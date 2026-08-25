@@ -53,10 +53,17 @@ describe("resolveUserIdFromRequest", () => {
   beforeEach(async () => {
     createLogger({ level: "warn", },);
     ({ db, } = await createTestDb());
+    // Enable the legacy sha256(token) lookup path so the tests below (which
+    // seed sessions with `token_hash = sha256(raw_token)`) resolve. Real
+    // deployments leave this off; login.ts now writes `token_hash =
+    // "jwt:" + sessionId` so JWT-issued sessions never collide with this
+    // path regardless of the flag.
+    process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "1";
   },);
 
   afterEach(async () => {
     resetSoloUserCache();
+    delete process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK;
     await db.destroy();
   },);
 
@@ -159,5 +166,94 @@ describe("resolveUserIdFromRequest", () => {
     const req = new Request("http://localhost",);
 
     expect(await resolveUserIdFromRequest(req, db, "demo",),).toBe(solo?.id ?? null,);
+  });
+
+  it("does NOT resolve via sha256 lookup when legacyOpaqueTokenFallback is off", async () => {
+    // SECURITY (BUG-legacy-sha256-token-hash-fallback): a session row keyed by
+    // sha256(raw_token) is the pre-JWT-era compat surface. Without the explicit
+    // opt-in flag, a secret-less deployment must not silently authenticate
+    // anyone whose hash happens to be in the table. The flag is OFF by default.
+    delete process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK;
+
+    const userId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: userId,
+        username: `legacy-${userId}`,
+        display_name: "Legacy User",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+
+    const token = "legacy-opaque-token";
+    const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
+    await db
+      .insertInto("sessions",)
+      .values({
+        user_id: userId,
+        token_hash: tokenHash,
+        ip: "127.0.0.1",
+        user_agent: "legacy",
+        expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
+      },)
+      .execute();
+
+    const req = new Request("http://localhost", {
+      headers: { Cookie: `ll_token=${token}`, },
+    },);
+
+    // The fallback must NOT fire — falls through to solo user.
+    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
+    expect(await resolveUserIdFromRequest(req, db, "demo",),).toBe(solo?.id ?? null,);
+
+    // Restore for any subsequent tests in the suite.
+    process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "1";
+  });
+
+  it("does NOT resolve via sha256 lookup when jwtSecret is empty even with legacy flag on — because jwt is checked first and falls through", async () => {
+    // Belt-and-suspenders: the gate is on `legacyOpaqueTokenFallback`, not on
+    // jwtSecret presence. Verify the gate alone is sufficient: with the flag
+    // off, even a populated sessions table is unauthenticated.
+    delete process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK;
+
+    const userId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: userId,
+        username: `secretless-${userId}`,
+        display_name: "Secretless",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+
+    const token = "should-not-resolve";
+    const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
+    await db
+      .insertInto("sessions",)
+      .values({
+        user_id: userId,
+        token_hash: tokenHash,
+        ip: "127.0.0.1",
+        user_agent: "secretless",
+        expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
+      },)
+      .execute();
+
+    const req = new Request("http://localhost", {
+      headers: { Cookie: `ll_token=${token}`, },
+    },);
+
+    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
+    const resolved = await resolveUserIdFromRequest(req, db, "demo",);
+    expect(resolved,).not.toBe(userId,);
+    expect(resolved,).toBe(solo?.id ?? null,);
+
+    process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "1";
   });
 });

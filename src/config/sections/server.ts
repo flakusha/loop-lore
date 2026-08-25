@@ -12,6 +12,7 @@ import type { ServerConfig, TlsConfig, } from "../schema";
 export const SERVER_DEFAULTS = {
   port: 3000,
   host: "localhost",
+  trustProxy: false,
   tls: {
     key: `${DATA_DIR}/certs/key.pem`,
     cert: `${DATA_DIR}/certs/cert.pem`,
@@ -21,6 +22,7 @@ export const SERVER_DEFAULTS = {
 export class ServerSection implements ServerConfig {
   port = SERVER_DEFAULTS.port;
   host = SERVER_DEFAULTS.host;
+  trustProxy = SERVER_DEFAULTS.trustProxy;
   tls: TlsConfig = { ...SERVER_DEFAULTS.tls, };
 
   constructor(overrides?: Partial<ServerConfig>,) {
@@ -47,6 +49,12 @@ export const serverMeta = {
       description: "Server port (0 = random)",
     },
     host: { type: "string", default: SERVER_DEFAULTS.host, description: "Server host", },
+    trustProxy: {
+      type: "boolean",
+      default: SERVER_DEFAULTS.trustProxy,
+      description: "Honor X-Forwarded-For / X-Real-IP / CF-Connecting-IP for getClientIp. " +
+        "Default false (headers are spoofable). Env: SERVER_TRUST_PROXY=1.",
+    },
     tls: {
       type: "object",
       description: "TLS certificate configuration",
