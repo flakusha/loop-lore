@@ -19,6 +19,7 @@ import { internalTraitsSection, } from "./sections/internal-traits";
 import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
 import { nsfwPolicySection, } from "./sections/nsfw-policy";
+import { styleSection, } from "./sections/output-style";
 import { pluginAgentRoleSection, } from "./sections/plugin-agent-role";
 import { postHistorySection, } from "./sections/post-history";
 import { recentEventsSection, } from "./sections/recent-events";
@@ -31,6 +32,7 @@ import type { SectionBuilder, } from "./types";
 
 export const PROMPT_SECTIONS: SectionBuilder[] = [
   systemSection,
+  styleSection,
   taskClarificationSection,
   nsfwPolicySection,
   authorNoteSection,
