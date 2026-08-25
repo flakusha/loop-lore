@@ -1,6 +1,6 @@
 # BUG: Generated images owned by 'system' are invisible to the requesting user
 
-**Status:** ⬜ Not Started
+**Status:** 🔧 Fixed in worktree `fix-gallery-assets` (commits 641f566, 0b41aa0)
 **Priority:** high
 **Effort:** Medium
 
