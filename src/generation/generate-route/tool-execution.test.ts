@@ -57,4 +57,78 @@ describe("executeToolCalls context forwarding", () => {
 
     expect(results[0]?.content,).toContain("Tool not found",);
   });
+
+  test("malformed JSON in arguments emits explicit error without invoking handler", async () => {
+    let invoked = false;
+    registry.addTools("test-plugin", [
+      {
+        name: "echo_ctx",
+        description: "echo ctx",
+        parameters: {},
+        handler: async (_params,) => {
+          invoked = true;
+          return { content: "ok", };
+        },
+      },
+    ],);
+
+    const results = await executeToolCalls([
+      { id: "call-malformed", function: { name: "echo_ctx", arguments: '{"name": "foo",}', }, },
+    ], ctx,);
+
+    expect(invoked,).toBe(false,);
+    expect(results[0]?.tool_call_id,).toBe("call-malformed",);
+    const parsed = JSON.parse(results[0]?.content ?? "{}",);
+    expect(parsed.error,).toContain("tool arguments must be a JSON object",);
+    expect(parsed.received,).toBe('{"name": "foo",}',);
+  });
+  test("non-object JSON (array) emits explicit error without invoking handler", async () => {
+    let invoked = false;
+    registry.addTools("test-plugin", [
+      {
+        name: "echo_ctx",
+        description: "echo ctx",
+        parameters: {},
+        handler: async (_params,) => {
+          invoked = true;
+          return { content: "ok", };
+        },
+      },
+    ],);
+
+    const results = await executeToolCalls([
+      { id: "call-array", function: { name: "echo_ctx", arguments: "[1,2,3]", }, },
+    ], ctx,);
+
+    expect(invoked,).toBe(false,);
+    expect(results[0]?.tool_call_id,).toBe("call-array",);
+    const parsed = JSON.parse(results[0]?.content ?? "{}",);
+    expect(parsed.error,).toContain("tool arguments must be a JSON object",);
+    expect(parsed.error,).toContain("array",);
+  });
+
+  test("null JSON emits explicit error without invoking handler", async () => {
+    let invoked = false;
+    registry.addTools("test-plugin", [
+      {
+        name: "echo_ctx",
+        description: "echo ctx",
+        parameters: {},
+        handler: async (_params,) => {
+          invoked = true;
+          return { content: "ok", };
+        },
+      },
+    ],);
+
+    const results = await executeToolCalls([
+      { id: "call-null", function: { name: "echo_ctx", arguments: "null", }, },
+    ], ctx,);
+
+    expect(invoked,).toBe(false,);
+    expect(results[0]?.tool_call_id,).toBe("call-null",);
+    const parsed = JSON.parse(results[0]?.content ?? "{}",);
+    expect(parsed.error,).toContain("tool arguments must be a JSON object",);
+    expect(parsed.error,).toContain("null",);
+  });
 });
