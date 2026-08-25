@@ -11,11 +11,16 @@
 import type { Kysely, } from "kysely";
 import { getContextWindowForModel, } from "../admin/model-capabilities";
 import { MoodService, } from "../characters/services/mood-service";
+import { resolveOutputStyle, } from "../chat/output-style";
+import type { OutputStylePreset, } from "../chat/output-style";
+import { resolveResponseLength, } from "../chat/response-length";
+import type { GmConfig, } from "../chat/types/config";
 import { ChatMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { defaultTokenCount, } from "../generation/context-window-config";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
+import { jsonParseOr, } from "../utils/safe-json";
 import { dropOverBudgetSections, reorderPromptMessages, } from "./prompt-budget";
 import { PROMPT_SECTIONS, } from "./prompt/registry";
 import type {
@@ -29,6 +34,11 @@ import type {
 
 export { compactPromptHistory, } from "./prompt-budget";
 export type { AssembledPrompt, PromptParams, PromptSectionReport, } from "./prompt/types";
+
+function parseJsonOr<T,>(raw: string | null | undefined, fallback: T,): T {
+  if (!raw) { return fallback; }
+  return jsonParseOr<T>(raw, fallback,);
+}
 
 export class PromptAssembler {
   constructor(private readonly db: Kysely<DB>,) {}
@@ -53,7 +63,17 @@ export class PromptAssembler {
         .executeTakeFirstOrThrow(),
       this.db
         .selectFrom("chats",)
-        .select(["id", "mode", "world_id", "current_location_id", "prompt_override",],)
+        .select([
+          "id",
+          "mode",
+          "world_id",
+          "current_location_id",
+          "prompt_override",
+          "output_style_preset",
+          "gm_config",
+          "response_length_preset",
+          "response_length_custom",
+        ],)
         .where("id", "=", params.chatId,)
         .executeTakeFirstOrThrow(),
     ],);
@@ -63,6 +83,38 @@ export class PromptAssembler {
     if (chatResult.status === "rejected") { throw chatResult.reason; }
     const actor: AssembleActor = { ...actorResult.value, type: actorResult.value.actor_type, };
     const chat = chatResult.value;
+
+    // ── Resolve output style + response length (chat → user → server) ──
+    const gmConfig = parseJsonOr<GmConfig | null>(chat.gm_config, null,);
+    let userOutputStylePreset: OutputStylePreset | null = null;
+    let userResponseLengthPreset: ResponseLengthPreset | null = null;
+    if (params.userId) {
+      const userRow = await this.db
+        .selectFrom("users",)
+        .select("settings",)
+        .where("id", "=", params.userId,)
+        .executeTakeFirst();
+      const userSettings = parseJsonOr<
+        {
+          outputStyle?: { preset?: OutputStylePreset };
+          responseLength?: { preset?: ResponseLengthPreset };
+        } | null
+      >(userRow?.settings ?? null, null,);
+      userOutputStylePreset = userSettings?.outputStyle?.preset ?? null;
+      userResponseLengthPreset = userSettings?.responseLength?.preset ?? null;
+    }
+    const resolvedOutputStyle = resolveOutputStyle(
+      chat.output_style_preset as OutputStylePreset | null,
+      gmConfig?.outputStyle ?? null,
+      userOutputStylePreset,
+      params.config?.generation?.chatDefaults?.outputStyle ?? null,
+    );
+    const resolvedResponseLength = resolveResponseLength(
+      chat.response_length_preset as ResponseLengthPreset | null,
+      chat.response_length_custom,
+      userResponseLengthPreset,
+      "medium",
+    );
 
     // Per-world setup overlay: apply scenario/system-prompt overrides for the
     // chat's world (character_world_setup). Non-null overrides win over the
@@ -123,6 +175,8 @@ export class PromptAssembler {
       action: efParams.action,
       assistantName: efParams.assistantName,
       gmName: efParams.gmName,
+      outputStyle: resolvedOutputStyle,
+      responseLength: resolvedResponseLength,
     };
 
     const sections: PromptSectionReport[] = [];
@@ -155,6 +209,7 @@ export class PromptAssembler {
       tokenCount: totalTokens,
       tokenBudget,
       sections,
+      responseLength: resolvedResponseLength,
     };
   }
 

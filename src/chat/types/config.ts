@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { GameMasterType, } from "../../db/enums-config";
+import type { OutputStylePreset, } from "../output-style";
 
 /** Chat modes from the DB enum */
 export type ChatMode = "direct" | "group" | "story";
@@ -125,4 +126,13 @@ export interface GmConfig {
    * GM `llmConfig` (or the chat's resolved model).
    */
   actorModels?: Record<string, { model: string; provider: string }>;
+  /**
+   * Output styling (genre/register/tone) for this chat. Resolved via the
+   * chat → user → server fallback and injected as a prompt section.
+   */
+  outputStyle?: {
+    preset?: OutputStylePreset;
+    customInstruction?: string;
+    intensity?: number;
+  } | null;
 }
