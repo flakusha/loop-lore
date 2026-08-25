@@ -15,6 +15,7 @@ export interface ActiveGeneration {
   chatId: string;
   parentMessageId: string;
   actorId: string;
+  idempotencyKey?: string;
   abortController: AbortController;
   startedAt: number;
   repetitionDetector: StreamingRepetitionDetector;
