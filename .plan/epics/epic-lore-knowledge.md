@@ -58,3 +58,9 @@ Extends lore system to support timeline-specific knowledge propagation, secret l
 ---
 
 _Notes: Builds upon existing lorebook system in `src/assistant/lore/` and `src/routes/actor-lore-entries.ts`. Secret lore UI reuses world detail page patterns. Reads `timeline_id` from Timeline System epic (indirect dependency)._
+
+## Chat Audit 2026-08-25 — Related Findings
+
+- **B2:** Hallucination guard validates vs static DB snapshot; no transient/dynamic world-object handling → false positives. See BUG-hallucination-guard-known-params-ignored.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25._

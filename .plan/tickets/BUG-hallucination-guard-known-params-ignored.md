@@ -56,3 +56,9 @@ Correctness. The hallucination guard either misses world-specific NPCs (false ne
 
 - `epic-chat-lifecycle-moderation.md`.
 - `BUG-chat-transitions-memory-poisoning` (same data-integrity theme).
+
+## Chat Audit 2026-08-25 — Cross-Reference
+
+**Finding B2:** Hallucination guard validates entities against a static DB snapshot; no handling for transient/dynamic world objects → false positives on legitimately-generated entities.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25. Related umbrella ticket for asset-injection feature: TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex (issue afe0589)._

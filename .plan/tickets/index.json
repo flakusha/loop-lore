@@ -64,6 +64,18 @@
     "git_issue": "20354a1",
     "status": "done"
   },
+  "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA": {
+    "hash": "64464bf",
+    "extid": "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA",
+    "type": "BUG",
+    "title": "Asset link/share handlers and gallery grid param lack validation and access checks",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-asset-link-share-handlers-and-gallery-grid-param-lack-valida.md",
+    "git_issue": "64464bf"
+  },
   "BUG-ASSET-LINK-SHARE-JSON-ROUTES-500-BODY-ALREADY-USED-ELYSIA-SU": {
     "hash": "c78e5466",
     "extid": "BUG-ASSET-LINK-SHARE-JSON-ROUTES-500-BODY-ALREADY-USED-ELYSIA-SU",
@@ -75,6 +87,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-asset-link-share-json-routes-500-body-already-used-elysia-su.md",
     "git_issue": "80e07be"
+  },
+  "BUG-ASSET-SERVE-PUBLIC-IMMUTABLE-CACHE-INLINE-SVG-EXPOSURE": {
+    "hash": "4961df8",
+    "extid": "BUG-ASSET-SERVE-PUBLIC-IMMUTABLE-CACHE-INLINE-SVG-EXPOSURE",
+    "type": "BUG",
+    "title": "Asset serve: public immutable cache + inline SVG exposure",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-asset-serve-public-immutable-cache-inline-svg-exposure.md",
+    "git_issue": "4961df8"
   },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "hash": "pending",
@@ -228,6 +252,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-cancellation-lifecycle-db-failure-permanently-marks-chat-gen.md",
     "git_issue": "cfc029f"
+  },
+  "BUG-CAPTION-ROUTE-HAS-NO-OWNERSHIP-CHECK-AND-OVERWRITES-FOREIGN-": {
+    "hash": "07a1ef2",
+    "extid": "BUG-CAPTION-ROUTE-HAS-NO-OWNERSHIP-CHECK-AND-OVERWRITES-FOREIGN-",
+    "type": "BUG",
+    "title": "Caption route has no ownership check and overwrites foreign alt_text",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-caption-route-has-no-ownership-check-and-overwrites-foreign-.md",
+    "git_issue": "07a1ef2"
   },
   "BUG-CHARACTER-EXPORT-BROKEN-EXPORT-MODAL-MISSING-DATA-CHARACTER-": {
     "hash": "d2861ca",
@@ -608,6 +644,18 @@
     "source": ".plan/tickets/BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard.md",
     "git_issue": "6fb9cbd"
   },
+  "BUG-DUPLICATE-OPENASSETPREVIEW-DEFINITIONS-WITH-DIVERGENT-BEHAVI": {
+    "hash": "fbd71df",
+    "extid": "BUG-DUPLICATE-OPENASSETPREVIEW-DEFINITIONS-WITH-DIVERGENT-BEHAVI",
+    "type": "BUG",
+    "title": "Duplicate openAssetPreview definitions with divergent behavior",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-duplicate-openassetpreview-definitions-with-divergent-behavi.md",
+    "git_issue": "fbd71df"
+  },
   "BUG-E2E-TEST-INFRASTRUCTURE-FIXES": {
     "hash": "7e811d7",
     "extid": "BUG-E2E-TEST-INFRASTRUCTURE-FIXES",
@@ -712,7 +760,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md"
+    "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md",
+    "git_issue": "aae9870"
   },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
@@ -727,6 +776,18 @@
     "closed_at": "2026-08-22",
     "source": ".plan/tickets/BUG-gallery-duplicate-serveGalleryGrid.md"
   },
+  "BUG-GALLERY-GRID-EXPOSES-OTHER-USERS-PRIVATE-ASSETS": {
+    "hash": "53398da",
+    "extid": "BUG-GALLERY-GRID-EXPOSES-OTHER-USERS-PRIVATE-ASSETS",
+    "type": "BUG",
+    "title": "Gallery grid exposes other users' private assets",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gallery-grid-exposes-other-users-private-assets.md",
+    "git_issue": "53398da"
+  },
   "BUG-GALLERY-OPENASSETPREVIEW-CONTEXT-SAFETY": {
     "hash": "pending",
     "extid": "BUG-GALLERY-OPENASSETPREVIEW-CONTEXT-SAFETY",
@@ -737,6 +798,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+  },
+  "BUG-GENERATED-IMAGES-OWNED-BY-SYSTEM-ARE-INVISIBLE-TO-THE-REQUES": {
+    "hash": "5d355aa",
+    "extid": "BUG-GENERATED-IMAGES-OWNED-BY-SYSTEM-ARE-INVISIBLE-TO-THE-REQUES",
+    "type": "BUG",
+    "title": "Generated images owned by 'system' are invisible to the requesting user",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-generated-images-owned-by-system-are-invisible-to-the-reques.md",
+    "git_issue": "5d355aa"
   },
   "BUG-GETCLIENTIP-TRUSTS-SPOOFABLE-PROXY-HEADERS-UNCONDITIONALLY": {
     "hash": "f52b255",
@@ -880,7 +953,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-html-lang-hardcoded-no-dir-handling-for-i18n.md"
+    "source": ".plan/tickets/BUG-html-lang-hardcoded-no-dir-handling-for-i18n.md",
+    "git_issue": "f835588"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "hash": "pending",
@@ -925,7 +999,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-isgenerating-stuck-true-bricks-chat-switching.md"
+    "source": ".plan/tickets/BUG-isgenerating-stuck-true-bricks-chat-switching.md",
+    "git_issue": "f254f7a"
   },
   "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA": {
     "hash": "c31f487",
@@ -988,6 +1063,18 @@
     "source": ".plan/tickets/BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec.md",
     "git_issue": "d489199"
   },
+  "BUG-LISTASSETS-TREATS-SHARED-VISIBILITY-AS-WORLD-READABLE": {
+    "hash": "72706d2",
+    "extid": "BUG-LISTASSETS-TREATS-SHARED-VISIBILITY-AS-WORLD-READABLE",
+    "type": "BUG",
+    "title": "listAssets treats Shared visibility as world-readable",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md",
+    "git_issue": "72706d2"
+  },
   "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK": {
     "hash": "fafb5a9",
     "extid": "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK",
@@ -999,6 +1086,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-logout-deletes-session-without-signature-or-ownership-check.md",
     "git_issue": "fafb5a9"
+  },
+  "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
+    "hash": "1fbe78c",
+    "extid": "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH",
+    "type": "BUG",
+    "title": "Message attachments link arbitrary asset ids without ownership check",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh.md",
+    "git_issue": "1fbe78c"
   },
   "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM": {
     "hash": "6ca8fad",
@@ -1209,7 +1308,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-out-of-order-fetch-race-in-loadmessages.md"
+    "source": ".plan/tickets/BUG-out-of-order-fetch-race-in-loadmessages.md",
+    "git_issue": "b91c284"
   },
   "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD": {
     "hash": "a83a310",
@@ -1284,7 +1384,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md"
+    "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md",
+    "git_issue": "df71725"
   },
   "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH": {
     "hash": "pending",
@@ -1342,7 +1443,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-stale-sse-stream-writes-render-into-wrong-chat.md"
+    "source": ".plan/tickets/BUG-stale-sse-stream-writes-render-into-wrong-chat.md",
+    "git_issue": "a1385db"
   },
   "BUG-STANDARD-TIER-AT-REST-ENCRYPTION-SILENTLY-STORES-PLAINTEXT-W": {
     "hash": "566d06c",
@@ -1414,7 +1516,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-tautological-browser-test-assertions.md"
+    "source": ".plan/tickets/BUG-tautological-browser-test-assertions.md",
+    "git_issue": "c8bad7f"
   },
   "BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA": {
     "hash": "pending",
@@ -1511,7 +1614,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md"
+    "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md",
+    "git_issue": "6c5ec87"
   },
   "BUG-USERS-PERSONA-HANDLERS-HORIZONTAL-PRIV-ESC": {
     "hash": "pending",
@@ -1572,7 +1676,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md"
+    "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md",
+    "git_issue": "7664314"
   },
   "BUG-XSS-IN-MUSIC-EMBED-FALLBACK-RENDERING": {
     "hash": "6e96aea",
@@ -1583,7 +1688,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md"
+    "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md",
+    "git_issue": "6e96aea"
   },
   "EPIC-027": {
     "hash": "821ab24",
@@ -6074,6 +6180,18 @@
     "source": ".plan/tickets/TASK-byok-api-keys.md",
     "git_issue": "e665ded"
   },
+  "TASK-CAPTION-VARIANTS-CREATE-RECREATE-PICK-BEST-SCENARIO": {
+    "hash": "bba2547",
+    "extid": "TASK-CAPTION-VARIANTS-CREATE-RECREATE-PICK-BEST-SCENARIO",
+    "type": "TASK",
+    "title": "Caption variants: create/recreate/pick-best scenario",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-caption-variants-create-recreate-pick-best-scenario.md",
+    "git_issue": "bba2547"
+  },
   "TASK-CHAR-EDITOR-DB-STORAGE-SYNC": {
     "hash": "pending",
     "extid": "TASK-CHAR-EDITOR-DB-STORAGE-SYNC",
@@ -8821,6 +8939,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-file-split-routes.md"
   },
+  "TASK-FINALIZE-NOTIFICATION-BELL-HEADER-WIRING": {
+    "hash": "3bf85e0",
+    "extid": "TASK-FINALIZE-NOTIFICATION-BELL-HEADER-WIRING",
+    "type": "TASK",
+    "title": "Finalize notification bell header wiring",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md",
+    "git_issue": "3bf85e0"
+  },
   "TASK-FIX-ACTOR-ITEM-VALUE-TYPE": {
     "hash": "a97459f",
     "extid": "TASK-FIX-ACTOR-ITEM-VALUE-TYPE",
@@ -9191,6 +9321,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-tree-shake.md"
+  },
+  "TASK-GALLERY-ASSET-REUSE-PICKER-FOR-WORLD-LOCATION-ITEM-CREATION": {
+    "hash": "7532037",
+    "extid": "TASK-GALLERY-ASSET-REUSE-PICKER-FOR-WORLD-LOCATION-ITEM-CREATION",
+    "type": "TASK",
+    "title": "Gallery asset reuse picker for world/location/item creation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gallery-asset-reuse-picker-for-world-location-item-creation.md",
+    "git_issue": "7532037"
   },
   "TASK-GALLERY-EDITOR-STRUCTURED-UI": {
     "hash": "pending",
@@ -10782,6 +10924,54 @@
     "tags": [],
     "source": ".plan/tickets/TASK-native-aws-bedrock-adapter.md",
     "git_issue": "30fd582"
+  },
+  "TASK-NO-BROWSER-TEST-ADMIN-SUBPAGES-SETTINGS-TABS-I18N-THEME-APPL": {
+    "hash": "9041d6f",
+    "extid": "TASK-NO-BROWSER-TEST-ADMIN-SUBPAGES-SETTINGS-TABS-I18N-THEME-APPL",
+    "type": "TASK",
+    "title": "No browser test: admin subpages, settings tabs, i18n/theme application",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-no-browser-test-admin-subpages-settings-tabs-i18n-theme-appl.md",
+    "git_issue": "9041d6f"
+  },
+  "TASK-NO-BROWSER-TEST-CHAT-PANELS-MOOD-AVATARS": {
+    "hash": "e464b39",
+    "extid": "TASK-NO-BROWSER-TEST-CHAT-PANELS-MOOD-AVATARS",
+    "type": "TASK",
+    "title": "No browser test: chat panels + mood avatars",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-no-browser-test-chat-panels-mood-avatars.md",
+    "git_issue": "e464b39"
+  },
+  "TASK-NO-BROWSER-TEST-CHAT-STREAMING-MESSAGE-LIFECYCLE": {
+    "hash": "a168030",
+    "extid": "TASK-NO-BROWSER-TEST-CHAT-STREAMING-MESSAGE-LIFECYCLE",
+    "type": "TASK",
+    "title": "No browser test: chat streaming + message lifecycle",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-no-browser-test-chat-streaming-message-lifecycle.md",
+    "git_issue": "a168030"
+  },
+  "TASK-NO-BROWSER-TEST-VN-SCENE-VIEW-BATTLE-UI-COMMAND-PALETTE": {
+    "hash": "8918822",
+    "extid": "TASK-NO-BROWSER-TEST-VN-SCENE-VIEW-BATTLE-UI-COMMAND-PALETTE",
+    "type": "TASK",
+    "title": "No browser test: VN scene view, battle UI, command palette",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-no-browser-test-vn-scene-view-battle-ui-command-palette.md",
+    "git_issue": "8918822"
   },
   "TASK-NON-ISOLATED-BUN-TEST-SRC-RED-SHARED-STATE-CONTAMINATION": {
     "hash": "70c23fb",
@@ -13440,6 +13630,18 @@
     "source": ".plan/tickets/TASK-shared-schemas.md",
     "status": "done",
     "git_issue": "754a395"
+  },
+  "TASK-SHOW-ASSETS-SCENES-WORLDS-ITEMS-TO-CHARACTER-VIA-CHAT-CONTEX": {
+    "hash": "afe0589",
+    "extid": "TASK-SHOW-ASSETS-SCENES-WORLDS-ITEMS-TO-CHARACTER-VIA-CHAT-CONTEX",
+    "type": "TASK",
+    "title": "Show assets, scenes, worlds, items to character via chat-context injection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-context-injection-templates",
+    "tags": [],
+    "source": ".plan/tickets/TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex.md",
+    "git_issue": "afe0589"
   },
   "TASK-SIGNED-URLS-FOR-ASSET-DOWNLOADS": {
     "hash": "4396076",

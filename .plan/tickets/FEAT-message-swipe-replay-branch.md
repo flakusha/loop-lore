@@ -95,3 +95,9 @@ online chat. Regenerate overrides (temperature/model) are per-request, not bound
 - Distinct from `TASK-quick-regen-button.md` (regenerate last message, archive-original flow);
   this ticket covers **previous-message replay branches** + the variant/swipe system.
 - Data model, API, and UI spec already exist — this is primarily **wiring + plan**, low design risk.
+
+## Chat Audit 2026-08-25 — Cross-Reference
+
+**Finding B6:** Swipe/replay branch depends on `swipe_index` in `Messages` (`src/chat/service/types.ts`); audit confirms the hierarchy exists but reaction/grading fields are deferred — coordinate so replay/branch doesn't assume those fields yet.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25. Related umbrella ticket for asset-injection feature: TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex (issue afe0589)._
