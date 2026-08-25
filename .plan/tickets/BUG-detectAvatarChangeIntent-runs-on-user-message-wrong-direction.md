@@ -3,7 +3,7 @@
 
 # BUG: detectAvatarChangeIntent runs on user messages, not assistant responses
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Resolved (Option B applied: prompt-injection call site removed; emotionAvatar section fires via prompt-assembler default on persisted character mood)
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding
 **Labels:** emotion-avatar, intent-detection, prompt-injection, wrong-direction
@@ -99,14 +99,16 @@ for avatar binding.
 After the fix, update `TASK-aux-emotion-avatar.md:152` to reflect the
 actual consumer and the wrong-direction defect.
 
+## Evidence
+
+ - prepare-generation.ts no longer imports or calls detectAvatarChangeIntent; the file docstring (lines 4-17) documents the removal rationale (prompt bias, wrong direction, EmotionHook already covers the assistant-response signal).
+ - bun test src/generation/: 494 pass / 0 fail
+ - bun test src/assistant/: 177 pass / 0 fail
+ - bunx tsc --noEmit -p tsconfig.backend.json: exit 0
+
 ## Acceptance Criteria
 
-- [ ] Decision made: A or B (recommend B).
-- [ ] If B: lines 84-92 removed; `emotionAvatarSection` still fires via
-      `prompt-assembler.ts:104-108` default; existing behavior preserved
-      for characters with a persisted mood.
-- [ ] If A: detection runs on `assistant[-1]` content; new test asserts
-      the assistant-reply direction.
-- [ ] `TASK-aux-emotion-avatar.md:152` updated to reflect the actual
-      consumer + the wrong-direction bug.
-- [ ] `bun run check` green.
+- [x] Decision made: B (recommended) — call site removed
+- [x] `emotionAvatarSection` still fires via `prompt-assembler.ts:104-108` default on persisted `character_mood.current_mood`
+- [x] Tests passing
+- [x] Typecheck passing
