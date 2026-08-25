@@ -15,6 +15,41 @@ import { serveFile, } from "./files";
 import { verifyAssetUrl, } from "./signed-url";
 import type { ServeCompressedOpts, ServeRawOpts, } from "./types";
 
+/** MIME types that execute script/markup when navigated to inline. */
+const ACTIVE_CONTENT_TYPES: Record<string, true> = {
+  "image/svg+xml": true,
+  "text/html": true,
+  "application/xhtml+xml": true,
+  "application/xml": true,
+  "text/xml": true,
+};
+
+/**
+ * Cache policy by visibility: public assets may live in shared caches;
+ * private/shared/restricted assets must stay out of shared caches — a
+ * `public, immutable` header lets a shared cache replay private bytes to a
+ * different user after expiry of the authorizing URL.
+ */
+function cacheControlFor(asset: AssetRecord,): string {
+  if (asset.visibility === "public") {
+    return `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`;
+  }
+  return "private, max-age=3600";
+}
+
+/**
+ * Active content (SVG/HTML/XML) must never be served inline: direct
+ * navigation executes embedded script. Force attachment for those types;
+ * everything else stays inline.
+ */
+function contentDispositionFor(asset: AssetRecord, filename: string,): Record<string, string> {
+  const safeName = filename.replace(/[^\w.\- ]+/g, "_",);
+  if (ACTIVE_CONTENT_TYPES[asset.mime_type]) {
+    return { "Content-Disposition": `attachment; filename="${safeName}"`, };
+  }
+  return {};
+}
+
 /**
  * Resolve the actor-facing asset record for a serve request.
  *
@@ -103,17 +138,22 @@ export async function handleServeRaw({
       return new Response(new Uint8Array(decryptedData,), {
         headers: {
           "Content-Type": asset.mime_type,
-          "Cache-Control": `private, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+          "Cache-Control": cacheControlFor(asset,),
           "X-Content-Type-Options": "nosniff",
+          ...contentDispositionFor(asset, asset.filename,),
         },
       },);
     } catch {
       return new Response("Failed to decrypt asset", { status: 500, },);
-    }
   }
-
+  }
   // Non-encrypted asset — serve directly
-  return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type,);
+  return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
+    cacheControl: cacheControlFor(asset,),
+    extraHeaders: {
+      ...contentDispositionFor(asset, asset.filename,),
+    },
+  },);
 }
 
 export async function handleServeCompressed({
@@ -147,9 +187,12 @@ export async function handleServeCompressed({
 
   // Fall back to raw if no compressed variant
   if (!existsSync(fullPath,)) {
-    return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path,), resolved.asset.mime_type,);
+    return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path,), resolved.asset.mime_type, {
+      cacheControl: cacheControlFor(resolved.asset,),
+      extraHeaders: { "X-Content-Type-Options": "nosniff", },
+    },);
   }
-  return serveFile(fullPath, "image/webp",);
+  return serveFile(fullPath, "image/webp", { cacheControl: cacheControlFor(resolved.asset,), },);
 }
 
 export async function handleDownload({
@@ -197,9 +240,9 @@ export async function handleDownload({
       return new Response(new Uint8Array(decryptedData,), {
         headers: {
           "Content-Type": asset.mime_type,
-          "Cache-Control": `private, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
-          "X-Content-Type-Options": "nosniff",
           "Content-Disposition": `attachment; filename="${safeName}"`,
+          "Cache-Control": cacheControlFor(asset,),
+          "X-Content-Type-Options": "nosniff",
         },
       },);
     } catch {
@@ -208,6 +251,10 @@ export async function handleDownload({
   }
 
   return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
-    extraHeaders: { "Content-Disposition": `attachment; filename="${safeName}"`, },
+    cacheControl: cacheControlFor(asset,),
+    extraHeaders: {
+      "Content-Disposition": `attachment; filename="${safeName}"`,
+      "X-Content-Type-Options": "nosniff",
+    },
   },);
 }
