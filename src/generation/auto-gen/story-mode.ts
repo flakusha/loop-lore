@@ -13,12 +13,11 @@ import {
   MessageVisibility,
 } from "../../db/enums";
 import { getLogger, } from "../../logger";
-import { getRuntimeNsfwConfig, } from "../../nsfw/runtime-config";
 import { resolveSystemPrompt, } from "../../prompts";
 import { type GameMasterConfig, GameMasterService, } from "../../story";
 import type { GenerateTextFn, } from "../../story/game-master";
 import { jsonParseOr, uid, } from "../../utils";
-import { getRegisteredHooks, runHookChain, } from "../hooks";
+import { runContentHooks, } from "./content-hooks";
 import type { StoryModeOpts, } from "./story-mode-opts";
 export type { StoryModeOpts, } from "./story-mode-opts";
 /**
@@ -155,42 +154,30 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   storedContent = result.storedContent;
   storedKeyId = result.keyId;
 
-  // Detect the dominant emotion on the generated story content via the same
-  // EmotionHook used by the regular path (gated on config.hooks.enableEmotionHooks),
-  // so GM/story messages also get a per-message emotion for avatar rendering.
-  let dominantEmotion: string | null = null;
-  const storyHooksConfig = config.hooks ?? {
-    enableMoodHooks: true,
-    enableEmotionHooks: true,
-    enableNsfwHooks: true,
-    enableModerationHooks: true,
-  };
-  if (storyHooksConfig.enableEmotionHooks) {
-    try {
-      const emotionResult = await runHookChain({
-        hooks: [...getRegisteredHooks(),],
-        context: {
-          chatId,
-          actorId: turnResult.actorId,
-          userId,
-          content: turnResult.prompt,
-          nsfwPolicy: undefined,
-          privacyLevel: "standard",
-          eventTypes: ["emotion_change",],
-          config,
-          nsfwConfig: getRuntimeNsfwConfig(),
-          db: database,
-        },
-      },);
-      const emotionEvent = emotionResult.events.find(
-        (e,) => e.eventType === "emotion_change" && typeof e.data?.dominantEmotion === "string",
-      );
-      dominantEmotion = (emotionEvent?.data?.dominantEmotion as string | undefined) ?? null;
-    } catch (error) {
-      log.warn("emotion-hook: story emotion detection failed", { err: error, },);
-    }
+  // Run the full content-hook chain (NSFW gate + emotion + mood + moderation)
+  // BEFORE persisting the generated story/GM content. Previously this path
+  // only invoked the emotion hook via a bare runHookChain call with
+  // eventTypes=["emotion_change"], which silently bypassed the NSFW gate
+  // (eventTypes "nsfw_gate" / "privacy_check") and the moderation hook
+  // (BUG-f0683a8 — story/GM generation never NSFW-gated, content safety
+  // bypass). Reusing runContentHooks guarantees the same pre-store policy
+  // enforcement as the regular auto-gen path (auto-generation.ts:163).
+  const hooks = await runContentHooks({
+    database,
+    config,
+    chatId,
+    actorId: turnResult.actorId,
+    userId,
+    content: turnResult.prompt,
+  },);
+  if (!hooks.allowed) {
+    log.warn("story-mode: generation blocked by content hooks", {
+      chatId,
+      actorId: turnResult.actorId,
+    },);
+    return;
   }
-
+  const dominantEmotion = hooks.dominantEmotion ?? null;
   // Compute swipe index for variant support
   let swipeIndex: number | null = null;
   if (parentMessageId) {
