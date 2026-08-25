@@ -49,6 +49,30 @@
     "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md",
     "git_issue": "114a27f"
   },
+  "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
+    "hash": "2d01b19",
+    "extid": "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY",
+    "type": "BUG",
+    "title": "ActivityPub actor signing keys and rotation undefined; no crypto-epic link",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md",
+    "git_issue": "2d01b19"
+  },
+  "BUG-ACTIVITYPUB-FEDERATION-DOES-NOT-LEVERAGE-THE-BLOG-SYSTEM-LEM": {
+    "hash": "81b59cf",
+    "extid": "BUG-ACTIVITYPUB-FEDERATION-DOES-NOT-LEVERAGE-THE-BLOG-SYSTEM-LEM",
+    "type": "BUG",
+    "title": "ActivityPub federation does not leverage the blog system (Lemmy/Mastodon primitive)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md",
+    "git_issue": "81b59cf"
+  },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "hash": "pending",
     "extid": "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY",
@@ -253,6 +277,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-avatar-selection-rule-unimplemented-branches.md"
   },
+  "BUG-BACKFILL-OF-HISTORICAL-POSTS-ON-NEW-FOLLOWER-UNSPECIFIED": {
+    "hash": "78722c5",
+    "extid": "BUG-BACKFILL-OF-HISTORICAL-POSTS-ON-NEW-FOLLOWER-UNSPECIFIED",
+    "type": "BUG",
+    "title": "Backfill of historical posts on new follower unspecified",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md",
+    "git_issue": "78722c5"
+  },
   "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0": {
     "hash": "d0d3739",
     "extid": "BUG-BASE64-TOBASE64-COERCES-UNDEFINED-TO-0-VIA-BYTES-I-0",
@@ -276,6 +312,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.md",
     "git_issue": "bc5de16"
+  },
+  "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM": {
+    "hash": "69d45a5",
+    "extid": "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM",
+    "type": "BUG",
+    "title": "Blog comments lack threading (parent_comment_id) blocking Lemmy/Mastodon/Reddit parity",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-blog-comments-lack-threading-parent-comment-id-blocking-lemm.md",
+    "git_issue": "69d45a5"
   },
   "BUG-CANCELLATION-LIFECYCLE-DB-FAILURE-PERMANENTLY-MARKS-CHAT-GEN": {
     "hash": "cfc029f",
@@ -312,6 +360,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md",
     "git_issue": "d2861ca"
+  },
+  "BUG-CHARACTER-FEDERATION-LACKS-OWNER-CONSENT-OR-NSFW-GATE": {
+    "hash": "bf46681",
+    "extid": "BUG-CHARACTER-FEDERATION-LACKS-OWNER-CONSENT-OR-NSFW-GATE",
+    "type": "BUG",
+    "title": "Character federation lacks owner consent or NSFW gate",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md",
+    "git_issue": "bf46681"
   },
   "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-ACTOR-OWNERSHIP-NEVER-CHECKED": {
     "hash": "d6c64be",
@@ -394,6 +454,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md",
     "git_issue": "f06194a"
+  },
+  "BUG-CHAT-IM-ADAPTER-ABSTRACTION-DUPLICATED-PROTOCOLADAPTER-VS-SO": {
+    "hash": "476e62b",
+    "extid": "BUG-CHAT-IM-ADAPTER-ABSTRACTION-DUPLICATED-PROTOCOLADAPTER-VS-SO",
+    "type": "BUG",
+    "title": "Chat/IM adapter abstraction duplicated (ProtocolAdapter vs SocialAdapter), no code",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-im-adapter-abstraction-duplicated-protocoladapter-vs-so.md",
+    "git_issue": "476e62b"
   },
   "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
     "hash": "61c7072",
@@ -657,6 +729,18 @@
     "source": ".plan/tickets/BUG-crafting-station-instances-scoped-across-worlds-cross-world-.md",
     "git_issue": "7bde6bd"
   },
+  "BUG-CRDT-CONFLICT-POLICY-MISSING-LEADER-VS-SWARM-PRECEDENCE-AND-": {
+    "hash": "31a4037",
+    "extid": "BUG-CRDT-CONFLICT-POLICY-MISSING-LEADER-VS-SWARM-PRECEDENCE-AND-",
+    "type": "BUG",
+    "title": "CRDT conflict policy missing leader-vs-swarm precedence and deletes",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-crdt-conflict-policy-missing-leader-vs-swarm-precedence-and-.md",
+    "git_issue": "31a4037"
+  },
   "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER": {
     "hash": "63f8f29",
     "extid": "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER",
@@ -810,6 +894,78 @@
     "tags": [],
     "source": ".plan/tickets/BUG-factory-reset-deletes-tables-without-transaction-silent-per-.md",
     "git_issue": "dc5a8b8"
+  },
+  "BUG-FEAT-RADICLE-INTEGRATION-ACCEPTANCE-CRITERIA-TOO-THIN": {
+    "hash": "4a8525b",
+    "extid": "BUG-FEAT-RADICLE-INTEGRATION-ACCEPTANCE-CRITERIA-TOO-THIN",
+    "type": "BUG",
+    "title": "FEAT-radicle-integration acceptance criteria too thin",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-feat-radicle-integration-acceptance-criteria-too-thin.md",
+    "git_issue": "4a8525b"
+  },
+  "BUG-FEDERATED-DELETE-AND-GDPR-RIGHT-TO-BE-FORGOTTEN-UNHANDLED": {
+    "hash": "69a4c7e",
+    "extid": "BUG-FEDERATED-DELETE-AND-GDPR-RIGHT-TO-BE-FORGOTTEN-UNHANDLED",
+    "type": "BUG",
+    "title": "Federated delete and GDPR right-to-be-forgotten unhandled",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-federated-delete-and-gdpr-right-to-be-forgotten-unhandled.md",
+    "git_issue": "69a4c7e"
+  },
+  "BUG-FEDERATION-AUTHORIZATION-WHO-MAY-PUBLISH-AN-ACTOR-UNDEFINED": {
+    "hash": "0ff0fc5",
+    "extid": "BUG-FEDERATION-AUTHORIZATION-WHO-MAY-PUBLISH-AN-ACTOR-UNDEFINED",
+    "type": "BUG",
+    "title": "Federation authorization (who may publish an actor) undefined",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md",
+    "git_issue": "0ff0fc5"
+  },
+  "BUG-FEDERATION-DELIVERY-RELIABILITY-QUEUE-RETRY-IDEMPOTENCY-UNDE": {
+    "hash": "7d8e517",
+    "extid": "BUG-FEDERATION-DELIVERY-RELIABILITY-QUEUE-RETRY-IDEMPOTENCY-UNDE",
+    "type": "BUG",
+    "title": "Federation delivery reliability (queue, retry, idempotency) undefined",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-federation-delivery-reliability-queue-retry-idempotency-unde.md",
+    "git_issue": "7d8e517"
+  },
+  "BUG-FEDERATION-IDENTITY-MAPPING-TO-LOCAL-USERS-UNDEFINED": {
+    "hash": "425bb6d",
+    "extid": "BUG-FEDERATION-IDENTITY-MAPPING-TO-LOCAL-USERS-UNDEFINED",
+    "type": "BUG",
+    "title": "Federation identity mapping to local users undefined",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-federation-identity-mapping-to-local-users-undefined.md",
+    "git_issue": "425bb6d"
+  },
+  "BUG-FEDERATION-TEST-HARNESS-NEEDS-IN-PROCESS-FIXTURES": {
+    "hash": "6831559",
+    "extid": "BUG-FEDERATION-TEST-HARNESS-NEEDS-IN-PROCESS-FIXTURES",
+    "type": "BUG",
+    "title": "Federation test harness needs in-process fixtures",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-federation-test-harness-needs-in-process-fixtures.md",
+    "git_issue": "6831559"
   },
   "BUG-FRONTEND-MINOR-BUGS-BATCH": {
     "hash": "aae9870",
@@ -1074,6 +1230,18 @@
     "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md",
     "git_issue": "8a630ce"
   },
+  "BUG-INBOUND-FEDERATION-CONTENT-NOT-MODERATED-BEFORE-DISPLAY": {
+    "hash": "74e13c7",
+    "extid": "BUG-INBOUND-FEDERATION-CONTENT-NOT-MODERATED-BEFORE-DISPLAY",
+    "type": "BUG",
+    "title": "Inbound federation content not moderated before display",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-inbound-federation-content-not-moderated-before-display.md",
+    "git_issue": "74e13c7"
+  },
   "BUG-INITDHRATCHETOPTS-THEIRINITIALPUB-DECLARED-BUT-NEVER-READ": {
     "hash": "86a2a1b",
     "extid": "BUG-INITDHRATCHETOPTS-THEIRINITIALPUB-DECLARED-BUT-NEVER-READ",
@@ -1085,6 +1253,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md",
     "git_issue": "86a2a1b"
+  },
+  "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
+    "hash": "27cc7ab",
+    "extid": "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD",
+    "type": "BUG",
+    "title": "IRC integration unscoped as group-chat (only in social-hub adapter list)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad.md",
+    "git_issue": "27cc7ab"
   },
   "BUG-ISGENERATING-STUCK-TRUE-BRICKS-CHAT-SWITCHING": {
     "hash": "f254f7a",
@@ -1146,6 +1326,18 @@
     "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md",
     "git_issue": "966f256",
     "status": "done"
+  },
+  "BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT": {
+    "hash": "6234f6d",
+    "extid": "BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT",
+    "type": "BUG",
+    "title": "Leader and swarm topologies lack simultaneous-write arbitration",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-leader-and-swarm-topologies-lack-simultaneous-write-arbitrat.md",
+    "git_issue": "6234f6d"
   },
   "BUG-LEGACY-SHA256-TOKEN-HASH-FALLBACK-AUTHENTICATES-WHEN-JWT-SEC": {
     "hash": "d489199",
@@ -1504,6 +1696,18 @@
     "source": ".plan/tickets/BUG-rate-limiter-module-singletons-shared-across-test-files-caus.md",
     "git_issue": "2e25526"
   },
+  "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
+    "hash": "e2daa2d",
+    "extid": "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT",
+    "type": "BUG",
+    "title": "Remote actor discovery (WebFinger resolve, host-meta) absent",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-remote-actor-discovery-webfinger-resolve-host-meta-absent.md",
+    "git_issue": "e2daa2d"
+  },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
     "extid": "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-",
@@ -1530,6 +1734,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md",
     "git_issue": "df71725"
+  },
+  "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
+    "hash": "6e94158",
+    "extid": "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED",
+    "type": "BUG",
+    "title": "Signal bridge activation trigger undefined",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-signal-bridge-activation-trigger-undefined.md",
+    "git_issue": "6e94158"
   },
   "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH": {
     "hash": "pending",
@@ -7659,6 +7875,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-consolidate-quest-engines.md"
   },
+  "TASK-CONSOLIDATE-UNSAFE-DATE-BUFFER-JSON-USAGE-INTO-SHARED-UTILS": {
+    "hash": "ad8bb7e",
+    "extid": "TASK-CONSOLIDATE-UNSAFE-DATE-BUFFER-JSON-USAGE-INTO-SHARED-UTILS",
+    "type": "TASK",
+    "title": "Consolidate unsafe Date/Buffer/JSON usage into shared utils",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consolidate-unsafe-date-buffer-json-usage-into-shared-utils.md",
+    "git_issue": "ad8bb7e"
+  },
   "TASK-CONTEXT-CUT-MEMORY-PROMOTION": {
     "hash": "90f0396",
     "extid": "TASK-CONTEXT-CUT-MEMORY-PROMOTION",
@@ -10112,7 +10340,8 @@
     "priority": "critical",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-implement-per-connection-ip-sourcing-for-auth-rate-limiters.md"
+    "source": ".plan/tickets/TASK-implement-per-connection-ip-sourcing-for-auth-rate-limiters.md",
+    "git_issue": "5353f07"
   },
   "TASK-IMPLEMENT-TRADE": {
     "hash": "f71d103",
