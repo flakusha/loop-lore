@@ -10,11 +10,13 @@
  * @module comfyui-provider
  */
 
+import { extractImageMetadata, } from "../../assets/metadata";
+import { createAsset, linkAsset, } from "../../assets/service";
 import { loadConfig, } from "../../config/load";
 import { pickSdProvider, } from "../../config/schema";
+import { getDatabase, } from "../../db";
 import { ComfyUIClient, } from "../../generation/providers/comfyui";
 import { getLogger, } from "../../logger";
-import { uid, } from "../../utils";
 import type {
   ImageEditBackend,
   ImageEditCategory,
@@ -137,17 +139,49 @@ export class ComfyUIEditProvider implements ImageEditProvider {
 
     onProgress?.({ status: "running", progress: 0.9, message: "Downloading images...", },);
 
+    const database = getDatabase();
+    const uploadDir = loadConfig().assets.uploadDir;
     const results: ImageEditResult[] = [];
 
     for (const filename of filenames) {
-      const id = uid();
+      const buffer = await client.downloadImage(filename,);
       const ext = filename.split(".",).pop() ?? "png";
+      const meta = extractImageMetadata(buffer,);
+
+      const { asset, } = await createAsset({
+        database,
+        input: {
+          ownerId: "system",
+          filename,
+          mimeType: `image/${ext === "jpg" ? "jpeg" : ext}`,
+          assetType: "image",
+          sizeBytes: buffer.length,
+          buffer,
+          altText: `ComfyUI ${template.name}: ${meta.width}x${meta.height} ${meta.format}`,
+        },
+        uploadDir,
+      },);
+
+      if (request.chatId) {
+        await linkAsset({
+          database,
+          assetId: asset.id,
+          link: { entityType: "chat", entityId: request.chatId, label: template.name, },
+        },);
+      }
+      if (request.messageId) {
+        await linkAsset({
+          database,
+          assetId: asset.id,
+          link: { entityType: "message", entityId: request.messageId, label: template.name, },
+        },);
+      }
 
       results.push({
-        id,
-        filename: `comfyui-${id.slice(0, 8,)}.${ext}`,
-        url: `/api/assets/${id}/raw`,
-        mimeType: `image/${ext === "jpg" ? "jpeg" : ext}`,
+        id: asset.id,
+        filename: asset.filename,
+        url: `/api/assets/${asset.id}/raw`,
+        mimeType: asset.mime_type,
       },);
     }
 
