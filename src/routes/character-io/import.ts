@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import type { CharacterSystemsExport, } from "../../characters/exporters/character-systems";
 import { importCharacterSystems, } from "../../characters/importers/character-systems";
+import { safeFetch, } from "../../utils";
 import {
   ActorIdParams,
   CharacterSystemsImportUrlBody,
@@ -123,15 +124,18 @@ export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
 
         try {
-          const response = await fetch(url, { signal: AbortSignal.timeout(5000,), },);
-          if (!response.ok) {
+          const fetched = await safeFetch<CharacterSystemsExport>(url, {
+            timeout: 5_000,
+            handle401: false,
+          },);
+          if (!fetched.ok) {
             return jsonError({
-              message: `Failed to fetch URL: ${response.statusText}`,
+              message: `Failed to fetch URL: ${fetched.error.message}`,
               status: HttpStatus.BadRequest,
             },);
           }
 
-          const data = await response.json() as CharacterSystemsExport;
+          const data = fetched.data;
           const worldId = ctx.body?.worldId as string | undefined;
           const result = await importCharacterSystems(database, actorId, data, worldId,);
 

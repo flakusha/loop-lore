@@ -13,6 +13,7 @@ import { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { can, } from "../users/permissions";
+import { parseIntOr, } from "../utils/parse-number";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonPaginated, jsonResponse, } from "./http-utils";
@@ -48,8 +49,8 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix 
       }
 
       const searchParams = new URL(request.url,).searchParams;
-      const page = parseInt(searchParams.get("page",) ?? "1", 10,);
-      const pageSize = parseInt(searchParams.get("pageSize",) ?? "50", 10,);
+      const page = parseIntOr(searchParams.get("page",) ?? "1", 1,);
+      const pageSize = parseIntOr(searchParams.get("pageSize",) ?? "50", 50,);
       const offset = (page - 1) * pageSize;
 
       const countResult = await opts.database

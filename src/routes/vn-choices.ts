@@ -12,10 +12,12 @@
  */
 
 import { Elysia, t, } from "elysia";
+
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { getLogger, type Logger, } from "../logger";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../utils";
+import { parseIntOr, } from "../utils/parse-number";
 import {
   forbiddenResponse as forbidden,
   HttpStatus,
@@ -47,8 +49,7 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (typeof userId !== "string") { return userId; }
 
           const { id: chatId, } = ctx.params;
-          const sceneIndex = parseInt(ctx.query.sceneIndex ?? "0", 10,);
-
+          const sceneIndex = parseIntOr(ctx.query.sceneIndex ?? "0", 0,);
           const chat = await database
             .selectFrom("chats",)
             .selectAll()

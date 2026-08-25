@@ -7,10 +7,10 @@
  * Extracts the API version from the URL path (/api/v1/...) or falls back to
  * Accept header content negotiation. Sets `ctx.apiVersion` for downstream
  * handlers and plugins.
- *
  * @see docs/spec/api-versioning.md
  */
 import { Elysia, } from "elysia";
+import { parseIntOr, } from "../../utils/parse-number";
 
 /** Supported API versions. */
 export type ApiVersion = "1";
@@ -36,14 +36,14 @@ export function resolveVersion(request: Request,): ApiVersion {
   const url = new URL(request.url ?? "",);
   const pathMatch = PATH_VERSION_RE.exec(url.pathname,);
   if (pathMatch?.[1]) {
-    const v = parseInt(pathMatch[1], 10,);
+    const v = parseIntOr(pathMatch[1], 0,);
     if (v === 1) { return "1"; }
   }
 
   const accept = request.headers?.get("Accept",) ?? "";
   const vndMatch = ACCEPT_VERSION_RE.exec(accept,);
   if (vndMatch?.[1]) {
-    const v = parseInt(vndMatch[1], 10,);
+    const v = parseIntOr(vndMatch[1], 0,);
     if (v === 1) { return "1"; }
   }
 

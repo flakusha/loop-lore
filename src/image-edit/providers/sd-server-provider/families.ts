@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { safeJsonStringify, uid, } from "../../../utils";
+import { safeFetch, safeJsonStringify, uid, } from "../../../utils";
 import type { ImageEditProgress, ImageEditResult, } from "../../types";
 import type { SDServerHost, } from "./types";
 
@@ -14,24 +14,21 @@ export async function sdcppGenerate(
   const url = `${host.baseUrl}/sdcpp/v1/${endpoint}`;
 
   const submitPayload = safeJsonStringify(body,);
-  const submitResp = await fetch(url, {
+  // Job status carries base64 images — can exceed safeFetch's default size cap.
+  const submitResult = await safeFetch<{ id: string }>(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", },
     body: submitPayload.ok ? submitPayload.value : "{}",
-    signal: AbortSignal.timeout(30_000,),
+    timeout: 30_000,
+    maxSize: Number.MAX_SAFE_INTEGER,
+    handle401: false,
   },);
 
-  if (!submitResp.ok) {
-    let errText = "unknown";
-    try {
-      errText = await submitResp.text();
-    } catch {
-      // Error body read failed — keep "unknown" fallback
-    }
-    throw new Error(`sd.cpp job submission failed: ${errText}`,);
+  if (!submitResult.ok) {
+    throw new Error(`sd.cpp job submission failed: ${submitResult.error.message}`,);
   }
 
-  const { id: jobId, } = (await submitResp.json()) as { id: string };
+  const { id: jobId, } = submitResult.data;
   if (!jobId) { throw new Error("sd.cpp returned no job id",); }
 
   onProgress?.({ status: "running", progress: 0.1, message: "Processing...", },);
@@ -40,18 +37,22 @@ export async function sdcppGenerate(
   const deadline = Date.now() + 300_000;
   while (Date.now() < deadline) {
     const jobUrl = `${host.baseUrl}/sdcpp/v1/jobs/${jobId}`;
-    const statusResp = await fetch(jobUrl, { signal: AbortSignal.timeout(10_000,), },);
-
-    if (!statusResp.ok) {
-      throw new Error(`sd.cpp polling failed: HTTP ${statusResp.status}`,);
-    }
-
-    const statusData = (await statusResp.json()) as {
+    const statusResult = await safeFetch<{
       status: string;
       progress?: number;
       images?: string[];
       error?: string;
-    };
+    }>(jobUrl, {
+      timeout: 10_000,
+      maxSize: Number.MAX_SAFE_INTEGER,
+      handle401: false,
+    },);
+
+    if (!statusResult.ok) {
+      throw new Error(`sd.cpp polling failed: ${statusResult.error.message}`,);
+    }
+
+    const statusData = statusResult.data;
 
     if (statusData.status === "done") {
       if (!statusData.images?.length) { throw new Error("sd.cpp completed but no images",); }
@@ -89,24 +90,21 @@ export async function sdapiGenerate(
   const url = `${host.baseUrl}/sdapi/v1/${endpoint}`;
 
   const payload = safeJsonStringify(body,);
-  const resp = await fetch(url, {
+  // Base64 image payloads can exceed safeFetch's default size cap.
+  const result = await safeFetch<{ images: string[] }>(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", },
     body: payload.ok ? payload.value : "{}",
-    signal: AbortSignal.timeout(120_000,),
+    timeout: 120_000,
+    maxSize: Number.MAX_SAFE_INTEGER,
+    handle401: false,
   },);
 
-  if (!resp.ok) {
-    let errText = "unknown";
-    try {
-      errText = await resp.text();
-    } catch {
-      // Error body read failed — keep "unknown" fallback
-    }
-    throw new Error(`sdapi ${endpoint} failed: ${errText}`,);
+  if (!result.ok) {
+    throw new Error(`sdapi ${endpoint} failed: ${result.error.message}`,);
   }
 
-  const data = (await resp.json()) as { images: string[] };
+  const data = result.data;
   return Array.from(data.images, (_b64, i,) => {
     const id = uid();
     return {
@@ -132,24 +130,20 @@ export async function openaiGenerate(
     ...(cfg?.apiKey && { Authorization: `Bearer ${cfg.apiKey}`, }),
   };
 
-  const resp = await fetch(url, {
+  const result = await safeFetch<{ data: { b64_json: string }[] }>(url, {
     method: "POST",
     headers,
     body: payload.ok ? payload.value : "{}",
-    signal: AbortSignal.timeout(60_000,),
+    timeout: 60_000,
+    maxSize: Number.MAX_SAFE_INTEGER,
+    handle401: false,
   },);
 
-  if (!resp.ok) {
-    let errText = "unknown";
-    try {
-      errText = await resp.text();
-    } catch {
-      // Error body read failed — keep "unknown" fallback
-    }
-    throw new Error(`OpenAI image gen failed: ${errText}`,);
+  if (!result.ok) {
+    throw new Error(`OpenAI image gen failed: ${result.error.message}`,);
   }
 
-  const data = (await resp.json()) as { data: { b64_json: string }[] };
+  const data = result.data;
   return Array.from(data.data, (_entry, i,) => {
     const id = uid();
     return {

@@ -3,12 +3,13 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { parseIntOr, } from "../../utils/parse-number";
 import { enrichChats, renderChatListItems, } from "./chat-render";
 import { htmlResponse, } from "./layout";
 
 async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
-  const page = Math.max(1, parseInt(params.get("page",) ?? "1", 10,),);
-  const rawPageSize = Math.max(1, parseInt(params.get("pageSize",) ?? "50", 10,),);
+  const page = Math.max(1, parseIntOr(params.get("page",) ?? "1", 1,),);
+  const rawPageSize = Math.max(1, parseIntOr(params.get("pageSize",) ?? "50", 50,),);
   const pageSize = Math.min(100, rawPageSize,);
   const offset = (page - 1) * pageSize;
 
@@ -68,8 +69,8 @@ async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,):
   const worldId = params.get("world",)?.trim() ?? "";
   const chatType = params.get("type",)?.trim() ?? "";
   const sort = params.get("sort",) ?? "recent";
-  const page = Math.max(1, parseInt(params.get("page",) ?? "1", 10,),);
-  const rawPageSize = Math.max(1, parseInt(params.get("pageSize",) ?? "50", 10,),);
+  const page = Math.max(1, parseIntOr(params.get("page",) ?? "1", 1,),);
+  const rawPageSize = Math.max(1, parseIntOr(params.get("pageSize",) ?? "50", 50,),);
   const pageSize = Math.min(100, rawPageSize,);
   const offset = (page - 1) * pageSize;
 

@@ -24,6 +24,8 @@
  * | `sentinel`| `<<tag>>content<</tag>>`            | OpenAI-style guidance legacy     |
  */
 
+import { toBase64, } from "../utils/base64";
+
 export type WrapperFormat = "xml" | "fence" | "sentinel";
 
 let _sessionNonce: string | null = null;
@@ -32,7 +34,7 @@ export function getSessionNonce(): string {
   if (!_sessionNonce) {
     const bytes = new Uint8Array(12,);
     crypto.getRandomValues(bytes,);
-    _sessionNonce = btoa(String.fromCharCode(...bytes,),)
+    _sessionNonce = toBase64(bytes,)
       .replace(/=+$/, "",)
       .slice(0, 12,);
   }

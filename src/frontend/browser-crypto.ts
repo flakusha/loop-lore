@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { fromBase64, toBase64, } from "../utils/base64";
+
 export interface BrowserEncryptResult {
   ciphertext: string;
   nonce: string;
@@ -16,22 +18,11 @@ function uint8ArrayToString(buf: Uint8Array,): string {
 }
 
 function uint8ArrayToBase64(buf: Uint8Array,): string {
-  let binary = "";
-  const len = buf.length;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCodePoint(buf[i]!,);
-  }
-  return btoa(binary,);
+  return toBase64(buf,);
 }
 
 function base64ToUint8Array(b64: string,): Uint8Array {
-  const binary = atob(b64,);
-  const len = binary.length;
-  const bytes = new Uint8Array(len,);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binary.codePointAt(i,)!;
-  }
-  return bytes;
+  return fromBase64(b64,);
 }
 
 export async function browserEncryptContent(

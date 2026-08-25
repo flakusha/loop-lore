@@ -12,6 +12,7 @@
  */
 
 import { feFetch, } from "./fe-fetch";
+import { safeFetch, } from "../utils";
 
 interface PreviewAsset {
   id: string;
@@ -65,9 +66,9 @@ async function ensurePreviewModal(): Promise<HTMLElement | null> {
   if (existing) { return existing; }
   const container = document.querySelector("#modal-container",);
   if (!container) { return null; }
-  const res = await fetch("/partials/gallery/preview-modal",);
-  if (!res.ok) { return null; }
-  container.innerHTML = await res.text();
+  const result = await safeFetch<string>("/partials/gallery/preview-modal", { parseJson: false, },);
+  if (!result.ok) { return null; }
+  container.innerHTML = result.data as string;
   if (globalThis.Alpine) {
     (globalThis.Alpine as { initTree(el: HTMLElement,): void }).initTree(container as HTMLElement,);
   }
