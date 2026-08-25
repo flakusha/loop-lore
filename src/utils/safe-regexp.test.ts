@@ -7,8 +7,8 @@ import { compileSafeRegExp, hasSafeShape, MAX_SAFE_PATTERN_LENGTH, } from "./saf
 describe("compileSafeRegExp", () => {
   test("compiles ordinary patterns", () => {
     const re = compileSafeRegExp("a+b", "i",);
-    expect(re).not.toBeNull();
-    expect(re!.test("aaab"),).toBe(true);
+    expect(re,).not.toBeNull();
+    expect(re!.test("aaab",),).toBe(true,);
   });
 
   test("returns null for empty and over-length patterns", () => {
@@ -46,7 +46,6 @@ describe("compileSafeRegExp", () => {
     expect(compileSafeRegExp("((a|))",),).not.toBeNull();
   });
 
-
   test("escaped quantifiers are not treated as nested quantification", () => {
     expect(compileSafeRegExp("(a\\+)+",),).not.toBeNull();
   });
@@ -54,10 +53,10 @@ describe("compileSafeRegExp", () => {
 
 describe("hasSafeShape", () => {
   test("flags quantified group with inner quantifier", () => {
-    expect(hasSafeShape("(x{2,})+y",),).toBe(false);
+    expect(hasSafeShape("(x{2,})+y",),).toBe(false,);
   });
 
   test("accepts unquantified group with inner quantifier", () => {
-    expect(hasSafeShape("(a+)",),).toBe(true);
+    expect(hasSafeShape("(a+)",),).toBe(true,);
   });
 });

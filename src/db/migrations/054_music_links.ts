@@ -9,7 +9,7 @@
  * Phase 1; a `message_id` FK can be added in Phase 2 to thread links to a
  * specific message.
  *
- * See .plan/tickets/TASK-chat-music-linking.md.
+ * See .plan/tickets/TASK-chat-external-music-linking.md.
  */
 import type { Kysely, } from "kysely";
 

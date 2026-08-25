@@ -19,10 +19,10 @@ import type { Config, } from "../../config/schema";
 import { AssetType, AssetVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
-import { assetRoutes, } from "./routes";
-import { signAssetUrl, } from "./signed-url";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
+import { assetRoutes, } from "./routes";
+import { signAssetUrl, } from "./signed-url";
 
 const OWNER = "owner-pol-1";
 const POLICY_SECRET = "policy-test-secret";
@@ -61,12 +61,22 @@ describe("asset serve policy (handler-level)", () => {
 
     await insertUsers(db, OWNER, "Policy Owner", { id: OWNER as never, },);
     await insertAssets(
-      db, OWNER, "hero.png", "image/png", AssetType.Image, 4,
+      db,
+      OWNER,
+      "hero.png",
+      "image/png",
+      AssetType.Image,
+      4,
       `raw/${PNG_ID.slice(0, 2,)}/${PNG_ID.slice(2, 4,)}/${PNG_ID}.png`,
       { id: PNG_ID as never, visibility: AssetVisibility.Private as never, storage_backend: "local" as never, },
     );
     await insertAssets(
-      db, OWNER, "evil.svg", "image/svg+xml", AssetType.Image, 4,
+      db,
+      OWNER,
+      "evil.svg",
+      "image/svg+xml",
+      AssetType.Image,
+      4,
       `raw/${SVG_ID.slice(0, 2,)}/${SVG_ID.slice(2, 4,)}/${SVG_ID}.svg`,
       { id: SVG_ID as never, visibility: AssetVisibility.Private as never, storage_backend: "local" as never, },
     );
