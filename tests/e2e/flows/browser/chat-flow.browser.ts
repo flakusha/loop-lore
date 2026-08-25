@@ -195,7 +195,7 @@ describe("Chat list panel", () => {
         const hasEmptyState = list.textContent?.includes("No chats yet",) ?? false;
         const hasRenderedItems = list.querySelectorAll("a.nav-item",).length > 0;
         return hasEmptyState || hasRenderedItems;
-      }, { timeout: 10_000, },);
+      }, undefined, { timeout: 10_000, },);
     } finally {
       errors.assert();
       errors.detach();
