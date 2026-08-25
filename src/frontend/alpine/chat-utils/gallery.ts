@@ -70,6 +70,15 @@ export const chatUtilsGallery: ChatUtilsGallery = {
       url,
       caption: asset.alt_text || asset.filename || asset.name,
     };
+    // Mirror into the global preview state so the modal's copy/download
+    // actions (which read __previewAsset) act on THIS asset.
+    window.__previewAsset = {
+      id: asset.id,
+      filename: asset.filename || asset.name || t("gallery.assetFallback",),
+      mime_type: asset.mime_type,
+      size_bytes: asset.size_bytes,
+      asset_type: asset.asset_type,
+    };
   },
 
   async loadGalleryAssets() {
@@ -135,6 +144,11 @@ export const chatUtilsGallery: ChatUtilsGallery = {
               this.$dispatch?.(`show-toast`, {
                 type: "success",
                 message: t("toasts.assetUploaded",),
+              },);
+            } else {
+              this.$dispatch?.(`show-toast`, {
+                type: "error",
+                message: t("toasts.failedUpload", { filename: file.name, },),
               },);
             }
           }

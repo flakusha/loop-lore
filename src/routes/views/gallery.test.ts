@@ -36,12 +36,27 @@ describe("views/gallery — serveGalleryGrid", () => {
 
   afterAll(() => sqlite.close());
 
-  test("empty grid renders empty state", async () => {
-    const res = await serveGalleryGrid(db,);
+  test("owner sees their assets in the grid", async () => {
+    const res = await serveGalleryGrid(db, undefined, "owner", "user",);
     const html = await res.text();
     expect(html,).not.toContain("gallery-empty",);
     expect(html,).toContain("asset-card-g1",);
     expect(html,).toContain("asset-card-g2",);
+  });
+
+  test("anonymous viewers see no private assets in the grid", async () => {
+    const res = await serveGalleryGrid(db, undefined, null, null,);
+    const html = await res.text();
+    expect(html,).toContain("gallery-empty",);
+    expect(html,).not.toContain("asset-card-g1",);
+  });
+
+  test("other users do not see private assets in the grid", async () => {
+    await insertUsers(db, "mallory", "Mallory", { id: "mallory" as never, },);
+    const res = await serveGalleryGrid(db, undefined, "mallory", "user",);
+    const html = await res.text();
+    expect(html,).not.toContain("asset-card-g1",);
+    expect(html,).not.toContain("asset-card-g2",);
   });
 
   test("entity filter narrows to linked assets", async () => {
@@ -57,6 +72,8 @@ describe("views/gallery — serveGalleryGrid", () => {
     const res = await serveGalleryGrid(
       db,
       new URLSearchParams({ entityType: "character", entityId: "char-1", },),
+      "owner",
+      "user",
     );
     const html = await res.text();
     expect(html,).toContain("asset-card-g1",);
@@ -64,8 +81,19 @@ describe("views/gallery — serveGalleryGrid", () => {
     expect(html,).not.toContain("asset-card-g3",);
   });
 
+  test("invalid entity filter renders an error card", async () => {
+    const res = await serveGalleryGrid(
+      db,
+      new URLSearchParams({ entityType: "bogus", entityId: "x", },),
+      "owner",
+      "user",
+    );
+    const html = await res.text();
+    expect(html,).toContain("Invalid entity type",);
+  });
+
   test("renders image thumbs and audio icons", async () => {
-    const res = await serveGalleryGrid(db,);
+    const res = await serveGalleryGrid(db, undefined, "owner", "user",);
     const html = await res.text();
     expect(html,).toContain("/api/assets/g1/thumb",);
     expect(html,).toContain("🎵",);

@@ -103,7 +103,8 @@ export async function handleServeRaw({
       return new Response(new Uint8Array(decryptedData,), {
         headers: {
           "Content-Type": asset.mime_type,
-          "Cache-Control": `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+          "Cache-Control": `private, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+          "X-Content-Type-Options": "nosniff",
         },
       },);
     } catch {
@@ -196,6 +197,8 @@ export async function handleDownload({
       return new Response(new Uint8Array(decryptedData,), {
         headers: {
           "Content-Type": asset.mime_type,
+          "Cache-Control": `private, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+          "X-Content-Type-Options": "nosniff",
           "Content-Disposition": `attachment; filename="${safeName}"`,
         },
       },);

@@ -80,7 +80,7 @@ describe("views/plugin-dynamic — dynamicRoutes", () => {
   });
 
   test("gallery grid renders with HX-Request", async () => {
-    const res = await makeApp(db,).handle(
+    const res = await makeApp(db, "owner", "user",).handle(
       new Request("http://localhost/dynamic/gallery/grid", { headers: { "HX-Request": "true", }, },),
     );
     expect(res.status,).toBe(200,);

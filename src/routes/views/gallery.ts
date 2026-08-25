@@ -2,11 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import type { AssetType, } from "../../db/enums";
+import { visibleAssetFilter, } from "../../assets/service/read";
 import { ActorType, ActorVisibility, AssetLinkEntity, } from "../../db/enums";
+import type { AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { escapeHtml, htmlResponse, } from "./layout";
+
+const GRID_PAGE_SIZE = 200;
 
 function formatSize(bytes: number,): string {
   if (bytes < 1024) { return `${bytes} B`; }
@@ -61,31 +64,58 @@ async function serveGalleryGrid(
   actorId?: string | null,
   actorRole?: string | null,
 ): Promise<Response> {
-  const entityType = params?.get("entityType",) ?? null;
+  const isAdmin = can(actorRole ?? null, "admin.character",);
+  const entityTypeParam = params?.get("entityType",) ?? null;
   const entityId = params?.get("entityId",) ?? null;
+  const page = Math.max(Number(params?.get("page",) ?? "1",) || 1, 1,);
 
   let qb = database
     .selectFrom("assets",)
     .selectAll("assets",)
     .orderBy("filename", "asc",)
-    .limit(200,);
+    .limit(GRID_PAGE_SIZE,)
+    .offset((page - 1) * GRID_PAGE_SIZE,);
+
+  // Same visibility model as listAssets: public, owned by the viewer, or
+  // explicitly shared with the viewer — plus assets linked to a PUBLIC
+  // character, whose avatars inherit the character's visibility (G6).
+  if (!isAdmin) {
+    qb = qb.where((eb,) =>
+      eb.or([
+        visibleAssetFilter(eb, actorId ?? "", "",),
+        eb.exists(
+          eb.selectFrom("asset_links as al",)
+            .innerJoin("actors as act", "act.id", "al.entity_id",)
+            .select("act.id",)
+            .whereRef("al.asset_id", "=", "assets.id",)
+            .where("al.entity_type", "=", AssetLinkEntity.Actor,)
+            .where("act.actor_type", "=", ActorType.Character,)
+            .where("act.visibility", "=", ActorVisibility.Public,),
+        ),
+      ],)
+    );
+  }
 
   // Filter by linked entity when entityType/entityId provided
-  if (entityType && entityId) {
+  const entityTypeValid = entityTypeParam !== null &&
+    Object.values(AssetLinkEntity,).includes(entityTypeParam as AssetLinkEntity,);
+  if (entityTypeValid && entityId) {
     qb = qb
       .innerJoin("asset_links", "asset_links.asset_id", "assets.id",)
-      .where("asset_links.entity_type", "=", entityType as any,)
+      .where("asset_links.entity_type", "=", entityTypeParam as AssetLinkEntity,)
       .where("asset_links.entity_id", "=", entityId,);
+  } else if (entityTypeParam !== null && !entityTypeValid) {
+    return htmlResponse(renderErrorCard("Invalid entity type",),);
   }
 
   const assets = await qb.execute();
 
-  // G6 visibility inheritance — hide private-owner's character assets from non-owners. When the
-  // helper reports nothing hidden (common path: no private-actor links, or admin/owner view), reuse
-  // the query result directly and avoid allocating a second buffer.
-  if (can(actorRole, "admin.character",)) {
+  if (isAdmin) {
     return htmlResponse(renderCards(assets,),);
   }
+  // G6 visibility inheritance — hide private-owner's character assets from non-owners. When the
+  // helper reports nothing hidden (common path: no private-actor links, or owner view), reuse
+  // the query result directly and avoid allocating a second buffer.
   const ids = Array.from(assets, (a,) => a.id,);
   const hidden = await inheritedHiddenAssetIds(database, ids, actorId ?? null, actorRole ?? null,);
   if (hidden.size === 0) {
@@ -99,6 +129,12 @@ async function serveGalleryGrid(
     }
   }
   return htmlResponse(renderCards(visible,),);
+}
+
+function renderErrorCard(message: string,): string {
+  return `<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
+    <div class="title">${escapeHtml(message,)}</div>
+  </div>`;
 }
 
 function renderCards(

@@ -31,8 +31,12 @@ interface ImageGenBody {
   lora?: LoRAConfig;
 }
 
-export async function handleImageGeneration(body: unknown,): Promise<Response> {
+export async function handleImageGeneration(body: unknown, userId?: string,): Promise<Response> {
   const req = body as ImageGenBody;
+
+  if (!userId) {
+    return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
+  }
 
   if (!req.prompt) {
     return Response.json({ error: "Missing required field: prompt", status: 400, }, { status: 400, },);
@@ -102,7 +106,7 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
     const { asset, } = await createAsset({
       database: db,
       input: {
-        ownerId: "system",
+        ownerId: userId,
         filename,
         mimeType,
         assetType: "image",

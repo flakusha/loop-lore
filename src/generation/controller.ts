@@ -103,7 +103,8 @@ export function generationRoutes({ database, config, }: { database: Kysely<DB>; 
   app.post("/api/generation/image", async (ctx,) => {
     const body = await parseJsonBody(ctx.request,);
     if (body instanceof Response) { return body; }
-    return handleImageGeneration(body,);
+    const auth = ctx as unknown as { userId?: string | null };
+    return handleImageGeneration(body, auth.userId ?? undefined,);
   },);
 
   app.post("/api/generation/caption", async (ctx,) => {

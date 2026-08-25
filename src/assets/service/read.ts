@@ -4,7 +4,7 @@
 /**
  * Asset Service — read/access (get, list, decrypt, ownership)
  */
-import type { Kysely, } from "kysely";
+import type { ExpressionBuilder, Kysely, } from "kysely";
 import { existsSync, readFileSync, } from "node:fs";
 import { decryptAssetBlob, } from "../../crypto/asset-encryption";
 import type { ChatKey, } from "../../crypto/chat-keys";
@@ -71,18 +71,30 @@ export async function isAssetEncrypted(
 }
 
 /**
- * Build an OR filter for asset visibility: public, owned by actor, or shared.
- * Pass tablePrefix "" for unjoined queries, "assets." for joined queries.
+ * Build an OR filter for asset visibility: public, owned by the actor, or
+ * shared with the actor via an explicit `asset_shares` row. Pass tablePrefix ""
+ * for unjoined queries, "assets." for joined queries.
  */
-function visibilityFilter(
-  eb: any,
+export function visibleAssetFilter(
+  eb: ExpressionBuilder<DB, "assets">,
   actorId: string,
-  tablePrefix: string,
+  tablePrefix = "",
 ) {
+  const visibilityColumn: "visibility" | "assets.visibility" = tablePrefix === "" ? "visibility" : "assets.visibility";
+  const ownerColumn: "owner_id" | "assets.owner_id" = tablePrefix === "" ? "owner_id" : "assets.owner_id";
+  const idColumn: "id" | "assets.id" = tablePrefix === "" ? "id" : "assets.id";
   return eb.or([
-    eb(`${tablePrefix}visibility`, "=", AssetVisibility.Public,),
-    eb(`${tablePrefix}owner_id`, "=", actorId,),
-    eb(`${tablePrefix}visibility`, "=", AssetVisibility.Shared,),
+    eb(visibilityColumn, "=", AssetVisibility.Public,),
+    eb(ownerColumn, "=", actorId,),
+    eb.and([
+      eb(visibilityColumn, "=", AssetVisibility.Shared,),
+      eb.exists(
+        eb.selectFrom("asset_shares",)
+          .select("asset_shares.id",)
+          .whereRef("asset_shares.asset_id", "=", idColumn,)
+          .where("asset_shares.shared_with_id", "=", actorId,),
+      ),
+    ],),
   ],);
 }
 
@@ -134,8 +146,8 @@ export async function listAssets(
 
     // Apply visibility filter (admin sees all)
     if (!isAdmin) {
-      countQuery = countQuery.where((eb,) => visibilityFilter(eb, actorId, "assets.",));
-      listQuery = listQuery.where((eb,) => visibilityFilter(eb, actorId, "assets.",));
+      countQuery = countQuery.where((eb,) => visibleAssetFilter(eb, actorId, "assets.",));
+      listQuery = listQuery.where((eb,) => visibleAssetFilter(eb, actorId, "assets.",));
     }
 
     const countResult = await countQuery.executeTakeFirst();
@@ -159,8 +171,8 @@ export async function listAssets(
     .selectAll();
 
   if (!isAdmin) {
-    countQuery = countQuery.where((eb,) => visibilityFilter(eb, actorId, "",));
-    listQuery = listQuery.where((eb,) => visibilityFilter(eb, actorId, "",));
+    countQuery = countQuery.where((eb,) => visibleAssetFilter(eb, actorId,));
+    listQuery = listQuery.where((eb,) => visibleAssetFilter(eb, actorId,));
   }
 
   const countResult = await countQuery.executeTakeFirst();
@@ -190,7 +202,7 @@ export async function canAccessAsset(
 
   const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
   if (!asset) { return false; }
-  if (asset.owner_id === actorId) { return true; }
+  if (actorId && asset.owner_id === actorId) { return true; }
   if (actorId && asset.visibility === AssetVisibility.Public) { return true; }
   if (actorId && asset.visibility === AssetVisibility.Shared) {
     const share = await database
