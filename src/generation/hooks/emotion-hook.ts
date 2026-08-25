@@ -4,8 +4,10 @@
 /**
  * Emotion Hook — Detects emotional content and triggers avatar selection.
  *
- * Uses the LLM to analyze content for emotional indicators and
- * emits emotion change events that trigger avatar selection updates.
+ * Uses keyword matching against hardcoded emotion word lists to classify
+ * emotional content and emits emotion change events that trigger avatar
+ * selection updates. LLM-based classification is planned
+ * (see TASK-aux-llm-emotion-classifier.md).
  */
 
 import { EmotionType, } from "../../db/enums";
