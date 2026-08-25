@@ -56,7 +56,7 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 | Dynamic-response policy (minify + compress)  | `src/middleware/dynamic-response.ts`                                 |
 | Handle resolver (userId → handle for audit)  | `src/middleware/handle-resolver.ts`                                   |
 | NSFW gate (access + consent + logging)       | `src/middleware/nsfw-gate/` (barrel: `index.ts`)                     |
-| Elysia auth guard shim (legacy, see elysia-app.ts) | `src/middleware/elysia-auth.ts`                                 |
+|(removed) Elysia auth guard shim              | ~~`src/middleware/elysia-auth.ts`~~ — deleted; auth inline in `src/elysia-app.ts` (see `BUG-elysia-auth-ts-dead-shim-duplicate-logic.md`)
 | API version redirect + resolver              | `src/routes/middleware/version-redirect.ts`, `version-resolver.ts`  |
 | Auth + i18n wiring (Elysia `.derive()`)       | `src/elysia-app.ts`                                                   |
 | Structured logger (levels, rotate, censor)   | `src/logger/*.ts`                                                     |
