@@ -8,7 +8,14 @@ import { existsSync, readFileSync, } from "node:fs";
 import { IMMUTABLE_CACHE_MAX_AGE, } from "../../config/constants";
 import { notFoundResponse, } from "../../routes/http-utils";
 
-/** Serve a file from disk with proper headers. */
+/**
+ * Serve a file from disk.
+ *
+ * Caching defaults to `private`: asset bytes may sit behind actor auth or
+ * time-limited signed URLs, so shared proxies must never cache them. The
+ * browser itself may cache immutably — the bytes are content-addressed by
+ * upload and do not change for a given asset id.
+ */
 export function serveFile(
   filePath: string,
   contentType: string,
@@ -21,7 +28,8 @@ export function serveFile(
   return new Response(data, {
     headers: {
       "Content-Type": contentType,
-      "Cache-Control": opts?.cacheControl ?? `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+      "Cache-Control": opts?.cacheControl ?? `private, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+      "X-Content-Type-Options": "nosniff",
       ...opts?.extraHeaders,
     },
   },);

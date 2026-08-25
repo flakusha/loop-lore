@@ -74,12 +74,35 @@ export async function prepareContentStorage(
   return { storedContent: plaintext, contentEncoding: "identity", storedKeyId: null, };
 }
 
+/** Error thrown when an attachment references an asset the caller does not own. */
+export class AttachmentOwnershipError extends Error {
+  constructor(assetId: string,) {
+    super(`Asset ${assetId} is not owned by the caller`,);
+    this.name = "AttachmentOwnershipError";
+  }
+}
+
 /** Link uploaded assets to the freshly-created message and persist the JSON. */
 export async function attachMessageAttachments(
   database: Kysely<DB>,
   messageId: string,
   attachments: { assetId: string; order?: number; caption?: string; label?: string }[],
+  ownerId: string,
 ): Promise<void> {
+  const ids = attachments.map((a,) => a.assetId);
+  if (ids.length > 0) {
+    const rows = await database
+      .selectFrom("assets",)
+      .select(["id", "owner_id",],)
+      .where("id", "in", ids,)
+      .execute();
+    const ownerById = new Map(rows.map((r,) => [r.id, r.owner_id,] as const),);
+    for (const a of attachments) {
+      if (ownerById.get(a.assetId,) !== ownerId) {
+        throw new AttachmentOwnershipError(a.assetId,);
+      }
+    }
+  }
   const attachData: { assetId: string; order: number; caption: string; label: string }[] = [];
   for (const [i, a,] of attachments.entries()) {
     await linkAsset({
