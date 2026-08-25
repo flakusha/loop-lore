@@ -90,32 +90,33 @@ export function createApp(deps: AppDeps,): Elysia {
   // `all("/api/:resource/*")` here matched /api/v1/* too, causing a
   // double-prefix redirect loop (/api/v1/x → /api/v1/v1/x → 404).
 
-  // ── Asset upload (standalone route) ──────────────────────────
-  // WORKAROUND: Elysia 1.4.x body consumption bug. When a child plugin
-  // containing routes that call request.json() is .use()d into a parent,
-  // Elysia's internal body parser consumes the multipart body stream before
-  // the upload handler can call request.formData(). Registering the multipart
-  // route directly on the parent app avoids this issue.
-  // See: https://github.com/elysiajs/elysia/issues/XXX (if filed)
-  app.post("/api/assets", async (ctx: any,) => {
-    const userId = ctx.userId as string | null;
-    if (!userId) {
-      const { unauthorizedResponse, } = await import("./routes/http-utils");
-      return unauthorizedResponse();
-    }
-    if (!config.assets.enabled) {
-      const { notFoundResponse, } = await import("./routes/http-utils");
-      return notFoundResponse("Asset system is disabled",);
-    }
-    const { handleUpload, } = await import("./assets/controller");
-    return handleUpload({
-      request: ctx.request,
-      userId,
-      database,
-      uploadDir: config.assets.uploadDir,
-      maxFileSize: config.assets.maxFileSize,
-    },);
-  },);
+  // ── Multipart upload route — registered directly on the parent app with
+  // parse: "none" so Elysia's body inference (which other sub-plugins force
+  // across the composed app) does not consume the multipart stream before
+  // handleUpload calls request.formData().
+  app.post(
+    "/api/assets",
+    async (ctx: any,) => {
+      const userId = ctx.userId as string | null;
+      if (!userId) {
+        const { unauthorizedResponse, } = await import("./routes/http-utils");
+        return unauthorizedResponse();
+      }
+      if (!config.assets.enabled) {
+        const { notFoundResponse, } = await import("./routes/http-utils");
+        return notFoundResponse("Asset system is disabled",);
+      }
+      const { handleUpload, } = await import("./assets/controller");
+      return handleUpload({
+        request: ctx.request,
+        userId,
+        database,
+        uploadDir: config.assets.uploadDir,
+        maxFileSize: config.assets.maxFileSize,
+      },);
+    },
+    { parse: "none", },
+  );
 
   // ── Convenience redirects ─────────────────────────────────────
   // Authenticated users land on the chat; everyone else on the login screen.
