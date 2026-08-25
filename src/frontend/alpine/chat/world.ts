@@ -119,18 +119,27 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
       this.loadMood(),
     ],);
     if (selectReload.some((r,) => r.status === "rejected")) { throw new Error("select chat reload failed",); }
-    await this.markChatAsRead(chatId,);
-    await this.loadChatKey(chatId,);
-    await this.loadImpersonationState();
+    // Independent post-load fetches — run concurrently (allSettled preserves
+    // the throw-on-rejection contract of the sequential version).
+    const postLoad = await Promise.allSettled([
+      this.markChatAsRead(chatId,),
+      this.loadChatKey(chatId,),
+      this.loadImpersonationState(),
+    ],);
+    if (postLoad.some((r,) => r.status === "rejected")) { throw new Error("select chat post-load failed",); }
     // Quick-reply buttons + startup-triggered automation for this chat.
     this.loadQuickReplies();
     await this.fireStartupQuickReplies();
     // Proactive messaging scheduler — poll for due character-initiated messages.
     this.startProactiveScheduler();
     if (this.isGroupChat) {
-      await this.loadParticipants();
-      await this.loadTurnOrder();
-      await this.loadAvailableActors();
+      // Participant/turn-order/actor loads are independent — overlap them.
+      const groupLoad = await Promise.allSettled([
+        this.loadParticipants(),
+        this.loadTurnOrder(),
+        this.loadAvailableActors(),
+      ],);
+      if (groupLoad.some((r,) => r.status === "rejected")) { throw new Error("group chat load failed",); }
     }
   },
 
