@@ -27,7 +27,6 @@ server-global `isEncryptionEnabled()` (SMK presence), never reading
    `"private"` value was renamed to `"at-rest"` in migration `057` per
    the Phase D cutover of TASK-asymmetric-key-pairs-followup). `"public"` is
    not a member.
-</input>
 2. **Column never set at creation.** `src/chat/service/crud/create.ts` and
    `src/routes/chats/create.ts` never assign `encryption_level`, so every new
    chat inherits the invalid `"public"` default.
