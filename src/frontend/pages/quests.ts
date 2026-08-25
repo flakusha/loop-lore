@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 // Quests Page component (quests.html)
+import type { QuestRow, WorldOption, } from "./quests-parts";
 import { feFetch, } from "../fe-fetch";
+import { formatDisplayDate, } from "../alpine/chat-utils/time";
 import { getErrorMessage, } from "./shared";
 import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
 import { showToast, } from "../ui";
-import type { QuestRow, WorldOption, } from "./quests-parts";
-import { getErrorMessage, } from "./shared";
 
 const log = rootLog.child({ module: "quests", },);
 
@@ -164,7 +164,7 @@ globalThis.questsPage = function() {
 
     formatDate(iso: string | null,): string {
       if (!iso) { return "-"; }
-      return new Date(iso,).toLocaleDateString();
+      return formatDisplayDate(iso, "date",);
     },
 
     progressPct(q: QuestRow,): number {
