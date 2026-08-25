@@ -306,7 +306,7 @@ function applyFixes(
     // the .md and may be stale or absent — never trusted over the registry.
     let gitIssueHash: string | null = null;
     for (const [, issue,] of gitIssues) {
-      if (issue.extid === extid) {
+      if (issue.status === "open" && issue.extid === extid) {
         gitIssueHash = issue.hash;
         break;
       }
@@ -337,6 +337,22 @@ function applyFixes(
         git_issue: m.suggestedGitIssue,
       };
       report.fixesApplied.push(`${m.extid}: added git_issue = ${m.suggestedGitIssue}`,);
+    }
+  }
+
+  // Relink entries whose hash points to a CLOSED issue when an OPEN
+  // duplicate sharing the same extid exists (ticket was re-created; the old
+  // issue was closed). Keeps index bound to the live issue.
+  for (const [extid, entry,] of Object.entries(fixed,)) {
+    const cur = entry.hash ? gitIssues.get(entry.hash,) : undefined;
+    if (!cur || cur.status !== "closed") { continue; }
+    let openDup: GitIssue | null = null;
+    for (const [, issue,] of gitIssues) {
+      if (issue.status === "open" && issue.extid === extid) { openDup = issue; break; }
+    }
+    if (openDup) {
+      fixed[extid] = { ...entry, hash: openDup.hash, git_issue: openDup.hash, };
+      report.fixesApplied.push(`${extid}: relinked closed ${cur.hash} → open ${openDup.hash}`,);
     }
   }
 
