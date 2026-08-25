@@ -19,25 +19,33 @@ const EMPTY_MESSAGE_PAGE = {
 export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   ...chatSendMethods,
   async loadMessages() {
-    log.info("loadMessages", { chatId: this.activeChat, },);
-    if (!this.activeChat) { return; }
+    // Capture the target chat up front so a rapid selectChat A→B cannot let a
+    // slow A response overwrite B's state (out-of-order fetch race).
+    const chatId = this.activeChat;
+    log.info("loadMessages", { chatId, },);
+    if (!chatId) { return; }
     this.loadingMessages = true;
     this.currentPage = 1;
     this.hasMoreMessages = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/messages?page=1&pageSize=50`,);
+      const res = await apiFetch(`/api/chats/${chatId}/messages?page=1&pageSize=50`,);
       const page = parseOr(MessageListResponse, await res.json(), EMPTY_MESSAGE_PAGE,);
+      if (this.activeChat !== chatId) { return; }
       // Wire rows are validated by MessageListResponse; nullable columns decode
       // to `T | null` while the display `Message` type uses optional (`T | undefined`).
       // The validation guarantees shape, so this narrows null→undefined equivalence.
       this.messages = page.data as unknown as Message[];
       this.totalPages = page.pagination.totalPages;
     } catch {
+      if (this.activeChat !== chatId) { return; }
       this.loadingError = t("toasts.failedLoadMessages",);
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadMessages",), },);
     } finally {
-      this.loadingMessages = false;
+      if (this.activeChat === chatId) {
+        this.loadingMessages = false;
+      }
     }
+    if (this.activeChat !== chatId) { return; }
     this.$nextTick?.(() => {
       this.scrollToBottom();
       this.setupInfiniteScroll();
@@ -48,7 +56,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     document.dispatchEvent(
       new CustomEvent("chat-context-refresh", {
         bubbles: true,
-        detail: { chatId: this.activeChat, },
+        detail: { chatId, },
       },),
     );
     // Keep the VN scene in sync with the freshly loaded messages.
@@ -56,15 +64,18 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   async loadOlderMessages() {
-    log.info("loadOlderMessages", { chatId: this.activeChat, page: this.currentPage + 1, },);
-    if (this.loadingOlder || !this.hasMoreMessages || !this.activeChat) { return; }
+    const chatId = this.activeChat;
+    log.info("loadOlderMessages", { chatId, page: this.currentPage + 1, },);
+    if (this.loadingOlder || !this.hasMoreMessages || !chatId) { return; }
     this.loadingOlder = true;
     const nextPage = this.currentPage + 1;
     const el = this.$refs.messageList;
     const prevScrollHeight = el?.scrollHeight ?? 0;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/messages?page=${nextPage}&pageSize=50`,);
+      const res = await apiFetch(`/api/chats/${chatId}/messages?page=${nextPage}&pageSize=50`,);
       const page = parseOr(MessageListResponse, await res.json(), EMPTY_MESSAGE_PAGE,);
+      // Stale-response guard: the user switched chats while this fetch was in flight.
+      if (this.activeChat !== chatId) { return; }
       const older = page.data as unknown as Message[];
       if (older.length === 0) {
         this.hasMoreMessages = false;
@@ -114,6 +125,9 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
   setupScrollDetection() {
     const el = document.querySelector("#message-list",);
     if (!el) { return; }
+    // Remember the element the handler is attached to so destroy() can remove
+    // it even after htmx swaps replaced the live #message-list node.
+    this._scrollEl = el;
     this._isScrolledUp = false;
     this._scrollHandler = () => {
       const threshold = 100;
@@ -151,14 +165,13 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       // non-critical
     }
   },
-
   async loadMessageReactions(msgId: string,) {
     try {
       const res = await apiFetch(`/api/messages/${msgId}/reactions`,);
       if (res.ok) {
         const reactions = await res.json();
         const msg = this.messages.find((m,) => m.id === msgId);
-        if (msg) { (msg as any).reactions = reactions; }
+        if (msg) { (msg as Message & { reactions?: unknown }).reactions = reactions; }
       }
     } catch {
       // ignore
