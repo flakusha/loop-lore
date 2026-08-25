@@ -28,9 +28,8 @@ const ACTIVE_CONTENT_TYPES: Record<string, true> = {
  * Cache policy by visibility: public assets may live in shared caches;
  * private/shared/restricted assets must stay out of shared caches — a
  * `public, immutable` header lets a shared cache replay private bytes to a
- * different user after expiry of the authorizing URL.
  */
-function cacheControlFor(asset: AssetRecord,): string {
+export function cacheControlFor(asset: AssetRecord,): string {
   if (asset.visibility === "public") {
     return `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`;
   }
@@ -42,7 +41,7 @@ function cacheControlFor(asset: AssetRecord,): string {
  * navigation executes embedded script. Force attachment for those types;
  * everything else stays inline.
  */
-function contentDispositionFor(asset: AssetRecord, filename: string,): Record<string, string> {
+export function contentDispositionFor(asset: AssetRecord, filename: string,): Record<string, string> {
   const safeName = filename.replace(/[^\w.\- ]+/g, "_",);
   if (ACTIVE_CONTENT_TYPES[asset.mime_type]) {
     return { "Content-Disposition": `attachment; filename="${safeName}"`, };
