@@ -18,6 +18,7 @@ import type { DB, } from "../../db/schema";
 import { extractMentionedActorIds, } from "../../group-chat/mention-parser";
 import { notifyMention, } from "../../notifications/service";
 import { safeJsonStringify, uid, } from "../../utils";
+import { verifyAttachmentsOwned, } from "./attachment-ownership";
 import { log, } from "./helpers";
 
 /** Result of preparing a plaintext message body for durable storage. */
@@ -74,14 +75,6 @@ export async function prepareContentStorage(
   return { storedContent: plaintext, contentEncoding: "identity", storedKeyId: null, };
 }
 
-/** Error thrown when an attachment references an asset the caller does not own. */
-export class AttachmentOwnershipError extends Error {
-  constructor(assetId: string,) {
-    super(`Asset ${assetId} is not owned by the caller`,);
-    this.name = "AttachmentOwnershipError";
-  }
-}
-
 /** Link uploaded assets to the freshly-created message and persist the JSON. */
 export async function attachMessageAttachments(
   database: Kysely<DB>,
@@ -89,20 +82,8 @@ export async function attachMessageAttachments(
   attachments: { assetId: string; order?: number; caption?: string; label?: string }[],
   ownerId: string,
 ): Promise<void> {
-  const ids = attachments.map((a,) => a.assetId);
-  if (ids.length > 0) {
-    const rows = await database
-      .selectFrom("assets",)
-      .select(["id", "owner_id",],)
-      .where("id", "in", ids,)
-      .execute();
-    const ownerById = new Map(rows.map((r,) => [r.id, r.owner_id,] as const),);
-    for (const a of attachments) {
-      if (ownerById.get(a.assetId,) !== ownerId) {
-        throw new AttachmentOwnershipError(a.assetId,);
-      }
-    }
-  }
+  await verifyAttachmentsOwned(database, attachments, ownerId,);
+
   const attachData: { assetId: string; order: number; caption: string; label: string }[] = [];
   for (const [i, a,] of attachments.entries()) {
     await linkAsset({
