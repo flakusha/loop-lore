@@ -18,7 +18,8 @@
 import { type Kysely, } from "kysely";
 import { type DB, } from "../../db/schema";
 import { getLogger, type Logger, } from "../../logger";
-import { executeReversal, getPendingAppeals, getUserAppeals, reviewAppeal, submitAppeal, } from "./appeals";
+import { getPendingAppeals, getUserAppeals, reviewAppeal, submitAppeal, } from "./appeals";
+import { executeReversal, } from "./appeals-reversal";
 import { getAuditLog, recordAction, } from "./audit";
 import { deleteUserData, exportUserData, } from "./data";
 import { flagContent, getFlagQueue, resolveFlag, } from "./flags";
@@ -110,7 +111,10 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
   getUserAppeals = (userId: string,) =>
     getUserAppeals({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
   getPendingAppeals = (limit?: number,) =>
-    getPendingAppeals({ thisL: this as unknown as NsfwModerationServiceContext, limit, },);
+    getPendingAppeals({
+      thisL: this as unknown as NsfwModerationServiceContext,
+      limit,
+    },);
   reviewAppeal = (
     appealId: string,
     reviewedBy: string,
@@ -124,6 +128,12 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
       status,
       reviewNote,
     },);
-  executeReversal = (appealId: string, executedBy: string,) =>
-    executeReversal({ thisL: this as unknown as NsfwModerationServiceContext, appealId, executedBy, },);
+
+  executeReversal = (appealId: string, executedBy: string, approvedBy: string,) =>
+    executeReversal({
+      thisL: this as unknown as NsfwModerationServiceContext,
+      appealId,
+      executedBy,
+      approvedBy,
+    },);
 }
