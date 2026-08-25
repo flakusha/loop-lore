@@ -33,7 +33,7 @@ export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise
     params.contentId,
   ).where("status", "in", ["pending", "under_review",],).executeTakeFirst();
   if (existing) { throw new Error("Content already flagged for review.",); }
-
+  checkDescriptionLength(params.description,);
   const dismissedCount = await thisL.db.selectFrom("content_flags",).where("reporter_id", "=", params.reporterId,)
     .where("status", "=", "dismissed",).select(({ fn, },) => fn.count<number>("id",).as("count",)).executeTakeFirst();
   if (dismissedCount && dismissedCount.count >= 3) {
@@ -152,4 +152,93 @@ export function mapFlag(
     resolvedAt: row.resolved_at,
     createdAt: row.created_at,
   };
+}
+
+/**
+ * Wire-level projection of a flag for the moderation queue.
+ *
+ * Strips reporter identity (`reporterId`), free-text PII (`description`),
+ * and contextual ids (`chatId`, `worldId`, `contentId`). The reporter is
+ * replaced with a stable server-derived hash (`reporterHash`) so admins
+ * can still correlate repeat reporters across flags.
+ */
+export interface FlagQueueView {
+  id: string;
+  contentType: string;
+  flagReason: string;
+  status: string;
+  resolution: string | null;
+  resolvedBy: string | null;
+  resolvedAt: string | null;
+  reporterHash: string;
+  createdAt: string;
+}
+
+/** Minimal projection returned from `resolveFlag` to the admin on resolution. */
+export interface ResolvedFlagView {
+  id: string;
+  status: string;
+  resolution: string | null;
+  resolvedBy: string | null;
+  resolvedAt: string | null;
+}
+
+const FLAG_QUEUE_LIMIT_CAP = 100;
+const FLAG_DESCRIPTION_MAX = 1000;
+
+/**
+ * Stable, opaque hash of a reporter id. Allows admins to correlate repeat
+ * reporters across flags without exposing raw user ids.
+ *
+ * @param reporterId - Raw reporter id (UUID).
+ * @returns 32-char hex digest prefixed with "rh_".
+ */
+export function hashReporterId(reporterId: string,): string {
+  const secret = process.env.NSFW_FLAG_REPORTER_HASH_SECRET ??
+    process.env.NSFW_MODERATION_HMAC_SECRET ??
+    "loop-lore-nsfw-default-do-not-use-in-prod";
+  const hasher = new Bun.CryptoHasher("sha256", secret,);
+  hasher.update(reporterId,);
+  return `rh_${hasher.digest("hex",).slice(0, 32,)}`;
+}
+
+/** Project a ContentFlag to the queue-view shape (no reporter PII). */
+export function toQueueView(row: ContentFlag,): FlagQueueView {
+  return {
+    id: row.id,
+    contentType: row.contentType,
+    flagReason: row.flagReason,
+    status: row.status,
+    resolution: row.resolution,
+    resolvedBy: row.resolvedBy,
+    resolvedAt: row.resolvedAt,
+    reporterHash: hashReporterId(row.reporterId,),
+    createdAt: row.createdAt,
+  };
+}
+
+/** Project a ContentFlag to the minimal resolved view returned to admins. */
+export function toResolvedView(row: ContentFlag,): ResolvedFlagView {
+  return {
+    id: row.id,
+    status: row.status,
+    resolution: row.resolution,
+    resolvedBy: row.resolvedBy,
+    resolvedAt: row.resolvedAt,
+  };
+}
+
+/** Enforce the maximum `description` length on flag creation. */
+export function checkDescriptionLength(description: string | null | undefined,): void {
+  if (description && description.length > FLAG_DESCRIPTION_MAX) {
+    throw new Error(
+      `Description too long (${description.length} > ${FLAG_DESCRIPTION_MAX} chars). Use a shorter structured flagReason instead.`,
+    );
+  }
+}
+
+/** Server-side cap on `limit` for the flag queue (max 100). */
+export function clampFlagLimit(limit: number | undefined,): number {
+  if (!limit || !Number.isFinite(limit,) || limit <= 0) { return 50; }
+  return Math.min(Math.floor(limit,), FLAG_QUEUE_LIMIT_CAP,);
 }

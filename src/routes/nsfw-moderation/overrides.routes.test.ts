@@ -53,75 +53,75 @@ describe("moderation override routes — moderator gating", () => {
 
   test("PUT chat override requires auth", async () => {
     const app = createApp(db, null, "moderator",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,),);
     expect(res.status,).toBe(401,);
-  },);
+  });
 
   test("PUT chat override denies user role", async () => {
     const app = createApp(db, uid(), "user",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,),);
     expect(res.status,).toBe(403,);
-  },);
+  });
 
   test("PUT chat override denies viewer role", async () => {
     const app = createApp(db, uid(), "viewer",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,),);
     expect(res.status,).toBe(403,);
-  },);
+  });
 
   test("PUT chat override denies creator role", async () => {
     const app = createApp(db, uid(), "creator",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,),);
     expect(res.status,).toBe(403,);
-  },);
+  });
 
   test("PUT chat override accepts moderator role", async () => {
     const app = createApp(db, uid(), "moderator",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,),);
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("PUT chat override accepts admin role", async () => {
     const app = createApp(db, uid(), "admin",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,),);
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("PUT chat override accepts solo role", async () => {
     const app = createApp(db, uid(), "solo",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,),);
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("PUT chat override accepts tester role", async () => {
     const app = createApp(db, uid(), "tester",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,),);
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   // ── PUT /api/nsfw/moderation/world/:worldId ────────────────
 
   test("PUT world override requires auth", async () => {
     const app = createApp(db, null, "moderator",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", worldBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", worldBody,),);
     expect(res.status,).toBe(401,);
-  },);
+  });
 
   test("PUT world override denies user role", async () => {
     const app = createApp(db, uid(), "user",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", worldBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", worldBody,),);
     expect(res.status,).toBe(403,);
-  },);
+  });
 
   test("PUT world override accepts moderator role", async () => {
     const app = createApp(db, uid(), "moderator",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", worldBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", worldBody,),);
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("PUT world override accepts admin role", async () => {
     const app = createApp(db, uid(), "admin",);
-    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", worldBody,));
+    const res = await app.handle(overrideRequest("/api/nsfw/moderation/world/w-1", worldBody,),);
     expect(res.status,).toBe(200,);
-  },);
+  });
 });
