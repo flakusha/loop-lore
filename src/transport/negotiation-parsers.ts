@@ -21,11 +21,14 @@ export function parseAcceptProtocols(accept: string | null,): TransportProtocol[
   const parsed: { protocol: TransportProtocol; q: number }[] = [];
   for (const part of accept.split(",", 100,)) {
     const [proto, qStr,] = part.trim().split(";", 2,);
-    const q = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
+    const qRaw = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
+    const q = Number.isFinite(qRaw,) ? Math.min(1, Math.max(0, qRaw,),) : 1;
     const key = proto!.trim();
     if (!Object.hasOwn(map, key,)) {
       continue;
     }
+    // q<=0 means "not acceptable" (RFC 7231) — exclude from negotiation.
+    if (q <= 0) { continue; }
     parsed.push({ protocol: map[key]!, q, },);
   }
   const sorted = parsed.toSorted((a, b,) => b.q - a.q);
@@ -47,11 +50,14 @@ export function parseAcceptEncoding(acceptEncoding: string | null,): Compression
   const parsed: { algorithm: CompressionAlgorithm; q: number }[] = [];
   for (const part of acceptEncoding.split(",", 100,)) {
     const [algo, qStr,] = part.trim().split(";", 2,);
-    const q = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
+    const qRaw = qStr ? Number(qStr.split("=", 2,)[1] ?? 1,) : 1;
+    const q = Number.isFinite(qRaw,) ? Math.min(1, Math.max(0, qRaw,),) : 1;
     const key = algo!.trim();
     if (!Object.hasOwn(map, key,)) {
       continue;
     }
+    // q<=0 means "not acceptable" (RFC 7231) — exclude from negotiation.
+    if (q <= 0) { continue; }
     parsed.push({ algorithm: map[key]!, q, },);
   }
   const sorted = parsed.toSorted((a, b,) => b.q - a.q);
