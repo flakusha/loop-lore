@@ -210,11 +210,17 @@ Location connections are validated: each connection ID must reference an existin
 | DELETE | `/api/assets/:id`               | Yes†       | —                                                                      | 204                           |
 | POST   | `/api/assets/:id/links`         | Yes        | `{ entityType, entityId, label? }`                                     | `{ id }` + 201                |
 | DELETE | `/api/assets/:id/links/:linkId` | Yes†       | —                                                                      | 204                           |
+| GET    | `/api/assets/:id/links`         | Yes (asset access) | —                                                              | Link list                     |
+| GET    | `/api/assets/:id/shares`        | Yes (asset access) | —                                                              | Share list                    |
+| POST   | `/api/assets/:id/signed-url/:action` | Yes (asset access) | —                                                          | `{ url, token, expiresAt }`   |
 
 † Owner or admin.
 
-> **Note:** Signed URL system is NOT implemented. Asset downloads use `/api/assets/:id/raw` with standard Bearer auth.
-> Signed URLs are aspirational (post-MVP).
+> **Note:** Signed URLs are implemented (`src/assets/controller/signed-url.ts`):
+> HMAC-SHA256 tokens bound to `action:assetId:expires`, default 15-minute TTL,
+> issued via `POST /api/assets/:id/signed-url/:action` after an asset access
+> check. Serve responses use `Cache-Control: private` and
+> `X-Content-Type-Options: nosniff`; active types (SVG) are rejected at upload.
 
 ---
 
