@@ -11,6 +11,7 @@ import { adminSystem, } from "./admin-system";
 import { adminTemplates, } from "./admin-templates";
 import { adminUsers, } from "./admin-users";
 import { adminWorlds, } from "./admin-worlds";
+import { formatDisplayDate, } from "./chat-utils/time";
 import { apiFetch, } from "./htmx";
 
 // Fallback: expose showTab on globalThis so Alpine expressions don't
@@ -137,7 +138,7 @@ import { apiFetch, } from "./htmx";
 
     formatDate(iso: string | null,): string {
       if (!iso) { return "-"; }
-      return new Date(iso,).toLocaleDateString();
+      return formatDisplayDate(iso, "date",);
     },
 
     displayKey(key: string,): string {
