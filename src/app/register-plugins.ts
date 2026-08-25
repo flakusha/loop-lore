@@ -15,6 +15,7 @@ import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { generationRoutes, } from "../generation/controller";
 import { loraRoutes, } from "../generation/lora/routes";
+import { imageEditRoutes, } from "../image-edit/routes";
 import { personaRoutes, } from "../personas/controller";
 import { activityRoutes, } from "../routes/activity";
 import { activityStreamRoutes, } from "../routes/activity-stream";
@@ -188,6 +189,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(nsfwRoutes(handleOpts,),);
   app.use(nsfwModerationRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
+  app.use(imageEditRoutes({ database: handleOpts.database, },),);
   app.use(rpgRoutes(handleOpts,),);
   app.use(tradeRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
