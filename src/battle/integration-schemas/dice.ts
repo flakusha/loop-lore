@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+import { parseIntOr, } from "../../utils/parse-number";
 
 // ── Resolution Roll (Shared: Battle, Social, Magic, RPG) ──────
 
@@ -71,7 +72,7 @@ export function rollDice(
   count = 1,
   modifiers: RollModifier[] = [],
 ): DiceRoll {
-  const sides = parseInt(type.slice(1,), 10,);
+  const sides = parseIntOr(type.slice(1,), 6,);
   let { rolls: results, total, } = rollSet(sides, count,);
 
   // Apply modifiers

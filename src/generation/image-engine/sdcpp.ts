@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { ImageProviderConfig, } from "../../config/schema";
-import { safeJsonStringify, } from "../../utils";
+import { safeFetch, safeJsonStringify, } from "../../utils";
 import { discoverLoras, } from "../lora/discovery";
 import { injectSdCppLora, } from "../lora/discovery-sdserver";
 import type { LoRAModel, } from "../lora/types";
@@ -52,24 +52,21 @@ export async function generateSDCPP(
     hr_scale: opts.hrScale,
     denoising_strength: opts.denoisingStrength,
   },);
-  const submitResp = await fetch(sdcppUrl, {
+  // Job status carries base64 images — can exceed safeFetch's default size cap.
+  const submitResult = await safeFetch<{ id: string }>(sdcppUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json", },
     body: sdcppPayload.ok ? sdcppPayload.value : "{}",
-    signal: AbortSignal.timeout(30_000,),
+    timeout: 30_000,
+    maxSize: Number.MAX_SAFE_INTEGER,
+    handle401: false,
   },);
 
-  if (!submitResp.ok) {
-    let errText = "unknown";
-    try {
-      errText = await submitResp.text();
-    } catch {
-      // Error body read failed — keep "unknown" fallback
-    }
-    return failure(`sd.cpp job submission failed: ${errText}`, 502,);
+  if (!submitResult.ok) {
+    return failure(`sd.cpp job submission failed: ${submitResult.error.message}`, 502,);
   }
 
-  const { id: jobId, } = (await submitResp.json()) as { id: string };
+  const { id: jobId, } = submitResult.data;
   if (!jobId) {
     return failure("sd.cpp job submission returned no job id", 502,);
   }
@@ -83,20 +80,22 @@ export async function generateSDCPP(
 
   while (!jobDone && Date.now() < deadline) {
     const jobUrl = `${sdConfig.baseUrl.replace(/\/+$/, "",)}/sdcpp/v1/jobs/${jobId}`;
-    const statusResp = await fetch(jobUrl, {
-      signal: AbortSignal.timeout(10_000,),
-    },);
-
-    if (!statusResp.ok) {
-      return failure(`sd.cpp job polling failed: HTTP ${statusResp.status}`, 502,);
-    }
-
-    const statusData = (await statusResp.json()) as {
+    const statusResult = await safeFetch<{
       status: string;
       progress?: number;
       images?: string[];
       error?: string;
-    };
+    }>(jobUrl, {
+      timeout: 10_000,
+      maxSize: Number.MAX_SAFE_INTEGER,
+      handle401: false,
+    },);
+
+    if (!statusResult.ok) {
+      return failure(`sd.cpp job polling failed: ${statusResult.error.message}`, 502,);
+    }
+
+    const statusData = statusResult.data;
 
     if (statusData.status === "done") {
       if (!statusData.images || statusData.images.length === 0) {

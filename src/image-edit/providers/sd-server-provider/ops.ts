@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { ImageProviderConfig, } from "../../../config/schema";
-import { safeJsonStringify, uid, } from "../../../utils";
+import { safeFetch, safeJsonStringify, uid, } from "../../../utils";
 import type { ImageEditProgress, ImageEditResult, } from "../../types";
 import {
   openaiGenerate,
@@ -164,24 +164,20 @@ export async function executeUpscale(
       upscale_model: upscaleModel,
     },);
 
-    const resp = await fetch(url, {
+    // Base64 image payload can exceed safeFetch's default size cap.
+    const result = await safeFetch<{ image: string }>(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: payload.ok ? payload.value : "{}",
-      signal: AbortSignal.timeout(120_000,),
+      timeout: 120_000,
+      maxSize: Number.MAX_SAFE_INTEGER,
+      handle401: false,
     },);
 
-    if (!resp.ok) {
-      let errText = "unknown";
-      try {
-        errText = await resp.text();
-      } catch {
-        // Error body read failed — keep "unknown" fallback
-      }
-      throw new Error(`Upscale failed: ${errText}`,);
+    if (!result.ok) {
+      throw new Error(`Upscale failed: ${result.error.message}`,);
     }
 
-    await resp.json() as { image: string };
     const id = uid();
 
     return [{

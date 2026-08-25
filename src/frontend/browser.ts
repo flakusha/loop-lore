@@ -6,6 +6,7 @@
  * Uses native browser APIs: Compression Streams API, WebCrypto API.
  */
 
+import { toBase64, } from "../utils/base64";
 import { jsonBody, safeJsonParse, } from "./alpine/json";
 import { type BrowserContentEncoding, browserDecodeContent, } from "./browser-compress";
 import { browserDecryptContent, browserEncryptContent, } from "./browser-crypto";
@@ -35,12 +36,7 @@ function stringToUint8Array(str: string,): Uint8Array {
 }
 
 function uint8ArrayToBase64(buf: Uint8Array,): string {
-  let binary = "";
-  const len = buf.length;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCodePoint(buf[i]!,);
-  }
-  return btoa(binary,);
+  return toBase64(buf,);
 }
 
 async function tryGzipCompress(data: Uint8Array,): Promise<Uint8Array | null> {

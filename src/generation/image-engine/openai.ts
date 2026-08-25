@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { ImageProviderConfig, } from "../../config/schema";
-import { safeJsonStringify, } from "../../utils";
+import { safeFetch, safeJsonStringify, } from "../../utils";
 import { decodeB64, failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
 
@@ -26,24 +26,21 @@ export async function generateOpenAI(
     output_format: outputFormat,
     ...(opts.negativePrompt && { negative_prompt: opts.negativePrompt, }),
   },);
-  const resp = await fetch(url, {
+  // Base64 image payloads can exceed safeFetch's default size cap.
+  const result = await safeFetch<{ data: { b64_json: string }[] }>(url, {
     method: "POST",
     headers,
     body: payload.ok ? payload.value : "{}",
-    signal: AbortSignal.timeout(sdConfig.generationTimeout ?? 60_000,),
+    timeout: sdConfig.generationTimeout ?? 60_000,
+    maxSize: Number.MAX_SAFE_INTEGER,
+    handle401: false,
   },);
 
-  if (!resp.ok) {
-    let errText = "unknown";
-    try {
-      errText = await resp.text();
-    } catch {
-      // Error body read failed — keep "unknown" fallback
-    }
-    return failure(`Image generation failed: ${errText}`, 502,);
+  if (!result.ok) {
+    return failure(`Image generation failed: ${result.error.message}`, 502,);
   }
 
-  const data = (await resp.json()) as { data: { b64_json: string }[] };
+  const data = result.data;
   return ok(
     Array.from(data.data, (d,) => decodeB64(d.b64_json,),),
     outputFormat === "jpeg" ? "image/jpeg" : "image/png",

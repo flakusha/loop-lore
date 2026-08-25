@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { safeJsonStringify, } from "../../utils";
+import { safeFetch, safeJsonStringify, } from "../../utils";
 import type { ChatHost, ChatMessage, } from "./types";
 
 export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
@@ -30,29 +30,24 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
 
   try {
     const bodyResult = safeJsonStringify({ content: text, role: "user", },);
-    const res = await fetch(`${API_BASE}/api/chats/${host.chatId}/messages`, {
+    const result = await safeFetch<{
+      id: string;
+      assistantMessage?: { id: string; content: string };
+    }>(`${API_BASE}/api/chats/${host.chatId}/messages`, {
       method: "POST",
       headers: getAuthHeaders(host.sessionToken,),
       body: bodyResult.ok ? bodyResult.value : "{}",
+      handle401: false,
     },);
 
     host.hideTyping();
 
-    if (!res.ok) {
-      let body: { error?: string };
-      try {
-        body = (await res.json()) as { error?: string };
-      } catch {
-        body = { error: res.statusText, };
-      }
-      host.showError(body.error ?? `HTTP ${res.status}`,);
+    if (!result.ok) {
+      host.showError(result.error.message,);
       return;
     }
 
-    const data = (await res.json()) as {
-      id: string;
-      assistantMessage?: { id: string; content: string };
-    };
+    const data = result.data;
 
     // Add user message
     host.addMessage({ id: data.id, role: "user", content: text, },);
@@ -81,12 +76,19 @@ export async function loadMessages(host: ChatHost,): Promise<void> {
     const url = host.cursor
       ? `${API_BASE}/api/chats/${host.chatId}/messages?pageSize=200&cursor=${host.cursor}`
       : `${API_BASE}/api/chats/${host.chatId}/messages?pageSize=200`;
-    const res = await fetch(url, { headers: getAuthHeaders(host.sessionToken,), },);
-    if (!res.ok) {
-      host.showError(`Failed to load messages (HTTP ${res.status})`,);
+    const result = await safeFetch<{ data: ChatMessage[]; cursor: string | null }>(url, {
+      headers: getAuthHeaders(host.sessionToken,),
+      handle401: false,
+    },);
+    if (!result.ok) {
+      host.showError(
+        result.status !== undefined
+          ? `Failed to load messages (HTTP ${result.status})`
+          : `Network error loading messages: ${result.error.message}`,
+      );
       return;
     }
-    const data = (await res.json()) as { data: ChatMessage[]; cursor: string | null };
+    const data = result.data;
     host.cursor = data.cursor ?? host.cursor;
     // Prepend older messages (cursor fetches older)
     host.messages = host.messages.length > 0 ? [...data.data, ...host.messages,] : data.data;
