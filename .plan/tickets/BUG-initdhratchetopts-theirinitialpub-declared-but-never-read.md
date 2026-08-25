@@ -1,6 +1,6 @@
 # BUG: InitDhRatchetOpts.theirInitialPub declared but never read
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (fixed by f69d0229)
 **Priority:** low
 **Effort:** Medium
 
