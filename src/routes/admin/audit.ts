@@ -29,7 +29,10 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           const eventType = url.searchParams.get("event_type",);
           const userIdFilter = url.searchParams.get("user_id",);
           const entityType = url.searchParams.get("entity_type",);
-          const q = url.searchParams.get("q",);
+          // Cap `q` to prevent LIKE-DoS on large audit tables; long LIKE
+          // patterns with leading wildcards scan every row.
+          const rawQ = url.searchParams.get("q",);
+          const q = rawQ && rawQ.length > 200 ? rawQ.slice(0, 200,) : rawQ;
 
           // NSFW gate events (`nsfw.gate.*`) carry hashed user/chat identifiers and
           // the closed-enum gate reason. Reading them requires the dedicated
@@ -44,7 +47,23 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           }
           let query = opts.database
             .selectFrom("log_entries",)
-            .selectAll()
+            .select([
+              "id",
+              "level",
+              "message",
+              "module",
+              "event_type",
+              "entity_type",
+              "entity_id",
+              "user_id",
+              "session_id",
+              "request_id",
+              "meta",
+              "action",
+              "timestamp",
+              "time",
+              "created_at",
+            ],)
             .orderBy("created_at", "desc",)
             .limit(pageSize,)
             .offset(offset,);
@@ -106,7 +125,23 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         const { id, } = p as { id: string };
         const entry = await opts.database
           .selectFrom("log_entries",)
-          .selectAll()
+          .select([
+            "id",
+            "level",
+            "message",
+            "module",
+            "event_type",
+            "entity_type",
+            "entity_id",
+            "user_id",
+            "session_id",
+            "request_id",
+            "meta",
+            "action",
+            "timestamp",
+            "time",
+            "created_at",
+          ],)
           .where("id", "=", id,)
           .executeTakeFirst();
         if (!entry) {
