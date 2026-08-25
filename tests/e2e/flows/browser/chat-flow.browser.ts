@@ -189,13 +189,17 @@ describe("Chat list panel", () => {
       // evaluation. Known blocker: BUG-alpine-init-crash-chat-view-store-undefined
       // (Alpine init crash leaves #chat-list unrendered — this test fails
       // until that root cause is fixed).
-      await page.waitForFunction(() => {
-        const list = document.querySelector("#chat-list",);
-        if (!list) { return false; }
-        const hasEmptyState = list.textContent?.includes("No chats yet",) ?? false;
-        const hasRenderedItems = list.querySelectorAll("a.nav-item",).length > 0;
-        return hasEmptyState || hasRenderedItems;
-      }, undefined, { timeout: 10_000, },);
+      await page.waitForFunction(
+        () => {
+          const list = document.querySelector("#chat-list",);
+          if (!list) { return false; }
+          const hasEmptyState = list.textContent?.includes("No chats yet",) ?? false;
+          const hasRenderedItems = list.querySelectorAll("a.nav-item",).length > 0;
+          return hasEmptyState || hasRenderedItems;
+        },
+        undefined,
+        { timeout: 10_000, },
+      );
     } finally {
       errors.assert();
       errors.detach();
