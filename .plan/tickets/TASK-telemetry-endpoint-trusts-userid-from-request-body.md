@@ -1,6 +1,6 @@
 # TASK: Telemetry endpoint trusts userId from request body
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved 2026-08-25 — route already uses server-derived ctx.userId (verified on dev); no body trust remains
 **Priority:** high
 **Effort:** Medium
 
