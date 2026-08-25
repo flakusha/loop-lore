@@ -162,22 +162,40 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   // (BUG-f0683a8 — story/GM generation never NSFW-gated, content safety
   // bypass). Reusing runContentHooks guarantees the same pre-store policy
   // enforcement as the regular auto-gen path (auto-generation.ts:163).
-  const hooks = await runContentHooks({
-    database,
-    config,
-    chatId,
-    actorId: turnResult.actorId,
-    userId,
-    content: turnResult.prompt,
-  },);
-  if (!hooks.allowed) {
-    log.warn("story-mode: generation blocked by content hooks", {
+  //
+  // Failure policy: if the hook chain throws, fail CLOSED and abort the
+  // turn (no message persisted). This is a deliberate change from the
+  // prior emotion-hook try/catch which swallowed errors — fail-closed is
+  // safer for a NSFW-gated pipeline (per-content safety bypass is worse
+  // than a missed emotion for one turn). The outer `triggerStoryModeGeneration`
+  // is called from a try/catch in the auto-gen orchestrator that records
+  // the error.
+  let dominantEmotion: string | null = null;
+  try {
+    const hooks = await runContentHooks({
+      database,
+      config,
       chatId,
       actorId: turnResult.actorId,
+      userId,
+      content: turnResult.prompt,
     },);
-    return;
+    if (!hooks.allowed) {
+      log.warn("story-mode: generation blocked by content hooks", {
+        chatId,
+        actorId: turnResult.actorId,
+      },);
+      return;
+    }
+    dominantEmotion = hooks.dominantEmotion ?? null;
+  } catch (error) {
+    log.error(
+      "story-mode: content-hook chain threw — aborting turn (fail-closed)",
+      error instanceof Error ? error : new Error(String(error,),),
+      { chatId, actorId: turnResult.actorId, },
+    );
+    throw error;
   }
-  const dominantEmotion = hooks.dominantEmotion ?? null;
   // Compute swipe index for variant support
   let swipeIndex: number | null = null;
   if (parentMessageId) {
