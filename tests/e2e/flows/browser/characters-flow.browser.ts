@@ -59,10 +59,17 @@ describe("Characters flow E2E", () => {
       const errors = trackPageErrors(page,);
       try {
         await gotoCharacters(page,);
-        await page.waitForSelector(
-          "[data-testid='characters-loading'], [data-testid='characters-empty'], [data-testid='character-grid']",
-          { timeout: 15_000, },
-        );
+        // Behavioral: the loading state must RESOLVE to a rendered grid or
+        // empty state — an OR-locator passes even when grid render is broken
+        // (falls through to loading forever).
+        await page.waitForSelector("[data-testid='characters-loading']", {
+          state: "detached",
+          timeout: 15_000,
+        },);
+        const resolved = await page
+          .locator("[data-testid='character-grid'], [data-testid='characters-empty']",)
+          .count();
+        expect(resolved,).toBeGreaterThan(0,);
       } finally {
         errors.assert();
         errors.detach();
