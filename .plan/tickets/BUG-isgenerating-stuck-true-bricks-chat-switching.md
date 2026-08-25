@@ -4,9 +4,9 @@
 
 ## Evidence
 
- - bun test src/generation/: 494 pass / 0 fail
- - bun test src/assistant/: 177 pass / 0 fail
- - bunx tsc --noEmit -p tsconfig.backend.json: exit 0
+- bun test src/generation/: 494 pass / 0 fail
+- bun test src/assistant/: 177 pass / 0 fail
+- bunx tsc --noEmit -p tsconfig.backend.json: exit 0
 
 ## Acceptance Criteria
 
