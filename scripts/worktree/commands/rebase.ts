@@ -4,7 +4,7 @@
 import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { assertNotInWorktree, gitSync, } from "../utils/git";
+import { assertNotInWorktree, getRootBranch, gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
@@ -26,7 +26,7 @@ export async function rebase(
 ): Promise<void> {
   assertNotInWorktree("rebase",);
   const [branch, onto,] = args;
-  const target = onto || gitSync(config.repoRoot, "branch", "--show-current",) || "master";
+  const target = onto || getRootBranch(config.repoRoot,);
 
   if (!branch) {
     log("error", "branch name required",);

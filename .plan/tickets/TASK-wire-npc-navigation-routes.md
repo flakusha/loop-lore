@@ -21,3 +21,6 @@ Mount the code-complete `NpcNavigationService` (src/rpg/npc-navigation/, state +
 ## Linked Epics
 
 - `epic-npc-navigation.md`
+
+
+git issue: d1ad853
