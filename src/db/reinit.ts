@@ -7,22 +7,22 @@ import { existsSync, mkdirSync, renameSync, unlinkSync, } from "node:fs";
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
 import { createLogger, getLogger, } from "../logger";
-import type { DB, } from "./schema";
 import type { Logger, } from "../logger";
 import { createSqliteDialect, getDatabase, } from "./index";
 import { runMigrations, } from "./migrate";
+import type { DB, } from "./schema";
 import { seedDefaultActors, } from "./seed";
 
 /** Move a DB file into the timestamped backup dir; fall back to unlink on cross-device rename. */
 function archiveFile(p: string, log: Logger,): void {
-  const backupDir = process.env.LOOP_LORE_BACKUP_DIR
-    ?? path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);
+  const backupDir = process.env.LOOP_LORE_BACKUP_DIR ??
+    path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);
   mkdirSync(backupDir, { recursive: true, },);
   const stamp = new Date().toISOString().replace(/[:.]/g, "-",);
   try {
     renameSync(p, path.join(backupDir, `${stamp}-${path.basename(p,)}`,),);
   } catch (err) {
-    log.warn(`Could not archive ${p} (${String(err)}); removing instead`,);
+    log.warn(`Could not archive ${p} (${String(err,)}); removing instead`,);
     unlinkSync(p,);
   }
 }
