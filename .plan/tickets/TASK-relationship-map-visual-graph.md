@@ -15,3 +15,6 @@ Implement relationship map visualization showing NPC-to-NPC and player-to-NPC re
 - [x] Implementation complete
 - [x] Tests passing (unit + e2e gates green)
 - [x] Documentation updated (epic status updated)
+
+
+git issue: 5a2a0cd

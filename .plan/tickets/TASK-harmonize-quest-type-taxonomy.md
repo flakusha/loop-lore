@@ -65,3 +65,6 @@ Treat the two axes as SEPARATE fields:
   quest classification segregates by game element/mechanic (Kill/Collection/
   Delivery/Interaction/Escort) — i.e. mechanic vs narrative are universally
   separate axes.
+
+
+git issue: 2918503

@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-actor-autonomy-story-drive.md
 
 ## Summary
 
@@ -23,8 +24,3 @@ Configuration layering and UX affordances for autonomy pacing: world default, ch
 - [ ] Preset switching changes observed cadence in a scheduler integration test.
 - [ ] Settings UI shows live budget consumption per actor.
 
-## Acceptance Criteria
-
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated

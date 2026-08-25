@@ -21,3 +21,6 @@ Mount the code-complete `WorldLocationTraitsService` (src/rpg/world-location-tra
 ## Linked Epics
 
 - `epic-locations.md`
+
+
+git issue: 43e8dec

@@ -15,3 +15,6 @@ Implement karma meter, standing tiers, category breakdown, and title display. Ph
 - [x] Implementation complete
 - [x] Tests passing (unit + e2e gates green)
 - [x] Documentation updated (epic status updated)
+
+
+git issue: f0a0935

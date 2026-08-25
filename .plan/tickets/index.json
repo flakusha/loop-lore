@@ -6486,7 +6486,7 @@
     "title": "Autonomy config surface layering presets and overrides",
     "label": "task",
     "priority": "medium",
-    "epic": "",
+    "epic": "epic-actor-autonomy-story-drive.md",
     "tags": [],
     "source": ".plan/tickets/TASK-autonomy-config-surface-layering-presets-and-overrides.md"
   },
@@ -6498,7 +6498,7 @@
     "title": "Autonomy rate governor for LLM actors",
     "label": "task",
     "priority": "high",
-    "epic": "",
+    "epic": "epic-actor-autonomy-story-drive.md",
     "tags": [],
     "source": ".plan/tickets/TASK-autonomy-rate-governor-for-llm-actors.md"
   },
@@ -14991,7 +14991,7 @@
     "title": "Story auto-drive scheduler world tick and actor turns",
     "label": "task",
     "priority": "high",
-    "epic": "",
+    "epic": "epic-actor-autonomy-story-drive.md",
     "tags": [],
     "source": ".plan/tickets/TASK-story-auto-drive-scheduler-world-tick-and-actor-turns.md"
   },

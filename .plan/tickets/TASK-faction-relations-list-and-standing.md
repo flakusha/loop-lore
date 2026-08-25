@@ -15,3 +15,6 @@ Implement faction list with standing display, benefits, and faction details pane
 - [x] Implementation complete
 - [x] Tests passing (unit + e2e gates green)
 - [x] Documentation updated (epic status updated)
+
+
+git issue: aa72df8

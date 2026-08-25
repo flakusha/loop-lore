@@ -30,3 +30,6 @@ the create form still emits narrative-role values (`main|side|bounty|daily`) as
 `type`, while the backend `QuestType` enum is completion-mechanic
 (`time|collection|...`). This 422s on submit. Harmonized separately in
 TASK-harmonize-quest-type-taxonomy.
+
+
+git issue: 82bb36d

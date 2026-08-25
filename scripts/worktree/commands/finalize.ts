@@ -4,7 +4,7 @@
 import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { gitSync, } from "../utils/git";
+import { getRootBranch, gitSync, } from "../utils/git";
 import { colorize, log, section, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
@@ -125,7 +125,7 @@ export async function finalize(
     process.exit(1,);
   }
 
-  const targetBranch = gitSync(config.repoRoot, "branch", "--show-current",) || "master";
+  const targetBranch = getRootBranch(config.repoRoot,);
 
   section(`Finalizing '${branch}'`,);
 

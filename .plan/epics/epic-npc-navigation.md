@@ -73,6 +73,7 @@ interface WorldStateChange {
 - Travel mechanics support both fast travel and realistic movement
 
 ## Dependencies
+Autonomy scheduling and budgets for these behaviors: epic-actor-autonomy-story-drive.md (this epic stays movement-execution only).
 
 - `epic-character-core-system.md` (character stats, traits)
 - `epic-world-locations.md` (location system)
