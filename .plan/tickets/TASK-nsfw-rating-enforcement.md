@@ -35,3 +35,8 @@ piece — the character rating write surface + editor UI — lands here.
 - [x] Invalid rating rejected (422)
 - [x] Character editor renders a 5-tier rating selector with the current value
 - [x] Create/update route tests + edit-form render test cover the contract
+## Chat Audit 2026-08-25 — Cross-Reference
+
+**Finding B4:** 5-tier `NSFWContentRating` (SFW→NSFW_EXTREME) exists in `src/schemas/nsfw-rating.ts` but is not referenced by `src/chat/types/nsfw.ts` or `moderation.ts`; intensity tier is not linked to moderation enforcement in the chat layer.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25. Related umbrella ticket for asset-injection feature: TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex (issue afe0589)._

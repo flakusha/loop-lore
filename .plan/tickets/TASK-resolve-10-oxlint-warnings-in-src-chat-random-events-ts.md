@@ -69,3 +69,8 @@ Pick ONE of:
 **Discovered by:** cleanup session 2026-08-24, post-`793a170d` check run.
 **Rationale for deferral:** Per subagent advisory "skip lint warnings
 (pre-existing scripts issues)". File as ticket for future cleanup sprint.
+## Chat Audit 2026-08-25 — Cross-Reference
+
+**Finding B5:** Same skeletal `src/chat/random-events.ts` flagged by oxlint — confirms incomplete/stagnant implementation in the proactive/random-events subsystem.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25. Related umbrella ticket for asset-injection feature: TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex (issue afe0589)._
