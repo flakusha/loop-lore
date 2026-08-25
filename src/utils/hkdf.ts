@@ -79,4 +79,65 @@ export const DOMAIN_INFO = {
   ASSETS_SIGNED_URL: "assets-signed-url",
   /** NSFW PII pseudonymization salt (`src/nsfw/pii-redaction.ts`). */
   NSFW_PII: "nsfw-pii",
+  /** Admin telemetry PII hashing (`src/routes/admin/aux-telemetry.ts`).
+ Stable, HMAC-derived hash for user_id and chat_id surfaced on the
+ admin telemetry endpoints. Same domain separation as NSFW_PII so a
+ leak in one does not compromise cross-domain identifiers. */
+  TELEMETRY_PII: "telemetry-pii",
 } as const;
+
+/**
+ * HMAC-SHA256 of a value using a domain-separated subkey. Suitable for
+ * stable identifier pseudonymization across admin views. Same input →
+ * same output (no salt/rotate), different `info` → different output.
+ *
+ * SECURITY (BUG-admin-auxtelemetry-leaks-userid-chatid): the wire
+ * surface MUST NOT carry raw user_id / chat_id. Use this helper to
+ * project raw columns to a 16-hex-char prefix suitable for cross-row
+ * correlation without exposing the underlying identifier.
+ *
+ * @param secret - High-entropy shared secret (e.g. `auth.jwtSecret`).
+ * @param info   - One of `DOMAIN_INFO.*`. MUST be unique per consumer.
+ * @param value  - Raw identifier to hash.
+ * @returns 16-hex-char prefix (8 bytes) of the HMAC. Stable for the
+ *   same `(secret, info, value)` triple.
+ */
+export async function hashWithDomain(
+  secret: string,
+  info: string,
+  value: string,
+): Promise<string> {
+  const ikm = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret,),
+    "HKDF",
+    false,
+    ["deriveBits",],
+  );
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "HKDF",
+      hash: "SHA-256",
+      salt: new Uint8Array(32,),
+      info: new TextEncoder().encode(VERSIONED_PREFIX + info,),
+    },
+    ikm,
+    8 * 8,
+  );
+  const hmacKey = await crypto.subtle.importKey(
+    "raw",
+    bits,
+    { name: "HMAC", hash: "SHA-256", },
+    false,
+    ["sign",],
+  );
+  const sig = await crypto.subtle.sign(
+    "HMAC",
+    hmacKey,
+    new TextEncoder().encode(value,),
+  );
+  return [...new Uint8Array(sig,),]
+    .slice(0, 8,)
+    .map((b,) => b.toString(16,).padStart(2, "0",))
+    .join("",);
+}
