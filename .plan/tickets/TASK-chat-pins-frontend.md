@@ -36,3 +36,6 @@ Create frontend UI for pinning/unpinning messages. Backend routes exist at `/api
 ## Related
 
 - `epic-chat-lifecycle-moderation.md` — Chat lifecycle epic
+
+
+git issue: 3de6f91

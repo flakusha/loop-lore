@@ -73,3 +73,6 @@ A factory value has no usable `.prototype`, so converting `AvatarService` breaks
 `EmotionAvatarService` also constructs `new AvatarService(this.db)` internally. Converting both
 requires reworking the prototype-mock to injection — do NOT modify the test to force green.
 Defer until a dependency-injection seam replaces the prototype mock.
+
+
+git issue: 2110eee

@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 198 epics
+**Total:** 200 epics
 
 ## Summary
 
@@ -39,6 +39,7 @@
 | ⬜ Not Started | Battle Integration Gaps — Items, Social, NPC, Weather, Resolution | High | High | 7 | [epic-battle-integration-gaps.md](/.plan/epics/epic-battle-integration-gaps.md) |
 | ⬜ Not Started | BYOK API Keys (Bring Your Own Key) | High | Large | 10 | [epic-byok-api-keys.md](/.plan/epics/epic-byok-api-keys.md) |
 | ⬜ Not Started | BYOK Local Models (Bring Your Own Model) | High | Large | 16 | [epic-byok-local-models.md](/.plan/epics/epic-byok-local-models.md) |
+| ⬜ Not Started | Certificate & TLS Management | High | Large | 6 | [epic-certificate-and-tls-management.md](/.plan/epics/epic-certificate-and-tls-management.md) |
 | ⬜ Not Started | CI/CD Pipeline | Low | Unknown | 0 | [epic-cicd-pipeline.md](/.plan/epics/epic-cicd-pipeline.md) |
 | ⬜ Not Started | Client-Side Routing | Medium | Unknown | 0 | [epic-frontend-routing.md](/.plan/epics/epic-frontend-routing.md) |
 | ⬜ Not Started | Communications Integrations | Medium | High | 60 | [epic-communications-integrations.md](/.plan/epics/epic-communications-integrations.md) |
@@ -115,6 +116,7 @@
 | ✅ Complete | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
 | ✅ Complete | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
 | ✅ Complete | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
+| Not Started | Actor Autonomy & Story Auto-Drive | High | Large | 7 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
 | 🟢 Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | Unknown | Anonymity & Decentralization — Epic | Unknown | Unknown | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
@@ -507,6 +509,15 @@ Add atmospheric audio/video generation to enhance chat immersion. This epic
 - **Type:** Feature Epic
 - **Tags:** byok, local-models, wasm, inference, llama, browser, offline
 - **File:** `.plan/epics/epic-byok-local-models.md`
+
+### Certificate & TLS Management
+
+- **Status:** ⬜ Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Task
+- **Tags:** tls, https, certificates, acme, federation, security, transport
+- **File:** `.plan/epics/epic-certificate-and-tls-management.md`
 
 ### CI/CD Pipeline
 
@@ -1187,6 +1198,15 @@ Full internationalization of loop-lore UI. Infrastructure complete (custom i18n 
 - **Type:** Feature Epic
 - **Tags:** data, integrity, acid, backend, config, deployment
 - **File:** `.plan/epics/epic-data-integrity-phase1.md`
+
+### Actor Autonomy & Story Auto-Drive
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** autonomy, npc, actors, story-drive, simulation, rate-limiting, scheduler, bdi
+- **File:** `.plan/epics/epic-actor-autonomy-story-drive.md`
 
 ### Admin Panel & Dashboard
 

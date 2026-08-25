@@ -58,3 +58,6 @@ do not change HTTP contracts.
   eslint 0 errors, `dead:code` exit 0. Commit `8f457158`.
 - 🔄 `src/routes/messages.ts` (1121L) → `src/routes/messages/` — in progress (subagent).
 - ⏳ Remaining: `views.ts` (1524L), `admin.ts` (1091L), `worlds.ts` (765L), `characters.ts` (553L).
+
+
+git issue: e18b91c

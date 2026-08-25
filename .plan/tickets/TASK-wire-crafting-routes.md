@@ -71,3 +71,6 @@ The crafting system has **8 DB tables** and a full `RecipesService` but **zero H
 - `TASK-implement-trade.md` — crafting orders are trade primitives
 - `TASK-persist-loot-drops.md` — crafting output should persist like loot
 - `TASK-unify-item-types.md` — crafting uses item types
+
+
+git issue: a2a2669

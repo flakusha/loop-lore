@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium
+**Epic:** epic-actor-autonomy-story-drive.md
 
 ## Summary
 
@@ -31,8 +32,3 @@ Highest-priority governance layer for autonomous character/NPC/GM actions: no au
 - [ ] Kill switch stops mid-loop within one action; unlimited mode refused without dev flag.
 - [ ] Cost ledger queryable per actor/world/window.
 
-## Acceptance Criteria
-
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
