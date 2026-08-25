@@ -1,11 +1,15 @@
 <!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# loop-lore
-
 [![EN](https://img.shields.io/badge/EN-blue)](README.md)
 [![中文](https://img.shields.io/badge/中文-blue)](docs/i18n/README.zh.md)
 [![Español](https://img.shields.io/badge/Español-blue)](docs/i18n/README.es.md)
+[![日本語](https://img.shields.io/badge/日本語-blue)](docs/i18n/README.ja.md)
+[![한국어](https://img.shields.io/badge/한국어-blue)](docs/i18n/README.ko.md)
+[![Русский](https://img.shields.io/badge/Русский-blue)](docs/i18n/README.ru.md)
+[![Français](https://img.shields.io/badge/Français-blue)](docs/i18n/README.fr.md)
+
+# loop-lore
 
 **LLM RPG Chat And More.**
 
