@@ -10,12 +10,13 @@ import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import {
-  executeReversal,
   getPendingAppeals,
   getUserAppeals,
   reviewAppeal,
   submitAppeal,
 } from "./appeals";
+import { executeReversal, } from "./appeals-reversal";
+import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
 let db: Kysely<DB>;
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
@@ -324,8 +325,8 @@ describe("reviewAppeal", () => {
 
     const actionRow = await db.selectFrom("moderation_actions",)
       .select(["id", "superseded_by",],)
-      .where("id", "=", "action-d4",)
       .executeTakeFirst() as unknown as { superseded_by: string | null } | undefined;
+    expect(actionRow?.superseded_by,).toBe(appeal.id,);
   });
 
   test("approving an appeal for an unknown action type still records pending_reversal", async () => {
@@ -410,7 +411,7 @@ describe("executeReversal", () => {
         scopeId: null,
         createdAt: "2026-01-01T00:00:00.000Z",
         metadata: "{}",
-      } as ModAction,)
+      } as unknown as ModAction,)
     );
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r3", reason: "x", },);
     await reviewAppeal({
@@ -471,7 +472,7 @@ describe("executeReversal", () => {
         scopeId: null,
         createdAt: "2026-01-01T00:00:00.000Z",
         metadata: "{}",
-      } as ModAction,)
+      } as unknown as ModAction,)
     );
     const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r4", reason: "x", },);
     await reviewAppeal({
