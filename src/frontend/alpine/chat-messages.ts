@@ -41,9 +41,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       this.loadingError = t("toasts.failedLoadMessages",);
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedLoadMessages",), },);
     } finally {
-      if (this.activeChat === chatId) {
-        this.loadingMessages = false;
-      }
+      this.loadingMessages = false;
     }
     if (this.activeChat !== chatId) { return; }
     this.$nextTick?.(() => {

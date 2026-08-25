@@ -8,7 +8,7 @@ import type { ChatState, Message, } from "./types";
 // would NOT intercept the global binding used here, so we stub globalThis directly.
 // i18n uses the REAL module via i18n.test-helper above.
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
-let fetchHandler: ((url: string, opts: RequestInit,) => Response) | null = null;
+let fetchHandler: ((url: string, opts: RequestInit,) => Response | Promise<Response>) | null = null;
 
 type ApiFetch = (url: string, options?: RequestInit,) => Promise<Response>;
 const globalApiFetch = globalThis as typeof globalThis & { apiFetch?: ApiFetch };
@@ -162,5 +162,40 @@ describe("chatMessages", () => {
       await chatMessages.loadMessageReactions!.call(state, "msg-1",);
       expect(state.messages[0]!.reactions,).toBeUndefined();
     });
+  });
+});
+
+describe("loadMessages stale-response guard", () => {
+  test("slow response for old chat does not overwrite switched-to chat state", async () => {
+    const state = {
+      activeChat: "chat-a" as string | null,
+      messages: [] as Message[],
+      totalPages: 0,
+      currentPage: 1,
+      hasMoreMessages: true,
+      loadingMessages: false,
+      loadingError: null as string | null,
+    } as ChatState;
+
+    let releaseA: ((r: Response,) => void) | null = null;
+    fetchCalls = [];
+    fetchHandler = (_url, _opts,) =>
+      new Promise<Response>((resolve,) => {
+        releaseA = resolve;
+      },);
+
+    const pending = chatMessages.loadMessages!.call(state,);
+    // User switches chats while A's fetch is still in flight.
+    state.activeChat = "chat-b";
+    releaseA!(Response.json({
+      data: [{ ...mockMessage("m1",), },],
+      pagination: { total: 1, page: 1, pageSize: 50, totalPages: 1, },
+    },),);
+    await pending;
+
+    // Stale response must not clobber the new chat's (empty) message list.
+    expect(state.messages,).toEqual([],);
+    expect(state.totalPages,).toBe(0,);
+    expect(state.loadingMessages,).toBe(false,);
   });
 });
