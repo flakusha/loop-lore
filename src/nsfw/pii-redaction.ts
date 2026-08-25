@@ -24,6 +24,7 @@
  * The 500-char body cap on user-facing notifications is enforced inline in
  * `audit.ts` (per ticket), not here.
  */
+import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
 import { jsonStringifyOr, } from "../utils/safe-json";
 
 /**
@@ -53,9 +54,28 @@ export function isNsfwGateReason(value: unknown,): value is NsfwGateReason {
 
 /**
  * Server-side HMAC secret. Read from env; falls back to a build-time
- * default for local/dev only — production MUST set `NSFW_PII_SECRET`.
+ * default ONLY when running in a non-production environment. Production
+ * MUST set `NSFW_PII_SECRET` — a startup failure surfaces the misconfig
+ * rather than silently using a publicly-known key for PII pseudonymization.
  */
-const NSFW_PII_SECRET = process.env["NSFW_PII_SECRET"] ?? "nsfw-pii-dev-secret-do-not-use-in-prod";
+function resolveNsfwPiiSecret(): string {
+  const envSecret = process.env["NSFW_PII_SECRET"];
+  if (envSecret) { return envSecret; }
+  const env = process.env["NODE_ENV"] ?? "";
+  // Test + development allow the legacy dev fallback so the existing suite
+  // (which never sets the env) keeps working. Production / staging / any
+  // non-dev environment refuses to boot.
+  if (env === "test" || env === "development" || env === "dev") {
+    return "nsfw-pii-dev-secret-do-not-use-in-prod";
+  }
+  throw new Error(
+    "NSFW_PII_SECRET is required. Set it to a random string of at least " +
+      `${MIN_NSFW_PII_SECRET_LENGTH} characters in production. ` +
+      "Generate with `openssl rand -base64 48`.",
+  );
+}
+const MIN_NSFW_PII_SECRET_LENGTH = 32;
+const NSFW_PII_SECRET = resolveNsfwPiiSecret();
 
 /** Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource. */
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
@@ -66,13 +86,20 @@ function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
  * Lazily-imported HMAC key for `NSFW_PII_SECRET`. WebCrypto's `sign()`
  * requires an async key, but every call site of `hashId` is sync — we
  * cache the imported key the first time `hashId` runs and reuse it.
+ *
+ * SECURITY (BUG-jwtsecret-reused-across-three-security-domains): the key
+ * is HKDF-derived from `NSFW_PII_SECRET` with a domain-specific info so
+ * it cannot collide with the JWT signing key or the asset signed-URL key,
+ * even though they may all draw from the same underlying env var in some
+ * deployments.
  */
 let hmacKeyPromise: Promise<CryptoKey> | null = null;
-function getHmacKey(): Promise<CryptoKey> {
+async function getHmacKey(): Promise<CryptoKey> {
   if (!hmacKeyPromise) {
+    const subkey = await domainKey(NSFW_PII_SECRET, DOMAIN_INFO.NSFW_PII, 32,);
     hmacKeyPromise = crypto.subtle.importKey(
       "raw",
-      toBufferSource(new TextEncoder().encode(NSFW_PII_SECRET,),),
+      toBufferSource(subkey,),
       { name: "HMAC", hash: "SHA-256", },
       false,
       ["sign",],
@@ -80,7 +107,6 @@ function getHmacKey(): Promise<CryptoKey> {
   }
   return hmacKeyPromise;
 }
-
 /** Max allowed size of redacted metadata payloads (1 KiB). */
 export const NSFW_METADATA_MAX_BYTES = 1024;
 
