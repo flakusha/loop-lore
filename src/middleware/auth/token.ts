@@ -70,16 +70,22 @@ export async function resolveUserIdFromRequest(
       }
     }
 
-    // Legacy opaque-token sessions keyed by sha256(token) — kept for
-    // compatibility with test/older flows.
-    const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
-    const session = await database
-      .selectFrom("sessions",)
-      .select(["user_id", "expires_at",],)
-      .where("token_hash", "=", tokenHash,)
-      .executeTakeFirst();
-    if (session && (session.expires_at === null || Date.parse(session.expires_at,) > nowMs)) {
-      return session.user_id;
+    // Legacy opaque-token sessions keyed by sha256(token). SECURITY: this path
+    // is gated behind `auth.legacyOpaqueTokenFallback` because it authenticates
+    // any pre-existing `token_hash` row even when `auth.jwtSecret` is empty —
+    // a secret-less deployment with a populated sessions table would otherwise
+    // be a one-lookup auth bypass. Off by default; enable only for one-shot
+    // legacy migrations, then disable.
+    if (config.auth.legacyOpaqueTokenFallback) {
+      const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
+      const session = await database
+        .selectFrom("sessions",)
+        .select(["user_id", "expires_at",],)
+        .where("token_hash", "=", tokenHash,)
+        .executeTakeFirst();
+      if (session && (session.expires_at === null || Date.parse(session.expires_at,) > nowMs)) {
+        return session.user_id;
+      }
     }
   }
 
