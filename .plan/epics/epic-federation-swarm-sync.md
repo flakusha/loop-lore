@@ -196,4 +196,12 @@ New gaps filed from this research:
 | G17 | ActivityPub federation ignores the blog system | Current `FEAT-activitypub-federation` models only World/Channel/Character actors; the Lemmy/Mastodon primitive (blog) is unused | `BUG-activitypub-federation-does-not-leverage-the-blog-system-lem` |
 | G18 | IRC integration unscoped as group-chat | No ticket/scope for IRC (only an adapter filename in social-hub); cannot start IRC integration | `BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad` |
 
-**Conclusion:** treat this as a research/architecture plan. Do not open implementation tickets or write adapter code until G15-G18 are closed. `blog_comments` threading (G15) and adapter consolidation (G16) are the gating prerequisites.
+**Conclusion:** treat this as a research/architecture plan. Implementation stays gated on G15-G18. Per approval, scoped **blocked** tickets now record intent only — do not start them until the gating blockers close:
+
+| Scoped ticket | Covers | Blocked by |
+|---|---|---|
+| `FEAT-federate-blog-system-via-activitypub-lemmy-mastodon-reddit` | Lemmy/Mastodon/Reddit via blog system | G15, G17 |
+| `FEAT-irc-integration-channels-as-group-chat-pm-as-chat` | IRC channels→group-chat, PM→chat | G16, G18 |
+| `TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle` | one chat/IM adapter above `ProtocolHandler` | G16 |
+
+`blog_comments` threading (G15) and adapter consolidation (G16) remain the gating prerequisites.

@@ -69,9 +69,6 @@ function parseTicketFile(filePath: string,): TicketFile | null {
     const typeMatch = titleMatch?.match(/^#\s+(TASK|FEAT|BUG|FIX|EPIC|SOL|INFRA|TEST|PERF|WIRE|IMPROVE)/i,);
     const type = typeMatch?.[1]?.toUpperCase() ?? guessType(filename,);
 
-    // Extract hash from content (7+ hex chars, likely git issue hash)
-    const hashMatch = raw.match(/\b([0-9a-f]{7,40})\b/,);
-
     // Extract git issue reference (e.g. "git issue: abc1234" or "Issue: abc1234")
     const gitIssueMatch = raw.match(/(?:git.?issue|issue):\s*([a-f0-9]{7,})/i,);
 
@@ -87,7 +84,7 @@ function parseTicketFile(filePath: string,): TicketFile | null {
       type,
       priority: priorityMatch?.[1]?.trim() ?? "medium",
       epic: epicMatch?.[1]?.trim() ?? "",
-      hash: gitIssueMatch?.[1] ?? hashMatch?.[1] ?? null,
+      hash: gitIssueMatch?.[1] ?? null,
       gitIssue: gitIssueMatch?.[1] ?? null,
     };
   } catch {
@@ -304,19 +301,21 @@ function applyFixes(
     const tf = fileByExtid.get(extid,);
     if (!tf) { continue; }
 
-    // Try to find matching git issue
-    let gitIssueHash = tf.hash;
-    if (!gitIssueHash) {
-      for (const [, issue,] of gitIssues) {
-        if (issue.extid === extid) {
-          gitIssueHash = issue.hash;
-          break;
-        }
+    // Resolve the ticket's OWN git issue: authoritative registry lookup by
+    // extid FIRST. tf.hash originates from an explicit "git issue:" line in
+    // the .md and may be stale or absent — never trusted over the registry.
+    let gitIssueHash: string | null = null;
+    for (const [, issue,] of gitIssues) {
+      if (issue.extid === extid) {
+        gitIssueHash = issue.hash;
+        break;
       }
     }
+    if (!gitIssueHash) { gitIssueHash = tf.gitIssue ?? tf.hash ?? null; }
 
     fixed[extid] = {
       hash: gitIssueHash ?? "pending",
+      git_issue: gitIssueHash ?? undefined,
       extid,
       type: tf.type,
       title: tf.title,
