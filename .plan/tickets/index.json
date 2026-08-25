@@ -6427,6 +6427,18 @@
     "source": ".plan/tickets/TASK-aux-scene-context.md",
     "git_issue": "f9da80f"
   },
+  "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE": {
+    "hash": "cd70f50",
+    "git_issue": "cd70f50",
+    "extid": "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE",
+    "type": "TASK",
+    "title": "Backup restore reliability and self-healing for federated deployments",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-database-backup-recovery.md (cross: epic-federation-swarm-sync.md, epic-db-asset-snapshot-recovery.md)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-backup-restore-reliability-and-self-healing-for-federated-de.md"
+  },
   "TASK-BATTLE-ACTION-SELECTOR": {
     "hash": "e961126",
     "extid": "TASK-BATTLE-ACTION-SELECTOR",
@@ -10722,6 +10734,18 @@
     "source": ".plan/tickets/TASK-info-bubbles-help-tooltips.md",
     "git_issue": "b0d3af6"
   },
+  "TASK-INJECT-RUNCONTENTHOOKS-INTO-GENDEPS-FOR-TESTABLE-STORY-MODE-": {
+    "hash": "8420494",
+    "git_issue": "8420494",
+    "extid": "TASK-INJECT-RUNCONTENTHOOKS-INTO-GENDEPS-FOR-TESTABLE-STORY-MODE-",
+    "type": "TASK",
+    "title": "Inject runContentHooks into GenDeps for testable story-mode hook contracts",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
+  },
   "TASK-INNER-MONOLOGUE": {
     "hash": "pending",
     "extid": "TASK-INNER-MONOLOGUE",
@@ -12041,7 +12065,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-age-gate-never-verified-at-generation-time.md",
-    "git_issue": "5232abe"
+    "git_issue": "5232abe",
+    "status": "done"
   },
   "TASK-NSFW-ALPINE": {
     "hash": "d9fae17",
@@ -14696,7 +14721,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-story-gm-generation-never-nsfw-gated-content-safety-bypass.md",
-    "git_issue": "f0683a8"
+    "git_issue": "f0683a8",
+    "status": "done"
   },
   "TASK-STORY-MODE-FRONTEND": {
     "hash": "pending",
