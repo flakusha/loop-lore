@@ -310,6 +310,7 @@ Creative processes such as character creation, prompt creation, image/video/audi
 - `epic-story-mode-ui.md` — story mode frontend GM panel, turn order, quest log; GM-guided story uses this infrastructure
 
 Autonomy loop + rate governance for GM/actor self-driving: epic-actor-autonomy-story-drive.md.
+
 ## Tickets
 
 - `TASK-assistant-gm-flows.md` — main implementation tasks
