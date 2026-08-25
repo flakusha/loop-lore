@@ -24,6 +24,13 @@ describe("parseAcceptLanguage", () => {
     const result = parseAcceptLanguage("ja , en-US ; q=0.9",);
     expect(result,).toEqual(["ja", "en-US",],);
   });
+
+  it("excludes quality value of 0 (not acceptable per RFC 7231)", () => {
+    // q=0 means "not acceptable" — ja must be excluded; en-US selected
+    // even though it appears later in the header.
+    const result = parseAcceptLanguage("ja;q=0, en-US;q=1",);
+    expect(result,).toEqual(["en-US",],);
+  });
 });
 
 describe("detectLocale", () => {
