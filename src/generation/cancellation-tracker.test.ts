@@ -1,15 +1,20 @@
 import { describe, expect, it, } from "bun:test";
+import type { Kysely, } from "kysely";
 import { GenerationStatus, } from "../db/enums";
+import type { DB, } from "../db/schema";
 import { createLogger, getLogger, } from "../logger";
 import {
   type ActiveGeneration,
   activeGenerations,
   chatToAttempt,
   getActiveAttemptId,
+  IdempotencyKeyConflictError,
   isChatGenerating,
   listActiveGenerations,
   safeTransition,
+  startGenerationTracking,
 } from "./cancellation-tracker";
+import type { GenerationOptions, } from "./types";
 
 // Initialize logger
 createLogger({ level: "error", },);
@@ -107,5 +112,53 @@ describe("safeTransition", () => {
     // Invalid: Completed → Streaming
     safeTransition({ active, to: GenerationStatus.Streaming, log, },);
     expect(active.status,).toBe(GenerationStatus.Streaming,);
+  });
+});
+
+describe("startGenerationTracking idempotency", () => {
+  function makeMockDb(): Kysely<DB> {
+    const chain = {
+      execute: async () => {},
+      set: () => chain,
+      values: () => chain,
+      where: () => chain,
+    };
+    return {
+      insertInto: () => chain,
+      updateTable: () => chain,
+    } as unknown as Kysely<DB>;
+  }
+
+  const baseOptions = {
+    chatId: "chat-1",
+    actorId: "actor-1",
+    idempotencyKey: "key-1",
+    modelId: "m",
+    provider: "p",
+  } as GenerationOptions;
+
+  it("throws IdempotencyKeyConflictError on duplicate key (closes TOCTOU)", async () => {
+    clearState();
+    const db = makeMockDb();
+    const first = await startGenerationTracking({ options: baseOptions, db, },);
+    await expect(
+      startGenerationTracking({ options: baseOptions, db, },),
+    ).rejects.toThrow(IdempotencyKeyConflictError,);
+    // First generation stays intact and in-flight.
+    expect(isChatGenerating("chat-1",),).toBe(true,);
+    expect(getActiveAttemptId("chat-1",),).toBe(first.attemptId,);
+  });
+
+  it("aborts previous generation on chat switch with different key", async () => {
+    clearState();
+    const db = makeMockDb();
+    const first = await startGenerationTracking({ options: baseOptions, db, },);
+    const second = await startGenerationTracking({
+      options: { ...baseOptions, idempotencyKey: "key-2", },
+      db,
+    },);
+    expect(first.abortSignal.aborted,).toBe(true,);
+    expect(second.attemptId,).not.toBe(first.attemptId,);
+    expect(getActiveAttemptId("chat-1",),).toBe(second.attemptId,);
   });
 });

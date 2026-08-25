@@ -15,7 +15,7 @@ import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { jsonError, } from "../../routes/http-utils";
-import { hasInFlightGeneration, startGenerationTracking, } from "../cancellation-manager";
+import { hasInFlightGeneration, IdempotencyKeyConflictError, startGenerationTracking, } from "../cancellation-manager";
 import {
   buildFailoverList,
   resolveProvider,
@@ -112,8 +112,6 @@ export async function handleGenerate({
     return jsonError({ message: `Prompt assembly failed: ${(error as Error).message}`, status: 422, },);
   }
 
-  // ── Build generation options for tracking ─────────────
-
   // Resolution chain: explicit request → chat setting → config default → provider capability
   let resolvedStream = input.stream;
   if (resolvedStream === undefined) {
@@ -154,18 +152,20 @@ export async function handleGenerate({
     totalSteps: input.totalSteps,
   };
 
-  // Idempotency check — without this, concurrent POSTs for the same
-  // idempotencyKey race: the second `startGenerationTracking` would silently
-  // abort the first one mid-stream, leaving the original client with a dead
-  // stream. The helper already exists at cancellation-actions/inflight.ts:12.
+  // Idempotency guard (DB pre-check); the in-memory TOCTOU backstop lives in startGenerationTracking.
   if (await hasInFlightGeneration(database, input.idempotencyKey,)) {
-    return jsonError({
-      message: "A generation with this idempotencyKey is already in flight",
-      status: 409,
-    },);
+    return jsonError({ message: "A generation with this idempotencyKey is already in flight", status: 409, },);
   }
 
-  const { attemptId, abortSignal, } = await startGenerationTracking({ options: genOptions, db: database, },);
+  let attemptId: string, abortSignal: AbortSignal;
+  try {
+    ({ attemptId, abortSignal, } = await startGenerationTracking({ options: genOptions, db: database, },));
+  } catch (err) {
+    if (err instanceof IdempotencyKeyConflictError) {
+      return jsonError({ message: "A generation with this idempotencyKey is already in flight", status: 409, },);
+    }
+    throw err;
+  }
 
   // ── Build provider request ────────────────────────────
 
