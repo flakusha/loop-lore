@@ -33,6 +33,14 @@
 | 7 | `age-gate/controller.ts` error message leak                                                 | `src/age-gate/service.ts:92`                         | ✅ Fixed 2026-08-14 — removed user input echo from error message; generic "Invalid birth date. Expected YYYY-MM-DD format." |
 | 8 | Telemetry `chatId` data loss                                                                | `src/frontend/`                                       | ✅ Resolved 2026-08-16 — `generation.completed` already carried chatId; **page_view + frontend.error/unhandledrejection now derive chatId from `?chatid=`** (`telemetry.ts` `chatTelemetryMeta`) and ship it top-level. Transport flatten contract tested (`telemetry.test.ts` +2 cases). |
 
+## Migration hygiene (audit 2026-08-25; re-applied after concurrent overwrite)
+
+| # | Item | Where | Status |
+| - | ---- | ----- | ------ |
+| 1 | `migrations/parts/` dead code — loader (`src/db/migrate.ts:13-28`) does non-recursive `readdirSync` filtered on top-level `.ts`, so `parts/*.ts` never load; zero imports; bare `up()` exports incompatible with loader contract (`module.default ?? module`) | `src/db/migrations/parts/` | 🟡 DELETE — unreferenced split of `001_init`; recoverable from git. ⚠️ 13 legacy tickets/epics still cite `migrations/parts/*.ts` as edit targets — stale pointers, real schema lives in shipped top-level migrations |
+| 2 | Duplicate migration prefixes (041×2, 042×2, 044×2, 046×3, 047×3, 054×2) — order within a number is an alphabetical tiebreak; verified benign today (disjoint tables/columns) but unenforced. Gap 007–008 cosmetic | `src/db/migrations/` | 🟡 ADD GATE — check failing on duplicate numeric prefix / reused prefix for new migrations; next migration takes `057`, numbers never reused |
+| 3 | Decision record: combining applied migrations is permanently unsafe — filename is identity in `kysely_migration`; `assertMigrationsNotStale` (`src/db/migrate.ts:40`, wired in `runMigrations` `:84`) fails fast on missing applied names. Verified 2026-08-25: live DB (`loop-lore-data/loop-lore.db`) has 62/62 names matching source exactly — no combine window remains for any existing file | `src/db/migrations/README.md` policy | ✅ CLOSED — combine nothing; append-only holds |
+
 ## Release hardening (mirrors `../priority-release-010.md`; kept here for the open queue)
 
 - ✅ **Lint-ts debt** → **closed 2026-08-14** — `bun run lint` EXIT 0 (0 errors, 193 warnings tracked); `bun run check` 18/18 (worktree `lint-ts-debt`).
