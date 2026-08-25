@@ -11,6 +11,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
+import { NsfwModerationService, } from "./index";
 import { get, getOrCreateOwn, updatePreferences, } from "./preferences";
 import type { NsfwModerationServiceContext, } from "./types";
 
@@ -92,5 +93,13 @@ describe("updatePreferences", () => {
       updates: { nsfwEnabled: true, },
     },);
     expect(prefs.nsfwEnabled,).toBe(true,);
+  });
+});
+describe("NsfwModerationService.getOrCreateOwn wiring", () => {
+  test("class binds getOrCreateOwn — instance method exists and delegates to dispatcher", async () => {
+    const svc = new NsfwModerationService(db,);
+    expect(typeof svc.getOrCreateOwn,).toBe("function",);
+    const prefs = await svc.getOrCreateOwn("fresh-user",);
+    expect(prefs.userId,).toBe("fresh-user",);
   });
 });

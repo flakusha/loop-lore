@@ -25,7 +25,7 @@ import { deleteUserData, exportUserData, } from "./data";
 import { flagContent, getFlagQueue, resolveFlag, } from "./flags";
 import { banUser, blockUser, shadowUser, unbanUser, unblockUser, unshadowUser, } from "./mod-actions";
 import { getEffectiveNsfw, setChatNsfwOverride, setWorldNsfwOverride, } from "./overrides";
-import { getPreferences, updatePreferences, } from "./preferences";
+import { getOrCreateOwn, getPreferences, updatePreferences, } from "./preferences";
 import type {
   NsfwModerationService as NsfwModerationServiceIface,
   NsfwModerationServiceContext,
@@ -67,6 +67,8 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
     getPreferences({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
   updatePreferences = (userId: string, updates: Parameters<NsfwModerationServiceIface["updatePreferences"]>[1],) =>
     updatePreferences({ thisL: this as unknown as NsfwModerationServiceContext, userId, updates, },);
+  getOrCreateOwn = (userId: string,) =>
+    getOrCreateOwn({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
   blockUser = (targetUserId: string, performedBy: string, reason: string,) =>
     blockUser({ thisL: this as unknown as NsfwModerationServiceContext, targetUserId, performedBy, reason, },);
   unblockUser = (targetUserId: string, performedBy: string, reason: string,) =>
