@@ -9,7 +9,7 @@
  * `src/generation/context-window-config` for the default estimate.
  */
 
-import { defaultTokenCount, } from "../generation/context-window-config";
+import { defaultTokenCount, type TokenCountFn, } from "../generation/context-window-config";
 
 /** Message shape compatible with chat history */
 export interface CountableMessage {
@@ -41,9 +41,12 @@ export interface TokenCountResult {
  * @param messages - Messages to count
  * @returns Total estimated token count
  */
-export function countMessageTokens(messages: CountableMessage[],): number {
+export function countMessageTokens(
+  messages: CountableMessage[],
+  tokenCountFn: TokenCountFn = defaultTokenCount,
+): number {
   let total = 0;
-  for (const msg of messages) { total += defaultTokenCount(msg.content,); }
+  for (const msg of messages) { total += tokenCountFn(msg.content,); }
   return total;
 }
 
@@ -85,8 +88,9 @@ export function computeContextWindow(
   messages: CountableMessage[],
   maxTokens = 32_000,
   threshold: number = THRESHOLDS.critical,
+  tokenCountFn: TokenCountFn = defaultTokenCount,
 ): TokenCountResult {
-  const currentTokens = countMessageTokens(messages,);
+  const currentTokens = countMessageTokens(messages, tokenCountFn,);
   const percentage = maxTokens > 0 ? currentTokens / maxTokens : 0;
 
   return {
