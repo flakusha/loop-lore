@@ -147,3 +147,101 @@ export function formatTime(options?: {
   // standard: "2026-07-04T14:30:00.123+02:00" — full ISO 8601, parseable by Date.parse()
   return `${y}-${pad(mo,)}-${pad(day,)}T${pad(h,)}:${pad(mi,)}:${pad(s,)}.${pad(ms, 3,)}${offset}`;
 }
+
+/**
+ * Normalize any date representation to a native `Date`.
+ *
+ * Accepts a `Date`, an epoch-millisecond number, or an ISO string and delegates
+ * to the native `Date` constructor — there is deliberately NO custom parser, so
+ * the canonical string form (`formatTime` standard) round-trips through
+ * `new Date(...)` unchanged.
+ *
+ * @param input - Date, epoch ms, or ISO string. `""` → Invalid Date; `undefined` → now.
+ */
+export function toDate(input?: Date | number | string,): Date {
+  if (input === "") { return new Date(Number.NaN,); }
+  if (input === undefined) { return new Date(); }
+  return input instanceof Date ? input : new Date(input,);
+}
+
+/** Output shapes supported by {@link serializeDate}. */
+export type DateFormat = "unix" | "iso" | "human" | "compact";
+
+/** Options controlling locale/region and timezone for display formatting. */
+export interface DateFormatOptions {
+  /** BCP-47 locale, e.g. "en-US", "de-DE", "ja-JP". Drives month/day names + order. */
+  locale?: string;
+  /** IANA timezone, e.g. "Europe/Berlin". Defaults to the runtime timezone. */
+  tz?: string;
+  /** Granularity for the `"human"` format. Defaults to `"datetime"`. */
+  humanStyle?: "date" | "time" | "datetime";
+}
+
+/**
+ * Human-readable, locale/region + timezone aware formatting (display only).
+ *
+ * The result is NOT parseable by `Date`. For storage/transport use `"unix"`
+ * or `"iso"` from {@link serializeDate}.
+ *
+ * @example
+ * formatHuman("2026-07-04T14:30:00Z", { locale: "de-DE", tz: "Europe/Berlin" })
+ * // "4. Juli 2026, 16:30"
+ */
+export function formatHuman(
+  input?: Date | number | string,
+  options?: DateFormatOptions,
+): string {
+  const d = toDate(input,);
+  if (Number.isNaN(d.getTime(),)) { return ""; }
+
+  const intlOpts: Intl.DateTimeFormatOptions = {};
+  if (options?.tz) { intlOpts.timeZone = options.tz; }
+  switch (options?.humanStyle ?? "datetime") {
+    case "date":
+      intlOpts.dateStyle = "long";
+      break;
+    case "time":
+      intlOpts.hour = "2-digit";
+      intlOpts.minute = "2-digit";
+      break;
+    case "datetime":
+    default:
+      intlOpts.dateStyle = "long";
+      intlOpts.timeStyle = "short";
+      break;
+  }
+
+  return new Intl.DateTimeFormat(options?.locale, intlOpts,).format(d,);
+}
+
+/**
+ * Unified date serializer.
+ *
+ * - `"unix"`    → epoch milliseconds (`number`), the backend storage form.
+ * - `"iso"`     → `yyyy-mm-ddTHH:MM:SS.ttt+/-xxtz` (native-`Date` round-trippable).
+ * - `"compact"` → dense, sortable ISO variant (NOT `Date.parse`-able).
+ * - `"human"`   → locale/region + timezone display string (see {@link formatHuman}).
+ *
+ * @example
+ * serializeDate(1751639400000, "iso", { tz: "America/New_York" })
+ * // "2026-07-04T10:30:00.000-04:00"
+ */
+export function serializeDate(
+  input?: Date | number | string,
+  format: DateFormat = "iso",
+  options?: DateFormatOptions,
+): number | string {
+  const d = toDate(input,);
+  if (Number.isNaN(d.getTime(),)) {
+    // Mirror formatHuman: display formats yield "" for invalid input; unix yields NaN.
+    return format === "unix" ? NaN : "";
+  }
+  if (format === "unix") { return d.getTime(); }
+  if (format === "human") { return formatHuman(input, options,); }
+  const style: "compact" | "standard" = format === "compact" ? "compact" : "standard";
+  return formatTime({
+    date: d,
+    style,
+    tz: options?.tz,
+  },);
+}

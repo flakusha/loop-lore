@@ -156,6 +156,7 @@ export interface ChatCoreState
   loadCharacterInfo(): Promise<void>;
   formatTime(iso: string,): string;
   formatTimeShort(iso: string,): string;
+  formatDate(iso: string,): string;
   displayName(msg: { role: string; actor_name?: string },): string;
   copyMessage(msgId: string, event: Event,): Promise<void>;
   removeMessage(msgId: string, event: Event,): Promise<void>;

@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // Quests Page component (quests.html)
+import { formatDisplayDate, } from "../alpine/chat-utils/time";
 import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
 import { feFetch, } from "../fe-fetch";
@@ -164,7 +165,7 @@ globalThis.questsPage = function() {
 
     formatDate(iso: string | null,): string {
       if (!iso) { return "-"; }
-      return new Date(iso,).toLocaleDateString();
+      return formatDisplayDate(iso, "date",);
     },
 
     progressPct(q: QuestRow,): number {
