@@ -9,9 +9,10 @@ import { UserRole, UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { TranslatorFn, } from "../../i18n/types";
 import { getOrCreateSoloUserForAuth, } from "../../middleware/auth";
+import { rateLimitHeaders, } from "../../middleware/rate-limit";
 import { uid, } from "../../utils";
 import { HttpStatus, jsonError, } from "../http-utils";
-import { errorHtml, getClientIp, loginLimiter, setTokenCookie, } from "./shared";
+import { demoLoginLimiter, errorHtml, getClientIp, loginLimiter, setTokenCookie, } from "./shared";
 
 async function handleLogin(
   request: Request,
@@ -21,17 +22,24 @@ async function handleLogin(
   peerIp?: string | null,
 ): Promise<Response> {
   const ip = getClientIp(request, config, peerIp ?? null,);
-  if (!loginLimiter.check(ip,)) {
+  // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers: emit
+  // X-RateLimit-* + Retry-After so well-behaved clients back off correctly.
+  const loginLimit = loginLimiter.consume(ip,);
+  if (!loginLimit.allowed) {
     return new Response(
       `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many attempts. Try again later."}</p>`,
       {
         status: HttpStatus.TooManyRequests,
-        headers: { "Content-Type": "text/html; charset=utf-8", },
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          ...rateLimitHeaders(loginLimit, loginLimit.resetSec,),
+        },
       },
     );
   }
 
   const formData = await parseCredentials(request,);
+
   if (!formData) {
     return jsonError({ message: "errors.badRequest", status: HttpStatus.BadRequest, t, },);
   }
@@ -132,6 +140,24 @@ async function handleDemoLogin(
   t?: TranslatorFn,
   peerIp?: string | null,
 ): Promise<Response> {
+  const ip = getClientIp(request, config, peerIp ?? null,);
+  // BUG-demo-login-endpoint-bypasses-rate-limiter: enforce the same per-IP
+  // gate as /api/auth/login. Without this, an attacker can spam session
+  // creation (one DB row per request) and exhaust the sessions table.
+  const demoLimit = demoLoginLimiter.consume(ip,);
+  if (!demoLimit.allowed) {
+    return new Response(
+      `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many attempts. Try again later."}</p>`,
+      {
+        status: HttpStatus.TooManyRequests,
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          ...rateLimitHeaders(demoLimit, demoLimit.resetSec,),
+        },
+      },
+    );
+  }
+
   const soloUser = await getOrCreateSoloUserForAuth(database, config.auth.demoUsername,);
   if (!soloUser) {
     return jsonError({
@@ -141,7 +167,6 @@ async function handleDemoLogin(
     },);
   }
 
-  const ip = getClientIp(request, config, peerIp ?? null,);
   const userAgent = request.headers.get("User-Agent",);
   const sessionId = uid();
 
