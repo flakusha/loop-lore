@@ -95,10 +95,9 @@ export class LoggerImpl implements Logger {
     // null/undefined/primitives pass through — only real objects are censored
     // (applyLimits crashes on Object.keys(null), and there is nothing to censor).
     const isCensorable = typeof message === "object" && message !== null;
-    const safeMessage: string | Record<string, unknown> =
-      options?.skipCensor || !isCensorable
-        ? (message as string | Record<string, unknown>)
-        : censorMeta({ meta: message, extraRules: fieldNamesToRules(this.censorFields,), },) ?? message;
+    const safeMessage: string | Record<string, unknown> = options?.skipCensor || !isCensorable
+      ? (message as string | Record<string, unknown>)
+      : censorMeta({ meta: message, extraRules: fieldNamesToRules(this.censorFields,), },) ?? message;
 
     // Build entry
     const entry: LogEntry = {
