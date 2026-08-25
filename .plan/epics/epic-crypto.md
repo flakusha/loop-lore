@@ -130,7 +130,6 @@ interface AlgorithmFactory {
 - `TASK-world-location-encryption.md` — ⬜ New
 - `TASK-asymmetric-key-pairs.md` — ⬜ New
 - `TASK-asymmetric-key-pairs-followup.md` — 🟡 Partial (Foundation + Phases A–D shipped on dev commit `10b203b4`; Phases E–G queue receiver-side wiring / Signal-grade ratchet / UI affordances — see "Client-Side E2E — 4-Phase Plan" below)
-</input>
 - `TASK-fix-crypto-isolation.md` — ✅ Done (was misdiagnosed)
 - `TASK-non-standard-browser-crypto-research.md` — ⬜ Research: JS/WASM crypto beyond WebCrypto
 
@@ -155,7 +154,6 @@ the shipped code":
 - `BUG-initdhratchetopts-theirinitialpub-declared-but-never-read.md` — dead param in `initDhRatchet`.
 - `BUG-base64-tobase64-coerces-undefined-to-0-via-bytes-i-0.md` — `?? 0` mask in `utils/base64.ts`.
 - `BUG-hot-reload-test-ts-asserts-trivially-true-on-emfile-enoent-c.md` — pre-existing config-infra coverage gap; defer to backlog.
-</input>
 
 ## Client-Side E2E — 4-Phase Plan (2026-08-22)
 
@@ -264,7 +262,6 @@ removal excludes future message wraps.
   (see note in the commit message); the `e2e/` directory is **active**
   and not deleted, contradicting the ticket's "Dead wiring deleted"
   claim.
-</input>
 
 All four phases shipped via `bun x tsgo --noEmit -p tsconfig.backend.json`
 exit 0 + `bun test src/crypto/ src/frontend/e2e/ src/db/` → 531 pass / 0 fail.
@@ -289,7 +286,6 @@ in "Open bugs against Phase B/C/D code" above; must resolve before Phase E.
 Phase G blocked on `TASK-encryption-architecture-clarification.md`
 (LLM-with-E2E strategy). Phases F + G see
 `TASK-asymmetric-key-pairs-followup.md` §"Phase F / G".
-</input>
 
 ### Open design questions (must be resolved before Phase B/C)
 
