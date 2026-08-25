@@ -89,3 +89,46 @@ memoryType rules:
 - "procedural": learned patterns ("The player prefers stealth over combat")
 
 If no facts are worth remembering, return an empty array: []`;
+
+/**
+ * Default NSFW content-rating classification prompt.
+ *
+ * Ready for wiring into an LLM-based NSFW policy path; currently no in-tree
+ * consumer calls the LLM for NSFW classification (moderation is external /
+ * keyword-based), but users can already override or extend it via config.
+ */
+export const NSFW_POLICY_PROMPT =
+  `You are a content rating classifier. Analyze the user message and reply with ONLY a JSON object:
+{
+  "rating": "sfw" | "nsfw_mild" | "nsfw_moderate" | "nsfw_intense" | "nsfw_extreme",
+  "categories": ["violence" | "sexual" | "drugs" | "profanity" | null],
+  "confidence": 0.0-1.0
+}
+
+Rules:
+- "sfw" = safe for all audiences
+- "nsfw_mild" = light innuendo, mild profanity, non-graphic violence
+- "nsfw_moderate" = implied sexual content, moderate violence
+- "nsfw_intense" = explicit sexual content, graphic violence
+- "nsfw_extreme" = extreme sexual or violent content
+- Return only the JSON object, no commentary`;
+
+/**
+ * Default NSFW policy system message — the SFW/NSFW level taxonomy injected
+ * into a chat's generation system prompt so the model writes within the
+ * allowed rating. Distinct from {@link NSFW_POLICY_PROMPT} (a classifier):
+ * this is guidance the model follows, not JSON it emits. Config-overridable
+ * via `configs/templates/llm.yaml` `systemPrompts.nsfwPolicy`.
+ */
+export const NSFW_POLICY_LEVELS_PROMPT = `Content rating policy. The chat is configured with a maximum allowed rating:
+- sfw: safe for all audiences — no sexual content, mild violence, no profanity.
+- nsfw_mild: light innuendo, mild profanity, non-graphic romance.
+- nsfw_moderate: implied sexual content, moderate romantic/sexual tension.
+- nsfw_intense: explicit sexual content, graphic descriptions.
+- nsfw_extreme: extreme sexual or violent content, hard kink.
+
+Rules:
+- Stay at or below the chat's maximum allowed rating at all times.
+- Never escalate beyond the allowed level; fade to black at the boundary.
+- Respect the character's hard limits and the user's stated boundaries.
+- Keep in-character; do not break the fourth wall about this policy.`;
