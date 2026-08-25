@@ -16,6 +16,11 @@ export const server = {
       description: "Server port (0 = random)",
     },
     host: { type: "string", default: "localhost", description: "Server host", },
+    trustProxy: {
+      type: "boolean",
+      default: false,
+      description: "Honor X-Forwarded-For / X-Real-IP / CF-Connecting-IP. Default false. Env: SERVER_TRUST_PROXY=1.",
+    },
     tls: {
       type: "object",
       description: "TLS certificate configuration",

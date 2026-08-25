@@ -16,6 +16,7 @@ export const AUTH_DEFAULTS = {
   adminPassword: "",
   jwtSecret: "",
   jwtExpiresIn: 86_400,
+  legacyOpaqueTokenFallback: false,
 } satisfies AuthConfig;
 
 export class AuthSection implements AuthConfig {
@@ -29,6 +30,7 @@ export class AuthSection implements AuthConfig {
   adminPassword = AUTH_DEFAULTS.adminPassword;
   jwtSecret = AUTH_DEFAULTS.jwtSecret;
   jwtExpiresIn = AUTH_DEFAULTS.jwtExpiresIn;
+  legacyOpaqueTokenFallback = AUTH_DEFAULTS.legacyOpaqueTokenFallback;
 
   constructor(overrides?: Partial<AuthConfig>,) {
     Object.assign(this, overrides,);
@@ -84,6 +86,12 @@ export const authMeta = {
       type: "integer",
       default: AUTH_DEFAULTS.jwtExpiresIn,
       description: "JWT token expiry in seconds (default: 86400 = 24h)",
+    },
+    legacyOpaqueTokenFallback: {
+      type: "boolean",
+      default: AUTH_DEFAULTS.legacyOpaqueTokenFallback,
+      description: "Permit sha256(token) lookup when JWT verify fails. Default false. " +
+        "Set AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1 only for one-shot legacy migrations.",
     },
   },
   required: [

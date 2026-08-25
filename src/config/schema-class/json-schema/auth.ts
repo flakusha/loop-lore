@@ -34,6 +34,12 @@ export const auth = {
       default: "",
       description: "Bootstrap admin password (multi-user mode). Env-only preferred: AUTH_ADMIN_PASSWORD. Never commit.",
     },
+    legacyOpaqueTokenFallback: {
+      type: "boolean",
+      default: false,
+      description:
+        "Permit sha256(token) lookup when JWT verify fails. Default false. Env: AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1.",
+    },
   },
   required: [
     "required",
