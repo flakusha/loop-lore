@@ -148,6 +148,7 @@ export async function reviewAppeal(
       await thisL.db.updateTable("moderation_actions",)
         .set({ superseded_by: appealId, },)
         .where("id", "=", appealRow.action_id,)
+        .where("deleted_at", "is", null,)
         .execute();
     }
     // Record the pending_reversal audit row. NO direct state change.
