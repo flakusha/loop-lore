@@ -142,10 +142,16 @@ describe("Smoke E2E", () => {
       const errors = trackPageErrors(page,);
       try {
         await gotoView(page, "/views/gallery",);
-        await page.waitForSelector(
-          "[data-testid='asset-grid'], [data-testid='gallery-loading'], [data-testid='gallery-empty']",
-          { timeout: 10_000, },
-        );
+        // Behavioral: loading must resolve to a rendered grid or empty state
+        // (OR-locator would pass even with broken grid render).
+        await page.waitForSelector("[data-testid='gallery-loading']", {
+          state: "detached",
+          timeout: 10_000,
+        },);
+        const resolved = await page
+          .locator("[data-testid='asset-grid'], [data-testid='gallery-empty']",)
+          .count();
+        expect(resolved,).toBeGreaterThan(0,);
       } finally {
         errors.assert();
         errors.detach();
