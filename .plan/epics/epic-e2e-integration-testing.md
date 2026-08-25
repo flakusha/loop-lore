@@ -205,6 +205,7 @@ linked to this epic:
 - [x] `TASK-wiring-dead-code-gate` — `check:wiring` + knip `exports` tightening +
       route-test coverage assertion.
 - [ ] `TASK-generation-mock-scenario-provider` — full-surface mock + fake ComfyUI server.
+- [ ] `TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server` — opt-in tier-gated real-server fixture (llama.cpp + llama-swap + sd-server); smallest viable models; default-off; one new scenario proves multi-provider routing (aux + story/general LLM coexisting behind llama-swap). Sibling to the mock + cassette legs of Pillar 3.
 - [ ] `TASK-generation-cassette-replay` — record/replay harness + first fixtures.
 - [ ] `TASK-BROWSER-E2E-UI-SURFACE-GAPS` — remaining untested UI surfaces (quests,
       personas, notifications, nsfw-moderation, character-edit, world-detail, VN scene,
