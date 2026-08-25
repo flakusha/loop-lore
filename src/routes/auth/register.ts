@@ -136,7 +136,7 @@ async function parseCredentials(
   }
 }
 
-/** Create a session row, sign a JWT, and return the redirect response. */
+/** Create a session row, enforce maxSessionsPerUser cap, sign a JWT, and return the redirect response. */
 async function createSessionAndCookie(
   request: Request,
   database: Kysely<DB>,
@@ -148,6 +148,24 @@ async function createSessionAndCookie(
 ): Promise<Response> {
   const userAgent = request.headers.get("User-Agent",);
   const sessionId = uid();
+
+  // Enforce maxSessionsPerUser cap: evict oldest session if at limit
+  const maxSessions = config.auth.maxSessionsPerUser ?? 10;
+  const existingCount = await database
+    .selectFrom("sessions",)
+    .select(database.fn.countAll().as("cnt",),)
+    .where("user_id", "=", userId,)
+    .executeTakeFirst();
+  const cnt = Number(existingCount?.cnt ?? 0,);
+  if (cnt >= maxSessions) {
+    // Evict the oldest session by id (lowest id = oldest auto-increment)
+    await database
+      .deleteFrom("sessions",)
+      .where("user_id", "=", userId,)
+      .orderBy("id", "asc",)
+      .limit(1,)
+      .execute();
+  }
 
   await database
     .insertInto("sessions",)
