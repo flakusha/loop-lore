@@ -16,3 +16,6 @@ Persist NPC movement events in message metadata and render movement indicators i
 - [x] Implementation complete
 - [x] Tests passing
 - [x] Documentation updated
+
+
+git issue: f9b5586
