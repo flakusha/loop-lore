@@ -167,6 +167,12 @@ describe("chatMessages", () => {
 
 describe("loadMessages stale-response guard", () => {
   test("slow response for old chat does not overwrite switched-to chat state", async () => {
+    afterEach(() => {
+      // Deterministic teardown: this suite reassigns the file-global mock fetch;
+      // reset it so later suites never inherit a pending deferred handler.
+      fetchHandler = null;
+      fetchCalls = [];
+    },);
     const state = {
       activeChat: "chat-a" as string | null,
       messages: [] as Message[],
