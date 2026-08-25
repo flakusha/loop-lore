@@ -23,6 +23,7 @@ import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 import type { GenDeps, } from "./deps";
+import { compactPromptHistory, } from "../../assistant/prompt-budget";
 
 export interface PrepareGenerationOpts {
   d: GenDeps;
@@ -91,12 +92,15 @@ export async function prepareGeneration(opts: PrepareGenerationOpts,): Promise<P
     actorId,
     chatId,
     modelId: resolved.resolvedModel,
+    providerId: resolved.resolvedProviderName,
     userId,
     groupParticipantIds,
     config,
     systemPromptOverride,
     task: "auto-reply",
   },);
+
+  await compactPromptHistory(prompt.messages, 32_000,);
   log.debug("prompt assembled", { messageCount: prompt.messages.length, },);
 
   // For initial greeting (no parentMessageId), skip generation tracking
