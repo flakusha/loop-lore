@@ -39,6 +39,13 @@ describe("LoggerImpl message censoring", () => {
     expect(String(message["password"],),).not.toContain("s3cret");
   });
 
+  test("null message does not crash and passes through", async () => {
+    logger.info(null,);
+    await logger.flush();
+
+    expect(transport.entries[0]?.message,).toBeNull();
+  });
+
   test("string messages pass through uncensored", async () => {
     logger.info("hello world",);
     await logger.flush();

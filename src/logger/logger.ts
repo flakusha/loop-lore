@@ -92,9 +92,12 @@ export class LoggerImpl implements Logger {
     // Censor structured messages: object messages carry key-value PII/secrets
     // (logger.info({ password })) and previously bypassed censoring entirely.
     // Free-text string messages pass through (no reliable content censoring).
+    // null/undefined/primitives pass through — only real objects are censored
+    // (applyLimits crashes on Object.keys(null), and there is nothing to censor).
+    const isCensorable = typeof message === "object" && message !== null;
     const safeMessage: string | Record<string, unknown> =
-      options?.skipCensor || typeof message === "string"
-        ? message
+      options?.skipCensor || !isCensorable
+        ? (message as string | Record<string, unknown>)
         : censorMeta({ meta: message, extraRules: fieldNamesToRules(this.censorFields,), },) ?? message;
 
     // Build entry
