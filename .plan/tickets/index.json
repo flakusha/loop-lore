@@ -1895,6 +1895,18 @@
     "source": ".plan/tickets/BUG-story-mode-prompt-stored-as-content.md",
     "git_issue": "879fa11"
   },
+  "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS": {
+    "hash": "efdee47",
+    "git_issue": "efdee47",
+    "extid": "BUG-STRAY-INPUT-CLOSE-TAGS-CORRUPT-THREE-PLANNING-DOCS",
+    "type": "BUG",
+    "title": "stray-input-close-tags-corrupt-three-planning-docs",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-stray-input-close-tags-corrupt-three-planning-docs.md"
+  },
   "BUG-STREAM-CANCEL-LEAVES-ATTEMPT-STUCK-PROCESSING-FOREVER-NO-CLE": {
     "hash": "268fdae",
     "extid": "BUG-STREAM-CANCEL-LEAVES-ATTEMPT-STUCK-PROCESSING-FOREVER-NO-CLE",
@@ -14808,6 +14820,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-tier-1-openai-compatible-platform-catalog.md",
     "git_issue": "d0ba5cb"
+  },
+  "TASK-TIGHTEN-SAFEPARSEINT-TO-STRICT-BASE-10-CONTRACT": {
+    "hash": "e2f734c",
+    "git_issue": "e2f734c",
+    "extid": "TASK-TIGHTEN-SAFEPARSEINT-TO-STRICT-BASE-10-CONTRACT",
+    "type": "TASK",
+    "title": "tighten safeParseInt to strict base-10 contract",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tighten-safeparseint-to-strict-base-10-contract.md"
   },
   "TASK-TIME-SCALE": {
     "hash": "bf194ee",

@@ -751,6 +751,12 @@
       "source": ".plan/epics/epic-memory-propagation.md"
     }
   ],
+  "src/assistant/prompt-assembler.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-context-optimization.md"
+    }
+  ],
   "src/assistant/prompt-assembler.ts": [
     {
       "kind": "epic",
@@ -895,6 +901,12 @@
       "source": ".plan/epics/epic-character-internal-traits.md"
     }
   ],
+  "src/assistant/prompt/sections/author-note.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-context-optimization.md"
+    }
+  ],
   "src/assistant/prompt/sections/character-traits.ts": [
     {
       "kind": "epic",
@@ -957,6 +969,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-related-memory-event-injection-hooks.md"
+    }
+  ],
+  "src/assistant/prompt/sections/examples.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-context-optimization.md"
     }
   ],
   "src/assistant/prompt/sections/gm-notes.ts": [
@@ -1119,6 +1137,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    }
+  ],
+  "src/assistant/prompt/sections/system.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-context-optimization.md"
     }
   ],
   "src/assistant/prompt/sections/task-clarification.test.ts": [
@@ -1344,6 +1368,10 @@
     }
   ],
   "src/assistant/xml-utils.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-safety-xml-utils-tag-unescaped-narrative-greedy.md"
@@ -3182,6 +3210,10 @@
     }
   ],
   "src/chat/response-length.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
@@ -9999,6 +10031,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-test-failures.md"
+    }
+  ],
+  "src/frontend/utils/parse-number.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tighten-safeparseint-to-strict-base-10-contract.md"
     }
   ],
   "src/frontend/vendor.ts": [
@@ -19581,6 +19619,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-classify-intent-confidence-unbounded.md"
+    }
+  ],
+  "src/utils/parse-number.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tighten-safeparseint-to-strict-base-10-contract.md"
     }
   ],
   "src/utils/safe-json.ts": [
