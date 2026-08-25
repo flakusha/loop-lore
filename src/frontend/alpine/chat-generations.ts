@@ -164,7 +164,14 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
     if (!container) { return; }
     const DOMPurify = getDOMPurify();
     const html = `${this._streamToolCalls.join("",)}${this._streamContent}`;
-    container.innerHTML = DOMPurify ? DOMPurify.sanitize(html,) : html;
+    if (DOMPurify) {
+      container.innerHTML = DOMPurify.sanitize(html,);
+      return;
+    }
+    // Fail-safe: sanitizer unavailable — render as text, never raw HTML.
+    const pre = document.createElement("pre",);
+    pre.textContent = html;
+    container.replaceChildren(pre,);
   },
 
   _cleanupSSE() {
