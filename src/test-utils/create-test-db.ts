@@ -7,15 +7,7 @@ import { createLogger, } from "../logger";
 import { createSqliteDialect, } from "../db/index";
 import { runMigrations, } from "../db/migrate";
 
-/**
- * Create an in-memory SQLite test database with the full schema
- * applied via migrations. Single source of truth: migrations define
- * the DB structure, tests consume it.
- *
- * @returns Both the typed Kysely instance and raw SQLite handle
- *   (for introspection tests that need PRAGMA queries).
- */
-export async function createTestDb(): Promise<{ db: Kysely<DB>; sqlite: Database }> {
+export async function createTestDb(): Promise<TestDb> {
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = ON",);
   const dialect = createSqliteDialect(sqlite,);
@@ -52,4 +44,17 @@ export function resetTestDb(sqlite: Database,): void {
     sqlite.run(`DELETE FROM "${name}"`,);
   }
   sqlite.run("PRAGMA foreign_keys = ON",);
+}
+
+/**
+ * Create an in-memory SQLite test database with the full schema
+ * applied via migrations. Single source of truth: migrations define
+ * the DB structure, tests consume it.
+ *
+ * @returns Both the typed Kysely instance and raw SQLite handle
+ *   (for introspection tests that need PRAGMA queries).
+ */
+export interface TestDb {
+  db: Kysely<DB>;
+  sqlite: Database;
 }
