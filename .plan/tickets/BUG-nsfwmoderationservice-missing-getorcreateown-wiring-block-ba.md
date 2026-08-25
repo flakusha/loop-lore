@@ -1,6 +1,6 @@
 # BUG: NsfwModerationService missing getOrCreateOwn wiring — block/ban/shadow all return 400
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Resolved (class now binds getOrCreateOwn via arrow-field dispatcher; regression test in preferences.test.ts verifies the binding; bun test src/nsfw/ — 60 pass / 0 fail)
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-nsfw-moderation-priority
@@ -11,6 +11,6 @@ mod-actions.ts (changed 2026-08-25) calls thisL.getOrCreateOwn(targetUserId) in 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
