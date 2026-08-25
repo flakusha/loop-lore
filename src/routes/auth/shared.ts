@@ -13,6 +13,9 @@ const loginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MA
 const REGISTER_MAX_ATTEMPTS = 3;
 const registerLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS, },);
 
+const DEMO_LOGIN_MAX_ATTEMPTS = 5;
+const demoLoginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
+
 // ── Cookie helpers ────────────────────────────────────────────
 
 const TOKEN_COOKIE = "ll_token";
@@ -116,8 +119,13 @@ export function resetRegisterRateLimiter(): void {
   registerLimiter.clear();
 }
 
+export function resetDemoLoginRateLimiter(): void {
+  demoLoginLimiter.clear();
+}
+
 export {
   COOKIE_PATH,
+  demoLoginLimiter,
   errorHtml,
   getClientIp,
   getTokenFromCookie,
