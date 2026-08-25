@@ -127,38 +127,48 @@ export async function completeGeneration({ attemptId, result, db, }: CompleteGen
 
   const status: GenerationStatus = result.cancelled ? GenerationStatus.Cancelled : GenerationStatus.Completed;
 
-  await updateAttemptStatus({
-    db,
-    attemptId,
-    status,
-    extra: {
-      completion_tokens: result.tokenUsage.completionTokens,
-      prompt_tokens: result.tokenUsage.promptTokens,
-      total_tokens: result.tokenUsage.totalTokens,
-      generation_time_ms: duration,
-      streaming_chunks_received: active.chunksReceived,
-      streaming_chars_received: active.charsReceived,
-      repetition_score: result.repetitionScore ?? null,
-      repetition_analysis: result.repetitionAnalysis
-        ? (() => {
-          const r = safeJsonStringify(result.repetitionAnalysis,);
-          return r.ok ? r.value : null;
-        })()
-        : null,
-      policy_analysis: result.policyAnalysis
-        ? (() => {
-          const r = safeJsonStringify(result.policyAnalysis,);
-          return r.ok ? r.value : null;
-        })()
-        : null,
-      completed_at: new Date().toISOString(),
-      ...(result.cancelReason && {
-        cancel_reason: result.cancelReason,
-        cancel_reason_detail: result.cancelReason,
-        cancel_source: result.cancelSource,
-      }),
-    },
-  },);
+  // DB write must NEVER block in-memory cleanup: same rationale as
+  // failGeneration — chat must not stay "generating" if DB is down.
+  try {
+    await updateAttemptStatus({
+      db,
+      attemptId,
+      status,
+      extra: {
+        completion_tokens: result.tokenUsage.completionTokens,
+        prompt_tokens: result.tokenUsage.promptTokens,
+        total_tokens: result.tokenUsage.totalTokens,
+        generation_time_ms: duration,
+        streaming_chunks_received: active.chunksReceived,
+        streaming_chars_received: active.charsReceived,
+        repetition_score: result.repetitionScore ?? null,
+        repetition_analysis: result.repetitionAnalysis
+          ? (() => {
+            const r = safeJsonStringify(result.repetitionAnalysis,);
+            return r.ok ? r.value : null;
+          })()
+          : null,
+        policy_analysis: result.policyAnalysis
+          ? (() => {
+            const r = safeJsonStringify(result.policyAnalysis,);
+            return r.ok ? r.value : null;
+          })()
+          : null,
+        completed_at: new Date().toISOString(),
+        ...(result.cancelReason && {
+          cancel_reason: result.cancelReason,
+          cancel_reason_detail: result.cancelReason,
+          cancel_source: result.cancelSource,
+        }),
+      },
+    },);
+  } catch (dbError: unknown) {
+    getLogger().error(
+      "completeGeneration: DB update failed; cleaning in-memory state anyway",
+      dbError instanceof Error ? dbError : new Error(String(dbError,),),
+      { attemptId, status, },
+    );
+  }
 
   active.events?.onComplete?.(attemptId, result,);
 
@@ -183,15 +193,29 @@ export async function failGeneration({ attemptId, error, db, }: FailGenerationOp
     }
   }
 
-  await updateAttemptStatus({
-    db,
-    attemptId,
-    status: GenerationStatus.Failed,
-    extra: {
-      error_message: error.message,
-      completed_at: new Date().toISOString(),
-    },
-  },);
+  // DB write must NEVER block in-memory cleanup: if the DB is down, the
+  // chat would otherwise remain "generating" forever (isChatGenerating(chatId)
+  // returns true, status endpoint lies, client retries all rejected). Log the
+  // DB failure and proceed to clean maps — the in-memory state is the
+  // authoritative truth for live generations; the persisted row will be
+  // reconciled on the next startGenerationTracking for this chat.
+  try {
+    await updateAttemptStatus({
+      db,
+      attemptId,
+      status: GenerationStatus.Failed,
+      extra: {
+        error_message: error.message,
+        completed_at: new Date().toISOString(),
+      },
+    },);
+  } catch (dbError: unknown) {
+    getLogger().error(
+      "failGeneration: DB update failed; cleaning in-memory state anyway",
+      dbError instanceof Error ? dbError : new Error(String(dbError,),),
+      { attemptId, originalError: error.message, },
+    );
+  }
 
   active?.events?.onError?.(attemptId, error,);
 
