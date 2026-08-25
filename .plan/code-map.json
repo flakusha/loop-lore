@@ -3870,6 +3870,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
     },
     {
@@ -7828,6 +7832,14 @@
   "src/frontend/alpine/chat-generations.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-stale-sse-stream-writes-render-into-wrong-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing.md"
     }
   ],
@@ -7841,6 +7853,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-out-of-order-fetch-race-in-loadmessages.md"
     },
     {
       "kind": "ticket",
@@ -7869,6 +7885,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/search-and-filter.md"
+    }
+  ],
+  "src/frontend/alpine/chat-send.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-isgenerating-stuck-true-bricks-chat-switching.md"
     }
   ],
   "src/frontend/alpine/chat-settings.ts": [
@@ -8087,6 +8109,28 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-alpine-init-hydration.md"
+    }
+  ],
+  "src/frontend/alpine/chat/music-embed.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md"
+    }
+  ],
+  "src/frontend/alpine/chat/render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md"
+    }
+  ],
+  "src/frontend/alpine/chat/world.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-isgenerating-stuck-true-bricks-chat-switching.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md"
     }
   ],
   "src/frontend/alpine/command-buttons.ts": [
@@ -13104,6 +13148,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-flow-section-navigation.md"
     },
     {
@@ -13172,6 +13220,10 @@
     }
   ],
   "src/public/css/vn.css": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-css-deduplication-jscpd-full.md"
@@ -19497,6 +19549,12 @@
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     }
   ],
+  "src/views": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md"
+    }
+  ],
   "src/views/admin.html": [
     {
       "kind": "epic",
@@ -19751,6 +19809,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-html-lang-hardcoded-no-dir-handling-for-i18n.md"
     },
     {
       "kind": "ticket",
