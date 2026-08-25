@@ -10,7 +10,9 @@ import type { DB, } from "../../db/schema";
 import type { LinkAssetOpts, UnlinkAssetOpts, } from "./types";
 
 /**
- * Link an asset to an entity.
+ * Link an asset to an entity. Re-linking the same asset/entity pair is an
+ * expected no-op; any other insert failure (e.g. FK violation for a
+ * nonexistent entity) propagates to the caller.
  */
 export async function linkAsset({ database, assetId, link, }: LinkAssetOpts,): Promise<void> {
   try {
@@ -23,8 +25,10 @@ export async function linkAsset({ database, assetId, link, }: LinkAssetOpts,): P
         label: link.label ?? null,
       },)
       .execute();
-  } catch {
-    /* ignore duplicate */
+  } catch (error) {
+    if (!(error instanceof Error && error.message.includes("UNIQUE constraint failed",))) {
+      throw error;
+    }
   }
 }
 
