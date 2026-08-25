@@ -3603,6 +3603,30 @@
     "source": ".plan/tickets/FEAT-chat-lifecycle-moderation.md",
     "git_issue": "d33a823"
   },
+  "FEAT-CHAT-OUTPUT-STYLING-RESOLVER-STYLESECTION-BINDING": {
+    "hash": "7d16ada",
+    "git_issue": "7d16ada",
+    "extid": "FEAT-CHAT-OUTPUT-STYLING-RESOLVER-STYLESECTION-BINDING",
+    "type": "FEAT",
+    "title": "Chat output styling: resolver + styleSection binding",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-chat-output-styling-resolver-stylesection-binding.md"
+  },
+  "FEAT-CHAT-SETTINGS-MODAL-OUTPUT-STYLING-CONTROL": {
+    "hash": "998d3da",
+    "git_issue": "998d3da",
+    "extid": "FEAT-CHAT-SETTINGS-MODAL-OUTPUT-STYLING-CONTROL",
+    "type": "FEAT",
+    "title": "Chat settings modal: output styling control",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-chat-settings-modal-output-styling-control.md"
+  },
   "FEAT-CHAT-TEMPLATE-CONFIG-LIFECYCLE": {
     "hash": "77c026e",
     "extid": "FEAT-CHAT-TEMPLATE-CONFIG-LIFECYCLE",
@@ -3930,6 +3954,18 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-origin-capture-generation-seeding.md",
     "git_issue": "e7cc2b6"
+  },
+  "FEAT-OUTPUT-STYLING-CUSTOM-GENRES-VIA-ECE": {
+    "hash": "a897ef0",
+    "git_issue": "a897ef0",
+    "extid": "FEAT-OUTPUT-STYLING-CUSTOM-GENRES-VIA-ECE",
+    "type": "FEAT",
+    "title": "Output styling: custom genres via ECE",
+    "label": "feat",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-output-styling-custom-genres-via-ece.md"
   },
   "FEAT-PLUGIN-SYSTEM-EXTENSIBILITY-DELAYED": {
     "hash": "42d36a1",
@@ -14563,6 +14599,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-svg-upload-leads-to-stored-xss.md",
     "git_issue": "962618b"
+  },
+  "TASK-SWARM-SUPERVISOR": {
+    "hash": "pending",
+    "extid": "TASK-SWARM-SUPERVISOR",
+    "type": "TASK",
+    "title": "Swarm Supervisor — generalize ServerExternalManager",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-local-process-swarm",
+    "tags": [],
+    "source": ".plan/tickets/TASK-swarm-supervisor.md"
   },
   "TASK-TALKATIVITY-INFLUENCE-RESPONSE-VERBOSITY": {
     "hash": "pending",
