@@ -868,6 +868,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-output-styling-resolver-stylesection-binding.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-feature-flags-conditional-injection.md"
     },
     {
@@ -3216,6 +3220,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-output-styling-resolver-stylesection-binding.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     },
     {
@@ -3880,6 +3888,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-settings-modal-output-styling-control.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
     },
     {
@@ -4429,6 +4441,10 @@
   ],
   "src/config/load/safety.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
     }
@@ -4762,6 +4778,10 @@
     }
   ],
   "src/config/sections/server.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
@@ -5920,6 +5940,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-multi-instance-reconciliation.md"
     },
     {
@@ -5945,6 +5969,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
     },
     {
       "kind": "epic",
@@ -7322,6 +7350,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
     },
     {
@@ -8035,6 +8067,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
+    }
+  ],
+  "src/frontend/alpine/chat-settings/gm-config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-chat-settings-modal-output-styling-control.md"
     }
   ],
   "src/frontend/alpine/chat-settings/vn.ts": [
@@ -11404,6 +11442,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
     },
     {
@@ -12597,6 +12639,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-db-cold-storage-high-perf.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
     },
     {
       "kind": "ticket",
@@ -14034,6 +14080,10 @@
     }
   ],
   "src/routes/activity-stream.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-multi-instance-reconciliation.md"
@@ -18574,6 +18624,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-skills-professions-config.md"
     },
     {
@@ -18591,6 +18645,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-size-strict-debt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-swarm-supervisor.md"
     }
   ],
   "src/server/static-files.ts": [
@@ -18698,6 +18756,10 @@
     }
   ],
   "src/services/server-external-manager/start-llama.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-local-process-swarm.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
