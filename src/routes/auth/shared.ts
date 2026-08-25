@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Config, } from "../../config/schema";
 import { createRateLimiter, } from "../../middleware/rate-limit";
 import { LL_TOKEN, } from "../../regex/cookies";
 
@@ -12,9 +11,6 @@ const loginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MA
 
 const REGISTER_MAX_ATTEMPTS = 3;
 const registerLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS, },);
-
-const DEMO_LOGIN_MAX_ATTEMPTS = 5;
-const demoLoginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
 
 // ── Cookie helpers ────────────────────────────────────────────
 
@@ -50,37 +46,20 @@ function setTokenCookie(token: string, maxAgeSecs: number,): string {
 
 // ── Helpers ───────────────────────────────────────────────────
 
-/**
- * Resolve the rate-limiter bucket key for a request.
- *
- * `peerIp` is the connection-derived address (Bun server.requestIP(request)),
- * threaded in from the Elysia route context — `request.remoteAddress` is never
- * set for plain HTTP, so it cannot be sourced from the Request alone.
- *
- * Policy:
- * - peerIp known, trustProxy off → use the peer address (spoofed XFF ignored).
- * - peerIp known, trustProxy on  → the nearest trusted proxy appended the
- *   client IP to X-Forwarded-For; trust only its LAST (proxy-appended) entry, falling back to
- *   x-real-ip / CF-Connecting-IP / the peer address.
- * - no peerIp (unit tests, exotic runtimes) → default deny: "unknown". All
- *   such callers share one bucket by design rather than trusting headers.
- */
-/** Rightmost XFF entry = the one the nearest trusted proxy appended. */
-function forwardedForLast(request: Request,): string | null {
-  const entries = request.headers.get("X-Forwarded-For",)?.split(",",);
-  if (!entries || entries.length === 0) { return null; }
-  const last = entries.at(-1,)?.trim();
-  return last ? last : null;
-}
-
-function getClientIp(request: Request, config: Config, peerIp?: string | null,): string {
-  if (!peerIp) { return "unknown"; }
-  if (!config.server?.trustProxy) { return peerIp; }
+function getClientIp(request: Request,): string {
+  const directIp = (request as { remoteAddress?: string }).remoteAddress;
+  if (directIp) { return directIp; }
+  // Only trust X-Forwarded-For behind a configured trusted proxy.
+  // In direct-deploy (no proxy), remoteAddress is authoritative.
+  const trustedProxy = process.env.LL_TRUSTED_PROXY === "true";
+  if (trustedProxy) {
+    const xff = request.headers.get("X-Forwarded-For",);
+    if (xff) { return xff.split(",", 1,)[0]?.trim() ?? "unknown"; }
+  }
   return (
-    forwardedForLast(request,) ??
-      request.headers.get("x-real-ip",) ??
+    request.headers.get("x-real-ip",) ??
       request.headers.get("CF-Connecting-IP",) ??
-      peerIp
+      "unknown"
   );
 }
 
@@ -119,13 +98,8 @@ export function resetRegisterRateLimiter(): void {
   registerLimiter.clear();
 }
 
-export function resetDemoLoginRateLimiter(): void {
-  demoLoginLimiter.clear();
-}
-
 export {
   COOKIE_PATH,
-  demoLoginLimiter,
   errorHtml,
   getClientIp,
   getTokenFromCookie,
