@@ -76,7 +76,8 @@ export async function waitForHealth(url: string, opts: WaitForHealthOptions,): P
   const intervalMs = opts.intervalMs ?? 500;
   const deadline = Date.now() + opts.timeoutMs;
   while (Date.now() < deadline) {
-    const result = await safeFetch(url, { timeout: 2_000, },);
+    // Readiness = any 2xx response; body may be empty/text, not JSON.
+    const result = await safeFetch<string>(url, { timeout: 2_000, parseJson: false, },);
     if (result.ok) { return true; }
     await new Promise((r,) => setTimeout(r, intervalMs,));
   }
