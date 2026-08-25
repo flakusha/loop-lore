@@ -28,8 +28,9 @@ export function sdStatusRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         let latencyMs: number | null = null;
 
         const start = Date.now();
-        const result = await safeFetch(`http://127.0.0.1:${String(sdPort,)}/`, {
+        const result = await safeFetch<string>(`http://127.0.0.1:${String(sdPort,)}/`, {
           timeout: 5_000,
+          parseJson: false,
         },);
         if (result.ok || result.status !== undefined) {
           latencyMs = Date.now() - start;
