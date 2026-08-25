@@ -40,6 +40,10 @@ export interface ModAction {
   metadata: Record<string, unknown>;
   expiresAt: string | null;
   createdAt: string;
+  /** Set when soft-deleted via deleteUserData; null for live actions. */
+  deletedAt: string | null;
+  /** Admin userId who performed the soft-delete; null for live actions. */
+  deletedBy: string | null;
 }
 
 /** A user-submitted content flag awaiting/pending review. */
@@ -98,17 +102,17 @@ export interface NsfwModerationService {
   getFlagQueue(
     params?: { status?: string; limit?: number; offset?: number },
   ): Promise<{ flags: ContentFlag[]; total: number }>;
+  getAuditLog(targetUserId: string, options?: { limit?: number; offset?: number },): Promise<ModAction[]>;
   resolveFlag(
     flagId: string,
     resolvedBy: string,
     resolution: string,
     status: "resolved" | "dismissed" | "confirmed",
   ): Promise<ContentFlag>;
-  getAuditLog(targetUserId: string, options?: { limit?: number; offset?: number },): Promise<ModAction[]>;
   exportUserData(
     userId: string,
   ): Promise<{ preferences: NsfwUserPrefs | null; actions: ModAction[]; flags: ContentFlag[] }>;
-  deleteUserData(userId: string,): Promise<void>;
+  deleteUserData(userId: string, deletedBy: string,): Promise<void>;
   getEffectiveNsfw(chatId: string, userId: string,): Promise<{ enabled: boolean; source: string }>;
   setChatNsfwOverride(chatId: string, override: "enabled" | "disabled" | null,): Promise<void>;
   setWorldNsfwOverride(worldId: string, override: "enabled" | "disabled" | null,): Promise<void>;
