@@ -10,7 +10,7 @@
 
 import { registry, } from "../../plugins/registry";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
-import { jsonParseOr, jsonStringifyOr, } from "../../utils";
+import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 
 /** Maximum rounds of tool calls in the generation loop. */
@@ -78,9 +78,30 @@ export async function executeToolCalls(
       },);
       continue;
     }
-
-    const params: Record<string, unknown> = jsonParseOr(tc.function.arguments, {},);
-
+    // Parse tool arguments strictly. BUG-tool-call-arg-parse-silent-fallback:
+    // silent `{}` fallback meant the model couldn't self-correct when it
+    // emitted malformed JSON — handler threw a generic runtime error
+    // instead of a syntax diagnostic.
+    const parsed = safeJsonParse<Record<string, unknown>>(tc.function.arguments,);
+    const valueIsObject = parsed.ok &&
+      parsed.value !== null &&
+      typeof parsed.value === "object" &&
+      !Array.isArray(parsed.value,);
+    if (!valueIsObject) {
+      const detail = parsed.ok
+        ? `got ${parsed.value === null ? "null" : Array.isArray(parsed.value,) ? "array" : typeof parsed.value}`
+        : parsed.error.message;
+      results.push({
+        role: "tool",
+        content: jsonStringifyOr({
+          error: `tool arguments must be a JSON object: ${detail}`,
+          received: tc.function.arguments.slice(0, 200,),
+        },),
+        tool_call_id: tc.id,
+      },);
+      continue;
+    }
+    const params = parsed.value;
     try {
       const toolResult = await def.handler(params, ctx,);
       results.push({
