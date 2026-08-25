@@ -62,8 +62,12 @@ export function createApp(deps: AppDeps,): Elysia {
       // Propagate the resolved user id onto the request so the access-log
       // handler (src/server/handler.ts) can attribute the request via the
       // x-user-id header. This is the same Request object the handler clones
-      // and later reads, so the mutation is observed downstream.
-      request.headers.set("x-user-id", authResult.context.userId,);
+      // and later reads, so the mutation is observed downstream. Skip when
+      // unauthenticated — the header type is non-nullable and the access-log
+      // falls back to anonymous attribution for absent x-user-id.
+      if (authResult.context.userId !== null) {
+        request.headers.set("x-user-id", authResult.context.userId,);
+      }
       return {
         userId: authResult.context.userId,
         userRole: authResult.context.userRole,
