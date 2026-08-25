@@ -13,3 +13,19 @@ ROOT CAUSE: src/routes/auth/shared.ts getClientIp (L50-68) relies on request.rem
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Verification (reproduced 2026-08-25)
+
+Runtime reproduction confirms the collapse is the DEFAULT, always-broken behavior — not a deployment edge case. Minimal Bun.serve + Elysia handler hit over loopback:
+
+- bare request.remoteAddress -> UNDEFINED (field absent from JSON; JSON.stringify drops undefined)
+- Elysia ctx.request.remoteAddress -> UNDEFINED; Elysia ctx.ip -> UNDEFINED
+- app.server.requestIP(ctx.request) -> {"address":"::ffff:127.0.0.1","family":"IPv6","port":52238} (real peer IP)
+
+Conclusion: hasRemoteAddress(request) is always false for HTTP; with server.trustProxy defaulting false (src/config/sections/server.ts L15), getClientIp returns the literal "unknown" for every request, so loginLimiter + registerLimiter share ONE global bucket.
+
+Dual failure mode:
+1. trustProxy=false (default): all clients collapse into bucket "unknown" -> the limit is a single global throttle; one client exhausting it blocks all other users (self-DoS / availability regression) and the intended per-IP brute-force isolation is void.
+2. trustProxy=true (behind a proxy): getClientIp trusts client-supplied X-Forwarded-For / X-Real-IP / CF-Connecting-IP first -> an attacker rotates XFF per request and bypasses the limiter entirely.
+
+Correct fix: source the peer address from the Bun server connection (server.requestIP(request)), threaded into getClientIp; only consult proxy headers when the connection originates from a configured trusted proxy (strip client-supplied XFF first). Add a regression test asserting getClientIp returns a distinct, real per-connection IP.
