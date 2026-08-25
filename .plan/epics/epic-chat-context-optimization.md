@@ -216,3 +216,9 @@ Their context model is the canonical precedent for our lossless/lossy split:
 - **epic-memory-propagation.md** — cross-timeline/chat memory scoping (feeds the lossy memory tier).
 - **epic-analytics-observability.md** — telemetry sink for compression metadata.
 - **epic-testing-qa.md** — golden token-accuracy + budget-boundary tests live in the QA epic's task pool.
+
+## Chat Audit 2026-08-25 — Related Findings
+
+- **B3:** Token counter uses generic `defaultTokenCount` (no per-model map) in `src/chat/token-counter.ts` → inaccurate budgeting. See TASK-ctx-token-accuracy.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25._

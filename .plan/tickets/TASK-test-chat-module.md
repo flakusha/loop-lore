@@ -36,3 +36,9 @@ The `src/chat/` module has 15 source files and 0 test files. This is the core ch
 - [ ] Each file has at least 1 test file
 - [ ] Core functions covered (≥80% function coverage)
 - [ ] All tests pass: `bun test src/chat/`
+
+## Chat Audit 2026-08-25 — Cross-Reference
+
+**Finding B6:** `Messages` entity (`src/chat/service/types.ts`, `src/db/schema-core.ts`) lacks first-class reaction/grading fields; assets linked via separate `asset_links` table, not embedded. Swipe hierarchy (`parent_id`/`swipe_index`) present.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25. Related umbrella ticket for asset-injection feature: TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex (issue afe0589)._

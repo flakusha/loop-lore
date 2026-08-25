@@ -42,3 +42,9 @@ Builds on the World Event & Timeline System (TASK-world-event-system.md) and the
 - Integrates with Weather & Environment epic for weather-related encounters
 - Integrates with Battle Action Systems for combat encounters
 - Uses existing hook system for event injection into chat context
+
+## Chat Audit 2026-08-25 — Cross-Reference
+
+**Finding B5:** `src/chat/proactive/*` and `src/chat/random-events.ts` are skeletal — event lifecycle and persistence logic missing/stagnant; needs completion before random/proactive events are reliable.
+
+_Source: chat functionality audit (loop-lore), 2026-08-25. Related umbrella ticket for asset-injection feature: TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex (issue afe0589)._
