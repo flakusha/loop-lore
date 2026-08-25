@@ -1,8 +1,7 @@
 # BUG: Validation middleware leaks raw err.message in 500 envelope
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
-**Effort:** Medium
 
 ## Summary
 
