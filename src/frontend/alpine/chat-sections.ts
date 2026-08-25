@@ -7,6 +7,7 @@
 // ordered groups (optionally bound to a location). The panel lists sections,
 // lets the user create/delete/reorder them, picks the "active" section, and
 // assigns/clears that section on individual messages.
+import { formatDisplayDate, } from "./chat-utils/time";
 import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -162,9 +163,7 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
   /** Format an ISO timestamp for divider display (HH:MM). */
   formatSectionTime(iso: string | null,): string {
     if (!iso) { return ""; }
-    const d = new Date(iso,);
-    if (Number.isNaN(d.getTime(),)) { return ""; }
-    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", },);
+    return formatDisplayDate(iso, "time",);
   },
 
   async assignMessageToSection(messageId: string, sectionId: string | null,) {

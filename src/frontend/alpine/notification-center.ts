@@ -10,6 +10,7 @@
 // stays the lightweight chat-header surface; this component backs the
 // standalone `/views/notifications` page.
 
+import { formatDisplayDate, } from "./chat-utils/time";
 import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, } from "./json";
 import type { NotificationCenterItem, NotificationCenterState, } from "./types";
@@ -163,7 +164,7 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       if (!iso) { return ""; }
       const then = new Date(iso,).getTime();
       if (Number.isNaN(then,)) { return ""; }
-      return new Date(then,).toLocaleString();
+      return formatDisplayDate(iso, "datetime",);
     },
   };
 };
