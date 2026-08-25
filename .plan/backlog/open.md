@@ -3,9 +3,8 @@
 
 # Open — Index (In-Flight, Debt, Unwired Code & Deferred)
 
-> **Last updated:** 2026-08-16 (.plan housekeeping — sync-ticket tooling extended with
-> git_issue link/stale/orphan checks; 5 stale git issues closed; 597 missing git_issue
-> fields bulk-linked; feature matrix items promoted to P4/P5/P6 tiers). Split into
+> **Last updated:** 2026-08-25 (backlog housekeeping — untriaged orphan set refreshed
+> in `open-untriaged.md`; resolved index-defect note closed out). Split into
 > per-category files 2026-08-15 (was a single monolith); this index holds the status
 > header + file map. Holds what is **currently in flight / needing a decision / open debt / deferred (P6+)**. The priority ladder P0→P6+ lives in `../priority.md` (index → tier files).
 >
