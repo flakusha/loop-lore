@@ -8,8 +8,11 @@
  * BYO-aware, telemetry-tracked. Consumers import `callAux` and a prompt.
  */
 export {
+  GM_TOOL_DETECTION_PROMPT,
   INTENT_CLASSIFIER_PROMPT,
   MEMORY_EXTRACTION_PROMPT,
+  NSFW_POLICY_LEVELS_PROMPT,
+  NSFW_POLICY_PROMPT,
   TRANSITION_CLASSIFIER_PROMPT,
 } from "./prompts";
 export { callAux, } from "./runner";
