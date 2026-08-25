@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { NSFWContentRating, } from "../../schemas/nsfw-rating";
+
+/** NSFW content-rating tiers, re-exported for chat-layer consumers (B4). */
+export { NSFWContentRating, } from "../../schemas/nsfw-rating";
+
 /** NSFW-specific moderation action types */
 export type NsfwModerationActionType =
   | "nsfw_block" // Block user from NSFW interactions
@@ -27,6 +32,8 @@ export interface NsfwModerationAction {
   reason?: string;
   /** Whether this is internal (mod queue) or external (user report) */
   internal: boolean;
+  /** NSFW content-rating tier this action was taken under (B4, 2026-08-25). */
+  rating?: NSFWContentRating;
   /** When this action was applied */
   timestamp: Date;
   /** When this action expires (if temporary) */
@@ -55,6 +62,8 @@ export interface NsfwFlag {
   reporterId: string;
   /** Why it was flagged */
   reason: string;
+  /** NSFW content-rating tier of the flagged content (B4, 2026-08-25). */
+  rating?: NSFWContentRating;
   /** Current status */
   status: NsfwFlagStatus;
   /** Resolution (if resolved) */

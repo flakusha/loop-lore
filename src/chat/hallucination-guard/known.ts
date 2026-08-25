@@ -68,8 +68,10 @@ export function isKnownEntity(
   known: KnownEntities,
   _knownActorIds: string[],
   _knownLocationIds: string[],
+  allowedNames?: Set<string>,
 ): boolean {
   const lower = name.toLowerCase();
+  if (allowedNames && allowedNames.has(lower,)) { return true; }
   return known.actors.has(lower,) ||
     known.locations.has(lower,) ||
     known.items.has(lower,) ||
