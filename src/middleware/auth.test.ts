@@ -49,6 +49,9 @@ describe("extractBearerToken", () => {
 
 describe("resolveUserIdFromRequest", () => {
   let db: Kysely<DB>;
+  // RESOURCE CONTRACT: this suite owns process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK for each test;
+  // the prior host value is captured here and restored in afterEach (parallel/global safety).
+  let prevLegacyFallback: string | undefined;
 
   beforeEach(async () => {
     createLogger({ level: "warn", },);
@@ -58,12 +61,14 @@ describe("resolveUserIdFromRequest", () => {
     // deployments leave this off; login.ts now writes `token_hash =
     // "jwt:" + sessionId` so JWT-issued sessions never collide with this
     // path regardless of the flag.
+    prevLegacyFallback = process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK;
     process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "1";
   },);
 
   afterEach(async () => {
     resetSoloUserCache();
-    delete process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK;
+    if (prevLegacyFallback === undefined) { delete process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK; }
+    else { process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = prevLegacyFallback; }
     await db.destroy();
   },);
 
