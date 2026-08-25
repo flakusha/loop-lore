@@ -27,7 +27,6 @@ export interface EntityDraft {
   description: string;
   /** World scope resolved at generation time. */
   worldId?: string;
-  userId: string;
 }
 
 /** Result of persisting an entity. */
@@ -50,9 +49,10 @@ export interface InsertedEntity {
 export async function insertGeneratedEntity(
   db: Kysely<DB>,
   draft: EntityDraft,
+  userId: string,
 ): Promise<InsertedEntity> {
   const id = uid();
-  const { kind, data, description, worldId, userId, } = draft;
+  const { kind, data, description, worldId, } = draft;
   const name = data.name || "Unnamed";
 
   switch (kind) {

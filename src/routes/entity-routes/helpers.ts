@@ -18,7 +18,7 @@ export function buildCreateValues({
     [config.parentFk]: parentId,
   };
   for (const [camel, col,] of Object.entries(config.fieldMappings,)) {
-    const raw = body[camel] ?? config.defaults[camel];
+    const raw = body[camel] == null ? config.defaults[camel] : body[camel];
     if (raw == null) { continue; }
     const val = config.valueTransforms?.[camel] ? config.valueTransforms[camel](raw,) : raw;
     values[col] = config.jsonFields.includes(camel,) ? jsonStringifyOr(val,) : val;

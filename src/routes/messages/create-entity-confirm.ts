@@ -50,7 +50,6 @@ export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
           data?: Record<string, unknown>;
           description?: string;
           worldId?: string | null;
-          userId?: string | null;
         };
 
         if (!body.kind || !ALLOWED_KINDS[body.kind]) {
@@ -73,8 +72,7 @@ export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
           data: entity,
           description: body.description ?? "",
           worldId: body.worldId ?? undefined,
-          userId: body.userId ?? actorId,
-        },);
+        }, actorId,);
         return jsonCreated({
           id: inserted.id,
           kind: inserted.kind,
@@ -89,7 +87,6 @@ export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
           data: t.Object({ name: t.String(), }, { additionalProperties: true, },),
           description: t.Optional(t.String(),),
           worldId: t.Optional(t.Union([t.String(), t.Null(),],),),
-          userId: t.Optional(t.Union([t.String(), t.Null(),],),),
         },),
         response: {
           201: t.Object({

@@ -12,7 +12,7 @@ export interface EntityPaths {
 }
 
 export function entityPaths(config: EntityConfig,): EntityPaths {
-  const parentParam = config.parentParam ?? "id";
+  const parentParam = config.parentParam == null ? "id" : config.parentParam;
   const basePath = `/api/${config.parentPrefix}/:${parentParam}/${config.entityPath}`;
   const withIdPath = `${basePath}/:entityId`;
   return { parentParam, basePath, withIdPath, };
