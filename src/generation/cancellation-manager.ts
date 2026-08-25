@@ -15,6 +15,7 @@ export {
   completeGeneration,
   failGeneration,
   getActiveAttemptId,
+  IdempotencyKeyConflictError,
   isChatGenerating,
   listActiveGenerations,
   startGenerationTracking,
