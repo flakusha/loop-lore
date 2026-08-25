@@ -363,12 +363,6 @@
       "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md"
     }
   ],
-  "src/assistant": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex.md"
-    }
-  ],
   "src/assistant/command-parser.ts": [
     {
       "kind": "epic",
@@ -3166,10 +3160,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-random-encounters-events.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     },
     {
@@ -3414,15 +3404,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/FEAT-message-swipe-replay-branch.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-test-chat-module.md"
     }
   ],
   "src/chat/service/write.test.ts": [
@@ -3454,10 +3436,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-ctx-token-accuracy.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     }
   ],
@@ -3485,14 +3463,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-aux-enrichment-pipeline.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-transitions-memory-poisoning.md"
     },
     {
       "kind": "ticket",
@@ -3573,20 +3543,8 @@
   ],
   "src/chat/types/nsfw.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-gate-log-plaintext-pii.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-nsfw-rating-schema.md"
     }
   ],
   "src/chat/visibility.ts": [
@@ -4713,12 +4671,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
-    }
-  ],
-  "src/config/sections/server.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
     }
   ],
   "src/config/sections/templates.ts": [
@@ -6637,10 +6589,6 @@
       "source": ".plan/tickets/TASK-mini-games-framework.md"
     },
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-test-chat-module.md"
-    },
-    {
       "kind": "frontend",
       "source": "docs/frontend/chat/assistant.md"
     },
@@ -7277,10 +7225,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-openapi-reference.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
     },
     {
       "kind": "ticket",
@@ -8075,12 +8019,6 @@
       "source": ".plan/tickets/TEST-gallery-frontend-utils-untested.md"
     }
   ],
-  "src/frontend/alpine/chat-utils/time.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
-    }
-  ],
   "src/frontend/alpine/chat-utils/validation.ts": [
     {
       "kind": "epic",
@@ -8408,10 +8346,6 @@
   "src/frontend/alpine/index.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
     }
   ],
@@ -8479,12 +8413,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-location-explorer.md"
-    }
-  ],
-  "src/frontend/alpine/logger.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
     }
   ],
   "src/frontend/alpine/memory-panel.ts": [
@@ -9980,10 +9908,6 @@
     }
   ],
   "src/frontend/ui.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-test-failures.md"
@@ -12439,10 +12363,6 @@
       "source": ".plan/epics/epic-architecture.md"
     },
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
-    },
-    {
       "kind": "frontend",
       "source": "docs/frontend/headers-management.md"
     }
@@ -12481,10 +12401,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md"
     },
     {
       "kind": "ticket",
@@ -12542,14 +12458,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-limiter-is-fixed-window-but-mislabeled-sliding-window-2x-bou.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-export-bundle-no-access-log.md"
     },
     {
@@ -12577,10 +12485,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
     },
     {
       "kind": "frontend",
@@ -14321,21 +14225,7 @@
       "source": "docs/spec/auth-middleware.md"
     }
   ],
-  "src/routes/auth/login.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-demo-login-endpoint-bypasses-rate-limiter.md"
-    }
-  ],
   "src/routes/auth/register.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-429-responses-omit-retry-after-and-x-ratelimit-headers.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-register-username-race-and-rate-limiter-multi-instance-gap.md"
@@ -14348,18 +14238,6 @@
     }
   ],
   "src/routes/auth/shared.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-rate-limiter-module-singletons-shared-across-test-files-caus.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md"
@@ -18238,15 +18116,7 @@
     },
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-nsfw-moderation-priority.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-shared-schemas.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
     },
     {
       "kind": "ticket",
@@ -18478,10 +18348,6 @@
   "src/server/handler.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-server-edge-error-handling-gaps-in-routes-layer.md"
     }
   ],
@@ -18543,14 +18409,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-static-files-304-only-matches-a-single-exact-if-none-match-e.md"
     },
     {
       "kind": "ticket",
@@ -19260,10 +19118,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-http1handler-send-is-a-silent-no-op.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-transport-expansion.md"
     },
     {
@@ -19271,28 +19125,10 @@
       "source": ".plan/tickets/TASK-transport-layer-expansion.md"
     }
   ],
-  "src/transport/negotiation-parsers.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
-    }
-  ],
   "src/transport/negotiation.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
     },
     {
       "kind": "spec",
@@ -19516,10 +19352,6 @@
     }
   ],
   "src/utils/date.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
-    },
     {
       "kind": "spec",
       "source": "docs/spec/logging.md"
@@ -20075,12 +19907,6 @@
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
     }
   ],
-  "src/views/notifications.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
-    }
-  ],
   "src/views/partials/worlds/item-provisioning-panel.html": [
     {
       "kind": "ticket",
@@ -20143,10 +19969,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
     },
     {
       "kind": "ticket",

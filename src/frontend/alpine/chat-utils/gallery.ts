@@ -72,7 +72,7 @@ export const chatUtilsGallery: ChatUtilsGallery = {
     };
     // Mirror into the global preview state so the modal's copy/download
     // actions (which read __previewAsset) act on THIS asset.
-    window.__previewAsset = {
+    globalThis.__previewAsset = {
       id: asset.id,
       filename: asset.filename || asset.name || t("gallery.assetFallback",),
       mime_type: asset.mime_type,

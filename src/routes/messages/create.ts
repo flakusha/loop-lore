@@ -13,17 +13,13 @@ import { safeJsonStringify, uid, } from "../../utils";
 import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validation/schemas";
 import { jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
 import type { HttpStatusCode, } from "../http-utils";
+import { AttachmentOwnershipError, } from "./attachment-ownership";
+import { dispatchCommand, } from "./command";
 import { createEntityConfirmRoutes, } from "./create-entity-confirm";
 import { handleSceneTransitions, } from "./handle-scene-transitions";
 import { serviceErrorToResponse, } from "./helpers";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
-import {
-  AttachmentOwnershipError,
-  attachMessageAttachments,
-  persistInitiative,
-  persistMentions,
-  prepareContentStorage,
-} from "./post";
+import { attachMessageAttachments, persistInitiative, persistMentions, prepareContentStorage, } from "./post";
 import { maybeAutoReply, } from "./reply";
 import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
 import { autoRenameChat, } from "./transitions";
