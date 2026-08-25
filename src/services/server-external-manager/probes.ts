@@ -52,8 +52,9 @@ export async function checkAllLiveliness(host: ServerExternalHost,): Promise<voi
 async function probeInstance(instance: ServerInstance,): Promise<boolean> {
   try {
     if (instance.type === "llama-cpp") {
-      const result = await safeFetch(`http://127.0.0.1:${instance.port}/health`, {
+      const result = await safeFetch<string>(`http://127.0.0.1:${instance.port}/health`, {
         timeout: 5_000,
+        parseJson: false,
       },);
       return result.ok;
     }
