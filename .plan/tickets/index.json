@@ -50,8 +50,8 @@
     "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
   },
   "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
-    "hash": "2d01b19",
-    "git_issue": "2d01b19",
+    "hash": "f27472d",
+    "git_issue": "f27472d",
     "extid": "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY",
     "type": "BUG",
     "title": "ActivityPub actor signing keys and rotation undefined; no crypto-epic link",
@@ -266,8 +266,8 @@
     "source": ".plan/tickets/BUG-avatar-selection-rule-unimplemented-branches.md"
   },
   "BUG-BACKFILL-OF-HISTORICAL-POSTS-ON-NEW-FOLLOWER-UNSPECIFIED": {
-    "hash": "78722c5",
-    "git_issue": "78722c5",
+    "hash": "9191c2f",
+    "git_issue": "9191c2f",
     "extid": "BUG-BACKFILL-OF-HISTORICAL-POSTS-ON-NEW-FOLLOWER-UNSPECIFIED",
     "type": "BUG",
     "title": "Backfill of historical posts on new follower unspecified",
@@ -338,8 +338,8 @@
     "git_issue": "d2861ca"
   },
   "BUG-CHARACTER-FEDERATION-LACKS-OWNER-CONSENT-OR-NSFW-GATE": {
-    "hash": "bf46681",
-    "git_issue": "bf46681",
+    "hash": "beff3bd",
+    "git_issue": "beff3bd",
     "extid": "BUG-CHARACTER-FEDERATION-LACKS-OWNER-CONSENT-OR-NSFW-GATE",
     "type": "BUG",
     "title": "Character federation lacks owner consent or NSFW gate",
@@ -694,8 +694,8 @@
     "git_issue": "7bde6bd"
   },
   "BUG-CRDT-CONFLICT-POLICY-MISSING-LEADER-VS-SWARM-PRECEDENCE-AND-": {
-    "hash": "31a4037",
-    "git_issue": "31a4037",
+    "hash": "26741b8",
+    "git_issue": "26741b8",
     "extid": "BUG-CRDT-CONFLICT-POLICY-MISSING-LEADER-VS-SWARM-PRECEDENCE-AND-",
     "type": "BUG",
     "title": "CRDT conflict policy missing leader-vs-swarm precedence and deletes",
@@ -884,8 +884,8 @@
     "source": ".plan/tickets/BUG-feat-radicle-integration-acceptance-criteria-too-thin.md"
   },
   "BUG-FEDERATED-DELETE-AND-GDPR-RIGHT-TO-BE-FORGOTTEN-UNHANDLED": {
-    "hash": "69a4c7e",
-    "git_issue": "69a4c7e",
+    "hash": "32066c5",
+    "git_issue": "32066c5",
     "extid": "BUG-FEDERATED-DELETE-AND-GDPR-RIGHT-TO-BE-FORGOTTEN-UNHANDLED",
     "type": "BUG",
     "title": "Federated delete and GDPR right-to-be-forgotten unhandled",
@@ -896,8 +896,8 @@
     "source": ".plan/tickets/BUG-federated-delete-and-gdpr-right-to-be-forgotten-unhandled.md"
   },
   "BUG-FEDERATION-AUTHORIZATION-WHO-MAY-PUBLISH-AN-ACTOR-UNDEFINED": {
-    "hash": "0ff0fc5",
-    "git_issue": "0ff0fc5",
+    "hash": "d50cdb6",
+    "git_issue": "d50cdb6",
     "extid": "BUG-FEDERATION-AUTHORIZATION-WHO-MAY-PUBLISH-AN-ACTOR-UNDEFINED",
     "type": "BUG",
     "title": "Federation authorization (who may publish an actor) undefined",
@@ -908,8 +908,8 @@
     "source": ".plan/tickets/BUG-federation-authorization-who-may-publish-an-actor-undefined.md"
   },
   "BUG-FEDERATION-DELIVERY-RELIABILITY-QUEUE-RETRY-IDEMPOTENCY-UNDE": {
-    "hash": "7d8e517",
-    "git_issue": "7d8e517",
+    "hash": "d07462c",
+    "git_issue": "d07462c",
     "extid": "BUG-FEDERATION-DELIVERY-RELIABILITY-QUEUE-RETRY-IDEMPOTENCY-UNDE",
     "type": "BUG",
     "title": "Federation delivery reliability (queue, retry, idempotency) undefined",
@@ -920,8 +920,8 @@
     "source": ".plan/tickets/BUG-federation-delivery-reliability-queue-retry-idempotency-unde.md"
   },
   "BUG-FEDERATION-IDENTITY-MAPPING-TO-LOCAL-USERS-UNDEFINED": {
-    "hash": "425bb6d",
-    "git_issue": "425bb6d",
+    "hash": "d6f2a94",
+    "git_issue": "d6f2a94",
     "extid": "BUG-FEDERATION-IDENTITY-MAPPING-TO-LOCAL-USERS-UNDEFINED",
     "type": "BUG",
     "title": "Federation identity mapping to local users undefined",
@@ -932,8 +932,8 @@
     "source": ".plan/tickets/BUG-federation-identity-mapping-to-local-users-undefined.md"
   },
   "BUG-FEDERATION-TEST-HARNESS-NEEDS-IN-PROCESS-FIXTURES": {
-    "hash": "6831559",
-    "git_issue": "6831559",
+    "hash": "9e5d529",
+    "git_issue": "9e5d529",
     "extid": "BUG-FEDERATION-TEST-HARNESS-NEEDS-IN-PROCESS-FIXTURES",
     "type": "BUG",
     "title": "Federation test harness needs in-process fixtures",
@@ -1219,8 +1219,8 @@
     "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
   },
   "BUG-INBOUND-FEDERATION-CONTENT-NOT-MODERATED-BEFORE-DISPLAY": {
-    "hash": "74e13c7",
-    "git_issue": "74e13c7",
+    "hash": "9f5c23f",
+    "git_issue": "9f5c23f",
     "extid": "BUG-INBOUND-FEDERATION-CONTENT-NOT-MODERATED-BEFORE-DISPLAY",
     "type": "BUG",
     "title": "Inbound federation content not moderated before display",
@@ -1304,8 +1304,8 @@
     "status": "done"
   },
   "BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT": {
-    "hash": "6234f6d",
-    "git_issue": "6234f6d",
+    "hash": "b760e48",
+    "git_issue": "b760e48",
     "extid": "BUG-LEADER-AND-SWARM-TOPOLOGIES-LACK-SIMULTANEOUS-WRITE-ARBITRAT",
     "type": "BUG",
     "title": "Leader and swarm topologies lack simultaneous-write arbitration",
@@ -1685,8 +1685,8 @@
     "source": ".plan/tickets/BUG-rate-limiter-module-singletons-shared-across-test-files-caus.md"
   },
   "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
-    "hash": "e2daa2d",
-    "git_issue": "e2daa2d",
+    "hash": "550802a",
+    "git_issue": "550802a",
     "extid": "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT",
     "type": "BUG",
     "title": "Remote actor discovery (WebFinger resolve, host-meta) absent",
@@ -1736,8 +1736,8 @@
     "git_issue": "df71725"
   },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
-    "hash": "6e94158",
-    "git_issue": "6e94158",
+    "hash": "3ba1095",
+    "git_issue": "3ba1095",
     "extid": "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED",
     "type": "BUG",
     "title": "Signal bridge activation trigger undefined",
@@ -2964,7 +2964,7 @@
     "git_issue": "8f9281e"
   },
   "FEAT-065-TEMPLATE-SYSTEM": {
-    "hash": "9aefe593",
+    "hash": "dc95659",
     "extid": "FEAT-065-TEMPLATE-SYSTEM",
     "type": "FEAT",
     "title": "# Template System — Unified Architecture Spec",
@@ -3597,7 +3597,7 @@
     "epic": "epic-comfyui-plugin",
     "tags": [],
     "source": ".plan/tickets/FEAT-comfyui-plugin-workflow-templates.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "989166a"
   },
   "FEAT-CONFIG-FILE-SEPARATION-DOMAIN-EXTRACTION": {
@@ -5305,7 +5305,7 @@
     "epic": "epic-logic-reconciliation",
     "tags": [],
     "source": ".plan/tickets/TASK-add-ownership-checks-characters.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "60c2d8f"
   },
   "TASK-ADD-RESPONSE-SCHEMAS-REMAINING-ROUTES": {
@@ -5812,7 +5812,7 @@
     "git_issue": "6df69d5"
   },
   "TASK-ASSISTANT-COMMANDS-EXTENSION": {
-    "hash": "eb2d50b",
+    "hash": "8ca33ef",
     "extid": "TASK-ASSISTANT-COMMANDS-EXTENSION",
     "type": "TASK",
     "title": "Assistant Commands Extension",
@@ -6135,7 +6135,7 @@
     "git_issue": "edf93cf"
   },
   "TASK-AUX-GM-TOOL-DETECTION": {
-    "hash": "fac4c45d",
+    "hash": "4c12c84",
     "extid": "TASK-AUX-GM-TOOL-DETECTION",
     "type": "TASK",
     "title": "AUX LLM — GM Tool Detection",
@@ -6566,7 +6566,7 @@
     "git_issue": "2108e81"
   },
   "TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION": {
-    "hash": "bdea77f8",
+    "hash": "83bde8b",
     "extid": "TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION",
     "type": "TASK",
     "title": "# TASK-BROWSER-E2E-COVERAGE-EXPANSION-PLAYWRIGHT-INTEGRATION: Browser e2e coverage expansion — Playwright integration",
@@ -7023,7 +7023,7 @@
     "epic": "epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/TASK-character-core-system.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "90e9eda"
   },
   "TASK-CHARACTER-CREATOR-PREROGATIVE": {
@@ -7152,7 +7152,7 @@
     "epic": "epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/TASK-character-mood-swings-happiness-meter.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "cd7794e"
   },
   "TASK-CHARACTER-MULTI-AVATAR": {
@@ -7187,7 +7187,7 @@
     "epic": "epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/TASK-character-multi-personality-system.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "735e6a6"
   },
   "TASK-CHARACTER-PERSONALITY-INTEGRITY": {
@@ -7382,7 +7382,7 @@
     "git_issue": "54abd35"
   },
   "TASK-CHAT-FLOW-SECTION-NAVIGATION": {
-    "hash": "c5270239",
+    "hash": "26eb01e",
     "extid": "TASK-CHAT-FLOW-SECTION-NAVIGATION",
     "type": "TASK",
     "title": "Chat Flow — Section Navigation & Story Spanning",
@@ -7742,7 +7742,7 @@
     "epic": "epic-comfyui-plugin",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-node-discovery.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "e2c1866"
   },
   "TASK-COMFYUI-TEMPLATE-REGISTRY": {
@@ -7755,7 +7755,7 @@
     "epic": "epic-comfyui-plugin",
     "tags": [],
     "source": ".plan/tickets/TASK-comfyui-template-registry.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "1d50bac"
   },
   "TASK-COMPANION-BONDING-QUESTS": {
@@ -9082,7 +9082,7 @@
     "epic": "epic-crypto",
     "tags": [],
     "source": ".plan/tickets/TASK-encryption-asset-encryption-update.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "f618cfa"
   },
   "TASK-ENCRYPTION-AUTO-KEY-ROTATION": {
@@ -9204,7 +9204,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-epic-36-lint-cognitive-complexity-misc.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "d20d31f"
   },
   "TASK-EPIC-36-LINT-FIX-ARRAY-METHOD-WARNINGS": {
@@ -9575,7 +9575,7 @@
     "epic": "epic-logic-reconciliation",
     "tags": [],
     "source": ".plan/tickets/TASK-fix-turn-number-double-count.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "bb2423e"
   },
   "TASK-FIX-WORKTREE-CLI-REPO-ROOT-TREE-DIR-ENV-VAR-REQUIREMENT-WHEN": {
@@ -10253,7 +10253,7 @@
     "epic": "epic-i18n",
     "tags": [],
     "source": ".plan/tickets/TASK-i18n-locale-completion.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "270c4fb"
   },
   "TASK-I18N-RECONCILIATION-SCRIPT": {
@@ -10400,7 +10400,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-implement-memory-decay-logic.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "ab3dad5"
   },
   "TASK-IMPLEMENT-PER-CONNECTION-IP-SOURCING-FOR-AUTH-RATE-LIMITERS": {
@@ -10561,7 +10561,7 @@
     "git_issue": "532218b"
   },
   "TASK-INTERNAL-TRAITS-VISIBILITY-TIERS": {
-    "hash": "44e22069",
+    "hash": "bcd9a39",
     "extid": "TASK-INTERNAL-TRAITS-VISIBILITY-TIERS",
     "type": "TASK",
     "title": "Internal Traits Visibility Tiers",
@@ -11947,7 +11947,7 @@
     "epic": "epic-nsfw-game-mechanics",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-gate-moderation-events.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "acdae7a"
   },
   "TASK-NSFW-HEAT-CYCLES": {
@@ -12875,7 +12875,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-quest-state-management.md",
     "git_issue": "66dda71",
-    "status": "done"
+    "status": "open"
   },
   "TASK-QUEST-STATUS-TRANSITIONS-BYPASS-STATE-MACHINE": {
     "hash": "208ef9b",
@@ -13589,7 +13589,7 @@
     "git_issue": "9621690"
   },
   "TASK-RESOLVE-WIRING-CLOSE-OUT-REVIEW-FOLLOW-UPS-TYPECHECK-RED-QUE": {
-    "hash": "db80bec9",
+    "hash": "13aa632",
     "extid": "TASK-RESOLVE-WIRING-CLOSE-OUT-REVIEW-FOLLOW-UPS-TYPECHECK-RED-QUE",
     "type": "TASK",
     "title": "Resolve wiring-close-out review follow-ups: typecheck red + quest test gap + gate caveats",
@@ -13657,7 +13657,7 @@
     "epic": "epic-battle-action-systems",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-battle-action-systems.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "95cf0da"
   },
   "TASK-RPG-CHAT-QUESTIONS": {
@@ -13682,7 +13682,7 @@
     "epic": "epic-companion-pet-mount",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-companion-pet-mount.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "d34a475"
   },
   "TASK-RPG-CORE-DICE-STATS-D20-ONLY": {
@@ -13708,7 +13708,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-crafting-professions.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "daf7896"
   },
   "TASK-RPG-DISEASE-POISON": {
@@ -13721,7 +13721,7 @@
     "epic": "epic-disease-poison",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-disease-poison.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "a394fd2"
   },
   "TASK-RPG-ECONOMY-TRADING": {
@@ -13734,7 +13734,7 @@
     "epic": "epic-economy-trading",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-economy-trading.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "d4d8eea"
   },
   "TASK-RPG-EMERGENT-NARRATIVE-DESIGN": {
@@ -13747,7 +13747,7 @@
     "epic": "epic-emergent-narrative-design",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-emergent-narrative-design.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "c1cdd67"
   },
   "TASK-RPG-EXPLORATION-DISCOVERY": {
@@ -13760,7 +13760,7 @@
     "epic": "epic-exploration-discovery",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-exploration-discovery.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "71ee2c8"
   },
   "TASK-RPG-FACTION-REPUTATION": {
@@ -13773,7 +13773,7 @@
     "epic": "epic-faction-reputation",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-faction-reputation.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "e06dba6"
   },
   "TASK-RPG-HOUSING-BASE-BUILDING": {
@@ -13786,7 +13786,7 @@
     "epic": "epic-housing-base-building",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-housing-base-building.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "4398db2"
   },
   "TASK-RPG-MAGIC-SPELL-SYSTEMS": {
@@ -13799,7 +13799,7 @@
     "epic": "epic-magic-spell-systems",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-magic-spell-systems.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "3054c11"
   },
   "TASK-RPG-MECHANICS": {
@@ -13888,7 +13888,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-quest-system.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "bc688a1"
   },
   "TASK-RPG-RESOLUTION-SYSTEM": {
@@ -13901,7 +13901,7 @@
     "epic": "epic-resolution-system",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-resolution-system.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "2e640bb"
   },
   "TASK-RPG-SOCIAL-INTERACTION": {
@@ -13914,7 +13914,7 @@
     "epic": "epic-social-interaction",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-social-interaction.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "f21d739"
   },
   "TASK-RPG-STATS-FRONTEND-WIRING": {
@@ -13939,7 +13939,7 @@
     "epic": "epic-stealth-crime",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-stealth-crime.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "0ee8def"
   },
   "TASK-RPG-WEATHER-ENVIRONMENT": {
@@ -13952,7 +13952,7 @@
     "epic": "epic-weather-environment",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-weather-environment.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "9bd0f42"
   },
   "TASK-RPG-XP-INTIMACY-READ-MODIFY-WRITE-LOST-UPDATES-UNDER-CONCURR": {
@@ -14718,7 +14718,7 @@
     "epic": "epic-testing-qa",
     "tags": [],
     "source": ".plan/tickets/TASK-testing-unit-test-expansion-priority.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "7081fd2"
   },
   "TASK-TEXT-EFFECTS-OVERLAYS": {
@@ -15229,7 +15229,7 @@
     "epic": "epic-visual-novel-mode.md",
     "tags": [],
     "source": ".plan/tickets/TASK-vn-qa-mode.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "0f9d87d"
   },
   "TASK-VN-SCENE-TEMPLATE-SYSTEM": {
@@ -15361,7 +15361,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-memory-promotion-pipeline.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "012232a"
   },
   "TASK-WIRE-MEMORY-PROVISION-CONTEXT": {
@@ -15374,7 +15374,7 @@
     "epic": "epic-crafting-professions",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-memory-provision-context.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "150fd6b"
   },
   "TASK-WIRE-NPC-NAVIGATION-ROUTES": {
@@ -15431,7 +15431,7 @@
     "epic": "epic-logic-reconciliation",
     "tags": [],
     "source": ".plan/tickets/TASK-wire-transitions.md",
-    "status": "done",
+    "status": "open",
     "git_issue": "a4044bc"
   },
   "TASK-WIRE-TRUST-MODIFIER-TO-RELATIONSHIPS": {
