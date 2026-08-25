@@ -18,7 +18,7 @@
 import { type Kysely, } from "kysely";
 import { type DB, } from "../../db/schema";
 import { getLogger, type Logger, } from "../../logger";
-import { getPendingAppeals, getUserAppeals, reviewAppeal, submitAppeal, } from "./appeals";
+import { executeReversal, getPendingAppeals, getUserAppeals, reviewAppeal, submitAppeal, } from "./appeals";
 import { getAuditLog, recordAction, } from "./audit";
 import { deleteUserData, exportUserData, } from "./data";
 import { flagContent, getFlagQueue, resolveFlag, } from "./flags";
@@ -121,4 +121,6 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
       status,
       reviewNote,
     },);
+  executeReversal = (appealId: string, executedBy: string,) =>
+    executeReversal({ thisL: this as unknown as NsfwModerationServiceContext, appealId, executedBy, },);
 }
