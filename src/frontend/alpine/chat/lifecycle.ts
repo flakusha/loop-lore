@@ -105,8 +105,11 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     }
 
     if (this._scrollHandler) {
-      const el = document.querySelector("#message-list",);
-      el?.removeEventListener("scroll", this._scrollHandler,);
+      // Detach from the element captured at setup time — the live
+      // #message-list node may have been replaced by an htmx swap, so a fresh
+      // querySelector here would miss the node that still holds the listener.
+      this._scrollEl?.removeEventListener("scroll", this._scrollHandler,);
+      this._scrollEl = null;
       this._scrollHandler = null;
     }
 
