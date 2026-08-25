@@ -34,6 +34,14 @@ export function isProtected(branch: string,): boolean {
 }
 
 /**
+ * Current branch of the main checkout - the base feature branches fork
+ * from (e.g. `dev`). Falls back to `master` when HEAD is detached.
+ */
+export function getRootBranch(repoRoot: string,): string {
+  return gitSync(repoRoot, "branch", "--show-current",) || "master";
+}
+
+/**
  * Resolve the *main* repo root for a git checkout regardless of cwd.
  *
  * Works correctly from any linked worktree: `--git-common-dir` returns the
@@ -148,8 +156,9 @@ export async function getStatus(
   repoRoot: string,
   branch: string,
 ): Promise<GitStatus> {
-  const aheadStr = gitSync(repoRoot, "rev-list", "--count", `master..${branch}`,);
-  const behindStr = gitSync(repoRoot, "rev-list", "--count", `${branch}..master`,);
+  const base = getRootBranch(repoRoot,);
+  const aheadStr = gitSync(repoRoot, "rev-list", "--count", `${base}..${branch}`,);
+  const behindStr = gitSync(repoRoot, "rev-list", "--count", `${branch}..${base}`,);
   const ahead = parseInt(aheadStr || "0", 10,);
   const behind = parseInt(behindStr || "0", 10,);
   const dirty = gitSyncQuiet(repoRoot, "status", "--porcelain",);

@@ -185,6 +185,7 @@ When generating NPC plans and reactions, the prompt includes:
 - Hook into generation pipeline (bias / retry path)
 
 ## Related
+Autonomy orchestration + rate governance (scheduler, budgets, kill switch): `epic-actor-autonomy-story-drive.md` — BDI decisions are dispatched by that loop.
 
 `epic-rpg-mechanics.md`, `epic-assistant-generation-extensions.md`,
 `epic-emergent-narrative-design.md`

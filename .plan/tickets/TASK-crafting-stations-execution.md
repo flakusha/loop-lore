@@ -65,3 +65,6 @@ Closed in worktree `feature/a8-unwired-closeout` (2026-08-18, commit `a7ffbb70`)
 - `epic-item-systems-unification.md` — Remaining Points #1–3
 - `epic-rpg-wiring-phase3.md` — parent epic
 - `TASK-wire-crafting-routes.md` — recipe CRUD landed subset
+
+
+git issue: 1fead82

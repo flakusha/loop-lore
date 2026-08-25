@@ -15,3 +15,6 @@ Implement NPC list with search/filter and NPC details panel (stats, inventory, s
 - [x] Implementation complete
 - [x] Tests passing (unit + e2e gates green)
 - [x] Documentation updated (epic status updated)
+
+
+git issue: 1b734cc
