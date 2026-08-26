@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 250
 
 /**
  * Image metadata extraction from raw file headers.
@@ -28,6 +29,10 @@ function readUint32BE(buf: Uint8Array, offset: number,): number {
 
 function readUint16LE(buf: Uint8Array, offset: number,): number {
   return (buf[offset + 1]! << 8) | buf[offset]!;
+}
+
+function readUint24LE(buf: Uint8Array, offset: number,): number {
+  return (buf[offset]! | (buf[offset + 1]! << 8) | (buf[offset + 2]! << 16)) >>> 0;
 }
 
 function readUint32LE(buf: Uint8Array, offset: number,): number {
@@ -147,7 +152,8 @@ function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } 
     const chunkSize = readUint32LE(buf, offset + 4,);
 
     if (chunkTag === "VP8 " && chunkSize >= 10) {
-      // VP8 keyframe header: 3 bytes frame tag, then 16 bits width/height
+      // VP8 keyframe: 3 bytes frame tag + 3 bytes start code (0x9D 0x01 0x2A)
+      // + uint16 LE width + uint16 LE height (lower 14 bits each, upper 2 are scale).
       const raw = readUint16LE(buf, offset + 14,);
       const width = raw & 0x3F_FF;
       const height = readUint16LE(buf, offset + 16,) & 0x3F_FF;
@@ -155,17 +161,18 @@ function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } 
     }
 
     if (chunkTag === "VP8L" && chunkSize >= 5) {
-      // VP8L lossless header
-      const bits = readUint32LE(buf, offset + 12,);
+      // VP8L lossless: 1-byte signature 0x2F + 32-bit LE packed (width-1, height-1)
+      // Width-1 occupies bits 0..13, height-1 bits 14..27.
+      const bits = readUint32LE(buf, offset + 9,);
       const width = (bits & 0x3F_FF) + 1;
       const height = ((bits >> 14) & 0x3F_FF) + 1;
       return { width, height, };
     }
 
     if (chunkTag === "VP8X") {
-      // VP8X extended header — bits 16-17 have width/height
-      const width = ((buf[offset + 12]! | (buf[offset + 13]! << 8)) & 0x3F_FF) + 1;
-      const height = ((buf[offset + 14]! | (buf[offset + 15]! << 8)) & 0x3F_FF) + 1;
+      // VP8X extended: 1-byte flags + 3 reserved + 24-bit LE width-1 + 24-bit LE height-1
+      const width = (readUint24LE(buf, offset + 12,) & 0x3F_FF) + 1;
+      const height = (readUint24LE(buf, offset + 15,) & 0x3F_FF) + 1;
       return { width, height, };
     }
 
