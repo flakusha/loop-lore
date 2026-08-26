@@ -3,11 +3,11 @@
 
 import { Elysia, t, } from "elysia";
 import { checkChatAccess, } from "../../chat/service";
-import { decryptMessageContent, getSmk, } from "../../crypto";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../../db/enums";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { requireUserId, } from "../http-utils";
+import { resolveMessageContent, } from "../messages/helpers";
 import { formatHtml, formatJson, formatMarkdown, formatPlainText, } from "./format";
 import type { HandlerOpts, MessageData, } from "./types";
 
@@ -57,14 +57,17 @@ export function exportChatRoute({ database, }: HandlerOpts, prefix = "/api",) {
         .orderBy("messages.created_at", "asc",)
         .execute();
 
-      // Decrypt encrypted message bodies so exports carry plaintext, never the
-      // raw ciphertext (a data leak).
-      const smk = getSmk();
+      // Resolve message bodies to plaintext via the shared helper so exports
+      // carry decoded text — never raw ciphertext (data leak) nor base64 gzip
+      // (which would be opaque to importers and silently inflate file sizes).
       const messages: MessageData[] = [];
       for (const row of rows) {
-        const content = smk && row.key_id
-          ? await decryptMessageContent(database, row, smk,)
-          : row.content;
+        let content: string;
+        try {
+          content = await resolveMessageContent(database, row,);
+        } catch {
+          content = "[Encrypted — unable to decrypt]";
+        }
         messages.push({
           id: row.id,
           content,

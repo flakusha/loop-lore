@@ -8,9 +8,9 @@
  * Decrypts encrypted message bodies before feeding them to the LLM so prior
  * turns never reach the prompt as ciphertext (a data-leak + prompt-quality bug).
  */
-import { decryptMessageContent, getSmk, } from "../../../crypto";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../../../db/enums";
 import type { GenerationMessage, } from "../../../generation/gen-types-options";
+import { resolveMessageContent, } from "../../../routes/messages/helpers";
 import type { SectionBuilder, } from "../types";
 
 export const chatHistorySection: SectionBuilder = {
@@ -43,19 +43,22 @@ export const chatHistorySection: SectionBuilder = {
       .limit(maxMessages,)
       .execute();
 
-    const smk = getSmk();
     const chatId = ctx.params.chatId;
     const out: GenerationMessage[] = [];
     for (const row of rows) {
-      let content = row.content;
-      if (smk && row.key_id) {
-        try {
-          content = await decryptMessageContent(ctx.db, { ...row, chat_id: chatId, }, smk,);
-        } catch {
-          // A corrupt/tampered payload in history must not break the whole
-          // prompt — surface a placeholder rather than the raw ciphertext.
-          content = "[encrypted message unavailable]";
-        }
+      let content: string;
+      try {
+        // resolveMessageContent handles three cases that prior code missed:
+        //   1. encrypted (key_id set) → decrypt via tier-aware at-rest layer
+        //   2. gzip-stored plaintext (key_id null, encoding gzip) → decompress
+        //   3. identity plaintext → pass through
+        // The previous inline check only handled (1); rows >10KB stored as
+        // gzip leaked raw base64 into the prompt (a privacy + token-cost bug).
+        content = await resolveMessageContent(ctx.db, { ...row, chat_id: chatId, },);
+      } catch {
+        // A corrupt/tampered payload in history must not break the whole
+        // prompt — surface a placeholder rather than the raw payload.
+        content = "[encrypted message unavailable]";
       }
       out.push({ role: row.role, content, },);
     }

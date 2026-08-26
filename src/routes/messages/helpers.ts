@@ -3,7 +3,6 @@
 
 import type { Kysely, } from "kysely";
 import type { ServiceError, } from "../../chat/service";
-import type { Config, } from "../../config/schema";
 import { decodeContent, } from "../../content/decode";
 import {
   decryptAtRest,
@@ -129,8 +128,17 @@ export function parseToolCalls(toolCallsJson: string | null | undefined,): ToolC
 }
 
 /**
- * Resolve the plaintext content of a stored message, decrypting its payload
- * when it was stored encrypted (key_id set).
+ * Resolve the plaintext content of a stored message.
+ *
+ * Handles three cases that prior call sites diverged on:
+ *   1. encrypted payload (`key_id` set) → tier-aware decrypt via `decryptAtRest`
+ *   2. gzip/brotli/zstd-stored plaintext (`key_id` null, encoding ≠ identity) →
+ *      base64 + decompress via `decodeContent`
+ *   3. identity plaintext → pass through
+ *
+ * Centralising this logic eliminates the three divergent inline copies that
+ * previously leaked base64 gzip soup into chat history prompts and chat
+ * exports whenever a message row crossed the 10KB compress threshold.
  */
 export async function resolveMessageContent(
   database: Kysely<DB>,
@@ -140,7 +148,6 @@ export async function resolveMessageContent(
     key_id: string | null;
     chat_id: string;
   },
-  _config: Config,
 ): Promise<string> {
   if (!message.key_id) {
     const enc = message.content_encoding as ContentEncoding;
