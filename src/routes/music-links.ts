@@ -7,6 +7,7 @@
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import { createMusicLinkService, } from "../chat/music-links";
+import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
 import {
   ChatIdParams,
@@ -14,7 +15,13 @@ import {
   MusicLinkIdParams,
   MusicLinkResponse,
 } from "../validation/schemas/music-links";
-import { jsonCreated, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
+import {
+  jsonCreated,
+  jsonNoContent,
+  jsonResponse,
+  notFoundResponse,
+  requireUserId,
+} from "./http-utils";
 
 export interface MusicLinkHandlerOpts {
   database: Kysely<DB>;
@@ -37,6 +44,10 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
           if (typeof userId !== "string") { return userId; }
 
           const chatId = ctx.params.id as string;
+          const userRole = (ctx as { userRole?: string | null }).userRole ?? null;
+          const access = await checkChatAccess(db, chatId, userId, userRole,);
+          if (!access.ok) { return notFoundResponse("Chat not found",); }
+
           const body = ctx.body as { chatId: string; url: string; sectionId?: string | null };
 
           // Detect service
@@ -45,7 +56,7 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
             return jsonResponse({ error: "Unsupported music service URL", }, 400,);
           }
 
-          // Fetch metadata + embed
+          // Fetch metadata + embed (post-auth: prevents unauth-cost SSRF probes)
           const metadata = await service.fetchMetadata(body.url, serviceName,);
           const embedHtml = await service.getEmbedHtml(body.url, serviceName,);
 
@@ -69,6 +80,7 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
             201: MusicLinkResponse,
             400: t.Object({ error: t.String(), },),
             401: t.Void(),
+            404: t.Object({ error: t.String(), },),
           },
           detail: {
             summary: "Share a music link",
@@ -84,6 +96,10 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
           if (typeof userId !== "string") { return userId; }
 
           const chatId = ctx.params.id as string;
+          const userRole = (ctx as { userRole?: string | null }).userRole ?? null;
+          const access = await checkChatAccess(db, chatId, userId, userRole,);
+          if (!access.ok) { return notFoundResponse("Chat not found",); }
+
           const rows = await service.list(chatId,);
           /* eslint-disable no-restricted-syntax */
           return jsonResponse({ data: rows.map(toResponse,), },);
@@ -94,6 +110,7 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
           response: {
             200: t.Object({ data: t.Array(MusicLinkResponse,), },),
             401: t.Void(),
+            404: t.Object({ error: t.String(), },),
           },
           detail: {
             summary: "List music links in a chat",
@@ -108,7 +125,9 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
           if (typeof userId !== "string") { return userId; }
 
           const id = ctx.params.id as string;
-          await service.destroy(id, userId,);
+          const userRole = (ctx as { userRole?: string | null }).userRole ?? null;
+          const deleted = await service.destroy(id, userId, userRole,);
+          if (!deleted) { return notFoundResponse("Music link not found",); }
 
           return jsonNoContent();
         },
@@ -117,6 +136,7 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
           response: {
             204: t.Void(),
             401: t.Void(),
+            404: t.Object({ error: t.String(), },),
           },
           detail: {
             summary: "Delete a music link",

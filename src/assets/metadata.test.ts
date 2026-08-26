@@ -86,24 +86,19 @@ describe("extractImageMetadata", () => {
       expect(result.format,).toBe("webp",);
     });
 
-    test("extracts VP8 keyframe dimensions (parser reads width at offset+14)", () => {
-      // VP8 layout: chunkTag(4) + chunkSize(4) + chunkData
-      // Parser reads width at offset+14, height at offset+16
-      // where offset=12 (start of "VP8 " tag).
-      // Data layout: [tag:4][size:4][pad6:6][width:2][height:2][pad:rest]
-
+    test("extracts VP8 keyframe dimensions", () => {
+      // VP8 lossy keyframe layout (after RIFF+WEBP header at offset=12):
+      //   [tag:4 "VP8 "][size:4][frame_tag:3][start_code:3 0x9D 0x01 0x2A]
+      //   [width:2 LE][height:2 LE][pad:rest]
       const riff = new Uint8Array([0x52, 0x49, 0x46, 0x46,],); // "RIFF"
       const fileLen = new Uint8Array([0x1C, 0x00, 0x00, 0x00,],); // 28 LE
       const webp = new Uint8Array([0x57, 0x45, 0x42, 0x50,],); // "WEBP"
       const vp8 = new Uint8Array([0x56, 0x50, 0x38, 0x20,],); // "VP8 "
       const csize = new Uint8Array([0x0E, 0x00, 0x00, 0x00,],); // chunkSize=14 LE
-
-      // 6 pad bytes so width lands at offset+14 (byte 26)
-      const pad6 = new Uint8Array([0, 0, 0, 0, 0, 0,],);
-      // width at byte 26-27 (offset+14): 320 = 0x0140, LE = [0x40, 0x01]
-      const wh = new Uint8Array([0x40, 0x01,],); // width=320
-      // height at byte 28-29 (offset+16): 200 = 0x00C8, LE = [0xC8, 0x00]
-      const ht = new Uint8Array([0xC8, 0x00,],);
+      const frameTag = new Uint8Array([0x9A, 0x02, 0x00,],); // key frame
+      const startCode = new Uint8Array([0x9D, 0x01, 0x2A,],);
+      // width=320 LE=0x0140, height=200 LE=0x00C8
+      const wh = new Uint8Array([0x40, 0x01, 0xC8, 0x00,],);
       const rest = new Uint8Array([0, 0,],); // fill to chunkSize=14
 
       const buf = new Uint8Array([
@@ -112,9 +107,9 @@ describe("extractImageMetadata", () => {
         ...webp,
         ...vp8,
         ...csize,
-        ...pad6,
+        ...frameTag,
+        ...startCode,
         ...wh,
-        ...ht,
         ...rest,
       ],);
       const result = extractImageMetadata(buf,);
@@ -123,24 +118,20 @@ describe("extractImageMetadata", () => {
       expect(result.height,).toBe(200,);
     });
 
-    test("extracts VP8L lossless dimensions (parser reads bits at offset+12)", () => {
-      // VP8L: offset=12, reads from offset+12 = byte 24
-      // width-1=319, height-1=199 packed: (199<<14)|319 = 0x31FC3F
-      // LE bytes: [0x3F, 0xFC, 0x31, 0x00]
-
+    test("extracts VP8L lossless dimensions", () => {
+      // VP8L layout (after RIFF+WEBP header at offset=12):
+      //   [tag:4 "VP8L"][size:4][signature:1 0x2F][bits:4 LE packed]
+      // Bits: width-1 in [0..13], height-1 in [14..27].
+      // width=320 → width-1=319=0x013F; height=200 → height-1=199=0x00C7.
+      // packed = (199 << 14) | 319 = 0x31C13F.
       const riff = new Uint8Array([0x52, 0x49, 0x46, 0x46,],);
-      const fileLen = new Uint8Array([0x1C, 0x00, 0x00, 0x00,],); // 28
+      const fileLen = new Uint8Array([0x1A, 0x00, 0x00, 0x00,],); // 26 LE
       const webp = new Uint8Array([0x57, 0x45, 0x42, 0x50,],);
       const vp8l = new Uint8Array([0x56, 0x50, 0x38, 0x4C,],); // "VP8L"
-      const csize = new Uint8Array([0x0E, 0x00, 0x00, 0x00,],); // 14
-
-      // 4 pad bytes so bits land at offset+12 (byte 24)
-      const pad4 = new Uint8Array([0, 0, 0, 0,],);
-      // bits at byte 24-27: width=320, height=200
-      // width-1=319=0x013F, height-1=199=0x00C7
-      // packed: (199<<14)|319 = 0x31C13F, LE: [0x3F, 0xC1, 0x31, 0x00]
-      const bits = new Uint8Array([0x3F, 0xC1, 0x31, 0x00,],);
-      const rest = new Uint8Array([0, 0, 0, 0, 0, 0,],); // fill to 14
+      const csize = new Uint8Array([0x0C, 0x00, 0x00, 0x00,],); // chunkSize=12 LE
+      const sig = new Uint8Array([0x2F,],);
+      const bits = new Uint8Array([0x3F, 0xC1, 0x31, 0x00,],); // 0x31C13F LE
+      const rest = new Uint8Array([0, 0, 0, 0, 0, 0, 0,],); // fill to chunkSize=12
 
       const buf = new Uint8Array([
         ...riff,
@@ -148,16 +139,45 @@ describe("extractImageMetadata", () => {
         ...webp,
         ...vp8l,
         ...csize,
-        ...pad4,
+        ...sig,
         ...bits,
         ...rest,
       ],);
       const result = extractImageMetadata(buf,);
       expect(result.format,).toBe("webp",);
-      // width = (bits & 0x3FFF) + 1 = (0x013F) + 1 = 320
-      // height = ((bits >> 14) & 0x3FFF) + 1 = (0x00C7) + 1 = 200
       expect(result.width,).toBe(320,);
       expect(result.height,).toBe(200,);
+    });
+
+    test("extracts VP8X extended dimensions", () => {
+      // VP8X layout (after RIFF+WEBP header at offset=12):
+      //   [tag:4 "VP8X"][size:4][flags:1][reserved:3][width-1:3 LE][height-1:3 LE]
+      // width=1024 → width-1=1023=0x0003FF; height=512 → height-1=511=0x0001FF.
+      const riff = new Uint8Array([0x52, 0x49, 0x46, 0x46,],);
+      const fileLen = new Uint8Array([0x1A, 0x00, 0x00, 0x00,],); // 26 LE
+      const webp = new Uint8Array([0x57, 0x45, 0x42, 0x50,],);
+      const vp8x = new Uint8Array([0x56, 0x50, 0x38, 0x58,],); // "VP8X"
+      const csize = new Uint8Array([0x0A, 0x00, 0x00, 0x00,],); // chunkSize=10 LE
+      const flags = new Uint8Array([0x00,],);
+      const reserved = new Uint8Array([0, 0, 0,],);
+      const widthLE = new Uint8Array([0xFF, 0x03, 0x00,],); // 1023 LE
+      const heightLE = new Uint8Array([0xFF, 0x01, 0x00,],); // 511 LE
+
+      const buf = new Uint8Array([
+        ...riff,
+        ...fileLen,
+        ...webp,
+        ...vp8x,
+        ...csize,
+        ...flags,
+        ...reserved,
+        ...widthLE,
+        ...heightLE,
+      ],);
+      const result = extractImageMetadata(buf,);
+      expect(result.format,).toBe("webp",);
+      expect(result.width,).toBe(1024,);
+      expect(result.height,).toBe(512,);
     });
   });
 
