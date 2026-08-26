@@ -147,6 +147,19 @@
     "source": ".plan/tickets/BUG-asset-serve-public-immutable-cache-inline-svg-exposure.md",
     "git_issue": "4961df8"
   },
+  "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES": {
+    "hash": "c658dd8",
+    "extid": "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES",
+    "type": "BUG",
+    "title": "WebP metadata parser reads VP8L/VP8X dimension fields at wrong offsets",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-asset-webp-metadata-vp8l-vp8x-off-bytes.md",
+    "status": "done",
+    "git_issue": "c658dd8"
+  },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "hash": "pending",
     "extid": "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE",
@@ -1607,7 +1620,7 @@
     "git_issue": "43587b3"
   },
   "BUG-MUSIC-LINKS-ROUTES-LACK-CHAT-ACCESS-CHECKS-CROSS-CHAT-READ-W": {
-    "hash": "a5a70bb",
+    "hash": "d283ff9",
     "extid": "BUG-MUSIC-LINKS-ROUTES-LACK-CHAT-ACCESS-CHECKS-CROSS-CHAT-READ-W",
     "type": "BUG",
     "title": "Music links routes lack chat access checks — cross-chat read/write",
@@ -16610,17 +16623,5 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
-  },
-  "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES": {
-    "hash": "9b303ff",
-    "extid": "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES",
-    "type": "BUG",
-    "title": "WebP metadata parser reads VP8L/VP8X dimension fields at wrong offsets",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-asset-webp-metadata-vp8l-vp8x-off-bytes.md",
-    "status": "done"
   }
 }
