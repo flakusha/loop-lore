@@ -35,7 +35,7 @@ Priority order: chat > memories > characters > assistant > NSFW.
 
 ## Tasks
 
-#### 1.1 Wire GameMasterService into story mode generation
+### 1.1 Wire GameMasterService into story mode generation
 
 - **Problem:** `GameMasterService` is fully tested but never called. Story mode uses the same `triggerAutoGeneration()` path as direct/group chat.
 - **Fix:** In `generation/auto-gen.ts`, when `chat.type === "story"`, use `GameMasterService.executeTurn()` + `acceptResponse()` instead of direct LLM call.
