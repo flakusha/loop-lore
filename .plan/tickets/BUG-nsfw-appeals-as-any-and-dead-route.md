@@ -3,7 +3,7 @@
 
 # BUG: NSFW appeals service uses `as any` casts and is unwired — either dead code or missing routes
 
-**Status:** ⬜ Not Started
+**Status:** Done
 **Severity:** Medium
 **Priority:** medium
 **Effort:** Small
