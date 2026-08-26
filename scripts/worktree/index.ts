@@ -36,18 +36,8 @@ import { execute as statusCmd, } from "./commands/status";
 import { sync, } from "./commands/sync";
 import { ticket, } from "./commands/ticket";
 import { loadConfig, resolveBranch, } from "./utils/config";
-import { getBranches, getStatus, getWorktrees, gitSync, } from "./utils/git";
+import { assertNotInWorktree, getBranches, getStatus, getWorktrees, gitSync, } from "./utils/git";
 import { colorize, colors, log, section, } from "./utils/output";
-
-export { branchToPath, loadConfig, resolveBranch, } from "./utils/config";
-export { getBranches, getStatus, getWorktrees, gitSync, } from "./utils/git";
-export { colorize, colors, log, section, } from "./utils/output";
-
-const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
-
-export function isProtected(branch: string,): boolean {
-  return PROTECTED_BRANCHES.includes(branch,);
-}
 
 interface CommandHandler {
   description: string;
@@ -188,16 +178,34 @@ function showHelp(): void {
   console.log("",);
 }
 
+/**
+ * Commands that mutate worktree layout (create/rebase/remove/merge trees).
+ * They must run from the main repo root — the guard is applied centrally
+ * here so new commands cannot forget it. `finalize`/`agent-merge` are the
+ * documented exemptions (they resolve the worktree from a branch argument).
+ */
+const ROOT_ONLY_COMMANDS: Record<string, true> = {
+  cleanup: true,
+  create: true,
+  merge: true,
+  new: true,
+  rebase: true,
+  remove: true,
+};
+
 export async function main(): Promise<void> {
   const config = await loadConfig();
   const [cmdName, ...cmdArgs] = process.argv.slice(2,);
-
   if (!cmdName || cmdName === "help" || !commands[cmdName]) {
     if (cmdName && cmdName !== "help") {
       console.log(colorize(`Unknown command: ${cmdName}`, "red",),);
     }
     showHelp();
     process.exit(cmdName && cmdName !== "help" ? 1 : 0,);
+  }
+
+  if (ROOT_ONLY_COMMANDS[cmdName]) {
+    assertNotInWorktree(cmdName,);
   }
 
   try {

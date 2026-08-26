@@ -4,14 +4,13 @@
 import { existsSync, mkdirSync, symlinkSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, } from "../utils/config";
-import { assertNotInWorktree, gitSync, isProtected, } from "../utils/git";
+import { gitSync, isProtected, } from "../utils/git";
 import { log, } from "../utils/output";
 
 export async function execute(
   args: string[],
   config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
 ): Promise<void> {
-  assertNotInWorktree("create",);
   const branch = args[0];
   if (!branch) {
     log("error", "branch name required",);
