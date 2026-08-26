@@ -24,7 +24,10 @@
  * - Auto-links `<https://...>`
  *
  * Modes:
- * - Default: reports broken links, exits 1 if any (blocking in `bun check`)
+ * - Default: reports broken links and exits 1 if any. NOTE: the check runner
+ *   (check-parallel.mjs) invokes this post-loop as ADVISORY — it prints
+ *   findings but does not gate `bun run check`. Run standalone for the
+ *   exit-code contract.
  * - `--fix`: rewrites non-existent relative targets to `<file> (missing)` —
  *   only for links that point at other tracks of the repo; prints the diff.
  *

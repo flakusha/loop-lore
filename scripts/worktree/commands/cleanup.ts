@@ -3,14 +3,13 @@
 
 import { existsSync, readdirSync, rmSync, } from "fs";
 import { resolve, } from "path";
-import { assertNotInWorktree, getWorktrees, gitSync, } from "../utils/git";
+import { getWorktrees, gitSync, } from "../utils/git";
 import { colorize, log, } from "../utils/output";
 
 export async function execute(
   _args: string[],
   config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
 ): Promise<void> {
-  assertNotInWorktree("cleanup",);
   if (!existsSync(config.treeDir,)) {
     log("info", "no tree/ directory — nothing to clean",);
     return;

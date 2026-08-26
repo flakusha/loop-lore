@@ -1,15 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { dirname, resolve, } from "path";
-import { fileURLToPath, } from "url";
+import { resolve, } from "path";
 import type { WorktreeConfig, } from "../utils/config";
 import { gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
-import { resolveExtid, } from "./resolver";
 
-const __filename = fileURLToPath(import.meta.url,);
-const __dirname = dirname(__filename,);
 
 const VALID_TYPES = ["BUG", "FEAT", "FIX", "IDEA", "TASK", "SOL", "INFRA",] as const;
 type TicketType = typeof VALID_TYPES[number];
@@ -61,7 +57,7 @@ export async function ticket(args: string[], config: WorktreeConfig,): Promise<v
   const ticketFile = `.plan/tickets/${type}-${ticketName}.md`;
   const extid = `${type}-${ticketName}`;
   const fullTitle = `${extid}: ${title}`;
-  const repoRoot = resolve(__dirname, "..", "..", "..",);
+  const repoRoot = config.repoRoot;
   const ticketPath = resolve(repoRoot, ticketFile,);
 
   const exists = await Bun.file(ticketPath,).exists();
