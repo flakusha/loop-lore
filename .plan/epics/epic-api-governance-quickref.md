@@ -5,12 +5,14 @@
 
 ## Epic Overview
 
-**File:** `.plan/epics/epic-api-governance.md`
+**File:** `.plan/epics/epic-api-governance.md` (hub — split into 5 sub-epics)
 **Status:** Not Started
 **Priority:** High
-**Effort:** High
+**Effort:** Very High (split into 5 sub-epics)
 **Type:** Infrastructure Epic
 **Tags:** openapi, validation, rate-limiting, telemetry, offloading
+
+**Sub-Epics:** `epic-api-openapi.md` · `epic-api-validation-guardrails.md` · `epic-api-rate-limiting.md` · `epic-api-telemetry.md` · `epic-api-task-offloading.md`
 
 ## Architecture
 

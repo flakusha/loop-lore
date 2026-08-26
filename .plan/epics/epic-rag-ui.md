@@ -233,6 +233,10 @@ Complete RAG (Retrieval-Augmented Generation) interface including document uploa
 | TASK-rag-citation-display.md | P0       | ⬜ Not Started |
 | TASK-rag-alpine.md           | P0       | ⬜ Not Started |
 
+## Notes
+
+> Scope note: the backend **business dashboard UI** (`src/frontend/alpine/rag-dashboard.ts`) tracked in epic-rag-enterprise.md belongs in this epic's UI scope; coordinate there when implementing it.
+
 ## Files to Create
 
 - `src/frontend/rag/document-upload.ts` — Document upload
