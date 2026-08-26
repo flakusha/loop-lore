@@ -55,8 +55,8 @@ but not started. Spec links go to [`docs/spec/`](docs/spec/) and
 | Assets (media)         | WIP     | [spec/assets](docs/spec/assets.md), [frontend/gallery](docs/frontend/gallery.md)                                                                     |
 | Assistant chat         | MVP     | [spec/assistant-commands](docs/spec/assistant-commands.md), [frontend/chat/assistant](docs/frontend/chat/assistant.md)                               |
 | VN scene generation    | WIP     | [spec/visual-novel](docs/spec/visual-novel.md), [frontend/chat/visual-novel-mode](docs/frontend/chat/visual-novel-mode.md)                           |
-| Emotion avatars        | WIP     | _spec pending — tracked in `.plan/`_                                                                                                                 |
-| Regex extraction       | WIP     | _spec pending — see `src/regex/`_                                                                                                                    |
+| Emotion avatars        | WIP     | [spec/emotion-avatars](docs/spec/emotion-avatars.md)                                                                                                 |
+| Regex extraction       | WIP     | [spec/regex-extraction](docs/spec/regex-extraction.md)                                                                                               |
 | RPG systems            | WIP     | [spec/rpg-mechanics](docs/spec/rpg-mechanics.md), [spec/achievements](docs/spec/achievements.md)                                                     |
 | Lorebooks / World Info | Planned | [spec/lore](docs/spec/lore.md), [frontend/worlds](docs/frontend/worlds.md)                                                                           |
 | Web UI                 | WIP     | [frontend/component-architecture](docs/frontend/component-architecture.md)                                                                           |
@@ -66,7 +66,7 @@ but not started. Spec links go to [`docs/spec/`](docs/spec/) and
 | I18n                   | WIP     | [frontend/internationalization](docs/frontend/internationalization.md), [docs/i18n](docs/i18n/)                                                      |
 | Memory                 | WIP     | [spec/memory-system](docs/spec/memory-system.md), [frontend/chat/memories](docs/frontend/chat/memories.md)                                           |
 | Telemetry              | WIP     | [spec/observability-telemetry](docs/spec/observability-telemetry.md)                                                                                 |
-| Profanity filter       | WIP     | _spec pending — see `src/profanity/`_                                                                                                                |
+| Profanity filter       | WIP     | [spec/profanity-filter](docs/spec/profanity-filter.md)                                                                                               |
 | Age gate               | WIP     | [frontend/age-gate](docs/frontend/age-gate.md)                                                                                                       |
 | Notifications          | WIP     | [frontend/notifications](docs/frontend/notifications.md)                                                                                             |
 
