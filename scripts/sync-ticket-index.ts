@@ -28,7 +28,7 @@
  */
 
 import { execSync, } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync, } from "node:fs";
 import { basename, join, } from "node:path";
 import {
   type GitIssue,
@@ -44,6 +44,8 @@ import {
 const ROOT = process.cwd();
 const TICKETS_DIR = join(ROOT, ".plan/tickets",);
 const INDEX_PATH = join(TICKETS_DIR, "index.json",);
+/** Serializes concurrent `--fix` runs (mkdir-based lock: atomic on POSIX). */
+const LOCK_PATH = join(TICKETS_DIR, ".index-sync.lock",);
 
 // ── Parse ticket .md frontmatter ───────────────────────────────
 
@@ -104,7 +106,13 @@ function guessType(filename: string,): string {
 
 // ── Read git issues ────────────────────────────────────────────
 
-function readGitIssues(): Map<string, GitIssue> {
+interface GitIssueRead {
+  issues: Map<string, GitIssue>;
+  /** False when the `git issue` CLI itself is unavailable (vs genuinely zero issues). */
+  available: boolean;
+}
+
+function readGitIssues(): GitIssueRead {
   const issues = new Map<string, GitIssue>();
 
   try {
@@ -129,10 +137,50 @@ function readGitIssues(): Map<string, GitIssue> {
       issues.set(hash, { hash, status, title, extid, },);
     }
   } catch {
-    // git issue not available — continue with empty map
+    // git issue not available — report explicitly so --fix can refuse safely
+    return { issues, available: false, };
   }
 
-  return issues;
+  return { issues, available: true, };
+}
+
+// ── Fix-mode lock (serializes concurrent --fix runs) ───────────
+
+function isLockStale(): boolean {
+  try {
+    const pid = parseInt(readFileSync(join(LOCK_PATH, "owner.pid",), "utf8",).trim(), 10,);
+    if (!Number.isInteger(pid)) { return true; }
+    try {
+      process.kill(pid, 0,); // signal 0 = liveness probe, no signal delivered
+      return false; // owner alive — lock genuinely held
+    } catch (e) {
+      // EPERM: process exists but is not ours → alive, do not break.
+      return (e as NodeJS.ErrnoException,).code !== "EPERM";
+    }
+  } catch {
+    return true; // missing/unreadable pid file — nothing alive claims it
+  }
+}
+
+function acquireFixLock(): void {
+  if (existsSync(LOCK_PATH,)) {
+    if (!isLockStale()) {
+      console.error(`\n✘ Another index sync is in progress (lock: ${LOCK_PATH}).`,);
+      process.exit(1,);
+    }
+    rmSync(LOCK_PATH, { recursive: true, force: true, },);
+    console.warn("⚠ Removed stale index-sync lock left by a dead process",);
+  }
+  mkdirSync(LOCK_PATH,);
+  writeFileSync(join(LOCK_PATH, "owner.pid",), `${process.pid}\n`,);
+}
+
+function releaseFixLock(): void {
+  try {
+    rmSync(LOCK_PATH, { recursive: true, force: true, },);
+  } catch {
+    // already gone — nothing to release
+  }
 }
 
 // ── Read index.json ────────────────────────────────────────────
@@ -416,12 +464,12 @@ Options:
     if (tf) { ticketFiles.push(tf,); }
   }
 
-  const gitIssues = readGitIssues();
+  const { issues: gitIssues, available: gitIssuesAvailable, } = readGitIssues();
   const index = readIndex();
 
   console.log(`\n📊 Scanning...`,);
   console.log(`   Ticket .md files:  ${ticketFiles.length}`,);
-  console.log(`   Git issues:        ${gitIssues.size}`,);
+  console.log(`   Git issues:        ${gitIssues.size}${gitIssuesAvailable ? "" : " (git issue CLI unavailable)"}`,);
   console.log(`   Index entries:     ${Object.keys(index,).length}`,);
 
   // Reconcile
@@ -552,15 +600,34 @@ Options:
 
   // Apply fixes (also when only advisory issues exist — e.g. missing-hash links)
   if (fixMode && (totalIssues > 0 || advisoryCount > 0)) {
-    console.log(`\n🔧 Applying fixes...`,);
-    const fixedIndex = applyFixes(index, report, ticketFiles, gitIssues,);
+    // With the issue registry unreadable, every non-commit hash looks like a
+    // placeholder — --fix would mass-create issues. Refuse instead.
+    if (!gitIssuesAvailable) {
+      console.error(`\n✘ git issue CLI unavailable — refusing to --fix.`,);
+      console.error("  Fix mode cannot distinguish a missing tool from stale hashes.",);
+      process.exit(1,);
+    }
 
-    // Sort by extid
-    const sorted = Object.fromEntries(
-      Object.entries(fixedIndex,).sort(([a,], [b,],) => a.localeCompare(b,)),
-    );
+    acquireFixLock();
+    let fixedIndex: Record<string, IndexEntry>;
+    try {
+      console.log(`\n🔧 Applying fixes...`,);
+      fixedIndex = applyFixes(index, report, ticketFiles, gitIssues,);
 
-    writeFileSync(INDEX_PATH, JSON.stringify(sorted, null, 2,) + "\n",);
+      // Sort by extid
+      const sorted = Object.fromEntries(
+        Object.entries(fixedIndex,).sort(([a,], [b,],) => a.localeCompare(b,)),
+      );
+
+      // Atomic write: temp file + rename, so a crash mid-write cannot
+      // truncate index.json.
+      const tmpPath = `${INDEX_PATH}.tmp-${process.pid}`;
+      writeFileSync(tmpPath, JSON.stringify(sorted, null, 2,) + "\n",);
+      renameSync(tmpPath, INDEX_PATH,);
+    } finally {
+      // Never leak the lock on a failed fix run.
+      releaseFixLock();
+    }
     console.log(`✅ Wrote ${INDEX_PATH}`,);
 
     if (report.fixesApplied.length > 0) {
