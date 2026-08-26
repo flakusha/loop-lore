@@ -49,12 +49,12 @@ or crash. Add a global idempotency middleware keyed on
 
 - [ ] New `src/middleware/idempotency.ts` exports `idempotencyMiddleware()`
   that:
-    - skips non-mutating verbs (GET, HEAD, OPTIONS);
-    - keys entries on `(method, normalized-route, requestId)`;
-    - on in-flight match → returns 409 with `Retry-After` hint and a body
+  - skips non-mutating verbs (GET, HEAD, OPTIONS);
+  - keys entries on `(method, normalized-route, requestId)`;
+  - on in-flight match → returns 409 with `Retry-After` hint and a body
       pointing to the in-progress status endpoint;
-    - on completed match → replays the cached response;
-    - on miss → runs the downstream handler, captures the response, stores
+  - on completed match → replays the cached response;
+  - on miss → runs the downstream handler, captures the response, stores
       it, and returns it.
 - [ ] Storage backend pluggable: in-memory `Map` (single-process) for
   development; `request_results` table (see
@@ -71,13 +71,13 @@ or crash. Add a global idempotency middleware keyed on
   `POST /api/chats/:id/messages`) keep their existing logic; the new
   middleware is a layer above and replays their response on re-fire.
 - [ ] Unit + integration tests:
-    - first call → handler runs once;
-    - second call during in-flight → 409, handler NOT re-run;
-    - second call after complete → cached response replayed, handler NOT
+  - first call → handler runs once;
+  - second call during in-flight → 409, handler NOT re-run;
+  - second call after complete → cached response replayed, handler NOT
       re-run;
-    - different request id → handler runs;
-    - expired TTL → handler runs again;
-    - bypass header → handler runs.
+  - different request id → handler runs;
+  - expired TTL → handler runs again;
+  - bypass header → handler runs.
 - [ ] `epic-middleware-request-lifecycle.md` sub-ticket checkbox marked done.
 
 ## Notes
