@@ -1,6 +1,6 @@
 # BUG: PII redaction hardcoded dev fallback secret, no prod guard
 
-**Status:** ⬜ Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
