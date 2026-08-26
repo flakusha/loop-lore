@@ -21,24 +21,24 @@ metadata:
 
 Before touching any feature, read the relevant spec in `docs/`:
 
-| Feature            | Doc File                        |
-| ------------------ | ------------------------------- |
-| DB schema (all)    | `docs/spec/schema.md`           |
-| Messages           | `docs/spec/messages.md`         |
-| Users/sessions     | `docs/spec/users-sessions.md`   |
-| Assets             | `docs/spec/assets.md`           |
-| Actors             | `docs/spec/actors.md`           |
-| Characters/persona | `docs/spec/character-spec.md`   |
-| RPG mechanics      | `docs/spec/rpg-mechanics.md`    |
-| Architecture       | `docs/spec/architecture.md`     |
-| Build/deploy       | `docs/spec/build-deploy.md`     |
-| Implementation     | `docs/spec/implementation.md`   |
-| TUI                | `docs/spec/terminal-ui.md`      |
-| Plugin system      | `docs/spec/plugin-system.md`    |
-| Memory system      | `docs/spec/memory-system.md`    |
-| Artifacts system   | `docs/spec/artifacts-system.md` |
+| Feature            | Doc File                                 |
+| ------------------ | ---------------------------------------- |
+| DB schema (all)    | `docs/spec/schema.md`                    |
+| Messages           | `docs/spec/messages.md`                  |
+| Users/sessions     | `docs/spec/users-sessions.md`            |
+| Assets             | `docs/spec/assets.md`                    |
+| Actors             | `docs/spec/actors.md`                    |
+| Characters/persona | `docs/spec/character-spec.md`            |
+| RPG mechanics      | `docs/spec/rpg-mechanics.md`             |
+| Architecture       | `docs/spec/architecture.md`              |
+| Build/deploy       | `docs/spec/build-deploy.md`              |
+| Implementation     | `docs/spec/implementation.md`            |
+| TUI                | `docs/spec/terminal-ui.md`               |
+| Plugin system      | `docs/spec/plugin-system.md`             |
+| Memory system      | `docs/spec/memory-system.md`             |
+| Artifacts system   | `docs/spec/artifacts-system.md`          |
 | Plan / tasks       | `.plan/epics-index.md`, `.plan/backlog/` |
-| Frontend UX        | `docs/frontend/overview.md`     |
+| Frontend UX        | `docs/frontend/overview.md`              |
 
 ## 2. Explore Existing Code
 
