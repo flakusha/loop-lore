@@ -3,7 +3,7 @@
 
 # BUG: NSFW gate `logNsfwEvent` writes plaintext PII (userId/chatId/reason) to `log_entries`; accessible to all admin readers
 
-**Status:** [OK] Resolved
+**Status:** Done
 **Severity:** High
 **Priority:** high
 **Effort:** Small
