@@ -16,7 +16,7 @@ export interface WorktreeConfig {
   agentGpgEmail?: string;
 }
 
-export async function findCredentials(startDir: string,): Promise<string | null> {
+async function findCredentials(startDir: string,): Promise<string | null> {
   let dir = startDir;
   while (dir !== "/") {
     const credentialsPath = resolve(dir, ".credentials.env",);

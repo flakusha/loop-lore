@@ -75,22 +75,9 @@
     // surface (no consumer yet). Tracked: TASK-knip-dead-code.
     "plugins/**/types.ts",
 
-    // Worktree CLI migration leftovers
-    // .sh -> .mjs migration is incomplete: index.mjs only imports
-    // agent-commit/list/git/output; the superseded commands/{branches,
-    // diff,status}.ts, index.ts, utils/{config,colors}.ts remain.
-    // Out of knip's reach (index.mjs is JS, its TS siblings aren't
-    // entry-reachable). Removal tracked separately: TASK-worktree-ts-superseded.
-    "scripts/worktree/index.ts",
-    "scripts/worktree/commands/branches.ts",
-    "scripts/worktree/commands/diff.ts",
-    "scripts/worktree/commands/status.ts",
-    "scripts/worktree/utils/config.ts",
-    "scripts/worktree/utils/colors.ts",
-
     // Live CLI referenced via shell/docs (not import-reachable)
-    // gpg-unlock.mjs is invoked by worktree.sh and documented in
-    // .agents/skills/agent-commit/SKILL.md + worktree-merge/SKILL.md.
+    // gpg-unlock.mjs is invoked by agent-commit.ts and documented in
+    // .agents/skills/worktree-merge/SKILL.md.
     "scripts/gpg-unlock.mjs",
 
     // Native benchmarks
