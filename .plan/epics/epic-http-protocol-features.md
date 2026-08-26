@@ -28,7 +28,7 @@ app-level abstractions.
 
 - **HTTP/2** — automatic when `tls` is set (ALPN negotiates h2/h1.1; Bun v1.3.14:
   "binds TCP for HTTP/1.1+2"), no extra flag. Benefit: multiplexed static assets
-  + concurrent SSE for the Web UI. Gap: only the `port+443` TLS server negotiates
+  and concurrent SSE for the Web UI. Gap: only the `port+443` TLS server negotiates
   h2; the main app port is plaintext, so clients never get h2. → consolidate to a
   single TLS port (ALPN yields h1.1+h2).
 - **HTTP/3 / QUIC** — experimental in 1.4.0 (`http3: true` + `tls`); same port
