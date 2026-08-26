@@ -149,13 +149,13 @@ function readGitIssues(): GitIssueRead {
 function isLockStale(): boolean {
   try {
     const pid = parseInt(readFileSync(join(LOCK_PATH, "owner.pid",), "utf8",).trim(), 10,);
-    if (!Number.isInteger(pid)) { return true; }
+    if (!Number.isInteger(pid,)) { return true; }
     try {
       process.kill(pid, 0,); // signal 0 = liveness probe, no signal delivered
       return false; // owner alive — lock genuinely held
     } catch (e) {
       // EPERM: process exists but is not ours → alive, do not break.
-      return (e as NodeJS.ErrnoException,).code !== "EPERM";
+      return (e as NodeJS.ErrnoException).code !== "EPERM";
     }
   } catch {
     return true; // missing/unreadable pid file — nothing alive claims it
