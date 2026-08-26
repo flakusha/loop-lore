@@ -3,13 +3,13 @@
 
 import { existsSync, mkdirSync, symlinkSync, } from "fs";
 import { resolve, } from "path";
-import { branchToPath, } from "../utils/config";
+import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { gitSync, isProtected, } from "../utils/git";
 import { log, } from "../utils/output";
 
 export async function execute(
   args: string[],
-  config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
+  config: WorktreeConfig,
 ): Promise<void> {
   const branch = args[0];
   const base = args[1] ?? "dev";
@@ -34,9 +34,6 @@ export async function execute(
     // branch doesn't exist — good
   }
 
-  // Resolve current HEAD — works in both attached and detached states
-  const headRef = gitSync(config.repoRoot, "rev-parse", "HEAD",).trim();
-
   // Verify base exists (accepts branch name, tag, or commit)
   try {
     gitSync(config.repoRoot, "rev-parse", "--verify", base,);
@@ -55,12 +52,12 @@ export async function execute(
 
   mkdirSync(config.treeDir, { recursive: true, },);
 
-  log("info", `Creating new branch '${branch}' from '${base}' (HEAD=${headRef.slice(0, 7,)})`,);
+  log("info", `Creating new branch '${branch}' from '${base}'`,);
 
-  // Use HEAD commit directly as base — works regardless of whether repo root
-  // is on a branch or in detached HEAD state.
+  // Branch off `base` (the caller-supplied ref, or the default `dev`). Using
+  // the resolved ref directly works whether `base` is a branch, tag, or commit.
   const result = Bun.spawnSync(
-    ["git", "-C", config.repoRoot, "worktree", "add", "-b", branch, wtPath, headRef,],
+    ["git", "-C", config.repoRoot, "worktree", "add", "-b", branch, wtPath, base,],
     { stdout: "pipe", stderr: "pipe", },
   );
   if (result.exitCode !== 0) {
