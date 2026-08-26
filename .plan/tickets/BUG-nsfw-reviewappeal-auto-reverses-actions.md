@@ -3,7 +3,7 @@
 
 # BUG: `reviewAppeal` auto-reverses `block`/`ban`/`shadow` on a single admin's approval — no separate confirmation
 
-**Status:** ⬜ Not Started
+**Status:** Done
 **Severity:** High
 **Priority:** high
 **Effort:** Small
