@@ -57,6 +57,8 @@ effects onto it. Long-term, status effects fold into the layered Player State mo
 - [ ] Skill/ability system
 - [ ] Buffs/debuffs system
 
+
+- [x] XP/leveling system — D&D 5e progression
 ## Design (from implementation roadmap)
 
 ### File: src/rpg/skills.ts

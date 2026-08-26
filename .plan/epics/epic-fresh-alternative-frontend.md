@@ -47,6 +47,8 @@ Fresh.js is the first concrete alternative frontend — Deno-native, islands arc
 - **Docker**: Fresh static export + reverse proxy
 - **Static**: Fresh preact-only export for CDN hosting
 
+
+- [ ] Alternative frontend documentation
 ## Dependencies
 
 - **Parent hub:** Headless Mode & Alternative Frontends (`epic-headless-alternative-frontends.md`)
