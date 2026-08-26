@@ -14,8 +14,11 @@ export type MusicService = Static<typeof MusicServiceSchema>;
 
 // ── Route schemas ────────────────────────────────────────────
 
+// chatId is intentionally omitted: chatId is the route param `id` (the
+// only authoritative source). Accepting a separate body field invited
+// mismatches where the handler stored against the param while consumers
+// believed they wrote to body.chatId. See BUG-music-links-post-body-chatid-is-required-but-ignored-dead-sc.md.
 export const MusicLinkCreateBody = t.Object({
-  chatId: Id,
   url: t.String({ format: "uri", }),
   sectionId: OptionalId,
 });
