@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 251 epics
+**Total:** 252 epics
 
 ## Summary
 
@@ -29,7 +29,7 @@
 | ⬜ Not Started | Age Gate & Content Warnings | Medium | Unknown | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
 | ⬜ Not Started | API Governance — Epic | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance.md](/.plan/epics/epic-api-governance.md) |
 | ⬜ Not Started | API Routes | High | Medium | 0 | [epic-api-routes.md](/.plan/epics/epic-api-routes.md) |
-| ⬜ Not Started | API-First Foundation | Medium | Medium | 7 | [epic-api-first-foundation.md](/.plan/epics/epic-api-first-foundation.md) |
+| ⬜ Not Started | API-First Foundation | Medium | Medium | 8 | [epic-api-first-foundation.md](/.plan/epics/epic-api-first-foundation.md) |
 | ⬜ Not Started | API/Library Distribution Mode | High | High | 25 | [epic-api-library-distribution.md](/.plan/epics/epic-api-library-distribution.md) |
 | ⬜ Not Started | Architecture Overview | High | Medium | 0 | [epic-architecture.md](/.plan/epics/epic-architecture.md) |
 | ⬜ Not Started | Assistant Generation Extensions (SD, Intent, Scenario Source) | Medium | High | 16 | [epic-assistant-generation-extensions.md](/.plan/epics/epic-assistant-generation-extensions.md) |
@@ -63,27 +63,27 @@
 | ⬜ Not Started | Epic: API Task Offloading | High | Medium | 6 | [epic-api-task-offloading.md](/.plan/epics/epic-api-task-offloading.md) |
 | ⬜ Not Started | Epic: API Telemetry | High | Medium | 6 | [epic-api-telemetry.md](/.plan/epics/epic-api-telemetry.md) |
 | ⬜ Not Started | Epic: API Validation & Guardrails | High | High | 12 | [epic-api-validation-guardrails.md](/.plan/epics/epic-api-validation-guardrails.md) |
-| ⬜ Not Started | Epic: Desktop App | Low | High | 9 | [epic-desktop-app.md](/.plan/epics/epic-desktop-app.md) |
+| ⬜ Not Started | Epic: Desktop App | Low | High | 10 | [epic-desktop-app.md](/.plan/epics/epic-desktop-app.md) |
 | ⬜ Not Started | Epic: Embeddable Backend | Low | Medium | 7 | [epic-embeddable-backend.md](/.plan/epics/epic-embeddable-backend.md) |
-| ⬜ Not Started | Epic: Entity Generation Workflows | High (MVP scoped, post-Gate C) | Medium | 2 | [epic-entity-generation-workflows.md](/.plan/epics/epic-entity-generation-workflows.md) |
-| ⬜ Not Started | Epic: Gallery Batch Operations | High (MVP scoped, post-Gate C) | Medium | 1 | [epic-gallery-batch-operations.md](/.plan/epics/epic-gallery-batch-operations.md) |
-| ⬜ Not Started | Epic: Game Engine SDKs (Unity / Godot) | Low | High | 9 | [epic-game-engine-sdks.md](/.plan/epics/epic-game-engine-sdks.md) |
+| ⬜ Not Started | Epic: Entity Generation Workflows | High (MVP scoped, post-Gate C) | Medium | 4 | [epic-entity-generation-workflows.md](/.plan/epics/epic-entity-generation-workflows.md) |
+| ⬜ Not Started | Epic: Gallery Batch Operations | High (MVP scoped, post-Gate C) | Medium | 6 | [epic-gallery-batch-operations.md](/.plan/epics/epic-gallery-batch-operations.md) |
+| ⬜ Not Started | Epic: Game Engine SDKs (Unity / Godot) | Low | High | 11 | [epic-game-engine-sdks.md](/.plan/epics/epic-game-engine-sdks.md) |
 | ⬜ Not Started | Epic: Game Frontend Scenes (2D/3D) | Low | Medium | 3 | [epic-game-frontend-scenes.md](/.plan/epics/epic-game-frontend-scenes.md) |
 | ⬜ Not Started | Epic: Mini-Games & Interactive Mechanics | Medium | High | 28 | [epic-mini-games.md](/.plan/epics/epic-mini-games.md) |
-| ⬜ Not Started | Epic: Mobile App | Low | High | 9 | [epic-mobile-app.md](/.plan/epics/epic-mobile-app.md) |
-| ⬜ Not Started | Epic: Model Family Presets | High (MVP scoped, post-Gate C) | Medium | 1 | [epic-model-family-presets.md](/.plan/epics/epic-model-family-presets.md) |
+| ⬜ Not Started | Epic: Mobile App | Low | High | 10 | [epic-mobile-app.md](/.plan/epics/epic-mobile-app.md) |
+| ⬜ Not Started | Epic: Model Family Presets | High (MVP scoped, post-Gate C) | Medium | 2 | [epic-model-family-presets.md](/.plan/epics/epic-model-family-presets.md) |
 | ⬜ Not Started | Epic: Multimodal Asset Reuse | Medium | Medium | 5 | [epic-multimodal-asset-reuse.md](/.plan/epics/epic-multimodal-asset-reuse.md) |
 | ⬜ Not Started | Epic: Narration Pipeline | Medium | High | 6 | [epic-narration-pipeline.md](/.plan/epics/epic-narration-pipeline.md) |
 | ⬜ Not Started | Epic: TTS Foundation | Medium | Medium | 10 | [epic-tts-foundation.md](/.plan/epics/epic-tts-foundation.md) |
 | ⬜ Not Started | Epic: Video Generation | Low | Medium | 6 | [epic-video-generation.md](/.plan/epics/epic-video-generation.md) |
-| ⬜ Not Started | Epic: Workflow Engine | High (MVP scoped, post-Gate C) | Large | 13 | [epic-workflow-engine.md](/.plan/epics/epic-workflow-engine.md) |
+| ⬜ Not Started | Epic: Workflow Engine | High (MVP scoped, post-Gate C) | Large | 21 | [epic-workflow-engine.md](/.plan/epics/epic-workflow-engine.md) |
 | ⬜ Not Started | Error Envelope | Medium | Unknown | 0 | [epic-error-envelope.md](/.plan/epics/epic-error-envelope.md) |
 | ⬜ Not Started | Exploration & Discovery Systems | Medium | High | 0 | [epic-exploration-discovery.md](/.plan/epics/epic-exploration-discovery.md) |
 | ⬜ Not Started | External Search Providers & Context Enrichment | Medium | Low | 3 | [epic-rag-context-sources.md](/.plan/epics/epic-rag-context-sources.md) |
 | ⬜ Not Started | Factions, Reputation & Persistent Consequences | High | High | 0 | [epic-faction-reputation.md](/.plan/epics/epic-faction-reputation.md) |
 | ⬜ Not Started | Flexible RPG Patterns | Medium | Unknown | 0 | [epic-rpg-patterns.md](/.plan/epics/epic-rpg-patterns.md) |
 | ⬜ Not Started | Framework SDKs | Medium | High | 8 | [epic-framework-sdks.md](/.plan/epics/epic-framework-sdks.md) |
-| ⬜ Not Started | Fresh.js Alternative Frontend | Medium | High | 7 | [epic-fresh-alternative-frontend.md](/.plan/epics/epic-fresh-alternative-frontend.md) |
+| ⬜ Not Started | Fresh.js Alternative Frontend | Medium | High | 8 | [epic-fresh-alternative-frontend.md](/.plan/epics/epic-fresh-alternative-frontend.md) |
 | ⬜ Not Started | Frontend ↔ Backend Integration — Wiring Backend Subsystems to UI | High | High | 9 | [epic-frontend-backend-integration.md](/.plan/epics/epic-frontend-backend-integration.md) |
 | ⬜ Not Started | Frontend Bundle Optimization | High | Medium | 2 | [epic-frontend-bundle-optimization.md](/.plan/epics/epic-frontend-bundle-optimization.md) |
 | ⬜ Not Started | Frontend Component Architecture | Medium | Unknown | 0 | [epic-frontend-component-architecture.md](/.plan/epics/epic-frontend-component-architecture.md) |
@@ -111,6 +111,7 @@
 | ⬜ Not Started | Mechanics Governance — Per-World Config, Control Levels & Plugin API | Medium | Medium | 4 | [epic-mechanics-governance.md](/.plan/epics/epic-mechanics-governance.md) |
 | ⬜ Not Started | Memory Profiling & Budgets | High | High | 12 | [epic-memory-profiling-budgets.md](/.plan/epics/epic-memory-profiling-budgets.md) |
 | ⬜ Not Started | Messages & Message Pipeline | High | Medium | 0 | [epic-messages.md](/.plan/epics/epic-messages.md) |
+| ⬜ Not Started | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 4 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
 | ⬜ Not Started | Multi-Session Support | Medium | Med | 6 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
 | ⬜ Not Started | Notification System UI | Medium | Unknown | 0 | [epic-frontend-notifications.md](/.plan/epics/epic-frontend-notifications.md) |
 | ⬜ Not Started | NSFW Integration Gaps — Housing, Weather, Social, Disease | High | Medium | 5 | [epic-nsfw-integration-gaps.md](/.plan/epics/epic-nsfw-integration-gaps.md) |
@@ -1223,6 +1224,14 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Type:** Feature Epic
 - **Tags:** messages, pipeline, chat, persistence, retrieval
 - **File:** `.plan/epics/epic-messages.md`
+
+### Middleware — Request Lifecycle, Idempotency & Async Results
+
+- **Status:** ⬜ Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **File:** `.plan/epics/epic-middleware-request-lifecycle.md`
 
 ### Multi-Session Support
 
