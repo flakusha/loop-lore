@@ -51,6 +51,12 @@ tickets `TASK-wire-xp-loot-routes` and `TASK-wire-combat-routes` (WIRED-7 mount 
 - [ ] Create `src/rpg/index.ts` barrel re-exporting dice/stats/combat/xp/loot public APIs
 - [ ] Combat DB persistence schema in `src/db/schema-rpg.ts` (persist battles/rounds/outcomes; engine logic stays pure)
 
+
+- [x] Dice system enhancements — crypto-grade entropy, NdS±M notation
+- [x] Stats system (D&D 5e model — 6 core abilities)
+- [x] Combat system (turn-based) — initiative, attacks, damage, action economy
+- [x] Routes — `src/routes/rpg.ts` (6 endpoints under /api/rpg/)
+- [x] Tests — 189 tests across 5 test files
 ## Design
 
 ### Mechanics Registry
