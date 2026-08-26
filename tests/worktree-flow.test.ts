@@ -53,6 +53,7 @@ beforeAll(() => {
   git(repoRoot, "add", "README.md",);
   git(repoRoot, "commit", "-m", "init: test repo", "--no-gpg-sign",);
   git(repoRoot, "branch", "feature-existing",);
+  git(repoRoot, "branch", "dev",);
 },);
 
 afterAll(() => {
@@ -601,7 +602,7 @@ describe("worktree CLI — inside-worktree invocation", () => {
     const ticketFile = "TASK-inside-worktree-root-probe.md";
     // `git issue` does not exist in the temp repo, so the CLI fails after
     // writing the file — the file placement is what this test pins down.
-    runWtRaw(["ticket", "TASK", "inside worktree root probe"], wt,);
+    runWtRaw(["ticket", "TASK", "inside worktree root probe",], wt,);
 
     expect(existsSync(join(repoRoot, ".plan/tickets", ticketFile,),),).toBe(true,);
     expect(existsSync(join(wt, ".plan/tickets", ticketFile,),),).toBe(false,);
