@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 200 epics
+**Total:** 203 epics
 
 ## Summary
 
@@ -157,6 +157,7 @@
 | Unknown | Epic: Database Backup & Recovery Infrastructure | Unknown | Unknown | 0 | [epic-database-backup-recovery.md](/.plan/epics/epic-database-backup-recovery.md) |
 | Unknown | Epic: Deployment Infrastructure (Docker & Bare Metal) | Unknown | Unknown | 0 | [epic-deployment-infrastructure.md](/.plan/epics/epic-deployment-infrastructure.md) |
 | Unknown | Epic: Federation, Swarm Sync & Decentralized Comms | Unknown | Unknown | 0 | [epic-federation-swarm-sync.md](/.plan/epics/epic-federation-swarm-sync.md) |
+| Unknown | Epic: Generation Flow Control — Pause, Throttling & Concurrency | High | Unknown | 0 | [epic-generation-flow-control.md](/.plan/epics/epic-generation-flow-control.md) |
 | Draft\ | Epic: Lore Knowledge System | High\ | Medium\ | 6 | [epic-lore-knowledge.md](/.plan/epics/epic-lore-knowledge.md) |
 | 🟡 Partial (three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge built) | Epic: Memory & Knowledge Systems | High | High | 12 | [epic-memory-knowledge-systems.md](/.plan/epics/epic-memory-knowledge-systems.md) |
 | Draft\ | Epic: Memory Propagation | High\ | Medium\ | 5 | [epic-memory-propagation.md](/.plan/epics/epic-memory-propagation.md) |
@@ -164,7 +165,9 @@
 | 🟡 Implementation exists (single consolidated engine, wired under /api/rpg/quests); quest type-taxonomy harmonization pending (see TASK-harmonize-quest-type-taxonomy) | Epic: Quests & Encounters | High | High | 6 | [epic-quests-encounters.md](/.plan/epics/epic-quests-encounters.md) |
 | Draft\ | Epic: Rarity Extensions | High\ | Medium\ | 6 | [epic-rarity-extensions.md](/.plan/epics/epic-rarity-extensions.md) |
 | 🟢 Code+tests+schema done (migration 035); UNWIRED | Epic: Replayability | Medium | Medium | 0 | [epic-replayability.md](/.plan/epics/epic-replayability.md) |
+| Unknown | Epic: Review — dev 2026-08-26 Late Merges (NSFW Audit Regression + Formatting) | Medium | Unknown | 0 | [epic-review-dev-2026-08-26-late-merges.md](/.plan/epics/epic-review-dev-2026-08-26-late-merges.md) |
 | 🟢 Code+tests+schema done (migration 036); UNWIRED | Epic: Skills | High | High | 0 | [epic-skills.md](/.plan/epics/epic-skills.md) |
+| Unknown | Epic: Strict Review — dev 2026-08-26 Merges (Security & Data-Integrity) | High | Unknown | 0 | [epic-review-dev-2026-08-26-security-data-integrity-merges.md](/.plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md) |
 | Draft\ | Epic: Timeline System | High\ | High\ | 6 | [epic-timeline-system.md](/.plan/epics/epic-timeline-system.md) |
 | Not Started | Epic: World Diplomacy & Karma | Medium | High | 0 | [epic-world-diplomacy-karma.md](/.plan/epics/epic-world-diplomacy-karma.md) |
 | Not Started | Epic: World Encounters & Resources | Medium | High | 0 | [epic-world-encounters.md](/.plan/epics/epic-world-encounters.md) |
@@ -1574,6 +1577,14 @@ Containerize the loop-lore application and establish deployment strategies for b
 - **Type:** Feature
 - **File:** `.plan/epics/epic-federation-swarm-sync.md`
 
+### Epic: Generation Flow Control — Pause, Throttling & Concurrency
+
+- **Status:** Unknown
+- **Priority:** High
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-generation-flow-control.md`
+
 ### Epic: Lore Knowledge System
 
 - **Status:** Draft\
@@ -1651,6 +1662,16 @@ Extends the rarity system to support timeline-weighted rarity modifiers, event r
 
 Replayability systems — new game plus, alternate story paths, multiple endings, and content that encourages multiple playthroughs. Covers branching narratives, secret content, and progression persistence.
 
+### Epic: Review — dev 2026-08-26 Late Merges (NSFW Audit Regression + Formatting)
+
+- **Status:** Unknown
+- **Priority:** Medium
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-review-dev-2026-08-26-late-merges.md`
+
+Two late dev merges analyzed; both clean. Two follow-up tasks filed (verification + CI hygiene).
+
 ### Epic: Skills
 
 - **Status:** 🟢 Code+tests+schema done (migration 036); UNWIRED
@@ -1661,6 +1682,16 @@ Replayability systems — new game plus, alternate story paths, multiple endings
 - **File:** `.plan/epics/epic-skills.md`
 
 Character skill system — abilities, progression, mastery, and specialization mechanics. Covers skill trees, skill points, prerequisites, synergies, and skill-based gameplay.
+
+### Epic: Strict Review — dev 2026-08-26 Merges (Security & Data-Integrity)
+
+- **Status:** Unknown
+- **Priority:** High
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md`
+
+Five changes verified correct; one data-loss defect and four follow-up tasks tracked as linked tickets.
 
 ### Epic: Timeline System
 
