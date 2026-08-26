@@ -1693,7 +1693,7 @@
     "git_issue": "5264b8b"
   },
   "BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG": {
-    "hash": "pending",
+    "hash": "81a5e15",
     "extid": "BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG",
     "type": "BUG",
     "title": "NSFW `exportUserData` returns full GDPR bundle (prefs + audit + flags) with no access log, no rate limit, no elevated capability",
@@ -1703,7 +1703,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-export-bundle-no-access-log.md",
     "git_issue": "9d02c08",
-    "status": "open"
+    "status": "done"
   },
   "BUG-NSFW-FLAGQUEUE-LEAKS-REPORTER-PII": {
     "hash": "c48d5fb",
