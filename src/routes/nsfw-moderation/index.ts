@@ -11,6 +11,7 @@
  */
 import { Elysia, } from "elysia";
 import { actionsRoutes, } from "./actions";
+import { appealsRoutes, } from "./appeals";
 import { auditRoutes, } from "./audit";
 import { flagsRoutes, } from "./flags";
 import { overridesRoutes, } from "./overrides";
@@ -25,5 +26,6 @@ export function nsfwModerationRoutes(opts: HandlerOpts,) {
     .use(actionsRoutes(opts,),)
     .use(flagsRoutes(opts,),)
     .use(auditRoutes(opts,),)
-    .use(overridesRoutes(opts,),);
+    .use(overridesRoutes(opts,),)
+    .use(appealsRoutes(opts,),);
 }
