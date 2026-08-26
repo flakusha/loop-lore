@@ -5538,6 +5538,28 @@
     "source": ".plan/tickets/TASK-3d-generation.md",
     "git_issue": "7d70ea6"
   },
+  "TASK-3D-GLTF-ASSETS": {
+    "hash": "pending",
+    "extid": "TASK-3D-GLTF-ASSETS",
+    "type": "TASK",
+    "title": "# TASK-3d-gltf-assets: 3D GLTF/GLB asset support (Phase 3)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "Epic 28 (Asset Support)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-3d-gltf-assets.md"
+  },
+  "TASK-3D-PERFORMANCE": {
+    "hash": "pending",
+    "extid": "TASK-3D-PERFORMANCE",
+    "type": "TASK",
+    "title": "# TASK-3d-performance: Performance budgets & optimization (Phase 6)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "Epic 26 (Avatar & Expression), Epic 28 (Asset Support)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-3d-performance.md"
+  },
   "TASK-3D-VIEW-MODES": {
     "hash": "pending",
     "extid": "TASK-3D-VIEW-MODES",
@@ -5548,6 +5570,28 @@
     "epic": "Epic 26 (Avatar & Expression), Epic 28 (Asset Support)",
     "tags": [],
     "source": ".plan/tickets/TASK-3d-view-modes.md"
+  },
+  "TASK-3D-VIEW-MODES-UI": {
+    "hash": "pending",
+    "extid": "TASK-3D-VIEW-MODES-UI",
+    "type": "TASK",
+    "title": "# TASK-3d-view-modes-ui: VRM view-mode switching + device-tier gating (Phase 5)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "Epic 26 (Avatar & Expression), Epic 28 (Asset Support)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-3d-view-modes-ui.md"
+  },
+  "TASK-3D-VRM-FOUNDATION": {
+    "hash": "pending",
+    "extid": "TASK-3D-VRM-FOUNDATION",
+    "type": "TASK",
+    "title": "# TASK-3d-vrm-foundation: 3D foundation — VRM avatars + rendering pipeline (Phases 1–2)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "Epic 26 (Avatar & Expression)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-3d-vrm-foundation.md"
   },
   "TASK-ACHIEVEMENTS": {
     "hash": "5270026",
@@ -6662,6 +6706,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-aux-scene-context.md",
     "git_issue": "f9da80f"
+  },
+  "TASK-AVATARS-DYNAMIC-2D": {
+    "hash": "pending",
+    "extid": "TASK-AVATARS-DYNAMIC-2D",
+    "type": "TASK",
+    "title": "# TASK-avatars-dynamic-2d: Dota-style dynamic 2D avatars (Phase 4)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "Epic 26 (Avatar & Expression)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-avatars-dynamic-2d.md"
   },
   "TASK-BACKUP-RESTORE-RELIABILITY-AND-SELF-HEALING-FOR-FEDERATED-DE": {
     "hash": "cd70f50",
@@ -7839,6 +7894,17 @@
     "source": ".plan/tickets/TASK-chat-battle-mode-switch.md",
     "git_issue": "ede7076"
   },
+  "TASK-CHAT-BRANCH-MERGE": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-BRANCH-MERGE",
+    "type": "TASK",
+    "title": "Chat Split/Reunite Engine (Party Branch & Merge)",
+    "label": "task",
+    "priority": "P2-B",
+    "epic": "epic-chat-transfer-location",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-branch-merge.md"
+  },
   "TASK-CHAT-CONTEXT-FEATURE-PERMISSIONS": {
     "hash": "a3d9b3d",
     "extid": "TASK-CHAT-CONTEXT-FEATURE-PERMISSIONS",
@@ -8420,6 +8486,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-consolidate-unsafe-date-buffer-json-usage-into-shared-utils.md"
   },
+  "TASK-CONTENT-HASH-CONSISTENCY": {
+    "hash": "pending",
+    "extid": "TASK-CONTENT-HASH-CONSISTENCY",
+    "type": "TASK",
+    "title": "Content Hash Consistency (Hashing Migration & Schema)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-non-standard-browser-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-content-hash-consistency.md"
+  },
   "TASK-CONTEXT-CUT-MEMORY-PROMOTION": {
     "hash": "90f0396",
     "extid": "TASK-CONTEXT-CUT-MEMORY-PROMOTION",
@@ -8780,6 +8857,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md",
     "git_issue": "c376c81"
+  },
+  "TASK-CRYPTO-LIBRARY-RESEARCH": {
+    "hash": "pending",
+    "extid": "TASK-CRYPTO-LIBRARY-RESEARCH",
+    "type": "TASK",
+    "title": "Non-Standard Browser Crypto — Library Research",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-non-standard-browser-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-crypto-library-research.md"
   },
   "TASK-CRYPTO-PLUGIN-HOOKS": {
     "hash": "682cf60",
@@ -9380,6 +9468,17 @@
     "git_issue": "950f39f",
     "status": "done"
   },
+  "TASK-E2E-AUTH-FLOWS": {
+    "hash": "pending",
+    "extid": "TASK-E2E-AUTH-FLOWS",
+    "type": "TASK",
+    "title": "# TASK-e2e-auth-flows: Browser e2e auth, registration, join/invite, redirection flows",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-testing-qa",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-auth-flows.md"
+  },
   "TASK-E2E-BROWSER-RELIABILITY-HARDENING": {
     "hash": "a7df405",
     "extid": "TASK-E2E-BROWSER-RELIABILITY-HARDENING",
@@ -9391,6 +9490,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-e2e-browser-reliability-hardening.md",
     "git_issue": "a7df405"
+  },
+  "TASK-E2E-PLAYWRIGHT-HARNESS": {
+    "hash": "pending",
+    "extid": "TASK-E2E-PLAYWRIGHT-HARNESS",
+    "type": "TASK",
+    "title": "# TASK-e2e-playwright-harness: Browser e2e harness hardening",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-testing-qa",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-playwright-harness.md"
   },
   "TASK-E2E-SCENARIO-CATALOG-COVERAGE": {
     "hash": "0f20270",
@@ -9405,6 +9515,17 @@
     "git_issue": "0f20270",
     "status": "done"
   },
+  "TASK-E2E-STATE-CONTRACTS": {
+    "hash": "pending",
+    "extid": "TASK-E2E-STATE-CONTRACTS",
+    "type": "TASK",
+    "title": "# TASK-e2e-state-contracts: Browser e2e Alpine state contracts, encryption flow, access + search correctness",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-testing-qa",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-state-contracts.md"
+  },
   "TASK-E2E-TEST-IMPROVEMENTS": {
     "hash": "f4dcbd7",
     "extid": "TASK-E2E-TEST-IMPROVEMENTS",
@@ -9416,6 +9537,61 @@
     "tags": [],
     "source": ".plan/tickets/TASK-e2e-test-improvements.md",
     "git_issue": "f4dcbd7"
+  },
+  "TASK-E2E-VIEW-EXPANSION": {
+    "hash": "pending",
+    "extid": "TASK-E2E-VIEW-EXPANSION",
+    "type": "TASK",
+    "title": "# TASK-e2e-view-expansion: Browser e2e view, creation-menu and settings coverage",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-testing-qa",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2e-view-expansion.md"
+  },
+  "TASK-E2EE-CRYPTO-UI": {
+    "hash": "pending",
+    "extid": "TASK-E2EE-CRYPTO-UI",
+    "type": "TASK",
+    "title": "# TASK-e2ee-crypto-ui: Client-Side E2E — Phase G UI affordances",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2ee-crypto-ui.md"
+  },
+  "TASK-E2EE-DOUBLE-RATCHET": {
+    "hash": "pending",
+    "extid": "TASK-E2EE-DOUBLE-RATCHET",
+    "type": "TASK",
+    "title": "# TASK-e2ee-double-ratchet: Client-Side E2E — Phase F Signal-grade double ratchet",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2ee-double-ratchet.md"
+  },
+  "TASK-E2EE-OPEN-BUGS": {
+    "hash": "pending",
+    "extid": "TASK-E2EE-OPEN-BUGS",
+    "type": "TASK",
+    "title": "# TASK-e2ee-open-bugs: Fix open bugs against shipped E2E crypto code",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2ee-open-bugs.md"
+  },
+  "TASK-E2EE-RECEIVER-WIRING": {
+    "hash": "pending",
+    "extid": "TASK-E2EE-RECEIVER-WIRING",
+    "type": "TASK",
+    "title": "# TASK-e2ee-receiver-wiring: Client-Side E2E — Phase E receiver-side wiring",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-crypto",
+    "tags": [],
+    "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
   },
   "TASK-ECONOMY-PLAYER-SHOPS": {
     "hash": "dcc5aaf",
@@ -11986,6 +12162,39 @@
     "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md",
     "git_issue": "5f22b58"
   },
+  "TASK-MOOD-CONTAGION": {
+    "hash": "pending",
+    "extid": "TASK-MOOD-CONTAGION",
+    "type": "TASK",
+    "title": "# TASK-mood-contagion: Mood extension — emotional contagion",
+    "label": "task",
+    "priority": "Low",
+    "epic": "Character Core System",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mood-contagion.md"
+  },
+  "TASK-MOOD-CORE": {
+    "hash": "pending",
+    "extid": "TASK-MOOD-CORE",
+    "type": "TASK",
+    "title": "# TASK-mood-core: Character happiness meter & mood core system",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "Character Core System",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mood-core.md"
+  },
+  "TASK-MOOD-MULTI-DIMENSIONAL": {
+    "hash": "pending",
+    "extid": "TASK-MOOD-MULTI-DIMENSIONAL",
+    "type": "TASK",
+    "title": "# TASK-mood-multi-dimensional: Mood extension — multi-dimensional emotional states (PAD)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "Character Core System",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mood-multi-dimensional.md"
+  },
   "TASK-MOOD-SHIFT-DELTA-TUNING-WORD-BOUNDARY": {
     "hash": "pending",
     "extid": "TASK-MOOD-SHIFT-DELTA-TUNING-WORD-BOUNDARY",
@@ -13011,6 +13220,28 @@
     "git_issue": "071d766",
     "status": "done"
   },
+  "TASK-PARTY-AUX-TRANSITION": {
+    "hash": "pending",
+    "extid": "TASK-PARTY-AUX-TRANSITION",
+    "type": "TASK",
+    "title": "AUX LLM Transition Detection Fallback",
+    "label": "task",
+    "priority": "P2-B",
+    "epic": "epic-chat-transfer-location",
+    "tags": [],
+    "source": ".plan/tickets/TASK-party-aux-transition.md"
+  },
+  "TASK-PARTY-JOIN-LEAVE": {
+    "hash": "pending",
+    "extid": "TASK-PARTY-JOIN-LEAVE",
+    "type": "TASK",
+    "title": "Party Join/Leave with VN Narration",
+    "label": "task",
+    "priority": "P2-B",
+    "epic": "epic-chat-transfer-location",
+    "tags": [],
+    "source": ".plan/tickets/TASK-party-join-leave.md"
+  },
   "TASK-PARTY-MIGRATION": {
     "hash": "69edfef",
     "extid": "TASK-PARTY-MIGRATION",
@@ -13676,6 +13907,17 @@
     "source": ".plan/tickets/TASK-rag-business-features.md",
     "git_issue": "b97c443"
   },
+  "TASK-RAG-CHAT-SOURCES": {
+    "hash": "pending",
+    "extid": "TASK-RAG-CHAT-SOURCES",
+    "type": "TASK",
+    "title": "# TASK-rag-chat-sources: RAG team-chat sources (Slack/Discord/Matrix)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-rag-document-processing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-chat-sources.md"
+  },
   "TASK-RAG-CITATION-DISPLAY": {
     "hash": "456ae2d",
     "extid": "TASK-RAG-CITATION-DISPLAY",
@@ -13700,6 +13942,17 @@
     "source": ".plan/tickets/TASK-rag-context-enrichment.md",
     "git_issue": "94d0df8"
   },
+  "TASK-RAG-CONTEXT-SCHEMA": {
+    "hash": "pending",
+    "extid": "TASK-RAG-CONTEXT-SCHEMA",
+    "type": "TASK",
+    "title": "# TASK-rag-context-schema: RAG shared context-source schema + sync framework",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rag-document-processing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-context-schema.md"
+  },
   "TASK-RAG-DOCUMENT-LIST": {
     "hash": "1bd0372",
     "extid": "TASK-RAG-DOCUMENT-LIST",
@@ -13723,6 +13976,39 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rag-document-upload.md",
     "git_issue": "d744582"
+  },
+  "TASK-RAG-EMAIL-SOURCE": {
+    "hash": "pending",
+    "extid": "TASK-RAG-EMAIL-SOURCE",
+    "type": "TASK",
+    "title": "# TASK-rag-email-source: RAG email source (IMAP)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-rag-document-processing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-email-source.md"
+  },
+  "TASK-RAG-FEED-SOURCES": {
+    "hash": "pending",
+    "extid": "TASK-RAG-FEED-SOURCES",
+    "type": "TASK",
+    "title": "# TASK-rag-feed-sources: RAG feed sources (RSS/Atom)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rag-document-processing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-feed-sources.md"
+  },
+  "TASK-RAG-KNOWLEDGE-GRAPH": {
+    "hash": "pending",
+    "extid": "TASK-RAG-KNOWLEDGE-GRAPH",
+    "type": "TASK",
+    "title": "# TASK-rag-knowledge-graph: RAG knowledge graph",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-rag-document-processing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-knowledge-graph.md"
   },
   "TASK-RAG-LOCAL-SEARCH-CACHE": {
     "hash": "a7e766b",
@@ -13771,6 +14057,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rag-search-providers.md",
     "git_issue": "dc8ba02"
+  },
+  "TASK-RAG-UNIFIED-ENRICHMENT": {
+    "hash": "pending",
+    "extid": "TASK-RAG-UNIFIED-ENRICHMENT",
+    "type": "TASK",
+    "title": "# TASK-rag-unified-enrichment: RAG unified context enrichment layer",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rag-document-processing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-unified-enrichment.md"
   },
   "TASK-RANDOM-ENCOUNTERS-EVENTS": {
     "hash": "e53d2f0",
@@ -13831,6 +14128,50 @@
     "epic": "epic-e2e-integration-testing.md",
     "tags": [],
     "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
+  },
+  "TASK-RECON-CRITICAL-FIXES": {
+    "hash": "pending",
+    "extid": "TASK-RECON-CRITICAL-FIXES",
+    "type": "TASK",
+    "title": "# TASK-recon-critical-fixes: Backend reconciliation — Phase 1 critical wiring/logic fixes",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-logic-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-recon-critical-fixes.md"
+  },
+  "TASK-RECON-DEDUP": {
+    "hash": "pending",
+    "extid": "TASK-RECON-DEDUP",
+    "type": "TASK",
+    "title": "# TASK-recon-dedup: Backend reconciliation — Phase 4 de-duplication (+ Phase 5 backlog)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-logic-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-recon-dedup.md"
+  },
+  "TASK-RECON-SECURITY-FIXES": {
+    "hash": "pending",
+    "extid": "TASK-RECON-SECURITY-FIXES",
+    "type": "TASK",
+    "title": "# TASK-recon-security-fixes: Backend reconciliation — Phase 2 security fixes",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-logic-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-recon-security-fixes.md"
+  },
+  "TASK-RECON-TEST-COVERAGE": {
+    "hash": "pending",
+    "extid": "TASK-RECON-TEST-COVERAGE",
+    "type": "TASK",
+    "title": "# TASK-recon-test-coverage: Backend reconciliation — Phase 3 test coverage",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-logic-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-recon-test-coverage.md"
   },
   "TASK-RECONCILE-ACHIEVEMENT-UNLOCK-SOURCES": {
     "hash": "pending",

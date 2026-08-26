@@ -5,49 +5,49 @@
 
 ## Epic Overview
 
-**File:** `.plan/epics/epic-communications-integrations.md`
+**File:** `.plan/epics/epic-communications-integrations.md` (hub)
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** High
+
+The epic is split into 5 sub-epics — see the Sub-Epics table in the hub.
+
+## Integrations Core
+
+- **File:** `.plan/epics/epic-integrations-core.md`
+- **Tasks:** 7 tasks
+- **Key Features:** `ProtocolAdapter`/`MessageBridge`/`EncryptionProvider` abstractions, config UI skeleton, health monitoring, rate limiting
+- **Note:** All protocol sub-epics implement `ProtocolAdapter` against this epic
 
 ## Four Phases
 
 ### Phase 1: Matrix Integration
 
 - **Protocol:** Matrix (federated, E2EE)
+- **File:** `.plan/epics/epic-matrix-integration.md`
 - **Tasks:** 14 tasks
 - **Key Features:** E2EE (Olm/Megolm), room management, Discord/Slack bridges
-- **File:** `TASK-matrix-integration.md`
 
 ### Phase 2: XMPP Integration
 
 - **Protocol:** XMPP (extensible, OMEMO)
-- **Tasks:** 10 tasks
+- **File:** `.plan/epics/epic-xmpp-integration.md`
+- **Tasks:** 11 tasks
 - **Key Features:** OMEMO encryption, MUC support, file transfer via Jingle
-- **File:** `TASK-xmpp-integration.md`
 
 ### Phase 3: Instant Messaging
 
 - **Protocols:** WhatsApp, Telegram, Signal
-- **Tasks:** 12 tasks
+- **File:** `.plan/epics/epic-im-integrations.md`
+- **Tasks:** 9 tasks
 - **Key Features:** Unified IM abstraction, experimental protocols
-- **File:** `TASK-im-abstraction-layer.md`
 
 ### Phase 4: Email Integration
 
 - **Protocol:** IMAP/SMTP, PGP
-- **Tasks:** 12 tasks
+- **File:** `.plan/epics/epic-email-integration.md`
+- **Tasks:** 11 tasks
 - **Key Features:** Email-to-chat bridge, PGP encryption, notification system
-- **File:** `TASK-email-integration.md`
-
-## Cross-Cutting
-
-**File:** `TASK-integration-infrastructure.md`
-
-- Protocol abstraction layer
-- Encryption providers
-- Message bridge
-- Monitoring and UI
 
 ## Architecture
 
