@@ -1,6 +1,6 @@
 # BUG: JWT payload parse failure yields empty object accepted as valid token
 
-**Status:** ⬜ Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
