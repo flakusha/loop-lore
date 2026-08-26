@@ -1,6 +1,6 @@
 # BUG: world timelines unauthenticated read and create
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Fixed (commit 88544034)
 **Priority:** critical
 **Effort:** Small
 
