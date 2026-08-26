@@ -1680,7 +1680,7 @@
     "status": "open"
   },
   "BUG-NSFW-FLAGQUEUE-LEAKS-REPORTER-PII": {
-    "hash": "pending",
+    "hash": "c48d5fb",
     "extid": "BUG-NSFW-FLAGQUEUE-LEAKS-REPORTER-PII",
     "type": "BUG",
     "title": "NSFW flag queue endpoint returns full `reporter_id` + free-text `description` to admin — no projection or redaction",
@@ -1690,10 +1690,10 @@
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-flagqueue-leaks-reporter-pii.md",
     "git_issue": "c48d5fb",
-    "status": "open"
+    "status": "done"
   },
   "BUG-NSFW-GATE-LOG-PLAINTEXT-PII": {
-    "hash": "pending",
+    "hash": "9f3faa5",
     "extid": "BUG-NSFW-GATE-LOG-PLAINTEXT-PII",
     "type": "BUG",
     "title": "NSFW gate `logNsfwEvent` writes plaintext PII (userId/chatId/reason) to `log_entries`; accessible to all admin readers",
@@ -1703,10 +1703,10 @@
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-gate-log-plaintext-pii.md",
     "git_issue": "9f3faa5",
-    "status": "open"
+    "status": "done"
   },
   "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY": {
-    "hash": "pending",
+    "hash": "bd2b3b5",
     "extid": "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY",
     "type": "BUG",
     "title": "NSFW mod actions (`block/unblock/ban/unban/shadow/unshadow`) trust `performedBy` from request body — admin impersonation",
@@ -1716,7 +1716,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-modactions-performedby-from-body.md",
     "git_issue": "bd2b3b5",
-    "status": "open"
+    "status": "done"
   },
   "BUG-NSFW-MODERATION-DELETE-DESTROYS-AUDIT-LOG": {
     "hash": "50a69ff",
@@ -2173,7 +2173,7 @@
     "git_issue": "c8bad7f"
   },
   "BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA": {
-    "hash": "pending",
+    "hash": "dbd9c18",
     "extid": "BUG-TELEMETRY-ERRORS-LEAKS-RAW-EVENT-DATA",
     "type": "BUG",
     "title": "`/api/telemetry/analytics/errors` exposes raw `event_data` JSON + `user_id`/`chat_id` to admin",
@@ -2183,7 +2183,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md",
     "git_issue": "dbd9c18",
-    "status": "open"
+    "status": "done"
   },
   "BUG-TELEMETRY-PURGE-UNBOUNDED-DAYS": {
     "hash": "pending",
@@ -10884,6 +10884,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-impersonation-system.md",
     "git_issue": "f0b63b7"
+  },
+  "TASK-IMPLEMENT-BUG-NSFW-REVIEWAPPEAL-AUTO-REVERSES-ACTIONS": {
+    "hash": "ab7f915",
+    "git_issue": "ab7f915",
+    "extid": "TASK-IMPLEMENT-BUG-NSFW-REVIEWAPPEAL-AUTO-REVERSES-ACTIONS",
+    "type": "TASK",
+    "title": "Implement BUG-nsfw-reviewappeal-auto-reverses-actions",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-implement-bug-nsfw-reviewappeal-auto-reverses-actions.md"
   },
   "TASK-IMPLEMENT-CRAFTING-UI": {
     "hash": "80c2397",

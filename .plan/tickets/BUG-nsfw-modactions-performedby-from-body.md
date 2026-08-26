@@ -3,7 +3,7 @@
 
 # BUG: NSFW mod actions (`block/unblock/ban/unban/shadow/unshadow`) trust `performedBy` from request body — admin impersonation
 
-**Status:** [OK] Resolved
+**Status:** Done
 **Severity:** High
 **Priority:** high
 **Effort:** Small
