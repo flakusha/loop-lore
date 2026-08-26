@@ -57,6 +57,7 @@ tickets `TASK-wire-xp-loot-routes` and `TASK-wire-combat-routes` (WIRED-7 mount 
 - [x] Combat system (turn-based) — initiative, attacks, damage, action economy
 - [x] Routes — `src/routes/rpg.ts` (6 endpoints under /api/rpg/)
 - [x] Tests — 189 tests across 5 test files
+
 ## Design
 
 ### Mechanics Registry

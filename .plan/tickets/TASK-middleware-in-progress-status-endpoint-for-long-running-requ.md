@@ -45,11 +45,11 @@ UX.
 
 - [ ] New `GET /api/requests/:id/status` route (under
   `src/routes/api/requests/`):
-    - 200 with `{ id, status, progress?, startedAt, completedAt?, error? }`
+  - 200 with `{ id, status, progress?, startedAt, completedAt?, error? }`
       on hit;
-    - 404 when no record exists for the id (and the id is well-formed);
-    - 400 on malformed id (length, charset);
-    - requires the same auth scope as the original request, looked up via
+  - 404 when no record exists for the id (and the id is well-formed);
+  - 400 on malformed id (length, charset);
+  - requires the same auth scope as the original request, looked up via
       the request id → userId association stored at request start.
 - [ ] New `src/middleware/in-progress.ts` exports `inProgressMiddleware()`
   that hooks into the request lifecycle: on start, writes a `pending`
@@ -65,14 +65,14 @@ UX.
   for that call is the same as the original POST's request id (already
   forwarded at `src/routes/messages/reply.ts:48`).
 - [ ] Unit + integration tests:
-    - status reflects `pending` immediately after POST;
-    - status reflects `in_progress` while handler is running (use a
+  - status reflects `pending` immediately after POST;
+  - status reflects `in_progress` while handler is running (use a
       test handler that yields control);
-    - status reflects `complete` with the captured response after the
+  - status reflects `complete` with the captured response after the
       handler finishes;
-    - status reflects `failed` if the handler throws;
-    - 404 for unknown id;
-    - 400 for malformed id.
+  - status reflects `failed` if the handler throws;
+  - 404 for unknown id;
+  - 400 for malformed id.
 - [ ] `epic-middleware-request-lifecycle.md` sub-ticket checkbox marked done.
 
 ## Notes

@@ -39,7 +39,7 @@ the in-progress status endpoint
 - Offload target: `.tmp/async-store/` is the default per AGENTS.md scratch
   rules; make the dir configurable so production deployments can point at
   a dedicated volume. Offloaded files are content-addressed by request id
-  + timestamp; do not depend on filesystem ordering.
+- timestamp; do not depend on filesystem ordering.
 - Compression: gzip via `Bun.gzipSync` for completed entries older than
   the offload window.
 
@@ -47,23 +47,23 @@ the in-progress status endpoint
 
 - [ ] New migration `src/db/migrations/XXXX_request_results.ts` creates
   `request_results` with columns:
-    - `id` (UUID, PK) — request id from
+  - `id` (UUID, PK) — request id from
       `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md`;
-    - `method`, `route_pattern` (normalized) — for replay key;
-    - `user_id` (nullable, for auth-scoped replay);
-    - `status` (TEXT, enum-checked: `pending` | `in_progress` | `complete`
+  - `method`, `route_pattern` (normalized) — for replay key;
+  - `user_id` (nullable, for auth-scoped replay);
+  - `status` (TEXT, enum-checked: `pending` | `in_progress` | `complete`
       | `failed` | `expired`);
-    - `progress` (TEXT, JSON, nullable);
-    - `response_status` (INTEGER, nullable until complete);
-    - `response_headers` (TEXT, JSON, nullable);
-    - `response_body` (BLOB, nullable, capped at config max);
-    - `response_body_truncated` (BOOLEAN, default false);
-    - `error` (TEXT, nullable);
-    - `started_at` (INTEGER, ms epoch);
-    - `completed_at` (INTEGER, nullable);
-    - `offloaded_at` (INTEGER, nullable) — set when the row's blob is
+  - `progress` (TEXT, JSON, nullable);
+  - `response_status` (INTEGER, nullable until complete);
+  - `response_headers` (TEXT, JSON, nullable);
+  - `response_body` (BLOB, nullable, capped at config max);
+  - `response_body_truncated` (BOOLEAN, default false);
+  - `error` (TEXT, nullable);
+  - `started_at` (INTEGER, ms epoch);
+  - `completed_at` (INTEGER, nullable);
+  - `offloaded_at` (INTEGER, nullable) — set when the row's blob is
       spilled to disk and the row is freed;
-    - `offload_path` (TEXT, nullable).
+  - `offload_path` (TEXT, nullable).
   Plus an index on `(method, route_pattern, id)` and on `started_at` for
   offload scans.
 - [ ] Regenerated artifacts (`src/db/schema-*.ts`,
@@ -71,24 +71,24 @@ the in-progress status endpoint
   `src/validation/db-schemas.ts`) compile and `bun run db:schemas:check`
   is green.
 - [ ] New `src/async/store.ts` exports:
-    - `recordRequestStart(id, opts)` — inserts `pending` row, non-blocking
+  - `recordRequestStart(id, opts)` — inserts `pending` row, non-blocking
       (fire-and-forget with structured logger on failure);
-    - `recordRequestProgress(id, progress)` — updates the `progress`
+  - `recordRequestProgress(id, progress)` — updates the `progress`
       column, non-blocking;
-    - `recordRequestComplete(id, response)` — captures status/headers/body,
+  - `recordRequestComplete(id, response)` — captures status/headers/body,
       updates to `complete`;
-    - `recordRequestFailed(id, error)` — updates to `failed`;
-    - `getRequestResult(id)` — read; falls back to offloaded file when
+  - `recordRequestFailed(id, error)` — updates to `failed`;
+  - `getRequestResult(id)` — read; falls back to offloaded file when
       `offloaded_at IS NOT NULL`;
-    - `evictExpired(ttlMs)` — purges rows older than TTL.
+  - `evictExpired(ttlMs)` — purges rows older than TTL.
 - [ ] New `src/async/offload.ts` exports a daemon that scans the table on
   the configured interval (default 5 min) and offloads rows where:
-    - `completed_at` is older than `offloadAgeMs` (default 1h), OR
-    - the table row count exceeds `offloadSizeThreshold` (default 10k
+  - `completed_at` is older than `offloadAgeMs` (default 1h), OR
+  - the table row count exceeds `offloadSizeThreshold` (default 10k
       rows), OR
-    - DB write latency (p95 over the last minute) exceeds
+  - DB write latency (p95 over the last minute) exceeds
       `offloadLoadThresholdMs` (default 50ms), OR
-    - the row has been idle (`last_touched_at`) longer than
+  - the row has been idle (`last_touched_at`) longer than
       `offloadIdleMs` (default 24h).
   Offload writes a gzipped JSON to `<offloadDir>/<yyyy>/<mm>/<dd>/<id>.json.gz`
   and updates the row with `offloaded_at` + `offload_path`. The daemon is
@@ -101,12 +101,12 @@ the in-progress status endpoint
 - [ ] The migration is reversible; `bun run db:migrate:down` (or the
   project's equivalent) drops the table cleanly.
 - [ ] Unit + integration tests:
-    - insert + read round-trip for each status transition;
-    - body cap truncates and sets the flag;
-    - offload moves the blob to disk and the row to the offloaded state;
-    - `getRequestResult` reads from disk when offloaded;
-    - TTL eviction removes old rows;
-    - offload triggers on size, age, load, idle.
+  - insert + read round-trip for each status transition;
+  - body cap truncates and sets the flag;
+  - offload moves the blob to disk and the row to the offloaded state;
+  - `getRequestResult` reads from disk when offloaded;
+  - TTL eviction removes old rows;
+  - offload triggers on size, age, load, idle.
 - [ ] `epic-middleware-request-lifecycle.md` sub-ticket checkbox marked done.
 
 ## Notes

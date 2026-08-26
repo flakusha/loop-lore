@@ -116,6 +116,7 @@ moderation and `epic-nsfw-capabilities.md` consent infrastructure.
 - [ ] Applicable to other assistant workflows (not just one use case)
 - [ ] Plugin can register additional workflows
 - [ ] Workflow templates are config-driven (YAML in `configs/templates/workflows/`)
+
 ## Dependencies
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)
