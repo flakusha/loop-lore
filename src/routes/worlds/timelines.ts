@@ -3,6 +3,15 @@
 
 /**
  * Timeline CRUD routes — world-scoped timeline branch management.
+ *
+ * Auth model (mirrors sibling worlds/locations routes):
+ *   GET    (list)   — extractAuth → requireWorldAccess (returns 404 to
+ *                     hide existence from non-members)
+ *   POST   (create) — extractAuth → requireWorldOwner (returns 403)
+ *   GET    (one)    — extractAuth → requireWorldAccess (404 to outsiders)
+ *   DELETE          — extractAuth → requireWorldOwner (403)
+ *
+ * Unauthenticated callers MUST receive 401 on all four verbs.
  */
 import { Elysia, t, } from "elysia";
 import {
@@ -12,7 +21,7 @@ import {
   notFoundResponse as notFound,
   unauthorizedResponse,
 } from "../http-utils/index.js";
-import { requireWorldOwner, } from "./access";
+import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
 export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
@@ -25,6 +34,11 @@ export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
         `${prefix}/worlds/:worldId/timelines`,
         async (ctx,) => {
           const { worldId, } = ctx.params;
+          const auth = extractAuth(ctx,);
+          if (!auth.userId) { return unauthorizedResponse(); }
+          const worldErr = await requireWorldAccess(database, worldId, auth.userId, auth.userRole ?? null,);
+          if (worldErr) { return worldErr; }
+
           const timelines = await database
             .selectFrom("world_timelines",)
             .select(["id", "world_id", "name", "description", "is_prime", "created_at",],)
@@ -40,14 +54,11 @@ export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
         `${prefix}/worlds/:worldId/timelines`,
         async (ctx,) => {
           const { worldId, } = ctx.params;
+          const auth = extractAuth(ctx,);
+          if (!auth.userId) { return unauthorizedResponse(); }
+          const ownerErr = await requireWorldOwner(database, worldId, auth.userId, auth.userRole ?? null,);
+          if (ownerErr) { return ownerErr; }
           const body = ctx.body as { name: string; description?: string };
-
-          const world = await database
-            .selectFrom("worlds",)
-            .select("id",)
-            .where("id", "=", worldId,)
-            .executeTakeFirst();
-          if (!world) { return notFound("World not found",); }
 
           const id = crypto.randomUUID();
           await database
@@ -82,6 +93,11 @@ export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
         `${prefix}/worlds/:worldId/timelines/:timelineId`,
         async (ctx,) => {
           const { worldId, timelineId, } = ctx.params;
+          const auth = extractAuth(ctx,);
+          if (!auth.userId) { return unauthorizedResponse(); }
+          const worldErr = await requireWorldAccess(database, worldId, auth.userId, auth.userRole ?? null,);
+          if (worldErr) { return worldErr; }
+
           const row = await database
             .selectFrom("world_timelines",)
             .select(["id", "world_id", "name", "description", "is_prime", "created_at",],)
