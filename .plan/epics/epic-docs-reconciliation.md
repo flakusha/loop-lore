@@ -17,7 +17,7 @@ in-app vitepress docs from the app interface, and grow the user-facing guide
 into practical how-tos. Ends the state where specs drift from `src/` and users
 cannot discover the documentation from the running app.
 
-## Current State (verified 2026-08-12)
+## Current State (verified 2026-08-12, updated 2026-08-26)
 
 - App serves the built vitepress docs at `/docs/` (`src/server/static-files.ts`,
   `DOCS_PATH`), but the web sidebar (`src/views/layout.html`) had **no Docs
@@ -27,6 +27,11 @@ cannot discover the documentation from the running app.
 - Vitepress sidebar had **2 dead links**: `/spec/character-setup` (no file —
   actual is `character-spec.md`) and `/spec/tui` (actual is `terminal-ui.md`).
 - Specs and the hand-written `docs/reference/api.md` drift from `src/`.
+- (2026-08-26) README flags three features as "spec pending" — emotion avatars,
+  regex extraction, profanity filter — all implemented in `src/`. Spec docs for
+  them are being authored in the `docs-current-features` worktree and wired into
+  the sidebar + README. Additional undocumented modules (`src/content`,
+  `src/aux-pipeline`, `src/image-edit`) are tracked separately.
 
 ## Goals
 
@@ -47,6 +52,8 @@ cannot discover the documentation from the running app.
 | Fix dead sidebar links   | TASK-docs-fix-dangling-links.md | ✅ Shipped 2026-08-12 | `character-setup`→`character-spec`; `tui`→`terminal-ui` |
 | User how-tos             | TASK-docs-guide-how-tos.md | 🟡 In Progress | first-chat, personas, worlds, gallery, settings |
 | Spec/API reconciliation  | TASK-docs-reconcile-implementation.md | 🟡 In Progress | audit most-cited specs + `reference/api.md` vs `src/` |
+| Spec docs: current features (emotion/regex/profanity) | TASK-doc-spec-emotion-avatars.md, TASK-doc-spec-regex-extraction.md, TASK-doc-spec-profanity-filter.md | 🟡 In Progress (docs-current-features) | author `docs/spec/{emotion-avatars,regex-extraction,profanity-filter}.md`; wire sidebar + README |
+| Audit undocumented `src/` modules | TASK-doc-audit-undocumented-src-modules.md | ⬜ Not Started | `src/content`, `src/aux-pipeline`, `src/image-edit` |
 
 ## Files (proposed/changed)
 
@@ -54,7 +61,7 @@ cannot discover the documentation from the running app.
 src/routes/views/layout.ts        ← docsNav injection + isDocsServed()
 src/views/layout.html             ← {{docsNav}} placeholder
 src/public/locales/*.json         ← navigation.docs (10 locales)
-docs/.vitepress/config.mts        ← guide sidebar + dead-link fixes
+docs/.vitepress/config.mts        ← guide sidebar + dead-link fixes; extended for new specs (2026-08-26)
 docs/guide/first-chat.md          ← new
 docs/guide/personas.md            ← new
 docs/guide/worlds.md              ← new
@@ -62,6 +69,10 @@ docs/guide/gallery.md             ← new
 docs/guide/settings.md            ← new
 docs/guide/getting-started.md     ← rewritten (routes to first-chat)
 docs/reference/api.md             ← reconciled (pending audit)
+docs/spec/emotion-avatars.md      ← new (2026-08-26, docs-current-features)
+docs/spec/regex-extraction.md     ← new (2026-08-26, docs-current-features)
+docs/spec/profanity-filter.md     ← new (2026-08-26, docs-current-features)
+README.md                         ← features table links extended (2026-08-26)
 ```
 
 ## Acceptance Criteria
@@ -70,6 +81,8 @@ docs/reference/api.md             ← reconciled (pending audit)
 - [ ] All vitepress nav/sidebar links resolve to real files
 - [ ] How-tos reflect the actual UI (verified against views + components)
 - [ ] Most-cited specs/API reference updated to match `src/`
+- [ ] Spec docs exist for emotion-avatars, regex-extraction, profanity-filter and are linked from README + sidebar
+- [ ] Undocumented `src/` modules audited (see TASK-doc-audit-undocumented-src-modules.md)
 
 ## Dependencies
 
@@ -81,3 +94,6 @@ docs/reference/api.md             ← reconciled (pending audit)
 - **Distinct from:** EPIC-2026-32 API Versioning (epic-api-versioning.md) —
   HTTP versioning, not docs content.
 - `docs/meta/` — research/reference (drift tolerated; not in scope here).
+- API reference auto-generation (JSDoc/TSDoc → Typedoc) proposed for
+  `docs/reference/api.md` (currently hand-maintained) — see
+  TASK-doc-audit-undocumented-src-modules.md.
