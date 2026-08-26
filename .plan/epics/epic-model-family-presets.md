@@ -239,6 +239,8 @@ Task breakdown (same deliverable, sequenced):
 3. Validate presets against the acceptance criterion: "Model family presets handle
    per-family prompt formatting (SD tags, Flux natural, Ideogram JSON, etc.)".
 
+
+- [ ] Model family presets handle per-family prompt formatting (SD tags, Flux natural, Ideogram JSON, etc.)
 ## Dependencies
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)

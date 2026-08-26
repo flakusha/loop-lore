@@ -95,6 +95,9 @@ files: see parent epic §7.6f.
 - [ ] Entity-generation workflow templates (character/world/location/item/npc) with `entity_type_presets` (§7.6c) + per-entity quality gates (§7.6d); wire `intent.target` bindings (§7.6a)
 - [ ] Decide and implement the NPC intent target: distinct `INTENT_PATTERNS` target (preferred) vs. routing through `character` with an `is_npc: true` step default
 
+
+- [ ] Entity-generation workflows (character/world/location/item/npc), each with: intent routing to its `INTENT_PATTERNS` target, per-entity step schema (§7.6b), `entity_type_presets` validation (§7.6c), schema/consistency/duplicate (+balance for items) quality gates, confirmation, and dispatch to the correct creation backend
+- [ ] User can add/override/replace workflows via config (merge strategies work)
 ## Dependencies
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)

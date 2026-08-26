@@ -50,6 +50,8 @@ Part of the **RPG Mechanics & Extensible Game Systems** mega-epic. See parent ep
 - [ ] Unique items
 - [ ] Crafting system (recipes, limitations, pre-compiled items)
 
+
+- [x] Loot system — rarity-weighted tables
 ## Design (from implementation roadmap)
 
 ### File: src/rpg/items.ts

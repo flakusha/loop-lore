@@ -107,6 +107,15 @@ moderation and `epic-nsfw-capabilities.md` consent infrastructure.
 - [ ] Unit tests for loader, step validation, intent→workflow routing
 - [ ] Integration test: Minimax H3 end-to-end (intent → steps → confirm → dispatch)
 
+
+- [ ] Step-by-step prompt construction with validation + recommendations
+- [ ] Final confirmation required before dispatch
+- [ ] Dispatch calls the designated backend/API with assembled payload
+- [ ] User intent matches a workflow template and triggers the creative studio flow
+- [ ] Assistant previews prompt steps + recommendations before building
+- [ ] Applicable to other assistant workflows (not just one use case)
+- [ ] Plugin can register additional workflows
+- [ ] Workflow templates are config-driven (YAML in `configs/templates/workflows/`)
 ## Dependencies
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)
