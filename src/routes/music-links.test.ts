@@ -37,13 +37,13 @@ function makeMockDb(initialChats: Row[], initialLinks: Row[],): Record<string, u
   const findBy = (table: string, col: string, val: unknown,): Row | undefined => {
     const arr = tables[table];
     const key = stripQualifier(col,);
-    return arr?.find((row,) => row[key] === val,);
+    return arr?.find((row,) => row[key] === val);
   };
 
   const filterBy = (table: string, col: string, val: unknown,): Row[] => {
     const arr = tables[table] ?? [];
     const key = stripQualifier(col,);
-    return arr.filter((row,) => row[key] === val,);
+    return arr.filter((row,) => row[key] === val);
   };
 
   return {
@@ -64,7 +64,7 @@ function makeMockDb(initialChats: Row[], initialLinks: Row[],): Record<string, u
             execute: async () =>
               filterBy(table, col, val,)
                 .slice()
-                .sort((a, b,) => String(a["created_at"] ?? "",).localeCompare(String(b["created_at"] ?? "",),),),
+                .sort((a, b,) => String(a["created_at"] ?? "",).localeCompare(String(b["created_at"] ?? "",),)),
           }),
         }),
       }),
@@ -74,7 +74,7 @@ function makeMockDb(initialChats: Row[], initialLinks: Row[],): Record<string, u
             executeTakeFirst: async () => {
               const row = findBy(table, col, val,);
               if (!row) { return null; }
-              const chat = tables["chats"]?.find((c,) => c["id"] === row["chat_id"],);
+              const chat = tables["chats"]?.find((c,) => c["id"] === row["chat_id"]);
               return { sender_id: row["sender_id"], created_by: chat?.["created_by"] ?? null, };
             },
           }),
@@ -87,7 +87,7 @@ function makeMockDb(initialChats: Row[], initialLinks: Row[],): Record<string, u
           const arr = tables[table];
           if (!arr) { return; }
           const key = stripQualifier(col,);
-          const idx = arr.findIndex((row,) => row[key] === val,);
+          const idx = arr.findIndex((row,) => row[key] === val);
           if (idx >= 0) { arr.splice(idx, 1,); }
         },
       }),
@@ -109,7 +109,7 @@ const baseMetadata = {
   genre: null,
 };
 
-const chatFixture: Row = { id: "chat-1", created_by: "user-owner" };
+const chatFixture: Row = { id: "chat-1", created_by: "user-owner", };
 
 describe("music-links service — destroy() ownership", () => {
   test("original sender can delete their own link", async () => {
