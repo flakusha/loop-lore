@@ -9,8 +9,8 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
-import { uid, } from "../utils";
 import { can, } from "../users/permissions";
+import { uid, } from "../utils";
 import type { MusicService, } from "../validation/schemas/music-links";
 
 // ── Types ────────────────────────────────────────────────────
