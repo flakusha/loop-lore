@@ -53,3 +53,5 @@ Option B — global: add `--isolate` to default test script in `package.json` so
 - `src/routes/admin-nsfw.test.ts:82,94,106` — writes `{allowNsfw: false}`
 - `src/story/game-master.test.ts:373` — affected consumer
 - `src/assistant/prompt/sections/nsfw-policy.ts:24` — affected consumer
+
+git issue: 7d8723d

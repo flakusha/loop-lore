@@ -105,6 +105,7 @@ func _on_ws_data():
 
 - [ ] Godot GDScript client SDK
 - [ ] Unity C# client SDK
+
 ## Dependencies
 
 - Parent hub: **Embeddable Engine & 2D/3D Game Frontend** (`epic-embeddable-engine-game-frontend.md`).
