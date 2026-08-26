@@ -241,7 +241,17 @@
       "source": ".plan/epics/epic-immersion-presentation.md"
     }
   ],
+  "src/assets/metadata.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-webp-metadata-vp8l-vp8x-off-bytes.md"
+    }
+  ],
   "src/assets/metadata.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-webp-metadata-vp8l-vp8x-off-bytes.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-multimodal-asset-reuse.md"
