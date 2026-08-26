@@ -1,6 +1,6 @@
 # BUG: Logout deletes session without signature or ownership check
 
-**Status:** ⬜ Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 

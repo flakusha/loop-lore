@@ -3,7 +3,7 @@
 
 # BUG: NSFW `notifyUser` stores admin's verbatim `reason` as `notifications.body` — leaks internal case-detail text to user
 
-**Status:** ⬜ Not Started
+**Status:** Done
 **Severity:** Medium
 **Priority:** medium
 **Effort:** Trivial
