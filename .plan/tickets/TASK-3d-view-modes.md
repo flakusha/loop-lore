@@ -1,9 +1,9 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: 3D View Modes (Consolidated)
+# TASK: 3D View Modes (Umbrella)
 
-**Status:** ⬜ Not Started
+**Status:** ⬜ Not Started — split into 5 child tickets
 **Priority:** Low
 **Effort:** High
 **Epic:** Epic 26 (Avatar & Expression), Epic 28 (Asset Support)
@@ -14,21 +14,22 @@
 
 ## Summary
 
-Consolidated task for all 3D rendering in chat: VRM/GLTF character
-avatars, 3D model assets, and three view modes (permanent panel,
-collapsible panel, inline preview). Merges three previously separate
-tasks into one coherent implementation.
+Umbrella for all 3D rendering in chat: VRM/GLTF character avatars, 3D model assets,
+and three view modes (permanent panel, collapsible panel, inline preview). The
+original consolidated task (`TASK-3d-view-modes.md`) carried 51 task checkboxes
+across six phases; those are now split verbatim into the five child tickets below.
+This parent holds only goal, status, child links, and shared context — no task
+checkboxes.
 
-## Superseded Tasks
+## Child Tickets
 
-| Old Task                             | What It Covered                    | What's New Here           |
-| ------------------------------------ | ---------------------------------- | ------------------------- |
-| `TASK-3d-character-avatars.md`       | VRM avatars, expressions, Three.js | Consolidated as Phase 1-2 |
-| `TASK-asset-3d-models.md`            | GLTF validation, preview           | Consolidated as Phase 3   |
-| `TASK-dynamic-avatars-dota-style.md` | Animated 2D mugshots, Spine        | Consolidated as Phase 4   |
-
-> **Migration note:** The old files should be updated with a redirect
-> to this task. Their content is preserved here — nothing is lost.
+| Ticket | Scope | Order |
+| ------ | ----- | ----- |
+| `TASK-3d-vrm-foundation.md` | Phases 1–2: VRM avatars + rendering pipeline | 1st — all else builds on it |
+| `TASK-3d-gltf-assets.md` | Phase 3: GLTF/GLB asset support | 2nd — shares Three.js loader |
+| `TASK-3d-view-modes-ui.md` | Phase 5: view-mode switching + device-tier gating | 3rd — renders through pipeline |
+| `TASK-3d-performance.md` | Phase 6: perf budgets / optimization | 4th — optimizes pipeline |
+| `TASK-avatars-dynamic-2d.md` | Phase 4: Dota-style dynamic 2D avatars | independent track (no Three.js) |
 
 ## Rationale
 
@@ -37,7 +38,7 @@ tasks into one coherent implementation.
 - Three view modes accommodate different device capabilities and user prefs
 - Consolidation prevents conflicting implementations
 
-## Architecture
+## Architecture (shared context)
 
 ### 3D Tech Stack
 
@@ -134,94 +135,7 @@ Small 3D preview within message bubbles:
 
 Detection: `src/frontend/alpine/device-tier.ts` (exists in index.json).
 
-## Tasks
-
-### Phase 1: Foundation (VRM Avatars)
-
-- [ ] Add Three.js dependencies (`three`, `@pixiv/three-vrm`)
-- [ ] Create `src/frontend/3d/scene-manager.ts` — Three.js scene lifecycle
-- [ ] Create `src/frontend/3d/vrm-loader.ts` — VRM model loader + cache
-- [ ] Create `src/frontend/3d/expression-controller.ts` — blend shape mapper
-- [ ] Create `src/frontend/3d/idle-animation.ts` — breathing, blinking
-- [ ] Add `avatar_3d_url` column to characters table (optional)
-- [ ] Add VRM model upload endpoint (`POST /api/characters/:id/3d-model`)
-
-### Phase 2: Rendering Pipeline
-
-- [ ] Create `src/frontend/3d/renderer.ts` — WebGL → canvas/texture
-- [ ] Add lighting presets (studio, dramatic, soft)
-- [ ] Add camera controls (orbit, zoom) for permanent panel
-- [ ] Implement emotion-to-blend-shape mapping
-- [ ] Implement 2D texture snapshot for inline preview
-- [ ] Add expression transition smoothing (100ms interpolation)
-
-### Phase 3: GLTF Asset Support
-
-- [ ] Create `src/assets/model-validator.ts` — GLTF validation
-- [ ] Create `src/assets/model-preview.ts` — thumbnail generation
-- [ ] Add `Model3d` to `AssetType` enum
-- [ ] Add GLTF metadata extraction (vertex count, materials, animations)
-- [ ] Create model viewer component (standalone, not avatar-specific)
-
-### Phase 4: Dynamic 2D Avatars (Dota-style)
-
-- [ ] Evaluate Spine 2D vs DragonBones (licensing, features)
-- [ ] Create `src/frontend/avatar/avatar-machine.ts` — animation state machine
-- [ ] Create `src/frontend/avatar/spine-renderer.ts` — Spine/DragonBones renderer
-- [ ] Implement idle animation (breathing, blinking)
-- [ ] Implement expression morph targets
-- [ ] Add ambient particle system (fire, frost, magic aura)
-- [ ] Add audio triggers (hover, select, expression change)
-- [ ] Wire expression state to chat events (typing → alert, message → emotion)
-
-### Phase 5: View Modes
-
-- [ ] Create `src/frontend/3d/view-modes.ts` — view mode manager
-- [ ] Implement permanent panel (always rendered, configurable width)
-- [ ] Implement collapsible panel (render on open, dispose on close)
-- [ ] Implement inline preview (static snapshot, click to expand)
-- [ ] Add toggle button in chat header
-- [ ] Add panel width setting (localStorage)
-- [ ] Wire to device tier (low = 2D fallback)
-
-### Phase 6: Performance & Optimization
-
-- [ ] Implement model caching (GLB → IndexedDB)
-- [ ] Add LOD (level of detail) for performance
-- [ ] Implement sprite sheet caching for 2D animations
-- [ ] GPU particle optimization
-- [ ] Audio pooling and spatial audio
-- [ ] Add `prefers-reduced-motion` support (disable animations)
-- [ ] Memory management: dispose WebGL contexts when not visible
-
-## Files to Create
-
-- `src/frontend/3d/scene-manager.ts` — Three.js scene lifecycle
-- `src/frontend/3d/vrm-loader.ts` — VRM model loader
-- `src/frontend/3d/expression-controller.ts` — blend shapes
-- `src/frontend/3d/idle-animation.ts` — idle animations
-- `src/frontend/3d/renderer.ts` — WebGL rendering
-- `src/frontend/3d/view-modes.ts` — permanent/collapsible/inline
-- `src/frontend/3d/styles.css` — 3D panel styles
-- `src/assets/model-validator.ts` — GLTF validation
-- `src/assets/model-preview.ts` — thumbnail generation
-- `src/frontend/avatar/avatar-machine.ts` — 2D animation state machine
-- `src/frontend/avatar/spine-renderer.ts` — Spine renderer
-- `src/frontend/avatar/particle-system.ts` — ambient effects
-- `src/frontend/avatar/audio-manager.ts` — spatial audio
-
-## Files to Modify
-
-- `src/db/enums.ts` — add `Model3d` to AssetType
-- `src/db/schema-characters.ts` — add `avatar_3d_url` column
-- `src/db/migrations/` — migration for new columns
-- `src/routes/characters.ts` — 3D model upload endpoint
-- `src/routes/assets.ts` — GLTF validation
-- `src/views/chat.html` — 3D panel containers
-- `src/frontend/alpine/chat.ts` — 3D state binding
-- `package.json` — add Three.js, @pixiv/three-vrm dependencies
-
-## Performance
+## Performance Targets (shared)
 
 | Metric            | Target  | Notes                     |
 | ----------------- | ------- | ------------------------- |
@@ -235,25 +149,11 @@ Detection: `src/frontend/alpine/device-tier.ts` (exists in index.json).
 
 ## Migration from Old Tasks
 
-When this task is started, update the old task files:
+When this family is started, update the old task files:
 
 - `TASK-3d-character-avatars.md`: Add header `> **Superseded by:** TASK-3d-view-modes.md`
 - `TASK-asset-3d-models.md`: Add header `> **Superseded by:** TASK-3d-view-modes.md`
 - `TASK-dynamic-avatars-dota-style.md`: Add header `> **Superseded by:** TASK-3d-view-modes.md`
-
-## Acceptance Criteria
-
-- [ ] VRM avatar renders in Three.js scene
-- [ ] Expression changes work (emotion → blend shape)
-- [ ] Idle animation plays (breathing, blinking)
-- [ ] Permanent panel shows 3D avatar alongside chat
-- [ ] Collapsible panel opens/closes with proper lifecycle
-- [ ] Inline preview shows static snapshot
-- [ ] Device tier gating: low devices get 2D fallback
-- [ ] GLTF models validate and show thumbnails
-- [ ] Spine 2D avatars animate (if implemented)
-- [ ] Memory stays under 80MB with 3D active
-- [ ] No WebGL errors in console
 
 ## Risk
 

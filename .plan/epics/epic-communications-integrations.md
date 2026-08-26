@@ -5,12 +5,14 @@
 
 **Status:** ⬜ Not Started
 **Priority:** Medium
-**Effort:** High
+**Effort:** High (split into 5 sub-epics)
 **Type:** Feature Epic
 
 ## Summary
 
 Enable loop-lore to integrate with external communication protocols: Matrix, XMPP, instant messaging, and email. Focus on encryption, data protection, ease of use, and exploration of new communication paradigms.
+
+> **⚠️ This epic is too large to ship in one pass.** It has been split into 5 sub-epics below. Each sub-epic delivers independently shippable value.
 
 ## Motivation
 
@@ -31,190 +33,37 @@ Users want to:
 | **Ease of Use**     | Auto-configuration, bridge discovery, minimal setup         |
 | **Exploration**     | Plugin architecture for experimental protocols              |
 
-## Scope
+## Sub-Epics
 
-### Phase 1: Matrix Integration
+| Sub-Epic                 | Epic File                            | Scope                                                                                                        | Priority | Effort |
+| ------------------------ | ------------------------------------ | ------------------------------------------------------------------------------------------------------------ | -------- | ------ |
+| **Integrations Core**    | `epic-integrations-core.md`          | `ProtocolAdapter`/`MessageBridge`/`EncryptionProvider` abstractions, config UI skeleton, health, rate limits | Medium   | Medium |
+| **Matrix Integration**   | `epic-matrix-integration.md`         | matrix-js-sdk, E2EE (Olm/Megolm), rooms, bridging, media, presence/receipts, Discord/Slack/IRC bridges       | Medium   | High   |
+| **XMPP Integration**     | `epic-xmpp-integration.md`           | xmpp.js, SASL, OMEMO, MUC, presence, Jingle file transfer, roster, vCard                                     | Medium   | Medium |
+| **IM Integrations**      | `epic-im-integrations.md`            | WhatsApp Web (experimental), Telegram Bot API, Signal, unified IM UI/status dashboard                        | Medium   | Medium |
+| **Email Integration**    | `epic-email-integration.md`          | imapflow/nodemailer, PGP/GPG, email-to-chat bridge, notifications, templates, filtering/search/archiving     | Medium   | Medium |
 
-- Matrix client SDK integration
-- E2EE support (Olm/Megolm)
-- Room creation and management
-- Message bridging (loop-lore ↔ Matrix)
-- Bridge to other networks (Discord, Slack, IRC)
+## Slicing Rationale
 
-### Phase 2: XMPP Integration
+The original epic mixed shared infrastructure with four protocol phases. Splitting isolates the shared abstractions so protocol work can proceed independently:
 
-- XMPP client connection
-- OMEMO encryption support
-- MUC (Multi-User Chat) support
-- Presence and status
-- File transfer via Jingle
+1. **Integrations Core** — foundation slice. All protocol sub-epics implement `ProtocolAdapter`, `MessageBridge`, and `EncryptionProvider` against it; land first or alongside the first protocol.
+2. **Matrix Integration** — largest protocol slice; also the route to Discord/Slack/IRC via appservices.
+3. **XMPP / IM / Email** — independent protocol slices with no cross-dependencies between them.
 
-### Phase 3: Instant Messaging
+## Shared Architecture
 
-- WhatsApp Web protocol (experimental)
-- Telegram Bot API
-- Signal protocol (via libsignal)
-- Unified IM abstraction layer
-
-### Phase 4: Email Integration
-
-- IMAP/SMTP support
-- PGP/GPG encryption
-- Email-to-chat bridging
-- Notification emails
-- Email templates for character responses
-
-## Architecture
-
-### Protocol Abstraction Layer
-
-```typescript
-// src/integrations/protocols/adapter.ts
-export interface ProtocolAdapter {
-  name: string;
-  connect(config: ProtocolConfig): Promise<void>;
-  disconnect(): Promise<void>;
-  sendMessage(target: string, message: Message): Promise<void>;
-  onMessage(handler: MessageHandler): void;
-  isEncrypted(): boolean;
-}
-
-// Implementations
-export class MatrixAdapter implements ProtocolAdapter { ... }
-export class XmppAdapter implements ProtocolAdapter { ... }
-export class EmailAdapter implements ProtocolAdapter { ... }
-```
-
-### Message Bridge
-
-```typescript
-// src/integrations/bridge.ts
-export class MessageBridge {
-  constructor(
-    private loopLore: LoopLoreInstance,
-    private protocols: ProtocolAdapter[],
-  ) {}
-
-  async bridgeMessage(
-    source: ProtocolAdapter,
-    target: ProtocolAdapter,
-    message: Message,
-  ): Promise<void> {
-    // Transform, encrypt, route
-  }
-}
-```
-
-### Encryption Layer
-
-```typescript
-// src/integrations/encryption.ts
-export interface EncryptionProvider {
-  encrypt(message: Message): Promise<EncryptedMessage>;
-  decrypt(message: EncryptedMessage): Promise<Message>;
-  generateKeys(): Promise<KeyPair>;
-}
-
-// Matrix: Olm/Megolm
-export class MatrixEncryption implements EncryptionProvider { ... }
-
-// XMPP: OMEMO
-export class OmemoEncryption implements EncryptionProvider { ... }
-
-// Email: PGP
-export class PgpEncryption implements EncryptionProvider { ... }
-```
-
-## Tasks
-
-### Phase 1: Matrix Integration
-
-- [ ] Add Matrix client SDK (`matrix-js-sdk`)
-- [ ] Create `src/integrations/matrix/` module
-- [ ] Implement Matrix authentication (access token, login)
-- [ ] Add E2EE support (Olm/Megolm)
-- [ ] Create room management API
-- [ ] Implement message bridging (loop-lore → Matrix)
-- [ ] Add Matrix → loop-lore message handling
-- [ ] Create Matrix room creation from loop-lore chat
-- [ ] Add file/media sharing via Matrix
-- [ ] Implement typing indicators and read receipts
-- [ ] Add Matrix presence status sync
-- [ ] Create bridge to Discord (via matrix-appservice-discord)
-- [ ] Create bridge to Slack (via matrix-appservice-slack)
-- [ ] Document Matrix setup in `docs/integrations/matrix.md`
-
-### Phase 2: XMPP Integration
-
-- [ ] Add XMPP client library (`xmpp.js` or `node-xmpp-client`)
-- [ ] Create `src/integrations/xmpp/` module
-- [ ] Implement XMPP authentication (SASL)
-- [ ] Add OMEMO encryption support
-- [ ] Create MUC (Multi-User Chat) support
-- [ ] Implement presence and status
-- [ ] Add file transfer via Jingle
-- [ ] Create XMPP → loop-lore message handling
-- [ ] Implement XMPP roster management
-- [ ] Add XMPP vCard support for character profiles
-- [ ] Document XMPP setup in `docs/integrations/xmpp.md`
-
-### Phase 3: Instant Messaging
-
-- [ ] Create IM abstraction layer (`src/integrations/im/`)
-- [ ] Add WhatsApp Web protocol (experimental, via `whatsapp-web.js`)
-- [ ] Implement WhatsApp message handling
-- [ ] Add Telegram Bot API support
-- [ ] Create Telegram bot integration
-- [ ] Add Signal protocol support (via `@nicepkg/signal-cli`)
-- [ ] Implement unified IM config UI
-- [ ] Add IM status dashboard
-- [ ] Document IM setup in `docs/integrations/im.md`
-
-### Phase 4: Email Integration
-
-- [ ] Add IMAP/SMTP libraries (`imapflow`, `nodemailer`)
-- [ ] Create `src/integrations/email/` module
-- [ ] Implement IMAP connection and email fetching
-- [ ] Add SMTP for sending emails
-- [ ] Implement PGP/GPG encryption
-- [ ] Create email-to-chat bridge
-- [ ] Add email notification system
-- [ ] Create email templates for character responses
-- [ ] Implement email filtering and rules
-- [ ] Add email search and archiving
-- [ ] Document email setup in `docs/integrations/email.md`
-
-### Cross-Cutting Concerns
-
-- [ ] Create integration config UI (`src/frontend/alpine/integrations.ts`)
-- [ ] Add integration status dashboard
-- [ ] Implement connection health monitoring
-- [ ] Add rate limiting per protocol
-- [ ] Create integration test suite
-- [ ] Add integration logging and observability
-- [ ] Document security considerations in `docs/security/integrations.md`
-
-## Files
-
-- `src/integrations/` — integration modules
-- `src/integrations/matrix/` — Matrix adapter
-- `src/integrations/xmpp/` — XMPP adapter
-- `src/integrations/im/` — IM abstraction layer
-- `src/integrations/email/` — Email adapter
-- `src/integrations/protocols/adapter.ts` — Protocol interface
-- `src/integrations/bridge.ts` — Message bridge
-- `src/integrations/encryption.ts` — Encryption providers
-- `src/frontend/alpine/integrations.ts` — Integration UI
-- `docs/integrations/` — Protocol documentation
-- `docs/security/integrations.md` — Security considerations
+The protocol abstraction layer, message bridge, and encryption provider interface live in [epic-integrations-core.md](epic-integrations-core.md). Each protocol sub-epic owns its concrete adapter (`MatrixAdapter`, `XmppAdapter`, `ImAdapter`, `EmailAdapter`) and encryption provider implementation (`MatrixEncryption`, `OmemoEncryption`, `PgpEncryption`). Key material comes from `epic-encryption-foundation.md`.
 
 ## Dependencies
 
-- Depends on: `epic-encryption-foundation.md` (encryption primitives)
+- Depends on: `epic-encryption-foundation.md` (encryption primitives — required by all sub-epics)
 - Depends on: `epic-api-library-distribution.md` (API for external tools)
 - Enables: Multi-platform chat, notifications, federation
 
 ## Security Considerations
+
+Shared cross-protocol security posture (per-protocol details live in each sub-epic):
 
 | Protocol | Encryption        | Key Management                  | Data Storage               |
 | -------- | ----------------- | ------------------------------- | -------------------------- |
@@ -235,6 +84,11 @@ export class PgpEncryption implements EncryptionProvider { ... }
 - [ ] All integrations configurable via UI
 - [ ] Integration health dashboard shows status
 - [ ] Documentation covers setup for each protocol
+
+## Open Questions
+
+- **Federation protocols absent:** ActivityPub/Lemmy do not appear anywhere in the current content. IRC appears only as a Matrix bridge target (via matrix-appservice-irc), not as a native integration. If federated/decentralized protocols beyond XMPP are intended, a new sub-epic (e.g. ActivityPub/Fediverse integration) is needed.
+- Should experimental protocols (WhatsApp Web, Signal CLI) graduate to supported status, and under what criteria?
 
 ## Related Epics
 
