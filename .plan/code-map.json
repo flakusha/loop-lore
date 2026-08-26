@@ -20056,6 +20056,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-http-protocol-features.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
     },
     {
@@ -20080,11 +20084,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-enable-http-2-via-single-tls-port-consolidation.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-config-templates.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota.md"
     },
     {
       "kind": "ticket",
@@ -20103,6 +20115,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-http-protocol-features.md"
     },
     {
       "kind": "ticket",
@@ -21025,6 +21041,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3.md"
     }
   ],
   "src/tui/app.ts": [
