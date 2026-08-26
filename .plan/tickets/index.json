@@ -840,6 +840,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-db-reinit-archive-destroys-previous-db-on-rename-failure.md"
   },
+  "BUG-DB-REINIT-ARCHIVE-DIRECTORY-HAS-NO-ROTATION-PII-ACCUMULATES-": {
+    "hash": "d904ef4",
+    "git_issue": "d904ef4",
+    "extid": "BUG-DB-REINIT-ARCHIVE-DIRECTORY-HAS-NO-ROTATION-PII-ACCUMULATES-",
+    "type": "BUG",
+    "title": "db-reinit archive directory has no rotation; PII accumulates indefinitely",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-db-reinit-archive-directory-has-no-rotation-pii-accumulates-.md"
+  },
   "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER": {
     "hash": "63f8f29",
     "git_issue": "63f8f29",
@@ -1587,6 +1599,18 @@
     "source": ".plan/tickets/BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh.md",
     "git_issue": "1fbe78c"
   },
+  "BUG-MESSAGE-SEARCH-PROMISE-ALLSETTLED-REJECTION-INSERTS-PHANTOM-": {
+    "hash": "ac86c2d",
+    "git_issue": "ac86c2d",
+    "extid": "BUG-MESSAGE-SEARCH-PROMISE-ALLSETTLED-REJECTION-INSERTS-PHANTOM-",
+    "type": "BUG",
+    "title": "message-search Promise.allSettled rejection inserts phantom row",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-message-search-promise-allsettled-rejection-inserts-phantom-.md"
+  },
   "BUG-MESSAGE-SEARCH-RETURNS-CIPHERTEXT-AND-INDEXES-CIPHERTEXT-FOR": {
     "hash": "baf5c4b",
     "git_issue": "baf5c4b",
@@ -1622,6 +1646,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-model-comparisons-analytics-leaks-all-users-rows-missing-use.md",
     "git_issue": "43587b3"
+  },
+  "BUG-MUSIC-LINKS-POST-BODY-CHATID-IS-REQUIRED-BUT-IGNORED-DEAD-SC": {
+    "hash": "63e7492",
+    "git_issue": "63e7492",
+    "extid": "BUG-MUSIC-LINKS-POST-BODY-CHATID-IS-REQUIRED-BUT-IGNORED-DEAD-SC",
+    "type": "BUG",
+    "title": "music-links POST body.chatId is required-but-ignored dead schema field",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-music-links-post-body-chatid-is-required-but-ignored-dead-sc.md"
   },
   "BUG-MUSIC-LINKS-ROUTES-LACK-CHAT-ACCESS-CHECKS-CROSS-CHAT-READ-W": {
     "hash": "d283ff9",
@@ -1799,6 +1835,19 @@
     "source": ".plan/tickets/BUG-nsfw-reviewappeal-auto-reverses-actions.md",
     "git_issue": "b3c47b2",
     "status": "done"
+  },
+  "BUG-NSFW-RUNTIME-CONFIG-SINGLETON-LEAKS-ACROSS-TESTS": {
+    "hash": "7d8723d",
+    "extid": "BUG-NSFW-RUNTIME-CONFIG-SINGLETON-LEAKS-ACROSS-TESTS",
+    "type": "BUG",
+    "title": "nsfwRuntimeConfig singleton leaks across test files",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md",
+    "status": "identified",
+    "git_issue": "7d8723d"
   },
   "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA": {
     "hash": "b8f7ad2",
@@ -17017,17 +17066,5 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
-  },
-  "BUG-NSFW-RUNTIME-CONFIG-SINGLETON-LEAKS-ACROSS-TESTS": {
-    "hash": "83078d8",
-    "extid": "BUG-NSFW-RUNTIME-CONFIG-SINGLETON-LEAKS-ACROSS-TESTS",
-    "type": "BUG",
-    "title": "nsfwRuntimeConfig singleton leaks across test files",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md",
-    "status": "identified"
   }
 }

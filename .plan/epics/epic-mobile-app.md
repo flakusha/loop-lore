@@ -61,6 +61,7 @@ Part of the **Embeddable Engine & 2D/3D Game Frontend** mega-epic. See parent ep
 
 
 - [ ] Mobile app (React Native/Capacitor) wrapper
+
 ## Dependencies
 
 - Parent hub: **Embeddable Engine & 2D/3D Game Frontend** (`epic-embeddable-engine-game-frontend.md`).
