@@ -813,6 +813,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-csp-unsafe-inline-defeats-per-request-nonce.md"
   },
+  "BUG-DB-REINIT-ARCHIVE-DESTROYS-PREVIOUS-DB-ON-RENAME-FAILURE": {
+    "hash": "376cd61",
+    "git_issue": "376cd61",
+    "extid": "BUG-DB-REINIT-ARCHIVE-DESTROYS-PREVIOUS-DB-ON-RENAME-FAILURE",
+    "type": "BUG",
+    "title": "db reinit archive destroys previous db on rename failure",
+    "label": "bug",
+    "priority": "high",
+    "epic": "review-dev-2026-08-26-security-data-integrity-merges",
+    "tags": [],
+    "source": ".plan/tickets/BUG-db-reinit-archive-destroys-previous-db-on-rename-failure.md"
+  },
   "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER": {
     "hash": "63f8f29",
     "git_issue": "63f8f29",
@@ -9275,6 +9287,18 @@
     "source": ".plan/tickets/TASK-document-processing-pipeline.md",
     "git_issue": "a4cc1e5"
   },
+  "TASK-DPRINT-FORMATTING-ENFORCED-CI-TEST-FILES": {
+    "hash": "82a631b",
+    "git_issue": "82a631b",
+    "extid": "TASK-DPRINT-FORMATTING-ENFORCED-CI-TEST-FILES",
+    "type": "TASK",
+    "title": "dprint formatting enforced ci test files",
+    "label": "task",
+    "priority": "low",
+    "epic": "review-dev-2026-08-26-late-merges",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dprint-formatting-enforced-ci-test-files.md"
+  },
   "TASK-DUPLICATE-ADMIN-TEMPLATES-ROUTE-REGISTRATION-WITH-DIFFERING-": {
     "hash": "53bd3e7",
     "extid": "TASK-DUPLICATE-ADMIN-TEMPLATES-ROUTE-REGISTRATION-WITH-DIFFERING-",
@@ -10561,6 +10585,18 @@
     "source": ".plan/tickets/TASK-guard-sql-ref-identifier-construction-in-optimistic-locking.md",
     "git_issue": "b14a507"
   },
+  "TASK-HARDEN-CANACCESSNSFW-REQUIRE-BIRTH-DATE": {
+    "hash": "f70d078",
+    "git_issue": "f70d078",
+    "extid": "TASK-HARDEN-CANACCESSNSFW-REQUIRE-BIRTH-DATE",
+    "type": "TASK",
+    "title": "harden canaccessnsfw require birth date",
+    "label": "task",
+    "priority": "low",
+    "epic": "review-dev-2026-08-26-security-data-integrity-merges",
+    "tags": [],
+    "source": ".plan/tickets/TASK-harden-canaccessnsfw-require-birth-date.md"
+  },
   "TASK-HARMONIZE-QUEST-TYPE-TAXONOMY": {
     "hash": "2918503",
     "extid": "TASK-HARMONIZE-QUEST-TYPE-TAXONOMY",
@@ -11800,6 +11836,18 @@
     "source": ".plan/tickets/TASK-message-quick-emojis-frontend.md",
     "git_issue": "cb9cc57"
   },
+  "TASK-MESSAGE-SEARCH-CANNOT-INDEX-COMPRESSED-OR-ENCRYPTED-CONTENT": {
+    "hash": "c0020da",
+    "git_issue": "c0020da",
+    "extid": "TASK-MESSAGE-SEARCH-CANNOT-INDEX-COMPRESSED-OR-ENCRYPTED-CONTENT",
+    "type": "TASK",
+    "title": "message search cannot index compressed or encrypted content",
+    "label": "task",
+    "priority": "medium",
+    "epic": "review-dev-2026-08-26-security-data-integrity-merges",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-search-cannot-index-compressed-or-encrypted-content.md"
+  },
   "TASK-MESSAGES": {
     "hash": "c6bbaad",
     "extid": "TASK-MESSAGES",
@@ -12607,6 +12655,18 @@
     "epic": "AO NSFW Game Mechanics",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-location-environment.md"
+  },
+  "TASK-NSFW-MODERATION-DELETE-AUDIT-REGRESSION-VERIFY": {
+    "hash": "55d3034",
+    "git_issue": "55d3034",
+    "extid": "TASK-NSFW-MODERATION-DELETE-AUDIT-REGRESSION-VERIFY",
+    "type": "TASK",
+    "title": "nsfw moderation delete audit regression verify",
+    "label": "task",
+    "priority": "medium",
+    "epic": "review-dev-2026-08-26-late-merges",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nsfw-moderation-delete-audit-regression-verify.md"
   },
   "TASK-NSFW-MODERATION-PRIORITY": {
     "hash": "6edf119",
@@ -14167,6 +14227,18 @@
     "source": ".plan/tickets/TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts.md",
     "git_issue": "7ffa7c7"
   },
+  "TASK-RESOLVE-MESSAGE-CONTENT-UNIT-TEST-ALL-ENCODINGS": {
+    "hash": "c90d3f1",
+    "git_issue": "c90d3f1",
+    "extid": "TASK-RESOLVE-MESSAGE-CONTENT-UNIT-TEST-ALL-ENCODINGS",
+    "type": "TASK",
+    "title": "resolve message content unit test all encodings",
+    "label": "task",
+    "priority": "low",
+    "epic": "review-dev-2026-08-26-security-data-integrity-merges",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resolve-message-content-unit-test-all-encodings.md"
+  },
   "TASK-RESOLVE-PLAYWRIGHT-CFG": {
     "hash": "9621690",
     "extid": "TASK-RESOLVE-PLAYWRIGHT-CFG",
@@ -15066,6 +15138,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-story-mode-frontend.md"
+  },
+  "TASK-STORY-MODE-RUNCONTENTHOOKS-INTEGRATION-TEST": {
+    "hash": "b34fb4c",
+    "git_issue": "b34fb4c",
+    "extid": "TASK-STORY-MODE-RUNCONTENTHOOKS-INTEGRATION-TEST",
+    "type": "TASK",
+    "title": "story mode runcontenthooks integration test",
+    "label": "task",
+    "priority": "low",
+    "epic": "review-dev-2026-08-26-security-data-integrity-merges",
+    "tags": [],
+    "source": ".plan/tickets/TASK-story-mode-runcontenthooks-integration-test.md"
   },
   "TASK-STORY-POINTS-PROTOTYPE": {
     "hash": "435385e",
