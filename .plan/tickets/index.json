@@ -493,7 +493,7 @@
     "git_issue": "d4547f8"
   },
   "BUG-CHAT-IDEMPOTENCY-NOT-ENFORCED": {
-    "hash": "pending",
+    "hash": "000589c",
     "extid": "BUG-CHAT-IDEMPOTENCY-NOT-ENFORCED",
     "type": "BUG",
     "title": "idempotency_key column exists but no unique index — retried requests double-insert",
@@ -502,7 +502,8 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md",
-    "git_issue": "f06194a"
+    "git_issue": "f06194a",
+    "status": "done"
   },
   "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
     "hash": "61c7072",
@@ -541,7 +542,7 @@
     "source": ".plan/tickets/BUG-chat-mention-silent-error-swall.md"
   },
   "BUG-CHAT-MESSAGE-CREATE-SWIPE-RACE": {
-    "hash": "pending",
+    "hash": "000589c",
     "extid": "BUG-CHAT-MESSAGE-CREATE-SWIPE-RACE",
     "type": "BUG",
     "title": "User-message create path has no transactional guard around swipe_index — race allows duplicate swipe slots or 500s",
@@ -550,7 +551,8 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-message-create-swipe-race.md",
-    "git_issue": "2597c06"
+    "git_issue": "2597c06",
+    "status": "done"
   },
   "BUG-CHAT-MESSAGE-DELETE-SOFT-FAILS-COMPLIANCE": {
     "hash": "pending",
@@ -1463,7 +1465,7 @@
     "git_issue": "f254f7a"
   },
   "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA": {
-    "hash": "c31f487",
+    "hash": "658c858",
     "extid": "BUG-JWT-PAYLOAD-PARSE-FAILURE-YIELDS-EMPTY-OBJECT-ACCEPTED-AS-VA",
     "type": "BUG",
     "title": "JWT payload parse failure yields empty object accepted as valid token",
@@ -1472,7 +1474,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-jwt-payload-parse-failure-yields-empty-object-accepted-as-va.md",
-    "git_issue": "c31f487"
+    "git_issue": "c31f487",
+    "status": "done"
   },
   "BUG-JWTSECRET-REUSED-ACROSS-THREE-SECURITY-DOMAINS-BYOK-PBKDF2-F": {
     "hash": "db75210",
@@ -1560,7 +1563,7 @@
     "git_issue": "72706d2"
   },
   "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK": {
-    "hash": "fafb5a9",
+    "hash": "658c858",
     "extid": "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK",
     "type": "BUG",
     "title": "Logout deletes session without signature or ownership check",
@@ -1569,7 +1572,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-logout-deletes-session-without-signature-or-ownership-check.md",
-    "git_issue": "fafb5a9"
+    "git_issue": "fafb5a9",
+    "status": "done"
   },
   "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
     "hash": "1fbe78c",
@@ -1758,7 +1762,7 @@
     "status": "done"
   },
   "BUG-NSFW-MODSERVICE-NOTIFY-USER-LEAKS-ADMIN-REASON": {
-    "hash": "pending",
+    "hash": "579115d",
     "extid": "BUG-NSFW-MODSERVICE-NOTIFY-USER-LEAKS-ADMIN-REASON",
     "type": "BUG",
     "title": "NSFW `notifyUser` stores admin's verbatim `reason` as `notifications.body` — leaks internal case-detail text to user",
@@ -1768,7 +1772,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-modservice-notify-user-leaks-admin-reason.md",
     "git_issue": "09b4d62",
-    "status": "open"
+    "status": "done"
   },
   "BUG-NSFW-PREFERENCES-ADMIN-READ-MATERIALIZES-ROW": {
     "hash": "pending",
@@ -1834,7 +1838,7 @@
     "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md"
   },
   "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD": {
-    "hash": "a83a310",
+    "hash": "c04aa89",
     "extid": "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD",
     "type": "BUG",
     "title": "PII redaction hardcoded dev fallback secret, no prod guard",
@@ -1843,7 +1847,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-pii-redaction-hardcoded-dev-fallback-secret-no-prod-guard.md",
-    "git_issue": "a83a310"
+    "git_issue": "a83a310",
+    "status": "done"
   },
   "BUG-PLUGIN-TOOL-GATING-EMPTY-ROLE-BYPASS": {
     "hash": "pending",

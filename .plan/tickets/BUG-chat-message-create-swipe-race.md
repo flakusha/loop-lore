@@ -3,7 +3,7 @@
 
 # BUG: User-message create path has no transactional guard around swipe_index — race allows duplicate swipe slots or 500s
 
-**Status:** Open
+**Status:** Done
 **Severity:** high
 **Priority:** high
 **Effort:** small
