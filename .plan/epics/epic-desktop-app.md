@@ -61,6 +61,8 @@ Part of the **Embeddable Engine & 2D/3D Game Frontend** mega-epic. See parent ep
 - [ ] Package for Windows (NSIS), macOS (DMG), Linux (AppImage)
 - [ ] Add desktop-specific settings (theme, window state, shortcuts)
 
+
+- [ ] Desktop app (Electron/Tauri) wrapper
 ## Dependencies
 
 - Parent hub: **Embeddable Engine & 2D/3D Game Frontend** (`epic-embeddable-engine-game-frontend.md`).
