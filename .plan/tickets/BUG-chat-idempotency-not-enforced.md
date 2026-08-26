@@ -3,7 +3,7 @@
 
 # BUG: idempotency_key column exists but no unique index — retried requests double-insert
 
-**Status:** Open
+**Status:** Done
 **Severity:** high
 **Priority:** high
 **Effort:** small
