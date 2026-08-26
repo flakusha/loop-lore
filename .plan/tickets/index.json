@@ -6425,6 +6425,18 @@
     "source": ".plan/tickets/TASK-asymmetric-key-pairs-followup.md",
     "git_issue": "5d9636b"
   },
+  "TASK-ASYNC-REQUEST-RESPONSE-RESULT-STORE-SEPARATE-TABLE-OFFLOAD": {
+    "hash": "73eb1de",
+    "git_issue": "73eb1de",
+    "extid": "TASK-ASYNC-REQUEST-RESPONSE-RESULT-STORE-SEPARATE-TABLE-OFFLOAD",
+    "type": "TASK",
+    "title": "Async request-response result store (separate table + offload)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+  },
   "TASK-AUDIO-PLAYER-COMPONENT": {
     "hash": "966af4f",
     "extid": "TASK-AUDIO-PLAYER-COMPONENT",
@@ -11879,6 +11891,42 @@
     "source": ".plan/tickets/TASK-messages.md",
     "git_issue": "c6bbaad"
   },
+  "TASK-MIDDLEWARE-ACCEPT-FRONTEND-SUPPLIED-REQUEST-ID-UUID-WITH-SER": {
+    "hash": "d33734d",
+    "git_issue": "d33734d",
+    "extid": "TASK-MIDDLEWARE-ACCEPT-FRONTEND-SUPPLIED-REQUEST-ID-UUID-WITH-SER",
+    "type": "TASK",
+    "title": "Middleware — accept frontend-supplied request id (UUID) + fall back to server-generated",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
+  },
+  "TASK-MIDDLEWARE-GLOBAL-IDEMPOTENCY-REPLAY-FOR-RE-FIRED-REQUESTS": {
+    "hash": "385f05a",
+    "git_issue": "385f05a",
+    "extid": "TASK-MIDDLEWARE-GLOBAL-IDEMPOTENCY-REPLAY-FOR-RE-FIRED-REQUESTS",
+    "type": "TASK",
+    "title": "Middleware — global idempotency replay for re-fired requests",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+  },
+  "TASK-MIDDLEWARE-IN-PROGRESS-STATUS-ENDPOINT-FOR-LONG-RUNNING-REQU": {
+    "hash": "2aeef24",
+    "git_issue": "2aeef24",
+    "extid": "TASK-MIDDLEWARE-IN-PROGRESS-STATUS-ENDPOINT-FOR-LONG-RUNNING-REQU",
+    "type": "TASK",
+    "title": "Middleware — in-progress status endpoint for long-running requests",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
+  },
   "TASK-MINI-GAMES-FRAMEWORK": {
     "hash": "pending",
     "extid": "TASK-MINI-GAMES-FRAMEWORK",
@@ -16628,5 +16676,17 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
+  },
+  "BUG-NSFW-RUNTIME-CONFIG-SINGLETON-LEAKS-ACROSS-TESTS": {
+    "hash": "83078d8",
+    "extid": "BUG-NSFW-RUNTIME-CONFIG-SINGLETON-LEAKS-ACROSS-TESTS",
+    "type": "BUG",
+    "title": "nsfwRuntimeConfig singleton leaks across test files",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md",
+    "status": "identified"
   }
 }
