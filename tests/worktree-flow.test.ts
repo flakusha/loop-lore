@@ -567,3 +567,51 @@ describe("worktree CLI", () => {
     expect(r2.exitCode,).toBe(0,);
   });
 });
+
+describe("worktree CLI — inside-worktree invocation", () => {
+  /** Like runWt but spawns from an arbitrary cwd WITHOUT REPO_ROOT/TREE_DIR env —
+   * exercises the real findRepoRoot()/assertNotInWorktree code paths. */
+  function runWtRaw(args: string[], cwd: string,): { out: string; exitCode: number } {
+    const result = Bun.spawnSync(
+      ["bun", "run", DISPATCHER, ...args,],
+      {
+        cwd,
+        env: Object.fromEntries(
+          Object.entries(process.env,).filter(([k,],) => k !== "REPO_ROOT" && k !== "TREE_DIR"),
+        ),
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
+    return { out: result.stdout.toString() + result.stderr.toString(), exitCode: result.exitCode ?? 0, };
+  }
+
+  test("54. guarded command rejected from inside a linked worktree", () => {
+    mkdirSync(treeDir, { recursive: true, },);
+    const wt = join(treeDir, "feat-guard-target",);
+    expect(gitOk(repoRoot, "worktree", "add", "-b", "feat/guard-target", wt, "master",),).toBe(true,);
+
+    const r = runWtRaw(["create", "feature-existing",], wt,);
+    expect(r.exitCode,).not.toBe(0,);
+    expect(r.out,).toContain("must be run from the repo root",);
+  });
+
+  test("55. ticket — resolves main repoRoot from inside a worktree", () => {
+    const wt = join(treeDir, "feat-guard-target",);
+    const ticketFile = "TASK-inside-worktree-root-probe.md";
+    // `git issue` does not exist in the temp repo, so the CLI fails after
+    // writing the file — the file placement is what this test pins down.
+    runWtRaw(["ticket", "TASK", "inside worktree root probe"], wt,);
+
+    expect(existsSync(join(repoRoot, ".plan/tickets", ticketFile,),),).toBe(true,);
+    expect(existsSync(join(wt, ".plan/tickets", ticketFile,),),).toBe(false,);
+    rmSync(join(repoRoot, ".plan/tickets", ticketFile,),);
+  });
+
+  test("56. read-only command works from inside a worktree without env overrides", () => {
+    const wt = join(treeDir, "feat-guard-target",);
+    const r = runWtRaw(["list",], wt,);
+    expect(r.exitCode,).toBe(0,);
+    expect(r.out,).toContain("Worktrees",);
+  });
+});
