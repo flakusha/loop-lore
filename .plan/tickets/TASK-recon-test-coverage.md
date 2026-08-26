@@ -25,7 +25,7 @@ Value priority: chat/memories/characters/assistant/nsfw > moderation/access/gall
 
 ## Tasks
 
-#### 3.1 Chat module tests (15 files, 0 tests)
+### 3.1 Chat module tests (15 files, 0 tests)
 
 - `src/chat/service.ts` — core CRUD, access checks
 - `src/chat/context-window.ts` — token computation, thresholds
@@ -41,12 +41,12 @@ Value priority: chat/memories/characters/assistant/nsfw > moderation/access/gall
 - `src/chat/token-utils.ts` — token estimation
 - `src/chat/random-events.ts` — random event generation
 
-#### 3.2 Auth module tests (2 files, 0 tests)
+### 3.2 Auth module tests (2 files, 0 tests)
 
 - `src/auth/jwt.ts` — JWT sign/verify
 - `src/auth/index.ts` — auth entry point
 
-#### 3.3 Route tests for untested routes (13+ files)
+### 3.3 Route tests for untested routes (13+ files)
 
 - `message-reactions.ts` — toggle, group, max reactions
 - `chat-context.ts` — context state, regenerate
@@ -64,12 +64,12 @@ Value priority: chat/memories/characters/assistant/nsfw > moderation/access/gall
 - `admin-character-overrides.ts` — admin overrides
 - (`activity-stream.ts` also listed in the audit's no-test set)
 
-#### 3.4 Telemetry + image-edit module tests
+### 3.4 Telemetry + image-edit module tests
 
 - `src/telemetry/` (3 files) — event recording, cleanup
 - `src/image-edit/` (4 files) — image editing pipeline
 
-#### 3.5 Services module tests
+### 3.5 Services module tests
 
 - `src/services/` (2 files) — server external manager
 

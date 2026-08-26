@@ -25,16 +25,16 @@ Duplicate logic found by the audit:
 
 ## Tasks
 
-#### 4.1 Consolidate message access checks
+### 4.1 Consolidate message access checks
 
 - Remove `assertChatAccess` and `requireMessageAccess` from `routes/messages.ts`
 - Use `checkChatAccess` and `getMessageWithAccess` from `chat/service.ts`
 
-#### 4.2 Consolidate message listing/variants
+### 4.2 Consolidate message listing/variants
 
 - Use `listMessages` and `getMessageVariants` from `chat/service.ts` in `routes/messages.ts`
 
-#### 4.3 Consolidate context window logic
+### 4.3 Consolidate context window logic
 
 - Use `getChatContext` from `chat/service.ts` in `routes/chat-context.ts`
 

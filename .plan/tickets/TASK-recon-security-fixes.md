@@ -27,23 +27,23 @@ Close the four security holes found in the reconciliation audit: missing charact
 
 ## Tasks
 
-#### 2.1 Add ownership checks to character routes
+### 2.1 Add ownership checks to character routes
 
 - **Problem:** Any authenticated user can read/modify any character's mood, relationships, traits, licensing, availability, emotions, avatars.
 - **Fix:** Add ownership check in each route handler — verify `actor.owner_id === userId` or `userRole === "admin"`.
 - **Files:** `character-mood.ts`, `character-relationships.ts`, `character-traits.ts`, `character-licensing.ts`, `character-availability.ts`, `character-emotions.ts`, `character-avatars.ts`
 
-#### 2.2 Fix message-reactions DELETE access check
+### 2.2 Fix message-reactions DELETE access check
 
 - **Problem:** DELETE `/api/messages/:id/reactions` doesn't verify message access.
 - **Fix:** Add access check before deletion.
 
-#### 2.3 Fix SSRF in import route
+### 2.3 Fix SSRF in import route
 
 - **Problem:** `import.ts` fetches arbitrary URLs from user input.
 - **Fix:** Validate URL scheme (http/https only), block private IPs, add timeout.
 
-#### 2.4 Fix server startup race
+### 2.4 Fix server startup race
 
 - **Problem:** `server.ts` calls `serve()` before `runMigrations()`.
 - **Fix:** Move `runMigrations()` before `serve()`.
