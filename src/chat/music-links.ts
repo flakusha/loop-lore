@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 250
 
 /**
  * Music Link Service — URL validation, oEmbed fetching, and DB storage
@@ -9,6 +10,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
+import { can, } from "../users/permissions";
 import type { MusicService, } from "../validation/schemas/music-links";
 
 // ── Types ────────────────────────────────────────────────────
@@ -183,6 +185,9 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
 
   /**
    * List all music links in a chat, chronological.
+   *
+   * Caller is responsible for chat access enforcement — this function
+   * returns whatever rows belong to `chatId`.
    */
   async function list(chatId: string,): Promise<MusicLinkRow[]> {
     const rows = await db
@@ -195,10 +200,31 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
   }
 
   /**
-   * Delete a music link. Caller must verify ownership.
+   * Delete a music link. Enforces ownership:
+   *   - admin role bypasses owner check
+   *   - chat owner (chat.created_by) can delete any link in their chat
+   *   - original sender can delete their own link
+   *
+   * Returns true if a row was deleted, false if the link was missing or
+   * the caller lacked permission (caller should map false → 404).
    */
-  async function destroy(id: string, _userId: string,): Promise<void> {
+  async function destroy(id: string, userId: string, userRole: string | null | undefined,): Promise<boolean> {
+    const row = await db
+      .selectFrom("music_links",)
+      .innerJoin("chats", "chats.id", "music_links.chat_id",)
+      .select(["music_links.sender_id", "chats.created_by",],)
+      .where("music_links.id", "=", id,)
+      .executeTakeFirst();
+
+    if (!row) { return false; }
+
+    const isAdmin = can(userRole, "admin.chat",);
+    const isChatOwner = row.created_by === userId;
+    const isOriginalSender = row.sender_id === userId;
+    if (!isAdmin && !isChatOwner && !isOriginalSender) { return false; }
+
     await db.deleteFrom("music_links",).where("id", "=", id,).execute();
+    return true;
   }
 
   return { validateUrl, fetchMetadata, getEmbedHtml, store, list, destroy, };
