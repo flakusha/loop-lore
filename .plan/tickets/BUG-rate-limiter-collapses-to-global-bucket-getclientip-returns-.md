@@ -1,6 +1,6 @@
 # BUG: Rate limiter collapses to global bucket (getClientIp returns 'unknown')
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Fixed (committed 830925f9, e3f1dd84, 140f16ff)
 **Priority:** critical
 **Effort:** Medium
 
