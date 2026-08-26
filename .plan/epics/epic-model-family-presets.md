@@ -241,6 +241,7 @@ Task breakdown (same deliverable, sequenced):
 
 
 - [ ] Model family presets handle per-family prompt formatting (SD tags, Flux natural, Ideogram JSON, etc.)
+
 ## Dependencies
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)

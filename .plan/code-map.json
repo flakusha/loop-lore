@@ -1259,10 +1259,20 @@
       "source": "docs/spec/lore.md"
     }
   ],
+  "src/assistant/prompt/sections/nsfw-policy.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    }
+  ],
   "src/assistant/prompt/sections/nsfw-policy.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
     },
     {
       "kind": "ticket",
@@ -1515,6 +1525,26 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-safety-xml-utils-tag-unescaped-narrative-greedy.md"
+    }
+  ],
+  "src/async/offload.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    }
+  ],
+  "src/async/store.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     }
   ],
   "src/auth": [
@@ -6575,6 +6605,16 @@
       "source": ".plan/tickets/TASK-character-rpg-stats.md"
     }
   ],
+  "src/db/migrations/XXXX_request_results.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    }
+  ],
   "src/db/migrations/XXX_polls.ts": [
     {
       "kind": "epic",
@@ -6684,6 +6724,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-db-reinit-archive-directory-has-no-rotation-pii-accumulates-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-db-reinit-archives-previous-database-instead-of-deleting.md"
     }
   ],
@@ -6705,6 +6749,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-data-integrity-acid.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     },
     {
       "kind": "ticket",
@@ -7224,6 +7272,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
     },
     {
@@ -7699,6 +7751,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-alpine-client.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
     },
     {
       "kind": "ticket",
@@ -13029,6 +13089,32 @@
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     }
   ],
+  "src/middleware/idempotency.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+    }
+  ],
+  "src/middleware/in-progress.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
+    }
+  ],
+  "src/middleware/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+    }
+  ],
   "src/middleware/nsfw-gate/access.ts": [
     {
       "kind": "epic",
@@ -13077,6 +13163,14 @@
       "source": ".plan/epics/epic-architecture.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
     }
@@ -13108,6 +13202,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md"
     },
     {
@@ -13125,6 +13227,16 @@
     {
       "kind": "spec",
       "source": "docs/spec/testing.md"
+    }
+  ],
+  "src/middleware/request-id.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
     }
   ],
   "src/middleware/response-headers.ts": [
@@ -13147,6 +13259,12 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/headers-management.md"
+    }
+  ],
+  "src/middleware/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
     }
   ],
   "src/native/blake3.ts": [
@@ -13436,6 +13554,10 @@
     }
   ],
   "src/nsfw/runtime-config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
@@ -14631,6 +14753,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/social-interaction.md"
+    }
+  ],
+  "src/routes/admin-nsfw.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    }
+  ],
+  "src/routes/admin-nsfw.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
     }
   ],
   "src/routes/admin.ts": [
@@ -16060,6 +16194,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-message-search-promise-allsettled-rejection-inserts-phantom-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
     }
   ],
@@ -16204,6 +16342,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-proactive-messaging.md"
     }
   ],
@@ -16317,6 +16459,10 @@
   ],
   "src/routes/messages/reply.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-assistant-retry-silent-500.md"
     },
@@ -16335,6 +16481,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
     }
   ],
   "src/routes/messages/swipe-race-insert.test.ts": [
@@ -16349,12 +16507,20 @@
   ],
   "src/routes/messages/swipe-race-insert.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-create-swipe-race.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
     }
   ],
   "src/routes/messages/transitions.ts": [
@@ -16460,6 +16626,10 @@
     }
   ],
   "src/routes/music-links.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-music-links-post-body-chatid-is-required-but-ignored-dead-sc.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-music-links-routes-lack-chat-access-checks-cross-chat-read-w.md"
@@ -16716,6 +16886,10 @@
     }
   ],
   "src/routes/rpg.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rpg-core-wiring.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-mechanics-combat.md"
@@ -16979,6 +17153,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
+    }
+  ],
+  "src/routes/swagger.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-api-first-foundation.md"
     }
   ],
   "src/routes/telemetry.test.ts": [
@@ -19185,8 +19365,24 @@
   ],
   "src/server/handler.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
     },
     {
       "kind": "ticket",
@@ -19241,6 +19437,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     },
     {
       "kind": "ticket",
@@ -19616,6 +19816,10 @@
   "src/story/game-master.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-gm-service-story-mode.md"
     }
   ],
@@ -19915,6 +20119,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     },
     {
       "kind": "ticket",
@@ -20401,6 +20609,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-scenario-source.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     },
     {
       "kind": "ticket",

@@ -63,6 +63,7 @@ Task breakdown (same deliverable, sequenced):
 - [ ] Gallery supports multi-select + batch download (server-zip) with NSFW/ownership gating (§7.7)
 - [ ] Default workflows cover media: video generation, image generation, image editing
 - [ ] NSFW prefiltering + labeling + consent gate wired for third-party API backends
+
 ## Dependencies
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)

@@ -52,6 +52,7 @@ Part of the **RPG Mechanics & Extensible Game Systems** mega-epic. See parent ep
 
 
 - [x] Loot system — rarity-weighted tables
+
 ## Design (from implementation roadmap)
 
 ### File: src/rpg/items.ts
