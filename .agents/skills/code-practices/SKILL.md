@@ -39,8 +39,8 @@ or any other) surface the right doc and don't build on the wrong assumption.
 | ------------------------------------------------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
 | `tsconfig*.json`, `src/db/index.ts` casts                                       | `01-strict-typing.md`                   | `exactOptionalPropertyTypes` still off; DB wrapper `any[]` is the only escape |
 | `eslint.config.mjs`, lint rules                                                 | `02-eslint-and-static-analysis.md`      | **Mostly DONE**; complexity cap is `warn@20`, not `error`                     |
-| `elysia-app.ts`, `server.ts` dispatch, routes                                   | `03-extensibility-code-patterns.md`     | Dual dispatch still exists; plugin routes still linear-scanned                |
-| `messages.ts`, `generate-route.ts`, `utils.ts`, `config/schema.ts`, `server.ts` | `04-code-organization-and-splitting.md` | These exceed 200L; split into `index.ts` barrels                              |
+| `elysia-app.ts`, `src/server/` dispatch, routes                                 | `03-extensibility-code-patterns.md`     | Dual dispatch still exists; plugin routes still linear-scanned                |
+| `messages.ts`, `generate-route.ts`, oversized files under `src/`                | `04-code-organization-and-splitting.md` | Files over the size gate; split into `index.ts` barrels                       |
 | `tests/e2e/helpers/server.ts`, `createTestDb`                                   | `05-testing-e2e-multiple-db.md`         | Only SQLite tested; `createTestDb` now takes a `DialectFactory`               |
 | `src/validation/schemas.ts`, request bodies                                     | `06-schemas-and-openapi.md`             | **Zod trap**: specs say Zod/`src/schemas/` — wrong; real is TypeBox           |
 | `src/middleware/`, `elysia-app.ts` view serving, `config/schema.ts` frontend    | `07-alternative-frontend-support.md`    | No `frontend.mode`/CORS/negotiation yet                                       |
@@ -54,10 +54,11 @@ or any other) surface the right doc and don't build on the wrong assumption.
   is `error`, `no-misused-promises` is `error` server-side, `import/no-cycle`
   is `error`). Do not flip `cognitive-complexity` to `error` until the
   oversized handlers are split — it would break `bun run check`.
-- **Type coverage**: floor raised to 90% (backend 96.88%, frontend 92.20%).
-  Do not regress below 90.
-- **File size**: `scripts/check-file-size.ts` warns >250L (non-blocking). Split
-  files over 200L into `index.ts` barrels.
+- **Type coverage**: keep type-coverage at or above its configured floor;
+  recompute current values with the coverage tool, never quote them from memory.
+- **File size**: `scripts/check-file-size.ts` gates over-limit files; per-file
+  exemptions use an inline `// size-allow:` directive. Split files over 200L
+  into `index.ts` barrels instead of adding exemptions.
 - **Tests**: `createTestDb(dialectFactory?)` now supports a Postgres factory
   behind `TEST_DB=postgres`. Add dialect coverage there, don't fork it.
 
