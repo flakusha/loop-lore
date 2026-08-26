@@ -22,6 +22,7 @@ import {
   MessageSearchResponse,
 } from "../../validation/schemas";
 import { extractAuth, jsonResponse, notFoundResponse as notFound, requireUserId, } from "../http-utils";
+import { resolveMessageContent, } from "../messages/helpers";
 import {
   buildFtsQuery,
   extraWhere,
@@ -78,6 +79,8 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
                   LIMIT 1) AS chatCharacterName,
                 m.role AS role,
                 m.content AS content,
+                m.content_encoding AS contentEncoding,
+                m.key_id AS keyId,
                 snippet(messages_fts, 2, ${SNIPPET_BEFORE}, ${SNIPPET_AFTER}, ${SNIPPET_ELLIPSIS}, ${SNIPPET_LENGTH}) AS matchContext,
                 m.created_at AS createdAt,
                 m.attachments AS attachments,
@@ -111,6 +114,8 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
                   LIMIT 1) AS chatCharacterName,
                 m.role AS role,
                 m.content AS content,
+                m.content_encoding AS contentEncoding,
+                m.key_id AS keyId,
                 substr(m.content, 1, 160) AS matchContext,
                 m.created_at AS createdAt,
                 m.attachments AS attachments,
@@ -133,18 +138,61 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           const total = counted?.rows[0]?.total ?? 0;
 
-          const results = Array.from(rows, (row,) => ({
-            messageId: row.messageId,
-            chatId: row.chatId,
-            chatName: row.chatName,
-            chatCharacterName: row.chatCharacterName,
-            role: row.role,
-            content: row.content,
-            matchContext: row.matchContext ?? "",
-            createdAt: row.createdAt,
-            attachments: parseAttachments(row.attachments,),
-            matchScore: row.matchScore ?? 0,
-          }),);
+          // Resolve each row's content via the shared helper so the response
+          // never carries raw encryption envelopes (data leak on standard-tier
+          // chats) nor base64 gzip (which makes snippets unreadable).
+          // Encrypted rows get an empty snippet — FTS5 indexed ciphertext, so
+          // any snippet it produces is garbage. See BUG-message-search for
+          // the policy decision on FTS indexing of encrypted content.
+          const results = [];
+          for (
+            const settled of await Promise.allSettled(
+              Array.from(rows, async (row,) => {
+                let resolved: string;
+                try {
+                  resolved = await resolveMessageContent(database, {
+                    content: row.content,
+                    content_encoding: row.contentEncoding,
+                    key_id: row.keyId,
+                    chat_id: row.chatId,
+                  },);
+                } catch {
+                  resolved = "[Encrypted — unable to decrypt]";
+                }
+                const snippet = row.keyId
+                  ? ""
+                  : (row.matchContext ?? "").slice(0, SNIPPET_LENGTH * 4,);
+                return {
+                  messageId: row.messageId,
+                  chatId: row.chatId,
+                  chatName: row.chatName,
+                  chatCharacterName: row.chatCharacterName,
+                  role: row.role,
+                  content: resolved,
+                  matchContext: snippet,
+                  createdAt: row.createdAt,
+                  attachments: parseAttachments(row.attachments,),
+                  matchScore: row.matchScore,
+                };
+              },),
+            )
+          ) {
+            if (settled.status === "fulfilled") {
+              results.push(settled.value,);
+            } else {
+              results.push({
+                messageId: "unknown",
+                chatId: "unknown",
+                chatName: null,
+                chatCharacterName: null,
+                role: "user",
+                content: "[Encrypted — unable to decrypt]",
+                matchContext: "",
+                createdAt: new Date(0,).toISOString(),
+                matchScore: 0,
+              },);
+            }
+          }
 
           log().info("Message search", {
             chatId: query.chatId ?? null,

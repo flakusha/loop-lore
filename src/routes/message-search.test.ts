@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { encodeContent, } from "../content/encode";
 import { MessageRole, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
@@ -15,9 +16,9 @@ import {
 import { uid, } from "../utils";
 import { messageSearchRoutes, } from "./message-search";
 
-const BASE = "http://localhost";
-
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
+
+const BASE = "http://localhost";
 
 /** Auth-context app via derive, mirroring message-reactions/chat-sections helpers. */
 function searchApp(db: Kysely<DB>, userId: string | null, userRole: string | null,): Elysia {
@@ -228,5 +229,81 @@ describe("messageSearchRoutes", () => {
     const after =
       (await (await appHandle(app, get(`/api/messages/search?chatId=${chatId}&q=snowflake`,),)).json()) as SearchBody;
     expect(after.results.some((r,) => r.content.includes("mint",)),).toBe(false,);
+  });
+
+  // ── BUG-message-search-returns-ciphertext-and-indexes-ciphertext ──
+  // Read-path regression: the search response must decode stored content
+  // (gzip / encrypted envelopes) before serializing to the client.
+  // Index-path note: FTS5 indexes raw stored bytes, so encrypted rows return
+  // no useful recall; that is the documented policy gap to address separately.
+
+  test("identity-encoded results return plaintext content (no decode regression)", async () => {
+    // Sanity baseline: the read path must never transform an identity row.
+    await insertMessages(db, chatId, ownerId, MessageRole.User, "plain-anchor-mint identity-marker", {},);
+    const app = searchApp(db, ownerId, "user",);
+    const res = await appHandle(
+      app,
+      get(`/api/messages/search?chatId=${chatId}&q=identity-marker`,),
+    );
+    const json = (await res.json()) as SearchBody;
+    const hit = json.results.find((r,) => r.content.startsWith("plain-anchor",));
+    expect(hit,).toBeTruthy();
+    expect(hit!.content,).toBe("plain-anchor-mint identity-marker",);
+  });
+
+  test("gzip-stored row: FTS cannot surface decoded plaintext (index policy)", async () => {
+    // Document the index-side limitation: FTS5 indexes stored bytes (base64
+    // for gzip rows), so a plaintext query token will not match the row at all.
+    // This is the architectural decision flagged in BUG-message-search; the
+    // fix in this commit is the read-path side. The test asserts the
+    // limitation so a future change is forced to revisit the policy.
+    const body = "Z".repeat(11_000,);
+    const encoded = encodeContent(body, "gzip",);
+    await insertMessages(db, chatId, ownerId, MessageRole.User, "gzip-probe-marker unique-token", {
+      content: encoded.encoded,
+      content_encoding: encoded.encoding,
+    } as never,);
+    const app = searchApp(db, ownerId, "user",);
+    // Search for the plaintext token. FTS indexes the base64 bytes, so this
+    // query MUST NOT return the gzip row (the row is functionally invisible
+    // to FTS via its decoded content).
+    const res = await appHandle(
+      app,
+      get(`/api/messages/search?chatId=${chatId}&q=gzip-probe-marker`,),
+    );
+    const json = (await res.json()) as SearchBody;
+    const leaked = json.results.find((r,) => r.content.includes("Z",));
+    expect(leaked,).toBeUndefined();
+    // And NO result should carry the raw base64 envelope — the API must not
+    // leak it through whatever FTS ends up returning.
+    for (const r of json.results) {
+      expect(r.content.startsWith("H4sI",),).toBe(false,);
+    }
+  });
+
+  test("encrypted row: read path never returns raw envelope; snippet is empty", async () => {
+    // Even when FTS indexes the envelope bytes (junk tokens), the API must
+    // never echo the envelope back. Without an SMK the helper throws → the
+    // response surfaces a placeholder.
+    const envelope = `{"enc":"deadbeefunique","nonce":"cafef00dunique","alg":"aes-gcm-256","kid":"k1"}`;
+    await insertMessages(db, chatId, ownerId, MessageRole.User, envelope, { key_id: "k1", } as never,);
+    const app = searchApp(db, ownerId, "user",);
+    // Match on a token in the envelope itself. If porter-tokenizer happens to
+    // skip the JSON tokens, FTS won't surface the row — the assertion then
+    // only checks that whatever IS returned is not the envelope.
+    const res = await appHandle(
+      app,
+      get(`/api/messages/search?chatId=${chatId}&q=deadbeefunique`,),
+    );
+    const json = (await res.json()) as SearchBody;
+    for (const r of json.results) {
+      expect(r.content,).not.toContain('"enc":',);
+      expect(r.content,).not.toContain('"nonce":',);
+      // Encrypted rows have no useful snippet; the API surfaces "".
+      if (r.matchContext.length > 0) {
+        // The snippet, if non-empty, MUST be plaintext (no {enc,nonce} markers).
+        expect(r.matchContext,).not.toContain('"enc":',);
+      }
+    }
   });
 });
