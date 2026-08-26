@@ -94,8 +94,8 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
     resolveFlag({ thisL: this as unknown as NsfwModerationServiceContext, flagId, resolvedBy, resolution, status, },);
   getAuditLog = (targetUserId: string, options?: Parameters<NsfwModerationServiceIface["getAuditLog"]>[1],) =>
     getAuditLog({ thisL: this as unknown as NsfwModerationServiceContext, targetUserId, options, },);
-  exportUserData = (userId: string,) =>
-    exportUserData({ thisL: this as unknown as NsfwModerationServiceContext, userId, },);
+  exportUserData = (userId: string, exportedBy: string, clientIp?: string | null,) =>
+    exportUserData({ thisL: this as unknown as NsfwModerationServiceContext, userId, exportedBy, clientIp, },);
   deleteUserData = (userId: string, deletedBy: string,) =>
     deleteUserData({ thisL: this as unknown as NsfwModerationServiceContext, userId, deletedBy, },);
   getEffectiveNsfw = (chatId: string, userId: string,) =>
