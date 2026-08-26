@@ -51,6 +51,8 @@ The API-first groundwork every alternative frontend and SDK depends on: OpenAPI 
 - [ ] Create `packages/server/` with importable Elysia app
 - [ ] Document API endpoints in `docs/api/`
 
+
+- [ ] Generate OpenAPI spec from Elysia (`src/routes/swagger.ts`)
 ## Dependencies
 
 - **Parent hub:** Headless Mode & Alternative Frontends (`epic-headless-alternative-frontends.md`)

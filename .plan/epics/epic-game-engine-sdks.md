@@ -102,6 +102,9 @@ func _on_ws_data():
 - [ ] Document game engine integration patterns
 - [ ] Add game engine-specific error handling and reconnection logic
 
+
+- [ ] Godot GDScript client SDK
+- [ ] Unity C# client SDK
 ## Dependencies
 
 - Parent hub: **Embeddable Engine & 2D/3D Game Frontend** (`epic-embeddable-engine-game-frontend.md`).
