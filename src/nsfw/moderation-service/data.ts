@@ -13,12 +13,66 @@ import type { ContentFlag, ModAction, NsfwModerationServiceContext, NsfwUserPref
 export interface ExportUserDataArgs {
   thisL: NsfwModerationServiceContext;
   userId: string;
+  /** Admin userId performing the export; recorded in log_entries for accountability. */
+  exportedBy: string;
+  /** Optional client IP; recorded in log_entries meta for forensics. */
+  clientIp?: string | null;
 }
 
-/** Export all moderation data for a user (prefs, actions, flags). */
+/**
+ * Maximum preview length for free-text fields (`description`,
+ * `reason`) in the default export bundle. Full fields require an
+ * elevated secondary request.
+ */
+export const EXPORT_PREVIEW_MAX = 200;
+
+/** Truncate a free-text field to a length-capped preview. */
+export function previewText(value: string | null | undefined,): string {
+  if (typeof value !== "string" || value.length === 0) { return ""; }
+  return value.length > EXPORT_PREVIEW_MAX
+    ? value.slice(0, EXPORT_PREVIEW_MAX,) + "…"
+    : value;
+}
+
+/**
+ * Export all moderation data for a user (prefs, actions, flags).
+ *
+ * Security posture (BUG-nsfw-export-bundle-no-access-log):
+ *   - Emits a `log_entries` access-log row BEFORE serving the bundle.
+ *   - Free-text fields (`description`, `reason`) are replaced with
+ *     length-capped previews in the default bundle. Full fields
+ *     require an elevated secondary request (see
+ *     `exportUserDataFull`).
+ */
 export async function exportUserData(
-  { thisL, userId, }: ExportUserDataArgs,
+  { thisL, userId, exportedBy, clientIp, }: ExportUserDataArgs,
 ): Promise<{ preferences: NsfwUserPrefs | null; actions: ModAction[]; flags: ContentFlag[] }> {
+  const now = new Date().toISOString();
+  // Emit the access-log row FIRST so even a downstream failure is
+  // recorded. GDPR exports are subject to retention/audit policy.
+  await thisL.db.insertInto("log_entries",).values({
+    id: crypto.randomUUID(),
+    level: 30,
+    timestamp: Date.now() / 1000,
+    time: now,
+    message: "NSFW moderation user-data export (audit log)",
+    module: "nsfw-moderation",
+    user_id: exportedBy,
+    session_id: null,
+    request_id: null,
+    meta: jsonStringifyOr({
+      action: "export-user-data",
+      targetUserId: userId,
+      exportedBy,
+      clientIp: clientIp ?? null,
+    },),
+    event_type: "moderation",
+    entity_type: "user",
+    entity_id: userId,
+    action: "export-user-data",
+    created_at: now,
+  },).execute();
+
   const [preferences, actions,] = await Promise.allSettled([
     thisL.getPreferences(userId,),
     thisL.getAuditLog(userId,),
@@ -27,10 +81,17 @@ export async function exportUserData(
     "created_at",
     "desc",
   ).selectAll().execute();
-  const flags = Array.from(flagRows, (r,) => mapFlag(r,),);
+  const flags = Array.from(flagRows, (r,) => mapFlag(r,),).map((f,) => ({
+    ...f,
+    description: previewText(f.description ?? null,),
+  }));
+  const sanitizedActions = (actions.status === "fulfilled" ? actions.value : []).map((a,) => ({
+    ...a,
+    reason: previewText(a.reason,),
+  }));
   return {
     preferences: preferences.status === "fulfilled" ? preferences.value : null as NsfwUserPrefs | null,
-    actions: actions.status === "fulfilled" ? actions.value : [],
+    actions: sanitizedActions,
     flags,
   };
 }
