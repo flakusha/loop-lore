@@ -18,15 +18,15 @@ live in `refs/issues/<uuid>` as commit chains with trailers for metadata.
 
 Valid ticket types (as accepted by the `ticket` command):
 
-| Prefix  | Use for                      |
-| ------- | ---------------------------- |
-| BUG-    | Bug reports                  |
-| FEAT-   | Feature requests             |
-| FIX-    | Non-bug fixes                |
-| IDEA-   | Research/experimental ideas  |
-| TASK-   | Small tasks                  |
-| SOL-    | Architectural solutions      |
-| INFRA-  | Infrastructure work          |
+| Prefix | Use for                     |
+| ------ | --------------------------- |
+| BUG-   | Bug reports                 |
+| FEAT-  | Feature requests            |
+| FIX-   | Non-bug fixes               |
+| IDEA-  | Research/experimental ideas |
+| TASK-  | Small tasks                 |
+| SOL-   | Architectural solutions     |
+| INFRA- | Infrastructure work         |
 
 Epics are NOT tickets — they live as files in `.plan/epics/` and their index
 is regenerated with `bun run plan:docs`.

@@ -43,11 +43,11 @@ After editing any planning artifact — epics (`.plan/epics/`), tickets
 derived indexes are reconciled with their sources. Orphaned files or stale
 index entries are bugs. The reconciliation commands are **distinct**:
 
-| Artifact edited            | Sync command              | What it reconciles                          |
-| -------------------------- | ------------------------- | ------------------------------------------- |
-| Tickets (`.plan/tickets/`) | `bun run plan:sync:fix`   | `index.json` ↔ `.md` ↔ git issues          |
-| Epics (`.plan/epics/`)     | `bun run plan:docs`       | regenerates `.plan/epics-index.md`          |
-| Backlog (`.plan/backlog/`) | `bun run plan:backlog:sync` | backlog ↔ index                          |
+| Artifact edited            | Sync command                | What it reconciles                 |
+| -------------------------- | --------------------------- | ---------------------------------- |
+| Tickets (`.plan/tickets/`) | `bun run plan:sync:fix`     | `index.json` ↔ `.md` ↔ git issues  |
+| Epics (`.plan/epics/`)     | `bun run plan:docs`         | regenerates `.plan/epics-index.md` |
+| Backlog (`.plan/backlog/`) | `bun run plan:backlog:sync` | backlog ↔ index                    |
 
 `bun run plan:sync` only reconciles **tickets** — using it after an epic edit
 leaves `epics-index.md` stale. Run the row that matches what you touched.
