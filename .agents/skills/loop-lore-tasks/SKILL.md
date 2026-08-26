@@ -28,16 +28,16 @@ Before touching any feature, read the relevant spec in `docs/`:
 | Users/sessions     | `docs/spec/users-sessions.md`   |
 | Assets             | `docs/spec/assets.md`           |
 | Actors             | `docs/spec/actors.md`           |
-| Characters/persona | `docs/spec/character-setup.md`  |
+| Characters/persona | `docs/spec/character-spec.md`   |
 | RPG mechanics      | `docs/spec/rpg-mechanics.md`    |
 | Architecture       | `docs/spec/architecture.md`     |
 | Build/deploy       | `docs/spec/build-deploy.md`     |
 | Implementation     | `docs/spec/implementation.md`   |
-| TUI                | `docs/spec/tui.md`              |
+| TUI                | `docs/spec/terminal-ui.md`      |
 | Plugin system      | `docs/spec/plugin-system.md`    |
 | Memory system      | `docs/spec/memory-system.md`    |
 | Artifacts system   | `docs/spec/artifacts-system.md` |
-| Plan / tasks       | `.plan/implementation-plan.md`  |
+| Plan / tasks       | `.plan/epics-index.md`, `.plan/backlog/` |
 | Frontend UX        | `docs/frontend/overview.md`     |
 
 ## 2. Explore Existing Code
@@ -56,7 +56,7 @@ bun test --coverage                    # See what's tested
 - What files change? (create/modify/delete)
 - What tests need updating?
 - Any side effects (migrations, config changes, docs updates)?
-- Check `docs/plan.md` if this is part of the MVP roadmap
+- Check `.plan/backlog/` (priority workstack) and `.plan/epics-index.md` if this is part of a planned epic
 
 ## 4. Implement
 
@@ -84,7 +84,7 @@ Follow coding conventions from `AGENTS.md`:
 ```bash
 bun run typecheck          # tsc --noEmit
 bun run lint               # ESLint
-bun run format             # Prettier check
+bun run format             # dprint check
 bun run md:lint            # Markdownlint on docs/
 bun run check              # All of the above
 bun test                   # Run tests

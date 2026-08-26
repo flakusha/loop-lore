@@ -13,10 +13,11 @@ description: >
 
 ## Overview
 
-Loop-lore uses git worktrees for parallel development. `scripts/worktree/`
-manages merge/rebase operations within the `./tree/` directory.
+Loop-lore uses git worktrees for parallel development. The worktree CLI
+(`bun run scripts/worktree/ <command>`) manages merge/rebase operations
+within the `tree/` directory.
 
-**Default base branch**: `master` (may shift to `develop` in future).
+**Default base branch**: `dev` (protected branches: master, main, stg, dev).
 
 ---
 
@@ -27,36 +28,42 @@ manages merge/rebase operations within the `./tree/` directory.
 Merges a source branch into a worktree's current branch:
 
 ```bash
-./scripts/worktree/ merge <worktree-branch> <source-branch>
+bun run scripts/worktree/ merge <worktree-branch> <source-branch>
 ```
 
 Example:
 
 ```bash
-./scripts/worktree/ merge feat feature-api
+bun run scripts/worktree/ merge feat feature-api
 # Merges 'feature-api' into the 'feat' worktree's branch
 ```
 
 ### Rebase
 
-Rebases a worktree's branch onto a target (default: master):
+Rebases a worktree's branch onto a target (default: the main checkout's
+current branch, typically `dev`):
 
 ```bash
-./scripts/worktree/ rebase <worktree-branch> [onto]
+bun run scripts/worktree/ rebase <worktree-branch> [onto]
 ```
 
 Example:
 
 ```bash
-./scripts/worktree/ rebase feat          # rebase feat onto master
-./scripts/worktree/ rebase feat develop  # rebase feat onto develop
+bun run scripts/worktree/ rebase feat         # rebase feat onto default base
+bun run scripts/worktree/ rebase feat develop # rebase feat onto develop
 ```
+
+> Worktree-layout commands (`new`, `create`, `merge`, `rebase`, `remove`,
+> `cleanup`) must run from the repo root — the CLI rejects them when invoked
+> from inside `tree/*`. Issue/ticket commands and read-only queries work from
+> any checkout.
 
 ---
 
 ## Pre-flight Checks
 
-Before merge/rebase, the script:
+Before merge/rebase, the CLI:
 
 1. **Verifies worktree exists** — exits with error if branch has no worktree
 2. **Verifies source/target branch exists** — exits with error if not found
@@ -78,7 +85,7 @@ git stash pop
 ### On merge conflict
 
 ```bash
-# Script exits with instructions:
+# CLI exits with instructions:
 cd tree/<branch>
 # Resolve conflicts in files, then:
 git add .
@@ -88,7 +95,7 @@ git commit  # or git merge --continue
 ### On rebase conflict
 
 ```bash
-# Script exits with instructions:
+# CLI exits with instructions:
 cd tree/<branch>
 # Resolve conflicts in files, then:
 git add .
@@ -104,7 +111,7 @@ git rebase --abort
 
 **All commits — including merge commits — must be GPG-signed.**
 
-`scripts/worktree/` auto-signs merge commits via `gpg_merge_flags()`.
+The worktree CLI auto-signs merge commits via `gpgMergeFlags()`.
 When `AGENT_GPG_KEY_ID` is set in `.credentials.env` and the secret key
 is available, `merge` and `finalize` pass `-c commit.gpgsign=true
 -c user.signingkey=<key>` to git automatically.
@@ -143,29 +150,29 @@ git -c user.signingkey=<AGENT_GPG_KEY_ID> \
 
 ```bash
 # 0. Unlock GPG (once per session, in real terminal)
-./scripts/gpg-unlock.mjs
+bun run scripts/gpg-unlock.mjs
 
-# 1. Create feature worktree
-./scripts/worktree/ new feature-xyz master
+# 1. Create feature worktree (from repo root)
+bun run scripts/worktree/ new feature-xyz dev
 
 # 2. Work on feature (commits happen in tree/feature-xyz)
 cd tree/feature-xyz
 # ... implement feature ...
 # Commit with GPG signing (agent-commit skill)
 
-# 3. Sync with master before merge
-./scripts/worktree/ rebase feature-xyz master
+# 3. Sync with dev before merge (back at repo root)
+bun run scripts/worktree/ rebase feature-xyz dev
 
 # 4. Or merge another branch in (auto-signed)
-./scripts/worktree/ merge feature-xyz other-feature
+bun run scripts/worktree/ merge feature-xyz other-feature
 
 # 5. Verify signature after commit
 cd tree/feature-xyz
 git log --show-signature -1
 
-# 6. Finalize: run checks, signed merge to master, remove worktree
-./scripts/worktree/ finalize feature-xyz
-# Or: ./scripts/worktree/ agent-merge feature-xyz
+# 6. Finalize: run checks, signed merge to base, remove worktree
+bun run scripts/worktree/ finalize feature-xyz
+# Or: bun run scripts/worktree/ agent-merge feature-xyz
 ```
 
 ---
