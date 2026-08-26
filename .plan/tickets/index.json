@@ -10009,6 +10009,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-emotions-avatar-edit-model.md"
   },
+  "TASK-ENABLE-HTTP-2-VIA-SINGLE-TLS-PORT-CONSOLIDATION": {
+    "hash": "19f0821",
+    "git_issue": "19f0821",
+    "extid": "TASK-ENABLE-HTTP-2-VIA-SINGLE-TLS-PORT-CONSOLIDATION",
+    "type": "TASK",
+    "title": "Enable HTTP/2 via single-TLS-port consolidation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-http-protocol-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-enable-http-2-via-single-tls-port-consolidation.md"
+  },
   "TASK-ENCRYPTION-ACCESS-MANAGEMENT": {
     "hash": "377b6d5",
     "extid": "TASK-ENCRYPTION-ACCESS-MANAGEMENT",
@@ -10261,6 +10273,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-error-envelope.md",
     "git_issue": "5690b8f"
+  },
+  "TASK-EVALUATE-ELYSIAJS-OPENTELEMETRY-VERSUS-CUSTOM-TELEMETRY-MODU": {
+    "hash": "9ffd6e0",
+    "git_issue": "9ffd6e0",
+    "extid": "TASK-EVALUATE-ELYSIAJS-OPENTELEMETRY-VERSUS-CUSTOM-TELEMETRY-MODU",
+    "type": "TASK",
+    "title": "Evaluate @elysiajs/opentelemetry versus custom telemetry module",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-http-protocol-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-evaluate-elysiajs-opentelemetry-versus-custom-telemetry-modu.md"
   },
   "TASK-EXPLORATION-DISCOVERY": {
     "hash": "45c5d1e",
@@ -11124,6 +11148,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-health-bar.md",
     "git_issue": "330ccdd"
+  },
+  "TASK-HOLD-INBOUND-HTTP-3-UNTIL-BUN-SUPPORTS-WEBSOCKET-OVER-H3": {
+    "hash": "438905f",
+    "git_issue": "438905f",
+    "extid": "TASK-HOLD-INBOUND-HTTP-3-UNTIL-BUN-SUPPORTS-WEBSOCKET-OVER-H3",
+    "type": "TASK",
+    "title": "Hold inbound HTTP/3 until Bun supports WebSocket over H3",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-http-protocol-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3.md"
   },
   "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE": {
     "hash": "20a414f",
@@ -13613,6 +13649,18 @@
     "source": ".plan/tickets/TASK-operator-platform-credential-store.md",
     "git_issue": "301358f"
   },
+  "TASK-OUTBOUND-FETCH-HTTP-2-AND-HTTP-3-PROTOCOL-HINTS-FOR-PROVIDER": {
+    "hash": "a544e76",
+    "git_issue": "a544e76",
+    "extid": "TASK-OUTBOUND-FETCH-HTTP-2-AND-HTTP-3-PROTOCOL-HINTS-FOR-PROVIDER",
+    "type": "TASK",
+    "title": "Outbound fetch HTTP/2 and HTTP/3 protocol hints for providers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-http-protocol-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-outbound-fetch-http-2-and-http-3-protocol-hints-for-provider.md"
+  },
   "TASK-OUTPUT-CONTROL-TRANSFORMS": {
     "hash": "cd237ca",
     "extid": "TASK-OUTPUT-CONTROL-TRANSFORMS",
@@ -14947,6 +14995,18 @@
     "source": ".plan/tickets/TASK-repetition-hallucination-guards.md",
     "status": "done",
     "git_issue": "4cec862"
+  },
+  "TASK-REPLACE-SIGHUP-FULL-RESTART-WITH-SERVER-RELOAD-FOR-CERT-ROTA": {
+    "hash": "22d0e95",
+    "git_issue": "22d0e95",
+    "extid": "TASK-REPLACE-SIGHUP-FULL-RESTART-WITH-SERVER-RELOAD-FOR-CERT-ROTA",
+    "type": "TASK",
+    "title": "Replace SIGHUP full restart with server.reload for cert rotation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-http-protocol-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota.md"
   },
   "TASK-REPLAYABILITY": {
     "hash": "2735bbf",
@@ -16902,6 +16962,18 @@
     "source": ".plan/tickets/TASK-wire-crafting-routes.md",
     "git_issue": "a2a2669",
     "status": "done"
+  },
+  "TASK-WIRE-ELYSIA-OPENAPI-MOUNT-TO-EMIT-GENERATED-SERVED-SPEC": {
+    "hash": "55d13ef",
+    "git_issue": "55d13ef",
+    "extid": "TASK-WIRE-ELYSIA-OPENAPI-MOUNT-TO-EMIT-GENERATED-SERVED-SPEC",
+    "type": "TASK",
+    "title": "Wire @elysia/openapi mount to emit generated served spec",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-http-protocol-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-elysia-openapi-mount-to-emit-generated-served-spec.md"
   },
   "TASK-WIRE-GM-SERVICE-STORY-MODE": {
     "hash": "pending",
