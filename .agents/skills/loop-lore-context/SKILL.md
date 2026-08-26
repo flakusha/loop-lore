@@ -55,11 +55,11 @@ See **`.agents/references/recommendations.md`** for full patterns. Key rules:
 
 ```bash
 bun run check        # typecheck + lint + format + md lint + db schema gate
-bun test src/        # unit tests (203 test files)
+bun test src/        # unit tests
 bun run db:migrate   # DB migrations
 # After a migration change, regenerate schema artifacts (fails `check` otherwise):
 bun run db:sync-types && bun run db:sync-manifest
-./scripts/worktree/ list   # active worktrees
+bun run scripts/worktree/ list   # active worktrees
 ```
 
 ## Key Design Decisions

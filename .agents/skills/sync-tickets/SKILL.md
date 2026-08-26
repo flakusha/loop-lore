@@ -19,25 +19,25 @@ that references docs instead of duplicating content.
 
 | Step | Action                                                       |
 | ---- | ------------------------------------------------------------ |
-| 1    | Run `sync-ticket-index.ts` to find orphans                   |
+| 1    | Run `plan:sync` (scripts/sync-ticket-index.ts) to find drift |
 | 2    | Link orphans to existing git issues via fuzzy title matching |
 | 3    | Create compact git issues for unmatched files                |
 | 4    | Update `index.json` with all links                           |
-| 5    | Verify with sync script (0 mismatches)                       |
+| 5    | Re-run `plan:sync` — expect zero actionable issues           |
 
 ---
 
 ## Quick Start
 
 ```bash
-# 1. Run sync to see current state
-bun run scripts/sync-ticket-index.ts
+# 1. Dry-run report of current state
+bun run plan:sync
 
-# 2. Fix orphan files (interactive)
-./scripts/worktree/ sync
+# 2. Apply fixes (non-interactive)
+bun run plan:sync:fix
 
 # 3. Verify clean
-bun run scripts/sync-ticket-index.ts  # expect 0 mismatches
+bun run plan:sync   # expect "Index is in sync"
 ```
 
 ---
@@ -103,13 +103,13 @@ overlap.length > 0 && extidWords.length <= 3; // 1 match for short extids
 
 ---
 
-## Sync Script Output
+## Sync Script Output (shape)
 
 ```
 📊 Scanning...
-   Ticket .md files:  312
-   Git issues:        401
-   Index entries:     312
+   Ticket .md files:  N
+   Git issues:        N
+   Index entries:     N
 📋 Reconciliation Report
 🟢 No orphan files        ← all .md files in index
 🟢 No phantom entries     ← no index entries without .md files
@@ -117,6 +117,8 @@ overlap.length > 0 && extidWords.length <= 3; // 1 match for short extids
 🟢 No status mismatches   ← index status matches git status
 🟢 No missing hashes     ← all entries have git_issue
 ```
+
+Counts are recomputed on every run — never quote them from memory.
 
 ---
 
@@ -135,14 +137,14 @@ overlap.length > 0 && extidWords.length <= 3; // 1 match for short extids
 ## Common Commands
 
 ```bash
-# Check current state
-bun run scripts/sync-ticket-index.ts
+# Check current state (dry-run)
+bun run plan:sync
 
-# Fix orphans (interactive)
-./scripts/worktree/ sync
+# Apply fixes (non-interactive; refuses when the git-issue CLI is unavailable)
+bun run plan:sync:fix
 
-# Force rebuild index from .md files
-./scripts/worktree/ sync:fix
+# Same fix via the worktree CLI dispatch
+bun run scripts/worktree/ sync
 
 # Create single git issue for orphan
 git issue create -m "See: .plan/tickets/TASK-NEW.md" "TASK-NEW: Title"
@@ -152,17 +154,22 @@ git issue create -m "See: .plan/tickets/TASK-NEW.md" "TASK-NEW: Title"
 
 ## Troubleshooting
 
-**Problem:** "34 hash mismatches"
+**Problem:** hash mismatches after cross-type relinks
 **Cause:** TASK→EPIC cross-type links where extid differs from git issue prefix
 **Fix:** Script title matching accepts 2+ word overlap; run sync again after update
 
 **Problem:** "Phantom entries in index"
 **Cause:** Index has entries without corresponding .md files
-**Fix:** `bun run scripts/sync-ticket-index.ts` removes phantoms automatically
+**Fix:** `bun run plan:sync:fix` removes phantoms automatically
 
 **Problem:** "Status mismatch"
 **Cause:** index.json status differs from git issue status
 **Fix:** Script auto-updates index status from git issue status
+
+**Problem:** `--fix` refuses with "git issue CLI unavailable"
+**Cause:** The `git issue` command failed; the tool cannot distinguish a
+missing CLI from all-stale hashes, and would otherwise mass-create issues
+**Fix:** Install/initialize git-issue, then re-run
 
 ---
 
