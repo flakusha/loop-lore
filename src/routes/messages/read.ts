@@ -22,7 +22,7 @@ import {
 import type { HandlerOpts, } from "./types";
 
 export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, config, } = opts;
+  const { database, } = opts;
 
   return new Elysia({ name: "messages-read", },)
     .get(
@@ -61,7 +61,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
               const attachments = await enrichAttachments(database, row.attachments ?? null,);
               const toolCalls = parseToolCalls(row.tool_calls ?? null,);
               try {
-                const content = await resolveMessageContent(database, row, config,);
+                const content = await resolveMessageContent(database, row,);
                 return { ...m, content, attachments, tool_calls: toolCalls, };
               } catch {
                 return { ...m, content: "[Encrypted — unable to decrypt]", attachments, tool_calls: toolCalls, };
@@ -111,7 +111,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
         const toolCalls = parseToolCalls(message.tool_calls as string | null,);
         let content: string;
         try {
-          content = await resolveMessageContent(database, message as any, config,);
+          content = await resolveMessageContent(database, message as any,);
         } catch {
           content = "[Encrypted — unable to decrypt]";
         }
@@ -149,7 +149,7 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
           variantPromises.push(
             (async (): Promise<Record<string, unknown>> => {
               try {
-                const c = await resolveMessageContent(database, v, config,);
+                const c = await resolveMessageContent(database, v,);
                 return { ...v, content: c, };
               } catch {
                 return { ...v, content: "[Encrypted — unable to decrypt]", };
