@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { decryptMessageContent, getSmk, } from "../../crypto";
+import { resolveMessageContent, } from "../messages/helpers";
 import { addChecksum, prettyJson, } from "./helpers";
 import type { ExportContext, } from "./types";
 
@@ -40,9 +40,9 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
       .orderBy("messages.created_at", "asc",)
       .execute();
 
-    // Decrypt encrypted message bodies so the ZIP export carries plaintext,
-    // never the raw ciphertext (a data leak).
-    const smk = getSmk();
+    // Resolve message bodies to plaintext via the shared helper so the ZIP
+    // export carries decoded text — never raw ciphertext (data leak) nor
+    // base64 gzip (which would be opaque to importers).
     const messages: {
       id: string;
       role: string;
@@ -51,9 +51,12 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
       created_at: string | Date;
     }[] = [];
     for (const row of rows) {
-      const content = smk && row.key_id
-        ? await decryptMessageContent(ctx.database, row, smk,)
-        : row.content;
+      let content: string;
+      try {
+        content = await resolveMessageContent(ctx.database, row,);
+      } catch {
+        content = "[Encrypted — unable to decrypt]";
+      }
       messages.push({
         id: row.id,
         role: row.role,
