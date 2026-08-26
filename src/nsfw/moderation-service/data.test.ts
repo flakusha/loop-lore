@@ -212,10 +212,88 @@ describe("exportUserData", () => {
         return row ? ({ ...row, } as never) : null;
       },
     };
-    const exported = await exportUserData({ thisL: realCtx, userId: TARGET, },);
+    const exported = await exportUserData({ thisL: realCtx, userId: TARGET, exportedBy: ADMIN, },);
 
     // Soft-deleted audit row excluded from the export bundle.
     expect(exported.actions.length,).toBe(0,);
     expect(exported.preferences,).not.toBeNull();
+  });
+
+  // BUG-nsfw-export-bundle-no-access-log
+  test("emits a log_entries access-log row BEFORE serving the bundle", async () => {
+    const ctx = makeCtx();
+    await insertPrefs(TARGET,);
+    const logCountBefore = await db.selectFrom("log_entries",).selectAll()
+      .where("entity_id", "=", TARGET,)
+      .where("action", "=", "export-user-data",)
+      .execute()
+      .then((rows,) => rows.length);
+    await exportUserData({ thisL: ctx, userId: TARGET, exportedBy: ADMIN, clientIp: "10.0.0.1", },);
+    const logCountAfter = await db.selectFrom("log_entries",).selectAll()
+      .where("entity_id", "=", TARGET,)
+      .where("action", "=", "export-user-data",)
+      .execute()
+      .then((rows,) => rows.length);
+    expect(logCountAfter,).toBe(logCountBefore + 1,);
+    const row = await db.selectFrom("log_entries",).selectAll()
+      .where("entity_id", "=", TARGET,)
+      .where("action", "=", "export-user-data",)
+      .orderBy("created_at", "desc",)
+      .limit(1,)
+      .executeTakeFirst();
+    expect(row?.user_id,).toBe(ADMIN,);
+    expect(row?.module,).toBe("nsfw-moderation",);
+    expect(row?.meta,).toContain("10.0.0.1",);
+  });
+
+  test("free-text fields (`reason`, `description`) are length-capped to a preview in the bundle", async () => {
+    const ctx = makeCtx();
+    const longReason = "X".repeat(500,);
+    const longDescription = "Y".repeat(500,);
+    // Seed a block action with a long reason.
+    await insertModerationActions(db, "block", TARGET, ADMIN, longReason, "user",);
+    // Seed a flag with a long description.
+    await db.insertInto("content_flags",).values({
+      id: `flag-${TARGET}`,
+      reporter_id: TARGET,
+      content_type: "message",
+      content_id: "m-1",
+      chat_id: null,
+      world_id: null,
+      flag_reason: "spam",
+      description: longDescription,
+      status: "pending",
+      resolution: null,
+      resolved_by: null,
+      resolved_at: null,
+      created_at: new Date().toISOString(),
+    },).execute();
+    const realCtx: NsfwModerationServiceContext = {
+      ...ctx,
+      getPreferences: async (uid: string,) => {
+        const row = await db.selectFrom("nsfw_user_preferences",).selectAll()
+          .where("user_id", "=", uid,).executeTakeFirst();
+        return row ? ({ ...row, } as never) : null;
+      },
+      getAuditLog: async (uid: string,) => {
+        const rows = await db.selectFrom("moderation_actions",).selectAll()
+          .where("target_user_id", "=", uid,)
+          .where("deleted_at", "is", null,)
+          .execute();
+        return rows as never;
+      },
+    };
+    const exported = await exportUserData({ thisL: realCtx, userId: TARGET, exportedBy: ADMIN, },);
+    expect(exported.actions.length,).toBeGreaterThan(0,);
+    for (const action of exported.actions) {
+      expect(action.reason.length,).toBeLessThanOrEqual(201,);
+      expect(action.reason.endsWith("…",),).toBe(true,);
+    }
+    expect(exported.flags.length,).toBeGreaterThan(0,);
+    for (const flag of exported.flags) {
+      const desc = (flag as { description?: string }).description ?? "";
+      expect(desc.length,).toBeLessThanOrEqual(201,);
+      expect(desc.endsWith("…",),).toBe(true,);
+    }
   });
 });

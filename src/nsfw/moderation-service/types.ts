@@ -111,6 +111,8 @@ export interface NsfwModerationService {
   ): Promise<ContentFlag>;
   exportUserData(
     userId: string,
+    exportedBy: string,
+    clientIp?: string | null,
   ): Promise<{ preferences: NsfwUserPrefs | null; actions: ModAction[]; flags: ContentFlag[] }>;
   deleteUserData(userId: string, deletedBy: string,): Promise<void>;
   getEffectiveNsfw(chatId: string, userId: string,): Promise<{ enabled: boolean; source: string }>;
