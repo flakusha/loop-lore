@@ -57,6 +57,12 @@ Task breakdown (same deliverable, sequenced):
    mounted in `src/elysia-app.ts`) + batch delete.
 4. Gates: NSFW rating visibility and ownership/scope enforcement on all batch ops.
 
+
+- [ ] Gallery edit workflows route to `src/image-edit/` (not the generation pipeline), cover img2img/inpaint/controlnet/upscale/lora, and support `qwen-edit` dual t2i + i2i mode (§7.8)
+- [ ] Gallery edit workflows: wrap `src/image-edit/` as workflow UX layer, asset→template binding, edit-capable family presets (flux-kontext, qwen-edit dual t2i/i2i, sdxl + controlnet/lora params), dispatch to `POST /api/image-edit/run` (§7.8)
+- [ ] Gallery supports multi-select + batch download (server-zip) with NSFW/ownership gating (§7.7)
+- [ ] Default workflows cover media: video generation, image generation, image editing
+- [ ] NSFW prefiltering + labeling + consent gate wired for third-party API backends
 ## Dependencies
 
 - **Parent hub:** Assistant Creative Studio — Workflow Templates (`epic-assistant-creative-studio-workflows.md`)
