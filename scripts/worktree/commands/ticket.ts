@@ -6,7 +6,6 @@ import type { WorktreeConfig, } from "../utils/config";
 import { gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
 
-
 const VALID_TYPES = ["BUG", "FEAT", "FIX", "IDEA", "TASK", "SOL", "INFRA",] as const;
 type TicketType = typeof VALID_TYPES[number];
 

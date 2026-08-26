@@ -192,6 +192,7 @@ generated **from the migration files**. Adding or editing a migration requires:
 bun run db:sync-types && bun run db:sync-manifest   # regenerate schema-*.ts, schema.ts, schema-manifest.ts, insert-helpers.ts, db-schemas.ts
 bun run schemas:check                              # gate — fails red if any generated artifact is stale
 ```
+
 `schemas:check` runs as part of `bun run check`; never hand-edit the
 generated `schema-*.ts`/`schema-manifest.ts`/`insert-helpers.ts`/`db-schemas.ts`.
 
