@@ -11,7 +11,7 @@
  */
 import { Elysia, t, } from "elysia";
 import { CharacterInternalTraitsService, } from "../../characters/services/internal-traits";
-import type { HandlerOpts, } from "../actor-auth";
+import { type HandlerOpts, requireActorAccess, } from "../actor-auth";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
 const R = "/api/character-internal-traits";
@@ -95,9 +95,16 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
     },)
     // ── Create/update internal traits ────────────────────
     .put(R, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      // IDOR fix (BUG-character-internal-traits-idor-actor-ownership-never-checked):
+      // requireActorAccess checks the user owns the actor (or has admin).
+      // The actor id lives on ctx.query (legacy) — synthesize a params shape
+      // so the existing helper can read it.
       const { actorId, } = ctx.query as { actorId: string };
+      const userId = await requireActorAccess(
+        { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
+        opts.database,
+      );
+      if (userId instanceof Response) { return userId; }
       const body = ctx.body as Record<string, unknown>;
       try {
         const traits = await svc().upsert(actorId, body,);
@@ -118,9 +125,13 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
     },)
     // ── Delete internal traits ────────────────────────────
     .delete(R, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      // IDOR fix (see PUT above for rationale).
       const { actorId, } = ctx.query as { actorId: string };
+      const userId = await requireActorAccess(
+        { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
+        opts.database,
+      );
+      if (userId instanceof Response) { return userId; }
       try {
         const deleted = await svc().delete(actorId,);
         return jsonResponse({ deleted, },);
