@@ -1770,7 +1770,7 @@
     "status": "open"
   },
   "BUG-NSFW-REVIEWAPPEAL-AUTO-REVERSES-ACTIONS": {
-    "hash": "pending",
+    "hash": "b3c47b2",
     "extid": "BUG-NSFW-REVIEWAPPEAL-AUTO-REVERSES-ACTIONS",
     "type": "BUG",
     "title": "`reviewAppeal` auto-reverses `block`/`ban`/`shadow` on a single admin's approval — no separate confirmation",
@@ -1780,7 +1780,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-reviewappeal-auto-reverses-actions.md",
     "git_issue": "b3c47b2",
-    "status": "open"
+    "status": "done"
   },
   "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA": {
     "hash": "b8f7ad2",
