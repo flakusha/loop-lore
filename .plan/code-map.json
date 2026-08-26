@@ -939,6 +939,12 @@
       "source": ".plan/tickets/TASK-prompt-permanent-traits-section.md"
     }
   ],
+  "src/assistant/prompt/sections/chat-history.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    }
+  ],
   "src/assistant/prompt/sections/chat-history.ts": [
     {
       "kind": "epic",
@@ -6351,6 +6357,12 @@
       "source": ".plan/tickets/FEAT-character-world-setup.md"
     }
   ],
+  "src/db/migrations/065_moderation_supersede.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md"
+    }
+  ],
   "src/db/migrations/0XX_audio_templates.ts": [
     {
       "kind": "ticket",
@@ -6515,6 +6527,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-db-reinit-archive-destroys-previous-db-on-rename-failure.md"
     },
     {
       "kind": "ticket",
@@ -10737,6 +10757,10 @@
   ],
   "src/generation/auto-gen/content-hooks-nsfw-gate.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
     }
@@ -12811,6 +12835,12 @@
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     }
   ],
+  "src/middleware/nsfw-gate/access.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    }
+  ],
   "src/middleware/nsfw-gate/consent.test.ts": [
     {
       "kind": "epic",
@@ -12833,6 +12863,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-consent-schema.md"
+    }
+  ],
+  "src/middleware/nsfw-gate/constants.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
     }
   ],
   "src/middleware/nsfw-gate/logging.ts": [
@@ -13096,13 +13132,33 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-modservice-notify-user-leaks-admin-reason.md"
     }
   ],
   "src/nsfw/moderation-service/data.test.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-late-merges.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-export-bundle-no-access-log.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-dprint-formatting-enforced-ci-test-files.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-moderation-delete-audit-regression-verify.md"
     }
   ],
   "src/nsfw/moderation-service/data.ts": [
@@ -15599,6 +15655,18 @@
       "source": "docs/spec/error-envelope.md"
     }
   ],
+  "src/routes/http-utils/responses.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    }
+  ],
+  "src/routes/http-utils/status.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    }
+  ],
   "src/routes/import.test.ts": [
     {
       "kind": "ticket",
@@ -15791,6 +15859,12 @@
       "source": ".plan/tickets/TASK-fix-message-reactions-access.md"
     }
   ],
+  "src/routes/message-search.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    }
+  ],
   "src/routes/message-search.ts": [
     {
       "kind": "ticket",
@@ -15798,6 +15872,10 @@
     }
   ],
   "src/routes/message-search/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md"
@@ -15965,6 +16043,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crypto.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
     },
     {
       "kind": "ticket",
@@ -17053,7 +17135,17 @@
       "source": ".plan/tickets/TASK-location-explorer.md"
     }
   ],
+  "src/routes/worlds/timelines.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    }
+  ],
   "src/routes/worlds/timelines.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md"
