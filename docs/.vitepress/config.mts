@@ -74,6 +74,8 @@ export default defineConfig({
             { text: 'Users & Sessions', link: '/spec/users-sessions' },
             { text: 'Assets', link: '/spec/assets' },
             { text: 'Asset Attribution', link: '/spec/assets-attribution' },
+            { text: 'Regex Extraction', link: '/spec/regex-extraction' },
+            { text: 'Profanity Filter', link: '/spec/profanity-filter' },
           ],
         },
         {
@@ -84,6 +86,7 @@ export default defineConfig({
             { text: 'Character & Persona Setup', link: '/spec/character-spec' },
             { text: 'RPG Mechanics', link: '/spec/rpg-mechanics' },
             { text: 'Memory System', link: '/spec/memory-system' },
+            { text: 'Emotion Avatars', link: '/spec/emotion-avatars' },
           ],
         },
         {
