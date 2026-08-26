@@ -48,8 +48,7 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
           const access = await checkChatAccess(db, chatId, userId, userRole,);
           if (!access.ok) { return notFoundResponse("Chat not found",); }
 
-          const body = ctx.body as { chatId: string; url: string; sectionId?: string | null };
-
+          const body = ctx.body as { url: string; sectionId?: string | null };
           // Detect service
           const serviceName = service.validateUrl(body.url,);
           if (!serviceName) {
