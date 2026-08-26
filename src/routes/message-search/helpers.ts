@@ -22,6 +22,8 @@ export interface MessageSearchRow {
   chatCharacterName: string | null;
   role: string;
   content: string;
+  contentEncoding: string;
+  keyId: string | null;
   matchContext: string;
   createdAt: string;
   attachments: string | null;
