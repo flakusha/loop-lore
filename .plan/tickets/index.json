@@ -1719,7 +1719,7 @@
     "status": "open"
   },
   "BUG-NSFW-MODERATION-DELETE-DESTROYS-AUDIT-LOG": {
-    "hash": "pending",
+    "hash": "50a69ff",
     "extid": "BUG-NSFW-MODERATION-DELETE-DESTROYS-AUDIT-LOG",
     "type": "BUG",
     "title": "NSFW `deleteUserData` hard-deletes `moderation_actions` rows — destroys auditability",
@@ -1729,7 +1729,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md",
     "git_issue": "50a69ff",
-    "status": "open"
+    "status": "done"
   },
   "BUG-NSFW-MODSERVICE-NOTIFY-USER-LEAKS-ADMIN-REASON": {
     "hash": "pending",
