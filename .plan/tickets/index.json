@@ -1607,7 +1607,7 @@
     "git_issue": "43587b3"
   },
   "BUG-MUSIC-LINKS-ROUTES-LACK-CHAT-ACCESS-CHECKS-CROSS-CHAT-READ-W": {
-    "hash": "d283ff9",
+    "hash": "a5a70bb",
     "extid": "BUG-MUSIC-LINKS-ROUTES-LACK-CHAT-ACCESS-CHECKS-CROSS-CHAT-READ-W",
     "type": "BUG",
     "title": "Music links routes lack chat access checks — cross-chat read/write",
@@ -1616,7 +1616,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-music-links-routes-lack-chat-access-checks-cross-chat-read-w.md",
-    "git_issue": "d283ff9"
+    "git_issue": "d283ff9",
+    "status": "done"
   },
   "BUG-N-1-QUERIES-IN-STORY-WORLD-STATE-CONTEXT-PER-PARTICIPANT": {
     "hash": "e874b71",
@@ -1654,7 +1655,7 @@
     "source": ".plan/tickets/BUG-npc-navigation-routes-all-stubbed.md"
   },
   "BUG-NSFW-APPEALS-AS-ANY-AND-DEAD-ROUTE": {
-    "hash": "pending",
+    "hash": "f8b5a20",
     "extid": "BUG-NSFW-APPEALS-AS-ANY-AND-DEAD-ROUTE",
     "type": "BUG",
     "title": "NSFW appeals service uses `as any` casts and is unwired — either dead code or missing routes",
@@ -1664,7 +1665,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-appeals-as-any-and-dead-route.md",
     "git_issue": "064e938",
-    "status": "open"
+    "status": "done"
   },
   "BUG-NSFW-BODY-PROFILE-MASS-ASSIGNMENT-RAW-BODY-INTO-UPDATEPROFIL": {
     "hash": "5264b8b",
@@ -16609,5 +16610,17 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
+  },
+  "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES": {
+    "hash": "9b303ff",
+    "extid": "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES",
+    "type": "BUG",
+    "title": "WebP metadata parser reads VP8L/VP8X dimension fields at wrong offsets",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-asset-webp-metadata-vp8l-vp8x-off-bytes.md",
+    "status": "done"
   }
 }
