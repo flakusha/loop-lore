@@ -115,4 +115,41 @@ describe("character-internal-traits IDOR authz", () => {
     );
     expect(res.status,).toBe(200,);
   });
+
+  test("GET rejects unauthenticated caller with 401", async () => {
+    const res = await makeApp(db,).handle(
+      new Request(`http://localhost/api/character-internal-traits?actorId=${ACTOR_OWNED_BY_OWNER}`,),
+    );
+    expect(res.status,).toBe(401,);
+  });
+
+  test("GET rejects non-owner non-admin caller with 404", async () => {
+    const res = await makeApp(db, OTHER, "user",).handle(
+      new Request(`http://localhost/api/character-internal-traits?actorId=${ACTOR_OWNED_BY_OWNER}`,),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("GET allows the actor's owner", async () => {
+    const res = await makeApp(db, OWNER, "user",).handle(
+      new Request(`http://localhost/api/character-internal-traits?actorId=${ACTOR_OWNED_BY_OWNER}`,),
+    );
+    expect(res.status,).toBe(200,);
+  });
+
+  test("GET /prompt rejects non-owner non-admin caller with 404", async () => {
+    const res = await makeApp(db, OTHER, "user",).handle(
+      new Request(
+        `http://localhost/api/character-internal-traits/prompt?actorId=${ACTOR_OWNED_BY_OWNER}&includeHidden=true`,
+      ),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("GET /prompt allows the actor's owner", async () => {
+    const res = await makeApp(db, OWNER, "user",).handle(
+      new Request(`http://localhost/api/character-internal-traits/prompt?actorId=${ACTOR_OWNED_BY_OWNER}`,),
+    );
+    expect(res.status,).toBe(200,);
+  });
 });
