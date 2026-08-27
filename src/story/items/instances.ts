@@ -201,6 +201,13 @@ export async function destroy(
   const db = trx ?? state.db;
 
   if (quantity === undefined) {
+    const source = await db
+      .selectFrom("world_items",)
+      .select("id",)
+      .where("id", "=", worldItemId,)
+      .where("world_id", "=", worldId,)
+      .executeTakeFirst();
+    if (!source) { return false; }
     await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,).execute();
     return true;
   }
