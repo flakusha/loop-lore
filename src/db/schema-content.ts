@@ -31,6 +31,8 @@ export interface Assets {
   encryption_tier: Generated<string>;
   encrypted_key_id: string | null;
   content_hash: string | null;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── asset_links ────────────────────────────────────────────
