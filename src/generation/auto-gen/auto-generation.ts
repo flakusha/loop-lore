@@ -9,6 +9,7 @@
  * and post-store effects.
  */
 import type { Kysely, } from "kysely";
+import type { AsyncStore, } from "../../async/store";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -49,6 +50,8 @@ export interface AutoGenOpts {
   deps?: Partial<GenDeps>;
   /** Request ID from HTTP middleware for traceability through the generation pipeline. */
   requestId?: string;
+  /** Async request-result store — when set, emits progress/fail updates. */
+  asyncStore?: AsyncStore;
 }
 
 /**
@@ -64,6 +67,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   const cascadeDepth = opts._cascadeDepth ?? 0;
   const cascadeActorId = opts._cascadeActorId;
   const requestId = opts.requestId;
+  const asyncStore = opts.asyncStore;
   const d = { ...createDefaultDeps(), ...opts.deps, };
   if (
     d.listProviders().length === 0 && !config.generation.defaultProvider &&
@@ -73,9 +77,17 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   const log = getLogger().child({ module: "auto-gen", requestId, },);
   log.debug("generation pipeline start", { chatId, parentMessageId, userId, cascadeDepth, },);
 
+  // Emit a named progress step to the async store (when one is wired),
+  // emitting progress updates for the status endpoint.
+  const emitProgress = (step: string,): void => {
+    if (asyncStore && requestId) { asyncStore.progress(requestId, { progress: { step, }, },); }
+  };
+
   let attemptId: string | undefined;
 
   try {
+    emitProgress("preparing",);
+
     if (parentMessageId) {
       d.cancelGenerationByChat({
         db: database,
@@ -145,6 +157,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       lastContentPreview: lastMsg?.content?.slice(0, 200,),
     },);
 
+    emitProgress("generating",);
     const llm = await callLlm({
       d,
       database,
@@ -170,6 +183,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     },);
     if (!hooks.allowed) { return; }
 
+    emitProgress("storing",);
     const stored = await storeMessage({
       d,
       database,
@@ -208,6 +222,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       deps: opts.deps,
     },);
   } catch (error) {
+    if (asyncStore && requestId) { asyncStore.fail(requestId, String(error,),); }
     await handleGenerationError(error, database, d, chatId, userId, attemptId,);
   }
 }
