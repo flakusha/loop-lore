@@ -9,11 +9,12 @@
  * handle the content produce results; none short-circuit.
  */
 
+
 import { getLogger, } from "../../logger";
-import { EmotionHook, } from "./emotion-hook";
 import { ModerationHook, } from "./moderation-hook";
+import { EmotionHook, } from "./emotion-hook";
+import { NsfwHook, type NsfwHookDeps, } from "./nsfw-hook";
 import { MoodHook, } from "./mood-hook";
-import { NsfwHook, } from "./nsfw-hook";
 import type { HookChainOptions, HookChainResult, HookHandler, HookResult, } from "./types";
 
 const registeredHooks: HookHandler[] = [];
@@ -65,11 +66,13 @@ export async function runHookChain(options: HookChainOptions,): Promise<HookChai
 
 /**
  * Initialize default hooks for the generation pipeline.
+ * @param nsfwDeps Optional NsfwHook deps (e.g. injected moderation service
+ * or LLM runner); forwarded to the default NsfwHook instance.
  */
-export function initDefaultHooks(): void {
+export function initDefaultHooks(nsfwDeps?: Partial<NsfwHookDeps>,): void {
   clearHooks();
   registerHook(new MoodHook(),);
   registerHook(new EmotionHook(),);
-  registerHook(new NsfwHook(),);
+  registerHook(new NsfwHook(nsfwDeps,),);
   registerHook(new ModerationHook(),);
 }
