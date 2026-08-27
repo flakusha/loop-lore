@@ -19,17 +19,12 @@ import { createAsyncStore, startOffloadDaemon, } from "./async";
 import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { authenticate, } from "./middleware/auth";
-import {
-  applyCsrfPlugin,
-  CSRF_EXEMPT_ROUTES,
-  CSRF_HEADER,
-} from "./middleware/csrf";
-import type { CsrfMiddlewareOptions, } from "./middleware/csrf";
+import { CSRF_EXEMPT_ROUTES, CSRF_HEADER, } from "./middleware/csrf";
+import { applyCsrfPlugin, type CsrfMiddlewareOptions, } from "./middleware/csrf-plugin";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { idempotent, } from "./middleware/idempotency";
 import type { IdempotencyCtx, } from "./middleware/idempotency";
 import { requestIdMiddleware, } from "./middleware/request-id";
-
 
 import { recordLifecycle, } from "./middleware/lifecycle";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
