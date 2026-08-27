@@ -37,6 +37,64 @@ export interface ContentHooksResult {
   moodShiftDelta: number | undefined;
 }
 
+export interface NsfwEligibilityResult {
+  /** True when generation may proceed; false when blocked. */
+  allowed: boolean;
+  /** Reason code (matches canAccessNsfw.reason) — present when allowed=false. */
+  reason?: string;
+  /** Resolved actor content_rating (canonical enum) — reused by post-LLM hook chain. */
+  actorContentRating: ContentRating;
+}
+/**
+ * Pre-LLM NSFW eligibility check.
+ *
+ * Resolves the actor's canonical content_rating and verifies the user is
+ * permitted to access NSFW content (config toggle, age gate, minimum age).
+ * Intended to run BEFORE the LLM call so blocked generations cost nothing.
+ *
+ * SFW-rated actors skip the user-side check (no DB user lookup) — SFW content
+ * never crosses the age threshold, so the check is unnecessary and avoids a
+ * false-negative on users without an age-gate accept.
+ *
+ * Resolves BUG-5232abe (HIGH) + BUG-f0683a8 (CRIT) follow-up. Both are already
+ * mitigated post-LLM by runContentHooks, but THIS function lets callers block
+ * BEFORE the LLM (avoiding token spend on a generation that would never be
+ * stored). The post-LLM check inside runContentHooks remains as
+ * defense-in-depth.
+ */
+export async function checkNsfwEligibility(
+  opts: {
+    database: Kysely<DB>;
+    config: Config;
+    actorId: string;
+    userId: string;
+    chatId?: string;
+  },
+): Promise<NsfwEligibilityResult> {
+  const { database, config, actorId, userId, chatId, } = opts;
+
+  const actorRow = await database
+    .selectFrom("actors",)
+    .select(["content_rating",],)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  const actorContentRating = (actorRow?.content_rating ?? ContentRating.Sfw) as ContentRating;
+
+  if (!isNsfwRating(actorContentRating,)) {
+    return { allowed: true, actorContentRating, };
+  }
+
+  const access = await canAccessNsfw(database, config, userId,);
+  if (!access.allowed) {
+    getLogger().child({ module: "auto-gen", },).warn(
+      "Generation blocked by NSFW age-gate precheck",
+      { actorId, userId, reason: access.reason, chatId, },
+    );
+    return { allowed: false, reason: access.reason, actorContentRating, };
+  }
+  return { allowed: true, actorContentRating, };
+}
+
 /**
  * Run the content-hook chain before storing a generated message.
  *
@@ -46,30 +104,23 @@ export interface ContentHooksResult {
 export async function runContentHooks(opts: RunContentHooksOpts,): Promise<ContentHooksResult> {
   const { database, config, chatId, actorId, userId, content, } = opts;
 
-  // Fetch actor's canonical content_rating from actors table
-  const actorRow = await database
-    .selectFrom("actors",)
-    .select(["content_rating",],)
-    .where("id", "=", actorId,)
-    .executeTakeFirst();
-  const actorContentRating = (actorRow?.content_rating ?? ContentRating.Sfw) as ContentRating;
-
   // Age-gate precheck (BUG-5232abe — NSFW age gate never verified at generation).
-  // canAccessNsfw enforces: NSFW globally enabled, user authenticated, age
-  // gate accepted, user above nsfwMinAge. Only NSFW-rated actors require the
-  // gate — SFW content never crosses the age threshold, so we skip the DB
-  // roundtrip and the false-negative on users without an age-gate accept.
-  // Use the canonical isNsfwRating helper (single source of truth for the
-  if (isNsfwRating(actorContentRating,)) {
-    const access = await canAccessNsfw(database, config, userId,);
-    if (!access.allowed) {
-      getLogger().child({ module: "auto-gen", },).warn(
-        "Generation blocked by NSFW age-gate precheck",
-        { actorId, userId, reason: access.reason, chatId, },
-      );
-      return { allowed: false, dominantEmotion: undefined, moodShiftDelta: undefined, };
-    }
+  // Delegates to checkNsfwEligibility (also called pre-LLM by callers). Kept
+  // here as defense-in-depth so the post-LLM chain can never persist content
+  // when the user would have been blocked.
+  const eligibility = await checkNsfwEligibility({
+    database,
+    config,
+    actorId,
+    userId,
+    chatId,
+  },);
+  if (!eligibility.allowed) {
+    return { allowed: false, dominantEmotion: undefined, moodShiftDelta: undefined, };
   }
+  const { actorContentRating, } = eligibility;
+
+
 
   // Also fetch legacy nsfw_policy from character_availability for backward compat
   const availability = await database
