@@ -34,7 +34,7 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .addColumn("user_id", "text", (col,) => col.notNull(),)
     .addColumn("chat_id", "text", (col,) => col.notNull(),)
     .addColumn("action", "text", (col,) => col.notNull(),)
-    .addColumn("scope", "text", (col,) => col.notNull().defaultTo("nsfw_encounter"),)
+    .addColumn("scope", "text", (col,) => col.notNull().defaultTo("nsfw_encounter",),)
     .addColumn("reason", "text",)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .addColumn("revoked_at", "text",)

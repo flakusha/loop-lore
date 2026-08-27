@@ -200,13 +200,6 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             return jsonError(result.message, status, result.code as never,);
           }
 
-          // Rotate encryption key on participant leave (forward secrecy)
-          const chatRecord = await database
-            .selectFrom("chats",)
-            .select("encryption_level",)
-            .where("id", "=", id,)
-            .executeTakeFirst();
-
           // Rotate encryption key on participant leave (forward secrecy).
           // Errors propagate — if rotation fails, the participant is NOT deleted.
           // The caller receives a 500 and can retry.
