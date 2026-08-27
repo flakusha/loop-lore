@@ -515,7 +515,6 @@ export async function insertCharacters(
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
     agent_role?: string | null;
-    federation_consent?: Generated<number>;
   },
 ): Promise<void> {
   await db.insertInto("characters",).values({
@@ -3355,22 +3354,20 @@ export async function insertRequestResults(
   } as any,).execute();
 }
 
-/** Insert a activitypub_actor_keys row. */
-export async function insertActivitypubActorKeys(
+/** Insert a nsfw_consent_state row. */
+export async function insertNsfwConsentState(
   db: Db,
-  actor_id: string,
-  key_id: string,
-  public_jwk: string,
-  encrypted_private_jwk: string,
+  user_id: string,
+  chat_id: string,
+  action: string,
   created_at: string,
-  opts?: { id?: Generated<string>; status?: Generated<string>; rotated_at?: string | null; expires_at?: string | null },
+  opts?: { id?: Generated<string>; scope?: Generated<string>; reason?: string | null; revoked_at?: string | null },
 ): Promise<void> {
-  await db.insertInto("activitypub_actor_keys",).values({
+  await db.insertInto("nsfw_consent_state",).values({
     id: crypto.randomUUID(),
-    actor_id,
-    key_id,
-    public_jwk,
-    encrypted_private_jwk,
+    user_id,
+    chat_id,
+    action,
     created_at,
     ...opts,
   } as any,).execute();
