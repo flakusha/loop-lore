@@ -183,6 +183,8 @@ export interface ChatParticipants {
   initiative: Generated<number>;
 }
 
+
+
 export interface ActorItems {
   id: Generated<string>;
   actor_id: string;
@@ -853,4 +855,16 @@ export interface E2eSkippedMessageKeys {
   chain_index: number;
   message_key: string;
   created_at: Generated<string>;
+}
+
+export interface ActivitypubActorKeys {
+  id: Generated<string>;
+  actor_id: string;
+  key_id: string;
+  public_jwk: string;
+  encrypted_private_jwk: string;
+  status: Generated<string>;
+  rotated_at: string | null;
+  created_at: string;
+  expires_at: string | null;
 }
