@@ -12409,6 +12409,18 @@
     "source": ".plan/tickets/TASK-item-system-extensions.md",
     "git_issue": "801bcd0"
   },
+  "TASK-JSDOC-COVERAGE-CLEANUP-PUBLIC-EXPORTS": {
+    "hash": "8030bc0",
+    "extid": "TASK-JSDOC-COVERAGE-CLEANUP-PUBLIC-EXPORTS",
+    "type": "TASK",
+    "title": "JSDoc coverage cleanup — public exports",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-code-quality-and-standards.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-jsdoc-coverage-cleanup-public-exports.md",
+    "git_issue": "8030bc0"
+  },
   "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT": {
     "hash": "379011c",
     "extid": "TASK-JWT-HEADER-ALG-KID-NEVER-ASSERTED-FAIL-OPEN-ROUTE-GUARD-PATT",

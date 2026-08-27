@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// ESLint flat config -- TypeScript + Unicorn + SonarJS
+// ESLint flat config -- TypeScript + Unicorn + SonarJS + JSDoc
 // https://eslint.org/docs/latest/use/configure/configuration-files
 // https://typescript-eslint.io/getting-started/typed-linting
 //
@@ -8,9 +8,11 @@
 // ESLint kept ONLY for:
 //   - import/* (cycle detection, ordering, mutable exports)
 //   - Custom AST selectors: JSON.parse/stringify, Promise.all
+//   - jsdoc/* (JSDoc tag validation + public-export coverage)
 
 import globals from "globals";
 import importPlugin from "eslint-plugin-import";
+import jsdoc from "eslint-plugin-jsdoc";
 import markdown from "eslint-plugin-markdown";
 import sonarjs from "eslint-plugin-sonarjs";
 import tseslint from "typescript-eslint";
@@ -93,7 +95,7 @@ export default [
       "dist/",
       "node_modules/",
       "data/",
-      ".tmp/",
+      "**/.tmp/",
       ".hermes/",
       "docs/.vitepress/",
       "docs/research/",
@@ -152,6 +154,32 @@ export default [
       "@typescript-eslint/prefer-regexp-exec": "off",
       "@typescript-eslint/no-unnecessary-template-expression": "off",
       "no-restricted-globals": "off",
+    },
+  },
+  // JSDoc -- recommendation-level (warn, non-blocking). Ongoing cleanup task:
+  // promote to "error" after existing public-export debt is cleared.
+  {
+    files: ["src/**/*.ts"],
+    plugins: {
+      jsdoc,
+    },
+    rules: {
+      ...jsdoc.configs["flat/recommended-typescript"].rules,
+      // Target public exports only (not private/internal helpers)
+      "jsdoc/require-jsdoc": ["warn", {
+        require: {
+          FunctionDeclaration: true,
+          ClassDeclaration: true,
+          MethodDefinition: true,
+        },
+        contexts: [
+          "ExportNamedDeclaration > FunctionDeclaration",
+          "ExportNamedDeclaration > ClassDeclaration",
+          "ExportNamedDeclaration > TSTypeAliasDeclaration",
+          "ExportNamedDeclaration > TSInterfaceDeclaration",
+          "ExportNamedDeclaration > VariableDeclaration > ArrowFunctionExpression",
+        ],
+      }],
     },
   },
   // E2E tests
