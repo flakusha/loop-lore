@@ -18,13 +18,11 @@ import type { RotationResult, RotationSummary, } from "./types";
  *
  * @param database - Kysely DB instance
  * @param rotationDays - Days before a key is considered expired (0 = disabled)
- * @param reEncryptLimit - Max messages to re-encrypt per chat (default 100)
  * @returns Summary of rotation results
  */
 export async function runAutoRotation(
   database: Kysely<DB>,
   rotationDays: number,
-  reEncryptLimit = 100,
 ): Promise<RotationSummary> {
   const log2 = log();
 
@@ -64,7 +62,6 @@ export async function runAutoRotation(
         database,
         actorId,
         smk,
-        reEncryptLimit,
       );
       results.push(result,);
     } catch (error) {
