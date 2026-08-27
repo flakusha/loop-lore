@@ -1216,6 +1216,30 @@
     "source": ".plan/tickets/BUG-federation-test-harness-needs-in-process-fixtures.md",
     "status": "not-yet-implemented"
   },
+  "BUG-FIX-CSRF-CTX-SET-HEADERS-APPEND-IS-UNDEFINED-IN-ELYSIA-1-4-H": {
+    "hash": "af1f205",
+    "git_issue": "af1f205",
+    "extid": "BUG-FIX-CSRF-CTX-SET-HEADERS-APPEND-IS-UNDEFINED-IN-ELYSIA-1-4-H",
+    "type": "BUG",
+    "title": "fix(csrf): ctx.set.headers.append is undefined in Elysia 1.4 HTTPHeaders",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h.md"
+  },
+  "BUG-FIX-CSRF-EXTRACT-CSRFPLUGIN-FACTORY-SO-TESTS-EXERCISE-THE-PR": {
+    "hash": "27c8db7",
+    "git_issue": "27c8db7",
+    "extid": "BUG-FIX-CSRF-EXTRACT-CSRFPLUGIN-FACTORY-SO-TESTS-EXERCISE-THE-PR",
+    "type": "BUG",
+    "title": "fix(csrf): extract csrfPlugin factory so tests exercise the production wiring",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
+  },
   "BUG-FRONTEND-DEAD-CSRF-BEARER-HEADER-MACHINERY": {
     "hash": "0fea62e",
     "git_issue": "0fea62e",
@@ -1522,7 +1546,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.md"
+    "source": ".plan/tickets/BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.md",
+    "status": "done"
   },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "hash": "pending",
@@ -2609,6 +2634,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d.md",
     "git_issue": "8be98b3"
+  },
+  "BUG-TABLE-BACKEND-REQUEST-ID-COLLISION-OVERWRITES-FOREIGN-ROW": {
+    "hash": "pending",
+    "extid": "BUG-TABLE-BACKEND-REQUEST-ID-COLLISION-OVERWRITES-FOREIGN-ROW",
+    "type": "BUG",
+    "title": "Table backend `request_results.complete`/`fail` overwrite foreign row on request-id collision",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
   },
   "BUG-TAUTOLOGICAL-BROWSER-TEST-ASSERTIONS": {
     "hash": "c8bad7f",
