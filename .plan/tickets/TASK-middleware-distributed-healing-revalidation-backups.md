@@ -27,9 +27,8 @@ Three cross-cutting subsystems, each built on the record_hash column
    either:
    - **repairs** the row from a known-good source (e.g. the file
      payload's `content_hash` matches an offloaded backup), OR
-   - **quarantines** the row (writes a `quarantine_log` entry and
-     sets `quarantined_at` on the row; `data_version` stays a
-     positive integer — see **Architectural question Q2** below).
+   - **quarantines** the row (sets `row_state = 'quarantined'`;
+     `data_version` stays a positive integer — see **Decisions log → Q2**).
 3. **Backups** — extend the existing SQLite + GPG backup pipeline
    (TASK-BKP-001..004) with **application-aware integrity
    verification**: every backup captures the `record_hash` index
@@ -87,19 +86,23 @@ Three cross-cutting subsystems, each built on the record_hash column
     `request_results` row for the async store, original `messages`
     row from the chat history). Returns the action taken
     (`repaired` | `quarantined` | `unrecoverable`).
-  - `healTable(database, table, opts)` — bulk heal. Uses
-    `MAX_CONCURRENCY` (default 4) workers; reports progress via the
-    report table.
 - [ ] Quarantine semantics:
-  - Adds `quarantined_at TEXT` (nullable) to each content-bearing
-    table via `0xx_quarantine_columns.ts`. `data_version` is NEVER
-    zeroed — it remains a positive integer used by the content-
-    versioning registry (ticket 3).
-  - A new `quarantine_log` table records `{ row_id, table, reason,
-    quarantined_at, original_record_hash, restored_at, restored_by }`.
+  - Adds `row_state TEXT NOT NULL DEFAULT 'active'` to each
+    content-bearing table via `0xx_row_state_column.ts`. Allowed
+    values: `'active' | 'quarantined'` (forward-compatible: future
+    states like `'deleted'` / `'archived'` / `'replicated'` are
+    reserved but not yet used — see **Decisions log → Q2**).
+  - `data_version` is NEVER zeroed; it remains a positive integer
+    used by the content-versioning registry (ticket 3).
   - `validateContentRow` (ticket 4) surfaces `QuarantinedError` on
-    serve when `quarantined_at IS NOT NULL`, distinct from
+    serve when `row_state = 'quarantined'`, distinct from
     `ContentHashMismatchError`.
+  - Audit history (who/when/why) lives in the existing
+    `revalidation_reports` table (per-row drift events include the
+    acting row id), so a dedicated `quarantine_log` table is NOT
+    created. The trade-off: audit trail shares a table with sweep
+    reports; per-row forensics requires joining on `error` text or
+    adding a JSON `details` column in a future migration if needed.
 - [ ] Tests:
   - heal a drifted asset row from its file bytes,
   - quarantine an unrecoverable row,
@@ -157,10 +160,10 @@ Three cross-cutting subsystems, each built on the record_hash column
 
 - **Healing is opt-in per environment.** Production runs repair;
   staging quarantines for analyst review; tests assert both paths.
-- **Quarantine is reversible** — a quarantined row can be restored
-  from a backup; the `quarantine_log` row records the original
-  `record_hash` so the restore can prove the row matches its
-  pre-quarantine state.
+- **Quarantine is reversible** — restoring sets `row_state =
+  'active'`. Per-row forensic audit (actor, reason, timestamp) lives
+  in `revalidation_reports` only; a dedicated per-row audit table is
+  out of scope (see **Decisions log → Q2**).
 - The **integrity manifest** is small (one row per content-bearing
   table: `{ table, min_hash, max_hash, row_count, sample_ids }`).
   Storage cost is negligible; verification cost is O(sample size).
@@ -170,21 +173,13 @@ Three cross-cutting subsystems, each built on the record_hash column
 - **Backups are still encrypted at rest with GPG** (TASK-BKP-001).
   This ticket adds **integrity verification**, not encryption.
 
-## Architectural questions (flagged for human decision)
+## Decisions log
 
-**Q2 — Quarantine state carrier.** This ticket now uses
-`quarantined_at` + `quarantine_log` (not `data_version = 0`).
-Three alternatives were considered:
-
-1. **`quarantined_at` column + `quarantine_log` table** (current
-   default): preserves `data_version` semantics for the content
-   registry. Cost: one nullable column per content-bearing table.
-2. **Single `row_state` enum column** (`active` | `quarantined`):
-   uniform, but couples all future states (deleted, archived,
-   replicated) into one column.
-3. **Out-of-band `quarantine_log` only**, no per-row column —
-   cheapest, but every read must JOIN to check quarantine status
-   (hot-path cost).
-
-Default assumed by this ticket: option 1. Override before
-implementation.
+**Q2 — Quarantine state carrier: option 1 (single `row_state` enum
+column).** Allowed values are `'active' | 'quarantined'`; future
+states (`'deleted'`, `'archived'`, `'replicated'`) are reserved but
+not yet used. `data_version` stays a positive integer (used by the
+content-versioning registry in ticket 3). Per-row forensic audit
+shares the existing `revalidation_reports` table instead of a
+dedicated `quarantine_log` table — the trade-off is documented
+under "Quarantine semantics" above.
