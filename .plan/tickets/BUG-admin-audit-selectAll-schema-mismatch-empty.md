@@ -3,7 +3,7 @@
 
 # BUG: `/api/admin/audit` returns `selectAll()` rows but `AdminAuditRow` schema omits `meta`/`user_id`/`request_id`/`session_id` → `parseOr` strict fallback → empty audit list
 
-**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
+**Status:** ✅ Resolved (already fixed in code: explicit `.select([...])` projection matches `AdminAuditRow` schema; `q` capped at 200 chars; both list and detail handlers updated)
 **Severity:** Medium
 **Priority:** medium
 **Effort:** Small
