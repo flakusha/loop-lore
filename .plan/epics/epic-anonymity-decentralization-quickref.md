@@ -61,6 +61,6 @@ src/anonymity/
 
 ## Related Epics
 
-- `epic-encryption-foundation.md` — E2EE
+- `epic-crypto.md` — E2EE
 - `epic-security-sandboxing.md` — Security hardening
 - `epic-social-hub.md` — Platform security

@@ -479,7 +479,7 @@ bun run security:tls
 
 ## Related Epics
 
-- `epic-encryption-foundation.md` — E2EE for all data
+- `epic-crypto.md` — E2EE for all data
 - `epic-anonymity-decentralization.md` — Anonymous access
 - `epic-api-governance.md` — API security and validation
 - `epic-social-hub.md` — Platform security

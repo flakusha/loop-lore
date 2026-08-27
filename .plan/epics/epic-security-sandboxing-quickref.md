@@ -73,6 +73,6 @@ src/security/
 
 ## Related Epics
 
-- `epic-encryption-foundation.md` — E2EE
+- `epic-crypto.md` — E2EE
 - `epic-anonymity-decentralization.md` — Anonymous access
 - `epic-api-governance.md` — API security
