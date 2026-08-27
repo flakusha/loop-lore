@@ -64,6 +64,18 @@
     "source": ".plan/tickets/BUG-activitypub-actor-signing-keys-and-rotation-undefined-no-cry.md",
     "status": "not-yet-implemented"
   },
+  "BUG-ACTIVITYPUB-FEDERATION-DOES-NOT-LEVERAGE-THE-BLOG-SYSTEM-LEM": {
+    "hash": "81b59cf",
+    "git_issue": "81b59cf",
+    "extid": "BUG-ACTIVITYPUB-FEDERATION-DOES-NOT-LEVERAGE-THE-BLOG-SYSTEM-LEM",
+    "type": "BUG",
+    "title": "ActivityPub federation does not leverage the blog system (Lemmy/Mastodon primitive)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
+  },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "hash": "pending",
     "extid": "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY",
@@ -359,6 +371,18 @@
     "source": ".plan/tickets/BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.md",
     "git_issue": "bc5de16"
   },
+  "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM": {
+    "hash": "69d45a5",
+    "git_issue": "69d45a5",
+    "extid": "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM",
+    "type": "BUG",
+    "title": "Blog comments lack threading (parent_comment_id) blocking Lemmy/Mastodon/Reddit parity",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-blog-comments-lack-threading-parent-comment-id-blocking-lemm.md"
+  },
   "BUG-BROWSER-ZSTD-DECOMPRESS-USES-FIXED-16X-OUTPUT-CAPACITY-HIGH-": {
     "hash": "881f7d7",
     "git_issue": "881f7d7",
@@ -529,6 +553,18 @@
     "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md",
     "git_issue": "f06194a",
     "status": "done"
+  },
+  "BUG-CHAT-IM-ADAPTER-ABSTRACTION-DUPLICATED-PROTOCOLADAPTER-VS-SO": {
+    "hash": "476e62b",
+    "git_issue": "476e62b",
+    "extid": "BUG-CHAT-IM-ADAPTER-ABSTRACTION-DUPLICATED-PROTOCOLADAPTER-VS-SO",
+    "type": "BUG",
+    "title": "Chat/IM adapter abstraction duplicated (ProtocolAdapter vs SocialAdapter), no code",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-im-adapter-abstraction-duplicated-protocoladapter-vs-so.md"
   },
   "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
     "hash": "61c7072",
@@ -857,6 +893,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-csp-unsafe-inline-defeats-per-request-nonce.md"
+  },
+  "BUG-DATE-PARSE-RESULTS-UNCHECKED-FOR-NAN-10-SITES": {
+    "hash": "65c87b5",
+    "git_issue": "65c87b5",
+    "extid": "BUG-DATE-PARSE-RESULTS-UNCHECKED-FOR-NAN-10-SITES",
+    "type": "BUG",
+    "title": "Date.parse results unchecked for NaN — 10 sites",
+    "label": "bug",
+    "priority": "low",
+    "epic": "epic-i18n",
+    "tags": [],
+    "source": ".plan/tickets/BUG-date-parse-results-unchecked-for-nan-10-sites.md"
   },
   "BUG-DB-REINIT-ARCHIVE-DESTROYS-PREVIOUS-DB-ON-RENAME-FAILURE": {
     "hash": "376cd61",
@@ -1526,6 +1574,18 @@
     "git_issue": "86a2a1b",
     "status": "done"
   },
+  "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
+    "hash": "27cc7ab",
+    "git_issue": "27cc7ab",
+    "extid": "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD",
+    "type": "BUG",
+    "title": "IRC integration unscoped as group-chat (only in social-hub adapter list)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad.md"
+  },
   "BUG-ISGENERATING-STUCK-TRUE-BRICKS-CHAT-SWITCHING": {
     "hash": "f254f7a",
     "extid": "BUG-ISGENERATING-STUCK-TRUE-BRICKS-CHAT-SWITCHING",
@@ -1639,6 +1699,18 @@
     "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md",
     "git_issue": "72706d2",
     "status": "fixed-in-worktree"
+  },
+  "BUG-LOGGER-CENSOR-DEPTH-CUTOFF-RETURNS-SUBTREE-UNTOUCHED-NESTED-": {
+    "hash": "b23b7fb",
+    "git_issue": "b23b7fb",
+    "extid": "BUG-LOGGER-CENSOR-DEPTH-CUTOFF-RETURNS-SUBTREE-UNTOUCHED-NESTED-",
+    "type": "BUG",
+    "title": "Logger censor depth cutoff returns subtree untouched — nested secrets bypass denylist",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested-.md"
   },
   "BUG-LOGNSFWEVENT-HAS-ZERO-CALLERS-NO-NSFW-GATE-DECISION-EVER-AUD": {
     "hash": "e241317",
@@ -2144,6 +2216,42 @@
     "tags": [],
     "source": ".plan/tickets/BUG-rate-limiter-module-singletons-shared-across-test-files-caus.md"
   },
+  "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER-65-SITES": {
+    "hash": "02a9092",
+    "git_issue": "02a9092",
+    "extid": "BUG-RAW-BUFFER-FROM-ALLOC-INCONSISTENT-WITH-SAFE-BUFFER-65-SITES",
+    "type": "BUG",
+    "title": "raw Buffer.from/alloc inconsistent with safe-buffer — 65 sites",
+    "label": "bug",
+    "priority": "low",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer-65-sites.md"
+  },
+  "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON-3-SITES": {
+    "hash": "2984874",
+    "git_issue": "2984874",
+    "extid": "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON-3-SITES",
+    "type": "BUG",
+    "title": "raw JSON.parse outside safe-json — 3 sites",
+    "label": "bug",
+    "priority": "low",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
+  },
+  "BUG-REDOS-IN-HTML-SANITIZE-SCRIPT-TAG-PATTERN-CHUNK-BOUNDARY-SAN": {
+    "hash": "b465b08",
+    "git_issue": "b465b08",
+    "extid": "BUG-REDOS-IN-HTML-SANITIZE-SCRIPT-TAG-PATTERN-CHUNK-BOUNDARY-SAN",
+    "type": "BUG",
+    "title": "ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+  },
   "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
     "hash": "550802a",
     "git_issue": "550802a",
@@ -2257,6 +2365,18 @@
     "git_issue": "df71725",
     "status": "done"
   },
+  "BUG-SERVER-VIEW-DATE-DISPLAY-IGNORES-USER-TIMEZONE-LOCALE": {
+    "hash": "0c43ca5",
+    "git_issue": "0c43ca5",
+    "extid": "BUG-SERVER-VIEW-DATE-DISPLAY-IGNORES-USER-TIMEZONE-LOCALE",
+    "type": "BUG",
+    "title": "server-view date display ignores user timezone/locale",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-i18n",
+    "tags": [],
+    "source": ".plan/tickets/BUG-server-view-date-display-ignores-user-timezone-locale.md"
+  },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
     "hash": "3ba1095",
     "git_issue": "3ba1095",
@@ -2305,6 +2425,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data.md",
     "git_issue": "3e90ae3"
+  },
+  "BUG-SSE-STREAMS-LEAK-STRING-ERROR-INTERNALS-TO-CLIENTS": {
+    "hash": "1a3a97a",
+    "git_issue": "1a3a97a",
+    "extid": "BUG-SSE-STREAMS-LEAK-STRING-ERROR-INTERNALS-TO-CLIENTS",
+    "type": "BUG",
+    "title": "SSE streams leak String(error) internals to clients",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
   },
   "BUG-STALE-AUDIT-CLAIM-AUX-EMOTION-MOOD-TASK-TABLES": {
     "hash": "pending",
@@ -2480,6 +2612,18 @@
     "git_issue": "a697ad3",
     "status": "open"
   },
+  "BUG-TELEMETRY-STORES-RAW-CLIENT-BODY-REAL-USER-CHAT-SESSION-IDS": {
+    "hash": "a06b99e",
+    "git_issue": "a06b99e",
+    "extid": "BUG-TELEMETRY-STORES-RAW-CLIENT-BODY-REAL-USER-CHAT-SESSION-IDS",
+    "type": "BUG",
+    "title": "Telemetry stores raw client body + real user/chat/session ids",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md"
+  },
   "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22": {
     "hash": "1e5d5dc",
     "extid": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22",
@@ -2564,6 +2708,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-undefined-css-custom-properties-break-rendering.md",
     "git_issue": "6c5ec87"
+  },
+  "BUG-UNTRUSTED-NEW-DATE-PARSE-WITHOUT-INVALID-DATE-GUARD": {
+    "hash": "e72f484",
+    "git_issue": "e72f484",
+    "extid": "BUG-UNTRUSTED-NEW-DATE-PARSE-WITHOUT-INVALID-DATE-GUARD",
+    "type": "BUG",
+    "title": "untrusted new Date() parse without Invalid Date guard",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
   },
   "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT": {
     "hash": "0cd09d6",
@@ -7393,6 +7549,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-BROWSER-E2E-UI-SURFACE-GAPS.md"
   },
+  "TASK-BROWSER-TEST-FIXTURE-NO-MOCK-LLM-PROVIDER-STALE-FRONTEND-BUI": {
+    "hash": "30d0e69",
+    "git_issue": "30d0e69",
+    "extid": "TASK-BROWSER-TEST-FIXTURE-NO-MOCK-LLM-PROVIDER-STALE-FRONTEND-BUI",
+    "type": "TASK",
+    "title": "Browser test fixture: no mock LLM provider + stale frontend build reuse",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-browser-test-fixture-no-mock-llm-provider-stale-frontend-bui.md"
+  },
   "TASK-BROWSER-TEST-ISOLATION": {
     "hash": "3bfc337",
     "extid": "TASK-BROWSER-TEST-ISOLATION",
@@ -7404,6 +7572,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-browser-test-isolation.md",
     "git_issue": "3bfc337"
+  },
+  "TASK-BROWSER-TESTS-WEAK-INTERACTION-COVERAGE-IN-EXISTING-FLOWS": {
+    "hash": "adff874",
+    "git_issue": "adff874",
+    "extid": "TASK-BROWSER-TESTS-WEAK-INTERACTION-COVERAGE-IN-EXISTING-FLOWS",
+    "type": "TASK",
+    "title": "Browser tests: weak interaction coverage in existing flows",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-browser-tests-weak-interaction-coverage-in-existing-flows.md"
   },
   "TASK-BULK-EXPORT-ZIP": {
     "hash": "c1ad423",
@@ -12140,6 +12320,18 @@
     "source": ".plan/tickets/TASK-logging-censor-exact-match-rules-error-stack-path-leak.md",
     "git_issue": "714ca84"
   },
+  "TASK-LOGGING-HARDENING-MINORS-INJECTION-ROTATION-RACES-SINK-PATH-": {
+    "hash": "5842782",
+    "git_issue": "5842782",
+    "extid": "TASK-LOGGING-HARDENING-MINORS-INJECTION-ROTATION-RACES-SINK-PATH-",
+    "type": "TASK",
+    "title": "Logging hardening minors: injection, rotation races, sink path, stack loss",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-logging-hardening-minors-injection-rotation-races-sink-path-.md"
+  },
   "TASK-LOGGING-SEPARATE-DATABASE-RESEARCH": {
     "hash": "pending",
     "extid": "TASK-LOGGING-SEPARATE-DATABASE-RESEARCH",
@@ -14881,6 +15073,18 @@
     "source": ".plan/tickets/TASK-regex-output-transforms-quick-win.md",
     "status": "done",
     "git_issue": "770f3fb"
+  },
+  "TASK-REGEX-PIPELINE-HARDENING-SWEEP-INPUT-CAPS-LASTINDEX-HAZARDS-": {
+    "hash": "eafe79f",
+    "git_issue": "eafe79f",
+    "extid": "TASK-REGEX-PIPELINE-HARDENING-SWEEP-INPUT-CAPS-LASTINDEX-HAZARDS-",
+    "type": "TASK",
+    "title": "Regex pipeline hardening sweep: input caps, lastIndex hazards, double scans",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-regex-pipeline-hardening-sweep-input-caps-lastindex-hazards-.md"
   },
   "TASK-REGEX-SAFETY-XML-UTILS-TAG-UNESCAPED-NARRATIVE-GREEDY": {
     "hash": "3302cdc",
