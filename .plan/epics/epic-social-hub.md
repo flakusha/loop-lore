@@ -204,7 +204,7 @@ interface Attachment {
 
 ## Related Epics
 
-- `epic-encryption-foundation.md` — E2EE for all communications
+- `epic-crypto.md` — E2EE for all communications
 - `epic-communications-integrations.md` — Matrix, XMPP, IM, Email
 - `epic-anonymity-decentralization.md` — Tor, I2P, mesh networking
 - `epic-security-sandboxing.md` — LLM sandboxing, security hardening

@@ -86,10 +86,10 @@ CREATE TABLE rag_access (
 
 - **Parent hub:** epic-rag-document-processing.md (shared pipeline interface, cross-cutting concerns)
 - **Sequencing:** Independent follow-on to the core pipeline; layers onto epic-rag-ingestion.md (documents table) and epic-rag-retrieval.md (query logging) once those exist.
-- External: depends on epic-encryption-foundation.md (document encryption at rest); aligns with epic-auth-access.md (users, roles)
+- External: depends on epic-crypto.md (document encryption at rest); aligns with epic-auth-access.md (users, roles)
 
 ## Related Epics
 
-- **epic-encryption-foundation.md** — document encryption at rest
+- **epic-crypto.md** — document encryption at rest
 - **epic-auth-access.md** — user/role foundation for RBAC and tenancy
 - **epic-rag-ui.md** — hosts the frontend surfaces this epic's dashboard complements

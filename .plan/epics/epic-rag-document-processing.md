@@ -50,7 +50,7 @@ Users want to:
 2. **Vector store second** — embedding/indexing builds directly on ingested chunks.
 3. **Retrieval third** — searching requires stored embeddings; delivers the end-user-visible RAG loop.
 4. **Context sources** — independent augmentation of retrieval with external providers; can land any time after retrieval.
-5. **Enterprise** — independent governance layer over the pipeline; gated on document encryption (`epic-encryption-foundation.md`).
+5. **Enterprise** — independent governance layer over the pipeline; gated on document encryption (`epic-crypto.md`).
 
 Cross-cutting configuration schema and migration scaffold live in the ingestion sub-epic (they create the RAG module's config/db footprint); testing, observability, and documentation stay in this hub below.
 
@@ -92,7 +92,7 @@ Per-subsystem interfaces (`DocumentSource`, `EmbeddingModel`, `VectorStore`, `RA
 
 ## Dependencies
 
-- Depends on: `epic-encryption-foundation.md` (document encryption; hard prerequisite of the enterprise sub-epic)
+- Depends on: `epic-crypto.md` (document encryption; hard prerequisite of the enterprise sub-epic)
 - Depends on: `epic-api-library-distribution.md` (API for external tools)
 - Depends on: `epic-communications-integrations.md` (document ingestion via email/IM)
 - Enables: Enterprise knowledge management, business automation
@@ -170,7 +170,7 @@ Implementation detail lives in the enterprise sub-epic (`epic-rag-enterprise.md`
 
 ## Related Epics
 
-- **epic-encryption-foundation.md** — Document encryption at rest
+- **epic-crypto.md** — Document encryption at rest
 - **epic-api-library-distribution.md** — API for external document ingestion
 - **epic-communications-integrations.md** — Document ingestion via email/IM
 - **epic-memory-foundation.md** — Memory system integration

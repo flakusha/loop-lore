@@ -112,7 +112,7 @@ Key material and primitives come from the encryption foundation epic.
 ## Dependencies
 
 - Depends on: **Communications Integrations** hub (epic-communications-integrations.md)
-- Depends on: `epic-encryption-foundation.md` (key management primitives behind `EncryptionProvider`)
+- Depends on: `epic-crypto.md` (key management primitives behind `EncryptionProvider`)
 - Depends on: `epic-api-library-distribution.md` (API surface exposed to external tools)
 - Required by: `epic-matrix-integration.md`, `epic-xmpp-integration.md`, `epic-im-integrations.md`, `epic-email-integration.md` (all implement `ProtocolAdapter` against this epic)
 
