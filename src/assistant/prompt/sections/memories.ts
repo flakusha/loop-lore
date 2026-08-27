@@ -74,10 +74,8 @@ export const memorySection: SectionBuilder = {
     // If Ollama is reachable, use cosine similarity to re-rank non-pinned
     // memories against the last 5 messages.  Pinned memories are excluded
     // from re-ranking (they always stay at the top).
-    /* eslint-disable no-restricted-syntax */
     const pinned = allAccepted.filter((m,) => m.pinned);
     const mutable = allAccepted.filter((m,) => !m.pinned);
-    /* eslint-enable no-restricted-syntax */
     if (mutable.length > 0) {
       const recent = await ctx.db
         .selectFrom("messages",)
@@ -87,22 +85,16 @@ export const memorySection: SectionBuilder = {
         .limit(5,)
         .execute();
       if (recent.length > 0) {
-        /* eslint-disable no-restricted-syntax */
         const queryText = recent.map((r,) => r.content ?? "").join(" ",);
-        /* eslint-enable no-restricted-syntax */
         const matched = await semanticRecall(
           ctx.db,
-          /* eslint-disable no-restricted-syntax */
           mutable.map((m,) => m.id),
-          /* eslint-enable no-restricted-syntax */
           queryText,
           mutable.length,
           0.3,
         );
         if (matched.length > 0) {
-          /* eslint-disable no-restricted-syntax */
           const scoreMap = new Map(matched.map((m,) => [m.memoryId, m.score,]),);
-          /* eslint-enable no-restricted-syntax */
           mutable.sort((a, b,) => {
             const sa = scoreMap.get(a.id,) ?? 0;
             const sb = scoreMap.get(b.id,) ?? 0;
@@ -140,11 +132,9 @@ export const memorySection: SectionBuilder = {
 
     if (injectionResult.selected.length === 0) { return []; }
 
-    /* eslint-disable no-restricted-syntax */
     const memoryText = injectionResult.selected
       .map((m,) => `- [${m.memoryType}] ${m.content}`)
       .join("\n",);
-    /* eslint-enable no-restricted-syntax */
 
     return [{ role: "system", content: wrapSection("memory_context", memoryText,), },];
   },
