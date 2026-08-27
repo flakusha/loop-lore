@@ -1,6 +1,6 @@
 # BUG: Character federation lacks owner consent or NSFW gate
 
-**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
+**Status:** not-yet-implemented
 **Priority:** high
 **Effort:** Medium
 

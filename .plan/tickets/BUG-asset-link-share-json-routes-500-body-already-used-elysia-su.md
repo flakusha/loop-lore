@@ -3,7 +3,7 @@
 
 # BUG: Asset link/share JSON routes 500 "Body already used" — Elysia sucrose body inference
 
-**Status:** ✅ Resolved (2026-08-06)
+**Status:** done
 **Priority:** high
 **Effort:** Small
 **Labels:** backend, assets, elysia, e2e
