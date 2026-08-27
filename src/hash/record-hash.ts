@@ -83,7 +83,7 @@ export function canonicalJSON(value: unknown,): string {
 // for content hashing. safeJsonStringify() would inject non-deterministic
 // metadata (e.g. Buffer coercion) and break row-integrity digests.
 /* eslint-disable no-restricted-syntax -- canonicalize() is a deterministic serializer; safeJsonStringify would inject non-deterministic metadata (Buffer coercion, etc.) and break row-integrity digests. */
- function canonicalize(value: unknown, seen: Set<object>,): string {
+function canonicalize(value: unknown, seen: Set<object>,): string {
   if (value === null) { return "null"; }
   if (value === undefined) { return "null"; }
   const t = typeof value;
