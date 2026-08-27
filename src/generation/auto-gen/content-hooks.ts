@@ -20,9 +20,8 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { canAccessNsfw, } from "../../middleware/nsfw-gate/access";
 import { isNsfwRating, } from "../../middleware/nsfw-gate/constants";
-import { jsonParseOr, } from "../../utils";
 import { getRegisteredHooks, runHookChain, } from "../hooks";
-import type { HookEventType, } from "../hooks";
+import { resolveActorIdFromEvents, } from "./resolve-actor-from-events";
 
 export interface RunContentHooksOpts {
   database: Kysely<DB>;
@@ -233,20 +232,4 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
   const actorId = resolveActorIdFromEvents(hookResult.events,) ?? fallbackActorId;
 
   return { allowed: true, dominantEmotion, moodShiftDelta, actorId, };
-}
-
-/**
- * Resolve actorId from the hook event payload. The MoodHook and EmotionHook
- * emit actorId in their data payload; this helper extracts it so consumers
- * don't need to thread actorId through ambient context.
- */
-function resolveActorIdFromEvents(
-  events: readonly { eventType: string; data?: Record<string, unknown> }[],
-): string | undefined {
-  for (const event of events) {
-    if (event.data && typeof event.data.actorId === "string" && event.data.actorId.length > 0) {
-      return event.data.actorId;
-    }
-  }
-  return undefined;
 }
