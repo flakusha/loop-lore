@@ -3,7 +3,7 @@
 
 # BUG: aux-pipeline index.ts re-export set doesn't match AuxTaskName union
 
-**Status:** ✅ Resolved (2026-08-25)
+**Status:** done
 **Priority:** P3
 **Effort:** Trivial
 **Epic:** epic-aux-enrichment-pipeline

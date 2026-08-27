@@ -1,6 +1,6 @@
 # BUG: Inbound federation content not moderated before display
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** high
 **Effort:** Medium
 

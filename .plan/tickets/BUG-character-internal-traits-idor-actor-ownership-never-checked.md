@@ -1,6 +1,6 @@
 # BUG: Character internal traits IDOR — actor ownership never checked
 
-**Status:** ⬜ Not Started
+**Status:** duplicate
 **Priority:** high
 **Effort:** Medium
 

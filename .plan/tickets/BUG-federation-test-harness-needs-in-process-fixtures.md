@@ -1,6 +1,6 @@
 # BUG: Federation test harness needs in-process fixtures
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** low
 **Effort:** Medium
 

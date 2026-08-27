@@ -1,6 +1,6 @@
 # BUG: Leader and swarm topologies lack simultaneous-write arbitration
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** high
 **Effort:** Medium
 
