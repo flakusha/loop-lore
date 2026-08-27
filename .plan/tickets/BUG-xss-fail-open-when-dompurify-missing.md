@@ -1,6 +1,6 @@
 # BUG: XSS fail-open when DOMPurify missing
 
-**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
+**Status:** ✅ Resolved (already fixed in code: render.ts and chat-generations.ts both fail closed — render.ts escapes source text, chat-generations.ts renders as text)
 **Priority:** high
 **Effort:** Medium
 
