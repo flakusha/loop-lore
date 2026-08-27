@@ -9,6 +9,7 @@ import { createLogger, } from "../../logger";
 import { EmotionHook, } from "./emotion-hook";
 import { ModerationHook, } from "./moderation-hook";
 import { MoodHook, } from "./mood-hook";
+import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { NsfwHook, type NsfwHookDeps, } from "./nsfw-hook";
 import { clearHooks, getRegisteredHooks, initDefaultHooks, registerHook, runHookChain, } from "./registry";
 import type { HookContext, } from "./types";
@@ -33,6 +34,17 @@ function makeContext(overrides?: Partial<HookContext>,): HookContext {
     db: {} as any,
     ...overrides,
   };
+}
+
+function makeModStub(): NsfwModerationService {
+  return {
+    getEffectiveNsfw: async () => ({ enabled: true, source: "test_stub", }),
+    recordAction: async () => ({}) as never,
+  } as unknown as NsfwModerationService;
+}
+
+function makeNsfwHook(deps?: Partial<NsfwHookDeps>,): NsfwHook {
+  return new NsfwHook({ modService: makeModStub(), ...deps, },);
 }
 
 // ── Registry ─────────────────────────────────────────────────
@@ -175,7 +187,7 @@ describe("EmotionHook", () => {
 // ── NsfwHook ─────────────────────────────────────────────────
 
 describe("NsfwHook", () => {
-  const hook = new NsfwHook();
+  const hook = makeNsfwHook();
 
   beforeAll(() => {
     createLogger({ level: "error", },);
@@ -201,9 +213,9 @@ describe("NsfwHook", () => {
     expect(await hook.canHandle("This is suggestive content with enough length.", ctx,),).toBe(false,);
   });
 
-  test("canHandle returns false for short content", async () => {
+  test("canHandle returns true even for short content (no length bypass)", async () => {
     const ctx = makeContext({
-      content: "Short",
+      content: "bad",
       nsfwConfig: {
         allowNsfw: true,
         nsfwMinAge: 18,
@@ -213,7 +225,7 @@ describe("NsfwHook", () => {
         useLlmClassifier: false,
       },
     },);
-    expect(await hook.canHandle("Short", ctx,),).toBe(false,);
+    expect(await hook.canHandle("bad", ctx,),).toBe(true,);
   });
 
   test("canHandle returns true when NSFW enabled and content long enough", async () => {
@@ -386,7 +398,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "nsfw_intense", confidence: 0.9, },),
       }));
-      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = llmLlContext("The two embraced in a long, lingering way.",);
 
       const result = await llmHook.execute("The two embraced in a long, lingering way.", ctx,);
@@ -401,7 +413,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "nsfw_extreme", confidence: 0.9, },),
       }));
-      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = llmLlContext("The scene escalated beyond the keyword pass.",);
 
       const result = await llmHook.execute("The scene escalated beyond the keyword pass.", ctx,);
@@ -419,7 +431,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "nsfw_extreme", confidence: 0.9, },),
       }));
-      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = llmLlContext("The graphic and explicit scene escalated beyond belief.",);
 
       const result = await llmHook.execute("The graphic and explicit scene escalated beyond belief.", ctx,);
@@ -433,7 +445,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "sfw", confidence: 0.9, },),
       }));
-      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = llmLlContext("They discussed the weather at length today.",);
 
       const result = await llmHook.execute("They discussed the weather at length today.", ctx,);
@@ -442,7 +454,7 @@ describe("NsfwHook", () => {
 
     test("LLM failure degrades gracefully without blocking", async () => {
       const aux = mock(async () => null);
-      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = llmLlContext("The two embraced in a long, lingering way.",);
 
       const result = await llmHook.execute("The two embraced in a long, lingering way.", ctx,);
@@ -453,7 +465,7 @@ describe("NsfwHook", () => {
       const aux = mock(async () => ({
         content: JSON.stringify({ rating: "nsfw_extreme", confidence: 0.9, },),
       }));
-      const llmHook = new NsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
+      const llmHook = makeNsfwHook({ callAux: aux as unknown as NsfwHookDeps["callAux"], },);
       const ctx = makeContext({
         content: "They discussed neutral things for a while.",
         nsfwPolicy: "mild",
@@ -488,9 +500,9 @@ describe("ModerationHook", () => {
     expect(hook.eventTypes,).toEqual(["moderation_flag",],);
   });
 
-  test("canHandle returns false for short content", async () => {
+  test("canHandle returns true even for short content (no length bypass)", async () => {
     const ctx = makeContext();
-    expect(await hook.canHandle("Hi", ctx,),).toBe(false,);
+    expect(await hook.canHandle("Hi", ctx,),).toBe(true,);
   });
 
   test("execute flags severe content", async () => {
@@ -584,7 +596,7 @@ describe("ModerationHook", () => {
 describe("runHookChain", () => {
   beforeAll(() => {
     createLogger({ level: "error", },);
-    initDefaultHooks();
+    initDefaultHooks({ modService: makeModStub(), },);
   },);
 
   afterAll(() => {
@@ -647,9 +659,10 @@ describe("runHookChain", () => {
     expect(eventTypes,).toContain("emotion_change",);
   });
 
-  test("chain skips hooks that cannot handle content", async () => {
+  test("targeted eventTypes skip non-matching hooks", async () => {
     const ctx = makeContext({
-      content: "Short",
+      content: "The weather is pleasant today.",
+      eventTypes: ["mood_shift",],
       nsfwConfig: {
         allowNsfw: true,
         nsfwMinAge: 18,
@@ -660,8 +673,8 @@ describe("runHookChain", () => {
       },
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
-    // All hooks require content > 10 or > 20 chars, so none run
-    expect(result.results,).toHaveLength(0,);
+    // Only the mood hook matches the targeted event type.
+    expect(result.results.map((r,) => r.eventType,),).toEqual(["mood_shift",],);
     expect(result.allowed,).toBe(true,);
   });
 });
