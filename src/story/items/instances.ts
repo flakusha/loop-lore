@@ -188,7 +188,6 @@ export async function transfer(
   };
 }
 
-
 /** Remove item instance. Requires worldId to prevent cross-world IDOR. */
 export async function destroy(
   state: ItemState,
