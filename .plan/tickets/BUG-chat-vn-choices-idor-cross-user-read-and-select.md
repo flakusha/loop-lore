@@ -1,6 +1,6 @@
 # BUG: chat vn-choices IDOR cross-user read and select
 
-**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
+**Status:** ✅ Resolved (commit 3ab26ccd — checkChatAccess guards both list + select handlers)
 **Priority:** high
 **Effort:** Medium
 

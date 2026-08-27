@@ -1,6 +1,6 @@
 # BUG: selectChat resets freshly loaded state and lacks reentrancy guard
 
-**Status:** ✅ Resolved (2026-08-25, worktree `bugfix-medium-low`, commit 04411f8)
+**Status:** ✅ Resolved (commit 04411f8 — selectChat state guard)
 **Priority:** medium
 **Effort:** Medium
 

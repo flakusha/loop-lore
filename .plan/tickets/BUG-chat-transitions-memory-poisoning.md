@@ -3,7 +3,7 @@
 
 # BUG: `promoteMessagesToMemories` / `classifyTransitionMessage` lack ownership checks — attacker can poison victim actor's memory store
 
-**Status:** Not Started
+**Status:** ✅ Resolved (ownership guards present — requireChatParticipant in classifyTransitionMessage + promoteMessagesToMemories)
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
