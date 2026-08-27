@@ -81,10 +81,12 @@ export class EmotionHook implements HookHandler {
         keywords: ["sad", "sorrow", "grief", "mourn", "cry", "tear", "depressed", "heartbroken",],
       },
       {
-        name: EmotionType.Fearful, keywords: ["afraid", "scared", "terrified", "fear", "dread", "anxious", "worried", "nervous",],
+        name: EmotionType.Fearful,
+        keywords: ["afraid", "scared", "terrified", "fear", "dread", "anxious", "worried", "nervous",],
       },
       {
-        name: EmotionType.Surprised, keywords: ["surprised", "shocked", "astonished", "amazed", "astonishing", "unexpected",],
+        name: EmotionType.Surprised,
+        keywords: ["surprised", "shocked", "astonished", "amazed", "astonishing", "unexpected",],
       },
       { name: EmotionType.Disgusted, keywords: ["disgust", "disgusted", "repulsive", "revolting", "nauseating",], },
       {
