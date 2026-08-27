@@ -27,18 +27,18 @@ export const chatMusicEmbed: ChatMusicEmbed = {
     if (!msg.embedHtml) {
       // Fallback: render a linked title card with escaped values to prevent
       // stored XSS from LLM/regex-extracted metadata (thumbnailUrl/title/artist/serviceUrl).
-      const esc = (s: string | null | undefined) => {
-        const div = document.createElement("div");
+      const esc = (s: string | null | undefined,) => {
+        const div = document.createElement("div",);
         div.textContent = s ?? "";
         return div.getHTML();
       };
       const thumb = msg.thumbnailUrl
-        ? `<img src="${esc(msg.thumbnailUrl)}" alt="${esc(msg.title)}" class="music-embed-thumb" />`
+        ? `<img src="${esc(msg.thumbnailUrl,)}" alt="${esc(msg.title,)}" class="music-embed-thumb" />`
         : "";
       return `<div class="music-embed-card">
         ${thumb}
-        <a href="${esc(msg.serviceUrl)}" target="_blank" rel="noopener" class="music-embed-link">
-          ${esc(msg.title)} — ${esc(msg.artist)}
+        <a href="${esc(msg.serviceUrl,)}" target="_blank" rel="noopener" class="music-embed-link">
+          ${esc(msg.title,)} — ${esc(msg.artist,)}
         </a>
       </div>`;
     }

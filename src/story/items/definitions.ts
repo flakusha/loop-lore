@@ -39,7 +39,8 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
 /** Get item definition by ID */
 /** Get item definition by ID. Requires worldId to prevent cross-world IDOR. */
 export async function getDefinition(state: ItemState, itemId: string, worldId: string,) {
-  return state.db.selectFrom("items",).selectAll().where("id", "=", itemId,).where("world_id", "=", worldId,).executeTakeFirst();
+  return state.db.selectFrom("items",).selectAll().where("id", "=", itemId,).where("world_id", "=", worldId,)
+    .executeTakeFirst();
 }
 
 /** List item definitions in a world */
