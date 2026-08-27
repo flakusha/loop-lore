@@ -243,20 +243,19 @@ describe("nonce uniqueness", () => {
   });
 });
 
-// ── Decompression failure → graceful degradation ────────────
+// ── Compression algorithm validation ────────────────────────
 
-describe("decompression graceful degradation", () => {
-  test("payload with comp=true but bogus compAlgo returns raw decrypted bytes", async () => {
-    // Encrypt normally but then corrupt the compression marker
+describe("compression algorithm validation", () => {
+  test("payload with comp=true but unknown compAlgo throws (no silent fallback)", async () => {
+    // Encrypt normally, then corrupt the algorithm marker. The previous
+    // behavior silently fell back to gzip and returned base64 ciphertext
+    // to the user as plaintext — see BUG-safedecompress-pre-check.
     const text = "x".repeat(200,);
     const encrypted = await compressThenEncrypt({
       plaintext: text,
       chatKey: cryptoKey,
       keyId: KEY_ID,
-      config: {
-        threshold: 128,
-        algorithm: "gzip",
-      },
+      config: { threshold: 128, algorithm: "gzip", },
     },);
     const payload = JSON.parse(encrypted,) as {
       enc: string;
@@ -267,13 +266,60 @@ describe("decompression graceful degradation", () => {
       key_id: string;
     };
 
-    // Corrupt: mark as compressed but with wrong algorithm name
     payload.comp = true;
     payload.compAlgo = "bogus-algo";
 
-    // Should not throw — returns raw bytes
-    const result = await decryptThenDecompress(JSON.stringify(payload,), cryptoKey,);
-    expect(typeof result,).toBe("string",);
-    expect(result.length,).toBeGreaterThan(0,);
+    await expect(decryptThenDecompress(JSON.stringify(payload,), cryptoKey,),).rejects.toThrow(
+      /Decompression failed|Unknown algorithm|Malformed encrypted payload/,
+    );
+  });
+
+  test("payload with comp=true but missing compAlgo throws (legacy data / tampering)", async () => {
+    // Legacy rows written before the compAlgo fix have comp=true with no
+    // compAlgo field. The new behavior fails loudly instead of silently
+    // returning the compressed ciphertext as "plaintext".
+    const text = "x".repeat(200,);
+    const encrypted = await compressThenEncrypt({
+      plaintext: text,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: { threshold: 128, algorithm: "gzip", },
+    },);
+    const payload = JSON.parse(encrypted,) as {
+      enc: string;
+      nonce: string;
+      algo: string;
+      comp: boolean;
+      compAlgo?: string;
+      key_id: string;
+    };
+
+    payload.comp = true;
+    delete payload.compAlgo;
+
+    await expect(decryptThenDecompress(JSON.stringify(payload,), cryptoKey,),).rejects.toThrow(
+      "Malformed encrypted payload: comp=true but compAlgo is missing",
+    );
+  });
+
+  test("payload with comp=true and valid compAlgo decrypts + decompresses normally", async () => {
+    // Sanity check: the happy path still works end-to-end. A > 10KB
+    // compressed payload would have hit the buggy pre-check previously.
+    const text = "x".repeat(2_000,);
+    const encrypted = await compressThenEncrypt({
+      plaintext: text,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: { threshold: 128, algorithm: "gzip", },
+    },);
+    const payload = JSON.parse(encrypted,) as {
+      comp: boolean;
+      compAlgo?: string;
+    };
+    expect(payload.comp,).toBe(true,);
+    expect(payload.compAlgo,).toBe("gzip",);
+
+    const decrypted = await decryptThenDecompress(encrypted, cryptoKey,);
+    expect(decrypted,).toBe(text,);
   });
 });

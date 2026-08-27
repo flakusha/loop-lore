@@ -175,13 +175,15 @@ export async function decryptThenDecompress(storedContent: string, chatKey: Cryp
     return decryptedText;
   }
 
-  try {
-    // Fall back to "gzip" if compAlgo field is missing (legacy/edge case).
-    // If the guess is wrong, decompression fails and outer catch returns raw bytes.
-    const compAlgo = (payload.compAlgo ?? "gzip") as ContentEncoding;
-    return decodeContent(decryptedText, compAlgo,);
-  } catch {
-    // Decompression failure: return decrypted raw bytes as-is, per spec
-    return decryptedText;
+  // `payload.comp === true` requires `payload.compAlgo` to be set. The write
+  // side (compressThenEncrypt) always emits compAlgo when comp is true, so a
+  // missing compAlgo indicates either legacy data written before the fix or
+  // client-side tampering. Either way, silently guessing an algorithm (the
+  // previous behavior) returned base64 ciphertext to the user as plaintext —
+  // see BUG-safedecompress-pre-check. Fail loudly so the caller can surface
+  // a clear error.
+  if (!payload.compAlgo) {
+    throw new Error("Malformed encrypted payload: comp=true but compAlgo is missing",);
   }
+  return decodeContent(decryptedText, payload.compAlgo as ContentEncoding,);
 }

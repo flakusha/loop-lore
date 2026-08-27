@@ -9399,6 +9399,50 @@
     "source": ".plan/tickets/TASK-distributed-trust-security-validation.md",
     "git_issue": "6bb86a2"
   },
+  "TASK-DOC-AUDIT-UNDOCUMENTED-SRC-MODULES": {
+    "hash": "pending",
+    "extid": "TASK-DOC-AUDIT-UNDOCUMENTED-SRC-MODULES",
+    "type": "TASK",
+    "title": "Audit & document remaining undocumented src/ modules",
+    "label": "task",
+    "priority": "P3",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-doc-audit-undocumented-src-modules.md"
+  },
+  "TASK-DOC-SPEC-EMOTION-AVATARS": {
+    "hash": "pending",
+    "extid": "TASK-DOC-SPEC-EMOTION-AVATARS",
+    "type": "TASK",
+    "title": "Document Emotion Avatars spec",
+    "label": "task",
+    "priority": "P3",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-doc-spec-emotion-avatars.md"
+  },
+  "TASK-DOC-SPEC-PROFANITY-FILTER": {
+    "hash": "pending",
+    "extid": "TASK-DOC-SPEC-PROFANITY-FILTER",
+    "type": "TASK",
+    "title": "Document Profanity Filter spec",
+    "label": "task",
+    "priority": "P3",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-doc-spec-profanity-filter.md"
+  },
+  "TASK-DOC-SPEC-REGEX-EXTRACTION": {
+    "hash": "pending",
+    "extid": "TASK-DOC-SPEC-REGEX-EXTRACTION",
+    "type": "TASK",
+    "title": "Document Regex Extraction pipeline spec",
+    "label": "task",
+    "priority": "P3",
+    "epic": "epic-docs-reconciliation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-doc-spec-regex-extraction.md"
+  },
   "TASK-DOCS-FIX-DANGLING-LINKS": {
     "hash": "pending",
     "extid": "TASK-DOCS-FIX-DANGLING-LINKS",
