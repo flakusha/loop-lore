@@ -31,7 +31,7 @@ describe("NSFW override service-level guard", () => {
     const svc = new NsfwModerationService(db,);
     expect(
       svc.setChatNsfwOverride("chat-missing", "enabled", "mod-1",),
-    ).rejects.toThrow("chat_not_found:chat-missing");
+    ).rejects.toThrow("chat_not_found:chat-missing",);
   });
 
   test("setChatNsfwOverride updates chat and writes attributed audit row", async () => {
@@ -63,7 +63,7 @@ describe("NSFW override service-level guard", () => {
     const svc = new NsfwModerationService(db,);
     expect(
       svc.setWorldNsfwOverride("world-missing", "disabled", "mod-1",),
-    ).rejects.toThrow("world_not_found:world-missing");
+    ).rejects.toThrow("world_not_found:world-missing",);
   });
 
   test("setWorldNsfwOverride updates world and writes attributed audit row", async () => {

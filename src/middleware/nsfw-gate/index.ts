@@ -13,6 +13,7 @@ export {
   checkIntimacyForNsfw,
   getActorContentRating,
 } from "./access";
-export { checkNsfwWithConsent, recordNsfwConsent, } from "./consent";
+export { checkNsfwWithConsent, } from "./consent";
+export { recordNsfwConsent, } from "./consent-ledger";
 export { isNsfwRating, } from "./constants";
 export { logNsfwEvent, } from "./logging";

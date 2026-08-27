@@ -122,7 +122,7 @@ export async function getChatParticipantUserIds(
   for (const r of rows) {
     if (r.user_id !== null) { seen.add(r.user_id,); }
   }
-  return [...seen];
+  return [...seen,];
 }
 
 /**
