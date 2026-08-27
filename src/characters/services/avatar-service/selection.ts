@@ -12,10 +12,6 @@ import { getWorldAvatarConfig, } from "./world-config";
 /** All tag types for iteration */
 const ALL_TAG_TYPES: AvatarTagType[] = ["emotion", "mood", "action", "location", "time", "outfit",];
 
-
-
-
-
 /**
  * Select the best avatar based on context.
  */
@@ -95,19 +91,21 @@ export function calculateAvatarScore(
   // Apply rule modifiers
   switch (rule) {
     case "emotion_first":
-      if (context.emotion && avatar.tags.emotion) score *= 1.5;
+      if (context.emotion && avatar.tags.emotion) { score *= 1.5; }
       break;
     case "mood_first":
-      if (context.mood && avatar.tags.mood) score *= 1.5;
+      if (context.mood && avatar.tags.mood) { score *= 1.5; }
       break;
     case "action_first":
-      if (context.action && avatar.tags.action) score *= 1.5;
+      if (context.action && avatar.tags.action) { score *= 1.5; }
       break;
     case "context_first":
-      if (context.location && avatar.tags.location === context.location ||
-          context.time && avatar.tags.time === context.time) score *= 1.5;
+      if (
+        context.location && avatar.tags.location === context.location ||
+        context.time && avatar.tags.time === context.time
+      ) { score *= 1.5; }
       break;
-    // "weighted", "random", "fixed" - no boost
+      // "weighted", "random", "fixed" - no boost
   }
 
   // Bonus for primary avatar (tiebreaker)
