@@ -16,6 +16,8 @@ export type AvatarTagType = (typeof AvatarTagType)[keyof typeof AvatarTagType];
 export const AvatarSelectionRule = {
   EmotionFirst: "emotion_first",
   MoodFirst: "mood_first",
+  ActionFirst: "action_first",
+  ContextFirst: "context_first",
   Weighted: "weighted",
   Random: "random",
   Fixed: "fixed",
