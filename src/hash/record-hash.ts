@@ -78,7 +78,12 @@ export function canonicalJSON(value: unknown,): string {
   return canonicalize(value, new Set(),);
 }
 
-function canonicalize(value: unknown, seen: Set<object>,): string {
+// canonicalize() intentionally uses bare JSON.stringify for primitives
+// (strings, numbers, BigInt, Date) — this is a deterministic serializer
+// for content hashing. safeJsonStringify() would inject non-deterministic
+// metadata (e.g. Buffer coercion) and break row-integrity digests.
+/* eslint-disable no-restricted-syntax -- canonicalize() is a deterministic serializer; safeJsonStringify would inject non-deterministic metadata (Buffer coercion, etc.) and break row-integrity digests. */
+ function canonicalize(value: unknown, seen: Set<object>,): string {
   if (value === null) { return "null"; }
   if (value === undefined) { return "null"; }
   const t = typeof value;
@@ -123,6 +128,7 @@ function canonicalize(value: unknown, seen: Set<object>,): string {
   // Functions, symbols, etc. — coerce to null to keep the envelope unambiguous.
   return "null";
 }
+/* eslint-enable no-restricted-syntax */
 
 /**
  * Compute the canonical `record_hash` for a row.
