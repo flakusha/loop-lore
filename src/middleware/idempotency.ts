@@ -33,6 +33,9 @@ import type { AsyncStore, } from "../async/store";
 import { ErrorCode, HttpStatus, jsonError, } from "../routes/http-utils";
 import { isValidRequestId, } from "./request-id";
 
+/** Header that bypasses the idempotency cache when set to "1". */
+export const IDEMPOTENCY_BYPASS_HEADER = "x-idempotency-bypass";
+
 /** Replay entry kept by the in-memory backend. */
 interface InMemoryEntry {
   status: number;
@@ -48,13 +51,17 @@ export type IdempotencyBackend = "memory" | "table";
 export interface IdempotencyConfig {
   /** Backend selector. Default: `"memory"`. */
   backend?: IdempotencyBackend;
-  /** TTL for cached responses in ms. Default: 5 min. */
+  /** TTL for cached responses in ms. Default: 24h. */
   ttlMs?: number;
   /** Async store for the table backend. Ignored when `backend === "memory"`. */
   asyncStore?: AsyncStore;
+  /** Enable the middleware. When false, beforeHandle is a pass-through. Default: true. */
+  enabled?: boolean;
+  /** Honor the X-Idempotency-Bypass header. Default: true. */
+  bypassHeader?: boolean;
 }
 
-const DEFAULT_TTL_MS = 5 * 60 * 1000;
+const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24h — matches messages.idempotencyExpiryHours default
 
 /** Composite key — distinct methods on the same route are distinct. */
 function makeKey(method: string, routePattern: string, requestId: string,): string {
@@ -71,9 +78,11 @@ function makeKey(method: string, routePattern: string, requestId: string,): stri
  * @param config - Backend selection + TTL + store binding.
  */
 export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHandle {
-  const cfg: Required<Pick<IdempotencyConfig, "backend" | "ttlMs">> = {
+  const cfg: Required<Pick<IdempotencyConfig, "backend" | "ttlMs" | "enabled" | "bypassHeader">> = {
     backend: config.backend ?? "memory",
     ttlMs: config.ttlMs ?? DEFAULT_TTL_MS,
+    enabled: config.enabled ?? true,
+    bypassHeader: config.bypassHeader ?? true,
   };
   const cache = new Map<string, InMemoryEntry>();
 
@@ -110,6 +119,15 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
     backend: cfg.backend,
     ttlMs: cfg.ttlMs,
     async beforeHandle(ctx: IdempotencyCtx,): Promise<Response | undefined> {
+      if (!cfg.enabled) { return undefined; } // disabled ⇒ pass-through
+      if (cfg.bypassHeader && ctx.request.headers.get(IDEMPOTENCY_BYPASS_HEADER,) === "1") {
+        return undefined; // client asked to bypass the cache
+      }
+      // Only mutating methods are idempotent. GET/HEAD/OPTIONS always run.
+      const method = ctx.request.method.toUpperCase();
+      if (method === "GET" || method === "HEAD" || method === "OPTIONS") {
+        return undefined;
+      }
       const requestId = ctx.requestId ?? ctx.request.headers.get("x-request-id",);
       if (!requestId) { return undefined; } // no id ⇒ not idempotent
       if (!isValidRequestId(requestId,)) { return undefined; }
@@ -144,13 +162,16 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      */
     recordResponse(args: { method: string; route: string; requestId: string; response: Response },): void {
       const key = makeKey(args.method, args.route, args.requestId,);
-      void args.response.text().then((body,) => {
+      // Clone before reading the body so the original response (sent to the
+      // client) is not consumed. .text() locks the stream.
+      const snapshot = args.response.clone();
+      void snapshot.text().then((body,) => {
         const headers: Record<string, string> = {};
-        args.response.headers.forEach((value, name,) => {
+        snapshot.headers.forEach((value, name,) => {
           headers[name] = value;
         },);
         cache.set(key, {
-          status: args.response.status,
+          status: snapshot.status,
           headers,
           body,
           inFlight: false,
@@ -158,6 +179,10 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
           completedAt: Date.now(),
         },);
       },);
+    },
+    /** Release an in-flight slot without caching (non-2xx completion). */
+    release(args: { method: string; route: string; requestId: string },): void {
+      cache.delete(makeKey(args.method, args.route, args.requestId,),);
     },
     /** Test seam: clear all in-flight + completed entries. */
     clear(): void {
@@ -197,5 +222,6 @@ export interface IdempotencyBeforeHandle {
   readonly ttlMs: number;
   beforeHandle(ctx: IdempotencyCtx,): Promise<Response | undefined>;
   recordResponse(args: { method: string; route: string; requestId: string; response: Response },): void;
+  release(args: { method: string; route: string; requestId: string },): void;
   clear(): void;
 }
