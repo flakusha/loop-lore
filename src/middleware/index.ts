@@ -15,7 +15,7 @@ export { idempotent, } from "./idempotency";
 export type { IdempotencyBackend, IdempotencyBeforeHandle, IdempotencyConfig, IdempotencyCtx, } from "./idempotency";
 export { requirePermission, } from "./permissions";
 export type { PermissionCtx, RequirePermissionOpts, } from "./permissions";
-export { applyRequestId, isValidRequestId, resolveRequestId, } from "./request-id";
+export { applyRequestId, isValidRequestId, requestIdMiddleware, resolveRequestId, } from "./request-id";
 export type {} from "./request-id";
 export { normalizeHeaderKey, ResponseHeaderPolicy, } from "./response-headers";
 export type { ApplyOptions, RouteKind, } from "./response-headers";

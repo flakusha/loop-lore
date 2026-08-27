@@ -25,6 +25,8 @@ export interface RequestContext {
   locale: Locale;
   /** Translator function for this request's locale. Returns key as-is if not set. */
   t: TranslatorFn;
+  /** Resolved request id for this request (set by requestIdMiddleware). Empty string when unavailable. */
+  requestId: string;
 }
 
 /**
@@ -38,6 +40,7 @@ export function createRequestContext(
     ...partial,
     locale: "en",
     t: (key: string,) => key,
+    requestId: "",
   };
 }
 

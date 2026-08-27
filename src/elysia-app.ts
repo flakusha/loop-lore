@@ -20,6 +20,7 @@ import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { authenticate, } from "./middleware/auth";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
+import { requestIdMiddleware, } from "./middleware/request-id";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
 import { versionResolver, } from "./routes/middleware/version-resolver";
 import { v1Routes, } from "./routes/v1";
@@ -51,6 +52,11 @@ export function createApp(deps: AppDeps,): Elysia {
     // ── Validation error handler (must be first) ─────────────
 
     .onError((ctx: any,) => onValidationError(ctx.code, ctx.error, ctx.set,))
+    // ── Request-id resolution ────────────────────────────────
+    // Resolves, validates, and applies the request id BEFORE auth so
+    // authenticate(...) can correlate it. Sets x-request-id on the request
+    // headers (existing header reads keep working) and populates ctx.requestId.
+    .derive(requestIdMiddleware(),)
     // ── Authentication guard (runs before all routes, populates context) ──────
     .derive(async ({ request, },) => {
       const authResult = await authenticate({ request, database, authConfig: config.auth, },);
