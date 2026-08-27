@@ -4959,6 +4959,12 @@
       "source": ".plan/tickets/TASK-generation-rate-limiting-and-concurrency-limits.md"
     }
   ],
+  "src/config/schema/idempotency.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    }
+  ],
   "src/config/schema/seeding.ts": [
     {
       "kind": "ticket",
@@ -7991,6 +7997,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
     },
     {
       "kind": "epic",
@@ -13489,10 +13499,6 @@
   ],
   "src/middleware/idempotency.ts": [
     {
-      "kind": "epic",
-      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
-    },
-    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
     },
@@ -13534,6 +13540,10 @@
     }
   ],
   "src/middleware/lifecycle.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
@@ -13676,10 +13686,6 @@
     }
   ],
   "src/middleware/request-id.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
