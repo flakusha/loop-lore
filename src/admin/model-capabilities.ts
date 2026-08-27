@@ -142,6 +142,9 @@ export async function resolveModelCapabilities(
 
 /**
  * List all registered model capabilities, optionally filtered by provider.
+ * @param db - Database instance.
+ * @param providerId - Optional provider filter.
+ * @returns List of resolved capabilities.
  */
 export async function listModelCapabilities(
   db: Kysely<DB>,
@@ -174,6 +177,11 @@ export async function listModelCapabilities(
 /**
  * Set user override for a model's capabilities.
  * Only updates fields provided in the override — preserves others.
+ * @param db - Database instance.
+ * @param providerId - Provider identifier.
+ * @param modelId - Model identifier.
+ * @param override - Fields to override.
+ * @returns True if the model was found and updated.
  */
 export async function setModelOverride(
   db: Kysely<DB>,
@@ -217,35 +225,4 @@ export async function setModelOverride(
     .execute();
 
   return true;
-}
-
-/**
- * Clear user override — revert to auto-detected values.
- */
-export async function clearModelOverride(
-  db: Kysely<DB>,
-  providerId: string,
-  modelId: string,
-): Promise<boolean> {
-  const result = await db
-    .updateTable("model_capabilities",)
-    .set({ user_override: 0, updated_at: new Date().toISOString(), },)
-    .where("provider_id", "=", providerId,)
-    .where("model_id", "=", modelId,)
-    .execute();
-
-  return result.length > 0;
-}
-
-/**
- * Get the context window size for a model from the registry.
- * Returns null if model not found (caller should use default).
- */
-export async function getContextWindowForModel(
-  db: Kysely<DB>,
-  providerId: string,
-  modelId: string,
-): Promise<number | null> {
-  const caps = await resolveModelCapabilities(db, providerId, modelId,);
-  return caps?.contextWindow ?? null;
 }
