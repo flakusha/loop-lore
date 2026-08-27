@@ -51,6 +51,78 @@ function branchToSquashMessage(branch: string,): string {
   return `${type}: ${subject}`;
 }
 
+
+/**
+ * Stash dirty working-tree state on `repoRoot` (the dev checkout) before
+ * an in-place merge. Returns a label identifying the stash entry, or `null`
+ * if the tree was already clean. The caller MUST call `restoreDirtyDev()`
+ * with the same label after the merge completes — even on failure — to
+ * avoid losing uncommitted work in the dev checkout.
+ *
+ * Why: `git merge --ff-only` refuses to proceed when the working tree has
+ * uncommitted changes that overlap with the merge. This is the most common
+ * cause of FF failure in finalize; auto-stashing makes the flow robust
+ * against races where another agent or hook mutates dev mid-finalize.
+ */
+function stashDirtyDev(repoRoot: string,): string | null {
+  const dirty = Bun.spawnSync(
+    ["git", "-C", repoRoot, "diff", "--quiet", "--ignore-submodules",],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+  const staged = Bun.spawnSync(
+    ["git", "-C", repoRoot, "diff", "--cached", "--quiet", "--ignore-submodules",],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+  const untracked = Bun.spawnSync(
+    ["git", "-C", repoRoot, "ls-files", "--others", "--exclude-standard",],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+  const hasUntracked = (untracked.stdout.toString().trim().length > 0);
+  if (dirty.exitCode === 0 && staged.exitCode === 0 && !hasUntracked) {
+    return null;
+  }
+  // Generate a distinguishable stash label so we can find it again even if
+  // the user has unrelated stashes on the stack.
+  const stashLabel = `worktree-finalize-${Date.now().toString(36,)}`;
+  const flags = hasUntracked ? ["--include-untracked"] : [];
+  const stash = Bun.spawnSync(
+    ["git", "-C", repoRoot, "stash", "push", ...flags, "-m", stashLabel,],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+  if (stash.exitCode !== 0) {
+    log("error", `failed to stash dirty dev checkout: ${stash.stderr.toString().trim()}`,);
+    process.exit(1,);
+  }
+  log("info", `Stashed dirty dev checkout as '${stashLabel}'`,);
+  return stashLabel;
+}
+
+function restoreDirtyDev(repoRoot: string, stashLabel: string,): void {
+  // Find the stash ref by message; we can't rely on `stash@{0}` because
+  // other agents may push stashes between our push and pop.
+  const list = Bun.spawnSync(
+    ["git", "-C", repoRoot, "stash", "list",],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+  const lines = list.stdout.toString().split("\n",);
+  const match = lines.find((line,) => line.includes(stashLabel,),);
+  if (!match) {
+    log("error", `stash '${stashLabel}' not found — restore manually with 'git stash list'`,);
+    process.exit(1,);
+  }
+  const stashRef = match.split(":",)[0].trim();
+  const pop = Bun.spawnSync(
+    ["git", "-C", repoRoot, "stash", "pop", stashRef,],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+  if (pop.exitCode !== 0) {
+    log("error", `failed to restore stash '${stashLabel}': ${pop.stderr.toString().trim()}`,);
+    log("error", `manual recovery: git -C ${repoRoot} stash pop ${stashRef}`,);
+    process.exit(1,);
+  }
+  log("success", `Restored stash '${stashLabel}'`,);
+}
+
 function runCheck(wtPath: string,): boolean {
   const result = Bun.spawnSync(
     ["bun", "run", "check",],
@@ -210,26 +282,39 @@ export async function finalize(
     if (mergeStrategy === "squash") {
       const msg = branchToSquashMessage(branch,);
       log("info", `Step 5b: Squash merging into ${targetBranch}...`,);
-      const mergeResult = Bun.spawnSync(
-        ["git", "-C", config.repoRoot, "merge", branch, "--squash", "-m", msg,],
-        { stdout: "pipe", stderr: "pipe", },
-      );
-      if (mergeResult.exitCode !== 0) {
-        log("error", "Squash merge failed",);
-        process.exit(1,);
+      const devStash = stashDirtyDev(config.repoRoot,);
+      try {
+        const mergeResult = Bun.spawnSync(
+          ["git", "-C", config.repoRoot, "merge", branch, "--squash", "-m", msg,],
+          { stdout: "pipe", stderr: "pipe", },
+        );
+        if (mergeResult.exitCode !== 0) {
+          log("error", "Squash merge failed",);
+          process.exit(1,);
+        }
+        log("success", `Squash merged: ${msg}`,);
+      } finally {
+        if (devStash !== null) { restoreDirtyDev(config.repoRoot, devStash,); }
       }
-      log("success", `Squash merged: ${msg}`,);
     } else {
       log("info", `Step 5b: Fast-forward merging into ${targetBranch}...`,);
-      const mergeResult = Bun.spawnSync(
-        ["git", "-C", config.repoRoot, "merge", branch, "--ff-only",],
-        { stdout: "pipe", stderr: "pipe", },
-      );
-      if (mergeResult.exitCode !== 0) {
-        log("error", "Fast-forward merge failed",);
-        process.exit(1,);
+      const devStash = stashDirtyDev(config.repoRoot,);
+      let ffOk = false;
+      try {
+        const mergeResult = Bun.spawnSync(
+          ["git", "-C", config.repoRoot, "merge", branch, "--ff-only",],
+          { stdout: "pipe", stderr: "pipe", },
+        );
+        if (mergeResult.exitCode !== 0) {
+          log("error", "Fast-forward merge failed",);
+          process.exit(1,);
+        }
+        ffOk = true;
+        log("success", "Fast-forward merged",);
+      } finally {
+        if (devStash !== null) { restoreDirtyDev(config.repoRoot, devStash,); }
       }
-      log("success", "Fast-forward merged",);
+      if (ffOk) { /* restored above */ }
     }
   } else if (mergeStrategy === "direct") {
     // Direct merge warning
@@ -251,15 +336,20 @@ export async function finalize(
 
     log("info", `Step 5: Merging '${branch}' into ${targetBranch} (direct)...`,);
     const flags = gpgMergeFlags(config,);
-    const mergeResult = Bun.spawnSync(
-      ["git", "-C", config.repoRoot, ...flags, "merge", branch, "--no-edit",],
-      { stdout: "pipe", stderr: "pipe", },
-    );
-    if (mergeResult.exitCode !== 0) {
-      log("error", `Merge conflicts — resolve on ${targetBranch}`,);
-      process.exit(1,);
+    const devStash = stashDirtyDev(config.repoRoot,);
+    try {
+      const mergeResult = Bun.spawnSync(
+        ["git", "-C", config.repoRoot, ...flags, "merge", branch, "--no-edit",],
+        { stdout: "pipe", stderr: "pipe", },
+      );
+      if (mergeResult.exitCode !== 0) {
+        log("error", `Merge conflicts — resolve on ${targetBranch}`,);
+        process.exit(1,);
+      }
+      log("success", `Merged into ${targetBranch}`,);
+    } finally {
+      if (devStash !== null) { restoreDirtyDev(config.repoRoot, devStash,); }
     }
-    log("success", `Merged into ${targetBranch}`,);
 
     // Verify GPG signature
     const mergeSha = gitSync(config.repoRoot, "rev-parse", "HEAD",);
