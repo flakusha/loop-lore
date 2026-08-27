@@ -2196,3 +2196,12 @@ export const NsfwConsentStateSchema = t.Object({
   reason: t.Optional(t.String(),),
   revoked_at: t.Optional(t.String(),),
 },);
+
+// ── message_seen ────────────────────────────────────────────
+export const MessageSeenSchema = t.Object({
+  message_id: t.String(),
+  actor_id: t.String(),
+  state: t.Optional(t.String(),),
+  seen_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
