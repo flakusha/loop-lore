@@ -66,6 +66,12 @@ export function recordLifecycle(asyncStore: AsyncStore,) {
     const response = ctx.response;
     if (!(response instanceof Response)) { return; }
     try {
+      if (response.status >= 400) {
+        // Client/server error responses mark the row failed rather than complete
+        // so the idempotency layer does not cache a 4xx/5xx for replay.
+        asyncStore.fail(requestId, `HTTP ${response.status}`,);
+        return;
+      }
       const captured = await capture(response,);
       asyncStore.complete(requestId, captured,);
     } catch (error) {
