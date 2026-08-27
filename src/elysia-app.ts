@@ -23,6 +23,8 @@ import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { idempotent, } from "./middleware/idempotency";
 import type { IdempotencyCtx, } from "./middleware/idempotency";
 import { requestIdMiddleware, } from "./middleware/request-id";
+
+import { recordLifecycle, } from "./middleware/lifecycle";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
 import { versionResolver, } from "./routes/middleware/version-resolver";
 import { v1Routes, } from "./routes/v1";
@@ -122,6 +124,23 @@ export function createApp(deps: AppDeps,): Elysia {
       requestId,
       response,
     },);
+  },);
+
+  // ── Request lifecycle (complete/fail the result row)
+  // Runs AFTER the idempotency afterHandle so it sees the recorded response.
+  app.onAfterHandle(recordLifecycle(asyncStore,),);
+
+  // ── Error boundary: mark tracked requests as failed
+  // Uncaught throws in handlers still resolve ctx.requestId (derive ran),
+  // so we can flip the result row to "failed" instead of leaving it pending.
+  app.onError((ctx: IdempotencyCtx & { error: unknown },) => {
+    const requestId = ctx.requestId;
+    if (requestId) { asyncStore.fail(requestId, String(ctx.error,),); }
+  },);
+
+  // ── Graceful shutdown: flush pending async-store writes
+  app.onStop(() => {
+    void asyncStore.flush();
   },);
   // ── API version resolver ───────────────────────────────────
   // Populates ctx.apiVersion for every request via global derive().
