@@ -41,6 +41,12 @@
       "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md"
     }
   ],
+  "src/admin/model-capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
+    }
+  ],
   "src/admin/model-roles.ts": [
     {
       "kind": "epic",
@@ -1592,6 +1598,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     },
     {
@@ -2201,6 +2211,12 @@
       "source": ".plan/epics/epic-battle-action-systems.md"
     }
   ],
+  "src/battle/weather-integration/hazards.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
+    }
+  ],
   "src/blog/comments.ts": [
     {
       "kind": "epic",
@@ -2466,6 +2482,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-yaml-to-replace-js-yaml.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic14-import-export-reconciliation.md"
     }
   ],
@@ -2711,6 +2731,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-yaml-to-replace-js-yaml.md"
     },
     {
       "kind": "ticket",
@@ -2969,6 +2993,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
+  "src/characters/services/internal-traits/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
     }
   ],
   "src/characters/services/mood-service/apply-happiness-delta.ts": [
@@ -3489,6 +3519,12 @@
       "source": "docs/spec/chat-privacy.md"
     }
   ],
+  "src/chat/proactive/db-helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
+    }
+  ],
   "src/chat/proactive/timing.ts": [
     {
       "kind": "ticket",
@@ -3665,6 +3701,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
     }
   ],
   "src/chat/service/batch.ts": [
@@ -4607,6 +4647,10 @@
       "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tls-configuration-audit-and-startup-validation.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/platform-support.md"
     }
@@ -5328,6 +5372,10 @@
     }
   ],
   "src/content/compress.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/content-compression.md"
@@ -7944,6 +7992,10 @@
     }
   ],
   "src/db/seed.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/auth-middleware.md"
@@ -13421,6 +13473,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
     }
   ],
   "src/middleware/auth/authenticate.ts": [
@@ -13451,6 +13507,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
     },
     {
       "kind": "spec",
@@ -13489,6 +13549,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
     },
     {
       "kind": "frontend",
@@ -13746,7 +13810,17 @@
   "src/middleware/request-id.integration.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
+    }
+  ],
+  "src/middleware/request-id.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
     }
   ],
   "src/middleware/request-id.ts": [
@@ -16357,6 +16431,12 @@
       "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
     }
   ],
+  "src/routes/export-shared.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
+    }
+  ],
   "src/routes/export-shared.ts": [
     {
       "kind": "ticket",
@@ -16367,6 +16447,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
+    }
+  ],
+  "src/routes/export-shared/helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
     }
   ],
   "src/routes/export-sse.ts": [
@@ -16387,6 +16473,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md"
+    }
+  ],
+  "src/routes/export.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
     }
   ],
   "src/routes/export.ts": [
@@ -17745,6 +17837,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-creative-studio-search-api.md"
+    }
+  ],
+  "src/routes/sessions.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
     }
   ],
   "src/routes/sessions.ts": [
@@ -20148,7 +20246,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-https-redirect-enforcement-for-plaintext-http.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-config-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ocsp-stapling-for-tls-certificate-status.md"
     },
     {
       "kind": "ticket",
@@ -20164,7 +20270,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-sni-multi-certificate-serving-for-multiple-domains.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-swarm-supervisor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tls-cipher-suite-hardening-and-secure-defaults.md"
     }
   ],
   "src/server/static-files.ts": [
@@ -20935,6 +21049,12 @@
       "source": ".plan/epics/epic-battle-action-systems.md"
     }
   ],
+  "src/transport/compression.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
+    }
+  ],
   "src/transport/compression.ts": [
     {
       "kind": "epic",
@@ -20943,6 +21063,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-transport-compression-wire-receive-side-decompression-with-l.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
     },
     {
       "kind": "spec",
@@ -21335,6 +21459,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-transport-compression-wire-receive-side-decompression-with-l.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
     }
   ],
   "src/utils/safe-json.ts": [
