@@ -1,6 +1,6 @@
 # BUG: CRDT conflict policy missing leader-vs-swarm precedence and deletes
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** medium
 **Effort:** Medium
 

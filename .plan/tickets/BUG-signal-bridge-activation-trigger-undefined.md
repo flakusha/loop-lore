@@ -1,6 +1,6 @@
 # BUG: Signal bridge activation trigger undefined
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** low
 **Effort:** Medium
 

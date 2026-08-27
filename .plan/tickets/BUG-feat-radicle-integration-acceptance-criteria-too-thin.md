@@ -1,6 +1,6 @@
 # BUG: FEAT-radicle-integration acceptance criteria too thin
 
-**Status:** ⬜ Not Started
+**Status:** not-a-bug
 **Priority:** low
 **Effort:** Medium
 
