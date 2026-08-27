@@ -61,6 +61,7 @@ error so the UI can render a disabled state instead of a spinner.
 | `FEAT-generation-rate-limiting-and-concurrency-limits` | semaphore + sliding-window limits on generation routes; config schema + env mapping |
 | `TASK-admin-generation-controls` | runtime admin surface: global pause toggle, limit adjustment, cancel-all on `/api/generation/active` |
 
+Autonomous actor dispatch (epic-actor-autonomy-story-drive.md) is a governed consumer of these controls: its scheduler honors per-chat + global holds, and its actor-level budget governor stacks on top of the route-level semaphore/limits here — neither layer reimplements the other.
 ## Non-goals
 
 - Cross-instance/swarm-coordinated limits (defer to `epic-federation-swarm-sync.md`).
