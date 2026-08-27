@@ -171,8 +171,8 @@ function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } 
 
     if (chunkTag === "VP8X") {
       // VP8X extended: 1-byte flags + 3 reserved + 24-bit LE width-1 + 24-bit LE height-1
-      const width = (readUint24LE(buf, offset + 12,) & 0x3F_FF) + 1;
-      const height = (readUint24LE(buf, offset + 15,) & 0x3F_FF) + 1;
+      const width = readUint24LE(buf, offset + 12) + 1;
+      const height = readUint24LE(buf, offset + 15) + 1;
       return { width, height, };
     }
 
