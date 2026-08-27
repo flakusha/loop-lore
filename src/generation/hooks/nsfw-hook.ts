@@ -122,7 +122,7 @@ export class NsfwHook implements HookHandler {
       // SFW content: audit "allowed" with no severity bucket so the log shows
       // the hook saw it and chose to pass through.
       await this.logGateDecision(_context, "allowed", "explicit_content_detected", { level: "none", },);
-      return { handled: false, eventType: "nsfw_gate", };
+      return { handled: false, eventType: "nsfw_gate", data: { actorId: _context.actorId, chatId: _context.chatId, }, };
     }
 
     const allowed = isAllowed(nsfwLevel, _context,);
@@ -138,7 +138,7 @@ export class NsfwHook implements HookHandler {
       return {
         handled: true,
         eventType: "nsfw_gate",
-        data: { nsfwLevel, blocked: true, },
+        data: { nsfwLevel, blocked: true, actorId: _context.actorId, chatId: _context.chatId, },
         suppressContent: true,
         reason: `Content level "${nsfwLevel}" exceeds policy "${_context.nsfwPolicy}"`,
       };
@@ -148,7 +148,7 @@ export class NsfwHook implements HookHandler {
     return {
       handled: true,
       eventType: "nsfw_gate",
-      data: { nsfwLevel, allowed: true, },
+      data: { nsfwLevel, allowed: true, actorId: _context.actorId, chatId: _context.chatId, },
     };
   }
 

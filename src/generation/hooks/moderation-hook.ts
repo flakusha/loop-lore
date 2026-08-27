@@ -119,7 +119,11 @@ export class ModerationHook implements HookHandler {
 
     const flags = this.detectModerationFlags(content,);
     if (!flags) {
-      return { handled: false, eventType: "moderation_flag", };
+      return {
+        handled: false,
+        eventType: "moderation_flag",
+        data: { actorId: context.actorId, chatId: context.chatId, },
+      };
     }
 
     const suppress = flags.severity === "severe";
@@ -143,6 +147,8 @@ export class ModerationHook implements HookHandler {
         matched: Array.from(flags.matched, (m,) => ({ term: m.term, count: m.count, }),),
         // Backward-compatible severity list (severe/moderate), kept for existing consumers.
         flags: [flags.severity,],
+        actorId: context.actorId,
+        chatId: context.chatId,
       },
       suppressContent: suppress,
       reason: `Content flagged for moderation (${flags.severity}, score ${flags.score}): ${matched}`,

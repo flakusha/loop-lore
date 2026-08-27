@@ -7,6 +7,11 @@
  * Fetches the actor's NSFW policy, runs the configured content hooks (mood,
  * emotion, NSFW, moderation), and extracts the dominant emotion / mood-shift
  * delta from the hook results.
+ *
+ * The actorId is resolved from the hook event payload (set by the hooks
+ * themselves) so consumers don't need to thread it through ambient context.
+ * A fallback actorId can be provided for callers that run the chain before
+ * the hooks have been updated to emit actorId.
  */
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
@@ -23,7 +28,8 @@ export interface RunContentHooksOpts {
   database: Kysely<DB>;
   config: Config;
   chatId: string;
-  actorId: string;
+  /** Optional: hooks emit actorId in their event payload (preferred). */
+  actorId?: string;
   userId: string;
   content: string;
 }
@@ -35,6 +41,8 @@ export interface ContentHooksResult {
   dominantEmotion: string | undefined;
   /** Mood-shift delta detected by the mood hook. */
   moodShiftDelta: number | undefined;
+  /** Actor ID resolved from the hook event payload. */
+  actorId: string | undefined;
 }
 
 export interface NsfwEligibilityResult {
@@ -45,34 +53,28 @@ export interface NsfwEligibilityResult {
   /** Resolved actor content_rating (canonical enum) — reused by post-LLM hook chain. */
   actorContentRating: ContentRating;
 }
+
 /**
  * Pre-LLM NSFW eligibility check.
  *
- * Resolves the actor's canonical content_rating and verifies the user is
- * permitted to access NSFW content (config toggle, age gate, minimum age).
- * Intended to run BEFORE the LLM call so blocked generations cost nothing.
+ * Runs BEFORE the LLM call so NSFW content is never generated for ineligible
+ * users. Returns the canonical actor content_rating so the post-LLM hook chain
+ * can reuse it without a second DB roundtrip.
  *
- * SFW-rated actors skip the user-side check (no DB user lookup) — SFW content
- * never crosses the age threshold, so the check is unnecessary and avoids a
- * false-negative on users without an age-gate accept.
- *
- * Resolves BUG-5232abe (HIGH) + BUG-f0683a8 (CRIT) follow-up. Both are already
- * mitigated post-LLM by runContentHooks, but THIS function lets callers block
- * BEFORE the LLM (avoiding token spend on a generation that would never be
- * stored). The post-LLM check inside runContentHooks remains as
- * defense-in-depth.
+ * This is the single source of truth for NSFW gating — both the pre-LLM
+ * eligibility check and the post-LLM defense-in-depth scan use the same
+ * `canAccessNsfw` helper.
  */
-export async function checkNsfwEligibility(
-  opts: {
-    database: Kysely<DB>;
-    config: Config;
-    actorId: string;
-    userId: string;
-    chatId?: string;
-  },
-): Promise<NsfwEligibilityResult> {
-  const { database, config, actorId, userId, chatId, } = opts;
+export async function checkNsfwEligibility(opts: {
+  database: Kysely<DB>;
+  config: Config;
+  chatId: string;
+  actorId: string;
+  userId: string;
+},): Promise<NsfwEligibilityResult> {
+  const { database, config, chatId, actorId, userId, } = opts;
 
+  // Fetch actor's canonical content_rating from actors table
   const actorRow = await database
     .selectFrom("actors",)
     .select(["content_rating",],)
@@ -80,18 +82,24 @@ export async function checkNsfwEligibility(
     .executeTakeFirst();
   const actorContentRating = (actorRow?.content_rating ?? ContentRating.Sfw) as ContentRating;
 
-  if (!isNsfwRating(actorContentRating,)) {
-    return { allowed: true, actorContentRating, };
+  // Age-gate precheck (BUG-5232abe — NSFW age gate never verified at generation).
+  // canAccessNsfw enforces: NSFW globally enabled, user authenticated, age
+  // gate accepted, user above nsfwMinAge. Only NSFW-rated actors require the
+  // gate — SFW content never crosses the age threshold, so we skip the DB
+  // roundtrip and the false-negative on users without an age-gate accept.
+  // Use the canonical isNsfwRating helper (single source of truth for the
+  // rating tiers).
+  if (isNsfwRating(actorContentRating,)) {
+    const access = await canAccessNsfw(database, config, userId,);
+    if (!access.allowed) {
+      getLogger().child({ module: "auto-gen", },).warn(
+        "Generation blocked by NSFW age-gate precheck",
+        { actorId, userId, reason: access.reason, chatId, },
+      );
+      return { allowed: false, reason: access.reason, actorContentRating, };
+    }
   }
 
-  const access = await canAccessNsfw(database, config, userId,);
-  if (!access.allowed) {
-    getLogger().child({ module: "auto-gen", },).warn(
-      "Generation blocked by NSFW age-gate precheck",
-      { actorId, userId, reason: access.reason, chatId, },
-    );
-    return { allowed: false, reason: access.reason, actorContentRating, };
-  }
   return { allowed: true, actorContentRating, };
 }
 
@@ -99,39 +107,53 @@ export async function checkNsfwEligibility(
  * Run the content-hook chain before storing a generated message.
  *
  * @returns Whether generation is allowed, plus the extracted dominant emotion
- *   and mood-shift delta.
+ *   and mood-shift delta, and the actorId resolved from the hook event payload.
  */
 export async function runContentHooks(opts: RunContentHooksOpts,): Promise<ContentHooksResult> {
-  const { database, config, chatId, actorId, userId, content, } = opts;
+  const { database, config, chatId, userId, content, } = opts;
 
+  // Resolve actorId: prefer the hook event payload (set by the hooks themselves),
+  // fall back to the caller-provided actorId for backward compatibility.
+  const fallbackActorId = opts.actorId;
+
+  // Fetch actor's canonical content_rating from actors table
+  const actorRow = fallbackActorId
+    ? await database
+      .selectFrom("actors",)
+      .select(["content_rating",],)
+      .where("id", "=", fallbackActorId,)
+      .executeTakeFirst()
+    : undefined;
+  const actorContentRating = (actorRow?.content_rating ?? ContentRating.Sfw) as ContentRating;
   // Age-gate precheck (BUG-5232abe — NSFW age gate never verified at generation).
-  // Delegates to checkNsfwEligibility (also called pre-LLM by callers). Kept
-  // here as defense-in-depth so the post-LLM chain can never persist content
-  // when the user would have been blocked.
-  const eligibility = await checkNsfwEligibility({
-    database,
-    config,
-    actorId,
-    userId,
-    chatId,
-  },);
-  if (!eligibility.allowed) {
-    return { allowed: false, dominantEmotion: undefined, moodShiftDelta: undefined, };
+  // canAccessNsfw enforces: NSFW globally enabled, user authenticated, age
+  // gate accepted, user above nsfwMinAge. Only NSFW-rated actors require the
+  // gate — SFW content never crosses the age threshold, so we skip the DB
+  // roundtrip and the false-negative on users without an age-gate accept.
+  // Use the canonical isNsfwRating helper (single source of truth for the
+  // rating tiers).
+  if (isNsfwRating(actorContentRating,)) {
+    const access = await canAccessNsfw(database, config, userId,);
+    if (!access.allowed) {
+      getLogger().child({ module: "auto-gen", },).warn(
+        "Generation blocked by NSFW age-gate precheck",
+        { actorId: fallbackActorId, userId, reason: access.reason, chatId, },
+      );
+      return { allowed: false, dominantEmotion: undefined, moodShiftDelta: undefined, actorId: fallbackActorId, };
+    }
   }
-  const { actorContentRating, } = eligibility;
-
-
 
   // Also fetch legacy nsfw_policy from character_availability for backward compat
-  const availability = await database
-    .selectFrom("character_availability",)
-    .select(["nsfw_policy",],)
-    .where("actor_id", "=", actorId,)
-    .executeTakeFirst();
+  const availability = fallbackActorId
+    ? await database
+      .selectFrom("character_availability",)
+      .select(["nsfw_policy",],)
+      .where("actor_id", "=", fallbackActorId,)
+      .executeTakeFirst()
+    : undefined;
   const nsfwPolicy = availability?.nsfw_policy
     ? jsonParseOr<Record<string, unknown>>(availability.nsfw_policy, {},).level as string | undefined
     : undefined;
-
   // Fetch user's max content rating from nsfw_user_preferences
   const userPrefs = await database
     .selectFrom("nsfw_user_preferences",)
@@ -165,7 +187,7 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
     hooks: [...getRegisteredHooks(),],
     context: {
       chatId,
-      actorId,
+      actorId: fallbackActorId ?? "",
       userId,
       content,
       nsfwPolicy,
@@ -185,7 +207,12 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
     getLogger().child({ module: "auto-gen", },).warn("Generation blocked by content hooks", {
       reason: Array.from(hookResult.events, (e,) => e.reason,).join("; ",),
     },);
-    return { allowed: false, dominantEmotion: undefined, moodShiftDelta: undefined, };
+    return {
+      allowed: false,
+      dominantEmotion: undefined,
+      moodShiftDelta: undefined,
+      actorId: resolveActorIdFromEvents(hookResult.events,) ?? fallbackActorId,
+    };
   }
 
   // Extract the dominant emotion detected by the EmotionHook (emotion_change
@@ -202,5 +229,24 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
     ? moodShift.data.delta
     : undefined;
 
-  return { allowed: true, dominantEmotion, moodShiftDelta, };
+  // Resolve actorId from the hook event payload (preferred) or fall back.
+  const actorId = resolveActorIdFromEvents(hookResult.events,) ?? fallbackActorId;
+
+  return { allowed: true, dominantEmotion, moodShiftDelta, actorId, };
+}
+
+/**
+ * Resolve actorId from the hook event payload. The MoodHook and EmotionHook
+ * emit actorId in their data payload; this helper extracts it so consumers
+ * don't need to thread actorId through ambient context.
+ */
+function resolveActorIdFromEvents(
+  events: readonly { eventType: string; data?: Record<string, unknown> }[],
+): string | undefined {
+  for (const event of events) {
+    if (event.data && typeof event.data.actorId === "string" && event.data.actorId.length > 0) {
+      return event.data.actorId;
+    }
+  }
+  return undefined;
 }
