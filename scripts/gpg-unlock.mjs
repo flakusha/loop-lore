@@ -65,14 +65,11 @@ function readMaxCacheTtl() {
 }
 
 async function getKeygrip(keyId,) {
-  // gpg-connect-agent reply shape:
-  //   S KEYINFO <keygrip> ... OK     ← key found
-  //   ERR <code> <reason>             ← key not in agent
+  // gpg-connect-agent reply: `S KEYINFO <keygrip> ...` on success, `ERR ...` otherwise.
   const out = await $`gpg-connect-agent "KEYINFO --no-list ${keyId} SENT" /bye 2>&1`.text();
-  return out.match(/^S KEYINFO\s+(\w+)/m,)?.[1]
-    ?? out.match(/^OK KEYINFO\s+(\w+)/m,)?.[1]
-    ?? null;
+  return out.match(/^S KEYINFO\s+(\w+)/m,)?.[1] ?? null;
 }
+
 
 
 
