@@ -225,7 +225,6 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             },);
           }
 
-
           return jsonNoContent();
         },
         { params: ChatParticipantParams, },
