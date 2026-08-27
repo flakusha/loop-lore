@@ -49,10 +49,9 @@ export class MoodHook implements HookHandler {
 
     // NSFW-rated actors: content carries stronger emotional valence, so
     // amplify the mood delta. Non-NSFW (SFW) actors use the base delta.
-    const isNsfwActor =
-      context.actorContentRating !== undefined &&
+    const isNsfwActor = context.actorContentRating !== undefined &&
       isNsfwRating(context.actorContentRating as ContentRating,);
-    const delta = isNsfwActor ? Math.round(baseDelta * 1.5) : baseDelta;
+    const delta = isNsfwActor ? Math.round(baseDelta * 1.5,) : baseDelta;
 
     log.info("mood-hook: detected mood shift", {
       dominantMood,
