@@ -82,8 +82,8 @@ DB-side trigger, to keep migrations portable to Postgres).
   separate keys (not collapsed by accident).
 - [ ] **Server emits `X-Record-Hash` on every response from a tracked
   route** (the row's `record_hash` value). On idempotency replay, the
-  original row's hash is echoed. Ticket 2 depends on this contract —
-  see **Architectural question Q1** below.
+  original row's hash is echoed. Ticket 2 depends on this contract
+  (see **Decisions log → Q1**).
 - [ ] Unit tests in `src/hash/record-hash.test.ts`:
   - deterministic for the same input (two calls, identical output),
   - `v` bump changes the output,
@@ -149,18 +149,9 @@ DB-side trigger, to keep migrations portable to Postgres).
   the envelope shape changes (e.g. new tracked column), bump `v`, the
   hash recomputes, and the backfill ticket can run safely in waves.
 
-## Architectural questions (flagged for human decision)
+## Decisions log
 
-**Q1 — Emission scope of `X-Record-Hash`.** Three options, materially
-different tradeoffs. The current ticket AC says "every response from a
-tracked route" but this is unverified against the user's intent:
-
-1. **Always** — emit on every response. Maximum transparency; small
-   per-response overhead (one header set).
-2. **On tracked routes only** — emit only on routes that participate
-   in the record-hash system. Saves header bytes for unrelated routes.
-3. **On idempotency replay only** — emit only when the response is a
-   replay (cached). Cheapest, but breaks ticket 2's reload-detection
-   for non-replayed responses.
-
-Default assumed by this ticket: option 1. Override before implementation.
+**Q1 — `X-Record-Hash` emission scope: option 0 (always on tracked routes).**
+The current AC ("server emits `X-Record-Hash` on every response from a
+tracked route") is the resolved decision. No further change needed;
+the option list under "Architectural questions" is removed.
