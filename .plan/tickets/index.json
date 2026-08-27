@@ -1512,6 +1512,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-http1handler-send-is-a-silent-no-op.md"
   },
+  "BUG-IDEMPOTENCY-CACHE-KEY-LACKS-USER-SCOPE-CROSS-USER-RESPONSE-R": {
+    "hash": "6361c0d",
+    "git_issue": "6361c0d",
+    "extid": "BUG-IDEMPOTENCY-CACHE-KEY-LACKS-USER-SCOPE-CROSS-USER-RESPONSE-R",
+    "type": "BUG",
+    "title": "Idempotency cache key lacks user scope — cross-user response replay",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.md"
+  },
   "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR": {
     "hash": "pending",
     "extid": "BUG-IMPERSONATE-BUILDIMPRESULT-REFERENCEERROR",
@@ -1834,6 +1846,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-middleware-requestid-dual-write-last-wins.md",
     "status": "fixed-in-worktree"
+  },
+  "BUG-MIGRATION-FILES-069-NSFW-CONSENT-STATE-AND-069-ACTIVITYPUB-S": {
+    "hash": "dc2bcaf",
+    "git_issue": "dc2bcaf",
+    "extid": "BUG-MIGRATION-FILES-069-NSFW-CONSENT-STATE-AND-069-ACTIVITYPUB-S",
+    "type": "BUG",
+    "title": "Migration files 069_nsfw_consent_state and 069_activitypub share numeric prefix",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-migration-files-069-nsfw-consent-state-and-069-activitypub-s.md"
   },
   "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM": {
     "hash": "6ca8fad",
@@ -2339,6 +2363,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
+  },
+  "BUG-SCRIPTS-WORKTREE-TICKET-WRITES-TO-CWD-INSTEAD-OF-WORKTREE-PA": {
+    "hash": "81dc8f9",
+    "git_issue": "81dc8f9",
+    "extid": "BUG-SCRIPTS-WORKTREE-TICKET-WRITES-TO-CWD-INSTEAD-OF-WORKTREE-PA",
+    "type": "BUG",
+    "title": "scripts/worktree ticket writes to CWD instead of worktree path",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-scripts-worktree-ticket-writes-to-cwd-instead-of-worktree-pa.md"
   },
   "BUG-SECURITY-MERGE-BUILD-BREAK-INSTANCES-TS": {
     "hash": "pending",
@@ -6456,6 +6492,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-adopt-bun-image-for-image-processing.md"
   },
+  "TASK-ADOPT-BUN-INSPECT-FOR-CUSTOM-FORMATTING": {
+    "hash": "4fea4d5",
+    "git_issue": "4fea4d5",
+    "extid": "TASK-ADOPT-BUN-INSPECT-FOR-CUSTOM-FORMATTING",
+    "type": "TASK",
+    "title": "Adopt Bun.inspect for custom formatting",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-bun-inspect-for-custom-formatting.md"
+  },
   "TASK-ADOPT-BUN-MARKDOWN-TO-REPLACE-MARKED": {
     "hash": "7c8ade4",
     "git_issue": "7c8ade4",
@@ -6515,6 +6563,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-adopt-bun-semver-for-version-comparison.md"
+  },
+  "TASK-ADOPT-BUN-SHELL-FOR-SHELL-COMMANDS": {
+    "hash": "9ccda03",
+    "git_issue": "9ccda03",
+    "extid": "TASK-ADOPT-BUN-SHELL-FOR-SHELL-COMMANDS",
+    "type": "TASK",
+    "title": "Adopt Bun.shell for shell commands",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-bun-shell-for-shell-commands.md"
   },
   "TASK-ADOPT-BUN-SLEEP-FOR-ASYNC-DELAYS": {
     "hash": "5770f52",
@@ -6587,6 +6647,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-adopt-bun-yaml-to-replace-js-yaml.md"
+  },
+  "TASK-ADOPT-DIALOG-API-FOR-NATIVE-MODALS": {
+    "hash": "19582a7",
+    "git_issue": "19582a7",
+    "extid": "TASK-ADOPT-DIALOG-API-FOR-NATIVE-MODALS",
+    "type": "TASK",
+    "title": "Adopt Dialog API for native modals",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-dialog-api-for-native-modals.md"
   },
   "TASK-ADOPT-EDEN-FOR-TYPE-SAFE-API-CLIENT": {
     "hash": "950c880",
@@ -6684,6 +6756,54 @@
     "tags": [],
     "source": ".plan/tickets/TASK-adopt-elysiajs-static-for-public-asset-serving.md"
   },
+  "TASK-ADOPT-INTERSECTION-OBSERVER-FOR-LAZY-LOADING": {
+    "hash": "2ac3417",
+    "git_issue": "2ac3417",
+    "extid": "TASK-ADOPT-INTERSECTION-OBSERVER-FOR-LAZY-LOADING",
+    "type": "TASK",
+    "title": "Adopt Intersection Observer for lazy loading",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-intersection-observer-for-lazy-loading.md"
+  },
+  "TASK-ADOPT-NOTIFICATION-API-FOR-DESKTOP-NOTIFICATIONS": {
+    "hash": "c8de0c7",
+    "git_issue": "c8de0c7",
+    "extid": "TASK-ADOPT-NOTIFICATION-API-FOR-DESKTOP-NOTIFICATIONS",
+    "type": "TASK",
+    "title": "Adopt Notification API for desktop notifications",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-notification-api-for-desktop-notifications.md"
+  },
+  "TASK-ADOPT-PAGE-VISIBILITY-API-AND-SERVICE-WORKER": {
+    "hash": "4686c96",
+    "git_issue": "4686c96",
+    "extid": "TASK-ADOPT-PAGE-VISIBILITY-API-AND-SERVICE-WORKER",
+    "type": "TASK",
+    "title": "Adopt Page Visibility API and Service Worker",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-page-visibility-api-and-service-worker.md"
+  },
+  "TASK-ADOPT-POPOVER-API-FOR-TOOLTIPS-DROPDOWNS-CONTEXT-MENUS": {
+    "hash": "5b7614d",
+    "git_issue": "5b7614d",
+    "extid": "TASK-ADOPT-POPOVER-API-FOR-TOOLTIPS-DROPDOWNS-CONTEXT-MENUS",
+    "type": "TASK",
+    "title": "Adopt Popover API for tooltips dropdowns context menus",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-popover-api-for-tooltips-dropdowns-context-menus.md"
+  },
   "TASK-ADOPT-STATE-MACHINE-FRAMEWORK-IN-RUNTIME-STATUS-WRITES": {
     "hash": "e900191",
     "extid": "TASK-ADOPT-STATE-MACHINE-FRAMEWORK-IN-RUNTIME-STATUS-WRITES",
@@ -6696,6 +6816,42 @@
     "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md",
     "status": "done",
     "git_issue": "e900191"
+  },
+  "TASK-ADOPT-VIEW-TRANSITIONS-API-FOR-PAGE-NAVIGATION": {
+    "hash": "5b18353",
+    "git_issue": "5b18353",
+    "extid": "TASK-ADOPT-VIEW-TRANSITIONS-API-FOR-PAGE-NAVIGATION",
+    "type": "TASK",
+    "title": "Adopt View Transitions API for page navigation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-view-transitions-api-for-page-navigation.md"
+  },
+  "TASK-ADOPT-WEB-ANIMATIONS-API-FOR-VN-SCENES": {
+    "hash": "527c733",
+    "git_issue": "527c733",
+    "extid": "TASK-ADOPT-WEB-ANIMATIONS-API-FOR-VN-SCENES",
+    "type": "TASK",
+    "title": "Adopt Web Animations API for VN scenes",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-web-animations-api-for-vn-scenes.md"
+  },
+  "TASK-ADOPT-WEB-SHARE-API-AND-CLIPBOARD-API": {
+    "hash": "c360eaa",
+    "git_issue": "c360eaa",
+    "extid": "TASK-ADOPT-WEB-SHARE-API-AND-CLIPBOARD-API",
+    "type": "TASK",
+    "title": "Adopt Web Share API and Clipboard API",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-web-share-api-and-clipboard-api.md"
   },
   "TASK-AGENCY-STORY-POINTS": {
     "hash": "bdb93de",
@@ -7920,6 +8076,18 @@
     "epic": "epic-e2e-integration-testing",
     "tags": [],
     "source": ".plan/tickets/TASK-BROWSER-E2E-UI-SURFACE-GAPS.md"
+  },
+  "TASK-BROWSER-SIDE-RANDOMUUIDV7-FOR-TIME-SORTABLE-IDS": {
+    "hash": "628ad64",
+    "git_issue": "628ad64",
+    "extid": "TASK-BROWSER-SIDE-RANDOMUUIDV7-FOR-TIME-SORTABLE-IDS",
+    "type": "TASK",
+    "title": "Browser-side randomUUIDv7 for time-sortable IDs",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-browser-side-randomuuidv7-for-time-sortable-ids.md"
   },
   "TASK-BROWSER-TEST-FIXTURE-NO-MOCK-LLM-PROVIDER-STALE-FRONTEND-BUI": {
     "hash": "30d0e69",
