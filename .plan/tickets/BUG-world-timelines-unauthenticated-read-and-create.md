@@ -1,6 +1,6 @@
 # BUG: world timelines unauthenticated read and create
 
-**Status:** ✅ Fixed (commit 88544034)
+**Status:** ✅ Resolved (commit 88544034 — GET list/POST create GET-by-id gated on extractAuth + requireWorldAccess/Owner)
 **Priority:** critical
 **Effort:** Small
 
