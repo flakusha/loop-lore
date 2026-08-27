@@ -3,7 +3,12 @@
 
 // src/transport/compression.ts — Transparent compression decorator
 
-import { brotliCompressSync, brotliDecompressSync, gunzipSync, gzipSync, } from "node:zlib";
+// Brotli has no Bun.* equivalent (Bun.zstd* covers zstd); gzip uses Bun.gzipSync.
+// lean-ctx: safeFromUint8Array returns Buffer (= Uint8Array<ArrayBufferLike>),
+//          but Bun.gzipSync declares the narrower `Uint8Array<ArrayBuffer>`.
+//          `new Uint8Array(buffer)` rehydrates the view into the strict generic
+//          the Bun types require; the underlying bytes are unchanged.
+import { brotliCompressSync, brotliDecompressSync, } from "node:zlib";
 import type { CompressionAlgorithm, } from "../db/enums";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import type { Connection, ProtocolHandler, } from "./protocol.unified";
@@ -13,6 +18,10 @@ interface CompressionOptions {
   level?: number;
   /** Minimum payload size (bytes) before compression kicks in. Default 256. */
   threshold?: number;
+}
+
+function strictUint8(buf: Buffer,): Uint8Array<ArrayBuffer> {
+  return new Uint8Array(buf);
 }
 
 /**
@@ -37,6 +46,7 @@ function compress(
     throw bufferResult.error;
   }
   const buffer = bufferResult.buffer;
+  const strictIn = strictUint8(buffer,);
 
   switch (algorithm) {
     case "zstd": {
@@ -58,7 +68,7 @@ function compress(
     }
 
     case "gzip": {
-      return new Uint8Array(gzipSync(buffer, { level: options.level ?? 6, },),);
+      return new Uint8Array(Bun.gzipSync(strictIn, { level: (options.level ?? 6) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9, },),);
     }
   }
 }
@@ -77,6 +87,7 @@ function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Ar
     throw bufferResult.error;
   }
   const buffer = bufferResult.buffer;
+  const strictIn = strictUint8(buffer,);
 
   switch (algorithm) {
     case "zstd": {
@@ -88,7 +99,7 @@ function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Ar
     }
 
     case "gzip": {
-      return new Uint8Array(gunzipSync(buffer,),);
+      return new Uint8Array(Bun.gunzipSync(strictIn,),);
     }
   }
 }
