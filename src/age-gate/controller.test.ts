@@ -18,7 +18,8 @@ import {
   initAgeGate,
 } from "./controller";
 
-/** Create an Elysia app with age-gate routes for testing.
+/**
+ * Create an Elysia app with age-gate routes for testing.
  * @returns Configured Elysia app.
  */
 function createAgeGateApp() {
@@ -28,7 +29,8 @@ function createAgeGateApp() {
     .use(ageGateRoutes({ database: mockDb, },),);
 }
 
-/** Create an Elysia app with admin age-gate routes for testing.
+/**
+ * Create an Elysia app with admin age-gate routes for testing.
  * @returns Configured Elysia app.
  */
 function createAdminAgeGateApp() {
@@ -39,7 +41,8 @@ function createAdminAgeGateApp() {
 }
 
 // Mock database factory - flat structure to avoid nested function lint errors
-/** Create a mock selectFrom function.
+/**
+ * Create a mock selectFrom function.
  * @returns Mock selectFrom chain.
  */
 function createSelectFrom(): {
@@ -65,7 +68,8 @@ function createSelectFrom(): {
   };
 }
 
-/** Create a mock updateTable function.
+/**
+ * Create a mock updateTable function.
  * @returns Mock updateTable chain.
  */
 function createUpdateTable(): {
@@ -80,7 +84,8 @@ function createUpdateTable(): {
   };
 }
 
-/** Create a mock insertInto function.
+/**
+ * Create a mock insertInto function.
  * @returns Mock insertInto chain.
  */
 function createInsertInto(): { values: () => { execute: () => Promise<void> } } {
@@ -91,7 +96,8 @@ function createInsertInto(): { values: () => { execute: () => Promise<void> } } 
   };
 }
 
-/** Create a complete mock Kysely database.
+/**
+ * Create a complete mock Kysely database.
  * @returns Mock Kysely instance.
  */
 function createMockDb(): Kysely<DB> {
@@ -102,7 +108,8 @@ function createMockDb(): Kysely<DB> {
   } as unknown as Kysely<DB>;
 }
 
-/** Create a mock DB that throws errors.
+/**
+ * Create a mock DB that throws errors.
  * @returns Mock DB that throws on access.
  */
 function createErrorDb() {
@@ -116,7 +123,8 @@ function createErrorDb() {
   };
 }
 
-/** Create a mock DB with a specific user's age-gate state.
+/**
+ * Create a mock DB with a specific user's age-gate state.
  * @param birthDate - User's birth date.
  * @param acceptedAt - When age gate was accepted.
  * @returns Mock DB with user state.
