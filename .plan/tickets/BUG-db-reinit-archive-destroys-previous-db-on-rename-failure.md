@@ -1,6 +1,6 @@
 # BUG: db reinit archive destroys previous db on rename failure
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (commit 19d136b8 — archive previous database before reinit instead of deleting)
 **Priority:** high
 **Effort:** Large
 **Epic:** review-dev-2026-08-26-security-data-integrity-merges
