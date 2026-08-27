@@ -25,7 +25,15 @@ export const AssetLinkEntitySchema = t.UnionEnum([
 ],);
 export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
 export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
-export const AvatarSelectionRuleSchema = t.UnionEnum(["emotion_first", "mood_first", "weighted", "random", "fixed",],);
+export const AvatarSelectionRuleSchema = t.UnionEnum([
+  "emotion_first",
+  "mood_first",
+  "action_first",
+  "context_first",
+  "weighted",
+  "random",
+  "fixed",
+],);
 export const CancelReasonSchema = t.UnionEnum([
   "user_cancel",
   "repetition_detected",

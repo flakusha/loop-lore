@@ -20,7 +20,7 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { canAccessNsfw, } from "../../middleware/nsfw-gate/access";
 import { isNsfwRating, } from "../../middleware/nsfw-gate/constants";
-import { jsonParseOr, } from "../../utils";
+import { jsonParseOr, } from "../../utils/safe-json";
 import { getRegisteredHooks, runHookChain, } from "../hooks";
 import type { HookEventType, } from "../hooks";
 import { resolveActorIdFromEvents, } from "./resolve-actor-from-events";
