@@ -8,6 +8,9 @@
  * emotional content and emits emotion change events that trigger avatar
  * selection updates. LLM-based classification is planned
  * (see TASK-aux-llm-emotion-classifier.md).
+ *
+ * Context-aware: skips detection for `privacyLevel === "private"` so private
+ * conversations are never analyzed for emotional content.
  */
 
 import { EmotionType, } from "../../db/enums";
@@ -19,14 +22,20 @@ export class EmotionHook implements HookHandler {
   readonly eventTypes: HookEventType[] = ["emotion_change",];
 
   // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
-  async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
-    return _content.length > 10;
+  async canHandle(content: string, context: HookContext,): Promise<boolean> {
+    // Private content opt-out: skip emotion detection entirely so private
+    // conversations are never analyzed for emotional indicators.
+    if (context.privacyLevel === "private") { return false; }
+    return content.length > 10;
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.execute interface requires Promise<HookResult>
-  async execute(content: string, _context: HookContext,): Promise<HookResult> {
+  async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();
-    log.debug("emotion-hook: analyzing content for emotional indicators", { contentLength: content.length, },);
+    log.debug("emotion-hook: analyzing content for emotional indicators", {
+      contentLength: content.length,
+      privacyLevel: context.privacyLevel,
+    },);
 
     const emotionIndicators = this.detectEmotions(content,);
     if (emotionIndicators.length === 0) {
@@ -35,12 +44,21 @@ export class EmotionHook implements HookHandler {
 
     const dominantEmotion = this.determineDominantEmotion(emotionIndicators,);
 
-    log.info("emotion-hook: detected emotion shift", { dominantEmotion, },);
+    log.info("emotion-hook: detected emotion shift", {
+      dominantEmotion,
+      actorId: context.actorId,
+      chatId: context.chatId,
+    },);
 
     return {
       handled: true,
       eventType: "emotion_change",
-      data: { dominantEmotion, indicators: emotionIndicators, },
+      data: {
+        dominantEmotion,
+        indicators: emotionIndicators,
+        actorId: context.actorId,
+        chatId: context.chatId,
+      },
     };
   }
 
@@ -63,12 +81,10 @@ export class EmotionHook implements HookHandler {
         keywords: ["sad", "sorrow", "grief", "mourn", "cry", "tear", "depressed", "heartbroken",],
       },
       {
-        name: EmotionType.Fearful,
-        keywords: ["afraid", "scared", "terrified", "fear", "dread", "anxious", "worried", "nervous",],
+        name: EmotionType.Fearful, keywords: ["afraid", "scared", "terrified", "fear", "dread", "anxious", "worried", "nervous",],
       },
       {
-        name: EmotionType.Surprised,
-        keywords: ["surprised", "shocked", "astonished", "amazed", "astonishing", "unexpected",],
+        name: EmotionType.Surprised, keywords: ["surprised", "shocked", "astonished", "amazed", "astonishing", "unexpected",],
       },
       { name: EmotionType.Disgusted, keywords: ["disgust", "disgusted", "repulsive", "revolting", "nauseating",], },
       {
