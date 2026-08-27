@@ -166,3 +166,23 @@ const inviteStatusDef: StateDef<InviteStatus> = {
   terminal: ["revoked", "expired", "exhausted",],
 };
 export const inviteStatusMachine = createMachine(inviteStatusDef,);
+
+// ── Message Seen State ──────────────────────────────────
+export const MessageSeenState = {
+  Unseen: "unseen",
+  Processing: "processing",
+  Seen: "seen",
+} as const;
+export type MessageSeenState = (typeof MessageSeenState)[keyof typeof MessageSeenState];
+
+const messageSeenStateDef: StateDef<MessageSeenState> = {
+  values: ["unseen", "processing", "seen",] as const,
+  initial: "unseen",
+  transitions: {
+    unseen: ["processing", "seen",],
+    processing: ["seen", "unseen",],
+    seen: ["unseen",],
+  },
+  terminal: [],
+};
+export const messageSeenStateMachine = createMachine(messageSeenStateDef,);
