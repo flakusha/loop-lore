@@ -236,5 +236,29 @@ describe("party split / reunion (C7 Phase 3)", () => {
         message: "Only the primary chat owner can initiate a reunion",
       },);
     });
+
+    test("returns forbidden when actor is not the secondary chat owner", async () => {
+      // Create a secondary chat owned by a different user
+      const otherOwnerId = crypto.randomUUID();
+      await insertUsers(db, `owner-${otherOwnerId}`, "Other Owner", { id: otherOwnerId, } as never,);
+      await insertActors(
+        db,
+        "Other Owner",
+        { id: otherOwnerId, user_id: otherOwnerId, owner_id: otherOwnerId, } as never,
+      );
+      const otherChatId = crypto.randomUUID();
+      await insertChats(db, "Other Chat", otherOwnerId, { id: otherChatId, type: "group", mode: "group", } as never,);
+
+      const result = await reuniteChats(db, {
+        primaryChatId: srcChatId,
+        secondaryChatId: otherChatId,
+        actorId: ownerId,
+      },);
+
+      expect(result,).toEqual({
+        code: "forbidden",
+        message: "Only the secondary chat owner can initiate a reunion",
+      },);
+    });
   });
 });
