@@ -135,6 +135,8 @@ export interface Chats {
   quick_replies: string | null;
   prompt_override: string | null;
   output_style_preset: string | null;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── actors ────────────────────────────────────────────
@@ -196,6 +198,8 @@ export interface Characters {
   updated_at: Generated<string>;
   agent_role: string | null;
   federation_consent: Generated<number>;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 
@@ -306,6 +310,8 @@ export interface Messages {
   e2e_sender_eph_pub_jwk: string | null;
   e2e_chain_index: number | null;
   content_plaintext: string | null;
+  data_version: Generated<number>;
+  record_hash: Generated<string>;
 }
 
 // ── actor_keys ────────────────────────────────────────────
@@ -913,3 +919,4 @@ export interface NsfwConsentState {
   created_at: string;
   revoked_at: string | null;
 }
+
