@@ -20,8 +20,7 @@ import type { DB, } from "../../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
 import { filter as filterProfanity, } from "../../profanity/service";
 import { uid, } from "../../utils";
-import { jsonCreated, jsonError, } from "../http-utils";
-import { log, } from "./helpers";
+import { ErrorCode, jsonCreated, jsonError, } from "../http-utils";
 
 /**
  * Trigger post-create generation: kick off async LLM auto-generation when
@@ -148,7 +147,7 @@ export async function maybeAutoReply(
           response: jsonError(
             "Could not persist reply due to high concurrency. Please retry.",
             503,
-            "service_busy",
+            ErrorCode.ServiceUnavailable,
           ),
         };
       }
