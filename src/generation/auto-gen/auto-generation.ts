@@ -15,7 +15,7 @@ import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { callLlm, } from "./call-llm";
-import { runContentHooks, } from "./content-hooks";
+import { checkNsfwEligibility, runContentHooks, } from "./content-hooks";
 import { checkAndPruneContext, } from "./context-pruning";
 import { createDefaultDeps, type GenDeps, } from "./deps";
 import { handleGenerationError, } from "./handle-generation-error";
@@ -125,6 +125,27 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     },);
     if (!actor) { return; }
     const { characterId, characterName, } = actor;
+
+    // Pre-LLM NSFW eligibility precheck (BUG-f0683a8 / BUG-5232abe). Block
+    // BEFORE spending tokens on generation for users who would be blocked
+    // anyway. runContentHooks runs the same check post-LLM as defense-in-depth.
+    const nsfwEligibility = await checkNsfwEligibility({
+      database,
+      config,
+      actorId: characterId,
+      userId,
+      chatId,
+    },);
+    if (!nsfwEligibility.allowed) {
+      log.info("auto-gen: blocked before generation by NSFW precheck", {
+        chatId,
+        actorId: characterId,
+        userId,
+        reason: nsfwEligibility.reason,
+      },);
+      return;
+    }
+
 
     // ── Context pruning (critical/imminent threshold) ───────
     // When the context window is critically full, prune low-value messages
