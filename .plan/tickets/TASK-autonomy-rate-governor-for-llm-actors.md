@@ -18,9 +18,9 @@ Highest-priority governance layer for autonomous character/NPC/GM actions: no au
 ## Direction
 
 1. Governor service consulted before every autonomous action dispatch; denial is default; autonomy is opt-in per world/chat.
-+2. Budgets: per-actor actions/hour, per-world/chat actions/hour, token + cost caps per window. In-flight bound rides the route-level concurrency semaphore (FEAT-generation-rate-limiting-and-concurrency-limits); the governor adds actor-level quotas above it, not a second semaphore.
+2. Budgets: per-actor actions/hour, per-world/chat actions/hour, token + cost caps per window. In-flight bound rides the route-level concurrency semaphore (FEAT-generation-rate-limiting-and-concurrency-limits); the governor adds actor-level quotas above it, not a second semaphore.
 3. Cooldowns with mandatory jitter (configurable spread ratio) — fixed intervals read robotic; jitter is part of pseudoorganic pacing, not optional polish.
-+4. Kill switch: per-world scope is autonomy-native; global + per-chat holds are CONSUMED from generation flow control (FEAT-global-generation-pause-kill-switch system_config key + story_state.isPaused) — no parallel pause machinery. Takes effect between actions, aborts queued dispatches.
+4. Kill switch: per-world scope is autonomy-native; global + per-chat holds are CONSUMED from generation flow control (FEAT-global-generation-pause-kill-switch system_config key + story_state.isPaused) — no parallel pause machinery. Takes effect between actions, aborts queued dispatches.
 5. Cost accounting: every autonomous generation logged per actor (tokens, model, est. cost) — surfaces in health/telemetry.
 6. Unlimited mode ONLY behind explicit dev/stress flag (config-gated, refused in production builds); when on, every action still cost-logged.
 
