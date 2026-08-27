@@ -18637,5 +18637,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
+  },
+  "BUG-FIX-CSRF-CTX-SET-HEADERS-APPEND-IS-UNDEFINED-IN-ELYSIA-1-4-H": {
+    "hash": "771e8b34",
+    "git_issue": "771e8b34",
+    "extid": "BUG-FIX-CSRF-CTX-SET-HEADERS-APPEND-IS-UNDEFINED-IN-ELYSIA-1-4-H",
+    "type": "BUG",
+    "title": "fix(csrf): ctx.set.headers.append is undefined in Elysia 1.4 HTTPHeaders",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h.md",
+    "status": "done"
   }
 }
