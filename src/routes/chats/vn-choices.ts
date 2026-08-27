@@ -9,6 +9,7 @@
  */
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../../chat/service";
 import { listVnChoices, selectVnChoice, } from "../../chat/service/vn-choices";
 import type { DB, } from "../../db/schema";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
@@ -40,7 +41,12 @@ function handleListVnChoices(database: Kysely<DB>,) {
     const userId = requireUserId(ctx,);
     if (typeof userId !== "string") { return userId; }
 
-    const chatId = ctx.params.id;
+    // IDOR guard: verify user has access to this chat before listing choices.
+    const userRole = ctx.userRole as string | null;
+    const access = await checkChatAccess(database, chatId, userId, userRole,);
+    if (!access.ok) {
+      return jsonError(access.message, access.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden, access.code as never,);
+    }
     const sceneIndex = Number(ctx.query.sceneIndex,);
 
     if (!Number.isInteger(sceneIndex,) || sceneIndex < 0) {
@@ -67,7 +73,12 @@ function handleSelectVnChoice(database: Kysely<DB>,) {
     const userId = requireUserId(ctx,);
     if (typeof userId !== "string") { return userId; }
 
-    const chatId = ctx.params.id;
+    // IDOR guard: verify user has access to this chat before selecting a choice.
+    const userRole = ctx.userRole as string | null;
+    const access = await checkChatAccess(database, chatId, userId, userRole,);
+    if (!access.ok) {
+      return jsonError(access.message, access.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden, access.code as never,);
+    }
     const choiceId = ctx.params.choiceId;
 
     if (!choiceId) {
