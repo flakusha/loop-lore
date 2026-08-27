@@ -15,6 +15,7 @@
 import type { Kysely, } from "kysely";
 import { encryptBytes, } from "../crypto/actor-keys";
 import type { DB, } from "../db/schema";
+import { safeJsonStringify, } from "../utils";
 import { getSmk, } from "./smk";
 
 export interface ActivityPubActorKey {
@@ -52,12 +53,14 @@ export async function generateActivityPubKey(
 
   // Export public key as JWK.
   const publicJwk = await crypto.subtle.exportKey("jwk", keyPair.publicKey,);
-  const publicJwkJson = safeJsonStringify(publicJwk,);
+  const publicJwkResult = safeJsonStringify(publicJwk,);
+  if (!publicJwkResult.ok) { throw new Error(`Failed to serialize public JWK: ${publicJwkResult.error.message}`,); }
 
   // Export private key as JWK and encrypt at rest.
   const privateJwk = await crypto.subtle.exportKey("jwk", keyPair.privateKey,);
-  const privateJwkJson = safeJsonStringify(privateJwk,);
-  const encryptedPrivate = await encryptBytes(smk, new TextEncoder().encode(privateJwkJson,),);
+  const privateJwkResult = safeJsonStringify(privateJwk,);
+  if (!privateJwkResult.ok) { throw new Error(`Failed to serialize private JWK: ${privateJwkResult.error.message}`,); }
+  const encryptedPrivate = await encryptBytes(smk, new TextEncoder().encode(privateJwkResult.value,),);
 
   const keyId = `ap-key-${actorId}-${Date.now()}`;
   const now = new Date().toISOString();
@@ -77,7 +80,7 @@ export async function generateActivityPubKey(
       id,
       actor_id: actorId,
       key_id: keyId,
-      public_jwk: publicJwkJson,
+      public_jwk: publicJwkResult.value,
       encrypted_private_jwk: Buffer.from(encryptedPrivate,).toString("base64",),
       status: "active",
       created_at: now,
@@ -89,7 +92,7 @@ export async function generateActivityPubKey(
       id,
       actor_id: actorId,
       key_id: keyId,
-      public_jwk: publicJwkJson,
+      public_jwk: publicJwkResult.value,
       status: "active",
       rotated_at: null,
       created_at: now,

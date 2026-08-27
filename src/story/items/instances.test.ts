@@ -111,10 +111,11 @@ describe("ItemsService.transfer", () => {
     const wId = uid();
     const otherWorldId = uid();
     const otherUserId = uid();
+    const otherItemId = uid();
     await insertUsers(db, `user-${otherUserId}`, "Other Owner", { id: otherUserId, } as never,);
     await insertWorlds(db, otherUserId, "Other World", { id: otherWorldId, } as never,);
-    await insertItems(db, otherWorldId, "Sword", "weapon", { id: itemId, } as never,);
-    await insertWorldItems(db, otherWorldId, itemId, { id: wId, location_id: locationA, quantity: 1, } as never,);
+    await insertItems(db, otherWorldId, "Sword", "weapon", { id: otherItemId, } as never,);
+    await insertWorldItems(db, otherWorldId, otherItemId, { id: wId, location_id: locationA, quantity: 1, } as never,);
     const svc = new ItemsService(db,);
 
     // Attempt to transfer an item from a world the user does not own.
@@ -159,10 +160,11 @@ describe("ItemsService.destroy", () => {
     const wId = uid();
     const otherWorldId = uid();
     const otherUserId = uid();
+    const otherItemId = uid();
     await insertUsers(db, `user-${otherUserId}`, "Other Owner", { id: otherUserId, } as never,);
     await insertWorlds(db, otherUserId, "Other World", { id: otherWorldId, } as never,);
-    await insertItems(db, otherWorldId, "Sword", "weapon", { id: itemId, } as never,);
-    await insertWorldItems(db, otherWorldId, itemId, { id: wId, location_id: locationA, quantity: 1, } as never,);
+    await insertItems(db, otherWorldId, "Sword", "weapon", { id: otherItemId, } as never,);
+    await insertWorldItems(db, otherWorldId, otherItemId, { id: wId, location_id: locationA, quantity: 1, } as never,);
     const svc = new ItemsService(db,);
 
     // Attempt to destroy an item from a world the user does not own.
