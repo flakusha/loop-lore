@@ -21,6 +21,8 @@ export {
   browserGenerateKey,
   browserImportKey,
 } from "./browser-crypto";
+export type { BrowserUUIDv7Options, } from "./browser-uuid";
+export { browserRandomUUIDv7, isUUIDv7, } from "./browser-uuid";
 
 export interface BrowserEncryptedPayload {
   enc: string;
