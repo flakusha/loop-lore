@@ -56,32 +56,73 @@ export interface SetChatNsfwOverrideArgs {
   thisL: NsfwModerationServiceContext;
   chatId: string;
   override: "enabled" | "disabled" | null;
+  performedBy: string;
 }
 
-/** Set NSFW override for a chat. Pass null to clear (revert to user pref). */
+/**
+ * Set NSFW override for a chat. Pass null to clear (revert to user pref).
+ *
+ * Service-level guard: the chat must exist (fail fast instead of a silent
+ * no-op update) and every change is attributed to `performedBy` with an
+ * audit row, so callers that bypass the HTTP route are still on record.
+ */
 export async function setChatNsfwOverride(
-  { thisL, chatId, override, }: SetChatNsfwOverrideArgs,
+  { thisL, chatId, override, performedBy, }: SetChatNsfwOverrideArgs,
 ): Promise<void> {
+  const chat = await thisL.db.selectFrom("chats",)
+    .select("id",)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+  if (!chat) {
+    throw new Error(`chat_not_found:${chatId}`);
+  }
   await thisL.db.updateTable("chats",)
     .set({ nsfw_override: override, },)
     .where("id", "=", chatId,)
     .execute();
-  thisL.log.info("Chat NSFW override updated", { chatId, override, },);
+  thisL.log.info("Chat NSFW override updated", { chatId, override, performedBy, },);
+  await thisL.recordAction({
+    actionType: "nsfw_override_set",
+    targetUserId: performedBy,
+    performedBy,
+    reason: `chat nsfw_override set to ${override ?? "null"}`,
+    scope: "chat",
+    scopeId: chatId,
+  },);
 }
 
 export interface SetWorldNsfwOverrideArgs {
   thisL: NsfwModerationServiceContext;
   worldId: string;
   override: "enabled" | "disabled" | null;
+  performedBy: string;
 }
 
-/** Set NSFW override for a world. Pass null to clear (revert to user pref). */
+/**
+ * Set NSFW override for a world. Pass null to clear (revert to user pref).
+ * Same service-level guard as the chat variant: existence check + audit.
+ */
 export async function setWorldNsfwOverride(
-  { thisL, worldId, override, }: SetWorldNsfwOverrideArgs,
+  { thisL, worldId, override, performedBy, }: SetWorldNsfwOverrideArgs,
 ): Promise<void> {
+  const world = await thisL.db.selectFrom("worlds",)
+    .select("id",)
+    .where("id", "=", worldId,)
+    .executeTakeFirst();
+  if (!world) {
+    throw new Error(`world_not_found:${worldId}`);
+  }
   await thisL.db.updateTable("worlds",)
     .set({ nsfw_override: override, },)
     .where("id", "=", worldId,)
     .execute();
-  thisL.log.info("World NSFW override updated", { worldId, override, },);
+  thisL.log.info("World NSFW override updated", { worldId, override, performedBy, },);
+  await thisL.recordAction({
+    actionType: "nsfw_override_set",
+    targetUserId: performedBy,
+    performedBy,
+    reason: `world nsfw_override set to ${override ?? "null"}`,
+    scope: "world",
+    scopeId: worldId,
+  },);
 }

@@ -192,7 +192,6 @@ export interface Characters {
   created_at: Generated<string>;
   updated_at: Generated<string>;
   agent_role: string | null;
-  federation_consent: Generated<number>;
 }
 
 // ── actor_notes ────────────────────────────────────────────
@@ -932,15 +931,14 @@ export interface RequestResults {
   offload_path: string | null;
 }
 
-// ── activitypub_actor_keys ────────────────────────────────────────────
-export interface ActivitypubActorKeys {
+// ── nsfw_consent_state ────────────────────────────────────────────
+export interface NsfwConsentState {
   id: Generated<string>;
-  actor_id: string;
-  key_id: string;
-  public_jwk: string;
-  encrypted_private_jwk: string;
-  status: Generated<string>;
-  rotated_at: string | null;
+  user_id: string;
+  chat_id: string;
+  action: string;
+  scope: Generated<string>;
+  reason: string | null;
   created_at: string;
-  expires_at: string | null;
+  revoked_at: string | null;
 }
