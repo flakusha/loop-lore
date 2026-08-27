@@ -25,7 +25,6 @@ import {
 } from "./csrf";
 import type { CsrfMiddlewareOptions, } from "./csrf";
 export type { CsrfMiddlewareOptions, };
-
 /**
  * Build the 403 JSON response used when CSRF verification rejects a
  * request. Kept as an export so production and test code share the exact
