@@ -9,7 +9,7 @@
  * object at call time, so `this` still resolves to the full ChatState.
  */
 
-import { browserCompressThenEncrypt, } from "../browser";
+import { browserCompressThenEncrypt, browserRandomUUIDv7, } from "../browser";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -17,8 +17,8 @@ import type { ChatState, } from "./types";
 
 const log = rootLog.child({ module: "chat", },);
 
-/** Monotonic per-load counter for optimistic temp message ids. */
-let TEMP_SEQ = 0;
+/** Counter prefix marker for optimistic temp ids; the full id embeds a UUIDv7. */
+const TEMP_PREFIX = "tmp-";
 
 /** Build request body for sendMessage (handles encryption + attachments). */
 async function buildSendBody(
@@ -36,7 +36,7 @@ async function buildSendBody(
       body.content = text;
     }
   }
-  const lastMsg = msgs.findLast((m,) => !m.id.startsWith("temp-",));
+  const lastMsg = msgs.findLast((m,) => !m.id.startsWith(TEMP_PREFIX,));
   if (lastMsg) { body.parentId = lastMsg.id; }
   if (pendingAssets.length > 0) {
     body.attachments = Array.from(pendingAssets, (a, i,) => ({
@@ -75,8 +75,11 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
     }
 
     // Unique id per optimistic send so rollback can target exactly this message.
-    // No crypto.randomUUID — unavailable in insecure contexts (plain-http LAN).
-    const tempId = `temp-${Date.now()}-${(++TEMP_SEQ).toString(36,)}`;
+    // UUIDv7 gives chronological ordering without a per-load counter; the
+    // `tmp-` prefix flags the row as an optimistic placeholder (consumed
+    // by `findLast` above to pick the real parent). `getRandomValues` works
+    // in insecure contexts (plain-http LAN), unlike `crypto.randomUUID`.
+    const tempId = `${TEMP_PREFIX}${browserRandomUUIDv7()}`;
     const msgs = this.messages;
     msgs.push({
       id: tempId,
