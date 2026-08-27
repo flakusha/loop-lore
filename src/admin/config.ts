@@ -14,7 +14,10 @@ import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 
-/** Logger instance for this module. */
+/**
+ * Logger instance for this module.
+ * @returns Child logger scoped to "system-config".
+ */
 function log() {
   return getLogger().child({ module: "system-config", },);
 }
@@ -28,17 +31,31 @@ export interface ConfigEntry {
   updated_at: string;
 }
 
-/** Return all system config entries ordered by key. */
+/**
+ * Return all system config entries ordered by key.
+ * @param db - Database instance.
+ * @returns All config entries.
+ */
 export async function getAllConfig(db: Kysely<DB>,): Promise<ConfigEntry[]> {
   return db.selectFrom("system_config",).selectAll().orderBy("key",).execute();
 }
 
-/** Return a single config entry by key, or undefined if missing. */
+/**
+ * Return a single config entry by key, or undefined if missing.
+ * @param db - Database instance.
+ * @param key - Config key.
+ * @returns The config entry, or undefined.
+ */
 export async function getConfig(db: Kysely<DB>, key: string,): Promise<ConfigEntry | undefined> {
   return db.selectFrom("system_config",).selectAll().where("key", "=", key,).executeTakeFirst();
 }
 
-/** Return the raw string value for a key, or undefined if missing. */
+/**
+ * Return the raw string value for a key, or undefined if missing.
+ * @param db - Database instance.
+ * @param key - Config key.
+ * @returns The value, or undefined.
+ */
 export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<string | undefined> {
   const row = await db.selectFrom("system_config",).select("value",).where("key", "=", key,).executeTakeFirst();
   return row?.value;
@@ -47,6 +64,10 @@ export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<stri
 /**
  * Insert or update a config entry.
  * Updates updated_at on conflict.
+ * @param db - Database instance.
+ * @param key - Config key.
+ * @param value - Value to store.
+ * @param description - Optional human-readable description.
  */
 export async function setConfig(
   db: Kysely<DB>,
@@ -65,12 +86,20 @@ export async function setConfig(
     .execute();
 }
 
-/** Delete a config entry by key. */
+/**
+ * Delete a config entry by key.
+ * @param db - Database instance.
+ * @param key - Config key.
+ */
 export async function deleteConfig(db: Kysely<DB>, key: string,): Promise<void> {
   await db.deleteFrom("system_config",).where("key", "=", key,).execute();
 }
 
-/** Seed default config values from the app config. Skips existing keys. */
+/**
+ * Seed default config values from the app config. Skips existing keys.
+ * @param db - Database instance.
+ * @param config - App config to source defaults from.
+ */
 export async function seedDefaults(db: Kysely<DB>, config: Config,): Promise<void> {
   const defaults: { key: string; value: string; description: string }[] = [
     {
