@@ -19,10 +19,18 @@ import { createAsyncStore, startOffloadDaemon, } from "./async";
 import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { authenticate, } from "./middleware/auth";
+import {
+  cookieForDecision,
+  CSRF_EXEMPT_ROUTES,
+  CSRF_HEADER,
+  decideCsrf,
+} from "./middleware/csrf";
+import type { CsrfMiddlewareOptions, } from "./middleware/csrf";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { idempotent, } from "./middleware/idempotency";
 import type { IdempotencyCtx, } from "./middleware/idempotency";
 import { requestIdMiddleware, } from "./middleware/request-id";
+import { safeJsonStringify, } from "./utils/safe-json";
 
 import { recordLifecycle, } from "./middleware/lifecycle";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
@@ -94,6 +102,68 @@ export function createApp(deps: AppDeps,): Elysia {
         ...i18n,
       };
     },);
+
+  // ── CSRF protection (double-submit cookie via Bun.CSRF) ───────
+  // Runs after auth derive so sessionId is available for token binding,
+  // and BEFORE idempotency.onBeforeHandle so unsafe idempotent requests
+  // are rejected at the gate (and never reach recordResponse / cache).
+  const csrfSecret = config.auth.csrfSecret ?? "";
+  const fallbackSecret = config.auth.jwtSecret ?? "";
+  const csrfEnabled = csrfSecret.length > 0 || fallbackSecret.length > 0;
+  const effectiveCsrfSecret = csrfSecret.length > 0 ? csrfSecret : fallbackSecret;
+  const csrfOpts: CsrfMiddlewareOptions = {
+    secret: effectiveCsrfSecret,
+    enabled: csrfEnabled,
+  };
+  // Elysia infers context types from prior `derive(...)` calls; we match the
+  // existing onBeforeHandle/onAfterHandle convention used by the idempotency
+  // middleware — explicit `any` with structural usage. Type-safe at runtime;
+  // the helpers above consume only the well-known fields.
+  app.onBeforeHandle((ctx: any,) => {
+    if (!csrfEnabled) { return undefined; }
+    const decision = decideCsrf(csrfOpts, {
+      method: ctx.request.method,
+      routePattern: ctx.route ?? null,
+      headers: ctx.request.headers,
+      sessionId: ctx.sessionId ?? null,
+      requestId: ctx.requestId ?? "anon",
+    },);
+    if (!decision.ok) {
+      ctx.set.status = 403;
+      const body = safeJsonStringify({
+        error: "csrf_verification_failed",
+        message: "CSRF token missing or invalid.",
+      },);
+      const payload = body.ok ? body.value : '{"error":"csrf_verification_failed"}';
+      return new Response(payload, {
+        status: 403,
+        headers: { "content-type": "application/json", },
+      },);
+    }
+    return undefined;
+  },);
+  app.onAfterHandle((ctx: any,) => {
+    if (!csrfEnabled) { return; }
+    const decision = decideCsrf(csrfOpts, {
+      method: ctx.request.method,
+      routePattern: ctx.route ?? null,
+      headers: ctx.request.headers,
+      sessionId: ctx.sessionId ?? null,
+      requestId: ctx.requestId ?? "anon",
+    },);
+    const cookieHeader = cookieForDecision(decision, csrfOpts,);
+    if (cookieHeader === null) { return; }
+    // Elysia mutation point — `ctx.set.headers` is an HTTPHeaders map; we
+    // append the Set-Cookie so the browser picks up the freshly-minted
+    // token on the next request.
+    ctx.set.headers.append("set-cookie", cookieHeader,);
+  },);
+  // Reference CSRF_HEADER + CSRF_EXEMPT_ROUTES so tree-shakers keep the
+  // route-table constant when consumers spread the module. The middleware
+  // looks the routes up internally via the Set; these symbols are the
+  // canonical "what we protect" surface for plugin authors.
+  void CSRF_HEADER;
+  void CSRF_EXEMPT_ROUTES;
 
   // ── Idempotency guard (after request-id derive so ctx.requestId is populated)
   // Single shared instance so beforeHandle (markInFlight) and recordResponse
