@@ -162,6 +162,7 @@ export async function injectNarration(
         actor_id: "system",
         role: "system" as never,
         content: text,
+        content_plaintext: text,
         content_type: "narration" as never,
         content_format: "markdown" as never,
         content_encoding: "identity" as never,
