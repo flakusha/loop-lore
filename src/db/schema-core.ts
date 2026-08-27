@@ -195,6 +195,7 @@ export interface Characters {
   created_at: Generated<string>;
   updated_at: Generated<string>;
   agent_role: string | null;
+  federation_consent: Generated<number>;
 }
 
 
@@ -870,6 +871,25 @@ export interface E2eSkippedMessageKeys {
   created_at: Generated<string>;
 }
 
+// ── request_results ────────────────────────────────────────────
+export interface RequestResults {
+  id: Generated<string>;
+  method: string;
+  route_pattern: string;
+  user_id: string | null;
+  status: string;
+  progress: string | null;
+  response_status: number | null;
+  response_headers: string | null;
+  response_body: string | null;
+  error: string | null;
+  started_at: string;
+  completed_at: string | null;
+  offloaded_at: string | null;
+  offload_path: string | null;
+}
+
+// ── activitypub_actor_keys ────────────────────────────────────────────
 export interface ActivitypubActorKeys {
   id: Generated<string>;
   actor_id: string;
@@ -882,6 +902,7 @@ export interface ActivitypubActorKeys {
   expires_at: string | null;
 }
 
+// ── nsfw_consent_state ────────────────────────────────────────────
 export interface NsfwConsentState {
   id: Generated<string>;
   user_id: string;
