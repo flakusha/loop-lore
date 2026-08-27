@@ -1,6 +1,6 @@
 # BUG: NSFW gate fail-open: DB error and missing prefs default to allowed
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Closed (commit 49731047 — fix(nsfw): gate correctness cluster)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ src/generation/hooks/nsfw-hook.ts:68 bare catch{} around getEffectiveNsfw falls 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

@@ -1294,7 +1294,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-group-chat-nsfw-weakest-link-violated-enforcement-hardcodes-.md"
+    "source": ".plan/tickets/BUG-group-chat-nsfw-weakest-link-violated-enforcement-hardcodes-.md",
+    "status": "done"
   },
   "BUG-GROUP-CHAT-SILENCE-PASS-NOT-IMPLEMENTED": {
     "hash": "pending",
@@ -1596,7 +1597,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud.md"
+    "source": ".plan/tickets/BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud.md",
+    "status": "done"
   },
   "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK": {
     "hash": "658c858",
@@ -1766,7 +1768,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-consent-auto-granted-in-memory-for-any-logged-in-user-n.md"
+    "source": ".plan/tickets/BUG-nsfw-consent-auto-granted-in-memory-for-any-logged-in-user-n.md",
+    "status": "done"
   },
   "BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG": {
     "hash": "81a5e15",
@@ -1804,7 +1807,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al.md"
+    "source": ".plan/tickets/BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al.md",
+    "status": "done"
   },
   "BUG-NSFW-GATE-LOG-PLAINTEXT-PII": {
     "hash": "9f3faa5",
@@ -1829,7 +1833,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g.md"
+    "source": ".plan/tickets/BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g.md",
+    "status": "done"
   },
   "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY": {
     "hash": "bd2b3b5",
@@ -13273,7 +13278,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-nsfw-override-authz-scope-route-lacks-chat-membership-check-.md"
+    "source": ".plan/tickets/TASK-nsfw-override-authz-scope-route-lacks-chat-membership-check-.md",
+    "status": "done"
   },
   "TASK-NSFW-PHEROMONES-CHEMISTRY": {
     "hash": "pending",

@@ -1,6 +1,6 @@
 # BUG: logNsfwEvent has zero callers: no NSFW gate decision ever audited
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Closed (commit 49731047 — fix(nsfw): gate correctness cluster)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ src/middleware/nsfw-gate/logging.ts:107 logNsfwEvent never called repo-wide; all
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
