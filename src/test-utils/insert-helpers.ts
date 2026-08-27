@@ -515,6 +515,7 @@ export async function insertCharacters(
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
     agent_role?: string | null;
+    federation_consent?: Generated<number>;
   },
 ): Promise<void> {
   await db.insertInto("characters",).values({
@@ -3350,6 +3351,27 @@ export async function insertRequestResults(
     route_pattern,
     status,
     started_at,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a activitypub_actor_keys row. */
+export async function insertActivitypubActorKeys(
+  db: Db,
+  actor_id: string,
+  key_id: string,
+  public_jwk: string,
+  encrypted_private_jwk: string,
+  created_at: string,
+  opts?: { id?: Generated<string>; status?: Generated<string>; rotated_at?: string | null; expires_at?: string | null },
+): Promise<void> {
+  await db.insertInto("activitypub_actor_keys",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    key_id,
+    public_jwk,
+    encrypted_private_jwk,
+    created_at,
     ...opts,
   } as any,).execute();
 }
