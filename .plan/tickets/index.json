@@ -12090,6 +12090,17 @@
     "source": ".plan/tickets/TASK-logging-censor-exact-match-rules-error-stack-path-leak.md",
     "git_issue": "714ca84"
   },
+  "TASK-LOGGING-SEPARATE-DATABASE-RESEARCH": {
+    "hash": "pending",
+    "extid": "TASK-LOGGING-SEPARATE-DATABASE-RESEARCH",
+    "type": "TASK",
+    "title": "Separate database for logging — research",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "`epic-logging-telemetry.md` (logging), `epic-database-backup-recovery.md` (storage), `epic-multi-instance-reconciliation.md` (consistency)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-logging-separate-database-research.md"
+  },
   "TASK-LORA-DISCOVERY-APPLICATION": {
     "hash": "b3764b1",
     "extid": "TASK-LORA-DISCOVERY-APPLICATION",
