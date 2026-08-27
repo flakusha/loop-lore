@@ -93,10 +93,18 @@ describe("messageSearchRoutes", () => {
     await insertChatParticipants(db, chatId, participantId, {},);
 
     // Messages in the owner's chat.
-    await insertMessages(db, chatId, ownerId, MessageRole.User, "The dragon guards the golden lair", {},);
-    await insertMessages(db, chatId, participantId, MessageRole.Character, "I bring news of the dragon's lair", {},);
-    await insertMessages(db, chatId, ownerId, MessageRole.Assistant, "A sack of coins spills onto the floor", {},);
-    await insertMessages(db, otherChatId, outsiderId, MessageRole.User, "secret dragon treasure elsewhere", {},);
+    await insertMessages(db, chatId, ownerId, MessageRole.User, "The dragon guards the golden lair", {
+      content_plaintext: "The dragon guards the golden lair",
+    },);
+    await insertMessages(db, chatId, participantId, MessageRole.Character, "I bring news of the dragon's lair", {
+      content_plaintext: "I bring news of the dragon's lair",
+    },);
+    await insertMessages(db, chatId, ownerId, MessageRole.Assistant, "A sack of coins spills onto the floor", {
+      content_plaintext: "A sack of coins spills onto the floor",
+    },);
+    await insertMessages(db, otherChatId, outsiderId, MessageRole.User, "secret dragon treasure elsewhere", {
+      content_plaintext: "secret dragon treasure elsewhere",
+    },);
   },);
 
   afterAll(async () => {
@@ -148,6 +156,7 @@ describe("messageSearchRoutes", () => {
 
   test("hasAttachment filter returns only messages with attachments", async () => {
     await insertMessages(db, chatId, ownerId, MessageRole.User, "look at this image", {
+      content_plaintext: "look at this image",
       attachments: JSON.stringify([{ assetId: "asset_1", order: 0, caption: "pic", label: "", },],),
     },);
     const app = searchApp(db, ownerId, "user",);
@@ -203,7 +212,9 @@ describe("messageSearchRoutes", () => {
   });
 
   test("FTS stays in sync with message insert", async () => {
-    await insertMessages(db, chatId, ownerId, MessageRole.User, "a shimmering unicorn appears", {},);
+    await insertMessages(db, chatId, ownerId, MessageRole.User, "a shimmering unicorn appears", {
+      content_plaintext: "a shimmering unicorn appears",
+    },);
     const app = searchApp(db, ownerId, "user",);
     const res = await appHandle(app, get(`/api/messages/search?chatId=${chatId}&q=unicorn`,),);
     const body = (await res.json()) as SearchBody;
@@ -211,7 +222,9 @@ describe("messageSearchRoutes", () => {
   });
 
   test("FTS stays in sync with message delete", async () => {
-    await insertMessages(db, chatId, ownerId, MessageRole.User, "unique snowflake mint", {},);
+    await insertMessages(db, chatId, ownerId, MessageRole.User, "unique snowflake mint", {
+      content_plaintext: "unique snowflake mint",
+    },);
     const row = await db
       .selectFrom("messages",)
       .select("id",)
@@ -239,7 +252,9 @@ describe("messageSearchRoutes", () => {
 
   test("identity-encoded results return plaintext content (no decode regression)", async () => {
     // Sanity baseline: the read path must never transform an identity row.
-    await insertMessages(db, chatId, ownerId, MessageRole.User, "plain-anchor-mint identity-marker", {},);
+    await insertMessages(db, chatId, ownerId, MessageRole.User, "plain-anchor-mint identity-marker", {
+      content_plaintext: "plain-anchor-mint identity-marker",
+    },);
     const app = searchApp(db, ownerId, "user",);
     const res = await appHandle(
       app,
