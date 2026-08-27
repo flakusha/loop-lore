@@ -292,6 +292,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-skills-routes.md"
     }
   ],
@@ -1575,6 +1587,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
     }
   ],
   "src/async/store.ts": [
@@ -1588,11 +1604,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
     }
   ],
   "src/auth": [
@@ -4852,6 +4880,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     },
     {
@@ -6705,6 +6737,16 @@
       "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md"
     }
   ],
+  "src/db/migrations/067_request_results.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    }
+  ],
   "src/db/migrations/0XX_audio_templates.ts": [
     {
       "kind": "ticket",
@@ -6778,10 +6820,6 @@
     }
   ],
   "src/db/migrations/XXXX_request_results.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-middleware-request-lifecycle.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
@@ -7934,6 +7972,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-rpg-stats.md"
     },
     {
@@ -7955,6 +8001,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
     },
     {
       "kind": "ticket",
@@ -11235,6 +11289,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
     }
   ],
   "src/generation/auto-gen/call-llm.ts": [
@@ -13367,10 +13425,20 @@
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     }
   ],
+  "src/middleware/idempotency.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+    }
+  ],
   "src/middleware/idempotency.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
     },
     {
       "kind": "ticket",
@@ -13383,6 +13451,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
     }
   ],
   "src/middleware/in-progress.ts": [
@@ -13399,6 +13471,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+    }
+  ],
+  "src/middleware/lifecycle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
     }
   ],
   "src/middleware/nsfw-gate/access.ts": [
@@ -13496,6 +13578,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rate-limit-coverage-expansion.md"
     },
     {
@@ -13515,6 +13601,12 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/middleware/request-id.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
+    }
+  ],
   "src/middleware/request-id.ts": [
     {
       "kind": "epic",
@@ -13531,6 +13623,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
     }
   ],
   "src/middleware/response-headers.ts": [
@@ -13559,6 +13659,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
     }
   ],
   "src/native/blake3.ts": [
@@ -16822,11 +16926,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
     }
   ],
   "src/routes/messages/swipe-race-insert.test.ts": [
@@ -16855,6 +16967,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
     }
   ],
   "src/routes/messages/transitions.ts": [
@@ -17171,6 +17287,16 @@
       "source": ".plan/tickets/TASK-proactive-messaging.md"
     }
   ],
+  "src/routes/proactive-messaging/send-handler.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
+    }
+  ],
   "src/routes/prompt-templates.ts": [
     {
       "kind": "ticket",
@@ -17208,7 +17334,15 @@
   "src/routes/requests/status.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
     }
   ],
   "src/routes/router.ts": [
@@ -19718,11 +19852,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
     },
     {
       "kind": "ticket",
