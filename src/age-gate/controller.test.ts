@@ -18,6 +18,7 @@ import {
   initAgeGate,
 } from "./controller";
 
+/** Create an Elysia app with age-gate routes for testing. */
 function createAgeGateApp() {
   const mockDb = createMockDb();
   return new Elysia()
@@ -25,6 +26,7 @@ function createAgeGateApp() {
     .use(ageGateRoutes({ database: mockDb, },),);
 }
 
+/** Create an Elysia app with admin age-gate routes for testing. */
 function createAdminAgeGateApp() {
   const mockDb = createMockDb();
   return new Elysia()
@@ -33,6 +35,7 @@ function createAdminAgeGateApp() {
 }
 
 // Mock database factory - flat structure to avoid nested function lint errors
+/** Create a mock selectFrom function. */
 function createSelectFrom(): {
   select: () => {
     where: () => {
@@ -56,6 +59,7 @@ function createSelectFrom(): {
   };
 }
 
+/** Create a mock updateTable function. */
 function createUpdateTable(): {
   set: () => { where: () => { execute: () => Promise<{ numUpdatedRows: number }> } };
 } {
@@ -68,6 +72,7 @@ function createUpdateTable(): {
   };
 }
 
+/** Create a mock insertInto function. */
 function createInsertInto(): { values: () => { execute: () => Promise<void> } } {
   return {
     values: () => ({
@@ -76,6 +81,7 @@ function createInsertInto(): { values: () => { execute: () => Promise<void> } } 
   };
 }
 
+/** Create a complete mock Kysely database. */
 function createMockDb(): Kysely<DB> {
   return {
     selectFrom: createSelectFrom,
@@ -84,6 +90,7 @@ function createMockDb(): Kysely<DB> {
   } as unknown as Kysely<DB>;
 }
 
+/** Create a mock DB that throws errors. */
 function createErrorDb() {
   return {
     selectFrom: () => {
@@ -95,6 +102,7 @@ function createErrorDb() {
   };
 }
 
+/** Create a mock DB with a specific user's age-gate state. */
 function createDbWithUser(birthDate: string | null, acceptedAt: string | null,) {
   return {
     selectFrom: () => ({
