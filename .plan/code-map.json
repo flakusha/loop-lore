@@ -435,7 +435,17 @@
       "source": "docs/spec/crypto.md"
     }
   ],
+  "src/assets/service/create.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    }
+  ],
   "src/assets/service/create.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
@@ -447,6 +457,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-data-level-integrity-checksums-and-re-readable-logical-dumps.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
     }
   ],
   "src/assets/service/delete.ts": [
@@ -1527,6 +1545,12 @@
       "source": ".plan/tickets/TASK-regex-safety-xml-utils-tag-unescaped-narrative-greedy.md"
     }
   ],
+  "src/async/offload.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
+    }
+  ],
   "src/async/offload.ts": [
     {
       "kind": "epic",
@@ -1535,6 +1559,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
     }
   ],
   "src/async/store.ts": [
@@ -1545,6 +1573,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
     }
   ],
   "src/auth": [
@@ -5223,6 +5259,22 @@
       "source": "docs/spec/content-compression.md"
     }
   ],
+  "src/content/validate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    }
+  ],
+  "src/content/validate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    }
+  ],
   "src/crypto": [
     {
       "kind": "epic",
@@ -5893,6 +5945,22 @@
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
     }
   ],
+  "src/db/content-version.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    }
+  ],
+  "src/db/content-version.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    }
+  ],
   "src/db/data-migrations/messages/v1_to_v2.ts": [
     {
       "kind": "ticket",
@@ -6225,6 +6293,22 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+  "src/db/heal.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
+    }
+  ],
+  "src/db/heal.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
+    }
+  ],
   "src/db/index.ts": [
     {
       "kind": "epic",
@@ -6313,6 +6397,12 @@
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
     }
   ],
+  "src/db/migrations.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    }
+  ],
   "src/db/migrations/001_init.ts": [
     {
       "kind": "epic",
@@ -6385,6 +6475,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
     }
   ],
   "src/db/migrations/018_data_version_columns.ts": [
@@ -6427,6 +6525,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crafting-professions.md"
+    }
+  ],
+  "src/db/migrations/026_rpg_mechanics.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
     }
   ],
   "src/db/migrations/028_lore_audience_scope.ts": [
@@ -6593,6 +6701,12 @@
       "source": ".plan/tickets/FEAT-065-sub-video.md"
     }
   ],
+  "src/db/migrations/0xx_": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    }
+  ],
   "src/db/migrations/README": [
     {
       "kind": "ticket",
@@ -6731,6 +6845,22 @@
       "source": ".plan/tickets/TASK-db-reinit-archives-previous-database-instead-of-deleting.md"
     }
   ],
+  "src/db/revalidate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
+    }
+  ],
+  "src/db/revalidate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
+    }
+  ],
   "src/db/schema": [
     {
       "kind": "ticket",
@@ -6757,6 +6887,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotions-avatar-edit-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
     },
     {
       "kind": "ticket",
@@ -7607,6 +7741,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-internal-external-flagging.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
     },
     {
       "kind": "ticket",
@@ -8879,6 +9017,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
     }
   ],
   "src/frontend/alpine/info-bubble.test.ts": [
@@ -9143,6 +9285,12 @@
       "source": ".plan/tickets/TASK-rag-pipeline-context.md"
     }
   ],
+  "src/frontend/alpine/reload.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    }
+  ],
   "src/frontend/alpine/rpg-stats.ts": [
     {
       "kind": "ticket",
@@ -9251,6 +9399,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-transfer-location.md"
+    }
+  ],
+  "src/frontend/alpine/use-request-status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
     }
   ],
   "src/frontend/alpine/user-notifications.ts": [
@@ -9912,6 +10066,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-401-guard-helpers.md"
     }
   ],
@@ -9929,6 +10091,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-gallery-upload-dropzone-untested.md"
+    }
+  ],
+  "src/frontend/gallery/grid.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
     }
   ],
   "src/frontend/htmx-encrypt.ts": [
@@ -10313,10 +10481,42 @@
       "source": ".plan/tickets/TASK-rag-document-upload.md"
     }
   ],
+  "src/frontend/reconcile.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    }
+  ],
+  "src/frontend/reconcile.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    }
+  ],
   "src/frontend/render-transforms.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-output-control-transforms.md"
+    }
+  ],
+  "src/frontend/request-cache.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    }
+  ],
+  "src/frontend/request-cache.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
     }
   ],
   "src/frontend/rpg/navigation.ts": [
@@ -12191,6 +12391,22 @@
       "source": "docs/frontend/chat/overview.md"
     }
   ],
+  "src/hash/record-hash.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    }
+  ],
+  "src/hash/record-hash.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-content-hashing-distributed-integrity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    }
+  ],
   "src/i18n/__tests/middleware.test.ts": [
     {
       "kind": "ticket",
@@ -13096,6 +13312,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
     }
   ],
@@ -13237,6 +13461,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
     }
   ],
   "src/middleware/response-headers.ts": [
@@ -14979,6 +15211,18 @@
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-batch.md"
     }
   ],
+  "src/routes/assets/serve.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    }
+  ],
+  "src/routes/assets/serve.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    }
+  ],
   "src/routes/audio.ts": [
     {
       "kind": "epic",
@@ -15025,6 +15269,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-demo-login-endpoint-bypasses-rate-limiter.md"
+    }
+  ],
+  "src/routes/auth/logout.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
     }
   ],
   "src/routes/auth/register.ts": [
@@ -15823,6 +16073,12 @@
       "source": "docs/spec/quests-encounters.md"
     }
   ],
+  "src/routes/gallery/batch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    }
+  ],
   "src/routes/games.ts": [
     {
       "kind": "epic",
@@ -16339,6 +16595,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-window-monitor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
     },
     {
       "kind": "ticket",
@@ -16869,6 +17129,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-queue.md"
+    }
+  ],
+  "src/routes/requests/status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
     }
   ],
   "src/routes/router.ts": [
@@ -20134,6 +20400,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-achievement-unlock-sources.md"
     },
     {
@@ -20621,6 +20891,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
     }
   ],
   "src/validation/middleware.ts": [
