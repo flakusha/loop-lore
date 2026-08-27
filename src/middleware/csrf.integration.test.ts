@@ -4,15 +4,23 @@
 /**
  * Integration test for the CSRF middleware wired into an Elysia app.
  *
- * Exercises the real `onBeforeHandle`/`onAfterHandle` flow (not the isolated
- * unit helpers) to verify the round-trip behavior the production wiring relies on:
+ * Exercises the SAME `csrfPlugin` factory that production uses (see
+ * `src/middleware/csrf.ts::csrfPlugin` and `src/elysia-app.ts::applyCsrfPlugin`)
+ * — NOT an inline duplicate. If production wiring regresses (e.g. someone
+ * reverts `ctx.set.headers["set-cookie"] = ...` back to `.append(...)`),
+ * this test MUST fail.
+ *
+ * Coverage:
  *   - GET issues a Set-Cookie for `csrf_token`.
  *   - subsequent GET with a valid cookie does NOT re-issue.
  *   - POST without any token → 403 (and short-circuits before the handler).
  *   - POST with mismatched header/cookie → 403.
  *   - POST with valid header matching cookie → handler runs.
+ *   - POST with a token bound to a DIFFERENT session → 403 (no replay).
  *   - login-style exempt routes bypass verification (no token required).
  *   - disabled mode (`enabled: false`) is a pass-through for any method.
+ *   - empty-secret + enabled=true does not crash (defensive coverage).
+ *   - anonymous binding: token minted for one request id is rejected on another.
  */
 
 import { describe, expect, test, } from "bun:test";
@@ -20,9 +28,8 @@ import { Elysia, } from "elysia";
 import { requestIdMiddleware, } from "./request-id";
 import {
   CSRF_COOKIE,
-  cookieForDecision,
   CSRF_HEADER,
-  decideCsrf,
+  applyCsrfPlugin,
   mintCsrfToken,
   type CsrfMiddlewareOptions,
 } from "./csrf";
@@ -33,60 +40,35 @@ const SESSION_A = "session-user-a";
 interface SetupOpts {
   secret?: string;
   enabled?: boolean;
-  exemptRoute?: string;
   /** Auth-derive-style mock: returns a sessionId or null for the request. */
   resolveSession?: (req: Request,) => string | null;
 }
 
+/**
+ * Build an Elysia app that runs the EXACT same CSRF wiring as production
+ * (`applyCsrfPlugin`). Only differences: a synthetic auth derive that
+ * resolves sessionId from the request (production uses `authenticate`),
+ * and the test routes. Both `csrfPlugin.beforeHandle` and `.afterHandle`
+ * are the production handlers — no copy-paste.
+ */
 function buildApp(opts: SetupOpts,) {
   const csrfOpts: CsrfMiddlewareOptions = {
     secret: opts.secret ?? SECRET,
     enabled: opts.enabled ?? true,
   };
-  return new Elysia()
+  const app = new Elysia()
     .derive(requestIdMiddleware(),)
     .derive((ctx: { request: Request },) => ({
       sessionId: opts.resolveSession?.(ctx.request,) ?? null,
-    }),)
-    .onBeforeHandle((ctx: any,) => {
-      if (!csrfOpts.enabled) { return undefined; }
-      const decision = decideCsrf(csrfOpts, {
-        method: ctx.request.method,
-        routePattern: ctx.route ?? null,
-        headers: ctx.request.headers,
-        sessionId: ctx.sessionId ?? null,
-        requestId: ctx.requestId ?? "anon",
-      },);
-      if (!decision.ok) {
-        ctx.set.status = 403;
-        return new Response(JSON.stringify({ error: "csrf_verification_failed" }), {
-          status: 403,
-          headers: { "content-type": "application/json" },
-        },);
-      }
-      return undefined;
-    },)
-    .onAfterHandle((ctx: any,) => {
-      if (!csrfOpts.enabled) { return; }
-      const decision = decideCsrf(csrfOpts, {
-        method: ctx.request.method,
-        routePattern: ctx.route ?? null,
-        headers: ctx.request.headers,
-        sessionId: ctx.sessionId ?? null,
-        requestId: ctx.requestId ?? "anon",
-      },);
-      const cookieHeader = cookieForDecision(decision, csrfOpts,);
-      if (cookieHeader === null) { return; }
-      ctx.set.headers["set-cookie"] = cookieHeader;
-    },)
-    // Register one mutating route so we can prove CSRF gates it.
+    }),);
+  applyCsrfPlugin(app as unknown as Parameters<typeof applyCsrfPlugin>[0], csrfOpts,);
+  return app
     .post("/api/things", () => new Response("created", { status: 201 }),)
-    // Register an exempt route when requested.
     .post("/api/auth/login", () => new Response("logged-in", { status: 200 }),)
-    .get("/api/whoami", (ctx: any,) =>
+    .get("/api/whoami", (ctx: { sessionId: string | null },) =>
       new Response(JSON.stringify({ userId: ctx.sessionId, }), {
         headers: { "content-type": "application/json" },
-      }),);
+      },),);
 }
 
 async function dispatch(
@@ -107,7 +89,7 @@ describe("csrf integration — issuance path", () => {
     expect(setCookie,).toContain("SameSite=Lax",);
     expect(setCookie,).toContain("Path=/",);
     expect(setCookie,).not.toContain("HttpOnly",);
-  });
+  },);
 
   test("GET with a valid existing cookie does NOT re-issue", async () => {
     const app = buildApp({ resolveSession: () => SESSION_A, });
@@ -120,13 +102,10 @@ describe("csrf integration — issuance path", () => {
     );
     expect(res.status,).toBe(200,);
     expect(res.headers.get("set-cookie",),).toBeNull();
-  });
+  },);
 
-  test("GET with a stale binding re-issues and gets a different token", async () => {
+  test("GET with a stale binding re-issues a fresh token", async () => {
     const app = buildApp({ resolveSession: () => SESSION_A, });
-    // Token bound to a stale sessionId — current request is SESSION_A so it
-    // still verifies; we need a token that FAILS verification against SESSION_A.
-    // Quickest: empty string (which `verifyCsrfToken` rejects on length).
     const stale = mintCsrfToken(SECRET, "old-session", {},);
     const res = await dispatch(
       app,
@@ -135,13 +114,12 @@ describe("csrf integration — issuance path", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    expect(res.headers.get("set-cookie",),).not.toBeNull();
-    // The new cookie's value must NOT equal the stale token (a freshly bound one).
     const issued = res.headers.get("set-cookie",) ?? "";
+    expect(issued,).not.toBe("");
     const value = new RegExp(`${CSRF_COOKIE}=([^;]+)`).exec(issued,)?.[1];
     expect(value,).toBeDefined();
     expect(value,).not.toBe(stale,);
-  });
+  },);
 });
 
 describe("csrf integration — verification path", () => {
@@ -154,7 +132,7 @@ describe("csrf integration — verification path", () => {
     expect(res.status,).toBe(403,);
     const body = await res.json();
     expect(body.error,).toBe("csrf_verification_failed",);
-  });
+  },);
 
   test("POST with mismatched header/cookie tokens is rejected with 403", async () => {
     const app = buildApp({ resolveSession: () => SESSION_A, });
@@ -171,7 +149,7 @@ describe("csrf integration — verification path", () => {
       },),
     );
     expect(res.status,).toBe(403,);
-  });
+  },);
 
   test("POST with a valid token bound to the current session passes the gate", async () => {
     const app = buildApp({ resolveSession: () => SESSION_A, });
@@ -188,7 +166,7 @@ describe("csrf integration — verification path", () => {
       },),
     );
     expect(res.status,).toBe(201,);
-  });
+  },);
 
   test("POST with a token bound to a DIFFERENT session is rejected (no replay)", async () => {
     const app = buildApp({ resolveSession: () => SESSION_A, });
@@ -205,14 +183,13 @@ describe("csrf integration — verification path", () => {
       },),
     );
     expect(res.status,).toBe(403,);
-  });
+  },);
 
   test("anonymous binding: token minted in one request cannot verify in another", async () => {
-    // Resolve a token bound to `anonymous::req-attacker`. Try to verify it on a
-    // different request (`anonymous::req-victim`) — must be rejected because
-    // the binding differs. This is the actual security property: the binding
-    // space `anonymous::<requestId>` is per-request, so an attacker who steals
-    // a cookie bound to their own request cannot replay it on someone else's.
+    // Token bound to `anonymous::req-attacker` cannot verify under
+    // `anonymous::req-victim`. The `anonymous::<requestId>` binding space
+    // is per-request, so an attacker who steals a cookie bound to their
+    // own request id cannot replay it on someone else's.
     const attackerToken = mintCsrfToken(SECRET, "anonymous::req-attacker", {},);
     const app = buildApp({ resolveSession: () => null, });
     const replay = await dispatch(
@@ -228,7 +205,7 @@ describe("csrf integration — verification path", () => {
       },),
     );
     expect(replay.status,).toBe(403,);
-  });
+  },);
 });
 
 describe("csrf integration — auth-route exemption", () => {
@@ -243,7 +220,7 @@ describe("csrf integration — auth-route exemption", () => {
     );
     // Exempt — must NOT be 403.
     expect(res.status,).not.toBe(403,);
-  });
+  },);
 });
 
 describe("csrf integration — disabled mode", () => {
@@ -254,22 +231,19 @@ describe("csrf integration — disabled mode", () => {
       new Request("http://localhost/api/things", { method: "POST", body: "{}" },),
     );
     expect(res.status,).not.toBe(403,);
-  });
+  },);
 
-  test("when secret is empty AND enabled=true, decideCsrf still accepts tokens via Bun's per-thread default", async () => {
-    // The Elysia wrapper in production guards against this scenario by
-    // checking config first. This test asserts that `decideCsrf` itself
-    // does not crash when the secret is empty — defensive coverage.
+  test("when secret is empty AND enabled=true, the wiring does not crash", async () => {
+    // Production guards against this by checking config first; this test
+    // is defensive coverage that the middleware itself does not crash on
+    // empty secret. With Bun's per-thread default secret, the response
+    // is either 403 (no token) or 201 (token round-trips). Either is
+    // non-fatal — the point is "no exception, no 500".
     const app = buildApp({ secret: "", });
     const res = await dispatch(
       app,
       new Request("http://localhost/api/things", { method: "POST", body: "{}" },),
     );
-    // With an empty secret, Bun.CSRF uses its per-thread default; tokens from
-    // generation round-trips within the same process (per-thread default secret
-    // is stable for the lifetime of the worker). Result: 403 because no token
-    // supplied, OR 201 if Bun's verify succeeded against the default secret.
-    // Either status is non-fatal — the point of this test is to ensure no crash.
     expect(res.status === 403 || res.status === 201,).toBe(true,);
-  });
+  },);
 });
