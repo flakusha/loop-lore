@@ -1,6 +1,6 @@
 # BUG: NSFW gate ordering inverted: moderation hooks run after LLM generation
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Closed (commit 49731047 — fix(nsfw): gate correctness cluster)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ NSFW/moderation hooks execute post-LLM at src/generation/auto-gen/auto-generatio
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
