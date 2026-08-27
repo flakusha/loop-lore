@@ -1594,6 +1594,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-logging-separate-database-research.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
     },
     {
@@ -1613,6 +1617,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-logging-separate-database-research.md"
     },
     {
       "kind": "ticket",
@@ -6559,6 +6567,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-gate-log-plaintext-pii.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-logging-separate-database-research.md"
     }
   ],
   "src/db/migrations/006_data_version_columns.ts": [
@@ -6785,6 +6797,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-logging-separate-database-research.md"
     }
   ],
   "src/db/migrations/0XX_audio_templates.ts": [
