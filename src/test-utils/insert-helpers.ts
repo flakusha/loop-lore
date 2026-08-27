@@ -3322,3 +3322,33 @@ export async function insertTradeHistory(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a request_results row. */
+export async function insertRequestResults(
+  db: Db,
+  method: string,
+  route_pattern: string,
+  status: string,
+  started_at: string,
+  opts?: {
+    id?: Generated<string>;
+    user_id?: string | null;
+    progress?: string | null;
+    response_status?: number | null;
+    response_headers?: string | null;
+    response_body?: string | null;
+    error?: string | null;
+    completed_at?: string | null;
+    offloaded_at?: string | null;
+    offload_path?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("request_results",).values({
+    id: crypto.randomUUID(),
+    method,
+    route_pattern,
+    status,
+    started_at,
+    ...opts,
+  } as any,).execute();
+}

@@ -627,6 +627,22 @@ export const SCHEMA = new SchemaManifest()
     discovered_at: col("text", { notNull: true, },),
     mastery_level: col("integer", { notNull: true, hasDefault: true, },),
   },)
+  .table("request_results", {
+    id: col("text", { primaryKey: true, },),
+    method: col("text", { notNull: true, },),
+    route_pattern: col("text", { notNull: true, },),
+    user_id: col("text",),
+    status: col("text", { notNull: true, },),
+    progress: col("text",),
+    response_status: col("integer",),
+    response_headers: col("text",),
+    response_body: col("text",),
+    error: col("text",),
+    started_at: col("text", { notNull: true, },),
+    completed_at: col("text",),
+    offloaded_at: col("text",),
+    offload_path: col("text",),
+  },)
   .table("seed_audit", {
     id: col("text", { primaryKey: true, },),
     seed_type: col("text", { notNull: true, },),
