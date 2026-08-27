@@ -21,6 +21,7 @@ import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generat
 import { filter as filterProfanity, } from "../../profanity/service";
 import { uid, } from "../../utils";
 import { ErrorCode, jsonCreated, jsonError, } from "../http-utils";
+import { log, } from "./helpers";
 
 /**
  * Trigger post-create generation: kick off async LLM auto-generation when
