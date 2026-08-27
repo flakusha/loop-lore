@@ -51,14 +51,15 @@ function loadCredentials() {
 // ── GPG agent helpers ────────────────────────────────────────────
 
 function agentConfigPath() {
-  const home = process.env.GNUPGHOME
-    ?? path.join(process.env.HOME ?? process.env.USERPROFILE ?? "", ".gnupg",);
+  const home = process.env.GNUPGHOME ??
+    path.join(process.env.HOME ?? process.env.USERPROFILE ?? "", ".gnupg",);
   return path.join(home, "gpg-agent.conf",);
 }
 
 function readMaxCacheTtl() {
   const confPath = agentConfigPath();
-  if (!existsSync(confPath,)) return 7200; // gpg-agent default 2h
+  if (!existsSync(confPath,)) { return 7200; // gpg-agent default 2h
+   }
   const content = readFileSync(confPath, "utf-8",);
   const match = content.match(/^max-cache-ttl\s+(\d+)/m,);
   return match ? parseInt(match[1], 10,) : 7200;
@@ -70,21 +71,18 @@ async function getKeygrip(keyId,) {
   return out.match(/^S KEYINFO\s+(\w+)/m,)?.[1] ?? null;
 }
 
-
-
-
 // ── Prolong cached passphrase TTL ────────────────────────────────
 
 async function prolongCachedPassphrase(keyId,) {
   const keygrip = await getKeygrip(keyId,);
-  if (!keygrip) return { ok: false, reason: "no-keygrip", };
+  if (!keygrip) { return { ok: false, reason: "no-keygrip", }; }
 
   const maxTtl = readMaxCacheTtl();
   // PRESET_PASSPHRASE --preset <keygrip> -1 <hex_timestamp>
   //   --preset = update existing cache entry (not --unpreset which clears)
   //   -1       = reuse the cached passphrase bytes (don't override)
   //   <hex>    = absolute unix timestamp when cache should expire
-  const newExp = (Math.floor(Date.now() / 1000) + maxTtl)
+  const newExp = (Math.floor(Date.now() / 1000,) + maxTtl)
     .toUpperCase();
 
   try {
