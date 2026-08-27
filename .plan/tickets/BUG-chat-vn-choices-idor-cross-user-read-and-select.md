@@ -1,6 +1,6 @@
 # BUG: chat vn-choices IDOR cross-user read and select
 
-**Status:** ✅ Resolved (commit 3ab26ccd — checkChatAccess guards both list + select handlers)
+**Status:** ✅ Resolved (guard fixed + compiles in worktree merge-review-followups, 2026-08-27)
 **Priority:** high
 **Effort:** Medium
 
@@ -26,3 +26,8 @@ Acceptance: cross-chat vn-choice read/select denied; owner/participant/admin suc
 ## Review Update (2026-08-27)
 
 The merged fix (commit `61ef179c`, integrated via `3ab26ccd`) **does not compile** and provides no protection as shipped. `src/routes/chats/vn-choices.ts:45,59,81,95` references a deleted `chatId` (TS2304) and reads the wrong `checkChatAccess` result shape (`access.message`/`access.code` vs `{ ok:false, error: ServiceError }`, TS2339). Tracked in `BUG-vn-choices-idor-guard-non-compiling.md`. Status stays 🔧 In Progress.
+
+
+## Resolution (2026-08-27)
+
+The guard in `src/routes/chats/vn-choices.ts` was fixed in worktree `merge-review-followups`: `chatId` restored, `checkChatAccess` error read as `access.error`, access check enforced. The route now compiles and the IDOR protection is functional. This bug is **resolved** (tracked in `BUG-vn-choices-idor-guard-non-compiling.md`, also resolved).
