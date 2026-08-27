@@ -1,6 +1,6 @@
 # BUG: Stale SSE stream writes render into wrong chat
 
-**Status:** ✅ Resolved (2026-08-25, worktree `bugfix-medium-low`, commit 04411f8)
+**Status:** ✅ Resolved (commit 04411f8 — SSE stream scoped to chat)
 **Priority:** medium
 **Effort:** Medium
 

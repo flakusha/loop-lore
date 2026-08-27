@@ -3,7 +3,7 @@
 
 # BUG: Stored XSS — unescaped server-derived asset IDs/labels in innerHTML
 
-**Status:** ✅ Fixed (uncommitted — XSS escapes applied to 5 files; `frontend - innerHTML xss` gate now 0 findings)
+**Status:** ✅ Fixed (XSS escapes applied to 5 files; frontend innerHTML xss gate 0 findings)
 **Priority:** high
 **Effort:** medium
 **Type:** Bug
