@@ -16,6 +16,7 @@ import {
   upsertModelCapabilities,
 } from "./model-capabilities";
 
+/** Build a mock ModelInfo with defaults for testing. */
 function makeModel(overrides: Partial<ModelInfo> = {},): ModelInfo {
   return {
     id: "gpt-4o",
