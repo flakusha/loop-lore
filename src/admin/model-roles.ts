@@ -166,6 +166,8 @@ export async function clearModelRoleOverride(role: ModelRole, db: Kysely<DB>,): 
 
 /**
  * Get all current model role overrides from DB.
+ * @param db - Database instance.
+ * @returns Map of role to override details.
  */
 export async function getModelRoleOverrides(
   db: Kysely<DB>,
