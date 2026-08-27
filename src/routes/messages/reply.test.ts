@@ -117,4 +117,31 @@ describe("maybeAutoReply — swipe_index race", () => {
       expect(indexes,).toEqual([1, 2, 3, 4, 5, 6, 7, 8,],); // contiguous
     },
   );
+
+  test("returns 503 service_busy when all swipe retries collide", async () => {
+    // Force unique-index collisions by pre-filling all swipe slots 1-8
+    const fillId = uid();
+    await insertMessages(db, chatId, actorId, MessageRole.User, "fill", { id: fillId, } as never,);
+    for (let i = 1; i <= 8; i++) {
+      await insertMessages(db, chatId, actorId, MessageRole.Assistant, "fill", {
+        parent_id: fillId,
+        swipe_index: i,
+      } as never,);
+    }
+
+    const result = await maybeAutoReply(
+      db,
+      testConfig,
+      chatId,
+      actorId,
+      fillId,
+      "hello",
+      new Request("http://localhost/",),
+    );
+
+    // Should return a 503 response, not throw
+    expect(result.replied,).toBe(true,);
+    expect(result.response,).toBeDefined();
+    expect(result.response!.status,).toBe(503,);
+  });
 });

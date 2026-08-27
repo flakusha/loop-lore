@@ -20,7 +20,7 @@ import type { DB, } from "../../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
 import { filter as filterProfanity, } from "../../profanity/service";
 import { uid, } from "../../utils";
-import { jsonCreated, } from "../http-utils";
+import { jsonCreated, jsonError, } from "../http-utils";
 import { log, } from "./helpers";
 
 /**
@@ -141,7 +141,17 @@ export async function maybeAutoReply(
           swipeIndex++;
         }
       }
-      if (lastError !== undefined) { throw lastError; }
+      if (lastError !== undefined) {
+        log().warn("Assistant reply swipe retry exhausted", { chatId, parentMessageId, err: lastError, },);
+        return {
+          replied: true,
+          response: jsonError(
+            "Could not persist reply due to high concurrency. Please retry.",
+            503,
+            "service_busy",
+          ),
+        };
+      }
 
       return {
         replied: true,
