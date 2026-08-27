@@ -55,7 +55,7 @@ describe("ItemsService.transfer", () => {
     await insertWorldItems(db, worldId, item, { id: wId, location_id: locationA, quantity: 5, } as never,);
     const svc = new ItemsService(db,);
 
-    const res = await svc.transfer(wId, 5, destLoc,);
+    const res = await svc.transfer(wId, worldId, 5, destLoc,);
     expect(res.success,).toBe(true,);
     expect(res.fromRemaining,).toBe(0,);
     expect(res.toQuantity,).toBe(5,);
@@ -83,7 +83,7 @@ describe("ItemsService.transfer", () => {
     await insertWorldItems(db, worldId, item, { id: wId, location_id: locationA, quantity: 5, } as never,);
     const svc = new ItemsService(db,);
 
-    const res = await svc.transfer(wId, 2, destLoc,);
+    const res = await svc.transfer(wId, worldId, 2, destLoc,);
     expect(res.success,).toBe(true,);
     expect(res.fromRemaining,).toBe(3,);
     expect(res.toQuantity,).toBe(2,);
@@ -102,7 +102,23 @@ describe("ItemsService.transfer", () => {
 
   test("transfer to missing item returns failure", async () => {
     const svc = new ItemsService(db,);
-    const res = await svc.transfer("missing", 1, locationB,);
+    const res = await svc.transfer("missing", worldId, 1, locationB,);
+    expect(res.success,).toBe(false,);
+    expect(res.transferred,).toBe(0,);
+  });
+
+  test("transfer across worlds is denied (IDOR guard)", async () => {
+    const wId = uid();
+    const otherWorldId = uid();
+    const otherUserId = uid();
+    await insertUsers(db, `user-${otherUserId}`, "Other Owner", { id: otherUserId, } as never,);
+    await insertWorlds(db, otherUserId, "Other World", { id: otherWorldId, } as never,);
+    await insertItems(db, otherWorldId, "Sword", "weapon", { id: itemId, } as never,);
+    await insertWorldItems(db, otherWorldId, itemId, { id: wId, location_id: locationA, quantity: 1, } as never,);
+    const svc = new ItemsService(db,);
+
+    // Attempt to transfer an item from a world the user does not own.
+    const res = await svc.transfer(wId, worldId, 1, locationB,);
     expect(res.success,).toBe(false,);
     expect(res.transferred,).toBe(0,);
   });
@@ -113,7 +129,7 @@ describe("ItemsService.destroy", () => {
     const wId = uid();
     await insertWorldItems(db, worldId, itemId, { id: wId, location_id: locationA, quantity: 3, } as never,);
     const svc = new ItemsService(db,);
-    const ok = await svc.destroy(wId,);
+    const ok = await svc.destroy(wId, worldId,);
     expect(ok,).toBe(true,);
     const row = await db.selectFrom("world_items",).select("id",).where("id", "=", wId,).executeTakeFirst();
     expect(row,).toBeUndefined();
@@ -123,7 +139,7 @@ describe("ItemsService.destroy", () => {
     const wId = uid();
     await insertWorldItems(db, worldId, itemId, { id: wId, location_id: locationA, quantity: 3, } as never,);
     const svc = new ItemsService(db,);
-    const ok = await svc.destroy(wId, 3,);
+    const ok = await svc.destroy(wId, worldId, 3,);
     expect(ok,).toBe(true,);
     const row = await db.selectFrom("world_items",).select("id",).where("id", "=", wId,).executeTakeFirst();
     expect(row,).toBeUndefined();
@@ -133,9 +149,24 @@ describe("ItemsService.destroy", () => {
     const wId = uid();
     await insertWorldItems(db, worldId, itemId, { id: wId, location_id: locationA, quantity: 3, } as never,);
     const svc = new ItemsService(db,);
-    const ok = await svc.destroy(wId, 1,);
+    const ok = await svc.destroy(wId, worldId, 1,);
     expect(ok,).toBe(true,);
     const row = await db.selectFrom("world_items",).select("quantity",).where("id", "=", wId,).executeTakeFirst();
     expect(row?.quantity,).toBe(2,);
+  });
+
+  test("destroy across worlds is denied (IDOR guard)", async () => {
+    const wId = uid();
+    const otherWorldId = uid();
+    const otherUserId = uid();
+    await insertUsers(db, `user-${otherUserId}`, "Other Owner", { id: otherUserId, } as never,);
+    await insertWorlds(db, otherUserId, "Other World", { id: otherWorldId, } as never,);
+    await insertItems(db, otherWorldId, "Sword", "weapon", { id: itemId, } as never,);
+    await insertWorldItems(db, otherWorldId, itemId, { id: wId, location_id: locationA, quantity: 1, } as never,);
+    const svc = new ItemsService(db,);
+
+    // Attempt to destroy an item from a world the user does not own.
+    const ok = await svc.destroy(wId, worldId,);
+    expect(ok,).toBe(false,);
   });
 });
