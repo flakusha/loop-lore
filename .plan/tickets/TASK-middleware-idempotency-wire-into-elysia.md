@@ -124,3 +124,8 @@ the `table` backend becomes functional end-to-end.
   idempotency there is a separate ticket).
 - Backing the memory cache with Redis (separate ticket if multi-instance prod
   is on the roadmap before the table backend is solid).
+
+
+## Review Update (2026-08-27)
+
+The epic marked this done, but the AC is **not met**: `idempotent({ backend: "table", asyncStore })` behaves identically to `memory` — the `table` backend is unimplemented and `asyncStore` is a dead parameter. See `BUG-middleware-idempotency-table-backend-unimplemented.md` and `BUG-middleware-idempotency-orphaned-slot-permanent-409.md`. Status stays ⬜ Open.

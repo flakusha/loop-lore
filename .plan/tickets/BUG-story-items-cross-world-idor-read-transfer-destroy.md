@@ -21,3 +21,8 @@ Acceptance: cross-world item definition read denied; cross-world transfer/destro
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Review Update (2026-08-27)
+
+The merge that carried this fix (`3ab26ccd`) **broke the backend build**: a malformed 3-way merge left an orphaned duplicate `transfer` body in `src/story/items/instances.ts:192-260` (tsc TS1128) and a stale duplicate `destroy` in `src/story/items/index.ts:122-125`. The IDOR fix therefore cannot run. Tracked in `BUG-security-merge-build-break-instances-ts.md`. Status stays 🔧 In Progress.

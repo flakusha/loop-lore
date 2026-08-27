@@ -3,7 +3,7 @@
 
 # EPIC: Middleware — Request Lifecycle, Idempotency & Async Results
 
-**Status:** 🟢 Complete (foundation + wiring gap closed; request-id derive, idempotency chain, and async-store lifecycle all wired into elysia-app.ts)
+**Status:** 🟡 In Progress (reopened 2026-08-27 — review found load-bearing defects; epic NOT complete)
 **Priority:** Medium
 **Effort:** Large
 **Type:** Feature Epic
@@ -78,8 +78,8 @@ frontends need:
 ## Follow-up Tickets (wiring gap — now closed)
 
 - [x] TASK-middleware-request-id-elysia-derive.md — wire `requestIdMiddleware()` into the Elysia `.derive()` chain. **DONE**: `elysia-app.ts` adds `.derive(requestIdMiddleware())` before auth derive; sets `x-request-id` header + `ctx.requestId`.
-- [x] TASK-middleware-idempotency-wire-into-elysia.md — call `idempotent()` in the Elysia app chain; add `X-Idempotency-Bypass` header + `config.idempotency.enabled` flag; bump TTL default to 24h. **DONE**: `elysia-app.ts` wires `idempotent()` via `onBeforeHandle`/`onAfterHandle`; bypass header + enabled flag + 24h TTL added.
-- [x] TASK-async-store-complete-fail-lifecycle-hooks.md — wire `asyncStore.complete()` / `fail()` / `progress()` into the request lifecycle. **DONE**: `recordLifecycle()` afterHandle captures response; global `.onError()` marks failed; `triggerAutoGeneration` emits progress steps; `onStop()` flushes at shutdown.
+- [ ] TASK-middleware-idempotency-wire-into-elysia.md — wire `idempotent()` into Elysia chain; **NOT DONE**: `table` backend unimplemented (BUG-middleware-idempotency-table-backend-unimplemented) + orphaned in-flight slot → permanent 409 (BUG-middleware-idempotency-orphaned-slot-permanent-409).
+- [ ] TASK-async-store-complete-fail-lifecycle-hooks.md — wire asyncStore.complete()/fail()/progress(); **NOT DONE**: `fail()` error boundary dead code (BUG-middleware-asyncstore-fail-dead-code) + recordLifecycle marks 4xx/5xx `complete` not `fail` (BUG-middleware-recordlifecycle-marks-error-complete).
 
 ## Files (planned → actual)
 
@@ -108,3 +108,16 @@ frontends need:
   telemetry/observability pipeline.
 - `epic-headless-alternative-frontends.md` — headless and external
   consumers benefit most from idempotency and async result retrieval.
+
+
+## Reopened — review findings (2026-08-27)
+
+This epic was marked 🟢 Complete by `263befef` (docs(plan): mark epic-middleware-request-lifecycle complete), but a code review of the merged middleware lifecycle work found load-bearing defects. The epic is reopened (status In Progress) until the bugs below are fixed:
+
+- `BUG-middleware-asyncstore-fail-dead-code.md` — `asyncStore.fail()` error boundary is dead code (validation onError returns first; Elysia short-circuits).
+- `BUG-middleware-idempotency-table-backend-unimplemented.md` — `table` backend == memory; `asyncStore` param dead.
+- `BUG-middleware-idempotency-orphaned-slot-permanent-409.md` — in-flight slot never released on throw → permanent 409.
+- `BUG-middleware-recordlifecycle-marks-error-complete.md` — 4xx/5xx responses recorded as `complete`, not `fail`.
+- `BUG-middleware-requestid-dual-write-last-wins.md` — same requestId row dual-written with last-write-wins.
+
+The `requestIdMiddleware` derive wiring (`TASK-middleware-request-id-elysia-derive.md`) is correct and stays ✅ done. The two follow-up sub-tickets above were re-marked ⬜ Open because their ACs are unmet.
