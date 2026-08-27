@@ -56,7 +56,7 @@ export function narrativeRoutes(opts: HandlerOpts, prefix = "/api",) {
           const body = ctx.body as { text: string };
           const content = filterProfanity(body.text,);
 
-          const { storedContent, contentEncoding, storedKeyId, } = await prepareContentStorage(
+          const { storedContent, contentEncoding, storedKeyId, storedPlaintext, } = await prepareContentStorage(
             database,
             config,
             chatId,
@@ -75,6 +75,7 @@ export function narrativeRoutes(opts: HandlerOpts, prefix = "/api",) {
               role: MessageRole.System,
               content: storedContent,
               key_id: storedKeyId,
+              content_plaintext: storedPlaintext,
               content_type: MessageContentType.Narration,
               content_format: MessageContentFormat.Markdown,
               content_encoding: contentEncoding as ContentEncoding,
