@@ -42,13 +42,14 @@ function handleListVnChoices(database: Kysely<DB>,) {
     if (typeof userId !== "string") { return userId; }
 
     // IDOR guard: verify user has access to this chat before listing choices.
+    const chatId = ctx.params.id;
     const userRole = ctx.userRole as string | null;
     const access = await checkChatAccess(database, chatId, userId, userRole,);
     if (!access.ok) {
       return jsonError(
-        access.message,
-        access.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden,
-        access.code as never,
+        access.error.message,
+        access.error.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden,
+        access.error.code as never,
       );
     }
     const sceneIndex = Number(ctx.query.sceneIndex,);
@@ -78,13 +79,14 @@ function handleSelectVnChoice(database: Kysely<DB>,) {
     if (typeof userId !== "string") { return userId; }
 
     // IDOR guard: verify user has access to this chat before selecting a choice.
+    const chatId = ctx.params.id;
     const userRole = ctx.userRole as string | null;
     const access = await checkChatAccess(database, chatId, userId, userRole,);
     if (!access.ok) {
       return jsonError(
-        access.message,
-        access.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden,
-        access.code as never,
+        access.error.message,
+        access.error.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden,
+        access.error.code as never,
       );
     }
     const choiceId = ctx.params.choiceId;
