@@ -940,10 +940,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-prompt-library-expanded.md"
     },
     {
