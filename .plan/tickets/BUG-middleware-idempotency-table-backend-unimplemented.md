@@ -3,7 +3,7 @@
 
 # BUG: idempotency `table` backend is unimplemented (silently == memory)
 
-**Status:** 🔧 In Progress (found in 2026-08-27 review; epic reopened)
+**Status:** ✅ Resolved (fixed in worktree merge-review-followups, 2026-08-27)
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-middleware-request-lifecycle

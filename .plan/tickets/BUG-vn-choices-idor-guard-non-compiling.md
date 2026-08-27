@@ -3,7 +3,7 @@
 
 # BUG: vn-choices IDOR guard does not compile (merge `3ab26ccd`)
 
-**Status:** 🔧 In Progress (found in 2026-08-27 review)
+**Status:** ✅ Resolved (fixed in worktree merge-review-followups, 2026-08-27)
 **Priority:** critical
 **Effort:** Small
 
