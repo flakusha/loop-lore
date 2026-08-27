@@ -183,6 +183,19 @@ export interface ChatParticipants {
   initiative: Generated<number>;
 }
 
+export interface Characters {
+  id: Generated<string>;
+  owner_id: string;
+  name: string;
+  avatar_asset_id: string | null;
+  description: string | null;
+  system_prompt: string | null;
+  agent_type: Generated<AgentType>;
+  settings: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  agent_role: string | null;
+}
 
 
 export interface ActorItems {
@@ -867,4 +880,15 @@ export interface ActivitypubActorKeys {
   rotated_at: string | null;
   created_at: string;
   expires_at: string | null;
+}
+
+export interface NsfwConsentState {
+  id: Generated<string>;
+  user_id: string;
+  chat_id: string;
+  action: string;
+  scope: Generated<string>;
+  reason: string | null;
+  created_at: string;
+  revoked_at: string | null;
 }

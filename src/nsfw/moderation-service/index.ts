@@ -100,12 +100,16 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
     deleteUserData({ thisL: this as unknown as NsfwModerationServiceContext, userId, deletedBy, },);
   getEffectiveNsfw = (chatId: string, userId: string,) =>
     getEffectiveNsfw({ thisL: this as unknown as NsfwModerationServiceContext, chatId, userId, },);
-  setChatNsfwOverride = (chatId: string, override: Parameters<NsfwModerationServiceIface["setChatNsfwOverride"]>[1],) =>
-    setChatNsfwOverride({ thisL: this as unknown as NsfwModerationServiceContext, chatId, override, },);
+  setChatNsfwOverride = (
+    chatId: string,
+    override: Parameters<NsfwModerationServiceIface["setChatNsfwOverride"]>[1],
+    performedBy: string,
+  ) => setChatNsfwOverride({ thisL: this as unknown as NsfwModerationServiceContext, chatId, override, performedBy, },);
   setWorldNsfwOverride = (
     worldId: string,
     override: Parameters<NsfwModerationServiceIface["setWorldNsfwOverride"]>[1],
-  ) => setWorldNsfwOverride({ thisL: this as unknown as NsfwModerationServiceContext, worldId, override, },);
+    performedBy: string,
+  ) => setWorldNsfwOverride({ thisL: this as unknown as NsfwModerationServiceContext, worldId, override, performedBy, },);
   recordAction = (params: Parameters<NsfwModerationServiceIface["recordAction"]>[0],) =>
     recordAction({ thisL: this as unknown as NsfwModerationServiceContext, params, },);
   submitAppeal = (userId: string, actionId: string, reason: string,) =>
