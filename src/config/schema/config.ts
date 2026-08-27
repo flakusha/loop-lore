@@ -22,6 +22,7 @@ import type { FrontendConfig, } from "./frontend";
 import type { GenerationConfig, } from "./generation";
 import type { HeadersConfig, } from "./headers";
 import type { HooksConfig, } from "./hooks";
+import type { IdempotencyConfig, } from "./idempotency";
 import type { LoggingConfig, } from "./logging";
 import type { MessagesConfig, } from "./messages";
 import type { NsfwConfig, } from "./nsfw";
@@ -43,6 +44,7 @@ export interface Config {
   auth: AuthConfig;
   transport: TransportConfig;
   messages: MessagesConfig;
+  idempotency: IdempotencyConfig;
   nsfw: NsfwConfig;
   hooks: HooksConfig;
   generation: GenerationConfig;
