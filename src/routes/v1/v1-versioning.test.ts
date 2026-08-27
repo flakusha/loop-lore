@@ -14,11 +14,29 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { uid, } from "../../utils";
 import { v1Routes, } from "./index";
 
+import type { AsyncStore, } from "../../async/store";
+
+function stubAsyncStore(): AsyncStore {
+  return {
+    track() {},
+    progress() {},
+    complete() {},
+    fail() {},
+    config: { maxInlineBytes: 65536, defaultTtlMs: 24 * 60 * 60 * 1000, queueLimit: 10_000, },
+    async flush() {},
+    async read() {
+      return null;
+    },
+
+    destroy() {},
+  };
+}
+
 function createV1App(db: Kysely<DB>, userId: string | null,): Elysia {
   const t = (k: string,) => k;
   return new Elysia({ name: "test-v1", },)
     .derive(() => ({ userId, userRole: userId ? "admin" : null, sessionId: null, locale: "en", t, }))
-    .use(v1Routes({ database: db, config: {} as any, },),) as unknown as Elysia;
+    .use(v1Routes({ database: db, config: {} as any, asyncStore: stubAsyncStore(), },),) as unknown as Elysia;
 }
 
 describe("v1 API versioning", () => {
