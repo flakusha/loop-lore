@@ -87,5 +87,5 @@ export async function applyItemTransfer(
 
   // Transfer to the destination actor (or leave at location if no target).
   const toLocation = toActorId ? undefined : (event.locationId ?? undefined);
-  await itemsService.transfer(source.id, quantity, toLocation, toActorId ?? undefined,);
+  await itemsService.transfer(source.id, worldId, quantity, toLocation, toActorId ?? undefined,);
 }

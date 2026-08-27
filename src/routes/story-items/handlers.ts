@@ -67,7 +67,7 @@ export async function handleDefinition(
   const items = new ItemsService(database,);
 
   if (method === "GET") {
-    const def = await items.getDefinition(itemId,);
+    const def = await items.getDefinition(itemId, worldId,);
     if (!def) { return notFound("Item not found",); }
     return jsonResponse(def,);
   }
@@ -91,7 +91,7 @@ export async function handleDefinition(
     .where("world_id", "=", worldId,)
     .execute();
 
-  const updated = await items.getDefinition(itemId,);
+  const updated = await items.getDefinition(itemId, worldId,);
   return jsonResponse(updated,);
 }
 
@@ -169,6 +169,7 @@ export async function handleTransfer(
   const quantity = (body?.quantity as number) ?? 1;
   const result = await items.transfer(
     instanceId,
+    worldId,
     quantity,
     (body?.toLocationId as string) ?? undefined,
     (body?.toActorId as string) ?? undefined,
@@ -188,6 +189,6 @@ export async function handleInstance(
   }
 
   const items = new ItemsService(database,);
-  await items.destroy(instanceId,);
+  await items.destroy(instanceId, worldId,);
   return jsonNoContent();
 }
