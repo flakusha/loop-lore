@@ -38,7 +38,6 @@ import { updateMood, } from "./update-mood";
 /** Public API type — merged with the factory value below. */
 // The empty interface is intentional: it merges the `MoodService` factory
 // value with a same-named type so one name is both API type and constructor.
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface MoodService extends MoodServiceIface {}
 
 export type {

@@ -85,7 +85,6 @@ export async function resolveCharacterTraits(
   // Collect violations (for audit/logging)
   const violations: PersonalityLockResult[] = [];
   for (const row of permanentRows) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- WorldTraitCategory ≠ TraitCategory
     const lock = checkPersonalityIntegrity(row.trait_name, row.trait_category as TraitCategory,);
     if (!lock.allowed) {
       violations.push(lock,);
