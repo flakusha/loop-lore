@@ -26,16 +26,14 @@ export interface StoredContent {
   storedContent: string;
   contentEncoding: string;
   storedKeyId: string | null;
+  /** Plaintext mirrored to `messages.content_plaintext` (migration 068) so FTS5 indexes at-rest-encrypted chats; null for client-pre-encrypted payloads. */
+  storedPlaintext: string | null;
 }
 
 /**
- * Prepare plaintext message content for storage.
- *
- * Handles three cases:
- *   1. Client pre-encrypted payload — stored as-is (key_id extracted).
- *   2. Server-side encryption enabled — routes through `encryptAtRest` which
- *      selects encryption by the chat's `encryption_level` tier.
- *   3. No encryption — gzip-compresses large plaintext, stores identity otherwise.
+ * Prepare plaintext message content for storage. Handles three cases:
+ * client-pre-encrypted (stored as-is), server-encryption-on (encryptAtRest by
+ * chat tier), and unencrypted (gzip large, identity otherwise).
  */
 export async function prepareContentStorage(
   database: Kysely<DB>,
@@ -47,7 +45,7 @@ export async function prepareContentStorage(
   if (isEncryptedPayload(plaintext,)) {
     const storedKeyId = extractKeyIdFromPayload(plaintext,);
     log().debug("Client pre-encrypted content detected", { keyId: storedKeyId, },);
-    return { storedContent: plaintext, contentEncoding: "identity", storedKeyId, };
+    return { storedContent: plaintext, contentEncoding: "identity", storedKeyId, storedPlaintext: null, };
   }
 
   if (isEncryptionEnabled()) {
@@ -64,15 +62,25 @@ export async function prepareContentStorage(
         algorithm: config.encryption.compressAlgorithm,
       },
     },);
-    return { storedContent: result.storedContent, contentEncoding: "identity", storedKeyId: result.keyId, };
+    return {
+      storedContent: result.storedContent,
+      contentEncoding: "identity",
+      storedKeyId: result.keyId,
+      storedPlaintext: plaintext,
+    };
   }
 
   const LARGE_CONTENT_THRESHOLD = 10_240;
   if (plaintext.length > LARGE_CONTENT_THRESHOLD) {
     const encoded = encodeContent(plaintext, "gzip",);
-    return { storedContent: encoded.encoded, contentEncoding: encoded.encoding, storedKeyId: null, };
+    return {
+      storedContent: encoded.encoded,
+      contentEncoding: encoded.encoding,
+      storedKeyId: null,
+      storedPlaintext: plaintext,
+    };
   }
-  return { storedContent: plaintext, contentEncoding: "identity", storedKeyId: null, };
+  return { storedContent: plaintext, contentEncoding: "identity", storedKeyId: null, storedPlaintext: plaintext, };
 }
 
 /** Link uploaded assets to the freshly-created message and persist the JSON. */

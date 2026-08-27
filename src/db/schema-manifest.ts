@@ -1437,6 +1437,7 @@ export const SCHEMA = new SchemaManifest()
     e2e_session_id: col("text",),
     e2e_sender_eph_pub_jwk: col("text",),
     e2e_chain_index: col("integer",),
+    content_plaintext: col("text",),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {
