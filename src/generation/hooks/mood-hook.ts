@@ -8,9 +8,15 @@
  * score content mood and emits mood-shift events that downstream systems
  * (mood UI, post-store persistence) can react to. LLM-based classification
  * is planned (see TASK-aux-mood-classification.md).
+ *
+ * Context-aware: skips detection for `privacyLevel === "private"` and
+ * amplifies mood delta for NSFW-rated actors (NSFW content tends to carry
+ * stronger emotional valence).
  */
 
+import { ContentRating, } from "../../db/enums";
 import { getLogger, } from "../../logger";
+import { isNsfwRating, } from "../../middleware/nsfw-gate/constants";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
 export class MoodHook implements HookHandler {
@@ -18,14 +24,20 @@ export class MoodHook implements HookHandler {
   readonly eventTypes: HookEventType[] = ["mood_shift",];
 
   // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
-  async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
-    return _content.length > 10;
+  async canHandle(content: string, context: HookContext,): Promise<boolean> {
+    // Private content opt-out: skip mood detection entirely so private
+    // conversations are never analyzed for mood shifts.
+    if (context.privacyLevel === "private") { return false; }
+    return content.length > 10;
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.execute interface requires Promise<HookResult>
-  async execute(content: string, _context: HookContext,): Promise<HookResult> {
+  async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();
-    log.debug("mood-hook: analyzing content for mood shifts", { contentLength: content.length, },);
+    log.debug("mood-hook: analyzing content for mood shifts", {
+      contentLength: content.length,
+      privacyLevel: context.privacyLevel,
+    },);
 
     const moodIndicators = this.detectMoodIndicators(content,);
     if (moodIndicators.length === 0) {
@@ -33,14 +45,33 @@ export class MoodHook implements HookHandler {
     }
 
     const dominantMood = this.determineDominantMood(moodIndicators,);
-    const delta = this.calculateMoodDelta(dominantMood,);
+    const baseDelta = this.calculateMoodDelta(dominantMood,);
 
-    log.info("mood-hook: detected mood shift", { dominantMood, delta, },);
+    // NSFW-rated actors: content carries stronger emotional valence, so
+    // amplify the mood delta. Non-NSFW (SFW) actors use the base delta.
+    const isNsfwActor =
+      context.actorContentRating !== undefined &&
+      isNsfwRating(context.actorContentRating as ContentRating,);
+    const delta = isNsfwActor ? Math.round(baseDelta * 1.5) : baseDelta;
+
+    log.info("mood-hook: detected mood shift", {
+      dominantMood,
+      delta,
+      isNsfwActor,
+      actorId: context.actorId,
+      chatId: context.chatId,
+    },);
 
     return {
       handled: true,
       eventType: "mood_shift",
-      data: { dominantMood, delta, indicators: moodIndicators, },
+      data: {
+        dominantMood,
+        delta,
+        indicators: moodIndicators,
+        actorId: context.actorId,
+        chatId: context.chatId,
+      },
     };
   }
 
