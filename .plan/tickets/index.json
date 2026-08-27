@@ -1666,6 +1666,61 @@
     "tags": [],
     "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
   },
+  "BUG-MIDDLEWARE-ASYNCSTORE-FAIL-DEAD-CODE": {
+    "hash": "pending",
+    "extid": "BUG-MIDDLEWARE-ASYNCSTORE-FAIL-DEAD-CODE",
+    "type": "BUG",
+    "title": "`asyncStore.fail()` error boundary is dead code",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/BUG-middleware-asyncstore-fail-dead-code.md"
+  },
+  "BUG-MIDDLEWARE-IDEMPOTENCY-ORPHANED-SLOT-PERMANENT-409": {
+    "hash": "pending",
+    "extid": "BUG-MIDDLEWARE-IDEMPOTENCY-ORPHANED-SLOT-PERMANENT-409",
+    "type": "BUG",
+    "title": "idempotency in-flight slot orphaned by throwing handler → permanent 409",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/BUG-middleware-idempotency-orphaned-slot-permanent-409.md"
+  },
+  "BUG-MIDDLEWARE-IDEMPOTENCY-TABLE-BACKEND-UNIMPLEMENTED": {
+    "hash": "pending",
+    "extid": "BUG-MIDDLEWARE-IDEMPOTENCY-TABLE-BACKEND-UNIMPLEMENTED",
+    "type": "BUG",
+    "title": "idempotency `table` backend is unimplemented (silently == memory)",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+  },
+  "BUG-MIDDLEWARE-RECORDLIFECYCLE-MARKS-ERROR-COMPLETE": {
+    "hash": "pending",
+    "extid": "BUG-MIDDLEWARE-RECORDLIFECYCLE-MARKS-ERROR-COMPLETE",
+    "type": "BUG",
+    "title": "`recordLifecycle` marks 4xx/5xx responses `complete`",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/BUG-middleware-recordlifecycle-marks-error-complete.md"
+  },
+  "BUG-MIDDLEWARE-REQUESTID-DUAL-WRITE-LAST-WINS": {
+    "hash": "pending",
+    "extid": "BUG-MIDDLEWARE-REQUESTID-DUAL-WRITE-LAST-WINS",
+    "type": "BUG",
+    "title": "same `requestId` row dual-written by HTTP afterHandle + async LLM gen",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/BUG-middleware-requestid-dual-write-last-wins.md"
+  },
   "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM": {
     "hash": "6ca8fad",
     "extid": "BUG-MIGRATION-ORDERING-AMBIGUOUS-VIA-LOCALECOMPARE-DUPLICATE-NUM",
@@ -2132,6 +2187,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
   },
+  "BUG-SECURITY-MERGE-BUILD-BREAK-INSTANCES-TS": {
+    "hash": "pending",
+    "extid": "BUG-SECURITY-MERGE-BUILD-BREAK-INSTANCES-TS",
+    "type": "BUG",
+    "title": "Security/auth merge wrapper `3ab26ccd` breaks the backend build",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-security-merge-build-break-instances-ts.md"
+  },
   "BUG-SELECTCHAT-RESETS-FRESHLY-LOADED-STATE-AND-LACKS-REENTRANCY-": {
     "hash": "df71725",
     "extid": "BUG-SELECTCHAT-RESETS-FRESHLY-LOADED-STATE-AND-LACKS-REENTRANCY-",
@@ -2501,6 +2567,17 @@
     "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md",
     "git_issue": "2021fbd",
     "status": "done"
+  },
+  "BUG-VN-CHOICES-IDOR-GUARD-NON-COMPILING": {
+    "hash": "pending",
+    "extid": "BUG-VN-CHOICES-IDOR-GUARD-NON-COMPILING",
+    "type": "BUG",
+    "title": "vn-choices IDOR guard does not compile (merge `3ab26ccd`)",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-vn-choices-idor-guard-non-compiling.md"
   },
   "BUG-WORLD-BUNDLE-IMPORT-UNTRANSACTED-PARTIAL-IMPORT-CORRUPTS-WOR": {
     "hash": "ca69118",
