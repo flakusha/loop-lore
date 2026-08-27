@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 252 epics
+**Total:** 254 epics
 
 ## Summary
 
@@ -48,6 +48,7 @@
 | ⬜ Not Started | Companion, Pet & Mount Systems | Medium | Very High | 0 | [epic-companion-pet-mount.md](/.plan/epics/epic-companion-pet-mount.md) |
 | ⬜ Not Started | Concurrency & Runtime Benchmarks | High | High | 13 | [epic-concurrency-runtime-benchmarks.md](/.plan/epics/epic-concurrency-runtime-benchmarks.md) |
 | ⬜ Not Started | Configs Path Resolution — File-Relative Paths + Windows/macOS Parity | High | Medium | 12 | [epic-configs-path-resolution.md](/.plan/epics/epic-configs-path-resolution.md) |
+| ⬜ Not Started | Content Hashing & Distributed Integrity | High | Large | 5 | [epic-content-hashing-distributed-integrity.md](/.plan/epics/epic-content-hashing-distributed-integrity.md) |
 | ⬜ Not Started | Core Testing Frameworks | High | Very High | 23 | [epic-core-testing-frameworks.md](/.plan/epics/epic-core-testing-frameworks.md) |
 | ⬜ Not Started | Database Schema | High | Medium | 0 | [epic-schema.md](/.plan/epics/epic-schema.md) |
 | ⬜ Not Started | Deno Support (Possible Node) | Low | Medium | 20 | [epic-deno-support.md](/.plan/epics/epic-deno-support.md) |
@@ -110,8 +111,8 @@
 | ⬜ Not Started | Matrix Integration | Medium | High | 14 | [epic-matrix-integration.md](/.plan/epics/epic-matrix-integration.md) |
 | ⬜ Not Started | Mechanics Governance — Per-World Config, Control Levels & Plugin API | Medium | Medium | 4 | [epic-mechanics-governance.md](/.plan/epics/epic-mechanics-governance.md) |
 | ⬜ Not Started | Memory Profiling & Budgets | High | High | 12 | [epic-memory-profiling-budgets.md](/.plan/epics/epic-memory-profiling-budgets.md) |
+| ⬜ Not Started | Message Seen-State & Viewership Ledger | High | Large | 0 | [epic-message-seen-state.md](/.plan/epics/epic-message-seen-state.md) |
 | ⬜ Not Started | Messages & Message Pipeline | High | Medium | 0 | [epic-messages.md](/.plan/epics/epic-messages.md) |
-| ⬜ Not Started | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 4 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
 | ⬜ Not Started | Multi-Session Support | Medium | Med | 6 | [epic-multi-session.md](/.plan/epics/epic-multi-session.md) |
 | ⬜ Not Started | Notification System UI | Medium | Unknown | 0 | [epic-frontend-notifications.md](/.plan/epics/epic-frontend-notifications.md) |
 | ⬜ Not Started | NSFW Integration Gaps — Housing, Weather, Social, Disease | High | Medium | 5 | [epic-nsfw-integration-gaps.md](/.plan/epics/epic-nsfw-integration-gaps.md) |
@@ -155,7 +156,7 @@
 | 🟡 In Progress | Assistant/GM Flows Reconciliation | High | High | 13 | [epic-assistant-gm-flows.md](/.plan/epics/epic-assistant-gm-flows.md) |
 | 🟡 In Progress | Character Specification & Unified API | High | High | 0 | [epic-character-spec.md](/.plan/epics/epic-character-spec.md) |
 | 🟡 In Progress | Continuous Improvement — Lint, TypeCheck, Build, Coverage | High | Medium | 8 | [epic-continuous-improvement.md](/.plan/epics/epic-continuous-improvement.md) |
-| 🟡 In Progress | Documentation Reconciliation & UX | Medium | Medium | 4 | [epic-docs-reconciliation.md](/.plan/epics/epic-docs-reconciliation.md) |
+| 🟡 In Progress | Documentation Reconciliation & UX | Medium | Medium | 6 | [epic-docs-reconciliation.md](/.plan/epics/epic-docs-reconciliation.md) |
 | 🟡 In Progress | Epic: Configurable Template System | High | Large | 0 | [epic-config-templates.md](/.plan/epics/epic-config-templates.md) |
 | 🟡 In Progress | NSFW Capabilities — Ratings, Consent & Gating | High | Medium | 3 | [epic-nsfw-capabilities.md](/.plan/epics/epic-nsfw-capabilities.md) |
 | 🟡 In Progress | Visual Novel Mode — Dynamic Generation & Q&A Mode | Medium | Very High | 0 | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md) |
@@ -230,6 +231,7 @@
 | 🟡 In Progress — TASK-add-trace-fatal, TASK-unify-logging-output-to-canonical-jsonl, TASK-insert-log-fatal-and-log-trace-calls, TASK-verify-logging-changes-green all ✅ Done (merged to dev 2026-08-07) | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
 | 🟡 Permanently Ongoing | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | 🟡 Phase 1 Complete, Phase 2 Partial | LoRA Discovery & Application | High | Medium | 12 | [epic-lora-discovery-application.md](/.plan/epics/epic-lora-discovery-application.md) |
+| 🟡 In Progress (foundation shipped; wiring gap blocks production use) | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 3 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
 | Unknown | Mini-Games: Database Schema Design | Unknown | Unknown | 0 | [epic-mini-games-db.md](/.plan/epics/epic-mini-games-db.md) |
 | Unknown | Mini-Games: Deep Mechanics & Game-Specific Designs | Unknown | Unknown | 0 | [epic-mini-games-mechanics.md](/.plan/epics/epic-mini-games-mechanics.md) |
 | Draft | Mini-Games: Design Document | Unknown | Unknown | 0 | [epic-mini-games-design.md](/.plan/epics/epic-mini-games-design.md) |
@@ -645,6 +647,14 @@ Benchmark Bun's async execution model extensions — Worker threads, `Bun.spawn`
 - **Type:** Infrastructure Epic
 - **Tags:** config, paths, resolution, cross-platform, windows, macos, cwd
 - **File:** `.plan/epics/epic-configs-path-resolution.md`
+
+### Content Hashing & Distributed Integrity
+
+- **Status:** ⬜ Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **File:** `.plan/epics/epic-content-hashing-distributed-integrity.md`
 
 ### Core Testing Frameworks
 
@@ -1216,6 +1226,15 @@ Comprehensive magic and spellcasting system — spell schools, elemental magic, 
 
 Per-component memory tracking with heap, RSS, and GC pressure targets, leak detection, and long-running endurance tests.
 
+### Message Seen-State & Viewership Ledger
+
+- **Status:** ⬜ Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** messages, seen, read-receipt, viewership, realtime, group-chat, turning, moderation
+- **File:** `.plan/epics/epic-message-seen-state.md`
+
 ### Messages & Message Pipeline
 
 - **Status:** ⬜ Not Started
@@ -1224,14 +1243,6 @@ Per-component memory tracking with heap, RSS, and GC pressure targets, leak dete
 - **Type:** Feature Epic
 - **Tags:** messages, pipeline, chat, persistence, retrieval
 - **File:** `.plan/epics/epic-messages.md`
-
-### Middleware — Request Lifecycle, Idempotency & Async Results
-
-- **Status:** ⬜ Not Started
-- **Priority:** Medium
-- **Effort:** Large
-- **Type:** Feature Epic
-- **File:** `.plan/epics/epic-middleware-request-lifecycle.md`
 
 ### Multi-Session Support
 
@@ -2328,6 +2339,14 @@ Group chat lets multiple characters participate in one conversation. The runtime
 - **File:** `.plan/epics/epic-lora-discovery-application.md`
 
 LoRA (Low-Rank Adaptation) enables character-specific and style-specific visual consistency across generations. This epic implements LoRA discovery (auto-detect available models) and application (inject into workflows) for both ComfyUI and sd.cpp backends.
+
+### Middleware — Request Lifecycle, Idempotency & Async Results
+
+- **Status:** 🟡 In Progress (foundation shipped; wiring gap blocks production use)
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **File:** `.plan/epics/epic-middleware-request-lifecycle.md`
 
 ### Mini-Games: Database Schema Design
 
