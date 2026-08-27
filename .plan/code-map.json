@@ -296,6 +296,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     },
     {
@@ -1583,6 +1587,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-safety-xml-utils-tag-unescaped-narrative-greedy.md"
+    }
+  ],
+  "src/async/apply.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
     }
   ],
   "src/async/offload.test.ts": [
@@ -3828,6 +3838,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-bound-linked-travel-prompts.md"
     },
     {
@@ -5463,6 +5477,16 @@
       "source": ".plan/epics/epic-platform-integrations.md"
     }
   ],
+  "src/crypto/activitypub-keys.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-crypto-activitypub-key-rotation-is-non-atomic-insert-failure.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-crypto-activitypub-keys-ts-has-zero-test-coverage.md"
+    }
+  ],
   "src/crypto/actor-keys.ts": [
     {
       "kind": "epic",
@@ -5842,6 +5866,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-crypto-asset-re-encryption-runs-inside-db-transaction-rollba.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-key-rotation-non-transactional-incomplete-re-encryption-stra.md"
     },
     {
@@ -5967,6 +5995,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-crypto-rotateactorkeyandreencrypt-returns-sentinel-string-ro.md"
     },
     {
       "kind": "ticket",
@@ -6213,6 +6245,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-avatar-selection-rule-unimplemented-branches.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-validation-avatarselectionruleschema-missing-action-first-an.md"
     },
     {
       "kind": "ticket",
@@ -6863,6 +6899,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-logging-separate-database-research.md"
+    }
+  ],
+  "src/db/migrations/069_activitypub_actor_keys_and_federation_consent.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
     }
   ],
   "src/db/migrations/0XX_audio_templates.ts": [
@@ -8110,6 +8152,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-asyncstore-fail-dead-code.md"
     },
     {
@@ -8829,6 +8875,12 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+  "src/frontend/alpine/chat-seen.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po.md"
+    }
+  ],
   "src/frontend/alpine/chat-settings.ts": [
     {
       "kind": "epic",
@@ -9064,6 +9116,10 @@
     }
   ],
   "src/frontend/alpine/chat/music-embed.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-music-embed-fallback-esc-allows-stored-xss-via-attr.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md"
@@ -11518,6 +11574,10 @@
   "src/generation/auto-gen/content-hooks.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-content-hooks-ts-missing-imports-breaks-typecheck.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
     },
     {
@@ -12024,11 +12084,21 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-nsfwhook-blocked-by-override-and-blocked-by-error-paths.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    }
+  ],
+  "src/generation/hooks/nsfw-rating.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-leveltorating-maps-unknown-levels-to-sfw-fail-open.md"
     }
   ],
   "src/generation/hooks/registry.ts": [
@@ -13581,10 +13651,20 @@
       "source": "docs/frontend/headers-management.md"
     }
   ],
+  "src/middleware/csrf-plugin.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
+    }
+  ],
   "src/middleware/csrf.integration.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
     }
   ],
   "src/middleware/csrf.test.ts": [
@@ -13743,6 +13823,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-nsfw-weakest-link-violated-enforcement-hardcodes-.md"
+    }
+  ],
+  "src/middleware/nsfw-gate/consent-ledger.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa.md"
     }
   ],
   "src/middleware/nsfw-gate/consent.test.ts": [
@@ -16984,6 +17070,10 @@
   "src/routes/message-seen.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-routes-message-seen-post-delete-trusts-client-actorid-idor-a.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-realtime-broadcast.md"
     },
     {
@@ -17708,6 +17798,10 @@
     }
   ],
   "src/routes/requests/status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
@@ -20515,6 +20609,12 @@
       "source": ".plan/tickets/TASK-implement-trade.md"
     }
   ],
+  "src/services/trade/core.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-services-tradecore-validatelines-lacks-world-id-filter-cross.md"
+    }
+  ],
   "src/social-hub/adapters/adapter.ts": [
     {
       "kind": "ticket",
@@ -20836,6 +20936,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-destroy-partial-quantity-update-path-missing-world-id-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
     },
     {
@@ -21137,6 +21241,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-transport-strictuint8-applied-to-gzip-path-but-not-zstd-brot.md"
     },
     {
       "kind": "ticket",
@@ -21565,6 +21673,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cross-layer-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-validation-avatarselectionruleschema-missing-action-first-an.md"
     },
     {
       "kind": "ticket",
