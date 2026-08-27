@@ -1,6 +1,6 @@
 # BUG: Federated delete and GDPR right-to-be-forgotten unhandled
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** medium
 **Effort:** Medium
 

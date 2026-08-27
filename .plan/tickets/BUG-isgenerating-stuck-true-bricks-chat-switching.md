@@ -1,6 +1,6 @@
 # BUG: isGenerating stuck true bricks chat switching
 
-**Status:** [OK] Resolved (commit on branch; reset flag after dispatchCommandAction so non-generation responses do not brick selectChat)
+**Status:** done
 
 ## Evidence
 

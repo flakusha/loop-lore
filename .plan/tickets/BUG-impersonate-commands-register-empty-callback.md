@@ -3,7 +3,7 @@
 
 # BUG: impersonate command register callbacks are empty (no-op)
 
-**Status:** Not A Bug — Already Correct
+**Status:** not-a-bug
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Small

@@ -1,6 +1,6 @@
 # BUG: Federation identity mapping to local users undefined
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** high
 **Effort:** Medium
 

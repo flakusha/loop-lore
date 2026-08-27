@@ -3,7 +3,7 @@
 
 # BUG: gatePluginToolsByRole exposes ALL tools when role declares an empty allowlist (privilege escalation vs unassigned)
 
-**Status:** Resolved (commit 375c4e05 — empty-role returns []; actor-lookup error path covered by handler)
+**Status:** done
 **Severity:** high
 **Priority:** high
 **Effort:** small
