@@ -69,6 +69,7 @@ import { locationExplorerRoutes, } from "../routes/location-explorer";
 import { messageEncryptionRoutes, } from "../routes/message-encryption";
 import { messageReactionsRoutes, } from "../routes/message-reactions";
 import { messageSearchRoutes, } from "../routes/message-search";
+import { messageSeenRoutes, } from "../routes/message-seen";
 import { messagesRoutes, } from "../routes/messages";
 import { modelComparisonsRoutes, } from "../routes/model-comparisons";
 import { musicLinksRoutes, } from "../routes/music-links";
@@ -210,4 +211,5 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(exportRoutes({ database: handleOpts.database, },),);
   app.use(exportSseRoutes({ database: handleOpts.database, },),);
   app.use(worldImportRoutes(handleOpts,),);
+  app.use(messageSeenRoutes({ database: handleOpts.database, },),);
 }

@@ -252,4 +252,26 @@ export interface ChatCoreState
   checkGenerationStatus(chatId: string,): Promise<void>;
   registerPanelHandlers(): void;
   unregisterPanelHandlers(): void;
+
+  /** Current actor ID for the logged-in user (for seen-state tracking). */
+  currentActorId: string | null;
+
+  // ── Seen-state popover ─────────────────────────────────────────
+  _seenPopoverOpen: boolean;
+  _seenPopoverX: number;
+  _seenPopoverY: number;
+  _seenPopoverViewers: Array<{ actorId: string; state: string; seenAt: string | null }>;
+
+  initSeenPopover(): void;
+  _seenPollTimer: ReturnType<typeof setInterval> | null;
+  startSeenPolling(): void;
+  stopSeenPolling(): void;
+
+  // ── Seen-state tracking ─────────────────────────────────────────
+  loadMessageSeen(msgId: string,): Promise<void>;
+  loadAllSeen(): Promise<void>;
+  markSeen(msgId: string, state: "seen" | "processing",): Promise<void>;
+  openSeenPopover(msgId: string, event: Event,): void;
+  seenTitle(seenState: Array<{ actorId: string; state: string; seenAt: string | null }>,): string;
+  seenCount(seenState: Array<{ actorId: string; state: string; seenAt: string | null }>,): number;
 }
