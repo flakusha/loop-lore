@@ -964,3 +964,13 @@ export interface NsfwConsentState {
   created_at: string;
   revoked_at: string | null;
 }
+
+// ── message_seen ────────────────────────────────────────────
+export interface MessageSeen {
+  id: Generated<string>;
+  message_id: string;
+  actor_id: string;
+  state: Generated<string>;
+  seen_at: string | null;
+  created_at: Generated<string>;
+}

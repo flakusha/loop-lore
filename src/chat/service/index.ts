@@ -77,6 +77,14 @@ export { regenerateMessageVariant, } from "./write";
 // ── Message visibility ────────────────────────────────────────
 export { updateMessageVisibility, } from "./visibility";
 
+// ── Message seen-state (VN mode / AI processing) ─────────────
+export {
+  deleteMessageSeen,
+  getMessageSeen,
+  recordMessageSeen,
+  type SeenStateRecord,
+} from "./seen";
+
 // ── Location events ───────────────────────────────────────────
 export { getLocationHistory, recordLocationChange, } from "./location-events";
 

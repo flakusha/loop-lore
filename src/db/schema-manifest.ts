@@ -483,6 +483,14 @@ export const SCHEMA = new SchemaManifest()
     emoji: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("message_seen", {
+    id: col("text", { primaryKey: true, },),
+    message_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    state: col("text", { notNull: true, hasDefault: true, },),
+    seen_at: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("message_translations", {
     id: col("text", { primaryKey: true, },),
     message_id: col("text", { notNull: true, },),
