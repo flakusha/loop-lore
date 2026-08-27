@@ -3583,6 +3583,10 @@
       "source": ".plan/epics/epic-impersonation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-message-seen-state.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
     },
@@ -3617,6 +3621,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-service-route.md"
     },
     {
       "kind": "ticket",
@@ -6233,12 +6241,20 @@
       "source": ".plan/epics/epic-item-systems-unification.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-message-seen-state.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-schema.md"
     },
     {
       "kind": "ticket",
@@ -6561,6 +6577,16 @@
       "source": ".plan/tickets/BUG-nsfw-moderation-delete-destroys-audit-log.md"
     }
   ],
+  "src/db/migrations/009_reactions_pins.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-message-seen-state.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-schema.md"
+    }
+  ],
   "src/db/migrations/016_asset_encryption.ts": [
     {
       "kind": "ticket",
@@ -6847,12 +6873,20 @@
       "source": ".plan/epics/epic-config-templates.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-message-seen-state.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-clean-transfer-orphans.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-schema.md"
     }
   ],
   "src/db/migrations/parts/005_actor_data.ts": [
@@ -6983,6 +7017,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotions-avatar-edit-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-schema.md"
     },
     {
       "kind": "ticket",
@@ -7511,6 +7549,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-e2ee-receiver-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-schema.md"
     },
     {
       "kind": "spec",
@@ -8121,6 +8163,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-world-item-instance-npc.md"
+    }
+  ],
+  "src/frontend/.../chat-messages.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-indicator-frontend.md"
     }
   ],
   "src/frontend/3d/avatar-renderer.ts": [
@@ -13913,6 +13961,10 @@
   ],
   "src/nsfw/moderation-service/flags.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-message-seen-state.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-flagqueue-leaks-reporter-pii.md"
     },
@@ -16627,8 +16679,16 @@
   ],
   "src/routes/message-reactions.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-message-seen-state.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-message-reactions-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-service-route.md"
     }
   ],
   "src/routes/message-search.test.ts": [
@@ -16659,6 +16719,22 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
+    }
+  ],
+  "src/routes/message-seen.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-service-route.md"
+    }
+  ],
+  "src/routes/message-seen.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-realtime-broadcast.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-service-route.md"
     }
   ],
   "src/routes/messages.test.ts": [
@@ -16851,6 +16927,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
+    }
+  ],
+  "src/routes/messages/nsfw-user-flag.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-message-seen-state.md"
     }
   ],
   "src/routes/messages/post.test.ts": [
@@ -20642,6 +20724,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-schema.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
     },
     {
@@ -21133,6 +21219,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-message-seen-state-schema.md"
     },
     {
       "kind": "ticket",

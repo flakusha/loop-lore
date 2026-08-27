@@ -9,12 +9,11 @@
  * handle the content produce results; none short-circuit.
  */
 
-
 import { getLogger, } from "../../logger";
-import { ModerationHook, } from "./moderation-hook";
 import { EmotionHook, } from "./emotion-hook";
-import { NsfwHook, type NsfwHookDeps, } from "./nsfw-hook";
+import { ModerationHook, } from "./moderation-hook";
 import { MoodHook, } from "./mood-hook";
+import { NsfwHook, type NsfwHookDeps, } from "./nsfw-hook";
 import type { HookChainOptions, HookChainResult, HookHandler, HookResult, } from "./types";
 
 const registeredHooks: HookHandler[] = [];

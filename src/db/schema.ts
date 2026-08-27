@@ -145,5 +145,6 @@ export interface DB {
   battles: import("./schema-core").Battles;
   trade_history: import("./schema-core").TradeHistory;
   request_results: import("./schema-core").RequestResults;
+  activitypub_actor_keys: import("./schema-core").ActivitypubActorKeys;
   nsfw_consent_state: import("./schema-core").NsfwConsentState;
 }
