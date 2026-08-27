@@ -14,14 +14,16 @@ import type { DB, } from "../../db";
 import { createLogger, } from "../../logger";
 import { NSFWContentRating, } from "../../schemas";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, insertChats, insertChatParticipants, insertNsfwUserPreferences, insertUsers, } from "../../test-utils/insert-helpers";
-import { checkChatNsfwAccess, } from "./access";
 import {
-  checkNsfwWithConsent,
-  getLatestConsent,
-  hasActiveConsent,
-  recordNsfwConsent,
-} from "./consent";
+  insertActors,
+  insertChatParticipants,
+  insertChats,
+  insertNsfwUserPreferences,
+  insertUsers,
+} from "../../test-utils/insert-helpers";
+import { checkChatNsfwAccess, } from "./access";
+import { checkNsfwWithConsent, } from "./consent";
+import { getLatestConsent, hasActiveConsent, recordNsfwConsent, } from "./consent-ledger";
 
 function makeConfig(overrides: Partial<Config["nsfw"]> = {},): Config {
   // Only nsfw section is read by the gate; other sections are inert placeholders.
