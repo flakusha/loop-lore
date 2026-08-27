@@ -11906,7 +11906,7 @@
     "git_issue": "8b0fa75"
   },
   "TASK-HTTPS-REDIRECT-ENFORCEMENT-FOR-PLAINTEXT-HTTP": {
-    "hash": "pending",
+    "hash": "b3888da",
     "extid": "TASK-HTTPS-REDIRECT-ENFORCEMENT-FOR-PLAINTEXT-HTTP",
     "type": "TASK",
     "title": "HTTPS redirect enforcement for plaintext HTTP",
@@ -11914,7 +11914,8 @@
     "priority": "high",
     "epic": "epic-certificate-and-tls-management.md",
     "tags": [],
-    "source": ".plan/tickets/TASK-https-redirect-enforcement-for-plaintext-http.md"
+    "source": ".plan/tickets/TASK-https-redirect-enforcement-for-plaintext-http.md",
+    "git_issue": "b3888da"
   },
   "TASK-I18N-ALPINE-CLIENT": {
     "hash": "f04df28",
@@ -14227,7 +14228,7 @@
     "git_issue": "4218340"
   },
   "TASK-OCSP-STAPLING-FOR-TLS-CERTIFICATE-STATUS": {
-    "hash": "pending",
+    "hash": "d555260",
     "extid": "TASK-OCSP-STAPLING-FOR-TLS-CERTIFICATE-STATUS",
     "type": "TASK",
     "title": "OCSP stapling for TLS certificate status",
@@ -14235,7 +14236,8 @@
     "priority": "medium",
     "epic": "epic-certificate-and-tls-management.md",
     "tags": [],
-    "source": ".plan/tickets/TASK-ocsp-stapling-for-tls-certificate-status.md"
+    "source": ".plan/tickets/TASK-ocsp-stapling-for-tls-certificate-status.md",
+    "git_issue": "d555260"
   },
   "TASK-OLLAMA-NATIVE-PROVIDER": {
     "hash": "pending",
@@ -16449,7 +16451,7 @@
     "source": ".plan/tickets/TASK-smart-context-pruning.md"
   },
   "TASK-SNI-MULTI-CERTIFICATE-SERVING-FOR-MULTIPLE-DOMAINS": {
-    "hash": "pending",
+    "hash": "4ca25ee",
     "extid": "TASK-SNI-MULTI-CERTIFICATE-SERVING-FOR-MULTIPLE-DOMAINS",
     "type": "TASK",
     "title": "SNI multi-certificate serving for multiple domains",
@@ -16457,7 +16459,8 @@
     "priority": "low",
     "epic": "epic-certificate-and-tls-management.md",
     "tags": [],
-    "source": ".plan/tickets/TASK-sni-multi-certificate-serving-for-multiple-domains.md"
+    "source": ".plan/tickets/TASK-sni-multi-certificate-serving-for-multiple-domains.md",
+    "git_issue": "4ca25ee"
   },
   "TASK-SOCIAL-GUILD-SYSTEM": {
     "hash": "pending",
@@ -17138,7 +17141,7 @@
     "source": ".plan/tickets/TASK-timeline-selection-api.md"
   },
   "TASK-TLS-CIPHER-SUITE-HARDENING-AND-SECURE-DEFAULTS": {
-    "hash": "pending",
+    "hash": "49a86d4",
     "extid": "TASK-TLS-CIPHER-SUITE-HARDENING-AND-SECURE-DEFAULTS",
     "type": "TASK",
     "title": "TLS cipher suite hardening and secure defaults",
@@ -17146,10 +17149,11 @@
     "priority": "high",
     "epic": "epic-certificate-and-tls-management.md",
     "tags": [],
-    "source": ".plan/tickets/TASK-tls-cipher-suite-hardening-and-secure-defaults.md"
+    "source": ".plan/tickets/TASK-tls-cipher-suite-hardening-and-secure-defaults.md",
+    "git_issue": "49a86d4"
   },
   "TASK-TLS-CONFIGURATION-AUDIT-AND-STARTUP-VALIDATION": {
-    "hash": "pending",
+    "hash": "124f1f7",
     "extid": "TASK-TLS-CONFIGURATION-AUDIT-AND-STARTUP-VALIDATION",
     "type": "TASK",
     "title": "TLS configuration audit and startup validation",
@@ -17157,7 +17161,8 @@
     "priority": "medium",
     "epic": "epic-certificate-and-tls-management.md",
     "tags": [],
-    "source": ".plan/tickets/TASK-tls-configuration-audit-and-startup-validation.md"
+    "source": ".plan/tickets/TASK-tls-configuration-audit-and-startup-validation.md",
+    "git_issue": "124f1f7"
   },
   "TASK-TOOL-CALLING-AGENTS": {
     "hash": "pending",
