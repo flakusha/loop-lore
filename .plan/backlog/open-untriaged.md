@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# Open — Untriaged Tickets & Issues (2026-08-25)
+# Open — Untriaged Tickets & Issues (2026-08-27)
 
 > **Purpose:** landing zone for git issues that exist but have no index entry / epic
 > linkage yet (advisory orphans reported by `bun run plan:sync`; recompute the
@@ -24,12 +24,6 @@
 | `a06b99e` BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids | Telemetry PII (raw bodies, session ids) | `security-review-2026-08-25.md` + privacy hardening |
 | `b23b7fb` BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested | Censor depth cutoff bug | same cluster as logging hardening |
 | `b465b08` BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san | ReDoS in HTML sanitizer | sanitizer hardening; HIGH-adjacent |
-| `94f9a36` TASK-nsfw-override-authz-scope-route-lacks-chat-membership-check | NSFW override route authz gap | NSFW gate cluster below + `epic-nsfw-moderation.md` |
-| `da08f1b` BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al | NSFW gate fails open on DB error | NSFW gate cluster |
-| `f89168b` BUG-group-chat-nsfw-weakest-link-violated-enforcement-hardcodes | Group-chat NSFW weakest-link violated | NSFW gate cluster |
-| `4f8aeb2` BUG-nsfw-consent-auto-granted-in-memory-for-any-logged-in-user | NSFW consent auto-granted in memory | NSFW gate cluster |
-| `9575d31` BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud | `logNsfwEvent` zero callers — no audit trail | NSFW gate cluster |
-| `ccb8879` BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g | Moderation hooks run AFTER LLM generation | NSFW gate cluster — ordering fix likely highest-value of the wave; promote into `epic-nsfw-moderation.md` § Integration Points first |
 | `eafe79f` TASK-regex-pipeline-hardening-sweep-input-caps-lastindex-hazards | Regex pipeline lastIndex/caps hazards | regex hardening; relates to quick-wins item 4 (`transforms.ts`) |
 
 ## Date-handling correctness cluster (pairs with linked date-utils ticket)
@@ -56,12 +50,6 @@ issues surfaced in the same sync window:
 - `69d45a5` BUG-blog-comments-lack-threading-parent-comment-id-blocking-lem — comment threading blocks Lemmy/Mastodon/Reddit parity
 - `476e62b` BUG-chat-im-adapter-abstraction-duplicated-protocoladapter-vs-so — ProtocolAdapter vs SocialAdapter duplication, no code path
 - `27cc7ab` BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad — IRC integration scoped as group-chat-only in social-hub adapter list
-
-**Cluster summary:** NSFW gate correctness/ordering is one coherent fix batch →
-suggest an `epic-nsfw-gate-correctness.md` or fold into
-`epic-nsfw-moderation.md` § Integration Points. Logging/telemetry/sanitizer/regex +
-raw-buffer/raw-json items form a second input-hardening batch. Browser-test items
-belong to release hardening. Rate-limit/IP items pair with the MEDIUM XFF finding.
 
 ## Known index defects
 
