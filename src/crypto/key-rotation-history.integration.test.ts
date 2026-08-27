@@ -146,7 +146,7 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
     }
 
     // ── 3. Rotate PARTICIPANT_1's actor key ───────────────────────────────
-    const result = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk, 100,);
+    const result = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk,);
 
     expect(result.actorId,).toBe(PARTICIPANT_1,);
     expect(result.oldKeyId,).toBe(oldKeyId,);
@@ -195,7 +195,7 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
 
   test("rotation with no messages succeeds without re-encrypting", async () => {
     const smk = getSmkSafe();
-    const result = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk, 100,);
+    const result = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk,);
     expect(result.messagesReEncrypted,).toBe(0,);
     expect(result.actorId,).toBe(PARTICIPANT_1,);
     expect(result.newKeyId,).not.toBe(result.oldKeyId,);
@@ -234,7 +234,7 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
     }
 
     // First rotation
-    const r1 = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk, 100,);
+    const r1 = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk,);
     expect(r1.messagesReEncrypted,).toBeGreaterThanOrEqual(3,);
     participantKeys = await loadActorKeys({ database: db, actorIds: [PARTICIPANT_1, PARTICIPANT_2,], smk, },);
     const midChatKey = await deriveChatKey(participantKeys, CHAT_ID,);
@@ -267,7 +267,7 @@ describe("rotateActorKeyAndReEncrypt — history preservation", () => {
       },).execute();
     }
 
-    const r2 = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk, 100,);
+    const r2 = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk,);
     expect(r2.messagesReEncrypted,).toBeGreaterThanOrEqual(5,);
     expect(r2.newKeyId,).not.toBe(r1.newKeyId,);
 
