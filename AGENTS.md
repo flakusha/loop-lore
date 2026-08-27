@@ -265,6 +265,33 @@ bun run scripts/worktree/ finalize feature-name
 
 > **Note:** The worktree CLI is native Bun (`scripts/worktree/index.mjs`). Run via `bun run scripts/worktree/ <command>` — no shell wrapper.
 
+### Mutating operations are worktree-only
+
+Agents MUST NOT run `git commit`, `git stash`, `git reset`, `git rebase`,
+`git merge`, `git push`, or any other mutating git command directly on
+`/home/flak/git-ai/loop-lore` (the dev checkout) outside of an isolated
+worktree under `tree/`. The dev checkout is for read-only inspection.
+All mutating operations — commits, stashes, rebases, merges, push/cleanup
+of finalized branches — flow through `scripts/worktree/`. If
+`scripts/worktree/ <command>` fails, agents MUST stop and report the failure
+to the user instead of bypassing the tooling with direct `git` calls.
+
+### GPG signing — never bypass
+
+If `git commit`, `scripts/worktree/ agent-commit`, or any signed operation
+fails with a GPG / pinentry error, agents MUST stop and report the failure.
+NEVER set `commit.gpgsign=false`, pass `-S none`, or otherwise strip the
+signature requirement. The user owns GPG configuration; agents report, the
+user fixes the signer. An unsigned commit on `dev` is a blocker — reset it
+and ask the user to re-sign or re-run the flow.
+
+### Stop on tooling failure
+
+When a `scripts/worktree/` command (or any other tool) fails, agents MUST
+stop and surface the error. Do NOT retry the failing step with a workaround
+(different binary, force flag, raw git, manual signing, etc.) without
+explicit user direction. If a workaround is genuinely necessary, ASK first.
+
 ````
 ## Issue Tracking
 
