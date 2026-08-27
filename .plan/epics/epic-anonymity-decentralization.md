@@ -324,7 +324,7 @@ interface RadicleClient {
 
 ## Related Epics
 
-- `epic-encryption-foundation.md` — E2EE for all communications
+- `epic-crypto.md` — E2EE for all communications
 - `epic-security-sandboxing.md` — Security hardening
 - `epic-social-hub.md` — Cross-platform communication
 - `epic-api-governance.md` — API security and validation

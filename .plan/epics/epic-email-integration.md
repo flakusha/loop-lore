@@ -29,7 +29,7 @@ Part of the **Communications Integrations** epic. See parent epic for full scope
 
 ## Design
 
-`EmailAdapter` implements `ProtocolAdapter` and `PgpEncryption` implements `EncryptionProvider`, both defined in **epic-integrations-core.md**. Keyring management builds on `epic-encryption-foundation.md`.
+`EmailAdapter` implements `ProtocolAdapter` and `PgpEncryption` implements `EncryptionProvider`, both defined in **epic-integrations-core.md**. Keyring management builds on `epic-crypto.md`.
 
 ```typescript
 // src/integrations/email/adapter.ts
@@ -64,7 +64,7 @@ Unlike chat protocols, email encryption is opportunistic: messages are stored un
 
 - Depends on: **Communications Integrations** hub (epic-communications-integrations.md)
 - Depends on: **Integrations Core** (epic-integrations-core.md) — implements `ProtocolAdapter`; uses health monitoring, rate limiting, config UI skeleton
-- Depends on: `epic-encryption-foundation.md` (key material behind the user-managed PGP keyring)
+- Depends on: `epic-crypto.md` (key material behind the user-managed PGP keyring)
 - Siblings: independent of Matrix/XMPP/IM sub-epics; the email-to-chat bridge routes into loop-lore chats shared with those epics' outputs
 
 ## Security Considerations
