@@ -5003,6 +5003,12 @@
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     }
   ],
+  "src/config/schema/auth.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    }
+  ],
   "src/config/schema/characters.ts": [
     {
       "kind": "ticket",
@@ -5049,6 +5055,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene.md"
+    }
+  ],
+  "src/config/sections/auth.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
     }
   ],
   "src/config/sections/byo-key.ts": [
@@ -8094,11 +8106,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-asyncstore-fail-dead-code.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
     },
     {
       "kind": "ticket",
@@ -10327,6 +10347,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
     },
     {
       "kind": "ticket",
@@ -13557,6 +13581,24 @@
       "source": "docs/frontend/headers-management.md"
     }
   ],
+  "src/middleware/csrf.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h.md"
+    }
+  ],
+  "src/middleware/csrf.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    }
+  ],
+  "src/middleware/csrf.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
+    }
+  ],
   "src/middleware/dynamic-response.ts": [
     {
       "kind": "epic",
@@ -15747,6 +15789,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limiter-module-singletons-shared-across-test-files-caus.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
     },
     {
       "kind": "ticket",
