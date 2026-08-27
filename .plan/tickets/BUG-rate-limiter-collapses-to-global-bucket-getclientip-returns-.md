@@ -1,6 +1,6 @@
 # BUG: Rate limiter collapses to global bucket (getClientIp returns 'unknown')
 
-**Status:** ✅ Fixed (committed 830925f9, e3f1dd84, 140f16ff)
+**Status:** ✅ Resolved (commit e3f1dd84 — getClientIp now sources peerIp from server.requestIP; proxy headers only when trustProxy)
 **Priority:** critical
 **Effort:** Medium
 
