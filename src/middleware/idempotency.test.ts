@@ -90,7 +90,7 @@ describe("idempotent (memory backend)", () => {
   test("distinct user ids on the same request id do NOT share cache (BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r)", async () => {
     const idem = idempotent({ backend: "memory", },);
     // User A caches a response under request id "shared".
-    const ctxA = { ...makeCtx("POST", "/api/x", "shared",), userId: "user-A" };
+    const ctxA = { ...makeCtx("POST", "/api/x", "shared",), userId: "user-A", };
     expect(await idem.beforeHandle(ctxA,),).toBeUndefined();
     idem.recordResponse({
       method: "POST",
@@ -101,14 +101,13 @@ describe("idempotent (memory backend)", () => {
     },);
     await flushMicrotasks();
     // User B submits the same request id — must NOT see A's cached body or slot.
-    const replay = await idem.beforeHandle({ ...makeCtx("POST", "/api/x", "shared",), userId: "user-B" },);
-    expect(replay).toBeUndefined();
+    const replay = await idem.beforeHandle({ ...makeCtx("POST", "/api/x", "shared",), userId: "user-B", },);
+    expect(replay,).toBeUndefined();
     // And A's replay still works on its own key.
     const aReplay = await idem.beforeHandle(ctxA,);
-    expect(aReplay).toBeInstanceOf(Response);
-    if (aReplay) { expect(await aReplay.text()).toBe("A's payload"); }
+    expect(aReplay,).toBeInstanceOf(Response,);
+    if (aReplay) { expect(await aReplay.text(),).toBe("A's payload",); }
   });
-
 
   test("TTL expiry reverts to fresh pass-through", async () => {
     const idem = idempotent({ backend: "memory", ttlMs: 1, },);
