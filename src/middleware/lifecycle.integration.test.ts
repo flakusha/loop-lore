@@ -187,5 +187,5 @@ describe("recordLifecycle (Elysia integration)", () => {
     expect(row?.status,).toBe("failed",);
     expect(row?.error,).toContain("HTTP 400",);
     expect(row?.responseBody,).toBeNull();
-  },);
+  });
 });
