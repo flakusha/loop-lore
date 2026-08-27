@@ -23,6 +23,7 @@ export const VALID_ROLES = [
   ModelRole.Captioning,
 ] as const;
 
+/** A resolved model role with its provider, model, and source. */
 export interface ResolvedModelRole {
   role: ModelRole;
   provider: string;
@@ -37,6 +38,10 @@ export interface ResolvedModelRole {
  * 1. DB override (model_role_overrides table)
  * 2. Config default (config.generation.modelRoles)
  * 3. Server default (config.generation.defaultProvider + defaultModels)
+ * @param role - The role to resolve.
+ * @param config - App config.
+ * @param db - Database instance.
+ * @returns The resolved model role.
  */
 export async function resolveModelRole(
   role: ModelRole,
@@ -82,6 +87,9 @@ export async function resolveModelRole(
 
 /**
  * Resolve all model roles at once.
+ * @param config - App config.
+ * @param db - Database instance.
+ * @returns All resolved model roles.
  */
 export async function resolveAllModelRoles(config: Config, db: Kysely<DB>,): Promise<ResolvedModelRole[]> {
   const promises: Promise<ResolvedModelRole>[] = Array.from(VALID_ROLES, role => resolveModelRole(role, config, db,),);
