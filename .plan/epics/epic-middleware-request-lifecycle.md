@@ -3,7 +3,7 @@
 
 # EPIC: Middleware — Request Lifecycle, Idempotency & Async Results
 
-**Status:** 🟡 In Progress (foundation shipped; wiring gap blocks production use)
+**Status:** 🟢 Complete (foundation + wiring gap closed; request-id derive, idempotency chain, and async-store lifecycle all wired into elysia-app.ts)
 **Priority:** Medium
 **Effort:** Large
 **Type:** Feature Epic
@@ -70,41 +70,28 @@ frontends need:
 
 ## Sub-Tickets
 
-- [x] TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md (d33734d) — 🟡 partial (Elysia-side wiring gap, see Closing Notes)
-- [x] TASK-middleware-global-idempotency-replay-for-re-fired-requests.md (385f05a) — 🟡 partial (middleware not wired into route chain, see Closing Notes)
-- [x] TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md (2aeef24) — 🟡 partial (status endpoint reads, but no caller writes `complete`/`fail`, see Closing Notes)
-- [x] TASK-async-request-response-result-store-separate-table-offload.md (73eb1de) — 🟡 partial (store + offload daemon shipped, lifecycle hooks missing, see Closing Notes)
+- [x] TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md (d33734d) — ✅ done (requestIdMiddleware shipped + wired into Elysia derive)
+- [x] TASK-middleware-global-idempotency-replay-for-re-fired-requests.md (385f05a) — ✅ done (idempotent() shipped + wired into Elysia chain)
+- [x] TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md (2aeef24) — ✅ done (status endpoint reads; lifecycle hooks now write complete/fail)
+- [x] TASK-async-request-response-result-store-separate-table-offload.md (73eb1de) — ✅ done (store + offload daemon + lifecycle hooks shipped)
 
-## Follow-up Tickets (block production use)
+## Follow-up Tickets (wiring gap — now closed)
 
-- [ ] TASK-middleware-request-id-elysia-derive.md — wire `requestIdMiddleware()` into the Elysia `.derive()` chain. **BLOCKER** for ticket 2 follow-up.
-- [ ] TASK-middleware-idempotency-wire-into-elysia.md — call `idempotent()` in the Elysia app chain; add `X-Idempotency-Bypass` header + `config.idempotency.enabled` flag; bump TTL default to 24h. Depends on the request-id follow-up.
-- [ ] TASK-async-store-complete-fail-lifecycle-hooks.md — wire `asyncStore.complete()` / `fail()` / `progress()` into the request lifecycle (idempotency `afterHandle`, global error boundary, `triggerAutoGeneration` steps). Closes the partial state on tickets 3 + 4. Depends on the idempotency follow-up.
+- [x] TASK-middleware-request-id-elysia-derive.md — wire `requestIdMiddleware()` into the Elysia `.derive()` chain. **DONE**: `elysia-app.ts` adds `.derive(requestIdMiddleware())` before auth derive; sets `x-request-id` header + `ctx.requestId`.
+- [x] TASK-middleware-idempotency-wire-into-elysia.md — call `idempotent()` in the Elysia app chain; add `X-Idempotency-Bypass` header + `config.idempotency.enabled` flag; bump TTL default to 24h. **DONE**: `elysia-app.ts` wires `idempotent()` via `onBeforeHandle`/`onAfterHandle`; bypass header + enabled flag + 24h TTL added.
+- [x] TASK-async-store-complete-fail-lifecycle-hooks.md — wire `asyncStore.complete()` / `fail()` / `progress()` into the request lifecycle. **DONE**: `recordLifecycle()` afterHandle captures response; global `.onError()` marks failed; `triggerAutoGeneration` emits progress steps; `onStop()` flushes at shutdown.
 
 ## Files (planned → actual)
 
-- `src/middleware/request-id.ts` ✅ — accept frontend UUID, fall back to
-  server-generated; exposed via `resolveRequestId` / `applyRequestId` /
-  `requestIdMiddleware`. Used by `handler.ts`; **NOT yet used by Elysia
-  routes** (see follow-up ticket).
-- `src/middleware/idempotency.ts` ✅ — module + tests shipped; exported
-  as `idempotent()` (ticket said `idempotencyMiddleware()`).
-  **Not wired** (see follow-up ticket).
-- ~~`src/middleware/in-progress.ts`~~ — inlined into `src/async/store.ts`
-  as `track` / `progress` / `complete` / `fail`. No separate file.
-- `src/routes/requests/` ✅ — `GET /api/requests/:id/status` shipped
-  (plan said `src/routes/api/requests/` — different path).
-- `src/db/migrations/067_request_results.ts` ✅ — `request_results` table
-  shipped (plan said `XXXX_request_results.ts` — concrete number assigned
-  by db:sync).
-- `src/async/store.ts` ✅ — result-store writer + writer API shipped.
-  The fire-and-forget drain loop composes with `apply.ts`.
-- `src/async/offload.ts` ✅ — cron / size / load / idle trigger; spills
-  to `.tmp/async-store/` (matches plan).
-- `src/routes/messages/reply.ts:55` — `triggerAutoGeneration` is called
-  fire-and-forget; `asyncStore.track()` is called before, but the LLM
-  completion path does NOT write `asyncStore.complete()` (see follow-up
-  ticket for the worked-example completion).
+- ~~`src/middleware/in-progress.ts`~~ — inlined into `src/async/store.ts` as `track` / `progress` / `complete` / `fail`. No separate file.
+- `src/middleware/lifecycle.ts` ✅ — NEW: `recordLifecycle()` afterHandle captures response into `request_results`.
+- `src/routes/requests/` ✅ — `GET /api/requests/:id/status` shipped (plan said `src/routes/api/requests/` — different path).
+- `src/db/migrations/067_request_results.ts` ✅ — `request_results` table shipped.
+- `src/async/store.ts` ✅ — result-store writer + writer API shipped; fire-and-forget drain loop composes with `apply.ts`.
+- `src/async/offload.ts` ✅ — cron / size / load / idle trigger; spills to `.tmp/async-store/`.
+- `src/routes/messages/reply.ts:55` — `triggerAutoGeneration` is called fire-and-forget; now passes `asyncStore`, which emits `progress` steps and `fail` on error.
+- `src/elysia-app.ts` ✅ — NEW: wires `requestIdMiddleware` derive, `idempotency` before/afterHandle, `recordLifecycle`, error-boundary `fail`, and `onStop` flush.
+- `src/config/schema/idempotency.ts` ✅ — NEW: `idempotency` config section (enabled/backend/ttlMs/bypassHeader).
 
 ## Related
 
