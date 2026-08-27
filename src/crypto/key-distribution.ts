@@ -102,6 +102,7 @@ export async function rotateKeyOnLeave(
       oldChatKey,
       newChatKey,
       RE_ENCRYPT_LIMIT,
+      { includeAll: true, },
     );
 
     if (failures.length > 0) {

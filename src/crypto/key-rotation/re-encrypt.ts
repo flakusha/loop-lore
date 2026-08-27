@@ -3,7 +3,7 @@
  *
  * - `reEncryptChatMessages` — derives the current chat key and uses it for
  *   both decrypt and encrypt. Use when no key change has happened (e.g. bulk
- *   refresh, schema migration).
+ *   refresh, schema migration). Only re-encodes visible messages by default.
  * - `reEncryptChatAssets` — re-encrypts encrypted asset blobs in a chat.
  *   Each asset is encrypted with a per-asset HKDF subkey derived from the
  *   parent chat key + asset id. Subkey derivation is deterministic, so
@@ -24,13 +24,15 @@ import { deriveChatKeyForChat, } from "../chat-keys";
 import { compressThenEncrypt, decryptThenDecompress, } from "../pipeline";
 import type { PipelineConfig, } from "../pipeline";
 
+export interface ReEncryptOptions {
+  /** Include hidden/archived/deleted messages (for key rotation). Default: false. */
+  includeAll?: boolean;
+}
+
 /**
  * Internal: decrypt each message with `oldKey`, re-encrypt with `newKey`.
  * Messages that fail decryption are surfaced via the returned `failures` array
  * instead of silently swallowed.
- *
- * Includes ALL messages (visible, hidden, archived, deleted) to prevent
- * stranded rows under expired keys.
  *
  * @returns `{ reEncrypted, failures }` where `failures[i]` is `{ id, reason }`.
  */
@@ -40,12 +42,23 @@ export async function reEncryptWithKeys(
   oldKey: ChatKey,
   newKey: ChatKey,
   limit: number,
+  options: ReEncryptOptions = {},
 ): Promise<{ reEncrypted: number; failures: { id: string; reason: string }[] }> {
-  const messages = await database
+  const { includeAll = false, } = options;
+
+  let query = database
     .selectFrom("messages",)
     .select(["id", "content", "key_id",],)
     .where("chat_id", "=", chatId,)
-    .where("key_id", "is not", null,)
+    .where("key_id", "is not", null,);
+
+  // For key rotation, include ALL messages to prevent stranded rows under
+  // expired keys. For migration/refresh, only re-encode visible messages.
+  if (!includeAll) {
+    query = query.where("visibility", "=", "visible",);
+  }
+
+  const messages = await query
     .orderBy("created_at", "desc",)
     .limit(limit,)
     .execute();
@@ -91,7 +104,7 @@ export async function reEncryptWithKeys(
 
 /**
  * Re-encrypt recent messages in a chat using the current chat key for both
- * decrypt and encrypt (no key change assumed).
+ * decrypt and encrypt (no key change assumed). Only visible messages by default.
  */
 export async function reEncryptChatMessages(
   database: Kysely<DB>,
