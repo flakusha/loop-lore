@@ -45,7 +45,11 @@ function handleListVnChoices(database: Kysely<DB>,) {
     const userRole = ctx.userRole as string | null;
     const access = await checkChatAccess(database, chatId, userId, userRole,);
     if (!access.ok) {
-      return jsonError(access.message, access.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden, access.code as never,);
+      return jsonError(
+        access.message,
+        access.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden,
+        access.code as never,
+      );
     }
     const sceneIndex = Number(ctx.query.sceneIndex,);
 
@@ -77,7 +81,11 @@ function handleSelectVnChoice(database: Kysely<DB>,) {
     const userRole = ctx.userRole as string | null;
     const access = await checkChatAccess(database, chatId, userId, userRole,);
     if (!access.ok) {
-      return jsonError(access.message, access.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden, access.code as never,);
+      return jsonError(
+        access.message,
+        access.code === "not_found" ? HttpStatus.NotFound : HttpStatus.Forbidden,
+        access.code as never,
+      );
     }
     const choiceId = ctx.params.choiceId;
 
