@@ -207,22 +207,24 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             .where("id", "=", id,)
             .executeTakeFirst();
 
+          // Rotate encryption key on participant leave (forward secrecy).
+          // Errors propagate — if rotation fails, the participant is NOT deleted.
+          // The caller receives a 500 and can retry.
+          const chatRecord = await database
+            .selectFrom("chats",)
+            .select("encryption_level",)
+            .where("id", "=", id,)
+            .executeTakeFirst();
+
           if (chatRecord?.encryption_level === "standard") {
-            try {
-              const { rotateKeyOnLeave, } = await import("../../crypto/key-distribution");
-              await rotateKeyOnLeave(database, id, actorId,);
-              log().info("Rotated encryption key after participant leave", {
-                chatId: id,
-                departedParticipantId: actorId,
-              },);
-            } catch (keyError) {
-              log().warn("Failed to rotate key on leave (non-fatal)", {
-                chatId: id,
-                departedParticipantId: actorId,
-                error: String(keyError,),
-              },);
-            }
+            const { rotateKeyOnLeave, } = await import("../../crypto/key-distribution");
+            await rotateKeyOnLeave(database, id, actorId,);
+            log().info("Rotated encryption key after participant leave", {
+              chatId: id,
+              departedParticipantId: actorId,
+            },);
           }
+
 
           return jsonNoContent();
         },

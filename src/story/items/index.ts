@@ -54,6 +54,7 @@ export class ItemsService {
     return createDefinitionDispatch(this.state, def,);
   }
 
+  /** Get item definition by ID */
   /** Get item definition by ID. Requires worldId to prevent cross-world IDOR. */
   async getDefinition(itemId: string, worldId: string,) {
     return getDefinitionDispatch(this.state, itemId, worldId,);
@@ -116,5 +117,10 @@ export class ItemsService {
   /** Remove item instance. Requires worldId to prevent cross-world IDOR. */
   async destroy(worldItemId: string, worldId: string, quantity?: number, trx?: Transaction<DB>,): Promise<boolean> {
     return destroyDispatch(this.state, worldItemId, worldId, quantity, trx,);
+  }
+
+  /** Remove item instance */
+  async destroy(worldItemId: string, quantity?: number, trx?: Transaction<DB>,): Promise<boolean> {
+    return destroyDispatch(this.state, worldItemId, quantity, trx,);
   }
 }

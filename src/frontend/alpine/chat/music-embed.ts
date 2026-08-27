@@ -15,17 +15,6 @@ const getDOMPurify = () =>
   }).__DOMPurify;
 
 const NSFW_PLACEHOLDER = '<span class="music-embed-nsfw">🔒 Explicit content hidden</span>';
-const EMBED_UNAVAILABLE = '<span class="music-embed-error">⚠️ Embed unavailable (sanitizer missing)</span>';
-
-/**
- * Escape a value for safe HTML interpolation.
- * 4 call sites in renderMusicEmbed — extracted for lockstep behavior.
- */
-const esc = (s: string | null | undefined,): string => {
-  const div = document.createElement("div",);
-  div.textContent = s ?? "";
-  return div.getHTML();
-};
 
 export const chatMusicEmbed: ChatMusicEmbed = {
   renderMusicEmbed(msg: MusicLinkMessage,): string {
@@ -38,13 +27,18 @@ export const chatMusicEmbed: ChatMusicEmbed = {
     if (!msg.embedHtml) {
       // Fallback: render a linked title card with escaped values to prevent
       // stored XSS from LLM/regex-extracted metadata (thumbnailUrl/title/artist/serviceUrl).
+      const esc = (s: string | null | undefined) => {
+        const div = document.createElement("div");
+        div.textContent = s ?? "";
+        return div.getHTML();
+      };
       const thumb = msg.thumbnailUrl
-        ? `<img src="${esc(msg.thumbnailUrl,)}" alt="${esc(msg.title,)}" class="music-embed-thumb" />`
+        ? `<img src="${esc(msg.thumbnailUrl)}" alt="${esc(msg.title)}" class="music-embed-thumb" />`
         : "";
       return `<div class="music-embed-card">
         ${thumb}
-        <a href="${esc(msg.serviceUrl,)}" target="_blank" rel="noopener" class="music-embed-link">
-          ${esc(msg.title,)} — ${esc(msg.artist,)}
+        <a href="${esc(msg.serviceUrl)}" target="_blank" rel="noopener" class="music-embed-link">
+          ${esc(msg.title)} — ${esc(msg.artist)}
         </a>
       </div>`;
     }
@@ -52,7 +46,7 @@ export const chatMusicEmbed: ChatMusicEmbed = {
     // Fail-closed: without DOMPurify we must not inject raw embed HTML —
     // return a placeholder instead.
     if (!DOMPurify) {
-      return EMBED_UNAVAILABLE;
+      return '<span class="music-embed-error">Embed unavailable (sanitizer missing)</span>';
     }
 
     return DOMPurify.sanitize(msg.embedHtml, {
