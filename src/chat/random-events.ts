@@ -45,6 +45,12 @@ export interface RandomEventOpts {
   lastEventId?: string;
   /** Messages since last event */
   messagesSinceLastEvent?: number;
+  /** Chat participants for {npc} substitution */
+  participants?: { id: string; displayName: string; role: "user" | "ai" }[];
+  /** Current location for {location} substitution */
+  currentLocation?: { id: string; name: string; description?: string };
+  /** World time for {weather} derivation */
+  worldTime?: { hour: number; period: "dawn" | "day" | "dusk" | "night" };
 }
 
 // ── Event Templates ─────────────────────────────────────────
@@ -161,10 +167,8 @@ const NPC_OPTIONS = [
  * @param opts - Event generation options
  * @returns A random event, or null if no event should fire
  */
-export function generateRandomEvent(
-  opts: RandomEventOpts,
-): RandomEvent | null {
-  const { messageCount, messagesSinceLastEvent = 999, } = opts;
+export function generateRandomEvent(opts: RandomEventOpts,): RandomEvent | null {
+  const { messageCount, messagesSinceLastEvent = 999, participants, currentLocation, worldTime, } = opts;
 
   // Filter eligible events (minMessages and cooldown checks)
   const eligible: Omit<RandomEvent, "id" | "content">[] = [];
@@ -191,7 +195,7 @@ export function generateRandomEvent(
   }
 
   // Resolve template placeholders
-  const content = resolveTemplate(selected.template,);
+  const content = resolveTemplate(selected.template, { participants, currentLocation, worldTime, },);
 
   return {
     id: uid(),
@@ -207,13 +211,32 @@ export function generateRandomEvent(
 /**
  * Resolve template placeholders with random options.
  */
-function resolveTemplate(template: string,): string {
+interface ResolveOpts {
+  participants?: { id: string; displayName: string; role: "user" | "ai" }[];
+  currentLocation?: { id: string; name: string; description?: string };
+  worldTime?: { hour: number; period: "dawn" | "day" | "dusk" | "night" };
+}
+
+function resolveTemplate(template: string, opts: ResolveOpts = {},): string {
+  const { participants = [], currentLocation, worldTime, } = opts;
+  const aiParticipants = participants.filter((p,) => p.role === "ai");
   return template
-    .replace("{weather}", () => pickRandom(WEATHER_OPTIONS,),)
+    .replace("{weather}", () => {
+      if (worldTime) {
+        const map: Record<string, string> = { dawn: "misty", day: "clear", dusk: "breezy", night: "cold", };
+        return map[worldTime.period] ?? pickRandom(WEATHER_OPTIONS,);
+      }
+      return pickRandom(WEATHER_OPTIONS,);
+    },)
     .replace("{sound}", () => pickRandom(SOUND_OPTIONS,),)
     .replace("{scent}", () => pickRandom(SCENT_OPTIONS,),)
-    .replace("{npc}", () => pickRandom(NPC_OPTIONS,),)
-    .replace("{location}", () => "the area",)
+    .replace("{npc}", () => {
+      if (aiParticipants.length > 0) { return pickRandom(aiParticipants,).displayName; }
+      return pickRandom(NPC_OPTIONS,);
+    },)
+    .replace("{location}", () => {
+      return currentLocation ? currentLocation.name : "the area";
+    },)
     .replace("{time}", () => "now",);
 }
 

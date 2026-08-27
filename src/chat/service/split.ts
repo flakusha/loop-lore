@@ -158,7 +158,7 @@ export async function reuniteChats(
 
   const secondary = await database
     .selectFrom("chats",)
-    .select(["id",],)
+    .select(["id", "created_by",],)
     .where("id", "=", secondaryChatId,)
     .executeTakeFirst();
 
@@ -167,6 +167,9 @@ export async function reuniteChats(
 
   if (primary.created_by !== actorId) {
     return { code: "forbidden", message: "Only the primary chat owner can initiate a reunion", };
+  }
+  if (secondary.created_by !== actorId) {
+    return { code: "forbidden", message: "Only the secondary chat owner can initiate a reunion", };
   }
 
   const mergedCount = await copyMessagesToPrimary(database, primaryChatId, secondaryChatId,);

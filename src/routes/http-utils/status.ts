@@ -29,6 +29,7 @@ export const HttpStatus = {
   UnprocessableEntity: 422,
   InternalServerError: 500,
   NotImplemented: 501,
+  ServiceUnavailable: 503,
 } as const;
 
 export type HttpStatusCode = (typeof HttpStatus)[keyof typeof HttpStatus];
@@ -43,8 +44,8 @@ export const ErrorCode = {
   ServerError: "SERVER_ERROR",
   Conflict: "CONFLICT",
   NotImplemented: "NOT_IMPLEMENTED",
+  ServiceUnavailable: "SERVICE_UNAVAILABLE",
 } as const;
-export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
 // ── Typed service errors ─────────────────────────────────────
 
