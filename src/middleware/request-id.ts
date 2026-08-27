@@ -95,3 +95,29 @@ export function applyRequestId(headers: Headers, id: string,): Headers {
   headers.set(REQUEST_ID_HEADER, id,);
   return headers;
 }
+/**
+ * Elysia `.derive()` middleware — resolves, validates, and applies the
+ * request id for every request.
+ *
+ * Sets `x-request-id` on the in-memory `Request` headers (so existing
+ * `request.headers.get("x-request-id")` reads continue to work) AND
+ * returns `{ requestId }` so downstream handlers can read `ctx.requestId`
+ * without re-parsing headers.
+ *
+ * Wire in `src/elysia-app.ts` BEFORE the auth `.derive()` so
+ * `authenticate(...)` can correlate the resolved id, and BEFORE the
+ * idempotency `beforeHandle` (which reads `ctx.requestId`).
+ *
+ * @returns An Elysia derive function for use with `.derive(...)`.
+ *
+ * @see TASK-middleware-request-id-elysia-derive.md
+ */
+export function requestIdMiddleware(): (ctx: {
+  request: Request;
+},) => { requestId: string } {
+  return ({ request, }: { request: Request },) => {
+    const id = resolveRequestId(request.headers,);
+    request.headers.set(REQUEST_ID_HEADER, id,);
+    return { requestId: id, };
+  };
+}
