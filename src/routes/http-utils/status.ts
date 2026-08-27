@@ -41,6 +41,7 @@ export const ErrorCode = {
   ValidationError: "VALIDATION_ERROR",
   TooManyRequests: "TOO_MANY_REQUESTS",
   ServerError: "SERVER_ERROR",
+  Conflict: "CONFLICT",
   NotImplemented: "NOT_IMPLEMENTED",
 } as const;
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

@@ -5,6 +5,7 @@ import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "../middleware";
 import { generateNonce, } from "../middleware/csp-nonce";
 import type { HandleResolver, } from "../middleware/handle-resolver";
 import { createHandleResolver, } from "../middleware/handle-resolver";
+import { applyRequestId, resolveRequestId, } from "../middleware/request-id";
 import { dispatchPluginRoute, } from "../plugins";
 
 /**
@@ -37,15 +38,15 @@ export function createRequestHandler(
   const headerPolicy = new ResponseHeaderPolicy(config.headers,);
   const dynamicPolicy = new DynamicResponsePolicy(config.dynamicResponse, logger,);
   const handleResolver = database ? createHandleResolver(database,) : null;
-
   return async (request: Request,): Promise<Response> => {
-    const requestId = crypto.randomUUID();
+    const requestId = resolveRequestId(request.headers,);
     const startMs = performance.now();
 
     // Attach request ID + auth context to the cloned request so downstream
     // handlers (Elysia .derive, plugin dispatch) can read them.
     const headers = new Headers(request.headers,);
-    headers.set("x-request-id", requestId,);
+    applyRequestId(headers, requestId,);
+
     const taggedRequest = new Request(request, { headers, },);
     generateNonce(taggedRequest,);
 
