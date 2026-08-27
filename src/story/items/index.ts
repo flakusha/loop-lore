@@ -118,9 +118,4 @@ export class ItemsService {
   async destroy(worldItemId: string, worldId: string, quantity?: number, trx?: Transaction<DB>,): Promise<boolean> {
     return destroyDispatch(this.state, worldItemId, worldId, quantity, trx,);
   }
-
-  /** Remove item instance */
-  async destroy(worldItemId: string, quantity?: number, trx?: Transaction<DB>,): Promise<boolean> {
-    return destroyDispatch(this.state, worldItemId, quantity, trx,);
-  }
 }
