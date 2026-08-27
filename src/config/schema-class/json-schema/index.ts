@@ -13,6 +13,7 @@ import { dynamicResponse, } from "./dynamic-response";
 import { generation, } from "./generation";
 import { headers, } from "./headers";
 import { hooks, } from "./hooks";
+import { idempotency, } from "./idempotency";
 import { logging, } from "./logging";
 import { messages, } from "./messages";
 import { nsfw, } from "./nsfw";
@@ -42,6 +43,7 @@ export const jsonSchema = (): JSONSchema => {
       messages,
       nsfw,
       hooks,
+      idempotency,
       generation,
       byoKey,
       headers,
