@@ -320,7 +320,10 @@ describe("idempotent (Elysia integration)", () => {
         }
         return new Response("error", { status: 500, },);
       },);
-    app.post("/api/x", () => { runs++; throw new Error("boom",); },);
+    app.post("/api/x", () => {
+      runs++;
+      throw new Error("boom",);
+    },);
 
     const first = await app.handle(
       new Request("http://localhost/api/x", {
@@ -335,12 +338,12 @@ describe("idempotent (Elysia integration)", () => {
     const second = await app.handle(
       new Request("http://localhost/api/x", {
         method: "POST",
-        headers: { "x-request-id": "r-err", "content-type": "application/json" },
+        headers: { "x-request-id": "r-err", "content-type": "application/json", },
         body: "{}",
       },),
     );
     // Slot released on error → not 409; handler runs again (no permanent 409).
     expect(second.status,).not.toBe(409,);
     expect(runs,).toBe(2,);
-  },);
+  });
 });
