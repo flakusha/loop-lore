@@ -2804,6 +2804,104 @@ html {
   justify-content: center;
 }
 
+/* ── Seen-state ──────────────────────────────────── */
+.message-seen {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.seen-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.seen-badge:hover {
+  background: var(--color-surface-hover, rgb(128 128 128 / 10%));
+}
+.seen-badge.seen-empty {
+  cursor: default;
+  color: var(--color-text-secondary);
+  border-style: dashed;
+}
+.seen-icon {
+  font-size: 12px;
+}
+.seen-count {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+.seen-popover {
+  position: fixed;
+  z-index: 100;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+  min-width: 180px;
+  max-width: 280px;
+}
+.seen-popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+.seen-popover-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.seen-popover-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.seen-viewer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+.seen-viewer-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.seen-viewer-state {
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.seen-viewer-state.state-seen {
+  background: color-mix(in srgb, var(--color-success, #2e7d32) 15%, transparent);
+  color: var(--color-success, #2e7d32);
+}
+.seen-viewer-state.state-processing {
+  background: color-mix(in srgb, var(--color-warning, #ed6c02) 15%, transparent);
+  color: var(--color-warning, #ed6c02);
+}
+.seen-viewer-state.state-unseen {
+  background: var(--color-surface-hover, rgb(128 128 128 / 10%));
+  color: var(--color-text-secondary);
+}
+.seen-viewer-time {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
 /* ── Debug Panel ─────────────────────────────────── */
 .debug-panel {
   margin-top: 8px;
