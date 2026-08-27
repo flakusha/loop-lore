@@ -91,7 +91,7 @@ export async function handleDefinition(
     .where("world_id", "=", worldId,)
     .execute();
 
-    const updated = await items.getDefinition(itemId, worldId,);
+  const updated = await items.getDefinition(itemId, worldId,);
   return jsonResponse(updated,);
 }
 
