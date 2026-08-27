@@ -12,6 +12,7 @@ import type { ModelInfo, } from "../generation/providers/types";
 import { getLogger, } from "../logger";
 import { upsertModelCapabilities, } from "./model-capabilities";
 
+/** Health status for a single provider. */
 export interface ProviderHealthStatus {
   name: string;
   label: string;
@@ -28,6 +29,8 @@ const state = { cache: [] as ProviderHealthStatus[], };
  * Scan all registered providers for health and model discovery.
  * Returns updated health cache. When db is provided, auto-populates
  * the model capabilities registry with discovered models.
+ * @param db - Optional database instance for capabilities sync.
+ * @returns Updated health cache.
  */
 export async function scanAllProviders(db?: unknown,): Promise<ProviderHealthStatus[]> {
   const providers = listProviders();
@@ -115,6 +118,7 @@ export async function scanAllProviders(db?: unknown,): Promise<ProviderHealthSta
 
 /**
  * Get cached health status (without re-scanning).
+ * @returns Cached health status list.
  */
 export function getHealthCache(): ProviderHealthStatus[] {
   return state.cache;
@@ -122,6 +126,8 @@ export function getHealthCache(): ProviderHealthStatus[] {
 
 /**
  * Get health for a single provider by name.
+ * @param name - Provider name.
+ * @returns Health status or undefined if not found.
  */
 export function getProviderHealth(name: string,): ProviderHealthStatus | undefined {
   for (const p of state.cache) {
@@ -132,6 +138,7 @@ export function getProviderHealth(name: string,): ProviderHealthStatus | undefin
 
 /**
  * Check if any providers are unhealthy.
+ * @returns True if any provider is not healthy.
  */
 export function hasUnhealthyProviders(): boolean {
   for (const p of state.cache) {
@@ -142,6 +149,7 @@ export function hasUnhealthyProviders(): boolean {
 
 /**
  * Get list of unhealthy provider names.
+ * @returns Names of unhealthy providers.
  */
 export function getUnhealthyProviders(): string[] {
   const result: string[] = [];
@@ -153,6 +161,8 @@ export function getUnhealthyProviders(): string[] {
 
 /**
  * Serialize a provider health status for API responses.
+ * @param p - Provider health status.
+ * @returns Summary object for API.
  */
 export function providerToSummary(p: ProviderHealthStatus,) {
   return {
