@@ -1,6 +1,6 @@
 # TASK: NSFW override authz scope: route lacks chat-membership check; service methods unguarded
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Closed (commit 49731047 — fix(nsfw): gate correctness cluster)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ routes/nsfw-moderation/overrides.ts:50 override PUT gated by requireModerationAc
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
