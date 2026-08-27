@@ -363,12 +363,20 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-webp-metadata-vp8l-vp8x-off-bytes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-webp-vp8x-dimension-truncation.md"
     }
   ],
   "src/assets/metadata.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-webp-metadata-vp8l-vp8x-off-bytes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-asset-webp-vp8x-dimension-truncation.md"
     },
     {
       "kind": "ticket",

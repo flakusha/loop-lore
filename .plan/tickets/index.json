@@ -1312,7 +1312,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-group-chat-nsfw-weakest-link-violated-enforcement-hardcodes-.md",
-    "status": null
+    "status": "done"
   },
   "BUG-GROUP-CHAT-SILENCE-PASS-NOT-IMPLEMENTED": {
     "hash": "pending",
@@ -1615,7 +1615,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud.md",
-    "status": null
+    "status": "done"
   },
   "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK": {
     "hash": "658c858",
@@ -1787,7 +1787,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-consent-auto-granted-in-memory-for-any-logged-in-user-n.md",
-    "status": null
+    "status": "done"
   },
   "BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG": {
     "hash": "81a5e15",
@@ -1826,7 +1826,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al.md",
-    "status": null
+    "status": "done"
   },
   "BUG-NSFW-GATE-LOG-PLAINTEXT-PII": {
     "hash": "9f3faa5",
@@ -1852,7 +1852,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g.md",
-    "status": null
+    "status": "done"
   },
   "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY": {
     "hash": "bd2b3b5",
@@ -4696,17 +4696,6 @@
     "source": ".plan/tickets/TASK-001.md",
     "git_issue": "732d54b"
   },
-  "TASK-001-DOCKERIZE-APPLICATION": {
-    "hash": "pending",
-    "extid": "TASK-001-DOCKERIZE-APPLICATION",
-    "type": "TASK",
-    "title": "# TASK-001: Dockerize the application",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-001-dockerize-application.md"
-  },
   "TASK-002": {
     "hash": "20c7472",
     "extid": "TASK-002",
@@ -5642,6 +5631,17 @@
     "source": ".plan/tickets/TASK-2026-021.md",
     "status": "done",
     "git_issue": "34dc568"
+  },
+  "TASK-2026-022-DOCKERIZE-APPLICATION": {
+    "hash": "pending",
+    "extid": "TASK-2026-022-DOCKERIZE-APPLICATION",
+    "type": "TASK",
+    "title": "# TASK-001: Dockerize the application",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-2026-022-dockerize-application.md"
   },
   "TASK-2FA-MFA": {
     "hash": "9ad0277",
