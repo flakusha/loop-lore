@@ -11,14 +11,17 @@ import type { BufferResult, CompressionAlgorithm, } from "./types";
 /**
  * Safely decompress data with compression ratio limits (zip bomb protection).
  *
- * Checks the compressed size against the decompressed size to detect
- * potential zip bomb attacks where a small compressed input expands
- * to an enormous decompressed output.
+ * Decompresses synchronously, then enforces post-decompression bounds
+ * (maxSize + maxRatio) to detect zip-bomb expansion. The compressed-size
+ * itself is NOT pre-checked: dense payloads (e.g. long base64 strings,
+ * high-entropy ciphertext) can compress poorly and exceed
+ * `maxSize / maxRatio` bytes while still being safe — pre-rejecting them
+ * causes silent garbage reads downstream (see BUG-safedecompress-pre-check).
  *
  * @param data - Compressed data as Buffer
  * @param algorithm - Compression algorithm
  * @param maxSize - Maximum decompressed size in bytes (default: 10 MB)
- * @param maxRatio - Maximum compression ratio (default: 100x)
+ * @param maxRatio - Maximum compression ratio (default: 1000x)
  * @returns BufferResult with decompressed buffer or error
  */
 export function safeDecompress(
@@ -29,19 +32,6 @@ export function safeDecompress(
 ): BufferResult<Buffer> {
   if (data.length === 0) {
     return { ok: true, buffer: Buffer.alloc(0,), };
-  }
-
-  // Check compression ratio before decompressing
-  // This is a heuristic — we can't know the decompressed size without decompressing
-  // but we can reject obviously dangerous ratios
-  if (data.length > maxSize / maxRatio) {
-    return {
-      ok: false,
-      error: new Error(
-        `Compressed data too large for safe decompression: ${data.length} bytes ` +
-          `(max: ${Math.floor(maxSize / maxRatio,)} bytes for ${maxRatio}x ratio)`,
-      ),
-    };
   }
 
   try {
