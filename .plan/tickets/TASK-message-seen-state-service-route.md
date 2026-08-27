@@ -23,9 +23,11 @@ Expose seen-state over the API, reusing the reactions route pattern and `checkCh
 New `src/routes/message-seen.ts` exporting `messageSeenRoutes(opts, prefix = "/api")`:
 
 - `GET /api/messages/:id/seen` — grouped viewer list:
+
   ```ts
   Array<{ actor_id, actor_type: "user" | "character", display_name, state, seen_at }>
   ```
+
   Joined from `message_seen` → `actors` (and `chat_participants` for display name). This is the "who actually seen the message" report.
 - `POST /api/messages/:id/seen` — mark the caller's actor seen. Body `{ state?: "seen" | "processing" }`; `processing` only permitted when the caller is a non-human/system actor (the turn scheduler), not a human user. Resolves caller `actor_id` from `chat_participants`; inserts/updates the `message_seen` row, sets `seen_at` on first non-`unseen` transition.
 - `DELETE /api/messages/:id/seen` — reset caller's actor row to `unseen` (clear `seen_at`).
