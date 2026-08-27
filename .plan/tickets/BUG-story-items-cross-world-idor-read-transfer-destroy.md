@@ -1,6 +1,6 @@
 # BUG: story-items cross-world IDOR read transfer destroy
 
-**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
+**Status:** ✅ Resolved (commit 61ef179c + 3ab26ccd — getDefinition/transfer/destroy take worldId; world_id predicate enforced)
 **Priority:** high
 **Effort:** Medium
 
