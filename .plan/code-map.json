@@ -387,6 +387,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
     }
   ],
   "src/assets/service.ts": [
@@ -1106,7 +1110,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-doc-spec-emotion-avatars.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-mood-full-section.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
     }
   ],
   "src/assistant/prompt/sections/emotion-context.ts": [
@@ -1678,6 +1690,10 @@
     }
   ],
   "src/aux-pipeline": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
@@ -2849,6 +2865,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-doc-spec-emotion-avatars.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
     }
   ],
   "src/characters/services/emotion-avatar-service.test.ts": [
@@ -2863,6 +2887,12 @@
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
     }
   ],
+  "src/characters/services/emotion-avatar-service/emotions.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
   "src/characters/services/emotion-avatar-service/generation.ts": [
     {
       "kind": "epic",
@@ -2871,6 +2901,28 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
+  "src/characters/services/emotion-avatar-service/index.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
+  "src/characters/services/emotion-avatar-service/job-store.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
+  "src/characters/services/emotion-avatar-service/types.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/emotion-avatars.md"
     }
   ],
   "src/characters/services/mood-service/apply-happiness-delta.ts": [
@@ -5197,6 +5249,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065.md"
+    }
+  ],
+  "src/content": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-docs-reconciliation.md"
     }
   ],
   "src/content/compress.test.ts": [
@@ -12425,6 +12483,10 @@
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-gallery-edit.md"
     },
@@ -14080,7 +14142,15 @@
   "src/profanity/service.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-doc-spec-profanity-filter.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-profanity-containsprofanity-edge-cases-untested.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/profanity-filter.md"
     },
     {
       "kind": "spec",
@@ -14806,6 +14876,10 @@
     }
   ],
   "src/regex/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-doc-spec-regex-extraction.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-extraction-tests.md"
