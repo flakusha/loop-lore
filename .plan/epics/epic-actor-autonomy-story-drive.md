@@ -64,7 +64,7 @@ Key decisions:
 
 ## Work Items
 
-- [ ] **Autonomy rate governor** — per-actor action quotas, per-world/chat budgets (actions/hour + token/cost caps), cooldowns with mandatory jitter, concurrency cap, global kill switch, cost accounting per actor. Unlimited mode only behind explicit dev/stress flag. → TASK-autonomy-rate-governor
+- [ ] **Autonomy rate governor** — per-actor action quotas, per-world/chat budgets (actions/hour + token/cost caps), cooldowns with mandatory jitter, cost accounting per actor; kill switch = autonomy-native per-world scope + consumption of generation-flow-control global/per-chat holds (no parallel pause machinery). Unlimited mode only behind explicit dev/stress flag. → TASK-autonomy-rate-governor
 - [ ] **Story auto-drive scheduler** — world-tick loop, due-actor selection, action dispatch through existing generation pipeline (navigation ticks, BDI decisions, GM beats), pause/resume/step, persistence of simulation state across restarts. → TASK-story-auto-drive-scheduler
 - [ ] **Autonomy config surface** — layering: world default → chat override → per-actor override; pacing presets (serene / organic / brisk); unlimited stress preset gated to dev builds; UI affordances in chat + world settings. → TASK-autonomy-config-surface
 
@@ -85,3 +85,7 @@ Key decisions:
 ## Related
 
 Host epics retain their scopes; this epic owns scheduling + governance only.
+
+Generation-level regulation (holds, concurrency semaphore, request-rate limits) lives in
+`epic-generation-flow-control.md`: the autonomy scheduler is a governed consumer of those
+controls, and the governor stacks actor-level budgets on top — the layers do not reimplement each other.
