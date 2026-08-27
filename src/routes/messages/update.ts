@@ -34,6 +34,8 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         const actorId = requireUserId(ctx,);
         if (typeof actorId !== "string") { return actorId; }
         const id = (ctx.params as { id: string }).id;
+        const rawQuery = (ctx.query as Record<string, unknown> | undefined) ?? {};
+        const hardDelete = rawQuery.hard === "true" || rawQuery.hard === true;
 
         const message = await database
           .selectFrom("messages",)
@@ -44,6 +46,18 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const access = await checkChatAccess(database, message.chat_id, actorId, ctx.userRole as string | null,);
         if (!access.ok) { return notFound(ctx.t?.("messages.messageNotFound",) ?? "Message not found",); }
+
+        if (hardDelete) {
+          // GDPR / right-to-be-forgotten path. Wipes the row (ciphertext +
+          // plaintext shadow); the migration-068 `messages_fts_ad` trigger
+          // fires on this real DELETE and removes the FTS row, so a
+          // subsequent search no longer surfaces the message. References
+          // in `message_attachments` (and any other FK rows) cascade via
+          // the FK declarations; the FTS row is removed by trigger.
+          await database.deleteFrom("messages",).where("id", "=", id,).execute();
+          log().info("Message hard-deleted", { messageId: id, userId: actorId, },);
+          return jsonNoContent();
+        }
 
         await database
           .updateTable("messages",)
@@ -99,20 +113,25 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         const access = await checkChatAccess(database, msg.chat_id, userId, ctx.userRole as string | null,);
         if (!access.ok) { return serviceErrorToResponse(access.error,); }
 
-        let storedContent = newContent.trim();
+        const trimmed = newContent.trim();
+        let storedContent = trimmed;
         const contentEncoding = "identity";
         let storedKeyId: string | null = null;
+        // The plaintext shadow column is always set to what the user typed,
+        // unless they sent a pre-encrypted payload (which we cannot index).
+        let storedPlaintext: string | null = trimmed;
 
-        if (isEncryptedPayload(newContent.trim(),)) {
-          storedContent = newContent.trim();
-          storedKeyId = extractKeyIdFromPayload(newContent.trim(),);
+        if (isEncryptedPayload(trimmed,)) {
+          storedContent = trimmed;
+          storedKeyId = extractKeyIdFromPayload(trimmed,);
+          storedPlaintext = null;
         } else if (isEncryptionEnabled()) {
           const smk = getSmk()!;
           const enc = await encryptMessageContent({
             database,
             chatId: msg.chat_id,
             actorId: msg.actor_id,
-            plaintext: newContent.trim(),
+            plaintext: trimmed,
             smk,
             pipeline: {
               threshold: config.encryption.compressThreshold,
@@ -128,6 +147,7 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
           .set({
             content: storedContent,
             key_id: storedKeyId,
+            content_plaintext: storedPlaintext,
             content_encoding: contentEncoding as ContentEncoding,
             edited_at: new Date().toISOString(),
           },)
