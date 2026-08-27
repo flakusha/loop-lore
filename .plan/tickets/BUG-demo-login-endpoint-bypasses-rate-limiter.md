@@ -1,6 +1,6 @@
 # BUG: Demo login endpoint bypasses rate limiter
 
-**Status:** [OK] Resolved (dedicated demoLoginLimiter at 5 req/60 s; gate at top of handleDemoLogin before any DB write; resetDemoLoginRateLimiter() exported for tests; 4 regression tests pass)
+**Status:** ✅ Resolved (dedicated demoLoginLimiter; gate at top of handleDemoLogin; 4 regression tests)
 
 **Priority:** high
 **Effort:** Medium
