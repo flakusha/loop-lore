@@ -11,7 +11,7 @@
 import { mkdirSync, writeFileSync, } from "node:fs";
 import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
-import { ConfigSchema, } from "../src/config/schema-class";
+import { envMap, jsonSchema, } from "../src/config/schema-class";
 import { safeJsonStringify, } from "../src/utils";
 
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
@@ -26,9 +26,9 @@ function toJson(value: unknown,): string {
 mkdirSync(schemasDir, { recursive: true, },);
 
 const jsonSchemaPath = resolve(schemasDir, "loop-lore-config.schema.json",);
-writeFileSync(jsonSchemaPath, toJson(ConfigSchema.jsonSchema(),),);
+writeFileSync(jsonSchemaPath, toJson(jsonSchema(),),);
 console.log(`✓ Written: ${jsonSchemaPath}`,);
 
 const envMapPath = resolve(schemasDir, "env-map.snapshot.json",);
-writeFileSync(envMapPath, toJson(ConfigSchema.envMap(),),);
+writeFileSync(envMapPath, toJson(envMap(),),);
 console.log(`✓ Written: ${envMapPath}`,);
