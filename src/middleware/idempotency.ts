@@ -63,13 +63,7 @@ export interface IdempotencyConfig {
 
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24h — matches messages.idempotencyExpiryHours default
 
-/**
- * Composite key — distinct methods on the same route are distinct. userId
- * scopes the key so two authenticated users submitting the same X-Request-Id
- * cannot replay each other's cached responses (BUG-idempotency-cache-key-
- * lacks-user-scope-cross-user-response-r). Unauthenticated requests share
- * the `"anon"` bucket — they're 401-bound downstream so no leakage.
- */
+// userId scopes the key (BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r) so two authenticated users sharing an X-Request-Id cannot replay each other's cached responses; unauthenticated requests share the `anon` bucket (401-bound downstream).
 function makeKey(
   method: string,
   routePattern: string,
@@ -171,7 +165,9 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      * Record a completed response into the cache. Called from a route
      * `afterHandle` after the handler runs successfully.
      */
-    recordResponse(args: { method: string; route: string; requestId: string; userId?: string | null; response: Response },): void {
+    recordResponse(
+      args: { method: string; route: string; requestId: string; userId?: string | null; response: Response },
+    ): void {
       const key = makeKey(args.method, args.route, args.requestId, args.userId ?? null,);
       // Clone before reading the body so the original response (sent to the
       // client) is not consumed. .text() locks the stream.
