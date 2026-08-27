@@ -103,6 +103,13 @@ export async function resolveAllModelRoles(config: Config, db: Kysely<DB>,): Pro
 
 /**
  * Set a model role override in the DB.
+ * @param role - The role to override.
+ * @param provider - Provider identifier.
+ * @param model - Model identifier.
+ * @param db - Database instance.
+ * @param tuning - Optional temperature/maxTokens tuning.
+ * @param tuning.temperature - Temperature override.
+ * @param tuning.maxTokens - Max tokens override.
  */
 export async function setModelRoleOverride(
   role: ModelRole,
@@ -145,6 +152,8 @@ export async function setModelRoleOverride(
 
 /**
  * Clear a model role override from the DB (revert to config/default).
+ * @param role - The role to clear.
+ * @param db - Database instance.
  */
 export async function clearModelRoleOverride(role: ModelRole, db: Kysely<DB>,): Promise<void> {
   if (!(VALID_ROLES as readonly string[]).includes(role,)) {
