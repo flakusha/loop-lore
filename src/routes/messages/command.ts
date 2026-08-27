@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import { parseCommand, } from "../../assistant/command-parser";
 import {
   type CommandContext,
+  type CommandResult,
   getCommand,
   getCommandRequirement,
   satisfiesRole,
@@ -115,7 +116,14 @@ export async function dispatchCommand(
     userId: actorId,
   };
 
-  const result = await handler(parsed.args, cmdCtx,);
+  let result: CommandResult;
+  try {
+    result = await handler(parsed.args, cmdCtx,);
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error,);
+    log().warn("command handler threw", { command: parsed.command, error: msg, },);
+    result = { handled: true, systemMessage: `**Command failed:** ${msg}`, };
+  }
 
   if (!result.handled) { return { handled: false, }; }
 
