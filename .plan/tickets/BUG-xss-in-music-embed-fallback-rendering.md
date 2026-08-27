@@ -1,6 +1,6 @@
 # BUG: XSS in music embed fallback rendering
 
-**Status:** ⬜ Not Started
+**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
 **Priority:** high
 **Effort:** Medium
 
