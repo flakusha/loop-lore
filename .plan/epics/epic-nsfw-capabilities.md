@@ -32,6 +32,7 @@ Split from `epic-nsfw-moderation-priority.md` (which was triple-duplicated and o
 - [x] Integration with generation boundary (LLM request filtering) — wired at `src/generation/auto-gen.ts:412`
 
 ### Gating & Preferences
+
 - [x] NSFW enable/disable at per-chat, per-user, per-world level — `setChatNsfwOverride` / `setWorldNsfwOverride` in `src/nsfw/moderation-service/overrides.ts`; routes in `src/routes/nsfw-moderation/overrides.ts` (commit `49731047`, git issue `94f9a36`)
 - [x] Age gate enforcement for NSFW content access — weakest-link intersect across participants in `src/middleware/nsfw-gate/consent.ts`; regression test `consent.test.ts` "weakest link: participant without age gate blocks chat access" (commit `49731047`, git issue `f89168b`)
 - [x] User preferences / allow-lists for permitted NSFW intensity — `getEffectiveNsfw` walks shadow_ban → chat override → world override → user pref (fail-closed, git issue `da08f1b`); persisted consent ledger in `nsfw_consent_state` (migration 069, `consent-ledger.ts`, git issue `4f8aeb2`)
