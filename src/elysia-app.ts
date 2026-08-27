@@ -19,12 +19,17 @@ import { createAsyncStore, startOffloadDaemon, } from "./async";
 import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { authenticate, } from "./middleware/auth";
-import { CSRF_EXEMPT_ROUTES, CSRF_HEADER, } from "./middleware/csrf";
-import { applyCsrfPlugin, type CsrfMiddlewareOptions, } from "./middleware/csrf-plugin";
+import {
+  applyCsrfPlugin,
+  CSRF_EXEMPT_ROUTES,
+  CSRF_HEADER,
+} from "./middleware/csrf";
+import type { CsrfMiddlewareOptions, } from "./middleware/csrf";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { idempotent, } from "./middleware/idempotency";
 import type { IdempotencyCtx, } from "./middleware/idempotency";
 import { requestIdMiddleware, } from "./middleware/request-id";
+import { safeJsonStringify, } from "./utils/safe-json";
 
 import { recordLifecycle, } from "./middleware/lifecycle";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
@@ -109,9 +114,9 @@ export function createApp(deps: AppDeps,): Elysia {
     secret: effectiveCsrfSecret,
     enabled: csrfEnabled,
   };
-  // The CSRF wiring (onBeforeHandle + onAfterHandle) lives in `csrfPlugin`
-  // in `src/middleware/csrf.ts`. Production and `csrf.integration.test.ts`
-  // apply the same factory — there is no second copy of the wiring to drift.
+  // The actual wiring lives in `csrfPlugin` (src/middleware/csrf.ts) so the
+  // production code and the integration test exercise the same code path —
+  // there is no second copy of the onBeforeHandle/onAfterHandle logic.
   applyCsrfPlugin(app as unknown as Parameters<typeof applyCsrfPlugin>[0], csrfOpts,);
   // Reference CSRF_HEADER + CSRF_EXEMPT_ROUTES so tree-shakers keep the
   // route-table constant when consumers spread the module. The middleware
