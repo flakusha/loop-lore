@@ -167,4 +167,25 @@ describe("recordLifecycle (Elysia integration)", () => {
     expect(row?.responseStatus,).toBe(201,);
     expect(row?.responseBody,).toBe("done",);
   });
+  test("client error (4xx) response marks the row failed, not complete", async () => {
+    const app = makeApp();
+    app.post("/api/x", () => new Response("bad", { status: 400, },),);
+
+    store.track({ id: "lc-4xx", method: "POST", routePattern: "/api/x", userId: null, },);
+
+    const res = await app.handle(
+      new Request("http://localhost/api/x", {
+        method: "POST",
+        headers: { "x-request-id": "lc-4xx", },
+        body: "{}",
+      },),
+    );
+    expect(res.status,).toBe(400,);
+
+    await store.flush();
+    const row = await store.read("lc-4xx",);
+    expect(row?.status,).toBe("failed",);
+    expect(row?.error,).toContain("HTTP 400",);
+    expect(row?.responseBody,).toBeNull();
+  },);
 });
