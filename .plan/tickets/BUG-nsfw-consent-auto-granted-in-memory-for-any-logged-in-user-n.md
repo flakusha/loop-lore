@@ -1,6 +1,6 @@
 # BUG: NSFW consent auto-granted in-memory for any logged-in user; never persisted
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Closed (commit 49731047 — fix(nsfw): gate correctness cluster)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ src/middleware/nsfw-gate/consent.ts:164 auto-consent on chat creation grants con
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
