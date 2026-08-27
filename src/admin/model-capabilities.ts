@@ -24,6 +24,9 @@ const STALE_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000;
 /**
  * Upsert model capabilities from provider-reported ModelInfo.
  * Only updates auto-detected fields — preserves user overrides.
+ * @param db - Database instance.
+ * @param providerId - Provider identifier.
+ * @param models - List of model info objects.
  */
 export async function upsertModelCapabilities(
   db: Kysely<DB>,
@@ -98,6 +101,10 @@ export async function upsertModelCapabilities(
 /**
  * Resolve merged capabilities for a specific model.
  * User overrides take precedence over auto-detected fields.
+ * @param db - Database instance.
+ * @param providerId - Provider identifier.
+ * @param modelId - Model identifier.
+ * @returns Resolved capabilities or null if not found.
  */
 export async function resolveModelCapabilities(
   db: Kysely<DB>,
