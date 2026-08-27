@@ -202,8 +202,9 @@ export async function destroy(
   const db = trx ?? state.db;
 
   if (quantity === undefined) {
-    await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,).execute();
-    return true;
+    const result = await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,)
+      .execute();
+    return result.length > 0 && (result[0]?.numDeletedRows ?? 0) > 0;
   }
 
   const source = await db
