@@ -9,6 +9,7 @@
  * characters-proactive.ts.
  */
 import { jsonBody, } from "../alpine/json";
+import { browserRandomUUIDv7, } from "../browser";
 import type { feFetch, } from "../fe-fetch";
 import { parseFloatOr, } from "../utils/parse-number";
 
@@ -41,7 +42,8 @@ export type Aspiration = {
 let aspirationsData: Aspiration[] = [];
 
 (globalThis as Record<string, unknown>).addAspiration = function() {
-  const id = `asp-${Date.now()}`;
+  // UUIDv7 gives chronological ordering; the server treats this id as opaque.
+  const id = browserRandomUUIDv7();
   aspirationsData.push({ id, goal: "", plans: [], visibility: "hidden", priority: "medium", progress: 0, },);
   renderAspirations();
 };
