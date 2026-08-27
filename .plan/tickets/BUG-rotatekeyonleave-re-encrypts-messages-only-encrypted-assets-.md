@@ -1,6 +1,6 @@
 # BUG: rotateKeyOnLeave re-encrypts messages only - encrypted assets become undecryptable
 
-**Status:** ⬜ Not Started
+**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
 **Priority:** high
 **Effort:** Medium
 

@@ -1,6 +1,6 @@
 # BUG: story-items cross-world IDOR read transfer destroy
 
-**Status:** ⬜ Not Started
+**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
 **Priority:** high
 **Effort:** Medium
 
