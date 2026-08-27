@@ -63,9 +63,20 @@ export interface IdempotencyConfig {
 
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24h — matches messages.idempotencyExpiryHours default
 
-/** Composite key — distinct methods on the same route are distinct. */
-function makeKey(method: string, routePattern: string, requestId: string,): string {
-  return `${method.toUpperCase()} ${routePattern} ${requestId}`;
+/**
+ * Composite key — distinct methods on the same route are distinct. userId
+ * scopes the key so two authenticated users submitting the same X-Request-Id
+ * cannot replay each other's cached responses (BUG-idempotency-cache-key-
+ * lacks-user-scope-cross-user-response-r). Unauthenticated requests share
+ * the `"anon"` bucket — they're 401-bound downstream so no leakage.
+ */
+function makeKey(
+  method: string,
+  routePattern: string,
+  requestId: string,
+  userId: string | null,
+): string {
+  return `${method.toUpperCase()} ${routePattern} ${userId ?? "anon"} ${requestId}`;
 }
 
 /**
@@ -132,7 +143,7 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
       if (!requestId) { return undefined; } // no id ⇒ not idempotent
       if (!isValidRequestId(requestId,)) { return undefined; }
 
-      const key = makeKey(ctx.request.method, ctx.route ?? "?", requestId,);
+      const key = makeKey(ctx.request.method, ctx.route ?? "?", requestId, ctx.userId ?? null,);
       const existing = memory.get(key,);
       if (existing?.inFlight) {
         return jsonError({
@@ -160,8 +171,8 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      * Record a completed response into the cache. Called from a route
      * `afterHandle` after the handler runs successfully.
      */
-    recordResponse(args: { method: string; route: string; requestId: string; response: Response },): void {
-      const key = makeKey(args.method, args.route, args.requestId,);
+    recordResponse(args: { method: string; route: string; requestId: string; userId?: string | null; response: Response },): void {
+      const key = makeKey(args.method, args.route, args.requestId, args.userId ?? null,);
       // Clone before reading the body so the original response (sent to the
       // client) is not consumed. .text() locks the stream.
       const snapshot = args.response.clone();
@@ -181,8 +192,8 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
       },);
     },
     /** Release an in-flight slot without caching (non-2xx completion). */
-    release(args: { method: string; route: string; requestId: string },): void {
-      cache.delete(makeKey(args.method, args.route, args.requestId,),);
+    release(args: { method: string; route: string; requestId: string; userId?: string | null },): void {
+      cache.delete(makeKey(args.method, args.route, args.requestId, args.userId ?? null,),);
     },
     /** Test seam: clear all in-flight + completed entries. */
     clear(): void {
@@ -214,6 +225,13 @@ export interface IdempotencyCtx {
   route?: string;
   /** Pre-resolved request id from the request-id middleware. */
   requestId?: string;
+  /**
+   * Resolved user id from the auth derive. Null/undefined when unauthenticated
+   * (the auth derive sets `userId: null` on failed auth). Used to scope the
+   * idempotency cache key so two users sharing an X-Request-Id cannot replay
+   * each other's cached responses.
+   */
+  userId?: string | null;
 }
 
 /** Returned factory — the `beforeHandle` is the Elysia hook; the rest are helpers. */
@@ -221,7 +239,13 @@ export interface IdempotencyBeforeHandle {
   readonly backend: IdempotencyBackend;
   readonly ttlMs: number;
   beforeHandle(ctx: IdempotencyCtx,): Promise<Response | undefined>;
-  recordResponse(args: { method: string; route: string; requestId: string; response: Response },): void;
-  release(args: { method: string; route: string; requestId: string },): void;
+  recordResponse(args: {
+    method: string;
+    route: string;
+    requestId: string;
+    userId?: string | null;
+    response: Response;
+  },): void;
+  release(args: { method: string; route: string; requestId: string; userId?: string | null },): void;
   clear(): void;
 }
