@@ -5,10 +5,11 @@
  * Integration test for the CSRF middleware wired into an Elysia app.
  *
  * Exercises the SAME `csrfPlugin` factory that production uses (see
- * `src/middleware/csrf.ts::csrfPlugin` and `src/elysia-app.ts::applyCsrfPlugin`)
- * — NOT an inline duplicate. If production wiring regresses (e.g. someone
- * reverts `ctx.set.headers["set-cookie"] = ...` back to `.append(...)`),
- * this test MUST fail.
+ * `src/middleware/csrf-plugin.ts::csrfPlugin` and
+ * `src/elysia-app.ts::applyCsrfPlugin`) — NOT an inline duplicate. If
+ * production wiring regresses (e.g. someone reverts
+ * `ctx.set.headers["set-cookie"] = ...` back to `.append(...)`), this
+ * test MUST fail.
  *
  * Coverage:
  *   - GET issues a Set-Cookie for `csrf_token`.
