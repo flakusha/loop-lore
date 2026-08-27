@@ -13612,6 +13612,10 @@
   "src/middleware/idempotency.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-idempotency-orphaned-slot-permanent-409.md"
     },
     {
@@ -13690,6 +13694,10 @@
     }
   ],
   "src/middleware/nsfw-gate/consent.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-capabilities.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-nsfw-integration-gaps.md"
@@ -14128,6 +14136,10 @@
     }
   ],
   "src/nsfw/moderation-service/overrides.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-capabilities.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al.md"
@@ -17470,6 +17482,10 @@
     }
   ],
   "src/routes/nsfw-moderation/overrides.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-nsfw-capabilities.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-moderator-permission-gating-for-read-only-review-surface.md"
