@@ -67,7 +67,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         const commandOutcome = await dispatchCommand(database, config, actorId, chatId, effectiveContent,);
         if (commandOutcome.handled) { return commandOutcome.response; }
 
-        const { storedContent, contentEncoding, storedKeyId, } = await prepareContentStorage(
+        const { storedContent, contentEncoding, storedKeyId, storedPlaintext, } = await prepareContentStorage(
           database,
           config,
           chatId,
@@ -95,6 +95,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             parentId,
             storedContent,
             storedKeyId,
+            storedPlaintext,
             contentEncoding: contentEncoding as ContentEncoding,
             idempotencyKey,
           },);
