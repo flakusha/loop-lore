@@ -14,7 +14,7 @@ flushing them together to reduce the input-trust surface.
 
 | Git issue | Topic | Suggested home | Sev |
 | --------- | ----- | -------------- | --- |
-| `02a9092` BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer-65-sites | Raw `Buffer.from(...alloc)` bypasses format-specific safe helpers (issue title cites 65 sites — count not verified; sweep repo before fix) | `src/utils/safe-buffer/` has per-format helpers (`safeDecompress`, `safeFromBase64`, `safeFromString`, `safeFromUint8Array`) — no general `safeBuffer.from()` wrapper exists; the fix likely requires either auditing each call site for caps or adding a new `safeBuffer` helper | MED |
+| `02a9092` BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer-65-sites | Raw `Buffer.from(...alloc)` bypasses format-specific safe helpers (issue title cites 65 sites — count not verified; sweep repo before fix) | No general `safeBuffer.from()` wrapper exists; see § Existing utilities (line 28-29). Fix likely requires per-site audit + caps or adding a new `safeBuffer` helper | MED |
 | `2984874` BUG-raw-json-parse-outside-safe-json-3-sites | Raw `JSON.parse` bypasses `safeJsonParse` (3 sites) | `src/utils/safe-json.ts` already provides safe variant; replace each call site | MED |
 | `5842782` TASK-logging-hardening-minors-injection-rotation-races-sink-path | Logger injection / rotation races / sink-path | `src/logger/` | MED |
 | `b23b7fb` BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested | Censor depth cutoff bug — nested subtree passes through | `src/logger/censors.ts` | MED |
