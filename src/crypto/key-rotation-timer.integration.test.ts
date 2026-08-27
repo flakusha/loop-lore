@@ -162,7 +162,7 @@ describe("startAutoRotationTimer", () => {
     const agedDate = new Date(Date.now() - 101 * 24 * 60 * 60 * 1000,).toISOString();
     sqlite.run("UPDATE actor_keys SET created_at = ? WHERE id = ?", [agedDate, agedKeyId,],);
 
-    const result = await runAutoRotation(db, 90, 100,);
+    const result = await runAutoRotation(db, 90,);
     expect(result.checked,).toBeGreaterThanOrEqual(1,);
     expect(result.rotated,).toBeGreaterThanOrEqual(1,);
 
