@@ -22,8 +22,8 @@
  * @see epic-content-hashing-distributed-integrity.md
  */
 
-import type { Kysely } from "kysely";
-import { asTableName, computeRecordHash, type TableName } from "../hash/record-hash";
+import type { Kysely, } from "kysely";
+import { asTableName, computeRecordHash, type TableName, } from "../hash/record-hash";
 
 /** A registered content version. */
 interface ContentVersion {
@@ -52,19 +52,19 @@ export function registerContentVersion(
   dataVersion: number,
   columns: readonly string[],
 ): void {
-  if (!Number.isInteger(dataVersion) || dataVersion < 1) {
-    throw new Error(`content-version: invalid data_version ${dataVersion}`);
+  if (!Number.isInteger(dataVersion,) || dataVersion < 1) {
+    throw new Error(`content-version: invalid data_version ${dataVersion}`,);
   }
   if (columns.length === 0) {
-    throw new Error(`content-version: empty column projection for ${table}@v${dataVersion}`);
+    throw new Error(`content-version: empty column projection for ${table}@v${dataVersion}`,);
   }
-  const normalized = [...columns].map((c) => c.toLowerCase()).sort();
-  const existing = REGISTRY.get(table);
-  const current = existing?.get(dataVersion);
+  const normalized = [...columns,].map((c,) => c.toLowerCase()).sort();
+  const existing = REGISTRY.get(table,);
+  const current = existing?.get(dataVersion,);
   if (current) {
     if (
       current.columns.length === normalized.length &&
-      current.columns.every((c, i) => c === normalized[i])
+      current.columns.every((c, i,) => c === normalized[i])
     ) {
       return; // idempotent re-registration
     }
@@ -73,9 +73,9 @@ export function registerContentVersion(
     );
   }
   if (!existing) {
-    REGISTRY.set(table, new Map());
+    REGISTRY.set(table, new Map(),);
   }
-  REGISTRY.get(table)!.set(dataVersion, { columns: normalized });
+  REGISTRY.get(table,)!.set(dataVersion, { columns: normalized, },);
 }
 
 /**
@@ -97,9 +97,9 @@ export function getContentEnvelope(
   table: TableName,
   row: { data_version: number } & Record<string, unknown>,
 ): Record<string, unknown> | null {
-  const projection = REGISTRY.get(table);
+  const projection = REGISTRY.get(table,);
   if (!projection) { return null; }
-  const cv = projection.get(row.data_version);
+  const cv = projection.get(row.data_version,);
   if (!cv) { return null; }
   const envelope: Record<string, unknown> = {};
   for (const col of cv.columns) {
@@ -122,12 +122,12 @@ export function computeRowHash(
   table: TableName,
   row: { id: string; data_version: number } & Record<string, unknown>,
 ): string | null {
-  const envelope = getContentEnvelope(table, row);
+  const envelope = getContentEnvelope(table, row,);
   if (!envelope) { return null; }
   // The PK is always part of the envelope; the envelope projection columns
   // are content-defining (the row's tracked columns). computeRecordHash
   // adds `v` automatically via its internal stamping.
-  return computeRecordHash(table, row.id, envelope);
+  return computeRecordHash(table, row.id, envelope,);
 }
 
 /**
@@ -152,12 +152,12 @@ export async function runBatchRefresh(
   table: string,
   opts: { dataVersion?: number; batchSize?: number } = {},
 ): Promise<{ scanned: number; updated: number; skipped: number }> {
-  const tableName = asTableName(table);
+  const tableName = asTableName(table,);
   const batchSize = opts.batchSize ?? 500;
   const dataVersion = opts.dataVersion;
-  const projection = REGISTRY.get(tableName);
+  const projection = REGISTRY.get(tableName,);
   if (!projection) {
-    return { scanned: 0, updated: 0, skipped: 0 };
+    return { scanned: 0, updated: 0, skipped: 0, };
   }
 
   let scanned = 0;
@@ -169,12 +169,12 @@ export async function runBatchRefresh(
   let offset = 0;
   for (;;) {
     const rows = (await database
-      .selectFrom(tableName)
-      .select(["id", "data_version", ...projectionColumns(projection)])
-      .$if(dataVersion !== undefined, (qb) => qb.where("data_version", "=", dataVersion))
-      .orderBy("id")
-      .limit(batchSize)
-      .offset(offset)
+      .selectFrom(tableName,)
+      .select(["id", "data_version", ...projectionColumns(projection,),],)
+      .$if(dataVersion !== undefined, (qb,) => qb.where("data_version", "=", dataVersion,),)
+      .orderBy("id",)
+      .limit(batchSize,)
+      .offset(offset,)
       .execute()) as Array<
         & { id: string; data_version: number; record_hash?: string }
         & Record<string, unknown>
@@ -182,16 +182,16 @@ export async function runBatchRefresh(
     if (rows.length === 0) { break; }
     scanned += rows.length;
     for (const row of rows) {
-      const hash = computeRowHash(tableName, row);
+      const hash = computeRowHash(tableName, row,);
       if (!hash) {
         skipped++;
         continue;
       }
       if (row.record_hash === hash) { continue; }
       await database
-        .updateTable(tableName)
-        .set({ record_hash: hash })
-        .where("id", "=", row.id)
+        .updateTable(tableName,)
+        .set({ record_hash: hash, },)
+        .where("id", "=", row.id,)
         .execute();
       updated++;
     }
@@ -199,7 +199,7 @@ export async function runBatchRefresh(
     offset += batchSize;
   }
 
-  return { scanned, updated, skipped };
+  return { scanned, updated, skipped, };
 }
 
 /**
@@ -208,14 +208,14 @@ export async function runBatchRefresh(
  * per row's data_version; the SELECT just needs every column the registry
  * might reference across versions.
  */
-function projectionColumns(projection: Map<number, ContentVersion>): string[] {
+function projectionColumns(projection: Map<number, ContentVersion>,): string[] {
   const seen = new Set<string>();
   for (const cv of projection.values()) {
-    for (const col of cv.columns) { seen.add(col); }
+    for (const col of cv.columns) { seen.add(col,); }
   }
-  if (!seen.has("id")) { seen.add("id"); }
-  if (!seen.has("data_version")) { seen.add("data_version"); }
-  return [...seen];
+  if (!seen.has("id",)) { seen.add("id",); }
+  if (!seen.has("data_version",)) { seen.add("data_version",); }
+  return [...seen,];
 }
 
 /** Test seam: clear the registry. NOT FOR PRODUCTION. */
@@ -226,8 +226,8 @@ export function __resetContentVersionRegistry(): void {
 /** Test seam: peek the registry. NOT FOR PRODUCTION. */
 export function __peekContentVersionRegistry(): ReadonlyMap<string, ReadonlyMap<number, readonly string[]>> {
   const out = new Map<string, ReadonlyMap<number, readonly string[]>>();
-  for (const [table, versions] of REGISTRY) {
-    out.set(table, new Map([...versions].map(([v, cv]) => [v, cv.columns] as const)));
+  for (const [table, versions,] of REGISTRY) {
+    out.set(table, new Map([...versions,].map(([v, cv,],) => [v, cv.columns,] as const),),);
   }
   return out;
 }
