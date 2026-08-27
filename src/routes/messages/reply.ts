@@ -60,6 +60,7 @@ export async function maybeAutoReply(
       userId: actorId,
       userMessage,
       requestId: request.headers.get("x-request-id",) ?? undefined,
+      asyncStore,
     },).catch((error: unknown,) => {
       // Fire-and-forget: surface failures via the structured logger instead
       // of emitting an unhandled-rejection warning at runtime.
