@@ -128,7 +128,6 @@ describe("EmotionAvatarService", () => {
     /** Stub AvatarService.prototype.createAvatar + disable FK to skip DB writes */
     let origCreateAvatar: (...args: any[]) => any;
     function stubDbWrites() {
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       origCreateAvatar = AvatarService.prototype.createAvatar;
       AvatarService.prototype.createAvatar = mock(async () => randomUUID());
       sqlite.run("PRAGMA foreign_keys = OFF",);

@@ -13,7 +13,7 @@
 import { existsSync, readFileSync, writeFileSync, } from "node:fs";
 import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
-import { ConfigSchema, } from "../src/config/schema-class";
+import { envMap, jsonSchema, } from "../src/config/schema-class";
 import { safeJsonStringify, } from "../src/utils";
 
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
@@ -27,12 +27,12 @@ function toJson(value: unknown,): string {
 // ── JSON Schema ──────────────────────────────────────────────
 
 const jsonSchemaPath = resolve(ROOT, "schemas/loop-lore-config.schema.json",);
-const newJsonSchemaStr = toJson(ConfigSchema.jsonSchema(),);
+const newJsonSchemaStr = toJson(jsonSchema(),);
 
 // ── ENV_MAP snapshot ─────────────────────────────────────────
 
 const envMapPath = resolve(ROOT, "schemas/env-map.snapshot.json",);
-const newEnvMapStr = toJson(ConfigSchema.envMap(),);
+const newEnvMapStr = toJson(envMap(),);
 
 // ── Compare and report ───────────────────────────────────────
 

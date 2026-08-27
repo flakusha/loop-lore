@@ -6,10 +6,10 @@
  */
 import { afterAll, beforeAll, describe, expect, mock, test, } from "bun:test";
 import { createLogger, } from "../../logger";
+import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { EmotionHook, } from "./emotion-hook";
 import { ModerationHook, } from "./moderation-hook";
 import { MoodHook, } from "./mood-hook";
-import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { NsfwHook, type NsfwHookDeps, } from "./nsfw-hook";
 import { clearHooks, getRegisteredHooks, initDefaultHooks, registerHook, runHookChain, } from "./registry";
 import type { HookContext, } from "./types";
@@ -674,7 +674,7 @@ describe("runHookChain", () => {
     },);
     const result = await runHookChain({ context: ctx, hooks: [...getRegisteredHooks(),], },);
     // Only the mood hook matches the targeted event type.
-    expect(result.results.map((r,) => r.eventType,),).toEqual(["mood_shift",],);
+    expect(result.results.map((r,) => r.eventType),).toEqual(["mood_shift",],);
     expect(result.allowed,).toBe(true,);
   });
 });
