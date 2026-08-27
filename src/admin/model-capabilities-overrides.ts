@@ -8,14 +8,20 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { resolveModelCapabilities, } from "./model-capabilities";
-import type { ResolvedModelCapabilities, } from "./model-capabilities-types";
 
 /**
  * Set user override for a model's capabilities.
  * Only updates fields provided in the override — preserves others.
  * @param db - Database instance.
+ * @param providerId - Provider identifier.
  * @param modelId - Model identifier.
  * @param override - Fields to override.
+ * @param override.contextWindow - Context window size override.
+ * @param override.maxOutput - Max output tokens override.
+ * @param override.supportsTools - Tools support override.
+ * @param override.supportsVision - Vision support override.
+ * @param override.supportsThinking - Thinking support override.
+ * @param override.notes - Notes override.
  * @returns True if the model was found and updated.
  */
 export async function setModelOverride(
