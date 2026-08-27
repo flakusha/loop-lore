@@ -73,6 +73,12 @@
       "source": ".plan/epics/epic-architecture.md"
     }
   ],
+  "src/age-gate/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
+    }
+  ],
   "src/anonymity/tor/circuits.ts": [
     {
       "kind": "ticket",
@@ -11571,6 +11577,12 @@
       "source": ".plan/tickets/TASK-story-gm-generation-never-nsfw-gated-content-safety-bypass.md"
     }
   ],
+  "src/generation/auto-gen/stream-render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    }
+  ],
   "src/generation/cancellation-actions.test.ts": [
     {
       "kind": "ticket",
@@ -13162,6 +13174,10 @@
   "src/logger/censors.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-logging-censor-exact-match-rules-error-stack-path-leak.md"
     },
     {
@@ -13173,6 +13189,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-logging-telemetry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-logging-hardening-minors-injection-rotation-races-sink-path-.md"
     },
     {
       "kind": "spec",
@@ -13631,6 +13651,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
     }
   ],
   "src/middleware/nsfw-gate/logging.ts": [
@@ -15103,6 +15127,12 @@
       "source": ".plan/tickets/TASK-embedding-vector-store.md"
     }
   ],
+  "src/regex/html-sanitize.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    }
+  ],
   "src/regex/index.ts": [
     {
       "kind": "ticket",
@@ -15149,6 +15179,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-regex-pipeline-hardening-sweep-input-caps-lastindex-hazards-.md"
     }
   ],
   "src/regex/narrative.ts": [
@@ -15193,6 +15227,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-transport-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
     },
     {
       "kind": "spec",
@@ -17259,6 +17297,12 @@
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
     }
   ],
+  "src/routes/notifications/stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
+    }
+  ],
   "src/routes/npcs.ts": [
     {
       "kind": "spec",
@@ -17815,6 +17859,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-purge-unbounded-days.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md"
     },
     {
       "kind": "ticket",
@@ -20287,6 +20335,12 @@
       "source": ".plan/tickets/TASK-social-hub-foundation.md"
     }
   ],
+  "src/social-hub/adapters/irc.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad.md"
+    }
+  ],
   "src/social-hub/adapters/slack.ts": [
     {
       "kind": "ticket",
@@ -20759,6 +20813,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md"
     }
   ],
   "src/test-utils/create-test-db.ts": [
@@ -21226,6 +21284,14 @@
   "src/utils/date.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-date-parse-results-unchecked-for-nan-10-sites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
     },
     {
@@ -21272,6 +21338,10 @@
     }
   ],
   "src/utils/safe-json.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-codemod-fetch-json-safe-utils.md"
