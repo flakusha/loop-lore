@@ -54,9 +54,9 @@ export class ItemsService {
     return createDefinitionDispatch(this.state, def,);
   }
 
-  /** Get item definition by ID */
-  async getDefinition(itemId: string,) {
-    return getDefinitionDispatch(this.state, itemId,);
+  /** Get item definition by ID. Requires worldId to prevent cross-world IDOR. */
+  async getDefinition(itemId: string, worldId: string,) {
+    return getDefinitionDispatch(this.state, itemId, worldId,);
   }
 
   /** List item definitions in a world */
@@ -101,19 +101,20 @@ export class ItemsService {
     return getNpcInventoryDispatch(this.state, actorId,);
   }
 
-  /** Transfer items between locations, NPCs, or from world to actor */
+  /** Transfer items between locations, NPCs, or from world to actor. Requires worldId to prevent cross-world IDOR. */
   async transfer(
     worldItemId: string,
+    worldId: string,
     quantity: number,
     toLocationId?: string,
     toActorId?: string,
     trx?: Transaction<DB>,
   ): Promise<TransferResult> {
-    return transferDispatch(this.state, worldItemId, quantity, toLocationId, toActorId, trx,);
+    return transferDispatch(this.state, worldItemId, worldId, quantity, toLocationId, toActorId, trx,);
   }
 
-  /** Remove item instance */
-  async destroy(worldItemId: string, quantity?: number, trx?: Transaction<DB>,): Promise<boolean> {
-    return destroyDispatch(this.state, worldItemId, quantity, trx,);
+  /** Remove item instance. Requires worldId to prevent cross-world IDOR. */
+  async destroy(worldItemId: string, worldId: string, quantity?: number, trx?: Transaction<DB>,): Promise<boolean> {
+    return destroyDispatch(this.state, worldItemId, worldId, quantity, trx,);
   }
 }

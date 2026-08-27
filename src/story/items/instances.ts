@@ -102,10 +102,11 @@ export async function getAtLocation(state: ItemState, locationId: string, includ
 
 export { getNpcInventory, } from "./npc-inventory";
 
-/** Transfer items between locations, NPCs, or from world to actor */
+/** Transfer items between locations, NPCs, or from world to actor. Requires worldId to prevent cross-world IDOR. */
 export async function transfer(
   state: ItemState,
   worldItemId: string,
+  worldId: string,
   quantity: number,
   toLocationId?: string,
   toActorId?: string,
@@ -117,6 +118,7 @@ export async function transfer(
     .selectFrom("world_items",)
     .selectAll()
     .where("id", "=", worldItemId,)
+    .where("world_id", "=", worldId,)
     .executeTakeFirst();
 
   if (!source) {
@@ -147,7 +149,7 @@ export async function transfer(
       .selectFrom("world_items",)
       .selectAll()
       .where("item_id", "=", source.item_id,)
-      .where("world_id", "=", source.world_id,);
+      .where("world_id", "=", worldId,);
 
     if (toLocationId) {
       query = query.where("location_id", "=", toLocationId,);
@@ -168,7 +170,7 @@ export async function transfer(
         .insertInto("world_items",)
         .values({
           id: uid(),
-          world_id: source.world_id,
+          world_id: worldId,
           item_id: source.item_id,
           location_id: toLocationId ?? null,
           owner_actor_id: toActorId ?? null,
@@ -189,17 +191,18 @@ export async function transfer(
   };
 }
 
-/** Remove item instance */
+/** Remove item instance. Requires worldId to prevent cross-world IDOR. */
 export async function destroy(
   state: ItemState,
   worldItemId: string,
+  worldId: string,
   quantity?: number,
   trx?: Transaction<DB>,
 ): Promise<boolean> {
   const db = trx ?? state.db;
 
   if (quantity === undefined) {
-    await db.deleteFrom("world_items",).where("id", "=", worldItemId,).execute();
+    await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,).execute();
     return true;
   }
 
@@ -207,13 +210,14 @@ export async function destroy(
     .selectFrom("world_items",)
     .selectAll()
     .where("id", "=", worldItemId,)
+    .where("world_id", "=", worldId,)
     .executeTakeFirst();
 
   if (!source) { return false; }
 
   const remaining = source.quantity - quantity;
   if (remaining <= 0) {
-    await db.deleteFrom("world_items",).where("id", "=", worldItemId,).execute();
+    await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,).execute();
   } else {
     await db
       .updateTable("world_items",)
