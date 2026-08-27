@@ -116,8 +116,8 @@ export interface NsfwModerationService {
   ): Promise<{ preferences: NsfwUserPrefs | null; actions: ModAction[]; flags: ContentFlag[] }>;
   deleteUserData(userId: string, deletedBy: string,): Promise<void>;
   getEffectiveNsfw(chatId: string, userId: string,): Promise<{ enabled: boolean; source: string }>;
-  setChatNsfwOverride(chatId: string, override: "enabled" | "disabled" | null,): Promise<void>;
-  setWorldNsfwOverride(worldId: string, override: "enabled" | "disabled" | null,): Promise<void>;
+  setChatNsfwOverride(chatId: string, override: "enabled" | "disabled" | null, performedBy: string,): Promise<void>;
+  setWorldNsfwOverride(worldId: string, override: "enabled" | "disabled" | null, performedBy: string,): Promise<void>;
   recordAction(params: {
     actionType: string;
     targetUserId: string;

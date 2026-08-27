@@ -107,7 +107,10 @@ export class ModerationHook implements HookHandler {
 
   // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
   async canHandle(content: string, _context: HookContext,): Promise<boolean> {
-    return content.length > 10;
+    // No length bypass: short content can carry moderation tokens. The
+    // scanner inside execute is the actual filter; canHandle only answers
+    // "is this hook applicable?".
+    return content.length > 0;
   }
 
   async execute(content: string, context: HookContext,): Promise<HookResult> {
@@ -202,7 +205,7 @@ export class ModerationHook implements HookHandler {
       await recorder.recordAction({
         actionType: suppressed ? "content_blocked" : "content_flagged",
         targetUserId: context.actorId,
-        performedBy: "system",
+        performedBy: context.userId ?? "system",
         reason: `Moderation ${suppressed ? "blocked" : "flagged"}: ${flags.severity} (score ${flags.score}) — ${
           Array.from(flags.matched, (m,) => `${m.term}×${m.count}`,).join(", ",)
         }`,

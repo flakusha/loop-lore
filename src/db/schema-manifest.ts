@@ -1481,6 +1481,16 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     updated_at: col("text",),
   },)
+  .table("nsfw_consent_state", {
+    id: col("text", { primaryKey: true, },),
+    user_id: col("text", { notNull: true, },),
+    chat_id: col("text", { notNull: true, },),
+    action: col("text", { notNull: true, },),
+    scope: col("text", { notNull: true, hasDefault: true, },),
+    reason: col("text",),
+    created_at: col("text", { notNull: true, },),
+    revoked_at: col("text",),
+  },)
   .table("nsfw_encounters", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text",),

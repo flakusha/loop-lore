@@ -104,10 +104,34 @@ export async function checkIntimacyForNsfw(
 }
 
 /**
+ * Resolve the distinct human user accounts backing a chat's participants
+ * (via `actors.user_id`). AI-only actors have no backing user and are
+ * skipped.
+ */
+export async function getChatParticipantUserIds(
+  database: Kysely<DB>,
+  chatId: string,
+): Promise<string[]> {
+  const rows = await database
+    .selectFrom("chat_participants",)
+    .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+    .select("actors.user_id",)
+    .where("chat_participants.chat_id", "=", chatId,)
+    .execute();
+  const seen = new Set<string>();
+  for (const r of rows) {
+    if (r.user_id !== null) { seen.add(r.user_id,); }
+  }
+  return [...seen];
+}
+
+/**
  * Check if a chat allows NSFW content based on participants.
  *
- * A chat allows NSFW if ALL participants have NSFW content ratings
- * AND the user is allowed to access NSFW.
+ * Weakest-link semantics: the requesting user AND every user-backed
+ * participant must individually pass the NSFW access check (config toggle,
+ * age gate, minimum age). AI-only actors contribute only their content
+ * rating to `nsfwParticipants`.
  */
 export async function checkChatNsfwAccess(
   database: Kysely<DB>,
@@ -137,13 +161,19 @@ export async function checkChatNsfwAccess(
     }
   }
 
-  // If there are NSFW participants but user can't access NSFW, block
-  if (nsfwParticipants.length > 0 && !userAccess.allowed) {
-    return {
-      allowed: false,
-      reason: "nsfw_participants_blocked",
-      nsfwParticipants,
-    };
+  // Weakest link: every human participant must individually clear the
+  // age/config gate — the initiator's clearance alone is not sufficient.
+  const participantUserIds = await getChatParticipantUserIds(database, chatId,);
+  for (const pid of participantUserIds) {
+    if (pid === userId) { continue; }
+    const access = await canAccessNsfw(database, config, pid,);
+    if (!access.allowed) {
+      return {
+        allowed: false,
+        reason: `participant_blocked:${access.reason ?? "unknown"}`,
+        nsfwParticipants,
+      };
+    }
   }
 
   return { allowed: true, nsfwParticipants, };

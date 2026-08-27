@@ -46,9 +46,18 @@ export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
       .put(`${prefix}/nsfw/moderation/chat/:chatId`, async (ctx: any,) => {
         const auth = requireModerationAction(ctx,);
         if (typeof auth !== "string") { return auth; }
+        // Chat-scoped guard: the moderator must also be able to access the
+        // chat they are flipping the override on.
+        const access = await checkChatAccess(
+          database,
+          ctx.params.chatId,
+          auth,
+          (ctx.userRole as string | null) ?? null,
+        );
+        if (!access.ok) { return notFound("Chat not found",); }
         try {
           const { override, } = ctx.body as { override: "enabled" | "disabled" | null };
-          await svc.setChatNsfwOverride(ctx.params.chatId, override,);
+          await svc.setChatNsfwOverride(ctx.params.chatId, override, auth,);
           return jsonResponse(SuccessResponse,);
         } catch (error: unknown) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
@@ -63,7 +72,7 @@ export function overridesRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (typeof auth !== "string") { return auth; }
         try {
           const { override, } = ctx.body as { override: "enabled" | "disabled" | null };
-          await svc.setWorldNsfwOverride(ctx.params.worldId, override,);
+          await svc.setWorldNsfwOverride(ctx.params.worldId, override, auth,);
           return jsonResponse(SuccessResponse,);
         } catch (error: unknown) {
           return jsonError(error instanceof Error ? error.message : String(error,), 500,);
