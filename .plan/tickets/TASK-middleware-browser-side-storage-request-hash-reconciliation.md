@@ -49,10 +49,10 @@ ll-req::<id> ::= JSON({
 ```
 
 > The `X-Record-Hash` header's presence depends on
-> `TASK-middleware-fe-be-db-record-content-hashing.md` **Architectural
-> question Q1**. This ticket assumes option 1 (always emitted on tracked
-> routes) and degrades gracefully if the header is absent on a given
-> response (cache miss → server fetch).
+> `TASK-middleware-fe-be-db-record-content-hashing.md` **Decisions log →
+> Q1**. Q1 is resolved to option 0 (always emitted on tracked routes); this
+> ticket degrades gracefully if the header is absent on a given response
+> (cache miss → server fetch).
 
 Keys are namespaced under `ll-req::` so other storage (preferences,
 auth tokens) is unaffected. The cache is best-effort — quota errors
@@ -133,3 +133,10 @@ must NOT break the request.
 - This ticket does NOT introduce a new DB column; everything lives in
   the browser. The server's only addition is `X-Record-Hash` on the
   replay response, which `idempotency.ts` already has the hook for.
+
+## Decisions log
+
+**Q1 (inherited from ticket 1) — `X-Record-Hash` emission scope: option 0
+(always on tracked routes).** Resolved in `TASK-middleware-fe-be-db-record-content-hashing.md`
+under "Decisions log → Q1". This ticket inherits the decision and only
+asserts graceful degradation if the header is absent.
