@@ -838,6 +838,7 @@ export const MessagesSchema = t.Object({
   e2e_session_id: t.Optional(t.String(),),
   e2e_sender_eph_pub_jwk: t.Optional(t.String(),),
   e2e_chain_index: t.Optional(t.Number(),),
+  content_plaintext: t.Optional(t.String(),),
 },);
 
 // ── actor_keys ────────────────────────────────────────────

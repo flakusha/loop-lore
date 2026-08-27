@@ -35,6 +35,7 @@ import {
 } from "../../db/enums";
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+
 export const MAX_INSERT_ATTEMPTS = 8;
 
 export interface SwipeInsertInput {
@@ -45,6 +46,13 @@ export interface SwipeInsertInput {
   role?: string;
   storedContent: string;
   storedKeyId: string | null;
+  /**
+   * Plaintext version of `storedContent`, if known at insert time. Stored
+   * alongside ciphertext in `messages.content_plaintext` so the FTS5 trigger
+   * (see migration 068) can search across at-rest-encrypted chats. Null
+   * for client-pre-encrypted payloads (we never saw the plaintext).
+   */
+  storedPlaintext?: string | null;
   contentType?: string;
   contentEncoding: ContentEncoding;
   idempotencyKey: string | null;
@@ -116,6 +124,7 @@ export async function insertUserMessageWithRetry(
           role: (input.role ?? MessageRole.User) as MessageRole,
           content: input.storedContent,
           key_id: input.storedKeyId,
+          content_plaintext: input.storedPlaintext ?? null,
           content_type: (input.contentType ?? MessageContentType.Text) as MessageContentType,
           content_format: MessageContentFormat.Markdown,
           content_encoding: input.contentEncoding,

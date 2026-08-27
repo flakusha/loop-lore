@@ -873,6 +873,7 @@ export async function insertMessages(
     e2e_session_id?: string | null;
     e2e_sender_eph_pub_jwk?: string | null;
     e2e_chain_index?: number | null;
+    content_plaintext?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("messages",).values({
