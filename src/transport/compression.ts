@@ -21,7 +21,7 @@ interface CompressionOptions {
 }
 
 function strictUint8(buf: Buffer,): Uint8Array<ArrayBuffer> {
-  return new Uint8Array(buf);
+  return new Uint8Array(buf,);
 }
 
 /**
@@ -68,7 +68,9 @@ function compress(
     }
 
     case "gzip": {
-      return new Uint8Array(Bun.gzipSync(strictIn, { level: (options.level ?? 6) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9, },),);
+      return new Uint8Array(
+        Bun.gzipSync(strictIn, { level: (options.level ?? 6) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9, },),
+      );
     }
   }
 }
