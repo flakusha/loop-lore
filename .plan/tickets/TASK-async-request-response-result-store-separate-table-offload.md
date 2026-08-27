@@ -3,12 +3,13 @@
 
 # TASK: Async request-response result store (separate table + offload)
 
-**Status:** ⬜ Open
+**Status:** 🟡 Partial (commit 85657ffb + 3f83ae89 on dev, 2026-08-26; only track() called, complete/fail never)
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-middleware-request-lifecycle
 **Related:** `src/db/migrations/`, `src/async/` (new), `TASK-middleware-global-idempotency-replay-for-re-fired-requests.md`, `TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md`, `src/server/handler.ts`, `src/routes/messages/reply.ts:41`, `epic-middleware-request-lifecycle.md`
 **Issue:** 73eb1de
+**Blocks:** `TASK-async-store-complete-fail-lifecycle-hooks.md`
 
 ## Summary
 
@@ -130,3 +131,67 @@ the in-progress status endpoint
   that moves an offloaded row back into the table. Re-reads are served
   from disk. If hot-rehydrate is needed later, that is a follow-up
   ticket.
+
+## Closing Notes (2026-08-26)
+
+Partial. The store, table, offload daemon, and full writer API are
+shipped, but the lifecycle is not driven by anything. Verified state
+on `dev`:
+
+- ✅ `src/db/migrations/067_request_results.ts` shipped. Schema matches
+  the ticket: `(id, method, routePattern, userId, status, progress,
+  responseStatus, responseHeaders, responseBody, error, startedAt,
+  completedAt, offloadedAt, offloadPath)` + index on `(userId, startedAt
+  DESC)` + TTL eviction index.
+- ✅ `src/async/store.ts` shipped. Public API: `track()`, `progress()`,
+  `complete()`, `fail()`, `flush()`, `read()`, `config`, `destroy()`.
+  All writes are fire-and-forget via a single drain loop calling
+  `apply()` against the migration's table.
+- ✅ `src/async/offload.ts` shipped. Cron-triggered daemon (default 30s)
+  that scans `.tmp/async-store/` for `*.json.gz` spills, compresses
+  oversized rows, deletes inline `response_body`, writes the spill
+  file, and records `offloadedAt` + `offloadPath`. TTL eviction runs
+  on the same cron tick for `complete`/`failed` rows older than the
+  configured TTL.
+- ✅ Test coverage: `apply.test.ts` (179 lines), `offload.test.ts`
+  (73 lines), `store.test.ts` (74 lines).
+- ✅ `src/elysia-app.ts:46-48` creates the store at boot and starts the
+  offload daemon.
+- ❌ **No caller writes `complete()` or `fail()`.** Grep across
+  `src/` for `asyncStore.complete(` / `asyncStore.fail(` returns zero
+  matches. The only consumer is `asyncStore.track(...)` in
+  `src/routes/messages/reply.ts:46`. Result: rows never transition
+  out of `pending`; the status endpoint reads back `pending`
+  indefinitely for every tracked request.
+- ❌ **No caller writes `progress()`** (e.g. LLM step updates from
+  `triggerAutoGeneration`). The progress field stays null.
+- ⚠️ **Storage encryption at rest is NOT implemented** (Notes section
+  flagged this as a follow-up). `response_body` is stored as plaintext
+  or base64. The ticket's "encrypt with SMK" guidance is unmet. Not a
+  blocker for closing this ticket — the ticket never listed encryption
+  as an AC — but worth surfacing for the next pass.
+
+**Impact**: the table exists and the daemon works, but rows are
+immutable past `pending`. The store is functionally a write-once
+`request_started_log` today, not the lifecycle store the ticket
+described. Idempotency replay (ticket 2) cannot work because there are
+no `complete` rows to replay.
+
+### Follow-up tickets
+
+- `TASK-async-store-complete-fail-lifecycle-hooks.md` — wire
+  `asyncStore.complete()` into the idempotency `afterHandle` (or a
+  dedicated response-completion middleware); wire `asyncStore.fail()`
+  into the global error boundary; call `asyncStore.progress()` from
+  `triggerAutoGeneration` with named steps. Medium. Closes this ticket
+  AND ticket 3.
+
+### What this ticket DID deliver
+
+- Persistent `request_results` table with the right shape, indices,
+  eviction policy.
+- Working async writer (`store.ts`) and offload daemon (`offload.ts`)
+  with full test coverage.
+- Boot-time wiring in `src/elysia-app.ts`.
+- Foundation for the idempotency table-backend + status endpoint,
+  ready to compose the moment the lifecycle hooks are added.
