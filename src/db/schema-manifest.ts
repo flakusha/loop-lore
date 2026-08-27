@@ -736,6 +736,29 @@ export const SCHEMA = new SchemaManifest()
     chat_id: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  // ── Activity & Notifications ──────────────────────────────────────────────
+  .table("activitypub_actor_keys", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    key_id: col("text", { notNull: true, },),
+    public_jwk: col("text", { notNull: true, },),
+    encrypted_private_jwk: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    rotated_at: col("text",),
+    created_at: col("text", { notNull: true, },),
+    expires_at: col("text",),
+  },)
+  .table("notifications", {
+    id: col("text", { primaryKey: true, },),
+    user_id: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, },),
+    title: col("text", { notNull: true, },),
+    body: col("text",),
+    link: col("text",),
+    read: col("text", { notNull: true, hasDefault: true, },),
+    data: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   // ── Core: Actor Systems ──────────────────────────────────────────────
   .table("actor_currencies", {
     id: col("text", { primaryKey: true, },),
@@ -1174,6 +1197,7 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     agent_role: col("text",),
+    federation_consent: col("integer", { notNull: true, hasDefault: true, },),
   },)
   // ── Admin & Config ──────────────────────────────────────────────
   .table("admin_character_overrides", {
@@ -1753,18 +1777,6 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     temperature: col("real",),
     max_tokens: col("integer",),
-  },)
-  // ── Activity & Notifications ──────────────────────────────────────────────
-  .table("notifications", {
-    id: col("text", { primaryKey: true, },),
-    user_id: col("text", { notNull: true, },),
-    type: col("text", { notNull: true, },),
-    title: col("text", { notNull: true, },),
-    body: col("text",),
-    link: col("text",),
-    read: col("text", { notNull: true, hasDefault: true, },),
-    data: col("text",),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Core: Users & Sessions ──────────────────────────────────────────────
   .table("personas", {
