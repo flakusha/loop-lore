@@ -3,7 +3,7 @@
 
 # BUG: `recordLifecycle` marks 4xx/5xx responses `complete`
 
-**Status:** ✅ Resolved (fixed in worktree merge-review-followups, 2026-08-27)
+**Status:** fixed-in-worktree
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-middleware-request-lifecycle

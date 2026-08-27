@@ -1,6 +1,6 @@
 # BUG: Backfill of historical posts on new follower unspecified
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** low
 **Effort:** Medium
 

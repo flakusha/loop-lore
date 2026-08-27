@@ -1,6 +1,6 @@
 # BUG: Federation delivery reliability (queue, retry, idempotency) undefined
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** medium
 **Effort:** Medium
 

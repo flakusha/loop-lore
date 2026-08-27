@@ -1,6 +1,6 @@
 # BUG: Federation authorization (who may publish an actor) undefined
 
-**Status:** ⬜ Not Started
+**Status:** not-yet-implemented
 **Priority:** medium
 **Effort:** Medium
 
