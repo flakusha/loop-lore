@@ -146,7 +146,6 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       return;
     }
 
-
     // ── Context pruning (critical/imminent threshold) ───────
     // When the context window is critically full, prune low-value messages
     // before assembling the prompt. High-importance messages are promoted
@@ -226,7 +225,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       config,
       chatId,
       userId,
-      actorId: characterId,
+      actorId: hooks.actorId ?? characterId,
       actorName,
       messageId: stored.messageId,
       content: llm.content,
