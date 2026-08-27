@@ -192,6 +192,7 @@ export interface Characters {
   created_at: Generated<string>;
   updated_at: Generated<string>;
   agent_role: string | null;
+  federation_consent: Generated<number>;
 }
 
 // ── actor_notes ────────────────────────────────────────────
@@ -929,6 +930,19 @@ export interface RequestResults {
   completed_at: string | null;
   offloaded_at: string | null;
   offload_path: string | null;
+}
+
+// ── activitypub_actor_keys ────────────────────────────────────────────
+export interface ActivitypubActorKeys {
+  id: Generated<string>;
+  actor_id: string;
+  key_id: string;
+  public_jwk: string;
+  encrypted_private_jwk: string;
+  status: Generated<string>;
+  rotated_at: string | null;
+  created_at: string;
+  expires_at: string | null;
 }
 
 // ── nsfw_consent_state ────────────────────────────────────────────

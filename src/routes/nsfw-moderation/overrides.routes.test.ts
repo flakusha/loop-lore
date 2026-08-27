@@ -15,6 +15,13 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
+import {
+  insertActors,
+  insertChatParticipants,
+  insertChats,
+  insertUsers,
+  insertWorlds,
+} from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { overridesRoutes, } from "./overrides";
 
@@ -39,6 +46,10 @@ describe("moderation override routes — moderator gating", () => {
   beforeAll(async () => {
     createLogger({ level: "warn", },);
     ({ db, sqlite, } = await createTestDb());
+    // Service-level guard requires the target rows to exist (404 otherwise).
+    await insertUsers(db, "creator-1", "Override Creator", { id: "creator-1" as never, },);
+    await insertChats(db, "override-test-chat", "creator-1", { id: "c-1" as never, },);
+    await insertWorlds(db, "creator-1", "override-test-world", { id: "w-1" as never, },);
   },);
 
   afterAll(async () => {
@@ -76,7 +87,12 @@ describe("moderation override routes — moderator gating", () => {
   });
 
   test("PUT chat override accepts moderator role", async () => {
-    const app = createApp(db, uid(), "moderator",);
+    // Moderators hold no admin.chat wildcard — they need chat access.
+    const modId = "mod-route-1";
+    await insertUsers(db, "mod-route-1", "Mod Route", { id: modId as never, },);
+    await insertActors(db, "Mod Route Actor", { id: modId as never, user_id: modId as never, },);
+    await insertChatParticipants(db, "c-1", modId,);
+    const app = createApp(db, modId, "moderator",);
     const res = await app.handle(overrideRequest("/api/nsfw/moderation/chat/c-1", chatBody,),);
     expect(res.status,).toBe(200,);
   });

@@ -109,7 +109,8 @@ export class NsfwModerationService implements NsfwModerationServiceIface {
     worldId: string,
     override: Parameters<NsfwModerationServiceIface["setWorldNsfwOverride"]>[1],
     performedBy: string,
-  ) => setWorldNsfwOverride({ thisL: this as unknown as NsfwModerationServiceContext, worldId, override, performedBy, },);
+  ) =>
+    setWorldNsfwOverride({ thisL: this as unknown as NsfwModerationServiceContext, worldId, override, performedBy, },);
   recordAction = (params: Parameters<NsfwModerationServiceIface["recordAction"]>[0],) =>
     recordAction({ thisL: this as unknown as NsfwModerationServiceContext, params, },);
   submitAppeal = (userId: string, actionId: string, reason: string,) =>

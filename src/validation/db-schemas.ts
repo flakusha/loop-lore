@@ -619,6 +619,7 @@ export const CharactersSchema = t.Object({
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
   agent_role: t.Optional(t.String(),),
+  federation_consent: t.Optional(t.Number(),),
 },);
 
 // ── world_items ────────────────────────────────────────────
@@ -2159,6 +2160,18 @@ export const RequestResultsSchema = t.Object({
   completed_at: t.Optional(t.String(),),
   offloaded_at: t.Optional(t.String(),),
   offload_path: t.Optional(t.String(),),
+},);
+
+// ── activitypub_actor_keys ────────────────────────────────────────────
+export const ActivitypubActorKeysSchema = t.Object({
+  actor_id: t.String(),
+  key_id: t.String(),
+  public_jwk: t.String(),
+  encrypted_private_jwk: t.String(),
+  created_at: t.String(),
+  status: t.Optional(t.String(),),
+  rotated_at: t.Optional(t.String(),),
+  expires_at: t.Optional(t.String(),),
 },);
 
 // ── nsfw_consent_state ────────────────────────────────────────────
