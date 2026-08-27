@@ -13410,6 +13410,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-input-hardening-batch.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-logging-censor-exact-match-rules-error-stack-path-leak.md"
     },
     {
@@ -13691,6 +13695,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-input-hardening-batch.md"
     },
     {
       "kind": "spec",
@@ -14405,6 +14413,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-pii-redaction-hardcoded-dev-fallback-secret-no-prod-guard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-input-hardening-batch.md"
     },
     {
       "kind": "ticket",
@@ -15529,6 +15541,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-extraction-tests.md"
+    }
+  ],
+  "src/regex/transforms.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-input-hardening-batch.md"
     }
   ],
   "src/regex/transitions.ts": [
@@ -21805,6 +21823,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-consolidate-unsafe-date-buffer-json-usage-into-shared-utils.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-input-hardening-batch.md"
     },
     {
       "kind": "spec",
