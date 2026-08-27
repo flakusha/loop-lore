@@ -14,6 +14,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
 import { uid, } from "../utils";
+import { EVENT_POOL, NPC_OPTIONS, SCENT_OPTIONS, SOUND_OPTIONS, WEATHER_OPTIONS, } from "./random-events-pool";
 import type { EventRef, } from "./types";
 
 // ── Types ───────────────────────────────────────────────────
@@ -52,112 +53,6 @@ export interface RandomEventOpts {
   /** World time for {weather} derivation */
   worldTime?: { hour: number; period: "dawn" | "day" | "dusk" | "night" };
 }
-
-// ── Event Templates ─────────────────────────────────────────
-
-const EVENT_POOL: Omit<RandomEvent, "id" | "content">[] = [
-  // Weather
-  {
-    category: "weather",
-    template: "The weather shifts — {weather}.",
-    weight: 3,
-    minMessages: 5,
-    cooldown: 10,
-  },
-  // NPC activity
-  {
-    category: "npc",
-    template: "{npc} passes by, glancing briefly.",
-    weight: 2,
-    minMessages: 8,
-    cooldown: 15,
-  },
-  {
-    category: "npc",
-    template: "A distant voice calls out, muffled by the surroundings.",
-    weight: 2,
-    minMessages: 6,
-    cooldown: 12,
-  },
-  // Environmental
-  {
-    category: "environmental",
-    template: "Something creaks in the distance.",
-    weight: 1,
-    minMessages: 10,
-    cooldown: 20,
-  },
-  {
-    category: "environmental",
-    template: "The ground vibrates almost imperceptibly.",
-    weight: 1,
-    minMessages: 15,
-    cooldown: 25,
-  },
-  // Ambient
-  {
-    category: "ambient",
-    template: "A {sound} echoes through the area.",
-    weight: 2,
-    minMessages: 5,
-    cooldown: 8,
-  },
-  {
-    category: "ambient",
-    template: "The air carries a faint scent of {scent}.",
-    weight: 1,
-    minMessages: 7,
-    cooldown: 12,
-  },
-  // Social
-  {
-    category: "social",
-    template: "Nearby, {npc} seems to be in a hurry.",
-    weight: 1,
-    minMessages: 12,
-    cooldown: 20,
-  },
-];
-
-const WEATHER_OPTIONS = [
-  "a light drizzle begins to fall",
-  "the wind picks up slightly",
-  "clouds gather overhead",
-  "the sun breaks through the clouds",
-  "a chill settles in the air",
-  "the temperature rises a few degrees",
-  "a gentle fog rolls in",
-  "the sky clears to reveal stars",
-];
-
-const SOUND_OPTIONS = [
-  "distant clang",
-  "muffled shout",
-  "birdsong",
-  "rustling leaves",
-  "flowing water",
-  "creaking wood",
-  "howling wind",
-];
-
-const SCENT_OPTIONS = [
-  "pine and earth",
-  "salt and sea",
-  "smoke and ash",
-  "flowers and rain",
-  "dust and old stone",
-  "fresh bread",
-  "iron and sweat",
-];
-
-const NPC_OPTIONS = [
-  "a traveler",
-  "a merchant",
-  "a guard",
-  "a child",
-  "an old man",
-  "a hooded figure",
-];
 
 // ── Event Generation ────────────────────────────────────────
 
