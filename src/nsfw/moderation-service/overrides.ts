@@ -74,7 +74,7 @@ export async function setChatNsfwOverride(
     .where("id", "=", chatId,)
     .executeTakeFirst();
   if (!chat) {
-    throw new Error(`chat_not_found:${chatId}`);
+    throw new Error(`chat_not_found:${chatId}`,);
   }
   await thisL.db.updateTable("chats",)
     .set({ nsfw_override: override, },)
@@ -110,7 +110,7 @@ export async function setWorldNsfwOverride(
     .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!world) {
-    throw new Error(`world_not_found:${worldId}`);
+    throw new Error(`world_not_found:${worldId}`,);
   }
   await thisL.db.updateTable("worlds",)
     .set({ nsfw_override: override, },)
