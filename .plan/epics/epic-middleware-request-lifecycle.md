@@ -3,7 +3,7 @@
 
 # EPIC: Middleware — Request Lifecycle, Idempotency & Async Results
 
-**Status:** 🟡 In Progress (reopened 2026-08-27 — review found load-bearing defects; epic NOT complete)
+**Status:** 🟢 Complete (reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups)
 **Priority:** Medium
 **Effort:** Large
 **Type:** Feature Epic
@@ -78,8 +78,8 @@ frontends need:
 ## Follow-up Tickets (wiring gap — now closed)
 
 - [x] TASK-middleware-request-id-elysia-derive.md — wire `requestIdMiddleware()` into the Elysia `.derive()` chain. **DONE**: `elysia-app.ts` adds `.derive(requestIdMiddleware())` before auth derive; sets `x-request-id` header + `ctx.requestId`.
-- [ ] TASK-middleware-idempotency-wire-into-elysia.md — wire `idempotent()` into Elysia chain; **NOT DONE**: `table` backend unimplemented (BUG-middleware-idempotency-table-backend-unimplemented) + orphaned in-flight slot → permanent 409 (BUG-middleware-idempotency-orphaned-slot-permanent-409).
-- [ ] TASK-async-store-complete-fail-lifecycle-hooks.md — wire asyncStore.complete()/fail()/progress(); **NOT DONE**: `fail()` error boundary dead code (BUG-middleware-asyncstore-fail-dead-code) + recordLifecycle marks 4xx/5xx `complete` not `fail` (BUG-middleware-recordlifecycle-marks-error-complete).
+- [x] TASK-middleware-idempotency-wire-into-elysia.md — wire `idempotent()` into Elysia chain; **DONE**: `table` backend replaced by memory-only fallback with warning (BUG-middleware-idempotency-table-backend-unimplemented), in-flight slot released on throw (BUG-middleware-idempotency-orphaned-slot-permanent-409).
+- [x] TASK-async-store-complete-fail-lifecycle-hooks.md — wire asyncStore.complete()/fail()/progress(); **DONE**: `fail()` error boundary now runs in validation onError (BUG-middleware-asyncstore-fail-dead-code), recordLifecycle marks 4xx/5xx `fail` not `complete` (BUG-middleware-recordlifecycle-marks-error-complete).
 
 ## Files (planned → actual)
 
@@ -121,3 +121,16 @@ This epic was marked 🟢 Complete by `263befef` (docs(plan): mark epic-middlewa
 - `BUG-middleware-requestid-dual-write-last-wins.md` — same requestId row dual-written with last-write-wins.
 
 The `requestIdMiddleware` derive wiring (`TASK-middleware-request-id-elysia-derive.md`) is correct and stays ✅ done. The two follow-up sub-tickets above were re-marked ⬜ Open because their ACs are unmet.
+
+
+## Resolution (2026-08-27)
+
+The defects listed in "Reopened — review findings" were all fixed in worktree `merge-review-followups` (committed and finalized to `dev`):
+
+- `BUG-middleware-asyncstore-fail-dead-code.md` — fixed: validation `onError` now calls `asyncStore.fail()` AND `idem.release()` before returning; the dead separate error-boundary handler was removed.
+- `BUG-middleware-idempotency-table-backend-unimplemented.md` — fixed: `table` backend replaced by a memory-only fallback with `console.warn`; dead `asyncStore` param removed from `idempotent()`.
+- `BUG-middleware-idempotency-orphaned-slot-permanent-409.md` — fixed: in-flight slot released on handler throw (error boundary calls `idem.release`).
+- `BUG-middleware-recordlifecycle-marks-error-complete.md` — fixed: `recordLifecycle` gates on status — 2xx/3xx → `complete`, 4xx/5xx → `fail`.
+- `BUG-middleware-requestid-dual-write-last-wins.md` — fixed: HTTP lifecycle owns the terminal `complete`; async generation only writes `progress`/`fail` when the row is not already `complete`.
+
+Backend `tsc` is clean and the middleware/idempotency/async tests pass. Epic marked complete again.

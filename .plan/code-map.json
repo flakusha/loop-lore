@@ -8024,6 +8024,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-asyncstore-fail-dead-code.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md"
     },
     {
@@ -11354,6 +11358,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-requestid-dual-write-last-wins.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g.md"
     },
     {
@@ -13508,6 +13516,14 @@
   "src/middleware/idempotency.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-idempotency-orphaned-slot-permanent-409.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
     },
     {
@@ -13551,6 +13567,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-recordlifecycle-marks-error-complete.md"
     },
     {
       "kind": "ticket",
@@ -16108,6 +16128,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-vn-choices-idor-guard-non-compiling.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-branching-choices.md"
     }
   ],
@@ -17041,6 +17065,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-requestid-dual-write-last-wins.md"
     },
     {
       "kind": "ticket",
@@ -20504,6 +20532,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-security-merge-build-break-instances-ts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-implement-trade.md"
     },
     {
@@ -20519,6 +20555,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-item-systems-unification.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-security-merge-build-break-instances-ts.md"
     },
     {
       "kind": "ticket",
