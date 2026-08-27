@@ -3406,3 +3406,18 @@ export async function insertNsfwConsentState(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a message_seen row. */
+export async function insertMessageSeen(
+  db: Db,
+  message_id: string,
+  actor_id: string,
+  opts?: { id?: Generated<string>; state?: Generated<string>; seen_at?: string | null; created_at?: Generated<string> },
+): Promise<void> {
+  await db.insertInto("message_seen",).values({
+    id: crypto.randomUUID(),
+    message_id,
+    actor_id,
+    ...opts,
+  } as any,).execute();
+}

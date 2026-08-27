@@ -31,12 +31,12 @@
           "properties": {
             "key": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/fix-nsfw-gate-correctness/loop-lore-data/certs/key.pem",
+              "default": "/home/flak/git-ai/loop-lore/tree/message-seen-state/loop-lore-data/certs/key.pem",
               "description": "Path to TLS private key (PEM)"
             },
             "cert": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/fix-nsfw-gate-correctness/loop-lore-data/certs/cert.pem",
+              "default": "/home/flak/git-ai/loop-lore/tree/message-seen-state/loop-lore-data/certs/cert.pem",
               "description": "Path to TLS certificate (PEM)"
             }
           },
@@ -66,7 +66,7 @@
         },
         "sqliteFilename": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/fix-nsfw-gate-correctness/loop-lore-data/loop-lore.db",
+          "default": "/home/flak/git-ai/loop-lore/tree/message-seen-state/loop-lore-data/loop-lore.db",
           "description": "SQLite database file path"
         },
         "url": {
@@ -90,7 +90,7 @@
         },
         "uploadDir": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/fix-nsfw-gate-correctness/loop-lore-data/uploads",
+          "default": "/home/flak/git-ai/loop-lore/tree/message-seen-state/loop-lore-data/uploads",
           "description": "Directory for uploaded assets"
         },
         "maxFileSize": {
@@ -548,6 +548,43 @@
         "enableEmotionHooks",
         "enableNsfwHooks",
         "enableModerationHooks"
+      ]
+    },
+    "idempotency": {
+      "type": "object",
+      "description": "Global idempotency middleware for re-fired mutating requests",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the global idempotency middleware. Env: IDEMPOTENCY_ENABLED=0 to disable."
+        },
+        "backend": {
+          "type": "string",
+          "enum": [
+            "memory",
+            "table"
+          ],
+          "default": "memory",
+          "description": "Cache backend: 'memory' (single-instance) or 'table' (shared across instances via request_results). Env: IDEMPOTENCY_BACKEND."
+        },
+        "ttlMs": {
+          "type": "integer",
+          "minimum": 1000,
+          "default": 86400000,
+          "description": "TTL for cached idempotent responses in ms. Default 24h. Env: IDEMPOTENCY_TTL_MS."
+        },
+        "bypassHeader": {
+          "type": "boolean",
+          "default": true,
+          "description": "Honor X-Idempotency-Bypass: 1 to skip the cache. Env: IDEMPOTENCY_BYPASS_HEADER=0 to disable."
+        }
+      },
+      "required": [
+        "enabled",
+        "backend",
+        "ttlMs",
+        "bypassHeader"
       ]
     },
     "generation": {

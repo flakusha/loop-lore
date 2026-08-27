@@ -262,6 +262,23 @@
                 🙂
               </button>
             </div>
+            <!-- Seen-state indicator: shows who has seen/processing the message -->
+            <div class="message-seen" data-testid="seen-bar">
+              <template x-if="msg.seenState && msg.seenState.length > 0">
+                <button
+                  class="seen-badge"
+                  @click="openSeenPopover(msg.id, $event)"
+                  x-bind:title="seenTitle(msg.seenState)"
+                  data-testid="seen-badge"
+                >
+                  <span class="seen-icon">👁</span>
+                  <span class="seen-count" x-text="seenCount(msg.seenState)"></span>
+                </button>
+              </template>
+              <template x-if="!msg.seenState || msg.seenState.length === 0">
+                <span class="seen-badge seen-empty" data-testid="seen-empty">—</span>
+              </template>
+            </div>
             <!-- Detailed (nerd) mode: full button row + stats -->
             <div class="actions-full" x-show="detailLevel === 'Detailed'" :data-detail="detailLevel">
               <button class="btn-icon-action" @click="copyMessage(msg.id, $event)" x-bind:title="t('chats.copy')">
@@ -607,6 +624,34 @@
           <span x-show="_flagBusy">…</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Seen-state viewer popover: shows who has seen/processing the message -->
+  <div
+    class="seen-popover"
+    x-show="_seenPopoverOpen"
+    x-cloak
+    @click.outside="_seenPopoverOpen = false"
+    data-testid="seen-popover"
+    :style="`left:${_seenPopoverX}px;top:${_seenPopoverY}px`"
+  >
+    <div class="seen-popover-header">
+      <span class="seen-popover-title">{{{t("chats.seenBy")}}}</span>
+      <button class="btn-icon btn-xs" @click="_seenPopoverOpen = false">✕</button>
+    </div>
+    <div class="seen-popover-list">
+      <template x-for="v in _seenPopoverViewers" :key="v.actorId">
+        <div class="seen-viewer">
+          <span class="seen-viewer-name" x-text="v.actorId"></span>
+          <span
+            class="seen-viewer-state"
+            :class="`state-${v.state}`"
+            x-text="v.state"
+          ></span>
+          <span class="seen-viewer-time" x-show="v.seenAt" x-text="formatTimeShort(v.seenAt)"></span>
+        </div>
+      </template>
     </div>
   </div>
 </div>

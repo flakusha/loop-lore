@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import type { ChatState, Message, } from "./types";
 import { MessageListResponse, } from "../../validation/schemas/responses";
+import { chatSeenMethods, } from "./chat-seen";
 import { chatSendMethods, } from "./chat-send";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -14,6 +15,8 @@ const EMPTY_MESSAGE_PAGE = {
   pagination: { total: 0, page: 1, pageSize: 50, totalPages: 1, },
 };
 export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
+  ...chatSendMethods,
+  ...chatSeenMethods,
   async loadMessages() {
     // Capture the target chat up front so a rapid selectChat A→B cannot let a
     // slow A response overwrite B's state (out-of-order fetch race).
@@ -46,6 +49,8 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       this.setupScrollDetection();
     },);
     await this.loadAllReactions();
+    await this.loadAllSeen();
+    this.startSeenPolling();
     // Keep the budget advisor meter in sync with this chat's context state.
     document.dispatchEvent(
       new CustomEvent("chat-context-refresh", {
