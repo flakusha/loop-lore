@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import crypto from "node:crypto";
+// lean-ctx: Bun.CryptoHasher("sha256") emits byte-identical output to
+//          node:crypto.createHash("sha256") (verified against the previous
+//          implementation on test vectors like "hello-token-1" →
+//          7961a7f6...). Existing checksums in the wild remain valid.
 import { safeJsonStringify, } from "../../utils";
 
 /**
@@ -22,5 +25,5 @@ export function addChecksum(
   path: string,
   content: string | Buffer,
 ): void {
-  checksums[path] = `sha256:${crypto.createHash("sha256",).update(content,).digest("hex",)}`;
+  checksums[path] = `sha256:${new Bun.CryptoHasher("sha256",).update(content,).digest("hex",)}`;
 }
