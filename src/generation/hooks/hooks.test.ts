@@ -105,6 +105,11 @@ describe("MoodHook", () => {
     expect(await hook.canHandle("I am so happy today!", ctx,),).toBe(true,);
   });
 
+  test("canHandle returns false for private content", async () => {
+    const ctx = makeContext({ content: "I am so happy today!", privacyLevel: "private", },);
+    expect(await hook.canHandle("I am so happy today!", ctx,),).toBe(false,);
+  });
+
   test("execute detects positive mood", async () => {
     const ctx = makeContext({ content: "I am so happy and joyful today!", },);
     const result = await hook.execute("I am so happy and joyful today!", ctx,);
@@ -127,6 +132,36 @@ describe("MoodHook", () => {
     const result = await hook.execute("The weather is okay today.", ctx,);
     expect(result.handled,).toBe(false,);
   });
+
+  test("execute includes actorId and chatId in data payload", async () => {
+    const ctx = makeContext({ content: "I am so happy and joyful today!", },);
+    const result = await hook.execute("I am so happy and joyful today!", ctx,);
+    expect(result.handled,).toBe(true,);
+    expect(result.data?.actorId,).toBe("actor-1",);
+    expect(result.data?.chatId,).toBe("chat-1",);
+  });
+
+  test("execute amplifies delta for NSFW-rated actors", async () => {
+    const ctx = makeContext({
+      content: "I am so happy and joyful today!",
+      actorContentRating: "nsfw_intense",
+    },);
+    const result = await hook.execute("I am so happy and joyful today!", ctx,);
+    expect(result.handled,).toBe(true,);
+    // NSFW actor: base delta 5 * 1.5 = 7.5 → Math.round → 8
+    expect(result.data?.delta,).toBe(8,);
+  });
+
+  test("execute uses base delta for SFW-rated actors", async () => {
+    const ctx = makeContext({
+      content: "I am so happy and joyful today!",
+      actorContentRating: "sfw",
+    },);
+    const result = await hook.execute("I am so happy and joyful today!", ctx,);
+    expect(result.handled,).toBe(true,);
+    // SFW actor: base delta 5 (no amplification)
+    expect(result.data?.delta,).toBe(5,);
+  });
 });
 
 // ── EmotionHook ──────────────────────────────────────────────
@@ -146,6 +181,11 @@ describe("EmotionHook", () => {
   test("canHandle returns false for short content", async () => {
     const ctx = makeContext();
     expect(await hook.canHandle("Hi", ctx,),).toBe(false,);
+  });
+
+  test("canHandle returns false for private content", async () => {
+    const ctx = makeContext({ privacyLevel: "private", },);
+    expect(await hook.canHandle("I am so happy today!", ctx,),).toBe(false,);
   });
 
   test("execute detects joy", async () => {
@@ -181,6 +221,14 @@ describe("EmotionHook", () => {
     const ctx = makeContext({ content: "The rock formation is tall.", },);
     const result = await hook.execute("The rock formation is tall.", ctx,);
     expect(result.handled,).toBe(false,);
+  });
+
+  test("execute includes actorId and chatId in data payload", async () => {
+    const ctx = makeContext({ content: "She laughed with pure joy and happiness.", },);
+    const result = await hook.execute("She laughed with pure joy and happiness.", ctx,);
+    expect(result.handled,).toBe(true,);
+    expect(result.data?.actorId,).toBe("actor-1",);
+    expect(result.data?.chatId,).toBe("chat-1",);
   });
 });
 
