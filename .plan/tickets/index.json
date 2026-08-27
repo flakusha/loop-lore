@@ -12164,6 +12164,50 @@
     "tags": [],
     "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
   },
+  "TASK-MIDDLEWARE-BROWSER-SIDE-STORAGE-REQUEST-HASH-RECONCILIATION": {
+    "hash": "pending",
+    "extid": "TASK-MIDDLEWARE-BROWSER-SIDE-STORAGE-REQUEST-HASH-RECONCILIATION",
+    "type": "TASK",
+    "title": "Browser-side storage of request hash + reconciliation reload",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-content-hashing-distributed-integrity",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+  },
+  "TASK-MIDDLEWARE-CONTENT-ASSETS-GALLERY-HASHING-VALIDATION": {
+    "hash": "pending",
+    "extid": "TASK-MIDDLEWARE-CONTENT-ASSETS-GALLERY-HASHING-VALIDATION",
+    "type": "TASK",
+    "title": "Content (assets, gallery, etc.) hashing + validation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-content-hashing-distributed-integrity (cross-cuts with `epic-frontend-gallery`)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+  },
+  "TASK-MIDDLEWARE-DISTRIBUTED-HEALING-REVALIDATION-BACKUPS": {
+    "hash": "pending",
+    "extid": "TASK-MIDDLEWARE-DISTRIBUTED-HEALING-REVALIDATION-BACKUPS",
+    "type": "TASK",
+    "title": "Distributed healing, revalidation, backups",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-content-hashing-distributed-integrity (cross-cuts with `epic-database-backup-recovery`, `epic-multi-instance-reconciliation`, `epic-federation-swarm-sync`)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-distributed-healing-revalidation-backups.md"
+  },
+  "TASK-MIDDLEWARE-FE-BE-DB-RECORD-CONTENT-HASHING": {
+    "hash": "pending",
+    "extid": "TASK-MIDDLEWARE-FE-BE-DB-RECORD-CONTENT-HASHING",
+    "type": "TASK",
+    "title": "Frontend / Backend / DB record content hashing",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-content-hashing-distributed-integrity",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+  },
   "TASK-MIDDLEWARE-GLOBAL-IDEMPOTENCY-REPLAY-FOR-RE-FIRED-REQUESTS": {
     "hash": "385f05a",
     "git_issue": "385f05a",
@@ -12187,6 +12231,17 @@
     "epic": "epic-middleware-request-lifecycle",
     "tags": [],
     "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
+  },
+  "TASK-MIDDLEWARE-MIGRATION-COMPACTION-DATA-VERSION-HASH": {
+    "hash": "pending",
+    "extid": "TASK-MIDDLEWARE-MIGRATION-COMPACTION-DATA-VERSION-HASH",
+    "type": "TASK",
+    "title": "Migration compaction, optimization, content data_version + record_hash",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-content-hashing-distributed-integrity (cross-cuts with `epic-db-content-versioning`)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
   },
   "TASK-MINI-GAMES-FRAMEWORK": {
     "hash": "pending",
