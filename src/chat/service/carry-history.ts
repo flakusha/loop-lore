@@ -48,6 +48,12 @@ export async function carryHistory(
         key_id: m.key_id,
         content_type: m.content_type,
         content_format: m.content_format,
+        // Carry the plaintext shadow column too so the carried chat is
+        // searchable from the get-go (migration 068). If the source row
+        // never had it populated (legacy data inserted before this
+        // migration), the carried row keeps it null — the migration-068
+        // `messages_fts_au` trigger then leaves the FTS row empty for it.
+        content_plaintext: m.content_plaintext,
         content_encoding: m.content_encoding,
         status: m.status,
         visibility: m.visibility,
