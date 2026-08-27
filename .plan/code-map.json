@@ -10027,6 +10027,18 @@
       "source": ".plan/tickets/TASK-encryption-browser-pre-encrypt.md"
     }
   ],
+  "src/frontend/browser-uuid.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-browser-side-randomuuidv7-for-time-sortable-ids.md"
+    }
+  ],
+  "src/frontend/browser-uuid.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-browser-side-randomuuidv7-for-time-sortable-ids.md"
+    }
+  ],
   "src/frontend/browser.ts": [
     {
       "kind": "epic",
@@ -10043,6 +10055,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-asymmetric-key-pairs.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-browser-side-randomuuidv7-for-time-sortable-ids.md"
     },
     {
       "kind": "ticket",
