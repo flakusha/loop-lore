@@ -1,6 +1,6 @@
 # BUG: Asset link/share handlers and gallery grid param lack validation and access checks
 
-**Status:** 🔧 Fixed in worktree `fix-gallery-assets` (commits b6c232e5, 1b5de824)
+**Status:** fixed-in-worktree
 **Priority:** high
 **Effort:** Medium
 
