@@ -25,6 +25,7 @@ flushing them together to reduce the input-trust surface.
 
 ## Existing utilities (reuse, don't reinvent)
 
+- `src/utils/safe-json.ts` — `safeJsonParse`, `jsonParseOr`, `safeJsonStringify` (full suite at `safe-json.test.ts`)
 - `src/utils/safe-buffer/` — per-format helpers (`safe-buffer/index.ts:10-12` re-exports): `safeCompress` + `safeDecompress` (compression.ts, ratio caps), `safeFromBase64` + `safeToBase64` (base64.ts, maxSize caps), `safeFromString` + `safeFromUint8Array` (string.ts) — **not** a general `safeBuffer.from()` allocation wrapper
 
 - `src/nsfw/pii-redaction.ts` — already used by moderation audit; reuse for telemetry redaction
