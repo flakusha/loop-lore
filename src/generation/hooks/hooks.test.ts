@@ -369,6 +369,24 @@ describe("NsfwHook", () => {
     expect(result.data?.allowed,).toBe(true,);
   });
 
+  test("execute includes actorId and chatId in payload", async () => {
+    const ctx = makeContext({
+      content: "The graphic and explicit scene was brutal and violent.",
+      nsfwPolicy: "mild",
+      nsfwConfig: {
+        allowNsfw: true,
+        nsfwMinAge: 18,
+        defaultNsfwScope: "chat",
+        consentRequired: true,
+        auditLogging: true,
+        useLlmClassifier: false,
+      },
+    },);
+    const result = await hook.execute("The graphic and explicit scene was brutal and violent.", ctx,);
+    expect(result.handled,).toBe(true,);
+    expect(result.data?.actorId,).toBe("actor-1",);
+    expect(result.data?.chatId,).toBe("chat-1",);
+  });
   test("contract enforcement: blocks content exceeding user max_rating", async () => {
     const ctx = makeContext({
       content: "The suggestive and provocative dance was steamy.",
@@ -637,8 +655,15 @@ describe("ModerationHook", () => {
     expect(calls[0]!.actionType,).toBe("content_blocked",);
     expect(calls[0]!.reason,).toContain("severe",);
   });
-});
 
+  test("execute includes actorId and chatId in payload", async () => {
+    const ctx = makeContext({ content: "This is a hate-filled threat of violence.", },);
+    const result = await hook.execute("This is a hate-filled threat of violence.", ctx,);
+    expect(result.handled,).toBe(true,);
+    expect(result.data?.actorId,).toBe("actor-1",);
+    expect(result.data?.chatId,).toBe("chat-1",);
+  });
+});
 // ── Chain Integration ────────────────────────────────────────
 
 describe("runHookChain", () => {
