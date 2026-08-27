@@ -15,6 +15,7 @@ import { FRONTEND_DEFAULTS, } from "./frontend";
 import { GENERATION_DEFAULTS, } from "./generation";
 import { HEADERS_SECTION_DEFAULTS, } from "./headers";
 import { HOOKS_DEFAULTS, } from "./hooks";
+import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
 import { LOGGING_DEFAULTS, } from "./logging";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
@@ -41,6 +42,7 @@ export const envMap = (): EnvMap => {
     messages: MESSAGES_DEFAULTS,
     nsfw: NSFW_DEFAULTS,
     hooks: HOOKS_DEFAULTS,
+    idempotency: IDEMPOTENCY_DEFAULTS,
     generation: GENERATION_DEFAULTS,
     byoKey: BYO_KEY_DEFAULTS,
     encryption: ENCRYPTION_DEFAULTS,
@@ -74,6 +76,7 @@ export const envMap = (): EnvMap => {
   add("messages", s.messages,);
   add("nsfw", s.nsfw,);
   add("hooks", s.hooks,);
+  add("idempotency", s.idempotency,);
   add("generation", s.generation,);
   add("byoKey", s.byoKey,);
   add("encryption", s.encryption,);

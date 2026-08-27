@@ -25,6 +25,7 @@ import { FRONTEND_DEFAULTS, } from "./frontend";
 import { GENERATION_DEFAULTS, } from "./generation";
 import { HEADERS_SECTION_DEFAULTS, } from "./headers";
 import { HOOKS_DEFAULTS, } from "./hooks";
+import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
 import { LOGGING_DEFAULTS, } from "./logging";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
@@ -67,6 +68,7 @@ export const createConfigSchema = () => {
     messages: deepClone(MESSAGES_DEFAULTS,),
     nsfw: deepClone(NSFW_DEFAULTS,),
     hooks: deepClone(HOOKS_DEFAULTS,),
+    idempotency: deepClone(IDEMPOTENCY_DEFAULTS,),
     generation: deepClone(GENERATION_DEFAULTS,),
     byoKey: deepClone(BYO_KEY_DEFAULTS,),
     encryption: deepClone(ENCRYPTION_DEFAULTS,),
@@ -93,6 +95,7 @@ export const createConfigSchema = () => {
         messages: sections.messages,
         nsfw: sections.nsfw,
         hooks: sections.hooks,
+        idempotency: sections.idempotency,
         generation: sections.generation,
         byoKey: sections.byoKey,
         encryption: sections.encryption,

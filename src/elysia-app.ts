@@ -20,6 +20,8 @@ import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { authenticate, } from "./middleware/auth";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
+import { idempotent, } from "./middleware/idempotency";
+import type { IdempotencyCtx, } from "./middleware/idempotency";
 import { requestIdMiddleware, } from "./middleware/request-id";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
 import { versionResolver, } from "./routes/middleware/version-resolver";
@@ -91,6 +93,36 @@ export function createApp(deps: AppDeps,): Elysia {
       };
     },);
 
+  // ── Idempotency guard (after request-id derive so ctx.requestId is populated)
+  // Single shared instance so beforeHandle (markInFlight) and recordResponse
+  // (cache write) operate on the same in-memory cache.
+  const idem = idempotent({
+    backend: config.idempotency.backend,
+    ttlMs: config.idempotency.ttlMs,
+    asyncStore: config.idempotency.backend === "table" ? asyncStore : undefined,
+    enabled: config.idempotency.enabled,
+    bypassHeader: config.idempotency.bypassHeader,
+  },);
+
+  app.onBeforeHandle(async (ctx: IdempotencyCtx,) => idem.beforeHandle(ctx,));
+
+  app.onAfterHandle(async (ctx: IdempotencyCtx & { response?: unknown; set: { status?: number | string } },) => {
+    const requestId = ctx.requestId;
+    if (!requestId) { return; }
+    const response = ctx.response;
+    // Cache only successful Response objects (2xx/3xx). Everything else
+    // releases the in-flight slot so the client can retry.
+    if (!(response instanceof Response) || response.status >= 300) {
+      idem.release({ method: ctx.request.method, route: ctx.route ?? "?", requestId, },);
+      return;
+    }
+    idem.recordResponse({
+      method: ctx.request.method,
+      route: ctx.route ?? "?",
+      requestId,
+      response,
+    },);
+  },);
   // ── API version resolver ───────────────────────────────────
   // Populates ctx.apiVersion for every request via global derive().
   // Mounted before plugins so they can read apiVersion from context.
