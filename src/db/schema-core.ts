@@ -911,3 +911,21 @@ export interface TradeHistory {
   trade_type: Generated<string>;
   created_at: string;
 }
+
+// ── request_results ────────────────────────────────────────────
+export interface RequestResults {
+  id: Generated<string>;
+  method: string;
+  route_pattern: string;
+  user_id: string | null;
+  status: string;
+  progress: string | null;
+  response_status: number | null;
+  response_headers: string | null;
+  response_body: string | null;
+  error: string | null;
+  started_at: string;
+  completed_at: string | null;
+  offloaded_at: string | null;
+  offload_path: string | null;
+}

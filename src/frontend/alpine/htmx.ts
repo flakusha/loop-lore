@@ -21,7 +21,10 @@ addEventListener("error", (e: ErrorEvent,) => {
 // `apiFetch` is the Alpine/chat-layer alias for the unified frontend request
 // helper. It delegates to `feFetch` (../fe-fetch) for header + 401 handling and
 // adds request/response logging. Vanilla pages call `feFetch` directly.
-export async function apiFetch(url: string, options?: RequestInit,): Promise<Response> {
+export async function apiFetch(
+  url: string,
+  options?: RequestInit & { idempotencyKey?: string | true },
+): Promise<Response> {
   const method = options?.method ?? "GET";
   const start = performance.now();
   apiLog.info(`${method} ${url}`, { direction: "request", },);

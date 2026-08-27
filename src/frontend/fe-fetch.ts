@@ -29,16 +29,29 @@ function getCsrfToken(): string {
   return match?.[1] ?? "";
 }
 
-export async function feFetch(url: string, options: RequestInit = {},): Promise<Response> {
+export async function feFetch(
+  url: string,
+  options: RequestInit & { idempotencyKey?: string | true } = {},
+): Promise<Response> {
   const token = localStorage.getItem("session_token",);
   const csrf = getCsrfToken();
+
+  // When the caller asks for an idempotency key (or supplies its own), mint
+  // a fresh UUID per logical request and surface it as the Idempotency-Key
+  // header. The server uses it to coalesce re-fired requests.
+  const headers = new Headers(options.headers ?? {},);
+  if (options.idempotencyKey === true) {
+    headers.set("Idempotency-Key", crypto.randomUUID(),);
+  } else if (typeof options.idempotencyKey === "string" && options.idempotencyKey !== "") {
+    headers.set("Idempotency-Key", options.idempotencyKey,);
+  }
 
   // Use safeFetch with parseJson=false to get raw text, then construct Response
   // This preserves the Response API for existing callers while using safeFetch
   // for timeout, header injection, and 401 handling
   const result = await safeFetch<string>(API_BASE + url, {
     method: options.method,
-    headers: options.headers,
+    headers,
     body: options.body as unknown,
     credentials: options.credentials,
     mode: options.mode,
