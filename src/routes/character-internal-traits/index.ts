@@ -12,7 +12,7 @@
 import { Elysia, t, } from "elysia";
 import { CharacterInternalTraitsService, } from "../../characters/services/internal-traits";
 import { type HandlerOpts, requireActorAccess, } from "../actor-auth";
-import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { jsonError, jsonResponse, } from "../http-utils";
 
 const R = "/api/character-internal-traits";
 
@@ -75,9 +75,14 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "character-internal-traits", },)
     // ── Get internal traits ──────────────────────────────
     .get(R, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      // IDOR fix (BUG-character-internal-traits-idor-cross-user-read-write-delete):
+      // requireActorAccess enforces owner/admin on every read.
       const { actorId, } = ctx.query as { actorId: string };
+      const userId = await requireActorAccess(
+        { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
+        opts.database,
+      );
+      if (userId instanceof Response) { return userId; }
       try {
         const traits = await svc().get(actorId,);
         return jsonResponse(traits,);
@@ -149,9 +154,14 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
     },)
     // ── Get prompt assembly section ──────────────────────
     .get(`${R}/prompt`, async (ctx: any,) => {
-      const userId = await requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
+      // IDOR fix (BUG-character-internal-traits-idor-cross-user-read-write-delete):
+      // includeHidden=true leaks hidden aspirations to non-owners without this check.
       const { actorId, } = ctx.query as { actorId: string };
+      const userId = await requireActorAccess(
+        { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
+        opts.database,
+      );
+      if (userId instanceof Response) { return userId; }
       const includeHidden = (ctx.query as Record<string, string>).includeHidden === "true";
       try {
         const section = await svc().buildPromptSection(actorId, includeHidden,);
