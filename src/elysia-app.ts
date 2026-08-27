@@ -140,13 +140,14 @@ export function createApp(deps: AppDeps,): Elysia {
     // Cache only successful Response objects (2xx/3xx). Everything else
     // releases the in-flight slot so the client can retry.
     if (!(response instanceof Response) || response.status >= 300) {
-      idem.release({ method: ctx.request.method, route: ctx.route ?? "?", requestId, },);
+      idem.release({ method: ctx.request.method, route: ctx.route ?? "?", requestId, userId: ctx.userId ?? null, },);
       return;
     }
     idem.recordResponse({
       method: ctx.request.method,
       route: ctx.route ?? "?",
       requestId,
+      userId: ctx.userId ?? null,
       response,
     },);
   },);
