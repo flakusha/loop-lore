@@ -17,6 +17,7 @@ import { Elysia, } from "elysia";
 import { chatsRoutes, } from "../chats";
 import { healthRoutes, } from "../health";
 import { versionResolver, } from "../middleware/version-resolver";
+import { requestStatusRoutes, } from "../requests";
 import { usersRoutes, } from "../users";
 
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
@@ -38,5 +39,6 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
       .use(healthRoutes(handleOpts, prefix,),)
       .use(chatsRoutes(handleOpts, prefix,),)
       .use(usersRoutes(handleOpts, prefix,),)
+      .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
   );
 }

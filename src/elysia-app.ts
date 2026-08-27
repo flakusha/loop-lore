@@ -15,6 +15,7 @@
 import { Elysia, } from "elysia";
 import { BunAdapter, } from "elysia/adapter/bun";
 import { registerPlugins, } from "./app/register-plugins";
+import { createAsyncStore, startOffloadDaemon, } from "./async";
 import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { authenticate, } from "./middleware/auth";
@@ -23,6 +24,7 @@ import { versionRedirect, } from "./routes/middleware/version-redirect";
 import { versionResolver, } from "./routes/middleware/version-resolver";
 import { v1Routes, } from "./routes/v1";
 import { handleApiRequest, } from "./server";
+
 import { onValidationError, } from "./validation";
 
 /** 302 redirect helper (module scope — no closure capture). */
@@ -37,6 +39,13 @@ export interface AppDeps {
 
 export function createApp(deps: AppDeps,): Elysia {
   const { database, config, handleNonApiRequest, } = deps;
+
+  // Wire the async request-result store + offload daemon once at boot.
+  // The status endpoint, idempotency replay, and `triggerAutoGeneration`
+  // all read/write the same `request_results` table.
+  const asyncStore = createAsyncStore(database,);
+  const offloadDaemon = startOffloadDaemon(database, asyncStore.config,);
+  offloadDaemon.start();
 
   const app = new Elysia({ adapter: BunAdapter, },)
     // ── Validation error handler (must be first) ─────────────
@@ -81,12 +90,9 @@ export function createApp(deps: AppDeps,): Elysia {
   // Mounted before plugins so they can read apiVersion from context.
   app.use(versionResolver(),);
 
-  registerPlugins(app as unknown as Elysia<any>, { database, config, },);
+  registerPlugins(app as unknown as Elysia<any>, { database, config, asyncStore, },);
 
-  // ── V1 versioned routes ────────────────────────────────────────
-  (app as any).use(v1Routes({ database, config, },),);
-  // NOTE: unversioned /api/* redirect to /api/v1/* happens in the
-  // catch-all below (NOT via Elysia catch-all routes) — registering
+  (app as any).use(v1Routes({ database, config, asyncStore, },),);
   // `all("/api/:resource/*")` here matched /api/v1/* too, causing a
   // double-prefix redirect loop (/api/v1/x → /api/v1/v1/x → 404).
 
