@@ -118,3 +118,8 @@ The work is wiring the calls into the right hook points.
   surfaces `failed` rows correctly — no replay needed).
 - Encrypting the `responseBody` at rest (Notes section of the parent ticket;
   not an AC here).
+
+
+## Review Update (2026-08-27)
+
+The epic marked this done, but the AC is **not met**: the `asyncStore.fail()` error boundary in `src/elysia-app.ts` is dead code (validation onError returns first; Elysia short-circuits, so `fail()` never runs), and `recordLifecycle` marks 4xx/5xx responses `complete` instead of `fail`. See `BUG-middleware-asyncstore-fail-dead-code.md` and `BUG-middleware-recordlifecycle-marks-error-complete.md`. Status stays ⬜ Open.
