@@ -153,10 +153,12 @@ export function createApp(deps: AppDeps,): Elysia {
     },);
     const cookieHeader = cookieForDecision(decision, csrfOpts,);
     if (cookieHeader === null) { return; }
-    // Elysia mutation point — `ctx.set.headers` is an HTTPHeaders map; we
-    // append the Set-Cookie so the browser picks up the freshly-minted
-    // token on the next request.
-    ctx.set.headers.append("set-cookie", cookieHeader,);
+    // Elysia mutation point — `ctx.set.headers` is a plain object (not a
+    // Headers instance), so we assign directly. This middleware is the sole
+    // writer of `csrf_token`, so single-value assignment is safe; if any
+    // future middleware also writes Set-Cookie on the same response, switch
+    // to array form (ctx.set.headers["set-cookie"] = [cookieHeader, other]).
+    ctx.set.headers["set-cookie"] = cookieHeader;
   },);
   // Reference CSRF_HEADER + CSRF_EXEMPT_ROUTES so tree-shakers keep the
   // route-table constant when consumers spread the module. The middleware
