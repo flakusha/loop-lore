@@ -15,6 +15,7 @@ export const AUTH_DEFAULTS = {
   adminUsername: "",
   adminPassword: "",
   jwtSecret: "",
+  csrfSecret: "",
   jwtExpiresIn: 86_400,
   legacyOpaqueTokenFallback: false,
 } satisfies AuthConfig;
@@ -29,6 +30,7 @@ export class AuthSection implements AuthConfig {
   adminUsername = AUTH_DEFAULTS.adminUsername;
   adminPassword = AUTH_DEFAULTS.adminPassword;
   jwtSecret = AUTH_DEFAULTS.jwtSecret;
+  csrfSecret = AUTH_DEFAULTS.csrfSecret;
   jwtExpiresIn = AUTH_DEFAULTS.jwtExpiresIn;
   legacyOpaqueTokenFallback = AUTH_DEFAULTS.legacyOpaqueTokenFallback;
 
@@ -81,6 +83,12 @@ export const authMeta = {
       type: "string",
       default: AUTH_DEFAULTS.jwtSecret,
       description: "HMAC-SHA256 secret for JWT signing. Env-only: AUTH_JWT_SECRET. Required when auth.required=true.",
+    },
+    csrfSecret: {
+      type: "string",
+      default: AUTH_DEFAULTS.csrfSecret,
+      description: "HMAC secret for Bun.CSRF token issuance + verification. " +
+        "Env-only: AUTH_CSRF_SECRET. Falls back to auth.jwtSecret when unset.",
     },
     jwtExpiresIn: {
       type: "integer",
