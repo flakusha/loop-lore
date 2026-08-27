@@ -24,7 +24,6 @@
  */
 
 import type { Logger, } from "../logger";
-import { jsonStringifyOr, } from "../utils/safe-json";
 
 export const CSRF_HEADER = "x-csrf-token";
 export const CSRF_COOKIE = "csrf_token";
@@ -250,42 +249,53 @@ export function cookieForDecision(
 }
 
 /**
- * Build the 403 JSON response used when CSRF verification rejects a request.
- * Kept as an export so production and test code share the exact same body.
+ * Resolve a per-request verification failure into a 403 JSON response.
+ * Kept as a separate export so tests can assert the exact shape without
+ * rebuilding the middleware by hand.
  */
 export function csrfForbiddenResponse(): Response {
-  const body = jsonStringifyOr({
-    error: "csrf_verification_failed",
-    message: "CSRF token missing or invalid.",
-  },);
-  return new Response(body, {
-    status: 403,
-    headers: { "content-type": "application/json", },
-  },);
+  return new Response(
+    JSON.stringify({ error: "csrf_verification_failed", message: "CSRF token missing or invalid." },),
+    {
+      status: 403,
+      headers: { "content-type": "application/json", },
+    },
+  );
 }
 
 /**
- * Elysia wiring for the CSRF middleware.
+ * Elysia plugin that wires `decideCsrf` into the request lifecycle.
  *
- * This factory is the SINGLE source of truth for how `decideCsrf` is
- * attached to an Elysia app. `src/elysia-app.ts` (production) and
- * `src/middleware/csrf.integration.test.ts` both apply it via
- * `applyCsrfPlugin` — there is no second copy of the onBeforeHandle /
- * onAfterHandle logic to drift.
+ * This factory is the SINGLE source of truth for the production CSRF wiring.
+ * `src/elysia-app.ts` and `src/middleware/csrf.integration.test.ts` both
+ * import and apply it — there is no second copy of the onBeforeHandle /
+ * onAfterHandle logic anywhere in the codebase.
  *
- * The returned plugin reads `request`, `route`, `requestId`, and
- * `sessionId` from the Elysia context. Callers MUST register
- * `requestIdMiddleware()` and an auth `derive({ sessionId })` upstream
- * so those fields exist when the plugin runs.
+ * Calling `applyCsrfPlugin(app, opts)` registers:
+ *   - `onBeforeHandle`: rejects unsafe, non-exempt requests with 403.
+ *   - `onAfterHandle`: appends a Set-Cookie when a fresh token is minted.
+ *
+ * The handlers read `request`, `route`, `requestId`, and `sessionId` from the
+ * Elysia context. Callers MUST register `requestIdMiddleware()` and the auth
+ * `derive(sessionId)` upstream so those fields exist when the plugin runs.
+ *
+ * @param opts - Resolved middleware options (secret, enabled, logger, ...).
  */
 export interface CsrfPlugin {
-  /** Run inside Elysia `onBeforeHandle`. Returns a Response to short-circuit (403) or undefined to continue. */
+  /**
+   * Run inside Elysia `onBeforeHandle`. Returns a `Response` to short-circuit
+   * (403 on rejection) or `undefined` to continue the chain.
+   */
   readonly beforeHandle: (ctx: unknown,) => Response | undefined;
   /** Run inside Elysia `onAfterHandle`. Never short-circuits. */
   readonly afterHandle: (ctx: unknown,) => void;
 }
 
 export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
+  // Capture once at registration time — runtime hot-path must not re-read
+  // opts on every request. `enabled` is still honored per-request inside
+  // `decideCsrf` because the spec is per-request, but the field selection
+  // (secret, cookieSecureOverride, logger) is stable.
   return {
     beforeHandle(ctx,) {
       const c = ctx as {
@@ -328,8 +338,8 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
       // Elysia mutation point — `ctx.set.headers` is a plain object (not a
       // Headers instance) in Elysia 1.4, so direct assignment is the
       // supported API. This middleware is the sole writer of the
-      // `csrf_token` Set-Cookie today; if a future middleware also writes
-      // Set-Cookie on the same response, switch to array form
+      // `csrf_token` Set-Cookie today; if a future middleware needs to
+      // also write Set-Cookie on the same response, switch to array form
       // (`c.set.headers["set-cookie"] = [cookieHeader, other]`).
       c.set.headers["set-cookie"] = cookieHeader;
     },
@@ -337,13 +347,13 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
 }
 
 /**
- * Register the CSRF plugin onto an Elysia instance.
- * Production wiring uses this; tests may either use it directly or call
- * the individual `beforeHandle` / `afterHandle` callbacks for finer
- * control. The accepted `app` shape is structural — a subset of Elysia —
- * so this module does not need to import the Elysia type.
+ * Convenience: register the CSRF plugin directly onto an Elysia instance.
+ * Production wiring uses this; tests may either use it or call the
+ * individual `beforeHandle` / `afterHandle` callbacks for finer control.
  */
 export function applyCsrfPlugin(
+  // Elysia's type is enormous; we accept a structural subset so this file
+  // stays decoupled from the Elysia version's type signature.
   app: {
     onBeforeHandle: (cb: (ctx: unknown,) => unknown,) => unknown;
     onAfterHandle: (cb: (ctx: unknown,) => void,) => unknown;

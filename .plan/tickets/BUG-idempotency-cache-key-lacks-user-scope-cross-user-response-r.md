@@ -1,6 +1,6 @@
 # BUG: Idempotency cache key lacks user scope — cross-user response replay
 
-**Status:** ✅ Fixed (worktree fix-idempotency-user-scoping)
+**Status:** ✅ Closed (commit c1cd4d8b on dev)
 **Priority:** high
 **Effort:** Medium
 
