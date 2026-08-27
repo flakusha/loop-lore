@@ -1,6 +1,6 @@
 # BUG: XSS in music embed fallback rendering
 
-**Status:** ✅ Resolved (music-embed.ts: escape fallback card values via esc() helper; fail-closed on missing DOMPurify returns placeholder)
+**Status:** ✅ Resolved (commit 14a4f71c — esc() helper escapes fallback card values; fail-closed on missing DOMPurify)
 **Priority:** high
 **Effort:** Medium
 

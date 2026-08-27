@@ -1,6 +1,6 @@
 # BUG: Out-of-order fetch race in loadMessages
 
-**Status:** ✅ Resolved (2026-08-25, worktree `bugfix-medium-low`, commit 04411f8)
+**Status:** ✅ Resolved (commit 04411f8 — loadMessages ordering)
 **Priority:** medium
 **Effort:** Medium
 

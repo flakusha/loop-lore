@@ -47,7 +47,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
+    "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md",
+    "status": "done"
   },
   "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
     "hash": "f27472d",
@@ -72,7 +73,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-admin-audit-selectAll-schema-mismatch-empty.md",
     "git_issue": "e2b43f3",
-    "status": "open"
+    "status": "done"
   },
   "BUG-ADMIN-AUXTELEMETRY-LEAKS-USERID-CHATID": {
     "hash": "pending",
@@ -159,6 +160,17 @@
     "source": ".plan/tickets/BUG-asset-webp-metadata-vp8l-vp8x-off-bytes.md",
     "status": "done",
     "git_issue": "c658dd8"
+  },
+  "BUG-ASSET-WEBP-VP8X-DIMENSION-TRUNCATION": {
+    "hash": "pending",
+    "extid": "BUG-ASSET-WEBP-VP8X-DIMENSION-TRUNCATION",
+    "type": "BUG",
+    "title": "WebP VP8X dimension truncation — 14-bit mask on 24-bit spec field",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "epic-assets-media-pipeline",
+    "tags": [],
+    "source": ".plan/tickets/BUG-asset-webp-vp8x-dimension-truncation.md"
   },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "hash": "pending",
@@ -360,7 +372,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-cancellation-lifecycle-db-failure-permanently-marks-chat-gen.md",
-    "git_issue": "cfc029f"
+    "git_issue": "cfc029f",
+    "status": "done"
   },
   "BUG-CAPTION-ROUTE-HAS-NO-OWNERSHIP-CHECK-AND-OVERWRITES-FOREIGN-": {
     "hash": "07a1ef2",
@@ -671,7 +684,8 @@
     "epic": "epic-chat-lifecycle-moderation, epic-assistant-gm-flows",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-transitions-memory-poisoning.md",
-    "git_issue": "f355410"
+    "git_issue": "f355410",
+    "status": "done"
   },
   "BUG-CHAT-TRIGGER-AUTO-GENERATION-UNHANDLED-REJECTION": {
     "hash": "pending",
@@ -694,7 +708,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-vn-choices-idor-cross-user-read-and-select.md"
+    "source": ".plan/tickets/BUG-chat-vn-choices-idor-cross-user-read-and-select.md",
+    "status": "done"
   },
   "BUG-CHATFORMATS-TEMPLATE-CONFIG-DEFINED-BUT-UNUSED-DEAD-STANDARD": {
     "hash": "6730c8b",
@@ -838,7 +853,8 @@
     "priority": "high",
     "epic": "review-dev-2026-08-26-security-data-integrity-merges",
     "tags": [],
-    "source": ".plan/tickets/BUG-db-reinit-archive-destroys-previous-db-on-rename-failure.md"
+    "source": ".plan/tickets/BUG-db-reinit-archive-destroys-previous-db-on-rename-failure.md",
+    "status": "done"
   },
   "BUG-DB-REINIT-ARCHIVE-DIRECTORY-HAS-NO-ROTATION-PII-ACCUMULATES-": {
     "hash": "d904ef4",
@@ -862,7 +878,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-demo-login-endpoint-bypasses-rate-limiter.md"
+    "source": ".plan/tickets/BUG-demo-login-endpoint-bypasses-rate-limiter.md",
+    "status": "done"
   },
   "BUG-DETECTAVATARCHANGEINTENT-RUNS-ON-USER-MESSAGE-WRONG-DIRECTION": {
     "hash": "pending",
@@ -1295,7 +1312,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-group-chat-nsfw-weakest-link-violated-enforcement-hardcodes-.md",
-    "status": "done"
+    "status": null
   },
   "BUG-GROUP-CHAT-SILENCE-PASS-NOT-IMPLEMENTED": {
     "hash": "pending",
@@ -1598,7 +1615,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud.md",
-    "status": "done"
+    "status": null
   },
   "BUG-LOGOUT-DELETES-SESSION-WITHOUT-SIGNATURE-OR-OWNERSHIP-CHECK": {
     "hash": "658c858",
@@ -1720,7 +1737,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-no-in-flight-generation-check-concurrent-generate-requests-l.md",
-    "git_issue": "a33c6f6"
+    "git_issue": "a33c6f6",
+    "status": "done"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "hash": "pending",
@@ -1769,7 +1787,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-consent-auto-granted-in-memory-for-any-logged-in-user-n.md",
-    "status": "done"
+    "status": null
   },
   "BUG-NSFW-EXPORT-BUNDLE-NO-ACCESS-LOG": {
     "hash": "81a5e15",
@@ -1808,7 +1826,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al.md",
-    "status": "done"
+    "status": null
   },
   "BUG-NSFW-GATE-LOG-PLAINTEXT-PII": {
     "hash": "9f3faa5",
@@ -1834,7 +1852,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g.md",
-    "status": "done"
+    "status": null
   },
   "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY": {
     "hash": "bd2b3b5",
@@ -1937,7 +1955,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-out-of-order-fetch-race-in-loadmessages.md",
-    "git_issue": "b91c284"
+    "git_issue": "b91c284",
+    "status": "done"
   },
   "BUG-PARSEACCEPTLANGUAGE-IGNORES-QUALITY-VALUES-RETURNS-HEADER-OR": {
     "hash": "d810266",
@@ -2011,7 +2030,8 @@
     "priority": "critical",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
+    "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md",
+    "status": "done"
   },
   "BUG-RATE-LIMITER-MODULE-SINGLETONS-SHARED-ACROSS-TEST-FILES-CAUS": {
     "hash": "2e25526",
@@ -2122,7 +2142,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-selectchat-resets-freshly-loaded-state-and-lacks-reentrancy-.md",
-    "git_issue": "df71725"
+    "git_issue": "df71725",
+    "status": "done"
   },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
     "hash": "3ba1095",
@@ -2193,7 +2214,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-stale-sse-stream-writes-render-into-wrong-chat.md",
-    "git_issue": "a1385db"
+    "git_issue": "a1385db",
+    "status": "done"
   },
   "BUG-STANDARD-TIER-AT-REST-ENCRYPTION-SILENTLY-STORES-PLAINTEXT-W": {
     "hash": "566d06c",
@@ -2254,7 +2276,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
+    "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md",
+    "status": "done"
   },
   "BUG-STORY-MODE-PROMPT-STORED-AS-CONTENT": {
     "hash": "pending",
@@ -2463,7 +2486,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-validation-middleware-leaks-raw-err-message-in-500-envelope.md",
-    "git_issue": "50af91c"
+    "git_issue": "50af91c",
+    "status": "done"
   },
   "BUG-VERSION-RESOLVER-MIDDLEWARE-BUILT-NOT-WIRED": {
     "hash": "2021fbd",
@@ -2500,7 +2524,8 @@
     "priority": "critical",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md"
+    "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md",
+    "status": "done"
   },
   "BUG-XSS-FAIL-OPEN-WHEN-DOMPURIFY-MISSING": {
     "hash": "7664314",
@@ -2512,7 +2537,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-xss-fail-open-when-dompurify-missing.md",
-    "git_issue": "7664314"
+    "git_issue": "7664314",
+    "status": "done"
   },
   "BUG-XSS-IN-MUSIC-EMBED-FALLBACK-RENDERING": {
     "hash": "6e96aea",
@@ -2524,7 +2550,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-xss-in-music-embed-fallback-rendering.md",
-    "git_issue": "6e96aea"
+    "git_issue": "6e96aea",
+    "status": "done"
   },
   "EPIC-027": {
     "hash": "821ab24",

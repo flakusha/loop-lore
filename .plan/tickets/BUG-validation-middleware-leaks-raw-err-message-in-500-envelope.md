@@ -1,6 +1,6 @@
 # BUG: Validation middleware leaks raw err.message in 500 envelope
 
-**Status:** ✅ Resolved
+**Status:** ✅ Resolved (onValidationError sanitizes error output)
 **Priority:** high
 
 ## Summary
