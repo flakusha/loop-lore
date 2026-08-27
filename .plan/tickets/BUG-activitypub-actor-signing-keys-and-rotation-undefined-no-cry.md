@@ -1,6 +1,6 @@
 # BUG: ActivityPub actor signing keys and rotation undefined; no crypto-epic link
 
-**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
+**Status:** not-yet-implemented
 **Priority:** high
 **Effort:** Medium
 

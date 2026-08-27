@@ -1,6 +1,6 @@
 # BUG: html lang hardcoded, no dir handling for i18n
 
-**Status:** ✅ Resolved (2026-08-25, worktree `bugfix-medium-low`, commit 04411f8)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 

@@ -3,7 +3,7 @@
 
 # BUG: impersonate buildImpersonateResult ReferenceError on undefined `target`
 
-**Status:** Not A Bug — Already Fixed
+**Status:** not-a-bug
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Small

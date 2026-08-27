@@ -3,7 +3,7 @@
 
 # BUG: `src/middleware/elysia-auth.ts` is a dead shim with divergent failure-path logic
 
-**Status:** ✅ Resolved (2026-08-25)
+**Status:** done
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-architecture
