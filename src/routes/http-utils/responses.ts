@@ -49,8 +49,10 @@ const STATUS_TO_CODE: Record<number, ErrorCode> = {
   [HttpStatus.Unauthorized]: ErrorCode.Unauthorized,
   [HttpStatus.Forbidden]: ErrorCode.Forbidden,
   [HttpStatus.NotFound]: ErrorCode.NotFound,
+  [HttpStatus.Conflict]: ErrorCode.Conflict,
   [HttpStatus.UnprocessableEntity]: ErrorCode.ValidationError,
   [HttpStatus.TooManyRequests]: ErrorCode.TooManyRequests,
+  [HttpStatus.InternalServerError]: ErrorCode.ServerError,
   [HttpStatus.NotImplemented]: ErrorCode.NotImplemented,
   [HttpStatus.ServiceUnavailable]: ErrorCode.ServiceUnavailable,
 };
