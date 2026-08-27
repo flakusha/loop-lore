@@ -167,6 +167,8 @@ export async function insertAssets(
     encryption_tier?: Generated<string>;
     encrypted_key_id?: string | null;
     content_hash?: string | null;
+    data_version?: Generated<number>;
+    record_hash?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("assets",).values({
@@ -293,6 +295,8 @@ export async function insertWorlds(
     updated_at?: Generated<string>;
     nsfw_override?: string | null;
     rpg_enabled?: Generated<number>;
+    data_version?: Generated<number>;
+    record_hash?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("worlds",).values({
@@ -426,6 +430,8 @@ export async function insertChats(
     quick_replies?: string | null;
     prompt_override?: string | null;
     output_style_preset?: string | null;
+    data_version?: Generated<number>;
+    record_hash?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("chats",).values({
@@ -516,6 +522,8 @@ export async function insertCharacters(
     updated_at?: Generated<string>;
     agent_role?: string | null;
     federation_consent?: Generated<number>;
+    data_version?: Generated<number>;
+    record_hash?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("characters",).values({
@@ -875,6 +883,8 @@ export async function insertMessages(
     e2e_sender_eph_pub_jwk?: string | null;
     e2e_chain_index?: number | null;
     content_plaintext?: string | null;
+    data_version?: Generated<number>;
+    record_hash?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("messages",).values({
@@ -3343,6 +3353,8 @@ export async function insertRequestResults(
     completed_at?: string | null;
     offloaded_at?: string | null;
     offload_path?: string | null;
+    data_version?: Generated<number>;
+    record_hash?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("request_results",).values({

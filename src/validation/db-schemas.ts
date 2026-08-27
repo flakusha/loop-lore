@@ -401,6 +401,8 @@ export const AssetsSchema = t.Object({
   encryption_tier: t.Optional(t.String(),),
   encrypted_key_id: t.Optional(t.String(),),
   content_hash: t.Optional(t.String(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── asset_links ────────────────────────────────────────────
@@ -472,6 +474,8 @@ export const WorldsSchema = t.Object({
   updated_at: t.Optional(t.String(),),
   nsfw_override: t.Optional(t.String(),),
   rpg_enabled: t.Optional(t.Number(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── locations ────────────────────────────────────────────
@@ -560,6 +564,8 @@ export const ChatsSchema = t.Object({
   quick_replies: t.Optional(t.String(),),
   prompt_override: t.Optional(t.String(),),
   output_style_preset: t.Optional(t.String(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── actors ────────────────────────────────────────────
@@ -620,6 +626,8 @@ export const CharactersSchema = t.Object({
   updated_at: t.Optional(t.String(),),
   agent_role: t.Optional(t.String(),),
   federation_consent: t.Optional(t.Number(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── world_items ────────────────────────────────────────────
@@ -840,6 +848,8 @@ export const MessagesSchema = t.Object({
   e2e_sender_eph_pub_jwk: t.Optional(t.String(),),
   e2e_chain_index: t.Optional(t.Number(),),
   content_plaintext: t.Optional(t.String(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── actor_keys ────────────────────────────────────────────
@@ -2160,6 +2170,8 @@ export const RequestResultsSchema = t.Object({
   completed_at: t.Optional(t.String(),),
   offloaded_at: t.Optional(t.String(),),
   offload_path: t.Optional(t.String(),),
+  data_version: t.Optional(t.Number(),),
+  record_hash: t.Optional(t.String(),),
 },);
 
 // ── activitypub_actor_keys ────────────────────────────────────────────
