@@ -3,12 +3,13 @@
 
 # TASK: Middleware — global idempotency replay for re-fired requests
 
-**Status:** ⬜ Open
+**Status:** 🟡 Partial (commit 85657ffb on dev, 2026-08-26; middleware not wired into route chain)
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-middleware-request-lifecycle
 **Related:** `src/routes/messages/swipe-race-insert.ts`, `src/routes/messages/create.ts:83-89`, `src/middleware/permissions.ts`, `TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md`, `TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md`, `epic-middleware-request-lifecycle.md`
 **Issue:** 385f05a
+**Blocks:** `TASK-middleware-idempotency-wire-into-elysia.md`
 
 ## Summary
 
@@ -98,3 +99,51 @@ or crash. Add a global idempotency middleware keyed on
 - Consider response-size limits on the cached entry; reject (and log) any
   response larger than the configured max (default 1 MiB) so an accidental
   file download does not balloon the cache.
+
+## Closing Notes (2026-08-26)
+
+Partial. The middleware module is shipped and unit-tested but is **not
+applied to any production route**. Verified state on `dev` at HEAD:
+
+- ✅ `src/middleware/idempotency.ts` + `idempotency.test.ts` shipped.
+  Function name is `idempotent()` (the ticket's AC said
+  `idempotencyMiddleware()`; semantically equivalent).
+- ✅ Pluggable backend (`memory` / `table`) via `IdempotencyConfig.backend`
+  matches the ticket's "in-memory for dev, table for prod" intent.
+  Default TTL is 5 min (ticket said 24h — needs ticket update or config
+  change to bump).
+- ✅ Replay path strips `Set-Cookie`, `Connection`, `Keep-Alive`,
+  `Transfer-Encoding`, `Upgrade`, `Content-Length` (whitelist of replay
+  headers).
+- ❌ **Not wired into the route chain.** `src/elysia-app.ts` does not call
+  `idempotent()`. `src/app/register-plugins.ts` does not call it either.
+  No migrated route module imports `idempotent`. The middleware is
+  exported from `src/middleware/index.ts:14` but has zero production
+  callers (only the unit test imports it directly).
+- ❌ **`X-Idempotency-Bypass: 1` header not implemented.** The AC
+  specifies a bypass header for debugging + a config flag to disable
+  the middleware in tests. Neither exists. Tests work today only because
+  they construct the middleware directly without going through the Elysia
+  app chain.
+
+**Impact**: re-fired requests on every migrated route STILL duplicate
+side effects today — only `POST /api/chats/:id/messages` (per-row
+idempotency in `swipe-race-insert.ts`) is protected. This is the
+single-flight guarantee the user explicitly called out, and it is
+not in effect.
+
+### Follow-up tickets
+
+- `TASK-middleware-idempotency-wire-into-elysia.md` — call `idempotent()`
+  in `src/elysia-app.ts` after the request-id `.derive()` and before the
+  route handlers; wire `recordResponse()` into an `afterHandle` hook;
+  implement the bypass header; add `idempotency.enabled` config flag.
+  Medium. Closes this ticket.
+
+### What this ticket DID deliver
+
+- Working in-memory backend (default `memory`) that protects
+  re-fires within its own `Map` cache when invoked directly.
+- Backend abstraction ready for the table backend (the async store).
+- 113-line test file exercising first-call, replay, in-flight 409,
+  different-id-passes, expired-TTL-reruns, etc.

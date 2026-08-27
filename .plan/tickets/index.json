@@ -6530,6 +6530,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
   },
+  "TASK-ASYNC-STORE-COMPLETE-FAIL-LIFECYCLE-HOOKS": {
+    "hash": "pending",
+    "extid": "TASK-ASYNC-STORE-COMPLETE-FAIL-LIFECYCLE-HOOKS",
+    "type": "TASK",
+    "title": "Wire `asyncStore.complete()` / `fail()` / `progress()` into the request lifecycle",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+  },
   "TASK-AUDIO-PLAYER-COMPONENT": {
     "hash": "966af4f",
     "extid": "TASK-AUDIO-PLAYER-COMPONENT",
@@ -12264,6 +12275,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-middleware-global-idempotency-replay-for-re-fired-requests.md"
   },
+  "TASK-MIDDLEWARE-IDEMPOTENCY-WIRE-INTO-ELYSIA": {
+    "hash": "pending",
+    "extid": "TASK-MIDDLEWARE-IDEMPOTENCY-WIRE-INTO-ELYSIA",
+    "type": "TASK",
+    "title": "Wire `idempotent()` middleware into the Elysia route chain",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+  },
   "TASK-MIDDLEWARE-IN-PROGRESS-STATUS-ENDPOINT-FOR-LONG-RUNNING-REQU": {
     "hash": "2aeef24",
     "git_issue": "2aeef24",
@@ -12286,6 +12308,17 @@
     "epic": "epic-content-hashing-distributed-integrity (cross-cuts with `epic-db-content-versioning`)",
     "tags": [],
     "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+  },
+  "TASK-MIDDLEWARE-REQUEST-ID-ELYSIA-DERIVE": {
+    "hash": "pending",
+    "extid": "TASK-MIDDLEWARE-REQUEST-ID-ELYSIA-DERIVE",
+    "type": "TASK",
+    "title": "Wire `requestIdMiddleware` into Elysia `.derive()` chain",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
   },
   "TASK-MINI-GAMES-FRAMEWORK": {
     "hash": "pending",

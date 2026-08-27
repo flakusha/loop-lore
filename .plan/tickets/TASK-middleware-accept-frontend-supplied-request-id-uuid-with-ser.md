@@ -3,12 +3,13 @@
 
 # TASK: Middleware — accept frontend-supplied request id (UUID) + fall back to server-generated
 
-**Status:** ⬜ Open
+**Status:** 🟡 Partial (commit 85657ffb on dev, 2026-08-26; wiring gap on Elysia side)
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-middleware-request-lifecycle
 **Related:** `src/server/handler.ts`, `src/middleware/permissions.ts:89`, `src/routes/messages/reply.ts:48`, `epic-middleware-request-lifecycle.md`
 **Issue:** d33734d
+**Blocks:** `TASK-middleware-idempotency-wire-into-elysia.md`, `TASK-middleware-request-id-elysia-derive.md`
 
 ## Summary
 
@@ -90,3 +91,44 @@ the UUID generator.
   by IP/client — it is NOT an idempotency layer. Do not modify it as part
   of this ticket; idempotency lives in its own middleware
   (`TASK-middleware-global-idempotency-replay-for-re-fired-requests.md`).**
+
+## Closing Notes (2026-08-26)
+
+Partial. Shipped in commit `85657ffb`, but the ticket's primary AC
+(Elysia `.derive()` wiring so route handlers read `ctx.requestId`) is
+NOT met. Verified state on `dev` at HEAD:
+
+- ✅ `src/middleware/request-id.ts` + `request-id.test.ts` shipped (86
+  lines of tests cover client UUID, malformed/oversized fallback, both
+  header aliases, and the shared generator).
+- ✅ `src/server/handler.ts:32-54` resolves the id for **legacy** routes
+  via `resolveRequestId(...)` / `applyRequestId(...)`. `X-Request-Id`
+  echoed on every response; access log attributes the same id.
+- ❌ **No Elysia-side `.derive()` wiring.** `src/elysia-app.ts:50-95`
+  builds the Elysia app with `.onError()` + auth `.derive()` +
+  `versionResolver()` + `registerPlugins()` + `v1Routes()`. The
+  `requestIdMiddleware()` export from `src/middleware/request-id.ts`
+  is NOT called here. Migrated route modules read the **raw**
+  `request.headers.get("x-request-id")` without resolution, validation,
+  or fallback (e.g. `src/routes/messages/reply.ts:44,62`,
+  `src/routes/proactive-messaging/send-handler.ts:69`).
+- ❌ `RequestContext.requestId` is not populated for migrated routes
+  (the AC said it should be). The downstream consumers that read the
+  header directly bypass the middleware entirely.
+
+### Follow-up tickets
+
+- `TASK-middleware-request-id-elysia-derive.md` — add `requestIdMiddleware`
+  into the Elysia `.derive()` chain in `src/elysia-app.ts`, replace direct
+  header reads in `reply.ts` and `proactive-messaging/send-handler.ts`
+  with `ctx.requestId`, run `ctx.requestId` through `isValidRequestId`.
+  Small. Closes this ticket.
+
+### What this ticket DID deliver
+
+- The middleware module exists and is unit-tested.
+- The legacy dispatch path (`handleApiRequest` in `src/server/handler.ts`)
+  honors client-supplied ids end-to-end.
+- The async store + idempotency modules both consume `ctx.requestId`,
+  so the moment the Elysia wiring lands, those features compose without
+  further change.
