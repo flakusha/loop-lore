@@ -14,7 +14,7 @@ flushing them together to reduce the input-trust surface.
 
 | Git issue | Topic | Suggested home | Sev |
 | --------- | ----- | -------------- | --- |
-| `02a9092` BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer-65-sites | Raw `Buffer.from(...alloc)` bypasses `safeBuffer` (65 sites) | `src/utils/safe-buffer/` — replace each | MED |
+| `02a9092` BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer-65-sites | Raw `Buffer.from(...alloc)` bypasses format-specific safe helpers (issue title cites 65 sites — count not verified; sweep repo before fix) | `src/utils/safe-buffer/` has per-format helpers (`safeDecompress`, `safeFromBase64`, `safeFromString`, `safeFromUint8Array`) — no general `safeBuffer.from()` wrapper exists; the fix likely requires either auditing each call site for caps or adding a new `safeBuffer` helper | MED |
 | `2984874` BUG-raw-json-parse-outside-safe-json-3-sites | Raw `JSON.parse` bypasses `safeJsonParse` (3 sites) | `src/utils/safe-json.ts` already provides safe variant; replace each call site | MED |
 | `5842782` TASK-logging-hardening-minors-injection-rotation-races-sink-path | Logger injection / rotation races / sink-path | `src/logger/` | MED |
 | `b23b7fb` BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested | Censor depth cutoff bug — nested subtree passes through | `src/logger/censors.ts` | MED |
@@ -26,9 +26,15 @@ flushing them together to reduce the input-trust surface.
 ## Existing utilities (reuse, don't reinvent)
 
 - `src/utils/safe-json.ts` — `safeJsonParse`, `jsonParseOr`, `safeJsonStringify` (full suite at `safe-json.test.ts`)
-- `src/utils/safe-buffer/compression.ts` — `safeDecompress`, allocation caps
+- `src/utils/safe-buffer/` — `safeDecompress` (compression-bound), `safeFromBase64` (in `base64.ts`), `safeFromString` (in `string.ts`), `safeFromUint8Array` (in `string.ts`); format-specific helpers — **not** a general `safeBuffer` allocation wrapper
 - `src/nsfw/pii-redaction.ts` — already used by moderation audit; reuse for telemetry redaction
 - `src/middleware/auth/token.ts` — already verifies session IDs from signed JWT, not headers
+
+## Pre-work (verify before fixing)
+
+1. **Count actual `Buffer.from(...)` / `Buffer.alloc(...)` sites** (the issue title's "65-sites" is unverified). Use `rg "Buffer\\.(from|alloc)\\(" src/ | wc -l` from repo root. If the count differs materially from 65, the ticket scope needs review.
+2. **Count raw `JSON.parse(` sites** (issue title says 3) — `rg -F 'JSON.parse(' src/`.
+3. **For each cluster (logger, telemetry, regex, SSE, HTML sanitizer)**, confirm the git-issue title's diagnosis still matches current `src/` (issues may be stale — verify before fixing).
 
 ## Acceptance Criteria
 
