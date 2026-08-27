@@ -46,8 +46,7 @@ export const ErrorCode = {
   NotImplemented: "NOT_IMPLEMENTED",
   ServiceUnavailable: "SERVICE_UNAVAILABLE",
 } as const;
-
-// ── Typed service errors ─────────────────────────────────────
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
 export class NotFoundError extends Error {
   constructor(entity: string, id: string, options?: ErrorOptions,) {
