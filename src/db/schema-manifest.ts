@@ -642,6 +642,8 @@ export const SCHEMA = new SchemaManifest()
     completed_at: col("text",),
     offloaded_at: col("text",),
     offload_path: col("text",),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("seed_audit", {
     id: col("text", { primaryKey: true, },),
@@ -1198,6 +1200,8 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     agent_role: col("text",),
     federation_consent: col("integer", { notNull: true, hasDefault: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Admin & Config ──────────────────────────────────────────────
   .table("admin_character_overrides", {
@@ -1245,6 +1249,8 @@ export const SCHEMA = new SchemaManifest()
     encryption_tier: col("text", { notNull: true, hasDefault: true, },),
     encrypted_key_id: col("text",),
     content_hash: col("text",),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Blog System ──────────────────────────────────────────────
   .table("blog_comments", {
@@ -1420,6 +1426,8 @@ export const SCHEMA = new SchemaManifest()
     quick_replies: col("text",),
     prompt_override: col("text",),
     output_style_preset: col("text",),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
@@ -1462,6 +1470,8 @@ export const SCHEMA = new SchemaManifest()
     e2e_sender_eph_pub_jwk: col("text",),
     e2e_chain_index: col("integer",),
     content_plaintext: col("text",),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── NSFW & Moderation ──────────────────────────────────────────────
   .table("content_flags", {
@@ -1740,6 +1750,8 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     nsfw_override: col("text",),
     rpg_enabled: col("integer", { notNull: true, hasDefault: true, },),
+    data_version: col("integer", { notNull: true, hasDefault: true, },),
+    record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Generation & Prompts ──────────────────────────────────────────────
   .table("model_capabilities", {
