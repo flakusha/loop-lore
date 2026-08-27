@@ -11,8 +11,8 @@
  *   No per-asset key table is needed; the salt (assetId) is recoverable from
  *   the payload's `a_id` field (v2) or the caller (v1).
  *
- * The internal `reEncryptWithKeys` is used by `rotateActorKeyAndReEncrypt`
- * which passes explicit old+new keys to correctly handle key rotation.
+ * The internal `reEncryptWithKeys` is used by `rotateKeyOnLeave` which passes
+ * explicit old+new keys to correctly handle key rotation.
  */
 import type { Kysely, } from "kysely";
 import { readFileSync, writeFileSync, } from "node:fs";
@@ -23,12 +23,14 @@ import type { ChatKey, } from "../chat-keys";
 import { deriveChatKeyForChat, } from "../chat-keys";
 import { compressThenEncrypt, decryptThenDecompress, } from "../pipeline";
 import type { PipelineConfig, } from "../pipeline";
-import { getSmk, } from "../smk";
 
 /**
  * Internal: decrypt each message with `oldKey`, re-encrypt with `newKey`.
  * Messages that fail decryption are surfaced via the returned `failures` array
  * instead of silently swallowed.
+ *
+ * Includes ALL messages (visible, hidden, archived, deleted) to prevent
+ * stranded rows under expired keys.
  *
  * @returns `{ reEncrypted, failures }` where `failures[i]` is `{ id, reason }`.
  */
@@ -44,7 +46,6 @@ export async function reEncryptWithKeys(
     .select(["id", "content", "key_id",],)
     .where("chat_id", "=", chatId,)
     .where("key_id", "is not", null,)
-    .where("visibility", "=", "visible",)
     .orderBy("created_at", "desc",)
     .limit(limit,)
     .execute();
@@ -108,11 +109,9 @@ export async function reEncryptChatAssets(
   chatId: string,
   uploadDir: string,
   pipelineConfig: PipelineConfig,
-  smk?: CryptoKey,
+  oldKey: ChatKey,
+  newKey: ChatKey,
 ): Promise<{ reEncrypted: number; failures: { id: string; reason: string }[] }> {
-  const effectiveSmk = smk ?? getSmk();
-  if (!effectiveSmk) { throw new Error("SMK not initialized",); }
-  const chatKey = await deriveChatKeyForChat(database, chatId, effectiveSmk,);
   // Find encrypted assets linked to this chat
   const assets = await database
     .selectFrom("assets",)
@@ -139,10 +138,12 @@ export async function reEncryptChatAssets(
     }
 
     try {
-      const plaintext = await decryptAssetBlob(buffer, chatKey, asset.id,);
+      // Decrypt with the OLD key (the key that originally encrypted this blob)
+      const plaintext = await decryptAssetBlob(buffer, oldKey, asset.id,);
+      // Re-encrypt with the NEW key
       const result = await encryptAssetBlob(
         plaintext,
-        chatKey,
+        newKey,
         asset.encrypted_key_id,
         asset.id,
         pipelineConfig,
