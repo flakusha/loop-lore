@@ -51,7 +51,6 @@ function branchToSquashMessage(branch: string,): string {
   return `${type}: ${subject}`;
 }
 
-
 /**
  * Stash dirty working-tree state on `repoRoot` (the dev checkout) before
  * an in-place merge. Returns a label identifying the stash entry, or `null`
@@ -77,14 +76,14 @@ function stashDirtyDev(repoRoot: string,): string | null {
     ["git", "-C", repoRoot, "ls-files", "--others", "--exclude-standard",],
     { stdout: "pipe", stderr: "pipe", },
   );
-  const hasUntracked = (untracked.stdout.toString().trim().length > 0);
+  const hasUntracked = untracked.stdout.toString().trim().length > 0;
   if (dirty.exitCode === 0 && staged.exitCode === 0 && !hasUntracked) {
     return null;
   }
   // Generate a distinguishable stash label so we can find it again even if
   // the user has unrelated stashes on the stack.
   const stashLabel = `worktree-finalize-${Date.now().toString(36,)}`;
-  const flags = hasUntracked ? ["--include-untracked"] : [];
+  const flags = hasUntracked ? ["--include-untracked",] : [];
   const stash = Bun.spawnSync(
     ["git", "-C", repoRoot, "stash", "push", ...flags, "-m", stashLabel,],
     { stdout: "pipe", stderr: "pipe", },
@@ -105,7 +104,7 @@ function restoreDirtyDev(repoRoot: string, stashLabel: string,): void {
     { stdout: "pipe", stderr: "pipe", },
   );
   const lines = list.stdout.toString().split("\n",);
-  const match = lines.find((line,) => line.includes(stashLabel,),);
+  const match = lines.find((line,) => line.includes(stashLabel,));
   if (!match) {
     log("error", `stash '${stashLabel}' not found — restore manually with 'git stash list'`,);
     process.exit(1,);
