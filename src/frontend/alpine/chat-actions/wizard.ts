@@ -9,6 +9,7 @@
  * (the general chat-action router) so each file stays under 250L.
  */
 
+import { browserRandomUUIDv7, } from "../../browser";
 import { t, } from "../i18n";
 import { log as rootLog, } from "../logger";
 
@@ -71,8 +72,9 @@ export const wizardActionHandlers: Record<string, ActionHandler> = {
     for (const [k, v,] of Object.entries(data,)) {
       if (typeof v === "string") { fields[k] = v; }
     }
+    // UUIDv7 gives chronological ordering; the wizard id is opaque to the server.
     ctx.wizardDraft = {
-      wizardId: `preview_${kind}_${Date.now()}`,
+      wizardId: `preview_${kind}_${browserRandomUUIDv7()}`,
       entityType: kind,
       label: kind.charAt(0,).toUpperCase() + kind.slice(1,),
       fields,
