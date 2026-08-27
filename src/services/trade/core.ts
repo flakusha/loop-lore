@@ -77,7 +77,7 @@ export async function tradeCore(
     moved.pricePaid = price;
 
     for (const line of buyerItems) {
-      const res = await items.transfer(line.worldItemId, line.quantity, undefined, sellerActorId, trx,);
+      const res = await items.transfer(line.worldItemId, worldId, line.quantity, undefined, sellerActorId, trx,);
       if (!res.success) {
         reason = "buyer item transfer failed";
         return;
@@ -85,7 +85,7 @@ export async function tradeCore(
       moved.itemsOffered.push(line.worldItemId,);
     }
     for (const line of sellerItems) {
-      const res = await items.transfer(line.worldItemId, line.quantity, undefined, buyerActorId, trx,);
+      const res = await items.transfer(line.worldItemId, worldId, line.quantity, undefined, buyerActorId, trx,);
       if (!res.success) {
         reason = "seller item transfer failed";
         return;
