@@ -1,6 +1,6 @@
 # BUG: auto key rotation derives chat keys from participant actor keys - legacy scheme incompatible with stable chat_keys
 
-**Status:** ⬜ Not Started
+**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
 **Priority:** medium
 **Effort:** Medium
 
