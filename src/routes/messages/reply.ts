@@ -36,7 +36,21 @@ export async function maybeAutoReply(
   parentMessageId: string,
   userMessage: string,
   request: Request,
+  asyncStore?: import("../../async/store").AsyncStore,
 ): Promise<{ replied: boolean; response?: Response }> {
+  // If the request carries a request id and an async store is wired, register
+  // it now so the frontend can poll /api/requests/:id/status while generation
+  // runs. The id is the same one auto-reply passes through to triggerAutoGeneration.
+  const requestId = request.headers.get("x-request-id",) ?? undefined;
+  if (requestId !== undefined && asyncStore !== undefined) {
+    asyncStore.track({
+      id: requestId,
+      method: request.method,
+      routePattern: `/api/chats/${chatId}/messages`,
+      userId: actorId,
+    },);
+  }
+
   if (isLlmGenerationConfigured(config,)) {
     void triggerAutoGeneration({
       database,
