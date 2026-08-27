@@ -33,7 +33,7 @@ interface EchoBody {
 }
 
 /** Build a minimal app with the request-id derive + an echo route. */
-function makeApp(): { app: Elysia; getSeen: () => string | null } {
+function makeApp() {
   let seen: string | null = null;
   const app = new Elysia()
     .derive(requestIdMiddleware(),)
