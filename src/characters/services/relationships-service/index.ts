@@ -24,7 +24,6 @@ import { createRelationship, deleteRelationship, updateRelationship, } from "./w
 // The empty interface is intentional: it merges the `RelationshipsService`
 // factory value with a same-named type so one name is both API type and
 // constructor.
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface RelationshipsService extends RelationshipsServiceIface {}
 
 export type {
