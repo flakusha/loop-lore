@@ -99,6 +99,8 @@ import { worldsRoutes, } from "../routes/worlds";
 export interface RegisterPluginsOpts {
   database: Db;
   config: Config;
+  /** Async request-result store (request_results table writer). */
+  asyncStore: import("../async/store").AsyncStore;
 }
 
 /**
