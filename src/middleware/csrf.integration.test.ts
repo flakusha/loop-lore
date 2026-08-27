@@ -25,14 +25,9 @@
 
 import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
+import { CSRF_COOKIE, CSRF_HEADER, mintCsrfToken, } from "./csrf";
+import { applyCsrfPlugin, type CsrfMiddlewareOptions, } from "./csrf-plugin";
 import { requestIdMiddleware, } from "./request-id";
-import {
-  CSRF_COOKIE,
-  CSRF_HEADER,
-  applyCsrfPlugin,
-  mintCsrfToken,
-  type CsrfMiddlewareOptions,
-} from "./csrf";
 
 const SECRET = "integration-test-secret-must-be-32-chars-or-more-for-hmac";
 const SESSION_A = "session-user-a";
@@ -60,15 +55,18 @@ function buildApp(opts: SetupOpts,) {
     .derive(requestIdMiddleware(),)
     .derive((ctx: { request: Request },) => ({
       sessionId: opts.resolveSession?.(ctx.request,) ?? null,
-    }),);
+    }));
   applyCsrfPlugin(app as unknown as Parameters<typeof applyCsrfPlugin>[0], csrfOpts,);
   return app
-    .post("/api/things", () => new Response("created", { status: 201 }),)
-    .post("/api/auth/login", () => new Response("logged-in", { status: 200 }),)
-    .get("/api/whoami", (ctx: { sessionId: string | null },) =>
-      new Response(JSON.stringify({ userId: ctx.sessionId, }), {
-        headers: { "content-type": "application/json" },
-      },),);
+    .post("/api/things", () => new Response("created", { status: 201, },),)
+    .post("/api/auth/login", () => new Response("logged-in", { status: 200, },),)
+    .get(
+      "/api/whoami",
+      (ctx: { sessionId: string | null },) =>
+        new Response(JSON.stringify({ userId: ctx.sessionId, },), {
+          headers: { "content-type": "application/json", },
+        },),
+    );
 }
 
 async function dispatch(
@@ -80,7 +78,7 @@ async function dispatch(
 
 describe("csrf integration — issuance path", () => {
   test("GET issues a Set-Cookie for the CSRF token when none is present", async () => {
-    const app = buildApp({});
+    const app = buildApp({},);
     const res = await dispatch(app, new Request("http://localhost/api/whoami",),);
     expect(res.status,).toBe(200,);
     const setCookie = res.headers.get("set-cookie",);
@@ -89,53 +87,53 @@ describe("csrf integration — issuance path", () => {
     expect(setCookie,).toContain("SameSite=Lax",);
     expect(setCookie,).toContain("Path=/",);
     expect(setCookie,).not.toContain("HttpOnly",);
-  },);
+  });
 
   test("GET with a valid existing cookie does NOT re-issue", async () => {
-    const app = buildApp({ resolveSession: () => SESSION_A, });
+    const app = buildApp({ resolveSession: () => SESSION_A, },);
     const token = mintCsrfToken(SECRET, SESSION_A, {},);
     const res = await dispatch(
       app,
       new Request("http://localhost/api/whoami", {
-        headers: { cookie: `${CSRF_COOKIE}=${token}` },
+        headers: { cookie: `${CSRF_COOKIE}=${token}`, },
       },),
     );
     expect(res.status,).toBe(200,);
     expect(res.headers.get("set-cookie",),).toBeNull();
-  },);
+  });
 
   test("GET with a stale binding re-issues a fresh token", async () => {
-    const app = buildApp({ resolveSession: () => SESSION_A, });
+    const app = buildApp({ resolveSession: () => SESSION_A, },);
     const stale = mintCsrfToken(SECRET, "old-session", {},);
     const res = await dispatch(
       app,
       new Request("http://localhost/api/whoami", {
-        headers: { cookie: `${CSRF_COOKIE}=${stale}` },
+        headers: { cookie: `${CSRF_COOKIE}=${stale}`, },
       },),
     );
     expect(res.status,).toBe(200,);
     const issued = res.headers.get("set-cookie",) ?? "";
-    expect(issued,).not.toBe("");
-    const value = new RegExp(`${CSRF_COOKIE}=([^;]+)`).exec(issued,)?.[1];
+    expect(issued,).not.toBe("",);
+    const value = new RegExp(`${CSRF_COOKIE}=([^;]+)`,).exec(issued,)?.[1];
     expect(value,).toBeDefined();
     expect(value,).not.toBe(stale,);
-  },);
+  });
 });
 
 describe("csrf integration — verification path", () => {
   test("POST without any token is short-circuited with 403 (handler never runs)", async () => {
-    const app = buildApp({});
+    const app = buildApp({},);
     const res = await dispatch(
       app,
-      new Request("http://localhost/api/things", { method: "POST", body: "{}" },),
+      new Request("http://localhost/api/things", { method: "POST", body: "{}", },),
     );
     expect(res.status,).toBe(403,);
     const body = await res.json();
     expect(body.error,).toBe("csrf_verification_failed",);
-  },);
+  });
 
   test("POST with mismatched header/cookie tokens is rejected with 403", async () => {
-    const app = buildApp({ resolveSession: () => SESSION_A, });
+    const app = buildApp({ resolveSession: () => SESSION_A, },);
     const good = mintCsrfToken(SECRET, SESSION_A, {},);
     const res = await dispatch(
       app,
@@ -149,10 +147,10 @@ describe("csrf integration — verification path", () => {
       },),
     );
     expect(res.status,).toBe(403,);
-  },);
+  });
 
   test("POST with a valid token bound to the current session passes the gate", async () => {
-    const app = buildApp({ resolveSession: () => SESSION_A, });
+    const app = buildApp({ resolveSession: () => SESSION_A, },);
     const token = mintCsrfToken(SECRET, SESSION_A, {},);
     const res = await dispatch(
       app,
@@ -166,10 +164,10 @@ describe("csrf integration — verification path", () => {
       },),
     );
     expect(res.status,).toBe(201,);
-  },);
+  });
 
   test("POST with a token bound to a DIFFERENT session is rejected (no replay)", async () => {
-    const app = buildApp({ resolveSession: () => SESSION_A, });
+    const app = buildApp({ resolveSession: () => SESSION_A, },);
     const attackerToken = mintCsrfToken(SECRET, "session-user-b", {},);
     const res = await dispatch(
       app,
@@ -183,7 +181,7 @@ describe("csrf integration — verification path", () => {
       },),
     );
     expect(res.status,).toBe(403,);
-  },);
+  });
 
   test("anonymous binding: token minted in one request cannot verify in another", async () => {
     // Token bound to `anonymous::req-attacker` cannot verify under
@@ -191,7 +189,7 @@ describe("csrf integration — verification path", () => {
     // is per-request, so an attacker who steals a cookie bound to their
     // own request id cannot replay it on someone else's.
     const attackerToken = mintCsrfToken(SECRET, "anonymous::req-attacker", {},);
-    const app = buildApp({ resolveSession: () => null, });
+    const app = buildApp({ resolveSession: () => null, },);
     const replay = await dispatch(
       app,
       new Request("http://localhost/api/things", {
@@ -205,12 +203,12 @@ describe("csrf integration — verification path", () => {
       },),
     );
     expect(replay.status,).toBe(403,);
-  },);
+  });
 });
 
 describe("csrf integration — auth-route exemption", () => {
   test("POST /api/auth/login bypasses CSRF (no token required)", async () => {
-    const app = buildApp({});
+    const app = buildApp({},);
     const res = await dispatch(
       app,
       new Request("http://localhost/api/auth/login", {
@@ -220,18 +218,18 @@ describe("csrf integration — auth-route exemption", () => {
     );
     // Exempt — must NOT be 403.
     expect(res.status,).not.toBe(403,);
-  },);
+  });
 });
 
 describe("csrf integration — disabled mode", () => {
   test("when enabled=false, all unsafe methods pass through without a token", async () => {
-    const app = buildApp({ enabled: false, });
+    const app = buildApp({ enabled: false, },);
     const res = await dispatch(
       app,
-      new Request("http://localhost/api/things", { method: "POST", body: "{}" },),
+      new Request("http://localhost/api/things", { method: "POST", body: "{}", },),
     );
     expect(res.status,).not.toBe(403,);
-  },);
+  });
 
   test("when secret is empty AND enabled=true, the wiring does not crash", async () => {
     // Production guards against this by checking config first; this test
@@ -239,11 +237,11 @@ describe("csrf integration — disabled mode", () => {
     // empty secret. With Bun's per-thread default secret, the response
     // is either 403 (no token) or 201 (token round-trips). Either is
     // non-fatal — the point is "no exception, no 500".
-    const app = buildApp({ secret: "", });
+    const app = buildApp({ secret: "", },);
     const res = await dispatch(
       app,
-      new Request("http://localhost/api/things", { method: "POST", body: "{}" },),
+      new Request("http://localhost/api/things", { method: "POST", body: "{}", },),
     );
     expect(res.status === 403 || res.status === 201,).toBe(true,);
-  },);
+  });
 });
