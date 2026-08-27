@@ -3,6 +3,18 @@
 
 ## Recent wiring (reference)
 
+- **NSFW gate correctness cluster (closed 2026-08-27, commit `49731047`)** — six issues
+  from the 2026-08-25 security-hardening wave (see `security-review-2026-08-25.md`) shipped
+  on `dev` via the `fix-nsfw-gate-correctness` worktree: `ccb8879` (gate ordering — pre-LLM
+  `checkNsfwEligibility` at `src/generation/auto-gen/auto-generation.ts:132`; `NsfwHook` is
+  post-LLM defense-in-depth), `da08f1b` (fail-open → fail-closed on `getEffectiveNsfw`
+  errors; `admin_emergency_block` audit + `suppressContent`), `f89168b` (group-chat
+  weakest-link intersected across human participants in `src/middleware/nsfw-gate/consent.ts`),
+  `4f8aeb2` (consent persisted to `nsfw_consent_state` migration 069, ledger in
+  `consent-ledger.ts` replaces in-memory map), `9575d31` (`logNsfwEvent` exported and
+  invoked from `NsfwHook.logGateDecision`; audit attribution = `context.userId`), `94f9a36`
+  (`overrides.ts` PUT routes gain `checkChatAccess` guards). Rows removed from
+  `open-untriaged.md` Security-hardening wave table.
 - **SSE refactor (merged `082c20cf`)** — `sse-utils.ts` extracted from
   `stream-to-client.ts`; `src/generation/generate-route/sse-utils.ts`; chat.html stream
   markup simplified (2026-08-13/14, committed on `dev`).
