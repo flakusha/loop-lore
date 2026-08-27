@@ -6,7 +6,9 @@
 > **Author:** OpenAgent security review pass (session 2026-08-25)
 > **Scope reviewed:** (A) Registration & Authorization HTTP flow — `src/auth/*`, `src/routes/auth/*`, `src/middleware/auth/*`; (1) WebSocket transport auth — `src/transport/*`; (2) RBAC enforcement at route layer — `src/users/permissions.ts` + call sites; (3) Asset object-level authz — `src/assets/controller/*`, `src/assets/service/*`.
 > **Source of truth:** `src/` runnable code; `.plan/` requirements. `AGENTS.md` conventions enforced.
-> **Status:** FINDINGS TRIAGED — fix tickets proposed below; not yet implemented.
+> **Status:** FINDINGS TRIAGED — 33 tickets filed (label `security`). Six NSFW-gate correctness
+> issues (`94f9a36`, `da08f1b`, `f89168b`, `4f8aeb2`, `9575d31`, `ccb8879`) closed on `dev`
+> via commit `49731047`; rows removed from `open-untriaged.md`.
 
 ## Cross-review dedup notes
 
