@@ -1,6 +1,6 @@
 # BUG: 429 responses omit Retry-After and X-RateLimit headers
 
-**Status:** [OK] Resolved (consume() returns {allowed,limit,remaining,resetSec}; rateLimitHeaders() emits X-RateLimit-Limit/Remaining/Reset + Retry-After on 429; applied in handleLogin + checkRegisterGate)
+**Status:** done
 
 **Priority:** medium
 **Effort:** Medium

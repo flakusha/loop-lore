@@ -3,7 +3,7 @@
 
 # BUG: Chat-level promptOverride is persisted but never consumed by assistant reply or auto-generation
 
-**Status:** ✅ Resolved (2026-08-24, verified — git issue 4c97a16 closed; `chat.prompt_override` is consumed by `PromptAssembler.assemble()` at src/assistant/prompt-assembler.ts:89-94, highest precedence over world-setup and character prompts)
+**Status:** done
 **Severity:** medium
 **Priority:** medium
 **Effort:** small

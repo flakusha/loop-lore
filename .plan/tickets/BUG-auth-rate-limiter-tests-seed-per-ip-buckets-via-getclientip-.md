@@ -1,6 +1,6 @@
 # BUG: Auth rate-limiter tests seed per-IP buckets via getClientIp internals — no direct bucket isolation
 
-**Status:** ✅ Resolved (2026-08-25, worktree `fix-ratelimiter-global-bucket`)
+**Status:** done
 **Priority:** low
 **Effort:** Medium
 

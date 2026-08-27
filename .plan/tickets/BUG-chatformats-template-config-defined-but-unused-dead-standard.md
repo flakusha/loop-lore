@@ -3,7 +3,7 @@
 
 # BUG: chatFormats template config defined but unused (dead standard-template feature)
 
-**Status:** ⬜ Not Started
+**Status:** not-a-bug
 **Priority:** medium
 **Effort:** Medium
 

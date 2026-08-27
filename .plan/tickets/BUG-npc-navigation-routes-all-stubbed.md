@@ -3,7 +3,7 @@
 
 # BUG: NPC navigation routes entirely stubbed — no service calls
 
-**Status:** Not A Bug — Already Fixed
+**Status:** not-a-bug
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Large

@@ -1,6 +1,6 @@
 # BUG: getClientIp is untestable without a live Bun server — IP source not injectable
 
-**Status:** ✅ Resolved (2026-08-25, worktree `fix-ratelimiter-global-bucket`)
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 

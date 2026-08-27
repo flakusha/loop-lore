@@ -3,7 +3,7 @@
 
 # BUG: detectAvatarChangeIntent runs on user messages, not assistant responses
 
-**Status:** [OK] Resolved (Option B applied: prompt-injection call site removed; emotionAvatar section fires via prompt-assembler default on persisted character mood)
+**Status:** done
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding
 **Labels:** emotion-avatar, intent-detection, prompt-injection, wrong-direction

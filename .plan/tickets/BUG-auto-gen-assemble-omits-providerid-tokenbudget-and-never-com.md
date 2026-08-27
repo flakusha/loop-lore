@@ -3,7 +3,7 @@
 
 # BUG: Auto-gen assemble() omits providerId/tokenBudget and never compacts
 
-**Status:** [OK] Resolved (providerId passed to assemble; compactPromptHistory invoked after assemble against the model-aware budget)
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 
