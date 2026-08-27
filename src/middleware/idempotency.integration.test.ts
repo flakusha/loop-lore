@@ -277,4 +277,70 @@ describe("idempotent (Elysia integration)", () => {
     await app.handle(new Request("http://localhost/api/g", { headers: { "x-request-id": "g-1", }, },),);
     expect(runs,).toBe(2,);
   });
+  test("handler throw releases the in-flight slot so a retry is not stuck at 409 (BUG-orphaned-slot)", async () => {
+    let runs = 0;
+    const idem = idempotent({ backend: "memory", },);
+    // Read the derived request id without an unchecked `as` cast: narrow via `in`.
+    const readRequestId = (ctx: object,): string | undefined => {
+      if ("requestId" in ctx) {
+        const id = ctx.requestId;
+        return typeof id === "string" ? id : undefined;
+      }
+      return undefined;
+    };
+    const app = new Elysia()
+      .derive(requestIdMiddleware(),)
+      .onBeforeHandle((ctx,) =>
+        idem.beforeHandle({
+          request: ctx.request,
+          route: ctx.route,
+          requestId: readRequestId(ctx,),
+        },)
+      )
+      .onAfterHandle((ctx,) => {
+        const requestId = readRequestId(ctx,);
+        if (!requestId) { return; }
+        const response = ctx.response;
+        if (!(response instanceof Response) || response.status >= 300) {
+          idem.release({ method: ctx.request.method, route: ctx.route, requestId, },);
+          return;
+        }
+        idem.recordResponse({ method: ctx.request.method, route: ctx.route, requestId, response, },);
+      },)
+      // Mirror elysia-app.ts: the error boundary releases the idempotency slot
+      // so a thrown handler does not strand the slot as a permanent 409.
+      .onError((ctx,) => {
+        const requestId = readRequestId(ctx,);
+        if (requestId) {
+          idem.release({
+            method: ctx.request.method,
+            route: new URL(ctx.request.url,).pathname,
+            requestId,
+          },);
+        }
+        return new Response("error", { status: 500, },);
+      },);
+    app.post("/api/x", () => { runs++; throw new Error("boom",); },);
+
+    const first = await app.handle(
+      new Request("http://localhost/api/x", {
+        method: "POST",
+        headers: { "x-request-id": "r-err", "content-type": "application/json", },
+        body: "{}",
+      },),
+    );
+    expect(first.status,).toBe(500,);
+    await flushMicrotasks();
+
+    const second = await app.handle(
+      new Request("http://localhost/api/x", {
+        method: "POST",
+        headers: { "x-request-id": "r-err", "content-type": "application/json" },
+        body: "{}",
+      },),
+    );
+    // Slot released on error → not 409; handler runs again (no permanent 409).
+    expect(second.status,).not.toBe(409,);
+    expect(runs,).toBe(2,);
+  },);
 });
