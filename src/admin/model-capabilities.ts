@@ -226,3 +226,4 @@ export async function setModelOverride(
 
   return true;
 }
+export { clearModelOverride, getContextWindowForModel, setModelOverride, } from "./model-capabilities-overrides";
