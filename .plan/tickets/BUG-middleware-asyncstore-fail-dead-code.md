@@ -3,7 +3,7 @@
 
 # BUG: `asyncStore.fail()` error boundary is dead code
 
-**Status:** 🔧 In Progress (found in 2026-08-27 review; epic reopened)
+**Status:** ✅ Resolved (fixed in worktree merge-review-followups, 2026-08-27)
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-middleware-request-lifecycle

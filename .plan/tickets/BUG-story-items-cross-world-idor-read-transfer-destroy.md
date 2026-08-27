@@ -1,6 +1,6 @@
 # BUG: story-items cross-world IDOR read transfer destroy
 
-**Status:** ✅ Resolved (commit 61ef179c + 3ab26ccd — getDefinition/transfer/destroy take worldId; world_id predicate enforced)
+**Status:** ✅ Resolved (build-break removed + fix compiles in worktree merge-review-followups, 2026-08-27)
 **Priority:** high
 **Effort:** Medium
 
@@ -26,3 +26,8 @@ Acceptance: cross-world item definition read denied; cross-world transfer/destro
 ## Review Update (2026-08-27)
 
 The merge that carried this fix (`3ab26ccd`) **broke the backend build**: a malformed 3-way merge left an orphaned duplicate `transfer` body in `src/story/items/instances.ts:192-260` (tsc TS1128) and a stale duplicate `destroy` in `src/story/items/index.ts:122-125`. The IDOR fix therefore cannot run. Tracked in `BUG-security-merge-build-break-instances-ts.md`. Status stays 🔧 In Progress.
+
+
+## Resolution (2026-08-27)
+
+The build-break from merge `3ab26ccd` was fixed in worktree `merge-review-followups`: orphaned duplicate `transfer` body removed from `src/story/items/instances.ts` and stale duplicate `destroy` removed from `src/story/items/index.ts`. The IDOR fix now compiles and is functional. This bug is **resolved** (tracked in `BUG-security-merge-build-break-instances-ts.md`, also resolved).

@@ -3,7 +3,7 @@
 
 # TASK: Wire `asyncStore.complete()` / `fail()` / `progress()` into the request lifecycle
 
-**Status:** ⬜ Open
+**Status:** ✅ Done (fixed in worktree merge-review-followups, 2026-08-27)
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-middleware-request-lifecycle
@@ -123,3 +123,8 @@ The work is wiring the calls into the right hook points.
 ## Review Update (2026-08-27)
 
 The epic marked this done, but the AC is **not met**: the `asyncStore.fail()` error boundary in `src/elysia-app.ts` is dead code (validation onError returns first; Elysia short-circuits, so `fail()` never runs), and `recordLifecycle` marks 4xx/5xx responses `complete` instead of `fail`. See `BUG-middleware-asyncstore-fail-dead-code.md` and `BUG-middleware-recordlifecycle-marks-error-complete.md`. Status stays ⬜ Open.
+
+
+## Resolution (2026-08-27)
+
+Fixed in worktree `merge-review-followups`: the validation `onError` now calls `asyncStore.fail()` and releases the idempotency slot, so failed rows are `failed` (not stuck `pending`), and `recordLifecycle` marks 4xx/5xx as `fail` not `complete`. ACs met. See `BUG-middleware-asyncstore-fail-dead-code.md` and `BUG-middleware-recordlifecycle-marks-error-complete.md` (both resolved).

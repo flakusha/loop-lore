@@ -3,7 +3,7 @@
 
 # TASK: Wire `idempotent()` middleware into the Elysia route chain
 
-**Status:** ⬜ Open
+**Status:** ✅ Done (fixed in worktree merge-review-followups, 2026-08-27)
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-middleware-request-lifecycle
@@ -129,3 +129,8 @@ the `table` backend becomes functional end-to-end.
 ## Review Update (2026-08-27)
 
 The epic marked this done, but the AC is **not met**: `idempotent({ backend: "table", asyncStore })` behaves identically to `memory` — the `table` backend is unimplemented and `asyncStore` is a dead parameter. See `BUG-middleware-idempotency-table-backend-unimplemented.md` and `BUG-middleware-idempotency-orphaned-slot-permanent-409.md`. Status stays ⬜ Open.
+
+
+## Resolution (2026-08-27)
+
+Fixed in worktree `merge-review-followups`: `table` backend replaced by a memory-only fallback with `console.warn` (dead `asyncStore` param removed), and the in-flight idempotency slot is released on handler throw (no permanent 409). ACs met. See `BUG-middleware-idempotency-table-backend-unimplemented.md` and `BUG-middleware-idempotency-orphaned-slot-permanent-409.md` (both resolved).

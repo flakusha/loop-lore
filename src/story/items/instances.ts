@@ -102,6 +102,7 @@ export async function getAtLocation(state: ItemState, locationId: string, includ
 
 export { getNpcInventory, } from "./npc-inventory";
 
+/** Transfer items between locations, NPCs, or from world to actor */
 /** Transfer items between locations, NPCs, or from world to actor. Requires worldId to prevent cross-world IDOR. */
 export async function transfer(
   state: ItemState,
@@ -188,6 +189,7 @@ export async function transfer(
   };
 }
 
+/** Remove item instance */
 /** Remove item instance. Requires worldId to prevent cross-world IDOR. */
 export async function destroy(
   state: ItemState,
@@ -200,8 +202,8 @@ export async function destroy(
 
   if (quantity === undefined) {
     const result = await db.deleteFrom("world_items",).where("id", "=", worldItemId,).where("world_id", "=", worldId,)
-      .executeTakeFirst();
-    return result.numDeletedRows > 0;
+      .execute();
+    return (result[0]?.numDeletedRows ?? 0) > 0;
   }
 
   const source = await db
