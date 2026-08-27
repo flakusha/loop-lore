@@ -3,10 +3,17 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * GPG passphrase unlock for loop-lore agent commits.
+ * GPG passphrase cache manager for loop-lore agent commits.
  *
- * Reads .credentials.env and signs test data to warm the gpg-agent cache.
- * Must be run in a REAL TERMINAL (not inside opencode) — pinentry needs a TTY.
+ * Reads .credentials.env and manages the gpg-agent passphrase cache:
+ *   - Prolong: when called repeatedly, resets the cache TTL to the
+ *     configured max-cache-ttl (no prompt, no signing).
+ *   - Warm:    when the cache is empty, signs test data with loopback
+ *     pinentry to populate it.
+ *
+ * Prolong works in any environment (no TTY required). Warm needs the
+ * GPG passphrase supplied via stdin in loopback mode — the convention
+ * for agent commits in this repo.
  *
  * Usage:
  *   bun run scripts/gpg-unlock.mjs
@@ -41,16 +48,70 @@ function loadCredentials() {
   return keyId;
 }
 
-// ── Unlock GPG key ───────────────────────────────────────────────
+// ── GPG agent helpers ────────────────────────────────────────────
 
-async function unlockGpg(keyId,) {
+function agentConfigPath() {
+  const home = process.env.GNUPGHOME
+    ?? path.join(process.env.HOME ?? process.env.USERPROFILE ?? "", ".gnupg",);
+  return path.join(home, "gpg-agent.conf",);
+}
+
+function readMaxCacheTtl() {
+  const confPath = agentConfigPath();
+  if (!existsSync(confPath,)) return 7200; // gpg-agent default 2h
+  const content = readFileSync(confPath, "utf-8",);
+  const match = content.match(/^max-cache-ttl\s+(\d+)/m,);
+  return match ? parseInt(match[1], 10,) : 7200;
+}
+
+async function getKeygrip(keyId,) {
+  // gpg-connect-agent reply shape:
+  //   S KEYINFO <keygrip> ... OK     ← key found
+  //   ERR <code> <reason>             ← key not in agent
+  const out = await $`gpg-connect-agent "KEYINFO --no-list ${keyId} SENT" /bye 2>&1`.text();
+  return out.match(/^S KEYINFO\s+(\w+)/m,)?.[1]
+    ?? out.match(/^OK KEYINFO\s+(\w+)/m,)?.[1]
+    ?? null;
+}
+
+
+
+// ── Prolong cached passphrase TTL ────────────────────────────────
+
+async function prolongCachedPassphrase(keyId,) {
+  const keygrip = await getKeygrip(keyId,);
+  if (!keygrip) return { ok: false, reason: "no-keygrip", };
+
+  const maxTtl = readMaxCacheTtl();
+  // PRESET_PASSPHRASE --preset <keygrip> -1 <hex_timestamp>
+  //   --preset = update existing cache entry (not --unpreset which clears)
+  //   -1       = reuse the cached passphrase bytes (don't override)
+  //   <hex>    = absolute unix timestamp when cache should expire
+  const newExp = (Math.floor(Date.now() / 1000) + maxTtl)
+    .toUpperCase();
+
+  try {
+    const out = await $`gpg-connect-agent "PRESET_PASSPHRASE --preset ${keygrip} -1 ${newExp}" /bye`.text();
+    if (/^ERR/m.test(out,)) {
+      return { ok: false, reason: "preset-rejected", output: out.trim(), };
+    }
+    return { ok: true, keygrip, maxTtl, };
+  } catch (e) {
+    return { ok: false, reason: "preset-threw", error: String(e,), };
+  }
+}
+
+// ── Warm (populate cache via loopback sign) ──────────────────────
+
+async function warmCache(keyId,) {
   console.log(`Unlocking GPG key: ${keyId.slice(0, 8,)}...`,);
 
   try {
-    // Sign test data to prompt for passphrase and cache it in gpg-agent
+    // Sign test data — pinentry-mode loopback reads passphrase from stdin
+    // and writes it into gpg-agent's cache for subsequent operations.
     await $`echo "unlock" | gpg --pinentry-mode loopback --sign --local-user ${keyId} --output /dev/null`.quiet();
     console.log("Passphrase cached.",);
-    console.log("You can now run agent commits. Cache expires after gpg-agent TTL.",);
+    console.log("Re-run this script to prolong the cache TTL.",);
     return true;
   } catch {
     console.error("Failed — enter passphrase in the pinentry dialog above.",);
@@ -63,5 +124,16 @@ async function unlockGpg(keyId,) {
 // ── Main ─────────────────────────────────────────────────────────
 
 const keyId = loadCredentials();
-const success = await unlockGpg(keyId,);
-process.exit(success ? 0 : 1,);
+console.log(`GPG key: ${keyId.slice(0, 8,)}...`,);
+
+// Step 1: try to prolong an already-cached passphrase (no prompt).
+const prolonged = await prolongCachedPassphrase(keyId,);
+if (prolonged.ok) {
+  console.log(`Cache TTL refreshed to ${prolonged.maxTtl}s.`,);
+  process.exit(0,);
+}
+
+// Step 2: cache miss — fall back to the warm flow.
+console.log(`Cache miss (${prolonged.reason}); warming via loopback sign...`,);
+const warmed = await warmCache(keyId,);
+process.exit(warmed ? 0 : 1,);
