@@ -60,7 +60,7 @@ The unified IM config UI and IM status dashboard build on the integration config
 
 - Depends on: **Communications Integrations** hub (epic-communications-integrations.md)
 - Depends on: **Integrations Core** (epic-integrations-core.md) — implements `ProtocolAdapter`; unified IM config UI/status dashboard extend the core config UI skeleton and dashboard
-- Depends on: `epic-encryption-foundation.md` (Signal protocol key management)
+- Depends on: `epic-crypto.md` (Signal protocol key management)
 - Siblings: independent of Matrix/XMPP/Email sub-epics; IM networks can be reached through Matrix bridges as an alternative (see epic-matrix-integration.md)
 
 ## Security Considerations

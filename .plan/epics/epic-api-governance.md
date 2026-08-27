@@ -111,7 +111,7 @@ sub-epic files above.
 
 - `epic-api-library-distribution.md` — API for library consumers
 - `epic-security-sandboxing.md` — Security hardening
-- `epic-encryption-foundation.md` — API encryption
+- `epic-crypto.md` — API encryption
 - `epic-rag-document-processing.md` — Document ingestion API
 
 ## Notes

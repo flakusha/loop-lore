@@ -31,7 +31,7 @@ Part of the **Communications Integrations** epic. See parent epic for full scope
 
 ## Design
 
-`MatrixAdapter` implements `ProtocolAdapter` and `MatrixEncryption` implements `EncryptionProvider`, both defined in **epic-integrations-core.md**. Key material comes from `epic-encryption-foundation.md`.
+`MatrixAdapter` implements `ProtocolAdapter` and `MatrixEncryption` implements `EncryptionProvider`, both defined in **epic-integrations-core.md**. Key material comes from `epic-crypto.md`.
 
 ```typescript
 // src/integrations/matrix/adapter.ts
@@ -67,7 +67,7 @@ export class MatrixEncryption implements EncryptionProvider { ... }
 
 - Depends on: **Communications Integrations** hub (epic-communications-integrations.md)
 - Depends on: **Integrations Core** (epic-integrations-core.md) — implements `ProtocolAdapter`; uses config UI skeleton, health monitoring, rate limiting
-- Depends on: `epic-encryption-foundation.md` (encryption primitives behind Olm/Megolm key management)
+- Depends on: `epic-crypto.md` (encryption primitives behind Olm/Megolm key management)
 - Siblings: independent of XMPP/IM/Email sub-epics; Discord/Slack/IRC connectivity is reached through this epic's bridges (IRC has no dedicated sub-epic — see parent Open Questions)
 
 ## Security Considerations

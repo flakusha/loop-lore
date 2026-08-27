@@ -59,6 +59,6 @@ interface SocialAdapter {
 
 ## Related Epics
 
-- `epic-encryption-foundation.md` — E2EE
+- `epic-crypto.md` — E2EE
 - `epic-communications-integrations.md` — Matrix, XMPP, IM, Email
 - `epic-anonymity-decentralization.md` — Tor, I2P
