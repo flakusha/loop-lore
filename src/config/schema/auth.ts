@@ -22,6 +22,12 @@ export interface AuthConfig {
   adminPassword?: string;
   /** HMAC-SHA256 secret for JWT signing. Required when auth.required=true. Env-only: AUTH_JWT_SECRET. */
   jwtSecret?: string;
+  /**
+   * HMAC secret for `Bun.CSRF` token issuance + verification. When unset,
+   * falls back to `auth.jwtSecret`. Env-only: AUTH_CSRF_SECRET.
+   * Required for production deployments; defaults in dev only.
+   */
+  csrfSecret?: string;
   /** JWT token expiry in seconds (default: 86400 = 24h) */
   jwtExpiresIn?: number;
   /**
