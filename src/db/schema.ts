@@ -144,4 +144,5 @@ export interface DB {
   character_world_setup: import("./schema-character").CharacterWorldSetup;
   battles: import("./schema-core").Battles;
   trade_history: import("./schema-core").TradeHistory;
+  request_results: import("./schema-core").RequestResults;
 }

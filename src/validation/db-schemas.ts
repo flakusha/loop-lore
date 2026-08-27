@@ -2142,3 +2142,20 @@ export const TradeHistorySchema = t.Object({
   items_requested: t.Optional(t.String(),),
   trade_type: t.Optional(t.String(),),
 },);
+
+// ── request_results ────────────────────────────────────────────
+export const RequestResultsSchema = t.Object({
+  method: t.String(),
+  route_pattern: t.String(),
+  status: t.String(),
+  started_at: t.String(),
+  user_id: t.Optional(t.String(),),
+  progress: t.Optional(t.String(),),
+  response_status: t.Optional(t.Number(),),
+  response_headers: t.Optional(t.String(),),
+  response_body: t.Optional(t.String(),),
+  error: t.Optional(t.String(),),
+  completed_at: t.Optional(t.String(),),
+  offloaded_at: t.Optional(t.String(),),
+  offload_path: t.Optional(t.String(),),
+},);

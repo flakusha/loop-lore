@@ -92,11 +92,15 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
 
     this.isGenerating = true;
     try {
-      const res = await apiFetch(`/api/chats/${this.activeChat}/messages`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", },
-        body: jsonBody(body,),
-      },);
+      const res = await apiFetch(
+        `/api/chats/${this.activeChat}/messages`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody(body,),
+          idempotencyKey: true,
+        } as Parameters<typeof apiFetch>[1],
+      );
       if (res.ok) {
         this.pendingAssets = [];
         const data = await res.json();
