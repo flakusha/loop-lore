@@ -14,10 +14,12 @@ import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 
+/** Logger instance for this module. */
 function log() {
   return getLogger().child({ module: "system-config", },);
 }
 
+/** A single system_config row. */
 export interface ConfigEntry {
   key: string;
   value: string;
@@ -26,19 +28,26 @@ export interface ConfigEntry {
   updated_at: string;
 }
 
+/** Return all system config entries ordered by key. */
 export async function getAllConfig(db: Kysely<DB>,): Promise<ConfigEntry[]> {
   return db.selectFrom("system_config",).selectAll().orderBy("key",).execute();
 }
 
+/** Return a single config entry by key, or undefined if missing. */
 export async function getConfig(db: Kysely<DB>, key: string,): Promise<ConfigEntry | undefined> {
   return db.selectFrom("system_config",).selectAll().where("key", "=", key,).executeTakeFirst();
 }
 
+/** Return the raw string value for a key, or undefined if missing. */
 export async function getConfigValue(db: Kysely<DB>, key: string,): Promise<string | undefined> {
   const row = await db.selectFrom("system_config",).select("value",).where("key", "=", key,).executeTakeFirst();
   return row?.value;
 }
 
+/**
+ * Insert or update a config entry.
+ * Updates updated_at on conflict.
+ */
 export async function setConfig(
   db: Kysely<DB>,
   key: string,
@@ -56,10 +65,12 @@ export async function setConfig(
     .execute();
 }
 
+/** Delete a config entry by key. */
 export async function deleteConfig(db: Kysely<DB>, key: string,): Promise<void> {
   await db.deleteFrom("system_config",).where("key", "=", key,).execute();
 }
 
+/** Seed default config values from the app config. Skips existing keys. */
 export async function seedDefaults(db: Kysely<DB>, config: Config,): Promise<void> {
   const defaults: { key: string; value: string; description: string }[] = [
     {
