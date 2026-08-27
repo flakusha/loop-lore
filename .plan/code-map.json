@@ -1592,6 +1592,14 @@
   "src/async/apply.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-store-complete-drops-response-body-larger-than-max.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
     }
   ],
@@ -1605,6 +1613,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-store-complete-drops-response-body-larger-than-max.md"
     },
     {
       "kind": "ticket",
@@ -1631,6 +1643,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md"
     },
     {
       "kind": "ticket",
@@ -3576,6 +3592,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-random-events-generator-is-dead-incomplete-phantom-param.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-random-events-no-character-binding.md"
     },
     {
@@ -3819,6 +3839,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
+    }
+  ],
+  "src/chat/service/seen.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-chat-service-seen-ts-is-dead-code-and-its-upsert-is-brok.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-message-seen-re-mark-clobbers-first-seen-timestamp.md"
     }
   ],
   "src/chat/service/templates.ts": [
@@ -6366,6 +6396,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-message-seen-post-accepts-arbitrary-state-string-enum-ne.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
     },
     {
@@ -8876,6 +8910,10 @@
     }
   ],
   "src/frontend/alpine/chat-seen.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-chat-seen-stopseenpolling-is-never-called-5s-polling-int.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po.md"
@@ -11520,6 +11558,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
     },
     {
@@ -11656,6 +11698,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-hallucination-guard-runs-outside-try-catch-after-message.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-random-events-generator-is-dead-incomplete-phantom-param.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
     },
     {
@@ -11685,7 +11735,23 @@
       "source": ".plan/tickets/BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va.md"
     }
   ],
+  "src/generation/auto-gen/resolve-actor-from-events.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md"
+    }
+  ],
+  "src/generation/auto-gen/resolve-actor.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-resolveactor-cascade-branch-does-not-verify-chat-partici.md"
+    }
+  ],
   "src/generation/auto-gen/store-message.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-assistant-message-swipe-index-read-modify-write-is-not-a.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
@@ -11730,6 +11796,10 @@
     }
   ],
   "src/generation/auto-gen/stream-render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
@@ -13676,6 +13746,18 @@
   "src/middleware/csrf.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-csrf-verification-accepts-cookie-only-token-defeating-do.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-logout-route-exempt-from-csrf-verification-logoff-csrf.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
     }
   ],
@@ -13750,6 +13832,10 @@
   "src/middleware/idempotency.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-idempotency-table-backend-accepted-but-never-implemented.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.md"
     },
     {
@@ -13805,6 +13891,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md"
     },
     {
       "kind": "ticket",
@@ -15360,6 +15454,10 @@
   "src/regex/html-sanitize.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
     }
   ],
@@ -15864,6 +15962,10 @@
     }
   ],
   "src/routes/auth/shared.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-in-memory-limiter-not-shared-across-instances-no-shutdown-cl.md"
@@ -17070,6 +17172,26 @@
   "src/routes/message-seen.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-chat-service-seen-ts-is-dead-code-and-its-upsert-is-brok.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-message-seen-delete-handler-trusts-client-actorid-idor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-message-seen-post-accepts-arbitrary-state-string-enum-ne.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-message-seen-post-races-on-deterministic-primary-key-500.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-message-seen-re-mark-clobbers-first-seen-timestamp.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-routes-message-seen-post-delete-trusts-client-actorid-idor-a.md"
     },
     {
@@ -17208,6 +17330,14 @@
     }
   ],
   "src/routes/messages/create.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-message-create-accepts-parentid-from-any-chat-cross-chat.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-idempotency-not-enforced.md"
@@ -17351,6 +17481,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-rule-based-assistant-reply-retries-on-any-insert-error-a.md"
     },
     {
       "kind": "ticket",
@@ -17798,6 +17936,10 @@
     }
   ],
   "src/routes/requests/status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-request-status-endpoint-fail-open-when-row-userid-is-nul.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
