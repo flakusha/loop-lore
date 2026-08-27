@@ -11288,6 +11288,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
     },
     {
@@ -11819,6 +11823,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al.md"
     },
     {
       "kind": "ticket",
@@ -13487,6 +13495,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-nsfw-weakest-link-violated-enforcement-hardcodes-.md"
     }
   ],
   "src/middleware/nsfw-gate/consent.test.ts": [
@@ -13510,6 +13522,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-consent-auto-granted-in-memory-for-any-logged-in-user-n.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-consent-schema.md"
     }
   ],
@@ -13520,6 +13536,10 @@
     }
   ],
   "src/middleware/nsfw-gate/logging.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-lognsfwevent-has-zero-callers-no-nsfw-gate-decision-ever-aud.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-gate-log-plaintext-pii.md"
@@ -13909,6 +13929,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-modservice-notify-user-leaks-admin-reason.md"
+    }
+  ],
+  "src/nsfw/moderation-service/overrides.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-nsfw-gate-fail-open-db-error-and-missing-prefs-default-to-al.md"
     }
   ],
   "src/nsfw/moderation-service/preferences.test.ts": [
