@@ -30,7 +30,7 @@ Part of the **Communications Integrations** epic. See parent epic for full scope
 
 ## Design
 
-`XmppAdapter` implements `ProtocolAdapter` and `OmemoEncryption` implements `EncryptionProvider`, both defined in **epic-integrations-core.md**. Key material comes from `epic-encryption-foundation.md`.
+`XmppAdapter` implements `ProtocolAdapter` and `OmemoEncryption` implements `EncryptionProvider`, both defined in **epic-integrations-core.md**. Key material comes from `epic-crypto.md`.
 
 ```typescript
 // src/integrations/xmpp/adapter.ts
@@ -63,7 +63,7 @@ export class OmemoEncryption implements EncryptionProvider { ... }
 
 - Depends on: **Communications Integrations** hub (epic-communications-integrations.md)
 - Depends on: **Integrations Core** (epic-integrations-core.md) — implements `ProtocolAdapter`; uses config UI skeleton, health monitoring, rate limiting
-- Depends on: `epic-encryption-foundation.md` (encryption primitives behind OMEMO device keys)
+- Depends on: `epic-crypto.md` (encryption primitives behind OMEMO device keys)
 - Siblings: independent of Matrix/IM/Email sub-epics; can reference epic-matrix-integration.md for feature-parity patterns (presence, receipts)
 
 ## Security Considerations

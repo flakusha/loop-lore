@@ -53,11 +53,11 @@ The original epic mixed shared infrastructure with four protocol phases. Splitti
 
 ## Shared Architecture
 
-The protocol abstraction layer, message bridge, and encryption provider interface live in [epic-integrations-core.md](epic-integrations-core.md). Each protocol sub-epic owns its concrete adapter (`MatrixAdapter`, `XmppAdapter`, `ImAdapter`, `EmailAdapter`) and encryption provider implementation (`MatrixEncryption`, `OmemoEncryption`, `PgpEncryption`). Key material comes from `epic-encryption-foundation.md`.
+The protocol abstraction layer, message bridge, and encryption provider interface live in [epic-integrations-core.md](epic-integrations-core.md). Each protocol sub-epic owns its concrete adapter (`MatrixAdapter`, `XmppAdapter`, `ImAdapter`, `EmailAdapter`) and encryption provider implementation (`MatrixEncryption`, `OmemoEncryption`, `PgpEncryption`). Key material comes from `epic-crypto.md`.
 
 ## Dependencies
 
-- Depends on: `epic-encryption-foundation.md` (encryption primitives — required by all sub-epics)
+- Depends on: `epic-crypto.md` (encryption primitives — required by all sub-epics)
 - Depends on: `epic-api-library-distribution.md` (API for external tools)
 - Enables: Multi-platform chat, notifications, federation
 
@@ -92,6 +92,6 @@ Shared cross-protocol security posture (per-protocol details live in each sub-ep
 
 ## Related Epics
 
-- **epic-encryption-foundation.md** — Encryption primitives used by all protocols
+- **epic-crypto.md** — Encryption primitives used by all protocols
 - **epic-api-library-distribution.md** — API enables external tool integration
 - **epic-headless-alternative-frontends.md** — IM clients as alternative frontends
