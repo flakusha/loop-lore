@@ -128,7 +128,7 @@ User Query → Embed → Search → Retrieve → Assemble Context → Inject →
 > `epic-rag-ingestion.md` (Phase 1), `epic-rag-vector-store.md` (Phase 2), `epic-rag-retrieval.md` (Phase 3),
 > `epic-rag-context-sources.md` (Phase 3.5), and `epic-rag-enterprise.md` (Phase 4).
 
-- `epic-encryption-foundation.md` — Document encryption
+- `epic-crypto.md` — Document encryption
 - `epic-api-library-distribution.md` — API for ingestion
 - `epic-communications-integrations.md` — Ingestion via email/IM
 - `epic-memory-foundation.md` — Memory integration

@@ -94,6 +94,6 @@ src/integrations/
 
 ## Related Epics
 
-- `epic-encryption-foundation.md` — Encryption primitives
+- `epic-crypto.md` — Encryption primitives
 - `epic-api-library-distribution.md` — API for external tools
 - `epic-headless-alternative-frontends.md` — IM as alternative frontends
