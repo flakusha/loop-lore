@@ -20,17 +20,16 @@ import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { authenticate, } from "./middleware/auth";
 import {
-  cookieForDecision,
+  applyCsrfPlugin,
   CSRF_EXEMPT_ROUTES,
   CSRF_HEADER,
-  decideCsrf,
 } from "./middleware/csrf";
 import type { CsrfMiddlewareOptions, } from "./middleware/csrf";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { idempotent, } from "./middleware/idempotency";
 import type { IdempotencyCtx, } from "./middleware/idempotency";
 import { requestIdMiddleware, } from "./middleware/request-id";
-import { safeJsonStringify, } from "./utils/safe-json";
+
 
 import { recordLifecycle, } from "./middleware/lifecycle";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
@@ -115,51 +114,10 @@ export function createApp(deps: AppDeps,): Elysia {
     secret: effectiveCsrfSecret,
     enabled: csrfEnabled,
   };
-  // Elysia infers context types from prior `derive(...)` calls; we match the
-  // existing onBeforeHandle/onAfterHandle convention used by the idempotency
-  // middleware — explicit `any` with structural usage. Type-safe at runtime;
-  // the helpers above consume only the well-known fields.
-  app.onBeforeHandle((ctx: any,) => {
-    if (!csrfEnabled) { return undefined; }
-    const decision = decideCsrf(csrfOpts, {
-      method: ctx.request.method,
-      routePattern: ctx.route ?? null,
-      headers: ctx.request.headers,
-      sessionId: ctx.sessionId ?? null,
-      requestId: ctx.requestId ?? "anon",
-    },);
-    if (!decision.ok) {
-      ctx.set.status = 403;
-      const body = safeJsonStringify({
-        error: "csrf_verification_failed",
-        message: "CSRF token missing or invalid.",
-      },);
-      const payload = body.ok ? body.value : '{"error":"csrf_verification_failed"}';
-      return new Response(payload, {
-        status: 403,
-        headers: { "content-type": "application/json", },
-      },);
-    }
-    return undefined;
-  },);
-  app.onAfterHandle((ctx: any,) => {
-    if (!csrfEnabled) { return; }
-    const decision = decideCsrf(csrfOpts, {
-      method: ctx.request.method,
-      routePattern: ctx.route ?? null,
-      headers: ctx.request.headers,
-      sessionId: ctx.sessionId ?? null,
-      requestId: ctx.requestId ?? "anon",
-    },);
-    const cookieHeader = cookieForDecision(decision, csrfOpts,);
-    if (cookieHeader === null) { return; }
-    // Elysia mutation point — `ctx.set.headers` is a plain object (not a
-    // Headers instance), so we assign directly. This middleware is the sole
-    // writer of `csrf_token`, so single-value assignment is safe; if any
-    // future middleware also writes Set-Cookie on the same response, switch
-    // to array form (ctx.set.headers["set-cookie"] = [cookieHeader, other]).
-    ctx.set.headers["set-cookie"] = cookieHeader;
-  },);
+  // The CSRF wiring (onBeforeHandle + onAfterHandle) lives in `csrfPlugin`
+  // in `src/middleware/csrf.ts`. Production and `csrf.integration.test.ts`
+  // apply the same factory — there is no second copy of the wiring to drift.
+  applyCsrfPlugin(app as unknown as Parameters<typeof applyCsrfPlugin>[0], csrfOpts,);
   // Reference CSRF_HEADER + CSRF_EXEMPT_ROUTES so tree-shakers keep the
   // route-table constant when consumers spread the module. The middleware
   // looks the routes up internally via the Set; these symbols are the
