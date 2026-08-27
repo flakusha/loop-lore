@@ -21,3 +21,8 @@ Acceptance: cross-chat vn-choice read/select denied; owner/participant/admin suc
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+## Review Update (2026-08-27)
+
+The merged fix (commit `61ef179c`, integrated via `3ab26ccd`) **does not compile** and provides no protection as shipped. `src/routes/chats/vn-choices.ts:45,59,81,95` references a deleted `chatId` (TS2304) and reads the wrong `checkChatAccess` result shape (`access.message`/`access.code` vs `{ ok:false, error: ServiceError }`, TS2339). Tracked in `BUG-vn-choices-idor-guard-non-compiling.md`. Status stays 🔧 In Progress.
