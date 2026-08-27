@@ -51,8 +51,8 @@ const STATUS_TO_CODE: Record<number, ErrorCode> = {
   [HttpStatus.NotFound]: ErrorCode.NotFound,
   [HttpStatus.UnprocessableEntity]: ErrorCode.ValidationError,
   [HttpStatus.TooManyRequests]: ErrorCode.TooManyRequests,
-  [HttpStatus.InternalServerError]: ErrorCode.ServerError,
   [HttpStatus.NotImplemented]: ErrorCode.NotImplemented,
+  [HttpStatus.ServiceUnavailable]: ErrorCode.ServiceUnavailable,
 };
 
 export function jsonError(message: string, status?: HttpStatusCode, code?: ErrorCode,): Response;
