@@ -198,7 +198,7 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
     expect(d.ok,).toBe(true,);
   });
 
-  test("POST with header but no cookie passes (single-submit variant)", () => {
+  test("POST with header but no cookie FAILS (double-submit requires both halves)", () => {
     const sessionId = "user-2";
     const token = mintCsrfToken(SECRET, sessionId, {},);
     const headers = makeHeaders({ [CSRF_HEADER]: token, },);
@@ -209,7 +209,21 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
       sessionId,
       requestId: "req-2",
     },);
-    expect(d.ok,).toBe(true,);
+    expect(d.ok,).toBe(false,);
+  });
+
+  test("POST with cookie but no header FAILS (double-submit requires both halves)", () => {
+    const sessionId = "user-2b";
+    const token = mintCsrfToken(SECRET, sessionId, {},);
+    const headers = makeHeaders({ cookie: `${CSRF_COOKIE}=${token}`, },);
+    const d = decideCsrf(opts, {
+      method: "POST",
+      routePattern: "/api/chats",
+      headers,
+      sessionId,
+      requestId: "req-2b",
+    },);
+    expect(d.ok,).toBe(false,);
   });
 
   test("POST with mismatched header and cookie fails", () => {
@@ -267,9 +281,12 @@ describe("decideCsrf — unsafe methods (verification path)", () => {
     expect(d.ok,).toBe(false,);
   });
 
-  test("unauthenticated POST (no sessionId yet) binds to anonymous::<requestId>", () => {
+  test("unauthenticated POST (no sessionId yet) passes with both header + cookie bound to anonymous::<requestId>", () => {
     const token = mintCsrfToken(SECRET, "anonymous::req-7", {},);
-    const headers = makeHeaders({ [CSRF_HEADER]: token, },);
+    const headers = makeHeaders({
+      [CSRF_HEADER]: token,
+      cookie: `${CSRF_COOKIE}=${token}`,
+    },);
     const d = decideCsrf(opts, {
       method: "POST",
       routePattern: "/api/foo",
@@ -336,7 +353,11 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
     expect(d.ok,).toBe(true,);
   });
 
-  test("POST /api/auth/logout is exempt (JWT carries the proof, CSRF cookie may be missing on logout)", () => {
+  test("POST /api/auth/logout REQUIRES CSRF (not exempt anymore)", () => {
+    // logout used to be CSRF-exempt under the rationale that the JWT cookie
+    // carries its own proof. That rationale defeats CSRF: an attacker page
+    // can force a logout cross-origin because the cookie is auto-attached.
+    // Logout is now treated like any other unsafe method.
     const headers = makeHeaders({},);
     const d = decideCsrf(opts, {
       method: "POST",
@@ -344,6 +365,23 @@ describe("decideCsrf — exempt routes (auth POSTs)", () => {
       headers,
       sessionId: "user-logout",
       requestId: "req-logout-1",
+    },);
+    expect(d.ok,).toBe(false,);
+  });
+
+  test("POST /api/auth/logout passes with both header + cookie", () => {
+    const sessionId = "user-logout-ok";
+    const token = mintCsrfToken(SECRET, sessionId, {},);
+    const headers = makeHeaders({
+      [CSRF_HEADER]: token,
+      cookie: `${CSRF_COOKIE}=${token}`,
+    },);
+    const d = decideCsrf(opts, {
+      method: "POST",
+      routePattern: "/api/auth/logout",
+      headers,
+      sessionId,
+      requestId: "req-logout-ok",
     },);
     expect(d.ok,).toBe(true,);
   });
@@ -365,10 +403,15 @@ describe("decideCsrf — method matrix", () => {
       expect(d.ok,).toBe(false,);
     });
 
-    test(`${method} passes with valid token`, () => {
+    test(`${method} passes with valid token (both header AND cookie)`, () => {
       const sessionId = "user-m-pass";
       const token = mintCsrfToken(SECRET, sessionId, {},);
-      const headers = makeHeaders({ [CSRF_HEADER]: token, },);
+      // Double-submit cookie: both the header AND the cookie must be
+      // present and equal. Sending only one half now fails.
+      const headers = makeHeaders({
+        [CSRF_HEADER]: token,
+        cookie: `${CSRF_COOKIE}=${token}`,
+      },);
       const d = decideCsrf(opts, {
         method,
         routePattern: "/api/resource/1",
@@ -377,6 +420,20 @@ describe("decideCsrf — method matrix", () => {
         requestId: "req-m-pass",
       },);
       expect(d.ok,).toBe(true,);
+    });
+
+    test(`${method} fails when only header is sent (cookie missing)`, () => {
+      const sessionId = "user-m-half";
+      const token = mintCsrfToken(SECRET, sessionId, {},);
+      const headers = makeHeaders({ [CSRF_HEADER]: token, },);
+      const d = decideCsrf(opts, {
+        method,
+        routePattern: "/api/resource/1",
+        headers,
+        sessionId,
+        requestId: "req-m-half",
+      },);
+      expect(d.ok,).toBe(false,);
     });
   }
 });
@@ -405,6 +462,26 @@ describe("cookieForDecision", () => {
     const d = { ok: true, cookieToIssue: "tok", };
     expect(cookieForDecision(d, { ...baseOpts, cookieSecureInProd: true, },),).toContain("Secure",);
     expect(cookieForDecision(d, { ...baseOpts, cookieSecureInProd: false, },),).not.toContain("Secure",);
+  });
+
+  test("derives prodDefault from NODE_ENV when cookieSecureInProd is unset", () => {
+    // Save and restore NODE_ENV to keep the test hermetic.
+    const saved = process.env["NODE_ENV"];
+    const d = { ok: true, cookieToIssue: "tok", };
+    try {
+      process.env["NODE_ENV"] = "production";
+      expect(cookieForDecision(d, { ...baseOpts, },),).toContain("Secure",);
+      process.env["NODE_ENV"] = "development";
+      expect(cookieForDecision(d, { ...baseOpts, },),).not.toContain("Secure",);
+      process.env["NODE_ENV"] = "test";
+      expect(cookieForDecision(d, { ...baseOpts, },),).not.toContain("Secure",);
+    } finally {
+      if (saved === undefined) {
+        delete process.env["NODE_ENV"];
+      } else {
+        process.env["NODE_ENV"] = saved;
+      }
+    }
   });
 });
 
