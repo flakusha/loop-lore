@@ -83,6 +83,8 @@ function buildApp(opts: SetupOpts,) {
     .post("/api/things", () => new Response("created", { status: 201, },),)
     // Register an exempt route when requested.
     .post("/api/auth/login", () => new Response("logged-in", { status: 200, },),)
+    // Logout is no longer CSRF-exempt; needs both halves like any unsafe method.
+    .post("/api/auth/logout", () => new Response("logged-out", { status: 200, },),)
     .get("/api/whoami", (ctx: any,) =>
       new Response(JSON.stringify({ userId: ctx.sessionId, },), {
         headers: { "content-type": "application/json", },
@@ -271,5 +273,39 @@ describe("csrf integration — disabled mode", () => {
     // supplied, OR 201 if Bun's verify succeeded against the default secret.
     // Either status is non-fatal — the point of this test is to ensure no crash.
     expect(res.status === 403 || res.status === 201,).toBe(true,);
+  });
+});
+
+describe("csrf integration — logout (no longer exempt)", () => {
+  test("POST /api/auth/logout without a CSRF token is rejected with 403", async () => {
+    // Previously logout bypassed CSRF under the rationale that the JWT cookie
+    // carries its own proof. That allowed cross-origin forced-logout. Now
+    // logout must satisfy the same double-submit gate as any unsafe method.
+    const app = buildApp({ resolveSession: () => SESSION_A, },);
+    const res = await dispatch(
+      app,
+      new Request("http://localhost/api/auth/logout", {
+        method: "POST",
+        body: "{}",
+      },),
+    );
+    expect(res.status,).toBe(403,);
+  });
+
+  test("POST /api/auth/logout passes with both header + cookie matching the session", async () => {
+    const app = buildApp({ resolveSession: () => SESSION_A, },);
+    const token = mintCsrfToken(SECRET, SESSION_A, {},);
+    const res = await dispatch(
+      app,
+      new Request("http://localhost/api/auth/logout", {
+        method: "POST",
+        body: "{}",
+        headers: {
+          cookie: `${CSRF_COOKIE}=${token}`,
+          [CSRF_HEADER]: token,
+        },
+      },),
+    );
+    expect(res.status,).toBe(200,);
   });
 });
