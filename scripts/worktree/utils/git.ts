@@ -64,6 +64,26 @@ export function findRepoRoot(startDir: string = process.cwd(),): string {
 }
 
 /**
+ * Resolve the top-level of the checkout `startDir` belongs to — the main
+ * repo root when run there, or the linked worktree root when run inside
+ * `tree/<branch>`. Use this for plan-file reads/writes so they land in the
+ * tree the user is actually working in; `findRepoRoot()` intentionally
+ * resolves to the *main* root (shared issue store, credentials) even from
+ * inside a linked worktree.
+ *
+ * @param startDir - directory to resolve from; defaults to `process.cwd()`
+ * @returns absolute top-level path of the current worktree checkout
+ * @throws when `startDir` is not inside a git repository
+ */
+export function getWorktreeRoot(startDir: string = process.cwd(),): string {
+  const toplevel = gitSyncQuiet(startDir, "rev-parse", "--show-toplevel",);
+  if (!toplevel) {
+    throw new Error(`getWorktreeRoot: not a git repository (cwd: ${startDir})`,);
+  }
+  return toplevel;
+}
+
+/**
  * True when `cwd` lies inside a linked worktree (e.g. tree/<branch>) rather
  * than the main repo root. Detection is git-aware (uses rev-parse) so it works
  * regardless of how the CLI was launched or which checkout's copy is running:
