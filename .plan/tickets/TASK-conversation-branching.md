@@ -76,3 +76,12 @@ interface MessageBranch {
 ## Risk
 
 Med — schema change, UI complexity for tree visualization.
+
+## Second-Sweep Acceptance Criteria (2026-08-31 — Neta Studio, candidate #34, gap G47)
+
+Mechanics worth adopting from Neta's world/session forking:
+
+- [ ] Fork available at **any turn**, including mid-generation while a turn streams
+- [ ] Fork carries the **full track history** (event ledger), not just copied message list — lineage stays auditable
+- [ ] Layout/attachments (scene state, pinned assets) travel with forks and checkpoints
+- [ ] Cross-session import: bring a work from one world into another session (pairs with TASK-portable-story-bundle-export-import.md)
