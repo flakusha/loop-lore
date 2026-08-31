@@ -276,3 +276,34 @@ Integration points for non-RPG domains once co-located in this file now live in 
 | Emotional pattern tracking | Kindroid | Medium | G31 | TASK-memory-happiness-patterns.md |
 | Inner monologue (dual-mind) | Convai | P6+ | G41 | TASK-inner-monologue.md |
 | Tool-calling via MCP connectors | Convai | P6+ | G42 | TASK-tool-calling-agents.md |
+
+## Research-Driven Integration Gaps (2026-08-31 — Second Emergent Sweep)
+
+> Gaps identified from the AI-native VN / world-generation platform sweep
+> (DreamRunner.ai, Neta Studio, Story Studio AI). Full extraction:
+> `docs/ideas/emergent-platform-landscape-2026b.md`. Candidates #27–#36 in
+> `epic-platform-research.md`.
+
+| #  | System A | System B | Current State | Recommended Action | Severity |
+|---|---|---|---|---|---|
+| G43 | **Character-POV Memory** | **Memory Summaries** × **Characters** | Story summaries are single narrator-level; no per-character memory store. | Per-character bullet memories fed back into summary prompts with description/personality; mood/relationship bias what each character encodes. Cross-ref needed. | 🟡 Medium |
+| G44 | **Scene Illustration Compiler** | **Assets** × **Story/RPG State** | Generation pipelines accept prompts; nothing compiles structured state (appearance/outfit/location/POV) into an image request. | Depict-style compiler over `characters` + world/session state → single generation request; reuse emotion-avatar asset links. | 🟡 Medium |
+| G45 | **Model-Agnostic Asset Representation (WEP pattern)** | **Providers** × **Assets** | Assets store provider-produced outputs; no world-level expression that survives provider/model swaps; no portable story-bundle export (`.drsf` analog). | Define model-independent asset/story expression + re-anchor workflow; bundle export covering story + instructions + voices. | 🔴 High (future, P6+) |
+| G46 | **Interrupt Semantics** | **Transport/Streaming** × **Queued Side-Effects** | Stream abort exists; truncate-to-last-observed, queued TTS/image job cancellation, and never-bill-undelivered are unspecified. | Stop → story truncates at last seen line, pending jobs cancelled end-to-end, billing hooks respect delivery. | 🟡 Medium |
+| G47 | **Fork-at-any-Turn + Lineage** | **Conversation Branching** | `TASK-conversation-branching.md` (Not Started) predates Neta mechanics: session fork at any turn, world fork carries full track history, canvas layouts travel with forks/checkpoints. | Adopt fork-at-turn + carried-lineage acceptance criteria into existing ticket. | 🟡 Medium |
+
+### Research Cross-Reference Map (Second Emergent Sweep)
+
+| Feature | Source Platform(s) | Priority | Maps to Gap(s) | Related Tickets |
+| --- | --- | --- | --- | --- |
+| Character-perspective memory | DreamRunner | Medium (candidate #27) | G43 | — (fold into memory epic) |
+| Depict state→image compiler | DreamRunner | Med — good pull (#28) | G44 | — |
+| Voice-design-by-description | DreamRunner | Medium (#29) | G34 (existing) | TASK-character-voice-profile.md |
+| Stop-and-respond interrupt | DreamRunner | Low–Med (#30) | G46 | — |
+| Two-layer custom instructions | DreamRunner | Low (#31) | — (assistant-local) | — |
+| Portable story-bundle export | DreamRunner `.drsf` | Medium (#32) | G45 | — |
+| World Expression Protocol | Neta | P6+ (#33) | G45 | — |
+| Fork-at-turn + track history | Neta | Medium (#34) | G47 | TASK-conversation-branching.md |
+| Cost-visible generation | Neta + DreamRunner | Low–Med (#35) | — (admin-local) | — |
+| Text→illustrated-VN importer | Story Studio AI | Medium (#36) | — (content-local) | — |
+
