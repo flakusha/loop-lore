@@ -23,11 +23,15 @@ import {
   requireUserId,
 } from "./http-utils";
 
+/** */
 export interface MusicLinkHandlerOpts {
   database: Kysely<DB>;
   nsfwFilterEnabled?: boolean;
 }
 
+/**
+ * @param opts
+ */
 export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
   const { database: db, nsfwFilterEnabled = false, } = opts;
 
@@ -100,9 +104,8 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
           if (!access.ok) { return notFoundResponse("Chat not found",); }
 
           const rows = await service.list(chatId,);
-          /* eslint-disable no-restricted-syntax */
+
           return jsonResponse({ data: rows.map(toResponse,), },);
-          /* eslint-enable no-restricted-syntax */
         },
         {
           params: ChatIdParams,
@@ -148,6 +151,25 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
 
 // ── Response mapper ──────────────────────────────────────────
 
+/**
+ * @param row
+ * @param row.id
+ * @param row.chat_id
+ * @param row.service
+ * @param row.url
+ * @param row.embed_html
+ * @param row.title
+ * @param row.artist
+ * @param row.thumbnail_url
+ * @param row.duration_secs
+ * @param row.service_track_id
+ * @param row.service_url
+ * @param row.is_playlist
+ * @param row.track_count
+ * @param row.explicit
+ * @param row.nsfw_hidden
+ * @param row.created_at
+ */
 function toResponse(row: {
   id: string;
   chat_id: string;

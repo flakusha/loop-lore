@@ -17,7 +17,6 @@ import type { BufferResult, CompressionAlgorithm, } from "./types";
  * high-entropy ciphertext) can compress poorly and exceed
  * `maxSize / maxRatio` bytes while still being safe — pre-rejecting them
  * causes silent garbage reads downstream (see BUG-safedecompress-pre-check).
- *
  * @param data - Compressed data as Buffer
  * @param algorithm - Compression algorithm
  * @param maxSize - Maximum decompressed size in bytes (default: 10 MB)
@@ -90,7 +89,6 @@ export function safeDecompress(
 
 /**
  * Safely compress data with size limits.
- *
  * @param data - Data to compress as Buffer
  * @param algorithm - Compression algorithm
  * @param maxSize - Maximum input size in bytes (default: 10 MB)

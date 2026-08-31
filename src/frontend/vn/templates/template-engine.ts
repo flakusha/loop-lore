@@ -12,6 +12,7 @@
 
 import { jsonParseOr, jsonStringifyOr, safeJsonStringify, } from "../../../utils";
 
+/** */
 export interface VnTemplate {
   id: string;
   name: string;
@@ -27,6 +28,7 @@ export interface VnTemplate {
   modifiedAt: string;
 }
 
+/** */
 export interface VnTemplateVariable {
   name: string;
   type: "string" | "number" | "boolean" | "enum" | "asset";
@@ -36,6 +38,7 @@ export interface VnTemplateVariable {
   enum?: string[];
 }
 
+/** */
 export interface VnTemplateBody {
   layout: "overlay" | "below" | "split" | "inherit";
   layoutConfig?: Record<string, unknown>;
@@ -59,6 +62,7 @@ export interface VnTemplateBody {
   content?: string;
 }
 
+/** */
 export interface VnCompositeStep {
   templateId: string;
   variables?: Record<string, unknown>;
@@ -68,6 +72,10 @@ export interface VnCompositeStep {
 
 // ── Variable Resolver ──────────────────────────────────────
 
+/**
+ * @param template
+ * @param context
+ */
 export function resolveVariables(
   template: VnTemplate,
   context: Record<string, unknown>,
@@ -89,6 +97,10 @@ export function resolveVariables(
 
 // ── Template Substitution ──────────────────────────────────
 
+/**
+ * @param text
+ * @param variables
+ */
 export function substituteTemplate(
   text: string,
   variables: Record<string, unknown>,
@@ -108,6 +120,10 @@ export function substituteTemplate(
 
 // ── Template Inheritance ───────────────────────────────────
 
+/**
+ * @param template
+ * @param templates
+ */
 export function resolveTemplate(
   template: VnTemplate,
   templates: Map<string, VnTemplate>,
@@ -142,6 +158,9 @@ export function resolveTemplate(
 
 const STORAGE_PREFIX = "vn-templates-";
 
+/**
+ * @param worldId
+ */
 export function getTemplatesForWorld(worldId: string,): VnTemplate[] {
   const key = `${STORAGE_PREFIX}${worldId}`;
   const data = localStorage.getItem(key,);
@@ -150,6 +169,9 @@ export function getTemplatesForWorld(worldId: string,): VnTemplate[] {
   return jsonParseOr(data, [],);
 }
 
+/**
+ * @param template
+ */
 export function saveTemplate(template: VnTemplate,): void {
   const templates = getTemplatesForWorld(template.worldId,);
   const existing = templates.findIndex((t,) => t.id === template.id);
@@ -170,6 +192,10 @@ export function saveTemplate(template: VnTemplate,): void {
   localStorage.setItem(key, jsonStringifyOr(templates,),);
 }
 
+/**
+ * @param worldId
+ * @param templateId
+ */
 export function deleteTemplate(worldId: string, templateId: string,): void {
   const templates = getTemplatesForWorld(worldId,);
   const filtered: VnTemplate[] = [];
@@ -180,6 +206,10 @@ export function deleteTemplate(worldId: string, templateId: string,): void {
   localStorage.setItem(key, jsonStringifyOr(filtered,),);
 }
 
+/**
+ * @param worldId
+ * @param templateId
+ */
 export function getTemplate(worldId: string, templateId: string,): VnTemplate | null {
   const templates = getTemplatesForWorld(worldId,);
   return templates.find((t,) => t.id === templateId) ?? null;
@@ -187,11 +217,17 @@ export function getTemplate(worldId: string, templateId: string,): VnTemplate | 
 
 // ── Template Export/Import ──────────────────────────────────
 
+/**
+ * @param template
+ */
 export function exportTemplate(template: VnTemplate,): string {
   const r = safeJsonStringify(template, 2,);
   return r.ok ? r.value : "{}";
 }
 
+/**
+ * @param json
+ */
 export function importTemplate(json: string,): VnTemplate | null {
   const template = jsonParseOr<VnTemplate | null>(json, null,);
   if (!template?.id || !template.name || !template.worldId) {

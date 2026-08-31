@@ -15,6 +15,7 @@ import { importRoutes, } from "./import";
 /**
  * Build the app with solo-mode auth (required=false) so no session/JWT is
  * needed — authenticate() falls back to the auto-created demo user.
+ * @param db
  */
 function createApp(db: Kysely<DB>,): Elysia {
   const auth: AuthConfig = {
@@ -48,6 +49,9 @@ const ccv2Card = JSON.stringify({
   },
 },);
 
+/**
+ * @param file
+ */
 function multipartRequest(file?: File,): Request {
   const form = new FormData();
   if (file) {

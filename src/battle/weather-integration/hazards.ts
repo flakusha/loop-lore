@@ -7,7 +7,11 @@ import type {
 } from "../integration-schemas";
 import type { EnvironmentalHazard, } from "./types";
 
-/** Generate random environmental hazard */
+/**
+ * Generate random environmental hazard
+ * @param terrain
+ * @param weather
+ */
 export function generateEnvironmentalHazard(
   terrain: TerrainType,
   weather: CombatWeather,

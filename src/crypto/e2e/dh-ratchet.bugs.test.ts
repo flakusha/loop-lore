@@ -17,6 +17,10 @@ import {
   initDhRatchet,
 } from "./dh-ratchet.ts";
 
+/**
+ * @param s
+ * @param alicePub
+ */
 function bobKnowsAlice(s: DhRatchetState, alicePub: JsonWebKey,): DhRatchetState {
   return { ...s, theirCurrentPubJwk: alicePub, };
 }

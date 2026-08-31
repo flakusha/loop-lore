@@ -32,6 +32,7 @@ import type { TestingConfig, } from "./testing";
 import type { TransportConfig, } from "./transport";
 import type { TuiConfig, } from "./tui";
 
+/** */
 export interface Config {
   server: ServerConfig;
   db: DbConfig;

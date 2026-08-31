@@ -18,6 +18,9 @@
  */
 import { type Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
     .alterTable("moderation_actions",)
@@ -45,6 +48,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropIndex("mod_actions_deleted_at_idx",).execute();
   await db.schema.dropIndex("mod_actions_superseded_idx",).execute();

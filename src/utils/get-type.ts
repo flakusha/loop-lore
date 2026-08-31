@@ -17,6 +17,7 @@
  * getType(function(){});// "function"
  * getType('hello');     // "string"
  * getType(123);         // "number"
+ * @param obj
  */
 export function getType(obj: unknown,) {
   const type = typeof obj;

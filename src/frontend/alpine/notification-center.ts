@@ -83,7 +83,10 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       return count;
     },
 
-    /** Mark-read on open, then follow the notification link when present. */
+    /**
+     * Mark-read on open, then follow the notification link when present.
+     * @param item
+     */
     async onOpen(item: NotificationCenterItem,) {
       if (!item.read) {
         item.read = 1;
@@ -100,7 +103,10 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       if (item.link) { globalThis.location.assign(item.link,); }
     },
 
-    /** Mark a single notification read without navigating. */
+    /**
+     * Mark a single notification read without navigating.
+     * @param id
+     */
     async markRead(id: string,) {
       try {
         await apiFetch(`/api/notifications/${id}`, {
@@ -135,7 +141,10 @@ globalThis.notificationCenter = function(): NotificationCenterState {
       }
     },
 
-    /** Flip the mute setting for one notification type. */
+    /**
+     * Flip the mute setting for one notification type.
+     * @param key
+     */
     async toggleType(key: string,) {
       this.prefs = { ...this.prefs, [key]: !this.prefs[key], };
       await this.savePrefs();

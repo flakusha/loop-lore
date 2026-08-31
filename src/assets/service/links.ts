@@ -13,6 +13,10 @@ import type { LinkAssetOpts, UnlinkAssetOpts, } from "./types";
  * Link an asset to an entity. Re-linking the same asset/entity pair is an
  * expected no-op; any other insert failure (e.g. FK violation for a
  * nonexistent entity) propagates to the caller.
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.link
  */
 export async function linkAsset({ database, assetId, link, }: LinkAssetOpts,): Promise<void> {
   try {
@@ -34,6 +38,11 @@ export async function linkAsset({ database, assetId, link, }: LinkAssetOpts,): P
 
 /**
  * Unlink an asset from an entity.
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.entityType
+ * @param root0.entityId
  */
 export async function unlinkAsset({
   database,
@@ -51,6 +60,8 @@ export async function unlinkAsset({
 
 /**
  * Get all links for an asset.
+ * @param database
+ * @param assetId
  */
 export async function getAssetLinks(
   database: Kysely<DB>,

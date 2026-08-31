@@ -30,6 +30,9 @@ import {
 // ── Schema validation tests ─────────────────────────────────
 // ── Schema validation tests ─────────────────────────────────
 
+/**
+ * @param schema
+ */
 function compile(schema: any,) {
   return TypeCompiler.Compile(schema,);
 }
@@ -264,6 +267,7 @@ describe("WorldUpdateBody", () => {
 // ── Middleware tests ────────────────────────────────────────
 
 describe("onValidationError", () => {
+  /** */
   function createApp() {
     return new Elysia()
       .onError((ctx: any,) => onValidationError(ctx.code, ctx.error, ctx.set,))

@@ -9,7 +9,6 @@
  */
 import { t, } from "elysia";
 
-/* eslint-disable unicorn/max-nested-calls -- Elysia TypeBox schema nesting is inherent to framework */
 export const RaritySchema = t.Union([
   t.Literal("common",),
   t.Literal("uncommon",),

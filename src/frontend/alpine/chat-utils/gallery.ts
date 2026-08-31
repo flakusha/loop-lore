@@ -5,6 +5,7 @@ import { t, } from "../i18n";
 import { jsonBody, } from "../json";
 import type { ChatState, } from "../types";
 
+/** */
 export type ChatUtilsGallery = Partial<ChatState> & ThisType<ChatState>;
 
 export const chatUtilsGallery: ChatUtilsGallery = {

@@ -1,6 +1,9 @@
 import { describe, expect, test, } from "bun:test";
 import { normalizeHeaderSlot, } from "./htmx-header";
 
+/**
+ * @param overrides
+ */
 function mockDoc(overrides?: Record<string, any>,) {
   const items: HTMLElement[] = [];
   const createElement = (tag: string, attrs?: Record<string, string>,) => {

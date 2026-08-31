@@ -11,6 +11,9 @@
  */
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
     .createTable("memory_embeddings",)
@@ -36,6 +39,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
   `.execute(db,);
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await sql`DROP TABLE IF EXISTS memories_fts`.execute(db,);
   await db.schema.dropTable("memory_embeddings",).execute();

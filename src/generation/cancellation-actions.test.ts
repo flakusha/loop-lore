@@ -17,6 +17,7 @@ import {
 createLogger({ level: "error", },);
 
 // Clear state before tests
+/** */
 function clearState(): void {
   activeGenerations.clear();
   chatToAttempt.clear();

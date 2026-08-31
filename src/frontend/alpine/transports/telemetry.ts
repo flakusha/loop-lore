@@ -35,16 +35,23 @@ export const CURATED_EVENTS: Set<string> = new Set<string>(["frontend.page_view"
 /** Per-instance (per-session) cap, guarding against a future enqueue bug. */
 export const MAX_EVENTS_PER_SESSION = 1000;
 
+/** */
 export class TelemetryTransport implements Transport {
   readonly name = "telemetry";
   private readonly url: string;
   private sent = 0;
   private capWarned = false;
 
+  /**
+   * @param url
+   */
   constructor(url = "/api/telemetry/event",) {
     this.url = url;
   }
 
+  /**
+   * @param entry
+   */
   write(entry: LogEntry,): Promise<void> {
     const eventType = typeof entry.message === "string" ? entry.message : "log";
 
@@ -103,6 +110,7 @@ export class TelemetryTransport implements Transport {
     return Promise.resolve();
   }
 
+  /** */
   flush(): Promise<void> {
     return Promise.resolve();
   }

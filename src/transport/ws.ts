@@ -10,19 +10,25 @@ interface WsOptions extends TransportBaseOptions {
   pingInterval?: number;
 }
 
+/** */
 export class WsHandler extends TransportBase<WsOptions> {
   private ws: WebSocket | undefined;
   private pingInterval: ReturnType<typeof setInterval> | undefined;
   private pendingMessages: (string | Uint8Array)[] = [];
 
+  /**
+   * @param options
+   */
   constructor(options: WsOptions = {},) {
     super(options,);
   }
 
+  /** */
   protected getProtocol(): TransportProtocol {
     return TransportProtocol.WebSocket;
   }
 
+  /** */
   protected getMetadata(): Record<string, unknown> {
     return {
       pingPong: true,
@@ -30,6 +36,7 @@ export class WsHandler extends TransportBase<WsOptions> {
     };
   }
 
+  /** */
   protected override createConnection(): Connection {
     const id = randomUUID();
     const remoteAddr = this.options.url ?? `${this.options.host ?? "localhost"}:${this.options.port ?? 3000}`;
@@ -42,6 +49,7 @@ export class WsHandler extends TransportBase<WsOptions> {
     };
   }
 
+  /** */
   override async connect(): Promise<Connection> {
     const conn = await super.connect();
     if (this.options.url) {
@@ -52,10 +60,16 @@ export class WsHandler extends TransportBase<WsOptions> {
     return conn;
   }
 
+  /**
+   * @param ws
+   */
   attach(ws: WebSocket,): void {
     this.ws = ws;
   }
 
+  /**
+   * @param data
+   */
   send(data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();
 
@@ -68,6 +82,7 @@ export class WsHandler extends TransportBase<WsOptions> {
     return Promise.resolve();
   }
 
+  /** */
   override close(): Promise<void> {
     if (this.pingInterval) {
       clearInterval(this.pingInterval,);
@@ -79,6 +94,9 @@ export class WsHandler extends TransportBase<WsOptions> {
   }
 }
 
+/**
+ * @param options
+ */
 export function createWsHandler(options: WsOptions = {},): WsHandler {
   return new WsHandler(options,);
 }

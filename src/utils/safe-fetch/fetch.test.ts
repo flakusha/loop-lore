@@ -12,21 +12,24 @@ const originalFetch = globalThis.fetch;
 
 type FetchUrl = string | URL | Request;
 
-/** Run fn with globalThis.fetch swapped for handler (codebase mock-fetch pattern). */
+/**
+ * Run fn with globalThis.fetch swapped for handler (codebase mock-fetch pattern).
+ * @param handler
+ * @param fn
+ */
 async function withMockFetch(
   handler: (url: FetchUrl, init?: RequestInit,) => Response | Promise<Response>,
   fn: () => Promise<void>,
 ): Promise<void> {
-  // eslint-disable-next-line unicorn/no-global-object-property-assignment
   (globalThis as Record<string, unknown>).fetch = handler;
   try {
     return await fn();
   } finally {
-    // eslint-disable-next-line unicorn/no-global-object-property-assignment
     (globalThis as Record<string, unknown>).fetch = originalFetch;
   }
 }
 
+/** */
 function abortError(): Error {
   return new DOMException("Aborted", "AbortError",);
 }
@@ -40,12 +43,16 @@ function neverResolvingFetch(): typeof fetch {
   ) as unknown as typeof fetch;
 }
 
+/**
+ * @param payload
+ * @param status
+ * @param headers
+ */
 function jsonFetch(payload: unknown, status = 200, headers?: Record<string, string>,): typeof fetch {
   return mock(() => Response.json(payload, { status, headers, },)) as unknown as typeof fetch;
 }
 
 afterEach(() => {
-  // eslint-disable-next-line unicorn/no-global-object-property-assignment
   (globalThis as Record<string, unknown>).fetch = originalFetch;
 },);
 

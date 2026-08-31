@@ -11,6 +11,7 @@
 
 // ── Message shape (compatible with GenerationMessage) ───────
 
+/** */
 export interface ContextMessage {
   role: "system" | "user" | "assistant" | "character";
   content: string;
@@ -19,6 +20,7 @@ export interface ContextMessage {
 
 // ── Config ──────────────────────────────────────────────────
 
+/** */
 export interface ContextWindowConfig {
   /** Context window size in tokens (default: 32000) */
   maxContextTokens: number;
@@ -56,7 +58,10 @@ export const DEFAULT_CONTEXT_WINDOW: ContextWindowConfig = {
   minTurnsAfterCompression: 1,
 };
 
-/** Rough token estimate: ~4 characters per token (English-optimized) */
+/**
+ * Rough token estimate: ~4 characters per token (English-optimized)
+ * @param text
+ */
 export function defaultTokenCount(text: string,): number {
   return Math.ceil(text.length / 4,);
 }

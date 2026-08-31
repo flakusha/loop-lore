@@ -23,6 +23,10 @@ export type { CharacterSystemsImportResult, } from "./types";
 
 /**
  * Import character systems data from loop-lore native format.
+ * @param db
+ * @param actorId
+ * @param data
+ * @param worldId
  */
 export async function importCharacterSystems(
   db: Kysely<DB>,

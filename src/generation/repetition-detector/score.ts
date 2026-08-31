@@ -3,6 +3,9 @@
 
 import type { RepetitionPattern, } from "../types";
 
+/**
+ * @param patterns
+ */
 export function computeRepetitionScore(patterns: RepetitionPattern[],): number {
   if (patterns.length === 0) { return 0; }
 

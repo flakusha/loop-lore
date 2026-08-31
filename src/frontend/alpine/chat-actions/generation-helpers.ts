@@ -19,7 +19,14 @@ export interface DispatchCtx {
   connectGenerationSSE: (chatId: string,) => void;
 }
 
-/** Handle 501 / error / success for generation-type command actions. */
+/**
+ * Handle 501 / error / success for generation-type command actions.
+ * @param ctx
+ * @param endpoint
+ * @param body
+ * @param label
+ * @param chatId
+ */
 export async function dispatchGenerationAction(
   ctx: DispatchCtx,
   endpoint: string,
@@ -64,7 +71,12 @@ export async function dispatchGenerationAction(
   }
 }
 
-/** Dispatch create-quest command action. */
+/**
+ * Dispatch create-quest command action.
+ * @param ctx
+ * @param description
+ * @param chatId
+ */
 export async function dispatchQuestAction(ctx: DispatchCtx, description: string, chatId: string,) {
   if (!description) {
     ctx.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noQuestDescription",), },);

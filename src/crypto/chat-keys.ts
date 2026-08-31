@@ -23,12 +23,17 @@ import type { ActorKeyData, } from "./actor-keys";
 
 const HKDF_INFO = "loop-lore-chat-key-v1";
 
+/** */
 export interface ChatKey {
   key: CryptoKey;
   keyId: string;
   rawKey: Uint8Array;
 }
 
+/**
+ * @param database
+ * @param chatId
+ */
 export async function getChatParticipantActorIds(database: Kysely<DB>, chatId: string,): Promise<string[]> {
   const rows = await database
     .selectFrom("chat_participants",)
@@ -39,6 +44,10 @@ export async function getChatParticipantActorIds(database: Kysely<DB>, chatId: s
   return Array.from(rows, (r,) => r.actor_id,);
 }
 
+/**
+ * @param participantKeys
+ * @param chatId
+ */
 export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: string,): Promise<ChatKey> {
   if (participantKeys.length === 0) {
     throw new Error("Cannot derive chat key: no participant keys",);
@@ -63,6 +72,11 @@ export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: str
   return { key: derived, keyId: participantKeys[0]!.keyId, rawKey, };
 }
 
+/**
+ * @param database
+ * @param keyId
+ * @param smk
+ */
 export async function getChatKeyById(
   database: Kysely<DB>,
   keyId: string,
@@ -85,6 +99,11 @@ export async function getChatKeyById(
   return { key, keyId: row.id, rawKey, };
 }
 
+/**
+ * @param database
+ * @param chatId
+ * @param smk
+ */
 export async function deriveChatKeyForChat(
   database: Kysely<DB>,
   chatId: string,

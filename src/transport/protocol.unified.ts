@@ -9,11 +9,10 @@ export type { TransportProtocol, } from "../db/enums";
 
 /**
  * Represents an established transport connection.
- *
- * @property id - Unique connection identifier
- * @property protocol - Negotiated transport protocol
- * @property remoteAddr - Remote endpoint address
- * @property metadata - Arbitrary state bag (used by upgrade handoff)
+ * id - Unique connection identifier
+ * protocol - Negotiated transport protocol
+ * remoteAddr - Remote endpoint address
+ * metadata - Arbitrary state bag (used by upgrade handoff)
  */
 export interface Connection {
   id: string;

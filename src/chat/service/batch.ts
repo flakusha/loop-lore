@@ -7,7 +7,9 @@ import type { DB, } from "../../db/schema";
 
 /**
  * Batch archive chats owned by a user.
- *
+ * @param database
+ * @param chatIds
+ * @param userId
  * @returns IDs of archived chats
  */
 export async function batchArchiveChats(
@@ -36,7 +38,9 @@ export async function batchArchiveChats(
 
 /**
  * Batch delete chats owned by a user.
- *
+ * @param database
+ * @param chatIds
+ * @param userId
  * @returns Number of deleted chats
  */
 export async function batchDeleteChats(
@@ -68,6 +72,9 @@ export async function batchDeleteChats(
 
 /**
  * Batch export chats with messages, participants, and actors.
+ * @param database
+ * @param chatIds
+ * @param userId
  */
 export async function batchExportChats(
   database: Kysely<DB>,

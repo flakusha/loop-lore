@@ -9,7 +9,11 @@ import { describe, expect, it, } from "bun:test";
 import type { Config, } from "../../config/schema";
 import { resolveBackendUrls, } from "./routes";
 
-/** Minimal valid ImageProviderConfig for a given apiFamily + baseUrl. */
+/**
+ * Minimal valid ImageProviderConfig for a given apiFamily + baseUrl.
+ * @param apiFamily
+ * @param baseUrl
+ */
 function provider(apiFamily: string, baseUrl: string,): Record<string, unknown> {
   return {
     name: `${apiFamily}-provider`,
@@ -22,6 +26,9 @@ function provider(apiFamily: string, baseUrl: string,): Record<string, unknown> 
   };
 }
 
+/**
+ * @param sd
+ */
 function configWithSd(sd: unknown[],): Config {
   return {
     generation: { providers: { sd: sd as never, }, },

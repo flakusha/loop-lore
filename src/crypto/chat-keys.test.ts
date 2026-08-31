@@ -21,6 +21,7 @@ const ACTOR_B = "actor-chat-b";
 
 let db: Kysely<DB>;
 
+/** */
 function getSmkKeySafe(): CryptoKey {
   const key = getSmk();
   if (!key) { throw new Error("SMK not loaded — test setup failed",); }

@@ -25,6 +25,7 @@ import { resolveActor, } from "./resolve-actor";
 import { resolveMode, } from "./resolve-mode";
 import { storeMessage, } from "./store-message";
 
+/** */
 export interface AutoGenOpts {
   database: Kysely<DB>;
   config: Config;
@@ -61,6 +62,7 @@ export interface AutoGenOpts {
  * (streaming SSE, abort signals, attempt row in DB). When null (initial
  * greeting), generation runs directly without an attempt row to avoid
  * the NOT NULL FK constraint on `generation_attempts.parent_message_id`.
+ * @param opts
  */
 export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   const { database, config, chatId, parentMessageId, userId, userMessage, } = opts;

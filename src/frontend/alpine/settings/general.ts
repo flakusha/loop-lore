@@ -6,6 +6,7 @@ import type { LocaleInfoArray, SettingsState, } from "./types";
 
 const log = rootLog.child({ module: "settings", },);
 
+/** */
 export function general(): Partial<SettingsState> & ThisType<SettingsState> {
   return {
     async init() {
@@ -155,7 +156,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
     async onLocaleChange() {
       await this.saveGeneral();
       // Cookie is read by server-side locale detection on reload.
-      // eslint-disable-next-line unicorn/no-document-cookie
+
       document.cookie = `ll_locale=${this.locale}; path=/; SameSite=Lax; max-age=31536000`;
       globalThis.location.reload();
     },

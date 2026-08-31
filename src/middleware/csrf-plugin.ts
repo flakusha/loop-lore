@@ -57,6 +57,7 @@ export interface CsrfPlugin {
  * Build the per-app CSRF plugin instance. `opts` is captured at
  * registration time so the hot-path does not re-read config on every
  * request.
+ * @param opts
  */
 export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
   return {
@@ -115,6 +116,10 @@ export function csrfPlugin(opts: CsrfMiddlewareOptions,): CsrfPlugin {
  * the individual `beforeHandle` / `afterHandle` callbacks for finer
  * control. The accepted `app` shape is structural — a subset of Elysia —
  * so this module does not need to import the Elysia type.
+ * @param app
+ * @param app.onBeforeHandle
+ * @param app.onAfterHandle
+ * @param opts
  */
 export function applyCsrfPlugin(
   app: {

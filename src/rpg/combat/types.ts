@@ -57,6 +57,7 @@ export const ActionType = {
   Reaction: "reaction",
   FreeAction: "free_action",
 } as const;
+/** */
 export type ActionType = (typeof ActionType)[keyof typeof ActionType];
 
 /** Result of an attack roll */
@@ -116,8 +117,10 @@ export const DamageModifier = {
   Vulnerable: "vulnerable",
   Immune: "immune",
 } as const;
+/** */
 export type DamageModifier = (typeof DamageModifier)[keyof typeof DamageModifier];
 
+/** */
 export interface DamageResistance {
   type: DamageType;
   /** "resistant" = half damage, "vulnerable" = double, "immune" = zero */

@@ -10,6 +10,12 @@ import { importWorldBundle, } from "./bundle";
 import { rowOf, } from "./rows";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param prefix
+ */
 export function worldImportRoutes({ database, config, }: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "world-import", },).post(`${prefix}/import/world`, async (ctx: any,) => {
     const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);

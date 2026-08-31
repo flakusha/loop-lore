@@ -13,6 +13,7 @@ import { type Kysely, sql, } from "kysely";
  *
  * `player_id` columns reference `users.id` — the solo player is a user
  * (consistent with chat/user-scoped tables elsewhere in the schema).
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Achievements ────────────────────────────────────────────
@@ -122,6 +123,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropIndex("idx_dice_roll_history_user_chat",).execute();
   await database.schema.dropTable("meta_progression",).execute();

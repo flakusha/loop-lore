@@ -5,12 +5,16 @@ import type { Db, } from "../../db";
 import { can, } from "../../users/permissions";
 import type { EntityConfig, } from "./types";
 
+/** */
 export interface EntityPaths {
   parentParam: string;
   basePath: string;
   withIdPath: string;
 }
 
+/**
+ * @param config
+ */
 export function entityPaths(config: EntityConfig,): EntityPaths {
   const parentParam = config.parentParam == null ? "id" : config.parentParam;
   const basePath = `/api/${config.parentPrefix}/:${parentParam}/${config.entityPath}`;
@@ -18,6 +22,13 @@ export function entityPaths(config: EntityConfig,): EntityPaths {
   return { parentParam, basePath, withIdPath, };
 }
 
+/**
+ * @param database
+ * @param config
+ * @param parentId
+ * @param userId
+ * @param userRole
+ */
 export async function checkOwnership(
   database: Db,
   config: EntityConfig,

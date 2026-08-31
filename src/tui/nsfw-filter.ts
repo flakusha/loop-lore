@@ -43,12 +43,17 @@ const DEFAULT_CONFIG: NsfwFilterConfig = {
 export class NsfwFilter {
   private config: NsfwFilterConfig;
 
+  /**
+   * @param config
+   */
   constructor(config?: Partial<NsfwFilterConfig>,) {
     this.config = { ...DEFAULT_CONFIG, ...config, };
   }
 
   /**
    * Check if a message contains NSFW content.
+   * @param content
+   * @param contentRating
    */
   isNsfw(content: string, contentRating?: string,): boolean {
     // Check content rating
@@ -65,6 +70,8 @@ export class NsfwFilter {
    * Filter a message based on NSFW content.
    *
    * Returns the filtered content or null if hidden.
+   * @param content
+   * @param contentRating
    */
   filter(content: string, contentRating?: string,): string | null {
     if (!this.isNsfw(content, contentRating,)) {
@@ -103,6 +110,7 @@ export class NsfwFilter {
 
   /**
    * Set the filter mode.
+   * @param mode
    */
   setMode(mode: NsfwFilterMode,): void {
     this.config.mode = mode;
@@ -110,6 +118,7 @@ export class NsfwFilter {
 
   /**
    * Add a keyword to the filter list.
+   * @param keyword
    */
   addKeyword(keyword: string,): void {
     if (!this.config.keywords.includes(keyword,)) {
@@ -119,6 +128,7 @@ export class NsfwFilter {
 
   /**
    * Remove a keyword from the filter list.
+   * @param keyword
    */
   removeKeyword(keyword: string,): void {
     const kept: string[] = [];

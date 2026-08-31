@@ -9,7 +9,6 @@
  */
 /**
  * Convert happiness value to mood string.
- *
  * @param happiness - Happiness value (0-100)
  * @returns Mood string
  */

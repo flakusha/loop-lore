@@ -26,6 +26,8 @@ const PLACEHOLDER = "[REDACTED]";
 /**
  * Simple glob match (case-insensitive).
  * Supports: "exact", "prefix*", "*suffix", "*contains*"
+ * @param pattern
+ * @param value
  */
 function isGlobMatch(pattern: string, value: string,): boolean {
   const lowerPattern = pattern.toLowerCase();
@@ -46,6 +48,8 @@ function isGlobMatch(pattern: string, value: string,): boolean {
 /**
  * Check if a key matches any censor rule.
  * Returns the matching rule or undefined.
+ * @param key
+ * @param rules
  */
 function matchRule(key: string, rules: CensorRule[],): CensorRule | undefined {
   return rules.find((r,) => isGlobMatch(r.field, key,));
@@ -53,6 +57,8 @@ function matchRule(key: string, rules: CensorRule[],): CensorRule | undefined {
 
 /**
  * Recursively walk a value and censor matching fields.
+ * @param val
+ * @param rule
  */
 function censorScalar(val: unknown, rule: CensorRule,): unknown {
   if (typeof val === "string" && rule.pattern) {
@@ -61,6 +67,12 @@ function censorScalar(val: unknown, rule: CensorRule,): unknown {
   return rule.replacement ?? PLACEHOLDER;
 }
 
+/**
+ * @param obj
+ * @param rules
+ * @param depth
+ * @param maxDepth
+ */
 function censorObject(
   obj: Record<string, unknown>,
   rules: CensorRule[],
@@ -87,6 +99,12 @@ function censorObject(
   return result;
 }
 
+/**
+ * @param value
+ * @param rules
+ * @param depth
+ * @param maxDepth
+ */
 function censorValue(value: unknown, rules: CensorRule[], depth: number, maxDepth: number,): unknown {
   if (value === null || value === undefined || depth > maxDepth) { return value; }
 
@@ -101,6 +119,7 @@ function censorValue(value: unknown, rules: CensorRule[], depth: number, maxDept
   return value;
 }
 
+/** */
 export interface CensorMetaOpts {
   meta: Record<string, unknown> | undefined;
   extraRules?: CensorRule[];
@@ -110,6 +129,10 @@ export interface CensorMetaOpts {
 /**
  * Censor PII in a metadata object.
  * Returns a new object, does not mutate input.
+ * @param root0
+ * @param root0.meta
+ * @param root0.extraRules
+ * @param root0.maxDepth
  */
 export function censorMeta({
   meta,
@@ -123,6 +146,7 @@ export function censorMeta({
 
 /**
  * Convert extra field name strings to CensorRule objects.
+ * @param fields
  */
 export function fieldNamesToRules(fields: string[],): CensorRule[] {
   return Array.from(fields, (f,) => ({ field: f, }),);

@@ -54,6 +54,9 @@ const HEX = "0123456789abcdef";
 const VERSION = 0x7;
 const VARIANT = 0b10;
 
+/**
+ * @param bytes
+ */
 function bytesToHex(bytes: Uint8Array,): string {
   let out = "";
   for (let i = 0; i < bytes.length; i++) {
@@ -73,10 +76,8 @@ function bytesToHex(bytes: Uint8Array,): string {
  * generated each call (the probability of collision across N calls in
  * the same ms is roughly N^2 / 2^74, comfortably negligible for any
  * realistic client-side fan-out).
- *
  * @param opts - Optional overrides for timestamp or randomness source.
  * @returns A new UUIDv7 string.
- *
  * @example
  * ```ts
  * const id = browserRandomUUIDv7(); // "018e4c5a-7b21-7a23-9f12-3c9d8e7b2a4f"
@@ -121,7 +122,6 @@ export function browserRandomUUIDv7(opts: BrowserUUIDv7Options = {},): string {
 
 /**
  * Test the shape of an arbitrary string against the UUIDv7 canonical form.
- *
  * @param value - String to test.
  * @returns True iff the string parses as a UUIDv7.
  */

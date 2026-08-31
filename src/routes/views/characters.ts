@@ -7,6 +7,9 @@ import type { DB, } from "../../db/schema";
 import { buildEditFormHtml, } from "./character-edit-form";
 import { escapeHtml, htmlResponse, } from "./layout";
 
+/**
+ * @param database
+ */
 async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
   const actors = await database
     .selectFrom("actors",)
@@ -42,6 +45,10 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
   return htmlResponse(cards,);
 }
 
+/**
+ * @param characterId
+ * @param database
+ */
 async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,): Promise<Response> {
   const actor = await database
     .selectFrom("actors",)
@@ -91,6 +98,10 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,
   },),);
 }
 
+/**
+ * @param slug
+ * @param database
+ */
 async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Promise<Response> {
   const chats = await database
     .selectFrom("chats",)

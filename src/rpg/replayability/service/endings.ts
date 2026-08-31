@@ -8,12 +8,18 @@ import { updateMetaProgression, } from "./meta";
 import { getPlaythrough, } from "./playthrough";
 import type { EndingType, Playthrough, } from "./types";
 
+/** */
 function getLog() {
   return getRpgLog("replayability",);
 }
 
 /**
  * Complete a playthrough with an ending
+ * @param db
+ * @param playthroughId
+ * @param endingId
+ * @param endingType
+ * @param completionTime
  */
 export async function completePlaythrough(
   db: Kysely<DB>,

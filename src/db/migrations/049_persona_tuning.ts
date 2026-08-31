@@ -11,6 +11,9 @@
  */
 import { type Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // Persona tuning fields
   await db.schema
@@ -40,6 +43,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.alterTable("model_role_overrides",).dropColumn("max_tokens",).execute();
   await db.schema.alterTable("model_role_overrides",).dropColumn("temperature",).execute();

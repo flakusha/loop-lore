@@ -29,6 +29,7 @@ const mockStartGenerationTracking = mock(() =>
 const mockCompleteGeneration = mock(() => Promise.resolve());
 const mockFailGeneration = mock(() => Promise.resolve());
 
+/** */
 function createMockDeps(): Partial<GenDeps> {
   const mockBuffer = {
     append: mock(() => {/* noop */},),
@@ -104,6 +105,7 @@ function createMockDeps(): Partial<GenDeps> {
 
 // ── Helpers ─────────────────────────────────────────────────────
 
+/** */
 function makeConfig(): any {
   return {
     generation: {
@@ -119,6 +121,9 @@ function makeConfig(): any {
   };
 }
 
+/**
+ * @param db
+ */
 async function seedUser(db: Kysely<DB>,) {
   const userId = uid();
   await db
@@ -150,7 +155,14 @@ async function seedUser(db: Kysely<DB>,) {
   return userId;
 }
 
-async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
+/**
+ * @param db
+ * @param name
+ */
+async function createAiActor(
+  db: Kysely<DB>,
+  name: string,
+): Promise<string> {
   const id = uid();
   await db
     .insertInto("actors",)
@@ -170,6 +182,14 @@ async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
   return id;
 }
 
+/**
+ * @param db
+ * @param userId
+ * @param opts
+ * @param opts.maxTurns
+ * @param opts.autoAdvance
+ * @param opts.storyState
+ */
 async function createGroupChat(
   db: Kysely<DB>,
   userId: string,
@@ -205,7 +225,16 @@ async function createGroupChat(
   return chatId;
 }
 
-async function addParticipant(db: Kysely<DB>, chatId: string, actorId: string,) {
+/**
+ * @param db
+ * @param chatId
+ * @param actorId
+ */
+async function addParticipant(
+  db: Kysely<DB>,
+  chatId: string,
+  actorId: string,
+) {
   await db
     .insertInto("chat_participants",)
     .values({
@@ -216,6 +245,12 @@ async function addParticipant(db: Kysely<DB>, chatId: string, actorId: string,) 
     .execute();
 }
 
+/**
+ * @param db
+ * @param chatId
+ * @param actorId
+ * @param content
+ */
 async function insertMessage(
   db: Kysely<DB>,
   chatId: string,

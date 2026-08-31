@@ -33,6 +33,8 @@ interface ActorCtx {
 
 /**
  * Per-actor stats routes — GET/POST/PATCH for character stats.
+ * @param opts
+ * @param prefix
  */
 export function statsActorRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

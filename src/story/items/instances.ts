@@ -12,7 +12,17 @@ import type { DB, } from "../../db/schema";
 import { safeJsonStringify, uid, } from "../../utils";
 import type { ItemState, TransferResult, } from "./types";
 
-/** Place item instance in a location */
+/**
+ * Place item instance in a location
+ * @param state
+ * @param itemId
+ * @param locationId
+ * @param worldId
+ * @param quantity
+ * @param hidden
+ * @param respawnable
+ * @param spawnCondition
+ */
 export async function placeInLocation(
   state: ItemState,
   itemId: string,
@@ -45,7 +55,14 @@ export async function placeInLocation(
   return id;
 }
 
-/** Give item instance to an NPC */
+/**
+ * Give item instance to an NPC
+ * @param state
+ * @param itemId
+ * @param actorId
+ * @param worldId
+ * @param quantity
+ */
 export async function giveToNpc(
   state: ItemState,
   itemId: string,
@@ -71,7 +88,12 @@ export async function giveToNpc(
   return id;
 }
 
-/** Get items at a location */
+/**
+ * Get items at a location
+ * @param state
+ * @param locationId
+ * @param includeHidden
+ */
 export async function getAtLocation(state: ItemState, locationId: string, includeHidden = false,) {
   let query = state.db
     .selectFrom("world_items",)
@@ -102,7 +124,16 @@ export async function getAtLocation(state: ItemState, locationId: string, includ
 
 export { getNpcInventory, } from "./npc-inventory";
 
-/** Transfer items between locations, NPCs, or from world to actor. Requires worldId to prevent cross-world IDOR. */
+/**
+ * Transfer items between locations, NPCs, or from world to actor. Requires worldId to prevent cross-world IDOR.
+ * @param state
+ * @param worldItemId
+ * @param worldId
+ * @param quantity
+ * @param toLocationId
+ * @param toActorId
+ * @param trx
+ */
 export async function transfer(
   state: ItemState,
   worldItemId: string,
@@ -188,7 +219,14 @@ export async function transfer(
   };
 }
 
-/** Remove item instance. Requires worldId to prevent cross-world IDOR. */
+/**
+ * Remove item instance. Requires worldId to prevent cross-world IDOR.
+ * @param state
+ * @param worldItemId
+ * @param worldId
+ * @param quantity
+ * @param trx
+ */
 export async function destroy(
   state: ItemState,
   worldItemId: string,

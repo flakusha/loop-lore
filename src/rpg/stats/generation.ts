@@ -25,7 +25,6 @@ const POINT_BUY_COST: Record<number, number> = {
 /**
  * Standard point-buy stat generation (27 points).
  * Each stat starts at 8, player allocates points (max 15 per stat).
- *
  * @param allocation - Points to allocate above 8 for each ability
  * @returns Stat block, or null if allocation is invalid
  */
@@ -60,7 +59,6 @@ export function pointBuy(allocation: Record<AbilityName, number>,): StatBlock | 
  * Roll stats using 4d6-drop-lowest method.
  * Roll 4d6, drop the lowest die, sum the remaining 3.
  * Repeated 6 times for each ability.
- *
  * @returns Array of 6 stat values (sorted highest to lowest)
  */
 export function rollStats4d6(): number[] {
@@ -89,6 +87,7 @@ export function standardArray(): number[] {
 
 /**
  * Create a stat block from an array of 6 values assigned to abilities in order.
+ * @param values
  */
 export function statBlockFromArray(values: number[],): StatBlock {
   return {

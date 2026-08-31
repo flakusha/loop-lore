@@ -41,6 +41,7 @@ export interface GameMasterConfig {
   escalationThreshold?: number;
 }
 
+/** */
 export interface TurnManagerState {
   currentTurn: number;
   currentActorId: string | null;
@@ -57,6 +58,7 @@ export interface TurnManagerState {
 }
 
 // ─── Quality Evaluation ──────────────────────────────────────────
+/** */
 export interface QualityScores {
   character_voice: number;
   plot_coherence: number;
@@ -67,6 +69,7 @@ export interface QualityScores {
   overall: number;
 }
 
+/** */
 export interface QualityEvaluation {
   scores: QualityScores;
   passed: boolean;
@@ -75,6 +78,7 @@ export interface QualityEvaluation {
   details: Record<QD, { score: number; reasoning: string }>;
 }
 
+/** */
 export interface QualityThresholds {
   accept: number;
   regenerate: number;
@@ -99,6 +103,7 @@ export const DEFAULT_QUALITY_WEIGHTS: Record<QD, number> = {
 };
 
 // ─── GM Decision ─────────────────────────────────────────────────
+/** */
 export interface GameMasterDecision {
   nextActorId: string;
   turnPrompt: string;
@@ -113,6 +118,7 @@ export interface GameMasterDecision {
 }
 
 // ─── Story Session Context ───────────────────────────────────────
+/** */
 export interface StoryContext {
   world: {
     id: string;

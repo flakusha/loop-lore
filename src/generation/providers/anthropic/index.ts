@@ -37,10 +37,14 @@ const CAPABILITIES: ProviderCapabilities = {
 
 // ── Provider class ────────────────────────────────────────
 
+/** */
 export class AnthropicProvider implements LLMProvider {
   private readonly state: AnthropicState;
   readonly capabilities = CAPABILITIES;
 
+  /**
+   * @param config
+   */
   constructor(config: ProviderInstanceConfig,) {
     const baseUrl = (config.baseUrl || "https://api.anthropic.com").replace(/\/+$/, "",);
     const validated = validateProviderUrl(baseUrl,);
@@ -64,16 +68,24 @@ export class AnthropicProvider implements LLMProvider {
 
   // ── Core generation ────────────────────────────────────
 
+  /**
+   * @param req
+   */
   async complete(req: GenerateRequest,): Promise<GenerateResponse> {
     return completeDispatch(this.state, req,);
   }
 
+  /**
+   * @param req
+   * @param handler
+   */
   async stream(req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse> {
     return streamDispatch(this.state, req, handler,);
   }
 
   // ── Health check ───────────────────────────────────────
 
+  /** */
   async healthCheck(): Promise<{
     status: "ok" | "degraded" | "down";
     model?: string;
@@ -85,6 +97,7 @@ export class AnthropicProvider implements LLMProvider {
 
   // ── List models ────────────────────────────────────────
 
+  /** */
   async listModels(): Promise<ModelInfo[]> {
     return listModelsDispatch(this.state,);
   }

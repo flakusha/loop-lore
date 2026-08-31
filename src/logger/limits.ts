@@ -19,10 +19,18 @@ const DEFAULTS: Required<SizeLimits> = {
   maxMetaEntries: 200,
 };
 
+/**
+ * @param str
+ */
 function bytes(str: string,): number {
   return new TextEncoder().encode(str,).length;
 }
 
+/**
+ * @param s
+ * @param maxBytes
+ * @param label
+ */
 function truncateString(s: string, maxBytes: number, label = "chars",): string {
   if (bytes(s,) <= maxBytes) { return s; }
   // Binary-search for cut point that fits
@@ -37,6 +45,13 @@ function truncateString(s: string, maxBytes: number, label = "chars",): string {
   return s.slice(0, lo,) + suffix;
 }
 
+/**
+ * @param obj
+ * @param maxBytes
+ * @param maxDepth
+ * @param maxEntries
+ * @param depth
+ */
 function truncateMeta(
   obj: Record<string, unknown>,
   maxBytes: number,
@@ -80,6 +95,8 @@ function truncateMeta(
 
 /**
  * Apply size limits to a log entry. Returns new entry, does not mutate.
+ * @param entry
+ * @param overrides
  */
 export function applyLimits(entry: LogEntry, overrides?: Partial<SizeLimits>,): LogEntry {
   const limits: Required<SizeLimits> = { ...DEFAULTS, ...overrides, };

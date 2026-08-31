@@ -17,7 +17,10 @@ import { createMusicLinkService, } from "../chat/music-links";
 /** Generic row type for the in-memory mock DB. */
 type Row = Record<string, unknown>;
 
-/** Strip an optional `table.` prefix from a column qualifier. */
+/**
+ * Strip an optional `table.` prefix from a column qualifier.
+ * @param col
+ */
 function stripQualifier(col: string,): string {
   const dot = col.indexOf(".",);
   return dot >= 0 ? col.slice(dot + 1,) : col;
@@ -27,6 +30,8 @@ function stripQualifier(col: string,): string {
  * Minimal mock DB. Implements only the queries the music-links service
  * actually issues: insertInto, selectFrom with where+innerJoin,
  * deleteFrom.
+ * @param initialChats
+ * @param initialLinks
  */
 function makeMockDb(initialChats: Row[], initialLinks: Row[],): Record<string, unknown> {
   const tables: Record<string, Row[]> = {

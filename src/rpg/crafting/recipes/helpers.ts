@@ -43,7 +43,11 @@ export interface RecipeMaterialDbRow {
   sort_order: number;
 }
 
-/** Convert a recipe row + material rows to a RecipeWithMaterials. */
+/**
+ * Convert a recipe row + material rows to a RecipeWithMaterials.
+ * @param recipe
+ * @param materials
+ */
 export function rowToRecipeWithMaterials(
   recipe: RecipeRow,
   materials: RecipeMaterialDbRow[],
@@ -81,7 +85,12 @@ export function rowToRecipeWithMaterials(
   };
 }
 
-/** Build crafting_recipe_materials insert rows for a recipe. */
+/**
+ * Build crafting_recipe_materials insert rows for a recipe.
+ * @param recipeId
+ * @param materials
+ * @param now
+ */
 export function recipeMaterialInsertRows(
   recipeId: string,
   materials: CreateRecipeMaterialOpts[],

@@ -12,6 +12,7 @@ import { applyEdit, } from "./apply";
 import { editHistories, } from "./state";
 import type { EditImageRequest, EditResult, ImageEditServiceContext, } from "./types";
 
+/** */
 export interface EditImageArgs {
   thisL: ImageEditServiceContext;
   request: EditImageRequest;
@@ -19,9 +20,11 @@ export interface EditImageArgs {
 
 /**
  * Edit an image based on a natural language command.
- *
  * @param args.thisL - The image edit service instance
+ * @param root0
+ * @param root0.thisL
  * @param args.request - Edit request
+ * @param root0.request
  * @returns Edit result with new asset ID
  */
 export async function editImage(

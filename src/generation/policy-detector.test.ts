@@ -17,6 +17,10 @@ interface DetectorResult {
   indicators?: PolicyAnalysis["indicators"];
 }
 
+/**
+ * @param name
+ * @param result
+ */
 function makeDetector(name: string, result: DetectorResult,): PolicyDetector {
   return {
     name,

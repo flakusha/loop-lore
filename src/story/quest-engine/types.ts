@@ -14,6 +14,7 @@ import type { WorldStateService, } from "../world-state";
 
 // ── Progress Entry ───────────────────────────────────────────
 
+/** */
 export interface QuestProgressEntry {
   questId: string;
   questName: string;
@@ -37,6 +38,7 @@ export interface QuestState {
 
 // ── Row shapes used by dispatchers ─────────────────────────
 
+/** */
 export interface QuestRow {
   id: string;
   world_id: string;
@@ -49,6 +51,7 @@ export interface QuestRow {
   rewards: string;
 }
 
+/** */
 export interface ProgressQuestRow {
   id: string;
   world_id: string;

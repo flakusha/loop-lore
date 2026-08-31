@@ -3,6 +3,7 @@
 
 import type { ActorVisibility, ContentRating, UserRole, } from "../../../db/enums";
 
+/** */
 export interface CharacterTemplate {
   /** Hard ID for deterministic test reseeding (optional — generated if omitted) */
   id?: string;

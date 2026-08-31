@@ -10,6 +10,10 @@ import {
 import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

@@ -12,6 +12,11 @@ import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { createEntityRoutes, } from "./entity-routes";
 
+/**
+ * @param opts
+ * @param opts.database
+ * @param opts.config
+ */
 export function actorLoreEntriesRoutes(opts: { database: Db; config: Config },): Elysia {
   return createEntityRoutes(
     {

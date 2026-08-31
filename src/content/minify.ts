@@ -21,6 +21,9 @@ const defaultHTMLOptions = {
 
 const cssMinifier = new CleanCSS({ level: 2, },);
 
+/**
+ * @param content
+ */
 export function minifyText(content: string,): string {
   const lines = content.split("\n",);
   const result: string[] = [];
@@ -43,10 +46,16 @@ export function minifyText(content: string,): string {
   return result.join("\n",);
 }
 
+/**
+ * @param content
+ */
 export async function minifyHTMLContent(content: string,): Promise<string> {
   return minifyHTML(content, defaultHTMLOptions,);
 }
 
+/**
+ * @param content
+ */
 export function minifyCSS(content: string,): string {
   const output = cssMinifier.minify(content,);
   if (output.errors.length > 0) {
@@ -55,6 +64,9 @@ export function minifyCSS(content: string,): string {
   return output.styles;
 }
 
+/**
+ * @param content
+ */
 export async function minifyJS(content: string,): Promise<string> {
   try {
     const result = await terserMinify(content, { module: true, compress: true, mangle: true, },);

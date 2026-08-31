@@ -22,6 +22,10 @@ import {
 import { NoteIdParams, WhiteneoteBody, } from "./schemas";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

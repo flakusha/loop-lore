@@ -12,6 +12,7 @@ export const SkillCategory = {
   Knowledge: "knowledge",
   Stealth: "stealth",
 } as const;
+/** */
 export type SkillCategory = (typeof SkillCategory)[keyof typeof SkillCategory];
 
 /** Skill proficiency levels */
@@ -23,6 +24,7 @@ export const ProficiencyLevel = {
   Master: "master",
   Grandmaster: "grandmaster",
 } as const;
+/** */
 export type ProficiencyLevel = (typeof ProficiencyLevel)[keyof typeof ProficiencyLevel];
 
 /** Skill definition */

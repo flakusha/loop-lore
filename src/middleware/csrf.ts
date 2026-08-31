@@ -49,6 +49,7 @@ const UNSAFE_METHODS: ReadonlySet<string> = new Set([
   "DELETE",
 ],);
 
+/** */
 export interface CsrfMiddlewareOptions {
   /** HMAC secret passed to `Bun.CSRF.generate`/`verify`. Required. */
   secret: string;
@@ -68,6 +69,8 @@ export interface CsrfMiddlewareOptions {
 /**
  * Resolve the `Secure` flag for the cookie. Mirrors the decision matrix used
  * by `src/routes/auth/shared.ts: setTokenCookie`.
+ * @param override
+ * @param prodDefault
  */
 export function resolveCookieSecure(
   override: boolean | undefined,
@@ -85,6 +88,10 @@ export function resolveCookieSecure(
  * echoes the value in the `X-CSRF-Token` header. `SameSite=Lax` is the
  * defense-in-depth counterpart that prevents cross-site POSTs from sending
  * the cookie in the first place.
+ * @param token
+ * @param opts
+ * @param opts.secure
+ * @param opts.maxAgeSecs
  */
 export function buildCsrfCookie(
   token: string,
@@ -107,6 +114,10 @@ export function buildCsrfCookie(
  * requests, callers pass `anonymous::<requestId>` so the token is bound to
  * that specific request and cannot be replayed by a different unauthenticated
  * visitor.
+ * @param secret
+ * @param sessionId
+ * @param opts
+ * @param opts.expiresInMs
  */
 export function mintCsrfToken(
   secret: string,
@@ -125,6 +136,9 @@ export function mintCsrfToken(
  * Returns true when the token is well-formed, not expired, and bound to the
  * same sessionId that issued it. Returns false otherwise — callers MUST treat
  * false as 403.
+ * @param secret
+ * @param token
+ * @param sessionId
  */
 export function verifyCsrfToken(
   secret: string,
@@ -146,6 +160,7 @@ export function verifyCsrfToken(
  * Intentionally lenient: rejects only malformed pairs. We do NOT decode —
  * the cookie value is opaque to the server (Bun.CSRF tokens are base64url
  * by default and carry their own structure).
+ * @param cookieHeader
  */
 export function readCsrfCookie(cookieHeader: string | null,): string | null {
   if (cookieHeader === null) { return null; }
@@ -155,6 +170,7 @@ export function readCsrfCookie(cookieHeader: string | null,): string | null {
   return match?.[1] ?? null;
 }
 
+/** */
 export interface CsrfDecision {
   /** Whether verification passed (true) or failed (false) for unsafe routes. */
   ok: boolean;
@@ -167,10 +183,14 @@ export interface CsrfDecision {
  *
  * Pure function — no side effects, no I/O. Callers wire it into `onBeforeHandle`
  * (for the 403 branch) and `onAfterHandle` (for the Set-Cookie branch).
- *
  * @param opts - Resolved middleware options.
  * @param args - Per-request state: method, route pattern, headers, and the
  *   sessionId resolved by the auth middleware (`null` for unauthenticated).
+ * @param args.method
+ * @param args.routePattern
+ * @param args.headers
+ * @param args.sessionId
+ * @param args.requestId
  */
 export function decideCsrf(
   opts: CsrfMiddlewareOptions,
@@ -232,6 +252,8 @@ export function decideCsrf(
 /**
  * Build the Set-Cookie header value for a freshly-decided token, honoring the
  * `Secure` decision matrix.
+ * @param decision
+ * @param opts
  */
 export function cookieForDecision(
   decision: CsrfDecision,

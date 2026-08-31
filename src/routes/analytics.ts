@@ -24,6 +24,11 @@ interface HandleOpts {
 /** Rough cost estimate: $0.002 per 1K tokens (blended average across providers) */
 const COST_PER_1K_TOKENS = 0.002;
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function analyticsRoutes({ database, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "analytics", },)
     .get(`${prefix}/analytics/chat/:chatId`, async (ctx: any,) => {

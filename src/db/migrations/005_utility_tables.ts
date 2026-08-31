@@ -12,6 +12,7 @@ import { type Kysely, sql, } from "kysely";
  *
  * No ordering dependencies between these tables — all create
  * standalone tables referencing only pre-existing tables (users).
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── System config ──────────────────────────────────────
@@ -119,6 +120,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropIndex("idx_notifications_user_read",).execute();
   await database.schema.dropTable("notifications",).execute();

@@ -25,6 +25,10 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const emotionAvatarService = new EmotionAvatarService(database,);
@@ -110,7 +114,6 @@ export function characterEmotionAvatarsRoutes(opts: HandlerOpts, prefix = "/api"
         }
       }
 
-      // eslint-disable-next-line unicorn/prefer-logical-operator-over-ternary
       const emotions = emotionsParam ? emotionsParam as EmotionType[] : undefined;
 
       try {

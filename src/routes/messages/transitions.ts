@@ -17,6 +17,10 @@ export interface ChatRecord {
 /**
  * Auto-rename a direct chat from its default placeholder name after the first
  * user message, based on the character and current location.
+ * @param database
+ * @param chatId
+ * @param effectiveContent
+ * @param chatRecord
  */
 export async function autoRenameChat(
   database: Kysely<DB>,

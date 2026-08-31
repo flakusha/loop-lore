@@ -4,7 +4,10 @@
 import { INTIMACY_THRESHOLDS, } from "./types";
 import type { IntimacyThreshold, } from "./types";
 
-/** Get the intimacy level label for a numeric score. */
+/**
+ * Get the intimacy level label for a numeric score.
+ * @param score
+ */
 export function getLevelLabel(score: number,): string {
   if (score >= INTIMACY_THRESHOLDS.soulbonded) { return "Soulbonded"; }
   if (score >= INTIMACY_THRESHOLDS.intimate) { return "Intimate"; }
@@ -16,7 +19,12 @@ export function getLevelLabel(score: number,): string {
   return "Strangers";
 }
 
-/** Check which threshold events fire when moving from oldScore to newScore. */
+/**
+ * Check which threshold events fire when moving from oldScore to newScore.
+ * @param oldScore
+ * @param newScore
+ * @param alreadyUnlocked
+ */
 export function checkThresholds(
   oldScore: number,
   newScore: number,
@@ -40,7 +48,10 @@ export function checkThresholds(
   return reached;
 }
 
-/** Suggest relationship type upgrade based on intimacy score. */
+/**
+ * Suggest relationship type upgrade based on intimacy score.
+ * @param score
+ */
 export function suggestRelationshipUpgrade(score: number,): string | undefined {
   if (score >= INTIMACY_THRESHOLDS.intimate) { return "romantic"; }
   if (score >= INTIMACY_THRESHOLDS.dating) { return "romantic_interest"; }

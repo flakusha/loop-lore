@@ -6,7 +6,6 @@
  *
  * Templates are registered at startup and can be queried by category,
  * backend compatibility, or node availability.
- *
  * @module template-registry
  */
 
@@ -23,15 +22,22 @@ import { builtinTemplates, } from "./templates/builtin";
 
 import type { ImageEditTemplateConfig, } from "../config/sections/templates";
 
+/** */
 class TemplateRegistry {
   private templates = new Map<string, WorkflowTemplate>();
 
-  /** Register a workflow template */
+  /**
+   * Register a workflow template
+   * @param template
+   */
   register(template: WorkflowTemplate,): void {
     this.templates.set(template.id, template,);
   }
 
-  /** Get a template by ID */
+  /**
+   * Get a template by ID
+   * @param id
+   */
   get(id: string,): WorkflowTemplate | undefined {
     return this.templates.get(id,);
   }
@@ -41,21 +47,31 @@ class TemplateRegistry {
     return [...this.templates.values(),];
   }
 
-  /** Filter templates by category */
+  /**
+   * Filter templates by category
+   * @param category
+   */
   listByCategory(category: ImageEditCategory,): WorkflowTemplate[] {
     const out: WorkflowTemplate[] = [];
     for (const t of this.listAll()) { if (t.category === category) { out.push(t,); } }
     return out;
   }
 
-  /** Filter templates available for a specific backend */
+  /**
+   * Filter templates available for a specific backend
+   * @param backend
+   */
   listForBackend(backend: ImageEditBackend,): WorkflowTemplate[] {
     const out: WorkflowTemplate[] = [];
     for (const t of this.listAll()) { if (t.backends.includes(backend,)) { out.push(t,); } }
     return out;
   }
 
-  /** Filter templates that can run on the given backend AND have all required nodes installed */
+  /**
+   * Filter templates that can run on the given backend AND have all required nodes installed
+   * @param backend
+   * @param installedNodes
+   */
   listAvailable(
     backend: ImageEditBackend,
     installedNodes: Set<string>,
@@ -72,7 +88,10 @@ class TemplateRegistry {
     return out;
   }
 
-  /** Unregister a template by ID */
+  /**
+   * Unregister a template by ID
+   * @param id
+   */
   unregister(id: string,): boolean {
     return this.templates.delete(id,);
   }
@@ -92,7 +111,6 @@ export const templateRegistry = new TemplateRegistry();
  * Config workflows are definitions (id, name, category, backend).
  * They are registered as lightweight templates with a passthrough build function.
  * Full workflow nodes should be provided via the build function or loaded separately.
- *
  * @param config - Image-edit template configuration
  * @param registry - Registry to register into (default: singleton)
  */
@@ -122,6 +140,7 @@ let builtinTemplatesRegistered = false;
 /**
  * Register the built-in ComfyUI workflow templates into the singleton registry.
  * Idempotent — safe to call on every route mount.
+ * @param registry
  */
 export function registerBuiltinTemplates(registry: TemplateRegistry = templateRegistry,): void {
   if (builtinTemplatesRegistered) { return; }

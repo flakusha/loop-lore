@@ -4,8 +4,6 @@
 /**
  * RPG route handler helpers — eliminates the repeated auth + try/catch
  * boilerplate across route files.
- *
- * @module routes/rpg/handler
  */
 import { getRpgLog, } from "../../rpg/shared/rpg-service-utils";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
@@ -24,7 +22,8 @@ export interface RpgRouteContext {
  * structured logging. The inner function receives the validated userId
  * and the Elysia context. Returns a standard 500 error JSON on any
  * unhandled exception.
- *
+ * @param fn
+ * @param errorLabel
  * @example
  * .post(
  *   "/api/rpg/dice/roll",
@@ -55,6 +54,10 @@ export function rpgHandler<T = unknown,>(
  * Standard Elysia route config for RPG endpoints:
  * - `response`: 200 SuccessResponse / 401 ErrorResponse
  * - `detail`: summary, description, tags with `["RPG", category]`
+ * @param body
+ * @param summary
+ * @param description
+ * @param category
  */
 export function rpgRouteConfig(
   body: unknown,

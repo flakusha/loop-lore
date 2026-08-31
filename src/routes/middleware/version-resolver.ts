@@ -31,6 +31,7 @@ const ACCEPT_VERSION_RE = /application\/vnd\.loop-lore\.v(\d+)\+json/;
  * 1. URL path: `/api/v1/{resource}` → `"1"`
  * 2. Accept header: `application/vnd.loop-lore.v1+json` → `"1"`
  * 3. Default: `"1"`
+ * @param request
  */
 export function resolveVersion(request: Request,): ApiVersion {
   const url = new URL(request.url ?? "",);
@@ -52,7 +53,6 @@ export function resolveVersion(request: Request,): ApiVersion {
 
 /**
  * Elysia plugin that injects `apiVersion` into the context.
- *
  * @example
  * app.use(versionResolver())
  * // ctx.apiVersion === "1"

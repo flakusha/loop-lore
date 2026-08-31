@@ -8,6 +8,7 @@ import type { TransportConfig, } from "./factory";
 import { createProtocol, } from "./factory";
 import type { ProtocolHandler, } from "./protocol.unified";
 
+/** */
 export interface UpgradeConnectionOpts {
   current: ProtocolHandler;
   targetProtocol: TransportProtocol;
@@ -24,14 +25,12 @@ export interface UpgradeConnectionOpts {
  * 4. Connect new handler
  * 5. Close old handler
  * 6. Automatic fallback on failure
- *
  * @param opts - Options object
  * @param opts.current - Active protocol handler to upgrade from
  * @param opts.targetProtocol - Target protocol to upgrade to
  * @param opts.config - Transport config for the new handler
  * @returns New ProtocolHandler on target protocol
  * @throws TransportError if upgrade fails and fallback also fails
- *
  * @example
  * ```ts
  * const http1 = createProtocol({ protocol: "http/1.1" });

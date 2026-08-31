@@ -27,7 +27,6 @@ export interface OptimisticUpdateResult {
  *
  * Uses `WHERE format_version = ?` to detect concurrent modifications.
  * If the version doesn't match, returns an error instead of overwriting.
- *
  * @param db - Kysely database instance
  * @param table - Table name to update
  * @param id - Row ID to update
@@ -69,7 +68,14 @@ export async function updateWithVersionCheck(
  * and partial update objects), which Kysely's typed builder cannot express
  * for a generic table — so the statement is composed with the `sql`
  * template (ref/value interpolation, no string concatenation of values).
- *
+ * @param db
+ * @param table
+ * @param id
+ * @param currentVersion
+ * @param updates
+ * @param opts
+ * @param opts.bumpUpdatedAt
+ * @param opts.now
  * @returns Number of rows affected by the UPDATE
  */
 async function applyOptimisticUpdate(
@@ -104,7 +110,6 @@ async function applyOptimisticUpdate(
  *
  * Same as updateWithVersionCheck but doesn't touch updated_at.
  * Use when you want to manage updated_at yourself.
- *
  * @param db - Kysely database instance
  * @param table - Table name to update
  * @param id - Row ID to update
@@ -137,7 +142,6 @@ export async function updateWithVersionCheckRaw(
 
 /**
  * Fetch current format_version for a row.
- *
  * @param db - Kysely database instance
  * @param table - Table name
  * @param id - Row ID

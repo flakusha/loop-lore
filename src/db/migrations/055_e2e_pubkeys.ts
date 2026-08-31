@@ -29,6 +29,9 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
     .createTable("actor_e2e_pubkeys",)
@@ -58,6 +61,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropIndex("idx_actor_e2e_pubkeys_revoked",).execute();
   await db.schema.dropIndex("idx_actor_e2e_pubkeys_actor_id",).execute();

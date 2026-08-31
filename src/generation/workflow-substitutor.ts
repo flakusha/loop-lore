@@ -9,7 +9,6 @@
  *
  * - Simple: `{{prompt}}` → replaced from `vars.prompt`
  * - Nested: `{{node_id.inputs.field}}` → targeted node field override
- *
  * @module workflow-substitutor
  */
 
@@ -23,10 +22,10 @@ const PLACEHOLDER_RE = /\{\{([^}]+)\}\}/g;
  * Deep-clone and substitute placeholders in a JSON-compatible value.
  *
  * Strings containing `{{...}}` are processed. All other types pass through unchanged.
- *
  * @param obj - JSON value to process (object, array, string, number, boolean, null)
  * @param vars - Variable map for simple replacements
  * @param nodeOverrides - Optional node-targeted overrides (nodeId → field path → value)
+ * @param _nodeOverrides
  * @returns New object with placeholders replaced
  */
 export function substituteWorkflow<T,>(
@@ -64,7 +63,6 @@ export function substituteWorkflow<T,>(
  * - `"a {{prompt}} b"` → string interpolation
  * - `"{{a}}{{b}}"` → multiple replacements
  * - Unknown variables → empty string
- *
  * @param str - String containing `{{...}}` placeholders
  * @param vars - Variable map
  * @returns Replaced string (or original if no placeholders found)
@@ -92,7 +90,6 @@ function substituteString(str: string, vars: SubstitutionVars,): string {
  * Node overrides allow setting specific node input values directly,
  * bypassing the template substitution. Useful when the caller knows
  * exactly which node to target (e.g., "node 5 inputs.text = my prompt").
- *
  * @param workflow - ComfyUI workflow object (node_id → { inputs, class_type, ... })
  * @param overrides - Map of nodeId → { fieldPath: value }
  * @returns New workflow with overrides applied
@@ -122,8 +119,15 @@ export function applyNodeOverrides<T extends Record<string, unknown>,>(
  * Build substitution vars from image generation parameters.
  *
  * Maps common generation fields to template variable names.
- *
  * @param params - Generation parameters from the request
+ * @param params.prompt
+ * @param params.negativePrompt
+ * @param params.width
+ * @param params.height
+ * @param params.steps
+ * @param params.cfgScale
+ * @param params.sampler
+ * @param params.seed
  * @returns Substitution variable map
  */
 export function buildSubstitutionVars(params: {

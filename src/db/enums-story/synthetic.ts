@@ -12,6 +12,7 @@ export const SyntheticDataType = {
   RegenerationCase: "regeneration_case",
   GmEscalation: "gm_escalation",
 } as const;
+/** */
 export type SyntheticDataType = (typeof SyntheticDataType)[keyof typeof SyntheticDataType];
 
 export const SyntheticDataStatus = {
@@ -21,6 +22,7 @@ export const SyntheticDataStatus = {
   Rejected: "rejected",
   Archived: "archived",
 } as const;
+/** */
 export type SyntheticDataStatus = (typeof SyntheticDataStatus)[keyof typeof SyntheticDataStatus];
 
 export const SyntheticTestMode = {
@@ -30,6 +32,7 @@ export const SyntheticTestMode = {
   Calibration: "calibration",
   Stress: "stress",
 } as const;
+/** */
 export type SyntheticTestMode = (typeof SyntheticTestMode)[keyof typeof SyntheticTestMode];
 
 const syntheticDataStatusDef: StateDef<SyntheticDataStatus> = {

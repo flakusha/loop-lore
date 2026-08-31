@@ -5,6 +5,11 @@ import type { Kysely, } from "kysely";
 import { uid, } from "../../../utils.js";
 
 // ── Tags (internal) ──────────────────────────────────────
+/**
+ * @param db
+ * @param postId
+ * @param tags
+ */
 export async function addTags(
   db: Kysely<any>,
   postId: string,
@@ -18,6 +23,10 @@ export async function addTags(
   await db.insertInto("blog_tags",).values(rows,).execute();
 }
 
+/**
+ * @param db
+ * @param postId
+ */
 export async function clearTags(db: Kysely<any>, postId: string,): Promise<void> {
   await db
     .deleteFrom("blog_tags",)
@@ -25,6 +34,10 @@ export async function clearTags(db: Kysely<any>, postId: string,): Promise<void>
     .execute();
 }
 
+/**
+ * @param db
+ * @param postId
+ */
 export async function getTags(db: Kysely<any>, postId: string,): Promise<string[]> {
   const rows = await db
     .selectFrom("blog_tags",)

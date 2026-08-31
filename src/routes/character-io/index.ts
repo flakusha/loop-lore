@@ -10,6 +10,7 @@ import type { HandlerOpts, } from "./types";
  * Character IO Routes — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`character-io`) is preserved so
  * the `register-plugins.ts` wiring is unchanged.
+ * @param opts
  */
 export function characterIoRoutes(opts: HandlerOpts,) {
   return (

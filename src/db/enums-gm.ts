@@ -19,6 +19,7 @@ export const ShadowNoteType = {
   WorldSecret: "world_secret",
   NarrativeHook: "narrative_hook",
 } as const;
+/** */
 export type ShadowNoteType = (typeof ShadowNoteType)[keyof typeof ShadowNoteType];
 
 // ── Whiteneote Types ───────────────────────────────────────
@@ -30,6 +31,7 @@ export const WhiteneoteType = {
   Pacing: "pacing",
   Theme: "theme",
 } as const;
+/** */
 export type WhiteneoteType = (typeof WhiteneoteType)[keyof typeof WhiteneoteType];
 
 // ── Whiteneote Scope ───────────────────────────────────────
@@ -39,6 +41,7 @@ export const WhiteneoteScope = {
   Session: "session",
   World: "world",
 } as const;
+/** */
 export type WhiteneoteScope = (typeof WhiteneoteScope)[keyof typeof WhiteneoteScope];
 
 // ── Shadow Note Reveal State ───────────────────────────────
@@ -46,6 +49,7 @@ export const ShadowNoteStatus = {
   Hidden: "hidden",
   Revealed: "revealed",
 } as const;
+/** */
 export type ShadowNoteStatus = (typeof ShadowNoteStatus)[keyof typeof ShadowNoteStatus];
 
 const shadowNoteStatusDef: StateDef<ShadowNoteStatus> = {

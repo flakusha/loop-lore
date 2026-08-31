@@ -15,6 +15,9 @@ import type { WorldState, } from "./types";
 /**
  * Build the full StoryContext for the Game Master
  * from the current DB state.
+ * @param state
+ * @param chatId
+ * @param recentTurnCount
  */
 export async function buildContext(
   state: WorldState,

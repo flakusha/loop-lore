@@ -5,6 +5,10 @@ import { existsSync, readFileSync, } from "node:fs";
 import { join, } from "node:path";
 import { ALLOWED_PARTIALS, COMPONENTS_DIR, PARTIALS_DIR, } from "./constants";
 
+/**
+ * @param name
+ * @param searchParams
+ */
 function serveStaticPartial(name: string, searchParams?: URLSearchParams,): string | null {
   if (!ALLOWED_PARTIALS.has(name,)) { return null; }
 
