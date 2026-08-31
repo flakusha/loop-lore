@@ -194,60 +194,6 @@ export default [
       }],
     },
   },
-        contexts: [
-          "ExportNamedDeclaration > FunctionDeclaration",
-          "ExportNamedDeclaration > ClassDeclaration",
-          "ExportNamedDeclaration > TSTypeAliasDeclaration",
-          "ExportNamedDeclaration > TSInterfaceDeclaration",
-          "ExportNamedDeclaration > VariableDeclaration > ArrowFunctionExpression",
-        ],
-      }],
-      "jsdoc/require-yields": "off",
-    },
-  },
-      // Target public exports only (not private/internal helpers)
-      "jsdoc/require-jsdoc": ["warn", {
-        require: {
-          FunctionDeclaration: true,
-          ClassDeclaration: true,
-          MethodDefinition: true,
-        },
-        contexts: [
-          "ExportNamedDeclaration > FunctionDeclaration",
-          "ExportNamedDeclaration > ClassDeclaration",
-          "ExportNamedDeclaration > TSTypeAliasDeclaration",
-          "ExportNamedDeclaration > TSInterfaceDeclaration",
-          "ExportNamedDeclaration > VariableDeclaration > ArrowFunctionExpression",
-        ],
-      }],
-    },
-  },
-      // Target public exports only (not private/internal helpers)
-      "jsdoc/require-jsdoc": ["warn", {
-        require: {
-          FunctionDeclaration: true,
-          ClassDeclaration: true,
-          MethodDefinition: true,
-        },
-        contexts: [
-          "ExportNamedDeclaration > FunctionDeclaration",
-          "ExportNamedDeclaration > ClassDeclaration",
-          "ExportNamedDeclaration > TSTypeAliasDeclaration",
-          "ExportNamedDeclaration > TSInterfaceDeclaration",
-          "ExportNamedDeclaration > VariableDeclaration > ArrowFunctionExpression",
-        ],
-      }],
-      // Relaxed rules — require-jsdoc presence but not full descriptions
-      // (can revisit once public-export debt is cleared)
-      "jsdoc/require-param-description": "off",
-      "jsdoc/require-returns-description": "off",
-      "jsdoc/require-param": "off",
-      "jsdoc/require-returns": "off",
-      "jsdoc/require-throws": "off",
-      "jsdoc/require-example": "off",
-      "jsdoc/require-yields": "off",
-    },
-  },
   // E2E tests
   {
     files: ["tests/e2e/**/*.ts"],
