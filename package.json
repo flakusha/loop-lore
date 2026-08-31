@@ -109,9 +109,11 @@
     "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e && bun run build"
   },
   "dependencies": {
+    "@alpinejs/morph": "^3.16.3",
     "@elysia/openapi": "^1.4.15",
     "@noble/hashes": "^2.3.0",
     "@sinclair/typebox": "^0.34.52",
+    "alpinejs": "^3.16.3",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.11.0",
     "clean-css": "^5.3.3",
@@ -126,7 +128,6 @@
     "obscenity": "^0.4.6"
   },
   "devDependencies": {
-    "@alpinejs/morph": "^3.16.3",
     "@biomejs/biome": "^2.5.10",
     "@markuplint/html-spec": "^4.18.0",
     "@markuplint/mustache-parser": "4.18.3",
@@ -140,7 +141,6 @@
     "@types/jszip": "^3.4.1",
     "@types/terser": "^3.12.0",
     "@typescript/native-preview": "^7.0.0-dev.20260707.2",
-    "alpinejs": "^3.16.3",
     "bun-plugin-html": "2.2.8",
     "dprint": "^0.56.1",
     "eslint": "^10.9.0",
