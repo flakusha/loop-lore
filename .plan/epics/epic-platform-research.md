@@ -126,6 +126,10 @@ respectful treatment.
 - **DreamGen** (Game Mode, multi-character scenes, Scenario Codex): https://weavai.app/blog/en/2026/04/14/dreamgen-2026-review-ai-story-features-pricing/ — verified review
 - **Generative agents** (Park et al., 2023 — 3-pillar memory: memory stream + retrieval scoring + reflection): https://arxiv.org/abs/2304.03442 + https://www.subodhjena.com/blog/generative-agents-memory-stanford (2026-04-22, code walkthrough)
 - **Luma** (Master Reference Asset pattern for character consistency): https://lumalabs.ai/learning-center/articles/character-and-object-consistency (2026-03-09, official learning center)
+- **Second sweep — DreamRunner.ai** (stateful VN world, Depict, POV memories, voice design, `.drsf`): https://dreamrunner.ai/about/ + /blog/ update log (2025-09 → 2026-06)
+- **Second sweep — Neta Studio** (World Expression Protocol, Neta-Lumina, agent studio): https://neta.art/changelogs/ + https://www.ai-market-watch.com/company/neta + https://marksun.net/blog/nieta-art-raises-over-10m-in-pre-a-funding-to-define-the-infrastructure-for-world-creation
+- **Second sweep — Story Studio AI** (text→illustrated-VN importer, frame→motion): https://story-studio.ai/; Dreammir: https://dreammir.ai/; miku.gg: https://miku.gg/
+- **Second-sweep synthesis:** `docs/ideas/emergent-platform-landscape-2026b.md` (Buckets D/E + E9–E16 gap synthesis)
 
 ## Research Reconciliation (2026-08-14)
 
@@ -304,6 +308,48 @@ Systematic analysis of agentic features across 9 platforms to enhance assistant 
 **Medium priority** (0.1.0/later wave): Proactive messaging (#20), Emotional pattern tracking (#21), Visual memory management (#25), Tool-calling agents (#24)
 
 **P6+ deferred**: Reflection/memory synthesis (#19), Inner monologue (#23), Goal-driven NPC autonomy (existing E1)
+
+## Second Emergent Sweep (2026-08-31) — AI-native VN & world-generation platforms
+
+Continuation of the 2026-08-14 sweep. This pass covers the next wave the prior sweep
+missed: **AI-native visual-novel production platforms** (exemplar **DreamRunner.ai** —
+simulated world with own state, on-demand scene illustration "Depict", per-character
+POV memories, designed voices, stop-and-respond interrupt, two-layer custom
+instructions, `.drsf` portable story export) and **agentic world-builder studios**
+(exemplar **Neta Studio / neta.art** — chat-agent builds forkable/checkpointable
+world-projects; **World Expression Protocol** keeps user assets persistent across
+model generations; open-source Neta-Lumina anime model; cost-visible commercialization
+pass). Adjacent entrants: Dreammir.ai, miku.gg, Story Studio AI (PDF/TXT→illustrated
+VN importer), plus seeles/llamagen/sekai category wrappers. Full feature extraction +
+gap synthesis E9–E16: `docs/ideas/emergent-platform-landscape-2026b.md`.
+
+New candidates (numbering continues; foldup here until split):
+
+| # | Feature | Source | Why it matters for loop-lore | Difficulty |
+|---|---|---|---|---|
+| 27 | Character-perspective memories (per-POV bullet lists feeding future summaries) | DreamRunner (Jun 2026) | Extends `memory` three-tier beyond the single narrator brain; characters "remember the same scene differently" | Med |
+| 28 | State→image scene compiler ("Depict": one-click illustration composed from live story state — appearance/outfit/location/POV) | DreamRunner (May 2026) | **loop-lore's DB-persisted state makes this cheaper here than for chat-window rivals**; extends `assets` + VN scene gen + emotion avatars | Med — good pull candidate |
+| 29 | Voice-design-by-description + per-slot voice assignment + live preview sliders | DreamRunner (Jun 2026) | Concrete API shape for candidate #2/#12; extends `TASK-character-voice-profile.md` | Med |
+| 30 | Stop-and-respond interrupt semantics (truncate to last-observed line, cancel queued TTS/image jobs, never bill undelivered output) | DreamRunner (Jun 2026) | `turning`/`transport` cancellation + billing hooks | Low–Med |
+| 31 | Two-layer custom instructions (per-story + account-global, stacking, travel inside exports, applied to impersonation) | DreamRunner (Jun 2026) | Cheap `assistant`/prompt-assembly win | Low |
+| 32 | Portable story-bundle export (`.drsf`: story + instructions + designed voices) | DreamRunner | `content`/`assets` portability | Med |
+| 33 | Model-agnostic asset persistence ("World Expression Protocol" pattern — world-level asset representation survives model/provider generations) | Neta (Pre-A+ 2026) | Names the moat loop-lore's provider-swappable stack should make explicit; P6+ architecture but record now so new assets keep a model-independent representation | High |
+| 34 | Agent authoring-studio mechanics (intent questionnaire preflight, structured-card answers, turn-by-turn feedback, queued followups, @mention→workspace-resource context, fork session at any turn, world fork carries full track history, cross-world work import, narrating camera) | Neta (Jun–Aug 2026 changelogs) | Feeds `TASK-conversation-branching.md` (Not Started) with concrete acceptance criteria; questionnaire/cards cheap for `assistant` | Med |
+| 35 | Cost-visible generation (per-model price labels, mid-session model switch, upfront regen cost chip, credit activity history, offline-model notices) | Neta + DreamRunner | `admin` provider health + generation UI; small, high-trust UX | Low–Med |
+| 36 | Text→illustrated-VN importer (PDF/TXT/script → scene-by-scene VN, style-consistent, export readable VN) | Story Studio AI | On-brand pipeline for `content`/story import | Med |
+
+**New cross-platform trend F — state-driven full production:** text + scene art +
+per-character voice generated on demand from persistent world/story state
+(DreamRunner Depict/Voice; Neta scene images/narration). loop-lore already owns the
+hard half (structured DB state); the render wrappers are the missing outer layer.
+**Trend G — world-as-project:** versioned, forkable, checkpointed creative workspaces
+whose assets outlive any model (Neta canvas/forks/WEP) — the product mechanics that
+make candidate #15 (living-world) concrete.
+
+**Recommendation (0.1.0/later-wave):** pull #30 (stop-and-respond), #31 (custom
+instructions), #35 (cost-visible generation), #28 (Depict-style compiler — biggest
+differentiator-per-effort given structured state). #27 feeds memory-epic design; #33
+P6+ architecture note; #34 criteria adopt into existing branching ticket.
 
 ## Related Epics
 
