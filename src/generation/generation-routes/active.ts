@@ -12,6 +12,7 @@ import { listActiveGenerations, } from "../cancellation-manager";
  * GET /api/generation/active
  *
  * List all currently active generation attempts (admin/debugging).
+ * @param _database
  */
 export function handleListActiveGenerations(_database?: Kysely<DB>,): Response {
   const active = listActiveGenerations();

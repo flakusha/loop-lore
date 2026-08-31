@@ -10,13 +10,18 @@
 
 import type { BattleCombatantView, BattleView, } from "../../battle/panel";
 
+/** */
 export type ActionHandler = (
   ctx: unknown,
   payload: Record<string, unknown> | null,
   chatId: string,
 ) => Promise<void> | void;
 
-/** Render the battle panel from a `battle-*` command action payload. */
+/**
+ * Render the battle panel from a `battle-*` command action payload.
+ * @param ctx
+ * @param payload
+ */
 function renderBattleFromPayload(
   ctx: unknown,
   payload: Record<string, unknown> | null,
@@ -45,7 +50,10 @@ function renderBattleFromPayload(
   panel?.renderBattlePanel(view,);
 }
 
-/** @returns true when `value` has the shape of a battle view payload. */
+/**
+ * @param value
+ * @returns true when `value` has the shape of a battle view payload.
+ */
 function isBattleViewShape(value: unknown,): value is {
   id: string;
   status: "active" | "completed" | "abandoned";
@@ -65,7 +73,10 @@ function isBattleViewShape(value: unknown,): value is {
   );
 }
 
-/** @returns true when `value` has a combatant view shape. */
+/**
+ * @param value
+ * @returns true when `value` has a combatant view shape.
+ */
 function isCombatantShape(value: unknown,): value is BattleCombatantView {
   if (!value || typeof value !== "object") { return false; }
   const v = value as Record<string, unknown>;

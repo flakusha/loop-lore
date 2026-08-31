@@ -37,6 +37,7 @@ const CHAT_ID = "chat-membership-001";
 
 let db: Kysely<DB>;
 
+/** */
 function buildMigrationProvider() {
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
@@ -76,6 +77,10 @@ afterAll(async () => {
   db.destroy();
 },);
 
+/**
+ * @param id
+ * @param type
+ */
 async function insertActor(id: string, type: "user" | "character",) {
   await db.insertInto("actors",).values({
     id,
@@ -93,6 +98,10 @@ async function insertActor(id: string, type: "user" | "character",) {
   },).execute();
 }
 
+/**
+ * @param id
+ * @param encryptionLevel
+ */
 async function insertChat(id: string, encryptionLevel: EncryptionLevel = "standard",) {
   await db.insertInto("chats",).values({
     id,
@@ -104,6 +113,10 @@ async function insertChat(id: string, encryptionLevel: EncryptionLevel = "standa
   },).execute();
 }
 
+/**
+ * @param chatId
+ * @param actorId
+ */
 async function addParticipant(chatId: string, actorId: string,) {
   await db.insertInto("chat_participants",).values({
     chat_id: chatId,
@@ -112,6 +125,11 @@ async function addParticipant(chatId: string, actorId: string,) {
   },).execute();
 }
 
+/**
+ * @param chatId
+ * @param plaintext
+ * @param actorId
+ */
 async function encryptMessage(chatId: string, plaintext: string, actorId: string,) {
   const chatKey = await getChatKey(db, chatId,);
   const encrypted = await compressThenEncrypt({
@@ -132,6 +150,10 @@ async function encryptMessage(chatId: string, plaintext: string, actorId: string
   },).execute();
 }
 
+/**
+ * @param content
+ * @param keyId
+ */
 async function decryptByKeyId(content: string, keyId: string,): Promise<string> {
   const { getChatKeyById, } = await import("./chat-keys");
   const chatKey = await getChatKeyById(db, keyId, getSmk()!,);

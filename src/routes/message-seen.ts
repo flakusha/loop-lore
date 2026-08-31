@@ -28,7 +28,10 @@ interface HandlerOpts {
  * Access policy: the chat owner, any chat participant, and admin/solo roles
  * may view or modify seen-state. Uses `checkChatAccess`, so this stays
  * consistent with the rest of the message/chat pipelines.
- *
+ * @param database
+ * @param messageId
+ * @param userId
+ * @param userRole
  * @returns the message's `chat_id` on success, or a 404 `Response` if the
  *          message is missing or the user lacks access (returned to the caller
  *          verbatim).
@@ -57,6 +60,8 @@ async function resolveMessageAccess(
  *
  * Returns: { actorId, state ("unseen"|"processing"|"seen"), seenAt } for each
  * viewer (human or AI) with a recorded state on this message.
+ * @param opts
+ * @param prefix
  */
 export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

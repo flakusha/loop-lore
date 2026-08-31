@@ -23,6 +23,7 @@ export interface UploadOpts {
   config?: Config;
 }
 
+/** */
 export interface ServeRawOpts {
   database: Kysely<DB>;
   assetId: string;
@@ -39,6 +40,7 @@ export interface ServeRawOpts {
   signedUrlAction?: SignedUrlAction | null;
 }
 
+/** */
 export interface ServeCompressedOpts {
   database: Kysely<DB>;
   assetId: string;
@@ -53,6 +55,7 @@ export interface ServeCompressedOpts {
   signedUrlAction?: SignedUrlAction | null;
 }
 
+/** */
 export interface ResolvedAsset {
   asset: AssetRecord;
 }

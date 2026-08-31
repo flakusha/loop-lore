@@ -122,7 +122,10 @@ interface StationInstanceRow {
 
 // ── Row mappers ───────────────────────────────────────────
 
-/** Map a raw DB row to the camelCase StationDef interface. */
+/**
+ * Map a raw DB row to the camelCase StationDef interface.
+ * @param row
+ */
 export function mapDef(row: StationDefRow,): StationDef {
   return {
     id: row.id,
@@ -141,7 +144,10 @@ export function mapDef(row: StationDefRow,): StationDef {
   };
 }
 
-/** Map a raw DB row to the camelCase StationInstance interface. */
+/**
+ * Map a raw DB row to the camelCase StationInstance interface.
+ * @param row
+ */
 export function mapInstance(row: StationInstanceRow,): StationInstance {
   return {
     id: row.id,

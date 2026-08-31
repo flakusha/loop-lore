@@ -7,6 +7,9 @@ import { safeJsonStringify, uid, } from "../../utils";
 import { getPrefs, } from "./prefs";
 import type { NotificationInput, NotificationRecord, NotificationRow, } from "./types";
 
+/**
+ * @param r
+ */
 function mapRow(r: NotificationRow,): NotificationRecord {
   return {
     id: r.id,
@@ -24,6 +27,8 @@ function mapRow(r: NotificationRow,): NotificationRecord {
 /**
  * Create a notification, skipping when the type is disabled for the user or
  * when the linked world is muted.
+ * @param db
+ * @param input
  */
 export async function createNotification(
   db: Kysely<DB>,
@@ -50,7 +55,12 @@ export async function createNotification(
     .execute();
 }
 
-/** Newest-first list, optionally unread only. */
+/**
+ * Newest-first list, optionally unread only.
+ * @param db
+ * @param userId
+ * @param unreadOnly
+ */
 export async function listNotifications(
   db: Kysely<DB>,
   userId: string,
@@ -62,7 +72,11 @@ export async function listNotifications(
   return Array.from(rows, (row,) => mapRow(row,),);
 }
 
-/** Count of unread notifications for a user. */
+/**
+ * Count of unread notifications for a user.
+ * @param db
+ * @param userId
+ */
 export async function getUnreadCount(db: Kysely<DB>, userId: string,): Promise<number> {
   const row = await db
     .selectFrom("notifications",)
@@ -73,7 +87,12 @@ export async function getUnreadCount(db: Kysely<DB>, userId: string,): Promise<n
   return row?.count ?? 0;
 }
 
-/** Mark a single notification read (ownership-checked). */
+/**
+ * Mark a single notification read (ownership-checked).
+ * @param db
+ * @param id
+ * @param userId
+ */
 export async function markNotificationRead(
   db: Kysely<DB>,
   id: string,
@@ -87,7 +106,11 @@ export async function markNotificationRead(
     .execute();
 }
 
-/** Mark every notification read for a user. */
+/**
+ * Mark every notification read for a user.
+ * @param db
+ * @param userId
+ */
 export async function markAllNotificationsRead(
   db: Kysely<DB>,
   userId: string,
@@ -100,7 +123,12 @@ export async function markAllNotificationsRead(
     .execute();
 }
 
-/** Delete a notification (ownership-checked). */
+/**
+ * Delete a notification (ownership-checked).
+ * @param db
+ * @param id
+ * @param userId
+ */
 export async function deleteNotification(
   db: Kysely<DB>,
   id: string,
@@ -112,6 +140,9 @@ export async function deleteNotification(
 /**
  * Build the `[Recent Events]` block injected into the LLM prompt so
  * characters stay aware of off-screen activity. Returns "" when empty.
+ * @param db
+ * @param userId
+ * @param chatId
  */
 export async function buildRecentEvents(
   db: Kysely<DB>,

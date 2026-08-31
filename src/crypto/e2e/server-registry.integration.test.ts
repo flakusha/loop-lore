@@ -24,6 +24,7 @@ const OWNER_USER_ID = "owner-e2e-user-001";
 const OTHER_ACTOR_ID = "other-e2e-001";
 const OTHER_USER_ID = "other-e2e-user-001";
 
+/** */
 function buildMigrationProvider() {
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
@@ -44,6 +45,11 @@ function buildMigrationProvider() {
   };
 }
 
+/**
+ * @param db
+ * @param id
+ * @param userId
+ */
 async function seedActor(db: Kysely<DB>, id: string, userId: string,): Promise<void> {
   await db.insertInto("users",).values({
     id: userId,
@@ -93,6 +99,9 @@ afterAll(async () => {
 
 // ── Helpers ────────────────────────────────────────────────
 
+/**
+ * @param seed
+ */
 function sampleJwk(seed: number,): JsonWebKey {
   // Deterministic but distinct per-seed value in `x` so we can tell rows apart.
   const x = `0${seed.toString(16,).padStart(63, "0",)}`;

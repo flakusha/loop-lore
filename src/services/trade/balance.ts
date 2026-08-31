@@ -14,6 +14,10 @@ import { DEFAULT_CURRENCY, } from "./types";
 /**
  * Resolve or create a currency balance row for an actor+world.
  * Returns the current balance (0 when absent) and upserts a row.
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currency
  */
 export async function ensureBalanceRow(
   db: Kysely<DB>,
@@ -44,7 +48,13 @@ export async function ensureBalanceRow(
   return 0;
 }
 
-/** Current gold (or other currency) balance for an actor in a world. */
+/**
+ * Current gold (or other currency) balance for an actor in a world.
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currency
+ */
 export async function getBalance(
   db: Kysely<DB>,
   actorId: string,
@@ -61,7 +71,15 @@ export async function getBalance(
   return row?.balance ?? 0;
 }
 
-/** Add funds to an actor's balance (never produces a negative balance). */
+/**
+ * Add funds to an actor's balance (never produces a negative balance).
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param amount
+ * @param currency
+ * @param trx
+ */
 export async function credit(
   db: Kysely<DB>,
   actorId: string,
@@ -84,7 +102,15 @@ export async function credit(
   return next;
 }
 
-/** Remove funds; returns false (no-op) when insufficient. */
+/**
+ * Remove funds; returns false (no-op) when insufficient.
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param amount
+ * @param currency
+ * @param trx
+ */
 export async function debit(
   db: Kysely<DB>,
   actorId: string,
@@ -108,7 +134,16 @@ export async function debit(
   return true;
 }
 
-/** Move gold atomically from one actor to another. Returns false when from lacks funds. */
+/**
+ * Move gold atomically from one actor to another. Returns false when from lacks funds.
+ * @param db
+ * @param fromActorId
+ * @param toActorId
+ * @param worldId
+ * @param amount
+ * @param currency
+ * @param trx
+ */
 export async function transferCurrency(
   db: Kysely<DB>,
   fromActorId: string,

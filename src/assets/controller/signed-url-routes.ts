@@ -30,6 +30,9 @@ import type { RouteCtx, ServeRawOpts, } from "./types";
  * Returns null when no `sig`+`expires` params are present (→ session auth),
  * or a signed-URL opts object when they are. The secret is resolved here and
  * passed through so serve.ts can verify fail-closed.
+ * @param searchParams
+ * @param action
+ * @param config
  */
 function signedAuthParams(
   searchParams: URLSearchParams,
@@ -53,6 +56,12 @@ function signedAuthParams(
   };
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param root0.ctx
+ */
 export async function handleServeRawRoute(
   { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },
 ): Promise<Response> {
@@ -70,6 +79,12 @@ export async function handleServeRawRoute(
   },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param root0.ctx
+ */
 export async function handleDownloadRoute(
   { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },
 ): Promise<Response> {
@@ -87,6 +102,13 @@ export async function handleDownloadRoute(
   },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param root0.ctx
+ * @param variant
+ */
 export async function handleCompressedRoute(
   { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },
   variant: string,
@@ -109,6 +131,10 @@ export async function handleCompressedRoute(
  * Generate a signed URL for an asset serve action.
  * Requires the caller to be able to access the asset (same gate as serving).
  * Returns `{ url, token, expiresAt }` where url already carries `sig`+`expires`.
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param root0.ctx
  */
 export async function handleSignedUrlRoute(
   { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },

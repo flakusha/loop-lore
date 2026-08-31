@@ -12,6 +12,9 @@ import {
   type InjectionContext,
 } from "./types";
 
+/**
+ * @param overrides
+ */
 function makeMemory(overrides: Partial<MemoryEntry>,): MemoryEntry {
   return {
     id: "mem-1",

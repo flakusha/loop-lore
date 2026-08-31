@@ -36,7 +36,10 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /** Load one world's channel chats via the grouped endpoint. */
+  /**
+   * Load one world's channel chats via the grouped endpoint.
+   * @param worldId
+   */
   async loadWorldChats(worldId: string,) {
     try {
       const res = await apiFetch(`/api/worlds/${worldId}/chats`,);

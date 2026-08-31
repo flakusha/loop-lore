@@ -12,7 +12,7 @@ import { getNativeStatus, } from "./loader";
 
 /**
 Official BLAKE3 vectors; 1024×'a' cross-verified with the Rust crate.
-*/
+ */
 const VECTORS: { input: Uint8Array; expected: string }[] = [
   {
     input: new Uint8Array(0,),
@@ -32,6 +32,9 @@ const VECTORS: { input: Uint8Array; expected: string }[] = [
   },
 ];
 
+/**
+ * @param bytes
+ */
 function toHex(bytes: Uint8Array,): string {
   return Buffer.from(bytes,).toString("hex",);
 }

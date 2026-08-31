@@ -28,7 +28,11 @@ export function activeChatId(): string | null {
   return chat?.currentChat?.id ?? null;
 }
 
-/** Post a toast via the app store (no-op when the store is unavailable). */
+/**
+ * Post a toast via the app store (no-op when the store is unavailable).
+ * @param message
+ * @param type
+ */
 export function toast(message: string, type = "info",): void {
   try {
     const alpine =
@@ -39,7 +43,10 @@ export function toast(message: string, type = "info",): void {
   }
 }
 
-/** Parse quest_progress JSON from a turn into display banners. */
+/**
+ * Parse quest_progress JSON from a turn into display banners.
+ * @param raw
+ */
 export function parseQuestBanners(raw: string,): QuestBanner[] {
   const entries = jsonParseOr<{ quest_name?: string; questName?: string; progress?: number }[]>(raw, [],);
   const banners: QuestBanner[] = [];
@@ -53,14 +60,20 @@ export function parseQuestBanners(raw: string,): QuestBanner[] {
   return banners;
 }
 
-/** CSS tier for a quality score: good (≥70) / mid (≥40) / low. */
+/**
+ * CSS tier for a quality score: good (≥70) / mid (≥40) / low.
+ * @param score
+ */
 export function qualityClass(score: number,): string {
   if (score >= 70) { return "is-good"; }
   if (score >= 40) { return "is-mid"; }
   return "is-low";
 }
 
-/** Quest progress clamped to 0..100. */
+/**
+ * Quest progress clamped to 0..100.
+ * @param quest
+ */
 export function questProgressPct(quest: StoryQuest,): number {
   return Math.max(0, Math.min(100, Math.round(quest.progress,),),);
 }
@@ -74,7 +87,10 @@ export interface TurnSummary {
   banners: QuestBanner[];
 }
 
-/** Index turns by parent message id and derive latest-turn state. */
+/**
+ * Index turns by parent message id and derive latest-turn state.
+ * @param turns
+ */
 export function summarizeTurns(turns: StoryTurnRow[],): TurnSummary {
   const turnMeta: Record<string, StoryTurnMeta> = {};
   let latest: StoryTurnRow | null = null;
@@ -101,7 +117,10 @@ export function summarizeTurns(turns: StoryTurnRow[],): TurnSummary {
   };
 }
 
-/** Map participant rows to turn-order actors plus the next actor's name. */
+/**
+ * Map participant rows to turn-order actors plus the next actor's name.
+ * @param participants
+ */
 export function mapParticipants(
   participants: ParticipantRow[],
 ): { actors: StoryParticipant[]; nextActorName: string | null } {

@@ -24,6 +24,11 @@ if (ISOLATED) {
   }),);
 }
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId: string, userRole: string,) {
   const app = new Elysia({ name: "test-telemetry-disabled", },);
   app.derive(() => ({ userId, userRole, }));

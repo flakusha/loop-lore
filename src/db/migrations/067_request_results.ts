@@ -27,13 +27,15 @@
  *   complete   → response captured, ready to replay / serve.
  *   failed     → handler threw; error captured.
  *   expired    → TTL elapsed; offloaded or evicted.
- *
  * @see TASK-async-request-response-result-store-separate-table-offload.md
  * @see epic-middleware-request-lifecycle.md
  */
 
 import type { Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
     .createTable("request_results",)
@@ -74,6 +76,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropTable("request_results",).ifExists().execute();
 }

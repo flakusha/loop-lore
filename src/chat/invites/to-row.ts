@@ -4,6 +4,18 @@
 import type { InviteStatus, } from "../../db/enums";
 import type { ChatInviteRow, } from "./types";
 
+/**
+ * @param row
+ * @param row.id
+ * @param row.chat_id
+ * @param row.code
+ * @param row.created_by
+ * @param row.created_at
+ * @param row.expires_at
+ * @param row.max_uses
+ * @param row.uses
+ * @param row.status
+ */
 export function toRow(row: {
   id: string;
   chat_id: string;

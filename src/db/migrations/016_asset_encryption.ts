@@ -6,6 +6,9 @@
  */
 import type { Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // Add encryption tier column (default: 'public')
   await db.schema
@@ -26,6 +29,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.alterTable("assets",).dropColumn("content_hash",).execute();
   await db.schema.alterTable("assets",).dropColumn("encrypted_key_id",).execute();

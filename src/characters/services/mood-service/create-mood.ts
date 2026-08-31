@@ -20,9 +20,11 @@ export interface CreateMoodArgs {
 
 /**
  * Create or initialize mood state for a character.
- *
  * @param args.thisL - The mood service instance
+ * @param root0
+ * @param root0.thisL
  * @param args.opts - Mood creation options
+ * @param root0.opts
  * @returns Created mood ID
  */
 export async function createMood(

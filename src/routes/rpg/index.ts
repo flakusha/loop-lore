@@ -57,6 +57,7 @@ import { xpLootTablesRoutes, } from "./xp-loot-tables";
  *   World & Location Traits:
  *     /api/rpg/world-location-traits/worlds|locations/... — trait CRUD
  *     /api/rpg/world-location-traits/actors/:actorId — aggregate
+ * @param opts
  */
 export function rpgRoutes(opts: HandlerOpts,) {
   return (

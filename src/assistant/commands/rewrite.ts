@@ -7,7 +7,6 @@
  * Registers the "rewrite" command alias. Returns a rewritten version of the
  * target text using basic local heuristics. In future iterations this will
  * route through the LLM generation pipeline.
- *
  * @module assistant/commands/rewrite
  */
 
@@ -68,7 +67,6 @@ registerCommand("rewrite", (args, ctx,): CommandResult => {
  * - Trim excess whitespace
  * - Fix common punctuation patterns
  * - Apply style-appropriate sentence structure hints
- *
  * @param text - The text to rewrite
  * @param style - Rewriting style ("clear", "concise", "dramatic", "formal")
  * @returns Rewritten text

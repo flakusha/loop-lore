@@ -38,6 +38,9 @@ const ChatListQuery = t.Object({
  * Apply the requested `sort` to a chat list query. Defaults to recent-first
  * ("updated_at" desc). "unread" orders by newer-than-last-read visible message
  * count (same semantics as routes/activity.ts), then by recency.
+ * @param query
+ * @param sort
+ * @param userId
  */
 function orderChatList<T,>(
   query: SelectQueryBuilder<DB, "chats", T>,
@@ -58,7 +61,7 @@ function orderChatList<T,>(
       // participant's last read message (COALESCE('') => never-read counts all).
       // This rule dislikes the wrapped template indentation; keep the SQL
       // stable by disabling it for this one expression.
-      // eslint-disable-next-line unicorn/template-indent
+
       const unreadSub = sql<number>`(
         SELECT COUNT(*)
         FROM messages m
@@ -80,6 +83,10 @@ function orderChatList<T,>(
   }
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

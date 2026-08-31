@@ -4,7 +4,11 @@
 import { describe, expect, it, } from "bun:test";
 import { isInQuietHours, } from "./timing";
 
-/** Build a Date with the given hour + minute (local). */
+/**
+ * Build a Date with the given hour + minute (local).
+ * @param hour
+ * @param minute
+ */
 function at(hour: number, minute = 0,): Date {
   const d = new Date(2026, 0, 1, hour, minute, 0, 0,);
   return d;

@@ -14,7 +14,13 @@ import type { DB, } from "../db/schema";
 import type { ExtractedMemory, } from "../memory/types";
 import { jsonStringifyOr, } from "../utils";
 
-/** Detect memory scope from message content. */
+/**
+ * Detect memory scope from message content.
+ * @param _content
+ * @param role
+ * @param worldId
+ * @param _participantIds
+ */
 export function detectScope(
   _content: string,
   role: string,
@@ -33,6 +39,11 @@ export function detectScope(
 /**
  * Store extracted memories with explicit scope.
  * Extends storeMemories by setting scope on inserted memories.
+ * @param db
+ * @param actorId
+ * @param chatId
+ * @param memories
+ * @param scope
  */
 export async function storeMemoriesWithScope(
   db: Kysely<DB>,

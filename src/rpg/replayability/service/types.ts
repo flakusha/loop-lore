@@ -10,6 +10,7 @@ export const PlusDifficulty = {
   Nightmare: "nightmare",
   Custom: "custom",
 } as const;
+/** */
 export type PlusDifficulty = (typeof PlusDifficulty)[keyof typeof PlusDifficulty];
 
 /** Ending types */
@@ -20,6 +21,7 @@ export const EndingType = {
   Secret: "secret",
   True: "true",
 } as const;
+/** */
 export type EndingType = (typeof EndingType)[keyof typeof EndingType];
 
 /** Playthrough data */

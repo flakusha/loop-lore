@@ -15,6 +15,8 @@ import type { HandlerOpts, } from "./types";
 
 /**
  * Avatar selection sub-plugin — context-aware avatar selection.
+ * @param opts
+ * @param prefix
  */
 export function selectRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

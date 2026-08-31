@@ -21,11 +21,15 @@ export interface ApplyHappinessDeltaArgs {
 
 /**
  * Apply happiness delta (positive or negative).
- *
  * @param args.thisL - The mood service instance
+ * @param root0
+ * @param root0.thisL
  * @param args.actorId - Character actor ID
+ * @param root0.actorId
  * @param args.worldId - Optional world ID
+ * @param root0.worldId
  * @param args.delta - Happiness change (-100 to +100)
+ * @param root0.delta
  * @returns New happiness value
  */
 export async function applyHappinessDelta(

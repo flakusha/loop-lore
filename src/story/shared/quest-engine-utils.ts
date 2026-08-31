@@ -27,6 +27,8 @@ import { safeJsonStringify, } from "../../utils";
  *
  * Replaces the repeated safeJsonStringify + ok-check + throw pattern
  * found in quest-engine.ts createQuest.
+ * @param value
+ * @param fieldName
  */
 export function serializeOrThrow(value: unknown, fieldName: string,): string {
   const r = safeJsonStringify(value,);
@@ -41,7 +43,9 @@ export function serializeOrThrow(value: unknown, fieldName: string,): string {
 
 /**
  * Read a quest's current status and assert `to` is a legal machine transition.
- *
+ * @param db
+ * @param questId
+ * @param to
  * @returns The current status (pre-transition)
  * @throws {Error} When the quest does not exist
  * @throws {TransitionError} When the status change is not allowed by the machine
@@ -70,7 +74,10 @@ export async function requireQuestTransition(
  *
  * Validates the quest status move against {@link questStatusMachine} and the
  * resulting (quest, progress) pair against {@link questProgressValidator}.
- *
+ * @param db
+ * @param questId
+ * @param questStatus
+ * @param progressStatus
  * @throws {Error} When the quest does not exist
  * @throws {TransitionError} When the status change is not allowed
  */
@@ -98,6 +105,8 @@ export async function transitionQuestStatus(
 
 /**
  * Select all active quests for a world, ordered by priority descending.
+ * @param db
+ * @param worldId
  */
 export async function selectActiveQuests(
   db: Kysely<DB>,
@@ -115,6 +124,12 @@ export async function selectActiveQuests(
 /**
  * Upsert quest progress for a chat: update the existing row if present,
  * otherwise insert a new one.
+ * @param db
+ * @param questId
+ * @param chatId
+ * @param newProgress
+ * @param completed
+ * @param sourceMessageId
  */
 export async function upsertQuestProgress(
   db: Kysely<DB>,

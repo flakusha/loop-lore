@@ -9,6 +9,7 @@ import { type Kysely, sql, } from "kysely";
  * actions, conditions) and `log` holds the `CombatAction[]` history — both
  * stored as JSON text (gm_config / tool_calls precedent). `/attack` and
  * `/heal` read + mutate this row via the pure engine and persist it back.
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
@@ -34,6 +35,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("battles",).execute();
 }

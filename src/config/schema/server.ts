@@ -3,6 +3,7 @@
 
 // src/config/schema/server.ts — HTTP server + TLS config types
 
+/** */
 export interface TlsConfig {
   /** Path to TLS private key (PEM). Auto-generated if missing. */
   key: string;
@@ -10,6 +11,7 @@ export interface TlsConfig {
   cert: string;
 }
 
+/** */
 export interface ServerConfig {
   port: number;
   host: string;

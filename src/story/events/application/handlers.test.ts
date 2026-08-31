@@ -58,6 +58,9 @@ afterAll(async () => {
   await db.destroy();
 },);
 
+/**
+ * @param overrides
+ */
 function transferEvent(overrides: Partial<WorldEvent["data"]> & { itemName: string },): WorldEvent {
   return {
     type: WorldEventType.ItemTransfer,

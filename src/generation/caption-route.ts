@@ -32,6 +32,10 @@ interface CaptionBody {
   assetIds: string[];
 }
 
+/**
+ * @param body
+ * @param userId
+ */
 export async function handleImageCaption(body: unknown, userId?: string,): Promise<Response> {
   const log = getLogger().child({ module: "generation/caption-route", },);
   const req = body as CaptionBody;

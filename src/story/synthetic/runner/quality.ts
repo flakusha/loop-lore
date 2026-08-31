@@ -13,6 +13,14 @@ import { collectScoresAndVariance, varianceResult, } from "../../shared/story-ut
 import type { SyntheticCase, } from "../types";
 import type { RunnerState, SyntheticTestStatus, } from "./types";
 
+/**
+ * @param state
+ * @param c
+ * @param mode
+ * @param mutationParams
+ * @param mutationParams.temperatureVariance
+ * @param mutationParams.promptVariations
+ */
 export function runQuality(
   state: RunnerState,
   c: SyntheticCase,
@@ -72,6 +80,10 @@ export function runQuality(
   };
 }
 
+/**
+ * @param state
+ * @param c
+ */
 export function regenerationLogic(state: RunnerState, c: SyntheticCase,): {
   status: SyntheticTestStatus;
   expected: Record<string, unknown>;

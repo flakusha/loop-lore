@@ -21,6 +21,7 @@ import type { ChatHost, ChatMessage, ChatWidgetOptions, } from "./types";
 export { API_BASE, } from "./api";
 export type { ChatMessage, ChatWidgetOptions, } from "./types";
 
+/** */
 export class ChatWidget implements ChatHost {
   screen: blessed.Widgets.Screen;
   private box: blessed.Widgets.BoxElement;
@@ -34,6 +35,10 @@ export class ChatWidget implements ChatHost {
   private onChatChange?: (chatId: string,) => void;
   cursor: string | null = null; // pagination cursor
 
+  /**
+   * @param screen
+   * @param options
+   */
   constructor(screen: blessed.Widgets.Screen, options: ChatWidgetOptions = {},) {
     this.screen = screen;
     this.sessionToken = options.sessionToken;
@@ -114,12 +119,18 @@ export class ChatWidget implements ChatHost {
     },);
   }
 
+  /**
+   * @param token
+   */
   setSessionToken(token: string,): void {
     this.sessionToken = token;
   }
 
   // ── Chat selection ──────────────────────────────────────────
 
+  /**
+   * @param chatId
+   */
   setChatId(chatId: string,): void {
     this.chatId = chatId;
     this.cursor = null;
@@ -127,12 +138,16 @@ export class ChatWidget implements ChatHost {
     this.onChatChange?.(chatId,);
   }
 
+  /** */
   getChatId(): string | null {
     return this.chatId;
   }
 
   // ── Message display ─────────────────────────────────────────
 
+  /**
+   * @param message
+   */
   addMessage(message: ChatMessage,): void {
     this.messages.push(message,);
     this.messageList.addItem(formatMessageLine(message,),);
@@ -140,6 +155,9 @@ export class ChatWidget implements ChatHost {
     this.scrollToBottom();
   }
 
+  /**
+   * @param messages
+   */
   setMessages(messages: ChatMessage[],): void {
     this.messages = messages;
     const items = Array.from(messages, (msg,) => formatMessageLine(msg,),);
@@ -148,12 +166,14 @@ export class ChatWidget implements ChatHost {
     this.scrollToBottom();
   }
 
+  /** */
   clearMessages(): void {
     this.messages = [];
     this.itemCount = 0;
     this.messageList.clearItems();
   }
 
+  /** */
   scrollToBottom(): void {
     if (this.itemCount > 0) {
       this.messageList.select(this.itemCount - 1,);
@@ -161,12 +181,14 @@ export class ChatWidget implements ChatHost {
     this.screen.render();
   }
 
+  /** */
   showTyping(): void {
     this.messageList.addItem("{italic}{yellow}... typing{/yellow}{/italic}",);
     this.itemCount++;
     this.scrollToBottom();
   }
 
+  /** */
   hideTyping(): void {
     if (this.itemCount > 0) {
       this.messageList.popItem();
@@ -175,6 +197,9 @@ export class ChatWidget implements ChatHost {
     this.screen.render();
   }
 
+  /**
+   * @param message
+   */
   showError(message: string,): void {
     this.messageList.addItem(`{red-fg}⚠ Error: ${message}{/red-fg}`,);
     this.scrollToBottom();
@@ -185,6 +210,7 @@ export class ChatWidget implements ChatHost {
   /**
    * Send message via POST /api/chats/:id/messages.
    * Shows typing indicator, adds user message + assistant auto-reply.
+   * @param text
    */
   async handleSend(text: string,): Promise<void> {
     return handleSendDispatch(this, text,);

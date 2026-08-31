@@ -26,6 +26,7 @@ export interface MessageContentRef {
   chat_id: string;
 }
 
+/** */
 export interface EncryptMessageOpts {
   database: Kysely<DB>;
   chatId: string;
@@ -35,6 +36,7 @@ export interface EncryptMessageOpts {
   pipeline?: { threshold?: number; algorithm?: "gzip" | "brotli" | "zstd" };
 }
 
+/** */
 export interface EncryptMessageResult {
   storedContent: string;
   keyId: string | null;
@@ -47,6 +49,13 @@ export interface EncryptMessageResult {
  * `getChatEncryptionLevel`. This function delegates entirely to `encryptAtRest`,
  * which handles tier-aware encryption (none → plaintext, standard → AES-256-GCM,
  * private → throws with guidance to pre-encrypt client-side).
+ * @param root0
+ * @param root0.database
+ * @param root0.chatId
+ * @param root0.actorId
+ * @param root0.plaintext
+ * @param root0.smk
+ * @param root0.pipeline
  */
 export async function encryptMessageContent({
   database,
@@ -79,7 +88,9 @@ export async function encryptMessageContent({
  * The chat's encryption tier is read from the database. This function delegates
  * entirely to `decryptAtRest`, which handles tier-aware decryption
  * (none → identity/decode, standard → decrypt-then-decompress, private → throws).
- *
+ * @param database
+ * @param message
+ * @param _smk
  * @throws If decryption fails (tampered / wrong key) or if no SMK is available
  *         for a standard-tier chat.
  */

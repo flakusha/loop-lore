@@ -25,12 +25,21 @@ import {
 import { uid, } from "../../utils";
 import { overridesRoutes, } from "./overrides";
 
+/**
+ * @param db
+ * @param userId
+ * @param role
+ */
 function createApp(db: Kysely<DB>, userId: string | null, role = "user",): Elysia {
   return new Elysia({ name: "test-overrides", },)
     .derive(() => ({ userId, userRole: role, }))
     .use(overridesRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param path
+ * @param body
+ */
 function overrideRequest(path: string, body: Record<string, unknown>,): Request {
   return new Request(`http://localhost${path}`, {
     method: "PUT",

@@ -37,7 +37,10 @@ export interface GmSettingsFields {
   outputStyleIntensity: number;
 }
 
-/** Read the editable GM/VN settings out of a chat's persisted GmConfig. */
+/**
+ * Read the editable GM/VN settings out of a chat's persisted GmConfig.
+ * @param config
+ */
 export function readGmSettings(config: GmConfig,): GmSettingsFields {
   return {
     assistantRole: config.assistantRole ?? "off",
@@ -64,6 +67,9 @@ export function readGmSettings(config: GmConfig,): GmSettingsFields {
 /**
  * Build the gm_config payload to persist, merging edited fields onto any
  * existing config and pruning sections that no longer apply.
+ * @param existing
+ * @param fields
+ * @param actorModels
  */
 export function buildGmConfig(
   existing: GmConfig,
@@ -125,7 +131,10 @@ export function buildGmConfig(
   return gmConfig;
 }
 
-/** Drop per-actor overrides whose model is blank. */
+/**
+ * Drop per-actor overrides whose model is blank.
+ * @param actorModels
+ */
 export function buildActorModels(
   actorModels: Record<string, { model: string; provider: string }>,
 ): Record<string, { model: string; provider: string }> {
@@ -138,7 +147,12 @@ export function buildActorModels(
   return result;
 }
 
-/** Persist the paused flag into a chat's story_state JSON (mutates the chat). */
+/**
+ * Persist the paused flag into a chat's story_state JSON (mutates the chat).
+ * @param chat
+ * @param chat.story_state
+ * @param isPaused
+ */
 export function setStoryPaused(chat: { story_state?: string }, isPaused: boolean,): void {
   if (chat.story_state) {
     const st = jsonParseOr<Record<string, unknown>>(chat.story_state, {},);

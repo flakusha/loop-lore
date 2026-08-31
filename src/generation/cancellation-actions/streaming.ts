@@ -27,6 +27,12 @@ export interface ProcessStreamingChunkOpts {
   db: Kysely<DB>;
 }
 
+/**
+ * @param root0
+ * @param root0.attemptId
+ * @param root0.chunk
+ * @param root0.db
+ */
 export async function processStreamingChunk({
   attemptId,
   chunk,

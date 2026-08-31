@@ -19,10 +19,13 @@ export interface GetMoodArgs {
 
 /**
  * Get mood state for a character.
- *
  * @param args.thisL - The mood service instance (provides db via its context)
+ * @param root0
+ * @param root0.thisL
  * @param args.actorId - Character actor ID
+ * @param root0.actorId
  * @param args.worldId - Optional world ID for world-specific mood
+ * @param root0.worldId
  * @returns Mood state or undefined
  */
 export async function getMood(

@@ -3,7 +3,10 @@
 
 import type { MoraleState, } from "../integration-schemas";
 
-/** Process morale break */
+/**
+ * Process morale break
+ * @param targetMorale
+ */
 export function processMoraleBreak(
   targetMorale: MoraleState,
 ): { broke: boolean; effects: string[] } {

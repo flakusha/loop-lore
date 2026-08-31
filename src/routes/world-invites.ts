@@ -43,11 +43,18 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/** */
 function log(): Logger {
   return getLogger().child({ module: "world-invites", },);
 }
 
-/** True if the user owns the world or is an admin. */
+/**
+ * True if the user owns the world or is an admin.
+ * @param database
+ * @param worldId
+ * @param userId
+ * @param userRole
+ */
 async function isWorldOwner(
   database: Kysely<DB>,
   worldId: string,
@@ -62,6 +69,10 @@ async function isWorldOwner(
   return Boolean(world,) && (world!.owner_id === userId || can(userRole, "admin.world",));
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function worldInvitesRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

@@ -57,7 +57,6 @@ export interface CharacterSystemsExport {
 
 /**
  * Export all character systems data for a character.
- *
  * @param db - Database instance
  * @param actorId - Character actor ID
  * @param worldId - Optional world ID for world-specific data
@@ -182,7 +181,6 @@ export async function exportCharacterSystems(
 
 /**
  * Export character systems to JSON string.
- *
  * @param db - Database instance
  * @param actorId - Character actor ID
  * @param worldId - Optional world ID

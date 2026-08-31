@@ -25,6 +25,7 @@ export const LOCALE_REGISTRY: Record<Locale, LocaleInfo> = {
 /**
  * Get locale info by ID.
  * Returns undefined for unknown locales.
+ * @param locale
  */
 export function getLocaleInfo(locale: Locale,): LocaleInfo | undefined {
   return LOCALE_REGISTRY[locale];
@@ -32,6 +33,7 @@ export function getLocaleInfo(locale: Locale,): LocaleInfo | undefined {
 
 /**
  * Check if a string is a supported locale ID.
+ * @param value
  */
 export function isLocale(value: string,): value is Locale {
   return value in LOCALE_REGISTRY;

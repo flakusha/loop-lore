@@ -16,6 +16,7 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { GenerationMessage, } from "../../generation/gen-types-options";
 
+/** */
 export interface PromptParams {
   /** Actor generating the response (character/narrator) */
   actorId: string;
@@ -63,6 +64,7 @@ export interface PromptParams {
   gmName?: string;
 }
 
+/** */
 export interface PromptSectionReport {
   name: string;
   chars: number;
@@ -70,6 +72,7 @@ export interface PromptSectionReport {
   dropped: boolean;
 }
 
+/** */
 export interface AssembledPrompt {
   /** Messages array for LLM request */
   messages: GenerationMessage[];

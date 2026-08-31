@@ -64,6 +64,7 @@ describe("getMediaStyle", () => {
 });
 
 describe("openAssetPreview", () => {
+  /** */
   function makeCtx() {
     return { previewMediaAsset: null as any, };
   }

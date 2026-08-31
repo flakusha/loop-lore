@@ -64,7 +64,10 @@ export const PRESET_DIRECTIVES: Record<OutputStylePreset, string> = {
     "Write in a western register: frontier sparseness, dry humor, sun-baked terrain, and clipped, weathered speech.",
 };
 
-/** Clamp intensity to 0..1 (default 0.5 when unspecified). */
+/**
+ * Clamp intensity to 0..1 (default 0.5 when unspecified).
+ * @param value
+ */
 export function clampIntensity(value: number | null | undefined,): number {
   if (value === null || value === undefined || Number.isNaN(value,)) { return 0.5; }
   return Math.max(0, Math.min(1, value,),);
@@ -78,7 +81,10 @@ export function clampIntensity(value: number | null | undefined,): number {
  *   2. Chat-level `gm_config.outputStyle` (richer shape)
  *   3. User-global `users.settings.outputStyle.preset`
  *   4. Server default from config
- *
+ * @param chatPreset
+ * @param chatGmConfig
+ * @param userPreset
+ * @param serverDefault
  * @returns null when no preset is configured anywhere (section stays off).
  */
 export function resolveOutputStyle(
@@ -96,7 +102,10 @@ export function resolveOutputStyle(
   };
 }
 
-/** Build the emitted directive text for a resolved style config. */
+/**
+ * Build the emitted directive text for a resolved style config.
+ * @param cfg
+ */
 export function buildStyleDirective(cfg: OutputStyleConfig,): string {
   const base = PRESET_DIRECTIVES[cfg.preset];
   const intensityLabel = cfg.intensity >= 0.75

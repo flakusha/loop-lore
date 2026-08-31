@@ -33,13 +33,18 @@ export type { WorldState, } from "./types";
 
 // ── World State Service ──────────────────────────────────────
 
+/** */
 export class WorldStateService {
   private readonly db: Kysely<DB>;
 
+  /**
+   * @param db
+   */
   constructor(db: Kysely<DB>,) {
     this.db = db;
   }
 
+  /** */
   private get state(): WorldState {
     return { db: this.db, };
   }
@@ -47,32 +52,52 @@ export class WorldStateService {
   /**
    * Build the full StoryContext for the Game Master
    * from the current DB state.
+   * @param chatId
+   * @param recentTurnCount
    */
   async buildContext(chatId: string, recentTurnCount = 10,): Promise<StoryContext | null> {
     return buildContextDispatch(this.state, chatId, recentTurnCount,);
   }
 
-  /** Initialize NPC dynamic states for all characters in a world */
+  /**
+   * Initialize NPC dynamic states for all characters in a world
+   * @param worldId
+   */
   async initializeNpcStates(worldId: string,): Promise<number> {
     return initializeNpcStatesDispatch(this.state, worldId,);
   }
 
-  /** Initialize per-world character setup rows for all characters in a world */
+  /**
+   * Initialize per-world character setup rows for all characters in a world
+   * @param worldId
+   */
   async initializeCharacterWorldSetup(worldId: string,): Promise<number> {
     return initializeCharacterWorldSetupDispatch(this.state, worldId,);
   }
 
-  /** Seed world_items from each character's starting_inventory on first join */
+  /**
+   * Seed world_items from each character's starting_inventory on first join
+   * @param worldId
+   */
   async seedStartingInventory(worldId: string,): Promise<number> {
     return seedStartingInventoryDispatch(this.state, worldId,);
   }
 
-  /** Initialize location dynamic states for all locations in a world */
+  /**
+   * Initialize location dynamic states for all locations in a world
+   * @param worldId
+   */
   async initializeLocationStates(worldId: string,): Promise<number> {
     return initializeLocationStatesDispatch(this.state, worldId,);
   }
 
-  /** Take a state snapshot for rollback/history */
+  /**
+   * Take a state snapshot for rollback/history
+   * @param worldId
+   * @param turnId
+   * @param messageId
+   * @param description
+   */
   async snapshot(
     worldId: string,
     turnId?: string,
@@ -82,17 +107,27 @@ export class WorldStateService {
     return snapshotDispatch(this.state, worldId, turnId, messageId, description,);
   }
 
-  /** Get NPC state for a given actor in a world */
+  /**
+   * Get NPC state for a given actor in a world
+   * @param actorId
+   * @param worldId
+   */
   async getNpcState(actorId: string, worldId: string,) {
     return getNpcStateDispatch(this.state, actorId, worldId,);
   }
 
-  /** Get location state for a given location */
+  /**
+   * Get location state for a given location
+   * @param locationId
+   */
   async getLocationState(locationId: string,) {
     return getLocationStateDispatch(this.state, locationId,);
   }
 
-  /** Get all NPCs at a given location */
+  /**
+   * Get all NPCs at a given location
+   * @param locationId
+   */
   async getNpcsAtLocation(locationId: string,) {
     return getNpcsAtLocationDispatch(this.state, locationId,);
   }

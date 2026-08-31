@@ -52,6 +52,7 @@ afterAll(async () => {
   db.destroy();
 },);
 
+/** */
 function getSmkKeySafe(): CryptoKey {
   const key = getSmk();
   if (!key) { throw new Error("SMK not loaded — test setup failed",); }

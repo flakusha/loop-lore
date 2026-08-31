@@ -13,6 +13,11 @@ import { characterAvailabilityRoutes, } from "./character-availability";
 const OWNER_ACTOR = "00000000-0000-4000-8000-000000000001";
 const MEMBER_ACTOR = "00000000-0000-4000-8000-000000000002";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-char-availability", },);
   if (userId) {

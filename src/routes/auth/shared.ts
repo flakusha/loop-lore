@@ -21,6 +21,10 @@ const demoLoginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: DEMO
 const TOKEN_COOKIE = "ll_token";
 const COOKIE_PATH = "/";
 
+/**
+ * @param token
+ * @param maxAgeSecs
+ */
 function setTokenCookie(token: string, maxAgeSecs: number,): string {
   // `Secure` is omitted unless the deployment is reachable over HTTPS.
   // A cookie with `Secure` set will be silently dropped by the browser
@@ -65,7 +69,10 @@ function setTokenCookie(token: string, maxAgeSecs: number,): string {
  * - no peerIp (unit tests, exotic runtimes) → default deny: "unknown". All
  *   such callers share one bucket by design rather than trusting headers.
  */
-/** Rightmost XFF entry = the one the nearest trusted proxy appended. */
+/**
+ * Rightmost XFF entry = the one the nearest trusted proxy appended.
+ * @param request
+ */
 function forwardedForLast(request: Request,): string | null {
   const entries = request.headers.get("X-Forwarded-For",)?.split(",",);
   if (!entries || entries.length === 0) { return null; }
@@ -73,6 +80,11 @@ function forwardedForLast(request: Request,): string | null {
   return last ? last : null;
 }
 
+/**
+ * @param request
+ * @param config
+ * @param peerIp
+ */
 function getClientIp(request: Request, config: Config, peerIp?: string | null,): string {
   if (!peerIp) { return "unknown"; }
   if (!config.server?.trustProxy) { return peerIp; }
@@ -84,6 +96,9 @@ function getClientIp(request: Request, config: Config, peerIp?: string | null,):
   );
 }
 
+/**
+ * @param str
+ */
 function escapeHtml(str: string,): string {
   return str
     .replaceAll("&", "&amp;",)
@@ -92,6 +107,9 @@ function escapeHtml(str: string,): string {
     .replaceAll('"', "&quot;",);
 }
 
+/**
+ * @param msg
+ */
 function errorHtml(msg: string,): Response {
   return new Response(`<p class="error-msg">${escapeHtml(msg,)}</p>`, {
     headers: { "Content-Type": "text/html; charset=utf-8", },
@@ -103,6 +121,9 @@ function errorHtml(msg: string,): Response {
 // /me and logout and allowed impersonation / logout-DoS attacks when an
 // attacker could set a forged cookie. Always go through verifyJwt().
 
+/**
+ * @param request
+ */
 function getTokenFromCookie(request: Request,): string | null {
   const cookieHeader = request.headers.get("Cookie",);
   if (!cookieHeader) { return null; }
@@ -111,14 +132,17 @@ function getTokenFromCookie(request: Request,): string | null {
 
 // ── Test utilities ───────────────────────────────────────────
 
+/** */
 export function resetLoginRateLimiter(): void {
   loginLimiter.clear();
 }
 
+/** */
 export function resetRegisterRateLimiter(): void {
   registerLimiter.clear();
 }
 
+/** */
 export function resetDemoLoginRateLimiter(): void {
   demoLoginLimiter.clear();
 }

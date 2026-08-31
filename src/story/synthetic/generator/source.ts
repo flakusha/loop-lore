@@ -10,6 +10,10 @@ import { jsonParseOr, } from "../../../utils";
 import type { SyntheticSource, } from "../types";
 import type { GeneratorState, } from "./types";
 
+/**
+ * @param state
+ * @param chatId
+ */
 export async function fetchSource(state: GeneratorState, chatId: string,): Promise<SyntheticSource | null> {
   const chat = await state.db
     .selectFrom("chats",)

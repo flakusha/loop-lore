@@ -23,6 +23,10 @@ import {
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function extrasRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

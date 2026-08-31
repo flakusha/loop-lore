@@ -14,6 +14,7 @@ import type { ChatSetupTemplate, } from "../../chat/service/types";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils";
 
+/** */
 export interface CreateLocationChatInput {
   /** Location being created (already inserted by the caller's tx). */
   locationId: string;
@@ -29,6 +30,8 @@ export interface CreateLocationChatInput {
  * Resolve the chat setup template for a location. Defaults to the `world`
  * template so a location always gets a public chat; an explicit templateId
  * binds a non-default template, which the frontend marks.
+ * @param database
+ * @param body
  */
 export async function resolveLocationTemplate(
   database: Kysely<DB>,
@@ -44,6 +47,9 @@ export async function resolveLocationTemplate(
  * Auto-create the public location chat bound to the resolved template.
  * Idempotent: skips when a public chat for this location already exists.
  * Runs inside the caller's transaction (tx).
+ * @param tx
+ * @param input
+ * @param template
  */
 export async function createLocationChat(
   tx: Transaction<DB>,

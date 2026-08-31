@@ -12,11 +12,19 @@ import { ActorIdParams, ErrorResponse, LicensingBody, SuccessResponse, } from ".
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
-/** Convert boolean to 0/1 integer, with fallback for undefined. */
+/**
+ * Convert boolean to 0/1 integer, with fallback for undefined.
+ * @param value
+ * @param fallback
+ */
 function booleanToInt(value: boolean | undefined, fallback: number,): number {
   return value === undefined ? fallback : (value ? 1 : 0);
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function characterLicensingRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

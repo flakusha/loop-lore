@@ -10,11 +10,15 @@ import { getLogger, type Logger, } from "../../logger";
 import { can, } from "../../users/permissions";
 import { forbiddenResponse, requireUserId, } from "../http-utils";
 
+/** */
 export function log(): Logger {
   return getLogger().child({ module: "nsfw-moderation-routes", },);
 }
 
-/** Require an authenticated admin caller. Returns userId on success, else a Response. */
+/**
+ * Require an authenticated admin caller. Returns userId on success, else a Response.
+ * @param ctx
+ */
 export function requireAdmin(ctx: any,): string | Response {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
@@ -30,6 +34,7 @@ export function requireAdmin(ctx: any,): string | Response {
  * delete-user-data) where a single admin should not be able to act alone.
  *
  * Returns userId on success, else a 403 Response.
+ * @param ctx
  */
 export function requireAdminUsers(ctx: any,): string | Response {
   const userId = requireUserId(ctx,);
@@ -49,6 +54,7 @@ export function requireAdminUsers(ctx: any,): string | Response {
  * denied so the read surface cannot leak via viewer/bot/guest.
  *
  * Returns userId on success, else a 403 Response.
+ * @param ctx
  */
 export function requireModerationReview(ctx: any,): string | Response {
   const userId = requireUserId(ctx,);
@@ -69,6 +75,7 @@ export function requireModerationReview(ctx: any,): string | Response {
  * everyone else is denied.
  *
  * Returns userId on success, else a 403 Response.
+ * @param ctx
  */
 export function requireModerationAction(ctx: any,): string | Response {
   const userId = requireUserId(ctx,);
@@ -79,7 +86,11 @@ export function requireModerationAction(ctx: any,): string | Response {
   return userId;
 }
 
-/** Require the caller to be the target user themselves, or an admin. */
+/**
+ * Require the caller to be the target user themselves, or an admin.
+ * @param ctx
+ * @param targetUserId
+ */
 export function requireOwnOrAdmin(ctx: any, targetUserId: string,): string | Response {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }

@@ -8,6 +8,10 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import { type HandlerOpts, MessageSectionAssignBody, MessageSectionAssignResponse, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function assignRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

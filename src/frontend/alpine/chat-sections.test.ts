@@ -25,6 +25,10 @@ const section = (id: string, label: string,) => ({
   sort_index: 0,
 });
 
+/**
+ * @param id
+ * @param sectionId
+ */
 function msg(id: string, sectionId: string | null,) {
   return {
     id,

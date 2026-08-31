@@ -3,7 +3,6 @@
 
 /**
  * Image Edit Providers — Barrel export
- *
  * @module image-edit-providers
  */
 

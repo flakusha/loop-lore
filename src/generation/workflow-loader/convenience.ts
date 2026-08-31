@@ -7,9 +7,16 @@ import { getWorkflowLoader, } from "./loader";
 
 /**
  * Convenience function: load and substitute a workflow in one call.
- *
  * @param name - Workflow name (e.g., "txt2img")
  * @param params - Generation parameters to substitute
+ * @param params.prompt
+ * @param params.negativePrompt
+ * @param params.width
+ * @param params.height
+ * @param params.steps
+ * @param params.cfgScale
+ * @param params.sampler
+ * @param params.seed
  * @returns Ready-to-submit ComfyUI workflow
  */
 export async function loadComfyUIWorkflow(

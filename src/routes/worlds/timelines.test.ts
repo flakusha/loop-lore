@@ -28,16 +28,28 @@ type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 
 const BASE = "http://localhost";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function appWithAuth(db: Kysely<DB>, userId: string | null, userRole: string | null,): Elysia {
   return new Elysia({ name: "test-worlds-timelines", },)
     .derive(() => ({ userId, userRole, }))
     .use(timelinesRoutes({ database: db, config: {} as Config, } as HandleOpts,),) as unknown as Elysia;
 }
 
+/**
+ * @param path
+ */
 function get(path: string,): Request {
   return new Request(`${BASE}${path}`,);
 }
 
+/**
+ * @param path
+ * @param body
+ */
 async function postJson(path: string, body: unknown,): Promise<Request> {
   return new Request(`${BASE}${path}`, {
     method: "POST",
@@ -46,6 +58,10 @@ async function postJson(path: string, body: unknown,): Promise<Request> {
   },);
 }
 
+/**
+ * @param app
+ * @param req
+ */
 async function appHandle(app: Elysia, req: Request,): Promise<Response> {
   return (app as unknown as { handle: (r: Request,) => Promise<Response> }).handle(req,);
 }

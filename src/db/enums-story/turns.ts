@@ -12,6 +12,7 @@ export const TurnType = {
   QuestUpdate: "quest_update",
   WorldEvent: "world_event",
 } as const;
+/** */
 export type TurnType = (typeof TurnType)[keyof typeof TurnType];
 
 export const TurnStatus = {
@@ -23,6 +24,7 @@ export const TurnStatus = {
   Failed: "failed",
   Escalated: "escalated",
 } as const;
+/** */
 export type TurnStatus = (typeof TurnStatus)[keyof typeof TurnStatus];
 
 // ── Turn State Machine ────────────────────────────────────

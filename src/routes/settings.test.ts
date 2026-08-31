@@ -17,6 +17,7 @@ import { settingsRoutes, } from "./settings";
 
 const TEST_USER_ID = uid();
 
+/** */
 function createTestDb(): Kysely<DB> {
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA journal_mode = WAL",);
@@ -25,6 +26,10 @@ function createTestDb(): Kysely<DB> {
   return new Kysely<DB>({ dialect, },);
 }
 
+/**
+ * @param db
+ * @param userId
+ */
 function createSettingsApp(db: Kysely<DB>, userId: string,): Elysia {
   return new Elysia({ name: "test-settings", },)
     .derive(() => ({ userId, }))

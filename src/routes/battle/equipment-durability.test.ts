@@ -71,12 +71,18 @@ describe("combat-use durability degradation", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-durability-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
       .use(battleEquipmentDurabilityRoutes({ database: db, config: {} as never, },),) as any;
   }
 
+  /**
+   * @param res
+   */
   async function json(res: Response,) {
     return res.json() as unknown;
   }

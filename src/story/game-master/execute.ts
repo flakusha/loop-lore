@@ -13,7 +13,11 @@ import { getGmDecision, recordGmTurn, } from "./decisions";
 import { injectNarration, } from "./narration";
 import type { GmState, GmTurnResult, } from "./types";
 
-/** Execute one full story turn */
+/**
+ * Execute one full story turn
+ * @param state
+ * @param debugActorId
+ */
 export async function executeTurn(state: GmState, debugActorId?: string,): Promise<GmTurnResult> {
   const context = await state.worldState.buildContext(state.chatId,);
   if (!context) { throw new Error("No story context available",); }

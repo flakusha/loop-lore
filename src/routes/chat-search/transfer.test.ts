@@ -17,6 +17,10 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertLocations, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { transferRoutes, } from "./transfer";
 
+/**
+ * @param db
+ * @param userId
+ */
 function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-chat-transfer", },)
     .derive(() => ({ userId, }))

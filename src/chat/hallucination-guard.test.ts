@@ -1,6 +1,7 @@
 import { describe, expect, it, } from "bun:test";
 import { isKnownEntity, } from "./hallucination-guard/known";
 
+/** */
 function known() {
   return {
     actors: new Set(["alice", "bob",],),

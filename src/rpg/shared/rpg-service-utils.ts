@@ -12,6 +12,7 @@ import { safeJsonParse, uid, } from "../../utils";
 /**
  * Create a module-scoped logger for RPG services.
  * Replaces the per-service `getLog()` wrapper pattern.
+ * @param moduleName
  */
 export function getRpgLog(moduleName: string,): Logger {
   return getLogger().child({ module: moduleName, },);
@@ -22,28 +23,46 @@ export function nowAndId(): { id: string; now: string } {
   return { id: uid(), now: new Date().toISOString(), };
 }
 
-/** Assert that at least one row was updated */
+/**
+ * Assert that at least one row was updated
+ * @param numRows
+ * @param label
+ */
 export function assertRowUpdated(numRows: number, label: string,): void {
   if (numRows === 0) {
     throw new Error(`${label} not found`,);
   }
 }
 
-/** Assert that at least one row was deleted */
+/**
+ * Assert that at least one row was deleted
+ * @param numRows
+ * @param label
+ */
 export function assertRowDeleted(numRows: number, label: string,): void {
   if (numRows === 0) {
     throw new Error(`${label} not found`,);
   }
 }
 
-/** Parse a JSON field safely from an unknown source, returning fallback on error or non-string input */
+/**
+ * Parse a JSON field safely from an unknown source, returning fallback on error or non-string input
+ * @param raw
+ * @param fallback
+ */
 export function parseJsonField<T,>(raw: unknown, fallback: T,): T {
   if (typeof raw !== "string") { return fallback; }
   const result = safeJsonParse<T>(raw,);
   return result.ok ? result.value : fallback;
 }
 
-/** Get or create a row — eliminates the get-then-insert pattern */
+/**
+ * Get or create a row — eliminates the get-then-insert pattern
+ * @param db
+ * @param table
+ * @param findFn
+ * @param insertData
+ */
 export async function getOrCreateRow<DB, T extends keyof DB & string,>(
   db: Kysely<DB>,
   table: T,

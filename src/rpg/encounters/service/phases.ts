@@ -7,7 +7,10 @@ import { getLogger, } from "../../../logger";
 import { getEncounter, } from "./crud";
 import type { AdvancePhaseResult, EncounterOutcome, NsfwEncounter, } from "./types";
 
-/** Roll for outcomes based on probability. */
+/**
+ * Roll for outcomes based on probability.
+ * @param outcomes
+ */
 function rollOutcomes(outcomes: EncounterOutcome[],): EncounterOutcome[] {
   const triggered: EncounterOutcome[] = [];
   for (const outcome of outcomes) {
@@ -18,7 +21,11 @@ function rollOutcomes(outcomes: EncounterOutcome[],): EncounterOutcome[] {
   return triggered;
 }
 
-/** Apply outcome effects (placeholder — would modify mood/intimacy). */
+/**
+ * Apply outcome effects (placeholder — would modify mood/intimacy).
+ * @param encounter
+ * @param outcomes
+ */
 function applyOutcomes(
   encounter: NsfwEncounter,
   outcomes: EncounterOutcome[],
@@ -39,6 +46,8 @@ function applyOutcomes(
  * Advance an encounter to the next phase.
  *
  * Returns triggered outcomes if the encounter completes.
+ * @param db
+ * @param encounterId
  */
 export async function advancePhase(
   db: Kysely<DB>,

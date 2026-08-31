@@ -33,11 +33,16 @@ export type {
 
 // ── Service ────────────────────────────────────────────────
 
+/** */
 export class LocationNsfwService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
    * Get or create NSFW config for a location.
+   * @param locationId
    */
   async getConfig(locationId: string,): Promise<LocationNsfwConfig> {
     const row = await this.db
@@ -100,6 +105,8 @@ export class LocationNsfwService {
 
   /**
    * Update a location's NSFW config.
+   * @param locationId
+   * @param updates
    */
   async updateConfig(
     locationId: string,
@@ -131,6 +138,7 @@ export class LocationNsfwService {
 
   /**
    * Get NSFW configs for multiple locations.
+   * @param locationIds
    */
   async getConfigs(locationIds: string[],): Promise<LocationNsfwConfig[]> {
     if (locationIds.length === 0) { return []; }
@@ -146,6 +154,7 @@ export class LocationNsfwService {
 
   /**
    * Delete a location's NSFW config.
+   * @param locationId
    */
   async deleteConfig(locationId: string,): Promise<boolean> {
     const result = await this.db
@@ -158,6 +167,8 @@ export class LocationNsfwService {
 
   /**
    * Check if a location is suitable for NSFW encounters.
+   * @param locationId
+   * @param minPrivacy
    */
   async isSuitableForEncounter(
     locationId: string,
@@ -187,6 +198,19 @@ export class LocationNsfwService {
 
   // ── Private helpers ───────────────────────────────────
 
+  /**
+   * @param row
+   * @param row.id
+   * @param row.location_id
+   * @param row.location_type
+   * @param row.privacy_level
+   * @param row.discovery_chance
+   * @param row.atmosphere
+   * @param row.equipment
+   * @param row.risks
+   * @param row.created_at
+   * @param row.updated_at
+   */
   private getRow(row: {
     id: string;
     location_id: string;

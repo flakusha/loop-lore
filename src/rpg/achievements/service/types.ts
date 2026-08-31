@@ -14,6 +14,7 @@ export const AchievementCategory = {
   Mastery: "mastery",
   Secret: "secret",
 } as const;
+/** */
 export type AchievementCategory = (typeof AchievementCategory)[keyof typeof AchievementCategory];
 
 /** Achievement tiers */
@@ -24,6 +25,7 @@ export const AchievementTier = {
   Platinum: "platinum",
   Diamond: "diamond",
 } as const;
+/** */
 export type AchievementTier = (typeof AchievementTier)[keyof typeof AchievementTier];
 
 /** Achievement definition */

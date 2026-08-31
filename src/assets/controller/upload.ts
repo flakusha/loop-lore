@@ -17,6 +17,16 @@ import {
 } from "../service";
 import type { UploadOpts, } from "./types";
 
+/**
+ * @param root0
+ * @param root0.request
+ * @param root0.userId
+ * @param root0.database
+ * @param root0.uploadDir
+ * @param root0.maxFileSize
+ * @param root0.chatId
+ * @param root0.config
+ */
 export async function handleUpload({
   request,
   userId,

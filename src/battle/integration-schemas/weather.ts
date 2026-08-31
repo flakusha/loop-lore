@@ -32,7 +32,10 @@ export interface EnvironmentalModifier {
   description: string;
 }
 
-/** Get weather modifiers for combat */
+/**
+ * Get weather modifiers for combat
+ * @param weather
+ */
 export function getCombatWeatherModifiers(
   weather: CombatWeather,
 ): EnvironmentalModifier[] {

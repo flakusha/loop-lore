@@ -17,6 +17,7 @@ import type { Kysely, } from "kysely";
  *
  * Note: story_turns.chat_id, quests.world_id, quest_progress.quest_id
  * are already indexed in parts/007_story_generation.ts
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Actor Memories (multi-scope queries) ────────────────
@@ -114,6 +115,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropIndex("idx_char_arousal_actor",).execute();
   await database.schema.dropIndex("idx_char_intimacy_actor",).execute();

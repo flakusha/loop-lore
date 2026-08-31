@@ -9,7 +9,14 @@ import type { BatchGenerationJob, BatchJobId, } from "./types";
 /** In-memory job store (persists until server restart) */
 const activeJobs = new Map<BatchJobId, BatchGenerationJob>();
 
-/** Create a new batch job in "pending" state. */
+/**
+ * Create a new batch job in "pending" state.
+ * @param opts
+ * @param opts.id
+ * @param opts.actorId
+ * @param opts.baseAvatarId
+ * @param opts.emotions
+ */
 export function createJob(opts: {
   id: BatchJobId;
   actorId: string;
@@ -29,17 +36,26 @@ export function createJob(opts: {
   };
 }
 
-/** Store a job in the in-memory store. */
+/**
+ * Store a job in the in-memory store.
+ * @param job
+ */
 export function storeJob(job: BatchGenerationJob,): void {
   activeJobs.set(job.id, job,);
 }
 
-/** Get a batch job by id. */
+/**
+ * Get a batch job by id.
+ * @param jobId
+ */
 export function getJob(jobId: BatchJobId,): BatchGenerationJob | undefined {
   return activeJobs.get(jobId,);
 }
 
-/** List all batch jobs for an actor, newest first. */
+/**
+ * List all batch jobs for an actor, newest first.
+ * @param actorId
+ */
 export function listJobs(actorId: string,): BatchGenerationJob[] {
   const jobs: BatchGenerationJob[] = [];
   for (const job of activeJobs.values()) {
@@ -52,7 +68,6 @@ export function listJobs(actorId: string,): BatchGenerationJob[] {
 
 /**
  * Cancel a running batch generation job.
- *
  * @param jobId - Batch job ID
  * @returns true if cancelled, false if not found or already completed
  */

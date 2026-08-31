@@ -21,7 +21,6 @@ export const DEFAULT_WORLD_ID = "default";
  *
  * Prefers an explicit `worldId` parameter, then the generating chat's
  * `world_id`, then the `default` world. Never throws; returns a usable id.
- *
  * @param db - Kysely instance
  * @param chatId - Generating chat id (may be empty when unset)
  * @param explicitWorldId - Optional explicit world id from tool params
@@ -53,7 +52,6 @@ export async function resolveWorldId(
  * `owners`-style foreign keys (`actors.user_id`, `worlds.owner_id`) reference
  * `users.id`, so the owning user is resolved from the generating actor's
  * `user_id`. Returns null when the actor has no owning user.
- *
  * @param db - Kysely instance
  * @param actorId - Generating actor id
  * @returns The owning user id, or null when unresolvable
@@ -72,7 +70,6 @@ export async function resolveOwnerUserId(
 
 /**
  * Extract a trimmed, non-empty string parameter.
- *
  * @param params - Tool parameters object
  * @param key - Parameter key
  * @returns Trimmed value, or undefined when absent/empty/not a string

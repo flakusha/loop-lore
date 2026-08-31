@@ -3,6 +3,7 @@
 
 // src/config/schema/hooks.ts — Hooks (fast review & trigger system) config type
 
+/** */
 export interface HooksConfig {
   /** Enable mood shift detection hooks. Default true. */
   enableMoodHooks: boolean;

@@ -8,6 +8,10 @@ import { AdminTemplateCreateBody, AdminTemplateUpdateBody, ErrorResponse, } from
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const guard = requirePermission("admin.settings",);
   return (
@@ -121,7 +125,7 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
                 code: ErrorCode.NotFound,
               },);
             }
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+
             delete profiles[id];
             await opts.database
               .insertInto("system_config",)

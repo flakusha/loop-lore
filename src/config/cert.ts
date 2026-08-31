@@ -17,10 +17,12 @@ import { platform, } from "node:process";
 import { getLogger, } from "../logger";
 import type { TlsConfig, } from "./schema";
 
+/** */
 export type TlsFiles = TlsConfig;
 
 let tlsLog: ReturnType<ReturnType<typeof getLogger>["child"]> | null = null;
 
+/** */
 function getTlsLog(): ReturnType<ReturnType<typeof getLogger>["child"]> {
   tlsLog ??= getLogger().child({ module: "tls", },);
   return tlsLog;
@@ -28,7 +30,7 @@ function getTlsLog(): ReturnType<ReturnType<typeof getLogger>["child"]> {
 
 /**
  * Ensure TLS key + cert exist. Auto-generates self-signed if missing.
- *
+ * @param configPath
  * @returns TlsFiles paths if available, null if TLS is unavailable.
  */
 export function ensureTlsCerts(configPath: TlsFiles,): TlsFiles | null {

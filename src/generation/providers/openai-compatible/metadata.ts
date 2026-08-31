@@ -8,6 +8,7 @@ import type { ModelInfo, } from "../types";
 /**
  * Map an OpenAI-compatible /v1/models entry to ModelInfo.
  * Carries provider-reported fields when present; advisory only.
+ * @param raw
  */
 export function modelInfoFromOpenAi(raw: Record<string, unknown>,): ModelInfo {
   const id = typeof raw.id === "string" ? raw.id : "";

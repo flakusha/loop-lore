@@ -3,10 +3,18 @@
 
 export const ALLOWED_TYPES = ["image/", "audio/", "video/",] as const;
 
+/**
+ * @param file
+ * @param file.type
+ */
 export function isAllowedType(file: { type: string },): boolean {
   return ALLOWED_TYPES.some((t,) => file.type.startsWith(t,));
 }
 
+/**
+ * @param dropZoneId
+ * @param inputId
+ */
 export function initDropZone(dropZoneId: string, inputId: string,): void {
   if (typeof document === "undefined") { return; }
 

@@ -11,6 +11,11 @@ import type {
 import { ContentRating, } from "../spec";
 import { AGE_REQUIREMENTS, VALID_CONTENT_RATINGS, } from "./constants";
 
+/**
+ * @param character
+ * @param errors
+ * @param _warnings
+ */
 export function validateContentRating(
   character: CanonicalCharacter,
   errors: ValidationError[],
@@ -29,6 +34,8 @@ export function validateContentRating(
 
 /**
  * Check if a content rating is allowed for a given age.
+ * @param rating
+ * @param userAge
  */
 export function isContentRatingAllowed(
   rating: ContentRating,
@@ -42,6 +49,7 @@ export function isContentRatingAllowed(
 
 /**
  * Get the minimum age required for a content rating.
+ * @param rating
  */
 export function getMinimumAge(rating: ContentRating,): number | null {
   return AGE_REQUIREMENTS[rating];
@@ -49,6 +57,8 @@ export function getMinimumAge(rating: ContentRating,): number | null {
 
 /**
  * Filter content ratings to only those allowed for a given age.
+ * @param ratings
+ * @param userAge
  */
 export function filterAllowedRatings(
   ratings: ContentRating[],

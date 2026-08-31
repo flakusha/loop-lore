@@ -38,6 +38,10 @@ const KIND_LABELS: Record<EntityKind, string> = {
 };
 
 /*** Pull the active world context (name + description) if a world is scoped. */
+/**
+ * @param db
+ * @param worldId
+ */
 async function resolveWorldContext(
   db: NonNullable<CommandContext["db"]>,
   worldId?: string,
@@ -58,6 +62,10 @@ async function resolveWorldContext(
  * injectable (the command passes the resolved provider's `complete`; tests pass
  * a stub). The entity is NEVER persisted here — the returned
  * `create-entity-preview` action carries the draft for user confirmation.
+ * @param args
+ * @param ctx
+ * @param complete
+ * @param model
  */
 export async function runCreateGeneration(
   args: string[],

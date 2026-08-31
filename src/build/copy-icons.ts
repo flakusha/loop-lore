@@ -29,6 +29,7 @@ const ICONS = [
 const SRC_DIR = join(import.meta.dir, "../../node_modules/@tabler/icons/icons/outline",);
 const DEST_DIR = join(import.meta.dir, "../../dist/public/icons/tabler",);
 
+/** */
 function main() {
   const log = createLogger({ level: "info", },);
 

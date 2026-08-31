@@ -7,6 +7,7 @@ import type { CanonicalCharacter, } from "./character";
 import type { ImportFormat, ReviewRole, ReviewState, } from "./enums";
 
 // ── Parse Result ──────────────────────────────
+/** */
 export type CharacterFormat =
   | "ccv2"
   | "ccv3"
@@ -18,12 +19,14 @@ export type CharacterFormat =
   | "png-v3"
   | "charx";
 
+/** */
 export interface ParseResult {
   character: CanonicalCharacter;
   format: CharacterFormat;
   warnings: string[];
 }
 
+/** */
 export interface ParseError {
   code:
     | "FORMAT_NOT_DETECTED"
@@ -43,6 +46,7 @@ export interface ParseError {
 }
 
 // ── Review Entry ─────────────────────────────────────
+/** */
 export interface ReviewEntry {
   id: string;
   character_id: string;
@@ -56,6 +60,7 @@ export interface ReviewEntry {
 }
 
 // ── Import Job ───────────────────────────────────────
+/** */
 export interface ImportJob {
   id: string;
   status: "queued" | "processing" | "completed" | "failed";
@@ -68,6 +73,7 @@ export interface ImportJob {
 }
 
 // ── Plugin Bundle ────────────────────────────────────
+/** */
 export interface PluginBundle {
   id: string;
   name: string;
@@ -78,6 +84,7 @@ export interface PluginBundle {
   actions: BundleAction[];
 }
 
+/** */
 export interface BundleStat {
   name: string;
   label: string;
@@ -87,6 +94,7 @@ export interface BundleStat {
   default: number;
 }
 
+/** */
 export interface BundleSkill {
   name: string;
   label: string;
@@ -95,6 +103,7 @@ export interface BundleSkill {
   level_cap: number;
 }
 
+/** */
 export interface BundleAction {
   name: string;
   label: string;

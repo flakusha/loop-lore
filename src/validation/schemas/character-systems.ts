@@ -65,8 +65,17 @@ export const MoodStateResponse = t.Object({
 },);
 
 // Type aliases for backward compatibility
+/**
+ *
+ */
 export type MoodCreateInput = typeof MoodCreateBody.static;
+/**
+ *
+ */
 export type MoodUpdateInput = typeof MoodUpdateBody.static;
+/**
+ *
+ */
 export type MoodEventInput = typeof MoodEventBody.static;
 
 export const TraitCreateBody = t.Object({
@@ -74,11 +83,17 @@ export const TraitCreateBody = t.Object({
   trait_name: t.String({ minLength: 1, },),
   value: t.Any(),
 },);
+/**
+ *
+ */
 export type TraitCreateInput = { category: string; name: string; value: string };
 
 export const TraitUpdateBody = t.Object({
   value: t.Any(),
 },);
+/**
+ *
+ */
 export type TraitUpdateInput = { name: string; value: string };
 
 export const WorldTraitCreateBody = t.Object({
@@ -86,6 +101,9 @@ export const WorldTraitCreateBody = t.Object({
   trait_name: t.String({ minLength: 1 }),
   value: t.Any(),
 });
+/**
+ *
+ */
 export type WorldTraitCreateInput = { category: string; name: string; value: string; worldId: string };
 
 export const LocationTraitCreateBody = t.Object({
@@ -93,6 +111,9 @@ export const LocationTraitCreateBody = t.Object({
   trait_name: t.String({ minLength: 1 }),
   value: t.Any(),
 });
+/**
+ *
+ */
 export type LocationTraitCreateInput = {
   category: string;
   name: string;
@@ -106,6 +127,9 @@ export type LocationTraitCreateInput = {
 export const LocationTraitUpdateBody = t.Object({
   value: t.Any(),
 },);
+/**
+ *
+ */
 export type LocationTraitUpdateInput = {
   name: string;
   value: string;

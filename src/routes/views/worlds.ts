@@ -7,6 +7,9 @@ import { can, } from "../../users/permissions";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { escapeHtml, htmlResponse, } from "./layout";
 
+/**
+ * @param raw
+ */
 function parseFeaturesJson(raw: string | null,): string[] {
   if (!raw) { return []; }
   const parsed = safeJsonParse(raw,);
@@ -15,6 +18,11 @@ function parseFeaturesJson(raw: string | null,): string[] {
     : [];
 }
 
+/**
+ * @param database
+ * @param userId
+ * @param userRole
+ */
 async function serveWorldsListDb(
   database: Kysely<DB>,
   userId: string | null,
@@ -48,6 +56,12 @@ async function serveWorldsListDb(
   return htmlResponse(items,);
 }
 
+/**
+ * @param worldId
+ * @param database
+ * @param userId
+ * @param userRole
+ */
 async function serveWorldDetailContent(
   worldId: string,
   database: Kysely<DB>,

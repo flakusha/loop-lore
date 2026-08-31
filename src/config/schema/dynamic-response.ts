@@ -5,6 +5,7 @@
 
 import type { ResponseCompression, } from "../../db/enums";
 
+/** */
 export interface DynamicResponseConfig {
   /** Master toggle for dynamic-response optimization */
   enabled: boolean;

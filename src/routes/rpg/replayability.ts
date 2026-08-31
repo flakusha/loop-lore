@@ -31,6 +31,8 @@ import type { HandlerOpts, } from "./types";
 /**
  * Require `playerId` to equal the authenticated user; returns userId string
  * on success, else a Response.
+ * @param ctx
+ * @param playerId
  */
 function requireOwnPlayer(ctx: any, playerId: string,): string | Response {
   const userId = requireUserId(ctx,);
@@ -39,6 +41,11 @@ function requireOwnPlayer(ctx: any, playerId: string,): string | Response {
   return userId;
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function replayabilityRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   const svc = (): ReplayabilityService => new ReplayabilityService(database,);
   const R = `${prefix}/rpg/replayability`;

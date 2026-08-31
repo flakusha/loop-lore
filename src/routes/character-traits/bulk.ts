@@ -15,6 +15,8 @@ import type { HandlerOpts, } from "./types";
 
 /**
  * Bulk Traits sub-plugin — aggregated trait lookup across all layers.
+ * @param opts
+ * @param prefix
  */
 export function bulkTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

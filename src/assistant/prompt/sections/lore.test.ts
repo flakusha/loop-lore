@@ -43,6 +43,9 @@ describe("loreSection — audience-constrained world-lore injection", () => {
   const beforeChar = LorePosition.BeforeChar as unknown as Generated<LorePosition>;
   const noCooldown = 0 as unknown as Generated<number>;
 
+  /**
+   * @param db
+   */
   async function setupWorld(db: Kysely<DB>,): Promise<{ worldId: string; elfId: string; humanId: string }> {
     await insertUsers(db, "gm", "GM",);
     const user = await db.selectFrom("users",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
@@ -81,6 +84,12 @@ describe("loreSection — audience-constrained world-lore injection", () => {
     return { worldId, elfId, humanId, };
   }
 
+  /**
+   * @param db
+   * @param worldId
+   * @param actorId
+   * @param displayName
+   */
   function ctxFor(db: Kysely<DB>, worldId: string, actorId: string, displayName: string,): AssembleContext {
     return {
       db,
@@ -153,6 +162,8 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
    * Create a user/actor/world/chat with a given conversation history (messages
    * supplied in chronological order; the LAST is the most recent). No lore
    * entries are inserted here — tests add entries per condition.
+   * @param db
+   * @param messages
    */
   async function setupWorld(
     db: Kysely<DB>,
@@ -190,6 +201,11 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
     return { worldId, actorId, };
   }
 
+  /**
+   * @param db
+   * @param worldId
+   * @param actorId
+   */
   function ctxFor(db: Kysely<DB>, worldId: string, actorId: string,): AssembleContext {
     return {
       db,
@@ -222,7 +238,14 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
     priority?: Generated<number>;
   }
 
-  /** Insert one unconstrained selective world-lore entry and render the section. */
+  /**
+   * Insert one unconstrained selective world-lore entry and render the section.
+   * @param db
+   * @param worldId
+   * @param actorId
+   * @param loreContent
+   * @param loreOpts
+   */
   async function render(
     db: Kysely<DB>,
     worldId: string,
@@ -478,6 +501,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
   });
 });
 
+/** */
 function createLoggerSafe(): void {
   try {
     createLogger({ level: "error", },);

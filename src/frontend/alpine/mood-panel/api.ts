@@ -6,6 +6,9 @@ import { apiFetch, } from "../htmx";
 import { jsonBody, } from "../json";
 import type { EmotionDefinition, EmotionEntry, MoodState, } from "./types";
 
+/**
+ * @param actorId
+ */
 export async function fetchMood(actorId: string,): Promise<MoodState | null> {
   try {
     const res = await apiFetch(`/api/actors/${actorId}/mood`,);
@@ -16,6 +19,9 @@ export async function fetchMood(actorId: string,): Promise<MoodState | null> {
   }
 }
 
+/**
+ * @param actorId
+ */
 export async function fetchEmotions(actorId: string,): Promise<EmotionEntry[]> {
   try {
     const res = await apiFetch(`/api/actors/${actorId}/emotions`,);
@@ -26,6 +32,7 @@ export async function fetchEmotions(actorId: string,): Promise<EmotionEntry[]> {
   }
 }
 
+/** */
 export async function fetchEmotionDefs(): Promise<EmotionDefinition[]> {
   try {
     const res = await apiFetch("/api/emotions",);
@@ -36,6 +43,11 @@ export async function fetchEmotionDefs(): Promise<EmotionDefinition[]> {
   }
 }
 
+/**
+ * @param actorId
+ * @param delta
+ * @param worldId
+ */
 export async function applyHappinessDelta(
   actorId: string,
   delta: number,

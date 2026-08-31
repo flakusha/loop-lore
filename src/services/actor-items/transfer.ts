@@ -12,13 +12,22 @@ import type { Kysely, Transaction, } from "kysely";
 import { EquipState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 
+/** */
 export interface TransferResult {
   ok: boolean;
   transferred?: number;
   reason?: string;
 }
 
-/** Move `quantity` of an item between actors, atomically. */
+/**
+ * Move `quantity` of an item between actors, atomically.
+ * @param db
+ * @param fromActorId
+ * @param toActorId
+ * @param itemId
+ * @param quantity
+ * @param trx
+ */
 export async function transferItems(
   db: Kysely<DB>,
   fromActorId: string,

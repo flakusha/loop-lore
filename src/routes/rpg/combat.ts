@@ -31,6 +31,10 @@ import { AttackBody, DamageBody, HealBody, InitiativeBody, SaveBody, } from "./c
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param _opts
+ * @param prefix
+ */
 export function combatRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
   const R = `${prefix}/rpg/combat`;
 

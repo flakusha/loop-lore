@@ -13,6 +13,7 @@
 
 // ─── Types ────────────────────────────────────────────────────
 
+/** */
 export interface RenameResult {
   name: string;
   source: "manual" | "auto-rule" | "auto-llm";
@@ -24,7 +25,6 @@ export interface RenameResult {
  * Generate a chat name using rule-based heuristics.
  *
  * Strategy: "{CharacterName} — {Topic}" or "{CharacterName} — {Location}"
- *
  * @param characterName - Name of the AI character in the chat
  * @param locationName - Current location name (if world-linked)
  * @param firstUserMessage - First user message for topic extraction
@@ -61,7 +61,6 @@ export function generateRuleName(
 
 /**
  * Build a prompt for LLM-based chat renaming.
- *
  * @param characterName - Character name for context
  * @param messages - First 3-5 messages (content only)
  * @returns Prompt string for the LLM
@@ -89,6 +88,7 @@ Title:`;
  *
  * Takes the first N words as the topic, filtering out common
  * filler phrases.
+ * @param message
  */
 function extractTopic(message: string,): string | null {
   const cleaned = message
@@ -104,6 +104,8 @@ function extractTopic(message: string,): string | null {
 
 /**
  * Truncate a string to maxLen, adding "…" if truncated.
+ * @param s
+ * @param maxLen
  */
 function truncate(s: string, maxLen: number,): string {
   if (s.length <= maxLen) { return s; }

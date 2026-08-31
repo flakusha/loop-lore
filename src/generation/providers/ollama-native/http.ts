@@ -13,6 +13,9 @@ import type { GenerateRequest, GenerateResponse, } from "../types";
 import { ProviderError, } from "../types";
 import type { OllamaNativeState, } from "./types";
 
+/**
+ * @param role
+ */
 function mapRole(role: GenerationMessage["role"],): string {
   // Ollama's chat API accepts system/user/assistant/tool. The shared
   // GenerationMessage includes `character` (speaker persona) and `tool`
@@ -21,6 +24,10 @@ function mapRole(role: GenerationMessage["role"],): string {
   return role;
 }
 
+/**
+ * @param body
+ * @param params
+ */
 function applyParams(body: Record<string, unknown>, params: GenerateRequest["params"],): void {
   const options: Record<string, unknown> = {};
   if (params.temperature !== undefined) { options.temperature = params.temperature; }
@@ -41,6 +48,11 @@ function applyParams(body: Record<string, unknown>, params: GenerateRequest["par
   if (Object.keys(options,).length > 0) { body.options = options; }
 }
 
+/**
+ * @param state
+ * @param req
+ * @param stream
+ */
 export function buildBody(
   state: OllamaNativeState,
   req: GenerateRequest,
@@ -66,6 +78,9 @@ export function buildBody(
   return body;
 }
 
+/**
+ * @param signals
+ */
 export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): AbortSignal | undefined {
   const defined: AbortSignal[] = [];
   for (const signal of signals) {
@@ -91,7 +106,6 @@ export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): Ab
 
 /**
  * Perform a request against the Ollama API with the configured timeout.
- *
  * @param state - Provider state (baseUrl, key, headers)
  * @param url - Full request URL (e.g. `${baseUrl}/api/chat`)
  * @param body - Optional JSON request body
@@ -129,7 +143,6 @@ export async function fetchRaw(
 
 /**
  * Fetch with retry for transient failures (network errors + 5xx/429).
- *
  * @param state - Provider state
  * @param path - Request path
  * @param body - Request body
@@ -175,7 +188,6 @@ export async function fetchWithRetry(
 
 /**
  * Map a non-2xx response to the appropriate ProviderError subclass.
- *
  * @param response - Failed HTTP response
  */
 export async function handleErrorResponse(response: Response,): Promise<never> {
@@ -201,7 +213,11 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
   throw new ProviderError(message, undefined, status, false,);
 }
 
-/** Map a done_reason (or a stop-detected stream) to a shared finish value. */
+/**
+ * Map a done_reason (or a stop-detected stream) to a shared finish value.
+ * @param finishReason
+ * @param defaultReason
+ */
 export function mapFinishReason(
   finishReason: string | null | undefined,
   defaultReason: GenerateResponse["finishReason"] = "stop",

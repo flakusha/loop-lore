@@ -77,6 +77,7 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
 
   /**
    * Calculate D&D-style modifier: floor((stat - 10) / 2)
+   * @param stat
    */
   getModifier(stat: number,): number {
     return Math.floor((stat - 10) / 2,);
@@ -85,6 +86,8 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Calculate effective stat with status effect modifiers.
    * Note: Equipment bonuses applied at use time, not stored.
+   * @param base
+   * @param effects
    */
   effectiveStat(base: number, effects: StatusEffect[],): number {
     let total = base;
@@ -132,7 +135,10 @@ function defaultEquipmentSlots(): EquipmentSlot[] {
   ];
 }
 
-/** Parse conditions JSON string into StatusEffect array */
+/**
+ * Parse conditions JSON string into StatusEffect array
+ * @param raw
+ */
 function parseConditions(raw: string,): StatusEffect[] {
   if (!raw || raw === "[]") { return []; }
   const parsed = jsonParseOr(raw, null,) as Array<{ name: string; source?: string; duration_rounds?: number }> | null;
@@ -146,7 +152,10 @@ function parseConditions(raw: string,): StatusEffect[] {
   }),);
 }
 
-/** Parse active effects JSON string into EquipmentSlot[] placeholder */
+/**
+ * Parse active effects JSON string into EquipmentSlot[] placeholder
+ * @param raw
+ */
 function parseEquipmentSlots(raw: string,): EquipmentSlot[] {
   if (!raw || raw === "[]") { return defaultEquipmentSlots(); }
   const parsed = jsonParseOr(raw, null,) as Array<{ name: string; type: string }> | null;

@@ -10,6 +10,12 @@ import { jsonNoContent, } from "../http-utils";
 import { checkOwnership, entityPaths, } from "./context";
 import type { EntityConfig, } from "./types";
 
+/**
+ * @param config
+ * @param opts
+ * @param opts.database
+ * @param opts.config
+ */
 export function removeRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
   const { withIdPath, parentParam, } = entityPaths(config,);
 

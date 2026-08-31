@@ -10,6 +10,7 @@
 
 import { type Locale, LOCALE_REGISTRY, SUPPORTED_LOCALES, } from "../i18n";
 
+/** */
 export function localePicker() {
   return {
     open: false,

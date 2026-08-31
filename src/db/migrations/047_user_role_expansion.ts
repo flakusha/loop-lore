@@ -16,6 +16,9 @@ import { type Kysely, sql, } from "kysely";
 /** All assignable roles — must stay in sync with UserRole in src/db/enums-core/users.ts */
 const ROLES_SQL = "'admin','moderator','user','creator','player','viewer','guest','bot','tester','custom','solo'";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // SQLite forbids mutating a table with active FK references in some cases;
   // disable FK enforcement for the duration of the rebuild.
@@ -55,6 +58,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
   await sql`PRAGMA foreign_keys = ON`.execute(db,);
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   // Restore the original 4-role constraint via the same rebuild.
   await sql`PRAGMA foreign_keys = OFF`.execute(db,);

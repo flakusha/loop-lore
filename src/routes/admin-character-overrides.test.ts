@@ -13,6 +13,11 @@ import { adminCharacterOverridesRoutes, } from "./admin-character-overrides";
 const ACTOR = "00000000-0000-4000-8000-000000000001";
 const ACTOR2 = "00000000-0000-4000-8000-000000000002";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-admin-overrides", },);
   if (userId) {

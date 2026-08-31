@@ -14,6 +14,10 @@ import { AdminChatRow, AdminPaginatedEnvelope, } from "../../validation/schemas/
 import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-chats", },)

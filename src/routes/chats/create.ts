@@ -25,6 +25,10 @@ import type { HandlerOpts, } from "./types";
 
 // ── Helpers (extracted for cognitive complexity) ────────────
 
+/**
+ * @param database
+ * @param userId
+ */
 async function checkAgeGate(database: HandlerOpts["database"], userId: string,): Promise<Response | null> {
   const config = getRuntimeConfig();
   if (!config.enabled || config.mode === "none") { return null; }
@@ -37,11 +41,22 @@ async function checkAgeGate(database: HandlerOpts["database"], userId: string,):
   return st.hasPassed ? null : forbidden("Age gate not passed",);
 }
 
+/**
+ * @param ctx
+ * @param ctx.rawBodyText
+ */
 function parseRawBody(ctx: { rawBodyText?: string },): Record<string, unknown> {
   const rawText = ctx.rawBodyText;
   return rawText ? jsonParseOr(rawText, {},) : {};
 }
 
+/**
+ * @param database
+ * @param body
+ * @param body.templateId
+ * @param rawBody
+ * @param hasExplicit
+ */
 async function resolveTemplate(
   database: HandlerOpts["database"],
   body: { templateId?: string },
@@ -53,6 +68,14 @@ async function resolveTemplate(
   return templateId ? await getChatSetupTemplate(database, templateId,) : null;
 }
 
+/**
+ * @param database
+ * @param chatId
+ * @param body
+ * @param body.participantIds
+ * @param opts
+ * @param userId
+ */
 async function seedWelcomeMessages(
   database: HandlerOpts["database"],
   chatId: string,
@@ -99,6 +122,9 @@ async function seedWelcomeMessages(
 /**
  * Check NSFW access for chat participants.
  * Blocks creation if user cannot access NSFW and any participant is NSFW-rated.
+ * @param opts
+ * @param userId
+ * @param participantIds
  */
 async function checkNsfwAccessForParticipants(
   opts: HandlerOpts,
@@ -117,6 +143,10 @@ async function checkNsfwAccessForParticipants(
   return null;
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

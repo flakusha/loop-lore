@@ -53,7 +53,6 @@ const DEFAULT_CAPABILITIES: ServerCapabilities = {
  * 1. `Accept` header protocol preference
  * 2. ALPN (TLS) — not applicable in this layer, handled by server
  * 3. Fallback: `http/1.1`
- *
  * @param request - Incoming HTTP request
  * @param serverCaps - Server capabilities (defaults to standard caps)
  * @returns Agreed protocol, compression, extensions, limits

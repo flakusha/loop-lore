@@ -18,7 +18,6 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
    *
    * Maps action strings to the appropriate API endpoint and fires the request.
    * Generation actions connect SSE for real-time progress streaming.
-   *
    * @param action - Action identifier from CommandResult.action
    * @param payload - Action payload from CommandResult.actionPayload
    * @param chatId - Active chat ID

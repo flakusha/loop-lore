@@ -22,6 +22,10 @@ export interface GetWorldTraitsArgs {
 
 /**
  * Get all world traits for a character in a specific world.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
  */
 export async function getWorldTraits(
   { thisL, actorId, worldId, }: GetWorldTraitsArgs,
@@ -44,6 +48,11 @@ export interface GetWorldTraitArgs {
 
 /**
  * Get a world trait by name.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
+ * @param root0.name
  */
 export async function getWorldTrait(
   { thisL, actorId, worldId, name, }: GetWorldTraitArgs,
@@ -65,6 +74,9 @@ export interface CreateWorldTraitArgs {
 
 /**
  * Create a world trait.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.opts
  * @throws If trait already exists for this actor+world
  */
 export async function createWorldTrait(
@@ -108,6 +120,11 @@ export interface UpdateWorldTraitArgs {
 
 /**
  * Update a world trait value.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
+ * @param root0.opts
  */
 export async function updateWorldTrait(
   { thisL, actorId, worldId, opts, }: UpdateWorldTraitArgs,
@@ -139,6 +156,11 @@ export interface DeleteWorldTraitArgs {
 
 /**
  * Delete a world trait.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
+ * @param root0.name
  */
 export async function deleteWorldTrait(
   { thisL, actorId, worldId, name, }: DeleteWorldTraitArgs,

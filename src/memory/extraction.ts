@@ -17,6 +17,7 @@ import { resolveSystemPrompt, } from "../prompts";
 import { jsonParseOr, jsonStringifyOr, } from "../utils";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
 
+/** */
 function getLog() {
   return getLogger().child({ module: "memory-extraction", },);
 }
@@ -25,6 +26,8 @@ function getLog() {
  * Extract memories from an AI response.
  * Uses the shared AUX runner (auxiliary role, 2s timeout, BYO-aware).
  * Returns extracted memories without storing them (caller decides when to store).
+ * @param db
+ * @param opts
  */
 export async function extractMemories(
   db: Kysely<DB>,
@@ -72,6 +75,7 @@ export async function extractMemories(
 
 /**
  * Parse the LLM extraction response into structured memories.
+ * @param content
  */
 function parseExtractionResponse(content: string,): ExtractedMemory[] | null {
   const trimmed = content.trim();
@@ -99,6 +103,10 @@ function parseExtractionResponse(content: string,): ExtractedMemory[] | null {
 /**
  * Store extracted memories in the database.
  * Deduplicates against existing memories for the same actor.
+ * @param db
+ * @param actorId
+ * @param chatId
+ * @param memories
  */
 export async function storeMemories(
   db: Kysely<DB>,
@@ -151,6 +159,8 @@ export async function storeMemories(
 /**
  * Background extraction hook — call after generation completes.
  * Non-blocking: fires and forgets, errors are logged but don't propagate.
+ * @param db
+ * @param opts
  */
 export async function extractAndStoreMemories(
   db: Kysely<DB>,

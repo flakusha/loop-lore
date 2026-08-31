@@ -7,7 +7,11 @@ import type {
 } from "../integration-schemas";
 import type { BattleTerrain, } from "./types";
 
-/** Create default battle terrain */
+/**
+ * Create default battle terrain
+ * @param type
+ * @param weather
+ */
 export function createBattleTerrain(
   type: TerrainType = "open",
   weather: CombatWeather = "clear",
@@ -22,7 +26,11 @@ export function createBattleTerrain(
   };
 }
 
-/** Check if terrain is affected by weather */
+/**
+ * Check if terrain is affected by weather
+ * @param terrain
+ * @param weather
+ */
 export function isTerrainAffectedByWeather(
   terrain: TerrainType,
   weather: CombatWeather,

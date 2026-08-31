@@ -8,6 +8,7 @@ export const ActorType = {
   Narrator: "narrator",
   System: "system",
 } as const;
+/** */
 export type ActorType = (typeof ActorType)[keyof typeof ActorType];
 
 export const AgentType = {
@@ -16,6 +17,7 @@ export const AgentType = {
   Narrator: "narrator",
   Npc: "npc",
 } as const;
+/** */
 export type AgentType = (typeof AgentType)[keyof typeof AgentType];
 
 // ── Chat Participants ─────────────────────────────────────
@@ -25,6 +27,7 @@ export const ChatParticipantRole = {
   Observer: "observer",
   Guest: "guest",
 } as const;
+/** */
 export type ChatParticipantRole = (typeof ChatParticipantRole)[keyof typeof ChatParticipantRole];
 
 // ── Notifications ──────────────────────────────────────────
@@ -40,6 +43,7 @@ export const NotificationType = {
   BlogComment: "blog_comment",
   System: "system",
 } as const;
+/** */
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];
 
 // ── Actor / Character Visibility ───────────────────────────
@@ -47,4 +51,5 @@ export const ActorVisibility = {
   Private: "private",
   Public: "public",
 } as const;
+/** */
 export type ActorVisibility = (typeof ActorVisibility)[keyof typeof ActorVisibility];

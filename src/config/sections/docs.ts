@@ -9,10 +9,14 @@ export const DOCS_DEFAULTS = {
   enabled: true,
 } satisfies DocumentationConfig;
 
+/** */
 export class DocsSection implements DocumentationConfig {
   enabled = DOCS_DEFAULTS.enabled;
   public?: string[];
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<DocumentationConfig>,) {
     Object.assign(this, overrides,);
   }

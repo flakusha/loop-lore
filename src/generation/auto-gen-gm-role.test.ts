@@ -23,6 +23,7 @@ import type { GenDeps, } from "./auto-gen";
 
 // ── Mock generation deps (prevents real LLM calls) ──────────────
 
+/** */
 function makeConfig(): Record<string, unknown> {
   return {
     generation: {
@@ -41,6 +42,7 @@ function makeConfig(): Record<string, unknown> {
   };
 }
 
+/** */
 function createMockDeps(): Partial<GenDeps> {
   const mockBuffer = {
     append: mock(() => {/* noop */},),
@@ -116,6 +118,9 @@ function createMockDeps(): Partial<GenDeps> {
 
 // ── Helpers ─────────────────────────────────────────────────────
 
+/**
+ * @param db
+ */
 async function seedUser(db: Kysely<DB>,): Promise<string> {
   const userId = uid();
   await db
@@ -147,6 +152,10 @@ async function seedUser(db: Kysely<DB>,): Promise<string> {
   return userId;
 }
 
+/**
+ * @param db
+ * @param name
+ */
 async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
   const id = uid();
   await db
@@ -167,6 +176,12 @@ async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
   return id;
 }
 
+/**
+ * @param db
+ * @param userId
+ * @param aiActorId
+ * @param gmConfig
+ */
 async function createDirectChat(
   db: Kysely<DB>,
   userId: string,
@@ -199,6 +214,9 @@ interface CapturedAssemble {
   params: Record<string, unknown>;
 }
 
+/**
+ * @param captured
+ */
 function createCapturingAssembler(captured: CapturedAssemble[],): (db: Kysely<DB>,) => PromptAssembler {
   return () => (({
     assemble: async (params: Record<string, unknown>,) => {

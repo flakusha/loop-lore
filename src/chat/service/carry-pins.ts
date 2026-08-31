@@ -14,6 +14,9 @@ import type { DB, } from "../../db/schema";
 
 /**
  * Carry chat pins + VN choice history.
+ * @param database
+ * @param sourceChatId
+ * @param newChatId
  */
 export async function carryPins(
   database: Kysely<DB>,

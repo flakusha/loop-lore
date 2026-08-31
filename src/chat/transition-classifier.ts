@@ -62,7 +62,6 @@ const REGEX_PATTERNS: { pattern: RegExp; type: TransitionType }[] = [
 
 /**
  * Classify transition using regex patterns (instant, zero cost).
- *
  * @param content - User message content
  * @returns Classification result or null if no pattern matches
  */
@@ -87,7 +86,6 @@ function classifyWithRegex(content: string,): Omit<TransitionClassification, "so
 
 /**
  * AUX LLM classification with fast-resolution constraints.
- *
  * @param content - User message content
  * @param recentMessages - Last 1-2 messages for context
  * @param config - Application config
@@ -146,7 +144,6 @@ async function classifyWithAuxLlm(
 /**
  * Classify whether a message is a transition.
  * Regex-first, AUX-LLM-fallback for missed cases.
- *
  * @param content - User message content
  * @param recentMessages - Last 1-2 messages for context (optional)
  * @param config - Application config
@@ -200,6 +197,7 @@ const TRANSITION_TYPES = new Set<TransitionType>([
 
 /**
  * Check if a string is a valid transition type.
+ * @param t
  */
 function isValidTransitionType(t: unknown,): t is TransitionType {
   return TRANSITION_TYPES.has(t as TransitionType,);
@@ -208,6 +206,7 @@ function isValidTransitionType(t: unknown,): t is TransitionType {
 /**
  * Extract location hint from message content.
  * Simple heuristic: extract text after movement prepositions.
+ * @param content
  */
 function extractLocationHint(content: string,): string | null {
   const match = /(?:to|into|toward|inside|outside)\s+(.+?)(?:\.|,|$)/i.exec(content,);

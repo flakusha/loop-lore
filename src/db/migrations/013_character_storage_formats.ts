@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
  *
  * - data_source_format: tracks the original format of character data
  * - data_raw: stores the raw YAML/TOML source for export fidelity
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Add storage format columns to actors ────────────
@@ -23,6 +24,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("actors",)

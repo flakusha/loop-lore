@@ -28,7 +28,10 @@ interface ActivityEntry {
   chatName: string;
 }
 
-/** Stable signature of an activity snapshot for change detection. */
+/**
+ * Stable signature of an activity snapshot for change detection.
+ * @param map
+ */
 function snapshotOf(map: Record<string, ActivityEntry>,): string {
   const result = safeJsonStringify(
     Array.from(Object.entries(map,), ([id, e,],) => [id, e.unseenCount, e.lastMessageCreatedAt,],),
@@ -42,6 +45,11 @@ function snapshotOf(map: Record<string, ActivityEntry>,): string {
  * keeping the wire quiet while remaining authoritative.
  */
 export class ActivityStreamer {
+  /**
+   * @param database
+   * @param userId
+   * @param intervalMs
+   */
   constructor(
     private readonly database: Kysely<DB>,
     private readonly userId: string,
@@ -110,6 +118,11 @@ export class ActivityStreamer {
   }
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function activityStreamRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "activity-stream", },).get(`${prefix}/activity/stream`, (ctx,) => {
     const userId = requireUserId(ctx,);

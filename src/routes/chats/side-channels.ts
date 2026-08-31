@@ -31,6 +31,8 @@ const ChatIdOnlyParams = t.Object({
 
 /**
  * Side-channel routes — create + list child chats for a group chat.
+ * @param opts
+ * @param prefix
  */
 export function sideChannelRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

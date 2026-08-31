@@ -35,6 +35,7 @@ import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 const STORAGE_PREFIX = "ll-e2e-privkey-v1";
 const DEFAULT_ALGORITHM = "ECDH-P256" as const;
 
+/** */
 export interface StoredKeyPair {
   actorId: string;
   keyPairJwk: KeyPairJwk;
@@ -42,12 +43,14 @@ export interface StoredKeyPair {
   createdAt: string;
 }
 
+/** */
 export interface LoadOrCreateOpts {
   actorId: string;
   /** If true, generate a new key pair even if one already exists (rotation). */
   rotate?: boolean;
 }
 
+/** */
 export interface LoadOrCreateResult {
   /** The local actor's full key pair (both keys as `CryptoKey` handles). */
   cryptoKeyPair: CryptoKeyPair;
@@ -63,6 +66,7 @@ export interface LoadOrCreateResult {
  *
  * The private key is imported as non-extractable (cannot be re-exported after
  * this call). Use `getStoredKeyPair` to retrieve the persisted JWK for backup.
+ * @param opts
  */
 export async function loadOrCreateKeyPair(opts: LoadOrCreateOpts,): Promise<LoadOrCreateResult> {
   const existing = opts.rotate ? null : getStoredKeyPair(opts.actorId,);
@@ -92,6 +96,7 @@ export async function loadOrCreateKeyPair(opts: LoadOrCreateOpts,): Promise<Load
  * Read the persisted key pair for the given actor (JWK form). Returns null
  * if no key pair is stored. Use this for backup/export flows — runtime code
  * should call `loadOrCreateKeyPair` instead.
+ * @param actorId
  */
 export function getStoredKeyPair(actorId: string,): StoredKeyPair | null {
   const raw = localStorage.getItem(storageKey(actorId,),);
@@ -107,6 +112,7 @@ export function getStoredKeyPair(actorId: string,): StoredKeyPair | null {
  * explicitly revokes their key on a device. The corresponding row in
  * `actor_e2e_pubkeys` is NOT deleted automatically — call
  * `server-registry.revokePublicKey` for that.
+ * @param actorId
  */
 export function deleteStoredKeyPair(actorId: string,): void {
   localStorage.removeItem(storageKey(actorId,),);
@@ -124,10 +130,16 @@ export function listStoredActorIds(): string[] {
   return ids;
 }
 
+/**
+ * @param actorId
+ */
 function storageKey(actorId: string,): string {
   return `${STORAGE_PREFIX}:${actorId}`;
 }
 
+/**
+ * @param stored
+ */
 function persistStoredKeyPair(stored: StoredKeyPair,): void {
   const r = safeJsonStringify(stored,);
   if (!r.ok) {
@@ -143,6 +155,9 @@ function persistStoredKeyPair(stored: StoredKeyPair,): void {
   }
 }
 
+/**
+ * @param value
+ */
 function isStoredKeyPair(value: unknown,): value is StoredKeyPair {
   if (typeof value !== "object" || value === null) { return false; }
   const v = value as Record<string, unknown>;

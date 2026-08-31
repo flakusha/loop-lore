@@ -16,6 +16,7 @@ import { updateRoutes, } from "./update";
  * Chat sections facade — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`chat-sections`) is preserved so the
  * `register-plugins.ts` wiring is unchanged.
+ * @param opts
  */
 export function chatSectionsRoutes(opts: HandlerOpts,) {
   return (

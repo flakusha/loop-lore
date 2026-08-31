@@ -14,7 +14,10 @@ export type JsonResult<T,> = { ok: true; value: T } | { ok: false; error: Error 
 
 // ── Error Helper ─────────────────────────────────────────────
 
-/** Extract a safe Error object from an unknown thrown value */
+/**
+ * Extract a safe Error object from an unknown thrown value
+ * @param error
+ */
 function asError(error: unknown,): Error {
   return error instanceof Error ? error : new Error(String(error,),);
 }
@@ -23,6 +26,7 @@ function asError(error: unknown,): Error {
 
 /**
  * Parse JSON safely. Never throws — returns a discriminated union.
+ * @param text
  */
 export function safeJsonParse<T = unknown,>(text: string,): JsonResult<T> {
   try {
@@ -35,6 +39,8 @@ export function safeJsonParse<T = unknown,>(text: string,): JsonResult<T> {
 
 /**
  * Parse JSON, returning the value or `fallback` on failure.
+ * @param text
+ * @param fallback
  */
 export function jsonParseOr<T,>(text: string, fallback: T,): T {
   const result = safeJsonParse<T>(text,);
@@ -53,6 +59,8 @@ export interface SafeJsonStringifyOptions {
 
 /**
  * Stringify JSON safely. Never throws — returns a discriminated union.
+ * @param value
+ * @param spaceOrOptions
  */
 export function safeJsonStringify(
   value: unknown,
@@ -86,7 +94,8 @@ export function safeJsonStringify(
 /**
  * Stringify JSON safely with a fallback value.
  * Never throws.
- *
+ * @param value
+ * @param fallback
  * @example
  *   jsonStringifyOr({ a: 1 })         // '{"a":1}'
  *   jsonStringifyOr(bad, "[]")         // '[]'
@@ -100,6 +109,7 @@ export function jsonStringifyOr(value: unknown, fallback = "{}",): string {
 
 /**
  * Check if a value is a valid JSON string.
+ * @param value
  */
 export function isJsonString(value: unknown,): value is string {
   if (typeof value !== "string") { return false; }

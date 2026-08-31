@@ -10,7 +10,6 @@
  *   - progress → in_progress (via triggerAutoGeneration-style calls)
  *   - recordLifecycle afterHandle → complete (status/headers/body captured)
  *   - error boundary → failed with error populated, completedAt set
- *
  * @see TASK-async-store-complete-fail-lifecycle-hooks.md
  */
 
@@ -37,6 +36,7 @@ describe("recordLifecycle (Elysia integration)", () => {
     await db.destroy();
   },);
 
+  /** */
   function makeApp() {
     return new Elysia()
       .derive(requestIdMiddleware(),)

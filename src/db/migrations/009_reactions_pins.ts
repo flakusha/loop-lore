@@ -12,6 +12,7 @@ import { type Kysely, sql, } from "kysely";
  * - `chat_pins`: pinned messages bar at chat top. UNIQUE(chat_id,
  *   message_id) prevents duplicate pins. Max 3 enforced in application
  *   code, not DB constraint.
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── message_reactions ──────────────────────────────────────
@@ -59,6 +60,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("chat_pins",).ifExists().execute();
   await database.schema.dropTable("message_reactions",).ifExists().execute();

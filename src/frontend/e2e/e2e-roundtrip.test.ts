@@ -73,6 +73,9 @@ if (typeof localStorage === "undefined") {
 
 // ── Helpers ──────────────────────────────────────────────
 
+/**
+ * @param actorId
+ */
 async function persistKeyPair(actorId: string,): Promise<JsonWebKey> {
   const pair = await generateKeyPair({ extractable: true, },);
   const pubJwk = await exportPublicJwk(pair.publicKey,);
@@ -89,6 +92,9 @@ async function persistKeyPair(actorId: string,): Promise<JsonWebKey> {
   return pubJwk;
 }
 
+/**
+ * @param actorId
+ */
 function loadStoredJwkPair(actorId: string,): { publicKey: JsonWebKey; privateKey: JsonWebKey } {
   const raw = localStorage.getItem(`ll-e2e-privkey-v1:${actorId}`,);
   if (!raw) { throw new Error(`no stored key for ${actorId}`,); }
@@ -96,6 +102,10 @@ function loadStoredJwkPair(actorId: string,): { publicKey: JsonWebKey; privateKe
   return parsed.keyPairJwk;
 }
 
+/**
+ * @param localPriv
+ * @param peerPub
+ */
 async function rawSharedBytes(localPriv: CryptoKey, peerPub: CryptoKey,): Promise<Uint8Array> {
   const bits = await crypto.subtle.deriveBits({ name: "ECDH", public: peerPub, }, localPriv, 256,);
   return new Uint8Array(bits,);

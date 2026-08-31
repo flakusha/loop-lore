@@ -24,7 +24,7 @@ config.assets.uploadDir = "/tmp/";
 const app = createApp({
   database: db,
   config,
-  // eslint-disable-next-line @typescript-eslint/require-await -- app options type requires Promise<Response>
+
   handleNonApiRequest: async () => new Response("Not found", { status: 404, },),
 },);
 console.log("createApp succeeded",);

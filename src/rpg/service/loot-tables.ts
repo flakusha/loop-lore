@@ -5,12 +5,17 @@ import { jsonStringifyOr, } from "../../utils.js";
 import { log, } from "./log.js";
 import type { RpgServiceDeps, } from "./types.js";
 
+/** */
 export interface CreateLootTableParams {
   name: string;
   sourceType: string;
   sourceId?: string;
 }
 
+/**
+ * @param deps
+ * @param params
+ */
 export async function createLootTable(
   deps: RpgServiceDeps,
   params: CreateLootTableParams,
@@ -33,6 +38,7 @@ export async function createLootTable(
   return id;
 }
 
+/** */
 export interface AddLootEntryParams {
   lootTableId: string;
   itemName: string;
@@ -46,6 +52,10 @@ export interface AddLootEntryParams {
   metadata?: Record<string, unknown>;
 }
 
+/**
+ * @param deps
+ * @param params
+ */
 export async function addLootEntry(
   deps: RpgServiceDeps,
   params: AddLootEntryParams,
@@ -84,6 +94,10 @@ export async function addLootEntry(
   return id;
 }
 
+/**
+ * @param deps
+ * @param lootTableId
+ */
 export async function rollLootTable(
   deps: RpgServiceDeps,
   lootTableId: string,

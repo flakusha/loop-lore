@@ -10,6 +10,7 @@ export const LOGGING_DEFAULTS = {
   level: LogLevel.Debug,
 } satisfies LoggingConfig;
 
+/** */
 export class LoggingSection implements LoggingConfig {
   level = LOGGING_DEFAULTS.level;
   jsonlPath?: string;
@@ -24,6 +25,9 @@ export class LoggingSection implements LoggingConfig {
   maxMetaDepth?: number;
   maxStackBytes?: number;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<LoggingConfig>,) {
     Object.assign(this, overrides,);
   }

@@ -20,17 +20,29 @@ type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 
 const BASE = "http://localhost";
 
-/** Auth-context app via derive, mirroring message-reactions/chat-sections helpers. */
+/**
+ * Auth-context app via derive, mirroring message-reactions/chat-sections helpers.
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function searchApp(db: Kysely<DB>, userId: string | null, userRole: string | null,): Elysia {
   return new Elysia({ name: "test-message-search", },)
     .derive(() => ({ userId, userRole, }))
     .use(messageSearchRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param path
+ */
 function get(path: string,): Request {
   return new Request(`${BASE}${path}`,);
 }
 
+/**
+ * @param app
+ * @param req
+ */
 async function appHandle(app: Elysia, req: Request,): Promise<Response> {
   return (app as unknown as { handle: (r: Request,) => Promise<Response> }).handle(req,);
 }

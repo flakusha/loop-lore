@@ -14,6 +14,7 @@ import { Type, type Static, type TSchema, } from "@sinclair/typebox";
 
 /**
  * Flat admin-list envelope — `{ data, total, page, pageSize }`.
+ * @param item
  */
 export const AdminPaginatedEnvelope = <T extends TSchema,>(item: T,) =>
   Type.Object({
@@ -33,6 +34,9 @@ export const AdminChatRow = Type.Object({
   created_at: Type.String(),
   updated_at: Type.String(),
 },);
+/**
+ *
+ */
 export type AdminChatRow = Static<typeof AdminChatRow>;
 export const AdminUserRow = Type.Object({
   id: Type.String(),
@@ -43,6 +47,9 @@ export const AdminUserRow = Type.Object({
   created_at: Type.String(),
   last_seen_at: Type.Union([Type.String(), Type.Null(),]),
 },);
+/**
+ *
+ */
 export type AdminUserRow = Static<typeof AdminUserRow>;
 export const AdminWorldRow = Type.Object({
   id: Type.String(),
@@ -52,6 +59,9 @@ export const AdminWorldRow = Type.Object({
   created_at: Type.String(),
   updated_at: Type.String(),
 },);
+/**
+ *
+ */
 export type AdminWorldRow = Static<typeof AdminWorldRow>;
 export const AdminAuditRow = Type.Object({
   id: Type.String(),
@@ -71,6 +81,9 @@ export const AdminAuditRow = Type.Object({
   created_at: Type.String(),
 
 },);
+/**
+ *
+ */
 export type AdminAuditRow = Static<typeof AdminAuditRow>;
 
 /** One template profile summary (admin-templates.ts). */
@@ -90,6 +103,9 @@ export const AdminTemplateProfile = Type.Object({
   isBuiltin: Type.Boolean(),
   templateCount: Type.Number(),
 },);
+/**
+ *
+ */
 export type AdminTemplateProfile = Static<typeof AdminTemplateProfile>;
 
 /** Response of GET /api/admin/templates — `{ profiles, defaultProfileId, counts }`. */
@@ -99,8 +115,14 @@ export const AdminTemplateListResponse = Type.Object({
   builtinCount: Type.Number(),
   customCount: Type.Number(),
 },);
+/**
+ *
+ */
 export type AdminTemplateListResponse = Static<typeof AdminTemplateListResponse>;
 // Public alias: `ProfileSummary` is re-exported for consumers (e.g.
 // admin-templates.ts) to keep the API name stable vs AdminTemplateProfile.
-// eslint-disable-next-line sonarjs/redundant-type-aliases
+ 
+/**
+ *
+ */
 export type ProfileSummary = AdminTemplateProfile;

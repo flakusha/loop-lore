@@ -9,7 +9,6 @@ import { type Combatant, } from "./types.js";
 
 /**
  * Make a saving throw.
- *
  * @param combatant - The combatant making the save
  * @param ability - Which ability to save with
  * @param dc - Difficulty class to beat

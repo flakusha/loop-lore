@@ -30,7 +30,10 @@ function log() {
   return getLogger().child({ module: "chat-context", },);
 }
 
-/** Validate regenerate request body */
+/**
+ * Validate regenerate request body
+ * @param body
+ */
 export function validateRegenerateBody(
   body: unknown,
 ): { chatId: string; messageId: string; parentId?: string; style?: RegenStyle } | null {
@@ -57,6 +60,11 @@ export function validateRegenerateBody(
  * Returns the current context window state for a chat, including
  * token usage, percentage, status level, per-section breakdown,
  * available budget, and trim suggestions (FEAT-068 budget advisor).
+ * @param database
+ * @param chatId
+ * @param userId
+ * @param userRole
+ * @param config
  */
 export async function handleGetContext(
   database: Kysely<DB>,
@@ -148,6 +156,15 @@ export async function handleGetContext(
 
   return jsonResponse({ chatId, ...result, },);
 }
+/**
+ * @param database
+ * @param chatId
+ * @param messageId
+ * @param parentId
+ * @param userId
+ * @param userRole
+ * @param style
+ */
 export async function handleRegenerateMessage(
   database: Kysely<DB>,
   chatId: string,

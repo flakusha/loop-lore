@@ -16,6 +16,8 @@ import { ProficiencyLevel, } from "./types";
 
 /**
  * Create a new skill for an actor
+ * @param db
+ * @param input
  */
 export async function createSkill(db: Kysely<DB>, input: CreateSkillInput,): Promise<Skill> {
   const now = new Date().toISOString();
@@ -48,6 +50,8 @@ export async function createSkill(db: Kysely<DB>, input: CreateSkillInput,): Pro
 
 /**
  * Get a skill by ID
+ * @param db
+ * @param skillId
  */
 export async function getSkill(db: Kysely<DB>, skillId: string,): Promise<Skill | null> {
   const row = await db
@@ -61,6 +65,9 @@ export async function getSkill(db: Kysely<DB>, skillId: string,): Promise<Skill 
 
 /**
  * Get all skills for an actor
+ * @param db
+ * @param actorId
+ * @param worldId
  */
 export async function getActorSkills(db: Kysely<DB>, actorId: string, worldId?: string,): Promise<Skill[]> {
   let query = db
@@ -79,6 +86,10 @@ export async function getActorSkills(db: Kysely<DB>, actorId: string, worldId?: 
 
 /**
  * Get skills by category for an actor
+ * @param db
+ * @param actorId
+ * @param category
+ * @param worldId
  */
 export async function getSkillsByCategory(
   db: Kysely<DB>,
@@ -102,6 +113,9 @@ export async function getSkillsByCategory(
 
 /**
  * Update a skill
+ * @param db
+ * @param skillId
+ * @param input
  */
 export async function updateSkill(db: Kysely<DB>, skillId: string, input: UpdateSkillInput,): Promise<Skill> {
   const now = new Date().toISOString();
@@ -126,6 +140,8 @@ export async function updateSkill(db: Kysely<DB>, skillId: string, input: Update
 
 /**
  * Delete a skill
+ * @param db
+ * @param skillId
  */
 export async function deleteSkill(db: Kysely<DB>, skillId: string,): Promise<void> {
   await db

@@ -3,29 +3,46 @@
 
 import { fromBase64, toBase64, } from "../utils/base64";
 
+/** */
 export type BrowserContentEncoding = "identity" | "gzip" | "brotli" | "zstd";
 
+/** */
 export interface BrowserEncodeResult {
   encoded: string;
   encoding: BrowserContentEncoding;
 }
 
+/**
+ * @param str
+ */
 function stringToUint8Array(str: string,): Uint8Array {
   return new TextEncoder().encode(str,);
 }
 
+/**
+ * @param buf
+ */
 function uint8ArrayToString(buf: Uint8Array,): string {
   return new TextDecoder().decode(buf,);
 }
 
+/**
+ * @param buf
+ */
 function uint8ArrayToBase64(buf: Uint8Array,): string {
   return toBase64(buf,);
 }
 
+/**
+ * @param b64
+ */
 function base64ToUint8Array(b64: string,): Uint8Array {
   return fromBase64(b64,);
 }
 
+/**
+ * @param data
+ */
 async function tryGzipCompress(data: Uint8Array,): Promise<Uint8Array | null> {
   if (typeof CompressionStream === "undefined") { return null; }
   try {
@@ -40,6 +57,9 @@ async function tryGzipCompress(data: Uint8Array,): Promise<Uint8Array | null> {
   }
 }
 
+/**
+ * @param data
+ */
 async function tryGzipDecompress(data: Uint8Array,): Promise<Uint8Array | null> {
   if (typeof DecompressionStream === "undefined") { return null; }
   try {
@@ -75,12 +95,18 @@ async function getWasmZstd(): Promise<WasmZstdModule | null> {
   }
 }
 
+/**
+ * @param data
+ */
 async function tryZstdCompress(data: Uint8Array,): Promise<Uint8Array | null> {
   const wasm = await getWasmZstd();
   if (wasm === null) { return null; }
   return wasm.zstd.compress(data, 3,);
 }
 
+/**
+ * @param data
+ */
 async function tryBrotliCompress(data: Uint8Array,): Promise<Uint8Array | null> {
   if (typeof CompressionStream === "undefined") { return null; }
   try {
@@ -95,6 +121,9 @@ async function tryBrotliCompress(data: Uint8Array,): Promise<Uint8Array | null> 
   }
 }
 
+/**
+ * @param data
+ */
 async function tryBrotliDecompress(data: Uint8Array,): Promise<Uint8Array | null> {
   if (typeof DecompressionStream === "undefined") { return null; }
   try {
@@ -108,6 +137,9 @@ async function tryBrotliDecompress(data: Uint8Array,): Promise<Uint8Array | null
   }
 }
 
+/**
+ * @param data
+ */
 async function tryZstdDecompress(data: Uint8Array,): Promise<Uint8Array | null> {
   const wasm = await getWasmZstd();
   if (wasm === null) { return null; }
@@ -115,17 +147,27 @@ async function tryZstdDecompress(data: Uint8Array,): Promise<Uint8Array | null> 
   return wasm.zstd.decompress(data, data.length * 16,); // generous initial capacity
 }
 
+/**
+ * @param encoding
+ */
 function getEncoderPriority(encoding: BrowserContentEncoding,): ("zstd" | "brotli" | "gzip")[] {
   if (encoding === "zstd") { return ["zstd", "gzip",]; }
   if (encoding === "brotli") { return ["brotli", "gzip",]; }
   return ["gzip",];
 }
 
+/**
+ * @param encoding
+ */
 function getDecoderPriority(encoding: BrowserContentEncoding,): ("zstd" | "brotli" | "gzip")[] {
   if (encoding === "zstd" || encoding === "brotli") { return [encoding,]; }
   return ["gzip", "brotli", "zstd",];
 }
 
+/**
+ * @param plaintext
+ * @param encoding
+ */
 export async function browserEncodeContent(
   plaintext: string,
   encoding: BrowserContentEncoding = "gzip",
@@ -149,6 +191,10 @@ export async function browserEncodeContent(
   return { encoded: plaintext, encoding: "identity", };
 }
 
+/**
+ * @param stored
+ * @param encoding
+ */
 export async function browserDecodeContent(
   stored: string,
   encoding: BrowserContentEncoding,

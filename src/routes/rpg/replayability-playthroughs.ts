@@ -24,6 +24,8 @@ import {
 /**
  * Require `playerId` to equal the authenticated user; returns userId string
  * on success, else a Response.
+ * @param ctx
+ * @param playerId
  */
 function requireOwnPlayer(ctx: any, playerId: string,): string | Response {
   const userId = requireUserId(ctx,);
@@ -32,6 +34,10 @@ function requireOwnPlayer(ctx: any, playerId: string,): string | Response {
   return userId;
 }
 
+/**
+ * @param svc
+ * @param R
+ */
 export function replayabilityPlaythroughRoutes(svc: () => ReplayabilityService, R: string,): Elysia {
   return new Elysia({ name: "rpg-replayability-playthroughs", },)
     // ── Start playthrough ────────────────────────────────

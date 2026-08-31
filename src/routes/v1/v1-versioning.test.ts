@@ -16,6 +16,7 @@ import { v1Routes, } from "./index";
 
 import type { AsyncStore, } from "../../async/store";
 
+/** */
 function stubAsyncStore(): AsyncStore {
   return {
     track() {},
@@ -32,6 +33,10 @@ function stubAsyncStore(): AsyncStore {
   };
 }
 
+/**
+ * @param db
+ * @param userId
+ */
 function createV1App(db: Kysely<DB>, userId: string | null,): Elysia {
   const t = (k: string,) => k;
   return new Elysia({ name: "test-v1", },)

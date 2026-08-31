@@ -9,7 +9,11 @@ import type {
   UpdateLocationTraitInput,
 } from "./types";
 
-/** Create a location trait */
+/**
+ * Create a location trait
+ * @param db
+ * @param input
+ */
 export async function createLocationTrait(
   db: Kysely<any>,
   input: CreateLocationTraitInput,
@@ -38,7 +42,12 @@ export async function createLocationTrait(
   return trait;
 }
 
-/** Get all location traits for an actor in a location */
+/**
+ * Get all location traits for an actor in a location
+ * @param db
+ * @param actorId
+ * @param locationId
+ */
 export async function getLocationTraits(
   db: Kysely<any>,
   actorId: string,
@@ -52,7 +61,12 @@ export async function getLocationTraits(
     .execute() as Promise<LocationTraitRow[]>;
 }
 
-/** Update a location trait */
+/**
+ * Update a location trait
+ * @param db
+ * @param id
+ * @param input
+ */
 export async function updateLocationTrait(
   db: Kysely<any>,
   id: string,
@@ -88,7 +102,11 @@ export async function updateLocationTrait(
     .executeTakeFirst() as Promise<LocationTraitRow | undefined>;
 }
 
-/** Delete a location trait */
+/**
+ * Delete a location trait
+ * @param db
+ * @param id
+ */
 export async function deleteLocationTrait(db: Kysely<any>, id: string,): Promise<boolean> {
   const result = await db
     .deleteFrom("character_location_traits",)

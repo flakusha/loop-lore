@@ -22,6 +22,9 @@ import { chatActorQuery, chatQuery, configBody, logErr, R, } from "./schemas";
 import type { ProactiveRouteOpts, } from "./schemas";
 import { sendProactiveHandler, } from "./send-handler";
 
+/**
+ * @param opts
+ */
 export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
   const svc = () => new ProactiveMessagingService(opts.database,);
   const { database, } = opts;

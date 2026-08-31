@@ -15,6 +15,7 @@ import { log as rootLog, } from "../logger";
 
 const log = rootLog.child({ module: "chat-actions", },);
 
+/** */
 export type ActionHandler = (
   ctx: any,
   payload: Record<string, unknown> | null,

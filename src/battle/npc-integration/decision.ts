@@ -7,7 +7,15 @@ import type {
   NPCPersonality,
 } from "./types";
 
-/** Make NPC combat decision based on personality */
+/**
+ * Make NPC combat decision based on personality
+ * @param personality
+ * @param currentHealth
+ * @param maxHealth
+ * @param enemyCount
+ * @param allyCount
+ * @param battleMemories
+ */
 export function makeNPCDecision(
   personality: NPCPersonality,
   currentHealth: number,
@@ -77,7 +85,13 @@ export function makeNPCDecision(
   };
 }
 
-/** Generate reasoning text for decision */
+/**
+ * Generate reasoning text for decision
+ * @param type
+ * @param personality
+ * @param healthPercent
+ * @param isOutnumbered
+ */
 function generateDecisionReasoning(
   type: NPCCombatDecision["type"],
   personality: NPCPersonality,

@@ -12,6 +12,10 @@ import { skippedResult, } from "../../shared/story-utils";
 import type { SyntheticCase, } from "../types";
 import type { RunnerState, SyntheticTestStatus, } from "./types";
 
+/**
+ * @param state
+ * @param c
+ */
 export function runTurnSequence(state: RunnerState, c: SyntheticCase,): CaseResult {
   if (!state.turnManagerFactory) {
     return skippedResult(c.expected, "turn orchestration replay requires a turnManagerFactory",);
@@ -26,6 +30,10 @@ export function runTurnSequence(state: RunnerState, c: SyntheticCase,): CaseResu
   };
 }
 
+/**
+ * @param _state
+ * @param c
+ */
 export function runWorldStateTransition(_state: RunnerState, c: SyntheticCase,): {
   status: SyntheticTestStatus;
   expected: Record<string, unknown>;
@@ -55,6 +63,14 @@ export function runWorldStateTransition(_state: RunnerState, c: SyntheticCase,):
   };
 }
 
+/**
+ * @param c
+ * @param computed
+ * @param computed.status
+ * @param computed.expected
+ * @param computed.actual
+ * @param computed.reason
+ */
 export function runGeneric(
   c: SyntheticCase,
   computed: {

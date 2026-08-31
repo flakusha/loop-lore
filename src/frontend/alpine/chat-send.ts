@@ -20,7 +20,13 @@ const log = rootLog.child({ module: "chat", },);
 /** Counter prefix marker for optimistic temp ids; the full id embeds a UUIDv7. */
 const TEMP_PREFIX = "tmp-";
 
-/** Build request body for sendMessage (handles encryption + attachments). */
+/**
+ * Build request body for sendMessage (handles encryption + attachments).
+ * @param ctx
+ * @param text
+ * @param msgs
+ * @param pendingAssets
+ */
 async function buildSendBody(
   ctx: ChatState,
   text: string,
@@ -48,10 +54,13 @@ async function buildSendBody(
   return body;
 }
 
-/** Remove one optimistic temp message after its send failed.
+/**
+ * Remove one optimistic temp message after its send failed.
  *
  * Scoped to the exact temp id so a failure does not strip temp messages
  * belonging to concurrent optimistic sends.
+ * @param ctx
+ * @param tempId
  */
 function removeTempMessage(ctx: ChatState, tempId: string,) {
   ctx.messages = ctx.messages.filter((m,) => m.id !== tempId);

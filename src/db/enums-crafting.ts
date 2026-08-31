@@ -21,6 +21,7 @@ export const CraftingDiscipline = {
   Jewelry: "jewelry",
   Engineering: "engineering",
 } as const;
+/** */
 export type CraftingDiscipline = (typeof CraftingDiscipline)[keyof typeof CraftingDiscipline];
 
 /** Gathering professions — raw material extraction. */
@@ -32,6 +33,7 @@ export const GatheringDiscipline = {
   Skinning: "skinning",
   Logging: "logging",
 } as const;
+/** */
 export type GatheringDiscipline = (typeof GatheringDiscipline)[keyof typeof GatheringDiscipline];
 
 // ── Crafting Stations ─────────────────────────────────────
@@ -46,6 +48,7 @@ export const CraftingStationType = {
   Kitchen: "kitchen",
   EnchantingTable: "enchanting_table",
 } as const;
+/** */
 export type CraftingStationType = (typeof CraftingStationType)[keyof typeof CraftingStationType];
 
 export const StationLocation = {
@@ -54,6 +57,7 @@ export const StationLocation = {
   Guild: "guild",
   Portable: "portable",
 } as const;
+/** */
 export type StationLocation = (typeof StationLocation)[keyof typeof StationLocation];
 
 // ── Profession Titles ─────────────────────────────────────
@@ -65,6 +69,7 @@ export const ProfessionTitle = {
   Master: "master",
   Grandmaster: "grandmaster",
 } as const;
+/** */
 export type ProfessionTitle = (typeof ProfessionTitle)[keyof typeof ProfessionTitle];
 
 // ── Quality Levels ────────────────────────────────────────
@@ -77,6 +82,7 @@ export const QualityLevel = {
   Epic: "epic",
   Legendary: "legendary",
 } as const;
+/** */
 export type QualityLevel = (typeof QualityLevel)[keyof typeof QualityLevel];
 
 // ── Discovery Methods ─────────────────────────────────────
@@ -90,6 +96,7 @@ export const DiscoveryMethod = {
   ReverseEngineering: "reverse_engineering",
   StartingKit: "starting_kit",
 } as const;
+/** */
 export type DiscoveryMethod = (typeof DiscoveryMethod)[keyof typeof DiscoveryMethod];
 
 // ── Gathering Nodes ───────────────────────────────────────
@@ -103,6 +110,7 @@ export const GatheringNodeType = {
   BerryBush: "berry_bush",
   CrystalNode: "crystal_node",
 } as const;
+/** */
 export type GatheringNodeType = (typeof GatheringNodeType)[keyof typeof GatheringNodeType];
 
 // ── Crafting Attempt Status ───────────────────────────────
@@ -113,6 +121,7 @@ export const CraftingAttemptStatus = {
   CriticalSuccess: "critical_success",
   CriticalFailure: "critical_failure",
 } as const;
+/** */
 export type CraftingAttemptStatus = (typeof CraftingAttemptStatus)[keyof typeof CraftingAttemptStatus];
 
 // ── Recipe Material Slot ──────────────────────────────────
@@ -122,6 +131,7 @@ export const MaterialSlotType = {
   Optional: "optional",
   Catalyst: "catalyst",
 } as const;
+/** */
 export type MaterialSlotType = (typeof MaterialSlotType)[keyof typeof MaterialSlotType];
 
 // ── Profession Bonus Type ─────────────────────────────────
@@ -133,6 +143,7 @@ export const ProfessionBonusType = {
   MaterialSaving: "material_saving",
   ExperienceGain: "experience_gain",
 } as const;
+/** */
 export type ProfessionBonusType = (typeof ProfessionBonusType)[keyof typeof ProfessionBonusType];
 
 // ── Gathering Node Instances ──────────────────────────────
@@ -141,4 +152,5 @@ export const NodeInstanceState = {
   Available: "available",
   Depleted: "depleted",
 } as const;
+/** */
 export type NodeInstanceState = (typeof NodeInstanceState)[keyof typeof NodeInstanceState];

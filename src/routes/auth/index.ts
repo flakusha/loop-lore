@@ -28,6 +28,12 @@ export { resetLoginRateLimiter, resetRegisterRateLimiter, } from "./shared";
 
 // ── Public routes: auth runs but won't block ─────────────────
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param prefix
+ */
 export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-public", },)
     .post(
@@ -103,6 +109,11 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
 
 // ── Protected routes: require auth ───────────────────────────
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function authProtectedRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-protected", },)
     .post(

@@ -12,14 +12,20 @@
  * dependency (so this works the same in browser + Node + Bun).
  */
 
-/** Encode a `Uint8Array` as base64 (no URL-safe alphabet). */
+/**
+ * Encode a `Uint8Array` as base64 (no URL-safe alphabet).
+ * @param bytes
+ */
 export function toBase64(bytes: Uint8Array,): string {
   let binary = "";
   for (let i = 0; i < bytes.byteLength; i++) { binary += String.fromCharCode(bytes[i]!,); }
   return btoa(binary,);
 }
 
-/** Decode a base64 string into a fresh `Uint8Array`. */
+/**
+ * Decode a base64 string into a fresh `Uint8Array`.
+ * @param b64
+ */
 export function fromBase64(b64: string,): Uint8Array {
   const binary = atob(b64,);
   const out = new Uint8Array(binary.length,);

@@ -12,6 +12,7 @@ import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { uid, } from "../utils";
 
+/** */
 export interface CreatePersonaParams {
   userId: string;
   name: string;
@@ -23,6 +24,7 @@ export interface CreatePersonaParams {
   model?: string | null;
 }
 
+/** */
 export interface UpdatePersonaParams {
   name?: string;
   avatarAssetId?: string | null;
@@ -34,9 +36,16 @@ export interface UpdatePersonaParams {
   model?: string | null;
 }
 
+/** */
 export class PersonasService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
+  /**
+   * @param userId
+   */
   async listByUser(userId: string,) {
     return this.db
       .selectFrom("personas",)
@@ -47,6 +56,10 @@ export class PersonasService {
       .execute();
   }
 
+  /**
+   * @param id
+   * @param userId
+   */
   async getById(id: string, userId: string,) {
     return this.db
       .selectFrom("personas",)
@@ -56,6 +69,9 @@ export class PersonasService {
       .executeTakeFirst();
   }
 
+  /**
+   * @param params
+   */
   async create(params: CreatePersonaParams,): Promise<string> {
     const id = uid();
     await this.db
@@ -75,6 +91,11 @@ export class PersonasService {
     return id;
   }
 
+  /**
+   * @param id
+   * @param params
+   * @param userId
+   */
   async update(id: string, params: UpdatePersonaParams, userId: string,): Promise<void> {
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), };
     if (params.name !== undefined) { updates.name = params.name; }
@@ -96,6 +117,10 @@ export class PersonasService {
       .execute();
   }
 
+  /**
+   * @param id
+   * @param userId
+   */
   async delete(id: string, userId: string,): Promise<void> {
     await this.db.deleteFrom("personas",).where("id", "=", id,).where("user_id", "=", userId,).execute();
 
@@ -107,6 +132,10 @@ export class PersonasService {
       .execute();
   }
 
+  /**
+   * @param id
+   * @param userId
+   */
   async setDefault(id: string, userId: string,): Promise<void> {
     // Unset current default
     await this.db
@@ -124,6 +153,9 @@ export class PersonasService {
       .execute();
   }
 
+  /**
+   * @param userId
+   */
   async getDefault(userId: string,) {
     return this.db
       .selectFrom("personas",)
@@ -133,6 +165,10 @@ export class PersonasService {
       .executeTakeFirst();
   }
 
+  /**
+   * @param id
+   * @param userId
+   */
   async convertToCharacter(id: string, userId: string,): Promise<{ actorId: string }> {
     const persona = await this.db
       .selectFrom("personas",)

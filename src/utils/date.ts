@@ -28,6 +28,8 @@ export function unixSec(): number {
  * Uses Intl.DateTimeFormat for IANA timezone support.
  * Falls back to getTimezoneOffset arithmetic if Intl fails or no tz given.
  * Honors Node.js `TZ` environment variable by default.
+ * @param date
+ * @param tz
  */
 export function tzOffset(date?: Date, tz?: string,): string {
   const d = date ?? new Date();
@@ -62,6 +64,10 @@ export function tzOffset(date?: Date, tz?: string,): string {
   return `${sign}${String(Math.floor(abs / 60,),).padStart(2, "0",)}:${String(abs % 60,).padStart(2, "0",)}`;
 }
 
+/**
+ * @param n
+ * @param len
+ */
 function pad(n: number, len = 2,): string {
   return String(n,).padStart(len, "0",);
 }
@@ -81,7 +87,7 @@ function pad(n: number, len = 2,): string {
  *   — No dashes in date, colon in TZ offset retained for native JS decode
  *   — Denser, sortable
  *   — NOT parseable by Date.parse() — use only for display/compact logs
- *
+ * @param options
  * @param options.style - "standard" (default) or "compact"
  * @param options.tz - IANA timezone name (e.g., "Europe/Berlin") or offset string
  * @param options.date - Date object, timestamp, or undefined for now
@@ -155,7 +161,6 @@ export function formatTime(options?: {
  * to the native `Date` constructor — there is deliberately NO custom parser, so
  * the canonical string form (`formatTime` standard) round-trips through
  * `new Date(...)` unchanged.
- *
  * @param input - Date, epoch ms, or ISO string. `""` → Invalid Date; `undefined` → now.
  */
 export function toDate(input?: Date | number | string,): Date {
@@ -182,7 +187,8 @@ export interface DateFormatOptions {
  *
  * The result is NOT parseable by `Date`. For storage/transport use `"unix"`
  * or `"iso"` from {@link serializeDate}.
- *
+ * @param input
+ * @param options
  * @example
  * formatHuman("2026-07-04T14:30:00Z", { locale: "de-DE", tz: "Europe/Berlin" })
  * // "4. Juli 2026, 16:30"
@@ -221,7 +227,9 @@ export function formatHuman(
  * - `"iso"`     → `yyyy-mm-ddTHH:MM:SS.ttt+/-xxtz` (native-`Date` round-trippable).
  * - `"compact"` → dense, sortable ISO variant (NOT `Date.parse`-able).
  * - `"human"`   → locale/region + timezone display string (see {@link formatHuman}).
- *
+ * @param input
+ * @param format
+ * @param options
  * @example
  * serializeDate(1751639400000, "iso", { tz: "America/New_York" })
  * // "2026-07-04T10:30:00.000-04:00"

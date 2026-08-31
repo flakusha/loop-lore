@@ -17,7 +17,10 @@ import { Type, type Static, type TSchema, } from "@sinclair/typebox";
 
 // ── Envelopes ────────────────────────────────────────────────────────────
 
-/** `jsonPaginated(...)` body — `{ data, pagination: { total, page, pageSize, totalPages } }`. */
+/**
+ * `jsonPaginated(...)` body — `{ data, pagination: { total, page, pageSize, totalPages } }`.
+ * @param item
+ */
 export const PaginatedEnvelope = <T extends TSchema,>(item: T,) =>
   Type.Object({
     data: Type.Array(item,),
@@ -29,7 +32,10 @@ export const PaginatedEnvelope = <T extends TSchema,>(item: T,) =>
     },),
   },);
 
-/** `jsonResponse({ data })` body — a single `data` field. */
+/**
+ * `jsonResponse({ data })` body — a single `data` field.
+ * @param item
+ */
 export const DataEnvelope = <T extends TSchema,>(item: T,) =>
   Type.Object({ data: item, },);
 
@@ -57,6 +63,9 @@ export const MessageAttachment = Type.Object({
   width: Type.Number(),
   height: Type.Number(),
 },);
+/**
+ *
+ */
 export type MessageAttachment = Static<typeof MessageAttachment>;
 
 /**
@@ -95,6 +104,9 @@ export const MessageRow = Type.Object({
 
 /** Body of GET /api/chats/:id/messages. */
 export const MessageListResponse = PaginatedEnvelope(MessageRow,);
+/**
+ *
+ */
 export type MessageListResponse = Static<typeof MessageListResponse>;
 
 /** Minimal chat row for the sidebar (GET /api/chats). */
@@ -106,6 +118,9 @@ export const ChatRow = Type.Object({
   mode: Type.Optional(Type.String(),),
 },);
 export const ChatListResponse = PaginatedEnvelope(ChatRow,);
+/**
+ *
+ */
 export type ChatListResponse = Static<typeof ChatListResponse>;
 
 /** One chat-section row (chat-sections.ts). */
@@ -114,6 +129,9 @@ export const ChatSectionRow = Type.Object({
   name: Type.String(),
 },);
 export const ChatSectionListResponse = DataEnvelope(Type.Array(ChatSectionRow,),);
+/**
+ *
+ */
 export type ChatSectionListResponse = Static<typeof ChatSectionListResponse>;
 
 /** One chat-background row (chat-backgrounds.ts). */
@@ -122,6 +140,9 @@ export const ChatBackgroundRow = Type.Object({
   name: Type.Optional(Type.String(),),
 },);
 export const ChatBackgroundListResponse = DataEnvelope(Type.Array(ChatBackgroundRow,),);
+/**
+ *
+ */
 export type ChatBackgroundListResponse = Static<typeof ChatBackgroundListResponse>;
 
 /** Location rows nested under `data.locations` (chat-location.ts). */
@@ -132,6 +153,9 @@ export const ChatLocationRow = Type.Object({
 export const ChatLocationListResponse = DataEnvelope(
   Type.Object({ locations: Type.Array(ChatLocationRow,), },),
 );
+/**
+ *
+ */
 export type ChatLocationListResponse = Static<typeof ChatLocationListResponse>;
 
 // ── Notifications & activity (SSE payloads) ────────────────────────────
@@ -145,6 +169,9 @@ export const NotificationListItem = Type.Object({
   link: Type.Union([Type.String(), Type.Null(),]),
   read: Type.Number(),
 },);
+/**
+ *
+ */
 export type NotificationListItem = Static<typeof NotificationListItem>;
 
 /** Body of the SSE `notifications` event. */
@@ -152,18 +179,27 @@ export const NotificationsEvent = Type.Object({
   unreadCount: Type.Number(),
   items: Type.Array(NotificationListItem,),
 },);
+/**
+ *
+ */
 export type NotificationsEvent = Static<typeof NotificationsEvent>;
 
 /** Body of the SSE `stream-error` event (generation/notification streams). */
 export const ErrorEvent = Type.Object({
   error: Type.Optional(Type.String(),),
 },);
+/**
+ *
+ */
 export type ErrorEvent = Static<typeof ErrorEvent>;
 
 /** Body of GET /api/notifications?unread=true — items only. */
 export const NotificationsRefresh = Type.Object({
   items: Type.Array(NotificationListItem,),
 },);
+/**
+ *
+ */
 export type NotificationsRefresh = Static<typeof NotificationsRefresh>;
 
 /** One per-chat activity entry in the SSE `activity` event. */
@@ -172,12 +208,18 @@ export const ActivityEntry = Type.Object({
   lastMessageCreatedAt: Type.Union([Type.String(), Type.Null(),]),
   chatName: Type.String(),
 },);
+/**
+ *
+ */
 export type ActivityEntry = Static<typeof ActivityEntry>;
 
 /** Body of the SSE `activity` event / GET /api/activity snapshot. */
 export const ActivitySnapshot = Type.Object({
   chats: Type.Record(Type.String(), ActivityEntry,),
 },);
+/**
+ *
+ */
 export type ActivitySnapshot = Static<typeof ActivitySnapshot>;
 
 // ── Translation map (i18n) ──────────────────────────────────────────────
@@ -193,6 +235,9 @@ export const TranslationMapSchema: TSchema = Type.Recursive(
       additionalProperties: Type.Union([Type.String(), Self,],),
     },),
 );
+/**
+ *
+ */
 export type TranslationMapSchema = Static<typeof TranslationMapSchema>;
 
 // ── Admin list rows ─────────────────────────────────────────────────────

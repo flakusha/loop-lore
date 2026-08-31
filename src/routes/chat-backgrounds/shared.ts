@@ -22,6 +22,12 @@ export const ChatBackgroundCreateBody = t.Object({
   priority: t.Optional(t.Number(),),
 },);
 
+/**
+ * @param database
+ * @param chatId
+ * @param userId
+ * @param userRole
+ */
 export async function chatAccess(
   database: Kysely<DB>,
   chatId: string,

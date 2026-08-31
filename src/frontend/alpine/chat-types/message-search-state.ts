@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // ── Message search (message-search.ts) ──────────────────
+/** */
 export interface ChatMessageSearchState {
   _msgSearchOpen: boolean;
   _msgSearchQuery: string;

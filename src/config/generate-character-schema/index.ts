@@ -22,6 +22,7 @@ import { extensionsProperties, } from "./extensions.js";
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
 const log = createLogger({ level: "info", },);
 
+/** */
 export function characterJsonSchema(): Record<string, unknown> {
   return {
     $schema: "https://json-schema.org/draft-2020-12/schema",
@@ -51,6 +52,7 @@ export function characterJsonSchema(): Record<string, unknown> {
   };
 }
 
+/** */
 function main() {
   const schema = characterJsonSchema();
   const outputPath = `${__dirname}/../../../schemas/character-card.schema.json`;

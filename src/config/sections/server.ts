@@ -19,12 +19,16 @@ export const SERVER_DEFAULTS = {
   },
 } satisfies ServerConfig;
 
+/** */
 export class ServerSection implements ServerConfig {
   port = SERVER_DEFAULTS.port;
   host = SERVER_DEFAULTS.host;
   trustProxy = SERVER_DEFAULTS.trustProxy;
   tls: TlsConfig = { ...SERVER_DEFAULTS.tls, };
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<ServerConfig>,) {
     if (!overrides) { return; }
 

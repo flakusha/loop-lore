@@ -14,7 +14,10 @@ let stubBody = "{}";
 /** Captured request so tests can assert the model is threaded through. */
 let lastReq: GenerateRequest | undefined;
 
-/** Stub completion fn injected into runCreateGeneration. */
+/**
+ * Stub completion fn injected into runCreateGeneration.
+ * @param req
+ */
 const stubComplete = async (req: GenerateRequest,): Promise<{ content: string }> => {
   lastReq = req;
   return { content: stubBody, };

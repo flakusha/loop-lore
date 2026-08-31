@@ -8,7 +8,6 @@ import type { ExpansionConfig, } from "./types.js";
 
 /**
  * Expand avatar template config with additional entries.
- *
  * @param base - Base avatar config
  * @param expansion - Expansion config
  * @returns Expanded avatar config
@@ -68,6 +67,7 @@ export function expandAvatarConfig(
 
 /**
  * Extract keywords from avatar emotions and intent patterns.
+ * @param config
  */
 export function extractKeywords(config: AvatarTemplateConfig,): string[] {
   const keywords = new Set<string>();
@@ -97,6 +97,7 @@ export function extractKeywords(config: AvatarTemplateConfig,): string[] {
 
 /**
  * Extract actions from avatar emotions.
+ * @param config
  */
 export function extractActions(config: AvatarTemplateConfig,): string[] {
   const actions = new Set<string>();

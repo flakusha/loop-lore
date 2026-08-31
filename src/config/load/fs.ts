@@ -10,6 +10,7 @@ import { CONFIG_FILES, NETWORK_FS_PREFIXES, } from "./constants";
 /**
  * Detect if a path is on a network filesystem.
  * Checks mount prefixes and /proc/mounts when available.
+ * @param filePath
  */
 export function isNetworkFilesystem(filePath: string,): boolean {
   const normalized = path.normalize(filePath,);
@@ -59,6 +60,7 @@ export function isNetworkFilesystem(filePath: string,): boolean {
  *   gitdir: /path/to/main/.git/worktrees/<branch>
  *
  * Returns the main repo root (parent of `.git/`) or null if not in a worktree.
+ * @param cwd
  */
 export function findMainRepoRoot(cwd: string,): string | null {
   const gitPath = path.join(cwd, ".git",);
@@ -95,6 +97,10 @@ export function findMainRepoRoot(cwd: string,): string | null {
   return null;
 }
 
+/**
+ * @param cwd
+ * @param fileNames
+ */
 export function findConfigFile(cwd: string, fileNames: string[] = CONFIG_FILES,): { path: string; ext: string } | null {
   // Search project root, configs/ dir, and main repo root (for worktrees).
   const mainRoot = findMainRepoRoot(cwd,);
@@ -113,7 +119,10 @@ export function findConfigFile(cwd: string, fileNames: string[] = CONFIG_FILES,)
   return null;
 }
 
-/** Return the first existing path among candidate dirs, or null. */
+/**
+ * Return the first existing path among candidate dirs, or null.
+ * @param candidates
+ */
 export function firstExisting(candidates: string[],): string | null {
   for (const candidate of candidates) {
     if (existsSync(candidate,)) { return candidate; }

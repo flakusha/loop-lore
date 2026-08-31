@@ -8,6 +8,10 @@ import {
 
 const SENT_URL = "https://telemetry.test/event";
 
+/**
+ * @param level
+ * @param message
+ */
 function makeEntry(level: number, message: string | Record<string, unknown>,): LogEntry {
   return { level, timestamp: 0, time: "t", message, };
 }
@@ -31,10 +35,14 @@ describe("TelemetryTransport curated gate", () => {
     (globalThis as { navigator: unknown }).navigator = originalNavigator;
   },);
 
+  /**
+   * @param entry
+   */
   async function ship(entry: LogEntry,): Promise<void> {
     await new TelemetryTransport(SENT_URL,).write(entry,);
   }
 
+  /** */
   async function payloads(): Promise<string[]> {
     return Promise.all(blobs.map((b,) => b.text()),);
   }

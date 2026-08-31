@@ -32,6 +32,9 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // ── 1. chat_keys table ────────────────────────────────────
   await db.schema
@@ -165,6 +168,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
   await sql`PRAGMA foreign_keys = ON`.execute(db,);
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await sql`PRAGMA foreign_keys = OFF`.execute(db,);
 

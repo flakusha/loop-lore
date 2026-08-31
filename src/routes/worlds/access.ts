@@ -7,11 +7,17 @@ import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { forbidden, notFound, } from "../../validation/middleware";
 
-/** Check world access; returns error Response if denied, null if OK.
+/**
+ * Check world access; returns error Response if denied, null if OK.
  *
  * Single-server model (no federation, no per-channel ACLs): access is
  * owner | admin | world member | (public AND authenticated). SFW/NSFW gating
- * is orthogonal and handled by the existing canAccessNsfw chain. */
+ * is orthogonal and handled by the existing canAccessNsfw chain.
+ * @param database
+ * @param worldId
+ * @param userId
+ * @param userRole
+ */
 export async function requireWorldAccess(
   database: Kysely<DB>,
   worldId: string,
@@ -42,6 +48,10 @@ export async function requireWorldAccess(
 /**
  * Check the caller OWNS the world (or is admin/solo) — for MUTATIONS.
  * Read access (public/member) is governed by requireWorldAccess.
+ * @param database
+ * @param worldId
+ * @param userId
+ * @param userRole
  * @returns error Response if denied, null if OK.
  */
 export async function requireWorldOwner(

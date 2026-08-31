@@ -37,7 +37,6 @@ export interface NSFWReputationChange {
 
 /**
  * Calculate reputation change from NSFW encounter.
- *
  * @param encounterId - Encounter ID
  * @param characterId - Character involved
  * @param success - Whether encounter was successful
@@ -105,7 +104,6 @@ export type { SeductionPrerequisite, SocialSkillForNSFW, } from "./seduction-pre
  *
  * Uses the canonical `applyReputationChange`; the change's context
  * (encounter ID, character ID, social context) is recorded as modifier context.
- *
  * @param current - Current reputation score
  * @param change - NSFW reputation change to apply
  * @returns Updated reputation score
@@ -128,7 +126,6 @@ export function applyReputationChange(
 
 /**
  * Apply daily reputation decay.
- *
  * @param reputation - Current reputation
  * @param daysPassed - Number of days since last update
  * @returns Updated reputation after decay
@@ -142,7 +139,6 @@ export function applyReputationDecay(
 
 /**
  * Create a new reputation score (canonical shape).
- *
  * @param source - Primary source
  * @param initialValue - Initial value (default 0)
  * @param decayRate - Daily decay rate (default 0.1)
@@ -158,7 +154,6 @@ export function createReputationScore(
 
 /**
  * Compute the reputation tier for a value.
- *
  * @param value - Reputation value (-100 to +100)
  * @returns The corresponding tier
  */

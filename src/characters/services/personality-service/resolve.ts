@@ -14,7 +14,10 @@ import type { PersonalityLockResult, } from "./integrity";
  *
  * Layer 0 (permanent) → Layer 2 (world) → Layer 3 (location)
  * Personality traits from Layer 0 are NEVER overridden by higher layers.
- *
+ * @param database
+ * @param actorId
+ * @param worldId
+ * @param locationId
  * @returns Resolved traits with integrity violations flagged
  */
 export async function resolveCharacterTraits(

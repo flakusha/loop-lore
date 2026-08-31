@@ -6,6 +6,8 @@ import type { DB, } from "../../../db/schema";
 
 /**
  * Delete a chat and all its related data (cascade).
+ * @param database
+ * @param chatId
  */
 export async function deleteChat(
   database: Kysely<DB>,

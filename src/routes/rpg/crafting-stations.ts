@@ -50,6 +50,10 @@ const UpdateStationDefBody = t.Object({
   maxDurability: t.Optional(t.Number({ minimum: 1, },),),
 },);
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function craftingStationRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
   const R = `${prefix}/rpg/crafting`;
   const svc = new StationsService(opts.database,);

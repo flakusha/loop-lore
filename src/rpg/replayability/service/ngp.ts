@@ -8,12 +8,15 @@ import { getPlaythrough, startPlaythrough, } from "./playthrough";
 import type { NewGamePlusInput, Playthrough, } from "./types";
 import { PlusDifficulty, } from "./types";
 
+/** */
 function getLog() {
   return getRpgLog("replayability",);
 }
 
 /**
  * Start new game plus
+ * @param db
+ * @param input
  */
 export async function startNewGamePlus(
   db: Kysely<DB>,

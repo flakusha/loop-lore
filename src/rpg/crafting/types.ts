@@ -46,6 +46,7 @@ export interface CraftAttempt {
   createdAt: string;
 }
 
+/** */
 export interface ItemDef {
   name: string;
   description: string | null;
@@ -54,6 +55,7 @@ export interface ItemDef {
   weight: number;
 }
 
+/** */
 export interface StationBonuses {
   successBonus: number;
   qualityBonus: number;

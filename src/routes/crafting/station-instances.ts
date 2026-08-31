@@ -52,6 +52,9 @@ const updateStationInstanceBody = t.Partial(stationInstanceBody,);
  * Mount the crafting station instance routes.
  *
  * Wraps {@link StationsService} with world-owner authorization.
+ * @param root0
+ * @param root0.database
+ * @param prefix
  */
 export function craftingStationInstancesRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new StationsService(database,);

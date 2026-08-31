@@ -19,12 +19,22 @@ import { chatSectionsRoutes, } from "./chat-sections";
 
 const USER_ROLE = "solo";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function createApp(db: Kysely<DB>, userId: string | null, userRole: string = USER_ROLE,): Elysia {
   return new Elysia({ name: "test-chat-sections", },)
     .derive(() => ({ userId, userRole, }))
     .use(chatSectionsRoutes({ database: db, config: {} as any, },),) as unknown as Elysia;
 }
 
+/**
+ * @param db
+ * @param userId
+ * @param username
+ */
 async function insertUser(db: Kysely<DB>, userId: string, username: string,): Promise<void> {
   await db
     .insertInto("users",)

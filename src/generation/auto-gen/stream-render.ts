@@ -3,6 +3,9 @@
 
 import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, SCRIPT_TAG, } from "../../regex/html-sanitize";
 
+/**
+ * @param str
+ */
 function escapeHtml(str: string,): string {
   return str
     .replaceAll("&", "&amp;",)
@@ -12,6 +15,9 @@ function escapeHtml(str: string,): string {
     .replaceAll("'", "&#039;",);
 }
 
+/**
+ * @param html
+ */
 function sanitizeHtml(html: string,): string {
   return html
     .replaceAll(SCRIPT_TAG, "",)
@@ -19,6 +25,16 @@ function sanitizeHtml(html: string,): string {
     .replaceAll(ON_EVENT_SINGLE, "",);
 }
 
+/**
+ * @param actorName
+ * @param content
+ * @param attemptId
+ * @param markedParse
+ * @param opts
+ * @param opts.messageId
+ * @param opts.isFinal
+ * @param opts.thinking
+ */
 export function renderStreamMessage(
   actorName: string,
   content: string,

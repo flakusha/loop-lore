@@ -10,7 +10,12 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
 
-/** Upsert the chat's assigned background to `backgroundId` (one per chat). */
+/**
+ * Upsert the chat's assigned background to `backgroundId` (one per chat).
+ * @param database
+ * @param chatId
+ * @param backgroundId
+ */
 export async function setChatBackground(
   database: Kysely<DB>,
   chatId: string,
@@ -43,6 +48,9 @@ export async function setChatBackground(
  * `location_id` matches the chat's new location wins; if none matches, the
  * current assignment is left untouched (a manually chosen global background).
  * Returns the resolved background row, or null when no location-scoped match.
+ * @param database
+ * @param chatId
+ * @param locationId
  */
 export async function autoSyncChatBackground(
   database: Kysely<DB>,
@@ -63,7 +71,11 @@ export async function autoSyncChatBackground(
   return match ?? null;
 }
 
-/** Load a chat's resolved background (assignment joined to catalog) or null. */
+/**
+ * Load a chat's resolved background (assignment joined to catalog) or null.
+ * @param database
+ * @param chatId
+ */
 export async function getChatBackground(
   database: Kysely<DB>,
   chatId: string,

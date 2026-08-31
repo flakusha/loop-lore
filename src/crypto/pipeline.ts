@@ -18,6 +18,7 @@ const IV_LENGTH = 12;
 const DEFAULT_THRESHOLD = 128;
 const DEFAULT_PIPELINE_CONFIG: PipelineConfig = { threshold: DEFAULT_THRESHOLD, algorithm: "gzip", };
 
+/** */
 export interface EncryptedPayload {
   enc: string; // base64 ciphertext
   nonce: string; // base64 12-byte nonce
@@ -28,11 +29,13 @@ export interface EncryptedPayload {
   a_id?: string; // asset id salt for HKDF-derived subkey (v2 only; absent = v1 legacy)
 }
 
+/** */
 export interface PipelineConfig {
   threshold: number;
   algorithm: "gzip" | "brotli" | "zstd";
 }
 
+/** */
 export interface CompressThenEncryptOpts {
   plaintext: string;
   chatKey: CryptoKey;
@@ -47,6 +50,7 @@ export interface CompressThenEncryptOpts {
 /**
  * Quick check: is this stored content an encrypted payload?
  * Allows detecting client-pre-encrypted content that should skip server-side re-encryption.
+ * @param storedContent
  */
 export function isEncryptedPayload(storedContent: string,): boolean {
   if (typeof storedContent !== "string") { return false; }
@@ -67,6 +71,7 @@ export function isEncryptedPayload(storedContent: string,): boolean {
 
 /**
  * Extract key_id from an encrypted payload without full parsing.
+ * @param storedContent
  */
 export function extractKeyIdFromPayload(storedContent: string,): string | null {
   const parsed = safeJsonParse<EncryptedPayload>(storedContent,);
@@ -74,6 +79,14 @@ export function extractKeyIdFromPayload(storedContent: string,): string | null {
   return parsed.value.key_id ?? null;
 }
 
+/**
+ * @param root0
+ * @param root0.plaintext
+ * @param root0.chatKey
+ * @param root0.keyId
+ * @param root0.config
+ * @param root0.aId
+ */
 export async function compressThenEncrypt({
   plaintext,
   chatKey,
@@ -137,7 +150,8 @@ export async function compressThenEncrypt({
 
 /**
  * Read: EncryptedPayload JSON → decrypt → decompress → plaintext.
- *
+ * @param storedContent
+ * @param chatKey
  * @throws If decryption fails (wrong key, tampered data).
  */
 export async function decryptThenDecompress(storedContent: string, chatKey: CryptoKey,): Promise<string> {
@@ -162,7 +176,7 @@ export async function decryptThenDecompress(storedContent: string, chatKey: Cryp
     decryptedBytes = new Uint8Array(decrypted,);
   } catch (error) {
     // Authentication tag mismatch or wrong key
-    // eslint-disable-next-line no-restricted-syntax
+
     throw new Error(`Decryption failed: ${(error as Error).message}. Possible tampered data or wrong key.`, {
       cause: error,
     },);

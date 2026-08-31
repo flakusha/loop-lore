@@ -12,6 +12,9 @@ import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { getRetentionDays, isTelemetryEnabled, } from "./service";
 
+/**
+ * @param db
+ */
 export function startRetentionCleanup(db: Kysely<DB>,): void {
   if (!isTelemetryEnabled()) { return; }
 
@@ -25,6 +28,9 @@ export function startRetentionCleanup(db: Kysely<DB>,): void {
   );
 }
 
+/**
+ * @param db
+ */
 async function runCleanup(db: Kysely<DB>,): Promise<void> {
   const days = getRetentionDays();
   const cutoff = new Date(Date.now() - days * 86_400_000,).toISOString();

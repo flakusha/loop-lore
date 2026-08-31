@@ -7,6 +7,10 @@ import { HttpStatus, jsonError, } from "../http-utils";
 import { jobs, } from "./jobs";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param _opts
+ * @param prefix
+ */
 export function downloadRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia()
     // GET /api/export/download/:jobId — Download completed export

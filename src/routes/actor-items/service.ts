@@ -37,7 +37,12 @@ const actionResponse = t.Object({
 
 const transferBody = t.Object({ toActorId: Id, quantity: t.Number(), },);
 
-/** Resolve the actor's owner; returns a denial Response or null when allowed. */
+/**
+ * Resolve the actor's owner; returns a denial Response or null when allowed.
+ * @param db
+ * @param actorId
+ * @param userId
+ */
 async function resolveActorOwner(
   db: Kysely<DB>,
   actorId: string,
@@ -53,6 +58,11 @@ async function resolveActorOwner(
   return null;
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function actorItemsGameplayRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   return new Elysia({ name: "actor-items-gameplay", },)
     .post(`${prefix}/actors/:actorId/items/:itemId/equip`, async (ctx: any,) => {

@@ -15,6 +15,7 @@ export const IntimacyLevel = {
   Intimate: 85,
   Soulbonded: 100,
 } as const;
+/** */
 export type IntimacyLevel = (typeof IntimacyLevel)[keyof typeof IntimacyLevel];
 
 // ── NSFW Intimacy Action Types ───────────────────────────
@@ -25,6 +26,7 @@ export const IntimacyActionType = {
   Service: "service",
   Intimate: "intimate",
 } as const;
+/** */
 export type IntimacyActionType = (typeof IntimacyActionType)[keyof typeof IntimacyActionType];
 
 // ── NSFW Arousal Levels ──────────────────────────────────
@@ -36,6 +38,7 @@ export const ArousalLevel = {
   Desperate: "desperate",
   Climax: "climax",
 } as const;
+/** */
 export type ArousalLevel = (typeof ArousalLevel)[keyof typeof ArousalLevel];
 
 // ── NSFW Encounter Types ─────────────────────────────────
@@ -52,6 +55,7 @@ export const NsfwEncounterType = {
   Rough: "rough",
   Tender: "tender",
 } as const;
+/** */
 export type NsfwEncounterType = (typeof NsfwEncounterType)[keyof typeof NsfwEncounterType];
 
 // ── NSFW Encounter Status ────────────────────────────────
@@ -59,6 +63,7 @@ export const NsfwEncounterStatus = {
   Active: "active",
   Completed: "completed",
 } as const;
+/** */
 export type NsfwEncounterStatus = (typeof NsfwEncounterStatus)[keyof typeof NsfwEncounterStatus];
 
 const nsfwEncounterStatusDef: StateDef<NsfwEncounterStatus> = {
@@ -80,6 +85,7 @@ export const ContentIntensity = {
   Intense: "intense",
   Extreme: "extreme",
 } as const;
+/** */
 export type ContentIntensity = (typeof ContentIntensity)[keyof typeof ContentIntensity];
 
 // ── NSFW Narrative Style ─────────────────────────────────
@@ -89,6 +95,7 @@ export const NarrativeStyle = {
   Explicit: "explicit",
   Literary: "literary",
 } as const;
+/** */
 export type NarrativeStyle = (typeof NarrativeStyle)[keyof typeof NarrativeStyle];
 
 // ── NSFW Seduction Skill Categories ──────────────────────
@@ -106,6 +113,7 @@ export const SeductionSkillCategory = {
   Aftercare: "aftercare",
   Communication: "communication",
 } as const;
+/** */
 export type SeductionSkillCategory = (typeof SeductionSkillCategory)[keyof typeof SeductionSkillCategory];
 
 // ── NSFW Fantasy Categories ──────────────────────────────
@@ -127,6 +135,7 @@ export const FantasyCategory = {
   Degradation: "degradation",
   Praise: "praise",
 } as const;
+/** */
 export type FantasyCategory = (typeof FantasyCategory)[keyof typeof FantasyCategory];
 
 // ── NSFW Body Build ──────────────────────────────────────
@@ -138,6 +147,7 @@ export const BodyBuild = {
   Muscular: "muscular",
   Heavy: "heavy",
 } as const;
+/** */
 export type BodyBuild = (typeof BodyBuild)[keyof typeof BodyBuild];
 
 // ── NSFW Size Category ───────────────────────────────────
@@ -148,6 +158,7 @@ export const SizeCategory = {
   Large: "large",
   Massive: "massive",
 } as const;
+/** */
 export type SizeCategory = (typeof SizeCategory)[keyof typeof SizeCategory];
 
 // ── NSFW Heat Phase ──────────────────────────────────────
@@ -157,6 +168,7 @@ export const HeatPhase = {
   Heat: "heat",
   PostHeat: "post_heat",
 } as const;
+/** */
 export type HeatPhase = (typeof HeatPhase)[keyof typeof HeatPhase];
 
 // ── NSFW Location Type ───────────────────────────────────
@@ -178,4 +190,5 @@ export const NsfwLocationType = {
   Office: "office",
   Workshop: "workshop",
 } as const;
+/** */
 export type NsfwLocationType = (typeof NsfwLocationType)[keyof typeof NsfwLocationType];

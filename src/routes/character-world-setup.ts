@@ -20,6 +20,10 @@ import {
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function characterWorldSetupRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const service = CharacterWorldSetupService(database,);

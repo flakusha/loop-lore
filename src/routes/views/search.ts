@@ -8,6 +8,12 @@ import { can, } from "../../users/permissions";
 import { formatSize, inheritedHiddenAssetIds, } from "./gallery";
 import { escapeHtml, htmlResponse, } from "./layout";
 
+/**
+ * @param database
+ * @param params
+ * @param actorId
+ * @param actorRole
+ */
 async function serveGallerySearch(
   database: Kysely<DB>,
   params: URLSearchParams,
@@ -64,6 +70,9 @@ async function serveGallerySearch(
     </div>`,);
   }
 
+  /**
+   * @param a
+   */
   function thumbForAsset(a: (typeof assets)[number],): string {
     switch (a.asset_type) {
       case "image": {
@@ -97,6 +106,10 @@ async function serveGallerySearch(
   return htmlResponse(cards,);
 }
 
+/**
+ * @param database
+ * @param params
+ */
 async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
   const sort = params.get("sort",) ?? "name";
@@ -139,6 +152,12 @@ async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchPara
   return htmlResponse(cards,);
 }
 
+/**
+ * @param database
+ * @param params
+ * @param userId
+ * @param userRole
+ */
 async function serveWorldsSearch(
   database: Kysely<DB>,
   params: URLSearchParams,

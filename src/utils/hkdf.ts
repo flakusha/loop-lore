@@ -30,7 +30,6 @@ const VERSIONED_PREFIX = "loop-lore/v1/";
 /**
  * Derive a domain-separated 256-bit subkey from a high-entropy input secret
  * using HKDF-SHA256.
- *
  * @param secret - The high-entropy shared input (e.g. `auth.jwtSecret`).
  * @param info  - Domain identifier (e.g. `"jwt-sign"`, `"assets-signed-url"`,
  *                `"nsfw-pii"`). MUST be unique per consumer.
@@ -79,10 +78,12 @@ export const DOMAIN_INFO = {
   ASSETS_SIGNED_URL: "assets-signed-url",
   /** NSFW PII pseudonymization salt (`src/nsfw/pii-redaction.ts`). */
   NSFW_PII: "nsfw-pii",
-  /** Admin telemetry PII hashing (`src/routes/admin/aux-telemetry.ts`).
+  /**
+  Admin telemetry PII hashing (`src/routes/admin/aux-telemetry.ts`).
  Stable, HMAC-derived hash for user_id and chat_id surfaced on the
  admin telemetry endpoints. Same domain separation as NSFW_PII so a
- leak in one does not compromise cross-domain identifiers. */
+ leak in one does not compromise cross-domain identifiers.
+   */
   TELEMETRY_PII: "telemetry-pii",
 } as const;
 
@@ -95,7 +96,6 @@ export const DOMAIN_INFO = {
  * surface MUST NOT carry raw user_id / chat_id. Use this helper to
  * project raw columns to a 16-hex-char prefix suitable for cross-row
  * correlation without exposing the underlying identifier.
- *
  * @param secret - High-entropy shared secret (e.g. `auth.jwtSecret`).
  * @param info   - One of `DOMAIN_INFO.*`. MUST be unique per consumer.
  * @param value  - Raw identifier to hash.

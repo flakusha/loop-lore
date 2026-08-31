@@ -1,5 +1,8 @@
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Generation Attempts ────────────────────────────────────
   await database.schema
@@ -220,6 +223,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema.createIndex("idx_synthetic_data_status",).on("synthetic_data",).column("status",).execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("synthetic_data",).execute();
   await database.schema.dropTable("location_states",).execute();

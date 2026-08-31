@@ -6,6 +6,10 @@ import { jsonPaginated, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { type HandlerOpts, JoinableQuery, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function joinableRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

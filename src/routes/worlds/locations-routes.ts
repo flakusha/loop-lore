@@ -13,6 +13,10 @@ import {
 } from "./locations";
 import type { HandleOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;
 

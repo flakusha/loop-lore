@@ -21,7 +21,6 @@ import {
  *   `adv`        — advantage (d20 only)
  *   `dis`        — disadvantage (d20 only)
  *   `x`          — exploding dice
- *
  * @param notation - Dice notation string
  * @returns Parsed dice components, or null if invalid
  */
@@ -48,7 +47,7 @@ export function parseDiceNotation(notation: string,): ParsedDice | null {
 
 /**
  * Roll from notation string (convenience wrapper).
- *
+ * @param notation
  * @example
  * ```ts
  * const result = rollFromNotation("2d6+3");

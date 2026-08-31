@@ -14,6 +14,7 @@ export const DYNAMIC_RESPONSE_DEFAULTS = {
   compressThreshold: 512,
 } satisfies DynamicResponseConfig;
 
+/** */
 export class DynamicResponseSection implements DynamicResponseConfig {
   enabled = DYNAMIC_RESPONSE_DEFAULTS.enabled;
   minify = DYNAMIC_RESPONSE_DEFAULTS.minify;
@@ -22,6 +23,9 @@ export class DynamicResponseSection implements DynamicResponseConfig {
   compressAlgorithm = DYNAMIC_RESPONSE_DEFAULTS.compressAlgorithm;
   compressThreshold = DYNAMIC_RESPONSE_DEFAULTS.compressThreshold;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<DynamicResponseConfig>,) {
     Object.assign(this, overrides,);
   }

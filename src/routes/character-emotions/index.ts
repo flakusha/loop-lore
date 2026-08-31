@@ -10,6 +10,7 @@ import type { HandlerOpts, } from "./types";
  * Character Emotions Routes — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`character-emotions`) is preserved so
  * the `register-plugins.ts` wiring is unchanged.
+ * @param opts
  */
 export function characterEmotionsRoutes(opts: HandlerOpts,) {
   return (

@@ -24,7 +24,6 @@ import {
  * 3. Comfort modifiers (willingness, mood, intimacy, trauma)
  * 4. Cooldown check
  * 5. Final random roll
- *
  * @param memory - The memory to evaluate
  * @param config - Injection configuration
  * @param ctx - Current injection context

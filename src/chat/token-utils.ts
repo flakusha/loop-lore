@@ -17,7 +17,6 @@ const CHARS_PER_TOKEN = 4;
  * Uses a simple heuristic: ~4 characters per token for English text.
  * This is a raw estimator — message overhead (role, separators) should
  * be added at the call site if needed.
- *
  * @param text - Content to estimate
  * @returns Estimated token count
  */

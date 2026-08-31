@@ -32,6 +32,7 @@ describe("updateGmGuidance", () => {
     await db?.destroy();
   },);
 
+  /** */
   async function gmConfigOf(): Promise<Record<string, unknown> | null> {
     const row = await db
       .selectFrom("chats",)

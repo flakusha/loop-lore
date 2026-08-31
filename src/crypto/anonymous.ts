@@ -16,6 +16,7 @@ let _anonymousEnabled = false;
 
 /**
  * Initialize anonymous chat mode from config.
+ * @param config
  */
 export function initAnonymousMode(config: Config,): void {
   _anonymousEnabled = config.encryption.anonymous ?? false;
@@ -31,7 +32,6 @@ export function isAnonymousModeEnabled(): boolean {
 /**
  * Get display name for an actor in anonymous mode.
  * Returns "Anonymous" for regular participants, real name for admins viewing.
- *
  * @param _actorId - The actor ID (unused but kept for API consistency)
  * @param actorName - The real actor name
  * @param isAdmin - Whether the viewer is an admin
@@ -66,6 +66,9 @@ export function getAnonymousDisplayName(
 /**
  * Get anonymous avatar placeholder.
  * Returns null for real avatars, placeholder for anonymous.
+ * @param _actorId
+ * @param isAdmin
+ * @param isSelf
  */
 export function getAnonymousAvatar(
   _actorId: string,

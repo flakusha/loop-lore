@@ -5,6 +5,12 @@ import { safeFetch, safeJsonStringify, uid, } from "../../../utils";
 import type { ImageEditProgress, ImageEditResult, } from "../../types";
 import type { SDServerHost, } from "./types";
 
+/**
+ * @param host
+ * @param endpoint
+ * @param body
+ * @param onProgress
+ */
 export async function sdcppGenerate(
   host: SDServerHost,
   endpoint: string,
@@ -81,6 +87,12 @@ export async function sdcppGenerate(
   throw new Error("sd.cpp job timed out",);
 }
 
+/**
+ * @param host
+ * @param endpoint
+ * @param body
+ * @param _onProgress
+ */
 export async function sdapiGenerate(
   host: SDServerHost,
   endpoint: string,
@@ -116,6 +128,10 @@ export async function sdapiGenerate(
   },);
 }
 
+/**
+ * @param host
+ * @param body
+ */
 export async function openaiGenerate(
   host: SDServerHost,
   body: Record<string, unknown>,

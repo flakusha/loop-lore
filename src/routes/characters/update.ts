@@ -14,6 +14,10 @@ import {
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
@@ -105,7 +109,10 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
     );
 }
 
-/** Assemble the update column map from the request body (non-empty fields). */
+/**
+ * Assemble the update column map from the request body (non-empty fields).
+ * @param body
+ */
 function buildActorUpdates(
   body: Record<string, unknown>,
 ): Record<string, unknown> {

@@ -225,7 +225,10 @@ export const chatLocation: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /** Join a discovered chat, then refresh the location-scoped list. */
+  /**
+   * Join a discovered chat, then refresh the location-scoped list.
+   * @param chatId
+   */
   async joinLocationChat(chatId: string,) {
     await this.joinChat(chatId,);
     await this.loadLocationJoinable();

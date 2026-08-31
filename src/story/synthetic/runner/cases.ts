@@ -17,6 +17,15 @@ import { runQuestProgression, } from "./quest";
 import { runGeneric, runTurnSequence, runWorldStateTransition, } from "./structural";
 import type { RowShape, RunnerState, SyntheticTestCaseResult, } from "./types";
 
+/**
+ * @param state
+ * @param row
+ * @param c
+ * @param mode
+ * @param mutationParams
+ * @param mutationParams.temperatureVariance
+ * @param mutationParams.promptVariations
+ */
 export async function executeCase(
   state: RunnerState,
   row: RowShape,

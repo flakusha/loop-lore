@@ -3,6 +3,7 @@
 
 // src/config/schema/messages.ts — Messages config type
 
+/** */
 export interface MessagesConfig {
   /** Auto-mark invalid messages as hidden */
   autoHideInvalid: boolean;

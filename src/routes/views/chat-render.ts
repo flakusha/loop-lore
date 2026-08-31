@@ -5,6 +5,10 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { escapeHtml, } from "./layout";
 
+/**
+ * @param database
+ * @param chats
+ */
 async function enrichChats(
   database: Kysely<DB>,
   chats: {
@@ -63,6 +67,9 @@ async function enrichChats(
   }),);
 }
 
+/**
+ * @param rows
+ */
 function renderChatListItems(rows: {
   id: string;
   name: string;

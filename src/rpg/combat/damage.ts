@@ -7,6 +7,8 @@ import { type Combatant, } from "./types.js";
 
 /**
  * Apply damage to a combatant.
+ * @param combatant
+ * @param damage
  */
 export function applyDamage(
   combatant: Combatant,
@@ -28,6 +30,8 @@ export function applyDamage(
 
 /**
  * Heal a combatant (cannot exceed max HP).
+ * @param combatant
+ * @param amount
  */
 export function healCombatant(
   combatant: Combatant,

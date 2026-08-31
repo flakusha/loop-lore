@@ -23,6 +23,12 @@ import {
 } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 
+/**
+ * @param database
+ * @param page
+ * @param pageSize
+ * @param userId
+ */
 export async function handleListWorlds(database: Kysely<DB>, page: number, pageSize: number, userId: string | null,) {
   const offset = (page - 1) * pageSize;
 
@@ -62,6 +68,11 @@ export async function handleListWorlds(database: Kysely<DB>, page: number, pageS
   return jsonPaginated({ data: worlds, total, page, pageSize, },);
 }
 
+/**
+ * @param database
+ * @param body
+ * @param userId
+ */
 export async function handleCreateWorld(database: Kysely<DB>, body: Record<string, unknown>, userId: string | null,) {
   if (!userId) { return unauthorized(); }
 
@@ -91,6 +102,12 @@ export async function handleCreateWorld(database: Kysely<DB>, body: Record<strin
   return jsonCreated({ id, },);
 }
 
+/**
+ * @param database
+ * @param worldId
+ * @param userId
+ * @param userRole
+ */
 export async function handleGetWorld(
   database: Kysely<DB>,
   worldId: string,
@@ -103,6 +120,13 @@ export async function handleGetWorld(
   return jsonResponse(world,);
 }
 
+/**
+ * @param database
+ * @param worldId
+ * @param body
+ * @param userId
+ * @param userRole
+ */
 export async function handleUpdateWorld(
   database: Kysely<DB>,
   worldId: string,
@@ -130,6 +154,12 @@ export async function handleUpdateWorld(
   return jsonResponse({ ok: true, },);
 }
 
+/**
+ * @param database
+ * @param worldId
+ * @param userId
+ * @param userRole
+ */
 export async function handleDeleteWorld(
   database: Kysely<DB>,
   worldId: string,
@@ -185,6 +215,12 @@ export async function handleDeleteWorld(
   return jsonNoContent();
 }
 
+/**
+ * @param database
+ * @param worldId
+ * @param userId
+ * @param userRole
+ */
 export async function handleInitializeStates(
   database: Kysely<DB>,
   worldId: string,

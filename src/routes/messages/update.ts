@@ -24,6 +24,10 @@ import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, requireU
 import { isServiceError, log, serviceErrorToResponse, } from "./helpers";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;
 

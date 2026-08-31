@@ -20,6 +20,9 @@ interface ChatEvent {
 
 /**
  * Fetch active world events for the current location/world.
+ * @param db
+ * @param worldId
+ * @param locationId
  */
 async function fetchWorldEvents(
   db: Kysely<DB>,
@@ -66,7 +69,14 @@ async function fetchWorldEvents(
   return events;
 }
 
-/** Convert the latest location state row into a chat event, if any detail. */
+/**
+ * Convert the latest location state row into a chat event, if any detail.
+ * @param loc
+ * @param loc.description_override
+ * @param loc.atmosphere
+ * @param loc.weather
+ * @param loc.npcs_present
+ */
 function locationStateToEvent(
   loc: {
     description_override: string | null;
@@ -99,6 +109,7 @@ function locationStateToEvent(
  * These are low-stakes stochastic additions that make the world feel alive
  * without requiring GM intervention. Examples: wind sounds, distant
  * footsteps, flickering lights, ambient smells.
+ * @param worldId
  */
 function generateAmbientEvents(worldId: string,): ChatEvent[] {
   const ambientPool: ChatEvent[] = [

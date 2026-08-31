@@ -15,13 +15,20 @@ import { safeJsonStringify, } from "../../utils";
 export const POLL_INTERVAL_MS = 5000;
 export const KEEPALIVE_MS = 15_000;
 
+/** */
 export class NotificationStreamer {
+  /**
+   * @param database
+   * @param userId
+   * @param intervalMs
+   */
   constructor(
     private readonly database: Kysely<DB>,
     private readonly userId: string,
     private readonly intervalMs: number = POLL_INTERVAL_MS,
   ) {}
 
+  /** */
   open(): Response {
     const encoder = new TextEncoder();
     let timer: ReturnType<typeof setInterval> | undefined;

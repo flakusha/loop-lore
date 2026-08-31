@@ -6,6 +6,11 @@ import type { VnChoice, } from "./choice-cards";
 
 // ── Internal ────────────────────────────────────────────────────────────────
 
+/**
+ * @param container
+ * @param choices
+ * @param onSelect
+ */
 export function renderChoiceCards(container: HTMLElement, choices: VnChoice[], onSelect: (id: string,) => void,): void {
   if (!container) {
     return;

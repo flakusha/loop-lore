@@ -10,7 +10,10 @@ import { MessageRole, MessageStatus, MessageVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils";
 
-/** Parse the `actor_memories.keywords` JSON column (string[] | null). */
+/**
+ * Parse the `actor_memories.keywords` JSON column (string[] | null).
+ * @param raw
+ */
 export function parseKeywords(raw: unknown,): string[] {
   if (raw == null) { return []; }
   if (Array.isArray(raw,)) { return Array.from(raw, String,); }
@@ -33,6 +36,7 @@ export function parseKeywords(raw: unknown,): string[] {
  * match); the outer array is OR (any group activates). Returns `null` when
  * the column is empty, invalid, or not a well-formed nest of string arrays —
  * callers should fall back to plain keyword matching.
+ * @param raw
  */
 export function parseKeyGroups(raw: unknown,): string[][] | null {
   if (raw == null) { return null; }
@@ -56,6 +60,7 @@ export function parseKeyGroups(raw: unknown,): string[][] | null {
  *
  * Tokenizes on non-alphanumeric boundaries and lowercases each word, matching
  * the keyword-matching semantics elsewhere in the project.
+ * @param text
  */
 function wordsFromText(text: string,): Set<string> {
   const words: string[] = [];
@@ -65,7 +70,12 @@ function wordsFromText(text: string,): Set<string> {
   return new Set(words,);
 }
 
-/** Recent user messages in a chat, most recent first (confirmed + visible). */
+/**
+ * Recent user messages in a chat, most recent first (confirmed + visible).
+ * @param db
+ * @param chatId
+ * @param limit
+ */
 async function recentUserMessages(
   db: Kysely<DB>,
   chatId: string,
@@ -95,7 +105,9 @@ async function recentUserMessages(
  * `scanDepth` governs conversation-depth activation (ticket FEAT-055): entries
  * with `scan_depth` > 1 match against keywords appearing several messages back,
  * and regex entries match against the joined text of the scanned window.
- *
+ * @param db
+ * @param chatId
+ * @param scanDepth
  * @returns Empty word set and empty text when there are no user messages.
  */
 export async function recentConversation(
@@ -113,7 +125,11 @@ export async function recentConversation(
   return { words, text: textParts.join("\n",), };
 }
 
-/** Lowercased word set of the most recent user message in a chat. */
+/**
+ * Lowercased word set of the most recent user message in a chat.
+ * @param db
+ * @param chatId
+ */
 export async function recentUserWords(db: Kysely<DB>, chatId: string,): Promise<Set<string>> {
   const { words, } = await recentConversation(db, chatId, 1,);
   return words;

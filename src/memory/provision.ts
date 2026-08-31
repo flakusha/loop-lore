@@ -55,7 +55,6 @@ export interface ProvisionResult {
  * 2. Privacy filtering (public/shared/private/secret)
  * 3. Shareability evaluation (probability + trusted/blocked)
  * 4. Token budget enforcement
- *
  * @param memories - All candidate memories
  * @param ctx - Provision context
  * @param maxTokens - Maximum tokens for memories (default: 1024)
@@ -98,7 +97,8 @@ export function provisionMemories(
 
 /**
  * Evaluate a single memory against the provision context.
- *
+ * @param memory
+ * @param ctx
  * @returns Rejection reason string, or null if memory should be accepted
  */
 function evaluateMemory(
@@ -140,7 +140,9 @@ function evaluateMemory(
  * - `character`: owner sees own; shared/public visible to all
  * - `world`: must be in the same world
  * - `assistant`: visible to all users
- *
+ * @param memory
+ * @param ctx
+ * @param privacy
  * @returns Rejection reason, or null if scope is valid
  */
 function checkScope(
@@ -174,7 +176,8 @@ function checkScope(
  *
  * Note: secret memories are handled by evaluateMemory before this is called.
  * Only public, shared, and private reach here.
- *
+ * @param memory
+ * @param ctx
  * @returns Rejection reason, or null if privacy allows sharing
  */
 function checkPrivacy(

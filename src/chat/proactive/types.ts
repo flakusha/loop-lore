@@ -9,6 +9,7 @@
  */
 
 import type { ProactiveFrequency as PF, } from "./timing";
+/** */
 export type ProactiveFrequency = PF;
 
 /** Per-chat proactive messaging configuration */

@@ -17,12 +17,21 @@ import { locationExplorerRoutes, } from "./location-explorer";
 
 const USER_ROLE = "solo";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function createApp(db: Kysely<DB>, userId: string | null, userRole: string = USER_ROLE,): Elysia {
   return new Elysia({ name: "test-loc-explorer", },)
     .derive(() => ({ userId, userRole, }))
     .use(locationExplorerRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param db
+ * @param userId
+ */
 async function insertUser(db: Kysely<DB>, userId: string,): Promise<void> {
   await db
     .insertInto("users",)

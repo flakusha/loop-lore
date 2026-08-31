@@ -7,6 +7,7 @@ import type { Kysely, } from "kysely";
  * - `decay_rate` on `actor_memories`: float (0 = never decays, higher = faster fade)
  * - `strength` on `actor_memories`: float (1.0 = full encoding, decays per access pattern)
  * - `last_accessed_at` on `actor_memories`: tracks when memory was last retrieved for decay calc
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
@@ -66,6 +67,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.alterTable("actor_memories",).dropColumn("shareability",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("privacy",).execute();

@@ -43,9 +43,14 @@ const SERVICES = {
 
 // ── Factory ──────────────────────────────────────────────────
 
+/**
+ * @param db
+ * @param config
+ */
 export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,) {
   /**
    * Detect which music service (if any) a URL belongs to.
+   * @param url
    */
   function validateUrl(url: string,): MusicService | null {
     for (
@@ -64,6 +69,8 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
   /**
    * Fetch oEmbed metadata from a supporting service (Spotify, SoundCloud).
    * Returns raw oEmbed JSON fields; caller extracts what it needs.
+   * @param url
+   * @param oembedEndpoint
    */
   async function fetchOembed(url: string, oembedEndpoint: string,): Promise<Record<string, unknown> | null> {
     try {
@@ -79,6 +86,8 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
   /**
    * Fetch metadata for a URL — uses oEmbed where available, otherwise
    * constructs embed HTML directly from the URL.
+   * @param url
+   * @param service
    */
   async function fetchMetadata(url: string, service: MusicService,): Promise<MusicMetadata> {
     const { oembed, } = SERVICES[service];
@@ -122,6 +131,8 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
   /**
    * Get iframe embed HTML for a URL — uses oEmbed HTML where available,
    * otherwise constructs an iframe src from the URL.
+   * @param url
+   * @param service
    */
   async function getEmbedHtml(url: string, service: MusicService,): Promise<string> {
     const { oembed, } = SERVICES[service];
@@ -141,6 +152,7 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
 
   /**
    * Persist a music link to the DB.
+   * @param params
    */
   async function store(params: StoreParams,): Promise<MusicLinkRow> {
     const id = uid();
@@ -188,6 +200,7 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
    *
    * Caller is responsible for chat access enforcement — this function
    * returns whatever rows belong to `chatId`.
+   * @param chatId
    */
   async function list(chatId: string,): Promise<MusicLinkRow[]> {
     const rows = await db
@@ -207,6 +220,9 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
    *
    * Returns true if a row was deleted, false if the link was missing or
    * the caller lacked permission (caller should map false → 404).
+   * @param id
+   * @param userId
+   * @param userRole
    */
   async function destroy(id: string, userId: string, userRole: string | null | undefined,): Promise<boolean> {
     const row = await db
@@ -230,4 +246,5 @@ export function createMusicLinkService(db: Kysely<DB>, config: MusicLinkConfig,)
   return { validateUrl, fetchMetadata, getEmbedHtml, store, list, destroy, };
 }
 
+/** */
 export type MusicLinkService = ReturnType<typeof createMusicLinkService>;

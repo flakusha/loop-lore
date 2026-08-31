@@ -16,10 +16,16 @@ import { findConfigFile, findMainRepoRoot, firstExisting, } from "./fs";
 import { deepMerge, parseFileContent, } from "./parse";
 import { validateAuthSafety, validateDatabaseSafety, } from "./safety";
 
+/**
+ * @param config
+ */
 export function validateConfig(config: Config,): void {
   validate(config,);
 }
 
+/**
+ * @param cwd
+ */
 export function loadConfig(cwd?: string,): Config {
   const directory = cwd ?? process.cwd();
   const mainRoot = findMainRepoRoot(directory,);

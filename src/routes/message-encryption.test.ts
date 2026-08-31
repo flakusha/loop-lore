@@ -27,6 +27,7 @@ const USER_ID = "msg-enc-user-001";
 let db: Kysely<DB>;
 let app: Elysia;
 
+/** */
 function buildMigrationProvider(): { getMigrations: () => Promise<Record<string, Migration>> } {
   return {
     async getMigrations(): Promise<Record<string, Migration>> {
@@ -93,6 +94,10 @@ beforeEach(async () => {
   await sql`DELETE FROM chat_keys`.execute(db,);
 },);
 
+/**
+ * @param chatId
+ * @param level
+ */
 async function insertChat(chatId: string, level: "none" | "standard" | "at-rest",): Promise<void> {
   await db.insertInto("chats",).values({
     id: chatId,
@@ -104,6 +109,9 @@ async function insertChat(chatId: string, level: "none" | "standard" | "at-rest"
   },).execute();
 }
 
+/**
+ * @param chatId
+ */
 async function callKeyEndpoint(chatId: string,): Promise<Response> {
   return app.handle(
     new Request(`http://localhost/api/chats/${chatId}/encryption-key`, {

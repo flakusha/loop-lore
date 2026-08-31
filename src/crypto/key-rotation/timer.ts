@@ -12,7 +12,6 @@ import { log, } from "./log";
 /**
  * Start auto-rotation timer.
  * Calls runAutoRotation periodically based on the configured interval.
- *
  * @param database - Kysely DB instance
  * @param rotationDays - Days before a key is considered expired
  * @param intervalMs - How often to check for expired keys (default: 1 hour)

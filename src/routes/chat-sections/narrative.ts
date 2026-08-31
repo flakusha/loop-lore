@@ -28,6 +28,8 @@ import { type HandlerOpts, } from "./types";
  * effects (slash commands, profanity moderation gate, auto-rename, scene
  * transitions, auto-reply) — a narrative is authorial flourish, not a user
  * turn, so nothing else may react to it.
+ * @param opts
+ * @param prefix
  */
 export function narrativeRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;

@@ -12,6 +12,7 @@ import type { HandlerOpts, } from "./types";
  * Chat search facade — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`chat-search`) is preserved so the
  * `register-plugins.ts` wiring is unchanged.
+ * @param opts
  */
 export function chatSearchRoutes(opts: HandlerOpts,) {
   return (

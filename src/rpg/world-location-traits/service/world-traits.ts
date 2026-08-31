@@ -9,7 +9,11 @@ import type {
   WorldTraitRow,
 } from "./types";
 
-/** Create a world trait */
+/**
+ * Create a world trait
+ * @param db
+ * @param input
+ */
 export async function createWorldTrait(
   db: Kysely<any>,
   input: CreateWorldTraitInput,
@@ -35,7 +39,12 @@ export async function createWorldTrait(
   return trait;
 }
 
-/** Get all world traits for an actor in a world */
+/**
+ * Get all world traits for an actor in a world
+ * @param db
+ * @param actorId
+ * @param worldId
+ */
 export async function getWorldTraits(
   db: Kysely<any>,
   actorId: string,
@@ -50,7 +59,12 @@ export async function getWorldTraits(
     .execute() as Promise<WorldTraitRow[]>;
 }
 
-/** Update a world trait */
+/**
+ * Update a world trait
+ * @param db
+ * @param id
+ * @param input
+ */
 export async function updateWorldTrait(
   db: Kysely<any>,
   id: string,
@@ -81,7 +95,11 @@ export async function updateWorldTrait(
     .executeTakeFirst() as Promise<WorldTraitRow | undefined>;
 }
 
-/** Delete a world trait */
+/**
+ * Delete a world trait
+ * @param db
+ * @param id
+ */
 export async function deleteWorldTrait(db: Kysely<any>, id: string,): Promise<boolean> {
   const result = await db
     .deleteFrom("character_world_traits",)

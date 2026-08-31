@@ -9,7 +9,10 @@ import {
 import { COMMON_WORDS, } from "./constants";
 import type { ExtractedEntity, } from "./types";
 
-/** Extract proper nouns from text, classify as character/location/item. */
+/**
+ * Extract proper nouns from text, classify as character/location/item.
+ * @param text
+ */
 export function extractProperNouns(text: string,): ExtractedEntity[] {
   const entities: ExtractedEntity[] = [];
   const seen = new Set<string>();
@@ -31,7 +34,11 @@ export function extractProperNouns(text: string,): ExtractedEntity[] {
   return entities;
 }
 
-/** Classify an entity based on context clues. */
+/**
+ * Classify an entity based on context clues.
+ * @param name
+ * @param text
+ */
 export function classifyEntity(
   name: string,
   text: string,

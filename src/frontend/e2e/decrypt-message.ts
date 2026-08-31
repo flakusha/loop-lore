@@ -19,6 +19,7 @@ import { nextRatchetStep, } from "../../crypto/e2e/ratchet";
 import { type EncryptedPayload, } from "./encrypt-message";
 import { loadOrCreateKeyPair, } from "./key-store";
 
+/** */
 export interface DecryptMessageOpts {
   /** The local actor (the recipient of the message). */
   recipientActorId: string;
@@ -28,6 +29,7 @@ export interface DecryptMessageOpts {
   payload: EncryptedPayload;
 }
 
+/** */
 export interface DecryptedMessage {
   plaintext: string;
   /** Updated chain key after consuming this message. */
@@ -42,6 +44,7 @@ export interface DecryptedMessage {
  *   - AES-GCM auth-tag mismatch (tampered / wrong key)
  *   - Recipient has no persisted private key
  *   - WebCrypto failures
+ * @param opts
  */
 export async function decryptMessage(opts: DecryptMessageOpts,): Promise<DecryptedMessage> {
   const { cryptoKeyPair, } = await loadOrCreateKeyPair({ actorId: opts.recipientActorId, },);
@@ -83,10 +86,17 @@ export async function decryptMessage(opts: DecryptMessageOpts,): Promise<Decrypt
 
 // ── Helpers ──────────────────────────────────────────────
 
+/**
+ * @param b64
+ */
 function fromBase64(b64: string,): Uint8Array {
   return Uint8Array.fromBase64(b64,);
 }
 
+/**
+ * @param a
+ * @param b
+ */
 function xorBytes(a: Uint8Array, b: Uint8Array,): Uint8Array {
   const len = Math.min(a.byteLength, b.byteLength,);
   const out = new Uint8Array(len,);

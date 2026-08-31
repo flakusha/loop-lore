@@ -30,6 +30,9 @@ const state: OpenAiCompatibleState = {
   headers: { "X-Custom": "yes", },
 };
 
+/**
+ * @param overrides
+ */
 function baseReq(overrides: Partial<GenerateRequest> = {},): GenerateRequest {
   return {
     model: "m1",
@@ -259,14 +262,17 @@ describe("combineAbortSignals", () => {
 // ── fetchRaw ──────────────────────────────────────────────
 
 describe("fetchRaw", () => {
+  /**
+   * @param handler
+   * @param fn
+   */
   async function withMockFetch(handler: FetchHandler, fn: () => Promise<void>,): Promise<void> {
     const originalFetch = globalThis.fetch;
-    // eslint-disable-next-line unicorn/no-global-object-property-assignment
+
     (globalThis as Record<string, unknown>).fetch = handler;
     try {
       return await fn();
     } finally {
-      // eslint-disable-next-line unicorn/no-global-object-property-assignment
       (globalThis as Record<string, unknown>).fetch = originalFetch;
     }
   }
@@ -362,14 +368,17 @@ describe("fetchRaw", () => {
 // ── fetchWithRetry ────────────────────────────────────────
 
 describe("fetchWithRetry", () => {
+  /**
+   * @param handler
+   * @param fn
+   */
   async function withMockFetch(handler: FetchHandler, fn: () => Promise<void>,): Promise<void> {
     const originalFetch = globalThis.fetch;
-    // eslint-disable-next-line unicorn/no-global-object-property-assignment
+
     (globalThis as Record<string, unknown>).fetch = handler;
     try {
       return await fn();
     } finally {
-      // eslint-disable-next-line unicorn/no-global-object-property-assignment
       (globalThis as Record<string, unknown>).fetch = originalFetch;
     }
   }

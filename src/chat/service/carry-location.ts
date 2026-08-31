@@ -16,6 +16,9 @@ import type { DB, } from "../../db/schema";
 /**
  * Carry location context: chat_sections + message section links.
  * Runs after carryHistory so the section remap reaches carried messages.
+ * @param database
+ * @param sourceChatId
+ * @param newChatId
  */
 export async function carryLocation(
   database: Kysely<DB>,

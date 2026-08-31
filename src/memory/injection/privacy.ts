@@ -7,7 +7,10 @@
 import type { MemoryPrivacy, } from "../types";
 import type { InjectionContext, InjectionPrivacyLevel, } from "./types";
 
-/** Map extended privacy to base privacy for provision pipeline. */
+/**
+ * Map extended privacy to base privacy for provision pipeline.
+ * @param level
+ */
 export function toBasePrivacy(level: InjectionPrivacyLevel,): MemoryPrivacy {
   switch (level) {
     case "absolute":
@@ -32,6 +35,8 @@ export function toBasePrivacy(level: InjectionPrivacyLevel,): MemoryPrivacy {
 /**
  * Check injection privacy — hard blocks based on level and context.
  * Returns rejection reason, or null if allowed.
+ * @param level
+ * @param ctx
  */
 export function checkInjectionPrivacy(
   level: InjectionPrivacyLevel,

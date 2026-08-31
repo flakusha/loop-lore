@@ -10,14 +10,21 @@
 import { formatConsole, } from "../../../logger/formatters";
 import type { LogEntry, Transport, } from "../../../logger/types";
 
+/** */
 export class BrowserConsoleTransport implements Transport {
   readonly name = "browser-console";
   private readonly isColor: boolean;
 
+  /**
+   * @param isColor
+   */
   constructor(isColor?: boolean,) {
     this.isColor = isColor ?? true;
   }
 
+  /**
+   * @param entry
+   */
   write(entry: LogEntry,): Promise<void> {
     try {
       const { formatted, css, } = formatConsole(entry, this.isColor, "css",);
@@ -33,10 +40,14 @@ export class BrowserConsoleTransport implements Transport {
     return Promise.resolve();
   }
 
+  /** */
   flush(): Promise<void> {
     return Promise.resolve();
   }
 
+  /**
+   * @param level
+   */
   private consoleMethod(level: number,): (...args: unknown[]) => void {
     if (level >= 40) { return console.error; }
     if (level >= 30) { return console.warn; }

@@ -10,6 +10,9 @@ import type { Kysely, } from "kysely";
  * conditions, and active effects to character_stats.
  */
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Cognition parameters ───────────────────────────────────
   await database.schema
@@ -57,6 +60,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.alterTable("worlds",).dropColumn("rpg_enabled",).execute();
   await database.schema.alterTable("character_stats",).dropColumn("active_effects",).execute();

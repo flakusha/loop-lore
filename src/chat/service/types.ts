@@ -8,6 +8,7 @@
  * types they need. Everything exported is re-exported by the service barrel.
  */
 
+/** */
 export interface ServiceError {
   code: "not_found" | "forbidden" | "bad_request";
   message: string;
@@ -23,8 +24,10 @@ export interface KeyMechanicConflictError {
   };
 }
 
+/** */
 export type UpdateChatResult = ServiceError | KeyMechanicConflictError | { ok: true };
 
+/** */
 export interface CreateChatParams {
   name: string;
   type?: string;
@@ -49,6 +52,7 @@ export interface CreateChatParams {
   memoryCarryIds?: string[];
 }
 
+/** */
 export interface ChatSetupTemplate {
   id: string;
   slug: string;
@@ -65,10 +69,12 @@ export interface ChatSetupTemplate {
   visibility: string | null;
 }
 
+/** */
 export type TemplateMutationResult =
   | { ok: true; template: ChatSetupTemplate }
   | { ok: false; code: "conflict" | "not_found" | "bad_request"; message: string };
 
+/** */
 export interface MigrateChatParams {
   templateId: string;
   createdBy: string;
@@ -88,6 +94,7 @@ export interface MigrateChatParams {
   };
 }
 
+/** */
 export type MigrateChatResult =
   | ServiceError
   | { ok: true; newChatId: string; sourceChatId: string };
@@ -99,6 +106,7 @@ export interface QuickReplyButton {
   trigger?: "startup" | "user" | "ai";
 }
 
+/** */
 export interface UpdateChatParams {
   name?: string;
   mode?: string;
@@ -117,6 +125,7 @@ export interface UpdateChatParams {
   outputStylePreset?: string | null;
 }
 
+/** */
 export interface ListMessagesParams {
   chatId: string;
   page?: number;
@@ -124,6 +133,7 @@ export interface ListMessagesParams {
   parentId?: string;
 }
 
+/** */
 export interface RegenerateVariantParams {
   chatId: string;
   messageId: string;
@@ -131,6 +141,7 @@ export interface RegenerateVariantParams {
   userRole: string | null;
 }
 
+/** */
 export type RegenerateVariantResult =
   | ServiceError
   | { ok: true; replayed: boolean; variantMessageId: string; swipeIndex: number };

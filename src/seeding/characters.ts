@@ -21,7 +21,6 @@ import { recordSeedAudit, } from "./audit";
 
 /**
  * Seed characters from config into the database as `actors` rows.
- *
  * @param database - Kysely instance
  * @param characters - Character definitions (owner referenced by username)
  * @param userById - Username → user id map (precomputed from prepopulated users)

@@ -14,17 +14,20 @@ export interface ApiResponseMeta {
   deprecated?: boolean;
 }
 
+/** */
 export interface ApiError {
   error: string;
   code?: ErrorCode;
   details?: unknown;
 }
 
+/** */
 export interface ValidationError {
   field: string;
   message: string;
 }
 
+/** */
 export interface PaginatedResponse<T,> {
   data: T[];
   pagination: {
@@ -36,6 +39,7 @@ export interface PaginatedResponse<T,> {
   meta: ApiResponseMeta;
 }
 
+/** */
 export interface JsonErrorOptions {
   message: string;
   status?: HttpStatusCode;
@@ -44,6 +48,7 @@ export interface JsonErrorOptions {
   t?: TranslatorFn;
 }
 
+/** */
 export interface JsonPaginatedOptions {
   data: unknown[];
   total: number;

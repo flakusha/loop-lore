@@ -22,6 +22,7 @@ const PIPELINE_CONFIG = {
   algorithm: "gzip" as const,
 };
 
+/** */
 async function generateChatKey(): Promise<ChatKey> {
   const cryptoKey = await crypto.subtle.generateKey(
     { name: "AES-GCM", length: 256, },

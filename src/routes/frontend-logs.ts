@@ -34,6 +34,9 @@ interface LogBatch {
   entries: FrontendLogEntry[];
 }
 
+/**
+ * @param prefix
+ */
 export function frontendLogsRoutes(prefix = "/api",) {
   return new Elysia({ name: "frontend-logs", },).post(`${prefix}/frontend/logs`, async ({ request, ...rest },) => {
     let body: LogBatch;

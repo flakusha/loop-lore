@@ -33,6 +33,7 @@ let db: Kysely<DB>;
 // src/db/migrations/); a static import would require hardcoding every
 // filename. The only writeable alternative would be a generated barrel,
 // which the project deliberately avoids.
+/** */
 function buildMigrationProvider(): {
   getMigrations: () => Promise<Record<string, Migration>>;
 } {

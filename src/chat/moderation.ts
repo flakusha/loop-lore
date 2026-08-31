@@ -19,8 +19,13 @@ import type {
 
 /**
  * Create a moderation action record.
- *
  * @param params - Action parameters
+ * @param params.type
+ * @param params.targetActorId
+ * @param params.scope
+ * @param params.actorId
+ * @param params.reason
+ * @param params.internal
  * @returns A new ModerationAction
  */
 export function createModerationAction(params: {
@@ -51,11 +56,10 @@ export function createModerationAction(params: {
  * - Only admins/owners can ban
  * - Only chat owners can shadow/collapse within a chat
  * - Anyone can flag (internal report)
- *
  * @param action - Proposed moderation action
  * @param callerRole - Role of the person attempting the action
  * @param isTargetSelf - Whether the target is the caller
- * @returns { allowed: boolean; reason?: string }
+ * @returns
  */
 export function checkModerationPermission(
   action: ModerationAction,
@@ -100,7 +104,6 @@ export function checkModerationPermission(
 
 /**
  * Check if a user is blocked in a given scope.
- *
  * @param blocks - List of active block actions
  * @param targetActorId - User to check
  * @param scope - Scope to check (chat, global, etc.)
@@ -123,7 +126,6 @@ export function isBlocked(
 
 /**
  * Check if a user is banned.
- *
  * @param bans - List of active ban actions
  * @param targetActorId - User to check
  * @returns True if the user is banned
@@ -141,7 +143,6 @@ export function isBanned(bans: ModerationAction[], targetActorId: string,): bool
  * In the current system, shadow/collapse actions target a viewer
  * (the person who cannot see the content), not a specific message.
  * This is a simplified check — full implementation would be per-message.
- *
  * @param actions - List of shadow/collapse actions
  * @param viewerId - Who is viewing
  * @returns "shadow" | "collapse" | null

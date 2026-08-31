@@ -20,7 +20,6 @@ import type { PromptSectionReport, } from "./prompt/types";
  * After the assembler drops low-priority sections, if the remaining messages
  * still exceed the budget, the ContextCompactor summarizes the older half
  * of chat history into a single system message.
- *
  * @param messages - Assembled message list (mutated in place)
  * @param tokenBudget - Maximum token budget
  * @returns Summary text if compaction occurred, undefined otherwise
@@ -51,6 +50,9 @@ export async function compactPromptHistory(
  *
  * Sections are dropped in descending priority order (lowest first); the
  * updated total token count is returned.
+ * @param sections
+ * @param tokenBudget
+ * @param totalTokens
  */
 export function dropOverBudgetSections(
   sections: PromptSectionReport[],
@@ -87,6 +89,8 @@ export function dropOverBudgetSections(
  *
  * `sections` and `messages` are 1:1 lockstep, so a dropped section means the
  * message at the same index is dropped too.
+ * @param messages
+ * @param sections
  */
 export function reorderPromptMessages(
   messages: GenerationMessage[],

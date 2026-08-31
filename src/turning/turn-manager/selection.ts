@@ -11,7 +11,7 @@ import type { TurnManagerHost, } from "./types";
 
 /**
  * Select the next actor to act.
- *
+ * @param host
  * @param strategy - Override strategy (default: state.strategy)
  * @param context - Turn context (@mentions, recent actors, chat mode, or story context)
  * @returns Selected actor ID, or null if no participants
@@ -43,7 +43,10 @@ export async function selectNextActor(
   return selectedId;
 }
 
-/** Record a completed turn (persists state) */
+/**
+ * Record a completed turn (persists state)
+ * @param host
+ */
 export async function recordTurn(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
   host.state.lastTurnCompletedAt = new Date().toISOString();
@@ -55,7 +58,11 @@ export async function recordTurn(host: TurnManagerHost,): Promise<void> {
   await persistState(host,);
 }
 
-/** Decrement the active actor's initiative score for the current scene (min 0). */
+/**
+ * Decrement the active actor's initiative score for the current scene (min 0).
+ * @param host
+ * @param actorId
+ */
 async function decrementInitiative(host: TurnManagerHost, actorId: string,): Promise<void> {
   const currentScene = "main"; // TODO: detect actual current scene from story_state
   const current = await host.db

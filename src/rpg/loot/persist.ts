@@ -52,7 +52,11 @@ const LOOSE_TYPE_TO_CATEGORY: Record<string, ItemCategory> = {
   misc: ItemCategory.Misc,
 } as const;
 
-/** Map a loose loot `type` string to a unified `ItemCategory`. */
+/**
+ * Map a loose loot `type` string to a unified `ItemCategory`.
+ * @param type
+ * @param fallback
+ */
 function toCategory(type: string, fallback: ItemCategory,): ItemCategory {
   const value = type.toLowerCase().trim();
   return LOOSE_TYPE_TO_CATEGORY[value] ??
@@ -64,6 +68,9 @@ function toCategory(type: string, fallback: ItemCategory,): ItemCategory {
  *
  * Mutates `result` in place, filling `result.worldItemIds`, and returns the
  * same result for convenience.
+ * @param db
+ * @param result
+ * @param dest
  */
 export async function persistLoot(
   db: Kysely<DB>,
@@ -82,6 +89,12 @@ export async function persistLoot(
   return { ...result, worldItemIds, };
 }
 
+/**
+ * @param items
+ * @param drop
+ * @param dest
+ * @param fallbackCategory
+ */
 async function persistDrop(
   items: ItemsService,
   drop: LootDrop,

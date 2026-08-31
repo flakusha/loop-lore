@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/**
+ * @param ms
+ */
 export function formattedGenerationTime(ms?: number,): string {
   if (!ms) { return ""; }
   if (ms < 1000) { return `${ms.toFixed(0,)}ms`; }
@@ -8,6 +11,12 @@ export function formattedGenerationTime(ms?: number,): string {
   return `${(ms / 60_000).toFixed(1,)}m`;
 }
 
+/**
+ * @param msg
+ * @param msg.tokens_per_second
+ * @param msg.generation_time_ms
+ * @param msg.token_count_total
+ */
 export function formattedTokensPerSecond(msg: {
   tokens_per_second?: number;
   generation_time_ms?: number;
@@ -21,6 +30,14 @@ export function formattedTokensPerSecond(msg: {
   return "";
 }
 
+/**
+ * @param msg
+ * @param msg.model_id
+ * @param msg.provider
+ * @param msg.generation_time_ms
+ * @param msg.token_count_total
+ * @param msg.tokens_per_second
+ */
 export function statsLine(msg: {
   model_id?: string;
   provider?: string;

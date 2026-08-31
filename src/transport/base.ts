@@ -35,8 +35,12 @@ export abstract class TransportBase<
   protected connection: Connection | undefined;
   protected closed = false;
 
+  /**
+   * @param options
+   */
   constructor(protected readonly options: TOptions,) {}
 
+  /** */
   protected ensureConnected(): Connection {
     if (this.closed || !this.connection) {
       throw new TransportError("connection closed", {
@@ -46,6 +50,7 @@ export abstract class TransportBase<
     return this.connection;
   }
 
+  /** */
   connect(): Promise<Connection> {
     if (this.connection) {
       return Promise.resolve(this.connection,);
@@ -74,12 +79,16 @@ export abstract class TransportBase<
 
   abstract send(data: string | Uint8Array,): Promise<void>;
 
+  /**
+   * @param signature
+   */
   get(signature: string,): Promise<string> {
     const conn = this.ensureConnected();
     const value = conn.metadata[signature];
     return Promise.resolve(typeof value === "string" ? value : "",);
   }
 
+  /** */
   close(): Promise<void> {
     this.closed = true;
     this.connection = undefined;

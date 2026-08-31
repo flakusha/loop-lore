@@ -7,6 +7,7 @@ import type { SettingsState, } from "./types";
 
 const log = rootLog.child({ module: "settings", },);
 
+/** */
 export function api(): Partial<SettingsState> & ThisType<SettingsState> {
   return {
     async saveApi() {

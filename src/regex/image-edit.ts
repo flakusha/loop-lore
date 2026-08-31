@@ -7,7 +7,6 @@
  * Compiled regex patterns for NL command intent detection.
  * Extracted from image-edit-commands.ts for centralized management
  * and unit testing.
- *
  * @module regex/image-edit
  */
 

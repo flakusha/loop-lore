@@ -21,6 +21,7 @@ interface CircuitStateInternal {
   retryAfterMs: number;
 }
 
+/** */
 export interface CircuitBreakerConfig {
   /** Consecutive failures before opening circuit (default: 3) */
   threshold?: number;
@@ -39,6 +40,7 @@ const DEFAULT_CONFIG: Required<CircuitBreakerConfig> = {
   enabled: true,
 };
 
+/** */
 export class CircuitBreaker {
   private circuits = new Map<string, CircuitStateInternal>();
   private configs = new Map<string, Required<CircuitBreakerConfig>>();
@@ -46,6 +48,8 @@ export class CircuitBreaker {
   /**
    * Register a provider with optional config overrides.
    * Safe to call multiple times — only sets config on first call.
+   * @param providerName
+   * @param config
    */
   register(providerName: string, config?: CircuitBreakerConfig,): void {
     if (this.configs.has(providerName,)) { return; }
@@ -63,6 +67,7 @@ export class CircuitBreaker {
    * Check if a provider is allowed to receive requests.
    * Returns true if closed or half-open, false if open.
    * Half-open probes are allowed — one request passes through to test recovery.
+   * @param providerName
    */
   allowRequest(providerName: string,): boolean {
     const cfg = this.configs.get(providerName,);
@@ -89,6 +94,7 @@ export class CircuitBreaker {
   /**
    * Record a successful request. Resets failure count.
    * If half-open, transitions to closed.
+   * @param providerName
    */
   onSuccess(providerName: string,): void {
     const circuit = this.circuits.get(providerName,);
@@ -105,6 +111,8 @@ export class CircuitBreaker {
    * Record a failed request. Increments failure count.
    * If threshold exceeded, opens circuit with exponential backoff cooldown.
    * Respects retryAfter if provided (from Retry-After header).
+   * @param providerName
+   * @param retryAfterMs
    */
   onFailure(providerName: string, retryAfterMs?: number,): void {
     const cfg = this.configs.get(providerName,);
@@ -131,6 +139,7 @@ export class CircuitBreaker {
 
   /**
    * Reset a provider's circuit to closed state.
+   * @param providerName
    */
   reset(providerName: string,): void {
     const circuit = this.circuits.get(providerName,);
@@ -144,6 +153,7 @@ export class CircuitBreaker {
 
   /**
    * Get current state for a provider (read-only).
+   * @param providerName
    */
   getState(
     providerName: string,

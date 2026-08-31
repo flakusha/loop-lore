@@ -38,7 +38,10 @@ interface CharacterFileData {
 
 // ── File Discovery ────────────────────────────────────────────
 
-/** Find character files in configs/characters/ directory */
+/**
+ * Find character files in configs/characters/ directory
+ * @param cwd
+ */
 function findCharacterFiles(cwd: string,): string[] {
   const mainRoot = findMainRepoRoot(cwd,);
   const searchDirs = [
@@ -78,6 +81,7 @@ function findCharacterFiles(cwd: string,): string[] {
 /**
  * Detect if cwd is a git worktree and return the main repo root.
  * Duplicated from templates-loader.ts to avoid circular import.
+ * @param cwd
  */
 function findMainRepoRoot(cwd: string,): string | null {
   const gitPath = path.join(cwd, ".git",);
@@ -111,6 +115,9 @@ function findMainRepoRoot(cwd: string,): string | null {
 
 // ── Parsing ───────────────────────────────────────────────────
 
+/**
+ * @param filePath
+ */
 function parseCharacterFile(filePath: string,): CharacterFileData {
   const content = readFileSync(filePath, "utf8",);
   const ext = path.extname(filePath,).slice(1,).toLowerCase();
@@ -123,7 +130,10 @@ function parseCharacterFile(filePath: string,): CharacterFileData {
 
 // ── Normalization ─────────────────────────────────────────────
 
-/** Normalize a character file data into an array of templates */
+/**
+ * Normalize a character file data into an array of templates
+ * @param data
+ */
 function normalizeTemplates(data: CharacterFileData,): CharacterTemplateConfig["templates"] {
   // Multi-character file: has templates array
   if (data.templates && Array.isArray(data.templates,)) {
@@ -174,7 +184,6 @@ function normalizeTemplates(data: CharacterFileData,): CharacterTemplateConfig["
 
 /**
  * Load character definitions from configs/characters/ directory.
- *
  * @param cwd - Working directory to search from (default: process.cwd())
  * @returns Array of character templates
  */

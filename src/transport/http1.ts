@@ -9,15 +9,21 @@ interface Http1Options extends TransportBaseOptions {
   fetch?: (request: Request,) => Response | Promise<Response>;
 }
 
+/** */
 export class Http1Handler extends TransportBase<Http1Options> {
+  /**
+   * @param options
+   */
   constructor(options: Http1Options = {},) {
     super(options,);
   }
 
+  /** */
   protected getProtocol(): TransportProtocol {
     return TransportProtocol.Http1_1;
   }
 
+  /** */
   protected getMetadata(): Record<string, unknown> {
     return {
       keepAlive: true,
@@ -25,12 +31,18 @@ export class Http1Handler extends TransportBase<Http1Options> {
     };
   }
 
+  /**
+   * @param _data
+   */
   send(_data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();
     return Promise.resolve();
   }
 }
 
+/**
+ * @param options
+ */
 export function createHttp1Handler(options: Http1Options = {},): Http1Handler {
   return new Http1Handler(options,);
 }

@@ -12,11 +12,13 @@ import { resolveSystemPrompt, } from "../../prompts";
 import { jsonParseOr, } from "../../utils/safe-json";
 import type { HookContext, } from "./types";
 
+/** */
 export type NsfwLevel = "none" | "mild" | "moderate" | "intense" | "extreme";
 
 /**
  * Keyword-based NSFW classifier.
  * Deterministic, fast — runs before any LLM check.
+ * @param content
  */
 export function detectNsfwLevel(content: string,): NsfwLevel {
   // No keyword extreme tier: "extreme" is LLM-only (detectNsfwWithLlm), reachable
@@ -43,7 +45,6 @@ export function detectNsfwLevel(content: string,): NsfwLevel {
  * config-driven nsfw purpose prompt. Any failure degrades to "none" —
  * the hook must never block generation on an LLM error (graceful, like
  * every other aux classifier).
- *
  * @param content - User message content to classify
  * @param context - Hook context (carries config + db)
  * @param callAuxFn - Injectable AUX runner

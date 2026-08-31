@@ -9,7 +9,6 @@
  *
  * Workflow files are standard ComfyUI API-format JSON with
  * `{{variable}}` placeholders in node inputs.
- *
  * @module workflow-loader
  */
 

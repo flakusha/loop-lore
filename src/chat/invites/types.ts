@@ -13,13 +13,16 @@ export type InviteErrorCode =
   | "conflict"
   | "bad_request";
 
+/** */
 export interface InviteError {
   code: InviteErrorCode;
   message: string;
 }
 
+/** */
 export type InviteResult<T,> = { ok: true; value: T } | { ok: false; error: InviteError };
 
+/** */
 export interface ChatInviteRow {
   id: string;
   chatId: string;
@@ -32,6 +35,7 @@ export interface ChatInviteRow {
   status: InviteStatus;
 }
 
+/** */
 export interface CreateInviteInput {
   chatId: string;
   createdBy: string;
@@ -41,6 +45,7 @@ export interface CreateInviteInput {
   maxUses?: number | null;
 }
 
+/** */
 export type RedeemOutcome =
   | { ok: true; chatId: string; alreadyMember: boolean }
   | { ok: false; error: InviteError };

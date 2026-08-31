@@ -37,6 +37,7 @@ interface CCv3Data {
 
 /**
  * Normalize CCv3 format to canonical character card.
+ * @param data
  */
 export function normalizeCcV3(data: Record<string, unknown>,): CanonicalCharacter {
   const raw = extractEnvelope(data,);

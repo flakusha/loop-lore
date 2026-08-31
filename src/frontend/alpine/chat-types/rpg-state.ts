@@ -4,6 +4,7 @@
 import type { EquipmentSlot, RpgStats, StatusEffect, } from "./rpg";
 
 // ── RPG Stats ───────────────────────────────────────────────
+/** */
 export interface ChatRpgState {
   rpgStats: RpgStats | null;
   statusEffects: StatusEffect[];

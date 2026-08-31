@@ -21,6 +21,10 @@ import {
 } from "./helpers";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

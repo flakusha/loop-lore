@@ -6,6 +6,7 @@
  */
 import type { ChatState, } from "./types";
 
+/** */
 export type ChatMovement = Partial<ChatState> & ThisType<ChatState>;
 
 export const chatMovement: ChatMovement = {

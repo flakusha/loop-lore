@@ -23,7 +23,6 @@ export interface ValidationResult {
  * This is a synchronous, lightweight check — no DB lookups or world-context
  * queries. For full quality gating including duplicate and consistency checks,
  * use {@link runQualityGates} instead.
- *
  * @param data - The entity data to validate
  * @param entityKind - The canonical entity kind
  * @returns A validation result with `valid: true` when all required fields are present

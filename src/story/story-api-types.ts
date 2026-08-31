@@ -9,16 +9,19 @@
 import type { SyntheticDataType as SDT, SyntheticTestMode as STM, TurnStrategy as TS, } from "../db/enums";
 import type { GameMasterConfig, GameMasterDecision, QualityThresholds, } from "./story-types";
 
+/** */
 export interface StartStoryRequest {
   chatId: string;
   initialPrompt?: string;
 }
 
+/** */
 export interface StepStoryRequest {
   chatId: string;
   forceActorId?: string;
 }
 
+/** */
 export interface ConfigureStoryRequest {
   chatId: string;
   gmConfig?: GameMasterConfig;
@@ -28,18 +31,21 @@ export interface ConfigureStoryRequest {
   autoAdvance?: boolean;
 }
 
+/** */
 export interface GameMasterOverrideRequest {
   chatId: string;
   turnId: string;
   decision: GameMasterDecision;
 }
 
+/** */
 export interface SyntheticGenerateRequest {
   chatId: string;
   types?: SDT[];
   maxScenarios?: number;
 }
 
+/** */
 export interface SyntheticTestRunRequest {
   scenarioIds: string[];
   mode: STM;

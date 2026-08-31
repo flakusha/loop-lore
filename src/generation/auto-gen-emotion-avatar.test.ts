@@ -27,6 +27,7 @@ import { MoodHook, } from "./hooks/mood-hook";
 /** Emotional content that triggers both the mood and emotion hooks. */
 const EMOTIONAL_CONTENT = "She was so happy and filled with joy and love today!";
 
+/** */
 function makeConfig(): Record<string, unknown> {
   return {
     generation: {
@@ -50,6 +51,7 @@ function makeConfig(): Record<string, unknown> {
   };
 }
 
+/** */
 function createMockDeps(): Partial<GenDeps> {
   const mockBuffer = {
     append: mock(() => {/* noop */},),
@@ -117,6 +119,9 @@ function createMockDeps(): Partial<GenDeps> {
   } as unknown as Partial<GenDeps>;
 }
 
+/**
+ * @param db
+ */
 async function seedUser(db: Kysely<DB>,): Promise<string> {
   const userId = uid();
   await db
@@ -148,6 +153,10 @@ async function seedUser(db: Kysely<DB>,): Promise<string> {
   return userId;
 }
 
+/**
+ * @param db
+ * @param name
+ */
 async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
   const id = uid();
   await db
@@ -168,6 +177,11 @@ async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
   return id;
 }
 
+/**
+ * @param db
+ * @param userId
+ * @param aiActorId
+ */
 async function createDirectChat(
   db: Kysely<DB>,
   userId: string,

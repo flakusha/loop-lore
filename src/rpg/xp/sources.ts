@@ -35,7 +35,6 @@ export const XP_BY_CR: Record<number, number> = {
 
 /**
  * Calculate XP reward for defeating an enemy.
- *
  * @param cr - Challenge Rating of the enemy
  * @param partySize - Number of party members (splits XP)
  * @param wasAssist - Whether this character assisted (gets half XP)
@@ -53,6 +52,8 @@ export function xpForEnemyDefeat(
 
 /**
  * XP reward for completing a quest.
+ * @param questLevel
+ * @param difficulty
  */
 export function xpForQuest(
   questLevel: number,
@@ -70,6 +71,8 @@ export function xpForQuest(
 
 /**
  * XP reward for skill challenge or roleplay encounter.
+ * @param characterLevel
+ * @param difficulty
  */
 export function xpForSkillChallenge(
   characterLevel: number,

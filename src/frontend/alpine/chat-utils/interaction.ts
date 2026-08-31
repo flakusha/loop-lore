@@ -6,6 +6,7 @@ import { jsonBody, } from "../json";
 import type { ChatState, } from "../types";
 import { _anonymousModeEnabled, } from "./anonymous";
 
+/** */
 export type ChatUtilsInteraction = Partial<ChatState> & ThisType<ChatState>;
 
 export const chatUtilsInteraction: ChatUtilsInteraction = {

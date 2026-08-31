@@ -6,7 +6,6 @@
  *
  * Wraps the existing ComfyUIClient to run workflow templates,
  * download generated images, and store them as assets.
- *
  * @module comfyui-provider
  */
 
@@ -28,6 +27,7 @@ import type {
 } from "../types";
 
 let _log: ReturnType<typeof getLogger> | null = null;
+/** */
 function log() {
   _log ??= getLogger();
   return _log;
@@ -42,12 +42,14 @@ const CAPABILITY_NODE_MAP: Record<ImageEditCategory, string[]> = {
   controlnet: ["ControlNetLoader", "ControlNetApply",],
 };
 
+/** */
 export class ComfyUIEditProvider implements ImageEditProvider {
   readonly name: ImageEditBackend = "comfyui";
 
   private client: ComfyUIClient | null = null;
   private installedNodes: Set<string> | null = null;
 
+  /** */
   private getClient(): ComfyUIClient {
     if (!this.client) {
       const config = loadConfig();
@@ -63,6 +65,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     return this.client;
   }
 
+  /** */
   async healthCheck(): Promise<boolean> {
     try {
       const client = this.getClient();
@@ -73,6 +76,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     }
   }
 
+  /** */
   async listCapabilities(): Promise<ImageEditCategory[]> {
     const nodes = await this.getInstalledNodes();
     const capabilities: ImageEditCategory[] = [];
@@ -87,6 +91,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     return capabilities;
   }
 
+  /** */
   async getInstalledNodes(): Promise<Set<string>> {
     if (this.installedNodes) { return this.installedNodes; }
 
@@ -102,6 +107,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     }
   }
 
+  /** */
   async getNodeInfo() {
     const client = this.getClient();
     return client.getNodeInfo();
@@ -112,6 +118,11 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     this.installedNodes = null;
   }
 
+  /**
+   * @param request
+   * @param template
+   * @param onProgress
+   */
   async execute(
     request: ImageEditRequest,
     template: WorkflowTemplate,
@@ -199,6 +210,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
   /**
    * Get emotion-based prompt modifier for ComfyUI workflow.
    * Maps emotion types to descriptive prompt suffixes for conditioning nodes.
+   * @param emotion
    */
   private getEmotionModifier(emotion: string,): string {
     const modifiers: Record<string, string> = {

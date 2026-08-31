@@ -11,7 +11,6 @@
  *
  * Catches all write/rotation errors silently — logging must never crash the
  * app (Transport contract).
- *
  * @module logger-transports-file
  */
 
@@ -20,6 +19,7 @@ import { dirname, } from "node:path";
 import { formatJSONL, } from "../formatters";
 import type { LogEntry, Transport, } from "../types";
 
+/** */
 export interface FileTransportOptions {
   /** Log file path (active file). */
   path: string;
@@ -37,12 +37,18 @@ export class FileTransport implements Transport {
   private readonly maxBytes: number;
   private readonly maxFiles: number;
 
+  /**
+   * @param options
+   */
   constructor(options: FileTransportOptions,) {
     this.activePath = options.path;
     this.maxBytes = options.maxBytes ?? 100 * 1024 * 1024;
     this.maxFiles = options.maxFiles ?? 5;
   }
 
+  /**
+   * @param entry
+   */
   async write(entry: LogEntry,): Promise<void> {
     try {
       const line = formatJSONL(entry,);
@@ -59,6 +65,7 @@ export class FileTransport implements Transport {
     }
   }
 
+  /** */
   async flush(): Promise<void> {
     // appendFile is awaited per write, so there is no buffered tail to flush.
   }
@@ -80,6 +87,9 @@ export class FileTransport implements Transport {
     }
   }
 
+  /**
+   * @param path
+   */
   private async fileSize(path: string,): Promise<number> {
     try {
       const s = await stat(path,);

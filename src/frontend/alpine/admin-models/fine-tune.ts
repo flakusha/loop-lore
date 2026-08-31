@@ -82,7 +82,10 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
     return out.sort((a, b,) => `${a.provider}/${a.model}`.localeCompare(`${b.provider}/${b.model}`,));
   },
 
-  /** Readiness of a model as a fine-tune base, derived from real metadata. */
+  /**
+   * Readiness of a model as a fine-tune base, derived from real metadata.
+   * @param c
+   */
   fineTuneReadiness(c: FineTuneCandidate,): string {
     const size = c.paramSize ? parseFloatOr(c.paramSize, Number.NaN,) : Number.NaN;
     const ctx = c.contextWindow ?? 0;

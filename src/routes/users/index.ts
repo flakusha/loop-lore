@@ -21,6 +21,10 @@ import type { UsersRoutesOpts, } from "./types";
 
 export type { UsersRoutesOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function usersRoutes(opts: UsersRoutesOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "users", },)
     .use(meRoutes(opts, prefix,),)

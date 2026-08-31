@@ -6,7 +6,6 @@
  *
  * Uses `obscenity` library for word-list-based filtering with leetspeak
  * and confusable resolution. Replaces matches with asterisks.
- *
  * @example
  *   filter("fuck you")     // "*** you"
  *   containsProfanity("hello world") // false
@@ -30,6 +29,7 @@ const censor = new TextCensor().setStrategy(asteriskCensorStrategy(),);
 /**
  * Filter profanity from text using asterisk replacement.
  * Handles leetspeak, confusables, and case variants.
+ * @param text
  */
 export function filter(text: string,): string {
   const matches = matcher.getAllMatches(text,);
@@ -39,6 +39,7 @@ export function filter(text: string,): string {
 
 /**
  * Check if text contains any profanity.
+ * @param text
  */
 export function containsProfanity(text: string,): boolean {
   return matcher.hasMatch(text,);

@@ -22,7 +22,12 @@ import { ErrorResponse, Id, } from "../../validation/schemas";
 import { jsonResponse, notFoundResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
 
-/** Ensure the user owns the given actor. Returns a denial Response or null. */
+/**
+ * Ensure the user owns the given actor. Returns a denial Response or null.
+ * @param db
+ * @param actorId
+ * @param userId
+ */
 async function resolveActorAccess(
   db: Kysely<DB>,
   actorId: string,
@@ -75,6 +80,11 @@ const craftAttemptSchema = t.Object({
   createdAt: t.String(),
 },);
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function craftingAttemptRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new CraftingProcessService(database,);
   return new Elysia({ name: "crafting-attempts", },)

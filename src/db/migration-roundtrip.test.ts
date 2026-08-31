@@ -29,7 +29,10 @@ function getMigrationNames(): string[] {
     .toSorted((a, b,) => a.localeCompare(b,));
 }
 
-/** Return all user-facing table names from an in-memory SQLite. */
+/**
+ * Return all user-facing table names from an in-memory SQLite.
+ * @param sqlite
+ */
 function getTableNames(sqlite: Database,): string[] {
   return (
     sqlite
@@ -38,7 +41,11 @@ function getTableNames(sqlite: Database,): string[] {
   ).map((r,) => r.name);
 }
 
-/** Return column names for a given table. */
+/**
+ * Return column names for a given table.
+ * @param sqlite
+ * @param table
+ */
 function getColumnNames(sqlite: Database, table: string,): string[] {
   return (
     sqlite

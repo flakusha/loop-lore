@@ -7,7 +7,6 @@
  * Type definitions for LoRA (Low-Rank Adaptation) discovery and application.
  * LoRA enables character-specific and style-specific visual consistency
  * across Stable Diffusion generations.
- *
  * @module generation/lora/types
  */
 
@@ -15,10 +14,9 @@
 
 /**
  * LoRA configuration for a single LoRA model.
- *
- * @property name - Model filename without extension (e.g., "my_character")
- * @property strength - Application strength 0.1-1.0 (typical: 0.3-0.7)
- * @property backend - Target backend for application
+ * name - Model filename without extension (e.g., "my_character")
+ * strength - Application strength 0.1-1.0 (typical: 0.3-0.7)
+ * backend - Target backend for application
  */
 export interface LoRAConfig {
   name: string;
@@ -28,14 +26,13 @@ export interface LoRAConfig {
 
 /**
  * LoRA model metadata from discovery.
- *
- * @property name - Model display name
- * @property filename - Original filename with extension
- * @property path - Full path to model file
- * @property backend - Backend this model is available on
- * @property size - File size in bytes (if available)
- * @property triggerWords - Trigger words from metadata (if available)
- * @property recommendedStrength - Recommended strength from metadata (if available)
+ * name - Model display name
+ * filename - Original filename with extension
+ * path - Full path to model file
+ * backend - Backend this model is available on
+ * size - File size in bytes (if available)
+ * triggerWords - Trigger words from metadata (if available)
+ * recommendedStrength - Recommended strength from metadata (if available)
  */
 export interface LoRAModel {
   name: string;
@@ -49,11 +46,10 @@ export interface LoRAModel {
 
 /**
  * LoRA discovery result.
- *
- * @property models - Available LoRA models
- * @property backend - Backend that was queried
- * @property timestamp - Discovery timestamp
- * @property error - Error message if discovery failed
+ * models - Available LoRA models
+ * backend - Backend that was queried
+ * timestamp - Discovery timestamp
+ * error - Error message if discovery failed
  */
 export interface LoRADiscoveryResult {
   models: LoRAModel[];
@@ -64,10 +60,9 @@ export interface LoRADiscoveryResult {
 
 /**
  * LoRA application context for workflow modification.
- *
- * @property config - LoRA configuration to apply
- * @property nodeId - ComfyUI node ID for LoraLoader (ComfyUI only)
- * @property promptPrefix - sd.cpp prompt prefix (sd-server only)
+ * config - LoRA configuration to apply
+ * nodeId - ComfyUI node ID for LoraLoader (ComfyUI only)
+ * promptPrefix - sd.cpp prompt prefix (sd-server only)
  */
 export interface LoRAApplicationContext {
   config: LoRAConfig;

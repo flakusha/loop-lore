@@ -10,8 +10,6 @@
  * that shared logic so the two handlers differ only in I/O: the SSE handler
  * wires an `onItem` notifier to drive its progress bar and the asset
  * manifest, while the plain handler passes none.
- *
- * @module routes/export-shared
  */
 export { exportAssetsToZip, } from "./assets";
 export { exportCharactersToZip, } from "./characters";

@@ -40,7 +40,10 @@ export const DEFAULT_EMOTIONS: EmotionType[] = [
   EmotionType.Calm,
 ];
 
-/** Resolve the modifier for an emotion from the built-in table. */
+/**
+ * Resolve the modifier for an emotion from the built-in table.
+ * @param emotion
+ */
 export function getEmotionPromptModifier(emotion: EmotionType,): string {
   return EMOTION_PROMPT_MODIFIERS[emotion] ?? "neutral expression";
 }
@@ -51,7 +54,6 @@ export function getEmotionPromptModifier(emotion: EmotionType,): string {
  * (config.templates.avatar.emotions — keyed by lowercase emotion name) over
  * the built-in EMOTION_PROMPT_MODIFIERS table. This is what consumes the
  * avatar emotion asset map the generation path previously ignored.
- *
  * @param emotion - Emotion type being generated
  * @param avatarEmotions - Optional config emotion map (lowercase keys)
  * @returns Prompt modifier string

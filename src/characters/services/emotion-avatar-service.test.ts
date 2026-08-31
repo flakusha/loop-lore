@@ -27,7 +27,10 @@ import { createTestActors, } from "./test-helpers";
 
 const originalFetch = globalThis.fetch;
 
-/** Mock fetch — caller provides (url, init?) → Response */
+/**
+ * Mock fetch — caller provides (url, init?) → Response
+ * @param handler
+ */
 function mockFetch(handler: (url: string, init?: RequestInit,) => Response | Promise<Response>,) {
   const mocked = mock(async (url: string | URL | Request, _init?: RequestInit,) => {
     const urlStr = typeof url === "string" ? url : (url instanceof URL ? url.href : url.url);
@@ -36,6 +39,7 @@ function mockFetch(handler: (url: string, init?: RequestInit,) => Response | Pro
   Object.defineProperty(globalThis, "fetch", { value: mocked, writable: true, configurable: true, },);
 }
 
+/** */
 function restoreFetch() {
   Object.defineProperty(globalThis, "fetch", { value: originalFetch, writable: true, configurable: true, },);
 }
@@ -127,11 +131,13 @@ describe("EmotionAvatarService", () => {
 
     /** Stub AvatarService.prototype.createAvatar + disable FK to skip DB writes */
     let origCreateAvatar: (...args: any[]) => any;
+    /** */
     function stubDbWrites() {
       origCreateAvatar = AvatarService.prototype.createAvatar;
       AvatarService.prototype.createAvatar = mock(async () => randomUUID());
       sqlite.run("PRAGMA foreign_keys = OFF",);
     }
+    /** */
     function restoreDbWrites() {
       AvatarService.prototype.createAvatar = origCreateAvatar;
       sqlite.run("PRAGMA foreign_keys = ON",);

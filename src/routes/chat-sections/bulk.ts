@@ -12,6 +12,8 @@ import { type HandlerOpts, OptionalNullableString, } from "./types";
  * Bulk section assignment — move an entire section's messages (or every
  * message in the chat) onto a target section in one round trip. Complements
  * the per-message `assign` route for the story-map "move all here" action.
+ * @param opts
+ * @param prefix
  */
 export function bulkAssignRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

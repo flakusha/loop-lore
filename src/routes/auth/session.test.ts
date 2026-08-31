@@ -34,6 +34,9 @@ beforeEach(async () => {
   await insertUsers(db, "Mallory", "mallory", { id: "user-mallory", } as never,);
 },);
 
+/**
+ * @param cookieValue
+ */
 function makeRequestWithCookie(cookieValue: string,): Request {
   return new Request("http://localhost/api/auth/me", {
     headers: { Cookie: `${TOKEN_COOKIE}=${cookieValue}`, },
@@ -42,6 +45,9 @@ function makeRequestWithCookie(cookieValue: string,): Request {
 
 // Build a token with the same wire format as signJwt but with an arbitrary
 // `sub` claim and NO signature — the attacker's forgery attempt.
+/**
+ * @param sub
+ */
 function forgeTokenWithSub(sub: string,): string {
   const headerB64 = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT", },),).toString("base64url",);
   const payloadB64 = Buffer.from(JSON.stringify({

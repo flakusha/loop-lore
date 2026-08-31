@@ -7,6 +7,7 @@
 
 import type { SdModelType, } from "../../db/enums";
 
+/** */
 export interface LlamaCppAutoStartConfig {
   /** Master toggle — false = external server expected */
   enabled: boolean;
@@ -85,6 +86,7 @@ export interface LlamaCppAutoStartConfig {
   extraArgs?: string[];
 }
 
+/** */
 export interface SdCppAutoStartConfig {
   /** Master toggle — false = external server expected */
   enabled: boolean;
@@ -163,6 +165,7 @@ export interface SdCppAutoStartConfig {
   extraArgs?: string[];
 }
 
+/** */
 export interface LlamaSwapAutoStartConfig {
   /** Enable auto-start of llama-swap proxy */
   enabled: boolean;
@@ -170,6 +173,7 @@ export interface LlamaSwapAutoStartConfig {
   configPath: string;
 }
 
+/** */
 export interface AutoStartConfig {
   /** Spawn llama.cpp server as child process at startup */
   llamaCpp?: LlamaCppAutoStartConfig;

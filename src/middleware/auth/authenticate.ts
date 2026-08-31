@@ -23,6 +23,7 @@ import { getOrCreateSoloUserForAuth, } from "./solo-user";
 import type { AuthenticateOpts, } from "./types";
 
 let _log: ReturnType<typeof getLogger> | null = null;
+/** */
 function getLog() {
   try {
     _log ??= getLogger().child({ module: "auth", },);
@@ -32,7 +33,10 @@ function getLog() {
   }
 }
 
-/** Extract the raw JWT from the Authorization header or cookie. */
+/**
+ * Extract the raw JWT from the Authorization header or cookie.
+ * @param request
+ */
 function extractToken(request: Request,): string | null {
   const authHeader = request.headers.get("Authorization",);
   if (authHeader?.startsWith("Bearer ",)) {
@@ -49,7 +53,6 @@ function extractToken(request: Request,): string | null {
 
 /**
  * Verify a JWT against the session table and return the user context.
- *
  * @param database - App database
  * @param rawToken - JWT from the request
  * @param secret - JWT signing secret
@@ -120,6 +123,10 @@ async function verifyTokenContext(
  * that user's context. Otherwise, fall back to solo/demo user if
  * authConfig.required === false. If auth is required and no valid
  * token is provided, return 401.
+ * @param root0
+ * @param root0.request
+ * @param root0.database
+ * @param root0.authConfig
  */
 export async function authenticate({
   request,

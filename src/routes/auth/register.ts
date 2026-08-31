@@ -13,7 +13,12 @@ import { uid, } from "../../utils";
 import { HttpStatus, jsonError, } from "../http-utils";
 import { errorHtml, getClientIp, registerLimiter, setTokenCookie, } from "./shared";
 
-/** Hash the password and insert the user row + mirror actor. */
+/**
+ * Hash the password and insert the user row + mirror actor.
+ * @param database
+ * @param username
+ * @param password
+ */
 async function insertRegisteredUser(
   database: Kysely<DB>,
   username: string,
@@ -59,7 +64,12 @@ async function insertRegisteredUser(
   return userId;
 }
 
-/** Enforce registration-open + rate-limit gates. */
+/**
+ * Enforce registration-open + rate-limit gates.
+ * @param config
+ * @param ip
+ * @param t
+ */
 function checkRegisterGate(
   config: Config,
   ip: string,
@@ -85,6 +95,13 @@ function checkRegisterGate(
   return null;
 }
 
+/**
+ * @param request
+ * @param database
+ * @param config
+ * @param t
+ * @param peerIp
+ */
 async function handleRegister(
   request: Request,
   database: Kysely<DB>,
@@ -125,7 +142,10 @@ async function handleRegister(
   return createSessionAndCookie(request, database, config, userId, UserRole.User, ip, t,);
 }
 
-/** Parse the registration/login form body, or null when malformed. */
+/**
+ * Parse the registration/login form body, or null when malformed.
+ * @param request
+ */
 async function parseCredentials(
   request: Request,
 ): Promise<URLSearchParams | null> {
@@ -136,7 +156,16 @@ async function parseCredentials(
   }
 }
 
-/** Create a session row, enforce maxSessionsPerUser cap, sign a JWT, and return the redirect response. */
+/**
+ * Create a session row, enforce maxSessionsPerUser cap, sign a JWT, and return the redirect response.
+ * @param request
+ * @param database
+ * @param config
+ * @param userId
+ * @param role
+ * @param ip
+ * @param t
+ */
 async function createSessionAndCookie(
   request: Request,
   database: Kysely<DB>,

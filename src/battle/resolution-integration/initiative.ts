@@ -9,7 +9,11 @@ import {
   rollDice,
 } from "../integration-schemas";
 
-/** Make an initiative roll */
+/**
+ * Make an initiative roll
+ * @param dexterity
+ * @param modifiers
+ */
 export function makeInitiativeRoll(
   dexterity: number,
   modifiers: RollModifier[] = [],

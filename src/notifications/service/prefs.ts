@@ -10,6 +10,9 @@ import {
   type NotificationPreferences,
 } from "./types";
 
+/**
+ * @param stored
+ */
 function mergePrefs(stored?: Partial<NotificationPreferences>,): NotificationPreferences {
   const prefs: NotificationPreferences = {
     enabled: { ...DEFAULT_PREFS.enabled, },
@@ -27,7 +30,11 @@ function mergePrefs(stored?: Partial<NotificationPreferences>,): NotificationPre
   return prefs;
 }
 
-/** Read the user's notification preferences, merging over defaults. */
+/**
+ * Read the user's notification preferences, merging over defaults.
+ * @param db
+ * @param userId
+ */
 export async function getPrefs(
   db: Kysely<DB>,
   userId: string,
@@ -42,7 +49,14 @@ export async function getPrefs(
   return mergePrefs(stored,);
 }
 
-/** Merge and persist the user's notification preferences. */
+/**
+ * Merge and persist the user's notification preferences.
+ * @param db
+ * @param userId
+ * @param patch
+ * @param patch.enabled
+ * @param patch.mutedWorlds
+ */
 export async function setPrefs(
   db: Kysely<DB>,
   userId: string,

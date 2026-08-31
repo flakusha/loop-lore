@@ -11,6 +11,10 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { auditQuery, requireAdminUsers, requireModerationReview, userIdParam, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function auditRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
 

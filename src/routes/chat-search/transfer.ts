@@ -7,6 +7,10 @@ import { forbiddenResponse as forbidden, jsonError, jsonResponse, requireUserId,
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function transferRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

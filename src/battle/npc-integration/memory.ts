@@ -6,7 +6,12 @@ import type {
   NPCPersonality,
 } from "./types";
 
-/** Check if NPC would remember a battle */
+/**
+ * Check if NPC would remember a battle
+ * @param personality
+ * @param battleOutcome
+ * @param opponentLevel
+ */
 export function shouldRememberBattle(
   personality: NPCPersonality,
   battleOutcome: "victory" | "defeat" | "draw",
@@ -27,7 +32,14 @@ export function shouldRememberBattle(
   return Math.random() < Math.min(1, totalChance,);
 }
 
-/** Create battle memory from encounter */
+/**
+ * Create battle memory from encounter
+ * @param battleId
+ * @param outcome
+ * @param opponents
+ * @param opponentLevel
+ * @param npcLevel
+ */
 export function createBattleMemory(
   battleId: string,
   outcome: "victory" | "defeat" | "draw",

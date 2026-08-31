@@ -26,6 +26,10 @@ const ActorIdLocationTraitParams = t.Object({
   traitName: t.String(),
 },);
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function locationTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const traitsService = TraitsService(database,);

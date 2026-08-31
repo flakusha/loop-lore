@@ -46,6 +46,8 @@ import { handleImageGeneration, } from "./image-gen-route";
  * stream would throw "Body already used". See
  * BUG-asset-link-share-json-routes-500-body-already-used-elysia-su
  * for the upstream precedent (asset-links fix 5a647564).
+ * @param ctx
+ * @param ctx.body
  */
 function readBody(ctx: { body: unknown },): unknown {
   return ctx.body;
@@ -53,6 +55,11 @@ function readBody(ctx: { body: unknown },): unknown {
 
 // ── Plugin ───────────────────────────────────────────────────
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ */
 export function generationRoutes({ database, config, }: { database: Kysely<DB>; config: Config },): Elysia {
   const app = new Elysia({ name: "generation", },);
 

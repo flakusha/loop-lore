@@ -15,6 +15,7 @@ import { updateRoutes, } from "./update";
  * Characters route module — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`characters`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
+ * @param opts
  */
 export function charactersRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "characters", },)

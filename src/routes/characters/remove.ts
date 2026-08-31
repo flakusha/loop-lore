@@ -10,6 +10,10 @@ import {
 import { HttpStatus, jsonError, jsonNoContent, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function removeRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

@@ -12,7 +12,12 @@ import type {
   TemplateContext,
 } from "./types";
 
-/** System prompt templates per model family group */
+/**
+ * System prompt templates per model family group
+ * @param promptFormat
+ * @param detail
+ * @param maxTokenHint
+ */
 function systemPromptForFamily(
   promptFormat: PromptFormat,
   detail: DetailLevel,
@@ -58,7 +63,11 @@ function systemPromptForFamily(
   }
 }
 
-/** Build a role-switch system message for image prompt generation */
+/**
+ * Build a role-switch system message for image prompt generation
+ * @param profile
+ * @param detail
+ */
 export function buildImageSystemPrompt(profile: ImageModelProfile, detail: DetailLevel,): string {
   const format = profile.promptFormat;
   const content = systemPromptForFamily(format, detail, profile.maxTokenHint,);
@@ -74,6 +83,7 @@ export function buildImageSystemPrompt(profile: ImageModelProfile, detail: Detai
   ].join(" ",);
 }
 
+/** */
 export interface ImagePromptMessage {
   role: "system" | "user";
   content: string;
@@ -87,6 +97,10 @@ export interface ImagePromptMessage {
  *   instant:   system ~80-120 + user ~200-400 = ~280-520
  *   balanced:  system ~100-150 + user ~400-800 = ~500-950
  *   detailed:  system ~120-180 + user ~800-1600 = ~920-1780
+ * @param mode
+ * @param detail
+ * @param ctx
+ * @param opts
  */
 export function buildImagePromptMessages(
   mode: SdGenMode,
@@ -107,6 +121,10 @@ export function buildImagePromptMessages(
 /**
  * Build image prompt messages and return everything needed in one call.
  * Convenience wrapper for calling code.
+ * @param mode
+ * @param detail
+ * @param ctx
+ * @param opts
  */
 export function buildImagePrompt(
   mode: SdGenMode,

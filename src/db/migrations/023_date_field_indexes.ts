@@ -12,6 +12,9 @@
  */
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<any>,): Promise<void> {
   // ── Users ──────────────────────────────────────────────────
   await database.schema
@@ -254,6 +257,9 @@ export async function up(database: Kysely<any>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<any>,): Promise<void> {
   // Drop all date indexes in reverse order
   await database.schema.dropIndex("idx_assets_created_at",).execute();

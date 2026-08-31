@@ -9,6 +9,10 @@ import {
 import { jsonPaginated, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function listRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

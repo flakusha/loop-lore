@@ -20,6 +20,10 @@ import { gmGuidanceRoutes, } from "./gm-guidance";
 import { promptTemplateRoutes, } from "./prompt-template";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

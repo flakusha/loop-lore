@@ -18,6 +18,8 @@ import { join, } from "node:path";
  * Build a minimal valid PNG buffer with correct IHDR dimensions.
  *
  * Structure: signature(8) + IHDR chunk(25) + IEND chunk(12)
+ * @param width
+ * @param height
  */
 export function makeMinimalPng(width = 2, height = 1,): Buffer {
   const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10,],);
@@ -45,6 +47,9 @@ export function makeMinimalPng(width = 2, height = 1,): Buffer {
  * Build a minimal valid PNG with a tEXt caption chunk.
  *
  * Structure: signature + IHDR + tEXt("Description\0{caption}") + IEND
+ * @param caption
+ * @param width
+ * @param height
  */
 export function makeMinimalPngWithCaption(
   caption: string,
@@ -84,6 +89,8 @@ export function makeMinimalPngWithCaption(
  * Build a minimal valid JPEG buffer with SOF0 dimensions.
  *
  * Structure: SOI + APP0 + SOF0(width, height)
+ * @param width
+ * @param height
  */
 export function makeMinimalJpeg(width = 3, height = 4,): Buffer {
   const soi = Buffer.from([0xFF, 0xD8,],);
@@ -130,6 +137,9 @@ export function makeMinimalJpeg(width = 3, height = 4,): Buffer {
  * Build a minimal valid JPEG with a COM (comment) caption.
  *
  * Structure: SOI + APP0 + COM(caption) + SOF0
+ * @param caption
+ * @param width
+ * @param height
  */
 export function makeMinimalJpegWithCaption(
   caption: string,
@@ -186,6 +196,8 @@ export function makeMinimalJpegWithCaption(
  * Build a minimal valid WebP buffer with VP8 keyframe dimensions.
  *
  * Structure: RIFF(12) + VP8 chunk(14 pad + 2w + 2h + 2 rest)
+ * @param width
+ * @param height
  */
 export function makeMinimalWebp(width = 5, height = 6,): Buffer {
   const riff = Buffer.from([0x52, 0x49, 0x46, 0x46,],); // "RIFF"
@@ -209,6 +221,7 @@ export function makeMinimalWebp(width = 5, height = 6,): Buffer {
 /**
  * Load a real image fixture from test-fixtures/images/ directory.
  * Returns null if file not found.
+ * @param name
  */
 export function loadFixture(name: string,): Buffer | null {
   try {

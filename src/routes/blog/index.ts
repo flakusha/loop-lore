@@ -13,6 +13,7 @@ import { blogRagRoutes, } from "./rag";
  * Blog route module — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`blog`) is preserved so the
  * `register-plugins.ts` wiring is unchanged.
+ * @param opts
  */
 export function blogRoutes(opts: HandlerOpts,) {
   return (

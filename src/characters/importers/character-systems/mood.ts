@@ -10,7 +10,14 @@ import { MoodService, } from "../../services/mood-service";
 import { errMsg, } from "../../shared/character-systems-utils";
 import type { CharacterSystemsImportResult, } from "./types";
 
-/** Import mood into the character systems importer result. */
+/**
+ * Import mood into the character systems importer result.
+ * @param db
+ * @param actorId
+ * @param data
+ * @param result
+ * @param worldId
+ */
 export async function importMood(
   db: Kysely<DB>,
   actorId: string,

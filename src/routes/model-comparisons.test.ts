@@ -13,6 +13,10 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { modelComparisonsRoutes, } from "./model-comparisons";
 
+/**
+ * @param db
+ * @param userId
+ */
 function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-model-comparisons", },)
     .derive(() => ({ userId, }))

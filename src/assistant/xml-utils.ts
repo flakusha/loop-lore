@@ -26,10 +26,12 @@
 
 import { toBase64, } from "../utils/base64";
 
+/** */
 export type WrapperFormat = "xml" | "fence" | "sentinel";
 
 let _sessionNonce: string | null = null;
 
+/** */
 export function getSessionNonce(): string {
   if (!_sessionNonce) {
     const bytes = new Uint8Array(12,);
@@ -41,10 +43,16 @@ export function getSessionNonce(): string {
   return _sessionNonce;
 }
 
+/**
+ * @param content
+ */
 export function escapeXml(content: string,): string {
   return content.replaceAll("&", "&amp;",).replaceAll("<", "&lt;",).replaceAll(">", "&gt;",);
 }
 
+/**
+ * @param content
+ */
 function escapeFence(content: string,): { escaped: string; fenceLen: number } {
   let maxBackticks = 0;
   const match = content.match(/`{3,}/g,);
@@ -57,23 +65,39 @@ function escapeFence(content: string,): { escaped: string; fenceLen: number } {
   return { escaped: content, fenceLen, };
 }
 
+/**
+ * @param content
+ * @param tag
+ */
 function escapeSentinel(content: string, tag: string,): string {
   return content
     .replaceAll(new RegExp(`<<${tag}>>`, "g",), () => `[${tag}]`,)
     .replaceAll(new RegExp(`<</${tag}>>`, "g",), () => `[/${tag}]`,);
 }
 
+/**
+ * @param tag
+ * @param content
+ */
 function wrapXml(tag: string, content: string,): string {
   const safe = escapeXml(content,);
   return `<${tag}>\n${safe}\n</${tag}>`;
 }
 
+/**
+ * @param tag
+ * @param content
+ */
 function wrapFence(tag: string, content: string,): string {
   const { escaped, fenceLen, } = escapeFence(content,);
   const fence = "`".repeat(fenceLen,);
   return `${fence}${tag}\n${escaped}\n${fence}`;
 }
 
+/**
+ * @param tag
+ * @param content
+ */
 function wrapSentinel(tag: string, content: string,): string {
   const safe = escapeSentinel(content, tag,);
   return `<<${tag}>>\n${safe}\n<</${tag}>>`;
@@ -82,7 +106,6 @@ function wrapSentinel(tag: string, content: string,): string {
 /**
  * Wrap a section's content with the given delimiter format.
  * Content is escaped per format to prevent delimiter injection.
- *
  * @param tag     Section tag name (e.g. "lore", "memory_context")
  * @param content The section's textual content
  * @param format  Wrapper format — "xml" (default), "fence", or "sentinel"
@@ -105,6 +128,8 @@ export function wrapContent(tag: string, content: string, format: WrapperFormat 
 /**
  * Convenience alias — wraps content in XML tags. Kept for backward compatibility
  * with existing section builders. Calls wrapContent(tag, content, "xml").
+ * @param tag
+ * @param content
  */
 export function wrapSection(tag: string, content: string,): string {
   return wrapContent(tag, content, "xml",);

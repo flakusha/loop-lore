@@ -13,7 +13,6 @@
  * - Template system for common edit operations
  * - Integration with generation pipeline
  * - Undo/redo support for edit chains
- *
  * @module generation/image-edit-commands
  */
 
