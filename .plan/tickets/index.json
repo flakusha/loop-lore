@@ -126,18 +126,6 @@
     "git_issue": "20354a1",
     "status": "done"
   },
-  "BUG-APP-REGISTERPLUGINS-ACCEPTS-ASYNCSTORE-BUT-NEVER-USES-IT": {
-    "hash": "3638006",
-    "git_issue": "3638006",
-    "extid": "BUG-APP-REGISTERPLUGINS-ACCEPTS-ASYNCSTORE-BUT-NEVER-USES-IT",
-    "type": "BUG",
-    "title": "app: registerPlugins accepts asyncStore but never uses it",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it.md"
-  },
   "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA": {
     "hash": "64464bf",
     "extid": "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA",
@@ -578,18 +566,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-im-adapter-abstraction-duplicated-protocoladapter-vs-so.md"
   },
-  "BUG-CHAT-INJECTNARRATION-SILENTLY-SWALLOWS-ALL-ERRORS-SILENT-CAT": {
-    "hash": "de1981c",
-    "git_issue": "de1981c",
-    "extid": "BUG-CHAT-INJECTNARRATION-SILENTLY-SWALLOWS-ALL-ERRORS-SILENT-CAT",
-    "type": "BUG",
-    "title": "chat: injectNarration silently swallows all errors (silent catch)",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat.md"
-  },
   "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
     "hash": "61c7072",
     "extid": "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE",
@@ -869,18 +845,6 @@
     "source": ".plan/tickets/BUG-consent-state-not-persisted-in-memory-only.md",
     "git_issue": "5f00999"
   },
-  "BUG-CONTENT-HOOKS-TS-MISSING-IMPORTS-BREAKS-TYPECHECK": {
-    "hash": "6cae038",
-    "git_issue": "6cae038",
-    "extid": "BUG-CONTENT-HOOKS-TS-MISSING-IMPORTS-BREAKS-TYPECHECK",
-    "type": "BUG",
-    "title": "content-hooks.ts missing imports breaks typecheck",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-content-hooks-ts-missing-imports-breaks-typecheck.md"
-  },
   "BUG-CONTEXT-WINDOW-TRIM-KEEPS-OLDEST-MESSAGES-DROPS-NEWEST-WHEN-": {
     "hash": "65693a3",
     "extid": "BUG-CONTEXT-WINDOW-TRIM-KEEPS-OLDEST-MESSAGES-DROPS-NEWEST-WHEN-",
@@ -917,42 +881,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-crdt-conflict-policy-missing-leader-vs-swarm-precedence-and-.md",
     "status": "not-yet-implemented"
-  },
-  "BUG-CRYPTO-ACTIVITYPUB-KEY-ROTATION-IS-NON-ATOMIC-INSERT-FAILURE": {
-    "hash": "af75120",
-    "git_issue": "af75120",
-    "extid": "BUG-CRYPTO-ACTIVITYPUB-KEY-ROTATION-IS-NON-ATOMIC-INSERT-FAILURE",
-    "type": "BUG",
-    "title": "crypto: ActivityPub key rotation is non-atomic; insert failure drops all signing keys",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-crypto-activitypub-key-rotation-is-non-atomic-insert-failure.md"
-  },
-  "BUG-CRYPTO-ASSET-RE-ENCRYPTION-RUNS-INSIDE-DB-TRANSACTION-ROLLBA": {
-    "hash": "2fa7280",
-    "git_issue": "2fa7280",
-    "extid": "BUG-CRYPTO-ASSET-RE-ENCRYPTION-RUNS-INSIDE-DB-TRANSACTION-ROLLBA",
-    "type": "BUG",
-    "title": "crypto: asset re-encryption runs inside DB transaction; rollback orphans assets",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-crypto-asset-re-encryption-runs-inside-db-transaction-rollba.md"
-  },
-  "BUG-CRYPTO-ROTATEACTORKEYANDREENCRYPT-RETURNS-SENTINEL-STRING-RO": {
-    "hash": "e394375",
-    "git_issue": "e394375",
-    "extid": "BUG-CRYPTO-ROTATEACTORKEYANDREENCRYPT-RETURNS-SENTINEL-STRING-RO",
-    "type": "BUG",
-    "title": "crypto: rotateActorKeyAndReEncrypt returns sentinel string rotated for oldKeyId",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-crypto-rotateactorkeyandreencrypt-returns-sentinel-string-ro.md"
   },
   "BUG-CSP-UNSAFE-INLINE-DEFEATS-PER-REQUEST-NONCE": {
     "hash": "b2fa212",
@@ -1300,31 +1228,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h.md"
   },
-  "BUG-FIX-CSRF-EXTRACT-CSRFPLUGIN-FACTORY-SO-TESTS-EXERCISE-THE-PR": {
-    "hash": "27c8db7",
-    "git_issue": "27c8db7",
-    "extid": "BUG-FIX-CSRF-EXTRACT-CSRFPLUGIN-FACTORY-SO-TESTS-EXERCISE-THE-PR",
-    "type": "BUG",
-    "title": "fix(csrf): extract csrfPlugin factory so tests exercise the production wiring",
-    "label": "bug",
-    "priority": "Medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md",
-    "status": "done"
-  },
-  "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO": {
-    "hash": "6914009",
-    "git_issue": "6914009",
-    "extid": "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO",
-    "type": "BUG",
-    "title": "frontend: chat-seen state broken — null actorId, dead popover, polling leak",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po.md"
-  },
   "BUG-FRONTEND-DEAD-CSRF-BEARER-HEADER-MACHINERY": {
     "hash": "0fea62e",
     "git_issue": "0fea62e",
@@ -1349,18 +1252,6 @@
     "source": ".plan/tickets/BUG-frontend-minor-bugs-batch.md",
     "git_issue": "aae9870",
     "status": "done"
-  },
-  "BUG-FRONTEND-MUSIC-EMBED-FALLBACK-ESC-ALLOWS-STORED-XSS-VIA-ATTR": {
-    "hash": "e7e5620",
-    "git_issue": "e7e5620",
-    "extid": "BUG-FRONTEND-MUSIC-EMBED-FALLBACK-ESC-ALLOWS-STORED-XSS-VIA-ATTR",
-    "type": "BUG",
-    "title": "frontend: music-embed fallback esc() allows stored XSS via attribute breakout and javascript: URLs",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-frontend-music-embed-fallback-esc-allows-stored-xss-via-attr.md"
   },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
@@ -1634,8 +1525,8 @@
     "source": ".plan/tickets/BUG-http1handler-send-is-a-silent-no-op.md"
   },
   "BUG-IDEMPOTENCY-CACHE-KEY-LACKS-USER-SCOPE-CROSS-USER-RESPONSE-R": {
-    "hash": "54c6ba4",
-    "git_issue": "54c6ba4",
+    "hash": "6361c0d",
+    "git_issue": "6361c0d",
     "extid": "BUG-IDEMPOTENCY-CACHE-KEY-LACKS-USER-SCOPE-CROSS-USER-RESPONSE-R",
     "type": "BUG",
     "title": "Idempotency cache key lacks user scope — cross-user response replay",
@@ -1969,18 +1860,6 @@
     "source": ".plan/tickets/BUG-middleware-requestid-dual-write-last-wins.md",
     "status": "fixed-in-worktree"
   },
-  "BUG-MIGRATION-ACTIVITYPUB-ACTOR-KEYS-FK-MISSING-ONDELETE-CASCADE": {
-    "hash": "42aa293",
-    "git_issue": "42aa293",
-    "extid": "BUG-MIGRATION-ACTIVITYPUB-ACTOR-KEYS-FK-MISSING-ONDELETE-CASCADE",
-    "type": "BUG",
-    "title": "migration: activitypub_actor_keys FK missing onDelete cascade",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
-  },
   "BUG-MIGRATION-FILES-069-NSFW-CONSENT-STATE-AND-069-ACTIVITYPUB-S": {
     "hash": "dc2bcaf",
     "git_issue": "dc2bcaf",
@@ -2182,18 +2061,6 @@
     "source": ".plan/tickets/BUG-nsfw-gate-ordering-inverted-moderation-hooks-run-after-llm-g.md",
     "status": "done"
   },
-  "BUG-NSFW-LEVELTORATING-MAPS-UNKNOWN-LEVELS-TO-SFW-FAIL-OPEN": {
-    "hash": "c4cd414",
-    "git_issue": "c4cd414",
-    "extid": "BUG-NSFW-LEVELTORATING-MAPS-UNKNOWN-LEVELS-TO-SFW-FAIL-OPEN",
-    "type": "BUG",
-    "title": "nsfw: levelToRating maps unknown levels to SFW (fail-open)",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-leveltorating-maps-unknown-levels-to-sfw-fail-open.md"
-  },
   "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY": {
     "hash": "bd2b3b5",
     "extid": "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY",
@@ -2233,18 +2100,6 @@
     "git_issue": "09b4d62",
     "status": "done"
   },
-  "BUG-NSFW-NSFWHOOK-BLOCKED-BY-OVERRIDE-AND-BLOCKED-BY-ERROR-PATHS": {
-    "hash": "1163d36",
-    "git_issue": "1163d36",
-    "extid": "BUG-NSFW-NSFWHOOK-BLOCKED-BY-OVERRIDE-AND-BLOCKED-BY-ERROR-PATHS",
-    "type": "BUG",
-    "title": "nsfw: NsfwHook blocked-by-override and blocked-by-error paths omit actorId/chatId",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-nsfwhook-blocked-by-override-and-blocked-by-error-paths.md"
-  },
   "BUG-NSFW-PREFERENCES-ADMIN-READ-MATERIALIZES-ROW": {
     "hash": "pending",
     "extid": "BUG-NSFW-PREFERENCES-ADMIN-READ-MATERIALIZES-ROW",
@@ -2257,18 +2112,6 @@
     "source": ".plan/tickets/BUG-nsfw-preferences-admin-read-materializes-row.md",
     "git_issue": "3cf439b",
     "status": "open"
-  },
-  "BUG-NSFW-RECORDNSFWCONSENT-INSERT-UPDATE-NOT-WRAPPED-IN-A-TRANSA": {
-    "hash": "66f16bd",
-    "git_issue": "66f16bd",
-    "extid": "BUG-NSFW-RECORDNSFWCONSENT-INSERT-UPDATE-NOT-WRAPPED-IN-A-TRANSA",
-    "type": "BUG",
-    "title": "nsfw: recordNsfwConsent INSERT+UPDATE not wrapped in a transaction",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa.md"
   },
   "BUG-NSFW-REVIEWAPPEAL-AUTO-REVERSES-ACTIONS": {
     "hash": "b3c47b2",
@@ -2507,18 +2350,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-.md"
   },
-  "BUG-ROUTES-MESSAGE-SEEN-POST-DELETE-TRUSTS-CLIENT-ACTORID-IDOR-A": {
-    "hash": "f0824a8",
-    "git_issue": "f0824a8",
-    "extid": "BUG-ROUTES-MESSAGE-SEEN-POST-DELETE-TRUSTS-CLIENT-ACTORID-IDOR-A",
-    "type": "BUG",
-    "title": "routes: message-seen POST/DELETE trusts client actorId (IDOR) and races on insert",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-routes-message-seen-post-delete-trusts-client-actorid-idor-a.md"
-  },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
     "extid": "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-",
@@ -2594,18 +2425,6 @@
     "epic": "epic-i18n",
     "tags": [],
     "source": ".plan/tickets/BUG-server-view-date-display-ignores-user-timezone-locale.md"
-  },
-  "BUG-SERVICES-TRADECORE-VALIDATELINES-LACKS-WORLD-ID-FILTER-CROSS": {
-    "hash": "a42f171",
-    "git_issue": "a42f171",
-    "extid": "BUG-SERVICES-TRADECORE-VALIDATELINES-LACKS-WORLD-ID-FILTER-CROSS",
-    "type": "BUG",
-    "title": "services: tradeCore validateLines lacks world_id filter (cross-world item IDOR)",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-services-tradecore-validatelines-lacks-world-id-filter-cross.md"
   },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
     "hash": "3ba1095",
@@ -2742,18 +2561,6 @@
     "git_issue": "7a293c3",
     "status": "done"
   },
-  "BUG-STORY-DESTROY-PARTIAL-QUANTITY-UPDATE-PATH-MISSING-WORLD-ID-": {
-    "hash": "82c405c",
-    "git_issue": "82c405c",
-    "extid": "BUG-STORY-DESTROY-PARTIAL-QUANTITY-UPDATE-PATH-MISSING-WORLD-ID-",
-    "type": "BUG",
-    "title": "story: destroy() partial-quantity update path missing world_id where-clause",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-story-destroy-partial-quantity-update-path-missing-world-id-.md"
-  },
   "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY": {
     "hash": "0ffc5e5",
     "git_issue": "0ffc5e5",
@@ -2815,17 +2622,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d.md",
     "git_issue": "8be98b3"
-  },
-  "BUG-TABLE-BACKEND-REQUEST-ID-COLLISION-OVERWRITES-FOREIGN-ROW": {
-    "hash": "pending",
-    "extid": "BUG-TABLE-BACKEND-REQUEST-ID-COLLISION-OVERWRITES-FOREIGN-ROW",
-    "type": "BUG",
-    "title": "Table backend `request_results.complete`/`fail` overwrite foreign row on request-id collision",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
   },
   "BUG-TAUTOLOGICAL-BROWSER-TEST-ASSERTIONS": {
     "hash": "c8bad7f",
@@ -2938,18 +2734,6 @@
     "tags": [],
     "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
   },
-  "BUG-TRANSPORT-STRICTUINT8-APPLIED-TO-GZIP-PATH-BUT-NOT-ZSTD-BROT": {
-    "hash": "d1f7e0a",
-    "git_issue": "d1f7e0a",
-    "extid": "BUG-TRANSPORT-STRICTUINT8-APPLIED-TO-GZIP-PATH-BUT-NOT-ZSTD-BROT",
-    "type": "BUG",
-    "title": "transport: strictUint8 applied to gzip path but not zstd/brotli",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-transport-strictuint8-applied-to-gzip-path-but-not-zstd-brot.md"
-  },
   "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN": {
     "hash": "02abf8a",
     "extid": "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN",
@@ -3011,18 +2795,6 @@
     "status": "closed",
     "closed_at": "2026-08-22",
     "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
-  },
-  "BUG-VALIDATION-AVATARSELECTIONRULESCHEMA-MISSING-ACTION-FIRST-AN": {
-    "hash": "3fbd1f5",
-    "git_issue": "3fbd1f5",
-    "extid": "BUG-VALIDATION-AVATARSELECTIONRULESCHEMA-MISSING-ACTION-FIRST-AN",
-    "type": "BUG",
-    "title": "validation: AvatarSelectionRuleSchema missing action_first and context_first enum values",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-validation-avatarselectionruleschema-missing-action-first-an.md"
   },
   "BUG-VALIDATION-MIDDLEWARE-LEAKS-RAW-ERR-MESSAGE-IN-500-ENVELOPE": {
     "hash": "50af91c",
@@ -10037,18 +9809,6 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-cross-tool-data-portability-review.md"
-  },
-  "TASK-CRYPTO-ACTIVITYPUB-KEYS-TS-HAS-ZERO-TEST-COVERAGE": {
-    "hash": "18584c8",
-    "git_issue": "18584c8",
-    "extid": "TASK-CRYPTO-ACTIVITYPUB-KEYS-TS-HAS-ZERO-TEST-COVERAGE",
-    "type": "TASK",
-    "title": "crypto: activitypub-keys.ts has zero test coverage",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-crypto-activitypub-keys-ts-has-zero-test-coverage.md"
   },
   "TASK-CRYPTO-ALGORITHM-FACTORY": {
     "hash": "e81c550",
@@ -18637,18 +18397,5 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
-  },
-  "BUG-FIX-CSRF-CTX-SET-HEADERS-APPEND-IS-UNDEFINED-IN-ELYSIA-1-4-H": {
-    "hash": "771e8b34",
-    "git_issue": "771e8b34",
-    "extid": "BUG-FIX-CSRF-CTX-SET-HEADERS-APPEND-IS-UNDEFINED-IN-ELYSIA-1-4-H",
-    "type": "BUG",
-    "title": "fix(csrf): ctx.set.headers.append is undefined in Elysia 1.4 HTTPHeaders",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-fix-csrf-ctx-set-headers-append-is-undefined-in-elysia-1-4-h.md",
-    "status": "done"
   }
 }
