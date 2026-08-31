@@ -22,7 +22,7 @@ import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { resolveSystemPrompt, } from "../prompts";
-import { jsonParseOr, } from "../utils";
+import { clampUnit, jsonParseOr, } from "../utils";
 
 /** GM tool names the detector may resolve to. */
 export const GM_TOOL_NAMES = [
@@ -81,13 +81,16 @@ export function parseGmToolDetection(content: string,): GmToolDetection | null {
   const params = toolCall.params && typeof toolCall.params === "object" && !Array.isArray(toolCall.params,)
     ? (toolCall.params as Record<string, unknown>)
     : {};
-  const confidence = typeof toolCall.confidence === "number" ? toolCall.confidence : 0.5;
+  // Confidence is contractually `[0, 1]`; clamp out-of-range values and fall
+  // back to 0.5 for non-finite input so downstream heuristics that branch on
+  // confidence thresholds cannot be tricked by prompt-injected tool-result JSON.
+  const rawConfidence = typeof toolCall.confidence === "number" ? toolCall.confidence : 0.5;
 
   return {
     requested: name !== "none",
     name: name as GmToolName,
     params,
-    confidence,
+    confidence: clampUnit(rawConfidence,),
     source: "aux-llm",
   };
 }
