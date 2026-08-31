@@ -26,6 +26,14 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     const chatId = this.activeChat;
     log.info("loadMessages", { chatId, },);
     if (!chatId) { return; }
+    // Stop any existing seen-polling timer before re-arming below. Without
+    // this, a rapid chat A→B swap would leave A's 5s setInterval running
+    // (BUG-bug-chat-seen-stopseenpolling-is-never-called-5s-polling-int);
+    // startSeenPolling's `if (this._seenPollTimer) return` guard would then
+    // silently no-op the second arming and we'd leak one timer per chat
+    // switch. Calling stopSeenPolling up front guarantees a single live
+    // timer at any time.
+    this.stopSeenPolling();
     this.loadingMessages = true;
     this.currentPage = 1;
     this.hasMoreMessages = true;
