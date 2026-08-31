@@ -18,9 +18,11 @@ export interface LogEventArgs {
 
 /**
  * Log a mood event.
- *
  * @param args.thisL - The mood service instance
+ * @param root0
+ * @param root0.thisL
  * @param args.opts - Event options
+ * @param root0.opts
  * @returns The created event ID
  */
 export async function logEvent(

@@ -17,7 +17,6 @@ import type {
  * 1. Named entities against known actors, locations, items
  * 2. Specific claims about non-existent entities
  * 3. Invented proper nouns that don't match any DB records
- *
  * @param opts - Check options including DB and text
  * @returns Hallucination analysis with flags
  */

@@ -6,6 +6,7 @@ import type { Kysely, } from "kysely";
  * Adds a model_comparisons table for Q4 model-comparison dashboard.
  * Users can submit preference data (better/worse/same) comparing
  * response models against a reference, with a confidence score.
+ * @param db
  */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
@@ -20,6 +21,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropTable("model_comparisons",).execute();
 }

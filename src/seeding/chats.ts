@@ -20,7 +20,6 @@ import { recordSeedAudit, } from "./audit";
 
 /**
  * Seed chats (with participants) from config.
- *
  * @param database - Kysely instance
  * @param chats - Chat definitions (participants referenced by username)
  * @param userById - Username → user id map

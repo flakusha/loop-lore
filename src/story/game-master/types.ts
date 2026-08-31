@@ -46,6 +46,7 @@ export interface GmState {
 
 // ── Story turn row type (from DB) ──────────────────────────
 
+/** */
 export interface StoryTurnRecord {
   id: string;
   turn_number: number;
@@ -67,6 +68,7 @@ export interface StoryTurnRecord {
   gm_decision: string | null;
 }
 
+/** */
 export interface BuildResultOptions {
   turn: StoryTurnRecord;
   response: string;
@@ -79,6 +81,7 @@ export interface BuildResultOptions {
 
 // ── GM Decision Result ──────────────────────────────────────
 
+/** */
 export interface GmTurnResult {
   turnId: string;
   turnNumber: number;

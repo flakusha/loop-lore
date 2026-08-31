@@ -12,6 +12,7 @@
 
 // ── Types ──────────────────────────────────────────────────
 
+/** */
 export interface StreamEvent {
   type: string;
   html: string;
@@ -27,6 +28,7 @@ type ErrorSubscriber = (error: string,) => void;
 const MAX_EVENTS = 500;
 const MAX_BYTES = 1_048_576; // 1 MB
 
+/** */
 export class StreamBuffer {
   private events: StreamEvent[] = [];
   private sequence = 0;
@@ -37,7 +39,11 @@ export class StreamBuffer {
   private readonly onDone = new Set<DoneSubscriber>();
   private readonly onError = new Set<ErrorSubscriber>();
 
-  /** Append an event to the buffer. Returns sequence number for replay tracking. */
+  /**
+   * Append an event to the buffer. Returns sequence number for replay tracking.
+   * @param type
+   * @param html
+   */
   append(type: string, html: string,): number {
     const seq = this.sequence++;
     const event: StreamEvent = { type, html, sequence: seq, };
@@ -60,13 +66,19 @@ export class StreamBuffer {
     for (const sub of this.onDone) { sub(); }
   }
 
-  /** Signal generation failed */
+  /**
+   * Signal generation failed
+   * @param error
+   */
   signalError(error: string,): void {
     this._error = error;
     for (const sub of this.onError) { sub(error,); }
   }
 
-  /** Replay events from a given sequence number (0 = all) */
+  /**
+   * Replay events from a given sequence number (0 = all)
+   * @param fromSequence
+   */
   replay(fromSequence = 0,): StreamEvent[] {
     const out: StreamEvent[] = [];
     for (const e of this.events) {
@@ -75,7 +87,12 @@ export class StreamBuffer {
     return out;
   }
 
-  /** Subscribe to live events. Returns unsubscribe function. */
+  /**
+   * Subscribe to live events. Returns unsubscribe function.
+   * @param cb
+   * @param onDone
+   * @param onError
+   */
   subscribe(cb: EventSubscriber, onDone?: DoneSubscriber, onError?: ErrorSubscriber,): () => void {
     this.onEvent.add(cb,);
     if (onDone) { this.onDone.add(onDone,); }
@@ -87,18 +104,22 @@ export class StreamBuffer {
     };
   }
 
+  /** */
   get isDone(): boolean {
     return this._done;
   }
 
+  /** */
   get hasError(): string | null {
     return this._error;
   }
 
+  /** */
   get isEmpty(): boolean {
     return this.events.length === 0;
   }
 
+  /** */
   get currentSequence(): number {
     return this.sequence;
   }
@@ -110,7 +131,10 @@ const MAX_BUFFERS = 1000;
 const chatBuffers = new Map<string, StreamBuffer>();
 const bufferAccessOrder: string[] = [];
 
-/** Move chatId to end of access order (most recently used) */
+/**
+ * Move chatId to end of access order (most recently used)
+ * @param chatId
+ */
 function touchBuffer(chatId: string,): void {
   const idx = bufferAccessOrder.indexOf(chatId,);
   if (idx !== -1) { bufferAccessOrder.splice(idx, 1,); }
@@ -124,7 +148,10 @@ function evictOldestBuffer(): void {
   if (oldest) { chatBuffers.delete(oldest,); }
 }
 
-/** Get or create a buffer for the given chat */
+/**
+ * Get or create a buffer for the given chat
+ * @param chatId
+ */
 export function getOrCreateBuffer(chatId: string,): StreamBuffer {
   let buf = chatBuffers.get(chatId,);
   if (!buf) {
@@ -136,21 +163,31 @@ export function getOrCreateBuffer(chatId: string,): StreamBuffer {
   return buf;
 }
 
-/** Get existing buffer (undefined if none) */
+/**
+ * Get existing buffer (undefined if none)
+ * @param chatId
+ */
 export function getBuffer(chatId: string,): StreamBuffer | undefined {
   const buf = chatBuffers.get(chatId,);
   if (buf) { touchBuffer(chatId,); }
   return buf;
 }
 
-/** Remove a buffer */
+/**
+ * Remove a buffer
+ * @param chatId
+ */
 export function removeBuffer(chatId: string,): void {
   chatBuffers.delete(chatId,);
   const idx = bufferAccessOrder.indexOf(chatId,);
   if (idx !== -1) { bufferAccessOrder.splice(idx, 1,); }
 }
 
-/** Schedule buffer cleanup after a TTL */
+/**
+ * Schedule buffer cleanup after a TTL
+ * @param chatId
+ * @param ttlMs
+ */
 export function scheduleBufferCleanup(chatId: string, ttlMs = 300_000,): void {
   setTimeout(() => {
     removeBuffer(chatId,);

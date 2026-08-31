@@ -10,6 +10,9 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
 import { importLorebook, } from "./lorebook";
 
+/**
+ * @param entries
+ */
 function lorebook(entries: LorebookData["entries"],): LorebookData {
   return { entries, };
 }

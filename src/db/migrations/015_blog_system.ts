@@ -8,6 +8,9 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
     .createTable("blog_posts",)
@@ -86,6 +89,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropTable("blog_rag_sources",).execute();
   await db.schema.dropTable("blog_follows",).execute();

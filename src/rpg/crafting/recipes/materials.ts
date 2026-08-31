@@ -6,7 +6,12 @@ import type { DB, } from "../../../db/schema";
 import { recipeMaterialInsertRows, } from "./helpers";
 import type { CreateRecipeMaterialOpts, } from "./types";
 
-/** Replace all materials for a recipe. */
+/**
+ * Replace all materials for a recipe.
+ * @param db
+ * @param recipeId
+ * @param materials
+ */
 export async function replaceMaterials(
   db: Kysely<DB>,
   recipeId: string,

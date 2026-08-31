@@ -18,6 +18,12 @@ export interface SceneNavigator {
 
 // ── DOM construction helpers ────────────────────────────────
 
+/**
+ * @param scene
+ * @param scene.backgroundUrl
+ * @param settings
+ * @param settings.imageScaling
+ */
 function createBackground(scene: { backgroundUrl?: string }, settings: { imageScaling: string },): HTMLElement {
   const bg = document.createElement("div",);
   bg.className = "vn-background";
@@ -26,6 +32,15 @@ function createBackground(scene: { backgroundUrl?: string }, settings: { imageSc
   return bg;
 }
 
+/**
+ * @param scene
+ * @param scene.role
+ * @param scene.characterName
+ * @param scene.characterAvatar
+ * @param settings
+ * @param settings.layout
+ * @param settings.portraitSize
+ */
 function createPortrait(
   scene: { role: string; characterName: string; characterAvatar?: string },
   settings: { layout: string; portraitSize: number },
@@ -41,6 +56,16 @@ function createPortrait(
   },);
 }
 
+/**
+ * @param scene
+ * @param scene.role
+ * @param scene.characterName
+ * @param scene.thinking
+ * @param settings
+ * @param settings.layout
+ * @param settings.dialogueBoxOpacity
+ * @param textEl
+ */
 function createDialogue(
   scene: { role: string; characterName: string; thinking?: string },
   settings: { layout: string; dialogueBoxOpacity: number },
@@ -77,6 +102,9 @@ function createDialogue(
   return box;
 }
 
+/**
+ * @param navigate
+ */
 function createNav(navigate: SceneNavigator,): HTMLElement {
   const nav = document.createElement("div",);
   nav.className = "vn-nav";
@@ -101,6 +129,10 @@ function createNav(navigate: SceneNavigator,): HTMLElement {
   return nav;
 }
 
+/**
+ * @param scene
+ * @param scene.attachments
+ */
 function createAttachments(
   scene: { attachments?: Array<{ assetId: string; thumbUrl?: string; caption?: string; filename?: string }> },
 ): HTMLElement | null {
@@ -135,6 +167,10 @@ function createAttachments(
   return el;
 }
 
+/**
+ * @param animate
+ * @param navigate
+ */
 export async function renderCurrentScene(
   animate = false,
   navigate: SceneNavigator,

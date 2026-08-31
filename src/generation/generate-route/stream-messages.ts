@@ -13,6 +13,7 @@ import type { GenerationMessage, GenerationToolCall, } from "../types";
  * Map provider tool calls to the canonical GenerationToolCall shape
  * (id + type + function name/arguments) used for both persistence and the
  * assistant tool-call message fed back into the conversation.
+ * @param toolCalls
  */
 export function toGenerationToolCalls(
   toolCalls: { id: string; function: { name: string; arguments: string } }[],
@@ -27,6 +28,8 @@ export function toGenerationToolCalls(
 /**
  * Build the assistant message carrying tool calls to append to the
  * conversation before the next tool-execution round.
+ * @param content
+ * @param toolCalls
  */
 export function buildToolCallAssistantMessage(
   content: string,

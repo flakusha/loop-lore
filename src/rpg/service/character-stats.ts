@@ -4,6 +4,7 @@
 import { log, } from "./log.js";
 import type { RpgServiceDeps, } from "./types.js";
 
+/** */
 export interface CreateCharacterStatsParams {
   actorId: string;
   level?: number;
@@ -29,6 +30,10 @@ export interface CreateCharacterStatsParams {
   aggressionThreshold?: number;
 }
 
+/**
+ * @param deps
+ * @param params
+ */
 export async function createCharacterStats(
   deps: RpgServiceDeps,
   params: CreateCharacterStatsParams,
@@ -74,6 +79,10 @@ export async function createCharacterStats(
   return id;
 }
 
+/**
+ * @param deps
+ * @param actorId
+ */
 export async function getCharacterStats(
   deps: RpgServiceDeps,
   actorId: string,
@@ -145,6 +154,7 @@ export async function getCharacterStats(
   };
 }
 
+/** */
 export interface UpdateCharacterStatsParams {
   hp?: number;
   maxHp?: number;
@@ -171,6 +181,11 @@ export interface UpdateCharacterStatsParams {
   activeEffects?: string;
 }
 
+/**
+ * @param deps
+ * @param statsId
+ * @param params
+ */
 export async function updateCharacterStats(
   deps: RpgServiceDeps,
   statsId: string,

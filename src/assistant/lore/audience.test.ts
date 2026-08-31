@@ -16,6 +16,9 @@ const human: ActorIdentity = {
   locationId: "castle-underground",
 };
 
+/**
+ * @param scope
+ */
 function entry(scope: LoreScope | null,): { audienceScope: LoreScope | null } {
   return { audienceScope: scope, };
 }

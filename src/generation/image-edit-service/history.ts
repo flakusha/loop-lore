@@ -8,6 +8,7 @@ import { applyEdit, } from "./apply";
 import { editHistories, } from "./state";
 import type { ImageEditServiceContext, UndoRedoResult, } from "./types";
 
+/** */
 export interface UndoEditArgs {
   thisL: ImageEditServiceContext;
   assetId: string;
@@ -15,9 +16,10 @@ export interface UndoEditArgs {
 
 /**
  * Undo the last edit on an asset.
- *
  * @param args.thisL - The image edit service instance
  * @param args.assetId - Asset ID to undo edit for
+ * @param root0
+ * @param root0.assetId
  * @returns Undo result with restored asset ID
  */
 export function undoEdit(
@@ -51,6 +53,7 @@ export function undoEdit(
   };
 }
 
+/** */
 export interface RedoEditArgs {
   thisL: ImageEditServiceContext;
   assetId: string;
@@ -58,9 +61,11 @@ export interface RedoEditArgs {
 
 /**
  * Redo a previously undone edit.
- *
  * @param args.thisL - The image edit service instance
+ * @param root0
+ * @param root0.thisL
  * @param args.assetId - Asset ID to redo edit for
+ * @param root0.assetId
  * @returns Redo result with applied asset ID
  */
 export async function redoEdit(
@@ -125,6 +130,7 @@ export async function redoEdit(
   }
 }
 
+/** */
 export interface GetEditHistoryArgs {
   thisL: ImageEditServiceContext;
   assetId: string;
@@ -132,9 +138,10 @@ export interface GetEditHistoryArgs {
 
 /**
  * Get edit history for an asset.
- *
  * @param args.thisL - The image edit service instance
  * @param args.assetId - Asset ID
+ * @param root0
+ * @param root0.assetId
  * @returns Edit history or undefined
  */
 export function getEditHistory(
@@ -143,6 +150,7 @@ export function getEditHistory(
   return editHistories.get(assetId,);
 }
 
+/** */
 export interface ClearEditHistoryArgs {
   thisL: ImageEditServiceContext;
   assetId: string;
@@ -150,9 +158,10 @@ export interface ClearEditHistoryArgs {
 
 /**
  * Clear edit history for an asset.
- *
  * @param args.thisL - The image edit service instance
  * @param args.assetId - Asset ID
+ * @param root0
+ * @param root0.assetId
  */
 export function clearEditHistory(
   { assetId, }: ClearEditHistoryArgs,

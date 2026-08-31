@@ -56,7 +56,6 @@ export interface ConsentState {
 
 /**
  * Create a ConsentState with sensible defaults.
- *
  * @param scope - Actions covered by this consent
  * @returns A new ConsentState with consent not yet given
  */
@@ -74,10 +73,14 @@ export function createConsentState(scope: string[] = [],): ConsentState {
 
 /**
  * Record a consent action in the audit trail and update state.
- *
  * @param state - Current consent state (mutated)
  * @param action - Action to record
  * @param params - Additional details
+ * @param params.actor
+ * @param params.reason
+ * @param params.moderator
+ * @param params.context
+ * @param params.scope
  * @returns Updated state
  */
 export function recordConsentAction(
@@ -128,7 +131,6 @@ export function recordConsentAction(
 
 /**
  * Check if a specific action is covered by the current consent.
- *
  * @param state - Current consent state
  * @param action - Action to check
  * @returns true if consent covers the action and has been given

@@ -8,7 +8,11 @@ import { injectSdCppLora, } from "../lora/discovery-sdserver";
 import type { LoRAModel, } from "../lora/types";
 import { decodeB64, failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
-/** Generate images via sd.cpp — async job submission + polling. */
+/**
+ * Generate images via sd.cpp — async job submission + polling.
+ * @param sdConfig
+ * @param opts
+ */
 export async function generateSDCPP(
   sdConfig: ImageProviderConfig,
   opts: ImageGenOptions,

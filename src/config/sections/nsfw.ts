@@ -14,6 +14,7 @@ export const NSFW_DEFAULTS = {
   useLlmClassifier: true,
 } satisfies NsfwConfig;
 
+/** */
 export class NsfwSection implements NsfwConfig {
   allowNsfw = NSFW_DEFAULTS.allowNsfw;
   nsfwMinAge = NSFW_DEFAULTS.nsfwMinAge;
@@ -22,6 +23,9 @@ export class NsfwSection implements NsfwConfig {
   auditLogging = NSFW_DEFAULTS.auditLogging;
   useLlmClassifier = NSFW_DEFAULTS.useLlmClassifier;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<NsfwConfig>,) {
     Object.assign(this, overrides,);
   }

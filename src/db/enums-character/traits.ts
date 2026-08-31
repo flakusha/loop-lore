@@ -10,6 +10,7 @@ export const TraitCategory = {
   Preferences: "preferences",
   Background: "background",
 } as const;
+/** */
 export type TraitCategory = (typeof TraitCategory)[keyof typeof TraitCategory];
 
 // ── World Trait Categories ────────────────────────────────
@@ -20,4 +21,5 @@ export const WorldTraitCategory = {
   Social: "social",
   Equipment: "equipment",
 } as const;
+/** */
 export type WorldTraitCategory = (typeof WorldTraitCategory)[keyof typeof WorldTraitCategory];

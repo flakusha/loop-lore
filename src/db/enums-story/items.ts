@@ -19,6 +19,7 @@ export const ItemCategory = {
   Misc: "misc",
   Other: "other",
 } as const;
+/** */
 export type ItemCategory = (typeof ItemCategory)[keyof typeof ItemCategory];
 
 export const ItemRarity = {
@@ -30,12 +31,14 @@ export const ItemRarity = {
   Unique: "unique",
   Artifact: "artifact",
 } as const;
+/** */
 export type ItemRarity = (typeof ItemRarity)[keyof typeof ItemRarity];
 
 export const ItemVisibility = {
   Visible: "visible",
   Hidden: "hidden",
 } as const;
+/** */
 export type ItemVisibility = (typeof ItemVisibility)[keyof typeof ItemVisibility];
 
 /** Publication lifecycle for generated/created entities (worlds, locations, items). */
@@ -46,6 +49,7 @@ export const PublicationStatus = {
   Rejected: "rejected",
   Archived: "archived",
 } as const;
+/** */
 export type PublicationStatus = (typeof PublicationStatus)[keyof typeof PublicationStatus];
 
 const publicationStatusDef: StateDef<PublicationStatus> = {

@@ -15,13 +15,14 @@ import type { Kysely, } from "kysely";
  *
  * Creates a temp column, copies data, drops the original, and renames.
  * Handles index rebuilds automatically.
- *
  * @param db - Kysely instance
  * @param table - Table name
  * @param column - Column to convert
  * @param trueValue - Text value when old value was 1 (e.g. "pinned")
  * @param falseValue - Text value when old value was 0 (e.g. "unpinned")
  * @param options - Optional: index rebuild config
+ * @param options.indexColumns
+ * @param options.oldIndexName
  */
 export async function boolToEnum(
   db: Kysely<any>,
@@ -70,7 +71,6 @@ export async function boolToEnum(
 
 /**
  * Convert multiple boolean integer columns to text enums in one call.
- *
  * @param db - Kysely instance
  * @param conversions - Array of conversion specs
  */

@@ -24,16 +24,22 @@ import {
 
 const TEST_DIR = path.join(import.meta.dir, "..", ".test-templates",);
 
+/** */
 function setupTestDir() {
   mkdirSync(path.join(TEST_DIR, "configs", "templates",), { recursive: true, },);
 }
 
+/** */
 function teardownTestDir() {
   if (existsSync(TEST_DIR,)) {
     rmSync(TEST_DIR, { recursive: true, },);
   }
 }
 
+/**
+ * @param name
+ * @param content
+ */
 function writeTemplateFile(name: string, content: string,) {
   writeFileSync(path.join(TEST_DIR, "configs", "templates", name,), content,);
 }

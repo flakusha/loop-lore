@@ -10,7 +10,14 @@ import { RelationshipsService, } from "../../services/relationships-service";
 import { errMsg, } from "../../shared/character-systems-utils";
 import type { CharacterSystemsImportResult, } from "./types";
 
-/** Import relationships into the character systems importer result. */
+/**
+ * Import relationships into the character systems importer result.
+ * @param db
+ * @param actorId
+ * @param data
+ * @param result
+ * @param worldId
+ */
 export async function importRelationships(
   db: Kysely<DB>,
   actorId: string,

@@ -8,6 +8,7 @@ export const DEFAULT_CURRENCY = "gold" as const;
 /** Type of trade — player↔player or player↔NPC. */
 export type TradeType = "player_player" | "player_npc" | "npc_player";
 
+/** */
 export interface TradeResult {
   success: boolean;
   reason?: string;
@@ -18,6 +19,7 @@ export interface TradeResult {
   itemsRequested?: string[];
 }
 
+/** */
 export interface TradeLine {
   worldItemId: string;
   quantity: number;

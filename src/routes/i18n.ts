@@ -15,6 +15,7 @@ import { jsonParseOr, jsonStringifyOr, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
+/** */
 export interface I18nRoutesOpts {
   database: Kysely<DB>;
 }
@@ -24,6 +25,9 @@ export interface I18nRoutesOpts {
  *
  * GET /api/i18n/locales — List supported locales with metadata
  * PATCH /api/i18n/locale — Set user's preferred locale
+ * @param root0
+ * @param root0.database
+ * @param prefix
  */
 export function i18nRoutes({ database, }: I18nRoutesOpts, prefix = "/api",) {
   return new Elysia({ name: "i18n", },)

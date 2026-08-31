@@ -18,6 +18,7 @@ import { sql, } from "kysely";
  *   persistent config,后者 is the volatile scene-level state
  * - parent_chat_id uses SET NULL on delete: side-chat survives parent deletion
  *   (messages become orphaned but chat stays browsable)
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── chat_participants: talkativity + initiative ─────────────
@@ -71,6 +72,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropIndex("idx_chat_mentions_actor",).execute();
   await database.schema.dropIndex("idx_chat_mentions_message",).execute();

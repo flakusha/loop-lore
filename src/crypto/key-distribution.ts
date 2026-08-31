@@ -29,16 +29,26 @@ import { getSmk, } from "./smk";
 // stranded rows under expired keys.
 const RE_ENCRYPT_LIMIT = Number.MAX_SAFE_INTEGER;
 
+/** */
 function log(): Logger {
   return getLogger().child({ module: "key-distribution", },);
 }
 
+/**
+ * @param database
+ * @param chatId
+ */
 export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
   const smk = getSmk();
   if (!smk) { throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",); }
   return deriveChatKeyForChat(database, chatId, smk,);
 }
 
+/**
+ * @param database
+ * @param chatId
+ * @param newParticipantId
+ */
 export async function distributeKeysOnJoin(
   database: Kysely<DB>,
   chatId: string,
@@ -56,6 +66,11 @@ export async function distributeKeysOnJoin(
   return chatKey;
 }
 
+/**
+ * @param database
+ * @param chatId
+ * @param departedParticipantId
+ */
 export async function rotateKeyOnLeave(
   database: Kysely<DB>,
   chatId: string,
@@ -71,11 +86,11 @@ export async function rotateKeyOnLeave(
     .select("actor_id",)
     .where("chat_id", "=", chatId,)
     .execute();
-  /* eslint-disable no-restricted-syntax */
+
   const remainingActors = allActorIds
     .map((r,) => r.actor_id)
     .filter((id,) => id !== departedParticipantId);
-  /* eslint-enable no-restricted-syntax */
+
   if (remainingActors.length === 0) {
     throw new Error("Cannot rotate key: no remaining participants",);
   }
@@ -148,6 +163,10 @@ export async function rotateKeyOnLeave(
   return newChatKey;
 }
 
+/**
+ * @param database
+ * @param chatId
+ */
 export async function resolveChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
   return getChatKey(database, chatId,);
 }

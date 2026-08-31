@@ -3,7 +3,11 @@
 
 import type { CombatWeather, } from "../integration-schemas";
 
-/** Calculate weather visibility */
+/**
+ * Calculate weather visibility
+ * @param weather
+ * @param timeOfDay
+ */
 export function calculateVisibility(
   weather: CombatWeather,
   timeOfDay: number, // 0-23

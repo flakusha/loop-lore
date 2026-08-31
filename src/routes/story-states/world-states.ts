@@ -22,6 +22,11 @@ const worldStatesListResponse = t.Object({
   totalPages: t.Number(),
 },);
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function storyWorldStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-states-world", },)
     .get(`${prefix}/worlds/:worldId/states`, async (ctx: any,) => {

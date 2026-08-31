@@ -58,9 +58,9 @@ Alpine.magic("t", (el: HTMLElement,) => {
 
 // htmx extensions reference `htmx` as a free variable.
 // Bun's require() inlines them in the same module scope where `htmx` is defined.
-// eslint-disable-next-line @typescript-eslint/no-require-imports -- CJS required for htmx extension side effects
+
 require("htmx.org/dist/ext/alpine-morph.js",);
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 require("htmx-ext-sse/sse.js",);
 
 // Auto-start after all deferred scripts have loaded.

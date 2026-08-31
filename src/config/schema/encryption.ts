@@ -5,6 +5,7 @@
 
 import type { EncryptionCompression, } from "../../db/enums";
 
+/** */
 export interface EncryptionConfig {
   /** 256-bit hex key from SERVER_ENCRYPTION_KEY env var. Missing = encryption disabled (dev mode). */
   serverEncryptionKey?: string;

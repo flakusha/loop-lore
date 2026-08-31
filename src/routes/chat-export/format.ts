@@ -5,6 +5,9 @@ import { MessageRole, } from "../../db/enums";
 import { safeJsonStringify, } from "../../utils";
 import type { MessageData, } from "./types";
 
+/**
+ * @param text
+ */
 function escapeHtml(text: string,): string {
   return text
     .replaceAll("&", "&amp;",)
@@ -14,6 +17,13 @@ function escapeHtml(text: string,): string {
     .replaceAll("'", "&#039;",);
 }
 
+/**
+ * @param chat
+ * @param chat.name
+ * @param chat.type
+ * @param chat.mode
+ * @param messages
+ */
 export function formatMarkdown(chat: { name: string; type: string; mode: string }, messages: MessageData[],): string {
   const lines: string[] = [
     `# ${chat.name}`,
@@ -40,6 +50,15 @@ export function formatMarkdown(chat: { name: string; type: string; mode: string 
   return lines.join("\n",);
 }
 
+/**
+ * @param chat
+ * @param chat.id
+ * @param chat.name
+ * @param chat.type
+ * @param chat.mode
+ * @param chat.created_at
+ * @param messages
+ */
 export function formatJson(
   chat: { id: string; name: string; type: string; mode: string; created_at: string },
   messages: MessageData[],
@@ -69,6 +88,13 @@ export function formatJson(
   return sr.ok ? sr.value : "{}";
 }
 
+/**
+ * @param chat
+ * @param chat.name
+ * @param chat.type
+ * @param chat.mode
+ * @param messages
+ */
 export function formatHtml(chat: { name: string; type: string; mode: string }, messages: MessageData[],): string {
   const messageHtml = Array.from(messages, (msg,) => {
     const author = msg.display_name || msg.role;
@@ -174,6 +200,13 @@ export function formatHtml(chat: { name: string; type: string; mode: string }, m
 </html>`;
 }
 
+/**
+ * @param chat
+ * @param chat.name
+ * @param chat.type
+ * @param chat.mode
+ * @param messages
+ */
 export function formatPlainText(
   chat: { name: string; type: string; mode: string },
   messages: MessageData[],

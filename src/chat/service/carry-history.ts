@@ -14,6 +14,9 @@ import type { DB, } from "../../db/schema";
 
 /**
  * Carry full history (message tree, preserving swipes).
+ * @param database
+ * @param sourceChatId
+ * @param newChatId
  */
 export async function carryHistory(
   database: Kysely<DB>,

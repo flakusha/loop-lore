@@ -27,6 +27,7 @@ export type { WorldEditState, } from "./world-types";
  * Only chat page uses Alpine now. All other pages use vanilla JS + HTMX.
  */
 
+/** */
 export interface AlpineMagicThis {
   $dispatch(event: string, detail?: unknown,): void;
   $nextTick(callback?: () => void,): Promise<void>;
@@ -34,8 +35,10 @@ export interface AlpineMagicThis {
   $el: HTMLElement;
 }
 
+/** */
 export type AlpineState<T,> = T & ThisType<T & AlpineMagicThis>;
 
+/** */
 export interface GalleryAsset {
   id: string;
   name?: string;
@@ -75,6 +78,7 @@ export interface QuickReplyButton {
   trigger?: "startup" | "user" | "ai";
 }
 
+/** */
 export interface PreviewAsset {
   id: string;
   filename?: string;
@@ -84,11 +88,13 @@ export interface PreviewAsset {
   avatar_asset_id?: string;
 }
 
+/** */
 export interface WorldDetailInit {
   worldId: string;
   locations: { id: string; name: string; description: string | null; world_id: string }[];
 }
 
+/** */
 export interface NotificationListItem {
   id: string;
   type: string;
@@ -98,6 +104,7 @@ export interface NotificationListItem {
   read: number;
 }
 
+/** */
 export interface NotificationBellState {
   open: boolean;
   unreadCount: number;
@@ -113,6 +120,7 @@ export interface NotificationBellState {
   goTo: (link: string | null,) => void;
 }
 
+/** */
 export interface NotificationPrefsState {
   loaded: boolean;
   saving: boolean;
@@ -196,9 +204,8 @@ declare global {
       $data: (el: HTMLElement,) => Record<string, unknown>;
       initTree: (el: HTMLElement,) => void;
       store: {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
         <T = Record<string, unknown>,>(key: string,): T;
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
+
         <T = Record<string, unknown>,>(key: string, value: T,): void;
       };
     };

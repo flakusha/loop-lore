@@ -18,6 +18,7 @@ import { CURATED_EVENTS, TelemetryTransport, } from "./transports/telemetry";
 
 let _initialized = false;
 
+/** */
 export function initTelemetry(): void {
   if (_initialized) { return; }
   _initialized = true;
@@ -69,6 +70,7 @@ export function initTelemetry(): void {
   },);
 }
 
+/** */
 export function isTelemetryEnabled(): boolean {
   return [true, "true", 1,].includes(globalThis.__TELEMETRY_FRONTEND_ENABLED,);
 }
@@ -77,6 +79,8 @@ export function isTelemetryEnabled(): boolean {
  * Send a curated telemetry event. Registers the name on the transport's
  * allowlist so it passes the info/debug gate and ships, even though the shared
  * logger also carries unrelated control-flow logs.
+ * @param event
+ * @param data
  */
 export function trackTelemetry(event: string, data?: Record<string, unknown>,): void {
   if (!isTelemetryEnabled()) { return; }
@@ -105,6 +109,7 @@ function chatTelemetryMeta(): Record<string, unknown> {
 let lastPagePath: string | null = null;
 let pageViewTimer: ReturnType<typeof setTimeout> | null = null;
 
+/** */
 function trackPageView(): void {
   const path = location.pathname;
   if (path === lastPagePath) { return; }

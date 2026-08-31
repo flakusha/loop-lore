@@ -13,15 +13,22 @@ import type { LogEntry, Transport, } from "../types";
 
 const isTty = process.stdout.isTTY;
 
+/** */
 export class ConsoleTransport implements Transport {
   private readonly isColor: boolean;
 
   readonly name = "console";
 
+  /**
+   * @param isColor
+   */
   constructor(isColor?: boolean,) {
     this.isColor = isColor ?? isTty;
   }
 
+  /**
+   * @param entry
+   */
   write(entry: LogEntry,): Promise<void> {
     try {
       const line = formatConsole(entry, this.isColor,);
@@ -33,6 +40,7 @@ export class ConsoleTransport implements Transport {
     return Promise.resolve();
   }
 
+  /** */
   flush(): Promise<void> {
     return Promise.resolve();
   }

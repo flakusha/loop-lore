@@ -13,6 +13,7 @@ import { validateProviderUrl, } from "../../utils/url-validation";
 import type { EditTemplate, ParsedCommand, } from "../image-edit-commands";
 import type { ImageEditServiceContext, } from "./types";
 
+/** */
 export interface ApplyEditArgs {
   thisL: ImageEditServiceContext;
   opts: {
@@ -26,6 +27,9 @@ export interface ApplyEditArgs {
 
 /**
  * Apply an edit using the generation pipeline.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.opts
  */
 export async function applyEdit(
   { thisL, opts, }: ApplyEditArgs,

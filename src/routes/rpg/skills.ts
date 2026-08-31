@@ -32,7 +32,10 @@ import {
 } from "./skills-schemas";
 import type { HandlerOpts, } from "./types";
 
-/** Minimal camelCase mapper for a raw character_skills row (global list). */
+/**
+ * Minimal camelCase mapper for a raw character_skills row (global list).
+ * @param row
+ */
 function rowToSkillLike(row: Record<string, unknown>,): Record<string, unknown> {
   return {
     id: row.id,
@@ -53,6 +56,11 @@ function rowToSkillLike(row: Record<string, unknown>,): Record<string, unknown> 
   };
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   const svc = (): SkillsService => new SkillsService(database,);
   const R = `${prefix}/rpg/skills`;

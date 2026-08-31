@@ -42,6 +42,16 @@ interface EventParams {
   source?: "server" | "frontend";
 }
 
+/**
+ * @param db
+ * @param root0
+ * @param root0.eventType
+ * @param root0.sessionId
+ * @param root0.userId
+ * @param root0.chatId
+ * @param root0.data
+ * @param root0.source
+ */
 export async function record(
   db: Kysely<DB>,
   { eventType, sessionId, userId, chatId, data, source, }: EventParams,
@@ -85,14 +95,17 @@ export async function record(
   }
 }
 
+/** */
 export function isTelemetryEnabled(): boolean {
   return config.eventsEnabled;
 }
 
+/** */
 export function isFrontendTelemetryEnabled(): boolean {
   return config.frontendEnabled;
 }
 
+/** */
 export function getRetentionDays(): number {
   return config.retentionDays;
 }

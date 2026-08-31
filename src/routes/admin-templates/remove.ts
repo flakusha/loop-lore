@@ -8,6 +8,11 @@ import { BUILTIN_PROFILES, } from "../../generation/prompt-templates";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { loadStoredTemplates, log, saveStoredTemplates, } from "./shared";
 
+/**
+ * @param opts
+ * @param opts.database
+ * @param prefix
+ */
 export function removeRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   const { database, } = opts;
 

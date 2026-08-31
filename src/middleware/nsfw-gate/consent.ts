@@ -54,6 +54,10 @@ const CONTENT_RATING_TO_NSFW: Record<ContentRating, NSFWContentRating> = {
  * - `chat_setting`: NSFW_EXTREME — the chats table carries only an
  *   enabled/disabled toggle (enforced in `getEffectiveNsfw`), no rating
  *   column, so the chat imposes no additional rating ceiling here.
+ * @param database
+ * @param actorId
+ * @param userId
+ * @param chatId
  */
 async function buildEnforcement(
   database: Kysely<DB>,
@@ -89,6 +93,7 @@ async function buildEnforcement(
   },);
 }
 
+/** */
 export interface CheckNsfwWithConsentArgs {
   database: Kysely<DB>;
   config: Config;
@@ -97,6 +102,7 @@ export interface CheckNsfwWithConsentArgs {
   actorId: string;
 }
 
+/** */
 export interface CheckNsfwWithConsentResult {
   allowed: boolean;
   reason?: string;
@@ -113,6 +119,7 @@ export interface CheckNsfwWithConsentResult {
  *   3. Persisted consent (when `consentRequired`), no auto-grant.
  *   4. Real enforcement object using persisted user max_rating,
  *      weakest-link intersected across chat participants.
+ * @param args
  */
 export async function checkNsfwWithConsent(
   args: CheckNsfwWithConsentArgs,

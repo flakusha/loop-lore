@@ -12,7 +12,6 @@ import { createLogger, } from "../logger";
  * Create an in-memory SQLite test database with the full schema
  * applied via migrations. Single source of truth: migrations define
  * the DB structure, tests consume it.
- *
  * @returns Both the typed Kysely instance and raw SQLite handle
  *   (for introspection tests that need PRAGMA queries).
  */
@@ -20,6 +19,7 @@ export interface TestDb {
   db: Kysely<DB>;
   sqlite: Database;
 }
+/** */
 export async function createTestDb(): Promise<TestDb> {
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = ON",);
@@ -41,6 +41,7 @@ export async function createTestDb(): Promise<TestDb> {
 /**
  * Drop all non-migration tables from the test DB.
  * Useful for tests that need a clean slate without re-running migrations.
+ * @param sqlite
  */
 export function resetTestDb(sqlite: Database,): void {
   // Temporarily disable FK constraints so we can delete in any order

@@ -13,6 +13,7 @@ import type { VnTemplate, } from "./template-engine";
 
 // ── Trigger Definitions ────────────────────────────────────
 
+/** */
 export interface VnTransitionTrigger {
   id: string;
   name: string;
@@ -22,6 +23,7 @@ export interface VnTransitionTrigger {
   priority: number;
 }
 
+/** */
 export interface VnTriggerContext {
   currentLocationId?: string;
   previousLocationId?: string;
@@ -89,6 +91,9 @@ export const TRANSITION_TRIGGERS: VnTransitionTrigger[] = [
 
 // ── Trigger Evaluation ─────────────────────────────────────
 
+/**
+ * @param context
+ */
 export function evaluateTriggers(
   context: VnTriggerContext,
 ): VnTemplate | null {
@@ -108,6 +113,7 @@ export function evaluateTriggers(
 
 // ── Trigger History (for debugging) ────────────────────────
 
+/** */
 export interface VnTriggerEvent {
   triggerId: string;
   timestamp: string;
@@ -117,6 +123,10 @@ export interface VnTriggerEvent {
 const triggerHistory: VnTriggerEvent[] = [];
 const MAX_HISTORY = 50;
 
+/**
+ * @param triggerId
+ * @param templateId
+ */
 export function recordTrigger(triggerId: string, templateId: string,): void {
   triggerHistory.push({
     triggerId,
@@ -129,10 +139,12 @@ export function recordTrigger(triggerId: string, templateId: string,): void {
   }
 }
 
+/** */
 export function getTriggerHistory(): VnTriggerEvent[] {
   return [...triggerHistory,];
 }
 
+/** */
 export function clearTriggerHistory(): void {
   triggerHistory.length = 0;
 }

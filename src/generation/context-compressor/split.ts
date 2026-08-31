@@ -4,7 +4,10 @@
 import type { ContextMessage, } from "../context-window-config";
 import type { SplitMessages, } from "./types";
 
-/** Separate leading system messages from conversation messages */
+/**
+ * Separate leading system messages from conversation messages
+ * @param messages
+ */
 export function splitSystemMessages(messages: ContextMessage[],): SplitMessages {
   const system: ContextMessage[] = [];
   const conversation: ContextMessage[] = [];

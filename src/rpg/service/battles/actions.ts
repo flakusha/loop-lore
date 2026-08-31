@@ -19,6 +19,10 @@ import type { RpgServiceDeps, } from "../types.js";
 import { persistBattle, requireActiveBattle, } from "./persistence.js";
 import type { AttackParams, BattleWithRoster, HealParams, ResolvedAttack, ResolvedHeal, } from "./types.js";
 import { BattleStatus, } from "./types.js";
+/**
+ * @param deps
+ * @param params
+ */
 export async function performAttack(
   deps: RpgServiceDeps,
   params: AttackParams,
@@ -86,12 +90,15 @@ export async function performAttack(
 
 /**
  * Heal a target combatant up to its max HP and persist the result.
- *
  * @param deps - Service dependencies
  * @param params - Heal resolution parameters
  * @returns The healed combatant + updated roster + amount healed
  */
 
+/**
+ * @param deps
+ * @param params
+ */
 export async function performHeal(
   deps: RpgServiceDeps,
   params: HealParams,
@@ -134,12 +141,15 @@ export async function performHeal(
  *
  * Resets the acting combatant's turn actions each turn and every combatant's
  * reactions at the start of a round.
- *
  * @param deps - Service dependencies
  * @param battleId - Battle to advance
  * @returns The battle after advancement
  */
 
+/**
+ * @param deps
+ * @param battleId
+ */
 export async function advanceTurn(
   deps: RpgServiceDeps,
   battleId: string,
@@ -172,7 +182,6 @@ export async function advanceTurn(
 
 /**
  * End a battle without a decisive winner.
- *
  * @param deps - Service dependencies
  * @param battleId - Battle to end
  * @param status - Terminal status (completed or abandoned)

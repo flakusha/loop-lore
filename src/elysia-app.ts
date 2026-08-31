@@ -34,16 +34,23 @@ import { handleApiRequest, } from "./server";
 
 import { onValidationError, } from "./validation";
 
-/** 302 redirect helper (module scope — no closure capture). */
+/**
+ * 302 redirect helper (module scope — no closure capture).
+ * @param location
+ */
 const redirectTo = (location: string,): Response =>
   new Response(null, { status: 302, headers: { Location: location, }, },);
 
+/** */
 export interface AppDeps {
   database: Db;
   config: Config;
   handleNonApiRequest: (request: Request,) => Promise<Response>;
 }
 
+/**
+ * @param deps
+ */
 export function createApp(deps: AppDeps,): Elysia {
   const { database, config, handleNonApiRequest, } = deps;
 

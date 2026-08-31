@@ -10,6 +10,9 @@ import type { ModelInfo, } from "../types";
 import { fetchRaw, handleErrorResponse, } from "./http";
 import type { AnthropicModelsResponse, AnthropicState, } from "./types";
 
+/**
+ * @param state
+ */
 export async function listModelsDispatch(state: AnthropicState,): Promise<ModelInfo[]> {
   const url = new URL(`${state.baseUrl}/v1/models`,);
   const response = await fetchRaw(state, url.href, undefined, undefined,);
@@ -27,6 +30,9 @@ export async function listModelsDispatch(state: AnthropicState,): Promise<ModelI
     : [];
 }
 
+/**
+ * @param state
+ */
 export async function healthCheckDispatch(state: AnthropicState,): Promise<{
   status: "ok" | "degraded" | "down";
   model?: string;

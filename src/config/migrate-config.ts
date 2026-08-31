@@ -38,6 +38,7 @@ interface MigrationOptions {
   format: "toml" | "yaml";
 }
 
+/** */
 function parseArgs(): MigrationOptions {
   const args = process.argv.slice(2,);
   const options: MigrationOptions = {
@@ -71,6 +72,9 @@ function parseArgs(): MigrationOptions {
   return options;
 }
 
+/**
+ * @param filePath
+ */
 function parseConfigFile(filePath: string,): Record<string, unknown> {
   const content = readFileSync(filePath, "utf8",);
   const ext = path.extname(filePath,).slice(1,);
@@ -84,6 +88,10 @@ function parseConfigFile(filePath: string,): Record<string, unknown> {
   throw new Error(`Unknown config file extension: .${ext}`,);
 }
 
+/**
+ * @param fullConfig
+ * @param domainPaths
+ */
 function extractDomainConfig(
   fullConfig: Record<string, unknown>,
   domainPaths: string[],
@@ -97,11 +105,18 @@ function extractDomainConfig(
   return domainConfig;
 }
 
+/**
+ * @param config
+ * @param format
+ */
 function formatConfig(config: Record<string, unknown>, format: "toml" | "yaml",): string {
   return format === "yaml" ? formatYaml(config,) : formatToml(config,);
 }
 
-/** Serialize a config object as simple YAML (one level of nesting). */
+/**
+ * Serialize a config object as simple YAML (one level of nesting).
+ * @param config
+ */
 function formatYaml(config: Record<string, unknown>,): string {
   const lines: string[] = [];
   for (const [key, value,] of Object.entries(config,)) {
@@ -117,7 +132,10 @@ function formatYaml(config: Record<string, unknown>,): string {
   return `${lines.join("\n",)}\n`;
 }
 
-/** Serialize a config object as TOML (one level of nesting). */
+/**
+ * Serialize a config object as TOML (one level of nesting).
+ * @param config
+ */
 function formatToml(config: Record<string, unknown>,): string {
   const lines: string[] = [];
   for (const [key, value,] of Object.entries(config,)) {
@@ -134,12 +152,16 @@ function formatToml(config: Record<string, unknown>,): string {
   return lines.join("\n",);
 }
 
-/** Format a scalar as a TOML literal (strings quoted). */
+/**
+ * Format a scalar as a TOML literal (strings quoted).
+ * @param value
+ */
 function tomlValue(value: unknown,): string {
   if (typeof value === "string") { return `"${value}"`; }
   return jsonStringifyOr(value, "undefined",);
 }
 
+/** */
 function main() {
   const options = parseArgs();
 

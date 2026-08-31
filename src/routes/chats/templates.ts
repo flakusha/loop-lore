@@ -28,6 +28,10 @@ import {
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

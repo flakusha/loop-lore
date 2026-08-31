@@ -17,6 +17,7 @@ export interface ItemState {
   db: Kysely<DB>;
 }
 
+/** */
 export interface ItemDefinition {
   worldId: string;
   name: string;
@@ -30,6 +31,7 @@ export interface ItemDefinition {
   weight: number;
 }
 
+/** */
 export interface ItemInstance {
   worldItemId: string;
   itemId: string;
@@ -44,6 +46,7 @@ export interface ItemInstance {
   visibility: ItemVisibility;
 }
 
+/** */
 export interface TransferResult {
   success: boolean;
   fromRemaining: number;

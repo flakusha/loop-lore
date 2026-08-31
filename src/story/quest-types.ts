@@ -10,10 +10,12 @@ import type { QuestCategory, QuestType as QT, } from "../db/enums";
 import type { WorldEvent, } from "./story-events-types";
 
 // ─── Quest Configs ───────────────────────────────────────────────
+/** */
 export interface BaseQuestConfig {
   type: QT;
 }
 
+/** */
 export interface TimeQuestConfig extends BaseQuestConfig {
   type: "time";
   durationMinutes: number;
@@ -22,6 +24,7 @@ export interface TimeQuestConfig extends BaseQuestConfig {
   milestones: { progress: number; narrative: string }[];
 }
 
+/** */
 export interface CollectionQuestConfig extends BaseQuestConfig {
   type: "collection";
   items?: { itemId: string; quantity: number }[];
@@ -30,6 +33,7 @@ export interface CollectionQuestConfig extends BaseQuestConfig {
   sources: string[];
 }
 
+/** */
 export interface DestructionQuestConfig extends BaseQuestConfig {
   type: "destruction";
   targetActorId?: string;
@@ -41,6 +45,7 @@ export interface DestructionQuestConfig extends BaseQuestConfig {
   };
 }
 
+/** */
 export interface RescueQuestConfig extends BaseQuestConfig {
   type: "rescue";
   targetActorId: string;
@@ -50,6 +55,7 @@ export interface RescueQuestConfig extends BaseQuestConfig {
   threats: string[];
 }
 
+/** */
 export interface DiscoveryQuestConfig extends BaseQuestConfig {
   type: "discovery";
   targetLocationId?: string;
@@ -58,6 +64,7 @@ export interface DiscoveryQuestConfig extends BaseQuestConfig {
   revealOnComplete: string;
 }
 
+/** */
 export interface SocialQuestConfig extends BaseQuestConfig {
   type: "social";
   targetActorId: string;
@@ -67,12 +74,14 @@ export interface SocialQuestConfig extends BaseQuestConfig {
   disfavoredActions: string[];
 }
 
+/** */
 export interface CompositeQuestConfig extends BaseQuestConfig {
   type: "composite";
   subQuests: string[];
   logic: "all" | "any" | "sequence";
 }
 
+/** */
 export type QuestConfig =
   | TimeQuestConfig
   | CollectionQuestConfig
@@ -83,6 +92,7 @@ export type QuestConfig =
   | CompositeQuestConfig;
 
 // ─── Quest Rewards ───────────────────────────────────────────────
+/** */
 export interface QuestReward {
   xp?: number;
   items?: { itemId: string; quantity: number }[];
@@ -92,6 +102,7 @@ export interface QuestReward {
 }
 
 // ─── Quest API Types ─────────────────────────────────────────────
+/** */
 export interface QuestCreateRequest {
   worldId: string;
   creatorId: string;
@@ -106,6 +117,7 @@ export interface QuestCreateRequest {
   narrativeHooks?: { progress: number; narrative: string }[];
 }
 
+/** */
 export interface QuestProgressRequest {
   questId: string;
   chatId: string;

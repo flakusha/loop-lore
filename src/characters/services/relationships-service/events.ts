@@ -16,6 +16,9 @@ export interface LogEventArgs {
 
 /**
  * Log a relationship event (applies standing/trust/familiarity changes).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.opts
  */
 export async function logEvent(
   { thisL, opts, }: LogEventArgs,

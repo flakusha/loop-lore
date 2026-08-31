@@ -8,6 +8,10 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import { ChatSectionReorderBody, type HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function reorderRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

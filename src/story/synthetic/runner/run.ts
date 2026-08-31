@@ -21,7 +21,15 @@ import type {
   SyntheticTestRunSummary,
 } from "./types";
 
-/** Execute all cases for one synthetic row, collecting quality scores. */
+/**
+ * Execute all cases for one synthetic row, collecting quality scores.
+ * @param state
+ * @param row
+ * @param cases
+ * @param mode
+ * @param mutationParams
+ * @param qualityScores
+ */
 async function executeRowCases(
   state: RunnerState,
   row: RowShape,
@@ -45,6 +53,15 @@ async function executeRowCases(
   return rowResults;
 }
 
+/**
+ * @param state
+ * @param generator
+ * @param scenarioIds
+ * @param mode
+ * @param mutationParams
+ * @param mutationParams.temperatureVariance
+ * @param mutationParams.promptVariations
+ */
 export async function run(
   state: RunnerState,
   generator: SyntheticGenerator,
@@ -107,6 +124,9 @@ export async function run(
   };
 }
 
+/**
+ * @param scores
+ */
 function suggestThresholds(scores: number[],): { accept: number; regenerate: number; escalate: number } {
   const sorted = [...scores,].sort((a, b,) => a - b);
   const pct = (p: number,): number => sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p,),)] ?? 0;
@@ -117,6 +137,10 @@ function suggestThresholds(scores: number[],): { accept: number; regenerate: num
   };
 }
 
+/**
+ * @param state
+ * @param ids
+ */
 async function loadRows(state: RunnerState, ids: string[],): Promise<RowShape[]> {
   return state.db
     .selectFrom("synthetic_data",)

@@ -22,6 +22,9 @@ const alwaysFailEvaluator = new QualityEvaluator({
   thresholds: { accept: 101, regenerate: 0, escalate: 0, maxRegenerations: 3, },
 },);
 
+/**
+ * @param overrides
+ */
 function makeCase(overrides: Partial<SyntheticCase> = {},): SyntheticCase {
   return {
     id: "case-1",
@@ -64,6 +67,9 @@ describe("Synthetic Test Runner", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param overrides
+   */
   function makeState(overrides: Partial<RunnerState> = {},): RunnerState {
     return {
       db,
@@ -168,6 +174,9 @@ describe("Synthetic Test Runner", () => {
   // ── Regeneration logic ──────────────────────────────────
 
   describe("regenerationLogic", () => {
+    /**
+     * @param overall
+     */
     function evaluatorWithBaseline(overall: number,): QualityEvaluator {
       return {
         evaluate: () => ({ scores: { overall, }, passed: overall >= 70, }),

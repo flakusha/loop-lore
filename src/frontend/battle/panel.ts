@@ -59,7 +59,6 @@ let keyHandler: ((e: KeyboardEvent,) => void) | null = null;
 
 /**
  * Mount the battle panel into a container.
- *
  * @param containerEl - DOM element to render into
  * @param battleCtx - Send bridge + option access
  */
@@ -92,7 +91,6 @@ export function destroyBattlePanel(): void {
 
 /**
  * Render (or update) the battle from a command response payload.
- *
  * @param view The battle state serialized by a `battle-*` command action
  */
 export function renderBattle(view: BattleView,): void {
@@ -115,6 +113,7 @@ export function refreshBattle(): void {
 
 // ── Rendering ──────────────────────────────────────────
 
+/** */
 function render(): void {
   if (!container) { return; }
 
@@ -164,6 +163,9 @@ function render(): void {
 
 // ── Action execution ───────────────────────────────────
 
+/**
+ * @param kind
+ */
 async function executeAction(kind: BattleActionKind,): Promise<void> {
   if (!ctx) { return; }
   const command = battleCommandFor(kind, selectedTargetId, battle?.combatants ?? [],);
@@ -172,6 +174,9 @@ async function executeAction(kind: BattleActionKind,): Promise<void> {
 
 // ── Keyboard navigation ────────────────────────────────
 
+/**
+ * @param e
+ */
 function handleKey(e: KeyboardEvent,): void {
   if (e.key === "Escape") {
     selectedTargetId = null;
@@ -214,7 +219,11 @@ function buildFocusTargets(): void {
   focusedIndex = Math.min(focusedIndex, Math.max(0, focusTargets.length - 1,),);
 }
 
-/** @returns true when two focus targets refer to the same element. */
+/**
+ * @param a
+ * @param b
+ * @returns true when two focus targets refer to the same element.
+ */
 function sameTarget(a: BattleFocusTarget, b: BattleFocusTarget,): boolean {
   if (a.type !== b.type) { return false; }
   if (a.type === "combatant" && b.type === "combatant") {

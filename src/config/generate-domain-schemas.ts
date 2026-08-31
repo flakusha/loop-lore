@@ -36,6 +36,7 @@ const DOMAINS: Record<string, string[]> = {
   headers: ["headers",],
 };
 
+/** */
 function main() {
   const fullSchema = jsonSchema();
   let generated = 0;

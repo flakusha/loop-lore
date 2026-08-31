@@ -9,7 +9,6 @@ import type { BufferResult, } from "./types";
 
 /**
  * Safely create a Buffer from a string with size limits.
- *
  * @param text - String to encode
  * @param encoding - String encoding (default: "utf8")
  * @param maxSize - Maximum string length (default: 10 MB)
@@ -36,7 +35,6 @@ export function safeFromString(
 
 /**
  * Safely create a Buffer from a Uint8Array with size limits.
- *
  * @param uint8 - Uint8Array to convert
  * @param maxSize - Maximum array length (default: 10 MB)
  * @returns BufferResult with buffer or error

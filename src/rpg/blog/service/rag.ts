@@ -6,6 +6,11 @@ import { uid, } from "../../../utils.js";
 import type { BlogRAGSourceRow, } from "./types";
 
 // ── RAG Sources ──────────────────────────────────────
+/**
+ * @param db
+ * @param postId
+ * @param source
+ */
 export async function addRAGSource(
   db: Kysely<any>,
   postId: string,
@@ -26,6 +31,10 @@ export async function addRAGSource(
   return row;
 }
 
+/**
+ * @param db
+ * @param postId
+ */
 export async function getRAGSources(
   db: Kysely<any>,
   postId: string,

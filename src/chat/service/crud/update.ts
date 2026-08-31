@@ -11,7 +11,9 @@ import type { UpdateChatParams, UpdateChatResult, } from "../types";
 
 /**
  * Update chat settings, enforcing online-chat key-mechanic immutability.
- *
+ * @param database
+ * @param chatId
+ * @param params
  * @returns ServiceError | KeyMechanicConflictError on failure, or { ok: true } on success
  */
 export async function updateChat(
@@ -39,7 +41,11 @@ export async function updateChat(
 
 /**
  * Enforce chat-update locks: admin panel freeze and online key-mechanic immutability.
- *
+ * @param database
+ * @param chatId
+ * @param params
+ * @param fullChat
+ * @param fullChat.story_state
  * @returns A conflict/forbidden result when an update is blocked, else null
  */
 async function checkChatUpdateLock(
@@ -75,7 +81,12 @@ async function checkChatUpdateLock(
   return null;
 }
 
-/** Merge a JSON patch into the chat's story_state column. */
+/**
+ * Merge a JSON patch into the chat's story_state column.
+ * @param fullChat
+ * @param fullChat.story_state
+ * @param patch
+ */
 function patchStoryState(
   fullChat: { story_state: string | null },
   patch: Record<string, unknown>,
@@ -90,7 +101,12 @@ function patchStoryState(
   return serialized.ok ? serialized.value : fullChat.story_state;
 }
 
-/** Assemble the update column map from the validated params. */
+/**
+ * Assemble the update column map from the validated params.
+ * @param fullChat
+ * @param fullChat.story_state
+ * @param params
+ */
 function buildChatUpdates(
   fullChat: { story_state: string | null },
   params: UpdateChatParams,

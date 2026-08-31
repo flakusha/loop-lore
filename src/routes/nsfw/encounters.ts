@@ -7,6 +7,10 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const encounterService = new EncounterService(database,);

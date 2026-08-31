@@ -31,6 +31,11 @@ import { npcTradeRoutes, } from "./npc";
 import { tradeOfferRoutes, } from "./offers";
 import { executeBody, executeResponse, resolveActorAccess, } from "./shared";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function tradeRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new TradeService(database,);
   const opts = { database, svc, };

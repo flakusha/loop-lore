@@ -4,6 +4,9 @@
 import type { Config, } from "../../config/schema";
 import { listProviders, } from "../providers/registry";
 
+/**
+ * @param config
+ */
 export function isLlmGenerationConfigured(config: Config,): boolean {
   return (
     !!config.generation.defaultProvider ||

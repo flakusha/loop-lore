@@ -8,6 +8,7 @@ import type { ServerExternalHost, ServerInstance, } from "./types";
 /**
  * Start periodic health checks on all managed servers.
  * Logs warning on first failure, error on repeated failures.
+ * @param host
  */
 export function startLivenessProbes(host: ServerExternalHost,): void {
   if (host.probeTimer) { return; }
@@ -23,7 +24,10 @@ export function startLivenessProbes(host: ServerExternalHost,): void {
   host.log.debug("Liveliness probes started", { intervalMs: host.PROBE_INTERVAL_MS, },);
 }
 
-/** Stop periodic health checks */
+/**
+ * Stop periodic health checks
+ * @param host
+ */
 export function stopLivenessProbes(host: ServerExternalHost,): void {
   if (!host.probeTimer) {
     return;
@@ -34,7 +38,10 @@ export function stopLivenessProbes(host: ServerExternalHost,): void {
   host.log.debug("Liveliness probes stopped",);
 }
 
-/** Run a single liveness check against all managed instances */
+/**
+ * Run a single liveness check against all managed instances
+ * @param host
+ */
 export async function checkAllLiveliness(host: ServerExternalHost,): Promise<void> {
   for (const instance of host.instances) {
     const alive = await probeInstance(instance,);
@@ -48,7 +55,10 @@ export async function checkAllLiveliness(host: ServerExternalHost,): Promise<voi
   }
 }
 
-/** Probe a single instance — returns true if responsive */
+/**
+ * Probe a single instance — returns true if responsive
+ * @param instance
+ */
 async function probeInstance(instance: ServerInstance,): Promise<boolean> {
   try {
     if (instance.type === "llama-cpp") {

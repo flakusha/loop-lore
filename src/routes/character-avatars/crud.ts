@@ -22,6 +22,8 @@ import type { HandlerOpts, } from "./types";
 
 /**
  * Avatars CRUD sub-plugin — list/get/create/update/delete actor avatars.
+ * @param opts
+ * @param prefix
  */
 export function crudRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

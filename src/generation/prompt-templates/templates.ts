@@ -23,7 +23,11 @@ const TOKENS = {
 
 type TokenKey = keyof typeof TOKENS;
 
-/** Resolve a template string by replacing all tokens */
+/**
+ * Resolve a template string by replacing all tokens
+ * @param template
+ * @param ctx
+ */
 export function resolveTemplate(template: string, ctx: TemplateContext,): string {
   const tokenMap: Record<TokenKey, string> = {
     charName: ctx.charName,
@@ -53,6 +57,9 @@ export function resolveTemplate(template: string, ctx: TemplateContext,): string
 
 // ── Helper: build tag-based templates ───────────────────────
 
+/**
+ * @param styleTags
+ */
 export function tagTemplates(styleTags: string,): Record<DetailLevel, ImageModelTemplates> {
   const base = {
     yourself:
@@ -90,6 +97,9 @@ export function tagTemplates(styleTags: string,): Record<DetailLevel, ImageModel
 
 // ── Helper: build natural language templates ────────────────
 
+/**
+ * @param style
+ */
 export function naturalTemplates(style: string,): Record<DetailLevel, ImageModelTemplates> {
   const base = {
     yourself:
@@ -127,6 +137,9 @@ export function naturalTemplates(style: string,): Record<DetailLevel, ImageModel
 
 // ── Helper: build mixed tag+natural templates ───────────────
 
+/**
+ * @param style
+ */
 export function mixedTagNaturalTemplates(style: string,): Record<DetailLevel, ImageModelTemplates> {
   const base = {
     yourself:

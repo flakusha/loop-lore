@@ -39,7 +39,7 @@ import {
 /** Public API type — merged with the factory value below. */
 // The empty interface is intentional: it merges the `TraitsService` factory
 // value with a same-named type so one name is both API type and constructor.
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+
 export interface TraitsService extends TraitsServiceIface {}
 
 export type {
@@ -56,7 +56,6 @@ export type {
 
 /**
  * Create a TraitsService instance.
- *
  * @param db - The database handle (matches the former `new TraitsService(db)`)
  * @returns A TraitsService bound to the given database
  */

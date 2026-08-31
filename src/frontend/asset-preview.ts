@@ -23,24 +23,29 @@ interface PreviewAsset {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var __previewAsset: PreviewAsset | null | undefined;
-  // eslint-disable-next-line no-var
+
   var openAssetPreview: ((id: string,) => Promise<void>) | undefined;
-  // eslint-disable-next-line no-var
+
   var copyAssetUrl: (() => Promise<void>) | undefined;
-  // eslint-disable-next-line no-var
+
   var downloadAsset: (() => Promise<void>) | undefined;
-  // eslint-disable-next-line no-var
+
   var deleteAssetPreview: (() => Promise<void>) | undefined;
 }
 
+/**
+ * @param bytes
+ */
 function formatSize(bytes: number,): string {
   if (bytes < 1024) { return `${bytes} B`; }
   if (bytes < 1_048_576) { return `${(bytes / 1024).toFixed(1,)} KB`; }
   return `${(bytes / 1_048_576).toFixed(1,)} MB`;
 }
 
+/**
+ * @param s
+ */
 function escapeHtml(s: string,): string {
   return s.replace(/[&<>"']/g, (c,) => {
     switch (c) {
@@ -78,7 +83,8 @@ async function ensurePreviewModal(): Promise<HTMLElement | null> {
 /**
  * Request a signed, time-limited URL for an asset serve action so
  * <img>/<audio>/<video> elements work without a fresh authenticated session.
- *
+ * @param assetId
+ * @param action
  * @returns The absolute signed URL, or null when generation/access is denied.
  */
 async function requestSignedUrl(assetId: string, action: string,): Promise<string | null> {
@@ -92,6 +98,10 @@ async function requestSignedUrl(assetId: string, action: string,): Promise<strin
   }
 }
 
+/**
+ * @param body
+ * @param a
+ */
 async function renderPreviewBody(
   body: HTMLElement,
   a: PreviewAsset,

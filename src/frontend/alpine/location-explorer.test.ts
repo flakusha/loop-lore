@@ -108,10 +108,15 @@ const fixture = {
   },
 };
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = () => Response.json(body, { status, },);
 }
 
+/** */
 function makeState(): ExplorerState {
   const factory = (globalThis as { locationExplorerState?: (id: string,) => ExplorerState }).locationExplorerState;
   if (!factory) { throw new Error("locationExplorerState not registered on globalThis",); }

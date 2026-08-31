@@ -6,6 +6,7 @@ import type { Kysely, } from "kysely";
  * Adds two new tables for GM narrative tools:
  * - `shadow_notes`: hidden narrative influences (foreshadowing, consequences, etc.)
  * - `whitenotes`: visible narrative directives (direction, tone, pacing, etc.)
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
@@ -43,6 +44,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("whitenotes",).execute();
   await database.schema.dropTable("shadow_notes",).execute();

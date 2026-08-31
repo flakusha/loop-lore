@@ -10,6 +10,8 @@ import type { InjectionContext, } from "./types";
 /**
  * Check if a memory is contextually relevant to the current conversation.
  * Uses keyword overlap as a simple relevance signal.
+ * @param memory
+ * @param ctx
  */
 export function isContextRelevant(
   memory: MemoryEntry,

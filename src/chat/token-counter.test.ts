@@ -7,6 +7,10 @@ import {
   THRESHOLDS,
 } from "./token-counter";
 
+/**
+ * @param content
+ * @param role
+ */
 function msg(content: string, role: CountableMessage["role"] = "user",): CountableMessage {
   return { role, content, };
 }

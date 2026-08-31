@@ -23,6 +23,9 @@ import type {
  * left by the DB-only pre-check in the generate route.
  */
 export class IdempotencyKeyConflictError extends Error {
+  /**
+   * @param existingAttemptId
+   */
   constructor(public readonly existingAttemptId: string,) {
     super("A generation with this idempotencyKey is already in flight",);
     this.name = "IdempotencyKeyConflictError";
@@ -34,6 +37,10 @@ export class IdempotencyKeyConflictError extends Error {
 /**
  * Register a new generation attempt. Returns the attempt ID and the
  * AbortSignal (already connected) that the LLM caller should use.
+ * @param root0
+ * @param root0.options
+ * @param root0.db
+ * @param root0.events
  */
 export async function startGenerationTracking({ options, db, events, }: StartGenerationTrackingOpts,): Promise<{
   attemptId: string;
@@ -132,6 +139,10 @@ export async function startGenerationTracking({ options, db, events, }: StartGen
 /**
  * Mark a generation as completed, recording final stats.
  * Cleans up in-memory tracking.
+ * @param root0
+ * @param root0.attemptId
+ * @param root0.result
+ * @param root0.db
  */
 export async function completeGeneration({ attemptId, result, db, }: CompleteGenerationOpts,): Promise<void> {
   const active = activeGenerations.get(attemptId,);
@@ -203,6 +214,10 @@ export async function completeGeneration({ attemptId, result, db, }: CompleteGen
 
 /**
  * Mark a generation as failed.
+ * @param root0
+ * @param root0.attemptId
+ * @param root0.error
+ * @param root0.db
  */
 export async function failGeneration({ attemptId, error, db, }: FailGenerationOpts,): Promise<void> {
   const active = activeGenerations.get(attemptId,);

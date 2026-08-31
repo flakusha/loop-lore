@@ -167,8 +167,10 @@ export function chatState() {
       ) ?? null;
     },
 
-    /** Recent assistant tool calls (newest first, capped at 20) for the
-     *  unified GM & Assistant panel's Assistant tab. */
+    /**
+     * Recent assistant tool calls (newest first, capped at 20) for the
+     *  unified GM & Assistant panel's Assistant tab.
+     */
     get assistantToolCalls(): AssistantToolCall[] {
       return collectAssistantToolCalls(this.messages ?? [],);
     },

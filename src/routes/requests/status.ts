@@ -21,7 +21,6 @@
  * Authorization: only the owning user (or an admin) may read a request's
  * status. Anonymous requests return 404 — not 401, to avoid leaking the
  * existence of an id.
- *
  * @see TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md
  * @see epic-middleware-request-lifecycle.md
  */
@@ -42,7 +41,12 @@ export interface RequestStatusCtx {
   userRole?: string | null;
 }
 
-/** Build the `/api/requests` Elysia sub-app. */
+/**
+ * Build the `/api/requests` Elysia sub-app.
+ * @param deps
+ * @param deps.asyncStore
+ * @param prefix
+ */
 export function requestStatusRoutes(deps: { asyncStore: AsyncStore }, prefix = "/api",) {
   return new Elysia({ name: "request-status", },)
     .get(

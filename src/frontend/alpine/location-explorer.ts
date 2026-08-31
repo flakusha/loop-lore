@@ -13,6 +13,7 @@ import { locationExplorerControls, } from "./location-explorer-controls";
 import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "location-explorer", },);
+/** */
 export interface ExplorerLocation {
   id: string;
   name: string;
@@ -22,6 +23,7 @@ export interface ExplorerLocation {
   publication_status: string;
 }
 
+/** */
 export interface ExplorerLocationState {
   location_id: string;
   atmosphere: string | null;
@@ -33,6 +35,7 @@ export interface ExplorerLocationState {
   hazards: string;
 }
 
+/** */
 export interface ExplorerDetail {
   id: string;
   name: string;

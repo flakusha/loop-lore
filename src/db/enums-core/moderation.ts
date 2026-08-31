@@ -10,6 +10,7 @@ export const NsfwAccessStatus = {
   Blocked: "blocked",
   Banned: "banned",
 } as const;
+/** */
 export type NsfwAccessStatus = (typeof NsfwAccessStatus)[keyof typeof NsfwAccessStatus];
 
 const nsfwAccessStatusDef: StateDef<NsfwAccessStatus> = {
@@ -32,6 +33,7 @@ export const ModerationFlagStatus = {
   Confirmed: "confirmed",
   Escalated: "escalated",
 } as const;
+/** */
 export type ModerationFlagStatus = (typeof ModerationFlagStatus)[keyof typeof ModerationFlagStatus];
 
 export const ModerationFlagReason = {
@@ -43,6 +45,7 @@ export const ModerationFlagReason = {
   NonConsensual: "non_consensual",
   Other: "other",
 } as const;
+/** */
 export type ModerationFlagReason = (typeof ModerationFlagReason)[keyof typeof ModerationFlagReason];
 
 export const ModerationAction = {
@@ -52,4 +55,5 @@ export const ModerationAction = {
   NsfwRevoked: "nsfw_revoked",
   Banned: "banned",
 } as const;
+/** */
 export type ModerationAction = (typeof ModerationAction)[keyof typeof ModerationAction];

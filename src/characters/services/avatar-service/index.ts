@@ -55,34 +55,58 @@ export type {
  * Avatars are tagged with emotion, mood, action, location, time, and outfit.
  */
 export class AvatarService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
-  /** Get all avatars for a character, sorted by sort_order */
+  /**
+   * Get all avatars for a character, sorted by sort_order
+   * @param actorId
+   */
   async getAvatars(actorId: string,): Promise<Avatar[]> {
     return getAvatarsDispatch(this.db, actorId,);
   }
 
-  /** Get a specific avatar by ID */
+  /**
+   * Get a specific avatar by ID
+   * @param avatarId
+   */
   async getAvatar(avatarId: string,): Promise<Avatar | undefined> {
     return getAvatarDispatch(this.db, avatarId,);
   }
 
-  /** Create a new avatar */
+  /**
+   * Create a new avatar
+   * @param opts
+   */
   async createAvatar(opts: CreateAvatarOpts,): Promise<string> {
     return createAvatarDispatch(this.db, opts,);
   }
 
-  /** Update an avatar */
+  /**
+   * Update an avatar
+   * @param avatarId
+   * @param opts
+   */
   async updateAvatar(avatarId: string, opts: UpdateAvatarOpts,): Promise<void> {
     return updateAvatarDispatch(this.db, avatarId, opts,);
   }
 
-  /** Delete an avatar */
+  /**
+   * Delete an avatar
+   * @param avatarId
+   */
   async deleteAvatar(avatarId: string,): Promise<void> {
     return deleteAvatarDispatch(this.db, avatarId,);
   }
 
-  /** Select the best avatar based on context */
+  /**
+   * Select the best avatar based on context
+   * @param actorId
+   * @param context
+   * @param worldId
+   */
   async selectAvatar(
     actorId: string,
     context: AvatarSelectionContext,
@@ -91,12 +115,22 @@ export class AvatarService {
     return selectAvatarDispatch(this.db, actorId, context, worldId,);
   }
 
-  /** Get avatar config for a character */
+  /**
+   * Get avatar config for a character
+   * @param actorId
+   */
   async getAvatarConfig(actorId: string,): Promise<AvatarConfig | undefined> {
     return getAvatarConfigDispatch(this.db, actorId,);
   }
 
-  /** Create or update avatar config */
+  /**
+   * Create or update avatar config
+   * @param actorId
+   * @param config
+   * @param config.selectionRule
+   * @param config.weights
+   * @param config.fallbackChain
+   */
   async upsertAvatarConfig(
     actorId: string,
     config: {
@@ -108,12 +142,23 @@ export class AvatarService {
     return upsertAvatarConfigDispatch(this.db, actorId, config,);
   }
 
-  /** Get world-specific avatar config */
+  /**
+   * Get world-specific avatar config
+   * @param actorId
+   * @param worldId
+   */
   async getWorldAvatarConfig(actorId: string, worldId: string,) {
     return getWorldAvatarConfigDispatch(this.db, actorId, worldId,);
   }
 
-  /** Create or update world-specific avatar config */
+  /**
+   * Create or update world-specific avatar config
+   * @param actorId
+   * @param worldId
+   * @param config
+   * @param config.selectionRuleOverride
+   * @param config.weightsOverride
+   */
   async upsertWorldAvatarConfig(
     actorId: string,
     worldId: string,

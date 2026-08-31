@@ -7,8 +7,6 @@
  * Each template produces a ComfyUI workflow JSON structure.
  * sd-server templates use the same parameters but are translated
  * at the provider layer to the appropriate API call.
- *
- * @module builtin-templates
  */
 import type { WorkflowTemplate, } from "../../types";
 import { controlnet, } from "./controlnet";

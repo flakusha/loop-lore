@@ -3,6 +3,7 @@
 
 // src/config/schema/docs.ts — Documentation config type
 
+/** */
 export interface DocumentationConfig {
   enabled: boolean;
   /**

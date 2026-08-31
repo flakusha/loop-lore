@@ -9,6 +9,7 @@ import type { ExpansionResult, } from "./types.js";
 
 /**
  * Check which emotions are missing avatar assets.
+ * @param config
  */
 export function findMissingAvatars(config: AvatarTemplateConfig,): string[] {
   const missing: string[] = [];
@@ -24,7 +25,6 @@ export function findMissingAvatars(config: AvatarTemplateConfig,): string[] {
 
 /**
  * Run template expansion at startup.
- *
  * @param cwd - Working directory
  * @param avatarConfig - Current avatar config to expand
  * @returns Expansion result
@@ -101,7 +101,6 @@ export function runTemplateExpansion(
 
 /**
  * Validate expanded template config.
- *
  * @param config - Config to validate
  * @returns Validation errors (empty if valid)
  */

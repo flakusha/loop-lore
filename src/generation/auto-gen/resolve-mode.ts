@@ -15,6 +15,7 @@ import { jsonParseOr, } from "../../utils";
 import type { GenDeps, } from "./deps";
 import { triggerStoryModeGeneration, } from "./story-mode";
 
+/** */
 export interface ResolveModeOpts {
   d: GenDeps;
   database: Kysely<DB>;
@@ -26,6 +27,7 @@ export interface ResolveModeOpts {
   chat: { type?: string; mode?: string; gm_config?: string | null; world_id?: string | null } | undefined;
 }
 
+/** */
 export type ResolveModeResult =
   | { handled: true }
   | { handled: false; systemPromptOverride: string | undefined };
@@ -33,7 +35,7 @@ export type ResolveModeResult =
 /**
  * Run story-mode generation (when applicable) and resolve the GM-role system
  * prompt override.
- *
+ * @param opts
  * @returns `handled: true` when story mode ran (caller must stop); otherwise
  *   the system-prompt override for the `"gm"` assistant role.
  */

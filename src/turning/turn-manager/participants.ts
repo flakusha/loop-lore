@@ -7,7 +7,7 @@ import type { TurnManagerHost, } from "./types";
 
 /**
  * Fetch participants eligible for turn selection.
- *
+ * @param host
  * @param mode - "story" filters to ai/narrator/npc; "group" includes all non-user agents
  */
 export async function fetchTurnParticipants(
@@ -58,6 +58,10 @@ export async function fetchTurnParticipants(
   return participants;
 }
 
+/**
+ * @param host
+ * @param mode
+ */
 export async function refreshTurnOrder(
   host: TurnManagerHost,
   mode: "story" | "group" = "story",
@@ -73,7 +77,11 @@ export async function refreshTurnOrder(
   host.state.turnOrder = Array.from(participants, (p,) => p.actorId,);
 }
 
-/** Update turn order (e.g., participant added/removed) */
+/**
+ * Update turn order (e.g., participant added/removed)
+ * @param host
+ * @param mode
+ */
 export async function refreshOrderPublic(
   host: TurnManagerHost,
   mode: "story" | "group" = "story",

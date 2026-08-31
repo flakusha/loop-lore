@@ -42,6 +42,7 @@ const fakeStorage: Storage = {
 
 (globalThis as unknown as { localStorage: Storage }).localStorage = fakeStorage;
 
+/** */
 function loadCommandButtons(): CommandButtonsApi {
   const factory = (globalThis as unknown as { commandButtons?: () => CommandButtonsApi }).commandButtons;
   if (!factory) { throw new Error("commandButtons factory not registered",); }

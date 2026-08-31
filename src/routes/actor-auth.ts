@@ -6,8 +6,6 @@
  *
  * Shared helper for routes that operate on actors.
  * Checks if the requesting user owns the actor or has admin/solo privileges.
- *
- * @module routes/actor-auth
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
@@ -31,7 +29,6 @@ export interface ActorAccessContext {
  *
  * Returns the userId on success, or a localized error Response (401
  * unauthenticated / 404 not-found-or-unauthorized) to return as-is.
- *
  * @param ctx - Elysia handler context (must carry `params.actorId`, optional `userRole`, `t`)
  * @param database - Database handle used for the ownership check
  * @returns The authenticated userId, or a Response to short-circuit the handler
@@ -53,7 +50,13 @@ export async function requireActorAccess(
   return userId;
 }
 
-/** Check if user owns the actor (or is admin/solo). */
+/**
+ * Check if user owns the actor (or is admin/solo).
+ * @param database
+ * @param actorId
+ * @param userId
+ * @param userRole
+ */
 export async function checkActorOwnership(
   database: Kysely<DB>,
   actorId: string,

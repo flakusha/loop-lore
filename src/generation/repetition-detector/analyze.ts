@@ -8,6 +8,8 @@ import { computeRepetitionScore, } from "./score";
 /**
  * Analyze a text buffer for repetitive patterns.
  * Returns a scored analysis with detected patterns.
+ * @param text
+ * @param config
  */
 export function analyzeRepetition(text: string, config: RepetitionDetectionConfig,): RepetitionAnalysis {
   if (text.length < config.minChars) {

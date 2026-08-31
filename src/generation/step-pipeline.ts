@@ -24,7 +24,6 @@ import { activeGenerations, updateAttemptStatus, } from "./cancellation-tracker"
 /**
  * Mark a step as completed in a multi-step generation pipeline.
  * Advances the step index so retry-from-point resumes from the next step.
- *
  * @param attemptId — the generation attempt ID
  * @param stepIndex — the step index that completed (0-based)
  * @param db — Kysely DB instance for persistence
@@ -35,6 +34,12 @@ export interface CompleteStepOpts {
   db: Kysely<DB>;
 }
 
+/**
+ * @param root0
+ * @param root0.attemptId
+ * @param root0.stepIndex
+ * @param root0.db
+ */
 export async function completeStep({ attemptId, stepIndex, db, }: CompleteStepOpts,): Promise<void> {
   const active = activeGenerations.get(attemptId,);
   if (!active) { return; }
@@ -60,7 +65,6 @@ export async function completeStep({ attemptId, stepIndex, db, }: CompleteStepOp
 
 /**
  * Mark a step as failed, storing error context for retry-from-point.
- *
  * @param attemptId — the generation attempt ID
  * @param stepIndex — the step index that failed (0-based)
  * @param error — the error that caused failure
@@ -73,6 +77,13 @@ export interface FailStepOpts {
   db: Kysely<DB>;
 }
 
+/**
+ * @param root0
+ * @param root0.attemptId
+ * @param root0.stepIndex
+ * @param root0.error
+ * @param root0.db
+ */
 export async function failStep({ attemptId, stepIndex, error, db, }: FailStepOpts,): Promise<void> {
   try {
     await updateAttemptStatus({
@@ -92,6 +103,7 @@ export async function failStep({ attemptId, stepIndex, error, db, }: FailStepOpt
   }
 }
 
+/** */
 export interface PipelineState {
   stepIndex: number;
   totalSteps: number;
@@ -101,7 +113,6 @@ export interface PipelineState {
 /**
  * Get the current pipeline state for a generation attempt.
  * Checks in-memory tracking first, falls back to DB.
- *
  * @param attemptId — the generation attempt ID
  * @param db — Kysely DB instance for fallback lookup
  * @returns pipeline state, or null if attempt not found

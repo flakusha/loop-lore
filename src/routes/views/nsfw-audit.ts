@@ -6,7 +6,11 @@ import type { DB, } from "../../db/schema";
 import { type ModAction, NsfwModerationService, type NsfwUserPrefs, } from "../../nsfw/moderation-service";
 import { escapeHtml, loadView, respond, } from "./layout";
 
-/** Render a single consent-state row (label/value) for the admin view. */
+/**
+ * Render a single consent-state row (label/value) for the admin view.
+ * @param label
+ * @param value
+ */
 function consentRow(label: string, value: string,): string {
   return `<tr>
       <td style="font-size: 13px; font-weight: 500; white-space: nowrap; width: 200px">${escapeHtml(label,)}</td>
@@ -18,6 +22,7 @@ function consentRow(label: string, value: string,): string {
  * Render the consent-state panel for the target user. Falls back to an
  * explanatory row when no stored preferences exist yet (the service lazily
  * creates default prefs on first read, so a row is normally always present).
+ * @param prefs
  */
 function renderNsfwConsent(prefs: NsfwUserPrefs,): string {
   const status = prefs.nsfwEnabled ? "Enabled" : "Disabled";
@@ -34,7 +39,10 @@ function renderNsfwConsent(prefs: NsfwUserPrefs,): string {
   return rows.join("\n            ",);
 }
 
-/** Render the moderation audit log rows (newest first). */
+/**
+ * Render the moderation audit log rows (newest first).
+ * @param actions
+ */
 function renderNsfwAuditRows(actions: ModAction[],): string {
   if (actions.length === 0) {
     return `<tr>
@@ -54,6 +62,13 @@ function renderNsfwAuditRows(actions: ModAction[],): string {
  * Server-render the NSFW moderation audit view: consent state + immutable
  * moderation-action audit log for a target user, wrapped in the page layout.
  * Admins may target any user via ?userId=; otherwise the acting admin is shown.
+ * @param database
+ * @param targetUserId
+ * @param isHtmx
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
  */
 async function serveNsfwModerationAudit(
   database: Kysely<DB>,
