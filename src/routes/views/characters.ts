@@ -55,15 +55,16 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,
       <div class="title">Character not found</div>
     </div>`,);
   }
-
-  const name = escapeHtml(actor.display_name || "",);
-  const desc = escapeHtml(actor.description || "",);
-  const systemPrompt = escapeHtml(actor.system_prompt || "",);
-  const personality = escapeHtml(actor.personality || "",);
-  const welcome = escapeHtml(actor.welcome_message || "",);
-  const scenario = escapeHtml(actor.scenario || "",);
-  const mesExample = escapeHtml(actor.mes_example || "",);
-  const postHistory = escapeHtml(actor.post_history_instructions || "",);
+  // buildEditFormHtml applies escapeHtml/escapeAttr internally to all
+  // user-controlled fields, so pass the raw DB values (not pre-escaped).
+  const name = actor.display_name ?? "";
+  const desc = actor.description ?? "";
+  const systemPrompt = actor.system_prompt ?? "";
+  const personality = actor.personality ?? "";
+  const welcome = actor.welcome_message ?? "";
+  const scenario = actor.scenario ?? "";
+  const mesExample = actor.mes_example ?? "";
+  const postHistory = actor.post_history_instructions ?? "";
   const avatarHtml = actor.avatar_asset_id
     ? `<img src="/api/assets/${actor.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
     : "<span>👤</span>";

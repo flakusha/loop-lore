@@ -8,6 +8,13 @@
  * Called by serveCharacterEditForm after loading the actor from DB.
  */
 
+import { escapeHtml, } from "./layout";
+
+/** Stricter escape for values interpolated inside single- or double-quoted attributes
+ * and JavaScript string literals (e.g. `onclick='...'`). Also encodes `'`. */
+function escapeAttr(str: string,): string {
+  return escapeHtml(str,).replaceAll("'", "&#39;",);
+}
 /** Input values for the edit form */
 export interface EditFormValues {
   name: string;
@@ -123,14 +130,30 @@ export function buildEditFormHtml(v: EditFormValues,): string {
             ${v.avatarRemoveBtn}
           </div>
         </div>
-        <div class="form-group"><label class="form-label" for="edit-name">Display Name</label><input class="form-input" type="text" id="edit-name" value="${v.name}" /></div>
-        <div class="form-group"><label class="form-label" for="edit-desc">Description</label><textarea class="form-input form-textarea" id="edit-desc" rows="3">${v.desc}</textarea></div>
-        <div class="form-group"><label class="form-label" for="edit-system">System Prompt</label><textarea class="form-input form-textarea" id="edit-system" rows="6">${v.systemPrompt}</textarea></div>
-        <div class="form-group"><label class="form-label" for="edit-personality">Personality</label><textarea class="form-input form-textarea" id="edit-personality" rows="4">${v.personality}</textarea></div>
-        <div class="form-group"><label class="form-label" for="edit-greeting">Welcome Message</label><textarea class="form-input form-textarea" id="edit-greeting" rows="4">${v.welcome}</textarea></div>
-        <div class="form-group"><label class="form-label" for="edit-scenario">Scenario</label><textarea class="form-input form-textarea" id="edit-scenario" rows="3">${v.scenario}</textarea></div>
-        <div class="form-group"><label class="form-label" for="edit-example">Example Messages</label><textarea class="form-input form-textarea" id="edit-example" rows="5">${v.mesExample}</textarea></div>
-        <div class="form-group"><label class="form-label" for="edit-post-history">Post-History Instructions</label><textarea class="form-input form-textarea" id="edit-post-history" rows="4">${v.postHistory}</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-name">Display Name</label><input class="form-input" type="text" id="edit-name" value="${
+    escapeHtml(v.name,)
+  }" /></div>
+        <div class="form-group"><label class="form-label" for="edit-desc">Description</label><textarea class="form-input form-textarea" id="edit-desc" rows="3">${
+    escapeHtml(v.desc,)
+  }</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-system">System Prompt</label><textarea class="form-input form-textarea" id="edit-system" rows="6">${
+    escapeHtml(v.systemPrompt,)
+  }</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-personality">Personality</label><textarea class="form-input form-textarea" id="edit-personality" rows="4">${
+    escapeHtml(v.personality,)
+  }</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-greeting">Welcome Message</label><textarea class="form-input form-textarea" id="edit-greeting" rows="4">${
+    escapeHtml(v.welcome,)
+  }</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-scenario">Scenario</label><textarea class="form-input form-textarea" id="edit-scenario" rows="3">${
+    escapeHtml(v.scenario,)
+  }</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-example">Example Messages</label><textarea class="form-input form-textarea" id="edit-example" rows="5">${
+    escapeHtml(v.mesExample,)
+  }</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-post-history">Post-History Instructions</label><textarea class="form-input form-textarea" id="edit-post-history" rows="4">${
+    escapeHtml(v.postHistory,)
+  }</textarea></div>
         <div class="form-group"><label class="form-label" for="edit-content-rating">Content Rating</label><select class="form-input" id="edit-content-rating">
           <option value="sfw"${v.contentRating === "sfw" ? " selected" : ""}>SFW — Safe</option>
           <option value="nsfw_mild"${v.contentRating === "nsfw_mild" ? " selected" : ""}>Mild</option>
@@ -139,18 +162,23 @@ export function buildEditFormHtml(v: EditFormValues,): string {
           <option value="nsfw_extreme"${v.contentRating === "nsfw_extreme" ? " selected" : ""}>Extreme</option>
         </select>
         <p class="form-hint" style="color:var(--text-secondary)">Maximum explicit content this character may produce. Gated by your account&rsquo;s NSFW preference.</p></div>
-        <input type="hidden" id="char-avatar-id" value="${v.avatarId}" />
+        <input type="hidden" id="char-avatar-id" value="${escapeHtml(v.avatarId,)}" />
 ${INTERNAL_TRAITS_SECTION}
 ${PROACTIVE_SECTION}
         <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
           <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
-          <button type="button" class="btn btn-primary" onclick="saveCharacterEdit('${v.characterId}')" data-testid="save-character-btn">Save Character</button>
-        </div>
+          <button type="button" class="btn btn-primary" onclick="saveCharacterEdit('${
+    escapeAttr(v.characterId,)
+  }')" data-testid="save-character-btn">Save Character</button>
       </form>
       <script>
         (async () => {
-          if (typeof globalThis.loadInternalTraits === 'function') { await globalThis.loadInternalTraits('${v.characterId}'); }
-          if (typeof globalThis.loadProactiveConfig === 'function') { await globalThis.loadProactiveConfig('${v.characterId}'); }
+          if (typeof globalThis.loadInternalTraits === 'function') { await globalThis.loadInternalTraits('${
+    escapeAttr(v.characterId,)
+  }'); }
+          if (typeof globalThis.loadProactiveConfig === 'function') { await globalThis.loadProactiveConfig('${
+    escapeAttr(v.characterId,)
+  }'); }
         })();
       </script>
     </div>`;

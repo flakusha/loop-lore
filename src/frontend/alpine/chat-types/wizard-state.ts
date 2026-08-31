@@ -20,7 +20,7 @@ export interface ChatWizardState {
   wizardStep: number;
   wizardTotalSteps: number;
   confirmWizard(wizardId: string,): Promise<void>;
-  cancelWizard(wizardId: string,): Promise<void>;
+  cancelWizard(): Promise<void>;
   updateWizardField(field: string, value: string,): void;
   wizardNextStep(): void;
   wizardPrevStep(): void;
