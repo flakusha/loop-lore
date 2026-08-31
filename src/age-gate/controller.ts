@@ -230,7 +230,12 @@ export function handleAdminUpdateConfig(userRole: string | null | undefined, bod
   return jsonResponse(ageGateConfig.get(),);
 }
 
-/** Create the age-gate Elysia route group. */
+/**
+ * Create the age-gate Elysia route group.
+ * @param root0 - Options object.
+ * @param root0.database - Database instance.
+ * @returns Configured Elysia app.
+ */
 export function ageGateRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "age-gate", },)
     .get("/api/age-gate/status", (ctx,) => handleGetStatus(database, (ctx as any).userId,),)
