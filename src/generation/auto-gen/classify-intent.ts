@@ -6,7 +6,7 @@ import { callAux, } from "../../aux-pipeline";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { resolveSystemPrompt, } from "../../prompts";
-import { jsonParseOr, } from "../../utils";
+import { clampUnit, jsonParseOr, } from "../../utils";
 
 /**
  * Pre-generation intent check using the auxiliary model.
@@ -41,16 +41,38 @@ export async function classifyIntent(
     },);
     if (!response) { return null; }
 
-    const parsed = jsonParseOr<Partial<IntentClassification>>(response.content, {},);
-    if (!parsed.intent) { return null; }
-
-    return {
-      intent: parsed.intent,
-      confidence: parsed.confidence ?? 0.5,
-      shortReply: parsed.shortReply ?? false,
-    };
+    return parseIntentClassification(response.content,);
   } catch {
     // Auxiliary model unavailable — proceed with main generation
     return null;
   }
+}
+
+/**
+ * Parse and validate a raw AUX-LLM JSON response into an {@link IntentClassification}.
+ *
+ * Pure and side-effect free — unit-testable without a live provider.
+ *
+ * @param content - Raw LLM response text
+ * @returns Classification, or null if the response is missing `intent`
+ *
+ * @example
+ * parseIntentClassification('{"intent":"chat","confidence":0.8,"shortReply":false}')
+ * // { intent: "chat", confidence: 0.8, shortReply: false }
+ */
+export function parseIntentClassification(content: string,): IntentClassification | null {
+  const parsed = jsonParseOr<Partial<IntentClassification>>(content, {},);
+  if (typeof parsed.intent !== "string" || parsed.intent === "") { return null; }
+
+  // Confidence is contractually `[0, 1]`; clamp out-of-range values and fall
+  // back to 0.5 for non-numeric input. A misbehaving model or prompt-injected
+  // tool-result JSON cannot poison downstream heuristics that branch on
+  // confidence thresholds.
+  const rawConfidence = typeof parsed.confidence === "number" ? parsed.confidence : 0.5;
+
+  return {
+    intent: parsed.intent,
+    confidence: clampUnit(rawConfidence,),
+    shortReply: parsed.shortReply === true,
+  };
 }
