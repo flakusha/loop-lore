@@ -19,6 +19,14 @@ export { isJsonString, jsonParseOr, jsonStringifyOr, safeJsonParse, safeJsonStri
 export type { FetchAuth, FetchResult, SafeFetchOptions, } from "./utils/safe-fetch";
 export { safeFetch, safeFetchWithRetry, } from "./utils/safe-fetch";
 
+// ── Numeric Clamping ──────────────────────────────────────────
+//
+// Re-exported from the no-dep clamp sub-module. Used to defensively
+// bound parsed numeric input (e.g. LLM confidence scores contractually
+// in `[0, 1]`) so downstream heuristics that branch on the value
+// cannot be tricked by out-of-range or non-finite input.
+export { clamp, clampUnit, } from "./utils/clamp";
+
 // ── Safe Buffer ─────────────────────────────────────────────
 
 // NOTE: safe-buffer functions (safeFromBase64, safeToBase64, safeCompress, etc.)
