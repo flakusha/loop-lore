@@ -192,6 +192,9 @@ export function handleAdminGetConfig(userRole: string | null | undefined,): Resp
  *
  * Body example:
  *   { "enabled": true, "minimumAge": 18, "mode": "self-declaration" }
+ * @param userRole - User's role from auth middleware.
+ * @param body - Request body with config updates.
+ * @returns JSON response with updated config.
  */
 export function handleAdminUpdateConfig(userRole: string | null | undefined, body: unknown,): Response {
   if (!can(userRole, "admin.settings",)) {
@@ -227,6 +230,7 @@ export function handleAdminUpdateConfig(userRole: string | null | undefined, bod
   return jsonResponse(ageGateConfig.get(),);
 }
 
+/** Create the age-gate Elysia route group. */
 export function ageGateRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "age-gate", },)
     .get("/api/age-gate/status", (ctx,) => handleGetStatus(database, (ctx as any).userId,),)
