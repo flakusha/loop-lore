@@ -42,7 +42,13 @@ type HandleResolver = (userId: string,) => Promise<string | null>;
 /** Optional cache to avoid per-request DB lookups for the same user. */
 class HandleCache {
   private readonly cache = new Map<string, string | null>();
+  /**
+   * @param resolve
+   */
   constructor(private readonly resolve: HandleResolver,) {}
+  /**
+   * @param userId
+   */
   async get(userId: string,): Promise<string | null> {
     const hit = this.cache.get(userId,);
     if (hit !== undefined) { return hit; }
@@ -57,6 +63,7 @@ class HandleCache {
   }
 }
 
+/** */
 export interface RequirePermissionOpts {
   /** Logger for denial audit. Defaults to global logger. */
   logger?: Logger;
@@ -68,7 +75,6 @@ export interface RequirePermissionOpts {
  * Create an Elysia `beforeHandle` that allows the request iff
  * `can(ctx.userRole, permission)` is true. Returns a localized 403
  * on denial and emits a security audit log entry.
- *
  * @param permission - Permission string (see users/permissions.ts).
  * @param opts - Logger + handle resolver overrides.
  */

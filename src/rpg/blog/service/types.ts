@@ -7,6 +7,7 @@ export const BlogPostVisibility = {
   Followers: "followers",
   Private: "private",
 } as const;
+/** */
 export type BlogPostVisibility = (typeof BlogPostVisibility)[keyof typeof BlogPostVisibility];
 export const BlogPostStatus = {
   Draft: "draft",
@@ -15,18 +16,23 @@ export const BlogPostStatus = {
   Disabled: "disabled",
   Scheduled: "scheduled",
 } as const;
+/** */
 export type BlogPostStatus = (typeof BlogPostStatus)[keyof typeof BlogPostStatus];
 export const BlogAuthorType = {
   Human: "human",
   Llm: "llm",
 } as const;
+/** */
 export type BlogAuthorType = (typeof BlogAuthorType)[keyof typeof BlogAuthorType];
+/** */
 export type BlogCommentStatus = "visible" | "hidden" | "deleted";
+/** */
 export type BlogRAGSourceType =
   | "internal_rag"
   | "external_web"
   | "external_api";
 
+/** */
 export interface BlogPostRow {
   id: string;
   author_id: string;
@@ -46,6 +52,7 @@ export interface BlogPostRow {
   updated_at: string;
 }
 
+/** */
 export interface BlogCommentRow {
   id: string;
   post_id: string;
@@ -55,12 +62,14 @@ export interface BlogCommentRow {
   created_at: string;
 }
 
+/** */
 export interface BlogTagRow {
   id: string;
   post_id: string;
   tag: string;
 }
 
+/** */
 export interface BlogFollowRow {
   id: string;
   follower_id: string;
@@ -68,6 +77,7 @@ export interface BlogFollowRow {
   created_at: string;
 }
 
+/** */
 export interface BlogRAGSourceRow {
   id: string;
   post_id: string;
@@ -79,6 +89,7 @@ export interface BlogRAGSourceRow {
   created_at: string;
 }
 
+/** */
 export interface CreateBlogPostInput {
   author_id: string;
   title: string;
@@ -93,6 +104,7 @@ export interface CreateBlogPostInput {
   metadata?: Record<string, unknown>;
 }
 
+/** */
 export interface UpdateBlogPostInput {
   title?: string;
   body?: string;
@@ -103,12 +115,14 @@ export interface UpdateBlogPostInput {
   metadata?: Record<string, unknown>;
 }
 
+/** */
 export interface CreateCommentInput {
   post_id: string;
   author_id: string;
   body: string;
 }
 
+/** */
 export interface BlogPostWithTags extends BlogPostRow {
   tags: string[];
 }

@@ -13,6 +13,11 @@ import type { AssetRecord, ShareAssetOpts, ShareRecord, UnshareAssetOpts, Update
 /**
  * Update an asset's visibility.
  * Only the owner can change visibility.
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.visibility
+ * @param root0.actorId
  */
 export async function updateAssetVisibility({
   database,
@@ -31,6 +36,11 @@ export async function updateAssetVisibility({
 
 /**
  * Share an asset with an actor.
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.sharedWithId
+ * @param root0.sharedById
  */
 export async function shareAsset({
   database,
@@ -72,6 +82,10 @@ export async function shareAsset({
 
 /**
  * Unshare an asset from an actor.
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.sharedWithId
  */
 export async function unshareAsset({ database, assetId, sharedWithId, }: UnshareAssetOpts,): Promise<void> {
   await database
@@ -83,6 +97,8 @@ export async function unshareAsset({ database, assetId, sharedWithId, }: Unshare
 
 /**
  * Get all shares for an asset.
+ * @param database
+ * @param assetId
  */
 export async function getAssetShares(database: Kysely<DB>, assetId: string,): Promise<ShareRecord[]> {
   return database.selectFrom("asset_shares",).selectAll().where("asset_id", "=", assetId,).execute();

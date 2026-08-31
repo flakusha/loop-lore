@@ -34,6 +34,9 @@ const querySchema = t.Object({
   limit: t.Optional(t.Number(),),
 },);
 
+/**
+ * @param opts
+ */
 export function npcMovementRoutes(opts: HandlerOpts,) {
   const svc = () => new NpcMovementIndicatorService(opts.database,);
 
@@ -125,6 +128,10 @@ interface MovementEvent {
 }
 
 // Helper for logging errors
+/**
+ * @param msg
+ * @param err
+ */
 function logErr(msg: string, err: unknown,) {
   console.error(`[npc-movement] ${msg}`, err,);
 }

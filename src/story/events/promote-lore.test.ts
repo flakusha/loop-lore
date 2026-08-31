@@ -19,6 +19,7 @@ import { insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
 import { applyEvents, } from "./application";
 import { promoteEventToLore, } from "./promote-lore";
 
+/** */
 async function setupWorld() {
   const env = await createTestDb();
   await insertUsers(env.db, "gm", "GM",);

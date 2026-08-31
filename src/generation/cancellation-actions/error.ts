@@ -11,6 +11,12 @@ export class GenerationCancelledError extends Error {
   readonly source: CancelSource;
   readonly detail: string;
 
+  /**
+   * @param reason
+   * @param source
+   * @param detail
+   * @param options
+   */
   constructor(reason: CancelReason, source: CancelSource, detail: string, options?: ErrorOptions,) {
     super(`Generation cancelled: ${reason} (${source}) — ${detail}`, options,);
     this.name = "GenerationCancelledError";

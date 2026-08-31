@@ -6,7 +6,6 @@
  *
  * Compiled regex patterns for routing user messages to the correct
  * handler: generation pipeline, tool execution, API calls, or chat.
- *
  * @module regex/intent
  */
 

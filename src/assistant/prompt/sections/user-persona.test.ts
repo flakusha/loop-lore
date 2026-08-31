@@ -60,7 +60,11 @@ describe("userPersonaSection", () => {
     return chatId;
   }
 
-  /** Context carrying a real chat + the acting user. */
+  /**
+   * Context carrying a real chat + the acting user.
+   * @param chatId
+   * @param withUserId
+   */
   function ctxFor(chatId: string, withUserId = true,): AssembleContext {
     return {
       db,
@@ -82,6 +86,9 @@ describe("userPersonaSection", () => {
     };
   }
 
+  /**
+   * @param displayName
+   */
   async function createImpersonatedActor(displayName: string,): Promise<string> {
     const id = uid();
     await insertActors(db, displayName, {

@@ -7,6 +7,9 @@
  */
 import type { Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // Add cooldown columns to actor_lore_entries
   await db.schema
@@ -31,6 +34,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   // Remove from world_lore_entries
   await db.schema.alterTable("world_lore_entries",).dropColumn("last_activated",).execute();

@@ -6,7 +6,6 @@
  *
  * Compiled regex patterns for detecting scene changes, context cuts,
  * and location transitions in user messages.
- *
  * @module regex/transitions
  */
 

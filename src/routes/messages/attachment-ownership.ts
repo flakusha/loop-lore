@@ -12,6 +12,9 @@ import type { DB, } from "../../db/schema";
 
 /** Error thrown when an attachment references an asset the caller does not own. */
 export class AttachmentOwnershipError extends Error {
+  /**
+   * @param assetId
+   */
   constructor(assetId: string,) {
     super(`Asset ${assetId} is not owned by the caller`,);
     this.name = "AttachmentOwnershipError";
@@ -21,6 +24,9 @@ export class AttachmentOwnershipError extends Error {
 /**
  * Verify every attachment asset exists and is owned by `ownerId`.
  * Throws {@link AttachmentOwnershipError} on the first violation.
+ * @param database
+ * @param attachments
+ * @param ownerId
  */
 export async function verifyAttachmentsOwned(
   database: Kysely<DB>,

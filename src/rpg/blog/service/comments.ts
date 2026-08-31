@@ -11,6 +11,10 @@ import type {
 } from "./types";
 
 // ── Comments ─────────────────────────────────────────
+/**
+ * @param db
+ * @param input
+ */
 export async function createComment(
   db: Kysely<any>,
   input: CreateCommentInput,
@@ -48,6 +52,13 @@ export async function createComment(
   return comment;
 }
 
+/**
+ * @param db
+ * @param postId
+ * @param opts
+ * @param opts.limit
+ * @param opts.offset
+ */
 export async function listComments(
   db: Kysely<any>,
   postId: string,
@@ -64,6 +75,11 @@ export async function listComments(
     .execute() as Promise<BlogCommentRow[]>;
 }
 
+/**
+ * @param db
+ * @param id
+ * @param status
+ */
 export async function moderateComment(
   db: Kysely<any>,
   id: string,

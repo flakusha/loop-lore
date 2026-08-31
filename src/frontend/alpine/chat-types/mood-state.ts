@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // ── Mood System ───────────────────────────────────────────
+/** */
 export interface ChatMoodState {
   _mood: {
     happiness: number;

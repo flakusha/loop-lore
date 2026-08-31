@@ -44,6 +44,7 @@ import {
 import type { PipelineConfig, } from "./pipeline";
 import { getSmk, isEncryptionEnabled, } from "./smk";
 
+/** */
 export interface AtRestEncryptOpts {
   database: Kysely<DB>;
   chatId: string;
@@ -52,6 +53,7 @@ export interface AtRestEncryptOpts {
   config?: PipelineConfig;
 }
 
+/** */
 export interface AtRestDecryptOpts {
   database: Kysely<DB>;
   chatId: string;
@@ -59,12 +61,16 @@ export interface AtRestDecryptOpts {
   encryptionLevel: EncryptionLevel;
 }
 
+/** */
 export interface AtRestResult {
   storedContent: string;
   keyId: string | null;
   wasEncrypted: boolean;
 }
 
+/**
+ * @param opts
+ */
 export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestResult> {
   const { database, chatId, plaintext, encryptionLevel, config, } = opts;
   if (isEncryptedPayload(plaintext,)) {
@@ -97,6 +103,9 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
   }
 }
 
+/**
+ * @param opts
+ */
 export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
   const { database, storedContent, encryptionLevel, } = opts;
   switch (encryptionLevel) {
@@ -126,12 +135,20 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
   }
 }
 
+/**
+ * @param encryptionLevel
+ * @param storedContent
+ */
 export function needsEncryption(encryptionLevel: EncryptionLevel, storedContent: string,): boolean {
   if (encryptionLevel === "none") { return false; }
   if (isEncryptedPayload(storedContent,)) { return false; }
   return encryptionLevel === "standard" || encryptionLevel === "at-rest";
 }
 
+/**
+ * @param database
+ * @param chatId
+ */
 export async function getChatEncryptionLevel(database: Kysely<DB>, chatId: string,): Promise<EncryptionLevel> {
   const row = await database
     .selectFrom("chats",)
@@ -150,6 +167,7 @@ export async function getChatEncryptionLevel(database: Kysely<DB>, chatId: strin
  * Returns true when the body is a JSON-encoded object containing either
  * `e2e: true` (client-pre-encrypted envelope — server does not decrypt,
  * future Phase E+) or a string `enc` field (server-encrypted payload).
+ * @param storedContent
  */
 export function isE2eOrEncrypted(storedContent: string,): boolean {
   if (!storedContent) { return false; }

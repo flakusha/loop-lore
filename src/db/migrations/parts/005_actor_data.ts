@@ -1,5 +1,8 @@
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Actor Memories ──────────────────────────────────
   await database.schema
@@ -112,6 +115,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema.createIndex("idx_actor_lore_position",).on("actor_lore_entries",).column("position",).execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropIndex("idx_actor_currencies_actor_world",).execute();
   await database.schema.dropTable("actor_currencies",).execute();

@@ -10,6 +10,11 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { charactersRoutes, } from "./characters";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function createApp(db: Kysely<DB>, userId: string, userRole = "solo",): Elysia {
   return new Elysia({ name: "test-characters", },)
     .derive(() => ({ userId, userRole, }))

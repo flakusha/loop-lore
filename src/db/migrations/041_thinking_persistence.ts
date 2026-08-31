@@ -13,6 +13,9 @@
  */
 import type { Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
     .alterTable("messages",)
@@ -25,6 +28,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.alterTable("chats",).dropColumn("thinking_visibility",).execute();
   await db.schema.alterTable("messages",).dropColumn("thinking",).execute();

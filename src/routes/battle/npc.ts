@@ -14,6 +14,10 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param _opts
+ * @param prefix
+ */
 export function npcRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "battle-npc", },)
     .post(

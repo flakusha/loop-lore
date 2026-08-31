@@ -11,6 +11,7 @@ import type { WorldEventType as WET, } from "../db/enums";
 import type { ItemInstance, } from "./items/types";
 
 // ─── World Events ────────────────────────────────────────────────
+/** */
 export interface WorldEvent {
   type: WET;
   actorId?: string;
@@ -20,6 +21,7 @@ export interface WorldEvent {
   description: string;
 }
 
+/** */
 export interface NpcState {
   health: number;
   mental_state: string;
@@ -33,6 +35,7 @@ export interface NpcState {
   movementTarget?: string | null;
 }
 
+/** */
 export interface LocationState {
   description_override: string | null;
   atmosphere: string | null;

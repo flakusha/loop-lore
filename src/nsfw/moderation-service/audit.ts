@@ -10,6 +10,7 @@
 import { jsonParseOr, jsonStringifyOr, } from "../../utils/safe-json";
 import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
+/** */
 export interface RecordActionArgs {
   thisL: NsfwModerationServiceContext;
   params: {
@@ -22,7 +23,12 @@ export interface RecordActionArgs {
   };
 }
 
-/** Persist a moderation action and notify the target user (unless system). */
+/**
+ * Persist a moderation action and notify the target user (unless system).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.params
+ */
 export async function recordAction({ thisL, params, }: RecordActionArgs,): Promise<ModAction> {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
@@ -63,13 +69,20 @@ export async function recordAction({ thisL, params, }: RecordActionArgs,): Promi
   };
 }
 
+/** */
 export interface GetAuditLogArgs {
   thisL: NsfwModerationServiceContext;
   targetUserId: string;
   options?: { limit?: number; offset?: number };
 }
 
-/** Read the moderation action audit trail for a user (newest first). Soft-deleted rows are excluded. */
+/**
+ * Read the moderation action audit trail for a user (newest first). Soft-deleted rows are excluded.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.targetUserId
+ * @param root0.options
+ */
 export async function getAuditLog({ thisL, targetUserId, options, }: GetAuditLogArgs,): Promise<ModAction[]> {
   const limit = options?.limit ?? 100;
   const offset = options?.offset ?? 0;
@@ -84,7 +97,14 @@ export async function getAuditLog({ thisL, targetUserId, options, }: GetAuditLog
   return Array.from(rows, (r,) => mapAction(r,),);
 }
 
-/** Send an in-app notification about a moderation action. */
+/**
+ * Send an in-app notification about a moderation action.
+ * @param deps
+ * @param deps.db
+ * @param deps.log
+ * @param userId
+ * @param actionType
+ */
 export async function notifyUser(
   deps: { db: NsfwModerationServiceContext["db"]; log: NsfwModerationServiceContext["log"] },
   userId: string,
@@ -123,7 +143,22 @@ export async function notifyUser(
   },).execute();
 }
 
-/** Map a storage row (snake_case) to the camel-cased ModAction shape. */
+/**
+ * Map a storage row (snake_case) to the camel-cased ModAction shape.
+ * @param row
+ * @param row.id
+ * @param row.action_type
+ * @param row.target_user_id
+ * @param row.performed_by
+ * @param row.reason
+ * @param row.scope
+ * @param row.scope_id
+ * @param row.metadata
+ * @param row.expires_at
+ * @param row.created_at
+ * @param row.deleted_at
+ * @param row.deleted_by
+ */
 export function mapAction(
   row: {
     id: string;

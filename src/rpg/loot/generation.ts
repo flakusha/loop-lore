@@ -13,7 +13,6 @@ import { effectiveWeight, } from "./weights.js";
 
 /**
  * Generate loot from a loot table.
- *
  * @param entries - Available loot entries
  * @param level - Character level (affects rarity weighting)
  * @param dropCount - Number of items to attempt to drop
@@ -58,6 +57,9 @@ export function generateLoot(
 
 /**
  * Roll a single drop from eligible entries.
+ * @param entries
+ * @param level
+ * @param luckModifier
  */
 function rollOneDrop(
   entries: LootEntry[],
@@ -116,6 +118,8 @@ function rollOneDrop(
 
 /**
  * Roll quantity within min/max range.
+ * @param min
+ * @param max
  */
 function rollQuantity(min: number, max: number,): number {
   if (min >= max) {

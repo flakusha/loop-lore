@@ -16,6 +16,7 @@ export interface OpenAiCompatibleState {
   headers: Record<string, string>;
 }
 
+/** */
 export interface OpenAIResponse {
   choices?: {
     message?: { content?: string; reasoning_content?: string; tool_calls?: ToolCallDTO[] };
@@ -28,6 +29,7 @@ export interface OpenAIResponse {
   };
 }
 
+/** */
 export interface OpenAIStreamChunk {
   choices?: {
     delta?: { content?: string; reasoning_content?: string; tool_calls?: ToolCallDeltaDTO[] };
@@ -40,12 +42,14 @@ export interface OpenAIStreamChunk {
   };
 }
 
+/** */
 export interface ToolCallDTO {
   id: string;
   type: "function";
   function: { name: string; arguments: string };
 }
 
+/** */
 export interface ToolCallDeltaDTO {
   index: number;
   id?: string;

@@ -23,7 +23,6 @@ const nonceStore = new WeakMap<Request, string>();
 /**
  * Generate a fresh CSP nonce and associate it with the given request.
  * Call once per request, before any middleware reads it.
- *
  * @param request - The incoming Request to key the nonce on.
  * @returns The base64url-encoded nonce string.
  */
@@ -35,7 +34,6 @@ export function generateNonce(request: Request,): string {
 
 /**
  * Retrieve the CSP nonce for a request, or `null` if none was generated.
- *
  * @param request - The incoming Request.
  * @returns The nonce string, or null.
  */

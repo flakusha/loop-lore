@@ -29,6 +29,7 @@ import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 
 const DEFAULT_ALGORITHM = "ECDH-P256" as const;
 
+/** */
 export interface PublicKeyRow {
   id: string;
   actorId: string;
@@ -39,6 +40,7 @@ export interface PublicKeyRow {
   revokedAt: string | null;
 }
 
+/** */
 export interface RegisterPublicKeyOpts {
   database: Kysely<DB>;
   actorId: string;
@@ -47,16 +49,19 @@ export interface RegisterPublicKeyOpts {
   expiresAt?: string;
 }
 
+/** */
 export interface GetActivePublicKeyOpts {
   database: Kysely<DB>;
   actorId: string;
 }
 
+/** */
 export interface ListActivePublicKeysOpts {
   database: Kysely<DB>;
   actorIds: string[];
 }
 
+/** */
 export interface RevokePublicKeyOpts {
   database: Kysely<DB>;
   actorId: string;
@@ -66,6 +71,7 @@ export interface RevokePublicKeyOpts {
  * Register (or rotate) the public key for an actor. Replaces any existing
  * active row for that actor — only one active pubkey per actor at a time.
  * The old row is soft-revoked (revoked_at set) for audit history.
+ * @param opts
  */
 export async function registerPublicKey(opts: RegisterPublicKeyOpts,): Promise<PublicKeyRow> {
   const { database, actorId, publicKeyJwk, } = opts;
@@ -107,6 +113,7 @@ export async function registerPublicKey(opts: RegisterPublicKeyOpts,): Promise<P
 /**
  * Read the active public key for one actor. Returns null if none is
  * registered or the only one has been revoked.
+ * @param opts
  */
 export async function getActivePublicKey(opts: GetActivePublicKeyOpts,): Promise<PublicKeyRow | null> {
   const row = await opts.database
@@ -123,6 +130,7 @@ export async function getActivePublicKey(opts: GetActivePublicKeyOpts,): Promise
  * Bulk read active public keys for many actors. Useful when a new participant
  * joins a chat and needs all current participants' pubkeys to seed a
  * sender-key ratchet (future ticket).
+ * @param opts
  */
 export async function listActivePublicKeys(opts: ListActivePublicKeysOpts,): Promise<PublicKeyRow[]> {
   if (opts.actorIds.length === 0) { return []; }
@@ -139,6 +147,7 @@ export async function listActivePublicKeys(opts: ListActivePublicKeysOpts,): Pro
 /**
  * Soft-revoke the active public key for an actor. Idempotent: revoking when
  * no active key exists is a no-op.
+ * @param opts
  */
 export async function revokePublicKey(opts: RevokePublicKeyOpts,): Promise<boolean> {
   const result = await opts.database
@@ -162,12 +171,18 @@ interface ActorE2EPubkeyRow {
   revoked_at: string | null;
 }
 
+/**
+ * @param jwk
+ */
 function serializeJwk(jwk: JsonWebKey,): string {
   const r = safeJsonStringify(jwk,);
   if (!r.ok) { throw new Error("serializeJwk: failed to serialize public_key_jwk",); }
   return r.value;
 }
 
+/**
+ * @param row
+ */
 function rowToPublicKey(row: ActorE2EPubkeyRow,): PublicKeyRow {
   const parsed = safeJsonParse<JsonWebKey>(row.public_key_jwk,);
   if (!parsed.ok) { throw new Error(`actor_e2e_pubkeys row ${row.id}: malformed public_key_jwk`,); }

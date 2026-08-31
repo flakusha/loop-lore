@@ -11,7 +11,11 @@ import { ItemVisibility, } from "../../db/enums";
 import { jsonParseOr, uid, } from "../../utils";
 import type { WorldState, } from "./types";
 
-/** Initialize NPC dynamic states for all characters in a world */
+/**
+ * Initialize NPC dynamic states for all characters in a world
+ * @param state
+ * @param worldId
+ */
 export async function initializeNpcStates(state: WorldState, worldId: string,): Promise<number> {
   const characters = await state.db
     .selectFrom("actors",)
@@ -50,7 +54,11 @@ export async function initializeNpcStates(state: WorldState, worldId: string,): 
   return count;
 }
 
-/** Initialize per-world character setup rows for all characters in a world */
+/**
+ * Initialize per-world character setup rows for all characters in a world
+ * @param state
+ * @param worldId
+ */
 export async function initializeCharacterWorldSetup(state: WorldState, worldId: string,): Promise<number> {
   const characters = await state.db
     .selectFrom("actors",)
@@ -96,6 +104,8 @@ export async function initializeCharacterWorldSetup(state: WorldState, worldId: 
  * (a character entering a world starts empty, then gets their starting gear).
  * Items whose definition does not exist in `items` are skipped (the world
  * author must create definitions before the seed resolves them).
+ * @param state
+ * @param worldId
  */
 export async function seedStartingInventory(state: WorldState, worldId: string,): Promise<number> {
   const setups = await state.db
@@ -147,7 +157,11 @@ export async function seedStartingInventory(state: WorldState, worldId: string,)
   return granted;
 }
 
-/** Initialize location dynamic states for all locations in a world */ export async function initializeLocationStates(
+/**
+ * Initialize location dynamic states for all locations in a world
+ * @param state
+ * @param worldId
+ */ export async function initializeLocationStates(
   state: WorldState,
   worldId: string,
 ): Promise<number> {

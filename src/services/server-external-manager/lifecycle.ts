@@ -6,7 +6,11 @@ import { safeFetch, } from "../../utils";
 import { stopLivenessProbes, } from "./probes";
 import type { ServerExternalHost, ServerInstance, } from "./types";
 
-/** Stop a specific instance by type + port */
+/**
+ * Stop a specific instance by type + port
+ * @param host
+ * @param instance
+ */
 export async function stop(host: ServerExternalHost, instance: ServerInstance,): Promise<void> {
   host.log.info("Stopping server", { type: instance.type, pid: instance.pid, },);
 
@@ -28,7 +32,10 @@ export async function stop(host: ServerExternalHost, instance: ServerInstance,):
   host.instances = kept;
 }
 
-/** Stop all managed servers */
+/**
+ * Stop all managed servers
+ * @param host
+ */
 export async function stopAll(host: ServerExternalHost,): Promise<void> {
   stopLivenessProbes(host,);
   host.log.info("Stopping all managed servers", { count: host.instances.length, },);
@@ -40,6 +47,7 @@ export async function stopAll(host: ServerExternalHost,): Promise<void> {
 /**
  * Synchronous kill of all instances — for process.on('exit') handler.
  * Does not await, does not log (no event loop).
+ * @param host
  */
 export function killAllSync(host: ServerExternalHost,): void {
   stopLivenessProbes(host,);
@@ -58,7 +66,10 @@ export function killAllSync(host: ServerExternalHost,): void {
   host.instances.length = 0;
 }
 
-/** Run a single liveness check against all managed instances */
+/**
+ * Run a single liveness check against all managed instances
+ * @param host
+ */
 export async function checkAllLiveliness(host: ServerExternalHost,): Promise<void> {
   for (const instance of host.instances) {
     const alive = await probeInstance(instance,);
@@ -72,7 +83,10 @@ export async function checkAllLiveliness(host: ServerExternalHost,): Promise<voi
   }
 }
 
-/** Probe a single instance — returns true if responsive */
+/**
+ * Probe a single instance — returns true if responsive
+ * @param instance
+ */
 async function probeInstance(instance: ServerInstance,): Promise<boolean> {
   try {
     if (instance.type === "llama-cpp") {

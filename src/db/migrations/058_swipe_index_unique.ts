@@ -19,6 +19,9 @@
  */
 import type { Kysely, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .createIndex("idx_messages_swipe_unique",)
@@ -28,6 +31,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropIndex("idx_messages_swipe_unique",).execute();
 }

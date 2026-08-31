@@ -18,14 +18,20 @@ import type { StoryChatDetail, StoryQuest, StoryTurnRow, } from "./types";
 
 const log = rootLog.child({ module: "story-state-api", },);
 
-/** Fetch the chat detail row for a story chat. */
+/**
+ * Fetch the chat detail row for a story chat.
+ * @param chatId
+ */
 export async function fetchChatDetail(chatId: string,): Promise<StoryChatDetail | null> {
   const res = await apiFetch(`/api/v1/chats/${chatId}`, { headers: { Accept: "application/json", }, },);
   if (!res.ok) { return null; }
   return await res.json() as StoryChatDetail;
 }
 
-/** Fetch the world's display name (best-effort). */
+/**
+ * Fetch the world's display name (best-effort).
+ * @param worldId
+ */
 export async function fetchWorldName(worldId: string,): Promise<string | null> {
   try {
     const res = await apiFetch(`/api/worlds/${worldId}`,);
@@ -38,7 +44,10 @@ export async function fetchWorldName(worldId: string,): Promise<string | null> {
   }
 }
 
-/** Fetch the latest story turns for a chat. */
+/**
+ * Fetch the latest story turns for a chat.
+ * @param chatId
+ */
 export async function fetchStoryTurns(chatId: string,): Promise<StoryTurnRow[]> {
   const res = await apiFetch(`/api/chats/${chatId}/story-turns?pageSize=50`,);
   if (!res.ok) { return []; }
@@ -46,7 +55,10 @@ export async function fetchStoryTurns(chatId: string,): Promise<StoryTurnRow[]> 
   return data.data ?? [];
 }
 
-/** Fetch world quest rows. */
+/**
+ * Fetch world quest rows.
+ * @param worldId
+ */
 export async function fetchQuests(worldId: string,): Promise<StoryQuest[]> {
   const res = await apiFetch(`/api/worlds/${worldId}/quests?pageSize=100`,);
   if (!res.ok) { return []; }
@@ -62,7 +74,10 @@ export interface LocationState {
   description: string | null;
 }
 
-/** Fetch a location's story state, tolerating response shape drift. */
+/**
+ * Fetch a location's story state, tolerating response shape drift.
+ * @param locationId
+ */
 export async function fetchLocationState(locationId: string,): Promise<LocationState | null> {
   try {
     const res = await apiFetch(`/api/locations/${locationId}/state`,);
@@ -81,7 +96,11 @@ export async function fetchLocationState(locationId: string,): Promise<LocationS
   }
 }
 
-/** Fetch NPCs present at a location within a world. */
+/**
+ * Fetch NPCs present at a location within a world.
+ * @param worldId
+ * @param locationId
+ */
 export async function fetchNpcsAt(
   worldId: string,
   locationId: string,
@@ -96,7 +115,10 @@ export async function fetchNpcsAt(
   }
 }
 
-/** Fetch chat participants for turn-order display. */
+/**
+ * Fetch chat participants for turn-order display.
+ * @param chatId
+ */
 export async function fetchParticipants(chatId: string,): Promise<ParticipantRow[] | null> {
   try {
     const res = await apiFetch(`/api/v1/chats/${chatId}/participants`,);

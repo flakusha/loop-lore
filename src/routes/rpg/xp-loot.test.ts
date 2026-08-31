@@ -57,6 +57,9 @@ describe("XP & loot (auth-gated)", () => {
     } as never,);
   },);
 
+  /**
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-xp-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
@@ -64,6 +67,9 @@ describe("XP & loot (auth-gated)", () => {
       .use(xpLootTablesRoutes({ database: db, } as any,),) as any;
   }
 
+  /**
+   * @param res
+   */
   async function json<T,>(res: Response,): Promise<T> {
     return res.json() as T;
   }

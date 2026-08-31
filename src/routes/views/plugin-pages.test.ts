@@ -12,6 +12,7 @@ import type { Elysia, } from "elysia";
 import { createLogger, setGlobalLogger, } from "../../logger";
 import { pagesRoutes, } from "./plugin-pages";
 
+/** */
 function fakeDb(): unknown {
   // Denial paths short-circuit before any DB access.
   return new Proxy({}, {

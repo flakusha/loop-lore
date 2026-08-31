@@ -36,6 +36,8 @@ const ActorEmotionResponse = t.Object({
 
 /**
  * Actor emotions sub-plugin — CRUD for an actor's active emotions.
+ * @param opts
+ * @param prefix
  */
 export function actorRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

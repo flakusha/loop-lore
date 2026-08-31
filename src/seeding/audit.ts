@@ -13,7 +13,6 @@ import { safeJsonStringify, uid, } from "../utils";
 
 /**
  * Record a seed event in the `seed_audit` table.
- *
  * @param database - Kysely instance
  * @param seedType - Entity type, e.g. "character" | "world" | "chat"
  * @param seedId - ID of the seeded entity

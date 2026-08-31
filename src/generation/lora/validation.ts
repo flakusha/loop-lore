@@ -5,7 +5,6 @@
  * LoRA Validation
  *
  * Validation functions for LoRA configuration and models.
- *
  * @module generation/lora/validation
  */
 
@@ -21,7 +20,6 @@ import {
 
 /**
  * Validate a required string field in a record.
- *
  * @param record - Record to validate
  * @param key - Field name
  * @param label - Human-readable label for error messages
@@ -41,7 +39,6 @@ function validateRequiredString(
 
 /**
  * Validate optional trigger words array.
- *
  * @param words - Value to validate
  * @returns Error message or null if valid
  */
@@ -62,7 +59,6 @@ function validateTriggerWords(words: unknown,): string | null {
 
 /**
  * Validate optional recommended strength.
- *
  * @param value - Value to validate
  * @returns Error message or null if valid
  */
@@ -83,10 +79,8 @@ function validateRecommendedStrength(value: unknown,): string | null {
 
 /**
  * Validate a LoRA configuration object.
- *
  * @param config - Configuration to validate
  * @returns Validation error message or null if valid
- *
  * @example
  * ```ts
  * const error = validateLoRAConfig({ name: "my_lora", strength: 0.5, backend: "comfyui" });
@@ -134,7 +128,6 @@ export function validateLoRAConfig(config: unknown,): string | null {
 
 /**
  * Validate a LoRA model object.
- *
  * @param model - Model to validate
  * @returns Validation error message or null if valid
  */
@@ -187,7 +180,6 @@ export function validateLoRAModel(model: unknown,): string | null {
 
 /**
  * Check if a filename is a valid LoRA model file.
- *
  * @param filename - Filename to check
  * @returns True if filename has a valid LoRA extension
  */
@@ -203,7 +195,6 @@ export function isLoRAFilename(filename: string,): boolean {
 
 /**
  * Extract LoRA name from filename (strip extension).
- *
  * @param filename - LoRA model filename
  * @returns Model name without extension
  */
@@ -216,7 +207,6 @@ export function extractLoRAName(filename: string,): string {
 
 /**
  * Clamp LoRA strength to valid range.
- *
  * @param strength - Input strength
  * @returns Clamped strength within [LORA_STRENGTH_MIN, LORA_STRENGTH_MAX]
  */
@@ -226,7 +216,6 @@ export function clampStrength(strength: number,): number {
 
 /**
  * Check if strength is in the typical range (0.3-0.7).
- *
  * @param strength - Strength to check
  * @returns True if strength is in typical range
  */

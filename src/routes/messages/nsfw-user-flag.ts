@@ -18,6 +18,10 @@ const RATING_ORDER = ["sfw", "nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw
  * Lightweight NSFW check on user-submitted messages.
  * Flags (warns) when content contains NSFW keywords and the user's max_rating
  * is below nsfw_intense. Does NOT suppress or block the message.
+ * @param database
+ * @param userId
+ * @param chatId
+ * @param content
  */
 export async function flagNsfwUserMessage(
   database: HandlerOpts["database"],

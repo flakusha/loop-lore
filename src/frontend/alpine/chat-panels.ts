@@ -15,6 +15,7 @@ export interface AssistantToolCall {
  * (newest first, capped at 20) for the unified GM & Assistant panel's
  * Assistant tab. Pure helper kept out of `bootstrap.ts` so that file stays
  * under the 250-line size guard.
+ * @param messages
  */
 export function collectAssistantToolCalls(
   messages: readonly {

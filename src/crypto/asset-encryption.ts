@@ -29,6 +29,7 @@ import {
 
 const ASSET_HKDF_INFO = "loop-lore-asset-subkey-v1";
 
+/** */
 export interface AssetEncryptionResult {
   encrypted: boolean;
   keyId: string | null;
@@ -41,6 +42,8 @@ export interface AssetEncryptionResult {
  * Uses HKDF-SHA-256 with the asset id as salt and a versioned info string.
  * The subkey is deterministic for any (chatKey, assetId) pair, so re-encrypt
  * during key rotation produces an equivalent key from the new chat key.
+ * @param chatKey
+ * @param assetId
  */
 export async function deriveAssetSubkey(chatKey: ChatKey, assetId: string,): Promise<CryptoKey> {
   const ikm = await crypto.subtle.importKey(
@@ -63,7 +66,6 @@ export async function deriveAssetSubkey(chatKey: ChatKey, assetId: string,): Pro
 
 /**
  * Encrypt an asset blob if encryption is enabled and tier is not public.
- *
  * @param buffer - Raw asset bytes
  * @param chatKey - Derived chat key for the parent entity
  * @param keyId - Chat key ID to embed in payload (`key_id`)
@@ -110,7 +112,6 @@ export async function encryptAssetBlob(
 /**
  * Decrypt an asset blob. Auto-detects v1 (direct chat key) vs v2 (subkey)
  * payloads.
- *
  * @param buffer - Encrypted asset bytes (JSON payload)
  * @param chatKey - Derived chat key for the parent entity
  * @param assetId - Asset ID used as HKDF salt for v2 payloads
@@ -137,6 +138,7 @@ export async function decryptAssetBlob(
 
 /**
  * Check if an asset blob is encrypted (has valid JSON structure).
+ * @param buffer
  */
 export function isEncryptedAsset(buffer: Buffer,): boolean {
   try {
@@ -155,6 +157,7 @@ export function isEncryptedAsset(buffer: Buffer,): boolean {
  * Extract the chat key id from an encrypted asset payload.
  *
  * Returns `null` for malformed payloads or plaintext.
+ * @param buffer
  */
 export function extractAssetKeyId(buffer: Buffer,): string | null {
   return extractKeyIdFromPayload(buffer.toString("utf8",),);

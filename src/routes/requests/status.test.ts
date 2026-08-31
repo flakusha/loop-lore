@@ -9,6 +9,11 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { requestStatusRoutes, } from "./status";
 
+/**
+ * @param store
+ * @param userId
+ * @param userRole
+ */
 function buildApp(
   store: AsyncStore,
   userId: string | null = null,

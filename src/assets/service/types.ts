@@ -10,6 +10,7 @@ import type { PipelineConfig, } from "../../crypto/pipeline";
 import type { AssetLinkEntity, AssetType as AssetTypeT, AssetVisibility, StorageBackend, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 
+/** */
 export interface AssetRecord {
   id: string;
   owner_id: string;
@@ -29,6 +30,7 @@ export interface AssetRecord {
   encrypted_key_id: string | null;
 }
 
+/** */
 export interface CreateAssetInput {
   ownerId: string;
   filename: string;
@@ -45,24 +47,28 @@ export interface CreateAssetInput {
   pipelineConfig?: PipelineConfig;
 }
 
+/** */
 export interface AssetLinkInput {
   entityType: AssetLinkEntity;
   entityId: string;
   label?: string;
 }
 
+/** */
 export interface CreateAssetOpts {
   database: Kysely<DB>;
   input: CreateAssetInput;
   uploadDir: string;
 }
 
+/** */
 export interface DeleteAssetOpts {
   database: Kysely<DB>;
   assetId: string;
   uploadDir: string;
 }
 
+/** */
 export interface UnlinkAssetOpts {
   database: Kysely<DB>;
   assetId: string;
@@ -70,12 +76,14 @@ export interface UnlinkAssetOpts {
   entityId: string;
 }
 
+/** */
 export interface LinkAssetOpts {
   database: Kysely<DB>;
   assetId: string;
   link: AssetLinkInput;
 }
 
+/** */
 export interface ShareRecord {
   id: string;
   asset_id: string;
@@ -84,6 +92,7 @@ export interface ShareRecord {
   created_at: string;
 }
 
+/** */
 export interface UpdateVisibilityOpts {
   database: Kysely<DB>;
   assetId: string;
@@ -91,6 +100,7 @@ export interface UpdateVisibilityOpts {
   actorId: string;
 }
 
+/** */
 export interface ShareAssetOpts {
   database: Kysely<DB>;
   assetId: string;
@@ -98,6 +108,7 @@ export interface ShareAssetOpts {
   sharedById: string;
 }
 
+/** */
 export interface UnshareAssetOpts {
   database: Kysely<DB>;
   assetId: string;

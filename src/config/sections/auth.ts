@@ -20,6 +20,7 @@ export const AUTH_DEFAULTS = {
   legacyOpaqueTokenFallback: false,
 } satisfies AuthConfig;
 
+/** */
 export class AuthSection implements AuthConfig {
   required = AUTH_DEFAULTS.required;
   registrationOpen = AUTH_DEFAULTS.registrationOpen;
@@ -34,6 +35,9 @@ export class AuthSection implements AuthConfig {
   jwtExpiresIn = AUTH_DEFAULTS.jwtExpiresIn;
   legacyOpaqueTokenFallback = AUTH_DEFAULTS.legacyOpaqueTokenFallback;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<AuthConfig>,) {
     Object.assign(this, overrides,);
   }

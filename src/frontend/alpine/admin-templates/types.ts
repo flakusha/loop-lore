@@ -3,18 +3,22 @@
 
 import type { ProfileSummary as ProfileSummaryType, } from "../../../validation/schemas/responses";
 
+/** */
 export type ProfileSummary = ProfileSummaryType;
 
+/** */
 export interface ProfileDetail extends ProfileSummary {
   templates: Record<string, Record<string, string>>;
 }
 
+/** */
 export interface EditingTemplate {
   detail: string;
   mode: string;
   value: string;
 }
 
+/** */
 export interface NewProfile {
   id: string;
   name: string;
@@ -38,6 +42,7 @@ export const MODE_LABELS: Record<string, string> = {
   background: "Background",
 };
 
+/** */
 export interface AdminTemplates {
   // List state
   templateProfiles: ProfileSummary[];

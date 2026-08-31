@@ -5,6 +5,7 @@ import type { ContextMessage, ContextWindowConfig, SummarizeFn, TokenCountFn, } 
 
 // ── Public compression types ───────────────────────────────
 
+/** */
 export interface CompressionMetadata {
   originalTokens: number;
   compressedTokens: number;
@@ -16,6 +17,7 @@ export interface CompressionMetadata {
   budgetExceeded: boolean;
 }
 
+/** */
 export interface CompressionResult {
   compressed: ContextMessage[];
   metadata: CompressionMetadata;
@@ -24,7 +26,6 @@ export interface CompressionResult {
 /**
  * Main entry point. Compress messages to fit within token budget.
  * No-op when messages already fit.
- *
  * @param messages — Ordered message array (system first, then conversation)
  * @param config — Context window configuration (defaults used when omitted)
  * @param tokenCountFn — Token counting function (default: ~4 chars/token)
@@ -45,6 +46,7 @@ export interface SplitMessages {
   conversation: ContextMessage[];
 }
 
+/** */
 export interface StrategyResult {
   compressedSystem: ContextMessage[];
   compressedConversation: ContextMessage[];

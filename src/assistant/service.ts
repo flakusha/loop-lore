@@ -12,12 +12,14 @@
 
 import type { Config, } from "../config/schema";
 
+/** */
 export interface AssistantResponse {
   type: "suggestion" | "info" | "error";
   content: string;
   confidence: number;
 }
 
+/** */
 export interface GenerateResponseParams {
   userInput: string;
   chatMode?: string;
@@ -53,6 +55,7 @@ const RESPONSE_MAP: Record<string, AssistantResponse[]> = {
 /**
  * Generate an assistant response based on user input.
  * Returns null if no match found (no response needed).
+ * @param params
  */
 export function generateResponse(params: GenerateResponseParams,): AssistantResponse | null {
   const { userInput, } = params;
@@ -71,6 +74,9 @@ export function generateResponse(params: GenerateResponseParams,): AssistantResp
   return null;
 }
 
+/**
+ * @param config
+ */
 export function isAssistantEnabled(config: Config,): boolean {
   return config.assistant?.enabled ?? false;
 }

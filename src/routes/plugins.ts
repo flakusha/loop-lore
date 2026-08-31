@@ -20,10 +20,16 @@ import { forbidden, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
+/** */
 function log() {
   return getLogger().child({ module: "plugins", },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function pluginRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "plugins", },)
     .get(

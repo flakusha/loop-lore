@@ -13,6 +13,9 @@ import type { feFetch, } from "../fe-fetch";
 // Shared feFetch — caller passes it in to avoid circular import
 let _feFetch: typeof feFetch;
 
+/**
+ * @param fetchFn
+ */
 export function initProactive(fetchFn: typeof feFetch,) {
   _feFetch = fetchFn;
 }

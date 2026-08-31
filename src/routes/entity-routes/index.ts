@@ -23,6 +23,10 @@ export type { EntityConfig, } from "./types";
  *   GET    /api/:parentPrefix/:parentId/:entityPath/:id   — get
  *   PUT    /api/:parentPrefix/:parentId/:entityPath/:id   — update
  *   DELETE /api/:parentPrefix/:parentId/:entityPath/:id   — delete
+ * @param config
+ * @param opts
+ * @param opts.database
+ * @param opts.config
  */
 export function createEntityRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
   return (

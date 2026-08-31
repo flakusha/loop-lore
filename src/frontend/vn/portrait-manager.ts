@@ -8,8 +8,10 @@
  * Handles left/right/center placement based on message role.
  */
 
+/** */
 export type PortraitPosition = "left" | "right" | "center" | "none";
 
+/** */
 export interface PortraitConfig {
   /** Character name for display */
   name: string;
@@ -23,6 +25,7 @@ export interface PortraitConfig {
 
 /**
  * Determine portrait position based on message role.
+ * @param role
  */
 export function getPortraitPosition(
   role: "assistant" | "user" | "system" | "narration",
@@ -46,6 +49,7 @@ export function getPortraitPosition(
 
 /**
  * Build a portrait URL from an asset ID.
+ * @param assetId
  */
 export function getPortraitUrl(assetId?: string | null,): string | undefined {
   if (!assetId) { return undefined; }
@@ -57,6 +61,7 @@ export function getPortraitUrl(assetId?: string | null,): string | undefined {
 
 /**
  * Create a portrait element positioned in the scene.
+ * @param config
  */
 export function createPortraitElement(config: PortraitConfig,): HTMLElement {
   const el = document.createElement("div",);
@@ -84,6 +89,9 @@ export function createPortraitElement(config: PortraitConfig,): HTMLElement {
 
 /**
  * Apply portrait positioning CSS to a scene container.
+ * @param sceneEl
+ * @param position
+ * @param splitRatio
  */
 export function applyPortraitLayout(
   sceneEl: HTMLElement,

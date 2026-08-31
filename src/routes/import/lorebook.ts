@@ -10,6 +10,10 @@ import { safeJsonStringify, uid, } from "../../utils";
 /**
  * Import lorebook entries for a character.
  * Maps LorebookData from parsed character card to actor_lore_entries table.
+ * @param database
+ * @param actorId
+ * @param lorebook
+ * @param warnings
  */
 export async function importLorebook(
   database: Kysely<DB>,

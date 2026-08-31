@@ -30,7 +30,10 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
     this._quickReplies = raw ? jsonParseOr<QuickReplyButton[]>(raw, [],) : [];
   },
 
-  /** Send a quick-reply command as a user message (reuses the send path). */
+  /**
+   * Send a quick-reply command as a user message (reuses the send path).
+   * @param command
+   */
   async executeQuickReply(command: string,) {
     if (!command || !this.activeChat) { return; }
     const input = this.$refs?.messageInput as HTMLTextAreaElement | undefined;
@@ -64,6 +67,7 @@ export const chatQuickReplies: Partial<ChatState> & ThisType<ChatState> = {
    * - Cap on consecutive automated sends; automation pauses until a
    *   human-initiated send resets the counter. This breaks the
    *   ai-trigger → send → response → ai-trigger feedback loop.
+   * @param trigger
    */
   async fireAutoQuickReplies(trigger: "user" | "ai",) {
     if (!this.activeChat) { return; }

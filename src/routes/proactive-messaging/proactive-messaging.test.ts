@@ -26,6 +26,10 @@ const mockConfig: Config = {
   generation: { defaultProvider: null, providers: { openaiCompatible: [], }, },
 } as unknown as Config;
 
+/**
+ * @param db
+ * @param userId
+ */
 function createApp(db: Kysely<DB>, userId: string,): Elysia {
   return new Elysia({ name: "test-proactive", },)
     .derive(() => ({ userId, userRole: "solo", }))
@@ -34,7 +38,17 @@ function createApp(db: Kysely<DB>, userId: string,): Elysia {
 
 const R = "/api/proactive-messaging";
 
-/** Insert a proactive config row directly (insert helper over-types opts). */
+/**
+ * Insert a proactive config row directly (insert helper over-types opts).
+ * @param db
+ * @param chatId
+ * @param actorId
+ * @param opts
+ * @param opts.frequency
+ * @param opts.enabled
+ * @param opts.backoffCount
+ * @param opts.lastProactiveAt
+ */
 async function insertConfig(
   db: Kysely<DB>,
   chatId: string,

@@ -110,14 +110,20 @@ registerCommand("attack", async (args, ctx,): Promise<CommandResult> => {
   }
 }, { requiredRole: ChatParticipantRole.Owner, },);
 
-/** Parse a positive integer, or null when absent/invalid. */
+/**
+ * Parse a positive integer, or null when absent/invalid.
+ * @param raw
+ */
 function parsePositiveInt(raw: string | undefined,): number | null {
   if (!raw) { return null; }
   const n = Number.parseInt(raw, 10,);
   return Number.isFinite(n,) && n > 0 ? n : null;
 }
 
-/** Parse a dice side count; defaults to 6 (d6). */
+/**
+ * Parse a dice side count; defaults to 6 (d6).
+ * @param raw
+ */
 function parseSides(raw: string | undefined,): DiceSides {
   if (!raw) { return 6; }
   const n = Number.parseInt(raw, 10,);

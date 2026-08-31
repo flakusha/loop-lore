@@ -40,11 +40,17 @@ export type {
 
 /** Full CRUD for station definitions and placed instances. */
 export class StationsService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   // ── Definitions ─────────────────────────────────────────
 
-  /** Create a new station definition. Returns the new ID. */
+  /**
+   * Create a new station definition. Returns the new ID.
+   * @param opts
+   */
   async createStationDef(opts: CreateStationDefOpts,): Promise<string> {
     const id = uid();
     const now = new Date().toISOString();
@@ -66,7 +72,10 @@ export class StationsService {
     return id;
   }
 
-  /** Get a single station definition by ID. */
+  /**
+   * Get a single station definition by ID.
+   * @param id
+   */
   async getStationDef(id: string,): Promise<StationDef | null> {
     const row = await this.db.selectFrom("crafting_station_defs",)
       .where("id", "=", id,)
@@ -75,7 +84,11 @@ export class StationsService {
     return row ? mapDef(row,) : null;
   }
 
-  /** List station definitions for a world, optionally filtered by type. */
+  /**
+   * List station definitions for a world, optionally filtered by type.
+   * @param worldId
+   * @param type
+   */
   async listStationDefs(
     worldId: string,
     type?: CraftingStationType,
@@ -89,7 +102,11 @@ export class StationsService {
     return Array.from(rows, mapDef,);
   }
 
-  /** Update a station definition. Returns false when not found. */
+  /**
+   * Update a station definition. Returns false when not found.
+   * @param id
+   * @param opts
+   */
   async updateStationDef(id: string, opts: UpdateStationDefOpts,): Promise<boolean> {
     const u: Record<string, unknown> = {};
     if (opts.name !== undefined) { u.name = opts.name; }
@@ -110,7 +127,10 @@ export class StationsService {
     return Number(r.numUpdatedRows,) > 0;
   }
 
-  /** Delete a station definition. Returns false when not found. */
+  /**
+   * Delete a station definition. Returns false when not found.
+   * @param id
+   */
   async deleteStationDef(id: string,): Promise<boolean> {
     const r = await this.db.deleteFrom("crafting_station_defs",)
       .where("id", "=", id,)
@@ -120,7 +140,10 @@ export class StationsService {
 
   // ── Instances ───────────────────────────────────────────
 
-  /** Place a new station instance. Returns the new ID. */
+  /**
+   * Place a new station instance. Returns the new ID.
+   * @param opts
+   */
   async createInstance(opts: CreateStationInstanceOpts,): Promise<string> {
     const id = uid();
     const now = new Date().toISOString();
@@ -138,7 +161,10 @@ export class StationsService {
     return id;
   }
 
-  /** Get a single station instance by ID. */
+  /**
+   * Get a single station instance by ID.
+   * @param id
+   */
   async getInstance(id: string,): Promise<StationInstance | null> {
     const row = await this.db.selectFrom("crafting_station_instances",)
       .where("id", "=", id,)
@@ -147,7 +173,11 @@ export class StationsService {
     return row ? mapInstance(row,) : null;
   }
 
-  /** List station instances for a world, optionally filtered by location. */
+  /**
+   * List station instances for a world, optionally filtered by location.
+   * @param worldId
+   * @param locationId
+   */
   async listInstances(
     worldId: string,
     locationId?: string,
@@ -160,7 +190,11 @@ export class StationsService {
     return Array.from(rows, mapInstance,);
   }
 
-  /** Update a station instance. Returns false when not found. */
+  /**
+   * Update a station instance. Returns false when not found.
+   * @param id
+   * @param opts
+   */
   async updateInstance(id: string, opts: UpdateStationInstanceOpts,): Promise<boolean> {
     const u: Record<string, unknown> = {};
     if (opts.locationId !== undefined) { u.location_id = opts.locationId; }
@@ -176,7 +210,10 @@ export class StationsService {
     return Number(r.numUpdatedRows,) > 0;
   }
 
-  /** Delete a station instance. Returns false when not found. */
+  /**
+   * Delete a station instance. Returns false when not found.
+   * @param id
+   */
   async deleteInstance(id: string,): Promise<boolean> {
     const r = await this.db.deleteFrom("crafting_station_instances",)
       .where("id", "=", id,)

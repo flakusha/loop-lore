@@ -9,7 +9,7 @@ import type { GenerationEvents, GenerationOptions, GenerationResult, } from "../
 
 // ── Option + data types ────────────────────────────────────
 
-/** @internal — exported for step-pipeline.ts */
+/** @internal */
 export interface ActiveGeneration {
   attemptId: string;
   chatId: string;
@@ -34,6 +34,7 @@ export interface ActiveGeneration {
   totalSteps: number;
 }
 
+/** */
 export interface UpdateAttemptStatusOpts {
   db: Kysely<DB>;
   attemptId: string;
@@ -41,18 +42,21 @@ export interface UpdateAttemptStatusOpts {
   extra?: Record<string, unknown>;
 }
 
+/** */
 export interface StartGenerationTrackingOpts {
   options: GenerationOptions;
   db: Kysely<DB>;
   events?: GenerationEvents;
 }
 
+/** */
 export interface CompleteGenerationOpts {
   attemptId: string;
   result: GenerationResult;
   db: Kysely<DB>;
 }
 
+/** */
 export interface FailGenerationOpts {
   attemptId: string;
   error: Error;

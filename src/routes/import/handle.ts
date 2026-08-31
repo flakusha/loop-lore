@@ -11,7 +11,11 @@ import { safeFromUint8Array, } from "../../utils/safe-buffer";
 import { HttpStatus, jsonError, unauthorizedResponse, } from "../http-utils";
 import { importActor, } from "./actor";
 
-/** True when the file is a CHARX archive (by extension or ZIP magic bytes). */
+/**
+ * True when the file is a CHARX archive (by extension or ZIP magic bytes).
+ * @param filename
+ * @param fileBytes
+ */
 function isCharxFile(filename: string, fileBytes: Buffer,): boolean {
   return filename.toLowerCase().endsWith(".charx",) ||
     (fileBytes.length > 4 &&
@@ -19,7 +23,14 @@ function isCharxFile(filename: string, fileBytes: Buffer,): boolean {
       fileBytes[2] === 0x03 && fileBytes[3] === 0x04);
 }
 
-/** Import a CHARX archive: extract assets + parse embedded card. */
+/**
+ * Import a CHARX archive: extract assets + parse embedded card.
+ * @param fileBytes
+ * @param filename
+ * @param database
+ * @param userId
+ * @param uploadDir
+ */
 async function importFromCharx(
   fileBytes: Buffer,
   filename: string,
@@ -54,7 +65,14 @@ async function importFromCharx(
   },);
 }
 
-/** Import a standard character card (JSON / PNG / YAML / TOML). */
+/**
+ * Import a standard character card (JSON / PNG / YAML / TOML).
+ * @param fileBytes
+ * @param filename
+ * @param database
+ * @param userId
+ * @param uploadDir
+ */
 async function importFromStandard(
   fileBytes: Buffer,
   filename: string,
@@ -87,6 +105,12 @@ async function importFromStandard(
   },);
 }
 
+/**
+ * @param request
+ * @param database
+ * @param userId
+ * @param uploadDir
+ */
 export async function handleImport(
   request: Request,
   database: Kysely<DB>,

@@ -19,6 +19,9 @@ let db: Kysely<DB>;
 let worldId: string;
 let actorId: string;
 
+/**
+ * @param initialStatus
+ */
 async function insertQuest(initialStatus: QuestStatus = QuestStatus.Active,): Promise<string> {
   const id = crypto.randomUUID();
   await db
@@ -39,6 +42,10 @@ async function insertQuest(initialStatus: QuestStatus = QuestStatus.Active,): Pr
   return id;
 }
 
+/**
+ * @param questId
+ * @param status
+ */
 async function insertProgressRow(questId: string, status: QuestProgressStatus,): Promise<void> {
   await db
     .insertInto("quest_progress",)

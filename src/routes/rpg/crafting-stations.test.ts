@@ -29,6 +29,10 @@ const SWORD = "00000000-0000-4000-8000-300000000002";
 const RCP = "00000000-0000-4000-8000-400000000001";
 const NOW = new Date().toISOString();
 
+/**
+ * @param db
+ * @param uid
+ */
 function app(db: Kysely<DB>, uid?: string,) {
   const e = new Elysia({ name: "test", },);
   if (uid) { e.derive(() => ({ userId: uid, userRole: "user", })); }
@@ -36,6 +40,10 @@ function app(db: Kysely<DB>, uid?: string,) {
     .use(craftingExecutionRoutes({ database: db, config: {} as never, },),);
 }
 
+/**
+ * @param url
+ * @param body
+ */
 function post(url: string, body: unknown,) {
   return new Request(url, {
     method: "POST",
@@ -44,6 +52,10 @@ function post(url: string, body: unknown,) {
   },);
 }
 
+/**
+ * @param url
+ * @param body
+ */
 function patch(url: string, body: unknown,) {
   return new Request(url, {
     method: "PATCH",

@@ -16,7 +16,11 @@ import { requireQuestTransition, selectActiveQuests, upsertQuestProgress, } from
 import type { QuestConfig, QuestReward, WorldEvent, } from "../types";
 import type { ProgressQuestRow, QuestProgressEntry, QuestState, } from "./types";
 
-/** Get completion percentage for a quest */
+/**
+ * Get completion percentage for a quest
+ * @param state
+ * @param questId
+ */
 export async function getCompletion(
   state: QuestState,
   questId: string,
@@ -39,6 +43,10 @@ export async function getCompletion(
 /**
  * Process a world event and update matching quest progress.
  * Returns all quests that had their progress changed.
+ * @param state
+ * @param worldId
+ * @param chatId
+ * @param events
  */
 export async function processEvent(
   state: QuestState,
@@ -64,6 +72,11 @@ export async function processEvent(
 
 /**
  * Manually update quest progress for a specific chat.
+ * @param state
+ * @param questId
+ * @param chatId
+ * @param delta
+ * @param sourceMessageId
  */
 export async function advanceProgress(
   state: QuestState,
@@ -82,6 +95,8 @@ export async function advanceProgress(
 /**
  * Calculate progress delta for a quest based on a world event.
  * Returns 0 if the event doesn't advance this quest.
+ * @param quest
+ * @param event
  */
 function calculateProgress(quest: ProgressQuestRow, event: WorldEvent,): number {
   const config = jsonParseOr(quest.config, null,) as QuestConfig | null;
@@ -94,6 +109,11 @@ function calculateProgress(quest: ProgressQuestRow, event: WorldEvent,): number 
 /**
  * Apply progress to a quest, check milestones, and distribute rewards
  * if completed.
+ * @param state
+ * @param quest
+ * @param chatId
+ * @param delta
+ * @param sourceMessageId
  */
 async function applyProgress(
   state: QuestState,
@@ -168,6 +188,12 @@ async function applyProgress(
   };
 }
 
+/**
+ * @param state
+ * @param questId
+ * @param worldId
+ * @param rewardsJson
+ */
 async function distributeRewards(
   state: QuestState,
   questId: string,

@@ -12,6 +12,10 @@ import {
   BattleStatus,
   type BattleWithRoster,
 } from "./types.js";
+/**
+ * @param deps
+ * @param chatId
+ */
 export async function getActiveBattle(
   deps: RpgServiceDeps,
   chatId: string,
@@ -28,12 +32,15 @@ export async function getActiveBattle(
 
 /**
  * Fetch a battle by id.
- *
  * @param deps - Service dependencies
  * @param battleId - Battle id
  * @returns The battle roster, or null when not found
  */
 
+/**
+ * @param deps
+ * @param battleId
+ */
 export async function getBattle(
   deps: RpgServiceDeps,
   battleId: string,
@@ -53,12 +60,15 @@ export async function getBattle(
  * Rolls attack + damage via the combat engine, applies damage to the target,
  * consumes the attacker's action, and saves the roster. A battle ends
  * automatically when one side is fully defeated.
- *
  * @param deps - Service dependencies
  * @param params - Attack resolution parameters
  * @returns The resolved attack + updated roster + end-of-battle state
  */
 
+/**
+ * @param deps
+ * @param battleId
+ */
 export async function requireActiveBattle(
   deps: RpgServiceDeps,
   battleId: string,
@@ -73,6 +83,15 @@ export async function requireActiveBattle(
   return battle;
 }
 
+/**
+ * @param deps
+ * @param battleId
+ * @param round
+ * @param turnIndex
+ * @param combatants
+ * @param logEntries
+ * @param status
+ */
 export async function persistBattle(
   deps: RpgServiceDeps,
   battleId: string,
@@ -107,7 +126,10 @@ export async function persistBattle(
     .execute();
 }
 
-/** Map a persisted battles row to a BattleWithRoster. */
+/**
+ * Map a persisted battles row to a BattleWithRoster.
+ * @param row
+ */
 function materialize(row: BattleRow,): BattleWithRoster {
   const parsedRoster = jsonParseOr<Combatant[]>(row.combatants, [],);
   if (!Array.isArray(parsedRoster,)) {

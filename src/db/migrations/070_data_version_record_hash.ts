@@ -35,12 +35,14 @@ import { type Kysely, } from "kysely";
  * apply-time probe in `down()` is the only safety). Forward-only;
  * `down()` is a best-effort reversal intended for tests, not production
  * rollback — production should pin to this migration and skip down on it.
- *
  * @see TASK-middleware-fe-be-db-record-content-hashing.md
  * @see TASK-middleware-migration-compaction-data-version-hash.md
  * @see epic-content-hashing-distributed-integrity.md
  */
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // NOTE: the schema-type generator (scripts/generate-db-types.ts) parses
   // each .alterTable("name", ...) literally — using a variable like
@@ -118,6 +120,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema.createIndex("idx_worlds_record_hash",).on("worlds",).column("record_hash",).execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   // Reverse order to avoid touching the index of a yet-to-be-dropped table.
   // The schema generator ignores down() blocks, so the loop form is fine here.

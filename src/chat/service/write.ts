@@ -31,7 +31,8 @@ const REGEN_IDEMPOTENCY_PREFIX = "regen:variant:";
  * "sending" until a generation pass attaches final content. Idempotent: a
  * repeat while a regen variant is still pending for the same parent returns
  * the existing row instead of creating a duplicate.
- *
+ * @param database
+ * @param params
  * @returns RegenerateVariantResult — ok+ids on success, ServiceError otherwise
  */
 export async function regenerateMessageVariant(

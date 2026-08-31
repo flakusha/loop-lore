@@ -16,6 +16,11 @@ import {
 } from "../../test-utils/insert-helpers";
 import { dynamicRoutes, } from "./plugin-dynamic";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-plugin-dynamic", },);
   if (userId) {

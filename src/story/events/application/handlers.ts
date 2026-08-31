@@ -16,6 +16,12 @@ import { promoteEventToLore, } from "../promote-lore";
 import { applyItemTransfer, } from "./item-transfer";
 import type { AppliedEvent, } from "./types";
 
+/**
+ * @param database
+ * @param worldId
+ * @param items
+ * @param event
+ */
 export async function applySingleEvent(
   database: Kysely<DB>,
   worldId: string,
@@ -61,6 +67,10 @@ export async function applySingleEvent(
   }
 }
 
+/**
+ * @param db
+ * @param event
+ */
 export async function applyLocationChange(db: Kysely<DB>, event: WorldEvent,): Promise<void> {
   if (!event.locationId) { return; }
 
@@ -74,6 +84,10 @@ export async function applyLocationChange(db: Kysely<DB>, event: WorldEvent,): P
   }
 }
 
+/**
+ * @param db
+ * @param event
+ */
 export async function applyNpcStateChange(db: Kysely<DB>, event: WorldEvent,): Promise<void> {
   const npcActorId = (event.data.npcActorId ?? event.actorId) as string;
   if (!npcActorId) { return; }
@@ -97,6 +111,11 @@ export async function applyNpcStateChange(db: Kysely<DB>, event: WorldEvent,): P
   }
 }
 
+/**
+ * @param db
+ * @param worldId
+ * @param event
+ */
 export async function applyTimeAdvancement(db: Kysely<DB>, worldId: string, event: WorldEvent,): Promise<void> {
   const minutes = (event.data.minutesAdvanced ?? 60) as number;
 
@@ -117,6 +136,10 @@ export async function applyTimeAdvancement(db: Kysely<DB>, worldId: string, even
   }
 }
 
+/**
+ * @param current
+ * @param minutes
+ */
 function advanceTimeOfDay(current: string, minutes: number,): string {
   const order = ["morning", "afternoon", "evening", "night",];
   const idx = order.indexOf(current,);
@@ -125,6 +148,10 @@ function advanceTimeOfDay(current: string, minutes: number,): string {
   return order[(idx + advanceSteps) % order.length]!;
 }
 
+/**
+ * @param db
+ * @param event
+ */
 export async function applyLocationModification(db: Kysely<DB>, event: WorldEvent,): Promise<void> {
   const locationId = (event.data.locationId ?? event.locationId) as string;
   if (!locationId) { return; }
@@ -143,6 +170,11 @@ export async function applyLocationModification(db: Kysely<DB>, event: WorldEven
   await db.updateTable("location_states",).set(update,).where("location_id", "=", locationId,).execute();
 }
 
+/**
+ * @param db
+ * @param worldId
+ * @param event
+ */
 export async function applyWorldLoreUpdate(db: Kysely<DB>, worldId: string, event: WorldEvent,): Promise<void> {
   const entry = event.data.newLoreEntry as string;
   if (!entry) { return; }
@@ -167,6 +199,10 @@ export async function applyWorldLoreUpdate(db: Kysely<DB>, worldId: string, even
   }
 }
 
+/**
+ * @param db
+ * @param event
+ */
 export async function applyCombatEvent(db: Kysely<DB>, event: WorldEvent,): Promise<void> {
   const defenderId = (event.data.defenderId ?? event.actorId) as string;
   const damage = (event.data.damage ?? 10) as number;

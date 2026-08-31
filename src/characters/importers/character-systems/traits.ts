@@ -10,7 +10,14 @@ import { TraitsService, } from "../../services/traits-service";
 import { errMsg, } from "../../shared/character-systems-utils";
 import type { CharacterSystemsImportResult, } from "./types";
 
-/** Import traits into the character systems importer result. */
+/**
+ * Import traits into the character systems importer result.
+ * @param db
+ * @param actorId
+ * @param data
+ * @param result
+ * @param worldId
+ */
 export async function importTraits(
   db: Kysely<DB>,
   actorId: string,

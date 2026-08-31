@@ -51,15 +51,25 @@ export type {
  * Layer 2 (world) and Layer 3 (location) trait management for characters.
  */
 export class WorldLocationTraitsService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<any>,) {}
 
   // ── World Traits (Layer 2) ───────────────────────────
+  /**
+   * @param input
+   */
   async createWorldTrait(
     input: CreateWorldTraitInput,
   ): Promise<WorldTraitRow> {
     return createWorldTraitDispatch(this.db, input,);
   }
 
+  /**
+   * @param actorId
+   * @param worldId
+   */
   async getWorldTraits(
     actorId: string,
     worldId: string,
@@ -67,6 +77,10 @@ export class WorldLocationTraitsService {
     return getWorldTraitsDispatch(this.db, actorId, worldId,);
   }
 
+  /**
+   * @param id
+   * @param input
+   */
   async updateWorldTrait(
     id: string,
     input: UpdateWorldTraitInput,
@@ -74,17 +88,27 @@ export class WorldLocationTraitsService {
     return updateWorldTraitDispatch(this.db, id, input,);
   }
 
+  /**
+   * @param id
+   */
   async deleteWorldTrait(id: string,): Promise<boolean> {
     return deleteWorldTraitDispatch(this.db, id,);
   }
 
   // ── Location Traits (Layer 3) ────────────────────────
+  /**
+   * @param input
+   */
   async createLocationTrait(
     input: CreateLocationTraitInput,
   ): Promise<LocationTraitRow> {
     return createLocationTraitDispatch(this.db, input,);
   }
 
+  /**
+   * @param actorId
+   * @param locationId
+   */
   async getLocationTraits(
     actorId: string,
     locationId: string,
@@ -92,6 +116,10 @@ export class WorldLocationTraitsService {
     return getLocationTraitsDispatch(this.db, actorId, locationId,);
   }
 
+  /**
+   * @param id
+   * @param input
+   */
   async updateLocationTrait(
     id: string,
     input: UpdateLocationTraitInput,
@@ -99,11 +127,17 @@ export class WorldLocationTraitsService {
     return updateLocationTraitDispatch(this.db, id, input,);
   }
 
+  /**
+   * @param id
+   */
   async deleteLocationTrait(id: string,): Promise<boolean> {
     return deleteLocationTraitDispatch(this.db, id,);
   }
 
   // ── Aggregate queries ────────────────────────────────
+  /**
+   * @param actorId
+   */
   async getAllTraitsForActor(
     actorId: string,
   ): Promise<{

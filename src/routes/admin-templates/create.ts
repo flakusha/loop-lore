@@ -9,6 +9,11 @@ import { can, } from "../../users/permissions";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { loadStoredTemplates, log, mergeProfiles, saveStoredTemplates, } from "./shared";
 
+/**
+ * @param opts
+ * @param opts.database
+ * @param prefix
+ */
 export function createRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   const { database, } = opts;
 

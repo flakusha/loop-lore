@@ -38,6 +38,9 @@ import type { HandlerOpts, } from "./types";
  * instead of silently flipping the note's status in the background.
  *
  * Mirrors the pattern from `src/story/game-master/narration.ts`.
+ * @param database
+ * @param chatId
+ * @param content
  */
 async function injectShadowRevealNarration(
   database: HandlerOpts["database"],
@@ -88,6 +91,10 @@ async function injectShadowRevealNarration(
     .execute();
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

@@ -5,7 +5,11 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db";
 import type { KnownEntities, } from "./types";
 
-/** Load all known entities from the database for validation. */
+/**
+ * Load all known entities from the database for validation.
+ * @param db
+ * @param worldId
+ */
 export async function loadKnownEntities(
   db: Kysely<DB>,
   worldId?: string,
@@ -62,7 +66,14 @@ export async function loadKnownEntities(
   return { actors, locations, items, worlds, };
 }
 
-/** Check if an entity is in any known set. */
+/**
+ * Check if an entity is in any known set.
+ * @param name
+ * @param known
+ * @param _knownActorIds
+ * @param _knownLocationIds
+ * @param allowedNames
+ */
 export function isKnownEntity(
   name: string,
   known: KnownEntities,

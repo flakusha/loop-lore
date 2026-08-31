@@ -72,6 +72,9 @@ interface InternalTraitsRow {
   updated_at: string;
 }
 
+/**
+ * @param row
+ */
 function rowToTraits(row: InternalTraitsRow,): CharacterInternalTraits {
   return {
     id: row.id,
@@ -90,11 +93,16 @@ function rowToTraits(row: InternalTraitsRow,): CharacterInternalTraits {
 
 // ── Service ────────────────────────────────────────────────
 
+/** */
 export class CharacterInternalTraitsService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
    * Get internal traits for an actor.
+   * @param actorId
    */
   async get(actorId: string,): Promise<CharacterInternalTraits | null> {
     const row = await this.db
@@ -108,6 +116,8 @@ export class CharacterInternalTraitsService {
 
   /**
    * Create or update internal traits for an actor.
+   * @param actorId
+   * @param input
    */
   async upsert(actorId: string, input: CharacterInternalTraitsInput,): Promise<CharacterInternalTraits> {
     const existing = await this.get(actorId,);
@@ -169,6 +179,7 @@ export class CharacterInternalTraitsService {
 
   /**
    * Delete internal traits for an actor.
+   * @param actorId
    */
   async delete(actorId: string,): Promise<boolean> {
     const result = await this.db
@@ -184,7 +195,6 @@ export class CharacterInternalTraitsService {
    *
    * Only includes fields the character is open about (per visibility config).
    * Always includes hidden-state directives for the LLM to track internally.
-   *
    * @param actorId - The character's actor ID
    * @param includeHidden - If true, include ALL traits regardless of visibility (for GM/system use)
    */

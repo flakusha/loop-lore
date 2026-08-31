@@ -11,11 +11,18 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { exportRoutes, } from "./export";
 
+/**
+ * @param db
+ */
 function createApp(db: Kysely<DB>,): Elysia {
   return new Elysia({ name: "test-export", },)
     .use(exportRoutes({ database: db, },),);
 }
 
+/**
+ * @param app
+ * @param body
+ */
 async function postExport(
   app: Elysia,
   body: Record<string, unknown> = {},
@@ -29,6 +36,9 @@ async function postExport(
   );
 }
 
+/**
+ * @param res
+ */
 async function parseZip(res: Response,): Promise<Record<string, string>> {
   const buf = await res.arrayBuffer();
   const zip = await JSZip.loadAsync(buf,);
@@ -44,6 +54,10 @@ async function parseZip(res: Response,): Promise<Record<string, string>> {
   return files;
 }
 
+/**
+ * @param files
+ * @param path
+ */
 function readJson(files: Record<string, string>, path: string,): Record<string, unknown> {
   const raw = files[path];
   if (!raw) { throw new Error(`File not found in zip: ${path}`,); }

@@ -10,6 +10,9 @@ import type { ArousalModifier, ArousalState, } from "./types";
 
 /**
  * Get or create arousal state for an actor.
+ * @param db
+ * @param actorId
+ * @param worldId
  */
 export async function getArousal(
   db: Kysely<DB>,
@@ -63,8 +66,11 @@ export async function getArousal(
 
 /**
  * Modify arousal level for an actor.
- *
+ * @param db
+ * @param actorId
  * @param delta - Arousal change (positive = increase, negative = decrease).
+ * @param worldId
+ * @param source
  * @returns New arousal level.
  */
 export async function modifyArousal(
@@ -105,6 +111,9 @@ export async function modifyArousal(
 
 /**
  * Decay arousal over time.
+ * @param db
+ * @param actorId
+ * @param worldId
  */
 export async function decayArousal(db: Kysely<DB>, actorId: string, worldId: string | null = null,): Promise<number> {
   const state = await getArousal(db, actorId, worldId,);
@@ -129,6 +138,10 @@ export async function decayArousal(db: Kysely<DB>, actorId: string, worldId: str
 
 /**
  * Add a modifier to arousal state.
+ * @param db
+ * @param actorId
+ * @param modifier
+ * @param worldId
  */
 export async function addModifier(
   db: Kysely<DB>,

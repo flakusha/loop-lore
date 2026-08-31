@@ -58,7 +58,10 @@ describe("FTS lifecycle on messages.content_plaintext (migration 068)", () => {
     await db.destroy();
   },);
 
-  /** Look up a row in the FTS5 virtual table by message_id. */
+  /**
+   * Look up a row in the FTS5 virtual table by message_id.
+   * @param messageId
+   */
   const ftsContentFor = async (messageId: string,): Promise<string | null> => {
     const row = await sql<{ content: string }>`
       SELECT content FROM messages_fts WHERE message_id = ${messageId}

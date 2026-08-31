@@ -9,7 +9,10 @@ import { nextRatchetStep, } from "./ratchet";
 
 // ── Helpers ──────────────────────────────────────────────
 
-/** Generate a deterministic-looking but random 32-byte key for testing. */
+/**
+ * Generate a deterministic-looking but random 32-byte key for testing.
+ * @param seed
+ */
 function seedKey(seed: number,): Uint8Array {
   const out = new Uint8Array(32,);
   for (let i = 0; i < out.byteLength; i++) {

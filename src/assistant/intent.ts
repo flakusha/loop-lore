@@ -14,11 +14,9 @@ export type { AssistantIntent, } from "../regex/intent";
 
 /**
  * Detect avatar change intent using config-defined patterns.
- *
  * @param input - User message text
  * @param avatarConfig - Avatar template config with intent patterns
  * @returns Detected emotion key or null if no match
- *
  * @example
  * ```typescript
  * const emotion = detectAvatarChangeIntent("She smiles warmly", avatarConfig);

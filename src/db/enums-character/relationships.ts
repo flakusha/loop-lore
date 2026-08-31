@@ -12,6 +12,7 @@ export const RelationshipType = {
   Student: "student",
   Neutral: "neutral",
 } as const;
+/** */
 export type RelationshipType = (typeof RelationshipType)[keyof typeof RelationshipType];
 
 // ── Relationship Events ───────────────────────────────────
@@ -32,4 +33,5 @@ export const RelationshipEventType = {
   Reconciled: "reconciled",
   Promised: "promised",
 } as const;
+/** */
 export type RelationshipEventType = (typeof RelationshipEventType)[keyof typeof RelationshipEventType];

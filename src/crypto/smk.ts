@@ -22,6 +22,7 @@ const smkState = { activeSmk: null as CryptoKey | null, };
 /**
  * Load the SMK at startup and store it globally.
  * Call once from server entry point.
+ * @param config
  */
 export async function initSmk(config: EncryptionConfig,): Promise<void> {
   smkState.activeSmk = await loadSmk(config,);
@@ -43,7 +44,7 @@ export function isEncryptionEnabled(): boolean {
 
 /**
  * Load and derive the Server Master Key.
- *
+ * @param config
  * @returns A CryptoKey (AES-256-GCM) or null if encryption disabled.
  * @throws If SMK is required but not configured.
  */
@@ -91,6 +92,9 @@ async function loadSmk(config: EncryptionConfig,): Promise<CryptoKey | null> {
   );
 }
 
+/**
+ * @param hex
+ */
 function hexToBytes(hex: string,): Uint8Array {
   const cleaned = hex.replaceAll("-", "",).replaceAll(/\s/g, "",);
   if (cleaned.length % 2 !== 0) { throw new TypeError("Hex string must have even length",); }

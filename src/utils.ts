@@ -43,12 +43,18 @@ export const secureToken = (): string => randomBytes(16,).toString("hex",);
 
 // ── Error Helpers ─────────────────────────────────────────────
 
-/** Extract a safe Error object from an unknown thrown value */
+/**
+ * Extract a safe Error object from an unknown thrown value
+ * @param error
+ */
 export function asError(error: unknown,): Error {
   return error instanceof Error ? error : new Error(String(error,),);
 }
 
-/** Extract error message string from an unknown thrown value */
+/**
+ * Extract error message string from an unknown thrown value
+ * @param error
+ */
 export function toErrorMessage(error: unknown,): string {
   return error instanceof Error ? error.message : "Unknown error";
 }
@@ -58,7 +64,7 @@ export function toErrorMessage(error: unknown,): string {
 /**
  * Assert that a value is `never` — used in switch default cases
  * to guarantee all enum/union variants are handled at compile time.
- *
+ * @param value
  * @example
  * switch (status) {
  *   case GenerationStatus.Pending: return "waiting";

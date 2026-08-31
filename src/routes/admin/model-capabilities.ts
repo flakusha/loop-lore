@@ -20,6 +20,8 @@ import type { AdminRouteOpts, } from "./types";
  * GET  /admin/model-capabilities/:provider/:model — resolve one model
  * PATCH /admin/model-capabilities/:provider/:model — set user override
  * DELETE /admin/model-capabilities/:provider/:model — clear user override
+ * @param opts
+ * @param prefix
  */
 export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (

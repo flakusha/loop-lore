@@ -1,5 +1,8 @@
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Assets ─────────────────────────────────────────────────
   await database.schema
@@ -58,6 +61,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   ],).execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("asset_shares",).execute();
   await database.schema.dropTable("asset_links",).execute();

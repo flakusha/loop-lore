@@ -10,6 +10,7 @@ import { sql, } from "kysely";
  * - `impersonate_actor_id` on `chat_participants`: which character a user plays
  * - `persona_id` on `chat_participants`: user's persona for this chat
  * - `archived_at` on `messages`: soft-delete with 30-day restore window
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
@@ -61,6 +62,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropIndex("idx_messages_archived",).execute();
   await database.schema.alterTable("messages",).dropColumn("archived_at",).execute();

@@ -32,6 +32,14 @@ afterEach(async () => {
   await db.db.deleteFrom("telemetry_events",).execute();
 },);
 
+/**
+ * @param input
+ * @param input.userId
+ * @param input.chatId
+ * @param input.error
+ * @param input.task
+ * @param input.createdAt
+ */
 async function seedAuxCall(input: {
   userId?: string | null;
   chatId?: string | null;

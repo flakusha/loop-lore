@@ -10,6 +10,9 @@ import { safeCompress, safeDecompress, } from "./compression";
 // incompressible for gzip/brotli, so the gzip output is roughly the same
 // size as the input — exactly the bug case: a payload whose COMPRESSED
 // size exceeds 10KB even though DECOMPRESSED fits well under the 10MB cap.
+/**
+ * @param decompressedBytes
+ */
 function buildDensePayload(decompressedBytes: number,): Buffer {
   const raw = Buffer.alloc(decompressedBytes,);
   for (let i = 0; i < raw.length; i += 4096) {

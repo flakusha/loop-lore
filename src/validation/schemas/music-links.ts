@@ -10,6 +10,9 @@ export const MusicServiceSchema = t.Union([
   t.Literal("apple_music"),
   t.Literal("bandcamp"),
 ]);
+/**
+ *
+ */
 export type MusicService = Static<typeof MusicServiceSchema>;
 
 // ── Route schemas ────────────────────────────────────────────

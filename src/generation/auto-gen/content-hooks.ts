@@ -25,6 +25,7 @@ import { getRegisteredHooks, runHookChain, } from "../hooks";
 import { type HookEventType, } from "../hooks/types";
 import { resolveActorIdFromEvents, } from "./resolve-actor-from-events";
 
+/** */
 export interface RunContentHooksOpts {
   database: Kysely<DB>;
   config: Config;
@@ -35,6 +36,7 @@ export interface RunContentHooksOpts {
   content: string;
 }
 
+/** */
 export interface ContentHooksResult {
   /** False when a hook blocked generation. */
   allowed: boolean;
@@ -46,6 +48,7 @@ export interface ContentHooksResult {
   actorId: string | undefined;
 }
 
+/** */
 export interface NsfwEligibilityResult {
   /** True when generation may proceed; false when blocked. */
   allowed: boolean;
@@ -65,6 +68,12 @@ export interface NsfwEligibilityResult {
  * This is the single source of truth for NSFW gating — both the pre-LLM
  * eligibility check and the post-LLM defense-in-depth scan use the same
  * `canAccessNsfw` helper.
+ * @param opts
+ * @param opts.database
+ * @param opts.config
+ * @param opts.chatId
+ * @param opts.actorId
+ * @param opts.userId
  */
 export async function checkNsfwEligibility(opts: {
   database: Kysely<DB>;
@@ -106,7 +115,7 @@ export async function checkNsfwEligibility(opts: {
 
 /**
  * Run the content-hook chain before storing a generated message.
- *
+ * @param opts
  * @returns Whether generation is allowed, plus the extracted dominant emotion
  *   and mood-shift delta, and the actorId resolved from the hook event payload.
  */

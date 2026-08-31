@@ -61,18 +61,25 @@ export interface FulfillResult {
   attemptId?: string;
 }
 
+/** */
 export class CraftingOrderService {
   private readonly db: Kysely<DB>;
   private readonly process: CraftingProcessService;
   private readonly trade: TradeService;
 
+  /**
+   * @param db
+   */
   constructor(db: Kysely<DB>,) {
     this.db = db;
     this.process = new CraftingProcessService(db,);
     this.trade = new TradeService(db,);
   }
 
-  /** Open a new crafting commission in the `open` state. Returns the new order id. */
+  /**
+   * Open a new crafting commission in the `open` state. Returns the new order id.
+   * @param input
+   */
   async placeOrder(input: PlaceOrderInput,): Promise<string> {
     const now = new Date().toISOString();
     const id = uid();
@@ -95,7 +102,11 @@ export class CraftingOrderService {
     return id;
   }
 
-  /** List orders for a world; when `actorId` is given, scope to orders touching that actor. */
+  /**
+   * List orders for a world; when `actorId` is given, scope to orders touching that actor.
+   * @param worldId
+   * @param actorId
+   */
   async listOrders(worldId: string, actorId?: string,): Promise<CraftingOrder[]> {
     let query = this.db.selectFrom("crafting_orders",)
       .selectAll()
@@ -112,7 +123,11 @@ export class CraftingOrderService {
     return Array.from(rows, (r,) => this.toCraftingOrder(r,),);
   }
 
-  /** A crafter claims an order; only succeeds while the order is still `open`. */
+  /**
+   * A crafter claims an order; only succeeds while the order is still `open`.
+   * @param orderId
+   * @param crafterActorId
+   */
   async acceptOrder(orderId: string, crafterActorId: string,): Promise<boolean> {
     const now = new Date().toISOString();
     const res = await this.db.updateTable("crafting_orders",)
@@ -126,6 +141,7 @@ export class CraftingOrderService {
   /**
    * Fulfil an accepted order: run the recipe as the requester, transfer the
    * offered payment from requester to crafter, then mark the order fulfilled.
+   * @param orderId
    */
   async fulfillOrder(orderId: string,): Promise<FulfillResult> {
     const order = await this.db.selectFrom("crafting_orders",)
@@ -167,7 +183,11 @@ export class CraftingOrderService {
     return { ok: true, attemptId: attempt.attemptId, };
   }
 
-  /** Requester cancels an order that is still `open` or `accepted`. */
+  /**
+   * Requester cancels an order that is still `open` or `accepted`.
+   * @param orderId
+   * @param actorId
+   */
   async cancelOrder(orderId: string, actorId: string,): Promise<boolean> {
     const order = await this.db.selectFrom("crafting_orders",)
       .selectAll()
@@ -185,7 +205,10 @@ export class CraftingOrderService {
     return Number(res?.numUpdatedRows ?? 0,) > 0;
   }
 
-  /** Map a `crafting_orders` row to the service-level {@link CraftingOrder}. */
+  /**
+   * Map a `crafting_orders` row to the service-level {@link CraftingOrder}.
+   * @param r
+   */
   private toCraftingOrder(r: Selectable<CraftingOrders>,): CraftingOrder {
     return {
       id: r.id,

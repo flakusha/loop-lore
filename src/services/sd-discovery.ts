@@ -22,6 +22,7 @@ function log() {
   return getLogger().child({ module: "sd-discovery", },);
 }
 
+/** */
 export interface DiscoveredBackend {
   /** API family */
   apiFamily: ImageApiFamily;
@@ -31,6 +32,7 @@ export interface DiscoveredBackend {
   label: string;
 }
 
+/** */
 export interface DiscoveryOptions {
   /** Timeout for each probe in milliseconds (default: 2000) */
   timeoutMs?: number;
@@ -54,6 +56,9 @@ const WELL_KNOWN_PORTS: { port: number; apiFamily: ImageApiFamily; label: string
 /**
  * Probe a single backend endpoint.
  * Returns true if the backend is responding and healthy.
+ * @param baseUrl
+ * @param healthPath
+ * @param timeoutMs
  */
 async function probeBackend(
   baseUrl: string,
@@ -68,6 +73,8 @@ async function probeBackend(
 /**
  * Probe a well-known port for an SD backend.
  * Returns the backend info if healthy, null otherwise.
+ * @param entry
+ * @param timeoutMs
  */
 async function probePort(
   entry: (typeof WELL_KNOWN_PORTS)[number],
@@ -90,7 +97,6 @@ async function probePort(
 
 /**
  * Discover running SD backends by probing well-known ports.
- *
  * @param options - Discovery options
  * @returns Array of discovered backends
  */
@@ -117,6 +123,8 @@ export async function discoverBackends(options?: DiscoveryOptions,): Promise<Dis
 
 /**
  * Convert a DiscoveredBackend to an ImageProviderConfig.
+ * @param backend
+ * @param name
  */
 export function backendToConfig(backend: DiscoveredBackend, name: string,): ImageProviderConfig {
   return {

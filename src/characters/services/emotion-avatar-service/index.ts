@@ -15,8 +15,6 @@
  * (generation, emotions, job-store) threaded with a structural handle. The
  * job store is in-memory and persists for the server lifetime. `EmotionAvatarService`
  * remains a class because consumers instantiate it via `new`.
- *
- * @module characters/services/emotion-avatar-service
  */
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
@@ -65,6 +63,9 @@ export class EmotionAvatarService {
   private readonly db: Kysely<DB>;
   private readonly avatarService: AvatarService;
 
+  /**
+   * @param db
+   */
   constructor(db?: Kysely<DB>,) {
     this.db = db ?? getDatabase();
     this.avatarService = new AvatarService(this.db,);
@@ -75,7 +76,6 @@ export class EmotionAvatarService {
    *
    * This is called from the character options menu — NOT automatically
    * after avatar addition.
-   *
    * @param opts - Generation options
    * @returns Batch job ID for tracking
    */
@@ -134,7 +134,6 @@ export class EmotionAvatarService {
 
   /**
    * Get status of a batch generation job.
-   *
    * @param jobId - Batch job ID
    * @returns Job status or undefined if not found
    */
@@ -144,7 +143,6 @@ export class EmotionAvatarService {
 
   /**
    * Cancel a running batch generation job.
-   *
    * @param jobId - Batch job ID
    * @returns true if cancelled, false if not found or already completed
    */
@@ -154,7 +152,6 @@ export class EmotionAvatarService {
 
   /**
    * List all batch jobs for an actor.
-   *
    * @param actorId - Character actor ID
    * @returns List of jobs
    */
@@ -164,7 +161,6 @@ export class EmotionAvatarService {
 
   /**
    * Get emotion prompt modifier for a given emotion.
-   *
    * @param emotion - Emotion type
    * @returns Prompt modifier string
    */
@@ -178,7 +174,6 @@ export class EmotionAvatarService {
    * (config.templates.avatar.emotions — keyed by lowercase emotion name) over
    * the built-in EMOTION_PROMPT_MODIFIERS table. This is what consumes the
    * avatar emotion asset map the generation path previously ignored.
-   *
    * @param emotion - Emotion type being generated
    * @param avatarEmotions - Optional config emotion map (lowercase keys)
    * @returns Prompt modifier string
@@ -189,8 +184,16 @@ export class EmotionAvatarService {
 
   /**
    * Generate a single emotion avatar variant.
-   *
    * @param opts - Generation options
+   * @param opts.actorId
+   * @param opts.emotion
+   * @param opts.sdConfig
+   * @param opts.uploadDir
+   * @param opts.promptPrefix
+   * @param opts.negativePrompt
+   * @param opts.baseAvatarId
+   * @param opts.fallbackMode
+   * @param opts.avatarEmotions
    * @returns Generated avatar ID and linked asset ID
    */
   private async generateEmotionAvatar(opts: {

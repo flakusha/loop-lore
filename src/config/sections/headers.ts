@@ -42,6 +42,7 @@ export const HEADERS_DEFAULTS: HeadersConfig = {
   nel: null,
 };
 
+/** */
 export class HeadersSection implements HeadersConfig {
   enabled = HEADERS_DEFAULTS.enabled;
   referrerPolicy = HEADERS_DEFAULTS.referrerPolicy;
@@ -61,6 +62,9 @@ export class HeadersSection implements HeadersConfig {
   reportingEndpoints: Record<string, string> = {};
   nel = HEADERS_DEFAULTS.nel;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<HeadersConfig>,) {
     if (!overrides) { return; }
 

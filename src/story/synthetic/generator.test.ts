@@ -30,6 +30,9 @@ afterAll(() => {
   testEnv.sqlite.close();
 },);
 
+/**
+ * @param db
+ */
 async function seedChatWithData(db: Kysely<DB>,): Promise<{ chatId: string; worldId: string }> {
   const chatId = randomUUID();
   const worldId = randomUUID();

@@ -34,7 +34,11 @@ const STANDARD_KEYS = new Set([
   "reasoning_budget",
 ],);
 
-/** Copy OpenAI-standard sampling params into the request body. */
+/**
+ * Copy OpenAI-standard sampling params into the request body.
+ * @param body
+ * @param params
+ */
 function applyCommonParams(body: Record<string, unknown>, params: GenerateRequest["params"],): void {
   if (params.temperature !== undefined) { body.temperature = params.temperature; }
   if (params.maxTokens !== undefined) { body.max_tokens = params.maxTokens; }
@@ -44,7 +48,11 @@ function applyCommonParams(body: Record<string, unknown>, params: GenerateReques
   if (params.frequencyPenalty !== undefined) { body.frequency_penalty = params.frequencyPenalty; }
 }
 
-/** Copy llama.cpp extended sampling params into the request body. */
+/**
+ * Copy llama.cpp extended sampling params into the request body.
+ * @param body
+ * @param params
+ */
 function applyLlamaParams(body: Record<string, unknown>, params: GenerateRequest["params"],): void {
   if (params.minP !== undefined) { body.min_p = params.minP; }
   if (params.topK !== undefined) { body.top_k = params.topK; }
@@ -59,6 +67,11 @@ function applyLlamaParams(body: Record<string, unknown>, params: GenerateRequest
   if (params.reasoningBudget !== undefined) { body.reasoning_budget = params.reasoningBudget; }
 }
 
+/**
+ * @param state
+ * @param req
+ * @param stream
+ */
 export function buildBody(
   state: OpenAiCompatibleState,
   req: GenerateRequest,
@@ -87,6 +100,9 @@ export function buildBody(
   return body;
 }
 
+/**
+ * @param signals
+ */
 export function combineAbortSignals(...signals: AbortSignal[]): AbortSignal {
   const controller = new AbortController();
   for (const signal of signals) {
@@ -105,6 +121,13 @@ export function combineAbortSignals(...signals: AbortSignal[]): AbortSignal {
   return controller.signal;
 }
 
+/**
+ * @param state
+ * @param url
+ * @param body
+ * @param signal
+ * @param apiKeyOverride
+ */
 export async function fetchRaw(
   state: OpenAiCompatibleState,
   url: string,
@@ -138,6 +161,13 @@ export async function fetchRaw(
   }
 }
 
+/**
+ * @param state
+ * @param path
+ * @param body
+ * @param signal
+ * @param apiKey
+ */
 export async function fetchWithRetry(
   state: OpenAiCompatibleState,
   path: string,
@@ -180,6 +210,9 @@ export async function fetchWithRetry(
   throw lastError ?? new ProviderError("Max retries exceeded", undefined, 500, true,);
 }
 
+/**
+ * @param response
+ */
 export async function handleErrorResponse(response: Response,): Promise<never> {
   let errorBody: { error?: { message?: string; code?: string } } | undefined;
   try {
@@ -215,6 +248,9 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
   }
 }
 
+/**
+ * @param reason
+ */
 export function mapFinishReason(
   reason: string | null | undefined,
 ): "stop" | "length" | "error" | "cancelled" {

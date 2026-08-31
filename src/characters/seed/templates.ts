@@ -26,7 +26,6 @@ interface SeedResult {
  * Seed default characters from config templates.
  * Runs on app start — idempotent (skips existing by name+owner).
  * Supports hard IDs for deterministic test reseeding.
- *
  * @param database - Kysely DB instance
  * @param config - Characters config section
  * @param ownerId - Owner ID for seeded characters (system user or null)
@@ -53,7 +52,16 @@ export async function seedCharacterTemplates(
   return result;
 }
 
-/** Seed a single character template: insert, traits, and avatar link. */
+/**
+ * Seed a single character template: insert, traits, and avatar link.
+ * @param database
+ * @param template
+ * @param ownerId
+ * @param uploadDir
+ * @param traits
+ * @param avatars
+ * @param result
+ */
 async function seedTemplate(
   database: Kysely<DB>,
   template: CharacterTemplate,
@@ -128,7 +136,12 @@ async function seedTemplate(
   }
 }
 
-/** Persist identity traits from a template (species/age/etc). */
+/**
+ * Persist identity traits from a template (species/age/etc).
+ * @param traits
+ * @param id
+ * @param template
+ */
 async function persistIdentityTraits(
   traits: ReturnType<typeof TraitsService>,
   id: string,
@@ -174,7 +187,15 @@ async function persistIdentityTraits(
   }
 }
 
-/** Create + link a template avatar when one is specified and writable. */
+/**
+ * Create + link a template avatar when one is specified and writable.
+ * @param database
+ * @param uploadDir
+ * @param ownerId
+ * @param template
+ * @param id
+ * @param avatars
+ */
 async function linkTemplateAvatar(
   database: Kysely<DB>,
   uploadDir: string | undefined,

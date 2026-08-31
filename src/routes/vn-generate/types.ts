@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 
+/** */
 export interface GenerateStoryBody {
   sceneIndex: number;
   locationId?: string;
@@ -17,6 +18,7 @@ export interface GenerateStoryBody {
   maxTokens?: number;
 }
 
+/** */
 export interface GenerateChoicesBody {
   sceneIndex: number;
   count?: number;
@@ -25,6 +27,7 @@ export interface GenerateChoicesBody {
   maxTokens?: number;
 }
 
+/** */
 export interface StoryGenerationResult {
   content: string;
   sceneIndex: number;
@@ -35,6 +38,7 @@ export interface StoryGenerationResult {
   };
 }
 
+/** */
 export interface ChoiceGenerationResult {
   choices: {
     label: string;
@@ -51,6 +55,7 @@ export interface ChoiceGenerationResult {
   };
 }
 
+/** */
 export interface VnGenerateRouteOpts {
   database: Kysely<DB>;
   config: Config;

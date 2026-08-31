@@ -26,20 +26,24 @@ import { getLogger, } from "../../logger";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
+/** */
 export type ModerationSeverity = "severe" | "moderate";
 
+/** */
 export interface ModerationMatch {
   term: string;
   severity: ModerationSeverity;
   count: number;
 }
 
+/** */
 export interface ModerationFlags {
   severity: ModerationSeverity;
   score: number;
   matched: ModerationMatch[];
 }
 
+/** */
 export interface ModerationAuditRecorder {
   recordAction(params: {
     actionType: string;
@@ -51,6 +55,7 @@ export interface ModerationAuditRecorder {
   },): Promise<unknown>;
 }
 
+/** */
 export interface ModerationHookDeps {
   /** Audit recorder factory; injectable for tests. Defaults to `NsfwModerationService` bound to `context.db`. */
   auditRecorder?: (db: Kysely<DB>,) => ModerationAuditRecorder;
@@ -94,6 +99,7 @@ const MODERATE_KEYWORDS: readonly { term: string; weight: number }[] = [
   { term: "disrespectful", weight: 2, },
 ];
 
+/** */
 export class ModerationHook implements HookHandler {
   readonly name = "moderation";
   readonly eventTypes: HookEventType[] = ["moderation_flag",];
@@ -101,11 +107,17 @@ export class ModerationHook implements HookHandler {
   private readonly auditRecorderFactory: (db: Kysely<DB>,) => ModerationAuditRecorder;
   private recorder: ModerationAuditRecorder | null = null;
 
+  /**
+   * @param deps
+   */
   constructor(deps?: Partial<ModerationHookDeps>,) {
     this.auditRecorderFactory = deps?.auditRecorder ?? ((db,) => new NsfwModerationService(db,));
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
+  /**
+   * @param content
+   * @param _context
+   */
   async canHandle(content: string, _context: HookContext,): Promise<boolean> {
     // No length bypass: short content can carry moderation tokens. The
     // scanner inside execute is the actual filter; canHandle only answers
@@ -113,6 +125,10 @@ export class ModerationHook implements HookHandler {
     return content.length > 0;
   }
 
+  /**
+   * @param content
+   * @param context
+   */
   async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();
     log.debug("moderation-hook: scanning content for flags", { contentLength: content.length, },);
@@ -161,6 +177,7 @@ export class ModerationHook implements HookHandler {
    * token, so substring matches never trigger a flag. The weighted score sums
    * `count × weight` per matched keyword; overall severity is "severe" when any
    * severe keyword matched, otherwise "moderate".
+   * @param content
    */
   detectModerationFlags(content: string,): ModerationFlags | null {
     const tokenCounts = new Map<string, number>();
@@ -194,6 +211,9 @@ export class ModerationHook implements HookHandler {
     };
   }
 
+  /**
+   * @param context
+   */
   private getAuditRecorder(context: HookContext,): ModerationAuditRecorder {
     if (!this.recorder) {
       this.recorder = this.auditRecorderFactory(context.db,);
@@ -201,6 +221,11 @@ export class ModerationHook implements HookHandler {
     return this.recorder;
   }
 
+  /**
+   * @param context
+   * @param flags
+   * @param suppressed
+   */
   private async recordAudit(
     context: HookContext,
     flags: ModerationFlags,

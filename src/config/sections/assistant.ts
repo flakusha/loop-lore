@@ -10,10 +10,14 @@ export const ASSISTANT_DEFAULTS = {
   travelPrompts: false,
 } satisfies AssistantConfig;
 
+/** */
 export class AssistantSection implements AssistantConfig {
   enabled = ASSISTANT_DEFAULTS.enabled;
   travelPrompts = ASSISTANT_DEFAULTS.travelPrompts;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<AssistantConfig>,) {
     Object.assign(this, overrides,);
   }

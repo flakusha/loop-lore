@@ -10,6 +10,7 @@ import type { GenerationMessage, } from "../gen-types-options";
 
 // ── Capabilities ──────────────────────────────────────────
 
+/** */
 export interface ProviderCapabilities {
   /** Provider type identifier used in config + DB */
   type: "openai-compatible" | "anthropic" | "ollama" | "sd-cpp" | "bedrock";
@@ -31,6 +32,7 @@ export interface ProviderCapabilities {
 
 // ── Request / Response ────────────────────────────────────
 
+/** */
 export interface ToolCall {
   id: string;
   type: "function";
@@ -40,6 +42,7 @@ export interface ToolCall {
   };
 }
 
+/** */
 export interface ToolDef {
   type: "function";
   function: {
@@ -49,6 +52,7 @@ export interface ToolDef {
   };
 }
 
+/** */
 export interface GenerateRequest {
   /** Model ID/alias to use */
   model: string;
@@ -85,6 +89,7 @@ export interface GenerateRequest {
   signal?: AbortSignal;
 }
 
+/** */
 export interface GenerateResponse {
   content: string;
   thinking?: string;
@@ -97,6 +102,7 @@ export interface GenerateResponse {
   };
 }
 
+/** */
 export interface ChunkEvent {
   type: "content" | "thinking" | "tool_call" | "done" | "error";
   content?: string;
@@ -110,11 +116,19 @@ export type StreamHandler = (chunk: ChunkEvent,) => void;
 
 // ── Error types ───────────────────────────────────────────
 
+/** */
 export class ProviderError extends Error {
   readonly statusCode?: number;
   readonly retryable: boolean;
   readonly retryAfter?: number;
 
+  /**
+   * @param message
+   * @param options
+   * @param statusCode
+   * @param retryable
+   * @param retryAfter
+   */
   constructor(
     message: string,
     options?: ErrorOptions,
@@ -130,14 +144,24 @@ export class ProviderError extends Error {
   }
 }
 
+/** */
 export class ProviderAuthError extends ProviderError {
+  /**
+   * @param message
+   * @param options
+   */
   constructor(message = "API key invalid", options?: ErrorOptions,) {
     super(message, options, 401, false, undefined,);
     this.name = "ProviderAuthError";
   }
 }
 
+/** */
 export class ProviderRateLimitError extends ProviderError {
+  /**
+   * @param retryAfter
+   * @param options
+   */
   constructor(retryAfter?: number, options?: ErrorOptions,) {
     super("Rate limited", options, 429, true, retryAfter,);
     this.name = "ProviderRateLimitError";
@@ -174,6 +198,7 @@ export interface ModelInfo {
 
 // ── Provider interface ────────────────────────────────────
 
+/** */
 export interface LLMProvider {
   readonly capabilities: ProviderCapabilities;
 

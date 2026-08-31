@@ -41,6 +41,7 @@ export interface ExportContext {
   onItem?: (item: ExportItem,) => void;
 }
 
+/** */
 export interface FinalizeExportInput {
   zip: JSZip;
   checksums: Record<string, string>;

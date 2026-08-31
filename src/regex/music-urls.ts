@@ -5,7 +5,6 @@
  * External Music URL Patterns
  *
  * Compiled regex patterns for detecting URLs from external music services.
- *
  * @module regex/music-urls
  */
 

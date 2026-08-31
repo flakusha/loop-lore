@@ -37,15 +37,22 @@ export type {
   EquipResult,
   EquipSlot,
 } from "./actor-items/equip";
+/** */
 export class ActorItemsService {
   private readonly db: Kysely<DB>;
+  /**
+   * @param db
+   */
   constructor(db: Kysely<DB>,) {
     this.db = db;
   }
 
   // ── Capacity ────────────────────────────────────────────
 
-  /** Base carry weight: 50 lb + STR×10 (STR defaults to 10). */
+  /**
+   * Base carry weight: 50 lb + STR×10 (STR defaults to 10).
+   * @param actorId
+   */
   private async capacityFor(actorId: string,): Promise<number> {
     const actor = await this.db
       .selectFrom("actors",)
@@ -57,7 +64,10 @@ export class ActorItemsService {
     return 50 + str * 10;
   }
 
-  /** Sum of weight × quantity carried. */
+  /**
+   * Sum of weight × quantity carried.
+   * @param actorId
+   */
   async getCarriedWeight(actorId: string,): Promise<number> {
     const rows = await this.db
       .selectFrom("actor_items",)
@@ -71,7 +81,10 @@ export class ActorItemsService {
     return total;
   }
 
-  /** Current load vs capacity + encumbrance level. */
+  /**
+   * Current load vs capacity + encumbrance level.
+   * @param actorId
+   */
   async getCarryStatus(actorId: string,): Promise<CarryStatus> {
     const [carriedResult, capacityResult,] = await Promise.allSettled([
       this.getCarriedWeight(actorId,),
@@ -98,6 +111,10 @@ export class ActorItemsService {
 
   // ── Equip / Unequip ─────────────────────────────────────
 
+  /**
+   * @param actorId
+   * @param itemId
+   */
   private async getItem(actorId: string, itemId: string,) {
     return this.db
       .selectFrom("actor_items",)
@@ -107,7 +124,11 @@ export class ActorItemsService {
       .executeTakeFirst();
   }
 
-  /** Equip an item, validating slot conflict. Dual-wield not supported. */
+  /**
+   * Equip an item, validating slot conflict. Dual-wield not supported.
+   * @param actorId
+   * @param itemId
+   */
   async equip(actorId: string, itemId: string,): Promise<EquipResult> {
     const item = await this.getItem(actorId, itemId,);
     if (!item) { return { ok: false, reason: "Item not found", }; }
@@ -137,7 +158,11 @@ export class ActorItemsService {
     return { ok: true, itemId, };
   }
 
-  /** Unequip an item. */
+  /**
+   * Unequip an item.
+   * @param actorId
+   * @param itemId
+   */
   async unequip(actorId: string, itemId: string,): Promise<EquipResult> {
     const item = await this.getItem(actorId, itemId,);
     if (!item) { return { ok: false, reason: "Item not found", }; }
@@ -149,7 +174,10 @@ export class ActorItemsService {
     return { ok: true, itemId, };
   }
 
-  /** List all equipped items. */
+  /**
+   * List all equipped items.
+   * @param actorId
+   */
   async getEquipped(actorId: string,) {
     return this.db
       .selectFrom("actor_items",)
@@ -165,6 +193,11 @@ export class ActorItemsService {
    * Move `quantity` of an item from one actor to another.
    * Deducts from source; creates (or stacks onto) the target row.
    * Uses a transaction so source deduction + target grant are atomic.
+   * @param fromActorId
+   * @param toActorId
+   * @param itemId
+   * @param quantity
+   * @param trx
    */
   transfer(
     fromActorId: string,

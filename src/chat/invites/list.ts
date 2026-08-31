@@ -6,7 +6,11 @@ import type { DB, } from "../../db/schema";
 import { toRow, } from "./to-row";
 import type { ChatInviteRow, } from "./types";
 
-/** List all invites for a chat (including revoked/expired), newest first. */
+/**
+ * List all invites for a chat (including revoked/expired), newest first.
+ * @param database
+ * @param chatId
+ */
 export async function listInvites(
   database: Kysely<DB>,
   chatId: string,

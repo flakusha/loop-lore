@@ -47,7 +47,11 @@ export const AVATAR_FIELDS = [
   "sortOrder",
 ] as const;
 
-/** Convert DB row to export object using field map */
+/**
+ * Convert DB row to export object using field map
+ * @param row
+ * @param fieldMap
+ */
 export function toExportFields(
   row: Record<string, unknown>,
   fieldMap: [string, string,][],
@@ -59,7 +63,11 @@ export function toExportFields(
   return result;
 }
 
-/** Convert export data to DB fields using field map */
+/**
+ * Convert export data to DB fields using field map
+ * @param data
+ * @param fieldMap
+ */
 export function toDbFields(
   data: Record<string, unknown>,
   fieldMap: [string, string,][],
@@ -73,7 +81,13 @@ export function toDbFields(
   return result;
 }
 
-/** Map a trait row to export format */
+/**
+ * Map a trait row to export format
+ * @param trait
+ * @param trait.trait_category
+ * @param trait.trait_name
+ * @param trait.trait_value
+ */
 export function mapTraitForExport(
   trait: { trait_category: string; trait_name: string; trait_value: string },
 ): Record<string, unknown> {
@@ -84,7 +98,17 @@ export function mapTraitForExport(
   };
 }
 
-/** Map a relationship to export format */
+/**
+ * Map a relationship to export format
+ * @param rel
+ * @param rel.targetActorId
+ * @param rel.relationshipType
+ * @param rel.standing
+ * @param rel.trust
+ * @param rel.familiarity
+ * @param rel.isBidirectional
+ * @param rel.metadata
+ */
 export function mapRelationshipForExport(
   rel: {
     targetActorId: string;
@@ -107,7 +131,15 @@ export function mapRelationshipForExport(
   };
 }
 
-/** Map an avatar to export format */
+/**
+ * Map an avatar to export format
+ * @param avatar
+ * @param avatar.assetId
+ * @param avatar.label
+ * @param avatar.tags
+ * @param avatar.isPrimary
+ * @param avatar.sortOrder
+ */
 export function mapAvatarForExport(
   avatar: {
     assetId: string;
@@ -126,7 +158,10 @@ export function mapAvatarForExport(
   };
 }
 
-/** Error message helper (moved from importer) */
+/**
+ * Error message helper (moved from importer)
+ * @param error
+ */
 export function errMsg(error: unknown,): string {
   return error instanceof Error ? error.message : String(error,);
 }

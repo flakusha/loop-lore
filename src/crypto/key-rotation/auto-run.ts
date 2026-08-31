@@ -15,7 +15,6 @@ import type { RotationResult, RotationSummary, } from "./types";
 /**
  * Run auto-rotation for all expired keys.
  * Designed to be called periodically (e.g., every hour or daily).
- *
  * @param database - Kysely DB instance
  * @param rotationDays - Days before a key is considered expired (0 = disabled)
  * @returns Summary of rotation results

@@ -14,6 +14,7 @@ import type {
 } from "./enums";
 
 // ── Feature Flags ───────────────────────────────────
+/** */
 export interface CharacterFeatureFlags {
   rpg_mechanics?: boolean;
   inventory?: boolean;
@@ -26,6 +27,7 @@ export interface CharacterFeatureFlags {
 }
 
 // ── Inventory ────────────────────────────────────────
+/** */
 export interface InventoryItem {
   id: string;
   name: string;
@@ -37,6 +39,7 @@ export interface InventoryItem {
 }
 
 // ── Character Relationship ───────────────────────────
+/** */
 export interface CharacterRelationship {
   target_character_id: string;
   type: CharacterRelationshipType;
@@ -45,6 +48,7 @@ export interface CharacterRelationship {
 }
 
 // ── World Modifier ───────────────────────────────────
+/** */
 export interface WorldModifier {
   world_id: string;
   type: WorldModifierType;
@@ -53,6 +57,7 @@ export interface WorldModifier {
 }
 
 // ── Locale Config ────────────────────────────────────
+/** */
 export interface LocaleConfig {
   default_locale: string;
   supported_locales: string[];
@@ -60,6 +65,7 @@ export interface LocaleConfig {
 }
 
 // ── Localized Fields ─────────────────────────────────
+/** */
 export interface LocalizedFields {
   name?: Record<string, string>;
   description?: Record<string, string>;
@@ -74,6 +80,7 @@ export interface LocalizedFields {
 }
 
 // ── Character Extensions ─────────────────────────────
+/** */
 export interface CharacterExtensions {
   stats?: Record<string, number>;
   inventory?: InventoryItem[];
@@ -86,6 +93,7 @@ export interface CharacterExtensions {
 }
 
 // ── Canonical Character ──────────────────────────────
+/** */
 export interface CanonicalCharacter {
   name: string;
   description: string;
@@ -110,6 +118,7 @@ export interface CanonicalCharacter {
 }
 
 // ── Character with Metadata ──────────────────────────
+/** */
 export interface CharacterRecord extends CanonicalCharacter {
   id: string;
   owner_id: string;
@@ -135,6 +144,7 @@ export interface CharacterRecord extends CanonicalCharacter {
 }
 
 // ── Lorebook ──────────────────────────────────
+/** */
 export interface LorebookData {
   name?: string;
   description?: string;
@@ -144,6 +154,7 @@ export interface LorebookData {
   entries: LorebookEntry[];
 }
 
+/** */
 export interface LorebookEntry {
   keys: string[];
   content: string;
@@ -170,6 +181,7 @@ export interface LorebookEntry {
 }
 
 // ── Character Asset ───────────────────────────
+/** */
 export interface CharacterAsset {
   type: string;
   name: string;

@@ -11,6 +11,9 @@ import { buildStylePrompt, isValidRegenStyle, type RegenStyle, } from "../smart-
 
 // ── Route: Regenerate (validator) ─────────────────────────
 
+/**
+ * @param body
+ */
 function validateRegenerate(
   body: unknown,
 ): { chatId: string; messageId?: string; style?: RegenStyle } | null {
@@ -37,6 +40,11 @@ function validateRegenerate(
  *
  * Cancel current generation and signal frontend to trigger
  * fresh generation for the same parent message.
+ * @param body
+ * @param database
+ * @param auth
+ * @param auth.userId
+ * @param auth.userRole
  */
 export async function handleRegenerate(
   body: unknown,

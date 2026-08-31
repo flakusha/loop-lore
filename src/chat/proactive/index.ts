@@ -35,11 +35,17 @@ import type {
 
 // ── Service ──────────────────────────────────────────────── ────────────────────────────────────────────────
 
+/** */
 export class ProactiveMessagingService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
    * Get proactive config for a chat+actor pair.
+   * @param chatId
+   * @param actorId
    */
   async getConfig(chatId: string, actorId: string,): Promise<ProactiveConfig | null> {
     return selectConfig(this.db, chatId, actorId,);
@@ -47,6 +53,7 @@ export class ProactiveMessagingService {
 
   /**
    * Get all proactive configs for a chat.
+   * @param chatId
    */
   async getChatConfigs(chatId: string,): Promise<ProactiveConfig[]> {
     return selectChatConfigs(this.db, chatId,);
@@ -54,6 +61,9 @@ export class ProactiveMessagingService {
 
   /**
    * Create or update proactive config for a chat+actor pair.
+   * @param chatId
+   * @param actorId
+   * @param input
    */
   async upsertConfig(
     chatId: string,
@@ -75,6 +85,8 @@ export class ProactiveMessagingService {
   /**
    * Check if a proactive message should be sent right now.
    * Evaluates: enabled flag, quiet hours, frequency timing, anti-spam backoff.
+   * @param chatId
+   * @param actorId
    */
   async checkShouldMessage(chatId: string, actorId: string,): Promise<ProactiveCheckResult> {
     const config = await this.getConfig(chatId, actorId,);
@@ -143,6 +155,8 @@ export class ProactiveMessagingService {
 
   /**
    * Record that a proactive message was sent. Resets backoff counter.
+   * @param chatId
+   * @param actorId
    */
   async recordSent(chatId: string, actorId: string,): Promise<void> {
     await this.db
@@ -159,6 +173,8 @@ export class ProactiveMessagingService {
 
   /**
    * Increment backoff counter (called when user doesn't respond).
+   * @param chatId
+   * @param actorId
    */
   async incrementBackoff(chatId: string, actorId: string,): Promise<void> {
     const config = await this.getConfig(chatId, actorId,);
@@ -177,6 +193,8 @@ export class ProactiveMessagingService {
 
   /**
    * Reset backoff counter (called when user responds).
+   * @param chatId
+   * @param actorId
    */
   async resetBackoff(chatId: string, actorId: string,): Promise<void> {
     await this.db
@@ -192,6 +210,8 @@ export class ProactiveMessagingService {
 
   /**
    * Delete proactive config for a chat+actor pair.
+   * @param chatId
+   * @param actorId
    */
   async deleteConfig(chatId: string, actorId: string,): Promise<boolean> {
     const result = await this.db

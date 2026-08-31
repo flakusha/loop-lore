@@ -7,6 +7,9 @@ interface Toast {
   message: string;
 }
 
+/**
+ * @param extra
+ */
 function toastCtx(extra: Record<string, unknown> = {},) {
   const toasts: Toast[] = [];
   return {

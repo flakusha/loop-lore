@@ -32,6 +32,9 @@ interface WorldTimelineBarState {
   createTimeline(): Promise<void>;
 }
 
+/**
+ * @param worldId
+ */
 function worldTimelineBarImpl(
   this: WorldTimelineBarState,
   worldId: string,

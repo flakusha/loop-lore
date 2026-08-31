@@ -13,6 +13,8 @@ import type { AdminRouteOpts, } from "./types";
  * Daily deltas count rows created since the start of today (UTC,
  * `datetime('now','start of day')`), matching the `datetime('now')`
  * default used by the schema.
+ * @param opts
+ * @param prefix
  */
 export function statsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;

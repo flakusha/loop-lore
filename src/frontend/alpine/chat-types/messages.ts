@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/** */
 export interface MessageAttachment {
   assetId: string;
   order: number;
@@ -22,6 +23,7 @@ export interface ToolCall {
   function: { name: string; arguments: string };
 }
 
+/** */
 export interface Message {
   id: string;
   role: string;
@@ -50,11 +52,13 @@ export interface Message {
   section_id?: string | null;
 }
 
+/** */
 export interface GroupedMessage extends Message {
   group?: boolean;
   groupCount?: number;
 }
 
+/** */
 export interface GenerationDetail {
   model?: string;
   elapsedMs?: number;
@@ -64,6 +68,7 @@ export interface GenerationDetail {
   attemptId?: string;
 }
 
+/** */
 export interface MusicLinkMessage extends Message {
   type: "music_link";
   musicService: string;

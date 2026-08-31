@@ -14,6 +14,7 @@ import { down as downModelRoles, up as upModelRoles, } from "./parts/008_model_r
  * single migration named `001_init` still applies atomically (and the
  * dir-scanning migrator, which only reads the migrations root, treats
  * this file as the one migration to run).
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await upUsers(database,);
@@ -26,6 +27,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await upModelRoles(database,);
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await downModelRoles(database,);
   await downStoryGeneration(database,);

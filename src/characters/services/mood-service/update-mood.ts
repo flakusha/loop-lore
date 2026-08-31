@@ -21,11 +21,15 @@ export interface UpdateMoodArgs {
 
 /**
  * Update mood state.
- *
  * @param args.thisL - The mood service instance
+ * @param root0
+ * @param root0.thisL
  * @param args.actorId - Character actor ID
+ * @param root0.actorId
  * @param args.worldId - Optional world ID
+ * @param root0.worldId
  * @param args.opts - Update options
+ * @param root0.opts
  */
 export async function updateMood(
   { thisL, actorId, worldId, opts, }: UpdateMoodArgs,

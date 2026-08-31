@@ -23,12 +23,14 @@ import type { OllamaNativeState, } from "../generation/providers/ollama-native/t
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
+/** */
 export interface EmbeddedMemory {
   memoryId: string;
   content: string;
   vector: Float32Array;
 }
 
+/** */
 export interface SemanticMatch {
   memoryId: string;
   score: number;
@@ -55,19 +57,29 @@ function buildOllamaState(): OllamaNativeState {
 
 // ── Math helpers ─────────────────────────────────────────────────────────────
 
-/** L2 norm of a vector. */
+/**
+ * L2 norm of a vector.
+ * @param vec
+ */
 function l2Norm(vec: Float32Array,): number {
   let s = 0;
   for (let i = 0; i < vec.length; i++) { s += (vec[i] ?? 0) * (vec[i] ?? 0); }
   return Math.sqrt(s,);
 }
 
+/**
+ * @param a
+ * @param b
+ */
 function dot(a: Float32Array, b: Float32Array,): number {
   let s = 0;
   for (let i = 0; i < a.length; i++) { s += (a[i] ?? 0) * (b[i] ?? 0); }
   return s;
 }
 
+/**
+ * @param vec
+ */
 function normalise(vec: Float32Array,): Float32Array {
   const norm = l2Norm(vec,);
   if (norm === 0) { return vec; }
@@ -78,7 +90,7 @@ function normalise(vec: Float32Array,): Float32Array {
 
 /**
  * Embed a single text string via the configured Ollama embedding model.
- *
+ * @param text
  * @throws If the embedding call fails or returns no results.
  */
 export async function embedText(text: string,): Promise<Float32Array> {
@@ -94,7 +106,7 @@ export async function embedText(text: string,): Promise<Float32Array> {
 
 /**
  * Upsert a vector for a memory row.
- *
+ * @param db
  * @param memoryId  Primary key of actor_memories
  * @param vector    Normalised float32 vector (any dimension)
  * @param model     Embedding model name
@@ -129,6 +141,8 @@ export async function storeEmbedding(
 
 /**
  * Delete the vector row for a memory.
+ * @param db
+ * @param memoryId
  */
 export async function deleteEmbedding(
   db: Kysely<DB>,
@@ -147,7 +161,6 @@ export async function deleteEmbedding(
  *
  * For bounded candidate sets (≤50 from fetchActorMemories) this is fast enough.
  * If candidate sets grow, replace with an approximate method (HNSW / IVF).
- *
  * @param candidates  Memory ids with their pre-loaded vectors
  * @param queryVec   Unit-normalised query embedding
  * @param topK      Max results to return
@@ -168,6 +181,8 @@ export function rankBySimilarity(
 
 /**
  * Load stored vectors for a list of memory ids (batch fetch).
+ * @param db
+ * @param memoryIds
  */
 export async function getStoredVectors(
   db: Kysely<DB>,
@@ -197,6 +212,11 @@ export async function getStoredVectors(
  *   3. rank by cosine similarity
  *
  * Returns ids with scores ≥ minScore, sorted descending.
+ * @param db
+ * @param candidateIds
+ * @param queryText
+ * @param topK
+ * @param minScore
  */
 export async function semanticRecall(
   db: Kysely<DB>,

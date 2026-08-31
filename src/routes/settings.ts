@@ -21,6 +21,10 @@ import { jsonParseOr, safeJsonStringify, } from "../utils";
 import { ErrorResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
+/**
+ * @param database
+ * @param userId
+ */
 async function handleGetSettings(database: Kysely<DB>, userId: string,): Promise<Response> {
   const user = await database
     .selectFrom("users",)
@@ -31,6 +35,11 @@ async function handleGetSettings(database: Kysely<DB>, userId: string,): Promise
   return jsonResponse(settings,);
 }
 
+/**
+ * @param database
+ * @param userId
+ * @param body
+ */
 async function handleUpdateSettings(
   database: Kysely<DB>,
   userId: string,
@@ -58,6 +67,10 @@ async function handleUpdateSettings(
   return jsonResponse(merged,);
 }
 
+/**
+ * @param database
+ * @param userId
+ */
 async function handleExportAll(database: Kysely<DB>, userId: string,): Promise<Response> {
   const user = await database
     .selectFrom("users",)
@@ -100,6 +113,11 @@ async function handleExportAll(database: Kysely<DB>, userId: string,): Promise<R
   },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function settingsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "settings", },)
     .get(

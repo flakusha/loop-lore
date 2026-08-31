@@ -15,6 +15,7 @@ import type { WorldEvent, } from "../types";
 
 // ── Result Type ──────────────────────────────────────────────
 
+/** */
 export interface ValidationResult {
   valid: boolean;
   filteredEvents: WorldEvent[];
@@ -23,6 +24,7 @@ export interface ValidationResult {
 
 // ── Options ──────────────────────────────────────────────────
 
+/** */
 export interface ValidateEventsOpts {
   db: Kysely<DB>;
   worldId: string;
@@ -31,6 +33,11 @@ export interface ValidateEventsOpts {
 
 // ── Validation ───────────────────────────────────────────────
 
+/**
+ * @param event
+ * @param locationNames
+ * @param locationIds
+ */
 function validateSingleEvent(
   event: WorldEvent,
   locationNames: Map<string, string>,
@@ -66,7 +73,13 @@ function validateSingleEvent(
   }
 }
 
-/** Validate extracted events against current world state */
+/**
+ * Validate extracted events against current world state
+ * @param root0
+ * @param root0.db
+ * @param root0.worldId
+ * @param root0.events
+ */
 export async function validateEvents({ db, worldId, events, }: ValidateEventsOpts,): Promise<ValidationResult> {
   const filteredEvents: WorldEvent[] = [];
   const rejections: string[] = [];

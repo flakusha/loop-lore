@@ -13,6 +13,9 @@ import type { DB, } from "../../db/schema";
 
 /**
  * Copy chat participants from the source chat to the new migrated chat.
+ * @param database
+ * @param sourceChatId
+ * @param newChatId
  */
 export async function carryParticipants(
   database: Kysely<DB>,

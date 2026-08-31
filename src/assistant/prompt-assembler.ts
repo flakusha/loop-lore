@@ -36,14 +36,25 @@ import type {
 export { compactPromptHistory, } from "./prompt-budget";
 export type { AssembledPrompt, PromptParams, PromptSectionReport, } from "./prompt/types";
 
+/**
+ * @param raw
+ * @param fallback
+ */
 function parseJsonOr<T,>(raw: string | null | undefined, fallback: T,): T {
   if (!raw) { return fallback; }
   return jsonParseOr<T>(raw, fallback,);
 }
 
+/** */
 export class PromptAssembler {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
+  /**
+   * @param params
+   */
   async assemble(params: PromptParams,): Promise<AssembledPrompt> {
     const projectionResults = await Promise.allSettled([
       this.db
@@ -225,7 +236,6 @@ export class PromptAssembler {
 
   /**
    * Resolve the character's current emotional state for prompt injection.
-   *
    * @param params - Prompt params (emotion field read for the actor/world)
    * @param chat - Assembled chat projection (provides the world scope)
    * @returns The persisted current mood string, or undefined when mood is

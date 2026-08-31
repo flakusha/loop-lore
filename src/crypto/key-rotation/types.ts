@@ -5,6 +5,7 @@
  * Key rotation result/summary types.
  */
 
+/** */
 export interface RotationResult {
   actorId: string;
   oldKeyId: string;
@@ -13,6 +14,7 @@ export interface RotationResult {
   messagesReEncrypted: number;
 }
 
+/** */
 export interface RotationSummary {
   checked: number;
   rotated: number;

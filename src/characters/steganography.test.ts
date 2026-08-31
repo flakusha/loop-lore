@@ -8,10 +8,18 @@ import { extractCharacterDataFromPng, getMinimalPng, insertCharacterDataIntoPng,
 
 const PNG_SIG = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10,],);
 
+/**
+ * @param _type
+ * @param _data
+ */
 function crc(_type: string, _data: Buffer,): Buffer {
   return Buffer.alloc(4,);
 }
 
+/**
+ * @param type
+ * @param data
+ */
 function pngChunk(type: string, data: Buffer,): Buffer {
   const len = Buffer.alloc(4,);
   len.writeUInt32BE(data.length, 0,);
@@ -19,6 +27,11 @@ function pngChunk(type: string, data: Buffer,): Buffer {
   return Buffer.concat([len, typeBuf, data, crc(type, data,),],);
 }
 
+/**
+ * @param type
+ * @param keyword
+ * @param text
+ */
 function pngWithTextChunk(type: string, keyword: string, text: string,): Buffer {
   const keyBuf = Buffer.from(keyword, "latin1",);
   const nullByte = Buffer.from([0,],);
@@ -37,6 +50,10 @@ function pngWithTextChunk(type: string, keyword: string, text: string,): Buffer 
   return Buffer.concat([PNG_SIG, pngChunk(type, chunkData,),],);
 }
 
+/**
+ * @param name
+ * @param spec
+ */
 function makeV2Card(name: string, spec = "chara_card_v2",): unknown {
   return {
     spec,

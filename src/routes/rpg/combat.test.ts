@@ -30,6 +30,9 @@ describe("combat resolution (auth-gated)", () => {
 
   afterAll(() => {},);
 
+  /**
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-combat-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
@@ -37,6 +40,9 @@ describe("combat resolution (auth-gated)", () => {
       .use(combatStatusRoutes({ database: mockDb, } as any,),) as any;
   }
 
+  /**
+   * @param res
+   */
   async function json<T,>(res: Response,): Promise<T> {
     return res.json() as T;
   }

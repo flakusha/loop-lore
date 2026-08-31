@@ -4,6 +4,10 @@
 import { safeCompress, safeFromString, safeToBase64, } from "../utils/safe-buffer";
 import type { ContentEncoding, EncodeResult, } from "./types";
 
+/**
+ * @param plaintext
+ * @param encoding
+ */
 export function encodeContent(plaintext: string, encoding: ContentEncoding,): EncodeResult {
   if (encoding === "identity" || !plaintext) {
     return { encoded: plaintext, encoding: "identity", };

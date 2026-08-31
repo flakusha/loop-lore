@@ -6,6 +6,10 @@ import { NotificationType, } from "../../db/enums-core";
 import type { DB, } from "../../db/schema";
 import { NotificationService, } from "./service";
 
+/**
+ * @param db
+ * @param chatId
+ */
 async function participantActorIds(db: Kysely<DB>, chatId: string,): Promise<string[]> {
   const rows = await db
     .selectFrom("chat_participants",)
@@ -15,6 +19,10 @@ async function participantActorIds(db: Kysely<DB>, chatId: string,): Promise<str
   return Array.from(rows, (r,) => r.actor_id,);
 }
 
+/**
+ * @param db
+ * @param worldId
+ */
 async function worldParticipantActorIds(db: Kysely<DB>, worldId: string,): Promise<string[]> {
   const rows = await db
     .selectFrom("chat_participants",)
@@ -25,6 +33,14 @@ async function worldParticipantActorIds(db: Kysely<DB>, worldId: string,): Promi
   return [...new Set(Array.from(rows, (r,) => r.actor_id,),),];
 }
 
+/**
+ * @param db
+ * @param opts
+ * @param opts.chatId
+ * @param opts.senderId
+ * @param opts.mentionedActorIds
+ * @param opts.messageId
+ */
 export async function notifyMention(
   db: Kysely<DB>,
   opts: { chatId: string; senderId: string; mentionedActorIds: string[]; messageId: string },
@@ -50,6 +66,13 @@ export async function notifyMention(
   }
 }
 
+/**
+ * @param db
+ * @param opts
+ * @param opts.chatId
+ * @param opts.invitedUserId
+ * @param opts.inviterId
+ */
 export async function notifyChatInvite(
   db: Kysely<DB>,
   opts: { chatId: string; invitedUserId: string; inviterId: string },
@@ -70,6 +93,13 @@ export async function notifyChatInvite(
   },);
 }
 
+/**
+ * @param db
+ * @param opts
+ * @param opts.worldId
+ * @param opts.chatId
+ * @param opts.questName
+ */
 export async function notifyQuestUpdate(
   db: Kysely<DB>,
   opts: { worldId?: string; chatId?: string; questName: string },
@@ -91,6 +121,12 @@ export async function notifyQuestUpdate(
   }
 }
 
+/**
+ * @param db
+ * @param opts
+ * @param opts.worldId
+ * @param opts.description
+ */
 export async function notifyGmAction(
   db: Kysely<DB>,
   opts: { worldId: string; description: string },
@@ -109,6 +145,13 @@ export async function notifyGmAction(
   }
 }
 
+/**
+ * @param db
+ * @param opts
+ * @param opts.userId
+ * @param opts.title
+ * @param opts.body
+ */
 export async function notifySystem(
   db: Kysely<DB>,
   opts: { userId: string; title: string; body?: string },
@@ -121,6 +164,13 @@ export async function notifySystem(
   },);
 }
 
+/**
+ * @param db
+ * @param opts
+ * @param opts.userId
+ * @param opts.postId
+ * @param opts.title
+ */
 export async function notifyBlogPost(
   db: Kysely<DB>,
   opts: { userId: string; postId: string; title: string },
@@ -133,6 +183,13 @@ export async function notifyBlogPost(
   },);
 }
 
+/**
+ * @param db
+ * @param opts
+ * @param opts.userId
+ * @param opts.postId
+ * @param opts.commenterName
+ */
 export async function notifyBlogComment(
   db: Kysely<DB>,
   opts: { userId: string; postId: string; commenterName: string },

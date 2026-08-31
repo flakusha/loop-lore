@@ -20,6 +20,9 @@ export interface LoreIdentityRow {
  * Resolve the speaking actor's identity (race + profession traits) for lore
  * audience scoping. Race = permanent trait `species`; profession = permanent
  * traits named `profession`/`class` plus `professions.discipline` rows.
+ * @param db
+ * @param actorId
+ * @param worldId
  */
 export async function resolveActorIdentity(
   db: Kysely<DB>,

@@ -19,6 +19,7 @@ import { jsonSchema, } from "./schema-class";
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
 const log = createLogger({ level: "info", },);
 
+/** */
 function main() {
   const schema = jsonSchema();
   const outputPath = `${__dirname}/../../schemas/loop-lore-config.schema.json`;

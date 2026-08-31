@@ -7,6 +7,7 @@ import type { Kysely, } from "kysely";
  * Model capabilities registry — persistent storage for provider-reported
  * model metadata (context window, max output, tool calling, vision, etc.)
  * with user-override support.
+ * @param db
  */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
@@ -45,6 +46,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropIndex("idx_model_capabilities_last_seen",).execute();
   await db.schema.dropIndex("idx_model_capabilities_provider",).execute();

@@ -12,6 +12,7 @@ import {
 /**
  * Match input against COMMAND_PATTERNS, returning highest-confidence match.
  * Mirrors parseEditCommand logic from image-edit-commands.ts.
+ * @param text
  */
 function matchIntent(
   text: string,

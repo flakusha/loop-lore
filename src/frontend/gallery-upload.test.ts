@@ -27,6 +27,10 @@ type FakeEl = {
   textContent: string;
 };
 
+/**
+ * @param tag
+ * @param id
+ */
 function makeEl(tag: string, id = "",): FakeEl {
   const listeners: Record<string, Array<(e: any,) => void>> = {};
   const classSet = new Set<string>();

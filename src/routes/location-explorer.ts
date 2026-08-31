@@ -21,7 +21,13 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-/** World access (owner, admin, member, or public+authenticated). Returns a denied Response or null when OK. */
+/**
+ * World access (owner, admin, member, or public+authenticated). Returns a denied Response or null when OK.
+ * @param database
+ * @param worldId
+ * @param userId
+ * @param userRole
+ */
 async function requireWorldAccess(
   database: Kysely<DB>,
   worldId: string,
@@ -46,6 +52,10 @@ async function requireWorldAccess(
   return notFound("World not found",);
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function locationExplorerRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

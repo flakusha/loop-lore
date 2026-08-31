@@ -19,7 +19,10 @@ import type { ServiceError, } from "./types";
  * Enforces 1-per-world constraint: when setting an impersonate_actor_id,
  * checks if that actor is already being impersonated by another user in
  * a chat belonging to the same world. Private/disconnected chats exempt.
- *
+ * @param database
+ * @param chatId
+ * @param userId
+ * @param impersonateActorId
  * @returns ServiceError if constraint violated, or void on success
  */
 export async function updateImpersonation(

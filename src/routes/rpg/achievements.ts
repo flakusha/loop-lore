@@ -29,6 +29,11 @@ import {
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function achievementsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   const svc = (): AchievementsService => new AchievementsService(database,);
   const R = `${prefix}/rpg/achievements`;

@@ -34,7 +34,11 @@ export const userPersonaSection: SectionBuilder = {
   },
 };
 
-/** Build the user persona section from a stored persona. */
+/**
+ * Build the user persona section from a stored persona.
+ * @param ctx
+ * @param personaId
+ */
 async function buildPersonaSection(
   ctx: AssembleContext,
   personaId: string,
@@ -55,7 +59,11 @@ async function buildPersonaSection(
   return [{ role: "system", content: wrapSection("user_persona", personaParts.join("",),), },];
 }
 
-/** Build the user persona section from an impersonated actor. */
+/**
+ * Build the user persona section from an impersonated actor.
+ * @param ctx
+ * @param impersonateActorId
+ */
 async function buildImpersonationSection(
   ctx: AssembleContext,
   impersonateActorId: string,

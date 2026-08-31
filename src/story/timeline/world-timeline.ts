@@ -37,6 +37,7 @@ export interface TimelineEntry {
   created_at: string;
 }
 
+/** */
 export interface AppendTimelineOpts {
   db: Kysely<DB>;
   worldId: string;
@@ -44,6 +45,7 @@ export interface AppendTimelineOpts {
   events: readonly WorldEvent[];
 }
 
+/** */
 export interface SeedBackstoryOpts {
   db: Kysely<DB>;
   worldId: string;
@@ -53,11 +55,14 @@ export interface SeedBackstoryOpts {
   actorId?: string | null;
   data?: Record<string, unknown>;
   storyId?: string | null;
-  /** When set, also promotes the backstory event to a world_lore_entries row
-   *  with this audience scope, so `loreSection` picks it up (§5.2). */
+  /**
+   * When set, also promotes the backstory event to a world_lore_entries row
+   *  with this audience scope, so `loreSection` picks it up (§5.2).
+   */
   audienceScope?: LoreScope;
 }
 
+/** */
 export interface EstablishedHistoryOpts {
   db: Kysely<DB>;
   worldId: string;
@@ -66,6 +71,7 @@ export interface EstablishedHistoryOpts {
   limit?: number;
 }
 
+/** */
 export interface ListTimelineOpts {
   db: Kysely<DB>;
   worldId: string;
@@ -80,6 +86,11 @@ export interface ListTimelineOpts {
  * Persist applied events to the world timeline.
  * Called from `applyEvents` — one row per successful event, preserving the
  * event's own timestamp as `occurred_at` and tagging provenance via `storyId`.
+ * @param root0
+ * @param root0.db
+ * @param root0.worldId
+ * @param root0.storyId
+ * @param root0.events
  */
 export async function appendTimelineEvents(
   { db, worldId, storyId, events, }: AppendTimelineOpts,
@@ -107,6 +118,16 @@ export async function appendTimelineEvents(
  * Seed a GM-authored backstory event. Past `occurredAt` values create
  * established history that renders as known lore, not fresh discoveries
  * (docs/spec/lore.md §5.2).
+ * @param root0
+ * @param root0.db
+ * @param root0.worldId
+ * @param root0.description
+ * @param root0.occurredAt
+ * @param root0.eventType
+ * @param root0.actorId
+ * @param root0.data
+ * @param root0.storyId
+ * @param root0.audienceScope
  */
 export async function seedBackstory(
   { db, worldId, description, occurredAt, eventType, actorId, data, storyId, audienceScope, }: SeedBackstoryOpts,
@@ -149,6 +170,12 @@ export async function seedBackstory(
 /**
  * List timeline entries for a world, ordered chronologically.
  * Optional time-range and limit filters.
+ * @param root0
+ * @param root0.db
+ * @param root0.worldId
+ * @param root0.occurredBefore
+ * @param root0.occurredAfter
+ * @param root0.limit
  */
 export async function listTimelineEntries(
   { db, worldId, occurredBefore, occurredAfter, limit, }: ListTimelineOpts,
@@ -175,6 +202,11 @@ export async function listTimelineEntries(
  * Return events whose `occurred_at` is strictly before the given timestamp.
  * Used by the lore injection pipeline: these render as *established history*
  * rather than fresh discoveries (§5.2).
+ * @param root0
+ * @param root0.db
+ * @param root0.worldId
+ * @param root0.since
+ * @param root0.limit
  */
 export async function getEstablishedHistory(
   { db, worldId, since, limit, }: EstablishedHistoryOpts,

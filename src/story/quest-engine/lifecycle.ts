@@ -14,7 +14,23 @@ import { serializeOrThrow, transitionQuestStatus, } from "../shared/story-utils"
 import type { QuestConfig, QuestReward, } from "../types";
 import type { QuestState, } from "./types";
 
-/** Create a new quest */
+/**
+ * Create a new quest
+ * @param state
+ * @param params
+ * @param params.worldId
+ * @param params.creatorId
+ * @param params.name
+ * @param params.description
+ * @param params.type
+ * @param params.category
+ * @param params.config
+ * @param params.target
+ * @param params.priority
+ * @param params.deadline
+ * @param params.rewards
+ * @param params.narrativeHooks
+ */
 export async function createQuest(
   state: QuestState,
   params: {
@@ -57,17 +73,29 @@ export async function createQuest(
   return id;
 }
 
-/** Fail a quest (e.g., deadline passed) */
+/**
+ * Fail a quest (e.g., deadline passed)
+ * @param state
+ * @param questId
+ */
 export async function fail(state: QuestState, questId: string,): Promise<void> {
   await transitionQuestStatus(state.db, questId, QuestStatus.Failed, QuestProgressStatus.Failed,);
 }
 
-/** Abandon a quest (GM action) */
+/**
+ * Abandon a quest (GM action)
+ * @param state
+ * @param questId
+ */
 export async function abandon(state: QuestState, questId: string,): Promise<void> {
   await transitionQuestStatus(state.db, questId, QuestStatus.Abandoned, QuestProgressStatus.Ignored,);
 }
 
-/** Check time-based quests for deadline expiry */
+/**
+ * Check time-based quests for deadline expiry
+ * @param state
+ * @param worldId
+ */
 export async function checkTimeQuests(state: QuestState, worldId: string,): Promise<string[]> {
   const now = new Date().toISOString();
   const timeQuests = await state.db

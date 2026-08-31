@@ -38,7 +38,11 @@ export interface RateLimitResult {
   resetSec: number;
 }
 
-/** Build the headers for a 429 (or informational) response. */
+/**
+ * Build the headers for a 429 (or informational) response.
+ * @param result
+ * @param retryAfterSec
+ */
 export function rateLimitHeaders(
   result: RateLimitResult,
   retryAfterSec?: number,
@@ -54,11 +58,15 @@ export function rateLimitHeaders(
   return headers;
 }
 
+/** */
 export interface RateLimitConfig {
   windowMs: number;
   maxRequests: number;
 }
 
+/**
+ * @param config
+ */
 export function createRateLimiter(config: RateLimitConfig,) {
   // Per-key queue of timestamps (ms). The queue length is bounded by
   // maxRequests for any key in normal operation.
@@ -78,6 +86,8 @@ export function createRateLimiter(config: RateLimitConfig,) {
    * Record a request and report whether it is within budget.
    * `consume()` is the single source of truth: it both checks and records.
    * Callers that need the pre-recording shape should branch on `allowed`.
+   * @param key
+   * @param now
    */
   function consume(key: string, now = Date.now(),): RateLimitResult {
     const cutoff = now - config.windowMs;
@@ -121,12 +131,16 @@ export function createRateLimiter(config: RateLimitConfig,) {
    * Backward-compatible boolean check.
    * Records the request on success (same as consume().allowed === true).
    * Does NOT record on failure (caller is blocked).
+   * @param key
    */
   function check(key: string,): boolean {
     return consume(key,).allowed;
   }
 
-  /** Reset counter for a specific key */
+  /**
+   * Reset counter for a specific key
+   * @param key
+   */
   function reset(key: string,): void {
     timestamps.delete(key,);
   }
@@ -136,6 +150,7 @@ export function createRateLimiter(config: RateLimitConfig,) {
     timestamps.clear();
   }
 
+  /** */
   function destroy(): void {
     clearInterval(pruneInterval,);
     timestamps.clear();
@@ -144,4 +159,5 @@ export function createRateLimiter(config: RateLimitConfig,) {
   return { check, clear: clearAll, consume, destroy, reset, };
 }
 
+/** */
 export type RateLimiter = ReturnType<typeof createRateLimiter>;

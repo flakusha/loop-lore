@@ -15,7 +15,11 @@ export interface UpsertAvatarConfigOpts {
   fallbackChain?: AvatarTagType[];
 }
 
-/** Get avatar config for a character */
+/**
+ * Get avatar config for a character
+ * @param db
+ * @param actorId
+ */
 export async function getAvatarConfig(db: Kysely<DB>, actorId: string,): Promise<AvatarConfig | undefined> {
   const row = await db
     .selectFrom("character_avatar_config",)
@@ -36,7 +40,12 @@ export async function getAvatarConfig(db: Kysely<DB>, actorId: string,): Promise
   };
 }
 
-/** Create or update avatar config */
+/**
+ * Create or update avatar config
+ * @param db
+ * @param actorId
+ * @param config
+ */
 export async function upsertAvatarConfig(
   db: Kysely<DB>,
   actorId: string,

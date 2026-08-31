@@ -11,7 +11,6 @@
  *   - generates a UUID when the supplied id is malformed,
  *   - honors the Idempotency-Key alias,
  *   - populates ctx.requestId for downstream handlers.
- *
  * @see TASK-middleware-request-id-elysia-derive.md
  */
 

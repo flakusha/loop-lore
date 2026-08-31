@@ -14,6 +14,14 @@ import type { Db, } from "../db";
 import { can, } from "../users/permissions";
 import { createEntityRoutes, } from "./entity-routes";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.parentId
+ * @param root0._entityId
+ * @param root0.userId
+ * @param root0.userRole
+ */
 async function worldOwnershipCheck({
   database,
   parentId,
@@ -48,6 +56,11 @@ async function worldOwnershipCheck({
   return true;
 }
 
+/**
+ * @param opts
+ * @param opts.database
+ * @param opts.config
+ */
 export function worldLoreEntriesRoutes(opts: { database: Db; config: Config },): Elysia {
   return createEntityRoutes(
     {

@@ -18,24 +18,41 @@ import { characterEmotionAvatarsRoutes, } from "./character-emotion-avatars";
 if (ISOLATED) {
   mock.module("../characters/services/emotion-avatar-service", () => {
     const jobs = new Map<string, unknown>();
+    /** */
     class EmotionAvatarService {
+      /**
+       * @param actorId
+       */
       listJobs(actorId: string,) {
         return Array.from(jobs.values(),).filter((j,) => (j as { actorId: string }).actorId === actorId);
       }
+      /**
+       * @param jobId
+       */
       getJobStatus(jobId: string,) {
         return jobs.get(jobId,);
       }
+      /**
+       * @param jobId
+       */
       cancelJob(jobId: string,) {
         if (!jobs.has(jobId,)) { return false; }
         const job = jobs.get(jobId,);
         jobs.set(jobId, { ...(job as object), status: "cancelled", },);
         return true;
       }
+      /**
+       * @param opts
+       * @param opts.actorId
+       */
       async startBatchGeneration(opts: { actorId: string },) {
         const jobId = `job-${jobs.size + 1}`;
         jobs.set(jobId, { jobId, actorId: opts.actorId, status: "running", },);
         return jobId;
       }
+      /**
+       * @param emotion
+       */
       getEmotionPromptModifier(emotion: string,) {
         return `[${emotion} mood]`;
       }
@@ -47,6 +64,11 @@ if (ISOLATED) {
 const ACTOR = "00000000-0000-4000-8000-000000000001";
 const OTHER = "00000000-0000-4000-8000-000000000002";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-emotion-avatars", },);
   if (userId) {

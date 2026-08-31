@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // ── Memory Types ───────────────────────────────────────────────
+/** */
 export interface MemoryEntry {
   id: string;
   content: string;
@@ -19,6 +20,7 @@ export interface MemoryEntry {
   scope?: "character" | "assistant" | "world";
 }
 
+/** */
 export interface MemoryPanelState {
   activeTab: "character" | "assistant" | "world";
   characterMemories: MemoryEntry[];

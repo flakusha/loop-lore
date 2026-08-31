@@ -10,14 +10,22 @@ import type { CompressionMetadata, } from "./types";
 /** Count structural overhead per message (role + wrapping JSON) */
 const STRUCTURAL_OVERHEAD_CHARS = 60;
 
-/** Estimate tokens for a single message (role + content overhead). */
+/**
+ * Estimate tokens for a single message (role + content overhead).
+ * @param msg
+ * @param fn
+ */
 export function tokensForMessage(msg: ContextMessage, fn: TokenCountFn,): number {
   let text = msg.content;
   if (msg.name) { text += msg.name; }
   return fn(text,) + fn(String(STRUCTURAL_OVERHEAD_CHARS,),);
 }
 
-/** Sum token count across all messages */
+/**
+ * Sum token count across all messages
+ * @param messages
+ * @param tokenCountFn
+ */
 export function calculateTotalTokens(
   messages: ContextMessage[],
   tokenCountFn: TokenCountFn = defaultTokenCount,
@@ -27,6 +35,10 @@ export function calculateTotalTokens(
   return sum;
 }
 
+/**
+ * @param tokens
+ * @param count
+ */
 export function zeroMetadata(tokens: number, count: number,): CompressionMetadata {
   return {
     originalTokens: tokens,

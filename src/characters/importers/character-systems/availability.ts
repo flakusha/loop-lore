@@ -10,7 +10,13 @@ import type { CharacterSystemsExport, } from "../../exporters/character-systems"
 import { errMsg, } from "../../shared/character-systems-utils";
 import type { CharacterSystemsImportResult, } from "./types";
 
-/** Import availability into the character systems importer result. */
+/**
+ * Import availability into the character systems importer result.
+ * @param db
+ * @param actorId
+ * @param data
+ * @param result
+ */
 export async function importAvailability(
   db: Kysely<DB>,
   actorId: string,

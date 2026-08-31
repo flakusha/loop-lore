@@ -56,6 +56,9 @@ export class ServerExternalManager implements ServerExternalHost {
   probeTimer: ReturnType<typeof setInterval> | null = null;
   readonly PROBE_INTERVAL_MS = 30_000;
 
+  /**
+   * @param logger
+   */
   constructor(logger: Logger,) {
     this.log = logger.child({ module: "server-external", },);
   }
@@ -69,6 +72,7 @@ export class ServerExternalManager implements ServerExternalHost {
    * Start llama.cpp server on given port.
    * modelPath accepts local path (/path/to/model.gguf) or HuggingFace ID (org/repo:quant).
    * Skips (returns null) if binary not found or port unavailable.
+   * @param opts
    */
   async startLlamaCpp(opts: LlamaCppOptions,): Promise<ServerInstance | null> {
     return startLlamaCppDispatch(this, opts,);
@@ -76,6 +80,7 @@ export class ServerExternalManager implements ServerExternalHost {
 
   /**
    * Start llama-swap proxy with a config file.
+   * @param opts
    */
   async startLlamaSwap(opts: LlamaSwapOptions,): Promise<ServerInstance | null> {
     return startLlamaSwapDispatch(this, opts,);
@@ -87,12 +92,16 @@ export class ServerExternalManager implements ServerExternalHost {
    * Supports two model loading modes:
    * - checkpoint (default): -m modelPath — standalone full model, no llm/vae needed
    * - diffusion: --diffusion-model modelPath — requires --llm (text encoder), --vae optional
+   * @param opts
    */
   async startSdCpp(opts: SdCppOptions,): Promise<ServerInstance | null> {
     return startSdCppDispatch(this, opts,);
   }
 
-  /** Stop a specific instance by type + port */
+  /**
+   * Stop a specific instance by type + port
+   * @param instance
+   */
   async stop(instance: ServerInstance,): Promise<void> {
     return stopDispatch(this, instance,);
   }

@@ -12,6 +12,10 @@ import { ProviderError, } from "../types";
 import { buildBody, fetchRaw, fetchWithRetry, handleErrorResponse, mapFinishReason, } from "./http";
 import type { OllamaNativeState, OllamaStreamChunk, OllamaToolCallDTO, } from "./types";
 
+/**
+ * @param state
+ * @param req
+ */
 export async function completeDispatch(
   state: OllamaNativeState,
   req: GenerateRequest,
@@ -67,6 +71,11 @@ interface StreamAccum {
   usage: GenerateResponse["usage"];
 }
 
+/**
+ * @param state
+ * @param req
+ * @param handler
+ */
 export async function streamDispatch(
   state: OllamaNativeState,
   req: GenerateRequest,
@@ -144,7 +153,6 @@ export async function streamDispatch(
 
 /**
  * Process a single raw JSON line from the Ollama stream.
- *
  * @param line - One newline-delimited JSON chunk
  * @param signal - Abort signal; when aborted the stream is marked cancelled
  * @param handler - Stream event callback
@@ -203,6 +211,9 @@ function applyStreamLine(
   return false;
 }
 
+/**
+ * @param value
+ */
 function safeJsonStringifyOr(value: unknown,): string {
   if (typeof value === "string") { return value; }
   const result = safeJsonStringify(value,);

@@ -20,6 +20,10 @@ import { insertCharacterWorldSetup, insertWorlds, } from "../test-utils/insert-h
 import { uid, } from "../utils";
 import { characterIoRoutes, } from "./character-io";
 
+/**
+ * @param db
+ * @param userId
+ */
 function createIoApp(db: TestDb["db"], userId: string | null,): Elysia {
   return new Elysia({ name: "test-character-io", },)
     .derive(() => ({ userId, }))
@@ -28,6 +32,10 @@ function createIoApp(db: TestDb["db"], userId: string | null,): Elysia {
 
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 
+/**
+ * @param db
+ * @param id
+ */
 async function seedUser(db: TestDb["db"], id: string,): Promise<void> {
   await db.insertInto("users",).values({
     id,
@@ -39,6 +47,11 @@ async function seedUser(db: TestDb["db"], id: string,): Promise<void> {
   },).execute();
 }
 
+/**
+ * @param db
+ * @param id
+ * @param ownerId
+ */
 async function seedActor(
   db: TestDb["db"],
   id: string,
@@ -59,7 +72,12 @@ async function seedActor(
   },).execute();
 }
 
-/** Seed a permanent trait so export has a non-empty section to filter. */
+/**
+ * Seed a permanent trait so export has a non-empty section to filter.
+ * @param db
+ * @param actorId
+ * @param name
+ */
 async function seedTrait(db: TestDb["db"], actorId: string, name: string,): Promise<void> {
   await TraitsService(db,).createPermanentTrait({
     actorId,
@@ -72,6 +90,9 @@ async function seedTrait(db: TestDb["db"], actorId: string, name: string,): Prom
 // ── URL-import fetch stubbing (SSRF guard blocks real localhost) ──
 const originalFetch = globalThis.fetch;
 
+/**
+ * @param handler
+ */
 function mockFetch(handler: (url: string,) => Response | Promise<Response>,): void {
   const mocked = mock(async (url: string | URL | Request, _init?: RequestInit,) => {
     const urlStr = typeof url === "string" ? url : (url instanceof URL ? url.href : url.url);
@@ -80,6 +101,7 @@ function mockFetch(handler: (url: string,) => Response | Promise<Response>,): vo
   Object.defineProperty(globalThis, "fetch", { value: mocked, writable: true, configurable: true, },);
 }
 
+/** */
 function restoreFetch(): void {
   Object.defineProperty(globalThis, "fetch", { value: originalFetch, writable: true, configurable: true, },);
 }

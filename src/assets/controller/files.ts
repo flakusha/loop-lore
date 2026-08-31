@@ -8,7 +8,14 @@ import { existsSync, readFileSync, } from "node:fs";
 import { IMMUTABLE_CACHE_MAX_AGE, } from "../../config/constants";
 import { notFoundResponse, } from "../../routes/http-utils";
 
-/** Serve a file from disk with proper headers. */
+/**
+ * Serve a file from disk with proper headers.
+ * @param filePath
+ * @param contentType
+ * @param opts
+ * @param opts.cacheControl
+ * @param opts.extraHeaders
+ */
 export function serveFile(
   filePath: string,
   contentType: string,

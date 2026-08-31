@@ -168,11 +168,21 @@ describe("batch chat operations", () => {
   });
 });
 
+/**
+ * @param db
+ * @param chatId
+ */
 async function chatExists(db: Kysely<DB>, chatId: string,): Promise<boolean> {
   const row = await db.selectFrom("chats",).select("id",).where("id", "=", chatId,).executeTakeFirst();
   return row !== undefined;
 }
 
+/**
+ * @param db
+ * @param table
+ * @param column
+ * @param value
+ */
 async function countRows(
   db: Kysely<DB>,
   table: "messages" | "chat_participants" | "actor_memories",

@@ -39,10 +39,14 @@ const DEFAULT_MIN_RECENT = 8;
  * Implements a sliding window: keeps the most recent messages that
  * fit within the token budget, with a minimum guarantee of recent
  * messages. Older messages are candidates for promotion to memory.
- *
  * @param messages - Messages in chronological order (oldest first)
  * @param maxTokens - Maximum token budget for the context window
  * @param options - Mode, participants, thresholds, and minRecent config
+ * @param options.mode
+ * @param options.activeParticipants
+ * @param options.currentTurnActorId
+ * @param options.thresholds
+ * @param options.minRecent
  * @returns Complete context window state
  */
 export function computeContextWindow(
@@ -132,7 +136,6 @@ export function computeContextWindow(
 
 /**
  * Get the current context threshold state.
- *
  * @param usagePercentage - Current usage as percentage (0-100)
  * @param thresholds - Threshold configuration
  * @returns Current threshold state
@@ -151,7 +154,6 @@ export function getThresholdState(
  * Add injected memories to the context window.
  *
  * Respects remaining token budget — memories that don't fit are rejected.
- *
  * @param context - Current context window state
  * @param memories - Memories to inject
  * @returns Updated context window with memories added
@@ -186,7 +188,6 @@ export function injectMemories(
  * Add injected events to the context window.
  *
  * Respects remaining token budget — events that don't fit are rejected.
- *
  * @param context - Current context window state
  * @param events - Events to inject
  * @returns Updated context window with events added

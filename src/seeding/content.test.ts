@@ -11,7 +11,10 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { applyEnvironmentOverrides, seedConfiguredContent, } from "./content";
 import { seedConfiguredUsers, } from "./users";
 
-/** Complete, valid AuthConfig for multi-user tests. */
+/**
+ * Complete, valid AuthConfig for multi-user tests.
+ * @param required
+ */
 function auth(required: boolean,): AuthConfig {
   return {
     required,

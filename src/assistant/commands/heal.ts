@@ -95,7 +95,10 @@ registerCommand("heal", async (args, ctx,): Promise<CommandResult> => {
   }
 }, { requiredRole: ChatParticipantRole.Owner, },);
 
-/** Parse a non-negative integer, or null when absent/invalid. */
+/**
+ * Parse a non-negative integer, or null when absent/invalid.
+ * @param raw
+ */
 function parseNonNegativeInt(raw: string | undefined,): number | null {
   if (!raw) { return null; }
   const n = Number.parseInt(raw, 10,);

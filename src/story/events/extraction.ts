@@ -58,6 +58,7 @@ const lorePatterns = [
 
 // ── Options ──────────────────────────────────────────────────
 
+/** */
 export interface ExtractEventsOpts {
   messageContent: string;
   actorId: string;
@@ -70,6 +71,10 @@ export interface ExtractEventsOpts {
  * Extract structured events from a narrative message.
  * For v1, uses regex pattern matching and keyword analysis.
  * Future: delegate to a lightweight LLM for structured extraction.
+ * @param root0
+ * @param root0.messageContent
+ * @param root0.actorId
+ * @param root0.currentLocationId
  */
 export function extractEvents({
   messageContent,
@@ -102,6 +107,12 @@ export function extractEvents({
 
 // ── Per-type detection helpers ──────────────────────────────
 
+/**
+ * @param content
+ * @param actorId
+ * @param currentLocationId
+ * @param timestamp
+ */
 function detectLocationChange(
   content: string,
   actorId: string,
@@ -124,6 +135,11 @@ function detectLocationChange(
   return null;
 }
 
+/**
+ * @param content
+ * @param actorId
+ * @param timestamp
+ */
 function detectTimeAdvancement(content: string, actorId: string, timestamp: string,): WorldEvent | null {
   for (const pattern of timePatterns) {
     if (pattern.test(content,)) {
@@ -139,6 +155,11 @@ function detectTimeAdvancement(content: string, actorId: string, timestamp: stri
   return null;
 }
 
+/**
+ * @param content
+ * @param actorId
+ * @param timestamp
+ */
 function detectCombat(content: string, actorId: string, timestamp: string,): WorldEvent | null {
   const lower = content.toLowerCase();
   for (const pattern of combatPatterns) {
@@ -162,6 +183,11 @@ function detectCombat(content: string, actorId: string, timestamp: string,): Wor
   return null;
 }
 
+/**
+ * @param content
+ * @param actorId
+ * @param timestamp
+ */
 function detectNpcStateChange(content: string, actorId: string, timestamp: string,): WorldEvent | null {
   for (const pattern of npcPatterns) {
     if (pattern.test(content,)) {
@@ -177,6 +203,12 @@ function detectNpcStateChange(content: string, actorId: string, timestamp: strin
   return null;
 }
 
+/**
+ * @param content
+ * @param actorId
+ * @param currentLocationId
+ * @param timestamp
+ */
 function detectItemTransfers(
   content: string,
   actorId: string,
@@ -207,6 +239,11 @@ function detectItemTransfers(
   return events;
 }
 
+/**
+ * @param content
+ * @param actorId
+ * @param timestamp
+ */
 function detectLoreUpdate(content: string, actorId: string, timestamp: string,): WorldEvent | null {
   for (const pattern of lorePatterns) {
     if (!pattern.test(content,)) { continue; }

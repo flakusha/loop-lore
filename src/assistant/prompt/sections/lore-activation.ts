@@ -32,7 +32,10 @@ export interface ActivationEntry {
   activation_chance: number | null;
 }
 
-/** Clamp an entry's scan_depth into the valid range (default 1, max {@link MAX_SCAN_DEPTH}). */
+/**
+ * Clamp an entry's scan_depth into the valid range (default 1, max {@link MAX_SCAN_DEPTH}).
+ * @param scanDepth
+ */
 export function clampScanDepth(scanDepth: number | null,): number {
   if (scanDepth == null || scanDepth <= 0) { return 1; }
   return Math.min(scanDepth, MAX_SCAN_DEPTH,);
@@ -44,6 +47,7 @@ export function clampScanDepth(scanDepth: number | null,): number {
  * catastrophic-backtracking shapes so a malicious card cannot freeze every
  * chat turn. Invalid patterns are treated as no-match (never crash prompt
  * assembly).
+ * @param key
  */
 function compileKeyRegex(key: string,): RegExp | null {
   return compileSafeRegExp(key, "i",);
@@ -56,6 +60,9 @@ function compileKeyRegex(key: string,): RegExp | null {
  * An entry with no activation condition at all (no regex keys, no groups, no
  * keywords) is treated as always-active, preserving the pre-FEAT-055 behavior
  * where a selective entry with empty keys is unconditionally included.
+ * @param entry
+ * @param words
+ * @param text
  */
 export function matchesSelectiveKeys(
   entry: ActivationEntry,
@@ -85,7 +92,10 @@ export function matchesSelectiveKeys(
   return keys.some((k,) => words.has(k.toLowerCase(),));
 }
 
-/** Whether an otherwise-relevant entry is admitted by its activation_chance. */
+/**
+ * Whether an otherwise-relevant entry is admitted by its activation_chance.
+ * @param chance
+ */
 export function passesActivationChance(chance: number | null,): boolean {
   if (chance == null) { return true; }
   const clamped = Math.min(1, Math.max(0, chance,),);

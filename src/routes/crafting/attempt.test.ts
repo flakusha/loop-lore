@@ -110,12 +110,18 @@ describe("crafting attempt lifecycle", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-attempt-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
       .use(craftingAttemptRoutes({ database: db, },),) as any;
   }
 
+  /**
+   * @param res
+   */
   async function json(res: Response,) {
     return res.json() as unknown;
   }

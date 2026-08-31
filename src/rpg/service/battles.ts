@@ -25,6 +25,10 @@ import type { RpgServiceDeps, } from "./types.js";
 export * from "./battles/actions.js";
 export * from "./battles/persistence.js";
 export * from "./battles/types.js";
+/**
+ * @param deps
+ * @param params
+ */
 export async function startBattle(
   deps: RpgServiceDeps,
   params: StartBattleParams,
@@ -79,12 +83,16 @@ export async function startBattle(
 
 /**
  * Fetch an active battle for a chat.
- *
  * @param deps - Service dependencies
  * @param chatId - Chat to look up
  * @returns The active battle roster, or null when none active
  */
 
+/**
+ * @param deps
+ * @param battleId
+ * @param status
+ */
 export async function endBattle(
   deps: RpgServiceDeps,
   battleId: string,

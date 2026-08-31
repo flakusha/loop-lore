@@ -17,6 +17,9 @@
  */
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .createTable("message_seen",)
@@ -49,6 +52,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("message_seen",).ifExists().execute();
 }

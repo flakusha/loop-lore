@@ -29,6 +29,7 @@ const log: Logger = new Proxy({} as Logger, {
   },
 },);
 
+/** */
 export interface TurnSelectorOptions {
   db: Kysely<DB>;
   chatId: string;
@@ -38,7 +39,7 @@ export interface TurnSelectorOptions {
 
 /**
  * Select the next actor to generate in a group chat.
- *
+ * @param options
  * @returns Actor ID to generate as, or null if no generation should occur
  */
 export async function selectNextGroupActor(options: TurnSelectorOptions,): Promise<string | null> {
@@ -120,6 +121,7 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
 
 /**
  * Check if group chat is paused from story_state JSON.
+ * @param storyState
  */
 function checkPaused(storyState: string | null,): boolean {
   if (!storyState) { return false; }
@@ -129,6 +131,9 @@ function checkPaused(storyState: string | null,): boolean {
 
 /**
  * Get actor IDs from the last N messages (for context-mention boost).
+ * @param db
+ * @param chatId
+ * @param limit
  */
 async function getRecentActorIds(db: Kysely<DB>, chatId: string, limit: number,): Promise<string[]> {
   const recent = await db

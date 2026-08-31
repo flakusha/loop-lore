@@ -17,6 +17,10 @@ import { ErrorResponse, SuccessResponse, UserIdParams, UserProfileUpdateBody, } 
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "../http-utils";
 import type { UsersRoutesOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function manageRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "users-manage", },)

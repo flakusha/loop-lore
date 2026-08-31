@@ -16,7 +16,12 @@ import type { GameMasterDecision, } from "../types";
 import { buildResult, } from "./decisions";
 import type { GmState, GmTurnResult, } from "./types";
 
-/** Accept a response and process it through the full pipeline */
+/**
+ * Accept a response and process it through the full pipeline
+ * @param state
+ * @param turnId
+ * @param response
+ */
 export async function acceptResponse(state: GmState, turnId: string, response: string,): Promise<GmTurnResult> {
   const turn = await state.db
     .selectFrom("story_turns",)
@@ -127,7 +132,13 @@ export async function acceptResponse(state: GmState, turnId: string, response: s
   },);
 }
 
-/** Human GM provides an override decision */
+/**
+ * Human GM provides an override decision
+ * @param state
+ * @param _chatId
+ * @param turnId
+ * @param decision
+ */
 export async function humanOverride(
   state: GmState,
   _chatId: string,

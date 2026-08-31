@@ -41,7 +41,6 @@ const DEFAULT_CONFIG: ShareabilityConfig = {
  * - `shared`: visible to chat participants (caller must check participation separately)
  * - `private`: visible only if viewer === owner
  * - `secret`: visible only if viewer is owner or in trusted list
- *
  * @param privacy - Memory privacy level
  * @param ownerId - Who owns this memory (actor_id)
  * @param viewerId - Who is trying to see it
@@ -74,7 +73,6 @@ export function isMemoryVisible(
 
 /**
  * Parse a shareability JSON string from the database.
- *
  * @param json - Raw JSON string from shareability column
  * @returns Parsed config, or defaults if null/invalid
  */
@@ -98,8 +96,13 @@ export function parseShareability(json: string | null,): ShareabilityConfig {
  * 2. If viewer is trusted → always share
  * 3. Apply privacy rules
  * 4. Apply probability check
- *
  * @param params - Evaluation parameters
+ * @param params.privacy
+ * @param params.ownerId
+ * @param params.viewerId
+ * @param params.shareability
+ * @param params.trustModifier
+ * @param params.randomFn
  * @returns Decision: "share" | "withhold"
  */
 export function evaluateShareability(params: {
@@ -140,6 +143,9 @@ export function evaluateShareability(params: {
 
 // ─── Helpers ───────────────────────────────────────────────────
 
+/**
+ * @param v
+ */
 function clampProbability(v: number,): number {
   return Math.max(0, Math.min(1, v,),);
 }

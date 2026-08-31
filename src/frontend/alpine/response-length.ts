@@ -47,7 +47,10 @@ const LENGTH_PRESETS = [
       this.showCustom = this.preset === "custom";
     },
 
-    /** Set the preset and persist to localStorage */
+    /**
+     * Set the preset and persist to localStorage
+     * @param value
+     */
     setPreset(value: string,): void {
       localStorage.setItem("response-length-preset", value,);
     },

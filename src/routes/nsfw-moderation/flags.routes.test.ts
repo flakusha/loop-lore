@@ -18,12 +18,20 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { uid, } from "../../utils";
 import { flagsRoutes, } from "./flags";
 
+/**
+ * @param db
+ * @param userId
+ * @param role
+ */
 function createApp(db: Kysely<DB>, userId: string | null, role = "user",): Elysia {
   return new Elysia({ name: "test-flags", },)
     .derive(() => ({ userId, userRole: role, }))
     .use(flagsRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param body
+ */
 function flagRequest(body: Record<string, unknown>,): Request {
   return new Request("http://localhost/api/nsfw/moderation/flags", {
     method: "POST",
@@ -174,6 +182,10 @@ describe("content flag routes", () => {
 
   // PUT /flags/:id (resolve) requires moderation.action
 
+  /**
+   * @param flagId
+   * @param body
+   */
   function resolveRequest(flagId: string, body: Record<string, unknown>,): Request {
     return new Request(`http://localhost/api/nsfw/moderation/flags/${flagId}`, {
       method: "PUT",

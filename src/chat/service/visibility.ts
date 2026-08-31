@@ -13,6 +13,10 @@ import type { DB, } from "../../db/schema";
 
 /**
  * Update a message's visibility (e.g. hidden_by_user, flagged).
+ * @param database
+ * @param messageId
+ * @param visibility
+ * @param reason
  */
 export async function updateMessageVisibility(
   database: Kysely<DB>,

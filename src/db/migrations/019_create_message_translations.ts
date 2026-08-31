@@ -7,6 +7,9 @@
  */
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<any>,): Promise<void> {
   const hasTable = await sql<
     { tbl: number }
@@ -28,6 +31,9 @@ export async function up(database: Kysely<any>,): Promise<void> {
   }
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<any>,): Promise<void> {
   await database.schema.dropTable("message_translations",).execute();
 }

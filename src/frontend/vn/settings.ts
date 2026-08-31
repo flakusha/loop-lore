@@ -9,6 +9,7 @@
 
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 
+/** */
 export interface VnSettings {
   enabled: boolean;
   layout: "overlay" | "below" | "split";
@@ -41,6 +42,7 @@ const DEFAULTS: VnSettings = {
 
 /**
  * Get VN settings, merging GmConfig with localStorage overrides.
+ * @param gmConfig
  */
 export function getVnSettings(gmConfig?: Record<string, unknown>,): VnSettings {
   const stored = loadFromStorage();
@@ -64,6 +66,7 @@ export function getVnSettings(gmConfig?: Record<string, unknown>,): VnSettings {
 
 /**
  * Save VN settings to localStorage.
+ * @param settings
  */
 export function saveVnSettings(settings: Partial<VnSettings>,): void {
   const current = getVnSettings();
@@ -82,6 +85,7 @@ export function resetVnSettings(): void {
   } catch { /* ignore */ }
 }
 
+/** */
 function loadFromStorage(): Partial<VnSettings> {
   const raw = localStorage.getItem(STORAGE_KEY,);
   return raw ? jsonParseOr(raw, {},) : {};

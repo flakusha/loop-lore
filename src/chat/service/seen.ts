@@ -13,6 +13,7 @@ import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
 import type { ServiceError, } from "./types";
 
+/** */
 export interface SeenStateRecord {
   messageId: string;
   actorId: string;
@@ -22,7 +23,11 @@ export interface SeenStateRecord {
 
 /**
  * Get the grouped viewer list for a message.
- *
+ * @param db
+ * @param messageId
+ * @param chatId
+ * @param userId
+ * @param userRole
  * @returns `{ ok: true, viewers }` or a `ServiceError` (404/403).
  */
 export async function getMessageSeen(
@@ -60,7 +65,13 @@ export async function getMessageSeen(
  * Upserts the `(message_id, actor_id)` ledger row. When the caller is the
  * actor marking themselves, the request is identity-checked against the
  * `actor_id` derived from the user's `user_id` (see `resolveActorId`).
- *
+ * @param db
+ * @param messageId
+ * @param chatId
+ * @param actorId
+ * @param userId
+ * @param userRole
+ * @param state
  * @returns `{ ok: true }` or a `ServiceError`.
  */
 export async function recordMessageSeen(
@@ -104,7 +115,12 @@ export async function recordMessageSeen(
 
 /**
  * Delete a seen-state row (reset to unseen).
- *
+ * @param db
+ * @param messageId
+ * @param chatId
+ * @param actorId
+ * @param userId
+ * @param userRole
  * @returns `{ ok: true }` or a `ServiceError`.
  */
 export async function deleteMessageSeen(

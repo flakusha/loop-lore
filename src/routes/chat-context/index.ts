@@ -25,6 +25,10 @@ import type { AuthContext, HandlerOpts, } from "./types";
 
 export type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function chatContextRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
   const { database, config, } = opts;
 

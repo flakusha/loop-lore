@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/* eslint-disable unicorn/max-nested-calls -- Kysely query chains and Elysia TypeBox schema nesting are inherent to the route layer */
-
 /**
  * Battle Equipment Durability Routes (IS7)
  *
@@ -25,7 +23,12 @@ import { jsonResponse, notFoundResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
 import type { HandlerOpts, } from "./types";
 
-/** Ensure the user owns the given actor. Returns a denial Response or null. */
+/**
+ * Ensure the user owns the given actor. Returns a denial Response or null.
+ * @param db
+ * @param actorId
+ * @param userId
+ */
 async function resolveActorAccess(
   db: Kysely<DB>,
   actorId: string,
@@ -37,7 +40,12 @@ async function resolveActorAccess(
   return null;
 }
 
-/** Apply `damage` to every equipped item an actor owns and persist it. */
+/**
+ * Apply `damage` to every equipped item an actor owns and persist it.
+ * @param db
+ * @param actorId
+ * @param damage
+ */
 async function degradeActorEquipment(
   db: Kysely<DB>,
   actorId: string,
@@ -80,6 +88,10 @@ async function degradeActorEquipment(
   return updated;
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function battleEquipmentDurabilityRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   return new Elysia({ name: "battle-equipment-durability", },)
@@ -122,5 +134,3 @@ export function battleEquipmentDurabilityRoutes(opts: HandlerOpts, prefix = "/ap
       },
     );
 }
-
-/* eslint-enable unicorn/max-nested-calls */

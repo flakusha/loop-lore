@@ -6,6 +6,11 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import type { DataMigration, } from "./types";
 
+/**
+ * @param db
+ * @param table
+ * @param toVersion
+ */
 async function isApplied(db: Kysely<DB>, table: string, toVersion: number,): Promise<boolean> {
   const row = await db
     .selectFrom("data_migrations",)
@@ -16,6 +21,10 @@ async function isApplied(db: Kysely<DB>, table: string, toVersion: number,): Pro
   return row !== undefined;
 }
 
+/**
+ * @param db
+ * @param migration
+ */
 async function markApplied(db: Kysely<DB>, migration: DataMigration,): Promise<void> {
   await db
     .insertInto("data_migrations",)
@@ -28,6 +37,7 @@ async function markApplied(db: Kysely<DB>, migration: DataMigration,): Promise<v
     .execute();
 }
 
+/** */
 async function discoverMigrations(): Promise<DataMigration[]> {
   const tasks: DataMigration[] = [];
   const { readdirSync, statSync, } = await import("node:fs");
@@ -65,7 +75,8 @@ async function discoverMigrations(): Promise<DataMigration[]> {
  *   - the isApplied re-check inside the same transaction closes the TOCTOU
  *     window between concurrent runners (SQLite serializes writers; the
  *     (table_name, to_version) PK rejects duplicate records).
- *
+ * @param db
+ * @param migration
  * @returns true when the migration was applied, false when already applied
  */
 export async function applyDataMigration(
@@ -82,6 +93,10 @@ export async function applyDataMigration(
   },);
 }
 
+/**
+ * @param db
+ * @param logProgress
+ */
 export async function runDataMigrations(db: Kysely<DB>, logProgress = true,): Promise<void> {
   const log = getLogger().child({ module: "data-migrations", },);
 

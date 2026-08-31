@@ -97,7 +97,10 @@ async function makeDb(): Promise<{ db: Db; sqlite: Database }> {
   return { db, sqlite, };
 }
 
-/** Build the route app with a fixed test identity injected into context. */
+/**
+ * Build the route app with a fixed test identity injected into context.
+ * @param db
+ */
 function makeApp(db: Db,) {
   return new Elysia()
     .derive(() => ({ userId: TEST_USER, }))

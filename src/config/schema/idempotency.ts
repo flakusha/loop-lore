@@ -5,6 +5,7 @@
 
 import type { IdempotencyBackend, } from "../../middleware/idempotency";
 
+/** */
 export interface IdempotencyConfig {
   /** Enable the global idempotency middleware. Default: true. */
   enabled: boolean;

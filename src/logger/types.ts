@@ -19,6 +19,7 @@ export const LogLevelNumeric: Record<LogLevel, number> = {
 
 // ── Log Entry ──────────────────────────────────────────────
 
+/** */
 export interface LogEntry {
   /** Numeric level: 5|10|20|30|40|50 */
   level: number;
@@ -44,6 +45,7 @@ export interface LogEntry {
 
 // ── Logger Interface ───────────────────────────────────────
 
+/** */
 export interface Logger {
   trace(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void;
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void;
@@ -64,6 +66,7 @@ export interface Logger {
   flush(): Promise<void>;
 }
 
+/** */
 export interface LoggerBindings {
   module?: string;
   requestId?: string;
@@ -79,6 +82,7 @@ export interface LogOptions {
 
 // ── Transport Interface ────────────────────────────────────
 
+/** */
 export interface Transport {
   /** Label for debugging/logging */
   readonly name: string;
@@ -92,6 +96,7 @@ export interface Transport {
 
 // ── Censor Engine Types ────────────────────────────────────
 
+/** */
 export interface CensorRule {
   /** Field name pattern (case-insensitive, glob-style: "api*") */
   field: string;
@@ -103,6 +108,7 @@ export interface CensorRule {
 
 // ── Size Limits ────────────────────────────────────────────
 
+/** */
 export interface SizeLimits {
   maxMessageBytes?: number;
   maxMetaBytes?: number;
@@ -114,6 +120,7 @@ export interface SizeLimits {
 
 // ── Logger Config (extends schema) ─────────────────────────
 
+/** */
 export interface LoggerConfig {
   /** Runtime level threshold: "debug" | "info" | "warn" | "error" */
   level: LogLevel;
@@ -137,6 +144,7 @@ export interface LoggerConfig {
 
 // ── Factory ────────────────────────────────────────────────
 
+/** */
 export type LoggerFactory = (config?: Partial<LoggerConfig>,) => Logger;
 
 export { LogLevel, } from "../db/enums-config";

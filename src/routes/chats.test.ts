@@ -20,6 +20,10 @@ import {
 import { uid, } from "../utils";
 import { chatsRoutes, } from "./chats";
 
+/**
+ * @param db
+ * @param userId
+ */
 function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-chats", },)
     .derive(() => ({ userId, }))
@@ -883,12 +887,19 @@ describe("chatsRoutes — side-channels + turn-order (C1)", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param db
+   * @param uid
+   */
   function createApp(db: Kysely<DB>, uid: string | null,): Elysia {
     return new Elysia({ name: "test-chats-c1", },)
       .derive(() => ({ userId: uid, }))
       .use(chatsRoutes({ database: db, config: {} as never, },),) as unknown as Elysia;
   }
 
+  /**
+   * @param app
+   */
   async function makeGroupChat(app: Elysia,): Promise<string> {
     const res = await app.handle(
       new Request("http://localhost/api/chats", {

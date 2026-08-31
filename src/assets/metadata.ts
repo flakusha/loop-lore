@@ -8,6 +8,7 @@
  * Supports: PNG, JPEG, WebP, GIF.
  */
 
+/** */
 export interface ImageMetadata {
   width: number;
   height: number;
@@ -19,32 +20,59 @@ const PNG_HEADER = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10,],);
 const TEXTSIG = 0x74_45_58_74; // 'tEXt' in big-endian
 const ZTXTSIG = 0x7A_54_58_74; // 'zTXt' in big-endian
 
+/**
+ * @param buf
+ * @param offset
+ */
 function readUint16BE(buf: Uint8Array, offset: number,): number {
   return (buf[offset]! << 8) | buf[offset + 1]!;
 }
 
+/**
+ * @param buf
+ * @param offset
+ */
 function readUint32BE(buf: Uint8Array, offset: number,): number {
   return ((buf[offset]! << 24) | (buf[offset + 1]! << 16) | (buf[offset + 2]! << 8) | buf[offset + 3]!) >>> 0;
 }
 
+/**
+ * @param buf
+ * @param offset
+ */
 function readUint16LE(buf: Uint8Array, offset: number,): number {
   return (buf[offset + 1]! << 8) | buf[offset]!;
 }
 
+/**
+ * @param buf
+ * @param offset
+ */
 function readUint24LE(buf: Uint8Array, offset: number,): number {
   return (buf[offset]! | (buf[offset + 1]! << 8) | (buf[offset + 2]! << 16)) >>> 0;
 }
 
+/**
+ * @param buf
+ * @param offset
+ */
 function readUint32LE(buf: Uint8Array, offset: number,): number {
   return ((buf[offset + 3]! << 24) | (buf[offset + 2]! << 16) | (buf[offset + 1]! << 8) | buf[offset]!) >>> 0;
 }
 
+/**
+ * @param buf
+ * @param prefix
+ */
 function startsWith(buf: Uint8Array, prefix: Uint8Array,): boolean {
   if (buf.length < prefix.length) { return false; }
   for (const [i, byte,] of prefix.entries()) { if (buf[i] !== byte) { return false; } }
   return true;
 }
 
+/**
+ * @param buf
+ */
 function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; caption?: string } {
   const width = readUint32BE(buf, 16,);
   const height = readUint32BE(buf, 20,);
@@ -76,7 +104,13 @@ function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; ca
   return { width, height, caption, };
 }
 
-/** Decode a PNG tEXt/zTXt chunk into its key/value pair (null on empty value). */
+/**
+ * Decode a PNG tEXt/zTXt chunk into its key/value pair (null on empty value).
+ * @param buf
+ * @param chunkType
+ * @param dataStart
+ * @param dataEnd
+ */
 function decodeTextChunk(
   buf: Uint8Array,
   chunkType: number,
@@ -94,6 +128,9 @@ function decodeTextChunk(
     : new TextDecoder().decode(buf.slice(valStart, dataEnd,),);
   return { key, value, };
 }
+/**
+ * @param buf
+ */
 function parseJpegMetadata(buf: Uint8Array,): { width: number; height: number; caption?: string } {
   let offset = 2;
   let caption: string | undefined;
@@ -140,6 +177,9 @@ function parseJpegMetadata(buf: Uint8Array,): { width: number; height: number; c
   return { width: 0, height: 0, caption, };
 }
 
+/**
+ * @param buf
+ */
 function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } {
   // RIFF header: 4 bytes "RIFF" + 4 bytes file size + 4 bytes "WEBP"
   // VP8/VP8L/VP8X chunk follows
@@ -187,6 +227,9 @@ function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } 
   return { width: 0, height: 0, };
 }
 
+/**
+ * @param buf
+ */
 function parseGifMetadata(buf: Uint8Array,): { width: number; height: number; caption?: string } {
   const width = readUint16LE(buf, 6,);
   const height = readUint16LE(buf, 8,);
@@ -196,6 +239,7 @@ function parseGifMetadata(buf: Uint8Array,): { width: number; height: number; ca
 /**
  * Extract metadata from an image buffer.
  * Returns dimensions, format, and optional caption.
+ * @param buffer
  */
 export function extractImageMetadata(buffer: Uint8Array,): ImageMetadata {
   if (startsWith(buffer, PNG_HEADER,)) {

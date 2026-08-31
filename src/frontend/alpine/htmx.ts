@@ -21,6 +21,10 @@ addEventListener("error", (e: ErrorEvent,) => {
 // `apiFetch` is the Alpine/chat-layer alias for the unified frontend request
 // helper. It delegates to `feFetch` (../fe-fetch) for header + 401 handling and
 // adds request/response logging. Vanilla pages call `feFetch` directly.
+/**
+ * @param url
+ * @param options
+ */
 export async function apiFetch(
   url: string,
   options?: RequestInit & { idempotencyKey?: string | true },
@@ -53,6 +57,7 @@ document.addEventListener("htmx:beforeSwap", () => {
 // Trigger page-specific loaders on htmx content swaps (for pages still using JS)
 const PAGE_LOADERS = new Map<string, string>([["#create-chat-form", "loadNewChatPage",],],);
 
+/** */
 function triggerPageLoaders(): void {
   for (const [sel, fn,] of PAGE_LOADERS) {
     if (document.querySelector(sel,)) {

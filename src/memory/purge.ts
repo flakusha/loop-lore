@@ -12,6 +12,7 @@ import type { DB, } from "../db";
 import { getLogger, } from "../logger";
 import type { PurgeConfig, } from "./types";
 
+/** */
 function getLog() {
   return getLogger().child({ module: "memory-purge", },);
 }
@@ -31,9 +32,9 @@ const DEFAULT_STALE_AFTER_CHATS = 10;
  *
  * Formula: strength -= decay_rate × elapsed_days
  * Strength is clamped to [0, 1].
- *
  * @param db - Kysely instance
  * @param opts - Optional overrides
+ * @param opts.now
  * @returns Number of memories affected
  */
 export async function applyDecay(
@@ -76,6 +77,8 @@ export async function applyDecay(
 /**
  * Mark memories as stale or delete them based on purge config.
  * Stale = not accessed in the last N chats.
+ * @param db
+ * @param config
  */
 export async function purgeStaleMemories(
   db: Kysely<DB>,
@@ -151,7 +154,6 @@ export async function purgeStaleMemories(
  *
  * Access-recency boost: strength is increased by 0.1 (clamped to 1.0)
  * when a memory is accessed, making recently-used memories more durable.
- *
  * @param db - Kysely instance
  * @param memoryId - ID of the memory to touch
  */

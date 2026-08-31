@@ -24,6 +24,7 @@ import { deriveChatKeyForChat, } from "../chat-keys";
 import { compressThenEncrypt, decryptThenDecompress, } from "../pipeline";
 import type { PipelineConfig, } from "../pipeline";
 
+/** */
 export interface ReEncryptOptions {
   /** Include hidden/archived/deleted messages (for key rotation). Default: false. */
   includeAll?: boolean;
@@ -33,7 +34,12 @@ export interface ReEncryptOptions {
  * Internal: decrypt each message with `oldKey`, re-encrypt with `newKey`.
  * Messages that fail decryption are surfaced via the returned `failures` array
  * instead of silently swallowed.
- *
+ * @param database
+ * @param chatId
+ * @param oldKey
+ * @param newKey
+ * @param limit
+ * @param options
  * @returns `{ reEncrypted, failures }` where `failures[i]` is `{ id, reason }`.
  */
 export async function reEncryptWithKeys(
@@ -105,6 +111,10 @@ export async function reEncryptWithKeys(
 /**
  * Re-encrypt recent messages in a chat using the current chat key for both
  * decrypt and encrypt (no key change assumed). Only visible messages by default.
+ * @param database
+ * @param chatId
+ * @param smk
+ * @param limit
  */
 export async function reEncryptChatMessages(
   database: Kysely<DB>,
@@ -117,6 +127,14 @@ export async function reEncryptChatMessages(
   return reEncrypted;
 }
 
+/**
+ * @param database
+ * @param chatId
+ * @param uploadDir
+ * @param pipelineConfig
+ * @param oldKey
+ * @param newKey
+ */
 export async function reEncryptChatAssets(
   database: Kysely<DB>,
   chatId: string,

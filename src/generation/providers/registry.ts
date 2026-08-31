@@ -22,6 +22,10 @@ import type { ChunkEvent, GenerateRequest, GenerateResponse, LLMProvider, } from
 
 const registry = new Map<string, LLMProvider>();
 
+/**
+ * @param name
+ * @param provider
+ */
 export function registerProvider(name: string, provider: LLMProvider,): void {
   if (registry.has(name,)) {
     return; // Idempotent — already registered (e.g. from test setup or previous init)
@@ -29,10 +33,14 @@ export function registerProvider(name: string, provider: LLMProvider,): void {
   registry.set(name, provider,);
 }
 
+/**
+ * @param name
+ */
 export function getProvider(name: string,): LLMProvider | undefined {
   return registry.get(name,);
 }
 
+/** */
 export function listProviders(): { name: string; capabilities: LLMProvider["capabilities"] }[] {
   return Array.from(registry, ([name, provider,],) => ({
     name,
@@ -42,6 +50,7 @@ export function listProviders(): { name: string; capabilities: LLMProvider["capa
 
 // ── Resolution ────────────────────────────────────────────
 
+/** */
 export interface ResolvedProvider {
   provider: LLMProvider;
   resolvedProviderName: string;
@@ -66,6 +75,14 @@ export interface ResolveProviderOpts {
   db?: Kysely<DB>;
 }
 
+/**
+ * @param root0
+ * @param root0.provider
+ * @param root0.model
+ * @param root0.userId
+ * @param root0.config
+ * @param root0.db
+ */
 export async function resolveProvider({
   provider,
   model,
@@ -130,6 +147,8 @@ export async function resolveProvider({
  * Returns the primary provider first, then any additional providers
  * from config that differ from the primary. Does NOT include all
  * registered providers — only those explicitly configured.
+ * @param primaryName
+ * @param config
  */
 export function buildFailoverList(
   primaryName: string,
@@ -161,7 +180,10 @@ export function buildFailoverList(
   return result;
 }
 
-/** Initialize providers from config on startup */
+/**
+ * Initialize providers from config on startup
+ * @param config
+ */
 export function initializeProviders(config: Config,): void {
   for (const instance of config.generation.providers.openaiCompatible) {
     if (getProvider(instance.name,)) {
@@ -194,6 +216,9 @@ export function initializeProviders(config: Config,): void {
  * Skips providers whose circuit is open.
  * Records success/failure in circuit breaker.
  * Respects Retry-After headers from ProviderRateLimitError.
+ * @param providers
+ * @param req
+ * @param handler
  */
 export async function callWithFailover(
   providers: { name: string; provider: LLMProvider }[],

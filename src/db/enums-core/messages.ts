@@ -13,6 +13,7 @@ export const MessageRole = {
   Character: "character",
   System: "system",
 } as const;
+/** */
 export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole];
 
 export const MessageContentType = {
@@ -23,11 +24,13 @@ export const MessageContentType = {
   Continuation: "continuation",
   MusicLink: "music_link",
 } as const;
+/** */
 export type MessageContentType = (typeof MessageContentType)[keyof typeof MessageContentType];
 
 export const MessageContentFormat = {
   Markdown: "markdown",
 } as const;
+/** */
 export type MessageContentFormat = (typeof MessageContentFormat)[keyof typeof MessageContentFormat];
 
 export const MessageStatus = {
@@ -38,6 +41,7 @@ export const MessageStatus = {
   Rejected: "rejected",
   Cancelled: "cancelled",
 } as const;
+/** */
 export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus];
 
 export const MessageVisibility = {
@@ -47,6 +51,7 @@ export const MessageVisibility = {
   AutoHidden: "auto_hidden",
   Redacted: "redacted",
 } as const;
+/** */
 export type MessageVisibility = (typeof MessageVisibility)[keyof typeof MessageVisibility];
 
 const messageStatusDef: StateDef<MessageStatus> = {

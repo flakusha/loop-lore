@@ -8,7 +8,10 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
-/** Handler for sound effect generation */
+/**
+ * Handler for sound effect generation
+ * @param args
+ */
 function handleSfx(args: string[],): CommandResult {
   const prompt = args.join(" ",).trim();
 

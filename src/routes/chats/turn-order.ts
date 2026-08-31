@@ -21,6 +21,8 @@ import type { HandlerOpts, } from "./types";
 
 /**
  * Turn-order routes — read-only group-chat orchestration view.
+ * @param opts
+ * @param prefix
  */
 export function turnOrderRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

@@ -25,6 +25,7 @@ import { sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
 
+/** */
 export interface E2eSessionRow {
   id: string;
   senderActorId: string;
@@ -36,17 +37,20 @@ export interface E2eSessionRow {
   revokedAt: string | null;
 }
 
+/** */
 export interface FindSessionOpts {
   database: Kysely<DB>;
   sessionId: string;
 }
 
+/** */
 export interface FindActiveSessionOpts {
   database: Kysely<DB>;
   senderActorId: string;
   recipientActorId: string;
 }
 
+/** */
 export interface EnsureActiveSessionOpts {
   database: Kysely<DB>;
   senderActorId: string;
@@ -56,11 +60,13 @@ export interface EnsureActiveSessionOpts {
   kind?: "pair" | "group";
 }
 
+/** */
 export interface RecordMessageSentOpts {
   database: Kysely<DB>;
   sessionId: string;
 }
 
+/** */
 export interface RevokeSessionOpts {
   database: Kysely<DB>;
   sessionId: string;
@@ -70,6 +76,7 @@ export interface RevokeSessionOpts {
  * Look up a session by id. Returns `null` if no such row exists. Includes
  * revoked rows — callers that want only active sessions should filter on
  * `revokedAt === null` themselves, or use `findActiveSession`.
+ * @param opts
  */
 export async function findSession(opts: FindSessionOpts,): Promise<E2eSessionRow | null> {
   const row = await opts.database
@@ -83,6 +90,7 @@ export async function findSession(opts: FindSessionOpts,): Promise<E2eSessionRow
 /**
  * Find the active (non-revoked) session for a (sender, recipient) pair.
  * Returns `null` if no session exists or the only one is revoked.
+ * @param opts
  */
 export async function findActiveSession(
   opts: FindActiveSessionOpts,
@@ -108,6 +116,7 @@ export async function findActiveSession(
  * For group sessions (kind === 'group'), pass `chatId` and omit
  * `recipientActorId`; the row carries no directed recipient, only a
  * chat_id anchor.
+ * @param opts
  */
 export async function ensureActiveSession(
   opts: EnsureActiveSessionOpts,
@@ -188,6 +197,7 @@ export async function ensureActiveSession(
 /**
  * Update `last_message_at` after a successful send. Best-effort — the
  * caller already has a valid `sessionId` from `ensureActiveSession`.
+ * @param opts
  */
 export async function recordMessageSent(opts: RecordMessageSentOpts,): Promise<void> {
   await opts.database
@@ -199,6 +209,7 @@ export async function recordMessageSent(opts: RecordMessageSentOpts,): Promise<v
 
 /**
  * Soft-revoke a session. Idempotent: revoking a revoked session is a no-op.
+ * @param opts
  */
 export async function revokeSession(opts: RevokeSessionOpts,): Promise<boolean> {
   const result = await opts.database
@@ -223,6 +234,9 @@ interface E2eSessionsDbRow {
   revoked_at: string | null;
 }
 
+/**
+ * @param row
+ */
 function rowToSession(row: E2eSessionsDbRow,): E2eSessionRow {
   return {
     id: row.id,

@@ -21,8 +21,8 @@ import { dispatchPluginRoute, } from "../plugins";
  *   - durationMs
  *   - userId + handle (best-effort; populated by elysia-app.ts .derive
  *     via x-user-id request header)
- *
  * @param app - Built Elysia app (provides `app.fetch`).
+ * @param app.fetch
  * @param config - Resolved config (supplies both policy config blocks).
  * @param logger - Logger for the dynamic-response policy + access log.
  * @param database - Optional. When provided, enables username resolution
@@ -77,6 +77,9 @@ interface LogAccessOpts {
   startMs: number;
 }
 
+/**
+ * @param opts
+ */
 async function logAccess(opts: LogAccessOpts,): Promise<void> {
   const { logger, handleResolver, request, response, requestId, startMs, } = opts;
   const url = new URL(request.url,);
@@ -112,6 +115,7 @@ async function logAccess(opts: LogAccessOpts,): Promise<void> {
   }
 }
 
+/** */
 export interface HandleApiRequestOpts {
   request: Request;
   database: ReturnType<typeof getDatabase>;
@@ -121,6 +125,8 @@ export interface HandleApiRequestOpts {
 /**
  * API request handler — dispatches to plugin routes.
  * All other API routes are handled by Elysia plugins.
+ * @param root0
+ * @param root0.request
  */
 export async function handleApiRequest({ request, }: HandleApiRequestOpts,): Promise<Response> {
   let pluginResult = await dispatchPluginRoute(request,);

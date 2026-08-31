@@ -11,6 +11,7 @@ import type { Kysely, } from "kysely";
  * - Gathering node definitions + materials + instances
  * - Crafting attempt log
  * - Crafting orders (economy)
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Crafting Recipes ──────────────────────────────────────
@@ -226,6 +227,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("crafting_orders",).execute();
   await database.schema.dropTable("crafting_attempts",).execute();

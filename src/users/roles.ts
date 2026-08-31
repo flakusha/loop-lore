@@ -29,7 +29,6 @@ export const ADMIN_ROLES: readonly UserRole[] = [UserRole.Admin, UserRole.Solo,]
 
 /**
  * Whether a role string is a valid UserRole.
- *
  * @param role - Raw role string (e.g. from config or a DB row)
  * @returns true if the role is a known UserRole
  */
@@ -39,7 +38,6 @@ export function isValidRole(role: string | null | undefined,): role is UserRole 
 
 /**
  * Whether a role has admin-level privileges (full access).
- *
  * @param role - user role or null for anonymous
  * @returns true for admin and solo roles
  */
@@ -57,7 +55,6 @@ export const ELEVATED_ROLES: readonly UserRole[] = [
 /**
  * Whether a role is an elevated moderation role (admin or moderator).
  * Moderators have user-moderation powers but not full admin.
- *
  * @param role - user role
  * @returns true for admin, solo, or moderator roles
  */

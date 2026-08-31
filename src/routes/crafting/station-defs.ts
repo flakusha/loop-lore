@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/* eslint-disable unicorn/max-nested-calls -- Kysely query chains and Elysia TypeBox schema nesting are inherent to the route layer */
-
 /**
  * Crafting Station Definition Routes
  *
@@ -61,7 +59,12 @@ const updateStationDefBody = t.Partial(stationDefBody,);
 
 // ── Shared auth helper (exported for station-instances) ─────
 
-/** Resolve the world's owner; returns a denial Response or null when allowed. */
+/**
+ * Resolve the world's owner; returns a denial Response or null when allowed.
+ * @param db
+ * @param worldId
+ * @param userId
+ */
 export async function resolveWorldOwner(
   db: Kysely<DB>,
   worldId: string,
@@ -83,6 +86,9 @@ export async function resolveWorldOwner(
  * Mount the crafting station definition routes.
  *
  * Wraps {@link StationsService} with world-owner authorization.
+ * @param root0
+ * @param root0.database
+ * @param prefix
  */
 export function craftingStationDefsRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new StationsService(database,);
@@ -209,5 +215,3 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
       },
     },);
 }
-
-/* eslint-enable unicorn/max-nested-calls */

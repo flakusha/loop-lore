@@ -27,6 +27,9 @@
  */
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // 1. Add the shadow column. Nullable: pre-existing rows stay null until
   //    a future reindex pass; FTS5 silently ignores null-token rows.
@@ -75,6 +78,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await sql`DELETE FROM messages_fts`.execute(database,);
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await sql`DROP TRIGGER IF EXISTS messages_fts_ai`.execute(database,);
   await sql`DROP TRIGGER IF EXISTS messages_fts_au`.execute(database,);

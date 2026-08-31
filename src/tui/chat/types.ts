@@ -3,6 +3,7 @@
 
 import type blessed from "blessed";
 
+/** */
 export interface ChatMessage {
   id: string;
   role: string;
@@ -10,6 +11,7 @@ export interface ChatMessage {
   actorName?: string;
 }
 
+/** */
 export interface ChatWidgetOptions {
   sessionToken?: string;
   onChatChange?: (chatId: string,) => void;

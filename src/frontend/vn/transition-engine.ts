@@ -8,8 +8,10 @@
  * Supports fade, cut, dissolve, slide, wipe.
  */
 
+/** */
 export type TransitionType = "fade" | "cut" | "dissolve" | "slide" | "wipe";
 
+/** */
 export interface TransitionOptions {
   type: TransitionType;
   duration?: number;
@@ -33,7 +35,6 @@ function prefersReducedMotion(): boolean {
 /**
  * Transition between two scene containers.
  * The outgoing element fades/slides out while incoming fades/slides in.
- *
  * @param outgoing - Current scene element (will be hidden)
  * @param incoming - New scene element (will be shown)
  * @param options - Transition type and duration
@@ -87,7 +88,7 @@ export function transitionScene(
         incoming.style.clipPath = "inset(0 100% 0 0)";
         incoming.style.transition = `clip-path ${duration}ms ease`;
         // Force reflow — reading offsetHeight forces a synchronous layout pass.
-        // eslint-disable-next-line sonarjs/void-use -- the read itself is the side effect
+
         void incoming.offsetHeight;
         incoming.style.clipPath = "inset(0 0 0 0)";
         incoming.style.opacity = "1";
@@ -103,7 +104,7 @@ export function transitionScene(
           outgoing.style.opacity = "0";
         }
         // Force reflow — reading offsetHeight forces a synchronous layout pass.
-        // eslint-disable-next-line sonarjs/void-use -- the read itself is the side effect
+
         void incoming.offsetHeight;
         incoming.style.opacity = "1";
         incoming.style.filter = "blur(0)";

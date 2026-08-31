@@ -11,6 +11,9 @@ import { serveGalleryGrid, } from "./gallery";
 import { serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
 import { serveWorldDetailContent, serveWorldsListDb, } from "./worlds";
 
+/**
+ * @param database
+ */
 export function dynamicRoutes(database: Kysely<DB>,) {
   return new Elysia({ name: "views-dynamic", },)
     // ── Dynamic partials (server-rendered data) ─────────────

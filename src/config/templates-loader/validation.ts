@@ -17,7 +17,6 @@ const LEGAL_MERGE_STRATEGIES: readonly MergeStrategy[] = [
  * Runtime-validate a raw template config (from YAML/TOML) before merging,
  * so malformed files fail fast with an actionable error instead of silently
  * casting into a half-shaped config. Currently scoped to the `llm` domain.
- *
  * @param raw - Parsed top-level object from the template file
  * @returns The llm sub-object, or null when the file is a different domain
  * @throws When the file declares `merge` legally but `systemPrompts` /
@@ -48,7 +47,10 @@ export function validateLlmConfig(
   return llm;
 }
 
-/** Validate the `systemPrompts` map (purpose -> string). */
+/**
+ * Validate the `systemPrompts` map (purpose -> string).
+ * @param systemPrompts
+ */
 function validateSystemPrompts(systemPrompts: unknown,): void {
   if (systemPrompts === undefined) { return; }
   if (typeof systemPrompts !== "object" || systemPrompts === null) {
@@ -61,7 +63,10 @@ function validateSystemPrompts(systemPrompts: unknown,): void {
   }
 }
 
-/** Validate the `chatFormats` map (name -> {system,user,assistant}). */
+/**
+ * Validate the `chatFormats` map (name -> {system,user,assistant}).
+ * @param chatFormats
+ */
 function validateChatFormats(chatFormats: unknown,): void {
   if (chatFormats === undefined) { return; }
   if (typeof chatFormats !== "object" || chatFormats === null) {
@@ -87,7 +92,10 @@ function validateChatFormats(chatFormats: unknown,): void {
 // the offending config. These validators enforce the minimum shape each merge
 // function assumes; deep semantic checks stay with the domain consumers.
 
-/** Validate the `sd` domain raw config before merging. */
+/**
+ * Validate the `sd` domain raw config before merging.
+ * @param raw
+ */
 export function validateSdConfig(raw: Record<string, unknown>,): void {
   if (raw.profiles !== undefined) {
     if (typeof raw.profiles !== "object" || raw.profiles === null || Array.isArray(raw.profiles,)) {
@@ -125,7 +133,10 @@ export function validateSdConfig(raw: Record<string, unknown>,): void {
   }
 }
 
-/** Validate the `avatar` domain raw config before merging. */
+/**
+ * Validate the `avatar` domain raw config before merging.
+ * @param raw
+ */
 export function validateAvatarConfig(raw: Record<string, unknown>,): void {
   if (raw.emotions !== undefined) {
     if (typeof raw.emotions !== "object" || raw.emotions === null || Array.isArray(raw.emotions,)) {
@@ -149,7 +160,10 @@ export function validateAvatarConfig(raw: Record<string, unknown>,): void {
   }
 }
 
-/** Validate the `imageEdit` domain raw config before merging. */
+/**
+ * Validate the `imageEdit` domain raw config before merging.
+ * @param raw
+ */
 export function validateImageEditConfig(raw: Record<string, unknown>,): void {
   if (raw.workflows !== undefined) {
     if (typeof raw.workflows !== "object" || raw.workflows === null || Array.isArray(raw.workflows,)) {
@@ -171,7 +185,11 @@ export function validateImageEditConfig(raw: Record<string, unknown>,): void {
 
 const LEGAL_CONTENT_RATINGS = ["sfw", "questionable", "explicit",] as const;
 
-/** Validate one character template entry. */
+/**
+ * Validate one character template entry.
+ * @param entry
+ * @param index
+ */
 function validateCharacterTemplateEntry(entry: unknown, index: number,): void {
   if (typeof entry !== "object" || entry === null) {
     throw new Error(`templates[${index}] must be an object`,);
@@ -193,7 +211,10 @@ function validateCharacterTemplateEntry(entry: unknown, index: number,): void {
   }
 }
 
-/** Validate the `character` domain raw config before merging. */
+/**
+ * Validate the `character` domain raw config before merging.
+ * @param raw
+ */
 export function validateCharacterConfig(raw: Record<string, unknown>,): void {
   if (raw.templates !== undefined) {
     if (!Array.isArray(raw.templates,)) {
@@ -212,6 +233,7 @@ export function validateCharacterConfig(raw: Record<string, unknown>,): void {
  * distance 2 of one — catches typos like `sumarize` that would otherwise be
  * silently treated as custom prompts and never resolved.
  * Custom keys beyond distance 2 stay silent (they are legal).
+ * @param systemPrompts
  */
 export function warnUnknownPromptPurposes(systemPrompts: unknown,): void {
   if (typeof systemPrompts !== "object" || systemPrompts === null) { return; }
@@ -227,7 +249,11 @@ export function warnUnknownPromptPurposes(systemPrompts: unknown,): void {
   }
 }
 
-/** Small Levenshtein distance (iterative, single row). */
+/**
+ * Small Levenshtein distance (iterative, single row).
+ * @param a
+ * @param b
+ */
 function levenshtein(a: string, b: string,): number {
   let prev: number[] = Array.from({ length: b.length + 1, }, (_, i,) => i,);
   for (let i = 1; i <= a.length; i++) {

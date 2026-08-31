@@ -12,6 +12,7 @@ import { worldTraitRoutes, } from "./world";
  * Character Traits Routes — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`character-traits`) is preserved so
  * the `register-plugins.ts` wiring is unchanged.
+ * @param opts
  */
 export function characterTraitsRoutes(opts: HandlerOpts,) {
   return (

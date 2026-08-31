@@ -11,6 +11,11 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { adminNsfwRoutes, } from "./admin-nsfw";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function createNsfwApp(db: Kysely<DB>, userId: string | null, userRole: string,): Elysia {
   return new Elysia({ name: "test-admin-nsfw", },)
     .derive(() => ({ userId, userRole, }))

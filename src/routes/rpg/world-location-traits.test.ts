@@ -57,16 +57,25 @@ describe("world & location traits (auth-gated)", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-traits-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
       .use(worldLocationTraitsRoutes({ database: db, config: {} as never, },),) as any;
   }
 
+  /**
+   * @param res
+   */
   async function json(res: Response,): Promise<unknown> {
     return res.json() as unknown;
   }
 
+  /**
+   * @param body
+   */
   function readId(body: unknown,): string {
     if (typeof body === "object" && body !== null && "id" in body && typeof body.id === "string") {
       return body.id;

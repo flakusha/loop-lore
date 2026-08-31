@@ -10,6 +10,9 @@ import type { InviteResult, } from "./types";
  * Revoke an invite so it can no longer be redeemed. Idempotent — revoking an
  * already-revoked or missing invite is a no-op success (matching the "skip
  * duplicate" tolerance used elsewhere in participant management).
+ * @param database
+ * @param chatId
+ * @param inviteId
  */
 export async function revokeInvite(
   database: Kysely<DB>,

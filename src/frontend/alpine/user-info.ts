@@ -14,6 +14,7 @@ import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "user-info", },);
 
+/** */
 async function loadUserInfo(): Promise<void> {
   const nameEl = document.querySelector("#user-display-name",);
   const roleEl = document.querySelector("#user-role",);

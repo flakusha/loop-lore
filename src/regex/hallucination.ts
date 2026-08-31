@@ -6,7 +6,6 @@
  *
  * Compiled regex patterns for classifying entities in generated text
  * as characters, locations, items, or worlds based on context clues.
- *
  * @module regex/hallucination
  */
 

@@ -9,6 +9,7 @@ import type { NpcMovementState, } from "./types";
 
 /**
  * Parse schedule JSON from npc_states
+ * @param raw
  */
 export function parseSchedule(raw: string | null,): Record<string, unknown> {
   if (!raw) { return {}; }
@@ -17,6 +18,9 @@ export function parseSchedule(raw: string | null,): Record<string, unknown> {
 
 /**
  * Get NPC movement state from npc_states table
+ * @param db
+ * @param actorId
+ * @param worldId
  */
 export async function getMovementState(
   db: Kysely<DB>,
@@ -52,6 +56,10 @@ export async function getMovementState(
 
 /**
  * Update NPC movement state
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param updates
  */
 export async function updateMovementState(
   db: Kysely<DB>,

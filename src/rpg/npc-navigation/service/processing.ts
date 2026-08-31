@@ -13,6 +13,8 @@ import { MovementPattern, } from "./types";
 
 /**
  * Process NPC movement tick — advance NPCs based on their movement patterns
+ * @param db
+ * @param worldId
  */
 export async function processMovementTick(
   db: Kysely<DB>,
@@ -52,6 +54,11 @@ export async function processMovementTick(
 
 /**
  * Process individual NPC movement based on pattern
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currentLocationId
+ * @param schedule
  */
 export async function processNpcMovement(
   db: Kysely<DB>,
@@ -87,6 +94,11 @@ export async function processNpcMovement(
 
 /**
  * Process patrol movement — follow patrol route
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currentLocationId
+ * @param schedule
  */
 export async function processPatrolMovement(
   db: Kysely<DB>,
@@ -122,6 +134,11 @@ export async function processPatrolMovement(
 
 /**
  * Process wander movement — random movement within radius
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currentLocationId
+ * @param _schedule
  */
 export async function processWanderMovement(
   db: Kysely<DB>,
@@ -159,6 +176,11 @@ export async function processWanderMovement(
 
 /**
  * Process follow movement — follow target NPC/player
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currentLocationId
+ * @param schedule
  */
 export async function processFollowMovement(
   db: Kysely<DB>,
@@ -198,6 +220,11 @@ export async function processFollowMovement(
 
 /**
  * Process flee movement — move away from threat
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param currentLocationId
+ * @param _schedule
  */
 export async function processFleeMovement(
   db: Kysely<DB>,

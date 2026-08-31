@@ -21,6 +21,11 @@ import { log, } from "./helpers";
  * Handle a context cut: promote qualifying history to memories and record
  * the transition event. Promotion failures are logged and degrade to an
  * empty promoted list rather than throwing.
+ * @param database
+ * @param chatId
+ * @param actorId
+ * @param effectiveContent
+ * @param transitionSource
  */
 export async function applyContextCut(
   database: Kysely<DB>,

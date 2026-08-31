@@ -12,6 +12,9 @@ import { Elysia, } from "elysia";
 import { exportChatRoute, } from "./export-route";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ */
 export function chatExportRoutes(opts: HandlerOpts,) {
   return (
     new Elysia({ name: "chat-export", },)

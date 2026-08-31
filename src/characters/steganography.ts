@@ -15,6 +15,7 @@ import { inflateSync, } from "node:zlib";
 import { jsonStringifyOr, safeJsonParse, } from "../utils";
 import { safeFromBase64, } from "../utils/safe-buffer";
 
+/** */
 export interface ExtractedCharacter {
   /** Parsed card payload. For V2 cards this is the `data` object. */
   data: Record<string, unknown>;
@@ -26,7 +27,6 @@ const PNG_SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10,];
 
 /**
  * Extract embedded character data from a PNG buffer.
- *
  * @param buffer raw PNG file bytes
  * @returns parsed card payload, or null if not a PNG / no data found
  */
@@ -56,6 +56,12 @@ export function extractCharacterDataFromPng(buffer: Buffer,): ExtractedCharacter
   return null;
 }
 
+/**
+ * @param buffer
+ * @param start
+ * @param length
+ * @param type
+ */
 function decodeTextChunk(buffer: Buffer, start: number, length: number, type: string,): string | null {
   const end = start + length;
   const nullIdx = buffer.indexOf(0, start, "latin1",);
@@ -97,6 +103,9 @@ function decodeTextChunk(buffer: Buffer, start: number, length: number, type: st
   return buffer.toString("latin1", textStart, end,);
 }
 
+/**
+ * @param text
+ */
 function tryParseCharacter(text: string | null,): ExtractedCharacter | null {
   if (!text) { return null; }
   const candidates: string[] = [];
@@ -137,6 +146,8 @@ const MINIMAL_PNG = Buffer.from(
 
 /**
  * Build a PNG tEXt chunk: [length:4][type:4][keyword\0value][crc:4]
+ * @param keyword
+ * @param value
  */
 function buildTextChunk(keyword: string, value: string,): Buffer {
   const payload = Buffer.alloc(keyword.length + 1 + value.length,);
@@ -160,6 +171,7 @@ function buildTextChunk(keyword: string, value: string,): Buffer {
 
 /**
  * Simple CRC-32 (IEEE 802.3) for PNG chunk checksums.
+ * @param buf
  */
 function crc32(buf: Buffer,): number {
   let crc = 0xFF_FF_FF_FF;
@@ -177,7 +189,6 @@ function crc32(buf: Buffer,): number {
  *
  * Writes both `chara` (V2) and `ccv3` (V3) chunks for maximum compatibility.
  * Existing text chunks in the input PNG are preserved.
- *
  * @param pngBase - base PNG image buffer (use `MINIMAL_PNG` if no avatar exists)
  * @param characterData - the `data` object from the character card (not wrapped in spec envelope)
  * @returns new PNG buffer with character data embedded
@@ -224,6 +235,7 @@ export function insertCharacterDataIntoPng(
 
 /**
  * Find the byte offset of the IEND chunk (start of its 12-byte block).
+ * @param buffer
  */
 function findIendOffset(buffer: Buffer,): number {
   let offset = 8; // skip PNG signature

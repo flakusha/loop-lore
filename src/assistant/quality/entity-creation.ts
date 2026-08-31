@@ -34,12 +34,14 @@ const REQUIRED_FIELDS: Record<EntityKind, string[]> = {
   item: ["name", "description",],
 };
 /*** Outcome of a single gate. */
+/** */
 export interface GateResult {
   ok: boolean;
   /** When not ok, a human-readable reason (used to reject or warn). */
   message?: string;
 }
 
+/** */
 export interface QualityReport {
   /** Schema gate — hard reject when false. */
   schema: GateResult;
@@ -49,7 +51,10 @@ export interface QualityReport {
   consistency: { warnings: string[] };
 }
 
-/** Normalize raw LLM JSON into a typed {@link GeneratedEntity}. */
+/**
+ * Normalize raw LLM JSON into a typed {@link GeneratedEntity}.
+ * @param raw
+ */
 export function normalizeEntity(
   raw: Record<string, unknown>,
 ): GeneratedEntity {
@@ -69,7 +74,8 @@ export function normalizeEntity(
 
 /**
  * Validate the generated entity against the per-kind schema.
- *
+ * @param kind
+ * @param entity
  * @returns ok=false when required fields (name, description) are missing.
  */
 export function validateEntitySchema(
@@ -92,6 +98,12 @@ export function validateEntitySchema(
  *
  * Scoping: characters by `owner_id`; locations/items by `world_id`; worlds by
  * `owner_id`. Matching is case-insensitive on the name column.
+ * @param db
+ * @param kind
+ * @param entity
+ * @param scope
+ * @param scope.ownerId
+ * @param scope.worldId
  */
 export async function checkDuplicate(
   db: Kysely<DB>,
@@ -155,6 +167,11 @@ export async function checkDuplicate(
  * Flags when the generated description contains a direct self-contradiction of
  * the world name, or is empty where the world context is present. This is a
  * best-effort heuristic; it only ever produces warnings, never a reject.
+ * @param kind
+ * @param entity
+ * @param worldContext
+ * @param worldContext.name
+ * @param worldContext.description
  */
 export function checkConsistency(
   kind: EntityKind,
@@ -170,7 +187,15 @@ export function checkConsistency(
 
 /**
  * Run the full quality pipeline.
- *
+ * @param db
+ * @param kind
+ * @param entity
+ * @param scope
+ * @param scope.ownerId
+ * @param scope.worldId
+ * @param worldContext
+ * @param worldContext.name
+ * @param worldContext.description
  * @returns aggregated {@link QualityReport}; `schema.ok` false must block
  *   creation, while `duplicate.found` / `consistency.warnings` are advisory.
  */

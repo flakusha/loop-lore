@@ -32,7 +32,6 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Map of section id → number of messages assigned to it (from the loaded
    * message stream). Unassigned messages are not counted.
-   *
    * @returns Map keyed by section id.
    */
   sectionMessageCounts(): Map<string, number> {
@@ -52,7 +51,6 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Unique actor names that have messages in the given section. Used by the
    * group-chat story map to show per-character location presence.
-   *
    * @param sectionId Section to inspect.
    * @returns Unique actor names.
    */
@@ -107,7 +105,6 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
    * (`_transferFx`) marks the visual transition; when the transition type is
    * "narrative" and narrative text is pending, it is inserted as a
    * system-role narration message bound to the section.
-   *
    * @param sectionId Destination section.
    */
   async transferToSection(sectionId: string,) {
@@ -130,7 +127,10 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /** Pick the transfer transition (walk / teleport / narrative). */
+  /**
+   * Pick the transfer transition (walk / teleport / narrative).
+   * @param type
+   */
   setTransitionType(type: "walk" | "teleport" | "narrative",) {
     this._transitionType = type;
   },
@@ -139,7 +139,6 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
    * Move every message — or every message currently in `fromSectionId` — onto
    * the target section (story-map "move all here"). Reloads the stream and
    * section list afterwards.
-   *
    * @param sectionId Destination section.
    * @param fromSectionId Optional source section to narrow the move.
    */
@@ -166,7 +165,6 @@ export const chatSectionsNav: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Insert a system-role narration message bound to a section (transfer
    * flourish, e.g. "the party rides north"). Reloads the stream afterwards.
-   *
    * @param sectionId Section to bind the narration to.
    * @param text Narrative content.
    */

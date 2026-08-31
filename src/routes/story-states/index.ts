@@ -12,6 +12,8 @@ import { storyWorldStateRoutes, } from "./world-states";
  * Story State route module — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`story-states`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
+ * @param root0
+ * @param root0.database
  */
 export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Elysia {
   return new Elysia({ name: "story-states", },)

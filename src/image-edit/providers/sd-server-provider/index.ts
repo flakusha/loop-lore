@@ -6,7 +6,6 @@
  *
  * Translates workflow templates to sd-server API calls (txt2img, img2img).
  * sd-server uses OpenAI-compatible, SDAPI, or sd.cpp API families.
- *
  * @module sd-server-provider
  *
  * The concrete operation bodies live in sibling dispatcher modules (ops /
@@ -40,11 +39,13 @@ import {
 import type { SDServerHost, } from "./types";
 
 let _log: ReturnType<typeof getLogger> | null = null;
+/** */
 function log() {
   _log ??= getLogger();
   return _log;
 }
 
+/** */
 export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   readonly name: ImageEditBackend = "sd-server";
 
@@ -52,6 +53,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
   apiFamily: ImageApiFamily = "sdcpp";
   private config: ImageProviderConfig | null = null;
 
+  /** */
   getConfig(): ImageProviderConfig | null {
     if (this.config) { return this.config; }
 
@@ -71,6 +73,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
     return sdConfig;
   }
 
+  /** */
   async healthCheck(): Promise<boolean> {
     try {
       const cfg = this.getConfig();
@@ -87,7 +90,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await -- provider interface requires Promise<ImageEditCategory[]>
+  /** */
   async listCapabilities(): Promise<ImageEditCategory[]> {
     const caps: ImageEditCategory[] = ["txt2img", "img2img",];
 
@@ -106,6 +109,7 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
     return caps;
   }
 
+  /** */
   async getCapabilities(): Promise<SDServerCapabilities> {
     const features = await this.listCapabilities();
     return {
@@ -115,6 +119,11 @@ export class SDServerEditProvider implements ImageEditProvider, SDServerHost {
     };
   }
 
+  /**
+   * @param request
+   * @param template
+   * @param onProgress
+   */
   async execute(
     request: ImageEditRequest,
     template: WorkflowTemplate,

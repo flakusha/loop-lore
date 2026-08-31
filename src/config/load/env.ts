@@ -6,6 +6,10 @@
 import type { Config, ProviderInstanceConfig, } from "../schema";
 import { coerceValue, getTypeOfPath, setByPath, } from "./parse";
 
+/**
+ * @param config
+ * @param environmentMap
+ */
 export function applyEnvironmentOverrides(config: Config, environmentMap: Record<string, string>,): Config {
   const result = structuredClone(config,) as unknown as Record<string, unknown>;
   for (const [environmentVariable, configPath,] of Object.entries(environmentMap,)) {
@@ -19,7 +23,10 @@ export function applyEnvironmentOverrides(config: Config, environmentMap: Record
   return result as unknown as Config;
 }
 
-/** Create a default provider instance from LLM_PROVIDER_* env vars */
+/**
+ * Create a default provider instance from LLM_PROVIDER_* env vars
+ * @param config
+ */
 export function applyProviderEnvVars(config: Config,): void {
   const baseUrl = process.env.LLM_PROVIDER_BASE_URL;
   if (!baseUrl) { return; }

@@ -38,6 +38,9 @@ interface JsonResponse {
   questId?: string;
 }
 
+/**
+ * @param res
+ */
 async function jsonOf(res: Response,): Promise<JsonResponse> {
   return res.json() as Promise<JsonResponse>;
 }

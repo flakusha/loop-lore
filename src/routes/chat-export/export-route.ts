@@ -11,6 +11,11 @@ import { resolveMessageContent, } from "../messages/helpers";
 import { formatHtml, formatJson, formatMarkdown, formatPlainText, } from "./format";
 import type { HandlerOpts, MessageData, } from "./types";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function exportChatRoute({ database, }: HandlerOpts, prefix = "/api",) {
   return new Elysia().get(
     `${prefix}/chats/:id/export`,
@@ -123,11 +128,9 @@ export function exportChatRoute({ database, }: HandlerOpts, prefix = "/api",) {
     {
       params: t.Object({ id: t.String(), },),
       query: t.Optional(
-        /* eslint-disable unicorn/max-nested-calls -- Elysia TypeBox schema nesting is inherent to framework */
         t.Object({
           format: t.Optional(t.String(),),
         },),
-        /* eslint-enable unicorn/max-nested-calls */
       ),
       response: {
         200: SuccessResponse,

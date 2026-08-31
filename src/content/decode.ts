@@ -4,6 +4,10 @@
 import { safeDecompress, safeFromBase64, } from "../utils/safe-buffer";
 import type { ContentEncoding, } from "./types";
 
+/**
+ * @param stored
+ * @param encoding
+ */
 export function decodeContent(stored: string, encoding: ContentEncoding,): string {
   if (encoding === "identity" || !stored) {
     return stored;

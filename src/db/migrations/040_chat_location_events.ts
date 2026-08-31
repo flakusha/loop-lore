@@ -18,6 +18,9 @@
  */
 import type { Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
     .createTable("chat_location_events",)
@@ -39,6 +42,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropIndex("chat_location_events_chat_created_idx",).execute();
   await db.schema.dropTable("chat_location_events",).execute();

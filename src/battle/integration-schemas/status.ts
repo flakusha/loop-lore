@@ -38,7 +38,15 @@ export interface StatusEffect {
   description: string;
 }
 
-/** Create a status effect */
+/**
+ * Create a status effect
+ * @param name
+ * @param type
+ * @param affectedStat
+ * @param value
+ * @param duration
+ * @param options
+ */
 export function createStatusEffect(
   name: string,
   type: StatusEffectType,
@@ -62,14 +70,20 @@ export function createStatusEffect(
   };
 }
 
-/** Tick a status effect (reduce duration) */
+/**
+ * Tick a status effect (reduce duration)
+ * @param effect
+ */
 export function tickStatusEffect(effect: StatusEffect,): StatusEffect | null {
   const remaining = effect.remainingTurns - 1;
   if (remaining <= 0) { return null; }
   return { ...effect, remainingTurns: remaining, };
 }
 
-/** Check if status effect is expired */
+/**
+ * Check if status effect is expired
+ * @param effect
+ */
 export function isStatusEffectExpired(effect: StatusEffect,): boolean {
   return effect.remainingTurns <= 0;
 }

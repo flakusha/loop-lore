@@ -13,6 +13,9 @@ import type {
 
 /**
  * Get player achievement progress
+ * @param db
+ * @param playerId
+ * @param achievementId
  */
 export async function getPlayerAchievement(
   db: Kysely<DB>,
@@ -31,6 +34,8 @@ export async function getPlayerAchievement(
 
 /**
  * Get all achievements for a player
+ * @param db
+ * @param playerId
  */
 export async function getPlayerAchievements(db: Kysely<DB>, playerId: string,): Promise<PlayerAchievement[]> {
   const rows = await (db as any)
@@ -45,6 +50,10 @@ export async function getPlayerAchievements(db: Kysely<DB>, playerId: string,): 
 
 /**
  * Update achievement progress for a player
+ * @param db
+ * @param playerId
+ * @param achievementId
+ * @param progressIncrement
  */
 export async function updateProgress(
   db: Kysely<DB>,
@@ -127,6 +136,9 @@ export async function updateProgress(
 
 /**
  * Claim achievement rewards
+ * @param db
+ * @param playerId
+ * @param achievementId
  */
 export async function claimRewards(
   db: Kysely<DB>,
@@ -165,6 +177,9 @@ export async function claimRewards(
 
 /**
  * Check if achievement is unlocked for player
+ * @param db
+ * @param playerId
+ * @param achievementId
  */
 export async function isUnlocked(db: Kysely<DB>, playerId: string, achievementId: string,): Promise<boolean> {
   const playerAchievement = await getPlayerAchievement(db, playerId, achievementId,);
@@ -173,6 +188,8 @@ export async function isUnlocked(db: Kysely<DB>, playerId: string, achievementId
 
 /**
  * Get achievement statistics for a player
+ * @param db
+ * @param playerId
  */
 export async function getPlayerStats(db: Kysely<DB>, playerId: string,): Promise<{
   totalUnlocked: number;

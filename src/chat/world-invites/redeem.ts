@@ -15,8 +15,11 @@ import type { WorldRedeemOutcome, } from "./types";
  *
  * The redemption and member insert are committed in the same transaction to
  * avoid double-redeeming a capped invite under concurrency.
- *
  * @param actorId - the joining user's actor id (== user id)
+ * @param database
+ * @param input
+ * @param input.code
+ * @param input.actorId
  */
 export async function redeemWorldInvite(
   database: Kysely<DB>,

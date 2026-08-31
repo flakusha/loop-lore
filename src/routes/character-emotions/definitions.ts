@@ -26,6 +26,8 @@ const EmotionDefinitionListResponse = ListResponse(t.Object({
 
 /**
  * Emotion definitions sub-plugin — list/create global emotion definitions.
+ * @param opts
+ * @param prefix
  */
 export function definitionRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

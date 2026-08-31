@@ -7,7 +7,6 @@
  * Both backends support text-to-image, img2img, inpainting, upscaling,
  * and ControlNet workflows. This module defines the common types
  * shared across both providers.
- *
  * @module image-edit-types
  */
 

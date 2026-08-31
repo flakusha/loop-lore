@@ -16,6 +16,9 @@ const state: OpenAiCompatibleState = {
   headers: {},
 };
 
+/**
+ * @param overrides
+ */
 function req(overrides: Partial<GenerateRequest> = {},): GenerateRequest {
   return {
     model: "m1",
@@ -27,18 +30,25 @@ function req(overrides: Partial<GenerateRequest> = {},): GenerateRequest {
 
 type FetchHandler = (url: string, init: RequestInit,) => Response | Promise<Response>;
 
+/**
+ * @param handler
+ * @param fn
+ */
 async function withMockFetch(handler: FetchHandler, fn: () => Promise<void>,): Promise<void> {
   const originalFetch = globalThis.fetch;
-  // eslint-disable-next-line unicorn/no-global-object-property-assignment
+
   (globalThis as Record<string, unknown>).fetch = handler;
   try {
     return await fn();
   } finally {
-    // eslint-disable-next-line unicorn/no-global-object-property-assignment
     (globalThis as Record<string, unknown>).fetch = originalFetch;
   }
 }
 
+/**
+ * @param body
+ * @param status
+ */
 function jsonResponse(body: unknown, status = 200,): Response {
   return Response.json(body, {
     status,
@@ -46,6 +56,9 @@ function jsonResponse(body: unknown, status = 200,): Response {
   },);
 }
 
+/**
+ * @param lines
+ */
 function sseResponse(lines: string[],): Response {
   return new Response(`${lines.join("\n",)}\n\n`, {
     headers: { "Content-Type": "text/event-stream", },

@@ -17,7 +17,6 @@
  *   - src/hash/record-hash.ts is pure (no I/O); src/db/content-version.ts
  *     performs SQL I/O via `Kysely<any>`. Separation lets the pure
  *     helper stay side-effect-free and testable without a DB.
- *
  * @see TASK-middleware-migration-compaction-data-version-hash.md
  * @see epic-content-hashing-distributed-integrity.md
  */
@@ -41,7 +40,6 @@ const REGISTRY = new Map<string, Map<number, ContentVersion>>();
  * same `columns` array is a no-op. Registering with DIFFERENT columns for
  * the same version throws — it is a programming error that would silently
  * invalidate every cached `record_hash`.
- *
  * @param table - Canonical table name.
  * @param dataVersion - The integer version this projection belongs to.
  * @param columns - Tracked columns (lowercase). Order matters: hashes are
@@ -85,7 +83,6 @@ export function registerContentVersion(
  * `(table, row.data_version)` and emits the projection's columns as a plain
  * object — the same envelope shape that `computeRecordHash` signs. Callers
  * wrap the result with `computeRecordHash` to produce the digest.
- *
  * @param table - Canonical table name (use `asTableName`).
  * @param row - A row object containing at minimum `id` and `data_version`.
  * @returns The canonical envelope object (un-hashed). Returns `null` when
@@ -114,7 +111,6 @@ export function getContentEnvelope(
  *
  * Convenience wrapper around `getContentEnvelope` + `computeRecordHash`.
  * Returns `null` when the projection is missing (callers log + skip).
- *
  * @param table - Canonical table name.
  * @param row - A row object containing `id` + `data_version` + the tracked columns.
  */
@@ -139,11 +135,12 @@ export function computeRowHash(
  * The `WHERE data_version = ?` predicate lets a future migration increment
  * `data_version` and re-run the refresh — rows at the previous version are
  * re-hashed with the new projection on the next call.
- *
  * @param database - Kysely handle (typed `any` because the column set is
  *   driven by the runtime registry, not the static DB type).
  * @param table - Canonical table name.
  * @param opts - `dataVersion` filter + batch size (default 500).
+ * @param opts.dataVersion
+ * @param opts.batchSize
  * @returns Counts: `{ scanned, updated, skipped }`. `skipped` covers rows
  *   whose projection is unknown (caller MUST investigate).
  */
@@ -207,6 +204,7 @@ export async function runBatchRefresh(
  * helper reads via `getContentEnvelope`, which picks the right projection
  * per row's data_version; the SELECT just needs every column the registry
  * might reference across versions.
+ * @param projection
  */
 function projectionColumns(projection: Map<number, ContentVersion>,): string[] {
   const seen = new Set<string>();

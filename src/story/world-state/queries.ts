@@ -9,7 +9,14 @@
 import { uid, } from "../../utils";
 import type { WorldState, } from "./types";
 
-/** Take a state snapshot for rollback/history */
+/**
+ * Take a state snapshot for rollback/history
+ * @param state
+ * @param worldId
+ * @param turnId
+ * @param messageId
+ * @param description
+ */
 export async function snapshot(
   state: WorldState,
   worldId: string,
@@ -32,7 +39,12 @@ export async function snapshot(
   return id;
 }
 
-/** Get NPC state for a given actor in a world */
+/**
+ * Get NPC state for a given actor in a world
+ * @param state
+ * @param actorId
+ * @param worldId
+ */
 export async function getNpcState(state: WorldState, actorId: string, worldId: string,) {
   return state.db
     .selectFrom("npc_states",)
@@ -42,7 +54,11 @@ export async function getNpcState(state: WorldState, actorId: string, worldId: s
     .executeTakeFirst();
 }
 
-/** Get location state for a given location */
+/**
+ * Get location state for a given location
+ * @param state
+ * @param locationId
+ */
 export async function getLocationState(state: WorldState, locationId: string,) {
   return state.db
     .selectFrom("location_states",)
@@ -51,7 +67,11 @@ export async function getLocationState(state: WorldState, locationId: string,) {
     .executeTakeFirst();
 }
 
-/** Get all NPCs at a given location */
+/**
+ * Get all NPCs at a given location
+ * @param state
+ * @param locationId
+ */
 export async function getNpcsAtLocation(state: WorldState, locationId: string,) {
   return state.db
     .selectFrom("npc_states",)

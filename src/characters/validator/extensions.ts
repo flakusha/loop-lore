@@ -11,6 +11,12 @@ import type {
   ValidationWarning,
 } from "../spec";
 
+/**
+ * @param character
+ * @param errors
+ * @param warnings
+ * @param mode
+ */
 export function validateExtensions(
   character: CanonicalCharacter,
   errors: ValidationError[],
@@ -39,7 +45,13 @@ export function validateExtensions(
   }
 }
 
-/** Validate inventory item entries. */
+/**
+ * Validate inventory item entries.
+ * @param inventory
+ * @param errors
+ * @param warnings
+ * @param mode
+ */
 function validateInventory(
   inventory: unknown[],
   errors: ValidationError[],
@@ -75,7 +87,13 @@ function validateInventory(
   }
 }
 
-/** Validate relationship entries. */
+/**
+ * Validate relationship entries.
+ * @param relationships
+ * @param errors
+ * @param warnings
+ * @param mode
+ */
 function validateRelationships(
   relationships: unknown[],
   errors: ValidationError[],
@@ -112,6 +130,12 @@ function validateRelationships(
   }
 }
 
+/**
+ * @param flags
+ * @param errors
+ * @param warnings
+ * @param mode
+ */
 export function validateFeatureFlags(
   flags: CharacterFeatureFlags,
   errors: ValidationError[],

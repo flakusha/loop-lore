@@ -35,6 +35,7 @@ import type { HookContext, HookEventType, HookHandler, HookResult, } from "./typ
 import { detectNsfwLevel, detectNsfwWithLlm, } from "./nsfw-classifier";
 import { isAllowed, levelToRating, } from "./nsfw-rating";
 
+/** */
 export interface NsfwHookDeps {
   /** LLM rating runner; injectable for tests. Defaults to the AUX pipeline. */
   callAux: typeof callAux;
@@ -42,6 +43,7 @@ export interface NsfwHookDeps {
   modService?: NsfwModerationService;
 }
 
+/** */
 export class NsfwHook implements HookHandler {
   readonly name = "nsfw";
 
@@ -53,18 +55,28 @@ export class NsfwHook implements HookHandler {
 
   private readonly injectedModService: NsfwModerationService | null = null;
 
+  /**
+   * @param deps
+   */
   constructor(deps?: Partial<NsfwHookDeps>,) {
     this.callAuxFn = deps?.callAux ?? callAux;
     this.injectedModService = deps?.modService ?? null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
+  /**
+   * @param _content
+   * @param _context
+   */
   async canHandle(_content: string, _context: HookContext,): Promise<boolean> {
     // No length bypass: short content can carry NSFW tokens. canHandle only
     // answers "is this hook applicable?" — it gates on the global toggle.
     return _context.nsfwConfig.allowNsfw;
   }
 
+  /**
+   * @param _content
+   * @param _context
+   */
   async execute(_content: string, _context: HookContext,): Promise<HookResult> {
     const log = getLogger();
     log.debug("nsfw-hook: checking content against policy", { policy: _context.nsfwPolicy, },);
@@ -152,6 +164,9 @@ export class NsfwHook implements HookHandler {
     };
   }
 
+  /**
+   * @param context
+   */
   private getModService(context: HookContext,): NsfwModerationService {
     if (this.injectedModService) {
       return this.injectedModService;
@@ -165,6 +180,10 @@ export class NsfwHook implements HookHandler {
   /**
    * Audit every gate decision through `logNsfwEvent`. Wrapped in try/catch so
    * a logging failure cannot itself fail the gate decision.
+   * @param context
+   * @param action
+   * @param reason
+   * @param metadata
    */
   private async logGateDecision(
     context: HookContext,
@@ -191,6 +210,9 @@ export class NsfwHook implements HookHandler {
    * `moderation_actions` so admin review flows see NSFW gate outcomes.
    * Attribution: `performedBy` is the authenticated user (was hard-coded
    * "system" — see 9575d31).
+   * @param context
+   * @param nsfwLevel
+   * @param allowed
    */
   private async recordAudit(context: HookContext, nsfwLevel: string, allowed: boolean,): Promise<void> {
     try {

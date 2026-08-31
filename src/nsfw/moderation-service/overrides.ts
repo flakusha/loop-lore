@@ -9,6 +9,7 @@
  */
 import type { NsfwModerationServiceContext, NsfwUserPrefs, } from "./types";
 
+/** */
 export interface GetEffectiveNsfwArgs {
   thisL: NsfwModerationServiceContext;
   chatId: string;
@@ -18,6 +19,10 @@ export interface GetEffectiveNsfwArgs {
 /**
  * Get the effective NSFW setting for a chat, considering chat override,
  * world override, and user preference in that order.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.chatId
+ * @param root0.userId
  */
 export async function getEffectiveNsfw(
   { thisL, chatId, userId, }: GetEffectiveNsfwArgs,
@@ -52,6 +57,7 @@ export async function getEffectiveNsfw(
   return { enabled: prefs?.nsfwEnabled ?? true, source: "user_preference", };
 }
 
+/** */
 export interface SetChatNsfwOverrideArgs {
   thisL: NsfwModerationServiceContext;
   chatId: string;
@@ -65,6 +71,11 @@ export interface SetChatNsfwOverrideArgs {
  * Service-level guard: the chat must exist (fail fast instead of a silent
  * no-op update) and every change is attributed to `performedBy` with an
  * audit row, so callers that bypass the HTTP route are still on record.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.chatId
+ * @param root0.override
+ * @param root0.performedBy
  */
 export async function setChatNsfwOverride(
   { thisL, chatId, override, performedBy, }: SetChatNsfwOverrideArgs,
@@ -91,6 +102,7 @@ export async function setChatNsfwOverride(
   },);
 }
 
+/** */
 export interface SetWorldNsfwOverrideArgs {
   thisL: NsfwModerationServiceContext;
   worldId: string;
@@ -101,6 +113,11 @@ export interface SetWorldNsfwOverrideArgs {
 /**
  * Set NSFW override for a world. Pass null to clear (revert to user pref).
  * Same service-level guard as the chat variant: existence check + audit.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.worldId
+ * @param root0.override
+ * @param root0.performedBy
  */
 export async function setWorldNsfwOverride(
   { thisL, worldId, override, performedBy, }: SetWorldNsfwOverrideArgs,

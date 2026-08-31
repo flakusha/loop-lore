@@ -23,6 +23,7 @@ import { weatherRoutes, } from "./weather";
  *   Weather:   /api/battle/weather/{modifiers,visibility,hazard}
  *   Resolution:/api/battle/resolution/{damage,attack,defense,round}
  *   Morale:    /api/battle/morale/{compute,apply,break}
+ * @param opts
  */
 export function battleRoutes(opts: HandlerOpts,) {
   const { database: _database, } = opts;

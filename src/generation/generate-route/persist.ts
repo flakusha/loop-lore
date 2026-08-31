@@ -36,6 +36,17 @@ interface StoreMessageOpts {
   continuationNumber?: number;
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.chatId
+ * @param root0.actorId
+ * @param root0.parentMessageId
+ * @param root0.result
+ * @param root0.modelId
+ * @param root0.provider
+ * @param root0.continuationNumber
+ */
 async function storeGeneratedMessage({
   database,
   chatId,
@@ -104,6 +115,17 @@ async function storeGeneratedMessage({
 
 /**
  * Build a GenerationResult from a provider response.
+ * @param response
+ * @param response.content
+ * @param response.thinking
+ * @param response.toolCalls
+ * @param response.finishReason
+ * @param response.usage
+ * @param response.usage.promptTokens
+ * @param response.usage.completionTokens
+ * @param response.usage.totalTokens
+ * @param cancelled
+ * @param cancelReason
  */
 export function buildGenerationResult(
   response: {
@@ -134,6 +156,16 @@ export function buildGenerationResult(
 /**
  * Insert the generated message into the database and complete tracking.
  * Returns the new message ID.
+ * @param opts
+ * @param opts.db
+ * @param opts.attemptId
+ * @param opts.result
+ * @param opts.chatId
+ * @param opts.parentMessageId
+ * @param opts.actorId
+ * @param opts.modelId
+ * @param opts.provider
+ * @param opts.continuationNumber
  */
 export async function storeGenerationResult(opts: {
   db: Kysely<DB>;

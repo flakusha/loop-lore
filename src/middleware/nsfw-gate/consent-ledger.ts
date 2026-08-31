@@ -36,6 +36,9 @@ export interface ConsentStateRow {
 /**
  * Read the latest persisted consent row for (userId, chatId). Returns
  * `null` if the user has never explicitly consented nor revoked.
+ * @param database
+ * @param chatId
+ * @param userId
  */
 export async function getLatestConsent(
   database: Kysely<DB>,
@@ -64,17 +67,24 @@ export async function getLatestConsent(
   };
 }
 
-/** Pure predicate: row is a `given` action with no `revoked_at` stamp. */
+/**
+ * Pure predicate: row is a `given` action with no `revoked_at` stamp.
+ * @param row
+ */
 export function hasActiveConsent(row: ConsentStateRow | null,): boolean {
   return row?.action === "given" && row.revokedAt === null;
 }
 
-/** Trim or null a free-form reason to keep the audit trail bounded. */
+/**
+ * Trim or null a free-form reason to keep the audit trail bounded.
+ * @param reason
+ */
 function sanitizeReason(reason: string | undefined,): string | null {
   if (!reason) { return null; }
   return reason.slice(0, REASON_MAX_CHARS,);
 }
 
+/** */
 export interface RecordNsfwConsentOptions {
   database: Kysely<DB>;
   chatId: string;
@@ -88,6 +98,7 @@ export interface RecordNsfwConsentOptions {
  * Record an explicit user consent action. Persists to `nsfw_consent_state`
  * and stamps `revoked_at` on prior open `given` rows so `hasActiveConsent`
  * has a unique source-of-truth row.
+ * @param options
  */
 export async function recordNsfwConsent(
   options: RecordNsfwConsentOptions,

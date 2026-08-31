@@ -10,17 +10,22 @@
 import type { LogEntry, Transport, } from "../../../logger/types";
 import { safeFetch, } from "../../../utils";
 
+/** */
 export class ServerTransport implements Transport {
   readonly name = "server";
   private buffer: LogEntry[] = [];
   private timer: ReturnType<typeof setTimeout> | null = null;
 
+  /**
+   * @param entry
+   */
   write(entry: LogEntry,): Promise<void> {
     this.buffer.push(entry,);
     this.scheduleFlush();
     return Promise.resolve();
   }
 
+  /** */
   async flush(): Promise<void> {
     if (this.timer) {
       clearTimeout(this.timer,);
@@ -47,6 +52,7 @@ export class ServerTransport implements Transport {
     }
   }
 
+  /** */
   private scheduleFlush(): void {
     if (this.timer) { return; }
     this.timer = setTimeout(() => {

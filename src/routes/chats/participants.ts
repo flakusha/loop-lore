@@ -24,10 +24,15 @@ import {
 } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/** */
 function log(): Logger {
   return getLogger().child({ module: "chats", },);
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

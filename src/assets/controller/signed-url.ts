@@ -25,13 +25,18 @@ import { fromBase64, toBase64, } from "../../utils/base64";
 import { DOMAIN_INFO, domainKey, } from "../../utils/hkdf";
 
 const SIGNED_URL_ACTIONS = ["raw", "download", "thumb", "compressed",] as const;
+/** */
 export type SignedUrlAction = (typeof SIGNED_URL_ACTIONS)[number];
 
+/**
+ * @param value
+ */
 export function isSignedUrlAction(value: string,): value is SignedUrlAction {
   return (SIGNED_URL_ACTIONS as readonly string[]).includes(value,);
 }
 
 let _log: ReturnType<typeof getLogger> | null = null;
+/** */
 function getLog() {
   try {
     _log ??= getLogger().child({ module: "assets/signed-url", },);
@@ -43,17 +48,26 @@ function getLog() {
 
 // ── Base64url helpers (mirror src/auth/jwt.ts) ──────────────────
 
+/**
+ * @param data
+ */
 function base64urlEncode(data: Uint8Array,): string {
   return toBase64(data,).replaceAll("+", "-",).replaceAll("/", "_",).replace(/=+$/, "",);
 }
 
+/**
+ * @param str
+ */
 function base64urlDecode(str: string,): Uint8Array {
   const base64 = str.replaceAll("-", "+",).replaceAll("_", "/",);
   const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
   return fromBase64(padded,);
 }
 
-/** Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource. */
+/**
+ * Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource.
+ * @param arr
+ */
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
 }
@@ -66,6 +80,7 @@ function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
  * same upstream secret is consumed here, by `src/auth/jwt.ts`, and by
  * `src/nsfw/pii-redaction.ts`. HKDF-SHA256 with a domain-specific info
  * keeps the resulting HMAC keys independent.
+ * @param secret
  */
 async function importSecretKey(secret: string,): Promise<CryptoKey> {
   const subkey = await domainKey(secret, DOMAIN_INFO.ASSETS_SIGNED_URL, 32,);
@@ -78,7 +93,11 @@ async function importSecretKey(secret: string,): Promise<CryptoKey> {
   );
 }
 
-/** Constant-time compare of two byte arrays. Length mismatch short-circuits. */
+/**
+ * Constant-time compare of two byte arrays. Length mismatch short-circuits.
+ * @param a
+ * @param b
+ */
 function timingSafeEqualBytes(a: Uint8Array, b: Uint8Array,): boolean {
   if (a.length !== b.length) { return false; }
   let diff = 0;
@@ -90,6 +109,7 @@ function timingSafeEqualBytes(a: Uint8Array, b: Uint8Array,): boolean {
 
 // ── Public API ────────────────────────────────────────────────
 
+/** */
 export interface SignAssetUrlOpts {
   secret: string;
   assetId: string;
@@ -100,6 +120,7 @@ export interface SignAssetUrlOpts {
   now?: number;
 }
 
+/** */
 export interface SignedUrlToken {
   /** base64url HMAC-SHA256 signature over `${action}:${assetId}:${expiresAt}`. */
   token: string;
@@ -109,7 +130,7 @@ export interface SignedUrlToken {
 
 /**
  * Sign a time-limited URL token for an asset serve action.
- *
+ * @param opts
  * @returns Signed token + absolute expiry (ms epoch).
  */
 export async function signAssetUrl(opts: SignAssetUrlOpts,): Promise<SignedUrlToken> {
@@ -130,6 +151,7 @@ export async function signAssetUrl(opts: SignAssetUrlOpts,): Promise<SignedUrlTo
   return { token: base64urlEncode(new Uint8Array(signature,),), expiresAt, };
 }
 
+/** */
 export interface VerifyAssetUrlOpts {
   secret: string;
   token: string;
@@ -141,6 +163,7 @@ export interface VerifyAssetUrlOpts {
   now?: number;
 }
 
+/** */
 export type SignedUrlVerifyResult =
   | { valid: true }
   | { valid: false; reason: "malformed" | "bad_signature" | "expired" };
@@ -149,6 +172,7 @@ export type SignedUrlVerifyResult =
  * Verify a signed URL token for an asset + action at the given expiry.
  * Recomputes the HMAC over `${action}:${assetId}:${expiresAt}` and compares
  * constant-time; rejects on bad signature or expiry.
+ * @param opts
  */
 export async function verifyAssetUrl(opts: VerifyAssetUrlOpts,): Promise<SignedUrlVerifyResult> {
   if (!Number.isFinite(opts.expiresAt,)) {
@@ -185,6 +209,8 @@ export async function verifyAssetUrl(opts: VerifyAssetUrlOpts,): Promise<SignedU
  * Resolve the effective HMAC secret for signed URLs.
  * Prefers `assets.signedUrlSecret`; falls back to `auth.jwtSecret`.
  * Returns null when neither is configured — callers must fail closed.
+ * @param assetsSecret
+ * @param jwtSecret
  */
 export function resolveSignedUrlSecret(
   assetsSecret: string | undefined,

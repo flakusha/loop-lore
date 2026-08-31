@@ -16,10 +16,16 @@ import { afterEach, describe, expect, test, } from "bun:test";
 import type { Config, } from "../../config/schema";
 import { getClientIp, registerLimiter, } from "./shared";
 
+/**
+ * @param trustProxy
+ */
 function cfg(trustProxy: boolean,): Config {
   return { server: { trustProxy, }, } as unknown as Config;
 }
 
+/**
+ * @param headers
+ */
 function req(headers?: Record<string, string>,): Request {
   return new Request("http://localhost/api/auth/login", { headers, },);
 }

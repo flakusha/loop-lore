@@ -5,6 +5,9 @@ import { describe, expect, test, } from "bun:test";
 import { formatHtml, formatJson, formatMarkdown, formatPlainText, } from "./format";
 import type { MessageData, } from "./types";
 
+/**
+ * @param partial
+ */
 function msg(partial: Partial<MessageData> & { content: string },): MessageData {
   const { content, ...rest } = partial;
   return {

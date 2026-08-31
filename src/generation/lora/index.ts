@@ -6,7 +6,6 @@
  *
  * LoRA (Low-Rank Adaptation) discovery and application for Stable Diffusion.
  * Enables character-specific and style-specific visual consistency.
- *
  * @module generation/lora
  */
 

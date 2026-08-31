@@ -20,6 +20,7 @@ export function getLog(): Logger {
 
 /**
  * Convert database row to Achievement interface
+ * @param row
  */
 export function rowToAchievement(row: any,): Achievement {
   return {
@@ -41,6 +42,7 @@ export function rowToAchievement(row: any,): Achievement {
 
 /**
  * Convert database row to PlayerAchievement interface
+ * @param row
  */
 export function rowToPlayerAchievement(row: any,): PlayerAchievement {
   return {

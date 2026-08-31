@@ -8,6 +8,10 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { notificationsRoutes, } from "./notifications";
 
+/**
+ * @param db
+ * @param userId
+ */
 function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-notifications", },)
     .derive(() => ({ userId, }))

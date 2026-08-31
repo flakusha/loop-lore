@@ -16,6 +16,10 @@ import { createRateLimiter, rateLimitHeaders, } from "./rate-limit";
 
 const cleanups: (() => void)[] = [];
 
+/**
+ * @param windowMs
+ * @param maxRequests
+ */
 function makeLimiter(windowMs: number, maxRequests: number,) {
   const limiter = createRateLimiter({ windowMs, maxRequests, },);
   cleanups.push(() => limiter.destroy());

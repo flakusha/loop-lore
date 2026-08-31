@@ -17,12 +17,18 @@ const NSFW_RATINGS: readonly ContentRating[] = [
 /** Minimum intimacy score required for NSFW encounters. */
 const NSFW_INTIMACY_THRESHOLD = 40;
 
-/** Whether a content rating is considered NSFW. */
+/**
+ * Whether a content rating is considered NSFW.
+ * @param rating
+ */
 export function isNsfwRating(rating: ContentRating,): boolean {
   return NSFW_RATINGS.includes(rating,);
 }
 
-/** Calculate age from birth date string. */
+/**
+ * Calculate age from birth date string.
+ * @param birthDate
+ */
 export function calculateAge(birthDate: string,): number {
   const birth = new Date(birthDate,);
   const now = new Date();

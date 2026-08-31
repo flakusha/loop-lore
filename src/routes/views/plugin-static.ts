@@ -6,6 +6,7 @@ import { SuccessResponse, } from "../../validation/schemas";
 import { applyI18n, htmlResponse, } from "./layout";
 import { serveStaticPartial, } from "./static-partials";
 
+/** */
 export function staticRoutes() {
   return new Elysia({ name: "views-static", },)
     .get("/partials/:page/:section", (ctx: any,) => {

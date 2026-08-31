@@ -11,6 +11,7 @@ import type { FinalizeExportInput, } from "./types";
  *
  * Shared by both export handlers; the SSE handler passes `assetManifest`,
  * the plain handler omits it.
+ * @param input
  */
 export async function finalizeExportZip(input: FinalizeExportInput,): Promise<Buffer> {
   const { zip, checksums, counts, userId, now, format, include, assetManifest, } = input;

@@ -14,6 +14,8 @@ import type { SeductionAttemptOpts, SeductionResult, } from "./types";
  *
  * Skill check: roll 1d100 vs DC.
  * DC is influenced by target's arousal, turn-ons, and hard limits.
+ * @param db
+ * @param opts
  */
 export async function attemptSeduction(db: Kysely<DB>, opts: SeductionAttemptOpts,): Promise<SeductionResult> {
   const { actorId, targetId, skillCategory, approach, worldId, } = opts;

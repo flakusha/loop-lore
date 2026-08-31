@@ -6,6 +6,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 
+/** */
 export interface HandlerOpts {
   database: Kysely<DB>;
   config: Config;
@@ -73,9 +74,8 @@ export const StatsGenerateBody = t.Object({
     t.Literal("4d6_drop_lowest",),
     t.Literal("standard_array",),
   ],),
-  /* eslint-disable unicorn/max-nested-calls -- Elysia TypeBox schema nesting is inherent to framework */
+
   allocation: t.Optional(t.Record(AbilityNameSchema, t.Number(),),),
-  /* eslint-enable unicorn/max-nested-calls */
 },);
 
 // ── Actor stats route schemas ─────────────────────────────

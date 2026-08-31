@@ -45,7 +45,10 @@ const QUICK_EMOJIS = [
  * Access policy: the chat owner, any chat participant, and admin/solo roles
  * may react. Uses `checkChatAccess`, so this stays consistent with the rest of
  * the message/chat pipelines.
- *
+ * @param database
+ * @param messageId
+ * @param userId
+ * @param userRole
  * @returns the message's `chat_id` on success, or a 404 `Response` if the
  *          message is missing or the user lacks access (returned to the caller
  *          verbatim).
@@ -69,6 +72,10 @@ async function resolveMessageAccess(
   return msg.chat_id;
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function messageReactionsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

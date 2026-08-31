@@ -9,9 +9,13 @@ export const TUI_DEFAULTS = {
   enabled: true,
 } satisfies TuiConfig;
 
+/** */
 export class TuiSection implements TuiConfig {
   enabled = TUI_DEFAULTS.enabled;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<TuiConfig>,) {
     Object.assign(this, overrides,);
   }

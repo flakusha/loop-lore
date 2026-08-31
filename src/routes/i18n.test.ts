@@ -10,6 +10,10 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
 import { i18nRoutes, } from "./i18n";
 
+/**
+ * @param db
+ * @param userId
+ */
 function makeApp(db: Kysely<DB>, userId?: string,) {
   const app = new Elysia({ name: "test-i18n", },);
   if (userId) {

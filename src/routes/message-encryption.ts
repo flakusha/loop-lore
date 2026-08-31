@@ -27,10 +27,17 @@ import { notFound, } from "../validation/middleware";
 import { SuccessResponse, } from "../validation/schemas";
 import { extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
+/** */
 function log(): Logger {
   return getLogger().child({ module: "routes:message-encryption", },);
 }
 
+/**
+ * @param opts
+ * @param opts.database
+ * @param opts.config
+ * @param prefix
+ */
 export function messageEncryptionRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return new Elysia()
     .get(`${prefix}/chats/:id/encryption-key`, async (req,) => {

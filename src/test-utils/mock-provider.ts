@@ -31,6 +31,7 @@ const MOCK_CAPABILITIES: ProviderCapabilities = {
   thinking: false,
 };
 
+/** */
 export class MockLLMProvider implements LLMProvider {
   private _failOnCall = false;
   private _streamError = false;
@@ -40,6 +41,7 @@ export class MockLLMProvider implements LLMProvider {
   set failOnCall(v: boolean,) {
     this._failOnCall = v;
   }
+  /** */
   get failOnCall(): boolean {
     return this._failOnCall;
   }
@@ -48,10 +50,14 @@ export class MockLLMProvider implements LLMProvider {
   set streamError(v: boolean,) {
     this._streamError = v;
   }
+  /** */
   get streamError(): boolean {
     return this._streamError;
   }
 
+  /**
+   * @param _req
+   */
   complete(_req: GenerateRequest,): Promise<GenerateResponse> {
     if (this._failOnCall) { throw new Error("Mock provider failure",); }
     return Promise.resolve({
@@ -62,6 +68,10 @@ export class MockLLMProvider implements LLMProvider {
     },);
   }
 
+  /**
+   * @param _req
+   * @param handler
+   */
   stream(_req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse> {
     if (this._streamError) {
       throw new Error("Mock stream failure",);
@@ -82,10 +92,12 @@ export class MockLLMProvider implements LLMProvider {
     },);
   }
 
+  /** */
   healthCheck(): Promise<{ status: "ok" }> {
     return Promise.resolve({ status: "ok" as const, },);
   }
 
+  /** */
   listModels(): Promise<ModelInfo[]> {
     return Promise.resolve([{ id: "mock-model", },],);
   }

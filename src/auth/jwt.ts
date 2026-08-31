@@ -14,6 +14,7 @@ import { fromBase64, toBase64, } from "../utils/base64";
 import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
 
 let _log: ReturnType<typeof getLogger> | null = null;
+/** */
 function getLog() {
   try {
     _log ??= getLogger().child({ module: "auth/jwt", },);
@@ -25,6 +26,7 @@ function getLog() {
 
 // ── Types ─────────────────────────────────────────────────────
 
+/** */
 export interface JwtPayload {
   /** Subject (user ID) */
   sub: string;
@@ -38,18 +40,22 @@ export interface JwtPayload {
   sid: string;
 }
 
+/** */
 export interface JwtVerifyResult {
   valid: true;
   payload: JwtPayload;
 }
 
+/** */
 export interface JwtVerifyError {
   valid: false;
   error: string;
 }
 
+/** */
 export type JwtResult = JwtVerifyResult | JwtVerifyError;
 
+/** */
 export interface SignJwtOpts {
   secret: string;
   userId: string;
@@ -58,6 +64,7 @@ export interface SignJwtOpts {
   expiresInSeconds: number;
 }
 
+/** */
 export interface VerifyJwtOpts {
   secret: string;
   token: string;
@@ -65,10 +72,16 @@ export interface VerifyJwtOpts {
 
 // ── Base64url helpers ─────────────────────────────────────────
 
+/**
+ * @param data
+ */
 function base64urlEncode(data: Uint8Array,): string {
   return toBase64(data,).replaceAll("+", "-",).replaceAll("/", "_",).replace(/=+$/, "",);
 }
 
+/**
+ * @param str
+ */
 function base64urlDecode(str: string,): Uint8Array {
   const base64 = str.replaceAll("-", "+",).replaceAll("_", "/",);
   const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
@@ -77,7 +90,10 @@ function base64urlDecode(str: string,): Uint8Array {
 
 // ── Crypto helpers ────────────────────────────────────────────
 
-/** Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource. */
+/**
+ * Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource.
+ * @param arr
+ */
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
 }
@@ -88,6 +104,7 @@ function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
  * `auth.jwtSecret` is used here, by `src/assets/controller/signed-url.ts`,
  * and by `src/nsfw/pii-redaction.ts`. Domain-separating the consumers with
  * HKDF-SHA256 means a leak of one subkey cannot impersonate the others.
+ * @param secret
  */
 async function importSecretKey(secret: string,): Promise<CryptoKey> {
   const subkey = await domainKey(secret, DOMAIN_INFO.JWT_SIGNING, 32,);
@@ -104,7 +121,7 @@ async function importSecretKey(secret: string,): Promise<CryptoKey> {
 
 /**
  * Sign a JWT token.
- *
+ * @param opts
  * @returns Signed JWT string (header.payload.signature)
  */
 export async function signJwt(opts: SignJwtOpts,): Promise<string> {
@@ -138,7 +155,7 @@ export async function signJwt(opts: SignJwtOpts,): Promise<string> {
 
 /**
  * Verify and decode a JWT token.
- *
+ * @param opts
  * @returns JwtVerifyResult with payload or error
  */
 export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {

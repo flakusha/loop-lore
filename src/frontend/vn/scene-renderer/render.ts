@@ -9,6 +9,9 @@ import { getPortraitUrl, } from "../portrait-manager";
 import { state, } from "./state";
 import type { VnMessage, VnScene, } from "./types";
 
+/**
+ * @param msg
+ */
 export function msgToScene(msg: VnMessage,): VnScene {
   return {
     messageId: msg.id,
@@ -24,6 +27,7 @@ export function msgToScene(msg: VnMessage,): VnScene {
 
 // ── Image Preloading ─────────────────────────────────────────
 
+/** */
 export async function preloadCurrentAndUpcoming(): Promise<void> {
   const indicator = state.loadingIndicator;
   if (!indicator || state.scenes.length === 0) { return; }
@@ -50,6 +54,7 @@ export async function preloadCurrentAndUpcoming(): Promise<void> {
  * Handle a `chat:location-changed` event: briefly fade the active scene out and
  * back in to signal a location/travel transition. Only acts when the VN
  * renderer is mounted and the event targets the currently-rendered chat.
+ * @param e
  */
 export function handleLocationChanged(e: Event,): void {
   const detail = (e as CustomEvent<{ chatId?: string; locationId?: string; locationName?: string | null }>).detail;

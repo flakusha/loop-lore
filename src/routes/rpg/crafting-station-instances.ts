@@ -35,6 +35,11 @@ const UpdateStationInstanceBody = t.Object({
 },);
 
 // ── World ownership check ────────────────────────────────
+/**
+ * @param db
+ * @param userId
+ * @param worldId
+ */
 export async function assertWorldOwner(
   db: HandlerOpts["database"],
   userId: string,
@@ -47,6 +52,11 @@ export async function assertWorldOwner(
   return null;
 }
 
+/**
+ * @param opts
+ * @param svc
+ * @param R
+ */
 export function stationInstanceRoutes(opts: HandlerOpts, svc: StationsService, R: string,): Elysia {
   return (
     new Elysia({ name: "rpg-crafting-station-instances", },)

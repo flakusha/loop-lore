@@ -7,6 +7,10 @@ import { startRoutes, } from "./start";
 import { statusRoutes, } from "./status";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param root0
+ * @param root0.database
+ */
 export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
   return new Elysia({ name: "export-sse", },)
     .use(startRoutes({ database, },),)

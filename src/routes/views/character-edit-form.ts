@@ -114,6 +114,7 @@ const PROACTIVE_SECTION = `
 /**
  * Build the full character edit form HTML.
  * Called by serveCharacterEditForm after DB lookup.
+ * @param v
  */
 export function buildEditFormHtml(v: EditFormValues,): string {
   return `<div style="max-width:720px;margin:0 auto;width:100%">

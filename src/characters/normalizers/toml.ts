@@ -13,6 +13,7 @@ import { buildCanonicalFields, } from "./shared";
  * Normalize TOML format to canonical character card.
  * TOML uses [character] section with nested subsections.
  * We flatten the nested structure into a flat Record before passing to the shared builder.
+ * @param data
  */
 export function normalizeToml(data: Record<string, unknown>,): CanonicalCharacter {
   const char = (data.character ?? {}) as Record<string, unknown>;

@@ -29,6 +29,10 @@ export interface ResolveCharacterWorldSetupArgs {
  * Returns undefined if the actor does not exist. When no world setup row is
  * present, the overlay fields fall back to the base actor setup and empty
  * collections, so the result is always complete for a valid actor.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
  */
 export async function resolveCharacterWorldSetup(
   { thisL, actorId, worldId, }: ResolveCharacterWorldSetupArgs,

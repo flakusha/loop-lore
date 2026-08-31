@@ -61,6 +61,11 @@ describe("createTransition", () => {
 });
 
 describe("selectMessagesForPromotion", () => {
+  /**
+   * @param id
+   * @param content
+   * @param score
+   */
   function makeMsg(id: string, content: string, score?: number,): MessageRef {
     return {
       messageId: id,
@@ -416,6 +421,9 @@ const NON_PARTICIPANT_ID = "non-participant";
 const ATTACKER_ID = "attacker-1";
 // Seed the victim users, actors, and chats once per test (beforeEach wipes the
 // DB, so the ownership-guard fixtures must be re-inserted on every test).
+/**
+ * @param database
+ */
 async function seedOwnershipFixtures(database: Kysely<DB>,): Promise<void> {
   // beforeEach already wipes the DB, but the per-describe beforeAll in the
   // sibling describe block re-runs after the first describe's tests have

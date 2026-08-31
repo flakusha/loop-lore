@@ -23,6 +23,9 @@ afterAll(() => {
   sqlite.close();
 },);
 
+/**
+ * @param database
+ */
 function makeApp(database: Kysely<DB>,) {
   const app = new Elysia({ name: "test-providers", },);
   return app.use(providersRoutes({ database, },),);

@@ -55,7 +55,10 @@ interface ContextWindowState {
       }
     },
 
-    /** Color class for a section segment in the stacked budget bar. */
+    /**
+     * Color class for a section segment in the stacked budget bar.
+     * @param name
+     */
     sectionColor(name: string,): string {
       switch (name) {
         case "system": {
@@ -73,7 +76,10 @@ interface ContextWindowState {
       }
     },
 
-    /** CSS flex-grow weight for a section segment (its budget share in pct). */
+    /**
+     * CSS flex-grow weight for a section segment (its budget share in pct).
+     * @param name
+     */
     sectionGrow(name: string,): number {
       const seg = this.sections.find((s,) => s.name === name);
       return Math.max(seg?.pct ?? 0, 0.5,);
@@ -115,7 +121,10 @@ interface ContextWindowState {
       return this.sections.length > 0;
     },
 
-    /** Load context window state from the API */
+    /**
+     * Load context window state from the API
+     * @param chatId
+     */
     async load(chatId: string,): Promise<void> {
       if (!chatId) { return; }
       this.chatId = chatId;

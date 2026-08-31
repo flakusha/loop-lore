@@ -14,7 +14,6 @@ import { deepMerge, parseFileContent, } from "./parse";
  *
  * Each domain file (config.<domain>.yaml/yml/toml) is loaded and merged
  * into the base config. Domain configs override the main config.
- *
  * @param directory - The directory to search for domain configs
  * @param baseConfig - The base config to merge domain configs into
  * @returns Merged config with domain overrides applied
@@ -48,13 +47,16 @@ export function loadDomainConfigs(directory: string, baseConfig: Config,): Confi
 
 /**
  * Validate a domain config against its expected structure.
- *
  * @param domain - The domain name (e.g., "server", "database")
  * @param parsed - The parsed config object
  * @param filePath - The file path for error messages
  */
 
-/** Validate the server domain: port range. */
+/**
+ * Validate the server domain: port range.
+ * @param parsed
+ * @param filePath
+ */
 function validateServerDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const server = parsed.server as Record<string, unknown> | undefined;
   if (server?.port === undefined) { return; }
@@ -64,7 +66,11 @@ function validateServerDomain(parsed: Record<string, unknown>, filePath: string,
   }
 }
 
-/** Validate the database domain: type + postgres url requirement. */
+/**
+ * Validate the database domain: type + postgres url requirement.
+ * @param parsed
+ * @param filePath
+ */
 function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const db = parsed.db as Record<string, unknown> | undefined;
   if (!db) { return; }
@@ -78,7 +84,11 @@ function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: strin
   }
 }
 
-/** Validate the logging domain: level enum. */
+/**
+ * Validate the logging domain: level enum.
+ * @param parsed
+ * @param filePath
+ */
 function validateLoggingDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const logging = parsed.logging as Record<string, unknown> | undefined;
   if (
@@ -92,6 +102,11 @@ function validateLoggingDomain(parsed: Record<string, unknown>, filePath: string
   }
 }
 
+/**
+ * @param domain
+ * @param parsed
+ * @param filePath
+ */
 export function validateDomainConfig(domain: string, parsed: Record<string, unknown>, filePath: string,): void {
   // Validate domain-specific constraints
   switch (domain) {

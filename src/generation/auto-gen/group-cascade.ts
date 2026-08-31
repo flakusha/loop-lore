@@ -44,7 +44,17 @@ export interface GroupCascadeOpts {
  * - An error occurs
  */
 
-/** Pick the next actor in the cascade: @mentions win, else auto-advance. */
+/**
+ * Pick the next actor in the cascade: @mentions win, else auto-advance.
+ * @param aiParticipants
+ * @param aiContent
+ * @param previousActorId
+ * @param autoAdvance
+ * @param database
+ * @param chatId
+ * @param depth
+ * @param log
+ */
 async function resolveNextCascadeActor(
   aiParticipants: { actor_id: string; actor_type: string; display_name: string }[],
   aiContent: string,
@@ -85,6 +95,9 @@ async function resolveNextCascadeActor(
   }
   return null;
 }
+/**
+ * @param opts
+ */
 export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void> {
   const { database, config, chatId, userId, aiContent, previousActorId, depth, } = opts;
   const d = { ...createDefaultDeps(), ...opts.deps, };

@@ -16,6 +16,10 @@ import { ErrorResponse, SuccessResponse, UserProfileUpdateBody, } from "../../va
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { UsersRoutesOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function meRoutes(opts: UsersRoutesOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "users-me", },)

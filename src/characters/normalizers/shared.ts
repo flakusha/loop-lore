@@ -17,6 +17,7 @@ import type {
  * Extract card data from an envelope wrapper.
  * CCv2/CCv3 wrap their data in `{ data: { ... } }`.
  * Other formats pass data directly.
+ * @param data
  */
 export function extractEnvelope(
   data: Record<string, unknown>,
@@ -28,6 +29,9 @@ export function extractEnvelope(
  * Build the common fields of a CanonicalCharacter.
  * Normalizers call this and spread any extra fields (lorebook, assets, extensions, etc.)
  * onto the result.
+ * @param raw
+ * @param opts
+ * @param opts.welcomeKey
  */
 export function buildCanonicalFields(
   raw: Record<string, unknown>,
@@ -56,6 +60,7 @@ export function buildCanonicalFields(
 
 /**
  * Normalize a single lorebook entry, applying defaults for missing fields.
+ * @param entry
  */
 export function normalizeLorebookEntry(
   entry: Record<string, unknown>,
@@ -81,6 +86,7 @@ export function normalizeLorebookEntry(
 /**
  * Build LorebookData from a raw character_book object.
  * Shared by ccv2 and ccv3 normalizers.
+ * @param characterBook
  */
 export function buildLorebook(
   characterBook: Record<string, unknown>,

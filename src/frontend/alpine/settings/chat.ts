@@ -3,6 +3,7 @@
 
 import type { SettingsState, } from "./types";
 
+/** */
 export function chat(): Partial<SettingsState> & ThisType<SettingsState> {
   return {
     async saveChat() {

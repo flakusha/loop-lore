@@ -31,7 +31,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
 
   async toggleGroupPause() {
     const chat = this.currentChat;
-    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain -- false positive: chat already null-checked above
+
     if (!chat || chat.type !== "group" || !this.activeChat) { return; }
     const newPaused = !this.isChatPaused(chat,);
     try {

@@ -29,6 +29,9 @@ const POLICY_SECRET = "policy-test-secret";
 const PNG_ID = "b1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
 const SVG_ID = "c2b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
 
+/**
+ * @param uploadDir
+ */
 function makeConfig(uploadDir: string,): Config {
   return {
     assets: {
@@ -43,6 +46,10 @@ function makeConfig(uploadDir: string,): Config {
   } as unknown as Config;
 }
 
+/**
+ * @param db
+ * @param config
+ */
 function createApp(db: Kysely<DB>, config: Config,): Elysia {
   return new Elysia({ name: "test-asset-serve-policy", },)
     .derive(() => ({ userId: OWNER, userRole: "user", }))

@@ -10,7 +10,15 @@ import { getLogger, } from "../../logger";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import type { GenDeps, } from "./deps";
 
-/** Handle generation pipeline errors (telemetry + buffer + logging). */
+/**
+ * Handle generation pipeline errors (telemetry + buffer + logging).
+ * @param error
+ * @param database
+ * @param d
+ * @param chatId
+ * @param userId
+ * @param attemptId
+ */
 export async function handleGenerationError(
   error: unknown,
   database: Kysely<DB>,

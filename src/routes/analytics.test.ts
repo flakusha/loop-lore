@@ -13,6 +13,10 @@ import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { analyticsRoutes, } from "./analytics";
 
+/**
+ * @param db
+ * @param userId
+ */
 function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-analytics", },)
     .derive(() => ({ userId, }))

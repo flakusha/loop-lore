@@ -34,7 +34,8 @@ async function getMigrationFiles(): Promise<Record<string, Migration>> {
  * Applied migrations are append-only — deleting or renumbering a shipped
  * migration orphans its `kysely_migration` row and breaks every existing DB
  * (Kysely throws an opaque "missing migration" error with no recovery hint).
- *
+ * @param database
+ * @param migrations
  * @throws {Error} When applied migrations are missing from the provider
  */
 export async function assertMigrationsNotStale<DB,>(
@@ -77,6 +78,9 @@ export async function assertMigrationsNotStale<DB,>(
   );
 }
 
+/**
+ * @param database
+ */
 export async function runMigrations(database: ReturnType<typeof getDatabase>,): Promise<void> {
   const log = getLogger().child({ module: "migrate", },);
 
@@ -86,7 +90,6 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>,): 
   const migrator = new Migrator({
     db: database,
     provider: {
-      // eslint-disable-next-line @typescript-eslint/require-await -- Kysely MigrationProvider requires Promise return
       getMigrations: async (): Promise<Record<string, Migration>> => migrations,
     },
   },);
@@ -106,6 +109,7 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>,): 
   log.info("Database migrations completed successfully",);
 }
 
+/** */
 async function migrate(): Promise<void> {
   createLogger();
   const database = getDatabase();

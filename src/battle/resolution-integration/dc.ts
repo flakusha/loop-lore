@@ -5,7 +5,11 @@ import type {
   DifficultyClass,
 } from "../integration-schemas";
 
-/** Get DC for common combat actions */
+/**
+ * Get DC for common combat actions
+ * @param action
+ * @param targetLevel
+ */
 export function getCombatDC(
   action: "disarm" | "shove" | "grapple" | "escape_grapple" | "aim",
   targetLevel = 10,

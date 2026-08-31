@@ -31,6 +31,11 @@ import {
   worldTraitBody,
 } from "./world-location-traits-schemas";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   const svc = (): WorldLocationTraitsService => new WorldLocationTraitsService(database,);
   const R = `${prefix}/rpg/world-location-traits`;

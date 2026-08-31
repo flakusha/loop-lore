@@ -20,12 +20,11 @@ import { blake3 as nobleBlake3, } from "@noble/hashes/blake3.js";
 
 /**
 BLAKE3 digest length in bytes (256-bit output).
-*/
+ */
 export const BLAKE3_DIGEST_LENGTH = 32;
 
 /**
  * BLAKE3 hash of `data` — pure-TS reference implementation.
- *
  * @param data - Input bytes.
  * @returns 32-byte BLAKE3 digest.
  */

@@ -20,12 +20,20 @@ const USER = "user-1";
 const ROLE = "user";
 const SID = "session-1";
 
+/**
+ * @param value
+ */
 function base64urlEncode(value: string,): string {
   const bytes = new TextEncoder().encode(value,);
   const b64 = btoa(String.fromCharCode(...bytes,),).replaceAll("+", "-",).replaceAll("/", "_",).replace(/=+$/, "",);
   return b64;
 }
 
+/**
+ * @param headerB64
+ * @param payloadB64
+ * @param secret
+ */
 async function signRaw(headerB64: string, payloadB64: string, secret: string,): Promise<string> {
   const encoder = new TextEncoder();
   // Match `verifyJwt`'s key derivation so the signature check passes; the
@@ -47,6 +55,9 @@ async function signRaw(headerB64: string, payloadB64: string, secret: string,): 
   return `${headerB64}.${payloadB64}.${sigB64}`;
 }
 
+/**
+ * @param payloadJson
+ */
 async function tokenWithPayload(payloadJson: string,): Promise<string> {
   const headerB64 = base64urlEncode(JSON.stringify({ alg: "HS256", typ: "JWT", },),);
   const payloadB64 = base64urlEncode(payloadJson,);

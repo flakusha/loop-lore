@@ -3,6 +3,7 @@
 
 // Quest row / world option types for the Quests page (quests.ts).
 
+/** */
 export interface QuestRow {
   id: string;
   name: string;
@@ -17,6 +18,7 @@ export interface QuestRow {
   created_at: string;
 }
 
+/** */
 export interface WorldOption {
   id: string;
   name: string;

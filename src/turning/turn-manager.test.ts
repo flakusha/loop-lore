@@ -9,6 +9,11 @@ let db: Kysely<DB>;
 const userId = "user-turn-1";
 let chatSeq = 0;
 
+/**
+ * @param maxTurns
+ * @param extra
+ * @param extra.maxRegenerations
+ */
 async function makeChat(
   maxTurns?: number,
   extra?: { maxRegenerations?: number },

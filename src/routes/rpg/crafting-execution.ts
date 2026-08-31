@@ -24,6 +24,10 @@ const CraftBody = t.Object({
 
 // ── Routes ───────────────────────────────────────────────
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
   const R = `${prefix}/rpg/craft`;
 

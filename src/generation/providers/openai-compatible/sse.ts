@@ -5,6 +5,9 @@
 
 import { safeJsonParse, } from "../../../utils";
 
+/**
+ * @param line
+ */
 export function parseSSELine(line: string,): Record<string, string> | null {
   if (!line.startsWith("data: ",)) { return null; }
   const payload = line.slice(6,).trim();

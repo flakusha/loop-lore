@@ -9,7 +9,6 @@
  * missing binary, unsupported platform, dlopen error, ABI mismatch — the
  * pure-TS implementation (@noble/hashes) takes over with identical output.
  * Application code imports only this module; it never touches FFI.
- *
  * @module native-blake3
  */
 
@@ -18,7 +17,7 @@ import { getNativeModule, getNativeStatus, isNativeAvailable, } from "./loader";
 
 /**
 BLAKE3 digest length in bytes (256-bit output).
-*/
+ */
 
 /**
  * Which implementation is currently active (diagnostics / health probes).
@@ -27,7 +26,6 @@ export type Blake3Implementation = "rust" | "ts";
 
 /**
  * BLAKE3 hash of `data` — native (Rust cdylib) when available, else pure TS.
- *
  * @param data - Input bytes (empty input is valid).
  * @returns 32-byte BLAKE3 digest.
  * @example
@@ -48,7 +46,6 @@ export function blake3Hash(data: Uint8Array,): Uint8Array {
 
 /**
  * Active implementation + native status, for health probes and telemetry.
- *
  * @returns Stable, serializable status object.
  */
 export function getBlake3Status(): {
@@ -70,7 +67,6 @@ export function getBlake3Status(): {
 
 /**
  * True when the native binary is loaded and ABI-verified.
- *
  * @returns Whether native BLAKE3 is currently in use.
  */
 export function isNativeBlake3Available(): boolean {

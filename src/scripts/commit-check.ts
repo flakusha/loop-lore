@@ -84,6 +84,9 @@ interface CommitInfo {
   warnings: string[];
 }
 
+/**
+ * @param message
+ */
 function validateCommit(message: string,): CommitInfo {
   const firstLine = message.trim().split("\n",)[0];
   if (!firstLine) {
@@ -124,10 +127,14 @@ function validateCommit(message: string,): CommitInfo {
   return { message: firstLine, valid: !hasTypeError, warnings, };
 }
 
+/**
+ * @param text
+ */
 function green(text: string,): string {
   return `\x1b[32m${text}\x1b[0m`;
 }
 
+/** */
 function getCommitsSinceLastTag(): string[] {
   try {
     const tag = execSync("git describe --tags --abbrev=0 2>/dev/null || echo ''", {
@@ -141,6 +148,7 @@ function getCommitsSinceLastTag(): string[] {
   }
 }
 
+/** */
 async function main(): Promise<void> {
   const args = Bun.argv.slice(2,);
   const hookMode = !args.includes("--all",) && !process.stdin.isTTY;

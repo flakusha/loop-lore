@@ -56,6 +56,9 @@ export class SyntheticTestRunner {
   private readonly defaultIterations: number;
   private readonly autoValidate: boolean;
 
+  /**
+   * @param options
+   */
   constructor(options: SyntheticTestRunnerOptions,) {
     this.db = options.db;
     this.evaluator = options.qualityEvaluator ?? createQualityEvaluator();
@@ -67,6 +70,7 @@ export class SyntheticTestRunner {
     this.autoValidate = options.autoValidate ?? false;
   }
 
+  /** */
   private get state(): RunnerState {
     return {
       db: this.db,
@@ -81,6 +85,11 @@ export class SyntheticTestRunner {
 
   /**
    * Run a batch of scenarios in the requested mode.
+   * @param scenarioIds
+   * @param mode
+   * @param mutationParams
+   * @param mutationParams.temperatureVariance
+   * @param mutationParams.promptVariations
    */
   async run(
     scenarioIds: string[],

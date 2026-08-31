@@ -24,6 +24,10 @@ import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from
 
 const AvatarListResponse = t.Array(AvatarResponse,);
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function characterAvatarsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const avatarService = new AvatarService(database,);

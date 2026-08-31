@@ -13,8 +13,10 @@ import type { GameMasterService, } from "../../game-master";
 import type { QualityEvaluator, } from "../../quality-evaluator";
 import type { TurnManager, } from "../../turn-manager";
 
+/** */
 export type SyntheticTestStatus = "passed" | "failed" | "skipped";
 
+/** */
 export interface SyntheticTestCaseResult {
   /** Parent SyntheticData row id */
   scenarioId: string;
@@ -27,6 +29,7 @@ export interface SyntheticTestCaseResult {
   reason?: string;
 }
 
+/** */
 export interface SyntheticTestRunSummary {
   /** Pass rate over executed (non-skipped) cases, 0..1 */
   passRate: number;
@@ -34,6 +37,7 @@ export interface SyntheticTestRunSummary {
   suggestedThresholds?: { accept: number; regenerate: number; escalate: number };
 }
 
+/** */
 export interface SyntheticTestRunResult {
   runId: string;
   mode: SyntheticTestMode;
@@ -47,6 +51,7 @@ export interface SyntheticTestRunResult {
   finishedAt: string;
 }
 
+/** */
 export interface SyntheticTestRunnerOptions {
   db: Kysely<DB>;
   /** Pure-logic scorer (no DB needed). Constructed if omitted. */
@@ -62,6 +67,7 @@ export interface SyntheticTestRunnerOptions {
   autoValidate?: boolean;
 }
 
+/** */
 export interface RowShape {
   id: string;
   chat_id: string | null;

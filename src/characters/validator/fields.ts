@@ -11,6 +11,11 @@ import type {
 } from "../spec";
 import { CONSTRAINTS, } from "./constants";
 
+/**
+ * @param character
+ * @param field
+ * @param errors
+ */
 export function validateRequiredString(
   character: CanonicalCharacter,
   field: keyof CanonicalCharacter,
@@ -27,6 +32,13 @@ export function validateRequiredString(
   }
 }
 
+/**
+ * @param character
+ * @param field
+ * @param errors
+ * @param warnings
+ * @param mode
+ */
 export function validateStringLength(
   character: CanonicalCharacter,
   field: string,
@@ -60,6 +72,13 @@ export function validateStringLength(
   }
 }
 
+/**
+ * @param character
+ * @param field
+ * @param errors
+ * @param warnings
+ * @param mode
+ */
 export function validateArrayConstraints(
   character: CanonicalCharacter,
   field: string,
@@ -123,6 +142,11 @@ export function validateArrayConstraints(
   }
 }
 
+/**
+ * @param character
+ * @param errors
+ * @param _warnings
+ */
 export function validateOptionalFields(
   character: CanonicalCharacter,
   errors: ValidationError[],

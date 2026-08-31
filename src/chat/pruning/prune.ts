@@ -14,13 +14,18 @@ import type { MessageScore, PruneResult, PruningConfig, ScorableMessage, } from 
  * 3. Remove lowest-scoring messages until under budget
  * 4. Promote high-importance messages to memory before removal
  * 5. Insert a system message noting what was pruned
- *
  * @param messages - All messages in the chat
  * @param config - Pruning configuration
  * @returns Prune result with kept/promoted/pruned messages
  */
 
-/** Choose which scored messages to prune to fit the token target. */
+/**
+ * Choose which scored messages to prune to fit the token target.
+ * @param messages
+ * @param scores
+ * @param sortedIndices
+ * @param config
+ */
 function selectMessagesToPrune(
   messages: ScorableMessage[],
   scores: MessageScore[],
@@ -49,7 +54,12 @@ function selectMessagesToPrune(
   return toPrune;
 }
 
-/** Partition messages into kept / promoted / pruned buckets. */
+/**
+ * Partition messages into kept / promoted / pruned buckets.
+ * @param messages
+ * @param scores
+ * @param toPrune
+ */
 function partitionMessages(
   messages: ScorableMessage[],
   scores: MessageScore[],
@@ -75,6 +85,10 @@ function partitionMessages(
   return { kept, promoted, pruned, };
 }
 
+/**
+ * @param messages
+ * @param config
+ */
 export function pruneMessages(
   messages: ScorableMessage[],
   config: PruningConfig = DEFAULT_PRUNING_CONFIG,

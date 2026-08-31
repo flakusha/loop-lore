@@ -8,6 +8,10 @@ import { ChatIdParams, ErrorResponse, MessageIdParams, SuccessResponse, } from "
 import { jsonResponse, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function archivingRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

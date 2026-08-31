@@ -44,11 +44,16 @@ export type {
 
 // ── Service ────────────────────────────────────────────────
 
+/** */
 export class EncounterService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
    * Create a new NSFW encounter.
+   * @param opts
    */
   async createEncounter(opts: CreateEncounterOpts,): Promise<NsfwEncounter> {
     return createEncounterDispatch(this.db, opts,);
@@ -56,6 +61,7 @@ export class EncounterService {
 
   /**
    * Get an encounter by ID.
+   * @param encounterId
    */
   async getEncounter(encounterId: string,): Promise<NsfwEncounter | null> {
     return getEncounterDispatch(this.db, encounterId,);
@@ -65,6 +71,7 @@ export class EncounterService {
    * Advance an encounter to the next phase.
    *
    * Returns triggered outcomes if the encounter completes.
+   * @param encounterId
    */
   async advancePhase(encounterId: string,): Promise<AdvancePhaseResult> {
     return advancePhaseDispatch(this.db, encounterId,);
@@ -72,6 +79,10 @@ export class EncounterService {
 
   /**
    * Get all encounters for a world.
+   * @param worldId
+   * @param opts
+   * @param opts.completed
+   * @param opts.type
    */
   async listEncounters(
     worldId: string,
@@ -82,6 +93,7 @@ export class EncounterService {
 
   /**
    * Delete an encounter.
+   * @param encounterId
    */
   async deleteEncounter(encounterId: string,): Promise<boolean> {
     return deleteEncounterDispatch(this.db, encounterId,);

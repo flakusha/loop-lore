@@ -16,12 +16,14 @@ import { ChatWidget, } from "./chat";
 
 const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
 
+/** */
 export class TUIApp {
   private statusBar: blessed.Widgets.TextElement;
   screen: blessed.Widgets.Screen;
   chat: ChatWidget;
   assets: AssetView;
 
+  /** */
   constructor() {
     this.screen = blessed.screen({
       smartCSR: true,
@@ -105,14 +107,17 @@ export class TUIApp {
 
   // ── Status bar ─────────────────────────────────────────────
 
+  /**
+   * @param msg
+   */
   private updateStatus(msg: string,): void {
-    // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
     this.statusBar.setContent(` {bold}Loop Lore{/bold}  |  ${msg}  |  API: ${API_BASE}  `,);
     this.screen.render();
   }
 
   // ── Shutdown ───────────────────────────────────────────────
 
+  /** */
   shutdown(): void {
     this.screen.destroy();
     process.exit(0,);

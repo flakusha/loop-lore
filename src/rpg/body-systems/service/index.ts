@@ -55,13 +55,18 @@ export type {
 
 // ── Service ────────────────────────────────────────────────
 
+/** */
 export class BodySystemService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   // ── Body Profile ──────────────────────────────────────
 
   /**
    * Get or create a body profile for an actor.
+   * @param actorId
    */
   async getProfile(actorId: string,): Promise<BodyProfile> {
     return getProfileDispatch(this.db, actorId,);
@@ -69,6 +74,8 @@ export class BodySystemService {
 
   /**
    * Update a body profile.
+   * @param actorId
+   * @param updates
    */
   async updateProfile(
     actorId: string,
@@ -79,6 +86,8 @@ export class BodySystemService {
 
   /**
    * Add a body modification.
+   * @param actorId
+   * @param modification
    */
   async addModification(
     actorId: string,
@@ -89,6 +98,8 @@ export class BodySystemService {
 
   /**
    * Remove a body modification by index.
+   * @param actorId
+   * @param index
    */
   async removeModification(actorId: string, index: number,): Promise<boolean> {
     return removeModificationDispatch(this.db, actorId, index,);
@@ -98,6 +109,8 @@ export class BodySystemService {
 
   /**
    * Get or create a heat cycle for an actor.
+   * @param actorId
+   * @param species
    */
   async getHeatCycle(
     actorId: string,
@@ -108,6 +121,8 @@ export class BodySystemService {
 
   /**
    * Advance the heat cycle by a number of days.
+   * @param actorId
+   * @param days
    */
   async advanceHeatCycle(
     actorId: string,
@@ -119,6 +134,7 @@ export class BodySystemService {
   /**
    * Get the current heat effects for an actor.
    * Returns nullified effects for non-heat species.
+   * @param actorId
    */
   async getHeatEffects(actorId: string,): Promise<HeatEffects> {
     return getHeatEffectsDispatch(this.db, actorId,);
@@ -128,6 +144,7 @@ export class BodySystemService {
 
   /**
    * Calculate effective encounter duration based on stamina + endurance.
+   * @param profile
    */
   static calculateEncounterDuration(profile: BodyProfile,): number {
     return calculateEncounterDurationDispatch(profile,);
@@ -135,6 +152,7 @@ export class BodySystemService {
 
   /**
    * Calculate available positions/actions based on flexibility + build.
+   * @param profile
    */
   static calculateAvailableActions(profile: BodyProfile,): number {
     return calculateAvailableActionsDispatch(profile,);
@@ -142,6 +160,7 @@ export class BodySystemService {
 
   /**
    * Calculate arousal buildup modifier from sensitivity + body.
+   * @param profile
    */
   static calculateArousalModifier(profile: BodyProfile,): number {
     return calculateArousalModifierDispatch(profile,);

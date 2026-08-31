@@ -11,6 +11,10 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { BACKGROUND_TYPES, ChatBackgroundCreateBody, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function catalogRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

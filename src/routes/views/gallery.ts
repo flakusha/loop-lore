@@ -11,6 +11,9 @@ import { escapeHtml, htmlResponse, } from "./layout";
 
 const GRID_PAGE_SIZE = 200;
 
+/**
+ * @param bytes
+ */
 function formatSize(bytes: number,): string {
   if (bytes < 1024) { return `${bytes} B`; }
   if (bytes < 1_048_576) { return `${(bytes / 1024).toFixed(1,)} KB`; }
@@ -28,6 +31,10 @@ function formatSize(bytes: number,): string {
  *
  * Returns the set of asset IDs to hide. Non-owner viewers see nothing of the
  * private character's assets; admins (admin.character) see all.
+ * @param database
+ * @param assetIds
+ * @param actorId
+ * @param actorRole
  */
 async function inheritedHiddenAssetIds(
   database: Kysely<DB>,
@@ -58,6 +65,12 @@ async function inheritedHiddenAssetIds(
   return hidden;
 }
 
+/**
+ * @param database
+ * @param params
+ * @param actorId
+ * @param actorRole
+ */
 async function serveGalleryGrid(
   database: Kysely<DB>,
   params?: URLSearchParams,
@@ -131,12 +144,18 @@ async function serveGalleryGrid(
   return htmlResponse(renderCards(visible,),);
 }
 
+/**
+ * @param message
+ */
 function renderErrorCard(message: string,): string {
   return `<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
     <div class="title">${escapeHtml(message,)}</div>
   </div>`;
 }
 
+/**
+ * @param assets
+ */
 function renderCards(
   assets: readonly { id: string; filename: string; asset_type: AssetType; size_bytes: number }[],
 ): string {
@@ -148,6 +167,12 @@ function renderCards(
     </div>`;
   }
 
+  /**
+   * @param a
+   * @param a.id
+   * @param a.filename
+   * @param a.asset_type
+   */
   function thumbForAsset(a: { id: string; filename: string; asset_type: AssetType },): string {
     switch (a.asset_type) {
       case "image": {

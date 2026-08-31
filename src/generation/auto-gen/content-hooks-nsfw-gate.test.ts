@@ -32,6 +32,7 @@ import { runContentHooks, } from "./content-hooks";
 
 // ── Minimal config (NSFW gating enabled, adult threshold) ──────
 
+/** */
 function makeConfig(): Config {
   return {
     nsfw: {
@@ -47,6 +48,12 @@ function makeConfig(): Config {
 
 // ── Helpers ─────────────────────────────────────────────────────
 
+/**
+ * @param db
+ * @param opts
+ * @param opts.birthDate
+ * @param opts.ageGateAcceptedAt
+ */
 async function seedUser(
   db: Kysely<DB>,
   opts: { birthDate?: string | null; ageGateAcceptedAt?: string | null } = {},
@@ -68,6 +75,10 @@ async function seedUser(
   return userId;
 }
 
+/**
+ * @param db
+ * @param content_rating
+ */
 async function createAiActor(
   db: Kysely<DB>,
   content_rating: ContentRating,
@@ -92,6 +103,10 @@ async function createAiActor(
   return actorId;
 }
 
+/**
+ * @param db
+ * @param ownerId
+ */
 async function createChat(db: Kysely<DB>, ownerId: string,): Promise<string> {
   const chatId = uid();
   await db

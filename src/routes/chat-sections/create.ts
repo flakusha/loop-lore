@@ -9,6 +9,10 @@ import { jsonResponse, requireUserId, } from "../http-utils";
 import { chatAccess, } from "./access";
 import { ChatSectionCreateBody, type HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

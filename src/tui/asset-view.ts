@@ -13,6 +13,7 @@ import blessed from "blessed";
 import { safeFetch, } from "../utils";
 import { API_BASE, } from "./chat";
 
+/** */
 export interface LinkedAsset {
   id: string;
   filename: string;
@@ -23,6 +24,7 @@ export interface LinkedAsset {
   created_at: string;
 }
 
+/** */
 export class AssetView {
   private screen: blessed.Widgets.Screen;
   private box: blessed.Widgets.BoxElement;
@@ -32,6 +34,10 @@ export class AssetView {
   private chatId: string | null = null;
   private assetCountLabel: blessed.Widgets.BlessedElement;
 
+  /**
+   * @param screen
+   * @param parent
+   */
   constructor(screen: blessed.Widgets.Screen, parent?: blessed.Widgets.BoxElement,) {
     this.screen = screen;
 
@@ -80,6 +86,7 @@ export class AssetView {
 
   // ── Rendering ───────────────────────────────────────────────
 
+  /** */
   private renderCurrent(): void {
     if (this.assets.length === 0) {
       this.renderInfo("No assets linked to this chat.",);
@@ -89,7 +96,6 @@ export class AssetView {
     const asset = this.assets[this.currentIndex]!;
     const sizeStr = this.formatSize(asset.size_bytes,);
 
-    /* eslint-disable unicorn/no-incorrect-template-string-interpolation */
     this.assetCountLabel.setContent(
       `Asset {bold}${this.currentIndex + 1}{/bold} of {bold}${this.assets.length}{/bold}`,
     );
@@ -103,17 +109,22 @@ export class AssetView {
           asset.alt_text ? `{bold}Alt:{/bold} ${asset.alt_text}\n` : ""
         }\n{cyan-fg}← → navigate   Del: unlink{/cyan-fg}`,
     );
-    /* eslint-enable unicorn/no-incorrect-template-string-interpolation */
 
     this.screen.render();
   }
 
+  /**
+   * @param msg
+   */
   private renderInfo(msg: string,): void {
     this.assetCountLabel.setContent("",);
     this.infoLabel.setContent(msg,);
     this.screen.render();
   }
 
+  /**
+   * @param bytes
+   */
   private formatSize(bytes: number,): string {
     if (bytes < 1024) { return `${bytes} B`; }
     if (bytes < 1024 * 1024) { return `${(bytes / 1024).toFixed(1,)} KB`; }
@@ -122,16 +133,19 @@ export class AssetView {
 
   // ── Public API ──────────────────────────────────────────────
 
+  /** */
   show(): void {
     this.box.show();
     this.screen.render();
   }
 
+  /** */
   hide(): void {
     this.box.hide();
     this.screen.render();
   }
 
+  /** */
   toggle(): void {
     if (this.box.visible) {
       this.hide();
@@ -140,10 +154,14 @@ export class AssetView {
     }
   }
 
+  /** */
   isVisible(): boolean {
     return this.box.visible;
   }
 
+  /**
+   * @param chatId
+   */
   setChatId(chatId: string,): void {
     this.chatId = chatId;
     this.currentIndex = 0;
@@ -156,12 +174,14 @@ export class AssetView {
     })();
   }
 
+  /** */
   getChatId(): string | null {
     return this.chatId;
   }
 
   // ── Data loading ────────────────────────────────────────────
 
+  /** */
   async loadAssets(): Promise<void> {
     if (!this.chatId) {
       this.assets = [];

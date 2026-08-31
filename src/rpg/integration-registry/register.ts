@@ -16,33 +16,51 @@ import type {
   PlayerStateLayer,
 } from "./types";
 
+/** */
 export interface AddEdgeArgs {
   thisL: IntegrationRegistryContext;
   edge: IntegrationEdge;
 }
 
-/** Register a single integration edge. */
+/**
+ * Register a single integration edge.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.edge
+ */
 export function addEdge({ thisL, edge, }: AddEdgeArgs,): void {
   const key = edgeKey(edge.source, edge.target,);
   thisL.edges.set(key, edge,);
 }
 
+/** */
 export interface AddContractArgs {
   thisL: IntegrationRegistryContext;
   contract: InterfaceContract;
 }
 
-/** Register a single shared interface contract, keyed by its stable id. */
+/**
+ * Register a single shared interface contract, keyed by its stable id.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.contract
+ */
 export function addContract({ thisL, contract, }: AddContractArgs,): void {
   thisL.contracts.set(contract.id, contract,);
 }
 
+/** */
 export interface RegisterStateLayerArgs {
   thisL: IntegrationRegistryContext;
   layer: PlayerStateLayer;
 }
 
-/** Append a player state layer to the registry. */
+/**
+ * Append a player state layer to the registry.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.layer
+ */
 export function registerStateLayer({ thisL, layer, }: RegisterStateLayerArgs,): void {
   thisL.stateLayers.push(layer,);
 }

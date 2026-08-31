@@ -10,7 +10,12 @@ import {
   rollDice,
 } from "../integration-schemas";
 
-/** Make a saving throw */
+/**
+ * Make a saving throw
+ * @param saveBonus
+ * @param dc
+ * @param modifiers
+ */
 export function makeSavingThrow(
   saveBonus: number,
   dc: DifficultyClass,
@@ -48,7 +53,12 @@ export function makeSavingThrow(
   };
 }
 
-/** Make a skill check for combat */
+/**
+ * Make a skill check for combat
+ * @param skillBonus
+ * @param dc
+ * @param modifiers
+ */
 export function makeCombatSkillCheck(
   skillBonus: number,
   dc: DifficultyClass,
@@ -90,7 +100,12 @@ export function makeCombatSkillCheck(
   };
 }
 
-/** Make a concentration check */
+/**
+ * Make a concentration check
+ * @param constitutionSave
+ * @param damageTaken
+ * @param dc
+ */
 export function makeConcentrationCheck(
   constitutionSave: number,
   damageTaken: number,

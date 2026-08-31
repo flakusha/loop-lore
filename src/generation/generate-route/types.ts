@@ -11,6 +11,7 @@
 
 import type { GenerationMessage, GenerationOptions, } from "../types";
 
+/** */
 export interface GenerateRequest {
   /** Chat to generate for */
   chatId: string;

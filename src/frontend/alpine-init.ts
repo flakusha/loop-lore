@@ -67,9 +67,9 @@ Alpine.magic("t", (el: HTMLElement,) => {
 },);
 
 // ── 6. htmx extensions (CJS side-effects) ───────────────────────
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 require("htmx.org/dist/ext/alpine-morph.js",);
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 require("htmx-ext-sse/sse.js",);
 initAlpineStores();
 

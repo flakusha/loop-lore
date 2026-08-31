@@ -15,6 +15,7 @@ import type { Kysely, } from "kysely";
  * - Admin character overrides
  *
  * Also adds content_rating column to actors table.
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Add content_rating to actors ──────────────────────────
@@ -252,6 +253,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("admin_character_overrides",).execute();
   await database.schema.dropTable("character_licensing",).execute();

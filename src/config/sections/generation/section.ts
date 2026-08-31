@@ -8,6 +8,7 @@ import type {
 } from "../../schema";
 import { GENERATION_DEFAULTS, } from "./defaults.js";
 
+/** */
 export class GenerationSection implements GenerationConfig {
   providers: GenerationProvidersConfig = {
     openaiCompatible: [],
@@ -17,6 +18,9 @@ export class GenerationSection implements GenerationConfig {
   modelRoles: Record<string, ModelRoleAssignment> = {};
   autoStart: GenerationConfig["autoStart"];
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<GenerationConfig>,) {
     if (!overrides) { return; }
 

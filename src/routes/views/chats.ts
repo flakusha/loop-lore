@@ -7,6 +7,10 @@ import { parseIntOr, } from "../../utils/parse-number";
 import { enrichChats, renderChatListItems, } from "./chat-render";
 import { htmlResponse, } from "./layout";
 
+/**
+ * @param database
+ * @param params
+ */
 async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
   const page = Math.max(1, parseIntOr(params.get("page",) ?? "1", 1,),);
   const rawPageSize = Math.max(1, parseIntOr(params.get("pageSize",) ?? "50", 50,),);
@@ -64,6 +68,10 @@ async function serveChatsListDb(database: Kysely<DB>, params: URLSearchParams,):
   return htmlResponse(`<div data-page="${page}">${items}</div>${loadMore}`,);
 }
 
+/**
+ * @param database
+ * @param params
+ */
 async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
   const query = params.get("q",)?.toLowerCase().trim() ?? "";
   const worldId = params.get("world",)?.trim() ?? "";

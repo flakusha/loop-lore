@@ -25,6 +25,9 @@ import type { RotationResult, } from "./types";
  * (deriveChatKeyForChat), not the pre-054 HKDF-from-participant-keys scheme.
  * Actor key rotation no longer requires message re-encryption — chat keys
  * are independent of actor keys.
+ * @param database
+ * @param actorId
+ * @param smk
  */
 export async function rotateActorKeyAndReEncrypt(
   database: Kysely<DB>,

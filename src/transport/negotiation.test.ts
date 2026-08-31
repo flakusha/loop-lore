@@ -33,6 +33,7 @@ import {
  * Tests for transport protocol negotiation.
  *
  * Pure functions — no I/O, no mocks needed.
+ * @param headers
  */
 // ── Test Request Helper ───────────────────────────────────────
 

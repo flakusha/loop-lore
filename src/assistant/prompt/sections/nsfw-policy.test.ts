@@ -13,6 +13,9 @@ import { NSFW_POLICY_LEVELS_PROMPT, } from "../../../prompts";
 import type { AssembleContext, } from "../types";
 import { nsfwPolicySection, } from "./nsfw-policy";
 
+/**
+ * @param config
+ */
 function makeCtx(config?: unknown,): AssembleContext {
   return {
     db: {} as Kysely<DB>,

@@ -40,6 +40,7 @@ export type {
 
 // ── Game Master Service ─────────────────────────────────────
 
+/** */
 export class GameMasterService {
   private readonly db: Kysely<DB>;
   private readonly turnManager: TurnManager;
@@ -68,6 +69,9 @@ export class GameMasterService {
     };
   }
 
+  /**
+   * @param options
+   */
   constructor(
     options: TurnManagerOptions & {
       generateText: GmState["generateText"];
@@ -105,30 +109,48 @@ export class GameMasterService {
     return this.turnManager.currentTurn;
   }
 
+  /** */
   get isPaused(): boolean {
     return this.turnManager.isPaused;
   }
 
+  /** */
   get isComplete(): boolean {
     return this.turnManager.isComplete;
   }
 
-  /** Execute one full story turn */
+  /**
+   * Execute one full story turn
+   * @param debugActorId
+   */
   async executeTurn(debugActorId?: string,): Promise<GmTurnResult> {
     return executeTurnDispatch(this.state, debugActorId,);
   }
 
-  /** Accept a response and process it through the full pipeline */
+  /**
+   * Accept a response and process it through the full pipeline
+   * @param turnId
+   * @param response
+   */
   async acceptResponse(turnId: string, response: string,): Promise<GmTurnResult> {
     return acceptResponseDispatch(this.state, turnId, response,);
   }
 
-  /** Human GM provides an override decision */
+  /**
+   * Human GM provides an override decision
+   * @param _chatId
+   * @param turnId
+   * @param decision
+   */
   async humanOverride(_chatId: string, turnId: string, decision: GameMasterDecision,): Promise<void> {
     return humanOverrideDispatch(this.state, _chatId, turnId, decision,);
   }
 
-  /** Inject narration message into the story timeline */
+  /**
+   * Inject narration message into the story timeline
+   * @param worldId
+   * @param text
+   */
   async injectNarration(worldId: string, text: string,): Promise<void> {
     return injectNarrationDispatch(this.state, worldId, text,);
   }

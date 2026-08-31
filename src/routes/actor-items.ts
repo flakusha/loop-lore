@@ -14,6 +14,11 @@ import { EquipState, } from "../db/enums";
 import { actorItemsGameplayRoutes, } from "./actor-items/service";
 import { createEntityRoutes, } from "./entity-routes";
 
+/**
+ * @param opts
+ * @param opts.database
+ * @param opts.config
+ */
 export function actorItemsRoutes(opts: { database: Db; config: Config },): Elysia {
   const crud = createEntityRoutes(
     {

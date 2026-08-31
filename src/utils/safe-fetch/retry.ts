@@ -9,7 +9,6 @@ import type { FetchResult, SafeFetchOptions, } from "./types";
 
 /**
  * Fetch with retry logic and exponential backoff.
- *
  * @param url - URL to fetch
  * @param options - Fetch options with retry configuration
  * @param retries - Number of retry attempts (default: 3)

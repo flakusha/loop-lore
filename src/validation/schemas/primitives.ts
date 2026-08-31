@@ -200,6 +200,10 @@ export const SuccessResponse = t.Object({
   data: t.Any(),
 },);
 
+/**
+ *
+ * @param itemSchema
+ */
 export function ListResponse(itemSchema: Parameters<typeof t.Array>[0],) {
   return t.Object({
     data: t.Array(itemSchema,),

@@ -20,6 +20,9 @@ export const BINARY_CANDIDATES = {
   "sd-cpp": ["sd-server",],
 } as const;
 
+/**
+ * @param name
+ */
 function getBinaryNameWithSuffix(name: string,): string[] {
   const names = [name,];
   if (platform === "win32") {
@@ -28,11 +31,13 @@ function getBinaryNameWithSuffix(name: string,): string[] {
   return names;
 }
 
+/**
+ * @param type
+ */
 export function findBinary(type: keyof typeof BINARY_CANDIDATES,): string | null {
   const candidates = BINARY_CANDIDATES[type];
   for (const name of candidates) {
     for (const actualName of getBinaryNameWithSuffix(name,)) {
-      // eslint-disable-next-line no-restricted-properties -- Bun-only utility; cross-runtime abstraction not needed
       const result = Bun.which(actualName,);
       if (result) { return result; }
     }
@@ -42,9 +47,11 @@ export function findBinary(type: keyof typeof BINARY_CANDIDATES,): string | null
 
 // ── Port verification ─────────────────────────────────────
 
+/**
+ * @param port
+ */
 export function isPortFree(port: number,): boolean {
   try {
-    // eslint-disable-next-line no-restricted-properties -- Bun-only utility; cross-runtime abstraction not needed
     const server = Bun.serve({ port, fetch: () => new Response("ok",), },);
     void (async () => {
       try {
@@ -61,17 +68,23 @@ export function isPortFree(port: number,): boolean {
 
 // ── Health check option types ─────────────────────────────
 
+/** */
 export interface WaitForHealthOptions {
   timeoutMs: number;
   intervalMs?: number;
 }
 
+/** */
 export interface WaitForPortOptions {
   timeoutMs: number;
 }
 
 // ── Health checks ─────────────────────────────────────────
 
+/**
+ * @param url
+ * @param opts
+ */
 export async function waitForHealth(url: string, opts: WaitForHealthOptions,): Promise<boolean> {
   const intervalMs = opts.intervalMs ?? 500;
   const deadline = Date.now() + opts.timeoutMs;
@@ -84,6 +97,10 @@ export async function waitForHealth(url: string, opts: WaitForHealthOptions,): P
   return false;
 }
 
+/**
+ * @param port
+ * @param opts
+ */
 export async function waitForPort(port: number, opts: WaitForPortOptions,): Promise<boolean> {
   const deadline = Date.now() + opts.timeoutMs;
   while (Date.now() < deadline) {
@@ -95,6 +112,9 @@ export async function waitForPort(port: number, opts: WaitForPortOptions,): Prom
   return false;
 }
 
+/**
+ * @param path
+ */
 export function isHuggingFaceRef(path: string,): boolean {
   return /^[\w-]+\/[\w.-]+:\w+$/i.test(path,);
 }

@@ -7,6 +7,7 @@
 import type { MusicLinkMessage, } from "../chat-types/messages";
 import type { ChatState, } from "../types";
 
+/** */
 export type ChatMusicEmbed = Pick<ChatState, never>;
 
 const getDOMPurify = () =>

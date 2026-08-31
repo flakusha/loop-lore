@@ -26,6 +26,10 @@ interface ReviewIssue {
   severity: "warning" | "error" | "info";
 }
 
+/**
+ * @param items
+ * @param prefix
+ */
 function formatIssueLines(items: ReviewIssue[], prefix: string,): string {
   return Array.from(items, (i,) => `- ${prefix} ${i.field}: ${i.issue}`,).join("\n",);
 }
@@ -33,6 +37,9 @@ function formatIssueLines(items: ReviewIssue[], prefix: string,): string {
 /**
  * Format a review report from issues.
  * Shared by character, world, and location review cases.
+ * @param entityLabel
+ * @param entityName
+ * @param issues
  */
 function formatReviewReport(entityLabel: string, entityName: string, issues: ReviewIssue[],): string {
   let report = `**${entityLabel} Review: ${entityName}**\n\n`;
@@ -98,7 +105,11 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
   }
 },);
 
-/** Review the most recently created character owned by the user. */
+/**
+ * Review the most recently created character owned by the user.
+ * @param db
+ * @param userId
+ */
 async function reviewCharacter(db: Kysely<DB>, userId: string,): Promise<CommandResult> {
   const actor = await db
     .selectFrom("actors",)
@@ -158,7 +169,11 @@ async function reviewCharacter(db: Kysely<DB>, userId: string,): Promise<Command
   };
 }
 
-/** Review the active world. */
+/**
+ * Review the active world.
+ * @param db
+ * @param worldId
+ */
 async function reviewWorld(db: Kysely<DB>, worldId: string,): Promise<CommandResult> {
   const world = await db
     .selectFrom("worlds",)
@@ -201,7 +216,11 @@ async function reviewWorld(db: Kysely<DB>, worldId: string,): Promise<CommandRes
   };
 }
 
-/** Review the most recent location in the active world. */
+/**
+ * Review the most recent location in the active world.
+ * @param db
+ * @param worldId
+ */
 async function reviewLocation(db: Kysely<DB>, worldId: string,): Promise<CommandResult> {
   const location = await db
     .selectFrom("locations",)

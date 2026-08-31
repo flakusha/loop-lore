@@ -8,6 +8,7 @@ import { type Kysely, } from "kysely";
  * (tool name + arguments). Mirrors the established convention of storing
  * JSON objects/arrays as TEXT (e.g. `attachments`). The read path parses
  * this back into an array for the frontend tool-call UI.
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
@@ -16,6 +17,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("messages",)

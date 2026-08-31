@@ -9,12 +9,18 @@
 
 import { safeJsonStringify, } from "../../utils";
 
+/**
+ * @param obj
+ */
 export function sseData(obj: unknown,): string {
   const r = safeJsonStringify(obj,);
   return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
 }
 
-/** Escape HTML special characters for safe injection into rendered output. */
+/**
+ * Escape HTML special characters for safe injection into rendered output.
+ * @param str
+ */
 export function escapeHtml(str: string,): string {
   return str
     .replaceAll("&", "&amp;",)
@@ -24,7 +30,11 @@ export function escapeHtml(str: string,): string {
     .replaceAll("'", "&#39;",);
 }
 
-/** Render a collapsible tool-call block for the live stream consumer. */
+/**
+ * Render a collapsible tool-call block for the live stream consumer.
+ * @param toolName
+ * @param toolArguments
+ */
 export function renderToolCallBlock(toolName: string, toolArguments: string,): string {
   const name = escapeHtml(toolName,);
   const args = escapeHtml(toolArguments,);

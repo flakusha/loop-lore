@@ -6,6 +6,10 @@ import { escapeHtml, } from "../shared";
 import { estimateTokens, } from "./helpers";
 import type { NewChatCtx, } from "./state";
 
+/**
+ * @param ctx
+ * @param actorId
+ */
 export async function loadMemoriesForActor(ctx: NewChatCtx, actorId: string,): Promise<void> {
   try {
     const res = await feFetch(`/api/actors/${actorId}/memories`,);
@@ -34,6 +38,9 @@ export async function loadMemoriesForActor(ctx: NewChatCtx, actorId: string,): P
   }
 }
 
+/**
+ * @param ctx
+ */
 export function renderMemoryList(ctx: NewChatCtx,): void {
   if (!ctx.memoryCheckboxList || !ctx.memoryCountLabel) { return; }
 
@@ -67,6 +74,9 @@ export function renderMemoryList(ctx: NewChatCtx,): void {
   ctx.memoryCheckboxList.innerHTML = checkboxLabels.join("",);
 }
 
+/**
+ * @param ctx
+ */
 export function bindMemoryHandlers(ctx: NewChatCtx,): void {
   (globalThis as any)._toggleMemorySelect = function(id: string, checked: boolean,) {
     if (checked) {

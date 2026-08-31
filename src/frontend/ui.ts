@@ -21,6 +21,7 @@ import {
   type TranslationMap,
 } from "./i18n";
 
+/** */
 export function toggleSidebar(): void {
   const sidebar = document.querySelector<HTMLElement>("#layout-sidebar",);
   const backdrop = document.querySelector<HTMLElement>("#sidebar-backdrop",);
@@ -36,6 +37,7 @@ export function toggleSidebar(): void {
   }
 }
 
+/** */
 export function closeSidebar(): void {
   const sidebar = document.querySelector<HTMLElement>("#layout-sidebar",);
   const backdrop = document.querySelector<HTMLElement>("#sidebar-backdrop",);
@@ -59,6 +61,10 @@ const ICONS: Record<string, string> = {
   warning: "⚠",
 };
 
+/**
+ * @param type
+ * @param message
+ */
 export function showToast(type: string, message: string,): void {
   const container = document.querySelector("#toast-container",);
   if (!container) { return; }
@@ -113,6 +119,9 @@ if (!(document as any)[LISTENER_KEY]) {
 let modalFocusCleanup: (() => void) | null = null;
 let previousFocusElement: HTMLElement | null = null;
 
+/**
+ * @param id
+ */
 export function openModal(id: string,): void {
   const modal = document.querySelector(`#${CSS.escape(id,)}`,);
   if (!modal) { return; }
@@ -140,6 +149,9 @@ export function openModal(id: string,): void {
   first?.focus();
 }
 
+/**
+ * @param el
+ */
 export function closeModal(el: Element,): void {
   const overlay = el.closest(".modal-overlay",);
   overlay?.classList.remove("open",);
@@ -159,6 +171,9 @@ export function closeModal(el: Element,): void {
   }
 }
 
+/**
+ * @param event
+ */
 export function closeModalOnBackdrop(event: Event,): void {
   if (event.target !== event.currentTarget) {
     return;
@@ -180,6 +195,9 @@ export function closeModalOnBackdrop(event: Event,): void {
 
 // ── Theme ────────────────────────────────────────────────────
 
+/**
+ * @param themeId
+ */
 export function applyTheme(themeId: string,): void {
   const themes: { id: string; file: string }[] = globalThis.__THEMES ?? [];
   if (!themeId || themes.every((t,) => t.id !== themeId)) { return; }
@@ -191,6 +209,7 @@ export function applyTheme(themeId: string,): void {
   localStorage.setItem("theme-preference", themeId,);
 }
 
+/** */
 export function getTheme(): string {
   return localStorage.getItem("theme-preference",) || "default";
 }
@@ -199,6 +218,8 @@ export function getTheme(): string {
 /**
  * Resolve a translation key against the global locale strings.
  * Falls back to key display if not found.
+ * @param key
+ * @param params
  */
 export function t(key: string, params?: Record<string, string>,): string {
   if (typeof key !== "string") { return ""; }
@@ -211,6 +232,9 @@ export function t(key: string, params?: Record<string, string>,): string {
   return value;
 }
 
+/**
+ * @param locale
+ */
 export async function loadLocale(locale: string,): Promise<void> {
   const strings = await loadTranslations(locale,);
   if (strings) {
@@ -219,6 +243,9 @@ export async function loadLocale(locale: string,): Promise<void> {
   }
 }
 
+/**
+ * @param localeId
+ */
 export function setLocale(localeId: string,): void {
   saveLocale(localeId as any,);
   loadLocale(localeId,);

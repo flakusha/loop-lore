@@ -20,6 +20,9 @@ import type { HandlerOpts, } from "./types";
 
 export type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ */
 export function nsfwModerationRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "nsfw-moderation", },)
     .use(preferencesRoutes(opts,),)
