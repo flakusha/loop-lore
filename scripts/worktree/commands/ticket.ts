@@ -3,7 +3,7 @@
 
 import { resolve, } from "path";
 import type { WorktreeConfig, } from "../utils/config";
-import { gitSync, } from "../utils/git";
+import { getWorktreeRoot, gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
 
 const VALID_TYPES = ["BUG", "FEAT", "FIX", "IDEA", "TASK", "SOL", "INFRA",] as const;
@@ -56,8 +56,12 @@ export async function ticket(args: string[], config: WorktreeConfig,): Promise<v
   const ticketFile = `.plan/tickets/${type}-${ticketName}.md`;
   const extid = `${type}-${ticketName}`;
   const fullTitle = `${extid}: ${title}`;
-  const repoRoot = config.repoRoot;
-  const ticketPath = resolve(repoRoot, ticketFile,);
+  // Plan files belong to the checkout in progress (worktree-aware): when the
+  // CLI is invoked from inside tree/<branch>, the ticket file must land in
+  // that worktree, not the main checkout (config.repoRoot is the *main* root
+  // by design, since git issues live in the shared .git store).
+  const planRoot = getWorktreeRoot();
+  const ticketPath = resolve(planRoot, ticketFile,);
 
   const exists = await Bun.file(ticketPath,).exists();
   if (exists) {
@@ -83,20 +87,20 @@ export async function ticket(args: string[], config: WorktreeConfig,): Promise<v
   }
 
   log("info", `creating git issue: ${extid}`,);
-  const issueOutput = gitSync(repoRoot, "issue", "create", fullTitle, "-m", body || "No description",);
+  const issueOutput = gitSync(config.repoRoot, "issue", "create", fullTitle, "-m", body || "No description",);
 
   const hashMatch = issueOutput.match(/[0-9a-f]{7,40}/,);
   const hash = hashMatch?.[0];
 
   if (hash) {
-    gitSync(repoRoot, "issue", "comment", hash, "-m", `Plan spec: ${ticketFile}`,);
+    gitSync(config.repoRoot, "issue", "comment", hash, "-m", `Plan spec: ${ticketFile}`,);
     // Single edit invocation: `git issue edit -l` replaces the whole label set,
     // so per-label edits would leave only the last label applied.
     if (flags.labels.length > 0) {
-      gitSync(repoRoot, "issue", "edit", hash, ...flags.labels.flatMap((label,) => ["-l", label,]),);
+      gitSync(config.repoRoot, "issue", "edit", hash, ...flags.labels.flatMap((label,) => ["-l", label,]),);
     }
     if (flags.priority) {
-      gitSync(repoRoot, "issue", "edit", hash, "-p", flags.priority,);
+      gitSync(config.repoRoot, "issue", "edit", hash, "-p", flags.priority,);
     }
     log("success", `created git issue: ${hash}`,);
   } else {

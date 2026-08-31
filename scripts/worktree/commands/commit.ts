@@ -7,17 +7,20 @@
 
 import { type WorktreeConfig, } from "../utils/config";
 import { gitSync, gitSyncQuiet, } from "../utils/git";
+import { extractMessageInput, } from "../utils/message";
 import { log, } from "../utils/output";
 
 export async function commit(
   args: string[],
   config: WorktreeConfig,
 ): Promise<void> {
-  const message = args.join(" ",);
+  const { rest, message: messageInput, } = await extractMessageInput(args,);
+  const message = messageInput ?? rest.join(" ",);
 
   if (!message) {
     log("error", "commit message required",);
-    console.log("  Usage: worktree commit <message>",);
+    console.log('  Usage: worktree commit [-F <file>|--message-file <file>] "<message>"',);
+    console.log('  Multi-line: worktree commit -F .tmp/msg.txt   (or pipe via "-F -")',);
     process.exit(1,);
   }
 
@@ -69,6 +72,7 @@ export async function commit(
   console.log(`  Author:    ${authorName} <${authorEmail}>`,);
   console.log(`  Committer: ${config.agentGpgName} <${config.agentGpgEmail}>`,);
   console.log(`  GPG Key:   ${config.agentGpgKeyId.slice(0, 8,)}...`,);
+  console.log(`  Message:   ${message.split("\n",)[0]}`,);
 
   const result = Bun.spawnSync(
     [
