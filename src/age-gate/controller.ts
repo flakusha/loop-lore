@@ -130,6 +130,9 @@ export async function handleGetStatus(database: Kysely<DB>, userId?: string | nu
  * Accept the age gate. Requires `{ birthDate: "YYYY-MM-DD" }` in the body.
  * Returns 200 on success, 400 for invalid data, 403 if underage.
  * @param opts - Options object containing database, userId, and body.
+ * @param opts.database - Database instance.
+ * @param opts.userId - User ID from auth middleware.
+ * @param opts.body - Request body.
  * @returns JSON response indicating success or failure.
  */
 export async function handleAccept({ database, userId, body, }: HandleAcceptOpts,): Promise<Response> {
@@ -170,6 +173,8 @@ export async function handleAccept({ database, userId, body, }: HandleAcceptOpts
  * GET /api/admin/age-gate
  *
  * Returns the current runtime age gate config (admin-only).
+ * @param userRole - User's role from auth middleware.
+ * @returns JSON response with current config.
  */
 export function handleAdminGetConfig(userRole: string | null | undefined,): Response {
   if (!can(userRole, "admin.settings",)) {
