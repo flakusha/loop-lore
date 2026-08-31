@@ -7,7 +7,11 @@ import { acceptAgeGate, AgeGateError, getStatus, UnderageError, validateAge, } f
 
 // ── Helpers ──────────────────────────────────────────────────
 
-/** Create a test AgeGateConfig with optional overrides. */
+/**
+ * Create a test AgeGateConfig with optional overrides.
+ * @param overrides - Partial config to override defaults.
+ * @returns Complete AgeGateConfig for testing.
+ */
 function gateConfig(overrides?: Partial<AgeGateConfig>,): AgeGateConfig {
   return {
     enabled: true,
@@ -195,6 +199,7 @@ describe("acceptAgeGate", () => {
 /**
  * Create a minimal in-memory SQLite DB with a users table
  * containing the age gate columns. Returns the Kysely instance.
+ * @returns Kysely instance with users table.
  */
 async function createTestDatabase() {
   const sqlite = new Database(":memory:",);
