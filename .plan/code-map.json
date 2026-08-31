@@ -1347,10 +1347,21 @@
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
     }
   ],
+
+  "src/assistant/prompt/sections/system.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-world-prompt-overrides-injected-verbatim-as-system.md"
+    }
+  ],
   "src/assistant/prompt/sections/system.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-world-prompt-overrides-injected-verbatim-as-system.md"
     }
   ],
   "src/assistant/prompt/sections/task-clarification.test.ts": [
@@ -3021,6 +3032,13 @@
       "source": "docs/spec/emotion-avatars.md"
     }
   ],
+
+  "src/characters/services/federation-consent.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md"
+    }
+  ],
   "src/characters/services/internal-traits/index.ts": [
     {
       "kind": "ticket",
@@ -4471,6 +4489,13 @@
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
     }
   ],
+
+  "src/components/chat/wizard-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-creation-wizard-bug-wizardid-unused.md"
+    }
+  ],
   "src/components/export/progress-bar.html": [
     {
       "kind": "ticket",
@@ -5508,6 +5533,10 @@
     }
   ],
   "src/crypto/activitypub-keys.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-crypto-activitypub-key-rotation-is-non-atomic-insert-failure.md"
@@ -9217,7 +9246,18 @@
       "source": ".plan/tickets/FEAT-068.md"
     }
   ],
+
+  "src/frontend/alpine/creation-wizard.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-creation-wizard-bug-wizardid-unused.md"
+    }
+  ],
   "src/frontend/alpine/creation-wizard.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-creation-wizard-bug-wizardid-unused.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-characters-creation-wizard-wizardid-unused.md"
@@ -10661,10 +10701,24 @@
       "source": ".plan/tickets/TASK-proactive-messaging.md"
     }
   ],
+
+  "src/frontend/pages/characters-traits.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-traits-page-injects-unescaped-goal-into-innerhtml-.md"
+    }
+  ],
   "src/frontend/pages/characters-traits.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-traits-page-injects-unescaped-goal-into-innerhtml-.md"
+    }
+  ],
+
+  "src/frontend/pages/characters.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md"
     }
   ],
   "src/frontend/pages/characters.ts": [
@@ -18409,6 +18463,13 @@
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/search-and-filter.md"
+    }
+  ],
+
+  "src/routes/views/character-edit-form.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-character-edit-form-renders-unescaped-user-fields-stored-xss.md"
     }
   ],
   "src/routes/views/character-edit-form.ts": [
