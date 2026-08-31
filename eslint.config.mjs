@@ -157,15 +157,72 @@ export default [
       "no-restricted-globals": "off",
     },
   },
-  // JSDoc -- relaxed rules. Only check that JSDoc exists on public exports,
-  // not full descriptions. Can revisit once public-export debt is cleared.
+  // JSDoc -- recommendation-level (warn, non-blocking). Ongoing cleanup task:
+  // promote to "error" after existing public-export debt is cleared.
   {
     files: ["src/**/*.ts"],
     plugins: {
       jsdoc,
     },
     rules: {
-      // Only check that JSDoc exists on public exports — not full descriptions
+      // ...jsdoc.configs["flat/recommended-typescript"].rules,
+      // Relaxed rules — require-jsdoc presence but not full descriptions
+      // (can revisit once public-export debt is cleared)
+      "jsdoc/require-param-description": "off",
+      "jsdoc/require-returns-description": "off",
+      "jsdoc/require-param": "off",
+      "jsdoc/require-returns": "off",
+      "jsdoc/require-throws": "off",
+      "jsdoc/require-example": "off",
+      "jsdoc/require-yields": "off",
+      "jsdoc/require-throws-type": "off",
+      "jsdoc/check-param-names": "off",
+      // Target public exports only (not private/internal helpers)
+      "jsdoc/require-jsdoc": ["warn", {
+        require: {
+          FunctionDeclaration: true,
+          ClassDeclaration: true,
+          MethodDefinition: true,
+        },
+        contexts: [
+          "ExportNamedDeclaration > FunctionDeclaration",
+          "ExportNamedDeclaration > ClassDeclaration",
+          "ExportNamedDeclaration > TSTypeAliasDeclaration",
+          "ExportNamedDeclaration > TSInterfaceDeclaration",
+          "ExportNamedDeclaration > VariableDeclaration > ArrowFunctionExpression",
+        ],
+      }],
+    },
+  },
+        contexts: [
+          "ExportNamedDeclaration > FunctionDeclaration",
+          "ExportNamedDeclaration > ClassDeclaration",
+          "ExportNamedDeclaration > TSTypeAliasDeclaration",
+          "ExportNamedDeclaration > TSInterfaceDeclaration",
+          "ExportNamedDeclaration > VariableDeclaration > ArrowFunctionExpression",
+        ],
+      }],
+      "jsdoc/require-yields": "off",
+    },
+  },
+      // Target public exports only (not private/internal helpers)
+      "jsdoc/require-jsdoc": ["warn", {
+        require: {
+          FunctionDeclaration: true,
+          ClassDeclaration: true,
+          MethodDefinition: true,
+        },
+        contexts: [
+          "ExportNamedDeclaration > FunctionDeclaration",
+          "ExportNamedDeclaration > ClassDeclaration",
+          "ExportNamedDeclaration > TSTypeAliasDeclaration",
+          "ExportNamedDeclaration > TSInterfaceDeclaration",
+          "ExportNamedDeclaration > VariableDeclaration > ArrowFunctionExpression",
+        ],
+      }],
+    },
+  },
+      // Target public exports only (not private/internal helpers)
       "jsdoc/require-jsdoc": ["warn", {
         require: {
           FunctionDeclaration: true,
