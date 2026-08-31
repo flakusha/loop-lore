@@ -35,7 +35,7 @@ Genuinely missing. The question-card → answer → consequence pipeline is not 
 - `src/frontend/vn/qa-mode.ts` covers validation only, not interaction
 - `src/routes/vn-generate/index.ts` only wires `storyRoutes` + `choicesRoutes`; no question/answer routes
 
-Move the interaction-loop scope to a new ticket (`TASK-vn-question-answer-interaction.md`) to avoid conflating static QA with the missing interactive feature.
+An earlier plan to move the interaction-loop scope to a separate follow-up ticket was not carried out; both deliverables stay tracked by this ticket (QA Validator ✅ / Interaction Loop ⬜), which keeps static validation and the interactive feature from being conflated.
 
 ## Scope
 
