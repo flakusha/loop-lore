@@ -23,7 +23,7 @@ When invoked inside a linked worktree, write the ticket file relative to that wo
 
 ## Reproduce
 
-1. `bun run scripts/worktree/ new some-branch`; 2. `cd tree/some-branch`; 3. `bun run scripts/worktree/ ticket TASK "demo" "body"`; 4. observe file created at `<main>/.plan/tickets/TASK-demo.md`, absent from the worktree.
+1. `bun run scripts/worktree/ new some-branch`; 2. `cd tree/some-branch`; 3. `bun run scripts/worktree/ ticket TASK "demo" "body"`; 4. observe file created at `<main>/.plan/tickets/<TYPE>-demo.md`, absent from the worktree.
 
 ## Acceptance Criteria
 
