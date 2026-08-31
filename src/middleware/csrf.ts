@@ -29,17 +29,24 @@ export const CSRF_HEADER = "x-csrf-token";
 export const CSRF_COOKIE = "csrf_token";
 export const CSRF_COOKIE_MAX_AGE_SECS = 86_400; // 24h, mirrors Bun.CSRF default expiry
 
+
 /**
  * Routes that mint a new session MUST be exempted from CSRF verification —
  * the sessionId binding principal does not exist until the handler runs.
  * Format: method + route pattern (Elysia route key).
+ *
+ * IMPORTANT: `/api/auth/logout` is NOT in this set. The JWT-in-cookie
+ * assumption ("logout carries its own proof") defeats CSRF: an attacker
+ * page can force a logout cross-origin because the cookie is
+ * auto-attached on every request. Logout requires CSRF verification
+ * (same as any other unsafe method) — see
+ * BUG-logout-route-exempt-from-csrf-verification-logoff-csrf.
  */
 export const CSRF_EXEMPT_ROUTES: ReadonlySet<string> = new Set([
   "POST /api/auth/login",
   "POST /api/auth/register",
   "POST /api/demo-login",
-  "POST /api/auth/logout", // logout uses existing session; exempt because it carries the JWT, not the CSRF cookie
-],);
+]);
 
 /** HTTP methods that require CSRF verification when the route is not exempt. */
 const UNSAFE_METHODS: ReadonlySet<string> = new Set([
@@ -214,21 +221,26 @@ export function decideCsrf(
   if (isUnsafe && !isExempt) {
     const headerToken = args.headers.get(CSRF_HEADER,);
     const cookieToken = readCsrfCookie(args.headers.get("cookie",),);
-    // Either source is acceptable for the double-submit pattern, but at
-    // least one must be present and they must match.
-    const token = headerToken ?? cookieToken;
-    if (token === null || token.length === 0) {
-      opts.logger?.warn("csrf.missing_token", { method, route: routeKey, sessionId: args.sessionId, },);
+    // Double-submit cookie requires BOTH the header AND the cookie to be
+    // present and equal. Accepting either alone (the previous
+    // `headerToken ?? cookieToken` fallback) defeats the pattern: an
+    // attacker who can read the cookie via a sibling subdomain, or set
+    // the cookie via a same-site XSS, can mint a forged request carrying
+    // only one half. Requiring both halves makes the cookie AND the
+    // header each independently non-leakable. See
+    // BUG-csrf-verification-accepts-cookie-only-token-defeating-do.
+    if (headerToken === null || cookieToken === null) {
+      opts.logger?.warn("csrf.missing_token", { method, route: routeKey, sessionId: args.sessionId, hasHeader: headerToken !== null, hasCookie: cookieToken !== null, },);
       return { ok: false, cookieToIssue: null, };
     }
-    if (headerToken !== null && cookieToken !== null && headerToken !== cookieToken) {
+    if (headerToken !== cookieToken) {
       opts.logger?.warn("csrf.header_cookie_mismatch", { method, route: routeKey, },);
       return { ok: false, cookieToIssue: null, };
     }
     // Bind to the authenticated session when present; otherwise bind to the
     // pre-auth request id so an unauthenticated attacker can't replay.
     const binding = args.sessionId ?? `anonymous::${args.requestId}`;
-    const ok = verifyCsrfToken(opts.secret, token, binding,);
+    const ok = verifyCsrfToken(opts.secret, headerToken, binding,);
     if (!ok) {
       opts.logger?.warn("csrf.verify_failed", { method, route: routeKey, sessionId: args.sessionId, },);
       return { ok: false, cookieToIssue: null, };
@@ -262,7 +274,13 @@ export function cookieForDecision(
   if (decision.cookieToIssue === null) { return null; }
   const secure = resolveCookieSecure(
     opts.cookieSecureOverride,
-    opts.cookieSecureInProd ?? true,
+    // Default `Secure` to true only when running in production. Plain-HTTP
+    // dev servers reject `Secure` cookies — without this check, every
+    // local developer hits "cookie not set" during login. Production
+    // gets the safe default; dev gets the workable default; explicit
+    // `cookieSecureOverride` still wins. See
+    // BUG-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.
+    opts.cookieSecureInProd ?? process.env["NODE_ENV"] === "production",
   );
   return buildCsrfCookie(decision.cookieToIssue, {
     secure,
