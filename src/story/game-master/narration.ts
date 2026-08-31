@@ -19,7 +19,12 @@ import {
 } from "../../db/enums";
 import type { GmState, } from "./types";
 
-/** Inject narration message into the story timeline */
+/**
+ * Inject narration message into the story timeline
+ * @param state
+ * @param worldId
+ * @param text
+ */
 export async function injectNarration(state: GmState, worldId: string, text: string,): Promise<void> {
   const narrator = await state.db
     .selectFrom("actors",)

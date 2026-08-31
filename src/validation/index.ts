@@ -3,7 +3,6 @@
 
 /**
  * Validation barrel.
- *
  * @module validation
  */
 

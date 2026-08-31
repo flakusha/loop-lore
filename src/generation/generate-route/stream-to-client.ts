@@ -24,6 +24,7 @@ import { buildToolCallAssistantMessage, toGenerationToolCalls, } from "./stream-
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
 import type { GenerateRequest, } from "./types";
 
+/** */
 export interface StreamToClientOpts {
   input: GenerateRequest;
   database: Kysely<DB>;
@@ -37,6 +38,19 @@ export interface StreamToClientOpts {
   failoverList: { name: string; provider: LLMProvider }[];
 }
 
+/**
+ * @param root0
+ * @param root0.input
+ * @param root0.database
+ * @param root0.messages
+ * @param root0.cfg
+ * @param root0.userId
+ * @param root0.attemptId
+ * @param root0.modelId
+ * @param root0.providerName
+ * @param root0.providerReq
+ * @param root0.failoverList
+ */
 export function streamToClient({
   input,
   database,

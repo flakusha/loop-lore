@@ -24,7 +24,6 @@
  *
  * `rate-limit.ts` is **not** an idempotency layer. Do not modify it as
  * part of this work.
- *
  * @see TASK-middleware-global-idempotency-replay-for-re-fired-requests.md
  * @see epic-middleware-request-lifecycle.md
  */
@@ -46,8 +45,10 @@ interface InMemoryEntry {
   completedAt: number | null;
 }
 
+/** */
 export type IdempotencyBackend = "memory" | "table";
 
+/** */
 export interface IdempotencyConfig {
   /** Backend selector. Default: `"memory"`. */
   backend?: IdempotencyBackend;
@@ -64,6 +65,12 @@ export interface IdempotencyConfig {
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24h — matches messages.idempotencyExpiryHours default
 
 // userId scopes the key (BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r) so two authenticated users sharing an X-Request-Id cannot replay each other's cached responses; unauthenticated requests share the `anon` bucket (401-bound downstream).
+/**
+ * @param method
+ * @param routePattern
+ * @param requestId
+ * @param userId
+ */
 function makeKey(
   method: string,
   routePattern: string,
@@ -79,7 +86,6 @@ function makeKey(
  * Usage:
  *   .guard({ beforeHandle: idempotent({ backend: "table", asyncStore, }), },
  *     (app,) => app.post("/api/...", handler,),)
- *
  * @param config - Backend selection + TTL + store binding.
  */
 export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHandle {
@@ -164,6 +170,12 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
     /**
      * Record a completed response into the cache. Called from a route
      * `afterHandle` after the handler runs successfully.
+     * @param args
+     * @param args.method
+     * @param args.route
+     * @param args.requestId
+     * @param args.userId
+     * @param args.response
      */
     recordResponse(
       args: { method: string; route: string; requestId: string; userId?: string | null; response: Response },
@@ -187,7 +199,14 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
         },);
       },);
     },
-    /** Release an in-flight slot without caching (non-2xx completion). */
+    /**
+     * Release an in-flight slot without caching (non-2xx completion).
+     * @param args
+     * @param args.method
+     * @param args.route
+     * @param args.requestId
+     * @param args.userId
+     */
     release(args: { method: string; route: string; requestId: string; userId?: string | null },): void {
       cache.delete(makeKey(args.method, args.route, args.requestId, args.userId ?? null,),);
     },
@@ -198,7 +217,10 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
   };
 }
 
-/** Drop headers that must NOT replay (cookies, hop-by-hop). */
+/**
+ * Drop headers that must NOT replay (cookies, hop-by-hop).
+ * @param headers
+ */
 function filterReplayHeaders(headers: Record<string, string>,): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [name, value,] of Object.entries(headers,)) {

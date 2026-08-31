@@ -26,6 +26,11 @@ interface StreamAccum {
   outputTokens: number;
 }
 
+/**
+ * @param state
+ * @param req
+ * @param handler
+ */
 export async function streamDispatch(
   state: AnthropicState,
   req: GenerateRequest,
@@ -124,7 +129,6 @@ interface PendingEvent {
 
 /**
  * Process a single SSE line from the Anthropic stream.
- *
  * @param line - One SSE line (`event:` or `data:`)
  * @param signal - Abort signal; when aborted the stream is marked cancelled
  * @param handler - Stream event callback
@@ -161,7 +165,6 @@ function applyStreamLine(
 
 /**
  * Apply a single Anthropic stream event to the accumulator + handler.
- *
  * @param event - Parsed event
  * @param handler - Stream event callback
  * @param acc - Mutable accumulators (content, thinking, tool calls, usage)

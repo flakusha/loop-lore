@@ -22,6 +22,10 @@ const ActorIdTraitParams = t.Object({
   traitName: t.String(),
 },);
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function permanentTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const traitsService = TraitsService(database,);

@@ -13,6 +13,7 @@ import type { Kysely, } from "kysely";
 import type { Config, NsfwConfig, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 
+/** */
 export type HookEventType =
   | "mood_shift"
   | "emotion_change"
@@ -20,6 +21,7 @@ export type HookEventType =
   | "moderation_flag"
   | "privacy_check";
 
+/** */
 export interface HookContext {
   chatId: string;
   actorId: string;
@@ -40,6 +42,7 @@ export interface HookContext {
   db: Kysely<DB>;
 }
 
+/** */
 export interface HookResult {
   handled: boolean;
   eventType: HookEventType;
@@ -48,6 +51,7 @@ export interface HookResult {
   reason?: string;
 }
 
+/** */
 export interface HookHandler {
   readonly name: string;
   readonly eventTypes: HookEventType[];
@@ -55,11 +59,13 @@ export interface HookHandler {
   execute(content: string, context: HookContext,): Promise<HookResult>;
 }
 
+/** */
 export interface HookChainOptions {
   hooks: HookHandler[];
   context: HookContext;
 }
 
+/** */
 export interface HookChainResult {
   allowed: boolean;
   results: HookResult[];

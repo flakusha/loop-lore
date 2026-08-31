@@ -12,7 +12,6 @@ import {
 /**
  * Calculate ability modifier from stat value.
  * Formula: floor((stat - 10) / 2)
- *
  * @param stat - Ability score (1–30)
  * @returns Modifier (can be negative)
  */
@@ -22,6 +21,7 @@ export function abilityModifier(stat: number,): number {
 
 /**
  * Compute all modifiers from a stat block.
+ * @param stats
  */
 export function computeModifiers(stats: StatBlock,): StatBlockWithModifiers {
   return {
@@ -37,6 +37,8 @@ export function computeModifiers(stats: StatBlock,): StatBlockWithModifiers {
 
 /**
  * Get the modifier for a specific ability from a stat block.
+ * @param stats
+ * @param ability
  */
 export function getModifier(stats: StatBlock, ability: AbilityName,): number {
   return abilityModifier(stats[ability],);

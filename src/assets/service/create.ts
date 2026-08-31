@@ -11,6 +11,12 @@ import { extractImageMetadata, } from "../metadata";
 import { storeFile, } from "./file-system";
 import type { AssetRecord, CreateAssetOpts, CreateAssetResult, } from "./types";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.input
+ * @param root0.uploadDir
+ */
 export async function createAsset({ database, input, uploadDir, }: CreateAssetOpts,): Promise<CreateAssetResult> {
   // Compute content hash for idempotent upload detection
   const hasher = new Bun.CryptoHasher("sha256",);

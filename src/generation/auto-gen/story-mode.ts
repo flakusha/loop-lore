@@ -30,6 +30,7 @@ export type { StoryModeOpts, } from "./story-mode-opts";
  * - World event extraction and application
  * - Quest tracking
  * - Escalation/regeneration handling
+ * @param opts
  */
 export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
   const { database, config, chatId, parentMessageId, userId, gmConfig, worldId, deps, } = opts;
@@ -46,17 +47,17 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   const gmGuidance = gmConfigRaw.gmGuidance as GmGuidance | undefined;
   const gameMasterConfig: GameMasterConfig = {
     type: (gmConfigRaw.type as GameMasterType | undefined) ?? GameMasterType.Llm,
-    // eslint-disable-next-line unicorn/consistent-conditional-object-spread -- `&&` form breaks TS spread on non-object falsy values
+
     ...(gmConfigRaw.llmConfig
       ? { llmConfig: gmConfigRaw.llmConfig as GameMasterConfig["llmConfig"], }
       : {}),
-    // eslint-disable-next-line unicorn/consistent-conditional-object-spread -- `&&` form breaks TS spread on non-object falsy values
+
     ...(gmConfigRaw.actorModels
       ? { actorModels: gmConfigRaw.actorModels as GameMasterConfig["actorModels"], }
       : {}),
-    // eslint-disable-next-line unicorn/consistent-conditional-object-spread -- `&&` form breaks TS spread on non-object falsy values
+
     ...(gmConfigRaw.humanGM ? { humanGM: gmConfigRaw.humanGM as GameMasterConfig["humanGM"], } : {}),
-    // eslint-disable-next-line unicorn/consistent-conditional-object-spread -- `&&` form breaks TS spread on non-object falsy values
+
     ...(typeof gmConfigRaw.escalationThreshold === "number"
       ? { escalationThreshold: gmConfigRaw.escalationThreshold, }
       : {}),
@@ -131,9 +132,9 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
 
   // Store the generated response as a message
   const messageId = uid();
-  // eslint-disable-next-line no-useless-assignment -- placeholder; reassigned after encryptAtRest
+
   let storedContent = turnResult.prompt;
-  // eslint-disable-next-line no-useless-assignment -- placeholder; reassigned after encryptAtRest
+
   let storedKeyId: string | null = null;
   const contentEncoding = ContentEncoding.Identity;
   // ensureActorKey is required before deriveChatKeyForChat in the standard path —

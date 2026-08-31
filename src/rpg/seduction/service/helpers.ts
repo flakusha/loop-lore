@@ -7,7 +7,21 @@ import type {
 import { jsonParseOr, } from "../../../utils";
 import type { ArousalState, DesireProfile, SeductionSkill, } from "./types";
 
-/** Convert database row to desire profile. */
+/**
+ * Convert database row to desire profile.
+ * @param row
+ * @param row.id
+ * @param row.actor_id
+ * @param row.turn_ons
+ * @param row.turn_offs
+ * @param row.fetishes
+ * @param row.hard_limits
+ * @param row.current_desire
+ * @param row.desire_decay_rate
+ * @param row.desire_buildup_rate
+ * @param row.created_at
+ * @param row.updated_at
+ */
 export function rowToDesireProfile(row: {
   id: string;
   actor_id: string;
@@ -36,7 +50,19 @@ export function rowToDesireProfile(row: {
   };
 }
 
-/** Convert database row to a seduction skill. */
+/**
+ * Convert database row to a seduction skill.
+ * @param row
+ * @param row.id
+ * @param row.actor_id
+ * @param row.skill_category
+ * @param row.skill_name
+ * @param row.level
+ * @param row.xp
+ * @param row.xp_to_next
+ * @param row.created_at
+ * @param row.updated_at
+ */
 export function rowToSkill(row: {
   id: string;
   actor_id: string;
@@ -61,7 +87,20 @@ export function rowToSkill(row: {
   };
 }
 
-/** Convert database row to arousal state. */
+/**
+ * Convert database row to arousal state.
+ * @param row
+ * @param row.id
+ * @param row.actor_id
+ * @param row.world_id
+ * @param row.level
+ * @param row.buildup_rate
+ * @param row.decay_rate
+ * @param row.modifiers
+ * @param row.last_update
+ * @param row.created_at
+ * @param row.updated_at
+ */
 export function rowToArousal(row: {
   id: string;
   actor_id: string;

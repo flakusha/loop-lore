@@ -40,6 +40,11 @@ const CreateLinkBody = t.Object({
 const DeleteLinkBody = t.Object({ entityType: t.Optional(t.String(),), entityId: t.Optional(t.String(),), },);
 const ShareBody = t.Object({ actor_id: t.String(), },);
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ */
 export function assetRoutes({ database, config, }: { database: Kysely<DB>; config: Config },) {
   const deps = { database, config, };
   const withCtx = (fn: (d: typeof deps & { ctx: RouteCtx },) => Promise<Response>,) => (ctx: any,) =>

@@ -6,6 +6,10 @@ import type { MusicService, } from "../../validation/schemas/music-links";
 
 // ── Internal helpers ────────────────────────────────────────
 
+/**
+ * @param url
+ * @param _service
+ */
 export function extractTrackId(url: string, _service: MusicService,): string {
   switch (_service) {
     case "spotify": {
@@ -29,12 +33,20 @@ export function extractTrackId(url: string, _service: MusicService,): string {
   }
 }
 
+/**
+ * @param url
+ * @param _service
+ */
 export function toServiceUrl(url: string, _service: MusicService,): string {
   // Normalize to a clean https:// URL for deep linking
   if (url.startsWith("http",)) { return url; }
   return `https://${url}`;
 }
 
+/**
+ * @param url
+ * @param service
+ */
 export function toEmbedSrc(url: string, service: MusicService,): string {
   const clean = url.startsWith("http",) ? url : `https://${url}`;
   switch (service) {

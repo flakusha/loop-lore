@@ -16,6 +16,11 @@ import type { CharacterSystemsImportResult, } from "./types";
  * World setup is scoped to a (actor, world) pair, so it is a no-op unless a
  * `worldId` is provided. Uses the same upsert the API routes use, so imports
  * merge idempotently into any existing bundle.
+ * @param db
+ * @param actorId
+ * @param data
+ * @param result
+ * @param worldId
  */
 export async function importWorldSetup(
   db: Kysely<DB>,

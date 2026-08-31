@@ -20,8 +20,6 @@
  *  - the `IntegrationRegistry` type/factory
  *  - the `integration` singleton (populated at module load)
  *  - `renderIntegrationMermaid`
- *
- * @module rpg/integration-registry
  */
 import { SHARED_CONTRACTS, } from "./contracts";
 import { buildEdges, } from "./edges";
@@ -70,12 +68,11 @@ export { renderIntegrationMermaid, } from "./mermaid";
 // The empty interface is intentional: it merges the `IntegrationRegistry`
 // factory value with a same-named type so one name is both the API type and
 // the factory.
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+
 export interface IntegrationRegistry extends IntegrationRegistryIface {}
 
 /**
  * Create an IntegrationRegistry instance.
- *
  * @returns A fresh, empty integration graph (matches the former
  *          `new IntegrationRegistry()`).
  */

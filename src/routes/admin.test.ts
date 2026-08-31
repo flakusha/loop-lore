@@ -14,6 +14,11 @@ import { adminRoutes, } from "./admin";
 
 const mockConfig = {} as any;
 
+/**
+ * @param db
+ * @param userRole
+ * @param config
+ */
 function createAdminApp(db: Kysely<DB>, userRole: string, config: unknown = mockConfig,): Elysia {
   return new Elysia({ name: "test-admin", },)
     .derive(() => ({ userRole, }))

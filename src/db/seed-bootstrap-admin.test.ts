@@ -6,6 +6,9 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import type { DB, } from "./schema";
 import { seedDefaultActors, } from "./seed";
 
+/**
+ * @param overrides
+ */
 function multiUserConfig(overrides: Partial<Config["auth"]> = {},): Config {
   return {
     auth: {

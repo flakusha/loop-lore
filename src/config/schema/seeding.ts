@@ -22,6 +22,7 @@
 
 import type { UserRole, } from "../../db/enums-core/users";
 
+/** */
 export interface SeedUserConfig {
   /** Unique login username. Skipped if already present. */
   username: string;
@@ -100,6 +101,7 @@ export interface EnvironmentOverride {
   seedData?: SeedData;
 }
 
+/** */
 export interface SeedingConfig {
   /** Master switch — if false, no configured users/content are seeded. */
   enabled: boolean;

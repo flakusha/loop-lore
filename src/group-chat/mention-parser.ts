@@ -38,7 +38,6 @@ export interface ParsedMention {
  * - @Luna
  * - @Luna hello
  * - @Luna, @Max hello
- *
  * @param text - User message content
  * @returns Array of parsed mentions (may be empty)
  */
@@ -76,7 +75,6 @@ export function parseMentions(text: string,): ParsedMention[] {
  * disambiguate (e.g. `@Lun#` or the full display name). When ambiguity is not
  * triggered the prefix match is deterministic: participants are ordered by
  * `actorId` lexicographically before scanning.
- *
  * @param name - Mention name to resolve (empty string returns null)
  * @param participants - Available participants [{actorId, displayName}]
  * @returns Matching actor ID, or null if no match / ambiguous prefix
@@ -106,7 +104,6 @@ export function resolveMention(
 
 /**
  * Extract all mentioned actor IDs from a message.
- *
  * @param text - User message content
  * @param participants - Available participants [{actorId, displayName}]
  * @returns Array of mentioned actor IDs (may be empty)
@@ -129,6 +126,7 @@ export function extractMentionedActorIds(
 /**
  * Detect initiative claim prefix (>>).
  * Returns { isInitiative: true, cleanMessage: string } if prefixed.
+ * @param input
  */
 export function parseInitiativeFlag(input: string,): { isInitiative: boolean; cleanMessage: string } {
   const trimmed = input.trim();

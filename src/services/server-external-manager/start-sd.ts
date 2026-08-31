@@ -12,6 +12,9 @@ import {
 import type { SdCppOptions, ServerExternalHost, ServerInstance, } from "./types";
 
 // ── Helper: expand ~ to home directory ─────────────────────
+/**
+ * @param path
+ */
 function expandPath(path: string,): string {
   if (path.startsWith("~",)) {
     return `${homedir()}${path.slice(1,)}`;
@@ -21,7 +24,6 @@ function expandPath(path: string,): string {
 
 /**
  * Append the model-loading arguments (checkpoint vs diffusion mode).
- *
  * @param args - Arg list being built
  * @param opts - sd-cpp options
  * @param modelType - Resolved loading mode
@@ -48,7 +50,11 @@ function appendModelArgs(
   }
 }
 
-/** Append path-valued flags (text encoders, components, upscalers). */
+/**
+ * Append path-valued flags (text encoders, components, upscalers).
+ * @param args
+ * @param opts
+ */
 function appendPathFlags(args: string[], opts: SdCppOptions,): void {
   if (opts.clipLPath) { args.push("--clip_l", resolve(expandPath(opts.clipLPath,),),); }
   if (opts.clipGPath) { args.push("--clip_g", resolve(expandPath(opts.clipGPath,),),); }
@@ -65,7 +71,11 @@ function appendPathFlags(args: string[], opts: SdCppOptions,): void {
   if (opts.upscaleModelPath) { args.push("--upscale-model", resolve(expandPath(opts.upscaleModelPath,),),); }
 }
 
-/** Append boolean flags (add only when enabled). */
+/**
+ * Append boolean flags (add only when enabled).
+ * @param args
+ * @param opts
+ */
 function appendBooleanFlags(args: string[], opts: SdCppOptions,): void {
   if (opts.fa) { args.push("--fa",); }
   if (opts.diffusionFA) { args.push("--diffusion-fa",); }
@@ -76,7 +86,11 @@ function appendBooleanFlags(args: string[], opts: SdCppOptions,): void {
   if (opts.autoFit) { args.push("--auto-fit",); }
 }
 
-/** Append value flags (add only when set). */
+/**
+ * Append value flags (add only when set).
+ * @param args
+ * @param opts
+ */
 function appendValueFlags(args: string[], opts: SdCppOptions,): void {
   if (opts.maxVram) { args.push("--max-vram", opts.maxVram,); }
   if (opts.backend) { args.push("--backend", opts.backend,); }
@@ -93,6 +107,8 @@ function appendValueFlags(args: string[], opts: SdCppOptions,): void {
  * Supports two model loading modes:
  * - checkpoint (default): -m modelPath — standalone full model, no llm/vae needed
  * - diffusion: --diffusion-model modelPath — requires --llm (text encoder), --vae optional
+ * @param host
+ * @param opts
  */
 export async function startSdCpp(
   host: ServerExternalHost,

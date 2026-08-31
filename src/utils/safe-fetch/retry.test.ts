@@ -9,26 +9,30 @@ import { safeFetchWithRetry, } from "./retry";
 
 const originalFetch = globalThis.fetch;
 
-/** Run fn with globalThis.fetch swapped for handler (codebase mock-fetch pattern). */
+/**
+ * Run fn with globalThis.fetch swapped for handler (codebase mock-fetch pattern).
+ * @param handler
+ * @param fn
+ */
 async function withMockFetch(
   handler: (url: string | URL | Request, init?: RequestInit,) => Response | Promise<Response>,
   fn: () => Promise<void>,
 ): Promise<void> {
-  // eslint-disable-next-line unicorn/no-global-object-property-assignment
   (globalThis as Record<string, unknown>).fetch = handler;
   try {
     return await fn();
   } finally {
-    // eslint-disable-next-line unicorn/no-global-object-property-assignment
     (globalThis as Record<string, unknown>).fetch = originalFetch;
   }
 }
 
 afterEach(() => {
-  // eslint-disable-next-line unicorn/no-global-object-property-assignment
   (globalThis as Record<string, unknown>).fetch = originalFetch;
 },);
 
+/**
+ * @param statuses
+ */
 function sequenceFetch(statuses: number[],): typeof fetch {
   let i = 0;
   return mock(() =>

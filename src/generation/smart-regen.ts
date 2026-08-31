@@ -17,12 +17,17 @@ export const VALID_REGEN_STYLES: Record<string, string> = {
   casual: "Rewrite in a more casual, conversational tone.",
 };
 
+/** */
 export type RegenStyle = keyof typeof VALID_REGEN_STYLES | null;
 
+/**
+ * @param value
+ */
 export function isValidRegenStyle(value: unknown,): value is NonNullable<RegenStyle> {
   return typeof value === "string" && value in VALID_REGEN_STYLES;
 }
 
+/** */
 export interface SmartRegenRequest {
   messageId: string;
   chatId: string;
@@ -35,6 +40,7 @@ export interface SmartRegenRequest {
  *
  * Returns an empty string when style is null/undefined (plain regen).
  * Each style maps to a clear instruction appended to the system prompt.
+ * @param style
  */
 export function buildStylePrompt(style: RegenStyle,): string {
   if (!style) { return ""; }

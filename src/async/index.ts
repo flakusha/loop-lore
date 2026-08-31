@@ -3,7 +3,6 @@
 
 /**
  * Async request-result subsystem barrel.
- *
  * @see epic-middleware-request-lifecycle.md
  */
 

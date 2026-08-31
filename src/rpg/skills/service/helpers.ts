@@ -28,6 +28,7 @@ const PROFICIENCY_THRESHOLDS: Record<ProficiencyLevel, number> = {
 
 /**
  * Calculate level from XP
+ * @param xp
  */
 export function calculateLevel(xp: number,): number {
   // Simple quadratic scaling: level = sqrt(xp / 50)
@@ -36,6 +37,7 @@ export function calculateLevel(xp: number,): number {
 
 /**
  * Calculate proficiency from XP
+ * @param xp
  */
 export function calculateProficiency(xp: number,): ProficiencyLevel {
   if (xp >= PROFICIENCY_THRESHOLDS[ProficiencyLevel.Grandmaster]) {
@@ -58,6 +60,7 @@ export function calculateProficiency(xp: number,): ProficiencyLevel {
 
 /**
  * Convert database row to Skill interface
+ * @param row
  */
 export function rowToSkill(row: Selectable<CharacterSkills>,): Skill {
   return {

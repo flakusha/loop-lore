@@ -11,6 +11,7 @@
  */
 import { fromBase64, toBase64, } from "../../utils/base64";
 import { safeJsonStringify, } from "../../utils/safe-json";
+/** */
 export interface DhMessagePayload {
   ephemeralPublicJwk: JsonWebKey;
   counter: number;
@@ -34,6 +35,9 @@ export const MESSAGE_KEY_BITS = 256;
  * for newChainKey) by re-importing the hkdfKey each time. Bun's
  * WebCrypto appears to behave better when hkdfKey is freshly imported
  * per derivation rather than reused across multiple deriveBits calls.
+ * @param rootKey
+ * @param myPriv
+ * @param theirPub
  */
 export async function dhStep(
   rootKey: Uint8Array,
@@ -67,6 +71,7 @@ export async function dhStep(
  * Derive the initial chain key from the shared root key (deterministic,
  * both sides compute the same value). Used by initDhRatchet to seed
  * both sendingChainKey and receivingChainKey without an ECDH round-trip.
+ * @param rootKey
  */
 export async function deriveChainKeyFromRoot(rootKey: Uint8Array,): Promise<ArrayBuffer> {
   const hkdfKey = await crypto.subtle.importKey(
@@ -88,7 +93,10 @@ export async function deriveChainKeyFromRoot(rootKey: Uint8Array,): Promise<Arra
   );
 }
 
-/** Advance the chain key by one step. */
+/**
+ * Advance the chain key by one step.
+ * @param chainKey
+ */
 export async function chainStep(chainKey: Uint8Array,): Promise<{
   nextChainKey: Uint8Array;
   messageKey: CryptoKey;
@@ -144,6 +152,10 @@ export async function chainStep(chainKey: Uint8Array,): Promise<{
   };
 }
 
+/**
+ * @param keyBytes
+ * @param payload
+ */
 export async function decryptWithMessageKey(keyBytes: Uint8Array, payload: DhMessagePayload,): Promise<string> {
   const key = await crypto.subtle.importKey(
     "raw",
@@ -160,6 +172,9 @@ export async function decryptWithMessageKey(keyBytes: Uint8Array, payload: DhMes
   return new TextDecoder().decode(plaintext,);
 }
 
+/**
+ * @param jwk
+ */
 export function canonicalJwk(jwk: JsonWebKey,): string {
   const src = jwk as Record<string, unknown>;
   const sorted: Record<string, unknown> = {};

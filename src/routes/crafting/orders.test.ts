@@ -118,13 +118,19 @@ describe("crafting order lifecycle", () => {
     await db.destroy();
   },);
 
-  /** Mount order routes behind a stub auth middleware that sets ctx.userId. */
+  /**
+   * Mount order routes behind a stub auth middleware that sets ctx.userId.
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-order-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
       .use(craftingOrderRoutes({ database: db, },),) as any;
   }
 
+  /**
+   * @param res
+   */
   async function json(res: Response,) {
     return res.json() as unknown;
   }

@@ -28,10 +28,16 @@ import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
+/** */
 function log(): Logger {
   return getLogger().child({ module: "key-management", },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "key-management", },)
     // ── List actor keys ────────────────────────────────────────

@@ -5,7 +5,10 @@ import type { TranslatorFn, } from "../../i18n/types";
 
 // ── Auth helpers ──────────────────────────────────────────────
 
-/** Extract auth fields (userId, userRole) from Elysia context. */
+/**
+ * Extract auth fields (userId, userRole) from Elysia context.
+ * @param ctx
+ */
 export function extractAuth(ctx: unknown,): { userId: string | null; userRole: string | null } {
   return {
     userId: (ctx as any).userId as string | null,
@@ -32,6 +35,7 @@ export const HttpStatus = {
   ServiceUnavailable: 503,
 } as const;
 
+/** */
 export type HttpStatusCode = (typeof HttpStatus)[keyof typeof HttpStatus];
 
 export const ErrorCode = {
@@ -46,16 +50,28 @@ export const ErrorCode = {
   NotImplemented: "NOT_IMPLEMENTED",
   ServiceUnavailable: "SERVICE_UNAVAILABLE",
 } as const;
+/** */
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
+/** */
 export class NotFoundError extends Error {
+  /**
+   * @param entity
+   * @param id
+   * @param options
+   */
   constructor(entity: string, id: string, options?: ErrorOptions,) {
     super(`${entity} not found: ${id}`, options,);
     this.name = "NotFoundError";
   }
 }
 
+/** */
 export class ForbiddenError extends Error {
+  /**
+   * @param msg
+   * @param options
+   */
   constructor(msg = "Forbidden", options?: ErrorOptions,) {
     super(msg, options,);
     this.name = "ForbiddenError";
@@ -65,6 +81,8 @@ export class ForbiddenError extends Error {
 /**
  * Create a translated error message.
  * If `t` is provided, translates the key; otherwise returns the key as-is.
+ * @param key
+ * @param t
  */
 export function translateError(key: string, t?: TranslatorFn,): string {
   return t ? t(key,) : key;

@@ -28,6 +28,8 @@ const MoodEventsListResponse = t.Array(t.Object({
 
 /**
  * Mood events sub-plugin — log and list actor mood events.
+ * @param opts
+ * @param prefix
  */
 export function eventsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

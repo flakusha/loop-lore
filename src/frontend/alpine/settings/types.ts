@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/** */
 export interface LocaleInfo {
   id: string;
   name: string;
@@ -8,8 +9,10 @@ export interface LocaleInfo {
   direction: "ltr" | "rtl";
 }
 
+/** */
 export type LocaleInfoArray = LocaleInfo[];
 
+/** */
 export interface NsfwConsent {
   nsfwEnabled: boolean;
   maxRating: string;

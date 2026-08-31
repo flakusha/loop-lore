@@ -40,6 +40,10 @@ export const executeReversalBody = t.Object({
   approvedBy: t.String(),
 }, CLOSED,);
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function appealsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
 

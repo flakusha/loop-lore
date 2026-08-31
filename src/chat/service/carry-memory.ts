@@ -14,6 +14,9 @@ import type { DB, } from "../../db/schema";
 
 /**
  * Carry memory (actor_memories whose source_chat_id points at this chat).
+ * @param database
+ * @param sourceChatId
+ * @param newChatId
  */
 export async function carryMemory(
   database: Kysely<DB>,

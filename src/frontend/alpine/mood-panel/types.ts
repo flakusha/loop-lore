@@ -3,6 +3,7 @@
 
 // ── Mood Panel — shared types ──
 
+/** */
 export interface MoodState {
   id: string;
   actorId: string;
@@ -15,6 +16,7 @@ export interface MoodState {
   lastMoodChange: string;
 }
 
+/** */
 export interface EmotionEntry {
   id: string;
   actor_id: string;
@@ -26,6 +28,7 @@ export interface EmotionEntry {
   updated_at: string;
 }
 
+/** */
 export interface EmotionDefinition {
   id: string;
   name: string;
@@ -36,6 +39,7 @@ export interface EmotionDefinition {
   icon: string | null;
 }
 
+/** */
 export interface MoodPanelState {
   mood: MoodState | null;
   emotions: EmotionEntry[];

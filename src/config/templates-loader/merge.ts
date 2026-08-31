@@ -19,7 +19,12 @@ import type {
 //   - extend:   additive — existing keys keep their base value,
 //               new keys from override are added (lists append with dedup)
 
-/** Apply merge strategy for LLM templates */
+/**
+ * Apply merge strategy for LLM templates
+ * @param base
+ * @param override
+ * @param strategy
+ */
 export function mergeLlmConfig(
   base: LlmTemplateConfig,
   override: Partial<LlmTemplateConfig>,
@@ -51,7 +56,12 @@ export function mergeLlmConfig(
   };
 }
 
-/** Apply merge strategy for SD templates */
+/**
+ * Apply merge strategy for SD templates
+ * @param base
+ * @param override
+ * @param strategy
+ */
 export function mergeSdConfig(
   base: SdTemplateConfig,
   override: Partial<SdTemplateConfig>,
@@ -84,7 +94,12 @@ export function mergeSdConfig(
   };
 }
 
-/** Apply merge strategy for avatar templates */
+/**
+ * Apply merge strategy for avatar templates
+ * @param base
+ * @param override
+ * @param strategy
+ */
 export function mergeAvatarConfig(
   base: AvatarTemplateConfig,
   override: Partial<AvatarTemplateConfig>,
@@ -134,7 +149,12 @@ export function mergeAvatarConfig(
   };
 }
 
-/** Apply merge strategy for image-edit templates */
+/**
+ * Apply merge strategy for image-edit templates
+ * @param base
+ * @param override
+ * @param strategy
+ */
 export function mergeImageEditConfig(
   base: ImageEditTemplateConfig,
   override: Partial<ImageEditTemplateConfig>,
@@ -163,7 +183,12 @@ export function mergeImageEditConfig(
   };
 }
 
-/** Apply merge strategy for character templates */
+/**
+ * Apply merge strategy for character templates
+ * @param base
+ * @param override
+ * @param strategy
+ */
 export function mergeCharacterConfig(
   base: CharacterTemplateConfig,
   override: Partial<CharacterTemplateConfig>,

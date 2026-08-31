@@ -89,7 +89,10 @@ describe("versionResolver (Elysia plugin)", () => {
       },);
   },);
 
-  /** Type-narrow the Elysia app fixture to its handle() surface for tests. */
+  /**
+   * Type-narrow the Elysia app fixture to its handle() surface for tests.
+   * @param request
+   */
   function handle(request: Request,): Promise<Response> {
     const e = app as { handle: (r: Request,) => Promise<Response> };
     return e.handle(request,);

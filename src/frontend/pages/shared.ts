@@ -10,6 +10,9 @@ import { feFetch, } from "../fe-fetch";
 const log = rootLog.child({ module: "shared", },);
 const PARTIALS_HEADERS = { "HX-Request": "true", } as const;
 
+/**
+ * @param path
+ */
 export async function fetchPartial(path: string,): Promise<string | null> {
   const resp = await feFetch(path, { headers: PARTIALS_HEADERS, },);
   if (!resp.ok) {
@@ -19,12 +22,18 @@ export async function fetchPartial(path: string,): Promise<string | null> {
   return resp.text();
 }
 
+/**
+ * @param str
+ */
 export function escapeHtml(str: string,): string {
   const div = document.createElement("div",);
   div.textContent = str;
   return div.getHTML();
 }
 
+/**
+ * @param bytes
+ */
 export function formatSize(bytes: number,): string {
   if (!bytes) { return ""; }
   if (bytes < 1024) { return `${bytes} B`; }
@@ -37,6 +46,7 @@ export function formatSize(bytes: number,): string {
 // container + selectors + empty-state copy; an optional `matchExtra` predicate
 // layers on secondary filters (e.g. asset type).
 
+/** */
 export interface FilterCardsOptions {
   containerId: string;
   cardSelector: string;
@@ -49,6 +59,9 @@ export interface FilterCardsOptions {
   matchExtra?: (card: Element,) => boolean;
 }
 
+/**
+ * @param opts
+ */
 export function filterCards(opts: FilterCardsOptions,): void {
   const query = opts.query.toLowerCase().trim();
   const cards = document.querySelectorAll(`${opts.containerId} ${opts.cardSelector}`,);
@@ -78,6 +91,11 @@ export function filterCards(opts: FilterCardsOptions,): void {
 
 // ── Actor/participant search (new-chat page) ────────────────
 
+/**
+ * @param actors
+ * @param q
+ * @param limit
+ */
 export function filterActors(actors: any[], q: string, limit = 20,): any[] {
   const query = q.toLowerCase().trim();
   if (!query) { return []; }
@@ -97,6 +115,10 @@ export function filterActors(actors: any[], q: string, limit = 20,): any[] {
 // Reads a JSON error body and falls back to a default message. Used everywhere
 // a failed API call is surfaced to the user.
 
+/**
+ * @param res
+ * @param fallback
+ */
 export async function getErrorMessage(res: Response, fallback: string,): Promise<string> {
   try {
     const e = await res.json();
@@ -117,6 +139,7 @@ interface FilterChip {
   label: string;
 }
 
+/** */
 export interface FilterBarState {
   query: string;
   typeFilter: string;

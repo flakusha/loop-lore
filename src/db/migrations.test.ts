@@ -11,6 +11,9 @@ import { assertMigrationsNotStale, } from "./migrate";
 
 // ── Helpers ──────────────────────────────────────────────────
 
+/**
+ * @param db
+ */
 function schemaTables(db: Database,): Set<string> {
   const rows = db
     .query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'kysely_%'",)
@@ -24,11 +27,15 @@ const MIGRATION_NAMES = readdirSync(MIGRATIONS_DIR,)
   .map((f,) => f.replace(/\.ts$/, "",))
   .sort((a, b,) => a.localeCompare(b,));
 
+/**
+ * @param name
+ */
 async function loadMigration(name: string,): Promise<Migration> {
   const module = await import(path.join(MIGRATIONS_DIR, `${name}.ts`,));
   return module.default ?? module;
 }
 
+/** */
 async function loadAllMigrations(): Promise<Record<string, Migration>> {
   const migrations: Record<string, Migration> = {};
   for (const name of MIGRATION_NAMES) {
@@ -37,6 +44,7 @@ async function loadAllMigrations(): Promise<Record<string, Migration>> {
   return migrations;
 }
 
+/** */
 function createTestKysely(): { db: Database; kysely: Kysely<unknown> } {
   const db = new Database(":memory:",);
   db.run("PRAGMA foreign_keys = ON",);

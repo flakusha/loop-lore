@@ -18,6 +18,10 @@ mock.module("./htmx", () => ({
   },
 }),);
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url, _opts,) => Response.json(body, { status, },);
 }
@@ -39,7 +43,10 @@ interface QuickReplyCtx {
   executeQuickReply: (command: string,) => Promise<void>;
 }
 
-/** Build a minimal ChatState-like context for the quick-reply methods. */
+/**
+ * Build a minimal ChatState-like context for the quick-reply methods.
+ * @param overrides
+ */
 function buildCtx(
   overrides?: Partial<{
     quickReplies: { label: string; command: string; trigger?: "startup" | "user" | "ai" }[];

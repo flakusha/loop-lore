@@ -30,6 +30,11 @@ import {
 } from "./npc-navigation-schemas";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   const svc = (): NpcNavigationService => new NpcNavigationService(database,);
   const R = `${prefix}/rpg/npc-navigation`;

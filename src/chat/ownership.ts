@@ -9,7 +9,12 @@
  * `actor_memories` row or pulling another user's BYO apiKey.
  */
 
+/** */
 export class OwnershipError extends Error {
+  /**
+   * @param message
+   * @param options
+   */
   constructor(
     message = "Caller is not a participant of this chat",
     options?: ErrorOptions,
@@ -23,6 +28,10 @@ export class OwnershipError extends Error {
  * Verify that `actorId` is a participant of `chatId`.
  *
  * Throws `OwnershipError` when the actor row is missing.
+ * @param db
+ * @param db.selectFrom
+ * @param chatId
+ * @param actorId
  */
 export async function requireChatParticipant(
   db: { selectFrom: Function },
@@ -49,6 +58,9 @@ export async function requireChatParticipant(
  * `userId` as a stand-in for the calling actor when classifying messages
  * (BYO apiKey resolution). This guard prevents a forged `userId` from
  * pulling another user's BYO credentials.
+ * @param db
+ * @param db.selectFrom
+ * @param userId
  */
 export async function requireActorExists(
   db: { selectFrom: Function },

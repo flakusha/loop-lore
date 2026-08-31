@@ -8,7 +8,6 @@
  * to keep the route module under the 250L ceiling.
  */
 
-/* eslint-disable unicorn/max-nested-calls -- Elysia TypeBox schema nesting is inherent to framework */
 import { t, } from "elysia";
 import { SkillCategory, } from "../../rpg/skills";
 

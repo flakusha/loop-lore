@@ -23,22 +23,34 @@ import {
   type SystemId,
 } from "./types";
 
+/** */
 export interface GetContractArgs {
   thisL: IntegrationRegistryContext;
   id: string;
 }
 
-/** Resolve a contract ID to its full definition. */
+/**
+ * Resolve a contract ID to its full definition.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.id
+ */
 export function getContract({ thisL, id, }: GetContractArgs,): InterfaceContract | undefined {
   return thisL.contracts.get(id,);
 }
 
+/** */
 export interface GetDependenciesArgs {
   thisL: IntegrationRegistryContext;
   systemId: SystemId;
 }
 
-/** All systems this system depends on. */
+/**
+ * All systems this system depends on.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.systemId
+ */
 export function getDependencies({ thisL, systemId, }: GetDependenciesArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
   for (const e of thisL.edges.values()) {
@@ -51,12 +63,18 @@ export function getDependencies({ thisL, systemId, }: GetDependenciesArgs,): Int
   return out;
 }
 
+/** */
 export interface GetDependentsArgs {
   thisL: IntegrationRegistryContext;
   systemId: SystemId;
 }
 
-/** All systems that depend on this system. */
+/**
+ * All systems that depend on this system.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.systemId
+ */
 export function getDependents({ thisL, systemId, }: GetDependentsArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
   for (const e of thisL.edges.values()) {
@@ -69,13 +87,20 @@ export function getDependents({ thisL, systemId, }: GetDependentsArgs,): Integra
   return out;
 }
 
+/** */
 export interface GetEdgeArgs {
   thisL: IntegrationRegistryContext;
   source: SystemId;
   target: SystemId;
 }
 
-/** Full edge for a pair (both directions collapsed into one record). */
+/**
+ * Full edge for a pair (both directions collapsed into one record).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.source
+ * @param root0.target
+ */
 export function getEdge({ thisL, source, target, }: GetEdgeArgs,): IntegrationEdge | undefined {
   return (
     thisL.edges.get(edgeKey(source, target,),) ??
@@ -83,22 +108,34 @@ export function getEdge({ thisL, source, target, }: GetEdgeArgs,): IntegrationEd
   );
 }
 
+/** */
 export interface GetGapArgs {
   thisL: IntegrationRegistryContext;
   source: SystemId;
   target: SystemId;
 }
 
-/** Gap status between two systems. */
+/**
+ * Gap status between two systems.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.source
+ * @param root0.target
+ */
 export function getGap({ thisL, source, target, }: GetGapArgs,): GapStatus | undefined {
   return getEdge({ thisL, source, target, },)?.gap;
 }
 
+/** */
 export interface GetUnresolvedGapsArgs {
   thisL: IntegrationRegistryContext;
 }
 
-/** All unresolved gaps, severity-sorted. */
+/**
+ * All unresolved gaps, severity-sorted.
+ * @param root0
+ * @param root0.thisL
+ */
 export function getUnresolvedGaps({ thisL, }: GetUnresolvedGapsArgs,): IntegrationEdge[] {
   const out: IntegrationEdge[] = [];
   for (const e of thisL.edges.values()) {
@@ -110,13 +147,20 @@ export function getUnresolvedGaps({ thisL, }: GetUnresolvedGapsArgs,): Integrati
   },);
 }
 
+/** */
 export interface GetEventsArgs {
   thisL: IntegrationRegistryContext;
   systemId: SystemId;
   direction?: EventDirection;
 }
 
-/** All events for a system, optionally filtered by direction. */
+/**
+ * All events for a system, optionally filtered by direction.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.systemId
+ * @param root0.direction
+ */
 export function getEvents(
   { thisL, systemId, direction, }: GetEventsArgs,
 ): CrossSystemEvent[] {
@@ -134,12 +178,18 @@ export function getEvents(
   return out;
 }
 
+/** */
 export interface GetSharedTypesArgs {
   thisL: IntegrationRegistryContext;
   systemId: SystemId;
 }
 
-/** All shared interface contracts for a system. */
+/**
+ * All shared interface contracts for a system.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.systemId
+ */
 export function getSharedTypes({ thisL, systemId, }: GetSharedTypesArgs,): InterfaceContract[] {
   const out: InterfaceContract[] = [];
   for (const c of thisL.contracts.values()) {
@@ -148,12 +198,18 @@ export function getSharedTypes({ thisL, systemId, }: GetSharedTypesArgs,): Inter
   return out;
 }
 
+/** */
 export interface ResolveEdgeInterfacesArgs {
   thisL: IntegrationRegistryContext;
   edge: IntegrationEdge;
 }
 
-/** Full type information for contracts referenced by an edge. */
+/**
+ * Full type information for contracts referenced by an edge.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.edge
+ */
 export function resolveEdgeInterfaces({ thisL, edge, }: ResolveEdgeInterfacesArgs,): InterfaceContract[] {
   const out: InterfaceContract[] = [];
   for (const id of edge.interfaces) {
@@ -163,12 +219,18 @@ export function resolveEdgeInterfaces({ thisL, edge, }: ResolveEdgeInterfacesArg
   return out;
 }
 
+/** */
 export interface GetStateLayersArgs {
   thisL: IntegrationRegistryContext;
   systemId: SystemId;
 }
 
-/** Player state layers owned by a system. */
+/**
+ * Player state layers owned by a system.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.systemId
+ */
 export function getStateLayers({ thisL, systemId, }: GetStateLayersArgs,): PlayerStateLayer[] {
   const out: PlayerStateLayer[] = [];
   for (const l of thisL.stateLayers) {
@@ -177,11 +239,16 @@ export function getStateLayers({ thisL, systemId, }: GetStateLayersArgs,): Playe
   return out;
 }
 
+/** */
 export interface GetGraphArgs {
   thisL: IntegrationRegistryContext;
 }
 
-/** Full adjacency list for Mermaid/graph rendering. */
+/**
+ * Full adjacency list for Mermaid/graph rendering.
+ * @param root0
+ * @param root0.thisL
+ */
 export function getGraph({ thisL, }: GetGraphArgs,): Map<SystemId, SystemId[]> {
   const adj = new Map<SystemId, SystemId[]>();
   for (const edge of thisL.edges.values()) {

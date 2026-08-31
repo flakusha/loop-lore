@@ -10,6 +10,9 @@ import type { ContinueResponse, } from "../types";
 
 // ── Route: Continue generation ────────────────────────────
 
+/**
+ * @param body
+ */
 function validateContinue(
   body: unknown,
 ): { messageId: string; chatId: string; actorId: string; modelId?: string; provider?: string } | null {
@@ -34,6 +37,8 @@ function validateContinue(
  *
  * Continue a partial/cancelled message. Captures partial content
  * and returns attempt metadata for the frontend to send the LLM request.
+ * @param body
+ * @param database
  */
 export async function handleContinueGeneration(body: unknown, database: Kysely<DB>,): Promise<Response> {
   const db = database;

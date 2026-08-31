@@ -17,8 +17,6 @@
  * const svc = ImageEditService({ database });      // factory value
  * const s: ImageEditService = ImageEditService(opts); // interface type
  * ```
- *
- * @module generation/image-edit-service
  */
 import { loadConfig, } from "../../config/load";
 import { editImage as editImageDispatch, } from "./edit";
@@ -37,7 +35,7 @@ import type {
 /** Public API type — merged with the factory value below. */
 // The empty interface is intentional: it merges the `ImageEditService` factory
 // value with a same-named type so one name is both API type and constructor.
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+
 export interface ImageEditService extends ImageEditServiceIface {}
 
 export type {
@@ -49,7 +47,6 @@ export type {
 
 /**
  * Create an ImageEditService instance.
- *
  * @param opts - Service options (matches the former `new ImageEditService(opts)`)
  * @returns An ImageEditService bound to the given database
  */

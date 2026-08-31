@@ -21,6 +21,8 @@ import { updateRoutes, } from "./update";
  *   PUT    /api/admin/templates/:id/defaults — update model defaults
  *   POST   /api/admin/templates             — create custom profile
  *   DELETE /api/admin/templates/:id         — delete custom profile
+ * @param opts
+ * @param opts.database
  */
 export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
   return (

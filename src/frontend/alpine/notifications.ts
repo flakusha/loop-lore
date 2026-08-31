@@ -37,6 +37,7 @@ export class NotificationsManager {
   private syncHandler: (() => void) | null = null;
   private beforeUnloadHandler: (() => void) | null = null;
 
+  /** */
   start(): void {
     if (this.started) { return; }
     this.started = true;
@@ -51,6 +52,7 @@ export class NotificationsManager {
     window.addEventListener("beforeunload", this.beforeUnloadHandler,);
   }
 
+  /** */
   stop(): void {
     this.es?.close();
     this.es = null;
@@ -67,7 +69,10 @@ export class NotificationsManager {
     this.started = false;
   }
 
-  /** Mark a chat read (POST) and clear its local unseen state. */
+  /**
+   * Mark a chat read (POST) and clear its local unseen state.
+   * @param chatId
+   */
   async markRead(chatId: string,): Promise<void> {
     try {
       await apiFetch(`/api/v1/chats/${chatId}/mark-read`, { method: "PUT", },);
@@ -78,11 +83,17 @@ export class NotificationsManager {
     this.renderBadge(chatId,);
   }
 
+  /**
+   * @param chatId
+   */
   setActiveChat(chatId: string | null,): void {
     this.state.activeChatId = chatId;
   }
 
-  /** Read unseen count for a specific chat. */
+  /**
+   * Read unseen count for a specific chat.
+   * @param chatId
+   */
   getUnseenCount(chatId: string,): number {
     return this.state.unseen[chatId] ?? 0;
   }
@@ -92,12 +103,16 @@ export class NotificationsManager {
     return { ...this.state.unseen, };
   }
 
-  /** Clear unseen count for a chat locally (without POST). */
+  /**
+   * Clear unseen count for a chat locally (without POST).
+   * @param chatId
+   */
   clearUnseen(chatId: string,): void {
     this.state.unseen[chatId] = 0;
     this.renderBadge(chatId,);
   }
 
+  /** */
   private openStream(): void {
     if (typeof EventSource === "undefined") { return; }
     try {
@@ -114,6 +129,7 @@ export class NotificationsManager {
     }
   }
 
+  /** */
   private async poll(): Promise<void> {
     try {
       const res = await apiFetch("/api/chats/activity",);
@@ -125,7 +141,10 @@ export class NotificationsManager {
     }
   }
 
-  /** Merge a server snapshot into local state and update UI. */
+  /**
+   * Merge a server snapshot into local state and update UI.
+   * @param chats
+   */
   private applySnapshot(chats: Record<string, ActivityEntry>,): void {
     for (const [chatId, entry,] of Object.entries(chats,)) {
       const prev = this.state.unseen[chatId] ?? 0;
@@ -140,6 +159,9 @@ export class NotificationsManager {
     }
   }
 
+  /**
+   * @param chatId
+   */
   private renderBadge(chatId: string,): void {
     const host = document.querySelector<HTMLElement>(`[data-chat-id="${CSS.escape(chatId,)}"]`,);
     if (!host) { return; }

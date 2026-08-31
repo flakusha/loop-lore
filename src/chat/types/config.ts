@@ -61,7 +61,11 @@ export const MODE_DEFAULTS: Record<ChatMode, ModeFeatureFlags> = {
   },
 } as const;
 
-/** Resolve feature flags for a chat, merging mode defaults with per-chat overrides */
+/**
+ * Resolve feature flags for a chat, merging mode defaults with per-chat overrides
+ * @param mode
+ * @param overrides
+ */
 export function resolveFeatureFlags(
   mode: ChatMode,
   overrides?: Partial<ModeFeatureFlags>,
@@ -89,6 +93,7 @@ export interface GmGuidance {
   turnPriority: Record<string, "high" | "medium" | "low">;
 }
 
+/** */
 export interface GmConfig {
   /** Assistant's role in this chat: off, helper, gm, or moderator */
   assistantRole?: "off" | "helper" | "gm" | "moderator";

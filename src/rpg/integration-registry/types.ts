@@ -38,11 +38,13 @@ export const EdgeDirection = {
   DependedBy: "depended_by",
   Bidirectional: "bidirectional",
 } as const;
+/** */
 export type EdgeDirection = (typeof EdgeDirection)[keyof typeof EdgeDirection];
 
 /** Severity when an integration edge is missing or broken. */
 export type GapSeverity = "high" | "medium" | "low";
 
+/** */
 export type InterfaceKind =
   | "shared_type" // Both systems use the same TS interface
   | "event" // One system emits, another subscribes
@@ -56,7 +58,9 @@ export const EventDirection = {
   Subscribes: "subscribes",
   Both: "both",
 } as const;
+/** */
 export type EventDirection = (typeof EventDirection)[keyof typeof EventDirection];
+/** */
 export type StateLayerClassification = "exclusive" | "stackable";
 
 // ── Integration Edge ──────────────────────────────────────────
@@ -124,6 +128,7 @@ export interface CrossSystemEvent {
 
 // ── Gap & Audit ───────────────────────────────────────────────
 
+/** */
 export interface GapStatus {
   /** Unique gap ID (G1–G17 from the audit) */
   gapId: string;
@@ -135,6 +140,7 @@ export interface GapStatus {
 
 // ── Player State Layer (wires into player-state-machine.md) ───
 
+/** */
 export interface PlayerStateLayer {
   id: string; // e.g. "vitality", "consciousness", "physical"
   classification: StateLayerClassification;

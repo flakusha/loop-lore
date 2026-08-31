@@ -18,7 +18,9 @@ import { formatJSONL, } from "./formatters";
 import { AsyncLogQueueBase, } from "./queue-base";
 import type { LogEntry, } from "./types";
 
+/** */
 export class AsyncLogQueue extends AsyncLogQueueBase {
+  /** */
   override async flush(): Promise<void> {
     if (this.flushing || this.buffer.length === 0) { return; }
 
@@ -32,6 +34,9 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
     this.scheduleFollowupFlush();
   }
 
+  /**
+   * @param results
+   */
   protected handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[],): void {
     for (const result of results) {
       if (result.status !== "rejected") { continue; }
@@ -52,6 +57,7 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
     }
   }
 
+  /** */
   protected override setupTimerUnref(): void {
     // Don't let the timer keep the process alive
     if (this.timer && "unref" in this.timer) {

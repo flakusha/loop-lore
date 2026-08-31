@@ -14,12 +14,22 @@ import {
 import type { MovementResult, } from "./types";
 import { MovementPattern, } from "./types";
 
+/** */
 function getLog() {
   return getRpgLog("npc-navigation",);
 }
 
 /**
  * Set NPC movement pattern
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param pattern
+ * @param config
+ * @param config.patrolRoute
+ * @param config.wanderRadius
+ * @param config.followTargetId
+ * @param config.speed
  */
 export async function setMovementPattern(
   db: Kysely<DB>,
@@ -46,6 +56,10 @@ export async function setMovementPattern(
 
 /**
  * Move NPC to a specific location
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param targetLocationId
  */
 export async function moveToLocation(
   db: Kysely<DB>,

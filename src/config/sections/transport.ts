@@ -27,6 +27,7 @@ export const TRANSPORT_DEFAULTS = {
   limits: TRANSPORT_LIMITS_DEFAULTS,
 } satisfies TransportConfig;
 
+/** */
 export class TransportSection implements TransportConfig {
   defaultProtocol = TRANSPORT_DEFAULTS.defaultProtocol;
   enableWebSocket = TRANSPORT_DEFAULTS.enableWebSocket;
@@ -36,6 +37,9 @@ export class TransportSection implements TransportConfig {
   compression: TransportCompressionConfig = { ...TRANSPORT_DEFAULTS.compression, };
   limits: TransportLimitsConfig = { ...TRANSPORT_DEFAULTS.limits, };
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<TransportConfig>,) {
     if (!overrides) { return; }
 

@@ -22,6 +22,10 @@ import {
 import { type HandlerOpts, requireActorAccess, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function characterRelationshipsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const relationshipsService = RelationshipsService(database,);

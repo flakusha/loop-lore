@@ -18,6 +18,9 @@ export const REPUTATION_TIERS = {
   devoted: { min: 76, max: 100, },
 } as const;
 
+/**
+ *
+ */
 export type ReputationTier = keyof typeof REPUTATION_TIERS;
 
 /** All tiers ordered from most negative to most positive. */
@@ -74,7 +77,6 @@ export interface ReputationScore {
 
 /**
  * Compute the reputation tier for a given numeric value.
- *
  * @param value - Reputation value (-100 to +100)
  * @returns The corresponding tier
  */
@@ -91,6 +93,7 @@ export function getReputationTier(value: number): ReputationTier {
 
 /**
  * Clamp a reputation value to the valid range [-100, +100].
+ * @param value
  */
 export function clampReputation(value: number): number {
   return Math.max(-100, Math.min(100, value,));
@@ -98,6 +101,10 @@ export function clampReputation(value: number): number {
 
 /**
  * Create a new ReputationScore with defaults.
+ * @param params
+ * @param params.source
+ * @param params.initial_value
+ * @param params.decay_rate
  */
 export function createReputationScore(params: {
   source: ReputationSource;
@@ -117,7 +124,6 @@ export function createReputationScore(params: {
 
 /**
  * Apply a reputation delta to a score, recording it as a modifier.
- *
  * @param current - Current reputation score
  * @param delta - Signed change to apply
  * @param reason - Human-readable reason for the change
@@ -151,7 +157,6 @@ export function applyReputationChange(
 
 /**
  * Apply daily reputation decay toward neutral (0).
- *
  * @param reputation - Current reputation score
  * @param daysPassed - Number of days since the last update
  * @returns Updated reputation score after decay, value rounded to 1 decimal

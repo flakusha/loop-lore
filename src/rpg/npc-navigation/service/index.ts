@@ -38,10 +38,15 @@ export type {
  * Manages NPC autonomous movement, pathfinding, and location-based behavior.
  */
 export class NpcNavigationService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
    * Get NPC movement state from npc_states table
+   * @param actorId
+   * @param worldId
    */
   async getMovementState(actorId: string, worldId: string,): Promise<NpcMovementState | null> {
     return getMovementStateDispatch(this.db, actorId, worldId,);
@@ -49,6 +54,9 @@ export class NpcNavigationService {
 
   /**
    * Update NPC movement state
+   * @param actorId
+   * @param worldId
+   * @param updates
    */
   async updateMovementState(
     actorId: string,
@@ -60,6 +68,14 @@ export class NpcNavigationService {
 
   /**
    * Set NPC movement pattern
+   * @param actorId
+   * @param worldId
+   * @param pattern
+   * @param config
+   * @param config.patrolRoute
+   * @param config.wanderRadius
+   * @param config.followTargetId
+   * @param config.speed
    */
   async setMovementPattern(
     actorId: string,
@@ -77,6 +93,9 @@ export class NpcNavigationService {
 
   /**
    * Move NPC to a specific location
+   * @param actorId
+   * @param worldId
+   * @param targetLocationId
    */
   async moveToLocation(
     actorId: string,
@@ -88,6 +107,7 @@ export class NpcNavigationService {
 
   /**
    * Process NPC movement tick — advance NPCs based on their movement patterns
+   * @param worldId
    */
   async processMovementTick(worldId: string,): Promise<MovementResult[]> {
     return processMovementTickDispatch(this.db, worldId,);

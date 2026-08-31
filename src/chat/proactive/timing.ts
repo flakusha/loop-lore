@@ -16,9 +16,15 @@ export const PROACTIVE_FREQUENCY_MS = {
   infrequent: 4 * 24 * 60 * 60 * 1000, // ~4 days
 } as const;
 
+/** */
 export type ProactiveFrequency = keyof typeof PROACTIVE_FREQUENCY_MS;
 
-/** Check if current time falls within quiet hours window */
+/**
+ * Check if current time falls within quiet hours window
+ * @param start
+ * @param end
+ * @param now
+ */
 export function isInQuietHours(start: string | null, end: string | null, now: Date,): boolean {
   if (!start || !end) { return false; }
 
@@ -45,12 +51,18 @@ export function isInQuietHours(start: string | null, end: string | null, now: Da
 /**
  * Calculate the wait time with exponential backoff.
  * Each unanswered message doubles the wait time.
+ * @param baseMs
+ * @param backoffCount
  */
 export function backoffMs(baseMs: number, backoffCount: number,): number {
   return baseMs * Math.pow(2, backoffCount,);
 }
 
-/** Milliseconds until quiet hours end */
+/**
+ * Milliseconds until quiet hours end
+ * @param end
+ * @param now
+ */
 export function msUntilQuietHoursEnd(end: string | null, now: Date,): number {
   if (!end) { return 0; }
   const [endHStr, endMStr,] = end.split(":", 2,);
@@ -68,7 +80,10 @@ export function msUntilQuietHoursEnd(end: string | null, now: Date,): number {
   return target.getTime() - now.getTime();
 }
 
-/** Milliseconds until midnight */
+/**
+ * Milliseconds until midnight
+ * @param now
+ */
 export function msUntilMidnight(now: Date,): number {
   const midnight = new Date(now,);
   midnight.setDate(midnight.getDate() + 1,);

@@ -6,7 +6,6 @@
  *
  * Designed to be compatible with the existing `feFetch` frontend utility while
  * also working on the backend (Node.js/Bun server-side).
- *
  * @example
  * // Basic GET with JSON response
  * const result = await safeFetch<MyData>("/api/data");
@@ -26,13 +25,16 @@ import type { FetchAuth, FetchResult, SafeFetchOptions, } from "./types";
  *
  * Compatible with `feFetch` — pass `auth` config to get the same CSRF +
  * bearer token injection behavior, or omit for raw fetch with safety.
- *
  * @param url - URL to fetch
  * @param options - Fetch options with safety extensions
  * @returns FetchResult with parsed data or error
  */
 
-/** Combine an external signal with an internal timeout signal. */
+/**
+ * Combine an external signal with an internal timeout signal.
+ * @param external
+ * @param timeoutSignal
+ */
 function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortSignal,): AbortSignal {
   if (!external) { return timeoutSignal; }
   const combined = new AbortController();
@@ -48,9 +50,12 @@ function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortS
  * other values are JSON-stringified. Returns undefined for null bodies or
  * when stringification fails.
  */
-/** Serialize a request body. Native body types (FormData, Blob, stream,
+/**
+ * Serialize a request body. Native body types (FormData, Blob, stream,
  * URLSearchParams, ArrayBuffer, view, string) pass through untouched so
- * multipart/uploads work; plain objects/arrays become JSON. */
+ * multipart/uploads work; plain objects/arrays become JSON.
+ * @param body
+ */
 function serializeBody(body: unknown,): BodyInit | undefined {
   if (body === undefined || body === null) { return undefined; }
   if (
@@ -69,7 +74,12 @@ function serializeBody(body: unknown,): BodyInit | undefined {
   return jsonResult.ok ? jsonResult.value : undefined;
 }
 
-/** Merge auth headers with caller headers and set Content-Type for JSON bodies. */
+/**
+ * Merge auth headers with caller headers and set Content-Type for JSON bodies.
+ * @param provided
+ * @param auth
+ * @param serializedBody
+ */
 function buildRequestHeaders(
   provided: HeadersInit | undefined,
   auth: FetchAuth | undefined,
@@ -89,6 +99,10 @@ function buildRequestHeaders(
   return headers;
 }
 
+/**
+ * @param url
+ * @param options
+ */
 export async function safeFetch<T = unknown,>(
   url: string,
   options: SafeFetchOptions = {},

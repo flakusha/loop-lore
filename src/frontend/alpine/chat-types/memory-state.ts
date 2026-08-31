@@ -4,6 +4,7 @@
 import type { MemoryEntry, MemoryPanelState, } from "./memory";
 
 // ── Memory System ───────────────────────────────────────────
+/** */
 export interface ChatMemoryState {
   memoryPanel: MemoryPanelState;
   loadMemories(): Promise<void>;

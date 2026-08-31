@@ -20,6 +20,10 @@ import { jsonError, jsonResponse, } from "../http-utils";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   return new Elysia({ name: "battle-equipment", },)

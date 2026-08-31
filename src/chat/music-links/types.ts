@@ -4,10 +4,12 @@
 /** Music link service types. */
 import type { MusicService, } from "../../validation/schemas/music-links";
 
+/** */
 export interface MusicLinkConfig {
   nsfwFilterEnabled: boolean;
 }
 
+/** */
 export interface MusicMetadata {
   title: string;
   artist: string;
@@ -22,6 +24,7 @@ export interface MusicMetadata {
   genre: string | null;
 }
 
+/** */
 export interface StoreParams {
   chatId: string;
   senderId: string;
@@ -32,6 +35,7 @@ export interface StoreParams {
   embedHtml: string | null;
 }
 
+/** */
 export interface MusicLinkRow {
   id: string;
   chat_id: string;

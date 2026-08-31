@@ -9,7 +9,6 @@
  * 250L ceiling.
  */
 
-/* eslint-disable unicorn/max-nested-calls -- Elysia TypeBox schema nesting is inherent to framework */
 import { t, } from "elysia";
 
 export const WorldTraitCategorySchema = t.Union([

@@ -17,6 +17,8 @@ import type { AssetRecord, } from "./types";
 
 /**
  * Get a single asset by ID.
+ * @param database
+ * @param assetId
  */
 export async function getAsset(database: Kysely<DB>, assetId: string,): Promise<AssetRecord | null> {
   const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
@@ -26,7 +28,6 @@ export async function getAsset(database: Kysely<DB>, assetId: string,): Promise<
 /**
  * Get decrypted asset data. If asset is encrypted, decrypts using provided chat key.
  * If asset is not encrypted, returns raw file data.
- *
  * @param database - Database connection
  * @param assetId - Asset ID
  * @param uploadDir - Upload directory path
@@ -60,6 +61,8 @@ export async function getAssetData(
 
 /**
  * Check if an asset is encrypted.
+ * @param database
+ * @param assetId
  */
 export async function isAssetEncrypted(
   database: Kysely<DB>,
@@ -74,6 +77,9 @@ export async function isAssetEncrypted(
  * Build an OR filter for asset visibility: public, owned by the actor, or
  * shared with the actor via an explicit `asset_shares` row. Pass tablePrefix ""
  * for unjoined queries, "assets." for joined queries.
+ * @param eb
+ * @param actorId
+ * @param tablePrefix
  */
 export function visibleAssetFilter(
   eb: ExpressionBuilder<DB, "assets">,
@@ -100,6 +106,15 @@ export function visibleAssetFilter(
 
 /**
  * List assets with optional filters (entity_type, entity_id, label).
+ * @param database
+ * @param options
+ * @param options.page
+ * @param options.pageSize
+ * @param options.entityType
+ * @param options.entityId
+ * @param options.label
+ * @param options.actorId
+ * @param options.actorRole
  */
 export async function listAssets(
   database: Kysely<DB>,
@@ -191,6 +206,10 @@ export async function listAssets(
  * Check if an actor can access an asset.
  * Owner always yes. Admin always yes. Public asset → any auth user.
  * Shared asset → check asset_shares. Private → owner only.
+ * @param database
+ * @param assetId
+ * @param actorId
+ * @param actorRole
  */
 export async function canAccessAsset(
   database: Kysely<DB>,

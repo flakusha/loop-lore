@@ -6,6 +6,9 @@ import type { OutputStyleConfig, } from "../../../chat/output-style";
 import type { AssembleContext, } from "../types";
 import { styleSection, } from "./output-style";
 
+/**
+ * @param style
+ */
 function ctxWith(style: OutputStyleConfig | null,): AssembleContext {
   return {
     db: {} as never,

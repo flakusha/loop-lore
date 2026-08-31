@@ -38,7 +38,10 @@ import type { Config, } from "../schema";
 import { CHARACTERS_DEFAULTS, } from "../sections/characters";
 import { TEMPLATES_DEFAULTS, } from "../sections/templates";
 
-/** Recursively copy plain data so each factory instance owns its own objects. */
+/**
+ * Recursively copy plain data so each factory instance owns its own objects.
+ * @param value
+ */
 const deepClone = <T,>(value: T,): T => {
   if (Array.isArray(value,)) {
     return Array.from(value, (item,) => deepClone(item,),) as unknown as T;
@@ -110,6 +113,7 @@ export const createConfigSchema = () => {
   };
 };
 
+/** */
 export type ConfigSchema = ReturnType<typeof createConfigSchema>;
 
 /** Singleton: config class instance for defaults generation */

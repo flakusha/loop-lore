@@ -2,6 +2,10 @@ import { describe, expect, it, } from "bun:test";
 import { ContextCompactor, estimateTokens, } from "./context-compactor";
 import type { GenerationMessage, } from "./gen-types-options";
 
+/**
+ * @param role
+ * @param len
+ */
 function msg(role: string, len: number,): GenerationMessage {
   return { role: role as GenerationMessage["role"], content: "x".repeat(len,), };
 }

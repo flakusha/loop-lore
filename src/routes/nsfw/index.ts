@@ -14,6 +14,7 @@ import type { HandlerOpts, } from "./types";
  * NSFW route module — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`nsfw`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
+ * @param opts
  */
 export function nsfwRoutes(opts: HandlerOpts,) {
   return (

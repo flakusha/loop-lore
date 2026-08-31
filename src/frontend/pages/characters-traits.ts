@@ -17,6 +17,9 @@ import { escapeHtml, } from "./shared";
 // Shared feFetch — caller passes it in to avoid circular import
 let _feFetch: typeof feFetch;
 
+/**
+ * @param fetchFn
+ */
 export function initTraits(fetchFn: typeof feFetch,) {
   _feFetch = fetchFn;
   // Wire slider display updates
@@ -31,6 +34,7 @@ export function initTraits(fetchFn: typeof feFetch,) {
 
 // ── Aspirations state ───────────────────────────────────────
 
+/** */
 export type Aspiration = {
   id: string;
   goal: string;
@@ -54,6 +58,7 @@ let aspirationsData: Aspiration[] = [];
   renderAspirations();
 };
 
+/** */
 export function renderAspirations() {
   const container = document.querySelector("#aspirations-list",);
   if (!container) { return; }
@@ -90,15 +95,25 @@ export function renderAspirations() {
 
 // ── Helpers ─────────────────────────────────────────────────
 
+/**
+ * @param id
+ */
 function sliderVal(id: string,): number {
   const el = document.querySelector<HTMLInputElement>(`#${id}`,);
   return el ? parseFloatOr(el.value, 0,) : 0;
 }
+/**
+ * @param id
+ */
 function textVal(id: string,): string {
   const el = document.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${id}`,);
   return el?.value ?? "";
 }
 
+/**
+ * @param selector
+ * @param value
+ */
 function setVal(selector: string, value: string | undefined,) {
   const el = document.querySelector<HTMLInputElement | HTMLTextAreaElement>(selector,);
   if (el && value != null) { el.value = value; }
@@ -114,6 +129,7 @@ const SLIDER_PAIRS: [string, string,][] = [
   ["voice-emotional", "voice-emotional-val",],
 ];
 
+/** */
 export function updateSliderDisplays() {
   for (const [inputId, displayId,] of SLIDER_PAIRS) {
     const input = document.querySelector<HTMLInputElement>(`#${inputId}`,);
@@ -124,7 +140,11 @@ export function updateSliderDisplays() {
 
 // ── Load internal traits into form ──────────────────────────
 
-/** Set slider/input values from a selector→value map. */
+/**
+ * Set slider/input values from a selector→value map.
+ * @param entries
+ * @param update
+ */
 function hydrateSliders(entries: Array<[string, string | number | boolean,]>, update = true,): void {
   for (const [selector, val,] of entries) {
     const el = document.querySelector<HTMLInputElement>(selector,);
@@ -180,6 +200,7 @@ function hydrateSliders(entries: Array<[string, string | number | boolean,]>, up
 
 // ── Build payload + save ────────────────────────────────────
 
+/** */
 function buildTraitsPayload() {
   const activeAspirations: Aspiration[] = [];
   for (const a of aspirationsData) {

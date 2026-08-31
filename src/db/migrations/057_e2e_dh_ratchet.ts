@@ -46,6 +46,9 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // ── e2e_sessions: Phase B columns ────────────────────────────
   // All nullable so Phase A rows continue to work (root_key IS NULL =>
@@ -130,6 +133,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropTable("e2e_skipped_keys",).execute();
 

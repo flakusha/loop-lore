@@ -7,7 +7,6 @@
  * Discovers available LoRA models from the sd.cpp (stable-diffusion.cpp) backend.
  * Uses the /sd-api/v1/models endpoint to list available models,
  * then filters for LoRA files (.safetensors, .pt, .ckpt, .bin).
- *
  * @module generation/lora/discovery-sdserver
  */
 
@@ -40,11 +39,9 @@ interface SdCppModel {
 
 /**
  * Discover LoRA models from sd.cpp backend.
- *
  * @param baseUrl - sd.cpp server base URL (e.g., "http://localhost:9010")
  * @param timeoutMs - Request timeout in milliseconds
  * @returns Discovery result with available LoRA models
- *
  * @example
  * ```ts
  * const result = await discoverSdCppLoras("http://localhost:9010");
@@ -123,11 +120,9 @@ export async function discoverSdCppLoras(
  *
  * sd.cpp applies LoRA via prompt injection in the format:
  * `[lora:name:strength]`
- *
  * @param name - LoRA model name (without extension)
  * @param strength - Application strength (0.1-1.0)
  * @returns Prompt prefix string
- *
  * @example
  * ```ts
  * const prefix = buildSdCppLoraPrefix("my_character", 0.7);
@@ -140,12 +135,10 @@ export function buildSdCppLoraPrefix(name: string, strength: number,): string {
 
 /**
  * Inject LoRA into a prompt for sd.cpp.
- *
  * @param prompt - Original prompt
  * @param name - LoRA model name
  * @param strength - Application strength
  * @returns Modified prompt with LoRA prefix
- *
  * @example
  * ```ts
  * const prompt = injectSdCppLora("a beautiful portrait", "my_character", 0.7);

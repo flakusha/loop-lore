@@ -12,6 +12,8 @@ import { executeResponse, resolveActorAccess, tradeLineSchema, } from "./shared"
 /**
  * NPC trade routes — buy-from-NPC and sell-to-NPC, each a player-vs-NPC
  * transfer of items + gold. The caller must own the player side.
+ * @param opts
+ * @param prefix
  */
 export function npcTradeRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
   return (

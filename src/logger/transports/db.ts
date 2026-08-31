@@ -6,7 +6,6 @@
  *
  * Enables audit trail queries from admin panel.
  * Catches all errors silently — logging must never crash the app.
- *
  * @module logger-transports-db
  */
 
@@ -15,15 +14,22 @@ import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, } from "../../utils";
 import type { LogEntry, Transport, } from "../types";
 
+/** */
 export class DBTransport implements Transport {
   readonly name = "db";
 
   private readonly db: Kysely<DB>;
 
+  /**
+   * @param db
+   */
   constructor(db: Kysely<DB>,) {
     this.db = db;
   }
 
+  /**
+   * @param entry
+   */
   async write(entry: LogEntry,): Promise<void> {
     try {
       const metaStr = entry.meta && Object.keys(entry.meta,).length > 0 ? jsonStringifyOr(entry.meta,) : null;
@@ -61,6 +67,7 @@ export class DBTransport implements Transport {
     }
   }
 
+  /** */
   async flush(): Promise<void> {
     // No buffering — writes are atomic INSERTs
   }

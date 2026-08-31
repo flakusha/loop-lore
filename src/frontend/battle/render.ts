@@ -17,6 +17,7 @@ import {
   hpPercent,
 } from "./commands.js";
 
+/** */
 export interface BattleRenderCallbacks {
   /** Toggle target selection for a combatant id (null = clear). */
   select: (id: string,) => void;
@@ -24,6 +25,9 @@ export interface BattleRenderCallbacks {
   execute: (kind: BattleActionKind,) => void;
 }
 
+/**
+ * @param battle
+ */
 export function renderHeader(battle: BattleView,): HTMLElement {
   const h = document.createElement("div",);
   h.className = "battle-panel-header";
@@ -33,6 +37,11 @@ export function renderHeader(battle: BattleView,): HTMLElement {
   return h;
 }
 
+/**
+ * @param battle
+ * @param selectedTargetId
+ * @param callbacks
+ */
 export function renderRoster(
   battle: BattleView,
   selectedTargetId: string | null,
@@ -78,6 +87,10 @@ export function renderRoster(
   return list;
 }
 
+/**
+ * @param selectedTargetId
+ * @param callbacks
+ */
 export function renderActions(
   selectedTargetId: string | null,
   callbacks: BattleRenderCallbacks,

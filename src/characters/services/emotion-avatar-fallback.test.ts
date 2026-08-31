@@ -1,6 +1,5 @@
 /**
  * Tests for emotion avatar fallback utilities.
- *
  * @module characters/services/emotion-avatar-fallback.test
  */
 

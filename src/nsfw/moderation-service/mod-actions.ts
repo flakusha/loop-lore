@@ -15,6 +15,7 @@ import type { NsfwAccessStatus, } from "../../db/enums";
 import { nsfwAccessStatusMachine, } from "../../db/enums";
 import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
+/** */
 export interface BlockUserArgs {
   thisL: NsfwModerationServiceContext;
   targetUserId: string;
@@ -22,7 +23,14 @@ export interface BlockUserArgs {
   reason: string;
 }
 
-/** Apply a block to a user (records a "block" action). */
+/**
+ * Apply a block to a user (records a "block" action).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.targetUserId
+ * @param root0.performedBy
+ * @param root0.reason
+ */
 export async function blockUser({ thisL, targetUserId, performedBy, reason, }: BlockUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   // BUG-nsfw-preferences-admin-read-materializes-row: block mutates the row,
@@ -48,6 +56,7 @@ export async function blockUser({ thisL, targetUserId, performedBy, reason, }: B
   },);
 }
 
+/** */
 export interface UnblockUserArgs {
   thisL: NsfwModerationServiceContext;
   targetUserId: string;
@@ -55,7 +64,14 @@ export interface UnblockUserArgs {
   reason: string;
 }
 
-/** Remove a block from a user (records an "unblock" action). */
+/**
+ * Remove a block from a user (records an "unblock" action).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.targetUserId
+ * @param root0.performedBy
+ * @param root0.reason
+ */
 export async function unblockUser({ thisL, targetUserId, performedBy, reason, }: UnblockUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   await thisL.db.updateTable("nsfw_user_preferences",).set({
@@ -74,6 +90,7 @@ export async function unblockUser({ thisL, targetUserId, performedBy, reason, }:
   },);
 }
 
+/** */
 export interface BanUserArgs {
   thisL: NsfwModerationServiceContext;
   targetUserId: string;
@@ -81,7 +98,14 @@ export interface BanUserArgs {
   reason: string;
 }
 
-/** Ban a user from NSFW content (records a "ban" action). */
+/**
+ * Ban a user from NSFW content (records a "ban" action).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.targetUserId
+ * @param root0.performedBy
+ * @param root0.reason
+ */
 export async function banUser({ thisL, targetUserId, performedBy, reason, }: BanUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   const prefs = await thisL.getOrCreateOwn(targetUserId,);
@@ -100,6 +124,7 @@ export async function banUser({ thisL, targetUserId, performedBy, reason, }: Ban
   return thisL.recordAction({ actionType: "ban", targetUserId, performedBy, reason, scope: "nsfw", scopeId: null, },);
 }
 
+/** */
 export interface UnbanUserArgs {
   thisL: NsfwModerationServiceContext;
   targetUserId: string;
@@ -107,7 +132,14 @@ export interface UnbanUserArgs {
   reason: string;
 }
 
-/** Lift a user's NSFW ban (records an "unban" action). */
+/**
+ * Lift a user's NSFW ban (records an "unban" action).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.targetUserId
+ * @param root0.performedBy
+ * @param root0.reason
+ */
 export async function unbanUser({ thisL, targetUserId, performedBy, reason, }: UnbanUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   await thisL.db.updateTable("nsfw_user_preferences",).set({
@@ -128,6 +160,7 @@ export async function unbanUser({ thisL, targetUserId, performedBy, reason, }: U
   },);
 }
 
+/** */
 export interface ShadowUserArgs {
   thisL: NsfwModerationServiceContext;
   targetUserId: string;
@@ -135,7 +168,14 @@ export interface ShadowUserArgs {
   reason: string;
 }
 
-/** Shadow-restrict a user from NSFW content (records a "shadow" action). */
+/**
+ * Shadow-restrict a user from NSFW content (records a "shadow" action).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.targetUserId
+ * @param root0.performedBy
+ * @param root0.reason
+ */
 export async function shadowUser({ thisL, targetUserId, performedBy, reason, }: ShadowUserArgs,): Promise<ModAction> {
   const now = new Date().toISOString();
   await thisL.db.updateTable("nsfw_user_preferences",).set({ shadow_nsfw: 1, updated_at: now, },).where(
@@ -154,6 +194,7 @@ export async function shadowUser({ thisL, targetUserId, performedBy, reason, }: 
   },);
 }
 
+/** */
 export interface UnshadowUserArgs {
   thisL: NsfwModerationServiceContext;
   targetUserId: string;
@@ -161,7 +202,14 @@ export interface UnshadowUserArgs {
   reason: string;
 }
 
-/** Lift a user's NSFW shadow restriction (records an "unshadow" action). */
+/**
+ * Lift a user's NSFW shadow restriction (records an "unshadow" action).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.targetUserId
+ * @param root0.performedBy
+ * @param root0.reason
+ */
 export async function unshadowUser(
   { thisL, targetUserId, performedBy, reason, }: UnshadowUserArgs,
 ): Promise<ModAction> {

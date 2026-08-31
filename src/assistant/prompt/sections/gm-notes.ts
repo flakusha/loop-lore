@@ -33,7 +33,11 @@ interface ShadowNoteRow {
   content: string;
 }
 
-/** Fetch active (non-expired) whitenotes for the chat, highest priority first. */
+/**
+ * Fetch active (non-expired) whitenotes for the chat, highest priority first.
+ * @param db
+ * @param chatId
+ */
 async function fetchActiveWhitenotes(
   db: Kysely<DB>,
   chatId: string,
@@ -62,7 +66,11 @@ async function fetchActiveWhitenotes(
   }),);
 }
 
-/** Fetch unrevealed shadow notes (hidden influences) for the chat. */
+/**
+ * Fetch unrevealed shadow notes (hidden influences) for the chat.
+ * @param db
+ * @param chatId
+ */
 async function fetchUnrevealedShadowNotes(
   db: Kysely<DB>,
   chatId: string,

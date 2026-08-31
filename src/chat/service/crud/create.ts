@@ -8,7 +8,8 @@ import type { CreateChatParams, } from "../types";
 
 /**
  * Create a new chat with owner and optional participants.
- *
+ * @param database
+ * @param params
  * @returns The new chat ID
  */
 export async function createChat(

@@ -7,7 +7,6 @@
  * Compiled regex patterns for stripping dangerous HTML elements
  * and event handlers from generated content, plus content-hash
  * injection patterns for static assets.
- *
  * @module regex/html-sanitize
  */
 

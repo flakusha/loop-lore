@@ -64,12 +64,18 @@ describe("npc navigation (auth-gated)", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-npc-nav-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
       .use(npcNavigationRoutes({ database: db, config: {} as never, },),) as any;
   }
 
+  /**
+   * @param res
+   */
   async function json(res: Response,): Promise<unknown> {
     return res.json() as unknown;
   }

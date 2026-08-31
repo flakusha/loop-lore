@@ -25,6 +25,9 @@ import { PromptAssembler, } from "./prompt-assembler";
 
 const EMOTION_SENTINEL = "Current emotional state:";
 
+/**
+ * @param content
+ */
 function hasEmotionContext(content: unknown,): boolean {
   return typeof content === "string" && content.includes(EMOTION_SENTINEL,);
 }

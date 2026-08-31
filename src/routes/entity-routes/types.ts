@@ -3,6 +3,7 @@
 
 import type { Db, } from "../../db";
 
+/** */
 export interface EntityConfig {
   parentPrefix: string;
   parentParam?: string;

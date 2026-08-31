@@ -13,7 +13,13 @@ import type {
   DamageResult,
 } from "./types";
 
-/** Make an attack roll */
+/**
+ * Make an attack roll
+ * @param attackBonus
+ * @param targetAC
+ * @param modifiers
+ * @param criticalThreshold
+ */
 export function makeAttackRoll(
   attackBonus: number,
   targetAC: number,
@@ -49,7 +55,13 @@ export function makeAttackRoll(
   };
 }
 
-/** Calculate damage */
+/**
+ * Calculate damage
+ * @param baseDamage
+ * @param modifiers
+ * @param isCritical
+ * @param damageType
+ */
 export function calculateDamage(
   baseDamage: string, // e.g., "2d6+3"
   modifiers: { source: string; value: number }[] = [],

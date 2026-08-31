@@ -21,6 +21,9 @@ import type {
 } from "./types";
 
 // ── Helper: expand ~ to home directory ─────────────────────
+/**
+ * @param path
+ */
 function expandPath(path: string,): string {
   if (path.startsWith("~",)) {
     return `${homedir()}${path.slice(1,)}`;
@@ -28,7 +31,11 @@ function expandPath(path: string,): string {
   return path;
 }
 
-/** Append model / hardware flags. */
+/**
+ * Append model / hardware flags.
+ * @param args
+ * @param opts
+ */
 function appendLlamaHardwareArgs(args: string[], opts: LlamaCppOptions,): void {
   if (opts.alias) { args.push("--alias", opts.alias,); }
   args.push("--ctx-size", String(opts.ctxSize ?? 8192,),);
@@ -40,7 +47,11 @@ function appendLlamaHardwareArgs(args: string[], opts: LlamaCppOptions,): void {
   if (opts.ropeScale) { args.push("--rope-scale", String(opts.ropeScale,),); }
 }
 
-/** Append KV cache flags. */
+/**
+ * Append KV cache flags.
+ * @param args
+ * @param opts
+ */
 function appendLlamaCacheArgs(args: string[], opts: LlamaCppOptions,): void {
   if (opts.cacheTypeK) { args.push("-ctk", opts.cacheTypeK,); }
   if (opts.cacheTypeV) { args.push("-ctv", opts.cacheTypeV,); }
@@ -51,7 +62,11 @@ function appendLlamaCacheArgs(args: string[], opts: LlamaCppOptions,): void {
   if (opts.swaFull) { args.push("--swa-full",); }
 }
 
-/** Append sampler + server behavior flags. */
+/**
+ * Append sampler + server behavior flags.
+ * @param args
+ * @param opts
+ */
 function appendLlamaSamplerArgs(args: string[], opts: LlamaCppOptions,): void {
   if (opts.temp !== undefined) { args.push("--temp", String(opts.temp,),); }
   if (opts.topK !== undefined) { args.push("--top-k", String(opts.topK,),); }
@@ -62,7 +77,11 @@ function appendLlamaSamplerArgs(args: string[], opts: LlamaCppOptions,): void {
   if (opts.fit) { args.push("--fit", "on",); }
 }
 
-/** Append advanced / speculative-decoding flags. */
+/**
+ * Append advanced / speculative-decoding flags.
+ * @param args
+ * @param opts
+ */
 function appendLlamaAdvancedArgs(args: string[], opts: LlamaCppOptions,): void {
   if (opts.specType) { args.push("--spec-type", opts.specType,); }
   if (opts.specDraftNMin !== undefined) { args.push("--spec-draft-n-min", String(opts.specDraftNMin,),); }
@@ -74,6 +93,8 @@ function appendLlamaAdvancedArgs(args: string[], opts: LlamaCppOptions,): void {
  * Start llama.cpp server on given port.
  * modelPath accepts local path (/path/to/model.gguf) or HuggingFace ID (org/repo:quant).
  * Skips (returns null) if binary not found or port unavailable.
+ * @param host
+ * @param opts
  */
 export async function startLlamaCpp(
   host: ServerExternalHost,
@@ -137,6 +158,8 @@ export async function startLlamaCpp(
 
 /**
  * Start llama-swap proxy with a config file.
+ * @param host
+ * @param opts
  */
 export async function startLlamaSwap(
   host: ServerExternalHost,
@@ -183,6 +206,8 @@ export async function startLlamaSwap(
  * Read `startPort` from a llama-swap config file.
  * llama-swap listens on this port (the spawn command does not override it).
  * Falls back to 8080 if the file is missing or unreadable.
+ * @param host
+ * @param configPath
  */
 function resolveLlamaSwapPort(host: ServerExternalHost, configPath: string,): number {
   try {

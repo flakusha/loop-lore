@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import type { TurnManagerState, } from "../types";
 
+/** */
 export interface TurnManagerOptions {
   db: Kysely<DB>;
   chatId: string;

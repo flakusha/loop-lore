@@ -39,6 +39,9 @@ const rule: any = {
   create(context: any, options: any[],) {
     const maxParams = options?.[0]?.maxParams ?? 2;
 
+    /**
+     * @param node
+     */
     function checkFunction(node: any,) {
       const params = node.params ?? [];
 

@@ -15,6 +15,7 @@ export const ASSETS_DEFAULTS = {
   signedUrlExpirySeconds: 900,
 } satisfies AssetsConfig;
 
+/** */
 export class AssetsSection implements AssetsConfig {
   enabled = ASSETS_DEFAULTS.enabled;
   uploadDir = ASSETS_DEFAULTS.uploadDir;
@@ -23,6 +24,9 @@ export class AssetsSection implements AssetsConfig {
   signedUrlSecret = ASSETS_DEFAULTS.signedUrlSecret;
   signedUrlExpirySeconds = ASSETS_DEFAULTS.signedUrlExpirySeconds;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<AssetsConfig>,) {
     Object.assign(this, overrides,);
   }

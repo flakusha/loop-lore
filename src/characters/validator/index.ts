@@ -32,6 +32,10 @@ export {
 
 // ── Validator ────────────────────────────────────
 
+/**
+ * @param character
+ * @param mode
+ */
 export function validateCharacter(
   character: CanonicalCharacter,
   mode: ValidationMode = "strict",

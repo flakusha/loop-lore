@@ -13,6 +13,10 @@ import { locationTraitRoutes, } from "./character-traits/location";
 import { permanentTraitRoutes, } from "./character-traits/permanent";
 import { worldTraitRoutes, } from "./character-traits/world";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function characterTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "character-traits", },)
     .use(permanentTraitRoutes(opts, prefix,),)

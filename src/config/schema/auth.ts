@@ -3,6 +3,7 @@
 
 // src/config/schema/auth.ts — Authentication / session config type
 
+/** */
 export interface AuthConfig {
   /** true = remote multi-user auth required, false = demo/solo mode (skip auth) */
   required: boolean;

@@ -40,6 +40,11 @@ export interface RouteDeps {
   config: Config;
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.ctx
+ */
 export async function handleListAssets({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const searchParams = new URL(ctx.request.url,).searchParams;
   const page = Number(searchParams.get("page",) ?? "1",);
@@ -62,6 +67,11 @@ export async function handleListAssets({ database, ctx, }: RouteDeps & { ctx: Ro
   return jsonPaginated({ data: result.data, total: result.total, page, pageSize, },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.ctx
+ */
 export async function handleGetAsset({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = ctx.userId ?? null;
   const userRole = ctx.userRole ?? null;
@@ -70,6 +80,11 @@ export async function handleGetAsset({ database, ctx, }: RouteDeps & { ctx: Rout
   return jsonResponse(resolved.asset,);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.ctx
+ */
 export async function handlePatchAsset({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
@@ -96,6 +111,12 @@ export async function handlePatchAsset({ database, ctx, }: RouteDeps & { ctx: Ro
   return jsonResponse({ id: updated.id, visibility: updated.visibility, },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param root0.ctx
+ */
 export async function handleDeleteAsset({ database, config, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
@@ -114,6 +135,11 @@ export async function handleDeleteAsset({ database, config, ctx, }: RouteDeps & 
   return jsonNoContent();
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.ctx
+ */
 export async function handleListLinks({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
@@ -127,6 +153,11 @@ export async function handleListLinks({ database, ctx, }: RouteDeps & { ctx: Rou
   return jsonResponse(links,);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.ctx
+ */
 export async function handleCreateLink({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
@@ -143,6 +174,11 @@ export async function handleCreateLink({ database, ctx, }: RouteDeps & { ctx: Ro
   return jsonCreated({ id: ctx.params.id!, },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.ctx
+ */
 export async function handleDeleteLink({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
@@ -163,6 +199,11 @@ export async function handleDeleteLink({ database, ctx, }: RouteDeps & { ctx: Ro
   return jsonNoContent();
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.ctx
+ */
 export async function handleCreateShare({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
@@ -184,6 +225,11 @@ export async function handleCreateShare({ database, ctx, }: RouteDeps & { ctx: R
   return jsonCreated(share,);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.ctx
+ */
 export async function handleDeleteShare({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }
@@ -200,6 +246,11 @@ export async function handleDeleteShare({ database, ctx, }: RouteDeps & { ctx: R
   return jsonNoContent();
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.ctx
+ */
 export async function handleListShares({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
   if (typeof userId !== "string") { return userId; }

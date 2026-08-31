@@ -16,11 +16,17 @@ import type { AdminRouteOpts, } from "./types";
  *   "DELETE ALL" — factory reset: wipe user data, re-seed minimal admin
  *
  * Every action is audit-logged BEFORE it executes so the trail survives.
+ * @param opts
+ * @param prefix
  */
 export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;
   const { config, } = opts;
 
+  /**
+   * @param message
+   * @param action
+   */
   async function audit(message: string, action: string,): Promise<void> {
     try {
       await db

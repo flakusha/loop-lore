@@ -15,6 +15,10 @@ import type { DiscoveryResult, } from "./types";
  * - Context keywords in the approach
  * - Actor's kink_openness (from desire profile)
  * - Random roll
+ * @param db
+ * @param actorId
+ * @param context
+ * @param discoveryChance
  */
 export async function attemptDiscovery(
   db: Kysely<DB>,
@@ -61,7 +65,10 @@ export async function attemptDiscovery(
   return { discovered: true, fantasy, };
 }
 
-/** Infer fantasy category from context keywords. */
+/**
+ * Infer fantasy category from context keywords.
+ * @param context
+ */
 function inferCategory(context: string,): FantasyCategory {
   if (context.includes("bondage",) || context.includes("restrain",)) { return "bondage"; }
   if (context.includes("public",) || context.includes("expose",)) { return "exhibitionism"; }
@@ -76,7 +83,10 @@ function inferCategory(context: string,): FantasyCategory {
   return "roleplay";
 }
 
-/** Infer fantasy name from context keywords. */
+/**
+ * Infer fantasy name from context keywords.
+ * @param context
+ */
 function inferName(context: string,): string {
   const words: string[] = [];
   for (const w of context.split(/\s+/,)) { if (w.length > 3) { words.push(w,); } }

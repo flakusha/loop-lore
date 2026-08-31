@@ -13,6 +13,11 @@ import type { Aspiration, } from "./types";
 
 // ── Prompt section builders ────────────────────────────────────
 
+/**
+ * @param lines
+ * @param aspirations
+ * @param isVisible
+ */
 function appendAspirations(lines: string[], aspirations: Aspiration[], isVisible: (f: string,) => boolean,): void {
   if (aspirations.length === 0) { return; }
   const visible: Aspiration[] = [];
@@ -29,6 +34,13 @@ function appendAspirations(lines: string[], aspirations: Aspiration[], isVisible
   lines.push("",);
 }
 
+/**
+ * @param lines
+ * @param m
+ * @param m.lawful_chaotic
+ * @param m.good_evil
+ * @param isVisible
+ */
 function appendMoralDisposition(
   lines: string[],
   m: { lawful_chaotic: number; good_evil: number },
@@ -40,6 +52,14 @@ function appendMoralDisposition(
   lines.push(`### Moral Disposition: ${lawAxis}-${goodAxis}`, "",);
 }
 
+/**
+ * @param lines
+ * @param a
+ * @param a.decision_style
+ * @param a.risk_tolerance
+ * @param a.initiative_level
+ * @param isVisible
+ */
 function appendApproachTendencies(
   lines: string[],
   a: { decision_style: string; risk_tolerance: number; initiative_level: number },
@@ -52,6 +72,16 @@ function appendApproachTendencies(
   );
 }
 
+/**
+ * @param lines
+ * @param v
+ * @param v.vocabulary_level
+ * @param v.sentence_structure
+ * @param v.humor_style
+ * @param v.verbal_tics
+ * @param v.emotional_range
+ * @param isVisible
+ */
 function appendVoicePatterns(
   lines: string[],
   v: {

@@ -7,6 +7,7 @@ import { MAX_LEVEL, XP_BY_LEVEL, } from "./constants.js";
 
 /**
  * Get the XP required to reach a specific level.
+ * @param level
  */
 export function xpForLevel(level: number,): number {
   return XP_BY_LEVEL[Math.min(Math.max(level, 1,), MAX_LEVEL,)] ?? 0;
@@ -15,6 +16,8 @@ export function xpForLevel(level: number,): number {
 /**
  * Get the XP needed to go from current level to next level.
  * Returns Infinity at max level.
+ * @param currentLevel
+ * @param currentXp
  */
 export function xpToNextLevel(currentLevel: number, currentXp: number,): number {
   if (currentLevel >= MAX_LEVEL) {
@@ -25,6 +28,8 @@ export function xpToNextLevel(currentLevel: number, currentXp: number,): number 
 
 /**
  * Check if a character has enough XP to level up.
+ * @param currentLevel
+ * @param currentXp
  */
 export function canLevelUp(currentLevel: number, currentXp: number,): boolean {
   if (currentLevel >= MAX_LEVEL) {
@@ -36,6 +41,7 @@ export function canLevelUp(currentLevel: number, currentXp: number,): boolean {
 /**
  * Calculate level from total XP.
  * Returns the highest level achievable with the given XP.
+ * @param totalXp
  */
 export function levelFromXp(totalXp: number,): number {
   let level = 1;
@@ -51,7 +57,6 @@ export function levelFromXp(totalXp: number,): number {
 
 /**
  * Award XP and check for level up.
- *
  * @param currentLevel - Current character level
  * @param currentXp - Current XP total
  * @param xpAward - XP to award

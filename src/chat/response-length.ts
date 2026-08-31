@@ -21,7 +21,6 @@ import { RESPONSE_LENGTH_DEFAULTS, } from "./types";
  *   1. Chat-specific preset + custom value (from chats table)
  *   2. User global setting (from users.settings JSON)
  *   3. Server default from config.yaml
- *
  * @param chatPreset - Per-chat preset from DB (null if not set)
  * @param chatCustom - Per-chat custom token count from DB (null if not set)
  * @param userPreset - User's global preference (null if not set)
@@ -51,7 +50,6 @@ export function resolveResponseLength(
 
 /**
  * Clamp a token count to the allowed range (50–2000).
- *
  * @param tokens - Raw token count
  * @returns Clamped value within bounds
  */
@@ -61,7 +59,6 @@ export function clampTokenCount(tokens: number,): number {
 
 /**
  * Check if a preset string is a valid ResponseLengthPreset.
- *
  * @param value - String to validate
  * @returns True if valid preset
  */

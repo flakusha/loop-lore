@@ -14,17 +14,25 @@ mock.module("./htmx", () => ({
   },
 }),);
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url, _opts,) => Response.json(body, { status, },);
 }
 
+/** */
 function mockFetchNetworkError() {
   fetchHandler = () => {
     throw new Error("network",);
   };
 }
 
-/** Build a minimal ChatState-like context for dispatchCommandAction. */
+/**
+ * Build a minimal ChatState-like context for dispatchCommandAction.
+ * @param overrides
+ */
 function buildCtx(
   overrides?: Partial<{
     toasts: { type: string; message: string }[];
