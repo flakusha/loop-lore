@@ -1,6 +1,6 @@
 # TASK: Character traits page injects unescaped goal into innerHTML (stored XSS)
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ src/frontend/pages/characters-traits.ts:66 sets value equals a.goal inside inner
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution (commit 5dd6ff40)
+
+`renderAspirations()` in `src/frontend/pages/characters-traits.ts` now wraps `a.goal` in `escapeHtml()` before interpolating into `innerHTML`. New `src/frontend/pages/characters-traits.test.ts` covers the wrap.
