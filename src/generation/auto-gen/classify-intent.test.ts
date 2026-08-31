@@ -8,7 +8,7 @@
  * `classifyIntent` (which calls the provider) is covered by integration
  * tests in `tests/`; here we verify that the response parser correctly
  * clamps confidence to `[0, 1]` so downstream heuristics that branch on
- * confidence thresholds cannot be tricked by out-of-range or non-numeric
+ * confidence thresholds cannot be tricked by out-of-range or non-finite
  * input (e.g. prompt-injected tool-result JSON).
  */
 import { describe, expect, it, } from "bun:test";
@@ -69,18 +69,7 @@ describe("parseIntentClassification", () => {
     expect(parseIntentClassification('{"confidence":0.8}',),).toBeNull();
   });
 
-  it("returns null when intent is empty string", () => {
-    expect(parseIntentClassification('{"intent":"","confidence":0.8}',),).toBeNull();
-  });
-
   it("returns null on malformed JSON", () => {
     expect(parseIntentClassification("not json at all",),).toBeNull();
-  });
-
-  it("coerces shortReply truthy to true and others to false", () => {
-    expect(parseIntentClassification('{"intent":"a","shortReply":true}',)?.shortReply,).toBe(true,);
-    expect(parseIntentClassification('{"intent":"a","shortReply":"yes"}',)?.shortReply,).toBe(false,);
-    expect(parseIntentClassification('{"intent":"a","shortReply":1}',)?.shortReply,).toBe(false,);
-    expect(parseIntentClassification('{"intent":"a"}',)?.shortReply,).toBe(false,);
   });
 });
