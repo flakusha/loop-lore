@@ -1,6 +1,6 @@
 # BUG: Character export broken: export modal missing data-character-id
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 
@@ -39,6 +39,10 @@ btn.closest('.modal') stops at the inner .modal div, so it never reaches those a
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution (commit 5dd6ff40)
+
+`exportCharacter()` in `src/frontend/pages/characters.ts` now resolves the character id by walking up to the nearest `[data-character-id]` ancestor before falling back to the modal element's `dataset.characterId`. New `src/frontend/pages/characters.test.ts` covers the resolved-id flow.
