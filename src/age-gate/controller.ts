@@ -36,21 +36,24 @@ import { jsonError, jsonResponse, } from "../routes/http-utils";
 class AgeGateConfigStore {
   private config: AgeGateConfig = { enabled: false, minimumAge: 18, mode: "self-declaration", };
 
-  /** Initialize the store with config.
+  /**
+   * Initialize the store with config.
    * @param config - Age-gate configuration.
    */
   init(config: AgeGateConfig,): void {
     this.config = { ...config, };
   }
 
-  /** Get the current config.
+  /**
+   * Get the current config.
    * @returns Current configuration.
    */
   get(): AgeGateConfig {
     return { ...this.config, };
   }
 
-  /** Update the config partially.
+  /**
+   * Update the config partially.
    * @param partial - Partial config to merge.
    */
   update(partial: Partial<AgeGateConfig>,): void {
@@ -78,6 +81,7 @@ export function getRuntimeConfig(): AgeGateConfig {
 
 // ── Options objects ──────────────────────────────────────────
 
+/** Options for handleAccept. */
 export interface HandleAcceptOpts {
   database: Kysely<DB>;
   userId: string | null;
@@ -92,6 +96,9 @@ export interface HandleAcceptOpts {
  * Returns whether the age gate is enabled and whether the current
  * user has passed it. The caller must have been authenticated by
  * middleware, with `userId` set on the request context.
+ * @param database - Database instance.
+ * @param userId - Optional user ID from auth middleware.
+ * @returns JSON response with age-gate status.
  */
 export async function handleGetStatus(database: Kysely<DB>, userId?: string | null,): Promise<Response> {
   try {
@@ -122,6 +129,8 @@ export async function handleGetStatus(database: Kysely<DB>, userId?: string | nu
  *
  * Accept the age gate. Requires `{ birthDate: "YYYY-MM-DD" }` in the body.
  * Returns 200 on success, 400 for invalid data, 403 if underage.
+ * @param opts - Options object containing database, userId, and body.
+ * @returns JSON response indicating success or failure.
  */
 export async function handleAccept({ database, userId, body, }: HandleAcceptOpts,): Promise<Response> {
   if (!userId) {
