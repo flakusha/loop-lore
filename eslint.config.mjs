@@ -181,6 +181,15 @@ export default [
           "ExportNamedDeclaration > VariableDeclaration > ArrowFunctionExpression",
         ],
       }],
+      // Relaxed rules — require-jsdoc presence but not full descriptions
+      // (can revisit once public-export debt is cleared)
+      "jsdoc/require-param-description": "off",
+      "jsdoc/require-returns-description": "off",
+      "jsdoc/require-param": "off",
+      "jsdoc/require-returns": "off",
+      "jsdoc/require-throws": "off",
+      "jsdoc/require-example": "off",
+      "jsdoc/require-yields": "off",
     },
   },
   // E2E tests
