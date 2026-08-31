@@ -109,6 +109,19 @@ export interface AssembleChat {
   gm_config?: string | null;
   response_length_preset?: string | null;
   response_length_custom?: number | null;
+  /**
+   * Chat-level system prompt override (untrusted; set by the chat
+   * creator). Tracked separately so `system.ts` can wrap it with a
+   * `<untrusted_user_content>` marker — see TASK-character-world-prompt-
+   * overrides-injected-verbatim-as-system.
+   */
+  prompt_override?: string | null;
+  /**
+   * World-setup system prompt override applied to this actor in this
+   * world (untrusted; set by the world creator). Tracked separately so
+   * `system.ts` can wrap it.
+   */
+  world_system_prompt_override?: string | null;
 }
 
 /** Shared inputs handed to every section builder. */

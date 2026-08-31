@@ -38,15 +38,22 @@ describe("views/character-edit-form", () => {
     expect(html,).toContain('value="nsfw_extreme"',);
   });
 
-  test("passes values through verbatim (escaping is the caller's job)", () => {
+  test("escapes user-controlled fields (TASK-character-edit-form-renders-unescaped-user-fields-stored-xss)", () => {
     const raw: EditFormValues = {
       ...BASE,
       name: "<script>alert(1)</script>",
       desc: "<b>bold</b>",
+      characterId: "evil'); alert(1); ('",
     };
     const html = buildEditFormHtml(raw,);
-    expect(html,).toContain("<script>alert(1)</script>",);
-    expect(html,).toContain("<b>bold</b>",);
+    // Raw script tag must NOT appear verbatim.
+    expect(html,).not.toContain("<script>alert(1)</script>",);
+    // Each dangerous char must be HTML-encoded.
+    expect(html,).toContain("&lt;script&gt;alert(1)&lt;/script&gt;",);
+    expect(html,).toContain("&lt;b&gt;bold&lt;/b&gt;",);
+    // characterId inside an onclick string must not break out of the quote.
+    expect(html,).toContain("evil&#39;); alert(1); (&#39;",);
+    expect(html,).not.toContain("evil'); alert(1); ('",);
   });
 
   test("includes internal traits section", () => {
