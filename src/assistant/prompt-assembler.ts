@@ -121,6 +121,7 @@ export class PromptAssembler {
     // chat's world (character_world_setup). Non-null overrides win over the
     // base actor setup; the base value is untouched.
     let effectiveActor = actor;
+    let worldSystemPromptOverride: string | null = null;
     if (chat.world_id) {
       const setup = await this.db
         .selectFrom("character_world_setup",)
@@ -134,6 +135,7 @@ export class PromptAssembler {
           scenario: setup.scenario_override ?? actor.scenario,
           system_prompt: setup.system_prompt_override ?? actor.system_prompt,
         };
+        worldSystemPromptOverride = setup.system_prompt_override;
       }
     }
 
@@ -167,9 +169,15 @@ export class PromptAssembler {
     const ctx: AssembleContext = {
       db: this.db,
       actor: effectiveActor,
-      chat,
+      // Pass through the raw override values so `system.ts` can wrap them
+      // with a clear "untrusted user content" marker (TASK-character-world-
+      // prompt-overrides-injected-verbatim-as-system).
+      chat: {
+        ...chat,
+        prompt_override: chat.prompt_override ?? null,
+        world_system_prompt_override: worldSystemPromptOverride,
+      },
       params: efParams,
-      isStory,
       tokenBudget,
       config: efParams.config,
       task: efParams.task,
@@ -178,6 +186,7 @@ export class PromptAssembler {
       gmName: efParams.gmName,
       outputStyle: resolvedOutputStyle,
       responseLength: resolvedResponseLength,
+      isStory,
     };
 
     const sections: PromptSectionReport[] = [];

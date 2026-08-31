@@ -31,7 +31,7 @@
       </div>
       <button
         class="btn btn-ghost btn-sm"
-        @click="cancelWizard(wizardDraft?.wizardId ?? '')"
+        @click="cancelWizard()"
         x-bind:title="t('common.cancel')"
       >
         ✕
@@ -111,7 +111,7 @@
       <div class="wizard-footer-left">
         <button
           class="btn btn-ghost"
-          @click="cancelWizard(wizardDraft?.wizardId ?? '')"
+          @click="cancelWizard()"
         >
           {{{ t("common.cancel") }}}
         </button>

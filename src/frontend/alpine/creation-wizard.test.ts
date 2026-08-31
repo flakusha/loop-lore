@@ -1,5 +1,7 @@
 import "./i18n.test-helper";
 import { afterEach, describe, expect, mock, test, } from "bun:test";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { creationWizard, } from "./creation-wizard";
 
 let fetchCalls: { url: string; opts: RequestInit }[] = [];
@@ -99,9 +101,68 @@ describe("creationWizard.cancelWizard", () => {
     };
     ctx.wizardPreviewOpen = true;
 
-    await creationWizard.cancelWizard!.call(ctx as never, "wiz-A",);
+    await creationWizard.cancelWizard!.call(ctx as never,);
 
     expect(ctx.wizardDraft,).toBeNull();
     expect(ctx.wizardPreviewOpen,).toBe(false,);
+  });
+});
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Regression: creation-wizard.cancelWizard must not take a wizardId
+ * parameter (BUG-character-creation-wizard-bug-wizardid-unused). The
+ * unused-parameter signature (`cancelWizard(_wizardId: string)`) was
+ * always ignored; the canonical fix is to drop the parameter and have
+ * callers call `cancelWizard()` with no argument.
+ */
+
+describe("creation-wizard.cancelWizard signature", () => {
+  test("impl no longer takes a wizardId parameter", () => {
+    const src = fs.readFileSync(
+      path.join(import.meta.dir, "creation-wizard.ts",),
+      "utf8",
+    );
+    expect(src,).toMatch(/async cancelWizard\(\):\s*Promise<void>/,);
+    expect(src,).not.toMatch(/async cancelWizard\(_wizardId: string/,);
+  });
+
+  test("interface declares no-arg cancelWizard", () => {
+    const src = fs.readFileSync(
+      path.join(
+        import.meta.dir,
+        "chat-types",
+        "wizard-state.ts",
+      ),
+      "utf8",
+    );
+    expect(src,).toMatch(/cancelWizard\(\):\s*Promise<void>/,);
+    expect(src,).not.toMatch(/cancelWizard\(wizardId: string/,);
+  });
+
+  test("wizard-panel.html callers pass no argument", () => {
+    const src = fs.readFileSync(
+      path.join(
+        import.meta.dir,
+        "..",
+        "..",
+        "components",
+        "chat",
+        "wizard-panel.html",
+      ),
+      "utf8",
+    );
+    expect(src,).toContain('@click="cancelWizard()"',);
+    expect(src,).not.toContain("cancelWizard(wizardDraft",);
+  });
+
+  test("ticket reference is captured in the impl", () => {
+    const src = fs.readFileSync(
+      path.join(import.meta.dir, "creation-wizard.ts",),
+      "utf8",
+    );
+    expect(src,).toContain("BUG-character-creation-wizard-bug-wizardid-unused",);
   });
 });

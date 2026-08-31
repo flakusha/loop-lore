@@ -12,6 +12,7 @@ import { jsonBody, } from "../alpine/json";
 import { browserRandomUUIDv7, } from "../browser";
 import type { feFetch, } from "../fe-fetch";
 import { parseFloatOr, } from "../utils/parse-number";
+import { escapeHtml, } from "./shared";
 
 // Shared feFetch — caller passes it in to avoid circular import
 let _feFetch: typeof feFetch;
@@ -67,7 +68,9 @@ export function renderAspirations() {
     const i = idx++;
     htmlParts.push(`
     <div class="aspiration-row" style="display:flex;gap:var(--space-2);align-items:flex-start;margin-bottom:var(--space-2);padding:var(--space-2);background:var(--bg-secondary);border-radius:var(--radius-sm)">
-      <input class="form-input" type="text" value="${a.goal}" placeholder="Goal" style="flex:1" onchange="aspirationsData[${i}].goal=this.value" />
+      <input class="form-input" type="text" value="${
+      escapeHtml(a.goal,)
+    }" placeholder="Goal" style="flex:1" onchange="aspirationsData[${i}].goal=this.value" />
       <select class="form-input" style="width:100px" onchange="aspirationsData[${i}].priority=this.value">
         <option value="high" ${a.priority === "high" ? "selected" : ""}>High</option>
         <option value="medium" ${a.priority === "medium" ? "selected" : ""}>Medium</option>
