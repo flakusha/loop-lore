@@ -7,6 +7,7 @@ import { acceptAgeGate, AgeGateError, getStatus, UnderageError, validateAge, } f
 
 // ── Helpers ──────────────────────────────────────────────────
 
+/** Create a test AgeGateConfig with optional overrides. */
 function gateConfig(overrides?: Partial<AgeGateConfig>,): AgeGateConfig {
   return {
     enabled: true,
