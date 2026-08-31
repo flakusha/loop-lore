@@ -1,6 +1,6 @@
 # BUG: Character federation lacks owner consent or NSFW gate
 
-**Status:** not-yet-implemented
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 
@@ -10,9 +10,13 @@ FEAT-activitypub-federation models a Character as Person or Service with no opt-
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution (commit 5dd6ff40)
+
+Added `assertFederationConsent()` / `getFederationConsent()` / `setFederationConsent()` in `src/characters/services/federation-consent.ts`. `generateActivityPubKey()` in `src/crypto/activitypub-keys.ts` now calls `assertFederationConsent()` before minting a signing key. 6 unit tests cover the gate (default false, throws on missing actor, flips on setFederationConsent). No ActivityPub publish route exists yet, so the gate is correctly wired to the only entry point that exists; the gate will activate automatically when a publish path is added.
 
 
 ## Review Update (2026-08-27)
