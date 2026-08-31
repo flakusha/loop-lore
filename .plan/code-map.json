@@ -1347,7 +1347,6 @@
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
     }
   ],
-
   "src/assistant/prompt/sections/system.test.ts": [
     {
       "kind": "ticket",
@@ -3032,7 +3031,6 @@
       "source": "docs/spec/emotion-avatars.md"
     }
   ],
-
   "src/characters/services/federation-consent.ts": [
     {
       "kind": "ticket",
@@ -4489,7 +4487,6 @@
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
     }
   ],
-
   "src/components/chat/wizard-panel.html": [
     {
       "kind": "ticket",
@@ -9246,7 +9243,6 @@
       "source": ".plan/tickets/FEAT-068.md"
     }
   ],
-
   "src/frontend/alpine/creation-wizard.test.ts": [
     {
       "kind": "ticket",
@@ -10701,7 +10697,6 @@
       "source": ".plan/tickets/TASK-proactive-messaging.md"
     }
   ],
-
   "src/frontend/pages/characters-traits.test.ts": [
     {
       "kind": "ticket",
@@ -10714,7 +10709,6 @@
       "source": ".plan/tickets/TASK-character-traits-page-injects-unescaped-goal-into-innerhtml-.md"
     }
   ],
-
   "src/frontend/pages/characters.test.ts": [
     {
       "kind": "ticket",
@@ -18465,7 +18459,6 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
-
   "src/routes/views/character-edit-form.test.ts": [
     {
       "kind": "ticket",
