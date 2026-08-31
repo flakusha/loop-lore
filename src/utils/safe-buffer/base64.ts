@@ -11,7 +11,6 @@ import type { BufferResult, } from "./types";
  * Safely decode a base64 string to a Buffer with size limits.
  *
  * Prevents memory exhaustion from oversized base64 inputs.
- *
  * @param encoded - Base64-encoded string
  * @param maxSize - Maximum decoded size in bytes (default: 10 MB)
  * @returns BufferResult with decoded buffer or error
@@ -44,7 +43,6 @@ export function safeFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Bu
 
 /**
  * Safely encode a Buffer to base64 string.
- *
  * @param buffer - Buffer to encode
  * @param maxSize - Maximum buffer size in bytes (default: 10 MB)
  * @returns BufferResult with base64 string or error

@@ -14,6 +14,7 @@ export const MESSAGES_DEFAULTS = {
   idempotencyExpiryHours: 24,
 } satisfies MessagesConfig;
 
+/** */
 export class MessagesSection implements MessagesConfig {
   autoHideInvalid = MESSAGES_DEFAULTS.autoHideInvalid;
   hideConfirmation = MESSAGES_DEFAULTS.hideConfirmation;
@@ -22,6 +23,9 @@ export class MessagesSection implements MessagesConfig {
   generationTimeoutMs = MESSAGES_DEFAULTS.generationTimeoutMs;
   idempotencyExpiryHours = MESSAGES_DEFAULTS.idempotencyExpiryHours;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<MessagesConfig>,) {
     Object.assign(this, overrides,);
   }

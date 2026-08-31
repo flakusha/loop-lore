@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/**
+ * @param text
+ */
 export function extractEntities(text: string,): Set<string> {
   const entities = new Set<string>();
   const capitalizedPattern = /\b[A-Z][a-z]{2,}(?:\s+[A-Z][a-z]{2,}){0,3}\b/g;
@@ -32,6 +35,10 @@ export function extractEntities(text: string,): Set<string> {
   return entities;
 }
 
+/**
+ * @param a
+ * @param b
+ */
 export function calculateSimilarity(a: string, b: string,): number {
   const wordsA = new Set(a.toLowerCase().split(/\s+/,),);
   const wordsB = new Set(b.toLowerCase().split(/\s+/,),);

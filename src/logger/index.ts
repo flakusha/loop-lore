@@ -23,6 +23,7 @@ const _root: { instance: Logger | null } = { instance: null, };
 /**
  * Create a new root logger instance.
  * If global root not yet set, assigns it.
+ * @param config
  */
 export function createLogger(config?: Partial<LoggerConfig>,): Logger {
   const instance = new LoggerImpl(config,);
@@ -40,6 +41,7 @@ export function getLogger(): Logger {
 
 /**
  * Set or replace the global root logger.
+ * @param logger
  */
 export function setGlobalLogger(logger: Logger,): void {
   _root.instance = logger;

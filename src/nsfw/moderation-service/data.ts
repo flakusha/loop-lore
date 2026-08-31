@@ -10,6 +10,7 @@ import { jsonStringifyOr, } from "../../utils/safe-json";
 import { mapFlag, } from "./flags";
 import type { ContentFlag, ModAction, NsfwModerationServiceContext, NsfwUserPrefs, } from "./types";
 
+/** */
 export interface ExportUserDataArgs {
   thisL: NsfwModerationServiceContext;
   userId: string;
@@ -26,7 +27,10 @@ export interface ExportUserDataArgs {
  */
 export const EXPORT_PREVIEW_MAX = 200;
 
-/** Truncate a free-text field to a length-capped preview. */
+/**
+ * Truncate a free-text field to a length-capped preview.
+ * @param value
+ */
 export function previewText(value: string | null | undefined,): string {
   if (typeof value !== "string" || value.length === 0) { return ""; }
   return value.length > EXPORT_PREVIEW_MAX
@@ -43,6 +47,11 @@ export function previewText(value: string | null | undefined,): string {
  *     length-capped previews in the default bundle. Full fields
  *     require an elevated secondary request (see
  *     `exportUserDataFull`).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.userId
+ * @param root0.exportedBy
+ * @param root0.clientIp
  */
 export async function exportUserData(
   { thisL, userId, exportedBy, clientIp, }: ExportUserDataArgs,
@@ -96,6 +105,7 @@ export async function exportUserData(
   };
 }
 
+/** */
 export interface DeleteUserDataArgs {
   thisL: NsfwModerationServiceContext;
   userId: string;
@@ -103,7 +113,13 @@ export interface DeleteUserDataArgs {
   deletedBy: string;
 }
 
-/** Delete all moderation data for a user, preserving the audit log. */
+/**
+ * Delete all moderation data for a user, preserving the audit log.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.userId
+ * @param root0.deletedBy
+ */
 export async function deleteUserData(
   { thisL, userId, deletedBy, }: DeleteUserDataArgs,
 ): Promise<void> {

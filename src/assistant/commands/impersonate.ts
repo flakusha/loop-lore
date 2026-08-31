@@ -7,6 +7,10 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
+/**
+ * @param args
+ * @param usageMsg
+ */
 function buildImpersonateResult(args: string[], usageMsg: string,): CommandResult {
   if (args.length === 0) {
     return {

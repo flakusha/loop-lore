@@ -19,6 +19,10 @@ import type { HandlerOpts, } from "./types";
 const tChatIdParams = t.Object({ id: t.String(), },);
 const tChoiceIdParams = t.Object({ id: t.String(), choiceId: t.String(), },);
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
@@ -37,6 +41,9 @@ export function vnChoiceRoutes(opts: HandlerOpts, prefix = "/api",) {
   );
 }
 
+/**
+ * @param database
+ */
 function handleListVnChoices(database: Kysely<DB>,) {
   return async (ctx: any,) => {
     const userId = requireUserId(ctx,);
@@ -70,6 +77,9 @@ function handleListVnChoices(database: Kysely<DB>,) {
   };
 }
 
+/**
+ * @param database
+ */
 function handleSelectVnChoice(database: Kysely<DB>,) {
   return async (ctx: any,) => {
     const userId = requireUserId(ctx,);

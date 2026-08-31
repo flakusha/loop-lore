@@ -8,7 +8,6 @@
  * (ComfyUI, sd.cpp). Both backends perform the same abort-with-timeout
  * fetch and normalize thrown errors into a `LoRADiscoveryResult`, so that
  * machinery lives here instead of being duplicated per backend.
- *
  * @module generation/lora/discovery-http
  */
 
@@ -36,7 +35,6 @@ export interface DiscoveryFailureContext {
  * Throws on timeout (AbortError) or network failure; callers catch and route
  * the error through {@link discoveryErrorResult}. The timer is always cleared
  * once the request settles, even on throw.
- *
  * @param url - URL to fetch
  * @param timeoutMs - Timeout in ms before the request is aborted
  * @returns The resolved {@link Response}
@@ -62,7 +60,6 @@ export async function fetchWithTimeout(
 /**
  * Normalize a thrown discovery error into a `LoRADiscoveryResult` with no
  * models and a classified `error` message (timeout / unreachable / generic).
- *
  * @param error - The thrown value from the fetch or parsing path
  * @param ctx - Discovery attempt context used to label the result
  * @returns An empty `LoRADiscoveryResult` carrying the classified error

@@ -10,6 +10,9 @@ import type { GenerationMessage, } from "../../gen-types-options";
 import type { GenerateRequest, ToolDef, } from "../types";
 import type { AnthropicState, AnthropicToolResultBlock, } from "./types";
 
+/**
+ * @param role
+ */
 function mapRole(role: GenerationMessage["role"],): "user" | "assistant" {
   // Anthropic Messages only accepts `user`/`assistant`. Map `character`
   // (speaker persona) and `tool` (tool-result turns, handled via blocks).
@@ -17,6 +20,9 @@ function mapRole(role: GenerationMessage["role"],): "user" | "assistant" {
   return role === "assistant" ? "assistant" : "user";
 }
 
+/**
+ * @param tool
+ */
 export function mapToolDef(tool: ToolDef,): Record<string, unknown> {
   return {
     name: tool.function.name,
@@ -29,6 +35,7 @@ export function mapToolDef(tool: ToolDef,): Record<string, unknown> {
  * Build the Anthropic request body, extracting system messages into the
  * top-level `system` field (Anthropic does not accept a `system` role in
  * the messages array).
+ * @param messages
  */
 export function buildMessages(
   messages: GenerationMessage[],
@@ -65,12 +72,21 @@ export function buildMessages(
   return { system: systemParts.join("\n\n",), messages: out, };
 }
 
+/**
+ * @param req
+ * @param body
+ */
 function buildToolCallsParam(req: GenerateRequest, body: Record<string, unknown>,): void {
   if (req.tools && req.tools.length > 0) {
     body.tools = Array.from(req.tools, mapToolDef,);
   }
 }
 
+/**
+ * @param state
+ * @param req
+ * @param stream
+ */
 export function buildBody(
   state: AnthropicState,
   req: GenerateRequest,

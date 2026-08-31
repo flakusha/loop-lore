@@ -15,6 +15,7 @@ import { jsonStringifyOr, } from "../../utils";
 import { safeFromUint8Array, } from "../../utils/safe-buffer";
 import { validateProviderUrl, } from "../../utils/url-validation";
 
+/** */
 export type ComfyUIWorkflow = Record<
   string,
   {
@@ -24,12 +25,14 @@ export type ComfyUIWorkflow = Record<
   }
 >;
 
+/** */
 export interface ComfyUIPromptResult {
   prompt_id: string;
   number?: number;
   node_errors?: Record<string, { class_type: string; errors: unknown[] }>;
 }
 
+/** */
 export interface ComfyUIExecutionStatus {
   prompt_id: string;
   status: "pending" | "running" | "completed" | "failed" | "cancelled";
@@ -38,6 +41,7 @@ export interface ComfyUIExecutionStatus {
   error?: string;
 }
 
+/** */
 export interface ComfyUINodeInfo {
   name: string;
   display_name: string;
@@ -47,17 +51,22 @@ export interface ComfyUINodeInfo {
   output_name: string[];
 }
 
+/** */
 export interface ComfyUIClientOptions {
   baseUrl: string;
   timeout?: number;
   pollIntervalMs?: number;
 }
 
+/** */
 export class ComfyUIClient {
   readonly baseUrl: string;
   private timeout: number;
   private pollIntervalMs: number;
 
+  /**
+   * @param options
+   */
   constructor(options: ComfyUIClientOptions,) {
     this.baseUrl = options.baseUrl.replace(/\/+$/, "",);
     this.timeout = options.timeout ?? 120_000;
@@ -71,7 +80,6 @@ export class ComfyUIClient {
 
   /**
    * Submit a workflow for execution.
-   *
    * @param workflow - ComfyUI API-format workflow JSON
    * @returns prompt_id for tracking execution
    */
@@ -100,6 +108,7 @@ export class ComfyUIClient {
    * Poll for execution result by prompt_id.
    *
    * Returns null if not yet complete, throws on failure.
+   * @param promptId
    */
   async pollResult(promptId: string,): Promise<{
     done: boolean;
@@ -144,7 +153,6 @@ export class ComfyUIClient {
 
   /**
    * Wait for workflow completion with polling.
-   *
    * @param promptId - the prompt_id from submitWorkflow
    * @param timeoutMs - max wait time in ms (overrides client timeout)
    * @returns list of generated image filenames
@@ -170,6 +178,7 @@ export class ComfyUIClient {
 
   /**
    * Cancel a running execution.
+   * @param _promptId
    */
   async cancelExecution(_promptId?: string,): Promise<void> {
     const url = `${this.baseUrl}/interrupt`;
@@ -197,7 +206,6 @@ export class ComfyUIClient {
 
   /**
    * Download a generated image by filename.
-   *
    * @param filename - as returned from pollResult / waitForCompletion
    * @param subfolder - optional subfolder from ComfyUI output
    * @param type - output type ("output" default, "temp")
@@ -226,7 +234,7 @@ export class ComfyUIClient {
 
   /**
    * Run a workflow end-to-end: submit → wait → download images.
-   *
+   * @param workflow
    * @returns array of image buffers
    */
   async runWorkflow(workflow: ComfyUIWorkflow,): Promise<Buffer[]> {

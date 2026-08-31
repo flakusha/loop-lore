@@ -24,12 +24,16 @@ export const KEY_MECHANIC_PARAMS = [
   "visualNovel",
 ] as const;
 
+/** */
 export type KeyMechanicParam = (typeof KEY_MECHANIC_PARAMS)[number];
 
 /**
  * Check if a user owns or is a participant of a chat.
- *
- * @returns { ok: true } if access granted, or { ok: false, error } with reason
+ * @param database
+ * @param chatId
+ * @param userId
+ * @param userRole
+ * @returns if access granted, or { ok: false, error } with reason
  */
 export async function checkChatAccess(
   database: Kysely<DB>,
@@ -68,6 +72,8 @@ export async function checkChatAccess(
 /**
  * Determine whether a chat is "online" — i.e. has at least one confirmed
  * message. Before that it is a draft and key mechanics remain editable.
+ * @param database
+ * @param chatId
  */
 export async function isChatOnline(
   database: Kysely<DB>,

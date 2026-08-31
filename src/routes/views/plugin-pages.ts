@@ -19,6 +19,9 @@ import {
   serveWorldsList,
 } from "./view-serving";
 
+/**
+ * @param database
+ */
 export function pagesRoutes(database: Kysely<DB>,) {
   const nsfwGuard = requirePermission("admin.system",);
   return new Elysia({ name: "views-pages", },)

@@ -3,6 +3,7 @@
 
 // ── Model family classification ─────────────────────────────
 
+/** */
 export type ImageModelFamily =
   | "sd1"
   | "sd2"

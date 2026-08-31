@@ -34,6 +34,10 @@ beforeAll(async () => {
 
 // ── Seed helpers ──────────────────────────────────────────────
 
+/**
+ * @param db
+ * @param overrides
+ */
 async function seedChat(db: Kysely<DB>, overrides?: Record<string, unknown>,): Promise<string> {
   const id = (overrides?.id as string | undefined) ?? randomUUID();
   await db
@@ -50,6 +54,9 @@ async function seedChat(db: Kysely<DB>, overrides?: Record<string, unknown>,): P
   return id;
 }
 
+/**
+ * @param db
+ */
 async function seedWorld(db: Kysely<DB>,): Promise<string> {
   const id = randomUUID();
   await db
@@ -68,6 +75,11 @@ async function seedWorld(db: Kysely<DB>,): Promise<string> {
   return id;
 }
 
+/**
+ * @param db
+ * @param worldId
+ * @param overrides
+ */
 async function seedLocation(
   db: Kysely<DB>,
   worldId: string,
@@ -101,6 +113,10 @@ async function seedLocation(
   return id;
 }
 
+/**
+ * @param db
+ * @param overrides
+ */
 async function seedActor(db: Kysely<DB>, overrides?: Record<string, unknown>,): Promise<string> {
   const id = (overrides?.id as string | undefined) ?? randomUUID();
   await db
@@ -119,6 +135,11 @@ async function seedActor(db: Kysely<DB>, overrides?: Record<string, unknown>,): 
   return id;
 }
 
+/**
+ * @param db
+ * @param chatId
+ * @param actorId
+ */
 async function seedParticipant(db: Kysely<DB>, chatId: string, actorId: string,): Promise<void> {
   await db
     .insertInto("chat_participants",)
@@ -130,6 +151,12 @@ async function seedParticipant(db: Kysely<DB>, chatId: string, actorId: string,)
     .execute();
 }
 
+/**
+ * @param db
+ * @param chatId
+ * @param actorId
+ * @param overrides
+ */
 async function seedStoryTurn(
   db: Kysely<DB>,
   chatId: string,
@@ -158,6 +185,7 @@ async function seedStoryTurn(
 
 // ── GM config factory ─────────────────────────────────────────
 
+/** */
 function makeLlmConfig(): GameMasterConfig {
   return {
     type: GameMasterType.Llm,
@@ -171,6 +199,7 @@ function makeLlmConfig(): GameMasterConfig {
   };
 }
 
+/** */
 function makeHumanConfig(): GameMasterConfig {
   return {
     type: GameMasterType.Human,
@@ -181,6 +210,7 @@ function makeHumanConfig(): GameMasterConfig {
   };
 }
 
+/** */
 function makeHybridConfig(): GameMasterConfig {
   return {
     type: GameMasterType.Hybrid,
@@ -306,6 +336,7 @@ describe("GameMasterService — constructor & state", () => {
 });
 
 describe("GameMasterService — executeTurn", () => {
+  /** */
   async function seedStoryWorld(): Promise<{
     chatId: string;
     worldId: string;

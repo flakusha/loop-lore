@@ -9,6 +9,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
 
+/** */
 export interface SyntheticGeneratorOptions {
   db: Kysely<DB>;
   /** Override id generator (testing/injectable) */

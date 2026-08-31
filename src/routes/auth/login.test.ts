@@ -5,7 +5,7 @@
  * Verifies credential validation, account status gating, session
  * creation, cookie issuance, and rate limiting.
  */
-/* eslint-disable sonarjs/no-hardcoded-passwords -- the password is a test fixture */
+
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
@@ -24,6 +24,10 @@ const USERNAME = "alice";
 const PASSWORD = "correct-horse-battery";
 const USER_ID = "user-login-alice";
 
+/**
+ * @param overrides
+ * @param overrides.jwtSecret
+ */
 function makeConfig(overrides?: { jwtSecret?: string },): Config {
   return {
     auth: {
@@ -40,6 +44,10 @@ function makeConfig(overrides?: { jwtSecret?: string },): Config {
   } as unknown as Config;
 }
 
+/**
+ * @param body
+ * @param headers
+ */
 function makeRequest(body?: string, headers?: Record<string, string>,): Request {
   return new Request("http://localhost/api/auth/login", {
     method: "POST",
@@ -48,6 +56,10 @@ function makeRequest(body?: string, headers?: Record<string, string>,): Request 
   },);
 }
 
+/**
+ * @param username
+ * @param password
+ */
 function loginBody(username: string, password: string,): string {
   return `username=${encodeURIComponent(username,)}&password=${encodeURIComponent(password,)}`;
 }
@@ -234,6 +246,7 @@ describe("handleLogin — Secure cookie", () => {
     LL_COOKIE_SECURE: process.env.LL_COOKIE_SECURE,
   };
 
+  /** */
   function restoreEnv(): void {
     for (const [k, v,] of Object.entries(envSnapshot,)) {
       if (v === undefined) { delete process.env[k]; }

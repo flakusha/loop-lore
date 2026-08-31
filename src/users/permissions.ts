@@ -17,6 +17,7 @@
 
 import type { UserRole, } from "../db/enums";
 
+/** */
 export type Permission =
   | "chat.create"
   | "chat.join"
@@ -85,7 +86,6 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, readonly string[]> = {
 /**
  * Whether a permission string is granted by a role's permission set.
  * Supports wildcard namespaces: "chat.*" grants "chat.create"; "*" grants all.
- *
  * @param role - User role (or null for anonymous)
  * @param permission - Permission to check, e.g. "character.edit_own"
  * @param overrides - Optional per-role override of DEFAULT_PERMISSIONS
@@ -110,7 +110,6 @@ export function can(
 
 /**
  * Whether a role is granted every permission in a list.
- *
  * @param role - User role
  * @param permissions - Permissions that must ALL be granted
  * @param overrides - Optional per-role override

@@ -14,7 +14,8 @@ import type { ChatInviteRow, CreateInviteInput, InviteResult, } from "./types";
  * Retries code generation on the (rare) collision. `expiresAt` and `maxUses`
  * are optional; both being unset yields a code that never expires and has no
  * redemption cap.
- *
+ * @param database
+ * @param input
  * @throws on unexpected DB failure (caller should let it bubble to error handling)
  */
 export async function createInvite(

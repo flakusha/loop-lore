@@ -4,9 +4,13 @@ import { chatUtilsTime, formatDisplayDate, } from "./time";
 
 const iso = "2026-07-04T14:30:00Z";
 
-/** Run fn with globalThis.currentLocale temporarily set, restoring afterward.
+/**
+ * Run fn with globalThis.currentLocale temporarily set, restoring afterward.
  *  Scoped synchronously so no other test (sequential or parallel worker) can
- *  observe the mutation — avoids shared-global flakiness. */
+ *  observe the mutation — avoids shared-global flakiness.
+ * @param locale
+ * @param fn
+ */
 function withLocale(locale: string, fn: () => void,): void {
   const prev = (globalThis as any).currentLocale;
   (globalThis as any).currentLocale = locale;

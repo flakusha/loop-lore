@@ -43,7 +43,12 @@ async function ensureModal(): Promise<HTMLElement | null> {
   return document.querySelector<HTMLElement>("#character-detail-modal",);
 }
 
-/** Fill modal with character data and mood. */
+/**
+ * Fill modal with character data and mood.
+ * @param modal
+ * @param char
+ * @param id
+ */
 async function populateModal(modal: HTMLElement, char: Record<string, unknown>, id: string,): Promise<void> {
   modal.querySelector("[data-field='name']",)!.textContent = (char.display_name || char.name || "") as string;
   modal.querySelector("[data-field='description']",)!.textContent = (char.description || "No description") as string;
@@ -79,7 +84,11 @@ async function populateModal(modal: HTMLElement, char: Record<string, unknown>, 
   if (happinessEl) { happinessEl.textContent = `${mood.happiness}%`; }
 }
 
-/** Load the character's linked gallery assets (avatars) into the modal's Gallery tab. */
+/**
+ * Load the character's linked gallery assets (avatars) into the modal's Gallery tab.
+ * @param modal
+ * @param id
+ */
 async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<void> {
   const container = modal.querySelector<HTMLElement>("[data-field='gallery']",);
   if (!container) { return; }

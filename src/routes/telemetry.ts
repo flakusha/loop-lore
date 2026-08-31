@@ -45,6 +45,11 @@ interface HandleOpts {
   database: Kysely<DB>;
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function telemetryRoutes({ database, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "telemetry", },)
     .post(`${prefix}/telemetry/event`, async (ctx: any,) => {

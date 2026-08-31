@@ -12,7 +12,10 @@
 import { jsonParseOr, } from "../json";
 import type { MemoryEntry, MemoryPanelState, } from "../types";
 
-/** Estimate tokens from content length (~4 chars per token). */
+/**
+ * Estimate tokens from content length (~4 chars per token).
+ * @param content
+ */
 export function estimateTokens(content: string,): number {
   return Math.ceil(content.length / 4,);
 }
@@ -30,14 +33,21 @@ export interface MemoryApiRow {
   created_at: string;
 }
 
-/** Parse keywords that may arrive as a JSON string or as an array. */
+/**
+ * Parse keywords that may arrive as a JSON string or as an array.
+ * @param keywords
+ */
 export function parseMemoryKeywords(keywords: string | string[],): string[] {
   return typeof keywords === "string"
     ? jsonParseOr<string[]>(keywords || "[]", [],)
     : (keywords ?? []);
 }
 
-/** Map a raw API row to a MemoryEntry, defaulting the scope when absent. */
+/**
+ * Map a raw API row to a MemoryEntry, defaulting the scope when absent.
+ * @param row
+ * @param scopeFallback
+ */
 export function toMemoryEntry(row: MemoryApiRow, scopeFallback: MemoryEntry["scope"],): MemoryEntry {
   return {
     id: row.id,
@@ -53,7 +63,11 @@ export function toMemoryEntry(row: MemoryApiRow, scopeFallback: MemoryEntry["sco
   };
 }
 
-/** Memories owned by the given panel tab. */
+/**
+ * Memories owned by the given panel tab.
+ * @param panel
+ * @param tab
+ */
 export function memoriesForTab(panel: MemoryPanelState, tab: MemoryPanelState["activeTab"],): MemoryEntry[] {
   switch (tab) {
     case "assistant": {

@@ -29,6 +29,7 @@ export const TEMPLATE_FILES: Record<string, keyof TemplatesConfig> = {
 /**
  * Detect if cwd is a git worktree and return the main repo root.
  * Same logic as load.ts — duplicated to avoid circular import.
+ * @param cwd
  */
 export function findMainRepoRoot(cwd: string,): string | null {
   const gitPath = path.join(cwd, ".git",);
@@ -60,7 +61,10 @@ export function findMainRepoRoot(cwd: string,): string | null {
   return null;
 }
 
-/** Find template files in search directories */
+/**
+ * Find template files in search directories
+ * @param cwd
+ */
 export function findTemplateFiles(cwd: string,): Map<string, string> {
   const mainRoot = findMainRepoRoot(cwd,);
   const searchDirs = [
@@ -95,6 +99,9 @@ export function findTemplateFiles(cwd: string,): Map<string, string> {
 
 // ── Parsing ─────────────────────────────────────────────────
 
+/**
+ * @param filePath
+ */
 export function parseTemplateFile(filePath: string,): Record<string, unknown> {
   const content = readFileSync(filePath, "utf8",);
   const ext = path.extname(filePath,).slice(1,);

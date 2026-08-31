@@ -19,7 +19,7 @@ import { type Kysely, sql, } from "kysely";
  * SQLite's `ALTER TABLE ... ADD COLUMN` raises immediately if the column
  * exists. We probe `pragma_table_info` first; if the row is present, the
  * column already exists and there's no work to do.
- *
+ * @param database
  * @see TASK-middleware-migration-compaction-data-version-hash.md
  * @see epic-content-hashing-distributed-integrity.md
  */
@@ -36,6 +36,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   }
 }
 
+/**
+ * @param _database
+ */
 export async function down(_database: Kysely<unknown>,): Promise<void> {
   // Forward-only. There is no clean down() because the broken down() in
   // migration 016 is what this migration defends against. Documented in

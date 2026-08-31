@@ -26,6 +26,7 @@ const LOCALES_DIR = join(import.meta.dir, "../public/locales",);
 /**
  * Load a locale file and cache it.
  * Returns flattened translations for immediate use.
+ * @param locale
  */
 export function loadLocale(locale: Locale,): FlatTranslationMap {
   const cached = localeCache.get(locale,);
@@ -49,6 +50,7 @@ export function loadLocale(locale: Locale,): FlatTranslationMap {
 
 /**
  * Load locale synchronously (same as loadLocale, but explicit naming).
+ * @param locale
  */
 export function loadLocaleSync(locale: Locale,): FlatTranslationMap {
   return loadLocale(locale,);
@@ -56,6 +58,7 @@ export function loadLocaleSync(locale: Locale,): FlatTranslationMap {
 
 /**
  * Get raw nested translations for a locale (used by export tools).
+ * @param locale
  */
 export function getRawTranslations(locale: Locale,): TranslationMap | undefined {
   if (!rawCache.has(locale,)) {

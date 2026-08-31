@@ -36,11 +36,17 @@ export type { QuestProgressEntry, } from "./types";
 
 // ── Quest Engine Service ─────────────────────────────────────
 
+/** */
 export class QuestEngine {
   private readonly db: Kysely<DB>;
   private readonly worldState?: WorldStateService;
   private readonly items?: ItemsService;
 
+  /**
+   * @param db
+   * @param worldState
+   * @param items
+   */
   constructor(
     db: Kysely<DB>,
     worldState?: WorldStateService,
@@ -56,7 +62,22 @@ export class QuestEngine {
     return { db: this.db, worldState: this.worldState, items: this.items, };
   }
 
-  /** Create a new quest */
+  /**
+   * Create a new quest
+   * @param params
+   * @param params.worldId
+   * @param params.creatorId
+   * @param params.name
+   * @param params.description
+   * @param params.type
+   * @param params.category
+   * @param params.config
+   * @param params.target
+   * @param params.priority
+   * @param params.deadline
+   * @param params.rewards
+   * @param params.narrativeHooks
+   */
   async createQuest(params: {
     worldId: string;
     creatorId: string;
@@ -77,6 +98,9 @@ export class QuestEngine {
   /**
    * Process a world event and update matching quest progress.
    * Returns all quests that had their progress changed.
+   * @param worldId
+   * @param chatId
+   * @param events
    */
   async processEvent(worldId: string, chatId: string, events: WorldEvent[],): Promise<QuestProgressEntry[]> {
     return processEventDispatch(this.state, worldId, chatId, events,);
@@ -84,6 +108,10 @@ export class QuestEngine {
 
   /**
    * Manually update quest progress for a specific chat.
+   * @param questId
+   * @param chatId
+   * @param delta
+   * @param sourceMessageId
    */
   async advanceProgress(
     questId: string,
@@ -94,37 +122,61 @@ export class QuestEngine {
     return advanceProgressDispatch(this.state, questId, chatId, delta, sourceMessageId,);
   }
 
-  /** Get all active quests for a world */
+  /**
+   * Get all active quests for a world
+   * @param worldId
+   */
   async getActiveQuests(worldId: string,) {
     return getActiveQuestsDispatch(this.state, worldId,);
   }
 
-  /** Get quest progress for a specific chat */
+  /**
+   * Get quest progress for a specific chat
+   * @param questId
+   * @param chatId
+   */
   async getChatProgress(questId: string, chatId: string,) {
     return getChatProgressDispatch(this.state, questId, chatId,);
   }
 
-  /** Fail a quest (e.g., deadline passed) */
+  /**
+   * Fail a quest (e.g., deadline passed)
+   * @param questId
+   */
   async fail(questId: string,): Promise<void> {
     return failDispatch(this.state, questId,);
   }
 
-  /** Abandon a quest (GM action) */
+  /**
+   * Abandon a quest (GM action)
+   * @param questId
+   */
   async abandon(questId: string,): Promise<void> {
     return abandonDispatch(this.state, questId,);
   }
 
-  /** Get completion percentage for a quest */
+  /**
+   * Get completion percentage for a quest
+   * @param questId
+   */
   async getCompletion(questId: string,): Promise<{ progress: number; target: number; percentage: number }> {
     return getCompletionDispatch(this.state, questId,);
   }
 
-  /** Check time-based quests for deadline expiry */
+  /**
+   * Check time-based quests for deadline expiry
+   * @param worldId
+   */
   async checkTimeQuests(worldId: string,): Promise<string[]> {
     return checkTimeQuestsDispatch(this.state, worldId,);
   }
 }
 
+/**
+ * @param db
+ * @param worldState
+ * @param items
+ */
 export function createQuestEngine(
   db: Kysely<DB>,
   worldState?: WorldStateService,

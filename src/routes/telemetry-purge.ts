@@ -15,6 +15,8 @@ import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
  *
  * Emits a `log_entries` audit row and a structured logger warning so the
  * action is traceable from the admin audit log.
+ * @param database
+ * @param ctx
  */
 export async function purgeTelemetryEvents(
   database: Kysely<DB>,

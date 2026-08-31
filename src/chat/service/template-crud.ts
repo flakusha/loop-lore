@@ -16,6 +16,18 @@ import type { TemplateMutationResult, } from "./types";
 
 /**
  * Create a chat setup template (admin).
+ * @param database
+ * @param params
+ * @param params.slug
+ * @param params.name
+ * @param params.description
+ * @param params.mode
+ * @param params.turnStrategy
+ * @param params.worldId
+ * @param params.gmConfig
+ * @param params.visualNovel
+ * @param params.features
+ * @param params.visibility
  */
 export async function createChatSetupTemplate(
   database: Kysely<DB>,
@@ -68,6 +80,18 @@ export async function createChatSetupTemplate(
 /**
  * Update a chat setup template (admin). Existing bound chats keep their snapshot
  * binding — templates are snapshots, edits apply to future chats only.
+ * @param database
+ * @param templateId
+ * @param params
+ * @param params.name
+ * @param params.description
+ * @param params.mode
+ * @param params.turnStrategy
+ * @param params.worldId
+ * @param params.gmConfig
+ * @param params.visualNovel
+ * @param params.features
+ * @param params.visibility
  */
 export async function updateChatSetupTemplate(
   database: Kysely<DB>,
@@ -120,6 +144,8 @@ export async function updateChatSetupTemplate(
 /**
  * Delete a chat setup template (admin). Chats bound to it keep their snapshot
  * (template_id set null via FK onDelete set null).
+ * @param database
+ * @param templateId
  */
 export async function deleteChatSetupTemplate(
   database: Kysely<DB>,

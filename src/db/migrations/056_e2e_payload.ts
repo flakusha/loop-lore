@@ -35,6 +35,9 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // ── e2e_sessions table ───────────────────────────────────
   await db.schema
@@ -127,6 +130,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropIndex("idx_skipped_keys_age",).execute();
   await db.schema.dropIndex("idx_skipped_keys_lookup",).execute();

@@ -13,6 +13,8 @@ import { isChatGenerating, } from "../index";
  * GET /api/generation/status/:chatId
  *
  * Check whether a chat currently has an active generation.
+ * @param chatId
+ * @param _database
  */
 export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>,): Response {
   if (!chatId) {

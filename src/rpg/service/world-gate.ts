@@ -12,6 +12,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 
+/** */
 export interface WorldGateResult {
   allowed: boolean;
   reason?: string;
@@ -19,7 +20,8 @@ export interface WorldGateResult {
 
 /**
  * Check if a world has RPG mechanics enabled.
- *
+ * @param database
+ * @param worldId
  * @returns `{ allowed: true }` or `{ allowed: false, reason }`.
  */
 export async function checkRpgEnabled(

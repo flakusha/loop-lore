@@ -9,10 +9,13 @@ import type { AsyncStoreConfig, } from "./store";
 /** Node's setInterval returns `Timeout` on Node and `number` on Bun — name it. */
 type IntervalHandle = ReturnType<typeof setInterval>;
 
-/** Root directory for spilled bodies. Lives under the repo's `.tmp/` to keep
- *  per-AGENTS.md scratch discipline and avoid stray repo-root files. */
+/**
+ * Root directory for spilled bodies. Lives under the repo's `.tmp/` to keep
+ *  per-AGENTS.md scratch discipline and avoid stray repo-root files.
+ */
 export const OFFLOAD_DIR = path.resolve(".tmp", "async-store",);
 
+/** */
 export interface OffloadDaemonConfig {
   /** Scan interval when cron trigger is active. */
   intervalMs?: number;
@@ -26,6 +29,7 @@ export interface OffloadDaemonConfig {
   shouldRun?: (state: DaState,) => boolean | Promise<boolean>;
 }
 
+/** */
 export interface DaState {
   rowCount: number;
   lastWriteAt: number;
@@ -36,13 +40,22 @@ const DEFAULT_INTERVAL_MS = 5 * 60 * 1000;
 const DEFAULT_MIN_AGE_MS = 5 * 60 * 1000;
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 
-/** Lazy default — pulled from `AsyncStoreConfig` defaults to keep parity. */
+/**
+ * Lazy default — pulled from `AsyncStoreConfig` defaults to keep parity.
+ * @param override
+ * @param fallback
+ */
 function getMaxInlineBytes(override: number | undefined, fallback: AsyncStoreConfig,): number {
   if (override !== undefined) { return override; }
   return fallback.maxInlineBytes ?? 1024 * 1024;
 }
 
-/** Start the offload daemon. Returns a handle exposing `stop()` + `runOnce()`. */
+/**
+ * Start the offload daemon. Returns a handle exposing `stop()` + `runOnce()`.
+ * @param database
+ * @param asyncStoreConfig
+ * @param config
+ */
 export function startOffloadDaemon(
   database: Kysely<DB>,
   asyncStoreConfig: AsyncStoreConfig,
@@ -62,6 +75,7 @@ export function startOffloadDaemon(
 
   const state: DaState = { rowCount: 0, lastWriteAt: Date.now(), eventLoopLagMs: 0, };
 
+  /** */
   async function runOnce(): Promise<{ offloaded: number; expired: number }> {
     if (running) { return { offloaded: 0, expired: 0, }; }
     running = true;
@@ -158,6 +172,7 @@ export function startOffloadDaemon(
   };
 }
 
+/** */
 export interface OffloadDaemon {
   start(): void;
   stop(): void;
@@ -165,7 +180,11 @@ export interface OffloadDaemon {
   readonly state: DaState;
 }
 
-/** Compress + write a body to disk under OFFLOAD_DIR. */
+/**
+ * Compress + write a body to disk under OFFLOAD_DIR.
+ * @param id
+ * @param body
+ */
 async function spill(id: string, body: string,): Promise<string> {
   const filePath = path.join(OFFLOAD_DIR, `${id}.json.gz`,);
   const compressed = gzipSync(Buffer.from(body, "utf8",),);
@@ -173,7 +192,10 @@ async function spill(id: string, body: string,): Promise<string> {
   return filePath;
 }
 
-/** Read a body back from disk (used by the status endpoint). */
+/**
+ * Read a body back from disk (used by the status endpoint).
+ * @param filePath
+ */
 export function readOffloadedBody(filePath: string,): string | null {
   try {
     if (!existsSync(filePath,)) { return null; }
@@ -184,7 +206,10 @@ export function readOffloadedBody(filePath: string,): string | null {
   }
 }
 
-/** Test seam: report whether a spill file exists for a given id. */
+/**
+ * Test seam: report whether a spill file exists for a given id.
+ * @param id
+ */
 export function offloadExists(id: string,): boolean {
   return existsSync(path.join(OFFLOAD_DIR, `${id}.json.gz`,),);
 }

@@ -36,7 +36,6 @@ export type {
 
 /**
  * Create a RelationshipsService instance.
- *
  * @param db - The database handle (matches the former `new RelationshipsService(db)`)
  * @returns A RelationshipsService bound to the given database
  */

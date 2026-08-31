@@ -11,6 +11,8 @@ import type { ExportContext, WorldBundle, } from "./types";
  * plus every story-domain record owned by it (locations, lore, quests, and
  * world/location states). Shared by the bulk ZIP story export and the
  * per-world export route so both produce identical bundles.
+ * @param database
+ * @param worldId
  */
 export async function buildWorldBundle(database: Kysely<DB>, worldId: string,): Promise<WorldBundle | null> {
   const world = await database
@@ -42,6 +44,7 @@ export async function buildWorldBundle(database: Kysely<DB>, worldId: string,): 
 /**
  * Export a self-contained {@link WorldBundle} per owned world into
  * `zip/story/<worldId>.json`. Populates `ctx.counts.story`.
+ * @param ctx
  */
 export async function exportStoryToZip(ctx: ExportContext,): Promise<void> {
   const worlds = await ctx.database

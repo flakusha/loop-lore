@@ -16,6 +16,9 @@ export class StreamingRepetitionDetector {
   private config: RepetitionDetectionConfig;
   private lastCheckLength = 0;
 
+  /**
+   * @param config
+   */
   constructor(config: RepetitionDetectionConfig,) {
     this.config = config;
   }
@@ -23,6 +26,7 @@ export class StreamingRepetitionDetector {
   /**
    * Add a chunk of text to the buffer and check for repetition.
    * Returns an analysis if the minimum threshold is met.
+   * @param chunk
    */
   addChunk(chunk: string,): RepetitionAnalysis | null {
     this.buffer.push(chunk,);
@@ -39,14 +43,17 @@ export class StreamingRepetitionDetector {
     return analysis.detected ? analysis : null;
   }
 
+  /** */
   getBufferText(): string {
     return this.buffer.join("",);
   }
 
+  /** */
   getTotalChars(): number {
     return this.totalChars;
   }
 
+  /** */
   reset(): void {
     this.buffer = [];
     this.totalChars = 0;

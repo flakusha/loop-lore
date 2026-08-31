@@ -8,18 +8,25 @@ import { ComfyUIClient, } from "./comfyui";
 
 type FetchHandler = (url: string, init: RequestInit,) => Response | Promise<Response>;
 
+/**
+ * @param handler
+ * @param fn
+ */
 async function withMockFetch(handler: FetchHandler, fn: () => Promise<void>,): Promise<void> {
   const originalFetch = globalThis.fetch;
-  // eslint-disable-next-line unicorn/no-global-object-property-assignment
+
   (globalThis as Record<string, unknown>).fetch = handler;
   try {
     return await fn();
   } finally {
-    // eslint-disable-next-line unicorn/no-global-object-property-assignment
     (globalThis as Record<string, unknown>).fetch = originalFetch;
   }
 }
 
+/**
+ * @param body
+ * @param status
+ */
 function jsonResponse(body: unknown, status = 200,): Response {
   return Response.json(body, { status, },);
 }

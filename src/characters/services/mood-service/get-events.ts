@@ -19,11 +19,15 @@ export interface GetEventsArgs {
 
 /**
  * Get mood events for a character.
- *
  * @param args.thisL - The mood service instance
+ * @param root0
+ * @param root0.thisL
  * @param args.actorId - Character actor ID
+ * @param root0.actorId
  * @param args.worldId - Optional world ID
+ * @param root0.worldId
  * @param args.limit - Max events to return
+ * @param root0.limit
  * @returns List of mood events
  */
 export async function getEvents(

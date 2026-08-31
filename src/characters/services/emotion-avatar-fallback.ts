@@ -6,7 +6,6 @@
  *
  * Provides metadata extraction and prompt construction for the
  * generation fallback path (txt2img when img2img is unavailable).
- *
  * @module characters/services/emotion-avatar-fallback
  */
 
@@ -56,7 +55,6 @@ export interface ExtractAvatarMetadataOpts {
  * Pulls caption, tags, alt text, and image dimensions from the asset row
  * and (when `opts.actorId` is provided) the character description and the
  * matching `character_avatars.tags` JSON.
- *
  * @param db - Database instance
  * @param assetId - Asset ID to extract metadata from
  * @param opts - Optional extractor knobs; pass `actorId` to enable the
@@ -133,7 +131,6 @@ export async function extractAvatarMetadata(
  *
  * Combines original character description with emotion-specific modifier
  * and quality tags to create a txt2img prompt.
- *
  * @param metadata - Avatar metadata extracted from asset
  * @param _emotion - Target emotion type (unused, kept for API consistency)
  * @param emotionModifier - Emotion-specific prompt modifier

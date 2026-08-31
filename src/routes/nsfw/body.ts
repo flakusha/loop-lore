@@ -43,6 +43,10 @@ const bodyUpdateSchema = t.Object({
   scent: t.Optional(t.Union([t.String({ maxLength: 200, },), t.Null(),],),),
 },);
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const bodyService = new BodySystemService(database,);

@@ -55,7 +55,11 @@ export const STANDARD_DC: Record<string, DifficultyClass> = {
   legendary: { name: "Legendary", value: 30, description: "Only legends succeed", },
 };
 
-/** Roll `count` dice with `sides` faces and sum them. */
+/**
+ * Roll `count` dice with `sides` faces and sum them.
+ * @param sides
+ * @param count
+ */
 function rollSet(sides: number, count: number,): { rolls: number[]; total: number } {
   const rolls: number[] = [];
   for (let i = 0; i < count; i++) {
@@ -66,7 +70,12 @@ function rollSet(sides: number, count: number,): { rolls: number[]; total: numbe
   return { rolls, total, };
 }
 
-/** Roll a dice */
+/**
+ * Roll a dice
+ * @param type
+ * @param count
+ * @param modifiers
+ */
 export function rollDice(
   type: DiceType,
   count = 1,
@@ -115,7 +124,12 @@ export function rollDice(
   };
 }
 
-/** Make a skill check */
+/**
+ * Make a skill check
+ * @param skillBonus
+ * @param dc
+ * @param modifiers
+ */
 export function makeSkillCheck(
   skillBonus: number,
   dc: DifficultyClass,

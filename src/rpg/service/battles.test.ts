@@ -31,6 +31,12 @@ import {
 
 const stats: StatBlock = { str: 16, dex: 14, con: 12, int: 10, wis: 8, cha: 6, };
 
+/**
+ * @param id
+ * @param name
+ * @param isNpc
+ * @param hp
+ */
 function makeCombatant(id: string, name: string, isNpc: boolean, hp = 30,): Combatant {
   return buildCombatant(id, name, stats, 5, hp, 16, isNpc,);
 }

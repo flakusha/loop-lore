@@ -14,6 +14,9 @@
  */
 import type { Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // SQLite ALTER TABLE supports one ADD COLUMN per statement.
   await db.schema
@@ -46,6 +49,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropIndex("idx_body_profile_world",).execute();
   await db.schema.dropIndex("idx_seduction_skills_world",).execute();

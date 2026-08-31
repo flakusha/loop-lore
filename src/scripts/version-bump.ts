@@ -27,6 +27,9 @@ interface Version {
   prerelease?: string;
 }
 
+/**
+ * @param version
+ */
 function parseVersion(version: string,): Version {
   const match = /(\d+)\.(\d+)\.(\d+)(?:-(.+))?/.exec(version,);
   if (!match) { throw new Error(`Invalid version: ${version}`,); }
@@ -38,12 +41,18 @@ function parseVersion(version: string,): Version {
   };
 }
 
+/**
+ * @param v
+ */
 function formatVersion(v: Version,): string {
   return v.prerelease
     ? `${v.major}.${v.minor}.${v.patch}-${v.prerelease}`
     : `${v.major}.${v.minor}.${v.patch}`;
 }
 
+/**
+ * @param major
+ */
 function getLatestTag(major?: number,): string | null {
   try {
     // Bare `x.y.z` tags (no `v` prefix). `dev-*` tags never match.
@@ -59,6 +68,9 @@ function getLatestTag(major?: number,): string | null {
   }
 }
 
+/**
+ * @param tag
+ */
 function getCommitsSinceTag(tag: string,): string[] {
   try {
     const range = tag ? `${tag}..HEAD` : "";
@@ -72,6 +84,9 @@ function getCommitsSinceTag(tag: string,): string[] {
   }
 }
 
+/**
+ * @param commits
+ */
 function determineBump(commits: string[],): "major" | "minor" | "patch" | null {
   let hasMajor = false;
   let hasMinor = false;
@@ -99,16 +114,21 @@ function determineBump(commits: string[],): "major" | "minor" | "patch" | null {
   return null;
 }
 
+/** */
 function getCurrentBranch(): string {
   return execSync("git branch --show-current", { encoding: "utf-8", },).trim();
 }
 
+/** */
 function getPackageJsonVersion(): string {
   const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
   const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8",),);
   return packageJson.version;
 }
 
+/**
+ * @param version
+ */
 function setPackageJsonVersion(version: string,): void {
   const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
   const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8",),);
@@ -117,6 +137,7 @@ function setPackageJsonVersion(version: string,): void {
 }
 
 // Get version from latest tag (source of truth)
+/** */
 function getTagVersion(): string {
   const latestTag = getLatestTag();
   if (latestTag) {
@@ -126,6 +147,7 @@ function getTagVersion(): string {
 }
 
 // Predict next version based on commits since latest tag
+/** */
 function predictVersion(): string {
   const latestTag = getLatestTag();
   const commits = getCommitsSinceTag(latestTag || "",);
@@ -167,6 +189,10 @@ function predictVersion(): string {
 }
 
 // Bump version: update package.json; create tag ONLY with explicit --tag flag
+/**
+ * @param bumpType
+ * @param shouldTag
+ */
 function bumpVersion(bumpType: "major" | "minor" | "patch", shouldTag: boolean,): string {
   const latestTag = getLatestTag();
   const baseVersion = latestTag ? parseVersion(latestTag,) : { major: 0, minor: 0, patch: 0, };
@@ -204,6 +230,7 @@ function bumpVersion(bumpType: "major" | "minor" | "patch", shouldTag: boolean,)
 }
 
 // Sync package.json to latest tag (for CI/CD)
+/** */
 function syncPackageJson(): void {
   const tagVersion = getTagVersion();
   const pkgVersion = getPackageJsonVersion();
@@ -217,6 +244,7 @@ function syncPackageJson(): void {
   setPackageJsonVersion(tagVersion,);
 }
 
+/** */
 function main(): void {
   const args = Bun.argv.slice(2,);
   const command = args[0];

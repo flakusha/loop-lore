@@ -35,6 +35,10 @@ import { worldsRoutes, } from "./worlds";
  *   GET  /api/admin/model-roles    — get current role assignments
  *   PUT  /api/admin/model-roles/:role — set role override
  *   DELETE /api/admin/model-roles/:role — clear role override
+ * @param opts
+ * @param opts.database
+ * @param opts.config
+ * @param prefix
  */
 export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return (

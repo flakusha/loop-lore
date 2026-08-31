@@ -20,7 +20,10 @@ import type { TurnStrategy as TurnStrategyType, } from "../db/enums";
 
 // ─── Helpers ───────────────────────────────────────────────────
 
-/** Weighted random selection using talkativity scores */
+/**
+ * Weighted random selection using talkativity scores
+ * @param participants
+ */
 function weightedRandomSelect(participants: { actorId: string; talkativity: number }[],): string {
   let totalWeight = 0;
   for (const p of participants) { totalWeight += p.talkativity; }
@@ -36,14 +39,26 @@ function weightedRandomSelect(participants: { actorId: string; talkativity: numb
 
 // ─── Strategies ────────────────────────────────────────────────
 
-/** Round-robin: deterministic cycle through participants */
+/**
+ * Round-robin: deterministic cycle through participants
+ * @param participants
+ * @param currentActorId
+ * @param _currentTurn
+ * @param turnOrder
+ */
 export const roundRobinSelect: TurnStrategyFn = (participants, currentActorId, _currentTurn, turnOrder,) => {
   const lastIndex = currentActorId ? turnOrder.indexOf(currentActorId,) : -1;
   const nextIndex = (lastIndex + 1) % participants.length;
   return participants[nextIndex]!.actorId;
 };
 
-/** Scene-based: narrator every 3rd turn, otherwise round-robin */
+/**
+ * Scene-based: narrator every 3rd turn, otherwise round-robin
+ * @param participants
+ * @param currentActorId
+ * @param currentTurn
+ * @param turnOrder
+ */
 export const sceneBasedSelect: TurnStrategyFn = (participants, currentActorId, currentTurn, turnOrder,) => {
   if (currentTurn % 3 === 0) {
     const narrator = participants.find((p,) => p.agentType === "narrator");
@@ -52,7 +67,10 @@ export const sceneBasedSelect: TurnStrategyFn = (participants, currentActorId, c
   return roundRobinSelect(participants, currentActorId, currentTurn, turnOrder,);
 };
 
-/** Initiative: weighted random based on talkativity + initiative score */
+/**
+ * Initiative: weighted random based on talkativity + initiative score
+ * @param participants
+ */
 export const initiativeSelect: TurnStrategyFn = (participants,) => {
   const hasInitiative = participants.some((p,) => (p as { initiativeScore?: number }).initiativeScore);
   if (hasInitiative) {
@@ -65,7 +83,13 @@ export const initiativeSelect: TurnStrategyFn = (participants,) => {
   return weightedRandomSelect(participants,);
 };
 
-/** Quest-driven: round-robin for MVP (quest context plugs in later) */
+/**
+ * Quest-driven: round-robin for MVP (quest context plugs in later)
+ * @param participants
+ * @param currentActorId
+ * @param currentTurn
+ * @param turnOrder
+ */
 export const questDrivenSelect: TurnStrategyFn = (participants, currentActorId, currentTurn, turnOrder,) => {
   return roundRobinSelect(participants, currentActorId, currentTurn, turnOrder,);
 };
@@ -75,6 +99,11 @@ export const questDrivenSelect: TurnStrategyFn = (participants, currentActorId, 
  *
  * In group chat mode, this degrades to talkativity-weighted selection
  * to keep conversations lively without GM orchestration.
+ * @param participants
+ * @param currentActorId
+ * @param currentTurn
+ * @param turnOrder
+ * @param context
  */
 export const hybridSelect: TurnStrategyFn = (
   participants,

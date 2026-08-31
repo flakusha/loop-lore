@@ -73,7 +73,6 @@ export interface NSFWRatingEnforcement {
 /**
  * Compute the effective rating limit from multiple sources.
  * Takes the most restrictive (lowest severity) rating.
- *
  * @param ratings - Array of ratings to compare
  * @returns The most restrictive rating
  */
@@ -93,7 +92,6 @@ export function computeEffectiveRating(
 
 /**
  * Check if a content rating is allowed by an enforcement limit.
- *
  * @param content_rating - Rating of the content
  * @param limit - Maximum allowed rating
  * @returns true if content is within the limit
@@ -107,8 +105,14 @@ export function isRatingAllowed(
 
 /**
  * Create an NSFWRatingEnforcement from component ratings.
- *
  * @param params - Component ratings and context
+ * @param params.character_rating
+ * @param params.user_preference
+ * @param params.chat_setting
+ * @param params.enforcement_point
+ * @param params.bypass_allowed
+ * @param params.bypass_reason
+ * @param params.enforced_by
  * @returns A fully computed enforcement state
  */
 export function createRatingEnforcement(params: {

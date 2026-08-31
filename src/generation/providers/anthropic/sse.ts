@@ -10,6 +10,7 @@
 import { safeJsonParse, } from "../../../utils";
 import type { AnthropicStreamEvent, } from "./types";
 
+/** */
 export interface AnthropicEventFrame {
   event: string;
   data: AnthropicStreamEvent;
@@ -17,7 +18,6 @@ export interface AnthropicEventFrame {
 
 /**
  * Parse a streamed Anthropic SSE chunk (an `event:` + `data:` line pair).
- *
  * @param eventLine - e.g. `event: content_block_delta`
  * @param dataLine - e.g. `data: {"type":"content_block_delta",...}`
  * @returns A typed event frame, or `null` when the lines are not a valid pair

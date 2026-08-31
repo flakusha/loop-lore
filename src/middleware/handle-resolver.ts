@@ -30,6 +30,7 @@ interface CacheEntry {
   expiresAt: number;
 }
 
+/** */
 export interface HandleResolver {
   /** userId → username (cached, may return null for unknown users). */
   resolve: (userId: string,) => Promise<string | null>;
@@ -41,9 +42,10 @@ export interface HandleResolver {
 
 /**
  * Build a resolver bound to the given DB.
- *
  * @param database - App Kysely instance (passed in to keep this stateless).
  * @param opts - TTL + max entries overrides (testing only).
+ * @param opts.ttlMs
+ * @param opts.maxEntries
  */
 export function createHandleResolver(
   database: Kysely<DB>,
@@ -53,6 +55,9 @@ export function createHandleResolver(
   const maxEntries = opts.maxEntries ?? DEFAULT_MAX_ENTRIES;
   const cache = new Map<string, CacheEntry>();
 
+  /**
+   * @param userId
+   */
   async function resolve(userId: string,): Promise<string | null> {
     const cached = cache.get(userId,);
     const now = Date.now();
@@ -79,10 +84,14 @@ export function createHandleResolver(
     return handle;
   }
 
+  /** */
   function invalidate(): void {
     cache.clear();
   }
 
+  /**
+   * @param userId
+   */
   function invalidateOne(userId: string,): void {
     cache.delete(userId,);
   }

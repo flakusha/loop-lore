@@ -9,7 +9,13 @@ import {
 } from "../integration-schemas";
 import type { SocialCombatResult, } from "./types";
 
-/** Calculate intimidation effect */
+/**
+ * Calculate intimidation effect
+ * @param attackerLevel
+ * @param attackerIntimidation
+ * @param _targetLevel
+ * @param targetMorale
+ */
 export function calculateIntimidationEffect(
   attackerLevel: number,
   attackerIntimidation: number,
@@ -45,7 +51,12 @@ export function calculateIntimidationEffect(
   };
 }
 
-/** Calculate taunt effect */
+/**
+ * Calculate taunt effect
+ * @param attackerCharisma
+ * @param targetMorale
+ * @param targetPersonality
+ */
 export function calculateTauntEffect(
   attackerCharisma: number,
   targetMorale: MoraleState,
@@ -102,7 +113,12 @@ export function calculateTauntEffect(
   };
 }
 
-/** Calculate demoralize effect */
+/**
+ * Calculate demoralize effect
+ * @param attackerIntimidation
+ * @param attackerLevel
+ * @param targetMorale
+ */
 export function calculateDemoralizeEffect(
   attackerIntimidation: number,
   attackerLevel: number,

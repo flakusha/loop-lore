@@ -10,7 +10,11 @@ import {
 } from "./constants";
 import type { MessageScore, ScorableMessage, } from "./types";
 
-/** Count how many of the given keywords appear in lowercased content. */
+/**
+ * Count how many of the given keywords appear in lowercased content.
+ * @param lowerContent
+ * @param keywords
+ */
 function countKeywordMatches(lowerContent: string, keywords: readonly string[],): number {
   let matches = 0;
   for (const kw of keywords) { if (lowerContent.includes(kw,)) { matches++; } }
@@ -19,7 +23,6 @@ function countKeywordMatches(lowerContent: string, keywords: readonly string[],)
 
 /**
  * Score a single message based on multiple factors.
- *
  * @param msg - Message to score
  * @returns Message score with reasons
  */

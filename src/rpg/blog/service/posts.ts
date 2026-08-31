@@ -17,6 +17,10 @@ import {
 } from "./types";
 
 // ── Posts ────────────────────────────────────────────
+/**
+ * @param db
+ * @param input
+ */
 export async function createPost(
   db: Kysely<any>,
   input: CreateBlogPostInput,
@@ -69,6 +73,10 @@ export async function createPost(
   return post;
 }
 
+/**
+ * @param db
+ * @param id
+ */
 export async function getPost(
   db: Kysely<any>,
   id: string,
@@ -85,6 +93,17 @@ export async function getPost(
   return { ...row, tags, };
 }
 
+/**
+ * @param db
+ * @param filters
+ * @param filters.author_id
+ * @param filters.visibility
+ * @param filters.status
+ * @param filters.category
+ * @param filters.world_id
+ * @param filters.limit
+ * @param filters.offset
+ */
 export async function listPosts(
   db: Kysely<any>,
   filters: {
@@ -144,6 +163,11 @@ export async function listPosts(
   }),);
 }
 
+/**
+ * @param db
+ * @param id
+ * @param input
+ */
 export async function updatePost(
   db: Kysely<any>,
   id: string,
@@ -185,6 +209,10 @@ export async function updatePost(
   return getPost(db, id,);
 }
 
+/**
+ * @param db
+ * @param id
+ */
 export async function deletePost(db: Kysely<any>, id: string,): Promise<boolean> {
   const result = await db
     .deleteFrom("blog_posts",)
@@ -193,6 +221,10 @@ export async function deletePost(db: Kysely<any>, id: string,): Promise<boolean>
   return Number(result?.numDeletedRows ?? 0,) > 0;
 }
 
+/**
+ * @param db
+ * @param id
+ */
 export async function incrementViewCount(
   db: Kysely<any>,
   id: string,

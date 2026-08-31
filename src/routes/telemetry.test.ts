@@ -20,6 +20,11 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
 import { telemetryRoutes, } from "./telemetry";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-telemetry", },);
   if (userId) {

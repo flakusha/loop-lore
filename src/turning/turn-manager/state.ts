@@ -8,6 +8,7 @@ import type { TurnManagerState, } from "../types";
 import { refreshTurnOrder, } from "./participants";
 import type { TurnManagerHost, } from "./types";
 
+/** */
 export function createInitialState(): TurnManagerState {
   return {
     currentTurn: 0,
@@ -20,6 +21,9 @@ export function createInitialState(): TurnManagerState {
   };
 }
 
+/**
+ * @param host
+ */
 export async function persistState(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { return; }
   const serialized = safeJsonStringify(host.state,);
@@ -36,7 +40,10 @@ export async function persistState(host: TurnManagerHost,): Promise<void> {
     .execute();
 }
 
-/** Load or initialize turn manager state from the DB */
+/**
+ * Load or initialize turn manager state from the DB
+ * @param host
+ */
 export async function initializeTurnManager(host: TurnManagerHost,): Promise<void> {
   const chat = await host.db
     .selectFrom("chats",)

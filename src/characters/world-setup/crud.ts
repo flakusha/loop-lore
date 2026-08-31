@@ -21,6 +21,10 @@ export interface GetWorldSetupArgs {
 
 /**
  * Get the world setup bundle for a character in a specific world.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
  */
 export async function getWorldSetup(
   { thisL, actorId, worldId, }: GetWorldSetupArgs,
@@ -44,6 +48,9 @@ export interface UpsertWorldSetupArgs {
  *
  * Idempotent — creates the row on first call, merges into it on subsequent
  * calls. Returns the resulting row.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.input
  */
 export async function upsertWorldSetup(
   { thisL, input, }: UpsertWorldSetupArgs,
@@ -99,6 +106,11 @@ export interface UpdateWorldSetupArgs {
 
 /**
  * Update an existing world setup bundle. Returns undefined if no row exists.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
+ * @param root0.input
  */
 export async function updateWorldSetup(
   { thisL, actorId, worldId, input, }: UpdateWorldSetupArgs,
@@ -139,6 +151,10 @@ export interface DeleteWorldSetupArgs {
 
 /**
  * Delete a world setup bundle. Returns true if a row was deleted.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
  */
 export async function deleteWorldSetup(
   { thisL, actorId, worldId, }: DeleteWorldSetupArgs,

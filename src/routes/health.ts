@@ -16,6 +16,12 @@ import { jsonResponse, } from "./http-utils";
 
 const startTime = Date.now();
 
+/**
+ * @param _opts
+ * @param _opts.database
+ * @param _opts.config
+ * @param prefix
+ */
 export function healthRoutes(_opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return new Elysia().get(`${prefix}/health`, () => {
     const providers = getHealthCache();

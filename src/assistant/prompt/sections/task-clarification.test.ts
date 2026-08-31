@@ -5,6 +5,9 @@ import { describe, expect, it, } from "bun:test";
 import type { AssembleActor, AssembleContext, } from "../types";
 import { taskClarificationSection, } from "./task-clarification";
 
+/**
+ * @param overrides
+ */
 function baseActor(overrides: Partial<AssembleActor> = {},): AssembleActor {
   return {
     id: "a",
@@ -21,6 +24,9 @@ function baseActor(overrides: Partial<AssembleActor> = {},): AssembleActor {
   };
 }
 
+/**
+ * @param overrides
+ */
 function fakeCtx(overrides: Partial<AssembleContext> = {},): AssembleContext {
   return {
     db: {} as AssembleContext["db"],

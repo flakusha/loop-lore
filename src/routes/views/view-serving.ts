@@ -6,6 +6,14 @@ import type { DB, } from "../../db/schema";
 import { ALLOWED_VIEWS, } from "./constants";
 import { loadView, notFoundView, respond, } from "./layout";
 
+/**
+ * @param viewName
+ * @param isHtmx
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
+ */
 function serveView(
   viewName: string,
   isHtmx = false,
@@ -24,6 +32,14 @@ function serveView(
   return respond(content, isHtmx, title, userId, sessionId, request, t,);
 }
 
+/**
+ * @param slug
+ * @param isHtmx
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
+ */
 function serveCharacterChatList(
   slug: string,
   isHtmx = false,
@@ -39,6 +55,15 @@ function serveCharacterChatList(
   return respond(content, isHtmx, `${slug} — Chats`, userId, sessionId, request, t,);
 }
 
+/**
+ * @param slug
+ * @param _chatId
+ * @param isHtmx
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
+ */
 function serveCharacterChat(
   slug: string,
   _chatId: string,
@@ -54,6 +79,13 @@ function serveCharacterChat(
   return respond(content, isHtmx, `${slug} — Chat`, userId, sessionId, request, t,);
 }
 
+/**
+ * @param isHtmx
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
+ */
 function serveWorldsList(
   isHtmx = false,
   userId?: string | null,
@@ -64,6 +96,15 @@ function serveWorldsList(
   return serveView("worlds", isHtmx, userId, sessionId, request, t,);
 }
 
+/**
+ * @param worldId
+ * @param database
+ * @param isHtmx
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
+ */
 async function serveWorldDetail(
   worldId: string,
   database: Kysely<DB>,
@@ -83,6 +124,15 @@ async function serveWorldDetail(
   return respond(content, isHtmx, "World — Details", userId, sessionId, request, t,);
 }
 
+/**
+ * @param worldId
+ * @param database
+ * @param isHtmx
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
+ */
 async function serveWorldEdit(
   worldId: string,
   database: Kysely<DB>,
@@ -102,6 +152,15 @@ async function serveWorldEdit(
   return respond(content, isHtmx, "Edit World", userId, sessionId, request, t,);
 }
 
+/**
+ * @param characterId
+ * @param database
+ * @param isHtmx
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
+ */
 async function serveCharacterEdit(
   characterId: string,
   database: Kysely<DB>,

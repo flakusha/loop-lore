@@ -14,6 +14,8 @@ import { getBuffer, } from "../index";
  * - Subscribes to live events until generation completes or errors
  * - Sends keepalive pings every 15s
  * - Closes connection on done/error or 30s of idle (no buffer)
+ * @param chatId
+ * @param headers
  */
 export function handleGenerationStream(chatId: string, headers?: Headers,): Response {
   if (!chatId) {
@@ -111,6 +113,8 @@ export function handleGenerationStream(chatId: string, headers?: Headers,): Resp
 /**
  * Wait up to `timeoutMs` for a StreamBuffer to appear for the given chat.
  * Returns null if timed out or no generation is active.
+ * @param chatId
+ * @param timeoutMs
  */
 async function waitForBuffer(chatId: string, timeoutMs: number,): Promise<ReturnType<typeof getBuffer>> {
   // Buffer may already exist (created before LLM call starts)

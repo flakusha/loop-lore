@@ -46,6 +46,7 @@ import {
   requireUserId,
 } from "./http-utils";
 
+/** */
 function log(): Logger {
   return getLogger().child({ module: "invites", },);
 }
@@ -54,7 +55,13 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-/** True if the user owns the chat or is an admin. */
+/**
+ * True if the user owns the chat or is an admin.
+ * @param database
+ * @param chatId
+ * @param userId
+ * @param userRole
+ */
 async function isChatOwner(
   database: Kysely<DB>,
   chatId: string,
@@ -69,6 +76,10 @@ async function isChatOwner(
   return Boolean(chat,) && (chat!.created_by === userId || can(userRole, "admin.chat",));
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function invitesRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

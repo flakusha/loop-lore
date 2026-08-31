@@ -52,6 +52,7 @@ const BODYLESS_STATUS = new Set([204, 205, 304,],);
 /**
  * Map a `Content-Type` header to a {@link BodyKind}, or null when the type is
  * outside the optimization allowlist.
+ * @param contentType
  */
 function classifyBody(contentType: string,): BodyKind | null {
   const ct = contentType.toLowerCase();
@@ -62,6 +63,7 @@ function classifyBody(contentType: string,): BodyKind | null {
   return null;
 }
 
+/** */
 export class DynamicResponsePolicy {
   private readonly log: Logger;
 
@@ -78,8 +80,9 @@ export class DynamicResponsePolicy {
 
   /**
    * Optimize a response: validate → minify → compress, per configuration.
-   *
    * @param options - request + response to process
+   * @param options.request
+   * @param options.response
    * @returns A new Response (or the original when no step applies).
    */
   async apply({ request, response, }: DynamicApplyOptions,): Promise<Response> {
@@ -118,6 +121,10 @@ export class DynamicResponsePolicy {
    * Validate + minify a text body. Minification doubles as validation: the
    * type-specific minifier throws on unparseable html/css/js. On failure the
    * original body is returned unchanged and a warning is logged.
+   * @param root0
+   * @param root0.request
+   * @param root0.body
+   * @param root0.kind
    */
   private async minifyBody({
     request,
@@ -147,7 +154,11 @@ export class DynamicResponsePolicy {
     }
   }
 
-  /** Dispatch to the content-module minifier for a given body kind. */
+  /**
+   * Dispatch to the content-module minifier for a given body kind.
+   * @param body
+   * @param kind
+   */
   private async runMinifier(body: string, kind: "html" | "css" | "js",): Promise<string> {
     switch (kind) {
       case "html": {
@@ -165,6 +176,9 @@ export class DynamicResponsePolicy {
   /**
    * Compress a body when it meets the threshold and the client advertises a
    * supported encoding. Returns null when compression should be skipped.
+   * @param root0
+   * @param root0.request
+   * @param root0.body
    */
   private compressBody({
     request,
@@ -187,6 +201,7 @@ export class DynamicResponsePolicy {
   /**
    * Choose an encoding from the client's Accept-Encoding, honoring the
    * configured preference. Returns null when no supported encoding is offered.
+   * @param accept
    */
   private negotiateEncoding(accept: string,): "br" | "gzip" | null {
     // parseAcceptEncoding honors client q-values and excludes q<=0
@@ -207,7 +222,10 @@ export class DynamicResponsePolicy {
     return null;
   }
 
-  /** Merge `Accept-Encoding` into an existing Vary header without duplicates. */
+  /**
+   * Merge `Accept-Encoding` into an existing Vary header without duplicates.
+   * @param existing
+   */
   private mergeVary(existing: string | null,): string {
     if (!existing) { return "Accept-Encoding"; }
     const parts = Array.from(existing.split(",",), (p,) => p.trim(),);

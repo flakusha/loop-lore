@@ -19,6 +19,9 @@ import type { DB, } from "../../db/schema";
  * These are world-scoped (not chat-scoped); when migrating to a template in
  * the same world they are already shared, so this only copies them when the
  * new chat's world differs from the source's.
+ * @param database
+ * @param sourceWorldId
+ * @param targetWorldId
  */
 export async function carryWorldState(
   database: Kysely<DB>,

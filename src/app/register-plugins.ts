@@ -97,6 +97,7 @@ import { worldInvitesRoutes, } from "../routes/world-invites";
 import { worldLoreEntriesRoutes, } from "../routes/world-lore-entries";
 import { worldsRoutes, } from "../routes/worlds";
 
+/** */
 export interface RegisterPluginsOpts {
   database: Db;
   config: Config;
@@ -108,6 +109,8 @@ export interface RegisterPluginsOpts {
  * Register every route module onto the app in the canonical order.
  * Order matters: Elysia resolves routes by path shape, and later registrations
  * can shadow earlier ones — keep this sequence stable. Mutates `app` in place.
+ * @param app
+ * @param opts
  */
 export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): void {
   const { database, config, } = opts;

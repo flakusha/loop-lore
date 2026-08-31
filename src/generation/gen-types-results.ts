@@ -45,6 +45,7 @@ export interface GenerationResult {
   policyAnalysis?: PolicyAnalysis;
 }
 
+/** */
 export interface TokenUsage {
   promptTokens: number;
   completionTokens: number;
@@ -52,6 +53,7 @@ export interface TokenUsage {
   estimatedCost?: number;
 }
 
+/** */
 export interface RepetitionAnalysis {
   detected: boolean;
   score: number;
@@ -59,6 +61,7 @@ export interface RepetitionAnalysis {
   sampleText: string;
 }
 
+/** */
 export interface RepetitionPattern {
   text: string;
   count: number;
@@ -66,6 +69,7 @@ export interface RepetitionPattern {
   similarity: number;
 }
 
+/** */
 export interface PolicyAnalysis {
   detected: boolean;
   policy: PolicyType;
@@ -73,6 +77,7 @@ export interface PolicyAnalysis {
   indicators: PolicyIndicator[];
 }
 
+/** */
 export interface PolicyIndicator {
   type: PolicyIndicatorType;
   description: string;

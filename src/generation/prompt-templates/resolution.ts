@@ -11,6 +11,7 @@ import type {
   TemplateContext,
 } from "./types";
 
+/** */
 export interface ResolveProfileOptions {
   /** Model name string (e.g. "flux1-dev", "ponyDiffusionV6") */
   modelName?: string;
@@ -26,6 +27,7 @@ export interface ResolveProfileOptions {
   characterOverrides?: Record<string, string>;
 }
 
+/** */
 export interface ResolvedProfile {
   profile: ImageModelProfile;
   /** The template string for the given mode and detail level */
@@ -37,6 +39,9 @@ export interface ResolvedProfile {
 /**
  * Resolve an image model profile by model name, profile ID, or default.
  * Returns the profile + the correct template for the given mode + detail.
+ * @param mode
+ * @param detail
+ * @param opts
  */
 export function resolveProfile(
   mode: SdGenMode,
@@ -84,6 +89,10 @@ export function resolveProfile(
 /**
  * Generate the full prompt by resolving the template and filling in context.
  * Shorthand: resolve + resolveTemplate in one call.
+ * @param mode
+ * @param detail
+ * @param ctx
+ * @param opts
  */
 export function generatePrompt(
   mode: SdGenMode,

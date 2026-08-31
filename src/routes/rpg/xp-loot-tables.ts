@@ -14,6 +14,11 @@ import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 import { AddEntryBody, CreateTableBody, } from "./xp-loot-schemas";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function xpLootTablesRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   const deps = { database, };
   const R = `${prefix}/rpg`;

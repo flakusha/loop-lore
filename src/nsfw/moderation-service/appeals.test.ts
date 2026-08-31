@@ -22,6 +22,7 @@ let db: Kysely<DB>;
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 let sqlite: TestDb["sqlite"];
 
+/** */
 function makeLog(): Logger {
   return {
     trace: mock(() => {},),
@@ -34,7 +35,13 @@ function makeLog(): Logger {
   } as unknown as Logger;
 }
 
-/** Build a context with spied reversal methods for approval tests. */
+/**
+ * Build a context with spied reversal methods for approval tests.
+ * @param overrides
+ * @param overrides.unblockUser
+ * @param overrides.unbanUser
+ * @param overrides.unshadowUser
+ */
 function makeCtx(overrides?: {
   unblockUser?: ReturnType<typeof mock>;
   unbanUser?: ReturnType<typeof mock>;
@@ -83,6 +90,12 @@ function makeCtx(overrides?: {
 
 const USER = "user-appealing-1";
 
+/**
+ * @param params
+ * @param params.id
+ * @param params.actionType
+ * @param params.targetUserId
+ */
 async function insertActionRow(params: {
   id: string;
   actionType: string;

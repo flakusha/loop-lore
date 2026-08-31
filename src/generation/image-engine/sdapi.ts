@@ -6,7 +6,11 @@ import { safeFetch, safeJsonStringify, } from "../../utils";
 import { decodeB64, failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
 
-/** Generate images via the Stable Diffusion WebUI (SDAPI) txt2img endpoint. */
+/**
+ * Generate images via the Stable Diffusion WebUI (SDAPI) txt2img endpoint.
+ * @param sdConfig
+ * @param opts
+ */
 export async function generateSDAPI(
   sdConfig: ImageProviderConfig,
   opts: ImageGenOptions,

@@ -29,6 +29,7 @@ const ACTIVE_CONTENT_TYPES: Record<string, true> = {
  * Cache policy by visibility: public assets may live in shared caches;
  * private/shared/restricted assets must stay out of shared caches — a
  * `public, immutable` header lets a shared cache replay private bytes to a
+ * @param asset
  */
 export function cacheControlFor(asset: AssetRecord,): string {
   if (asset.visibility === "public") {
@@ -41,6 +42,8 @@ export function cacheControlFor(asset: AssetRecord,): string {
  * Active content (SVG/HTML/XML) must never be served inline: direct
  * navigation executes embedded script. Force attachment for those types;
  * everything else stays inline.
+ * @param asset
+ * @param filename
  */
 export function contentDispositionFor(asset: AssetRecord, filename: string,): Record<string, string> {
   const safeName = filename.replace(/[^\w.\- ]+/g, "_",);
@@ -59,6 +62,7 @@ export function contentDispositionFor(asset: AssetRecord, filename: string,): Re
  * access check via `resolveAsset`.
  *
  * Returns `{ asset, response? }` — `response` is non-null on failure.
+ * @param opts
  */
 async function resolveForServe(
   opts: ServeRawOpts,
@@ -93,6 +97,19 @@ async function resolveForServe(
   return { asset: resolved.asset, };
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.uploadDir
+ * @param root0.actorId
+ * @param root0.actorRole
+ * @param root0.chatId
+ * @param root0.signedUrlSecret
+ * @param root0.signedUrlToken
+ * @param root0.signedUrlExpires
+ * @param root0.signedUrlAction
+ */
 export async function handleServeRaw({
   database,
   assetId,
@@ -156,6 +173,19 @@ export async function handleServeRaw({
   },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.uploadDir
+ * @param root0.variant
+ * @param root0.actorId
+ * @param root0.actorRole
+ * @param root0.signedUrlSecret
+ * @param root0.signedUrlToken
+ * @param root0.signedUrlExpires
+ * @param root0.signedUrlAction
+ */
 export async function handleServeCompressed({
   database,
   assetId,
@@ -195,6 +225,19 @@ export async function handleServeCompressed({
   return serveFile(fullPath, "image/webp", { cacheControl: cacheControlFor(resolved.asset,), },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.uploadDir
+ * @param root0.actorId
+ * @param root0.actorRole
+ * @param root0.chatId
+ * @param root0.signedUrlSecret
+ * @param root0.signedUrlToken
+ * @param root0.signedUrlExpires
+ * @param root0.signedUrlAction
+ */
 export async function handleDownload({
   database,
   assetId,

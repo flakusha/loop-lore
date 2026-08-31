@@ -19,6 +19,7 @@ import { ContextCompactor, } from "../context-compactor";
 import type { GenerationMessage, } from "../types";
 import type { GenerateRequest, } from "./types";
 
+/** */
 export interface BuildPromptOpts {
   input: GenerateRequest;
   database: Kysely<DB>;
@@ -29,6 +30,15 @@ export interface BuildPromptOpts {
   userId?: string;
 }
 
+/**
+ * @param root0
+ * @param root0.input
+ * @param root0.database
+ * @param root0.resolvedModel
+ * @param root0.resolvedProviderName
+ * @param root0.cfg
+ * @param root0.userId
+ */
 export async function buildPrompt({
   input,
   database,

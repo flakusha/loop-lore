@@ -9,6 +9,10 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { DiceAdvantageBody, DiceNotationBody, DiceRollBody, type HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function diceRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

@@ -14,6 +14,13 @@ import { uid, } from "../../utils";
 import { HttpStatus, jsonError, } from "../http-utils";
 import { demoLoginLimiter, errorHtml, getClientIp, loginLimiter, setTokenCookie, } from "./shared";
 
+/**
+ * @param request
+ * @param database
+ * @param config
+ * @param t
+ * @param peerIp
+ */
 async function handleLogin(
   request: Request,
   database: Kysely<DB>,
@@ -73,7 +80,10 @@ async function handleLogin(
   return createSessionAndCookie(request, database, config, user.id, user.role, ip, t,);
 }
 
-/** Parse the registration/login form body, or null when malformed. */
+/**
+ * Parse the registration/login form body, or null when malformed.
+ * @param request
+ */
 async function parseCredentials(
   request: Request,
 ): Promise<URLSearchParams | null> {
@@ -84,7 +94,16 @@ async function parseCredentials(
   }
 }
 
-/** Create a session row, enforce maxSessionsPerUser cap, sign a JWT, and return the redirect response. */
+/**
+ * Create a session row, enforce maxSessionsPerUser cap, sign a JWT, and return the redirect response.
+ * @param request
+ * @param database
+ * @param config
+ * @param userId
+ * @param role
+ * @param ip
+ * @param t
+ */
 async function createSessionAndCookie(
   request: Request,
   database: Kysely<DB>,
@@ -151,6 +170,13 @@ async function createSessionAndCookie(
   },);
 }
 
+/**
+ * @param request
+ * @param database
+ * @param config
+ * @param t
+ * @param peerIp
+ */
 async function handleDemoLogin(
   request: Request,
   database: Kysely<DB>,

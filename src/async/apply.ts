@@ -7,7 +7,6 @@
  * Extracted from `store.ts` to keep that file under the project's 250-line
  * size gate. The queue drains via this function; failures are logged but
  * never thrown on the hot path.
- *
  * @see TASK-async-request-response-result-store-separate-table-offload.md
  * @see epic-middleware-request-lifecycle.md
  */
@@ -29,7 +28,12 @@ export type Write =
   | { kind: "complete"; id: string; response: { status: number; headers: Record<string, string>; body: string } }
   | { kind: "fail"; id: string; error: string };
 
-/** Apply a single write to the DB. Exported for test fixtures. */
+/**
+ * Apply a single write to the DB. Exported for test fixtures.
+ * @param database
+ * @param write
+ * @param cfg
+ */
 export async function apply(
   database: Kysely<DB>,
   write: Write,

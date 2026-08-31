@@ -31,14 +31,21 @@ const DEFAULTS: NsfwRuntimeConfig = {
 class NsfwRuntimeConfigStore {
   private config: NsfwRuntimeConfig = { ...DEFAULTS, };
 
+  /**
+   * @param config
+   */
   init(config: NsfwRuntimeConfig,): void {
     this.config = { ...DEFAULTS, ...config, };
   }
 
+  /** */
   get(): NsfwRuntimeConfig {
     return { ...this.config, };
   }
 
+  /**
+   * @param partial
+   */
   update(partial: Partial<NsfwRuntimeConfig>,): void {
     this.config = { ...this.config, ...partial, };
   }
@@ -46,7 +53,10 @@ class NsfwRuntimeConfigStore {
 
 export const nsfwRuntimeConfig = new NsfwRuntimeConfigStore();
 
-/** Seed the runtime config from file config. Called once during server start. */
+/**
+ * Seed the runtime config from file config. Called once during server start.
+ * @param config
+ */
 export function initNsfwRuntimeConfig(config: NsfwRuntimeConfig,): void {
   nsfwRuntimeConfig.init(config,);
 }
@@ -56,7 +66,10 @@ export function getRuntimeNsfwConfig(): NsfwRuntimeConfig {
   return nsfwRuntimeConfig.get();
 }
 
-/** Apply a partial update to the live runtime NSFW config. */
+/**
+ * Apply a partial update to the live runtime NSFW config.
+ * @param partial
+ */
 export function updateRuntimeNsfwConfig(partial: Partial<NsfwRuntimeConfig>,): void {
   nsfwRuntimeConfig.update(partial,);
 }
@@ -65,6 +78,7 @@ export function updateRuntimeNsfwConfig(partial: Partial<NsfwRuntimeConfig>,): v
  * Overlay any persisted admin overrides from `system_config` onto the runtime
  * store. Called once during server start, after the DB is available, so a
  * value saved via the admin panel survives a restart.
+ * @param db
  */
 export async function applyStoredNsfwConfig(db: Kysely<DB>,): Promise<void> {
   const allowRaw = await getConfigValue(db, "nsfw_allow",);

@@ -12,19 +12,33 @@ import { DEFAULT_CONTEXT_WINDOW, } from "./context-window-config";
 
 // ── Fixtures ────────────────────────────────────────────────
 
+/**
+ * @param content
+ */
 function systemMsg(content: string,): ContextMessage {
   return { role: "system", content, };
 }
 
+/**
+ * @param content
+ */
 function userMsg(content: string,): ContextMessage {
   return { role: "user", content, };
 }
 
+/**
+ * @param content
+ */
 function assistantMsg(content: string,): ContextMessage {
   return { role: "assistant", content, };
 }
 
-/** Build N pairs of user+assistant messages */
+/**
+ * Build N pairs of user+assistant messages
+ * @param count
+ * @param userLen
+ * @param assistantLen
+ */
 function buildTurns(count: number, userLen = 200, assistantLen = 500,): ContextMessage[] {
   const turns: ContextMessage[] = [];
   for (let i = 0; i < count; i++) {
@@ -42,7 +56,10 @@ const SMALL_SYSTEM = [SYSTEM_PROMPT, CHAR_CARD,];
 
 // ── Token counting helper for tests ─────────────────────────
 
-/** Deterministic token count: 1 token per word */
+/**
+ * Deterministic token count: 1 token per word
+ * @param text
+ */
 const wordTokenCount: TokenCountFn = (text: string,) => text.split(/\s+/,).filter(Boolean,).length;
 
 // ── Tests ───────────────────────────────────────────────────

@@ -11,6 +11,9 @@ import type { HeadersConfig, } from "../config/schema";
 import { generateNonce, } from "./csp-nonce";
 import { ResponseHeaderPolicy, } from "./response-headers";
 
+/**
+ * @param overrides
+ */
 function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
   const base: HeadersConfig = {
     enabled: true,
@@ -48,10 +51,19 @@ function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
   return { ...base, ...overrides, };
 }
 
+/**
+ * @param method
+ * @param url
+ */
 function req(method: string, url: string,): Request {
   return new Request(url, { method, },);
 }
 
+/**
+ * @param status
+ * @param headers
+ * @param body
+ */
 function res(status: number, headers: Record<string, string>, body = "",): Response {
   return new Response(body, { status, headers, },);
 }

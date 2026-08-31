@@ -32,7 +32,6 @@ import type { GenerateRequest, } from "./types";
  * POST /api/generation/generate
  *
  * Assembles prompt, resolves provider, calls LLM, stores message.
- *
  * @param userId  Authenticated user ID for BYO key resolution (optional).
  */
 export interface HandleGenerateOpts {
@@ -42,6 +41,13 @@ export interface HandleGenerateOpts {
   userId?: string;
 }
 
+/**
+ * @param root0
+ * @param root0.body
+ * @param root0.database
+ * @param root0.config
+ * @param root0.userId
+ */
 export async function handleGenerate({
   body,
   database,

@@ -19,6 +19,8 @@ import type { HandlerOpts, } from "./types";
  * `GET /api/v1/chats/:id/prompt-template` resolves the prompt from the primary
  * character's system prompt (or the registry default), determining its purpose
  * from chat mode + assistant role.
+ * @param opts
+ * @param prefix
  */
 export function promptTemplateRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;

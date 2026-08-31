@@ -12,6 +12,11 @@ import { assertNever, } from "../../../utils";
 import type { SyntheticCase, SyntheticSource, } from "../types";
 import type { GeneratorState, } from "./types";
 
+/**
+ * @param state
+ * @param type
+ * @param source
+ */
 export function build(state: GeneratorState, type: SyntheticDataType, source: SyntheticSource,): SyntheticCase[] {
   switch (type) {
     case SyntheticDataType.TurnSequence: {
@@ -38,6 +43,10 @@ export function build(state: GeneratorState, type: SyntheticDataType, source: Sy
   }
 }
 
+/**
+ * @param state
+ * @param source
+ */
 function buildTurnSequence(state: GeneratorState, source: SyntheticSource,): SyntheticCase[] {
   const seq = source.messages.slice(0, state.maxScenarios,);
   return Array.from(seq, (m, i,) => ({
@@ -49,6 +58,10 @@ function buildTurnSequence(state: GeneratorState, source: SyntheticSource,): Syn
   }),);
 }
 
+/**
+ * @param state
+ * @param source
+ */
 function buildQualityEvaluation(state: GeneratorState, source: SyntheticSource,): SyntheticCase[] {
   return Array.from(source.messages.slice(0, state.maxScenarios,), (m,) => ({
     id: state.idGenerator(),
@@ -59,6 +72,10 @@ function buildQualityEvaluation(state: GeneratorState, source: SyntheticSource,)
   }),);
 }
 
+/**
+ * @param state
+ * @param source
+ */
 function buildQuestProgression(state: GeneratorState, source: SyntheticSource,): SyntheticCase[] {
   return Array.from(source.questProgress.slice(0, state.maxScenarios,), (p,) => ({
     id: state.idGenerator(),
@@ -69,6 +86,10 @@ function buildQuestProgression(state: GeneratorState, source: SyntheticSource,):
   }),);
 }
 
+/**
+ * @param state
+ * @param source
+ */
 function buildWorldStateTransition(state: GeneratorState, source: SyntheticSource,): SyntheticCase[] {
   const states = source.worldStates.slice(0, state.maxScenarios,);
   const cases: SyntheticCase[] = [];
@@ -87,6 +108,10 @@ function buildWorldStateTransition(state: GeneratorState, source: SyntheticSourc
   return cases;
 }
 
+/**
+ * @param state
+ * @param source
+ */
 function buildRegenerationCase(state: GeneratorState, source: SyntheticSource,): SyntheticCase[] {
   const failed: SyntheticCase[] = [];
   for (const m of source.messages) {
@@ -103,6 +128,10 @@ function buildRegenerationCase(state: GeneratorState, source: SyntheticSource,):
   return failed;
 }
 
+/**
+ * @param state
+ * @param source
+ */
 function buildGmEscalation(state: GeneratorState, source: SyntheticSource,): SyntheticCase[] {
   const escalatable: SyntheticCase[] = [];
   for (const q of source.quests) {

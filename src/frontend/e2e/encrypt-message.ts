@@ -34,6 +34,7 @@ import { fetchRecipientPublicKey, } from "./recipient-pubkey";
 
 const IV_LENGTH = 12;
 
+/** */
 export interface EncryptMessageOpts {
   senderActorId: string;
   recipientActorId: string;
@@ -41,6 +42,7 @@ export interface EncryptMessageOpts {
   plaintext: string;
 }
 
+/** */
 export interface EncryptedPayload {
   ciphertext: string;
   nonce: string;
@@ -58,6 +60,7 @@ export interface EncryptedPayload {
  *
  * Throws if the recipient has no registered public key (`fetchRecipientPublicKey`
  * returns null) or if any WebCrypto operation fails.
+ * @param opts
  */
 export async function encryptMessage(opts: EncryptMessageOpts,): Promise<EncryptedPayload> {
   const recipientPub = await fetchRecipientPublicKey(opts.recipientActorId,);
@@ -107,6 +110,8 @@ export async function encryptMessage(opts: EncryptMessageOpts,): Promise<Encrypt
  * Bootstrap a fresh chain key from the local actor's persisted key pair +
  * the recipient's persisted public key. The caller stores the returned
  * `chainKey` for use on the next call to `encryptMessage`.
+ * @param senderActorId
+ * @param recipientActorId
  */
 export async function bootstrapChainKey(senderActorId: string, recipientActorId: string,): Promise<Uint8Array> {
   const { cryptoKeyPair, } = await loadOrCreateKeyPair({ actorId: senderActorId, },);
@@ -123,10 +128,17 @@ export async function bootstrapChainKey(senderActorId: string, recipientActorId:
 
 // ── Helpers ──────────────────────────────────────────────
 
+/**
+ * @param bytes
+ */
 function toBase64(bytes: Uint8Array,): string {
   return bytes.toBase64();
 }
 
+/**
+ * @param a
+ * @param b
+ */
 function xorBytes(a: Uint8Array, b: Uint8Array,): Uint8Array {
   const len = Math.min(a.byteLength, b.byteLength,);
   const out = new Uint8Array(len,);

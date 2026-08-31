@@ -9,7 +9,6 @@
  * GET  /api/image-edit/nodes      — Discover installed nodes
  * GET  /api/image-edit/capabilities — List backend capabilities
  * GET  /api/image-edit/health     — Health check backends
- *
  * @module image-edit-routes
  */
 
@@ -34,6 +33,9 @@ import type { DB, } from "../db/schema";
 const comfyuiProvider = new ComfyUIEditProvider();
 const sdServerProvider = new SDServerEditProvider();
 
+/**
+ * @param backend
+ */
 function getProvider(backend: ImageEditBackend,): ImageEditProvider {
   switch (backend) {
     case "comfyui": {
@@ -54,6 +56,7 @@ function getProvider(backend: ImageEditBackend,): ImageEditProvider {
  * POST /api/image-edit/run — Execute a workflow template
  *
  * Body: { template_id, backend, params, chatId?, messageId? }
+ * @param request
  */
 export async function handleRun(request: Request,): Promise<Response> {
   const body = await parseBody<ImageEditRequest>(request,);
@@ -107,6 +110,7 @@ export async function handleRun(request: Request,): Promise<Response> {
  * Query params:
  *   backend  — filter by backend (comfyui | sd-server)
  *   category — filter by category (txt2img | img2img | inpaint | upscale | controlnet)
+ * @param request
  */
 export function handleTemplates(request: Request,): Response {
   const url = new URL(request.url,);
@@ -189,6 +193,8 @@ export async function handleHealth(): Promise<Response> {
  *
  * Registers built-in + config-driven workflow templates on first mount, then
  * exposes the unified ComfyUI / sd-server image-edit endpoints.
+ * @param _opts
+ * @param _opts.database
  */
 export function imageEditRoutes(_opts: { database: Kysely<DB> },) {
   registerBuiltinTemplates();

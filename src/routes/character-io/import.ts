@@ -23,6 +23,8 @@ import type { HandlerOpts, } from "./types";
 
 /**
  * Import sub-plugin — import character systems data from body or remote URL.
+ * @param opts
+ * @param prefix
  */
 export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
@@ -111,7 +113,7 @@ export function importRoutes(opts: HandlerOpts, prefix = "/api",) {
           hostname === "localhost" ||
           hostname === "127.0.0.1" ||
           hostname === "::1" ||
-          hostname === "169.254.169.254" || // eslint-disable-line sonarjs/no-hardcoded-ip
+          hostname === "169.254.169.254" ||
           hostname.startsWith("10.",) ||
           hostname.startsWith("172.",) ||
           hostname.startsWith("192.168.",) ||

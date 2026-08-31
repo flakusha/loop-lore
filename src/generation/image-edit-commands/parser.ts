@@ -10,7 +10,6 @@ import type { EditTemplate, ParsedCommand, } from "./types";
 
 /**
  * Parse a natural language image editing command.
- *
  * @param text - User command text
  * @returns Parsed command with intent and parameters
  */
@@ -54,6 +53,9 @@ export function parseEditCommand(text: string,): ParsedCommand {
 
 /**
  * Find the best matching template for a command.
+ * @param intent
+ * @param text
+ * @param _parameters
  */
 function findBestTemplate(
   intent: CommandIntent,
@@ -86,7 +88,6 @@ function findBestTemplate(
 
 /**
  * Get available templates for an intent.
- *
  * @param intent - Command intent
  * @returns Array of matching templates
  */
@@ -98,7 +99,6 @@ export function getTemplatesForIntent(intent: CommandIntent,): EditTemplate[] {
 
 /**
  * Get a template by ID.
- *
  * @param templateId - Template ID
  * @returns Template or undefined
  */
@@ -108,7 +108,6 @@ export function getTemplateById(templateId: string,): EditTemplate | undefined {
 
 /**
  * Get all available command intents.
- *
  * @returns Array of intent descriptions
  */
 export function getAvailableIntents(): {
@@ -150,7 +149,6 @@ const INTENT_DESCRIPTIONS: Record<CommandIntent, string> = {
 
 /**
  * Suggest edits based on image content analysis.
- *
  * @param tags - Image tags from analysis
  * @returns Suggested edit commands
  */

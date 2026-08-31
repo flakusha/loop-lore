@@ -24,6 +24,10 @@ import {
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function timelinesRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;
 

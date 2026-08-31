@@ -9,7 +9,6 @@ import type { Relationship, RelationshipRow, } from "./types";
 
 /**
  * Convert a database row to a {@link Relationship} object.
- *
  * @param row - Database row
  * @returns Relationship object
  */

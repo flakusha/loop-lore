@@ -11,6 +11,7 @@ export const ContentRating = {
   NsfwIntense: "nsfw_intense",
   NsfwExtreme: "nsfw_extreme",
 } as const;
+/** */
 export type ContentRating = (typeof ContentRating)[keyof typeof ContentRating];
 
 // ── Validation Mode ─────────────────────────────────
@@ -18,6 +19,7 @@ export const ValidationMode = {
   Strict: "strict",
   Relaxed: "relaxed",
 } as const;
+/** */
 export type ValidationMode = (typeof ValidationMode)[keyof typeof ValidationMode];
 
 // ── Review State ────────────────────────────────────
@@ -28,6 +30,7 @@ export const ReviewState = {
   Rejected: "rejected",
   Archived: "archived",
 } as const;
+/** */
 export type ReviewState = (typeof ReviewState)[keyof typeof ReviewState];
 
 // ── Review Role ─────────────────────────────────────
@@ -39,6 +42,7 @@ export const ReviewRole = {
   LlAux: "llm_aux",
   LlReview: "llm_review",
 } as const;
+/** */
 export type ReviewRole = (typeof ReviewRole)[keyof typeof ReviewRole];
 
 // ── Impersonation Context ───────────────────────────
@@ -46,6 +50,7 @@ export const ImpersonationContext = {
   PrivateChat: "private_chat",
   GroupChat: "group_chat",
 } as const;
+/** */
 export type ImpersonationContext = (typeof ImpersonationContext)[keyof typeof ImpersonationContext];
 
 // ── Migration Status ────────────────────────────────
@@ -55,6 +60,7 @@ export const MigrationStatus = {
   Blocked: "migration-blocked",
   Complete: "migration-complete",
 } as const;
+/** */
 export type MigrationStatus = (typeof MigrationStatus)[keyof typeof MigrationStatus];
 
 // ── Storage Format ──────────────────────────────────
@@ -63,6 +69,7 @@ export const StorageFormat = {
   Yaml: "yaml",
   Toml: "toml",
 } as const;
+/** */
 export type StorageFormat = (typeof StorageFormat)[keyof typeof StorageFormat];
 
 // ── Import Format ───────────────────────────────────
@@ -77,6 +84,7 @@ export const ImportFormat = {
   PngV3: "png-v3",
   Charx: "charx",
 } as const;
+/** */
 export type ImportFormat = (typeof ImportFormat)[keyof typeof ImportFormat];
 
 // ── Export Format ───────────────────────────────────
@@ -88,6 +96,7 @@ export const ExportFormat = {
   Toml: "toml",
   Png: "png",
 } as const;
+/** */
 export type ExportFormat = (typeof ExportFormat)[keyof typeof ExportFormat];
 
 // ── Character Relationship Types ────────────────────
@@ -101,6 +110,7 @@ export const CharacterRelationshipType = {
   Student: "student",
   Neutral: "neutral",
 } as const;
+/** */
 export type CharacterRelationshipType = (typeof CharacterRelationshipType)[keyof typeof CharacterRelationshipType];
 
 // ── World Modifier Types ────────────────────────────
@@ -111,4 +121,5 @@ export const WorldModifierType = {
   Social: "social",
   QuirkSuppression: "quirk_suppression",
 } as const;
+/** */
 export type WorldModifierType = (typeof WorldModifierType)[keyof typeof WorldModifierType];

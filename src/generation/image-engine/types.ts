@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { LoRAConfig, } from "../../generation/lora/types";
+/** */
 export interface ImageGenOptions {
   prompt: string;
   n: number;
@@ -37,4 +38,5 @@ export interface ImageGenFailure {
   status: number;
 }
 
+/** */
 export type ImageGenOutcome = ImageGenSuccess | ImageGenFailure;

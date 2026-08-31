@@ -37,7 +37,12 @@ export interface TradeRoutesOptions {
   svc: () => TradeService;
 }
 
-/** Ensure the user owns the given actor (or is the world owner). Returns denial Response or null. */
+/**
+ * Ensure the user owns the given actor (or is the world owner). Returns denial Response or null.
+ * @param db
+ * @param actorId
+ * @param userId
+ */
 export async function resolveActorAccess(
   db: Kysely<DB>,
   actorId: string,

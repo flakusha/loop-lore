@@ -19,6 +19,10 @@ import {
 } from "./handlers";
 
 // ── Elysia Plugin ─────────────────────────────────────────────────
+/**
+ * @param root0
+ * @param root0.database
+ */
 export function personaRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "personas", },)
     .get("/api/personas", async (ctx,) => {

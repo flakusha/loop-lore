@@ -8,6 +8,7 @@
  * checks for missing assets, and reports issues.
  */
 
+/** */
 export interface VnQaIssue {
   sceneIndex: number;
   severity: "error" | "warning" | "info";
@@ -15,6 +16,7 @@ export interface VnQaIssue {
   field?: string;
 }
 
+/** */
 export interface VnQaReport {
   totalScenes: number;
   issues: VnQaIssue[];
@@ -23,6 +25,14 @@ export interface VnQaReport {
 
 // ── Validators ─────────────────────────────────────────────
 
+/**
+ * @param scene
+ * @param scene.text
+ * @param scene.characterName
+ * @param scene.backgroundUrl
+ * @param scene.role
+ * @param index
+ */
 function validateScene(
   scene: { text: string; characterName: string; backgroundUrl?: string; role: string },
   index: number,
@@ -70,6 +80,9 @@ function validateScene(
 
 // ── Main QA Function ───────────────────────────────────────
 
+/**
+ * @param scenes
+ */
 export function runQaCheck(
   scenes: Array<{ text: string; characterName: string; backgroundUrl?: string; role: string }>,
 ): VnQaReport {
@@ -108,6 +121,10 @@ export function runQaCheck(
 
 // ── UI Rendering ───────────────────────────────────────────
 
+/**
+ * @param report
+ * @param container
+ */
 export function renderQaReport(
   report: VnQaReport,
   container: HTMLElement,

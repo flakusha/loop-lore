@@ -21,6 +21,8 @@ globalThis.__ = function(key: string, fallback?: string,): string {
  * map and interpolates `{param}` placeholders. Falls back to the key itself
  * when the catalog is empty (e.g. in unit tests without locale setup), which
  * keeps components renderable while still surfacing missing keys.
+ * @param key
+ * @param params
  */
 export function t(key: string, params?: Record<string, string>,): string {
   const map = (globalThis.__localeStrings ?? {}) as TranslationMap;

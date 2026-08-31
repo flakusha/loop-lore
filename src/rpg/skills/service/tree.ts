@@ -8,6 +8,10 @@ import type { SkillTreeNode, } from "./types";
 
 /**
  * Check if a skill meets prerequisites
+ * @param db
+ * @param actorId
+ * @param prerequisites
+ * @param worldId
  */
 export async function checkPrerequisites(
   db: Kysely<DB>,
@@ -33,6 +37,9 @@ export async function checkPrerequisites(
 
 /**
  * Build skill tree for an actor
+ * @param db
+ * @param actorId
+ * @param worldId
  */
 export async function buildSkillTree(
   db: Kysely<DB>,

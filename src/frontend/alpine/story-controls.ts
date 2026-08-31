@@ -39,11 +39,10 @@ const inFlight = new Set<string>();
 
 /**
  * Dispatch a story-orchestration action to the story-engine backend.
- *
  * @param chatId — active chat id
  * @param action — orchestration action (pause/resume/step/escalate/narration)
  * @param body — optional payload (e.g. narration text)
- * @returns { ok, message } — ok=false carries a user-facing failure reason
+ * @returns — ok=false carries a user-facing failure reason
  * @example await storyControl(chatId, "step")
  */
 export async function storyControl(

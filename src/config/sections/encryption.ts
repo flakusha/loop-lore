@@ -13,6 +13,7 @@ export const ENCRYPTION_DEFAULTS = {
   anonymous: false,
 } satisfies EncryptionConfig;
 
+/** */
 export class EncryptionSection implements EncryptionConfig {
   required = ENCRYPTION_DEFAULTS.required;
   compressThreshold = ENCRYPTION_DEFAULTS.compressThreshold;
@@ -21,6 +22,9 @@ export class EncryptionSection implements EncryptionConfig {
   anonymous = ENCRYPTION_DEFAULTS.anonymous;
   serverEncryptionKey?: string;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<EncryptionConfig>,) {
     Object.assign(this, overrides,);
   }

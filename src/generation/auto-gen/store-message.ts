@@ -23,6 +23,7 @@ import { uid, } from "../../utils";
 import { applyRegexTransforms, } from "../transforms";
 import type { GenDeps, } from "./deps";
 
+/** */
 export interface StoreMessageOpts {
   d: GenDeps;
   database: Kysely<DB>;
@@ -43,6 +44,7 @@ export interface StoreMessageOpts {
   thinking: string | undefined;
 }
 
+/** */
 export interface StoreMessageResult {
   messageId: string;
   /** True when a regex transform was applied to the content. */
@@ -51,7 +53,7 @@ export interface StoreMessageResult {
 
 /**
  * Store the generated assistant message.
- *
+ * @param opts
  * @returns The new message ID and whether regex transforms were applied.
  */
 export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessageResult> {

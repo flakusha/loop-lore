@@ -14,7 +14,10 @@ import type {
 
 /**
  * Check if a user can access a specific message.
- *
+ * @param database
+ * @param messageId
+ * @param userId
+ * @param userRole
  * @returns The message row if access granted, or ServiceError
  */
 export async function getMessageWithAccess(
@@ -48,6 +51,8 @@ export async function getMessageWithAccess(
 
 /**
  * List messages in a chat with pagination and variant info.
+ * @param database
+ * @param params
  */
 export async function listMessages(
   database: Kysely<DB>,
@@ -127,6 +132,9 @@ export async function listMessages(
 
 /**
  * Get message variants (swipe alternatives).
+ * @param database
+ * @param parentId
+ * @param chatId
  */
 export async function getMessageVariants(
   database: Kysely<DB>,

@@ -18,7 +18,6 @@
  * compressed (gzip) and spilled to disk by `src/async/offload.ts`; the
  * store is unaware of the offload path and just reports the inlined body.
  * The status endpoint joins with `offload.ts` to resolve the spill.
- *
  * @see TASK-async-request-response-result-store-separate-table-offload.md
  * @see epic-middleware-request-lifecycle.md
  */
@@ -82,6 +81,8 @@ const DEFAULT_QUEUE_LIMIT = 10_000;
  * The returned API is **fire-and-forget**: every method returns immediately.
  * Errors are logged but never thrown on the hot path. Drain `destroy()` at
  * shutdown to flush the in-flight queue.
+ * @param database
+ * @param config
  */
 export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig = {},): AsyncStore {
   const cfg: Required<AsyncStoreConfig> = {
@@ -94,7 +95,10 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
   let draining = false;
   let destroyed = false;
 
-  /** Enqueue a write. Drops on overflow (logs at warn). */
+  /**
+   * Enqueue a write. Drops on overflow (logs at warn).
+   * @param write
+   */
   const enqueue = (write: Write,): void => {
     if (destroyed) { return; }
     if (queue.length >= cfg.queueLimit) {
@@ -192,7 +196,10 @@ export interface AsyncStore {
   destroy(): void;
 }
 
-/** Translate a DB row to the public `RequestResultRow`. */
+/**
+ * Translate a DB row to the public `RequestResultRow`.
+ * @param row
+ */
 function rowToResult(row: RequestResultsRow,): RequestResultRow {
   return {
     id: row.id,

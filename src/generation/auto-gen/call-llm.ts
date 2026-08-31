@@ -20,6 +20,7 @@ import { classifyIntent, } from "./classify-intent";
 import type { GenDeps, } from "./deps";
 import { renderStreamMessage, } from "./stream-render";
 
+/** */
 export interface CallLlmOpts {
   d: GenDeps;
   database: Kysely<DB>;
@@ -43,6 +44,7 @@ export interface CallLlmOpts {
   requestId?: string;
 }
 
+/** */
 export interface CallLlmResult {
   content: string;
   thinking: string | undefined;
@@ -52,7 +54,7 @@ export interface CallLlmResult {
 
 /**
  * Run the LLM request for a generated message.
- *
+ * @param opts
  * @returns The accumulated content, thinking, token usage, and finish reason.
  */
 export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {

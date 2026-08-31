@@ -37,6 +37,15 @@ const DOCS_NAV_HTML = `
         </a>
 `.trim();
 
+/**
+ * @param content
+ * @param title
+ * @param userId
+ * @param sessionId
+ * @param cspNonce
+ * @param t
+ * @param locale
+ */
 function wrapWithLayout(
   content: string,
   title?: string,
@@ -80,6 +89,10 @@ function wrapWithLayout(
   return layout;
 }
 
+/**
+ * @param content
+ * @param chain
+ */
 function resolveIncludes(content: string, chain = new Set<string>(),): string {
   return content.replaceAll(/\{\{>\s*([\w./-]+)\s*\}\}/g, (_match, includePath: string,) => {
     const resolved = join(COMPONENTS_DIR, includePath,);
@@ -102,6 +115,7 @@ function resolveIncludes(content: string, chain = new Set<string>(),): string {
  *
  * Falls back to a comment placeholder if the icon file is missing so
  * the page still renders (visible indicator for debugging).
+ * @param content
  */
 function resolveIcons(content: string,): string {
   return content.replaceAll(/\{\{icon:([\w-]+)\}\}/g, (_match, name: string,) => {
@@ -113,6 +127,9 @@ function resolveIcons(content: string,): string {
   },);
 }
 
+/**
+ * @param viewName
+ */
 function loadView(viewName: string,): string {
   const cached = viewCache.get(viewName,);
   if (cached !== undefined) { return cached; }
@@ -125,11 +142,24 @@ function loadView(viewName: string,): string {
   return resolved;
 }
 
+/**
+ * @param content
+ * @param t
+ */
 export function applyI18n(content: string, t?: (key: string,) => string,): string {
   if (!t) { return content; }
   return content.replaceAll(I18N_TEMPLATE_RE, (_match, key,) => t(key,),);
 }
 
+/**
+ * @param content
+ * @param isHtmx
+ * @param title
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
+ */
 function respond(
   content: string,
   isHtmx: boolean,
@@ -147,6 +177,15 @@ function respond(
   },);
 }
 
+/**
+ * @param message
+ * @param isHtmx
+ * @param title
+ * @param userId
+ * @param sessionId
+ * @param request
+ * @param t
+ */
 function notFoundView(
   message: string,
   isHtmx: boolean,
@@ -164,12 +203,18 @@ function notFoundView(
   return respond(content, isHtmx, translatedTitle, userId, sessionId, request, t,);
 }
 
+/**
+ * @param body
+ */
 function htmlResponse(body: string,): Response {
   return new Response(body, {
     headers: { "Content-Type": "text/html; charset=utf-8", },
   },);
 }
 
+/**
+ * @param str
+ */
 function escapeHtml(str: string,): string {
   return str
     .replaceAll("&", "&amp;",)

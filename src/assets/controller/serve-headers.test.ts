@@ -8,6 +8,9 @@ import type { AssetRecord, } from "../service/types";
 import { serveFile, } from "./files";
 import { cacheControlFor, contentDispositionFor, } from "./serve";
 
+/**
+ * @param overrides
+ */
 function asset(overrides: Partial<AssetRecord>,): AssetRecord {
   return {
     id: "abcdef01",

@@ -13,6 +13,7 @@
 import { jsonStringifyOr, } from "../../utils/safe-json";
 import type { ModAction, NsfwModerationServiceContext, } from "./types";
 
+/** */
 export interface ExecuteReversalArgs {
   thisL: NsfwModerationServiceContext;
   appealId: string;
@@ -34,6 +35,11 @@ export interface ExecuteReversalArgs {
  * `unblock`/`unban`/`unshadow` action row is recorded; a notification
  * is delivered to the original moderator; and the appeal moves to
  * `reversed`.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.appealId
+ * @param root0.executedBy
+ * @param root0.approvedBy
  */
 export async function executeReversal(
   { thisL, appealId, executedBy, approvedBy, }: ExecuteReversalArgs,
@@ -102,7 +108,14 @@ export async function executeReversal(
   return reversal;
 }
 
-/** Deliver an in-app notification to the moderator who applied the original action. */
+/**
+ * Deliver an in-app notification to the moderator who applied the original action.
+ * @param thisL
+ * @param moderatorId
+ * @param appealId
+ * @param originalActionId
+ * @param reversalActionId
+ */
 export async function notifyModeratorReversal(
   thisL: NsfwModerationServiceContext,
   moderatorId: string,

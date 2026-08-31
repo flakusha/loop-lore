@@ -3,6 +3,7 @@
 
 import type { ChatState, } from "../types";
 
+/** */
 export type ChatUtilsAnonymous = Partial<ChatState> & ThisType<ChatState>;
 
 /** Cache for anonymous mode status — mutable module singleton */

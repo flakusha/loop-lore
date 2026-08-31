@@ -13,13 +13,16 @@ export interface AnthropicState {
   headers: Record<string, string>;
 }
 
+/** */
 export type AnthropicContentBlock = AnthropicTextBlock | AnthropicToolUseBlock;
 
+/** */
 export interface AnthropicTextBlock {
   type: "text";
   text: string;
 }
 
+/** */
 export interface AnthropicToolUseBlock {
   type: "tool_use";
   id: string;
@@ -27,6 +30,7 @@ export interface AnthropicToolUseBlock {
   input: Record<string, unknown>;
 }
 
+/** */
 export interface AnthropicToolResultBlock {
   type: "tool_result";
   tool_use_id: string;
@@ -48,11 +52,13 @@ export interface AnthropicMessagesResponse {
 
 // ── Streaming SSE events ────────────────────────────────
 
+/** */
 export interface AnthropicMessageStart {
   type: "message_start";
   message?: { usage?: { input_tokens?: number } };
 }
 
+/** */
 export interface AnthropicContentBlockStart {
   type: "content_block_start";
   index: number;
@@ -66,6 +72,7 @@ export interface AnthropicContentBlockStart {
   };
 }
 
+/** */
 export interface AnthropicContentBlockDelta {
   type: "content_block_delta";
   index: number;
@@ -77,21 +84,25 @@ export interface AnthropicContentBlockDelta {
   };
 }
 
+/** */
 export interface AnthropicContentBlockStop {
   type: "content_block_stop";
   index: number;
 }
 
+/** */
 export interface AnthropicMessageDelta {
   type: "message_delta";
   delta?: { stop_reason?: string | null; stop_sequence?: string | null };
   usage?: { output_tokens?: number };
 }
 
+/** */
 export interface AnthropicMessageStop {
   type: "message_stop";
 }
 
+/** */
 export type AnthropicStreamEvent =
   | AnthropicMessageStart
   | AnthropicContentBlockStart

@@ -29,6 +29,10 @@ const SECRET = "integration-test-hmac-secret";
 const OWNER = "owner-1";
 const ASSET_ID = "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
 
+/**
+ * @param uploadDir
+ * @param secret
+ */
 function makeConfig(uploadDir: string, secret: string | undefined,): Config {
   return {
     assets: {
@@ -43,6 +47,12 @@ function makeConfig(uploadDir: string, secret: string | undefined,): Config {
   } as unknown as Config;
 }
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ * @param config
+ */
 function createApp(db: Kysely<DB>, userId: string | null, userRole: string | null, config: Config,): Elysia {
   return new Elysia({ name: "test-asset-signed", },)
     .derive(() => ({ userId, userRole, }))

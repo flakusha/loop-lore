@@ -38,6 +38,11 @@ const NOTES_CONFIG: EntityConfig = {
   createRequired: ["title", "content",],
 };
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function createApp(db: Kysely<DB>, userId: string | null, userRole: string | null = "user",): Elysia {
   return new Elysia({ name: "test-entity", },)
     .derive(() => ({ userId, userRole, }))

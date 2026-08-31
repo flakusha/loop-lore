@@ -53,16 +53,25 @@ describe("replayability (auth-gated)", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-replayability-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
       .use(replayabilityRoutes({ database: db, config: {} as never, },),) as any;
   }
 
+  /**
+   * @param res
+   */
   async function json(res: Response,): Promise<unknown> {
     return res.json() as unknown;
   }
 
+  /**
+   * @param body
+   */
   function readId(body: unknown,): string {
     if (typeof body === "object" && body !== null && "id" in body && typeof body.id === "string") {
       return body.id;
@@ -111,7 +120,7 @@ describe("replayability (auth-gated)", () => {
       new Request(`http://localhost/api/rpg/replayability/playthroughs/${playthroughId}/secret`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        // eslint-disable-next-line unicorn/max-nested-calls -- request body nesting is test infrastructure
+
         body: JSON.stringify({ secretId: uid(), },),
       },),
     );
@@ -124,7 +133,7 @@ describe("replayability (auth-gated)", () => {
       new Request(`http://localhost/api/rpg/replayability/playthroughs/${playthroughId}/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        // eslint-disable-next-line unicorn/max-nested-calls -- request body nesting is test infrastructure
+
         body: JSON.stringify({ endingId: uid(), endingType: "good", completionTime: 3600, },),
       },),
     );

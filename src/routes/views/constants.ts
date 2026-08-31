@@ -15,6 +15,7 @@ const I18N_TEMPLATE_RE = /\{\{\{\s*t\("([^"]+)"\)\s*\}\}\}/g;
 /**
  * Auto-discover allowed views from src/views/ directory.
  * Any .html file (except layout.html) becomes a valid view name.
+ * @param dir
  */
 function discoverViews(dir: string,): Set<string> {
   const views = new Set<string>();
@@ -32,10 +33,15 @@ function discoverViews(dir: string,): Set<string> {
 /**
  * Auto-discover allowed partials from src/partials/ directory.
  * Supports nested directories (e.g. characters/create-modal).
+ * @param dir
  */
 function discoverPartials(dir: string,): Set<string> {
   const partials = new Set<string>();
   if (!existsSync(dir,)) { return partials; }
+  /**
+   * @param current
+   * @param prefix
+   */
   function walk(current: string, prefix: string,): void {
     for (const entry of readdirSync(current, { withFileTypes: true, },)) {
       const rel = prefix ? `${prefix}/${entry.name}` : entry.name;

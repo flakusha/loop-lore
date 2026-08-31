@@ -12,7 +12,10 @@ import {
 import { calculateCoverBonus, } from "./position";
 import type { BattleTerrain, } from "./types";
 
-/** Get all environmental modifiers for a battle terrain */
+/**
+ * Get all environmental modifiers for a battle terrain
+ * @param terrain
+ */
 export function getEnvironmentalModifiers(
   terrain: BattleTerrain,
 ): EnvironmentalModifier[] {
@@ -54,7 +57,11 @@ export function getEnvironmentalModifiers(
   return modifiers;
 }
 
-/** Apply environmental modifiers to combat stats */
+/**
+ * Apply environmental modifiers to combat stats
+ * @param baseStats
+ * @param modifiers
+ */
 export function applyEnvironmentalModifiers(
   baseStats: CombatStats,
   modifiers: EnvironmentalModifier[],

@@ -23,6 +23,13 @@ import type { ChoiceGenerationResult, GenerateChoicesBody, VnGenerateRouteOpts, 
 
 // ── Choice Generation ──────────────────────────────────────
 
+/**
+ * @param database
+ * @param chatId
+ * @param body
+ * @param config
+ * @param userId
+ */
 async function generateBranchingChoices(
   database: Kysely<DB>,
   chatId: string,
@@ -118,6 +125,9 @@ const ChoicesBodySchema = t.Object({
   maxTokens: t.Optional(t.Number(),),
 },);
 
+/**
+ * @param opts
+ */
 export function choicesRoutes(opts: VnGenerateRouteOpts,) {
   const { database, } = opts;
 

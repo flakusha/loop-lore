@@ -4,6 +4,7 @@
 import type { RegexTransform, RegexTransformPhase, } from "../config/schema";
 import { compileSafeRegExp, } from "../utils/safe-regexp";
 
+/** */
 export interface TransformResult {
   text: string;
   applied: { name: string; pattern: string; matches: number }[];
@@ -24,6 +25,8 @@ const DEFAULT_PHASE: RegexTransformPhase = "output";
  * Transforms are grouped by `phase` and run phase-grouped in canonical order
  * (edit-input → output → process → display); within a phase, list order is
  * preserved. Each tracks match count.
+ * @param text
+ * @param transforms
  */
 export function applyRegexTransforms(
   text: string,
@@ -53,7 +56,7 @@ export function applyRegexTransforms(
         const matches = current.match(regex,);
         if (matches && matches.length > 0) {
           applied.push({ name: t.name, pattern: t.pattern, matches: matches.length, },);
-          // eslint-disable-next-line unicorn/no-unsafe-string-replacement -- user-configured replacement strings are the feature
+
           current = current.replace(regex, t.replacement,);
         }
       } catch {

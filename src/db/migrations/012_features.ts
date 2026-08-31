@@ -10,6 +10,7 @@ import type { Kysely, } from "kysely";
  *
  * The typed schema (`GmConfig`, `VisualNovel`) is enforced at the
  * application layer, not the DB layer.
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── GM Config & Visual Novel (chats columns) ───────────
@@ -192,6 +193,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   // ── Drop NSFW tables (reverse creation order) ──────────
   await database.schema.dropTable("location_nsfw_config",).execute();

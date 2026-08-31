@@ -6,7 +6,19 @@ import type { DB, } from "../../../db/schema";
 import { jsonParseOr, uid, } from "../../../utils";
 import type { IntimacyPair, } from "./types";
 
-/** Convert a DB row to an IntimacyPair. */
+/**
+ * Convert a DB row to an IntimacyPair.
+ * @param row
+ * @param row.id
+ * @param row.actor_id
+ * @param row.target_actor_id
+ * @param row.world_id
+ * @param row.score
+ * @param row.action_history
+ * @param row.unlocked_thresholds
+ * @param row.created_at
+ * @param row.updated_at
+ */
 export function rowToPair(row: {
   id: string;
   actor_id: string;
@@ -34,6 +46,10 @@ export function rowToPair(row: {
 /**
  * Get or create an intimacy pair between two actors.
  * Intimacy is symmetric — (A,B) and (B,A) share the same score.
+ * @param db
+ * @param actorId
+ * @param targetActorId
+ * @param worldId
  */
 export async function getPair(
   db: Kysely<DB>,
@@ -87,6 +103,9 @@ export async function getPair(
 
 /**
  * Get all intimacy pairs for an actor (optionally in a world).
+ * @param db
+ * @param actorId
+ * @param worldId
  */
 export async function getActorPairs(
   db: Kysely<DB>,

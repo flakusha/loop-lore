@@ -15,7 +15,6 @@ import {
 
 /**
  * Make an attack roll.
- *
  * @param attacker - The attacking combatant
  * @param target - The target combatant
  * @param attackAbility - Which ability to use ("str" for melee, "dex" for ranged)

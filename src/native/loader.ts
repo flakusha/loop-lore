@@ -11,7 +11,6 @@
  * reports the module as unavailable so callers fall back to the pure-TS
  * implementation. This is the *integration sample* for pre-compiled code:
  * no application code outside `src/native/` ever touches FFI directly.
- *
  * @module native-loader
  */
 
@@ -21,12 +20,12 @@ import { join, } from "node:path";
 
 /**
 ABI version the loader requires (packed `(major<<16)|(minor<<8)|patch`).
-*/
+ */
 const REQUIRED_ABI_VERSION = (0 << 16) | (3 << 8);
 
 /**
 Platform → shared-library filename, matching the Rust crate output name.
-*/
+ */
 const BINARY_NAMES: Record<NodeJS.Platform, string | undefined> = {
   linux: "libloop_lore_native.so",
   darwin: "libloop_lore_native.dylib",
@@ -44,7 +43,7 @@ const BINARY_NAMES: Record<NodeJS.Platform, string | undefined> = {
 
 /**
 FFI symbol definitions — must match the Rust ABI contract in lib.rs.
-*/
+ */
 const SYMBOLS = {
   ll_version: { args: [] as never[], returns: FFIType.i32, },
   ll_blake3: {
@@ -65,17 +64,19 @@ const SYMBOLS = {
   },
 } as const;
 
+/** */
 export interface NativeBlake3Symbols {
   /**
   Packed ABI version.
-  */
+   */
   ll_version(): number;
   /**
   Blake3 into a caller buffer. 0 = success, -1 = bad args.
-  */
+   */
   ll_blake3(data: Uint8Array, len: number, out: Uint8Array, outLen: number,): number;
 }
 
+/** */
 export interface NativeZstdSymbols {
   ll_zstd_compress(data: Uint8Array, len: number, out: Uint8Array, outLen: number, level: number,): number;
   ll_zstd_decompress(data: Uint8Array, len: number, out: Uint8Array, outLen: number,): number;
@@ -84,7 +85,7 @@ export interface NativeZstdSymbols {
 
 /**
 Resolved native module state (lazy, cached after first load attempt).
-*/
+ */
 let cachedModule: { handle: NativeBlake3Symbols & NativeZstdSymbols; version: number } | null | undefined;
 
 /**
@@ -94,7 +95,6 @@ let cachedModule: { handle: NativeBlake3Symbols & NativeZstdSymbols; version: nu
  * (`native/loop-lore-native/target/release/`). Relative to the repo root so
  * the sample works from any cwd — `import.meta.dir` points at
  * `src/native/`, so `../..` lands on the repo root.
- *
  * @returns Absolute path to the binary, or null when this platform is unsupported.
  */
 export function resolveNativeBinaryPath(): string | null {
@@ -125,7 +125,6 @@ export function resolveNativeBinaryPath(): string | null {
 /**
  * Attempt to load the native module. Result is cached; subsequent calls are
  * cheap. Never throws — failures degrade to `null` (fallback path).
- *
  * @returns The dlopen handle + verified ABI version, or null when
  *   unavailable (missing binary, wrong platform, version mismatch, dlopen error).
  */
@@ -158,7 +157,6 @@ export function getNativeModule(): { handle: NativeBlake3Symbols & NativeZstdSym
 
 /**
  * True when the native binary is loaded and ABI-verified.
- *
  * @returns Whether native BLAKE3 is available.
  */
 export function isNativeAvailable(): boolean {
@@ -167,7 +165,6 @@ export function isNativeAvailable(): boolean {
 
 /**
  * Current native module status for diagnostics (health probe / telemetry).
- *
  * @returns A stable, serializable status object.
  */
 export function getNativeStatus(): {

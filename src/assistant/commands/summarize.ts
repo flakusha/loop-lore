@@ -8,6 +8,11 @@
 import { parseIntOr, } from "../../utils/parse-number";
 import { type CommandResult, registerCommand, } from "./registry";
 
+/**
+ * @param args
+ * @param ctx
+ * @param ctx.messages
+ */
 function buildSummary(args: string[], ctx: { messages?: { role: string; content: string }[] },): CommandResult {
   if (!ctx.messages || ctx.messages.length === 0) {
     return { systemMessage: "No messages to summarize.", handled: true, };

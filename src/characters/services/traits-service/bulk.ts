@@ -24,6 +24,11 @@ export interface GetAllTraitsArgs {
 
 /**
  * Get all traits for a character across all layers.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
+ * @param root0.locationId
  */
 export async function getAllTraits(
   { thisL, actorId, worldId, locationId, }: GetAllTraitsArgs,

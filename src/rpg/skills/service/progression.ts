@@ -10,6 +10,9 @@ import { ProficiencyLevel, } from "./types";
 
 /**
  * Add XP to a skill
+ * @param db
+ * @param skillId
+ * @param xpAmount
  */
 export async function addXp(db: Kysely<DB>, skillId: string, xpAmount: number,): Promise<XpGainResult> {
   const skill = await getSkill(db, skillId,);
@@ -66,6 +69,9 @@ export async function addXp(db: Kysely<DB>, skillId: string, xpAmount: number,):
 
 /**
  * Specialize a skill
+ * @param db
+ * @param skillId
+ * @param specialization
  */
 export async function specializeSkill(db: Kysely<DB>, skillId: string, specialization: string,): Promise<Skill> {
   const skill = await getSkill(db, skillId,);

@@ -16,6 +16,10 @@ describe("createHandleResolver", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param id
+   * @param username
+   */
   async function insertUser(id: string, username: string,): Promise<void> {
     await db.insertInto("users",)
       .values({ id, username, display_name: username, password_hash: null, role: "user", status: "active", },)

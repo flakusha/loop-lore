@@ -22,7 +22,13 @@ export type {
   MaterialRecord,
 } from "./types";
 
-/** Find or merge quantity into an actor's inventory. */
+/**
+ * Find or merge quantity into an actor's inventory.
+ * @param trx
+ * @param actorId
+ * @param item
+ * @param qty
+ */
 async function upsertActorItem(
   trx: Kysely<DB>,
   actorId: string,
@@ -51,7 +57,24 @@ async function upsertActorItem(
   }
 }
 
-/** Map a crafting_attempts row to CraftAttempt. */
+/**
+ * Map a crafting_attempts row to CraftAttempt.
+ * @param r
+ * @param r.id
+ * @param r.actor_id
+ * @param r.world_id
+ * @param r.recipe_id
+ * @param r.station_instance_id
+ * @param r.materials_used
+ * @param r.status
+ * @param r.quality_achieved
+ * @param r.output_item_id
+ * @param r.output_quantity
+ * @param r.experience_gained
+ * @param r.skill_increase
+ * @param r.bonus_effects
+ * @param r.created_at
+ */
 function toCraftAttempt(r: {
   id: string;
   actor_id: string;
@@ -88,9 +111,15 @@ function toCraftAttempt(r: {
 /** Crafting process — attempt, consume materials, roll, produce output. */
 export class CraftingProcessService {
   private readonly db: Kysely<DB>;
+  /**
+   * @param db
+   */
   constructor(db: Kysely<DB>,) {
     this.db = db;
   }
+  /**
+   * @param opts
+   */
   async attemptCraft(opts: CraftAttemptOpts,): Promise<CraftResult> {
     const recipe = await this.db.selectFrom("crafting_recipes",).selectAll()
       .where("id", "=", opts.recipeId,).executeTakeFirst();
@@ -235,11 +264,18 @@ export class CraftingProcessService {
     },);
   }
 
+  /**
+   * @param id
+   */
   async getAttempt(id: string,): Promise<CraftAttempt | null> {
     const r = await this.db.selectFrom("crafting_attempts",).selectAll()
       .where("id", "=", id,).executeTakeFirst();
     return r ? toCraftAttempt(r,) : null;
   }
+  /**
+   * @param actorId
+   * @param worldId
+   */
   async listAttempts(actorId: string, worldId: string,): Promise<CraftAttempt[]> {
     const rows = await this.db.selectFrom("crafting_attempts",).selectAll()
       .where("actor_id", "=", actorId,).where("world_id", "=", worldId,)

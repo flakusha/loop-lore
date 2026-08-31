@@ -12,7 +12,11 @@ import { loadComfyUIWorkflow, } from "../workflow-loader";
 import { failure, ok, } from "./helpers";
 import type { ImageGenOptions, ImageGenOutcome, } from "./types";
 
-/** Generate images via a ComfyUI workflow (loaded + substituted from disk). */
+/**
+ * Generate images via a ComfyUI workflow (loaded + substituted from disk).
+ * @param sdConfig
+ * @param opts
+ */
 export async function generateComfyUI(
   sdConfig: ImageProviderConfig,
   opts: ImageGenOptions,

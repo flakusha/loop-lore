@@ -13,6 +13,11 @@ import type { DB, } from "../../../db";
  * how personality is EXPRESSED (e.g., "in this world, she speaks more formally").
  *
  * Stored as a world trait with a "behavioral_modifier" prefix.
+ * @param database
+ * @param actorId
+ * @param worldId
+ * @param modifierName
+ * @param modifierValue
  */
 export async function applyBehavioralModifier(
   database: Kysely<DB>,
@@ -44,6 +49,9 @@ export async function applyBehavioralModifier(
 /**
  * Get all behavioral modifiers for a character in a world.
  * These are world traits with the "behavioral_modifier:" prefix.
+ * @param database
+ * @param actorId
+ * @param worldId
  */
 export async function getBehavioralModifiers(
   database: Kysely<DB>,

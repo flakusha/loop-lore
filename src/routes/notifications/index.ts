@@ -19,6 +19,11 @@ import { NotificationStreamer, } from "./stream";
 
 export { NotificationStreamer, } from "./stream";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function notificationsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   const idParams = t.Object({ id: t.String(), },);
   const markReadBody = t.Object({ read: t.Optional(t.Boolean(),), },);

@@ -28,6 +28,11 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { uid, } from "../../utils";
 import { appealsRoutes, } from "./appeals";
 
+/**
+ * @param db
+ * @param userId
+ * @param role
+ */
 function createApp(
   db: Kysely<DB>,
   userId: string | null,
@@ -38,6 +43,11 @@ function createApp(
     .use(appealsRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param db
+ * @param id
+ * @param targetUserId
+ */
 function seedAction(
   db: Kysely<DB>,
   id: string,
@@ -54,6 +64,9 @@ function seedAction(
   },).execute();
 }
 
+/**
+ * @param body
+ */
 function submitRequest(body: Record<string, unknown>,): Request {
   return new Request("http://localhost/api/nsfw/moderation/appeals", {
     method: "POST",

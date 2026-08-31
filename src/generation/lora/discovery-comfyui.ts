@@ -7,7 +7,6 @@
  * Discovers available LoRA models from the ComfyUI backend.
  * Uses the /object_info endpoint to extract available models
  * from the LoraLoader node's input configuration.
- *
  * @module generation/lora/discovery-comfyui
  */
 
@@ -45,11 +44,9 @@ interface ComfyUILoraLoaderInfo {
  *
  * Extracts available LoRA models from the LoraLoader node's
  * input configuration in the /object_info response.
- *
  * @param baseUrl - ComfyUI server base URL (e.g., "http://localhost:8188")
  * @param timeoutMs - Request timeout in milliseconds
  * @returns Discovery result with available LoRA models
- *
  * @example
  * ```ts
  * const result = await discoverComfyUILoras("http://localhost:8188");
@@ -140,13 +137,11 @@ export async function discoverComfyUILoras(
 
 /**
  * Build a ComfyUI LoraLoader node for workflow injection.
- *
  * @param loraName - LoRA model filename (with extension)
  * @param strengthModel - Model strength (0.1-1.0, typical 0.3-0.7)
  * @param strengthClip - CLIP strength (defaults to model strength)
  * @param previousNodeId - Node ID to connect as input (optional)
  * @returns ComfyUI workflow node
- *
  * @example
  * ```ts
  * const node = buildComfyUILoraNode("my_character.safetensors", 0.7);
@@ -181,14 +176,12 @@ export function buildComfyUILoraNode(
 
 /**
  * Inject LoraLoader nodes into a ComfyUI workflow.
- *
  * @param workflow - Original workflow
  * @param loraName - LoRA model filename
  * @param strengthModel - Model strength
  * @param strengthClip - CLIP strength (optional, defaults to model strength)
  * @param targetNodeId - Node ID to inject after (optional, uses first MODEL/CLIP output)
  * @returns Modified workflow with LoraLoader node inserted
- *
  * @example
  * ```ts
  * const modified = injectComfyUILora(workflow, "my_character.safetensors", 0.7);

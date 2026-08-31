@@ -19,6 +19,9 @@
  */
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await sql`
     CREATE VIRTUAL TABLE IF NOT EXISTS messages_fts USING fts5(
@@ -65,6 +68,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
   `.execute(db,);
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await sql`DROP TRIGGER IF EXISTS messages_fts_ai`.execute(db,);
   await sql`DROP TRIGGER IF EXISTS messages_fts_ad`.execute(db,);

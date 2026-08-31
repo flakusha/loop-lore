@@ -34,6 +34,11 @@ export interface StoredContent {
  * Prepare plaintext message content for storage. Handles three cases:
  * client-pre-encrypted (stored as-is), server-encryption-on (encryptAtRest by
  * chat tier), and unencrypted (gzip large, identity otherwise).
+ * @param database
+ * @param config
+ * @param chatId
+ * @param actorId
+ * @param plaintext
  */
 export async function prepareContentStorage(
   database: Kysely<DB>,
@@ -83,7 +88,13 @@ export async function prepareContentStorage(
   return { storedContent: plaintext, contentEncoding: "identity", storedKeyId: null, storedPlaintext: plaintext, };
 }
 
-/** Link uploaded assets to the freshly-created message and persist the JSON. */
+/**
+ * Link uploaded assets to the freshly-created message and persist the JSON.
+ * @param database
+ * @param messageId
+ * @param attachments
+ * @param ownerId
+ */
 export async function attachMessageAttachments(
   database: Kysely<DB>,
   messageId: string,
@@ -118,7 +129,12 @@ export async function attachMessageAttachments(
     .execute();
 }
 
-/** Persist an initiative claim for the actor in the chat's main scene. */
+/**
+ * Persist an initiative claim for the actor in the chat's main scene.
+ * @param database
+ * @param chatId
+ * @param actorId
+ */
 export async function persistInitiative(
   database: Kysely<DB>,
   chatId: string,
@@ -167,7 +183,14 @@ export interface MentionPersistResult {
   failed: number;
 }
 
-/** Record @mentions for the message and fire the mention notification. */
+/**
+ * Record @mentions for the message and fire the mention notification.
+ * @param database
+ * @param chatId
+ * @param senderId
+ * @param messageId
+ * @param filteredContent
+ */
 export async function persistMentions(
   database: Kysely<DB>,
   chatId: string,
@@ -239,7 +262,10 @@ export async function persistMentions(
   return result;
 }
 
-/** True when the error is a unique-constraint violation (already-inserted row). */
+/**
+ * True when the error is a unique-constraint violation (already-inserted row).
+ * @param err
+ */
 function isBenignMentionInsertError(err: unknown,): boolean {
   if (err === null || typeof err !== "object") { return false; }
   const message = (err as { message?: unknown }).message;

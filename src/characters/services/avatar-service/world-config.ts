@@ -22,7 +22,12 @@ export interface WorldAvatarConfig {
   weightsOverride: Record<AvatarTagType, number> | undefined;
 }
 
-/** Get world-specific avatar config */
+/**
+ * Get world-specific avatar config
+ * @param db
+ * @param actorId
+ * @param worldId
+ */
 export async function getWorldAvatarConfig(
   db: Kysely<DB>,
   actorId: string,
@@ -48,7 +53,13 @@ export async function getWorldAvatarConfig(
   };
 }
 
-/** Create or update world-specific avatar config */
+/**
+ * Create or update world-specific avatar config
+ * @param db
+ * @param actorId
+ * @param worldId
+ * @param config
+ */
 export async function upsertWorldAvatarConfig(
   db: Kysely<DB>,
   actorId: string,

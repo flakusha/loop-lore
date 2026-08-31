@@ -14,7 +14,11 @@ mock.module("./htmx", () => ({
   },
 }),);
 
-/** Queue endpoint responses: each handler consumes configs then check then send. */
+/**
+ * Queue endpoint responses: each handler consumes configs then check then send.
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url, _opts,) => Response.json(body, { status, },);
 }
@@ -29,6 +33,12 @@ interface ProactiveCtx {
   tickProactive(): Promise<void>;
 }
 
+/**
+ * @param overrides
+ * @param overrides.activeChat
+ * @param overrides.inFlight
+ * @param overrides.lastSendAt
+ */
 function buildCtx(overrides: {
   activeChat?: string | null;
   inFlight?: boolean;

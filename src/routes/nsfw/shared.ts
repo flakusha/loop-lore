@@ -7,13 +7,19 @@ import { getLogger, type Logger, } from "../../logger";
 import { checkActorOwnership, } from "../actor-auth";
 import { forbiddenResponse, requireUserId, } from "../http-utils";
 
+/** */
 function log(): Logger {
   return getLogger().child({ module: "nsfw-routes", },);
 }
 
 export { log, };
 
-/** Require the caller to own `targetActor` (or be admin/solo). Returns userId on success, else a Response. */
+/**
+ * Require the caller to own `targetActor` (or be admin/solo). Returns userId on success, else a Response.
+ * @param database
+ * @param targetActor
+ * @param ctx
+ */
 export async function requireActorAccess(
   database: Kysely<DB>,
   targetActor: string,

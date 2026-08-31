@@ -20,12 +20,19 @@ import type {
 } from "./types";
 export { streamDispatch, } from "./stream";
 
-/** Serialize a tool-use input object to the string form expected by ToolCall. */
+/**
+ * Serialize a tool-use input object to the string form expected by ToolCall.
+ * @param input
+ */
 function stringifyToolInput(input: Record<string, unknown> | undefined,): string {
   const result = safeJsonStringify(input ?? {},);
   return result.ok ? result.value : "";
 }
 
+/**
+ * @param state
+ * @param req
+ */
 export async function completeDispatch(
   state: AnthropicState,
   req: GenerateRequest,

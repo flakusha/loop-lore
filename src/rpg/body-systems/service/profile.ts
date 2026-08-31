@@ -11,7 +11,25 @@ import type {
   UpdateBodyProfileOpts,
 } from "./types";
 
-/** Convert database row to BodyProfile object */
+/**
+ * Convert database row to BodyProfile object
+ * @param row
+ * @param row.id
+ * @param row.actor_id
+ * @param row.stamina
+ * @param row.flexibility
+ * @param row.sensitivity
+ * @param row.endurance
+ * @param row.size_category
+ * @param row.build
+ * @param row.beauty
+ * @param row.charisma
+ * @param row.style
+ * @param row.scent
+ * @param row.modifications
+ * @param row.created_at
+ * @param row.updated_at
+ */
 export function rowToProfile(row: {
   id: string;
   actor_id: string;
@@ -48,13 +66,18 @@ export function rowToProfile(row: {
   };
 }
 
-/** Clamp a value to 1–100 range. */
+/**
+ * Clamp a value to 1–100 range.
+ * @param value
+ */
 function clamp(value: number,): number {
   return Math.max(1, Math.min(100, value,),);
 }
 
 /**
  * Get or create a body profile for an actor.
+ * @param db
+ * @param actorId
  */
 export async function getProfile(
   db: Kysely<DB>,
@@ -116,6 +139,9 @@ export async function getProfile(
 
 /**
  * Update a body profile.
+ * @param db
+ * @param actorId
+ * @param updates
  */
 export async function updateProfile(
   db: Kysely<DB>,
@@ -150,6 +176,9 @@ export async function updateProfile(
 
 /**
  * Add a body modification.
+ * @param db
+ * @param actorId
+ * @param modification
  */
 export async function addModification(
   db: Kysely<DB>,
@@ -172,6 +201,9 @@ export async function addModification(
 
 /**
  * Remove a body modification by index.
+ * @param db
+ * @param actorId
+ * @param index
  */
 export async function removeModification(
   db: Kysely<DB>,

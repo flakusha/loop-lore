@@ -25,11 +25,15 @@ interface WorkflowMeta {
 /** Default workflows directory (relative to project root) */
 const DEFAULT_WORKFLOWS_DIR = "configs/workflows";
 
+/** */
 class WorkflowLoader {
   private workflowsDir: string;
   private cache = new Map<string, { meta: WorkflowMeta; workflow: ComfyUIWorkflow }>();
   private dirMtime = 0;
 
+  /**
+   * @param workflowsDir
+   */
   constructor(workflowsDir: string = DEFAULT_WORKFLOWS_DIR,) {
     this.workflowsDir = workflowsDir;
   }
@@ -39,7 +43,6 @@ class WorkflowLoader {
    *
    * Scans the workflows directory for `.json` files and returns
    * their names (filename without extension).
-   *
    * @returns Array of workflow names
    */
   async listWorkflows(): Promise<string[]> {
@@ -49,7 +52,6 @@ class WorkflowLoader {
 
   /**
    * Load a workflow by name with optional template substitution.
-   *
    * @param options - Workflow name and substitution parameters
    * @returns ComfyUI-ready workflow with placeholders replaced
    * @throws If workflow not found
@@ -90,6 +92,7 @@ class WorkflowLoader {
 
   /**
    * Get raw workflow JSON without substitution (for inspection/debugging).
+   * @param name
    */
   async getRawWorkflow(name: string,): Promise<ComfyUIWorkflow | null> {
     await this.ensureLoaded();
@@ -99,6 +102,7 @@ class WorkflowLoader {
 
   // ── Internal ──────────────────────────────────────────────
 
+  /** */
   private async ensureLoaded(): Promise<void> {
     const dirPath = this.resolveWorkflowsDir();
 
@@ -120,6 +124,9 @@ class WorkflowLoader {
     await this.loadFromDisk(dirPath,);
   }
 
+  /**
+   * @param dirPath
+   */
   private async loadFromDisk(dirPath: string,): Promise<void> {
     let filenames: string[];
     try {
@@ -176,6 +183,7 @@ class WorkflowLoader {
    * Validate that a parsed JSON object is a valid ComfyUI workflow.
    *
    * A valid workflow is a Record where each value has `inputs` and `class_type`.
+   * @param obj
    */
   private isValidWorkflow(obj: unknown,): obj is ComfyUIWorkflow {
     if (typeof obj !== "object" || obj === null || Array.isArray(obj,)) {
@@ -196,6 +204,7 @@ class WorkflowLoader {
     return false;
   }
 
+  /** */
   private resolveWorkflowsDir(): string {
     // Resolve relative to project root
     const root = process.cwd();
@@ -208,7 +217,6 @@ let _instance: WorkflowLoader | null = null;
 
 /**
  * Get or create the singleton workflow loader.
- *
  * @param workflowsDir - Optional custom workflows directory
  */
 export function getWorkflowLoader(workflowsDir?: string,): WorkflowLoader {

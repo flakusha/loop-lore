@@ -13,7 +13,10 @@ import { destroyVnRenderer, initVnRenderer, type VnMessage, } from "../../vn";
 import { jsonParseOr, } from "../json";
 import type { GmConfig, Message, } from "../types";
 
-/** Map a chat-page message to the VN renderer's message shape. */
+/**
+ * Map a chat-page message to the VN renderer's message shape.
+ * @param m
+ */
 export function toVnMessage(m: Message,): VnMessage {
   const role = m.role as VnMessage["role"];
   const isVnRole = ["assistant", "user", "system",].includes(role,);
@@ -31,6 +34,10 @@ export function toVnMessage(m: Message,): VnMessage {
  * (Re)render the active chat as a VN scene when VN mode is enabled, or tear the
  * renderer down when it is disabled. Reads the persisted gm_config so the
  * renderer and the settings modal stay in sync.
+ * @param messages
+ * @param gmConfig
+ * @param vnEnabled
+ * @param chatId
  */
 export function syncVnRenderer(
   messages: Message[],

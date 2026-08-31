@@ -17,6 +17,10 @@ import {
   handleUpdateWorld,
 } from "./worlds";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;
 

@@ -5,6 +5,7 @@
 
 import type { LogLevel as LogLevelT, } from "../../db/enums";
 
+/** */
 export interface LoggingConfig {
   level: LogLevelT;
   /** JSONL output path. Unset = disabled. */

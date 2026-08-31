@@ -5,6 +5,9 @@ import { escapeHtml, filterActors, } from "../shared";
 import { loadMemoriesForActor, } from "./memory";
 import { isGroup, type NewChatCtx, } from "./state";
 
+/**
+ * @param ctx
+ */
 export function renderSelected(ctx: NewChatCtx,): void {
   if (!ctx.selectedEl) { return; }
   const selectedItems = Array.from(
@@ -18,6 +21,10 @@ export function renderSelected(ctx: NewChatCtx,): void {
   ctx.selectedEl.innerHTML = selectedItems.join("",);
 }
 
+/**
+ * @param ctx
+ * @param filtered
+ */
 export function renderResults(ctx: NewChatCtx, filtered: any[],): void {
   if (!ctx.resultsEl) { return; }
   if (filtered.length === 0) {
@@ -48,6 +55,9 @@ export function renderResults(ctx: NewChatCtx, filtered: any[],): void {
 }
 
 // Show memory carry when character is selected
+/**
+ * @param ctx
+ */
 export function updateMemoryCarryVisibility(ctx: NewChatCtx,): void {
   if (!ctx.memoryCarryGroup) {
     return;
@@ -60,6 +70,10 @@ export function updateMemoryCarryVisibility(ctx: NewChatCtx,): void {
   }
 }
 
+/**
+ * @param ctx
+ * @param id
+ */
 export function removeParticipant(ctx: NewChatCtx, id: string,): void {
   const next: any[] = [];
   for (const a of ctx.selected) {
@@ -75,6 +89,10 @@ export function removeParticipant(ctx: NewChatCtx, id: string,): void {
   }
 }
 
+/**
+ * @param ctx
+ * @param actor
+ */
 export function selectActor(ctx: NewChatCtx, actor: any,): void {
   if (isGroup(ctx,)) {
     if (ctx.selected.every((a: any,) => a.id !== actor.id)) { ctx.selected.push(actor,); }
@@ -91,11 +109,18 @@ export function selectActor(ctx: NewChatCtx, actor: any,): void {
   }
 }
 
+/**
+ * @param ctx
+ * @param id
+ */
 export function selectActorFromList(ctx: NewChatCtx, id: string,): void {
   const actor = ctx.actors.find((a: any,) => a.id === id);
   if (actor) { selectActor(ctx, actor,); }
 }
 
+/**
+ * @param ctx
+ */
 export function bindSelectionHandlers(ctx: NewChatCtx,): void {
   globalThis.removeParticipant = function(id: string,) {
     removeParticipant(ctx, id,);

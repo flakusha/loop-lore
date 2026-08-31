@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/* eslint-disable sonarjs/no-hardcoded-passwords -- passwords are test fixtures */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { AuthConfig, } from "../config/schema";
@@ -11,7 +10,10 @@ import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { resolvePasswordReference, seedConfiguredUsers, } from "./users";
 
-/** Complete, valid AuthConfig for multi-user tests. */
+/**
+ * Complete, valid AuthConfig for multi-user tests.
+ * @param required
+ */
 function auth(required: boolean,): AuthConfig {
   return {
     required,

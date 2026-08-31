@@ -13,6 +13,7 @@ import { runMigrations, } from "./migrate";
 import type { DB, } from "./schema";
 import { seedDefaultActors, } from "./seed";
 
+/** */
 async function reinit(): Promise<void> {
   createLogger();
   const log = getLogger().child({ module: "reinit", },);
@@ -54,7 +55,11 @@ async function reinit(): Promise<void> {
 
 await reinit();
 
-/** Move a DB file into the timestamped backup dir; fall back to unlink on cross-device rename. */
+/**
+ * Move a DB file into the timestamped backup dir; fall back to unlink on cross-device rename.
+ * @param p
+ * @param log
+ */
 function archiveFile(p: string, log: Logger,): void {
   const backupDir = process.env.LOOP_LORE_BACKUP_DIR ??
     path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);

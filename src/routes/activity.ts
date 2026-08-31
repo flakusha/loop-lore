@@ -31,6 +31,8 @@ interface ActivityEntry {
  * counts against each participant's `last_read_message_id`. Shared by the
  * polling endpoint (`GET /api/chats/activity`) and the SSE stream so both
  * reflect the exact same source of truth.
+ * @param database
+ * @param userId
  */
 export async function computeActivity(
   database: Kysely<DB>,
@@ -112,6 +114,11 @@ export async function computeActivity(
   return result;
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function activityRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "activity", },).get(`${prefix}/chats/activity`, async (ctx,) => {
     const userId = requireUserId(ctx,);

@@ -42,11 +42,15 @@ export type PartyJoinResult =
   | ServiceError
   | { ok: true; participant: { actorId: string; role: ChatParticipantRole; talkativity: number } };
 
+/** */
 export type PartyLeaveResult =
   | ServiceError
   | { ok: true };
 
-/** Find the narrator actor, if one exists. Mirrors GM `injectNarration`. */
+/**
+ * Find the narrator actor, if one exists. Mirrors GM `injectNarration`.
+ * @param database
+ */
 async function findNarrator(
   database: Kysely<DB>,
 ): Promise<{ id: string } | null> {
@@ -63,6 +67,9 @@ async function findNarrator(
  * Append a VN narration message for a party event, best-effort. Mirrors the
  * GM `injectNarration` write path (encryption + narrator actor lookup). Any
  * failure is non-fatal — the party mutation has already succeeded.
+ * @param database
+ * @param chatId
+ * @param text
  */
 async function injectPartyNarration(
   database: Kysely<DB>,
@@ -112,7 +119,8 @@ async function injectPartyNarration(
 /**
  * Join a party: add a chat participant, returning the participant on success.
  * VN narration is emitted when the chat is in visual-novel mode.
- *
+ * @param database
+ * @param params
  * @returns `{ ok: true, participant }` or a ServiceError.
  */
 export async function joinParty(
@@ -173,7 +181,8 @@ export async function joinParty(
 
 /**
  * Leave a party: remove a chat participant.
- *
+ * @param database
+ * @param params
  * @returns `{ ok: true }` or a ServiceError (not_found when the chat or the
  * member does not exist).
  */

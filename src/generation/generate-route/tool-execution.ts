@@ -28,7 +28,6 @@ export const MAX_TOOL_ROUNDS = 5;
  *   MUST NOT fall through to "all tools" — that's a privilege escalation vs
  *   the unassigned baseline, because role assignment implies intent.
  * - Role registered with named tools → only those.
- *
  * @param agentRole - The actor's assigned plugin agent role id (or null)
  * @returns The filtered list of plugin tool definitions
  */
@@ -55,7 +54,6 @@ interface ToolCallItem {
 /**
  * Execute tool calls and return tool result messages.
  * Looks up ToolDefinition from the plugin registry by name.
- *
  * @param toolCalls - Tool call items from the provider response
  * @param ctx - Optional per-request execution context (db + actor + chat),
  *   forwarded to tool handlers; builtin tools (e.g. write_memory_note) require it.

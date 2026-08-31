@@ -31,6 +31,7 @@ import { jsonStringifyOr, } from "../../utils";
 /** Action types emitted to the gate audit log. */
 export type NsfwGateAction = "blocked" | "allowed" | "warning";
 
+/** */
 export interface LogNsfwEventInput {
   userId: string | null;
   actorId?: string;
@@ -46,6 +47,8 @@ export interface LogNsfwEventInput {
  *
  * Throws if `reason` is not a known `NsfwGateReason` (no silent acceptance
  * of free-form text — see BUG-nsfw-gate-log-plaintext-pii).
+ * @param database
+ * @param event
  */
 export async function logNsfwEvent(
   database: Kysely<DB>,

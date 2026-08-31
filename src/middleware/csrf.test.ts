@@ -17,6 +17,9 @@ import {
 const SECRET = "test-secret-do-not-use-in-prod-min-32-chars-required-here";
 const ALT_SECRET = "different-secret-also-needs-min-32-chars-for-hmac-stability";
 
+/**
+ * @param parts
+ */
 function makeHeaders(parts: Record<string, string>,): Headers {
   const h = new Headers();
   for (const [k, v,] of Object.entries(parts,)) { h.set(k, v,); }

@@ -10,6 +10,10 @@ import { registry, } from "../plugins/registry";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { pluginRoutes, } from "./plugins";
 
+/**
+ * @param db
+ * @param userRole
+ */
 function createPluginApp(db: Kysely<DB>, userRole: string,): Elysia {
   return new Elysia({ name: "test-plugins", },)
     .derive(() => ({ userRole, }))

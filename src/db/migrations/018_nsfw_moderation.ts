@@ -8,6 +8,9 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // ── NSFW User Preferences ──────────────────────────────
   await db.schema
@@ -90,6 +93,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropTable("moderation_actions",).execute();
   await db.schema.dropTable("content_flags",).execute();

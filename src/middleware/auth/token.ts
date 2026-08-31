@@ -19,6 +19,7 @@ import { getOrCreateSoloUserForAuth, } from "./solo-user";
  * against the legacy `crypto.createHash("sha256").update(t).digest("hex")` form
  * with test vectors like `"hello-token-1"` (both produce
  * `7961a7f6...`). Existing `token_hash` rows remain readable.
+ * @param token
  */
 function sha256Hex(token: string,): string {
   return new Bun.CryptoHasher("sha256",).update(token,).digest("hex",);
@@ -27,6 +28,7 @@ function sha256Hex(token: string,): string {
 /**
  * Validate that a session token is well-formed (basic sanity).
  * Returns the raw token string or null.
+ * @param request
  */
 export function extractBearerToken(request: Request,): string | null {
   const header = request.headers.get("Authorization",);
@@ -41,7 +43,6 @@ export function extractBearerToken(request: Request,): string | null {
  * Looks up the `ll_token` cookie, hashes it to a session `token_hash`, and
  * returns the session's `user_id`. If no token is present or no session
  * matches, returns the solo/demo user's id.
- *
  * @param request - Incoming request (reads the Cookie header)
  * @param database - Kysely database handle
  * @param demoUsername - Demo username used for the solo fallback

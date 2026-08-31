@@ -6,6 +6,7 @@ import type { Kysely, } from "kysely";
  * Adds tables for VN mode branching choices:
  * - `vn_choices`: available choices per scene
  * - `vn_choice_selections`: user selections (history)
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
@@ -37,6 +38,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("vn_choices",).execute();
 }

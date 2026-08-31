@@ -44,6 +44,10 @@ describe("export-shared routines", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param id
+   * @param name
+   */
   async function insertCharacter(id: string, name: string,): Promise<void> {
     await db
       .insertInto("actors",)

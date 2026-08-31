@@ -8,6 +8,9 @@ import { showToast, } from "../../ui";
 import { getErrorMessage, } from "../shared";
 import type { NewChatCtx, } from "./state";
 
+/**
+ * @param ctx
+ */
 export function bindSubmitHandler(ctx: NewChatCtx,): void {
   ctx.form!.addEventListener("submit", async function(e: Event,) {
     e.preventDefault();
@@ -53,7 +56,11 @@ export function bindSubmitHandler(ctx: NewChatCtx,): void {
   },);
 }
 
-/** Collect the chat-creation payload from the form + UI state. */
+/**
+ * Collect the chat-creation payload from the form + UI state.
+ * @param ctx
+ * @param name
+ */
 function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, unknown> {
   const personaId = $<HTMLSelectElement>("#persona-select",)?.value || undefined;
   const impersonateId = ctx.impersonateToggle?.checked && ctx.selected.length === 1
@@ -93,7 +100,13 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   };
 }
 
-/** Post-create: attach persona/impersonation then redirect to the chat. */
+/**
+ * Post-create: attach persona/impersonation then redirect to the chat.
+ * @param res
+ * @param personaId
+ * @param impersonateId
+ * @param gmGuided
+ */
 async function handleCreateSuccess(
   res: Response,
   personaId: string | undefined,

@@ -13,6 +13,9 @@
  */
 import { can, } from "../users/permissions";
 
+/**
+ * @param ctx
+ */
 export function adminViewGuard(ctx: any,): Response | undefined {
   if (!can(ctx.userRole, "admin.system",)) {
     return new Response(null, { status: 302, headers: { Location: "/", }, },);

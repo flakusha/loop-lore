@@ -33,7 +33,10 @@ const ERROR_PATTERNS: Array<[RegExp, ErrorCategory,]> = [
   [/auth|unauthorized|token|api.?key|key_id|nonce|401|403|forbidden|jwt|signature/i, "auth_failure",],
 ];
 
-/** Map a raw error string to its ErrorCategory. */
+/**
+ * Map a raw error string to its ErrorCategory.
+ * @param error
+ */
 export function categoriseError(error: string,): ErrorCategory {
   for (const [pattern, category,] of ERROR_PATTERNS) {
     if (pattern.test(error,)) { return category; }
@@ -50,6 +53,9 @@ export function categoriseError(error: string,): ErrorCategory {
  * Returns null when no secret is configured — callers must fail closed
  * (the response should still go out, but the hash will be null so admins
  * can see redaction was applied even without correlation).
+ * @param value
+ * @param secret
+ * @param byteCount
  */
 export async function hmacHex(value: string, secret: string, byteCount = 8,): Promise<string | null> {
   if (!secret) { return null; }
@@ -73,7 +79,11 @@ export async function hmacHex(value: string, secret: string, byteCount = 8,): Pr
 
 // ── ID hasher ───────────────────────────────────────────────────────────
 
-/** Stable HMAC hash of a userId for admin telemetry. Returns 16-char hex or null. */
+/**
+ * Stable HMAC hash of a userId for admin telemetry. Returns 16-char hex or null.
+ * @param userId
+ * @param authConfig
+ */
 export async function actorHash(
   userId: string | null,
   authConfig: AuthConfig | undefined,
@@ -82,7 +92,11 @@ export async function actorHash(
   return hmacHex(userId, authConfig?.jwtSecret ?? "", 8,);
 }
 
-/** Stable HMAC hash of a chatId for admin telemetry. Returns 16-char hex or null. */
+/**
+ * Stable HMAC hash of a chatId for admin telemetry. Returns 16-char hex or null.
+ * @param chatId
+ * @param authConfig
+ */
 export async function chatHash(
   chatId: string | null,
   authConfig: AuthConfig | undefined,
@@ -110,6 +124,7 @@ const MAX_ERROR_LEN = 200;
  * - strips sensitive patterns (tokens, keys, nonces, numeric IDs, URLs)
  * - truncates to MAX_ERROR_LEN chars
  * - returns the ErrorCategory enum value so admins can still group failures
+ * @param raw
  */
 export function redactError(
   raw: string | null,

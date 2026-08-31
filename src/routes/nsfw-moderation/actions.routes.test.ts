@@ -15,12 +15,21 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { uid, } from "../../utils";
 import { actionsRoutes, } from "./actions";
 
+/**
+ * @param db
+ * @param userId
+ * @param role
+ */
 function createApp(db: Kysely<DB>, userId: string | null, role = "user",): Elysia {
   return new Elysia({ name: "test-actions", },)
     .derive(() => ({ userId, userRole: role, }))
     .use(actionsRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param path
+ * @param body
+ */
 function actionRequest(path: string, body: Record<string, unknown>,): Request {
   return new Request(`http://localhost${path}`, {
     method: "POST",

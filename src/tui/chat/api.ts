@@ -6,6 +6,9 @@ import type { ChatHost, ChatMessage, } from "./types";
 
 export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
 
+/**
+ * @param sessionToken
+ */
 function getAuthHeaders(sessionToken: string | undefined,): Record<string, string> {
   const headers: Record<string, string> = { "Content-Type": "application/json", };
   if (sessionToken) {
@@ -17,6 +20,8 @@ function getAuthHeaders(sessionToken: string | undefined,): Record<string, strin
 /**
  * Send message via POST /api/chats/:id/messages.
  * Shows typing indicator, adds user message + assistant auto-reply.
+ * @param host
+ * @param text
  */
 export async function handleSend(host: ChatHost, text: string,): Promise<void> {
   if (!host.chatId) {
@@ -69,7 +74,10 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
   }
 }
 
-/** Load messages from GET /api/chats/:id/messages with cursor-based pagination */
+/**
+ * Load messages from GET /api/chats/:id/messages with cursor-based pagination
+ * @param host
+ */
 export async function loadMessages(host: ChatHost,): Promise<void> {
   if (!host.chatId) { return; }
   try {

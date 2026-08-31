@@ -43,7 +43,6 @@ export interface ContextBudgetResult {
  * Assembles the prompt the real generation would receive and derives
  * per-section token counts. Returns an empty section list on any failure so
  * the caller can fall back to the message-based estimate.
- *
  * @param database - Kysely db handle
  * @param config - App config (provider defaults)
  * @param chatId - Target chat
@@ -86,7 +85,6 @@ export async function assembleBudgetSections(
  * Prefers the per-section breakdown from prompt assembly; when that is
  * unavailable (no actor / assembly failure), falls back to the handler's
  * message-based token estimate.
- *
  * @param database - Kysely db handle
  * @param config - App config
  * @param chatId - Target chat

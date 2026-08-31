@@ -10,6 +10,7 @@ import type { EmotionDefinition, MoodPanelState, } from "./types";
 
 const log = rootLog.child({ module: "mood-panel", },);
 
+/** */
 export function createMoodPanelState(): MoodPanelState {
   return {
     mood: null,

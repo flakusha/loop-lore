@@ -12,6 +12,9 @@ import type { DynamicResponseConfig, } from "../config/schema";
 import type { Logger, } from "../logger";
 import { DynamicResponsePolicy, } from "./dynamic-response";
 
+/**
+ * @param overrides
+ */
 function makeConfig(overrides: Partial<DynamicResponseConfig> = {},): DynamicResponseConfig {
   return {
     enabled: true,
@@ -28,6 +31,7 @@ interface WarnCall {
   message: string | Record<string, unknown>;
 }
 
+/** */
 function makeLogger(): { logger: Logger; warns: WarnCall[] } {
   const warns: WarnCall[] = [];
   const noop = (): void => {
@@ -47,10 +51,16 @@ function makeLogger(): { logger: Logger; warns: WarnCall[] } {
   return { logger, warns, };
 }
 
+/**
+ * @param body
+ */
 function htmlResponse(body: string,): Response {
   return new Response(body, { headers: { "Content-Type": "text/html; charset=utf-8", }, },);
 }
 
+/**
+ * @param acceptEncoding
+ */
 function req(acceptEncoding = "",): Request {
   const headers = new Headers();
   if (acceptEncoding) { headers.set("accept-encoding", acceptEncoding,); }

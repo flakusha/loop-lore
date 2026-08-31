@@ -15,6 +15,13 @@ import type { TradeLine, TradeResult, } from "./types";
 /**
  * Player buys items from an NPC. The NPC sells `sellerItems` to the buyer
  * for `price` gold. Items must be owned by the NPC.
+ * @param db
+ * @param opts
+ * @param opts.worldId
+ * @param opts.buyerActorId
+ * @param opts.npcActorId
+ * @param opts.sellerItems
+ * @param opts.price
  */
 export async function buyFromNpc(
   db: Kysely<DB>,
@@ -59,6 +66,13 @@ export async function buyFromNpc(
 /**
  * Player sells items to an NPC. The NPC buys `buyerItems` from the seller
  * for `price` gold. Items must be owned by the player.
+ * @param db
+ * @param opts
+ * @param opts.worldId
+ * @param opts.sellerActorId
+ * @param opts.npcActorId
+ * @param opts.buyerItems
+ * @param opts.price
  */
 export async function sellToNpc(
   db: Kysely<DB>,

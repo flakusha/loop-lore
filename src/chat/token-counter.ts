@@ -37,8 +37,8 @@ export interface TokenCountResult {
 
 /**
  * Count total tokens across a list of messages.
- *
  * @param messages - Messages to count
+ * @param tokenCountFn
  * @returns Total estimated token count
  */
 export function countMessageTokens(
@@ -59,7 +59,6 @@ export function countMessageTokens(
  * | 70–85%     | warning   | Approaching limit                    |
  * | 85–95%     | critical  | Near limit, compaction triggered     |
  * | 95%+       | danger    | Danger, consider pruning/summarizing |
- *
  * @param percentage - Usage percentage (0–1)
  * @returns Status level
  */
@@ -72,12 +71,11 @@ export function getStatus(percentage: number,): ContextStatus {
 
 /**
  * Compute the full context window state for a chat.
- *
  * @param messages - Current message history
  * @param maxTokens - Model context window size (default: 32000)
  * @param threshold - Critical threshold override (default: 0.85)
+ * @param tokenCountFn
  * @returns Token count result with status
- *
  * @example
  * ```typescript
  * const result = computeContextWindow(messages, 32000);

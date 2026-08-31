@@ -88,7 +88,11 @@ afterAll(async () => {
   db.destroy();
 },);
 
-/** Insert a minimal actor row. */
+/**
+ * Insert a minimal actor row.
+ * @param id
+ * @param type
+ */
 async function insertActor(id: string, type: "user" | "character",) {
   await db.insertInto("actors",).values({
     id,
@@ -106,7 +110,11 @@ async function insertActor(id: string, type: "user" | "character",) {
   },).execute();
 }
 
-/** Insert a chat row. */
+/**
+ * Insert a chat row.
+ * @param id
+ * @param encryptionLevel
+ */
 async function insertChat(id: string, encryptionLevel: EncryptionLevel = "standard",) {
   await db.insertInto("chats",).values({
     id,
@@ -118,7 +126,11 @@ async function insertChat(id: string, encryptionLevel: EncryptionLevel = "standa
   },).execute();
 }
 
-/** Add a participant to a chat. */
+/**
+ * Add a participant to a chat.
+ * @param chatId
+ * @param actorId
+ */
 async function addParticipant(chatId: string, actorId: string,) {
   await db.insertInto("chat_participants",).values({
     chat_id: chatId,

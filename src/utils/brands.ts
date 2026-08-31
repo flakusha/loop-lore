@@ -22,12 +22,18 @@
 /** Generic brand type — intersects Base with a readonly tag */
 export type Brand<Base, Tag extends string,> = Base & { readonly __brand: Tag };
 
-/** Create a branded value from a raw string */
+/**
+ * Create a branded value from a raw string
+ * @param raw
+ */
 export function brand<T extends string,>(raw: string,): Brand<string, T> {
   return raw as Brand<string, T>;
 }
 
-/** Extract the underlying string from a branded type */
+/**
+ * Extract the underlying string from a branded type
+ * @param branded
+ */
 export function unbrand<T extends string,>(branded: Brand<string, T>,): string {
   return branded;
 }

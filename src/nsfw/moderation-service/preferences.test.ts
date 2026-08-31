@@ -19,6 +19,7 @@ let db: Kysely<DB>;
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 let sqlite: TestDb["sqlite"];
 
+/** */
 function makeLog(): Logger {
   return {
     trace: mock(() => {},),
@@ -31,6 +32,7 @@ function makeLog(): Logger {
   } as unknown as Logger;
 }
 
+/** */
 function makeCtx(): NsfwModerationServiceContext {
   return { db, log: makeLog(), } as unknown as NsfwModerationServiceContext;
 }

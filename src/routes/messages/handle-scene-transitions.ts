@@ -19,12 +19,18 @@ import { log, } from "./helpers";
 import { applyContextCut, } from "./scene-transition-context-cut";
 import type { ChatRecord, } from "./transitions";
 
-/** Derive a section label from a location id (fallback when name not available). */
+/**
+ * Derive a section label from a location id (fallback when name not available).
+ * @param locationId
+ */
 const locationIdToLabel = (locationId: string,): string => `Location ${locationId.slice(0, 8,)}`;
 
 /**
  * Resolve a location name to a world-scoped location row.
  * Exact match first, then LIKE with dedup; ambiguous matches return null.
+ * @param database
+ * @param locationName
+ * @param worldId
  */
 async function resolveLocation(
   database: Kysely<DB>,
@@ -60,6 +66,13 @@ async function resolveLocation(
 /**
  * Detect scene transitions for the message and apply their side effects:
  * location changes update the chat's location; context cuts promote messages.
+ * @param database
+ * @param config
+ * @param chatId
+ * @param actorId
+ * @param effectiveContent
+ * @param chatRecord
+ * @param messageId
  */
 export async function handleSceneTransitions(
   database: Kysely<DB>,

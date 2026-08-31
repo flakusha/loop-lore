@@ -8,6 +8,7 @@ import type {
   TransportProtocol,
 } from "../../db/enums";
 
+/** */
 export interface TransportCompressionConfig {
   /** Master toggle for transport compression */
   enabled: boolean;
@@ -17,6 +18,7 @@ export interface TransportCompressionConfig {
   threshold: number;
 }
 
+/** */
 export interface TransportLimitsConfig {
   /** Max frame size in bytes. Default 0x10000 (64 KiB) */
   maxFrameSize: number;
@@ -26,6 +28,7 @@ export interface TransportLimitsConfig {
   maxConcurrentStreams: number;
 }
 
+/** */
 export interface TransportConfig {
   /** Default transport protocol */
   defaultProtocol: TransportProtocol;

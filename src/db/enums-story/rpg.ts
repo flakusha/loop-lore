@@ -16,6 +16,7 @@ export const PlayerAchievementStatus = {
   Unlocked: "unlocked",
   Claimed: "claimed",
 } as const;
+/** */
 export type PlayerAchievementStatus = (typeof PlayerAchievementStatus)[keyof typeof PlayerAchievementStatus];
 
 // ── Playthroughs ──────────────────────────────────────────
@@ -23,6 +24,7 @@ export const PlaythroughStatus = {
   Active: "active",
   Completed: "completed",
 } as const;
+/** */
 export type PlaythroughStatus = (typeof PlaythroughStatus)[keyof typeof PlaythroughStatus];
 
 // ── Character Skills ──────────────────────────────────────
@@ -30,6 +32,7 @@ export const SkillLockState = {
   Locked: "locked",
   Unlocked: "unlocked",
 } as const;
+/** */
 export type SkillLockState = (typeof SkillLockState)[keyof typeof SkillLockState];
 
 // ── VN Choices ────────────────────────────────────────────
@@ -37,6 +40,7 @@ export const VnChoiceStatus = {
   Available: "available",
   Selected: "selected",
 } as const;
+/** */
 export type VnChoiceStatus = (typeof VnChoiceStatus)[keyof typeof VnChoiceStatus];
 
 // ── State Machines ────────────────────────────────────────

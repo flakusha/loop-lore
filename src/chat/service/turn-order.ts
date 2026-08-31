@@ -46,7 +46,8 @@ export interface GroupTurnOrder {
 
 /**
  * Resolve the current turn order for a group chat.
- *
+ * @param db
+ * @param chatId
  * @returns A read-only snapshot; `null` when the chat is not a group chat or
  *   has no AI participants eligible for turn selection.
  */

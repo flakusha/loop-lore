@@ -15,6 +15,7 @@ import { DOCS_PATH, walkDirectorySync, } from "./static-files";
  * references into HTML for immutable-cache support.
  *
  * All paths are resolved relative to this module's location in the built tree.
+ * @param logger
  */
 export async function initAssetCompression(logger: Logger,): Promise<void> {
   const distPublic = join(import.meta.dir, "..", "..", "dist", "public",);
@@ -38,6 +39,10 @@ export async function initAssetCompression(logger: Logger,): Promise<void> {
   const destinationPublicDirectory = join(import.meta.dir, "..", "..", "dist", "public",);
 
   // Helper: check if source is newer than destination
+  /**
+   * @param srcDir
+   * @param destDir
+   */
   function needsCompression(srcDir: string, destDir: string,): boolean {
     if (!existsSync(destDir,)) { return true; }
     const srcFiles = walkDirectorySync(srcDir,);

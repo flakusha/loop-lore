@@ -11,6 +11,7 @@ import type { HandlerOpts, } from "./types";
  * Character Avatars Routes — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`character-avatars`) is preserved so
  * the `register-plugins.ts` wiring is unchanged.
+ * @param opts
  */
 export function characterAvatarsRoutes(opts: HandlerOpts,) {
   return (

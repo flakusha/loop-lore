@@ -19,7 +19,23 @@ import type {
   NsfwEncounter,
 } from "./types";
 
-/** Convert a database row to an NsfwEncounter object. */
+/**
+ * Convert a database row to an NsfwEncounter object.
+ * @param row
+ * @param row.id
+ * @param row.world_id
+ * @param row.encounter_type
+ * @param row.intensity
+ * @param row.narrative_style
+ * @param row.participants
+ * @param row.phases
+ * @param row.current_phase
+ * @param row.outcomes
+ * @param row.content_tags
+ * @param row.status
+ * @param row.created_at
+ * @param row.updated_at
+ */
 function rowToEncounter(row: {
   id: string;
   world_id: string | null;
@@ -55,6 +71,8 @@ function rowToEncounter(row: {
 
 /**
  * Create a new NSFW encounter.
+ * @param db
+ * @param opts
  */
 export async function createEncounter(
   db: Kysely<DB>,
@@ -165,6 +183,8 @@ export async function createEncounter(
 
 /**
  * Get an encounter by ID.
+ * @param db
+ * @param encounterId
  */
 export async function getEncounter(
   db: Kysely<DB>,
@@ -181,6 +201,11 @@ export async function getEncounter(
 
 /**
  * Get all encounters for a world.
+ * @param db
+ * @param worldId
+ * @param opts
+ * @param opts.completed
+ * @param opts.type
  */
 export async function listEncounters(
   db: Kysely<DB>,
@@ -205,6 +230,8 @@ export async function listEncounters(
 
 /**
  * Delete an encounter.
+ * @param db
+ * @param encounterId
  */
 export async function deleteEncounter(
   db: Kysely<DB>,

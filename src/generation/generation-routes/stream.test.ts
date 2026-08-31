@@ -13,12 +13,16 @@ afterEach(() => {
   for (const id of seenChatIds) { removeBuffer(id,); }
 },);
 
+/** */
 function chatId(): string {
   const id = `stream-test-${crypto.randomUUID()}`;
   seenChatIds.push(id,);
   return id;
 }
 
+/**
+ * @param response
+ */
 async function readAll(response: Response,): Promise<string> {
   const reader = response.body?.getReader();
   if (!reader) { return ""; }

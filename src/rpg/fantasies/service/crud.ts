@@ -20,6 +20,8 @@ import type {
 
 /**
  * Create a fantasy for an actor.
+ * @param db
+ * @param opts
  */
 export async function createFantasy(
   db: Kysely<DB>,
@@ -105,6 +107,8 @@ export async function createFantasy(
 
 /**
  * Get all fantasies for an actor.
+ * @param db
+ * @param actorId
  */
 export async function getActorFantasies(
   db: Kysely<DB>,
@@ -123,6 +127,9 @@ export async function getActorFantasies(
 
 /**
  * Get fantasies by category.
+ * @param db
+ * @param actorId
+ * @param category
  */
 export async function getByCategory(
   db: Kysely<DB>,
@@ -142,6 +149,9 @@ export async function getByCategory(
 
 /**
  * Record exploration of a fantasy (after encounter).
+ * @param db
+ * @param fantasyId
+ * @param feeling
  */
 export async function recordExploration(
   db: Kysely<DB>,
@@ -178,6 +188,8 @@ export async function recordExploration(
 
 /**
  * Delete a fantasy.
+ * @param db
+ * @param fantasyId
  */
 export async function deleteFantasy(
   db: Kysely<DB>,
@@ -191,7 +203,24 @@ export async function deleteFantasy(
   return (result.numDeletedRows ?? 0n) > 0n;
 }
 
-/** Convert a database row to a Fantasy object. */
+/**
+ * Convert a database row to a Fantasy object.
+ * @param row
+ * @param row.id
+ * @param row.actor_id
+ * @param row.fantasy_name
+ * @param row.category
+ * @param row.intensity
+ * @param row.requirements
+ * @param row.fulfillment_effects
+ * @param row.risks
+ * @param row.discovered_through
+ * @param row.initial_reaction
+ * @param row.current_feeling
+ * @param row.times_explored
+ * @param row.created_at
+ * @param row.updated_at
+ */
 function getRow(row: {
   id: string;
   actor_id: string;

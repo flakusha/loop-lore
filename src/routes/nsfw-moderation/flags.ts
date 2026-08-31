@@ -20,6 +20,10 @@ import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { flagBody, flagQuery, requireModerationAction, requireModerationReview, resolveFlagBody, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function flagsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
 

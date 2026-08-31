@@ -12,6 +12,7 @@ import { getMinimalPng, insertCharacterDataIntoPng, } from "../steganography";
 /**
  * Export canonical character card to PNG with embedded data.
  * Embeds both V2 and V3 character data in PNG tEXt chunks.
+ * @param character
  */
 export function exportToPng(character: CanonicalCharacter,): Buffer {
   // Get minimal PNG as base image
@@ -47,6 +48,7 @@ export function exportToPng(character: CanonicalCharacter,): Buffer {
 
 /**
  * Export canonical character card to PNG base64 string.
+ * @param character
  */
 export function exportToPngBase64(character: CanonicalCharacter,): string {
   const pngBuffer = exportToPng(character,);

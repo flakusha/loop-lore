@@ -15,7 +15,12 @@ export interface CaseResult {
   actual: Record<string, unknown>;
   reason?: string;
 }
-/** Build a skipped-case result with an optional actual payload. */
+/**
+ * Build a skipped-case result with an optional actual payload.
+ * @param expected
+ * @param reason
+ * @param actual
+ */
 export function skippedResult(
   expected: Record<string, unknown>,
   reason: string,
@@ -27,6 +32,8 @@ export function skippedResult(
 /**
  * Collect scores by evaluating a callback `iterations` times, then return
  * the score array and the variance (max − min).
+ * @param evaluate
+ * @param iterations
  */
 export function collectScoresAndVariance(
   evaluate: (i: number,) => number,
@@ -42,7 +49,6 @@ export function collectScoresAndVariance(
 
 /**
  * Build a pass/fail CaseResult for quality score variance checks.
- *
  * @param scores  - collected score array
  * @param variance - max − min spread
  * @param passed   - whether the check passed
@@ -66,6 +72,7 @@ export function varianceResult(
 
 /**
  * Count results by status, returning `{ passed, failed, skipped }`.
+ * @param results
  */
 export function countByStatus(results: { status: string }[],): {
   passed: number;

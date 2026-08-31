@@ -16,6 +16,9 @@ import type { HookContext, } from "./types";
 
 // ── Helpers ──────────────────────────────────────────────────
 
+/**
+ * @param overrides
+ */
 function makeContext(overrides?: Partial<HookContext>,): HookContext {
   return {
     chatId: "chat-1",
@@ -36,6 +39,7 @@ function makeContext(overrides?: Partial<HookContext>,): HookContext {
   };
 }
 
+/** */
 function makeModStub(): NsfwModerationService {
   return {
     getEffectiveNsfw: async () => ({ enabled: true, source: "test_stub", }),
@@ -43,6 +47,9 @@ function makeModStub(): NsfwModerationService {
   } as unknown as NsfwModerationService;
 }
 
+/**
+ * @param deps
+ */
 function makeNsfwHook(deps?: Partial<NsfwHookDeps>,): NsfwHook {
   return new NsfwHook({ modService: makeModStub(), ...deps, },);
 }
@@ -434,6 +441,10 @@ describe("NsfwHook", () => {
   describe("LLM classifier", () => {
     // The LLM tap is only reached for keyword-"none" content when
     // useLlmClassifier is true. Inject a mock runner so no real LLM call fires.
+    /**
+     * @param content
+     * @param extraNsfw
+     */
     function llmLlContext(content: string, extraNsfw?: Record<string, unknown>,) {
       return makeContext({
         content,

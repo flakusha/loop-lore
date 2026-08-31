@@ -13,12 +13,21 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import { auditRoutes, } from "./audit";
 
+/**
+ * @param db
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userRole: string,): Elysia {
   const app = new Elysia({ name: "test-audit", },);
   app.derive((): { userRole: string } => ({ userRole, }));
   return app.use(auditRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
+/**
+ * @param db
+ * @param userId
+ * @param reason
+ */
 async function insertNsfwGateEvent(
   db: Kysely<DB>,
   userId: string,

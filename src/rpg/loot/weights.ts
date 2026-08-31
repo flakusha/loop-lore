@@ -29,6 +29,8 @@ const RARITY_LEVEL_BONUS: Record<Rarity, number> = {
 
 /**
  * Get effective drop weight for a rarity at a given level.
+ * @param rarity
+ * @param level
  */
 export function effectiveWeight(rarity: Rarity, level: number,): number {
   const base = RARITY_WEIGHTS[rarity];

@@ -11,6 +11,7 @@ import { RARITY_WEIGHTS, } from "./weights.js";
 
 /**
  * Create a simple loot table from a list of items.
+ * @param items
  */
 export function createLootTable(
   items: { name: string; rarity: Rarity; weight?: number; minLevel?: number }[],
@@ -31,6 +32,7 @@ export function createLootTable(
 
 /**
  * Merge multiple loot tables into one.
+ * @param tables
  */
 export function mergeLootTables(...tables: LootEntry[][]): LootEntry[] {
   const out: LootEntry[] = [];

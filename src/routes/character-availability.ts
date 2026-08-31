@@ -13,6 +13,10 @@ import { ActorIdParams, AvailabilityBody, ErrorResponse, SuccessResponse, } from
 import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { HttpStatus, jsonCreated, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function characterAvailabilityRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

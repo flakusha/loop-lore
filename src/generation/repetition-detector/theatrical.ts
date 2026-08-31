@@ -7,6 +7,7 @@
  * Check if text shows signs of theatrical over-performance
  * (excessive emoting, parentheticals, asterisk actions)
  * which can indicate the model is stuck in a loop.
+ * @param text
  */
 export function detectTheatricalLoop(text: string,): { detected: boolean; score: number } {
   const lines = text.split("\n",);

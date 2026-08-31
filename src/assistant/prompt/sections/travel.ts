@@ -19,7 +19,12 @@ import type { SectionBuilder, } from "../types";
 
 const MAX_LOCATION_HINTS = 12;
 
-/** Known world location names (id + name) for travel references. */
+/**
+ * Known world location names (id + name) for travel references.
+ * @param db
+ * @param worldId
+ * @param excludeLocationId
+ */
 async function knownLocations(
   db: Kysely<DB>,
   worldId: string,

@@ -14,6 +14,7 @@ import type { DB, } from "../../db/schema";
  * FK references are IDs — format changes stay local to their table.
  */
 
+/** */
 export interface DataMigration {
   /** Target table name */
   table: string;

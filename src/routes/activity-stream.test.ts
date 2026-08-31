@@ -16,6 +16,10 @@ import {
 } from "../test-utils/insert-helpers";
 import { ActivityStreamer, activityStreamRoutes, } from "./activity-stream";
 
+/**
+ * @param db
+ * @param userId
+ */
 function makeApp(db: Kysely<DB>, userId?: string,) {
   const app = new Elysia({ name: "test-activity-stream", },);
   if (userId) {
@@ -106,7 +110,11 @@ describe("activity-stream routes", () => {
     return fresh;
   }
 
-  /** Read the next SSE chunk, failing fast if nothing arrives in time. */
+  /**
+   * Read the next SSE chunk, failing fast if nothing arrives in time.
+   * @param reader
+   * @param ms
+   */
   async function readChunkWithTimeout(reader: ReadableStreamDefaultReader<Uint8Array>, ms = 500,) {
     const timeout = new Promise<{ done: boolean; value?: undefined }>((resolve,) => {
       setTimeout(() => resolve({ done: true, value: undefined, },), ms,);

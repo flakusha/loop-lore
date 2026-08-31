@@ -18,6 +18,7 @@ export const BattleStatus = {
   Completed: "completed",
   Abandoned: "abandoned",
 } as const;
+/** */
 export type BattleStatus = (typeof BattleStatus)[keyof typeof BattleStatus];
 
 /** A battle with its in-memory roster materialized from the persisted JSON. */
@@ -36,6 +37,7 @@ export interface BattleWithRoster {
   endedAt: string | null;
 }
 
+/** */
 export interface StartBattleParams {
   chatId: string;
   worldId?: string | null;
@@ -43,6 +45,7 @@ export interface StartBattleParams {
   combatants: Combatant[];
 }
 
+/** */
 export interface AttackParams {
   battleId: string;
   attackerId: string;
@@ -67,12 +70,14 @@ export interface ResolvedAttack {
   battleId: string;
 }
 
+/** */
 export interface HealParams {
   battleId: string;
   targetId: string;
   amount: number;
 }
 
+/** */
 export interface ResolvedHeal {
   /** Updated combatant after healing. */
   combatant: Combatant;
@@ -84,7 +89,6 @@ export interface ResolvedHeal {
 }
 /**
  * Build a Combatant from an actor's persisted stats.
- *
  * @param actorId - Actor/character id
  * @param name - Display name
  * @param stats - Six-ability stat block

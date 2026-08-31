@@ -113,7 +113,7 @@ export const envMap = (): EnvMap => {
   map.DEMO_USERNAME = "auth.demoUsername";
   map.DEMO_AUTO_SETUP = "auth.demoAutoSetup";
   map.AUTH_ADMIN_USERNAME = "auth.adminUsername";
-  // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+
   map.AUTH_ADMIN_PASSWORD = "auth.adminPassword";
   map.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "auth.legacyOpaqueTokenFallback";
   map.TRANSPORT_DEFAULT_PROTOCOL = "transport.defaultProtocol";

@@ -18,6 +18,7 @@ export type GenerationAttemptRow = Selectable<GenerationAttempts>;
 
 // ── Core generation options ────────────────────────────────
 
+/** */
 export interface GenerationOptions {
   /** The chat ID this generation is for */
   chatId: string;
@@ -65,6 +66,7 @@ export interface GenerationOptions {
   isContinuation?: boolean;
 }
 
+/** */
 export interface GenerationMessage {
   role: "system" | "user" | "assistant" | "character" | "tool";
   content: string;
@@ -75,6 +77,7 @@ export interface GenerationMessage {
 
 // ── Detection configuration interfaces ─────────────────────
 
+/** */
 export interface RepetitionDetectionConfig {
   /** Enable repetition detection */
   enabled: boolean;
@@ -90,6 +93,7 @@ export interface RepetitionDetectionConfig {
   autoCancel: boolean;
 }
 
+/** */
 export interface PolicyDetectionConfig {
   /** Enable policy mismatch detection */
   enabled: boolean;
@@ -103,6 +107,7 @@ export interface PolicyDetectionConfig {
   confidenceThreshold: number;
 }
 
+/** */
 export interface ResponseLimitConfig {
   /** Maximum number of AI responses per turn in group chats */
   maxResponsesPerTurn: number;

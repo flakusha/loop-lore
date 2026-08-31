@@ -4,6 +4,7 @@
 import { log, } from "./log.js";
 import type { RpgServiceDeps, } from "./types.js";
 
+/** */
 export interface LogXpParams {
   actorId: string;
   amount: number;
@@ -13,6 +14,10 @@ export interface LogXpParams {
   chatId?: string;
 }
 
+/**
+ * @param deps
+ * @param params
+ */
 export async function logXp(
   deps: RpgServiceDeps,
   params: LogXpParams,
@@ -37,6 +42,11 @@ export async function logXp(
   return id;
 }
 
+/**
+ * @param deps
+ * @param actorId
+ * @param limit
+ */
 export async function getXpHistory(
   deps: RpgServiceDeps,
   actorId: string,

@@ -49,7 +49,6 @@ export interface PersonalityLockResult {
 
 /**
  * Check if a trait modification is allowed under personality integrity rules.
- *
  * @param traitName - The name of the trait being modified
  * @param traitCategory - The category of the trait
  * @returns Whether the modification is allowed and why

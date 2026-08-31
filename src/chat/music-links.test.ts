@@ -11,6 +11,7 @@ import { createMusicLinkService, } from "./music-links";
 // back from `selectFrom(table).executeTakeFirst()` so the service's
 // `selectAll().where().executeTakeFirst()` post-insert can return the row
 // it just wrote (matches real Kysely behavior).
+/** */
 function makeMockDb(): Record<string, unknown> {
   const lastInserted: Record<string, Record<string, unknown>> = {};
   return {

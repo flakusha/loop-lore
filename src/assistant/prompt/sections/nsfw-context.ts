@@ -99,6 +99,9 @@ export const nsfwContextSection: SectionBuilder = {
   },
 };
 
+/**
+ * @param score
+ */
 function getLevelLabel(score: number,): string {
   if (score >= 100) { return "Soulbonded"; }
   if (score >= 85) { return "Intimate"; }
@@ -110,6 +113,9 @@ function getLevelLabel(score: number,): string {
   return "Strangers";
 }
 
+/**
+ * @param level
+ */
 function getArousalLabel(level: number,): string {
   if (level >= 80) { return "Desperate"; }
   if (level >= 60) { return "Highly Aroused"; }

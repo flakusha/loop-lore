@@ -19,7 +19,8 @@ const API_META: ApiResponseMeta = { api_version: API_VERSION, };
 
 /**
  * JSON success response.
- *
+ * @param data
+ * @param status
  * @example
  *   jsonResponse({ ok: true, id: "abc" })
  *   jsonResponse(user, HttpStatus.Created)
@@ -38,7 +39,6 @@ export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.
  *
  * Accepts either positional args (legacy) or an options object.
  * When `t` is provided, message is treated as an i18n key.
- *
  * @example
  *   jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, t })
  *   jsonError("Not found", HttpStatus.NotFound)
@@ -59,6 +59,11 @@ const STATUS_TO_CODE: Record<number, ErrorCode> = {
 
 export function jsonError(message: string, status?: HttpStatusCode, code?: ErrorCode,): Response;
 export function jsonError(options: JsonErrorOptions,): Response;
+/**
+ * @param messageOrOptions
+ * @param status
+ * @param code
+ */
 export function jsonError(
   messageOrOptions: string | JsonErrorOptions,
   status: HttpStatusCode = HttpStatus.BadRequest,
@@ -76,7 +81,8 @@ export function jsonError(
 
 /**
  * JSON validation error (422) with field-level detail.
- *
+ * @param errors
+ * @param message
  * @example
  *   jsonValidationError([
  *     { field: "email", message: "Invalid format" },
@@ -95,7 +101,10 @@ export function jsonValidationError(errors: ValidationError[], message = "Valida
  * JSON paginated list response.
  *
  * Accepts either positional args (legacy) or an options object.
- *
+ * @param data
+ * @param total
+ * @param page
+ * @param pageSize
  * @example
  *   jsonPaginated({ data: items, total, page, pageSize })
  *   jsonPaginated(items, total, page, pageSize)
@@ -132,7 +141,7 @@ export function jsonPaginated(
 
 /**
  * Created response (201). Empty body when no payload.
- *
+ * @param data
  * @example
  *   jsonCreated({ id: "new-entity" })
  *   jsonCreated()  // no body
@@ -161,35 +170,57 @@ export function jsonNoContent(): Response {
 
 // ── Common error response factories ───────────────────────────
 
-/** 404 Not Found with NOT_FOUND code. */
+/**
+ * 404 Not Found with NOT_FOUND code.
+ * @param message
+ * @param t
+ */
 export function notFoundResponse(message?: string, t?: TranslatorFn,): Response {
   const msg = message ?? t?.("errors.notFound",) ?? "Not found";
   return jsonError({ message: msg, status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
 }
 
-/** 404 "Not found or not owner" — ownership check failure. */
+/**
+ * 404 "Not found or not owner" — ownership check failure.
+ * @param entity
+ * @param t
+ */
 export function notOwnerResponse(entity = "Resource", t?: TranslatorFn,): Response {
   return notFoundResponse(`${entity} ${t?.("errors.notFound",) ?? "not found or not owner"}`, t,);
 }
 
-/** 401 Unauthorized. */
+/**
+ * 401 Unauthorized.
+ * @param message
+ * @param t
+ */
 export function unauthorizedResponse(message?: string, t?: TranslatorFn,): Response {
   const msg = message ?? t?.("errors.unauthorized",) ?? "Unauthorized";
   return jsonError({ message: msg, status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized, },);
 }
 
-/** 403 Forbidden. */
+/**
+ * 403 Forbidden.
+ * @param message
+ * @param t
+ */
 export function forbiddenResponse(message?: string, t?: TranslatorFn,): Response {
   const msg = message ?? t?.("errors.forbidden",) ?? "Forbidden";
   return jsonError({ message: msg, status: HttpStatus.Forbidden, code: ErrorCode.Forbidden, },);
 }
 
-/** 400 Bad Request with message. */
+/**
+ * 400 Bad Request with message.
+ * @param message
+ */
 export function badRequestResponse(message: string,): Response {
   return jsonError({ message, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest, },);
 }
 
-/** Extract userId from Elysia context or return a localized Unauthorized error response. */
+/**
+ * Extract userId from Elysia context or return a localized Unauthorized error response.
+ * @param ctx
+ */
 export function requireUserId(ctx: unknown,): string | Response {
   const userId = (ctx as any).userId as string | null;
   if (!userId) {

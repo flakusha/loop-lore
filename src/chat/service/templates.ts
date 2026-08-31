@@ -22,6 +22,7 @@ import type { ChatSetupTemplate, } from "./types";
 /** Default chat setup template shape (code-defined). */
 /**
  * Parse the features JSON column into a string array.
+ * @param raw
  */
 function parseFeatures(raw: string | null,): string[] | null {
   if (!raw) { return null; }
@@ -48,6 +49,7 @@ function parseFeatures(raw: string | null,): string[] | null {
  *     gmConfig: null
  *     features: [rpg mode, no assistant]
  * ```
+ * @param cwd
  */
 export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDefault[] {
   const base = cwd ?? process.cwd();
@@ -75,7 +77,10 @@ export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDe
   return templates;
 }
 
-/** Collect chat-setup template files under the repo config dirs. */
+/**
+ * Collect chat-setup template files under the repo config dirs.
+ * @param base
+ */
 function findTemplateCandidates(
   base: string,
 ): { path: string; kind: "yaml" | "toml" }[] {
@@ -98,7 +103,10 @@ function findTemplateCandidates(
   return candidates;
 }
 
-/** Convert one raw config-file template entry into the default shape. */
+/**
+ * Convert one raw config-file template entry into the default shape.
+ * @param item
+ */
 function toTemplateDefault(item: unknown,): ChatSetupTemplateDefault | null {
   const t = item as Record<string, unknown>;
   const slug = typeof t.slug === "string" && t.slug ? t.slug : null;
@@ -119,6 +127,9 @@ function toTemplateDefault(item: unknown,): ChatSetupTemplateDefault | null {
   };
 }
 
+/**
+ * @param p
+ */
 function statIsDir(p: string,): boolean {
   try {
     return statSync(p,).isDirectory();
@@ -129,6 +140,7 @@ function statIsDir(p: string,): boolean {
 
 /**
  * List all chat setup templates, with parsed features.
+ * @param database
  */
 export async function listChatSetupTemplates(
   database: Kysely<DB>,
@@ -146,6 +158,8 @@ export async function listChatSetupTemplates(
 
 /**
  * Resolve a chat setup template by id or slug.
+ * @param database
+ * @param templateId
  */
 export async function getChatSetupTemplate(
   database: Kysely<DB>,
@@ -168,7 +182,8 @@ export async function getChatSetupTemplate(
  * missing templates are inserted, existing rows are never touched (admin edits
  * and admin-created templates survive; new code defaults backfill into old DBs).
  * Safe to call at server boot and in tests.
- *
+ * @param database
+ * @param cwd
  * @returns The number of templates created.
  */
 export async function seedChatSetupTemplates(

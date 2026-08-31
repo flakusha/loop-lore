@@ -21,6 +21,9 @@ export interface GetPermanentTraitsArgs {
 
 /**
  * Get all permanent traits for a character.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
  */
 export async function getPermanentTraits(
   { thisL, actorId, }: GetPermanentTraitsArgs,
@@ -41,6 +44,10 @@ export interface GetPermanentTraitArgs {
 
 /**
  * Get a permanent trait by name.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.name
  */
 export async function getPermanentTrait(
   { thisL, actorId, name, }: GetPermanentTraitArgs,
@@ -61,6 +68,9 @@ export interface CreatePermanentTraitArgs {
 
 /**
  * Create a permanent trait.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.opts
  * @throws If trait already exists for this actor
  */
 export async function createPermanentTrait(
@@ -98,6 +108,10 @@ export interface UpdatePermanentTraitArgs {
 
 /**
  * Update a permanent trait value.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.opts
  * @throws If trait doesn't exist
  */
 export async function updatePermanentTrait(
@@ -128,6 +142,10 @@ export interface DeletePermanentTraitArgs {
 
 /**
  * Delete a permanent trait.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.name
  */
 export async function deletePermanentTrait(
   { thisL, actorId, name, }: DeletePermanentTraitArgs,

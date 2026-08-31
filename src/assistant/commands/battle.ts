@@ -124,7 +124,6 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
 
 /**
  * Set a roster combatant's battle side (`player` or `enemy`).
- *
  * @param db - Database handle
  * @param chatId - Chat whose roster to inspect
  * @param userId - The commanding actor (excluded from the roster)
@@ -168,7 +167,10 @@ async function alignCombatant(
   };
 }
 
-/** Render a battle as a readable markdown block. */
+/**
+ * Render a battle as a readable markdown block.
+ * @param battle
+ */
 export function formatBattle(battle: BattleWithRoster,): string {
   const acting = battle.combatants[battle.turnIndex];
   const lines = [
@@ -190,7 +192,10 @@ export function formatBattle(battle: BattleWithRoster,): string {
   return nonEmpty.join("\n",);
 }
 
-/** Serialize the battle for a frontend action payload. */
+/**
+ * Serialize the battle for a frontend action payload.
+ * @param battle
+ */
 export function serializeBattle(battle: BattleWithRoster,): {
   id: string;
   status: string;

@@ -18,7 +18,14 @@ import { uid, } from "../utils";
 import { autoSyncChatBackground, chatBackgroundsRoutes, } from "./chat-backgrounds";
 import { chatsRoutes, } from "./chats";
 
-/** Insert a background row, setting generated columns directly (bypasses helper typing). */
+/**
+ * Insert a background row, setting generated columns directly (bypasses helper typing).
+ * @param db
+ * @param name
+ * @param opts
+ * @param opts.priority
+ * @param opts.location_id
+ */
 async function insertBg(
   db: Kysely<DB>,
   name: string,
@@ -35,7 +42,13 @@ async function insertBg(
     .execute();
 }
 
-/** Insert a location row with an explicit id (bypasses helper typing). */
+/**
+ * Insert a location row with an explicit id (bypasses helper typing).
+ * @param db
+ * @param worldId
+ * @param name
+ * @param id
+ */
 async function insertLocationById(db: Kysely<DB>, worldId: string, name: string, id: string,): Promise<void> {
   await db
     .insertInto("locations",)
@@ -45,18 +58,30 @@ async function insertLocationById(db: Kysely<DB>, worldId: string, name: string,
 
 const USER_ROLE = "solo";
 
+/**
+ * @param db
+ * @param userId
+ */
 function bgApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-bg", },)
     .derive(() => ({ userId, userRole: USER_ROLE, }))
     .use(chatBackgroundsRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param db
+ * @param userId
+ */
 function chatsApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-bg-chats", },)
     .derive(() => ({ userId, userRole: USER_ROLE, }))
     .use(chatsRoutes({ database: db, config: {} as any, },),) as unknown as Elysia;
 }
 
+/**
+ * @param db
+ * @param userId
+ */
 async function insertUser(db: Kysely<DB>, userId: string,): Promise<void> {
   await db
     .insertInto("users",)

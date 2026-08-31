@@ -38,6 +38,10 @@ export const configBody = t.Object({
 export const chatQuery = t.Object({ chatId: t.String(), },);
 export const chatActorQuery = t.Object({ chatId: t.String(), actorId: t.String(), },);
 
+/**
+ * @param msg
+ * @param err
+ */
 export function logErr(msg: string, err: unknown,): void {
   getLogger().child({ module: "proactive-messaging", },).error(
     msg,

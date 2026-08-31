@@ -13,6 +13,7 @@ import { type Kysely, sql, } from "kysely";
  *
  * Down migration is a no-op: the historical "public" default cannot be
  * restored deterministically after the backfill.
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // Set the new default (future inserts will use "none")
@@ -26,6 +27,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await sql`UPDATE chats SET encryption_level = 'none' WHERE encryption_level = 'public'`.execute(database,);
 }
 
+/**
+ * @param _database
+ */
 export async function down(_database: Kysely<unknown>,): Promise<void> {
   // No-op: "public" was the historical default but is not a valid EncryptionLevel.
   // Rows that existed before this migration have already been backfilled to "none"

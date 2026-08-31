@@ -14,7 +14,10 @@ import { t, } from "./i18n";
 import type { ChatState, } from "./types";
 
 export const worldChannels: Partial<ChatState> & ThisType<ChatState> = {
-  /** Group a world's channel chats by location (channel category). */
+  /**
+   * Group a world's channel chats by location (channel category).
+   * @param worldId
+   */
   worldChatGroups(worldId: string,) {
     const chats = this._worldChats[worldId] || [];
     const groups = new Map<string, { locationId: string; locationName: string; chats: WorldChannelChat[] }>();

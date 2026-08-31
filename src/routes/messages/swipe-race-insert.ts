@@ -38,6 +38,7 @@ import type { DB, } from "../../db/schema";
 
 export const MAX_INSERT_ATTEMPTS = 8;
 
+/** */
 export interface SwipeInsertInput {
   id: string;
   chatId: string;
@@ -58,12 +59,17 @@ export interface SwipeInsertInput {
   idempotencyKey: string | null;
 }
 
+/** */
 export interface SwipeInsertResult {
   id: string;
   swipeIndex: number | null;
 }
 
+/** */
 export class SwipeInsertExhaustedError extends Error {
+  /**
+   * @param message
+   */
   constructor(message = "swipe_index retry exhausted after 8 attempts",) {
     super(message,);
     this.name = "SwipeInsertExhaustedError";
@@ -74,6 +80,9 @@ export class SwipeInsertExhaustedError extends Error {
  * Look up an existing row by (chat_id, idempotency_key). Returns the row's
  * id, or null if no row exists yet. Used by the create route to short-circuit
  * retried POSTs.
+ * @param database
+ * @param chatId
+ * @param idempotencyKey
  */
 export async function findByIdempotencyKey(
   database: Kysely<DB>,
@@ -94,6 +103,8 @@ export async function findByIdempotencyKey(
  * Insert a user message with retry-on-swipe-collision. See file header for
  * semantics. The id, role, content, key_id, content_type, etc. are passed
  * via the input shape so this helper is testable without Elysia fixtures.
+ * @param database
+ * @param input
  */
 export async function insertUserMessageWithRetry(
   database: Kysely<DB>,

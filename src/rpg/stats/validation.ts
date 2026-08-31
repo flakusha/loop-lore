@@ -16,6 +16,7 @@ export const MAX_STAT = 30;
 
 /**
  * Validate a stat block — all values within [1, 30].
+ * @param stats
  */
 export function validateStatBlock(stats: StatBlock,): boolean {
   for (const ability of ALL_ABILITIES) {

@@ -15,6 +15,11 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
 import { rpgRoutes, } from "./index";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-rpg-stats", },);
   if (userId) {

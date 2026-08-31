@@ -10,15 +10,16 @@
  * `subscribe(id, onUpdate)` and `cancel()` for callers that need
  * fire-and-forget notifications (e.g. a "Retry" button that re-issues
  * the underlying request with the same idempotency key).
- *
  * @see TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md
  * @see epic-middleware-request-lifecycle.md
  */
 
 import { feFetch, } from "../fe-fetch";
 
+/** */
 export type RequestStatusKind = "pending" | "in_progress" | "complete" | "failed" | "expired";
 
+/** */
 export interface RequestStatusPayload {
   requestId: string;
   status: RequestStatusKind;
@@ -31,6 +32,7 @@ export interface RequestStatusPayload {
   error?: string | null;
 }
 
+/** */
 export interface UseRequestStatusOptions {
   /** Poll interval in milliseconds (default 750). */
   intervalMs?: number;
@@ -53,6 +55,7 @@ const TERMINAL: ReadonlySet<RequestStatusKind> = new Set<RequestStatusKind>([
  * state. Returns a `cancel()` to stop polling early. Errors thrown by the
  * fetch are surfaced via `onUpdate` with `status: "failed"` so callers
  * can render an inline retry affordance without `try/catch` boilerplate.
+ * @param opts
  */
 export function useRequestStatus(opts: UseRequestStatusOptions = {},): {
   subscribe: (requestId: string,) => void;
@@ -63,6 +66,7 @@ export function useRequestStatus(opts: UseRequestStatusOptions = {},): {
   let timer: ReturnType<typeof setTimeout> | null = null;
   let aborted = false;
 
+  /** */
   function cancel(): void {
     aborted = true;
     if (timer !== null) {
@@ -71,6 +75,10 @@ export function useRequestStatus(opts: UseRequestStatusOptions = {},): {
     }
   }
 
+  /**
+   * @param requestId
+   * @param startedAt
+   */
   async function poll(requestId: string, startedAt: number,): Promise<void> {
     if (aborted) { return; }
     try {
@@ -109,6 +117,9 @@ export function useRequestStatus(opts: UseRequestStatusOptions = {},): {
     }
   }
 
+  /**
+   * @param requestId
+   */
   function subscribe(requestId: string,): void {
     cancel();
     aborted = false;

@@ -10,12 +10,14 @@
 
 // ── Types ──────────────────────────────────────────────────
 
+/** */
 export interface PreloadResult {
   url: string;
   loaded: boolean;
   error?: string;
 }
 
+/** */
 export interface PreloadStats {
   total: number;
   loaded: number;
@@ -31,6 +33,9 @@ const MAX_CACHE_SIZE = 50;
 
 // ── Core Preload Function ──────────────────────────────────
 
+/**
+ * @param url
+ */
 export function preloadImage(url: string,): Promise<PreloadResult> {
   // Check cache first
   if (imageCache.has(url,)) {
@@ -79,6 +84,9 @@ export function preloadImage(url: string,): Promise<PreloadResult> {
 
 // ── Batch Preloading ───────────────────────────────────────
 
+/**
+ * @param urls
+ */
 export async function preloadImages(urls: string[],): Promise<PreloadResult[]> {
   const settled = await Promise.allSettled(
     Array.from(urls, (url,) => preloadImage(url,),),
@@ -92,12 +100,18 @@ export async function preloadImages(urls: string[],): Promise<PreloadResult[]> {
 
 // ── Scene Preloading ───────────────────────────────────────
 
+/** */
 export interface SceneImages {
   backgroundUrl?: string;
   portraitUrl?: string;
 }
 
-/** Collect background + portrait URLs from current and next N scenes. */
+/**
+ * Collect background + portrait URLs from current and next N scenes.
+ * @param scenes
+ * @param currentIndex
+ * @param preloadCount
+ */
 function collectSceneUrls(scenes: SceneImages[], currentIndex: number, preloadCount: number,): string[] {
   const urls: string[] = [];
   const indices = [currentIndex,];
@@ -112,6 +126,11 @@ function collectSceneUrls(scenes: SceneImages[], currentIndex: number, preloadCo
   return [...new Set(urls,),];
 }
 
+/**
+ * @param scenes
+ * @param currentIndex
+ * @param preloadCount
+ */
 export async function preloadSceneImages(
   scenes: SceneImages[],
   currentIndex: number,
@@ -146,6 +165,7 @@ export async function preloadSceneImages(
 
 // ── Cache Management ───────────────────────────────────────
 
+/** */
 function manageCacheSize(): void {
   if (imageCache.size <= MAX_CACHE_SIZE) {
     return;
@@ -160,26 +180,38 @@ function manageCacheSize(): void {
   }
 }
 
+/** */
 export function clearCache(): void {
   imageCache.clear();
 }
 
+/** */
 export function getCacheSize(): number {
   return imageCache.size;
 }
 
 // ── Utility Functions ──────────────────────────────────────
 
+/**
+ * @param url
+ */
 export function isImageCached(url: string,): boolean {
   return imageCache.has(url,);
 }
 
+/**
+ * @param url
+ */
 export function getCachedImage(url: string,): HTMLImageElement | undefined {
   return imageCache.get(url,);
 }
 
 // ── Fallback Handling ──────────────────────────────────────
 
+/**
+ * @param url
+ * @param fallback
+ */
 export function getImageWithFallback(
   url: string | undefined,
   fallback = "/images/vn-placeholder.png",
@@ -190,12 +222,16 @@ export function getImageWithFallback(
 
 // ── Loading Indicator ──────────────────────────────────────
 
+/** */
 export interface LoadingIndicator {
   show: () => void;
   hide: () => void;
   updateProgress: (loaded: number, total: number,) => void;
 }
 
+/**
+ * @param container
+ */
 export function createLoadingIndicator(
   container: HTMLElement,
 ): LoadingIndicator {

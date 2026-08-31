@@ -11,12 +11,16 @@ import type { Logger, } from "../logger/types";
 
 const STRIP_TEST_IDS = process.env.STRIP_TEST_IDS !== "false";
 
+/**
+ * @param content
+ */
 function stripTestIds(content: string,): string {
   let result = content.replaceAll(/\s+data-testid="[^"]*"/g, "",);
   result = result.replaceAll(/\s+:data-testid="[^"]*"/g, "",);
   return result;
 }
 
+/** */
 async function main() {
   const log = createLogger({ level: "info", },);
   const directory = process.argv[2] ?? "./dist/public";
@@ -80,7 +84,6 @@ async function main() {
  *
  * Writes the minified form only when it is strictly smaller than the source.
  * Minification failures are logged and the original file is left untouched.
- *
  * @param file - Absolute path of the artifact
  * @param content - Current file bytes
  * @param log - Logger for minification failures
@@ -92,7 +95,12 @@ async function minifyByExtension(file: string, content: Buffer, log: Logger,): P
   if (ext === ".svg") { stripSvgTestIds(file, content,); }
 }
 
-/** Minify a CSS artifact in place when the result is smaller. */
+/**
+ * Minify a CSS artifact in place when the result is smaller.
+ * @param file
+ * @param content
+ * @param log
+ */
 function minifyCss(file: string, content: Buffer, log: Logger,): void {
   const original = content.toString("utf8",);
   try {
@@ -108,7 +116,12 @@ function minifyCss(file: string, content: Buffer, log: Logger,): void {
   }
 }
 
-/** Minify an HTML artifact in place when the result is smaller. */
+/**
+ * Minify an HTML artifact in place when the result is smaller.
+ * @param file
+ * @param content
+ * @param log
+ */
 async function minifyHtml(file: string, content: Buffer, log: Logger,): Promise<void> {
   const original = content.toString("utf8",);
   try {
@@ -127,7 +140,11 @@ async function minifyHtml(file: string, content: Buffer, log: Logger,): Promise<
   }
 }
 
-/** Strip `data-testid` attributes from an SVG artifact in place when smaller. */
+/**
+ * Strip `data-testid` attributes from an SVG artifact in place when smaller.
+ * @param file
+ * @param content
+ */
 function stripSvgTestIds(file: string, content: Buffer,): void {
   let processed = content.toString("utf8",);
   if (STRIP_TEST_IDS) {

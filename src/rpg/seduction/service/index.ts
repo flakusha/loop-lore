@@ -54,13 +54,18 @@ export type {
   SeductionSkill,
 } from "./types";
 
+/** */
 export class SeductionService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   // ── Desire Profiles ───────────────────────────────────
 
   /**
    * Get or create a desire profile for an actor.
+   * @param actorId
    */
   async getDesireProfile(actorId: string,): Promise<DesireProfile> {
     return getDesireProfileDispatch(this.db, actorId,);
@@ -68,6 +73,8 @@ export class SeductionService {
 
   /**
    * Update a desire profile.
+   * @param actorId
+   * @param updates
    */
   async updateDesireProfile(
     actorId: string,
@@ -82,6 +89,9 @@ export class SeductionService {
 
   /**
    * Get or create a seduction skill for an actor.
+   * @param actorId
+   * @param category
+   * @param name
    */
   async getSkill(
     actorId: string,
@@ -93,6 +103,10 @@ export class SeductionService {
 
   /**
    * Award XP to a seduction skill and level up if threshold reached.
+   * @param actorId
+   * @param category
+   * @param name
+   * @param amount
    */
   async awardXp(
     actorId: string,
@@ -105,6 +119,7 @@ export class SeductionService {
 
   /**
    * Get all seduction skills for an actor.
+   * @param actorId
    */
   async getActorSkills(actorId: string,): Promise<SeductionSkill[]> {
     return getActorSkillsDispatch(this.db, actorId,);
@@ -114,6 +129,8 @@ export class SeductionService {
 
   /**
    * Get or create arousal state for an actor.
+   * @param actorId
+   * @param worldId
    */
   async getArousal(
     actorId: string,
@@ -124,6 +141,10 @@ export class SeductionService {
 
   /**
    * Modify arousal level for an actor.
+   * @param actorId
+   * @param delta
+   * @param worldId
+   * @param source
    */
   async modifyArousal(
     actorId: string,
@@ -136,6 +157,8 @@ export class SeductionService {
 
   /**
    * Decay arousal over time.
+   * @param actorId
+   * @param worldId
    */
   async decayArousal(actorId: string, worldId: string | null = null,): Promise<number> {
     return decayArousalDispatch(this.db, actorId, worldId,);
@@ -143,6 +166,9 @@ export class SeductionService {
 
   /**
    * Add a modifier to arousal state.
+   * @param actorId
+   * @param modifier
+   * @param worldId
    */
   async addModifier(
     actorId: string,
@@ -156,6 +182,7 @@ export class SeductionService {
 
   /**
    * Attempt a seduction action.
+   * @param opts
    */
   async attemptSeduction(opts: SeductionAttemptOpts,): Promise<SeductionResult> {
     return attemptSeductionDispatch(this.db, opts,);

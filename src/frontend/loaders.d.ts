@@ -36,9 +36,8 @@ declare global {
     $data: (el: HTMLElement,) => Record<string, unknown>;
     initTree: (el: HTMLElement,) => void;
     store: {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
       <T = Record<string, unknown>,>(key: string,): T;
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
+
       <T = Record<string, unknown>,>(key: string, value: T,): void;
     };
   };

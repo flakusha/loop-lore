@@ -34,12 +34,16 @@ import type { TurnManagerOptions, } from "./types";
 
 export type { TurnManagerOptions, } from "./types";
 
+/** */
 export class TurnManager {
   db: Kysely<DB>;
   chatId: string;
   maxRegenerations: number;
   state: TurnManagerState | null = null;
 
+  /**
+   * @param options
+   */
   constructor(options: TurnManagerOptions,) {
     this.db = options.db;
     this.chatId = options.chatId;
@@ -55,18 +59,22 @@ export class TurnManager {
 
   // ─── Public API ───────────────────────────────────────────────
 
+  /** */
   get currentTurn(): number {
     return this.state?.currentTurn ?? 0;
   }
 
+  /** */
   get stateSnapshot(): TurnManagerState | null {
     return this.state;
   }
 
+  /** */
   get isPaused(): boolean {
     return this.state?.isPaused ?? true;
   }
 
+  /** */
   get isComplete(): boolean {
     if (!this.state) { return false; }
     const maxTurns = this.state.maxTurns ?? Number.MAX_SAFE_INTEGER;
@@ -76,7 +84,6 @@ export class TurnManager {
 
   /**
    * Select the next actor to act.
-   *
    * @param strategy - Override strategy (default: state.strategy)
    * @param context - Turn context (@mentions, recent actors, chat mode, or story context)
    * @returns Selected actor ID, or null if no participants
@@ -93,7 +100,11 @@ export class TurnManager {
     return recordTurnDispatch(this,);
   }
 
-  /** Request regeneration of a failed turn */
+  /**
+   * Request regeneration of a failed turn
+   * @param turnId
+   * @param reason
+   */
   async requestRegeneration(turnId: string, reason: string,): Promise<boolean> {
     return requestRegenerationDispatch(this, turnId, reason,);
   }
@@ -118,7 +129,10 @@ export class TurnManager {
     return resetTurnCounterDispatch(this,);
   }
 
-  /** Update turn order (e.g., participant added/removed) */
+  /**
+   * Update turn order (e.g., participant added/removed)
+   * @param mode
+   */
   async refreshOrder(mode: "story" | "group" = "story",): Promise<void> {
     return refreshOrderPublic(this, mode,);
   }

@@ -13,6 +13,7 @@ import { renderChoiceCards, } from "./choice-cards-render";
 
 const LOCATION_CHANGED_EVENT = "chat:location-changed";
 
+/** */
 export interface VnChoice {
   id: string;
   chat_id: string;
@@ -48,6 +49,9 @@ let sceneIndex = 0;
 
 /**
  * Initialize the choice cards component.
+ * @param containerEl
+ * @param currentChatId
+ * @param currentSceneIndex
  */
 export function initChoiceCards(
   containerEl: HTMLElement,
@@ -92,7 +96,10 @@ export async function loadChoices(): Promise<void> {
   }
 }
 
-/** Detect a split consequence: { action: "split", branches: [...] } */
+/**
+ * Detect a split consequence: { action: "split", branches: [...] }
+ * @param consequences
+ */
 function extractSplitBranches(
   consequences: Record<string, unknown>,
 ): { locationId: string; actorIds: string[] }[] | null {
@@ -116,7 +123,10 @@ function extractSplitBranches(
   return out.length >= 2 ? out : null;
 }
 
-/** Detect a reunion consequence: { action: "reunite", secondaryChatId } */
+/**
+ * Detect a reunion consequence: { action: "reunite", secondaryChatId }
+ * @param consequences
+ */
 function extractReunionSource(consequences: Record<string, unknown>,): string | null {
   if (consequences.action !== "reunite") { return null; }
   const id = consequences.secondaryChatId;
@@ -126,7 +136,7 @@ function extractReunionSource(consequences: Record<string, unknown>,): string | 
 /**
  * Select a choice, apply its effects, and trigger location/split/reunite
  * consequences via their dedicated endpoints.
- *
+ * @param choiceId
  * @returns SelectChoiceResult on success, null on failure.
  */
 export async function selectChoice(choiceId: string,): Promise<SelectChoiceResult | null> {

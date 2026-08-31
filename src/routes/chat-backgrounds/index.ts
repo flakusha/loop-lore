@@ -19,6 +19,9 @@ import type { HandlerOpts, } from "./types";
 export { autoSyncChatBackground, getChatBackground, setChatBackground, } from "./service";
 export type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ */
 export function chatBackgroundsRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "chat-backgrounds", },)
     .use(catalogRoutes(opts,),)

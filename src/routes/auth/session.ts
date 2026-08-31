@@ -10,6 +10,12 @@ import {
   TOKEN_COOKIE,
 } from "./shared";
 
+/**
+ * @param request
+ * @param database
+ * @param derivedUserId
+ * @param derivedSessionId
+ */
 async function handleLogout(
   request: Request,
   database: Kysely<DB>,
@@ -37,6 +43,11 @@ async function handleLogout(
   },);
 }
 
+/**
+ * @param request
+ * @param database
+ * @param derivedUserId
+ */
 async function handleMe(
   request: Request,
   database: Kysely<DB>,

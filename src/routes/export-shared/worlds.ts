@@ -7,6 +7,7 @@ import type { ExportContext, } from "./types";
 /**
  * Export the user's worlds into `zip/worlds/` as JSON.
  * Populates `ctx.counts.worlds`.
+ * @param ctx
  */
 export async function exportWorldsToZip(ctx: ExportContext,): Promise<void> {
   const worlds = await ctx.database

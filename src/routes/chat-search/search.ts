@@ -6,6 +6,10 @@ import { jsonPaginated, requireUserId, } from "../http-utils";
 import { log, } from "./log";
 import { ChatSearchQuery, type HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function searchRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

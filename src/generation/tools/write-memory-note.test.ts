@@ -37,6 +37,7 @@ describe("write_memory_note tool", () => {
     await db?.destroy();
   },);
 
+  /** */
   async function memoryRows(): Promise<{ content: string; source_chat_id: string | null }[]> {
     return db
       .selectFrom("actor_memories",)

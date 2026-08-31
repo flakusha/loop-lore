@@ -15,7 +15,6 @@ import {
 
 /**
  * Evaluate a batch of memories for injection, respecting maxPerMessage.
- *
  * @param memories - Candidate memories (should already be provision-filtered)
  * @param config - Injection configuration
  * @param ctx - Current injection context

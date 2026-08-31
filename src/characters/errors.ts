@@ -17,6 +17,11 @@ export class ImportError extends Error {
   readonly code: ErrorCode;
   readonly details?: unknown;
 
+  /**
+   * @param message
+   * @param code
+   * @param details
+   */
   constructor(message: string, code: ErrorCode = ErrorCode.BadRequest, details?: unknown,) {
     super(message,);
     this.name = "ImportError";
@@ -27,6 +32,9 @@ export class ImportError extends Error {
 
 /** File format not recognized */
 export class FormatDetectionError extends ImportError {
+  /**
+   * @param filename
+   */
   constructor(filename: string,) {
     super(
       `Unable to detect character card format for "${filename}"`,
@@ -41,6 +49,9 @@ export class FormatDetectionError extends ImportError {
 export class CharacterValidationError extends ImportError {
   readonly validationErrors: string[];
 
+  /**
+   * @param errors
+   */
   constructor(errors: string[],) {
     super(
       `Character validation failed: ${errors.join(", ",)}`,
@@ -54,6 +65,10 @@ export class CharacterValidationError extends ImportError {
 
 /** CHARX extraction failed */
 export class CharxExtractionError extends ImportError {
+  /**
+   * @param message
+   * @param details
+   */
   constructor(message: string, details?: unknown,) {
     super(`CHARX extraction failed: ${message}`, ErrorCode.BadRequest, details,);
     this.name = "CharxExtractionError";
@@ -62,6 +77,10 @@ export class CharxExtractionError extends ImportError {
 
 /** PNG extraction failed */
 export class PngExtractionError extends ImportError {
+  /**
+   * @param message
+   * @param details
+   */
   constructor(message: string, details?: unknown,) {
     super(`PNG extraction failed: ${message}`, ErrorCode.BadRequest, details,);
     this.name = "PngExtractionError";
@@ -72,6 +91,11 @@ export class PngExtractionError extends ImportError {
 export class AssetImportError extends ImportError {
   readonly assetName: string;
 
+  /**
+   * @param assetName
+   * @param message
+   * @param details
+   */
   constructor(assetName: string, message: string, details?: unknown,) {
     super(`Failed to import asset "${assetName}": ${message}`, ErrorCode.BadRequest, details,);
     this.name = "AssetImportError";
@@ -86,6 +110,11 @@ export class ExportError extends Error {
   readonly code: ErrorCode;
   readonly details?: unknown;
 
+  /**
+   * @param message
+   * @param code
+   * @param details
+   */
   constructor(message: string, code: ErrorCode = ErrorCode.BadRequest, details?: unknown,) {
     super(message,);
     this.name = "ExportError";
@@ -96,6 +125,10 @@ export class ExportError extends Error {
 
 /** Export format not supported */
 export class UnsupportedExportFormatError extends ExportError {
+  /**
+   * @param format
+   * @param supportedFormats
+   */
   constructor(format: string, supportedFormats: string[],) {
     super(
       `Unsupported export format: "${format}". Supported formats: ${supportedFormats.join(", ",)}`,
@@ -108,6 +141,10 @@ export class UnsupportedExportFormatError extends ExportError {
 
 /** Export data not found */
 export class ExportDataNotFoundError extends ExportError {
+  /**
+   * @param entity
+   * @param userId
+   */
   constructor(entity: string, userId: string,) {
     super(
       `No ${entity} found for export`,
@@ -120,6 +157,10 @@ export class ExportDataNotFoundError extends ExportError {
 
 /** ZIP generation failed */
 export class ZipGenerationError extends ExportError {
+  /**
+   * @param message
+   * @param details
+   */
   constructor(message: string, details?: unknown,) {
     super(`ZIP generation failed: ${message}`, ErrorCode.ServerError, details,);
     this.name = "ZipGenerationError";
@@ -131,6 +172,7 @@ export class ZipGenerationError extends ExportError {
 /**
  * Handle import/export errors and convert to structured API response.
  * Returns true if error was handled, false otherwise.
+ * @param error
  */
 export function handleImportExportError(error: unknown,): { handled: true; response: Response } | { handled: false } {
   if (error instanceof ImportError || error instanceof ExportError) {
@@ -152,6 +194,7 @@ export function handleImportExportError(error: unknown,): { handled: true; respo
 
 /**
  * Get HTTP status code from error code.
+ * @param code
  */
 function getHttpStatusFromErrorCode(code: ErrorCode,): number {
   switch (code) {

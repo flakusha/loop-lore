@@ -23,7 +23,10 @@ import type { HandlerOpts, } from "./types";
 
 const PERFORMED_BY_REJECT = "performedBy must be derived from the authenticated session, not the request body.";
 
-/** beforeHandle: reject any request whose parsed body contains a `performedBy` key. */
+/**
+ * beforeHandle: reject any request whose parsed body contains a `performedBy` key.
+ * @param ctx
+ */
 function rejectBodyImpersonation(ctx: any,): Response | undefined {
   const body = ctx.body;
   if (!body || typeof body !== "object" || Array.isArray(body,)) { return; }
@@ -33,6 +36,10 @@ function rejectBodyImpersonation(ctx: any,): Response | undefined {
   return;
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function actionsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = new NsfwModerationService(opts.database,);
 

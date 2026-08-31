@@ -13,6 +13,9 @@ const originalApiFetch = (globalThis as Record<string, unknown>).apiFetch;
 const originalShowToast = (globalThis as Record<string, unknown>).showToast;
 const originalConfirm = globalThis.confirm;
 
+/**
+ * @param overrides
+ */
 function ctx(overrides?: Partial<WorldEditState>,): WorldEditState {
   return {
     ...(worldItems as WorldEditState),
@@ -21,6 +24,10 @@ function ctx(overrides?: Partial<WorldEditState>,): WorldEditState {
   };
 }
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url: string, _opts?: RequestInit,) => Response.json(body, { status, },);
 }

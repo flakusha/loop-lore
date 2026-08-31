@@ -28,6 +28,10 @@ const generateImagesCalls: Array<[unknown, Record<string, unknown>,]> = [];
 
 // ── Mock implementations ───────────────────────────────────────────────────────
 
+/**
+ * @param _sdConfig
+ * @param opts
+ */
 async function mockGenerateImages(
   _sdConfig: unknown,
   opts: Record<string, unknown>,
@@ -40,10 +44,14 @@ async function mockGenerateImages(
   };
 }
 
+/**
+ * @param _buf
+ */
 function mockExtractImageMetadata(_buf: Buffer,) {
   return { width: 512, height: 512, format: "png", };
 }
 
+/** */
 function mockUid() {
   return randomUUID();
 }
@@ -54,12 +62,19 @@ const mockAsset = {
   mime_type: "image/png",
 };
 
+/**
+ * @param _opts
+ */
 async function mockCreateAsset(_opts: unknown,) {
   return { asset: mockAsset, };
 }
 
+/**
+ * @param _opts
+ */
 async function mockLinkAsset(_opts: unknown,) {}
 
+/** */
 function mockGetDatabase() {
   return {} as ReturnType<typeof import("../db/index").getDatabase>;
 }
@@ -137,6 +152,9 @@ const { handleImageGeneration, } = await import("./image-gen-route");
 
 // ── Helpers ─────────────────────────────────────────────────────────────────────
 
+/**
+ * @param overrides
+ */
 function makeBody(overrides?: Record<string, unknown>,) {
   return {
     prompt: "a beautiful portrait",

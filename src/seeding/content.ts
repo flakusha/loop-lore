@@ -26,7 +26,6 @@ import { seedWorlds, } from "./worlds";
  * When `seeding.environments[NODE_ENV]` exists, its `users` and `seedData`
  * replace the corresponding base fields (when present). Returns a new
  * SeedingConfig; the original is never mutated.
- *
  * @param seeding - Resolved base seeding config
  * @param envName - Environment name (defaults to process.env.NODE_ENV ?? "development")
  * @returns The effective seeding config for the current environment
@@ -48,7 +47,6 @@ export function applyEnvironmentOverrides(
  * Seed configured content (characters / worlds / chats) after users are
  * prepopulated. Idempotent per entity. Only runs when seeding is enabled and
  * auth is required (multi-user mode).
- *
  * @param database - Kysely instance
  * @param seeding - Effective seeding config (environment overrides applied)
  * @param authRequired - Whether multi-user auth is on (solo mode seeds nothing)
@@ -84,7 +82,10 @@ export async function seedConfiguredContent(
   return created;
 }
 
-/** Build a username → user id map from the DB for owner/participant resolution. */
+/**
+ * Build a username → user id map from the DB for owner/participant resolution.
+ * @param database
+ */
 async function buildUserById(database: Kysely<DB>,): Promise<Map<string, string>> {
   const rows = await database
     .selectFrom("users",)

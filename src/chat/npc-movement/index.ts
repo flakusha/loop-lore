@@ -34,11 +34,17 @@ export interface MovementQuery {
   limit?: number;
 }
 
+/** */
 export class NpcMovementIndicatorService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
    * Store movement events in a message's metadata.
+   * @param messageId
+   * @param events
    */
   async storeMovementEvents(
     messageId: string,
@@ -72,6 +78,7 @@ export class NpcMovementIndicatorService {
 
   /**
    * Get movement events for a chat.
+   * @param query
    */
   async getMovementEvents(query: MovementQuery,): Promise<MovementEvent[]> {
     let qb = this.db
@@ -110,6 +117,8 @@ export class NpcMovementIndicatorService {
 
   /**
    * Get recent movement events for display in chat.
+   * @param chatId
+   * @param limit
    */
   async getRecentMovements(
     chatId: string,

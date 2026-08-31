@@ -13,6 +13,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { selectNextGroupActor, } from "../../group-chat/turn-selector";
 
+/** */
 export interface ResolveActorOpts {
   /** Chat row subset read by the caller (type is used for branch selection). */
   type: string | undefined;
@@ -24,6 +25,7 @@ export interface ResolveActorOpts {
   userId: string;
 }
 
+/** */
 export interface ResolvedActor {
   characterId: string;
   characterName: string;
@@ -31,7 +33,8 @@ export interface ResolvedActor {
 
 /**
  * Resolve the actor that should generate the next message.
- *
+ * @param database
+ * @param opts
  * @returns The resolved actor, or null when no eligible actor exists (group
  *   turn selection yielded nothing, or the single-chat participant is missing).
  */

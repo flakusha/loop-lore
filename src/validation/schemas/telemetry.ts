@@ -103,5 +103,11 @@ export const TelemetryAnalyticsErrorsRow = t.Object({
 
 // Re-export schema name so existing imports still resolve.
 // (Kept as a type alias for callers that destructure by name.)
+/**
+ *
+ */
 export type TelemetryEventBodyT = typeof TelemetryEventBody;
+/**
+ *
+ */
 export type TelemetryAnalyticsErrorsRowT = typeof TelemetryAnalyticsErrorsRow;

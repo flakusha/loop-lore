@@ -13,6 +13,10 @@ import type { ServerExternalManager, } from "../services/server-external-manager
  *
  * Returns once every background job has settled (success or failure — errors
  * are logged, never thrown, so startup is resilient to optional components).
+ * @param database
+ * @param config
+ * @param logger
+ * @param serverManager
  */
 export async function initBackgroundServices(
   database: Db,

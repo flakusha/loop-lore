@@ -71,6 +71,7 @@ if (typeof localStorage === "undefined") {
   } as Storage;
 }
 
+/** */
 function buildMigrationProvider() {
   // The migration specifier IS genuinely runtime-selected (readdirSync of
   // src/db/migrations/); a static import would require hardcoding every
@@ -96,6 +97,10 @@ function buildMigrationProvider() {
   };
 }
 
+/**
+ * @param db
+ * @param userId
+ */
 async function seedUser(db: Kysely<DB>, userId: string,): Promise<void> {
   await db.insertInto("users",).values({
     id: userId,
@@ -105,6 +110,11 @@ async function seedUser(db: Kysely<DB>, userId: string,): Promise<void> {
   },).execute();
 }
 
+/**
+ * @param db
+ * @param actorId
+ * @param userId
+ */
 async function seedActor(
   db: Kysely<DB>,
   actorId: string,
@@ -127,6 +137,9 @@ async function seedActor(
   },).execute();
 }
 
+/**
+ * @param db
+ */
 async function seedChat(db: Kysely<DB>,): Promise<void> {
   await db.insertInto("chats",).values({
     id: CHAT_ID,
@@ -160,6 +173,9 @@ afterAll(async () => {
 
 // ── Helpers ──────────────────────────────────────────────────
 
+/**
+ * @param actorId
+ */
 async function persistKeyPair(actorId: string,): Promise<JsonWebKey> {
   const kp = await generateKeyPair();
   const publicJwk = await crypto.subtle.exportKey("jwk", kp.publicKey,);
@@ -177,6 +193,7 @@ async function persistKeyPair(actorId: string,): Promise<JsonWebKey> {
   return publicJwk;
 }
 
+/** */
 function buildPubKeyRegistry(): Record<string, JsonWebKey> {
   const reg: Record<string, JsonWebKey> = {};
   for (const actorId of ACTOR_IDS) {
@@ -189,6 +206,7 @@ function buildPubKeyRegistry(): Record<string, JsonWebKey> {
   return reg;
 }
 
+/** */
 function bindStubFetch(): void {
   const registry = buildPubKeyRegistry();
   const stub = mock(async (input: RequestInfo | URL,) => {

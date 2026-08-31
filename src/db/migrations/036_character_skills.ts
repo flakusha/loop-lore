@@ -13,6 +13,7 @@ import { type Kysely, sql, } from "kysely";
  * `world_id` is nullable to allow actor-global or world-scoped skills.
  * Booleans stored as integer, JSON arrays/objects as text — the schema's
  * established convention.
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
@@ -47,6 +48,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropIndex("idx_character_skills_actor_world",).execute();
   await database.schema.dropIndex("idx_character_skills_actor",).execute();

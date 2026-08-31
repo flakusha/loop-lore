@@ -15,6 +15,11 @@ import type { HandleOpts, } from "./types";
  * location — the grouped enumeration that powers the world channel tree.
  * In a chat-only world, `chats.current_location_id` is the static channel
  * binding; the frontend groups the returned rows by location.
+ * @param database
+ * @param worldId
+ * @param userId
+ * @param userRole
+ * @param locationId
  */
 async function handleListWorldChats(
   database: Kysely<DB>,
@@ -56,6 +61,10 @@ async function handleListWorldChats(
   return jsonResponse({ data: chats, },);
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function chatsRoutes(opts: HandleOpts, prefix = "/api",) {
   const { database, } = opts;
 

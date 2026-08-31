@@ -11,9 +11,13 @@ import type { ItemCategory, } from "../../db/enums";
 
 /** Per-actor equip layout. */
 export const EQUIP_SLOTS = ["weapon", "armor", "accessory",] as const;
+/** */
 export type EquipSlot = (typeof EQUIP_SLOTS)[number];
 
-/** Slot an ItemCategory occupies when equipped. */
+/**
+ * Slot an ItemCategory occupies when equipped.
+ * @param category
+ */
 export function slotForCategory(category: ItemCategory,): EquipSlot | null {
   switch (category) {
     case "weapon": {
@@ -44,6 +48,7 @@ export const ENCUMBRANCE = {
   Medium: "medium",
   Overloaded: "overloaded",
 } as const;
+/** */
 export type Encumbrance = (typeof ENCUMBRANCE)[keyof typeof ENCUMBRANCE];
 
 /** Result of a carry check. */

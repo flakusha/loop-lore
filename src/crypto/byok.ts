@@ -30,6 +30,8 @@ const SALT_LENGTH = 16; // 128-bit per-record salt
 /**
  * Derive an AES-256-GCM CryptoKey from a string secret + per-record salt.
  * Uses HKDF-SHA256 (no PBKDF2) with the salt as the HKDF `salt` input.
+ * @param secret
+ * @param salt
  */
 async function deriveKey(secret: string, salt: Uint8Array,): Promise<CryptoKey> {
   const ikm = await crypto.subtle.importKey(
@@ -71,6 +73,8 @@ const LEGACY_GLOBAL_SALT = new TextEncoder().encode("loop-lore-byok-v1",);
 /**
  * Encrypt a plaintext string.
  * Returns base64-encoded "salt:iv:ciphertext" (three chunks).
+ * @param plaintext
+ * @param secret
  */
 export async function encryptValue(plaintext: string, secret: string,): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH,),);
@@ -85,6 +89,8 @@ export async function encryptValue(plaintext: string, secret: string,): Promise<
  * Decrypt a base64-encoded string. Accepts both wire formats:
  *   - new (3 chunks): "salt:iv:ciphertext"
  *   - old (2 chunks): "iv:ciphertext" — uses the legacy global salt
+ * @param encrypted
+ * @param secret
  */
 export async function decryptValue(encrypted: string, secret: string,): Promise<string> {
   const parts = encrypted.split(":",);

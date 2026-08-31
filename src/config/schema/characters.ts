@@ -5,6 +5,7 @@
 
 import type { UserRole, } from "../../db/enums-core/users";
 
+/** */
 export interface CharactersConfig {
   /** Enable character template seeding on app start. Default true. */
   enabled: boolean;

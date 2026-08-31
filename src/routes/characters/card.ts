@@ -11,6 +11,10 @@ import {
 import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function cardRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

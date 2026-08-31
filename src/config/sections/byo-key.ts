@@ -9,10 +9,14 @@ export const BYO_KEY_DEFAULTS = {
   enabled: true,
 } satisfies ByoKeyConfig;
 
+/** */
 export class ByoKeySection implements ByoKeyConfig {
   enabled = BYO_KEY_DEFAULTS.enabled;
   encryptionKey?: string;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<ByoKeyConfig>,) {
     Object.assign(this, overrides,);
   }

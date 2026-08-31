@@ -15,11 +15,13 @@ import { formatTime, unixSec, } from "../../utils/date";
 import { AsyncLogQueue, } from "./queue";
 import { BrowserConsoleTransport, } from "./transports/console";
 
+/** */
 export interface LightLoggerConfig {
   level?: LogLevel;
   transports?: Transport[];
 }
 
+/** */
 class LightLogger implements Logger {
   private bindings: LoggerBindings;
   private readonly transports: Transport[];
@@ -27,6 +29,10 @@ class LightLogger implements Logger {
   private readonly threshold: number;
   private readonly levelString: LogLevel;
 
+  /**
+   * @param config
+   * @param bindings
+   */
   constructor(config?: LightLoggerConfig, bindings?: LoggerBindings,) {
     this.bindings = bindings ?? {};
     this.levelString = config?.level ?? "debug";
@@ -40,6 +46,12 @@ class LightLogger implements Logger {
     }
   }
 
+  /**
+   * @param level
+   * @param message
+   * @param error
+   * @param meta
+   */
   private log(
     level: LogLevel,
     message: string | Record<string, unknown>,
@@ -84,30 +96,59 @@ class LightLogger implements Logger {
     }
   }
 
+  /**
+   * @param message
+   * @param meta
+   */
   trace(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("trace", message, undefined, meta,);
   }
 
+  /**
+   * @param message
+   * @param meta
+   */
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("debug", message, undefined, meta,);
   }
 
+  /**
+   * @param message
+   * @param meta
+   */
   info(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("info", message, undefined, meta,);
   }
 
+  /**
+   * @param message
+   * @param meta
+   */
   warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("warn", message, undefined, meta,);
   }
 
+  /**
+   * @param message
+   * @param error
+   * @param meta
+   */
   error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("error", message, error, meta,);
   }
 
+  /**
+   * @param message
+   * @param error
+   * @param meta
+   */
   fatal(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("fatal", message, error, meta,);
   }
 
+  /**
+   * @param bindings
+   */
   child(bindings: LoggerBindings,): Logger {
     return new LightLogger(
       { level: this.levelString, transports: this.transports, },
@@ -115,13 +156,20 @@ class LightLogger implements Logger {
     );
   }
 
+  /** */
   async flush(): Promise<void> {
     await this.queue?.flush();
   }
 
+  /**
+   * @param transport
+   */
   addTransport(transport: Transport,): void {
     this.transports.push(transport,);
   }
+  /**
+   * @param partial
+   */
   setBindings(partial: LoggerBindings,): void {
     Object.assign(this.bindings, partial,);
   }
@@ -131,6 +179,10 @@ class LightLogger implements Logger {
 
 const _root: { instance: Logger | null } = { instance: null, };
 
+/**
+ * @param config
+ * @param config.level
+ */
 export function createLogger(config?: { level?: LogLevel },): Logger {
   const transports: Transport[] = [new BrowserConsoleTransport(),];
   const instance = new LightLogger({ level: config?.level, transports, },);
@@ -138,11 +190,15 @@ export function createLogger(config?: { level?: LogLevel },): Logger {
   return instance;
 }
 
+/** */
 export function getLogger(): Logger {
   if (!_root.instance) { throw new Error("Logger not initialized — call createLogger() first",); }
   return _root.instance;
 }
 
+/**
+ * @param logger
+ */
 export function setGlobalLogger(logger: Logger,): void {
   _root.instance = logger;
 }

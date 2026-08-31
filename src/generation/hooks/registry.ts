@@ -18,18 +18,26 @@ import type { HookChainOptions, HookChainResult, HookHandler, HookResult, } from
 
 const registeredHooks: HookHandler[] = [];
 
+/**
+ * @param hook
+ */
 export function registerHook(hook: HookHandler,): void {
   registeredHooks.push(hook,);
 }
 
+/** */
 export function clearHooks(): void {
   registeredHooks.length = 0;
 }
 
+/** */
 export function getRegisteredHooks(): readonly HookHandler[] {
   return registeredHooks;
 }
 
+/**
+ * @param options
+ */
 export async function runHookChain(options: HookChainOptions,): Promise<HookChainResult> {
   const log = getLogger();
   const results: HookResult[] = [];

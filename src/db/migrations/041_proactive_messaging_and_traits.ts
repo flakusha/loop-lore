@@ -13,6 +13,9 @@
  */
 import type { Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // ── Proactive Messaging Config ────────────────────────────
   await db.schema
@@ -80,6 +83,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropTable("character_internal_traits",).execute();
   await db.schema.dropTable("proactive_messaging_config",).execute();

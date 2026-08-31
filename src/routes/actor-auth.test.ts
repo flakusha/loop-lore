@@ -34,6 +34,9 @@ describe("requireUserId", () => {
 });
 
 describe("checkActorOwnership", () => {
+  /**
+   * @param db
+   */
   async function seedActor(db: Awaited<ReturnType<typeof createTestDb>>["db"],) {
     await insertUsers(db, "user1", "User 1", { id: "user-1", } as never,);
     await insertActors(db, "Alice", { id: "actor-1", owner_id: "user-1", } as never,);

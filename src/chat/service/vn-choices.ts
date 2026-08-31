@@ -15,6 +15,7 @@ import type { ServiceError, } from "./types";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
+/** */
 export interface VnChoice {
   id: string;
   chat_id: string;
@@ -30,18 +31,22 @@ export interface VnChoice {
   created_at: string;
 }
 
+/** */
 export interface ListVnChoicesParams {
   chatId: string;
   sceneIndex: number;
 }
 
+/** */
 export type ListVnChoicesResult = ServiceError | { ok: true; choices: VnChoice[] };
 
+/** */
 export interface SelectVnChoiceParams {
   chatId: string;
   choiceId: string;
 }
 
+/** */
 export interface SelectVnChoiceSuccess {
   ok: true;
   choice: VnChoice;
@@ -49,10 +54,26 @@ export interface SelectVnChoiceSuccess {
   locationId?: string;
 }
 
+/** */
 export type SelectVnChoiceResult = SelectVnChoiceSuccess | ServiceError;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
+/**
+ * @param raw
+ * @param raw.id
+ * @param raw.chat_id
+ * @param raw.scene_index
+ * @param raw.label
+ * @param raw.description
+ * @param raw.consequences
+ * @param raw.relationship_impact
+ * @param raw.mood_impact
+ * @param raw.unlock_conditions
+ * @param raw.status
+ * @param raw.selected_at
+ * @param raw.created_at
+ */
 function parseVnChoice(raw: {
   id: string;
   chat_id: string;
@@ -93,6 +114,8 @@ function parseVnChoice(raw: {
 /**
  * List available VN choices for a given chat and scene index.
  * Returns only "available" (not yet selected) choices.
+ * @param database
+ * @param params
  */
 export async function listVnChoices(
   database: Kysely<DB>,
@@ -136,6 +159,8 @@ export async function listVnChoices(
  * If the choice has a "location" consequence, the `locationId` field in the
  * result can be used to trigger a location change (the caller handles the
  * `PUT /api/chats/:id/location` call).
+ * @param database
+ * @param params
  */
 export async function selectVnChoice(
   database: Kysely<DB>,

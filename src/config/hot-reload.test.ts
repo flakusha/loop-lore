@@ -80,6 +80,7 @@ describeOrSkip("Domain Config Hot-Reload", () => {
   // are registered before the import resolves. The dynamic import is the
   // standard bun:test seam for module-mock boundaries; the path is a literal
   // known at author time, not runtime-selected.
+  /** */
   async function loadModule(): Promise<typeof import("./hot-reload")> {
     return await import("./hot-reload");
   }

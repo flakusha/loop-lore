@@ -33,7 +33,12 @@ import {
   updateRecipeBody,
 } from "./recipes-schemas";
 
-/** Resolve the world's owner; returns a denial Response or null when allowed. */
+/**
+ * Resolve the world's owner; returns a denial Response or null when allowed.
+ * @param db
+ * @param worldId
+ * @param userId
+ */
 async function resolveWorldOwner(
   db: Kysely<DB>,
   worldId: string,
@@ -49,6 +54,11 @@ async function resolveWorldOwner(
   return null;
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function craftingRecipeRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new RecipesService(database,);
   return new Elysia({ name: "crafting-recipes", },)

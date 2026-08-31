@@ -5,6 +5,9 @@ import type { VnTemplate, } from "../template-engine";
 import { DIALOGUE_TEMPLATES, } from "./dialogue-templates";
 import { SCENE_TEMPLATES, } from "./scene-templates";
 
+/**
+ * @param query
+ */
 export function searchTemplates(query: string,): VnTemplate[] {
   const lower = query.toLowerCase();
   const results: VnTemplate[] = [];

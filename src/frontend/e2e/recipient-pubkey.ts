@@ -23,6 +23,7 @@ function apiBase(): string {
  * Fetch the active ECDH public key for an actor.
  * Returns null if the actor has no active key (404 from the route).
  * Throws on other network / parse errors.
+ * @param actorId
  */
 export async function fetchRecipientPublicKey(actorId: string,): Promise<JsonWebKey | null> {
   const url = `${apiBase()}/api/actors/${encodeURIComponent(actorId,)}/e2e-public-key`;

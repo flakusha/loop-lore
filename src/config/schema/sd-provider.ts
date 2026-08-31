@@ -12,7 +12,6 @@ import type { ImageProviderConfig, } from "./providers";
  * 1. Find providers matching `purpose` (or "both")
  * 2. Among matches, prefer exact purpose match over "both"
  * 3. Fall back to first provider in array
- *
  * @param providers - Array of SD provider configs (may be undefined)
  * @param purpose - What the provider will be used for
  * @returns Best matching provider, or undefined if none configured

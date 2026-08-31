@@ -19,6 +19,7 @@ export const GenerationStatus = {
   Failed: "failed",
   Cancelled: "cancelled",
 } as const;
+/** */
 export type GenerationStatus = (typeof GenerationStatus)[keyof typeof GenerationStatus];
 
 // ── State Machine ──────────────────────────────────────────
@@ -48,6 +49,7 @@ export const CancelReason = {
   Timeout: "timeout",
   Error: "error",
 } as const;
+/** */
 export type CancelReason = (typeof CancelReason)[keyof typeof CancelReason];
 
 export const CancelSource = {
@@ -58,6 +60,7 @@ export const CancelSource = {
   ChatSwitch: "chat_switch",
   System: "system",
 } as const;
+/** */
 export type CancelSource = (typeof CancelSource)[keyof typeof CancelSource];
 
 // ── Streaming Chunk Pipeline ──────────────────────────────
@@ -68,4 +71,5 @@ export const ChunkAction = {
   CancelResponseLimit: "cancel_response_limit",
   Complete: "complete",
 } as const;
+/** */
 export type ChunkAction = (typeof ChunkAction)[keyof typeof ChunkAction];

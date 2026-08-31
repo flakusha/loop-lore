@@ -12,11 +12,15 @@ export const DATABASE_DEFAULTS = {
   sqliteFilename: `${DATA_DIR}/loop-lore.db`,
 } satisfies DatabaseConfig;
 
+/** */
 export class DatabaseSection implements DatabaseConfig {
   type = DATABASE_DEFAULTS.type;
   sqliteFilename = DATABASE_DEFAULTS.sqliteFilename;
   url?: string;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<DatabaseConfig>,) {
     Object.assign(this, overrides,);
   }

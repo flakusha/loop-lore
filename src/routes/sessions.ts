@@ -21,6 +21,7 @@ import { notFound, } from "../validation/middleware";
 import { ErrorResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, requireUserId, } from "./http-utils";
 
+/** */
 function log(): Logger {
   return getLogger().child({ module: "sessions", },);
 }
@@ -29,7 +30,18 @@ interface HandleOpts {
   database: Db;
 }
 
-/** Safe session response — strips token_hash, shows current flag */
+/**
+ * Safe session response — strips token_hash, shows current flag
+ * @param session
+ * @param session.id
+ * @param session.user_id
+ * @param session.ip
+ * @param session.user_agent
+ * @param session.created_at
+ * @param session.last_activity
+ * @param session.expires_at
+ * @param currentSessionId
+ */
 function sanitizeSession(
   session: {
     id: string;
@@ -54,6 +66,10 @@ function sanitizeSession(
   };
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
   const { database, } = opts;
 

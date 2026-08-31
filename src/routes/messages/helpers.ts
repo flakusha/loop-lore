@@ -19,7 +19,10 @@ export function log(): Logger {
   return getLogger().child({ module: "messages", },);
 }
 
-/** Convert a ServiceError into an HTTP Response */
+/**
+ * Convert a ServiceError into an HTTP Response
+ * @param error
+ */
 export function serviceErrorToResponse(error: ServiceError,): Response {
   switch (error.code) {
     case "forbidden": {
@@ -47,14 +50,21 @@ export function serviceErrorToResponse(error: ServiceError,): Response {
   }
 }
 
-/** Type guard: check if a value is a ServiceError (not a message record) */
+/**
+ * Type guard: check if a value is a ServiceError (not a message record)
+ * @param value
+ */
 export function isServiceError(
   value: Record<string, unknown> | ServiceError,
 ): value is ServiceError {
   return "code" in value && typeof (value as ServiceError).code === "string";
 }
 
-/** Resolve asset metadata for a message's stored attachment JSON payload. */
+/**
+ * Resolve asset metadata for a message's stored attachment JSON payload.
+ * @param database
+ * @param attachmentsJson
+ */
 export async function enrichAttachments(
   database: Kysely<DB>,
   attachmentsJson: string | null,
@@ -117,7 +127,10 @@ export interface ToolCallRecord {
   function: { name: string; arguments: string };
 }
 
-/** Parse a message's stored `tool_calls` JSON payload into a typed array (null when empty/invalid). */
+/**
+ * Parse a message's stored `tool_calls` JSON payload into a typed array (null when empty/invalid).
+ * @param toolCallsJson
+ */
 export function parseToolCalls(toolCallsJson: string | null | undefined,): ToolCallRecord[] | null {
   if (!toolCallsJson) { return null; }
   const parsed = safeJsonParse<ToolCallRecord[]>(toolCallsJson,);
@@ -139,6 +152,12 @@ export function parseToolCalls(toolCallsJson: string | null | undefined,): ToolC
  * Centralising this logic eliminates the three divergent inline copies that
  * previously leaked base64 gzip soup into chat history prompts and chat
  * exports whenever a message row crossed the 10KB compress threshold.
+ * @param database
+ * @param message
+ * @param message.content
+ * @param message.content_encoding
+ * @param message.key_id
+ * @param message.chat_id
  */
 export async function resolveMessageContent(
   database: Kysely<DB>,

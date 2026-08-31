@@ -16,6 +16,11 @@ const OWNER_USER = "00000000-0000-4000-8000-000000000011";
 const OTHER = "00000000-0000-4000-8000-000000000002";
 const OTHER_USER = "00000000-0000-4000-8000-000000000012";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   return new Elysia({ name: "test-mood", },)
     .derive(() => ({ userId, userRole, }))

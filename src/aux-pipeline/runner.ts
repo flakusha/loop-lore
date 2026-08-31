@@ -28,6 +28,7 @@ const DEFAULT_TEMPERATURE = 0;
 const DEFAULT_MAX_TOKENS = 100;
 const AUX_TELEMETRY_EVENT = "aux.call";
 
+/** */
 function getLog() {
   return getLogger().child({ module: "aux-pipeline", },);
 }
@@ -37,7 +38,6 @@ function getLog() {
  *
  * Resolves the model role, threads BYO apiKey (user → chat/actor → server),
  * applies a hard timeout, and records telemetry for every call.
- *
  * @param task - Name of the calling task (telemetry + logs)
  * @param config - Application config
  * @param db - Kysely instance
@@ -146,6 +146,8 @@ export async function callAux(
  * Run a promise with a hard timeout. Resolves null if the timeout wins.
  * The timer is cleared once the race settles and unref'd so it never
  * keeps the process alive.
+ * @param promise
+ * @param ms
  */
 async function withTimeout<T,>(promise: Promise<T>, ms: number,): Promise<T | null> {
   let timer: ReturnType<typeof setTimeout> | undefined;

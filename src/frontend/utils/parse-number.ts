@@ -7,11 +7,11 @@
  * precedent for safe-json). Keep the two in sync.
  */
 
+/** */
 export type NumberResult = { ok: true; value: number } | { ok: false; error: Error };
 
 /**
  * Parse a base-10 integer strictly: the whole string must be a valid integer.
- *
  * @param text - Raw input to parse.
  * @returns `{ ok: true, value }` or `{ ok: false, error }`.
  */
@@ -26,7 +26,6 @@ export function safeParseInt(text: string,): NumberResult {
 
 /**
  * Parse a float strictly: the whole string must be a valid finite number.
- *
  * @param text - Raw input to parse.
  * @returns `{ ok: true, value }` or `{ ok: false, error }`.
  */
@@ -41,7 +40,6 @@ export function safeParseFloat(text: string,): NumberResult {
 
 /**
  * Parse a base-10 integer, falling back on invalid input.
- *
  * @param text - Raw input to parse.
  * @param fallback - Value returned when parsing fails.
  * @returns Parsed integer or `fallback`.
@@ -53,7 +51,6 @@ export function parseIntOr(text: string, fallback: number,): number {
 
 /**
  * Parse a float, falling back on invalid input.
- *
  * @param text - Raw input to parse.
  * @param fallback - Value returned when parsing fails.
  * @returns Parsed finite number or `fallback`.

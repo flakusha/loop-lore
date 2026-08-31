@@ -9,6 +9,7 @@ import { HttpStatus, } from "./status";
 /**
  * Parse request body: JSON or form-encoded.
  * Returns typed body on success, error Response on parse failure.
+ * @param request
  */
 export async function parseBody<T = Record<string, unknown>,>(request: Request,): Promise<T | Response> {
   const ct = request.headers.get("content-type",) ?? "";
@@ -30,6 +31,7 @@ export async function parseBody<T = Record<string, unknown>,>(request: Request,)
  * Extract pagination params from URLSearchParams.
  * Defaults: page=1, pageSize=50 (capped at 200).
  * Clamps to safe ranges: page >= 1, pageSize 1..200.
+ * @param searchParams
  */
 export function parsePagination(searchParams: URLSearchParams,): { page: number; pageSize: number } {
   const rawPage = Number(searchParams.get("page",) ?? "1",);
@@ -41,12 +43,20 @@ export function parsePagination(searchParams: URLSearchParams,): { page: number;
 
 // ── Body field helpers ───────────────────────────────────────
 
-/** Cast body field as string | undefined */
+/**
+ * Cast body field as string | undefined
+ * @param body
+ * @param key
+ */
 export function str(body: Record<string, unknown>, key: string,): string | undefined {
   return body[key] as string | undefined;
 }
 
-/** Cast body field as number | undefined */
+/**
+ * Cast body field as number | undefined
+ * @param body
+ * @param key
+ */
 export function num(body: Record<string, unknown>, key: string,): number | undefined {
   return body[key] as number | undefined;
 }

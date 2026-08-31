@@ -28,7 +28,7 @@ import type {
 /** Public API type — merged with the factory value below. */
 // The empty interface is intentional: it merges the factory value with a
 // same-named type so one name is both API type and constructor.
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+
 export interface CharacterWorldSetupService extends CharacterWorldSetupServiceIface {}
 
 export type {
@@ -42,7 +42,6 @@ export type {
 
 /**
  * Create a CharacterWorldSetupService instance.
- *
  * @param db - The database handle
  * @returns A service bound to the given database
  */

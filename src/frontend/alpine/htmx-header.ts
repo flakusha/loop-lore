@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/** */
 export function normalizeHeaderSlot() {
   const all = Array.from(document.querySelectorAll<HTMLElement>("#header-slot",),);
   const appRoot = document.querySelector<HTMLElement>("#app-root",);
@@ -28,7 +29,11 @@ export function normalizeHeaderSlot() {
   }
 }
 
-/** Pick the header slot with the most content, preferring in-app ones. */
+/**
+ * Pick the header slot with the most content, preferring in-app ones.
+ * @param slots
+ * @param appRoot
+ */
 function selectNewestSlot(slots: HTMLElement[], appRoot: HTMLElement,): HTMLElement | null {
   let newest: HTMLElement | null = null;
   for (const h of slots) {

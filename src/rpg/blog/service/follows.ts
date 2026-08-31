@@ -6,6 +6,11 @@ import { uid, } from "../../../utils.js";
 import type { BlogFollowRow, } from "./types";
 
 // ── Follows ──────────────────────────────────────────
+/**
+ * @param db
+ * @param followerId
+ * @param authorId
+ */
 export async function follow(
   db: Kysely<any>,
   followerId: string,
@@ -22,6 +27,11 @@ export async function follow(
   return follow;
 }
 
+/**
+ * @param db
+ * @param followerId
+ * @param authorId
+ */
 export async function unfollow(
   db: Kysely<any>,
   followerId: string,
@@ -35,6 +45,10 @@ export async function unfollow(
   return Number(result?.numDeletedRows ?? 0,) > 0;
 }
 
+/**
+ * @param db
+ * @param authorId
+ */
 export async function getFollowers(
   db: Kysely<any>,
   authorId: string,
@@ -47,6 +61,11 @@ export async function getFollowers(
   return Array.from(rows, (r: any,) => r.follower_id as string,);
 }
 
+/**
+ * @param db
+ * @param followerId
+ * @param authorId
+ */
 export async function isFollowing(
   db: Kysely<any>,
   followerId: string,
@@ -61,6 +80,11 @@ export async function isFollowing(
   return !!row;
 }
 
+/**
+ * @param db
+ * @param followerId
+ * @param authorId
+ */
 export async function getFollowStatus(
   db: Kysely<any>,
   followerId: string,

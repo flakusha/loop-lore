@@ -12,6 +12,8 @@ import { questWorldRoutes, } from "./world";
  * Quest route module — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`quests`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
+ * @param root0
+ * @param root0.database
  */
 export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
   return new Elysia({ name: "quests", },)

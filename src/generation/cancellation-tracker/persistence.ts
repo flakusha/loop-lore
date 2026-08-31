@@ -9,7 +9,13 @@ import type { UpdateAttemptStatusOpts, } from "./types";
 
 // ── DB helpers ─────────────────────────────────────────────
 
-/** @internal — exported for lifecycle/step-pipeline */
+/**
+ * @param db
+ * @param options
+ * @param attemptId
+ * @param abortSignalId
+ * @internal
+ */
 export async function insertAttempt(
   db: Kysely<DB>,
   options: GenerationOptions,
@@ -53,7 +59,14 @@ export async function insertAttempt(
     .execute();
 }
 
-/** @internal — exported for step-pipeline.ts */
+/**
+ * @param root0
+ * @param root0.db
+ * @param root0.attemptId
+ * @param root0.status
+ * @param root0.extra
+ * @internal
+ */
 export async function updateAttemptStatus({
   db,
   attemptId,

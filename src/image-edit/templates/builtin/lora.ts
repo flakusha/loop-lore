@@ -4,7 +4,10 @@
 import type { ComfyUIWorkflow, } from "../../../generation/providers/comfyui";
 import type { LoraEntry, } from "../../types";
 
-/** Parse LoRA entries from comma-separated string: "path:strength,path:strength" */
+/**
+ * Parse LoRA entries from comma-separated string: "path:strength,path:strength"
+ * @param loraStr
+ */
 export function parseLoraString(loraStr: string,): LoraEntry[] {
   const entries: LoraEntry[] = [];
   if (!loraStr.trim()) { return entries; }
@@ -30,6 +33,9 @@ export function parseLoraString(loraStr: string,): LoraEntry[] {
  * Build ComfyUI LORA nodes from a list of LoraEntry objects.
  * Returns workflow nodes and the final model/clip output refs
  * after all LORAs have been applied.
+ * @param loras
+ * @param startModelRef
+ * @param startClipRef
  */
 export function buildLoraNodes(
   loras: LoraEntry[],

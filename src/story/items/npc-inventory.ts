@@ -12,7 +12,11 @@
 import { jsonParseOr, } from "../../utils";
 import type { ItemInstance, ItemState, } from "./types";
 
-/** Get items carried by an NPC */
+/**
+ * Get items carried by an NPC
+ * @param state
+ * @param actorId
+ */
 export async function getNpcInventory(state: ItemState, actorId: string,): Promise<ItemInstance[]> {
   const rows = await state.db
     .selectFrom("world_items",)

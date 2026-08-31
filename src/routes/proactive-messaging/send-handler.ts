@@ -27,6 +27,8 @@ import type { ProactiveRouteOpts, } from "./schemas";
  * Returns 409 when `checkShouldMessage` says it's not time yet (so the
  * client can react differently from a hard error). Returns 200 with
  * `{ triggered: true }` after the auto-gen + notification fan-out.
+ * @param opts
+ * @param ctx
  */
 export async function sendProactiveHandler(
   opts: ProactiveRouteOpts,
