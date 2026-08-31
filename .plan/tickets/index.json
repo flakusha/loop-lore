@@ -3337,6 +3337,19 @@
     "source": ".plan/tickets/BUG-vn-choices-idor-guard-non-compiling.md",
     "status": "fixed-in-worktree"
   },
+  "BUG-WORKTREE-TICKET-WRITES-PLAN-FILES-TO-MAIN-CHECKOUT": {
+    "hash": "ab13e3c",
+    "git_issue": "ab13e3c",
+    "extid": "BUG-WORKTREE-TICKET-WRITES-PLAN-FILES-TO-MAIN-CHECKOUT",
+    "type": "BUG",
+    "title": "Worktree ticket writes plan files to main checkout",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-worktree-ticket-writes-plan-files-to-main-checkout.md",
+    "status": "done"
+  },
   "BUG-WORLD-BUNDLE-IMPORT-UNTRANSACTED-PARTIAL-IMPORT-CORRUPTS-WOR": {
     "hash": "ca69118",
     "extid": "BUG-WORLD-BUNDLE-IMPORT-UNTRANSACTED-PARTIAL-IMPORT-CORRUPTS-WOR",
@@ -5437,6 +5450,18 @@
     "epic": "epic-i18n",
     "tags": [],
     "source": ".plan/tickets/FEAT-unified-date-representation-util-locale-region-iana-timezone.md"
+  },
+  "FEAT-WORKTREE-COMMIT-COMMANDS-LACK-MESSAGE-FILE-INPUT": {
+    "hash": "e195260",
+    "git_issue": "e195260",
+    "extid": "FEAT-WORKTREE-COMMIT-COMMANDS-LACK-MESSAGE-FILE-INPUT",
+    "type": "FEAT",
+    "title": "Worktree commit commands lack message file input",
+    "label": "feat",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-worktree-commit-commands-lack-message-file-input.md"
   },
   "FEAT-WORLD-LOCATIONS": {
     "hash": "0144015",
@@ -9254,6 +9279,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-character-personality-integrity.md"
   },
+  "TASK-CHARACTER-PERSPECTIVE-MEMORY-SUMMARIES": {
+    "hash": "02af951",
+    "git_issue": "02af951",
+    "extid": "TASK-CHARACTER-PERSPECTIVE-MEMORY-SUMMARIES",
+    "type": "TASK",
+    "title": "Character perspective memory summaries",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-perspective-memory-summaries.md"
+  },
   "TASK-CHARACTER-RELATIONSHIPS": {
     "hash": "71a3535",
     "extid": "TASK-CHARACTER-RELATIONSHIPS",
@@ -10744,6 +10781,18 @@
     "epic": "epic-deno-support",
     "tags": [],
     "source": ".plan/tickets/TASK-deno-support.md"
+  },
+  "TASK-DEPICT-STYLE-STATE-TO-IMAGE-SCENE-COMPILER": {
+    "hash": "b3edffe",
+    "git_issue": "b3edffe",
+    "extid": "TASK-DEPICT-STYLE-STATE-TO-IMAGE-SCENE-COMPILER",
+    "type": "TASK",
+    "title": "Depict-style state to image scene compiler",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-visual-novel-mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-depict-style-state-to-image-scene-compiler.md"
   },
   "TASK-DEPLOYMENT-TOPOLOGIES": {
     "hash": "d8edd5a",
@@ -12905,6 +12954,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-inner-monologue.md"
   },
+  "TASK-INPUT-HARDENING-BATCH": {
+    "hash": "pending",
+    "extid": "TASK-INPUT-HARDENING-BATCH",
+    "type": "TASK",
+    "title": "Input-handling hardening batch (2026-08-25 security wave)",
+    "label": "task",
+    "priority": "medium-high (HIGH-adjacent ReDoS in `b465b08`)",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-input-hardening-batch.md"
+  },
   "TASK-INPUT-VALIDATION-BATTLE-SCHEMA-LESS-POST-EMOTION-AVATARS-PAR": {
     "hash": "9f6b799",
     "extid": "TASK-INPUT-VALIDATION-BATTLE-SCHEMA-LESS-POST-EMOTION-AVATARS-PAR",
@@ -13911,6 +13971,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-mobile-touch-gestures.md",
     "git_issue": "b442367"
+  },
+  "TASK-MODEL-AGNOSTIC-ASSET-REPRESENTATION": {
+    "hash": "d031edc",
+    "git_issue": "d031edc",
+    "extid": "TASK-MODEL-AGNOSTIC-ASSET-REPRESENTATION",
+    "type": "TASK",
+    "title": "Model agnostic asset representation",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-multimodal-asset-reuse",
+    "tags": [],
+    "source": ".plan/tickets/TASK-model-agnostic-asset-representation.md"
   },
   "TASK-MODEL-COMPARISON-REACTIONS": {
     "hash": "2bd26a0",
@@ -15416,6 +15488,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-plugin-system.md",
     "git_issue": "7e5f50b"
+  },
+  "TASK-PORTABLE-STORY-BUNDLE-EXPORT-IMPORT": {
+    "hash": "3c68e93",
+    "git_issue": "3c68e93",
+    "extid": "TASK-PORTABLE-STORY-BUNDLE-EXPORT-IMPORT",
+    "type": "TASK",
+    "title": "Portable story bundle export import",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-import-export-io",
+    "tags": [],
+    "source": ".plan/tickets/TASK-portable-story-bundle-export-import.md"
   },
   "TASK-PRECOMPILED-HOT-BINARIES": {
     "hash": "b84e8d8",
@@ -17358,6 +17442,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-stealth-crime.md"
   },
+  "TASK-STOP-AND-RESPOND-INTERRUPT-SEMANTICS": {
+    "hash": "6cc04ad",
+    "git_issue": "6cc04ad",
+    "extid": "TASK-STOP-AND-RESPOND-INTERRUPT-SEMANTICS",
+    "type": "TASK",
+    "title": "Stop and respond interrupt semantics",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-generation-flow-control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-stop-and-respond-interrupt-semantics.md"
+  },
   "TASK-STORY-ALPINE": {
     "hash": "871b352",
     "extid": "TASK-STORY-ALPINE",
@@ -17722,6 +17818,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-text-effects-overlays.md"
   },
+  "TASK-TEXT-TO-VISUAL-NOVEL-IMPORTER": {
+    "hash": "74b22f4",
+    "git_issue": "74b22f4",
+    "extid": "TASK-TEXT-TO-VISUAL-NOVEL-IMPORTER",
+    "type": "TASK",
+    "title": "Text to visual novel importer",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-visual-novel-mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-text-to-visual-novel-importer.md"
+  },
   "TASK-THINKING-TAG-CONTEXT-PRUNE": {
     "hash": "d02e61f",
     "extid": "TASK-THINKING-TAG-CONTEXT-PRUNE",
@@ -18061,6 +18169,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-two-factor-multi-factor-auth.md",
     "git_issue": "83fdcea"
+  },
+  "TASK-TWO-TIER-CUSTOM-INSTRUCTIONS": {
+    "hash": "0040c75",
+    "git_issue": "0040c75",
+    "extid": "TASK-TWO-TIER-CUSTOM-INSTRUCTIONS",
+    "type": "TASK",
+    "title": "Two tier custom instructions",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-assistant-generation-extensions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-two-tier-custom-instructions.md"
   },
   "TASK-TYPESCRIPT-MJS-RECONCILIATION": {
     "hash": "728c3ff",
