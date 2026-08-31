@@ -35,6 +35,7 @@ export interface AgeGateAcceptInput {
 
 // ── Error types ──────────────────────────────────────────────
 
+/** Base error for age-gate validation failures. */
 export class AgeGateError extends Error {
   constructor(message: string, options?: ErrorOptions,) {
     super(message, options,);
@@ -42,6 +43,7 @@ export class AgeGateError extends Error {
   }
 }
 
+/** Error raised when user is underage. */
 export class UnderageError extends AgeGateError {
   constructor(minimumAge: number, options?: ErrorOptions,) {
     const message = `You must be at least ${minimumAge} years old to use this service.`;
@@ -52,6 +54,7 @@ export class UnderageError extends AgeGateError {
 
 // ── Options objects ──────────────────────────────────────────
 
+/** Options for acceptAgeGate. */
 export interface AcceptAgeGateOpts {
   database: Kysely<DB>;
   config: AgeGateConfig;
@@ -66,6 +69,9 @@ export interface AcceptAgeGateOpts {
  *
  * When age gate is disabled (`enabled=false` or `mode="none"`),
  * returns `{ isEnabled: false, hasPassed: true }` — no gating at all.
+ * @param config - Age-gate configuration.
+ * @param user - User record with birth_date and age_gate_accepted_at.
+ * @returns Current age-gate status.
  */
 export function getStatus(
   config: AgeGateConfig,
