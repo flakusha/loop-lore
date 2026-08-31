@@ -6,7 +6,6 @@
  *
  * Unified LoRA discovery across multiple backends (sd.cpp, ComfyUI).
  * Provides caching and error handling for production use.
- *
  * @module generation/lora/discovery
  */
 
@@ -31,12 +30,12 @@ const DEFAULT_CACHE_TTL_MS = 5 * 60 * 1000;
 
 /**
  * Discover LoRA models from a specific backend.
- *
  * @param backend - Backend to query ("comfyui" | "sd-server")
  * @param baseUrl - Backend server base URL
  * @param options - Discovery options
+ * @param options.timeoutMs
+ * @param options.forceRefresh
  * @returns Discovery result with available LoRA models
- *
  * @example
  * ```ts
  * const result = await discoverLoras("comfyui", "http://localhost:8188");
@@ -97,11 +96,11 @@ export async function discoverLoras(
 
 /**
  * Discover LoRA models from all configured backends.
- *
  * @param backends - Array of backend configurations
  * @param options - Discovery options
+ * @param options.timeoutMs
+ * @param options.forceRefresh
  * @returns Combined discovery results
- *
  * @example
  * ```ts
  * const results = await discoverAllLoras([
@@ -131,7 +130,6 @@ export async function discoverAllLoras(
 
 /**
  * Get all cached LoRA models across all backends.
- *
  * @returns Array of cached LoRA models
  */
 export function getCachedLoras(): LoRAModel[] {
@@ -149,7 +147,6 @@ export function getCachedLoras(): LoRAModel[] {
 
 /**
  * Clear the LoRA discovery cache.
- *
  * @param backend - Optional backend to clear (clears all if omitted)
  */
 export function clearDiscoveryCache(backend?: "comfyui" | "sd-server",): void {
@@ -166,7 +163,6 @@ export function clearDiscoveryCache(backend?: "comfyui" | "sd-server",): void {
 
 /**
  * Get cache status for debugging.
- *
  * @returns Cache entry count and expiration info
  */
 export function getCacheStatus(): { entries: number; nextExpiration: number | null } {

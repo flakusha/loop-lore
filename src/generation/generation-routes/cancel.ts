@@ -9,6 +9,9 @@ import { cancelGenerationByChat, listActiveGenerations, } from "../cancellation-
 
 // ── Route: Cancel generation (validator) ───────────────────
 
+/**
+ * @param body
+ */
 function validateCancel(
   body: unknown,
 ): { chatId?: string; attemptId?: string; reason?: string; source?: string; detail?: string } | null {
@@ -37,6 +40,8 @@ function validateCancel(
  *   { chatId: string }               — cancel by chat
  *   { attemptId: string }            — cancel by attempt ID
  *   { reason?: string, source?: string, detail?: string }
+ * @param body
+ * @param database
  */
 export function handleCancelGeneration(body: unknown, database: Kysely<DB>,): Response {
   const db = database;

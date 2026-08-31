@@ -18,6 +18,7 @@ import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import type { GenDeps, } from "./deps";
 import { renderStreamMessage, } from "./stream-render";
 
+/** */
 export interface PostStoreOpts {
   d: GenDeps;
   database: Kysely<DB>;
@@ -51,6 +52,7 @@ export interface PostStoreOpts {
 
 /**
  * Apply post-store effects and finish the generation attempt.
+ * @param opts
  */
 export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void> {
   const {

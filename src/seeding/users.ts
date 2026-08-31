@@ -21,7 +21,10 @@ import { getLogger, type Logger, } from "../logger";
 import { isValidRole, } from "../users/roles";
 import { safeJsonStringify, uid, } from "../utils";
 
-/** Resolve "${ENV_VAR}" references in a password string. */
+/**
+ * Resolve "${ENV_VAR}" references in a password string.
+ * @param value
+ */
 export function resolvePasswordReference(value: string,): string {
   const match = /^\$\{([A-Za-z_]\w*)\}$/.exec(value.trim(),);
   if (!match) { return value; }
@@ -43,7 +46,6 @@ export function resolvePasswordReference(value: string,): string {
  * Idempotent per-username: existing usernames are skipped. Only runs when
  * config.seeding.enabled is true and auth is required (multi-user mode);
  * solo mode always uses its own demo user and ignores seeding config.
- *
  * @param database - Kysely instance
  * @param config - Resolved app config
  * @returns number of users created (0 when skipped or all existed)
@@ -69,7 +71,12 @@ export async function seedConfiguredUsers(
   return created;
 }
 
-/** Seed one user if it does not already exist. Returns the user id or null. */
+/**
+ * Seed one user if it does not already exist. Returns the user id or null.
+ * @param database
+ * @param seedUser
+ * @param log
+ */
 async function seedSingleUser(
   database: Kysely<DB>,
   seedUser: SeedUserConfig,

@@ -3,6 +3,7 @@
 
 import type { CraftingDiscipline, CraftingStationType, QualityLevel, } from "../../../db/enums";
 
+/** */
 export interface CreateRecipeOpts {
   worldId: string;
   name: string;
@@ -23,6 +24,7 @@ export interface CreateRecipeOpts {
   materials: CreateRecipeMaterialOpts[];
 }
 
+/** */
 export interface CreateRecipeMaterialOpts {
   itemId: string;
   quantity: number;
@@ -32,6 +34,7 @@ export interface CreateRecipeMaterialOpts {
   sortOrder?: number;
 }
 
+/** */
 export interface UpdateRecipeOpts {
   name?: string;
   description?: string;
@@ -50,6 +53,7 @@ export interface UpdateRecipeOpts {
   tags?: string[];
 }
 
+/** */
 export interface RecipeWithMaterials {
   id: string;
   worldId: string;
@@ -73,6 +77,7 @@ export interface RecipeWithMaterials {
   updatedAt: string;
 }
 
+/** */
 export interface RecipeMaterialRow {
   id: string;
   recipeId: string;

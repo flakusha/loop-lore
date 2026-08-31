@@ -12,11 +12,15 @@ export const AGE_GATE_DEFAULTS = {
   mode: AgeGateMode.SelfDeclaration,
 } satisfies AgeGateConfig;
 
+/** */
 export class AgeGateSection implements AgeGateConfig {
   enabled = AGE_GATE_DEFAULTS.enabled;
   minimumAge = AGE_GATE_DEFAULTS.minimumAge;
   mode = AGE_GATE_DEFAULTS.mode;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<AgeGateConfig>,) {
     Object.assign(this, overrides,);
   }

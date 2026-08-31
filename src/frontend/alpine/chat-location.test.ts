@@ -24,10 +24,15 @@ mock.module("./htmx", () => ({
   },
 }),);
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url, _opts,) => Response.json(body, { status, },);
 }
 
+/** */
 function mockFetchNetworkError() {
   fetchHandler = () => {
     throw new Error("network",);
@@ -49,6 +54,7 @@ interface LocationTestContext {
  * `chatLocation` methods (including private helpers such as
  * `_emitLocationChanged`, which other methods call via `this`) are spread
  * in; data props and mocks override their defaults.
+ * @param overrides
  */
 function buildCtx(
   overrides: Partial<{
@@ -200,9 +206,9 @@ describe("chatLocation", () => {
     test("joins and refreshes the location-scoped list", async () => {
       const { state, } = buildCtx({ _selectedLocationId: "loc-2", },);
       await chatLocation.joinLocationChat!.call(state, "c1",);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       expect(state.joinChat,).toHaveBeenCalledWith("c1",);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       expect(state.loadLocationJoinable,).toHaveBeenCalled();
     });
   });

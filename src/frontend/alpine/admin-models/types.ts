@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/** */
 export interface ProviderInfo {
   name: string;
   label: string;
@@ -20,12 +21,14 @@ export interface ProviderInfo {
   error?: string;
 }
 
+/** */
 export interface ModelRolesResponse {
   roles: { role: string; provider: string; model: string; source: string }[];
   overrides: Record<string, { provider: string; model: string; temperature: number | null; maxTokens: number | null }>;
   validRoles: string[];
 }
 
+/** */
 export interface PluginInfo {
   name: string;
   version: string;
@@ -36,6 +39,7 @@ export interface PluginInfo {
   routeCount: number;
 }
 
+/** */
 export interface ModelInfo {
   id: string;
   ownedBy?: string;
@@ -48,6 +52,7 @@ export interface ModelInfo {
   raw?: Record<string, unknown>;
 }
 
+/** */
 export interface ModelCapabilityEntry {
   providerId: string;
   modelId: string;
@@ -78,6 +83,7 @@ export interface FineTuneCandidate {
   ownedBy: string | null;
 }
 
+/** */
 export interface ModelsState {
   providers: ProviderInfo[];
   providerModels: Record<string, ModelInfo[]>;

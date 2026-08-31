@@ -17,7 +17,6 @@
  *
  * The hook clones the response before reading its body so the client-facing
  * stream is not consumed.
- *
  * @see TASK-async-store-complete-fail-lifecycle-hooks.md
  * @see epic-middleware-request-lifecycle.md
  */
@@ -38,7 +37,10 @@ const HEADER_BLOCKLIST = new Set([
   "date",
 ],);
 
-/** Capture a snapshot of the response for the result row. */
+/**
+ * Capture a snapshot of the response for the result row.
+ * @param response
+ */
 async function capture(response: Response,): Promise<CapturedResponse> {
   const headers: Record<string, string> = {};
   response.headers.forEach((value, name,) => {
@@ -51,7 +53,6 @@ async function capture(response: Response,): Promise<CapturedResponse> {
 
 /**
  * Build the lifecycle afterHandle hook bound to a concrete store.
- *
  * @param asyncStore - The async request-result store written to on completion.
  */
 export function recordLifecycle(asyncStore: AsyncStore,) {

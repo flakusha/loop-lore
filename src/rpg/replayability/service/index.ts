@@ -48,10 +48,14 @@ export { EndingType, PlusDifficulty, } from "./types";
 
 /** Replayability Service */
 export class ReplayabilityService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
    * Start a new playthrough
+   * @param input
    */
   async startPlaythrough(input: CreatePlaythroughInput,): Promise<Playthrough> {
     return startPlaythroughDispatch(this.db, input,);
@@ -59,6 +63,7 @@ export class ReplayabilityService {
 
   /**
    * Get playthrough by ID
+   * @param playthroughId
    */
   async getPlaythrough(playthroughId: string,): Promise<Playthrough | null> {
     return getPlaythroughDispatch(this.db, playthroughId,);
@@ -66,6 +71,8 @@ export class ReplayabilityService {
 
   /**
    * Get all playthroughs for a player
+   * @param playerId
+   * @param worldId
    */
   async getPlayerPlaythroughs(playerId: string, worldId?: string,): Promise<Playthrough[]> {
     return getPlayerPlaythroughsDispatch(this.db, playerId, worldId,);
@@ -73,6 +80,10 @@ export class ReplayabilityService {
 
   /**
    * Complete a playthrough with an ending
+   * @param playthroughId
+   * @param endingId
+   * @param endingType
+   * @param completionTime
    */
   async completePlaythrough(
     playthroughId: string,
@@ -85,6 +96,7 @@ export class ReplayabilityService {
 
   /**
    * Start new game plus
+   * @param input
    */
   async startNewGamePlus(input: NewGamePlusInput,): Promise<Playthrough> {
     return startNewGamePlusDispatch(this.db, input,);
@@ -92,6 +104,7 @@ export class ReplayabilityService {
 
   /**
    * Record a choice made during playthrough
+   * @param playthroughId
    */
   async recordChoice(playthroughId: string,): Promise<void> {
     return recordChoiceDispatch(this.db, playthroughId,);
@@ -99,6 +112,8 @@ export class ReplayabilityService {
 
   /**
    * Record a secret found during playthrough
+   * @param playthroughId
+   * @param secretId
    */
   async recordSecretFound(playthroughId: string, secretId: string,): Promise<void> {
     return recordSecretFoundDispatch(this.db, playthroughId, secretId,);
@@ -106,6 +121,7 @@ export class ReplayabilityService {
 
   /**
    * Get meta-progression for a player
+   * @param playerId
    */
   async getMetaProgression(playerId: string,): Promise<MetaProgression> {
     return getMetaProgressionDispatch(this.db, playerId,);

@@ -20,17 +20,30 @@ import {
 } from "./prefs";
 import type { NotificationInput, NotificationPreferences, NotificationRecord, } from "./types";
 
+/** */
 export class NotificationService {
   private readonly log = getLogger().child({ module: "notifications", },);
 
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
-  /** Read the user's notification preferences, merging over defaults. */
+  /**
+   * Read the user's notification preferences, merging over defaults.
+   * @param userId
+   */
   async getPrefs(userId: string,): Promise<NotificationPreferences> {
     return getPrefsDispatch(this.db, userId,);
   }
 
-  /** Merge and persist the user's notification preferences. */
+  /**
+   * Merge and persist the user's notification preferences.
+   * @param userId
+   * @param patch
+   * @param patch.enabled
+   * @param patch.mutedWorlds
+   */
   async setPrefs(
     userId: string,
     patch: { enabled?: Partial<Record<NotificationType, boolean>>; mutedWorlds?: string[] },
@@ -41,12 +54,16 @@ export class NotificationService {
   /**
    * Create a notification, skipping when the type is disabled for the user or
    * when the linked world is muted.
+   * @param input
    */
   async create(input: NotificationInput,): Promise<void> {
     return createNotification(this.db, input,);
   }
 
-  /** Fire-and-forget variant: logs and drops on failure. */
+  /**
+   * Fire-and-forget variant: logs and drops on failure.
+   * @param input
+   */
   emit(input: NotificationInput,): void {
     void this.create(input,).catch((error,) => {
       this.log.warn(
@@ -56,27 +73,45 @@ export class NotificationService {
     },);
   }
 
-  /** Newest-first list, optionally unread only. */
+  /**
+   * Newest-first list, optionally unread only.
+   * @param userId
+   * @param unreadOnly
+   */
   async list(userId: string, unreadOnly = false,): Promise<NotificationRecord[]> {
     return listNotifications(this.db, userId, unreadOnly,);
   }
 
-  /** Count of unread notifications for a user. */
+  /**
+   * Count of unread notifications for a user.
+   * @param userId
+   */
   async getUnreadCount(userId: string,): Promise<number> {
     return getUnreadCount(this.db, userId,);
   }
 
-  /** Mark a single notification read (ownership-checked). */
+  /**
+   * Mark a single notification read (ownership-checked).
+   * @param id
+   * @param userId
+   */
   async markRead(id: string, userId: string,): Promise<void> {
     return markNotificationRead(this.db, id, userId,);
   }
 
-  /** Mark every notification read for a user. */
+  /**
+   * Mark every notification read for a user.
+   * @param userId
+   */
   async markAllRead(userId: string,): Promise<void> {
     return markAllNotificationsRead(this.db, userId,);
   }
 
-  /** Delete a notification (ownership-checked). */
+  /**
+   * Delete a notification (ownership-checked).
+   * @param id
+   * @param userId
+   */
   async delete(id: string, userId: string,): Promise<void> {
     return deleteNotification(this.db, id, userId,);
   }
@@ -84,6 +119,8 @@ export class NotificationService {
   /**
    * Build the `[Recent Events]` block injected into the LLM prompt so
    * characters stay aware of off-screen activity. Returns "" when empty.
+   * @param userId
+   * @param chatId
    */
   async buildRecentEventsContext(userId: string, chatId?: string,): Promise<string> {
     return buildRecentEvents(this.db, userId, chatId,);

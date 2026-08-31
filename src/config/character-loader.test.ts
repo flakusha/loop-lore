@@ -9,6 +9,7 @@ const TEST_DIR = path.join(import.meta.dir, "../../test-fixtures/character-loade
 
 // ── Helpers ─────────────────────────────────────────────────
 
+/** */
 function setupTestDir(): void {
   if (existsSync(TEST_DIR,)) {
     rmSync(TEST_DIR, { recursive: true, },);
@@ -17,12 +18,17 @@ function setupTestDir(): void {
   mkdirSync(path.join(TEST_DIR, "configs", "characters",), { recursive: true, },);
 }
 
+/** */
 function teardownTestDir(): void {
   if (existsSync(TEST_DIR,)) {
     rmSync(TEST_DIR, { recursive: true, },);
   }
 }
 
+/**
+ * @param name
+ * @param content
+ */
 function writeCharacterFile(name: string, content: string,): void {
   const filePath = path.join(TEST_DIR, "configs", "characters", name,);
   writeFileSync(filePath, content,);

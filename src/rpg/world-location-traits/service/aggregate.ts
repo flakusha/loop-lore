@@ -4,7 +4,11 @@
 import type { Kysely, } from "kysely";
 import type { LocationTraitRow, WorldTraitRow, } from "./types";
 
-/** Get all world and location traits for a single actor */
+/**
+ * Get all world and location traits for a single actor
+ * @param db
+ * @param actorId
+ */
 export async function getAllTraitsForActor(
   db: Kysely<any>,
   actorId: string,

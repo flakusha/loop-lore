@@ -15,6 +15,7 @@
 import type { NsfwAccessStatus, } from "../../db/enums";
 import type { NsfwModerationServiceContext, NsfwUserPrefs, } from "./types";
 
+/** */
 export interface GetPreferencesArgs {
   thisL: NsfwModerationServiceContext;
   userId: string;
@@ -23,6 +24,9 @@ export interface GetPreferencesArgs {
 /**
  * Read-only fetch — returns null when no preferences row exists.
  * Does NOT create a phantom row.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.userId
  */
 export async function get({ thisL, userId, }: GetPreferencesArgs,): Promise<NsfwUserPrefs | null> {
   const row = await thisL.db
@@ -40,6 +44,7 @@ export async function get({ thisL, userId, }: GetPreferencesArgs,): Promise<Nsfw
  */
 export const getPreferences = get;
 
+/** */
 export interface GetOrCreateOwnArgs {
   thisL: NsfwModerationServiceContext;
   userId: string;
@@ -48,6 +53,9 @@ export interface GetOrCreateOwnArgs {
 /**
  * Read-or-create — used by self-update, block, and ban flows. Write
  * semantics are intentional: callers mutate the row anyway.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.userId
  */
 export async function getOrCreateOwn({ thisL, userId, }: GetOrCreateOwnArgs,): Promise<NsfwUserPrefs> {
   const existing = await get({ thisL, userId, },);
@@ -84,6 +92,7 @@ export async function getOrCreateOwn({ thisL, userId, }: GetOrCreateOwnArgs,): P
   };
 }
 
+/** */
 export interface UpdatePreferencesArgs {
   thisL: NsfwModerationServiceContext;
   userId: string;
@@ -93,6 +102,10 @@ export interface UpdatePreferencesArgs {
 /**
  * Update a user's NSFW preferences (enabled flag and/or max rating).
  * Uses `getOrCreateOwn` so the first self-write creates the row.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.userId
+ * @param root0.updates
  */
 export async function updatePreferences({ thisL, userId, updates, }: UpdatePreferencesArgs,): Promise<NsfwUserPrefs> {
   const now = new Date().toISOString();
@@ -106,7 +119,21 @@ export async function updatePreferences({ thisL, userId, updates, }: UpdatePrefe
   return (await get({ thisL, userId, },))!;
 }
 
-/** Map a storage row (snake_case) to the camel-cased NsfwUserPrefs shape. */
+/**
+ * Map a storage row (snake_case) to the camel-cased NsfwUserPrefs shape.
+ * @param row
+ * @param row.id
+ * @param row.user_id
+ * @param row.nsfw_enabled
+ * @param row.max_rating
+ * @param row.access_status
+ * @param row.shadow_nsfw
+ * @param row.block_reason
+ * @param row.banned_at
+ * @param row.banned_by
+ * @param row.created_at
+ * @param row.updated_at
+ */
 export function mapPrefs(
   row: {
     id: string;

@@ -12,6 +12,10 @@ import { safeJsonParse, } from "../../../utils";
 /**
  * Compute the trust modifier for a viewer based on average trust
  * across all chat participants.
+ * @param db
+ * @param viewerId
+ * @param participantIds
+ * @param worldId
  */
 async function computeTrustModifier(
   db: Kysely<DB>,
@@ -44,6 +48,11 @@ async function computeTrustModifier(
 
 /**
  * Build a ProvisionContext from the prompt assembly context.
+ * @param db
+ * @param actorId
+ * @param chatId
+ * @param worldId
+ * @param ownerId
  */
 export async function buildProvisionContext(
   db: Kysely<DB>,
@@ -73,6 +82,9 @@ export async function buildProvisionContext(
 
 /**
  * Fetch memories for the actor from the database.
+ * @param db
+ * @param actorId
+ * @param limit
  */
 export async function fetchActorMemories(
   db: Kysely<DB>,

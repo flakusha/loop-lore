@@ -6,7 +6,6 @@
  *
  * Compiled regex patterns for classifying messages into memory types
  * (episodic, procedural, semantic) and scoring importance.
- *
  * @module regex/memory-classification
  */
 

@@ -13,4 +13,5 @@
  * so only the well-known "human" sentinel is consolidated here.
  */
 export const Species = { Human: "human", } as const;
+/** */
 export type Species = (typeof Species)[keyof typeof Species];

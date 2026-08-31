@@ -7,7 +7,6 @@
  * The original `calculateAttackRoll`, `calculateDefenseRoll`, and
  * `processCombatRound` were removed during a merge. These thin wrappers
  * let existing route call-sites work without modification.
- *
  * @deprecated — new code should use makeAttackRoll / makeSavingThrow directly.
  */
 
@@ -18,6 +17,10 @@ import {
   makeSavingThrow,
 } from "./resolution-integration";
 
+/**
+ * @param advantage
+ * @param disadvantage
+ */
 function buildMods(advantage?: boolean, disadvantage?: boolean,): RollModifier[] {
   const mods: RollModifier[] = [];
   if (advantage) { mods.push({ source: "advantage", value: 2, type: "bonus", },); }
@@ -25,7 +28,13 @@ function buildMods(advantage?: boolean, disadvantage?: boolean,): RollModifier[]
   return mods;
 }
 
-/** @deprecated Use makeAttackRoll */
+/**
+ * @param attackBonus
+ * @param targetAC
+ * @param advantage
+ * @param disadvantage
+ * @deprecated Use makeAttackRoll
+ */
 export function calculateAttackRoll(
   attackBonus: number,
   targetAC: number,
@@ -35,7 +44,13 @@ export function calculateAttackRoll(
   return makeAttackRoll(attackBonus, targetAC, buildMods(advantage, disadvantage,),);
 }
 
-/** @deprecated Use makeSavingThrow */
+/**
+ * @param defenseBonus
+ * @param incomingAttack
+ * @param advantage
+ * @param disadvantage
+ * @deprecated Use makeSavingThrow
+ */
 export function calculateDefenseRoll(
   defenseBonus: number,
   incomingAttack: number,
@@ -49,7 +64,11 @@ export function calculateDefenseRoll(
   );
 }
 
-/** @deprecated Removed from resolution-integration — stub */
+/**
+ * @param _combatants
+ * @param _currentHP
+ * @deprecated Removed from resolution-integration — stub
+ */
 export function processCombatRound(
   _combatants: { id: string; attackBonus: number; defenseBonus: number; maxHP: number }[],
   _currentHP: Record<string, number>,

@@ -37,9 +37,32 @@ export const DEFAULT_RESPONSE_LENGTH: ResponseLengthConfig = {
 /**
  * Compute max_tokens from a preset.
  *
+<<<<<<< HEAD
  * @param preset - Length preset
  * @param customMax - Custom max for "custom" preset
  * @returns Token count for max_tokens parameter
+||||||| parent of 53b67054e (fix(dev): eslint --fix + dprint + db schema regen)
+ * Fallback chain:
+ *   1. Chat-specific preset + custom value (from chats table)
+ *   2. User global setting (from users.settings JSON)
+ *   3. Server default from config.yaml
+ *
+ * @param chatPreset - Per-chat preset from DB (null if not set)
+ * @param chatCustom - Per-chat custom token count from DB (null if not set)
+ * @param userPreset - User's global preference (null if not set)
+ * @param serverDefault - Server default from config (default: "medium")
+ * @returns Resolved configuration with effective maxTokens
+=======
+ * Fallback chain:
+ *   1. Chat-specific preset + custom value (from chats table)
+ *   2. User global setting (from users.settings JSON)
+ *   3. Server default from config.yaml
+ * @param chatPreset - Per-chat preset from DB (null if not set)
+ * @param chatCustom - Per-chat custom token count from DB (null if not set)
+ * @param userPreset - User's global preference (null if not set)
+ * @param serverDefault - Server default from config (default: "medium")
+ * @returns Resolved configuration with effective maxTokens
+>>>>>>> 53b67054e (fix(dev): eslint --fix + dprint + db schema regen)
  */
 export function computeMaxTokens(preset: LengthPreset, customMax?: number,): number {
   if (preset === "custom") {
@@ -70,17 +93,29 @@ export function buildLengthConfig(
 }
 
 /**
+<<<<<<< HEAD
  * Parse a ResponseLengthConfig from a user settings JSON blob.
  * Returns default if missing or invalid.
  *
  * @param settings - Parsed user settings object
  * @returns Validated config or default
+||||||| parent of 53b67054e (fix(dev): eslint --fix + dprint + db schema regen)
+ * Clamp a token count to the allowed range (50–2000).
+ *
+ * @param tokens - Raw token count
+ * @returns Clamped value within bounds
+=======
+ * Clamp a token count to the allowed range (50–2000).
+ * @param tokens - Raw token count
+ * @returns Clamped value within bounds
+>>>>>>> 53b67054e (fix(dev): eslint --fix + dprint + db schema regen)
  */
 export function parseLengthConfig(settings: Record<string, unknown> | null | undefined,): ResponseLengthConfig {
   if (!settings?.responseLength) {
     return { ...DEFAULT_RESPONSE_LENGTH, };
   }
 
+<<<<<<< HEAD
   const raw = settings.responseLength as Record<string, unknown>;
   const preset = raw.preset as string;
   const validPresets: LengthPreset[] = ["short", "medium", "long", "custom",];
@@ -94,4 +129,22 @@ export function parseLengthConfig(settings: Record<string, unknown> | null | und
     raw.customMin as number | undefined,
     raw.customMax as number | undefined,
   );
+||||||| parent of 53b67054e (fix(dev): eslint --fix + dprint + db schema regen)
+/**
+ * Check if a preset string is a valid ResponseLengthPreset.
+ *
+ * @param value - String to validate
+ * @returns True if valid preset
+ */
+export function isValidPreset(value: string,): value is ResponseLengthPreset {
+  return (["short", "medium", "long", "custom",] as const).includes(value as never,);
+=======
+/**
+ * Check if a preset string is a valid ResponseLengthPreset.
+ * @param value - String to validate
+ * @returns True if valid preset
+ */
+export function isValidPreset(value: string,): value is ResponseLengthPreset {
+  return (["short", "medium", "long", "custom",] as const).includes(value as never,);
+>>>>>>> 53b67054e (fix(dev): eslint --fix + dprint + db schema regen)
 }

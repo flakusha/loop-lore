@@ -44,7 +44,10 @@ const CANONICAL_HEADER_NAMES = new Map<string, string>([
   ["timing-allow-origin", "Timing-Allow-Origin",],
 ],);
 
-/** Normalize header key to canonical casing for case-insensitive comparison. */
+/**
+ * Normalize header key to canonical casing for case-insensitive comparison.
+ * @param key
+ */
 export function normalizeHeaderKey(key: string,): string {
   const lower = key.toLowerCase();
   return CANONICAL_HEADER_NAMES.get(lower,) ?? key;
@@ -64,6 +67,7 @@ export interface ApplyOptions {
   response: Response;
 }
 
+/** */
 export class ResponseHeaderPolicy {
   /**
    * @param config - Resolved `headers` config block.
@@ -72,8 +76,9 @@ export class ResponseHeaderPolicy {
 
   /**
    * Decorate a response with the configured header set.
-   *
    * @param options - request + response to process
+   * @param options.request
+   * @param options.response
    * @returns A new Response carrying the merged headers (original untouched).
    */
   apply({ request, response, }: ApplyOptions,): Response {
@@ -104,6 +109,9 @@ export class ResponseHeaderPolicy {
   /**
    * Classify a response into a route kind.
    * HTML → html; SSE (content-type) → sse; `/api/*` → api; static → static.
+   * @param root0
+   * @param root0.request
+   * @param root0.response
    */
   private classify({ request, response, }: ApplyOptions,): RouteKind {
     const contentType = response.headers.get("content-type",) ?? "";
@@ -116,6 +124,8 @@ export class ResponseHeaderPolicy {
   /**
    * Build the header map for a given route kind. Route headers are not present
    * here — merge logic in {@link apply} handles precedence.
+   * @param kind
+   * @param request
    */
   private buildHeaders(kind: RouteKind, request: Request,): Record<string, string> {
     const cfg = this.config;
@@ -150,7 +160,11 @@ export class ResponseHeaderPolicy {
   }
 
   /** Serialize the CSP directive set into a single header value. */
-  /** Apply document-specific security/policy headers (CSP, COOP, COEP, hints). */
+  /**
+   * Apply document-specific security/policy headers (CSP, COOP, COEP, hints).
+   * @param headers
+   * @param request
+   */
   private applyHtmlHeaders(headers: Record<string, string>, request: Request,): void {
     const cfg = this.config;
     if (cfg.csp.enabled) {
@@ -177,6 +191,9 @@ export class ResponseHeaderPolicy {
     }
   }
 
+  /**
+   * @param request
+   */
   private buildCsp(request: Request,): string {
     const c = this.config.csp;
     const nonce = getNonce(request,);
@@ -227,6 +244,9 @@ export class ResponseHeaderPolicy {
   /**
    * Append `immutable` to an existing `Cache-Control: …max-age…` value when the
    * requested path is a content-hashed asset (safe long-term caching).
+   * @param root0
+   * @param root0.request
+   * @param root0.headers
    */
   private augmentImmutable({ request, headers, }: { request: Request; headers: Headers },): void {
     const cacheControl = headers.get("Cache-Control",);

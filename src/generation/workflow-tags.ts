@@ -20,6 +20,7 @@ export const WorkflowKind = {
   Monster: "monster",
   Location: "location",
 } as const;
+/** */
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 
 /** Output modality the workflow produces. */
@@ -27,6 +28,7 @@ export const WorkflowModality = {
   Image: "image",
   Video: "video",
 } as const;
+/** */
 export type WorkflowModality = (typeof WorkflowModality)[keyof typeof WorkflowModality];
 
 /** A single workflow-addressing tag. */
@@ -39,7 +41,6 @@ const TAG_RE = /^(?<kind>character|item|monster|location):(?<modality>image|vide
 
 /**
  * Compose workflow tags into their canonical string form.
- *
  * @param tags - tags to encode
  * @returns strings like `"character:image"`, `"location:video"`
  */
@@ -49,7 +50,6 @@ export function composeWorkflowTags(tags: readonly WorkflowTag[],): string[] {
 
 /**
  * Parse a single tag string back into a {@link WorkflowTag}.
- *
  * @param tag - string like `"item:image"`
  * @returns the parsed tag, or `null` if malformed
  */
@@ -64,7 +64,6 @@ export function parseWorkflowTag(tag: string,): WorkflowTag | null {
 
 /**
  * Parse a set of tag strings, dropping any malformed entries.
- *
  * @param tags - raw tag strings
  * @returns validated tags (empty-safe)
  */

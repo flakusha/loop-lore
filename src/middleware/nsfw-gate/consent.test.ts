@@ -25,6 +25,9 @@ import { checkChatNsfwAccess, } from "./access";
 import { checkNsfwWithConsent, } from "./consent";
 import { getLatestConsent, hasActiveConsent, recordNsfwConsent, } from "./consent-ledger";
 
+/**
+ * @param overrides
+ */
 function makeConfig(overrides: Partial<Config["nsfw"]> = {},): Config {
   // Only nsfw section is read by the gate; other sections are inert placeholders.
   return {

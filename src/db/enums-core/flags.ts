@@ -10,24 +10,28 @@ export const PinnedState = {
   Pinned: "pinned",
   Archived: "archived",
 } as const;
+/** */
 export type PinnedState = (typeof PinnedState)[keyof typeof PinnedState];
 
 export const DefaultState = {
   NotDefault: "not_default",
   Default: "default",
 } as const;
+/** */
 export type DefaultState = (typeof DefaultState)[keyof typeof DefaultState];
 
 export const EquipState = {
   Unequipped: "unequipped",
   Equipped: "equipped",
 } as const;
+/** */
 export type EquipState = (typeof EquipState)[keyof typeof EquipState];
 
 export const StackableState = {
   Unique: "unique",
   Stackable: "stackable",
 } as const;
+/** */
 export type StackableState = (typeof StackableState)[keyof typeof StackableState];
 
 // ── Actor Keys ────────────────────────────────────────────
@@ -38,6 +42,7 @@ export const KeyType = {
   Master: "master",
   Primary: "primary",
 } as const;
+/** */
 export type KeyType = (typeof KeyType)[keyof typeof KeyType];
 
 export const KeyStatus = {
@@ -45,6 +50,7 @@ export const KeyStatus = {
   Expired: "expired",
   Revoked: "revoked",
 } as const;
+/** */
 export type KeyStatus = (typeof KeyStatus)[keyof typeof KeyStatus];
 
 // ── Notes ─────────────────────────────────────────────────
@@ -56,6 +62,7 @@ export const NoteCategory = {
   Combat: "combat",
   Session: "session",
 } as const;
+/** */
 export type NoteCategory = (typeof NoteCategory)[keyof typeof NoteCategory];
 
 // ── Model Roles ───────────────────────────────────────────
@@ -67,6 +74,7 @@ export const ModelRole = {
   Embeddings: "embeddings",
   Summarization: "summarization",
 } as const;
+/** */
 export type ModelRole = (typeof ModelRole)[keyof typeof ModelRole];
 
 /**
@@ -103,6 +111,7 @@ export const EncryptionLevel = {
   Standard: "standard",
   AtRest: "at-rest",
 } as const;
+/** */
 export type EncryptionLevel = (typeof EncryptionLevel)[keyof typeof EncryptionLevel];
 
 // ── Plugin Lifecycle ─────────────────────────────────────
@@ -111,6 +120,7 @@ export const PluginStatus = {
   Disabled: "disabled",
   Error: "error",
 } as const;
+/** */
 export type PluginStatus = (typeof PluginStatus)[keyof typeof PluginStatus];
 
 // ── Notification Read State ──────────────────────────────
@@ -119,6 +129,7 @@ export const NotificationStatus = {
   Read: "read",
   Archived: "archived",
 } as const;
+/** */
 export type NotificationStatus = (typeof NotificationStatus)[keyof typeof NotificationStatus];
 
 // ── Invite Lifecycle ─────────────────────────────────────
@@ -128,6 +139,7 @@ export const InviteStatus = {
   Expired: "expired",
   Exhausted: "exhausted",
 } as const;
+/** */
 export type InviteStatus = (typeof InviteStatus)[keyof typeof InviteStatus];
 
 const pluginStatusDef: StateDef<PluginStatus> = {
@@ -173,6 +185,7 @@ export const MessageSeenState = {
   Processing: "processing",
   Seen: "seen",
 } as const;
+/** */
 export type MessageSeenState = (typeof MessageSeenState)[keyof typeof MessageSeenState];
 
 const messageSeenStateDef: StateDef<MessageSeenState> = {

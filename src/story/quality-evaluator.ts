@@ -15,11 +15,13 @@ import type { ScorerContext, } from "./quality/types";
 import { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS, } from "./types";
 import type { QualityEvaluation, QualityScores, QualityThresholds, StoryContext, } from "./types";
 
+/** */
 export interface EvaluatorConfig {
   thresholds: QualityThresholds;
   weights: Record<QualityDimension, number>;
 }
 
+/** */
 export interface EvaluateParams {
   response: string;
   prompt: string;
@@ -34,6 +36,9 @@ const DEFAULT_EVALUATOR_CONFIG: EvaluatorConfig = {
 
 const DIMENSIONS = Object.values(QualityDimension,);
 
+/**
+ * @param params
+ */
 function toScorerContext(params: EvaluateParams,): ScorerContext {
   return {
     response: params.response,
@@ -45,10 +50,14 @@ function toScorerContext(params: EvaluateParams,): ScorerContext {
   };
 }
 
+/** */
 export class QualityEvaluator {
   private readonly config: EvaluatorConfig;
   private readonly scorers = SCORERS;
 
+  /**
+   * @param config
+   */
   constructor(config?: Partial<EvaluatorConfig>,) {
     this.config = {
       thresholds: { ...DEFAULT_EVALUATOR_CONFIG.thresholds, ...config?.thresholds, },
@@ -56,6 +65,9 @@ export class QualityEvaluator {
     };
   }
 
+  /**
+   * @param params
+   */
   private computeScores(params: EvaluateParams,): QualityScores {
     const ctx = toScorerContext(params,);
     const scores = {} as Omit<QualityScores, "overall">;
@@ -68,6 +80,9 @@ export class QualityEvaluator {
     return { ...scores, overall, };
   }
 
+  /**
+   * @param scores
+   */
   private buildDetails(scores: QualityScores,): QualityEvaluation["details"] {
     const details = {} as QualityEvaluation["details"];
     for (const dim of DIMENSIONS) {
@@ -79,6 +94,7 @@ export class QualityEvaluator {
   /**
    * Evaluate a generated response against the story context.
    * Returns detailed scores and a pass/regenerate/escalate decision.
+   * @param params
    */
   evaluate(params: EvaluateParams,): QualityEvaluation {
     const scores = this.computeScores(params,);
@@ -112,12 +128,18 @@ export class QualityEvaluator {
     };
   }
 
-  /** Get the raw dimension scores without full evaluation metadata */
+  /**
+   * Get the raw dimension scores without full evaluation metadata
+   * @param params
+   */
   computeScore(params: EvaluateParams,): QualityScores {
     return this.computeScores(params,);
   }
 }
 
+/**
+ * @param config
+ */
 export function createQualityEvaluator(config?: Partial<EvaluatorConfig>,): QualityEvaluator {
   return new QualityEvaluator(config,);
 }

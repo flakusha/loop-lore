@@ -22,6 +22,10 @@ import {
 } from "../../../test-utils/insert-helpers";
 import { gmNotesSection, } from "./gm-notes";
 
+/**
+ * @param db
+ * @param chatId
+ */
 function makeCtx(db: Kysely<DB>, chatId: string,) {
   return {
     db,

@@ -57,18 +57,27 @@ describe("crafting recipe CRUD (auth-gated)", () => {
     await db.destroy();
   },);
 
-  /** Mount crafting routes behind a stub auth middleware that sets ctx.userId. */
+  /**
+   * Mount crafting routes behind a stub auth middleware that sets ctx.userId.
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-crafting-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)
       .use(craftingRecipeRoutes({ database: db, },),) as any;
   }
 
+  /**
+   * @param res
+   */
   async function json(res: Response,) {
     return res.json() as unknown;
   }
 
-  /** Read an id off a response body, narrowing via `in`. */
+  /**
+   * Read an id off a response body, narrowing via `in`.
+   * @param body
+   */
   function readId(body: unknown,): string {
     if (typeof body === "object" && body !== null && "id" in body && typeof body.id === "string") {
       return body.id;

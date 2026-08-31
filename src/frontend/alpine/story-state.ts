@@ -93,7 +93,10 @@ const log = rootLog.child({ module: "story-state", },);
       return questProgressPercent(quest,);
     },
 
-    /** CSS tier for a quality score: good (≥70) / mid (≥40) / low. */
+    /**
+     * CSS tier for a quality score: good (≥70) / mid (≥40) / low.
+     * @param score
+     */
     qualityClass(score: number,): string {
       return qualityClassTier(score,);
     },

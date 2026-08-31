@@ -7,6 +7,9 @@ import { getProvider, } from "../providers/registry";
 
 // ── Route: Test connection (validator) ────────────────────
 
+/**
+ * @param body
+ */
 function validateTestConnection(body: unknown,): { provider: string } | null {
   if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
@@ -21,6 +24,8 @@ function validateTestConnection(body: unknown,): { provider: string } | null {
  *
  * Test connectivity to a provider. Body:
  *   { provider: string, model?: string }
+ * @param body
+ * @param _config
  */
 export async function handleTestConnection(body: unknown, _config?: Config,): Promise<Response> {
   const input = validateTestConnection(body,);

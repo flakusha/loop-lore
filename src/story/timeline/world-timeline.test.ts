@@ -26,12 +26,14 @@ import {
 
 // ── Helpers ─────────────────────────────────────────────────
 
+/** */
 function ensureLogger() {
   try {
     createLogger({ level: "error", },);
   } catch { /* Already initialized. */ }
 }
 
+/** */
 async function setupWorld() {
   const env = await createTestDb();
   await insertUsers(env.db, "gm", "GM",);
@@ -41,6 +43,9 @@ async function setupWorld() {
   return { ...env, worldId: world.id, };
 }
 
+/**
+ * @param overrides
+ */
 function makeEvent(overrides: Partial<WorldEvent> = {},): WorldEvent {
   return {
     type: WorldEventType.WorldLoreUpdate,

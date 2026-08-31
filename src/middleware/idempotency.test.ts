@@ -4,6 +4,12 @@
 import { describe, expect, test, } from "bun:test";
 import { type IdempotencyCtx, idempotent, } from "./idempotency";
 
+/**
+ * @param method
+ * @param route
+ * @param requestId
+ * @param body
+ */
 function makeCtx(
   method: string,
   route: string,

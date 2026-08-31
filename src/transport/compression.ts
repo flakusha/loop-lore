@@ -20,12 +20,18 @@ interface CompressionOptions {
   threshold?: number;
 }
 
+/**
+ * @param buf
+ */
 function strictUint8(buf: Buffer,): Uint8Array<ArrayBuffer> {
   return new Uint8Array(buf,);
 }
 
 /**
  * Compress outgoing data using the specified algorithm.
+ * @param data
+ * @param algorithm
+ * @param options
  */
 function compress(
   data: Uint8Array,
@@ -77,6 +83,8 @@ function compress(
 
 /**
  * Decompress incoming data using the specified algorithm.
+ * @param data
+ * @param algorithm
  */
 function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Array {
   if (algorithm === "none") {
@@ -106,6 +114,7 @@ function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Ar
   }
 }
 
+/** */
 export interface WithCompressionOpts {
   handler: ProtocolHandler;
   algorithm: CompressionAlgorithm;
@@ -118,7 +127,6 @@ export interface WithCompressionOpts {
  * Outgoing data is compressed before passing to the inner handler.
  * The raw (uncompressed) handler's `connect()` metadata is extended
  * with `{ compression: algorithm }`.
- *
  * @param opts - Options object
  * @param opts.handler - Inner protocol handler to wrap
  * @param opts.algorithm - Compression algorithm to apply

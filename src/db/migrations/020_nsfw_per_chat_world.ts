@@ -9,6 +9,9 @@
  */
 import { type Kysely, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<any>,): Promise<void> {
   // Add nsfw_override to chats (null = use user pref)
   await database.schema
@@ -29,6 +32,9 @@ export async function up(database: Kysely<any>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<any>,): Promise<void> {
   await database.schema.alterTable("chats",).dropColumn("name_source",).execute();
   await database.schema.alterTable("worlds",).dropColumn("nsfw_override",).execute();

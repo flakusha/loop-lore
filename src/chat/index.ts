@@ -2,8 +2,22 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
+<<<<<<< HEAD
  * Chat module — context window monitoring, response length control,
  * and smart context pruning.
+||||||| parent of 53b67054e (fix(dev): eslint --fix + dprint + db schema regen)
+ * Chat Module
+ *
+ * Chat lifecycle management: context windows, transitions,
+ * moderation primitives, and service layer.
+ *
+ * @module chat
+=======
+ * Chat Module
+ *
+ * Chat lifecycle management: context windows, transitions,
+ * moderation primitives, and service layer.
+>>>>>>> 53b67054e (fix(dev): eslint --fix + dprint + db schema regen)
  */
 
 

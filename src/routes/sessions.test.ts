@@ -11,6 +11,12 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { sessionsRoutes, } from "./sessions";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ * @param sessionId
+ */
 function createApp(
   db: Kysely<DB>,
   userId: string | null,
@@ -22,6 +28,9 @@ function createApp(
     .use(sessionsRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param token
+ */
 function tokenHash(token: string,): string {
   return crypto.createHash("sha256",).update(token,).digest("hex",);
 }

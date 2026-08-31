@@ -3,6 +3,7 @@
 
 // src/config/schema/testing.ts — e2e external-server config type
 
+/** */
 export interface TestingConfig {
   /** Path to GGUF model for llama.cpp external-server e2e */
   llamaModel?: string;

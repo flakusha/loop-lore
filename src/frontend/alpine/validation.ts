@@ -23,7 +23,6 @@ const cache = new WeakMap<TSchema, TypeCheck<TSchema>>();
 
 /**
  * Get (or compile + cache) the TypeCompiler checker for a schema.
- *
  * @param schema - TypeBox schema to compile
  * @returns compiled checker
  */
@@ -41,7 +40,6 @@ export function getChecker<T extends TSchema,>(schema: T,): TypeCheck<T> {
  *
  * Never throws. On failure the first schema error is logged via console.warn
  * (the frontend has no logger at this layer) — set `onError` to customize.
- *
  * @param schema - shared response schema (from `../validation/schemas/responses`)
  * @param value - untrusted payload (e.g. `await res.json()`)
  * @param fallback - returned when `value` does not match `schema`
@@ -70,7 +68,6 @@ export function parseOr<T extends TSchema,>(
  *
  * Useful where a bad payload must fail loudly rather than degrade to a
  * fallback. Throws `TypeBoxParseError` with the full error list.
- *
  * @param schema - shared response schema
  * @param value - untrusted payload
  * @returns `value` decoded to `Static<typeof schema>`
@@ -90,6 +87,11 @@ export class TypeBoxParseError extends Error {
   readonly errors: ValueError[];
   readonly schema: TSchema;
 
+  /**
+   * @param schema
+   * @param _value
+   * @param errors
+   */
   constructor(schema: TSchema, _value: unknown, errors: ValueError[],) {
     const first = errors[0];
     super(`TypeBox parse failed at ${first?.path ?? "?"}: ${first?.message ?? "no errors"}`,);

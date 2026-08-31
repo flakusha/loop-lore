@@ -67,10 +67,11 @@ export interface SDProviderConfig {
 
 /**
  * Generate an image via Stable Diffusion.
- *
  * @param db - Database instance
+ * @param _db
  * @param request - Generation request
  * @param config - Provider configuration
+ * @param _config
  * @returns Generated image asset reference
  */
 export function generateImage(
@@ -93,7 +94,6 @@ export function generateImage(
 
 /**
  * Get the asset kind for a given entity type.
- *
  * @param entityType - Entity type
  * @returns Asset kind description
  */
@@ -109,7 +109,6 @@ export function getAssetKind(entityType: EntityRef["type"],): string {
 
 /**
  * Build a prompt for entity image generation.
- *
  * @param entityType - Entity type
  * @param description - Entity description
  * @returns Formatted prompt for SD

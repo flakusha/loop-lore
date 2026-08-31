@@ -9,6 +9,7 @@
  * executes. Pure + unit-tested in panel.test.ts.
  */
 
+/** */
 export interface BattleCombatantView {
   id: string;
   name: string;
@@ -17,6 +18,7 @@ export interface BattleCombatantView {
   initiative: number;
 }
 
+/** */
 export interface BattleView {
   id: string;
   status: string;
@@ -25,6 +27,7 @@ export interface BattleView {
   combatants: BattleCombatantView[];
 }
 
+/** */
 export type BattleActionKind = "attack" | "heal" | "end";
 
 /** A focusable element in the keyboard cycle: a combatant or an action. */
@@ -38,6 +41,11 @@ export const ACTIONS: { kind: BattleActionKind; label: string }[] = [
   { kind: "end", label: "End battle", },
 ];
 
+/**
+ * @param kind
+ * @param targetId
+ * @param combatants
+ */
 export function battleCommandFor(
   kind: BattleActionKind,
   targetId: string | null,
@@ -57,16 +65,26 @@ export function battleCommandFor(
   }
 }
 
-/** Clamp an HP fraction to a 0–100 percentage for the progress bar. */
+/**
+ * Clamp an HP fraction to a 0–100 percentage for the progress bar.
+ * @param hp
+ * @param maxHp
+ */
 export function hpPercent(hp: number, maxHp: number,): number {
   const raw = (hp / Math.max(1, maxHp,)) * 100;
   return Math.max(0, Math.min(100, Math.round(raw,),),);
 }
 
+/**
+ * @param name
+ */
 export function quote(name: string,): string {
   return name.includes(" ",) ? `"${name}"` : name;
 }
 
+/**
+ * @param value
+ */
 export function escapeHtml(value: string,): string {
   return value
     .replaceAll("&", "&amp;",)

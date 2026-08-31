@@ -30,7 +30,6 @@ export interface SeductionPrerequisite {
 
 /**
  * Get seduction prerequisites based on target's reputation tier.
- *
  * @param targetTier - Target's reputation tier
  * @returns List of prerequisites
  */
@@ -90,7 +89,6 @@ export function getSeductionPrerequisites(
 
 /**
  * Check if prerequisites are met.
- *
  * @param prerequisites - Required prerequisites
  * @param skillLevels - Character's skill levels
  * @returns Whether prerequisites are met

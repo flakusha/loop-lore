@@ -15,6 +15,15 @@ import { authenticate, } from "../../middleware/auth";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { handleImport, } from "./handle";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param root0.config.auth
+ * @param root0.config.assets
+ * @param root0.config.assets.uploadDir
+ * @param prefix
+ */
 export function importRoutes(
   { database, config, }: { database: Kysely<DB>; config: { auth: AuthConfig; assets?: { uploadDir?: string } } },
   prefix = "/api",

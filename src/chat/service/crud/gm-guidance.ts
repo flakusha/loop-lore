@@ -23,6 +23,9 @@ export interface UpdateGmGuidanceParams {
  *
  * Guidance is runtime narrative state, not a key mechanic, so the GM can steer
  * an in-progress story. Merges over the existing `gm_config` blob.
+ * @param database
+ * @param chatId
+ * @param params
  */
 export async function updateGmGuidance(
   database: Kysely<DB>,

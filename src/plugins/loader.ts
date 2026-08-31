@@ -6,7 +6,6 @@
  *
  * Discovery order: core → community → local.
  * Shutdown: reverse order (local → community → core).
- *
  * @module plugin-loader
  */
 
@@ -32,6 +31,10 @@ const PLUGIN_DIRS: { origin: PluginOrigin; dir: string }[] = [
   { origin: "local", dir: "plugins/local" },
 ];
 
+/**
+ *
+ * @param pluginName
+ */
 function makeLogger(pluginName: string): PluginLogger {
   const log = getLogger();
   return {
@@ -55,6 +58,7 @@ function makeLogger(pluginName: string): PluginLogger {
  * Call once at startup, after DB is ready.
  *
  * Checks plugin_state table for previously disabled plugins.
+ * @param db
  */
 export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
   const log = getLogger();
@@ -104,7 +108,13 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
   ],);
 }
 
-/** Load a single plugin from its directory: manifest, hooks, and state. */
+/**
+ * Load a single plugin from its directory: manifest, hooks, and state.
+ * @param db
+ * @param pluginName
+ * @param pluginDir
+ * @param origin
+ */
 async function loadSinglePlugin(
   db: Kysely<DB>,
   pluginName: string,
@@ -147,7 +157,10 @@ async function loadSinglePlugin(
   }
 }
 
-/** Register static extension points declared in a plugin manifest. */
+/**
+ * Register static extension points declared in a plugin manifest.
+ * @param manifest
+ */
 function registerManifestExtensions(manifest: PluginManifest,): void {
   if (manifest.apiRoutes?.length) { registry.addRoutes(manifest.name, manifest.apiRoutes,); }
   if (manifest.tools?.length) { registry.addTools(manifest.name, manifest.tools,); }
@@ -157,7 +170,11 @@ function registerManifestExtensions(manifest: PluginManifest,): void {
   if (manifest.migrations?.length) { registry.addMigrations(manifest.name, manifest.migrations,); }
 }
 
-/** Persist a new plugin to plugin_state if not already tracked (best-effort). */
+/**
+ * Persist a new plugin to plugin_state if not already tracked (best-effort).
+ * @param db
+ * @param name
+ */
 async function persistPluginState(db: Kysely<DB>, name: string,): Promise<void> {
   try {
     await db
@@ -170,7 +187,10 @@ async function persistPluginState(db: Kysely<DB>, name: string,): Promise<void> 
   }
 }
 
-/** Dispatch a request against all registered plugin routes (enabled only) */
+/**
+ * Dispatch a request against all registered plugin routes (enabled only)
+ * @param request
+ */
 export async function dispatchPluginRoute(request: Request): Promise<Response | null> {
   for (const route of registry.getAllRoutes()) {
     const url = new URL(request.url);

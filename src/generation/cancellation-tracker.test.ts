@@ -20,6 +20,7 @@ import type { GenerationOptions, } from "./types";
 createLogger({ level: "error", },);
 
 // Clear maps before each test
+/** */
 function clearState(): void {
   activeGenerations.clear();
   chatToAttempt.clear();
@@ -116,6 +117,7 @@ describe("safeTransition", () => {
 });
 
 describe("startGenerationTracking idempotency", () => {
+  /** */
   function makeMockDb(): Kysely<DB> {
     const chain = {
       execute: async () => {},

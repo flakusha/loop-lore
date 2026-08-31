@@ -79,6 +79,7 @@ function resolveTelemetryPiiSecret(): string {
 const TELEMETRY_PII_SECRET = resolveTelemetryPiiSecret();
 
 let hmacKeyPromise: Promise<CryptoKey> | null = null;
+/** */
 async function getHmacKey(): Promise<CryptoKey> {
   if (!hmacKeyPromise) {
     const subkey = await domainKey(TELEMETRY_PII_SECRET, DOMAIN_INFO.TELEMETRY_PII, 32,);
@@ -93,6 +94,9 @@ async function getHmacKey(): Promise<CryptoKey> {
   return hmacKeyPromise;
 }
 
+/**
+ * @param value
+ */
 async function hashId(value: string,): Promise<string> {
   const key = await getHmacKey();
   const sig = await crypto.subtle.sign(
@@ -106,6 +110,10 @@ async function hashId(value: string,): Promise<string> {
     .join("",);
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;
 
@@ -295,6 +303,9 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     },);
 }
 
+/**
+ * @param raw
+ */
 function classifyError(raw: unknown,): "timeout" | "rate_limit" | "schema_validation" | "auth_failure" | "other" {
   if (typeof raw !== "string" || raw.length === 0) { return "other"; }
   const lower = raw.toLowerCase();

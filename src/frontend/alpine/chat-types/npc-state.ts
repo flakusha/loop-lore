@@ -9,6 +9,7 @@ import type {
 } from "./npc";
 
 // ── NPC Management UI State ─────────────────────────────────
+/** */
 export interface ChatNpcState {
   // NPC Viewer
   npcs: NpcData[];

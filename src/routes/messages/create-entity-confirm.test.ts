@@ -16,6 +16,10 @@ import { insertChatParticipants, insertChats, } from "../../test-utils/insert-he
 import { uid, } from "../../utils";
 import { createEntityConfirmRoutes, } from "./create-entity-confirm";
 
+/**
+ * @param db
+ * @param userId
+ */
 function createApp(db: Kysely<DB>, userId: string | null,): Elysia {
   return new Elysia({ name: "test-create-entity-confirm", },)
     .derive(() => ({ userId, }))

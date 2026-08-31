@@ -42,6 +42,7 @@ import {
 
 const NONCE_LENGTH = 12;
 
+/** */
 export interface GroupEncryptOpts {
   plaintext: string;
   chainIndex: number;
@@ -52,12 +53,14 @@ export interface GroupEncryptOpts {
   recipients: { actorId: string; staticPubJwk: JsonWebKey }[];
 }
 
+/** */
 export interface GroupDecryptOpts {
   payload: GroupEncryptedPayload;
   recipientActorId: string;
   recipientStaticPriv: CryptoKey;
 }
 
+/** */
 export interface GroupEncryptedPayload {
   ciphertext: string;
   nonce: string;
@@ -65,6 +68,9 @@ export interface GroupEncryptedPayload {
   per_recipient: Record<string, { wrappedKey: string; senderEphPubJwk: JsonWebKey }>;
 }
 
+/**
+ * @param opts
+ */
 export async function encryptGroupMessage(
   opts: GroupEncryptOpts,
 ): Promise<GroupEncryptedPayload> {
@@ -106,6 +112,9 @@ export async function encryptGroupMessage(
   };
 }
 
+/**
+ * @param opts
+ */
 export async function decryptGroupMessage(
   opts: GroupDecryptOpts,
 ): Promise<string> {
@@ -143,6 +152,9 @@ export async function decryptGroupMessage(
   return new TextDecoder().decode(pt,);
 }
 
+/**
+ * @param payload
+ */
 export function groupPayloadRecipients(
   payload: GroupEncryptedPayload,
 ): string[] {

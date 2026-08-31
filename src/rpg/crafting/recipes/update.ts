@@ -6,7 +6,12 @@ import type { DB, } from "../../../db/schema";
 import { jsonStringifyOr, } from "../../../utils";
 import type { UpdateRecipeOpts, } from "./types";
 
-/** Update a recipe's base properties. */
+/**
+ * Update a recipe's base properties.
+ * @param db
+ * @param recipeId
+ * @param opts
+ */
 export async function updateRecipe(db: Kysely<DB>, recipeId: string, opts: UpdateRecipeOpts,): Promise<boolean> {
   const now = new Date().toISOString();
   const updates: Record<string, unknown> = { updated_at: now, };

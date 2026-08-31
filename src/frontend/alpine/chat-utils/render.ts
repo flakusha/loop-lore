@@ -3,6 +3,7 @@
 
 import type { ChatState, } from "../types";
 
+/** */
 export type ChatUtilsRender = Partial<ChatState> & ThisType<ChatState>;
 
 const getMarked = () => globalThis.__marked;

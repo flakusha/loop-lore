@@ -5,6 +5,7 @@ import { formatHuman, toDate, } from "../../../utils/date";
 import { DEFAULT_LOCALE, } from "../../i18n";
 import type { ChatState, } from "../types";
 
+/** */
 export type ChatUtilsTime = Partial<ChatState> & ThisType<ChatState>;
 
 /**
@@ -25,7 +26,10 @@ function activeLocale(): string {
   return globalThis.currentLocale ?? DEFAULT_LOCALE;
 }
 
-/** Time-only, locale + timezone aware display. */
+/**
+ * Time-only, locale + timezone aware display.
+ * @param iso
+ */
 function formatTimeOnly(iso: string,): string {
   if (!iso) { return ""; }
   const d = toDate(iso,);
@@ -57,6 +61,8 @@ export const chatUtilsTime: ChatUtilsTime = {
  * active i18n locale (globalThis.currentLocale) + the viewer's browser
  * timezone — not the runtime default (the defect behind the unsafe toLocale*
  * call sites). Mirrors the logic already applied to formatTime/formatDate.
+ * @param iso
+ * @param humanStyle
  */
 export function formatDisplayDate(
   iso: string | null | undefined,

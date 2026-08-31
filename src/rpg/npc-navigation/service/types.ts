@@ -10,6 +10,7 @@ export const MovementPattern = {
   Flee: "flee",
   Custom: "custom",
 } as const;
+/** */
 export type MovementPattern = (typeof MovementPattern)[keyof typeof MovementPattern];
 
 /** NPC movement state */

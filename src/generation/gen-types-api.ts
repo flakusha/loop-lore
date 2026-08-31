@@ -13,6 +13,7 @@ import type { GenerationResult, PolicyAnalysis, RepetitionAnalysis, } from "./ge
 
 // ── Continuation types ─────────────────────────────────────
 
+/** */
 export interface ContinueRequest {
   /** The ID of the partial/cancelled message to continue */
   messageId: string;
@@ -26,6 +27,7 @@ export interface ContinueRequest {
   provider?: string;
 }
 
+/** */
 export interface ContinueResponse {
   /** Whether the continue was initiated */
   ok: boolean;
@@ -57,6 +59,7 @@ export interface ContinueResponse {
 
 // ── Retry-from-point types ─────────────────────────────────
 
+/** */
 export interface RetryFromPointRequest {
   /** The chat ID */
   chatId: string;
@@ -66,6 +69,7 @@ export interface RetryFromPointRequest {
   step?: number;
 }
 
+/** */
 export interface RetryFromPointResponse {
   /** Whether the retry was initiated */
   ok: boolean;
@@ -83,6 +87,7 @@ export interface RetryFromPointResponse {
 
 // ── Events ─────────────────────────────────────────────────
 
+/** */
 export interface GenerationEvents {
   onStart?: (attemptId: string,) => void;
   onStreamingStart?: (attemptId: string,) => void;

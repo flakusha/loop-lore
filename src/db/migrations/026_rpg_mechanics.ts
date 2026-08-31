@@ -6,6 +6,9 @@ import { type Kysely, sql, } from "kysely";
  * Dice roll history, character stat blocks, XP tracking, loot tables.
  */
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Dice Roll History ──────────────────────────────────────
 
@@ -122,6 +125,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("loot_entries",).execute();
   await database.schema.dropTable("loot_tables",).execute();

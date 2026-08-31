@@ -45,9 +45,13 @@ export const NSFW_GATE_REASONS = [
   "user_override_disabled",
   "admin_emergency_block",
 ] as const;
+/** */
 export type NsfwGateReason = typeof NSFW_GATE_REASONS[number];
 
-/** Type guard for `NsfwGateReason`. */
+/**
+ * Type guard for `NsfwGateReason`.
+ * @param value
+ */
 export function isNsfwGateReason(value: unknown,): value is NsfwGateReason {
   return typeof value === "string" && (NSFW_GATE_REASONS as readonly string[]).includes(value,);
 }
@@ -77,7 +81,10 @@ function resolveNsfwPiiSecret(): string {
 const MIN_NSFW_PII_SECRET_LENGTH = 32;
 const NSFW_PII_SECRET = resolveNsfwPiiSecret();
 
-/** Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource. */
+/**
+ * Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource.
+ * @param arr
+ */
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
 }
@@ -94,6 +101,7 @@ function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
  * deployments.
  */
 let hmacKeyPromise: Promise<CryptoKey> | null = null;
+/** */
 async function getHmacKey(): Promise<CryptoKey> {
   if (!hmacKeyPromise) {
     const subkey = await domainKey(NSFW_PII_SECRET, DOMAIN_INFO.NSFW_PII, 32,);
@@ -117,6 +125,7 @@ export const NSFW_METADATA_MAX_BYTES = 1024;
  *
  * Async because WebCrypto's HMAC `sign` is async; the key is cached
  * after the first call.
+ * @param value
  */
 export async function hashId(value: string,): Promise<string> {
   const key = await getHmacKey();
@@ -148,6 +157,7 @@ const PII_METADATA_KEYS = new Set<string>([
  *
  * Also strips any key whose name ends in `Content`, `Message`, or `Text`
  * (case-insensitive) — same family of fields, different naming.
+ * @param metadata
  */
 export function applyNsfwMetadataRedaction(
   metadata: Record<string, unknown> | undefined,
@@ -189,6 +199,9 @@ export const NOTIFICATION_BODY_MAX_CHARS = 500;
  * `adminReason` is intentionally ignored — admin case-detail text never
  * reaches the user. (If a future feature needs `user_visible: true`
  * short reasons, it should set `reasonOverride` explicitly.)
+ * @param actionType
+ * @param _adminReason
+ * @param reasonOverride
  */
 export function buildUserNotificationBody(
   actionType: string,

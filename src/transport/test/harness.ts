@@ -48,8 +48,8 @@ export interface TestReport {
 
 /**
  * Validate a protocol handler against a test suite.
- *
  * @param handler - Protocol handler to test
+ * @param _handler
  * @param tests - Test suite to run
  * @returns Test report with pass/fail for each case
  */

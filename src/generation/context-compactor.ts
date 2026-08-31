@@ -15,11 +15,15 @@
 
 import type { GenerationMessage, } from "./gen-types-options";
 
-/** char→token heuristic (plan: chars * 0.3) */
+/**
+ * char→token heuristic (plan: chars * 0.3)
+ * @param text
+ */
 export function estimateTokens(text: string,): number {
   return Math.ceil(text.length * 0.3,);
 }
 
+/** */
 export interface CompactResult {
   messages: GenerationMessage[];
   compacted: boolean;
@@ -27,8 +31,10 @@ export interface CompactResult {
   droppedTokens: number;
 }
 
+/** */
 export type Summarizer = (segments: string[],) => Promise<string> | string;
 
+/** */
 export interface ContextCompactorOptions {
   /** Compact once prompt exceeds this fraction of the budget. */
   threshold?: number;
@@ -43,7 +49,6 @@ const SUMMARY_PREFIX = "[Conversation Summary]";
 
 /**
  * Compacts conversation history to fit a token budget.
- *
  * @example
  * const compactor = new ContextCompactor();
  * const { messages, compacted } = await compactor.compact(history, 32000);
@@ -53,13 +58,19 @@ export class ContextCompactor {
   private readonly keepLast: number;
   private readonly summarizer: Summarizer;
 
+  /**
+   * @param options
+   */
   constructor(options: ContextCompactorOptions = {},) {
     this.threshold = options.threshold ?? 0.85;
     this.keepLast = options.keepLast ?? 10;
     this.summarizer = options.summarizer ?? extractiveSummarize;
   }
 
-  /** Total estimated tokens across a message list. */
+  /**
+   * Total estimated tokens across a message list.
+   * @param messages
+   */
   totalTokens(messages: GenerationMessage[],): number {
     let sum = 0;
     for (const m of messages) { sum += estimateTokens(m.content ?? "",); }
@@ -69,6 +80,8 @@ export class ContextCompactor {
   /**
    * Returns a compacted message list. If under threshold, input is
    * returned unchanged (compacted: false).
+   * @param messages
+   * @param tokenBudget
    */
   async compact(messages: GenerationMessage[], tokenBudget: number,): Promise<CompactResult> {
     const total = this.totalTokens(messages,);
@@ -100,6 +113,7 @@ export class ContextCompactor {
 /**
  * Extractive fallback: keeps the opening context and the final stretch of
  * the older window, trimmed to a sane size. No LLM required.
+ * @param segments
  */
 function extractiveSummarize(segments: string[],): string {
   if (segments.length === 0) { return "(no earlier context)"; }

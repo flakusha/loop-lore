@@ -5,6 +5,7 @@ import { jsonStringifyOr, } from "../../utils.js";
 import { log, } from "./log.js";
 import type { RpgServiceDeps, } from "./types.js";
 
+/** */
 export interface LogDiceRollParams {
   userId: string;
   chatId?: string;
@@ -20,6 +21,10 @@ export interface LogDiceRollParams {
   purpose?: string;
 }
 
+/**
+ * @param deps
+ * @param params
+ */
 export async function logDiceRoll(
   deps: RpgServiceDeps,
   params: LogDiceRollParams,
@@ -50,6 +55,13 @@ export async function logDiceRoll(
   return id;
 }
 
+/**
+ * @param deps
+ * @param params
+ * @param params.userId
+ * @param params.chatId
+ * @param params.limit
+ */
 export async function getDiceRollHistory(
   deps: RpgServiceDeps,
   params: { userId: string; chatId?: string; limit?: number },

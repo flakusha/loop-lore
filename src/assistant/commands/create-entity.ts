@@ -40,9 +40,9 @@ export interface InsertedEntity {
 
 /**
  * Insert a validated, user-confirmed entity into the correct table.
- *
  * @param db - Database handle
  * @param draft - The confirmed draft (must have passed quality gates)
+ * @param userId
  * @returns The persisted entity id and name
  * @throws when the insert fails
  */

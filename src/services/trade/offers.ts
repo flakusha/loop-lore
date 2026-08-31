@@ -18,6 +18,8 @@ export const TRADE_RECIPE_SENTINEL = "__trade_offer__";
  * Ensure the sentinel recipe exists for trade offers.
  * The crafting_orders table has a FK on recipe_id → crafting_recipes.id,
  * so we need a real row to reference for trade offers.
+ * @param db
+ * @param worldId
  */
 export async function ensureTradeSentinel(
   db: Kysely<DB>,
@@ -68,6 +70,14 @@ export async function ensureTradeSentinel(
 /**
  * Create a pending trade offer. The offerer proposes to buy items from
  * a counterparty for a price. Returns the offer ID.
+ * @param db
+ * @param opts
+ * @param opts.worldId
+ * @param opts.buyerActorId
+ * @param opts.sellerActorId
+ * @param opts.buyerItems
+ * @param opts.price
+ * @param opts.deadline
  */
 export async function createOffer(
   db: Kysely<DB>,
@@ -105,6 +115,9 @@ export async function createOffer(
 /**
  * Accept a pending trade offer. Returns the offer row for the caller to
  * execute the trade with. Only the seller (crafter_actor_id) can accept.
+ * @param db
+ * @param offerId
+ * @param acceptorActorId
  */
 export async function loadOfferForAccept(
   db: Kysely<DB>,
@@ -138,7 +151,12 @@ export async function loadOfferForAccept(
   return { offer, buyerItems, };
 }
 
-/** Mark an offer as accepted or failed. */
+/**
+ * Mark an offer as accepted or failed.
+ * @param db
+ * @param offerId
+ * @param success
+ */
 export async function markOfferStatus(
   db: Kysely<DB>,
   offerId: string,
@@ -152,6 +170,9 @@ export async function markOfferStatus(
 
 /**
  * Cancel a pending trade offer. Only the offer creator (requester_actor_id) can cancel.
+ * @param db
+ * @param offerId
+ * @param cancellerActorId
  */
 export async function cancelOffer(
   db: Kysely<DB>,
@@ -179,6 +200,9 @@ export async function cancelOffer(
 
 /**
  * List pending trade offers for an actor (as buyer or seller).
+ * @param db
+ * @param worldId
+ * @param actorId
  */
 export async function listOffers(
   db: Kysely<DB>,

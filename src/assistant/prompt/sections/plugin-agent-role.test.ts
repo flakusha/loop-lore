@@ -3,6 +3,9 @@ import { registry, } from "../../../plugins/registry";
 import type { AssembleContext, } from "../types";
 import { pluginAgentRoleSection, } from "./plugin-agent-role";
 
+/**
+ * @param agentRole
+ */
 function makeContext(agentRole: string | null,): AssembleContext {
   return {
     db: {} as never,

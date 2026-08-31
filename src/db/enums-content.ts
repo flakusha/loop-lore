@@ -14,6 +14,7 @@ export const ContentEncoding = {
   Zstd: "zstd",
   Brotli: "brotli",
 } as const;
+/** */
 export type ContentEncoding = (typeof ContentEncoding)[keyof typeof ContentEncoding];
 
 export const AssetVisibility = {
@@ -21,6 +22,7 @@ export const AssetVisibility = {
   Shared: "shared",
   Public: "public",
 } as const;
+/** */
 export type AssetVisibility = (typeof AssetVisibility)[keyof typeof AssetVisibility];
 export const AssetType = {
   Image: "image",
@@ -29,6 +31,7 @@ export const AssetType = {
   Memory: "memory",
   Other: "other",
 } as const;
+/** */
 export type AssetType = (typeof AssetType)[keyof typeof AssetType];
 
 export const StorageBackend = {
@@ -36,6 +39,7 @@ export const StorageBackend = {
   S3: "s3",
   Gcs: "gcs",
 } as const;
+/** */
 export type StorageBackend = (typeof StorageBackend)[keyof typeof StorageBackend];
 
 // ── Asset Link Entities ──────────────────────────────────
@@ -50,4 +54,5 @@ export const AssetLinkEntity = {
   Memory: "memory",
   Message: "message",
 } as const;
+/** */
 export type AssetLinkEntity = (typeof AssetLinkEntity)[keyof typeof AssetLinkEntity];

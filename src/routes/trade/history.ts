@@ -11,6 +11,8 @@ import { resolveActorAccess, } from "./shared";
 /**
  * Trade history route — query past trades for a world, optionally
  * filtered by actor (owner-gated).
+ * @param opts
+ * @param prefix
  */
 export function tradeHistoryRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
   return (

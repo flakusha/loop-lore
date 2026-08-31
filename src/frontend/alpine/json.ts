@@ -11,6 +11,7 @@ export type JsonResult<T,> = { ok: true; value: T } | { ok: false; error: Error 
 
 /**
  * Parse JSON safely. Never throws — returns a discriminated union.
+ * @param text
  */
 export function safeJsonParse<T = unknown,>(text: string,): JsonResult<T> {
   try {
@@ -24,6 +25,8 @@ export function safeJsonParse<T = unknown,>(text: string,): JsonResult<T> {
 /**
  * Stringify JSON safely. Never throws — returns a discriminated union.
  * Handles edge cases like circular references gracefully.
+ * @param value
+ * @param space
  */
 export function safeJsonStringify(value: unknown, space?: number,): JsonResult<string> {
   try {
@@ -35,6 +38,8 @@ export function safeJsonStringify(value: unknown, space?: number,): JsonResult<s
 
 /**
  * Parse JSON, returning the value or `fallback` on failure.
+ * @param text
+ * @param fallback
  */
 export function jsonParseOr<T,>(text: string, fallback: T,): T {
   const result = safeJsonParse<T>(text,);
@@ -44,6 +49,7 @@ export function jsonParseOr<T,>(text: string, fallback: T,): T {
 /**
  * Safely stringify to a JSON body string for API requests.
  * Throws on failure (caught by existing try/catch blocks around apiFetch calls).
+ * @param data
  */
 export function jsonBody(data: unknown,): string {
   const r = safeJsonStringify(data,);

@@ -19,6 +19,9 @@ const state: AnthropicState = {
   headers: {},
 };
 
+/**
+ * @param overrides
+ */
 function req(overrides: Partial<GenerateRequest> = {},): GenerateRequest {
   return {
     model: "claude-3-5-sonnet",
@@ -30,18 +33,25 @@ function req(overrides: Partial<GenerateRequest> = {},): GenerateRequest {
 
 type FetchHandler = (url: string, init: RequestInit,) => Response | Promise<Response>;
 
+/**
+ * @param handler
+ * @param fn
+ */
 async function withMockFetch(handler: FetchHandler, fn: () => Promise<void>,): Promise<void> {
   const originalFetch = globalThis.fetch;
-  // eslint-disable-next-line unicorn/no-global-object-property-assignment
+
   (globalThis as Record<string, unknown>).fetch = handler;
   try {
     return await fn();
   } finally {
-    // eslint-disable-next-line unicorn/no-global-object-property-assignment
     (globalThis as Record<string, unknown>).fetch = originalFetch;
   }
 }
 
+/**
+ * @param body
+ * @param status
+ */
 function jsonResponse(body: unknown, status = 200,): Response {
   return Response.json(body, {
     status,
@@ -49,7 +59,10 @@ function jsonResponse(body: unknown, status = 200,): Response {
   },);
 }
 
-/** Build an Anthropic SSE body (event:/data: line pairs). */
+/**
+ * Build an Anthropic SSE body (event:/data: line pairs).
+ * @param events
+ */
 function sseResponse(events: [string, unknown,][],): Response {
   const lines = events.flatMap(([name, data,],) => [`event: ${name}`, `data: ${JSON.stringify(data,)}`,]);
   return new Response(`${lines.join("\n",)}\n\n`, {

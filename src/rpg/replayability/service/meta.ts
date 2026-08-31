@@ -7,7 +7,11 @@ import { jsonStringifyOr, } from "../../../utils";
 import { parseJsonField, } from "../../shared/rpg-service-utils";
 import type { EndingType, MetaProgression, PermanentBonus, } from "./types";
 
-/** Get meta-progression for a player */
+/**
+ * Get meta-progression for a player
+ * @param db
+ * @param playerId
+ */
 export async function getMetaProgression(
   db: Kysely<DB>,
   playerId: string,
@@ -47,6 +51,10 @@ export async function getMetaProgression(
 
 /**
  * Update meta-progression after completing a playthrough
+ * @param db
+ * @param playerId
+ * @param endingId
+ * @param _endingType
  */
 export async function updateMetaProgression(
   db: Kysely<DB>,

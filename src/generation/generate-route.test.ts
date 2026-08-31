@@ -35,6 +35,10 @@ beforeAll(async () => {
 
 // ── Seed helpers ──────────────────────────────────────────────
 
+/**
+ * @param testDb
+ * @param overrides
+ */
 async function seedChat(testDb: Kysely<DB>, overrides?: Partial<Record<string, unknown>>,): Promise<string> {
   const id = (overrides?.id as string) ?? randomUUID();
   await testDb
@@ -51,6 +55,10 @@ async function seedChat(testDb: Kysely<DB>, overrides?: Partial<Record<string, u
   return id;
 }
 
+/**
+ * @param testDb
+ * @param overrides
+ */
 async function seedActor(testDb: Kysely<DB>, overrides?: Partial<Record<string, unknown>>,): Promise<string> {
   const id = (overrides?.id as string) ?? randomUUID();
   await testDb
@@ -69,6 +77,12 @@ async function seedActor(testDb: Kysely<DB>, overrides?: Partial<Record<string, 
   return id;
 }
 
+/**
+ * @param testDb
+ * @param chatId
+ * @param actorId
+ * @param overrides
+ */
 async function seedMessage(
   testDb: Kysely<DB>,
   chatId: string,
@@ -97,6 +111,9 @@ async function seedMessage(
 
 // ── Test helpers ──────────────────────────────────────────────
 
+/**
+ * @param overrides
+ */
 function makeRequest(overrides?: Partial<Record<string, unknown>>,): Record<string, unknown> {
   return {
     chatId: "chat-1",
@@ -107,6 +124,7 @@ function makeRequest(overrides?: Partial<Record<string, unknown>>,): Record<stri
   };
 }
 
+/** */
 function makeConfig(): Config {
   return {
     ...loadConfig(),

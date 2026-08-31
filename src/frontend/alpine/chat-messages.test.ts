@@ -18,6 +18,10 @@ globalApiFetch.apiFetch = async (url: string, opts?: RequestInit,) => {
   return fetchHandler(url, opts ?? {},);
 };
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url, _opts,) => Response.json(body, { status, },);
 }
@@ -77,7 +81,6 @@ describe("chatMessages", () => {
 
   describe("scrollToBottom", () => {
     test("handles missing element gracefully", () => {
-      // eslint-disable-next-line @typescript-eslint/no-deprecated -- intentional mock for testing
       document.querySelector = () => null;
       expect(() => chatMessages.scrollToBottom!()).not.toThrow();
     });
@@ -85,7 +88,6 @@ describe("chatMessages", () => {
 
   describe("setupInfiniteScroll", () => {
     test("does nothing when sentinel not found", () => {
-      // eslint-disable-next-line @typescript-eslint/no-deprecated -- intentional mock for testing
       document.querySelector = () => null;
       expect(() => chatMessages.setupInfiniteScroll!.call({ scrollObserver: null, loadOlderMessages: () => {}, },)).not
         .toThrow();

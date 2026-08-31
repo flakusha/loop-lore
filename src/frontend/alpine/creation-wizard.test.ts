@@ -15,6 +15,10 @@ mock.module("./htmx", () => ({
   },
 }),);
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url, _opts,) => Response.json(body, { status, },);
 }

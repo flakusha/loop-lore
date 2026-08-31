@@ -20,6 +20,13 @@ interface BranchChatFields {
 /**
  * Create one branch chat for party split.
  * Returns the new chat ID and participant count.
+ * @param database
+ * @param sourceChatId
+ * @param source
+ * @param branchName
+ * @param locationId
+ * @param actorIds
+ * @param actorId
  */
 export async function createBranchChat(
   database: Kysely<DB>,
@@ -68,6 +75,9 @@ export async function createBranchChat(
 /**
  * Merge participants from secondary chat into primary, deduplicating by actor_id.
  * Returns the count of newly added participants.
+ * @param database
+ * @param primaryChatId
+ * @param secondaryChatId
  */
 export async function mergeParticipantsIntoPrimary(
   database: Kysely<DB>,
@@ -116,6 +126,9 @@ export async function mergeParticipantsIntoPrimary(
 /**
  * Copy all messages from secondary chat into primary in chronological order.
  * Returns the count of merged messages.
+ * @param database
+ * @param primaryChatId
+ * @param secondaryChatId
  */
 export async function copyMessagesToPrimary(
   database: Kysely<DB>,

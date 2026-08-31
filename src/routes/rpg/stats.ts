@@ -26,6 +26,8 @@ import { type HandlerOpts, StatsBody, StatsGenerateBody, } from "./types.js";
 
 /**
  * RPG Stats routes — stat-block calculations (no actor context).
+ * @param _opts
+ * @param prefix
  */
 export function statsRoutes(_opts: HandlerOpts, prefix = "/api",) {
   return (

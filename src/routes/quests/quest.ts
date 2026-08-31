@@ -13,6 +13,11 @@ import {
 } from "../../validation/schemas";
 import { handleAbandonQuest, handleQuest, } from "./handlers";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function questCrudRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "quests-crud", },)
     .get(`${prefix}/quests/:id`, async (ctx: any,) => {

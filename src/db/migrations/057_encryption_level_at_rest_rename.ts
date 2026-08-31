@@ -35,6 +35,9 @@
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   // SQLite enforces a CHECK constraint only if one was declared; this
   // column is plain TEXT and the only historical values are the four
@@ -45,6 +48,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
   );
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   // Reverse the rename for rollback safety.
   await sql`UPDATE chats SET encryption_level = 'private' WHERE encryption_level = 'at-rest'`.execute(

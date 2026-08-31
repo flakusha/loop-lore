@@ -13,6 +13,11 @@ const locationStateResponse = t.Object({
   state: t.Record(t.String(), t.Any(),),
 },);
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function storyLocationStateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-states-location", },)
     .get(`${prefix}/locations/:id/state`, async (ctx: any,) => {

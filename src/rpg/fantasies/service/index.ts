@@ -42,11 +42,16 @@ export type {
   FulfillmentEffects,
 } from "./types";
 
+/** */
 export class FantasyService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
    * Create a fantasy for an actor.
+   * @param opts
    */
   async createFantasy(opts: CreateFantasyOpts,): Promise<Fantasy> {
     return createFantasyDispatch(this.db, opts,);
@@ -54,6 +59,7 @@ export class FantasyService {
 
   /**
    * Get all fantasies for an actor.
+   * @param actorId
    */
   async getActorFantasies(actorId: string,): Promise<Fantasy[]> {
     return getActorFantasiesDispatch(this.db, actorId,);
@@ -61,6 +67,8 @@ export class FantasyService {
 
   /**
    * Get fantasies by category.
+   * @param actorId
+   * @param category
    */
   async getByCategory(
     actorId: string,
@@ -71,6 +79,9 @@ export class FantasyService {
 
   /**
    * Attempt to discover a new fantasy through play.
+   * @param actorId
+   * @param context
+   * @param discoveryChance
    */
   async attemptDiscovery(
     actorId: string,
@@ -82,6 +93,8 @@ export class FantasyService {
 
   /**
    * Record exploration of a fantasy (after encounter).
+   * @param fantasyId
+   * @param feeling
    */
   async recordExploration(
     fantasyId: string,
@@ -92,6 +105,7 @@ export class FantasyService {
 
   /**
    * Delete a fantasy.
+   * @param fantasyId
    */
   async deleteFantasy(fantasyId: string,): Promise<boolean> {
     return deleteFantasyDispatch(this.db, fantasyId,);

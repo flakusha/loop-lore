@@ -19,16 +19,28 @@ import { messageSeenRoutes, } from "./message-seen";
 
 const BASE = "http://localhost";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function seenApp(db: Kysely<DB>, userId: string | null, userRole: string | null,): Elysia {
   return new Elysia({ name: "test-seen", },)
     .derive(() => ({ userId, userRole, }))
     .use(messageSeenRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param path
+ */
 function get(path: string,): Request {
   return new Request(`${BASE}${path}`,);
 }
 
+/**
+ * @param path
+ * @param body
+ */
 function postSeen(path: string, body: unknown,): Request {
   return new Request(`${BASE}${path}`, {
     method: "POST",
@@ -37,6 +49,10 @@ function postSeen(path: string, body: unknown,): Request {
   },);
 }
 
+/**
+ * @param path
+ * @param actorId
+ */
 function deleteReq(path: string, actorId: string,): Request {
   return new Request(`${BASE}${path}?actorId=${actorId}`, {
     method: "DELETE",

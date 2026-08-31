@@ -10,6 +10,9 @@ import type { ModelInfo, } from "../types";
 import { fetchRaw, handleErrorResponse, } from "./http";
 import type { OllamaEmbedResponse, OllamaNativeState, OllamaTagsResponse, OllamaVersionResponse, } from "./types";
 
+/**
+ * @param state
+ */
 export async function listModelsDispatch(state: OllamaNativeState,): Promise<ModelInfo[]> {
   const url = new URL(`${state.baseUrl}/api/tags`,);
   const response = await fetchRaw(state, url.href, undefined, undefined,);
@@ -28,6 +31,9 @@ export async function listModelsDispatch(state: OllamaNativeState,): Promise<Mod
     : [];
 }
 
+/**
+ * @param state
+ */
 export async function healthCheckDispatch(state: OllamaNativeState,): Promise<{
   status: "ok" | "degraded" | "down";
   model?: string;
@@ -67,6 +73,11 @@ export async function healthCheckDispatch(state: OllamaNativeState,): Promise<{
   }
 }
 
+/**
+ * @param state
+ * @param input
+ * @param model
+ */
 export async function embedDispatch(
   state: OllamaNativeState,
   input: string | string[],

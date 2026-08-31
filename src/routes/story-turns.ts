@@ -18,6 +18,12 @@ import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonPaginated, jsonResponse, } from "./http-utils";
 
+/**
+ * @param database
+ * @param chatId
+ * @param userId
+ * @param userRole
+ */
 async function checkChatOwnership(
   database: Db,
   chatId: string,
@@ -32,6 +38,12 @@ async function checkChatOwnership(
   return !!chat && (chat.created_by === userId || can(userRole, "admin.chat",));
 }
 
+/**
+ * @param opts
+ * @param opts.database
+ * @param opts.config
+ * @param prefix
+ */
 export function storyTurnsRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return new Elysia({ name: "story-turns", },)
     .get(`${prefix}/chats/:id/story-turns`, async (ctx: any,) => {

@@ -13,6 +13,9 @@ const APPROVED_TOOLS: Record<string, boolean> = {
   help: true,
 };
 
+/**
+ * @param text
+ */
 function matchIntent(
   text: string,
 ): { intent: AssistantIntent; target: string; confidence: number } | null {

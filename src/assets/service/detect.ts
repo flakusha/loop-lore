@@ -9,6 +9,7 @@ import type { AssetType as AssetTypeT, } from "../../db/enums";
 
 /**
  * Detect asset type from MIME type.
+ * @param mime
  */
 export function detectAssetType(mime: string,): AssetTypeT {
   if (mime.startsWith("image/",)) { return AssetType.Image; }
@@ -19,6 +20,7 @@ export function detectAssetType(mime: string,): AssetTypeT {
 
 /**
  * Detect MIME type from file extension.
+ * @param filename
  */
 export function mimeFromExtension(filename: string,): string {
   const ext = filename.split(".",).pop()?.toLowerCase() ?? "";

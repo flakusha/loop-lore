@@ -7,6 +7,10 @@ import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function keyRotationRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-key-rotation", },)

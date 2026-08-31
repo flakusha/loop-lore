@@ -16,6 +16,7 @@ import { GenerationCancelledError, } from "./error";
  * Returns true if cancellation was actually performed.
  */
 
+/** */
 export interface CancelGenerationOpts {
   attemptId: string;
   reason: CancelReason;
@@ -23,6 +24,13 @@ export interface CancelGenerationOpts {
   detail: string;
 }
 
+/**
+ * @param root0
+ * @param root0.attemptId
+ * @param root0.reason
+ * @param root0.source
+ * @param root0.detail
+ */
 export function cancelGeneration({ attemptId, reason, source, detail, }: CancelGenerationOpts,): boolean {
   const active = activeGenerations.get(attemptId,);
   if (!active) { return false; }
@@ -63,6 +71,14 @@ export interface CancelGenerationByChatOpts {
   detail?: string;
 }
 
+/**
+ * @param root0
+ * @param root0.db
+ * @param root0.chatId
+ * @param root0.reason
+ * @param root0.source
+ * @param root0.detail
+ */
 export function cancelGenerationByChat({
   db,
   chatId,
@@ -99,6 +115,7 @@ export function cancelGenerationByChat({
 /**
  * Get the abort signal for a given attempt. Returns null if the
  * attempt is not active or has already been cancelled.
+ * @param attemptId
  */
 export function getAbortSignal(attemptId: string,): AbortSignal | null {
   const active = activeGenerations.get(attemptId,);

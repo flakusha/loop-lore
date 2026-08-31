@@ -1,5 +1,8 @@
 import { type Kysely, sql, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Model role overrides (admin panel model assignment) ────────
   await database.schema
@@ -12,6 +15,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("model_role_overrides",).execute();
 }

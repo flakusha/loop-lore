@@ -7,7 +7,6 @@
  * Reference: docs/spec/plugin-system.md
  * Covers: Plugin, PluginContext, ToolDefinition, AgentRoleDefinition,
  * RouteDefinition, UIComponent, EventHandler, Migration, PluginConfigSchema.
- *
  * @module plugin-types
  */
 
@@ -69,6 +68,9 @@ export interface ToolExecutionContext {
   chatId: string;
 }
 
+/**
+ *
+ */
 export interface ToolDefinition {
   name: string;
   description: string;
@@ -82,12 +84,18 @@ export interface ToolDefinition {
   sandboxed?: boolean;
 }
 
+/**
+ *
+ */
 export interface ToolResult {
   content: string;
   metadata?: Record<string, unknown>;
   isError?: boolean;
 }
 
+/**
+ *
+ */
 export interface AgentRoleDefinition {
   id: string;
   name: string;
@@ -99,6 +107,9 @@ export interface AgentRoleDefinition {
   permissions?: string[];
 }
 
+/**
+ *
+ */
 export interface RouteDefinition {
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
@@ -108,6 +119,9 @@ export interface RouteDefinition {
   permissions?: string[];
 }
 
+/**
+ *
+ */
 export interface UIComponentDefinition {
   type: "web" | "tui" | "both";
   name: string;
@@ -115,12 +129,18 @@ export interface UIComponentDefinition {
   props?: Record<string, unknown>;
 }
 
+/**
+ *
+ */
 export interface EventHandlerDefinition {
   event: string;
   handler: (data: unknown) => Promise<void>;
   description?: string;
 }
 
+/**
+ *
+ */
 export interface MigrationDefinition {
   version: number;
   name: string;
@@ -128,6 +148,9 @@ export interface MigrationDefinition {
   down?: (db: Kysely<DB>) => Promise<void>;
 }
 
+/**
+ *
+ */
 export interface PluginConfigSchema {
   type: "object";
   properties: Record<string, unknown>;
@@ -136,6 +159,9 @@ export interface PluginConfigSchema {
 
 // ── Logger subset for plugins ────────────────────────────────
 
+/**
+ *
+ */
 export interface PluginLogger {
   info(msg: string, meta?: Record<string, unknown>): void;
   warn(msg: string, meta?: Record<string, unknown>): void;

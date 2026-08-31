@@ -14,12 +14,14 @@ export const DEFAULT_FLUSH_INTERVAL = 100;
 export const DEFAULT_BATCH_SIZE = 50;
 export const DEFAULT_QUEUE_MAX = 10_000;
 
+/** */
 export interface QueueOptions {
   flushInterval?: number;
   batchSize?: number;
   queueMaxSize?: number;
 }
 
+/** */
 export abstract class AsyncLogQueueBase {
   protected buffer: LogEntry[] = [];
   protected transports: Transport[] = [];
@@ -30,6 +32,10 @@ export abstract class AsyncLogQueueBase {
   protected readonly queueMaxSize: number;
   protected droppedCount = 0;
 
+  /**
+   * @param transports
+   * @param options
+   */
   constructor(transports: Transport[], options?: QueueOptions,) {
     this.transports = transports;
     this.flushInterval = options?.flushInterval ?? DEFAULT_FLUSH_INTERVAL;
@@ -37,6 +43,7 @@ export abstract class AsyncLogQueueBase {
     this.queueMaxSize = options?.queueMaxSize ?? DEFAULT_QUEUE_MAX;
   }
 
+  /** */
   start(): void {
     if (this.timer) { return; }
     this.timer = setInterval(() => {
@@ -52,12 +59,16 @@ export abstract class AsyncLogQueueBase {
     this.setupTimerUnref();
   }
 
+  /** */
   stop(): void {
     if (!this.timer) { return; }
     clearInterval(this.timer,);
     this.timer = null;
   }
 
+  /**
+   * @param entry
+   */
   enqueue(entry: LogEntry,): void {
     if (this.buffer.length >= this.queueMaxSize) {
       this.droppedCount++;
@@ -95,6 +106,7 @@ export abstract class AsyncLogQueueBase {
 
   abstract flush(): Promise<void>;
 
+  /** */
   protected async flushToTransports(): Promise<void> {
     const batch = this.buffer.splice(0, this.batchSize,);
 
@@ -120,6 +132,7 @@ export abstract class AsyncLogQueueBase {
 
   protected abstract setupTimerUnref(): void;
 
+  /** */
   protected scheduleFollowupFlush(): void {
     if (this.buffer.length > 0) {
       queueMicrotask(() => {

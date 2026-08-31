@@ -3,6 +3,10 @@
 
 // src/config/load/parse.ts — Config parsing & object helpers
 
+/**
+ * @param base
+ * @param overrides
+ */
 export function deepMerge<T extends Record<string, unknown>,>(base: T, overrides: Partial<T>,): T {
   const result = { ...base, };
   for (const key of Object.keys(overrides,)) {
@@ -22,6 +26,11 @@ export function deepMerge<T extends Record<string, unknown>,>(base: T, overrides
   return result;
 }
 
+/**
+ * @param object
+ * @param path
+ * @param value
+ */
 export function setByPath(object: Record<string, unknown>, path: string, value: unknown,): void {
   const parts = path.split(".",);
   let current = object;
@@ -35,6 +44,10 @@ export function setByPath(object: Record<string, unknown>, path: string, value: 
   current[parts.at(-1,) as string] = value;
 }
 
+/**
+ * @param value
+ * @param targetType
+ */
 export function coerceValue(value: string, targetType: string,): unknown {
   if (targetType === "number") { return Number(value,); }
   if (targetType === "boolean") {
@@ -45,6 +58,10 @@ export function coerceValue(value: string, targetType: string,): unknown {
   return value;
 }
 
+/**
+ * @param object
+ * @param configPath
+ */
 export function getTypeOfPath(object: Record<string, unknown>, configPath: string,): string {
   const parts = configPath.split(".",);
   let current: unknown = object;
@@ -55,6 +72,10 @@ export function getTypeOfPath(object: Record<string, unknown>, configPath: strin
   return typeof current;
 }
 
+/**
+ * @param content
+ * @param extension
+ */
 export function parseFileContent(content: string, extension: string,): Record<string, unknown> {
   if (extension === "yaml" || extension === "yml") {
     return Bun.YAML.parse(content,) as Record<string, unknown>;

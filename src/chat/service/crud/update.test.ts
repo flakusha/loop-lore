@@ -32,6 +32,7 @@ describe("updateChat gmConfig GM execution fields", () => {
     await db?.destroy();
   },);
 
+  /** */
   async function gmConfigOf(): Promise<Record<string, unknown> | null> {
     const row = await db
       .selectFrom("chats",)
@@ -159,6 +160,7 @@ describe("updateChat promptOverride (per-chat prompt override)", () => {
     await db?.destroy();
   },);
 
+  /** */
   async function promptOverrideOf(): Promise<string | null> {
     const row = await db
       .selectFrom("chats",)
@@ -216,6 +218,7 @@ describe("updateChat quickReplies (quick-reply button sets)", () => {
     await db?.destroy();
   },);
 
+  /** */
   async function quickRepliesOf(): Promise<unknown> {
     const row = await db
       .selectFrom("chats",)

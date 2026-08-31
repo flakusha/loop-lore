@@ -9,7 +9,12 @@ import {
 } from "../integration-schemas";
 import type { SocialCombatResult, } from "./types";
 
-/** Calculate rally effect */
+/**
+ * Calculate rally effect
+ * @param leaderCharisma
+ * @param leaderLevel
+ * @param allyMorale
+ */
 export function calculateRallyEffect(
   leaderCharisma: number,
   leaderLevel: number,
@@ -44,7 +49,12 @@ export function calculateRallyEffect(
   };
 }
 
-/** Calculate inspire effect */
+/**
+ * Calculate inspire effect
+ * @param leaderCharisma
+ * @param leaderInspiration
+ * @param allyMorale
+ */
 export function calculateInspireEffect(
   leaderCharisma: number,
   leaderInspiration: number,

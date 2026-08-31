@@ -12,6 +12,10 @@ interface NGramFingerprint {
   positions: number[];
 }
 
+/**
+ * @param text
+ * @param size
+ */
 function extractNGrams(text: string, size: number,): NGramFingerprint[] {
   const fingerprints = new Map<string, number[]>();
 
@@ -32,6 +36,11 @@ function extractNGrams(text: string, size: number,): NGramFingerprint[] {
   return result;
 }
 
+/**
+ * @param positions
+ * @param windowSize
+ * @param _textLength
+ */
 function computeNGramSimilarity(positions: number[], windowSize: number, _textLength: number,): number {
   if (positions.length < 2) { return 0; }
 
@@ -55,6 +64,10 @@ function computeNGramSimilarity(positions: number[], windowSize: number, _textLe
   return Math.min(1, Math.max(0, 1 - avgDistance / windowSize,),);
 }
 
+/**
+ * @param text
+ * @param config
+ */
 export function detectPatterns(text: string, config: RepetitionDetectionConfig,): RepetitionPattern[] {
   const fingerprints = extractNGrams(text, NGRAM_SIZE,);
 
@@ -88,6 +101,9 @@ export function detectPatterns(text: string, config: RepetitionDetectionConfig,)
   return deduplicatePatterns(patterns,);
 }
 
+/**
+ * @param patterns
+ */
 function deduplicatePatterns(patterns: RepetitionPattern[],): RepetitionPattern[] {
   const deduped: RepetitionPattern[] = [];
   const seenPositions = new Set<number>();

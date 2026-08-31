@@ -38,6 +38,10 @@ mock.module("../../assets/service/links", () => {
   };
 },);
 
+/**
+ * @param db
+ * @param userId
+ */
 function makeApp(db: Kysely<DB>, userId: string,): Elysia {
   const app = new Elysia({ name: "test-create", },);
   app.derive(() => ({ userId, userRole: "user", }));

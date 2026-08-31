@@ -10,6 +10,12 @@ import { checkOwnership, entityPaths, } from "./context";
 import { applyResponseTransforms, buildCreateValues, } from "./helpers";
 import type { EntityConfig, } from "./types";
 
+/**
+ * @param config
+ * @param opts
+ * @param opts.database
+ * @param opts.config
+ */
 export function createRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
   const { basePath, parentParam, } = entityPaths(config,);
 

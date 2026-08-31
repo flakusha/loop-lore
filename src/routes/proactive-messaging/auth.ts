@@ -44,6 +44,10 @@ export type Ctx = Context & AuthContext;
  *
  * Both checks fail-closed with `notFound` (404) to avoid leaking which
  * dimension of the authorization failed.
+ * @param database
+ * @param ctx
+ * @param chatId
+ * @param actorId
  */
 export async function authorizeProactiveTarget(
   database: Kysely<DB>,

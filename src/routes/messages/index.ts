@@ -12,6 +12,7 @@ import { updateRoutes, } from "./update";
  * Message route module — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`messages`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
+ * @param opts
  */
 export function messagesRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "messages", },)

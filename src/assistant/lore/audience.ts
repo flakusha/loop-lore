@@ -29,6 +29,7 @@ export type LoreSubject =
   | { kind: "faction" }
   | { kind: "item" };
 
+/** */
 export interface LoreScope {
   subject?: LoreSubject;
   /** Location lore is only known while the actor is present there. */
@@ -48,7 +49,10 @@ export interface ActorIdentity {
 /** Optional callback to test whether a location is inside another's scope tree. */
 export type LocationInScope = (locId: string, scopeLocId: string,) => boolean;
 
-/** Parse a stored audience_scope JSON string. Returns null for empty/invalid. */
+/**
+ * Parse a stored audience_scope JSON string. Returns null for empty/invalid.
+ * @param json
+ */
 export function parseLoreScope(json: string | null | undefined,): LoreScope | null {
   if (!json) { return null; }
   const result = safeJsonParse<Record<string, unknown>>(json,);
@@ -62,8 +66,8 @@ export function parseLoreScope(json: string | null | undefined,): LoreScope | nu
 
 /**
  * Decide whether a lore entry is visible to a speaking actor.
- *
  * @param entry    The lore entry with parsed `audience_scope`.
+ * @param entry.audienceScope
  * @param identity The speaking actor's resolved identity.
  * @param locationInScope Optional resolver for location ancestry when subject.kind === "location".
  * @returns `true` if the actor may know this lore.

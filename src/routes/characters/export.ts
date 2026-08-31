@@ -19,6 +19,10 @@ import {
 import { HttpStatus, jsonError, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function exportRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

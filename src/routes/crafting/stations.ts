@@ -16,6 +16,9 @@ import { craftingStationInstancesRoutes, } from "./station-instances";
  * Mount all crafting station routes (definitions + instances).
  *
  * Signature kept stable so `register-plugins.ts` and tests need no changes.
+ * @param root0
+ * @param root0.database
+ * @param prefix
  */
 export function craftingStationRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   return new Elysia({ name: "crafting-stations", },)

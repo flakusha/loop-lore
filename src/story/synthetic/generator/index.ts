@@ -34,23 +34,30 @@ const ALL_TYPES: readonly SyntheticDataType[] = [
   SyntheticDataType.GmEscalation,
 ];
 
+/** */
 export class SyntheticGenerator {
   private readonly db: Kysely<DB>;
   private readonly idGenerator: () => string;
   private readonly maxScenarios: number;
 
+  /**
+   * @param options
+   */
   constructor(options: SyntheticGeneratorOptions,) {
     this.db = options.db;
     this.idGenerator = options.idGenerator ?? (() => uid());
     this.maxScenarios = options.maxScenarios ?? 10;
   }
 
+  /** */
   private get state(): GeneratorState {
     return { db: this.db, idGenerator: this.idGenerator, maxScenarios: this.maxScenarios, };
   }
 
   /**
    * Generate synthetic scenarios for a chat across the requested types.
+   * @param chatId
+   * @param types
    */
   async generateForChat(chatId: string, types?: SyntheticDataType[],): Promise<string[]> {
     const source = await fetchSource(this.state, chatId,);
@@ -71,6 +78,9 @@ export class SyntheticGenerator {
 
   /**
    * Transition a SyntheticData row's status via the state machine.
+   * @param id
+   * @param to
+   * @param validatedBy
    */
   async transitionStatus(id: string, to: SyntheticDataStatus, validatedBy?: string,): Promise<boolean> {
     return transitionStatus(this.state, id, to, validatedBy,);

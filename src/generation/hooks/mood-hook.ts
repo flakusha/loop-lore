@@ -19,11 +19,15 @@ import { getLogger, } from "../../logger";
 import { isNsfwRating, } from "../../middleware/nsfw-gate/constants";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
+/** */
 export class MoodHook implements HookHandler {
   readonly name = "mood";
   readonly eventTypes: HookEventType[] = ["mood_shift",];
 
-  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
+  /**
+   * @param content
+   * @param context
+   */
   async canHandle(content: string, context: HookContext,): Promise<boolean> {
     // Private content opt-out: skip mood detection entirely so private
     // conversations are never analyzed for mood shifts.
@@ -31,7 +35,10 @@ export class MoodHook implements HookHandler {
     return content.length > 10;
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.execute interface requires Promise<HookResult>
+  /**
+   * @param content
+   * @param context
+   */
   async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();
     log.debug("mood-hook: analyzing content for mood shifts", {
@@ -74,6 +81,9 @@ export class MoodHook implements HookHandler {
     };
   }
 
+  /**
+   * @param content
+   */
   private detectMoodIndicators(content: string,): string[] {
     const indicators: string[] = [];
     const lower = content.toLowerCase();
@@ -117,6 +127,9 @@ export class MoodHook implements HookHandler {
     return indicators;
   }
 
+  /**
+   * @param indicators
+   */
   private determineDominantMood(indicators: string[],): string {
     let positive = 0;
     for (const i of indicators) { if (i.startsWith("positive:",)) { positive += 1; } }
@@ -130,6 +143,9 @@ export class MoodHook implements HookHandler {
     return "neutral";
   }
 
+  /**
+   * @param mood
+   */
   private calculateMoodDelta(mood: string,): number {
     switch (mood) {
       case "positive": {

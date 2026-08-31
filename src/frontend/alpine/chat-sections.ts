@@ -15,6 +15,7 @@ import type { ChatState, } from "./types";
 
 const log = rootLog.child({ module: "chat-sections", },);
 
+/** */
 export interface ChatSectionRow {
   id: string;
   label: string;
@@ -118,7 +119,6 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
    * `index`, or null when no divider is needed. A divider renders when the
    * message's section differs from the previous message's section (or the
    * message is the first in the stream with an assigned section).
-   *
    * @param index Index within the rendered (grouped) message list.
    * @param sectionId Section of the message at that index.
    */
@@ -132,7 +132,10 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     return null;
   },
 
-  /** Scroll the message list to the first message of a section. */
+  /**
+   * Scroll the message list to the first message of a section.
+   * @param sectionId
+   */
   jumpToSection(sectionId: string,) {
     const target = this.groupedMessages.find((m,) => m.section_id === sectionId);
     if (!target) { return; }
@@ -145,7 +148,6 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
    * the location label ("📍 The Dark Forest — 12 msgs · 14:32"). Both derive
    * from the loaded message stream; count is the same figure the story map
    * shows, time is the first message's `created_at`.
-   *
    * @param sectionId Section to summarize.
    * @returns `{ count, startTime }` (startTime `null` when the section is empty).
    */
@@ -160,7 +162,10 @@ export const chatSections: Partial<ChatState> & ThisType<ChatState> = {
     return { count, startTime, };
   },
 
-  /** Format an ISO timestamp for divider display (HH:MM). */
+  /**
+   * Format an ISO timestamp for divider display (HH:MM).
+   * @param iso
+   */
   formatSectionTime(iso: string | null,): string {
     if (!iso) { return ""; }
     return formatDisplayDate(iso, "time",);

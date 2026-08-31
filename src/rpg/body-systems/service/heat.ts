@@ -9,7 +9,19 @@ import { jsonParseOr, jsonStringifyOr, uid, } from "../../../utils";
 import { Species, } from "../enums";
 import type { HeatCycleState, HeatEffects, } from "./types";
 
-/** Convert database row to HeatCycleState object */
+/**
+ * Convert database row to HeatCycleState object
+ * @param row
+ * @param row.id
+ * @param row.actor_id
+ * @param row.species
+ * @param row.cycle_length_days
+ * @param row.current_phase
+ * @param row.days_until_next_heat
+ * @param row.effects
+ * @param row.created_at
+ * @param row.updated_at
+ */
 export function rowToHeatCycle(row: {
   id: string;
   actor_id: string;
@@ -36,6 +48,9 @@ export function rowToHeatCycle(row: {
 
 /**
  * Get or create a heat cycle for an actor.
+ * @param db
+ * @param actorId
+ * @param species
  */
 export async function getHeatCycle(
   db: Kysely<DB>,
@@ -96,6 +111,9 @@ export async function getHeatCycle(
 
 /**
  * Advance the heat cycle by a number of days.
+ * @param db
+ * @param actorId
+ * @param days
  */
 export async function advanceHeatCycle(
   db: Kysely<DB>,
@@ -144,6 +162,8 @@ export async function advanceHeatCycle(
 /**
  * Get the current heat effects for an actor.
  * Returns nullified effects for non-heat species.
+ * @param db
+ * @param actorId
  */
 export async function getHeatEffects(
   db: Kysely<DB>,

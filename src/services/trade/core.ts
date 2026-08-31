@@ -22,6 +22,14 @@ import type { TradeHistoryEntry, TradeLine, TradeResult, TradeType, } from "./ty
  *
  * Every item line must be owned by the stated party and hold sufficient
  * quantity. Item transfers and currency ledger commit in one transaction.
+ * @param db
+ * @param opts
+ * @param opts.worldId
+ * @param opts.buyerActorId
+ * @param opts.sellerActorId
+ * @param opts.buyerItems
+ * @param opts.sellerItems
+ * @param opts.price
  */
 export async function tradeCore(
   db: Kysely<DB>,
@@ -115,6 +123,17 @@ export async function tradeCore(
 /**
  * Record a completed trade in trade_history.
  * Called internally after successful trades.
+ * @param db
+ * @param opts
+ * @param opts.worldId
+ * @param opts.buyerActorId
+ * @param opts.sellerActorId
+ * @param opts.price
+ * @param opts.currency
+ * @param opts.itemsOffered
+ * @param opts.itemsRequested
+ * @param opts.tradeType
+ * @param opts.trx
  */
 export async function recordTrade(
   db: Kysely<DB>,
@@ -151,6 +170,10 @@ export async function recordTrade(
 /**
  * Query trade history for an actor (as buyer or seller) in a world.
  * Returns most recent trades first.
+ * @param db
+ * @param worldId
+ * @param actorId
+ * @param limit
  */
 export async function getTradeHistory(
   db: Kysely<DB>,

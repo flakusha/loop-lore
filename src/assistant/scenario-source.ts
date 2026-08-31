@@ -35,9 +35,10 @@ export interface ScenarioSource {
 
 /**
  * Store a new scenario source.
- *
  * @param db - Database instance
  * @param source - Scenario source to store
+ * @param _db
+ * @param _source
  * @returns Stored scenario source ID
  */
 export function storeScenarioSource(
@@ -53,10 +54,12 @@ export function storeScenarioSource(
 
 /**
  * Find reusable scenario sources matching a query.
- *
  * @param db - Database instance
  * @param query - Search query (matched against world_sketch and tags)
  * @param limit - Maximum results
+ * @param _db
+ * @param _query
+ * @param _limit
  * @returns Matching scenario sources
  */
 export function findScenarioSources(
@@ -73,8 +76,8 @@ export function findScenarioSources(
 
 /**
  * Get a random reusable scenario source for inspiration.
- *
  * @param db - Database instance
+ * @param _db
  * @returns Random scenario source or null
  */
 export function getRandomScenarioSource(_db: Kysely<DB>,): ScenarioSource | null {
@@ -84,10 +87,12 @@ export function getRandomScenarioSource(_db: Kysely<DB>,): ScenarioSource | null
 
 /**
  * Bridge: Create a blog world seed from a scenario source.
- *
  * @param db - Database instance
  * @param scenarioId - Scenario source ID
  * @param blogPostId - Blog post to link
+ * @param _db
+ * @param _scenarioId
+ * @param _blogPostId
  * @returns Bridge record ID
  */
 export function bridgeToBlog(

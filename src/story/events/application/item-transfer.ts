@@ -15,6 +15,12 @@ import { getLogger, } from "../../../logger";
 import type { ItemsService, } from "../../items";
 import type { WorldEvent, } from "../../types";
 
+/**
+ * @param db
+ * @param itemsService
+ * @param worldId
+ * @param event
+ */
 export async function applyItemTransfer(
   db: Kysely<DB>,
   itemsService: ItemsService,

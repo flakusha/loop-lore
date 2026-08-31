@@ -44,6 +44,7 @@ const CHAIN_KEY_INFO = "loop-lore-e2e-chain-key-v1" as const;
 const MESSAGE_KEY_INFO = "loop-lore-e2e-message-key-v1" as const;
 const KEY_LENGTH = 32;
 
+/** */
 export interface RatchetStep {
   /** Updated chain key. Pass to the next `nextRatchetStep` call. */
   chainKey: Uint8Array;
@@ -53,7 +54,6 @@ export interface RatchetStep {
 
 /**
  * Advance the chain key by one step and derive the next message key.
- *
  * @param chainKey - Current chain key bytes (typically the AES-GCM session
  *   key from `deriveSharedSecret`, or the previous step's `chainKey`).
  *   Treated as input keying material; discarded after the call.
@@ -81,7 +81,10 @@ export async function nextRatchetStep(chainKey: Uint8Array,): Promise<RatchetSte
   return { chainKey: chainKeyOut, messageKey, };
 }
 
-/** Import raw bytes as an HKDF base key (extract step is a no-op). */
+/**
+ * Import raw bytes as an HKDF base key (extract step is a no-op).
+ * @param rawKey
+ */
 async function importHmacKey(rawKey: Uint8Array,): Promise<CryptoKey> {
   return crypto.subtle.importKey(
     "raw",
@@ -92,7 +95,12 @@ async function importHmacKey(rawKey: Uint8Array,): Promise<CryptoKey> {
   );
 }
 
-/** HKDF-Expand (RFC 5869): derive `out` bytes from `baseKey` + `info`. */
+/**
+ * HKDF-Expand (RFC 5869): derive `out` bytes from `baseKey` + `info`.
+ * @param baseKey
+ * @param info
+ * @param out
+ */
 async function hkdfExpand(baseKey: CryptoKey, info: string, out: Uint8Array,): Promise<void> {
   const bits = out.byteLength * 8;
   const derived = await crypto.subtle.deriveBits(
@@ -108,9 +116,12 @@ async function hkdfExpand(baseKey: CryptoKey, info: string, out: Uint8Array,): P
   out.set(new Uint8Array(derived,),);
 }
 
-/** WebCrypto wants `BufferSource`; typed-array views are accepted but the type
+/**
+ * WebCrypto wants `BufferSource`; typed-array views are accepted but the type
  *  signature varies by @types/web. Narrowing via fresh ArrayBuffer copy is the
- *  portable approach used across this module. */
+ *  portable approach used across this module.
+ * @param bytes
+ */
 function toBufferSource(bytes: Uint8Array,): Uint8Array<ArrayBuffer> {
   const copy = new Uint8Array(bytes.byteLength,);
   copy.set(bytes,);

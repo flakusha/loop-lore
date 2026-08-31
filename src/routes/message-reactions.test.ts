@@ -19,17 +19,29 @@ const BASE = "http://localhost";
 
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 
-/** Auth-context app via derive, mirroring chat-sections/chats test helpers. */
+/**
+ * Auth-context app via derive, mirroring chat-sections/chats test helpers.
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function reactionApp(db: Kysely<DB>, userId: string | null, userRole: string | null,): Elysia {
   return new Elysia({ name: "test-reactions", },)
     .derive(() => ({ userId, userRole, }))
     .use(messageReactionsRoutes({ database: db, },),) as unknown as Elysia;
 }
 
+/**
+ * @param path
+ */
 function get(path: string,): Request {
   return new Request(`${BASE}${path}`,);
 }
 
+/**
+ * @param path
+ * @param emoji
+ */
 function toggle(path: string, emoji: string,): Request {
   return new Request(`${BASE}${path}`, {
     method: "POST",
@@ -38,6 +50,9 @@ function toggle(path: string, emoji: string,): Request {
   },);
 }
 
+/**
+ * @param path
+ */
 function del(path: string,): Request {
   return new Request(`${BASE}${path}`, { method: "DELETE", },);
 }

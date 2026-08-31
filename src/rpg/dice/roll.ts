@@ -13,6 +13,7 @@ import {
 /**
  * Generate a cryptographically secure random integer in [1, max].
  * Uses `crypto.getRandomValues` — unbiased, uniform distribution.
+ * @param max
  */
 function cryptoRandomInt(max: number,): number {
   const array = new Uint32Array(1,);
@@ -24,10 +25,8 @@ function cryptoRandomInt(max: number,): number {
 
 /**
  * Roll a single die with crypto-grade entropy.
- *
  * @param sides - Number of sides (4, 6, 8, 10, 12, 20, 100)
  * @returns Face value in [1, sides]
- *
  * @example
  * ```ts
  * const result = rollDie(20); // 1–20
@@ -39,7 +38,6 @@ export function rollDie(sides: DiceSides,): number {
 
 /**
  * Roll multiple dice with crypto-grade entropy.
- *
  * @param count - Number of dice to roll
  * @param sides - Number of sides per die
  * @returns Array of face values
@@ -58,6 +56,7 @@ export function rollMultiple(count: number, sides: DiceSides,): number[] {
  * Advantage: roll 2d20, take the higher result.
  * Disadvantage: roll 2d20, take the lower result.
  * Natural 20/1 are only flagged on the *kept* die.
+ * @param mode
  */
 export function rollD20WithAdvantage(mode: AdvantageMode = AdvantageMode.Normal,): {
   value: number;
@@ -99,7 +98,6 @@ export function rollD20WithAdvantage(mode: AdvantageMode = AdvantageMode.Normal,
  *
  * For d20 rolls with advantage/disadvantage, rolls 2d20 and keeps one.
  * For other dice types, rolls `count` dice normally.
- *
  * @param sides - Die type
  * @param count - Number of dice (ignored for d20 advantage rolls)
  * @param modifier - Flat modifier to add

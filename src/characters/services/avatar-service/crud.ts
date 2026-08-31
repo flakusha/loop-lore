@@ -9,7 +9,19 @@ import type { DB, } from "../../../db/schema";
 import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
 import type { Avatar, CreateAvatarOpts, UpdateAvatarOpts, } from "./types";
 
-/** Convert database row to Avatar object */
+/**
+ * Convert database row to Avatar object
+ * @param row
+ * @param row.id
+ * @param row.actor_id
+ * @param row.asset_id
+ * @param row.label
+ * @param row.tags
+ * @param row.is_primary
+ * @param row.sort_order
+ * @param row.created_at
+ * @param row.updated_at
+ */
 export function rowToAvatar(row: {
   id: string;
   actor_id: string;
@@ -34,7 +46,11 @@ export function rowToAvatar(row: {
   };
 }
 
-/** Get all avatars for a character */
+/**
+ * Get all avatars for a character
+ * @param db
+ * @param actorId
+ */
 export async function getAvatars(db: Kysely<DB>, actorId: string,): Promise<Avatar[]> {
   const rows = await db
     .selectFrom("character_avatars",)
@@ -46,7 +62,11 @@ export async function getAvatars(db: Kysely<DB>, actorId: string,): Promise<Avat
   return Array.from(rows, (row,) => rowToAvatar(row,),);
 }
 
-/** Get a specific avatar by ID */
+/**
+ * Get a specific avatar by ID
+ * @param db
+ * @param avatarId
+ */
 export async function getAvatar(db: Kysely<DB>, avatarId: string,): Promise<Avatar | undefined> {
   const row = await db
     .selectFrom("character_avatars",)
@@ -57,7 +77,11 @@ export async function getAvatar(db: Kysely<DB>, avatarId: string,): Promise<Avat
   return row ? rowToAvatar(row,) : undefined;
 }
 
-/** Create a new avatar */
+/**
+ * Create a new avatar
+ * @param db
+ * @param opts
+ */
 export async function createAvatar(db: Kysely<DB>, opts: CreateAvatarOpts,): Promise<string> {
   const id = randomUUID();
   const now = new Date().toISOString();
@@ -100,7 +124,12 @@ export async function createAvatar(db: Kysely<DB>, opts: CreateAvatarOpts,): Pro
   return id;
 }
 
-/** Update an avatar */
+/**
+ * Update an avatar
+ * @param db
+ * @param avatarId
+ * @param opts
+ */
 export async function updateAvatar(
   db: Kysely<DB>,
   avatarId: string,
@@ -144,7 +173,11 @@ export async function updateAvatar(
     .execute();
 }
 
-/** Delete an avatar */
+/**
+ * Delete an avatar
+ * @param db
+ * @param avatarId
+ */
 export async function deleteAvatar(db: Kysely<DB>, avatarId: string,): Promise<void> {
   const existing = await getAvatar(db, avatarId,);
   await db

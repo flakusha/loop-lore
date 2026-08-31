@@ -16,7 +16,10 @@ const DiscoverBody = t.Object({
   forceRefresh: t.Optional(t.Boolean(),),
 },);
 
-/** POST /api/lora/discover — Trigger LoRA discovery for a backend. */
+/**
+ * POST /api/lora/discover — Trigger LoRA discovery for a backend.
+ * @param config
+ */
 export function discoverRoutes(config: Config,) {
   return new Elysia({ name: "lora-discover", },)
     .post("/api/lora/discover", async (ctx,) => {

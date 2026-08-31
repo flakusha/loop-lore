@@ -11,6 +11,9 @@ import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { escapeHtml, } from "./shared";
 
+/**
+ * @param id
+ */
 function editField(id: string,): string {
   return document.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${id}`,)?.value ?? "";
 }

@@ -9,6 +9,10 @@ import { authPublicRoutes, resetRegisterRateLimiter, } from "./auth";
 
 // ── Helpers ───────────────────────────────────────────────────
 
+/**
+ * @param body
+ * @param headers
+ */
 function makeRequest(body: string, headers?: Record<string, string>,): Request {
   return new Request("http://localhost/api/auth/register", {
     method: "POST",
@@ -17,6 +21,10 @@ function makeRequest(body: string, headers?: Record<string, string>,): Request {
   },);
 }
 
+/**
+ * @param overrides
+ * @param overrides.registrationOpen
+ */
 function makeConfig(overrides?: { registrationOpen?: boolean },): any {
   return {
     auth: {
@@ -33,6 +41,9 @@ function makeConfig(overrides?: { registrationOpen?: boolean },): any {
   };
 }
 
+/**
+ * @param existingUser
+ */
 function executeTakeFirst(existingUser?: boolean,) {
   return async () => {
     if (existingUser) { return { id: "existing-user-id", }; }
@@ -40,6 +51,11 @@ function executeTakeFirst(existingUser?: boolean,) {
   };
 }
 
+/**
+ * @param overrides
+ * @param overrides.existingUser
+ * @param overrides.sessionsCount
+ */
 function makeDb(overrides?: { existingUser?: boolean; sessionsCount?: number },): any {
   const sessionsCount = overrides?.sessionsCount ?? 0;
   return {

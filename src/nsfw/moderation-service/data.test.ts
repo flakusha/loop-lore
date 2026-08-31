@@ -23,6 +23,7 @@ let db: Kysely<DB>;
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 let sqlite: TestDb["sqlite"];
 
+/** */
 function makeLog(): Logger {
   return {
     trace: mock(() => {},),
@@ -35,6 +36,7 @@ function makeLog(): Logger {
   } as unknown as Logger;
 }
 
+/** */
 function makeCtx(): NsfwModerationServiceContext {
   return {
     db,
@@ -52,12 +54,16 @@ const TARGET = "target-user-audit";
 const REPORTER = "reporter-flags";
 const ADMIN = "admin-deleter";
 
+/** */
 async function seedUsers(): Promise<void> {
   await insertUsers(db, "target", "Target", { id: TARGET, } as never,);
   await insertUsers(db, "reporter", "Reporter", { id: REPORTER, } as never,);
   await insertUsers(db, "admin", "Admin", { id: ADMIN, } as never,);
 }
 
+/**
+ * @param userId
+ */
 async function insertPrefs(userId: string,): Promise<void> {
   await db.insertInto("nsfw_user_preferences",)
     .values({
@@ -70,6 +76,10 @@ async function insertPrefs(userId: string,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param reporterId
+ * @param contentId
+ */
 async function insertFlag(reporterId: string, contentId: string,): Promise<void> {
   await insertContentFlags(db, reporterId, "message", contentId, "spam",);
 }

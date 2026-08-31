@@ -17,6 +17,8 @@ const soloUserCache = new Map<Kysely<DB>, { id: string } | null>();
  * Get or create the singleton solo/demo user.
  * Cached in-memory after first lookup.
  * Exported for use in routes/auth.ts.
+ * @param database
+ * @param demoUsername
  */
 export async function getOrCreateSoloUserForAuth(
   database: Kysely<DB>,

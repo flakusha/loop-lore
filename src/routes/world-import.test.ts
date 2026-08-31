@@ -16,6 +16,9 @@ import { uid, } from "../utils";
 import { exportStoryToZip, type WorldBundle, } from "./export-shared";
 import { importWorldBundle, worldImportRoutes, } from "./world-import";
 
+/**
+ * @param db
+ */
 function createApp(db: Kysely<DB>,): Elysia {
   const auth: AuthConfig = {
     required: false,
@@ -30,6 +33,11 @@ function createApp(db: Kysely<DB>,): Elysia {
     .use(worldImportRoutes({ database: db, config: { auth, }, },),);
 }
 
+/**
+ * @param db
+ * @param userId
+ * @param worldId
+ */
 async function exportBundleForWorld(db: Kysely<DB>, userId: string, worldId: string,): Promise<WorldBundle> {
   const zip = new JSZip();
   await exportStoryToZip({

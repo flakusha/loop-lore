@@ -36,6 +36,15 @@ interface InsertedMessage {
   createdAt: string;
 }
 
+/**
+ * @param plaintext
+ * @param chatKey
+ * @param keyId
+ * @param opts
+ * @param opts.visibility
+ * @param opts.createdAt
+ * @param opts.id
+ */
 async function insertEncryptedMessage(
   plaintext: string,
   chatKey: CryptoKey,
@@ -89,12 +98,14 @@ beforeEach(async () => {
   await setupChat();
 },);
 
+/** */
 function getSmkSafe(): CryptoKey {
   const smk = getSmk();
   if (!smk) { throw new Error("SMK not loaded — test setup failed",); }
   return smk;
 }
 
+/** */
 async function currentChatKey(): Promise<{ key: CryptoKey; keyId: string }> {
   return deriveChatKeyForChat(db, CHAT_ID, getSmkSafe(),);
 }

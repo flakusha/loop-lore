@@ -7,6 +7,7 @@ import type { ExportContext, } from "./types";
 /**
  * Export the user's assets into `zip/assets/` by copying their storage
  * files. Populates `ctx.counts.assets`.
+ * @param ctx
  */
 export async function exportAssetsToZip(ctx: ExportContext,): Promise<void> {
   const assets = await ctx.database

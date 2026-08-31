@@ -20,6 +20,10 @@ const navigate: SceneNavigator = { next: nextScene, prev: prevScene, };
 
 /**
  * Initialize the VN scene renderer.
+ * @param containerEl
+ * @param messages
+ * @param gmConfig
+ * @param chatId
  */
 export function initVnRenderer(
   containerEl: HTMLElement,
@@ -97,6 +101,7 @@ export function prevScene(): void {
 
 /**
  * Jump to a specific scene index.
+ * @param index
  */
 export function jumpToScene(index: number,): void {
   if (!(index >= 0 && index < state.scenes.length)) {
@@ -124,6 +129,7 @@ export function getSceneCount(): number {
 
 /**
  * Add a new scene from an incoming message (for live streaming).
+ * @param message
  */
 export function addScene(message: VnMessage,): void {
   state.scenes.push(msgToScene(message,),);

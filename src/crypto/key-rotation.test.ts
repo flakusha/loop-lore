@@ -16,6 +16,9 @@ import {
 
 const mockExecute = mock(() => Promise.resolve([],));
 
+/**
+ * @param finalResult
+ */
 function createMockChain(finalResult: unknown,) {
   const chain: Record<string, unknown> = {};
   const mockFn = mock(() => chain);

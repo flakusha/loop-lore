@@ -15,6 +15,8 @@ export { serveView, } from "./view-serving";
  * View route module — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`views`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
+ * @param root0
+ * @param root0.database
  */
 export function viewRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "views", },)

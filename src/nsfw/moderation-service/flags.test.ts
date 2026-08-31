@@ -17,6 +17,7 @@ let db: Kysely<DB>;
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 let sqlite: TestDb["sqlite"];
 
+/** */
 function makeLog(): Logger {
   return {
     trace: mock(() => {},),
@@ -29,6 +30,9 @@ function makeLog(): Logger {
   } as unknown as Logger;
 }
 
+/**
+ * @param log
+ */
 function makeCtx(log: Logger = makeLog(),): NsfwModerationServiceContext {
   return { db, log, } as unknown as NsfwModerationServiceContext;
 }
@@ -36,6 +40,16 @@ function makeCtx(log: Logger = makeLog(),): NsfwModerationServiceContext {
 const REPORTER = "user-reporter-1";
 const OTHER_REPORTER = "user-reporter-2";
 
+/**
+ * @param params
+ * @param params.id
+ * @param params.reporterId
+ * @param params.status
+ * @param params.createdAt
+ * @param params.contentType
+ * @param params.contentId
+ * @param params.reason
+ */
 async function insertFlagRow(params: {
   id: string;
   reporterId: string;

@@ -8,6 +8,7 @@
  * Respects prefers-reduced-motion.
  */
 
+/** */
 export interface TypewriterOptions {
   speed: number;
   pausePunctuation: boolean;
@@ -37,6 +38,9 @@ function prefersReducedMotion(): boolean {
 /**
  * Animate text character-by-character into a container.
  * Returns a promise that resolves when complete or on skip.
+ * @param container
+ * @param text
+ * @param options
  */
 export function typewrite(
   container: HTMLElement,
@@ -85,6 +89,8 @@ export function typewrite(
 
 /**
  * Skip to end — instantly reveal all text.
+ * @param container
+ * @param fullText
  */
 export function skipTypewrite(container: HTMLElement, fullText: string,): void {
   if (activeAnimation !== null) {

@@ -29,6 +29,9 @@ import type { MigrateChatParams, MigrateChatResult, } from "./types";
  *
  * Idempotency: a source chat may only be migrated once — a second call returns
  * `bad_request` with a pointer to the existing migrated chat.
+ * @param database
+ * @param chatId
+ * @param params
  */
 export async function migrateChat(
   database: Kysely<DB>,
@@ -147,6 +150,9 @@ export async function migrateChat(
 /**
  * Inject a VN narration system message into a chat. Non-fatal.
  * Used by split/reunion to embed VN branching narration.
+ * @param database
+ * @param chatId
+ * @param text
  */
 export async function injectNarration(
   database: Kysely<DB>,

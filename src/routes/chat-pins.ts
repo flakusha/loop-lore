@@ -20,6 +20,10 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function chatPinRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

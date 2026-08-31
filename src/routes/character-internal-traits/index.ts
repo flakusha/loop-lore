@@ -69,6 +69,9 @@ const inputBody = t.Object({
 
 const actorQuery = t.Object({ actorId: t.String(), },);
 
+/**
+ * @param opts
+ */
 export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
   const svc = () => new CharacterInternalTraitsService(opts.database,);
 
@@ -184,6 +187,10 @@ export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
     },);
 }
 
+/**
+ * @param msg
+ * @param err
+ */
 function logErr(msg: string, err: unknown,): void {
   console.error(`[character-internal-traits] ${msg}`, err,);
 }

@@ -12,6 +12,7 @@ import { exportBaseFields, exportLorebook, } from "./shared";
 
 /**
  * Export canonical character card to CCv3 format.
+ * @param character
  */
 export function exportToCcV3(character: CanonicalCharacter,): Record<string, unknown> {
   const data = exportBaseFields(character,);
@@ -47,6 +48,7 @@ export function exportToCcV3(character: CanonicalCharacter,): Record<string, unk
 
 /**
  * Export canonical character card to CCv3 JSON string.
+ * @param character
  */
 export function exportToCcV3Json(character: CanonicalCharacter,): string {
   const ccv3 = exportToCcV3(character,);

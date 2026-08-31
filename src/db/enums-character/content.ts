@@ -9,6 +9,7 @@ export const ContentRating = {
   NsfwIntense: "nsfw_intense",
   NsfwExtreme: "nsfw_extreme",
 } as const;
+/** */
 export type ContentRating = (typeof ContentRating)[keyof typeof ContentRating];
 
 // ── Licensing ─────────────────────────────────────────────
@@ -21,6 +22,7 @@ export const LicenseType = {
   Proprietary: "proprietary",
   Custom: "custom",
 } as const;
+/** */
 export type LicenseType = (typeof LicenseType)[keyof typeof LicenseType];
 
 // ── Character Visibility Override (admin) ──────────────────
@@ -30,4 +32,5 @@ export const VisibilityOverride = {
   Unlisted: "unlisted",
   Public: "public",
 } as const;
+/** */
 export type VisibilityOverride = (typeof VisibilityOverride)[keyof typeof VisibilityOverride];

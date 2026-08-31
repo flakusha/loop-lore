@@ -12,6 +12,7 @@ export const WorldEventType = {
   QuestProgress: "quest_progress",
   CombatEvent: "combat_event",
 } as const;
+/** */
 export type WorldEventType = (typeof WorldEventType)[keyof typeof WorldEventType];
 
 // ── Memory ───────────────────────────────────────────────
@@ -20,6 +21,7 @@ export const MemoryType = {
   Semantic: "semantic",
   Procedural: "procedural",
 } as const;
+/** */
 export type MemoryType = (typeof MemoryType)[keyof typeof MemoryType];
 
 // ── Lorebook ──────────────────────────────────────────────
@@ -28,6 +30,7 @@ export const LorePosition = {
   AfterChar: "after_char",
   InChar: "in_char",
 } as const;
+/** */
 export type LorePosition = (typeof LorePosition)[keyof typeof LorePosition];
 
 export const LoreEntryStatus = {
@@ -35,6 +38,7 @@ export const LoreEntryStatus = {
   Disabled: "disabled",
   Archived: "archived",
 } as const;
+/** */
 export type LoreEntryStatus = (typeof LoreEntryStatus)[keyof typeof LoreEntryStatus];
 
 // ── World Difficulty ──────────────────────────────────────
@@ -43,6 +47,7 @@ export const DifficultyReroll = {
   PerTurn: "per_turn",
   PerQuest: "per_quest",
 } as const;
+/** */
 export type DifficultyReroll = (typeof DifficultyReroll)[keyof typeof DifficultyReroll];
 
 export const DifficultyState = {
@@ -51,6 +56,7 @@ export const DifficultyState = {
   Extreme: "extreme",
   Custom: "custom",
 } as const;
+/** */
 export type DifficultyState = (typeof DifficultyState)[keyof typeof DifficultyState];
 
 // ── Quality Dimensions ────────────────────────────────────
@@ -62,22 +68,29 @@ export const QualityDimension = {
   QuestRelevance: "quest_relevance",
   Creativity: "creativity",
 } as const;
+/** */
 export type QualityDimension = (typeof QualityDimension)[keyof typeof QualityDimension];
 
-/** World mode — 'rpg' uses locations as a travel graph (current_location_id moves);
- * 'chat' uses locations as channels (current_location_id is a static binding). */
+/**
+ * World mode — 'rpg' uses locations as a travel graph (current_location_id moves);
+ * 'chat' uses locations as channels (current_location_id is a static binding).
+ */
 export const WorldKind = {
   Rpg: "rpg",
   Chat: "chat",
 } as const;
+/** */
 export type WorldKind = (typeof WorldKind)[keyof typeof WorldKind];
 
-/** World visibility (single-server model — no federation, no per-channel ACLs).
+/**
+ * World visibility (single-server model — no federation, no per-channel ACLs).
  * 'public' = any authenticated user, 'unlisted' = owner + world members (not listed),
- * 'private' = owner + world members. */
+ * 'private' = owner + world members.
+ */
 export const WorldVisibility = {
   Public: "public",
   Unlisted: "unlisted",
   Private: "private",
 } as const;
+/** */
 export type WorldVisibility = (typeof WorldVisibility)[keyof typeof WorldVisibility];

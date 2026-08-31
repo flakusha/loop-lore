@@ -11,6 +11,7 @@ import type { DB, } from "../../db/schema";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import type { ProactiveConfig, ProactiveConfigInput, ProactiveFrequency, } from "./types";
 
+/** */
 export interface ProactiveRow {
   id: string;
   chat_id: string;
@@ -26,6 +27,9 @@ export interface ProactiveRow {
   updated_at: string;
 }
 
+/**
+ * @param row
+ */
 export function rowToConfig(row: ProactiveRow,): ProactiveConfig {
   return {
     id: row.id,
@@ -43,6 +47,11 @@ export function rowToConfig(row: ProactiveRow,): ProactiveConfig {
   };
 }
 
+/**
+ * @param db
+ * @param chatId
+ * @param actorId
+ */
 export async function selectConfig(
   db: Kysely<DB>,
   chatId: string,
@@ -58,6 +67,10 @@ export async function selectConfig(
   return row ? rowToConfig(row,) : null;
 }
 
+/**
+ * @param db
+ * @param chatId
+ */
 export async function selectChatConfigs(
   db: Kysely<DB>,
   chatId: string,
@@ -71,6 +84,12 @@ export async function selectChatConfigs(
   return Array.from(rows, (row,) => rowToConfig(row,),);
 }
 
+/**
+ * @param db
+ * @param chatId
+ * @param actorId
+ * @param input
+ */
 export async function insertConfig(
   db: Kysely<DB>,
   chatId: string,
@@ -95,6 +114,13 @@ export async function insertConfig(
     .execute();
 }
 
+/**
+ * @param db
+ * @param chatId
+ * @param actorId
+ * @param existing
+ * @param input
+ */
 export async function updateConfig(
   db: Kysely<DB>,
   chatId: string,
@@ -117,6 +143,12 @@ export async function updateConfig(
     .execute();
 }
 
+/**
+ * @param db
+ * @param chatId
+ * @param actorId
+ * @param since
+ */
 export async function countMessagesSince(
   db: Kysely<DB>,
   chatId: string,

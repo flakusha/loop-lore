@@ -7,6 +7,7 @@ import type { OutputStylePreset, } from "../../chat/output-style";
 import type { AutoStartConfig, } from "./auto-start";
 import type { GenerationProvidersConfig, } from "./providers";
 
+/** */
 export interface ModelRoleAssignment {
   /** Provider name (must match a registered provider) */
   provider: string;
@@ -14,6 +15,7 @@ export interface ModelRoleAssignment {
   model: string;
 }
 
+/** */
 export interface RegexTransform {
   /** Human-readable name for this transform */
   name: string;
@@ -37,6 +39,7 @@ export interface RegexTransform {
 /** Pipeline phase for a regex transform. */
 export type RegexTransformPhase = "edit-input" | "output" | "process" | "display";
 
+/** */
 export interface GenerationConfig {
   /** Provider configurations */
   providers: GenerationProvidersConfig;

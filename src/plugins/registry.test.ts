@@ -2,6 +2,11 @@ import { describe, test, expect, beforeEach } from "bun:test";
 import { registry } from "./registry";
 import type { LoadedPlugin, RouteDefinition, ToolDefinition } from "./types";
 
+/**
+ *
+ * @param name
+ * @param origin
+ */
 function makePlugin(name: string, origin: "core" | "community" | "local" = "community"): LoadedPlugin {
   return {
     manifest: {

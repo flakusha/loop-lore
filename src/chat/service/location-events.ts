@@ -33,7 +33,8 @@ export interface RecordLocationChangeParams {
 
 /**
  * Append an immutable row to the location-change event log.
- *
+ * @param database
+ * @param params
  * @returns The inserted event id.
  */
 export async function recordLocationChange(
@@ -76,6 +77,8 @@ export interface LocationEvent {
 /**
  * Get the full location-change history for a chat, oldest first.
  * Used by future chat re-read / history-navigation features.
+ * @param database
+ * @param chatId
  */
 export async function getLocationHistory(
   database: Kysely<DB>,

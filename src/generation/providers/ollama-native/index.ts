@@ -38,10 +38,14 @@ const CAPABILITIES: ProviderCapabilities = {
 
 // ── Provider class ────────────────────────────────────────
 
+/** */
 export class OllamaNativeProvider implements LLMProvider {
   private readonly state: OllamaNativeState;
   readonly capabilities = CAPABILITIES;
 
+  /**
+   * @param config
+   */
   constructor(config: ProviderInstanceConfig,) {
     const baseUrl = config.baseUrl.replace(/\/+$/, "",);
     const validated = validateProviderUrl(baseUrl,);
@@ -65,16 +69,24 @@ export class OllamaNativeProvider implements LLMProvider {
 
   // ── Core generation ────────────────────────────────────
 
+  /**
+   * @param req
+   */
   async complete(req: GenerateRequest,): Promise<GenerateResponse> {
     return completeDispatch(this.state, req,);
   }
 
+  /**
+   * @param req
+   * @param handler
+   */
   async stream(req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse> {
     return streamDispatch(this.state, req, handler,);
   }
 
   // ── Health check ───────────────────────────────────────
 
+  /** */
   async healthCheck(): Promise<{
     status: "ok" | "degraded" | "down";
     model?: string;
@@ -86,12 +98,16 @@ export class OllamaNativeProvider implements LLMProvider {
 
   // ── List models ────────────────────────────────────────
 
+  /** */
   async listModels(): Promise<ModelInfo[]> {
     return listModelsDispatch(this.state,);
   }
 
   // ── Embeddings ─────────────────────────────────────────
 
+  /**
+   * @param input
+   */
   async embed(input: string | string[],): Promise<number[][]> {
     return embedDispatch(this.state, input, this.state.defaultModel,);
   }

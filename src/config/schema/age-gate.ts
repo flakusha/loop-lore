@@ -5,6 +5,7 @@
 
 import type { AgeGateMode as AgeGateModeT, } from "../../db/enums";
 
+/** */
 export interface AgeGateConfig {
   /** Master toggle — false = no gating at all */
   enabled: boolean;

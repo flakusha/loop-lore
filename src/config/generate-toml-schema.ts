@@ -33,6 +33,7 @@ type JSONSchema = Record<string, unknown>;
  * TOML language servers use these to provide correct autocompletion:
  * - Array of scalars → `items: { type: "string" }` etc.
  * - Array of objects (array-of-tables `[[key]]`) → full items schema
+ * @param schema
  */
 function annotateForToml(schema: JSONSchema,): JSONSchema {
   const result: JSONSchema = { ...schema, };
@@ -59,7 +60,10 @@ function annotateForToml(schema: JSONSchema,): JSONSchema {
   return result;
 }
 
-/** Annotate nested items and additionalProperties in a schema node. */
+/**
+ * Annotate nested items and additionalProperties in a schema node.
+ * @param schema
+ */
 function annotateNested(schema: JSONSchema,): JSONSchema {
   const result: JSONSchema = { ...schema, };
 
@@ -77,6 +81,7 @@ function annotateNested(schema: JSONSchema,): JSONSchema {
 /**
  * Ensure all array types have items definitions.
  * TOML LSP needs items to provide autocompletion.
+ * @param schema
  */
 function ensureArrayItems(schema: JSONSchema,): JSONSchema {
   const result: JSONSchema = { ...schema, };
@@ -104,6 +109,7 @@ function ensureArrayItems(schema: JSONSchema,): JSONSchema {
   return result;
 }
 
+/** */
 function main() {
   // Start from the base JSON Schema
   const baseSchema = jsonSchema();

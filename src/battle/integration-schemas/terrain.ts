@@ -14,7 +14,10 @@ export type TerrainType =
   | "dungeon"
   | "underwater";
 
-/** Get terrain modifiers for combat */
+/**
+ * Get terrain modifiers for combat
+ * @param terrain
+ */
 export function getCombatTerrainModifiers(
   terrain: TerrainType,
 ): EnvironmentalModifier[] {

@@ -5,10 +5,14 @@ import type { CharactersConfig, } from "../../schema";
 import { CHARACTERS_DEFAULTS, } from "./defaults.js";
 import type { CharacterTemplate, } from "./types.js";
 
+/** */
 export class CharactersSection implements CharactersConfig {
   enabled = CHARACTERS_DEFAULTS.enabled;
   templates: CharacterTemplate[] = CHARACTERS_DEFAULTS.templates;
 
+  /**
+   * @param overrides
+   */
   constructor(overrides?: Partial<CharactersConfig>,) {
     Object.assign(this, overrides,);
   }

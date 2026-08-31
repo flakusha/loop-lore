@@ -26,6 +26,10 @@ const ActorIdWorldTraitParams = t.Object({
   traitName: t.String(),
 },);
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function worldTraitRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
   const traitsService = TraitsService(database,);

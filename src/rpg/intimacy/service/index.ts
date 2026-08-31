@@ -44,12 +44,19 @@ export type {
   IntimacyThreshold,
 } from "./types";
 
+/** */
 export class IntimacyService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
    * Get or create an intimacy pair between two actors.
    * Intimacy is symmetric — (A,B) and (B,A) share the same score.
+   * @param actorId
+   * @param targetActorId
+   * @param worldId
    */
   async getPair(
     actorId: string,
@@ -68,6 +75,7 @@ export class IntimacyService {
    * 3. Consent flag (if action requires it)
    *
    * Updates score, records history, and fires threshold events.
+   * @param opts
    */
   async applyAction(opts: ApplyIntimacyActionOpts,): Promise<ApplyIntimacyResult> {
     return applyActionDispatch(this.db, opts,);
@@ -75,6 +83,8 @@ export class IntimacyService {
 
   /**
    * Get all intimacy pairs for an actor (optionally in a world).
+   * @param actorId
+   * @param worldId
    */
   async getActorPairs(
     actorId: string,
@@ -85,6 +95,7 @@ export class IntimacyService {
 
   /**
    * Get the intimacy level label for a numeric score.
+   * @param score
    */
   static getLevelLabel(score: number,): string {
     return getLevelLabelDispatch(score,);
@@ -92,7 +103,7 @@ export class IntimacyService {
 
   /**
    * Decay intimacy over time (natural drift toward 0).
-   *
+   * @param actorId
    * @param decayAmount - How much to decay per call (default 1).
    */
   async decayAll(actorId: string, decayAmount = 1,): Promise<number> {

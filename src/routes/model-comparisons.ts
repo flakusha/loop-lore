@@ -31,6 +31,11 @@ interface ComparisonBody {
 
 const VALID_PREFERENCES = ["better", "worse", "same",] as const;
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "model-comparisons", },)
     // ── POST /api/analytics/comparisons ────────────────────────

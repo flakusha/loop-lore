@@ -35,7 +35,6 @@ type DomainReloadCallback = (domain: string, config: Config,) => void;
 
 /**
  * Watch domain config files for changes and reload them.
- *
  * @param configsDir - The configs directory to watch
  * @param onReload - Callback when a domain config is reloaded
  * @returns FSWatcher instance
@@ -77,7 +76,6 @@ function watchDomainConfigs(configsDir: string, onReload: DomainReloadCallback,)
 
 /**
  * Stop watching domain configs.
- *
  * @param watcher - The FSWatcher instance to stop
  */
 function stopWatchingDomainConfigs(watcher: FSWatcher,): void {

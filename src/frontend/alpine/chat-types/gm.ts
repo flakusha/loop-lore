@@ -35,6 +35,7 @@ export interface GmParticipant {
   order: number;
 }
 
+/** */
 export interface GmConfig {
   /** Assistant's role in this chat: off, helper, gm, or moderator */
   assistantRole?: "off" | "helper" | "gm" | "moderator";

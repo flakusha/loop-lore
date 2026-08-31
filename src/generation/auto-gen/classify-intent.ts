@@ -21,6 +21,12 @@ export interface IntentClassification {
   shortReply: boolean;
 }
 
+/**
+ * @param userMessage
+ * @param config
+ * @param db
+ * @param userId
+ */
 export async function classifyIntent(
   userMessage: string,
   config: Config,

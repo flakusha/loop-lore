@@ -26,6 +26,9 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { uid, } from "../../utils";
 import { checkNsfwEligibility, } from "./content-hooks";
 
+/**
+ * @param allowNsfw
+ */
 function makeConfig(allowNsfw = true,): Config {
   return {
     nsfw: {
@@ -39,6 +42,12 @@ function makeConfig(allowNsfw = true,): Config {
   } as unknown as Config;
 }
 
+/**
+ * @param db
+ * @param opts
+ * @param opts.birthDate
+ * @param opts.ageGateAcceptedAt
+ */
 async function seedUser(
   db: Kysely<DB>,
   opts: { birthDate?: string | null; ageGateAcceptedAt?: string | null } = {},
@@ -60,6 +69,10 @@ async function seedUser(
   return userId;
 }
 
+/**
+ * @param db
+ * @param content_rating
+ */
 async function createAiActor(
   db: Kysely<DB>,
   content_rating: ContentRating,

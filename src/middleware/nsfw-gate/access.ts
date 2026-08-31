@@ -17,6 +17,9 @@ import { calculateAge, isNsfwRating, NSFW_INTIMACY_THRESHOLD, } from "./constant
  * - NSFW config (allowNsfw toggle)
  * - User age (from birth_date + nsfwMinAge)
  * - Age gate acceptance
+ * @param database
+ * @param config
+ * @param userId
  */
 export async function canAccessNsfw(
   database: Kysely<DB>,
@@ -62,6 +65,8 @@ export async function canAccessNsfw(
 
 /**
  * Check if a character (actor) has NSFW content that requires gating.
+ * @param database
+ * @param actorId
  */
 export async function getActorContentRating(
   database: Kysely<DB>,
@@ -80,6 +85,10 @@ export async function getActorContentRating(
  * Check if intimacy level is sufficient for NSFW content.
  *
  * Returns the current intimacy score and whether it meets the threshold.
+ * @param database
+ * @param actorId
+ * @param targetActorId
+ * @param worldId
  */
 export async function checkIntimacyForNsfw(
   database: Kysely<DB>,
@@ -107,6 +116,8 @@ export async function checkIntimacyForNsfw(
  * Resolve the distinct human user accounts backing a chat's participants
  * (via `actors.user_id`). AI-only actors have no backing user and are
  * skipped.
+ * @param database
+ * @param chatId
  */
 export async function getChatParticipantUserIds(
   database: Kysely<DB>,
@@ -132,6 +143,10 @@ export async function getChatParticipantUserIds(
  * participant must individually pass the NSFW access check (config toggle,
  * age gate, minimum age). AI-only actors contribute only their content
  * rating to `nsfwParticipants`.
+ * @param database
+ * @param config
+ * @param userId
+ * @param chatId
  */
 export async function checkChatNsfwAccess(
   database: Kysely<DB>,

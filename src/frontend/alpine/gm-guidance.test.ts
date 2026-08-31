@@ -10,6 +10,7 @@ import "./gm-guidance";
 const gmGuidance = (globalThis as unknown as Record<string, () => Record<string, unknown>>).gmGuidance!;
 
 describe("gmGuidance state", () => {
+  /** */
   function freshState() {
     const s = gmGuidance() as Record<string, unknown>;
     s._gmGuidance = { constraints: [], turnPriority: {}, };

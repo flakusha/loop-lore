@@ -56,6 +56,9 @@ export type {
   WrapSenderKeyOpts,
 } from "./wrap-sender-key-helpers";
 
+/**
+ * @param opts
+ */
 export async function wrapSenderKey(
   opts: WrapSenderKeyOpts,
 ): Promise<RecipientWrap[]> {
@@ -119,6 +122,9 @@ export async function wrapSenderKey(
   return wraps;
 }
 
+/**
+ * @param opts
+ */
 export async function unwrapSenderKey(
   opts: UnwrapSenderKeyOpts,
 ): Promise<Uint8Array> {
@@ -174,6 +180,7 @@ export async function unwrapSenderKey(
 
 // ── Server-side helpers (e2e_group_wraps table) ────────────────────────────
 
+/** */
 export interface GroupWrapRow {
   id: string;
   groupSessionId: string;
@@ -183,6 +190,7 @@ export interface GroupWrapRow {
   chainIndex: number;
 }
 
+/** */
 export interface RecordGroupWrapRowOpts {
   database: Kysely<DB>;
   groupSessionId: string;
@@ -192,6 +200,9 @@ export interface RecordGroupWrapRowOpts {
   chainIndex: number;
 }
 
+/**
+ * @param opts
+ */
 export async function recordGroupWrap(
   opts: RecordGroupWrapRowOpts,
 ): Promise<GroupWrapRow> {
@@ -219,6 +230,11 @@ export async function recordGroupWrap(
   };
 }
 
+/**
+ * @param database
+ * @param groupSessionId
+ * @param recipientActorId
+ */
 export async function latestGroupWrapForRecipient(
   database: Kysely<DB>,
   groupSessionId: string,

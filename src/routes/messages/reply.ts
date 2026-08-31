@@ -27,6 +27,14 @@ import { log, } from "./helpers";
  * Trigger post-create generation: kick off async LLM auto-generation when
  * configured, otherwise fall back to the synchronous rule-based assistant.
  * Returns a response when an assistant reply was synchronously materialized.
+ * @param database
+ * @param config
+ * @param chatId
+ * @param actorId
+ * @param parentMessageId
+ * @param userMessage
+ * @param request
+ * @param asyncStore
  */
 export async function maybeAutoReply(
   database: Kysely<DB>,

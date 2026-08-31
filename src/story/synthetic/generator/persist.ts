@@ -13,6 +13,14 @@ import { safeJsonStringify, } from "../../../utils";
 import type { SyntheticCase, SyntheticSource, } from "../types";
 import type { GeneratorState, } from "./types";
 
+/**
+ * @param state
+ * @param chatId
+ * @param worldId
+ * @param type
+ * @param source
+ * @param cases
+ */
 export async function persist(
   state: GeneratorState,
   chatId: string,

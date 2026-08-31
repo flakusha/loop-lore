@@ -40,11 +40,9 @@ export interface TransportConfig {
  * 2. `Accept` header negotiation (handled by negotiate() before calling this)
  * 3. ALPN (TLS)
  * 4. Fallback: `http/1.1`
- *
  * @param config - Transport configuration
  * @returns ProtocolHandler with optional compression wrapper
  * @throws TransportError if protocol is unsupported
- *
  * @example
  * ```ts
  * // HTTP/1.1 with zstd compression

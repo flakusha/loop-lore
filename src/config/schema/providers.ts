@@ -7,6 +7,7 @@
 
 import type { ImageApiFamily, } from "../../db/enums";
 
+/** */
 export interface ModelLimits {
   /** Context window size in tokens */
   contextLimit: number;
@@ -14,6 +15,7 @@ export interface ModelLimits {
   maxOutput: number;
 }
 
+/** */
 export interface ProviderInstanceConfig {
   /** Unique provider instance name (referenced in registry) */
   name: string;
@@ -37,6 +39,7 @@ export interface ProviderInstanceConfig {
   models: Record<string, ModelLimits>;
 }
 
+/** */
 export interface ImageProviderDefaults {
   /** Default image width */
   width: number;
@@ -58,6 +61,7 @@ export interface ImageProviderDefaults {
   loras?: { path: string; multiplier: number; isHighNoise?: boolean }[];
 }
 
+/** */
 export interface ImageProviderConfig {
   /** Unique provider name */
   name: string;
@@ -79,6 +83,7 @@ export interface ImageProviderConfig {
   generationTimeout: number;
 }
 
+/** */
 export interface GenerationProvidersConfig {
   /** OpenAI-compatible providers (llama.cpp, vLLM, Ollama, LM Studio, etc.) */
   openaiCompatible: ProviderInstanceConfig[];
@@ -92,6 +97,7 @@ export interface GenerationProvidersConfig {
   bedrock?: BedrockProviderConfig;
 }
 
+/** */
 export interface BedrockProviderConfig {
   /** Unique provider instance name */
   name: string;

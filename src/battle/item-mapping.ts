@@ -29,7 +29,10 @@ export type ItemType =
   | "material"
   | "quest";
 
-/** Map a unified `ItemCategory` to a battle `ItemType` (best-effort). */
+/**
+ * Map a unified `ItemCategory` to a battle `ItemType` (best-effort).
+ * @param category
+ */
 export function categoryToType(category: ItemCategory,): ItemType {
   switch (category) {
     case "weapon": {
@@ -60,7 +63,10 @@ export function categoryToType(category: ItemCategory,): ItemType {
   }
 }
 
-/** Map a unified `ItemCategory` to an equipment slot (or undefined). */
+/**
+ * Map a unified `ItemCategory` to an equipment slot (or undefined).
+ * @param category
+ */
 export function categoryToSlot(category: ItemCategory,): EquipmentSlot | undefined {
   switch (category) {
     case "weapon": {
@@ -131,6 +137,7 @@ export interface EquipmentSource {
  *   { damage, ac, bonus, damageType, resistances, ... }
  * `damage`/`bonus` map to `attack`; `ac` maps to `defense`; optional
  * `requiredLevel`/`requiredStats` carry equip requirements.
+ * @param def
  */
 export function toEquipmentItem(def: EquipmentSource,): EquipmentItem {
   const props = def.properties ?? {};

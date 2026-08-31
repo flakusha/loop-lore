@@ -3,7 +3,12 @@
 
 import type { MoraleState, } from "../integration-schemas";
 
-/** Calculate surrender chance */
+/**
+ * Calculate surrender chance
+ * @param targetMorale
+ * @param attackerReputation
+ * @param targetHealthPercent
+ */
 export function calculateSurrenderChance(
   targetMorale: MoraleState,
   attackerReputation: number,

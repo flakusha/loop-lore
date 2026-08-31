@@ -11,6 +11,8 @@ import { storyItemInstanceRoutes, } from "./instances";
  * Story Items route module — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`story-items`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
+ * @param root0
+ * @param root0.database
  */
 export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
   return new Elysia({ name: "story-items", },)

@@ -27,7 +27,10 @@ export const characterTraitsSection: SectionBuilder = {
   },
 };
 
-/** Build `[category] trait, trait…` lines from the actor's world traits. */
+/**
+ * Build `[category] trait, trait…` lines from the actor's world traits.
+ * @param ctx
+ */
 async function buildWorldTraitParts(ctx: AssembleContext,): Promise<string[]> {
   const { actor, } = ctx;
   const worldTraits = await ctx.db
@@ -50,7 +53,10 @@ async function buildWorldTraitParts(ctx: AssembleContext,): Promise<string[]> {
   return parts;
 }
 
-/** Build `[location] trait (+bonus/-penalty); …` lines from location traits. */
+/**
+ * Build `[location] trait (+bonus/-penalty); …` lines from location traits.
+ * @param ctx
+ */
 async function buildLocationTraitParts(ctx: AssembleContext,): Promise<string[]> {
   const { actor, } = ctx;
   const locationTraits = await ctx.db

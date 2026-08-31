@@ -13,6 +13,8 @@ import { executeResponse, resolveActorAccess, tradeLineSchema, } from "./shared"
  * Trade offer routes — create, list, accept and cancel pending offers.
  * The buyer proposes items + gold; only the seller accepts, only the
  * creator cancels.
+ * @param opts
+ * @param prefix
  */
 export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
   return (

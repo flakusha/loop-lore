@@ -14,10 +14,15 @@ mock.module("./htmx", () => ({
   },
 }),);
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown,): void {
   fetchHandler = () => Response.json(body, { status, },);
 }
 
+/** */
 function makeState(): StoryStateComponent {
   return (globalThis as unknown as Record<string, () => StoryStateComponent>).storyState!();
 }

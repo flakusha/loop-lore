@@ -8,11 +8,15 @@ import { getRpgLog, parseJsonField, } from "../../shared/rpg-service-utils";
 import type { CreatePlaythroughInput, Playthrough, } from "./types";
 import { PlusDifficulty, } from "./types";
 
+/** */
 function getLog() {
   return getRpgLog("replayability",);
 }
 
-/** Convert database row to Playthrough interface */
+/**
+ * Convert database row to Playthrough interface
+ * @param row
+ */
 export function rowToPlaythrough(row: any,): Playthrough {
   return {
     id: row.id,
@@ -35,7 +39,12 @@ export function rowToPlaythrough(row: any,): Playthrough {
   };
 }
 
-/** Get playthrough count for a player in a world */
+/**
+ * Get playthrough count for a player in a world
+ * @param db
+ * @param playerId
+ * @param worldId
+ */
 export async function getPlaythroughCount(
   db: Kysely<DB>,
   playerId: string,
@@ -53,6 +62,8 @@ export async function getPlaythroughCount(
 
 /**
  * Start a new playthrough
+ * @param db
+ * @param input
  */
 export async function startPlaythrough(
   db: Kysely<DB>,
@@ -97,6 +108,8 @@ export async function startPlaythrough(
 
 /**
  * Get playthrough by ID
+ * @param db
+ * @param playthroughId
  */
 export async function getPlaythrough(
   db: Kysely<DB>,
@@ -113,6 +126,9 @@ export async function getPlaythrough(
 
 /**
  * Get all playthroughs for a player
+ * @param db
+ * @param playerId
+ * @param worldId
  */
 export async function getPlayerPlaythroughs(
   db: Kysely<DB>,
@@ -134,6 +150,8 @@ export async function getPlayerPlaythroughs(
 
 /**
  * Record a choice made during playthrough
+ * @param db
+ * @param playthroughId
  */
 export async function recordChoice(db: Kysely<DB>, playthroughId: string,): Promise<void> {
   await (db as any)
@@ -148,6 +166,9 @@ export async function recordChoice(db: Kysely<DB>, playthroughId: string,): Prom
 
 /**
  * Record a secret found during playthrough
+ * @param db
+ * @param playthroughId
+ * @param secretId
  */
 export async function recordSecretFound(
   db: Kysely<DB>,

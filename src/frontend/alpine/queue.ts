@@ -10,7 +10,9 @@
 
 import { AsyncLogQueueBase, } from "../../logger/queue-base";
 
+/** */
 export class AsyncLogQueue extends AsyncLogQueueBase {
+  /** */
   override async flush(): Promise<void> {
     if (this.flushing || this.buffer.length === 0) { return; }
 
@@ -24,6 +26,9 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
     this.scheduleFollowupFlush();
   }
 
+  /**
+   * @param results
+   */
   protected override handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[],): void {
     for (const result of results) {
       if (result.status !== "rejected") { continue; }
@@ -35,10 +40,12 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
     }
   }
 
+  /** */
   protected override setupTimerUnref(): void {
     // No-op in browser
   }
 
+  /** */
   flushSync(): void {
     // No-op in browser — not supported
   }

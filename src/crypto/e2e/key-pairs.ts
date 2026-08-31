@@ -42,11 +42,13 @@ const DERIVED_KEY_LENGTH = 256;
 /** Context string bound into the HKDF — must be stable per Loop Lore version. */
 const HKDF_INFO = "loop-lore-e2e-session-key-v1";
 
+/** */
 export interface KeyPairJwk {
   publicKey: JsonWebKey;
   privateKey: JsonWebKey;
 }
 
+/** */
 export interface GenerateKeyPairOpts {
   /** If true, the private key is extractable (exportable as JWK for backup). Default: true. */
   extractable?: boolean;
@@ -57,6 +59,7 @@ export interface GenerateKeyPairOpts {
  *
  * Both keys are returned as `CryptoKey` handles. Use `exportPrivateJwk` /
  * `exportPublicJwk` to serialize for storage or upload.
+ * @param opts
  */
 export async function generateKeyPair(opts: GenerateKeyPairOpts = {},): Promise<CryptoKeyPair> {
   const extractable = opts.extractable ?? true;
@@ -66,7 +69,10 @@ export async function generateKeyPair(opts: GenerateKeyPairOpts = {},): Promise<
   ],);
 }
 
-/** Export a public ECDH key as a JWK (safe to upload to server). */
+/**
+ * Export a public ECDH key as a JWK (safe to upload to server).
+ * @param key
+ */
 export async function exportPublicJwk(key: CryptoKey,): Promise<JsonWebKey> {
   // ECDH public keys are always exportable as JWK regardless of the
   // extractable flag — WebCrypto refuses only private export when non-extractable.
@@ -78,6 +84,7 @@ export async function exportPublicJwk(key: CryptoKey,): Promise<JsonWebKey> {
  * with `extractable: true`. Throws otherwise.
  *
  * The exported JWK contains the raw private scalar; never upload it.
+ * @param key
  */
 export async function exportPrivateJwk(key: CryptoKey,): Promise<JsonWebKey> {
   return crypto.subtle.exportKey("jwk", key,);
@@ -86,6 +93,7 @@ export async function exportPrivateJwk(key: CryptoKey,): Promise<JsonWebKey> {
 /**
  * Import a public ECDH key from a JWK. Always non-extractable (only used for
  * ECDH derivation, never serialized further).
+ * @param jwk
  */
 export async function importPublicKey(jwk: JsonWebKey,): Promise<CryptoKey> {
   return crypto.subtle.importKey("jwk", jwk, { name: "ECDH", namedCurve: NAMED_CURVE, }, false, [],);
@@ -94,6 +102,9 @@ export async function importPublicKey(jwk: JsonWebKey,): Promise<CryptoKey> {
 /**
  * Import a private ECDH key from a JWK. Marks the key extractable so it can be
  * re-exported for backup; pass `extractable: false` to lock it down after import.
+ * @param jwk
+ * @param opts
+ * @param opts.extractable
  */
 export async function importPrivateKey(jwk: JsonWebKey, opts: { extractable?: boolean } = {},): Promise<CryptoKey> {
   const extractable = opts.extractable ?? true;
@@ -109,6 +120,9 @@ export async function importPrivateKey(jwk: JsonWebKey, opts: { extractable?: bo
  * The private key is marked non-extractable by default (forget-after-import
  * security). Set `extractablePrivate: true` only if you intend to re-export
  * (e.g. for backup).
+ * @param jwks
+ * @param opts
+ * @param opts.extractablePrivate
  */
 export async function importKeyPair(
   jwks: KeyPairJwk,
@@ -119,6 +133,7 @@ export async function importKeyPair(
   return { publicKey, privateKey, };
 }
 
+/** */
 export interface DeriveSharedSecretOpts {
   /** The local actor's PRIVATE key. */
   privateKey: CryptoKey;
@@ -138,6 +153,7 @@ export interface DeriveSharedSecretOpts {
  * private key, so it cannot reconstruct the session key.
  *
  * Used by sender-key ratchet (future) and one-shot session keys (v1).
+ * @param opts
  */
 export async function deriveSharedSecret(opts: DeriveSharedSecretOpts,): Promise<CryptoKey> {
   const sharedBits = await crypto.subtle.deriveBits({ name: "ECDH", public: opts.publicKey, }, opts.privateKey, 256,);
@@ -164,6 +180,7 @@ export async function deriveSharedSecret(opts: DeriveSharedSecretOpts,): Promise
  * The ratchet module will accept this raw IKM directly via
  * `nextRatchetStep(rawBytes)`. Callers needing an AES-GCM session key for
  * generic purposes (not the ratchet) should use `deriveSharedSecret`.
+ * @param opts
  */
 export async function deriveSharedBytes(opts: DeriveSharedSecretOpts,): Promise<Uint8Array> {
   const sharedBits = await crypto.subtle.deriveBits({ name: "ECDH", public: opts.publicKey, }, opts.privateKey, 256,);
@@ -172,7 +189,10 @@ export async function deriveSharedBytes(opts: DeriveSharedSecretOpts,): Promise<
 
 // ── Internal helpers ───────────────────────────────────────
 
-/** WebCrypto requires `BufferSource` for input; many lib versions don't accept `Uint8Array` directly. */
+/**
+ * WebCrypto requires `BufferSource` for input; many lib versions don't accept `Uint8Array` directly.
+ * @param bytes
+ */
 function toBufferSource(bytes: Uint8Array,): Uint8Array<ArrayBuffer> {
   // Slice into a fresh ArrayBuffer so the typed array satisfies BufferSource's
   // narrower type without sharing memory with the caller's buffer.

@@ -14,6 +14,7 @@ import type {
 /**
  * Map canonical character fields to version-agnostic data object.
  * Core fields shared between CCv2 and CCv3.
+ * @param character
  */
 export function exportBaseFields(character: CanonicalCharacter,): Record<string, unknown> {
   const data: Record<string, unknown> = {};
@@ -53,6 +54,9 @@ export function exportBaseFields(character: CanonicalCharacter,): Record<string,
 /**
  * Export lorebook entries with consistent field mapping.
  * V2 entries omit `use_regex`; V3 entries include it.
+ * @param entries
+ * @param options
+ * @param options.includeUseRegex
  */
 export function exportLorebookEntries(
   entries: LorebookEntry[],
@@ -87,6 +91,9 @@ export function exportLorebookEntries(
 
 /**
  * Map lorebook data to character_book output.
+ * @param lorebook
+ * @param options
+ * @param options.includeUseRegex
  */
 export function exportLorebook(
   lorebook: LorebookData,

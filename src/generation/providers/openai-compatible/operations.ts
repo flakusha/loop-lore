@@ -11,6 +11,9 @@ import { fetchRaw, handleErrorResponse, } from "./http";
 import { modelInfoFromOpenAi, } from "./metadata";
 import type { OpenAiCompatibleState, } from "./types";
 
+/**
+ * @param state
+ */
 export async function listModelsDispatch(state: OpenAiCompatibleState,): Promise<ModelInfo[]> {
   const url = new URL(`${state.baseUrl}/models`,);
   const response = await fetchRaw(state, url.href, undefined, undefined,);
@@ -25,6 +28,9 @@ export async function listModelsDispatch(state: OpenAiCompatibleState,): Promise
     : [];
 }
 
+/**
+ * @param state
+ */
 export async function healthCheckDispatch(state: OpenAiCompatibleState,): Promise<{
   status: "ok" | "degraded" | "down";
   model?: string;

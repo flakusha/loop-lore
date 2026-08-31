@@ -13,8 +13,11 @@ import {
 } from "../../schemas";
 import type { HookContext, } from "./types";
 
-/** Map hook-detected level string to NSFWContentRating enum.
- *  Accepts both short names ("extreme") and full enum values ("nsfw_extreme"). */
+/**
+ * Map hook-detected level string to NSFWContentRating enum.
+ *  Accepts both short names ("extreme") and full enum values ("nsfw_extreme").
+ * @param level
+ */
 export function levelToRating(level: string,): NSFWContentRating {
   switch (level) {
     case "extreme":
@@ -43,6 +46,7 @@ export function levelToRating(level: string,): NSFWContentRating {
  * Compute effective content limit using the NSFWRatingEnforcement contract.
  * effective_limit = min(actor_rating, user_max_rating, chat_setting).
  * Falls back to nsfwPolicy-based limit when contract fields are absent.
+ * @param context
  */
 export function computeEffectiveLimit(context: HookContext,): NSFWContentRating {
   const actorRating = context.actorContentRating
@@ -65,7 +69,11 @@ export function computeEffectiveLimit(context: HookContext,): NSFWContentRating 
   return levelToRating(policy,);
 }
 
-/** Weakest-link allow check: content rating must be within the effective limit. */
+/**
+ * Weakest-link allow check: content rating must be within the effective limit.
+ * @param level
+ * @param context
+ */
 export function isAllowed(level: string, context: HookContext,): boolean {
   const contentRating = levelToRating(level,);
   const effectiveLimit = computeEffectiveLimit(context,);

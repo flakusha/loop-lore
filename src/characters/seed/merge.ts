@@ -8,7 +8,6 @@ import type { CharactersConfig, } from "../../config/schema";
 /**
  * Merge built-in defaults with user config templates.
  * User templates override built-in by name (case-insensitive).
- *
  * @param defaults - Built-in character templates
  * @param userTemplates - User config templates
  * @returns Merged templates

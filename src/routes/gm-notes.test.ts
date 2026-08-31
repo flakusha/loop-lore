@@ -30,7 +30,12 @@ async function setup(): Promise<Kysely<DB>> {
   return db;
 }
 
-/** Bare app (no auth context) or with derived userId/userRole. */
+/**
+ * Bare app (no auth context) or with derived userId/userRole.
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia();
   if (userId) {
@@ -39,6 +44,9 @@ function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   return app.use(gmNotesRoutes({ database: db, config: {} as any, },),);
 }
 
+/**
+ * @param res
+ */
 function getJson<T,>(res: Response,): Promise<T> {
   return res.json() as Promise<T>;
 }

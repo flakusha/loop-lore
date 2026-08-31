@@ -12,6 +12,9 @@
  */
 import type { Kysely, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("actors",)
@@ -24,6 +27,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("characters",)

@@ -57,6 +57,10 @@ const ActorIdE2EParams = t.Object({
   actorId: t.String({ minLength: 1, },),
 },);
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function actorE2EPubkeyRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

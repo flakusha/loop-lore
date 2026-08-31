@@ -32,14 +32,24 @@ import type {
 const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4E, 0x47,],);
 const ZIP_MAGIC = Buffer.from([0x50, 0x4B, 0x03, 0x04,],);
 
+/**
+ * @param data
+ */
 function isPngMagic(data: Buffer,): boolean {
   return data.length >= 4 && data.subarray(0, 4,).equals(PNG_MAGIC,);
 }
 
+/**
+ * @param data
+ */
 function isZipMagic(data: Buffer,): boolean {
   return data.length >= 4 && data.subarray(0, 4,).equals(ZIP_MAGIC,);
 }
 
+/**
+ * @param input
+ * @param _filename
+ */
 export async function parseCharacterCard(input: Buffer | string, _filename?: string,): Promise<ParseResult> {
   const warnings: string[] = [];
   let data: Buffer;
@@ -78,6 +88,10 @@ export async function parseCharacterCard(input: Buffer | string, _filename?: str
   throw error;
 }
 
+/**
+ * @param data
+ * @param warnings
+ */
 function parsePngCard(data: Buffer, warnings: string[],): ParseResult | null {
   const result = extractCharacterDataFromPng(data,);
   if (!result) { return null; }
@@ -87,6 +101,10 @@ function parsePngCard(data: Buffer, warnings: string[],): ParseResult | null {
   return { character, format, warnings, };
 }
 
+/**
+ * @param data
+ * @param warnings
+ */
 async function parseCharxCard(data: Buffer, warnings: string[],): Promise<ParseResult | null> {
   try {
     const charxResult = await extractCharx(data,);
@@ -100,6 +118,9 @@ async function parseCharxCard(data: Buffer, warnings: string[],): Promise<ParseR
   }
 }
 
+/**
+ * @param text
+ */
 function tryParseJson(text: string,): ParseResult | null {
   const parsed = jsonParseOr(text, null,);
   if (!parsed || typeof parsed !== "object") { return null; }
@@ -126,6 +147,9 @@ function tryParseJson(text: string,): ParseResult | null {
   return { character: normalizeJsonFlat(obj,), format: "json-flat", warnings, };
 }
 
+/**
+ * @param text
+ */
 function tryParseToml(text: string,): ParseResult | null {
   try {
     if (!text.includes("[",) || !text.includes("]",)) { return null; }
@@ -143,6 +167,9 @@ function tryParseToml(text: string,): ParseResult | null {
   }
 }
 
+/**
+ * @param text
+ */
 function tryParseYaml(text: string,): ParseResult | null {
   try {
     if (!text.includes(":",) || text.includes("{",)) { return null; }
@@ -160,10 +187,16 @@ function tryParseYaml(text: string,): ParseResult | null {
   }
 }
 
+/**
+ * @param content
+ */
 export async function parseCharacterFile(content: Buffer,): Promise<ParseResult> {
   return parseCharacterCard(content,);
 }
 
+/**
+ * @param character
+ */
 export function validateCharacter(character: CanonicalCharacter,): string[] {
   const errors: string[] = [];
 

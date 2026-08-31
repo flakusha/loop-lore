@@ -33,6 +33,7 @@ const KNOWN_SUBJECT_KINDS = new Set([
  * Validate an event-carried `audienceScope` value and return a clean `LoreScope`,
  * or null when absent/invalid. Structure mirrors `parseLoreScope` but accepts an
  * already-parsed object (events carry objects, not JSON strings).
+ * @param value
  */
 function normalizeAudienceScope(value: unknown,): LoreScope | null {
   if (!value || typeof value !== "object") { return null; }
@@ -66,10 +67,11 @@ function normalizeAudienceScope(value: unknown,): LoreScope | null {
 
 /**
  * Promote a validated world event into a `world_lore_entries` row.
- *
  * @param db      Database handle.
  * @param worldId World the event belongs to.
  * @param event   The validated world event to promote.
+ * @param event.description
+ * @param event.data
  * @returns The new entry's id, or null when there is nothing to promote.
  */
 export async function promoteEventToLore(

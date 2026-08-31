@@ -24,6 +24,10 @@ interface TransitionOpts {
 /**
  * Validate and apply a status transition on an active generation.
  * Logs a warning on invalid transitions but does not block (defensive).
+ * @param root0
+ * @param root0.active
+ * @param root0.to
+ * @param root0.log
  */
 export function safeTransition({ active, to, log, }: TransitionOpts,): void {
   const from = active.status;
@@ -37,12 +41,12 @@ export function safeTransition({ active, to, log, }: TransitionOpts,): void {
 
 /**
  * Check if a chat currently has an active generation.
+ * @param chatId
  */
 export function isChatGenerating(chatId: string,): boolean {
-  // eslint-disable-next-line sonarjs/no-empty-collection
   const attemptId = chatToAttempt.get(chatId,);
   if (!attemptId) { return false; }
-  // eslint-disable-next-line sonarjs/no-empty-collection
+
   const active = activeGenerations.get(attemptId,);
   return (
     active !== undefined &&
@@ -53,9 +57,9 @@ export function isChatGenerating(chatId: string,): boolean {
 
 /**
  * Get the attempt ID for an active chat generation, if any.
+ * @param chatId
  */
 export function getActiveAttemptId(chatId: string,): string | undefined {
-  // eslint-disable-next-line sonarjs/no-empty-collection
   return chatToAttempt.get(chatId,);
 }
 
@@ -74,7 +78,6 @@ export function listActiveGenerations(): {
   const now = Date.now();
   const result: ReturnType<typeof listActiveGenerations> = [];
 
-  // eslint-disable-next-line sonarjs/no-empty-collection
   for (const [attemptId, active,] of activeGenerations) {
     result.push({
       attemptId,
