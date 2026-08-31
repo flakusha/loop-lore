@@ -11,12 +11,12 @@
 // POST   /api/messages/:id/seen     — record/clear seen for actor
 // DELETE /api/messages/:id/seen     — remove actor's seen record
 import { Elysia, t, } from "elysia";
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { extractAuth, jsonResponse, requireUserId, } from "./http-utils";
+import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -56,6 +56,43 @@ async function resolveMessageAccess(
 }
 
 /**
+ * Resolve an actor and verify the session user owns it.
+ *
+ * The POST and DELETE handlers previously trusted the client-supplied
+ * `actorId` (from request body or query string). Any chat participant
+ * could mutate another participant's seen-state — a classic IDOR. This
+ * helper gates the mutation on server-side ownership.
+ *
+ * @returns `null` on success (the actor belongs to the session user),
+ *          or a 403 `Response` if the actor does not exist or is owned
+ *          by a different user.
+ */
+async function authorizeActor(
+  database: Kysely<DB>,
+  userId: string,
+  actorId: string,
+): Promise<Response | null> {
+  const actor = await database
+    .selectFrom("actors",)
+    .select("user_id",)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  if (!actor || actor.user_id !== userId) {
+    return jsonError({
+      message: "Forbidden: actor does not belong to the session user",
+      status: HttpStatus.Forbidden,
+      code: ErrorCode.Forbidden,
+    },);
+  }
+  return null;
+}
+
+/** `seen_at` is recorded when state first reaches "seen" or "processing". */
+function seenAtFor(state: string,): string | null {
+  return state === "seen" || state === "processing" ? new Date().toISOString() : null;
+}
+
+/**
  * List grouped viewers for a message — seen/unseen + who is processing.
  *
  * Returns: { actorId, state ("unseen"|"processing"|"seen"), seenAt } for each
@@ -65,6 +102,14 @@ async function resolveMessageAccess(
  */
 export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
+
+  // Elysia t.Literal state union — strict enum enforcement (replaces the
+  // permissive `t.Optional(t.String())` that accepted any string).
+  const seenStateSchema = t.Union([
+    t.Literal("unseen",),
+    t.Literal("processing",),
+    t.Literal("seen",),
+  ],);
 
   return (
     new Elysia({ name: "message-seen", },)
@@ -129,9 +174,10 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
           const messageId = ctx.params.id;
           const { actorId, state, } = ctx.body as { actorId: string; state?: "unseen" | "processing" | "seen" };
 
-          if (!actorId || typeof actorId !== "string") {
-            return Response.json({ error: "actorId is required", }, { status: 400, },);
-          }
+          // IDOR guard: the client-supplied actorId must belong to the session user.
+          // Covers BOTH the reset branch (state==="unseen") and the record branch.
+          const authz = await authorizeActor(database, userId, actorId,);
+          if (authz) { return authz; }
 
           const chatId = await resolveMessageAccess(database, messageId, userId, userRole,);
           if (typeof chatId !== "string") { return chatId; }
@@ -148,49 +194,46 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           // Record the seen state (default: "seen")
           const effectiveState = state ?? "seen";
-          const now = new Date().toISOString();
+          const now = seenAtFor(effectiveState,);
 
-          // Try to update existing row first
-          const existing = await database
-            .selectFrom("message_seen",)
-            .select("id",)
-            .where("message_id", "=", messageId,)
-            .where("actor_id", "=", actorId,)
-            .executeTakeFirst();
-
-          if (existing) {
-            await database
-              .updateTable("message_seen",)
-              .set({
-                state: effectiveState,
-                seen_at: effectiveState === "seen" || effectiveState === "processing" ? now : null,
-              },)
-              .where("message_id", "=", messageId,)
-              .where("actor_id", "=", actorId,)
-              .execute();
-          } else {
-            await database
-              .insertInto("message_seen",)
-              .values({
-                id: `ms-${messageId}-${actorId}`,
-                message_id: messageId,
-                actor_id: actorId,
-                state: effectiveState,
-                seen_at: effectiveState === "seen" || effectiveState === "processing" ? now : null,
-                created_at: now,
-              },)
-              .execute();
-          }
+          // Atomic upsert backed by migration 072's unique index on
+          // (message_id, actor_id). Replaces the previous select-then-insert
+          // sequence that raced on concurrent POSTs for the same row.
+          //
+          // First-seen semantics: the UPDATE path does NOT touch seen_at, so
+          // the original timestamp from the first INSERT is preserved across
+          // re-marks. A subsequent "seen" → "processing" → "seen" cycle keeps
+          // the timestamp from the actor's first "seen"/"processing" mark.
+          await database
+            .insertInto("message_seen",)
+            .values({
+              id: `ms-${messageId}-${actorId}`,
+              message_id: messageId,
+              actor_id: actorId,
+              state: effectiveState,
+              seen_at: now,
+              created_at: sql`(datetime('now'))`,
+            },)
+            .onConflict((oc,) =>
+              oc
+                .columns(["message_id", "actor_id",],)
+                .doUpdateSet({
+                  // Preserve first-seen timestamp; only state changes on re-mark.
+                  state: sql`excluded.state`,
+                },)
+            )
+            .execute();
 
           return jsonResponse({ ok: true, state: effectiveState, },);
         },
         {
           params: t.Object({ id: t.String(), },),
-          body: t.Object({ actorId: t.String(), state: t.Optional(t.String(),), },),
+          body: t.Object({ actorId: t.String(), state: t.Optional(seenStateSchema,), },),
           response: {
             200: SuccessResponse,
             401: ErrorResponse,
             400: ErrorResponse,
+            403: ErrorResponse,
           },
           detail: {
             summary: "Record or clear seen-state for an actor on a message",
@@ -210,9 +253,9 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
           const messageId = ctx.params.id;
           const { actorId, } = ctx.query as { actorId: string };
 
-          if (!actorId || typeof actorId !== "string") {
-            return Response.json({ error: "actorId is required", }, { status: 400, },);
-          }
+          // IDOR guard: must own the actor whose record is being deleted.
+          const authz = await authorizeActor(database, userId, actorId,);
+          if (authz) { return authz; }
 
           const chatId = await resolveMessageAccess(database, messageId, userId, userRole,);
           if (typeof chatId !== "string") { return chatId; }
@@ -232,6 +275,7 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
             200: SuccessResponse,
             401: ErrorResponse,
             400: ErrorResponse,
+            403: ErrorResponse,
           },
           detail: {
             summary: "Remove actor's seen record from a message",
