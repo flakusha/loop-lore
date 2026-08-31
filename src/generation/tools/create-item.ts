@@ -59,7 +59,13 @@ const PARAMETERS: Record<string, unknown> = {
   additionalProperties: false,
 };
 
-/** Enum-valued string param validator — returns the value when in the set, else undefined. */
+/**
+ * Enum-valued string param validator — returns the value when in the set, else undefined.
+ * @param params
+ * @param key
+ * @param values
+ * @param fallback
+ */
 function enumParam<T extends string,>(
   params: Record<string, unknown>,
   key: string,

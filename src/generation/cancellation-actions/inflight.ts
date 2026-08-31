@@ -8,6 +8,8 @@ import type { DB, } from "../../db/schema";
 /**
  * Check if a generation attempt with the given idempotency key
  * is in-flight (to prevent duplicate retries).
+ * @param db
+ * @param idempotencyKey
  */
 export async function hasInFlightGeneration(db: Kysely<DB>, idempotencyKey: string,): Promise<boolean> {
   const existing = await db

@@ -64,6 +64,7 @@ const CHAIN_KEY_INFO = "loop-lore-e2e-ephemeral-chain-v1" as const;
 const KEY_LENGTH = 32;
 const NONCE_LENGTH = 12;
 
+/** */
 export interface EphemeralRatchetWirePayload {
   /** base64 AES-GCM ciphertext (incl. auth tag). */
   ciphertext: string;
@@ -82,6 +83,7 @@ export interface EphemeralRatchetWirePayload {
   chainIndex: number;
 }
 
+/** */
 export interface EphemeralRatchetEncryptOpts {
   plaintext: string;
   /** Receiver's static ECDH public key (JWK). */
@@ -93,12 +95,16 @@ export interface EphemeralRatchetEncryptOpts {
   chainIndex: number;
 }
 
+/** */
 export interface EphemeralRatchetDecryptOpts {
   payload: EphemeralRatchetWirePayload;
   /** Receiver's static ECDH private key (CryptoKey handle). */
   receiverStaticPriv: CryptoKey;
 }
 
+/**
+ * @param opts
+ */
 export async function encodeEphemeralPayload(
   opts: EphemeralRatchetEncryptOpts,
 ): Promise<EphemeralRatchetWirePayload> {
@@ -155,6 +161,9 @@ export async function encodeEphemeralPayload(
   }
 }
 
+/**
+ * @param opts
+ */
 export async function decodeEphemeralPayload(
   opts: EphemeralRatchetDecryptOpts,
 ): Promise<string> {
@@ -204,6 +213,8 @@ export async function decodeEphemeralPayload(
  * Salt = chainIndex as 8-byte big-endian; info = CHAIN_KEY_INFO. Binds the
  * chain key to the specific message position so two messages on different
  * indices derive different keys even with the same shared secret.
+ * @param sharedBytes
+ * @param chainIndex
  */
 async function deriveChainKey(
   sharedBytes: Uint8Array,

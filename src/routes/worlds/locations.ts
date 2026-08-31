@@ -19,6 +19,14 @@ import {
 import { requireWorldAccess, requireWorldOwner, } from "./access";
 import { createLocationChat, resolveLocationTemplate, } from "./location-chat";
 
+/**
+ * @param database
+ * @param worldId
+ * @param page
+ * @param pageSize
+ * @param userId
+ * @param userRole
+ */
 export async function handleListLocations(
   database: Kysely<DB>,
   worldId: string,
@@ -50,6 +58,12 @@ export async function handleListLocations(
   return jsonPaginated({ data: locations, total, page, pageSize, },);
 }
 
+/**
+ * @param database
+ * @param worldId
+ * @param connections
+ * @param excludeLocationId
+ */
 export async function validateConnections(
   database: Kysely<DB>,
   worldId: string,
@@ -95,6 +109,13 @@ export async function validateConnections(
   return null;
 }
 
+/**
+ * @param database
+ * @param worldId
+ * @param body
+ * @param userId
+ * @param userRole
+ */
 export async function handleCreateLocation(
   database: Kysely<DB>,
   worldId: string,
@@ -166,6 +187,13 @@ export async function handleCreateLocation(
   return jsonCreated({ id, },);
 }
 
+/**
+ * @param database
+ * @param worldId
+ * @param locId
+ * @param userId
+ * @param userRole
+ */
 export async function handleGetLocation(
   database: Kysely<DB>,
   worldId: string,
@@ -187,6 +215,14 @@ export async function handleGetLocation(
   return jsonResponse(location,);
 }
 
+/**
+ * @param database
+ * @param worldId
+ * @param locId
+ * @param body
+ * @param userId
+ * @param userRole
+ */
 export async function handleUpdateLocation(
   database: Kysely<DB>,
   worldId: string,
@@ -223,6 +259,13 @@ export async function handleUpdateLocation(
   return jsonResponse({ ok: true, },);
 }
 
+/**
+ * @param database
+ * @param worldId
+ * @param locId
+ * @param userId
+ * @param userRole
+ */
 export async function handleDeleteLocation(
   database: Kysely<DB>,
   worldId: string,

@@ -105,7 +105,12 @@ describe("nsfw runtime config store", () => {
   });
 });
 
-/** Insert a system_config row with a stable key. */
+/**
+ * Insert a system_config row with a stable key.
+ * @param db
+ * @param key
+ * @param value
+ */
 async function insertConfig(
   db: Kysely<DB>,
   key: string,

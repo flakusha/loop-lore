@@ -9,7 +9,6 @@
  * - ComfyUI and sd-server providers
  * - Node discovery
  * - API routes for run, templates, nodes, capabilities, health
- *
  * @module image-edit
  */
 

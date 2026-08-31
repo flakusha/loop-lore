@@ -12,6 +12,7 @@ import type { ExportContext, } from "./types";
 /**
  * Export the user's characters into `zip/characters/` in the requested format.
  * Populates `ctx.counts.characters`.
+ * @param ctx
  */
 export async function exportCharactersToZip(ctx: ExportContext,): Promise<void> {
   const characters = await ctx.database

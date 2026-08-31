@@ -9,6 +9,10 @@ import { forbiddenResponse as forbidden, jsonCreated, jsonError, requireUserId, 
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function joinRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

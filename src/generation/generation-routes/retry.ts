@@ -10,6 +10,9 @@ import type { RetryFromPointResponse, } from "../types";
 
 // ── Route: Retry with step-from-point ──────────────────────
 
+/**
+ * @param body
+ */
 function validateRetryFromPoint(body: unknown,): { chatId: string; attemptId?: string; step?: number } | null {
   if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
@@ -28,6 +31,8 @@ function validateRetryFromPoint(body: unknown,): { chatId: string; attemptId?: s
  *
  * Cancel active generation and return retry metadata
  * including which step to resume from in a multi-step pipeline.
+ * @param body
+ * @param database
  */
 export async function handleRetryGeneration(body: unknown, database: Kysely<DB>,): Promise<Response> {
   const db = database;

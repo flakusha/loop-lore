@@ -17,6 +17,11 @@ const OTHER = "00000000-0000-4000-8000-000000000002";
 const OTHER_USER = "00000000-0000-4000-8000-000000000012";
 const ASSET = "00000000-0000-4000-8000-000000000101";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   return new Elysia({ name: "test-avatars", },)
     .derive(() => ({ userId, userRole, }))

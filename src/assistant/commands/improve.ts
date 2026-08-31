@@ -33,6 +33,7 @@ registerCommand("improve", (args,): CommandResult => {
  * NOTE: This is a placeholder. The real implementation should call
  * the generation pipeline with a "rewrite" prompt. For now, we do
  * basic text cleanup.
+ * @param text
  */
 function improveText(text: string,): string {
   let result = text.trim();

@@ -13,6 +13,11 @@ import {
 } from "../../validation/schemas";
 import { handleDefinition, handleDefinitions, handleDeleteDefinition, } from "./handlers";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function storyItemDefinitionsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "story-items-definitions", },)
     .get(`${prefix}/worlds/:worldId/items/:itemId`, async (ctx: any,) => {

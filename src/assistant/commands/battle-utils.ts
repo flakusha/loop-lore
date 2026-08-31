@@ -14,6 +14,7 @@ import type { DB, } from "../../db/schema.js";
 import type { Combatant, } from "../../rpg/combat.js";
 import { buildCombatant, } from "../../rpg/service/battles.js";
 
+/** */
 export interface ResolvedRosterItem {
   combatant: Combatant;
   actorId: string;
@@ -25,6 +26,7 @@ export const CombatAlignment = {
   Player: "player",
   Enemy: "enemy",
 } as const;
+/** */
 export type CombatAlignment = (typeof CombatAlignment)[keyof typeof CombatAlignment];
 
 /**
@@ -35,7 +37,6 @@ export type CombatAlignment = (typeof CombatAlignment)[keyof typeof CombatAlignm
  * human users, narrators) are skipped. A character whose
  * `character_stats.combat_alignment` is `enemy` becomes an NPC combatant, so
  * the battle engine can reach its defeat check.
- *
  * @param db - Database handle
  * @param chatId - Chat whose participants to resolve
  * @param callerActorId - The calling actor (excluded from the roster)
@@ -86,7 +87,6 @@ export async function resolveBattleRoster(
 
 /**
  * Find a combatant in a battle roster by a loose name/id match.
- *
  * @param combatants - The active battle's combatant roster
  * @param needle - The user-supplied target (name or id, case-insensitive)
  * @returns The matching combatant, or null
@@ -106,7 +106,6 @@ export function findCombatant(
 
 /**
  * Join combatant names into a readable roster hint.
- *
  * @param combatants - The roster
  * @returns A comma-joined name list, or "none" when empty
  */

@@ -28,6 +28,9 @@ const RESET = "\u{1B}[0m";
  * CSS mode (browser) — returns formatted string + CSS for console.log `%c`.
  *
  * Output: "[time] [LEVEL] [module] message"
+ * @param entry
+ * @param isColor
+ * @param mode
  */
 export function formatConsole(entry: LogEntry, isColor?: boolean, mode?: "ansi",): string;
 export function formatConsole(
@@ -79,6 +82,7 @@ const LEVEL_CSS: Record<number, string> = {
 /**
  * Serialize entry as one JSON line for JSONL output.
  * Strips undefined fields, keeps nulls for schema alignment.
+ * @param entry
  */
 export function formatJSONL(entry: LogEntry,): string {
   const msgResult = safeJsonStringify(entry.message,);

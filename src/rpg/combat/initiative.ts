@@ -10,6 +10,7 @@ import { type Combatant, type InitiativeResult, } from "./types.js";
 /**
  * Roll initiative for a combatant.
  * d20 + DEX modifier.
+ * @param combatant
  */
 export function rollInitiative(combatant: Combatant,): InitiativeResult {
   const dexMod = abilityModifier(combatant.stats.dex,);
@@ -24,6 +25,7 @@ export function rollInitiative(combatant: Combatant,): InitiativeResult {
 /**
  * Sort combatants by initiative (highest first).
  * Ties broken by DEX score (higher goes first).
+ * @param combatants
  */
 export function sortByInitiative(combatants: Combatant[],): Combatant[] {
   return [...combatants,].sort((a, b,) => {

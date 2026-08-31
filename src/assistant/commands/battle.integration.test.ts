@@ -30,6 +30,11 @@ const CALLER_ACTOR_ID = "caller-user";
 const ALICE_ACTOR_ID = "alice-char";
 const ORC_ACTOR_ID = "orc-char";
 
+/**
+ * @param db
+ * @param chatId
+ * @param content
+ */
 async function dispatch(db: Kysely<DB>, chatId: string, content: string,): Promise<Response> {
   const result = await dispatchCommand(db, {} as never, CALLER_ACTOR_ID, chatId, content,);
   if (!result.handled) {
@@ -97,6 +102,9 @@ describe("battle commands via slash dispatch", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param res
+   */
   async function sysMsg(res: Response,): Promise<string> {
     const body = await res.json() as { systemMessage?: string };
     return body.systemMessage ?? "";

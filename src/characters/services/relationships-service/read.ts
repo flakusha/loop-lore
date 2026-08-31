@@ -17,6 +17,10 @@ export interface GetRelationshipsArgs {
 
 /**
  * Get all relationships for a character.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.worldId
  */
 export async function getRelationships(
   { thisL, actorId, worldId, }: GetRelationshipsArgs,
@@ -41,6 +45,11 @@ export interface GetRelationshipArgs {
 
 /**
  * Get relationship between two characters.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.actorId
+ * @param root0.targetActorId
+ * @param root0.worldId
  */
 export async function getRelationship(
   { thisL, actorId, targetActorId, worldId, }: GetRelationshipArgs,

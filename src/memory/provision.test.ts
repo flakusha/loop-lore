@@ -10,6 +10,9 @@ import type { MemoryEntry, } from "./types";
 
 // ─── Helpers ───────────────────────────────────────────────────
 
+/**
+ * @param overrides
+ */
 function makeMemory(overrides: Partial<MemoryEntry> & { id: string },): MemoryEntry {
   return {
     actorId: "char-1",
@@ -28,6 +31,9 @@ function makeMemory(overrides: Partial<MemoryEntry> & { id: string },): MemoryEn
   };
 }
 
+/**
+ * @param overrides
+ */
 function makeCtx(overrides: Partial<ProvisionContext> = {},): ProvisionContext {
   return {
     viewerId: "char-1",

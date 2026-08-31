@@ -3,28 +3,45 @@
 
 import { fromBase64, toBase64, } from "../utils/base64";
 
+/** */
 export interface BrowserEncryptResult {
   ciphertext: string;
   nonce: string;
   algorithm: "aes-256-gcm";
 }
 
+/**
+ * @param str
+ */
 function stringToUint8Array(str: string,): Uint8Array {
   return new TextEncoder().encode(str,);
 }
 
+/**
+ * @param buf
+ */
 function uint8ArrayToString(buf: Uint8Array,): string {
   return new TextDecoder().decode(buf,);
 }
 
+/**
+ * @param buf
+ */
 function uint8ArrayToBase64(buf: Uint8Array,): string {
   return toBase64(buf,);
 }
 
+/**
+ * @param b64
+ */
 function base64ToUint8Array(b64: string,): Uint8Array {
   return fromBase64(b64,);
 }
 
+/**
+ * @param plaintext
+ * @param key
+ */
 export async function browserEncryptContent(
   plaintext: string,
   key: CryptoKey,
@@ -44,6 +61,11 @@ export async function browserEncryptContent(
   };
 }
 
+/**
+ * @param ciphertext
+ * @param nonce
+ * @param key
+ */
 export async function browserDecryptContent(
   ciphertext: string,
   nonce: string,
@@ -60,6 +82,9 @@ export async function browserDecryptContent(
   return uint8ArrayToString(new Uint8Array(decrypted,),);
 }
 
+/**
+ * @param base64Key
+ */
 export async function browserImportKey(base64Key: string,): Promise<CryptoKey> {
   const keyData = base64ToUint8Array(base64Key,);
   return crypto.subtle.importKey(
@@ -71,11 +96,15 @@ export async function browserImportKey(base64Key: string,): Promise<CryptoKey> {
   );
 }
 
+/**
+ * @param key
+ */
 export async function browserExportKey(key: CryptoKey,): Promise<string> {
   const buffer = await crypto.subtle.exportKey("raw", key,);
   return uint8ArrayToBase64(new Uint8Array(buffer,),);
 }
 
+/** */
 export function browserGenerateKey(): Promise<CryptoKey> {
   return crypto.subtle.generateKey({ name: "AES-GCM", length: 256, }, false, ["encrypt", "decrypt",],);
 }

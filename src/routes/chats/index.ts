@@ -13,6 +13,10 @@ import { turnOrderRoutes, } from "./turn-order";
 import type { HandlerOpts, } from "./types";
 import { vnChoiceRoutes, } from "./vn-choices";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chats", },)

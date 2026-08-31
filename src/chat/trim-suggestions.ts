@@ -70,7 +70,6 @@ const SECTION_ADVICE: Record<string, (tokens: number,) => string> = {
  * Sorted by largest section first; only sections above `minTokens` are
  * included. Returns an empty array when the usage percentage is at or below
  * the threshold, so the advisory panel only appears once the budget is tight.
- *
  * @param sections - Per-section token breakdown (already percentage-weighted)
  * @param usagePct - Overall context usage as a percentage (0-100)
  * @param options - Threshold and minimum-size controls

@@ -5,7 +5,13 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 
-/** Chat ownership or admin check; returns true when allowed. */
+/**
+ * Chat ownership or admin check; returns true when allowed.
+ * @param database
+ * @param chatId
+ * @param userId
+ * @param userRole
+ */
 export async function chatAccess(
   database: Kysely<DB>,
   chatId: string,

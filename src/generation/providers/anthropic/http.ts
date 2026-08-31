@@ -16,6 +16,9 @@ export { buildBody, buildMessages, mapToolDef, } from "./request";
 const API_VERSION = "2023-06-01";
 const TOOLS_BETA = "anthropic-beta: tools-2024-04-04";
 
+/**
+ * @param signals
+ */
 export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): AbortSignal | undefined {
   const defined: AbortSignal[] = [];
   for (const signal of signals) {
@@ -41,7 +44,6 @@ export function combineAbortSignals(...signals: (AbortSignal | undefined)[]): Ab
 
 /**
  * Perform a request against the Anthropic Messages API.
- *
  * @param state - Provider state (baseUrl, key, headers)
  * @param url - Full request URL (e.g. `${baseUrl}/v1/messages`)
  * @param body - JSON request body
@@ -94,7 +96,6 @@ export async function fetchRaw(
 
 /**
  * Fetch with retry for transient failures (network errors + 5xx/429).
- *
  * @param state - Provider state
  * @param url - Full request URL
  * @param body - Request body
@@ -140,7 +141,6 @@ export async function fetchWithRetry(
 
 /**
  * Map a non-2xx response to the appropriate ProviderError subclass.
- *
  * @param response - Failed HTTP response
  */
 export async function handleErrorResponse(response: Response,): Promise<never> {
@@ -166,7 +166,10 @@ export async function handleErrorResponse(response: Response,): Promise<never> {
   throw new ProviderError(message, undefined, status, false,);
 }
 
-/** Map an Anthropic stop_reason to the shared finish-reason value. */
+/**
+ * Map an Anthropic stop_reason to the shared finish-reason value.
+ * @param stopReason
+ */
 export function mapFinishReason(
   stopReason: string | null | undefined,
 ): GenerateResponse["finishReason"] {

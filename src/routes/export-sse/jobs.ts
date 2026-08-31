@@ -20,11 +20,20 @@ import type { ExportJob, } from "./types";
 // In-memory job store (in production, use Redis or DB)
 const jobs = new Map<string, ExportJob>();
 
+/**
+ * @param obj
+ */
 function sseData(obj: unknown,): string {
   const r = safeJsonStringify(obj,);
   return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
 }
 
+/**
+ * @param jobId
+ * @param request
+ * @param database
+ * @param userId
+ */
 async function processExport(
   jobId: string,
   request: Request,

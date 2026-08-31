@@ -11,6 +11,10 @@ import { skippedResult, } from "../../shared/story-utils";
 import type { SyntheticCase, } from "../types";
 import type { RunnerState, SyntheticTestStatus, } from "./types";
 
+/**
+ * @param state
+ * @param c
+ */
 export async function runGmEscalation(state: RunnerState, c: SyntheticCase,): Promise<{
   status: SyntheticTestStatus;
   expected: Record<string, unknown>;

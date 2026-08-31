@@ -7,8 +7,6 @@
  * Player↔player and player↔NPC trading with gold/currency exchange,
  * layered over `ItemsService` for item transfer and an `actor_currencies`
  * balance ledger per world.
- *
- * @module
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
@@ -43,10 +41,19 @@ export type {
   TradeType,
 } from "./types";
 
+/** */
 export class TradeService {
+  /**
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
-  /** Current gold (or other currency) balance for an actor in a world. */
+  /**
+   * Current gold (or other currency) balance for an actor in a world.
+   * @param actorId
+   * @param worldId
+   * @param currency
+   */
   getBalance(
     actorId: string,
     worldId: string,
@@ -55,7 +62,13 @@ export class TradeService {
     return getBalance(this.db, actorId, worldId, currency,);
   }
 
-  /** Add funds to an actor's balance (never produces a negative balance). */
+  /**
+   * Add funds to an actor's balance (never produces a negative balance).
+   * @param actorId
+   * @param worldId
+   * @param amount
+   * @param currency
+   */
   credit(
     actorId: string,
     worldId: string,
@@ -65,7 +78,13 @@ export class TradeService {
     return credit(this.db, actorId, worldId, amount, currency,);
   }
 
-  /** Remove funds; returns false (no-op) when insufficient. */
+  /**
+   * Remove funds; returns false (no-op) when insufficient.
+   * @param actorId
+   * @param worldId
+   * @param amount
+   * @param currency
+   */
   debit(
     actorId: string,
     worldId: string,
@@ -75,7 +94,14 @@ export class TradeService {
     return debit(this.db, actorId, worldId, amount, currency,);
   }
 
-  /** Move gold atomically from one actor to another. */
+  /**
+   * Move gold atomically from one actor to another.
+   * @param fromActorId
+   * @param toActorId
+   * @param worldId
+   * @param amount
+   * @param currency
+   */
   transferCurrency(
     fromActorId: string,
     toActorId: string,
@@ -86,7 +112,16 @@ export class TradeService {
     return transferCurrency(this.db, fromActorId, toActorId, worldId, amount, currency,);
   }
 
-  /** Execute a two-sided trade atomically. */
+  /**
+   * Execute a two-sided trade atomically.
+   * @param opts
+   * @param opts.worldId
+   * @param opts.buyerActorId
+   * @param opts.sellerActorId
+   * @param opts.buyerItems
+   * @param opts.sellerItems
+   * @param opts.price
+   */
   trade(opts: {
     worldId: string;
     buyerActorId: string;
@@ -98,7 +133,12 @@ export class TradeService {
     return tradeCore(this.db, opts,);
   }
 
-  /** Query trade history for an actor in a world. */
+  /**
+   * Query trade history for an actor in a world.
+   * @param worldId
+   * @param actorId
+   * @param limit
+   */
   getTradeHistory(
     worldId: string,
     actorId?: string,
@@ -107,7 +147,15 @@ export class TradeService {
     return getTradeHistory(this.db, worldId, actorId, limit,);
   }
 
-  /** Player buys items from an NPC. */
+  /**
+   * Player buys items from an NPC.
+   * @param opts
+   * @param opts.worldId
+   * @param opts.buyerActorId
+   * @param opts.npcActorId
+   * @param opts.sellerItems
+   * @param opts.price
+   */
   buyFromNpc(opts: {
     worldId: string;
     buyerActorId: string;
@@ -118,7 +166,15 @@ export class TradeService {
     return buyFromNpc(this.db, opts,);
   }
 
-  /** Player sells items to an NPC. */
+  /**
+   * Player sells items to an NPC.
+   * @param opts
+   * @param opts.worldId
+   * @param opts.sellerActorId
+   * @param opts.npcActorId
+   * @param opts.buyerItems
+   * @param opts.price
+   */
   sellToNpc(opts: {
     worldId: string;
     sellerActorId: string;
@@ -133,7 +189,16 @@ export class TradeService {
 
   static readonly TRADE_RECIPE_SENTINEL = TRADE_RECIPE_SENTINEL;
 
-  /** Create a pending trade offer. Returns the offer ID. */
+  /**
+   * Create a pending trade offer. Returns the offer ID.
+   * @param opts
+   * @param opts.worldId
+   * @param opts.buyerActorId
+   * @param opts.sellerActorId
+   * @param opts.buyerItems
+   * @param opts.price
+   * @param opts.deadline
+   */
   createOffer(opts: {
     worldId: string;
     buyerActorId: string;
@@ -145,7 +210,11 @@ export class TradeService {
     return createOfferFn(this.db, opts,);
   }
 
-  /** Accept a pending trade offer. Only the seller can accept. */
+  /**
+   * Accept a pending trade offer. Only the seller can accept.
+   * @param offerId
+   * @param acceptorActorId
+   */
   async acceptOffer(
     offerId: string,
     acceptorActorId: string,
@@ -171,7 +240,11 @@ export class TradeService {
     return result;
   }
 
-  /** Cancel a pending trade offer. Only the offer creator can cancel. */
+  /**
+   * Cancel a pending trade offer. Only the offer creator can cancel.
+   * @param offerId
+   * @param cancellerActorId
+   */
   cancelOffer(
     offerId: string,
     cancellerActorId: string,
@@ -179,7 +252,11 @@ export class TradeService {
     return cancelOfferFn(this.db, offerId, cancellerActorId,);
   }
 
-  /** List pending trade offers for an actor. */
+  /**
+   * List pending trade offers for an actor.
+   * @param worldId
+   * @param actorId
+   */
   listOffers(
     worldId: string,
     actorId: string,

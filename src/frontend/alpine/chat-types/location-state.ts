@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // ── Chat Sections + Backgrounds + Location ──────────────────
+/** */
 export interface ChatLocationState {
   // ── Chat Sections (multi-location sectioning) ──────────────
   _sections: {

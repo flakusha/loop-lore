@@ -23,7 +23,9 @@ import type { ImportCounts, } from "./types";
  * Re-insert a {@link WorldBundle} as a new world owned by `userId`.
  * Generates fresh ids for every row and remaps parent/child foreign keys so
  * the bundle round-trips without colliding with existing rows.
- *
+ * @param database
+ * @param userId
+ * @param bundle
  * @returns the new world id and per-table import counts.
  */
 export async function importWorldBundle(

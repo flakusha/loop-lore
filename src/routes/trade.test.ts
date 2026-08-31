@@ -72,6 +72,9 @@ describe("trade routes (auth-gated)", () => {
     await db.destroy();
   },);
 
+  /**
+   * @param actingUserId
+   */
   function authedApp(actingUserId: string = userId,): Elysia {
     return new Elysia({ name: "test-trade-auth", },)
       .derive({ as: "scoped", }, (_ctx,) => ({ userId: actingUserId, userRole: "user", }),)

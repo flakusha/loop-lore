@@ -16,6 +16,7 @@ import { modelRolesRoutes, } from "./model-roles";
 import { getProvider, registerProvider, } from "../../generation/providers/registry";
 import type { LLMProvider, } from "../../generation/providers/types";
 
+/** */
 function fakeProvider(): LLMProvider {
   return {
     name: "fake-provider",
@@ -29,6 +30,11 @@ function fakeProvider(): LLMProvider {
   } as unknown as LLMProvider;
 }
 
+/**
+ * @param db
+ * @param userRole
+ * @param config
+ */
 function makeApp(db: Kysely<DB>, userRole: string, config: Config,) {
   const app = new Elysia({ name: "test-model-roles", },);
   app.derive(() => ({ userRole, }));

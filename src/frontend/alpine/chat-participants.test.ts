@@ -19,6 +19,10 @@ mock.module("./htmx", () => ({
   },
 }),);
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url, _opts,) => Response.json(body, { status, },);
 }
@@ -28,6 +32,12 @@ interface Toast {
   message: string;
 }
 
+/**
+ * @param overrides
+ * @param overrides.activeChat
+ * @param overrides.chatType
+ * @param overrides.toasts
+ */
 function buildCtx(
   overrides: { activeChat?: string | null; chatType?: string; toasts?: Toast[] } = {},
 ): ChatState {

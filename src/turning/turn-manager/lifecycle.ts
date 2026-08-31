@@ -4,7 +4,12 @@
 import { persistState, } from "./state";
 import type { TurnManagerHost, } from "./types";
 
-/** Request regeneration of a failed turn */
+/**
+ * Request regeneration of a failed turn
+ * @param host
+ * @param turnId
+ * @param reason
+ */
 export async function requestRegeneration(
   host: TurnManagerHost,
   turnId: string,
@@ -20,28 +25,40 @@ export async function requestRegeneration(
   return true;
 }
 
-/** Clear pending regeneration (accepted) */
+/**
+ * Clear pending regeneration (accepted)
+ * @param host
+ */
 export async function clearRegeneration(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { return; }
   host.state.pendingRegeneration = null;
   await persistState(host,);
 }
 
-/** Pause turn generation */
+/**
+ * Pause turn generation
+ * @param host
+ */
 export async function pause(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
   host.state.isPaused = true;
   await persistState(host,);
 }
 
-/** Resume turn generation */
+/**
+ * Resume turn generation
+ * @param host
+ */
 export async function resume(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
   host.state.isPaused = false;
   await persistState(host,);
 }
 
-/** Reset turn counter (e.g., new scene) */
+/**
+ * Reset turn counter (e.g., new scene)
+ * @param host
+ */
 export async function resetTurnCounter(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
   host.state.currentTurn = 0;

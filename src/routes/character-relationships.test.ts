@@ -21,6 +21,11 @@ const D = "00000000-0000-4000-8000-000000000004";
 const E = "00000000-0000-4000-8000-000000000005";
 const WORLD = "00000000-0000-4000-8000-000000000101";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-char-relationships", },);
   if (userId) {

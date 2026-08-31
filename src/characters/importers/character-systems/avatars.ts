@@ -10,7 +10,13 @@ import { AvatarService, } from "../../services/avatar-service";
 import { errMsg, } from "../../shared/character-systems-utils";
 import type { CharacterSystemsImportResult, } from "./types";
 
-/** Import avatars + avatar config into the character systems importer result. */
+/**
+ * Import avatars + avatar config into the character systems importer result.
+ * @param db
+ * @param actorId
+ * @param data
+ * @param result
+ */
 export async function importAvatars(
   db: Kysely<DB>,
   actorId: string,

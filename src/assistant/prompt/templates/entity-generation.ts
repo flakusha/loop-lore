@@ -48,7 +48,6 @@ const DEFAULT_PROMPTS: Record<EntityKind, EntityPrompt> = {
  * present, otherwise the built-in default. The override must be a full prompt
  * string containing a `{description}` placeholder; if it lacks the placeholder
  * it is appended automatically so callers can rely on substitution.
- *
  * @param config - Active resolved config (may be undefined in tests)
  * @param kind - Canonical entity kind
  * @param description - User-supplied description to embed

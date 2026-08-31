@@ -50,7 +50,8 @@ export interface LocaleInfo {
 
 /**
  * Resolve a dot-notation key against a nested translation map.
- *
+ * @param map
+ * @param key
  * @example
  * resolveKey({ common: { save: "Save" } }, "common.save") // => "Save"
  * resolveKey({ common: { save: "Save" } }, "missing") // => undefined
@@ -79,7 +80,8 @@ export function resolveKey(
 
 /**
  * Flatten a nested translation map into dot-notation keys.
- *
+ * @param map
+ * @param prefix
  * @example
  * flattenTranslations({ common: { save: "Save" } })
  * // => Map { "common.save" => "Save" }
@@ -109,7 +111,8 @@ export const INTERPOLATE_RE = /\{(\w+)\}/g;
 
 /**
  * Interpolate {param} placeholders in a translated string.
- *
+ * @param template
+ * @param params
  * @example
  * interpolate("Hello {name}", { name: "World" }) // => "Hello World"
  */
@@ -122,7 +125,7 @@ export function interpolate(
 
 /**
  * Load translations for a locale from the server.
- *
+ * @param locale
  * @returns The nested translation map, or null on failure.
  */
 export async function loadTranslations(locale: string,): Promise<TranslationMap | null> {
@@ -152,11 +155,12 @@ export function getSavedLocale(): Locale {
 
 /**
  * Save locale preference to localStorage and set cookie for server.
+ * @param locale
  */
 export function saveLocale(locale: Locale,): void {
   localStorage.setItem("locale", locale,);
   // Cookie for server-side detection (middleware reads this)
-  // eslint-disable-next-line unicorn/no-document-cookie
+
   document.cookie = `ll_locale=${locale}; path=/; SameSite=Lax; max-age=31536000`;
   // Update global ref
   globalThis.currentLocale = locale;
@@ -170,6 +174,7 @@ export function saveLocale(locale: Locale,): void {
 
 /**
  * Apply RTL direction based on locale.
+ * @param locale
  */
 export function applyDirection(locale: Locale,): void {
   const info = LOCALE_REGISTRY[locale];
@@ -182,7 +187,6 @@ export function applyDirection(locale: Locale,): void {
 /**
  * Create a translator function from loaded translations.
  * Uses dot-notation key resolution with fallback.
- *
  * @param translations - The nested translation map.
  * @param fallbackLocale - Fallback translations (optional).
  * @returns A translator function.

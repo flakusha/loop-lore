@@ -34,7 +34,6 @@ import {
  * using per-domain merge strategies.
  *
  * Also loads character files from configs/characters/ directory.
- *
  * @param cwd - Working directory to search from (default: process.cwd())
  * @returns Merged template configuration
  */

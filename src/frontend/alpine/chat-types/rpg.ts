@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // ── RPG Stats Types (Phase 1 Foundation) ─────────────────────
+/** */
 export interface RpgStatBlock {
   str: number;
   dex: number;
@@ -11,6 +12,7 @@ export interface RpgStatBlock {
   cha: number;
 }
 
+/** */
 export interface RpgStats extends RpgStatBlock {
   level: number;
   hp: number;
@@ -23,6 +25,7 @@ export interface RpgStats extends RpgStatBlock {
   xpToNext: number;
 }
 
+/** */
 export interface StatusEffect {
   id: string;
   name: string;
@@ -32,6 +35,7 @@ export interface StatusEffect {
   icon?: string;
 }
 
+/** */
 export interface EquipmentSlot {
   slot: "head" | "chest" | "legs" | "feet" | "hands" | "weapon" | "shield" | "accessory";
   itemId: string | null;

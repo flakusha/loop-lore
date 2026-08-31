@@ -32,7 +32,10 @@ export interface MoraleModifier {
   appliedAt: string;
 }
 
-/** Compute morale level from value */
+/**
+ * Compute morale level from value
+ * @param value
+ */
 export function computeMoraleLevel(value: number,): MoraleLevel {
   if (value <= 20) { return "broken"; }
   if (value <= 40) { return "shaken"; }
@@ -41,7 +44,11 @@ export function computeMoraleLevel(value: number,): MoraleLevel {
   return "inspired";
 }
 
-/** Create initial morale state */
+/**
+ * Create initial morale state
+ * @param characterId
+ * @param initialValue
+ */
 export function createMoraleState(
   characterId: string,
   initialValue = 50,
@@ -55,7 +62,11 @@ export function createMoraleState(
   };
 }
 
-/** Apply morale modifier */
+/**
+ * Apply morale modifier
+ * @param state
+ * @param modifier
+ */
 export function applyMoraleModifier(
   state: MoraleState,
   modifier: MoraleModifier,

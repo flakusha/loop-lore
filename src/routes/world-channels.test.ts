@@ -78,13 +78,22 @@ describe("world channels routes", () => {
     await db.destroy();
   },);
 
-  /** Mount worlds routes behind stub auth derive. */
+  /**
+   * Mount worlds routes behind stub auth derive.
+   * @param userId
+   * @param userRole
+   */
   function authedApp(userId: string, userRole = "user",): Elysia {
     return new Elysia({ name: "test-wc-auth", },)
       .derive({ as: "scoped", }, () => ({ userId, userRole, }),)
       .use(worldsRoutes({ database: db, config: mockConfig, },),) as any;
   }
 
+  /**
+   * @param app
+   * @param wid
+   * @param query
+   */
   function getWorldChats(app: Elysia, wid = worldId, query = "",): Promise<Response> {
     return app.handle(new Request(`http://localhost/api/worlds/${wid}/chats${query}`,),);
   }

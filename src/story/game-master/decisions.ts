@@ -15,7 +15,12 @@ import { GM_DECISIONS, } from "../gm/decisions/registry";
 import type { GameMasterDecision, StoryContext, } from "../types";
 import type { BuildResultOptions, GmState, GmTurnResult, } from "./types";
 
-/** Select the next actor and produce a GM decision for the turn */
+/**
+ * Select the next actor and produce a GM decision for the turn
+ * @param state
+ * @param context
+ * @param debugActorId
+ */
 export async function getGmDecision(
   state: GmState,
   context: StoryContext,
@@ -62,6 +67,9 @@ export async function getGmDecision(
  * `turnPriority` is a soft bias: pick the highest-priority eligible actor that
  * is not the actor who just spoke. Returns null when guidance yields nothing,
  * so the caller falls back to normal turn selection.
+ * @param guidance
+ * @param context
+ * @param lastActorId
  */
 function resolveGuidedActor(
   guidance: GmGuidance,
@@ -90,7 +98,14 @@ function resolveGuidedActor(
   return null;
 }
 
-/** Persist a pending GM turn row */
+/**
+ * Persist a pending GM turn row
+ * @param state
+ * @param _context
+ * @param turnId
+ * @param turnNumber
+ * @param decision
+ */
 export async function recordGmTurn(
   state: GmState,
   _context: StoryContext,
@@ -119,7 +134,10 @@ export async function recordGmTurn(
     .execute();
 }
 
-/** Build a GmTurnResult from a recorded turn */
+/**
+ * Build a GmTurnResult from a recorded turn
+ * @param options
+ */
 export function buildResult(options: BuildResultOptions,): GmTurnResult {
   const { turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested, } = options;
   return {

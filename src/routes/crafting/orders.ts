@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/* eslint-disable unicorn/max-nested-calls -- Kysely query chains and Elysia TypeBox schema nesting are inherent to the route layer */
-
 /**
  * Crafting Order Routes
  *
@@ -51,6 +49,11 @@ const fulfillResponse = t.Object({
   reason: t.Optional(t.String(),),
 },);
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function craftingOrderRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   const svc = () => new CraftingOrderService(database,);
   return new Elysia({ name: "crafting-orders", },)
@@ -182,5 +185,3 @@ export function craftingOrderRoutes({ database, }: { database: Db }, prefix = "/
       },
     },);
 }
-
-/* eslint-enable unicorn/max-nested-calls */

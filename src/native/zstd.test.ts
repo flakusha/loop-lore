@@ -20,6 +20,9 @@ interface BunZstd {
 
 const bunZstd = Bun as unknown as BunZstd;
 
+/**
+ * @param bytes
+ */
 function toUtf8(bytes: Uint8Array,): string {
   return new TextDecoder().decode(bytes,);
 }

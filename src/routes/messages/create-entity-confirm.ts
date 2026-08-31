@@ -32,6 +32,10 @@ const ALLOWED_KINDS: Record<string, true> = {
   item: true,
 };
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

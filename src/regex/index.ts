@@ -6,7 +6,6 @@
  *
  * All compiled regex patterns used across the codebase, organized by domain.
  * Import from this module or directly from the specific sub-module.
- *
  * @module regex
  */
 

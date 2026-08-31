@@ -12,6 +12,8 @@ import type { AdminRouteOpts, } from "./types";
  *
  * Computes flags/day (last 14 days), most-flagged content, average
  * resolution time, and the false-positive rate (dismissed / resolved).
+ * @param opts
+ * @param prefix
  */
 export function reviewStatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const db = opts.database;

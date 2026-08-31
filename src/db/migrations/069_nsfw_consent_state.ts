@@ -19,13 +19,15 @@
  * Why not a single row with a status column: history matters for audit and
  * appeal flows; an append-only ledger matches the rest of the moderation
  * surface (see `moderation_actions`).
- *
  * @see BUG-nsfw-consent-auto-granted-in-memory-for-any-logged-in-user-n.md
  * @see TASK-nsfw-consent-integration.md
  */
 
 import type { Kysely, } from "kysely";
 
+/**
+ * @param db
+ */
 export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
     .createTable("nsfw_consent_state",)
@@ -65,6 +67,9 @@ export async function up(db: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param db
+ */
 export async function down(db: Kysely<unknown>,): Promise<void> {
   await db.schema.dropTable("nsfw_consent_state",).ifExists().execute();
 }

@@ -8,6 +8,7 @@ import type { ExportContext, } from "./types";
  * Export the user's locations into `zip/locations/<worldId>/` as JSON.
  * Ownership is scoped through the owning world. Populates
  * `ctx.counts.locations`.
+ * @param ctx
  */
 export async function exportLocationsToZip(ctx: ExportContext,): Promise<void> {
   const locations = await ctx.database

@@ -8,6 +8,11 @@ import { BUILTIN_PROFILES, type DetailLevel, type SdGenMode, } from "../../gener
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { loadStoredTemplates, log, mergeProfiles, saveStoredTemplates, } from "./shared";
 
+/**
+ * @param opts
+ * @param opts.database
+ * @param prefix
+ */
 export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   const { database, } = opts;
 

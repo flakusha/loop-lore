@@ -20,6 +20,8 @@ const isDev = process.env.NODE_ENV !== "production";
  * Resolve a telemetry flag.
  * - "1" → on, "0" → off
  * - unset → devDefault (true outside production, false in prod)
+ * @param env
+ * @param devDefault
  */
 function resolveFlag(env: string | undefined, devDefault: boolean,): boolean {
   if (env === "1") { return true; }
@@ -27,6 +29,7 @@ function resolveFlag(env: string | undefined, devDefault: boolean,): boolean {
   return devDefault;
 }
 
+/** */
 export function loadTelemetryConfig(): TelemetryConfig {
   const master = resolveFlag(process.env.TELEMETRY_ENABLED, isDev,);
   return {

@@ -24,6 +24,7 @@ export {
 export type { BrowserUUIDv7Options, } from "./browser-uuid";
 export { browserRandomUUIDv7, isUUIDv7, } from "./browser-uuid";
 
+/** */
 export interface BrowserEncryptedPayload {
   enc: string;
   nonce: string;
@@ -33,14 +34,23 @@ export interface BrowserEncryptedPayload {
   key_id: string;
 }
 
+/**
+ * @param str
+ */
 function stringToUint8Array(str: string,): Uint8Array {
   return new TextEncoder().encode(str,);
 }
 
+/**
+ * @param buf
+ */
 function uint8ArrayToBase64(buf: Uint8Array,): string {
   return toBase64(buf,);
 }
 
+/**
+ * @param data
+ */
 async function tryGzipCompress(data: Uint8Array,): Promise<Uint8Array | null> {
   if (typeof CompressionStream === "undefined") { return null; }
   try {
@@ -55,6 +65,9 @@ async function tryGzipCompress(data: Uint8Array,): Promise<Uint8Array | null> {
   }
 }
 
+/**
+ * @param data
+ */
 async function tryBrotliCompress(data: Uint8Array,): Promise<Uint8Array | null> {
   if (typeof CompressionStream === "undefined") { return null; }
   try {
@@ -72,6 +85,10 @@ async function tryBrotliCompress(data: Uint8Array,): Promise<Uint8Array | null> 
 /**
  * Write pipeline: plaintext → compress → encrypt → EncryptedPayload JSON.
  * Matches server-side crypto/pipeline.ts shape.
+ * @param plaintext
+ * @param key
+ * @param keyId
+ * @param threshold
  */
 export async function browserCompressThenEncrypt(
   plaintext: string,
@@ -117,6 +134,8 @@ export async function browserCompressThenEncrypt(
 /**
  * Read pipeline: EncryptedPayload JSON → decrypt → decompress → plaintext.
  * Matches server-side crypto/pipeline.ts decryptThenDecompress.
+ * @param stored
+ * @param key
  */
 export async function browserDecryptThenDecompress(stored: string, key: CryptoKey,): Promise<string> {
   const result = safeJsonParse<BrowserEncryptedPayload>(stored,);

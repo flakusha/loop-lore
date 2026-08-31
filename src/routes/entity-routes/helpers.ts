@@ -4,6 +4,12 @@
 import { jsonStringifyOr, uid, } from "../../utils";
 import type { EntityConfig, } from "./types";
 
+/**
+ * @param root0
+ * @param root0.config
+ * @param root0.parentId
+ * @param root0.body
+ */
 export function buildCreateValues({
   config,
   parentId,
@@ -26,6 +32,11 @@ export function buildCreateValues({
   return values;
 }
 
+/**
+ * @param root0
+ * @param root0.config
+ * @param root0.body
+ */
 export function buildUpdateValues({
   config,
   body,
@@ -46,7 +57,11 @@ export function buildUpdateValues({
   return updates;
 }
 
-/** Map snake_case DB rows back to camelCase API shapes, applying responseTransforms. */
+/**
+ * Map snake_case DB rows back to camelCase API shapes, applying responseTransforms.
+ * @param config
+ * @param row
+ */
 export function applyResponseTransforms(
   config: EntityConfig,
   row: Record<string, unknown>,

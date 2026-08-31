@@ -7,13 +7,19 @@ import { compress, decompress, } from "./compression";
 
 type Algorithm = "zstd" | "br" | "gzip" | "none";
 
-/** Larger-than-default-threshold payload so compression actually engages. */
+/**
+ * Larger-than-default-threshold payload so compression actually engages.
+ * @param size
+ */
 function payload(size = 2000,): Uint8Array {
   const bytes = new Uint8Array(size,);
   for (let i = 0; i < size; i++) { bytes[i] = i % 256; }
   return bytes;
 }
 
+/**
+ * @param data
+ */
 function toText(data: Uint8Array,): string {
   return new TextDecoder().decode(data,);
 }

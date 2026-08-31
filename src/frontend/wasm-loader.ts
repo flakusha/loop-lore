@@ -16,7 +16,6 @@
  *
  * When the wasm module fails to load (network error, unsupported browser)
  * every accessor returns null — callers fall back to JS implementations.
- *
  * @module wasm-loader
  */
 
@@ -47,7 +46,6 @@ const SCRATCH_SIZE = 65_536;
 
 /**
  * Fetch and instantiate the wasm module. Cached after first success/failure.
- *
  * @returns The wrapped module, or null on any failure.
  */
 export async function getWasmModule(): Promise<WasmNativeModule | null> {
@@ -75,6 +73,8 @@ export async function getWasmModule(): Promise<WasmNativeModule | null> {
 
 /**
  * Build a safe JS wrapper around the raw wasm C ABI functions.
+ * @param instance
+ * @param memory
  */
 function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory,): WasmNativeModule {
   const {
@@ -148,7 +148,6 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
 /**
  * True when the wasm module is loaded and ready.
  * This is an async check — first call triggers fetch + instantiate.
- *
  * @returns Whether WASM-based blake3+zstd are available.
  */
 export async function isWasmAvailable(): Promise<boolean> {
@@ -159,7 +158,7 @@ export async function isWasmAvailable(): Promise<boolean> {
 // ── Script auto-init for Alpine.js / htmx environments ──────────
 // When loaded as a script tag, eagerly fetch the wasm module and expose
 // it on `window.__loopLoreWasm` for other IIFE bundles to use.
-// eslint-disable-next-line unicorn/prefer-top-level-await -- loaded as regular script tag, not module
+
 (async function autoInit(): Promise<void> {
   const g = globalThis as Record<string, unknown>;
   // Prevent double-init and preserve existing global.

@@ -27,6 +27,9 @@ import type { StatBlock, } from "./stats.js";
 
 const testStats: StatBlock = { str: 16, dex: 14, con: 12, int: 10, wis: 8, cha: 6, };
 
+/**
+ * @param overrides
+ */
 function makeTestCombatant(overrides: Partial<Combatant> = {},): Combatant {
   return {
     id: "test-1",

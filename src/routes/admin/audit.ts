@@ -8,6 +8,10 @@ import { AdminAuditRow, AdminPaginatedEnvelope, } from "../../validation/schemas
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, parsePagination, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-audit", },)

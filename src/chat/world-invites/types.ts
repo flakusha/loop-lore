@@ -4,6 +4,7 @@
 import type { InviteStatus, } from "../../db/enums";
 import type { InviteError, } from "../invites";
 
+/** */
 export interface WorldInviteRow {
   id: string;
   worldId: string;
@@ -16,6 +17,7 @@ export interface WorldInviteRow {
   status: InviteStatus;
 }
 
+/** */
 export interface CreateWorldInviteInput {
   worldId: string;
   createdBy: string;
@@ -25,6 +27,7 @@ export interface CreateWorldInviteInput {
   maxUses?: number | null;
 }
 
+/** */
 export type WorldRedeemOutcome =
   | { ok: true; worldId: string; alreadyMember: boolean }
   | { ok: false; error: InviteError };

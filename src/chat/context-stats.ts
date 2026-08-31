@@ -40,7 +40,6 @@ export interface BudgetStats {
  *
  * Uses the same token estimation as the context window manager.
  * Suitable for inclusion in message create/generate responses.
- *
  * @param messages - Messages with content and optional token counts
  * @param maxTokens - Model context window size (default: 32000)
  * @param thresholds - Optional threshold overrides
@@ -72,7 +71,6 @@ export function computeContextStats(
  * Accepts the shape returned by `PromptAssembler.assemble()` so callers can
  * hand the assembled prompt straight to the advisor. Dropped sections are
  * excluded — they never reached the actual context window.
- *
  * @param sections - Per-section reports from prompt assembly
  * @param maxTokens - Total context budget (for per-section percentages)
  * @returns Budget sections with per-section token counts and budget share
@@ -98,7 +96,6 @@ export function computeSections(
  *
  * The context window is assumed to respect a per-chat or model budget; this
  * reports what is left after the used (non-dropped) tokens are accounted for.
- *
  * @param usedTokens - Tokens currently consumed by the context window
  * @param maxTokens - Total context budget
  * @returns Available tokens (never negative)

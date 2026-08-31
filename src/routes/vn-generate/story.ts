@@ -22,6 +22,13 @@ import type { GenerateStoryBody, StoryGenerationResult, VnGenerateRouteOpts, } f
 
 // ── Story Generation ───────────────────────────────────────
 
+/**
+ * @param database
+ * @param chatId
+ * @param body
+ * @param config
+ * @param userId
+ */
 async function generateStoryDescription(
   database: Kysely<DB>,
   chatId: string,
@@ -117,6 +124,9 @@ const StoryBodySchema = t.Object({
   maxTokens: t.Optional(t.Number(),),
 },);
 
+/**
+ * @param opts
+ */
 export function storyRoutes(opts: VnGenerateRouteOpts,) {
   const { database, } = opts;
 

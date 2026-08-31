@@ -23,7 +23,10 @@ export {
   toEquipmentItem,
 } from "./item-mapping";
 
-/** Calculate equipment stat modifiers */
+/**
+ * Calculate equipment stat modifiers
+ * @param items
+ */
 export function calculateEquipmentModifiers(
   items: EquipmentItem[],
 ): EquipmentModifier[] {
@@ -47,7 +50,12 @@ export function calculateEquipmentModifiers(
   return modifiers;
 }
 
-/** Check if item can be equipped */
+/**
+ * Check if item can be equipped
+ * @param item
+ * @param characterLevel
+ * @param characterStats
+ */
 export function canEquipItem(
   item: EquipmentItem,
   characterLevel: number,
@@ -82,7 +90,11 @@ export function canEquipItem(
   return { canEquip: true, };
 }
 
-/** Apply durability damage to item */
+/**
+ * Apply durability damage to item
+ * @param item
+ * @param damage
+ */
 export function applyDurabilityDamage(
   item: EquipmentItem,
   damage: number,
@@ -94,7 +106,12 @@ export function applyDurabilityDamage(
   };
 }
 
-/** Repair item durability */
+/**
+ * Repair item durability
+ * @param item
+ * @param repairAmount
+ * @param goldCost
+ */
 export function repairItem(
   item: EquipmentItem,
   repairAmount: number,
@@ -124,7 +141,11 @@ export interface LootTableEntry {
   requiredLevel: number;
 }
 
-/** Generate loot from a loot table */
+/**
+ * Generate loot from a loot table
+ * @param lootTable
+ * @param monsterLevel
+ */
 export function generateLoot(
   lootTable: LootTableEntry[],
   monsterLevel: number,
@@ -151,7 +172,11 @@ export function generateLoot(
   return drops;
 }
 
-/** Calculate item sell price based on quality and durability */
+/**
+ * Calculate item sell price based on quality and durability
+ * @param item
+ * @param basePrice
+ */
 export function calculateSellPrice(
   item: EquipmentItem,
   basePrice: number,
@@ -172,7 +197,11 @@ export function calculateSellPrice(
   return Math.round(basePrice * rarityMultiplier * durabilityFactor * 0.5,);
 }
 
-/** Get items in a specific equipment slot */
+/**
+ * Get items in a specific equipment slot
+ * @param items
+ * @param slot
+ */
 export function getEquippedInSlot(
   items: EquipmentItem[],
   slot: EquipmentSlot,
@@ -180,14 +209,21 @@ export function getEquippedInSlot(
   return items.find(item => item.equipped && item.slot === slot);
 }
 
-/** Get all equipped items */
+/**
+ * Get all equipped items
+ * @param items
+ */
 export function getEquippedItems(items: EquipmentItem[],): EquipmentItem[] {
   const equipped: EquipmentItem[] = [];
   for (const item of items) { if (item.equipped) { equipped.push(item,); } }
   return equipped;
 }
 
-/** Calculate total weight of items */
+/**
+ * Calculate total weight of items
+ * @param items
+ * @param weightMap
+ */
 export function calculateTotalWeight(
   items: EquipmentItem[],
   weightMap: Map<string, number>,

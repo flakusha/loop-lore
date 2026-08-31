@@ -37,6 +37,11 @@ interface DeletePersonaOpts {
   personaId: string;
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.context
+ */
 export async function handleListPersonas({ database, context, }: ListPersonasOpts,): Promise<Response> {
   const userId = context.userId;
   if (!userId) {
@@ -52,6 +57,12 @@ export async function handleListPersonas({ database, context, }: ListPersonasOpt
   return jsonResponse(personas,);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.body
+ * @param root0.context
+ */
 export async function handleCreatePersona({ database, body, context, }: CreatePersonaOpts,): Promise<Response> {
   const userId = context.userId;
   if (!userId) {
@@ -82,6 +93,12 @@ export async function handleCreatePersona({ database, body, context, }: CreatePe
   return jsonCreated({ id: personaId, },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.personaId
+ * @param root0.context
+ */
 export async function handleGetPersona({ database, personaId, context, }: GetPersonaOpts,): Promise<Response> {
   const userId = context.userId;
   if (!userId) {
@@ -100,6 +117,13 @@ export async function handleGetPersona({ database, personaId, context, }: GetPer
   return jsonResponse(persona,);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.personaId
+ * @param root0.body
+ * @param root0.context
+ */
 export async function handleUpdatePersona({
   database,
   personaId,
@@ -141,6 +165,12 @@ export async function handleUpdatePersona({
   return jsonResponse({ ok: true, },);
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.personaId
+ * @param root0.context
+ */
 export async function handleDeletePersona({ database, personaId, context, }: DeletePersonaOpts,): Promise<Response> {
   const userId = context.userId;
   if (!userId) {
@@ -156,6 +186,12 @@ export async function handleDeletePersona({ database, personaId, context, }: Del
   return jsonNoContent();
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.personaId
+ * @param root0.context
+ */
 export async function handleConvertToCharacter({ database, personaId, context, }: GetPersonaOpts,): Promise<Response> {
   const userId = context.userId;
   if (!userId) {

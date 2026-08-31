@@ -25,6 +25,7 @@ import { uid, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 import type { GenDeps, } from "./deps";
 
+/** */
 export interface PrepareGenerationOpts {
   d: GenDeps;
   database: Kysely<DB>;
@@ -40,6 +41,7 @@ export interface PrepareGenerationOpts {
   systemPromptOverride?: string;
 }
 
+/** */
 export interface PreparedGeneration {
   resolved: {
     resolvedModel: string;
@@ -54,7 +56,7 @@ export interface PreparedGeneration {
 
 /**
  * Resolve provider, assemble the prompt, and start generation tracking.
- *
+ * @param opts
  * @returns The resolved provider, assembled prompt, and (when applicable) the
  *   generation tracking handle.
  */

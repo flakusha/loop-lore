@@ -38,16 +38,24 @@ const PLAINTEXTS = [
   "fifth message before rotation",
 ];
 
+/** */
 function getSmkSafe(): CryptoKey {
   const smk = getSmk();
   if (!smk) { throw new Error("SMK not loaded — test setup failed",); }
   return smk;
 }
 
+/**
+ * @param id
+ */
 async function insertUser(id: string,) {
   await db.insertInto("users",).values({ id, username: id, display_name: id, },).execute();
 }
 
+/**
+ * @param id
+ * @param type
+ */
 async function insertActor(id: string, type: "user" | "character",) {
   await db.insertInto("actors",).values({
     id,
@@ -65,6 +73,9 @@ async function insertActor(id: string, type: "user" | "character",) {
   },).execute();
 }
 
+/**
+ * @param id
+ */
 async function insertChat(id: string,) {
   await db.insertInto("chats",).values({
     id,
@@ -76,6 +87,10 @@ async function insertChat(id: string,) {
   },).execute();
 }
 
+/**
+ * @param chatId
+ * @param actorId
+ */
 async function addParticipant(chatId: string, actorId: string,) {
   await db.insertInto("chat_participants",).values({
     chat_id: chatId,

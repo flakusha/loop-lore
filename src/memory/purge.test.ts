@@ -9,6 +9,10 @@ import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, } from "../test-utils/insert-helpers";
 import { applyDecay, touchMemory, } from "./purge";
 
+/**
+ * @param db
+ * @param overrides
+ */
 async function seedMemory(
   db: Kysely<DB>,
   overrides: Partial<{

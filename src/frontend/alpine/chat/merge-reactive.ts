@@ -7,6 +7,8 @@
  * (`...source`) EVALUATES getters at spread time and copies a stale snapshot,
  * so computed state like `groupedMessages` never recomputes. Use this for any
  * sub-module that declares `get`/`set` accessors consumed by templates.
+ * @param target
+ * @param source
  */
 export function mergeReactiveSource(target: Record<string, unknown>, source: object,): void {
   for (const name of Object.getOwnPropertyNames(source,)) {

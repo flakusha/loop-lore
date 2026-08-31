@@ -31,6 +31,8 @@ const MAX_HISTORY = 50;
  * 3. Consent flag (if action requires it)
  *
  * Updates score, records history, and fires threshold events.
+ * @param db
+ * @param opts
  */
 export async function applyAction(
   db: Kysely<DB>,
@@ -126,7 +128,8 @@ export async function applyAction(
 
 /**
  * Decay intimacy over time (natural drift toward 0).
- *
+ * @param db
+ * @param actorId
  * @param decayAmount - How much to decay per call (default 1).
  */
 export async function decayAll(

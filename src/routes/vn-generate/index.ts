@@ -17,6 +17,9 @@ import type { VnGenerateRouteOpts, } from "./types";
 
 export type { VnGenerateRouteOpts, } from "./types";
 
+/**
+ * @param opts
+ */
 export function vnGenerateRoutes(opts: VnGenerateRouteOpts,) {
   return new Elysia({ prefix: "/api/chats", },)
     .use(storyRoutes(opts,),)

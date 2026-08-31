@@ -44,7 +44,8 @@ export { clampFlagLimit, hashReporterId, toQueueView, toResolvedView, } from "./
  * Public API type — declaration-merged with the class value below so one name
  * is both the instance type and the `new`-able constructor.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unsafe-declaration-merging
+
+/** */
 export interface NsfwModerationService extends NsfwModerationServiceIface {}
 
 /**
@@ -53,11 +54,15 @@ export interface NsfwModerationService extends NsfwModerationServiceIface {}
  * Each public method delegates to a thisL dispatcher (`{ thisL, ...args }`);
  * dispatchers reach sibling methods and storage through `thisL`.
  */
-// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+
+/** */
 export class NsfwModerationService implements NsfwModerationServiceIface {
   readonly db: Kysely<DB>;
   readonly log: Logger;
 
+  /**
+   * @param database
+   */
   constructor(database: Kysely<DB>,) {
     this.db = database;
     this.log = getLogger().child({ module: "nsfw-moderation", },);

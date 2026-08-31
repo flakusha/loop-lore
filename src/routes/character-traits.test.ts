@@ -18,6 +18,11 @@ const OTHER_USER = "00000000-0000-4000-8000-000000000012";
 const WORLD = "00000000-0000-4000-8000-000000000101";
 const LOCATION = "00000000-0000-4000-8000-000000000201";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   return new Elysia({ name: "test-traits", },)
     .derive(() => ({ userId, userRole, }))

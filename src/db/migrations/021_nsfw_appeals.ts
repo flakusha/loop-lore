@@ -6,6 +6,9 @@
  */
 import { type Kysely, } from "kysely";
 
+/**
+ * @param database
+ */
 export async function up(database: Kysely<any>,): Promise<void> {
   await database.schema
     .createTable("moderation_appeals",)
@@ -23,6 +26,9 @@ export async function up(database: Kysely<any>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<any>,): Promise<void> {
   await database.schema.dropTable("moderation_appeals",).execute();
 }

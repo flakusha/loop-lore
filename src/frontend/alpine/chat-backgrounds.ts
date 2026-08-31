@@ -14,6 +14,7 @@ import type { ChatState, } from "./types";
 
 const log = rootLog.child({ module: "chat-backgrounds", },);
 
+/** */
 export interface ChatBackgroundRow {
   id: string;
   name: string;

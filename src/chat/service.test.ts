@@ -31,6 +31,9 @@ describe("createChat memory carry", () => {
     await db?.destroy();
   },);
 
+  /**
+   * @param contentById
+   */
   async function seedMemories(contentById: Record<string, string>,): Promise<string[]> {
     const ids: string[] = [];
     for (const [id, content,] of Object.entries(contentById,)) {
@@ -40,6 +43,9 @@ describe("createChat memory carry", () => {
     return ids;
   }
 
+  /**
+   * @param chatId
+   */
   async function carriedForChat(chatId: string,): Promise<{ id: string; content: string }[]> {
     return db
       .selectFrom("actor_memories",)

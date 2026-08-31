@@ -20,7 +20,6 @@ export type {
 
 /**
  * Generate images using the configured provider.
- *
  * @param sdConfig - Resolved image provider config
  * @param opts - Generation request inputs
  * @returns A discriminated outcome; never throws on provider failures

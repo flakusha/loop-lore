@@ -22,6 +22,7 @@ beforeAll(() => {
 },);
 
 describe("DEFAULTS", () => {
+  /** */
   function defaults() {
     return structuredClone(createConfigSchema().defaults,);
   }
@@ -160,6 +161,7 @@ describe("setByPath", () => {
 });
 
 describe("validateConfig", () => {
+  /** */
   function validConfig(): Config {
     return structuredClone(createConfigSchema().defaults,);
   }
@@ -293,6 +295,9 @@ describe("Config layer merging", () => {
 describe("loadConfig integration", () => {
   const tmpDir = join(import.meta.dir, "__test_config_tmp",);
 
+  /**
+   * @param files
+   */
   function setupConfigFiles(files: Record<string, string>,) {
     rmSync(tmpDir, { recursive: true, force: true, },);
     // Create all parent directories needed by file paths
@@ -310,6 +315,7 @@ describe("loadConfig integration", () => {
     }
   }
 
+  /** */
   function cleanup() {
     rmSync(tmpDir, { recursive: true, force: true, },);
   }
@@ -419,6 +425,9 @@ configPath = "~/models/llama-swap.yaml"
 });
 
 describe("validateDatabaseSafety", () => {
+  /**
+   * @param overrides
+   */
   function sqliteConfig(overrides?: Partial<Config["db"]>,): Config {
     const defaults = structuredClone(createConfigSchema().defaults,);
     defaults.db.type = "sqlite";
@@ -495,6 +504,9 @@ describe("validateDatabaseSafety", () => {
 });
 
 describe("validateAuthSafety", () => {
+  /**
+   * @param overrides
+   */
   function authConfig(overrides?: Partial<Config["auth"]>,): Config {
     const defaults = structuredClone(createConfigSchema().defaults,);
     Object.assign(defaults.auth, overrides,);

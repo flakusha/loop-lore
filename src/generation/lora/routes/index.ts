@@ -16,6 +16,8 @@ export { resolveBackendUrls, } from "./urls";
  * LoRA routes plugin — barrel assembling the HTTP surface from domain
  * sub-plugins. Registration point/name (`lora`) is preserved so wiring in
  * `register-plugins.ts` is unchanged.
+ * @param root0
+ * @param root0.config
  */
 export function loraRoutes({ config, }: { config: Config },) {
   return (

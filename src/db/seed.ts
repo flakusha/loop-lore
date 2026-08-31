@@ -19,8 +19,8 @@ const ASSISTANT_ID = "assistant-default";
  * prompt refinement, text review, and general creative assistance.
  *
  * Safe to call on every startup — checks for existence first.
- *
  * @param database - Kysely instance
+ * @param config
  */
 export async function seedDefaultActors(database: Kysely<DB>, config?: Config,): Promise<void> {
   const log = getLogger().child({ module: "seed", },);
@@ -98,7 +98,6 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config,):
  * `auth.required` is true but no admin username/password is configured, logs a
  * warning — without them the instance has no way to create its first admin
  * (registration never grants admin).
- *
  * @param database - Kysely instance
  * @param config - Resolved config (auth.adminUsername / auth.adminPassword or env overrides)
  * @param log - Logger child

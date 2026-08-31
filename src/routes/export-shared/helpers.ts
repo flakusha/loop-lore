@@ -10,6 +10,7 @@ import { safeJsonStringify, } from "../../utils";
 /**
  * Pretty-print a JSON value (2-space indent) safely, mirroring the previous
  * `JSON.stringify(value, null, 2)` calls. Never throws.
+ * @param value
  */
 export function prettyJson(value: unknown,): string {
   const sr = safeJsonStringify(value, 2,);
@@ -19,6 +20,9 @@ export function prettyJson(value: unknown,): string {
 /**
  * Record a `sha256:` prefixed checksum for a written export artifact.
  * Shared by both export handlers for routine, metadata, and manifest entries.
+ * @param checksums
+ * @param path
+ * @param content
  */
 export function addChecksum(
   checksums: Record<string, string>,

@@ -14,6 +14,7 @@ import type { SDServerHost, } from "./types";
 /**
  * Get emotion-based prompt modifier for SD generation.
  * Maps emotion types to descriptive prompt suffixes.
+ * @param emotion
  */
 function getEmotionModifier(emotion: string,): string {
   const modifiers: Record<string, string> = {
@@ -39,6 +40,12 @@ function getEmotionModifier(emotion: string,): string {
   return modifiers[emotion] ?? "";
 }
 
+/**
+ * @param host
+ * @param params
+ * @param cfg
+ * @param onProgress
+ */
 export async function executeTxt2Img(
   host: SDServerHost,
   params: Record<string, unknown>,
@@ -99,6 +106,12 @@ export async function executeTxt2Img(
   },);
 }
 
+/**
+ * @param host
+ * @param params
+ * @param cfg
+ * @param onProgress
+ */
 export async function executeImg2Img(
   host: SDServerHost,
   params: Record<string, unknown>,
@@ -147,6 +160,11 @@ export async function executeImg2Img(
   throw new Error("img2img not supported with OpenAI API family",);
 }
 
+/**
+ * @param host
+ * @param params
+ * @param onProgress
+ */
 export async function executeUpscale(
   host: SDServerHost,
   params: Record<string, unknown>,

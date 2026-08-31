@@ -7,7 +7,6 @@
  * Barrel exports for the BLAKE3 (hashing) + zstd (compression) modules —
  * loader + wrappers + fallbacks. Application code imports from here; the
  * FFI boundary lives in `loader.ts` and is invisible to callers.
- *
  * @module native
  */
 

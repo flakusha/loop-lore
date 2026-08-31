@@ -13,6 +13,7 @@ export const QuestType = {
   Social: "social",
   Composite: "composite",
 } as const;
+/** */
 export type QuestType = (typeof QuestType)[keyof typeof QuestType];
 
 export const QuestStatus = {
@@ -21,6 +22,7 @@ export const QuestStatus = {
   Failed: "failed",
   Abandoned: "abandoned",
 } as const;
+/** */
 export type QuestStatus = (typeof QuestStatus)[keyof typeof QuestStatus];
 
 // Narrative role / reset behavior — orthogonal to the completion mechanic (`type`).
@@ -31,6 +33,7 @@ export const QuestCategory = {
   Bounty: "bounty",
   Daily: "daily",
 } as const;
+/** */
 export type QuestCategory = (typeof QuestCategory)[keyof typeof QuestCategory];
 
 // ── State Machine ──────────────────────────────────────────
@@ -56,6 +59,7 @@ export const QuestProgressStatus = {
   Failed: "failed",
   Ignored: "ignored",
 } as const;
+/** */
 export type QuestProgressStatus = (typeof QuestProgressStatus)[keyof typeof QuestProgressStatus];
 
 // ── Quest Progress State Machine ──────────────────────────

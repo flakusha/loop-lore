@@ -10,6 +10,9 @@ import type { InviteResult, } from "../invites";
  * Revoke a world invite so it can no longer be redeemed. Revoking an invite
  * that does not exist (or belongs to a different world) returns `not_found`,
  * mirroring chat/invites.ts.
+ * @param database
+ * @param worldId
+ * @param inviteId
  */
 export async function revokeWorldInvite(
   database: Kysely<DB>,

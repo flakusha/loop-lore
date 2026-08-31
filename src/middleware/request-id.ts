@@ -20,7 +20,6 @@
  * The function is pure: it does not read or mutate the request, it only
  * inspects headers. Callers must apply the resolved id back to the request
  * (e.g. `headers.set("x-request-id", id)`) and to the outgoing response.
- *
  * @see TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md
  */
 
@@ -40,7 +39,6 @@ const SAFE_REQUEST_ID = /^[A-Za-z0-9._:-]+$/;
  * Validate a client-supplied id. Empty / oversized / unsafe / control-char
  * inputs are rejected — callers MUST fall back to a server-generated id
  * rather than echo the input back.
- *
  * @param value - Raw header value (may be empty or contain leading/trailing
  *   whitespace from the client).
  * @returns The trimmed value when valid; `null` when the caller must fall
@@ -58,7 +56,6 @@ export function isValidRequestId(value: string | null | undefined,): string | nu
 
 /**
  * Resolve the request id for an incoming request.
- *
  * @param headers - Request headers to inspect (case-insensitive via Headers).
  * @returns The chosen id — either the validated client value or a freshly
  *   generated UUID v4. Always returns a non-empty printable ASCII string ≤
@@ -80,7 +77,6 @@ export function resolveRequestId(headers: Headers,): string {
  * convenience. Callers that pass a `Headers` instance directly (as Elysia's
  * `.derive` does) get the mutation for free; callers with immutable
  * snapshots should pass a cloned `Headers` instead.
- *
  * @param headers - Mutable headers bag (typically a cloned request's Headers).
  * @param id - Resolved request id (must pass `isValidRequestId`).
  * @returns The same headers reference, now carrying `x-request-id`.
@@ -107,9 +103,7 @@ export function applyRequestId(headers: Headers, id: string,): Headers {
  * Wire in `src/elysia-app.ts` BEFORE the auth `.derive()` so
  * `authenticate(...)` can correlate the resolved id, and BEFORE the
  * idempotency `beforeHandle` (which reads `ctx.requestId`).
- *
  * @returns An Elysia derive function for use with `.derive(...)`.
- *
  * @see TASK-middleware-request-id-elysia-derive.md
  */
 export function requestIdMiddleware(): (ctx: {

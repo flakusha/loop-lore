@@ -38,6 +38,10 @@ import type { HandlerOpts, } from "./types";
 
 export type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

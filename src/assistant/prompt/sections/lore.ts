@@ -45,7 +45,11 @@ interface LoreRow extends ActivationEntry {
   priority: number;
 }
 
-/** Check if a lore entry's cooldown has expired. */
+/**
+ * Check if a lore entry's cooldown has expired.
+ * @param lastActivated
+ * @param cooldownSeconds
+ */
 function isCooldownExpired(
   lastActivated: string | null,
   cooldownSeconds: number,

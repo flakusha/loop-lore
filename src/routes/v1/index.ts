@@ -10,7 +10,6 @@
  *
  * Uses `.use()` (not `.mount()`) so Elysia's `.derive()` context (userId,
  * userRole, etc.) propagates correctly to all child routes.
- *
  * @see docs/spec/api-versioning.md
  */
 import { Elysia, } from "elysia";
@@ -27,6 +26,7 @@ import type { RegisterPluginsOpts, } from "../../app/register-plugins";
  *
  * All route plugins are called with `prefix = "/api/v1"` so they register
  * their routes under `/api/v1/...` instead of the default `/api/...`.
+ * @param opts
  */
 export function v1Routes(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;

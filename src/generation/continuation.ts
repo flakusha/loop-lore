@@ -20,7 +20,6 @@ const messageToAttempt = new Map<string, string>();
 /**
  * Get partial content for a generation attempt.
  * Checks in-memory store first, falls back to DB.
- *
  * @param attemptId — the generation attempt ID
  * @param db — Kysely DB instance for fallback lookup
  * @returns object with content string or null if not found
@@ -51,7 +50,6 @@ export async function getPartialContent(
 /**
  * Store partial content for a generation attempt.
  * Preserves it across cancellation/failure for Continue feature.
- *
  * @param attemptId — the generation attempt ID
  * @param content — partial content to store
  */
@@ -62,6 +60,8 @@ export function storePartialContent(attemptId: string, content: string,): void {
 /**
  * Map a message ID to its latest generation attempt ID.
  * Used for rapid lookup when Continue targets a message.
+ * @param messageId
+ * @param attemptId
  */
 export function mapMessageToAttempt(messageId: string, attemptId: string,): void {
   messageToAttempt.set(messageId, attemptId,);
@@ -69,6 +69,7 @@ export function mapMessageToAttempt(messageId: string, attemptId: string,): void
 
 /**
  * Get the latest generation attempt ID for a message.
+ * @param messageId
  */
 export function getAttemptForMessage(messageId: string,): string | undefined {
   return messageToAttempt.get(messageId,);

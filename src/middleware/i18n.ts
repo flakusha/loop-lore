@@ -16,7 +16,7 @@ import type { I18nConfig, Locale, } from "../i18n/types";
 
 /**
  * Parse Accept-Language header and extract locale preferences.
- *
+ * @param header
  * @example
  * parseAcceptLanguage("ja,en-US;q=0.9,en;q=0.8")
  * // => ["ja", "en-US", "en"]
@@ -46,6 +46,8 @@ export function parseAcceptLanguage(header: string,): string[] {
  * 1. Cookie: ll_locale=xx
  * 2. Accept-Language header (parse q-values)
  * 3. Server default
+ * @param request
+ * @param config
  */
 export function detectLocale(
   request: Request,
@@ -58,6 +60,8 @@ export function detectLocale(
 
 /**
  * Try to detect locale from ll_locale cookie.
+ * @param request
+ * @param config
  */
 function detectFromCookie(
   request: Request,
@@ -79,6 +83,8 @@ function detectFromCookie(
 
 /**
  * Try to detect locale from Accept-Language header.
+ * @param request
+ * @param config
  */
 function detectFromAcceptLanguage(
   request: Request,
@@ -108,6 +114,8 @@ function detectFromAcceptLanguage(
 /**
  * Create i18n context for a request.
  * Loads translations and creates translator function.
+ * @param locale
+ * @param config
  */
 export function createI18nContext(
   locale: Locale,

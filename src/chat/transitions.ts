@@ -32,13 +32,14 @@ import type { ChatTransition, MessageRef, TransitionClassification, } from "./ty
  * is provided, the user MUST exist as an actor — this prevents a forged
  * `userId` from pulling another user's BYO apiKey via the underlying
  * `classifyTransition` call.
- *
  * @param content - User message content
  * @param recentMessages - Last 1-2 messages for context (optional)
  * @param config - Application config
  * @param db - Kysely instance
  * @param userId - User ID for BYO apiKey resolution (optional)
  * @param ownership - Optional ownership context for participant enforcement
+ * @param ownership.chatId
+ * @param ownership.actorId
  * @returns Transition classification with source and confidence
  */
 export async function classifyTransitionMessage(
@@ -66,8 +67,11 @@ export async function classifyTransitionMessage(
  * Create a chat transition event from a message.
  *
  * Pure constructor — no DB access, no ownership check required.
- *
  * @param params - Transition parameters
+ * @param params.actorId
+ * @param params.narration
+ * @param params.promotedMemoryIds
+ * @param params.newLocationId
  * @returns A new ChatTransition
  */
 export function createTransition(params: {
@@ -96,7 +100,6 @@ export function createTransition(params: {
  * based on age and importance.
  *
  * Pure function — no DB access, no ownership check required.
- *
  * @param messages - All messages in the chat (chronological)
  * @param maxTokens - Maximum token budget
  * @param promotionThreshold - Minimum score for promotion (0-1, default 0.6)
@@ -145,9 +148,15 @@ export function selectMessagesForPromotion(
  * This is the last line of defense against memory poisoning: a forged
  * `(actorId, chatId)` pair (cross-actor or non-participant) cannot
  * inject content into a victim's `actor_memories` table.
- *
  * @param db - Kysely instance
  * @param params - Promotion parameters
+ * @param params.messages
+ * @param params.maxTokens
+ * @param params.actorId
+ * @param params.chatId
+ * @param params.worldId
+ * @param params.participantIds
+ * @param params.promotionThreshold
  * @returns Array of stored memory IDs
  */
 export async function promoteMessagesToMemories(

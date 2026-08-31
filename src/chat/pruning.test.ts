@@ -6,6 +6,17 @@ import {
   scoreMessage,
 } from "./pruning";
 
+/**
+ * @param id
+ * @param content
+ * @param index
+ * @param total
+ * @param opts
+ * @param opts.hasMemoryLink
+ * @param opts.hasAttachment
+ * @param opts.reactionCount
+ * @param opts.role
+ */
 function makeMsg(
   id: string,
   content: string,

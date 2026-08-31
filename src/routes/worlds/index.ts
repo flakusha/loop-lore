@@ -7,6 +7,9 @@ import { locationRoutes, } from "./locations-routes";
 import { timelinesRoutes, } from "./timelines";
 import type { HandleOpts, } from "./types";
 import { worldRoutes, } from "./worlds-routes";
+/**
+ * @param opts
+ */
 export function worldsRoutes(opts: HandleOpts,) {
   return new Elysia({ name: "worlds", },)
     .use(worldRoutes(opts,),)

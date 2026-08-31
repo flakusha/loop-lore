@@ -70,7 +70,6 @@ const ROLE_PRIORITY: Record<ChatParticipantRole, number> = {
 
 /**
  * Check whether a participant's role satisfies a minimum required role.
- *
  * @param actual - The participant's actual role in the chat
  * @param required - The minimum role required
  * @returns true when `actual` is at least as privileged as `required`
@@ -81,7 +80,6 @@ export function satisfiesRole(actual: ChatParticipantRole, required: ChatPartici
 
 /**
  * Register a command handler.
- *
  * @param name - Command name (lowercased automatically)
  * @param handler - Handler function
  * @param opts - Optional registration options (e.g. `requiredRole`)
@@ -96,7 +94,6 @@ export function registerCommand(
 
 /**
  * Get a command handler by name.
- *
  * @param name - Command name
  * @returns Handler function, or undefined if not registered
  */
@@ -106,7 +103,6 @@ export function getCommand(name: string,): CommandHandler | undefined {
 
 /**
  * Get the minimum role required to run a command, if any.
- *
  * @param name - Command name
  * @returns Required role, or undefined when unrestricted
  */
@@ -116,7 +112,6 @@ export function getCommandRequirement(name: string,): ChatParticipantRole | unde
 
 /**
  * List all registered command names.
- *
  * @returns Array of command names
  */
 export function listCommands(): string[] {

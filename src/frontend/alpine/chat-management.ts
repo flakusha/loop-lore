@@ -84,7 +84,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  // eslint-disable-next-line @typescript-eslint/require-await -- ChatState.renameChat is typed Promise<void>; called from Alpine event handlers that await it
   async renameChat(chatId: string,) {
     this.openRenameModal(chatId,);
   },

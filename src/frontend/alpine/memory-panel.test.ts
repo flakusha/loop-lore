@@ -7,6 +7,9 @@ const fetchCalls: { url: string; opts?: RequestInit }[] = [];
 let fetchHandler: ((url: string, opts?: RequestInit,) => Response) | null = null;
 const originalApiFetch = (globalThis as Record<string, unknown>).apiFetch;
 
+/**
+ * @param overrides
+ */
 function ctx(overrides: Record<string, unknown> = {},): ChatState {
   return {
     ...(memoryPanel as unknown as ChatState),
@@ -19,6 +22,10 @@ function ctx(overrides: Record<string, unknown> = {},): ChatState {
   } as unknown as ChatState;
 }
 
+/**
+ * @param status
+ * @param body
+ */
 function mockFetch(status: number, body: unknown = {},) {
   fetchHandler = (_url: string, _opts?: RequestInit,) => Response.json(body, { status, },);
 }

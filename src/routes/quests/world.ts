@@ -12,6 +12,11 @@ import {
 } from "../../validation/schemas";
 import { handleCreateQuest, handleListQuests, } from "./handlers";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function questWorldRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "quests-world", },)
     .get(`${prefix}/worlds/:worldId/quests`, async (ctx: any,) => {

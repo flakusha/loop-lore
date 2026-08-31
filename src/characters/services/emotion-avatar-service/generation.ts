@@ -53,6 +53,9 @@ export interface GenerateEmotionAvatarOpts {
  *
  * Generates images for each emotion sequentially to avoid
  * overwhelming the image generation provider.
+ * @param svc
+ * @param job
+ * @param opts
  */
 export async function runBatchGeneration(
   svc: GenerationDispatchHandle,
@@ -132,6 +135,17 @@ export async function runBatchGeneration(
 
 /**
  * Generate a single emotion avatar variant.
+ * @param svc
+ * @param opts
+ * @param opts.actorId
+ * @param opts.emotion
+ * @param opts.sdConfig
+ * @param opts.uploadDir
+ * @param opts.promptPrefix
+ * @param opts.negativePrompt
+ * @param opts.baseAvatarId
+ * @param opts.fallbackMode
+ * @param opts.avatarEmotions
  */
 export async function generateEmotionAvatar(
   svc: GenerationDispatchHandle,

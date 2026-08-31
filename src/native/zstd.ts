@@ -17,7 +17,6 @@
  * Determinism: a fixed `level` produces byte-identical frames — the
  * property deterministic memory/text compression relies on (stable frames
  * enable content-addressing + dedup).
- *
  * @module native-zstd
  */
 
@@ -45,7 +44,6 @@ const bunZstd = Bun as unknown as BunZstd;
 
 /**
  * zstd-compress `data` — Rust cdylib when available, else Bun built-in.
- *
  * @param data - Input bytes (empty is valid).
  * @param level - Compression level 0–22 (default 3). Fixed level ⇒
  *   byte-identical output for the same input.
@@ -75,7 +73,6 @@ export function zstdCompress(data: Uint8Array, level: number = DEFAULT_ZSTD_LEVE
  *
  * Sizes the output buffer via `ll_zstd_decompress_bound`, so the caller
  * never needs to know the decompressed size.
- *
  * @param data - Compressed zstd frame.
  * @returns Decompressed bytes.
  * @throws Error when the frame is corrupt or decompression fails.
@@ -100,7 +97,6 @@ export function zstdDecompress(data: Uint8Array,): Uint8Array {
 /**
  * True when the native cdylib is loaded and ABI-verified (shared with the
  * BLAKE3 sample — the loader is module-agnostic).
- *
  * @returns Whether the Rust binary is currently in use.
  */
 export function isNativeZstdAvailable(): boolean {

@@ -15,6 +15,9 @@ import type { DB, } from "../../db/schema";
 /**
  * Carry party/game state: story_turns, quest_progress, group_initiatives.
  * These are chat-scoped so they re-point cleanly to the migrated chat.
+ * @param database
+ * @param sourceChatId
+ * @param newChatId
  */
 export async function carryState(
   database: Kysely<DB>,

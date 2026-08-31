@@ -5,6 +5,7 @@ import type { Subprocess, } from "bun";
 import type { LlamaCppAutoStartConfig, SdCppAutoStartConfig, } from "../../config/schema";
 import type { Logger, } from "../../logger";
 
+/** */
 export interface ServerInstance {
   type: "llama-cpp" | "llama-swap" | "sd-cpp";
   process: Subprocess;
@@ -13,9 +14,12 @@ export interface ServerInstance {
   startedAt: number;
 }
 
+/** */
 export type LlamaCppOptions = LlamaCppAutoStartConfig;
+/** */
 export type SdCppOptions = SdCppAutoStartConfig;
 
+/** */
 export interface LlamaSwapOptions {
   configPath: string;
 }

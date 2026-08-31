@@ -93,7 +93,6 @@ export const LLM_PROMPT_DEFAULTS: Record<string, string> = {
 
 /**
  * Resolve a system prompt for a purpose, preferring the user's config override.
- *
  * @param templates - LLM template config (`config.templates.llm`), may be undefined
  * @param purpose - Prompt purpose key (assistant, gm, nsfw, vn, intent, …)
  * @returns The resolved prompt string; "" when no override and no default exists

@@ -7,7 +7,12 @@ import { jsonBody, } from "../json";
 import { log, } from "./shared";
 import type { ModelsState, } from "./types";
 
-/** Map one system-config key onto the SD/comfyui admin state. */
+/**
+ * Map one system-config key onto the SD/comfyui admin state.
+ * @param state
+ * @param key
+ * @param value
+ */
 function applySdConfigEntry(
   state: ModelsState,
   key: string,

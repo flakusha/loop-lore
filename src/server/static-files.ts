@@ -22,6 +22,9 @@ const MIME_TYPES: Record<string, string> = {
   zst: "application/zstd",
 };
 
+/**
+ * @param filePath
+ */
 function getContentType(filePath: string,): string {
   const extension = filePath.split(".",).pop()?.toLowerCase() ?? "";
   return MIME_TYPES[extension] ?? "text/plain";
@@ -31,11 +34,18 @@ const PUBLIC_DIR = join(import.meta.dir, "..", "..", "dist", "public",);
 
 const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg",],);
 
+/**
+ * @param filePath
+ */
 function isCompressible(filePath: string,): boolean {
   const extension = filePath.split(".",).pop()?.toLowerCase();
   return extension ? COMPRESSIBLE_EXTS.has(`.${extension}`,) : false;
 }
 
+/**
+ * @param filePath
+ * @param acceptEncoding
+ */
 function findCompressedVariant(
   filePath: string,
   acceptEncoding: string,
@@ -58,6 +68,9 @@ function findCompressedVariant(
   return null;
 }
 
+/**
+ * @param dir
+ */
 function walkDirectorySync(dir: string,): string[] {
   const files: string[] = [];
   const entries = readdirSync(dir, { withFileTypes: true, },);
@@ -72,6 +85,7 @@ function walkDirectorySync(dir: string,): string[] {
 /**
  * Compute a weak ETag from file mtime + size.
  * Weak ETag (W/"…") allows semantically equivalent variants (e.g. gzip vs br).
+ * @param filePath
  */
 function computeEtag(filePath: string,): string {
   const stat = statSync(filePath,);
@@ -81,6 +95,7 @@ function computeEtag(filePath: string,): string {
 /**
  * Detect whether a file path contains a content hash (build output).
  * Hash format: filename.HASH.ext where HASH is ~8+ hex chars.
+ * @param filePath
  */
 function isHashedAsset(filePath: string,): boolean {
   const name = filePath.split("/",).pop() ?? "";
@@ -95,6 +110,8 @@ const STATIC_CACHE_MAX_AGE = 60;
 /**
  * Build the Cache-Control header value for a static file response.
  * Hashed assets (content-hashed filenames) get long-lived immutable caching.
+ * @param filePath
+ * @param maxAge
  */
 function buildCacheControl(filePath: string, maxAge: number,): string {
   if (maxAge <= 0) { return "no-store"; }
@@ -105,6 +122,10 @@ function buildCacheControl(filePath: string, maxAge: number,): string {
 /**
  * Serve a static file with optional compressed variant, cache headers, and ETag.
  * Shared between docs path and public path serving.
+ * @param fullPath
+ * @param acceptEncoding
+ * @param ifNoneMatch
+ * @param cacheMaxAge
  */
 function respondWithFile(
   fullPath: string,
@@ -147,6 +168,12 @@ function respondWithFile(
   return new Response(content, { headers, },);
 }
 
+/**
+ * @param url
+ * @param request
+ * @param docs
+ * @param docs.public
+ */
 export function handleDocsRequest(
   url: URL,
   request: Request,
@@ -191,11 +218,12 @@ export function handleDocsRequest(
 
 /**
  * Build the non-API request handler: serves views, docs, and static files.
+ * @param docs
+ * @param docs.public
  */
 export function createNonApiHandler(
   docs: { public?: string[] },
 ): (request: Request,) => Promise<Response> {
-  // eslint-disable-next-line @typescript-eslint/require-await -- RequestHandler type requires Promise<Response>; async keeps signature honest
   return async (request: Request,): Promise<Response> => {
     const url = new URL(request.url,);
 
@@ -225,14 +253,20 @@ export function createNonApiHandler(
   };
 }
 
-/** Resolve file path, appending .html if needed. Returns null if not found. */
+/**
+ * Resolve file path, appending .html if needed. Returns null if not found.
+ * @param publicPath
+ */
 function resolveFilePath(publicPath: string,): string | null {
   if (existsSync(publicPath,)) { return publicPath; }
   const htmlPath = `${publicPath}.html`;
   return existsSync(htmlPath,) ? htmlPath : null;
 }
 
-/** Check if a file starts with valid HTML doctype/tag. */
+/**
+ * Check if a file starts with valid HTML doctype/tag.
+ * @param fullPath
+ */
 function isValidHtml(fullPath: string,): boolean {
   const head = readFileSync(fullPath, "utf8",).slice(0, 1024,).trimStart();
   return head.startsWith("<!doctype",) || head.startsWith("<!DOCTYPE",) || head.startsWith("<html",);

@@ -8,6 +8,11 @@ import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 
+/**
+ * @param opts
+ * @param opts.database
+ * @param prefix
+ */
 export function providersRoutes(opts: { database?: unknown } = {}, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-providers", },)

@@ -10,6 +10,12 @@
 import { SyntheticDataStatus, syntheticDataStatusMachine, } from "../../../db/enums";
 import type { GeneratorState, } from "./types";
 
+/**
+ * @param state
+ * @param id
+ * @param to
+ * @param validatedBy
+ */
 export async function transitionStatus(
   state: GeneratorState,
   id: string,

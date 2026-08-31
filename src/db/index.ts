@@ -23,6 +23,9 @@ interface BunSqliteWrapper {
 // Wraps bun:sqlite to match the interface Kysely's SqliteDialect expects.
 // The `any` casts are required because Bun's SQLite accepts a wide union of binding types
 // that can't be expressed in Kysely's `readonly unknown[]` parameter signature.
+/**
+ * @param database
+ */
 export function createSqliteDialect(database: Database,): SqliteDialect {
   const wrapped: BunSqliteWrapper = {
     close() {
@@ -49,6 +52,9 @@ export function createSqliteDialect(database: Database,): SqliteDialect {
   return new SqliteDialect({ database: wrapped, },);
 }
 
+/**
+ * @param databasePath
+ */
 function createDialect(databasePath: string,): SqliteDialect {
   const sqlite = new Database(databasePath,);
   sqlite.run("PRAGMA journal_mode = WAL",);
@@ -70,15 +76,20 @@ let testDatabaseOverride: Kysely<DB> | null = null;
 /**
  * Override the global database instance for testing.
  * Pass null to clear the override.
+ * @param db
  */
 export function setTestDatabase(db: Kysely<DB> | null,): void {
   testDatabaseOverride = db;
 }
 
+/**
+ * @param _databasePath
+ */
 export function getDatabase(_databasePath?: string,): Kysely<DB> {
   return testDatabaseOverride ?? database;
 }
 
+/** */
 export type Db = Kysely<DB>;
 
 export { type DB, } from "./schema";

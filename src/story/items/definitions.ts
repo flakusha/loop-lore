@@ -11,7 +11,11 @@ import type { ItemCategory, } from "../../db/enums";
 import { safeJsonStringify, uid, } from "../../utils";
 import type { ItemDefinition, ItemState, } from "./types";
 
-/** Create a new item definition */
+/**
+ * Create a new item definition
+ * @param state
+ * @param def
+ */
 export async function createDefinition(state: ItemState, def: ItemDefinition,): Promise<string> {
   const id = uid();
   await state.db
@@ -37,13 +41,23 @@ export async function createDefinition(state: ItemState, def: ItemDefinition,): 
 }
 
 /** Get item definition by ID */
-/** Get item definition by ID. Requires worldId to prevent cross-world IDOR. */
+/**
+ * Get item definition by ID. Requires worldId to prevent cross-world IDOR.
+ * @param state
+ * @param itemId
+ * @param worldId
+ */
 export async function getDefinition(state: ItemState, itemId: string, worldId: string,) {
   return state.db.selectFrom("items",).selectAll().where("id", "=", itemId,).where("world_id", "=", worldId,)
     .executeTakeFirst();
 }
 
-/** List item definitions in a world */
+/**
+ * List item definitions in a world
+ * @param state
+ * @param worldId
+ * @param category
+ */
 export async function listDefinitions(state: ItemState, worldId: string, category?: ItemCategory,) {
   let query = state.db.selectFrom("items",).selectAll().where("world_id", "=", worldId,);
 

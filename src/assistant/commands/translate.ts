@@ -7,7 +7,6 @@
  * Registers the "translate" and "tl" command aliases. Uses a lookup-based
  * translation for common phrases with a fallback to simple identity pass.
  * In future iterations this will route through the LLM generation pipeline.
- *
  * @module assistant/commands/translate
  */
 
@@ -49,6 +48,9 @@ registerCommand("tl", (args,): CommandResult => {
   return translateImpl(args,);
 },);
 
+/**
+ * @param args
+ */
 function translateImpl(args: string[],): CommandResult {
   if (args.length === 0) {
     return {

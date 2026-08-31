@@ -20,6 +20,7 @@ import {
   initDhRatchet,
 } from "./dh-ratchet.ts";
 
+/** */
 async function setupAliceBob(): Promise<{
   aliceState: DhRatchetState;
   aliceInitialPubJwk: JsonWebKey;
@@ -43,7 +44,11 @@ async function setupAliceBob(): Promise<{
   };
 }
 
-/** Bob must know Alice's ephemeral pub before he can decrypt her messages. */
+/**
+ * Bob must know Alice's ephemeral pub before he can decrypt her messages.
+ * @param bobState
+ * @param aliceInitialPubJwk
+ */
 function bobKnowsAlice(
   bobState: DhRatchetState,
   aliceInitialPubJwk: JsonWebKey,
@@ -51,6 +56,10 @@ function bobKnowsAlice(
   return { ...bobState, theirCurrentPubJwk: aliceInitialPubJwk, };
 }
 
+/**
+ * @param state
+ * @param n
+ */
 async function aliceSendsN(
   state: DhRatchetState,
   n: number,

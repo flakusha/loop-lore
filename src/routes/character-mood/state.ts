@@ -18,6 +18,8 @@ import type { HandlerOpts, } from "./types";
 
 /**
  * Mood state sub-plugin — get/create/update actor mood and apply happiness deltas.
+ * @param opts
+ * @param prefix
  */
 export function stateRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

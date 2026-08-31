@@ -25,10 +25,18 @@ export const AAD_PREFIX = "loop-lore-e2e-sender-key-aad-v1" as const;
 export const KEY_LENGTH = 32;
 export const WRAP_NONCE_LENGTH = 12;
 
+/**
+ * @param recipientActorId
+ */
 export function wrapAad(recipientActorId: string,): Uint8Array {
   return new TextEncoder().encode(`${AAD_PREFIX}:${recipientActorId}`,);
 }
 
+/**
+ * @param sharedBytes
+ * @param info
+ * @param outLen
+ */
 export async function hkdfExpandToBytes(
   sharedBytes: Uint8Array,
   info: string,
@@ -54,6 +62,7 @@ export async function hkdfExpandToBytes(
   return new Uint8Array(bits,);
 }
 
+/** */
 export interface RecipientWrap {
   recipientActorId: string;
   /**
@@ -66,11 +75,13 @@ export interface RecipientWrap {
   senderEphPubJwk: JsonWebKey;
 }
 
+/** */
 export interface WrapSenderKeyOpts {
   chainKey: Uint8Array;
   recipients: { actorId: string; staticPubJwk: JsonWebKey }[];
 }
 
+/** */
 export interface UnwrapSenderKeyOpts {
   wrappedKey: string;
   senderEphPubJwk: JsonWebKey;

@@ -12,6 +12,10 @@ import {
 import { jsonCreated, requireUserId, } from "../http-utils";
 import type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 

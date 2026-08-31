@@ -7,7 +7,6 @@ import { ASI_LEVELS, AVG_HP_BY_DIE, } from "./constants.js";
 
 /**
  * Calculate HP gain on level up.
- *
  * @param hitDie - Size of hit die (d6, d8, d10, d12)
  * @param conModifier - CON modifier (added to each level)
  * @param isFirstLevel - Whether this is level 1 (max hit die, no CON mod)
@@ -26,6 +25,7 @@ export function hpOnLevelUp(
 
 /**
  * Check if a level grants an Ability Score Increase (ASI).
+ * @param level
  */
 export function grantsAsi(level: number,): boolean {
   return (ASI_LEVELS as readonly number[]).includes(level,);
@@ -33,6 +33,7 @@ export function grantsAsi(level: number,): boolean {
 
 /**
  * Get maximum ASI increases remaining for a character.
+ * @param currentLevel
  */
 export function asiRemaining(currentLevel: number,): number {
   let count = 0;

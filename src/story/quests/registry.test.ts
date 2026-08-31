@@ -3,6 +3,10 @@ import { QuestType, WorldEventType, } from "../../db/enums";
 import type { CollectionQuestConfig, TimeQuestConfig, WorldEvent, } from "../types";
 import { PROGRESS_CALCULATORS, } from "./registry";
 
+/**
+ * @param type
+ * @param data
+ */
 function makeEvent(type: WorldEventType, data: Record<string, unknown> = {},): WorldEvent {
   return { type, timestamp: "2024-01-01T00:00:00Z", data, description: "", };
 }

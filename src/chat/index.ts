@@ -6,8 +6,6 @@
  *
  * Chat lifecycle management: context windows, transitions,
  * moderation primitives, and service layer.
- *
- * @module chat
  */
 export type {
   ChatMode,

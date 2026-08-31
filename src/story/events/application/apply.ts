@@ -13,7 +13,15 @@ import type { WorldEvent, } from "../../types";
 import { applySingleEvent, } from "./handlers";
 import type { AppliedEvent, ApplyEventsOpts, } from "./types";
 
-/** Apply validated events to the DB */
+/**
+ * Apply validated events to the DB
+ * @param root0
+ * @param root0.db
+ * @param root0.worldId
+ * @param root0.events
+ * @param root0.trx
+ * @param root0.storyId
+ */
 export async function applyEvents({ db, worldId, events, trx, storyId, }: ApplyEventsOpts,): Promise<AppliedEvent[]> {
   const database = trx ?? db;
   const results: AppliedEvent[] = [];

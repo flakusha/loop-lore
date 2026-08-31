@@ -21,7 +21,6 @@ const ChatIdParams = {
   params: t.Object({ id: t.String(), },),
 } as const;
 
-/* eslint-disable unicorn/max-nested-calls -- Elysia t() schema nesting is structural and unavoidable */
 const splitBody = t.Object({
   actorId: t.Optional(t.String(),),
   branches: t.Array(
@@ -37,8 +36,11 @@ const reuniteBody = t.Object({
   secondaryChatId: t.String(),
   actorId: t.Optional(t.String(),),
 },);
-/* eslint-enable */
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function partySplitRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;
 
@@ -57,6 +59,9 @@ export function partySplitRoutes(opts: HandlerOpts, prefix = "/api",) {
   );
 }
 
+/**
+ * @param database
+ */
 function handleSplit(database: Kysely<DB>,) {
   return async (ctx: any,) => {
     const userId = requireUserId(ctx,);
@@ -81,6 +86,9 @@ function handleSplit(database: Kysely<DB>,) {
   };
 }
 
+/**
+ * @param database
+ */
 function handleReunite(database: Kysely<DB>,) {
   return async (ctx: any,) => {
     const userId = requireUserId(ctx,);

@@ -8,6 +8,10 @@ import { minifyCSS, minifyHTMLContent, minifyJS, minifyText, } from "./minify";
 
 const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg",],);
 
+/**
+ * @param sourceDir
+ * @param destDir
+ */
 export function copyDirectory(sourceDir: string, destDir: string,): void {
   if (!existsSync(sourceDir,)) { return; }
 
@@ -25,6 +29,9 @@ export function copyDirectory(sourceDir: string, destDir: string,): void {
   }
 }
 
+/**
+ * @param directory
+ */
 export function walkDirectory(directory: string,): string[] {
   const files: string[] = [];
   const entries = readdirSync(directory, { withFileTypes: true, },);
@@ -41,6 +48,10 @@ export function walkDirectory(directory: string,): string[] {
   return files;
 }
 
+/**
+ * @param sourceDirectory
+ * @param destinationDirectory
+ */
 function _setupStaticDirectory(sourceDirectory: string, destinationDirectory: string,): void {
   if (!existsSync(destinationDirectory,)) {
     mkdirSync(destinationDirectory, { recursive: true, },);
@@ -60,6 +71,10 @@ function _setupStaticDirectory(sourceDirectory: string, destinationDirectory: st
   }
 }
 
+/**
+ * @param content
+ * @param extension
+ */
 async function _getMinimizedContent(content: string, extension: string,): Promise<string> {
   switch (extension) {
     case ".css": {
@@ -78,6 +93,9 @@ async function _getMinimizedContent(content: string, extension: string,): Promis
   }
 }
 
+/**
+ * @param filePath
+ */
 export async function compressFile(filePath: string,): Promise<void> {
   const content = readFileSync(filePath, "utf8",);
   const extension = extname(filePath,);
@@ -103,6 +121,10 @@ export async function compressFile(filePath: string,): Promise<void> {
   writeFileSync(`${filePath}.br`, br,);
 }
 
+/**
+ * @param sourceDirectory
+ * @param destinationDirectory
+ */
 export async function compressAssets(
   sourceDirectory: string,
   destinationDirectory: string,

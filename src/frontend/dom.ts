@@ -14,8 +14,16 @@
  *   const items = $all<HTMLLIElement>(".list-item");
  */
 
-/** Query a single element by CSS selector, typed. */
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+/**
+ * Query a single element by CSS selector, typed.
+ * @param selector
+ * @param root
+ */
+
+/**
+ * @param selector
+ * @param root
+ */
 export function $<T extends HTMLElement,>(
   selector: string,
   root: ParentNode = document,
@@ -23,7 +31,11 @@ export function $<T extends HTMLElement,>(
   return root.querySelector<T>(selector,);
 }
 
-/** Query all matching elements by CSS selector, typed (NodeListOf). */
+/**
+ * Query all matching elements by CSS selector, typed (NodeListOf).
+ * @param selector
+ * @param root
+ */
 export function $all<T extends HTMLElement,>(
   selector: string,
   root: ParentNode = document,
@@ -39,16 +51,24 @@ export function $all<T extends HTMLElement,>(
  *     const input = eventTarget<HTMLInputElement>(e);
  *     console.log(input.value);
  *   }
+ * @param e
  */
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+
+/**
+ * @param e
+ */
 export function eventTarget<T extends HTMLElement,>(e: Event,): T | null {
   return e.target as T | null;
 }
 
 /**
  * Typed `currentTarget` — extracts the element the listener is bound to.
+ * @param e
  */
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+
+/**
+ * @param e
+ */
 export function eventCurrentTarget<T extends HTMLElement,>(e: Event,): T | null {
   return e.currentTarget as T | null;
 }

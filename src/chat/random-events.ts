@@ -58,7 +58,6 @@ export interface RandomEventOpts {
 
 /**
  * Generate a random ambient event for the current chat context.
- *
  * @param opts - Event generation options
  * @returns A random event, or null if no event should fire
  */
@@ -112,6 +111,10 @@ interface ResolveOpts {
   worldTime?: { hour: number; period: "dawn" | "day" | "dusk" | "night" };
 }
 
+/**
+ * @param template
+ * @param opts
+ */
 function resolveTemplate(template: string, opts: ResolveOpts = {},): string {
   const { participants = [], currentLocation, worldTime, } = opts;
   const aiParticipants = participants.filter((p,) => p.role === "ai");
@@ -135,13 +138,15 @@ function resolveTemplate(template: string, opts: ResolveOpts = {},): string {
     .replace("{time}", () => "now",);
 }
 
+/**
+ * @param arr
+ */
 function pickRandom<T,>(arr: readonly T[],): T {
   return arr[Math.floor(Math.random() * arr.length,)]!;
 }
 
 /**
  * Convert a RandomEvent to an EventRef for context window injection.
- *
  * @param event - The random event to convert
  * @returns EventRef compatible with injectEvents()
  */

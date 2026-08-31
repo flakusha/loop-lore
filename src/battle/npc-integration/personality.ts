@@ -6,7 +6,10 @@ import type {
   NPCPersonality,
 } from "./types";
 
-/** Get NPC morale modifier from personality */
+/**
+ * Get NPC morale modifier from personality
+ * @param personality
+ */
 export function getPersonalityMoraleModifier(
   personality: NPCPersonality,
 ): number {
@@ -24,7 +27,13 @@ export function getPersonalityMoraleModifier(
   return Math.max(-20, Math.min(20, Math.round(modifier,),),);
 }
 
-/** Check if NPC would surrender */
+/**
+ * Check if NPC would surrender
+ * @param personality
+ * @param currentHealth
+ * @param maxHealth
+ * @param battleMemories
+ */
 export function wouldNPCSurrender(
   personality: NPCPersonality,
   currentHealth: number,

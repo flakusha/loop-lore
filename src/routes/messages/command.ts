@@ -35,6 +35,11 @@ import { log, } from "./helpers";
  * Returns `{ handled: true, response }` when a registered command took over
  * the message (optionally persisting a system message), or `{ handled: false }`
  * when the content should fall through to normal user-message creation.
+ * @param database
+ * @param config
+ * @param actorId
+ * @param chatId
+ * @param content
  */
 export async function dispatchCommand(
   database: Kysely<DB>,
@@ -156,13 +161,13 @@ export async function dispatchCommand(
         id: sysMsgId,
         chat_id: chatId,
         actor_id: actorId,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
+
         role: MessageRole.System as any,
         content: sysStoredContent,
         key_id: sysKeyId,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
+
         content_format: MessageContentFormat.Markdown as any,
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
+
         content_type: MessageContentType.Text as any,
         content_encoding: sysContentEncoding as ContentEncoding,
         status: MessageStatus.Confirmed,

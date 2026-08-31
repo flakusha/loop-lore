@@ -32,13 +32,20 @@ interface RecordedQuery {
   update?: RecordedUpdate;
 }
 
+/** */
 function makeMockDb(): {
   queries: RecordedQuery[];
   mock: Parameters<typeof apply>[0];
 } {
   const queries: RecordedQuery[] = [];
 
+  /**
+   * @param table
+   */
   function insertChain(table: string,): unknown {
+    /**
+     * @param values
+     */
     function values(values: Record<string, unknown>,): unknown {
       const q: RecordedQuery = {
         insert: { table, values, onConflict: false, },
@@ -60,7 +67,13 @@ function makeMockDb(): {
     return { values, };
   }
 
+  /**
+   * @param table
+   */
   function updateChain(table: string,): unknown {
+    /**
+     * @param set
+     */
     function set(set: Record<string, unknown>,): unknown {
       const q: RecordedQuery = {
         update: { table, set, where: { column: "", value: undefined, }, },

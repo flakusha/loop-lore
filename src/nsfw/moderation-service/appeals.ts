@@ -8,6 +8,7 @@
  */
 import type { NsfwModerationServiceContext, } from "./types";
 
+/** */
 export interface SubmitAppealArgs {
   thisL: NsfwModerationServiceContext;
   userId: string;
@@ -15,7 +16,14 @@ export interface SubmitAppealArgs {
   reason: string;
 }
 
-/** Submit an appeal for a moderation action. */
+/**
+ * Submit an appeal for a moderation action.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.userId
+ * @param root0.actionId
+ * @param root0.reason
+ */
 export async function submitAppeal(
   { thisL, userId, actionId, reason, }: SubmitAppealArgs,
 ): Promise<{ id: string; status: string }> {
@@ -33,12 +41,18 @@ export async function submitAppeal(
   return { id, status: "pending", };
 }
 
+/** */
 export interface GetUserAppealsArgs {
   thisL: NsfwModerationServiceContext;
   userId: string;
 }
 
-/** Get appeals for a user. */
+/**
+ * Get appeals for a user.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.userId
+ */
 export async function getUserAppeals(
   { thisL, userId, }: GetUserAppealsArgs,
 ): Promise<
@@ -80,12 +94,18 @@ export async function getUserAppeals(
   }),);
 }
 
+/** */
 export interface GetPendingAppealsArgs {
   thisL: NsfwModerationServiceContext;
   limit?: number;
 }
 
-/** Get pending appeals (admin). */
+/**
+ * Get pending appeals (admin).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.limit
+ */
 export async function getPendingAppeals(
   { thisL, limit = 50, }: GetPendingAppealsArgs,
 ): Promise<Array<{ id: string; userId: string; actionId: string; reason: string; createdAt: string }>> {
@@ -103,6 +123,7 @@ export async function getPendingAppeals(
   }),);
 }
 
+/** */
 export interface ReviewAppealArgs {
   thisL: NsfwModerationServiceContext;
   appealId: string;
@@ -121,6 +142,12 @@ export interface ReviewAppealArgs {
  *   of the user-side block/ban/shadow is deferred to `executeReversal`,
  *   which requires the elevated `admin.users` capability AND a
  *   `ctx.userId` different from the approver (dual-admin confirmation).
+ * @param root0
+ * @param root0.thisL
+ * @param root0.appealId
+ * @param root0.reviewedBy
+ * @param root0.status
+ * @param root0.reviewNote
  */
 export async function reviewAppeal(
   { thisL, appealId, reviewedBy, status, reviewNote, }: ReviewAppealArgs,

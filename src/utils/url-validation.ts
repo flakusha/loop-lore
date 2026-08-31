@@ -19,6 +19,7 @@ const LOCAL_IPV4_RANGES: { network: number; mask: number }[] = [
   { network: 0xA9_FE_00_00, mask: 0xFF_FF_00_00, }, // 169.254.0.0/16 (link-local)
 ];
 
+/** */
 export interface UrlValidationOptions {
   /** Allowed hostnames/IPs beyond local ranges (e.g. "api.openai.com") */
   allowlist?: string[];
@@ -28,6 +29,7 @@ export interface UrlValidationOptions {
   allowedSchemes?: string[];
 }
 
+/** */
 export interface UrlValidationResult {
   ok: boolean;
   /** Sanitized URL string (original if ok) */
@@ -43,7 +45,6 @@ export interface UrlValidationResult {
  *
  * Default: allows local/private IPs + localhost, blocks remote unless in allowlist.
  * Set `blockLocalAddrs: true` to restrict to allowlist only.
- *
  * @param urlString - raw URL from config
  * @param options - validation rules
  * @returns result with ok flag and sanitized URL
@@ -133,7 +134,6 @@ export function validateProviderUrl(
 
 /**
  * Validate multiple provider URLs at once.
- *
  * @param entries - array of { name, url } pairs to validate
  * @param options - shared validation options
  * @returns map of name → result
@@ -149,6 +149,9 @@ export function validateProviderUrls(
   return results;
 }
 
+/**
+ * @param ip
+ */
 function isLocalIPv4(ip: string,): boolean {
   const parts = ip.split(".",);
   if (parts.length !== 4) { return false; }
@@ -168,6 +171,9 @@ function isLocalIPv4(ip: string,): boolean {
   return false;
 }
 
+/**
+ * @param ip
+ */
 function isLocalIPv6(ip: string,): boolean {
   const lower = ip.toLowerCase();
   return lower === "::1" || lower.startsWith("fe80:",);

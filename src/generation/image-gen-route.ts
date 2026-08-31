@@ -31,6 +31,10 @@ interface ImageGenBody {
   lora?: LoRAConfig;
 }
 
+/**
+ * @param body
+ * @param userId
+ */
 export async function handleImageGeneration(body: unknown, userId?: string,): Promise<Response> {
   const req = body as ImageGenBody;
 

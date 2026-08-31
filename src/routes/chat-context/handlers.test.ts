@@ -22,6 +22,7 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, } from "../../test-utils/insert-helpers";
 import { handleGetContext, } from "./handlers";
 
+/** */
 function makeConfig(): Config {
   return {
     ...loadConfig(),
@@ -38,6 +39,9 @@ function makeConfig(): Config {
   };
 }
 
+/**
+ * @param overrides
+ */
 function makeModel(overrides: Partial<ModelInfo> = {},): ModelInfo {
   return {
     id: "gpt-4o",
@@ -101,6 +105,11 @@ describe("handleGetContext max-tokens resolution", () => {
     sqlite.close();
   },);
 
+  /**
+   * @param opts
+   * @param opts.id
+   * @param opts.context_max_tokens
+   */
   async function createChat(opts?: { id?: string; context_max_tokens?: number | null },): Promise<string> {
     const chatId = crypto.randomUUID();
     await insertChats(db, "Test Chat", userId, {
@@ -110,6 +119,12 @@ describe("handleGetContext max-tokens resolution", () => {
     return chatId;
   }
 
+  /**
+   * @param chatId
+   * @param opts
+   * @param opts.provider
+   * @param opts.model_id
+   */
   async function addMessage(
     chatId: string,
     opts?: { provider?: string | null; model_id?: string | null },
@@ -120,6 +135,9 @@ describe("handleGetContext max-tokens resolution", () => {
     },);
   }
 
+  /**
+   * @param chatId
+   */
   async function getMaxTokens(chatId: string,): Promise<number> {
     const res = await handleGetContext(db, chatId, userId, "solo", makeConfig(),);
     expect(res.status,).toBe(200,);

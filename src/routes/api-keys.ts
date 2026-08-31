@@ -22,6 +22,12 @@ import { forbidden, notFound, } from "../validation/middleware";
 import { ApiKeyCreateBody, ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param prefix
+ */
 export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>; config: Config }, prefix = "/api",) {
   const config = cfg;
   return new Elysia({ name: "api-keys", },)

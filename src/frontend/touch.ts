@@ -10,8 +10,10 @@
  * WCAG 2.1 — all gestures have keyboard/click alternatives.
  */
 
+/** */
 export type SwipeDirection = "left" | "right" | "up" | "down";
 
+/** */
 export interface SwipeOptions {
   /** Minimum distance in px to register a swipe (default: 50) */
   threshold?: number;
@@ -21,11 +23,13 @@ export interface SwipeOptions {
   onSwipe: (direction: SwipeDirection, delta: { x: number; y: number },) => void;
 }
 
+/** */
 export interface TapOptions {
   /** Called on tap */
   onTap: (event: Event,) => void;
 }
 
+/** */
 export interface LongPressOptions {
   /** Delay in ms before long-press fires (default: 500) */
   delay?: number;
@@ -41,6 +45,8 @@ function prefersReducedMotion(): boolean {
 /**
  * Attach swipe detection to an element.
  * Returns a cleanup function.
+ * @param element
+ * @param options
  */
 export function onSwipe(element: Element, options: SwipeOptions,): () => void {
   const { threshold = 50, maxDuration = 300, onSwipe: callback, } = options;
@@ -93,6 +99,8 @@ export function onSwipe(element: Element, options: SwipeOptions,): () => void {
  * Attach tap detection to an element.
  * Uses click as fallback for reduced-motion or non-touch devices.
  * Returns a cleanup function.
+ * @param element
+ * @param options
  */
 export function onTap(element: Element, options: TapOptions,): () => void {
   const { onTap: callback, } = options;
@@ -114,6 +122,8 @@ export function onTap(element: Element, options: TapOptions,): () => void {
  * Attach long-press detection to an element.
  * Falls back to right-click context menu for non-touch / reduced-motion.
  * Returns a cleanup function.
+ * @param element
+ * @param options
  */
 export function onLongPress(element: Element, options: LongPressOptions,): () => void {
   const { delay = 500, onLongPress: callback, } = options;

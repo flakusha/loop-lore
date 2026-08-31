@@ -3,8 +3,11 @@
 
 import { QualityDimension, } from "../../db/enums";
 
+/**
+ * @param dimension
+ * @param score
+ */
 export function getReasoning(dimension: QualityDimension, score: number,): string {
-  /* eslint-disable unicorn/switch-case-braces */
   if (score >= 80) {
     switch (dimension) {
       case QualityDimension.CharacterVoice:
@@ -57,5 +60,4 @@ export function getReasoning(dimension: QualityDimension, score: number,): strin
     default:
       return "Low quality";
   }
-  /* eslint-enable unicorn/switch-case-braces */
 }

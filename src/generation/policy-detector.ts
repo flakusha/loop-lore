@@ -16,6 +16,7 @@ import type { PolicyAnalysis, PolicyDetectionConfig, } from "./types";
 
 // ── Detector interface ────────────────────────────────────
 
+/** */
 export interface PolicyDetector {
   /**
    * Unique name for this detector (e.g., 'openai-moderation', 'keyword-filter')
@@ -24,7 +25,6 @@ export interface PolicyDetector {
 
   /**
    * Analyze a text string for policy violations.
-   *
    * @param text - The generated text to analyze (full or partial)
    * @param config - Detection configuration
    * @returns A PolicyAnalysis describing any violations found
@@ -39,6 +39,7 @@ const registeredDetectors: PolicyDetector[] = [];
 /**
  * Register a custom policy detector. Detectors run in registration order;
  * the first detector to return `detected: true` short-circuits.
+ * @param detector
  */
 export function registerPolicyDetector(detector: PolicyDetector,): void {
   registeredDetectors.push(detector,);
@@ -53,6 +54,7 @@ export function clearDetectors(): void {
 
 // ── Null detector (no-op fallback) ────────────────────────
 
+/** */
 class NullDetector implements PolicyDetector {
   readonly name = "null";
 
@@ -68,6 +70,7 @@ class NullDetector implements PolicyDetector {
 
 // Register the null detector by default — no third-party dependency
 // Call this explicitly at startup. Export for use in tests.
+/** */
 export function registerDefaultNullDetector(): void {
   registerPolicyDetector(new NullDetector(),);
 }
@@ -78,6 +81,8 @@ export function registerDefaultNullDetector(): void {
  * Detect policy mismatches in generated text.
  * Runs all registered detectors and returns the first positive hit,
  * or the aggregate result if none fire.
+ * @param text
+ * @param config
  */
 export async function detectPolicyMismatch(
   text: string,

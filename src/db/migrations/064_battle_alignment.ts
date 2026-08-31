@@ -12,6 +12,7 @@ import { type Kysely, } from "kysely";
  * Stored as text with a CHECK on the two allowed values (battle-side enum is
  * intentionally simple; the combat engine derives everything else from a
  * `Combatant`).
+ * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
@@ -20,6 +21,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 }
 
+/**
+ * @param database
+ */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("character_stats",)

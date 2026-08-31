@@ -14,13 +14,20 @@ import type { SeductionSkill, } from "./types";
 /** Maximum skill level. */
 const MAX_SKILL_LEVEL = 100;
 
-/** XP required per skill level (scales quadratically). */
+/**
+ * XP required per skill level (scales quadratically).
+ * @param level
+ */
 function xpForLevel(level: number,): number {
   return Math.floor(50 * level * (1 + level * 0.1),);
 }
 
 /**
  * Get or create a seduction skill for an actor.
+ * @param db
+ * @param actorId
+ * @param category
+ * @param name
  */
 export async function getSkill(
   db: Kysely<DB>,
@@ -74,6 +81,11 @@ export async function getSkill(
 
 /**
  * Award XP to a seduction skill and level up if threshold reached.
+ * @param db
+ * @param actorId
+ * @param category
+ * @param name
+ * @param amount
  */
 export async function awardXp(
   db: Kysely<DB>,
@@ -121,6 +133,8 @@ export async function awardXp(
 
 /**
  * Get all seduction skills for an actor.
+ * @param db
+ * @param actorId
  */
 export async function getActorSkills(db: Kysely<DB>, actorId: string,): Promise<SeductionSkill[]> {
   const rows = await db

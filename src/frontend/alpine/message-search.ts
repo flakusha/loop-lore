@@ -145,7 +145,10 @@ export const messageSearch: Partial<ChatState> & ThisType<ChatState> = {
     this.scrollToSearchMatch(this._msgSearchIndex,);
   },
 
-  /** Enter → next match, Shift+Enter → previous. */
+  /**
+   * Enter → next match, Shift+Enter → previous.
+   * @param event
+   */
   onMessageSearchEnter(event: KeyboardEvent,) {
     if (event.shiftKey) { this.prevMessageMatch(); }
     else { this.nextMessageMatch(); }

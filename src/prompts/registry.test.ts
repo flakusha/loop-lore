@@ -10,6 +10,9 @@ import {
   resolveSystemPrompt,
 } from "./registry";
 
+/**
+ * @param systemPrompts
+ */
 function llmTemplates(systemPrompts: Record<string, string>,): LlmTemplateConfig {
   return {
     merge: "extend",

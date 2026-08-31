@@ -14,6 +14,10 @@ const ALL_TAG_TYPES: AvatarTagType[] = ["emotion", "mood", "action", "location",
 
 /**
  * Select the best avatar based on context.
+ * @param db
+ * @param actorId
+ * @param context
+ * @param worldId
  */
 export async function selectAvatar(
   db: Kysely<DB>,
@@ -69,6 +73,10 @@ export async function selectAvatar(
 /**
  * Calculate score for an avatar based on context and weights.
  * Iterates over all tag types, comparing context values to avatar tags.
+ * @param avatar
+ * @param context
+ * @param weights
+ * @param rule
  */
 export function calculateAvatarScore(
   avatar: Avatar,

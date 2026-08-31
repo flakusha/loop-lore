@@ -54,7 +54,6 @@ export { happinessToMood, } from "./happiness-to-mood";
 
 /**
  * Create a MoodService instance.
- *
  * @param db - The database handle (matches the former `new MoodService(db)`)
  * @returns A MoodService bound to the given database
  */

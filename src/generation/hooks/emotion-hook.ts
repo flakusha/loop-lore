@@ -17,11 +17,15 @@ import { EmotionType, } from "../../db/enums";
 import { getLogger, } from "../../logger";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
+/** */
 export class EmotionHook implements HookHandler {
   readonly name = "emotion";
   readonly eventTypes: HookEventType[] = ["emotion_change",];
 
-  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.canHandle interface requires Promise<boolean>
+  /**
+   * @param content
+   * @param context
+   */
   async canHandle(content: string, context: HookContext,): Promise<boolean> {
     // Private content opt-out: skip emotion detection entirely so private
     // conversations are never analyzed for emotional indicators.
@@ -29,7 +33,10 @@ export class EmotionHook implements HookHandler {
     return content.length > 10;
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await -- GenerationHook.execute interface requires Promise<HookResult>
+  /**
+   * @param content
+   * @param context
+   */
   async execute(content: string, context: HookContext,): Promise<HookResult> {
     const log = getLogger();
     log.debug("emotion-hook: analyzing content for emotional indicators", {
@@ -62,6 +69,9 @@ export class EmotionHook implements HookHandler {
     };
   }
 
+  /**
+   * @param content
+   */
   private detectEmotions(content: string,): string[] {
     const indicators: string[] = [];
     const lower = content.toLowerCase();
@@ -109,6 +119,9 @@ export class EmotionHook implements HookHandler {
     return indicators;
   }
 
+  /**
+   * @param indicators
+   */
   private determineDominantEmotion(indicators: string[],): string {
     const emotionCounts = new Map<string, number>();
     for (const indicator of indicators) {

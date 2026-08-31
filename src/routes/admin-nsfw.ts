@@ -21,6 +21,7 @@ import { getRuntimeNsfwConfig, updateRuntimeNsfwConfig, } from "../nsfw/runtime-
 import { can, } from "../users/permissions";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
+/** */
 function log(): Logger {
   return getLogger().child({ module: "admin-nsfw", },);
 }
@@ -34,6 +35,11 @@ interface NsfwAdminConfig {
   nsfwMinAge: number;
 }
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function adminNsfwRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "admin-nsfw", },)
     // ── Get NSFW config ───────────────────────────────────

@@ -27,6 +27,11 @@ const OWNER = "owner-user";
 const OTHER = "other-user";
 const ADMIN = "admin-user";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-internal-traits-authz", },);
   if (userId) { app.derive(() => ({ userId, userRole, })); }

@@ -11,6 +11,12 @@ import type { AssetRecord, } from "../service";
 import { canAccessAsset, getAsset, } from "../service";
 import type { ResolvedAsset, } from "./types";
 
+/**
+ * @param database
+ * @param assetId
+ * @param actorId
+ * @param actorRole
+ */
 export async function resolveAsset(
   database: Kysely<DB>,
   assetId: string,
@@ -33,6 +39,9 @@ export async function resolveAsset(
 /**
  * Load an asset and require the caller to be its owner.
  * Returns the asset on success, or a Response on failure.
+ * @param database
+ * @param assetId
+ * @param userId
  */
 export async function requireAssetOwner(
   database: Kysely<DB>,

@@ -1,6 +1,9 @@
 import { describe, expect, test, } from "bun:test";
 import { EXTERNAL_MUSIC_PATTERNS, } from "./music-urls";
 
+/**
+ * @param url
+ */
 function isExternalMusicUrl(url: string,): boolean {
   return EXTERNAL_MUSIC_PATTERNS.some((p,) => p.test(url,));
 }

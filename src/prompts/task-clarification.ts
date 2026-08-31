@@ -56,7 +56,6 @@ const TASK_LABEL: Record<string, string> = {
 
 /**
  * Build the task-clarification instruction block.
- *
  * @param input - Task + context dimensions
  * @returns A single instruction string wrapped for injection as a system message.
  */

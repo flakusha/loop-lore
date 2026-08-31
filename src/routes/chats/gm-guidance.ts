@@ -18,6 +18,8 @@ import type { HandlerOpts, } from "./types";
  * `PUT /api/v1/chats/:id/gm-guidance` patches `gm_config.storyMode` /
  * `gm_config.gmGuidance` WITHOUT the online key-mechanic immutability guard, so
  * a Game Master can steer an in-progress story.
+ * @param opts
+ * @param prefix
  */
 export function gmGuidanceRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, } = opts;

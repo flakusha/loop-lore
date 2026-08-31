@@ -128,6 +128,8 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
    * current character), not globally. Falls back to the character's base
    * avatar when the message has no emotion or no matching variant exists.
    * @param msg - The message being rendered
+   * @param msg.role
+   * @param msg.emotion
    * @returns Asset id to display, or null to hide the avatar
    */
   avatarForMessage(msg: { role?: string; emotion?: string | null },): string | null {
@@ -147,6 +149,7 @@ export const moodStateAvatars: Partial<ChatState> & ThisType<ChatState> = {
   /**
    * Select the best emotion avatar for the given emotion.
    * Returns the asset ID or null if no matching avatar found.
+   * @param emotion
    */
   selectEmotionAvatar(emotion: string,): string | null {
     if (this._emotionAvatars.length === 0) { return null; }

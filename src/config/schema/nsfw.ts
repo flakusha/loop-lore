@@ -3,6 +3,7 @@
 
 // src/config/schema/nsfw.ts — NSFW content gating config type
 
+/** */
 export interface NsfwConfig {
   /** Allow NSFW content in chats. Default true. */
   allowNsfw: boolean;

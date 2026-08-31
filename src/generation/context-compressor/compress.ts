@@ -10,6 +10,11 @@ import type { CompressionResult, CompressMessagesOpts, } from "./types";
 /**
  * Main entry point. Compress messages to fit within token budget.
  * No-op when messages already fit.
+ * @param root0
+ * @param root0.messages
+ * @param root0.config
+ * @param root0.tokenCountFn
+ * @param root0.summarizeFn
  */
 export function compressMessages({
   messages,

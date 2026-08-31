@@ -14,7 +14,10 @@ import { StreamingRepetitionDetector, } from "./repetition-detector";
 import { completeStep, failStep, getPipelineState, } from "./step-pipeline";
 import { DEFAULT_REPETITION_DETECTION, } from "./types";
 
-/** Minimal ActiveGeneration factory for test mocks. */
+/**
+ * Minimal ActiveGeneration factory for test mocks.
+ * @param overrides
+ */
 function makeActiveGen(overrides: Partial<ActiveGeneration>,): ActiveGeneration {
   const now = Date.now();
   return {

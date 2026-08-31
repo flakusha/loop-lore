@@ -37,6 +37,10 @@ export interface AgeGateAcceptInput {
 
 /** Base error for age-gate validation failures. */
 export class AgeGateError extends Error {
+  /**
+   * @param message
+   * @param options
+   */
   constructor(message: string, options?: ErrorOptions,) {
     super(message, options,);
     this.name = "AgeGateError";
@@ -45,6 +49,10 @@ export class AgeGateError extends Error {
 
 /** Error raised when user is underage. */
 export class UnderageError extends AgeGateError {
+  /**
+   * @param minimumAge
+   * @param options
+   */
   constructor(minimumAge: number, options?: ErrorOptions,) {
     const message = `You must be at least ${minimumAge} years old to use this service.`;
     super(message, options,);
@@ -91,7 +99,8 @@ export function getStatus(
 
 /**
  * Validate that a given birth date meets the minimum age requirement.
- *
+ * @param birthDate
+ * @param minimumAge
  * @throws {UnderageError} if the user is below the minimum age
  * @throws {AgeGateError} if birthDate is not a valid ISO date
  */
@@ -119,7 +128,11 @@ export function validateAge(birthDate: string, minimumAge: number,): void {
 
 /**
  * Accept the age gate: record the user's birth date and acceptance timestamp.
- *
+ * @param root0
+ * @param root0.database
+ * @param root0.config
+ * @param root0.userId
+ * @param root0.input
  * @throws {UnderageError} if the user is below the minimum age
  * @throws {AgeGateError} if birth date is invalid
  */

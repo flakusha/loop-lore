@@ -12,6 +12,9 @@ import { jsonCreated, } from "../http-utils";
 import { importLorebook, } from "./lorebook";
 import type { ImportActorOpts, } from "./types";
 
+/**
+ * @param opts
+ */
 export async function importActor(opts: ImportActorOpts,): Promise<Response> {
   const { character, format, warnings, database, userId, charxAssets, uploadDir, } = opts;
 
@@ -89,7 +92,12 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
  * Import CHARX assets (avatars, audio, etc), linking each to the character.
  *
  * Asset failures are logged as warnings and never fail the import.
- *
+ * @param database
+ * @param actorId
+ * @param characterName
+ * @param charxAssets
+ * @param uploadDir
+ * @param warnings
  * @returns The number of avatar assets imported
  */
 async function importCharxAssets(

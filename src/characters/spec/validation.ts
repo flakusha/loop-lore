@@ -6,6 +6,7 @@
 import type { ContentRating, } from "./enums";
 
 // ── World Validation ────────────────────────────────
+/** */
 export interface WorldValidationRules {
   world_id: string;
   allowed_content_ratings: ContentRating[];
@@ -15,6 +16,7 @@ export interface WorldValidationRules {
   custom_validators?: CustomValidator[];
 }
 
+/** */
 export interface CustomValidator {
   field: string;
   rule: string;
@@ -23,6 +25,7 @@ export interface CustomValidator {
 }
 
 // ── World Style Rules ───────────────────────────────
+/** */
 export interface WorldStyleRules {
   world_id: string;
   speech_style: "formal" | "informal" | "neutral" | "custom";
@@ -32,12 +35,14 @@ export interface WorldStyleRules {
 }
 
 // ── Validation Result ────────────────────────────────
+/** */
 export interface ValidationResult {
   ok: boolean;
   errors: ValidationError[];
   warnings: ValidationWarning[];
 }
 
+/** */
 export interface ValidationError {
   field: string;
   code: string;
@@ -45,6 +50,7 @@ export interface ValidationError {
   value: unknown;
 }
 
+/** */
 export interface ValidationWarning {
   field: string;
   code: string;

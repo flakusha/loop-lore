@@ -8,6 +8,12 @@ import type { StrategyResult, } from "./types";
 /**
  * Apply the configured compression strategy given a budget.
  * System messages are always included; only the conversation is windowed.
+ * @param system
+ * @param conversation
+ * @param config
+ * @param budget
+ * @param tokenCountFn
+ * @param summarizeFn
  */
 export function applyStrategy(
   system: ContextMessage[],
@@ -44,7 +50,14 @@ export function applyStrategy(
   }
 }
 
-/** Truncation: keep last N messages, drop oldest beyond budget */
+/**
+ * Truncation: keep last N messages, drop oldest beyond budget
+ * @param system
+ * @param conversation
+ * @param budget
+ * @param config
+ * @param tokenCountFn
+ */
 function truncateStrategy(
   system: ContextMessage[],
   conversation: ContextMessage[],
@@ -66,7 +79,15 @@ function truncateStrategy(
   };
 }
 
-/** Sliding window: keep recent messages, optionally summarize older ones */
+/**
+ * Sliding window: keep recent messages, optionally summarize older ones
+ * @param system
+ * @param conversation
+ * @param budget
+ * @param config
+ * @param tokenCountFn
+ * @param _summarizeFn
+ */
 function slidingStrategy(
   system: ContextMessage[],
   conversation: ContextMessage[],
@@ -96,6 +117,11 @@ function slidingStrategy(
  * 1. Always keep last `minRecentMessages` conversation messages
  * 2. If still over budget, keep only `minTurnsAfterCompression` turns
  * 3. Otherwise, include older messages that fit within budget
+ * @param messages
+ * @param budget
+ * @param minRecent
+ * @param minTurns
+ * @param tokenCountFn
  */
 function selectMessagesByBudget(
   messages: ContextMessage[],
@@ -132,7 +158,13 @@ function selectMessagesByBudget(
   return selectByTurns(recentMessages, budget, minTurns, tokenCountFn,);
 }
 
-/** Keep only enough messages to fill `minTurns` complete user+assistant pairs */
+/**
+ * Keep only enough messages to fill `minTurns` complete user+assistant pairs
+ * @param messages
+ * @param budget
+ * @param minTurns
+ * @param tokenCountFn
+ */
 function selectByTurns(
   messages: ContextMessage[],
   budget: number,

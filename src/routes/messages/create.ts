@@ -28,6 +28,10 @@ import type { HandlerOpts, } from "./types";
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/**
+ * @param opts
+ * @param prefix
+ */
 export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database, config, } = opts;
 

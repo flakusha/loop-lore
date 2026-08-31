@@ -60,6 +60,9 @@ const EXEMPT_FILES: Record<string, true> = {
   [join(SRC_ROOT, "db/migrations/057_encryption_level_at_rest_rename.ts",)]: true,
 };
 
+/**
+ * @param dir
+ */
 function collectTsFiles(dir: string,): string[] {
   const out: string[] = [];
   let entries: string[];

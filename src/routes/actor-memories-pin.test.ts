@@ -14,6 +14,11 @@ import { actorMemoriesRoutes, } from "./actor-memories";
 
 const mockConfig = {} as any;
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function createApp(db: Kysely<DB>, userId: string | null, userRole: string | null = "user",): Elysia {
   return new Elysia({ name: "test-memories", },)
     .derive(() => ({ userId, userRole, }))

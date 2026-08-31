@@ -32,6 +32,9 @@ import {
 import type { AssembleContext, } from "../types";
 import { chatHistorySection, } from "./chat-history";
 
+/**
+ * @param db
+ */
 async function setupContext(db: Kysely<DB>,): Promise<AssembleContext> {
   await insertUsers(db, "history-user", "History User",);
   const user = await db.selectFrom("users",).select(["id",],).limit(1,).executeTakeFirstOrThrow();

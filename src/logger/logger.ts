@@ -26,6 +26,7 @@ import type {
 } from "./types";
 import { LogLevelNumeric, } from "./types";
 
+/** */
 export class LoggerImpl implements Logger {
   private transports: Transport[];
   private readonly queue: AsyncLogQueue;
@@ -36,6 +37,10 @@ export class LoggerImpl implements Logger {
   private readonly censorFields: string[];
   private readonly limits: Partial<SizeLimits>;
 
+  /**
+   * @param config
+   * @param bindings
+   */
   constructor(config?: Partial<LoggerConfig>, bindings?: LoggerBindings,) {
     this.bindings = bindings ?? {};
     this.levelString = config?.level ?? "debug";
@@ -79,6 +84,13 @@ export class LoggerImpl implements Logger {
     this.queue.start();
   }
 
+  /**
+   * @param level
+   * @param message
+   * @param error
+   * @param meta
+   * @param options
+   */
   private log(
     level: LogLevel,
     message: string | Record<string, unknown>,
@@ -127,30 +139,59 @@ export class LoggerImpl implements Logger {
     this.queue.enqueue(limited,);
   }
 
+  /**
+   * @param message
+   * @param meta
+   */
   trace(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("trace", message, undefined, meta,);
   }
 
+  /**
+   * @param message
+   * @param meta
+   */
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("debug", message, undefined, meta,);
   }
 
+  /**
+   * @param message
+   * @param meta
+   */
   info(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("info", message, undefined, meta,);
   }
 
+  /**
+   * @param message
+   * @param meta
+   */
   warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
     this.log("warn", message, undefined, meta,);
   }
 
+  /**
+   * @param message
+   * @param error
+   * @param meta
+   */
   error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("error", message, error, meta,);
   }
 
+  /**
+   * @param message
+   * @param error
+   * @param meta
+   */
   fatal(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
     this.log("fatal", message, error, meta,);
   }
 
+  /**
+   * @param bindings
+   */
   child(bindings: LoggerBindings,): Logger {
     return new LoggerImpl(
       {
@@ -163,14 +204,21 @@ export class LoggerImpl implements Logger {
     );
   }
 
+  /**
+   * @param transport
+   */
   addTransport(transport: Transport,): void {
     this.transports.push(transport,);
   }
 
+  /**
+   * @param partial
+   */
   setBindings(partial: LoggerBindings,): void {
     this.bindings = { ...this.bindings, ...partial, };
   }
 
+  /** */
   async flush(): Promise<void> {
     await this.queue.flush();
     const results = await Promise.allSettled(

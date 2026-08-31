@@ -9,6 +9,11 @@ import { HttpStatus, jsonError, } from "../http-utils";
 import { jobs, processExport, sseData, } from "./jobs";
 import type { ExportJob, HandlerOpts, } from "./types";
 
+/**
+ * @param root0
+ * @param root0.database
+ * @param prefix
+ */
 export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia()
     // POST /api/export/progress — Start export and return SSE stream

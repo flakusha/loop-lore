@@ -19,7 +19,6 @@ import { recordSeedAudit, } from "./audit";
 
 /**
  * Seed worlds (and their child locations) from config.
- *
  * @param database - Kysely instance
  * @param worlds - World definitions (creator referenced by username)
  * @param userById - Username → user id map

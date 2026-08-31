@@ -19,7 +19,9 @@ const MAX_TOKENS = 32_000;
 
 /**
  * Check context window state and prune if threshold is critical/imminent.
- *
+ * @param database
+ * @param chatId
+ * @param requestId
  * @returns true if pruning was triggered
  */
 export async function checkAndPruneContext(

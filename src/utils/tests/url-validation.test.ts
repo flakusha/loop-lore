@@ -2,9 +2,6 @@
  * URL Validation Tests — SSRF protection
  */
 
-/* eslint-disable sonarjs/no-clear-text-protocols -- testing HTTP for local inference servers */
-/* eslint-disable sonarjs/no-hardcoded-ip -- testing IP validation */
-
 import { describe, expect, it, } from "bun:test";
 import { validateProviderUrl, validateProviderUrls, } from "../url-validation";
 

@@ -9,6 +9,7 @@
  */
 import type { ContentFlag, NsfwModerationServiceContext, } from "./types";
 
+/** */
 export interface FlagContentArgs {
   thisL: NsfwModerationServiceContext;
   params: {
@@ -22,7 +23,12 @@ export interface FlagContentArgs {
   };
 }
 
-/** Submit a content flag for review. */
+/**
+ * Submit a content flag for review.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.params
+ */
 export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise<ContentFlag> {
   const existing = await thisL.db.selectFrom("content_flags",).selectAll().where(
     "content_type",
@@ -74,12 +80,18 @@ export async function flagContent({ thisL, params, }: FlagContentArgs,): Promise
   };
 }
 
+/** */
 export interface GetFlagQueueArgs {
   thisL: NsfwModerationServiceContext;
   params?: { status?: string; limit?: number; offset?: number };
 }
 
-/** Read a page of flags filtered by status, plus the total count. */
+/**
+ * Read a page of flags filtered by status, plus the total count.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.params
+ */
 export async function getFlagQueue(
   { thisL, params, }: GetFlagQueueArgs,
 ): Promise<{ flags: ContentFlag[]; total: number }> {
@@ -99,6 +111,7 @@ export async function getFlagQueue(
   return { flags, total: countVal?.count ?? 0, };
 }
 
+/** */
 export interface ResolveFlagArgs {
   thisL: NsfwModerationServiceContext;
   flagId: string;
@@ -107,7 +120,15 @@ export interface ResolveFlagArgs {
   status: "resolved" | "dismissed" | "confirmed";
 }
 
-/** Resolve a flag with a disposition and resolution note. */
+/**
+ * Resolve a flag with a disposition and resolution note.
+ * @param root0
+ * @param root0.thisL
+ * @param root0.flagId
+ * @param root0.resolvedBy
+ * @param root0.resolution
+ * @param root0.status
+ */
 export async function resolveFlag(
   { thisL, flagId, resolvedBy, resolution, status, }: ResolveFlagArgs,
 ): Promise<ContentFlag> {
@@ -120,7 +141,23 @@ export async function resolveFlag(
   return mapFlag(row,);
 }
 
-/** Map a storage row (snake_case) to the camel-cased ContentFlag shape. */
+/**
+ * Map a storage row (snake_case) to the camel-cased ContentFlag shape.
+ * @param row
+ * @param row.id
+ * @param row.reporter_id
+ * @param row.content_type
+ * @param row.content_id
+ * @param row.chat_id
+ * @param row.world_id
+ * @param row.flag_reason
+ * @param row.description
+ * @param row.status
+ * @param row.resolution
+ * @param row.resolved_by
+ * @param row.resolved_at
+ * @param row.created_at
+ */
 export function mapFlag(
   row: {
     id: string;
@@ -210,7 +247,6 @@ const REPORTER_HASH_SECRET = resolveReporterHashSecret();
  * SECURITY: the secret is production-gated (see resolveReporterHashSecret)
  * so a deployment without `NSFW_FLAG_REPORTER_HASH_SECRET` cannot boot in
  * production with a known default salt.
- *
  * @param reporterId - Raw reporter id (UUID).
  * @returns 32-char hex digest prefixed with "rh_".
  */
@@ -220,7 +256,10 @@ export function hashReporterId(reporterId: string,): string {
   return `rh_${hasher.digest("hex",).slice(0, 32,)}`;
 }
 
-/** Project a ContentFlag to the queue-view shape (no reporter PII). */
+/**
+ * Project a ContentFlag to the queue-view shape (no reporter PII).
+ * @param row
+ */
 export function toQueueView(row: ContentFlag,): FlagQueueView {
   return {
     id: row.id,
@@ -235,7 +274,10 @@ export function toQueueView(row: ContentFlag,): FlagQueueView {
   };
 }
 
-/** Project a ContentFlag to the minimal resolved view returned to admins. */
+/**
+ * Project a ContentFlag to the minimal resolved view returned to admins.
+ * @param row
+ */
 export function toResolvedView(row: ContentFlag,): ResolvedFlagView {
   return {
     id: row.id,
@@ -246,7 +288,10 @@ export function toResolvedView(row: ContentFlag,): ResolvedFlagView {
   };
 }
 
-/** Enforce the maximum `description` length on flag creation. */
+/**
+ * Enforce the maximum `description` length on flag creation.
+ * @param description
+ */
 export function checkDescriptionLength(description: string | null | undefined,): void {
   if (description && description.length > FLAG_DESCRIPTION_MAX) {
     throw new Error(
@@ -255,7 +300,10 @@ export function checkDescriptionLength(description: string | null | undefined,):
   }
 }
 
-/** Server-side cap on `limit` for the flag queue (max 100). */
+/**
+ * Server-side cap on `limit` for the flag queue (max 100).
+ * @param limit
+ */
 export function clampFlagLimit(limit: number | undefined,): number {
   if (!limit || !Number.isFinite(limit,) || limit <= 0) { return 50; }
   return Math.min(Math.floor(limit,), FLAG_QUEUE_LIMIT_CAP,);

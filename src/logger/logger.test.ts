@@ -5,15 +5,20 @@ import { beforeEach, describe, expect, test, } from "bun:test";
 import { LoggerImpl, } from "./logger";
 import type { LogEntry, Transport, } from "./types";
 
+/** */
 class CapturingTransport implements Transport {
   readonly name = "capturing";
   readonly entries: LogEntry[] = [];
 
+  /**
+   * @param entry
+   */
   write(entry: LogEntry,): Promise<void> {
     this.entries.push(entry,);
     return Promise.resolve();
   }
 
+  /** */
   flush(): Promise<void> {
     return Promise.resolve();
   }

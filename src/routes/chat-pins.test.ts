@@ -17,6 +17,11 @@ import {
 } from "../test-utils/insert-helpers";
 import { chatPinRoutes, } from "./chat-pins";
 
+/**
+ * @param db
+ * @param userId
+ * @param userRole
+ */
 function makeApp(db: Kysely<DB>, userId?: string, userRole?: string,) {
   const app = new Elysia({ name: "test-chat-pins", },);
   if (userId) {

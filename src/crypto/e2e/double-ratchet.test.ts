@@ -49,6 +49,11 @@ beforeEach(async () => {
   bobPubJwk = await exportPublicJwk(bobKp.publicKey,);
 },);
 
+/**
+ * @param plaintext
+ * @param index
+ * @param receiver
+ */
 async function encrypt(
   plaintext: string,
   index: number,

@@ -5,6 +5,7 @@
  * Resolve actorId from the hook event payload. The MoodHook and EmotionHook
  * emit actorId in their data payload; this helper extracts it so consumers
  * don't need to thread actorId through ambient context.
+ * @param events
  */
 export function resolveActorIdFromEvents(
   events: readonly { eventType: string; data?: Record<string, unknown> }[],

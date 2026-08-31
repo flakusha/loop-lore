@@ -20,6 +20,9 @@ import { whitenoteRoutes, } from "./whitenotes";
 
 export type { HandlerOpts, } from "./types";
 
+/**
+ * @param opts
+ */
 export function gmNotesRoutes(opts: HandlerOpts,) {
   return new Elysia({ name: "gm-notes", },)
     .use(shadowRoutes(opts,),)
