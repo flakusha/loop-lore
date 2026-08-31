@@ -296,14 +296,14 @@ Integration points for non-RPG domains once co-located in this file now live in 
 
 | Feature | Source Platform(s) | Priority | Maps to Gap(s) | Related Tickets |
 | --- | --- | --- | --- | --- |
-| Character-perspective memory | DreamRunner | Medium (candidate #27) | G43 | — (fold into memory epic) |
-| Depict state→image compiler | DreamRunner | Med — good pull (#28) | G44 | — |
+| Character-perspective memory | DreamRunner | Medium (candidate #27) | G43 | TASK-character-perspective-memory-summaries.md |
+| Depict state→image compiler | DreamRunner | Med — good pull (#28) | G44 | TASK-depict-style-state-to-image-scene-compiler.md |
 | Voice-design-by-description | DreamRunner | Medium (#29) | G34 (existing) | TASK-character-voice-profile.md |
-| Stop-and-respond interrupt | DreamRunner | Low–Med (#30) | G46 | — |
-| Two-layer custom instructions | DreamRunner | Low (#31) | — (assistant-local) | — |
-| Portable story-bundle export | DreamRunner `.drsf` | Medium (#32) | G45 | — |
-| World Expression Protocol | Neta | P6+ (#33) | G45 | — |
-| Fork-at-turn + track history | Neta | Medium (#34) | G47 | TASK-conversation-branching.md |
-| Cost-visible generation | Neta + DreamRunner | Low–Med (#35) | — (admin-local) | — |
-| Text→illustrated-VN importer | Story Studio AI | Medium (#36) | — (content-local) | — |
+| Stop-and-respond interrupt | DreamRunner | Low–Med (#30) | G46 | TASK-stop-and-respond-interrupt-semantics.md |
+| Two-layer custom instructions | DreamRunner | Low (#31) | — (assistant-local) | TASK-two-tier-custom-instructions.md |
+| Portable story-bundle export | DreamRunner `.drsf` | Medium (#32) | G45 | TASK-portable-story-bundle-export-import.md |
+| World Expression Protocol | Neta | P6+ (#33) | G45 | TASK-model-agnostic-asset-representation.md |
+| Fork-at-turn + track history | Neta | Medium (#34) | G47 | TASK-conversation-branching.md (addendum 2026-08-31) |
+| Cost-visible generation | Neta + DreamRunner | Low–Med (#35) | — (admin-local) | TASK-platform-health-discovery-cost-display.md |
+| Text→illustrated-VN importer | Story Studio AI | Medium (#36) | — (content-local) | TASK-text-to-visual-novel-importer.md |
 
