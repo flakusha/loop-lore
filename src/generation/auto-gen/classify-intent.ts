@@ -62,17 +62,16 @@ export async function classifyIntent(
  */
 export function parseIntentClassification(content: string,): IntentClassification | null {
   const parsed = jsonParseOr<Partial<IntentClassification>>(content, {},);
-  if (typeof parsed.intent !== "string" || parsed.intent === "") { return null; }
+  if (!parsed.intent) { return null; }
 
   // Confidence is contractually `[0, 1]`; clamp out-of-range values and fall
-  // back to 0.5 for non-numeric input. A misbehaving model or prompt-injected
-  // tool-result JSON cannot poison downstream heuristics that branch on
-  // confidence thresholds.
+  // back to 0.5 for non-finite input so downstream heuristics that branch on
+  // confidence thresholds cannot be tricked by prompt-injected tool-result JSON.
   const rawConfidence = typeof parsed.confidence === "number" ? parsed.confidence : 0.5;
 
   return {
     intent: parsed.intent,
     confidence: clampUnit(rawConfidence,),
-    shortReply: parsed.shortReply === true,
+    shortReply: parsed.shortReply ?? false,
   };
 }
