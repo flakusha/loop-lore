@@ -1,6 +1,6 @@
 # TASK: Character edit form renders unescaped user fields (stored XSS)
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ src/routes/views/character-edit-form.ts:125,127 interpolates v.name/v.desc into 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution (commit 5dd6ff40)
+
+All `v.*` interpolations in `src/routes/views/character-edit-form.ts` (name, desc, systemPrompt, personality, welcome, scenario, mesExample, postHistory, avatarId) wrapped in `escapeHtml()`. New `src/routes/views/character-edit-form.test.ts` covers the 9 fields.
