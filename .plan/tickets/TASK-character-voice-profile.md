@@ -95,3 +95,12 @@ function buildVoicePrompt(voice: VoiceProfile, mood: MoodState): string {
 3. Should voice evolve over time based on character growth?
 4. What's the right granularity for accent descriptors?
 5. Should catchphrases be weighted by context?
+
+## Second-Sweep Addendum (2026-08-31 — DreamRunner.ai, candidate #29)
+
+Extend the profile with TTS voice-design bindings (from `docs/ideas/emergent-platform-landscape-2026b.md`):
+
+- [ ] Voice spec expressible as natural-language voice description ("warm, gravelly, late 40s, slight British accent") → provider voice-design API call
+- [ ] Per-character + narrator voice slot assignment with preview loop (live volume/pitch sliders)
+- [ ] Voice definitions serializable so they travel with story bundle export (TASK-portable-story-bundle-export-import.md)
+- [ ] Mood state modulates voice parameters (G34) — keep, feed design params

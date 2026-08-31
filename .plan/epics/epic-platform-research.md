@@ -351,6 +351,21 @@ instructions), #35 (cost-visible generation), #28 (Depict-style compiler — big
 differentiator-per-effort given structured state). #27 feeds memory-epic design; #33
 P6+ architecture note; #34 criteria adopt into existing branching ticket.
 
+### Second-Sweep Ticket Map (created 2026-08-31)
+
+| Candidate | Ticket | Action |
+|---|---|---|
+| #27 | TASK-character-perspective-memory-summaries.md | new |
+| #28 | TASK-depict-style-state-to-image-scene-compiler.md | new |
+| #29 | TASK-character-voice-profile.md | addendum (voice-design bindings) |
+| #30 | TASK-stop-and-respond-interrupt-semantics.md | new |
+| #31 | TASK-two-tier-custom-instructions.md | new |
+| #32 | TASK-portable-story-bundle-export-import.md | new |
+| #33 | TASK-model-agnostic-asset-representation.md | new (P6+, spike) |
+| #34 | TASK-conversation-branching.md | addendum (fork-at-turn criteria) |
+| #35 | TASK-platform-health-discovery-cost-display.md | addendum (cost-visible UX) |
+| #36 | TASK-text-to-visual-novel-importer.md | new |
+
 ## Related Epics
 
 - **Epic World & Locations** — world style / style-specific asset & NPC generation are adoption candidates tracked here.
