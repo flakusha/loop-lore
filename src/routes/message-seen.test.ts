@@ -66,6 +66,9 @@ describe("messageSeenRoutes", () => {
   let messageId: string;
   let actorId: string;
   let userId: string;
+  // Second user + actor used to exercise the IDOR guards on POST/DELETE.
+  let otherUserId: string;
+  let otherActorId: string;
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
@@ -77,6 +80,11 @@ describe("messageSeenRoutes", () => {
 
     actorId = uid();
     await insertActors(db, "Seen User", { id: actorId, user_id: userId, } as never,);
+
+    otherUserId = uid();
+    await insertUsers(db, "seen-other", "Seen Other", { id: otherUserId, } as never,);
+    otherActorId = uid();
+    await insertActors(db, "Seen Other", { id: otherActorId, user_id: otherUserId, } as never,);
 
     chatId = uid();
     await insertChats(db, "Seen Chat", userId, { id: chatId, } as never,);
@@ -160,10 +168,77 @@ describe("messageSeenRoutes", () => {
   });
 
   test("GET /messages/:id/seen returns 404 for user without chat access", async () => {
-    const otherUser = uid();
-    await insertUsers(db, "other-user", "Other User", { id: otherUser, } as never,);
-    const app = seenApp(db, otherUser, null,);
+    const app = seenApp(db, otherUserId, null,);
     const res = await app.handle(get(`/api/messages/${messageId}/seen`,),);
     expect(res.status,).toBe(404,);
+  });
+
+  // ─── Hardening: state union + atomic upsert + IDOR guards ────
+
+  test("POST rejects invalid state string with 422 (Elysia body validation)", async () => {
+    const app = seenApp(db, userId, null,);
+    const res = await app.handle(postSeen(`/api/messages/${messageId}/seen`, { actorId, state: "archived", },),);
+    // Elysia emits 422 for body schema-validation failures (TypeBox union mismatch).
+    expect(res.status,).toBe(422,);
+  });
+  test("POST re-mark preserves original seen_at (first-seen semantics)", async () => {
+    const app = seenApp(db, userId, null,);
+
+    // First mark
+    const first = await app.handle(postSeen(`/api/messages/${messageId}/seen`, { actorId, state: "seen", },),);
+    expect(first.status,).toBe(200,);
+
+    // Snapshot seen_at via GET
+    const beforeRes = await app.handle(get(`/api/messages/${messageId}/seen`,),);
+    const before = (await beforeRes.json()).find((r: { actorId: string },) => r.actorId === actorId);
+    expect(before?.seenAt,).toBeTruthy();
+
+    // Second mark — should preserve seen_at (not overwrite with current time)
+    const second = await app.handle(postSeen(`/api/messages/${messageId}/seen`, { actorId, state: "seen", },),);
+    expect(second.status,).toBe(200,);
+
+    const afterRes = await app.handle(get(`/api/messages/${messageId}/seen`,),);
+    const after = (await afterRes.json()).find((r: { actorId: string },) => r.actorId === actorId);
+    expect(after?.seenAt,).toBe(before?.seenAt,);
+  });
+
+  test("Two concurrent POSTs for same (msg, actor) both succeed with one row", async () => {
+    const app = seenApp(db, userId, null,);
+    const [a, b,] = await Promise.all([
+      app.handle(postSeen(`/api/messages/${messageId}/seen`, { actorId, state: "seen", },),),
+      app.handle(postSeen(`/api/messages/${messageId}/seen`, { actorId, state: "seen", },),),
+    ],);
+    expect(a.status,).toBe(200,);
+    expect(b.status,).toBe(200,);
+
+    const listRes = await app.handle(get(`/api/messages/${messageId}/seen`,),);
+    const list = await listRes.json();
+    const myEntries = list.filter((r: { actorId: string },) => r.actorId === actorId);
+    expect(myEntries.length,).toBe(1,);
+  });
+
+  test("DELETE with mismatched actorId returns 403 (IDOR guard)", async () => {
+    const app = seenApp(db, userId, null,);
+    // userId session tries to delete otherActorId's record
+    const res = await app.handle(deleteReq(`/api/messages/${messageId}/seen`, otherActorId,),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("POST record branch with mismatched body.actorId returns 403 (IDOR guard)", async () => {
+    const app = seenApp(db, userId, null,);
+    // userId session tries to record state for otherActorId
+    const res = await app.handle(
+      postSeen(`/api/messages/${messageId}/seen`, { actorId: otherActorId, state: "seen", },),
+    );
+    expect(res.status,).toBe(403,);
+  });
+
+  test("POST reset branch (state=unseen) with mismatched body.actorId returns 403", async () => {
+    const app = seenApp(db, userId, null,);
+    // userId session tries to reset otherActorId's record
+    const res = await app.handle(
+      postSeen(`/api/messages/${messageId}/seen`, { actorId: otherActorId, state: "unseen", },),
+    );
+    expect(res.status,).toBe(403,);
   });
 });
