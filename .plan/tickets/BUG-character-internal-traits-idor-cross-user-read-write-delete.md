@@ -1,6 +1,6 @@
 # BUG: character internal traits IDOR cross-user read write delete
 
-**Status:** ⬜ Not Started
+**Status:** done
 **Priority:** high
 **Effort:** Small
 
@@ -18,6 +18,10 @@ Acceptance: cross-actor access denied (404/403); owner/admin succeeds; regressio
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Fixed by prior commits `06ca7e9d` (PUT/DELETE ownership check) and `f2f0eb26` (GET/prompt ownership check) on `dev`. All handlers in `src/routes/character-internal-traits/index.ts` now authorize `actorId` via ownership before each op.
