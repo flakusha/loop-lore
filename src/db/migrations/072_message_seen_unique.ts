@@ -9,10 +9,15 @@
  * prevents duplicates at write time but races on the select-then-insert
  * sequence (BUG-bug-message-seen-post-races-on-deterministic-primary-key-500).
  *
- * Adding this index makes the upsert atomic at the DB layer and lets the
- * route collapse select-then-insert into a single statement. Also unblocks
- * `src/chat/service/seen.ts#recordMessageSeen`, whose existing
- * `onConflict(columns)` upsert targets exactly this composite.
+ * Adding this index activates the `onConflict(columns(["message_id",
+ * "actor_id"]))` upsert in both `src/routes/message-seen.ts#POST` and
+ * `src/chat/service/seen.ts#recordMessageSeen`. Prior to this index,
+ * `onConflict(columns)` had no conflict target — it silently degraded
+ * to a plain INSERT, allowing duplicate rows to accumulate. The
+ * deterministic PK `ms-<msgId>-<actorId>` would have caught them but
+ * only if every writer used it; the route layer was racing on a
+ * select-then-insert sequence instead (see
+ * BUG-bug-message-seen-post-races-on-deterministic-primary-key-500).
  *
  * Rollout caveat: any environment that bypassed the deterministic PK
  * (manual SQL or pre-070 recovery) will fail this `CREATE UNIQUE INDEX`
