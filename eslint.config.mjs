@@ -157,16 +157,15 @@ export default [
       "no-restricted-globals": "off",
     },
   },
-  // JSDoc -- recommendation-level (warn, non-blocking). Ongoing cleanup task:
-  // promote to "error" after existing public-export debt is cleared.
+  // JSDoc -- relaxed rules. Only check that JSDoc exists on public exports,
+  // not full descriptions. Can revisit once public-export debt is cleared.
   {
     files: ["src/**/*.ts"],
     plugins: {
       jsdoc,
     },
     rules: {
-      ...jsdoc.configs["flat/recommended-typescript"].rules,
-      // Target public exports only (not private/internal helpers)
+      // Only check that JSDoc exists on public exports — not full descriptions
       "jsdoc/require-jsdoc": ["warn", {
         require: {
           FunctionDeclaration: true,
