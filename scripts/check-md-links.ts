@@ -214,7 +214,7 @@ async function checkFile(file: string,): Promise<void> {
 
   // Bare-text TASK refs (epic/backlog tables, prose) — resolve against tickets dir.
   if (file.startsWith(join(PROJECT_ROOT, ".plan",),)) {
-    const selfTitle = raw.split("\n", 1,)[0] ?? ""; // file's own H1 (old numeric ID vs descriptive filename)
+    const selfTitle = raw.split("\n",).find((l,) => l.startsWith("# ",)) ?? ""; // file's own H1 (old numeric ID vs descriptive filename)
     // Use fence-stripped text with newlines intact: stripCodeBlocks collapses
     // lines and glues adjacent refs into one regex match.
     const refText = raw.replace(/```[\s\S]*?```/g, "",);
