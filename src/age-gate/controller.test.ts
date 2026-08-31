@@ -143,7 +143,10 @@ function createDbWithUser(birthDate: string | null, acceptedAt: string | null,) 
   };
 }
 
-/** Create a mock DB with a working updateTable. */
+/**
+ * Create a mock DB with a working updateTable.
+ * @returns Mock DB with working update.
+ */
 function createDbWithUpdate() {
   return {
     selectFrom: createSelectFrom,

@@ -36,17 +36,23 @@ import { jsonError, jsonResponse, } from "../routes/http-utils";
 class AgeGateConfigStore {
   private config: AgeGateConfig = { enabled: false, minimumAge: 18, mode: "self-declaration", };
 
-  /** Initialize the store with config. */
+  /** Initialize the store with config.
+   * @param config - Age-gate configuration.
+   */
   init(config: AgeGateConfig,): void {
     this.config = { ...config, };
   }
 
-  /** Get the current config. */
+  /** Get the current config.
+   * @returns Current configuration.
+   */
   get(): AgeGateConfig {
     return { ...this.config, };
   }
 
-  /** Update the config partially. */
+  /** Update the config partially.
+   * @param partial - Partial config to merge.
+   */
   update(partial: Partial<AgeGateConfig>,): void {
     this.config = { ...this.config, ...partial, };
   }
@@ -54,14 +60,16 @@ class AgeGateConfigStore {
 
 export const ageGateConfig = new AgeGateConfigStore();
 
-/** Seed the runtime config. Called once during server start.
+/**
+ * Seed the runtime config. Called once during server start.
  * @param config - Age-gate configuration.
  */
 export function initAgeGate(config: AgeGateConfig,): void {
   ageGateConfig.init(config,);
 }
 
-/** Read the current (possibly admin-overridden) runtime config.
+/**
+ * Read the current (possibly admin-overridden) runtime config.
  * @returns Current age-gate configuration.
  */
 export function getRuntimeConfig(): AgeGateConfig {
