@@ -35,7 +35,7 @@ Builds on `TASK-visual-novel-mode.md` (base VN rendering, backend complete) and 
 
 ## Scope Clarification (2026-08-23)
 
-This ticket covers **dynamic generation** only. The Q&A interaction loop (question-card display, answer routing, consequence application) is out of scope here — see `TASK-vn-qa-mode.md` and the planned follow-up `TASK-vn-question-answer-interaction.md`. The Q&A backend routes listed in earlier drafts of this ticket are not wired in `src/routes/vn-generate/index.ts` and are not part of this ticket's deliverable.
+This ticket covers **dynamic generation** only. The Q&A interaction loop (question-card display, answer routing, consequence application) is out of scope here — see `TASK-vn-qa-mode.md` (its ⬜ Q&A Interaction Loop section tracks that scope). The Q&A backend routes listed in earlier drafts of this ticket are not wired in `src/routes/vn-generate/index.ts` and are not part of this ticket's deliverable.
 
 ## Technical Notes
 

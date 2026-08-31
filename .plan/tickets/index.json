@@ -9149,6 +9149,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-character-growth-development.md"
   },
+  "TASK-CHARACTER-GROWTH-MILESTONES": {
+    "hash": "521a0a7",
+    "git_issue": "521a0a7",
+    "extid": "TASK-CHARACTER-GROWTH-MILESTONES",
+    "type": "TASK",
+    "title": "Character growth milestones",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-character-core-system.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-growth-milestones.md"
+  },
   "TASK-CHARACTER-INTERNAL-TRAITS": {
     "hash": "pending",
     "extid": "TASK-CHARACTER-INTERNAL-TRAITS",
@@ -9315,6 +9327,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-character-rpg-stats.md",
     "git_issue": "5c9e0ea"
+  },
+  "TASK-CHARACTER-SPEC-ADOPT-SILLYTAVERN-EXTENSIONS": {
+    "hash": "9d1975e",
+    "git_issue": "9d1975e",
+    "extid": "TASK-CHARACTER-SPEC-ADOPT-SILLYTAVERN-EXTENSIONS",
+    "type": "TASK",
+    "title": "Character spec adopt sillytavern extensions",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-character-spec-adopt-sillytavern-extensions.md"
   },
   "TASK-CHARACTER-SPEC-UNIFIED-API": {
     "hash": "136220e",
@@ -9953,6 +9977,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-config-extensions.md",
     "git_issue": "d1f633b"
+  },
+  "TASK-CONFIG-FILE-SEPARATION-DOMAIN-EXTRACTION": {
+    "hash": "fce8fca",
+    "git_issue": "fce8fca",
+    "extid": "TASK-CONFIG-FILE-SEPARATION-DOMAIN-EXTRACTION",
+    "type": "TASK",
+    "title": "Config file separation domain extraction",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-file-separation-domain-extraction.md"
   },
   "TASK-CONFIG-GALLERY-ATTACHMENT-IDEMPOTENT": {
     "hash": "42a1319",
@@ -11621,6 +11657,18 @@
     "source": ".plan/tickets/TASK-error-envelope.md",
     "git_issue": "5690b8f"
   },
+  "TASK-EVALUATE-ELYSIA-OPENTELEMETRY": {
+    "hash": "23430eb",
+    "git_issue": "23430eb",
+    "extid": "TASK-EVALUATE-ELYSIA-OPENTELEMETRY",
+    "type": "TASK",
+    "title": "Evaluate elysia opentelemetry",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-http-protocol-features.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-evaluate-elysia-opentelemetry.md"
+  },
   "TASK-EVALUATE-ELYSIAJS-OPENTELEMETRY-VERSUS-CUSTOM-TELEMETRY-MODU": {
     "hash": "9ffd6e0",
     "git_issue": "9ffd6e0",
@@ -12507,6 +12555,18 @@
     "epic": "epic-http-protocol-features",
     "tags": [],
     "source": ".plan/tickets/TASK-hold-inbound-http-3-until-bun-supports-websocket-over-h3.md"
+  },
+  "TASK-HOLD-INBOUND-HTTP-3-UNTIL-BUN-WS-OVER-H3": {
+    "hash": "ede1304",
+    "git_issue": "ede1304",
+    "extid": "TASK-HOLD-INBOUND-HTTP-3-UNTIL-BUN-WS-OVER-H3",
+    "type": "TASK",
+    "title": "Hold inbound http 3 until bun ws over h3",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-http-protocol-features.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-hold-inbound-http-3-until-bun-ws-over-h3.md"
   },
   "TASK-HOOK-CHAIN-AND-MODERATION-ROBUSTNESS-IN-GENERATION-PIPELINE": {
     "hash": "20a414f",
@@ -15078,6 +15138,18 @@
     "source": ".plan/tickets/TASK-operator-platform-credential-store.md",
     "git_issue": "301358f"
   },
+  "TASK-OUTBOUND-FETCH-HTTP-2-3-PROTOCOL-HINTS": {
+    "hash": "ae98edc",
+    "git_issue": "ae98edc",
+    "extid": "TASK-OUTBOUND-FETCH-HTTP-2-3-PROTOCOL-HINTS",
+    "type": "TASK",
+    "title": "Outbound fetch http 2 3 protocol hints",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-http-protocol-features.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-outbound-fetch-http-2-3-protocol-hints.md"
+  },
   "TASK-OUTBOUND-FETCH-HTTP-2-AND-HTTP-3-PROTOCOL-HINTS-FOR-PROVIDER": {
     "hash": "a544e76",
     "git_issue": "a544e76",
@@ -15523,6 +15595,42 @@
     "epic": "epic-assistant-gm-flows",
     "tags": [],
     "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
+  },
+  "TASK-PRECOMPILED-TEMPLATES-MEDIA": {
+    "hash": "f38ec28",
+    "git_issue": "f38ec28",
+    "extid": "TASK-PRECOMPILED-TEMPLATES-MEDIA",
+    "type": "TASK",
+    "title": "Precompiled templates media",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-assistant-gm-flows.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-precompiled-templates-media.md"
+  },
+  "TASK-PRECOMPILED-TEMPLATES-STORY": {
+    "hash": "3d364ed",
+    "git_issue": "3d364ed",
+    "extid": "TASK-PRECOMPILED-TEMPLATES-STORY",
+    "type": "TASK",
+    "title": "Precompiled templates story",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-assistant-gm-flows.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-precompiled-templates-story.md"
+  },
+  "TASK-PRECOMPILED-TEMPLATES-TESTS": {
+    "hash": "69577c6",
+    "git_issue": "69577c6",
+    "extid": "TASK-PRECOMPILED-TEMPLATES-TESTS",
+    "type": "TASK",
+    "title": "Precompiled templates tests",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-assistant-gm-flows.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-precompiled-templates-tests.md"
   },
   "TASK-PROACTIVE-MESSAGING": {
     "hash": "pending",
@@ -16460,6 +16568,18 @@
     "epic": "epic-http-protocol-features",
     "tags": [],
     "source": ".plan/tickets/TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota.md"
+  },
+  "TASK-REPLACE-SIGHUP-RESTART-WITH-SERVER-RELOAD": {
+    "hash": "eeff3f4",
+    "git_issue": "eeff3f4",
+    "extid": "TASK-REPLACE-SIGHUP-RESTART-WITH-SERVER-RELOAD",
+    "type": "TASK",
+    "title": "Replace sighup restart with server reload",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-http-protocol-features.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-replace-sighup-restart-with-server-reload.md"
   },
   "TASK-REPLAYABILITY": {
     "hash": "2735bbf",
@@ -17562,6 +17682,18 @@
     "source": ".plan/tickets/TASK-svg-upload-leads-to-stored-xss.md",
     "git_issue": "962618b"
   },
+  "TASK-SWARM-LOCAL-ROUTER": {
+    "hash": "de8da86",
+    "git_issue": "de8da86",
+    "extid": "TASK-SWARM-LOCAL-ROUTER",
+    "type": "TASK",
+    "title": "Swarm local router",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-local-process-swarm.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-swarm-local-router.md"
+  },
   "TASK-SWARM-ROUTER-DEDICATED-VPS-FEDERATION-OF-LOCALLY-RUNNING-INS": {
     "hash": "50c9791",
     "git_issue": "50c9791",
@@ -17573,6 +17705,18 @@
     "epic": "epic-local-process-swarm",
     "tags": [],
     "source": ".plan/tickets/TASK-swarm-router-dedicated-vps-federation-of-locally-running-ins.md"
+  },
+  "TASK-SWARM-ROUTER-VPS": {
+    "hash": "3f529a1",
+    "git_issue": "3f529a1",
+    "extid": "TASK-SWARM-ROUTER-VPS",
+    "type": "TASK",
+    "title": "Swarm router vps",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-local-process-swarm.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-swarm-router-vps.md"
   },
   "TASK-SWARM-SUPERVISOR": {
     "hash": "pending",
@@ -17979,6 +18123,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-tls-configuration-audit-and-startup-validation.md",
     "git_issue": "124f1f7"
+  },
+  "TASK-TOOL-CALL-USER-TEXT-SANITIZATION": {
+    "hash": "92adc57",
+    "git_issue": "92adc57",
+    "extid": "TASK-TOOL-CALL-USER-TEXT-SANITIZATION",
+    "type": "TASK",
+    "title": "Tool call user text sanitization",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tool-call-user-text-sanitization.md"
   },
   "TASK-TOOL-CALLING-AGENTS": {
     "hash": "pending",
