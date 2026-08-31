@@ -10,6 +10,7 @@ import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
 import { gitSyncQuiet, } from "../utils/git";
+import { extractMessageInput, } from "../utils/message";
 import { log, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
@@ -22,12 +23,14 @@ export async function agentCommit(
   args: string[],
   config: WorktreeConfig,
 ): Promise<void> {
-  const [branch, ...messageParts] = args;
-  const message = messageParts.join(" ",);
+  const { rest, message: messageInput, } = await extractMessageInput(args,);
+  const [branch, ...messageParts] = rest;
+  const message = messageInput ?? messageParts.join(" ",);
 
   if (!branch || !message) {
     log("error", "branch and message required",);
-    console.log('  Usage: index.mjs agent-commit <branch> "<message>"',);
+    console.log('  Usage: index.mjs agent-commit <branch> [-F <file>|--message-file <file>] "<message>"',);
+    console.log('  Multi-line: index.mjs agent-commit <branch> -F .tmp/msg.txt   (or pipe via "-F -")',);
     process.exit(1,);
   }
 
