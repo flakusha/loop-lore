@@ -200,6 +200,11 @@ globalThis.deleteCharacter = async function(btn: HTMLElement,) {
 };
 
 globalThis.exportCharacter = function(btn: HTMLElement,) {
+  // The export modal partial does not carry data-character-id itself, but it
+  // is rendered inside a context that does (e.g. #character-chat-list,
+  // #character-edit-form, or the grid). Walk up to the nearest ancestor with
+  // the attribute. Fall back to the modal element for callers that set it
+  // explicitly. Fix for BUG-character-export-broken-export-modal-missing-data-character-id.
   const modal = btn.closest(".modal",);
   if (!modal) {
     log.error("No modal found",);
@@ -209,14 +214,15 @@ globalThis.exportCharacter = function(btn: HTMLElement,) {
   const format = (
     modal.querySelector('input[name="export-format"]:checked',) as HTMLInputElement | null
   )?.value;
-  const characterId = (modal as HTMLElement).dataset.characterId;
+  const characterId = btn.closest("[data-character-id]",)?.getAttribute("data-character-id",) ??
+    (modal as HTMLElement).dataset.characterId;
 
   if (!characterId) {
     log.error("No character ID found",);
     return;
   }
 
-  // Trigger download — backend uses /api/actors/:actorId/export
+  // Trigger download - backend uses /api/actors/:actorId/export
   globalThis.location.assign(`/api/actors/${characterId}/export?format=${format}`,);
   closeModal(btn,);
 };

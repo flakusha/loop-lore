@@ -13,11 +13,11 @@
  * ActivityPub federation.
  */
 import type { Kysely, } from "kysely";
+import { assertFederationConsent, } from "../characters/services/federation-consent";
 import { encryptBytes, } from "../crypto/actor-keys";
 import type { DB, } from "../db/schema";
 import { safeJsonStringify, } from "../utils";
 import { getSmk, } from "./smk";
-
 export interface ActivityPubActorKey {
   id: string;
   actor_id: string;
@@ -41,6 +41,10 @@ export async function generateActivityPubKey(
   database: Kysely<DB>,
   actorId: string,
 ): Promise<GeneratedActivityPubKey> {
+  // Federation-consent gate: refuse to mint a signing key for a character
+  // whose owner has not opted into ActivityPub publication. See
+  // BUG-character-federation-lacks-owner-consent-or-nsfw-gate.
+  await assertFederationConsent(database, actorId,);
   const smk = getSmk();
   if (!smk) { throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",); }
 
