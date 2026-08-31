@@ -75,6 +75,34 @@ describe("parseGmToolDetection", () => {
     const result = parseGmToolDetection('{"toolCall":{"name":"roll_dice","params":"d20"}}',);
     expect(result?.params,).toEqual({},);
   });
+
+  it("clamps confidence above 1 to 1", () => {
+    const result = parseGmToolDetection(
+      '{"toolCall":{"name":"roll_dice","params":{},"confidence":1.5}}',
+    );
+    expect(result?.confidence,).toBe(1,);
+  });
+
+  it("clamps confidence below 0 to 0", () => {
+    const result = parseGmToolDetection(
+      '{"toolCall":{"name":"roll_dice","params":{},"confidence":-0.5}}',
+    );
+    expect(result?.confidence,).toBe(0,);
+  });
+
+  it("falls back to 0.5 when confidence is a string", () => {
+    const result = parseGmToolDetection(
+      '{"toolCall":{"name":"roll_dice","params":{},"confidence":"0.9"}}',
+    );
+    expect(result?.confidence,).toBe(0.5,);
+  });
+
+  it("falls back to 0.5 when confidence is null", () => {
+    const result = parseGmToolDetection(
+      '{"toolCall":{"name":"roll_dice","params":{},"confidence":null}}',
+    );
+    expect(result?.confidence,).toBe(0.5,);
+  });
 });
 
 // ─── Graceful Degradation ─────────────────────────────────────
