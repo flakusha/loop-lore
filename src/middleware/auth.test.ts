@@ -2,15 +2,36 @@ import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import crypto from "node:crypto";
 import type { DB, } from "../db/schema";
+import { UserStatus, } from "../db/enums";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
+import type { AuthConfig, } from "../config/schema/auth";
 import {
   extractBearerToken,
   getOrCreateSoloUserForAuth,
   resetSoloUserCache,
   resolveUserIdFromRequest,
 } from "./auth";
+
+/**
+ * Minimal AuthConfig used by status-gate tests. Only fields that
+ * `resolveUserIdFromRequest` consults are configured; `jwtSecret: ""`
+ * skips the JWT branch, and `legacyOpaqueTokenFallback: true` forces
+ * the sha256(token) lookup.
+ */
+const LEGACY_ONLY_AUTH_CONFIG = {
+  required: false,
+  registrationOpen: false,
+  sessionTimeoutHours: 24,
+  maxSessionsPerUser: 5,
+  demoUsername: "demo",
+  demoAutoSetup: false,
+  jwtSecret: "",
+  legacyOpaqueTokenFallback: true,
+} as const satisfies AuthConfig;
+
+
 
 describe("extractBearerToken", () => {
   it("extracts token from Bearer header", () => {
@@ -260,5 +281,118 @@ describe("resolveUserIdFromRequest", () => {
     expect(resolved,).toBe(solo?.id ?? null,);
 
     process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "1";
+  });
+
+  it("falls back to solo when the resolved user is Disabled (BUG-resolveuseridfromrequest-missing-user-status-check)", async () => {
+    const userId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: userId,
+        username: `disabled-${userId}`,
+        display_name: "Disabled User",
+        role: "user",
+        status: UserStatus.Disabled,
+        settings: "{}",
+      },)
+      .execute();
+
+    const token = "disabled-user-token";
+    const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
+    await db
+      .insertInto("sessions",)
+      .values({
+        user_id: userId,
+        token_hash: tokenHash,
+        ip: "127.0.0.1",
+        user_agent: "test",
+        expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
+      },)
+      .execute();
+
+    const req = new Request("http://localhost", {
+      headers: { Cookie: `ll_token=${token}`, },
+    },);
+
+    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
+    expect(solo?.id ?? null,).not.toBe(userId,); // sanity: test user is NOT the solo user
+    // Disabled user must NOT resolve — falls through to solo.
+    expect(
+      await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),
+    ).toBe(solo?.id ?? null,);
+  });
+
+  it("falls back to solo when the resolved user is Deactivated", async () => {
+    const userId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: userId,
+        username: `deactivated-${userId}`,
+        display_name: "Deactivated User",
+        role: "user",
+        status: UserStatus.Deactivated,
+        settings: "{}",
+      },)
+      .execute();
+
+    const token = "deactivated-user-token";
+    const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
+    await db
+      .insertInto("sessions",)
+      .values({
+        user_id: userId,
+        token_hash: tokenHash,
+        ip: "127.0.0.1",
+        user_agent: "test",
+        expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
+      },)
+      .execute();
+
+    const req = new Request("http://localhost", {
+      headers: { Cookie: `ll_token=${token}`, },
+    },);
+
+    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
+    expect(solo?.id ?? null,).not.toBe(userId,); // sanity
+    expect(
+      await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),
+    ).toBe(solo?.id ?? null,);
+  });
+
+  it("resolves an active user normally (status gate does not block active users)", async () => {
+    const userId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: userId,
+        username: `active-${userId}`,
+        display_name: "Active User",
+        role: "user",
+        status: UserStatus.Active,
+        settings: "{}",
+      },)
+      .execute();
+
+    const token = "active-user-token";
+    const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
+    await db
+      .insertInto("sessions",)
+      .values({
+        user_id: userId,
+        token_hash: tokenHash,
+        ip: "127.0.0.1",
+        user_agent: "test",
+        expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
+      },)
+      .execute();
+
+    const req = new Request("http://localhost", {
+      headers: { Cookie: `ll_token=${token}`, },
+    },);
+
+    expect(
+      await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),
+    ).toBe(userId,);
   });
 });
