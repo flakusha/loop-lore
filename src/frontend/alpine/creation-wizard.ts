@@ -127,11 +127,16 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
 
   /**
    * Cancel and discard the wizard draft. Resets step counter.
+   * (BUG-character-creation-wizard-bug-wizardid-unused: signature was
+   * `cancelWizard(_wizardId: string)` - the param was always ignored. Drop
+   * the parameter; callers in wizard-panel.html now call `cancelWizard()`
+   * with no argument.)
    */
-  async cancelWizard(_wizardId: string,): Promise<void> {
+  async cancelWizard(): Promise<void> {
+    const cancelledWizardId = this.wizardDraft?.wizardId;
     this.wizardPreviewOpen = false;
     this.wizardDraft = null;
     this.wizardResetSteps();
-    log.info("wizard cancelled", { wizardId: _wizardId, },);
+    log.info("wizard cancelled", { wizardId: cancelledWizardId, },);
   },
 };

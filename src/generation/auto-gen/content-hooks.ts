@@ -20,9 +20,9 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { canAccessNsfw, } from "../../middleware/nsfw-gate/access";
 import { isNsfwRating, } from "../../middleware/nsfw-gate/constants";
-import { jsonParseOr, } from "../../utils/safe-json";
+import { jsonParseOr, } from "../../utils";
 import { getRegisteredHooks, runHookChain, } from "../hooks";
-import type { HookEventType, } from "../hooks";
+import { type HookEventType, } from "../hooks/types";
 import { resolveActorIdFromEvents, } from "./resolve-actor-from-events";
 
 export interface RunContentHooksOpts {
