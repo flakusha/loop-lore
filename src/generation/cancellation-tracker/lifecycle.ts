@@ -86,6 +86,14 @@ export async function startGenerationTracking({ options, db, events, }: StartGen
     partialContent: options.partialContent,
     stepIndex,
     totalSteps,
+    // Stop-and-respond interrupt: last SSE event sequence the client
+    // actually received before any abort. `-1` until the first chunk is
+    // flushed. Persisted on cancel so the server knows the truncation
+    // point; surfaced in usage/billing hooks to skip charging undelivered
+    // output.
+    lastRenderedChunkIndex: -1,
+    deliveryConfirmed: false,
+    sideEffectJobs: new Map(),
   };
 
   // Idempotency guard — closes the TOCTOU window left by the DB-only pre-check.
@@ -174,6 +182,12 @@ export async function completeGeneration({ attemptId, result, db, }: CompleteGen
         generation_time_ms: duration,
         streaming_chunks_received: active.chunksReceived,
         streaming_chars_received: active.charsReceived,
+        // Stop-and-respond: persist the truncation point + delivery status.
+        // delivery_confirmed_at is set by stream-to-client when the final
+        // "done" SSE event is flushed; cancellation paths leave it null so
+        // billing queries can exclude undelivered output.
+        last_rendered_chunk_index: active.lastRenderedChunkIndex,
+        delivery_confirmed_at: active.deliveryConfirmed ? new Date().toISOString() : null,
         repetition_score: result.repetitionScore ?? null,
         repetition_analysis: result.repetitionAnalysis
           ? (() => {
@@ -244,6 +258,9 @@ export async function failGeneration({ attemptId, error, db, }: FailGenerationOp
       extra: {
         error_message: error.message,
         completed_at: new Date().toISOString(),
+        // Persist the truncation point on failure too — even an error
+        // mid-stream leaves a partial visible response.
+        ...(active ? { last_rendered_chunk_index: active.lastRenderedChunkIndex, } : {}),
       },
     },);
   } catch (dbError: unknown) {
