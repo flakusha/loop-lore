@@ -1117,6 +1117,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-history-truncates-to-oldest-messages-drops-recent-turns.md"
     }
   ],
   "src/assistant/prompt/sections/chat-history.ts": [
@@ -1185,6 +1189,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-related-memory-event-injection-hooks.md"
+    }
+  ],
+  "src/assistant/prompt/sections/examples.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-example-dialogue-mes-example-few-shot-never-injected-include.md"
     }
   ],
   "src/assistant/prompt/sections/examples.ts": [
@@ -6119,6 +6129,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-algorithm-tests.md"
+    }
+  ],
+  "src/crypto/pipeline.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
     }
   ],
   "src/crypto/pipeline.ts": [
