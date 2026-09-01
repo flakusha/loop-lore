@@ -1,6 +1,6 @@
 # BUG: promptOverride schema has no maxLength - token-bomb storage vector
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Fixed (fix-review-quickwins)
 **Priority:** low
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ src/validation/schemas/chat.ts:67-70 declares promptOverride as t.Optional(t.Uni
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

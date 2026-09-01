@@ -1,6 +1,6 @@
 # BUG: BUG: CSRF verification accepts cookie-only token, defeating double-submit
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Fixed (ccac5b9d server + fix-review-quickwins clients)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ src/middleware/csrf.ts decideCsrf: on unsafe methods it sets token = headerToken
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

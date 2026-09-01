@@ -1,6 +1,6 @@
 # BUG: e2e test client never sends X-CSRF-Token - 114/173 e2e red on dev
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Fixed (fix-review-quickwins; client wiring for ccac5b9d)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ tests/e2e/helpers/client.ts createClient sends Cookie: ll_token only; after ccac
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
