@@ -154,6 +154,7 @@
     "model": "モデル",
     "maxTokens": "最大コンテキストトークン",
     "temperature": "温度",
+    "customInstructions": "カスタム指示",
     "saveGeneral": "一般設定を保存",
     "saveApi": "API設定を保存",
     "testConnection": "接続テスト",

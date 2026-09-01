@@ -123,6 +123,8 @@ export interface UpdateChatParams {
   quickReplies?: QuickReplyButton[] | null;
   /** Chat-level output-style preset ("" / null clears the override). */
   outputStylePreset?: string | null;
+  /** Per-story custom instructions ("" / null clears; max 5000 chars). */
+  customInstructions?: string | null;
 }
 
 /** */

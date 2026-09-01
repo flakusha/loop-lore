@@ -171,6 +171,37 @@ describe("export-shared routines", () => {
     },);
   });
 
+  test("chat export carries the custom instructions story tier", async () => {
+    const chatId = uid();
+    await db
+      .insertInto("chats",)
+      .values({
+        id: chatId,
+        name: "CI Export Chat",
+        type: "direct",
+        mode: "story",
+        created_by: userId,
+        custom_instructions: "second person only",
+      },)
+      .execute();
+
+    const zip = new JSZip();
+    await exportChatsToZip({
+      database: db,
+      userId,
+      zip,
+      checksums: {},
+      format: "json",
+      chatIds: [chatId,],
+      counts: {},
+    },);
+
+    const file = zip.file("chats/ci_export_chat.json",);
+    expect(file,).toBeDefined();
+    const data = JSON.parse(await file!.async("string",),) as { custom_instructions: string | null };
+    expect(data.custom_instructions,).toBe("second person only",);
+  });
+
   test("worlds routine scopes rows to owner and reports entries", async () => {
     const worldId = uid();
     await db

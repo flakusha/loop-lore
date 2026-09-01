@@ -146,3 +146,82 @@ describe("PromptAssembler per-chat prompt override", () => {
     expect(systemMsg,).toBeDefined();
   });
 });
+
+describe("PromptAssembler two-tier custom instructions", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+  let userId: string;
+  let actorId: string;
+  let chatId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, sqlite, } = await createTestDb());
+    userId = uid();
+    actorId = uid();
+    chatId = uid();
+    await insertUsers(db, "tester-ci", "Tester", { id: userId, } as never,);
+    await insertActors(db, "Alice", { id: actorId, user_id: userId, } as never,);
+    await insertChats(db, "CI chat", userId, { id: chatId, } as never,);
+    await insertChatParticipants(db, chatId, actorId,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  /** Run assemble() with the account tier present (userId required). */
+  async function assembleCi() {
+    const assembler = new PromptAssembler(db,);
+    return assembler.assemble({ actorId, chatId, modelId: "mock", userId, },);
+  }
+
+  test("stamps both tiers into one customInstructions section, global first", async () => {
+    await db
+      .updateTable("users",)
+      .set({ settings: JSON.stringify({ customInstructions: "ACCOUNT-STEER", },), },)
+      .where("id", "=", userId,)
+      .execute();
+    await db
+      .updateTable("chats",)
+      .set({ custom_instructions: "STORY-STEER", },)
+      .where("id", "=", chatId,)
+      .execute();
+    const assembled = await assembleCi();
+    const ciMsg = assembled.messages.find((m,) => m.content.includes("custom_instructions",));
+    expect(ciMsg,).toBeDefined();
+    expect(assembled.sections.some((s,) => s.name === "customInstructions" && !s.dropped),).toBe(true,);
+    const content = String(ciMsg?.content,);
+    expect(content,).toContain("ACCOUNT-STEER",);
+    expect(content,).toContain("STORY-STEER",);
+    expect(content.indexOf("ACCOUNT-STEER",),).toBeLessThan(content.indexOf("STORY-STEER",),);
+  });
+
+  test("stays inert when neither tier is set", async () => {
+    await db
+      .updateTable("users",)
+      .set({ settings: JSON.stringify({},), },)
+      .where("id", "=", userId,)
+      .execute();
+    await db
+      .updateTable("chats",)
+      .set({ custom_instructions: null, },)
+      .where("id", "=", chatId,)
+      .execute();
+    const assembled = await assembleCi();
+    expect(assembled.messages.some((m,) => m.content.includes("custom_instructions",)),).toBe(false,);
+  });
+
+  test("story tier alone fires without an account setting", async () => {
+    await db
+      .updateTable("chats",)
+      .set({ custom_instructions: "STORY-ONLY", },)
+      .where("id", "=", chatId,)
+      .execute();
+    const assembled = await assembleCi();
+    const ciMsg = assembled.messages.find((m,) => m.content.includes("STORY-ONLY",));
+    expect(ciMsg,).toBeDefined();
+    expect(String(ciMsg?.content,),).not.toContain("ACCOUNT-STEER",);
+  });
+});

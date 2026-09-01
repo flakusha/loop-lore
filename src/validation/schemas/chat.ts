@@ -93,6 +93,10 @@ export const ChatUpdateBody = t.Object({
     t.Literal("western",),
     t.Literal("",),
   ],),),
+  customInstructions: t.Optional(t.Union([
+    t.String({ maxLength: 5000, },),
+    t.Null(),
+  ],),),
 },);
 
 /**
