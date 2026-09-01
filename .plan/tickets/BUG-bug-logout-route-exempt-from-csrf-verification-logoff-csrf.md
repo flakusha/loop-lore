@@ -1,6 +1,6 @@
 # BUG: BUG: logout route exempt from CSRF verification (logoff CSRF)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Fixed (ccac5b9d server + fix-review-quickwins clients)
 **Priority:** medium
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ src/middleware/csrf.ts CSRF_EXEMPT_ROUTES includes POST /api/auth/logout. Logout
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

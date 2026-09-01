@@ -1,6 +1,6 @@
 # BUG: BUG: CSRF cookie Secure flag hardcoded true; breaks over plain HTTP
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Fixed (ccac5b9d server + fix-review-quickwins clients)
 **Priority:** medium
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ src/middleware/csrf.ts cookieForDecision uses resolveCookieSecure(opts.cookieSec
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
