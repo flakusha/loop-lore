@@ -99,6 +99,23 @@ export async function handleGenerate({
     return jsonError({ message: `Provider resolution failed: ${(error as Error).message}`, status: 422, },);
   }
 
+  // ── Resolve group participants (manual route) ─────────────────
+  // Same wiring as prepare-generation.ts: the chat_participants table is
+  // joined with actors to filter out users (actor_type='user'), and the
+  // generating actor itself is excluded so the actor doesn't get its own
+  // card injected as a participant. The result enables the
+  // `groupParticipantsSection` of the prompt assembler (which is gated on
+  // `params.groupParticipantIds.length > 0`).
+  const participantRows = await database
+    .selectFrom("chat_participants",)
+    .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+    .select("chat_participants.actor_id",)
+    .where("chat_participants.chat_id", "=", input.chatId,)
+    .where("actors.actor_type", "<>", "user",)
+    .where("chat_participants.actor_id", "<>", input.actorId,)
+    .execute();
+  const groupParticipantIds = participantRows.map((row,) => row.actor_id);
+
   // ── Assemble prompt ───────────────────────────────────
 
   let messages: GenerationMessage[];
@@ -111,6 +128,7 @@ export async function handleGenerate({
       resolvedProviderName: resolved.resolvedProviderName,
       cfg,
       userId,
+      groupParticipantIds,
     },);
     messages = built.messages;
     systemPrompt = built.systemPrompt;
