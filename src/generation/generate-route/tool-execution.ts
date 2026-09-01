@@ -6,10 +6,16 @@
  * through the plugin registry.
  *
  * Extracted from generate-route.ts (pure refactor, no behavior change).
+ *
+ * BUG-generation-error-handling-gaps-detector-abort-void-promises:
+ * Tool outputs are sanitized before being re-injected into the assistant
+ * prompt so an attacker-controlled tool result cannot smuggle
+ * `<script>`/on-event HTML into the next LLM turn.
  */
 
 import { registry, } from "../../plugins/registry";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
+import { SCRIPT_TAG, ON_EVENT_DOUBLE, ON_EVENT_SINGLE, } from "../../regex/html-sanitize";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 
@@ -17,17 +23,23 @@ import type { GenerationMessage, } from "../types";
 export const MAX_TOOL_ROUNDS = 5;
 
 /**
+ * Strip dangerous HTML from tool output before re-injection into the
+ * assistant prompt. `<script>` tags and inline `on*` event handlers are
+ * scrubbed; the rest of the content passes through unchanged so legitimate
+ * tool output (e.g. JSON, markdown) is not lost.
+ * @param content - Raw tool output string.
+ * @returns Sanitized content safe for prompt re-use.
+ */
+export function sanitizeToolOutput(content: string,): string {
+  if (!content) { return content; }
+  return content
+    .replace(SCRIPT_TAG, "")
+    .replace(ON_EVENT_DOUBLE, "")
+    .replace(ON_EVENT_SINGLE, "");
+}
+
+/**
  * Gate plugin tools by the actor's assigned agent role.
- *
- * Policy:
- * - `agentRole === null` (no role assigned) → all plugin tools are exposed.
- *   This matches the prior "unassigned = unrestricted" baseline so existing
- *   single-user / demo deployments don't suddenly lose tools.
- * - Role registered but `tools: []` → zero plugin tools (explicit deny).
- *   SECURITY (BUG-plugin-tool-gating-empty-role-bypass): an empty allowlist
- *   MUST NOT fall through to "all tools" — that's a privilege escalation vs
- *   the unassigned baseline, because role assignment implies intent.
- * - Role registered with named tools → only those.
  * @param agentRole - The actor's assigned plugin agent role id (or null)
  * @returns The filtered list of plugin tool definitions
  */
@@ -53,7 +65,6 @@ interface ToolCallItem {
 
 /**
  * Execute tool calls and return tool result messages.
- * Looks up ToolDefinition from the plugin registry by name.
  * @param toolCalls - Tool call items from the provider response
  * @param ctx - Optional per-request execution context (db + actor + chat),
  *   forwarded to tool handlers; builtin tools (e.g. write_memory_note) require it.
@@ -71,15 +82,11 @@ export async function executeToolCalls(
     if (!def) {
       results.push({
         role: "tool",
-        content: jsonStringifyOr({ error: `Tool not found: ${tc.function.name}`, },),
+        content: sanitizeToolOutput(jsonStringifyOr({ error: `Tool not found: ${tc.function.name}`, },),),
         tool_call_id: tc.id,
       },);
       continue;
     }
-    // Parse tool arguments strictly. BUG-tool-call-arg-parse-silent-fallback:
-    // silent `{}` fallback meant the model couldn't self-correct when it
-    // emitted malformed JSON — handler threw a generic runtime error
-    // instead of a syntax diagnostic.
     const parsed = safeJsonParse<Record<string, unknown>>(tc.function.arguments,);
     const valueIsObject = parsed.ok &&
       parsed.value !== null &&
@@ -91,10 +98,10 @@ export async function executeToolCalls(
         : parsed.error.message;
       results.push({
         role: "tool",
-        content: jsonStringifyOr({
+        content: sanitizeToolOutput(jsonStringifyOr({
           error: `tool arguments must be a JSON object: ${detail}`,
           received: tc.function.arguments.slice(0, 200,),
-        },),
+        },),),
         tool_call_id: tc.id,
       },);
       continue;
@@ -104,13 +111,13 @@ export async function executeToolCalls(
       const toolResult = await def.handler(params, ctx,);
       results.push({
         role: "tool",
-        content: toolResult.content,
+        content: sanitizeToolOutput(toolResult.content,),
         tool_call_id: tc.id,
       },);
     } catch (error) {
       results.push({
         role: "tool",
-        content: jsonStringifyOr({ error: (error as Error).message, },),
+        content: sanitizeToolOutput(jsonStringifyOr({ error: (error as Error).message, },),),
         tool_call_id: tc.id,
       },);
     }
