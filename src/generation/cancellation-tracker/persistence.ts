@@ -55,6 +55,12 @@ export async function insertAttempt(
       partial_content: options.partialContent ?? null,
       step_index: options.stepIndex ?? 0,
       total_steps: options.totalSteps ?? 1,
+      // Stop-and-respond interrupt: NULL = nothing delivered yet.
+      // delivery_confirmed_at flips to a timestamp when the final SSE
+      // event is flushed to the client; the partial-response path leaves
+      // it NULL so billing queries can exclude undelivered output.
+      last_rendered_chunk_index: null,
+      delivery_confirmed_at: null,
     },)
     .execute();
 }
