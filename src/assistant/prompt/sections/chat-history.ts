@@ -5,6 +5,11 @@
  * Chat history section — recent confirmed, visible messages, sliced to the
  * token budget (approx 4 chars per token).
  *
+ * Reads the most recent N rows from the DB (DESC + LIMIT) and reverses to
+ * chronological order. The previous ASC + LIMIT strategy silently dropped
+ * the newest turns on long chats because chatHistory is PRIORITY=0 and
+ * never dropped by dropOverBudgetSections.
+ *
  * Decrypts encrypted message bodies before feeding them to the LLM so prior
  * turns never reach the prompt as ciphertext (a data-leak + prompt-quality bug).
  */
@@ -39,7 +44,8 @@ export const chatHistorySection: SectionBuilder = {
         MessageRole.Character,
         MessageRole.System,
       ],)
-      .orderBy("created_at", "asc",)
+      .orderBy("created_at", "desc",)
+      .orderBy("id", "desc",)
       .limit(maxMessages,)
       .execute();
 
@@ -62,6 +68,8 @@ export const chatHistorySection: SectionBuilder = {
       }
       out.push({ role: row.role, content, },);
     }
-    return out;
+    // Most-recent-first query was reversed so the LLM sees history in
+    // chronological order.
+    return out.reverse();
   },
 };
