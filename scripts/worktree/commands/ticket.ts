@@ -69,7 +69,7 @@ export async function ticket(args: string[], config: WorktreeConfig,): Promise<v
   } else {
     log("info", `creating ticket file: ${ticketFile}`,);
 
-    let content = `# ${type}: ${title}\n\n`;
+    let content = `<!-- SPDX-License-Identifier: Apache-2.0 -->\n<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->\n\n# ${type}: ${title}\n\n`;
     content += `**Status:** ⬜ Not Started\n`;
     content += `**Priority:** ${flags.priority || "Medium"}\n`;
     content += `**Effort:** ${flags.effort}\n`;
