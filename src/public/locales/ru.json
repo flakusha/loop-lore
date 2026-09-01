@@ -154,6 +154,7 @@
     "model": "Модель",
     "maxTokens": "Макс. токенов контекста",
     "temperature": "Температура",
+    "customInstructions": "Пользовательские инструкции",
     "saveGeneral": "Сохранить основные",
     "saveApi": "Сохранить API",
     "testConnection": "Проверить соединение",

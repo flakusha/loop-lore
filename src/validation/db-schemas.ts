@@ -574,6 +574,7 @@ export const ChatsSchema = t.Object({
   output_style_preset: t.Optional(t.String(),),
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
+  custom_instructions: t.Optional(t.String(),),
 },);
 
 // ── actors ────────────────────────────────────────────
