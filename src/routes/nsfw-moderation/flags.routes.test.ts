@@ -212,4 +212,48 @@ describe("content flag routes", () => {
     // Resolves to 400 (flag not found) once auth passes — confirms moderator reached the handler.
     expect(res.status,).toBe(400,);
   });
+
+  // ── resolveFlagBody schema enum (runtime validation) ─────────────
+  //
+  // BUG-resolveflagbody-schema-allows-upheld-but-service-type-expect:
+  // The schema enum must match NsfwModerationService.resolveFlag which
+  // accepts only "resolved" | "dismissed" | "confirmed". At runtime Elysia
+  // validates request bodies against the body schema BEFORE the handler
+  // runs, so an invalid status returns 422 (schema failure), not 400
+  // (handler failure). These tests pin the wire contract.
+
+  test("PUT /flags/:id rejects status='upheld' (legacy, not in service contract)", async () => {
+    const app = createApp(db, uid(), "moderator",);
+    const res = await app.handle(resolveRequest("any-flag", { resolution: "kept", status: "upheld", },),);
+    // Elysia returns 422 when body schema validation fails — handler is NOT reached.
+    expect(res.status,).toBe(422,);
+  });
+
+  test("PUT /flags/:id rejects unknown status values", async () => {
+    const app = createApp(db, uid(), "moderator",);
+    const res = await app.handle(resolveRequest("any-flag", { resolution: "kept", status: "approved", },),);
+    expect(res.status,).toBe(422,);
+  });
+
+  test("PUT /flags/:id accepts status='confirmed' (canonical disposition)", async () => {
+    const app = createApp(db, uid(), "moderator",);
+    const res = await app.handle(resolveRequest("nonexistent-flag-id", { resolution: "kept", status: "confirmed", },),);
+    // Schema accepts 'confirmed'; handler runs and returns 400 (flag not found).
+    // The 400 distinguishes handler-reached from schema-rejected (which is 422).
+    expect(res.status,).toBe(400,);
+  });
+
+  test("PUT /flags/:id still accepts status='resolved' and 'dismissed'", async () => {
+    const app = createApp(db, uid(), "moderator",);
+    for (const status of ["resolved", "dismissed",]) {
+      const res = await app.handle(resolveRequest(`nonexistent-${status}`, { resolution: "n/a", status, },),);
+      expect(res.status,).toBe(400,);
+    }
+  });
+
+  test("PUT /flags/:id rejects missing resolution", async () => {
+    const app = createApp(db, uid(), "moderator",);
+    const res = await app.handle(resolveRequest("any-flag", { status: "confirmed", },),);
+    expect(res.status,).toBe(422,);
+  });
 });
