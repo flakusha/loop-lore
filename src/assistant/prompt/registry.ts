@@ -47,7 +47,6 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   loreSection,
   memorySection,
   eventSection,
-  postHistorySection,
   storyContextSection,
   travelSection,
   gmNotesSection,
@@ -55,4 +54,11 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   recentEventsSection,
   examplesSection,
   chatHistorySection,
+  // postHistorySection is rendered as `role: "user"` (not "system"), so it
+  // is NOT spliced to the front by `reorderPromptMessages`. Placed AFTER
+  // chat history so the post-history instructions land at the end of the
+  // assembled messages — matching the documented SillyTavern semantics
+  // ("instructions appended after chat history") and the intent stated in
+  // sections/post-history.ts.
+  postHistorySection,
 ];
