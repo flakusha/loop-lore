@@ -154,6 +154,7 @@
     "model": "النموذج",
     "maxTokens": "الحد الأقصى للرموز",
     "temperature": "الحرارة",
+    "customInstructions": "تعليمات مخصصة",
     "saveGeneral": "حفظ عام",
     "saveApi": "حفظ إعدادات API",
     "testConnection": "اختبار الاتصال",

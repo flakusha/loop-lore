@@ -255,3 +255,61 @@ describe("updateChat quickReplies (quick-reply button sets)", () => {
     expect(await quickRepliesOf(),).toEqual([{ label: "Y", command: "/y", },],);
   });
 });
+
+describe("updateChat customInstructions (two-tier steering, story tier)", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+
+  beforeEach(async () => {
+    const fresh = await createTestDb();
+    db = fresh.db;
+    await insertUsers(db, "ci-creator", "CI Creator", { id: "user-ci", } as never,);
+    await insertActors(
+      db,
+      "CI Creator",
+      { id: "user-ci", user_id: "user-ci", owner_id: "user-ci", } as never,
+    );
+    chatId = await createChat(db, {
+      name: "CI Chat",
+      type: "direct",
+      mode: "story",
+      createdBy: "user-ci",
+      participantIds: ["user-ci",],
+    },);
+  },);
+
+  afterEach(async () => {
+    await db?.destroy();
+  },);
+
+  /** */
+  async function customInstructionsOf(): Promise<string | null> {
+    const row = await db
+      .selectFrom("chats",)
+      .select("custom_instructions",)
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+    return row?.custom_instructions ?? null;
+  }
+
+  it("persists the story tier and clears it with null", async () => {
+    const res = await updateChat(db, chatId, { customInstructions: "second person only", },);
+    expect(res,).toEqual({ ok: true, },);
+    expect(await customInstructionsOf(),).toBe("second person only",);
+    const cleared = await updateChat(db, chatId, { customInstructions: null, },);
+    expect(cleared,).toEqual({ ok: true, },);
+    expect(await customInstructionsOf(),).toBeNull();
+  });
+
+  it("empty string clears the column (same semantics as other text overrides)", async () => {
+    await updateChat(db, chatId, { customInstructions: "keep tight", },);
+    await updateChat(db, chatId, { customInstructions: "", },);
+    expect(await customInstructionsOf(),).toBeNull();
+  });
+
+  it("leaves the column untouched when the field is omitted", async () => {
+    await updateChat(db, chatId, { customInstructions: "steady", },);
+    await updateChat(db, chatId, { name: "Renamed ci", },);
+    expect(await customInstructionsOf(),).toBe("steady",);
+  });
+});

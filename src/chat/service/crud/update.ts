@@ -143,5 +143,8 @@ function buildChatUpdates(
   if (params.outputStylePreset !== undefined) {
     updates.output_style_preset = params.outputStylePreset || null;
   }
+  if (params.customInstructions !== undefined) {
+    updates.custom_instructions = params.customInstructions || null;
+  }
   return updates;
 }

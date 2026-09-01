@@ -13,7 +13,7 @@ import type { ExportContext, } from "./types";
 export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
   let query = ctx.database
     .selectFrom("chats",)
-    .select(["id", "name", "type", "mode", "created_at",],)
+    .select(["id", "name", "type", "mode", "created_at", "custom_instructions",],)
     .where("created_by", "=", ctx.userId,);
 
   if (ctx.chatIds && ctx.chatIds.length > 0) {
@@ -73,6 +73,7 @@ export async function exportChatsToZip(ctx: ExportContext,): Promise<void> {
       type: chat.type,
       mode: chat.mode,
       created_at: chat.created_at,
+      custom_instructions: chat.custom_instructions,
       messages,
     };
 

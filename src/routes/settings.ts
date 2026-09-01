@@ -45,6 +45,20 @@ async function handleUpdateSettings(
   userId: string,
   body: Record<string, unknown>,
 ): Promise<Response> {
+  // The account tier of the two-tier custom instructions (task
+  // TASK-two-tier-custom-instructions): the settings blob is otherwise
+  // free-form, so validate this key explicitly — string ≤ 5000 chars, or
+  // null to clear. The prompt section also defensively trims.
+  if ("customInstructions" in body) {
+    const ci = body.customInstructions;
+    if (ci !== null && (typeof ci !== "string" || ci.length > 5000)) {
+      return jsonError(
+        "customInstructions must be a string of at most 5000 characters (or null to clear)",
+        HttpStatus.BadRequest,
+        "validation_error" as never,
+      );
+    }
+  }
   const current = await database
     .selectFrom("users",)
     .select("settings",)
