@@ -65,7 +65,7 @@ export const ChatUpdateBody = t.Object({
     t.Literal("visible",),
   ],),),
   promptOverride: t.Optional(t.Union([
-    t.String(),
+    t.String({ maxLength: 20_000, },),
     t.Null(),
   ],),),
   quickReplies: t.Optional(t.Union([
