@@ -1,6 +1,6 @@
 # TASK: Two tier custom instructions
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-09-01 — dev cdd0b6c7)
 **Priority:** low
 **Effort:** low
 **Epic:** epic-assistant-generation-extensions
@@ -13,14 +13,14 @@ Free-text user steering injected into prompt assembly in two stacking layers: pe
 
 ## Acceptance
 
-- [ ] Per-story + per-account fields (validated length limit, e.g. 5k chars each)
-- [ ] PromptAssembler section wiring with global-then-story stacking, budget-safe
-- [ ] Applied on impersonation paths too
-- [ ] Included in story export/share payload
-- [ ] Tests: stacking order + trimming precedence
+- [x] Per-story + per-account fields (validated length limit, e.g. 5k chars each)
+- [x] PromptAssembler section wiring with global-then-story stacking, budget-safe
+- [x] Applied on impersonation paths too
+- [x] Included in story export/share payload
+- [x] Tests: stacking order + trimming precedence
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

@@ -18336,7 +18336,8 @@
     "priority": "low",
     "epic": "epic-assistant-generation-extensions",
     "tags": [],
-    "source": ".plan/tickets/TASK-two-tier-custom-instructions.md"
+    "source": ".plan/tickets/TASK-two-tier-custom-instructions.md",
+    "status": "done"
   },
   "TASK-TYPESCRIPT-MJS-RECONCILIATION": {
     "hash": "728c3ff",

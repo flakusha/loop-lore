@@ -80,6 +80,33 @@ priority. When token budget is exceeded, sections are dropped **last-to-first**:
 | 6     | Example/swipe content | `actors.mes_example`                                     | 1st (dropped first) |
 | 7     | Chat history          | `messages` (latest N)                                    | Never               |
 | 8     | Story context         | `npc_states`, `location_states`, `quests`                | Never (story mode)  |
+| 9     | Custom instructions   | `users.settings.customInstructions` + `chats.custom_instructions` | Never   |
+
+> **Note**: The authoritative, current section list/order is
+> `src/assistant/prompt/registry.ts` (`PROMPT_SECTIONS`); the table above is
+> the original design sketch and lags the implementation (e.g. output-style,
+> nsfw-policy, author-note, emotion-avatar, gm-notes, dynamic-context and
+> more were added after it).
+
+#### Two-tier custom instructions (implemented)
+
+Free-text user steering injected as one `<custom_instructions>` system
+section (`src/assistant/prompt/sections/custom-instructions.ts`), stacked
+account tier first, story tier on top ("on conflict these win"):
+
+- **Account tier** — `users.settings.customInstructions` (JSON blob),
+  edited on the Settings modal Generation tab, validated on
+  `PATCH /api/settings` (string ≤ 5000 chars or null).
+- **Story tier** — `chats.custom_instructions` (migration 073), edited in
+  Chat Settings, written via `PUT /api/chats/:id` (`customInstructions`,
+  `""`/null clears; omitted leaves untouched).
+
+Both tiers are untrusted user content, wrapped in
+`<untrusted_user_content source="user.custom_instructions">`. PRIORITY 0 →
+never dropped by token-budget trimming. The section fires on every
+`PromptAssembler` path (chat, auto-gen, VN generate, story GM) including
+impersonation. Story exports (`/api/export/shared`) carry the story tier.
+See TASK-two-tier-custom-instructions.md.
 
 ### Section Details
 
