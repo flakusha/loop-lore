@@ -191,6 +191,15 @@ export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhR
       theirCurrentPubJwk: payload.ephemeralPublicJwk,
       recvCount: 0,
     };
+    // Re-seed chainKey from the NEW epoch's chain (dh.sendingChainKey), not
+    // the previous epoch's receivingChainKey captured before the DH step.
+    // Without this re-seed the chain-advance loop derives the message key
+    // from the stale chain and AES-GCM auth fails. The fresh copy is
+    // required (not a reference assignment) because workingState.receivingChainKey
+    // (aliasing dh.sendingChainKey) gets fill(0)'d at the end of this function;
+    // sharing that buffer with chainKey would zero the new epoch's chain
+    // material before it is returned in the new state.
+    chainKey = new Uint8Array(workingState.receivingChainKey,);
   } else {
     recvCountAdvance = payload.counter - state.recvCount;
     if (recvCountAdvance < 0) {
