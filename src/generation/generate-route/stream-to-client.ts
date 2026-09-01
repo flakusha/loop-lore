@@ -9,8 +9,9 @@
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import { CancelReason, ChunkAction, } from "../../db/enums";
+import { CancelReason, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
 import { extractAndStoreMemories, } from "../../memory";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import { failGeneration, processStreamingChunk, } from "../cancellation-manager";
@@ -68,6 +69,7 @@ export function streamToClient({
   let accumulatedThinking = "";
   let abortController: AbortController | null = null;
   const buffer = getOrCreateBuffer(input.chatId,);
+  const log = getLogger().child({ module: "generate-route", },);
   // Function calls requested by the assistant across tool rounds; persisted
   // on the final message and replayed to the live stream consumer.
   const collectedToolCalls: { id: string; type: "function"; function: { name: string; arguments: string } }[] = [];
@@ -76,6 +78,19 @@ export function streamToClient({
     async start(controller,) {
       try {
         abortController = new AbortController();
+        // Link the tracker signal: cancelGeneration() and user cancels abort
+        // the tracker controller — the provider below only sees the local
+        // controller, so without this link a cancel never reaches the stream.
+        const trackerSignal = providerReq.signal;
+        if (trackerSignal) {
+          if (trackerSignal.aborted) {
+            abortController.abort(trackerSignal.reason,);
+          } else {
+            trackerSignal.addEventListener("abort", () => {
+              abortController?.abort(trackerSignal.reason,);
+            }, { once: true, },);
+          }
+        }
         let currentMessages = messages;
         let finalResponse: Awaited<ReturnType<typeof callWithFailover>> | null = null;
 
@@ -90,13 +105,14 @@ export function streamToClient({
               if (chunk.type === "content" && chunk.content) {
                 accumulatedContent += chunk.content;
                 roundContent += chunk.content;
-                // Feed chunk to repetition/policy detector
-                void processStreamingChunk({ attemptId, chunk: chunk.content, db: database, },).then((action,) => {
-                  if (action !== ChunkAction.Continue) {
-                    // Detector triggered cancel — abort the stream
-                    abortController?.abort();
-                  }
-                },);
+                // Feed chunk to repetition/policy detector. On trigger the
+                // detector cancels via cancelGeneration(); the linked tracker
+                // signal (above) aborts this stream. Detection errors must
+                // never become unhandled rejections.
+                void processStreamingChunk({ attemptId, chunk: chunk.content, db: database, },)
+                  .catch((error: unknown,) => {
+                    log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
+                  },);
                 // Emit to inline SSE consumer
                 controller.enqueue(
                   new TextEncoder().encode(sseData({ type: "content", content: chunk.content, },),),
