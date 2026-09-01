@@ -1,15 +1,23 @@
 /**
- * Prompt assembler emotion wiring.
+ * Prompt assembler regression tests.
  *
- * The `emotionAvatar` prompt section only fires when `params.emotion` is set,
- * and every generation callsite omits it — so the prompt-injection loop was
- * broken. The assembler now defaults `params.emotion` to the character's
- * persisted mood (`character_mood.current_mood`, kept current by the
- * mood/emotion hooks), closing detection → prompt context.
+ * - emotion wiring: `emotionAvatar` prompt section only fires when
+ *   `params.emotion` is set; the assembler now defaults `params.emotion` to
+ *   the character's persisted mood (`character_mood.current_mood`), closing
+ *   the detection → prompt context loop.
+ * - per-chat prompt override: `chats.prompt_override` wins over the
+ *   character system prompt.
+ * - post-history position: `postHistorySection` is documented to land AFTER
+ *   chat history, but the previous implementation emitted `role: "system"`
+ *   and was placed BEFORE `chatHistorySection` in `PROMPT_SECTIONS` — so
+ *   `reorderPromptMessages` spliced it to the front of the prompt. The fix
+ *   renders it as `role: "user"` AND places it after `chatHistorySection`,
+ *   so the section lands at the end of the assembled messages.
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import type { Kysely, } from "kysely";
+import type { Generated, Kysely, } from "kysely";
+import { MessageRole, MessageStatus, MessageVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -18,6 +26,7 @@ import {
   insertCharacterMood,
   insertChatParticipants,
   insertChats,
+  insertMessages,
   insertUsers,
 } from "../test-utils/insert-helpers";
 import { uid, } from "../utils";
@@ -146,7 +155,6 @@ describe("PromptAssembler per-chat prompt override", () => {
     expect(systemMsg,).toBeDefined();
   });
 });
-
 describe("PromptAssembler two-tier custom instructions", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
@@ -223,5 +231,90 @@ describe("PromptAssembler two-tier custom instructions", () => {
     const ciMsg = assembled.messages.find((m,) => m.content.includes("STORY-ONLY",));
     expect(ciMsg,).toBeDefined();
     expect(String(ciMsg?.content,),).not.toContain("ACCOUNT-STEER",);
+  });
+});
+
+describe("PromptAssembler post-history position", () => {
+  let db: Kysely<DB>;
+  let sqlite: Database;
+  let userId: string;
+  let actorId: string;
+  let chatId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, sqlite, } = await createTestDb());
+    userId = uid();
+    actorId = uid();
+    chatId = uid();
+    await insertUsers(db, "tester-post", "Tester", { id: userId, } as never,);
+    await insertActors(
+      db,
+      "Alice",
+      {
+        id: actorId,
+        user_id: userId,
+        post_history_instructions: "Always respond in character.",
+      } as never,
+    );
+    await insertChats(db, "Post-history chat", userId, { id: chatId, } as never,);
+    await insertChatParticipants(db, chatId, actorId,);
+    // Seed chat history — confirmed, visible messages. Order matters:
+    // `chatHistorySection` reads ascending by created_at and emits the
+    // user/assistant roles. After the fix, the post-history `<user>`
+    // message must appear AFTER every one of these.
+    const confirmed = MessageStatus.Confirmed as unknown as Generated<MessageStatus>;
+    const visible = MessageVisibility.Visible as unknown as Generated<MessageVisibility>;
+    await insertMessages(db, chatId, actorId, MessageRole.User, "first user turn", {
+      status: confirmed,
+      visibility: visible,
+      created_at: "2025-01-01T00:00:00.000Z" as unknown as Generated<string>,
+    },);
+    await insertMessages(db, chatId, actorId, MessageRole.Assistant, "first assistant turn", {
+      status: confirmed,
+      visibility: visible,
+      created_at: "2025-01-01T00:00:01.000Z" as unknown as Generated<string>,
+    },);
+    await insertMessages(db, chatId, actorId, MessageRole.User, "second user turn", {
+      status: confirmed,
+      visibility: visible,
+      created_at: "2025-01-01T00:00:02.000Z" as unknown as Generated<string>,
+    },);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+    sqlite.close();
+  },);
+
+  test("post-history section lands AFTER every chat-history message in the assembled prompt", async () => {
+    const assembler = new PromptAssembler(db,);
+    const assembled = await assembler.assemble({ actorId, chatId, modelId: "mock", },);
+
+    // The post-history message is wrapped with the `<post_history>` tag and
+    // emitted as `role: "user"` — locate it by its unique marker.
+    const postHistoryIdx = assembled.messages.findIndex(
+      (m,) => typeof m.content === "string" && m.content.includes("<post_history>",),
+    );
+    expect(postHistoryIdx,).toBeGreaterThanOrEqual(0,);
+
+    // The chat-history content must appear in the assembled prompt.
+    expect(assembled.messages.some((m,) => m.content === "first user turn"),).toBe(true,);
+    expect(assembled.messages.some((m,) => m.content === "first assistant turn"),).toBe(true,);
+    expect(assembled.messages.some((m,) => m.content === "second user turn"),).toBe(true,);
+
+    // Every chat-history message index must precede the post-history index —
+    // i.e. the post-history section sits at the END of the assembled prompt,
+    // not at the front. This is the regression guard for BUG-post-history-
+    // instruction-relocated-to-front-not-after-histor.
+    for (const needle of ["first user turn", "first assistant turn", "second user turn",]) {
+      const idx = assembled.messages.findIndex((m,) => m.content === needle);
+      expect(idx,).toBeGreaterThanOrEqual(0,);
+      expect(idx,).toBeLessThan(postHistoryIdx,);
+    }
+
+    // The post-history message must be the last message in the assembled
+    // prompt — there are no trailing sections after it.
+    expect(postHistoryIdx,).toBe(assembled.messages.length - 1,);
   });
 });
