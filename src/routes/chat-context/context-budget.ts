@@ -61,6 +61,21 @@ export async function assembleBudgetSections(
 ): Promise<{ sections: ContextSection[]; usedTokens: number }> {
   try {
     const resolved = await resolveProvider({ config, db: database, },);
+    // Match the manual-generate route's wiring (handler.ts): include group
+    // participants so the `groupParticipantsSection` token cost is reflected
+    // in the per-section breakdown. `chat_participants` is joined with
+    // `actors` to filter users out by `actor_type <> 'user'`. The
+    // generating `actorId` is excluded so the section's "others" semantics
+    // match the real prompt assembly contract.
+    const participantRows = await database
+      .selectFrom("chat_participants",)
+      .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+      .select("chat_participants.actor_id",)
+      .where("chat_participants.chat_id", "=", chatId,)
+      .where("actors.actor_type", "<>", "user",)
+      .where("chat_participants.actor_id", "<>", actorId,)
+      .execute();
+    const groupParticipantIds = participantRows.map((row,) => row.actor_id);
     const assembled = await new PromptAssembler(database,).assemble({
       actorId,
       chatId,
@@ -68,6 +83,7 @@ export async function assembleBudgetSections(
       providerId: resolved.resolvedProviderName,
       tokenBudget: maxTokens,
       userId: userId ?? undefined,
+      groupParticipantIds,
       task: "chat-reply",
     },);
     return {
