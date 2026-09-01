@@ -1436,6 +1436,7 @@ export const SCHEMA = new SchemaManifest()
     output_style_preset: col("text",),
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+    custom_instructions: col("text",),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),

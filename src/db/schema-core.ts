@@ -137,6 +137,7 @@ export interface Chats {
   output_style_preset: string | null;
   data_version: Generated<number>;
   record_hash: Generated<string>;
+  custom_instructions: string | null;
 }
 
 // ── actors ────────────────────────────────────────────
@@ -919,4 +920,3 @@ export interface NsfwConsentState {
   created_at: string;
   revoked_at: string | null;
 }
-

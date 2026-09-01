@@ -85,6 +85,7 @@ export class PromptAssembler {
           "gm_config",
           "response_length_preset",
           "response_length_custom",
+          "custom_instructions",
         ],)
         .where("id", "=", params.chatId,)
         .executeTakeFirstOrThrow(),
@@ -100,6 +101,7 @@ export class PromptAssembler {
     const gmConfig = parseJsonOr<GmConfig | null>(chat.gm_config, null,);
     let userOutputStylePreset: OutputStylePreset | null = null;
     let userResponseLengthPreset: ResponseLengthPreset | null = null;
+    let userCustomInstructions: string | null = null;
     if (params.userId) {
       const userRow = await this.db
         .selectFrom("users",)
@@ -110,10 +112,14 @@ export class PromptAssembler {
         {
           outputStyle?: { preset?: OutputStylePreset };
           responseLength?: { preset?: ResponseLengthPreset };
+          customInstructions?: string | null;
         } | null
       >(userRow?.settings ?? null, null,);
       userOutputStylePreset = userSettings?.outputStyle?.preset ?? null;
       userResponseLengthPreset = userSettings?.responseLength?.preset ?? null;
+      userCustomInstructions = typeof userSettings?.customInstructions === "string"
+        ? userSettings.customInstructions
+        : null;
     }
     const resolvedOutputStyle = resolveOutputStyle(
       chat.output_style_preset as OutputStylePreset | null,
@@ -197,6 +203,7 @@ export class PromptAssembler {
       gmName: efParams.gmName,
       outputStyle: resolvedOutputStyle,
       responseLength: resolvedResponseLength,
+      userCustomInstructions,
       isStory,
     };
 

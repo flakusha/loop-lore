@@ -154,6 +154,7 @@
     "model": "模型",
     "maxTokens": "最大上下文令牌",
     "temperature": "温度",
+    "customInstructions": "自定义指令",
     "saveGeneral": "保存通用",
     "saveApi": "保存 API 设置",
     "testConnection": "测试连接",

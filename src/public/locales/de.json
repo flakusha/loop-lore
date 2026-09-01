@@ -154,6 +154,7 @@
     "model": "Modell",
     "maxTokens": "Max. Kontext-Tokens",
     "temperature": "Temperatur",
+    "customInstructions": "Individuelle Anweisungen",
     "saveGeneral": "Allgemein speichern",
     "saveApi": "API-Einstellungen speichern",
     "testConnection": "Verbindung testen",
