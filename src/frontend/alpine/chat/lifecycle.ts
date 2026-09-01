@@ -94,6 +94,7 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
 
     this._cleanupSSE?.();
     this.stopProactiveScheduler();
+    this.stopSeenPolling();
 
     if (this._storageHandler) {
       removeEventListener("storage", this._storageHandler,);
