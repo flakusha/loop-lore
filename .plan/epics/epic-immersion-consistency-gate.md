@@ -9,6 +9,7 @@
 **Type:** Feature Epic
 **Tags:** immersion, actor-state, moderation, consistency, refusal, pre-generation, rules
 **Related:** epic-player-state-machine.md (state layers = ground truth), epic-actor-turn-skip.md (escape hatch), epic-chat-lifecycle-moderation.md (loop/hallucination protection), epic-narration-pipeline.md, epic-battle-integration-gaps.md (skill-check outcomes)
+**Matrix:** `matrix-story-coherence.md` (SC1, SC3–SC4, SC7, SC10)
 
 ## Summary
 
@@ -86,3 +87,36 @@ fiction, preserving story flow; reasons surfaced OOC only on hard-block.
 - [ ] Skill/item claims absent from actor state are flagged with the specific missing precondition (explainable verdict, no silent block).
 - [ ] Deterministic engine adds < 50 ms p95 to message path (classifier off); classifier runs within flow-control budget and never blocks the default path.
 - [ ] Every gate decision auditable: input, state snapshot, verdict, severity, engine attribution.
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| epic-player-state-machine.md | layered actor state | rule engine ground truth (SC10 adapters until Phase 3) |
+| src/rpg/skills, src/story/items, battle checks | ownership / failed-check facts | deterministic preconditions |
+| src/regex + epic-aux-enrichment-pipeline | claim extraction, sidecar LLM | inputs to rule + classifier engines |
+| epic-generation-flow-control.md | budgets, holds | classifier calls governed |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| epic-actor-turn-skip.md | `GateVerdict` | interlock: hard-block offers skip; soft-refuse consumes beat (SC3) |
+| epic-two-pass-delivery.md | pre-pass-1 audit | gates user input before draft (SC4 open for generated output) |
+| epic-narration-pipeline.md | refusal intent | soft-refuse narration beats |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `GateVerdict { severity, ruleId, claims, stateSnapshot }` | skip, two-pass, telemetry | explainable decision |
+| `MessageKind` (emits `narration`/`system` outputs) | separation | SC7 |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `gate.verdict` | emits | interlock, UI escape hatch, audit |
+

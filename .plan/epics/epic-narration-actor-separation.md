@@ -9,6 +9,7 @@
 **Type:** Feature Epic
 **Tags:** narration, actors, role-contract, message-kind, scene-exposition, rendering, regex
 **Related:** epic-narration-pipeline.md, epic-perspective-narration-voice.md, epic-two-pass-delivery.md (pass-2 role split), epic-messages.md, epic-assistant-gm-flows.md, epic-immersion-presentation.md (rendering)
+**Matrix:** `matrix-story-coherence.md` (SC2, SC6, SC8, SC10)
 
 ## Summary
 
@@ -82,3 +83,34 @@ embodiment) — better prompts and better rendering for both.
 - [ ] Actor reply that narrates the scene (puppeting) is flagged by the violation scorer; narration writing a character's private thoughts is flagged likewise.
 - [ ] Narrator-less chat: with world facts pending, coverage scorer confirms actors surface them within N turns (ambient clause active) without omniscient prose.
 - [ ] Rendering distinguishes kinds in both frontends with user-visible, i18n-labeled treatment.
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| epic-messages.md / db migrations | message storage | `kind` column + backfill |
+| src/regex extraction pipeline | prose parsing | contract-violation tagging |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| all four coherence epics | `MessageKind` | routing, gating, rendering, interlocks (SC1–SC9) — land this epic first |
+| epic-immersion-presentation.md / TUI | kind-aware rendering | distinct visual treatment per kind |
+| epic-context-injection-correctness.md | kind | assembly excludes/weights kinds differently |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `MessageKind = narration \| actor_action \| system` | all | replaces author-inference |
+| `scene.info.starved` signal | GM spotlight, UI | narrator-absent fallback escalation |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `scene.info.starved` | emits | coverage scorer detects un-communicated world facts |
+| `turn.skipped` | subscribes | render absence as `system` record |
