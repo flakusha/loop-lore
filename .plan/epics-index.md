@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 254 epics
+**Total:** 260 epics
 
 ## Summary
 
@@ -70,6 +70,7 @@
 | ⬜ Not Started | Epic: Gallery Batch Operations | High (MVP scoped, post-Gate C) | Medium | 6 | [epic-gallery-batch-operations.md](/.plan/epics/epic-gallery-batch-operations.md) |
 | ⬜ Not Started | Epic: Game Engine SDKs (Unity / Godot) | Low | High | 11 | [epic-game-engine-sdks.md](/.plan/epics/epic-game-engine-sdks.md) |
 | ⬜ Not Started | Epic: Game Frontend Scenes (2D/3D) | Low | Medium | 3 | [epic-game-frontend-scenes.md](/.plan/epics/epic-game-frontend-scenes.md) |
+| ⬜ Not Started | Epic: HTTP/2 / HTTP/3 / Elysia Protocol & Feature Adoption | Medium | Medium | 6 | [epic-http-protocol-features.md](/.plan/epics/epic-http-protocol-features.md) |
 | ⬜ Not Started | Epic: Mini-Games & Interactive Mechanics | Medium | High | 28 | [epic-mini-games.md](/.plan/epics/epic-mini-games.md) |
 | ⬜ Not Started | Epic: Mobile App | Low | High | 10 | [epic-mobile-app.md](/.plan/epics/epic-mobile-app.md) |
 | ⬜ Not Started | Epic: Model Family Presets | High (MVP scoped, post-Gate C) | Medium | 2 | [epic-model-family-presets.md](/.plan/epics/epic-model-family-presets.md) |
@@ -158,12 +159,12 @@
 | 🟡 In Progress | Continuous Improvement — Lint, TypeCheck, Build, Coverage | High | Medium | 8 | [epic-continuous-improvement.md](/.plan/epics/epic-continuous-improvement.md) |
 | 🟡 In Progress | Documentation Reconciliation & UX | Medium | Medium | 6 | [epic-docs-reconciliation.md](/.plan/epics/epic-docs-reconciliation.md) |
 | 🟡 In Progress | Epic: Configurable Template System | High | Large | 0 | [epic-config-templates.md](/.plan/epics/epic-config-templates.md) |
-| 🟡 In Progress | NSFW Capabilities — Ratings, Consent & Gating | High | Medium | 3 | [epic-nsfw-capabilities.md](/.plan/epics/epic-nsfw-capabilities.md) |
 | 🟡 In Progress | Visual Novel Mode — Dynamic Generation & Q&A Mode | Medium | Very High | 0 | [epic-visual-novel-mode.md](/.plan/epics/epic-visual-novel-mode.md) |
 | ✅ Complete | Epic: Config File Separation | High | High | 0 | [epic-config-file-separation.md](/.plan/epics/epic-config-file-separation.md) |
 | ✅ Complete | Epic: Internationalization (i18n) | High | Large | 1 | [epic-i18n.md](/.plan/epics/epic-i18n.md) |
 | ✅ Complete | TASK: Data Integrity Phase 1 — Config Guards & Backend Selection | High | Low | 0 | [epic-data-integrity-phase1.md](/.plan/epics/epic-data-integrity-phase1.md) |
 | Not Started | Actor Autonomy & Story Auto-Drive | High | Large | 7 | [epic-actor-autonomy-story-drive.md](/.plan/epics/epic-actor-autonomy-story-drive.md) |
+| Not Started | Actor Turn Skip ('Continue' Without Breaking the Story) | Medium | Small–Medium | 9 | [epic-actor-turn-skip.md](/.plan/epics/epic-actor-turn-skip.md) |
 | 🟢 Near-complete — 12 tabs + user Flag button/dialog shipped; remaining gap: Revision History | Admin Panel & Dashboard | Medium | Medium | 0 | [epic-frontend-admin.md](/.plan/epics/epic-frontend-admin.md) |
 | Unknown | Anonymity & Decentralization — Epic | Unknown | Unknown | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
@@ -226,22 +227,26 @@
 | ✅ Done — TASK-htmx-reuse-e2e-verify done; browser e2e green in parallel (113/0 across 18 files, 2026-08-07). Scope note: loading-state dedup via shared `src/components/loading-state.html` landed (7 views migrated); remaining dedup tasks (audit/shared-partials/ajax-helper/migrate-views) tracked separately. | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 4 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
 | 🟡 In Progress (2026-08-01 — frontend + DB + CRUD routes done; prompt injection pending) | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 0 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
 | 🟡 Partial — `src/group-chat` modules exist (mention-parser, turn-selector, index) but the feature was never captured as a first-class epic; 3 bug tickets open, 2 feature tickets now track completion. | Group Chat | High | Medium | 0 | [epic-group-chat.md](/.plan/epics/epic-group-chat.md) |
+| Not Started | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 10 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
 | 🟡 Partially Implemented (wiring gaps remain) | Impersonation System | Medium | Med | 5 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
 | 🟡 In Progress (backend wiring merged 2026-08-14 — `rpg-wire-routes`; item frontend/UX tickets remain) | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
 | 🟡 In Progress — TASK-add-trace-fatal, TASK-unify-logging-output-to-canonical-jsonl, TASK-insert-log-fatal-and-log-trace-calls, TASK-verify-logging-changes-green all ✅ Done (merged to dev 2026-08-07) | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
 | 🟡 Permanently Ongoing | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | 🟡 Phase 1 Complete, Phase 2 Partial | LoRA Discovery & Application | High | Medium | 12 | [epic-lora-discovery-application.md](/.plan/epics/epic-lora-discovery-application.md) |
-| 🟡 In Progress (foundation shipped; wiring gap blocks production use) | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 3 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
+| 🟢 Complete (reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups) | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 0 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
 | Unknown | Mini-Games: Database Schema Design | Unknown | Unknown | 0 | [epic-mini-games-db.md](/.plan/epics/epic-mini-games-db.md) |
 | Unknown | Mini-Games: Deep Mechanics & Game-Specific Designs | Unknown | Unknown | 0 | [epic-mini-games-mechanics.md](/.plan/epics/epic-mini-games-mechanics.md) |
 | Draft | Mini-Games: Design Document | Unknown | Unknown | 0 | [epic-mini-games-design.md](/.plan/epics/epic-mini-games-design.md) |
 | Draft | Mini-Games: Expanded Design — UI/UX, Flow, & Deep Mechanics | Unknown | Unknown | 0 | [epic-mini-games-expanded.md](/.plan/epics/epic-mini-games-expanded.md) |
 | Unknown | Mini-Games: UI Components & API Contracts | Unknown | Unknown | 0 | [epic-mini-games-ui-api.md](/.plan/epics/epic-mini-games-ui-api.md) |
+| Not Started | Narration / Actor Separation | High | Medium–Large | 9 | [epic-narration-actor-separation.md](/.plan/epics/epic-narration-actor-separation.md) |
 | 🟡 In Progress — blake3 + zstd benchmarks shipped (2026-08-15, branch `native-blake3`) | Native/WASM Module Performance Benchmarks | High | High | 10 | [epic-native-module-benchmarks.md](/.plan/epics/epic-native-module-benchmarks.md) |
 | 🟦 Research | Non-Standard Browser Encryption | Medium | High | 7 | [epic-non-standard-browser-crypto.md](/.plan/epics/epic-non-standard-browser-crypto.md) |
 | 🟢 Implemented (mock data, UI shell) | NPC & Social UI | P2 — Medium | Medium | 19 | [epic-npc-management-ui.md](/.plan/epics/epic-npc-management-ui.md) |
+| ✅ In Review (Gating & Preferences + Consent cluster landed on dev via commit `49731047`) | NSFW Capabilities — Ratings, Consent & Gating | High | Medium | 0 | [epic-nsfw-capabilities.md](/.plan/epics/epic-nsfw-capabilities.md) |
 | ✅ Complete (merged epic-openapi-reference branch) | OpenAPI-Driven API Reference | P1-High | Medium | 23 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
 | 🟡 In Progress (schema + service + seed hook shipped; resolution integration pending) | Per-World Character Setup & Overlay | High | Medium | 0 | [epic-character-world-setup.md](/.plan/epics/epic-character-world-setup.md) |
+| Not Started | Perspective & Voice Control (1st / 3rd / Narrator) | High | Medium | 7 | [epic-perspective-narration-voice.md](/.plan/epics/epic-perspective-narration-voice.md) |
 | 🟡 Permanently Ongoing | Platform Research & Feature Adoption (Permanently Ongoing) | Medium | Continuous | 0 | [epic-platform-research.md](/.plan/epics/epic-platform-research.md) |
 | 🟡 In Progress — Phase 1 infra + Phase 2 BLAKE3 sample shipped (2026-08-15, branch `native-blake3`); native-vs-TS benchmark 53× bound to bench suite | Pre-Compiled Hot Binary Modules | Medium | High | 14 | [epic-precompiled-hot-binaries.md](/.plan/epics/epic-precompiled-hot-binaries.md) |
 | 🟡 Partial (openai-compatible complete; native providers deferred) | Provider & Plugin Ecosystem | Medium | Large | 16 | [epic-provider-plugin-ecosystem.md](/.plan/epics/epic-provider-plugin-ecosystem.md) |
@@ -261,6 +266,7 @@
 | 🟡 In Progress — benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`); broader framework tasks open | Testing, Benchmarking & Performance | High | Very High (split into 7 sub-epics) | 0 | [epic-testing-benchmarking.md](/.plan/epics/epic-testing-benchmarking.md) |
 | 🟡 Permanently Ongoing | Tooling Support & Improvement (Permanently Ongoing) | Medium | Continuous | 0 | [epic-tooling-improvement.md](/.plan/epics/epic-tooling-improvement.md) |
 | 🟡 Partially Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing | Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport) | Medium | Medium (remaining gaps only) | 4 | [epic-transport-expansion.md](/.plan/epics/epic-transport-expansion.md) |
+| Not Started | Two-Pass Message Delivery (Draft → Finalization) | Medium | Large | 11 | [epic-two-pass-delivery.md](/.plan/epics/epic-two-pass-delivery.md) |
 | 🟡 Permanently Ongoing | User Story & Use Case Improvements (Permanently Ongoing) | Medium | Continuous | 0 | [epic-user-stories.md](/.plan/epics/epic-user-stories.md) |
 | ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`) | World Chat Channels & Invite-Driven Membership | Medium | Medium | 0 | [epic-world-chat-channels-invites.md](/.plan/epics/epic-world-chat-channels-invites.md) |
 
@@ -851,6 +857,15 @@ One coherent scene-audio domain: location-based ambient sound, scene-aware
 - **Type:** Feature Epic
 - **Tags:** game-frontend, 2d-scenes, webgl, interactive, click-to-chat
 - **File:** `.plan/epics/epic-game-frontend-scenes.md`
+
+### Epic: HTTP/2 / HTTP/3 / Elysia Protocol & Feature Adoption
+
+- **Status:** ⬜ Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Infrastructure Epic
+- **Tags:** http2, http3, quic, tls, alpn, elysia, openapi, opentelemetry, transports
+- **File:** `.plan/epics/epic-http-protocol-features.md`
 
 ### Epic: Mini-Games & Interactive Mechanics
 
@@ -1648,15 +1663,6 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 - **Tags:** llm, sd, avatar, image-edit, templates, yaml, merge
 - **File:** `.plan/epics/epic-config-templates.md`
 
-### NSFW Capabilities — Ratings, Consent & Gating
-
-- **Status:** 🟡 In Progress
-- **Priority:** High
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** nsfw, capabilities, rating, consent, age-gate, gating
-- **File:** `.plan/epics/epic-nsfw-capabilities.md`
-
 ### Visual Novel Mode — Dynamic Generation & Q&A Mode
 
 - **Status:** 🟡 In Progress
@@ -1705,6 +1711,15 @@ Full internationalization of loop-lore UI. Infrastructure complete (custom i18n 
 - **Type:** Feature Epic
 - **Tags:** autonomy, npc, actors, story-drive, simulation, rate-limiting, scheduler, bdi
 - **File:** `.plan/epics/epic-actor-autonomy-story-drive.md`
+
+### Actor Turn Skip ('Continue' Without Breaking the Story)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Small–Medium
+- **Type:** Feature Epic
+- **Tags:** turn-skip, pass, continue, cadence, gm, group-chat
+- **File:** `.plan/epics/epic-actor-turn-skip.md`
 
 ### Admin Panel & Dashboard
 
@@ -2294,6 +2309,15 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 
 Group chat lets multiple characters participate in one conversation. The runtime
 
+### Immersion Consistency Gate (Actor-State Blockage & Refusal)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** immersion, actor-state, moderation, consistency, refusal, pre-generation, rules
+- **File:** `.plan/epics/epic-immersion-consistency-gate.md`
+
 ### Impersonation System
 
 - **Status:** 🟡 Partially Implemented (wiring gaps remain)
@@ -2342,7 +2366,7 @@ LoRA (Low-Rank Adaptation) enables character-specific and style-specific visual 
 
 ### Middleware — Request Lifecycle, Idempotency & Async Results
 
-- **Status:** 🟡 In Progress (foundation shipped; wiring gap blocks production use)
+- **Status:** 🟢 Complete (reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups)
 - **Priority:** Medium
 - **Effort:** Large
 - **Type:** Feature Epic
@@ -2388,6 +2412,15 @@ LoRA (Low-Rank Adaptation) enables character-specific and style-specific visual 
 - **Type:** Feature
 - **File:** `.plan/epics/epic-mini-games-ui-api.md`
 
+### Narration / Actor Separation
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Medium–Large
+- **Type:** Feature Epic
+- **Tags:** narration, actors, role-contract, message-kind, scene-exposition, rendering, regex
+- **File:** `.plan/epics/epic-narration-actor-separation.md`
+
 ### Native/WASM Module Performance Benchmarks
 
 - **Status:** 🟡 In Progress — blake3 + zstd benchmarks shipped (2026-08-15, branch `native-blake3`)
@@ -2417,6 +2450,15 @@ Benchmarks for the native module system (`epic-precompiled-hot-binaries`). Measu
 - **Tags:** npc, social, relationships, ui, frontend
 - **File:** `.plan/epics/epic-npc-management-ui.md`
 
+### NSFW Capabilities — Ratings, Consent & Gating
+
+- **Status:** ✅ In Review (Gating & Preferences + Consent cluster landed on dev via commit `49731047`)
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** nsfw, capabilities, rating, consent, age-gate, gating
+- **File:** `.plan/epics/epic-nsfw-capabilities.md`
+
 ### OpenAPI-Driven API Reference
 
 - **Status:** ✅ Complete (merged epic-openapi-reference branch)
@@ -2438,6 +2480,15 @@ Auto-generate the API Reference from an OpenAPI spec derived from TypeScript
 - **File:** `.plan/epics/epic-character-world-setup.md`
 
 A character has one base **setup** (personality, description, scenario, system
+
+### Perspective & Voice Control (1st / 3rd / Narrator)
+
+- **Status:** Not Started
+- **Priority:** High
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** perspective, pov, voice, narration, gm, persona, prompt-assembly
+- **File:** `.plan/epics/epic-perspective-narration-voice.md`
 
 ### Platform Research & Feature Adoption (Permanently Ongoing)
 
@@ -2609,6 +2660,15 @@ Centralized hub for messengers, social networks, and email integration. Unified 
 - **Effort:** Medium (remaining gaps only)
 - **Type:** Feature Epic
 - **File:** `.plan/epics/epic-transport-expansion.md`
+
+### Two-Pass Message Delivery (Draft → Finalization)
+
+- **Status:** Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** generation, two-pass, draft, refinement, narration, mood, cascade, cost
+- **File:** `.plan/epics/epic-two-pass-delivery.md`
 
 ### User Story & Use Case Improvements (Permanently Ongoing)
 
