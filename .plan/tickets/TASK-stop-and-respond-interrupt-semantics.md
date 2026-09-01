@@ -9,7 +9,7 @@
 
 Source: second emergent sweep, DreamRunner.ai stop-and-respond (candidate #30, gap G46).
 
-Always-available Stop during streaming: story truncates at the last line the user actually saw; input frees immediately; queued side-effect jobs (TTS, images) cancel end-to-end; billing/quota never charges undelivered output. Builds on known gaps: TASK-generation-error-handling-gaps-detector-abort-void-promises, BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire.
+Always-available Stop during streaming: story truncates at the last line the user actually saw; input frees immediately; queued side-effect jobs (TTS, images) cancel end-to-end; billing/quota never charges undelivered output. Builds on the remaining known gap TASK-generation-error-handling-gaps-detector-abort-void-promises (BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire resolved on dev da05302e — detector hygiene, cancel-vs-failover, and the SSE tracker-signal link are wired).
 
 ## Acceptance
 
