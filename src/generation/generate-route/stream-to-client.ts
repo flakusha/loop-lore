@@ -13,19 +13,38 @@
  *   gain explicit `.catch(…)` so a DB outage during background tasks
  *   cannot surface as unhandled rejections.
  * - Empty final content is rejected as an explicit error.
+ *
+ * Stop-and-respond interrupt (TASK-stop-and-respond-interrupt-semantics):
+ * - Each successful controller.enqueue() updates `lastRenderedChunkIndex`
+ *   on the active generation so cancellation can persist the truncation
+ *   point the user actually saw.
+ * - The final SSE frame is `done` with `cancelled: true` for truncated
+ *   responses and `deliveryConfirmed: false` is kept on the in-memory
+ *   active record. Telemetry `generation.completed` is emitted ONLY when
+ *   `deliveryConfirmed === true` (full response delivered); undelivered
+ *   output is NEVER charged and gets a separate `generation.truncated`
+ *   analytics event.
+ * - When the client disconnects (ReadableStream cancel callback) we
+ *   forward the abort into the in-memory active generation so any
+ *   registered side-effect jobs (TTS / image-queue) cancel cleanly.
  */
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import { CancelReason, } from "../../db/enums";
+import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { extractAndStoreMemories, } from "../../memory";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
-import { failGeneration, processStreamingChunk, } from "../cancellation-manager";
+import {
+  activeGenerations,
+  cancelGeneration,
+  failGeneration,
+  processStreamingChunk,
+} from "../cancellation-manager";
 import { callWithFailover, } from "../providers/registry";
 import type { ChunkEvent, GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
-import { getOrCreateBuffer, scheduleBufferCleanup, } from "../stream-buffer";
+import { getOrCreateBuffer, scheduleBufferCleanup, StreamBuffer, } from "../stream-buffer";
 import type { GenerationMessage, } from "../types";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { renderToolCallBlock, sseData, } from "./sse-utils";
@@ -45,6 +64,30 @@ export interface StreamToClientOpts {
   providerName: string;
   providerReq: ProviderRequest;
   failoverList: { name: string; provider: LLMProvider }[];
+}
+
+/**
+ * Flush a chunk to the SSE controller. Returns the sequence number assigned
+ * by the StreamBuffer (used as `lastRenderedChunkIndex`).
+ */
+function flushChunk(
+  controller: ReadableStreamDefaultController,
+  buffer: StreamBuffer,
+  chunk: string,
+): number {
+  const seq = buffer.append("stream-update", chunk,);
+  controller.enqueue(new TextEncoder().encode(chunk,),);
+  return seq;
+}
+
+/**
+ * Record that this SSE event reached the client. The active generation
+ * carries `lastRenderedChunkIndex` so the cancel path can persist exactly
+ * where the user-visible response was truncated.
+ */
+function recordLastRendered(attemptId: string, seq: number,): void {
+  const active = activeGenerations.get(attemptId,);
+  if (active) { active.lastRenderedChunkIndex = seq; }
 }
 
 /**
@@ -113,16 +156,13 @@ export function streamToClient({
                   .catch((error: unknown,) => {
                     log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
                   },);
-                controller.enqueue(
-                  new TextEncoder().encode(sseData({ type: "content", content: chunk.content, },),),
-                );
-                buffer.append("stream-update", accumulatedContent,);
+                const seq = flushChunk(controller, buffer, sseData({ type: "content", content: chunk.content, },),);
+                recordLastRendered(attemptId, seq,);
               } else if (chunk.type === "thinking" && chunk.content) {
                 accumulatedThinking += chunk.content;
                 _roundThinking += chunk.content;
-                controller.enqueue(
-                  new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content, },),),
-                );
+                const seq = flushChunk(controller, buffer, sseData({ type: "thinking", content: chunk.content, },),);
+                recordLastRendered(attemptId, seq,);
               }
               // BUG-generation-error-handling-gaps: throwIfAborted AFTER
               // processing each chunk so cancellation terminates accumulation
@@ -138,7 +178,9 @@ export function streamToClient({
 
           collectedToolCalls.push(...toGenerationToolCalls(response.toolCalls,),);
           for (const tc of response.toolCalls) {
-            controller.enqueue(new TextEncoder().encode(sseData({ type: "tool_call", toolCall: tc, },),),);
+            const tcFrame = sseData({ type: "tool_call", toolCall: tc, },);
+            const seq = flushChunk(controller, buffer, tcFrame,);
+            recordLastRendered(attemptId, seq,);
             buffer.append(
               "tool_call",
               renderToolCallBlock(tc.function.name, tc.function.arguments,),
@@ -194,8 +236,37 @@ export function streamToClient({
           continuationNumber: input.continuationNumber,
         },);
 
-        if (isTelemetryEnabled()) {
+        // Flush the final "done" frame BEFORE recording telemetry. The
+        // delivery-confirmed flag is what protects undelivered output
+        // from being billed: only flip it when controller.enqueue has
+        // synchronously handed the frame to the underlying transport.
+        const activeForDone = activeGenerations.get(attemptId,);
+        const isCancelled = finalResponse.finishReason === "cancelled";
+        const doneFrame = sseData({
+          type: "done",
+          messageId,
+          attemptId,
+          content: result.content,
+          finishReason: finalResponse.finishReason,
+          tokenUsage: result.tokenUsage,
+          cancelled: isCancelled,
+          lastRenderedChunkIndex: activeForDone?.lastRenderedChunkIndex ?? -1,
+        },);
+        const doneSeq = flushChunk(controller, buffer, doneFrame,);
+        if (activeForDone) {
+          activeForDone.lastRenderedChunkIndex = doneSeq;
+          // Stop-and-respond: only mark deliveryConfirmed when the full
+          // response (not the cancelled/truncated subset) was flushed.
+          // Undelivered output leaves the flag false so billing skips it.
+          activeForDone.deliveryConfirmed = !isCancelled;
+        }
+
+        if (isTelemetryEnabled() && activeForDone?.deliveryConfirmed) {
           // BUG-generation-error-handling-gaps: explicit .catch on telemetry.
+          // Stop-and-respond interrupt: only emit generation.completed when
+          // the full response was delivered. Undelivered / truncated
+          // streams leave deliveryConfirmed false; billing queries
+          // additionally gate on delivery_confirmed_at NOT NULL.
           void record(database, {
             eventType: "generation.completed",
             userId,
@@ -208,40 +279,54 @@ export function streamToClient({
               model: modelId,
               provider: providerName,
               finishReason: finalResponse.finishReason,
+              lastRenderedChunkIndex: activeForDone.lastRenderedChunkIndex,
+              deliveryConfirmed: true,
             },
           },).catch((error: unknown,) => {
             log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
           },);
+        } else if (isTelemetryEnabled()) {
+          // Stop-and-respond: track the truncation explicitly so analytics
+          // can surface stop-and-respond usage. Marked separately so it
+          // doesn't pollute the billing pipeline.
+          void record(database, {
+            eventType: "generation.truncated",
+            userId,
+            chatId: input.chatId,
+            data: {
+              promptTokens: result.tokenUsage.promptTokens,
+              completionTokens: result.tokenUsage.completionTokens,
+              totalTokens: result.tokenUsage.totalTokens,
+              model: modelId,
+              provider: providerName,
+              finishReason: finalResponse.finishReason,
+              lastRenderedChunkIndex: activeForDone?.lastRenderedChunkIndex ?? -1,
+              deliveryConfirmed: false,
+            },
+          },).catch((error: unknown,) => {
+            log.error("Telemetry truncation record failed", error instanceof Error ? error : undefined,);
+          },);
         }
         // BUG-generation-error-handling-gaps: explicit .catch on memory.
-        void extractAndStoreMemories(database, {
-          actorId: input.actorId,
-          chatId: input.chatId,
-          messageId,
-          aiContent: result.content,
-          config: cfg,
-          userId,
-        },).catch((error: unknown,) => {
-          log.error("Memory extraction failed", error instanceof Error ? error : undefined,);
-        },);
+        // Memory extraction runs only when the full response was delivered —
+        // we don't want to memorize partial output the user never saw.
+        if (activeForDone?.deliveryConfirmed) {
+          void extractAndStoreMemories(database, {
+            actorId: input.actorId,
+            chatId: input.chatId,
+            messageId,
+            aiContent: result.content,
+            config: cfg,
+            userId,
+          },).catch((error: unknown,) => {
+            log.error("Memory extraction failed", error instanceof Error ? error : undefined,);
+          },);
+        }
 
         buffer.append("stream-update", accumulatedContent,);
         buffer.signalDone();
         scheduleBufferCleanup(input.chatId,);
 
-        controller.enqueue(
-          new TextEncoder().encode(
-            sseData({
-              type: "done",
-              messageId,
-              attemptId,
-              content: result.content,
-              finishReason: finalResponse.finishReason,
-              tokenUsage: result.tokenUsage,
-              cancelled: result.cancelled,
-            },),
-          ),
-        );
         controller.close();
       } catch (error) {
         streamError = (error as Error).message;
@@ -260,7 +345,21 @@ export function streamToClient({
       }
     },
     cancel() {
+      // Client disconnect: tear down the provider call AND propagate the
+      // stop-and-respond fan-out. lastRenderedChunkIndex was last updated
+      // on the synchronous enqueue that handed the chunk to the transport,
+      // so we record exactly what the user actually saw.
       abortController?.abort();
+      const active = activeGenerations.get(attemptId,);
+      if (active) {
+        active.deliveryConfirmed = false;
+        cancelGeneration({
+          attemptId,
+          reason: CancelReason.UserCancel,
+          source: CancelSource.User,
+          detail: "client disconnected",
+        },);
+      }
     },
   },);
 
