@@ -6661,6 +6661,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-3d-vrm-foundation.md"
   },
+  "TASK-ACCESS-PROFILE-GENERATION-FROM-ACTOR-EXPERIENCE": {
+    "hash": "c7a9b06",
+    "git_issue": "c7a9b06",
+    "extid": "TASK-ACCESS-PROFILE-GENERATION-FROM-ACTOR-EXPERIENCE",
+    "type": "TASK",
+    "title": "Access profile generation from actor experience",
+    "label": "task",
+    "priority": "high",
+    "epic": "Character & NPC Lore Access",
+    "tags": [],
+    "source": ".plan/tickets/TASK-access-profile-generation-from-actor-experience.md"
+  },
   "TASK-ACHIEVEMENTS": {
     "hash": "5270026",
     "extid": "TASK-ACHIEVEMENTS",
@@ -13634,6 +13646,54 @@
     "source": ".plan/tickets/TASK-lora-discovery-application.md",
     "git_issue": "b3764b1"
   },
+  "TASK-LORE-ACCESS-END-TO-END-VERIFICATION": {
+    "hash": "2c1ed3d",
+    "git_issue": "2c1ed3d",
+    "extid": "TASK-LORE-ACCESS-END-TO-END-VERIFICATION",
+    "type": "TASK",
+    "title": "Lore access end-to-end verification",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Character & NPC Lore Access",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lore-access-end-to-end-verification.md"
+  },
+  "TASK-LORE-ACCESS-INTERSECTION-LOGIC": {
+    "hash": "563d9e5",
+    "git_issue": "563d9e5",
+    "extid": "TASK-LORE-ACCESS-INTERSECTION-LOGIC",
+    "type": "TASK",
+    "title": "Lore access intersection logic",
+    "label": "task",
+    "priority": "high",
+    "epic": "Character & NPC Lore Access",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lore-access-intersection-logic.md"
+  },
+  "TASK-LORE-ACCESS-PROFILE-SCHEMA-AND-MIGRATION": {
+    "hash": "6ed7cc4",
+    "git_issue": "6ed7cc4",
+    "extid": "TASK-LORE-ACCESS-PROFILE-SCHEMA-AND-MIGRATION",
+    "type": "TASK",
+    "title": "Lore access profile schema and migration",
+    "label": "task",
+    "priority": "high",
+    "epic": "Character & NPC Lore Access",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lore-access-profile-schema-and-migration.md"
+  },
+  "TASK-LORE-ENTRY-ACCESS-TAGS-AND-TAXONOMY": {
+    "hash": "337dd4b",
+    "git_issue": "337dd4b",
+    "extid": "TASK-LORE-ENTRY-ACCESS-TAGS-AND-TAXONOMY",
+    "type": "TASK",
+    "title": "Lore entry access tags and taxonomy",
+    "label": "task",
+    "priority": "high",
+    "epic": "Character & NPC Lore Access",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lore-entry-access-tags-and-taxonomy.md"
+  },
   "TASK-LORE-PERSONA-TRAITS-PLACED-AS-SYSTEM-MESSAGES-SEMANTIC-INJEC": {
     "hash": "cad5904",
     "extid": "TASK-LORE-PERSONA-TRAITS-PLACED-AS-SYSTEM-MESSAGES-SEMANTIC-INJEC",
@@ -13810,6 +13870,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-memory-provision-wiring.md",
     "git_issue": "90378a1"
+  },
+  "TASK-MEMORY-RETRIEVAL-FILTERING-BY-LORE-ACCESS-PROFILE": {
+    "hash": "dc745aa",
+    "git_issue": "dc745aa",
+    "extid": "TASK-MEMORY-RETRIEVAL-FILTERING-BY-LORE-ACCESS-PROFILE",
+    "type": "TASK",
+    "title": "Memory retrieval filtering by lore access profile",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Character & NPC Lore Access",
+    "tags": [],
+    "source": ".plan/tickets/TASK-memory-retrieval-filtering-by-lore-access-profile.md"
   },
   "TASK-MEMORY-SELECTION-UI": {
     "hash": "1fd6514f",
@@ -14428,6 +14500,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-npc-behavior.md",
     "git_issue": "9b17da2"
+  },
+  "TASK-NPC-BEHAVIOR-LORE-ACCESS-GATING": {
+    "hash": "6baebbc",
+    "git_issue": "6baebbc",
+    "extid": "TASK-NPC-BEHAVIOR-LORE-ACCESS-GATING",
+    "type": "TASK",
+    "title": "NPC behavior lore access gating",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Character & NPC Lore Access",
+    "tags": [],
+    "source": ".plan/tickets/TASK-npc-behavior-lore-access-gating.md"
   },
   "TASK-NPC-BEHAVIOR-STATE-MACHINE-FOUNDATION": {
     "hash": "c4026dc",
@@ -15767,6 +15851,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-promote-user-to-moderator.md",
     "git_issue": "45d6f78"
+  },
+  "TASK-PROMPT-ASSEMBLY-LORE-FILTERING-BY-ACCESS-PROFILE": {
+    "hash": "25d32a4",
+    "git_issue": "25d32a4",
+    "extid": "TASK-PROMPT-ASSEMBLY-LORE-FILTERING-BY-ACCESS-PROFILE",
+    "type": "TASK",
+    "title": "Prompt assembly lore filtering by access profile",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Character & NPC Lore Access",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-assembly-lore-filtering-by-access-profile.md"
   },
   "TASK-PROMPT-CHARACTER-EXTENSIONS-SECTION": {
     "hash": "pending",
