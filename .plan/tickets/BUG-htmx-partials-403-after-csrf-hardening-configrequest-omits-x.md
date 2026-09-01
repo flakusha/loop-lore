@@ -1,6 +1,6 @@
 # BUG: htmx partials 403 after CSRF hardening - configRequest omits X-CSRF-Token
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Fixed (fix-review-quickwins; client wiring for ccac5b9d)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ Commit ccac5b9d made double-submit require BOTH x-csrf-token header and csrf_tok
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

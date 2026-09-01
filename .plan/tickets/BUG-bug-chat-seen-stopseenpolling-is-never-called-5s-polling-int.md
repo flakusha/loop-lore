@@ -1,6 +1,6 @@
 # BUG: BUG: chat-seen stopSeenPolling is never called; 5s polling interval leaks
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Fixed (11c88484 chat-switch + fix-review-quickwins destroy)
 **Priority:** low
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ src/frontend/alpine/chat-seen.ts startSeenPolling (called from chat-messages.ts 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
