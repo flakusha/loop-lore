@@ -5,12 +5,19 @@
  * RunNonStreaming — non-streaming (JSON) generation path for
  * POST /api/generation/generate. Extracted from generate-route.ts
  * (pure refactor, no behavior change).
+ *
+ * BUG-generation-error-handling-gaps-detector-abort-void-promises:
+ * - Telemetry `record()` and memory `extractAndStoreMemories()` void calls
+ *   gain explicit `.catch(…)` so DB failures during these background tasks
+ *   cannot surface as unhandled rejections.
+ * - Empty `result.content` is rejected as an explicit error.
  */
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { CancelReason, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
 import { extractAndStoreMemories, } from "../../memory";
 import { jsonError, jsonResponse, } from "../../routes/http-utils";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
@@ -61,6 +68,7 @@ export async function runNonStreaming({
   providerReq,
   failoverList,
 }: RunNonStreamingOpts,): Promise<Response> {
+  const log = getLogger().child({ module: "generate-route", },);
   try {
     const startedAt = Date.now();
     let currentMessages = messages;
@@ -77,7 +85,6 @@ export async function runNonStreaming({
         break;
       }
 
-      // Add assistant message with tool calls
       currentMessages = [
         ...currentMessages,
         {
@@ -91,7 +98,6 @@ export async function runNonStreaming({
         },
       ];
 
-      // Execute tools and append results
       const toolResults = await executeToolCalls(response.toolCalls, {
         db: database,
         actorId: input.actorId,
@@ -110,6 +116,15 @@ export async function runNonStreaming({
       finalResponse.finishReason === "cancelled" ? CancelReason.UserCancel : undefined,
     );
 
+    // BUG-generation-error-handling-gaps: reject empty non-stream content.
+    if (!result.content.trim() && finalResponse.finishReason !== "cancelled") {
+      log.warn("Non-stream provider returned empty content — rejecting as empty response", {
+        attemptId,
+        finishReason: finalResponse.finishReason,
+      },);
+      throw new Error(`LLM returned empty content (finishReason=${finalResponse.finishReason})`,);
+    }
+
     const messageId = await storeGenerationResult({
       db: database,
       attemptId,
@@ -121,8 +136,9 @@ export async function runNonStreaming({
       provider: providerName,
     },);
 
-    // Record generation telemetry event
     if (isTelemetryEnabled()) {
+      // BUG-generation-error-handling-gaps: explicit .catch so DB outage
+      // cannot become an unhandled rejection.
       void record(database, {
         eventType: "generation.completed",
         userId,
@@ -136,9 +152,11 @@ export async function runNonStreaming({
           provider: providerName,
           finishReason: finalResponse.finishReason,
         },
+      },).catch((error: unknown,) => {
+        log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
       },);
     }
-    // Background: extract memories from the generated response
+    // BUG-generation-error-handling-gaps: explicit .catch on memory void.
     void extractAndStoreMemories(database, {
       actorId: input.actorId,
       chatId: input.chatId,
@@ -146,6 +164,8 @@ export async function runNonStreaming({
       aiContent: result.content,
       config: cfg,
       userId,
+    },).catch((error: unknown,) => {
+      log.error("Memory extraction failed", error instanceof Error ? error : undefined,);
     },);
 
     return jsonResponse({
