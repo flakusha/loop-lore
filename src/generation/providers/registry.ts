@@ -10,8 +10,10 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { decryptValue, } from "../../crypto";
+import { CancelReason, CancelSource, } from "../../db/enums";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
+import { GenerationCancelledError, } from "../cancellation-actions/error";
 import { AnthropicProvider, } from "./anthropic";
 import { circuitBreaker, } from "./circuit-breaker";
 import { OllamaNativeProvider, } from "./ollama-native";
@@ -242,6 +244,17 @@ export async function callWithFailover(
       return response;
     } catch (error) {
       const err = error as Error & { retryable?: boolean; retryAfter?: number };
+      // A cancelled generation is not a provider failure: never count it
+      // against the circuit breaker and never restart the request on a
+      // fallback provider — a throw during an aborted stream must
+      // propagate the cancellation to the caller.
+      if (req.signal?.aborted) {
+        const reason: unknown = req.signal.reason;
+        if (reason instanceof GenerationCancelledError) { throw reason; }
+        throw new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, err.message, {
+          cause: err,
+        },);
+      }
       circuitBreaker.onFailure(name, err.retryAfter ? err.retryAfter * 1000 : undefined,);
       errors.push(`${name}: ${err.message}`,);
     }

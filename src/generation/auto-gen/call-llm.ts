@@ -10,7 +10,6 @@
  */
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import { ChunkAction, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { processStreamingChunk, } from "../index";
@@ -113,20 +112,33 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
   };
 
   if (canStream) {
+    if (!tracking) {
+      // Initial greeting: no attempt row to key the detector on. Warn loudly
+      // instead of silently disabling repetition/policy detection.
+      log.warn("Streaming without generation tracking — repetition/policy detection disabled", {
+        chatId,
+        requestId,
+      },);
+    }
     const finalResponse = await d.callWithFailover(
       failoverList,
       genReq,
       (chunk: ChunkEvent,) => {
+        // A cancelled generation (user cancel or auto-detector via
+        // cancelGeneration) aborts tracking.abortSignal — stop consuming the
+        // stream immediately: no further accumulation or buffer appends.
+        if (tracking?.abortSignal.aborted) { return; }
         if (chunk.type === "content" && chunk.content) {
           accumulatedContent += chunk.content;
-          // Feed chunk to repetition/policy detector
-          void processStreamingChunk({ attemptId: tracking?.attemptId ?? "", chunk: chunk.content, db: database, },)
-            .then((action,) => {
-              if (action !== ChunkAction.Continue) {
-                // Detector triggered cancel — abort the stream
-                tracking?.abortSignal?.throwIfAborted();
-              }
-            },);
+          // Feed chunk to repetition/policy detector. On trigger the detector
+          // cancels the generation itself (aborts the signal guarded above).
+          // Detection errors must never become unhandled rejections.
+          if (tracking) {
+            void processStreamingChunk({ attemptId: tracking.attemptId, chunk: chunk.content, db: database, },)
+              .catch((error: unknown,) => {
+                log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
+              },);
+          }
           buffer?.append(
             "stream-update",
             renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", d.markedParse, {
