@@ -9,6 +9,7 @@
 **Type:** Feature Epic
 **Tags:** turn-skip, pass, continue, cadence, gm, group-chat
 **Related:** epic-immersion-consistency-gate.md (conflict resolution below), epic-group-chat.md (turn cascade), epic-assistant-gm-flows.md (GM beat generation), epic-actor-autonomy-story-drive.md (turn queue)
+**Matrix:** `matrix-story-coherence.md` (SC3, SC5, SC7–SC8)
 
 ## Summary
 
@@ -67,3 +68,34 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 - [ ] Hard-blocked message path exposes working skip action in ≤1 click from the refusal notice.
 - [ ] Group chat with one skipping actor continues the cascade; no max-turns guard misfire.
 - [ ] `advance` mode visibly progresses the scene (GM beat changes location/time cues); `hold` does not.
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| epic-immersion-consistency-gate.md | `GateVerdict` | interlock rules SC3 |
+| epic-narration-actor-separation.md | `MessageKind` | skip renders as `system` absence record (SC8) |
+| epic-group-chat.md cascade / epic-assistant-gm-flows.md | turn slots, GM beats | slot release + beat generation |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| epic-actor-autonomy-story-drive.md | `TurnSkip` | skipping actor excluded from due-actor selection that beat |
+| epic-two-pass-delivery.md | skip semantics | skip beats are single-pass (SC5) |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `TurnSkip { actor, beat, mode: hold \| advance }` | gate, cascade, autonomy | absence record + beat consumption |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `gate.verdict` | subscribes | offer skip on hard-block |
+| `turn.skipped` | emits | cascade advance, ambient beat |
+

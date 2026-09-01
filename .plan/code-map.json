@@ -1801,6 +1801,10 @@
       "source": ".plan/epics/epic-docs-reconciliation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-two-pass-delivery.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
     },
@@ -2139,6 +2143,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rpg-mechanics-combat.md"
+    }
+  ],
+  "src/battle/resolution-integration/checks.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-immersion-consistency-gate.md"
     }
   ],
   "src/battle/resolution.ts": [
@@ -3997,6 +4007,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-perspective-narration-voice.md"
     },
     {
       "kind": "ticket",
@@ -11943,6 +11957,12 @@
       "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
+  "src/generation/continuation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actor-turn-skip.md"
+    }
+  ],
   "src/generation/controller.ts": [
     {
       "kind": "epic",
@@ -12700,6 +12720,10 @@
     }
   ],
   "src/generation/step-pipeline.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-two-pass-delivery.md"
+    },
     {
       "kind": "frontend",
       "source": "docs/frontend/chat/prompt-creation.md"
@@ -15525,6 +15549,16 @@
       "source": ".plan/tickets/TASK-embedding-vector-store.md"
     }
   ],
+  "src/regex": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-immersion-consistency-gate.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narration-actor-separation.md"
+    }
+  ],
   "src/regex/html-sanitize.ts": [
     {
       "kind": "ticket",
@@ -15588,6 +15622,14 @@
     }
   ],
   "src/regex/narrative.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narration-actor-separation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-perspective-narration-voice.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-safety-xml-utils-tag-unescaped-narrative-greedy.md"
@@ -18919,6 +18961,12 @@
       "source": ".plan/epics/epic-stealth-crime.md"
     }
   ],
+  "src/rpg/dice": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-immersion-consistency-gate.md"
+    }
+  ],
   "src/rpg/dice.test.ts": [
     {
       "kind": "epic",
@@ -19921,6 +19969,12 @@
       "source": ".plan/tickets/TASK-wire-xp-loot-routes.md"
     }
   ],
+  "src/rpg/skills": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-immersion-consistency-gate.md"
+    }
+  ],
   "src/rpg/skills-sexual/categories.ts": [
     {
       "kind": "ticket",
@@ -20079,6 +20133,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-species-mechanics.md"
+    }
+  ],
+  "src/rpg/stats": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-immersion-consistency-gate.md"
     }
   ],
   "src/rpg/stats-service.ts": [
@@ -21091,6 +21151,10 @@
   ],
   "src/story/game-master/narration.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narration-actor-separation.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encryption-tier-not-enforced.md"
     }
@@ -21105,6 +21169,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-error-handling-gaps-detector-abort-void-promises.md"
+    }
+  ],
+  "src/story/items": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-immersion-consistency-gate.md"
     }
   ],
   "src/story/items.ts": [
@@ -21191,10 +21261,22 @@
       "source": ".plan/epics/epic-authoring-creation.md"
     }
   ],
+  "src/story/quality": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-two-pass-delivery.md"
+    }
+  ],
   "src/story/quality-evaluator.ts": [
     {
       "kind": "spec",
       "source": "docs/spec/testing.md"
+    }
+  ],
+  "src/story/quality/scorers/character-voice.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-perspective-narration-voice.md"
     }
   ],
   "src/story/quest-engine": [

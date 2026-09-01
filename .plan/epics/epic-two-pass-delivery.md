@@ -9,6 +9,7 @@
 **Type:** Feature Epic
 **Tags:** generation, two-pass, draft, refinement, narration, mood, cascade, cost
 **Related:** epic-narration-pipeline.md, epic-generation-flow-control.md (2× call budget), epic-assistant-gm-flows.md (quality gating), epic-narration-actor-separation.md (who writes what in each pass), epic-chat-context-optimization.md
+**Matrix:** `matrix-story-coherence.md` (SC4–SC6, SC9)
 
 ## Summary
 
@@ -79,3 +80,36 @@ is set before actions, and per-actor isolation prevents draft-echo contamination
 - [ ] Actor A's final message contains no verbatim content from actor B's draft (isolation test).
 - [ ] Hint dosage `explicit` measurably raises reaction-anticipation coherence vs `none` (scorer comparison).
 - [ ] Pass-1 failure degrades to single-pass with no user-visible error; 2× cost is accounted per chat and holdable via flow-control.
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| src/aux-pipeline + epic-generation-flow-control.md | sidecar substrate, budgets | pass-1 draft cost-governed (≥2×/beat) |
+| epic-narration-actor-separation.md | role contracts | pass-2 narration/actor split (SC6) |
+| epic-immersion-consistency-gate.md | `GateVerdict` | user input audited pre-pass-1 (SC4 open for generated output) |
+| src/story/quality scorers | scoring substrate | runs on final; new draft-utilization scorer |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| epic-narration-pipeline.md | finalized narration + hints | downstream sounding/enrichment |
+| Frontend streaming | pass-2 tokens only | draft invisible; "composing…" status |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `GenerationDraft { mood, beats, intents: ActorIntent[] }` | pass-1 → pass-2 | isolated per-actor handoff |
+| `HintDosage = none \| subtle \| explicit` | separation, config | reaction-telegraph strength |
+
+### Cross-System Events
+
+| Event | Direction | Purpose |
+| ----- | --------- | ------- |
+| `beat.draft.ready` | emits | finalization trigger |
+| `turn.skipped` | subscribes | skip beats bypass draft stage (SC5) |
+
