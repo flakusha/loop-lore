@@ -1,6 +1,6 @@
 # BUG: executeReversal and reviewAppeal do not exclude soft-deleted moderation_actions — deleted actions can be reinstated or re-appealed
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (worktree fix-nsfw-soft-deleted-exclusion)
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-nsfw-moderation-priority
@@ -11,6 +11,6 @@ appeal-reversal.ts:62 executeReversal selects from moderation_actions WHERE id =
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — no source change required; `appeals.ts:178` UPDATE and `appeals-reversal.ts:68` SELECT already filter `deleted_at IS NULL` (commit 7d725b49). The proposed SELECT filter on `moderation_appeals.deleted_at` is structurally impossible — the column does not exist in `schema-moderation.ts` / migration 021.
+- [x] Tests passing — `appeals.test.ts` extended with 3 soft-deletion regression tests: (a) reviewAppeal does NOT update `superseded_by` when the underlying action is soft-deleted; (b) reviewAppeal still emits the `pending_reversal` audit row for audit integrity; (c) executeReversal throws on a soft-deleted action. `bun test src/nsfw/` → 82 pass / 0 fail.
+- [ ] Documentation updated — not required; ticket body already describes the resolved invariant.

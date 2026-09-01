@@ -372,6 +372,61 @@ describe("reviewAppeal", () => {
       reviewNote: "ok",
     },),).resolves.toBeUndefined();
   });
+
+  test("approving an appeal whose underlying action is soft-deleted does NOT set superseded_by", async () => {
+    await insertActionRow({ id: "action-sd1", actionType: "block", targetUserId: USER, },);
+    const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-sd1", reason: "x", },);
+    // Soft-delete the underlying action (mirror deleteUserData.ts behavior).
+    await db.updateTable("moderation_actions",)
+      .set({ deleted_at: "2026-01-15T00:00:00.000Z", deleted_by: "admin-3", },)
+      .where("id", "=", "action-sd1",)
+      .execute();
+
+    await expect(reviewAppeal({
+      thisL: makeCtx(),
+      appealId: appeal.id,
+      reviewedBy: "admin-2",
+      status: "approved",
+      reviewNote: "appeal granted",
+    },),).resolves.toBeUndefined();
+
+    // The soft-deleted action MUST stay tombstoned: superseded_by remains null.
+    const actionRow = await db.selectFrom("moderation_actions",)
+      .select(["id", "superseded_by", "deleted_at",],)
+      .where("id", "=", "action-sd1",)
+      .executeTakeFirst() as unknown as { superseded_by: string | null; deleted_at: string | null } | undefined;
+    expect(actionRow?.superseded_by,).toBeNull();
+    expect(actionRow?.deleted_at,).not.toBeNull();
+    // Appeal still progresses to pending_reversal (audit trail is preserved).
+    const appealRow = await db.selectFrom("moderation_appeals",).selectAll()
+      .where("id", "=", appeal.id,).executeTakeFirst();
+    expect(appealRow?.status,).toBe("pending_reversal",);
+  });
+
+  test("approving an appeal whose underlying action is soft-deleted still emits a pending_reversal audit row", async () => {
+    await insertActionRow({ id: "action-sd2", actionType: "block", targetUserId: USER, },);
+    const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-sd2", reason: "x", },);
+    await db.updateTable("moderation_actions",)
+      .set({ deleted_at: "2026-01-15T00:00:00.000Z", deleted_by: "admin-3", },)
+      .where("id", "=", "action-sd2",)
+      .execute();
+
+    const ctx = makeCtx();
+    await reviewAppeal({
+      thisL: ctx,
+      appealId: appeal.id,
+      reviewedBy: "admin-2",
+      status: "approved",
+      reviewNote: "appeal granted",
+    },);
+
+    // The audit row is intentionally emitted even when the action is soft-deleted:
+    // audit integrity MUST record the approval decision regardless of action state.
+    expect(ctx.recordAction,).toHaveBeenCalledTimes(1,);
+    expect(ctx.recordAction,).toHaveBeenCalledWith(
+      expect.objectContaining({ actionType: "pending_reversal", },),
+    );
+  });
 });
 
 describe("executeReversal", () => {
@@ -504,5 +559,34 @@ describe("executeReversal", () => {
     const note = await db.selectFrom("notifications",).selectAll()
       .where("user_id", "=", "moderator-A",).executeTakeFirst();
     expect(note?.type,).toBe("appeal.reversed",);
+  });
+  test("throws when the underlying action is soft-deleted (deleted_at IS NOT NULL)", async () => {
+    await insertActionRow({ id: "action-r5", actionType: "block", targetUserId: USER, },);
+    const appeal = await submitAppeal({ thisL: makeCtx(), userId: USER, actionId: "action-r5", reason: "x", },);
+    await reviewAppeal({
+      thisL: makeCtx(),
+      appealId: appeal.id,
+      reviewedBy: "admin-1",
+      status: "approved",
+      reviewNote: "ok",
+    },);
+    // Now tombstone the action between approval and execution — mirrors
+    // deleteUserData.ts running concurrently with the approval flow.
+    await db.updateTable("moderation_actions",)
+      .set({ deleted_at: "2026-01-15T00:00:00.000Z", deleted_by: "admin-3", },)
+      .where("id", "=", "action-r5",)
+      .execute();
+    const unblock = mock(() => Promise.resolve({} as ModAction,));
+    await expect(executeReversal({
+      thisL: makeCtx({ unblockUser: unblock, },),
+      appealId: appeal.id,
+      executedBy: "admin-2",
+      approvedBy: "admin-1",
+    },),).rejects.toThrow(/not found/,);
+    // The reversal side effects MUST NOT fire when the action is tombstoned.
+    expect(unblock,).not.toHaveBeenCalled();
+    const appealRow = await db.selectFrom("moderation_appeals",).selectAll()
+      .where("id", "=", appeal.id,).executeTakeFirst();
+    expect(appealRow?.status,).toBe("pending_reversal",);
   });
 });
