@@ -5,6 +5,14 @@
  * StreamToClient — streaming (SSE) generation path for
  * POST /api/generation/generate. Extracted from generate-route.ts
  * (pure refactor, no behavior change).
+ *
+ * BUG-generation-error-handling-gaps-detector-abort-void-promises:
+ * - Abort signal is checked via `throwIfAborted()` AFTER each chunk so
+ *   cancellation terminates accumulation promptly (not only at start).
+ * - Telemetry `record()` and memory `extractAndStoreMemories()` void calls
+ *   gain explicit `.catch(…)` so a DB outage during background tasks
+ *   cannot surface as unhandled rejections.
+ * - Empty final content is rejected as an explicit error.
  */
 
 import type { Kysely, } from "kysely";
@@ -70,17 +78,12 @@ export function streamToClient({
   let abortController: AbortController | null = null;
   const buffer = getOrCreateBuffer(input.chatId,);
   const log = getLogger().child({ module: "generate-route", },);
-  // Function calls requested by the assistant across tool rounds; persisted
-  // on the final message and replayed to the live stream consumer.
   const collectedToolCalls: { id: string; type: "function"; function: { name: string; arguments: string } }[] = [];
 
   const sseStream = new ReadableStream({
     async start(controller,) {
       try {
         abortController = new AbortController();
-        // Link the tracker signal: cancelGeneration() and user cancels abort
-        // the tracker controller — the provider below only sees the local
-        // controller, so without this link a cancel never reaches the stream.
         const trackerSignal = providerReq.signal;
         if (trackerSignal) {
           if (trackerSignal.aborted) {
@@ -102,22 +105,17 @@ export function streamToClient({
             failoverList,
             { ...providerReq, messages: currentMessages, signal: abortController.signal, },
             (chunk: ChunkEvent,) => {
+              if (abortController?.signal.aborted) { return; }
               if (chunk.type === "content" && chunk.content) {
                 accumulatedContent += chunk.content;
                 roundContent += chunk.content;
-                // Feed chunk to repetition/policy detector. On trigger the
-                // detector cancels via cancelGeneration(); the linked tracker
-                // signal (above) aborts this stream. Detection errors must
-                // never become unhandled rejections.
                 void processStreamingChunk({ attemptId, chunk: chunk.content, db: database, },)
                   .catch((error: unknown,) => {
                     log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
                   },);
-                // Emit to inline SSE consumer
                 controller.enqueue(
                   new TextEncoder().encode(sseData({ type: "content", content: chunk.content, },),),
                 );
-                // Append to buffer for SSE reconnect replay
                 buffer.append("stream-update", accumulatedContent,);
               } else if (chunk.type === "thinking" && chunk.content) {
                 accumulatedThinking += chunk.content;
@@ -126,6 +124,10 @@ export function streamToClient({
                   new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content, },),),
                 );
               }
+              // BUG-generation-error-handling-gaps: throwIfAborted AFTER
+              // processing each chunk so cancellation terminates accumulation
+              // promptly (not only at start).
+              abortController?.signal.throwIfAborted();
             },
           );
 
@@ -134,25 +136,20 @@ export function streamToClient({
             break;
           }
 
-          // Record tool calls for persistence (single canonical mapping)
           collectedToolCalls.push(...toGenerationToolCalls(response.toolCalls,),);
-          // Emit tool_call events to client + replay to the live stream consumer
           for (const tc of response.toolCalls) {
             controller.enqueue(new TextEncoder().encode(sseData({ type: "tool_call", toolCall: tc, },),),);
-            // Replay to the live stream consumer (GET /api/generation/stream/:chatId)
             buffer.append(
               "tool_call",
               renderToolCallBlock(tc.function.name, tc.function.arguments,),
             );
           }
 
-          // Add assistant message with tool calls
           currentMessages = [
             ...currentMessages,
             buildToolCallAssistantMessage(roundContent, response.toolCalls,),
           ];
 
-          // Execute tools and append results
           const toolResults = await executeToolCalls(response.toolCalls, {
             db: database,
             actorId: input.actorId,
@@ -165,7 +162,6 @@ export function streamToClient({
           throw new Error(`Tool call loop exceeded max rounds (${MAX_TOOL_ROUNDS})`,);
         }
 
-        // Provider stream completed — handle result
         const result = buildGenerationResult(
           {
             ...finalResponse,
@@ -176,6 +172,15 @@ export function streamToClient({
           finalResponse.finishReason === "cancelled",
           finalResponse.finishReason === "cancelled" ? CancelReason.UserCancel : undefined,
         );
+
+        // BUG-generation-error-handling-gaps: reject empty streamed content.
+        if (!result.content.trim() && finalResponse.finishReason !== "cancelled") {
+          log.warn("Streamed provider returned empty content — rejecting as empty response", {
+            attemptId,
+            finishReason: finalResponse.finishReason,
+          },);
+          throw new Error(`LLM returned empty content (finishReason=${finalResponse.finishReason})`,);
+        }
 
         const messageId = await storeGenerationResult({
           db: database,
@@ -189,8 +194,8 @@ export function streamToClient({
           continuationNumber: input.continuationNumber,
         },);
 
-        // Record generation telemetry event
         if (isTelemetryEnabled()) {
+          // BUG-generation-error-handling-gaps: explicit .catch on telemetry.
           void record(database, {
             eventType: "generation.completed",
             userId,
@@ -204,9 +209,11 @@ export function streamToClient({
               provider: providerName,
               finishReason: finalResponse.finishReason,
             },
+          },).catch((error: unknown,) => {
+            log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
           },);
         }
-        // Background: extract memories from the generated response
+        // BUG-generation-error-handling-gaps: explicit .catch on memory.
         void extractAndStoreMemories(database, {
           actorId: input.actorId,
           chatId: input.chatId,
@@ -214,15 +221,14 @@ export function streamToClient({
           aiContent: result.content,
           config: cfg,
           userId,
+        },).catch((error: unknown,) => {
+          log.error("Memory extraction failed", error instanceof Error ? error : undefined,);
         },);
 
-        // Append final content to buffer for SSE reconnect replay
         buffer.append("stream-update", accumulatedContent,);
-        // Signal done on StreamBuffer for GET /stream/:chatId consumers
         buffer.signalDone();
         scheduleBufferCleanup(input.chatId,);
 
-        // Send done event to inline SSE consumer with final metadata
         controller.enqueue(
           new TextEncoder().encode(
             sseData({
@@ -240,14 +246,12 @@ export function streamToClient({
       } catch (error) {
         streamError = (error as Error).message;
 
-        // Fail tracking
         try {
           await failGeneration({ attemptId, error: error as Error, db: database, },);
         } catch {
           /* empty */
         }
 
-        // Signal error on StreamBuffer for GET /stream/:chatId consumers
         buffer.signalError(streamError,);
         scheduleBufferCleanup(input.chatId,);
 
@@ -256,7 +260,6 @@ export function streamToClient({
       }
     },
     cancel() {
-      // Client disconnected — abort the provider request via controller
       abortController?.abort();
     },
   },);

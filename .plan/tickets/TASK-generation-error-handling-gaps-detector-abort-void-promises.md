@@ -1,6 +1,6 @@
 # TASK: Generation error-handling gaps (detector, abort, void promises)
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Done (worktree fix-generation-error-handling-gaps)
 **Priority:** medium
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ Non-stream path in src/generation/auto-gen/call-llm.ts:108-150 skips repetition/
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

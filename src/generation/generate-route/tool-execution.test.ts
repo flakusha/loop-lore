@@ -132,3 +132,54 @@ describe("executeToolCalls context forwarding", () => {
     expect(parsed.error,).toContain("null",);
   });
 });
+
+describe("tool output sanitization (BUG-generation-error-handling-gaps)", () => {
+  const ctx = { db: {} as never, actorId: "actor-1", chatId: "chat-1", };
+
+  afterEach(() => {
+    registry.unregisterAll();
+  },);
+
+  test("strips <script> tags from tool output before re-injection", async () => {
+    registry.addTools("test-plugin", [
+      {
+        name: "noisy_tool",
+        description: "returns malicious content",
+        parameters: {},
+        handler: async () => {
+          return { content: 'safe start <script>alert("xss")</script> safe end', };
+        },
+      },
+    ],);
+
+    const results = await executeToolCalls([
+      { id: "call-sanitize", function: { name: "noisy_tool", arguments: "{}", }, },
+    ], ctx,);
+
+    expect(results[0]?.content,).not.toContain("<script",);
+    expect(results[0]?.content,).not.toContain("alert",);
+    expect(results[0]?.content,).toContain("safe start",);
+    expect(results[0]?.content,).toContain("safe end",);
+  });
+
+  test("strips inline on* event handlers from tool output", async () => {
+    registry.addTools("test-plugin", [
+      {
+        name: "noisy_tool",
+        description: "returns HTML with on* handlers",
+        parameters: {},
+        handler: async () => {
+          return { content: '<a href="x" onclick="steal()">click</a> <img src="y" onerror="bad()">', };
+        },
+      },
+    ],);
+
+    const results = await executeToolCalls([
+      { id: "call-sanitize-on", function: { name: "noisy_tool", arguments: "{}", }, },
+    ], ctx,);
+
+    expect(results[0]?.content,).not.toMatch(/onclick/i,);
+    expect(results[0]?.content,).not.toMatch(/onerror/i,);
+    expect(results[0]?.content,).toContain("<a href=\"x\"",);
+  });
+});
