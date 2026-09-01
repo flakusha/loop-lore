@@ -29,7 +29,6 @@ export const CSRF_HEADER = "x-csrf-token";
 export const CSRF_COOKIE = "csrf_token";
 export const CSRF_COOKIE_MAX_AGE_SECS = 86_400; // 24h, mirrors Bun.CSRF default expiry
 
-
 /**
  * Routes that mint a new session MUST be exempted from CSRF verification —
  * the sessionId binding principal does not exist until the handler runs.
@@ -46,7 +45,7 @@ export const CSRF_EXEMPT_ROUTES: ReadonlySet<string> = new Set([
   "POST /api/auth/login",
   "POST /api/auth/register",
   "POST /api/demo-login",
-]);
+],);
 
 /** HTTP methods that require CSRF verification when the route is not exempt. */
 const UNSAFE_METHODS: ReadonlySet<string> = new Set([
@@ -230,7 +229,13 @@ export function decideCsrf(
     // header each independently non-leakable. See
     // BUG-csrf-verification-accepts-cookie-only-token-defeating-do.
     if (headerToken === null || cookieToken === null) {
-      opts.logger?.warn("csrf.missing_token", { method, route: routeKey, sessionId: args.sessionId, hasHeader: headerToken !== null, hasCookie: cookieToken !== null, },);
+      opts.logger?.warn("csrf.missing_token", {
+        method,
+        route: routeKey,
+        sessionId: args.sessionId,
+        hasHeader: headerToken !== null,
+        hasCookie: cookieToken !== null,
+      },);
       return { ok: false, cookieToIssue: null, };
     }
     if (headerToken !== cookieToken) {
