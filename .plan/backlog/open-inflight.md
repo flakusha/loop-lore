@@ -8,7 +8,12 @@
 > Rows that mirror a `../priority.md` (index) tier or a section below are removed here.
 > **2026-08-16 update:** Feature matrix items FEAT-055/059/060/062/065/066/067/068/075/045-047/048-051 promoted to P4/P5/P6 tiers. Lint-ts + e2e confirmed closed. 0.1.0 release-blocking: A8 (unwired close-out) + A9 (artifacts + push).
 >
-> **2026-08-21 update:** FEAT-055 (lorebook activation) shipped via `lorebook-activation` worktree — regex keys, key_groups, scan_depth, activation_chance, priority weighting all implemented + tested.
+>
+> **2026-09-01 update:** Dev-fix review found 3 BUGs requiring action (planning only, no code today):
+> one HIGH-severity reopened security-boundary (idempotency user-scope) and two
+> medium-tier coverage fixes (account-tier custom-instructions preamble, dh-ratchet
+> out-of-order tests). See `.tmp/next-batch-2026-09-02-plan.md` for full triage and
+> recommended tomorrow order.
 
 | ID  | Item                                                                                    | Ticket / where                               | Recommend                       | Decision              |
 | --- | --------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------- | --------------------- |
@@ -34,6 +39,9 @@
 | C3  | Assistant tooling remainder — creation wizards + tiered `/commands` (tool-call display ✅) | `../priority-p0-p2.md`                     | ▲ now                           | ✅ **DONE 2026-08-18** — creation wizards (`/create` → prompt templates → quality gates → preview → confirm endpoint) + tiered command registry (`531664d5`, `81e5d1eb`, `19139461`) |
 | D3  | Expand command buttons (GM role switching ✅)                                           | `../priority-p0-p2.md`                        | ▲ now                           | 🟡 partial             |
 | E1  | Unified GM↔assistant view (GM panels ✅ + quest log ✅ 2026-08-12)                      | `../priority-p0-p2.md`                        | ▲ now                           | ✅ **CLOSED 2026-08-20** — unified 5-tab panel wired; `openGmAssistantTab` global registered; `showGmPanel`/`gmAssistantTab` in ui-store; header 🤖/📜/👥 buttons all call `openGmAssistantTab`; story-view/input-area 🎭 buttons now also call `openGmAssistantTab('shadow')` (parity fix, 2026-08-20). Tests: group-chat-matrix 3/3 + frontend 374/374 green. |
+| H1  | Idempotency cache key lacks user scope — cross-user response replay (reopened 2026-09-01) | `BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.md` | ▲ now | 🟡 Reopened; production wiring deleted by `f68a7321`; see git issue 6361c0d. Recover wiring + add cross-user isolation test. |
+| H2  | account-tier custom instructions render as system message without injection preamble (GM override vector) | `BUG-account-tier-custom-instructions-render-as-system-message-wi.md` | ▲ now | 🟡 New (filed 2026-09-01). Inject preamble marker so account-tier precedence is preserved against GM system prompt override. |
+| H3  | dh-ratchet regression tests lack out-of-order delivery across ratchet boundary | `BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md` | ▲ now | 🟡 New (filed 2026-09-01). Add 3-5 cases: skip-1, skip-many, boundary-crossing, replay-with-skip, store-and-forward. |
 
 **Deferred (do not decide now):** F1 (9 AUX LLM enrichment tasks) · G3 (external music
 linking) · G4 (authoring ownership indicators) — these sit in § Hardening / deferred
@@ -88,3 +96,14 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
   `docs/reference/api.md`. Only md-lint (84 issues/12 files) matched. Corrected
   counts now in `TASK-PLAN-LINT-TS-DEBT.md` / row A5. dprint + md-lint gates closed;
   lint-ts remains open (see A5).
+
+- **2026-09-01 dev-fix review backlog (planning only)** — Three BUGs require
+  action before next bugfix-batch: H1 (idempotency user-scope, HIGH),
+  H2 (account-tier custom-instructions preamble, MED), H3 (dh-ratchet
+  out-of-order tests, MED). See `.tmp/next-batch-2026-09-02-plan.md` for
+  recommended tomorrow order and pre-work grep lists. Also: 6 stale
+  `VALID_FIXED_WORKTREE` worktrees (`fix-character-avatar-idor`,
+  `fix-character-xss-batch-doc`, `fix-chat-routes-batch`,
+  `fix-command-dispatch-async-safety`, `fix-csrf-hardening-batch`,
+  `fix-middleware-async-cancellation`) need a clean-or-drop call before
+  piling new work on top.
