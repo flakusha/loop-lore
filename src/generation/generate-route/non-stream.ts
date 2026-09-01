@@ -11,6 +11,18 @@
  *   gain explicit `.catch(…)` so DB failures during these background tasks
  *   cannot surface as unhandled rejections.
  * - Empty `result.content` is rejected as an explicit error.
+ *
+ * Stop-and-respond interrupt (TASK-stop-and-respond-interrupt-semantics):
+ * - Non-streaming responses are fully delivered before this function
+ *   returns, so `deliveryConfirmed = true` is unconditionally set on
+ *   the active generation and the billing/telemetry path is unchanged.
+ * - On the cancellation branch (AbortError / cancelled finishReason),
+ *   we mark `deliveryConfirmed = false` so any future billing query
+ *   that walks the active generation's in-memory state still
+ *   excludes undelivered output. (Today only stream-to-client emits
+ *   telemetry, but this keeps non-stream symmetric for the rare
+ *   race where the abort signal fires between response arrival and
+ *   return.)
  */
 
 import type { Kysely, } from "kysely";
@@ -21,7 +33,7 @@ import { getLogger, } from "../../logger";
 import { extractAndStoreMemories, } from "../../memory";
 import { jsonError, jsonResponse, } from "../../routes/http-utils";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
-import { failGeneration, } from "../cancellation-manager";
+import { activeGenerations, failGeneration, } from "../cancellation-manager";
 import { callWithFailover, } from "../providers/registry";
 import type { GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
 import type { GenerationMessage, } from "../types";
@@ -136,6 +148,14 @@ export async function runNonStreaming({
       provider: providerName,
     },);
 
+    // Stop-and-respond: non-stream responses are fully delivered before
+    // storeGenerationResult returns (no SSE transport to race). Mark
+    // delivery confirmed so in-memory billing views exclude nothing.
+    const active = activeGenerations.get(attemptId,);
+    if (active) {
+      active.deliveryConfirmed = true;
+    }
+
     if (isTelemetryEnabled()) {
       // BUG-generation-error-handling-gaps: explicit .catch so DB outage
       // cannot become an unhandled rejection.
@@ -151,6 +171,7 @@ export async function runNonStreaming({
           model: modelId,
           provider: providerName,
           finishReason: finalResponse.finishReason,
+          deliveryConfirmed: true,
         },
       },).catch((error: unknown,) => {
         log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
@@ -179,6 +200,12 @@ export async function runNonStreaming({
     },);
   } catch (error) {
     const errMsg = (error as Error).message;
+    // Stop-and-respond: cancelled non-stream responses mark the attempt
+    // as not-delivered so any in-flight billing view excludes the token
+    // usage. The persisted row goes through failGeneration which already
+    // records last_rendered_chunk_index on the attempt.
+    const active = activeGenerations.get(attemptId,);
+    if (active) { active.deliveryConfirmed = false; }
     try {
       await failGeneration({ attemptId, error: error as Error, db: database, },);
     } catch {

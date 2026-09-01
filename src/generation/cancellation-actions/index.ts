@@ -28,5 +28,12 @@ export { hasInFlightGeneration, } from "./inflight";
 export { processStreamingChunk, } from "./streaming";
 export type { ProcessStreamingChunkOpts, } from "./streaming";
 
+// ── Side-effect job registry (TTS / image-queue) ──────────
+export {
+  listSideEffectJobs,
+  registerSideEffectJob,
+  unregisterSideEffectJob,
+} from "./side-effects";
+
 // ── Error type ────────────────────────────────────────────
 export { GenerationCancelledError, } from "./error";
