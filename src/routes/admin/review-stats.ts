@@ -46,7 +46,7 @@ export function reviewStatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             db
               .selectFrom("content_flags",)
               .select(db.fn.countAll<number>().as("n",),)
-              .where("status", "in", ["resolved", "upheld",],)
+              .where("status", "in", ["resolved", "confirmed",],)
               .executeTakeFirst(),
             db
               .selectFrom("content_flags",)
