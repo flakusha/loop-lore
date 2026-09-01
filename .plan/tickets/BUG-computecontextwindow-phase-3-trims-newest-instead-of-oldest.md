@@ -3,7 +3,7 @@
 
 # BUG: computeContextWindow phase-3 trims newest instead of oldest
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
 
@@ -13,6 +13,6 @@ context-window.ts:102 keeps oldest, drops newest on overflow. Latent (handlers u
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated (N/A — no public docs reference the trim order)
