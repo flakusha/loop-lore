@@ -158,6 +158,59 @@ describe("PATCH /api/settings", () => {
     expect(body.locale,).toBe("fr",);
   });
 
+  test("accepts account-tier customInstructions within the cap", async () => {
+    const app = createSettingsApp(db, TEST_USER_ID,);
+    const res = await app.handle(
+      new Request("http://localhost/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ customInstructions: "always stay in character", },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as Record<string, unknown>;
+    expect(body.customInstructions,).toBe("always stay in character",);
+  });
+
+  test("rejects customInstructions beyond 5000 chars", async () => {
+    const app = createSettingsApp(db, TEST_USER_ID,);
+    const res = await app.handle(
+      new Request("http://localhost/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ customInstructions: "x".repeat(5001,), },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("rejects non-string customInstructions", async () => {
+    const app = createSettingsApp(db, TEST_USER_ID,);
+    const res = await app.handle(
+      new Request("http://localhost/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ customInstructions: { nested: true, }, },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("null clears customInstructions without dropping sibling keys", async () => {
+    const app = createSettingsApp(db, TEST_USER_ID,);
+    const res = await app.handle(
+      new Request("http://localhost/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ customInstructions: null, },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as Record<string, unknown>;
+    expect(body.customInstructions,).toBeNull();
+    expect(body.theme,).toBe("light",);
+  });
+
   test("returns 401 when no userId", async () => {
     const app = new Elysia({ name: "test-settings-noauth", },)
       .derive(() => ({ userId: null, }))
