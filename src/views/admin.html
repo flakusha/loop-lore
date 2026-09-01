@@ -487,7 +487,7 @@
               <option value="under_review">Under review</option>
               <option value="resolved">Resolved</option>
               <option value="dismissed">Dismissed</option>
-              <option value="upheld">Upheld</option>
+              <option value="confirmed">Upheld</option>
             </select>
             <button class="btn btn-primary btn-xs" @click="loadReview()" :disabled="loadingReview">Refresh</button>
           </div>
@@ -546,7 +546,7 @@
                       x-model="reviewResolution[f.id]"
                     />
                     <button class="btn btn-success btn-xs" @click="resolveFlag(f.id, 'resolved')">Keep</button>
-                    <button class="btn btn-warning btn-xs" @click="resolveFlag(f.id, 'upheld')">Upheld</button>
+                    <button class="btn btn-warning btn-xs" @click="resolveFlag(f.id, 'confirmed')">Upheld</button>
                     <button class="btn btn-danger btn-xs" @click="resolveFlag(f.id, 'dismissed')">Dismiss</button>
                   </div>
                 </div>
