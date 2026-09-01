@@ -489,7 +489,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-chat-seen-stopseenpolling-is-never-called-5s-polling-int.md"
+    "source": ".plan/tickets/BUG-bug-chat-seen-stopseenpolling-is-never-called-5s-polling-int.md",
+    "status": "done"
   },
   "BUG-BUG-CHAT-SERVICE-SEEN-TS-IS-DEAD-CODE-AND-ITS-UPSERT-IS-BROK": {
     "hash": "9230c4f",
@@ -513,7 +514,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.md"
+    "source": ".plan/tickets/BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.md",
+    "status": "done"
   },
   "BUG-BUG-CSRF-VERIFICATION-ACCEPTS-COOKIE-ONLY-TOKEN-DEFEATING-DO": {
     "hash": "2ba7be1",
@@ -525,7 +527,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-csrf-verification-accepts-cookie-only-token-defeating-do.md"
+    "source": ".plan/tickets/BUG-bug-csrf-verification-accepts-cookie-only-token-defeating-do.md",
+    "status": "done"
   },
   "BUG-BUG-HALLUCINATION-GUARD-RUNS-OUTSIDE-TRY-CATCH-AFTER-MESSAGE": {
     "hash": "4c1623e",
@@ -561,7 +564,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-logout-route-exempt-from-csrf-verification-logoff-csrf.md"
+    "source": ".plan/tickets/BUG-bug-logout-route-exempt-from-csrf-verification-logoff-csrf.md",
+    "status": "done"
   },
   "BUG-BUG-MESSAGE-CREATE-ACCEPTS-PARENTID-FROM-ANY-CHAT-CROSS-CHAT": {
     "hash": "b918b96",
@@ -1399,7 +1403,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-e2e-test-client-never-sends-x-csrf-token-114-173-e2e-red-on-.md"
+    "source": ".plan/tickets/BUG-e2e-test-client-never-sends-x-csrf-token-114-173-e2e-red-on-.md",
+    "status": "done"
   },
   "BUG-E2E-TEST-INFRASTRUCTURE-FIXES": {
     "hash": "7e811d7",
@@ -1942,7 +1947,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
+    "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md",
+    "status": "done"
   },
   "BUG-HTTP1HANDLER-SEND-IS-A-SILENT-NO-OP": {
     "hash": "c722708",
@@ -2718,7 +2724,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve.md"
+    "source": ".plan/tickets/BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve.md",
+    "status": "done"
   },
   "BUG-RATE-LIMITER-COLLAPSES-TO-GLOBAL-BUCKET-GETCLIENTIP-RETURNS-": {
     "hash": "ab71933",
