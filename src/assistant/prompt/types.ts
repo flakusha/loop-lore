@@ -125,6 +125,8 @@ export interface AssembleChat {
    * `system.ts` can wrap it.
    */
   world_system_prompt_override?: string | null;
+  /** Per-story custom instructions (story tier of the two-tier steering). */
+  custom_instructions?: string | null;
 }
 
 /** Shared inputs handed to every section builder. */
@@ -152,6 +154,8 @@ export interface AssembleContext {
   outputStyle?: OutputStyleConfig | null;
   /** Resolved response-length config (wires resolveResponseLength into assembly). */
   responseLength?: ResponseLengthConfig | null;
+  /** Account tier of the two-tier custom instructions (null when unset). */
+  userCustomInstructions?: string | null;
 }
 
 /** Builds one prompt section's messages. */
@@ -185,4 +189,5 @@ export const PRIORITY = {
   postHistory: 4,
   examples: 5,
   nsfwPolicy: 0,
+  customInstructions: 0,
 } as const;
