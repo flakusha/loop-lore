@@ -10,7 +10,14 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import type { Logger, } from "../../logger";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
-import { clampFlagLimit, flagContent, getFlagQueue, resolveFlag, } from "./flags";
+import {
+  clampFlagLimit,
+  flagContent,
+  getFlagQueue,
+  hashReporterId,
+  resolveFlag,
+  resolveReporterHashSecret,
+} from "./flags";
 import type { NsfwModerationServiceContext, } from "./types";
 
 let db: Kysely<DB>;
@@ -391,5 +398,91 @@ describe("getFlagQueue status filter (all variants)", () => {
 
     const r = await getFlagQueue({ thisL: makeCtx(), params: { status: "resolved", }, },);
     expect(r.total,).toBe(3,);
+  });
+});
+
+/**
+ * Tests for the production-gated reporter-hash secret resolver.
+ *
+ * The function reads `process.env` on every call, so we can flip
+ * `NODE_ENV` and the two secret vars per-test and call the exported
+ * resolver directly. The module-level `REPORTER_HASH_SECRET` was
+ * captured at import time (under bun's test env) and is unaffected
+ * by these mutations — these tests only exercise the resolver.
+ */
+describe("resolveReporterHashSecret (production gate)", () => {
+  const SAVED_NODE_ENV = process.env["NODE_ENV"];
+  const SAVED_PRIMARY = process.env["NSFW_FLAG_REPORTER_HASH_SECRET"];
+  const SAVED_FALLBACK = process.env["NSFW_MODERATION_HMAC_SECRET"];
+
+  beforeEach(() => {
+    delete process.env["NSFW_FLAG_REPORTER_HASH_SECRET"];
+    delete process.env["NSFW_MODERATION_HMAC_SECRET"];
+  },);
+
+  afterAll(() => {
+    if (SAVED_NODE_ENV === undefined) {
+      delete process.env["NODE_ENV"];
+    } else {
+      process.env["NODE_ENV"] = SAVED_NODE_ENV;
+    }
+    if (SAVED_PRIMARY === undefined) {
+      delete process.env["NSFW_FLAG_REPORTER_HASH_SECRET"];
+    } else {
+      process.env["NSFW_FLAG_REPORTER_HASH_SECRET"] = SAVED_PRIMARY;
+    }
+    if (SAVED_FALLBACK === undefined) {
+      delete process.env["NSFW_MODERATION_HMAC_SECRET"];
+    } else {
+      process.env["NSFW_MODERATION_HMAC_SECRET"] = SAVED_FALLBACK;
+    }
+  },);
+
+  test("throws when NODE_ENV=production and both secrets unset", () => {
+    process.env["NODE_ENV"] = "production";
+    expect(() => resolveReporterHashSecret()).toThrow(
+      /NSFW_FLAG_REPORTER_HASH_SECRET is required in production/,
+    );
+  });
+
+  test("returns NSFW_FLAG_REPORTER_HASH_SECRET when set", () => {
+    process.env["NODE_ENV"] = "production";
+    process.env["NSFW_FLAG_REPORTER_HASH_SECRET"] = "primary-secret-aaaaaaaaaaaaaaaa";
+    expect(resolveReporterHashSecret(),).toBe("primary-secret-aaaaaaaaaaaaaaaa",);
+  });
+
+  test("returns NSFW_MODERATION_HMAC_SECRET when primary is unset", () => {
+    process.env["NODE_ENV"] = "production";
+    process.env["NSFW_MODERATION_HMAC_SECRET"] = "fallback-secret-bbbbbbbbbbbbbb";
+    expect(resolveReporterHashSecret(),).toBe("fallback-secret-bbbbbbbbbbbbbb",);
+  });
+  test("falls back to dev secret only in test/dev NODE_ENV (matches pii-redaction pattern)", () => {
+    process.env["NODE_ENV"] = "test";
+    expect(resolveReporterHashSecret(),).toBe(
+      "loop-lore-nsfw-default-do-not-use-in-prod",
+    );
+    process.env["NODE_ENV"] = "development";
+    expect(resolveReporterHashSecret(),).toBe(
+      "loop-lore-nsfw-default-do-not-use-in-prod",
+    );
+  });
+});
+
+/**
+ * Sanity: hashReporterId() must be deterministic and use the
+ * captured module-level secret. Different ids → different hashes;
+ * same id → same hash.
+ */
+describe("hashReporterId", () => {
+  test("is deterministic for the same id", () => {
+    expect(hashReporterId("user-1",),).toBe(hashReporterId("user-1",),);
+  });
+
+  test("produces different hashes for different ids", () => {
+    expect(hashReporterId("user-1",),).not.toBe(hashReporterId("user-2",),);
+  });
+
+  test("returns a 32-char hex digest prefixed with rh_", () => {
+    expect(hashReporterId("user-1",),).toMatch(/^rh_[0-9a-f]{32}$/,);
   });
 });
