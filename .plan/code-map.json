@@ -1139,6 +1139,10 @@
   ],
   "src/assistant/prompt/sections/custom-instructions.ts": [
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-account-tier-custom-instructions-render-as-system-message-wi.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/chat/prompt-creation.md"
     }
@@ -5825,6 +5829,12 @@
       "source": "docs/spec/encryption-workflow.md"
     }
   ],
+  "src/crypto/e2e/dh-ratchet.bugs.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md"
+    }
+  ],
   "src/crypto/e2e/dh-ratchet.ts": [
     {
       "kind": "ticket",
@@ -9407,6 +9417,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
     },
     {
       "kind": "ticket",
@@ -14575,6 +14589,12 @@
       "source": "docs/spec/nsfw-integration.md"
     }
   ],
+  "src/partials/characters/create-modal.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
+    }
+  ],
   "src/partials/characters/detail-modal.html": [
     {
       "kind": "ticket",
@@ -14606,6 +14626,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-char-editor-import-export-ui.md"
     }
   ],
@@ -14618,11 +14642,21 @@
   "src/partials/gallery/upload-modal.html": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-config-gallery-attachment-idempotent.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-minimal-image-asset-viewer.md"
+    }
+  ],
+  "src/partials/worlds/edit-modal.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
     }
   ],
   "src/partials/worlds/item-create-modal.html": [
@@ -22166,6 +22200,10 @@
     }
   ],
   "src/validation/schemas/chat.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
