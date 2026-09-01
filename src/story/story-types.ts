@@ -128,6 +128,13 @@ export interface GameMasterDecision {
   narration?: string;
   questUpdates: { questId: string; progress: number; note: string }[];
   worldStateChanges: WorldEvent[];
+  /**
+   * True when this decision was produced by a fallback path (e.g. LLM call
+   * failed and the GM service surfaced the hardcoded decision instead). Lets
+   * callers distinguish silently-degraded turns from real LLM output for
+   * telemetry and user-visible diagnostics.
+   */
+  fallback?: boolean;
 }
 
 // ─── Story Session Context ───────────────────────────────────────
