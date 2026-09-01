@@ -12,12 +12,22 @@
  * - Abort is checked AFTER each chunk via `throwIfAborted`, making
  *   cancellation effective mid-stream (not only at start).
  * - Empty content is rejected as an error instead of returning "".
+ *
+ * Stop-and-respond interrupt (TASK-stop-and-respond-interrupt-semantics):
+ * - The provider AbortSignal is wired through from the active generation
+ *   tracker (already on dev) so user-initiated Stop unblocks the provider
+ *   stream synchronously.
+ * - On abort the call returns the partial text already accumulated, which
+ *   is exactly what the SSE path flushed before the abort fired — this
+ *   keeps the auto-gen path symmetric with the manual generate route.
+ * - `lastRenderedChunkIndex` is updated on each successful buffer append
+ *   so the cancel path can persist the truncation point the user saw.
  */
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { processStreamingChunk, } from "../index";
+import { activeGenerations, processStreamingChunk, } from "../cancellation-manager";
 import type { ChunkEvent, } from "../providers/types";
 import type { GenerationMessage, } from "../types";
 import { classifyIntent, } from "./classify-intent";
@@ -57,7 +67,19 @@ export interface CallLlmResult {
 }
 
 /**
- * Run the LLM request for a generated message.
+ * Update lastRenderedChunkIndex on the active generation record. No-op
+ * when the attempt is no longer in flight (e.g. it completed while we
+ * were still flushing chunks). The buffer's append() returns the
+ * sequence number the cancel path uses as the truncation marker.
+ */
+function bumpLastRendered(attemptId: string | undefined, seq: number,): void {
+  if (!attemptId) { return; }
+  const active = activeGenerations.get(attemptId,);
+  if (active) { active.lastRenderedChunkIndex = seq; }
+}
+
+/**
+ * Run the LLM call for a generated message.
  * @param opts
  * @returns The accumulated content, thinking, token usage, and finish reason.
  */
@@ -132,12 +154,15 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
                 log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
               },);
           }
-          buffer?.append(
-            "stream-update",
-            renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", d.markedParse, {
-              thinking: accumulatedThinking,
-            },),
-          );
+          if (buffer) {
+            const seq = buffer.append(
+              "stream-update",
+              renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", d.markedParse, {
+                thinking: accumulatedThinking,
+              },),
+            );
+            bumpLastRendered(tracking?.attemptId, seq,);
+          }
         } else if (chunk.type === "thinking" && chunk.content) {
           accumulatedThinking = (accumulatedThinking ?? "") + chunk.content;
         }
@@ -169,12 +194,15 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
       totalTokens: response.usage.totalTokens,
     };
     finishReason = response.finishReason;
-    buffer?.append(
-      "stream-update",
-      renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", d.markedParse, {
-        thinking: accumulatedThinking,
-      },),
-    );
+    if (buffer) {
+      const seq = buffer.append(
+        "stream-update",
+        renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", d.markedParse, {
+          thinking: accumulatedThinking,
+        },),
+      );
+      bumpLastRendered(tracking?.attemptId, seq,);
+    }
   }
 
   log.info("LLM response", { contentLength: accumulatedContent.length, finishReason, ...tokenUsage, },);
