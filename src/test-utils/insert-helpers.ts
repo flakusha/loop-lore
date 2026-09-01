@@ -432,6 +432,7 @@ export async function insertChats(
     output_style_preset?: string | null;
     data_version?: Generated<number>;
     record_hash?: Generated<string>;
+    custom_instructions?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("chats",).values({

@@ -47,6 +47,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   // Output styling (genre/register/tone)
   _outputStylePreset: "" as "" | OutputStylePreset,
   _outputStyleIntensity: 0.5,
+  // Two-tier custom instructions — story tier (TASK-two-tier-custom-instructions)
+  _customInstructions: "",
 
   toggleDebugView() {
     this._debugView = !this._debugView;
@@ -85,6 +87,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._responseLengthCustom = fields.responseLengthCustom;
     this._outputStylePreset = fields.outputStylePreset;
     this._outputStyleIntensity = fields.outputStyleIntensity;
+    this._customInstructions = chat?.custom_instructions ?? "";
     // Seed per-actor model overrides from saved config (or empty defaults)
     // so the modal bindings have a stable object per participant.
     const actorModels: Record<string, { model: string; provider: string }> = {};
@@ -153,6 +156,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         isPaused: this._groupPaused,
         thinkingVisibility: this._chatSettingsThinkingVisibility,
         outputStylePreset: this._outputStylePreset,
+        customInstructions: this._customInstructions.trim() || null,
       };
       // Key mechanics are immutable once the chat is online — the backend rejects
       // them with 409, so only send them for draft (offline) chats.
@@ -172,6 +176,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         if (chat) {
           chat.name = this._chatSettingsName.trim();
           chat.turn_strategy = this._chatSettingsTurnStrategy;
+          chat.custom_instructions = this._customInstructions.trim() || null;
           setStoryPaused(chat, this._groupPaused,);
           if (globalThis.Alpine) {
             try {

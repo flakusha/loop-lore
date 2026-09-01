@@ -154,6 +154,7 @@
     "model": "모델",
     "maxTokens": "최대 컨텍스트 토큰",
     "temperature": "온도",
+    "customInstructions": "사용자 지정 지침",
     "saveGeneral": "일반 저장",
     "saveApi": "API 설정 저장",
     "testConnection": "연결 테스트",
