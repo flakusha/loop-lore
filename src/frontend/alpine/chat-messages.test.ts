@@ -183,6 +183,10 @@ describe("loadMessages stale-response guard", () => {
       hasMoreMessages: true,
       loadingMessages: false,
       loadingError: null as string | null,
+      // 11c88484 added seen-poller (re)arming to loadMessages; the plain mock
+      // must expose the mixin methods it now calls.
+      stopSeenPolling: () => {},
+      startSeenPolling: () => {},
     } as ChatState;
 
     let releaseA: ((r: Response,) => void) | null = null;
