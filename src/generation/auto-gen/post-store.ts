@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * Post-store step for auto-generation.
  *
  * Applies mood-shift persistence, hallucination detection, completion
  * telemetry, generation-attempt completion, and the group-chat cascade after
  * the assistant message is stored.
+ *
+ * BUG-generation-error-handling-gaps-detector-abort-void-promises:
+ * Telemetry `record()` void calls gain explicit `.catch(…)` so a DB outage
+ * during telemetry does not produce an unhandled rejection that crashes the
+ * post-store call site.
  */
 import type { Kysely, } from "kysely";
 import { MoodService, } from "../../characters/services/mood-service";
@@ -79,11 +83,6 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
   } = opts;
   const log = getLogger().child({ module: "auto-gen", },);
 
-  // ── Mood shift persistence ──────────────────────────────────
-  // If the MoodHook detected a mood shift, apply its delta to the character's
-  // world-scoped mood record so mood auto-tracks the conversation's tone.
-  // Best-effort: a missing mood row (no-op) or a DB failure is logged, never
-  // allowed to fail generation.
   if (moodShiftDelta != null) {
     try {
       await MoodService(database,).applyHappinessDelta(
@@ -96,8 +95,6 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     }
   }
 
-  // ── Hallucination guard ────────────────────────────────────────
-  // Check generated content against known world entities
   const hallucinationAnalysis = await detectHallucinations({
     db: database,
     text: content,
@@ -115,8 +112,10 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
       }),),
     },);
   }
-  // Record generation telemetry event
+
   if (isTelemetryEnabled()) {
+    // BUG-generation-error-handling-gaps: .catch keeps the void promise
+    // from becoming an unhandled rejection if the telemetry DB is down.
     void record(database, {
       eventType: "generation.completed",
       userId,
@@ -130,6 +129,8 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
         provider: resolvedProviderName,
         finishReason,
       },
+    },).catch((error: unknown,) => {
+      log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
     },);
   }
 
@@ -158,10 +159,6 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     d.scheduleBufferCleanup(chatId,);
   }
 
-  // ── Random event injection ─────────────────────────────────
-  // After storing a message, probabilistically generate a random ambient
-  // event and inject it into the context window for the next generation.
-  // Events are low-stakes (weather, NPC, environmental) and non-disruptive.
   if (worldId) {
     try {
       const msgCount = await database
@@ -182,18 +179,13 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
           category: event.category,
           content: event.content.slice(0, 100,),
         },);
-        // Store the event reference for the next generation's context window
-        // The PromptAssembler will pick it up via the events section.
-        // For now, log it — full DB event storage is a follow-up.
       }
     } catch (error) {
       log.warn("random event generation failed (non-fatal)", { err: error, },);
     }
   }
 
-  // ── Group chat cascade: trigger next AI turn if applicable ──
   if (isGroupChat && finishReason !== "cancelled") {
-    // Fire-and-forget: cascade runs in background, errors logged internally
     void (async () => {
       try {
         await d.triggerGroupCascade!({
