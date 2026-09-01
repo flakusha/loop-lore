@@ -225,7 +225,7 @@ const FLAG_QUEUE_LIMIT_CAP = 100;
 const FLAG_DESCRIPTION_MAX = 1000;
 
 /** Resolve the reporter-hash HMAC secret, production-gated. */
-function resolveReporterHashSecret(): string {
+export function resolveReporterHashSecret(): string {
   const envSecret = process.env["NSFW_FLAG_REPORTER_HASH_SECRET"] ??
     process.env["NSFW_MODERATION_HMAC_SECRET"];
   if (envSecret) { return envSecret; }
