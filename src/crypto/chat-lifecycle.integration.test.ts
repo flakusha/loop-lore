@@ -279,117 +279,122 @@ describe("Step 4: Derive chat key, encrypt and decrypt messages", () => {
   test("needsEncryption detects plaintext vs encrypted", () => {
     expect(needsEncryption("standard", "plaintext",),).toBe(true,);
     expect(needsEncryption("none", "plaintext",),).toBe(false,);
-    // isEncryptedPayload checks for { enc, nonce, algo, key_id }
-    const encrypted = '{"enc":"x","nonce":"y","algo":"aes-256-gcm","key_id":"k1"}';
+    // isEncryptedPayload now strictly validates base64: nonce must decode
+    // to 12 bytes, enc must be base64-decodable. The fixture uses a
+    // 12-byte base64 nonce and a valid (though non-decryptable) ciphertext
+    // blob to mirror a real on-the-wire shape without forging crypto.
+    const nonceB64 = new Uint8Array(12,).toBase64();
+    const encB64 = new Uint8Array(16,).toBase64();
+    const encrypted = `{"enc":"${encB64}","nonce":"${nonceB64}","algo":"aes-256-gcm","key_id":"k1"}`;
     expect(needsEncryption("standard", encrypted,),).toBe(false,);
   });
-});
 
-// ══════════════════════════════════════════════════════════
-// Step 5: Third participant joins → key distribution
-// ══════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════
+  // Step 5: Third participant joins → key distribution
+  // ══════════════════════════════════════════════════════════
 
-describe("Step 5: USER_3 joins the chat", () => {
-  test("add USER_3 as participant", async () => {
-    await addParticipant(CHAT_ID, USER_3,);
+  describe("Step 5: USER_3 joins the chat", () => {
+    test("add USER_3 as participant", async () => {
+      await addParticipant(CHAT_ID, USER_3,);
 
-    const actorIds = await getChatParticipantActorIds(db, CHAT_ID,);
-    expect(actorIds.length,).toBe(3,);
-    expect(actorIds,).toContain(USER_3,);
+      const actorIds = await getChatParticipantActorIds(db, CHAT_ID,);
+      expect(actorIds.length,).toBe(3,);
+      expect(actorIds,).toContain(USER_3,);
+    });
+
+    test("distributeKeysOnJoin returns valid chat key", async () => {
+      const chatKey = await distributeKeysOnJoin(db, CHAT_ID, USER_3,);
+
+      expect(chatKey.key,).toBeDefined();
+      expect(chatKey.rawKey.length,).toBe(32,);
+    });
   });
 
-  test("distributeKeysOnJoin returns valid chat key", async () => {
-    const chatKey = await distributeKeysOnJoin(db, CHAT_ID, USER_3,);
+  // ══════════════════════════════════════════════════════════
+  // Step 6: Participant leaves → forward secrecy
+  // ══════════════════════════════════════════════════════════
 
-    expect(chatKey.key,).toBeDefined();
-    expect(chatKey.rawKey.length,).toBe(32,);
-  });
-});
+  describe("Step 6: USER_3 leaves — forward secrecy", () => {
+    test("rotateKeyOnLeave produces a new chat key", async () => {
+      const newKey = await rotateKeyOnLeave(db, CHAT_ID, USER_3,);
 
-// ══════════════════════════════════════════════════════════
-// Step 6: Participant leaves → forward secrecy
-// ══════════════════════════════════════════════════════════
+      expect(newKey.rawKey.length,).toBe(32,);
+      expect(newKey.keyId,).toBeDefined();
+    });
 
-describe("Step 6: USER_3 leaves — forward secrecy", () => {
-  test("rotateKeyOnLeave produces a new chat key", async () => {
-    const newKey = await rotateKeyOnLeave(db, CHAT_ID, USER_3,);
+    test("removed participant no longer in participant list", async () => {
+      await db.deleteFrom("chat_participants",)
+        .where("chat_id", "=", CHAT_ID,)
+        .where("actor_id", "=", USER_3,).execute();
 
-    expect(newKey.rawKey.length,).toBe(32,);
-    expect(newKey.keyId,).toBeDefined();
-  });
+      const remaining = await getChatParticipantActorIds(db, CHAT_ID,);
+      expect(remaining.length,).toBe(2,);
+      expect(remaining,).not.toContain(USER_3,);
 
-  test("removed participant no longer in participant list", async () => {
-    await db.deleteFrom("chat_participants",)
-      .where("chat_id", "=", CHAT_ID,)
-      .where("actor_id", "=", USER_3,).execute();
+      const chatKey = await getChatKey(db, CHAT_ID,);
+      expect(chatKey.rawKey.length,).toBe(32,);
+    });
 
-    const remaining = await getChatParticipantActorIds(db, CHAT_ID,);
-    expect(remaining.length,).toBe(2,);
-    expect(remaining,).not.toContain(USER_3,);
+    test("rotateKeyOnLeave rejects when no participants remain", async () => {
+      const chatId = "chat-empty-leave";
+      await insertChat(chatId, "standard",);
+      await addParticipant(chatId, USER_1,);
 
-    const chatKey = await getChatKey(db, CHAT_ID,);
-    expect(chatKey.rawKey.length,).toBe(32,);
-  });
+      await db.deleteFrom("chat_participants",)
+        .where("chat_id", "=", chatId,).execute();
 
-  test("rotateKeyOnLeave rejects when no participants remain", async () => {
-    const chatId = "chat-empty-leave";
-    await insertChat(chatId, "standard",);
-    await addParticipant(chatId, USER_1,);
-
-    await db.deleteFrom("chat_participants",)
-      .where("chat_id", "=", chatId,).execute();
-
-    await expect(rotateKeyOnLeave(db, chatId, USER_1,),).rejects.toThrow("no remaining participants",);
-  });
-});
-
-// ══════════════════════════════════════════════════════════
-// Step 7: Messages still decrypt after key changes
-// ══════════════════════════════════════════════════════════
-
-describe("Step 7: Message persistence across key changes", () => {
-  test("message encrypted before join still decrypts after key change", async () => {
-    const chatKey = await getChatKey(db, CHAT_ID,);
-    const originalMessage = "Sent before USER_3 joined";
-    const encrypted = await compressThenEncrypt({
-      plaintext: originalMessage,
-      chatKey: chatKey.key,
-      keyId: chatKey.keyId,
-    },);
-
-    // After USER_3 left, participant set is back to USER_1 + USER_2
-    const keyAfterLeave = await getChatKey(db, CHAT_ID,);
-
-    const decrypted = await decryptThenDecompress(encrypted, keyAfterLeave.key,);
-    expect(decrypted,).toBe(originalMessage,);
-  });
-});
-
-// ══════════════════════════════════════════════════════════
-// Step 8: Key rotation after expiry
-// ══════════════════════════════════════════════════════════
-
-describe("Step 8: Key rotation after expiry", () => {
-  test("findExpiredKeys returns empty when rotation disabled", async () => {
-    const expired = await findExpiredKeys(db, 0,);
-    expect(expired.length,).toBe(0,);
+      await expect(rotateKeyOnLeave(db, chatId, USER_1,),).rejects.toThrow("no remaining participants",);
+    });
   });
 
-  test("findExpiredKeys returns empty when all keys are fresh", async () => {
-    const expired = await findExpiredKeys(db, 365,);
-    expect(expired.length,).toBe(0,);
+  // ══════════════════════════════════════════════════════════
+  // Step 7: Messages still decrypt after key changes
+  // ══════════════════════════════════════════════════════════
+
+  describe("Step 7: Message persistence across key changes", () => {
+    test("message encrypted before join still decrypts after key change", async () => {
+      const chatKey = await getChatKey(db, CHAT_ID,);
+      const originalMessage = "Sent before USER_3 joined";
+      const encrypted = await compressThenEncrypt({
+        plaintext: originalMessage,
+        chatKey: chatKey.key,
+        keyId: chatKey.keyId,
+      },);
+
+      // After USER_3 left, participant set is back to USER_1 + USER_2
+      const keyAfterLeave = await getChatKey(db, CHAT_ID,);
+
+      const decrypted = await decryptThenDecompress(encrypted, keyAfterLeave.key,);
+      expect(decrypted,).toBe(originalMessage,);
+    });
   });
 
-  test("runAutoRotation returns empty when no expired keys", async () => {
-    const result = await runAutoRotation(db, 365,);
-    expect(result.checked,).toBe(0,);
-    expect(result.rotated,).toBe(0,);
-    expect(result.errors.length,).toBe(0,);
-  });
+  // ══════════════════════════════════════════════════════════
+  // Step 8: Key rotation after expiry
+  // ══════════════════════════════════════════════════════════
 
-  test("runAutoRotation returns early when rotation disabled", async () => {
-    const result = await runAutoRotation(db, 0,);
-    expect(result.checked,).toBe(0,);
-    expect(result.rotated,).toBe(0,);
+  describe("Step 8: Key rotation after expiry", () => {
+    test("findExpiredKeys returns empty when rotation disabled", async () => {
+      const expired = await findExpiredKeys(db, 0,);
+      expect(expired.length,).toBe(0,);
+    });
+
+    test("findExpiredKeys returns empty when all keys are fresh", async () => {
+      const expired = await findExpiredKeys(db, 365,);
+      expect(expired.length,).toBe(0,);
+    });
+
+    test("runAutoRotation returns empty when no expired keys", async () => {
+      const result = await runAutoRotation(db, 365,);
+      expect(result.checked,).toBe(0,);
+      expect(result.rotated,).toBe(0,);
+      expect(result.errors.length,).toBe(0,);
+    });
+
+    test("runAutoRotation returns early when rotation disabled", async () => {
+      const result = await runAutoRotation(db, 0,);
+      expect(result.checked,).toBe(0,);
+      expect(result.rotated,).toBe(0,);
+    });
   });
 });

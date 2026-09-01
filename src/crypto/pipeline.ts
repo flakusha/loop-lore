@@ -49,7 +49,23 @@ export interface CompressThenEncryptOpts {
  */
 /**
  * Quick check: is this stored content an encrypted payload?
- * Allows detecting client-pre-encrypted content that should skip server-side re-encryption.
+ *
+ * Strict shape validation: the caller must be a well-formed EncryptedPayload
+ * JSON object whose `enc`/`nonce` fields are base64-decodable and whose
+ * `nonce` decodes to the AES-GCM IV length (12 bytes). Without these
+ * checks any user could submit a literal JSON string of the right shape
+ * (e.g. `{ "enc":"x", "nonce":"y", "algo":"aes-256-gcm", "key_id":"abc" }`)
+ * and have the server treat it as client-pre-encrypted content — storing
+ * the forgery verbatim with an attacker-chosen `key_id` and skipping
+ * server-side encryption. See BUG-encrypted-payload-sniffing.
+ *
+ * `key_id` existence in `chat_keys` is NOT verified here (that requires a
+ * DB round-trip); the read path will surface the failure as a decryption
+ * error. The strict shape catches the common forgery attempt: junk string
+ * values that don't decode to valid base64 or that have a wrong-length
+ * nonce.
+ *
+ * For DB-validating checks see `verifyEncryptedPayload` in at-rest.ts.
  * @param storedContent
  */
 export function isEncryptedPayload(storedContent: string,): boolean {
@@ -60,13 +76,31 @@ export function isEncryptedPayload(storedContent: string,): boolean {
   const parsed = safeJsonParse<EncryptedPayload>(trimmed,);
   if (!parsed.ok) { return false; }
   const p = parsed.value;
-  return (
-    typeof p.enc === "string" &&
-    typeof p.nonce === "string" &&
-    typeof p.algo === "string" &&
-    p.algo === "aes-256-gcm" &&
-    typeof p.key_id === "string"
-  );
+  if (
+    typeof p.enc !== "string" ||
+    typeof p.nonce !== "string" ||
+    p.algo !== "aes-256-gcm" ||
+    typeof p.key_id !== "string"
+  ) { return false; }
+  // Validate nonce: AES-GCM requires exactly 12 bytes. Forged payloads
+  // (e.g. `{ "nonce":"y" }`) must NOT pass.
+  let nonceBytes: Uint8Array;
+  try {
+    nonceBytes = Uint8Array.fromBase64(p.nonce,);
+  } catch {
+    return false;
+  }
+  if (nonceBytes.length !== IV_LENGTH) { return false; }
+  // Ciphertext must also be base64-decodable (it can be any non-empty
+  // length; we only require the encoding is valid). Forged placeholders
+  // like `"x"` decode but produce a single byte — that's allowed by AES
+  // itself; the read path's decryption failure catches the rest.
+  try {
+    Uint8Array.fromBase64(p.enc,);
+  } catch {
+    return false;
+  }
+  return true;
 }
 
 /**
