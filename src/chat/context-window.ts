@@ -101,14 +101,15 @@ export function computeContextWindow(
   if (totalTokens > maxTokens) {
     let trimmedTokens = 0;
     const trimmed: MessageRef[] = [];
-    for (const msg of retained) {
+    for (let i = retained.length - 1; i >= 0; i--) {
+      const msg = retained[i]!;
       const msgTokens = msg.tokenCount || estimateTokens(msg.content,);
       if (trimmedTokens + msgTokens <= maxTokens) {
         trimmedTokens += msgTokens;
         trimmed.push(msg,);
       }
-      // else: this message is dropped (overflows budget even as a recent message)
     }
+    trimmed.sort((a, b,) => a.createdAt.localeCompare(b.createdAt,));
     totalTokens = trimmedTokens;
     retained.length = 0;
     retained.push(...trimmed,);
