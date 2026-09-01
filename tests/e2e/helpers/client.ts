@@ -5,7 +5,17 @@
  * E2E Test Client
  *
  * Lightweight fetch wrapper for E2E test flows.
- * Handles base URL, auto-auth token injection, response parsing.
+ * Handles base URL, auto-auth token injection, response parsing, and the
+ * CSRF double-submit dance: unsafe methods (POST/PUT/PATCH/DELETE) must
+ * carry the `csrf_token` cookie AND a matching `X-CSRF-Token` header bound
+ * to the current session (see src/middleware/csrf.ts::decideCsrf).
+ *
+ * Token lifecycle mirrors a browser:
+ *   - any response may Set-Cookie a `csrf_token`; we capture it,
+ *   - a token seen while unauthenticated is bound to `anonymous::<requestId>`
+ *     and NOT reusable once we hold a session → tracked via `csrfSessionBound`,
+ *   - before the first unsafe request with a session, we refresh via one
+ *     authenticated GET (safe method → server issues a session-bound token).
  */
 
 export interface ApiResponse<T = unknown,> {
@@ -16,12 +26,43 @@ export interface ApiResponse<T = unknown,> {
   code: string | null; // Error envelope code (TEST.2)
 }
 
+/** Methods that the CSRF middleware gates (must mirror UNSAFE_METHODS in src/middleware/csrf.ts). */
+const UNSAFE_METHODS: Record<string, true> = { DELETE: true, PATCH: true, POST: true, PUT: true, };
+
 /**
  * Create an API client bound to a test server URL.
- * After login() is called, subsequent requests include the auth cookie.
+ * After login() is called, subsequent requests include the auth cookie and
+ * the CSRF pair for unsafe methods.
+ * @param baseUrl
  */
 export function createClient(baseUrl: string,) {
   let token: string | null = null;
+  let csrfToken: string | null = null;
+  // True when csrfToken was captured on a request that carried a session
+  // token (⇒ bound to sessionId). False for anonymous-bound tokens.
+  let csrfSessionBound = false;
+
+  /** Capture ll_token / csrf_token from any Set-Cookie headers on a response. */
+  function absorbCookies(res: Response,): void {
+    const raws: string[] = typeof res.headers.getSetCookie === "function"
+      ? res.headers.getSetCookie()
+      : [res.headers.get("Set-Cookie",) ?? "",];
+    for (const raw of raws) {
+      const lm = /(?:^|,\s*)ll_token=([^;]+)/.exec(raw,);
+      if (lm) { token = lm[1] ?? null; }
+      const cm = /(?:^|,\s*)csrf_token=([^;]+)/.exec(raw,);
+      if (cm && cm[1] !== "") {
+        csrfToken = cm[1] ?? null;
+        // A csrf cookie arriving on a response to a request that carried the
+        // session token is session-bound; otherwise it is anonymous-bound.
+        csrfSessionBound = carriedSession;
+      }
+    }
+  }
+
+  // Set by request() before fetch so absorbCookies knows whether the
+  // outgoing request was session-authenticated.
+  let carriedSession = false;
 
   async function request<T = unknown,>(
     method: string,
@@ -35,26 +76,33 @@ export function createClient(baseUrl: string,) {
       headers["Content-Type"] = "application/json";
     }
 
-    // Include auth cookie via Cookie header
-    if (token) {
-      headers["Cookie"] = `ll_token=${token}`;
+    // Session-authenticated unsafe request with a missing or anonymous-bound
+    // CSRF token → refresh once via an authenticated GET (issues a
+    // session-bound token, exactly like a browser page load).
+    const isUnsafe = method.toUpperCase() in UNSAFE_METHODS;
+    if (isUnsafe && token && (!csrfToken || !csrfSessionBound)) {
+      await bootstrapCsrf();
+    }
+
+    const cookies: string[] = [];
+    if (token) { cookies.push(`ll_token=${token}`,); }
+    if (csrfToken) { cookies.push(`csrf_token=${csrfToken}`,); }
+    carriedSession = token !== null;
+    if (cookies.length > 0) {
+      headers["Cookie"] = cookies.join("; ",);
+    }
+    if (isUnsafe && csrfToken) {
+      headers["X-CSRF-Token"] = csrfToken;
     }
 
     const res = await fetch(`${baseUrl}${path}`, {
       method,
       headers,
-      body: body instanceof FormData ? body : (body === undefined ? undefined : JSON.stringify(body,)),
+      body: body instanceof FormData ? body : body === undefined ? undefined : JSON.stringify(body,),
       redirect: "manual", // don't follow HX-Redirect
     },);
 
-    // Extract Set-Cookie for auth token
-    const setCookie = res.headers.get("Set-Cookie",);
-    if (setCookie) {
-      const match = /ll_token=([^;]+)/.exec(setCookie,);
-      if (match) {
-        token = match[1] ?? null;
-      }
-    }
+    absorbCookies(res,);
 
     let data: T | null = null;
     let error: string | null = null;
@@ -88,13 +136,23 @@ export function createClient(baseUrl: string,) {
     return { ok: res.ok, status: res.status, data, error, code, };
   }
 
+  /** One authenticated GET so the server re-issues a session-bound CSRF token. */
+  async function bootstrapCsrf(): Promise<void> {
+    await request<unknown>("GET", "/api/auth/me",);
+  }
+
   return {
     get token(): string | null {
       return token;
     },
+    get csrfToken(): string | null {
+      return csrfToken;
+    },
 
     setToken(t: string | null,) {
       token = t;
+      // Binding of any held token is now unknown — force a re-bootstrap.
+      csrfSessionBound = false;
     },
 
     get<T = unknown,>(path: string,): Promise<ApiResponse<T>> {
@@ -127,6 +185,9 @@ export function createClient(baseUrl: string,) {
      */
     async login(): Promise<boolean> {
       const res = await this.post("/api/demo-login",);
+      if (res.ok) {
+        await bootstrapCsrf();
+      }
       return res.ok;
     },
 
@@ -142,16 +203,16 @@ export function createClient(baseUrl: string,) {
       // (limiter is keyed by IP and shared across test servers in the same bun process).
       const { resetLoginRateLimiter, } = await import("@/routes/auth");
       resetLoginRateLimiter();
+      carriedSession = token !== null;
       const res = await fetch(`${baseUrl}/api/auth/login`, {
         method: "POST",
         headers,
         body: formBody,
         redirect: "manual",
       },);
-      const setCookie = res.headers.get("Set-Cookie",);
-      if (setCookie) {
-        const match = /ll_token=([^;]+)/.exec(setCookie,);
-        if (match) { token = match[1] ?? null; }
+      absorbCookies(res,);
+      if (res.ok) {
+        await bootstrapCsrf();
       }
       return res.ok;
     },
@@ -161,6 +222,8 @@ export function createClient(baseUrl: string,) {
      */
     logout() {
       token = null;
+      csrfToken = null;
+      csrfSessionBound = false;
     },
   };
 }
