@@ -1,6 +1,6 @@
 # BUG: dhRatchetDecrypt DH-step branch derives message key from stale previous-epoch chain (f69d0229 regression)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ The aliasing fix in f69d0229 removed the load-bearing line 'chainKey = new Uint8
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
