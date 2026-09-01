@@ -5,20 +5,26 @@
  * LLM-driven decision. Assembles a prompt via {@link PromptAssembler}, calls
  * the injected generateText, and falls back to the hardcoded decision on
  * failure.
+ *
+ * BUG-generation-error-handling-gaps-detector-abort-void-promises:
+ * The hardcoded fallback is no longer silent. Each fallback path emits a
+ * structured `log.warn` and marks the resulting `GameMasterDecision` with
+ * `fallback: true` so callers and telemetry can observe the degraded turn.
  */
 import { PromptAssembler, } from "../../../assistant/prompt-assembler";
+import { getLogger, } from "../../../logger";
 import { GM_SYSTEM_PROMPT, } from "../../../prompts";
+
 import { hardcodedDecision, } from "./hardcoded";
 import type { GmDecisionStrategy, } from "./types";
 
 export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) => {
   const llmConfig = deps.config.llmConfig;
-  // Per-actor model override (multi-LLM story mode). Falls back to the GM
-  // llmConfig when the actor has no explicit assignment.
   const actorModel = deps.config.actorModels?.[actorId];
   const resolvedModel = actorModel?.model ?? llmConfig?.model;
   const resolvedProvider = actorModel?.provider ?? llmConfig?.provider;
   const systemPrompt = llmConfig?.systemPrompt ?? deps.systemPromptDefault ?? GM_SYSTEM_PROMPT;
+  const log = getLogger().child({ module: "gm-decision", },);
 
   const assembler = new PromptAssembler(deps.db,);
   const assembled = await assembler.assemble({
@@ -67,8 +73,29 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
       provider: resolvedProvider,
       model: resolvedModel,
     },);
-  } catch {
-    return hardcodedDecision(deps, context, actorId,);
+  } catch (error) {
+    // BUG-generation-error-handling-gaps: surface the fallback explicitly.
+    log.warn("llmDecision: LLM call failed — falling back to hardcoded decision", {
+      actorId,
+      chatId: deps.chatId,
+      resolvedModel,
+      resolvedProvider,
+      error: error instanceof Error ? error.message : String(error),
+    },);
+    const fallback = await hardcodedDecision(deps, context, actorId,);
+    return { ...fallback, fallback: true, };
+  }
+
+  // BUG-generation-error-handling-gaps: reject empty LLM output explicitly.
+  if (!responseText || !responseText.trim()) {
+    log.warn("llmDecision: empty LLM response — falling back to hardcoded decision", {
+      actorId,
+      chatId: deps.chatId,
+      resolvedModel,
+      resolvedProvider,
+    },);
+    const fallback = await hardcodedDecision(deps, context, actorId,);
+    return { ...fallback, fallback: true, };
   }
 
   return {

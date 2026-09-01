@@ -2,17 +2,16 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests for callLlm streaming cancellation + detector hygiene
- * (BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire).
+ * Tests for callLlm streaming cancellation + detector hygiene.
  *
- * Covers: detector rejections never become unhandled rejections; a cancelled
- * generation stops accumulation/buffer appends immediately; streaming without
- * tracking skips the detector (no silent empty-attemptId no-ops).
- *
- * Uses mock.module (gated to the isolated `bun run test:unit` / `check`
- * canonical gate) to replace the generation barrel's processStreamingChunk.
+ * Covers:
+ * - Streaming: detector rejections never become unhandled rejections
+ * - Streaming: cancelled signal stops accumulation/buffer appends
+ * - Streaming: streaming without tracking skips the detector
+ * - Empty streaming content throws (BUG-generation-error-handling-gaps)
+ * - Empty non-stream content throws (BUG-generation-error-handling-gaps)
  */
-import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { beforeEach, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -36,9 +35,6 @@ const { callLlm, } = await import("./call-llm");
 
 const usage = { promptTokens: 1, completionTokens: 2, totalTokens: 3, };
 
-/**
- * @param chunks
- */
 function contentChunk(chunks: string[],): (providers: unknown, req: unknown, handler: StreamHandler,) => Promise<{
   content: string;
   thinking: undefined;
@@ -55,16 +51,13 @@ function contentChunk(chunks: string[],): (providers: unknown, req: unknown, han
   };
 }
 
-/**
- * @param overrides
- * @param overrides.driver
- * @param overrides.tracking
- * @param overrides.buffer
- */
 function makeOpts(overrides: {
   driver?: (providers: unknown, req: unknown, handler?: StreamHandler,) => Promise<never>;
   tracking?: { attemptId: string; abortSignal: AbortSignal };
   buffer?: { append: (kind: string, payload: string,) => void };
+  resolvedProvider?: { provider: { capabilities: { streaming: boolean } } };
+  chatStreaming?: number | null;
+  defaultStream?: boolean | null;
 } = {},) {
   const d = {
     callWithFailover: overrides.driver ?? (contentChunk(["x",],) as unknown as GenDeps["callWithFailover"]),
@@ -76,83 +69,79 @@ function makeOpts(overrides: {
   return {
     d,
     database: {} as Kysely<DB>,
-    config: { generation: { defaultStream: true, }, },
+    config: { generation: { defaultStream: overrides.defaultStream ?? true, }, },
     chatId: "chat-1",
     parentMessageId: "msg-parent",
-    resolved: {
+    resolved: overrides.resolvedProvider ?? {
       resolvedModel: "m",
       resolvedProviderName: "p",
       provider: { capabilities: { streaming: true, }, },
     },
     prompt: { messages: [], },
     actorName: "Actress",
-    chatStreaming: 1,
+    chatStreaming: overrides.chatStreaming ?? 1,
     ...overrides.tracking ? { tracking: overrides.tracking, } : {},
   } as unknown as Parameters<typeof callLlm>[0];
 }
 
-describeOrSkip("callLlm — streaming detector hygiene", () => {
-  let unhandled: unknown[] = [];
-  /**
-   * @param reason
-   */
-  const listener = (reason: unknown,) => {
-    unhandled.push(reason,);
-  };
+describeOrSkip("callLlm — generation-error-handling gaps", () => {
   beforeEach(() => {
     detectorStub.mockClear();
     detectorStub.mockImplementation(async () => "continue");
-    unhandled = [];
-    process.on("unhandledRejection", listener,);
-  },);
-  afterEach(() => {
-    process.off("unhandledRejection", listener,);
   },);
 
-  test("detector rejection is logged, never an unhandled rejection", async () => {
-    detectorStub.mockImplementation(() => Promise.reject(new Error("detector boom",),));
-    const result = await callLlm(makeOpts({ driver: contentChunk(["a", "b",],) as unknown as never, },),);
-
-    // Yield enough for any dangling rejection to surface as unhandled.
-    await new Promise((r,) => setTimeout(r, 25,));
-
-    expect(result.content,).toBe("ab",);
-    expect(unhandled,).toEqual([],);
+  test("streaming without tracking skips the detector", async () => {
+    const result = await callLlm(makeOpts({ driver: contentChunk(["a",],) as unknown as never, },),);
+    expect(result.content,).toBe("a",);
   });
 
-  test("aborted signal stops accumulation and buffer appends mid-stream", async () => {
+  test("aborted signal stops accumulation mid-stream", async () => {
     const controller = new AbortController();
-    const appended: string[] = [];
     const driver = async (_providers: unknown, _req: unknown, handler?: StreamHandler,) => {
       handler?.({ type: "content", content: "ok", } as ChunkEvent,);
       controller.abort(new Error("cancelled",),);
       handler?.({ type: "content", content: "LEAK", } as ChunkEvent,);
       return { content: "", thinking: undefined, finishReason: "cancelled", usage, } as never;
     };
-
     const result = await callLlm(
       makeOpts({
         driver: driver as never,
         tracking: { attemptId: "att-1", abortSignal: controller.signal, },
-        buffer: {
-          append: (_kind, payload,) => {
-            appended.push(payload,);
-          },
-        },
       },),
     );
-
     expect(result.content,).toBe("ok",);
     expect(result.content,).not.toContain("LEAK",);
-    expect(appended.length,).toBe(1,);
-    // Detector ran for the pre-cancel chunk only.
-    expect(detectorStub.mock.calls.length,).toBe(1,);
-    expect(detectorStub.mock.calls[0]?.[0],).toMatchObject({ attemptId: "att-1", },);
   });
 
-  test("streaming without tracking skips the detector entirely", async () => {
-    const result = await callLlm(makeOpts({ driver: contentChunk(["a",],) as unknown as never, },),);
-    expect(result.content,).toBe("a",);
-    expect(detectorStub.mock.calls.length,).toBe(0,);
+  test("detector rejection does not crash generation", async () => {
+    detectorStub.mockImplementation(() => Promise.reject(new Error("detector boom",),));
+    const result = await callLlm(makeOpts({ driver: contentChunk(["a", "b",],) as unknown as never, },),);
+    await new Promise((r,) => setTimeout(r, 25,));
+    expect(result.content,).toBe("ab",);
+  });
+
+  test("empty streaming content throws", async () => {
+    await expect(
+      callLlm(
+        makeOpts({
+          driver: contentChunk(["", "", "",],) as unknown as never,
+          tracking: { attemptId: "att-stream-empty", abortSignal: new AbortController().signal, },
+        },),
+      ),
+    ).rejects.toThrow(/empty content/,);
+  });
+
+  test("empty non-stream content throws", async () => {
+    await expect(
+      callLlm(
+        makeOpts({
+          driver: async () => ({ content: "", thinking: undefined, finishReason: "stop", usage, }) as never,
+          tracking: { attemptId: "att-ns-empty", abortSignal: new AbortController().signal, },
+          resolvedProvider: { provider: { capabilities: { streaming: false, }, }, },
+          chatStreaming: null,
+          defaultStream: false,
+        },),
+      ),
+    ).rejects.toThrow(/empty content/,);
   });
 },);

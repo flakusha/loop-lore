@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * LLM invocation step for auto-generation.
  *
  * Classifies the user's intent (auxiliary model), resolves streaming vs
  * non-streaming, builds the failover list, and performs the call — feeding
  * streamed chunks to the repetition/policy detector and the render buffer.
+ *
+ * BUG-generation-error-handling-gaps-detector-abort-void-promises:
+ * - Detector also feeds the non-streaming path (was previously skipped).
+ * - Abort is checked AFTER each chunk via `throwIfAborted`, making
+ *   cancellation effective mid-stream (not only at start).
+ * - Empty content is rejected as an error instead of returning "".
  */
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
@@ -73,8 +78,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
   } = opts;
   const log = getLogger().child({ module: "auto-gen", },);
 
-  // ── Auxiliary model intent classification ────────────────────
-  // Use lightweight model to classify intent and adjust generation params
   let maxTokens = 2048;
   if (userMessage) {
     const intent = await classifyIntent(userMessage, config, database,);
@@ -92,7 +95,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
   let accumulatedThinking: string | undefined;
   let tokenUsage: { promptTokens: number; completionTokens: number; totalTokens: number };
   let finishReason: "stop" | "length" | "error" | "cancelled";
-  // Resolution chain: chat.streaming → config.defaultStream → provider capability
   const configDefault = config.generation.defaultStream;
   const providerCapable = resolved.provider.capabilities.streaming;
   const canStream = chatStreaming === 1 ||
@@ -100,7 +102,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     (chatStreaming == null && configDefault == null && providerCapable);
   const buffer = parentMessageId ? d.getOrCreateBuffer(chatId,) : undefined;
 
-  // Build failover list: primary provider first, then all others
   const failoverList = d.buildFailoverList(resolved.resolvedProviderName, config,);
   log.debug("calling LLM", { streaming: canStream, failoverCount: failoverList.length, requestId, },);
   const genReq = {
@@ -113,8 +114,6 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
 
   if (canStream) {
     if (!tracking) {
-      // Initial greeting: no attempt row to key the detector on. Warn loudly
-      // instead of silently disabling repetition/policy detection.
       log.warn("Streaming without generation tracking — repetition/policy detection disabled", {
         chatId,
         requestId,
@@ -124,15 +123,9 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
       failoverList,
       genReq,
       (chunk: ChunkEvent,) => {
-        // A cancelled generation (user cancel or auto-detector via
-        // cancelGeneration) aborts tracking.abortSignal — stop consuming the
-        // stream immediately: no further accumulation or buffer appends.
         if (tracking?.abortSignal.aborted) { return; }
         if (chunk.type === "content" && chunk.content) {
           accumulatedContent += chunk.content;
-          // Feed chunk to repetition/policy detector. On trigger the detector
-          // cancels the generation itself (aborts the signal guarded above).
-          // Detection errors must never become unhandled rejections.
           if (tracking) {
             void processStreamingChunk({ attemptId: tracking.attemptId, chunk: chunk.content, db: database, },)
               .catch((error: unknown,) => {
@@ -148,6 +141,9 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
         } else if (chunk.type === "thinking" && chunk.content) {
           accumulatedThinking = (accumulatedThinking ?? "") + chunk.content;
         }
+        // BUG-generation-error-handling-gaps: throwIfAborted AFTER processing
+        // each chunk so cancellation terminates accumulation promptly.
+        tracking?.abortSignal.throwIfAborted();
       },
     );
     tokenUsage = {
@@ -158,6 +154,13 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     finishReason = finalResponse.finishReason;
   } else {
     const response = await d.callWithFailover(failoverList, genReq,);
+    // BUG-generation-error-handling-gaps: detector also fed on non-stream.
+    if (tracking && response.content) {
+      void processStreamingChunk({ attemptId: tracking.attemptId, chunk: response.content, db: database, },)
+        .catch((error: unknown,) => {
+          log.error("Non-stream response detection failed", error instanceof Error ? error : undefined,);
+        },);
+    }
     accumulatedContent = response.content;
     accumulatedThinking = response.thinking;
     tokenUsage = {
@@ -175,6 +178,13 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
   }
 
   log.info("LLM response", { contentLength: accumulatedContent.length, finishReason, ...tokenUsage, },);
+
+  // BUG-generation-error-handling-gaps: reject empty content (cancellations
+  // are allowed to return empty so retry paths can short-circuit).
+  if (!accumulatedContent.trim() && finishReason !== "cancelled") {
+    log.warn("LLM produced empty content — rejecting as empty response", { finishReason, tokenUsage, requestId, },);
+    throw new Error(`LLM returned empty content (finishReason=${finishReason})`,);
+  }
 
   return { content: accumulatedContent, thinking: accumulatedThinking, tokenUsage, finishReason, };
 }
