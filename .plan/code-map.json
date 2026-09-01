@@ -12049,6 +12049,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
+    }
+  ],
+  "src/generation/generate-route/group-participants.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
     }
   ],
   "src/generation/generate-route/handler.test.ts": [
@@ -12058,6 +12068,10 @@
     }
   ],
   "src/generation/generate-route/handler.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-no-in-flight-generation-check-concurrent-generate-requests-l.md"
@@ -16349,6 +16363,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-conversation-branching.md"
+    }
+  ],
+  "src/routes/chat-context/context-budget.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
     }
   ],
   "src/routes/chat-export.test.ts": [
