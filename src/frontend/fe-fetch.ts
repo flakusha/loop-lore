@@ -23,7 +23,7 @@ import { safeFetch, } from "../utils";
 const API_BASE = "";
 
 /** */
-function getCsrfToken(): string {
+export function getCsrfToken(): string {
   const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]',);
   if (meta?.content) { return meta.content; }
   const match = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie,);

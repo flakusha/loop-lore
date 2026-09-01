@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { feFetch, } from "../fe-fetch";
+import { feFetch, getCsrfToken, } from "../fe-fetch";
 import { normalizeHeaderSlot, } from "./htmx-header";
 import { t, } from "./i18n";
 import { jsonParseOr, } from "./json";
@@ -48,6 +48,12 @@ document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Recor
   if (token) {
     e.detail.headers.Authorization = `Bearer ${token}`;
   }
+  // CSRF double-submit: echo the (non-HttpOnly) csrf_token cookie value in
+  // the header. htmx sends same-origin cookies automatically, so the cookie
+  // half is already present; without this header the both-halves gate
+  // (src/middleware/csrf.ts) rejects every hx-post/hx-put partial with 403.
+  const csrf = getCsrfToken();
+  if (csrf) { e.detail.headers["X-CSRF-Token"] = csrf; }
 },);
 
 document.addEventListener("htmx:beforeSwap", () => {
