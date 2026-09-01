@@ -14,6 +14,7 @@ import { jsonBody, } from "./json";
     provider: "OpenAI",
     model: "",
     temperature: 1,
+    customInstructions: "",
 
     async load() {
       try {
@@ -25,6 +26,7 @@ import { jsonBody, } from "./json";
           if (s.model) { this.model = s.model; }
           if (typeof s.temperature === "number") { this.temperature = s.temperature; }
           if (s.detailLevel) { this.detailLevel = s.detailLevel; }
+          if (typeof s.customInstructions === "string") { this.customInstructions = s.customInstructions; }
         }
       } catch {
         /* ignore */
@@ -47,6 +49,7 @@ import { jsonBody, } from "./json";
         payload.provider = this.provider;
         payload.model = this.model;
         payload.temperature = this.temperature;
+        payload.customInstructions = this.customInstructions.trim() || null;
       }
       try {
         await apiFetch("/api/settings", {

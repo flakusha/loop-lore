@@ -9,6 +9,7 @@
 import { actorHeaderSection, } from "./sections/actor-header";
 import { authorNoteSection, } from "./sections/author-note";
 import { chatHistorySection, } from "./sections/chat-history";
+import { customInstructionsSection, } from "./sections/custom-instructions";
 import { dynamicContextSection, } from "./sections/dynamic-context";
 import { emotionAvatarSection, } from "./sections/emotion-avatar";
 import { eventSection, } from "./sections/events";
@@ -36,6 +37,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   taskClarificationSection,
   nsfwPolicySection,
   authorNoteSection,
+  customInstructionsSection,
   actorHeaderSection,
   pluginAgentRoleSection,
   groupParticipantsSection,

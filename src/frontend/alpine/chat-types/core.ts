@@ -35,6 +35,7 @@ export interface ChatCoreState
     thinking_visibility?: string;
     prompt_override?: string | null;
     quick_replies?: string | null;
+    custom_instructions?: string | null;
   }[];
   activeChat: string | null;
   messages: Message[];
@@ -119,6 +120,8 @@ export interface ChatCoreState
     | "western";
   /** How strongly the style is imposed (0–1). */
   _outputStyleIntensity: number;
+  /** Story tier of the two-tier custom instructions ("" = unset). */
+  _customInstructions: string;
   _promptTemplate: PromptTemplateInfo | null;
   _promptLoading: boolean;
   _promptExpanded: boolean;
