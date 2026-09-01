@@ -36,6 +36,14 @@ export interface BuildPromptOpts {
    * `actors` (filtering `actor_type <> 'user'`).
    */
   groupParticipantIds?: string[];
+  /**
+   * Inject the actor's `mes_example` few-shot pairs into the prompt.
+   * Defaults to `true` for chat-reply so SillyTavern-character authoring
+   * conventions actually take effect; callers (vn-generate, gm-decision)
+   * can still pass `false` explicitly. `GenerateRequest.includeExamples`
+   * overrides this default when provided.
+   */
+  includeExamples?: boolean;
 }
 
 /**
@@ -47,6 +55,7 @@ export interface BuildPromptOpts {
  * @param root0.cfg
  * @param root0.userId
  * @param root0.groupParticipantIds
+ * @param root0.includeExamples
  */
 export async function buildPrompt({
   input,
@@ -56,12 +65,17 @@ export async function buildPrompt({
   cfg,
   userId,
   groupParticipantIds,
+  includeExamples,
 }: BuildPromptOpts,): Promise<{ messages: GenerationMessage[]; systemPrompt: string | undefined }> {
   if (input.prompt && input.prompt.length > 0) {
     return { messages: input.prompt, systemPrompt: input.systemPrompt, };
   }
 
   const assembler = new PromptAssembler(database,);
+  // Caller override > opts override > default-true for chat-reply (mes_example
+  // is the documented SillyTavern few-shot mechanism; the prior default of
+  // false silently broke it — see BUG-example-dialogue-mes-example).
+  const wantsExamples = input.includeExamples ?? includeExamples ?? true;
   const assembled = await assembler.assemble({
     actorId: input.actorId,
     chatId: input.chatId,
@@ -72,6 +86,7 @@ export async function buildPrompt({
     systemPromptFallback: resolveSystemPrompt(cfg.templates.llm, "assistant",),
     config: cfg,
     groupParticipantIds,
+    includeExamples: wantsExamples,
     task: "chat-reply",
   },);
   let messages = assembled.messages;

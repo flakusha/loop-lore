@@ -25,6 +25,8 @@ export interface GenerateRequest {
   provider?: string;
   /** Explicit prompt messages (uses prompt assembler if absent) */
   prompt?: GenerationMessage[];
+  /** Inject actor `mes_example` few-shot pairs into the prompt (default: true for chat-reply). */
+  includeExamples?: boolean;
   /** System prompt override */
   systemPrompt?: string;
   /** Generation params */
