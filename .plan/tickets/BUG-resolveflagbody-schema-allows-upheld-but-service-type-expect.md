@@ -1,6 +1,6 @@
 # BUG: resolveFlagBody schema allows upheld but service type expects confirmed — status mismatch
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (fix landed on branch `fix-nsfw-resolveflagbody-status-enum`; awaiting merge)
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-nsfw-moderation-priority
@@ -11,6 +11,6 @@ shared.ts:109-125 resolveFlagBody schema uses status enum with 'upheld' (and 're
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

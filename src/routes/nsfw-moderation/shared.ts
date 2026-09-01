@@ -132,7 +132,7 @@ export const flagQuery = t.Object({
 },);
 export const resolveFlagBody = t.Object({
   resolution: t.String(),
-  status: t.Union([t.Literal("resolved",), t.Literal("dismissed",), t.Literal("upheld",),],),
+  status: t.Union([t.Literal("resolved",), t.Literal("dismissed",), t.Literal("confirmed",),],),
 },);
 export const auditQuery = t.Object({
   limit: t.Optional(t.String(),),

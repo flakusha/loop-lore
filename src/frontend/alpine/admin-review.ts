@@ -61,7 +61,7 @@ export const adminReview = {
     }
   },
 
-  async resolveFlag(flagId: string, status: "resolved" | "dismissed" | "upheld",) {
+  async resolveFlag(flagId: string, status: "resolved" | "dismissed" | "confirmed",) {
     try {
       const res = await apiFetch(`/api/nsfw/moderation/flags/${flagId}`, {
         method: "PUT",
