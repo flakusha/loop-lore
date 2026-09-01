@@ -1,6 +1,6 @@
 # BUG: Idempotency cache key lacks user scope — cross-user response replay
 
-**Status:** ✅ Fixed (worktree fix-idempotency-user-scoping)
+**Status:** ⬜ Reopened (dev-fix review 2026-09-01 — production wiring coverage deleted by f68a7321; see git issue 6361c0d)
 **Priority:** high
 **Effort:** Medium
 
@@ -11,6 +11,6 @@ In src/middleware/idempotency.ts:67-69, makeKey() builds the idempotency cache k
 ## Acceptance Criteria
 
 - [x] Implementation complete
-- [x] Tests passing (added cross-user isolation test in idempotency.test.ts)
+- [ ] Tests passing (unit-layer isolation test exists at idempotency.test.ts:96, but f68a7321 deleted the only integration test wiring userId through the Elysia middleware chain — production composition is untested)
 - [ ] Documentation updated
 

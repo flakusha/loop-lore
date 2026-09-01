@@ -51,6 +51,18 @@
     "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md",
     "status": "done"
   },
+  "BUG-ACCOUNT-TIER-CUSTOM-INSTRUCTIONS-RENDER-AS-SYSTEM-MESSAGE-WI": {
+    "hash": "d613285",
+    "git_issue": "d613285",
+    "extid": "BUG-ACCOUNT-TIER-CUSTOM-INSTRUCTIONS-RENDER-AS-SYSTEM-MESSAGE-WI",
+    "type": "BUG",
+    "title": "account-tier custom instructions render as system message without injection preamble - GM override vector",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-account-tier-custom-instructions-render-as-system-message-wi.md"
+  },
   "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
     "hash": "f27472d",
     "git_issue": "f27472d",
@@ -1303,6 +1315,18 @@
     "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md",
     "status": "done"
   },
+  "BUG-DH-RATCHET-REGRESSION-TESTS-LACK-OUT-OF-ORDER-DELIVERY-ACROS": {
+    "hash": "63cbc05",
+    "git_issue": "63cbc05",
+    "extid": "BUG-DH-RATCHET-REGRESSION-TESTS-LACK-OUT-OF-ORDER-DELIVERY-ACROS",
+    "type": "BUG",
+    "title": "dh-ratchet regression tests lack out-of-order delivery across ratchet boundary",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md"
+  },
   "BUG-DHRATCHETDECRYPT-DH-STEP-BRANCH-DERIVES-MESSAGE-KEY-FROM-STA": {
     "hash": "ecf20e4",
     "git_issue": "ecf20e4",
@@ -1364,6 +1388,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-e2e-actor-import-and-asset-endpoints-return-500-where-4xx-va.md"
+  },
+  "BUG-E2E-TEST-CLIENT-NEVER-SENDS-X-CSRF-TOKEN-114-173-E2E-RED-ON-": {
+    "hash": "ed92491",
+    "git_issue": "ed92491",
+    "extid": "BUG-E2E-TEST-CLIENT-NEVER-SENDS-X-CSRF-TOKEN-114-173-E2E-RED-ON-",
+    "type": "BUG",
+    "title": "e2e test client never sends X-CSRF-Token - 114/173 e2e red on dev",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-e2e-test-client-never-sends-x-csrf-token-114-173-e2e-red-on-.md"
   },
   "BUG-E2E-TEST-INFRASTRUCTURE-FIXES": {
     "hash": "7e811d7",
@@ -1895,6 +1931,18 @@
     "source": ".plan/tickets/BUG-html-lang-hardcoded-no-dir-handling-for-i18n.md",
     "git_issue": "f835588",
     "status": "done"
+  },
+  "BUG-HTMX-PARTIALS-403-AFTER-CSRF-HARDENING-CONFIGREQUEST-OMITS-X": {
+    "hash": "3610f4d",
+    "git_issue": "3610f4d",
+    "extid": "BUG-HTMX-PARTIALS-403-AFTER-CSRF-HARDENING-CONFIGREQUEST-OMITS-X",
+    "type": "BUG",
+    "title": "htmx partials 403 after CSRF hardening - configRequest omits X-CSRF-Token",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-htmx-partials-403-after-csrf-hardening-configrequest-omits-x.md"
   },
   "BUG-HTTP1HANDLER-SEND-IS-A-SILENT-NO-OP": {
     "hash": "c722708",
@@ -2659,6 +2707,18 @@
     "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md",
     "git_issue": "bc54f30",
     "status": "done"
+  },
+  "BUG-PROMPTOVERRIDE-SCHEMA-HAS-NO-MAXLENGTH-TOKEN-BOMB-STORAGE-VE": {
+    "hash": "9efbed5",
+    "git_issue": "9efbed5",
+    "extid": "BUG-PROMPTOVERRIDE-SCHEMA-HAS-NO-MAXLENGTH-TOKEN-BOMB-STORAGE-VE",
+    "type": "BUG",
+    "title": "promptOverride schema has no maxLength - token-bomb storage vector",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve.md"
   },
   "BUG-RATE-LIMITER-COLLAPSES-TO-GLOBAL-BUCKET-GETCLIENTIP-RETURNS-": {
     "hash": "ab71933",
