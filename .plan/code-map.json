@@ -935,6 +935,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md"
     }
   ],
   "src/assistant/prompt-assembler.ts": [
@@ -1059,6 +1063,10 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     },
     {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/prompt-creation.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/template-system.md"
     }
@@ -1127,6 +1135,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/chat-privacy.md"
+    }
+  ],
+  "src/assistant/prompt/sections/custom-instructions.ts": [
+    {
+      "kind": "frontend",
+      "source": "docs/frontend/chat/prompt-creation.md"
     }
   ],
   "src/assistant/prompt/sections/emotion-avatar.test.ts": [
