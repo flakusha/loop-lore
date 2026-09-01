@@ -33,6 +33,22 @@ createLogger({ level: "error", },);
 if (ISOLATED) {
   mock.module("../cancellation-manager", () => ({
     processStreamingChunk: async () => "continue",
+    activeGenerations: {
+      get: () => undefined,
+      set: () => {},
+      delete: () => {},
+      clear: () => {},
+      has: () => false,
+      size: 0,
+      values: () => [],
+      keys: () => [],
+      entries: () => [],
+      forEach: () => {},
+    },
+    cancelGeneration: () => false,
+    registerSideEffectJob: () => false,
+    unregisterSideEffectJob: () => false,
+    listSideEffectJobs: () => [],
     failGeneration: async () => {/* noop */},
   }),);
   mock.module("./persist", () => ({

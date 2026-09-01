@@ -9,6 +9,20 @@ import type { GenerationEvents, GenerationOptions, GenerationResult, } from "../
 
 // ── Option + data types ────────────────────────────────────
 
+/**
+ * Handle for a side-effect job (TTS / image-queue / etc.) registered with
+ * an in-flight generation attempt. The cancellation manager fan-out invokes
+ * `cancel()` to terminate the job cleanly when the generation is aborted
+ * mid-stream. The job id surfaces in logs / telemetry so operators can
+ * correlate cancellation to the originating attempt.
+ */
+export interface SideEffectJob {
+  readonly id: string;
+  readonly kind: "tts" | "image-queue" | "other";
+  /** Sync-or-async cancellation handler — must not throw. */
+  cancel: () => void | Promise<void>;
+}
+
 /** @internal */
 export interface ActiveGeneration {
   attemptId: string;
@@ -32,6 +46,30 @@ export interface ActiveGeneration {
   partialContent?: string;
   stepIndex: number;
   totalSteps: number;
+  /**
+   * Sequence number of the last SSE / buffer event the client actually
+   * received before a stop / disconnect. `-1` while nothing has been
+   * delivered yet. Updated by stream-to-client.ts when each event is
+   * successfully flushed to the underlying ReadableStream controller,
+   * and persisted on abort by cancellation-actions/cancel.ts so the
+   * server knows exactly where the user-visible response was truncated.
+   */
+  lastRenderedChunkIndex: number;
+  /**
+   * Whether the full response was confirmed delivered to the client.
+   * `false` while streaming; flipped to `true` only when the final
+   * "done" SSE event is flushed. Telemetry / billing hooks MUST check
+   * this flag before recording token usage so undelivered output is
+   * never charged.
+   */
+  deliveryConfirmed: boolean;
+  /**
+   * Side-effect jobs (TTS / image-queue) registered for this attempt.
+   * The cancellation manager iterates and invokes `cancel()` on each
+   * when the generation is aborted mid-stream, so queued jobs do not
+   * keep producing output the user never sees.
+   */
+  sideEffectJobs?: Map<string, SideEffectJob>;
 }
 
 /** */

@@ -38,6 +38,7 @@ export type {
   ActiveGeneration,
   CompleteGenerationOpts,
   FailGenerationOpts,
+  SideEffectJob,
   StartGenerationTrackingOpts,
   UpdateAttemptStatusOpts,
 } from "./types";
