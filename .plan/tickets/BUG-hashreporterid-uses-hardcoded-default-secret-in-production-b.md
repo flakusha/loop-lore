@@ -1,6 +1,6 @@
 # BUG: hashReporterId uses hardcoded default secret in production — breaks PII pseudonymous projection
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (worktree fix-nsfw-hashreporterid-default-secret, pending commit)
 **Priority:** high
 **Effort:** Small
 **Epic:** epic-nsfw-moderation-priority
