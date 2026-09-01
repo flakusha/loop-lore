@@ -144,7 +144,8 @@ describe("Generation E2E", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `ll_token=${api.token}`,
+        Cookie: `ll_token=${api.token}; csrf_token=${api.csrfToken}`,
+        "X-CSRF-Token": api.csrfToken ?? "",
       },
       body: JSON.stringify({
         chatId: SEED.chat.id,
@@ -171,7 +172,8 @@ describe("Generation E2E", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `ll_token=${api.token}`,
+        Cookie: `ll_token=${api.token}; csrf_token=${api.csrfToken}`,
+        "X-CSRF-Token": api.csrfToken ?? "",
       },
       body: JSON.stringify({
         chatId: SEED.chat.id,
@@ -204,7 +206,8 @@ describe("Generation E2E", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `ll_token=${api.token}`,
+        Cookie: `ll_token=${api.token}; csrf_token=${api.csrfToken}`,
+        "X-CSRF-Token": api.csrfToken ?? "",
       },
       body: JSON.stringify({
         chatId: SEED.chat.id,
