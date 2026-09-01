@@ -3,7 +3,7 @@
  */
 
 import { beforeAll, describe, expect, test, } from "bun:test";
-import { compressThenEncrypt, decryptThenDecompress, } from "./pipeline";
+import { compressThenEncrypt, decryptThenDecompress, isEncryptedPayload, } from "./pipeline";
 
 // Use a shorter key ID since the pipeline just stores it, doesn't validate length
 const KEY_ID = "key-001";
@@ -321,5 +321,37 @@ describe("compression algorithm validation", () => {
 
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey,);
     expect(decrypted,).toBe(text,);
+  });
+});
+describe("isEncryptedPayload strict shape validation (BUG-encrypted-payload-sniffing)", () => {
+  test("rejects a forged payload with garbage nonce (not 12 bytes)", () => {
+    const forged = '{"enc":"AAAA","nonce":"y","algo":"aes-256-gcm","key_id":"k1"}';
+    expect(isEncryptedPayload(forged,),).toBe(false,);
+  });
+
+  test("rejects a forged payload with garbage enc (not base64)", () => {
+    const nonceB64 = new Uint8Array(12,).toBase64();
+    const forged = `{"enc":"!!!not-base64!!!","nonce":"${nonceB64}","algo":"aes-256-gcm","key_id":"k1"}`;
+    expect(isEncryptedPayload(forged,),).toBe(false,);
+  });
+
+  test("rejects a forged payload missing required fields", () => {
+    expect(isEncryptedPayload('{"enc":"x","nonce":"y"}',),).toBe(false,);
+  });
+
+  test("rejects wrong algorithm", () => {
+    const nonceB64 = new Uint8Array(12,).toBase64();
+    const encB64 = new Uint8Array(16,).toBase64();
+    const forged = `{"enc":"${encB64}","nonce":"${nonceB64}","algo":"aes-128-cbc","key_id":"k1"}`;
+    expect(isEncryptedPayload(forged,),).toBe(false,);
+  });
+
+  test("accepts a well-formed payload produced by compressThenEncrypt", async () => {
+    const enc = await compressThenEncrypt({
+      plaintext: "real encrypted",
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+    },);
+    expect(isEncryptedPayload(enc,),).toBe(true,);
   });
 });

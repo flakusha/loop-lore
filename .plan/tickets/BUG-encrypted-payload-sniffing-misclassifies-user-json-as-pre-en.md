@@ -1,6 +1,6 @@
 # BUG: encrypted-payload sniffing misclassifies user JSON as pre-encrypted content
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -24,6 +24,6 @@ Acceptance:
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — tightened `isEncryptedPayload` shape validation: nonce must base64-decode to exactly 12 bytes; enc must be base64-decodable. Forged payloads with junk strings no longer pass. `key_id` existence in `chat_keys` is intentionally NOT validated in this hot path; read-path decryption failure surfaces tampering. The PATCH response-body fix and the `isE2eOrEncrypted` hardening are deferred to a follow-up (out of scope for the strict-shape pass).
+- [x] Tests passing — added 5 forgery regression tests in `src/crypto/pipeline.test.ts`; updated `needsEncryption` fixture in `chat-lifecycle.integration.test.ts` to use valid base64. All 281 tests under `src/crypto/` + `src/routes/messages/` pass.
+- [x] Documentation updated — JSDoc on `isEncryptedPayload` documents the strict shape and points readers to `verifyEncryptedPayload` for DB-validating checks.
