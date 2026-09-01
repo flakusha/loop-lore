@@ -28,6 +28,14 @@ export interface BuildPromptOpts {
   cfg: Config;
   /** Authenticated user ID — enables the userPersona prompt section (impersonation/persona). */
   userId?: string;
+  /**
+   * Other chat participant actor IDs (group-chat context). When non-empty
+   * the `groupParticipantsSection` fires and inserts character cards for
+   * the other non-user actors in the chat. Excludes the generating actor
+   * itself. The handler resolves this from `chat_participants` joined with
+   * `actors` (filtering `actor_type <> 'user'`).
+   */
+  groupParticipantIds?: string[];
 }
 
 /**
@@ -38,6 +46,7 @@ export interface BuildPromptOpts {
  * @param root0.resolvedProviderName
  * @param root0.cfg
  * @param root0.userId
+ * @param root0.groupParticipantIds
  */
 export async function buildPrompt({
   input,
@@ -46,6 +55,7 @@ export async function buildPrompt({
   resolvedProviderName,
   cfg,
   userId,
+  groupParticipantIds,
 }: BuildPromptOpts,): Promise<{ messages: GenerationMessage[]; systemPrompt: string | undefined }> {
   if (input.prompt && input.prompt.length > 0) {
     return { messages: input.prompt, systemPrompt: input.systemPrompt, };
@@ -61,6 +71,7 @@ export async function buildPrompt({
     systemPromptOverride: input.systemPrompt,
     systemPromptFallback: resolveSystemPrompt(cfg.templates.llm, "assistant",),
     config: cfg,
+    groupParticipantIds,
     task: "chat-reply",
   },);
   let messages = assembled.messages;
