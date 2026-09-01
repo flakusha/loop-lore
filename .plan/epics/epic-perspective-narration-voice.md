@@ -9,6 +9,7 @@
 **Type:** Feature Epic
 **Tags:** perspective, pov, voice, narration, gm, persona, prompt-assembly
 **Related:** epic-chat-lifecycle-moderation.md (ChatMode axis 3 — response style), epic-assistant-gm-flows.md (GM roles), epic-narration-actor-separation.md (role contracts), epic-immersion-presentation.md
+**Matrix:** `matrix-story-coherence.md` (SC1–SC2, SC9–SC10)
 
 ## Summary
 
@@ -65,3 +66,30 @@ actors mirror the user's voice), generation quality gating, and the frontend com
 - [ ] User set to third person: actor replies stay third person over ≥10 turns (scorer-verified).
 - [ ] Narrator-mode user message is processed as director input, never as an actor action (no gate/skip misfire from epic-immersion-consistency-gate / epic-actor-turn-skip).
 - [ ] Perspective survives reload (persisted per chat + persona override).
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System | What It Provides | How Used |
+| ------ | ---------------- | -------- |
+| epic-narration-actor-separation.md | `MessageKind` | narrator-mode input routes to `narration` kind, actor modes to `actor_action` (SC2) |
+| epic-chat-lifecycle-moderation.md (ChatMode) | orchestration/style axes | perspective added as orthogonal voice axis, not new taxonomy |
+
+### Systems That Depend On This Epic
+
+| System | What It Consumes | How Used |
+| ------ | ---------------- | -------- |
+| epic-immersion-consistency-gate.md | `Perspective` | `narrator`-mode messages bypass the actor gate (SC1) |
+| epic-two-pass-delivery.md | configured voice | draft/final prompt framing (SC9, open) |
+
+### Shared Data Contracts
+
+| Contract | Shared With | Purpose |
+| -------- | ----------- | ------- |
+| `Perspective = first \| third \| narrator` | gate, separation | voice routing + gate bypass |
+
+### Cross-System Events
+
+None — state read synchronously via effective-perspective lookup.
+
