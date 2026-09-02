@@ -222,7 +222,7 @@ Recovery is **user-confirmed** for every merge decision — never silent.
 - [ ] `TASK-resource-provision-quota-engine` — quota counter service; per-minute reset;
   persistence; `QuotaExceededError`
 - [ ] `TASK-resource-provision-external-inference` — inference endpoint provisioning UX
-  + routes (add/list/revoke/test)
+  - routes (add/list/revoke/test)
 - [ ] `TASK-resource-provision-external-storage` — storage endpoint provisioning +
   backup scheduling + integrity check
 - [ ] `TASK-resource-provision-browser-backup` — IndexedDB backup export + hash +
