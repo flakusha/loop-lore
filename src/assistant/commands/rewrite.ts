@@ -10,11 +10,14 @@
  * @module assistant/commands/rewrite
  */
 
-import { type CommandResult, type CommandHandler, registerCommand, } from "./registry";
+import { resolveProvider, } from "../../generation/providers/registry";
+import type { GenerateRequest, } from "../../generation/providers/types";
+import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 
-/** Deps shape for rewriting. */
+/** Deps shape for /rewrite — matches `runCreateGeneration`'s `complete` signature. */
 export interface RewriteDeps {
-  complete?: (req: { prompt: string; systemPrompt: string }) => Promise<{ content: string }>;
+  complete?: (req: GenerateRequest) => Promise<{ content: string }>;
+  model?: string;
 }
 
 /**
@@ -32,13 +35,15 @@ function parseStyle(args: string[],): { style: string; rest: string[] } {
 
 /**
  * Core `/rewrite` logic. Extractable so tests can inject a stub `complete`.
+ * The production handler resolves a provider and passes the bound `complete`
+ * here, mirroring `runCreateGeneration`.
  * @param args
  * @param ctx
  * @param deps
  */
 export async function runRewrite(
   args: string[],
-  ctx: Parameters<CommandHandler>[1],
+  ctx: CommandContext,
   deps: RewriteDeps,
 ): Promise<CommandResult> {
   const { style, rest, } = parseStyle(args,);
@@ -69,7 +74,14 @@ export async function runRewrite(
 
   if (deps.complete) {
     try {
-      const result = await deps.complete({ prompt: targetText, systemPrompt, });
+      const result = await deps.complete({
+        model: deps.model ?? "",
+        messages: [
+          { role: "system", content: systemPrompt, },
+          { role: "user", content: targetText, },
+        ],
+        params: { maxTokens: 512, temperature: 0.7, },
+      },);
       const content = result.content.trim();
       if (content) {
         return {
@@ -91,12 +103,20 @@ export async function runRewrite(
   };
 }
 
-/**
- * @param args
- * @param ctx
- */
-registerCommand("rewrite", (args, ctx,): CommandResult | Promise<CommandResult> => {
-  return runRewrite(args, ctx, {},);
+registerCommand("rewrite", async (args, ctx,): Promise<CommandResult> => {
+  const { config, db, } = ctx;
+  if (!db || !config) {
+    return runRewrite(args, ctx, { complete: async () => ({ content: "", }), },);
+  }
+  try {
+    const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
+    return runRewrite(args, ctx, {
+      complete: (req) => resolved.provider.complete(req,),
+      model: resolved.resolvedModel,
+    },);
+  } catch {
+    return runRewrite(args, ctx, {},);
+  }
 },);
 
 /**

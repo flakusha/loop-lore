@@ -5,26 +5,31 @@
 //
 // /improve — rewrite user text for better quality.
 //
-// Flow: LLM-first (when a `complete` injection is supplied), local-heuristics
-// fallback otherwise. The LLM is given a clarity/flow system prompt; the
-// fallback applies basic capitalization + punctuation cleanup.
+// Flow: LLM-first (when a provider resolves and `complete` is injectable),
+// local-heuristics fallback otherwise. The LLM is given a clarity/flow system
+// prompt; the fallback applies basic capitalization + punctuation cleanup.
 
-import { type CommandResult, type CommandHandler, registerCommand, } from "./registry";
+import { resolveProvider, } from "../../generation/providers/registry";
+import type { GenerateRequest, } from "../../generation/providers/types";
+import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 
-/** Deps shape for /improve. */
+/** Deps shape for /improve — matches `runCreateGeneration`'s `complete` signature. */
 export interface ImproveDeps {
-  complete?: (req: { prompt: string; systemPrompt: string }) => Promise<{ content: string }>;
+  complete?: (req: GenerateRequest) => Promise<{ content: string }>;
+  model?: string;
 }
 
 /**
  * Core `/improve` logic. Extractable so tests can inject a stub `complete`.
+ * The production handler in this file resolves a provider and passes the
+ * bound `complete` here, mirroring `runCreateGeneration`.
  * @param args
  * @param _ctx
  * @param deps
  */
 export async function runImprove(
   args: string[],
-  _ctx: Parameters<CommandHandler>[1],
+  _ctx: CommandContext,
   deps: ImproveDeps,
 ): Promise<CommandResult> {
   const text = args.join(" ",).trim();
@@ -41,7 +46,14 @@ export async function runImprove(
 
   if (deps.complete) {
     try {
-      const result = await deps.complete({ prompt: text, systemPrompt, });
+      const result = await deps.complete({
+        model: deps.model ?? "",
+        messages: [
+          { role: "system", content: systemPrompt, },
+          { role: "user", content: text, },
+        ],
+        params: { maxTokens: 512, temperature: 0.7, },
+      },);
       const content = result.content.trim();
       if (content) {
         return {
@@ -63,8 +75,20 @@ export async function runImprove(
   };
 }
 
-registerCommand("improve", (args, ctx,): CommandResult | Promise<CommandResult> => {
-  return runImprove(args, ctx, {},);
+registerCommand("improve", async (args, ctx,): Promise<CommandResult> => {
+  const { config, db, } = ctx;
+  if (!db || !config) {
+    return runImprove(args, ctx, { complete: async () => ({ content: "", }), },);
+  }
+  try {
+    const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
+    return runImprove(args, ctx, {
+      complete: (req) => resolved.provider.complete(req,),
+      model: resolved.resolvedModel,
+    },);
+  } catch {
+    return runImprove(args, ctx, {},);
+  }
 },);
 
 /**
