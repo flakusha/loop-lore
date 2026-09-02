@@ -257,6 +257,7 @@
 | 🟡 In Progress — XP/loot + combat routes mounted (2026-08-14); registry module, barrel, combat persistence outstanding | RPG Core Wiring & Registry | Medium | High | 4 | [epic-rpg-core-wiring.md](/.plan/epics/epic-rpg-core-wiring.md) |
 | 🟡 In Progress — Phase 1 core (dice/stats/combat/xp/loot) implemented and route-wired (2026-08-14); extended systems split into 6 sub-epics | RPG Mechanics & Extensible Game Systems | Medium | Very High (split into 6 sub-epics) | 0 | [epic-rpg-mechanics.md](/.plan/epics/epic-rpg-mechanics.md) |
 | 🟡 In Progress (7 services wired + quest consolidation `51a7bc01` 2026-08-14; crafting/trade/battle execution shipped `49ee5c1a` 2026-08-18) | RPG Wiring Completion — Phase 3 | High | High | 0 | [epic-rpg-wiring-phase3.md](/.plan/epics/epic-rpg-wiring-phase3.md) |
+| Unknown | Runtime Integrity, Crash Recovery & Fail-Safes | Unknown | Unknown | 0 | [epic-runtime-integrity-fail-safes.md](/.plan/epics/epic-runtime-integrity-fail-safes.md) |
 | 🟡 In Progress (tasks 1-2 complete) | Script Migration to Modular Architecture | Medium | Medium | 0 | [epic-script-migration.md](/.plan/epics/epic-script-migration.md) |
 | Unknown | Security & Sandboxing — Epic | Unknown | Unknown | 27 | [epic-security-sandboxing.md](/.plan/epics/epic-security-sandboxing.md) |
 | Not Started | Security & Sandboxing — Quick Reference | High | High | 0 | [epic-security-sandboxing-quickref.md](/.plan/epics/epic-security-sandboxing-quickref.md) |
@@ -2579,6 +2580,14 @@ A character has one base **setup** (personality, description, scenario, system
 - **Type:** Feature Epic
 - **Tags:** rpg, wiring, routes, items, crafting, trade, loot, services
 - **File:** `.plan/epics/epic-rpg-wiring-phase3.md`
+
+### Runtime Integrity, Crash Recovery & Fail-Safes
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-runtime-integrity-fail-safes.md`
 
 ### Script Migration to Modular Architecture
 
