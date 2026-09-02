@@ -75,7 +75,7 @@ entirely as a "simpler fix" that avoids threading the field through
   needed the new optional field (4 lines: one new import + one new
   field + the surrounding JSDoc). One file changed, not ten.
 - The committed test `calls asyncStore.track() when requestId header
-  + asyncStore are both supplied` exercises the now-live code path;
+  - asyncStore are both supplied` exercises the now-live code path;
   the rejected alternative would have left that path unchanged
   (`asyncStore === undefined` at the call site).
 

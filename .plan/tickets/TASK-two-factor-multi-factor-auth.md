@@ -10,7 +10,7 @@
 
 ## Summary
 
-Add two-factor (2FA) and multi-factor (MFA) authentication support. Enhance security with TOTP, SMS, e-mail verification, and hardware key support. From `epic-two-factor-auth.md`.
+Add two-factor (2FA) and multi-factor (MFA) authentication support. Enhance security with TOTP, e-mail verification, and hardware key support (SMS dropped as a factor — see epic note). Canonical ticket for the 2FA cluster (`TASK-2fa-mfa.md` folded in, `matrix-authentication-channels.md`). From `epic-two-factor-auth.md`.
 
 ## Scope
 
@@ -57,5 +57,7 @@ Add two-factor (2FA) and multi-factor (MFA) authentication support. Enhance secu
 ## Notes
 
 - Reference `epic-two-factor-auth.md` for full system design
+- Channel provisioning + unlock semantics (verified ownership, ladder, cooling-off, messenger/e-mail/OIDC transports): `epic-auth-channel-provisioning.md` work items F1–F10
+- Shared contracts (`FactorKind`/`FactorState`/`ChallengePurpose`, adapter capability flags): `matrix-authentication-channels.md`
 - Consider recovery mechanisms for lost devices
 - Balance security vs. user convenience
