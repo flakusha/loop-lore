@@ -169,7 +169,11 @@ export function createApp(deps: AppDeps,): Elysia {
   // so we can flip the result row to "failed" instead of leaving it pending.
   app.onError((ctx: IdempotencyCtx & { error: unknown },) => {
     const requestId = ctx.requestId;
-    if (requestId) { asyncStore.fail(requestId, String(ctx.error,),); }
+    if (requestId) {
+      // Scope the fail() by userId so a client that guesses another user's
+      // requestId cannot flip their row to "failed". BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+      asyncStore.fail(requestId, { userId: ctx.userId ?? null, }, String(ctx.error,),);
+    }
   },);
 
   // ── Graceful shutdown: flush pending async-store writes

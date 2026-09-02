@@ -16,17 +16,37 @@ import type { DB, } from "../db/schema";
 import { jsonStringifyOr, } from "../utils/safe-json";
 import type { AsyncStoreConfig, } from "./store";
 
-/** Queue entry — discriminated by the status target. */
+/**
+ * Queue entry — discriminated by the status target.
+ *
+ * `progress` / `complete` / `fail` carry `userId` so the update WHERE clause
+ * is scoped by ownership: a client that guesses another user's `requestId`
+ * cannot overwrite or fail that user's row. The `upsert` variant already
+ * stores `userId` in the row, so the same value is used for the matching
+ * scope. `userId === null` indicates an unauthenticated request (the
+ * `x-user-id` header is stripped by `src/elysia-app.ts` when auth fails);
+ * the WHERE clause falls back to `id` alone — anonymous rows never collide
+ * with any authenticated user's row because the row's `user_id` is `null`
+ * at insert time, and SQL `NULL = NULL` is false, so an unauthenticated
+ * client cannot accidentally match an authenticated user's row.
+ * BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+ */
 export type Write =
   | { kind: "upsert"; id: string; method: string; routePattern: string; userId: string | null; startedAt: string }
   | {
     kind: "progress";
     id: string;
+    userId: string | null;
     status: "pending" | "in_progress" | "complete" | "failed" | "expired";
     progress: Record<string, unknown> | null;
   }
-  | { kind: "complete"; id: string; response: { status: number; headers: Record<string, string>; body: string } }
-  | { kind: "fail"; id: string; error: string };
+  | {
+    kind: "complete";
+    id: string;
+    userId: string | null;
+    response: { status: number; headers: Record<string, string>; body: string };
+  }
+  | { kind: "fail"; id: string; userId: string | null; error: string };
 
 /**
  * Apply a single write to the DB. Exported for test fixtures.
@@ -66,14 +86,18 @@ export async function apply(
       return;
     }
     case "progress": {
-      await database
+      // Chain two `.where()` calls: first by `id`, then by `user_id` when
+      // the write is authenticated. Kysely's fluent builder narrows the
+      // return type at each step, so the second `.where()` only compiles
+      // when chained off the first — not when captured into a `let`.
+      const where = database
         .updateTable("request_results",)
         .set({
           status: write.status,
           progress: write.progress === null ? null : jsonStringifyOr(write.progress,) ?? null,
         },)
-        .where("id", "=", write.id,)
-        .execute();
+        .where("id", "=", write.id,);
+      await (write.userId !== null ? where.where("user_id", "=", write.userId,) : where).execute();
       return;
     }
     case "complete": {
@@ -81,7 +105,7 @@ export async function apply(
       // daemon to spill later. We always inline here; offload.ts re-evaluates
       // on its cron tick. If we want eager offload we can move the check.
       const inline = write.response.body.length <= cfg.maxInlineBytes;
-      await database
+      const where = database
         .updateTable("request_results",)
         .set({
           status: "complete",
@@ -92,20 +116,20 @@ export async function apply(
           error: null,
           completed_at: new Date().toISOString(),
         },)
-        .where("id", "=", write.id,)
-        .execute();
+        .where("id", "=", write.id,);
+      await (write.userId !== null ? where.where("user_id", "=", write.userId,) : where).execute();
       return;
     }
     case "fail": {
-      await database
+      const where = database
         .updateTable("request_results",)
         .set({
           status: "failed",
           error: write.error,
           completed_at: new Date().toISOString(),
         },)
-        .where("id", "=", write.id,)
-        .execute();
+        .where("id", "=", write.id,);
+      await (write.userId !== null ? where.where("user_id", "=", write.userId,) : where).execute();
       return;
     }
   }
