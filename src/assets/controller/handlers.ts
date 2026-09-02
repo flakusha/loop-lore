@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 271
+
 /**
  * Asset Controller — per-route handler logic.
  * Each handler receives the shared route deps plus the Elysia request ctx.
