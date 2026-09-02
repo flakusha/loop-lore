@@ -33,32 +33,60 @@ interface SetupOpts {
   handler: (ctx: { body: unknown; request: Request },) => Response | Promise<Response>;
 }
 
-/** Build a minimal app with request-id derive + idempotent before/afterHandle. */
+/** Shape consumed from the Elysia ctx after both derives run. */
+type DerivedCtx = {
+  request: Request;
+  route?: string;
+  requestId?: string;
+  userId?: string | null;
+  response?: unknown;
+};
+
+/**
+ * Build a minimal app with request-id derive + idempotent before/afterHandle.
+ *
+ * Honors `x-user-id` (mirrors the production elysia-app.ts wiring where the
+ * auth derive populates `ctx.userId`). Two authenticated users sharing the
+ * same X-Request-Id MUST NOT replay each other's cached responses — see
+ * BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.
+ */
 function setup(opts: SetupOpts,) {
   const idem = idempotent({ backend: "memory", },);
   const app = new Elysia()
     .derive(requestIdMiddleware(),)
-    .onBeforeHandle((ctx,) =>
-      idem.beforeHandle({
+    .derive((ctx,) => ({
+      userId: ctx.request.headers.get("x-user-id",),
+    }))
+    .onBeforeHandle((rawCtx,) => {
+      const ctx = rawCtx as unknown as DerivedCtx;
+      return idem.beforeHandle({
         request: ctx.request,
         route: ctx.route,
-        requestId: (ctx as unknown as { requestId?: string }).requestId,
-      },)
-    )
-    .onAfterHandle((ctx: { request: Request; route: string; requestId?: string; response?: unknown },) => {
+        requestId: ctx.requestId,
+        userId: ctx.userId ?? null,
+      },);
+    },)
+    .onAfterHandle((rawCtx,) => {
+      const ctx = rawCtx as unknown as DerivedCtx;
       const requestId = ctx.requestId;
       if (!requestId) { return; }
       const response = ctx.response;
       // Cache only successful Response objects. Everything else releases the
       // in-flight slot so the client can retry.
       if (!(response instanceof Response) || response.status >= 300) {
-        idem.release({ method: ctx.request.method, route: ctx.route, requestId, },);
+        idem.release({
+          method: ctx.request.method,
+          route: ctx.route ?? "?",
+          requestId,
+          userId: ctx.userId ?? null,
+        },);
         return;
       }
       idem.recordResponse({
         method: ctx.request.method,
-        route: ctx.route,
+        route: ctx.route ?? "?",
         requestId,
+        userId: ctx.userId ?? null,
         response,
       },);
     },);
@@ -220,6 +248,111 @@ describe("idempotent (Elysia integration)", () => {
       new Request("http://localhost/api/x", {
         method: "POST",
         headers: { "x-request-id": "has space", },
+        body: "{}",
+      },),
+    );
+  });
+
+  test("cross-user isolation: distinct x-user-id on the same X-Request-Id do NOT share cache (BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r)", async () => {
+    let runs = 0;
+    const app = setup({
+      handler: () => {
+        runs++;
+        return new Response(JSON.stringify({ who: "user-A", n: runs, },), {
+          status: 201,
+          headers: { "content-type": "application/json", },
+        },);
+      },
+    },);
+
+    const a1 = await app.handle(
+      new Request("http://localhost/api/x", {
+        method: "POST",
+        headers: { "x-request-id": "shared", "x-user-id": "user-A", "content-type": "application/json", },
+        body: "{}",
+      },),
+    );
+    expect(a1.status,).toBe(201,);
+    expect(await a1.json(),).toEqual({ who: "user-A", n: 1, },);
+    await flushMicrotasks();
+
+    // Same X-Request-Id, DIFFERENT x-user-id → MUST run handler (not replay user-A's body).
+    const b1 = await app.handle(
+      new Request("http://localhost/api/x", {
+        method: "POST",
+        headers: { "x-request-id": "shared", "x-user-id": "user-B", "content-type": "application/json", },
+        body: "{}",
+      },),
+    );
+    expect(b1.status,).toBe(201,);
+    // The body must belong to user-B's handler run, not the replay of user-A.
+    expect(await b1.json(),).toEqual({ who: "user-A", n: 2, },);
+    expect(runs,).toBe(2,);
+  });
+
+  test("cross-user isolation: replay returns the SAME user's cached body (not another user's)", async () => {
+    let runs = 0;
+    const app = setup({
+      handler: (ctx: { request: Request },) => {
+        runs++;
+        const who = ctx.request.headers.get("x-user-id",) ?? "anon";
+        return new Response(JSON.stringify({ who, n: runs, },), {
+          status: 201,
+          headers: { "content-type": "application/json", },
+        },);
+      },
+    },);
+
+    const a1 = await app.handle(
+      new Request("http://localhost/api/x", {
+        method: "POST",
+        headers: { "x-request-id": "shared-2", "x-user-id": "user-A", "content-type": "application/json", },
+        body: "{}",
+      },),
+    );
+    expect(a1.status,).toBe(201,);
+    expect(await a1.json(),).toEqual({ who: "user-A", n: 1, },);
+    await flushMicrotasks();
+
+    // user-A replays → cached response (no new run).
+    const a2 = await app.handle(
+      new Request("http://localhost/api/x", {
+        method: "POST",
+        headers: { "x-request-id": "shared-2", "x-user-id": "user-A", "content-type": "application/json", },
+        body: "{}",
+      },),
+    );
+    expect(a2.status,).toBe(201,);
+    expect(await a2.json(),).toEqual({ who: "user-A", n: 1, },);
+    expect(runs,).toBe(1,);
+  });
+
+  test("cross-user isolation: unauthenticated requests share the anon bucket but not an authenticated user's cache", async () => {
+    let runs = 0;
+    const app = setup({
+      handler: () => {
+        runs++;
+        return new Response("ok", { status: 201, },);
+      },
+    },);
+
+    // Authenticated user primes the cache for this X-Request-Id.
+    await app.handle(
+      new Request("http://localhost/api/x", {
+        method: "POST",
+        headers: { "x-request-id": "shared-3", "x-user-id": "user-A", "content-type": "application/json", },
+        body: "{}",
+      },),
+    );
+    expect(runs,).toBe(1,);
+    await flushMicrotasks();
+
+    // Unauthenticated request with the SAME X-Request-Id → must NOT replay
+    // user-A's body; the anon bucket is separate.
+    await app.handle(
+      new Request("http://localhost/api/x", {
+        method: "POST",
+        headers: { "x-request-id": "shared-3", "content-type": "application/json", },
         body: "{}",
       },),
     );
