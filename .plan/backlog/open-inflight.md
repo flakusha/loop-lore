@@ -14,6 +14,13 @@
 > medium-tier coverage fixes (account-tier custom-instructions preamble, dh-ratchet
 > out-of-order tests). See `.tmp/next-batch-2026-09-02-plan.md` for full triage and
 > recommended tomorrow order.
+>
+> **2026-09-02 update:** planning branch `plan-emotion-avatar-epics` adds the
+> emotion-avatar + asset-platform epic bundle (5 new/extended epics, AV-matrix,
+> 4 P4 tier rows, README registry) — **docs only, no code**; after finalize the
+> `.plan/` bookkeeping pass listed at the end of `matrix-emotion-avatar-assets.md`
+> (ticket creation, duplicate-ticket reconciliation, binding-epic path drift,
+> AV3/AV4/AV8/AV10 open decisions) is required.
 
 | ID  | Item                                                                                    | Ticket / where                               | Recommend                       | Decision              |
 | --- | --------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------- | --------------------- |
@@ -35,6 +42,7 @@
 | F3  | M6 AUX telemetry (tokens/latency per call)                                              | `../priority-release-010.md`                   | ▲ now                           | ✅ **CLOSED 2026-08-18** (worktree `feature-f3-aux-telemetry`) — `aux.call` telemetry events, `generation.completed` latencyMs fix, `GET /api/admin/telemetry/aux` endpoint, 5 AUX sites verified |
 | G2  | World timeline §5.3 forward-event steering + §5.4 cross-story convergence              | `epic-world-timeline*` (cluster B)           | ▲ now                           |                       |
 | G6  | Avatar-gallery visibility inheritance                                                  | `../priority-p0-p2.md`                        | ▲ now                           | ✅ DONE (2026-08-19) — private-character avatar assets gated to owner in gallery grid/search (asset_links -> actors.owner_id) |
+| V1  | Emotion-avatar + asset-platform plan bundle (5 epics + matrix + P4 rows)              | `../matrix-emotion-avatar-assets.md`          | ▲ finalize when convenient      | 🟡 docs committed on branch `plan-emotion-avatar-epics`, finalize pending; post-land `.plan/` bookkeeping pass required (see matrix footer) |
 | W3  | **Push `dev` → `origin/dev`** (Gate C + item-systems + docs-reconcile + memory-selection UI + C1 panel + GM-guided story + 7 wired RPG services) | `dev` (unreleased) | ▲ before release | |
 | C3  | Assistant tooling remainder — creation wizards + tiered `/commands` (tool-call display ✅) | `../priority-p0-p2.md`                     | ▲ now                           | ✅ **DONE 2026-08-18** — creation wizards (`/create` → prompt templates → quality gates → preview → confirm endpoint) + tiered command registry (`531664d5`, `81e5d1eb`, `19139461`) |
 | D3  | Expand command buttons (GM role switching ✅)                                           | `../priority-p0-p2.md`                        | ▲ now                           | 🟡 partial             |

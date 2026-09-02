@@ -103,6 +103,7 @@ root — one file per domain scope:
 | `matrix-federation-swarm.md` | Fediverse, messaging bridges, swarm CRDT sync — feature evaluation + integration points | `epic-federation-swarm-sync.md` |
 | `matrix-precompiled-hot-binaries.md` | Native hot binary module integration points | `epic-precompiled-hot-binaries.md` |
 | `matrix-story-coherence.md` | Story-coherence pipeline — pairwise integration gaps SC1–SC10 + shared contracts across the five coherence epics | `epic-perspective-narration-voice.md` +4 |
+| `matrix-emotion-avatar-assets.md` | Emotion-avatar & asset platform — integration gaps AV1–AV13, shared contracts, ticket reconciliation, post-land bookkeeping | `epic-emotion-avatar-message-binding.md` +5 |
 
 **Naming rule:** every integration matrix is named `matrix-<scope>.md` (kebab-case scope),
 lives at `.plan/` root, and aggregates one domain's cross-system integration surface. Epics
