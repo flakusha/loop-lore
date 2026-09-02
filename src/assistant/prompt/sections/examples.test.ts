@@ -90,7 +90,7 @@ describe("examplesSection — mes_example few-shot injection", () => {
     try {
       const ctx = await setupContext(db, true,);
       expect(examplesSection.enabled(ctx,),).toBe(true,);
-      const out = examplesSection.build(ctx,);
+      const out = await examplesSection.build(ctx,);
       // Two <START> blocks, each producing one user + one character message.
       expect(out,).toHaveLength(4,);
       expect(out[0],).toEqual({ role: "user", content: "Hello there.", },);
