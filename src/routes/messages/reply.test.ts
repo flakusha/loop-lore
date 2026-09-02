@@ -13,6 +13,7 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { AsyncStore, } from "../../async/store";
 import type { Config, } from "../../config/schema";
 import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -20,7 +21,6 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import type { AsyncStore, } from "../../async/store";
 import { maybeAutoReply, } from "./reply";
 
 /**
@@ -214,22 +214,26 @@ describe("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-discard
   },);
 
   /** In-memory AsyncStore mock capturing every track() call. */
-  function makeAsyncStoreMock(): AsyncStore & { tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null; }>; } {
-    const tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null; }> = [];
+  function makeAsyncStoreMock(): AsyncStore & {
+    tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null }>;
+  } {
+    const tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null }> = [];
     return {
       tracks,
-      track(input: { id: string; method: string; routePattern: string; userId: string | null; },) {
+      track(input: { id: string; method: string; routePattern: string; userId: string | null },) {
         tracks.push(input,);
       },
       // The remaining AsyncStore methods are unused by maybeAutoReply but
       // required by the structural interface. Provide no-op stubs.
-      progress() { /* noop */ },
-      complete() { /* noop */ },
-      fail() { /* noop */ },
+      progress() {/* noop */},
+      complete() {/* noop */},
+      fail() {/* noop */},
       read: async () => null,
       flush: async () => undefined,
       config: { offloadThresholdBytes: 0, baseDir: "/tmp/async-store-test", },
-    } as unknown as AsyncStore & { tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null; }>; };
+    } as unknown as AsyncStore & {
+      tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null }>;
+    };
   }
 
   test("calls asyncStore.track() when requestId header + asyncStore are both supplied", async () => {
