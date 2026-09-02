@@ -428,7 +428,7 @@ docs/spec/
 - [ ] `document_references` adjacency inserts are atomic (single transaction)
 
 ### B-R2 (Decomposers)
-- **Hard:** `epic-rag-ingestion.md` (provides `documents` table), `epic-rag-vector-store.md` (vectors), `epic-asset-platform-capabilities.md` (B1 BLAKE3 dedup, B4 captioning, B5 ops language), `epic-aux-enrichment-pipeline.md` (model-role plumbing), `epic-rag-evaluation-observability.md` (B-R4 NDCG@10 rig, B-R5 replay log evidence).
+
 - [ ] Image decomposer emits valid IIIF Presentation 2 manifest for a JPEG fixture
 - [ ] Video decomposer produces >=1 transcript segment per detected scene
 - [ ] Audio decomposer round-trips Whisper transcript + diarization
