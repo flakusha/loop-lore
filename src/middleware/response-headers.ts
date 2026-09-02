@@ -156,6 +156,15 @@ export class ResponseHeaderPolicy {
       if (cfg.nel) { headers.NEL = cfg.nel; }
     }
 
+    // Strict-Transport-Security: only on HTTPS. Detects via URL protocol
+    // (covers TLS-terminating proxies that preserve the original scheme
+    // in the request URL).
+    if (cfg.hsts.enabled && new URL(request.url,).protocol === "https:") {
+      const parts = [`max-age=${cfg.hsts.maxAge}`,];
+      if (cfg.hsts.includeSubDomains) { parts.push("includeSubDomains",); }
+      if (cfg.hsts.preload) { parts.push("preload",); }
+      headers["Strict-Transport-Security"] = parts.join("; ",);
+    }
     return headers;
   }
 
