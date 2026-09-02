@@ -51,6 +51,8 @@
 | H2  | account-tier custom instructions render as system message without injection preamble (GM override vector) | `BUG-account-tier-custom-instructions-render-as-system-message-wi.md` | ▲ now | 🟡 New (filed 2026-09-01). Inject preamble marker so account-tier precedence is preserved against GM system prompt override. |
 | H3  | dh-ratchet regression tests lack out-of-order delivery across ratchet boundary | `BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md` | ▲ now | 🟡 New (filed 2026-09-01). Add 3-5 cases: skip-1, skip-many, boundary-crossing, replay-with-skip, store-and-forward. |
 
+| R1  | **Resource Provision** — new epic: external compute/inference endpoints, encrypted credential store (BYOK), browser backup opt-in with SHA-256 hashing, per-resource quota engine, hash-based reconciliation/recovery. 12 tickets scoped. | `.plan/epics/epic-resource-provision.md` | ▲ now (planning) | 📝 Draft — 12 tasks; see `epic-resource-provision.md` and `.plan/tickets/TASK-resource-provision-*.md` |
+
 **Deferred (do not decide now):** F1 (9 AUX LLM enrichment tasks) · G3 (external music
 linking) · G4 (authoring ownership indicators) — these sit in § Hardening / deferred
 clusters below. Rows removed here: all shipped since last refresh — **B1** (register
