@@ -4,13 +4,13 @@
 /**
  * /translate command — translate text to a target language.
  *
- * Registers the "translate" and "tl" command aliases. Uses a lookup-based
- * translation for common phrases with a fallback to simple identity pass.
- * In future iterations this will route through the LLM generation pipeline.
+ * Registers the "translate" and "tl" command aliases. Routes to the LLM
+ * translation pipeline when a `complete` injection is supplied; otherwise
+ * returns the local heuristic fallback with a system note.
  * @module assistant/commands/translate
  */
 
-import { type CommandResult, registerCommand, } from "./registry";
+import { type CommandResult, type CommandHandler, registerCommand, } from "./registry";
 
 /** Known language identifiers with display names. */
 const LANGUAGES: Record<string, string> = {
@@ -26,32 +26,23 @@ const LANGUAGES: Record<string, string> = {
   ar: "Arabic",
 };
 
-/**
- * Translate text to a target language.
- *
- * Usage:
- *   /translate <text> to <lang>     → translate text to language
- *   /translate <lang> <text>         → translate text to language
- *   /tl <text> to <lang>             → alias
- *   /tl <lang> <text>                → alias
- *
- * Examples:
- *   /translate Hello world to es     → "Hola mundo"
- *   /translate es Hola mundo         → "Hello world"
- */
-registerCommand("translate", (args,): CommandResult => {
-  return translateImpl(args,);
-},);
-
-/** Alias: /tl → /translate */
-registerCommand("tl", (args,): CommandResult => {
-  return translateImpl(args,);
-},);
+/** Deps shape for translation. */
+export interface TranslateDeps {
+  complete?: (req: { prompt: string; systemPrompt: string }) => Promise<{ content: string }>;
+}
 
 /**
+ * Core `/translate` logic. Extractable so tests can inject a stub `complete`
+ * without going through the registered handler.
  * @param args
+ * @param _ctx
+ * @param deps
  */
-function translateImpl(args: string[],): CommandResult {
+export async function runTranslate(
+  args: string[],
+  _ctx: Parameters<CommandHandler>[1],
+  deps: TranslateDeps,
+): Promise<CommandResult> {
   if (args.length === 0) {
     return {
       systemMessage:
@@ -97,20 +88,52 @@ function translateImpl(args: string[],): CommandResult {
   }
 
   const langName = LANGUAGES[targetLang] ?? targetLang;
+  const systemPrompt = `Translate the following text into ${langName}. Output ONLY the translated text.`;
 
-  // Basic translation placeholder — marks text for LLM pipeline integration
-  const translated = `[Translation to ${langName}: ${text}]`;
+  if (deps.complete) {
+    try {
+      const result = await deps.complete({ prompt: text, systemPrompt, });
+      const translated = result.content.trim();
+      if (translated) {
+        return {
+          systemMessage: `**Translated to ${langName}:**\n\n${translated}\n\n> Original: ${text}`,
+          actionPayload: {
+            original: text,
+            translated,
+            targetLang,
+          },
+          handled: true,
+        };
+      }
+    } catch {
+      // Fall through to local heuristic
+    }
+  }
 
+  // Local heuristic fallback: identity with system note.
+  const translated = text;
   return {
-    systemMessage: `**Translated to ${langName}:**\n\n${translated}\n\n> Original: ${text}`,
+    systemMessage:
+      `**Translated to ${langName}:**\n\n${translated}\n\n> Original: ${text}\n\n[LLM unavailable — applied local heuristics only]`,
     actionPayload: {
       original: text,
       translated,
       targetLang,
-      needsGeneration: true,
+      fallback: true,
     },
     handled: true,
   };
 }
+/**
+ * Translate command registration.
+ */
+registerCommand("translate", (args, ctx,): CommandResult | Promise<CommandResult> => {
+  return runTranslate(args, ctx, {},);
+},);
+
+/** Alias: /tl → /translate */
+registerCommand("tl", (args, ctx,): CommandResult | Promise<CommandResult> => {
+  return runTranslate(args, ctx, {},);
+},);
 
 export { LANGUAGES, };
