@@ -1388,7 +1388,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-account-tier-custom-instructions-render-as-system-message-wi.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-world-prompt-overrides-injected-verbatim-as-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-two-tier-custom-instructions.md"
     }
   ],
   "src/assistant/prompt/sections/task-clarification.test.ts": [
@@ -8267,6 +8275,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.md"
     },
     {
       "kind": "ticket",
