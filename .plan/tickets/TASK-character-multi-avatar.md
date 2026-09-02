@@ -362,3 +362,7 @@ High — significant complexity in selection algorithm, config system, and integ
 - TASK-emotions-avatar-edit-model.md — Superseded by this task
 - TASK-character-world-data-separation.md — Per-world avatars
 - epic-character-core-system.md — Parent epic
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Parent design for epic Wardrobe / Loadout Avatar Variants — selection algorithm v2 (TASK-selection-algorithm-v2-outfit-emotion) extends it with the outfit axis.
