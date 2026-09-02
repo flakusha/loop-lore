@@ -32,10 +32,13 @@ if (ISOLATED) {
   }),);
 }
 
-// Stub failGeneration — only invoked on error paths.
+// Stub failGeneration + activeGenerations — non-stream.ts imports both from
+// the cancellation-manager barrel (stop-and-respond records the last-rendered
+// chunk index); an incomplete mock throws "Export named not found" at import.
 if (ISOLATED) {
   mock.module("../cancellation-manager", () => ({
     failGeneration: async () => {},
+    activeGenerations: new Map(),
   }),);
 }
 
