@@ -17,6 +17,12 @@
       "source": ".plan/tickets/TASK-smart-context-pruning.md"
     }
   ],
+  "src/actors.md": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
+    }
+  ],
   "src/actors/actor-resolver.ts": [
     {
       "kind": "spec",
@@ -51,6 +57,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
     },
     {
       "kind": "ticket",
@@ -1727,6 +1737,12 @@
       "source": ".plan/tickets/TASK-middleware-in-progress-status-endpoint-for-long-running-requ.md"
     }
   ],
+  "src/audio-video-sound": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
+    }
+  ],
   "src/auth": [
     {
       "kind": "ticket",
@@ -1821,6 +1837,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
     },
     {
       "kind": "epic",
@@ -4075,6 +4095,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-perspective-narration-voice.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
     },
     {
       "kind": "ticket",
@@ -6545,6 +6569,10 @@
       "source": ".plan/epics/epic-message-seen-state.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-message-seen-post-accepts-arbitrary-state-string-enum-ne.md"
     },
@@ -7297,6 +7325,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-db-reinit-archives-previous-database-instead-of-deleting.md"
+    }
+  ],
+  "src/db/repositories/documents.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
     }
   ],
   "src/db/revalidate.test.ts": [
@@ -15273,6 +15307,12 @@
       "source": ".plan/tickets/TASK-rag-business-features.md"
     }
   ],
+  "src/rag/cache/semantic-cache.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-evaluation-observability.md"
+    }
+  ],
   "src/rag/chunking.ts": [
     {
       "kind": "epic",
@@ -15323,6 +15363,12 @@
       "source": ".plan/tickets/TASK-rag-pipeline-context.md"
     }
   ],
+  "src/rag/document-object.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
+    }
+  ],
   "src/rag/embeddings.ts": [
     {
       "kind": "epic",
@@ -15361,6 +15407,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rag-unified-enrichment.md"
+    }
+  ],
+  "src/rag/eval/metrics.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-evaluation-observability.md"
+    }
+  ],
+  "src/rag/eval/runner.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-evaluation-observability.md"
     }
   ],
   "src/rag/formats/csv.ts": [
@@ -15441,6 +15499,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-document-processing-pipeline.md"
+    }
+  ],
+  "src/rag/hybrid.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-evaluation-observability.md"
     }
   ],
   "src/rag/injection.ts": [
@@ -15709,6 +15777,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rag-context-schema.md"
+    }
+  ],
+  "src/rag/telemetry/citation-clicks.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-rag-evaluation-observability.md"
     }
   ],
   "src/rag/tenancy.ts": [
