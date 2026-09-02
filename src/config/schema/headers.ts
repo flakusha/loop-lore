@@ -94,4 +94,4 @@ export interface HstsConfig {
   includeSubDomains: boolean;
   /** Append `preload`. Off by default — only enable after confirming the entire domain is HTTPS-only. */
   preload: boolean;
- }
+}
