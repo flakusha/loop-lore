@@ -173,6 +173,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           id,
           effectiveContent,
           ctx.request as Request,
+          opts.asyncStore,
         );
         if (reply.replied) {
           return jsonCreated({ ...(await reply.response?.json?.()), context, },);

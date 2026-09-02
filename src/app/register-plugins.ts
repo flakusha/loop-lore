@@ -113,9 +113,8 @@ export interface RegisterPluginsOpts {
  * @param opts
  */
 export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): void {
-  const { database, config, } = opts;
-  const handleOpts = { database, config, };
-
+  const { database, config, asyncStore, } = opts;
+  const handleOpts = { database, config, asyncStore, };
   // ── Public routes (auth runs but won't block) ───────────────────────────────
   app.use(authPublicRoutes(handleOpts,),);
   app.use(healthRoutes(handleOpts,),);
