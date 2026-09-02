@@ -120,3 +120,7 @@ Key material and primitives come from the encryption foundation epic.
 
 - Should rate limits be configurable per adapter instance or global per protocol?
 - Does the config UI skeleton need a plugin registration point for protocol-specific settings panels?
+
+## Related Epics
+
+- `epic-auth-channel-provisioning.md` — consumes `ProtocolAdapter` for 2FA challenge delivery and inbound approval; capability flags `auth-challenge`/`auth-approval` must be added to the adapter capability registry (see `matrix-authentication-channels.md` AC3).
