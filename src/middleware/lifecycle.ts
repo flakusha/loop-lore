@@ -23,6 +23,7 @@
 import {
   type AsyncStore,
   type CapturedResponse,
+  type OwnerRef,
   createAsyncStore,
 } from "../async/store";
 
@@ -36,6 +37,23 @@ const HEADER_BLOCKLIST = new Set([
   "content-length",
   "date",
 ],);
+
+/**
+ * Resolve the userId to attribute this lifecycle event to.
+ *
+ * Reads the `x-user-id` header that `src/elysia-app.ts` derives sets after
+ * authentication resolves. The header is **stripped** when auth fails (see
+ * `src/elysia-app.ts:auth-derive` — `request.headers.delete("x-user-id",)`),
+ * so a client cannot spoof the owner of an unauthenticated request.
+ * Anonymous reads return `null`, matching the `user_id` column on the row
+ * created by `track()` for the same request id.
+ *
+ * BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+ * @param request
+ */
+function resolveOwner(request: Request,): string | null {
+  return request.headers.get("x-user-id",);
+}
 
 /**
  * Capture a snapshot of the response for the result row.
@@ -66,18 +84,19 @@ export function recordLifecycle(asyncStore: AsyncStore,) {
     if (!requestId) { return; }
     const response = ctx.response;
     if (!(response instanceof Response)) { return; }
+    const owner: OwnerRef = { userId: resolveOwner(ctx.request,), };
     try {
       if (response.status >= 400) {
         // Client/server error responses mark the row failed rather than complete
         // so the idempotency layer does not cache a 4xx/5xx for replay.
-        asyncStore.fail(requestId, `HTTP ${response.status}`,);
+        asyncStore.fail(requestId, owner, `HTTP ${response.status}`,);
         return;
       }
       const captured = await capture(response,);
-      asyncStore.complete(requestId, captured,);
+      asyncStore.complete(requestId, owner, captured,);
     } catch (error) {
       // Never fail the client response because of a record error.
-      asyncStore.fail(requestId, `lifecycle capture failed: ${String(error,)}`,);
+      asyncStore.fail(requestId, owner, `lifecycle capture failed: ${String(error,)}`,);
     }
   };
 }

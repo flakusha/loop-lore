@@ -8,11 +8,16 @@ import type { AsyncStoreConfig, } from "./store";
 /**
  * Minimal mock that satisfies the Kysely surface `apply()` actually uses:
  *   insertInto(...).values(...).onConflict(...).execute()
- *   updateTable(...).set(...).where(...).execute()
+ *   updateTable(...).set(...).where(...).where(...).execute()
  *
- * The mock records the query shape so each test asserts the right column
- * was written for each `Write` variant without spinning up a real SQLite
+ * The mock records the query shape so each test asserts the right columns
+ * were written for each `Write` variant without spinning up a real SQLite
  * instance.
+ *
+ * BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user added
+ * a second `.where("user_id", ...)` to scope updates by owner — the
+ * mock's `where()` returns a builder that exposes BOTH `where` (for
+ * chaining) AND `execute` (for the terminal call).
  */
 
 interface RecordedInsert {
@@ -24,12 +29,27 @@ interface RecordedInsert {
 interface RecordedUpdate {
   table: string;
   set: Record<string, unknown>;
+  /** Last `where()` recorded. Multi-where chains collapse to the latest
+   * match per Kysely semantics (each `where` AND-combines into the WHERE
+   * clause; only the last call's column/value is asserted here). */
   where: { column: string; value: unknown };
+  /** All `where()` calls in order — used to assert user-scope chaining. */
+  whereCalls: Array<{ column: string; value: unknown }>;
 }
 
 interface RecordedQuery {
   insert?: RecordedInsert;
   update?: RecordedUpdate;
+}
+
+/**
+ * A Kysely-shaped update chain that supports `where().where().execute()`.
+ * Each `.where()` returns a fresh builder (recording into the same `q`)
+ * so production code that chains scopes works the same as in tests.
+ */
+interface UpdateBuilderMock {
+  where: (column: string, op: string, value: unknown,) => UpdateBuilderMock;
+  execute: () => Promise<void>;
 }
 
 /** */
@@ -76,15 +96,22 @@ function makeMockDb(): {
      */
     function set(set: Record<string, unknown>,): unknown {
       const q: RecordedQuery = {
-        update: { table, set, where: { column: "", value: undefined, }, },
+        update: { table, set, where: { column: "", value: undefined, }, whereCalls: [], },
       };
       queries.push(q,);
-      return {
-        where(column: string, _op: string, value: unknown,): unknown {
-          if (q.update) { q.update.where = { column, value, }; }
-          return { execute: async (): Promise<void> => undefined, };
+      const builder: UpdateBuilderMock = {
+        where(column: string, _op: string, value: unknown,): UpdateBuilderMock {
+          if (q.update) {
+            q.update.where = { column, value, };
+            q.update.whereCalls.push({ column, value, },);
+          }
+          // Return `this` so production code can chain a second `.where()`
+          // (e.g. `where("id", ...).where("user_id", ...)`). Mirrors Kysely.
+          return builder;
         },
+        execute: async (): Promise<void> => undefined,
       };
+      return builder;
     }
     return { set, };
   }
@@ -127,11 +154,12 @@ describe("apply()", () => {
     expect(queries[0]?.insert?.values.started_at,).toBe("2026-08-27T00:00:00Z",);
   });
 
-  test("progress updates status + JSON-stringified payload", async () => {
+  test("progress scopes update by user_id when authenticated", async () => {
     const { queries, mock, } = makeMockDb();
     const write: Write = {
       kind: "progress",
       id: "r-2",
+      userId: "alice",
       status: "in_progress",
       progress: { step: "tokens", n: 42, },
     };
@@ -139,21 +167,38 @@ describe("apply()", () => {
     expect(queries[0]?.update?.table,).toBe("request_results",);
     expect(queries[0]?.update?.set.status,).toBe("in_progress",);
     expect(queries[0]?.update?.set.progress,).toBe('{"step":"tokens","n":42}',);
-    expect(queries[0]?.update?.where,).toEqual({ column: "id", value: "r-2", },);
+    // Authenticated writes scope by (id, user_id) — verify both WHERE clauses.
+    expect(queries[0]?.update?.whereCalls,).toEqual([
+      { column: "id", value: "r-2", },
+      { column: "user_id", value: "alice", },
+    ],);
+  });
+
+  test("progress with null userId only matches id (anonymous bucket)", async () => {
+    const { queries, mock, } = makeMockDb();
+    const write: Write = { kind: "progress", id: "r-x", userId: null, status: "in_progress", progress: null, };
+    await apply(mock, write, cfg,);
+    expect(queries[0]?.update?.set.progress,).toBeNull();
+    // Anonymous writes must NOT scope by user_id — otherwise SQL NULL = NULL
+    // is false and we silently drop the update. Only `id` is included.
+    expect(queries[0]?.update?.whereCalls,).toEqual([
+      { column: "id", value: "r-x", },
+    ],);
   });
 
   test("progress with null payload writes null (not 'null')", async () => {
     const { queries, mock, } = makeMockDb();
-    const write: Write = { kind: "progress", id: "r-x", status: "in_progress", progress: null, };
+    const write: Write = { kind: "progress", id: "r-x", userId: "alice", status: "in_progress", progress: null, };
     await apply(mock, write, cfg,);
     expect(queries[0]?.update?.set.progress,).toBeNull();
   });
 
-  test("complete inlines when body fits, JSON-stringifies headers, sets completed_at", async () => {
+  test("complete inlines when body fits, JSON-stringifies headers, sets completed_at + scopes by user", async () => {
     const { queries, mock, } = makeMockDb();
     const write: Write = {
       kind: "complete",
       id: "r-3",
+      userId: "alice",
       response: {
         status: 201,
         headers: { "content-type": "application/json", "x-trace": "t", },
@@ -166,6 +211,10 @@ describe("apply()", () => {
     expect(queries[0]?.update?.set.response_headers,).toBe('{"content-type":"application/json","x-trace":"t"}',);
     expect(queries[0]?.update?.set.response_body,).toBe("ok",);
     expect(queries[0]?.update?.set.completed_at,).toMatch(/^\d{4}-\d{2}-\d{2}T/,);
+    expect(queries[0]?.update?.whereCalls,).toEqual([
+      { column: "id", value: "r-3", },
+      { column: "user_id", value: "alice", },
+    ],);
   });
 
   test("complete nulls response_body when body exceeds maxInlineBytes", async () => {
@@ -173,6 +222,7 @@ describe("apply()", () => {
     const write: Write = {
       kind: "complete",
       id: "r-4",
+      userId: "alice",
       response: { status: 200, headers: {}, body: "x".repeat(cfg.maxInlineBytes + 1,), },
     };
     await apply(mock, write, cfg,);
@@ -180,13 +230,25 @@ describe("apply()", () => {
     expect(queries[0]?.update?.set.status,).toBe("complete",);
   });
 
-  test("fail marks failed and records the error message", async () => {
+  test("fail scopes update by user_id when authenticated", async () => {
     const { queries, mock, } = makeMockDb();
-    const write: Write = { kind: "fail", id: "r-5", error: "boom", };
+    const write: Write = { kind: "fail", id: "r-5", userId: "alice", error: "boom", };
     await apply(mock, write, cfg,);
     expect(queries[0]?.update?.set.status,).toBe("failed",);
     expect(queries[0]?.update?.set.error,).toBe("boom",);
     expect(queries[0]?.update?.set.completed_at,).toMatch(/^\d{4}-\d{2}-\d{2}T/,);
-    expect(queries[0]?.update?.where,).toEqual({ column: "id", value: "r-5", },);
+    expect(queries[0]?.update?.whereCalls,).toEqual([
+      { column: "id", value: "r-5", },
+      { column: "user_id", value: "alice", },
+    ],);
+  });
+
+  test("fail with null userId only matches id (anonymous bucket)", async () => {
+    const { queries, mock, } = makeMockDb();
+    const write: Write = { kind: "fail", id: "r-anon", userId: null, error: "x", };
+    await apply(mock, write, cfg,);
+    expect(queries[0]?.update?.whereCalls,).toEqual([
+      { column: "id", value: "r-anon", },
+    ],);
   });
 });
