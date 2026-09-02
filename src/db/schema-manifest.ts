@@ -419,6 +419,9 @@ export const SCHEMA = new SchemaManifest()
     total_steps: col("integer", { hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    last_rendered_chunk_index: col("integer",),
+    delivery_confirmed_at: col("text",),
+    side_effect_jobs_cancelled: col("integer", { hasDefault: true, },),
   },)
   .table("group_initiatives", {
     chat_id: col("text", { notNull: true, },),
