@@ -61,6 +61,12 @@ export interface ProgressUpdate {
   progress?: Record<string, unknown>;
 }
 
+/** Identity carried on every write so `apply()` can scope by owner. */
+export interface OwnerRef {
+  /** User id (null = anonymous / unauthenticated). */
+  userId: string | null;
+}
+
 /** Public configuration knobs. All have safe defaults. */
 export interface AsyncStoreConfig {
   /** Max inlined `response_body` bytes (default 1 MiB). Larger → offload. */
@@ -139,19 +145,43 @@ export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig 
         startedAt: new Date().toISOString(),
       },);
     },
-    progress(id: string, update: ProgressUpdate,) {
+    /**
+     * Push a progress update. The owner must match the `track()` caller —
+     * a client that guesses another user's requestId cannot push progress
+     * on their row. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+     * @param id
+     * @param owner
+     * @param update
+     */
+    progress(id: string, owner: OwnerRef, update: ProgressUpdate,) {
       enqueue({
         kind: "progress",
         id,
+        userId: owner.userId,
         status: "in_progress",
         progress: update.progress ?? null,
       },);
     },
-    complete(id: string, response: CapturedResponse,) {
-      enqueue({ kind: "complete", id, response, },);
+    /**
+     * Mark a request complete. Scoped by `owner.userId` so a client that
+     * guesses another user's requestId cannot overwrite their cached
+     * response. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+     * @param id
+     * @param owner
+     * @param response
+     */
+    complete(id: string, owner: OwnerRef, response: CapturedResponse,) {
+      enqueue({ kind: "complete", id, userId: owner.userId, response, },);
     },
-    fail(id: string, error: string,) {
-      enqueue({ kind: "fail", id, error, },);
+    /**
+     * Mark a request failed. Scoped by `owner.userId` for the same reason
+     * as `complete()`. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+     * @param id
+     * @param owner
+     * @param error
+     */
+    fail(id: string, owner: OwnerRef, error: string,) {
+      enqueue({ kind: "fail", id, userId: owner.userId, error, },);
     },
     async flush(): Promise<void> {
       // Spin until the queue is empty. Used by tests + graceful shutdown.
@@ -187,9 +217,9 @@ export interface AsyncStore {
     routePattern: string;
     userId: string | null;
   },): void;
-  progress(id: string, update: ProgressUpdate,): void;
-  complete(id: string, response: CapturedResponse,): void;
-  fail(id: string, error: string,): void;
+  progress(id: string, owner: OwnerRef, update: ProgressUpdate,): void;
+  complete(id: string, owner: OwnerRef, response: CapturedResponse,): void;
+  fail(id: string, owner: OwnerRef, error: string,): void;
   flush(): Promise<void>;
   read(id: string,): Promise<RequestResultRow | null>;
   readonly config: Required<AsyncStoreConfig>;
