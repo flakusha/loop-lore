@@ -77,3 +77,7 @@ already enumerates them). Effort: small.
       compatible).
 - [ ] New unit tests cover `action_first` and `context_first` boost paths.
 - [ ] `bun run check` green.
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Prerequisite for epic Wardrobe selection ladder (TASK-selection-algorithm-v2-outfit-emotion.md) — fix first; ladder tests pin these branches. Matrix: matrix-emotion-avatar-assets.md → Ticket Reconciliation.

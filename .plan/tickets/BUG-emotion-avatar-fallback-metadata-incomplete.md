@@ -148,3 +148,7 @@ The current fix is intentionally narrow: it surfaces
 (current row data) without introducing new columns or new file-format
 dependencies. Wider metadata capture is tracked as a separate ticket
 once the spec calls.
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Prerequisite for epic Emotion Avatar Message Binding persist path (regeneration/render work blocked until hook payload carries actor+chat).
