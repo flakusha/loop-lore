@@ -45,9 +45,13 @@ type DerivedCtx = {
 /**
  * Build a minimal app with request-id derive + idempotent before/afterHandle.
  *
- * Honors `x-user-id` (mirrors the production elysia-app.ts wiring where the
- * auth derive populates `ctx.userId`). Two authenticated users sharing the
- * same X-Request-Id MUST NOT replay each other's cached responses — see
+ * Reads `x-user-id` from the request and exposes it as `ctx.userId`. Production
+ * (`src/elysia-app.ts`) populates `ctx.userId` from the auth derive instead of
+ * a header, but for these tests a header is sufficient: the idempotency cache
+ * key only depends on the resolved userId value, not on how it was derived.
+ *
+ * Two authenticated users sharing the same X-Request-Id MUST NOT replay each
+ * other's cached responses — see
  * BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.
  */
 function setup(opts: SetupOpts,) {
