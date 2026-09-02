@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 271 epics
+**Total:** 262 epics
 
 ## Summary
 
@@ -11,7 +11,6 @@
 | ------ | ----- | -------- | ------ | ----- | ---- |
 | 📝 Draft | Actors & Entity System | High | High | 17 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 📝 Draft | Archival Workflow | Medium | Medium | 19 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
-| 📝 Draft | Assistant Entity Access & Manipulation | High | High | 10 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
 | 📝 Draft | Character & NPC Lore Access | High | High | 17 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
 | 📝 Draft | Cross-Layer Reconciliation | High | Large (permanently ongoing) | 12 | [epic-cross-layer-reconciliation.md](/.plan/epics/epic-cross-layer-reconciliation.md) |
 | 📝 Draft | Epic: Analytics & Observability | High | Medium | 3 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
@@ -26,7 +25,6 @@
 | 📝 Draft | Epic: Relationships | High | High | 0 | [epic-relationships.md](/.plan/epics/epic-relationships.md) |
 | 📝 Draft | Epic: Time Scale | High | Medium | 8 | [epic-time-scale.md](/.plan/epics/epic-time-scale.md) |
 | 📝 Draft | Player State Machine — Cross-System Design | Medium | Medium | 0 | [epic-player-state-machine.md](/.plan/epics/epic-player-state-machine.md) |
-| 📝 Draft | Resource Provision | High | Large | 12 | [epic-resource-provision.md](/.plan/epics/epic-resource-provision.md) |
 | 📝 Draft | Task Management Integration | Medium | Medium | 6 | [epic-task-management-integration.md](/.plan/epics/epic-task-management-integration.md) |
 | ⬜ Not Started | 3D Asset Generation (Future) | Low | Very High | 25 | [epic-3d-generation.md](/.plan/epics/epic-3d-generation.md) |
 | ⬜ Not Started | Age Gate & Content Warnings | Medium | Unknown | 0 | [epic-frontend-age-gate.md](/.plan/epics/epic-frontend-age-gate.md) |
@@ -130,10 +128,8 @@
 | ⬜ Not Started | Prompt & Output Control | Medium | Unknown | 0 | [epic-output-control-transforms.md](/.plan/epics/epic-output-control-transforms.md) |
 | ⬜ Not Started | RAG & Document Processing | High | Very High (split into 5 sub-epics) | 15 | [epic-rag-document-processing.md](/.plan/epics/epic-rag-document-processing.md) |
 | ⬜ Not Started | RAG & Document UI | P2 — Medium | Medium | 17 | [epic-rag-ui.md](/.plan/epics/epic-rag-ui.md) |
-| ⬜ Not Started | RAG × Assets — Unified Storage, Decomposition & Assistant Flows | High | Very High (decomposes into RAG-side and asset-side sub-batches; each ships standalone) | 33 | [epic-rag-assets-unified-storage-and-assistant-flows.md](/.plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md) |
 | ⬜ Not Started | RAG Embedding & Vector Store | High | Medium | 13 | [epic-rag-vector-store.md](/.plan/epics/epic-rag-vector-store.md) |
 | ⬜ Not Started | RAG Enterprise Features | Medium | Medium | 25 | [epic-rag-enterprise.md](/.plan/epics/epic-rag-enterprise.md) |
-| ⬜ Not Started | RAG Evaluation & Observability | High (blocks shipping `epic-rag-assets-unified-storage-and-assistant-flows.md` B-R4 + B-R5 with confidence) | Medium | 17 | [epic-rag-evaluation-observability.md](/.plan/epics/epic-rag-evaluation-observability.md) |
 | ⬜ Not Started | RAG Ingestion & Document Processing | High | High | 22 | [epic-rag-ingestion.md](/.plan/epics/epic-rag-ingestion.md) |
 | ⬜ Not Started | RAG Retrieval & Context Injection | High | Medium | 11 | [epic-rag-retrieval.md](/.plan/epics/epic-rag-retrieval.md) |
 | ⬜ Not Started | Realtime Transports | Medium | Medium | 3 | [epic-realtime-transports.md](/.plan/epics/epic-realtime-transports.md) |
@@ -149,7 +145,7 @@
 | ⬜ Not Started | TASK: NSFW Moderation Safety Infrastructure — Priority Elevation | High | Medium | 16 | [epic-nsfw-moderation-priority.md](/.plan/epics/epic-nsfw-moderation-priority.md) |
 | ⬜ Not Started | Terminal UI (TUI) | Low | Unknown | 0 | [epic-terminal-ui.md](/.plan/epics/epic-terminal-ui.md) |
 | ⬜ Not Started | Transport Layer Expansion | Low | Unknown | 0 | [epic-transport-layer-expansion.md](/.plan/epics/epic-transport-layer-expansion.md) |
-| ⬜ Not Started | Two-Factor / Multi-Factor Authentication | Medium | Medium | 9 | [epic-two-factor-auth.md](/.plan/epics/epic-two-factor-auth.md) |
+| ⬜ Not Started | Two-Factor / Multi-Factor Authentication | Medium | Medium | 10 | [epic-two-factor-auth.md](/.plan/epics/epic-two-factor-auth.md) |
 | ⬜ Not Started | UI Components Library | Medium | Unknown | 0 | [epic-frontend-components.md](/.plan/epics/epic-frontend-components.md) |
 | ⬜ Not Started | Use Case: Agentic Workspace | Medium | Unknown | 0 | [epic-use-case-agentic-workspace.md](/.plan/epics/epic-use-case-agentic-workspace.md) |
 | ⬜ Not Started | Weather & Environmental Effects | Medium | High | 0 | [epic-weather-environment.md](/.plan/epics/epic-weather-environment.md) |
@@ -174,11 +170,7 @@
 | Unknown | Anonymity & Decentralization — Epic | Unknown | Unknown | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Not Started | API Governance — Quick Reference | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance-quickref.md](/.plan/epics/epic-api-governance-quickref.md) |
-| 🔴 Not Started | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 6 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
-| 🔴 Not Started | Asset Transform Editing + Metadata | Medium | Medium | 8 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
-| 📝 Planned (this bundle) | Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock | High (security-critical provisioning) | High | 19 | [epic-auth-channel-provisioning.md](/.plan/epics/epic-auth-channel-provisioning.md) |
 | 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review) | AUX LLM Enrichment Pipeline | P2-B | Medium | 10 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
-| 🔴 Not Started | Avatar Alpha Channel + VN Layering | Medium | Medium | 7 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
 | 🟡 In Progress — benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`) | Benchmark CI & Performance Regression Detection | High | High | 10 | [epic-benchmark-ci-regression.md](/.plan/epics/epic-benchmark-ci-regression.md) |
 | 🟡 Partial (core CRUD + comments + follows + moderation built) | Blog System | Medium | High | 29 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
 | 🟡 Partial — character core services (traits, mood, relationships, avatars, licensing) + API/IO routes + tests complete; RPG stat system + template system in progress | Character Core System | High | High | 3 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
@@ -193,7 +185,6 @@
 | 🔵 Research | DB & Asset Snapshot Recovery | High | High | 7 | [epic-db-asset-snapshot-recovery.md](/.plan/epics/epic-db-asset-snapshot-recovery.md) |
 | 🟡 Draft — analysis complete, tickets scoped | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 7 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
 | 🟡 Draft — analysis complete, tickets scoped | E2E & Integration Testing Reliability | High | Medium | 4 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
-| 🔴 Not Started | Emotion Avatar Regeneration Control | Medium | Small | 7 | [epic-avatar-regeneration-control.md](/.plan/epics/epic-avatar-regeneration-control.md) |
 | 🟡 In Progress (migration + schema done) | Emotion-Avatar Message Binding | High | Medium | 14 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
 | 🟡 Partial | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | 🟨 Partial — browser crypto + send path built; receive-decrypt + key-management UI pending | Encryption UI | Medium | Unknown | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
@@ -243,6 +234,7 @@
 | 🟡 In Progress — TASK-add-trace-fatal, TASK-unify-logging-output-to-canonical-jsonl, TASK-insert-log-fatal-and-log-trace-calls, TASK-verify-logging-changes-green all ✅ Done (merged to dev 2026-08-07) | Logging & Telemetry — Complete Level Set + Canonical JSONL | High | Medium | 5 | [epic-logging-telemetry.md](/.plan/epics/epic-logging-telemetry.md) |
 | 🟡 Permanently Ongoing | Logic Reconciliation (Permanently Ongoing) | High | Continuous | 0 | [epic-logic-reconciliation.md](/.plan/epics/epic-logic-reconciliation.md) |
 | 🟡 Phase 1 Complete, Phase 2 Partial | LoRA Discovery & Application | High | Medium | 12 | [epic-lora-discovery-application.md](/.plan/epics/epic-lora-discovery-application.md) |
+| Unknown | Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server | Unknown | Unknown | 0 | [epic-mesh-federation-content-sharing.md](/.plan/epics/epic-mesh-federation-content-sharing.md) |
 | 🟢 Complete (reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups) | Middleware — Request Lifecycle, Idempotency & Async Results | Medium | Large | 0 | [epic-middleware-request-lifecycle.md](/.plan/epics/epic-middleware-request-lifecycle.md) |
 | Unknown | Mini-Games: Database Schema Design | Unknown | Unknown | 0 | [epic-mini-games-db.md](/.plan/epics/epic-mini-games-db.md) |
 | Unknown | Mini-Games: Deep Mechanics & Game-Specific Designs | Unknown | Unknown | 0 | [epic-mini-games-mechanics.md](/.plan/epics/epic-mini-games-mechanics.md) |
@@ -278,7 +270,6 @@
 | 🟡 Partially Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing | Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport) | Medium | Medium (remaining gaps only) | 4 | [epic-transport-expansion.md](/.plan/epics/epic-transport-expansion.md) |
 | Not Started | Two-Pass Message Delivery (Draft → Finalization) | Medium | Large | 11 | [epic-two-pass-delivery.md](/.plan/epics/epic-two-pass-delivery.md) |
 | 🟡 Permanently Ongoing | User Story & Use Case Improvements (Permanently Ongoing) | Medium | Continuous | 0 | [epic-user-stories.md](/.plan/epics/epic-user-stories.md) |
-| 🔴 Not Started | Wardrobe / Loadout Avatar Variants | Medium | Large | 8 | [epic-wardrobe-avatar-variants.md](/.plan/epics/epic-wardrobe-avatar-variants.md) |
 | ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`) | World Chat Channels & Invite-Driven Membership | Medium | Medium | 0 | [epic-world-chat-channels-invites.md](/.plan/epics/epic-world-chat-channels-invites.md) |
 
 ---
@@ -302,15 +293,6 @@
 - **Type:** Feature Epic
 - **Tags:** archival, soft-delete, retention, purge, data-lifecycle
 - **File:** `.plan/epics/epic-archival-workflow.md`
-
-### Assistant Entity Access & Manipulation
-
-- **Status:** 📝 Draft
-- **Priority:** High
-- **Effort:** High
-- **Type:** Feature Epic
-- **Tags:** assistant, rag, assets, world, location, character, item, inventory, access, manipulation, duplication, adaptation
-- **File:** `.plan/epics/epic-assistant-entity-access.md`
 
 ### Character & NPC Lore Access
 
@@ -457,15 +439,6 @@ Time scale system — manage game time progression, day/night cycles, seasons, a
 - **Type:** Feature Epic
 - **Tags:** player-state, state-machine, cross-system, design
 - **File:** `.plan/epics/epic-player-state-machine.md`
-
-### Resource Provision
-
-- **Status:** 📝 Draft
-- **Priority:** High
-- **Effort:** Large
-- **Type:** Feature Epic
-- **Tags:** byok, compute, external-providers, browser-storage, backup, hashing, quota, resource-provision, inference, storage
-- **File:** `.plan/epics/epic-resource-provision.md`
 
 ### Task Management Integration
 
@@ -1413,15 +1386,6 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Tags:** rag, documents, search, ui, frontend
 - **File:** `.plan/epics/epic-rag-ui.md`
 
-### RAG × Assets — Unified Storage, Decomposition & Assistant Flows
-
-- **Status:** ⬜ Not Started
-- **Priority:** High
-- **Effort:** Very High (decomposes into RAG-side and asset-side sub-batches; each ships standalone)
-- **Type:** Feature Epic (cross-cutting bridge)
-- **Tags:** rag, assets, extraction, decomposition, hybrid-search, assistant, admin, gallery, model-roles, standards
-- **File:** `.plan/epics/epic-rag-assets-unified-storage-and-assistant-flows.md`
-
 ### RAG Embedding & Vector Store
 
 - **Status:** ⬜ Not Started
@@ -1439,15 +1403,6 @@ Real-time observability dashboard combining benchmarking results, live telemetry
 - **Type:** Feature Epic
 - **Tags:** rag, enterprise, access-control, audit, compliance, multi-tenancy, lifecycle, analytics
 - **File:** `.plan/epics/epic-rag-enterprise.md`
-
-### RAG Evaluation & Observability
-
-- **Status:** ⬜ Not Started
-- **Priority:** High (blocks shipping `epic-rag-assets-unified-storage-and-assistant-flows.md` B-R4 + B-R5 with confidence)
-- **Effort:** Medium
-- **Type:** Feature Epic (cross-cutting)
-- **Tags:** rag, evaluation, observability, telemetry, golden-datasets, regression, prompt-cache
-- **File:** `.plan/epics/epic-rag-evaluation-observability.md`
 
 ### RAG Ingestion & Document Processing
 
@@ -1813,33 +1768,6 @@ Anonymous access via Tor/I2P, distributed infrastructure, and BYOK mesh networki
 - **Tags:** openapi, validation, rate-limiting, telemetry, offloading
 - **File:** `.plan/epics/epic-api-governance-quickref.md`
 
-### Asset Platform Capabilities (Messenger/Social Patterns)
-
-- **Status:** 🔴 Not Started
-- **Priority:** Medium
-- **Effort:** Large (batch-decomposable; each batch ships standalone value)
-- **Type:** Feature Epic
-- **Tags:** assets, messages, uploads, renditions, dedup, RAG, assistant
-- **File:** `.plan/epics/epic-asset-platform-capabilities.md`
-
-### Asset Transform Editing + Metadata
-
-- **Status:** 🔴 Not Started
-- **Priority:** Medium
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** assets, avatar, crop, centering, metadata, editor
-- **File:** `.plan/epics/epic-asset-transform-metadata.md`
-
-### Authentication Channel Provisioning — Messenger / E-mail / Federated Login & Unlock
-
-- **Status:** 📝 Planned (this bundle)
-- **Priority:** High (security-critical provisioning)
-- **Effort:** High
-- **Type:** Feature Epic
-- **Tags:** auth, 2fa, mfa, login, unlock, step-up, matrix, email, messenger, federation, device-trust
-- **File:** `.plan/epics/epic-auth-channel-provisioning.md`
-
 ### AUX LLM Enrichment Pipeline
 
 - **Status:** 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review)
@@ -1847,15 +1775,6 @@ Anonymous access via Tor/I2P, distributed infrastructure, and BYOK mesh networki
 - **Effort:** Medium
 - **Type:** Feature Epic
 - **File:** `.plan/epics/epic-aux-enrichment-pipeline.md`
-
-### Avatar Alpha Channel + VN Layering
-
-- **Status:** 🔴 Not Started
-- **Priority:** Medium
-- **Effort:** Medium
-- **Type:** Feature Epic
-- **Tags:** avatar, alpha, transparency, background-removal, visual-novel
-- **File:** `.plan/epics/epic-avatar-alpha-vn-layering.md`
 
 ### Benchmark CI & Performance Regression Detection
 
@@ -1988,15 +1907,6 @@ ComfyUI is the primary integration target for image generation and editing.
 - **Type:** Infrastructure Epic
 - **Tags:** testing, e2e, browser, integration, mocking, dead-code, wiring, reliability
 - **File:** `.plan/epics/epic-e2e-integration-testing.md`
-
-### Emotion Avatar Regeneration Control
-
-- **Status:** 🔴 Not Started
-- **Priority:** Medium
-- **Effort:** Small
-- **Type:** Feature Epic
-- **Tags:** avatar, emotion, regeneration, jobs
-- **File:** `.plan/epics/epic-avatar-regeneration-control.md`
 
 ### Emotion-Avatar Message Binding
 
@@ -2465,6 +2375,14 @@ Group chat lets multiple characters participate in one conversation. The runtime
 
 LoRA (Low-Rank Adaptation) enables character-specific and style-specific visual consistency across generations. This epic implements LoRA discovery (auto-detect available models) and application (inject into workflows) for both ComfyUI and sd.cpp backends.
 
+### Mesh Federation — Encrypted Content Sharing, Quota & Coordinator Server
+
+- **Status:** Unknown
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-mesh-federation-content-sharing.md`
+
 ### Middleware — Request Lifecycle, Idempotency & Async Results
 
 - **Status:** 🟢 Complete (reopened 2026-08-27 for review; defects fixed in worktree merge-review-followups)
@@ -2778,15 +2696,6 @@ Centralized hub for messengers, social networks, and email integration. Unified 
 - **Effort:** Continuous
 - **Type:** Ongoing Epic
 - **File:** `.plan/epics/epic-user-stories.md`
-
-### Wardrobe / Loadout Avatar Variants
-
-- **Status:** 🔴 Not Started
-- **Priority:** Medium
-- **Effort:** Large
-- **Type:** Feature Epic
-- **Tags:** avatar, wardrobe, outfit, loadout, emotion, variants, selection
-- **File:** `.plan/epics/epic-wardrobe-avatar-variants.md`
 
 ### World Chat Channels & Invite-Driven Membership
 
