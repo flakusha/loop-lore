@@ -58,6 +58,10 @@
 - [ ] **Model capability registry** (`FEAT-067`) — per-model metadata (context length, function calling support, vision, pricing) auto-detected + editable. |
 - [ ] **Token budget advisor** (`FEAT-068`) — real-time context-window usage meter + warnings when approaching limit, suggest which sections to trim. |
 - [ ] **Conversation branching** (`FEAT-045`, `FEAT-046`, `FEAT-047`) — branching data model (tree-structured chat with fork points), branch navigation API, and branch UI controls (fork/resume/compare). Builds on existing chat tree with `parent_id`. |
+- [ ] **Emotion-avatar pipeline completion** — binding render path (persist→read→per-message resolve), regeneration control (subset/slot re-roll + durable jobs), context transforms + in-browser cropper — design: `matrix-emotion-avatar-assets.md` AV1–AV3, `epic-emotion-avatar-message-binding.md` +2 | proposal (docs on `plan-emotion-avatar-epics`)
+- [ ] **Avatar alpha + VN sprite layering** — provider transparency capability, async matting fallback, `has_alpha` render branch, VN compositor layer — `epic-avatar-alpha-vn-layering.md` | proposal
+- [ ] **Wardrobe/loadout avatar variants** — outfit axis × emotion, context-bound selection ladder, outfit-scoped regen — extends `TASK-character-multi-avatar`; `epic-wardrobe-avatar-variants.md` | proposal
+- [ ] **Asset platform capabilities B1–B5** — BLAKE3 dedup + renditions + EXIF strip; optimistic upload/albums/shared-media; GC + soft-delete + storage budget; caption/alt/pHash/backlinks (RAG feed); deterministic ops (assistant feed) — `epic-asset-platform-capabilities.md`; suggested order B1→B3→B2→B4→B5 | proposal
 - [ ] **E2E auth flows** (`TEST-e2e-auth-flows-missing`) — no e2e spec covers login/logout/token expiry |
 - [ ] **E2E NSFW moderation** (`TEST-e2e-nsfw-moderation-routes-missing`) — no e2e spec covers nsfw admin routes |
 - [ ] **E2E users/personas** (`TEST-e2e-users-personas-routes-missing`) — no e2e spec covers `/api/users/*` or `/api/personas/*` |
