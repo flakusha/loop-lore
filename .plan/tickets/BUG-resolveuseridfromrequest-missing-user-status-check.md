@@ -1,6 +1,6 @@
 # BUG: resolveUserIdFromRequest missing user status check
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Resolved (worktree fix-csrf-hardening-batch → commit c9ca8edd)
 **Priority:** medium
 **Effort:** Small
 
@@ -18,6 +18,6 @@ Acceptance: disabled/deactivated user's export resolves to denial/fallback; per-
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing (14/14 auth.test.ts on dev HEAD c9ca8edd: 7 pre-existing + 3 new status-gate cases for Disabled/Deactivated/Active + others)
+- [x] Documentation updated (this ticket + code comments + commit message)
