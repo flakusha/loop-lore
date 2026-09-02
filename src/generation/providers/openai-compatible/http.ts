@@ -6,6 +6,8 @@
 // Extracted from the `OpenAiCompatibleProvider` class body. Each dispatcher is
 // threaded with an explicit `state` handle (the class's private fields).
 
+// size-allow: 267
+
 import { safeJsonStringify, } from "../../../utils";
 import type { GenerateRequest, } from "../types";
 import { ProviderAuthError, ProviderError, ProviderRateLimitError, } from "../types";

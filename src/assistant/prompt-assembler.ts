@@ -8,6 +8,8 @@
 // budget, and returns the assembled prompt. See
 // docs/frontend/chat/prompt-creation.md for section ordering rationale.
 
+// size-allow: 268
+
 import type { Kysely, } from "kysely";
 import { getContextWindowForModel, } from "../admin/model-capabilities";
 import { MoodService, } from "../characters/services/mood-service";

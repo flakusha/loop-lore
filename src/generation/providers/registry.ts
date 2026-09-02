@@ -7,6 +7,8 @@
 // resolveProvider() handles resolution order: user BYO key → chat → server default.
 // See .plan/epics/epic-provider-plugin-ecosystem.md.
 
+// size-allow: 270
+
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { decryptValue, } from "../../crypto";
