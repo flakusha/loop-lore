@@ -63,6 +63,7 @@
 - [ ] **Avatar alpha + VN sprite layering** — provider transparency capability, async matting fallback, `has_alpha` render branch, VN compositor layer — `epic-avatar-alpha-vn-layering.md` | proposal
 - [ ] **Wardrobe/loadout avatar variants** — outfit axis × emotion, context-bound selection ladder, outfit-scoped regen — extends `TASK-character-multi-avatar`; `epic-wardrobe-avatar-variants.md` | proposal
 - [ ] **Asset platform capabilities B1–B5** — BLAKE3 dedup + renditions + EXIF strip; optimistic upload/albums/shared-media; GC + soft-delete + storage budget; caption/alt/pHash/backlinks (RAG feed); deterministic ops (assistant feed) — `epic-asset-platform-capabilities.md`; suggested order B1→B3→B2→B4→B5 | proposal
+- [ ] **2FA channel provisioning** — verified-factor login/unlock across messenger (Matrix + bridges), e-mail, OIDC; factor state machine, unlock ladder, anti-takeover cooling-off — design: `epic-auth-channel-provisioning.md` F1–F10 + `matrix-authentication-channels.md` AC1–AC12; reopens the 2026-08-05 MFA deferral for planning | proposal (docs on `plan-2fa-channel-integrations`); security-relevant — human triage may promote above P4
 - [ ] **E2E auth flows** (`TEST-e2e-auth-flows-missing`) — no e2e spec covers login/logout/token expiry |
 - [ ] **E2E NSFW moderation** (`TEST-e2e-nsfw-moderation-routes-missing`) — no e2e spec covers nsfw admin routes |
 - [ ] **E2E users/personas** (`TEST-e2e-users-personas-routes-missing`) — no e2e spec covers `/api/users/*` or `/api/personas/*` |
