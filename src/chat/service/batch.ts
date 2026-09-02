@@ -75,7 +75,8 @@ export async function batchDeleteChats(
     }
     await trx.deleteFrom("chats",).where("id", "in", ownedIds,).execute();
   },);
-}
+  return ownedIds.length;
+ }
 
 /**
  * Batch export chats with messages, participants, and actors.
