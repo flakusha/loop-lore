@@ -1152,6 +1152,30 @@
     "source": ".plan/tickets/BUG-computecontextwindow-phase-3-trims-newest-instead-of-oldest.md",
     "git_issue": "51281c7"
   },
+  "BUG-CONFIG-SCHEMA-DEFAULTS-LEAK-ABSOLUTE-PATHS": {
+    "hash": "8f17329",
+    "git_issue": "8f17329",
+    "extid": "BUG-CONFIG-SCHEMA-DEFAULTS-LEAK-ABSOLUTE-PATHS",
+    "type": "BUG",
+    "title": "config schema defaults leak absolute paths",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "epic-api-validation-guardrails.md",
+    "tags": [],
+    "source": ".plan/tickets/BUG-config-schema-defaults-leak-absolute-paths.md"
+  },
+  "BUG-CONFIG-SCHEMA-EMITTER-MISSING-TOP-LEVEL-SECTIONS": {
+    "hash": "2d7a60c",
+    "git_issue": "2d7a60c",
+    "extid": "BUG-CONFIG-SCHEMA-EMITTER-MISSING-TOP-LEVEL-SECTIONS",
+    "type": "BUG",
+    "title": "config schema emitter missing top-level sections",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "epic-api-validation-guardrails.md",
+    "tags": [],
+    "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+  },
   "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY": {
     "hash": "5f00999",
     "extid": "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY",
@@ -2967,6 +2991,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-signal-bridge-activation-trigger-undefined.md",
     "status": "not-yet-implemented"
+  },
+  "BUG-SIZE-STRICT-PRE-EXISTING-DEV-DRIFT": {
+    "hash": "94675a8",
+    "git_issue": "94675a8",
+    "extid": "BUG-SIZE-STRICT-PRE-EXISTING-DEV-DRIFT",
+    "type": "BUG",
+    "title": "size-strict pre-existing dev drift",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "epic-code-quality.md",
+    "tags": [],
+    "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
   },
   "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH": {
     "hash": "pending",
