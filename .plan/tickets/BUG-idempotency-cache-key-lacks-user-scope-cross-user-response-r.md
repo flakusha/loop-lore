@@ -1,16 +1,41 @@
 # BUG: Idempotency cache key lacks user scope — cross-user response replay
 
-**Status:** ⬜ Reopened (dev-fix review 2026-09-01 — production wiring coverage deleted by f68a7321; see git issue 6361c0d)
+**Status:** [OK] Resolved (worktree fix-idempotency-user-scope)
+
 **Priority:** high
+
 **Effort:** Medium
 
 ## Summary
 
-In src/middleware/idempotency.ts:67-69, makeKey() builds the idempotency cache key as 'METHOD routePattern requestId' with NO user scoping. Any two users sharing the same X-Request-Id header value (or both with no header → server-generated UUID) can replay each other's cached responses. Fix: include userId (or an auth-derived scope) in the cache key. Privacy/security impact: a user could observe another user's response body if they guess/brute-force a colliding requestId. The body is filtered (Set-Cookie stripped) but the response payload (e.g. generated chat message text, file metadata) is leaked.
+In `src/middleware/idempotency.ts`, `makeKey()` now scopes the cache key by
+`userId` (or `anon` for unauthenticated requests) in addition to method, route
+pattern, and request id. Two authenticated users sharing the same `X-Request-Id`
+header value can no longer replay each other's cached responses. Unauthenticated
+requests are scoped to the `anon` bucket and do not collide with any
+authenticated user's cached body. The production wiring (`src/elysia-app.ts`)
+threads `ctx.userId` through `beforeHandle`, `recordResponse`, and `release`.
+
+## Fix surface
+
+- `src/middleware/idempotency.ts:67-81` — `makeKey` signature includes
+  `userId: string | null`; key format `METHOD route userId requestId`.
+- `src/middleware/idempotency.ts:146` — `beforeHandle` passes
+  `ctx.userId ?? null` into `makeKey`.
+- `src/elysia-app.ts:151,158` — production afterHandle forwards
+  `ctx.userId ?? null` to `release`/`recordResponse`.
 
 ## Acceptance Criteria
 
-- [x] Implementation complete
-- [ ] Tests passing (unit-layer isolation test exists at idempotency.test.ts:96, but f68a7321 deleted the only integration test wiring userId through the Elysia middleware chain — production composition is untested)
-- [ ] Documentation updated
-
+- [x] Implementation complete (key includes userId; production wiring threads
+  `ctx.userId`)
+- [x] Tests passing — 8 unit tests + 12 integration tests. Three new
+  cross-user isolation integration tests cover:
+  1. Distinct `x-user-id` on the same `X-Request-Id` do not share cache
+     (the original BUG scenario).
+  2. Replay returns the SAME user's cached body (not another user's).
+  3. Unauthenticated requests share the `anon` bucket but never collide
+     with an authenticated user's cache.
+- [x] Documentation updated — this ticket reflects the resolution; the
+  in-code comment at `idempotency.ts:67` references the BUG and explains
+  the precedence model.
