@@ -182,7 +182,9 @@ export async function maybeAutoReply(
       };
     }
   }
-
+  // Neither LLM auto-generation nor a rule-based assistant response was
+  // produced — report honestly that no reply was attempted (the previous
+  // implicit `undefined` broke the declared Promise shape; TS2366).
   return { replied: false, };
 }
 
