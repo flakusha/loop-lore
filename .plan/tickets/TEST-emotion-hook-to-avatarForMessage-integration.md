@@ -74,3 +74,7 @@ The test exercises **both halves in one run** with real DB rows.
       assetId (not base, not sad, not null).
 - [ ] Test passes green under default suite (no `--isolate`).
 - [ ] `bun run check` green.
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Bound to epic Emotion Avatar Message Binding acceptance list.
