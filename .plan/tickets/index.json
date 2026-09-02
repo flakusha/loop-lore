@@ -61,7 +61,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-account-tier-custom-instructions-render-as-system-message-wi.md"
+    "source": ".plan/tickets/BUG-account-tier-custom-instructions-render-as-system-message-wi.md",
+    "status": "done"
   },
   "BUG-ACTIVITYPUB-ACTOR-SIGNING-KEYS-AND-ROTATION-UNDEFINED-NO-CRY": {
     "hash": "f27472d",
@@ -1329,7 +1330,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md"
+    "source": ".plan/tickets/BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md",
+    "status": "done"
   },
   "BUG-DHRATCHETDECRYPT-DH-STEP-BRANCH-DERIVES-MESSAGE-KEY-FROM-STA": {
     "hash": "ecf20e4",
