@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 265 epics
+**Total:** 266 epics
 
 ## Summary
 
@@ -170,6 +170,7 @@
 | Unknown | Anonymity & Decentralization — Epic | Unknown | Unknown | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Not Started | API Governance — Quick Reference | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance-quickref.md](/.plan/epics/epic-api-governance-quickref.md) |
+| 🔴 Not Started | Asset Platform Capabilities (Messenger/Social Patterns) | Medium | Large (batch-decomposable; each batch ships standalone value) | 6 | [epic-asset-platform-capabilities.md](/.plan/epics/epic-asset-platform-capabilities.md) |
 | 🔴 Not Started | Asset Transform Editing + Metadata | Medium | Medium | 8 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
 | 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review) | AUX LLM Enrichment Pipeline | P2-B | Medium | 10 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
 | 🔴 Not Started | Avatar Alpha Channel + VN Layering | Medium | Medium | 7 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
@@ -1770,6 +1771,15 @@ Anonymous access via Tor/I2P, distributed infrastructure, and BYOK mesh networki
 - **Type:** Infrastructure Epic
 - **Tags:** openapi, validation, rate-limiting, telemetry, offloading
 - **File:** `.plan/epics/epic-api-governance-quickref.md`
+
+### Asset Platform Capabilities (Messenger/Social Patterns)
+
+- **Status:** 🔴 Not Started
+- **Priority:** Medium
+- **Effort:** Large (batch-decomposable; each batch ships standalone value)
+- **Type:** Feature Epic
+- **Tags:** assets, messages, uploads, renditions, dedup, RAG, assistant
+- **File:** `.plan/epics/epic-asset-platform-capabilities.md`
 
 ### Asset Transform Editing + Metadata
 
