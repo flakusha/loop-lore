@@ -123,7 +123,12 @@ export const headers = {
       description: "Strict-Transport-Security policy (RFC 6797). Emitted only on HTTPS requests.",
       properties: {
         enabled: { type: "boolean", default: false, description: "Master toggle", },
-        maxAge: { type: "number", default: 31536000, minimum: 0, description: "max-age in seconds; RFC 6797 recommends >= 31536000 (1 year)", },
+        maxAge: {
+          type: "number",
+          default: 31536000,
+          minimum: 0,
+          description: "max-age in seconds; RFC 6797 recommends >= 31536000 (1 year)",
+        },
         includeSubDomains: { type: "boolean", default: true, },
         preload: { type: "boolean", default: false, },
       },
@@ -131,4 +136,4 @@ export const headers = {
     },
   },
   required: ["enabled", "referrerPolicy", "xContentTypeOptions", "csp", "earlyHints",],
- };
+};

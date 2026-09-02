@@ -80,7 +80,7 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId,) =
       chatId: deps.chatId,
       resolvedModel,
       resolvedProvider,
-      error: error instanceof Error ? error.message : String(error),
+      error: error instanceof Error ? error.message : String(error,),
     },);
     const fallback = await hardcodedDecision(deps, context, actorId,);
     return { ...fallback, fallback: true, };
