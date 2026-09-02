@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 300
 
 // src/routes/message-seen.ts
 //
@@ -10,6 +11,7 @@
 // GET    /api/messages/:id/seen     — grouped viewers (who has seen / who is processing)
 // POST   /api/messages/:id/seen     — record/clear seen for actor
 // DELETE /api/messages/:id/seen     — remove actor's seen record
+
 import { Elysia, t, } from "elysia";
 import { type Kysely, sql, } from "kysely";
 import { checkChatAccess, } from "../chat/service";

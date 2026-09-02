@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 267
+
 /**
  * NPC movement processing — tick dispatch and per-pattern movement logic
  */

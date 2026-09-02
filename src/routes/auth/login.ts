@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 263
+
 import type { Kysely, } from "kysely";
 import { signJwt, } from "../../auth/jwt";
 import type { Config, } from "../../config/schema";

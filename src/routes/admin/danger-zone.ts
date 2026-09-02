@@ -2,15 +2,16 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import type { DB, } from "../../db/schema";
+import { seedDefaultActors, } from "../../db/seed";
+import { getLogger, } from "../../logger";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
-import type { DB, } from "../../db/schema";
-import { getLogger, } from "../../logger";
-import { seedDefaultActors, } from "../../db/seed";
 
-const log = (): ReturnType<ReturnType<typeof getLogger>["child"]> => getLogger().child({ module: "admin-danger-zone", },);
+const log = (): ReturnType<ReturnType<typeof getLogger>["child"]> =>
+  getLogger().child({ module: "admin-danger-zone", },);
 
 /**
  * Tables wiped by factory reset, in FK-safe order (children before parents).
