@@ -145,6 +145,29 @@ describe("maybeAutoReply — swipe_index race", () => {
     expect(result.response,).toBeDefined();
     expect(result.response!.status,).toBe(503,);
   });
+
+  test("returns replied:false when neither LLM generation nor the assistant is enabled", async () => {
+    // TS2366 regression guard: with both paths off, maybeAutoReply fell off
+    // the end returning undefined against its declared
+    // Promise<{ replied: boolean }>; the caller's `result.replied` then read
+    // a property off undefined.
+    const offConfig = {
+      ...testConfig,
+      assistant: { enabled: false, },
+    } as unknown as Config;
+    const result = await maybeAutoReply(
+      db,
+      offConfig,
+      chatId,
+      actorId,
+      parentMessageId,
+      "hello",
+      new Request("http://localhost/",),
+    );
+    expect(result,).toBeDefined();
+    expect(result.replied,).toBe(false,);
+    expect(result.response,).toBeUndefined();
+  });
 });
 
 describe("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-discards-asyncStore)", () => {
