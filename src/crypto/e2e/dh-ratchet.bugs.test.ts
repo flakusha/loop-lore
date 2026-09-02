@@ -163,3 +163,93 @@ describe("BUG-initdhratchetopts-theirinitialpub-declared-but-never-read", () => 
     expect(a.myInitialPubJwk,).toBeDefined();
   });
 });
+
+describe("BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-across-ratchet-boundary", () => {
+  test("out-of-order old-epoch messages populate and drain the skip store; the next-epoch message still decrypts", async () => {
+    const rootKey = crypto.getRandomValues(new Uint8Array(32,),);
+    const aliceInit = await initDhRatchet({ rootKey, },);
+    const bobInit = await initDhRatchet({ rootKey, },);
+    let bob = bobKnowsAlice(bobInit.state, aliceInit.myInitialPubJwk,);
+
+    // Alice emits three messages on the initial sending chain (counters 0,1,2).
+    const e0 = await dhRatchetEncrypt({ state: aliceInit.state, plaintext: "m0", },);
+    const e1 = await dhRatchetEncrypt({ state: e0.state, plaintext: "m1", },);
+    const e2 = await dhRatchetEncrypt({ state: e1.state, plaintext: "m2", },);
+
+    // m2 arrives FIRST: the chain-advance must retain keys for counters 0 and 1.
+    const d2 = await dhRatchetDecrypt({
+      state: bob,
+      payload: e2.payload,
+      skippedKeys: [],
+      maxSkip: 10,
+    },);
+    expect(d2.plaintext,).toBe("m2",);
+    expect(d2.newSkippedKeys.map((k,) => k.counter).sort((a, b,) => a - b),).toEqual([0, 1,],);
+    let pool = [...d2.newSkippedKeys,];
+
+    // m0 arrives late — must be served from the skip store, not the live chain.
+    const d0 = await dhRatchetDecrypt({
+      state: d2.state,
+      payload: e0.payload,
+      skippedKeys: pool,
+      maxSkip: 10,
+    },);
+    expect(d0.plaintext,).toBe("m0",);
+    expect(d0.consumedSkippedKeyIds.length,).toBe(1,);
+    pool = pool.filter((k,) => !d0.consumedSkippedKeyIds.includes(k.id,));
+
+    // m1 drains the last retained key.
+    const d1 = await dhRatchetDecrypt({
+      state: d0.state,
+      payload: e1.payload,
+      skippedKeys: pool,
+      maxSkip: 10,
+    },);
+    expect(d1.plaintext,).toBe("m1",);
+    pool = pool.filter((k,) => !d1.consumedSkippedKeyIds.includes(k.id,));
+    expect(pool.length,).toBe(0,);
+    bob = d1.state;
+
+    // Ratchet boundary: Alice rotates her ephemeral (DH step) and sends m3.
+    // A re-seed bug that derives the receiving chain from stale epoch-1
+    // material passes simple in-epoch round-trips but fails here, because
+    // the stale chain is now THREE steps advanced.
+    const newEphemeral = await crypto.subtle.generateKey(
+      { name: "ECDH", namedCurve: "P-256", },
+      true,
+      ["deriveBits",],
+    );
+    const newPubJwk = await crypto.subtle.exportKey("jwk", newEphemeral.publicKey,);
+    const bobPub = await crypto.subtle.importKey(
+      "jwk",
+      bobInit.myInitialPubJwk,
+      { name: "ECDH", namedCurve: "P-256", },
+      false,
+      [],
+    );
+    const dh = await dhStep(e2.state.rootKey, newEphemeral.privateKey, bobPub,);
+    const aliceRotated = {
+      ...e2.state,
+      rootKey: dh.newRoot,
+      sendingChainKey: dh.sendingChainKey,
+      myEphemeralPriv: newEphemeral.privateKey,
+      myEphemeralPubJwk: newPubJwk,
+      sendCount: 0,
+    };
+    const e3 = await dhRatchetEncrypt({ state: aliceRotated, plaintext: "m3", },);
+
+    const d3 = await dhRatchetDecrypt({
+      state: bob,
+      payload: e3.payload,
+      skippedKeys: [],
+      maxSkip: 10,
+    },);
+    expect(d3.plaintext,).toBe("m3",);
+    // The new epoch consumed nothing from the drained store, and Bob's
+    // receiving key now tracks the fresh epoch chain.
+    expect(d3.newSkippedKeys.length,).toBe(0,);
+    expect(d3.consumedSkippedKeyIds.length,).toBe(0,);
+    expect(d3.state.recvCount,).toBe(1,);
+    expect(d3.state.theirCurrentPubJwk,).toEqual(e3.payload.ephemeralPublicJwk,);
+  });
+});
