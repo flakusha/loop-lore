@@ -60,6 +60,7 @@
 | H3  | dh-ratchet regression tests lack out-of-order delivery across ratchet boundary | `BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md` | ▲ now | 🟡 New (filed 2026-09-01). Add 3-5 cases: skip-1, skip-many, boundary-crossing, replay-with-skip, store-and-forward. |
 
 | R1  | **Resource Provision** — new epic: external compute/inference endpoints, encrypted credential store (BYOK), browser backup opt-in with SHA-256 hashing, per-resource quota engine, hash-based reconciliation/recovery. 12 tickets scoped. | `.plan/epics/epic-resource-provision.md` | ▲ now (planning) | 📝 Draft — 12 tasks; see `epic-resource-provision.md` and `.plan/tickets/TASK-resource-provision-*.md` |
+- | R2  | **Assistant Entity Access & Manipulation** — new epic: assistant access to RAG documents, assets, worlds, locations, characters, items, inventory; addition, modification, duplication, adaptation (outfit/knowledge/background for character in new world). 12 tickets scoped. | `.plan/epics/epic-assistant-entity-access.md` | ▲ now (planning) | 📝 Draft — 12 tasks; see `epic-assistant-entity-access.md` and `.plan/tickets/TASK-assistant-entity-access-*.md` |
 
 **Deferred (do not decide now):** F1 (9 AUX LLM enrichment tasks) · G3 (external music
 linking) · G4 (authoring ownership indicators) — these sit in § Hardening / deferred
