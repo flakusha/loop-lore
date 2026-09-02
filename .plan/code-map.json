@@ -567,6 +567,178 @@
       "source": ".plan/tickets/TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex.md"
     }
   ],
+  "src/assistant/adapter/access.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/adapter/access.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
+    }
+  ],
+  "src/assistant/adapter/adapt.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/adapter/adapt.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
+    }
+  ],
+  "src/assistant/adapter/assets.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/adapter/assets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
+    }
+  ],
+  "src/assistant/adapter/characters.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
+    }
+  ],
+  "src/assistant/adapter/duplicate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/adapter/duplicate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
+    }
+  ],
+  "src/assistant/adapter/entity.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/adapter/entity.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
+    }
+  ],
+  "src/assistant/adapter/items.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/adapter/items.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
+    }
+  ],
+  "src/assistant/adapter/locations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    }
+  ],
+  "src/assistant/adapter/modify.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+    }
+  ],
+  "src/assistant/adapter/quality.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    }
+  ],
+  "src/assistant/adapter/rag.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/adapter/rag.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-rag-access.md"
+    }
+  ],
+  "src/assistant/adapter/worlds.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/adapter/worlds.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    }
+  ],
   "src/assistant/command-parser.ts": [
     {
       "kind": "epic",
@@ -595,10 +767,60 @@
       "source": ".plan/epics/epic-creative-studio.md"
     }
   ],
+  "src/assistant/commands/adapt.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/commands/adapt.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+    }
+  ],
+  "src/assistant/commands/assets.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/commands/assets.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
+    }
+  ],
   "src/assistant/commands/caption.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    }
+  ],
+  "src/assistant/commands/characters-access.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    }
+  ],
+  "src/assistant/commands/characters.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/commands/characters.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
     }
   ],
   "src/assistant/commands/commit.ts": [
@@ -657,6 +879,22 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    }
+  ],
+  "src/assistant/commands/duplicate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/commands/duplicate.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
     }
   ],
   "src/assistant/commands/games.ts": [
@@ -729,6 +967,16 @@
       "source": ".plan/tickets/BUG-impersonate-commands-register-empty-callback.md"
     }
   ],
+  "src/assistant/commands/import.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+    }
+  ],
   "src/assistant/commands/improve.test.ts": [
     {
       "kind": "ticket",
@@ -743,6 +991,50 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
+    }
+  ],
+  "src/assistant/commands/items.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/commands/items.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
+    }
+  ],
+  "src/assistant/commands/locations.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/commands/locations.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    }
+  ],
+  "src/assistant/commands/modify.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/commands/modify.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
     }
   ],
   "src/assistant/commands/music.ts": [
@@ -769,14 +1061,38 @@
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
     }
   ],
+  "src/assistant/commands/rag.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/commands/rag.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-rag-access.md"
+    }
+  ],
   "src/assistant/commands/registry.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-creative-studio-workflows.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-command-dispatch-async-handler-uncaught.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
     },
     {
       "kind": "ticket",
@@ -829,6 +1145,24 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    }
+  ],
+  "src/assistant/commands/worlds-access.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    }
+  ],
+  "src/assistant/commands/worlds.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/commands/worlds.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
     }
   ],
   "src/assistant/emotion-detector.test.ts": [
@@ -1463,6 +1797,22 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
+  "src/assistant/quality/adaptation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/quality/adaptation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+    }
+  ],
   "src/assistant/quality/entity-creation.test.ts": [
     {
       "kind": "ticket",
@@ -1471,8 +1821,72 @@
   ],
   "src/assistant/quality/entity-creation.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-check-duplicate-loads-all-owner-rows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/quota/engine.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/quota/engine.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
+    }
+  ],
+  "src/assistant/quota/errors.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
+    }
+  ],
+  "src/assistant/quota/rag-quota.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-rag-access.md"
+    }
+  ],
+  "src/assistant/quota/storage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    }
+  ],
+  "src/assistant/quota/storage.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
     }
   ],
   "src/assistant/scenario-source.test.ts": [
@@ -5810,6 +6224,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-byo-key-optional-weak-pbkdf2-100k-iterations.md"
     },
     {
@@ -8181,6 +8599,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeals-as-any-and-dead-route.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
     },
     {
       "kind": "ticket",
@@ -13960,6 +14382,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
     },
     {
@@ -18645,8 +19071,28 @@
   ],
   "src/routes/story-items/handlers.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
     }
   ],
   "src/routes/story-items/instances.ts": [
@@ -18995,10 +19441,28 @@
       "source": ".plan/tickets/TASK-world-location-encryption.md"
     }
   ],
+  "src/routes/worlds/access.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    }
+  ],
   "src/routes/worlds/locations.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
     },
     {
       "kind": "ticket",
@@ -19023,6 +19487,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md"
+    }
+  ],
+  "src/routes/worlds/worlds.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
     }
   ],
   "src/rpg": [
