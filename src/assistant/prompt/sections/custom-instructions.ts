@@ -11,17 +11,21 @@
  *   2. story tier  — `chats.custom_instructions` (chat projection), stacked
  *      on top of the account tier for this story only.
  *
- * Both tiers are user-authored free text: wrapped in
- * `<untrusted_user_content>` (same marker as prompt_override — see
- * TASK-character-world-prompt-overrides-injected-verbatim-as-system) so the
- * model can distinguish steering from system truth. The section fires for
- * every generation path the assembler runs, including impersonation (the
- * user-persona section replaces the *identity*, never the steering).
+ * Both tiers are user-authored free text and are wrapped via the shared
+ * `wrapUntrusted` helper from `./system`, which emits the data-only preamble
+ * that prevents the LLM from treating user-supplied text as authoritative
+ * system instructions. Without that preamble the model could let account-tier
+ * instructions override the GM contract in shared story chats (see
+ * BUG-account-tier-custom-instructions-render-as-system-message-wi). The
+ * section fires for every generation path the assembler runs, including
+ * impersonation (the user-persona section replaces the *identity*, never
+ * the steering).
  *
  * Trimming precedence lives in ../types PRIORITY (`customInstructions: 0`) —
  * never dropped by the token-budget trim.
  */
 import type { SectionBuilder, } from "../types";
+import { wrapUntrusted, } from "./system";
 
 /** Per-tier cap; mirrors validation (`ChatUpdateBody` / settings PATCH). */
 const MAX_TIER_CHARS = 5000;
@@ -57,13 +61,3 @@ export const customInstructionsSection: SectionBuilder = {
     return [{ role: "system", content: wrapUntrusted("user.custom_instructions", body,), },];
   },
 };
-
-/**
- * Same marker shape as the system section's override wrapping
- * (src/assistant/prompt/sections/system.ts).
- * @param source
- * @param content
- */
-function wrapUntrusted(source: string, content: string,): string {
-  return `<untrusted_user_content source="${source}">\n${content}\n</untrusted_user_content>`;
-}
