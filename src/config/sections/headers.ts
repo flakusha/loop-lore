@@ -40,7 +40,10 @@ export const HEADERS_DEFAULTS: HeadersConfig = {
   earlyHints: { enabled: false, },
   reportingEndpoints: {},
   nel: null,
-};
+  // HSTS defaults — disabled so plain-HTTP dev still works. Operators
+  // flip `enabled: true` once the deployment is HTTPS-only.
+  hsts: { enabled: false, maxAge: 31536000, includeSubDomains: true, preload: false, },
+ };
 
 /** */
 export class HeadersSection implements HeadersConfig {
@@ -55,13 +58,13 @@ export class HeadersSection implements HeadersConfig {
   crossOriginResourcePolicy = HEADERS_DEFAULTS.crossOriginResourcePolicy;
   timingAllowOrigin = HEADERS_DEFAULTS.timingAllowOrigin;
   immutableHashedAssets = HEADERS_DEFAULTS.immutableHashedAssets;
-  linkPreload = [...HEADERS_DEFAULTS.linkPreload,];
   acceptClientHints = [...HEADERS_DEFAULTS.acceptClientHints,];
   saveData = HEADERS_DEFAULTS.saveData;
-  earlyHints = { ...HEADERS_DEFAULTS.earlyHints, };
+  linkPreload = [...HEADERS_DEFAULTS.linkPreload,];
   reportingEndpoints: Record<string, string> = {};
   nel = HEADERS_DEFAULTS.nel;
-
+  hsts = { ...HEADERS_DEFAULTS.hsts, };
+  earlyHints = { ...HEADERS_DEFAULTS.earlyHints, };
   /**
    * @param overrides
    */

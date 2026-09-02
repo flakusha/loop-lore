@@ -76,4 +76,22 @@ export interface HeadersConfig {
   reportingEndpoints: Record<string, string>;
   /** `NEL` policy JSON string (null = omit). */
   nel: string | null;
+  /** Strict-Transport-Security policy (RFC 6797). Disabled by default to keep plain-HTTP dev working. */
+  hsts: HstsConfig;
 }
+
+/**
+ * Strict-Transport-Security policy. Emitted only on HTTPS requests to
+ * avoid lockout when the server is reached over plain HTTP (dev, internal
+ * proxy). RFC 6797 recommends `max-age >= 31536000` (1 year).
+ */
+export interface HstsConfig {
+  /** Master toggle. When false, the header is never emitted. */
+  enabled: boolean;
+  /** `max-age` value in seconds. */
+  maxAge: number;
+  /** Append `includeSubDomains`. */
+  includeSubDomains: boolean;
+  /** Append `preload`. Off by default — only enable after confirming the entire domain is HTTPS-only. */
+  preload: boolean;
+ }
