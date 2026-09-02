@@ -80,3 +80,7 @@ Unlike chat protocols, email encryption is opportunistic: messages are stored un
 - Can receive notifications via email
 - PGP-encrypted correspondence works when configured
 - Email-to-chat bridge delivers inbound mail into loop-lore chats
+
+## Related Epics
+
+- `epic-auth-channel-provisioning.md` — the SMTP send slice (`EmailAdapter`) unblocks e-mail OTP login/unlock factors (work item F5; see `matrix-authentication-channels.md` AC6). Address-change re-verification semantics are defined there.
