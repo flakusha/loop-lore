@@ -20,8 +20,8 @@
  */
 import { afterEach, describe, expect, mock, spyOn, test, } from "bun:test";
 import { Kysely, } from "kysely";
-import { createLogger, } from "../../../logger";
 import type { DB, } from "../../../db/schema";
+import { createLogger, } from "../../../logger";
 import type { StoryContext, } from "../../story-types";
 import { llmDecision, } from "./llm";
 
@@ -64,7 +64,7 @@ const baseContext: StoryContext = {
   },
 };
 
-function makeDeps(generateText: (params: unknown) => Promise<string>,) {
+function makeDeps(generateText: (params: unknown,) => Promise<string>,) {
   // Empty Kysely handle — the PromptAssembler queries during assemble, but
   // we mock it below so this stub is never used.
   const db = {} as unknown as Kysely<DB>;
@@ -100,7 +100,9 @@ describe("llmDecision — fallback surfacing", () => {
     // Stub the PromptAssembler import so the test does not depend on a real
     // DB. We only need to assert the fallback path — assembling happens
     // before the throwing generateText call.
-    const failingGenerateText = async () => { throw new Error("provider down",); };
+    const failingGenerateText = async () => {
+      throw new Error("provider down",);
+    };
     const deps = makeDeps(failingGenerateText,);
 
     // The PromptAssembler is invoked synchronously inside llmDecision and
@@ -108,7 +110,7 @@ describe("llmDecision — fallback surfacing", () => {
     // Since the test passes an empty db, the real assembler would throw
     // before the LLM call. We therefore monkey-patch the assembler via the
     // module's already-imported reference.
-    const assemblerModule = await import("../../../assistant/prompt-assembler",);
+    const assemblerModule = await import("../../../assistant/prompt-assembler");
     const { PromptAssembler, } = assemblerModule;
     const originalAssemble = PromptAssembler.prototype.assemble;
     PromptAssembler.prototype.assemble = mock(async () => ({
@@ -125,13 +127,13 @@ describe("llmDecision — fallback surfacing", () => {
     } finally {
       PromptAssembler.prototype.assemble = originalAssemble;
     }
-  },);
+  });
 
   test("Empty LLM text surfaces log.warn AND returns fallback: true", async () => {
     const emptyGenerateText = async () => "";
     const deps = makeDeps(emptyGenerateText,);
 
-    const assemblerModule = await import("../../../assistant/prompt-assembler",);
+    const assemblerModule = await import("../../../assistant/prompt-assembler");
     const { PromptAssembler, } = assemblerModule;
     const originalAssemble = PromptAssembler.prototype.assemble;
     PromptAssembler.prototype.assemble = mock(async () => ({
@@ -146,13 +148,13 @@ describe("llmDecision — fallback surfacing", () => {
     } finally {
       PromptAssembler.prototype.assemble = originalAssemble;
     }
-  },);
+  });
 
   test("Whitespace-only LLM text surfaces log.warn AND returns fallback: true", async () => {
     const blankGenerateText = async () => "   \n\t  ";
     const deps = makeDeps(blankGenerateText,);
 
-    const assemblerModule = await import("../../../assistant/prompt-assembler",);
+    const assemblerModule = await import("../../../assistant/prompt-assembler");
     const { PromptAssembler, } = assemblerModule;
     const originalAssemble = PromptAssembler.prototype.assemble;
     PromptAssembler.prototype.assemble = mock(async () => ({
@@ -166,13 +168,13 @@ describe("llmDecision — fallback surfacing", () => {
     } finally {
       PromptAssembler.prototype.assemble = originalAssemble;
     }
-  },);
+  });
 
   test("Successful LLM response does NOT set fallback: true", async () => {
     const okGenerateText = async () => "A rich in-character narration that meets the prompt.";
     const deps = makeDeps(okGenerateText,);
 
-    const assemblerModule = await import("../../../assistant/prompt-assembler",);
+    const assemblerModule = await import("../../../assistant/prompt-assembler");
     const { PromptAssembler, } = assemblerModule;
     const originalAssemble = PromptAssembler.prototype.assemble;
     PromptAssembler.prototype.assemble = mock(async () => ({
@@ -187,5 +189,5 @@ describe("llmDecision — fallback surfacing", () => {
     } finally {
       PromptAssembler.prototype.assemble = originalAssemble;
     }
-  },);
+  });
 });
