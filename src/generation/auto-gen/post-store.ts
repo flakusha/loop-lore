@@ -95,11 +95,17 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     }
   }
 
-  const hallucinationAnalysis = await detectHallucinations({
-    db: database,
-    text: content,
-    worldId: worldId ?? undefined,
-  },);
+  let hallucinationAnalysis: { detected: boolean; score: number; flags: readonly { entityName: string; entityType: string; confidence: number }[] };
+  try {
+    hallucinationAnalysis = await detectHallucinations({
+      db: database,
+      text: content,
+      worldId: worldId ?? undefined,
+    },);
+  } catch (error) {
+    log.warn("hallucination-guard: failed to detect hallucinations", { err: error, },);
+    hallucinationAnalysis = { detected: false, score: 0, flags: [], };
+  }
 
   if (hallucinationAnalysis.detected) {
     log.warn("Hallucination detected in generation", {
