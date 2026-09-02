@@ -33,6 +33,47 @@ export const CHARACTERS_DEFAULTS = {
       target_roles: ["user", "admin",],
       is_template: true,
       is_default: true,
+      // ── Wardrobe / outfits (epic-wardrobe-avatar-variants.md) ──
+      // Elara is the multi-context sage; her wardrobe demonstrates the
+      // (outfit × emotion) variant key + the default-outfit fallback.
+      default_outfit: "library-robes",
+      outfits: [
+        {
+          id: "library-robes",
+          name: "Library Robes",
+          descriptor:
+            "Heavy layered linen robes in muted indigo and silver, an embroidered sash of woven starlight, weathered leather-bound tomes tucked into a belt pouch",
+          tags: ["scholar", "indoor",],
+        },
+        {
+          id: "travel-cloak",
+          name: "Travel Cloak",
+          descriptor:
+            "Hooded grey-green cloak over simple traveling clothes, sturdy boots, a satchel of scrolls, walking staff in hand",
+          tags: ["outdoor", "travel",],
+        },
+        {
+          id: "formal-court",
+          name: "Formal Court Attire",
+          descriptor:
+            "Elegant elven court gown in deep emerald with moonstone embroidery, silver circlet, formal gloves, a delicate chain of office",
+          tags: ["formal", "court",],
+        },
+      ],
+      loadouts: [
+        {
+          name: "court-hearing",
+          slot: "chest",
+          item_match: "court-robes",
+          outfit: "formal-court",
+        },
+        {
+          name: "long-journey",
+          slot: "chest",
+          item_match: "travel-cloak",
+          outfit: "travel-cloak",
+        },
+      ],
     },
     {
       id: "tpl-aria-7",
@@ -85,6 +126,39 @@ export const CHARACTERS_DEFAULTS = {
       target_roles: ["user", "admin",],
       is_template: true,
       is_default: true,
+      // ── Wardrobe / outfits (epic-wardrobe-avatar-variants.md) ──
+      // Morgan's wardrobe demonstrates the modern-noir side of the
+      // (outfit × emotion) variant key: office vs stakeout vs undercover.
+      default_outfit: "office-attire",
+      outfits: [
+        {
+          id: "office-attire",
+          name: "Office Attire",
+          descriptor: "Worn charcoal suit, loosened tie, rumpled white shirt, rumpled fedora hanging on the coat rack",
+          tags: ["modern", "office",],
+        },
+        {
+          id: "stakeout-jacket",
+          name: "Stakeout Jacket",
+          descriptor:
+            "Heavy dark jacket with collar turned up, thermal undershirt, sturdy boots, surveillance gear in pockets",
+          tags: ["field", "night",],
+        },
+        {
+          id: "undercover-casual",
+          name: "Undercover Casual",
+          descriptor: "Plain hoodie and jeans, scuffed sneakers, baseball cap pulled low, unremarkable on purpose",
+          tags: ["undercover", "casual",],
+        },
+      ],
+      loadouts: [
+        {
+          name: "surveillance-kit",
+          slot: "chest",
+          item_match: "field-jacket",
+          outfit: "stakeout-jacket",
+        },
+      ],
     },
 
     // ── Genre Sampler ───────────────────────────────────────

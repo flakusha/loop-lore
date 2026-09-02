@@ -394,7 +394,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.md",
-    "git_issue": "bc5de16"
+    "git_issue": "bc5de16",
+    "status": "done"
   },
   "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM": {
     "hash": "69d45a5",
@@ -442,7 +443,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user-.md"
+    "source": ".plan/tickets/BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user-.md",
+    "status": "done"
   },
   "BUG-BUG-ASYNC-RESULT-STORE-TRACK-NEVER-CALLED-REQUEST-RESULTS-PI": {
     "hash": "287e4fd",
@@ -454,7 +456,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md"
+    "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md",
+    "status": "done"
   },
   "BUG-BUG-ASYNC-STORE-COMPLETE-DROPS-RESPONSE-BODY-LARGER-THAN-MAX": {
     "hash": "7ef551a",
@@ -1526,7 +1529,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-factory-reset-deletes-tables-without-transaction-silent-per-.md",
-    "git_issue": "dc5a8b8"
+    "git_issue": "dc5a8b8",
+    "status": "done"
   },
   "BUG-FEAT-RADICLE-INTEGRATION-ACCEPTANCE-CRITERIA-TOO-THIN": {
     "hash": "4a8525b",
@@ -19530,6 +19534,30 @@
     "status": "done",
     "git_issue": "5cf3d0c"
   },
+  "TASK-WARDROBE-DEFERRED-EQUIPPED-ITEMS-OUTFIT-AUTO-MAPPING-FLAG-GA": {
+    "hash": "850e55d",
+    "git_issue": "850e55d",
+    "extid": "TASK-WARDROBE-DEFERRED-EQUIPPED-ITEMS-OUTFIT-AUTO-MAPPING-FLAG-GA",
+    "type": "TASK",
+    "title": "Wardrobe deferred: equipped-items -> outfit auto-mapping (flag-gated)",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-wardrobe-avatar-variants.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-deferred-equipped-items-outfit-auto-mapping-flag-ga.md"
+  },
+  "TASK-WARDROBE-FRONTEND-MANAGER-ON-CHARACTER-SHEET-OUTFIT-SWITCHER": {
+    "hash": "4b7a6c5",
+    "git_issue": "4b7a6c5",
+    "extid": "TASK-WARDROBE-FRONTEND-MANAGER-ON-CHARACTER-SHEET-OUTFIT-SWITCHER",
+    "type": "TASK",
+    "title": "Wardrobe frontend: manager on character sheet + outfit switcher",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-wardrobe-avatar-variants.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-frontend-manager-on-character-sheet-outfit-switcher.md"
+  },
   "TASK-WARDROBE-MANAGER-UI-AND-CHAT-OUTFIT-SWITCHER": {
     "hash": "ca24912",
     "git_issue": "ca24912",
@@ -19541,6 +19569,18 @@
     "epic": "Wardrobe / Loadout Avatar Variants",
     "tags": [],
     "source": ".plan/tickets/TASK-wardrobe-manager-ui-and-chat-outfit-switcher.md"
+  },
+  "TASK-WARDROBE-OUTFIT-SCOPED-AVATAR-GENERATION-BATCH-SINGLE": {
+    "hash": "7449960",
+    "git_issue": "7449960",
+    "extid": "TASK-WARDROBE-OUTFIT-SCOPED-AVATAR-GENERATION-BATCH-SINGLE",
+    "type": "TASK",
+    "title": "Wardrobe outfit-scoped avatar generation (batch + single)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-wardrobe-avatar-variants.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-outfit-scoped-avatar-generation-batch-single.md"
   },
   "TASK-WARDROBE-ROUTES-VALIDATION-AND-PER-OUTFIT-AVATAR-ENDPOINTS": {
     "hash": "98db3a5",
@@ -19554,6 +19594,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-wardrobe-routes-validation-and-per-outfit-avatar-endpoints.md"
   },
+  "TASK-WARDROBE-ROUTES-VALIDATION-CRUD-OUTFIT-OVERRIDE-ENDPOINTS": {
+    "hash": "77ab687",
+    "git_issue": "77ab687",
+    "extid": "TASK-WARDROBE-ROUTES-VALIDATION-CRUD-OUTFIT-OVERRIDE-ENDPOINTS",
+    "type": "TASK",
+    "title": "Wardrobe routes + validation (CRUD + outfit override endpoints)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-wardrobe-avatar-variants.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-routes-validation-crud-outfit-override-endpoints.md"
+  },
   "TASK-WARDROBE-SCHEMA-ITEMS-BINDINGS-OUTFIT-ID": {
     "hash": "405aad0",
     "git_issue": "405aad0",
@@ -19565,6 +19617,54 @@
     "epic": "Wardrobe / Loadout Avatar Variants",
     "tags": [],
     "source": ".plan/tickets/TASK-wardrobe-schema-items-bindings-outfit-id.md"
+  },
+  "TASK-WARDROBE-SCHEMA-WARDROBE-ITEMS-ACTOR-WARDROBE-AVATAR-OUTFIT-": {
+    "hash": "dc09970",
+    "git_issue": "dc09970",
+    "extid": "TASK-WARDROBE-SCHEMA-WARDROBE-ITEMS-ACTOR-WARDROBE-AVATAR-OUTFIT-",
+    "type": "TASK",
+    "title": "Wardrobe schema: wardrobe_items, actor_wardrobe, avatar outfit_id",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-wardrobe-avatar-variants.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-schema-wardrobe-items-actor-wardrobe-avatar-outfit-.md"
+  },
+  "TASK-WARDROBE-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION-RESOLUTION-LA": {
+    "hash": "9276802",
+    "git_issue": "9276802",
+    "extid": "TASK-WARDROBE-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION-RESOLUTION-LA",
+    "type": "TASK",
+    "title": "Wardrobe selection algorithm v2 (outfit, emotion) resolution ladder",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-wardrobe-avatar-variants.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-selection-algorithm-v2-outfit-emotion-resolution-la.md"
+  },
+  "TASK-WARDROBE-STORY-GM-INTEGRATION-OUTFIT-CHANGE-EVENTS": {
+    "hash": "d3698da",
+    "git_issue": "d3698da",
+    "extid": "TASK-WARDROBE-STORY-GM-INTEGRATION-OUTFIT-CHANGE-EVENTS",
+    "type": "TASK",
+    "title": "Wardrobe story/GM integration (outfit change events)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-wardrobe-avatar-variants.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-story-gm-integration-outfit-change-events.md"
+  },
+  "TASK-WARDROBE-TESTS-FALLBACK-LADDER-OVERRIDE-PRECEDENCE-OUTFIT-SC": {
+    "hash": "dbb9e46",
+    "git_issue": "dbb9e46",
+    "extid": "TASK-WARDROBE-TESTS-FALLBACK-LADDER-OVERRIDE-PRECEDENCE-OUTFIT-SC",
+    "type": "TASK",
+    "title": "Wardrobe tests: fallback ladder, override precedence, outfit-scoped regen isolation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-wardrobe-avatar-variants.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-tests-fallback-ladder-override-precedence-outfit-sc.md"
   },
   "TASK-WARDROBE-TESTS-LADDER-PRECEDENCE-SCOPED-REGEN": {
     "hash": "3c04fc1",

@@ -1519,6 +1519,10 @@
       "source": ".plan/tickets/TASK-prompt-mood-full-section.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wardrobe-story-gm-integration-outfit-change-events.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
     }
@@ -22897,6 +22901,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-schema-validation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wardrobe-routes-validation-crud-outfit-override-endpoints.md"
     },
     {
       "kind": "spec",

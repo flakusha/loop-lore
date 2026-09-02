@@ -171,3 +171,4 @@ phase 2.
 - `epic-worlds-extension.md` — world shareability/placement
 - `epic-character-core-system.md` — base setup (Layer 0)
 - `TASK-world-item-instance-npc.md` — item placement onto NPCs
+- `epic-wardrobe-avatar-variants.md` — per-world outfit binding rules + `chat_wardrobe_overrides` live in `character_world_setup`/world avatar config; `starting_inventory` is the bridge to loadout-driven outfit switching
