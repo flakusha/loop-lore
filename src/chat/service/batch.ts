@@ -75,8 +75,12 @@ export async function batchDeleteChats(
     }
     await trx.deleteFrom("chats",).where("id", "in", ownedIds,).execute();
   },);
+
+  // Every owned chat deleted or the transaction rolled back — the committed
+  // count is the owned set (previously fell off the end returning undefined
+  // against the declared Promise<number>; TS2366).
   return ownedIds.length;
- }
+}
 
 /**
  * Batch export chats with messages, participants, and actors.
