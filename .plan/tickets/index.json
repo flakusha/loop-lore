@@ -3406,6 +3406,18 @@
     "source": ".plan/tickets/BUG-vn-choices-idor-guard-non-compiling.md",
     "status": "fixed-in-worktree"
   },
+  "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M": {
+    "hash": "508a7ea",
+    "git_issue": "508a7ea",
+    "extid": "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M",
+    "type": "BUG",
+    "title": "worktree finalize must hard-fail on non-mergeable or multi-merge dev state, never blind stash round-trip",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-tooling-improvement",
+    "tags": [],
+    "source": ".plan/tickets/BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m.md"
+  },
   "BUG-WORKTREE-TICKET-WRITES-PLAN-FILES-TO-MAIN-CHECKOUT": {
     "hash": "ab13e3c",
     "git_issue": "ab13e3c",
