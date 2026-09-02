@@ -57,17 +57,24 @@ export async function batchDeleteChats(
   const ownedIds = Array.from(owned, (c,) => c.id,);
   if (ownedIds.length === 0) { return 0; }
 
-  for (const chatId of ownedIds) {
-    await database.deleteFrom("generation_attempts",).where("chat_id", "=", chatId,).execute();
-    await database.deleteFrom("messages",).where("chat_id", "=", chatId,).execute();
-    await database.deleteFrom("chat_participants",).where("chat_id", "=", chatId,).execute();
-    await database.deleteFrom("story_turns",).where("chat_id", "=", chatId,).execute();
-    await database.deleteFrom("quest_progress",).where("chat_id", "=", chatId,).execute();
-    await database.deleteFrom("synthetic_data",).where("chat_id", "=", chatId,).execute();
-    await database.deleteFrom("actor_memories",).where("source_chat_id", "=", chatId,).execute();
-  }
-  await database.deleteFrom("chats",).where("id", "in", ownedIds,).execute();
-  return ownedIds.length;
+  // Wrap the 7 child-table deletes + parent-chat delete in a single
+  // transaction so a mid-failure rolls back cleanly. Without the
+  // transaction wrapper, a partial failure (FK violation, DB down,
+  // schema mismatch) leaves orphaned messages / participants /
+  // generation_attempts attached to chats that no longer exist.
+  // BUG-batch-chat-delete-lacks-transaction-orphaned-rows-on-partial.
+  await database.transaction().execute(async (trx,) => {
+    for (const chatId of ownedIds) {
+      await trx.deleteFrom("generation_attempts",).where("chat_id", "=", chatId,).execute();
+      await trx.deleteFrom("messages",).where("chat_id", "=", chatId,).execute();
+      await trx.deleteFrom("chat_participants",).where("chat_id", "=", chatId,).execute();
+      await trx.deleteFrom("story_turns",).where("chat_id", "=", chatId,).execute();
+      await trx.deleteFrom("quest_progress",).where("chat_id", "=", chatId,).execute();
+      await trx.deleteFrom("synthetic_data",).where("chat_id", "=", chatId,).execute();
+      await trx.deleteFrom("actor_memories",).where("source_chat_id", "=", chatId,).execute();
+    }
+    await trx.deleteFrom("chats",).where("id", "in", ownedIds,).execute();
+  },);
 }
 
 /**
