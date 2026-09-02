@@ -8,7 +8,7 @@
  * `actor_id`). Reuses `checkChatAccess` from `./access` so access policy stays
  * consistent with reactions and other message interactions.
  */
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { checkChatAccess, } from "./access";
 import type { ServiceError, } from "./types";
@@ -105,7 +105,7 @@ export async function recordMessageSeen(
         .columns(["message_id", "actor_id",],)
         .doUpdateSet({
           state,
-          seen_at: state === "seen" || state === "processing" ? now : undefined,
+          seen_at: sql`COALESCE(message_seen.seen_at, excluded.seen_at)`,
         },)
     )
     .execute();
