@@ -67,3 +67,7 @@ The risk surfaces when:
 - [ ] Existing hook tests green; new assertions for the new fields.
 - [ ] Optional follow-up: NSFW + Moderation hooks carry the same fields for consistency.
 - [ ] `bun run check` green.
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Prerequisite for epic Emotion Avatar Message Binding persist path (regeneration/render work blocked until hook payload carries actor+chat).
