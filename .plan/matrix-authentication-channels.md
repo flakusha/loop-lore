@@ -46,13 +46,13 @@ auth-infrastructure epics.
 
 | Ticket | Status | Disposition |
 |--------|--------|-------------|
-| `TASK-2fa-mfa.md` | epic-generated duplicate | **folded** into `TASK-two-factor-multi-factor-auth.md` (kept as alias stub; sync pass may delete) |
+| `TASK-2fa-mfa.md` | epic-generated duplicate | **folded** (executed) into `TASK-two-factor-multi-factor-auth.md` (kept as alias stub; sync pass may delete) |
 | `TASK-two-factor-multi-factor-auth.md` | canonical | extended with F1–F10 pointers to this bundle |
 
 ## Post-land Bookkeeping Checklist (for whoever implements / maintains `.plan/`)
 
-- [ ] After finalize: create execution tickets for F1–F10 via `scripts/worktree/ ticket TASK …` and link back to epic work items.
+- [x] After finalize: execution tickets F1–F10 created with git issues + linked from epic work items (2026-09-02, `plan-bookkeeping-2fa-emotion`).
 - [ ] Reconcile `open-deferred.md` #7 row (MFA deferral) once implementation is scheduled — decision is human re-triage; planning bundle only records the reopen.
 - [ ] Resolve `[WAC1..4]` open decisions as their counterpart epics (integrations-core capability registry, matrix inbound) land; update rows in place.
 - [ ] When first messenger factor ships, add an e2e flows spec (`tests/e2e/flows/auth-factors.test.ts`) and update this matrix AC4/AC7 rows with real adapter names.
-- [ ] `bun run plan:sync:fix` + `plan:docs` regeneration after any ticket/epic churn.
+- [x] `plan:sync:fix` + `plan:docs` regeneration — executed in the 2026-09-02 bookkeeping pass (8 advisory orphan git issues remain from a concurrent wardrobe batch — owner session should reconcile or `plan:sync:fix`).
