@@ -8084,6 +8084,138 @@
     "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md",
     "git_issue": "ad082ef"
   },
+  "TASK-ASSISTANT-ENTITY-ACCESS-ADAPTATION": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-ADAPTATION",
+    "type": "TASK",
+    "title": "Assistant Entity Adaptation Command & Engine",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-ADAPTER": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-ADAPTER",
+    "type": "TASK",
+    "title": "Assistant Entity Access Adapter Layer",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-ASSET-ACCESS": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-ASSET-ACCESS",
+    "type": "TASK",
+    "title": "Assistant Asset Access Commands",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-CHARACTER-ITEM-INVENTORY": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-CHARACTER-ITEM-INVENTORY",
+    "type": "TASK",
+    "title": "Assistant Character, Item & Inventory Access Commands",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-character-item-inventory.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-DUPLICATION": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-DUPLICATION",
+    "type": "TASK",
+    "title": "Assistant Entity Duplication Command",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-duplication.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-E2E": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-E2E",
+    "type": "TASK",
+    "title": "Assistant Entity Access E2E Tests",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-e2e.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-MODIFICATION-ADDITION": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-MODIFICATION-ADDITION",
+    "type": "TASK",
+    "title": "Assistant Entity Modification & Addition Commands",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-modification-addition.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-QUOTA-ENGINE": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-QUOTA-ENGINE",
+    "type": "TASK",
+    "title": "Assistant Entity Access Quota Engine",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-quota-engine.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-RAG-ACCESS": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-RAG-ACCESS",
+    "type": "TASK",
+    "title": "Assistant RAG Access Commands",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-rag-access.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-SCHEMA": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-SCHEMA",
+    "type": "TASK",
+    "title": "Assistant Entity Access Schema",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-schema.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-TESTS": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-TESTS",
+    "type": "TASK",
+    "title": "Assistant Entity Access Unit Tests",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+  },
+  "TASK-ASSISTANT-ENTITY-ACCESS-WORLD-LOCATION-ACCESS": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-ENTITY-ACCESS-WORLD-LOCATION-ACCESS",
+    "type": "TASK",
+    "title": "Assistant World & Location Access Commands",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+  },
   "TASK-ASSISTANT-GENERATION-EXTENSIONS": {
     "hash": "pending",
     "extid": "TASK-ASSISTANT-GENERATION-EXTENSIONS",
