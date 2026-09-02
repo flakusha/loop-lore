@@ -90,6 +90,52 @@ export const charactersMeta = {
             description: "Can be used as template for user-created chars",
           },
           is_default: { type: "boolean", default: false, description: "Auto-add to new users' character list", },
+          // ── Wardrobe / outfits (epic-wardrobe-avatar-variants.md) ──
+          // NOTE: under merge strategy "extend" (default for the character
+          // domain), name collisions keep the BASE template; user overrides
+          // for an existing character's wardrobe are silently dropped. To
+          // add a wardrobe to a built-in character (Elara, ARIA-7, Morgan),
+          // use strategy "override" in configs/templates/character.yaml.
+          default_outfit: {
+            type: "string",
+            description: "Default outfit id used when no context binding fires",
+          },
+          outfits: {
+            type: "array",
+            description: "Wardrobe catalog — distinct (outfit_id) entries this character can wear",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "string", description: "Stable outfit id referenced by loadouts and selection ladder", },
+                name: { type: "string", description: "Human-readable label shown in UI", },
+                descriptor: {
+                  type: "string",
+                  description:
+                    "Prompt-fragment fed to the avatar generator (identity-anchor + outfit-descriptor + emotion-descriptor)",
+                },
+                tags: {
+                  type: "array",
+                  items: { type: "string", },
+                  description: "Free-form tags (formal|armor|sleepwear|swim|...) used by binding rules",
+                },
+              },
+              required: ["id", "name", "descriptor",],
+            },
+          },
+          loadouts: {
+            type: "array",
+            description: "Equipped-items → outfit mapping (deferred loadout-bridge phase)",
+            items: {
+              type: "object",
+              properties: {
+                name: { type: "string", description: "Symbolic name for the loadout rule", },
+                slot: { type: "string", description: 'Inventory slot key (e.g. "chest", "legs", "head")', },
+                item_match: { type: "string", description: "Substring match against equipped item id/name", },
+                outfit: { type: "string", description: "Outfit id (from outfits[]) to switch into", },
+              },
+              required: ["name", "slot", "item_match", "outfit",],
+            },
+          },
         },
         required: ["name", "description",],
       },

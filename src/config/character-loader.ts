@@ -32,8 +32,30 @@ interface CharacterFileData {
   is_template?: boolean;
   is_default?: boolean;
 
+  // ── Wardrobe / Outfits (epic-wardrobe-avatar-variants.md) ──
+  // Optional. Existing emotion-only character files keep working without these.
+  default_outfit?: string;
+  outfits?: CharacterOutfit[];
+  loadouts?: CharacterLoadout[];
+
   /** Multi-character file: array of character definitions */
   templates?: CharacterFileData[];
+}
+
+/** Wardrobe outfit descriptor — mirrors CharacterOutfitTemplate in sections/characters/types.ts */
+interface CharacterOutfit {
+  id: string;
+  name: string;
+  descriptor: string;
+  tags?: string[];
+}
+
+/** Loadout bridge entry — mirrors CharacterLoadoutTemplate in sections/characters/types.ts */
+interface CharacterLoadout {
+  name: string;
+  slot: string;
+  item_match: string;
+  outfit: string;
 }
 
 // ── File Discovery ────────────────────────────────────────────
@@ -153,6 +175,9 @@ function normalizeTemplates(data: CharacterFileData,): CharacterTemplateConfig["
       target_roles: t.target_roles,
       is_template: t.is_template,
       is_default: t.is_default,
+      default_outfit: t.default_outfit,
+      outfits: t.outfits,
+      loadouts: t.loadouts,
     }),);
   }
 
@@ -174,6 +199,9 @@ function normalizeTemplates(data: CharacterFileData,): CharacterTemplateConfig["
       target_roles: data.target_roles,
       is_template: data.is_template,
       is_default: data.is_default,
+      default_outfit: data.default_outfit,
+      outfits: data.outfits,
+      loadouts: data.loadouts,
     },];
   }
 

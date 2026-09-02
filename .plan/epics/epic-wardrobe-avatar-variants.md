@@ -68,24 +68,32 @@ competing with it.
 
 ## Work Items
 
-- [ ] Schema: `wardrobe_items`, `actor_wardrobe`, avatar-row `outfit_id` column
+- [ ] **Schema** — `wardrobe_items`, `actor_wardrobe`, avatar-row `outfit_id` column
       (+ binding-rules storage per multi-avatar design); regen generated schema
-- [ ] Service: selection algorithm v2 — (outfit, emotion) resolution with
+      → `TASK-wardrobe-schema-wardrobe-items-actor-wardrobe-avatar-outfit-.md`
+- [ ] **Selection algorithm v2** — (outfit, emotion) resolution with
       fallback ladder; context overrides (chat > location > default)
-- [ ] Generation: outfit-scoped batch/single jobs (prompt composition slot);
+      → `TASK-wardrobe-selection-algorithm-v2-outfit-emotion-resolution-la.md`
+- [ ] **Outfit-scoped generation** — batch/single jobs (prompt composition slot);
       integrates `epic-avatar-regeneration-control.md` scope params
-- [ ] Routes + validation: wardrobe CRUD, per-outfit avatar generate/regenerate,
+      → `TASK-wardrobe-outfit-scoped-avatar-generation-batch-single.md`
+- [ ] **Routes + validation** — wardrobe CRUD, per-outfit avatar generate/regenerate,
       chat/scene outfit override endpoints (ownership-checked)
-- [ ] UI: wardrobe manager on character sheet; outfit switcher in chat header;
+      → `TASK-wardrobe-routes-validation-crud-outfit-override-endpoints.md`
+- [ ] **UI** — wardrobe manager on character sheet; outfit switcher in chat header;
       variant grid grouped by outfit × emotion
-- [ ] Story/GM integration: narration hook — outfit change events visible to
+      → `TASK-wardrobe-frontend-manager-on-character-sheet-outfit-switcher.md`
+- [ ] **Story/GM integration** — narration hook — outfit change events visible to
       prompt context (`src/assistant/prompt/sections/emotion-avatar.ts` analog
       or extension); refuse/block interaction note: wardrobe change of the
       *player* actor routes through the immersion gate
       (`epic-immersion-consistency-gate.md`)
-- [ ] Tests: fallback ladder order, override precedence, outfit-scoped regen
+      → `TASK-wardrobe-story-gm-integration-outfit-change-events.md`
+- [ ] **Tests** — fallback ladder order, override precedence, outfit-scoped regen
       isolation (emotion re-roll doesn't cross outfits), migration/schema-sync
-- [ ] Deferred phase: equipped-items → outfit auto-mapping (flag-gated)
+      → `TASK-wardrobe-tests-fallback-ladder-override-precedence-outfit-sc.md`
+- [ ] **Deferred phase** — equipped-items → outfit auto-mapping (flag-gated)
+      → `TASK-wardrobe-deferred-equipped-items-outfit-auto-mapping-flag-ga.md`
 
 ## Non-Goals
 
