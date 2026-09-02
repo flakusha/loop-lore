@@ -36,7 +36,7 @@ describe("AsyncStore", () => {
 
   test("progress updates the inlined JSON column", async () => {
     store.track({ id: "req-2", method: "POST", routePattern: "/api/y", userId: null, },);
-    store.progress("req-2", { progress: { step: "tokens", tokens: 42, }, },);
+    store.progress("req-2", { userId: null, }, { progress: { step: "tokens", tokens: 42, }, },);
     await store.flush();
     const row = await store.read("req-2",);
     expect(row?.status,).toBe("in_progress",);
@@ -45,7 +45,7 @@ describe("AsyncStore", () => {
 
   test("complete captures status + headers + body", async () => {
     store.track({ id: "req-3", method: "POST", routePattern: "/api/z", userId: null, },);
-    store.complete("req-3", {
+    store.complete("req-3", { userId: null, }, {
       status: 201,
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({ id: "msg-99", },),
@@ -61,11 +61,37 @@ describe("AsyncStore", () => {
 
   test("fail marks the row as failed and surfaces the error", async () => {
     store.track({ id: "req-4", method: "POST", routePattern: "/api/a", userId: null, },);
-    store.fail("req-4", "boom",);
+    store.fail("req-4", { userId: null, }, "boom",);
     await store.flush();
     const row = await store.read("req-4",);
     expect(row?.status,).toBe("failed",);
     expect(row?.error,).toBe("boom",);
+  });
+
+  test("complete scoped to owner — cross-user complete is silently dropped", async () => {
+    // Alice tracks. Bob attempts to complete Alice's row. The WHERE clause
+    // user_id = 'bob' matches zero rows, so the DB row keeps its `pending`
+    // state. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+    store.track({ id: "req-5", method: "POST", routePattern: "/api/b", userId: "alice", },);
+    store.complete("req-5", { userId: "bob", }, {
+      status: 200,
+      headers: {},
+      body: "bob-forbidden",
+    },);
+    await store.flush();
+    const row = await store.read("req-5",);
+    expect(row?.status,).toBe("pending",);
+    expect(row?.responseBody,).toBeNull();
+  });
+
+  test("fail scoped to owner — cross-user fail is silently dropped", async () => {
+    // Same as complete: a fail write for another user's requestId is a no-op.
+    store.track({ id: "req-6", method: "POST", routePattern: "/api/c", userId: "alice", },);
+    store.fail("req-6", { userId: "bob", }, "bob-forbidden",);
+    await store.flush();
+    const row = await store.read("req-6",);
+    expect(row?.status,).toBe("pending",);
+    expect(row?.error,).toBeNull();
   });
 
   test("read returns null for unknown ids", async () => {
