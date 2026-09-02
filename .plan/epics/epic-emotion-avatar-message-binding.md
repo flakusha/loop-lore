@@ -107,3 +107,7 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
 - `FEAT-avatar-expression-system.md` — expression system
 - `TASK-character-mood-happiness.md` — mood state (render context)
 - `epic-messages.md` — message pipeline (parent for message-path changes)
+- `epic-avatar-regeneration-control.md` — re-roll of emotion slots this epic binds
+- `epic-asset-transform-metadata.md` — per-context framing of the bound avatar
+- `epic-avatar-alpha-vn-layering.md` — alpha/sprite consumption of bound variants
+- `epic-wardrobe-avatar-variants.md` — adds outfit axis to the bound emotion axis
