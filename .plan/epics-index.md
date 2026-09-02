@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 270 epics
+**Total:** 271 epics
 
 ## Summary
 
@@ -11,6 +11,7 @@
 | ------ | ----- | -------- | ------ | ----- | ---- |
 | 📝 Draft | Actors & Entity System | High | High | 17 | [epic-actors.md](/.plan/epics/epic-actors.md) |
 | 📝 Draft | Archival Workflow | Medium | Medium | 19 | [epic-archival-workflow.md](/.plan/epics/epic-archival-workflow.md) |
+| 📝 Draft | Assistant Entity Access & Manipulation | High | High | 10 | [epic-assistant-entity-access.md](/.plan/epics/epic-assistant-entity-access.md) |
 | 📝 Draft | Character & NPC Lore Access | High | High | 17 | [epic-character-npc-lore-access.md](/.plan/epics/epic-character-npc-lore-access.md) |
 | 📝 Draft | Cross-Layer Reconciliation | High | Large (permanently ongoing) | 12 | [epic-cross-layer-reconciliation.md](/.plan/epics/epic-cross-layer-reconciliation.md) |
 | 📝 Draft | Epic: Analytics & Observability | High | Medium | 3 | [epic-analytics-observability.md](/.plan/epics/epic-analytics-observability.md) |
@@ -301,6 +302,15 @@
 - **Type:** Feature Epic
 - **Tags:** archival, soft-delete, retention, purge, data-lifecycle
 - **File:** `.plan/epics/epic-archival-workflow.md`
+
+### Assistant Entity Access & Manipulation
+
+- **Status:** 📝 Draft
+- **Priority:** High
+- **Effort:** High
+- **Type:** Feature Epic
+- **Tags:** assistant, rag, assets, world, location, character, item, inventory, access, manipulation, duplication, adaptation
+- **File:** `.plan/epics/epic-assistant-entity-access.md`
 
 ### Character & NPC Lore Access
 
