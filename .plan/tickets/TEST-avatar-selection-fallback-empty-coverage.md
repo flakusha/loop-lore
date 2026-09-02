@@ -55,3 +55,7 @@ cover the pure `calculateAvatarScore` function (no DB needed) and the
       first avatar, fallback-chain consulted, world override wins.
 - [ ] Tests run under the default suite (no `--isolate`) and pass green.
 - [ ] `bun run check` green.
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Prerequisite for epic Wardrobe selection ladder (TASK-selection-algorithm-v2-outfit-emotion.md) — fix first; ladder tests pin these branches. Matrix: matrix-emotion-avatar-assets.md → Ticket Reconciliation.

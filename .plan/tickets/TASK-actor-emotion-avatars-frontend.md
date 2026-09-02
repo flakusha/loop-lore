@@ -42,3 +42,7 @@ Create frontend UI for emotion avatar batch generation. Backend routes exist at 
 - `TASK-emotion-avatar-message-binding.md` — Existing task
 - `TASK-emotions-avatar-edit-model.md` — Existing task
 - `TASK-aux-emotion-avatar.md` — Existing task
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Absorbed TASK-actor-emotion-avatars-frontend-panel.md (merged frontend ticket scoped to binding-epic render tasks per matrix reconciliation; grid group-by-outfit deferred to wardrobe epic).

@@ -1759,6 +1759,12 @@
       "source": ".plan/epics/epic-auth-channel-provisioning.md"
     }
   ],
+  "src/auth/factors": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-auth-factors-schema-and-service-core-f1.md"
+    }
+  ],
   "src/auth/index.ts": [
     {
       "kind": "ticket",
@@ -2994,10 +3000,6 @@
     }
   ],
   "src/characters/services/avatar-service.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-seed-default-characters-avatar.md"
@@ -4312,10 +4314,6 @@
   "src/components/character/emotion-avatars-panel.html": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
     }
   ],
@@ -4547,12 +4545,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
-    }
-  ],
-  "src/components/chat/mood-panel.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
     }
   ],
   "src/components/chat/pins-panel.html": [
@@ -6406,10 +6398,6 @@
   "src/db/enums-character.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
-    },
-    {
-      "kind": "epic",
       "source": ".plan/epics/epic-shared-schemas.md"
     },
     {
@@ -6422,6 +6410,10 @@
     }
   ],
   "src/db/enums-character/avatar.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-avatar-selection-rule-unimplemented-branches.md"
@@ -8786,10 +8778,6 @@
   "src/frontend/alpine/actor-emotion-avatars.ts": [
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
     }
   ],
@@ -9701,10 +9689,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-avatar-select-empty-throws-no-frontend-fallback.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
     },
     {
       "kind": "ticket",
