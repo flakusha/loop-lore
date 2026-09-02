@@ -256,8 +256,13 @@ describeOrSkip("streamToClient — stop-and-respond interrupt", () => {
         },
       },);
 
+      // stop-and-respond persists attempt status on cancel; give the fan-out
+      // a chainable no-op db so updateAttemptStatus resolves quietly.
+      const noopDb = {
+        updateTable: () => ({ set: () => ({ where: () => ({ execute: async () => 0, }), }), }),
+      } as unknown as Kysely<DB>;
       const cancelled = cancelGenerationByChat({
-        db: {} as Kysely<DB>,
+        db: noopDb,
         chatId,
         reason: CancelReason.UserCancel,
         source: CancelSource.User,

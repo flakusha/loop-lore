@@ -15,7 +15,7 @@
 
 import { registry, } from "../../plugins/registry";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
-import { SCRIPT_TAG, ON_EVENT_DOUBLE, ON_EVENT_SINGLE, } from "../../regex/html-sanitize";
+import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, SCRIPT_TAG, } from "../../regex/html-sanitize";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 
@@ -33,9 +33,9 @@ export const MAX_TOOL_ROUNDS = 5;
 export function sanitizeToolOutput(content: string,): string {
   if (!content) { return content; }
   return content
-    .replace(SCRIPT_TAG, "")
-    .replace(ON_EVENT_DOUBLE, "")
-    .replace(ON_EVENT_SINGLE, "");
+    .replace(SCRIPT_TAG, "",)
+    .replace(ON_EVENT_DOUBLE, "",)
+    .replace(ON_EVENT_SINGLE, "",);
 }
 
 /**
