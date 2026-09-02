@@ -86,16 +86,16 @@ Guarantee that an **authorized user can always log in, re-authenticate (step-up)
 
 ## Work Items
 
-- [ ] F1 — Schema + `auth_factors`/`auth_challenges`/`auth_devices`/`factor_audit` + service core (`src/auth/factors/`)
-- [ ] F2 — TOTP + backup codes + WebAuthn (factor mechanics, shared with `epic-two-factor-auth`)
-- [ ] F3 — Step-up middleware (`auth_time`/`amr` in JWT, route policies) + login factor prompt
-- [ ] F4 — Unlock ladder + failed-factor backoff + admin lock/unlock + device trust
-- [ ] F5 — E-mail OTP (blocked by email-integration SMTP slice — interface stub via EmailAdapter meanwhile)
-- [ ] F6 — Messenger OTP/approval via ProtocolAdapter (Matrix first; inbound verification route; health-aware fallback)
-- [ ] F7 — Provisioning guarantees hardening (cooling-off, change notifications, inventory UI, erasure cascade, rate limits)
-- [ ] F8 — OIDC RP login + binding table (optional feature flag)
-- [ ] F9 — Factor-management / recovery UI (htmx) + admin enforcement config
-- [ ] F10 — Tests: unit + integration + e2e (mocked adapters) + `docs/spec/2fa.md`
+- [ ] F1 — Schema + `auth_factors`/`auth_challenges`/`auth_devices`/`factor_audit` + service core (`src/auth/factors/`) → `.plan/tickets/auth-factors-schema-and-service-core-f1.md`
+- [ ] F2 — TOTP + backup codes + WebAuthn (factor mechanics, shared with `epic-two-factor-auth`) → `.plan/tickets/totp-backup-codes-and-webauthn-mechanics.md`
+- [ ] F3 — Step-up middleware (`auth_time`/`amr` in JWT, route policies) + login factor prompt → `.plan/tickets/f2-step-up-middleware-login-factor-prompt.md`
+- [ ] F4 — Unlock ladder + failed-factor backoff + admin lock/unlock + device trust → `.plan/tickets/f4-unlock-ladder-backoff-device-trust.md`
+- [ ] F5 — E-mail OTP (blocked by email-integration SMTP slice — interface stub via EmailAdapter meanwhile) → `.plan/tickets/f5-e-mail-otp-factor-delivery.md`
+- [ ] F6 — Messenger OTP/approval via ProtocolAdapter (Matrix first; inbound verification route; health-aware fallback) → `.plan/tickets/f6-messenger-otp-and-login-approval.md`
+- [ ] F7 — Provisioning guarantees hardening (cooling-off, change notifications, inventory UI, erasure cascade, rate limits) → `.plan/tickets/f7-factor-provisioning-guarantees-hardening.md`
+- [ ] F8 — OIDC RP login + binding table (optional feature flag) → `.plan/tickets/f8-oidc-rp-login-with-identity-bindings.md`
+- [ ] F9 — Factor-management / recovery UI (htmx) + admin enforcement config → `.plan/tickets/f9-factor-management-and-recovery-ui.md`
+- [ ] F10 — Tests: unit + integration + e2e (mocked adapters) + `docs/spec/2fa.md` → `.plan/tickets/f10-auth-factors-tests-and-2fa-spec-rewrite.md`
 
 ## Non-Goals
 

@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: F2 step-up middleware login factor prompt
+# TASK: Step-up middleware + login factor prompt (F3)
 
 **Status:** ⬜ Not Started
 **Priority:** high
