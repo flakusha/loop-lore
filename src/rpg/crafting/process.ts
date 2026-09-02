@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 291
+
 import type { Kysely, } from "kysely";
 import { CraftingAttemptStatus, EquipState, } from "../../db/enums";
 import type { ItemCategory, } from "../../db/enums";

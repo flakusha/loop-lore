@@ -3,6 +3,8 @@
 
 // src/characters/services/emotion-avatar-service/generation.ts — Batch generation logic
 
+// size-allow: 265
+
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { createAsset, linkAsset, } from "../../../assets/service";
