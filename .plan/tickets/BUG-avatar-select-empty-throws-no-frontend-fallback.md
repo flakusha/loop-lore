@@ -85,3 +85,7 @@ the `kind: "base"` shape from the API.
 - [ ] New unit tests cover: no avatars at all, no matching tag, fallback
       chain exhausted → base, base + world override.
 - [ ] `bun run check` green.
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Prerequisite for epic Wardrobe selection ladder (TASK-selection-algorithm-v2-outfit-emotion.md) — fix first; ladder tests pin these branches. Matrix: matrix-emotion-avatar-assets.md → Ticket Reconciliation.

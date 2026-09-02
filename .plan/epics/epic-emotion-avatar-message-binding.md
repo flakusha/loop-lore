@@ -60,7 +60,7 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
   per `TASK-aux-emotion-avatar.md`).
 - `detectAvatarChangeIntent()` (`src/assistant/intent.ts`) — regex fast-path
   (currently dead code, folded into generation or removed).
-- Value set should align with `EmotionType` in `src/db/enums-character.ts`.
+- Value set should align with `EmotionType` in `src/db/enums-character/avatar.ts`.
 
 ## Tasks
 
@@ -84,7 +84,7 @@ selection path is a manual `POST /api/actors/:actorId/avatars/select`.
 - `src/db/migrations/parts/006_messages_keys.ts` (migration) — ✅
 - `src/db/schema-core.ts` / `src/db/schema-manifest.ts` (schema) — ✅
 - `src/generation/hooks/emotion-hook.ts` / `src/generation/auto-gen.ts` (persist)
-- `src/characters/services/avatar-service.ts` (selectAvatar)
+- `src/characters/services/avatar-service/` (selection.ts selectAvatar)
 - `src/routes/chats.ts` / `src/chat/service.ts` (message read/create)
 - `src/frontend/alpine/chat.ts` / `src/frontend/alpine/chat-messages.ts`
 - `src/components/chat/message-list.html` (render)

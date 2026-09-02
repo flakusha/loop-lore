@@ -236,3 +236,7 @@ Revisit edit model priority when:
 ## Risk
 
 Medium — generation fallback reduces edit model dependency. Main risk is fallback quality: metadata-derived prompts may not preserve character identity as well as img2img editing.
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Absorbed TASK-emotion-avatar-edit-model.md (42L near-duplicate; folded per matrix reconciliation). Phase-2 edit-model stability remains tracked here.
