@@ -1,6 +1,6 @@
 # FEAT: Worktree commit commands lack message file input
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (2026-09-02 — `-F`/`--message-file` shipped in `scripts/worktree/utils/message.ts`, wired into `commit`/`agent-commit`)
 **Priority:** low
 **Effort:** low
 
