@@ -8,7 +8,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const IDEMPOTENCY_DEFAULTS = {
   enabled: true,
-  backend: "memory",
+  backend: "table",
   ttlMs: DAY_MS,
   bypassHeader: true,
 } satisfies IdempotencyConfig;
