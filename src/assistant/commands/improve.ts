@@ -4,10 +4,29 @@
 // src/assistant/commands/improve.ts
 //
 // /improve — rewrite user text for better quality.
+//
+// Flow: LLM-first (when a `complete` injection is supplied), local-heuristics
+// fallback otherwise. The LLM is given a clarity/flow system prompt; the
+// fallback applies basic capitalization + punctuation cleanup.
 
-import { type CommandResult, registerCommand, } from "./registry";
+import { type CommandResult, type CommandHandler, registerCommand, } from "./registry";
 
-registerCommand("improve", (args,): CommandResult => {
+/** Deps shape for /improve. */
+export interface ImproveDeps {
+  complete?: (req: { prompt: string; systemPrompt: string }) => Promise<{ content: string }>;
+}
+
+/**
+ * Core `/improve` logic. Extractable so tests can inject a stub `complete`.
+ * @param args
+ * @param _ctx
+ * @param deps
+ */
+export async function runImprove(
+  args: string[],
+  _ctx: Parameters<CommandHandler>[1],
+  deps: ImproveDeps,
+): Promise<CommandResult> {
   const text = args.join(" ",).trim();
 
   if (!text) {
@@ -18,21 +37,38 @@ registerCommand("improve", (args,): CommandResult => {
     };
   }
 
-  const improved = improveText(text,);
+  const systemPrompt = "Rewrite the following text for clarity and flow. Preserve meaning.";
 
+  if (deps.complete) {
+    try {
+      const result = await deps.complete({ prompt: text, systemPrompt, });
+      const content = result.content.trim();
+      if (content) {
+        return {
+          systemMessage: `**Improved:**\n\n${content}`,
+          actionPayload: { original: text, improved: content, },
+          handled: true,
+        };
+      }
+    } catch {
+      // Fall through to local heuristics on LLM failure
+    }
+  }
+
+  const improved = improveText(text,);
   return {
-    systemMessage: `**Improved:**\n\n${improved}`,
+    systemMessage: `**Improved:**\n\n${improved}\n\n[LLM unavailable — applied local heuristics only]`,
+    actionPayload: { original: text, improved, fallback: true, },
     handled: true,
   };
+}
+
+registerCommand("improve", (args, ctx,): CommandResult | Promise<CommandResult> => {
+  return runImprove(args, ctx, {},);
 },);
 
 /**
- * Basic text improvement without LLM.
- * Fixes common issues: capitalization, punctuation, spacing.
- *
- * NOTE: This is a placeholder. The real implementation should call
- * the generation pipeline with a "rewrite" prompt. For now, we do
- * basic text cleanup.
+ * Local fallback: capitalization, punctuation, whitespace cleanup.
  * @param text
  */
 function improveText(text: string,): string {

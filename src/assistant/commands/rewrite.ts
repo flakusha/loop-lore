@@ -4,35 +4,49 @@
 /**
  * /rewrite command — rewrite the last assistant message or given text.
  *
- * Registers the "rewrite" command alias. Returns a rewritten version of the
- * target text using basic local heuristics. In future iterations this will
- * route through the LLM generation pipeline.
+ * Registers the "rewrite" command. Routes to the LLM when a `complete` injection
+ * is supplied with a style-specific system prompt; otherwise falls back to
+ * local heuristics (filler removal, contraction expansion, capitalization).
  * @module assistant/commands/rewrite
  */
 
-import { type CommandResult, registerCommand, } from "./registry";
+import { type CommandResult, type CommandHandler, registerCommand, } from "./registry";
+
+/** Deps shape for rewriting. */
+export interface RewriteDeps {
+  complete?: (req: { prompt: string; systemPrompt: string }) => Promise<{ content: string }>;
+}
 
 /**
- * Rewrite the last assistant message or provided text.
- *
- * Usage:
- *   /rewrite                     → rewrite the last assistant message
- *   /rewrite <text>              → rewrite the given text
- *   /rewrite <text> --style <s>  → rewrite with a specific style
+ * Extract `--style <name>` from args, returning the chosen style and the
+ * remaining positional args. Defaults to "clear".
+ * @param args
  */
-registerCommand("rewrite", (args, ctx,): CommandResult => {
-  // Determine target text: explicit argument vs. last assistant message
-  let targetText: string | undefined;
-  let style = "clear";
-
-  const styleArgIndex = args.indexOf("--style",);
-  if (styleArgIndex !== -1 && styleArgIndex + 1 < args.length) {
-    style = args[styleArgIndex + 1] ?? "clear";
-    args.splice(styleArgIndex, 2,);
+function parseStyle(args: string[],): { style: string; rest: string[] } {
+  const idx = args.indexOf("--style",);
+  if (idx !== -1 && idx + 1 < args.length) {
+    return { style: args[idx + 1] ?? "clear", rest: args.filter((_, i,) => i !== idx && i !== idx + 1,), };
   }
+  return { style: "clear", rest: args, };
+}
 
-  if (args.length > 0) {
-    targetText = args.join(" ",);
+/**
+ * Core `/rewrite` logic. Extractable so tests can inject a stub `complete`.
+ * @param args
+ * @param ctx
+ * @param deps
+ */
+export async function runRewrite(
+  args: string[],
+  ctx: Parameters<CommandHandler>[1],
+  deps: RewriteDeps,
+): Promise<CommandResult> {
+  const { style, rest, } = parseStyle(args,);
+
+  let targetText: string | undefined;
+
+  if (rest.length > 0) {
+    targetText = rest.join(" ",);
   } else if (ctx.messages && ctx.messages.length > 0) {
     // Find last assistant/character message
     for (let i = ctx.messages.length - 1; i >= 0; i--) {
@@ -51,25 +65,44 @@ registerCommand("rewrite", (args, ctx,): CommandResult => {
     };
   }
 
-  const rewritten = rewriteText(targetText, style,);
+  const systemPrompt = `Rewrite the following text in ${style} style. Preserve meaning.`;
 
+  if (deps.complete) {
+    try {
+      const result = await deps.complete({ prompt: targetText, systemPrompt, });
+      const content = result.content.trim();
+      if (content) {
+        return {
+          systemMessage: `**Rewritten (${style}):**\n\n${content}`,
+          actionPayload: { original: targetText, rewritten: content, style, },
+          handled: true,
+        };
+      }
+    } catch {
+      // Fall through to local heuristic
+    }
+  }
+
+  const rewritten = rewriteText(targetText, style,);
   return {
-    systemMessage: `**Rewritten (${style}):**\n\n${rewritten}`,
-    actionPayload: { original: targetText, rewritten, style, },
+    systemMessage: `**Rewritten (${style}):**\n\n${rewritten}\n\n[LLM unavailable — applied local heuristics only]`,
+    actionPayload: { original: targetText, rewritten, style, fallback: true, },
     handled: true,
   };
+}
+
+/**
+ * @param args
+ * @param ctx
+ */
+registerCommand("rewrite", (args, ctx,): CommandResult | Promise<CommandResult> => {
+  return runRewrite(args, ctx, {},);
 },);
 
 /**
- * Apply basic text rewriting heuristics.
- *
- * Current transformations (to be replaced by LLM-based rewriting):
- * - Trim excess whitespace
- * - Fix common punctuation patterns
- * - Apply style-appropriate sentence structure hints
- * @param text - The text to rewrite
- * @param style - Rewriting style ("clear", "concise", "dramatic", "formal")
- * @returns Rewritten text
+ * Local fallback: trim whitespace, style-based transforms, sentence punctuation.
+ * @param text
+ * @param style
  */
 function rewriteText(text: string, style: string,): string {
   let result = text.trim();
