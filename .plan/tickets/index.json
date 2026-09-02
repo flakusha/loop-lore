@@ -6711,17 +6711,6 @@
     "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md",
     "git_issue": "9ca71ff"
   },
-  "TASK-ACTOR-EMOTION-AVATARS-FRONTEND-PANEL": {
-    "hash": "pending",
-    "extid": "TASK-ACTOR-EMOTION-AVATARS-FRONTEND-PANEL",
-    "type": "TASK",
-    "title": "Actor emotion avatars frontend panel",
-    "label": "task",
-    "priority": "P2",
-    "epic": "epic-frontend-backend-integration / epic-emotion-avatar-message-binding",
-    "tags": [],
-    "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend-panel.md"
-  },
   "TASK-ACTOR-ITEM-SERVICE": {
     "hash": "c68b555",
     "extid": "TASK-ACTOR-ITEM-SERVICE",
@@ -7612,6 +7601,54 @@
     "source": ".plan/tickets/TASK-ai-dungeon-moderation-lesson.md",
     "git_issue": "7b51327"
   },
+  "TASK-ALPHA-AWARE-GENERATION-REQUESTS-AND-FORMAT-PICK": {
+    "hash": "e1a63dc",
+    "git_issue": "e1a63dc",
+    "extid": "TASK-ALPHA-AWARE-GENERATION-REQUESTS-AND-FORMAT-PICK",
+    "type": "TASK",
+    "title": "Alpha-aware generation requests and format pick",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering",
+    "tags": [],
+    "source": ".plan/tickets/TASK-alpha-aware-generation-requests-and-format-pick.md"
+  },
+  "TASK-ALPHA-AWARE-RENDER-BINDING-AND-MOOD-PANEL": {
+    "hash": "e3861fc",
+    "git_issue": "e3861fc",
+    "extid": "TASK-ALPHA-AWARE-RENDER-BINDING-AND-MOOD-PANEL",
+    "type": "TASK",
+    "title": "Alpha-aware render binding and mood panel",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering",
+    "tags": [],
+    "source": ".plan/tickets/TASK-alpha-aware-render-binding-and-mood-panel.md"
+  },
+  "TASK-ALPHA-TESTS-CAPABILITY-MATRIX-DETECTION": {
+    "hash": "c9c6aac",
+    "git_issue": "c9c6aac",
+    "extid": "TASK-ALPHA-TESTS-CAPABILITY-MATRIX-DETECTION",
+    "type": "TASK",
+    "title": "Alpha tests capability matrix detection",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering",
+    "tags": [],
+    "source": ".plan/tickets/TASK-alpha-tests-capability-matrix-detection.md"
+  },
+  "TASK-ALPINE-CROPPER-COMPONENT-AND-INTEGRATIONS": {
+    "hash": "2fe7103",
+    "git_issue": "2fe7103",
+    "extid": "TASK-ALPINE-CROPPER-COMPONENT-AND-INTEGRATIONS",
+    "type": "TASK",
+    "title": "Alpine cropper component and integrations",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Transform Editing + Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-alpine-cropper-component-and-integrations.md"
+  },
   "TASK-ALPINE-STATE-TESTING": {
     "hash": "14b805c",
     "extid": "TASK-ALPINE-STATE-TESTING",
@@ -7766,6 +7803,66 @@
     "source": ".plan/tickets/TASK-asset-dedup-toctou-creates-duplicate-rows-and-orphan-files.md",
     "git_issue": "c8dbeab"
   },
+  "TASK-ASSET-PLATFORM-B1-CONTENT-FOUNDATION": {
+    "hash": "eb57d4e",
+    "git_issue": "eb57d4e",
+    "extid": "TASK-ASSET-PLATFORM-B1-CONTENT-FOUNDATION",
+    "type": "TASK",
+    "title": "Asset platform B1 content foundation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-platform-b1-content-foundation.md"
+  },
+  "TASK-ASSET-PLATFORM-B2-CHAT-UPLOAD-UX-PATTERNS": {
+    "hash": "43f1def",
+    "git_issue": "43f1def",
+    "extid": "TASK-ASSET-PLATFORM-B2-CHAT-UPLOAD-UX-PATTERNS",
+    "type": "TASK",
+    "title": "Asset platform B2 chat upload UX patterns",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-platform-b2-chat-upload-ux-patterns.md"
+  },
+  "TASK-ASSET-PLATFORM-B3-LIFECYCLE-GOVERNANCE": {
+    "hash": "49b6e63",
+    "git_issue": "49b6e63",
+    "extid": "TASK-ASSET-PLATFORM-B3-LIFECYCLE-GOVERNANCE",
+    "type": "TASK",
+    "title": "Asset platform B3 lifecycle governance",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-platform-b3-lifecycle-governance.md"
+  },
+  "TASK-ASSET-PLATFORM-B4-MACHINE-READABLE-SURFACE": {
+    "hash": "0da4f14",
+    "git_issue": "0da4f14",
+    "extid": "TASK-ASSET-PLATFORM-B4-MACHINE-READABLE-SURFACE",
+    "type": "TASK",
+    "title": "Asset platform B4 machine-readable surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-platform-b4-machine-readable-surface.md"
+  },
+  "TASK-ASSET-PLATFORM-B5-DETERMINISTIC-ASSET-OPS": {
+    "hash": "3179c33",
+    "git_issue": "3179c33",
+    "extid": "TASK-ASSET-PLATFORM-B5-DETERMINISTIC-ASSET-OPS",
+    "type": "TASK",
+    "title": "Asset platform B5 deterministic asset ops",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-platform-b5-deterministic-asset-ops.md"
+  },
   "TASK-ASSET-RPG-TOKENS": {
     "hash": "406496d",
     "extid": "TASK-ASSET-RPG-TOKENS",
@@ -7814,6 +7911,18 @@
     "source": ".plan/tickets/TASK-asset-templates.md",
     "git_issue": "cec1622"
   },
+  "TASK-ASSET-TRANSFORMS-MIGRATION-AND-TRANSFORMCONTEXT-ENUM": {
+    "hash": "8c4905b",
+    "git_issue": "8c4905b",
+    "extid": "TASK-ASSET-TRANSFORMS-MIGRATION-AND-TRANSFORMCONTEXT-ENUM",
+    "type": "TASK",
+    "title": "asset_transforms migration and TransformContext enum",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Transform Editing + Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-transforms-migration-and-transformcontext-enum.md"
+  },
   "TASK-ASSET-UPLOAD-PATH-TRAVERSAL-ENABLES-ARBITRARY-FILE-WRITE": {
     "hash": "e4000f4",
     "extid": "TASK-ASSET-UPLOAD-PATH-TRAVERSAL-ENABLES-ARBITRARY-FILE-WRITE",
@@ -7837,6 +7946,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-asset-versioning.md",
     "git_issue": "b395f85"
+  },
+  "TASK-ASSETS-HAS-ALPHA-COLUMN-AND-STORE-COMPUTATION": {
+    "hash": "f70bd6f",
+    "git_issue": "f70bd6f",
+    "extid": "TASK-ASSETS-HAS-ALPHA-COLUMN-AND-STORE-COMPUTATION",
+    "type": "TASK",
+    "title": "assets.has_alpha column and store computation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
   },
   "TASK-ASSISTANT-COMMAND-EXECUTION-INTENT-DETECTION": {
     "hash": "6df69d5",
@@ -8077,6 +8198,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-audio-player-component.md",
     "git_issue": "966af4f"
+  },
+  "TASK-AUTH-FACTORS-SCHEMA-AND-SERVICE-CORE-F1": {
+    "hash": "89e0e7b",
+    "git_issue": "89e0e7b",
+    "extid": "TASK-AUTH-FACTORS-SCHEMA-AND-SERVICE-CORE-F1",
+    "type": "TASK",
+    "title": "auth factors schema and service core (F1)",
+    "label": "task",
+    "priority": "high",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-auth-factors-schema-and-service-core-f1.md"
   },
   "TASK-AUTH-HARDENING-XFF-TRUST-SESSION-CAP-ALGO-PIN-DERIVE-SHORT-C": {
     "hash": "a001848",
@@ -10818,6 +10951,54 @@
     "tags": [],
     "source": ".plan/tickets/TASK-dead-rejectbodyimpersonation-guard-never-fires-elysia-typebo.md"
   },
+  "TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS": {
+    "hash": "7bface9",
+    "git_issue": "7bface9",
+    "extid": "TASK-DECISION-AV10-ALBUM-MESSAGE-KIND-AXIS",
+    "type": "TASK",
+    "title": "Decision AV10 album message kind axis",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decision-av10-album-message-kind-axis.md"
+  },
+  "TASK-DECISION-AV3-TRANSFORMS-STORAGE-CANON": {
+    "hash": "6692293",
+    "git_issue": "6692293",
+    "extid": "TASK-DECISION-AV3-TRANSFORMS-STORAGE-CANON",
+    "type": "TASK",
+    "title": "Decision AV3 transforms storage canon",
+    "label": "task",
+    "priority": "high",
+    "epic": "Asset Transform Editing + Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decision-av3-transforms-storage-canon.md"
+  },
+  "TASK-DECISION-AV4-MATTED-OUTPUT-REPRESENTATION": {
+    "hash": "05d861e",
+    "git_issue": "05d861e",
+    "extid": "TASK-DECISION-AV4-MATTED-OUTPUT-REPRESENTATION",
+    "type": "TASK",
+    "title": "Decision AV4 matted output representation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decision-av4-matted-output-representation.md"
+  },
+  "TASK-DECISION-AV8-AUX-CAPTIONING-ROLE": {
+    "hash": "7c712bb",
+    "git_issue": "7c712bb",
+    "extid": "TASK-DECISION-AV8-AUX-CAPTIONING-ROLE",
+    "type": "TASK",
+    "title": "Decision AV8 aux captioning role",
+    "label": "task",
+    "priority": "high",
+    "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-decision-av8-aux-captioning-role.md"
+  },
   "TASK-DEDUPE-CONTEXT-WINDOW": {
     "hash": "pending",
     "extid": "TASK-DEDUPE-CONTEXT-WINDOW",
@@ -10863,6 +11044,18 @@
     "epic": "epic-frontend-backend-integration.md",
     "tags": [],
     "source": ".plan/tickets/TASK-dedupe-sse-activity-stream.md"
+  },
+  "TASK-DEFERRED-EQUIPPED-ITEMS-OUTFIT-AUTO-MAPPING": {
+    "hash": "0f93778",
+    "git_issue": "0f93778",
+    "extid": "TASK-DEFERRED-EQUIPPED-ITEMS-OUTFIT-AUTO-MAPPING",
+    "type": "TASK",
+    "title": "Deferred equipped-items outfit auto-mapping",
+    "label": "task",
+    "priority": "low",
+    "epic": "Wardrobe / Loadout Avatar Variants",
+    "tags": [],
+    "source": ".plan/tickets/TASK-deferred-equipped-items-outfit-auto-mapping.md"
   },
   "TASK-DEFINED-BUT-NOT-ENFORCED-DEBT-UNUSED-SCHEMAS-AND-DEAD-VALIDA": {
     "hash": "06df3a3",
@@ -10922,6 +11115,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-deployment-topologies.md",
     "git_issue": "d8edd5a"
+  },
+  "TASK-DERIVE-BAKE-ENDPOINT-SERVER-SIDE-CROP": {
+    "hash": "f604fa4",
+    "git_issue": "f604fa4",
+    "extid": "TASK-DERIVE-BAKE-ENDPOINT-SERVER-SIDE-CROP",
+    "type": "TASK",
+    "title": "Derive bake endpoint server-side crop",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Transform Editing + Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-derive-bake-endpoint-server-side-crop.md"
   },
   "TASK-DEV-TOOLING-UPDATES": {
     "hash": "f47979b",
@@ -11424,19 +11629,6 @@
     "source": ".plan/tickets/TASK-emergent-narrative-design.md",
     "git_issue": "7bb9e9d"
   },
-  "TASK-EMOTION-AVATAR-EDIT-MODEL": {
-    "hash": "cff55b1",
-    "extid": "TASK-EMOTION-AVATAR-EDIT-MODEL",
-    "type": "TASK",
-    "title": "Emotion Avatar Edit Model",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-character-core-system",
-    "tags": [],
-    "source": ".plan/tickets/TASK-emotion-avatar-edit-model.md",
-    "git_issue": "cff55b1",
-    "status": "done"
-  },
   "TASK-EMOTION-AVATAR-MESSAGE-BINDING": {
     "hash": "cbf8ec95",
     "extid": "TASK-EMOTION-AVATAR-MESSAGE-BINDING",
@@ -11821,6 +12013,102 @@
     "tags": [],
     "source": ".plan/tickets/TASK-extract-chat-route-business-logic.md",
     "git_issue": "4d8fd3f"
+  },
+  "TASK-F10-AUTH-FACTORS-TESTS-AND-2FA-SPEC-REWRITE": {
+    "hash": "d1dbcca",
+    "git_issue": "d1dbcca",
+    "extid": "TASK-F10-AUTH-FACTORS-TESTS-AND-2FA-SPEC-REWRITE",
+    "type": "TASK",
+    "title": "F10 auth factors tests and 2FA spec rewrite",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-f10-auth-factors-tests-and-2fa-spec-rewrite.md"
+  },
+  "TASK-F2-STEP-UP-MIDDLEWARE-LOGIN-FACTOR-PROMPT": {
+    "hash": "39688d5",
+    "git_issue": "39688d5",
+    "extid": "TASK-F2-STEP-UP-MIDDLEWARE-LOGIN-FACTOR-PROMPT",
+    "type": "TASK",
+    "title": "F2 step-up middleware login factor prompt",
+    "label": "task",
+    "priority": "high",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-f2-step-up-middleware-login-factor-prompt.md"
+  },
+  "TASK-F4-UNLOCK-LADDER-BACKOFF-DEVICE-TRUST": {
+    "hash": "07b261b",
+    "git_issue": "07b261b",
+    "extid": "TASK-F4-UNLOCK-LADDER-BACKOFF-DEVICE-TRUST",
+    "type": "TASK",
+    "title": "F4 unlock ladder backoff device trust",
+    "label": "task",
+    "priority": "high",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-f4-unlock-ladder-backoff-device-trust.md"
+  },
+  "TASK-F5-E-MAIL-OTP-FACTOR-DELIVERY": {
+    "hash": "2ea300a",
+    "git_issue": "2ea300a",
+    "extid": "TASK-F5-E-MAIL-OTP-FACTOR-DELIVERY",
+    "type": "TASK",
+    "title": "F5 e-mail OTP factor delivery",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-f5-e-mail-otp-factor-delivery.md"
+  },
+  "TASK-F6-MESSENGER-OTP-AND-LOGIN-APPROVAL": {
+    "hash": "c562038",
+    "git_issue": "c562038",
+    "extid": "TASK-F6-MESSENGER-OTP-AND-LOGIN-APPROVAL",
+    "type": "TASK",
+    "title": "F6 messenger OTP and login approval",
+    "label": "task",
+    "priority": "high",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-f6-messenger-otp-and-login-approval.md"
+  },
+  "TASK-F7-FACTOR-PROVISIONING-GUARANTEES-HARDENING": {
+    "hash": "033f4c0",
+    "git_issue": "033f4c0",
+    "extid": "TASK-F7-FACTOR-PROVISIONING-GUARANTEES-HARDENING",
+    "type": "TASK",
+    "title": "F7 factor provisioning guarantees hardening",
+    "label": "task",
+    "priority": "high",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-f7-factor-provisioning-guarantees-hardening.md"
+  },
+  "TASK-F8-OIDC-RP-LOGIN-WITH-IDENTITY-BINDINGS": {
+    "hash": "171cd1a",
+    "git_issue": "171cd1a",
+    "extid": "TASK-F8-OIDC-RP-LOGIN-WITH-IDENTITY-BINDINGS",
+    "type": "TASK",
+    "title": "F8 OIDC RP login with identity bindings",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-f8-oidc-rp-login-with-identity-bindings.md"
+  },
+  "TASK-F9-FACTOR-MANAGEMENT-AND-RECOVERY-UI": {
+    "hash": "abdb8a7",
+    "git_issue": "abdb8a7",
+    "extid": "TASK-F9-FACTOR-MANAGEMENT-AND-RECOVERY-UI",
+    "type": "TASK",
+    "title": "F9 factor management and recovery UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-f9-factor-management-and-recovery-ui.md"
   },
   "TASK-FACTION-RELATIONS-LIST-AND-STANDING": {
     "hash": "aa72df8",
@@ -12442,6 +12730,18 @@
     "epic": "epic-generation-flow-control.md",
     "tags": [],
     "source": ".plan/tickets/TASK-generation-rate-limiting-and-concurrency-limits.md"
+  },
+  "TASK-GENERATION-SEED-CAPTURE-AND-OVERRIDE-PER-AVATAR": {
+    "hash": "62f51fd",
+    "git_issue": "62f51fd",
+    "extid": "TASK-GENERATION-SEED-CAPTURE-AND-OVERRIDE-PER-AVATAR",
+    "type": "TASK",
+    "title": "Generation seed capture and override per avatar",
+    "label": "task",
+    "priority": "low",
+    "epic": "Emotion Avatar Regeneration Control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generation-seed-capture-and-override-per-avatar.md"
   },
   "TASK-GITHUB-PAGES-VITEPRESS": {
     "hash": "7a1b009",
@@ -13789,6 +14089,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-matrix-integration.md",
     "git_issue": "1b92bae"
+  },
+  "TASK-MATTING-FALLBACK-AUX-PIPELINE-JOB": {
+    "hash": "8341527",
+    "git_issue": "8341527",
+    "extid": "TASK-MATTING-FALLBACK-AUX-PIPELINE-JOB",
+    "type": "TASK",
+    "title": "Matting fallback aux-pipeline job",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering",
+    "tags": [],
+    "source": ".plan/tickets/TASK-matting-fallback-aux-pipeline-job.md"
   },
   "TASK-MEMORY-CHARACTER-INTEGRATION": {
     "hash": "pending",
@@ -15315,6 +15627,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-outbound-fetch-http-2-and-http-3-protocol-hints-for-provider.md"
   },
+  "TASK-OUTFIT-SCOPED-GENERATION-JOBS-AND-PROMPT-SLOT": {
+    "hash": "9ccbf3d",
+    "git_issue": "9ccbf3d",
+    "extid": "TASK-OUTFIT-SCOPED-GENERATION-JOBS-AND-PROMPT-SLOT",
+    "type": "TASK",
+    "title": "Outfit-scoped generation jobs and prompt slot",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Wardrobe / Loadout Avatar Variants",
+    "tags": [],
+    "source": ".plan/tickets/TASK-outfit-scoped-generation-jobs-and-prompt-slot.md"
+  },
   "TASK-OUTPUT-CONTROL-TRANSFORMS": {
     "hash": "cd237ca",
     "extid": "TASK-OUTPUT-CONTROL-TRANSFORMS",
@@ -15397,6 +15721,18 @@
     "source": ".plan/tickets/TASK-persist-loot-drops.md",
     "status": "done",
     "git_issue": "ecec58f"
+  },
+  "TASK-PERSISTENT-REGEN-JOB-STORE-MIGRATION": {
+    "hash": "ec5673f",
+    "git_issue": "ec5673f",
+    "extid": "TASK-PERSISTENT-REGEN-JOB-STORE-MIGRATION",
+    "type": "TASK",
+    "title": "Persistent regen job store migration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Emotion Avatar Regeneration Control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-persistent-regen-job-store-migration.md"
   },
   "TASK-PLAN-E2E-STABILIZATION": {
     "hash": "5fb353d",
@@ -15967,6 +16303,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-prompt-template-registry.md"
   },
+  "TASK-PROVIDER-TRANSPARENCY-CAPABILITY-FLAG": {
+    "hash": "99dbf42",
+    "git_issue": "99dbf42",
+    "extid": "TASK-PROVIDER-TRANSPARENCY-CAPABILITY-FLAG",
+    "type": "TASK",
+    "title": "Provider transparency capability flag",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering",
+    "tags": [],
+    "source": ".plan/tickets/TASK-provider-transparency-capability-flag.md"
+  },
   "TASK-QUEST-LOG": {
     "hash": "1e4bab5",
     "extid": "TASK-QUEST-LOG",
@@ -16297,6 +16645,18 @@
     "source": ".plan/tickets/TASK-rbac-capability-matrix-not-enforced-25-of-30-caps-decorative.md",
     "git_issue": "2129b97"
   },
+  "TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR": {
+    "hash": "6a86a55",
+    "git_issue": "6a86a55",
+    "extid": "TASK-RE-ROLL-TRANSFORM-INHERITANCE-FROM-PARENT-AVATAR",
+    "type": "TASK",
+    "title": "Re-roll transform inheritance from parent avatar",
+    "label": "task",
+    "priority": "low",
+    "epic": "Asset Transform Editing + Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-re-roll-transform-inheritance-from-parent-avatar.md"
+  },
   "TASK-REAL-LLM-SD-E2E-FIXTURE-LLAMA-CPP-LLAMA-SWAP-SD-SERVER": {
     "hash": "5c2b987",
     "git_issue": "5c2b987",
@@ -16509,6 +16869,54 @@
     "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md",
     "git_issue": "5c73739"
   },
+  "TASK-REGEN-ROUTES-AND-JOB-STATUS-ENDPOINTS": {
+    "hash": "d26adc3",
+    "git_issue": "d26adc3",
+    "extid": "TASK-REGEN-ROUTES-AND-JOB-STATUS-ENDPOINTS",
+    "type": "TASK",
+    "title": "Regen routes and job status endpoints",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Emotion Avatar Regeneration Control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-regen-routes-and-job-status-endpoints.md"
+  },
+  "TASK-REGEN-SERVICE-REGENERATEEMOTIONAVATARS-SCOPE-AND-REPLACE": {
+    "hash": "4475a8b",
+    "git_issue": "4475a8b",
+    "extid": "TASK-REGEN-SERVICE-REGENERATEEMOTIONAVATARS-SCOPE-AND-REPLACE",
+    "type": "TASK",
+    "title": "Regen service regenerateEmotionAvatars scope and replace",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Emotion Avatar Regeneration Control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-regen-service-regenerateemotionavatars-scope-and-replace.md"
+  },
+  "TASK-REGEN-TESTS-SUBSET-REPLACE-ATOMICITY-RESTART": {
+    "hash": "7d3f661",
+    "git_issue": "7d3f661",
+    "extid": "TASK-REGEN-TESTS-SUBSET-REPLACE-ATOMICITY-RESTART",
+    "type": "TASK",
+    "title": "Regen tests subset replace-atomicity restart",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Emotion Avatar Regeneration Control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-regen-tests-subset-replace-atomicity-restart.md"
+  },
+  "TASK-REGEN-UI-RE-ROLL-AND-REGENERATE-ALL-CONTROLS": {
+    "hash": "ff8f765",
+    "git_issue": "ff8f765",
+    "extid": "TASK-REGEN-UI-RE-ROLL-AND-REGENERATE-ALL-CONTROLS",
+    "type": "TASK",
+    "title": "Regen UI re-roll and regenerate-all controls",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Emotion Avatar Regeneration Control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-regen-ui-re-roll-and-regenerate-all-controls.md"
+  },
   "TASK-REGEX-EXTRACTION-TESTS": {
     "hash": "592149a",
     "extid": "TASK-REGEX-EXTRACTION-TESTS",
@@ -16709,6 +17117,18 @@
     "source": ".plan/tickets/TASK-remove-dist-artifact.md",
     "git_issue": "15bf677"
   },
+  "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES": {
+    "hash": "4484e39",
+    "git_issue": "4484e39",
+    "extid": "TASK-RENDER-PATH-RESOLVETRANSFORM-IN-CHAT-BUBBLES",
+    "type": "TASK",
+    "title": "Render path resolveTransform in chat bubbles",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Transform Editing + Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-render-path-resolvetransform-in-chat-bubbles.md"
+  },
   "TASK-REPETITION-HALLUCINATION-GUARDS": {
     "hash": "4cec862",
     "extid": "TASK-REPETITION-HALLUCINATION-GUARDS",
@@ -16886,6 +17306,138 @@
     "tags": [],
     "source": ".plan/tickets/TASK-resolve-wiring-close-out-review-follow-ups-typecheck-red-que.md",
     "git_issue": "13aa632"
+  },
+  "TASK-RESOURCE-PROVISION-BROWSER-BACKUP": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-BROWSER-BACKUP",
+    "type": "TASK",
+    "title": "Browser-Storage Backup (Opt-In)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-browser-backup.md"
+  },
+  "TASK-RESOURCE-PROVISION-CREDENTIAL-STORE": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-CREDENTIAL-STORE",
+    "type": "TASK",
+    "title": "Credential Store (Hash & Wrapped-Key References)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-credential-store.md"
+  },
+  "TASK-RESOURCE-PROVISION-E2E": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-E2E",
+    "type": "TASK",
+    "title": "Resource Provision End-to-End",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-e2e.md"
+  },
+  "TASK-RESOURCE-PROVISION-EXTERNAL-INFERENCE": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-EXTERNAL-INFERENCE",
+    "type": "TASK",
+    "title": "External Inference Endpoint Provisioning",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-external-inference.md"
+  },
+  "TASK-RESOURCE-PROVISION-EXTERNAL-STORAGE": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-EXTERNAL-STORAGE",
+    "type": "TASK",
+    "title": "External Storage Provisioning & Backup Scheduling",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-external-storage.md"
+  },
+  "TASK-RESOURCE-PROVISION-QUOTA-ENGINE": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-QUOTA-ENGINE",
+    "type": "TASK",
+    "title": "Quota Engine & Counter Service",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-quota-engine.md"
+  },
+  "TASK-RESOURCE-PROVISION-QUOTA-UI": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-QUOTA-UI",
+    "type": "TASK",
+    "title": "Quota UI & Admin Override",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-quota-ui.md"
+  },
+  "TASK-RESOURCE-PROVISION-RECONCILIATION": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-RECONCILIATION",
+    "type": "TASK",
+    "title": "Hashing-Based Reconciliation & Drift Detection",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-reconciliation.md"
+  },
+  "TASK-RESOURCE-PROVISION-RECOVERY": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-RECOVERY",
+    "type": "TASK",
+    "title": "User-Confirmed Recovery & Backup Rotation",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-recovery.md"
+  },
+  "TASK-RESOURCE-PROVISION-ROUTING-FACADE": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-ROUTING-FACADE",
+    "type": "TASK",
+    "title": "Resource Provider Routing Facade",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-routing-facade.md"
+  },
+  "TASK-RESOURCE-PROVISION-SCHEMA": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-SCHEMA",
+    "type": "TASK",
+    "title": "Resource Provision Schema & Migrations",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-schema.md"
+  },
+  "TASK-RESOURCE-PROVISION-TESTS": {
+    "hash": "pending",
+    "extid": "TASK-RESOURCE-PROVISION-TESTS",
+    "type": "TASK",
+    "title": "Resource Provision Tests",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-resource-provision",
+    "tags": [],
+    "source": ".plan/tickets/TASK-resource-provision-tests.md"
   },
   "TASK-RESPONSE-LENGTH-CONTROL": {
     "hash": "pending",
@@ -17372,6 +17924,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene.md"
   },
+  "TASK-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION": {
+    "hash": "6e22de3",
+    "git_issue": "6e22de3",
+    "extid": "TASK-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION",
+    "type": "TASK",
+    "title": "Selection algorithm v2 outfit emotion",
+    "label": "task",
+    "priority": "high",
+    "epic": "Wardrobe / Loadout Avatar Variants",
+    "tags": [],
+    "source": ".plan/tickets/TASK-selection-algorithm-v2-outfit-emotion.md"
+  },
   "TASK-SERVER-EDGE-ERROR-HANDLING-GAPS-IN-ROUTES-LAYER": {
     "hash": "c9036fd",
     "extid": "TASK-SERVER-EDGE-ERROR-HANDLING-GAPS-IN-ROUTES-LAYER",
@@ -17515,6 +18079,18 @@
     "epic": "epic-skills-professions-config",
     "tags": [],
     "source": ".plan/tickets/TASK-skills-routes.md"
+  },
+  "TASK-SLOT-REPLACE-TRANSACTIONAL-REBIND-SEMANTICS": {
+    "hash": "f2f155d",
+    "git_issue": "f2f155d",
+    "extid": "TASK-SLOT-REPLACE-TRANSACTIONAL-REBIND-SEMANTICS",
+    "type": "TASK",
+    "title": "Slot-replace transactional rebind semantics",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Emotion Avatar Regeneration Control",
+    "tags": [],
+    "source": ".plan/tickets/TASK-slot-replace-transactional-rebind-semantics.md"
   },
   "TASK-SMART-CONTEXT-PRUNING": {
     "hash": "pending",
@@ -17775,6 +18351,18 @@
     "source": ".plan/tickets/TASK-story-gm-generation-never-nsfw-gated-content-safety-bypass.md",
     "git_issue": "f0683a8",
     "status": "done"
+  },
+  "TASK-STORY-GM-OUTFIT-CHANGE-HOOK-ROUTING": {
+    "hash": "dda29da",
+    "git_issue": "dda29da",
+    "extid": "TASK-STORY-GM-OUTFIT-CHANGE-HOOK-ROUTING",
+    "type": "TASK",
+    "title": "Story GM outfit-change hook routing",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Wardrobe / Loadout Avatar Variants",
+    "tags": [],
+    "source": ".plan/tickets/TASK-story-gm-outfit-change-hook-routing.md"
   },
   "TASK-STORY-MODE-FRONTEND": {
     "hash": "pending",
@@ -18336,6 +18924,18 @@
     "source": ".plan/tickets/TASK-tor-integration.md",
     "git_issue": "34bc4a2"
   },
+  "TASK-TOTP-BACKUP-CODES-AND-WEBAUTHN-MECHANICS": {
+    "hash": "323dbf0",
+    "git_issue": "323dbf0",
+    "extid": "TASK-TOTP-BACKUP-CODES-AND-WEBAUTHN-MECHANICS",
+    "type": "TASK",
+    "title": "TOTP backup codes and WebAuthn mechanics",
+    "label": "task",
+    "priority": "high",
+    "epic": "Authentication Channel Provisioning",
+    "tags": [],
+    "source": ".plan/tickets/TASK-totp-backup-codes-and-webauthn-mechanics.md"
+  },
   "TASK-TRACK-VOYAGE-INSPIRATION": {
     "hash": "db5c4e7",
     "extid": "TASK-TRACK-VOYAGE-INSPIRATION",
@@ -18370,6 +18970,42 @@
     "tags": [],
     "source": ".plan/tickets/TASK-trading-interface.md",
     "git_issue": "f79f20a"
+  },
+  "TASK-TRANSFORM-ROUTES-VALIDATION-AND-OWNERSHIP-AUTHZ": {
+    "hash": "12523de",
+    "git_issue": "12523de",
+    "extid": "TASK-TRANSFORM-ROUTES-VALIDATION-AND-OWNERSHIP-AUTHZ",
+    "type": "TASK",
+    "title": "Transform routes validation and ownership authz",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Transform Editing + Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-transform-routes-validation-and-ownership-authz.md"
+  },
+  "TASK-TRANSFORM-SERVICE-UPSERT-READ-DERIVED-DEFAULT": {
+    "hash": "9098139",
+    "git_issue": "9098139",
+    "extid": "TASK-TRANSFORM-SERVICE-UPSERT-READ-DERIVED-DEFAULT",
+    "type": "TASK",
+    "title": "Transform service upsert read derived-default",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Transform Editing + Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-transform-service-upsert-read-derived-default.md"
+  },
+  "TASK-TRANSFORM-TESTS-IDEMPOTENCY-PRECEDENCE-AUTHZ": {
+    "hash": "416de71",
+    "git_issue": "416de71",
+    "extid": "TASK-TRANSFORM-TESTS-IDEMPOTENCY-PRECEDENCE-AUTHZ",
+    "type": "TASK",
+    "title": "Transform tests idempotency precedence authz",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Asset Transform Editing + Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-transform-tests-idempotency-precedence-authz.md"
   },
   "TASK-TRANSITION-AUX-LLM-FALLBACK": {
     "hash": "1c216f6",
@@ -18725,6 +19361,18 @@
     "status": "done",
     "git_issue": "83a03a9"
   },
+  "TASK-VN-SPRITE-LAYER-COMPOSITING": {
+    "hash": "8b15b89",
+    "git_issue": "8b15b89",
+    "extid": "TASK-VN-SPRITE-LAYER-COMPOSITING",
+    "type": "TASK",
+    "title": "VN sprite layer compositing",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-sprite-layer-compositing.md"
+  },
   "TASK-VN-TEMPLATE-ACTIONS": {
     "hash": "5cf3d0c",
     "extid": "TASK-VN-TEMPLATE-ACTIONS",
@@ -18737,6 +19385,54 @@
     "source": ".plan/tickets/TASK-vn-template-actions.md",
     "status": "done",
     "git_issue": "5cf3d0c"
+  },
+  "TASK-WARDROBE-MANAGER-UI-AND-CHAT-OUTFIT-SWITCHER": {
+    "hash": "ca24912",
+    "git_issue": "ca24912",
+    "extid": "TASK-WARDROBE-MANAGER-UI-AND-CHAT-OUTFIT-SWITCHER",
+    "type": "TASK",
+    "title": "Wardrobe manager UI and chat outfit switcher",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Wardrobe / Loadout Avatar Variants",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-manager-ui-and-chat-outfit-switcher.md"
+  },
+  "TASK-WARDROBE-ROUTES-VALIDATION-AND-PER-OUTFIT-AVATAR-ENDPOINTS": {
+    "hash": "98db3a5",
+    "git_issue": "98db3a5",
+    "extid": "TASK-WARDROBE-ROUTES-VALIDATION-AND-PER-OUTFIT-AVATAR-ENDPOINTS",
+    "type": "TASK",
+    "title": "Wardrobe routes validation and per-outfit avatar endpoints",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Wardrobe / Loadout Avatar Variants",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-routes-validation-and-per-outfit-avatar-endpoints.md"
+  },
+  "TASK-WARDROBE-SCHEMA-ITEMS-BINDINGS-OUTFIT-ID": {
+    "hash": "405aad0",
+    "git_issue": "405aad0",
+    "extid": "TASK-WARDROBE-SCHEMA-ITEMS-BINDINGS-OUTFIT-ID",
+    "type": "TASK",
+    "title": "Wardrobe schema items bindings outfit_id",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Wardrobe / Loadout Avatar Variants",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-schema-items-bindings-outfit-id.md"
+  },
+  "TASK-WARDROBE-TESTS-LADDER-PRECEDENCE-SCOPED-REGEN": {
+    "hash": "3c04fc1",
+    "git_issue": "3c04fc1",
+    "extid": "TASK-WARDROBE-TESTS-LADDER-PRECEDENCE-SCOPED-REGEN",
+    "type": "TASK",
+    "title": "Wardrobe tests ladder precedence scoped regen",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Wardrobe / Loadout Avatar Variants",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wardrobe-tests-ladder-precedence-scoped-regen.md"
   },
   "TASK-WEATHER-ENVIRONMENT": {
     "hash": "pending",
