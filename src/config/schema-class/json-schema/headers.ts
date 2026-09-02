@@ -117,6 +117,18 @@ export const headers = {
       description: "Reporting-Endpoints name → URL",
     },
     nel: { type: ["string", "null",], default: null, description: "NEL policy JSON; null omits", },
+    hsts: {
+      type: "object",
+      default: { enabled: false, maxAge: 31536000, includeSubDomains: true, preload: false, },
+      description: "Strict-Transport-Security policy (RFC 6797). Emitted only on HTTPS requests.",
+      properties: {
+        enabled: { type: "boolean", default: false, description: "Master toggle", },
+        maxAge: { type: "number", default: 31536000, minimum: 0, description: "max-age in seconds; RFC 6797 recommends >= 31536000 (1 year)", },
+        includeSubDomains: { type: "boolean", default: true, },
+        preload: { type: "boolean", default: false, },
+      },
+      required: ["enabled", "maxAge", "includeSubDomains", "preload",],
+    },
   },
   required: ["enabled", "referrerPolicy", "xContentTypeOptions", "csp", "earlyHints",],
-};
+ };

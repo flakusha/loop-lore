@@ -182,6 +182,8 @@ export async function maybeAutoReply(
       };
     }
   }
+
+  return { replied: false, };
 }
 
 /**
