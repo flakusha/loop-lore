@@ -385,6 +385,7 @@ src/db/enums-core/
 
 src/admin/
 └── model-roles.ts                # EXTEND - extend VALID_ROLES array (line 20) + per-kind matrix
+
 src/views/admin/  (or src/partials/admin/)        # EXTEND - htmx model-picker UI; exact path TBD
 
 src/assistant/commands/
@@ -427,7 +428,7 @@ docs/spec/
 - [ ] `document_references` adjacency inserts are atomic (single transaction)
 
 ### B-R2 (Decomposers)
-
+- **Hard:** `epic-rag-ingestion.md` (provides `documents` table), `epic-rag-vector-store.md` (vectors), `epic-asset-platform-capabilities.md` (B1 BLAKE3 dedup, B4 captioning, B5 ops language), `epic-aux-enrichment-pipeline.md` (model-role plumbing), `epic-rag-evaluation-observability.md` (B-R4 NDCG@10 rig, B-R5 replay log evidence).
 - [ ] Image decomposer emits valid IIIF Presentation 2 manifest for a JPEG fixture
 - [ ] Video decomposer produces >=1 transcript segment per detected scene
 - [ ] Audio decomposer round-trips Whisper transcript + diarization
@@ -474,7 +475,7 @@ docs/spec/
 
 ## Dependencies
 
-- **Hard:** `epic-rag-ingestion.md` (provides `documents` table), `epic-rag-vector-store.md` (vectors), `epic-asset-platform-capabilities.md` (B1 BLAKE3 dedup, B4 captioning, B5 ops language), `epic-aux-enrichment-pipeline.md` (model-role plumbing).
+- **Hard:** `epic-rag-ingestion.md` (provides `documents` table), `epic-rag-vector-store.md` (vectors), `epic-asset-platform-capabilities.md` (B1 BLAKE3 dedup, B4 captioning, B5 ops language), `epic-aux-enrichment-pipeline.md` (model-role plumbing), `epic-rag-evaluation-observability.md` (B-R4 NDCG@10 rig + B-R5 replay-log evidence).
 - **Soft:** `epic-frontend-gallery.md`, `epic-gallery-batch-operations.md`, `epic-assistant-gm-flows.md`, `epic-rag-enterprise.md` (audit), `epic-rag-context-sources.md` (URL ingestion), `epic-rag-ui.md` (admin search UX).
 - **Standards libs (new deps, small):** `jsonld` (~30KB, MIT, type-stripped), `@iiif/parser` + `@iiif/presentation-3` (~40KB). Both pinned to known-good versions; tree-shaken.
 - **Model providers (existing infra):** the per-role admin picker uses providers already registered in `src/admin/`.
@@ -530,3 +531,4 @@ docs/spec/
 - `epic-openapi-reference.md` — REST API contract (extended with `/api/documents/*`)
 - `epic-db-content-versioning.md` — version lineage / FRBR partial adoption
 - `.plan/matrix-emotion-avatar-assets.md` — extend with RAG↔asset references (AV-row for decomposition chips)
+- `epic-rag-evaluation-observability.md` — eval rig + retrieval telemetry + prompt cache (provides NDCG@10 harness cited in B-R4 ACs)
