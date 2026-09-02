@@ -292,3 +292,4 @@ Complete NPC management interface including NPC viewer, relationship map, factio
 - **Epic Relationships** — Backend relationship system
 - **Epic Faction Reputation** — Backend faction system
 - **Epic World & Locations** — Backend world system
+- `epic-wardrobe-avatar-variants.md` — NPC viewer detail panel needs an "outfit/loadout" tab; schedule view should reference outfit binding rules (time-of-day → outfit)

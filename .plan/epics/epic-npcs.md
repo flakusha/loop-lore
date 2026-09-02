@@ -40,6 +40,13 @@ interface NPCMemoryEntry {
 - [ ] NPC memory system working
 - [ ] Dialogue system operational
 
+## Related Epics
+
+- `epic-actors.md` — NPCs are actors with `is_npc: true`; this epic focuses on NPC-specific behavior/memory
+- `epic-character-core-system.md` — shared base fields (personality, traits, descriptions)
+- `epic-character-world-setup.md` — per-world overrides of NPC setup (incl. outfit binding rules)
+- `epic-wardrobe-avatar-variants.md` — NPCs carry outfit/loadout descriptors the same way characters do; selection + fallback ladder is shared
+
 ## Generation via Creative Studio Workflows
 
 NPC creation through the assistant is specified as a **config-driven workflow template**

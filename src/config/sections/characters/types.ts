@@ -52,4 +52,39 @@ export interface CharacterTemplate {
   is_template?: boolean;
   /** Auto-add to new users' character list */
   is_default?: boolean;
+
+  // ── Wardrobe / Outfits (epic-wardrobe-avatar-variants.md) ──
+  // Optional. Existing emotion-only characters keep working without these
+  // fields (null outfit = today's behavior; zero-migration surprise).
+  /** Default outfit id used when no context binding fires. */
+  default_outfit?: string;
+  /** Wardrobe catalog: distinct (outfit_id) entries this character can wear. */
+  outfits?: CharacterOutfitTemplate[];
+  /** Equipped-items → outfit mapping (deferred loadout-bridge phase). */
+  loadouts?: CharacterLoadoutTemplate[];
+}
+
+/** Wardrobe outfit descriptor for a character template. */
+export interface CharacterOutfitTemplate {
+  /** Stable outfit id referenced by loadouts and selection ladder. */
+  id: string;
+  /** Human-readable label shown in UI. */
+  name: string;
+  /** Prompt-fragment fed to the avatar generator
+   *  (identity-anchor + outfit-descriptor + emotion-descriptor). */
+  descriptor: string;
+  /** Free-form tags (formal|armor|sleepwear|swim|...) used by binding rules. */
+  tags?: string[];
+}
+
+/** Loadout bridge entry: maps an equipped-item slot to an outfit. */
+export interface CharacterLoadoutTemplate {
+  /** Symbolic name for the loadout rule. */
+  name: string;
+  /** Inventory slot key (e.g. "chest", "legs", "head"). */
+  slot: string;
+  /** Substring match against equipped item id/name. */
+  item_match: string;
+  /** Outfit id (from outfits[]) to switch into. */
+  outfit: string;
 }
