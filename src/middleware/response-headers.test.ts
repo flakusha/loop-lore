@@ -47,6 +47,7 @@ function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
     earlyHints: { enabled: false, },
     reportingEndpoints: {},
     nel: null,
+    hsts: { enabled: false, maxAge: 31536000, includeSubDomains: true, preload: false, },
   };
   return { ...base, ...overrides, };
 }
@@ -273,3 +274,55 @@ describe("ResponseHeaderPolicy.apply — CSP nonce", () => {
     expect(out.headers.get("Content-Security-Policy",),).toBeNull();
   });
 });
+
+/**
+ * BUG-hsts-header-missing-from-response-policy: Strict-Transport-Security
+ * must be emitted only on HTTPS, only when enabled, and with the
+ * configured max-age / includeSubDomains / preload flags.
+ */
+describe("ResponseHeaderPolicy.apply — HSTS (BUG-hsts-header-missing-from-response-policy)", () => {
+  test("emits HSTS on HTTPS with max-age + includeSubDomains when enabled", async () => {
+    const policy = new ResponseHeaderPolicy(
+      makeConfig({
+        hsts: { enabled: true, maxAge: 31536000, includeSubDomains: true, preload: false, },
+      },),
+    );
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "https://x/",), response, },);
+    expect(out.headers.get("Strict-Transport-Security",),).toBe(
+      "max-age=31536000; includeSubDomains",
+    );
+  });
+
+  test("omits HSTS on plain HTTP even when enabled (no lockout)", async () => {
+    const policy = new ResponseHeaderPolicy(
+      makeConfig({
+        hsts: { enabled: true, maxAge: 31536000, includeSubDomains: true, preload: false, },
+      },),
+    );
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "http://x/",), response, },);
+    expect(out.headers.get("Strict-Transport-Security",),).toBeNull();
+  });
+
+  test("omits HSTS when disabled (default dev config)", async () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "https://x/",), response, },);
+    expect(out.headers.get("Strict-Transport-Security",),).toBeNull();
+  });
+
+  test("appends preload when configured", async () => {
+    const policy = new ResponseHeaderPolicy(
+      makeConfig({
+        hsts: { enabled: true, maxAge: 63072000, includeSubDomains: true, preload: true, },
+      },),
+    );
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "https://x/",), response, },);
+    expect(out.headers.get("Strict-Transport-Security",),).toBe(
+      "max-age=63072000; includeSubDomains; preload",
+    );
+  });
+});
+
