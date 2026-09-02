@@ -116,6 +116,7 @@ The unified character API is **implemented and wired** — no `TBD` remains in `
 - `epic-achievements.md` — stat-based achievements depend on character stats
 - `epic-memory-knowledge-systems.md` — G24: shares `MemoryEmotionImpact` contract
   (mood/coping weight episodic memories; see Memory Architecture section below)
+- `epic-wardrobe-avatar-variants.md` — seeded `CharacterTemplate` carries the per-character default outfit + loadout descriptor; the (outfit × emotion) variant key extends this epic's selection algorithm
 
 ## Tickets
 
@@ -617,6 +618,15 @@ templates:
   - name: "My Character"
     description: "..."
 ```
+
+## Wardrobe / Loadout Hook (cross-ref)
+
+This epic's `CharacterTemplate` is the natural surface to **seed default outfits and loadouts**
+for new characters/NPCs. The (outfit × emotion) variant key, the (outfit, emotion) resolution
+fallback ladder, and the wardrobe descriptor prompt slot live in
+`epic-wardrobe-avatar-variants.md` — when that epic lands, the seeded templates here should
+declare one default `outfit` per character and an optional `loadout[]` mapping equipped items
+to outfit descriptors (deferred phase of the wardrobe epic).
 
 ## Merge Logic
 
