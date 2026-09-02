@@ -35,14 +35,14 @@ metadata, alpha/VN layering, wardrobe variants, asset platform capabilities.
 | - | -------- | -------- | ------ | -------------------- |
 | AV1 | Regen | Binding | ✅ doc-resolved | Slot re-point must invalidate frontend emotion→avatar caches; failed re-roll never unbinds (no avatar-less window) |
 | AV2 | Regen | Platform-B3 GC | ✅ doc-resolved | Regen stops deleting directly: replace = rebind + release ref; GC retention window provides undo, sweep finalizes |
-| AV3 | Transforms (context rows) | Platform-B5 ops lists | ⚠️ open | Two storages for one concept. Decision needed before B5: ops-list becomes canonical (single crop = 1-op program) with transform rows as view; ship S3 v1, migration ticket booked at B5 design |
-| AV4 | Alpha (raw+matted pair) | Platform-B1 dedup/renditions | ⚠️ open | Matted output = rendition of raw (inherits dedup/GC) vs second linked root asset. Rendition preferred (one identity, no emotion re-binding); confirm Bun-side storage ergonomics at implementation |
+| AV3 | Transforms (context rows) | Platform-B5 ops lists | 📋 `TASK-decision-av3-transforms-storage-canon.md` | Two storages for one concept. Decision needed before B5: ops-list becomes canonical (single crop = 1-op program) with transform rows as view; ship S3 v1, migration ticket booked at B5 design |
+| AV4 | Alpha (raw+matted pair) | Platform-B1 dedup/renditions | 📋 `TASK-decision-av4-matted-output-representation.md` | Matted output = rendition of raw (inherits dedup/GC) vs second linked root asset. Rendition preferred (one identity, no emotion re-binding); confirm Bun-side storage ergonomics at implementation |
 | AV5 | Wardrobe | Binding render | ✅ doc-resolved | Resolver contract `(actorId, chatId, at) → outfit_id` owned by wardrobe; binding/render consumers call it, never infer outfit themselves |
 | AV6 | Wardrobe | Regen scope | ✅ doc-resolved | Regen `emotions?` filter gains `outfit_id?` in same validation-schema change that adds subset filter — don't land two incompatible job param generations |
 | AV7 | Transforms | Alpha/VN | ✅ doc-resolved | `sprite` transform context carries anchor/scale the VN compositor needs; bake path (derive) emits alpha-preserving rendition |
-| AV8 | Platform-B4 | aux-enrichment-pipeline | ⚠️ open | Captioning wiring depends on aux epic's dead-role decision (wire vs remove `ModelRole.Captioning`); if removed, B4 must re-add the role first — sequence or merge the tickets |
+| AV8 | Platform-B4 | aux-enrichment-pipeline | 📋 `TASK-decision-av8-aux-captioning-role.md` | Captioning wiring depends on aux epic's dead-role decision (wire vs remove `ModelRole.Captioning`); if removed, B4 must re-add the role first — sequence or merge the tickets |
 | AV9 | Binding/wardrobe jobs | Platform async jobs | ✅ doc-resolved | Single `asset_jobs` (or shared async-job) table convention adopted by regen, matting, batch-gen; job-store.ts Map demoted to cache |
-| AV10 | Platform-B2 albums | story-coherence message kinds | ⚠️ open | Album/carousel = new message kind vs attribute on existing kind — MUST reconcile with the `narration\|actor_action\|system` axis (see `matrix-story-coherence.md`); kind enum is shared vocabulary, one axis each |
+| AV10 | Platform-B2 albums | story-coherence message kinds | 📋 `TASK-decision-av10-album-message-kind-axis.md` | Album/carousel = new message kind vs attribute on existing kind — MUST reconcile with the `narration\|actor_action\|system` axis (see `matrix-story-coherence.md`); kind enum is shared vocabulary, one axis each |
 | AV11 | Wardrobe | immersion-consistency-gate | ✅ doc-resolved | Player-initiated outfit change is an actor-state claim routed through the gate (story continuity); NPC/world-rule outfit binding is system-authored, bypasses |
 | AV12 | Platform-B5 ops | assistant tool registry | ✅ doc-resolved | Ops emission lands as assistant tool (deterministic, auditable); GM-flow prompts gain "asset edit" intent only after executor exists |
 | AV13 | Transforms/renditions | frontend-gallery | ✅ doc-resolved | Gallery cards + chat bubbles switch to `thumb_*` renditions with LQIP; existing 4:3 CSS card contract unchanged |
@@ -74,18 +74,25 @@ metadata, alpha/VN layering, wardrobe variants, asset platform capabilities.
 
 ## Post-Land Bookkeeping (after this branch finalizes)
 
-- [ ] Create git tickets from epic work-item checkboxes (`worktree/ ticket TASK
-      "<epic>: <item>" …`): regen (7), transforms (8), alpha (7), wardrobe (8),
-      platform B1–B5 (batch-level first, decompose per batch)
-- [ ] Execute the ticket reconciliations above (fold two pairs, cross-link
-      multi-avatar parent, attach selection bugs to wardrobe prerequisites)
-- [ ] Repair binding-epic drift: `character_avatars` table and
-      `avatar-service.ts` / `enums-character.ts` paths do not exist at this tip
-      (real: `avatar-service/` dir, `enums-character/avatar.ts`)
-- [ ] Resolve ⚠️-open rows AV3/AV4/AV8/AV10 or convert each to a decision
-      ticket under the owning epic
-- [ ] Re-run `bun run plan:docs` + `plan:sync:fix`; refresh README matrix
-      registry if scope renames
+- [x] Create git tickets from epic work-item checkboxes — ✅ done 2026-09-02
+      via `worktree/ ticket` in `plan-bookkeeping-2fa-emotion`: regen 7,
+      transforms 8, alpha 7, wardrobe 8, platform B1–B5 (5 batch-level,
+      decompose per batch at execution), decisions 4 (AV3/AV4/AV8/AV10)
+- [x] Execute the ticket reconciliations above — ✅ 2026-09-02: folded
+      `TASK-emotion-avatar-edit-model` (42L) into `TASK-emotions-avatar-edit-model`;
+      merged `…-frontend-panel` into `TASK-actor-emotion-avatars-frontend`;
+      selection bugs → wardrobe ladder prerequisites; hook bugs → binding
+      prerequisites; `TASK-character-multi-avatar` ↔ selection-v2 cross-linked
+- [x] Repair binding-epic drift — ✅ 2026-09-02: real drift was the
+      `avatar-service.ts` citation (→ `avatar-service/` dir) and
+      `enums-character.ts` (→ `enums-character/avatar.ts`), both fixed in
+      `epic-emotion-avatar-message-binding.md`. The `character_avatars` claim
+      here was itself stale: the table exists since migration 010.
+- [x] Resolve ⚠️-open rows AV3/AV4/AV8/AV10 — converted to decision tickets
+      (`TASK-decision-av3…`/`av4…`/`av8…`/`av10…`) under their owning epics;
+      human call required on each (matrix rows now cite the tickets)
+- [x] Re-run `bun run plan:docs` + `plan:sync:fix` — done in this bookkeeping
+      pass (`plan-bookkeeping-2fa-emotion`); no matrix renames, README registry unchanged
 
 ## Related
 

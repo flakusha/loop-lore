@@ -113,3 +113,7 @@ Took the **proper fix** path:
    - **Payload enrichment**: Both hooks now include `actorId` and `chatId` from context in the `data` payload (partially addresses `BUG-emotion-mood-hook-payload-missing-actor-chat.md`).
 3. Added tests for privacy gating, actorId/chatId payload, and NSFW delta scaling.
 4. All 52 hook tests pass; all 510 generation tests pass.
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Prerequisite for epic Emotion Avatar Message Binding persist path (regeneration/render work blocked until hook payload carries actor+chat).

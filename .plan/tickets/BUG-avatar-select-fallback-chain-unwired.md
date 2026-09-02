@@ -70,3 +70,7 @@ minimum observable fix is **the chain is consulted**.
       chain consulted when no emotion match exists / world override wins /
       chain exhausted falls back to primary.
 - [ ] `bun run check` green.
+
+## Notes
+
+**Reconciliation (2026-09-02)**: Prerequisite for epic Wardrobe selection ladder (TASK-selection-algorithm-v2-outfit-emotion.md) — fix first; ladder tests pin these branches. Matrix: matrix-emotion-avatar-assets.md → Ticket Reconciliation.
