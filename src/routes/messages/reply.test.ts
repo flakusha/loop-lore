@@ -20,6 +20,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
+import type { AsyncStore, } from "../../async/store";
 import { maybeAutoReply, } from "./reply";
 
 /**
@@ -143,5 +144,119 @@ describe("maybeAutoReply — swipe_index race", () => {
     expect(result.replied,).toBe(true,);
     expect(result.response,).toBeDefined();
     expect(result.response!.status,).toBe(503,);
+  });
+});
+
+describe("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-discards-asyncStore)", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+  let actorId: string;
+  let parentMessageId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    const userId = uid();
+    await insertUsers(db, `user-${userId}`, "Test User", { id: userId, } as never,);
+    actorId = userId;
+    await db
+      .insertInto("actors",)
+      .values({
+        id: actorId,
+        actor_type: "user",
+        display_name: "Test Actor",
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "none",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+
+    chatId = uid();
+    await insertChats(db, "AsyncStore Forward Test", actorId, { id: chatId, } as never,);
+
+    parentMessageId = uid();
+    await insertMessages(db, chatId, actorId, MessageRole.User, "hello world", {
+      id: parentMessageId,
+      swipe_index: 0,
+    } as never,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  /** In-memory AsyncStore mock capturing every track() call. */
+  function makeAsyncStoreMock(): AsyncStore & { tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null; }>; } {
+    const tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null; }> = [];
+    return {
+      tracks,
+      track(input: { id: string; method: string; routePattern: string; userId: string | null; },) {
+        tracks.push(input,);
+      },
+      // The remaining AsyncStore methods are unused by maybeAutoReply but
+      // required by the structural interface. Provide no-op stubs.
+      progress() { /* noop */ },
+      complete() { /* noop */ },
+      fail() { /* noop */ },
+      read: async () => null,
+      flush: async () => undefined,
+      config: { offloadThresholdBytes: 0, baseDir: "/tmp/async-store-test", },
+    } as unknown as AsyncStore & { tracks: Array<{ id: string; method: string; routePattern: string; userId: string | null; }>; };
+  }
+
+  test("calls asyncStore.track() when requestId header + asyncStore are both supplied", async () => {
+    const store = makeAsyncStoreMock();
+    const requestId = "req-test-123";
+    const request = new Request("http://localhost/", {
+      method: "POST",
+      headers: { "x-request-id": requestId, },
+    },);
+
+    await maybeAutoReply(
+      db,
+      testConfig,
+      chatId,
+      actorId,
+      parentMessageId,
+      "hello",
+      request,
+      store,
+    );
+
+    expect(store.tracks,).toHaveLength(1,);
+    expect(store.tracks[0]?.id,).toBe(requestId,);
+    expect(store.tracks[0]?.method,).toBe("POST",);
+    expect(store.tracks[0]?.routePattern,).toBe(`/api/chats/${chatId}/messages`,);
+    expect(store.tracks[0]?.userId,).toBe(actorId,);
+  });
+
+  test("does NOT call asyncStore.track() when asyncStore is undefined (defensive)", async () => {
+    // No asyncStore — track() should be a silent no-op (the old broken
+    // wiring). The test guards against regressing that — if the optional
+    // chain ever becomes a hard call, this will throw at the unstubbed
+    // store.track reference.
+    const requestId = "req-test-456";
+    const request = new Request("http://localhost/", {
+      method: "POST",
+      headers: { "x-request-id": requestId, },
+    },);
+
+    const result = await maybeAutoReply(
+      db,
+      testConfig,
+      chatId,
+      actorId,
+      parentMessageId,
+      "hello",
+      request,
+      // asyncStore intentionally omitted
+    );
+    // Synchronous rule-based assistant path; must reply successfully.
+    expect(result.replied,).toBe(true,);
   });
 });
