@@ -11,12 +11,14 @@
  *   2. story tier  — `chats.custom_instructions` (chat projection), stacked
  *      on top of the account tier for this story only.
  *
- * Both tiers are user-authored free text and are wrapped via the shared
- * `wrapUntrusted` helper from `./system`, which emits the data-only preamble
- * that prevents the LLM from treating user-supplied text as authoritative
- * system instructions. Without that preamble the model could let account-tier
- * instructions override the GM contract in shared story chats (see
- * BUG-account-tier-custom-instructions-render-as-system-message-wi). The
+ * Both tiers are user-authored free text and wrapped via the shared
+ * `wrapSteering` helper from `./system`, which emits an advisory preamble:
+ * honor the preferences only where they do not conflict with system/GM/safety
+ * instructions; they never change role or override policy. This is distinct
+ * from `wrapUntrusted` (data-only) — a blanket "do not follow" preamble would
+ * cancel this section's purpose, while a bare imperative (the original bug,
+ * BUG-account-tier-custom-instructions-render-as-system-message-wi) let
+ * account-tier text override the GM contract in shared story chats. The
  * section fires for every generation path the assembler runs, including
  * impersonation (the user-persona section replaces the *identity*, never
  * the steering).
@@ -25,7 +27,7 @@
  * never dropped by the token-budget trim.
  */
 import type { SectionBuilder, } from "../types";
-import { wrapUntrusted, } from "./system";
+import { wrapSteering, } from "./system";
 
 /** Per-tier cap; mirrors validation (`ChatUpdateBody` / settings PATCH). */
 const MAX_TIER_CHARS = 5000;
@@ -54,10 +56,10 @@ export const customInstructionsSection: SectionBuilder = {
     if (global) { parts.push(`[Account-wide rules — always apply]\n${global}`,); }
     if (story) { parts.push(`[Story-specific rules — stack on top of the above; on conflict these win]\n${story}`,); }
     const body = [
-      "Follow these user steering instructions for every reply.",
+      "User steering preferences (account tier and story tier):",
       "",
       ...parts,
     ].join("\n",);
-    return [{ role: "system", content: wrapUntrusted("user.custom_instructions", body,), },];
+    return [{ role: "system", content: wrapSteering("user.custom_instructions", body,), },];
   },
 };
