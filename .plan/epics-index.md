@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 261 epics
+**Total:** 265 epics
 
 ## Summary
 
@@ -170,7 +170,9 @@
 | Unknown | Anonymity & Decentralization — Epic | Unknown | Unknown | 27 | [epic-anonymity-decentralization.md](/.plan/epics/epic-anonymity-decentralization.md) |
 | Not Started | Anonymity & Decentralization — Quick Reference | High | High | 0 | [epic-anonymity-decentralization-quickref.md](/.plan/epics/epic-anonymity-decentralization-quickref.md) |
 | Not Started | API Governance — Quick Reference | High | Very High (split into 5 sub-epics) | 0 | [epic-api-governance-quickref.md](/.plan/epics/epic-api-governance-quickref.md) |
+| 🔴 Not Started | Asset Transform Editing + Metadata | Medium | Medium | 8 | [epic-asset-transform-metadata.md](/.plan/epics/epic-asset-transform-metadata.md) |
 | 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review) | AUX LLM Enrichment Pipeline | P2-B | Medium | 10 | [epic-aux-enrichment-pipeline.md](/.plan/epics/epic-aux-enrichment-pipeline.md) |
+| 🔴 Not Started | Avatar Alpha Channel + VN Layering | Medium | Medium | 7 | [epic-avatar-alpha-vn-layering.md](/.plan/epics/epic-avatar-alpha-vn-layering.md) |
 | 🟡 In Progress — benchmark suite structure defined + first benchmark shipped (2026-08-15, branch `native-blake3`) | Benchmark CI & Performance Regression Detection | High | High | 10 | [epic-benchmark-ci-regression.md](/.plan/epics/epic-benchmark-ci-regression.md) |
 | 🟡 Partial (core CRUD + comments + follows + moderation built) | Blog System | Medium | High | 29 | [epic-blog-system.md](/.plan/epics/epic-blog-system.md) |
 | 🟡 Partial — character core services (traits, mood, relationships, avatars, licensing) + API/IO routes + tests complete; RPG stat system + template system in progress | Character Core System | High | High | 3 | [epic-character-core-system.md](/.plan/epics/epic-character-core-system.md) |
@@ -185,6 +187,7 @@
 | 🔵 Research | DB & Asset Snapshot Recovery | High | High | 7 | [epic-db-asset-snapshot-recovery.md](/.plan/epics/epic-db-asset-snapshot-recovery.md) |
 | 🟡 Draft — analysis complete, tickets scoped | Distributed Computing & Sharing (Contributor Compute Network) | Medium | Very High | 7 | [epic-distributed-compute-sharing.md](/.plan/epics/epic-distributed-compute-sharing.md) |
 | 🟡 Draft — analysis complete, tickets scoped | E2E & Integration Testing Reliability | High | Medium | 4 | [epic-e2e-integration-testing.md](/.plan/epics/epic-e2e-integration-testing.md) |
+| 🔴 Not Started | Emotion Avatar Regeneration Control | Medium | Small | 7 | [epic-avatar-regeneration-control.md](/.plan/epics/epic-avatar-regeneration-control.md) |
 | 🟡 In Progress (migration + schema done) | Emotion-Avatar Message Binding | High | Medium | 14 | [epic-emotion-avatar-message-binding.md](/.plan/epics/epic-emotion-avatar-message-binding.md) |
 | 🟡 Partial | Encryption & Cryptographic Infrastructure | High | High | 0 | [epic-crypto.md](/.plan/epics/epic-crypto.md) |
 | 🟨 Partial — browser crypto + send path built; receive-decrypt + key-management UI pending | Encryption UI | Medium | Unknown | 0 | [epic-frontend-encryption.md](/.plan/epics/epic-frontend-encryption.md) |
@@ -269,6 +272,7 @@
 | 🟡 Partially Built — H2/WS handlers exist but http1/h2 send() are no-op stubs; NOT server-wired; H3/WebTransport missing | Transport Layer Expansion (HTTP/2, HTTP/3, WebSocket, WebTransport) | Medium | Medium (remaining gaps only) | 4 | [epic-transport-expansion.md](/.plan/epics/epic-transport-expansion.md) |
 | Not Started | Two-Pass Message Delivery (Draft → Finalization) | Medium | Large | 11 | [epic-two-pass-delivery.md](/.plan/epics/epic-two-pass-delivery.md) |
 | 🟡 Permanently Ongoing | User Story & Use Case Improvements (Permanently Ongoing) | Medium | Continuous | 0 | [epic-user-stories.md](/.plan/epics/epic-user-stories.md) |
+| 🔴 Not Started | Wardrobe / Loadout Avatar Variants | Medium | Large | 8 | [epic-wardrobe-avatar-variants.md](/.plan/epics/epic-wardrobe-avatar-variants.md) |
 | ✅ Complete (merged to dev: backend `95680e00`, frontend `d61ce737`) | World Chat Channels & Invite-Driven Membership | Medium | Medium | 0 | [epic-world-chat-channels-invites.md](/.plan/epics/epic-world-chat-channels-invites.md) |
 
 ---
@@ -1767,6 +1771,15 @@ Anonymous access via Tor/I2P, distributed infrastructure, and BYOK mesh networki
 - **Tags:** openapi, validation, rate-limiting, telemetry, offloading
 - **File:** `.plan/epics/epic-api-governance-quickref.md`
 
+### Asset Transform Editing + Metadata
+
+- **Status:** 🔴 Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** assets, avatar, crop, centering, metadata, editor
+- **File:** `.plan/epics/epic-asset-transform-metadata.md`
+
 ### AUX LLM Enrichment Pipeline
 
 - **Status:** 🟡 Partial — transition detection + memory extraction implemented; shared runner missing, wiring gaps open (2026-08-01 review)
@@ -1774,6 +1787,15 @@ Anonymous access via Tor/I2P, distributed infrastructure, and BYOK mesh networki
 - **Effort:** Medium
 - **Type:** Feature Epic
 - **File:** `.plan/epics/epic-aux-enrichment-pipeline.md`
+
+### Avatar Alpha Channel + VN Layering
+
+- **Status:** 🔴 Not Started
+- **Priority:** Medium
+- **Effort:** Medium
+- **Type:** Feature Epic
+- **Tags:** avatar, alpha, transparency, background-removal, visual-novel
+- **File:** `.plan/epics/epic-avatar-alpha-vn-layering.md`
 
 ### Benchmark CI & Performance Regression Detection
 
@@ -1906,6 +1928,15 @@ ComfyUI is the primary integration target for image generation and editing.
 - **Type:** Infrastructure Epic
 - **Tags:** testing, e2e, browser, integration, mocking, dead-code, wiring, reliability
 - **File:** `.plan/epics/epic-e2e-integration-testing.md`
+
+### Emotion Avatar Regeneration Control
+
+- **Status:** 🔴 Not Started
+- **Priority:** Medium
+- **Effort:** Small
+- **Type:** Feature Epic
+- **Tags:** avatar, emotion, regeneration, jobs
+- **File:** `.plan/epics/epic-avatar-regeneration-control.md`
 
 ### Emotion-Avatar Message Binding
 
@@ -2687,6 +2718,15 @@ Centralized hub for messengers, social networks, and email integration. Unified 
 - **Effort:** Continuous
 - **Type:** Ongoing Epic
 - **File:** `.plan/epics/epic-user-stories.md`
+
+### Wardrobe / Loadout Avatar Variants
+
+- **Status:** 🔴 Not Started
+- **Priority:** Medium
+- **Effort:** Large
+- **Type:** Feature Epic
+- **Tags:** avatar, wardrobe, outfit, loadout, emotion, variants, selection
+- **File:** `.plan/epics/epic-wardrobe-avatar-variants.md`
 
 ### World Chat Channels & Invite-Driven Membership
 
