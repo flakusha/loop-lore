@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 268
+
 import type { Kysely, } from "kysely";
 import type { QuestCategory as QuestCategoryEnum, QuestType as QuestTypeEnum, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
