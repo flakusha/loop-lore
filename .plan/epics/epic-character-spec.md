@@ -98,6 +98,7 @@ and polls for completion.
 - `epic-plugin-system.md` — plugin bundle system for game rules
 - `epic-nsfw-game-mechanics.md` — NSFW content handling in game context
 - `epic-impersonation.md` — impersonation system
+- `epic-wardrobe-avatar-variants.md` — `CanonicalCharacter` and `CharacterTemplate` carry `default_outfit` + `loadout[]` once that epic lands; selection algorithm extends this spec's avatar fields
 
 ## Testing
 

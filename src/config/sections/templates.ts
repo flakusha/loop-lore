@@ -184,7 +184,27 @@ export interface CharacterTemplateConfig {
     target_roles?: ("admin" | "user" | "viewer" | "solo")[];
     is_template?: boolean;
     is_default?: boolean;
+    // ── Wardrobe / Outfits (epic-wardrobe-avatar-variants.md) ──
+    default_outfit?: string;
+    outfits?: CharacterOutfit[];
+    loadouts?: CharacterLoadout[];
   }[];
+}
+
+/** Wardrobe outfit descriptor — mirrors CharacterOutfitTemplate in sections/characters/types.ts */
+export interface CharacterOutfit {
+  id: string;
+  name: string;
+  descriptor: string;
+  tags?: string[];
+}
+
+/** Loadout bridge entry — mirrors CharacterLoadoutTemplate in sections/characters/types.ts */
+export interface CharacterLoadout {
+  name: string;
+  slot: string;
+  item_match: string;
+  outfit: string;
 }
 
 // ── Defaults ────────────────────────────────────────────────
