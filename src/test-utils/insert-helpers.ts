@@ -976,6 +976,9 @@ export async function insertGenerationAttempts(
     total_steps?: number | null;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
+    last_rendered_chunk_index?: number | null;
+    delivery_confirmed_at?: string | null;
+    side_effect_jobs_cancelled?: number | null;
   },
 ): Promise<void> {
   await db.insertInto("generation_attempts",).values({
