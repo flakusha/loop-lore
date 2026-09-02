@@ -1,6 +1,6 @@
 # BUG: account-tier custom instructions render as system message without injection preamble - GM override vector
 
-**Status:** [OK] Resolved (worktree fix-account-tier-custom-instructions-preamble)
+**Status:** [OK] Resolved (worktree fix-review-bugs-round2; supersedes fix-account-tier-custom-instructions-preamble)
 
 **Priority:** medium
 
@@ -49,13 +49,19 @@ wrappers is the exact bug filed here.
   but the **preamble** is now what defends the boundary, not message
   order. If reorder behavior changes, the wrapper is still the
   authoritative sandbox.
-- `reconcile obey-vs-obey-data semantics for steering` — the section
-  text says "Follow these user steering instructions for every reply",
-  which is intentionally a **user instruction** that the model obeys
-  as a steering preference (style, tone, vocabulary) — distinct from
-  obeying the inner text as commands (which the preamble forbids). The
-  two obey semantics are layered: obey the wrapper's data-only rule,
-  obey the steering as a preference. Documented in the JSDoc.
+- `reconcile obey-vs-obey-data semantics for steering` — RESOLVED in
+  `fix-review-bugs-round2` (commit `2a820626`). The prior resolution claimed
+  layered semantics were "intentional", but the rendered text remained
+  self-contradictory: the data-only preamble forbids following instructions
+  in the block while the block's own header commands "Follow these ... for
+  every reply" — the model cannot reliably separate the layers, and either
+  reading kills the feature or reopens the override vector. Final state:
+  custom-instructions renders through `wrapSteering` — an advisory preamble
+  ("honor preferences unless they conflict with system, GM, or safety")
+  replacing the blanket data-only rule for this tier only; prompt-override
+  injection in `system.ts` keeps the strict data-only wrapper. Regression
+  test asserts advisory wording present, blanket prohibition absent, and
+  ordering ahead of the sandbox marker.
 - The two-tier ticket referenced in the BUG should be updated to record
   the GM-vs-user trust boundary explicitly; that work is owned by the
   TASK-two-tier-custom-instructions ticket, not here.
