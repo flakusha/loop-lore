@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { beforeAll, describe, expect, it, } from "bun:test";
+import type { GenerateRequest, } from "../../generation/providers/types";
 import { createLogger, } from "../../logger";
 import { getCommand, } from "./registry";
 import { rewriteText, runRewrite, } from "./rewrite";
@@ -44,8 +45,8 @@ describe("rewrite command", () => {
 
   describe("runRewrite (LLM injection)", () => {
     it("returns the LLM output verbatim when complete is provided", async () => {
-      let captured: { prompt: string; systemPrompt: string } | undefined;
-      const complete = async (req: { prompt: string; systemPrompt: string },) => {
+      let captured: GenerateRequest | undefined;
+      const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
         captured = req;
         return { content: "A polished version.", };
       };
@@ -56,19 +57,20 @@ describe("rewrite command", () => {
         { complete, },
       );
 
-      expect(captured?.systemPrompt,).toBe(
+      expect(captured?.messages[0]?.content,).toBe(
         "Rewrite the following text in clear style. Preserve meaning.",
       );
-      expect(captured?.prompt,).toBe("some rough text",);
+      expect(captured?.messages[1]?.content,).toBe("some rough text",);
       expect(result.systemMessage,).toContain("A polished version.",);
       expect(result.systemMessage,).not.toContain("LLM unavailable",);
     });
 
     it("routes each --style value to a distinct system prompt", async () => {
       const captured: { style: string; systemPrompt: string }[] = [];
-      const complete = async (req: { prompt: string; systemPrompt: string },) => {
-        const m = req.systemPrompt.match(/in (\w+) style\./,);
-        captured.push({ style: m?.[1] ?? "?", systemPrompt: req.systemPrompt, },);
+      const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
+        const sysMsg = req.messages[0]?.content ?? "";
+        const m = sysMsg.match(/in (\w+) style\./,);
+        captured.push({ style: m?.[1] ?? "?", systemPrompt: sysMsg, },);
         return { content: "ok", };
       };
 
@@ -112,8 +114,8 @@ describe("rewrite command", () => {
     });
 
     it("uses the last assistant message when no positional text is supplied", async () => {
-      const complete = async (req: { prompt: string; systemPrompt: string },) => {
-        expect(req.prompt,).toBe("previous reply",);
+      const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
+        expect(req.messages[1]?.content,).toBe("previous reply",);
         return { content: "rewritten reply", };
       };
       const result = await runRewrite(

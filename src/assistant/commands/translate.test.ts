@@ -2,6 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { beforeAll, describe, expect, it, } from "bun:test";
+import { readFileSync, } from "node:fs";
+import { join, } from "node:path";
+import type { GenerateRequest, } from "../../generation/providers/types";
 import { createLogger, } from "../../logger";
 import { getCommand, } from "./registry";
 import { LANGUAGES, runTranslate, } from "./translate";
@@ -26,8 +29,8 @@ describe("translate command", () => {
   });
 
   it("uses the LLM output when complete is provided (parse: <text> to <lang>)", async () => {
-    let captured: { prompt: string; systemPrompt: string } | undefined;
-    const complete = async (req: { prompt: string; systemPrompt: string },) => {
+    let captured: GenerateRequest | undefined;
+    const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
       captured = req;
       return { content: "Hola mundo", };
     };
@@ -38,18 +41,18 @@ describe("translate command", () => {
       { complete, },
     );
 
-    expect(captured?.systemPrompt,).toBe(
+    expect(captured?.messages[0]?.content,).toBe(
       "Translate the following text into Spanish. Output ONLY the translated text.",
     );
-    expect(captured?.prompt,).toBe("Hello world",);
+    expect(captured?.messages[1]?.content,).toBe("Hello world",);
     expect(result.systemMessage,).toContain("Hola mundo",);
     expect(result.systemMessage,).not.toContain("[Translation to",);
     expect(result.systemMessage,).not.toContain("LLM unavailable",);
   });
 
   it("uses the LLM output for the <lang> <text> form", async () => {
-    let captured: { prompt: string; systemPrompt: string } | undefined;
-    const complete = async (req: { prompt: string; systemPrompt: string },) => {
+    let captured: GenerateRequest | undefined;
+    const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
       captured = req;
       return { content: "Hello world", };
     };
@@ -60,10 +63,10 @@ describe("translate command", () => {
       { complete, },
     );
 
-    expect(captured?.systemPrompt,).toBe(
+    expect(captured?.messages[0]?.content,).toBe(
       "Translate the following text into English. Output ONLY the translated text.",
     );
-    expect(captured?.prompt,).toBe("Hola mundo",);
+    expect(captured?.messages[1]?.content,).toBe("Hola mundo",);
     expect(result.systemMessage,).toContain("Hello world",);
   });
 
@@ -96,10 +99,7 @@ describe("translate command", () => {
   it("does not contain the literal placeholder string", () => {
     // Source-level guard: the old `[Translation to ${langName}: ${text}]` string
     // must be GONE from translate.ts.
-    const src = require("node:fs",).readFileSync(
-      require("node:path",).join(__dirname, "translate.ts",),
-      "utf8",
-    );
+    const src = readFileSync(join(__dirname, "translate.ts",), "utf8",);
     expect(src,).not.toContain("[Translation to",);
   });
 });
