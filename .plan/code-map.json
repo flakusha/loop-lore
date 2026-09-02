@@ -13994,6 +13994,10 @@
   "src/middleware/idempotency.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-idempotency-table-backend-accepted-but-never-implemented.md"
     },
     {
@@ -17554,6 +17558,10 @@
   "src/routes/messages/create.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md"
     },
     {
@@ -17692,6 +17700,10 @@
   "src/routes/messages/reply.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-assistant-retry-silent-500.md"
     },
     {
@@ -17797,6 +17809,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-location-change-event-log.md"
+    }
+  ],
+  "src/routes/messages/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it.md"
     }
   ],
   "src/routes/messages/update.test.ts": [
