@@ -2029,6 +2029,36 @@
       "source": ".plan/tickets/TASK-aux-enrichment-emotion-avatar-task.md"
     }
   ],
+  "src/backup/browser-backup.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-resource-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-browser-backup.md"
+    }
+  ],
+  "src/backup/reconciliation.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-resource-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-reconciliation.md"
+    }
+  ],
+  "src/backup/recovery.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-resource-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-recovery.md"
+    }
+  ],
   "src/battle": [
     {
       "kind": "ticket",
@@ -5779,6 +5809,10 @@
       "source": ".plan/epics/epic-encryption-workflow.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-resource-provision.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f.md"
     },
@@ -5793,6 +5827,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic17-encryption-e2e-expansion.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-credential-store.md"
     },
     {
       "kind": "frontend",
@@ -7841,6 +7879,10 @@
       "source": ".plan/tickets/TASK-message-seen-state-schema.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-schema.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/gm-shadow-notes.md"
     },
@@ -8177,6 +8219,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-nsfw-traits-section.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-schema.md"
     },
     {
       "kind": "ticket",
@@ -11091,6 +11137,12 @@
       "source": ".plan/tickets/FEAT-byok-api-keys.md"
     }
   ],
+  "src/frontend/settings/browser-backup.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-resource-provision.md"
+    }
+  ],
   "src/frontend/settings/inference-mode.ts": [
     {
       "kind": "epic",
@@ -11115,6 +11167,16 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
+    }
+  ],
+  "src/frontend/settings/resource-provision.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-resource-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-quota-ui.md"
     }
   ],
   "src/frontend/stores/ui-store.ts": [
@@ -12735,6 +12797,10 @@
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-resource-provision.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md"
     },
@@ -12745,6 +12811,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotions-avatar-edit-model.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-routing-facade.md"
     }
   ],
   "src/generation/providers/tts.ts": [
@@ -12773,6 +12843,16 @@
       "source": ".plan/tickets/FEAT-062.md"
     }
   ],
+  "src/generation/quota-engine.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-resource-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-quota-engine.md"
+    }
+  ],
   "src/generation/repetition-detector.ts": [
     {
       "kind": "epic",
@@ -12787,6 +12867,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-repetition-hallucination-guards.md"
+    }
+  ],
+  "src/generation/resource-provider.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-resource-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-routing-facade.md"
     }
   ],
   "src/generation/smart-regen.ts": [
@@ -15773,6 +15863,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-transition-aux-llm-fallback.md"
+    }
+  ],
+  "src/resource/credential-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-credential-store.md"
     }
   ],
   "src/routes/achievements.ts": [
@@ -21623,6 +21719,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-achievement-unlock-sources.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-resource-provision-schema.md"
     },
     {
       "kind": "ticket",
