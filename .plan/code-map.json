@@ -1793,10 +1793,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
     }
   ],
   "src/auth/sms.ts": [
@@ -3807,6 +3803,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
     }
   ],
   "src/chat/service/carry-history.ts": [
@@ -5007,6 +5007,12 @@
       "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
     }
   ],
+  "src/config/schema-class/json-schema/headers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    }
+  ],
   "src/config/schema.ts": [
     {
       "kind": "epic",
@@ -5141,6 +5147,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-rate-limiting-and-concurrency-limits.md"
+    }
+  ],
+  "src/config/schema/headers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
     }
   ],
   "src/config/schema/idempotency.ts": [
@@ -14241,6 +14253,12 @@
       "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
     }
   ],
+  "src/middleware/response-headers.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    }
+  ],
   "src/middleware/response-headers.ts": [
     {
       "kind": "epic",
@@ -17713,6 +17731,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
     },
     {
       "kind": "ticket",
