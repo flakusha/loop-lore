@@ -31,7 +31,7 @@ This epic fills all three.
 |---|---|
 | **Document-as-object + document-as-record** | One shape for code (`DocumentObject`), one shape for persistence (`documents` table extended with `document_kind`, `source_asset_id`, `raw_repr`, `decomposed_repr`); both serialize from the same canonical schema. |
 | **Standards-aware decomposition** | Pluggable decomposers; first-class support for common document standards (see "Standards" section) and a fall-back "free decomposition" path so proprietary formats are first-class. |
-| **Model-role expansion (admin)** | New `ModelRole.{Extraction,Embedding,Analysis}` registered alongside the dead `Captioning`/`Moderation`; admin UI exposes them on the same model picker used for `default`/`aux`/`gm`/`actor`. |
+| **Model-role expansion (admin)** | New `ModelRole.{Extraction,Embeddings,Analysis}` registered alongside the dead `Captioning`/`Moderation`; admin UI exposes them on the same model picker used for `Main`/`Auxiliary`. |
 | **Hybrid retrieval** | Vector similarity + keyword (BM25 or SQLite FTS5) + tag filter + reference-graph traversal; cross-encoder rerank pluggable. |
 | **Assistant ↔ RAG ↔ Asset round-trip** | Assistant chat can `/decompose <asset>`, `/link <a> <b>`, `/search <query>`, `/preview <doc>` — each becomes an assistant tool with deterministic, replayable outputs. |
 | **Gallery decomposition view** | Side-by-side panel: original (raw bytes), decomposed (tree), human-readable (rendered), and references (backlinks graph). |
@@ -46,7 +46,7 @@ The user asked "any standards?". Survey of relevant document/spec standards for 
 | **OpenAPI 3.1** | REST API schema | High for RAG/asset API surface | Reuse existing `epic-openapi-reference.md` work; this epic extends it with `/api/documents/*` + `/api/assets/documents/*`. |
 | **CommonMark + GFM** | Markdown spec | High for human-readable representation | Default renderer for `decomposed_repr.human`. |
 | **Schema.org** | Schema.org types (Article, Book, ImageObject, etc.) | Medium | Tag vocabulary for `document_kind` mapping (e.g. `ImageObject` → `image`). |
-| **FRBR** | Functional Requirements for Bibliographic Records (work/expression/manifestation/item) | Medium | Model for `document_version`/`revision` lineage; reuses `epic-content-versioning.md`. |
+| **FRBR** | Functional Requirements for Bibliographic Records (work/expression/manifestation/item) | Medium | Model for `document_version`/`revision` lineage; reuses `epic-db-content-versioning.md`. |
 | **IIIF** (Presentation API) | International Image Interoperability Framework | High for asset decomposition | Adopt for image/PDF assets — manifest/canvas/annotation maps onto `decomposed_repr.struct` (regions, OCR overlay, references). |
 | **Unstructured / DiSSCo** | Biodiversity/structured-data | Low — domain-specific | Skip. |
 | **DocBook / TEI** | XML semantic markup | Medium for "long-form lore" docs | Optional `tei-xml` parser; not default. |
@@ -83,7 +83,7 @@ export interface DocumentObject {
   structRepr: JsonLdDoc;            // JSON-LD graph
   references: DocReference[];       // JSON-LD @id of other docs
   tags: string[];
-  sourceAssetId?: string;           // FK → assets.id (when kind in {image,video,audio,file})
+  sourceAssetId?: string;           // FK -> assets.id (when kind in {image,video,audio,file})
   sourceMessageId?: string;
   tenantId?: string;
 }
@@ -103,6 +103,14 @@ export interface JsonLdDoc {
   // all references go through `references` so the graph is queryable
 }
 
+// Minimal selector shape (W3C IIIF region / Web Annotation selector subset).
+// Full IIIF + Web Annotation selector grammars are large; this is the loop-lore-minimal slice.
+export type JsonLdSelector =
+  | { type: "iiif-region"; x: number; y: number; w: number; h: number }
+  | { type: "text-quote"; exact: string; prefix?: string; suffix?: string }
+  | { type: "point"; x: number; y: number }
+  | { type: "range"; start: number; end: number };
+
 export interface DocReference {
   refId: string;                   // loop://doc/<id> or loop://asset/<id>
   relation: "mentions" | "derives-from" | "annotates" | "embeds" | "tags";
@@ -113,14 +121,14 @@ export interface DocReference {
 
 ## Document-as-Record (DB shape)
 
-Extends the `documents` table from `epic-rag-ingestion.md` (additive migration — no breaking change to the RAG sub-epic):
+Extends the `documents` table from `epic-rag-ingestion.md` (additive migration — no breaking change to the RAG sub-epic). **Sequencing constraint:** B-R1 ships **after** `epic-rag-ingestion.md` lands; columns are added to that table. New columns are nullable so existing rows survive the migration.
 
 ```sql
 ALTER TABLE documents ADD COLUMN
   document_kind TEXT NOT NULL DEFAULT 'file',
   source_asset_id TEXT REFERENCES assets(id),
   source_message_id TEXT REFERENCES messages(id),
-  raw_bytes_hash TEXT,           -- joins to assets.blake3 (asset-platform B1)
+  raw_bytes_hash TEXT,           -- joins to assets.blake3 (asset-platform B1); nullable until B1 lands
   raw_bytes_size INTEGER,
   mime_type TEXT,
   struct_repr JSONB,             -- JSON-LD @graph
@@ -130,10 +138,11 @@ ALTER TABLE documents ADD COLUMN
   decomposition_model TEXT,      -- ModelRole.Extraction resolution at write-time
   decomposition_version INTEGER DEFAULT 1;
 
--- Tag-aware full-text search:
+-- Tag-aware full-text search (FTS5 external-content: documents.id is TEXT/ULID, so we
+-- index by rowid via INTEGER alias — see B-R1 spike for the rowid-mapping design).
 CREATE VIRTUAL TABLE documents_fts USING fts5(
   title, human_repr, tags,
-  content='documents', content_rowid='id'
+  content='documents', content_rowid='rowid_alias'
 );
 
 -- Reference-graph table for efficient backlinks/forward links:
@@ -150,6 +159,8 @@ CREATE INDEX idx_dref_dst ON document_references(dst_doc_id, relation);
 CREATE INDEX idx_dref_src ON document_references(src_doc_id);
 ```
 
+**B-R1 implementation spike** (raised by strict review 2026-09-02): FTS5 `content='documents'` with `content_rowid` requires an INTEGER rowid. Since `documents.id` is a TEXT ULID, B-R1 must either (a) add an INTEGER alias column to `documents` and use it for FTS5, or (b) use FTS5 without `content=` (standalone table with explicit triggers). Spike decision before B-R1 lands.
+
 This is the **document-as-record** shape: every artifact becomes a row in `documents`, regardless of whether the user uploaded a PDF, generated an image, or wrote a chat message. Asset-platform B1's BLAKE3 dedup is reused — same bytes, one document row, many `asset_links` rows pointing at it.
 
 ## Decomposers (extension points)
@@ -158,43 +169,70 @@ Each `DocumentKind` registers a decomposer that turns `raw_repr` into `struct_re
 
 | Kind | Decomposer | ModelRole | JSON-LD @type | Notes |
 |---|---|---|---|---|
-| `image` | IIIF manifest emitter (regions, EXIF, OCR text via image decomposer) | `ModelRole.Extraction` (caption/VLM) + `ModelRole.Embedding` for vectors | `ImageObject` + IIIF manifest | Reuses asset-platform B1 pHash + B4 captioning |
-| `video` | Scene detector + keyframe + transcript | `ModelRole.Extraction` | `VideoObject` + IIIF canvas list | Reuses `src/audio-video-sound` |
-| `audio` | Transcript + diarization | `ModelRole.Extraction` (Whisper-class) | `AudioObject` | Reuses `src/aux-pipeline` task shape |
-| `file` (PDF/DOCX/...) | Existing parsers from `epic-rag-ingestion.md` + structured heading/footnote extraction | `ModelRole.Embedding` (re-rank), `ModelRole.Extraction` (semantic chunking) | `DigitalDocument` | Wraps ingestion output |
-| `message` | Chat turn splitter + reference extractor | `ModelRole.Extraction` (existing `classifyIntent` migrated) | `Message` | Reuses `src/chat/transition-classifier.ts` |
-| `character-card` | Field mapper -> JSON-LD (name, traits, lore, sample dialogue) | `ModelRole.Extraction` (relationships, traits) | `Person`/`Character` | Reuses `src/characters/` traits |
-| `worldbook` | Entry splitter -> keyword triggers + content | `ModelRole.Extraction` (semantic tags) | `CreativeWork` | Reuses `src/actors.md` `actor_lore_entries` |
-| `scenario` | Beat splitter -> choice cards + asset refs | `ModelRole.Extraction` (intent tagging) | `Scenario` | Reuses VN scene generator |
-| `url` | Scraper + readability + JSON-LD extraction | `ModelRole.Extraction` (entity linking) | `WebPage` | Wraps `epic-rag-context-sources.md` web providers |
+| `image` | IIIF manifest emitter (regions, EXIF, OCR text via image decomposer) | `ModelRole.Captioning` (alt text) + `ModelRole.Embeddings` for vectors | `ImageObject` + IIIF manifest | Reuses asset-platform B1 pHash + B4 captioning |
+| `video` | Scene detector + keyframe + transcript | `ModelRole.Summarization` (scene labels) | `VideoObject` + IIIF canvas list | Reuses `src/audio-video-sound` |
+| `audio` | Transcript + diarization | `ModelRole.Summarization` (diarization summary) | `AudioObject` | Reuses `src/aux-pipeline` task shape |
+| `file` (PDF/DOCX/...) | Existing parsers from `epic-rag-ingestion.md` + structured heading/footnote extraction | `ModelRole.Embeddings` (re-rank), `ModelRole.Extraction` (semantic chunking — NEW) | `DigitalDocument` | Wraps ingestion output |
+| `message` | Chat turn splitter + reference extractor | `ModelRole.Auxiliary` (existing `classifyIntent` migrated) | `Message` | Reuses `src/chat/transition-classifier.ts` |
+| `character-card` | Field mapper -> JSON-LD (name, traits, lore, sample dialogue) | `ModelRole.Extraction` (NEW — relationships, traits) | `Person`/`Character` | Reuses `src/characters/` traits |
+| `worldbook` | Entry splitter -> keyword triggers + content | `ModelRole.Extraction` (NEW — semantic tags) | `CreativeWork` | Reuses `src/actors.md` `actor_lore_entries` |
+| `scenario` | Beat splitter -> choice cards + asset refs | `ModelRole.Extraction` (NEW — intent tagging) | `Scenario` | Reuses VN scene generator |
+| `url` | Scraper + readability + JSON-LD extraction | `ModelRole.Extraction` (NEW — entity linking) | `WebPage` | Wraps `epic-rag-context-sources.md` web providers |
 
 Every decomposer is a pure function `(rawRepr, opts) -> { structRepr, humanRepr, references }`. Pluggable; worldbuilders register custom decomposers via the plugin system (`epic-plugin-extension-points.md`).
 
 ## Model-Role Expansion (admin-side)
 
-New roles registered in `VALID_ROLES`:
+The current `ModelRole` enum lives at `src/db/enums-core/flags.ts:69-78` with six values (verified 2026-09-02 in `tree/epic-rag-assets/src/db/enums-core/flags.ts:69-76`):
 
 ```ts
-// src/config/roles.ts  (extends existing ModelRole enum)
+// ACTUAL current code — src/db/enums-core/flags.ts:69-76
 export const ModelRole = {
-  Default: "default",
-  Aux: "aux",
-  Gm: "gm",
-  Actor: "actor",
-  Moderation: "moderation",    // existing dead role - wire into NSFW pipeline
-  Captioning: "captioning",    // existing dead role - wire into asset-platform B4
-  Extraction: "extraction",    // NEW - doc decomposition
-  Embedding: "embedding",      // NEW - embedding provider (separate from generation)
-  Analysis: "analysis",        // NEW - chat-time reasoning over retrieved docs
+  Main: "main",
+  Auxiliary: "auxiliary",
+  Captioning: "captioning",
+  Moderation: "moderation",
+  Embeddings: "embeddings",
+  Summarization: "summarization",
 } as const;
 ```
 
-Admin model-picker (`src/frontend/admin/models.html` per existing epic-frontend-admin) gets:
-- Existing roles: `default`, `aux`, `gm`, `actor`
-- Newly exposed: `extraction`, `embedding`, `analysis`, `moderation`, `captioning`
-- Each assignment: `(provider, modelId, per-call budget, BYO apiKey override, temperature/topP overrides)` — same shape as the existing admin model manager, just routed through `resolveModelRole` (the helper flagged in `epic-aux-enrichment-pipeline.md` row 2 for BYO-key + actor overrides).
+**Admin-manageable subset** (`VALID_ROLES`, `src/admin/model-roles.ts:20-24`) is currently only `[Main, Auxiliary, Captioning]`. `Moderation`, `Embeddings`, and `Summarization` exist in the enum but are **not** admin-pickable. Per `epic-aux-enrichment-pipeline.md` row 4, `Captioning` and `Moderation` are dead roles (no call sites resolve them).
 
-Per-document kind overrides (new): the admin can pick "for `image` documents, use provider P1; for `file` documents, use provider P2" — a kind->role matrix. Falls back to the role default.
+**B-R3 changes (additive only):**
+
+```ts
+// src/db/enums-core/flags.ts:69  — EXTEND enum (additions only)
+export const ModelRole = {
+  Main: "main",
+  Auxiliary: "auxiliary",
+  Captioning: "captioning",
+  Moderation: "moderation",
+  Embeddings: "embeddings",
+  Summarization: "summarization",
+  // NEW additions (this epic):
+  Extraction: "extraction",    // doc decomposition (per kind)
+  Analysis: "analysis",        // chat-time reasoning over retrieved docs
+} as const;
+
+// src/admin/model-roles.ts:20  — EXTEND admin subset
+export const VALID_ROLES = [
+  ModelRole.Main,
+  ModelRole.Auxiliary,
+  ModelRole.Captioning,
+  ModelRole.Moderation,        // promoted: now actually wired
+  ModelRole.Embeddings,        // promoted: admin-pickable for vector store
+  ModelRole.Summarization,     // promoted: admin-pickable
+  ModelRole.Extraction,        // NEW
+  ModelRole.Analysis,          // NEW
+] as const;
+```
+
+**Per-chat routing keys (`GmConfig.actorModels`) are NOT part of `ModelRole`** — they live in chat config (see `epic-assistant-gm-flows.md` "GmConfig shape gap CLOSED"). This epic does **not** touch them.
+
+**Admin model-picker UI** (backend: `src/admin/model-roles.ts:114` for `setModelRoleOverride`; htmx view location TBD — locate via `views/admin/` or `partials/admin/` per `epic-frontend-admin.md`) gets the newly-admin-exposed roles. Each assignment: `(provider, modelId, per-call budget, BYO apiKey override, temperature/topP overrides)` — same shape as `setModelRoleOverride`.
+
+**Per-document kind overrides (new):** a kind->role matrix in config (`config.generation.roleByKind[kind] = ModelRole.Extraction | ModelRole.Embeddings | ...`). Falls back to the role default. Resolution helper: `resolveKindModelRole(kind, config, db)` mirrors `resolveModelRole` (`src/admin/model-roles.ts:46`).
 
 ## Storage Layout (cross-reference + fast search + interconnection + tagging + in-document content structuring)
 
@@ -210,14 +248,14 @@ Three persistent indices plus one in-memory cache:
 Hybrid retrieval (`src/rag/hybrid.ts`) fuses:
 
 ```
-score(d) = alpha * normalize(vector(d, q))         // semantic
-         + beta  * normalize(fts(d, q))            // keyword
-         + gamma * tag_overlap(q.tags, d.tags)     // tag
-         + delta * 1/(1 + graph_distance(d, seed)) // graph (where seed = last referenced doc)
-         + eps   * cross_encoder(d, q)             // rerank (optional, slow)
+score(d) = alpha * normalize(vector(d, q))                   // semantic
+         + beta  * normalize(fts(d, q))                      // keyword
+         + gamma * tag_overlap(q.tags, d.tags)               // tag
+         + delta * 1/(1 + graph_distance(d, seed))           // graph (seed = last referenced doc, or null)
+         + eps   * sigmoid(normalize(cross_encoder(d, q)))   // rerank (optional, slow; sigmoid maps logits -> [0,1])
 ```
 
-with `(alpha, beta, gamma, delta, eps)` config-driven (defaults `(0.5, 0.3, 0.1, 0.05, 0.05)`); rerank (`eps`) only when `topK <= 32`.
+with `(alpha, beta, gamma, delta, eps)` config-driven (defaults `(0.5, 0.3, 0.1, 0.05, 0.05)`); rerank (`eps`) only when `topK <= 32`. **Cross-encoder outputs logits in `[-10, +10]`**; the `sigmoid + normalize` wrapper is required (raised by strict review 2026-09-02 — bare logits would dominate the linear sum).
 
 ## Assistant Flow & Chat Integration
 
@@ -230,7 +268,7 @@ Extends `epic-assistant-gm-flows.md` with RAG/asset-aware tools (slash commands 
 | `/rag-link <a> <b> [relation]` | `linkDocuments(a, b, relation)` | Inserts `document_references`; both sides show backlink |
 | `/rag-untag <doc> <tag>` / `/rag-tag <doc> <tag>` | `tagDocument(doc, tag, op)` | Updates `documents.tags` + FTS5 + tag co-occurrence |
 | `/rag-preview <doc-id>` | `previewDocument(doc-id)` | Inline gallery panel: original + human + JSON-LD tree + backlinks |
-| `/rag-ask <query>` | `answerWithRAG(query)` | LLM call (ModelRole.Analysis) over hybrid-retrieved context; streams answer + citations |
+| `/rag-ask <query>` | `answerWithRAG(query)` | LLM call (`ModelRole.Analysis`) over hybrid-retrieved context; streams answer + citations |
 | `/asset-link <msg\|asset> <doc>` | `linkAssetToDocument(...)` | Sets `documents.source_asset_id`; appears in chat bubble tooltip |
 
 All commands are **deterministic + replayable**: same inputs -> same outputs; an assistant invocation is logged with input args + resolved model + output hash for the audit trail `epic-rag-enterprise.md` will reuse.
@@ -264,6 +302,7 @@ Extends `epic-frontend-gallery.md` and `epic-gallery-batch-operations.md`. Adds 
 - Migration extending `documents` + `documents_fts` + `document_references`
 - Repository layer (`src/db/repositories/documents.ts`) — Kysely types only
 - Unit tests for round-trip raw<->struct<->human
+- **FTS5 rowid spike** — resolve INTEGER-rowid question before migration lands
 
 ### B-R2 — Decomposers (one batch per kind)
 
@@ -278,14 +317,17 @@ Each decomposer batch = standalone value; ship in priority order.
 
 ### B-R3 — ModelRole Expansion (admin)
 
-- New `ModelRole.{Extraction,Embedding,Analysis}` + wire `Captioning`/`Moderation`
-- Admin model-picker UI updates (existing `src/frontend/admin/models.html`)
-- Per-kind model override matrix
-- BYO apiKey routing through `resolveModelRole` (closes aux-enrichment row 2)
+- Extend `ModelRole` enum in `src/db/enums-core/flags.ts:69` with `Extraction` + `Analysis` (additive)
+- Extend `VALID_ROLES` in `src/admin/model-roles.ts:20` to include all 8 roles (promote `Moderation`/`Embeddings`/`Summarization` to admin-manageable + add `Extraction`/`Analysis`)
+- Wire dead `Captioning` role into the captioner pipeline (asset-platform B4)
+- Wire `Moderation` role into LLM moderation path (`src/nsfw/`)
+- Admin model-picker UI updates (backend `src/admin/model-roles.ts`; view path TBD via `views/admin/` or `partials/admin/` per `epic-frontend-admin.md`)
+- Per-kind model override matrix (`config.generation.roleByKind[]`)
+- BYO apiKey routing through `resolveModelRole` (closes `epic-aux-enrichment-pipeline.md` row 2)
 
 ### B-R4 — Hybrid Retrieval & Index
 
-- `src/rag/hybrid.ts` (alpha*beta*gamma*delta*eps fusion + cross-encoder rerank pluggable)
+- `src/rag/hybrid.ts` (`α·β·γ·δ·ε` fusion with sigmoid-normalized cross-encoder rerank)
 - Tag co-occurrence matrix builder (offline job)
 - `POST /api/rag/hybrid-search` + `GET /api/documents/:id/references`
 - Streamed citation responses
@@ -336,13 +378,14 @@ src/rag/
 
 src/db/
 ├── repositories/documents.ts      # NEW - Kysely-only
-└── migrations/<ts>_rag_documents.ts  # NEW
+└── migrations/<ts>_rag_documents.ts  # NEW (after epic-rag-ingestion lands)
+
+src/db/enums-core/
+└── flags.ts                      # EXTEND - add Extraction + Analysis to ModelRole (line 69)
 
 src/admin/
-└── model-roles.ts                 # EXTEND - new roles + per-kind matrix
-
-src/frontend/admin/
-└── models.html                    # EXTEND - extraction/embedding/analysis pickers
+└── model-roles.ts                # EXTEND - extend VALID_ROLES array (line 20) + per-kind matrix
+src/views/admin/  (or src/partials/admin/)        # EXTEND - htmx model-picker UI; exact path TBD
 
 src/assistant/commands/
 └── rag/                           # NEW
@@ -378,6 +421,7 @@ docs/spec/
 ### B-R1 (Foundation)
 
 - [ ] `documents` table extends without breaking the existing RAG ingestion epic
+- [ ] FTS5 rowid spike resolved (INTEGER alias added OR external-content FTS5 with triggers) before migration lands
 - [ ] Round-trip raw <-> struct <-> human is byte-stable for a 1KB text fixture
 - [ ] `documents_fts` FTS5 search returns correct ranking for a known query
 - [ ] `document_references` adjacency inserts are atomic (single transaction)
@@ -393,27 +437,30 @@ docs/spec/
 
 ### B-R3 (Model Roles)
 
-- [ ] `ModelRole.{Extraction,Embedding,Analysis}` resolve via `resolveModelRole`
+- [ ] `ModelRole.Extraction` + `ModelRole.Analysis` resolve via `resolveModelRole` (`src/admin/model-roles.ts:46`)
+- [ ] All 8 ModelRole values present in `VALID_ROLES` (`src/admin/model-roles.ts:20`)
 - [ ] Per-kind model override matrix works (admin picks different model for `image` vs `file`)
-- [ ] Dead `Captioning`/`Moderation` roles wired (captioner produces alt text in caption-route.ts; moderation consumes LLM output)
-- [ ] BYO apiKey routing for aux path closes gap from aux-enrichment row 2
+- [ ] Dead `Captioning` role wired (captioner produces alt text per asset-platform B4 — surface location TBD until B4 spike lands)
+- [ ] `Moderation` role wired into NSFW pipeline (`src/nsfw/`)
+- [ ] BYO apiKey routing for aux path closes gap from `epic-aux-enrichment-pipeline.md` row 2
 
 ### B-R4 (Hybrid)
 
 - [ ] Hybrid query returns consistent ordering across weight changes (monotonic)
+- [ ] Cross-encoder rerank uses `sigmoid(normalize(...))` to map logits to `[0, 1]`
 - [ ] Cross-encoder rerank improves top-1 NDCG@10 on a known fixture (regression test)
-- [ ] Backlinks/forward links query returns <=5ms for <=10k edges
+- [ ] Backlinks/forward links query returns <=5ms for <=10k edges `[INFERENCE — pending benchmark]`
 - [ ] Citation streaming surfaces source chips in chat response
 
 ### B-R5 (Assistant)
 
 - [ ] All seven `/rag-*` and `/asset-link` commands have unit + integration tests
-- [ ] Chat bubble "🧠 Decomposed" chip renders `human_repr` excerpt on hover (visual e2e)
+- [ ] Chat bubble "🧠 Decomposed" chip renders `humanRepr` excerpt on hover (visual e2e)
 - [ ] Replay log captures `(input, model, output_hash)` per invocation; audit query returns same shape
 
 ### B-R6 (Gallery)
 
-- [ ] Four-tab gallery renders all four tabs with <=200ms TTI on 10k docs
+- [ ] Four-tab gallery renders all four tabs with <=200ms TTI on 10k docs `[INFERENCE — pending baseline]`
 - [ ] Unified search bar returns hybrid results across tabs with provenance chips
 - [ ] Four-pane preview toggles without re-fetching
 - [ ] Cursor pagination works at offset >=10k
@@ -446,7 +493,7 @@ docs/spec/
 | **Decomposition drift** (re-running a decomposer changes `decomposition_version`; humans see new text) | `documents.decomposition_version` is monotonic; old versions retained; gallery shows "v3 (current) / v2 / v1" picker |
 | **Vector + FTS5 cost** at 100k+ docs | Cursor pagination mandatory; per-tab indices; tag-matrix precomputed offline (nightly job); vector index stays separate from documents table |
 | **JSON-LD context drift** (own context vs. Schema.org changes) | Pin context version (`/doc/v1`); bump + migration when Schema.org major changes |
-| **Model-role explosion** (too many admin pickers) | Group in admin UI: "Generation roles" (default/gm/actor), "Analysis roles" (extraction/embedding/analysis), "Safety roles" (moderation/captioning) |
+| **Model-role explosion** (too many admin pickers) | Group in admin UI: "Generation roles" (Main/Auxiliary), "Analysis roles" (Extraction/Embeddings/Summarization/Analysis), "Safety roles" (Moderation/Captioning) |
 | **Hybrid ranking surprise** (results reorder when weights shift) | Config is per-user; ranking change requires user opt-in; tests assert monotonicity not specific scores |
 | **Standards lock-in** | Pluggable decomposer registry; ship with JSON-LD + IIIF, allow Markdown + DocBook + custom via plugin |
 
@@ -478,5 +525,8 @@ docs/spec/
 - `epic-assistant-gm-flows.md` — assistant commands extended with RAG/asset tools
 - `epic-aux-enrichment-pipeline.md` — model-role plumbing (rows 2, 4 closed)
 - `epic-byok-local-models.md` — admin model surface extended with new roles
+- `epic-frontend-admin.md` — admin model-picker UI extended
 - `epic-matrix-integration.md` — add this epic to the integration matrix
-- `matrix-emotion-avatar-assets.md` — extend with RAG<->asset references (AV-row for decomposition chips)
+- `epic-openapi-reference.md` — REST API contract (extended with `/api/documents/*`)
+- `epic-db-content-versioning.md` — version lineage / FRBR partial adoption
+- `.plan/matrix-emotion-avatar-assets.md` — extend with RAG↔asset references (AV-row for decomposition chips)
