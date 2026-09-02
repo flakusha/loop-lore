@@ -52,7 +52,7 @@ describe("GET /api/requests/:id/status", () => {
 
   test("returns full payload when the caller owns the row", async () => {
     store.track({ id: "req-owned", method: "POST", routePattern: "/api/x", userId: "alice", },);
-    store.complete("req-owned", {
+    store.complete("req-owned", { userId: "alice", }, {
       status: 200,
       headers: { "Content-Type": "application/json", },
       body: JSON.stringify({ ok: true, },),

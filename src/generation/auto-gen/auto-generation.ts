@@ -80,9 +80,13 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   log.debug("generation pipeline start", { chatId, parentMessageId, userId, cascadeDepth, },);
 
   // Emit a named progress step to the async store (when one is wired),
-  // emitting progress updates for the status endpoint.
+  // emitting progress updates for the status endpoint. Scoped by userId
+  // so a client that guesses another user's requestId cannot push progress
+  // on their row. BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
   const emitProgress = (step: string,): void => {
-    if (asyncStore && requestId) { asyncStore.progress(requestId, { progress: { step, }, },); }
+    if (asyncStore && requestId) {
+      asyncStore.progress(requestId, { userId, }, { progress: { step, }, },);
+    }
   };
 
   let attemptId: string | undefined;
@@ -244,7 +248,10 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       deps: opts.deps,
     },);
   } catch (error) {
-    if (asyncStore && requestId) { asyncStore.fail(requestId, String(error,),); }
+    if (asyncStore && requestId) {
+      // Scope by userId — see BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+      asyncStore.fail(requestId, { userId, }, String(error,),);
+    }
     await handleGenerationError(error, database, d, chatId, userId, attemptId,);
   }
 }

@@ -41,9 +41,12 @@ describe("recordLifecycle (Elysia integration)", () => {
     return new Elysia()
       .derive(requestIdMiddleware(),)
       .onAfterHandle(recordLifecycle(store,),)
-      .onError((ctx: { requestId?: string; error: unknown },) => {
+      .onError((ctx: { requestId?: string; userId?: string | null; error: unknown },) => {
         const requestId = ctx.requestId;
-        if (requestId) { store.fail(requestId, String(ctx.error,),); }
+        if (requestId) {
+          // Scope by userId — see BUG-bug-async-lifecycle-writes-request-results-unscoped-by-user.
+          store.fail(requestId, { userId: ctx.userId ?? null, }, String(ctx.error,),);
+        }
       },);
   }
 
@@ -145,7 +148,7 @@ describe("recordLifecycle (Elysia integration)", () => {
 
     // Simulate what reply.ts + triggerAutoGeneration do:
     store.track({ id: "pipe-1", method: "POST", routePattern: "/api/x", userId: "u-1", },);
-    store.progress("pipe-1", { progress: { step: "generating", }, },);
+    store.progress("pipe-1", { userId: "u-1", }, { progress: { step: "generating", }, },);
     await store.flush();
 
     let row = await store.read("pipe-1",);
@@ -167,6 +170,7 @@ describe("recordLifecycle (Elysia integration)", () => {
     expect(row?.responseStatus,).toBe(201,);
     expect(row?.responseBody,).toBe("done",);
   });
+
   test("client error (4xx) response marks the row failed, not complete", async () => {
     const app = makeApp();
     app.post("/api/x", () => new Response("bad", { status: 400, },),);
