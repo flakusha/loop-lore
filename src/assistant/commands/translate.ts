@@ -10,7 +10,9 @@
  * @module assistant/commands/translate
  */
 
-import { type CommandResult, type CommandHandler, registerCommand, } from "./registry";
+import { resolveProvider, } from "../../generation/providers/registry";
+import type { GenerateRequest, } from "../../generation/providers/types";
+import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 
 /** Known language identifiers with display names. */
 const LANGUAGES: Record<string, string> = {
@@ -26,9 +28,10 @@ const LANGUAGES: Record<string, string> = {
   ar: "Arabic",
 };
 
-/** Deps shape for translation. */
+/** Deps shape for /translate — matches `runCreateGeneration`'s `complete` signature. */
 export interface TranslateDeps {
-  complete?: (req: { prompt: string; systemPrompt: string }) => Promise<{ content: string }>;
+  complete?: (req: GenerateRequest) => Promise<{ content: string }>;
+  model?: string;
 }
 
 /**
@@ -40,7 +43,7 @@ export interface TranslateDeps {
  */
 export async function runTranslate(
   args: string[],
-  _ctx: Parameters<CommandHandler>[1],
+  _ctx: CommandContext,
   deps: TranslateDeps,
 ): Promise<CommandResult> {
   if (args.length === 0) {
@@ -92,7 +95,14 @@ export async function runTranslate(
 
   if (deps.complete) {
     try {
-      const result = await deps.complete({ prompt: text, systemPrompt, });
+      const result = await deps.complete({
+        model: deps.model ?? "",
+        messages: [
+          { role: "system", content: systemPrompt, },
+          { role: "user", content: text, },
+        ],
+        params: { maxTokens: 512, temperature: 0.7, },
+      },);
       const translated = result.content.trim();
       if (translated) {
         return {
@@ -124,16 +134,41 @@ export async function runTranslate(
     handled: true,
   };
 }
+
 /**
  * Translate command registration.
  */
-registerCommand("translate", (args, ctx,): CommandResult | Promise<CommandResult> => {
-  return runTranslate(args, ctx, {},);
+registerCommand("translate", async (args, ctx,): Promise<CommandResult> => {
+  const { config, db, } = ctx;
+  if (!db || !config) {
+    return runTranslate(args, ctx, { complete: async () => ({ content: "", }), },);
+  }
+  try {
+    const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
+    return runTranslate(args, ctx, {
+      complete: (req) => resolved.provider.complete(req,),
+      model: resolved.resolvedModel,
+    },);
+  } catch {
+    return runTranslate(args, ctx, {},);
+  }
 },);
 
 /** Alias: /tl → /translate */
-registerCommand("tl", (args, ctx,): CommandResult | Promise<CommandResult> => {
-  return runTranslate(args, ctx, {},);
+registerCommand("tl", async (args, ctx,): Promise<CommandResult> => {
+  const { config, db, } = ctx;
+  if (!db || !config) {
+    return runTranslate(args, ctx, { complete: async () => ({ content: "", }), },);
+  }
+  try {
+    const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
+    return runTranslate(args, ctx, {
+      complete: (req) => resolved.provider.complete(req,),
+      model: resolved.resolvedModel,
+    },);
+  } catch {
+    return runTranslate(args, ctx, {},);
+  }
 },);
 
 export { LANGUAGES, };
