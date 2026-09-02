@@ -28,12 +28,29 @@ unaffected.
   block with the same defaults
 - `src/middleware/response-headers.ts` — emit
   `Strict-Transport-Security` on HTTPS when enabled
-- `src/middleware/response-headers.test.ts` — 5 new HSTS tests
+- `src/middleware/response-headers.test.ts` — 4 new HSTS tests
 
-## Tests
+## Deployment caveat — TLS-terminating proxies
 
-`bun test src/middleware/response-headers.test.ts` — 23/23 pass
-(18 pre-existing + 5 new). `bun test src/middleware/` — 216/216 pass.
+The protocol check is `new URL(request.url,).protocol === "https:"`,
+which reads what Bun sees, not the original wire scheme. In
+deployments behind a TLS terminator (Cloudflare, nginx, ALB, etc.)
+the proxy reaches the app over plain HTTP and forwards the original
+scheme via `X-Forwarded-Proto`. The current code does not consult
+that header, so HSTS will not fire for those deployments unless one
+of the following is in place:
+
+- the proxy rewrites `X-Forwarded-Proto` into the request URL, OR
+- the deployment runs on direct HTTPS (no terminator), OR
+- a future change consults `X-Forwarded-Proto` when present.
+
+Default `enabled: false` keeps dev unaffected. Operators on direct
+HTTPS should set `enabled: true` and `maxAge` per the deployment
+plan; operators behind a terminator should file a follow-up to add
+proxy-header support before enabling in production.
+
+`bun test src/middleware/response-headers.test.ts` — 22/22 pass
+(18 pre-existing + 4 new HSTS). `bun test src/middleware/` — 211/211 pass.
 
 ## Bonus fixes bundled in the commit
 
@@ -55,5 +72,5 @@ finalize round-trip without adding value.
 ## Acceptance Criteria
 
 - [x] Implementation complete
-- [x] Tests passing (5 new HSTS tests, 216/216 middleware)
+- [x] Tests passing (4 new HSTS tests, 211/211 middleware)
 - [x] Documentation updated (this ticket + code comments)
