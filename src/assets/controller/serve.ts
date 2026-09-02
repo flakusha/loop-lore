@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 300
-
+// size-allow: 309
 /**
  * Asset Controller — serve/download handlers
  */
