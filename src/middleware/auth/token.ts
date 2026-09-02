@@ -7,10 +7,10 @@
 import type { Kysely, } from "kysely";
 import { verifyJwt, } from "../../auth/jwt";
 import { loadConfig, } from "../../config/load";
-import { LL_TOKEN, } from "../../regex/cookies";
 import type { AuthConfig, } from "../../config/schema/auth";
-import type { DB, } from "../../db/schema";
 import { UserStatus, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
+import { LL_TOKEN, } from "../../regex/cookies";
 import { getOrCreateSoloUserForAuth, } from "./solo-user";
 
 /**
@@ -119,7 +119,7 @@ async function resolveUserIdFromSession(
       if (sid) {
         const session = await database
           .selectFrom("sessions",)
-          .select(["user_id", "expires_at"],)
+          .select(["user_id", "expires_at",],)
           .where("id", "=", sid,)
           .executeTakeFirst();
         if (
@@ -136,7 +136,7 @@ async function resolveUserIdFromSession(
     const tokenHash = sha256Hex(token,);
     const session = await database
       .selectFrom("sessions",)
-      .select(["user_id", "expires_at"],)
+      .select(["user_id", "expires_at",],)
       .where("token_hash", "=", tokenHash,)
       .executeTakeFirst();
     if (session && (session.expires_at === null || Date.parse(session.expires_at,) > nowMs)) {
