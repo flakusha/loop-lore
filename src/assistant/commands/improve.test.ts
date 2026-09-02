@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { beforeAll, describe, expect, it, } from "bun:test";
+import type { GenerateRequest, } from "../../generation/providers/types";
 import { createLogger, } from "../../logger";
 import { getCommand, } from "./registry";
 import { runImprove, } from "./improve";
@@ -16,8 +17,8 @@ describe("improve command", () => {
   });
 
   it("uses the LLM output when complete is provided", async () => {
-    let captured: { prompt: string; systemPrompt: string } | undefined;
-    const complete = async (req: { prompt: string; systemPrompt: string },) => {
+    let captured: GenerateRequest | undefined;
+    const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
       captured = req;
       return { content: "A clearer sentence.", };
     };
@@ -28,10 +29,11 @@ describe("improve command", () => {
       { complete, },
     );
 
-    expect(captured?.systemPrompt,).toBe(
+    // System prompt must match the spec verbatim
+    expect(captured?.messages[0]?.content,).toBe(
       "Rewrite the following text for clarity and flow. Preserve meaning.",
     );
-    expect(captured?.prompt,).toBe("this needs clarity",);
+    expect(captured?.messages[1]?.content,).toBe("this needs clarity",);
     expect(result.systemMessage,).toContain("A clearer sentence.",);
     expect(result.systemMessage,).not.toContain("LLM unavailable",);
   });
