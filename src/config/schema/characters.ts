@@ -41,5 +41,29 @@ export interface CharactersConfig {
     is_template?: boolean;
     /** Auto-add to new users' character list */
     is_default?: boolean;
+    /** Default outfit id used when no context binding fires (epic-wardrobe-avatar-variants.md). */
+    default_outfit?: string;
+    /** Wardrobe catalog: distinct (outfit_id) entries this character can wear. */
+    outfits?: {
+      /** Stable outfit id referenced by loadouts and selection ladder. */
+      id: string;
+      /** Human-readable label shown in UI. */
+      name: string;
+      /** Prompt-fragment fed to the avatar generator. */
+      descriptor: string;
+      /** Free-form tags (formal|armor|sleepwear|swim|...) used by binding rules. */
+      tags?: string[];
+    }[];
+    /** Equipped-items → outfit mapping (deferred loadout-bridge phase). */
+    loadouts?: {
+      /** Symbolic name for the loadout rule. */
+      name: string;
+      /** Inventory slot key (e.g. "chest", "legs", "head"). */
+      slot: string;
+      /** Substring match against equipped item id/name. */
+      item_match: string;
+      /** Outfit id (from outfits[]) to switch into. */
+      outfit: string;
+    }[];
   }[];
 }

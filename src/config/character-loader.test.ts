@@ -284,4 +284,46 @@ This is just a markdown file.
     expect(characters.length,).toBe(0,);
     teardownTestDir();
   });
+
+  test("passes through wardrobe fields (outfits/loadouts/default_outfit) per epic-wardrobe-avatar-variants", () => {
+    setupTestDir();
+
+    writeCharacterFile(
+      "wardrobe-character.yaml",
+      `
+name: "Wardrobe Test"
+description: "loader pass-through check"
+default_outfit: "robes"
+outfits:
+  - id: "robes"
+    name: "Robes"
+    descriptor: "Heavy velvet robes"
+    tags: ["formal",]
+loadouts:
+  - name: "robe-slot"
+    slot: "chest"
+    item_match: "vestments"
+    outfit: "robes"
+`,
+    );
+
+    const characters = loadCharacterFiles(TEST_DIR,);
+
+    expect(characters.length,).toBe(1,);
+    const c = characters[0];
+    if (!c) { throw new Error("character not loaded",); }
+    expect(c.default_outfit,).toBe("robes",);
+    expect(c.outfits?.length,).toBe(1,);
+    expect(c.outfits?.[0]?.id,).toBe("robes",);
+    expect(c.outfits?.[0]?.name,).toBe("Robes",);
+    expect(c.outfits?.[0]?.descriptor,).toBe("Heavy velvet robes",);
+    expect(c.outfits?.[0]?.tags,).toEqual(["formal",],);
+    expect(c.loadouts?.length,).toBe(1,);
+    expect(c.loadouts?.[0]?.name,).toBe("robe-slot",);
+    expect(c.loadouts?.[0]?.slot,).toBe("chest",);
+    expect(c.loadouts?.[0]?.item_match,).toBe("vestments",);
+    expect(c.loadouts?.[0]?.outfit,).toBe("robes",);
+
+    teardownTestDir();
+  });
 });

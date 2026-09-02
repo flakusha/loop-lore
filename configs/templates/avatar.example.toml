@@ -91,3 +91,44 @@ emotion = "embarrassed"
 [[intentPatterns]]
 pattern = "embarrass"
 emotion = "embarrassed"
+
+# ── Outfit × Emotion variant matrix (wardrobe/loadout feature) ──────────
+# The wardrobe/loadout avatar variant feature (epic-wardrobe-avatar-variants.md)
+# extends the variant key from emotion-only to (outfit_id, emotion). Each
+# entry below is one cell of the variant matrix; the asset is the
+# pre-generated image at configs/assets/characters/<actor>/<outfit>/<emotion>.png
+# and the intent is the prompt-fragment fed to the avatar generator.
+# Selection algorithm resolves (outfit, emotion) with the fallback ladder:
+#   (outfit,emotion) → (outfit,neutral) → (default,emotion) → base avatar
+#
+# [[outfits]]
+# id = "default"           # base outfit (always present)
+# descriptor = "default appearance"
+# default_outfit = true
+#
+# [outfits.variants.happy]
+# asset = "characters/elara/default/happy.png"
+# intent = "warm smile, default robes"
+#
+# [outfits.variants.sad]
+# asset = "characters/elara/default/sad.png"
+# intent = "downcast, default robes"
+#
+# [[outfits]]
+# id = "court-dress"
+# descriptor = "elegant silk court dress in deep blue and silver"
+#
+# [outfits.variants.happy]
+# asset = "characters/elara/court-dress/happy.png"
+# intent = "smiling, court dress, formal headdress"
+#
+# [outfits.variants.sad]
+# asset = "characters/elara/court-dress/sad.png"
+# intent = "composed, court dress, formal headdress"
+#
+# [outfits.variants.angry]
+# asset = "characters/elara/court-dress/angry.png"
+# intent = "stern, court dress, formal headdress"
+#
+# # Default outfit when no context binding fires; defaults to "default".
+# default_outfit = "default"

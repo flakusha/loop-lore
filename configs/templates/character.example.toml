@@ -46,3 +46,93 @@ merge = "extend" # extend | override | replace
 # target_roles = ["user", "admin"]
 # is_template = true
 # is_default = true
+
+# ── Example: Wardrobe / Loadouts / Outfits ──────────────────
+# These fields power the wardrobe/loadout avatar variant feature
+# (epic-wardrobe-avatar-variants.md). Existing emotion-only characters
+# keep working — every field below is optional. The avatar (outfit, emotion)
+# variant key extends the multi-avatar selection algorithm.
+#
+# [[templates]]
+# id = "tpl-wardrobe-hero"
+# name = "Wardrobe Hero"
+# description = """
+# A hero whose appearance follows the story — court dress at court, \
+# armor on the march, sleepwear at camp."""
+# personality = "Adaptable, observant."
+# scenario = "Use outfits to signal the current scene."
+#
+# # ── Outfits: the wardrobe catalog ─────────────────────
+# # Each entry is a distinct (outfit_id) the actor can wear.
+# # `descriptor` is the prompt-fragment fed to the avatar generator
+# # (identity-anchor + outfit-descriptor + emotion-descriptor).
+#
+# [[templates.outfits]]
+# id = "court-dress"
+# name = "Court Dress"
+# descriptor = """
+# Elegant silk court dress in deep blue and silver, \
+# embroidered with house sigils, formal court headdress."""
+# tags = ["formal", "court"]
+#
+# [[templates.outfits]]
+# id = "battle-armor"
+# name = "Battle Armor"
+# descriptor = """
+# Polished steel plate armor with kingdom heraldry, \
+# worn leather cloak, sword at hip, greaves and gauntlets."""
+# tags = ["armor", "combat"]
+#
+# [[templates.outfits]]
+# id = "camp-sleepwear"
+# name = "Camp Sleepwear"
+# descriptor = """
+# Simple linen shirt, soft wool trousers, worn boots, \
+# travel cloak draped over shoulders, hair loosely tied."""
+# tags = ["casual", "rest"]
+#
+# # ── Default outfit (used when no context binding fires) ─
+# default_outfit = "court-dress"
+#
+# # ── Loadouts: equipped-items → outfit mapping (deferred phase) ─
+# # The wardrobe epic ships manual outfit switching first; loadout-driven
+# # automatic switching lands behind a flag. The shape below is the
+# # planned structure; the field is read by the wardrobe service today
+# # and applied when the loadout-bridge flag is enabled.
+#
+# [[templates.loadouts]]
+# name = "knight-loadout"
+# slot = "chest"            # inventory slot key
+# item_match = "plate-armor" # substring match against equipped item id/name
+# outfit = "battle-armor"    # → outfit_id to switch into
+#
+# [[templates.loadouts]]
+# name = "courtier-loadout"
+# slot = "chest"
+# item_match = "silk-robe"
+# outfit = "court-dress"
+
+# ── Adding wardrobe to a BUILT-IN character (Elara, ARIA-7, Morgan) ──
+# IMPORTANT: the default merge strategy `extend` keeps the base template
+# on name collisions, so your wardrobe fields are silently dropped. To
+# add a wardrobe to a built-in character, switch the strategy to
+# `override` (user wins on collision) and re-declare the full template
+# with the additions.
+#
+#   # Step 1: switch strategy at the top of this file:
+# merge = "override"   # ← switch from extend → override
+#
+#   # Step 2: redeclare the full template with the additions:
+# [[templates]]
+# name = "Elara Nightwhisper"
+# description = "long-journey elara"   # must redeclare required fields
+# personality = "..."
+# scenario = "..."
+# # ... all other base fields ...
+#
+# [[templates.outfits]]
+# id = "field-armor"
+# name = "Field Armor"
+# descriptor = "leather armor"
+#
+# default_outfit = "field-armor"

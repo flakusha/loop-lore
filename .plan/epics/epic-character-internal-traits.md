@@ -587,6 +587,7 @@ aspirations, disposition, coping, approach, autonomy, and voice.
 - `TASK-character-mood-happiness.md` — mood state (coping activates when mood drops)
 - `TASK-character-relationships.md` — relationship graph (autonomy + coping reference relationship strength)
 - `TASK-character-personality-integrity.md` — immutable personality (behavioral dimensions are expression, not personality)
+- `epic-wardrobe-avatar-variants.md` — visible/hidden split is also the right encapsulation boundary for wardrobe descriptors (author vs player visibility on outfit metadata); wardrobe consumes character traits/identity for outfit switching triggers
 
 ## Task Management Note (2026-08-15)
 

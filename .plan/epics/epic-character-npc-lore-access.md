@@ -88,6 +88,7 @@ Each lore entry has access tags; a character can access an entry if their access
 - `epic-character-core-system.md` (skill progression, character growth)
 - `docs/spec/lore.md` (lore spec, existing entry schema)
 - `docs/spec/memory-system.md` (memory system schema)
+- `epic-wardrobe-avatar-variants.md` — loadout descriptors feed the access profile (skills-based access for armor/weapon lore; communication-based for faction outfits); outfit binding rules may gate lore reveal (court dress = court lore visible)
 
 ## Integration Points
 
