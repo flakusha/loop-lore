@@ -75,3 +75,7 @@ The unified IM config UI and IM status dashboard build on the integration config
 
 - Can chat with loop-lore characters via at least one IM network (Telegram recommended first)
 - All supported IM networks configurable via the unified UI
+
+## Related Epics
+
+- `epic-auth-channel-provisioning.md` — IM adapters double as `messenger-im` 2FA OTP/approval rungs; each adapter must declare `auth-challenge` (outbound) / `auth-approval` (inbound) capability flags — rungs without inbound support deliver OTP only (retype flow). See `matrix-authentication-channels.md` AC7.

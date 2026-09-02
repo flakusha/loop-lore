@@ -83,3 +83,7 @@ export class MatrixEncryption implements EncryptionProvider { ... }
 - Can chat with loop-lore characters via a Matrix client
 - E2EE works end-to-end for Matrix rooms
 - loop-lore chat can be bridged to Discord/Slack
+
+## Related Epics
+
+- `epic-auth-channel-provisioning.md` — Matrix DM (and bridged Discord/Slack/IRC reach) as verified 2FA OTP / login-approval channel; inbound `auth_challenge` reply parsing rides this epic's receive path (see `matrix-authentication-channels.md` AC4/AC5; Matrix SSO option tracked there).
