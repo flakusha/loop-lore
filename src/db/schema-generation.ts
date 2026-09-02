@@ -1,6 +1,3 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * DB Schema — Generation Domain Tables
  *
@@ -46,9 +43,9 @@ export interface GenerationAttempts {
   partial_content: string | null;
   step_index: number | null;
   total_steps: number | null;
-  last_rendered_chunk_index: number | null;
-  delivery_confirmed_at: string | null;
-  side_effect_jobs_cancelled: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  last_rendered_chunk_index: number | null;
+  delivery_confirmed_at: string | null;
+  side_effect_jobs_cancelled: number | null;
 }

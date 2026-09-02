@@ -915,6 +915,9 @@ export const GenerationAttemptsSchema = t.Object({
   total_steps: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  last_rendered_chunk_index: t.Optional(t.Number(),),
+  delivery_confirmed_at: t.Optional(t.String(),),
+  side_effect_jobs_cancelled: t.Optional(t.Number(),),
 },);
 
 // ── story_turns ────────────────────────────────────────────
