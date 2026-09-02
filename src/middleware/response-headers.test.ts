@@ -325,4 +325,3 @@ describe("ResponseHeaderPolicy.apply — HSTS (BUG-hsts-header-missing-from-resp
     );
   });
 });
-
