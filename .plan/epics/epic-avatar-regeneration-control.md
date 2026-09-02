@@ -96,3 +96,5 @@ Today batch generation exists (`POST /actors/:actorId/emotion-avatars` →
   crop metadata (see its re-bake rule)
 - `epic-wardrobe-avatar-variants.md` — regen must become variant-scoped once
   wardrobe dimension exists
+- `epic-asset-platform-capabilities.md` — B3 GC owns the delete-and-replace
+  churn; B1 dedup absorbs re-roll byte cost

@@ -104,3 +104,5 @@ Metadata-first (store rect/zoom/rotation, apply at render) means:
   alpha assets share the transform store
 - `epic-inventory-ui.md` / `epic-assets*` where card/gallery frames consume
   transforms
+- `epic-asset-platform-capabilities.md` — B5 generalizes this epic's transform
+  rows into deterministic ops lists; B1 renditions host the bake/derive output
