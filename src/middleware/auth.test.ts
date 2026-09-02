@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import crypto from "node:crypto";
-import type { DB, } from "../db/schema";
+import type { AuthConfig, } from "../config/schema/auth";
 import { UserStatus, } from "../db/enums";
+import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
-import type { AuthConfig, } from "../config/schema/auth";
 import {
   extractBearerToken,
   getOrCreateSoloUserForAuth,
@@ -30,8 +30,6 @@ const LEGACY_ONLY_AUTH_CONFIG = {
   jwtSecret: "",
   legacyOpaqueTokenFallback: true,
 } as const satisfies AuthConfig;
-
-
 
 describe("extractBearerToken", () => {
   it("extracts token from Bearer header", () => {
