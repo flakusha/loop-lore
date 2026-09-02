@@ -1,10 +1,10 @@
-/**
- * Rewrite Command Tests.
- */
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { beforeAll, describe, expect, it, } from "bun:test";
 import { createLogger, } from "../../logger";
 import { getCommand, } from "./registry";
-import { rewriteText, } from "./rewrite";
+import { rewriteText, runRewrite, } from "./rewrite";
 
 beforeAll(() => {
   createLogger({ level: "error", },);
@@ -15,7 +15,7 @@ describe("rewrite command", () => {
     expect(getCommand("rewrite",),).toBeDefined();
   });
 
-  describe("rewriteText", () => {
+  describe("rewriteText (local fallback)", () => {
     it("trims excess whitespace in clear style", () => {
       const out = rewriteText("  Hello   world  ", "clear",);
       expect(out,).toBe("Hello world.",);
@@ -39,6 +39,100 @@ describe("rewrite command", () => {
     it("appends sentence-ending punctuation when missing", () => {
       const out = rewriteText("Hello world", "clear",);
       expect(out,).toBe("Hello world.",);
+    });
+  });
+
+  describe("runRewrite (LLM injection)", () => {
+    it("returns the LLM output verbatim when complete is provided", async () => {
+      let captured: { prompt: string; systemPrompt: string } | undefined;
+      const complete = async (req: { prompt: string; systemPrompt: string },) => {
+        captured = req;
+        return { content: "A polished version.", };
+      };
+
+      const result = await runRewrite(
+        ["some rough text",],
+        { chatId: "c1", },
+        { complete, },
+      );
+
+      expect(captured?.systemPrompt,).toBe(
+        "Rewrite the following text in clear style. Preserve meaning.",
+      );
+      expect(captured?.prompt,).toBe("some rough text",);
+      expect(result.systemMessage,).toContain("A polished version.",);
+      expect(result.systemMessage,).not.toContain("LLM unavailable",);
+    });
+
+    it("routes each --style value to a distinct system prompt", async () => {
+      const captured: { style: string; systemPrompt: string }[] = [];
+      const complete = async (req: { prompt: string; systemPrompt: string },) => {
+        const m = req.systemPrompt.match(/in (\w+) style\./,);
+        captured.push({ style: m?.[1] ?? "?", systemPrompt: req.systemPrompt, },);
+        return { content: "ok", };
+      };
+
+      for (const style of ["clear", "concise", "dramatic", "formal",]) {
+        await runRewrite(
+          ["--style", style, "text",],
+          { chatId: "c1", },
+          { complete, },
+        );
+      }
+
+      expect(captured.map((c,) => c.style,),).toEqual(["clear", "concise", "dramatic", "formal",]);
+      // Each prompt is distinct
+      const prompts = new Set(captured.map((c,) => c.systemPrompt,),);
+      expect(prompts.size,).toBe(4,);
+    });
+
+    it("falls back to local heuristics when complete is undefined and appends the system note", async () => {
+      const result = await runRewrite(
+        ["  I just   want  ", "--style", "concise",],
+        { chatId: "c1", },
+        {},
+      );
+      expect(result.systemMessage,).toContain("LLM unavailable — applied local heuristics only",);
+      expect(result.systemMessage,).toContain("I want",);
+      expect(result.actionPayload,).toEqual(
+        expect.objectContaining({ style: "concise", fallback: true, }),
+      );
+    });
+
+    it("falls back to local heuristics when complete throws", async () => {
+      const complete = async (): Promise<{ content: string }> => {
+        throw new Error("provider down",);
+      };
+      const result = await runRewrite(
+        ["text",],
+        { chatId: "c1", },
+        { complete, },
+      );
+      expect(result.systemMessage,).toContain("LLM unavailable — applied local heuristics only",);
+    });
+
+    it("uses the last assistant message when no positional text is supplied", async () => {
+      const complete = async (req: { prompt: string; systemPrompt: string },) => {
+        expect(req.prompt,).toBe("previous reply",);
+        return { content: "rewritten reply", };
+      };
+      const result = await runRewrite(
+        [],
+        {
+          chatId: "c1",
+          messages: [
+            { id: "1", role: "user", content: "hi", created_at: "t", },
+            { id: "2", role: "assistant", content: "previous reply", created_at: "t", },
+          ],
+        },
+        { complete, },
+      );
+      expect(result.systemMessage,).toContain("rewritten reply",);
+    });
+
+    it("returns the no-text message when no input and no history", async () => {
+      const result = await runRewrite([], { chatId: "c1", }, { complete: async () => ({ content: "x", }), },);
+      expect(result.systemMessage,).toContain("No text to rewrite",);
     });
   });
 });
