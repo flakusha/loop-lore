@@ -120,6 +120,12 @@ export async function maybeAutoReply(
       // parent without requiring a SELECT FOR UPDATE / advisory lock.
       // Bounded retries handle pathological contention without infinite
       // spin; 8 attempts is far above realistic concurrent-fanout.
+      //
+      // BUG-rule-based-reply-only-retry-unique-conflict: only retry on
+      // the specific unique-constraint conflict. Any other failure
+      // (FK violation, encryption error, DB down, schema mismatch) is
+      // a real error and must surface as-is — retrying just masks the
+      // cause and then mislabels it as concurrency 503.
       let swipeIndex = 1;
       let lastError: unknown;
       for (let attempt = 0; attempt < 8; attempt++) {
@@ -145,6 +151,12 @@ export async function maybeAutoReply(
           lastError = undefined;
           break;
         } catch (err) {
+          // Only retry on the swipe unique-constraint race. Any other
+          // error (FK, encryption, DB, schema) bubbles up unchanged so
+          // the caller sees the real cause, not a fake 503.
+          if (!isSwipeUniqueConflict(err,)) {
+            throw err;
+          }
           lastError = err;
           swipeIndex++;
         }
@@ -170,6 +182,32 @@ export async function maybeAutoReply(
       };
     }
   }
+}
 
-  return { replied: false, };
+/**
+ * Detect the messages swipe-index unique-constraint race.
+ *
+ * The `idx_messages_swipe_unique` index on `(chat_id, parent_id,
+ * swipe_index)` is the only conflict we expect to see on a fresh
+ * assistant reply INSERT — every other FK / NOT NULL / CHECK
+ * failure indicates a real bug or environment problem that must
+ * not be retried.
+ *
+ * Matches both the bun:sqlite wording ("UNIQUE constraint failed:
+ * messages.swipe_index") and Kysely's wrapping when surfaced via
+ * Postgres after the dialect swap (23505 / "duplicate key value
+ * violates unique constraint"). We test the column name and the
+ * constraint marker, not the exact SQL state, because both
+ * backends emit different prefixes.
+ *
+ * @param err - Error thrown by `db.insertInto(...).execute()`.
+ * @returns True if the error is the swipe-index unique conflict.
+ */
+function isSwipeUniqueConflict(err: unknown,): boolean {
+  if (!(err instanceof Error)) { return false; }
+  const msg = err.message;
+  return (
+    msg.includes("UNIQUE constraint failed",) &&
+    msg.includes("swipe_index",)
+  ) || msg.includes("idx_messages_swipe_unique",);
 }
