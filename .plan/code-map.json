@@ -1753,10 +1753,10 @@
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     }
   ],
-  "src/auth/email.ts": [
+  "src/auth/devices.ts": [
     {
       "kind": "epic",
-      "source": ".plan/epics/epic-two-factor-auth.md"
+      "source": ".plan/epics/epic-auth-channel-provisioning.md"
     }
   ],
   "src/auth/index.ts": [
@@ -1799,12 +1799,6 @@
       "source": "docs/spec/users-sessions.md"
     }
   ],
-  "src/auth/recovery.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-two-factor-auth.md"
-    }
-  ],
   "src/auth/shared.ts": [
     {
       "kind": "ticket",
@@ -1813,24 +1807,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md"
-    }
-  ],
-  "src/auth/sms.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-two-factor-auth.md"
-    }
-  ],
-  "src/auth/totp.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-two-factor-auth.md"
-    }
-  ],
-  "src/auth/webauthn.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-two-factor-auth.md"
     }
   ],
   "src/aux-pipeline": [
@@ -13979,7 +13955,17 @@
       "source": ".plan/tickets/TASK-solo-user-cold-start-race-caches-phantom-uid.md"
     }
   ],
+  "src/middleware/auth/stepup.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-auth-channel-provisioning.md"
+    }
+  ],
   "src/middleware/auth/token.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-auth-channel-provisioning.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-legacy-sha256-token-hash-fallback-authenticates-when-jwt-sec.md"
@@ -14489,6 +14475,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-precompiled-hot-binaries.md"
+    }
+  ],
+  "src/notifications/service": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-auth-channel-provisioning.md"
     }
   ],
   "src/npcs/behavior.ts": [
@@ -16313,10 +16305,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
-    },
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-two-factor-auth.md"
     },
     {
       "kind": "ticket",
@@ -22356,6 +22344,10 @@
     }
   ],
   "src/validation/schemas.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-auth-channel-provisioning.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-core-system.md"

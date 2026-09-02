@@ -10,6 +10,8 @@
 
 ## Summary
 
+**Folded** into `TASK-two-factor-multi-factor-auth.md` (duplicate epic-generated ticket; 2026-09-02 reconciliation, see `matrix-authentication-channels.md` → Ticket Reconciliation).
+
 Add two-factor (2FA) and multi-factor (MFA) authentication support. Enhance security with TOTP, SMS, e-mail verification, and hardware key support.
 
 ## Linked Epics

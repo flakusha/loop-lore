@@ -32,6 +32,7 @@ Authorization and access control for the application. Covers user registration, 
 - Email verification flow
 - Hardware key (WebAuthn/FIDO2) support
 - MFA enrollment and management UI
+- Provisioning semantics (verified channels, unlock ladder, messenger/e-mail OTP transports, anti-takeover): `epic-two-factor-auth.md` + `epic-auth-channel-provisioning.md`
 
 ### Access Control
 
@@ -51,6 +52,7 @@ Authorization and access control for the application. Covers user registration, 
 ## Related Epics
 
 - `epic-two-factor-auth.md` — existing 2FA/MFA design spec; this epic implements the frontend and integration
+- `epic-auth-channel-provisioning.md` — factor binding lifecycle, login/unlock provisioning over messenger, e-mail and federated channels
 - `epic-chat-lifecycle-moderation.md` — message access checks tie into chat moderation
 - `epic-character-core-system.md` — authoring ownership ties into character/core system
 

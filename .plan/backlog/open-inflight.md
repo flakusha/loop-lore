@@ -21,6 +21,13 @@
 > `.plan/` bookkeeping pass listed at the end of `matrix-emotion-avatar-assets.md`
 > (ticket creation, duplicate-ticket reconciliation, binding-epic path drift,
 > AV3/AV4/AV8/AV10 open decisions) is required.
+>
+> **2026-09-02 update (2):** planning branch `plan-2fa-channel-integrations` reopens the
+> MFA deferral for **planning only**: new `epic-auth-channel-provisioning.md` (verified-factor
+> login/unlock across messenger / e-mail / federated channels, unlock ladder, anti-takeover
+> cooling-off), rewritten `epic-two-factor-auth.md`, `matrix-authentication-channels.md`
+> (AC1–AC12 + shared contracts + 2FA ticket reconciliation), backlog rows (P2-E note,
+> P4 proposal, deferred #7 flip). Implementation scheduling stays a human triage call.
 
 | ID  | Item                                                                                    | Ticket / where                               | Recommend                       | Decision              |
 | --- | --------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------- | --------------------- |
@@ -42,7 +49,8 @@
 | F3  | M6 AUX telemetry (tokens/latency per call)                                              | `../priority-release-010.md`                   | ▲ now                           | ✅ **CLOSED 2026-08-18** (worktree `feature-f3-aux-telemetry`) — `aux.call` telemetry events, `generation.completed` latencyMs fix, `GET /api/admin/telemetry/aux` endpoint, 5 AUX sites verified |
 | G2  | World timeline §5.3 forward-event steering + §5.4 cross-story convergence              | `epic-world-timeline*` (cluster B)           | ▲ now                           |                       |
 | G6  | Avatar-gallery visibility inheritance                                                  | `../priority-p0-p2.md`                        | ▲ now                           | ✅ DONE (2026-08-19) — private-character avatar assets gated to owner in gallery grid/search (asset_links -> actors.owner_id) |
-| V1  | Emotion-avatar + asset-platform plan bundle (5 epics + matrix + P4 rows)              | `../matrix-emotion-avatar-assets.md`          | ▲ finalize when convenient      | 🟡 docs committed on branch `plan-emotion-avatar-epics`, finalize pending; post-land `.plan/` bookkeeping pass required (see matrix footer) |
+| V1  | Emotion-avatar + asset-platform plan bundle (5 epics + matrix + P4 rows)              | `../matrix-emotion-avatar-assets.md`          | ✅ landed                        | merged to dev `0e8d4830` (2026-09-02); post-land `.plan/` bookkeeping pass required (see matrix footer) |
+| X1  | 2FA channel-provisioning plan bundle (1 new epic + 2FA epic rewrite + AC-matrix + backlog rows) | `../matrix-authentication-channels.md`        | ▲ finalize when convenient      | 🟡 docs committed on branch `plan-2fa-channel-integrations`, finalize pending; post-land bookkeeping checklist in matrix footer |
 | W3  | **Push `dev` → `origin/dev`** (Gate C + item-systems + docs-reconcile + memory-selection UI + C1 panel + GM-guided story + 7 wired RPG services) | `dev` (unreleased) | ▲ before release | |
 | C3  | Assistant tooling remainder — creation wizards + tiered `/commands` (tool-call display ✅) | `../priority-p0-p2.md`                     | ▲ now                           | ✅ **DONE 2026-08-18** — creation wizards (`/create` → prompt templates → quality gates → preview → confirm endpoint) + tiered command registry (`531664d5`, `81e5d1eb`, `19139461`) |
 | D3  | Expand command buttons (GM role switching ✅)                                           | `../priority-p0-p2.md`                        | ▲ now                           | 🟡 partial             |
