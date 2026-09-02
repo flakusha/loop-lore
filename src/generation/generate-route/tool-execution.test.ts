@@ -180,6 +180,6 @@ describe("tool output sanitization (BUG-generation-error-handling-gaps)", () => 
 
     expect(results[0]?.content,).not.toMatch(/onclick/i,);
     expect(results[0]?.content,).not.toMatch(/onerror/i,);
-    expect(results[0]?.content,).toContain("<a href=\"x\"",);
+    expect(results[0]?.content,).toContain('<a href="x"',);
   });
 });

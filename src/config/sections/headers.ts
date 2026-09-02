@@ -43,7 +43,7 @@ export const HEADERS_DEFAULTS: HeadersConfig = {
   // HSTS defaults — disabled so plain-HTTP dev still works. Operators
   // flip `enabled: true` once the deployment is HTTPS-only.
   hsts: { enabled: false, maxAge: 31536000, includeSubDomains: true, preload: false, },
- };
+};
 
 /** */
 export class HeadersSection implements HeadersConfig {
