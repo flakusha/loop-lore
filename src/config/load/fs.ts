@@ -3,9 +3,10 @@
 
 // src/config/load/fs.ts — Filesystem lookup helpers
 
-import { existsSync, readFileSync, statSync, } from "node:fs";
+import { existsSync, readFileSync, } from "node:fs";
 import path from "node:path";
 import { CONFIG_FILES, NETWORK_FS_PREFIXES, } from "./constants";
+import { findMainRepoRoot, } from "../../utils/git-worktree";
 
 /**
  * Detect if a path is on a network filesystem.
@@ -51,50 +52,6 @@ export function isNetworkFilesystem(filePath: string,): boolean {
     // Not on Linux or /proc not available — fall through to prefix-only check
   }
   return false;
-}
-
-/**
- * Detect if cwd is a git worktree and return the main repo root.
- *
- * In a worktree, `.git` is a file containing:
- *   gitdir: /path/to/main/.git/worktrees/<branch>
- *
- * Returns the main repo root (parent of `.git/`) or null if not in a worktree.
- * @param cwd
- */
-export function findMainRepoRoot(cwd: string,): string | null {
-  const gitPath = path.join(cwd, ".git",);
-  if (!existsSync(gitPath,)) { return null; }
-
-  // .git is a directory → main repo, not a worktree
-  try {
-    if (statSync(gitPath,).isDirectory()) { return null; }
-  } catch {
-    return null;
-  }
-
-  // .git is a file — we're in a worktree
-  const content = readFileSync(gitPath, "utf8",).trim();
-  const match = /^gitdir:\s*(.+)$/.exec(content,);
-  if (!match) { return null; }
-
-  const gitdir = match[1]!;
-  // gitdir points to <main>/.git/worktrees/<branch>
-  // Walk up: worktrees → .git → main root
-  const worktreesDir = path.dirname(gitdir,); // <main>/.git/worktrees
-  const gitDir = path.dirname(worktreesDir,); // <main>/.git
-  const mainRoot = path.dirname(gitDir,); // <main>
-
-  // Verify .git is a directory there (actual main repo)
-  const mainGitPath = path.join(mainRoot, ".git",);
-  if (existsSync(mainGitPath,)) {
-    try {
-      if (statSync(mainGitPath,).isDirectory()) { return mainRoot; }
-    } catch {
-      // fall through
-    }
-  }
-  return null;
 }
 
 /**

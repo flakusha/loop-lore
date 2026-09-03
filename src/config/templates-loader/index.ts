@@ -116,7 +116,6 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
 }
 
 export {
-  findMainRepoRoot,
   findTemplateFiles,
   TEMPLATE_FILES,
 } from "./discovery.js";
