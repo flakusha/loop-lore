@@ -3,7 +3,7 @@
 
 # WIRE: nsfw-audit view route has no inline authz guard
 
-**Status:** Open
+**Status:** Resolved
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Small
@@ -40,5 +40,11 @@ Or ensure the registration in `plugin-pages.ts` is inside the `.guard({ beforeHa
 
 ## Acceptance Criteria
 
-- [ ] No inline 403/401 bypass possible
-- [ ] Test covers unauthenticated + non-admin cases
+- [x] No inline 403/401 bypass possible
+- [x] Test covers unauthenticated + non-admin cases
+
+## Resolution
+
+Fixed in commit `a4f35f2b` (wrap nsfw-moderation route in admin.system guard): the registration in `src/routes/views/plugin-pages.ts` (lines 136-137) now mounts `/views/nsfw-moderation` inside `.guard({ beforeHandle: nsfwGuard })`, where `nsfwGuard = requirePermission("admin.system")` (defined at line 26). This short-circuits unauthenticated and non-admin traffic before the handler runs: `requirePermission` returns 403 (with audit log) when the caller lacks `admin.system`, and 401 when `ctx.userId` is absent. A SECURITY comment was added in `nsfw-audit.ts` documenting that `serveNsfwModerationAudit` trusts its caller to have established the admin contract.
+
+Files changed: `src/routes/views/nsfw-audit.ts` (+11/-1), `src/routes/views/plugin-pages.test.ts` (+14/-4). The added test case `denies unauthenticated request (302 redirect or 403)` covers both unauthenticated and non-admin paths against the live guard.
