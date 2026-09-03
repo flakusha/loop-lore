@@ -8,6 +8,7 @@
 // Merges all found characters by name (user wins on conflict).
 
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
+import { findMainRepoRoot, } from "../utils/git-worktree";
 import path from "node:path";
 import type { ContentRating, } from "../characters/spec";
 import type { CharacterTemplateConfig, } from "./sections/templates";
@@ -98,41 +99,6 @@ function findCharacterFiles(cwd: string,): string[] {
   }
 
   return files.sort((a, b,) => a.localeCompare(b,));
-}
-
-/**
- * Detect if cwd is a git worktree and return the main repo root.
- * Duplicated from templates-loader.ts to avoid circular import.
- * @param cwd
- */
-function findMainRepoRoot(cwd: string,): string | null {
-  const gitPath = path.join(cwd, ".git",);
-  if (!existsSync(gitPath,)) { return null; }
-
-  try {
-    if (statSync(gitPath,).isDirectory()) { return null; }
-  } catch {
-    return null;
-  }
-
-  const content = readFileSync(gitPath, "utf8",).trim();
-  const match = /^gitdir:\s*(.+)$/.exec(content,);
-  if (!match) { return null; }
-
-  const gitdir = match[1]!;
-  const worktreesDir = path.dirname(gitdir,);
-  const gitDir = path.dirname(worktreesDir,);
-  const mainRoot = path.dirname(gitDir,);
-
-  const mainGitPath = path.join(mainRoot, ".git",);
-  if (existsSync(mainGitPath,)) {
-    try {
-      if (statSync(mainGitPath,).isDirectory()) { return mainRoot; }
-    } catch {
-      // fall through
-    }
-  }
-  return null;
 }
 
 // ── Parsing ───────────────────────────────────────────────────
@@ -244,5 +210,5 @@ export function loadCharacterFiles(cwd?: string,): CharacterTemplateConfig["temp
 
 export {
   findCharacterFiles,
-  findMainRepoRoot,
 };
+export { findMainRepoRoot, } from "../utils/git-worktree";
