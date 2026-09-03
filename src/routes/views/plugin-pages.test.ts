@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Tests for `pagesRoutes` (/views/nsfw-moderation) — ensures the inline
- * `requirePermission("admin.system")` beforeHandle plus the outer
- * adminViewGuard block deny non-admins. Regression for
+ * Tests for `pagesRoutes` (/views/nsfw-moderation) — ensures the
+ * `requirePermission("admin.system")` beforeHandle wrapping this route
+ * denies non-admin and unauthenticated traffic. Regression for
  * WIRE-nsfw-audit-page-missing-inline-authz.
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
@@ -50,6 +50,16 @@ describe("pagesRoutes /views/nsfw-moderation authz", () => {
         headers: { "x-user-id": "u1", },
       },),
     );
+    expect([302, 403,],).toContain(res.status,);
+  });
+
+  it("denies unauthenticated request (302 redirect or 403)", async () => {
+    const res = await app.handle(
+      new Request("http://test/views/nsfw-moderation",),
+    );
+    // requirePermission("admin.system") short-circuits before any DB access
+    // when no admin role is present; adminViewGuard falls back to 302.
+    // Either is acceptable as long as the handler is never reached.
     expect([302, 403,],).toContain(res.status,);
   });
 });
