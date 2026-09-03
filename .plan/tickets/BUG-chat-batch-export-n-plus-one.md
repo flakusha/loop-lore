@@ -3,7 +3,7 @@
 
 # BUG: chat batch export N+1 (batch.ts:72-98)
 
-**Status:** Open
+**Status:** Done
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Small
@@ -49,3 +49,7 @@ Then partition in-memory by `chat_id` and iterate.
 - [ ] `batchExportChats` issues ≤3 DB queries regardless of chat count
 - [ ] Test asserts query count
 - [ ] `bun run check` clean
+
+## Resolution
+
+Resolved in `batch.ts`. `batchExportChats` pre-fetches `messages` and `chat_participants` with `where("chat_id", "in", ownedIds)` (two batch queries) and partitions in-memory by `chat_id`. Total query count is 3 (owned + messages + participants) regardless of chat count.
