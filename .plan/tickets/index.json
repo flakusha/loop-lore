@@ -13695,6 +13695,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-implement-per-connection-ip-sourcing-for-auth-rate-limiters.md"
   },
+
   "TASK-IMPLEMENT-TRADE": {
     "hash": "f71d103",
     "extid": "TASK-IMPLEMENT-TRADE",
@@ -13707,6 +13708,25 @@
     "source": ".plan/tickets/TASK-implement-trade.md",
     "git_issue": "f71d103",
     "status": "done"
+  },
+  
+  "TASK-IMPLEMENT-REUSABLE-BULK-TICKET-RESOLUTION-HELPER": {
+    "hash": "9933dc6",
+    "extid": "TASK-IMPLEMENT-REUSABLE-BULK-TICKET-RESOLUTION-HELPER",
+    "type": "TASK",
+    "title": "Implement reusable bulk ticket-resolution helper",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "tooling",
+      "scripts",
+      "plan-management",
+      "session-2026-09-03"
+    ],
+    "source": ".plan/tickets/TASK-implement-reusable-bulk-ticket-resolution-helper.md",
+    "git_issue": "df8fd5f",
+    "status": "open"
   },
   "TASK-IMPLEMENT-UI-FEATURE-PERMISSIONS": {
     "hash": "0028efd",
@@ -17309,6 +17329,32 @@
     "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md",
     "git_issue": "5c73739"
   },
+  "TASK-REFACTOR-EXTRACT-SCOPEBYUSERID-MIDDLEWARE": {
+    "hash": "48a07df",
+    "extid": "TASK-REFACTOR-EXTRACT-SCOPEBYUSERID-MIDDLEWARE",
+    "type": "TASK",
+    "title": "Refactor: extract scopeByUserId middleware",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-refactor-extract-scopebyuserid-middleware.md",
+    "git_issue": "48a07df",
+    "status": "done"
+  },
+  "TASK-REFACTOR-LIFT-CRAFTING-STATION-WORLD-ID-SCOPE-TO-SHARED-HELP": {
+    "hash": "ae13c93",
+    "extid": "TASK-REFACTOR-LIFT-CRAFTING-STATION-WORLD-ID-SCOPE-TO-SHARED-HELP",
+    "type": "TASK",
+    "title": "Refactor: lift crafting-station world_id scope to shared helper",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-refactor-lift-crafting-station-world-id-scope-to-shared-help.md",
+    "git_issue": "ae13c93",
+    "status": "done"
+  },
   "TASK-REFACTOR-LLM-PROVIDER-ADAPTERS-ONTO-SHARED-BASE-FACTORY": {
     "hash": "5313ce7",
     "git_issue": "5313ce7",
@@ -17320,6 +17366,45 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-refactor-llm-provider-adapters-onto-shared-base-factory.md"
+  },
+  "TASK-REFACTOR-SCHEMA-VALIDATE-ALPINE-STORE-FIELDS-AT-INIT": {
+    "hash": "5b19d56",
+    "extid": "TASK-REFACTOR-SCHEMA-VALIDATE-ALPINE-STORE-FIELDS-AT-INIT",
+    "type": "TASK",
+    "title": "Refactor: schema-validate Alpine store fields at init",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-refactor-schema-validate-alpine-store-fields-at-init.md",
+    "git_issue": "5b19d56",
+    "status": "done"
+  },
+  "TASK-REFACTOR-TRUST-BOUNDARY-AUDIT-PASS": {
+    "hash": "76ab0c8",
+    "extid": "TASK-REFACTOR-TRUST-BOUNDARY-AUDIT-PASS",
+    "type": "TASK",
+    "title": "Refactor: trust-boundary audit pass",
+    "label": "task",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-refactor-trust-boundary-audit-pass.md",
+    "git_issue": "76ab0c8",
+    "status": "done"
+  },
+  "TASK-REFACTOR-TYPED-KYSELY-UPSERT-BY-UNIQUE-KEY-HELPERS": {
+    "hash": "61bec9a",
+    "extid": "TASK-REFACTOR-TYPED-KYSELY-UPSERT-BY-UNIQUE-KEY-HELPERS",
+    "type": "TASK",
+    "title": "Refactor: typed Kysely upsert-by-unique-key helpers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-refactor-typed-kysely-upsert-by-unique-key-helpers.md",
+    "git_issue": "61bec9a",
+    "status": "done"
   },
   "TASK-REGEN-ROUTES-AND-JOB-STATUS-ENDPOINTS": {
     "hash": "d26adc3",
