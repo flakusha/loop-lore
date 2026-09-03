@@ -34,6 +34,7 @@ export interface BlogComments {
   body: string;
   status: Generated<string>;
   created_at: Generated<string>;
+  parent_comment_id: string | null;
 }
 
 // ── blog_tags ────────────────────────────────────────────

@@ -59,6 +59,7 @@ export interface BlogCommentRow {
   author_id: string;
   body: string;
   status: BlogCommentStatus;
+  parent_comment_id: string | null;
   created_at: string;
 }
 
@@ -120,9 +121,13 @@ export interface CreateCommentInput {
   post_id: string;
   author_id: string;
   body: string;
+  parent_comment_id?: string;
 }
 
 /** */
 export interface BlogPostWithTags extends BlogPostRow {
   tags: string[];
 }
+
+/** */
+export type BlogCommentWithChildren = BlogCommentRow & { children: BlogCommentWithChildren[] };
