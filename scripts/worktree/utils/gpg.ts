@@ -47,7 +47,7 @@
 import { spawnSync, } from "bun";
 import { credentials, } from "./credentials.mjs";
 
-export type GpgHint = "invalid-key" | "key-not-in-keyring" | "key-not-unlocked";
+type GpgHint = "invalid-key" | "key-not-in-keyring" | "key-not-unlocked";
 
 /**
  * Regex + length check for a GPG fingerprint.
