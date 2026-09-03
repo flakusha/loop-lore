@@ -1242,6 +1242,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-crafting-station-instances-scoped-across-worlds-cross-world-.md",
+    "status": "done",
     "git_issue": "7bde6bd"
   },
   "BUG-CRDT-CONFLICT-POLICY-MISSING-LEADER-VS-SWARM-PRECEDENCE-AND-": {
@@ -20645,17 +20646,5 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
-  },
-  "BUG-CRAFTING-STATION-INSTANCES-SCOPED-ACROSS-WORLDS-CROSS-WORLD-": {
-    "hash": "pending",
-    "extid": "BUG-CRAFTING-STATION-INSTANCES-SCOPED-ACROSS-WORLDS-CROSS-WORLD-",
-    "type": "BUG",
-    "title": "Crafting station instances scoped across worlds — cross-world read/write",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-crafting-station-instances-scoped-across-worlds-cross-world-.md",
-    "status": "done"
   }
 }
