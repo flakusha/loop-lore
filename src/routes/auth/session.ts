@@ -2,13 +2,99 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { signJwt, } from "../../auth/jwt";
+import type { Config, } from "../../config/schema";
+import { UserRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import type { TranslatorFn, } from "../../i18n/types";
+import { uid, } from "../../utils";
 import { notFound, unauthorized, } from "../../validation/middleware";
-import { HttpStatus, jsonResponse, } from "../http-utils";
+import { HttpStatus, jsonError, jsonResponse, } from "../http-utils";
 import {
   COOKIE_PATH,
+  setTokenCookie,
   TOKEN_COOKIE,
 } from "./shared";
+
+/**
+ * Create a session row, enforce maxSessionsPerUser cap, sign a JWT, and return
+ * the redirect response.
+ *
+ * Shared by login, registration and demo login (dedup: this was a byte-for-byte
+ * clone in login.ts and register.ts). The JWT-misconfiguration branch uses the
+ * precise `auth.jwtSecretMissing` message across all three call sites.
+ * @param request
+ * @param database
+ * @param config
+ * @param userId
+ * @param role
+ * @param ip
+ * @param t
+ */
+async function createSessionAndCookie(
+  request: Request,
+  database: Kysely<DB>,
+  config: Config,
+  userId: string,
+  role: UserRole,
+  ip: string,
+  t: TranslatorFn | undefined,
+): Promise<Response> {
+  const userAgent = request.headers.get("User-Agent",);
+  const sessionId = uid();
+
+  // Enforce maxSessionsPerUser cap: evict oldest session if at limit
+  const maxSessions = config.auth.maxSessionsPerUser ?? 10;
+  const existingCount = await database
+    .selectFrom("sessions",)
+    .select(database.fn.countAll().as("cnt",),)
+    .where("user_id", "=", userId,)
+    .executeTakeFirst();
+  const cnt = Number(existingCount?.cnt ?? 0,);
+  if (cnt >= maxSessions) {
+    // Evict the oldest session by id (lowest id = oldest auto-increment)
+    await database
+      .deleteFrom("sessions",)
+      .where("user_id", "=", userId,)
+      .orderBy("id", "asc",)
+      .limit(1,)
+      .execute();
+  }
+
+  await database
+    .insertInto("sessions",)
+    .values({
+      id: sessionId,
+      user_id: userId,
+      token_hash: `jwt:${sessionId}`,
+      ip,
+      user_agent: userAgent,
+      expires_at: new Date(Date.now() + config.auth.sessionTimeoutHours * 60 * 60 * 1000,).toISOString(),
+    },)
+    .execute();
+
+  const jwtSecret = config.auth.jwtSecret;
+  if (!jwtSecret) {
+    return jsonError({
+      message: t?.("auth.jwtSecretMissing",) ?? "Server misconfigured: JWT secret not set",
+      status: HttpStatus.InternalServerError,
+    },);
+  }
+
+  const jwtExpiresIn = config.auth.jwtExpiresIn ?? 86_400;
+  const token = await signJwt({
+    secret: jwtSecret,
+    userId,
+    role,
+    sessionId,
+    expiresInSeconds: jwtExpiresIn,
+  },);
+
+  return new Response("OK", {
+    status: HttpStatus.OK,
+    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(token, jwtExpiresIn,), },
+  },);
+}
 
 /**
  * @param request
@@ -73,4 +159,4 @@ async function handleMe(
   return jsonResponse(user,);
 }
 
-export { handleLogout, handleMe, };
+export { createSessionAndCookie, handleLogout, handleMe, };
