@@ -20848,7 +20848,9 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/WIRE-characters-create-avatar-linking-missing.md"
+    "source": ".plan/tickets/WIRE-characters-create-avatar-linking-missing.md",
+    "status": "done",
+    "resolved_by": "2ac5cf29"
   },
   "WIRE-EXTRAS-IMPERSONATEACTORID-SCHEMA-VALIDATION": {
     "hash": "pending",
@@ -20870,7 +20872,9 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
+    "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md",
+    "status": "done",
+    "resolved_by": "2ac5cf29"
   },
   "WIRE-NSFW-AUDIT-PAGE-MISSING-INLINE-AUTHZ": {
     "hash": "pending",
@@ -20881,6 +20885,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
+    "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
+    "status": "done",
+    "resolved_by": "2ac5cf29"
   }
 }
