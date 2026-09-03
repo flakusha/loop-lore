@@ -5,6 +5,7 @@ import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { gitSync, } from "../utils/git";
+import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { log, } from "../utils/output";
 
 function gpgMergeFlags(config: WorktreeConfig,): string[] {
@@ -68,6 +69,10 @@ export async function merge(
     log("error", `uncommitted changes in worktree '${branch}'`,);
     process.exit(1,);
   }
+  // Verify GPG is configured AND unlocked — exits 1 on cold cache.
+  // This is the gate that previously let merge.ts silently produce an
+  // unsigned merge when gpgMergeFlags() returned [] on cold cache.
+  assertAgentGpgUnlocked();
 
   const flags = gpgMergeFlags(config,);
   log("info", `Merging '${source}' into '${branch}'...`,);

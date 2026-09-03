@@ -5,6 +5,7 @@ import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, } from "../utils/config";
 import { gitSync, } from "../utils/git";
+import { assertGpgUnlocked, } from "../utils/gpg";
 import { log, } from "../utils/output";
 
 export async function execute(
@@ -39,25 +40,10 @@ export async function execute(
     return;
   }
 
-  // Verify key exists in GPG keyring
-  const keyCheck = Bun.spawnSync(
-    ["gpg", "--list-keys", config.agentGpgKeyId,],
-    { stdout: "pipe", stderr: "pipe", },
-  );
-  if (keyCheck.exitCode !== 0) {
-    log("error", `GPG key ${config.agentGpgKeyId} not found in keyring`,);
-    process.exit(1,);
-  }
-
-  // Verify secret key exists
-  const secretCheck = Bun.spawnSync(
-    ["gpg", "--list-secret-keys", config.agentGpgKeyId,],
-    { stdout: "pipe", stderr: "pipe", },
-  );
-  if (secretCheck.exitCode !== 0) {
-    log("error", `GPG secret key for ${config.agentGpgKeyId} not found — cannot sign`,);
-    process.exit(1,);
-  }
+  // Verify GPG key is configured AND unlocked. The helper exits 1 on
+  // any of three failure modes (invalid-key, key-not-in-keyring,
+  // key-not-unlocked) with an actionable hint to scripts/gpg-unlock.mjs.
+  assertGpgUnlocked(config.agentGpgKeyId,);
 
   log("info", "Configuring GPG signing for worktree...",);
 

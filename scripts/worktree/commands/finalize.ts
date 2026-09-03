@@ -2,12 +2,12 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { existsSync, } from "fs";
-import { openSync, closeSync, writeSync, unlinkSync, readFileSync, } from "node:fs";
+import { closeSync, openSync, readFileSync, unlinkSync, writeSync, } from "node:fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { getRootBranch, gitSync, gitSyncQuiet, } from "../utils/git";
+import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { colorize, log, section, } from "../utils/output";
-
 
 const LOCK_FILENAME = ".worktree-finalize.lock";
 // Git-state sentinel files that indicate an unfinished operation on the dev
@@ -32,7 +32,7 @@ function checkDevMergeable(repoRoot: string,): void {
   const unmerged = gitSyncQuiet(repoRoot, "ls-files", "--unmerged",);
   if (unmerged.length > 0) {
     log("error", "dev checkout has unmerged paths — resolve or abort before finalizing",);
-    console.log("  git -C " + repoRoot + " status  (then resolve or git merge/rebase/cherry-pick --abort)");
+    console.log("  git -C " + repoRoot + " status  (then resolve or git merge/rebase/cherry-pick --abort)",);
     process.exit(1,);
   }
 
@@ -41,11 +41,11 @@ function checkDevMergeable(repoRoot: string,): void {
   const gitDirAbs = resolve(repoRoot, gitDirRaw.startsWith("/",) ? gitDirRaw.slice(1,) : gitDirRaw,);
   for (const name of DEV_IN_PROGRESS_HEADS) {
     if (existsSync(resolve(gitDirAbs, name,),)) {
-      const op = name.replace("_HEAD", "").toLowerCase();
+      const op = name.replace("_HEAD", "",).toLowerCase();
       log("error", `dev checkout is mid-${op} (${name} exists) — abort or resolve before finalizing`,);
-      if (op === "merge") { console.log("  git merge --abort  (or commit the merge)"); }
-      else if (op === "rebase") { console.log("  git rebase --abort  (or git rebase --continue)"); }
-      else { console.log("  git cherry-pick --abort  (or git cherry-pick --continue)"); }
+      if (op === "merge") { console.log("  git merge --abort  (or commit the merge)",); }
+      else if (op === "rebase") { console.log("  git rebase --abort  (or git rebase --continue)",); }
+      else { console.log("  git cherry-pick --abort  (or git cherry-pick --continue)",); }
       process.exit(1,);
     }
   }
@@ -54,9 +54,9 @@ function checkDevMergeable(repoRoot: string,): void {
   // merge the same way untracked dirty files would.
   const staged = gitSyncQuiet(repoRoot, "diff", "--cached", "--name-only",);
   if (staged.length > 0) {
-    const stagedFiles = staged.split("\n",).filter((s,) => s.length > 0,);
+    const stagedFiles = staged.split("\n",).filter((s,) => s.length > 0);
     log("error", `dev checkout has ${stagedFiles.length} staged-but-uncommitted entries`,);
-    console.log("  git -C " + repoRoot + " commit  (or git -C " + repoRoot + " reset)");
+    console.log("  git -C " + repoRoot + " commit  (or git -C " + repoRoot + " reset)",);
     process.exit(1,);
   }
 
@@ -64,7 +64,7 @@ function checkDevMergeable(repoRoot: string,): void {
   // the user's perspective but harmless if we leave them; warn so the
   // operator can `git stash drop` them.
   const stashList = gitSyncQuiet(repoRoot, "stash", "list",);
-  const leftovers = stashList.split("\n",).filter((l,) => l.includes(FINALIZE_STASH_PREFIX,),);
+  const leftovers = stashList.split("\n",).filter((l,) => l.includes(FINALIZE_STASH_PREFIX,));
   if (leftovers.length > 0) {
     log("warn", `dev has ${leftovers.length} leftover finalize stash(es) from prior crash — review 'git stash list'`,);
   }
@@ -97,14 +97,18 @@ function acquireFinalizeLock(repoRoot: string,): () => void {
       closeSync(fd,);
       return true;
     } catch (err) {
-      if ((err as NodeJS.ErrnoException,).code !== "EEXIST") { throw err; }
+      if ((err as NodeJS.ErrnoException).code !== "EEXIST") { throw err; }
       return false;
     }
   };
 
   const reapStale = (): boolean => {
     let raw = "";
-    try { raw = readFileSync(lockPath, "utf8",).trim(); } catch { return false; }
+    try {
+      raw = readFileSync(lockPath, "utf8",).trim();
+    } catch {
+      return false;
+    }
     const ownerPid = parseInt(raw, 10,);
     if (!Number.isFinite(ownerPid,) || ownerPid === myPid) { return false; }
     try {
@@ -117,14 +121,18 @@ function acquireFinalizeLock(repoRoot: string,): () => void {
       // checking PID 1 (init) — but the process IS alive, so respect
       // its lock. Other errors fall through to retry that will fail
       // safely if the owner is actually gone.
-      if ((err as NodeJS.ErrnoException,).code !== "ESRCH") { return false; }
+      if ((err as NodeJS.ErrnoException).code !== "ESRCH") { return false; }
     }
-    try { unlinkSync(lockPath,); } catch { /* best-effort */ }
+    try {
+      unlinkSync(lockPath,);
+    } catch { /* best-effort */ }
     return tryCreate();
   };
 
   const release = (): void => {
-    try { unlinkSync(lockPath,); } catch { /* best-effort */ }
+    try {
+      unlinkSync(lockPath,);
+    } catch { /* best-effort */ }
   };
 
   for (let attempt = 0; attempt < 50; attempt++) {
@@ -248,7 +256,7 @@ function restoreDevFromStash(
     { stdout: "pipe", stderr: "pipe", },
   );
   const lines = list.stdout.toString().split("\n",);
-  const match = lines.find((line,) => line.includes(stashLabel,),);
+  const match = lines.find((line,) => line.includes(stashLabel,));
   if (!match) {
     log("error", `stash '${stashLabel}' not found — restore manually with 'git stash list'`,);
     process.exit(1,);
@@ -277,9 +285,11 @@ function restoreDevFromStash(
     log("error", `failed to reset dev to ${mergeHead} after stash pop failure`,);
     console.log(`  Stderr: ${reset.stderr.toString().trim()}`,);
     console.log(`  Manual recovery:`,);
-    console.log(`    cd ${repoRoot}`);
-    console.log(`    git reset --hard ${mergeHead}     # discard the merge (or 'git reset --hard HEAD~1' if you want to undo it)`);
-    console.log(`    git stash pop ${stashRef}         # then apply your pre-merge work`);
+    console.log(`    cd ${repoRoot}`,);
+    console.log(
+      `    git reset --hard ${mergeHead}     # discard the merge (or 'git reset --hard HEAD~1' if you want to undo it)`,
+    );
+    console.log(`    git stash pop ${stashRef}         # then apply your pre-merge work`,);
     process.exit(1,);
   }
   log("info", `Dev reset to ${mergeHead.slice(0, 8,)}; stash entry '${stashRef}' preserved`,);
@@ -468,10 +478,17 @@ async function runFinalize(
     if (mergeStrategy === "squash") {
       const msg = branchToSquashMessage(branch,);
       log("info", `Step 5b: Squash merging into ${targetBranch}...`,);
+      // Gate: GPG must be configured AND unlocked before we produce a
+      // squash commit. The previous `git merge --squash` invocation ran
+      // without `-c commit.gpgsign=true`, producing an unsigned squash
+      // commit even on a warm cache. Splicing gpgMergeFlags into the
+      // command fixes that.
+      assertAgentGpgUnlocked();
+      const flags = gpgMergeFlags(config,);
       const devStash = stashDevForMerge(config.repoRoot,);
       try {
         const mergeResult = Bun.spawnSync(
-          ["git", "-C", config.repoRoot, "merge", branch, "--squash", "-m", msg,],
+          ["git", "-C", config.repoRoot, ...flags, "merge", branch, "--squash", "-m", msg,],
           { stdout: "pipe", stderr: "pipe", },
         );
         if (mergeResult.exitCode !== 0) {
@@ -525,8 +542,10 @@ async function runFinalize(
       log("error", "Aborted. Use --force to proceed with direct merge",);
       process.exit(1,);
     }
-
-    log("info", `Step 5: Merging '${branch}' into ${targetBranch} (direct)...`,);
+    // Gate: GPG must be configured AND unlocked before we attempt a signed
+    // direct merge. The previous behavior let `gpgMergeFlags()` silently
+    // return [] on cold cache, producing an unsigned merge commit.
+    assertAgentGpgUnlocked();
     const flags = gpgMergeFlags(config,);
     const devStash = stashDevForMerge(config.repoRoot,);
     try {
@@ -552,10 +571,15 @@ async function runFinalize(
       ["git", "-C", config.repoRoot, "verify-commit", mergeSha,],
       { stdout: "pipe", stderr: "pipe", },
     );
+    // Strict verify: assertAgentGpgUnlocked above already gates against
+    // cold-cache. An unsigned merge here means the cold-cache gate was
+    // bypassed (e.g. passphrase expired mid-merge) — fail loudly rather
+    // than silently leaving an unsigned commit on the target branch.
     if (verifyResult.exitCode === 0) {
       log("success", `Merge commit GPG-signed (${mergeSha.slice(0, 8,)})`,);
     } else {
-      log("warn", "Merge commit not signed — GPG key may be locked",);
+      log("error", `Merge commit ${mergeSha.slice(0, 8,)} is unsigned — refusing to finalize`,);
+      process.exit(1,);
     }
   }
 

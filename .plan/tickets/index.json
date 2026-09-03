@@ -1674,6 +1674,18 @@
     "git_issue": "27c8db7",
     "status": "done"
   },
+  "BUG-FIX-WORKTREE-ASSERT-GPG-UNLOCKED-ON-EVERY-SIGNING-PATH-SURFA": {
+    "hash": "1b1e796",
+    "git_issue": "1b1e796",
+    "extid": "BUG-FIX-WORKTREE-ASSERT-GPG-UNLOCKED-ON-EVERY-SIGNING-PATH-SURFA",
+    "type": "BUG",
+    "title": "fix(worktree): assert GPG unlocked on every signing path; surface unlock command on failure",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fix-worktree-assert-gpg-unlocked-on-every-signing-path-surfa.md"
+  },
   "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO": {
     "hash": "6914009",
     "git_issue": "6914009",
