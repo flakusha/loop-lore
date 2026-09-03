@@ -7,9 +7,12 @@ import { assets, } from "./assets";
 import { assistant, } from "./assistant";
 import { auth, } from "./auth";
 import { byoKey, } from "./byo-key";
+import { characters, } from "./characters";
 import { db, } from "./db";
 import { docs, } from "./docs";
 import { dynamicResponse, } from "./dynamic-response";
+import { encryption, } from "./encryption";
+import { frontend, } from "./frontend";
 import { generation, } from "./generation";
 import { headers, } from "./headers";
 import { hooks, } from "./hooks";
@@ -17,10 +20,11 @@ import { idempotency, } from "./idempotency";
 import { logging, } from "./logging";
 import { messages, } from "./messages";
 import { nsfw, } from "./nsfw";
+import { seeding, } from "./seeding";
 import { server, } from "./server";
+import { templates, } from "./templates";
 import { transport, } from "./transport";
 import { tui, } from "./tui";
-
 type JSONSchema = Record<string, unknown>;
 
 export const jsonSchema = (): JSONSchema => {
@@ -46,8 +50,13 @@ export const jsonSchema = (): JSONSchema => {
       idempotency,
       generation,
       byoKey,
+      encryption,
       headers,
       dynamicResponse,
+      frontend,
+      seeding,
+      templates,
+      characters,
     },
     required: [
       "server",
@@ -64,6 +73,9 @@ export const jsonSchema = (): JSONSchema => {
       "headers",
       "dynamicResponse",
       "frontend",
+      "seeding",
+      "templates",
+      "characters",
     ],
   };
 };
