@@ -544,7 +544,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-hallucination-guard-runs-outside-try-catch-after-message.md"
+    "source": ".plan/tickets/BUG-bug-hallucination-guard-runs-outside-try-catch-after-message.md",
+    "status": "done"
   },
   "BUG-BUG-IDEMPOTENCY-TABLE-BACKEND-ACCEPTED-BUT-NEVER-IMPLEMENTED": {
     "hash": "c90b7e2",
@@ -629,7 +630,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-message-seen-re-mark-clobbers-first-seen-timestamp.md"
+    "source": ".plan/tickets/BUG-bug-message-seen-re-mark-clobbers-first-seen-timestamp.md",
+    "status": "done"
   },
   "BUG-BUG-RANDOM-EVENTS-GENERATOR-IS-DEAD-INCOMPLETE-PHANTOM-PARAM": {
     "hash": "237d991",
@@ -665,7 +667,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-resolveactor-cascade-branch-does-not-verify-chat-partici.md"
+    "source": ".plan/tickets/BUG-bug-resolveactor-cascade-branch-does-not-verify-chat-partici.md",
+    "status": "done"
   },
   "BUG-BUG-RULE-BASED-ASSISTANT-REPLY-RETRIES-ON-ANY-INSERT-ERROR-A": {
     "hash": "941dd9a",
@@ -677,7 +680,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-rule-based-assistant-reply-retries-on-any-insert-error-a.md"
+    "source": ".plan/tickets/BUG-bug-rule-based-assistant-reply-retries-on-any-insert-error-a.md",
+    "status": "done"
   },
   "BUG-BUG-SSE-STREAM-RENDER-RELIES-ON-WEAK-REGEX-HTML-SANITIZER-RE": {
     "hash": "f4ed8ee",
@@ -1633,6 +1637,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-federation-test-harness-needs-in-process-fixtures.md",
     "status": "not-yet-implemented"
+  },
+  "BUG-FINALIZE-CONCURRENT-MERGE-RACE": {
+    "hash": "pending",
+    "extid": "BUG-FINALIZE-CONCURRENT-MERGE-RACE",
+    "type": "BUG",
+    "title": "finalize concurrent-merge race corrupts dev checkout",
+    "label": "bug",
+    "priority": "High",
+    "epic": "epic-tooling.md",
+    "tags": [],
+    "source": ".plan/tickets/BUG-finalize-concurrent-merge-race.md"
   },
   "BUG-FIX-CSRF-CTX-SET-HEADERS-APPEND-IS-UNDEFINED-IN-ELYSIA-1-4-H": {
     "hash": "af1f205",
