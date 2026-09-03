@@ -1048,7 +1048,9 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-swipe-index-race.md"
+    "source": ".plan/tickets/BUG-chat-swipe-index-race.md",
+    "status": "done",
+    "resolved_by": "08c2a95f"
   },
   "BUG-CHAT-TRANSITIONS-MEMORY-POISONING": {
     "hash": "pending",
