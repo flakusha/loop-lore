@@ -1684,7 +1684,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-fix-worktree-assert-gpg-unlocked-on-every-signing-path-surfa.md"
+    "source": ".plan/tickets/BUG-fix-worktree-assert-gpg-unlocked-on-every-signing-path-surfa.md",
+    "status": "done"
   },
   "BUG-FRONTEND-CHAT-SEEN-STATE-BROKEN-NULL-ACTORID-DEAD-POPOVER-PO": {
     "hash": "6914009",
@@ -11210,6 +11211,30 @@
     "tags": [],
     "source": ".plan/tickets/TASK-decision-av8-aux-captioning-role.md"
   },
+  "TASK-DEDUP-INVITES-REDEEM-AND-AUTH-FORM-FLOWS": {
+    "hash": "13b55a0",
+    "git_issue": "13b55a0",
+    "extid": "TASK-DEDUP-INVITES-REDEEM-AND-AUTH-FORM-FLOWS",
+    "type": "TASK",
+    "title": "Dedup invites redeem and auth form flows",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dedup-invites-redeem-and-auth-form-flows.md"
+  },
+  "TASK-DEDUP-ROUTE-HANDLER-BOILERPLATE-VIA-SHARED-ROUTE-FACTORY": {
+    "hash": "f2cbf7f",
+    "git_issue": "f2cbf7f",
+    "extid": "TASK-DEDUP-ROUTE-HANDLER-BOILERPLATE-VIA-SHARED-ROUTE-FACTORY",
+    "type": "TASK",
+    "title": "Dedup route-handler boilerplate via shared route factory",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dedup-route-handler-boilerplate-via-shared-route-factory.md"
+  },
   "TASK-DEDUPE-CONTEXT-WINDOW": {
     "hash": "pending",
     "extid": "TASK-DEDUPE-CONTEXT-WINDOW",
@@ -17080,6 +17105,18 @@
     "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md",
     "git_issue": "5c73739"
   },
+  "TASK-REFACTOR-LLM-PROVIDER-ADAPTERS-ONTO-SHARED-BASE-FACTORY": {
+    "hash": "5313ce7",
+    "git_issue": "5313ce7",
+    "extid": "TASK-REFACTOR-LLM-PROVIDER-ADAPTERS-ONTO-SHARED-BASE-FACTORY",
+    "type": "TASK",
+    "title": "Refactor LLM provider adapters onto shared base factory",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-refactor-llm-provider-adapters-onto-shared-base-factory.md"
+  },
   "TASK-REGEN-ROUTES-AND-JOB-STATUS-ENDPOINTS": {
     "hash": "d26adc3",
     "git_issue": "d26adc3",
@@ -18233,6 +18270,18 @@
     "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md",
     "status": "done",
     "git_issue": "4396076"
+  },
+  "TASK-SINGLE-SOURCE-OF-TRUTH-FOR-CONFIG-SCHEMA-MIRRORS": {
+    "hash": "1b3a5ca",
+    "git_issue": "1b3a5ca",
+    "extid": "TASK-SINGLE-SOURCE-OF-TRUTH-FOR-CONFIG-SCHEMA-MIRRORS",
+    "type": "TASK",
+    "title": "Single source of truth for config schema mirrors",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-single-source-of-truth-for-config-schema-mirrors.md"
   },
   "TASK-SIZE-STRICT-DEBT": {
     "hash": "eb3ed64f",
