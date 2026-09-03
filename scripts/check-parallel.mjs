@@ -170,7 +170,7 @@ async function ensureGpgWarm() {
     process.exit(1,);
   }
   const content = readFileSync(credentialsPath, "utf-8",);
-  const m = /^AGENT_GPG_KEY_ID\s*=\s*["']?([^"'\n]*)["']?/m.exec(content);
+  const m = /^AGENT_GPG_KEY_ID\s*=\s*["']?([^"'\n]*)["']?/m.exec(content,);
   const keyId = m?.[1]?.trim().replaceAll(/^["']|["']$/g, "",) ?? "";
   if (!keyId) {
     console.error("hint: gpg-no-key-id",);
