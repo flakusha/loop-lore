@@ -251,4 +251,42 @@ describe("apply()", () => {
       { column: "id", value: "r-anon", },
     ],);
   });
+
+  test("BUG-table-backend-request-id-collision: cross-user complete cannot overwrite owner row", async () => {
+    const { queries, mock, } = makeMockDb();
+    await apply(mock, {
+      kind: "upsert",
+      id: "r-shared",
+      method: "POST",
+      routePattern: "/api/x",
+      userId: "alice",
+      startedAt: "2026-09-03T00:00:00Z",
+    }, cfg,);
+    await apply(mock, {
+      kind: "upsert",
+      id: "r-shared",
+      method: "POST",
+      routePattern: "/api/x",
+      userId: "bob",
+      startedAt: "2026-09-03T00:00:01Z",
+    }, cfg,);
+    expect(queries[0]?.insert?.values.user_id,).toBe("alice",);
+    expect(queries[1]?.insert?.values.user_id,).toBe("bob",);
+    expect(queries[0]?.insert?.onConflict,).toBe(true,);
+    expect(queries[1]?.insert?.onConflict,).toBe(true,);
+    await apply(mock, {
+      kind: "complete",
+      id: "r-shared",
+      userId: "bob",
+      response: { status: 200, headers: {}, body: "bob-body-leak", },
+    }, cfg,);
+    const bUpdate = queries[2]?.update;
+    expect(bUpdate,).toBeDefined();
+    expect(bUpdate?.whereCalls,).toEqual([{ column: "id", value: "r-shared", }, {
+      column: "user_id",
+      value: "bob",
+    },],);
+    expect(bUpdate?.set.response_body,).toBe("bob-body-leak",);
+    expect(bUpdate?.set.status,).toBe("complete",);
+  });
 });
