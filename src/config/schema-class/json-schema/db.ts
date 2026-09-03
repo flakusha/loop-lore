@@ -20,7 +20,8 @@ export const db = {
     sqliteFilename: {
       type: "string",
       default: "${DATA_DIR}/loop-lore.db",
-      description: "SQLite database file path. DATA_DIR resolves to <repo>/loop-lore-data at runtime. Overridden by LOOP_LORE_DB_PATH env var.",
+      description:
+        "SQLite database file path. DATA_DIR resolves to <repo>/loop-lore-data at runtime. Overridden by LOOP_LORE_DB_PATH env var.",
     },
     url: { type: "string", description: "PostgreSQL connection URL", },
   },
