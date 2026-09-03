@@ -11,7 +11,7 @@
 
 ## Summary
 
-Create blog authoring and reader UI. Backend routes exist at `/api/blog/*` (posts, comments, follow, sources) but no frontend UI exists.
+Create blog authoring and reader UI. Backend routes exist at `/api/blog/*` (posts, comments, follow, sources) including threaded comments and single-comment endpoint. Frontend Alpine store and page module created.
 
 ## Backend Routes (already exist)
 
@@ -20,30 +20,30 @@ Create blog authoring and reader UI. Backend routes exist at `/api/blog/*` (post
 | `/api/blog/posts`                       | GET    | List posts          |
 | `/api/blog/posts/:id`                   | GET    | Get post            |
 | `/api/blog/posts`                       | POST   | Create post         |
-| `/api/blog/posts/:id`                   | PUT    | Update post         |
+| `/api/blog/posts/:id`                   | PATCH  | Update post         |
 | `/api/blog/posts/:id`                   | DELETE | Delete post         |
-| `/api/blog/posts/:id/comments`          | GET    | List comments       |
-| `/api/blog/posts/:id/comments`          | POST   | Add comment         |
+| `/api/blog/posts/:id/comments`          | GET    | List comments (threaded) |
+| `/api/blog/posts/:id/comments/:commentId` | GET  | Get single comment with children |
+| `/api/blog/posts/:id/comments`          | POST   | Add comment (with parent_comment_id) |
 | `/api/blog/follow/:authorId`            | POST   | Follow author       |
 | `/api/blog/follow/:authorId`            | DELETE | Unfollow author     |
 | `/api/blog/follow/:authorId/status`     | GET    | Check follow status |
 | `/api/blog/authors/:authorId/followers` | GET    | List followers      |
 | `/api/blog/posts/:id/sources`           | GET    | RAG sources         |
 
-## Files to Create
+## Frontend Files Created
 
-- `src/frontend/alpine/blog.ts` — Alpine.js blog component
-- `src/components/blog/post-editor.html` — Post editor template
-- `src/components/blog/post-list.html` — Post list template
-- `src/components/blog/post-detail.html` — Post detail + comments
-- `src/frontend/pages/blog.ts` — Page-specific blog code
+- `src/frontend/alpine/blog.ts` — Alpine.js blog store (loadPosts, loadPost, createPost, createComment, listComments)
+- `src/frontend/pages/blog.ts` — Blog page entry point
 
 ## Acceptance Criteria
 
+- [x] Blog Alpine store with `apiFetch` and `jsonBody`
+- [x] Blog page module registered in `pages.ts`
 - [ ] Post list with search/filter
 - [ ] Post creation with rich text editor
-- [ ] Post detail view with comments
-- [ ] Comment submission
+- [ ] Post detail view with threaded comments
+- [ ] Comment submission with threading support
 - [ ] Follow/unfollow author
 - [ ] RAG sources display
 - [ ] Draft management
@@ -52,4 +52,5 @@ Create blog authoring and reader UI. Backend routes exist at `/api/blog/*` (post
 ## Related
 
 - `epic-blog-system.md` — Blog epic
-- `TASK-blog-system.md` — Existing task (needs updating)
+- `TASK-blog-system.md` — Existing task (updated: threading + visibility done)
+- `BUG-blog-comments-lack-threading-parent-comment-id-blocking-lemm.md` — Resolved by `075_blog_comments_threading.ts` migration
