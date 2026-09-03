@@ -100,5 +100,16 @@ export async function execute(
     log("success", "node_modules linked",);
   }
 
+  // Link .credentials.env so worktree-local scripts (check-parallel.mjs,
+  // gpg-unlock.mjs — both resolve REPO_ROOT = import.meta.dir + "/..") can
+  // find agent GPG identity without a parent-walk. Mirrors the node_modules
+  // symlink above: same pattern, same idempotency, same skip-if-present.
+  const mainCreds = resolve(config.repoRoot, ".credentials.env",);
+  const wtCreds = resolve(wtPath, ".credentials.env",);
+  if (existsSync(mainCreds,) && !existsSync(wtCreds,)) {
+    symlinkSync(mainCreds, wtCreds,);
+    log("success", ".credentials.env linked",);
+  }
+
   log("success", `Created: ${wtPath}`,);
 }
