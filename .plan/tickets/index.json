@@ -2751,6 +2751,18 @@
     "git_issue": "a83a310",
     "status": "done"
   },
+  "BUG-PLAN-SYNC-FIX-MASS-CREATES-ORPHAN-GIT-ISSUES-FOR-PLACEHOLDER": {
+    "hash": "4bc4b34",
+    "git_issue": "4bc4b34",
+    "extid": "BUG-PLAN-SYNC-FIX-MASS-CREATES-ORPHAN-GIT-ISSUES-FOR-PLACEHOLDER",
+    "type": "BUG",
+    "title": "plan:sync --fix mass-creates orphan git issues for placeholder hashes",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-plan-sync-fix-mass-creates-orphan-git-issues-for-placeholder.md"
+  },
   "BUG-PLUGIN-TOOL-GATING-EMPTY-ROLE-BYPASS": {
     "hash": "pending",
     "extid": "BUG-PLUGIN-TOOL-GATING-EMPTY-ROLE-BYPASS",
@@ -2776,9 +2788,8 @@
     "source": ".plan/tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md",
     "git_issue": "0d223a7"
   },
-
   "BUG-POST-STORE-TEST-TS-32-IMPORTS-MISSING-COMPLETEGENERATIONOPTS": {
-    "hash": "46547b2",
+    "hash": "d660ce1",
     "extid": "BUG-POST-STORE-TEST-TS-32-IMPORTS-MISSING-COMPLETEGENERATIONOPTS",
     "type": "BUG",
     "title": "post-store.test.ts:32 imports missing CompleteGenerationOpts",
@@ -2792,8 +2803,8 @@
       "session-2026-09-03"
     ],
     "source": ".plan/tickets/BUG-post-store-test-ts-32-imports-missing-completegenerationopts.md",
-    "git_issue": "7bb2bdf",
-    "status": "open"
+    "git_issue": "d660ce1",
+    "status": "done"
   },
   "BUG-PRIVATE-TIER-NO-TRUE-E2E": {
     "hash": "bc54f30",
@@ -2882,9 +2893,8 @@
     "tags": [],
     "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
   },
-
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
-    "hash": "0dc1cb1",
+    "hash": "0b9a09b",
     "extid": "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES",
     "type": "BUG",
     "title": "register-plugins:150 references undefined chatSectionsRoutes",
@@ -2898,8 +2908,8 @@
       "session-2026-09-03"
     ],
     "source": ".plan/tickets/BUG-register-plugins-150-references-undefined-chatsectionsroutes.md",
-    "git_issue": "2c747e0",
-    "status": "open"
+    "git_issue": "0b9a09b",
+    "status": "done"
   },
   "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
     "hash": "550802a",
@@ -2962,9 +2972,8 @@
     "tags": [],
     "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-.md"
   },
-
   "BUG-ROUTES-COMMANDS-INDEX-TS-19-HAS-UNUSED-IMPORT-T": {
-    "hash": "a2be346",
+    "hash": "2226309",
     "extid": "BUG-ROUTES-COMMANDS-INDEX-TS-19-HAS-UNUSED-IMPORT-T",
     "type": "BUG",
     "title": "routes/commands/index.ts:19 has unused import t",
@@ -2978,8 +2987,8 @@
       "session-2026-09-03"
     ],
     "source": ".plan/tickets/BUG-routes-commands-index-ts-19-has-unused-import-t.md",
-    "git_issue": "49dd182",
-    "status": "open"
+    "git_issue": "2226309",
+    "status": "done"
   },
   "BUG-ROUTES-MESSAGE-SEEN-POST-DELETE-TRUSTS-CLIENT-ACTORID-IDOR-A": {
     "hash": "f0824a8",
@@ -13752,23 +13761,8 @@
     "tags": [],
     "source": ".plan/tickets/TASK-implement-per-connection-ip-sourcing-for-auth-rate-limiters.md"
   },
-
-  "TASK-IMPLEMENT-TRADE": {
-    "hash": "f71d103",
-    "extid": "TASK-IMPLEMENT-TRADE",
-    "type": "TASK",
-    "title": "Implement Trade System (Transfer + Currency)",
-    "label": "task",
-    "priority": "P1 — High",
-    "epic": "epic-item-systems-unification",
-    "tags": [],
-    "source": ".plan/tickets/TASK-implement-trade.md",
-    "git_issue": "f71d103",
-    "status": "done"
-  },
-  
   "TASK-IMPLEMENT-REUSABLE-BULK-TICKET-RESOLUTION-HELPER": {
-    "hash": "9933dc6",
+    "hash": "df8fd5f",
     "extid": "TASK-IMPLEMENT-REUSABLE-BULK-TICKET-RESOLUTION-HELPER",
     "type": "TASK",
     "title": "Implement reusable bulk ticket-resolution helper",
@@ -13783,7 +13777,20 @@
     ],
     "source": ".plan/tickets/TASK-implement-reusable-bulk-ticket-resolution-helper.md",
     "git_issue": "df8fd5f",
-    "status": "open"
+    "status": "done"
+  },
+  "TASK-IMPLEMENT-TRADE": {
+    "hash": "f71d103",
+    "extid": "TASK-IMPLEMENT-TRADE",
+    "type": "TASK",
+    "title": "Implement Trade System (Transfer + Currency)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-implement-trade.md",
+    "git_issue": "f71d103",
+    "status": "done"
   },
   "TASK-IMPLEMENT-UI-FEATURE-PERMISSIONS": {
     "hash": "0028efd",

@@ -48,3 +48,6 @@ Provide a permanent, reusable CLI for bulk-updating `.plan/tickets/*.md` Status 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+
+git issue: df8fd5f
