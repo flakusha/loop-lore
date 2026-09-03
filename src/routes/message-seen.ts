@@ -265,7 +265,15 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
           await database
             .deleteFrom("message_seen",)
             .where("message_id", "=", messageId,)
-            .where("actor_id", "=", actorId,)
+            .where(
+              "actor_id",
+              "in",
+              database
+                .selectFrom("actors",)
+                .select("id",)
+                .where("id", "=", actorId,)
+                .where("user_id", "=", userId,),
+            )
             .execute();
 
           return jsonResponse({ ok: true, },);
