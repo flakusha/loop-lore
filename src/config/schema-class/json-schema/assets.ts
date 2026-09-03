@@ -2,7 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // src/config/schema-class/json-schema/assets.ts — assets JSON Schema section
-import { DATA_DIR, } from "../../constants";
+// Default paths are emitted as `${DATA_DIR}/...` placeholders, not the
+// resolved absolute path, so the published JSON Schema is portable across
+// dev checkouts / worktrees / CI machines. Consumers resolve `DATA_DIR` at
+// runtime via `path.resolve(<repo>/loop-lore-data)` (see src/config/constants.ts).
 
 export const assets = {
   type: "object",
@@ -11,8 +14,8 @@ export const assets = {
     enabled: { type: "boolean", default: true, description: "Enable asset uploads", },
     uploadDir: {
       type: "string",
-      default: `${DATA_DIR}/uploads`,
-      description: "Directory for uploaded assets",
+      default: "${DATA_DIR}/uploads",
+      description: "Directory for uploaded assets. DATA_DIR resolves to <repo>/loop-lore-data at runtime.",
     },
     maxFileSize: {
       type: "integer",
