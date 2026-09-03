@@ -35,7 +35,7 @@ describe("recordMessageSeen — first-seen semantics", () => {
 
   beforeAll(async () => {
     createLogger({ level: "error", },);
-    ({ db, } = await createTestDb(),);
+    ({ db, } = await createTestDb());
 
     await insertUsers(db, `user-${userId}`, "Seen User", { id: userId, } as never,);
     await insertActors(db, "Seen Actor", { id: actorId, user_id: userId, owner_id: userId, } as never,);
