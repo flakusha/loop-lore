@@ -3,7 +3,7 @@
 
 # BUG: creation wizard confirmWizard ignores wizardId — cross-talk risk
 
-**Status:** Open
+**Status:** Done
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Small
@@ -45,3 +45,7 @@ confirmWizard(wizardId: string) {
 
 - [ ] `confirmWizard` uses `wizardId` as lookup key
 - [ ] Concurrent wizards don't cross-talk
+
+## Resolution
+
+Resolved in `creation-wizard.ts`. `confirmWizard(wizardId)` now validates `this.wizardDraft?.wizardId !== wizardId` and logs at warn + returns on mismatch. The draft is the active single slot (not keyed), so concurrent wizards serialize on the slot; cross-talk is prevented by the guard rather than by lookup.

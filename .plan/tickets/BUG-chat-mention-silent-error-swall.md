@@ -3,7 +3,7 @@
 
 # BUG: chat mentions silently swallow persist/notify failures (post.ts:176-188)
 
-**Status:** Open
+**Status:** Done
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Small
@@ -43,3 +43,7 @@ void notifyMention(...).catch(() => {});
 - [ ] Failures logged at warn
 - [ ] Response carries partial-failure count
 - [ ] No silent `.catch(() => {})`
+
+## Resolution
+
+Resolved in `post.ts`. `persistMentions` now returns `MentionPersistResult { persisted, notified, failed }`, logs per-actor insert failures at warn with `chatId`/`actorId`/`err`, and uses `Promise.allSettled` so individual failures don't short-circuit the batch. Duplicate inserts (benign) are filtered via `isBenignMentionInsertError`.
