@@ -1271,6 +1271,7 @@ export const SCHEMA = new SchemaManifest()
     body: col("text", { notNull: true, },),
     status: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+    parent_comment_id: col("text",),
   },)
   .table("blog_follows", {
     id: col("text", { primaryKey: true, },),

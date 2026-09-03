@@ -32,10 +32,11 @@ export const BlogPostStatusBody = t.Object({
 
 export const BlogCommentCreateBody = t.Object({
   body: t.String({ minLength: 1, },),
+  parent_comment_id: t.Optional(t.String({ format: "uuid" }),),
 },);
 
 export const BlogPostResponse = t.Object({
-  id: t.String({ format: "uuid", },),
+  id: t.String({ format: "uuid" },),
   title: t.String(),
   body: t.String(),
   author_id: t.String(),
@@ -45,11 +46,15 @@ export const BlogPostResponse = t.Object({
   updated_at: t.String(),
 },);
 
-export const BlogCommentResponse = t.Object({
-  id: t.String({ format: "uuid", },),
-  post_id: t.String(),
-  author_id: t.String(),
-  body: t.String(),
-  status: t.String(),
-  created_at: t.String(),
-},);
+export const BlogCommentResponse = t.Recursive((self) =>
+  t.Object({
+    id: t.String({ format: "uuid" },),
+    post_id: t.String(),
+    author_id: t.String(),
+    body: t.String(),
+    status: t.String(),
+    parent_comment_id: t.Optional(t.String({ format: "uuid" }),),
+    created_at: t.String(),
+    children: t.Optional(t.Array(self)),
+  },),
+);
