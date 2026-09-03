@@ -17,7 +17,17 @@ import { uiStoreDefinition, } from "./ui-store";
 /** Store name → initial value object. */
 const stores: Record<string, Record<string, unknown>> = {
   sidebar: { open: false, },
-  chat: { currentChat: null, },
+  // Chat store — owns the currently active chat along with non-reactive
+  // fallback fields read by templates before the live chat payload lands.
+  // `children` and `visibility` are provided as safe defaults so component
+  // init() never throws "Cannot read properties of undefined (reading
+  // 'children')" / "... of null (reading 'visibility')" — see
+  // BUG-alpine-init-crash-chat-view-store-undefined.
+  chat: {
+    currentChat: null as { id: string; name?: string; type?: string } | null,
+    children: [] as unknown[],
+    visibility: "visible" as "visible" | "hidden" | "collapsed",
+  },
   ui: uiStoreDefinition as Record<string, unknown>,
 };
 
