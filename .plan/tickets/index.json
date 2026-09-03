@@ -1120,6 +1120,18 @@
     "source": ".plan/tickets/BUG-check-duplicate-loads-all-owner-rows.md",
     "git_issue": "2b01c97"
   },
+  "BUG-CHECK-PARALLEL-GPG-PREFLIGHT-CRASHES-ON-UNDEFINED-M": {
+    "hash": "a99ba70",
+    "git_issue": "a99ba70",
+    "extid": "BUG-CHECK-PARALLEL-GPG-PREFLIGHT-CRASHES-ON-UNDEFINED-M",
+    "type": "BUG",
+    "title": "check-parallel GPG preflight crashes on undefined m",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-check-parallel-gpg-preflight-crashes-on-undefined-m.md"
+  },
   "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED": {
     "hash": "pending",
     "extid": "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED",
@@ -10488,7 +10500,6 @@
     "source": ".plan/tickets/TASK-consolidate-quest-engines.md",
     "git_issue": "82bb36d"
   },
-
   "TASK-CONSOLIDATE-TEMPLATE-CONSTANTS-UNDER-GLOBAL-ALL-CONSTANTS-UM": {
     "hash": "ca2e7e0",
     "git_issue": "ca2e7e0",
@@ -12263,7 +12274,6 @@
     "source": ".plan/tickets/TASK-extract-chat-route-business-logic.md",
     "git_issue": "4d8fd3f"
   },
-
   "TASK-EXTRACT-HTMX-VIEW-FRAGMENTS-FROM-DUPLICATED-HTML-VIEWS": {
     "hash": "e4c5f81",
     "git_issue": "e4c5f81",
@@ -17416,7 +17426,6 @@
     "status": "done",
     "git_issue": "4cec862"
   },
-
   "TASK-REPLACE-KNIP-GLOBAL-TYPES-EXCLUSION-WITH-PER-SYMBOL-KNIPIGNO": {
     "hash": "db6cb3b",
     "git_issue": "db6cb3b",
@@ -18117,7 +18126,6 @@
     "source": ".plan/tickets/TASK-runtime-migration-staleness-guard.md",
     "git_issue": "c41b00a"
   },
-
   "TASK-SCAN-EPICS-FOR-PLUGIN-API-SURFACE-CANDIDATES": {
     "hash": "d8b1fc5",
     "git_issue": "d8b1fc5",
