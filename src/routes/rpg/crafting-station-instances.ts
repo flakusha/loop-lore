@@ -111,14 +111,14 @@ export function stationInstanceRoutes(opts: HandlerOpts, svc: StationsService, R
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const id = (ctx.params as { id: string }).id;
-        const existing = await svc.getInstance(id,);
+        const existing = await svc.getInstanceById(id,);
         if (!existing) { return jsonError("Instance not found", HttpStatus.NotFound,); }
         const deny = await assertWorldOwner(opts.database, userId, existing.worldId,);
         if (deny) { return deny; }
         const body = ctx.body as Record<string, unknown>;
-        const ok = await svc.updateInstance(id, body,);
+        const ok = await svc.updateInstance(existing.worldId, id, body,);
         if (!ok) { return jsonError("Update failed", HttpStatus.InternalServerError,); }
-        const updated = await svc.getInstance(id,);
+        const updated = await svc.getInstanceById(id,);
         return jsonResponse(updated,);
       }, {
         body: UpdateStationInstanceBody,
@@ -130,11 +130,11 @@ export function stationInstanceRoutes(opts: HandlerOpts, svc: StationsService, R
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const id = (ctx.params as { id: string }).id;
-        const existing = await svc.getInstance(id,);
+        const existing = await svc.getInstanceById(id,);
         if (!existing) { return jsonError("Instance not found", HttpStatus.NotFound,); }
         const deny = await assertWorldOwner(opts.database, userId, existing.worldId,);
         if (deny) { return deny; }
-        await svc.deleteInstance(id,);
+        await svc.deleteInstance(existing.worldId, id,);
         return jsonResponse({ deleted: true, },);
       }, {
         response: { 200: SuccessResponse, 401: ErrorResponse, },
