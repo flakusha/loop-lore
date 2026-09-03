@@ -9,21 +9,11 @@
 // See .plan/epics/epic-provider-plugin-ecosystem.md.
 
 import type { ProviderInstanceConfig, } from "../../../config/schema";
-import { validateProviderUrl, } from "../../../utils/url-validation";
-import type {
-  GenerateRequest,
-  GenerateResponse,
-  LLMProvider,
-  ModelInfo,
-  ProviderCapabilities,
-  StreamHandler,
-} from "../types";
-import { ProviderError, } from "../types";
+import type { ProviderCapabilities, } from "../types";
+import { BaseProvider, type BaseProviderDispatchers, } from "../base";
 import { completeDispatch, streamDispatch, } from "./core";
 import { embedDispatch, healthCheckDispatch, listModelsDispatch, } from "./operations";
 import type { OllamaNativeState, } from "./types";
-
-// ── Capabilities ──────────────────────────────────────────
 
 const CAPABILITIES: ProviderCapabilities = {
   type: "ollama",
@@ -36,79 +26,23 @@ const CAPABILITIES: ProviderCapabilities = {
   thinking: false,
 };
 
-// ── Provider class ────────────────────────────────────────
+const DISPATCHERS: BaseProviderDispatchers<OllamaNativeState> = {
+  complete: completeDispatch,
+  stream: streamDispatch,
+  healthCheck: healthCheckDispatch,
+  listModels: listModelsDispatch,
+  embed: embedDispatch,
+};
 
 /** */
-export class OllamaNativeProvider implements LLMProvider {
-  private readonly state: OllamaNativeState;
-  readonly capabilities = CAPABILITIES;
-
+export class OllamaNativeProvider extends BaseProvider<OllamaNativeState> {
   /**
    * @param config
    */
-  constructor(config: ProviderInstanceConfig,) {
-    const baseUrl = config.baseUrl.replace(/\/+$/, "",);
-    const validated = validateProviderUrl(baseUrl,);
-    if (!validated.ok) {
-      throw new ProviderError(
-        `Invalid provider URL (${config.name}): ${validated.error}`,
-        undefined,
-        400,
-        false,
-      );
-    }
-    this.state = {
-      baseUrl,
-      apiKey: config.apiKey,
-      defaultModel: config.model,
-      timeout: config.timeout,
-      retries: config.retries,
-      headers: config.headers ?? {},
-    };
-  }
-
-  // ── Core generation ────────────────────────────────────
-
-  /**
-   * @param req
-   */
-  async complete(req: GenerateRequest,): Promise<GenerateResponse> {
-    return completeDispatch(this.state, req,);
-  }
-
-  /**
-   * @param req
-   * @param handler
-   */
-  async stream(req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse> {
-    return streamDispatch(this.state, req, handler,);
-  }
-
-  // ── Health check ───────────────────────────────────────
-
-  /** */
-  async healthCheck(): Promise<{
-    status: "ok" | "degraded" | "down";
-    model?: string;
-    latencyMs?: number;
-    error?: string;
-  }> {
-    return healthCheckDispatch(this.state,);
-  }
-
-  // ── List models ────────────────────────────────────────
-
-  /** */
-  async listModels(): Promise<ModelInfo[]> {
-    return listModelsDispatch(this.state,);
-  }
-
-  // ── Embeddings ─────────────────────────────────────────
-
-  /**
-   * @param input
-   */
-  async embed(input: string | string[],): Promise<number[][]> {
-    return embedDispatch(this.state, input, this.state.defaultModel,);
+  constructor(config: ProviderInstanceConfig) {
+    super(config, {
+      capabilities: CAPABILITIES,
+      dispatchers: DISPATCHERS,
+    });
   }
 }
