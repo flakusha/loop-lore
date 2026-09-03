@@ -31,12 +31,12 @@
           "properties": {
             "key": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/plan-wardrobe-loadouts/loop-lore-data/certs/key.pem",
+              "default": "/home/flak/git-ai/loop-lore/tree/fix-config-and-finalize/loop-lore-data/certs/key.pem",
               "description": "Path to TLS private key (PEM)"
             },
             "cert": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/plan-wardrobe-loadouts/loop-lore-data/certs/cert.pem",
+              "default": "/home/flak/git-ai/loop-lore/tree/fix-config-and-finalize/loop-lore-data/certs/cert.pem",
               "description": "Path to TLS certificate (PEM)"
             }
           },
@@ -66,7 +66,7 @@
         },
         "sqliteFilename": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/plan-wardrobe-loadouts/loop-lore-data/loop-lore.db",
+          "default": "/home/flak/git-ai/loop-lore/tree/fix-config-and-finalize/loop-lore-data/loop-lore.db",
           "description": "SQLite database file path"
         },
         "url": {
@@ -90,7 +90,7 @@
         },
         "uploadDir": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/plan-wardrobe-loadouts/loop-lore-data/uploads",
+          "default": "/home/flak/git-ai/loop-lore/tree/fix-config-and-finalize/loop-lore-data/uploads",
           "description": "Directory for uploaded assets"
         },
         "maxFileSize": {
@@ -1052,6 +1052,47 @@
         "enabled"
       ]
     },
+    "encryption": {
+      "type": "object",
+      "description": "Encryption / SMK configuration",
+      "properties": {
+        "serverEncryptionKey": {
+          "type": "string",
+          "description": "256-bit hex key. Missing = encryption disabled (dev mode)."
+        },
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "true = refuse to start without SMK (prod guard)"
+        },
+        "compressThreshold": {
+          "type": "integer",
+          "default": 128,
+          "description": "Min bytes before compressing prior to encrypt"
+        },
+        "compressAlgorithm": {
+          "type": "string",
+          "default": "gzip",
+          "description": "Preferred compression algorithm"
+        },
+        "keyRotationDays": {
+          "type": "integer",
+          "default": 90,
+          "description": "Days before auto-rotating actor keys. 0 = disabled."
+        },
+        "anonymous": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable anonymous chat mode. Actor identities hidden from other participants."
+        }
+      },
+      "required": [
+        "required",
+        "compressThreshold",
+        "compressAlgorithm",
+        "keyRotationDays"
+      ]
+    },
     "headers": {
       "type": "object",
       "description": "Response-header policy (browser security / isolation / perf / observability)",
@@ -1402,6 +1443,674 @@
         "compressAlgorithm",
         "compressThreshold"
       ]
+    },
+    "frontend": {
+      "type": "object",
+      "description": "Frontend rendering mode configuration",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "htmx"
+          ],
+          "default": "htmx",
+          "description": "Frontend rendering strategy (htmx + Alpine.js)"
+        }
+      },
+      "required": [
+        "mode"
+      ]
+    },
+    "seeding": {
+      "type": "object",
+      "description": "Database seeding configuration (default users, characters, etc.)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable seeding on first start"
+        },
+        "users": {
+          "type": "array",
+          "description": "Default users to seed",
+          "items": {
+            "type": "object",
+            "properties": {
+              "handle": {
+                "type": "string",
+                "description": "User handle (login name)"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "admin",
+                  "user",
+                  "viewer",
+                  "solo"
+                ],
+                "description": "User role"
+              }
+            },
+            "required": [
+              "handle",
+              "role"
+            ]
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "users"
+      ]
+    },
+    "templates": {
+      "type": "object",
+      "description": "Template configuration — LLM prompts, SD profiles, avatar emotions, image-edit workflows, character seeds",
+      "properties": {
+        "llm": {
+          "type": "object",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "systemPrompts": {
+              "type": "object",
+              "description": "System prompt overrides keyed by canonical name",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "chatFormats": {
+              "type": "object",
+              "description": "Chat format templates keyed by format id",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "system": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "string"
+                  },
+                  "assistant": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "system",
+                  "user",
+                  "assistant"
+                ]
+              }
+            }
+          },
+          "required": [
+            "merge",
+            "systemPrompts",
+            "chatFormats"
+          ]
+        },
+        "sd": {
+          "type": "object",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "profiles": {
+              "type": "object",
+              "description": "SD profile overrides keyed by profile id",
+              "additionalProperties": {
+                "type": "object"
+              }
+            },
+            "modelMatching": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "profileId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "pattern",
+                  "profileId"
+                ]
+              }
+            }
+          },
+          "required": [
+            "merge",
+            "profiles",
+            "modelMatching"
+          ]
+        },
+        "avatar": {
+          "type": "object",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "emotions": {
+              "type": "object",
+              "description": "Emotion key -> asset mapping",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "asset": {
+                    "type": "string"
+                  },
+                  "intent": {
+                    "type": "string"
+                  },
+                  "prompt": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "asset",
+                  "intent"
+                ]
+              }
+            },
+            "intentPatterns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "emotion": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "pattern",
+                  "emotion"
+                ]
+              }
+            }
+          },
+          "required": [
+            "merge",
+            "emotions",
+            "intentPatterns"
+          ]
+        },
+        "imageEdit": {
+          "type": "object",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "workflows": {
+              "type": "object",
+              "description": "Image-edit workflow overrides keyed by workflow id",
+              "additionalProperties": {
+                "type": "object"
+              }
+            }
+          },
+          "required": [
+            "merge",
+            "workflows"
+          ]
+        },
+        "character": {
+          "type": "object",
+          "description": "Character template seeding — defaults loaded from configs/templates/character.yaml",
+          "properties": {
+            "merge": {
+              "type": "string",
+              "enum": [
+                "replace",
+                "extend",
+                "override"
+              ],
+              "default": "extend",
+              "description": "Per-domain merge strategy for user overrides"
+            },
+            "templates": {
+              "type": "array",
+              "description": "Character templates seeded on first start",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Hard ID for deterministic test reseeding"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Character display name"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Character description"
+                  },
+                  "personality": {
+                    "type": "string"
+                  },
+                  "scenario": {
+                    "type": "string"
+                  },
+                  "welcome_message": {
+                    "type": "string"
+                  },
+                  "system_prompt": {
+                    "type": "string"
+                  },
+                  "mes_example": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "creator": {
+                    "type": "string"
+                  },
+                  "visibility": {
+                    "type": "string",
+                    "enum": [
+                      "private",
+                      "public"
+                    ]
+                  },
+                  "content_rating": {
+                    "type": "string",
+                    "enum": [
+                      "sfw",
+                      "nsfw_mild",
+                      "nsfw_moderate",
+                      "nsfw_intense",
+                      "nsfw_extreme"
+                    ]
+                  },
+                  "target_roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "admin",
+                        "user",
+                        "viewer",
+                        "solo"
+                      ]
+                    }
+                  },
+                  "is_template": {
+                    "type": "boolean"
+                  },
+                  "is_default": {
+                    "type": "boolean"
+                  },
+                  "default_outfit": {
+                    "type": "string",
+                    "description": "Default outfit id used when no context binding fires"
+                  },
+                  "outfits": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Stable outfit id referenced by loadouts and selection ladder"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Human-readable label shown in UI"
+                        },
+                        "descriptor": {
+                          "type": "string",
+                          "description": "Prompt-fragment fed to the avatar generator (identity-anchor + outfit-descriptor + emotion-descriptor)"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Free-form tags (formal|armor|sleepwear|swim|...) used by binding rules"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "descriptor"
+                      ]
+                    }
+                  },
+                  "loadouts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Symbolic name for the loadout rule"
+                        },
+                        "slot": {
+                          "type": "string",
+                          "description": "Inventory slot key (e.g. chest, legs, head)"
+                        },
+                        "item_match": {
+                          "type": "string",
+                          "description": "Substring match against equipped item id/name"
+                        },
+                        "outfit": {
+                          "type": "string",
+                          "description": "Outfit id (from outfits[]) to switch into"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "slot",
+                        "item_match",
+                        "outfit"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "description"
+                ]
+              }
+            }
+          },
+          "required": [
+            "merge",
+            "templates"
+          ]
+        }
+      },
+      "required": [
+        "llm",
+        "sd",
+        "avatar",
+        "imageEdit",
+        "character"
+      ]
+    },
+    "characters": {
+      "type": "object",
+      "description": "Character template configuration — default characters seeded on app start",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable character template seeding"
+        },
+        "templates": {
+          "type": "array",
+          "description": "Default character templates to seed on first start",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Hard ID for deterministic test reseeding"
+              },
+              "name": {
+                "type": "string",
+                "description": "Character display name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Character description"
+              },
+              "personality": {
+                "type": "string",
+                "description": "Personality traits"
+              },
+              "scenario": {
+                "type": "string",
+                "description": "RP scenario/setting"
+              },
+              "welcome_message": {
+                "type": "string",
+                "description": "Welcome message"
+              },
+              "system_prompt": {
+                "type": "string",
+                "description": "System prompt override"
+              },
+              "mes_example": {
+                "type": "string",
+                "description": "Example dialogue"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Classification tags"
+              },
+              "creator": {
+                "type": "string",
+                "description": "Creator attribution"
+              },
+              "species": {
+                "type": "string",
+                "description": "Identity — race/species trait (persisted as permanent trait)"
+              },
+              "subrace": {
+                "type": "string",
+                "description": "Identity — subrace trait (persisted as permanent trait)"
+              },
+              "gender": {
+                "type": "string",
+                "description": "Identity — gender trait (persisted as permanent trait)"
+              },
+              "age": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "description": "Identity — age trait (persisted as permanent trait)"
+              },
+              "homeland": {
+                "type": "string",
+                "description": "Identity — origin/homeland background trait (persisted as permanent trait)"
+              },
+              "culture": {
+                "type": "string",
+                "description": "Identity — culture background trait (persisted as permanent trait)"
+              },
+              "avatar": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "file"
+                      },
+                      "path": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "path"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "const": "default"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ]
+                  }
+                ],
+                "description": "Optional avatar for the seeded character"
+              },
+              "visibility": {
+                "type": "string",
+                "enum": [
+                  "private",
+                  "public"
+                ],
+                "default": "public",
+                "description": "Visibility level"
+              },
+              "content_rating": {
+                "type": "string",
+                "enum": [
+                  "sfw",
+                  "nsfw_mild",
+                  "nsfw_moderate",
+                  "nsfw_intense",
+                  "nsfw_extreme"
+                ],
+                "default": "sfw",
+                "description": "Content rating"
+              },
+              "target_roles": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "admin",
+                    "user",
+                    "viewer",
+                    "solo"
+                  ]
+                },
+                "default": [
+                  "user",
+                  "admin"
+                ],
+                "description": "User roles that can see/use this character"
+              },
+              "is_template": {
+                "type": "boolean",
+                "default": false,
+                "description": "Can be used as template for user-created chars"
+              },
+              "is_default": {
+                "type": "boolean",
+                "default": false,
+                "description": "Auto-add to new users' character list"
+              },
+              "default_outfit": {
+                "type": "string",
+                "description": "Default outfit id used when no context binding fires"
+              },
+              "outfits": {
+                "type": "array",
+                "description": "Wardrobe catalog — distinct (outfit_id) entries this character can wear",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Stable outfit id referenced by loadouts and selection ladder"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Human-readable label shown in UI"
+                    },
+                    "descriptor": {
+                      "type": "string",
+                      "description": "Prompt-fragment fed to the avatar generator (identity-anchor + outfit-descriptor + emotion-descriptor)"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Free-form tags (formal|armor|sleepwear|swim|...) used by binding rules"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "descriptor"
+                  ]
+                }
+              },
+              "loadouts": {
+                "type": "array",
+                "description": "Equipped-items → outfit mapping (deferred loadout-bridge phase)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Symbolic name for the loadout rule"
+                    },
+                    "slot": {
+                      "type": "string",
+                      "description": "Inventory slot key (e.g. \"chest\", \"legs\", \"head\")"
+                    },
+                    "item_match": {
+                      "type": "string",
+                      "description": "Substring match against equipped item id/name"
+                    },
+                    "outfit": {
+                      "type": "string",
+                      "description": "Outfit id (from outfits[]) to switch into"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "slot",
+                    "item_match",
+                    "outfit"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "name",
+              "description"
+            ]
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "templates"
+      ]
     }
   },
   "required": [
@@ -1418,6 +2127,9 @@
     "encryption",
     "headers",
     "dynamicResponse",
-    "frontend"
+    "frontend",
+    "seeding",
+    "templates",
+    "characters"
   ]
 }
