@@ -29,16 +29,10 @@ Add a unique index on `(chat_id, parent_id, swipe_index)` in `messages` migratio
 
 ## Acceptance Criteria
 
-- [x] Concurrent replies produce distinct swipe_indexes
-- [x] Migration adds unique index (already present as 058_swipe_index_unique; no schema change in this commit)
-- [x] No `bun run check` regressions
+- [ ] Concurrent replies produce distinct swipe_indexes
+- [ ] Migration adds unique index (and `bun run db:sync-types && bun run db:sync-manifest`)
+- [ ] No `bun run check` regressions
 
 ## Resolution
 
-Refactored `src/routes/messages/reply.ts` from try/catch unique-violation
-detection to `INSERT ... ON CONFLICT (chat_id, parent_id, swipe_index)
-DO UPDATE SET swipe_index = excluded.swipe_index + 1 RETURNING id`. The
-RETURNING yields our row's id on success, or the existing (shifted) row's
-id on conflict — that signal drives the same bounded retry loop with no
-string-matching against unique-violation messages. Migration 058 was
-already present on dev; no new migration needed.
+Resolved by `b7e4b0b7 fix(chat): unique swipe_index per parent + log triggerAutoGeneration errors` and follow-up `02a51621 fix(messages): narrow reply.ts retry loop to swipe unique conflict only`. Source now has a retry loop that increments `swipeIndex` on `idx_messages_swipe_unique` conflict (8 attempt cap) and `isSwipeUniqueConflict` helper that matches the unique-constraint marker. Migration `058_swipe_index_unique.ts` adds the unique index.

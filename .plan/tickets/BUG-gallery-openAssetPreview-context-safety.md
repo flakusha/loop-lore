@@ -3,7 +3,7 @@
 
 # BUG: gallery grid onclick openAssetPreview ReferenceError when gallery not top-level
 
-**Status:** Open
+**Status:** Done
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Small
@@ -31,3 +31,7 @@ Register `openAssetPreview` as a permanent global at app init (e.g., in `src/fro
 
 - [ ] Gallery works when embedded (not on /gallery page)
 - [ ] `openAssetPreview` available as global
+
+## Resolution
+
+Resolved by `src/frontend/asset-preview.ts` which registers `globalThis.openAssetPreview` as a side-effect import. `src/frontend/alpine-init.ts` imports `./asset-preview` on every Alpine page load, so the global is available in any embedded context (chat panel, world detail), not just `/gallery`. Test `src/frontend/asset-preview.test.ts` asserts the global registration.
