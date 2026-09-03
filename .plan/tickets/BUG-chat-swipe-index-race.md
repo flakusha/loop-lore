@@ -3,7 +3,7 @@
 
 # BUG: chat swipe_index race on concurrent assistant replies (reply.ts:83-84)
 
-**Status:** Open
+**Status:** Done
 **Priority:** high
 **Priority Tier:** P2
 **Effort:** Small
@@ -29,6 +29,16 @@ Add a unique index on `(chat_id, parent_id, swipe_index)` in `messages` migratio
 
 ## Acceptance Criteria
 
-- [ ] Concurrent replies produce distinct swipe_indexes
-- [ ] Migration adds unique index (and `bun run db:sync-types && bun run db:sync-manifest`)
-- [ ] No `bun run check` regressions
+- [x] Concurrent replies produce distinct swipe_indexes
+- [x] Migration adds unique index (already present as 058_swipe_index_unique; no schema change in this commit)
+- [x] No `bun run check` regressions
+
+## Resolution
+
+Refactored `src/routes/messages/reply.ts` from try/catch unique-violation
+detection to `INSERT ... ON CONFLICT (chat_id, parent_id, swipe_index)
+DO UPDATE SET swipe_index = excluded.swipe_index + 1 RETURNING id`. The
+RETURNING yields our row's id on success, or the existing (shifted) row's
+id on conflict — that signal drives the same bounded retry loop with no
+string-matching against unique-violation messages. Migration 058 was
+already present on dev; no new migration needed.

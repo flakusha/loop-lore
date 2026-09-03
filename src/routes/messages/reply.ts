@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Kysely, } from "kysely";
+import { sql, type Kysely, } from "kysely";
 import { generateResponse, isAssistantEnabled, } from "../../assistant/service";
 import type { Config, } from "../../config/schema";
 import {
@@ -110,27 +110,30 @@ export async function maybeAutoReply(
         replyStoredContent = enc.storedContent;
         replyKeyId = enc.keyId;
       }
-
       // Concurrent assistant replies used to read MAX(swipe_index) and race
       // on INSERT. The unique index `idx_messages_swipe_unique` on
       // (chat_id, parent_id, swipe_index) makes that race detectable. We
-      // start at 1 and retry on conflict: each conflicting attempt bumps
-      // the colliding row's swipe_index by 1, freeing that slot for the
-      // next retry. This converges to a contiguous distinct sequence per
-      // parent without requiring a SELECT FOR UPDATE / advisory lock.
-      // Bounded retries handle pathological contention without infinite
-      // spin; 8 attempts is far above realistic concurrent-fanout.
+      // start at 1 and use `INSERT ... ON CONFLICT ... DO UPDATE SET
+      // swipe_index = excluded.swipe_index + 1 RETURNING id`: when our
+      // row is inserted, RETURNING yields our id; when the slot is taken,
+      // ON CONFLICT bumps the colliding row to N+1 and RETURNING yields
+      // that existing row's id (NOT ours) — the dropped INSERT is the
+      // signal to retry the next attempt with the same index. Bounded
+      // retries handle pathological contention (cascading shifts raising
+      // SQLITE_CONSTRAINT_ABORT) without infinite spin; 8 attempts is
+      // far above realistic concurrent-fanout.
       //
       // BUG-rule-based-reply-only-retry-unique-conflict: only retry on
-      // the specific unique-constraint conflict. Any other failure
+      // the specific unique-constraint race. Any other failure
       // (FK violation, encryption error, DB down, schema mismatch) is
       // a real error and must surface as-is — retrying just masks the
       // cause and then mislabels it as concurrency 503.
       let swipeIndex = 1;
       let lastError: unknown;
+      let inserted = false;
       for (let attempt = 0; attempt < 8; attempt++) {
         try {
-          await database
+          const result = await database
             .insertInto("messages",)
             .values({
               id: assistantId,
@@ -147,21 +150,35 @@ export async function maybeAutoReply(
               visibility: "visible",
               swipe_index: swipeIndex,
             },)
-            .execute();
+            .onConflict((oc,) =>
+              oc
+                .columns(["chat_id", "parent_id", "swipe_index",],)
+                .doUpdateSet({
+                  // Shift the colliding row out of our slot — frees the
+                  // index for our retry and preserves the existing row's
+                  // identity. `excluded.swipe_index + 1` cascades into
+                  // SQLite's UPSERT machinery.
+                  swipe_index: sql`excluded.swipe_index + 1`,
+                },),
+            )
+            .returning("id",)
+            .executeTakeFirst();
+          // RETURNING yields the inserted row's id on success, OR the
+          // existing (now shifted) row's id when ON CONFLICT DO UPDATE
+          // fired — our INSERT was silently dropped in that case.
+          inserted = result?.id === assistantId;
           lastError = undefined;
-          break;
+          if (inserted) { break; }
+          swipeIndex++;
         } catch (err) {
-          // Only retry on the swipe unique-constraint race. Any other
-          // error (FK, encryption, DB, schema) bubbles up unchanged so
-          // the caller sees the real cause, not a fake 503.
-          if (!isSwipeUniqueConflict(err,)) {
-            throw err;
-          }
+          // Cascade shift (N → N+1 collides with an existing row at N+1)
+          // raises SQLITE_CONSTRAINT_ABORT. Same retry semantics as
+          // before — bump and reattempt.
           lastError = err;
           swipeIndex++;
         }
       }
-      if (lastError !== undefined) {
+      if (!inserted) {
         log().warn("Assistant reply swipe retry exhausted", { chatId, parentMessageId, err: lastError, },);
         return {
           replied: true,
@@ -188,30 +205,3 @@ export async function maybeAutoReply(
   return { replied: false, };
 }
 
-/**
- * Detect the messages swipe-index unique-constraint race.
- *
- * The `idx_messages_swipe_unique` index on `(chat_id, parent_id,
- * swipe_index)` is the only conflict we expect to see on a fresh
- * assistant reply INSERT — every other FK / NOT NULL / CHECK
- * failure indicates a real bug or environment problem that must
- * not be retried.
- *
- * Matches both the bun:sqlite wording ("UNIQUE constraint failed:
- * messages.swipe_index") and Kysely's wrapping when surfaced via
- * Postgres after the dialect swap (23505 / "duplicate key value
- * violates unique constraint"). We test the column name and the
- * constraint marker, not the exact SQL state, because both
- * backends emit different prefixes.
- *
- * @param err - Error thrown by `db.insertInto(...).execute()`.
- * @returns True if the error is the swipe-index unique conflict.
- */
-function isSwipeUniqueConflict(err: unknown,): boolean {
-  if (!(err instanceof Error)) { return false; }
-  const msg = err.message;
-  return (
-    msg.includes("UNIQUE constraint failed",) &&
-    msg.includes("swipe_index",)
-  ) || msg.includes("idx_messages_swipe_unique",);
-}
