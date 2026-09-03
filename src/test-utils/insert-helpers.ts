@@ -2222,7 +2222,12 @@ export async function insertBlogComments(
   post_id: string,
   author_id: string,
   body: string,
-  opts?: { id?: Generated<string>; status?: Generated<string>; created_at?: Generated<string> },
+  opts?: {
+    id?: Generated<string>;
+    status?: Generated<string>;
+    created_at?: Generated<string>;
+    parent_comment_id?: string | null;
+  },
 ): Promise<void> {
   await db.insertInto("blog_comments",).values({
     id: crypto.randomUUID(),

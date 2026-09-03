@@ -38,6 +38,7 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
         post_id: ctx.params.id,
         author_id: userId,
         body: ctx.body.body,
+        parent_comment_id: ctx.body.parent_comment_id,
       },);
 
       return jsonResponse({ success: true, comment, },);
@@ -56,7 +57,7 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     .get(`${prefix}/blog/posts/:id/comments`, async (ctx: any,) => {
-      const comments = await svc.listComments(ctx.params.id, {
+      const comments = await svc.listCommentsThreaded(ctx.params.id, {
         limit: ctx.query.limit ? Number(ctx.query.limit,) : undefined,
         offset: ctx.query.offset ? Number(ctx.query.offset,) : undefined,
       },);
@@ -69,6 +70,23 @@ export function blogCommentRoutes(opts: HandlerOpts, prefix = "/api",) {
       detail: {
         summary: "List comments on post",
         description: "List comments on a blog post with optional pagination.",
+        tags: ["Blog",],
+      },
+    },)
+    .get(`${prefix}/blog/posts/:id/comments/:commentId`, async (ctx: any,) => {
+      const comment = await svc.getComment(ctx.params.commentId,);
+      if (!comment) {
+        return jsonError({ message: "errors.notFound", status: HttpStatus.NotFound, },);
+      }
+      return jsonResponse({ success: true, comment, },);
+    }, {
+      response: {
+        200: SuccessResponse,
+        404: ErrorResponse,
+      },
+      detail: {
+        summary: "Get a comment by ID with children",
+        description: "Retrieve a single comment and its nested replies.",
         tags: ["Blog",],
       },
     },);
