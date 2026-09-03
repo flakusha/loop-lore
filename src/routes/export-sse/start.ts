@@ -3,6 +3,7 @@
 
 import { Elysia, } from "elysia";
 import crypto from "node:crypto";
+import { loadConfig, } from "../../config/load";
 import { resolveUserIdFromRequest, } from "../../middleware/auth";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { HttpStatus, jsonError, } from "../http-utils";
@@ -18,7 +19,8 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
   return new Elysia()
     // POST /api/export/progress — Start export and return SSE stream
     .post(`${prefix}/export/progress`, async (ctx: any,) => {
-      const userId = await resolveUserIdFromRequest(ctx.request, database, "solo",);
+      const { auth: authConfig, } = loadConfig();
+      const userId = await resolveUserIdFromRequest(ctx.request, database, "solo", authConfig,);
       if (!userId) {
         return jsonError({
           message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
