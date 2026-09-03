@@ -27,3 +27,6 @@ src/app/register-plugins.ts(150,11): error TS2552: Cannot find name 'chatSection
 ## Related
 
 Discovered during Bucket D audit (2026-09-03). Filed while dev was 154+ commits ahead of origin with `bun run check` gate skipped on finalize (most commits are docs-only); the 3 typecheck errors slipped in during this skip window. Related: see also `BUG-post-store-test-ts-32-imports-missing-completegenerationopts.md` and `BUG-routes-commands-index-ts-19-has-unused-import-t.md`.
+
+
+git issue: 0b9a09b
