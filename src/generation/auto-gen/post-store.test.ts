@@ -25,11 +25,11 @@
  */
 import { beforeEach, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { CompleteGenerationOpts, } from "../cancellation-tracker/lifecycle";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import type { CompleteGenerationOpts, } from "../cancellation-tracker/lifecycle";
 import type { GenDeps, } from "./deps";
 
 createLogger({ level: "error", },);
@@ -39,10 +39,10 @@ if (ISOLATED) {
   // try/catch added around it. Everything else from the chat module keeps
   // its real implementation via the source module path.
   mock.module("../../chat", () => {
-    const realChat = require("../../chat/hallucination-guard/index.ts");
+    const realChat = require("../../chat/hallucination-guard/index.ts",);
     return {
       detectHallucinations: async () => {
-        throw new Error("SQLITE_BUSY: database is locked");
+        throw new Error("SQLITE_BUSY: database is locked",);
       },
       generateRandomEvent: realChat.generateRandomEvent ?? (() => null),
     };
@@ -70,7 +70,9 @@ function makeDeps(
   scheduleCalls: string[],
 ): GenDeps {
   return {
-    completeGeneration: mock(async (_opts: CompleteGenerationOpts,) => {/* noop */}) as unknown as GenDeps["completeGeneration"],
+    completeGeneration: mock(
+      async (_opts: CompleteGenerationOpts,) => {/* noop */},
+    ) as unknown as GenDeps["completeGeneration"],
     getOrCreateBuffer: () => ({
       append: (kind: string, payload: string,) => {
         appendCalls.push(`${kind}:${payload.length}`,);
@@ -78,7 +80,7 @@ function makeDeps(
       signalDone: () => {
         signalDone.count += 1;
       },
-    },),
+    }),
     scheduleBufferCleanup: mock((chatId: string,) => {
       scheduleCalls.push(chatId,);
     },) as unknown as GenDeps["scheduleBufferCleanup"],
