@@ -16,7 +16,9 @@
 import type { Kysely, } from "kysely";
 import {
   createComment as createCommentDispatch,
+  getComment as getCommentDispatch,
   listComments as listCommentsDispatch,
+  listCommentsThreaded as listCommentsThreadedDispatch,
   moderateComment as moderateCommentDispatch,
 } from "./comments";
 import {
@@ -38,6 +40,7 @@ import { addRAGSource as addRAGSourceDispatch, getRAGSources as getRAGSourcesDis
 import type {
   BlogCommentRow,
   BlogCommentStatus,
+  BlogCommentWithChildren,
   BlogFollowRow,
   BlogPostRow,
   BlogPostStatus,
@@ -53,6 +56,7 @@ export type {
   BlogAuthorType,
   BlogCommentRow,
   BlogCommentStatus,
+  BlogCommentWithChildren,
   BlogFollowRow,
   BlogPostRow,
   BlogPostStatus,
@@ -66,7 +70,7 @@ export type {
   UpdateBlogPostInput,
 } from "./types";
 
-// ── Service ──────────────────────────────────────────────
+// ── Service ──────────────────────────────────────
 /** */
 export class BlogService {
   /**
@@ -74,7 +78,7 @@ export class BlogService {
    */
   constructor(private readonly db: Kysely<any>,) {}
 
-  // ── Posts ────────────────────────────────────────────
+  // ── Posts ────────────────────────────────────
   /**
    * @param input
    */
@@ -107,6 +111,7 @@ export class BlogService {
     world_id?: string;
     limit?: number;
     offset?: number;
+    userId?: string;
   },): Promise<BlogPostWithTags[]> {
     return listPostsDispatch(this.db, filters,);
   }
@@ -136,12 +141,19 @@ export class BlogService {
     return incrementViewCountDispatch(this.db, id,);
   }
 
-  // ── Comments ─────────────────────────────────────────
+  // ── Comments ─────────────────────────────────
   /**
    * @param input
    */
   async createComment(input: CreateCommentInput,): Promise<BlogCommentRow> {
     return createCommentDispatch(this.db, input,);
+  }
+
+  /**
+   * @param id
+   */
+  async getComment(id: string,): Promise<BlogCommentRow | undefined> {
+    return getCommentDispatch(this.db, id,);
   }
 
   /**
@@ -158,6 +170,19 @@ export class BlogService {
   }
 
   /**
+   * @param postId
+   * @param opts
+   * @param opts.limit
+   * @param opts.offset
+   */
+  async listCommentsThreaded(
+    postId: string,
+    opts?: { limit?: number; offset?: number },
+  ): Promise<BlogCommentWithChildren[]> {
+    return listCommentsThreadedDispatch(this.db, postId, opts,);
+  }
+
+  /**
    * @param id
    * @param status
    */
@@ -168,7 +193,7 @@ export class BlogService {
     return moderateCommentDispatch(this.db, id, status,);
   }
 
-  // ── Follows ──────────────────────────────────────────
+  // ── Follows ──────────────────────────────────
   /**
    * @param followerId
    * @param authorId
@@ -220,7 +245,7 @@ export class BlogService {
     return getFollowStatusDispatch(this.db, followerId, authorId,);
   }
 
-  // ── RAG Sources ──────────────────────────────────────
+  // ── RAG Sources ──────────────────────────────
   /**
    * @param postId
    * @param source
