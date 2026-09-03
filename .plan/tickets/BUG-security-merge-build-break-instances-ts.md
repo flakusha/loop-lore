@@ -3,7 +3,7 @@
 
 # BUG: Security/auth merge wrapper `3ab26ccd` breaks the backend build
 
-**Status:** fixed-in-worktree
+**Status:** ✅ Resolved (already on dev, 2026-09-03)
 **Priority:** critical
 **Effort:** Medium
 
@@ -28,6 +28,18 @@ left a malformed 3-way merge in the story-items code. `tsc --noEmit
 Net effect: **`dev` backend does not compile**. Every later merge (the
 middleware lifecycle merge, the message-seen-state plan filing) sits on a
 broken tree.
+
+## Resolution
+
+Build-break artifacts removed in worktree `merge-review-followups` (per sibling ticket Resolution sections, 2026-08-27) and verified clean against current `dev` (`60a76152`):
+
+- `src/story/items/instances.ts` — orphaned duplicate `transfer` body gone. Lines ~180-260 are properly-scoped inside `transfer()` (closure over `existing`, `query`, `toLocationId`/`toActorId`); no top-level statements referencing out-of-scope identifiers.
+- `src/story/items/index.ts:122-125` — duplicate stale `destroy` removed. File now has only `giveToNpc` (L122 area) and `getAtLocation` (L130 area). `destroy()` calls the worldId-scoped `destroyDispatch(state, worldItemId, worldId, quantity?, trx?)` (matching `instances.ts` definition).
+- Cross-references: sibling tickets `BUG-vn-choices-idor-guard-non-compiling.md` and `BUG-story-items-cross-world-idor-read-transfer-destroy.md` are both `✅ Resolved` with Resolution sections dated 2026-08-27 confirming the same `merge-review-followups` worktree.
+
+Live `tsc --noEmit -p tsconfig.backend.json` (2026-09-03) does not flag either file. Remaining 3 errors (in `register-plugins.ts`, `post-store.test.ts`, `routes/commands/index.ts`) are unrelated build-debt tracked in active parallel worktrees.
+
+No code change required.
 
 ## Acceptance Criteria
 
