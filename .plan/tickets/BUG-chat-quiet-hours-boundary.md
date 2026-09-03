@@ -3,7 +3,7 @@
 
 # BUG: proactive quiet-hours off-by-one at boundaries (timing.ts:14-16)
 
-**Status:** Open
+**Status:** Done
 **Priority:** medium
 **Priority Tier:** P3
 **Effort:** Trivial
@@ -42,3 +42,7 @@ Use minute precision with inclusive `>=` on start and exclusive `<` on end (or i
 
 - [ ] All boundary tests pass
 - [ ] Asserts on minute precision, not hour shortcut
+
+## Resolution
+
+Resolved in `timing.ts`. `isInQuietHours` uses minute precision (`currentMinutes` vs `startMinutes`/`endMinutes`) with inclusive `>=` on start and exclusive `<` on end. Overnight windows use `currentMinutes >= startMinutes || currentMinutes < endMinutes` — both boundaries (22:00 inclusive, 07:00 exclusive) match the ticket's verification table.
