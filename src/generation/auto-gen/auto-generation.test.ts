@@ -49,8 +49,8 @@ function makeFakeAsyncStore(): FakeAsyncStore {
       // every pipeline step; we don't care about those for the catch-path
       // contract, only that they don't throw and short-circuit the test.
       progress: () => {},
-      fail: (id: string, owner: { userId: string | null }, error: string) => {
-        calls.push({ id, userId: owner.userId ?? "", error, });
+      fail: (id: string, owner: { userId: string | null }, error: string,) => {
+        calls.push({ id, userId: owner.userId ?? "", error, },);
       },
       track: () => {},
       complete: () => {},
@@ -89,6 +89,48 @@ function makeThrowingDeps(
     failGeneration: (() => {
       hooks.onFailGeneration?.();
     }) as unknown as GenDeps["failGeneration"],
+    // The catch path inside `handleGenerationError` calls
+    // `d.getOrCreateBuffer(chatId).signalError(...)` and
+    // `d.scheduleBufferCleanup(chatId)`. Without these stubs the buffer
+    // branch is a silent TypeError swallowed by the `catch { /* best-effort */ }`
+    // guard, so the catch path looks exercised (failGeneration was called)
+    // while the buffer side-effect is never tested.
+    getOrCreateBuffer: ((_chatId: string,) => ({
+      signalError: () => {},
+      signalDone: () => {},
+      append: () => 0,
+      subscribe: () => () => {},
+      replay: () => [],
+    })) as unknown as GenDeps["getOrCreateBuffer"],
+    scheduleBufferCleanup: (() => {}) as unknown as GenDeps["scheduleBufferCleanup"],
+  };
+}
+
+/**
+ * Like `makeThrowingDeps`, but the `getOrCreateBuffer` stub records every
+ * `signalError` call so the test can assert the catch path actually exercises
+ * the buffer side-effect (not just the `failGeneration` telemetry side).
+ */
+function makeThrowingDepsWithBufferSpy(
+  error: Error,
+  signalErrors: Array<{ chatId: string; message: string }>,
+): Partial<GenDeps> {
+  return {
+    listProviders: (() => [{ id: "mock", },]) as unknown as GenDeps["listProviders"],
+    cancelGenerationByChat: (() => {
+      throw error;
+    }) as unknown as GenDeps["cancelGenerationByChat"],
+    failGeneration: (() => {}) as unknown as GenDeps["failGeneration"],
+    getOrCreateBuffer: ((chatId: string,) => ({
+      signalError: (message: string,) => {
+        signalErrors.push({ chatId, message, },);
+      },
+      signalDone: () => {},
+      append: () => 0,
+      subscribe: () => () => {},
+      replay: () => [],
+    })) as unknown as GenDeps["getOrCreateBuffer"],
+    scheduleBufferCleanup: (() => {}) as unknown as GenDeps["scheduleBufferCleanup"],
   };
 }
 
@@ -152,7 +194,7 @@ describe("triggerAutoGeneration — catch-path contract", () => {
     expect(call?.id,).toBe(requestId,);
     expect(call?.userId,).toBe(userId,);
     expect(call?.error,).toBe(String(pipelineError,),);
-  },);
+  });
 
   test("handleGenerationError receives the same error but suppresses failGeneration when attemptId is undefined", async () => {
     const fakeStore = makeFakeAsyncStore();
@@ -186,7 +228,7 @@ describe("triggerAutoGeneration — catch-path contract", () => {
     // …but the error still propagates to asyncStore.fail so the status
     // endpoint reflects the failure.
     expect(fakeStore.failCalls.length,).toBe(1,);
-  },);
+  });
 
   test("asyncStore omitted → error still swallowed (no throw, no fail call)", async () => {
     const userId = uid();
@@ -208,7 +250,7 @@ describe("triggerAutoGeneration — catch-path contract", () => {
       didThrow = true;
     }
     expect(didThrow,).toBe(false,);
-  },);
+  });
 
   test("asyncStore provided but requestId missing → fail() is skipped", async () => {
     const fakeStore = makeFakeAsyncStore();
@@ -231,5 +273,38 @@ describe("triggerAutoGeneration — catch-path contract", () => {
     // before calling fail(). Without requestId the status row has no id to
     // write to, so it silently skips.
     expect(fakeStore.failCalls.length,).toBe(0,);
-  },);
+  });
+
+  test("handleGenerationError exercises buffer.signalError (catch path runs end-to-end)", async () => {
+    const signalErrors: Array<{ chatId: string; message: string }> = [];
+    const fakeStore = makeFakeAsyncStore();
+    const requestId = `req-${uid()}`;
+    const userId = uid();
+    const chatId = uid();
+    const parentMessageId = uid();
+    const pipelineError = new Error("signal-error probe",);
+
+    await triggerAutoGeneration({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      parentMessageId,
+      userId,
+      asyncStore: fakeStore.store,
+      requestId,
+      deps: makeThrowingDepsWithBufferSpy(pipelineError, signalErrors,),
+    },);
+
+    // The catch path inside `handleGenerationError` must have reached
+    // `getOrCreateBuffer(chatId).signalError(...)`. If it silently
+    // short-circuited (e.g. TypeError on missing dep), the spy never
+    // fires.
+    expect(signalErrors.length,).toBe(1,);
+    expect(signalErrors[0]?.chatId,).toBe(chatId,);
+    expect(signalErrors[0]?.message,).toBe("signal-error probe",);
+
+    // The asyncStore.fail side-effect also runs (sanity-check the
+    // catch block executes the full failure path).
+    expect(fakeStore.failCalls.length,).toBe(1,);
+  });
 });
