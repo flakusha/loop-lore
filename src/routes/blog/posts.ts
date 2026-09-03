@@ -77,6 +77,8 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     },)
     .get(`${prefix}/blog/posts`, async (ctx: any,) => {
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       const query = ctx.query as Record<string, string>;
       const posts = await svc.listPosts({
         author_id: query.author_id,
@@ -86,6 +88,7 @@ export function blogPostRoutes(opts: HandlerOpts, prefix = "/api",) {
         world_id: query.world_id,
         limit: query.limit ? Number(query.limit,) : undefined,
         offset: query.offset ? Number(query.offset,) : undefined,
+        userId: typeof userId === "string" ? userId : undefined,
       },);
       return jsonResponse({ success: true, posts, count: posts.length, },);
     }, {

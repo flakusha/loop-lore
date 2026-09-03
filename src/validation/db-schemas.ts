@@ -1563,6 +1563,7 @@ export const BlogCommentsSchema = t.Object({
   body: t.String(),
   status: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
+  parent_comment_id: t.Optional(t.String(),),
 },);
 
 // ── blog_tags ────────────────────────────────────────────
