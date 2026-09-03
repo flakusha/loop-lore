@@ -92,3 +92,54 @@
 > commits were not directly merged, but the fixes **landed on `dev`** under new hashes —
 > `7dc68be7` (critical bypasses) + `c78e5466` (remaining gaps) + `c99704c1` (401-guard
 > unification). **RESOLVED — do not treat as open.**
+
+## Bucket A close-out — Security / Perf / Tooling (2026-09-03)
+
+**33 commits landed on `dev`** (commit `f37056eb`): 20 security + 6 perf + 7 tooling.
+Full detail: `bucket-A-security-perf-close-out-2026-09-03.md`.
+
+### Security cluster (20 commits)
+- **Idempotency user-scope** (`c1cd4d8b`) — `src/middleware/idempotency.ts` cache key
+  includes `userId`; cross-user response replay IDOR fixed. Regression test:
+  `60bcc1f8 test(middleware): restore cross-user isolation integration test`.
+- **HSTS** (`d789df42`) — `Strict-Transport-Security` emitted on HTTPS only, configurable
+  `maxAge`/`preload`/`subDomains`.
+- **CSRF double-submit** (`ccac5b9d`) — requires both cookie + header token; logout
+  gated; `NODE_ENV`-aware `Secure` flag. Frontend injection via `b085c0ec`
+  (htmx `configRequest` + `X-CSRF-Token`).
+- **NSFW resolveFlagBody** (`9b39670d`) — status enum aligned with service `NsfwRecordStatus`
+  (was `upheld` string, service expects union).
+- **NSFW resolveReporterHashSecret** (`f4e49335`) — exported + production-gate tests
+  for hash secret rotation.
+- **Auth user-status gate** (`c9ca8edd`) — `resolveUserIdFromRequest` rejects users
+  with `status !== 'active'`.
+- **Session token** — `/api/auth/me` no longer falls back to unsigned JWT decode
+  (`e16fb61` from security review, addressed in `c093f56d`).
+- **401-guard unification** — `requireUserId` canonical handler (follow-up to `c99704c1`).
+
+### Perf cluster (6 commits)
+- **Check runner** (`f2deabc5`) — parallel runner capped at 4 jobs to bound peak RSS.
+- **Crypto** (`11a6c0dd`) — `Bun.CryptoHasher` adopted for sha256 (replaces
+  `src/crypto/hasher.ts` naive impl).
+- **Transport** (`59a0753e`) — `Bun.gzipSync`/`gunzipSync` adopted.
+- **Config portability** (`c77aa744`) — `${DATA_DIR}` placeholders in schema output
+  instead of resolved absolute paths (`2f5c5f17`).
+- **Config schema** (`2f5c5f17`) — top-level sections added to JSON schema emitter.
+- **Tooling fix** (`3f640da9`) — knip/jscpd scripts repaired, stale dead-code config pruned.
+
+### Tooling cluster (7 commits)
+- **GPG pre-flight** (`8b3656db`) — `assertGpgUnlocked` on every signing path;
+  pre-flight in check runner.
+- **GPG keygrip** (`e0121860`) — `.credentials.env` `AGENT_GPG_KEY_ID` parsed for precheck.
+- **Worktree finalize race** (`d13f6078`) — concurrent-merge guard prevents blind stash
+  round-trip.
+- **Reap stale propagation** (`7aa33f8b`) — finalize lock acquisition no longer deadlocks.
+- **SPDX headers** (`3d1737c0`) — worktree-cli ticket files get SPDX headers.
+- **detectHallucinations** (`d5e3a72e`) — wrapped in try/catch so DB error doesn't strand
+  stored message.
+- **Auto-gen catch path** (`7cbcea68` + `e2f086e5`) — `triggerAutoGeneration` `.catch()`
+  path gains DI override + buffer stubs + `signalError` assertion.
+
+### Audit follow-up tickets (8, open)
+Filed as `TASK-audit-follow-up-*` git issues — tracked in `open-debt.md` § Audit Follow-up
+Cluster. No BLOCKING issues found; all are NIT-1/LOW/MED follow-ups.
