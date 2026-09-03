@@ -16,7 +16,7 @@
  * The endpoint is auth-gated like the rest of the assistant surface; it
  * requires the calling user but does not surface any per-user data.
  */
-import { Elysia, t, } from "elysia";
+import { Elysia, } from "elysia";
 import { listCommands, } from "../../assistant/commands/registry";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas/primitives";
 import { requireUserId, } from "../http-utils";

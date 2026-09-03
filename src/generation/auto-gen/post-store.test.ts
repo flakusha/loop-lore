@@ -29,7 +29,7 @@ import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
-import type { CompleteGenerationOpts, } from "../cancellation-tracker/lifecycle";
+import type { CompleteGenerationOpts, } from "../cancellation-tracker/types";
 import type { GenDeps, } from "./deps";
 
 createLogger({ level: "error", },);
