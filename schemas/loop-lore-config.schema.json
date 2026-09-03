@@ -31,13 +31,13 @@
           "properties": {
             "key": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/fix-config-and-finalize/loop-lore-data/certs/key.pem",
-              "description": "Path to TLS private key (PEM)"
+              "default": "${DATA_DIR}/certs/key.pem",
+              "description": "Path to TLS private key (PEM). DATA_DIR resolves to <repo>/loop-lore-data at runtime."
             },
             "cert": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/fix-config-and-finalize/loop-lore-data/certs/cert.pem",
-              "description": "Path to TLS certificate (PEM)"
+              "default": "${DATA_DIR}/certs/cert.pem",
+              "description": "Path to TLS certificate (PEM). DATA_DIR resolves to <repo>/loop-lore-data at runtime."
             }
           },
           "required": [
@@ -66,8 +66,8 @@
         },
         "sqliteFilename": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/fix-config-and-finalize/loop-lore-data/loop-lore.db",
-          "description": "SQLite database file path"
+          "default": "${DATA_DIR}/loop-lore.db",
+          "description": "SQLite database file path. DATA_DIR resolves to <repo>/loop-lore-data at runtime. Overridden by LOOP_LORE_DB_PATH env var."
         },
         "url": {
           "type": "string",
@@ -90,8 +90,8 @@
         },
         "uploadDir": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/fix-config-and-finalize/loop-lore-data/uploads",
-          "description": "Directory for uploaded assets"
+          "default": "${DATA_DIR}/uploads",
+          "description": "Directory for uploaded assets. DATA_DIR resolves to <repo>/loop-lore-data at runtime."
         },
         "maxFileSize": {
           "type": "integer",
