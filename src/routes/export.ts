@@ -11,6 +11,7 @@
 import { Elysia, } from "elysia";
 import JSZip from "jszip";
 import type { Kysely, } from "kysely";
+import { loadConfig, } from "../config/load";
 import type { DB, } from "../db/schema";
 import { resolveUserIdFromRequest, } from "../middleware/auth";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
@@ -36,7 +37,8 @@ interface HandlerOpts {
  */
 export function exportRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "export", },).post(`${prefix}/export`, async (ctx: any,) => {
-    const userId = await resolveUserIdFromRequest(ctx.request, database, "solo",);
+    const { auth: authConfig, } = loadConfig();
+    const userId = await resolveUserIdFromRequest(ctx.request, database, "solo", authConfig,);
     if (!userId) {
       return jsonError({
         message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
