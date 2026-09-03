@@ -310,6 +310,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-register-plugins-150-references-undefined-chatsectionsroutes.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
     },
     {
@@ -3711,6 +3715,12 @@
       "source": ".plan/tickets/TASK-character-world-data-separation.md"
     }
   ],
+  "src/characters/update.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fail-safe-execution-work-safety.md"
+    }
+  ],
   "src/characters/url-fetch.ts": [
     {
       "kind": "ticket",
@@ -4279,6 +4289,16 @@
       "source": "docs/spec/worlds.md"
     }
   ],
+  "src/chat/service/access.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md"
+    }
+  ],
   "src/chat/service/batch.test.ts": [
     {
       "kind": "ticket",
@@ -4377,6 +4397,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
+    }
+  ],
+  "src/chat/service/ownership.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
     }
   ],
   "src/chat/service/participants.ts": [
@@ -7253,6 +7279,10 @@
       "source": ".plan/epics/epic-multi-instance-reconciliation.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-runtime-integrity-fail-safes.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data.md"
     },
@@ -7261,8 +7291,18 @@
       "source": ".plan/tickets/TASK-data-integrity-phase1.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-runtime-integrity-watchdog-crash-recovery.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/multi-instance-reconciliation.md"
+    }
+  ],
+  "src/db/integrity-ledger.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-runtime-integrity-watchdog-crash-recovery.md"
     }
   ],
   "src/db/migrate.test.ts": [
@@ -7843,6 +7883,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-data-integrity-acid.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-runtime-integrity-fail-safes.md"
     },
     {
       "kind": "ticket",
@@ -9275,6 +9319,12 @@
       "source": ".plan/epics/epic-platform-integrations.md"
     }
   ],
+  "src/frontend/alpine-init.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+    }
+  ],
   "src/frontend/alpine/a11y.ts": [
     {
       "kind": "epic",
@@ -9627,6 +9677,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-settings-modal-output-styling-control.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-expose-full-vn-settings-from-spec.md"
     }
   ],
   "src/frontend/alpine/chat-settings/vn.ts": [
@@ -10547,10 +10601,20 @@
       "source": ".plan/epics/epic-archival-workflow.md"
     }
   ],
+  "src/frontend/asset-preview.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+    }
+  ],
   "src/frontend/asset-preview.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-duplicate-openassetpreview-definitions-with-divergent-behavi.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
     },
     {
       "kind": "ticket",
@@ -12419,6 +12483,12 @@
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     }
   ],
+  "src/generation/auto-gen/post-store.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-post-store-test-ts-32-imports-missing-completegenerationopts.md"
+    }
+  ],
   "src/generation/auto-gen/post-store.ts": [
     {
       "kind": "epic",
@@ -13011,6 +13081,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-immersion-presentation.md"
+    }
+  ],
+  "src/generation/lifecycle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-triggerautogeneration-catch-path-untested.md"
     }
   ],
   "src/generation/llm-queue.ts": [
@@ -14055,6 +14131,30 @@
       "source": ".plan/tickets/TASK-xmpp-integration.md"
     }
   ],
+  "src/integrity/health.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-local-instance-integrity-holistic.md"
+    }
+  ],
+  "src/integrity/playbook.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-local-instance-integrity-holistic.md"
+    }
+  ],
+  "src/integrity/reporting.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-local-instance-integrity-holistic.md"
+    }
+  ],
+  "src/integrity/safe-mode.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-local-instance-integrity-holistic.md"
+    }
+  ],
   "src/inventory/equipment.ts": [
     {
       "kind": "spec",
@@ -14437,6 +14537,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-emotion-impact.md"
+    }
+  ],
+  "src/messages/handle-scene-transitions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fail-safe-execution-work-safety.md"
     }
   ],
   "src/middleware/admin-gate.ts": [
@@ -17493,6 +17599,12 @@
       "source": ".plan/tickets/TASK-vn-branching-choices.md"
     }
   ],
+  "src/routes/commands/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-routes-commands-index-ts-19-has-unused-import-t.md"
+    }
+  ],
   "src/routes/companions.ts": [
     {
       "kind": "epic",
@@ -17707,6 +17819,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md"
     }
   ],
   "src/routes/export.test.ts": [
@@ -17727,6 +17843,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md"
     },
     {
       "kind": "ticket",
@@ -21413,6 +21533,12 @@
       "source": ".plan/epics/epic-script-migration.md"
     }
   ],
+  "src/scripts/worktree/templates.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-templates-ts-at-190l-convention-ceiling.md"
+    }
+  ],
   "src/search/plugin-types.ts": [
     {
       "kind": "epic",
@@ -21652,6 +21778,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-runtime-integrity-fail-safes.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-skills-professions-config.md"
     },
     {
@@ -21676,11 +21806,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-fail-safe-execution-work-safety.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-https-redirect-enforcement-for-plaintext-http.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-config-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-local-instance-integrity-holistic.md"
     },
     {
       "kind": "ticket",
@@ -21693,6 +21831,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-replace-sighup-full-restart-with-server-reload-for-cert-rota.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-runtime-integrity-watchdog-crash-recovery.md"
     },
     {
       "kind": "ticket",
@@ -22521,6 +22663,12 @@
       "source": ".plan/epics/epic-script-migration.md"
     }
   ],
+  "src/trade/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fail-safe-execution-work-safety.md"
+    }
+  ],
   "src/trading/market.ts": [
     {
       "kind": "epic",
@@ -22990,6 +23138,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-scenario-source.md"
     },
     {
@@ -23153,6 +23305,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md"
     },
     {
       "kind": "ticket",
