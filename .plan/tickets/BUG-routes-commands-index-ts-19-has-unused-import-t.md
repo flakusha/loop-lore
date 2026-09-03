@@ -26,3 +26,6 @@ src/routes/commands/index.ts(19,18): error TS6133: 't' is declared but its value
 ## Related
 
 Discovered during Bucket D audit (2026-09-03). File is in the shared scope of all 4 active parallel worktrees; whoever removes it first wins. Related: see also `BUG-register-plugins-150-references-undefined-chatsectionsroutes.md` and `BUG-post-store-test-ts-32-imports-missing-completegenerationopts.md`.
+
+
+git issue: 2226309
