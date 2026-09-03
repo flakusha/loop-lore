@@ -116,19 +116,27 @@ async function warmCache(keyId,) {
   }
 }
 
+// Named exports so other scripts (notably scripts/check-parallel.mjs
+// ensureGpgWarm()) can drive the same prolong/warm flow without spawning
+// a fresh bun subprocess. The CLI entrypoint below still runs when this
+// file is invoked directly.
+export { getKeygrip, prolongCachedPassphrase, warmCache, };
+
 // ── Main ─────────────────────────────────────────────────────────
 
-const keyId = loadCredentials();
-console.log(`GPG key: ${keyId.slice(0, 8,)}...`,);
+if (import.meta.main) {
+  const keyId = loadCredentials();
+  console.log(`GPG key: ${keyId.slice(0, 8,)}...`,);
 
-// Step 1: try to prolong an already-cached passphrase (no prompt).
-const prolonged = await prolongCachedPassphrase(keyId,);
-if (prolonged.ok) {
-  console.log(`Cache TTL refreshed to ${prolonged.maxTtl}s.`,);
-  process.exit(0,);
+  // Step 1: try to prolong an already-cached passphrase (no prompt).
+  const prolonged = await prolongCachedPassphrase(keyId,);
+  if (prolonged.ok) {
+    console.log(`Cache TTL refreshed to ${prolonged.maxTtl}s.`,);
+    process.exit(0,);
+  }
+
+  // Step 2: cache miss — fall back to the warm flow.
+  console.log(`Cache miss (${prolonged.reason}); warming via loopback sign...`,);
+  const warmed = await warmCache(keyId,);
+  process.exit(warmed ? 0 : 1,);
 }
-
-// Step 2: cache miss — fall back to the warm flow.
-console.log(`Cache miss (${prolonged.reason}); warming via loopback sign...`,);
-const warmed = await warmCache(keyId,);
-process.exit(warmed ? 0 : 1,);
