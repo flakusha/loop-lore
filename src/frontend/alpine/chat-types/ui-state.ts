@@ -27,8 +27,9 @@ export interface ChatCoreUiState {
   _debugView: boolean;
   _showCommandPalette: boolean;
   _activeCommand: string;
-  _commandList: { name: string; description: string }[];
-  _filteredCommands: { name: string; description: string }[];
+  _commandList: { name: string; descriptionKey: string; description: string }[];
+  _filteredCommands: { name: string; descriptionKey: string; description: string }[];
+  _loadCommandList(): Promise<void>;
   openContextMenu(event: MouseEvent, msgId: string,): void;
   closeContextMenu(): void;
   toggleReaction(msgId: string, emoji: string,): Promise<void>;
