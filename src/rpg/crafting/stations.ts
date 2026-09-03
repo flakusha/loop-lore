@@ -162,10 +162,27 @@ export class StationsService {
   }
 
   /**
-   * Get a single station instance by ID.
+   * Get a single station instance by ID, scoped to a world.
+   * @param worldId
    * @param id
    */
-  async getInstance(id: string,): Promise<StationInstance | null> {
+  async getInstance(worldId: string, id: string,): Promise<StationInstance | null> {
+    const row = await this.db.selectFrom("crafting_station_instances",)
+      .where("id", "=", id,)
+      .where("world_id", "=", worldId,)
+      .selectAll()
+      .executeTakeFirst();
+    return row ? mapInstance(row,) : null;
+  }
+
+  /**
+   * Look up a station instance by bare ID — no world scoping. Intended for
+   * authorization flows that need to read the row first to derive its worldId
+   * before performing a scoped mutation. Prefer {@link getInstance} (with
+   * worldId) for direct reads from request handlers.
+   * @param id
+   */
+  async getInstanceById(id: string,): Promise<StationInstance | null> {
     const row = await this.db.selectFrom("crafting_station_instances",)
       .where("id", "=", id,)
       .selectAll()
@@ -191,11 +208,12 @@ export class StationsService {
   }
 
   /**
-   * Update a station instance. Returns false when not found.
+   * Update a station instance, scoped to a world. Returns false when not found.
+   * @param worldId
    * @param id
    * @param opts
    */
-  async updateInstance(id: string, opts: UpdateStationInstanceOpts,): Promise<boolean> {
+  async updateInstance(worldId: string, id: string, opts: UpdateStationInstanceOpts,): Promise<boolean> {
     const u: Record<string, unknown> = {};
     if (opts.locationId !== undefined) { u.location_id = opts.locationId; }
     if (opts.ownerActorId !== undefined) { u.owner_actor_id = opts.ownerActorId; }
@@ -206,17 +224,20 @@ export class StationsService {
     const r = await this.db.updateTable("crafting_station_instances",)
       .set(u,)
       .where("id", "=", id,)
+      .where("world_id", "=", worldId,)
       .executeTakeFirst();
     return Number(r.numUpdatedRows,) > 0;
   }
 
   /**
-   * Delete a station instance. Returns false when not found.
+   * Delete a station instance, scoped to a world. Returns false when not found.
+   * @param worldId
    * @param id
    */
-  async deleteInstance(id: string,): Promise<boolean> {
+  async deleteInstance(worldId: string, id: string,): Promise<boolean> {
     const r = await this.db.deleteFrom("crafting_station_instances",)
       .where("id", "=", id,)
+      .where("world_id", "=", worldId,)
       .executeTakeFirst();
     return (r.numDeletedRows ?? 0n) > 0n;
   }

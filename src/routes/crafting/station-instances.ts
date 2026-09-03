@@ -115,7 +115,7 @@ export function craftingStationInstancesRoutes({ database, }: { database: Db }, 
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
       if (denied) { return denied; }
-      const inst = await svc().getInstance(ctx.params.instanceId,);
+      const inst = await svc().getInstance(ctx.params.worldId, ctx.params.instanceId,);
       if (!inst) { return notFoundResponse("Station instance",); }
       return jsonResponse(inst,);
     }, {
@@ -133,7 +133,7 @@ export function craftingStationInstancesRoutes({ database, }: { database: Db }, 
       const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
       if (denied) { return denied; }
       const body = ctx.body as Record<string, unknown>;
-      const ok = await svc().updateInstance(ctx.params.instanceId, {
+      const ok = await svc().updateInstance(ctx.params.worldId, ctx.params.instanceId, {
         locationId: body.locationId as string | undefined,
         ownerActorId: body.ownerActorId as string | undefined,
         currentDurability: body.currentDurability as number | undefined,
@@ -156,7 +156,7 @@ export function craftingStationInstancesRoutes({ database, }: { database: Db }, 
       if (typeof userId !== "string") { return userId; }
       const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
       if (denied) { return denied; }
-      const ok = await svc().deleteInstance(ctx.params.instanceId,);
+      const ok = await svc().deleteInstance(ctx.params.worldId, ctx.params.instanceId,);
       if (!ok) { return notFoundResponse("Station instance",); }
       return jsonResponse({ ok: true, },);
     }, {
