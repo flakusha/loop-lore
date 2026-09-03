@@ -58,6 +58,15 @@ function renderNsfwAuditRows(actions: ModAction[],): string {
     </tr>`,).join("\n            ",);
 }
 
+// SECURITY: This handler MUST only be reached through the registration in
+// `plugin-pages.ts` which wraps it in `.guard({ beforeHandle: nsfwGuard })`
+// where `nsfwGuard = requirePermission("admin.system")`. That guard returns
+// 403 on authz failure (with audit log) and 401 when `ctx.userId` is absent.
+// Do not call `serveNsfwModerationAudit` from any route that does not
+// establish the same admin contract — the function trusts its caller to
+// have already gated unauthenticated/non-admin traffic.
+// See: WIRE-nsfw-audit-page-missing-inline-authz.
+
 /**
  * Server-render the NSFW moderation audit view: consent state + immutable
  * moderation-action audit log for a target user, wrapped in the page layout.
