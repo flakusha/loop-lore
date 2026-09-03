@@ -4,6 +4,7 @@
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
 import type { TemplatesConfig, } from "../sections/templates";
+import { findMainRepoRoot, } from "../../utils/git-worktree";
 
 // ── File Discovery ──────────────────────────────────────────
 
@@ -25,41 +26,6 @@ export const TEMPLATE_FILES: Record<string, keyof TemplatesConfig> = {
   "character.yml": "character",
   "character.toml": "character",
 };
-
-/**
- * Detect if cwd is a git worktree and return the main repo root.
- * Same logic as load.ts — duplicated to avoid circular import.
- * @param cwd
- */
-export function findMainRepoRoot(cwd: string,): string | null {
-  const gitPath = path.join(cwd, ".git",);
-  if (!existsSync(gitPath,)) { return null; }
-
-  try {
-    if (statSync(gitPath,).isDirectory()) { return null; }
-  } catch {
-    return null;
-  }
-
-  const content = readFileSync(gitPath, "utf8",).trim();
-  const match = /^gitdir:\s*(.+)$/.exec(content,);
-  if (!match) { return null; }
-
-  const gitdir = match[1]!;
-  const worktreesDir = path.dirname(gitdir,);
-  const gitDir = path.dirname(worktreesDir,);
-  const mainRoot = path.dirname(gitDir,);
-
-  const mainGitPath = path.join(mainRoot, ".git",);
-  if (existsSync(mainGitPath,)) {
-    try {
-      if (statSync(mainGitPath,).isDirectory()) { return mainRoot; }
-    } catch {
-      // fall through
-    }
-  }
-  return null;
-}
 
 /**
  * Find template files in search directories
