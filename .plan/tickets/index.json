@@ -2776,6 +2776,25 @@
     "source": ".plan/tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md",
     "git_issue": "0d223a7"
   },
+
+  "BUG-POST-STORE-TEST-TS-32-IMPORTS-MISSING-COMPLETEGENERATIONOPTS": {
+    "hash": "46547b2",
+    "extid": "BUG-POST-STORE-TEST-TS-32-IMPORTS-MISSING-COMPLETEGENERATIONOPTS",
+    "type": "BUG",
+    "title": "post-store.test.ts:32 imports missing CompleteGenerationOpts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "typecheck",
+      "test",
+      "regression",
+      "session-2026-09-03"
+    ],
+    "source": ".plan/tickets/BUG-post-store-test-ts-32-imports-missing-completegenerationopts.md",
+    "git_issue": "7bb2bdf",
+    "status": "open"
+  },
   "BUG-PRIVATE-TIER-NO-TRUE-E2E": {
     "hash": "bc54f30",
     "extid": "BUG-PRIVATE-TIER-NO-TRUE-E2E",
@@ -2863,6 +2882,25 @@
     "tags": [],
     "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
   },
+
+  "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
+    "hash": "0dc1cb1",
+    "extid": "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES",
+    "type": "BUG",
+    "title": "register-plugins:150 references undefined chatSectionsRoutes",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [
+      "typecheck",
+      "backend",
+      "regression",
+      "session-2026-09-03"
+    ],
+    "source": ".plan/tickets/BUG-register-plugins-150-references-undefined-chatsectionsroutes.md",
+    "git_issue": "2c747e0",
+    "status": "open"
+  },
   "BUG-REMOTE-ACTOR-DISCOVERY-WEBFINGER-RESOLVE-HOST-META-ABSENT": {
     "hash": "550802a",
     "git_issue": "550802a",
@@ -2923,6 +2961,25 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-.md"
+  },
+
+  "BUG-ROUTES-COMMANDS-INDEX-TS-19-HAS-UNUSED-IMPORT-T": {
+    "hash": "a2be346",
+    "extid": "BUG-ROUTES-COMMANDS-INDEX-TS-19-HAS-UNUSED-IMPORT-T",
+    "type": "BUG",
+    "title": "routes/commands/index.ts:19 has unused import t",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [
+      "typecheck",
+      "backend",
+      "cleanup",
+      "session-2026-09-03"
+    ],
+    "source": ".plan/tickets/BUG-routes-commands-index-ts-19-has-unused-import-t.md",
+    "git_issue": "49dd182",
+    "status": "open"
   },
   "BUG-ROUTES-MESSAGE-SEEN-POST-DELETE-TRUSTS-CLIENT-ACTORID-IDOR-A": {
     "hash": "f0824a8",
