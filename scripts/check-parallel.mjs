@@ -185,7 +185,16 @@ async function ensureGpgWarm() {
     GPG_PRECHECK_STATE = { state: "warm", maxTtl: prolonged.maxTtl, };
     return;
   }
-  // Step 2: cold cache — CI path refuses, TTY path falls through to warmCache().
+  // Step 2: distinguish "agent config gap" from "genuine cold cache".
+  //   `preset-unsupported` means the agent can't accept PRESET_PASSPHRASE
+  //   (no `allow-preset-passphrase` in gpg-agent.conf). The cache MAY still
+  //   be warm from a prior session — prolong just can't refresh its TTL.
+  //   Don't kill the gate over a config gap the user owns.
+  if (prolonged.reason === "preset-unsupported") {
+    console.log(`gpg-precheck: prolong unavailable (${prolonged.reason}); trusting agent cache as-is.`,);
+    GPG_PRECHECK_STATE = { state: "warm", reason: prolonged.reason, };
+    return;
+  }
   const isCi = MODE === "ci" || !process.stdout.isTTY;
   if (isCi) {
     console.error("hint: gpg-cold-cache",);
