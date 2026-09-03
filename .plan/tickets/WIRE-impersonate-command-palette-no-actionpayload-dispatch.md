@@ -1,27 +1,11 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
-
 # WIRE: impersonate command-palette FE has no actionPayload dispatch
-
-**Status:** Open
-**Priority:** high
 **Priority Tier:** P2
 **Effort:** Medium
-**Area:** impersonation
 **Source:** reconcile review (Scout Batch C — IMP-3)
-
-## Evidence
-
 `src/frontend/alpine/command-buttons.ts:73-92` — `runCommand(cmd)` handles only `"guide"` and `"scene"`. When `cmd === "impersonate"` or `"char"`, it falls through to `input.value = \`/${cmd} \` (types into chat input). The `actionPayload` from `buildImpersonateResult` is never read, never dispatched.
-
-## Impact
-
 User sees `/impersonate Eldon` typed into the chat input instead of actual impersonation. The impersonation flow is completely dead on the FE side.
-
-## Fix
-
-Add to `runCommand`:
-
 ```ts
 if (cmd === "impersonate" || cmd === "char") {
   Alpine.store("chat").impersonate(cmd);
@@ -40,3 +24,7 @@ And add `impersonate(cmd)` method to the chat Alpine store that calls the BE imp
 
 - [ ] Impersonate button dispatches actionPayload, not text input
 - [ ] Chat store has `impersonate()` method
+
+## Resolution
+
+Fixed in commit `2ac5cf29` (fix(wire): 3 P2-Reconcile tickets): the same commit also wrapped /views/nsfw-moderation in `requirePermission('admin.system')` guard, added the impersonate dispatch in `command-buttons.runCommand`, and added the linkAsset() call in `src/routes/characters/create.ts` after actor insert.
