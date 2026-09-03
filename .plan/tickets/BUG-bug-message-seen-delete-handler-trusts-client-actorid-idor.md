@@ -1,6 +1,7 @@
 # BUG: BUG: message-seen DELETE handler trusts client actorId (IDOR)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ done
+**Resolution:** Fixed in `5b080b4d0c013f04faa88076ac3abd47cab481ca`
 **Priority:** high
 **Effort:** Medium
 

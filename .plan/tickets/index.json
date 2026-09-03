@@ -596,7 +596,9 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-message-seen-delete-handler-trusts-client-actorid-idor.md"
+    "source": ".plan/tickets/BUG-bug-message-seen-delete-handler-trusts-client-actorid-idor.md",
+    "status": "done",
+    "resolution": "Fixed in 5b080b4d0c013f04faa88076ac3abd47cab481ca"
   },
   "BUG-BUG-MESSAGE-SEEN-POST-ACCEPTS-ARBITRARY-STATE-STRING-ENUM-NE": {
     "hash": "37fbf14",
