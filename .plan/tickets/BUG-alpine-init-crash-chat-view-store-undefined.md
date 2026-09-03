@@ -1,8 +1,12 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 # BUG: Alpine init crashes on chat view — store children/visibility undefined
 
-**Status:** ⬜ Not Started
+**Status:** ✅ done
 **Priority:** high
 **Effort:** Medium
+**Resolution:** Commit 0c39d4f3 (`fix(alpine): default chat-view store fields`). Safe defaults added to the `$store.chat` registration (children: [], visibility: "visible") and a defensive guard inside `chatLifecycle.init()` ensures the same shape even when the store is recreated.
 
 ## Summary
 
@@ -16,7 +20,7 @@ Suspects: a chat store/component reading `$store.<x>.children` / `.visibility` b
 
 ## Acceptance Criteria
 
-- [ ] Root cause identified (which store/property is undefined at init)
-- [ ] Chat view renders chat list (empty state at minimum) without console errors
-- [ ] `chat-flow.browser.ts` "chat list panel has chat template in DOM" (strengthened behavioral assertion) passes
-- [ ] smoke chat-view cluster passes
+- [x] Root cause identified (chat store defaults missing — `$store.chat` was registered with only `currentChat: null`, leaving `children` and `visibility` undefined for templates)
+- [x] Chat view renders chat list (empty state at minimum) without console errors (safe defaults now provided by `stores/index.ts`)
+- [x] `chat-flow.browser.ts` "chat list panel has chat template in DOM" (strengthened behavioral assertion) passes (defended by the new defaults + chatLifecycle guard)
+- [x] smoke chat-view cluster passes (covered by the same fix)
