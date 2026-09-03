@@ -1134,7 +1134,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-check-parallel-gpg-preflight-crashes-on-undefined-m.md"
+    "source": ".plan/tickets/BUG-check-parallel-gpg-preflight-crashes-on-undefined-m.md",
+    "status": "done"
   },
   "BUG-CLASSIFY-INTENT-CONFIDENCE-UNBOUNDED": {
     "hash": "pending",
@@ -2471,6 +2472,18 @@
     "git_issue": "a33c6f6",
     "status": "done"
   },
+  "BUG-NO-ROLE-RESTRICTION-FOR-CHANGING-CHAT-SETTINGS": {
+    "hash": "90d9e30",
+    "git_issue": "90d9e30",
+    "extid": "BUG-NO-ROLE-RESTRICTION-FOR-CHANGING-CHAT-SETTINGS",
+    "type": "BUG",
+    "title": "No role restriction for changing chat settings",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
+  },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "hash": "pending",
     "extid": "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED",
@@ -2893,6 +2906,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
   },
+  "BUG-REDUNDANT-VN-STATE-STORED-IN-TWO-INDEPENDENT-LOCATIONS": {
+    "hash": "9db5fef",
+    "git_issue": "9db5fef",
+    "extid": "BUG-REDUNDANT-VN-STATE-STORED-IN-TWO-INDEPENDENT-LOCATIONS",
+    "type": "BUG",
+    "title": "Redundant VN state stored in two independent locations",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
+  },
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
     "hash": "0b9a09b",
     "extid": "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES",
@@ -3089,6 +3114,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-services-tradecore-validatelines-lacks-world-id-filter-cross.md"
+  },
+  "BUG-SETTINGS-SAVE-OMITS-GMCONFIG-FOR-ONLINE-CHATS": {
+    "hash": "e5219e3",
+    "git_issue": "e5219e3",
+    "extid": "BUG-SETTINGS-SAVE-OMITS-GMCONFIG-FOR-ONLINE-CHATS",
+    "type": "BUG",
+    "title": "Settings save omits gmConfig for online chats",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
   },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
     "hash": "3ba1095",
@@ -3546,6 +3583,18 @@
     "git_issue": "2021fbd",
     "status": "done"
   },
+  "BUG-VISUALNOVEL-TYPE-MISMATCH-ACROSS-API-DB-LAYERS": {
+    "hash": "c0c51c2",
+    "git_issue": "c0c51c2",
+    "extid": "BUG-VISUALNOVEL-TYPE-MISMATCH-ACROSS-API-DB-LAYERS",
+    "type": "BUG",
+    "title": "visualNovel type mismatch across API/DB layers",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md"
+  },
   "BUG-VN-CHOICES-IDOR-GUARD-NON-COMPILING": {
     "hash": "pending",
     "extid": "BUG-VN-CHOICES-IDOR-GUARD-NON-COMPILING",
@@ -3557,6 +3606,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-vn-choices-idor-guard-non-compiling.md",
     "status": "fixed-in-worktree"
+  },
+  "BUG-VN-MODE-LOCKED-ONCE-CHAT-HAS-CONFIRMED-MESSAGES": {
+    "hash": "c7f002c",
+    "git_issue": "c7f002c",
+    "extid": "BUG-VN-MODE-LOCKED-ONCE-CHAT-HAS-CONFIRMED-MESSAGES",
+    "type": "BUG",
+    "title": "VN mode locked once chat has confirmed messages",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md"
   },
   "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M": {
     "hash": "508a7ea",
@@ -5267,6 +5328,18 @@
     "source": ".plan/tickets/FEAT-encryption-foundation-aes-256-gcm.md",
     "status": "done",
     "git_issue": "441a05e"
+  },
+  "FEAT-EXPOSE-FULL-VN-SETTINGS-FROM-SPEC": {
+    "hash": "8a1613e",
+    "git_issue": "8a1613e",
+    "extid": "FEAT-EXPOSE-FULL-VN-SETTINGS-FROM-SPEC",
+    "type": "FEAT",
+    "title": "Expose full VN settings from spec",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-expose-full-vn-settings-from-spec.md"
   },
   "FEAT-FEDERATE-BLOG-SYSTEM-VIA-ACTIVITYPUB-LEMMY-MASTODON-REDDIT": {
     "hash": "9c1c458",
@@ -19921,6 +19994,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-user-stories.md",
     "git_issue": "f188860"
+  },
+  "TASK-VALIDATE-AND-FIX-FE-BE-DB-GAPS-FOR-CHAT-VN-SETTINGS": {
+    "hash": "66c4c3d",
+    "git_issue": "66c4c3d",
+    "extid": "TASK-VALIDATE-AND-FIX-FE-BE-DB-GAPS-FOR-CHAT-VN-SETTINGS",
+    "type": "TASK",
+    "title": "Validate and fix FE/BE/DB gaps for chat/VN settings",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
   },
   "TASK-VERIFY-LOGGING-CHANGES-GREEN": {
     "hash": "a51c266",
