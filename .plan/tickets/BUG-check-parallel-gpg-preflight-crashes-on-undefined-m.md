@@ -3,7 +3,7 @@
 
 # BUG: check-parallel GPG preflight crashes on undefined m
 
-**Status:** ⬜ Not Started
+**Status:** Done
 **Priority:** high
 **Effort:** Medium
 
@@ -16,3 +16,7 @@ Dev HEAD regression from 8b3656db (fix(worktree): assertGpgUnlocked on every sig
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Resolved by `b58a75f1 chore(format): dprint fmt on 20 files (assistant commands, config schema-class, async apply, middleware lifecycle, generation post-store, chat seen, scripts)` — the dprint run re-emitted `const m = /^AGENT_GPG_KEY_ID\s*=\s*["']?([^"'\n]*)["']?/m.exec(content,)` at `scripts/check-parallel.mjs:173` (git blame confirms). The pre-flight now successfully reads `keyId` from `.credentials.env` and exits with the `hint: gpg-no-key-id` or `hint: gpg-cold-cache` guidance instead of crashing. Interim workaround `CHECK_SKIP_GPG_PRECHECK=1` remains valid for worktrees without `.credentials.env` (sets `state: "skipped"` in the check report).
