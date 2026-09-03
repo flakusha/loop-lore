@@ -47,3 +47,23 @@
 - ✅ **Size-strict debt** → closed (`size:strict` reports 0 files over 250L, verified 2026-08-12; gate stays non-blocking until `TASK-size-strict-debt.md` promotion AC lands).
 - ✅ **e2e browser stabilization** → closed 2026-08-14 — `test:e2e:browser` 19/19 files ×2 (worktree `e2e-stabilization`).
 - 🟡 release-process + tag `v0.1.0` + changelog + push `dev`→`origin/dev` → `TASK-PLAN-RELEASE-V010` + `epic-release-010.md`.
+
+## Post-bug-bucket refactoring (session-2026-09-03)
+
+Surfaced by the 5 surgical bug fixes shipped on 2026-09-03 (`c093f56d`, `7cbcea68`, `a4ce15bf`, `be9fcfc5`, `08c2a95f`, `7e0687f4`). 4 of 5 fixes were trust-boundary failures; the inline patches need a structural home. Filed as TASK tickets; this section is the visibility index.
+
+| # | Refactor                                                              | Where                                          | Triggered by                                                              | Prereq |
+| - | --------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- | ------ |
+| 1 | Extract `scopeByUserId` middleware                                   | `src/middleware/actor-scope.ts` (new)          | `be9fcfc5` (message-seen DELETE IDOR) + `c093f56d` (async userId guards)   | —      |
+| 2 | Lift crafting-station `world_id` scope to shared entity-helper        | `src/db/entity-scope.ts` or `src/rpg/world-scoped.ts` (new) | `7e0687f4` (crafting station world scope)                                 | —      |
+| 3 | Typed Kysely helpers for ON CONFLICT upsert-by-unique-key             | `src/db/upsert.ts` (new)                       | `08c2a95f` (chat swipe_index race) + `058_swipe_index_unique.ts`          | —      |
+| 4 | Schema-validate Alpine store fields at init (replace runtime defaults) | `src/frontend/stores/chat-schema.ts` (new)     | `7cbcea68` + `a4ce15bf` (alpine chat-view init crash)                     | —      |
+| 5 | Trust-boundary audit pass (cross-cutting migration sweep)             | `src/routes/**` + helpers from #1/#2           | meta-finding — 4 of 5 fixes were trust-boundary class                     | #1, #2 |
+
+**Execution order**: #1, #2, #3, #4 small enough to parallelize. #5 is the meta-sweep that adopts them — must run after #1 and #2 land.
+
+**Why now**: each helper is small (1-3 days), eliminates whole IDOR classes, and de-risks the next 70+ open HIGH BUG tickets where ownership/scope checks are missing. Bucket-D bug fixes will hit the same patterns repeatedly unless these helpers land first.
+
+**Tickets**: `TASK-refactor-extract-scopebyuserid-middleware`, `TASK-refactor-lift-crafting-station-world-id-scope-to-shared-help`, `TASK-refactor-typed-kysely-upsert-by-unique-key-helpers`, `TASK-refactor-schema-validate-alpine-store-fields-at-init`, `TASK-refactor-trust-boundary-audit-pass`.
+
+**Acceptance check**: after #1 + #2 + #5 land, grep `query\.actorId\|body\.actorId` in `src/routes/` returns zero production hits, and every world-scoped entity query has a `WHERE world_id = ?` (or helper call).
