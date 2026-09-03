@@ -10,6 +10,7 @@ import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
 import { gitSyncQuiet, } from "../utils/git";
+import { assertGpgUnlocked, } from "../utils/gpg";
 import { extractMessageInput, } from "../utils/message";
 import { log, } from "../utils/output";
 
@@ -75,15 +76,9 @@ export async function agentCommit(
     process.exit(1,);
   }
 
-  // Verify GPG key available
-  const gpgCheck = Bun.spawnSync(
-    ["gpg", "--list-secret-keys", credentials.keyId,],
-    { stdout: "pipe", stderr: "pipe", },
-  );
-  if (gpgCheck.exitCode !== 0) {
-    log("error", `GPG secret key ${credentials.keyId} not found — run: ./scripts/gpg-unlock.mjs`,);
-    process.exit(1,);
-  }
+  // Verify GPG key is in the keyring AND unlocked. The helper exits 1 on
+  // any of three failure modes with an actionable hint to scripts/gpg-unlock.mjs.
+  assertGpgUnlocked(credentials.keyId,);
 
   log("info", `Creating GPG-signed commit in '${branch}'...`,);
   console.log(`  Author:    ${authorName} <${authorEmail}>`,);

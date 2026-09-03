@@ -7,6 +7,7 @@
 
 import { type WorktreeConfig, } from "../utils/config";
 import { gitSync, gitSyncQuiet, } from "../utils/git";
+import { assertGpgUnlocked, } from "../utils/gpg";
 import { extractMessageInput, } from "../utils/message";
 import { log, } from "../utils/output";
 
@@ -56,15 +57,9 @@ export async function commit(
     process.exit(1,);
   }
 
-  // Verify GPG key available
-  const gpgCheck = Bun.spawnSync(
-    ["gpg", "--list-secret-keys", config.agentGpgKeyId,],
-    { stdout: "pipe", stderr: "pipe", },
-  );
-  if (gpgCheck.exitCode !== 0) {
-    log("error", `GPG secret key ${config.agentGpgKeyId} not found — run: ./scripts/gpg-unlock.mjs`,);
-    process.exit(1,);
-  }
+  // Verify GPG key is in the keyring AND unlocked. The helper exits 1 on
+  // any of three failure modes with an actionable hint to scripts/gpg-unlock.mjs.
+  assertGpgUnlocked(config.agentGpgKeyId,);
 
   const currentBranch = gitSync(config.repoRoot, "branch", "--show-current",) || "(detached)";
 
