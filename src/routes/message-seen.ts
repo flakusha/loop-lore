@@ -17,6 +17,7 @@ import { type Kysely, sql, } from "kysely";
 import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
 import { notFound, } from "../validation/middleware";
+import { requireActorFromSession, } from "../middleware/scope-by-user";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
@@ -249,8 +250,13 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
       .delete(
         `${prefix}/messages/:id/seen`,
         async (ctx: any,) => {
-          const userId = requireUserId(ctx,);
-          if (typeof userId !== "string") { return userId; }
+          // Resolve the session actor via the dedicated helper. On success
+          // `actor.userId` is the validated session user; on failure the
+          // helper returns the same 401 Response that `requireUserId`
+          // produced, so the rejection semantics are unchanged.
+          const actor = requireActorFromSession(ctx,);
+          if (!("userId" in actor)) { return actor; }
+          const { userId, } = actor;
           const { userRole, } = extractAuth(ctx,);
           const messageId = ctx.params.id;
           const { actorId, } = ctx.query as { actorId: string };
