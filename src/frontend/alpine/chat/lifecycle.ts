@@ -29,6 +29,22 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
     this._flagOther = "";
     this._flagBusy = false;
     this._reactionPicker = { visible: false, messageId: "", x: 0, y: 0, };
+
+    // Defensive defaults for the `$store.chat` payload — templates may read
+    // `$store.chat.children` / `$store.chat.visibility` before initAlpineStores
+    // has wired the store, or before a fetched payload populates it. Without
+    // these guards Alpine throws "Cannot read properties of undefined
+    // (reading 'children')" / "... of null (reading 'visibility')", aborting
+    // the chat-view mount and leaving #chat-list unrendered — see
+    // BUG-alpine-init-crash-chat-view-store-undefined.
+    const chatStore = Alpine.store("chat",) as Record<string, unknown> | undefined;
+    if (chatStore) {
+      if (!Array.isArray(chatStore.children,)) { chatStore.children = []; }
+      if (typeof chatStore.visibility !== "string" || chatStore.visibility === "") {
+        chatStore.visibility = "visible";
+      }
+    }
+
     this._quickEmojis = [
       "👍",
       "❤️",
