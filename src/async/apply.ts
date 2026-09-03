@@ -11,7 +11,7 @@
  * @see epic-middleware-request-lifecycle.md
  */
 
-import type { Kysely, } from "kysely";
+import type { Kysely, UpdateQueryBuilder, } from "kysely";
 import type { DB, } from "../db/schema";
 import { jsonStringifyOr, } from "../utils/safe-json";
 import type { AsyncStoreConfig, } from "./store";
@@ -47,6 +47,31 @@ export type Write =
     response: { status: number; headers: Record<string, string>; body: string };
   }
   | { kind: "fail"; id: string; userId: string | null; error: string };
+
+/**
+ * Execute a `request_results` update scoped by `id` and (when the write
+ * is authenticated) the owner's `user_id`.
+ *
+ * Mirrors the `requireActorFromSession` guard in the request layer:
+ * the `userId` from the write is treated as the session actor and
+ * matched against the row's `user_id` column. When `userId === null`
+ * the WHERE clause falls back to `id` alone — anonymous rows never
+ * collide with any authenticated user's row because SQL `NULL = NULL`
+ * is false, and the row's `user_id` is `null` at insert time.
+ *
+ * Centralizing the guard here keeps the WHERE-chain shape consistent
+ * across `progress` / `complete` / `fail` and makes the ownership
+ * semantics a single point of change. BUG-bug-async-lifecycle-writes-
+ * request-results-unscoped-by-user.
+ * @param where
+ * @param userId
+ */
+async function executeScopedByUser<O>(
+  where: UpdateQueryBuilder<DB, "request_results", "request_results", O>,
+  userId: string | null,
+): Promise<void> {
+  await (userId !== null ? where.where("user_id", "=", userId) : where).execute();
+}
 
 /**
  * Apply a single write to the DB. Exported for test fixtures.
@@ -97,7 +122,7 @@ export async function apply(
           progress: write.progress === null ? null : jsonStringifyOr(write.progress,) ?? null,
         },)
         .where("id", "=", write.id,);
-      await (write.userId !== null ? where.where("user_id", "=", write.userId,) : where).execute();
+      await executeScopedByUser(where, write.userId,);
       return;
     }
     case "complete": {
@@ -117,7 +142,7 @@ export async function apply(
           completed_at: new Date().toISOString(),
         },)
         .where("id", "=", write.id,);
-      await (write.userId !== null ? where.where("user_id", "=", write.userId,) : where).execute();
+      await executeScopedByUser(where, write.userId,);
       return;
     }
     case "fail": {
@@ -129,7 +154,7 @@ export async function apply(
           completed_at: new Date().toISOString(),
         },)
         .where("id", "=", write.id,);
-      await (write.userId !== null ? where.where("user_id", "=", write.userId,) : where).execute();
+      await executeScopedByUser(where, write.userId,);
       return;
     }
   }
