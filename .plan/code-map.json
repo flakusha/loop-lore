@@ -4755,24 +4755,6 @@
       "source": ".plan/tickets/TASK-character-personality-integrity.md"
     }
   ],
-  "src/components/blog/post-detail.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
-    }
-  ],
-  "src/components/blog/post-editor.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
-    }
-  ],
-  "src/components/blog/post-list.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
-    }
-  ],
   "src/components/branch-indicator.html": [
     {
       "kind": "ticket",
