@@ -7,6 +7,7 @@ import { uid, } from "../../../utils.js";
 import type {
   BlogCommentRow,
   BlogCommentStatus,
+  BlogCommentWithChildren,
   CreateCommentInput,
 } from "./types";
 
@@ -26,6 +27,7 @@ export async function createComment(
     author_id: input.author_id,
     body: input.body,
     status: "visible" as const,
+    parent_comment_id: input.parent_comment_id ?? null,
     created_at: new Date().toISOString(),
   };
 
@@ -72,7 +74,70 @@ export async function listComments(
     .orderBy("created_at", "asc",)
     .limit(opts?.limit ?? 50,)
     .offset(opts?.offset ?? 0,)
-    .execute() as Promise<BlogCommentRow[]>;
+    .execute() as unknown as BlogCommentRow[];
+}
+
+/**
+ * @param db
+ * @param postId
+ * @param opts
+ * @param opts.limit
+ * @param opts.offset
+ */
+export async function listCommentsThreaded(
+  db: Kysely<any>,
+  postId: string,
+  opts?: { limit?: number; offset?: number },
+): Promise<BlogCommentWithChildren[]> {
+  const comments = await db
+    .selectFrom("blog_comments",)
+    .selectAll()
+    .where("post_id", "=", postId,)
+    .where("status", "!=", "deleted",)
+    .orderBy("created_at", "asc",)
+    .limit(opts?.limit ?? 50,)
+    .offset(opts?.offset ?? 0,)
+    .execute() as unknown as BlogCommentRow[];
+
+  // Build a lookup map keyed by id
+  const byId = new Map<string, BlogCommentRow[]>();
+
+  for (const c of comments) {
+    const key = c.parent_comment_id ?? "__root__";
+    const arr = byId.get(key,);
+    if (arr) {
+      arr.push(c,);
+    } else {
+      byId.set(key, [c,],);
+    }
+  }
+
+  function buildTree(parentId: string | null,): BlogCommentWithChildren[] {
+    const key = parentId ?? "__root__";
+    const siblings = byId.get(key,) ?? [];
+    return siblings.map((c,) => ({
+      ...c,
+      children: buildTree(c.id,),
+    }));
+  }
+
+  return buildTree(null,);
+}
+
+/**
+ * @param db
+ * @param id
+ */
+export async function getComment(
+  db: Kysely<any>,
+  id: string,
+): Promise<BlogCommentRow | undefined> {
+  return db
+    .selectFrom("blog_comments",)
+    .selectAll()
+    .where("id", "=", id,)
+    .where("status", "!=", "deleted",)
+    .executeTakeFirst() as unknown as BlogCommentRow | undefined;
 }
 
 /**

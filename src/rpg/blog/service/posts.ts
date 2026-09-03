@@ -114,6 +114,7 @@ export async function listPosts(
     world_id?: string;
     limit?: number;
     offset?: number;
+    userId?: string;
   },
 ): Promise<BlogPostWithTags[]> {
   let query = db.selectFrom("blog_posts",).selectAll();
@@ -132,6 +133,17 @@ export async function listPosts(
   }
   if (filters.world_id) {
     query = query.where("world_id", "=", filters.world_id,);
+  }
+
+  // Followers visibility: only show posts from authors the userId follows
+  if (filters.visibility === BlogPostVisibility.Followers && filters.userId) {
+    query = query.where(
+      "blog_posts.author_id",
+      "in",
+      db.selectFrom("blog_follows",)
+        .select("author_id",)
+        .where("follower_id", "=", filters.userId,),
+    );
   }
 
   query = query
