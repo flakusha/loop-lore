@@ -277,4 +277,96 @@ describe("craftingStationRoutes", () => {
     await db.destroy();
     sqlite.close();
   });
+
+  test("rejects cross-world station instance access", async () => {
+    const { db, sqlite, } = await makeDb();
+    const otherWorldId = randomUUID();
+    const defId = randomUUID();
+    const instId = randomUUID();
+
+    // Seed user + two worlds owned by that user.
+    await db.insertInto("users",).values({
+      id: TEST_USER,
+      username: "station-tester-cross",
+      display_name: "Cross World Tester",
+      role: "user",
+      status: "active",
+      settings: "{}",
+    },).execute();
+    await db.insertInto("worlds",).values({
+      id: WORLD_ID,
+      owner_id: TEST_USER,
+      name: "World A",
+      description: null,
+    },).execute();
+    await db.insertInto("worlds",).values({
+      id: otherWorldId,
+      owner_id: TEST_USER,
+      name: "World B",
+      description: null,
+    },).execute();
+
+    // Place a station def + instance in world A.
+    await db.insertInto("crafting_station_defs",).values({
+      id: defId,
+      world_id: WORLD_ID,
+      name: "Anvil A",
+      description: null,
+      station_type: "anvil",
+      tier: 1,
+      speed_bonus: 0,
+      quality_bonus: 0,
+      success_bonus: 0,
+      material_saving_chance: 0,
+      max_durability: 100,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },).execute();
+    await db.insertInto("crafting_station_instances",).values({
+      id: instId,
+      station_def_id: defId,
+      world_id: WORLD_ID,
+      location_id: null,
+      owner_actor_id: null,
+      current_durability: 100,
+      is_active: 1,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },).execute();
+
+    const app = makeApp(db,);
+    const otherBase = `http://localhost/api/worlds/${otherWorldId}/crafting-stations/${defId}/instances/${instId}`;
+
+    // GET must 404 (scoped lookup returns null).
+    const getRes = await app.handle(new Request(otherBase,),);
+    expect(getRes.status,).toBe(404,);
+
+    // PUT must 404 (no row updated).
+    const putRes = await app.handle(
+      new Request(otherBase, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ currentDurability: 1, },),
+      },),
+    );
+    expect(putRes.status,).toBe(404,);
+
+    // DELETE must 404 (no row deleted).
+    const delRes = await app.handle(
+      new Request(otherBase, {
+        method: "DELETE",
+      },),
+    );
+    expect(delRes.status,).toBe(404,);
+
+    // Original instance must still exist in world A.
+    const stillThere = await db.selectFrom("crafting_station_instances",)
+      .where("id", "=", instId,)
+      .selectAll()
+      .executeTakeFirst();
+    expect(stillThere?.current_durability,).toBe(100,);
+
+    await db.destroy();
+    sqlite.close();
+  });
 });
