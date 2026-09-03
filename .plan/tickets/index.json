@@ -116,7 +116,7 @@
     "status": "open"
   },
   "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED": {
-    "hash": "pending",
+    "hash": "0c39d4f",
     "extid": "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED",
     "type": "BUG",
     "title": "Alpine init crashes on chat view — store children/visibility undefined",
@@ -124,7 +124,9 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-alpine-init-crash-chat-view-store-undefined.md"
+    "source": ".plan/tickets/BUG-alpine-init-crash-chat-view-store-undefined.md",
+    "status": "done",
+    "git_issue": "0c39d4f"
   },
   "BUG-ALPINE-INIT-HYDRATION": {
     "hash": "20354a1",
@@ -7521,6 +7523,17 @@
     "status": "done",
     "git_issue": "e900191"
   },
+  "TASK-ADOPT-VIEW-TRANSITIONS-API-FOR-NAVIGATION": {
+    "hash": "pending",
+    "extid": "TASK-ADOPT-VIEW-TRANSITIONS-API-FOR-NAVIGATION",
+    "type": "TASK",
+    "title": "Adopt View Transitions API for page navigation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-modernization.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-view-transitions-api-for-navigation.md"
+  },
   "TASK-ADOPT-VIEW-TRANSITIONS-API-FOR-PAGE-NAVIGATION": {
     "hash": "5b18353",
     "git_issue": "5b18353",
@@ -12516,6 +12529,17 @@
     "source": ".plan/tickets/TASK-faction-standing-schema.md",
     "git_issue": "c8f2e8a"
   },
+  "TASK-FAIL-SAFE-EXECUTION-WORK-SAFETY": {
+    "hash": "pending",
+    "extid": "TASK-FAIL-SAFE-EXECUTION-WORK-SAFETY",
+    "type": "TASK",
+    "title": "Fail-Safe Execution & Work Safety",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-runtime-integrity-fail-safes",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fail-safe-execution-work-safety.md"
+  },
   "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL": {
     "hash": "99c122b",
     "git_issue": "99c122b",
@@ -14129,6 +14153,17 @@
     "source": ".plan/tickets/TASK-llm-sandboxing.md",
     "git_issue": "0982d2a"
   },
+  "TASK-LOCAL-INSTANCE-INTEGRITY-HOLISTIC": {
+    "hash": "pending",
+    "extid": "TASK-LOCAL-INSTANCE-INTEGRITY-HOLISTIC",
+    "type": "TASK",
+    "title": "Local Instance Integrity — Holistic Posture",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-runtime-integrity-fail-safes",
+    "tags": [],
+    "source": ".plan/tickets/TASK-local-instance-integrity-holistic.md"
+  },
   "TASK-LOCAL-RANDOM-EVENT-GENERATOR": {
     "hash": "36632b3",
     "extid": "TASK-LOCAL-RANDOM-EVENT-GENERATOR",
@@ -14601,6 +14636,39 @@
     "source": ".plan/tickets/TASK-memory-trust-modifier-wiring.md",
     "git_issue": "e128690",
     "status": "done"
+  },
+  "TASK-MESH-CONTENT-FEDERATION-QUOTA": {
+    "hash": "pending",
+    "extid": "TASK-MESH-CONTENT-FEDERATION-QUOTA",
+    "type": "TASK",
+    "title": "Mesh Content Federation Quota",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-mesh-federation-content-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mesh-content-federation-quota.md"
+  },
+  "TASK-MESH-COORDINATOR-SERVER-KNOWLEDGE-DB": {
+    "hash": "pending",
+    "extid": "TASK-MESH-COORDINATOR-SERVER-KNOWLEDGE-DB",
+    "type": "TASK",
+    "title": "Mesh Coordinator Server — Knowledge DB, Addresses, Trusted Keys, Negotiations, Resync Cron",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-mesh-federation-content-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mesh-coordinator-server-knowledge-db.md"
+  },
+  "TASK-MESH-ENCRYPTED-CONTENT-SHARING-RESERVATION-DUPLICATION": {
+    "hash": "pending",
+    "extid": "TASK-MESH-ENCRYPTED-CONTENT-SHARING-RESERVATION-DUPLICATION",
+    "type": "TASK",
+    "title": "Mesh Encrypted Content Sharing, Reservation & Duplication",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-mesh-federation-content-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
   },
   "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND": {
     "hash": "eb021bb",
@@ -17533,7 +17601,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-replace-knip-global-types-exclusion-with-per-symbol-knipigno.md"
+    "source": ".plan/tickets/TASK-replace-knip-global-types-exclusion-with-per-symbol-knipigno.md",
+    "status": "done"
   },
   "TASK-REPLACE-SIGHUP-FULL-RESTART-WITH-SERVER-RELOAD-FOR-CERT-ROTA": {
     "hash": "22d0e95",
@@ -18210,6 +18279,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-runtime-abstraction-layer.md",
     "git_issue": "ab4d790"
+  },
+  "TASK-RUNTIME-INTEGRITY-WATCHDOG-CRASH-RECOVERY": {
+    "hash": "pending",
+    "extid": "TASK-RUNTIME-INTEGRITY-WATCHDOG-CRASH-RECOVERY",
+    "type": "TASK",
+    "title": "Runtime Integrity Watchdog & Crash Recovery",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-runtime-integrity-fail-safes",
+    "tags": [],
+    "source": ".plan/tickets/TASK-runtime-integrity-watchdog-crash-recovery.md"
   },
   "TASK-RUNTIME-MIGRATION-STALENESS-GUARD": {
     "hash": "a78a2a4f",
