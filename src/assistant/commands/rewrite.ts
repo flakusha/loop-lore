@@ -16,7 +16,7 @@ import { type CommandContext, type CommandResult, registerCommand, } from "./reg
 
 /** Deps shape for /rewrite — matches `runCreateGeneration`'s `complete` signature. */
 export interface RewriteDeps {
-  complete?: (req: GenerateRequest) => Promise<{ content: string }>;
+  complete?: (req: GenerateRequest,) => Promise<{ content: string }>;
   model?: string;
 }
 
@@ -28,7 +28,7 @@ export interface RewriteDeps {
 function parseStyle(args: string[],): { style: string; rest: string[] } {
   const idx = args.indexOf("--style",);
   if (idx !== -1 && idx + 1 < args.length) {
-    return { style: args[idx + 1] ?? "clear", rest: args.filter((_, i,) => i !== idx && i !== idx + 1,), };
+    return { style: args[idx + 1] ?? "clear", rest: args.filter((_, i,) => i !== idx && i !== idx + 1), };
   }
   return { style: "clear", rest: args, };
 }
@@ -111,7 +111,7 @@ registerCommand("rewrite", async (args, ctx,): Promise<CommandResult> => {
   try {
     const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
     return runRewrite(args, ctx, {
-      complete: (req) => resolved.provider.complete(req,),
+      complete: (req,) => resolved.provider.complete(req,),
       model: resolved.resolvedModel,
     },);
   } catch {

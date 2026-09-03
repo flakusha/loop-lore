@@ -95,7 +95,11 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     }
   }
 
-  let hallucinationAnalysis: { detected: boolean; score: number; flags: readonly { entityName: string; entityType: string; confidence: number }[] };
+  let hallucinationAnalysis: {
+    detected: boolean;
+    score: number;
+    flags: readonly { entityName: string; entityType: string; confidence: number }[];
+  };
   try {
     hallucinationAnalysis = await detectHallucinations({
       db: database,

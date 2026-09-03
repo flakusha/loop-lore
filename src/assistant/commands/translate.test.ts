@@ -80,7 +80,7 @@ describe("translate command", () => {
     expect(result.systemMessage,).toContain("LLM unavailable — applied local heuristics only",);
     expect(result.systemMessage,).toContain("Hello world",);
     expect(result.actionPayload,).toEqual(
-      expect.objectContaining({ fallback: true, }),
+      expect.objectContaining({ fallback: true, },),
     );
   });
 
