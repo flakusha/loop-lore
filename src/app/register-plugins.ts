@@ -50,6 +50,7 @@ import { chatContextRoutes, } from "../routes/chat-context";
 import { chatExportRoutes, } from "../routes/chat-export";
 import { chatPinRoutes, } from "../routes/chat-pins";
 import { chatSearchRoutes, } from "../routes/chat-search";
+import { chatSectionsRoutes, } from "../routes/chat-sections";
 import { commandsRoutes, } from "../routes/commands";
 import { chatsRoutes, } from "../routes/chats";
 import { craftingRecipeRoutes, } from "../routes/crafting";
