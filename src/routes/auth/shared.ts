@@ -2,8 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Config, } from "../../config/schema";
+import type { TranslatorFn, } from "../../i18n/types";
 import { createRateLimiter, } from "../../middleware/rate-limit";
+import { rateLimitHeaders, type RateLimitResult, } from "../../middleware/rate-limit";
 import { LL_TOKEN, } from "../../regex/cookies";
+import { HttpStatus, } from "../http-utils";
 
 // ── Rate limiting (per-IP, in-memory) ─────────────────────────
 
@@ -158,3 +161,46 @@ export {
   setTokenCookie,
   TOKEN_COOKIE,
 };
+
+// ── Shared request/response helpers (login + register + demo) ─
+
+/**
+ * Parse the registration/login form body, or null when malformed.
+ * Shared by handleLogin and handleRegister (dedup: exact clone pair).
+ * @param request
+ */
+async function parseCredentials(
+  request: Request,
+): Promise<URLSearchParams | null> {
+  try {
+    return new URLSearchParams(await request.text(),);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 429 rate-limit response with X-RateLimit-* + Retry-After headers
+ * (BUG-429-responses-omit-retry-after-and-x-ratelimit-headers).
+ * @param options
+ * @param options.limit - limiter decision carrying the reset window
+ * @param options.t - translator; when absent `fallbackMessage` is shown
+ * @param options.fallbackMessage - English fallback for the shared key
+ */
+function rateLimitHtml(
+  options: { limit: RateLimitResult; t?: TranslatorFn; fallbackMessage: string },
+): Response {
+  const { limit, t, fallbackMessage, } = options;
+  return new Response(
+    `<p class="error-msg">${escapeHtml(t ? t("errors.rateLimited",) : fallbackMessage,)}</p>`,
+    {
+      status: HttpStatus.TooManyRequests,
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        ...rateLimitHeaders(limit, limit.resetSec,),
+      },
+    },
+  );
+}
+
+export { parseCredentials, rateLimitHtml, };

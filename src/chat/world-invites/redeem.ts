@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import type { Kysely, } from "kysely";
-import { InviteStatus, inviteStatusMachine, } from "../../db/enums";
+import type { Kysely, Selectable, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { redeemInviteCode, type RedeemPortals, } from "../invites/redeem-core";
 import type { WorldRedeemOutcome, } from "./types";
 
 /**
@@ -15,7 +15,6 @@ import type { WorldRedeemOutcome, } from "./types";
  *
  * The redemption and member insert are committed in the same transaction to
  * avoid double-redeeming a capped invite under concurrency.
- * @param actorId - the joining user's actor id (== user id)
  * @param database
  * @param input
  * @param input.code
@@ -25,76 +24,51 @@ export async function redeemWorldInvite(
   database: Kysely<DB>,
   input: { code: string; actorId: string },
 ): Promise<WorldRedeemOutcome> {
-  const code = input.code.trim().toUpperCase();
+  const portals: RedeemPortals<Selectable<DB["world_invites"]>> = {
+    findByCode: (code,) =>
+      database
+        .selectFrom("world_invites",)
+        .selectAll()
+        .where("code", "=", code,)
+        .executeTakeFirst(),
+    setStatus: async (id, status,) => {
+      await database
+        .updateTable("world_invites",)
+        .set({ status, },)
+        .where("id", "=", id,)
+        .execute();
+    },
+    hasMember: async (invite, actorId,) => {
+      const existing = await database
+        .selectFrom("world_members",)
+        .select("actor_id",)
+        .where("world_id", "=", invite.world_id,)
+        .where("actor_id", "=", actorId,)
+        .executeTakeFirst();
+      return existing !== undefined;
+    },
+    insertMemberAndConsumeUse: (invite, actorId,) =>
+      database
+        .transaction()
+        .execute(async (trx,) => {
+          await trx
+            .insertInto("world_members",)
+            .values({
+              world_id: invite.world_id,
+              actor_id: actorId,
+            },)
+            .execute();
+          await trx
+            .updateTable("world_invites",)
+            .set({ uses: invite.uses + 1, },)
+            .where("id", "=", invite.id,)
+            .execute();
+        },),
+  };
 
-  const invite = await database
-    .selectFrom("world_invites",)
-    .selectAll()
-    .where("code", "=", code,)
-    .executeTakeFirst();
-
-  if (!invite) {
-    return { ok: false, error: { code: "not_found", message: "Invalid invite code", }, };
+  const result = await redeemInviteCode(portals, input,);
+  if (!result.ok) {
+    return result;
   }
-  if (invite.status === InviteStatus.Revoked) {
-    return { ok: false, error: { code: "revoked", message: "Invite has been revoked", }, };
-  }
-  if (invite.status === InviteStatus.Expired) {
-    return { ok: false, error: { code: "expired", message: "Invite has expired", }, };
-  }
-  if (invite.status === InviteStatus.Exhausted) {
-    return { ok: false, error: { code: "used_up", message: "Invite has reached its usage limit", }, };
-  }
-  if (invite.expires_at && Date.parse(invite.expires_at,) < Date.now()) {
-    if (!inviteStatusMachine.canTransition(invite.status, InviteStatus.Expired,)) {
-      return { ok: false, error: { code: "expired", message: "Invite has expired", }, };
-    }
-    await database
-      .updateTable("world_invites",)
-      .set({ status: InviteStatus.Expired, },)
-      .where("id", "=", invite.id,)
-      .execute();
-    return { ok: false, error: { code: "expired", message: "Invite has expired", }, };
-  }
-
-  // Idempotent join: if already a member, succeed without consuming a use.
-  const existing = await database
-    .selectFrom("world_members",)
-    .select("actor_id",)
-    .where("world_id", "=", invite.world_id,)
-    .where("actor_id", "=", input.actorId,)
-    .executeTakeFirst();
-
-  if (existing) {
-    return { ok: true, worldId: invite.world_id, alreadyMember: true, };
-  }
-
-  if (invite.max_uses !== null && invite.uses >= invite.max_uses) {
-    if (!inviteStatusMachine.canTransition(invite.status, InviteStatus.Exhausted,)) {
-      return { ok: false, error: { code: "used_up", message: "Invite has reached its usage limit", }, };
-    }
-    await database
-      .updateTable("world_invites",)
-      .set({ status: InviteStatus.Exhausted, },)
-      .where("id", "=", invite.id,)
-      .execute();
-    return { ok: false, error: { code: "used_up", message: "Invite has reached its usage limit", }, };
-  }
-
-  await database.transaction().execute(async (trx,) => {
-    await trx
-      .insertInto("world_members",)
-      .values({
-        world_id: invite.world_id,
-        actor_id: input.actorId,
-      },)
-      .execute();
-    await trx
-      .updateTable("world_invites",)
-      .set({ uses: invite.uses + 1, },)
-      .where("id", "=", invite.id,)
-      .execute();
-  },);
-
-  return { ok: true, worldId: invite.world_id, alreadyMember: false, };
+  return { ok: true, worldId: result.invite.world_id, alreadyMember: result.alreadyMember, };
 }
