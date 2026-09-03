@@ -82,9 +82,9 @@ describe("rewrite command", () => {
         );
       }
 
-      expect(captured.map((c,) => c.style,),).toEqual(["clear", "concise", "dramatic", "formal",]);
+      expect(captured.map((c,) => c.style),).toEqual(["clear", "concise", "dramatic", "formal",],);
       // Each prompt is distinct
-      const prompts = new Set(captured.map((c,) => c.systemPrompt,),);
+      const prompts = new Set(captured.map((c,) => c.systemPrompt),);
       expect(prompts.size,).toBe(4,);
     });
 
@@ -97,7 +97,7 @@ describe("rewrite command", () => {
       expect(result.systemMessage,).toContain("LLM unavailable — applied local heuristics only",);
       expect(result.systemMessage,).toContain("I want",);
       expect(result.actionPayload,).toEqual(
-        expect.objectContaining({ style: "concise", fallback: true, }),
+        expect.objectContaining({ style: "concise", fallback: true, },),
       );
     });
 

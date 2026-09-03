@@ -15,7 +15,7 @@ import { type CommandContext, type CommandResult, registerCommand, } from "./reg
 
 /** Deps shape for /improve — matches `runCreateGeneration`'s `complete` signature. */
 export interface ImproveDeps {
-  complete?: (req: GenerateRequest) => Promise<{ content: string }>;
+  complete?: (req: GenerateRequest,) => Promise<{ content: string }>;
   model?: string;
 }
 
@@ -83,7 +83,7 @@ registerCommand("improve", async (args, ctx,): Promise<CommandResult> => {
   try {
     const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
     return runImprove(args, ctx, {
-      complete: (req) => resolved.provider.complete(req,),
+      complete: (req,) => resolved.provider.complete(req,),
       model: resolved.resolvedModel,
     },);
   } catch {

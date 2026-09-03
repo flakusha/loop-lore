@@ -30,7 +30,7 @@ const LANGUAGES: Record<string, string> = {
 
 /** Deps shape for /translate — matches `runCreateGeneration`'s `complete` signature. */
 export interface TranslateDeps {
-  complete?: (req: GenerateRequest) => Promise<{ content: string }>;
+  complete?: (req: GenerateRequest,) => Promise<{ content: string }>;
   model?: string;
 }
 
@@ -146,7 +146,7 @@ registerCommand("translate", async (args, ctx,): Promise<CommandResult> => {
   try {
     const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
     return runTranslate(args, ctx, {
-      complete: (req) => resolved.provider.complete(req,),
+      complete: (req,) => resolved.provider.complete(req,),
       model: resolved.resolvedModel,
     },);
   } catch {
@@ -163,7 +163,7 @@ registerCommand("tl", async (args, ctx,): Promise<CommandResult> => {
   try {
     const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
     return runTranslate(args, ctx, {
-      complete: (req) => resolved.provider.complete(req,),
+      complete: (req,) => resolved.provider.complete(req,),
       model: resolved.resolvedModel,
     },);
   } catch {
