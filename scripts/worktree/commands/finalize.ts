@@ -2,10 +2,141 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { existsSync, } from "fs";
+import { openSync, closeSync, writeSync, unlinkSync, readFileSync, } from "node:fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { getRootBranch, gitSync, } from "../utils/git";
+import { getRootBranch, gitSync, gitSyncQuiet, } from "../utils/git";
 import { colorize, log, section, } from "../utils/output";
+
+
+const LOCK_FILENAME = ".worktree-finalize.lock";
+// Git-state sentinel files that indicate an unfinished operation on the dev
+// checkout. If any of these exist, popping a stash or fast-forwarding onto
+// the tree would compound damage — files end up "modified" instead of the
+// operation cancelling cleanly. See BUG-finalize-race.
+const DEV_IN_PROGRESS_HEADS = ["MERGE_HEAD", "REBASE_HEAD", "CHERRY_PICK_HEAD",] as const;
+// Stash label prefix used by `stashDevForMerge` so `restoreDevFromStash` and
+// the precheck can recognize the agent's own leftover entries.
+const FINALIZE_STASH_PREFIX = "worktree-finalize-";
+
+/**
+ * Precheck: refuse to start if the dev checkout is mid-merge / mid-rebase /
+ * mid-cherry-pick, has unmerged paths, or has staged-but-uncommitted entries.
+ *
+ * This is the hard invariant. The lock below is best-effort single-flight;
+ * these prechecks catch the cases where the dev tree is in a half-mutated
+ * state that no lock acquisition can repair.
+ */
+function checkDevMergeable(repoRoot: string,): void {
+  // 1. Unmerged paths (merge/rebase/cherry-pick left a tree with conflicts)
+  const unmerged = gitSyncQuiet(repoRoot, "ls-files", "--unmerged",);
+  if (unmerged.length > 0) {
+    log("error", "dev checkout has unmerged paths — resolve or abort before finalizing",);
+    console.log("  git -C " + repoRoot + " status  (then resolve or git merge/rebase/cherry-pick --abort)");
+    process.exit(1,);
+  }
+
+  // 2. In-progress state sentinels (MERGE_HEAD / REBASE_HEAD / CHERRY_PICK_HEAD)
+  const gitDirRaw = gitSyncQuiet(repoRoot, "rev-parse", "--git-dir",);
+  const gitDirAbs = resolve(repoRoot, gitDirRaw.startsWith("/",) ? gitDirRaw.slice(1,) : gitDirRaw,);
+  for (const name of DEV_IN_PROGRESS_HEADS) {
+    if (existsSync(resolve(gitDirAbs, name,),)) {
+      const op = name.replace("_HEAD", "").toLowerCase();
+      log("error", `dev checkout is mid-${op} (${name} exists) — abort or resolve before finalizing`,);
+      if (op === "merge") { console.log("  git merge --abort  (or commit the merge)"); }
+      else if (op === "rebase") { console.log("  git rebase --abort  (or git rebase --continue)"); }
+      else { console.log("  git cherry-pick --abort  (or git cherry-pick --continue)"); }
+      process.exit(1,);
+    }
+  }
+
+  // 3. Staged-but-uncommitted entries — these would interfere with the in-place
+  // merge the same way untracked dirty files would.
+  const staged = gitSyncQuiet(repoRoot, "diff", "--cached", "--name-only",);
+  if (staged.length > 0) {
+    const stagedFiles = staged.split("\n",).filter((s,) => s.length > 0,);
+    log("error", `dev checkout has ${stagedFiles.length} staged-but-uncommitted entries`,);
+    console.log("  git -C " + repoRoot + " commit  (or git -C " + repoRoot + " reset)");
+    process.exit(1,);
+  }
+
+  // 4. Leftover finalize stashes from a prior crashed finalize. Garbage from
+  // the user's perspective but harmless if we leave them; warn so the
+  // operator can `git stash drop` them.
+  const stashList = gitSyncQuiet(repoRoot, "stash", "list",);
+  const leftovers = stashList.split("\n",).filter((l,) => l.includes(FINALIZE_STASH_PREFIX,),);
+  if (leftovers.length > 0) {
+    log("warn", `dev has ${leftovers.length} leftover finalize stash(es) from prior crash — review 'git stash list'`,);
+  }
+}
+
+/**
+ * Acquire an exclusive finalize lock on the dev checkout.
+ *
+ * Two concurrent `finalize` invocations race on `repoRoot`: each pushes a
+ * stash, runs `git merge`, and pops the stash. Without a lock, A and B both
+ * mutate the dev checkout's working tree; whichever finishes second pops
+ * the other's stash onto a tree that may already be in rebasing/merge/
+ * conflict state, leaving files in "modified" instead of cancelling cleanly.
+ *
+ * Lock primitive: atomic `O_CREAT|O_EXCL` via Node `openSync(path, 'wx')`.
+ * The first caller wins; later callers fail fast. The lockfile content is
+ * the PID so a stale lock from a crashed prior run can be detected via
+ * `kill -0` and reaped automatically.
+ *
+ * Returns a release function the caller MUST invoke in a finally block.
+ */
+function acquireFinalizeLock(repoRoot: string,): () => void {
+  const lockPath = resolve(repoRoot, LOCK_FILENAME,);
+  const myPid = process.pid;
+
+  const tryCreate = (): boolean => {
+    try {
+      const fd = openSync(lockPath, "wx",);
+      writeSync(fd, String(myPid,),);
+      closeSync(fd,);
+      return true;
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException,).code !== "EEXIST") { throw err; }
+      return false;
+    }
+  };
+
+  const reapStale = (): void => {
+    let raw = "";
+    try {
+      process.kill(ownerPid, 0,);
+      // Owner still alive — keep their lock.
+    } catch (err) {
+      // Only reap on ESRCH (process truly gone). EPERM means we lack
+      // permission to signal the owner — typical for non-root agents
+      // checking PID 1 (init) — but the process IS alive, so respect
+      // its lock. Any other error also means we cannot determine liveness,
+      // so fall through to retry the acquire; that fails safely when the
+      // owner is actually gone, and loops indefinitely (50 attempts)
+      // when the owner is alive.
+      if ((err as NodeJS.ErrnoException,).code === "ESRCH") {
+        try { unlinkSync(lockPath,); } catch { /* best-effort */ }
+        if (!tryCreate()) { /* lost the race — retry below */ }
+      }
+    }
+  };
+
+  for (let attempt = 0; attempt < 50; attempt++) {
+    if (tryCreate()) {
+      return (): void => {
+        try { unlinkSync(lockPath,); } catch { /* best-effort */ }
+      };
+    }
+    reapStale();
+    // Brief backoff before retry. 50 × 20ms = 1s ceiling.
+    Bun.sleepSync(20,);
+  }
+  log("error", `could not acquire finalize lock at ${lockPath} — another finalize in progress?`,);
+  console.log("  If no other finalize is running, remove the lockfile manually:",);
+  console.log(`    rm ${lockPath}`,);
+  process.exit(1,);
+}
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
 
@@ -63,7 +194,7 @@ function branchToSquashMessage(branch: string,): string {
  * cause of FF failure in finalize; auto-stashing makes the flow robust
  * against races where another agent or hook mutates dev mid-finalize.
  */
-function stashDirtyDev(repoRoot: string,): string | null {
+function stashDevForMerge(repoRoot: string,): string | null {
   const dirty = Bun.spawnSync(
     ["git", "-C", repoRoot, "diff", "--quiet", "--ignore-submodules",],
     { stdout: "pipe", stderr: "pipe", },
@@ -82,7 +213,7 @@ function stashDirtyDev(repoRoot: string,): string | null {
   }
   // Generate a distinguishable stash label so we can find it again even if
   // the user has unrelated stashes on the stack.
-  const stashLabel = `worktree-finalize-${Date.now().toString(36,)}`;
+  const stashLabel = `${FINALIZE_STASH_PREFIX}${Date.now().toString(36,)}`;
   const flags = hasUntracked ? ["--include-untracked",] : [];
   const stash = Bun.spawnSync(
     ["git", "-C", repoRoot, "stash", "push", ...flags, "-m", stashLabel,],
@@ -96,7 +227,19 @@ function stashDirtyDev(repoRoot: string,): string | null {
   return stashLabel;
 }
 
-function restoreDirtyDev(repoRoot: string, stashLabel: string,): void {
+/**
+ * Restore the dev checkout from a stash entry created by `stashDevForMerge`,
+ * with transactional semantics: if `git stash pop` conflicts with the
+ * post-merge tree (the symptom from BUG-finalize-race where files end up
+ * "modified" instead of cancelling cleanly), reset dev to the post-merge
+ * HEAD so the tree is clean and the stash entry is preserved for manual
+ * recovery.
+ */
+function restoreDevFromStash(
+  repoRoot: string,
+  stashLabel: string,
+  mergeHead: string,
+): void {
   // Find the stash ref by message; we can't rely on `stash@{0}` because
   // other agents may push stashes between our push and pop.
   const list = Bun.spawnSync(
@@ -104,7 +247,7 @@ function restoreDirtyDev(repoRoot: string, stashLabel: string,): void {
     { stdout: "pipe", stderr: "pipe", },
   );
   const lines = list.stdout.toString().split("\n",);
-  const match = lines.find((line,) => line.includes(stashLabel,));
+  const match = lines.find((line,) => line.includes(stashLabel,),);
   if (!match) {
     log("error", `stash '${stashLabel}' not found — restore manually with 'git stash list'`,);
     process.exit(1,);
@@ -114,12 +257,33 @@ function restoreDirtyDev(repoRoot: string, stashLabel: string,): void {
     ["git", "-C", repoRoot, "stash", "pop", stashRef,],
     { stdout: "pipe", stderr: "pipe", },
   );
-  if (pop.exitCode !== 0) {
-    log("error", `failed to restore stash '${stashLabel}': ${pop.stderr.toString().trim()}`,);
-    log("error", `manual recovery: git -C ${repoRoot} stash pop ${stashRef}`,);
+  if (pop.exitCode === 0) {
+    log("success", `Restored stash '${stashLabel}'`,);
+    return;
+  }
+
+  // Pop failed (conflict with post-merge tree). Roll dev back to the
+  // post-merge HEAD so the checkout is clean and the stash entry is
+  // preserved. Without this, files end up in "modified" state and the
+  // user's pre-merge work disappears into the stash entry.
+  log("warn", `stash pop conflicted — resetting dev to post-merge HEAD and preserving stash`,);
+  console.log("  Stash output:", pop.stderr.toString().trim(),);
+  const reset = Bun.spawnSync(
+    ["git", "-C", repoRoot, "reset", "--hard", mergeHead,],
+    { stdout: "pipe", stderr: "pipe", },
+  );
+  if (reset.exitCode !== 0) {
+    log("error", `failed to reset dev to ${mergeHead} after stash pop failure`,);
+    console.log(`  Stderr: ${reset.stderr.toString().trim()}`,);
+    console.log(`  Manual recovery:`,);
+    console.log(`    cd ${repoRoot}`);
+    console.log(`    git reset --hard ${mergeHead}     # discard the merge (or 'git reset --hard HEAD~1' if you want to undo it)`);
+    console.log(`    git stash pop ${stashRef}         # then apply your pre-merge work`);
     process.exit(1,);
   }
-  log("success", `Restored stash '${stashLabel}'`,);
+  log("info", `Dev reset to ${mergeHead.slice(0, 8,)}; stash entry '${stashRef}' preserved`,);
+  console.log(`  Your pre-merge work is still on the stash stack as '${stashRef}'.`,);
+  console.log(`  When ready: cd ${repoRoot} && git stash pop ${stashRef}`,);
 }
 
 function runCheck(wtPath: string,): boolean {
@@ -198,6 +362,28 @@ export async function finalize(
 
   const targetBranch = getRootBranch(config.repoRoot,);
 
+  // Refuse concurrent or in-flight dev-checkout operations BEFORE doing
+  // anything that mutates `repoRoot`. See BUG-finalize-race: two concurrent
+  // finalizes race on stash push/pop around an in-place merge, which can leave
+  // files in "modified" instead of cancelling cleanly. The precheck is the
+  // hard invariant; the lock is best-effort single-flight.
+  checkDevMergeable(config.repoRoot,);
+  const releaseFinalizeLock = acquireFinalizeLock(config.repoRoot,);
+  try {
+    await runFinalize(branch, mergeStrategy, force, config, wtPath, targetBranch,);
+  } finally {
+    releaseFinalizeLock();
+  }
+}
+
+async function runFinalize(
+  branch: string,
+  mergeStrategy: string,
+  force: boolean,
+  config: WorktreeConfig,
+  wtPath: string,
+  targetBranch: string,
+): Promise<void> {
   section(`Finalizing '${branch}'`,);
 
   // Step 1: Check worktree clean
@@ -281,7 +467,7 @@ export async function finalize(
     if (mergeStrategy === "squash") {
       const msg = branchToSquashMessage(branch,);
       log("info", `Step 5b: Squash merging into ${targetBranch}...`,);
-      const devStash = stashDirtyDev(config.repoRoot,);
+      const devStash = stashDevForMerge(config.repoRoot,);
       try {
         const mergeResult = Bun.spawnSync(
           ["git", "-C", config.repoRoot, "merge", branch, "--squash", "-m", msg,],
@@ -293,11 +479,14 @@ export async function finalize(
         }
         log("success", `Squash merged: ${msg}`,);
       } finally {
-        if (devStash !== null) { restoreDirtyDev(config.repoRoot, devStash,); }
+        if (devStash !== null) {
+          const mergeHead = gitSyncQuiet(config.repoRoot, "rev-parse", "HEAD",);
+          restoreDevFromStash(config.repoRoot, devStash, mergeHead,);
+        }
       }
     } else {
       log("info", `Step 5b: Fast-forward merging into ${targetBranch}...`,);
-      const devStash = stashDirtyDev(config.repoRoot,);
+      const devStash = stashDevForMerge(config.repoRoot,);
       let ffOk = false;
       try {
         const mergeResult = Bun.spawnSync(
@@ -311,7 +500,10 @@ export async function finalize(
         ffOk = true;
         log("success", "Fast-forward merged",);
       } finally {
-        if (devStash !== null) { restoreDirtyDev(config.repoRoot, devStash,); }
+        if (devStash !== null) {
+          const mergeHead = gitSyncQuiet(config.repoRoot, "rev-parse", "HEAD",);
+          restoreDevFromStash(config.repoRoot, devStash, mergeHead,);
+        }
       }
       if (ffOk) { /* restored above */ }
     }
@@ -335,7 +527,7 @@ export async function finalize(
 
     log("info", `Step 5: Merging '${branch}' into ${targetBranch} (direct)...`,);
     const flags = gpgMergeFlags(config,);
-    const devStash = stashDirtyDev(config.repoRoot,);
+    const devStash = stashDevForMerge(config.repoRoot,);
     try {
       const mergeResult = Bun.spawnSync(
         ["git", "-C", config.repoRoot, ...flags, "merge", branch, "--no-edit",],
@@ -347,7 +539,10 @@ export async function finalize(
       }
       log("success", `Merged into ${targetBranch}`,);
     } finally {
-      if (devStash !== null) { restoreDirtyDev(config.repoRoot, devStash,); }
+      if (devStash !== null) {
+        const mergeHead = gitSyncQuiet(config.repoRoot, "rev-parse", "HEAD",);
+        restoreDevFromStash(config.repoRoot, devStash, mergeHead,);
+      }
     }
 
     // Verify GPG signature

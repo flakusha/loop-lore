@@ -77,7 +77,8 @@ omp-session-*.html
 
 # Git worktrees (parallel branch development)
 tree/*
-
+# Worktree finalize single-flight lock (atomic O_CREAT|O_EXCL sentinel)
+.worktree-finalize.lock
 # Agent credentials (GPG keys, signing config — never commit)
 .credentials.env
 
