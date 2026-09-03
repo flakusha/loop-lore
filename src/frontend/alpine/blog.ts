@@ -3,7 +3,7 @@
 
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
-import { safeJsonStringify, } from "./json";
+import { jsonBody, } from "./json";
 
 import { log as rootLog, } from "./logger";
 
@@ -111,7 +111,7 @@ export const blogStore: BlogState = {
       const res = await apiFetch("/api/blog/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: safeJsonStringify(input,).value,
+        body: jsonBody(input,),
       },);
       if (!res.ok) { throw new Error(t("errors.createFailed",),); }
       const post = await res.json() as BlogPost | null;
@@ -130,7 +130,7 @@ export const blogStore: BlogState = {
       const res = await apiFetch(`/api/blog/posts/${postId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: safeJsonStringify({ body, parent_comment_id, },).value,
+        body: jsonBody({ body, parent_comment_id, },),
       },);
       if (!res.ok) { throw new Error(t("errors.createFailed",),); }
       const comment = await res.json();
