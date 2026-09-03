@@ -3241,7 +3241,7 @@
     "git_issue": "8be98b3"
   },
   "BUG-TABLE-BACKEND-REQUEST-ID-COLLISION-OVERWRITES-FOREIGN-ROW": {
-    "hash": "pending",
+    "hash": "",
     "extid": "BUG-TABLE-BACKEND-REQUEST-ID-COLLISION-OVERWRITES-FOREIGN-ROW",
     "type": "BUG",
     "title": "Table backend `request_results.complete`/`fail` overwrite foreign row on request-id collision",
@@ -3249,7 +3249,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md"
+    "source": ".plan/tickets/BUG-table-backend-request-id-collision-overwrites-foreign-row.md",
+    "status": "done"
   },
   "BUG-TAUTOLOGICAL-BROWSER-TEST-ASSERTIONS": {
     "hash": "c8bad7f",
