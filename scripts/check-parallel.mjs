@@ -483,7 +483,11 @@ async function runNonBlockingChecks(notes,) {
     notes.push({ level: "skipped", message: "Version check skipped", },);
   }
 
-  // Code duplication check
+  // Code duplication check (jscpd:full) — parses the JSON report the script
+  // writes to .tmp/jscpd/; falls back to counting console "Clone found" lines
+  // only when the report is missing/corrupt. Advisory (never blocking), but
+  // reports clone count + duplicated-lines % and records clones in
+  // .tmp/jscpd/prev.json so the next run can show a regression trend.
   try {
     const jscpdProc = Bun.spawn(["bash", "-c", "bun run jscpd:full",], {
       cwd: PROJECT_ROOT,
@@ -492,18 +496,57 @@ async function runNonBlockingChecks(notes,) {
     },);
     await jscpdProc.exited;
     const jscpdText = await new Response(jscpdProc.stdout,).text();
-    if (jscpdText.includes("Found",)) {
-      const cloneCount = (jscpdText.match(/Clone found/g,) ?? []).length;
-      console.log(`⚠ Code duplication detected (jscpd:full): ${cloneCount} clones`,);
-      console.log("  Run 'bun run jscpd:full' for full report",);
-      notes.push({ level: "warn", message: `Code duplication (jscpd:full): ${cloneCount} clones`, },);
+    const jscpdDir = path.resolve(PROJECT_ROOT, ".tmp/jscpd",);
+    let cloneCount = null;
+    let pctText = "";
+    try {
+      const report = JSON.parse(
+        readFileSync(path.resolve(jscpdDir, "jscpd-report.json",), "utf8",),
+      );
+      cloneCount = report.duplicates.length;
+      const formats = Object.values(report.statistics?.formats ?? {},);
+      const dupLines = formats.reduce((sum, f,) => sum + f.duplicatedLines, 0,);
+      const allLines = formats.reduce((sum, f,) => sum + f.lines, 0,);
+      pctText = allLines > 0 ? `, ${(100 * dupLines / allLines).toFixed(2,)}% dup lines` : "";
+    } catch {
+      cloneCount = (jscpdText.match(/Clone found/g,) ?? []).length;
+    }
+    let trend = " (first run: baseline recorded)";
+    const prevPath = path.resolve(jscpdDir, "prev.json",);
+    try {
+      const prev = JSON.parse(readFileSync(prevPath, "utf8",),);
+      const delta = cloneCount - prev.clones;
+      trend = delta === 0
+        ? " (unchanged vs last run)"
+        : delta > 0
+        ? ` (+${delta} clones vs last run ⚠)`
+        : ` (${delta} clones vs last run ✓)`;
+    } catch {
+      // no previous report in this checkout — baseline gets recorded below
+    }
+    mkdirSync(jscpdDir, { recursive: true, },);
+    writeFileSync(
+      prevPath,
+      `${JSON.stringify({ clones: cloneCount, generatedAt: new Date().toISOString(), },)}\n`,
+      "utf8",
+    );
+    if (cloneCount > 0) {
+      console.log(`⚠ Code duplication detected (jscpd:full): ${cloneCount} clones${pctText}${trend}`,);
+      console.log("  Full report: .tmp/jscpd/jscpd-report.json",);
+      notes.push({
+        level: "warn",
+        message: `Code duplication (jscpd:full): ${cloneCount} clones${pctText}${trend}`,
+      },);
     } else {
       console.log("✓ No code duplication issues (jscpd:full)",);
       notes.push({ level: "ok", message: "No code duplication issues (jscpd:full)", },);
     }
-  } catch {
-    console.log("✓ No code duplication issues (jscpd:full)",);
-    notes.push({ level: "ok", message: "No code duplication issues (jscpd:full)", },);
+  } catch (error) {
+    console.log("⚠ Code duplication check skipped (jscpd run failed)",);
+    notes.push({
+      level: "skipped",
+      message: `Code duplication check skipped: ${error.message}`,
+    },);
   }
 
   // Markdown stale-link check (non-blocking — reports broken internal links)
