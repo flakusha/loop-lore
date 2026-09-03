@@ -20,12 +20,9 @@
     "tests/**/*.ts",
     "plugins/**/*.ts"
   ],
-  // types analysis is disabled: this repo's test factories re-export
-  // their *Factory types as part of a stable public-API surface; knip
-  // cannot trace consumers (test fixtures + plugin manifests), producing
-  // false positives on every test-helper barrel. Dead-code signal still
-  // runs on unused files + exports + deps + binaries.
-  "exclude": ["types"],
+  // Type-export analysis is ENABLED (per-symbol policy). Intentionally
+  // public type re-exports (test factories, plugin sample surface) carry
+  // /** @knipignore */ tags at their declaration instead of a global gag.
   "ignoreDependencies": [
     // Runtime/string-resolved -- used via plugin manifest paths, build scripts,
     // or dynamic imports knip can't follow (elysia app def, frontend bundle,
