@@ -1,6 +1,6 @@
 # BUG: scripts/worktree ticket writes to CWD instead of worktree path
 
-**Status:** ⬜ Not Started
+**Status:** Done
 **Priority:** medium
 **Effort:** small
 
@@ -13,3 +13,7 @@ The `ticket` subcommand of `scripts/worktree/` resolves the ticket file path rel
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Resolved by `29281294 fix(worktree): place ticket files in active worktree, add -F/stdin message input`. `scripts/worktree/commands/ticket.ts:63-64` now computes `const planRoot = getWorktreeRoot()` (worktree-aware) and writes the ticket file there, while `config.repoRoot` is still used for `git issue create/comment/edit` (which live in the shared `.git` store). The CLI also rejects `ticket` runs from inside a worktree (worktree-only guard, same as `new`). Help text updated.
