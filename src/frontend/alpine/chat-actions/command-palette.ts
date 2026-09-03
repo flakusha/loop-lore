@@ -1,38 +1,55 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+/**
+ * Command palette Alpine.js state slice.
+ *
+ * Hydrates its command list from `GET /api/commands` on init (single source
+ * of truth — the assistant command registry). Falls back to an empty list
+ * when the request fails so the UI degrades gracefully.
+ * (WIRE-assistant-command-palette-stale-static-list: prior implementation
+ * hardcoded 22 commands; new server-side commands were missing from the
+ * palette until a FE rebuild. Now the registry drives the list.)
+ */
+
+
+import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
+import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
+
+const log = rootLog.child({ module: "command-palette", },);
+
 
 export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
   _showCommandPalette: false,
   _activeCommand: "",
-  _commandList: [
-    { name: "help", description: t("commands.help",), },
-    { name: "roll", description: t("commands.roll",), },
-    { name: "summarize", description: t("commands.summarize",), },
-    { name: "impersonate", description: t("commands.impersonate",), },
-    { name: "narrate", description: t("commands.narrate",), },
-    { name: "ooc", description: t("commands.ooc",), },
-    { name: "debug", description: t("commands.debug",), },
-    { name: "detail", description: t("commands.detail",), },
-    { name: "improve", description: t("commands.improve",), },
-    { name: "context", description: t("commands.context",), },
-    { name: "image", description: t("commands.image",), },
-    { name: "quest", description: t("commands.quest",), },
-    { name: "video", description: t("commands.video",), },
-    { name: "sfx", description: t("commands.sfx",), },
-    { name: "sound", description: t("commands.sound",), },
-    { name: "music", description: t("commands.music",), },
-    { name: "caption", description: t("commands.caption",), },
-    { name: "create", description: t("commands.create",), },
-    { name: "rewrite", description: t("commands.rewrite",), },
-    { name: "translate", description: t("commands.translate",), },
-    { name: "review", description: t("commands.review",), },
-    { name: "clear", description: t("commands.clear",), },
-    { name: "stats", description: t("commands.stats",), },
-  ] as { name: string; description: string }[],
-  _filteredCommands: [] as { name: string; description: string }[],
+  _commandList: [] as { name: string; descriptionKey: string; description: string }[],
+  _filteredCommands: [] as { name: string; descriptionKey: string; description: string }[],
+
+  async init(): Promise<void> {
+    await this._loadCommandList();
+  },
+
+  async _loadCommandList(): Promise<void> {
+    try {
+      const res = await apiFetch("/api/commands",);
+      if (!res.ok) {
+        log.warn("command list fetch failed", { status: res.status, },);
+        return;
+      }
+      const body = await res.json() as { data?: { name: string; descriptionKey: string }[] };
+      const entries = Array.isArray(body.data,) ? body.data : [];
+      this._commandList = entries.map((entry,) => ({
+        name: entry.name,
+        descriptionKey: entry.descriptionKey,
+        description: t(entry.descriptionKey,),
+      }),);
+      if (this._showCommandPalette) { this._filteredCommands = this._commandList; }
+    } catch (err) {
+      log.warn("command list fetch threw", { err, },);
+    }
+  },
 
   handleCommandInput(event: Event,) {
     const input = event.target as HTMLTextAreaElement;
