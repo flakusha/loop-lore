@@ -399,6 +399,17 @@
     "git_issue": "bc5de16",
     "status": "done"
   },
+  "BUG-BATTLE-EQUIPMENT-LOOT-NO-AUTH-GUARD": {
+    "hash": "pending",
+    "extid": "BUG-BATTLE-EQUIPMENT-LOOT-NO-AUTH-GUARD",
+    "type": "BUG",
+    "title": "battle/equipment.ts loot POST handler has no auth guard",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
+  },
   "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM": {
     "hash": "69d45a5",
     "git_issue": "69d45a5",
