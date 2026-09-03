@@ -2,16 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { signJwt, } from "../../auth/jwt";
 import type { Config, } from "../../config/schema";
 import { ensureActorKey, getSmk, isEncryptionEnabled, } from "../../crypto";
 import { UserRole, UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { TranslatorFn, } from "../../i18n/types";
-import { rateLimitHeaders, } from "../../middleware/rate-limit";
 import { uid, } from "../../utils";
-import { HttpStatus, jsonError, } from "../http-utils";
-import { errorHtml, getClientIp, registerLimiter, setTokenCookie, } from "./shared";
+import { createSessionAndCookie, } from "./session";
+import { errorHtml, getClientIp, parseCredentials, rateLimitHtml, registerLimiter, } from "./shared";
 
 /**
  * Hash the password and insert the user row + mirror actor.
@@ -81,16 +79,11 @@ function checkRegisterGate(
   // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers: emit headers.
   const regLimit = registerLimiter.consume(ip,);
   if (!regLimit.allowed) {
-    return new Response(
-      `<p class="error-msg">${t ? t("errors.rateLimited",) : "Too many registration attempts. Try again later."}</p>`,
-      {
-        status: HttpStatus.TooManyRequests,
-        headers: {
-          "Content-Type": "text/html; charset=utf-8",
-          ...rateLimitHeaders(regLimit, regLimit.resetSec,),
-        },
-      },
-    );
+    return rateLimitHtml({
+      limit: regLimit,
+      t,
+      fallbackMessage: "Too many registration attempts. Try again later.",
+    },);
   }
   return null;
 }
@@ -140,95 +133,6 @@ async function handleRegister(
 
   const userId = await insertRegisteredUser(database, username, password,);
   return createSessionAndCookie(request, database, config, userId, UserRole.User, ip, t,);
-}
-
-/**
- * Parse the registration/login form body, or null when malformed.
- * @param request
- */
-async function parseCredentials(
-  request: Request,
-): Promise<URLSearchParams | null> {
-  try {
-    return new URLSearchParams(await request.text(),);
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Create a session row, enforce maxSessionsPerUser cap, sign a JWT, and return the redirect response.
- * @param request
- * @param database
- * @param config
- * @param userId
- * @param role
- * @param ip
- * @param t
- */
-async function createSessionAndCookie(
-  request: Request,
-  database: Kysely<DB>,
-  config: Config,
-  userId: string,
-  role: UserRole,
-  ip: string,
-  t: TranslatorFn | undefined,
-): Promise<Response> {
-  const userAgent = request.headers.get("User-Agent",);
-  const sessionId = uid();
-
-  // Enforce maxSessionsPerUser cap: evict oldest session if at limit
-  const maxSessions = config.auth.maxSessionsPerUser ?? 10;
-  const existingCount = await database
-    .selectFrom("sessions",)
-    .select(database.fn.countAll().as("cnt",),)
-    .where("user_id", "=", userId,)
-    .executeTakeFirst();
-  const cnt = Number(existingCount?.cnt ?? 0,);
-  if (cnt >= maxSessions) {
-    // Evict the oldest session by id (lowest id = oldest auto-increment)
-    await database
-      .deleteFrom("sessions",)
-      .where("user_id", "=", userId,)
-      .orderBy("id", "asc",)
-      .limit(1,)
-      .execute();
-  }
-
-  await database
-    .insertInto("sessions",)
-    .values({
-      id: sessionId,
-      user_id: userId,
-      token_hash: `jwt:${sessionId}`,
-      ip,
-      user_agent: userAgent,
-      expires_at: new Date(Date.now() + config.auth.sessionTimeoutHours * 60 * 60 * 1000,).toISOString(),
-    },)
-    .execute();
-
-  const jwtSecret = config.auth.jwtSecret;
-  if (!jwtSecret) {
-    return jsonError({
-      message: t?.("auth.jwtSecretMissing",) ?? "Server misconfigured: JWT secret not set",
-      status: HttpStatus.InternalServerError,
-    },);
-  }
-
-  const jwtExpiresIn = config.auth.jwtExpiresIn ?? 86_400;
-  const token = await signJwt({
-    secret: jwtSecret,
-    userId,
-    role,
-    sessionId,
-    expiresInSeconds: jwtExpiresIn,
-  },);
-
-  return new Response("OK", {
-    status: HttpStatus.OK,
-    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(token, jwtExpiresIn,), },
-  },);
 }
 
 export { handleRegister, };
