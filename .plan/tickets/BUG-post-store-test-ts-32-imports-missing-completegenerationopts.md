@@ -26,3 +26,6 @@ src/generation/auto-gen/post-store.test.ts(32,15): error TS2724: '"../cancellati
 ## Related
 
 Discovered during Bucket D audit (2026-09-03). Likely in scope of `fix-table-backend-user-leak` worktree (handles `async/apply.test.ts` and TableBackend cancellation-tracker integration). Related: see also `BUG-register-plugins-150-references-undefined-chatsectionsroutes.md` and `BUG-routes-commands-index-ts-19-has-unused-import-t.md`.
+
+
+git issue: d660ce1
