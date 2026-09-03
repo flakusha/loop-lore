@@ -104,7 +104,11 @@ function resolveIncludes(content: string, chain = new Set<string>(),): string {
     }
     const included = readFileSync(resolved, "utf8",);
     chain.add(resolved,);
-    return resolveIncludes(included, chain,);
+    try {
+      return resolveIncludes(included, chain,);
+    } finally {
+      chain.delete(resolved,);
+    }
   },);
 }
 
