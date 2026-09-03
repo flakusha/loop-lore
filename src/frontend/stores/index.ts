@@ -12,6 +12,7 @@
  *   2. Import it here and add to the `stores` map below
  */
 
+import { applyChatViewDefaults, assertChatViewShape, } from "../alpine/store-schema";
 import { uiStoreDefinition, } from "./ui-store";
 
 /** Store name → initial value object. */
@@ -19,17 +20,22 @@ const stores: Record<string, Record<string, unknown>> = {
   sidebar: { open: false, },
   // Chat store — owns the currently active chat along with non-reactive
   // fallback fields read by templates before the live chat payload lands.
-  // `children` and `visibility` are provided as safe defaults so component
-  // init() never throws "Cannot read properties of undefined (reading
-  // 'children')" / "... of null (reading 'visibility')" — see
-  // BUG-alpine-init-crash-chat-view-store-undefined.
+  // Safe defaults are applied via `applyChatViewDefaults` at module init so
+  // component init() never throws "Cannot read properties of undefined
+  // (reading 'children')" / "... of null (reading 'visibility')" — see
+  // BUG-alpine-init-crash-chat-view-store-undefined. Dev builds also run
+  // `assertChatViewShape` to fail loud if a future caller forgets to seed
+  // the same fields.
   chat: {
     currentChat: null as { id: string; name?: string; type?: string } | null,
-    children: [] as unknown[],
-    visibility: "visible" as "visible" | "hidden" | "collapsed",
   },
   ui: uiStoreDefinition as Record<string, unknown>,
 };
+
+// Module init: seed chat-view defaults + (dev-only) assert the chat payload
+// shape. The dev check is a no-op in production bundles.
+applyChatViewDefaults(stores.chat,);
+assertChatViewShape(stores.chat,);
 
 // Global lock — defensive, in case initAlpineStores is called more than once.
 const LOCK_KEY = "__alpineStoresInitialized";
