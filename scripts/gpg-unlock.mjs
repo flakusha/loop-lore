@@ -11,6 +11,11 @@
  *   - Warm:    when the cache is empty, signs test data with loopback
  *     pinentry to populate it.
  *
+ * Prolong requires `allow-preset-passphrase` in the user's gpg-agent
+ * config. When the agent refuses `PRESET_PASSPHRASE` with `ERR 67108924
+ * Not supported`, we report `preset-unsupported` so callers can skip the
+ * prolong path and fall through to warmCache without spamming the user.
+ *
  * Prolong works in any environment (no TTY required). Warm needs the
  * GPG passphrase supplied via stdin in loopback mode — the convention
  * for agent commits in this repo.
@@ -65,35 +70,81 @@ function readMaxCacheTtl() {
   return match ? parseInt(match[1], 10,) : 7200;
 }
 
+/**
+ * Resolve the signing key's keygrip(s) from the keyring (NOT the agent).
+ *
+ * The previous implementation used `gpg-connect-agent KEYINFO`, which queries
+ * the agent's working set and returns `ERR 67108924 No secret key` whenever
+ * the key hasn't been touched in the current agent session — even when the
+ * passphrase is perfectly cached. That made `prolongCachedPassphrase` report
+ * "no-keygrip" on every invocation, so `ensureGpgWarm()` in check-parallel
+ * could never take the silent prolong path and always fell through to
+ * `warmCache()` (which still works but re-prompts / re-signs every run).
+ *
+ * `gpg --list-secret-keys --with-keygrip` reads from the keyring directly
+ * and always returns the keygrip(s), so prolong works the moment the cache
+ * is populated. Returns ALL keygrips (primary + subkeys) — only the ones
+ * actually in the agent cache will accept the PRESET_PASSPHRASE below.
+ */
 async function getKeygrip(keyId,) {
-  // gpg-connect-agent reply: `S KEYINFO <keygrip> ...` on success, `ERR ...` otherwise.
-  const out = await $`gpg-connect-agent "KEYINFO --no-list ${keyId} SENT" /bye 2>&1`.text();
-  return out.match(/^S KEYINFO\s+(\w+)/m,)?.[1] ?? null;
+  const out = await $`gpg --list-secret-keys --with-keygrip ${keyId} 2>&1`.text();
+  // Lines like: `      Keygrip = 13826444A29AFA408618EDAA5F6C54EEA604B51F`
+  // (indented under each `sec`/`ssb` record — `^\s*` allows the indent).
+  const matches = [...out.matchAll(/^\s*Keygrip\s+=\s+([0-9A-Fa-f]+)/gm,),];
+  return matches.map((m,) => m[1],);
 }
 
 // ── Prolong cached passphrase TTL ────────────────────────────────
 
+/**
+ * Try to prolong every keygrip the keyring lists. Returns the first success,
+ * or one of these structured failures:
+ *   { ok: false, reason: "no-keygrip" }            — keyring lookup empty
+ *   { ok: false, reason: "preset-unsupported" }   — agent lacks allow-preset-passphrase
+ *   { ok: false, reason: "preset-rejected", ... }  — agent refused for some other reason
+ *
+ * `preset-unsupported` is distinct from `preset-rejected` so the caller can
+ * skip the prolong path cleanly (warmCache still works) instead of treating
+ * an environment gap as a transient failure.
+ */
 async function prolongCachedPassphrase(keyId,) {
-  const keygrip = await getKeygrip(keyId,);
-  if (!keygrip) { return { ok: false, reason: "no-keygrip", }; }
+  const keygrips = await getKeygrip(keyId,);
+  if (keygrips.length === 0) { return { ok: false, reason: "no-keygrip", }; }
 
   const maxTtl = readMaxCacheTtl();
   // PRESET_PASSPHRASE --preset <keygrip> -1 <hex_timestamp>
   //   --preset = update existing cache entry (not --unpreset which clears)
   //   -1       = reuse the cached passphrase bytes (don't override)
-  //   <hex>    = absolute unix timestamp when cache should expire
+  //   <hex>    = absolute unix timestamp when cache should expire (UPPERCASE HEX)
+  // Convert seconds-since-epoch to an uppercase hex string — gpg-connect-agent
+  // expects hex, and `.toUpperCase()` alone on a Number would crash. The
+  // earlier code had the same shape but never ran because `getKeygrip` always
+  // returned null under the old `KEYINFO` agent-query path.
   const newExp = (Math.floor(Date.now() / 1000,) + maxTtl)
+    .toString(16,)
     .toUpperCase();
 
-  try {
-    const out = await $`gpg-connect-agent "PRESET_PASSPHRASE --preset ${keygrip} -1 ${newExp}" /bye`.text();
-    if (/^ERR/m.test(out,)) {
-      return { ok: false, reason: "preset-rejected", output: out.trim(), };
+  let sawUnsupported = false;
+  let lastErr = "";
+  for (const keygrip of keygrips) {
+    try {
+      const out = await $`gpg-connect-agent "PRESET_PASSPHRASE --preset ${keygrip} -1 ${newExp}" /bye`.text();
+      if (!/^ERR/m.test(out,)) {
+        return { ok: true, keygrip, maxTtl, };
+      }
+      lastErr = out.trim();
+      // ERR 67108924 ... no --allow-preset-passphrase → agent config lacks
+      // the option. All keygrips will fail identically, so bail out now.
+      if (/no --allow-preset-passphrase/.test(lastErr,)) {
+        return { ok: false, reason: "preset-unsupported", output: lastErr, };
+      }
+    } catch (e) {
+      lastErr = String(e,);
+      continue;
     }
-    return { ok: true, keygrip, maxTtl, };
-  } catch (e) {
-    return { ok: false, reason: "preset-threw", error: String(e,), };
   }
+  if (sawUnsupported) { return { ok: false, reason: "preset-unsupported", output: lastErr, }; }
+  return { ok: false, reason: "preset-rejected", output: `tried ${keygrips.length} keygrip(s): ${lastErr}`, };
 }
 
 // ── Warm (populate cache via loopback sign) ──────────────────────
@@ -135,8 +186,14 @@ if (import.meta.main) {
     process.exit(0,);
   }
 
-  // Step 2: cache miss — fall back to the warm flow.
-  console.log(`Cache miss (${prolonged.reason}); warming via loopback sign...`,);
+  // Step 2: cache miss (or prolong unsupported) — fall back to warm flow.
+  // `preset-unsupported` is a config gap, not a real failure, so the user
+  // shouldn't be scolded about it.
+  if (prolonged.reason === "preset-unsupported") {
+    console.log("Prolong unsupported by agent (allow-preset-passphrase not set); warming cache instead.",);
+  } else {
+    console.log(`Cache miss (${prolonged.reason}); warming via loopback sign...`,);
+  }
   const warmed = await warmCache(keyId,);
   process.exit(warmed ? 0 : 1,);
 }
