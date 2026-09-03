@@ -14,6 +14,7 @@
 import type { Kysely, } from "kysely";
 import type { CraftingStationType, } from "../../db/enums-crafting.js";
 import type { DB, } from "../../db/schema.js";
+import { worldScoped, } from "../../db/world-scope.js";
 import { uid, } from "../../utils.js";
 import {
   mapDef,
@@ -93,8 +94,7 @@ export class StationsService {
     worldId: string,
     type?: CraftingStationType,
   ): Promise<StationDef[]> {
-    let q = this.db.selectFrom("crafting_station_defs",)
-      .where("world_id", "=", worldId,)
+    let q = worldScoped(this.db, "crafting_station_defs", worldId,)
       .orderBy("tier", "asc",)
       .orderBy("name", "asc",);
     if (type) { q = q.where("station_type", "=", type,); }
@@ -199,8 +199,7 @@ export class StationsService {
     worldId: string,
     locationId?: string,
   ): Promise<StationInstance[]> {
-    let q = this.db.selectFrom("crafting_station_instances",)
-      .where("world_id", "=", worldId,)
+    let q = worldScoped(this.db, "crafting_station_instances", worldId,)
       .orderBy("created_at", "asc",);
     if (locationId) { q = q.where("location_id", "=", locationId,); }
     const rows = await q.selectAll().execute();
