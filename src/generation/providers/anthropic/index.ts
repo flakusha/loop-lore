@@ -8,21 +8,11 @@
 // See .plan/epics/epic-provider-plugin-ecosystem.md.
 
 import type { ProviderInstanceConfig, } from "../../../config/schema";
-import { validateProviderUrl, } from "../../../utils/url-validation";
-import type {
-  GenerateRequest,
-  GenerateResponse,
-  LLMProvider,
-  ModelInfo,
-  ProviderCapabilities,
-  StreamHandler,
-} from "../types";
-import { ProviderError, } from "../types";
+import type { ProviderCapabilities, } from "../types";
+import { BaseProvider, type BaseProviderDispatchers, } from "../base";
 import { completeDispatch, streamDispatch, } from "./core";
 import { healthCheckDispatch, listModelsDispatch, } from "./operations";
 import type { AnthropicState, } from "./types";
-
-// ── Capabilities ──────────────────────────────────────────
 
 const CAPABILITIES: ProviderCapabilities = {
   type: "anthropic",
@@ -35,70 +25,23 @@ const CAPABILITIES: ProviderCapabilities = {
   thinking: true,
 };
 
-// ── Provider class ────────────────────────────────────────
+const DISPATCHERS: BaseProviderDispatchers<AnthropicState> = {
+  complete: completeDispatch,
+  stream: streamDispatch,
+  healthCheck: healthCheckDispatch,
+  listModels: listModelsDispatch,
+};
 
 /** */
-export class AnthropicProvider implements LLMProvider {
-  private readonly state: AnthropicState;
-  readonly capabilities = CAPABILITIES;
-
+export class AnthropicProvider extends BaseProvider<AnthropicState> {
   /**
    * @param config
    */
-  constructor(config: ProviderInstanceConfig,) {
-    const baseUrl = (config.baseUrl || "https://api.anthropic.com").replace(/\/+$/, "",);
-    const validated = validateProviderUrl(baseUrl,);
-    if (!validated.ok) {
-      throw new ProviderError(
-        `Invalid provider URL (${config.name}): ${validated.error}`,
-        undefined,
-        400,
-        false,
-      );
-    }
-    this.state = {
-      baseUrl,
-      apiKey: config.apiKey,
-      defaultModel: config.model,
-      timeout: config.timeout,
-      retries: config.retries,
-      headers: config.headers ?? {},
-    };
-  }
-
-  // ── Core generation ────────────────────────────────────
-
-  /**
-   * @param req
-   */
-  async complete(req: GenerateRequest,): Promise<GenerateResponse> {
-    return completeDispatch(this.state, req,);
-  }
-
-  /**
-   * @param req
-   * @param handler
-   */
-  async stream(req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse> {
-    return streamDispatch(this.state, req, handler,);
-  }
-
-  // ── Health check ───────────────────────────────────────
-
-  /** */
-  async healthCheck(): Promise<{
-    status: "ok" | "degraded" | "down";
-    model?: string;
-    latencyMs?: number;
-    error?: string;
-  }> {
-    return healthCheckDispatch(this.state,);
-  }
-
-  // ── List models ────────────────────────────────────────
-
-  /** */
-  async listModels(): Promise<ModelInfo[]> {
-    return listModelsDispatch(this.state,);
+  constructor(config: ProviderInstanceConfig) {
+    super(config, {
+      capabilities: CAPABILITIES,
+      defaultBaseUrl: "https://api.anthropic.com",
+      dispatchers: DISPATCHERS,
+    });
   }
 }
