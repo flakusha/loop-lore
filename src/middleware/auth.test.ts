@@ -393,4 +393,57 @@ describe("resolveUserIdFromRequest", () => {
       await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),
     ).toBe(userId,);
   });
+  it("uses the authConfig 4th-arg over env when DI is provided (BUG-resolveuseridfromrequest-authconfig-di)", async () => {
+    // With AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1 set globally (via beforeEach), a
+    // bare resolveUserIdFromRequest(req, db, "demo") would consult the legacy
+    // sha256(token) path. When callers pass an `authConfig` whose
+    // `legacyOpaqueTokenFallback` is false, that DI must win — otherwise the
+    // caller has no way to opt out of the env-driven fallback from inside a
+    // route handler. This guards the DI contract used by export.ts and
+    // export-sse/start.ts.
+    const LEGACY_OFF_DI_CONFIG = {
+      ...LEGACY_ONLY_AUTH_CONFIG,
+      legacyOpaqueTokenFallback: false,
+    } as const satisfies AuthConfig;
+
+    const userId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: userId,
+        username: `di-${userId}`,
+        display_name: "DI User",
+        role: "user",
+        status: UserStatus.Active,
+        settings: "{}",
+      },)
+      .execute();
+
+    const token = "di-token-only-resolves-via-legacy";
+    const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
+    await db
+      .insertInto("sessions",)
+      .values({
+        user_id: userId,
+        token_hash: tokenHash,
+        ip: "127.0.0.1",
+        user_agent: "test",
+        expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
+      },)
+      .execute();
+
+    const req = new Request("http://localhost", {
+      headers: { Cookie: `ll_token=${token}`, },
+    },);
+
+    // Sanity: env fallback ON + no DI = resolves via sha256 (legacy path active).
+    expect(await resolveUserIdFromRequest(req, db, "demo",),).toBe(userId,);
+
+    // Contract: DI with legacyOpaqueTokenFallback=false suppresses the env-driven fallback.
+    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
+    expect(solo?.id ?? null,).not.toBe(userId,); // sanity: test user is NOT the solo user
+    expect(
+      await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_DI_CONFIG,),
+    ).toBe(solo?.id ?? null,);
+  });
 });
