@@ -4,8 +4,8 @@
 import { beforeAll, describe, expect, it, } from "bun:test";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { createLogger, } from "../../logger";
-import { getCommand, } from "./registry";
 import { runImprove, } from "./improve";
+import { getCommand, } from "./registry";
 
 beforeAll(() => {
   createLogger({ level: "error", },);
@@ -48,7 +48,7 @@ describe("improve command", () => {
     expect(result.systemMessage,).toContain("LLM unavailable — applied local heuristics only",);
     expect(result.systemMessage,).toContain("Hello world.",);
     expect(result.actionPayload,).toEqual(
-      expect.objectContaining({ fallback: true, }),
+      expect.objectContaining({ fallback: true, },),
     );
   });
 

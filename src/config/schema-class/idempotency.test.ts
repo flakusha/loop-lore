@@ -16,7 +16,7 @@ import { describe, expect, test, } from "bun:test";
 import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
 
 describe("IDEMPOTENCY_DEFAULTS", () => {
-  test("backend defaults to \"table\" so asyncStore.track() runs by default", () => {
+  test('backend defaults to "table" so asyncStore.track() runs by default', () => {
     // Bug regression guard: flipping back to "memory" silently disables
     // /api/requests/:id/status for every install that doesn't override.
     expect(IDEMPOTENCY_DEFAULTS.backend,).toBe("table",);
