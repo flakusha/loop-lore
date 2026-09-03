@@ -68,7 +68,7 @@
     "test:all": "bun run build:frontend && bun test && bun run test:e2e:browser",
     "test:parallel": "bun run test:unit:parallel & bun run test:e2e & wait",
     "jscpd": "jscpd src/ --min-lines 8 --min-tokens 100 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts'",
-    "jscpd:full": "jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts'",
+    "jscpd:full": "jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts' --reporters console,json --output .tmp/jscpd",
     "size:check": "bun run scripts/check-file-size.ts",
     "wiring:check": "bun run scripts/check-wiring.ts",
     "changelog:check": "bun run scripts/check-changelog.ts",
