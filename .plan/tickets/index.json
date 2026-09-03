@@ -10488,6 +10488,19 @@
     "source": ".plan/tickets/TASK-consolidate-quest-engines.md",
     "git_issue": "82bb36d"
   },
+
+  "TASK-CONSOLIDATE-TEMPLATE-CONSTANTS-UNDER-GLOBAL-ALL-CONSTANTS-UM": {
+    "hash": "ca2e7e0",
+    "git_issue": "ca2e7e0",
+    "extid": "TASK-CONSOLIDATE-TEMPLATE-CONSTANTS-UNDER-GLOBAL-ALL-CONSTANTS-UM",
+    "type": "TASK",
+    "title": "Consolidate template constants under global all-constants umbrella",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-consolidate-template-constants-under-global-all-constants-um.md"
+  },
   "TASK-CONSOLIDATE-UNSAFE-DATE-BUFFER-JSON-USAGE-INTO-SHARED-UTILS": {
     "hash": "ad8bb7e",
     "git_issue": "ad8bb7e",
@@ -12249,6 +12262,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-extract-chat-route-business-logic.md",
     "git_issue": "4d8fd3f"
+  },
+
+  "TASK-EXTRACT-HTMX-VIEW-FRAGMENTS-FROM-DUPLICATED-HTML-VIEWS": {
+    "hash": "e4c5f81",
+    "git_issue": "e4c5f81",
+    "extid": "TASK-EXTRACT-HTMX-VIEW-FRAGMENTS-FROM-DUPLICATED-HTML-VIEWS",
+    "type": "TASK",
+    "title": "Extract htmx view fragments from duplicated HTML views",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-extract-htmx-view-fragments-from-duplicated-html-views.md"
   },
   "TASK-F10-AUTH-FACTORS-TESTS-AND-2FA-SPEC-REWRITE": {
     "hash": "d1dbcca",
@@ -17390,6 +17416,19 @@
     "status": "done",
     "git_issue": "4cec862"
   },
+
+  "TASK-REPLACE-KNIP-GLOBAL-TYPES-EXCLUSION-WITH-PER-SYMBOL-KNIPIGNO": {
+    "hash": "db6cb3b",
+    "git_issue": "db6cb3b",
+    "extid": "TASK-REPLACE-KNIP-GLOBAL-TYPES-EXCLUSION-WITH-PER-SYMBOL-KNIPIGNO",
+    "type": "TASK",
+    "title": "Replace knip global types exclusion with per-symbol knipignore tags",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-replace-knip-global-types-exclusion-with-per-symbol-knipigno.md"
+  },
   "TASK-REPLACE-SIGHUP-FULL-RESTART-WITH-SERVER-RELOAD-FOR-CERT-ROTA": {
     "hash": "22d0e95",
     "git_issue": "22d0e95",
@@ -18077,6 +18116,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-runtime-migration-staleness-guard.md",
     "git_issue": "c41b00a"
+  },
+
+  "TASK-SCAN-EPICS-FOR-PLUGIN-API-SURFACE-CANDIDATES": {
+    "hash": "d8b1fc5",
+    "git_issue": "d8b1fc5",
+    "extid": "TASK-SCAN-EPICS-FOR-PLUGIN-API-SURFACE-CANDIDATES",
+    "type": "TASK",
+    "title": "Scan epics for plugin API surface candidates",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-scan-epics-for-plugin-api-surface-candidates.md"
   },
   "TASK-SCENARIO-SYSTEM-AUTHORING": {
     "hash": "cbb7cd3",
