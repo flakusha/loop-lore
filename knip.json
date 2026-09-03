@@ -46,7 +46,6 @@
     "@markuplint/html-spec",
     "@markuplint/mustache-parser", // referenced by .markuplintrc.json (config), not imported in code
     "markuplint", // CLI binary invoked by pre-commit hook, not imported
-    "@eslint/js", // eslint.config.mjs rewritten as stubs (no @eslint/js import needed)
     "@elysia/openapi",
     "@sinclair/typebox", // frontend bundle + validation schemas; frontend entries not in knip's entry list
     "@types/clean-css",
@@ -62,7 +61,6 @@
   "ignoreBinaries": [
     "sha256sum", // CI checksum step
     "wait", // shell helper
-    "pip", // scancode install (scripts/check-licenses.ts)
     "scancode", // license compliance gate (scripts/check-licenses.ts)
     "fossa", // license compliance gate (scripts/check-licenses.ts)
     "tail", // changelog gate (scripts/check-changelog.ts git-tag query)
@@ -153,7 +151,6 @@
     "tests/e2e/flows/browser/register-flow.browser.ts",
     "tests/e2e/flows/browser/search-flow.browser.ts",
     "tests/e2e/flows/browser/settings-flow.browser.ts",
-    "tests/e2e/flows/browser/smoke.browser.ts",
     "tests/e2e/flows/browser/world-invites.browser.ts",
     "tests/e2e/flows/browser/worlds-flow.browser.ts",
     "tests/e2e/flows/browser/vn-settings.browser.ts"
