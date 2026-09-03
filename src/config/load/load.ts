@@ -12,7 +12,8 @@ import { loadTemplateConfig, } from "../templates-loader";
 import { DEFAULT_CONFIG_FILES, ENV_MAP, LOCAL_CONFIG_FILES, } from "./constants";
 import { loadDomainConfigs, } from "./domain";
 import { applyEnvironmentOverrides, applyProviderEnvVars, } from "./env";
-import { findConfigFile, findMainRepoRoot, firstExisting, } from "./fs";
+import { findConfigFile, firstExisting, } from "./fs";
+import { findMainRepoRoot, } from "../../utils/git-worktree";
 import { deepMerge, parseFileContent, } from "./parse";
 import { validateAuthSafety, validateDatabaseSafety, } from "./safety";
 
