@@ -55,7 +55,11 @@ export async function updateImpersonation(
           code: "bad_request",
           message: "This character is already being impersonated by another user in this world",
         };
+      } else {
+        // no conflict — proceed to update impersonation for this user
       }
+    } else {
+      // chat has no world_id — no cross-world conflict to check
     }
   }
 
