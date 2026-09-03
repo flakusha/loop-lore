@@ -126,3 +126,26 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
   `fix-command-dispatch-async-safety`, `fix-csrf-hardening-batch`,
   `fix-middleware-async-cancellation`) need a clean-or-drop call before
   piling new work on top.
+
+## Open / next actions (2026-09-03, post-Bucket A close-out)
+
+- **VN Mode / Chat Settings Bug Cluster** — 7 interlocking bugs filed 2026-09-03
+  (`df576604 docs(plan): file FE/BE/DB chat/VN settings gap tickets`), tracked in
+  `open-vn-settings-bugs.md`. Umbrella ticket `66c4c3d` (TASK, HIGH). Blocks
+  0.1.0 release quality — visualNovel must be toggleable, type-consistent, and
+  role-guarded per spec. See also `FEAT-expose-full-vn-settings-from-spec` (`8a1613e`).
+
+- **Build Integrity Cluster** — 3 untracked tsc errors + plan:sync orphan bug,
+  filed 2026-09-03 (`25420d13`, `e11f57d6`), tracked in `open-build-integrity.md`.
+  These surfaced from the 154+ ahead window where the gate was skipped.
+  Must be fixed before next release tag.
+
+- **Audit Follow-up Cluster** — 8 `TASK-audit-follow-up-*` tickets from the
+  2026-09-03 audit re-reviews, tracked in `open-debt.md` § Audit Follow-up Cluster.
+  Priority order: report-name-dropped → maxRatio → DI path → templates ceiling →
+  .catch path → reuniteChats ownership → reapStale dead code → Promise.all concurrency.
+
+- **Bucket A bugs (dev-fix review)** — H1 (idempotency user-scope), H2 (custom-instructions
+  preamble), H3 (dh-ratchet tests) — all shipped in the 2026-09-03 Bucket A commit set
+  (`c9ca8edd`, `c1cd4d8b`, `ccac5b9d`, `b085c0ec`, `5c56b529`, `9b39670d`, `f4e49335`).
+  Remaining: 6 `VALID_FIXED_WORKTREE` worktrees need clean-or-drop.
