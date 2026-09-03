@@ -217,11 +217,29 @@ describe("messageSeenRoutes", () => {
     expect(myEntries.length,).toBe(1,);
   });
 
-  test("DELETE with mismatched actorId returns 403 (IDOR guard)", async () => {
+  test("DELETE cannot delete another user's actor record", async () => {
     const app = seenApp(db, userId, null,);
-    // userId session tries to delete otherActorId's record
+    await db
+      .insertInto("message_seen",)
+      .values({
+        id: `ms-${messageId}-${otherActorId}`,
+        message_id: messageId,
+        actor_id: otherActorId,
+        state: "seen",
+        seen_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+      },)
+      .execute();
+
     const res = await app.handle(deleteReq(`/api/messages/${messageId}/seen`, otherActorId,),);
     expect(res.status,).toBe(403,);
+
+    const row = await db
+      .selectFrom("message_seen",)
+      .select("id",)
+      .where("id", "=", `ms-${messageId}-${otherActorId}`,)
+      .executeTakeFirst();
+    expect(row,).toBeDefined();
   });
 
   test("POST record branch with mismatched body.actorId returns 403 (IDOR guard)", async () => {
