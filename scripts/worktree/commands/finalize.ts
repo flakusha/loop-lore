@@ -102,33 +102,34 @@ function acquireFinalizeLock(repoRoot: string,): () => void {
     }
   };
 
-  const reapStale = (): void => {
+  const reapStale = (): boolean => {
     let raw = "";
+    try { raw = readFileSync(lockPath, "utf8",).trim(); } catch { return false; }
+    const ownerPid = parseInt(raw, 10,);
+    if (!Number.isFinite(ownerPid,) || ownerPid === myPid) { return false; }
     try {
       process.kill(ownerPid, 0,);
       // Owner still alive — keep their lock.
+      return false;
     } catch (err) {
       // Only reap on ESRCH (process truly gone). EPERM means we lack
       // permission to signal the owner — typical for non-root agents
       // checking PID 1 (init) — but the process IS alive, so respect
-      // its lock. Any other error also means we cannot determine liveness,
-      // so fall through to retry the acquire; that fails safely when the
-      // owner is actually gone, and loops indefinitely (50 attempts)
-      // when the owner is alive.
-      if ((err as NodeJS.ErrnoException,).code === "ESRCH") {
-        try { unlinkSync(lockPath,); } catch { /* best-effort */ }
-        if (!tryCreate()) { /* lost the race — retry below */ }
-      }
+      // its lock. Other errors fall through to retry that will fail
+      // safely if the owner is actually gone.
+      if ((err as NodeJS.ErrnoException,).code !== "ESRCH") { return false; }
     }
+    try { unlinkSync(lockPath,); } catch { /* best-effort */ }
+    return tryCreate();
+  };
+
+  const release = (): void => {
+    try { unlinkSync(lockPath,); } catch { /* best-effort */ }
   };
 
   for (let attempt = 0; attempt < 50; attempt++) {
-    if (tryCreate()) {
-      return (): void => {
-        try { unlinkSync(lockPath,); } catch { /* best-effort */ }
-      };
-    }
-    reapStale();
+    if (tryCreate()) { return release; }
+    if (reapStale()) { return release; }
     // Brief backoff before retry. 50 × 20ms = 1s ceiling.
     Bun.sleepSync(20,);
   }
