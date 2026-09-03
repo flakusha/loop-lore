@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { platform, } from "node:process";
-import { safeFetch, } from "../../utils";
 import { stopLivenessProbes, } from "./probes";
 import type { ServerExternalHost, ServerInstance, } from "./types";
 
@@ -66,50 +65,3 @@ export function killAllSync(host: ServerExternalHost,): void {
   host.instances.length = 0;
 }
 
-/**
- * Run a single liveness check against all managed instances
- * @param host
- */
-export async function checkAllLiveliness(host: ServerExternalHost,): Promise<void> {
-  for (const instance of host.instances) {
-    const alive = await probeInstance(instance,);
-    if (!alive) {
-      host.log.warn("External server unresponsive", {
-        type: instance.type,
-        port: instance.pid,
-        pid: instance.pid,
-      },);
-    }
-  }
-}
-
-/**
- * Probe a single instance — returns true if responsive
- * @param instance
- */
-async function probeInstance(instance: ServerInstance,): Promise<boolean> {
-  try {
-    if (instance.type === "llama-cpp") {
-      const result = await safeFetch<string>(`http://127.0.0.1:${instance.port}/health`, {
-        timeout: 5_000,
-        parseJson: false,
-      },);
-      return result.ok;
-    }
-    if (instance.type === "llama-swap") {
-      // No guaranteed /health route; probe the OpenAI models endpoint.
-      const result = await safeFetch(`http://127.0.0.1:${instance.port}/v1/models`, {
-        timeout: 5_000,
-      },);
-      // Any HTTP response (any status) means the server is alive.
-      return result.ok || result.status !== undefined;
-    }
-    // sd-cpp: any TCP response = alive
-    const result = await safeFetch(`http://127.0.0.1:${instance.port}/`, {
-      timeout: 5_000,
-    },);
-    return result.ok || result.status !== undefined;
-  } catch {
-    return false;
-  }
-}
