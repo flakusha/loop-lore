@@ -7,7 +7,16 @@
  * Runs independent checks in parallel and aggregates results
  *
  * Usage:
- *   bun run scripts/check-parallel.mjs [--fix] [--ci] [--report-ls]
+ *   bun run scripts/check-parallel.mjs [--fix] [--ci] [--report-ls] [--jobs N]
+ *
+ * Concurrency cap (added to keep peak RSS sane across multiple worktrees):
+ *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env, or 4).
+ *   CHECK_JOBS  Env override for the same value. The cap controls how many
+ *               checks run in parallel; the script still launches all checks,
+ *               but processes them in chunks of `jobs` at a time. With the
+ *               default (4), peak RSS per run drops to roughly 1/6 of the
+ *               historical `Promise.all`-everything behaviour, which lets
+ *               2 worktrees share a 64GB host without OOM.
  *
  * Writes a machine-readable report to .tmp/check-report.json after every run
  * (success: summary only; failure: summary + full failed-check output).
@@ -42,11 +51,12 @@ const checks = {
     "typecheck - coverage": "bun run typecheck:coverage",
     "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend",
 
-    "lint - ts (eslint)": "bun run lint:eslint",
+    // ESLint (single canonical entry — duplicate "lint - ts (eslint)" removed;
+    // running ESLint twice doubled its 1.5GB RSS peak with no new signal.)
+    "lint - eslint": "bun run lint:eslint",
     // oxlint gate is advisory: tsc + eslint already cover real correctness,
     // and oxlint reports thousands of style warnings that don't fail other gates.
     "lint - oxlint (correctness)": "bun run lint:oxlint:advisory",
-    "lint - eslint": "bun run lint:eslint",
 
     // Formatting
     "format - dprint": "bun run format",
@@ -119,6 +129,34 @@ const checks = {
   })(),
   IS_REPORT_LS = process.argv.includes("--report-ls",);
 
+// ── Concurrency cap ────────────────────────────────────────────
+// Resolve the per-run concurrency cap with priority: --jobs flag > CHECK_JOBS
+// env > default 4. We refuse values < 1 (would deadlock) and cap at the check
+// count to avoid the Promise.all-of-empty-array footgun. The cap exists so
+// multiple worktrees can run `bun run check` simultaneously without the host
+// hitting OOM — peak RSS scales ~linearly with concurrent checks.
+const DEFAULT_JOBS = 4;
+function parseJobs() {
+  const flagIdx = process.argv.indexOf("--jobs",);
+  let raw;
+  if (flagIdx !== -1 && flagIdx + 1 < process.argv.length) {
+    raw = process.argv[flagIdx + 1];
+  } else if (process.env.CHECK_JOBS !== undefined) {
+    raw = process.env.CHECK_JOBS;
+  } else {
+    raw = `${DEFAULT_JOBS}`;
+  }
+  const parsed = Number.parseInt(raw, 10,);
+  if (!Number.isFinite(parsed,) || parsed < 1) {
+    console.error(
+      `⚠ Invalid --jobs/CHECK_JOBS value ${JSON.stringify(raw,)}; falling back to ${DEFAULT_JOBS}.`,
+    );
+    return DEFAULT_JOBS;
+  }
+  return parsed;
+}
+const JOBS = Math.min(parseJobs(), Object.keys(checks,).length,);
+
 // oxlint-disable-next-line func-style
 async function runCheck(name, command,) {
   const startedAt = performance.now(),
@@ -160,11 +198,56 @@ async function runCheck(name, command,) {
 }
 
 async function runAllChecks() {
+  const entries = Object.entries(checks,);
+  const total = entries.length;
   console.log("=== loop-lore parallel check runner ===",);
-  console.log(`Running ${Object.keys(checks,).length} checks in parallel...\n`,);
-
-  const promises = Object.entries(checks,).map(([name, command,],) => runCheck(name, command,));
-  return Promise.all(promises,);
+  console.log(
+    `Running ${total} checks with concurrency=${JOBS} (override via --jobs N or CHECK_JOBS=N)...\n`,
+  );
+  // Cap the number of in-flight checks at JOBS. We schedule chunks of size
+  // JOBS and await each chunk before starting the next; this keeps peak
+  // RSS roughly bounded at JOBS × max-check-RSS instead of total × max-check-RSS.
+  // Order is preserved per chunk so the report's per-check duration numbers
+  // remain comparable across runs (the slowest check sits in the final chunk).
+  //
+  // We use `Promise.allSettled` rather than `Promise.all`: `runCheck` already
+  // catches every check-level error into a `{ passed: false, output, ... }`
+  // result object, so no promise should reject — but `allSettled` keeps the
+  // chunk resilient to any future check that forgets its try/catch, and
+  // makes the per-chunk invariant explicit (collect every result, no early
+  // short-circuit on a single failure).
+  const results = [];
+  for (let offset = 0; offset < total; offset += JOBS) {
+    const chunk = entries.slice(offset, offset + JOBS,);
+    const chunkResults = await Promise.allSettled(
+      chunk.map(([name, command,],) => runCheck(name, command,)),
+    );
+    for (const settled of chunkResults) {
+      if (settled.status === "fulfilled") {
+        results.push(settled.value,);
+        continue;
+      }
+      // `rejected` branch: `runCheck` catches every check-level error into
+      // a `{ passed: false, output, ... }` result, so a rejection here means
+      // a bug in `runCheck` itself (uncaught throw from `Bun.spawn` setup,
+      // stream read, etc.). Synthesize a failing result so the rest of the
+      // run can complete and the report still shows the anomaly.
+      const reason = settled.reason;
+      const message = reason instanceof Error
+        ? `${reason.message}\n${reason.stack ?? ""}`
+        : String(reason,);
+      results.push({
+        name: "(runner error)",
+        command: "(see stack trace)",
+        passed: false,
+        exitCode: 1,
+        output: message,
+        durationMs: 0,
+        truncated: false,
+      },);
+    }
+  }
+  return results;
 }
 
 function reportResults(results,) {
