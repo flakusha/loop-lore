@@ -2423,17 +2423,6 @@
     "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md",
     "git_issue": "6ca8fad"
   },
-  "BUG-MISSING-COMPLETEGENERATIONOPTS-IMPORT-IN-POST-STORE-TEST": {
-    "hash": "pending",
-    "extid": "BUG-MISSING-COMPLETEGENERATIONOPTS-IMPORT-IN-POST-STORE-TEST",
-    "type": "BUG",
-    "title": "Missing `CompleteGenerationOpts` import in src/generation/auto-gen/post-store.test.ts:32",
-    "label": "bug",
-    "priority": "critical",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-missing-completegenerationopts-import-in-post-store-test.md"
-  },
   "BUG-MODEL-COMPARISONS-ANALYTICS-LEAKS-ALL-USERS-ROWS-MISSING-USE": {
     "hash": "43587b3",
     "extid": "BUG-MODEL-COMPARISONS-ANALYTICS-LEAKS-ALL-USERS-ROWS-MISSING-USE",
@@ -2787,17 +2776,6 @@
     "source": ".plan/tickets/BUG-pii-redaction-hardcoded-dev-fallback-secret-no-prod-guard.md",
     "git_issue": "a83a310",
     "status": "done"
-  },
-  "BUG-PLAN-SYNC-FIX-CREATES-ORPHAN-GIT-ISSUES": {
-    "hash": "pending",
-    "extid": "BUG-PLAN-SYNC-FIX-CREATES-ORPHAN-GIT-ISSUES",
-    "type": "BUG",
-    "title": "`plan:sync --fix` mass-creates orphan git issues for placeholder hashes",
-    "label": "bug",
-    "priority": "critical",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-plan-sync-fix-creates-orphan-git-issues.md"
   },
   "BUG-PLAN-SYNC-FIX-MASS-CREATES-ORPHAN-GIT-ISSUES-FOR-PLACEHOLDER": {
     "hash": "4bc4b34",
@@ -3530,17 +3508,6 @@
     "source": ".plan/tickets/BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren.md",
     "git_issue": "02abf8a"
   },
-  "BUG-UNDEFINED-CHATSECTIONSROUTES-IN-REGISTER-PLUGINS": {
-    "hash": "pending",
-    "extid": "BUG-UNDEFINED-CHATSECTIONSROUTES-IN-REGISTER-PLUGINS",
-    "type": "BUG",
-    "title": "Undefined `chatSectionsRoutes` referenced at src/app/register-plugins.ts:150",
-    "label": "bug",
-    "priority": "critical",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-undefined-chatsectionsroutes-in-register-plugins.md"
-  },
   "BUG-UNDEFINED-CSS-CUSTOM-PROPERTIES-BREAK-RENDERING": {
     "hash": "6c5ec87",
     "extid": "BUG-UNDEFINED-CSS-CUSTOM-PROPERTIES-BREAK-RENDERING",
@@ -3564,17 +3531,6 @@
     "epic": "epic-code-quality",
     "tags": [],
     "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
-  },
-  "BUG-UNUSED-T-IMPORT-IN-COMMANDS-INDEX": {
-    "hash": "pending",
-    "extid": "BUG-UNUSED-T-IMPORT-IN-COMMANDS-INDEX",
-    "type": "BUG",
-    "title": "Unused `t` import in src/routes/commands/index.ts:19",
-    "label": "bug",
-    "priority": "critical",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-unused-t-import-in-commands-index.md"
   },
   "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT": {
     "hash": "0cd09d6",
