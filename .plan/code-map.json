@@ -357,6 +357,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-link-share-handlers-and-gallery-grid-param-lack-valida.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    }
+  ],
+  "src/assets/controller/serve.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
   "src/assets/controller/signed-url-routes.ts": [
@@ -403,6 +413,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-asset-webp-vp8x-dimension-truncation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
@@ -1099,6 +1113,12 @@
       "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
     }
   ],
+  "src/assistant/commands/review.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    }
+  ],
   "src/assistant/commands/rewrite.test.ts": [
     {
       "kind": "ticket",
@@ -1301,6 +1321,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-context-injection-correctness.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
@@ -3505,6 +3529,10 @@
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
     }
@@ -3659,6 +3687,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-import-export-io.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
   "src/characters/story-overlay.ts": [
@@ -4050,6 +4082,10 @@
     }
   ],
   "src/chat/music-links.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-external-music-linking.md"
@@ -5305,6 +5341,14 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-logging-telemetry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-schema-defaults-leak-absolute-paths.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
     }
   ],
   "src/config/hot-reload.test.ts": [
@@ -5459,10 +5503,28 @@
       "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
     }
   ],
+  "src/config/schema-class/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    }
+  ],
   "src/config/schema-class/json-schema/headers.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    }
+  ],
+  "src/config/schema-class/json-schema/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    }
+  ],
+  "src/config/schema-class/json-schema/server.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-schema-defaults-leak-absolute-paths.md"
     }
   ],
   "src/config/schema.ts": [
@@ -5592,6 +5654,10 @@
   "src/config/schema/config.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-item-config-templates.md"
     }
   ],
@@ -5674,6 +5740,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-config-skills-professions.md"
     }
   ],
@@ -5687,6 +5757,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-skills-professions-config.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
     },
     {
       "kind": "ticket",
@@ -5829,6 +5903,12 @@
       "source": ".plan/tickets/TASK-production-tls-modes-byo-certs-acme-and-proxy-termination.md"
     }
   ],
+  "src/config/sections/server/defaults.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-config-schema-defaults-leak-absolute-paths.md"
+    }
+  ],
   "src/config/sections/templates.ts": [
     {
       "kind": "epic",
@@ -5943,6 +6023,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
+    }
+  ],
+  "src/config/templates-loader/validation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
   "src/config/templates/llm.yaml": [
@@ -11272,6 +11358,10 @@
   "src/frontend/pages/characters-traits.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-traits-page-injects-unescaped-goal-into-innerhtml-.md"
     }
   ],
@@ -11690,6 +11780,10 @@
     }
   ],
   "src/frontend/ui.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-finalize-notification-bell-header-wiring.md"
@@ -12204,6 +12298,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
     },
     {
@@ -12467,6 +12565,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-cancellation-lifecycle-db-failure-permanently-marks-chat-gen.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
   "src/generation/caption-route.ts": [
@@ -12636,10 +12738,18 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos.md"
     }
   ],
   "src/generation/generate-route/stream-to-client.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
@@ -12755,6 +12865,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
@@ -13160,6 +13274,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-comfyui-template-registry.md"
     },
     {
@@ -13187,6 +13305,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
+    }
+  ],
+  "src/generation/providers/openai-compatible/http.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
   "src/generation/providers/openai-compatible/metadata.ts": [
@@ -13219,6 +13343,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-resource-provision.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
@@ -14462,6 +14590,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
     }
   ],
@@ -14553,6 +14685,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
@@ -14820,6 +14956,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
     },
     {
@@ -15077,6 +15217,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-flagqueue-leaks-reporter-pii.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
@@ -15367,6 +15511,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-plugin-tool-gating-empty-role-bypass.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
@@ -16747,6 +16895,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-demo-login-endpoint-bypasses-rate-limiter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
   "src/routes/auth/logout.ts": [
@@ -18016,6 +18168,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-realtime-broadcast.md"
     },
     {
@@ -18279,6 +18435,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
   "src/routes/messages/read.ts": [
@@ -18767,6 +18927,12 @@
       "source": "docs/spec/quests-encounters.md"
     }
   ],
+  "src/routes/quests/handlers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    }
+  ],
   "src/routes/queue.ts": [
     {
       "kind": "epic",
@@ -19077,6 +19243,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-entity-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
@@ -19458,6 +19628,10 @@
   "src/routes/worlds/locations.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     },
     {
@@ -19674,6 +19848,10 @@
     }
   ],
   "src/rpg/crafting/process.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-uses-shared-sync-connection-causing-database-is-loc.md"
@@ -19935,6 +20113,12 @@
       "source": ".plan/epics/epic-exploration-discovery.md"
     }
   ],
+  "src/rpg/fantasies/service/crud.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    }
+  ],
   "src/rpg/fantasy/categories.ts": [
     {
       "kind": "ticket",
@@ -20057,6 +20241,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-player-state-machine.md"
+    }
+  ],
+  "src/rpg/integration-registry/queries.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
   "src/rpg/intimacy/actions.ts": [
@@ -20400,6 +20590,10 @@
     }
   ],
   "src/rpg/npc-navigation/service/processing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
@@ -21205,6 +21399,10 @@
   ],
   "src/scripts/version-bump.ts": [
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/platform-support.md"
     }
@@ -21528,6 +21726,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
     },
     {
@@ -21673,6 +21875,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-services-tradecore-validatelines-lacks-world-id-filter-cross.md"
+    }
+  ],
+  "src/services/trade/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
   "src/social-hub/adapters/adapter.ts": [
@@ -21861,6 +22069,10 @@
   ],
   "src/story/events/extraction.ts": [
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/testing.md"
     }
@@ -22003,6 +22215,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-security-merge-build-break-instances-ts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
@@ -22681,6 +22897,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-date-parse-results-unchecked-for-nan-10-sites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     },
     {
       "kind": "ticket",
