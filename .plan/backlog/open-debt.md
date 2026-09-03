@@ -67,3 +67,22 @@ Surfaced by the 5 surgical bug fixes shipped on 2026-09-03 (`c093f56d`, `7cbcea6
 **Tickets**: `TASK-refactor-extract-scopebyuserid-middleware`, `TASK-refactor-lift-crafting-station-world-id-scope-to-shared-help`, `TASK-refactor-typed-kysely-upsert-by-unique-key-helpers`, `TASK-refactor-schema-validate-alpine-store-fields-at-init`, `TASK-refactor-trust-boundary-audit-pass`.
 
 **Acceptance check**: after #1 + #2 + #5 land, grep `query\.actorId\|body\.actorId` in `src/routes/` returns zero production hits, and every world-scoped entity query has a `WHERE world_id = ?` (or helper call).
+
+## Audit Follow-up Cluster (from Bucket A/B/C close-outs — 2026-09-03)
+
+> 8 follow-up tickets filed from the 2026-09-03 audit re-reviews (`docs/meta/code-practices-improvements/audit-batch-A-message-seen-gen-2026-09-03.md` and sibling Bucket B/C audits). These are NOT bucket failures — they are residual defects that the buckets landed while not yet addressing.
+
+| Git issue | Task | Severity | Problem | Where |
+| --------- | ---- | -------- | ------- | ----- |
+| `864a2bc` | `TASK-audit-follow-up-check-report-name-field-dropped` | NIT-1 | Check report `name` field dropped after ratchet-perf changes | check report aggregation |
+| `0391ad6` | `TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress` | NIT-1 | `safeDecompress` `maxRatio` silently raised 10× without regression test | `src/content/compress.ts` |
+| `0735878` | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | LOW | DI fast path (4-arg call) untested; callers silently fall back to per-request `loadConfig()` | `src/middleware/auth/*` |
+| `4636043` | `TASK-audit-follow-up-templates-ts-at-190l-convention-ceiling` | NIT-1 | `templates.ts` at 190L convention ceiling | `src/assistant/prompt/templates.ts` |
+| `1448001` | `TASK-audit-follow-up-triggerautogeneration-catch-path-untested` | NIT-2 | `.catch()` path of `triggerAutoGeneration` not isolated | `src/generation/auto-gen/auto-generation.ts` |
+| `6caa51a` | `TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha` | NIT-2 | Secondary chat-ownership check in `reuniteChats` untested | `src/chat/service/` |
+| `06d25f6` | `TASK-audit-follow-up-worktree-finalize-reapstale-void-dead-code` | LOW | Proposed removal of `reapStale(): boolean` as dead-code pattern | worktree tooling |
+| `3afdeb2` | `TASK-audit-follow-up-chat-swipe-index-race-test-uses-promise-all-` | NIT-1 | chat-swipe-index-race test uses `Promise.all` which runs on JS thread serially — no real concurrency tested | test infra |
+
+**Priority order** (from bucket-A close-out doc): #1 (report name), #2 (maxRatio), #3 (DI path), #4 (templates.ts ceiling), #5 (.catch path), #6 (reuniteChats ownership), #7 (reapStale dead code), #8 (Promise.all concurrency).
+
+**Tracking**: each ticket has a git issue + `.plan/tickets/TASK-audit-follow-up-*.md` file. These cluster with the post-bug-bucket refactoring section above — #3 (DI path) and #5 (.catch path) overlap with the refactoring items #1 and #3 respectively.
