@@ -155,7 +155,7 @@ export async function migrateChat(
   return { ok: true, newChatId, sourceChatId: chatId, };
 }
 
-// ── Narration injection ────────────────────────────────────────────────────────
+// ── Narration injection ────────────────────────────────────────────────
 
 /**
  * Inject a VN narration system message into a chat. Non-fatal.

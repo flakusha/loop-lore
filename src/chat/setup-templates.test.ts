@@ -101,7 +101,7 @@ describe("chat setup templates", () => {
       description: "A custom story template",
       mode: "story",
       turnStrategy: "scene_based",
-      visualNovel: false,
+      renderingOverride: null,
     },);
     expect(r1.ok,).toBe(true,);
     if (!r1.ok) { return; }
@@ -121,11 +121,11 @@ describe("chat setup templates", () => {
       slug: "editable",
       name: "Before",
       mode: "direct",
-      visualNovel: false,
+      renderingOverride: null,
     },);
     const r = await updateChatSetupTemplate(db, "template-editable", {
       name: "After",
-      visualNovel: true,
+      renderingOverride: "visual_novel",
     },);
     expect(r.ok,).toBe(true,);
     if (!r.ok) { return; }
