@@ -13,6 +13,7 @@ import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, } from "../../utils";
 import { getChatSetupTemplate, } from "./templates";
 import type { TemplateMutationResult, } from "./types";
+import type { ChatRenderingOverride } from "../../db/enums-core/chat";
 
 /**
  * Create a chat setup template (admin).
@@ -25,7 +26,7 @@ import type { TemplateMutationResult, } from "./types";
  * @param params.turnStrategy
  * @param params.worldId
  * @param params.gmConfig
- * @param params.visualNovel
+ * @param params.renderingOverride
  * @param params.features
  * @param params.visibility
  */
@@ -39,7 +40,7 @@ export async function createChatSetupTemplate(
     turnStrategy?: string | null;
     worldId?: string | null;
     gmConfig?: Record<string, unknown> | null;
-    visualNovel?: boolean;
+    renderingOverride?: ChatRenderingOverride | null;
     features?: string[] | null;
     visibility?: string | null;
   },
@@ -65,7 +66,7 @@ export async function createChatSetupTemplate(
       turn_strategy: params.turnStrategy ?? null,
       world_id: params.worldId ?? null,
       gm_config: params.gmConfig ? jsonStringifyOr(params.gmConfig, "{}",) : null,
-      visual_novel: params.visualNovel ? 1 : 0,
+      visual_novel: params.renderingOverride === "visual_novel" ? 1 : 0,
       features: params.features ? jsonStringifyOr(params.features, "[]",) : "[]",
       visibility: params.visibility ?? null,
     },)
@@ -89,7 +90,7 @@ export async function createChatSetupTemplate(
  * @param params.turnStrategy
  * @param params.worldId
  * @param params.gmConfig
- * @param params.visualNovel
+ * @param params.renderingOverride
  * @param params.features
  * @param params.visibility
  */
@@ -103,7 +104,7 @@ export async function updateChatSetupTemplate(
     turnStrategy?: string | null;
     worldId?: string | null;
     gmConfig?: Record<string, unknown> | null;
-    visualNovel?: boolean;
+    renderingOverride?: ChatRenderingOverride | null;
     features?: string[] | null;
     visibility?: string | null;
   },
@@ -122,7 +123,7 @@ export async function updateChatSetupTemplate(
   if (params.gmConfig !== undefined) {
     updates.gm_config = params.gmConfig ? jsonStringifyOr(params.gmConfig, "{}",) : null;
   }
-  if (params.visualNovel !== undefined) { updates.visual_novel = params.visualNovel ? 1 : 0; }
+  if (params.renderingOverride !== undefined) { updates.visual_novel = params.renderingOverride === "visual_novel" ? 1 : 0; }
   if (params.features !== undefined) {
     updates.features = params.features ? jsonStringifyOr(params.features, "[]",) : "[]";
   }

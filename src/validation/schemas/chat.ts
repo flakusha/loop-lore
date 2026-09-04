@@ -109,7 +109,7 @@ export const ChatUpdateBody = t.Object({
 
 /**
  * A chat setup template — a validated preset that seeds a chat's key mechanics
- * at creation. `mode`, `turnStrategy`, `worldId`, `gmConfig`, `visualNovel` are
+ * at creation. `mode`, `turnStrategy`, `worldId`, `gmConfig`, `renderingOverride` are
  * the immutable key mechanics once the bound chat goes online.
  */
 export const ChatSetupTemplateSchema = t.Object({
@@ -121,7 +121,11 @@ export const ChatSetupTemplateSchema = t.Object({
   turnStrategy: t.Optional(TurnStrategySchema,),
   worldId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
-  visualNovel: t.Optional(t.Boolean(),),
+  renderingOverride: t.Optional(t.Union([
+    t.Literal("text",),
+    t.Literal("visual_novel",),
+    t.Null(),
+  ],),),
   features: t.Optional(t.Array(t.String(),),),
   visibility: t.Optional(ChatVisibilitySchema,),
 },);
@@ -135,7 +139,11 @@ export const ChatSetupTemplateCreateBody = t.Object({
   turnStrategy: t.Optional(TurnStrategySchema,),
   worldId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
-  visualNovel: t.Optional(t.Boolean(),),
+  renderingOverride: t.Optional(t.Union([
+    t.Literal("text",),
+    t.Literal("visual_novel",),
+    t.Null(),
+  ],),),
   features: t.Optional(t.Array(t.String(),),),
   visibility: t.Optional(ChatVisibilitySchema,),
 },);
@@ -148,7 +156,11 @@ export const ChatSetupTemplateUpdateBody = t.Object({
   turnStrategy: t.Optional(TurnStrategySchema,),
   worldId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
-  visualNovel: t.Optional(t.Boolean(),),
+  renderingOverride: t.Optional(t.Union([
+    t.Literal("text",),
+    t.Literal("visual_novel",),
+    t.Null(),
+  ],),),
   features: t.Optional(t.Array(t.String(),),),
   visibility: t.Optional(ChatVisibilitySchema,),
 },);
