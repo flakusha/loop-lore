@@ -168,7 +168,6 @@ Steps 5–7 are user-visible behavior changes (cold-cache finalize now **fails l
 **Acceptance criteria:**
 
 
-
 - `scripts/worktree/utils/gpg.ts` exports `assertGpgUnlocked(keyId)` and `assertAgentGpgUnlocked()`.
 - All signing flows (`commit`, `agent-commit`, `sign`, `merge`, `finalize --direct`, `finalize --squash`) call the helper before any `git commit -S` / `git merge -S`.
 - Cold-cache invocation of any signing flow exits non-zero with `hint: key-not-unlocked` followed by `Run: bun run scripts/gpg-unlock.mjs` on stderr.
@@ -179,6 +178,7 @@ Steps 5–7 are user-visible behavior changes (cold-cache finalize now **fails l
 - `scripts/check-parallel.mjs` runs a GPG warm-up before the parallel check loop: `bun run check` exits non-zero with the `gpg-unlock.mjs` hint in `--ci` mode when the cache is cold; on a TTY in `--plain` / `--fix` mode it falls through to loopback pinentry inherited from the parent. The `.tmp/check-report.json` provenance records the cache state (`warm` / `cold`).
 - `AGENTS.md` L279-286 ("never bypass" signing) is unchanged; the warm-up only populates the agent cache and does not introduce any sign-stripping escape hatch.
 - No `commit.gpgsign=false`, no `-S none`, no opt-out flag introduced.
+
 ## 10. Out of Scope
 
 - Pinentry-mode selection (`loopback` vs `tty` vs `qt`) — `scripts/gpg-unlock.mjs` already handles the cold-path loopback fallback.
