@@ -62,19 +62,6 @@ export const MODE_DEFAULTS: Record<ChatMode, ModeFeatureFlags> = {
 } as const;
 
 /**
- * Resolve feature flags for a chat, merging mode defaults with per-chat overrides.
- * @param mode Chat mode whose defaults to use.
- * @param overrides Per-flag overrides (optional).
- */
-export function resolveFeatureFlags(
-  mode: ChatMode,
-  overrides?: Partial<ModeFeatureFlags>,
-): ModeFeatureFlags {
-  const defaults = MODE_DEFAULTS[mode] ?? MODE_DEFAULTS.direct;
-  return { ...defaults, ...overrides, };
-}
-
-/**
  * Resolve chat rendering by composing `ChatMode` default with the chat's
  * explicit override. The result is the single value every consumer
  * (prompt assembler, VN renderer, settings UI) reads.
@@ -89,6 +76,22 @@ export function resolveRendering(
   if (override === ChatRenderingOverride.VisualNovel) { return "visual_novel"; }
   return (MODE_DEFAULTS[mode] ?? MODE_DEFAULTS.direct).defaultRendering;
 }
+
+/**
+ * Resolve feature flags for a chat mode by composing `MODE_DEFAULTS[mode]`
+ * with optional per-chat overrides. Falls back to `direct` mode defaults
+ * when the mode is unknown.
+ * @param mode Chat mode whose defaults to use.
+ * @param overrides Per-chat feature flag overrides merged on top of defaults.
+ */
+export function resolveFeatureFlags(
+  mode: ChatMode,
+  overrides?: Partial<ModeFeatureFlags>,
+): ModeFeatureFlags {
+  const defaults = MODE_DEFAULTS[mode] ?? MODE_DEFAULTS.direct;
+  return { ...defaults, ...overrides };
+}
+
 
 /**
  * Chat-level GM configuration. Stored as JSON in `chats.gm_config`.
