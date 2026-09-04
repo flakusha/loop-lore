@@ -23,8 +23,9 @@
  *   bun run scripts/sync-ticket-index.ts --verbose    # show all entries
  *
  * --fix also resolves placeholder hashes (index hash with no git-issue /
- * commit provenance) by linking to a matching git issue (by extid) or, if
- * none exists, creating one and writing its ref back into the .md file.
+ * commit provenance) by linking to a matching git issue (by extid). If no
+ * matching issue exists, the placeholder is left in place (not mass-created
+ * as a git issue — see BUG-plan-sync-fix-creates-orphan-git-issues).
  */
 
 import { execSync, } from "node:child_process";
@@ -233,9 +234,9 @@ function applyFixes(
 
   // Fix placeholder hashes: index hash points to no git issue and is not a
   // real commit (no provenance at all). Resolve by linking to a matching git
-  // issue (by extid) — the common case where the stored hash drifted but the
-  // real issue still exists — or, if none exists, creating one so the entry
-  // gains provenance. Mirrors the missing-hash fix for unprovenanced hashes.
+  // issue (by extid). If no matching issue exists, the placeholder is left
+  // in place — mass-creating git issues for unprovenanced entries produced
+  // orphan floods (see BUG-plan-sync-fix-creates-orphan-git-issues).
   for (const ph of report.placeholderHashes) {
     const entry = fixed[ph.extid];
     if (!entry) { continue; }
@@ -257,8 +258,6 @@ function applyFixes(
       report.fixesApplied.push(`${ph.extid}: SKIPPED placeholder fix — no matching git issue (orphan left in place)`,);
       continue;
     }
-
-    if (!target) { continue; }
 
     // 3. Update the index entry.
     fixed[ph.extid] = {
