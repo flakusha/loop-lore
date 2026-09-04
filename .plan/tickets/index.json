@@ -1196,7 +1196,8 @@
     "priority": "Medium",
     "epic": "epic-api-validation-guardrails.md",
     "tags": [],
-    "source": ".plan/tickets/BUG-config-schema-defaults-leak-absolute-paths.md"
+    "source": ".plan/tickets/BUG-config-schema-defaults-leak-absolute-paths.md",
+    "status": "done"
   },
   "BUG-CONFIG-SCHEMA-EMITTER-MISSING-TOP-LEVEL-SECTIONS": {
     "hash": "2d7a60c",
@@ -1208,7 +1209,8 @@
     "priority": "Medium",
     "epic": "epic-api-validation-guardrails.md",
     "tags": [],
-    "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md"
+    "source": ".plan/tickets/BUG-config-schema-emitter-missing-top-level-sections.md",
+    "status": "done"
   },
   "BUG-CONSENT-STATE-NOT-PERSISTED-IN-MEMORY-ONLY": {
     "hash": "5f00999",
@@ -2841,7 +2843,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-plan-sync-fix-mass-creates-orphan-git-issues-for-placeholder.md"
+    "source": ".plan/tickets/BUG-plan-sync-fix-mass-creates-orphan-git-issues-for-placeholder.md",
+    "status": "done"
   },
   "BUG-PLUGIN-TOOL-GATING-EMPTY-ROLE-BYPASS": {
     "hash": "pending",
@@ -3220,7 +3223,8 @@
     "priority": "Medium",
     "epic": "epic-code-quality.md",
     "tags": [],
-    "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md",
+    "status": "done"
   },
   "BUG-SMART-REGEN-STYLE-NOT-THREADED-THROUGH": {
     "hash": "pending",
@@ -3701,7 +3705,8 @@
     "priority": "high",
     "epic": "epic-tooling-improvement",
     "tags": [],
-    "source": ".plan/tickets/BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m.md"
+    "source": ".plan/tickets/BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m.md",
+    "status": "done"
   },
   "BUG-WORKTREE-TICKET-WRITES-PLAN-FILES-TO-MAIN-CHECKOUT": {
     "hash": "ab13e3c",
