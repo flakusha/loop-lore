@@ -11,9 +11,9 @@
  * index on `username` (migration 001).
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { sql, type Kysely, } from "kysely";
-import type { DB, } from "./schema";
+import { type Kysely, sql, } from "kysely";
 import { createTestDb, } from "../test-utils/create-test-db";
+import type { DB, } from "./schema";
 import { insertUnique, upsertByUnique, upsertByUniqueWith, } from "./upsert-helpers";
 
 describe("insertUnique", () => {
@@ -37,7 +37,7 @@ describe("insertUnique", () => {
         username: `alice-${id1}`,
         display_name: "Alice",
       },
-      ["username"],
+      ["username",],
     );
     expect(first,).toBe("inserted",);
 
@@ -52,7 +52,7 @@ describe("insertUnique", () => {
         username: `alice-${id1}`, // collides with the row above
         display_name: "Alice Two",
       },
-      ["username"],
+      ["username",],
     );
     expect(second,).toBe("skipped",);
 
@@ -64,7 +64,7 @@ describe("insertUnique", () => {
       .executeTakeFirst();
     expect(row?.id,).toBe(id1,);
     expect(row?.display_name,).toBe("Alice",);
-  },);
+  });
 
   test("returns 'inserted' for distinct usernames", async () => {
     const username = `bob-${crypto.randomUUID()}`;
@@ -76,10 +76,10 @@ describe("insertUnique", () => {
         username,
         display_name: "Bob",
       },
-      ["username"],
+      ["username",],
     );
     expect(result,).toBe("inserted",);
-  },);
+  });
 });
 
 describe("upsertByUnique", () => {
@@ -104,7 +104,7 @@ describe("upsertByUnique", () => {
         display_name: "Carol",
         settings: '{"first":true}',
       },
-      ["username"],
+      ["username",],
     );
 
     const row = await db
@@ -114,7 +114,7 @@ describe("upsertByUnique", () => {
       .executeTakeFirst();
     expect(row?.display_name,).toBe("Carol",);
     expect(row?.settings,).toBe('{"first":true}',);
-  },);
+  });
 
   test("updates ONLY the specified columns on conflict (preserves others)", async () => {
     const username = `dave-${crypto.randomUUID()}`;
@@ -128,7 +128,7 @@ describe("upsertByUnique", () => {
         display_name: "Dave",
         settings: '{"seed":true}',
       },
-      ["username"],
+      ["username",],
     );
 
     // Upsert with the SAME conflict (username) but different display_name
@@ -143,8 +143,8 @@ describe("upsertByUnique", () => {
         display_name: "Dave Renamed",
         settings: '{"would_overwrite":true}',
       },
-      ["username"],
-      ["display_name"],
+      ["username",],
+      ["display_name",],
     );
 
     const row = await db
@@ -158,7 +158,7 @@ describe("upsertByUnique", () => {
     // settings must be the ORIGINAL value (column was NOT in updateColumns
     // — the upsert must NOT have overwritten it with excluded.settings).
     expect(row?.settings,).toBe('{"seed":true}',);
-  },);
+  });
 
   test("default updateColumns covers all non-conflict insert columns", async () => {
     // When updateColumns is omitted, every non-conflict column in `values`
@@ -173,7 +173,7 @@ describe("upsertByUnique", () => {
         display_name: "Erin",
         settings: '{"v":1}',
       },
-      ["username"],
+      ["username",],
     );
 
     await upsertByUnique(
@@ -185,7 +185,7 @@ describe("upsertByUnique", () => {
         display_name: "Erin Two",
         settings: '{"v":2}',
       },
-      ["username"],
+      ["username",],
     );
 
     const row = await db
@@ -195,7 +195,7 @@ describe("upsertByUnique", () => {
       .executeTakeFirst();
     expect(row?.display_name,).toBe("Erin Two",);
     expect(row?.settings,).toBe('{"v":2}',);
-  },);
+  });
 });
 
 describe("upsertByUniqueWith", () => {
@@ -225,7 +225,7 @@ describe("upsertByUniqueWith", () => {
         username,
         display_name: "Frank",
       },
-      ["username"],
+      ["username",],
     );
 
     // Bump format_version by +1 on conflict, leaving display_name alone.
@@ -237,18 +237,18 @@ describe("upsertByUniqueWith", () => {
         username,
         display_name: "Frank Two",
       },
-      ["username"],
-      { format_version: sql`excluded.format_version + 1` },
+      ["username",],
+      { format_version: sql`excluded.format_version + 1`, },
     );
 
     const row = await db
-      .selectFrom("users")
-      .select(["display_name", "format_version"])
-      .where("username", "=", username)
+      .selectFrom("users",)
+      .select(["display_name", "format_version",],)
+      .where("username", "=", username,)
       .executeTakeFirst();
     // display_name should be untouched (we did not list it in updateSet).
-    expect(row?.display_name).toBe("Frank");
+    expect(row?.display_name,).toBe("Frank",);
     // format_version should be the bumped value (0 + 1 = 1).
-    expect(row?.format_version).toBe(1);
-  },);
+    expect(row?.format_version,).toBe(1,);
+  });
 });

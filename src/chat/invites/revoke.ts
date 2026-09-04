@@ -17,5 +17,5 @@ export async function revokeInvite(
   chatId: string,
   inviteId: string,
 ): Promise<InviteResult<{ id: string; status: "active" | "revoked" | "expired" | "exhausted" }>> {
-  return revokeInviteRow({ database, table: "chat_invites", scopeId: chatId, inviteId });
+  return revokeInviteRow({ database, table: "chat_invites", scopeId: chatId, inviteId, },);
 }

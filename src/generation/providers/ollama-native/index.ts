@@ -9,8 +9,8 @@
 // See .plan/epics/epic-provider-plugin-ecosystem.md.
 
 import type { ProviderInstanceConfig, } from "../../../config/schema";
-import type { ProviderCapabilities, } from "../types";
 import { BaseProvider, type BaseProviderDispatchers, } from "../base";
+import type { ProviderCapabilities, } from "../types";
 import { completeDispatch, streamDispatch, } from "./core";
 import { embedDispatch, healthCheckDispatch, listModelsDispatch, } from "./operations";
 import type { OllamaNativeState, } from "./types";
@@ -39,10 +39,10 @@ export class OllamaNativeProvider extends BaseProvider<OllamaNativeState> {
   /**
    * @param config
    */
-  constructor(config: ProviderInstanceConfig) {
+  constructor(config: ProviderInstanceConfig,) {
     super(config, {
       capabilities: CAPABILITIES,
       dispatchers: DISPATCHERS,
-    });
+    },);
   }
 }

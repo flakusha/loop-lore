@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import type { Kysely, } from "kysely";
 
 /**
@@ -9,19 +12,21 @@ import type { Kysely, } from "kysely";
  * - Template Injection (actors column)
  *
  * The typed schema (`GmConfig`) is enforced at the application layer,
- * not the DB layer. The legacy `chats.visual_novel` integer column was
- * removed; chat rendering state now lives in `gm_config.renderingOverride`
- * (a 3-value `as const` enum per `db/enums-core/chat.ts`, see
- * `chat/types/config.ts` for the resolution rules against ChatMode defaults).
+ * not the DB layer. The legacy `chats.visual_novel` integer column is
+ * not added in this migration's up() path; the column is dropped on
+ * existing DBs by migration 076 (forward-only, guarded by
+ * `pragma_table_info` so it is a no-op on fresh DBs that never had the
+ * column). `gm_config.renderingOverride` is the new typed source of
+ * truth.
  * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── GM Config (chats column) ─────────────────────────
-  // (No data migration needed: the legacy `chats.visual_novel` column is
-  // dropped by this migration's `down()` path only; the up() path simply
-  // stops adding it. Fresh DBs never had the column; existing DBs lose the
-  // integer-typed bit but `gm_config.renderingOverride` is the new typed
-  // source of truth starting now.)
+  // Note: the legacy `chats.visual_novel` integer column is no longer added
+  // in this migration. Migration 076 is the forward-only column drop on
+  // existing DBs (guarded by `pragma_table_info`); fresh DBs never had the
+  // column. `gm_config.renderingOverride` is the typed source of truth
+  // starting from this cycle.
 
   await database.schema
     .alterTable("chats",)
@@ -223,4 +228,9 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
     .alterTable("chats",)
     .dropColumn("streaming",)
     .execute();
+
+  // Note: `chats.visual_novel` is intentionally NOT dropped here — that
+  // column was never added by this migration's up() (see header doc).
+  // Migration 076 is the forward-only column drop, with no down() because
+  // there's nothing for this migration to roll back.
 }

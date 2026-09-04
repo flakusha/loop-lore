@@ -72,9 +72,20 @@ export async function migrateChat(
   }
 
   const newChatId = crypto.randomUUID();
-  const gmConfig = template.gm_config
+  // The template's `visual_novel` integer flag is migrated into the new chat's
+  // `gm_config.renderingOverride` typed enum so we don't need the legacy
+  // `chats.visual_novel` column (dropped in migration 076).
+  const baseGmConfig = template.gm_config
     ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
     : { ok: false as const, value: null, };
+  const renderingOverride = template.visual_novel === 1 ? "visual_novel" : null;
+  const mergedGmConfig: Record<string, unknown> = {
+    ...(baseGmConfig.ok && baseGmConfig.value ? baseGmConfig.value : {}),
+    ...(renderingOverride !== null ? { renderingOverride, } : {}),
+  };
+  const finalGmConfig = Object.keys(mergedGmConfig,).length > 0
+    ? jsonStringifyOr(mergedGmConfig,)
+    : null;
 
   await database
     .insertInto("chats",)
@@ -87,8 +98,7 @@ export async function migrateChat(
       world_id: template.world_id ?? source.world_id,
       current_location_id: source.current_location_id,
       turn_strategy: (template.turn_strategy as never) ?? source.turn_strategy,
-      gm_config: gmConfig.ok && gmConfig.value ? jsonStringifyOr(gmConfig.value,) : null,
-      visual_novel: template.visual_novel,
+      gm_config: finalGmConfig,
       parent_chat_id: chatId,
       template_id: template.id,
     },)

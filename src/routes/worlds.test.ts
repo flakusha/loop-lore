@@ -9,7 +9,7 @@ import { PublicationStatus, } from "../db/enums-story";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { uid, } from "../utils";
+import { safeJsonParse, uid, } from "../utils";
 import type { WorldBundle, } from "./export-shared";
 import { importWorldBundle, } from "./world-import";
 import { worldsRoutes, } from "./worlds";
@@ -198,7 +198,12 @@ describe("worlds creation publication_status (commit gating)", () => {
       .executeTakeFirst();
     expect(chat,).toBeDefined();
     expect(chat?.template_id,).toBe("template-visual-novel",);
-    expect(chat?.visual_novel,).toBe(1,);
+    const worldGmConfig = chat?.gm_config ?? "";
+    const worldGmParsed = safeJsonParse<{ renderingOverride?: "text" | "visual_novel" | null }>(
+      worldGmConfig,
+    );
+    expect(worldGmParsed.ok ? worldGmParsed.value.renderingOverride ?? null : null,)
+      .toBe("visual_novel",);
     // Explicit fine-tune override wins over the template default.
     expect(chat?.visibility,).toBe("private",);
   });

@@ -42,7 +42,7 @@ export interface BaseProviderState {
  * Bindings the base class delegates to. Each provider wires these to its
  * own dispatcher modules.
  */
-export interface BaseProviderDispatchers<S extends BaseProviderState> {
+export interface BaseProviderDispatchers<S extends BaseProviderState,> {
   complete(state: S, req: GenerateRequest,): Promise<GenerateResponse>;
   stream(state: S, req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse>;
   healthCheck(state: S,): Promise<{
@@ -59,7 +59,7 @@ export interface BaseProviderDispatchers<S extends BaseProviderState> {
  * Factory options for `BaseProvider`. Providers hand these to the base to
  * construct their class with no boilerplate.
  */
-export interface BaseProviderOptions<S extends BaseProviderState> {
+export interface BaseProviderOptions<S extends BaseProviderState,> {
   capabilities: ProviderCapabilities;
   /** Default base URL used when `config.baseUrl` is empty. */
   defaultBaseUrl?: string;
@@ -89,18 +89,17 @@ export interface BaseProviderOptions<S extends BaseProviderState> {
  * }
  * ```
  */
-export abstract class BaseProvider<S extends BaseProviderState = BaseProviderState>
-  implements LLMProvider {
+export abstract class BaseProvider<S extends BaseProviderState = BaseProviderState,> implements LLMProvider {
   protected readonly state: S;
   readonly capabilities: ProviderCapabilities;
   private readonly dispatchers: BaseProviderDispatchers<S>;
 
-  protected constructor(config: ProviderInstanceConfig, options: BaseProviderOptions<S>) {
+  protected constructor(config: ProviderInstanceConfig, options: BaseProviderOptions<S>,) {
     const rawBase = options.defaultBaseUrl && !config.baseUrl
       ? options.defaultBaseUrl
       : config.baseUrl;
-    const baseUrl = rawBase.replace(/\/+$/, "");
-    const validated = validateProviderUrl(baseUrl);
+    const baseUrl = rawBase.replace(/\/+$/, "",);
+    const validated = validateProviderUrl(baseUrl,);
     if (!validated.ok) {
       throw new ProviderError(
         `Invalid provider URL (${config.name}): ${validated.error}`,
@@ -117,17 +116,17 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
       retries: config.retries,
       headers: config.headers ?? {},
     };
-    this.state = options.buildState ? options.buildState(base) : (base as S);
+    this.state = options.buildState ? options.buildState(base,) : (base as S);
     this.capabilities = options.capabilities;
     this.dispatchers = options.dispatchers;
   }
 
-  async complete(req: GenerateRequest): Promise<GenerateResponse> {
-    return this.dispatchers.complete(this.state, req);
+  async complete(req: GenerateRequest,): Promise<GenerateResponse> {
+    return this.dispatchers.complete(this.state, req,);
   }
 
-  async stream(req: GenerateRequest, handler: StreamHandler): Promise<GenerateResponse> {
-    return this.dispatchers.stream(this.state, req, handler);
+  async stream(req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse> {
+    return this.dispatchers.stream(this.state, req, handler,);
   }
 
   async healthCheck(): Promise<{
@@ -136,14 +135,14 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
     latencyMs?: number;
     error?: string;
   }> {
-    return this.dispatchers.healthCheck(this.state);
+    return this.dispatchers.healthCheck(this.state,);
   }
 
   async listModels(): Promise<ModelInfo[]> {
-    return this.dispatchers.listModels(this.state);
+    return this.dispatchers.listModels(this.state,);
   }
 
-  async embed(input: string | string[]): Promise<number[][]> {
+  async embed(input: string | string[],): Promise<number[][]> {
     if (!this.dispatchers.embed) {
       throw new ProviderError(
         `Provider ${this.capabilities.type} does not support embeddings`,
@@ -152,6 +151,6 @@ export abstract class BaseProvider<S extends BaseProviderState = BaseProviderSta
         false,
       );
     }
-    return this.dispatchers.embed(this.state, input, this.state.defaultModel);
+    return this.dispatchers.embed(this.state, input, this.state.defaultModel,);
   }
 }

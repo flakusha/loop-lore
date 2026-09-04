@@ -50,7 +50,7 @@ export type WorldScopedTable = {
  * @param worldId World id to scope the query to.
  * @returns A query builder ready for the caller to chain against.
  */
-export function worldScoped<T extends WorldScopedTable>(
+export function worldScoped<T extends WorldScopedTable,>(
   db: Kysely<DB>,
   table: T,
   worldId: string,
@@ -60,8 +60,8 @@ export function worldScoped<T extends WorldScopedTable>(
   // union members (each member has a different `world_id` column type).
   // The structural invariant is guaranteed by `WorldScopedTable` (every
   // table in the union has `world_id`), so we narrow with a cast.
-  const base = db.selectFrom(table) as SelectQueryBuilder<DB, T, {}>;
-  return base.where("world_id" as never, "=", worldId as never) as SelectQueryBuilder<DB, T, {}>;
+  const base = db.selectFrom(table,) as SelectQueryBuilder<DB, T, {}>;
+  return base.where("world_id" as never, "=", worldId as never,) as SelectQueryBuilder<DB, T, {}>;
 }
 
 /**
@@ -84,10 +84,10 @@ export async function validateWorldAccess(
   worldId: string,
 ): Promise<boolean> {
   const row = await db
-    .selectFrom("world_members")
-    .select("actor_id")
-    .where("world_id", "=", worldId)
-    .where("actor_id", "=", userId)
+    .selectFrom("world_members",)
+    .select("actor_id",)
+    .where("world_id", "=", worldId,)
+    .where("actor_id", "=", userId,)
     .executeTakeFirst();
   return row !== undefined;
 }

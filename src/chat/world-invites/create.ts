@@ -3,10 +3,10 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import type { InviteResult, } from "../invites";
 import { createInviteRow, } from "../invites/create-core";
 import { toRow, } from "./to-row";
 import type { CreateWorldInviteInput, WorldInviteRow, } from "./types";
-import type { InviteResult, } from "../invites";
 
 /**
  * Create a new invite for a world with a unique code.
@@ -21,10 +21,10 @@ export async function createWorldInvite(
     database,
     table: "world_invites",
     input,
-    resolveScope: (i) => i.worldId,
-  });
+    resolveScope: (i,) => i.worldId,
+  },);
   if (!result.ok) {
     return result;
   }
-  return { ok: true, value: toRow(result.value as never) };
+  return { ok: true, value: toRow(result.value as never,), };
 }
