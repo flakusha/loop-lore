@@ -54,10 +54,14 @@ export function worldScoped<T extends WorldScopedTable>(
   db: Kysely<DB>,
   table: T,
   worldId: string,
-): SelectQueryBuilder<DB, DB[T], {}> {
-  return db
-    .selectFrom(table)
-    .where("world_id", "=", worldId);
+): SelectQueryBuilder<DB, T, {}> {
+  // Kysely's `selectFrom` over a union of `WorldScopedTable` types
+  // produces a builder whose `.where()` signature is incompatible across
+  // union members (each member has a different `world_id` column type).
+  // The structural invariant is guaranteed by `WorldScopedTable` (every
+  // table in the union has `world_id`), so we narrow with a cast.
+  const base = db.selectFrom(table) as SelectQueryBuilder<DB, T, {}>;
+  return base.where("world_id" as never, "=", worldId as never) as SelectQueryBuilder<DB, T, {}>;
 }
 
 /**
