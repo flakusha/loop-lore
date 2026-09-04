@@ -3,7 +3,7 @@
 
 # BUG: NSFW consent state is in-memory only, never persisted
 
-**Status:** 🔴 Open
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-nsfw-integration-gaps
@@ -39,3 +39,9 @@ shared-schema epic's claim that the gate "consumes `ConsentState`".
 
 - `src/schemas/consent.ts` already provides `createConsentState`, `recordConsentAction`, `isActionConsented`, `ConsentAuditEntry` — the contract is ready; only the middleware persistence is missing.
 - Out of scope for this bug: UI for consent prompts (track separately if needed).
+
+
+## Resolution
+
+Stale — already implemented by migration `069_nsfw_consent_state.ts` (`nsfw_consent_state` ledger with `idx_nsfw_consent_state_user_chat_created` and `idx_nsfw_consent_state_chat` indices). `src/middleware/nsfw-gate/consent.ts` now uses `getLatestConsent` + `hasActiveConsent` from `./consent-ledger`; the old `loadOrCreateConsent` in-memory auto-grant was removed (docstring §1: "The earlier in-memory auto-grant path was removed for BUG-nsfw-consent-auto-granted"). `recordConsentAction` is the only writer needed at runtime; the gate enforces persisted consent under `config.nsfw.consentRequired`.
+
