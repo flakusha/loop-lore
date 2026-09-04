@@ -847,6 +847,12 @@
       "source": ".plan/tickets/FEAT-creative-process-commit-gating.md"
     }
   ],
+  "src/assistant/commands/create-entity.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    }
+  ],
   "src/assistant/commands/create.ts": [
     {
       "kind": "epic",
@@ -3939,6 +3945,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-related-memory-event-injection-hooks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/coordination.ts": [
@@ -4383,6 +4393,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/location-events.ts": [
@@ -4424,7 +4438,15 @@
   "src/chat/service/party.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-party-join-leave.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/read.ts": [
@@ -4443,6 +4465,12 @@
       "source": ".plan/tickets/BUG-bug-message-seen-re-mark-clobbers-first-seen-timestamp.md"
     }
   ],
+  "src/chat/service/split-utils.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    }
+  ],
   "src/chat/service/split.test.ts": [
     {
       "kind": "ticket",
@@ -4453,6 +4481,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/templates.ts": [
@@ -4481,6 +4513,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/types.ts": [
@@ -4503,6 +4539,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-test-chat-module.md"
+    }
+  ],
+  "src/chat/service/vn-choices.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/vn-choices.ts": [
@@ -4649,6 +4691,12 @@
       "source": ".plan/tickets/TASK-wire-transitions.md"
     }
   ],
+  "src/chat/types.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    }
+  ],
   "src/chat/types.ts": [
     {
       "kind": "epic",
@@ -4663,6 +4711,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
+    }
+  ],
+  "src/chat/types/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/types/moderation.ts": [
@@ -7065,10 +7119,76 @@
       "source": "docs/spec/messages.md"
     }
   ],
+  "src/db/enums-core/achievement-type.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-achievementcategory-and-achievementtier-enums-for-achiev.md"
+    }
+  ],
+  "src/db/enums-core/activitypub-key-status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-activitypubkeystatus-state-machine-for-activitypub-actor.md"
+    }
+  ],
+  "src/db/enums-core/appeal-status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-appealstatus-state-machine-for-moderation-appeals-status.md"
+    }
+  ],
+  "src/db/enums-core/battle-status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-battlestatus-state-machine-for-battles-status.md"
+    }
+  ],
+  "src/db/enums-core/blog-status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-blog-state-machines-blogpoststatus-blogpostvisibility-bl.md"
+    }
+  ],
+  "src/db/enums-core/character-fantasy.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-fantasycategory-and-intensitylevel-enums-for-character-f.md"
+    }
+  ],
+  "src/db/enums-core/character-state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-characterstate-state-machine-for-character-stats-charact.md"
+    }
+  ],
+  "src/db/enums-core/chat-event-source.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-eventsource-enum-for-chat-location-events-source.md"
+    }
+  ],
   "src/db/enums-core/chat.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md"
+    }
+  ],
+  "src/db/enums-core/consent-type.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-consentaction-and-consentscope-enums-for-nsfw-consent-st.md"
+    }
+  ],
+  "src/db/enums-core/difficulty-level.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-difficultylevel-enum-for-playthroughs-difficulty.md"
+    }
+  ],
+  "src/db/enums-core/e2e-type.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-e2ealgorithm-and-e2esessionkind-enums-for-e2e-tables.md"
     }
   ],
   "src/db/enums-core/flags.ts": [
@@ -7109,6 +7229,12 @@
       "source": ".plan/tickets/TASK-unify-item-types.md"
     }
   ],
+  "src/db/enums-core/heat-phase.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-heatphase-state-machine-for-character-heat-cycle-current.md"
+    }
+  ],
   "src/db/enums-core/messages.test.ts": [
     {
       "kind": "ticket",
@@ -7131,10 +7257,34 @@
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
     }
   ],
+  "src/db/enums-core/nsfw-encounter-status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-nsfwencounterstatus-state-machine-for-nsfw-encounters-st.md"
+    }
+  ],
   "src/db/enums-core/rename-verification.test.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crypto.md"
+    }
+  ],
+  "src/db/enums-core/request-result.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-requestresultstatus-and-requestprogress-state-machines-f.md"
+    }
+  ],
+  "src/db/enums-core/skill-enum.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-skillcategory-and-proficiencylevel-enums-for-character-s.md"
+    }
+  ],
+  "src/db/enums-core/trade-type.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-tradetype-enum-for-trade-history-trade-type.md"
     }
   ],
   "src/db/enums-core/users.ts": [
@@ -9905,6 +10055,12 @@
       "source": ".plan/tickets/BUG-alpine-init-hydration.md"
     }
   ],
+  "src/frontend/alpine/chat/music-embed.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-music-embed-fallback-esc-allows-stored-xss-via-attr.md"
+    }
+  ],
   "src/frontend/alpine/chat/music-embed.ts": [
     {
       "kind": "ticket",
@@ -11983,6 +12139,26 @@
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
+  "src/frontend/vn/state-machine/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-visual-novel-mode.md"
+    }
+  ],
+  "src/frontend/vn/state-machine/state-machine.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-visual-novel-mode.md"
+    }
+  ],
   "src/frontend/vn/styles.css": [
     {
       "kind": "ticket",
@@ -12901,6 +13077,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/generation/hooks/emotion-hook.ts": [
@@ -13591,6 +13771,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-thinking-tag-context-prune.md"
+    }
+  ],
+  "src/generation/tools/create-location.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/generation/transforms.ts": [
@@ -17439,6 +17625,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/gap-closure-report.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/routes/chats.ts": [
@@ -17559,6 +17749,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/routes/chats/extras.ts": [
@@ -17583,6 +17777,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/routes/chats/participants.ts": [
@@ -19757,6 +19955,12 @@
       "source": "docs/spec/worlds.md"
     }
   ],
+  "src/routes/worlds.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    }
+  ],
   "src/routes/worlds.ts": [
     {
       "kind": "epic",
@@ -19787,6 +19991,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    }
+  ],
+  "src/routes/worlds/location-chat.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/routes/worlds/locations.ts": [

@@ -11,7 +11,6 @@
  */
 import type { Kysely, } from "kysely";
 import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../crypto";
-import { jsonParseOr } from "../../utils";
 import {
   ChatParticipantRole,
   ContentEncoding,
@@ -22,6 +21,7 @@ import {
   MessageVisibility,
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { jsonParseOr, } from "../../utils";
 import type { ServiceError, } from "./types";
 
 /** Parameters for a party join. */
@@ -130,7 +130,7 @@ export async function joinParty(
 ): Promise<PartyJoinResult> {
   const chat = await database
     .selectFrom("chats",)
-    .select(["id", "gm_config"],)
+    .select(["id", "gm_config",],)
     .where("id", "=", params.chatId,)
     .executeTakeFirst();
 
@@ -169,7 +169,7 @@ export async function joinParty(
     },)
     .execute();
 
-  if (jsonParseOr<Record<string, unknown>>(chat.gm_config ?? "", {}).renderingOverride === "visual_novel") {
+  if (jsonParseOr<Record<string, unknown>>(chat.gm_config ?? "", {},).renderingOverride === "visual_novel") {
     await injectPartyNarration(
       database,
       params.chatId,
@@ -193,7 +193,7 @@ export async function leaveParty(
 ): Promise<PartyLeaveResult> {
   const chat = await database
     .selectFrom("chats",)
-    .select(["id", "gm_config"],)
+    .select(["id", "gm_config",],)
     .where("id", "=", params.chatId,)
     .executeTakeFirst();
 
@@ -218,7 +218,7 @@ export async function leaveParty(
     .where("actor_id", "=", params.actorId,)
     .execute();
 
-  if (jsonParseOr<Record<string, unknown>>(chat.gm_config ?? "", {}).renderingOverride === "visual_novel") {
+  if (jsonParseOr<Record<string, unknown>>(chat.gm_config ?? "", {},).renderingOverride === "visual_novel") {
     await injectPartyNarration(
       database,
       params.chatId,
