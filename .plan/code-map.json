@@ -7494,6 +7494,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-migrate-ts-loader-imports-test-ts-files-from-src-db-migratio.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
     },
     {
@@ -7807,6 +7811,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
+    }
+  ],
+  "src/db/migrations/076_drop_chats_visual_novel.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-076-distinguish-explicit-null-renderingoverride-fr.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-migration-076-harden-against-malformed-gm-config-json.md"
     }
   ],
   "src/db/migrations/0XX_audio_templates.ts": [
