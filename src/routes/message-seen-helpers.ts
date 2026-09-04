@@ -6,11 +6,10 @@
 // Shared helpers for message-seen routes: access resolution,
 // actor authorization, and seen-timestamp logic.
 
-import type { Kysely } from "kysely";
+import type { Kysely, } from "kysely";
 import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
-import { notFound, } from "../validation/middleware";
-import { jsonError, ErrorCode, HttpStatus, } from "./http-utils";
+import { ErrorCode, HttpStatus, jsonError, } from "./http-utils";
 
 /**
  * Resolve a message and verify the user may access it.
@@ -36,10 +35,10 @@ export async function resolveMessageAccess(
     .select(["chat_id", "id",],)
     .where("id", "=", messageId,)
     .executeTakeFirst();
-  if (!msg) { return notFound("Message not found",); }
+  if (!msg) { return jsonError("Message not found", HttpStatus.NotFound, ErrorCode.NotFound,); }
 
   const access = await checkChatAccess(database, msg.chat_id, userId, userRole,);
-  if (!access.ok) { return notFound("Message not found",); }
+  if (!access.ok) { return jsonError("Message not found", HttpStatus.NotFound, ErrorCode.NotFound,); }
 
   return msg.chat_id;
 }

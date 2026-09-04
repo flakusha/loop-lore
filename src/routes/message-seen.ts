@@ -18,7 +18,7 @@ import type { DB, } from "../db/schema";
 import { requireActorFromSession, } from "../middleware/scope-by-user";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { extractAuth, jsonResponse, requireUserId, } from "./http-utils";
-import { resolveMessageAccess, authorizeActor, seenAtFor, } from "./message-seen-helpers";
+import { authorizeActor, resolveMessageAccess, seenAtFor, } from "./message-seen-helpers";
 
 interface HandlerOpts {
   database: Kysely<DB>;
