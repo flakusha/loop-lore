@@ -1,6 +1,6 @@
 # BUG: BUG: message create accepts parentId from any chat (cross-chat parent coupling)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ src/routes/messages/create.ts sets parentId = body.parentId ?? null and passes i
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Wrapped the parent-check + INSERT in a single `db.transaction().execute(...)` block in `src/routes/messages/create.ts`. Inside the transaction, if `parentId !== null`, a SELECT against `messages` returns the parent's `chat_id`; missing parent → 404 (`ParentMessageNotFoundError`), parent from another chat → 403 (`ParentMessageNotInChatError`). Both errors throw inside the transaction (rolled back, no row inserted) and are mapped to their HTTP responses in the surrounding catch. New sentinel error classes exported from the same module. Added `__tests__/cross-chat-parent-idor.test.ts` (4 cases: same-chat positive, cross-chat → 403, missing → 404, null parentId root insert). Negative paths assert no row inserted via `SELECT COUNT(*) WHERE id = ?`. `bun run tsc --noEmit` clean; `bun test` passes 4/4.
