@@ -24,7 +24,7 @@
  * @see BUG-chat-swipe-index-race for the original motivating use site.
  */
 
-import { sql, type InsertObject, type Kysely, type RawBuilder, } from "kysely";
+import { sql, type AnyColumn, type InsertObject, type Kysely, type RawBuilder, } from "kysely";
 import type { DB, } from "./schema";
 
 /**
@@ -55,7 +55,7 @@ type UpdatableExpression = Parameters<typeof sql.val>[0] | RawBuilder<unknown>;
  */
 export async function upsertByUnique<
   T extends keyof DB,
-  K extends keyof DB[T],
+  K extends AnyColumn<DB, T>,
 >(
   db: Kysely<DB>,
   table: T,
@@ -84,7 +84,7 @@ export async function upsertByUnique<
     await db
       .insertInto(table,)
       .values(values,)
-      .onConflict((oc,) => oc.columns(conflictColumns as K[],).doNothing(),)
+      .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doNothing(),)
       .execute();
     return;
   }
@@ -92,7 +92,7 @@ export async function upsertByUnique<
   await db
     .insertInto(table,)
     .values(values,)
-    .onConflict((oc,) => oc.columns(conflictColumns as K[],).doUpdateSet(setObject as never,),)
+    .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doUpdateSet(setObject as never,),)
     .execute();
 }
 
@@ -126,18 +126,18 @@ export async function upsertByUnique<
  */
 export async function upsertByUniqueWith<
   T extends keyof DB,
-  K extends keyof DB[T],
+  K extends AnyColumn<DB, T>,
 >(
   db: Kysely<DB>,
   table: T,
   values: InsertObject<DB, T>,
   conflictColumns: readonly K[],
-  updateSet: Partial<Record<K, UpdatableExpression>>,
+  updateSet: Partial<Record<AnyColumn<DB, T>, UpdatableExpression>>,
 ): Promise<"inserted" | "updated"> {
   await db
     .insertInto(table,)
     .values(values,)
-    .onConflict((oc,) => oc.columns(conflictColumns as K[],).doUpdateSet(updateSet as never,),)
+    .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doUpdateSet(updateSet as never,),)
     .execute();
   // Disambiguate insert vs update via a guarded SELECT on the PK. The
   // ON CONFLICT DO UPDATE preserves the existing row's identity
@@ -175,7 +175,7 @@ export async function upsertByUniqueWith<
  */
 export async function insertUnique<
   T extends keyof DB,
-  K extends keyof DB[T],
+  K extends AnyColumn<DB, T>,
 >(
   db: Kysely<DB>,
   table: T,
@@ -185,7 +185,7 @@ export async function insertUnique<
   const result = await db
     .insertInto(table,)
     .values(values,)
-    .onConflict((oc,) => oc.columns(conflictColumns as K[],).doNothing(),)
+    .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doNothing(),)
     .execute();
   const first = result[0];
   const inserted = first !== undefined && Number(first.numInsertedOrUpdatedRows,) > 0;
