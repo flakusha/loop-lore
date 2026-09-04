@@ -18,9 +18,7 @@
   <p class="character-journey-arc">
     Current arc:
     <strong>{{.Arc.CurrentStage}}</strong>
-    {{if .Arc.StageDescription}}
-    — {{.Arc.StageDescription}}
-    {{end}}
+    {{if .Arc.StageDescription}} — {{.Arc.StageDescription}} {{end}}
   </p>
 
   {{if .GrowthEntries}}
