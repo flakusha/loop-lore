@@ -2,7 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
-import { checkChatAccess, deleteChat, getChat, migrateChat, updateChat, } from "../../chat/service";
+import {
+  checkChatAccess,
+  checkChatSettingsAccess,
+  deleteChat,
+  getChat,
+  migrateChat,
+  updateChat,
+} from "../../chat/service";
 import { jsonParseOr, } from "../../utils";
 import { ChatIdParams, ChatMigrateBody, ChatRenameBody, ChatUpdateBody, } from "../../validation/schemas";
 import {
@@ -38,7 +45,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatMigrateBody.static;
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           const result = await migrateChat(database, id, {
@@ -83,7 +90,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatUpdateBody.static;
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           // Only pass key-mechanic fields when the client explicitly sent them —
@@ -135,7 +142,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatRenameBody.static;
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           // Validate name length (1-60 characters)
