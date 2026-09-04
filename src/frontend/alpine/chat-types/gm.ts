@@ -53,6 +53,16 @@ export interface GmConfig {
   vnTransition?: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   /** VN auto-advance between scenes */
   vnAutoAdvance?: boolean;
+  /** VN image scaling — how scene backgrounds/portraits fit the scene area. */
+  vnImageScaling?: "contain" | "cover" | "fill" | "auto";
+  /** VN auto-advance delay in seconds. */
+  vnAutoAdvanceDelay?: number;
+  /** VN dialogue-box opacity (0–1, overlay layout). */
+  vnDialogueBoxOpacity?: number;
+  /** VN portrait size as a percentage of scene width. */
+  vnPortraitSize?: number;
+  /** VN portrait:text split ratio (split layout). */
+  vnSplitRatio?: number;
   /** Story-mode flag enabling the human-GM guided-story UX. */
   storyMode?: boolean;
   /** Active human-GM narrative guidance (persisted, mutable at runtime). */
