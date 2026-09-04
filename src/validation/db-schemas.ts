@@ -874,6 +874,8 @@ export const ActorsSchema = t.Object({
   data_source_format: t.Optional(t.String(),),
   data_raw: t.Optional(t.String(),),
   agent_role: t.Optional(t.String(),),
+  growth_mode: t.Optional(t.String(),),
+  llm_assist_enabled: t.Optional(t.Number(),),
 },);
 
 // ── admin_character_overrides ────────────────────────────────────────────
@@ -1060,6 +1062,8 @@ export const CharacterLocationTraitsSchema = t.Object({
   penalty: t.Optional(t.Number(),),
   effects: t.Optional(t.String(),),
   equipment_override: t.Optional(t.String(),),
+  last_drifted_at: t.Optional(t.String(),),
+  drift_count: t.Optional(t.Number(),),
 },);
 
 // ── character_mood ────────────────────────────────────────────
@@ -1100,6 +1104,8 @@ export const CharacterRelationshipsSchema = t.Object({
   familiarity: t.Optional(t.Number(),),
   is_bidirectional: t.Optional(t.Number(),),
   metadata: t.Optional(t.String(),),
+  evolution_tracked: t.Optional(t.Number(),),
+  last_evolution_at: t.Optional(t.String(),),
 },);
 
 // ── character_seduction_skills ────────────────────────────────────────────
@@ -1131,6 +1137,9 @@ export const CharacterSkillsSchema = t.Object({
   metadata: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
+  acquired_at: t.Optional(t.String(),),
+  acquisition_reason: t.Optional(t.String(),),
+  acquisition_source: t.Optional(t.String(),),
 },);
 
 // ── character_stats ────────────────────────────────────────────
@@ -1191,6 +1200,8 @@ export const CharacterWorldTraitsSchema = t.Object({
   trait_value: t.String(),
   created_at: t.String(),
   updated_at: t.String(),
+  last_drifted_at: t.Optional(t.String(),),
+  drift_count: t.Optional(t.Number(),),
 },);
 
 // ── characters ────────────────────────────────────────────
@@ -2216,4 +2227,29 @@ export const E2eSkippedMessageKeysSchema = t.Object({
   chain_index: t.Number(),
   message_key: t.String(),
   created_at: t.Optional(t.String(),),
+},);
+
+// ── character_arc ────────────────────────────────────────────
+export const CharacterArcSchema = t.Object({
+  actor_id: t.String(),
+  current_stage: t.String(),
+  updated_at: t.String(),
+  stage_description: t.Optional(t.String(),),
+},);
+
+// ── growth_log ────────────────────────────────────────────
+export const GrowthLogSchema = t.Object({
+  actor_id: t.String(),
+  axis: t.String(),
+  event_type: t.String(),
+  recorded_at: t.String(),
+  status: t.Optional(t.String(),),
+  subject_kind: t.Optional(t.String(),),
+  subject_id: t.Optional(t.String(),),
+  before_json: t.Optional(t.String(),),
+  after_json: t.Optional(t.String(),),
+  reason: t.Optional(t.String(),),
+  source_event_id: t.Optional(t.String(),),
+  confirmed_at: t.Optional(t.String(),),
+  confirmed_by: t.Optional(t.String(),),
 },);
