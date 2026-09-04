@@ -10,7 +10,7 @@
 
 ## Summary
 
-Replace string-typed status/visibility in blog_posts and blog_comments with strictly typed state machines. BlogPostStatus: draft→visible→archived. BlogPostVisibility: public→private→unlisted. BlogCommentStatus: visible→hidden→deleted. The 015_blog_system.ts migration defaults to 'draft'/'visible'. Must create src/db/enums-core/blog-status.ts with StateDef + createMachine + CompositeValidator, export from index, and update schema-core.ts.
+Replace string-typed status/visibility in blog_posts and blog_comments with strictly typed state machines. BlogPostStatus: draft→visible→archived. BlogPostVisibility: public→private→unlisted. BlogCommentStatus: visible→hidden→deleted. Must create src/db/enums-core/blog-status.ts with StateDef + createMachine + CompositeValidator, export from index, and add `BlogPosts`/`BlogComments` COLUMN_TYPE_OVERRIDES mappings (then `bun run db:sync-types`). No migration.
 
 ## Analysis (2026-09-04)
 

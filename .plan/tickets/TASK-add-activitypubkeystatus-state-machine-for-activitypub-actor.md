@@ -10,7 +10,7 @@
 
 ## Summary
 
-Replace string-typed status in activitypub_actor_keys with ActivitypubKeyStatus (active→rotated→revoked→expired). The 069_activitypub_actor_keys_and_federation_consent.ts migration defaults to 'active'. Must create src/db/enums-core/activitypub-key-status.ts with StateDef + createMachine, export from index, and update schema-core.ts.
+Replace string-typed status in activitypub_actor_keys with ActivitypubKeyStatus (active→rotated→revoked→expired). Must create src/db/enums-core/activitypub-key-status.ts with StateDef + createMachine, export from index, and add a `ActivitypubActorKeys.status` COLUMN_TYPE_OVERRIDES mapping (then `bun run db:sync-types`). No migration.
 
 ## Analysis (2026-09-04)
 

@@ -10,7 +10,7 @@
 
 ## Summary
 
-Replace string-typed current_phase in character_heat_cycle with HeatPhase state machine (normal→heat→cooling). The 012_features.ts migration defaults to 'normal'. Must create src/db/enums-core/heat-phase.ts with StateDef + createMachine, export from index, and update schema-core.ts.
+Replace string-typed current_phase in character_heat_cycle with HeatPhase state machine. Must create/extend a HeatPhase StateDef + createMachine, export from index, and add a `CharacterHeatCycle.current_phase` COLUMN_TYPE_OVERRIDES mapping (then `bun run db:sync-types`). No migration. See Analysis below: existing HeatPhase values conflict with this ticket's proposed transition set.
 
 ## Analysis (2026-09-04)
 

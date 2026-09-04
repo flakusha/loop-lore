@@ -10,7 +10,7 @@
 
 ## Summary
 
-Replace string-typed status/progress fields in request_results table with strictly typed state machines. RequestResultStatus: pending→in_progress→complete/failed/expired. RequestProgress: waiting→processing→paused→done. The 067_request_results.ts migration already defines the lifecycle. Must create src/db/enums-core/request-result.ts with StateDef + createMachine + CompositeValidator, export from index, and update schema-core.ts.
+Replace string-typed status/progress fields in request_results table with strictly typed state machines. RequestResultStatus: pending→in_progress→complete/failed/expired. RequestProgress: waiting→processing→paused→done. Must create src/db/enums-core/request-result.ts with StateDef + createMachine + CompositeValidator, export from index, and add `RequestResults` status/progress COLUMN_TYPE_OVERRIDES mappings (then `bun run db:sync-types`). No migration.
 
 ## Analysis (2026-09-04)
 
