@@ -28,7 +28,7 @@
 - `BUG-bug-message-seen-delete-handler-trusts-client-actorid-idor.md`
 - `BUG-bug-chat-seen-stopseenpolling-is-never-called-5s-polling-int.md`
 - `BUG-bug-chat-service-seen-ts-is-dead-code-and-its-upsert-is-brok.md`
-- + 1 schema-bump row
+- - 1 schema-bump row
 
 **Migration 071** required: unique index on `message_seen(message_id, actor_id)` + change primary key from deterministic to UUIDv7.
 
@@ -143,6 +143,7 @@ Each worktree = independent. Can be picked up sequentially by user or by future 
 - Abandoned scratch dirs: 3 (`rm -rf` cleanup candidates)
 - WARNING: `tree/character-bugfix-batch` has **30 dirty files** (was originally stated as 20, then 27 — corrected to 30) with REAL in-flight work (5 staged-added new files: 4 `.test.ts` + `src/characters/services/federation-consent.ts` service, plus 25 modified source files — verified via `git -C tree/character-bugfix-batch status --short | wc -l` on 2026-08-31) — do NOT discard without recovery action. Full recovery procedure in `.tmp/tree-finalization-candidates.md`.
 - WARNING (unverifiable 2026-08-31): `tree/chore-dev-gate-reset` was claimed to have 5 unmerged `UU` conflict markers plus new file `src/middleware/csrf-wiring.ts`. **Both the worktree directory and the branch ref are now gone.** User MUST re-verify the state before any finalize or recovery action.
+
 ### Deliverable 2: 5 new bugfix worktrees with comprehensive plans
 
 ## ⚠ Orchestrator-caused side effects (this session)

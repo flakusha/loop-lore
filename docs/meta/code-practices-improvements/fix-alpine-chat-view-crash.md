@@ -20,6 +20,7 @@ e2e test "chat list panel has chat template in DOM" was strengthened to catch.
 ## Fix
 
 1. **`src/frontend/stores/index.ts`** — register the `chat` store with safe defaults:
+
    ```ts
    chat: {
      currentChat: null as { id: string; name?: string; type?: string } | null,
@@ -27,6 +28,7 @@ e2e test "chat list panel has chat template in DOM" was strengthened to catch.
      visibility: "visible" as "visible" | "hidden" | "collapsed",
    },
    ```
+
    Templates reading these properties now always see an array / a string.
 
 2. **`src/frontend/alpine/chat/lifecycle.ts`** — belt-and-suspenders guard inside

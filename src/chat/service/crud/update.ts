@@ -45,13 +45,14 @@ export async function updateChat(
  * @param chatId
  * @param params
  * @param fullChat
+ * @param fullChat.story_state
  * @returns A conflict/forbidden result when an update is blocked, else null
  */
 async function checkChatUpdateLock(
   database: Kysely<DB>,
   chatId: string,
   params: UpdateChatParams,
-  fullChat: { story_state: string | null; gm_config: string | null },
+  fullChat: { story_state: string | null },
 ): Promise<UpdateChatResult | null> {
   // Panel freeze
   if (fullChat.story_state) {
@@ -83,6 +84,7 @@ async function checkChatUpdateLock(
 /**
  * Merge a JSON patch into the chat's story_state column.
  * @param fullChat
+ * @param fullChat.story_state
  * @param patch
  */
 function patchStoryState(
@@ -100,23 +102,13 @@ function patchStoryState(
 }
 
 /**
- * Parse a stored GM config blob, returning `{}` when missing or invalid.
- * Centralizes the JsonResult narrowing so each call site stays clean.
- * @param raw
- */
-function parseGmConfig(raw: string | null,): Record<string, unknown> {
-  if (!raw) { return {}; }
-  const parsed = safeJsonParse<Record<string, unknown>>(raw,);
-  return parsed.ok ? parsed.value ?? {} : {};
-}
-
-/**
  * Assemble the update column map from the validated params.
  * @param fullChat
+ * @param fullChat.story_state
  * @param params
  */
 function buildChatUpdates(
-  fullChat: { story_state: string | null; gm_config: string | null },
+  fullChat: { story_state: string | null },
   params: UpdateChatParams,
 ): Record<string, unknown> {
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), };
@@ -133,13 +125,16 @@ function buildChatUpdates(
   if (typeof params.freezePanel === "boolean" && can(params.userRole, "admin.chat",)) {
     updates.story_state = patchStoryState(fullChat, { isPanelFrozen: params.freezePanel, },);
   }
-  const baseGmConfig = parseGmConfig(fullChat.gm_config,);
-  let nextGmConfig: Record<string, unknown> | undefined;
+  let nextGmConfig: Record<string, unknown> | null | undefined;
   if (params.renderingOverride !== undefined) {
-    nextGmConfig = { ...baseGmConfig, renderingOverride: params.renderingOverride, };
+    const base = (fullChat.gm_config as Record<string, unknown> | null) ?? {};
+    nextGmConfig = { ...base, renderingOverride: params.renderingOverride, };
   }
   if (params.gmConfig !== undefined) {
-    nextGmConfig = { ...(nextGmConfig ?? baseGmConfig), ...params.gmConfig, };
+    nextGmConfig = {
+      ...(nextGmConfig ?? (fullChat.gm_config as Record<string, unknown> | null) ?? {}),
+      ...params.gmConfig,
+    };
   }
   if (nextGmConfig !== undefined) {
     updates.gm_config = jsonStringifyOr(nextGmConfig,);
