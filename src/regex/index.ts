@@ -57,7 +57,7 @@ export {
   HASH_INJECTION_SCRIPT,
   ON_EVENT_DOUBLE,
   ON_EVENT_SINGLE,
-  SCRIPT_TAG,
+  stripScriptTags,
 } from "./html-sanitize";
 
 // ── Story Events ─────────────────────────────────────────────
