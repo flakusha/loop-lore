@@ -16,7 +16,10 @@ import {
 import { ItemsService, } from "../../story/items";
 import { jsonParseOr, } from "../../utils/safe-json";
 import { SuccessResponse, } from "../../validation/schemas";
-import { jsonError, jsonResponse, } from "../http-utils";
+import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { HttpStatus, } from "../http-utils/status";
+import { assertWorldOwner, } from "../rpg/crafting-station-instances";
+import { resolveActorAccess, } from "../trade/shared";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
@@ -179,8 +182,35 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
           };
           const { lootTable, monsterLevel, worldId, actorId, locationId, } = body;
           const loot = generateLoot(lootTable, monsterLevel,);
+          // Persistence path requires authentication and ownership proofs.
+          // The non-persistence branch (no worldId, or no destination) needs
+          // no guard — no row is written and the response is just the rolled
+          // drops. BUG-battle-equipment-loot-no-auth-guard.
           if (!worldId || (!actorId && !locationId)) {
             return jsonResponse(loot,);
+          }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const deny = await assertWorldOwner(database, userId, worldId,);
+          if (deny) { return deny; }
+          if (actorId) {
+            const denyActor = await resolveActorAccess(database, actorId, userId,);
+            if (denyActor) { return denyActor; }
+          } else if (locationId) {
+            const location = await database.selectFrom("locations",)
+              .select("world_id",)
+              .where("id", "=", locationId,)
+              .executeTakeFirst();
+            if (!location) {
+              return jsonError("Location not found", HttpStatus.NotFound,);
+            }
+            if (location.world_id !== worldId) {
+              return jsonError("Location does not belong to world", HttpStatus.BadRequest,);
+            }
+            // worldId was already verified to be owned by the caller via
+            // `assertWorldOwner`; the location's world_id match enforces
+            // that the caller cannot drop loot into a foreign world by
+            // mismatching the two ids.
           }
           // Persist drops that reference real item definitions.
           const items = new ItemsService(database,);
@@ -198,7 +228,13 @@ export function equipmentRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
       },
       {
-        response: { 200: SuccessResponse, },
+        response: {
+          200: SuccessResponse,
+          400: SuccessResponse,
+          401: SuccessResponse,
+          403: SuccessResponse,
+          404: SuccessResponse,
+        },
         detail: {
           summary: "Generate loot from table",
           description:
