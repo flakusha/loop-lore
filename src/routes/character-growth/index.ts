@@ -20,8 +20,8 @@
 import { Elysia, t, } from "elysia";
 import { characterGrowthService, GrowthServiceError, } from "../../characters/services/growth-service";
 import {
-  GrowthAxis,
   ArcStage,
+  GrowthAxis,
   GrowthEntryStatus,
 } from "../../characters/spec/growth";
 import type { GrowthAxis as GrowthAxisT, GrowthEntryStatus as GrowthEntryStatusT, } from "../../characters/spec/growth";
@@ -129,7 +129,6 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
         tags: ["Character Growth",],
       },
     },)
-
     // ── Set arc stage (author/owner/GM via requireActorAccess) ────
     .patch(`${R}/arc`, async (ctx,) => {
       const actorId = getString(ctx.params, "actorId",);
@@ -163,7 +162,6 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
         tags: ["Character Growth",],
       },
     },)
-
     // ── List growth log ─────────────────────────────────────
     .get(`${R}/growth-log`, async (ctx,) => {
       const actorId = getString(ctx.query, "actorId",);
@@ -199,7 +197,6 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
         tags: ["Character Growth",],
       },
     },)
-
     // ── Confirm pending entry ───────────────────────────────
     .post(`${R}/growth-log/:entryId/confirm`, async (ctx,) => {
       const actorId = getString(ctx.params, "actorId",);
@@ -228,7 +225,6 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
         tags: ["Character Growth",],
       },
     },)
-
     // ── Reject pending entry ────────────────────────────────
     .post(`${R}/growth-log/:entryId/reject`, async (ctx,) => {
       const actorId = getString(ctx.params, "actorId",);

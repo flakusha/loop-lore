@@ -94,6 +94,6 @@ export function redactGrowthLogForPlayerCard(
   entries: readonly GrowthLogEntry[],
 ): PublicGrowthLogEntry[] {
   return entries
-    .filter((e,) => e.status === GrowthEntryStatus.Applied,)
+    .filter((e,) => e.status === GrowthEntryStatus.Applied)
     .map(redactGrowthLogEntry,);
 }

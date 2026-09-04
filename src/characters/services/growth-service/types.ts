@@ -92,4 +92,4 @@ export class GrowthServiceError extends Error {
  *  even on static characters (D4). */
 export const AUTHOR_ONLY_EVENT_TYPES: ReadonlySet<GrowthEventType> = new Set([
   "arc_stage_set" as GrowthEventType,
-]);
+],);
