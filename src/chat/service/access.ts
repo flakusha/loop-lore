@@ -3,6 +3,17 @@
 
 /**
  * Chat access control and online-state (key mechanics) checks.
+ *
+ * Two layered helpers:
+ *   - `checkChatAccess` — broad read/join/leave access: admin, creator, or any
+ *     participant. Used by message-seen, exports, participant-management.
+ *   - `checkChatSettingsAccess` — stricter authority required to mutate chat
+ *     settings (mode, turnStrategy, worldId, gmConfig, renderingOverride,
+ *     name, pinned, paused, etc.) per `docs/spec/chat-privacy.md` §5.1.
+ *     Only admin OR the chat creator OR `role_in_chat = "owner"` passes.
+ *
+ * Both helpers return the same `{ ok: true } | { ok: false, error }` shape so
+ * callers can drop in the appropriate variant without changing control flow.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
@@ -28,7 +39,7 @@ export const KEY_MECHANIC_PARAMS = [
 export type KeyMechanicParam = (typeof KEY_MECHANIC_PARAMS)[number];
 
 /**
- * Check if a user owns or is a participant of a chat.
+ * Broad chat-access check: admin, creator, or any participant.
  * @param database
  * @param chatId
  * @param userId
@@ -67,6 +78,61 @@ export async function checkChatAccess(
   }
 
   return { ok: true, };
+}
+
+/**
+ * Strict settings-access check. Per `docs/spec/chat-privacy.md` §5.1 only the
+ * Master (chat creator) or a GM may change settings. The DB enum
+ * (`ChatParticipantRole`) currently exposes `Owner` instead of `Master`; we
+ * treat `Owner` as the Master equivalent until the spec's `gm` role lands.
+ *
+ * Members/observers/guests are denied even when they pass `checkChatAccess`.
+ * @param database
+ * @param chatId
+ * @param userId
+ * @param userRole
+ * @returns if settings-mutation is granted, else { ok: false, error }
+ */
+export async function checkChatSettingsAccess(
+  database: Kysely<DB>,
+  chatId: string,
+  userId: string,
+  userRole: string | null | undefined,
+): Promise<{ ok: true } | { ok: false, error: ServiceError }> {
+  if (can(userRole, "admin.chat",)) {
+    return { ok: true, };
+  }
+
+  const chat = await database
+    .selectFrom("chats",)
+    .select("created_by",)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+
+  if (!chat) {
+    return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
+  }
+
+  if (chat.created_by === userId) {
+    return { ok: true, };
+  }
+
+  const ownerParticipant = await database
+    .selectFrom("chat_participants",)
+    .select("actor_id",)
+    .where("chat_id", "=", chatId,)
+    .where("actor_id", "=", userId,)
+    .where("role_in_chat", "=", "owner",)
+    .executeTakeFirst();
+
+  if (ownerParticipant) {
+    return { ok: true, };
+  }
+
+  return {
+    ok: false,
+    error: { code: "forbidden", message: "Only the chat creator or an Owner role can change settings", },
+  };
 }
 
 /**
