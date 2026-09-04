@@ -27,6 +27,7 @@ Verified stale — no code change required. The regression test exists and the a
   the audit's claim of a 10x change is unsupported by `git log -S "DEFAULT_MAX_RATIO" src/utils/safe-buffer`
   (only the original commit and the SPDX header sweep touch the constant).
 - Regression coverage exists at `src/utils/safe-buffer/compression.test.ts:64-72`:
+
   ```
   test("post-check: zip bomb (high decompress/compress ratio) is still rejected", () => {
     // 5MB of zeros gzips to ~5KB — ratio ~1000x. Exceeds the 1000x limit.
@@ -36,6 +37,7 @@ Verified stale — no code change required. The regression test exists and the a
     expect(result.error.message,).toMatch(/Compression ratio .* exceeds limit/,);
   });
   ```
+
 - Other regression tests in the same file (lines 52, 64, 71) all exercise the ratio check directly.
 - Conclusion: the 1000x cap is constant since inception, and the regression test that asserts
   rejection at this ratio is present and passing. No action required. Ticket resolved.
