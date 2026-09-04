@@ -1,15 +1,19 @@
-# BUG: BUG: hallucination guard runs outside try/catch after message insert; DB error strands message
+# BUG: BUG: hallucination guard runs outside try/catch after message stored
 
-**Status:** ⬜ Not Started
-**Priority:** medium
-**Effort:** Medium
+**Status:** ✅ Done
+**Priority:** high
+**Effort:** Low
 
 ## Summary
 
-src/generation/auto-gen/post-store.ts calls detectHallucinations(...) with no try/catch, AFTER storeMessage has already inserted the assistant message. If detectHallucinations throws (e.g. DB error querying world entities), applyPostStoreEffects throws, so completeGeneration / buffer append / signalDone / group cascade never run - the stored message is left with an uncompleted generation attempt and the SSE buffer is never signaled. Fix: wrap detectHallucinations (and the telemetry record) in try/catch consistent with the mood block, and ensure the attempt is completed or rolled back.
+In `src/generation/auto-gen/auto-generation.ts`, `detectHallucinations(...)` runs AFTER `storeMessage(...)` inserts the assistant message but BEFORE `completeGeneration` / buffer append / `signalDone` / group cascade. A thrown DB error inside `detectHallucinations` unwound `applyPostStoreEffects`, leaving the stored message with an uncompleted generation attempt and an SSE buffer that was never signaled. Fix: mirror the mood block — wrap the `detectHallucinations` call in try/catch, default `hallucinationAnalysis` to no-detections on error, log and continue.
 
 ## Acceptance Criteria
 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in commit `d5e3a72e` (`fix(gen): wrap detectHallucinations in try/catch so DB error does not strand stored message`). The guard is now wrapped in try/catch matching the mood block pattern; on error, `hallucinationAnalysis` defaults to no-detections and the generation pipeline continues to `completeGeneration` / `signalDone`. Index marked done; this file was out of sync.
