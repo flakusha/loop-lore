@@ -46,6 +46,9 @@ export interface Skill {
   updatedAt: string;
 }
 
+/** */
+export type SkillAcquisitionSource = "baseline" | "story" | "config";
+
 /** Skill creation input */
 export interface CreateSkillInput {
   actorId: string;
@@ -55,8 +58,11 @@ export interface CreateSkillInput {
   description?: string;
   prerequisites?: string[];
   metadata?: Record<string, unknown>;
+  /** Story-driven acquisition bookkeeping (`.plan/epics/epic-character-growth.md` D10). */
+  acquiredAt?: string;
+  acquisitionReason?: string;
+  acquisitionSource?: SkillAcquisitionSource;
 }
-
 /** Skill update input */
 export interface UpdateSkillInput {
   name?: string;

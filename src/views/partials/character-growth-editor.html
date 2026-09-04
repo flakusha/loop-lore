@@ -1,0 +1,109 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Character Growth Editor — author/GM partial.
+
+  Renders:
+  - growth_mode radio toggle (dynamic / static)
+  - llm_assist_enabled checkbox
+  - Arc stage editor (dropdown + description)
+  - Growth log table with status badges + confirm/reject affordances
+    for pending entries
+
+  Uses Alpine.js (data-x-bind, $fetch) for client-side mutations.
+  See .plan/epics/epic-character-growth.md (Frontend / UI section).
+-->
+<div class="character-growth-editor" x-data="characterGrowthEditor({
+  actorId: '{{.ActorID}}',
+  initialMode: '{{.InitialMode}}',
+  initialLlmAssist: {{.InitialLlmAssistEnabled}},
+  initialArcStage: '{{.InitialArcStage}}',
+  initialArcDescription: {{.InitialArcDescription}},
+  initialEntries: {{.InitialEntriesJSON}}
+})" data-testid="character-growth-editor">
+
+  <!-- Growth mode toggle -->
+  <fieldset class="growth-mode-fieldset">
+    <legend>Growth Mode</legend>
+    <label>
+      <input type="radio" name="growth_mode" value="dynamic"
+        x-model="growthMode" data-testid="growth-mode-dynamic">
+      Dynamic — character may evolve through the story
+    </label>
+    <label>
+      <input type="radio" name="growth_mode" value="static"
+        x-model="growthMode" data-testid="growth-mode-static">
+      Static — character does not change
+    </label>
+    <button @click="saveMode()" type="button" data-testid="save-growth-mode">
+      Save
+    </button>
+  </fieldset>
+
+  <!-- LLM-assist toggle -->
+  <label class="llm-assist-toggle">
+    <input type="checkbox" x-model="llmAssistEnabled"
+      data-testid="llm-assist-toggle">
+    Enable LLM-assist (proposes pending growth entries)
+  </label>
+
+  <!-- Arc stage editor -->
+  <fieldset class="arc-editor">
+    <legend>Arc Stage</legend>
+    <select x-model="arcStage" data-testid="arc-stage-select">
+      <option value="introduction">Introduction</option>
+      <option value="rising_action">Rising Action</option>
+      <option value="crisis">Crisis</option>
+      <option value="resolution">Resolution</option>
+      <option value="epilogue">Epilogue</option>
+    </select>
+    <textarea x-model="arcDescription" placeholder="Stage description (optional)"
+      data-testid="arc-description"></textarea>
+    <button @click="saveArc()" type="button" data-testid="save-arc">
+      Save Arc
+    </button>
+  </fieldset>
+
+  <!-- Growth log table -->
+  <table class="growth-log-table" data-testid="growth-log-table">
+    <thead>
+      <tr>
+        <th>Recorded</th>
+        <th>Axis</th>
+        <th>Event</th>
+        <th>Reason</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="entry in entries" :key="entry.id">
+        <tr :data-entry-id="entry.id" :data-status="entry.status">
+          <td x-text="entry.recordedAt"></td>
+          <td x-text="entry.axis"></td>
+          <td x-text="entry.eventType"></td>
+          <td x-text="entry.reason"></td>
+          <td>
+            <span class="status-badge" :class="'status-' + entry.status"
+              x-text="entry.status"></span>
+          </td>
+          <td>
+            <template x-if="entry.status === 'pending'">
+              <span>
+                <button @click="confirmEntry(entry.id)" type="button"
+                  :data-testid="'confirm-' + entry.id">Confirm</button>
+                <button @click="rejectEntry(entry.id)" type="button"
+                  :data-testid="'reject-' + entry.id">Reject</button>
+              </span>
+            </template>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <!-- Status message -->
+  <div x-show="message" class="growth-editor-message" x-text="message"
+    data-testid="growth-editor-message"></div>
+</div>

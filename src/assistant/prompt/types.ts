@@ -177,6 +177,8 @@ export const PRIORITY = {
   userPersona: 0,
   emotionAvatar: 0,
   internalTraits: 1,
+  /** Behavior-critical for both static and dynamic characters. */
+  actorGrowth: 1,
   pluginAgentRole: 0,
   chatHistory: 0,
   storyContext: 1,

@@ -23,6 +23,12 @@ export async function createSkill(db: Kysely<DB>, input: CreateSkillInput,): Pro
   const now = new Date().toISOString();
   const id: string = crypto.randomUUID();
 
+  // Per `.plan/epics/epic-character-growth.md` D10: story-driven
+  // acquisitions set `acquisition_source='story'` and `acquired_at=now`;
+  // config-seeded baseline skills leave them at their defaults (NULL +
+  // 'baseline'). The caller chooses via `input.acquisitionSource` and
+  // `input.acquiredAt` / `input.acquisitionReason`.
+  const acquisitionSource = input.acquisitionSource ?? "baseline";
   const skillData = {
     id,
     actor_id: input.actorId,
@@ -39,6 +45,9 @@ export async function createSkill(db: Kysely<DB>, input: CreateSkillInput,): Pro
     metadata: jsonStringifyOr(input.metadata ?? {},),
     created_at: now,
     updated_at: now,
+    acquired_at: input.acquiredAt ?? (acquisitionSource === "story" ? now : null),
+    acquisition_reason: input.acquisitionReason ?? null,
+    acquisition_source: acquisitionSource,
   };
 
   await db.insertInto("character_skills",).values(skillData,).execute();

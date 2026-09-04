@@ -35,6 +35,7 @@ import { battleRoutes, } from "../routes/battle";
 import { blogRoutes, } from "../routes/blog";
 import { characterAvailabilityRoutes, } from "../routes/character-availability";
 import { characterAvatarsRoutes, } from "../routes/character-avatars";
+import { characterGrowthRoutes, } from "../routes/character-growth";
 import { characterEmotionAvatarsRoutes, } from "../routes/character-emotion-avatars";
 import { characterEmotionsRoutes, } from "../routes/character-emotions";
 import { characterInternalTraitsRoutes, } from "../routes/character-internal-traits";
@@ -162,6 +163,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(characterTraitsRoutes(handleOpts,),);
   app.use(characterWorldSetupRoutes(handleOpts,),);
   app.use(characterInternalTraitsRoutes(handleOpts,),);
+  app.use(characterGrowthRoutes(handleOpts,),);
   app.use(characterMoodRoutes(handleOpts,),);
   app.use(characterRelationshipsRoutes(handleOpts,),);
   app.use(characterAvatarsRoutes(handleOpts,),);

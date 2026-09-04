@@ -1,19 +1,21 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# TASK: Char Growth Schema
+# TASK: char-growth-schema
 
-**Status**: open
-**Priority**: medium
-**Labels**:
-**Assignee**:
-**Epic**: epic-character-core-system
-**Related**:
+**Status:** ⬜ Not Started
+**Priority:** High
+**Effort:** Medium
 
 ## Summary
 
-Add `CharacterGrowth` types + `CanonicalCharacter` fields
+Add migration `099_character_growth.ts` with `character_arc` + `growth_log` tables and growth-mode columns on `actors` / `character_skills` / `character_relationships` / trait tables. Regenerate DB schemas via `db:sync-types` + `db:sync-manifest`.
 
-## Acceptance
+See `.plan/epics/epic-character-growth.md` (Schema section).
 
-- [ ] Complete
+## Acceptance Criteria
+
+- [ ] Migration applies cleanly to dev DB (idempotent on rollback/replay)
+- [ ] `bun run db:sync-types && bun run db:sync-manifest` succeeds
+- [ ] `bun run schemas:check` green
+- [ ] `bun test src/db/schema-sync.test.ts` green

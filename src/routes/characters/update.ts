@@ -132,6 +132,8 @@ function buildActorUpdates(
     creatorNotes,
     creator,
     characterVersion,
+    growthMode,
+    llmAssistEnabled,
   } = body;
   if (displayName) { updates.display_name = displayName; }
   if (description) { updates.description = description; }
@@ -144,8 +146,8 @@ function buildActorUpdates(
   if (mesExample) { updates.mes_example = mesExample; }
   if (scenario) { updates.scenario = scenario; }
   if (postHistoryInstructions) { updates.post_history_instructions = postHistoryInstructions; }
-  if (creatorNotes) { updates.creator_notes = creatorNotes; }
-  if (creator) { updates.creator = creator; }
   if (characterVersion) { updates.character_version = characterVersion; }
+  if (growthMode !== undefined) { updates.growth_mode = growthMode; }
+  if (llmAssistEnabled !== undefined) { updates.llm_assist_enabled = llmAssistEnabled ? 1 : 0; }
   return updates;
 }
