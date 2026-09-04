@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 278
+// size-allow: 320
 
 /**
  * Version management - Git tags are the single source of truth (bare `x.y.z`,
@@ -21,6 +21,7 @@
 import { execSync, } from "child_process";
 import { readFileSync, writeFileSync, } from "fs";
 import { resolve, } from "path";
+import { safeJsonParse, } from "../utils/safe-json";
 
 interface Version {
   major: number;
@@ -121,11 +122,30 @@ function getCurrentBranch(): string {
   return execSync("git branch --show-current", { encoding: "utf-8", },).trim();
 }
 
-/** */
+/**
+ * Read + parse `package.json` safely. Returns an empty object on malformed
+ * JSON rather than throwing — a missing/malformed `package.json` should
+ * surface as a missing version, not a stack trace, when this script is
+ * invoked from `bun run version:*` hooks.
+ * @param packageJsonPath
+ */
+function readPackageJson(packageJsonPath: string,): { version?: string } {
+  let text: string;
+  try {
+    text = readFileSync(packageJsonPath, "utf-8",);
+  } catch {
+    return {};
+  }
+  const result = safeJsonParse<{ version?: string }>(text,);
+  return result.ok ? result.value : {};
+}
+
+/**
+ * @returns the version pinned in `package.json`, or "0.0.0" if missing.
+ */
 function getPackageJsonVersion(): string {
   const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
-  const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8",),);
-  return packageJson.version;
+  return readPackageJson(packageJsonPath,).version ?? "0.0.0";
 }
 
 /**
@@ -133,7 +153,7 @@ function getPackageJsonVersion(): string {
  */
 function setPackageJsonVersion(version: string,): void {
   const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
-  const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8",),);
+  const packageJson = readPackageJson(packageJsonPath,);
   packageJson.version = version;
   writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2,)}\n`,);
 }
