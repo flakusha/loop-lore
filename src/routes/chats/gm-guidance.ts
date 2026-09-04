@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
-import { checkChatAccess, updateGmGuidance, } from "../../chat/service";
+import { checkChatSettingsAccess, updateGmGuidance, } from "../../chat/service";
 import { ChatIdParams, GmGuidanceUpdateBody, } from "../../validation/schemas";
 import {
   forbiddenResponse as forbidden,
@@ -34,7 +34,7 @@ export function gmGuidanceRoutes(opts: HandlerOpts, prefix = "/api",) {
         const id = (ctx.params as { id: string }).id;
         const body = ctx.body as typeof GmGuidanceUpdateBody.static;
 
-        const access = await checkChatAccess(database, id, userId, userRole,);
+        const access = await checkChatSettingsAccess(database, id, userId, userRole,);
         if (!access.ok) { return forbidden(); }
 
         const result = await updateGmGuidance(database, id, {
