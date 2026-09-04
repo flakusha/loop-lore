@@ -2413,6 +2413,18 @@
     "source": ".plan/tickets/BUG-middleware-requestid-dual-write-last-wins.md",
     "status": "fixed-in-worktree"
   },
+  "BUG-MIGRATE-TS-LOADER-IMPORTS-TEST-TS-FILES-FROM-SRC-DB-MIGRATIO": {
+    "hash": "e4a3544",
+    "git_issue": "e4a3544",
+    "extid": "BUG-MIGRATE-TS-LOADER-IMPORTS-TEST-TS-FILES-FROM-SRC-DB-MIGRATIO",
+    "type": "BUG",
+    "title": "migrate.ts loader imports *.test.ts files from src/db/migrations/, breaks unrelated tests",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-migrate-ts-loader-imports-test-ts-files-from-src-db-migratio.md"
+  },
   "BUG-MIGRATION-ACTIVITYPUB-ACTOR-KEYS-FK-MISSING-ONDELETE-CASCADE": {
     "hash": "42aa293",
     "git_issue": "42aa293",
@@ -15350,6 +15362,30 @@
     "epic": "epic-middleware-request-lifecycle",
     "tags": [],
     "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
+  },
+  "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR": {
+    "hash": "221a610",
+    "git_issue": "221a610",
+    "extid": "TASK-MIGRATION-076-DISTINGUISH-EXPLICIT-NULL-RENDERINGOVERRIDE-FR",
+    "type": "TASK",
+    "title": "Migration 076: distinguish explicit-null renderingOverride from absent key",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-migration-076-distinguish-explicit-null-renderingoverride-fr.md"
+  },
+  "TASK-MIGRATION-076-HARDEN-AGAINST-MALFORMED-GM-CONFIG-JSON": {
+    "hash": "c009f35",
+    "git_issue": "c009f35",
+    "extid": "TASK-MIGRATION-076-HARDEN-AGAINST-MALFORMED-GM-CONFIG-JSON",
+    "type": "TASK",
+    "title": "Migration 076: harden against malformed gm_config JSON",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-migration-076-harden-against-malformed-gm-config-json.md"
   },
   "TASK-MINI-GAMES-FRAMEWORK": {
     "hash": "pending",
