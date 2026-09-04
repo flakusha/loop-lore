@@ -195,6 +195,75 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
   });
 });
 
+describe("updateChat renderingOverride merge (gm_config string-spread regression)", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+
+  beforeEach(async () => {
+    const fresh = await createTestDb();
+    db = fresh.db;
+    await insertUsers(db, "ro-creator", "RO Creator", { id: "user-ro", } as never,);
+    await insertActors(
+      db,
+      "RO Creator",
+      { id: "user-ro", user_id: "user-ro", owner_id: "user-ro", } as never,
+    );
+    chatId = await createChat(db, {
+      name: "RO Chat",
+      type: "direct",
+      mode: "story",
+      createdBy: "user-ro",
+      participantIds: ["user-ro",],
+    },);
+  },);
+
+  afterEach(async () => {
+    await db?.destroy();
+  },);
+
+  /** */
+  async function gmConfigOf(): Promise<Record<string, unknown> | null> {
+    const row = await db
+      .selectFrom("chats",)
+      .select("gm_config",)
+      .where("id", "=", chatId,)
+      .executeTakeFirst();
+    return row?.gm_config ? JSON.parse(row.gm_config,) : null;
+  }
+
+  it("merges renderingOverride into an existing gm_config JSON string without string-spread garbage", async () => {
+    // Seed a real JSON string — the exact shape the old code corrupted by
+    // spreading a string into numeric-index keys.
+    await db
+      .updateTable("chats",)
+      .set({ gm_config: JSON.stringify({ type: "llm", storyMode: true, },), },)
+      .where("id", "=", chatId,)
+      .execute();
+
+    const res = await updateChat(db, chatId, { renderingOverride: "visual_novel", },);
+    expect(res,).toEqual({ ok: true, },);
+
+    const parsed = await gmConfigOf();
+    expect(parsed,).toBeTruthy();
+    // Pre-existing keys survive the merge.
+    expect(parsed?.type,).toBe("llm",);
+    expect(parsed?.storyMode,).toBe(true,);
+    // New override is set.
+    expect(parsed?.renderingOverride,).toBe("visual_novel",);
+    // No string-spread numeric-index keys.
+    const keys = Object.keys(parsed ?? {},);
+    expect(keys.filter((k,) => /^\d+$/.test(k,)),).toEqual([],);
+  });
+
+  it("merges renderingOverride into a NULL gm_config without corruption", async () => {
+    const res = await updateChat(db, chatId, { renderingOverride: "text", },);
+    expect(res,).toEqual({ ok: true, },);
+    const parsed = await gmConfigOf();
+    expect(parsed?.renderingOverride,).toBe("text",);
+    expect(Object.keys(parsed ?? {},).filter((k,) => /^\d+$/.test(k,)),).toEqual([],);
+  });
+});
+
 describe("updateChat promptOverride (per-chat prompt override)", () => {
   let db: Kysely<DB>;
   let chatId: string;
