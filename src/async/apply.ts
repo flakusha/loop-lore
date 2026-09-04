@@ -14,6 +14,7 @@
 import type { Kysely, UpdateQueryBuilder, } from "kysely";
 import type { DB, } from "../db/schema";
 import { jsonStringifyOr, } from "../utils/safe-json";
+import { spill, } from "./offload";
 import type { AsyncStoreConfig, } from "./store";
 
 /**
@@ -126,10 +127,23 @@ export async function apply(
       return;
     }
     case "complete": {
-      // Decide based on body length whether to inline or trust the offload
-      // daemon to spill later. We always inline here; offload.ts re-evaluates
-      // on its cron tick. If we want eager offload we can move the check.
+      // Bodies within the inline threshold are stored in `response_body`
+      // directly. Larger bodies are spilled to disk (gzip) immediately so
+      // they are never dropped: the offload daemon skips rows whose
+      // `response_body` is null, so nulling a large body here would lose it
+      // permanently. BUG-bug-async-store-complete-drops-response-body-larger-than-max.
       const inline = write.response.body.length <= cfg.maxInlineBytes;
+      const completedAt = new Date().toISOString();
+      let responseBody: string | null;
+      let offloadedAt: string | null = null;
+      let offloadPath: string | null = null;
+      if (inline) {
+        responseBody = write.response.body;
+      } else {
+        offloadedAt = completedAt;
+        offloadPath = await spill(write.id, write.response.body,);
+        responseBody = null;
+      }
       const where = database
         .updateTable("request_results",)
         .set({
@@ -137,9 +151,11 @@ export async function apply(
           progress: null,
           response_status: write.response.status,
           response_headers: jsonStringifyOr(write.response.headers,) ?? null,
-          response_body: inline ? write.response.body : null,
+          response_body: responseBody,
           error: null,
-          completed_at: new Date().toISOString(),
+          completed_at: completedAt,
+          offloaded_at: offloadedAt,
+          offload_path: offloadPath,
         },)
         .where("id", "=", write.id,);
       await executeScopedByUser(where, write.userId,);
