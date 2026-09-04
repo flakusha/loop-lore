@@ -310,6 +310,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-register-plugins-150-references-undefined-chatsectionsroutes.md"
     },
     {
@@ -2099,6 +2103,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-regex-safety-xml-utils-tag-unescaped-narrative-greedy.md"
+    }
+  ],
+  "src/async/apply.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-store-complete-drops-response-body-larger-than-max.md"
     }
   ],
   "src/async/apply.ts": [
@@ -18963,6 +18973,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-async-result-store-track-never-called-request-results-pi.md"
     }
   ],
   "src/routes/messages/update.test.ts": [
