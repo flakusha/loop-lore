@@ -12,6 +12,38 @@
  * - findByIdempotencyKey short-circuits duplicate POSTs.
  * - Different chat_id with the same idempotency_key is independent.
  * - A null idempotency_key never triggers the idempotency short-circuit.
+ *
+ * NOTE on Promise.all as a "concurrency" probe (TASK-audit-follow-up-chat-swipe-index-race-test-uses-promise-all-).
+ *
+ * Promise.all on the JS event loop does NOT produce a true concurrent race on
+ * the same DB row. The async functions handed to Promise.all run serially at
+ * the microtask checkpoint; only the I/O (Kysely → bun:sqlite) overlaps. For
+ * an in-process bun:sqlite handle, every Promise.all branch sees the same
+ * serialised stream, so SELECT-MAX + INSERT completes one at a time and the
+ * unique-index collisions the retry loop guards against never fire.
+ *
+ * What this test IS verifying, in order of priority:
+ *   1. Uniqueness — every committed row under (chat_id, parent_id) gets a
+ *      distinct swipe_index (the in-memory Set check on the returned rows).
+ *   2. Monotonicity — indexes are dense and start at MAX(parent.swipe_index)+1.
+ *   3. Final commit ordering — after Promise.all settles, every committed
+ *      swipe_index is non-null and the set is exactly {1..fanout}.
+ *
+ * What this test is NOT verifying:
+ *   - True OS-thread or cross-process races (would require
+ *     `child_process.fork` workers with separate bun:sqlite handles, or
+ *     `bun:test --maxConcurrency` workers, per the original ticket's
+ *     option 1/2).
+ *   - The unique-index constraint's enforcement under contention — that
+ *     is covered indirectly by the forced-collision test below
+ *     (SwipeInsertExhaustedError), not by the Promise.all block.
+ *
+ * Decision: ticket option 4 — keep Promise.all, document its limitation, and
+ * assert uniqueness + monotonicity + final-commit ordering (already in place
+ * below). The retry-on-collision path is exercised by the explicit
+ * forced-collision test in the same describe block. To exercise the retry
+ * loop against a real race, switch to child_process.fork workers — out of
+ * scope for this audit fix.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
