@@ -410,12 +410,12 @@ describe("handleCommandInput", () => {
   // populated list to exercise the filter logic.
   type CommandEntry = { name: string; descriptionKey: string; description: string };
   const seededCommandList: CommandEntry[] = [
-    { name: "help", descriptionKey: "commands.help", description: "help" },
-    { name: "roll", descriptionKey: "commands.roll", description: "roll" },
-    { name: "summarize", descriptionKey: "commands.summarize", description: "summarize" },
-    { name: "impersonate", descriptionKey: "commands.impersonate", description: "impersonate" },
-    { name: "image", descriptionKey: "commands.image", description: "image" },
-    { name: "improve", descriptionKey: "commands.improve", description: "improve" },
+    { name: "help", descriptionKey: "commands.help", description: "help", },
+    { name: "roll", descriptionKey: "commands.roll", description: "roll", },
+    { name: "summarize", descriptionKey: "commands.summarize", description: "summarize", },
+    { name: "impersonate", descriptionKey: "commands.impersonate", description: "impersonate", },
+    { name: "image", descriptionKey: "commands.image", description: "image", },
+    { name: "improve", descriptionKey: "commands.improve", description: "improve", },
   ];
 
   type CommandInputState = {
@@ -424,7 +424,7 @@ describe("handleCommandInput", () => {
     _commandList: CommandEntry[];
   };
 
-  const makeState = (init: { show: boolean; },): CommandInputState => ({
+  const makeState = (init: { show: boolean },): CommandInputState => ({
     _showCommandPalette: init.show,
     _filteredCommands: [],
     _commandList: seededCommandList,
@@ -433,11 +433,14 @@ describe("handleCommandInput", () => {
     const event: Event = { target: { value, }, } as unknown as Event;
     // handleCommandInput is typed as `Partial<ChatState>`; the test exercises
     // a minimal state slice, so we widen via unknown at the call boundary.
-    chatActions.handleCommandInput!.call(state as unknown as Parameters<NonNullable<typeof chatActions.handleCommandInput>>[0], event,);
+    chatActions.handleCommandInput!.call(
+      state as unknown as Parameters<NonNullable<typeof chatActions.handleCommandInput>>[0],
+      event,
+    );
   };
 
   test("shows palette when typing slash without space", () => {
-    const state = makeState({ show: false, });
+    const state = makeState({ show: false, },);
     invokeHandle(state, "/im",);
     expect(state._showCommandPalette,).toBe(true,);
     expect(state._filteredCommands.length,).toBeGreaterThan(0,);
@@ -445,25 +448,24 @@ describe("handleCommandInput", () => {
   });
 
   test("hides palette when no slash prefix", () => {
-    const state = makeState({ show: true, });
+    const state = makeState({ show: true, },);
     invokeHandle(state, "hello",);
     expect(state._showCommandPalette,).toBe(false,);
   });
 
   test("hides palette when space follows slash", () => {
-    const state = makeState({ show: true, });
+    const state = makeState({ show: true, },);
     invokeHandle(state, "/im hello",);
     expect(state._showCommandPalette,).toBe(false,);
   });
 
   test("shows all commands when just /", () => {
-    const state = makeState({ show: false, });
+    const state = makeState({ show: false, },);
     invokeHandle(state, "/",);
     expect(state._showCommandPalette,).toBe(true,);
     expect(state._filteredCommands.length,).toBe(seededCommandList.length,);
   });
 });
-
 
 // ── selectCommand ────────────────────────────────────────────
 
