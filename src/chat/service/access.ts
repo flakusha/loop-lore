@@ -98,7 +98,7 @@ export async function checkChatSettingsAccess(
   chatId: string,
   userId: string,
   userRole: string | null | undefined,
-): Promise<{ ok: true } | { ok: false, error: ServiceError }> {
+): Promise<{ ok: true } | { ok: false; error: ServiceError }> {
   if (can(userRole, "admin.chat",)) {
     return { ok: true, };
   }
