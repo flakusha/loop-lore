@@ -77,7 +77,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
             turnStrategy: body.turnStrategy ?? null,
             worldId: body.worldId ?? null,
             gmConfig: body.gmConfig ?? null,
-            visualNovel: body.visualNovel ?? false,
+            renderingOverride: body.renderingOverride ?? null,
             features: body.features ?? null,
             visibility: body.visibility ?? null,
           },);
@@ -110,7 +110,7 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
             turnStrategy: body?.turnStrategy,
             worldId: body?.worldId,
             gmConfig: body?.gmConfig,
-            visualNovel: body?.visualNovel,
+            renderingOverride: (body ?? {}).renderingOverride ?? null,
             features: body?.features,
             visibility: body?.visibility,
           },);
