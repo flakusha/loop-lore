@@ -4,6 +4,7 @@
 import { describe, expect, test, } from "bun:test";
 import { gzipSync, } from "node:zlib";
 import { safeCompress, safeDecompress, } from "./compression";
+import { DEFAULT_MAX_RATIO, DEFAULT_MAX_SIZE, } from "./constants";
 
 // Build a payload whose compressed size exceeds 10KB but stays well under
 // maxSize (10MB) and within maxRatio (1000x). Crypto-random bytes are
@@ -69,6 +70,51 @@ describe("safeDecompress", () => {
     expect(result.ok,).toBe(false,);
     if (!result.ok) {
       expect(result.error.message,).toMatch(/Compression ratio .* exceeds limit/,);
+    }
+  });
+
+  // Runtime-driven boundary tests: read limits from constants so future raises
+  // of DEFAULT_MAX_RATIO / DEFAULT_MAX_SIZE shift assertion targets (rather
+  // than silently re-pin a stale value).
+  test("boundary: decompressed/compressed ratio just under DEFAULT_MAX_RATIO passes", () => {
+    // 1MB of zeros gzips to ~1003B — ratio ~997x, just under DEFAULT_MAX_RATIO (1000x).
+    const under = Buffer.alloc(1_000_000, 0,);
+    const compressed = gzipSync(under,);
+    const actualRatio = under.length / compressed.length;
+    expect(actualRatio,).toBeLessThan(DEFAULT_MAX_RATIO,);
+
+    const result = safeDecompress(compressed, "gzip",);
+    expect(result.ok,).toBe(true,);
+    if (result.ok) { expect(result.buffer.length,).toBe(1_000_000,); }
+  });
+
+  test("boundary: decompressed/compressed ratio just over DEFAULT_MAX_RATIO is rejected", () => {
+    // 1.2MB of zeros gzips to ~1198B — ratio ~1001.67x, just over DEFAULT_MAX_RATIO (1000x).
+    // Far below DEFAULT_MAX_SIZE (10MB) so the size cap cannot fire first.
+    const over = Buffer.alloc(1_200_000, 0,);
+    const compressed = gzipSync(over,);
+    const actualRatio = over.length / compressed.length;
+    expect(actualRatio,).toBeGreaterThan(DEFAULT_MAX_RATIO,);
+    expect(over.length,).toBeLessThan(DEFAULT_MAX_SIZE,);
+
+    const result = safeDecompress(compressed, "gzip",);
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      expect(result.error.message,).toMatch(/Compression ratio .* exceeds limit/,);
+    }
+  });
+
+  test("boundary: absolute byte cap fires before ratio check", () => {
+    // Crypto-random 11MB plaintext: incompressible, so decompressed/compressed
+    // ratio is ~1x (well under DEFAULT_MAX_RATIO) but decompressed length
+    // exceeds DEFAULT_MAX_SIZE. The size cap must reject this BEFORE the ratio
+    // check runs, so the error must be the size one, not the ratio one.
+    const oversized = buildDensePayload(11_000_000,);
+    const result = safeDecompress(oversized, "gzip",);
+    expect(result.ok,).toBe(false,);
+    if (!result.ok) {
+      expect(result.error.message,).toMatch(/Decompressed data too large/,);
+      expect(result.error.message,).not.toMatch(/Compression ratio/,);
     }
   });
 
