@@ -18,8 +18,54 @@
  * @module regex/html-sanitize
  */
 
-/** Match <script> tags and their contents (including multiline) */
-export const SCRIPT_TAG = /<script\b[\s\S]*?<\/script\s*>/gi;
+const SCRIPT_OPEN = "<script";
+const SCRIPT_CLOSE = "</script>";
+const WORD_CHAR = /[a-z0-9_]/i;
+
+/**
+ * Strip `<script>…</script>` spans (case-insensitive) via a single
+ * left-to-right scan. Replaces the former `SCRIPT_TAG` regex, whose nested
+ * quantifier `(?:(?!<\/script>)<[^<]*)*` backtracks quadratically on input
+ * containing many `<` characters with no closing tag — a CPU-exhaustion DoS
+ * on untrusted LLM stream output.
+ * @param html - The text to scan.
+ * @returns The text with `<script>` spans removed.
+ */
+export function stripScriptTags(html: string,): string {
+  const lower = html.toLowerCase();
+  const parts: string[] = [];
+  let i = 0;
+
+  for (;;) {
+    const start = lower.indexOf(SCRIPT_OPEN, i,);
+    if (start === -1) {
+      parts.push(html.slice(i,),);
+      break;
+    }
+    const afterOpen = start + SCRIPT_OPEN.length;
+    const nextChar = html[afterOpen];
+    if (nextChar !== undefined && WORD_CHAR.test(nextChar,)) {
+      // `<scripture>` etc. — not a script tag; skip past the `<script` prefix.
+      parts.push(html.slice(i, afterOpen,),);
+      i = afterOpen;
+      continue;
+    }
+    const gt = html.indexOf(">", afterOpen,);
+    if (gt === -1) {
+      parts.push(html.slice(i,),);
+      break;
+    }
+    const close = lower.indexOf(SCRIPT_CLOSE, gt + 1,);
+    if (close === -1) {
+      parts.push(html.slice(i,),);
+      break;
+    }
+    parts.push(html.slice(i, start,),);
+    i = close + SCRIPT_CLOSE.length;
+  }
+
+  return parts.join("",);
+}
 
 /** Match inline event handlers with double-quoted attributes */
 export const ON_EVENT_DOUBLE = /\bon\w+="[^"]*"/gi;
