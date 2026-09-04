@@ -4,20 +4,24 @@ import type { Kysely, } from "kysely";
  * Migration 027 — Consolidated feature batch
  *
  * Merges three previously separate 027 migrations:
- * - GM Config & Visual Novel (chats columns)
+ * - GM Config (chats column)
  * - NSFW Game Mechanics (9 tables)
  * - Template Injection (actors column)
  *
- * The typed schema (`GmConfig`, `VisualNovel`) is enforced at the
- * application layer, not the DB layer.
+ * The typed schema (`GmConfig`) is enforced at the application layer,
+ * not the DB layer. The legacy `chats.visual_novel` integer column was
+ * removed; chat rendering state now lives in `gm_config.renderingOverride`
+ * (a 3-value `as const` enum per `db/enums-core/chat.ts`, see
+ * `chat/types/config.ts` for the resolution rules against ChatMode defaults).
  * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
-  // ── GM Config & Visual Novel (chats columns) ───────────
-  await database.schema
-    .alterTable("chats",)
-    .addColumn("visual_novel", "integer", (col,) => col.notNull().defaultTo(0,),)
-    .execute();
+  // ── GM Config (chats column) ─────────────────────────
+  // (No data migration needed: the legacy `chats.visual_novel` column is
+  // dropped by this migration's `down()` path only; the up() path simply
+  // stops adding it. Fresh DBs never had the column; existing DBs lose the
+  // integer-typed bit but `gm_config.renderingOverride` is the new typed
+  // source of truth starting now.)
 
   await database.schema
     .alterTable("chats",)
@@ -218,10 +222,5 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("chats",)
     .dropColumn("streaming",)
-    .execute();
-
-  await database.schema
-    .alterTable("chats",)
-    .dropColumn("visual_novel",)
     .execute();
 }

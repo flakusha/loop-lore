@@ -596,98 +596,16 @@
           "properties": {
             "openaiCompatible": {
               "type": "array",
-              "default": [],
-              "description": "OpenAI-compatible provider instances",
-              "items": {
-                "type": "object",
-                "description": "Provider instance configuration",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Unique provider instance name (referenced in registry)"
-                  },
-                  "label": {
-                    "type": "string",
-                    "description": "Human-readable label for UI"
-                  },
-                  "baseUrl": {
-                    "type": "string",
-                    "description": "Base URL (e.g. http://localhost:8080/v1)"
-                  },
-                  "apiKey": {
-                    "type": "string",
-                    "description": "Server-level API key (overridden by user BYO key)"
-                  },
-                  "model": {
-                    "type": "string",
-                    "description": "Default model ID"
-                  },
-                  "timeout": {
-                    "type": "integer",
-                    "default": 30000,
-                    "description": "Connection timeout in ms"
-                  },
-                  "retries": {
-                    "type": "integer",
-                    "default": 3,
-                    "description": "Max retries for transient failures"
-                  },
-                  "allowUserApiKey": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Allow user API key override for this provider"
-                  },
-                  "headers": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    },
-                    "description": "Extra headers sent with every request"
-                  },
-                  "models": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "object",
-                      "description": "Model limits",
-                      "properties": {
-                        "contextLimit": {
-                          "type": "integer",
-                          "description": "Context window size in tokens"
-                        },
-                        "maxOutput": {
-                          "type": "integer",
-                          "description": "Max output tokens"
-                        }
-                      },
-                      "required": [
-                        "contextLimit",
-                        "maxOutput"
-                      ]
-                    },
-                    "description": "Known models (name → limits)"
-                  }
-                },
-                "required": [
-                  "name",
-                  "label",
-                  "baseUrl",
-                  "model",
-                  "timeout",
-                  "retries",
-                  "allowUserApiKey"
-                ]
-              }
+              "description": "OpenAI-compatible provider instances"
             }
           }
         },
         "defaultProvider": {
           "type": "string",
-          "default": "",
           "description": "Default provider name"
         },
         "defaultModels": {
           "type": "object",
-          "default": {},
           "description": "Default model per provider"
         },
         "autoStart": {
@@ -700,7 +618,6 @@
               "properties": {
                 "enabled": {
                   "type": "boolean",
-                  "default": false,
                   "description": "Enable auto-start"
                 },
                 "modelPath": {
@@ -709,7 +626,6 @@
                 },
                 "port": {
                   "type": "integer",
-                  "default": 9011,
                   "description": "llama-server port"
                 },
                 "alias": {
@@ -718,7 +634,6 @@
                 },
                 "ctxSize": {
                   "type": "integer",
-                  "default": 8192,
                   "description": "Context size in tokens"
                 },
                 "threads": {
@@ -833,7 +748,6 @@
               "properties": {
                 "enabled": {
                   "type": "boolean",
-                  "default": false,
                   "description": "Enable auto-start"
                 },
                 "modelType": {
@@ -842,7 +756,6 @@
                     "checkpoint",
                     "diffusion"
                   ],
-                  "default": "checkpoint",
                   "description": "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)"
                 },
                 "modelPath": {
@@ -851,7 +764,6 @@
                 },
                 "port": {
                   "type": "integer",
-                  "default": 9010,
                   "description": "sd-server port"
                 },
                 "llmPath": {
@@ -981,55 +893,6 @@
                 "port"
               ]
             }
-          }
-        },
-        "regexTransforms": {
-          "type": "array",
-          "default": [],
-          "description": "Regex transforms applied to LLM output before display",
-          "items": {
-            "type": "object",
-            "description": "A single regex transform rule",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Human-readable name"
-              },
-              "pattern": {
-                "type": "string",
-                "description": "Regex pattern string"
-              },
-              "replacement": {
-                "type": "string",
-                "description": "Replacement string"
-              },
-              "flags": {
-                "type": "string",
-                "default": "g",
-                "description": "Regex flags"
-              },
-              "enabled": {
-                "type": "boolean",
-                "description": "Whether this transform is active"
-              },
-              "phase": {
-                "type": "string",
-                "enum": [
-                  "edit-input",
-                  "output",
-                  "process",
-                  "display"
-                ],
-                "default": "output",
-                "description": "Pipeline phase this transform runs in (edit-input → output → process → display canonical order)"
-              }
-            },
-            "required": [
-              "name",
-              "pattern",
-              "replacement",
-              "enabled"
-            ]
           }
         }
       }

@@ -4433,6 +4433,18 @@
       "source": ".plan/tickets/BUG-bug-message-seen-re-mark-clobbers-first-seen-timestamp.md"
     }
   ],
+  "src/chat/service/split.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
+    }
+  ],
+  "src/chat/service/split.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
+    }
+  ],
   "src/chat/service/templates.ts": [
     {
       "kind": "epic",
@@ -15055,6 +15067,12 @@
       "source": "docs/frontend/headers-management.md"
     }
   ],
+  "src/middleware/scope-by-user.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
+    }
+  ],
   "src/middleware/types.ts": [
     {
       "kind": "ticket",
@@ -17080,6 +17098,10 @@
   "src/routes/battle/equipment.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-map-battle-equipment.md"
     },
     {
@@ -17265,6 +17287,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-characters-create-avatar-linking-missing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md"
     }
   ],
   "src/routes/characters/update.ts": [
@@ -19131,6 +19161,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-combat-routes.md"
+    }
+  ],
+  "src/routes/rpg/crafting-station-instances.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
     }
   ],
   "src/routes/rpg/index.ts": [
@@ -21487,6 +21523,12 @@
       "source": "docs/spec/shared-schemas.md"
     }
   ],
+  "src/scripts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-templates-ts-at-190l-convention-ceiling.md"
+    }
+  ],
   "src/scripts-workflow.md": [
     {
       "kind": "epic",
@@ -23073,6 +23115,18 @@
       "source": ".plan/tickets/TASK-tighten-safeparseint-to-strict-base-10-contract.md"
     }
   ],
+  "src/utils/safe-buffer": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
+    }
+  ],
+  "src/utils/safe-buffer/compression.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
+    }
+  ],
   "src/utils/safe-buffer/compression.ts": [
     {
       "kind": "ticket",
@@ -23085,6 +23139,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-gzipsync-for-compression-standardization.md"
+    }
+  ],
+  "src/utils/safe-buffer/constants.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
     }
   ],
   "src/utils/safe-json.ts": [
