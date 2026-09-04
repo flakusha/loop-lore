@@ -103,6 +103,16 @@ export interface ChatCoreState
   _vnTypewriterSpeed: number;
   _vnTransition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   _vnAutoAdvance: boolean;
+  /** VN image scaling (contain/cover/fill/auto). */
+  _imageScaling: "contain" | "cover" | "fill" | "auto";
+  /** VN auto-advance delay in seconds. */
+  _autoAdvanceDelay: number;
+  /** VN dialogue-box opacity (0–1, overlay layout). */
+  _dialogueBoxOpacity: number;
+  /** VN portrait size as percentage of scene width. */
+  _portraitSize: number;
+  /** VN portrait:text split ratio (split layout). */
+  _splitRatio: number;
   _responseLengthPreset: "short" | "medium" | "long" | "custom";
   _responseLengthCustom: number;
   /** Chat-level output-style preset ("" = none). */

@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
+import { MessageStatus, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
-import { insertActors, insertUsers, } from "../../../test-utils/insert-helpers";
+import { insertActors, insertMessages, insertUsers, } from "../../../test-utils/insert-helpers";
 import { createChat, } from "../chats";
 import { updateChat, } from "./update";
 
@@ -131,6 +132,66 @@ describe("updateChat gmConfig GM execution fields", () => {
     const am = parsed?.actorModels as Record<string, { model: string; provider: string }>;
     expect(am["user-gm"]!.model,).toBe("claude-3.5-sonnet",);
     expect(am["actor-2"]!.provider,).toBe("openai",);
+  });
+});
+
+describe("updateChat online key-mechanic guard (presentation vs GM-execution)", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+
+  beforeEach(async () => {
+    const fresh = await createTestDb();
+    db = fresh.db;
+    await insertUsers(db, "online-creator", "Online Creator", { id: "user-on", } as never,);
+    await insertActors(
+      db,
+      "Online Creator",
+      { id: "user-on", user_id: "user-on", owner_id: "user-on", } as never,
+    );
+    chatId = await createChat(db, {
+      name: "Online Story",
+      type: "group",
+      mode: "story",
+      createdBy: "user-on",
+      participantIds: ["user-on",],
+    },);
+    // Put the chat online with a confirmed message.
+    await insertMessages(db, chatId, "user-on", "user", "hello", {
+      status: MessageStatus.Confirmed,
+    } as never,);
+  },);
+
+  afterEach(async () => {
+    await db?.destroy();
+  },);
+
+  it("rejects GM-execution gmConfig sub-keys once online with key_mechanic_conflict", async () => {
+    const res = await updateChat(db, chatId, {
+      gmConfig: { type: "hybrid", assistantRole: "gm", },
+    },);
+    expect(res,).toMatchObject({ code: "key_mechanic_conflict", },);
+    const details = (res as { details?: { fields: string[] } }).details;
+    expect(details?.fields,).toContain("gmConfig.type",);
+    expect(details?.fields,).toContain("gmConfig.assistantRole",);
+  });
+
+  it("allows presentation gmConfig sub-keys once online", async () => {
+    const res = await updateChat(db, chatId, {
+      gmConfig: { vnLayout: "below", vnSplitRatio: 55, vnImageScaling: "cover", },
+    },);
+    expect(res,).toEqual({ ok: true, },);
+  });
+
+  it("still rejects top-level key-mechanic fields once online", async () => {
+    const res = await updateChat(db, chatId, { mode: "direct", },);
+    expect(res,).toMatchObject({ code: "key_mechanic_conflict", },);
+  });
+
+  it("rejects a mixed blob containing any GM-execution key", async () => {
+    const res = await updateChat(db, chatId, {
+      gmConfig: { vnLayout: "below", type: "llm", },
+    },);
+    expect(res,).toMatchObject({ code: "key_mechanic_conflict", },);
   });
 });
 

@@ -8,8 +8,8 @@
  *   - `checkChatAccess` — broad read/join/leave access: admin, creator, or any
  *     participant. Used by message-seen, exports, participant-management.
  *   - `checkChatSettingsAccess` — stricter authority required to mutate chat
- *     settings (mode, turnStrategy, worldId, gmConfig, renderingOverride,
- *     name, pinned, paused, etc.) per `docs/spec/chat-privacy.md` §5.1.
+ *     settings (mode, turnStrategy, worldId, gmConfig, name, pinned, paused,
+ *     etc.) per `docs/spec/chat-privacy.md` §5.1.
  *     Only admin OR the chat creator OR `role_in_chat = "owner"` passes.
  *
  * Both helpers return the same `{ ok: true } | { ok: false, error }` shape so
@@ -21,9 +21,16 @@ import { can, } from "../../users/permissions";
 import type { ServiceError, } from "./types";
 
 /**
- * Names of the key-mechanic update params that are immutable once a chat is
+ * Names of the top-level update params that are immutable once a chat is
  * online. Changing these requires migrating to a new chat bound to a different
  * template (see `migrateChat`).
+ *
+ * `gmConfig` is a mixed blob: its GM-execution sub-keys (assistantRole, type,
+ * humanGM, escalationThreshold, llmConfig, actorModels, storyMode, gmGuidance)
+ * stay immutable online, while its presentation/VN sub-keys (see
+ * `GM_CONFIG_PRESENTATION_KEYS`) remain mutable. The online guard inspects the
+ * `gmConfig` sub-keys individually rather than treating the whole object as a
+ * single mechanic.
  *
  * Mirrors .plan/epics/epic-config-templates.md §3.1.
  */
@@ -32,11 +39,33 @@ export const KEY_MECHANIC_PARAMS = [
   "turnStrategy",
   "worldId",
   "gmConfig",
-  "renderingOverride",
 ] as const;
 
 /** */
 export type KeyMechanicParam = (typeof KEY_MECHANIC_PARAMS)[number];
+
+/**
+ * `gmConfig` sub-keys that are presentation (display) state, mutable even once
+ * a chat is online. Everything else inside `gmConfig` is a GM-execution
+ * mechanic and remains immutable.
+ */
+export const GM_CONFIG_PRESENTATION_KEYS = [
+  "renderingOverride",
+  "visualNovel",
+  "vnLayout",
+  "vnTypewriter",
+  "vnTypewriterSpeed",
+  "vnTransition",
+  "vnAutoAdvance",
+  "vnImageScaling",
+  "vnAutoAdvanceDelay",
+  "vnDialogueBoxOpacity",
+  "vnPortraitSize",
+  "vnSplitRatio",
+  "responseLengthPreset",
+  "responseLengthCustom",
+  "outputStyle",
+] as const;
 
 /**
  * Broad chat-access check: admin, creator, or any participant.
