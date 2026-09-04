@@ -31,6 +31,14 @@ export interface PostStoreOpts {
   userId: string;
   actorId: string;
   actorName: string;
+  /**
+   * Server-resolved character ID of the generating character. Used for the
+   * mood delta write (BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor).
+   * May equal `actorId` for 1:1 chats, but in group chats `actorId` may carry
+   * a hook-resolved mention target while the generating character's mood is
+   * what should be updated.
+   */
+  characterId: string;
   /** The stored message ID (for the final buffer render). */
   messageId: string;
   content: string;
@@ -67,6 +75,7 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     userId,
     actorId,
     actorName,
+    characterId,
     messageId,
     content,
     thinking,
@@ -86,7 +95,7 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
   if (moodShiftDelta != null) {
     try {
       await MoodService(database,).applyHappinessDelta(
-        actorId,
+        characterId,
         worldId ?? undefined,
         moodShiftDelta,
       );
