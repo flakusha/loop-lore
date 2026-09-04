@@ -10,7 +10,7 @@
 
 ## Summary
 
-Replace string-typed status in nsfw_encounters with NsfwEncounterStatus (active→paused→completed→abandoned). The 012_features.ts migration defaults to 'active'. Must create src/db/enums-core/nsfw-encounter-status.ts with StateDef + createMachine, export from index, and update schema-core.ts.
+Replace string-typed status in nsfw_encounters with NsfwEncounterStatus (active→paused→completed→abandoned). Expand the existing NsfwEncounterStatus machine (see Analysis), export from index, and use the existing `NsfwEncounters.status` COLUMN_TYPE_OVERRIDES mapping. No migration.
 
 ## Analysis (2026-09-04)
 
