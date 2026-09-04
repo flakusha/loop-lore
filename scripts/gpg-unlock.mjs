@@ -91,7 +91,7 @@ async function getKeygrip(keyId,) {
   // Lines like: `      Keygrip = 13826444A29AFA408618EDAA5F6C54EEA604B51F`
   // (indented under each `sec`/`ssb` record — `^\s*` allows the indent).
   const matches = [...out.matchAll(/^\s*Keygrip\s+=\s+([0-9A-Fa-f]+)/gm,),];
-  return matches.map((m,) => m[1],);
+  return matches.map((m,) => m[1]);
 }
 
 // ── Prolong cached passphrase TTL ────────────────────────────────

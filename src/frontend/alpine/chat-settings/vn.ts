@@ -46,7 +46,9 @@ export function syncVnRenderer(
   chatId: string | undefined,
 ): void {
   const config = gmConfig ? jsonParseOr<GmConfig>(gmConfig, {},) : {};
-  const enabled = config.visualNovel ?? vnEnabled;
+  const enabled = config.renderingOverride != null
+    ? config.renderingOverride === "visual_novel"
+    : (vnEnabled || (config.visualNovel ?? false));
   const container = document.querySelector<HTMLElement>("#vn-container",);
 
   if (!enabled || !container) {

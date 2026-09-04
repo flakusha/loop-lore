@@ -82,7 +82,7 @@ export async function splitParty(
 
   const chat = await database
     .selectFrom("chats",)
-    .select(["id", "name", "created_by", "type", "mode", "gm_config", "visual_novel", "world_id",],)
+    .select(["id", "name", "created_by", "type", "mode", "gm_config", "world_id",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
 
@@ -110,7 +110,6 @@ export async function splitParty(
         type: chat.type,
         mode: chat.mode,
         gm_config: chat.gm_config,
-        visual_novel: chat.visual_novel,
         world_id: chat.world_id,
       },
       branch.name ?? "Unknown",

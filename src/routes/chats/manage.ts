@@ -105,7 +105,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
             isPaused: body.isPaused,
             freezePanel: body.freezePanel,
             gmConfig: hasExplicit("gmConfig",) ? body.gmConfig : undefined,
-            visualNovel: hasExplicit("visualNovel",) ? body.visualNovel : undefined,
+            renderingOverride: hasExplicit("renderingOverride",) ? body.renderingOverride : undefined,
             thinkingVisibility: body.thinkingVisibility,
             promptOverride: hasExplicit("promptOverride",) ? body.promptOverride : undefined,
             quickReplies: hasExplicit("quickReplies",) ? body.quickReplies : undefined,

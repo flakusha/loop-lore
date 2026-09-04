@@ -8,8 +8,8 @@
 // See .plan/epics/epic-provider-plugin-ecosystem.md.
 
 import type { ProviderInstanceConfig, } from "../../../config/schema";
-import type { ProviderCapabilities, } from "../types";
 import { BaseProvider, type BaseProviderDispatchers, } from "../base";
+import type { ProviderCapabilities, } from "../types";
 import { completeDispatch, streamDispatch, } from "./core";
 import { healthCheckDispatch, listModelsDispatch, } from "./operations";
 import type { AnthropicState, } from "./types";
@@ -37,11 +37,11 @@ export class AnthropicProvider extends BaseProvider<AnthropicState> {
   /**
    * @param config
    */
-  constructor(config: ProviderInstanceConfig) {
+  constructor(config: ProviderInstanceConfig,) {
     super(config, {
       capabilities: CAPABILITIES,
       defaultBaseUrl: "https://api.anthropic.com",
       dispatchers: DISPATCHERS,
-    });
+    },);
   }
 }

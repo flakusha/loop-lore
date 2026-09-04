@@ -8,12 +8,14 @@
  * and moderation primitives. Used by the context window manager,
  * transition system, and message routes.
  */
+export type { ChatRenderingOverrideValue, } from "../../db/enums-core/chat";
 export type {
   ChatMode,
   GmConfig,
+  GmGuidance,
   ModeFeatureFlags,
 } from "./config";
-export { MODE_DEFAULTS, resolveFeatureFlags, } from "./config";
+export { MODE_DEFAULTS, resolveFeatureFlags, resolveRendering, } from "./config";
 
 export type {
   ContextThreshold,

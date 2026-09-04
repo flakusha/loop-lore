@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { sql, type Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import { generateResponse, isAssistantEnabled, } from "../../assistant/service";
 import type { Config, } from "../../config/schema";
 import {
@@ -159,7 +159,7 @@ export async function maybeAutoReply(
                   // identity. `excluded.swipe_index + 1` cascades into
                   // SQLite's UPSERT machinery.
                   swipe_index: sql`excluded.swipe_index + 1`,
-                },),
+                },)
             )
             .returning("id",)
             .executeTakeFirst();
@@ -204,4 +204,3 @@ export async function maybeAutoReply(
   // implicit `undefined` broke the declared Promise shape; TS2366).
   return { replied: false, };
 }
-

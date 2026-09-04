@@ -46,7 +46,12 @@ describe("party split / reunion (C7 Phase 3)", () => {
       db,
       "Party Dungeon",
       ownerId,
-      { id: srcChatId, type: "group", mode: "group", visual_novel: 1, } as never,
+      {
+        id: srcChatId,
+        type: "group",
+        mode: "group",
+        gm_config: JSON.stringify({ renderingOverride: "visual_novel", },),
+      } as never,
     );
 
     await insertChatParticipants(db, srcChatId, ownerId, {

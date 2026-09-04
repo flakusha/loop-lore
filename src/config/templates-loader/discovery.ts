@@ -3,8 +3,8 @@
 
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
-import type { TemplatesConfig, } from "../sections/templates";
 import { findMainRepoRoot, } from "../../utils/git-worktree";
+import type { TemplatesConfig, } from "../sections/templates";
 
 // ── File Discovery ──────────────────────────────────────────
 
