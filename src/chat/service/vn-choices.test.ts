@@ -33,7 +33,6 @@ describe("VN choice card service (C7 Phase 4)", () => {
       type: "direct" as const,
       mode: "group" as const,
       created_by: ownerId,
-      visual_novel: 1,
     },).execute();
 
     // Scene 0 — two available choices

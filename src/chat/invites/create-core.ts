@@ -15,7 +15,7 @@ import type { InviteError, } from "./types";
 
 export type InviteTableName = "chat_invites" | "world_invites";
 export type InviteScopeId = string;
-export type ResolveScope<Input> = (input: Input) => InviteScopeId;
+export type ResolveScope<Input,> = (input: Input,) => InviteScopeId;
 
 export interface InviteCreateCommon {
   createdBy: string;
@@ -23,32 +23,32 @@ export interface InviteCreateCommon {
   maxUses?: number | null;
 }
 
-export interface CreateInviteParams<Input extends InviteCreateCommon> {
+export interface CreateInviteParams<Input extends InviteCreateCommon,> {
   database: Kysely<DB>;
   table: InviteTableName;
   input: Input;
   resolveScope: ResolveScope<Input>;
 }
 
-export type InviteResult<T> =
+export type InviteResult<T,> =
   | { ok: true; value: T }
   | { ok: false; error: InviteError };
 
-export async function createInviteRow<Input extends InviteCreateCommon>(
+export async function createInviteRow<Input extends InviteCreateCommon,>(
   params: CreateInviteParams<Input>,
 ): Promise<InviteResult<Record<string, unknown>>> {
   const { database, table, input, resolveScope, } = params;
-  const scopeId = resolveScope(input);
+  const scopeId = resolveScope(input,);
 
   if (input.maxUses !== null && input.maxUses !== undefined && input.maxUses < 1) {
-    return { ok: false, error: { code: "bad_request", message: "maxUses must be at least 1" } };
+    return { ok: false, error: { code: "bad_request", message: "maxUses must be at least 1", }, };
   }
   if (
     input.expiresAt &&
     input.expiresAt !== null &&
-    Number.isNaN(Date.parse(input.expiresAt))
+    Number.isNaN(Date.parse(input.expiresAt,),)
   ) {
-    return { ok: false, error: { code: "bad_request", message: "Invalid expiresAt" } };
+    return { ok: false, error: { code: "bad_request", message: "Invalid expiresAt", }, };
   }
 
   for (let attempt = 0; attempt < 5; attempt++) {
@@ -57,7 +57,7 @@ export async function createInviteRow<Input extends InviteCreateCommon>(
     try {
       if (table === "chat_invites") {
         await database
-          .insertInto("chat_invites")
+          .insertInto("chat_invites",)
           .values({
             id,
             chat_id: scopeId,
@@ -67,11 +67,11 @@ export async function createInviteRow<Input extends InviteCreateCommon>(
             max_uses: input.maxUses ?? null,
             uses: 0,
             status: "active",
-          })
+          },)
           .execute();
       } else {
         await database
-          .insertInto("world_invites")
+          .insertInto("world_invites",)
           .values({
             id,
             world_id: scopeId,
@@ -81,26 +81,26 @@ export async function createInviteRow<Input extends InviteCreateCommon>(
             max_uses: input.maxUses ?? null,
             uses: 0,
             status: "active",
-          })
+          },)
           .execute();
       }
       const row = await database
-        .selectFrom(table)
+        .selectFrom(table,)
         .selectAll()
-        .where("id", "=", id)
+        .where("id", "=", id,)
         .executeTakeFirst();
       if (!row) {
-        return { ok: false, error: { code: "not_found", message: "Invite not found after insert" } };
+        return { ok: false, error: { code: "not_found", message: "Invite not found after insert", }, };
       }
-      return { ok: true, value: row };
+      return { ok: true, value: row, };
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      if (msg.includes("UNIQUE") || msg.includes("constraint")) {
+      const msg = error instanceof Error ? error.message : String(error,);
+      if (msg.includes("UNIQUE",) || msg.includes("constraint",)) {
         continue;
       }
       throw error;
     }
   }
 
-  return { ok: false, error: { code: "conflict", message: "Failed to generate a unique code" } };
+  return { ok: false, error: { code: "conflict", message: "Failed to generate a unique code", }, };
 }

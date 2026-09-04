@@ -12,14 +12,12 @@
  * palette until a FE rebuild. Now the registry drives the list.)
  */
 
-
 import { apiFetch, } from "../htmx";
 import { t, } from "../i18n";
 import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
 
 const log = rootLog.child({ module: "command-palette", },);
-
 
 export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
   _showCommandPalette: false,
@@ -44,7 +42,7 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
         name: entry.name,
         descriptionKey: entry.descriptionKey,
         description: t(entry.descriptionKey,),
-      }),);
+      }));
       if (this._showCommandPalette) { this._filteredCommands = this._commandList; }
     } catch (err) {
       log.warn("command list fetch threw", { err, },);

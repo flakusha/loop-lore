@@ -13,7 +13,6 @@ interface BranchChatFields {
   type: string;
   mode: string;
   gm_config: string | null;
-  visual_novel: number | null;
   world_id: string | null;
 }
 
@@ -50,7 +49,6 @@ export async function createBranchChat(
       world_id: source.world_id,
       current_location_id: locationId || null,
       gm_config: source.gm_config,
-      visual_novel: (source.visual_novel ?? null) as never,
       parent_chat_id: sourceChatId,
       template_id: null,
     },)
