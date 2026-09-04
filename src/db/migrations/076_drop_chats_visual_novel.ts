@@ -16,19 +16,41 @@ import { type Kysely, sql, } from "kysely";
  * (compare `071_assets_content_hash_repair`): on fresh DBs the column
  * was never added, so the drop is a no-op.
  *
+ * Before dropping the column, every row where `visual_novel=1` has its
+ * `gm_config` JSON patched to set `renderingOverride = "visual_novel"`,
+ * but only when the key is absent — explicit overrides already in
+ * `gm_config` take precedence. This is the AC #5 data-migration step
+ * from `.plan/backlog/open-vn-settings-bugs.md`: existing chats that
+ * had VN mode enabled must not silently lose that state when the legacy
+ * column is dropped. The patch uses SQLite's `json_set`/`json_extract`
+ * so we don't depend on app-layer `safeJsonStringify` inside migrations.
+ *
  * Forward-only: no `down()` because `012.down()` still owns the column's
  * original lifecycle.
  * @param database
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
-  const rows = await sql<{ name: string }>`SELECT name FROM pragma_table_info('chats') WHERE name = 'visual_novel'`
+  const probe = await sql<{ name: string }>`SELECT name FROM pragma_table_info('chats') WHERE name = 'visual_novel'`
     .execute(database,);
-  if (rows.rows.length > 0) {
-    await database.schema
-      .alterTable("chats",)
-      .dropColumn("visual_novel",)
-      .execute();
-  }
+  if (probe.rows.length === 0) { return; }
+
+  // Copy `visual_novel=1` into `gm_config.renderingOverride` for any chat
+  // that does not already have an explicit override. The override-absent
+  // guard goes in the WHERE clause (efficient: skips rows that already
+  // have an explicit override, no wasted write). `COALESCE(gm_config, '{}')`
+  // handles rows where `gm_config` is NULL — `json_set` on a NULL base
+  // would return NULL.
+  await sql<unknown>`
+    UPDATE chats
+       SET gm_config = json_set(COALESCE(gm_config, '{}'), '$.renderingOverride', 'visual_novel')
+     WHERE visual_novel = 1
+       AND json_extract(gm_config, '$.renderingOverride') IS NULL
+  `.execute(database,);
+
+  await database.schema
+    .alterTable("chats",)
+    .dropColumn("visual_novel",)
+    .execute();
 }
 
 /** Forward-only: `012.down()` owns the original column lifecycle. */
