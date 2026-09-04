@@ -12553,6 +12553,12 @@
       "source": ".plan/tickets/TASK-wire-gm-service-story-mode.md"
     }
   ],
+  "src/generation/auto-gen/auto-generation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-triggerautogeneration-catch-path-untested.md"
+    }
+  ],
   "src/generation/auto-gen/auto-generation.ts": [
     {
       "kind": "epic",
@@ -14801,6 +14807,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-hash-bun-cryptohasher-for-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md"
     }
   ],
   "src/middleware/auth/authenticate.ts": [
