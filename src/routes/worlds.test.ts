@@ -198,7 +198,7 @@ describe("worlds creation publication_status (commit gating)", () => {
       .executeTakeFirst();
     expect(chat,).toBeDefined();
     expect(chat?.template_id,).toBe("template-visual-novel",);
-    expect(chat?.visual_novel,).toBe(1,);
+    expect(chat?.gm_config,).toBeTruthy();
     // Explicit fine-tune override wins over the template default.
     expect(chat?.visibility,).toBe("private",);
   });

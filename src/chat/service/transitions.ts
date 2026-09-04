@@ -72,9 +72,14 @@ export async function migrateChat(
   }
 
   const newChatId = crypto.randomUUID();
+  const renderingOverride = template.visual_novel === 1 ? "visual_novel" : null;
   const gmConfig = template.gm_config
     ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
     : { ok: false as const, value: null, };
+  const mergedGmConfig = {
+    ...(gmConfig.ok && gmConfig.value ? (gmConfig.value as Record<string, unknown>) : {}),
+    renderingOverride,
+  };
 
   await database
     .insertInto("chats",)
@@ -87,8 +92,7 @@ export async function migrateChat(
       world_id: template.world_id ?? source.world_id,
       current_location_id: source.current_location_id,
       turn_strategy: (template.turn_strategy as never) ?? source.turn_strategy,
-      gm_config: gmConfig.ok && gmConfig.value ? jsonStringifyOr(gmConfig.value,) : null,
-      visual_novel: template.visual_novel,
+      gm_config: jsonStringifyOr(mergedGmConfig,),
       parent_chat_id: chatId,
       template_id: template.id,
     },)
@@ -145,7 +149,7 @@ export async function migrateChat(
   return { ok: true, newChatId, sourceChatId: chatId, };
 }
 
-// ── Narration injection ────────────────────────────────────────────────────────
+// ── Narration injection ────────────────────────────────────────────────
 
 /**
  * Inject a VN narration system message into a chat. Non-fatal.

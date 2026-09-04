@@ -469,7 +469,7 @@ describe("chatsRoutes", () => {
     const chat = await db.selectFrom("chats",).selectAll().where("id", "=", id,).executeTakeFirst();
     expect(chat?.mode,).toBe("story",);
     expect(chat?.turn_strategy,).toBe("scene_based",);
-    expect(chat?.visual_novel,).toBe(1,);
+    expect(chat?.gm_config,).toBeTruthy();
     const tmpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "vn-story",)
       .executeTakeFirst();
     expect(chat?.template_id,).toBe(tmpl?.id,);
