@@ -9,8 +9,8 @@
  * happens at the bridge layer (D3); CRUD itself does not judge trait
  * drift eligibility.
  */
-import { randomUUID, } from "node:crypto";
 import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
 import type { DB, } from "../../../db/schema";
 import { getLogger, } from "../../../logger";
 import type {
@@ -22,12 +22,12 @@ import type {
 } from "../../spec/growth";
 import { GrowthEntryStatus as Status, } from "../../spec/growth";
 import {
-  GrowthServiceError,
   AUTHOR_ONLY_EVENT_TYPES,
   type CharacterArcRow,
   type ConfirmGrowthEntryOpts,
   type GrowthLogRow,
   type GrowthModeSnapshot,
+  GrowthServiceError,
   type ListGrowthLogOpts,
   type RejectGrowthEntryOpts,
 } from "./types";
@@ -68,7 +68,8 @@ function rowToGrowthEntry(row: GrowthLogRow,): GrowthLogEntry {
  * @param actorId
  */
 export async function getGrowthMode(
-  db: Kysely<DB>, actorId: string,
+  db: Kysely<DB>,
+  actorId: string,
 ): Promise<GrowthModeSnapshot> {
   const row = await db
     .selectFrom("actors",)
@@ -77,7 +78,7 @@ export async function getGrowthMode(
     .executeTakeFirst();
   return {
     growthMode: (row?.growth_mode ?? "dynamic") as GrowthModeSnapshot["growthMode"],
-    llmAssistEnabled: Boolean(row?.llm_assist_enabled ?? 0),
+    llmAssistEnabled: Boolean(row?.llm_assist_enabled ?? 0,),
   };
 }
 
@@ -129,11 +130,13 @@ export async function upsertArc(
       stage_description: input.stageDescription ?? null,
       updated_at: now,
     },)
-    .onConflict((oc,) => oc.column("actor_id",).doUpdateSet({
-      current_stage: input.currentStage,
-      stage_description: input.stageDescription ?? null,
-      updated_at: now,
-    },),)
+    .onConflict((oc,) =>
+      oc.column("actor_id",).doUpdateSet({
+        current_stage: input.currentStage,
+        stage_description: input.stageDescription ?? null,
+        updated_at: now,
+      },)
+    )
     .execute();
 
   // Audit trail: append a growth_log entry even on no-op (so the
@@ -187,10 +190,11 @@ export async function upsertArc(
  * @param input
  */
 export async function insertGrowthLog(
-  db: Kysely<DB>, input: InsertGrowthLogInput,
+  db: Kysely<DB>,
+  input: InsertGrowthLogInput,
 ): Promise<GrowthLogEntry> {
   const mode = await getGrowthMode(db, input.actorId,);
-  if (mode.growthMode === "static" && !AUTHOR_ONLY_EVENT_TYPES.has(input.eventType)) {
+  if (mode.growthMode === "static" && !AUTHOR_ONLY_EVENT_TYPES.has(input.eventType,)) {
     throw new GrowthServiceError(
       `Static character '${input.actorId}' rejects growth event '${input.eventType}'`,
       "static_mode_forbidden",
@@ -249,7 +253,9 @@ export async function insertGrowthLog(
  * @param opts
  */
 export async function listGrowthLog(
-  db: Kysely<DB>, actorId: string, opts: ListGrowthLogOpts = {},
+  db: Kysely<DB>,
+  actorId: string,
+  opts: ListGrowthLogOpts = {},
 ): Promise<GrowthLogEntry[]> {
   let q = db
     .selectFrom("growth_log",)
@@ -268,7 +274,7 @@ export async function listGrowthLog(
 
   const limit = Math.min(Math.max(opts.limit ?? 50, 1,), 500,);
   const rows = await q.orderBy("recorded_at", "desc",).limit(limit,).execute();
-  return rows.map((r,) => rowToGrowthEntry(r as GrowthLogRow,),);
+  return rows.map((r,) => rowToGrowthEntry(r as GrowthLogRow,));
 }
 
 /**
@@ -290,7 +296,8 @@ export async function listGrowthLog(
  * @param opts
  */
 export async function confirmGrowthEntry(
-  db: Kysely<DB>, opts: ConfirmGrowthEntryOpts,
+  db: Kysely<DB>,
+  opts: ConfirmGrowthEntryOpts,
 ): Promise<GrowthLogEntry> {
   const now = new Date().toISOString();
   const row = await db
@@ -344,7 +351,8 @@ export async function confirmGrowthEntry(
  * @param opts
  */
 export async function rejectGrowthEntry(
-  db: Kysely<DB>, opts: RejectGrowthEntryOpts,
+  db: Kysely<DB>,
+  opts: RejectGrowthEntryOpts,
 ): Promise<GrowthLogEntry> {
   const now = new Date().toISOString();
   const row = await db
