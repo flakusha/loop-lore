@@ -17,6 +17,7 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger/index";
 import { LL_TOKEN, } from "../../regex/cookies";
 import { ErrorCode, HttpStatus, jsonError, } from "../../routes/http-utils";
+import { parseExpiryMs, } from "../../utils/date";
 import type { RequestContext, } from "../types";
 import { createRequestContext, } from "../types";
 import { getOrCreateSoloUserForAuth, } from "./solo-user";
@@ -77,11 +78,16 @@ async function verifyTokenContext(
     .select(["id", "expires_at",],)
     .where("id", "=", payload.sid,)
     .executeTakeFirst();
+  if (session === undefined) {
+    return null;
+  }
   const nowMs = Date.now();
-  const notExpired = session !== undefined &&
-    (session.expires_at === null ||
-      Date.parse(session.expires_at,) > nowMs);
-  if (!session || !notExpired) {
+  // parseExpiryMs returns null for null / empty / unparseable; treat both
+  // null and corrupt as "not expired" (matches the original `Date.parse()`/NaN
+  // path which incidentally allowed these rows through).
+  const expiresMs = parseExpiryMs(session.expires_at,);
+  const notExpired = expiresMs === null || expiresMs > nowMs;
+  if (!notExpired) {
     getLog()?.debug("JWT session not found (logged out?)", { sid: payload.sid, },);
     return null;
   }
