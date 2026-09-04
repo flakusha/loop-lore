@@ -109,8 +109,9 @@ export const ChatUpdateBody = t.Object({
 
 /**
  * A chat setup template — a validated preset that seeds a chat's key mechanics
- * at creation. `mode`, `turnStrategy`, `worldId`, `gmConfig`, `renderingOverride` are
- * the immutable key mechanics once the bound chat goes online.
+ * at creation. `mode`, `turnStrategy`, `worldId` and the GM-execution sub-keys of
+ * `gmConfig` are the immutable key mechanics once the bound chat goes online;
+ * presentation/VN sub-keys of `gmConfig` stay mutable.
  */
 export const ChatSetupTemplateSchema = t.Object({
   id: t.String({ minLength: 1, },),

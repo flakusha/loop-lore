@@ -6,7 +6,7 @@ import { PinnedState, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { can, } from "../../../users/permissions";
 import { jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "../../../utils";
-import { isChatOnline, KEY_MECHANIC_PARAMS, } from "../access";
+import { GM_CONFIG_PRESENTATION_KEYS, isChatOnline, KEY_MECHANIC_PARAMS, } from "../access";
 import type { UpdateChatParams, UpdateChatResult, } from "../types";
 
 /**
@@ -63,15 +63,28 @@ async function checkChatUpdateLock(
   }
 
   // Key-mechanic immutability once online
-  const attemptedMechanics: (typeof KEY_MECHANIC_PARAMS)[number][] = [];
+  const attemptedMechanics: string[] = [];
   for (const field of KEY_MECHANIC_PARAMS) {
+    if (field === "gmConfig") {
+      // gmConfig is a mixed blob: GM-execution sub-keys are immutable, but the
+      // presentation/VN sub-keys remain mutable. Reject only the mechanic keys.
+      const gmConfig = params.gmConfig;
+      if (gmConfig && typeof gmConfig === "object") {
+        for (const key of Object.keys(gmConfig,)) {
+          if (!GM_CONFIG_PRESENTATION_KEYS.includes(key as (typeof GM_CONFIG_PRESENTATION_KEYS)[number],)) {
+            attemptedMechanics.push(`gmConfig.${key}`,);
+          }
+        }
+      }
+      continue;
+    }
     if (params[field] !== undefined) { attemptedMechanics.push(field,); }
   }
   if (attemptedMechanics.length > 0 && (await isChatOnline(database, chatId,))) {
     return {
       code: "key_mechanic_conflict",
       message:
-        "This chat is online and its key mechanics are locked. To change mode, turn strategy, world, GM config, or rendering override, migrate to a new chat.",
+        "This chat is online and its key mechanics are locked. To change mode, turn strategy, world, or GM execution, migrate to a new chat.",
       details: {
         fields: [...attemptedMechanics,],
         migrateEndpoint: `/api/chats/${chatId}/migrate`,

@@ -3,7 +3,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import type { GmConfig, } from "../types";
-import { buildGmConfig, readGmSettings, } from "./gm-config";
+import { buildGmConfig, presentationGmConfig, readGmSettings, } from "./gm-config";
 
 describe("gm-config output style", () => {
   test("readGmSettings defaults to no preset when unset", () => {
@@ -46,5 +46,58 @@ describe("gm-config output style", () => {
     expect(gm.storyMode,).toBe(true,);
     expect(gm.assistantRole,).toBe("gm",);
     expect(gm.outputStyle,).toEqual({ preset: "horror", intensity: 1, },);
+  });
+
+  test("readGmSettings defaults the five VN fields to renderer DEFAULTS", () => {
+    const fields = readGmSettings({},);
+    expect(fields.imageScaling,).toBe("auto",);
+    expect(fields.autoAdvanceDelay,).toBe(5,);
+    expect(fields.dialogueBoxOpacity,).toBe(0.75,);
+    expect(fields.portraitSize,).toBe(35,);
+    expect(fields.splitRatio,).toBe(40,);
+  });
+
+  test("readGmSettings reads persisted vn-prefixed VN fields", () => {
+    const config = {
+      vnImageScaling: "cover",
+      vnAutoAdvanceDelay: 12,
+      vnDialogueBoxOpacity: 0.5,
+      vnPortraitSize: 60,
+      vnSplitRatio: 55,
+    } as GmConfig;
+    const fields = readGmSettings(config,);
+    expect(fields.imageScaling,).toBe("cover",);
+    expect(fields.autoAdvanceDelay,).toBe(12,);
+    expect(fields.dialogueBoxOpacity,).toBe(0.5,);
+    expect(fields.portraitSize,).toBe(60,);
+    expect(fields.splitRatio,).toBe(55,);
+  });
+
+  test("buildGmConfig emits vn-prefixed VN keys", () => {
+    const fields = { ...readGmSettings({},), imageScaling: "fill" as const, splitRatio: 45, };
+    const gm = buildGmConfig({}, fields, {},);
+    expect(gm.vnImageScaling,).toBe("fill",);
+    expect(gm.vnAutoAdvanceDelay,).toBe(5,);
+    expect(gm.vnDialogueBoxOpacity,).toBe(0.75,);
+    expect(gm.vnPortraitSize,).toBe(35,);
+    expect(gm.vnSplitRatio,).toBe(45,);
+  });
+
+  test("presentationGmConfig keeps presentation keys and drops GM-execution keys", () => {
+    const full = {
+      assistantRole: "gm",
+      type: "hybrid",
+      humanGM: { actorId: "a", notifications: true, },
+      renderingOverride: "visual_novel",
+      vnLayout: "below",
+      vnSplitRatio: 40,
+    };
+    const subset = presentationGmConfig(full,);
+    expect(subset.renderingOverride,).toBe("visual_novel",);
+    expect(subset.vnLayout,).toBe("below",);
+    expect(subset.vnSplitRatio,).toBe(40,);
+    expect("assistantRole" in subset,).toBe(false,);
+    expect("type" in subset,).toBe(false,);
+    expect("humanGM" in subset,).toBe(false,);
   });
 });

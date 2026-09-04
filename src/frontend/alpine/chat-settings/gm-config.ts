@@ -23,6 +23,11 @@ export interface GmSettingsFields {
   vnTypewriterSpeed: number;
   vnTransition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   vnAutoAdvance: boolean;
+  imageScaling: "contain" | "cover" | "fill" | "auto";
+  autoAdvanceDelay: number;
+  dialogueBoxOpacity: number;
+  portraitSize: number;
+  splitRatio: number;
   gmType: "llm" | "human" | "hybrid";
   gmHumanActorId: string;
   gmEscalationThreshold: number;
@@ -51,6 +56,11 @@ export function readGmSettings(config: GmConfig,): GmSettingsFields {
     vnTypewriterSpeed: config.vnTypewriterSpeed ?? 30,
     vnTransition: config.vnTransition ?? "fade",
     vnAutoAdvance: config.vnAutoAdvance ?? false,
+    imageScaling: config.vnImageScaling ?? "auto",
+    autoAdvanceDelay: config.vnAutoAdvanceDelay ?? 5,
+    dialogueBoxOpacity: config.vnDialogueBoxOpacity ?? 0.75,
+    portraitSize: config.vnPortraitSize ?? 35,
+    splitRatio: config.vnSplitRatio ?? 40,
     gmType: config.type ?? "llm",
     gmHumanActorId: config.humanGM?.actorId ?? "",
     gmEscalationThreshold: config.escalationThreshold ?? 0.5,
@@ -86,6 +96,11 @@ export function buildGmConfig(
     vnTypewriterSpeed: fields.vnTypewriterSpeed,
     vnTransition: fields.vnTransition,
     vnAutoAdvance: fields.vnAutoAdvance,
+    vnImageScaling: fields.imageScaling,
+    vnAutoAdvanceDelay: fields.autoAdvanceDelay,
+    vnDialogueBoxOpacity: fields.dialogueBoxOpacity,
+    vnPortraitSize: fields.portraitSize,
+    vnSplitRatio: fields.splitRatio,
     type: fields.gmType,
   };
   if (fields.gmModel.trim()) {
@@ -130,6 +145,46 @@ export function buildGmConfig(
     delete gmConfig.outputStyle;
   }
   return gmConfig;
+}
+
+/**
+ * `gmConfig` sub-keys that are presentation (display) state, mirroring the
+ * backend `GM_CONFIG_PRESENTATION_KEYS` in `src/chat/service/access.ts`. Only
+ * these may be mutated once a chat is online; the GM-execution keys stay
+ * immutable.
+ */
+export const GM_CONFIG_PRESENTATION_KEYS = [
+  "renderingOverride",
+  "visualNovel",
+  "vnLayout",
+  "vnTypewriter",
+  "vnTypewriterSpeed",
+  "vnTransition",
+  "vnAutoAdvance",
+  "vnImageScaling",
+  "vnAutoAdvanceDelay",
+  "vnDialogueBoxOpacity",
+  "vnPortraitSize",
+  "vnSplitRatio",
+  "responseLengthPreset",
+  "responseLengthCustom",
+  "outputStyle",
+] as const;
+
+/**
+ * Subset a full `gmConfig` blob to only the presentation keys, safe to send on
+ * an online chat (the backend 409s on any other key). Keeps the backend
+ * authoritative while the online path forwards only mutable display state.
+ * @param gmConfig
+ */
+export function presentationGmConfig(
+  gmConfig: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of GM_CONFIG_PRESENTATION_KEYS) {
+    if (gmConfig[key] !== undefined) { out[key] = gmConfig[key]; }
+  }
+  return out;
 }
 
 /**

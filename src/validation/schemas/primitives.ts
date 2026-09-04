@@ -74,6 +74,31 @@ export const GmConfigSchema = t.Object({
   actorModels: t.Optional(
     t.Record(t.String(), t.Object({ model: t.String(), provider: t.String(), },),),
   ),
+  // ── VN presentation keys (mutable once a chat is online) ──
+  visualNovel: t.Optional(t.Boolean(),),
+  vnLayout: t.Optional(t.UnionEnum(["overlay", "below", "split",],),),
+  vnTypewriter: t.Optional(t.Boolean(),),
+  vnTypewriterSpeed: t.Optional(t.Number(),),
+  vnTransition: t.Optional(t.UnionEnum(["fade", "cut", "dissolve", "slide", "wipe",],),),
+  vnAutoAdvance: t.Optional(t.Boolean(),),
+  vnImageScaling: t.Optional(t.UnionEnum(["contain", "cover", "fill", "auto",],),),
+  vnAutoAdvanceDelay: t.Optional(t.Number({ minimum: 0, },),),
+  vnDialogueBoxOpacity: t.Optional(t.Number({ minimum: 0, maximum: 1, },),),
+  vnPortraitSize: t.Optional(t.Number({ minimum: 0, },),),
+  vnSplitRatio: t.Optional(t.Number({ minimum: 0, maximum: 100, },),),
+  responseLengthPreset: t.Optional(t.UnionEnum(["short", "medium", "long", "custom",],),),
+  responseLengthCustom: t.Optional(t.Number({ minimum: 50, maximum: 2000, },),),
+  outputStyle: t.Optional(t.Union([
+    t.Object({
+      preset: t.Optional(t.UnionEnum([
+        "neutral", "high_fantasy", "sci_fi", "modern", "noir", "cyberpunk",
+        "pulp", "literary", "horror", "western", "",
+      ],),),
+      customInstruction: t.Optional(t.String(),),
+      intensity: t.Optional(t.Number({ minimum: 0, maximum: 1, },),),
+    },),
+    t.Null(),
+  ],),),
 },);
 
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
