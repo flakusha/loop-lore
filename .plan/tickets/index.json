@@ -1854,7 +1854,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-gm-config-corrupted-by-string-spread-in-buildchatupdates-mer.md"
+    "source": ".plan/tickets/BUG-gm-config-corrupted-by-string-spread-in-buildchatupdates-mer.md",
+    "status": "done"
   },
   "BUG-GM-GUIDANCE-ROUTE-USES-BROAD-CHECKCHATACCESS-ALLOWS-NON-OWNE": {
     "hash": "80880b9",
@@ -1866,7 +1867,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-gm-guidance-route-uses-broad-checkchataccess-allows-non-owne.md"
+    "source": ".plan/tickets/BUG-gm-guidance-route-uses-broad-checkchataccess-allows-non-owne.md",
+    "status": "done"
   },
   "BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR": {
     "hash": "2a271d7",
@@ -2520,7 +2522,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-new-chat-vn-toggle-sends-visualnovel-but-backend-reads-rende.md"
+    "source": ".plan/tickets/BUG-new-chat-vn-toggle-sends-visualnovel-but-backend-reads-rende.md",
+    "status": "done"
   },
   "BUG-NO-IN-FLIGHT-GENERATION-CHECK-CONCURRENT-GENERATE-REQUESTS-L": {
     "hash": "a33c6f6",
@@ -2545,7 +2548,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
+    "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md",
+    "status": "done"
   },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "hash": "pending",
@@ -2980,7 +2984,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
+    "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md",
+    "status": "done"
   },
   "BUG-REGISTER-PLUGINS-150-REFERENCES-UNDEFINED-CHATSECTIONSROUTES": {
     "hash": "0b9a09b",
@@ -3189,7 +3194,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
+    "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md",
+    "status": "done"
   },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
     "hash": "3ba1095",
@@ -3657,7 +3663,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md"
+    "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md",
+    "status": "done"
   },
   "BUG-VN-CHOICES-IDOR-GUARD-NON-COMPILING": {
     "hash": "pending",
@@ -3681,7 +3688,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md"
+    "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md",
+    "status": "done"
   },
   "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M": {
     "hash": "508a7ea",
@@ -11694,6 +11702,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-db-content-versioning.md",
     "git_issue": "59efcd3"
+  },
+  "TASK-DB-MIGRATION-EPOCH-SQUASH": {
+    "hash": "b2666f6",
+    "git_issue": "b2666f6",
+    "extid": "TASK-DB-MIGRATION-EPOCH-SQUASH",
+    "type": "TASK",
+    "title": "db-migration-epoch-squash",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-db-migration-epoch-squash.md"
   },
   "TASK-DB-REINIT-ARCHIVES-PREVIOUS-DATABASE-INSTEAD-OF-DELETING": {
     "hash": "62d1647",
