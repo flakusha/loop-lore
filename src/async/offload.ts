@@ -182,10 +182,18 @@ export interface OffloadDaemon {
 
 /**
  * Compress + write a body to disk under OFFLOAD_DIR.
+ *
+ * Exported so `apply.ts` can eagerly spill bodies that exceed the inline
+ * threshold at completion time (rather than nulling them and losing the
+ * data). BUG-bug-async-store-complete-drops-response-body-larger-than-max.
  * @param id
  * @param body
  */
-async function spill(id: string, body: string,): Promise<string> {
+export async function spill(id: string, body: string,): Promise<string> {
+  // Self-sufficient: `apply()` may spill before the daemon's startup
+  // `mkdirSync` has run (e.g. in unit tests or an early drain), so ensure
+  // the directory exists rather than relying on `startOffloadDaemon()`.
+  mkdirSync(OFFLOAD_DIR, { recursive: true, },);
   const filePath = path.join(OFFLOAD_DIR, `${id}.json.gz`,);
   const compressed = gzipSync(Buffer.from(body, "utf8",),);
   writeFileSync(filePath, compressed,);
