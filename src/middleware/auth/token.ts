@@ -11,6 +11,7 @@ import type { AuthConfig, } from "../../config/schema/auth";
 import { UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { LL_TOKEN, } from "../../regex/cookies";
+import { parseExpiryMs, } from "../../utils/date";
 import { getOrCreateSoloUserForAuth, } from "./solo-user";
 
 /**
@@ -124,7 +125,7 @@ async function resolveUserIdFromSession(
           .executeTakeFirst();
         if (
           session &&
-          (session.expires_at === null || Date.parse(session.expires_at,) > nowMs)
+          (session.expires_at === null || (parseExpiryMs(session.expires_at,) ?? -Infinity) > nowMs)
         ) {
           return session.user_id;
         }
@@ -139,7 +140,7 @@ async function resolveUserIdFromSession(
       .select(["user_id", "expires_at",],)
       .where("token_hash", "=", tokenHash,)
       .executeTakeFirst();
-    if (session && (session.expires_at === null || Date.parse(session.expires_at,) > nowMs)) {
+    if (session && (session.expires_at === null || (parseExpiryMs(session.expires_at,) ?? -Infinity) > nowMs)) {
       return session.user_id;
     }
   }
