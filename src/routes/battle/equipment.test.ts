@@ -107,7 +107,7 @@ describe("battle equipmentRoutes /loot auth", () => {
   /**
    * @param destination
    */
-  function bodyFor(destination: { actorId?: string; locationId?: string }): string {
+  function bodyFor(destination: { actorId?: string; locationId?: string },): string {
     return JSON.stringify({
       lootTable: [{
         itemId: itemDefId,
