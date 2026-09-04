@@ -407,6 +407,81 @@
               Advance to the next scene automatically after each message.
             </small>
           </div>
+
+          <div x-show="_vnAutoAdvance">
+            <label class="form-label" for="settings-vn-auto-advance-delay">
+              Auto-advance Delay (<span x-text="_autoAdvanceDelay"></span>s)
+            </label>
+            <input
+              type="range"
+              id="settings-vn-auto-advance-delay"
+              min="1"
+              max="30"
+              step="1"
+              x-model.number="_autoAdvanceDelay"
+              data-testid="vn-auto-advance-delay"
+            />
+          </div>
+
+          <div>
+            <label class="form-label" for="settings-vn-image-scaling">Image Scaling</label>
+            <select
+              class="form-input"
+              id="settings-vn-image-scaling"
+              x-model="_imageScaling"
+              data-testid="vn-image-scaling"
+            >
+              <option value="auto">Auto (background cover / portrait contain)</option>
+              <option value="contain">Contain</option>
+              <option value="cover">Cover</option>
+              <option value="fill">Fill</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label" for="settings-vn-portrait-size">
+              Portrait Size (<span x-text="_portraitSize"></span>%)
+            </label>
+            <input
+              type="range"
+              id="settings-vn-portrait-size"
+              min="20"
+              max="80"
+              step="5"
+              x-model.number="_portraitSize"
+              data-testid="vn-portrait-size"
+            />
+          </div>
+
+          <div x-show="_vnLayout === 'overlay'">
+            <label class="form-label" for="settings-vn-dialogue-box-opacity">
+              Dialogue Box Opacity (<span x-text="_dialogueBoxOpacity"></span>)
+            </label>
+            <input
+              type="range"
+              id="settings-vn-dialogue-box-opacity"
+              min="0"
+              max="1"
+              step="0.05"
+              x-model.number="_dialogueBoxOpacity"
+              data-testid="vn-dialogue-box-opacity"
+            />
+          </div>
+
+          <div x-show="_vnLayout === 'split'">
+            <label class="form-label" for="settings-vn-split-ratio">
+              Split Ratio (<span x-text="_splitRatio"></span>%)
+            </label>
+            <input
+              type="range"
+              id="settings-vn-split-ratio"
+              min="20"
+              max="80"
+              step="5"
+              x-model.number="_splitRatio"
+              data-testid="vn-split-ratio"
+            />
+          </div>
         </div>
       </div>
       <div class="form-group">
