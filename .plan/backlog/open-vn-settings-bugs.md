@@ -40,6 +40,7 @@ change, and (5) accompanied by the full set of VN settings fields from spec.
 ## Files
 
 ### Backend endpoints
+
 - `src/validation/schemas.ts` — API schema (ChatUpdateBody, GmConfig) — update ChatUpdateBody to validate `visualNovel` as Boolean; extend GmConfig schema with 5 new VN fields
 - `src/validation/db-schemas.ts` — DB schema — remove `visual_novel` column from generated schema; add VN fields to gm_config JSON schema
 - `src/chat/service/access.ts` — `KEY_MECHANIC_PARAMS` (remove `visualNovel`), `checkChatAccess` (add Master/GM role gate for settings changes)
@@ -47,6 +48,7 @@ change, and (5) accompanied by the full set of VN settings fields from spec.
 - `src/db/migrations/` — migration to drop `chats.visual_novel` column + one-time data migration syncing `visual_novel=1` → `gm_config.visualNovel: true`
 
 ### Frontend implementation (required alongside backend endpoints)
+
 - `src/frontend/alpine/chat-settings/gm-config.ts` — `GmSettingsFields` interface: add `imageScaling`, `autoAdvanceDelay`, `dialogueBoxOpacity`, `portraitSize`, `splitRatio`; default values per spec
 - `src/frontend/alpine/chat-settings.ts` — `saveChatSettings()`: remove `!_chatOnline` guard on gmConfig dispatch; `_chatSettingsMode` defaults to `"story"`; load fallback `?? "story"`
 - `src/frontend/alpine/chat-settings.ts` — `openChatSettings()`: load `gm_config.vnSettings` for the 5 new fields from `gmConfig`; emit only backend-valid values
@@ -55,9 +57,11 @@ change, and (5) accompanied by the full set of VN settings fields from spec.
 - `src/frontend/alpine/chat-messages.ts` — per-message avatar resolution: read `message.emotion` → resolve emotion-tagged avatar variant from actor's avatar set (see `epic-emotion-avatar-message-binding.md`)
 
 ### Shared prompt/render pipeline
+
 - `src/assistant/prompt/assembler/prompt-assembler.ts` — read `gm_config.visualNovel` (not `chats.visual_novel`) to activate VN mode in prompt assembly
 - `src/frontend/vn/` — VN scene renderer (already shipped) — reads from `gm_config` for all VN field values
 
 ### Spec reference
+
 - `docs/frontend/chat/visual-novel-mode.md` — spec for missing fields + VN settings UI
 - `docs/frontend/chat/chat-privacy.md` — Master/GM role requirement for settings changes

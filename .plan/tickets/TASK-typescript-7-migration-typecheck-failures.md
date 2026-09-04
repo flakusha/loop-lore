@@ -13,6 +13,7 @@
 The project has `@typescript/native-preview@7.0.0-dev.20260707.2` installed. `tsgo` (the TS7 compiler) is configured as the typechecker via `bun run typecheck`. However, the `visualNovel: boolean` → `renderingOverride: ChatRenderingOverride | null` migration left 19 backend typecheck errors across 18 files. The frontend typecheck passes cleanly.
 
 ### Fresh worktree `tree/typescript7-migration` with fresh `node_modules` confirms:
+
 - `bun run typecheck:frontend` — PASSES (0 errors)
 - `bun run typecheck:backend` (`tsgo`) — 19 errors
 - `bun run typecheck:coverage` — PASSES (97.04%)
@@ -37,6 +38,7 @@ The project has `@typescript/native-preview@7.0.0-dev.20260707.2` installed. `ts
 - `src/chat/service/crud/update.ts:130,134`, `src/routes/chats.test.ts:472`, `src/routes/worlds.test.ts:201`
 
 ### Previous tickets marked done but unverified:
+
 - `BUG-visualnovel-type-mismatch-across-api-db-layers.md` — marked done without running typecheck
 - `BUG-redundant-vn-state-stored-in-two-independent-locations.md` — same
 - Closed based on commit `1b9b0cdf` without verifying the typecheck passes

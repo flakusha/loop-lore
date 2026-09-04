@@ -1,6 +1,7 @@
 # Bugfix Batch 2 — 2026-09-01 — DONE
 
 ## Triage summary
+
 - **Candidates reviewed from VALID_FIXABLE**: 9 short-listed
 - **Bugs landed**: 3 (chat-history, example-dialogue, encrypted-payload)
 - **Bugs skipped**: 6 (already fixed on dev, see notes)
@@ -16,6 +17,7 @@
 | `BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en` | `5116ed2` | `isEncryptedPayload` tightened: nonce must base64-decode to exactly 12 bytes; enc must be base64-decodable. Forged JSON payloads no longer bypass server-side encryption. |
 
 ### Test counts per BUG
+
 - **chat-history-truncates**: 2 tests in `chat-history.test.ts` pass; all 9 prompt-assembler tests still pass.
 - **example-dialogue**: 3 new tests in `examples.test.ts` pass; full `src/assistant/` suite (209 tests) still passes.
 - **encrypted-payload**: 5 new forgery regression tests in `pipeline.test.ts` pass; full `src/crypto/` + `src/routes/messages/` suite (281 tests) still passes.
@@ -41,6 +43,7 @@ All three landed worktrees finalized cleanly:
 `--force` used on all three finalizes (per session constraint — `bun run check` is OOM'd on this workstation). Each branch passed `bun test src/<area>/` (scoped) before commit.
 
 ## Deferred items
+
 1. **Alpine chat-view init crash** — needs reproducible browser e2e console log to diagnose; deferred.
 2. **PATCH response leaks ciphertext** (BUG-encrypted-payload-sniffing acceptance bullet) — `update.ts:162` returns `content: storedContent` which is raw ciphertext in encrypted chats. Out of scope for the strict-shape pass; should land as a follow-up that reuses the read-path decryption helper.
 3. **`isE2eOrEncrypted` in `at-rest.ts`** — looser shape check (any JSON with `enc: string`); flagged in ticket but not hardened in this pass.
