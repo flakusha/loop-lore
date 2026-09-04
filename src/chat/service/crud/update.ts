@@ -52,7 +52,7 @@ async function checkChatUpdateLock(
   database: Kysely<DB>,
   chatId: string,
   params: UpdateChatParams,
-  fullChat: { story_state: string | null },
+  fullChat: { story_state: string | null; gm_config: string | null },
 ): Promise<UpdateChatResult | null> {
   // Panel freeze
   if (fullChat.story_state) {
@@ -88,7 +88,7 @@ async function checkChatUpdateLock(
  * @param patch
  */
 function patchStoryState(
-  fullChat: { story_state: string | null },
+  fullChat: { story_state: string | null; gm_config: string | null },
   patch: Record<string, unknown>,
 ): string | null {
   if (!fullChat.story_state) {
@@ -108,7 +108,7 @@ function patchStoryState(
  * @param params
  */
 function buildChatUpdates(
-  fullChat: { story_state: string | null },
+  fullChat: { story_state: string | null; gm_config: string | null },
   params: UpdateChatParams,
 ): Record<string, unknown> {
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), };
