@@ -15,9 +15,9 @@ import type { ComfyUIWorkflow, } from "../../../generation/providers/comfyui";
  * Resolve the `seed` parameter, randomising when set to the sentinel `-1`.
  * @param seedParam
  */
-export function resolveSeed(seedParam: unknown): number {
+export function resolveSeed(seedParam: unknown,): number {
   const seed = (seedParam as number | undefined) ?? -1;
-  return seed === -1 ? Math.floor(Math.random() * 2_147_483_647) : seed;
+  return seed === -1 ? Math.floor(Math.random() * 2_147_483_647,) : seed;
 }
 
 /** Build the CheckpointLoaderSimple node (id "1"). */
@@ -34,7 +34,7 @@ export function checkpointNode(): ComfyUIWorkflow {
 /** Build the positive + negative CLIPTextEncode nodes (ids "2" + "3"). */
 export function promptNodes(
   params: Record<string, unknown>,
-  clipRef: [string, number] = ["1", 1],
+  clipRef: [string, number,] = ["1", 1,],
 ): ComfyUIWorkflow {
   return {
     "2": {
@@ -53,10 +53,10 @@ export function promptNodes(
 /** Options for {@link ksamplerNode}. */
 export interface KSamplerOptions {
   id?: string;
-  positive: [string, number];
-  negative: [string, number];
-  latent: [string, number];
-  model: [string, number];
+  positive: [string, number,];
+  negative: [string, number,];
+  latent: [string, number,];
+  model: [string, number,];
   denoise?: number;
   sampler?: string;
   scheduler?: string;
@@ -92,19 +92,19 @@ export function ksamplerNode(
 /** Build VAEDecode + SaveImage nodes after the sampler. */
 export function decodeAndSave(
   samplerId: string,
-  vaeRef: [string, number] = ["1", 2],
+  vaeRef: [string, number,] = ["1", 2,],
   filenamePrefix = "loop-lore",
 ): ComfyUIWorkflow {
-  const decodeId = String(Number(samplerId) + 1);
-  const saveId = String(Number(samplerId) + 2);
+  const decodeId = String(Number(samplerId,) + 1,);
+  const saveId = String(Number(samplerId,) + 2,);
   return {
     [decodeId]: {
-      inputs: { samples: [samplerId, 0], vae: vaeRef, },
+      inputs: { samples: [samplerId, 0,], vae: vaeRef, },
       class_type: "VAEDecode",
       _meta: { title: "VAE Decode", },
     },
     [saveId]: {
-      inputs: { filename_prefix: filenamePrefix, images: [decodeId, 0], },
+      inputs: { filename_prefix: filenamePrefix, images: [decodeId, 0,], },
       class_type: "SaveImage",
       _meta: { title: "Save Image", },
     },

@@ -18,7 +18,7 @@ const OTHER_TEST_COMMAND = "routes-test-other";
 
 function makeApp(userId: string | null,) {
   const app = new Elysia({ name: "test-commands", },);
-  if (userId) { app.derive(() => ({ userId, userRole: "member", }),); }
+  if (userId) { app.derive(() => ({ userId, userRole: "member", })); }
   return app.use(commandsRoutes({},),);
 }
 
@@ -44,7 +44,7 @@ describe("GET /api/commands", () => {
     expect(res.status,).toBe(401,);
     const body = await res.json() as { error?: string };
     expect(typeof body.error,).toBe("string",);
-  },);
+  });
 
   it("returns the live registry with description keys", async () => {
     const app = makeApp("user-1",);
@@ -52,13 +52,13 @@ describe("GET /api/commands", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { name: string; descriptionKey: string }[] };
     expect(Array.isArray(body.data,),).toBe(true,);
-    const names = body.data.map((entry,) => entry.name,);
+    const names = body.data.map((entry,) => entry.name);
     expect(names,).toContain(TEST_COMMAND,);
     expect(names,).toContain(OTHER_TEST_COMMAND,);
     for (const entry of body.data) {
       expect(entry.descriptionKey,).toBe(`commands.${entry.name}`,);
     }
-  },);
+  });
 
   it("includes new commands without an FE rebuild", async () => {
     const app = makeApp("user-1",);
@@ -67,6 +67,6 @@ describe("GET /api/commands", () => {
     const res = await app.handle(new Request("http://localhost/api/commands",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { name: string; descriptionKey: string }[] };
-    expect(body.data.map((entry,) => entry.name,),).toContain(freshName,);
-  },);
+    expect(body.data.map((entry,) => entry.name),).toContain(freshName,);
+  });
 });
