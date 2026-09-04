@@ -1,12 +1,14 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 # WIRE: nsfw-audit view route has no inline authz guard
+
 **Status:** Resolved
 **Priority Tier:** P2
 **Source:** reconcile review (Scout Batch B — ISSUE-002)
 `src/routes/views/nsfw-audit.ts:19-25` — `serveNsfwModerationAudit` calls `can(userRole, "admin.system")` in the template but has NO inline `beforeHandle` guard. The route is registered via `plugin-pages.ts` which may or may not apply `adminViewGuard`.
 If the route is ever mounted outside the `adminViewGuard` scope, NSFW ban history and user preferences are exposed to any authenticated user.
 Either add explicit guard inline:
+
 ```ts
 new Elysia().get("/views/nsfw-moderation", async (ctx) => {
   if (!can(ctx.store.userRole, "admin.system")) {
