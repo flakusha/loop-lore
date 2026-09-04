@@ -847,12 +847,6 @@
       "source": ".plan/tickets/FEAT-creative-process-commit-gating.md"
     }
   ],
-  "src/assistant/commands/create-entity.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
-    }
-  ],
   "src/assistant/commands/create.ts": [
     {
       "kind": "epic",
@@ -3945,10 +3939,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-related-memory-event-injection-hooks.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/coordination.ts": [
@@ -4393,10 +4383,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/location-events.ts": [
@@ -4439,10 +4425,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-party-join-leave.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/read.ts": [
@@ -4461,12 +4443,6 @@
       "source": ".plan/tickets/BUG-bug-message-seen-re-mark-clobbers-first-seen-timestamp.md"
     }
   ],
-  "src/chat/service/split-utils.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
-    }
-  ],
   "src/chat/service/split.test.ts": [
     {
       "kind": "ticket",
@@ -4477,10 +4453,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/templates.ts": [
@@ -4509,10 +4481,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-lifecycle-moderation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/types.ts": [
@@ -4535,12 +4503,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-test-chat-module.md"
-    }
-  ],
-  "src/chat/service/vn-choices.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/service/vn-choices.ts": [
@@ -4687,12 +4649,6 @@
       "source": ".plan/tickets/TASK-wire-transitions.md"
     }
   ],
-  "src/chat/types.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
-    }
-  ],
   "src/chat/types.ts": [
     {
       "kind": "epic",
@@ -4707,12 +4663,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
-    }
-  ],
-  "src/chat/types/index.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/types/moderation.ts": [
@@ -12951,10 +12901,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/generation/hooks/emotion-hook.ts": [
@@ -13645,12 +13591,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-thinking-tag-context-prune.md"
-    }
-  ],
-  "src/generation/tools/create-location.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/generation/transforms.ts": [
@@ -17499,10 +17439,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/gap-closure-report.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/routes/chats.ts": [
@@ -17623,10 +17559,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/routes/chats/extras.ts": [
@@ -17651,10 +17583,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/routes/chats/participants.ts": [
@@ -19829,12 +19757,6 @@
       "source": "docs/spec/worlds.md"
     }
   ],
-  "src/routes/worlds.test.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
-    }
-  ],
   "src/routes/worlds.ts": [
     {
       "kind": "epic",
@@ -19865,12 +19787,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
-    }
-  ],
-  "src/routes/worlds/location-chat.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/routes/worlds/locations.ts": [

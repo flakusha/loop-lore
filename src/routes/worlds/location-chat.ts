@@ -13,6 +13,7 @@ import { createChat, getChatSetupTemplate, } from "../../chat/service";
 import type { ChatSetupTemplate, } from "../../chat/service/types";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils";
+import type { ChatRenderingOverride } from "../../db/enums-core/chat";
 
 /** */
 export interface CreateLocationChatInput {
@@ -87,8 +88,8 @@ export async function createLocationChat(
       ? (body.gmConfig as Record<string, unknown> | null)
       : (template.gm_config ? jsonParseOr(template.gm_config, {},) : null),
     renderingOverride: hasExplicit("renderingOverride",)
-      ? (body.renderingOverride as "text" | "visual_novel" | null)
-      : (template.visual_novel === 1 ? "visual_novel" : null),
+      ? (body.renderingOverride as ChatRenderingOverride | undefined)
+      : ((jsonParseOr<Record<string, unknown>>(template.gm_config ?? "", {}).renderingOverride as ChatRenderingOverride) ?? null),
     visibility: hasExplicit("visibility",)
       ? (body.visibility as string)
       : (template.visibility ?? "private"),

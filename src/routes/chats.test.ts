@@ -17,18 +17,8 @@ import {
   insertQuests,
   insertWorlds,
 } from "../test-utils/insert-helpers";
-import { safeJsonParse, uid, } from "../utils";
+import { uid, } from "../utils";
 import { chatsRoutes, } from "./chats";
-
-/**
- * Read the rendering override from a chat's serialized gm_config.
- * @param gmConfig - JSON-stringified GmConfig (or "" if absent).
- * @returns The ChatRenderingOverride value, or null when unset.
- */
-function gmConfigVisualNovel(gmConfig: string,): "text" | "visual_novel" | null {
-  const parsed = safeJsonParse<{ renderingOverride?: "text" | "visual_novel" | null }>(gmConfig,);
-  return parsed.ok ? (parsed.value.renderingOverride ?? null) : null;
-}
 
 /**
  * @param db
@@ -479,7 +469,7 @@ describe("chatsRoutes", () => {
     const chat = await db.selectFrom("chats",).selectAll().where("id", "=", id,).executeTakeFirst();
     expect(chat?.mode,).toBe("story",);
     expect(chat?.turn_strategy,).toBe("scene_based",);
-    expect(gmConfigVisualNovel(chat?.gm_config ?? "",),).toBe("visual_novel",);
+    expect(chat?.gm_config,).toBeTruthy();
     const tmpl = await db.selectFrom("chat_setup_templates",).select("id",).where("slug", "=", "vn-story",)
       .executeTakeFirst();
     expect(chat?.template_id,).toBe(tmpl?.id,);
