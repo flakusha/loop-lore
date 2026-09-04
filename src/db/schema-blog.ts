@@ -6,6 +6,25 @@
  */
 import type { Generated, } from "kysely";
 
+// ── blog_comments ────────────────────────────────────────────
+export interface BlogComments {
+  id: Generated<string>;
+  post_id: string;
+  author_id: string;
+  body: string;
+  status: Generated<string>;
+  created_at: Generated<string>;
+  parent_comment_id: string | null;
+}
+
+// ── blog_follows ────────────────────────────────────────────
+export interface BlogFollows {
+  id: Generated<string>;
+  follower_id: string;
+  author_id: string;
+  created_at: Generated<string>;
+}
+
 // ── blog_posts ────────────────────────────────────────────
 export interface BlogPosts {
   id: Generated<string>;
@@ -26,32 +45,6 @@ export interface BlogPosts {
   updated_at: Generated<string>;
 }
 
-// ── blog_comments ────────────────────────────────────────────
-export interface BlogComments {
-  id: Generated<string>;
-  post_id: string;
-  author_id: string;
-  body: string;
-  status: Generated<string>;
-  created_at: Generated<string>;
-  parent_comment_id: string | null;
-}
-
-// ── blog_tags ────────────────────────────────────────────
-export interface BlogTags {
-  id: Generated<string>;
-  post_id: string;
-  tag: string;
-}
-
-// ── blog_follows ────────────────────────────────────────────
-export interface BlogFollows {
-  id: Generated<string>;
-  follower_id: string;
-  author_id: string;
-  created_at: Generated<string>;
-}
-
 // ── blog_rag_sources ────────────────────────────────────────────
 export interface BlogRagSources {
   id: Generated<string>;
@@ -62,4 +55,11 @@ export interface BlogRagSources {
   relevance_score: Generated<number>;
   snippet: Generated<string>;
   created_at: Generated<string>;
+}
+
+// ── blog_tags ────────────────────────────────────────────
+export interface BlogTags {
+  id: Generated<string>;
+  post_id: string;
+  tag: string;
 }

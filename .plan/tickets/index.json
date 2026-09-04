@@ -11713,7 +11713,7 @@
     "git_issue": "b2666f6",
     "extid": "TASK-DB-MIGRATION-EPOCH-SQUASH",
     "type": "TASK",
-    "title": "db-migration-epoch-squash",
+    "title": "db-migration-compaction (Path B — final-form, parts/-decomposed)",
     "label": "task",
     "priority": "high",
     "epic": "",
