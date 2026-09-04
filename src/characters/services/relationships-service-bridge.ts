@@ -15,10 +15,10 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 import {
   GrowthServiceError,
 } from "./growth-service/types";
-import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 
 /** Options for `recordRelationshipShift`. */
 export interface RecordRelationshipShiftOpts {
@@ -54,8 +54,9 @@ export interface RecordRelationshipShiftOpts {
  * @param opts
  */
 export async function recordRelationshipShift(
-  db: Kysely<DB>, opts: RecordRelationshipShiftOpts,
-): Promise<{ growthEntryId: string | null; }> {
+  db: Kysely<DB>,
+  opts: RecordRelationshipShiftOpts,
+): Promise<{ growthEntryId: string | null }> {
   // Lookup the relationship row to check evolution_tracked.
   const relRow = await db
     .selectFrom("character_relationships",)
