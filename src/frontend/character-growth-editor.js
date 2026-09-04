@@ -15,7 +15,7 @@
  *
  * Template attribute: x-data="characterGrowthEditor({ ... })"
  */
-(function () {
+(function() {
   "use strict";
 
   /**
@@ -23,84 +23,88 @@
    *           initialArcStage: string, initialArcDescription: string,
    *           initialEntries: Array<object> }} opts
    */
-  function characterGrowthEditor(opts) {
+  function characterGrowthEditor(opts,) {
     return {
       actorId: opts.actorId,
       growthMode: opts.initialMode,
-      llmAssistEnabled: Boolean(opts.initialLlmAssist),
+      llmAssistEnabled: Boolean(opts.initialLlmAssist,),
       arcStage: opts.initialArcStage || "introduction",
       arcDescription: opts.initialArcDescription || "",
-      entries: Array.isArray(opts.initialEntries) ? opts.initialEntries : [],
+      entries: Array.isArray(opts.initialEntries,) ? opts.initialEntries : [],
       message: "",
 
       async saveMode() {
         try {
-          await fetch(`/api/actors/${encodeURIComponent(this.actorId)}`, {
+          await fetch(`/api/actors/${encodeURIComponent(this.actorId,)}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", },
             body: JSON.stringify({
               growthMode: this.growthMode,
               llmAssistEnabled: this.llmAssistEnabled,
-            }),
-          });
+            },),
+          },);
           this.message = "Saved.";
         } catch (err) {
           this.message = "Failed to save growth mode.";
-          console.error(err);
+          console.error(err,);
         }
       },
 
       async saveArc() {
         try {
           const res = await fetch(
-            `/api/character-growth/arc/${encodeURIComponent(this.actorId)}`,
+            `/api/character-growth/arc/${encodeURIComponent(this.actorId,)}`,
             {
               method: "PATCH",
-              headers: { "Content-Type": "application/json" },
+              headers: { "Content-Type": "application/json", },
               body: JSON.stringify({
                 currentStage: this.arcStage,
                 stageDescription: this.arcDescription,
-              }),
+              },),
             },
           );
-          if (!res.ok) { throw new Error(`HTTP ${res.status}`); }
+          if (!res.ok) { throw new Error(`HTTP ${res.status}`,); }
           this.message = "Arc saved.";
         } catch (err) {
           this.message = "Failed to save arc.";
-          console.error(err);
+          console.error(err,);
         }
       },
 
-      async confirmEntry(entryId) {
+      async confirmEntry(entryId,) {
         try {
           await fetch(
-            `/api/character-growth/growth-log/${encodeURIComponent(entryId)}/confirm?actorId=${encodeURIComponent(this.actorId)}`,
-            { method: "POST" },
+            `/api/character-growth/growth-log/${encodeURIComponent(entryId,)}/confirm?actorId=${
+              encodeURIComponent(this.actorId,)
+            }`,
+            { method: "POST", },
           );
-          this._updateEntryStatus(entryId, "applied");
+          this._updateEntryStatus(entryId, "applied",);
           this.message = "Entry confirmed.";
         } catch (err) {
           this.message = "Failed to confirm entry.";
-          console.error(err);
+          console.error(err,);
         }
       },
 
-      async rejectEntry(entryId) {
+      async rejectEntry(entryId,) {
         try {
           await fetch(
-            `/api/character-growth/growth-log/${encodeURIComponent(entryId)}/reject?actorId=${encodeURIComponent(this.actorId)}`,
-            { method: "POST" },
+            `/api/character-growth/growth-log/${encodeURIComponent(entryId,)}/reject?actorId=${
+              encodeURIComponent(this.actorId,)
+            }`,
+            { method: "POST", },
           );
-          this._updateEntryStatus(entryId, "rejected");
+          this._updateEntryStatus(entryId, "rejected",);
           this.message = "Entry rejected.";
         } catch (err) {
           this.message = "Failed to reject entry.";
-          console.error(err);
+          console.error(err,);
         }
       },
 
-      _updateEntryStatus(entryId, status) {
-        const idx = this.entries.findIndex((e) => e.id === entryId);
+      _updateEntryStatus(entryId, status,) {
+        const idx = this.entries.findIndex((e,) => e.id === entryId);
         if (idx >= 0) {
           this.entries[idx].status = status;
         }

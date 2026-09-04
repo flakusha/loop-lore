@@ -15,11 +15,11 @@
  * `personality`, `background` are refused with `integrity_forbidden`.
  */
 import type { Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
 import type { TraitCategory, } from "../../db/enums";
-import { checkPersonalityIntegrity, } from "./personality-service/integrity";
-import { GrowthServiceError, } from "./growth-service/types";
+import type { DB, } from "../../db/schema";
 import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
+import { GrowthServiceError, } from "./growth-service/types";
+import { checkPersonalityIntegrity, } from "./personality-service/integrity";
 
 /** Options for `recordTraitDrift`. */
 export interface RecordTraitDriftOpts {
@@ -41,8 +41,9 @@ export interface RecordTraitDriftOpts {
  * @param opts
  */
 export async function recordTraitDrift(
-  db: Kysely<DB>, opts: RecordTraitDriftOpts,
-): Promise<{ growthEntryId: string; }> {
+  db: Kysely<DB>,
+  opts: RecordTraitDriftOpts,
+): Promise<{ growthEntryId: string }> {
   const result = checkPersonalityIntegrity(opts.traitName, opts.traitCategory,);
   if (!result.allowed) {
     throw new GrowthServiceError(

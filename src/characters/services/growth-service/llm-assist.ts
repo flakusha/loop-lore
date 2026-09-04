@@ -16,11 +16,11 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
-import { insertGrowthLog, } from "./crud";
 import type {
   GrowthAxis,
   GrowthEventType,
 } from "../../spec/growth";
+import { insertGrowthLog, } from "./crud";
 
 /** Options for the LLM-assist pass. */
 export interface RunLlmAssistOpts {
@@ -28,7 +28,7 @@ export interface RunLlmAssistOpts {
   /** Recent chat context the LLM summarizer should reason over. */
   chatContext: string;
   /** Optional explicit axis / event focus from the caller. */
-  hint?: { axis: GrowthAxis; eventType: GrowthEventType; };
+  hint?: { axis: GrowthAxis; eventType: GrowthEventType };
 }
 
 /**
@@ -43,8 +43,9 @@ export interface RunLlmAssistOpts {
  * @param opts
  */
 export async function runLlmAssist(
-  db: Kysely<DB>, opts: RunLlmAssistOpts,
-): Promise<{ entryId: string | null; }> {
+  db: Kysely<DB>,
+  opts: RunLlmAssistOpts,
+): Promise<{ entryId: string | null }> {
   // 1. Read the actor's growth mode + llm_assist_enabled flag.
   const actorRow = await db
     .selectFrom("actors",)

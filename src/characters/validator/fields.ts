@@ -229,8 +229,7 @@ export function validateGrowthFields(
       errors.push({
         field: "growth_mode",
         code: "INVALID_VALUE",
-        message:
-          `growth_mode must be one of ${Object.keys(VALID_GROWTH_MODES,).join(", ")}`,
+        message: `growth_mode must be one of ${Object.keys(VALID_GROWTH_MODES,).join(", ",)}`,
         value: mode,
       },);
     }

@@ -119,6 +119,14 @@ export class CharacterGrowthService {
 export function characterGrowthService(db: Kysely<DB>,): CharacterGrowthService {
   return new CharacterGrowthService(db,);
 }
+export { runLlmAssist, } from "./llm-assist";
+export type { RunLlmAssistOpts, } from "./llm-assist";
+export {
+  redactArcForPlayerCard,
+  redactGrowthLogEntry,
+  redactGrowthLogForPlayerCard,
+} from "./redact";
+export type { GrowthRedactionViewer, PublicCharacterArc, PublicGrowthLogEntry, } from "./redact";
 export { GrowthServiceError, } from "./types";
 export type {
   ConfirmGrowthEntryOpts,
@@ -126,11 +134,3 @@ export type {
   ListGrowthLogOpts,
   RejectGrowthEntryOpts,
 } from "./types";
-export {
-  redactArcForPlayerCard,
-  redactGrowthLogEntry,
-  redactGrowthLogForPlayerCard,
-} from "./redact";
-export type { GrowthRedactionViewer, PublicCharacterArc, PublicGrowthLogEntry, } from "./redact";
-export { runLlmAssist, } from "./llm-assist";
-export type { RunLlmAssistOpts, } from "./llm-assist";
