@@ -40,7 +40,7 @@ export function applyChatViewDefaults(store: unknown,): void {
   // writable shape is safe inside this branch.
   const draft = store as ChatViewShape;
   if (!Array.isArray(draft.children,)) { draft.children = []; }
-  if (typeof draft.visibility !== "string" || draft.visibility === "") {
+  if (typeof draft.visibility !== "string" || !draft.visibility) {
     draft.visibility = "visible";
   }
 }
