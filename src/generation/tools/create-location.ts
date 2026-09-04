@@ -95,7 +95,7 @@ export const locationCreationTool: ToolDefinition = {
         currentLocationId: id,
         turnStrategy: template.turn_strategy,
         gmConfig: gmParsed?.ok ? gmParsed.value : null,
-        visualNovel: template.visual_novel === 1,
+        renderingOverride: template.visual_novel === 1 ? "visual_novel" : null,
         visibility: template.visibility ?? "private",
         templateId: template.id,
       },);

@@ -78,6 +78,22 @@ export function resolveRendering(
 }
 
 /**
+ * Resolve feature flags for a chat mode by composing `MODE_DEFAULTS[mode]`
+ * with optional per-chat overrides. Falls back to `direct` mode defaults
+ * when the mode is unknown.
+ * @param mode Chat mode whose defaults to use.
+ * @param overrides Per-chat feature flag overrides merged on top of defaults.
+ */
+export function resolveFeatureFlags(
+  mode: ChatMode,
+  overrides?: Partial<ModeFeatureFlags>,
+): ModeFeatureFlags {
+  const defaults = MODE_DEFAULTS[mode] ?? MODE_DEFAULTS.direct;
+  return { ...defaults, ...overrides };
+}
+
+
+/**
  * Chat-level GM configuration. Stored as JSON in `chats.gm_config`.
  *
  * This is the lightweight chat settings config — not the full story-mode

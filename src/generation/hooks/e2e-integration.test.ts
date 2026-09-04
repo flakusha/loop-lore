@@ -84,7 +84,6 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       mode: "direct",
       turn_strategy: null,
       created_by: userId,
-      visual_novel: 0,
       is_pinned: "unpinned",
       encryption_level: "standard",
     },).execute();
