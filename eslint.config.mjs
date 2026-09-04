@@ -79,6 +79,8 @@ const tsRules = {
   "no-undef": "off",
   "no-redeclare": "off",
   "sort-keys": "off",
+  // Allow `== null` (nullish check) but forbid all other loose equality.
+  "eqeqeq": ["error", "smart"],
 };
 
 // Stub rules for rules referenced in eslint-disable comments in scripts.
