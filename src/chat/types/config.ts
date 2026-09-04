@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { GameMasterType, } from "../../db/enums-config";
+import { ChatRenderingOverride, type ChatRenderingOverrideValue, } from "../../db/enums-core/chat";
 import type { OutputStylePreset, } from "../output-style";
 
 /** Chat modes from the DB enum */
@@ -17,9 +18,8 @@ export interface ModeFeatureFlags {
   memoryInjection: boolean;
   /** Turn-based orchestration */
   turnOrchestration: boolean;
-  /** Visual novel mode */
-  visualNovel: boolean;
-  /** Response length control */
+  /** Default rendering when `gm_config.renderingOverride` is `null` */
+  defaultRendering: ChatRenderingOverrideValue;
   responseLength: boolean;
   /** Chat autonaming */
   autoRename: boolean;
@@ -34,7 +34,7 @@ export const MODE_DEFAULTS: Record<ChatMode, ModeFeatureFlags> = {
     transitions: true,
     memoryInjection: true,
     turnOrchestration: false,
-    visualNovel: true,
+    defaultRendering: "visual_novel",
     responseLength: true,
     autoRename: true,
     quickRegen: true,
@@ -44,7 +44,7 @@ export const MODE_DEFAULTS: Record<ChatMode, ModeFeatureFlags> = {
     transitions: true,
     memoryInjection: true,
     turnOrchestration: true,
-    visualNovel: false, // group chat has multiple speakers
+    defaultRendering: "text",
     responseLength: true,
     autoRename: true,
     quickRegen: true,
@@ -54,7 +54,7 @@ export const MODE_DEFAULTS: Record<ChatMode, ModeFeatureFlags> = {
     transitions: true,
     memoryInjection: true,
     turnOrchestration: true,
-    visualNovel: true,
+    defaultRendering: "visual_novel",
     responseLength: true,
     autoRename: true,
     quickRegen: true,
@@ -62,16 +62,19 @@ export const MODE_DEFAULTS: Record<ChatMode, ModeFeatureFlags> = {
 } as const;
 
 /**
- * Resolve feature flags for a chat, merging mode defaults with per-chat overrides
- * @param mode
- * @param overrides
+ * Resolve chat rendering by composing `ChatMode` default with the chat's
+ * explicit override. The result is the single value every consumer
+ * (prompt assembler, VN renderer, settings UI) reads.
+ * @param mode Chat mode whose default to use when override is `null`/undefined.
+ * @param override Per-chat override (`null` → use mode default).
  */
-export function resolveFeatureFlags(
+export function resolveRendering(
   mode: ChatMode,
-  overrides?: Partial<ModeFeatureFlags>,
-): ModeFeatureFlags {
-  const defaults = MODE_DEFAULTS[mode] ?? MODE_DEFAULTS.direct;
-  return { ...defaults, ...overrides, };
+  override: ChatRenderingOverride | null | undefined,
+): ChatRenderingOverrideValue {
+  if (override === ChatRenderingOverride.Text) { return "text"; }
+  if (override === ChatRenderingOverride.VisualNovel) { return "visual_novel"; }
+  return (MODE_DEFAULTS[mode] ?? MODE_DEFAULTS.direct).defaultRendering;
 }
 
 /**
@@ -97,9 +100,8 @@ export interface GmGuidance {
 export interface GmConfig {
   /** Assistant's role in this chat: off, helper, gm, or moderator */
   assistantRole?: "off" | "helper" | "gm" | "moderator";
-  /** Visual novel mode (image-heavy, sequential panel display) */
-  visualNovel?: boolean;
-  /** Story-mode flag enabling the human-GM guided-story UX. */
+  /** Per-chat rendering override. `null` (default) means "render per ChatMode default" — see `resolveRendering()`. */
+  renderingOverride?: ChatRenderingOverride | null;
   storyMode?: boolean;
   /** Active human-GM narrative guidance (persisted, mutable at runtime). */
   gmGuidance?: GmGuidance;

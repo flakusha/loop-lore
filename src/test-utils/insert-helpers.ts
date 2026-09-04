@@ -420,7 +420,6 @@ export async function insertChats(
     context_max_tokens?: number | null;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
-    visual_novel?: Generated<number>;
     streaming?: number | null;
     nsfw_override?: string | null;
     name_source?: string | null;

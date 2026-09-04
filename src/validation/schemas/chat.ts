@@ -30,7 +30,11 @@ export const ChatCreateBody = t.Object({
   worldId: OptionalId,
   currentLocationId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
-  visualNovel: t.Optional(t.Boolean(),),
+  renderingOverride: t.Optional(t.Union([
+    t.Literal("text",),
+    t.Literal("visual_novel",),
+    t.Null(),
+  ],),),
   visibility: t.Optional(ChatVisibilitySchema,),
   /** Encryption tier for message content at rest. Defaults to "none" on the server. */
   encryptionLevel: t.Optional(t.Union([
@@ -58,7 +62,11 @@ export const ChatUpdateBody = t.Object({
   isPaused: t.Optional(t.Boolean(),),
   freezePanel: t.Optional(t.Boolean(),),
   gmConfig: t.Optional(GmConfigSchema,),
-  visualNovel: t.Optional(t.Boolean(),),
+  renderingOverride: t.Optional(t.Union([
+    t.Literal("text",),
+    t.Literal("visual_novel",),
+    t.Null(),
+  ],),),
   thinkingVisibility: t.Optional(t.Union([
     t.Literal("hidden",),
     t.Literal("collapsed",),
