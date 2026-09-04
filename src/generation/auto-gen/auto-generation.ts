@@ -235,6 +235,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       userId,
       actorId: hooks.actorId ?? characterId,
       actorName,
+      characterId,
       messageId: stored.messageId,
       content: llm.content,
       thinking: llm.thinking,
