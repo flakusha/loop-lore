@@ -10,7 +10,7 @@
  */
 
 // ── Access ────────────────────────────────────────────────────
-export { checkChatAccess, } from "./access";
+export { checkChatAccess, checkChatSettingsAccess, } from "./access";
 
 // ── Chat CRUD ─────────────────────────────────────────────────
 export {
