@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
+import { rmSync, } from "node:fs";
 import { apply, type Write, } from "./apply";
+import { readOffloadedBody, } from "./offload";
 import type { AsyncStoreConfig, } from "./store";
 
 /**
@@ -217,17 +219,32 @@ describe("apply()", () => {
     ],);
   });
 
-  test("complete nulls response_body when body exceeds maxInlineBytes", async () => {
+  test("complete spills body over maxInlineBytes to disk (recoverable, not lost)", async () => {
     const { queries, mock, } = makeMockDb();
+    const bigBody = "x".repeat(cfg.maxInlineBytes + 1,);
     const write: Write = {
       kind: "complete",
       id: "r-4",
       userId: "alice",
-      response: { status: 200, headers: {}, body: "x".repeat(cfg.maxInlineBytes + 1,), },
+      response: { status: 200, headers: {}, body: bigBody, },
     };
     await apply(mock, write, cfg,);
-    expect(queries[0]?.update?.set.response_body,).toBeNull();
-    expect(queries[0]?.update?.set.status,).toBe("complete",);
+    const set = queries[0]?.update?.set;
+    // The inline column is nulled (the daemon would otherwise skip it), but
+    // the body is NOT lost — it is spilled to disk and the path recorded so
+    // the status endpoint can read it back. BUG-bug-async-store-complete-drops-response-body-larger-than-max.
+    expect(set?.response_body,).toBeNull();
+    expect(set?.status,).toBe("complete",);
+    expect(set?.offload_path,).toBeTypeOf("string",);
+    expect(set?.offloaded_at,).toMatch(/^\d{4}-\d{2}-\d{2}T/,);
+    // The round-trip is the real contract: read the spilled file back.
+    try {
+      const restored = readOffloadedBody(set?.offload_path as string,);
+      expect(restored,).toBe(bigBody,);
+    } finally {
+      // Remove the spill file so this test does not pollute OFFLOAD_DIR.
+      rmSync(set?.offload_path as string, { force: true, },);
+    }
   });
 
   test("fail scopes update by user_id when authenticated", async () => {
