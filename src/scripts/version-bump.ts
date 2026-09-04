@@ -19,9 +19,11 @@
  */
 
 import { execSync, } from "child_process";
-import { readFileSync, writeFileSync, } from "fs";
 import { resolve, } from "path";
-import { safeJsonParse, } from "../utils/safe-json";
+import {
+  readPackageJsonOrNull,
+  setPackageJsonVersion as writePackageJsonVersion,
+} from "../utils/package-json";
 
 interface Version {
   major: number;
@@ -123,29 +125,17 @@ function getCurrentBranch(): string {
 }
 
 /**
- * Read + parse `package.json` safely. Returns an empty object on malformed
- * JSON rather than throwing — a missing/malformed `package.json` should
- * surface as a missing version, not a stack trace, when this script is
- * invoked from `bun run version:*` hooks.
- * @param packageJsonPath
- */
-function readPackageJson(packageJsonPath: string,): { version?: string } {
-  let text: string;
-  try {
-    text = readFileSync(packageJsonPath, "utf-8",);
-  } catch {
-    return {};
-  }
-  const result = safeJsonParse<{ version?: string }>(text,);
-  return result.ok ? result.value : {};
-}
-
-/**
- * @returns the version pinned in `package.json`, or "0.0.0" if missing.
+ * @returns the version pinned in `package.json`, or "0.0.0" if missing/unparseable.
+ *
+ * Reads use a lenient helper that returns `null` for missing/malformed
+ * input — appropriate for version prediction during feature-branch
+ * releases. Writes go through the throwing path (see
+ * {@link writePackageJsonVersion}) so a corrupt package.json surfaces
+ * loudly instead of being silently overwritten with a stub.
  */
 function getPackageJsonVersion(): string {
   const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
-  return readPackageJson(packageJsonPath,).version ?? "0.0.0";
+  return readPackageJsonOrNull(packageJsonPath,)?.version ?? "0.0.0";
 }
 
 /**
@@ -153,9 +143,7 @@ function getPackageJsonVersion(): string {
  */
 function setPackageJsonVersion(version: string,): void {
   const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
-  const packageJson = readPackageJson(packageJsonPath,);
-  packageJson.version = version;
-  writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2,)}\n`,);
+  writePackageJsonVersion(packageJsonPath, version,);
 }
 
 // Get version from latest tag (source of truth)
