@@ -1,6 +1,9 @@
 # Audit: batch-A — message-seen, generation, admin, auth, async, idempotency
+
 # Working dir: /home/flak/git-ai/loop-lore  |  branch: dev
+
 # Auditor: audit-batch-A (subagent)
+
 # Strict mode: all claims verified against actual behavior
 
 ---

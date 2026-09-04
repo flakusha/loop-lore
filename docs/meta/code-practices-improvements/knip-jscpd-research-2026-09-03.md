@@ -56,6 +56,7 @@ that gets connected later — triage keep-vs-wire-vs-remove; nothing is removed
 without confirmation.
 
 ### routes/* handler boilerplate (dominant family)
+
 - `routes/rpg/*` 11.0k; `routes/admin/*` 8.5k; `routes/actor-items/service.ts`
   5.8k/77 clones (worst single file); `routes/views/*` 5.7k;
   `routes/chats/*` 4.8k; `routes/crafting/*` 3.9k; `routes/nsfw-moderation/*`
@@ -66,29 +67,35 @@ without confirmation.
   `routes/character-avatars*.ts` same family.
 
 ### provider adapters
+
 - `generation/providers/{anthropic,ollama-native,openai-compatible}/index.ts`
-  + `http.ts` cross-clones (237t/69l, 216t/55l, 166t/23l).
+  - `http.ts` cross-clones (237t/69l, 216t/55l, 166t/23l).
   Proposal: provider base/factory.
 
 ### config schema mirrors
+
 - `config/schema-class/json-schema/generation.ts` ↔
   `config/sections/generation/{sd,llama}.ts` (409t/54l, 342t/37l).
   Proposal: single source + codegen (repo already codegens DB schemas).
 
 ### image-edit templates
+
 - `image-edit/templates/builtin/{img2img,inpaint,controlnet,txt2img}.ts`
   (300t/60l, 197t/33l, 187t/49l). Proposal: template registry + overrides.
 
 ### invites
+
 - `chat/invites/redeem.ts` ↔ `chat/world-invites/redeem.ts` 216t/23l
   near-exact. Proposal: parameterized shared flow.
 
 ### HTML templates (views/components)
+
 - `components/chat/chat-settings-modal.html` ↔ `gm-guidance-panel.html`
   526t/98l (largest code clone); `views/world-edit.html` 1195t/24c,
   `views/admin.html` 1123t/32c. Proposal: htmx partial extraction.
 
 ### other files flagged
+
 - `assets/controller/handlers.ts` 1095t/18c; `chat/service/*` 2.8k;
   `services/server-external-manager/{lifecycle,probes}.ts` 220t/50l;
   `config/load/fs.ts` ↔ `config/templates-loader/discovery.ts` 197t/40l;

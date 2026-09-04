@@ -10,6 +10,7 @@
 ## Newly filed (Not Started)
 
 ### 1. BUG-account-tier-custom-instructions-render-as-system-message-wi
+
 **Priority:** medium · **Effort:** Medium
 **Path:** `.plan/tickets/BUG-account-tier-custom-instructions-render-as-system-message-wi.md`
 
@@ -29,6 +30,7 @@ so account-tier precedence is preserved.
 read `TASK-two-tier-custom-instructions.md` to confirm precedence model.
 
 ### 2. BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros
+
 **Priority:** medium · **Effort:** Medium
 **Path:** `.plan/tickets/BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md`
 
@@ -49,6 +51,7 @@ trigger; design 3-5 cases: (a) skip-1, (b) skip-many, (c) boundary-crossing skip
 ## Reopened (production wiring coverage)
 
 ### 3. BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r
+
 **Priority:** **high** · **Effort:** Medium
 **Path:** `.plan/tickets/BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r.md`
 

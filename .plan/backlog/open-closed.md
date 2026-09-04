@@ -99,6 +99,7 @@
 Full detail: `bucket-A-security-perf-close-out-2026-09-03.md`.
 
 ### Security cluster (20 commits)
+
 - **Idempotency user-scope** (`c1cd4d8b`) — `src/middleware/idempotency.ts` cache key
   includes `userId`; cross-user response replay IDOR fixed. Regression test:
   `60bcc1f8 test(middleware): restore cross-user isolation integration test`.
@@ -118,6 +119,7 @@ Full detail: `bucket-A-security-perf-close-out-2026-09-03.md`.
 - **401-guard unification** — `requireUserId` canonical handler (follow-up to `c99704c1`).
 
 ### Perf cluster (6 commits)
+
 - **Check runner** (`f2deabc5`) — parallel runner capped at 4 jobs to bound peak RSS.
 - **Crypto** (`11a6c0dd`) — `Bun.CryptoHasher` adopted for sha256 (replaces
   `src/crypto/hasher.ts` naive impl).
@@ -128,6 +130,7 @@ Full detail: `bucket-A-security-perf-close-out-2026-09-03.md`.
 - **Tooling fix** (`3f640da9`) — knip/jscpd scripts repaired, stale dead-code config pruned.
 
 ### Tooling cluster (7 commits)
+
 - **GPG pre-flight** (`8b3656db`) — `assertGpgUnlocked` on every signing path;
   pre-flight in check runner.
 - **GPG keygrip** (`e0121860`) — `.credentials.env` `AGENT_GPG_KEY_ID` parsed for precheck.
@@ -141,5 +144,6 @@ Full detail: `bucket-A-security-perf-close-out-2026-09-03.md`.
   path gains DI override + buffer stubs + `signalError` assertion.
 
 ### Audit follow-up tickets (8, open)
+
 Filed as `TASK-audit-follow-up-*` git issues — tracked in `open-debt.md` § Audit Follow-up
 Cluster. No BLOCKING issues found; all are NIT-1/LOW/MED follow-ups.
