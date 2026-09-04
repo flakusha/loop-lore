@@ -17,8 +17,6 @@
  */
 import { safeJsonStringify, } from "../../utils";
 
-import { safeJsonStringify } from "../../utils";
-
 /** Visibility modes accepted by chat-view templates. */
 export type ChatVisibility = "visible" | "hidden" | "collapsed";
 
