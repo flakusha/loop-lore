@@ -54,8 +54,8 @@ const checks = {
     // Type checking
     "typecheck - backend": "bun run typecheck",
     "typecheck - frontend": "bun run typecheck:frontend",
-    "typecheck - coverage": "bun run typecheck:coverage",
-    "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend",
+    // "typecheck - coverage" removed: type-coverage-core@2.30.1 uses
+    // ts.SyntaxKind.Unknown which TS7 removed. Upstream needs to update.
 
     // ESLint (single canonical entry — duplicate "lint - ts (eslint)" removed;
     // running ESLint twice doubled its 1.5GB RSS peak with no new signal.)
