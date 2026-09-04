@@ -12,6 +12,25 @@ import type {
   StorageBackend,
 } from "./enums";
 
+// ── asset_links ────────────────────────────────────────────
+export interface AssetLinks {
+  asset_id: string;
+  entity_type: AssetLinkEntity;
+  entity_id: string;
+  label: string | null;
+  sort_order: Generated<number>;
+  created_at: Generated<string>;
+}
+
+// ── asset_shares ────────────────────────────────────────────
+export interface AssetShares {
+  id: Generated<string>;
+  asset_id: string;
+  shared_with_id: string;
+  shared_by_id: string;
+  created_at: Generated<string>;
+}
+
 // ── assets ────────────────────────────────────────────
 export interface Assets {
   id: Generated<string>;
@@ -33,23 +52,4 @@ export interface Assets {
   content_hash: string | null;
   data_version: Generated<number>;
   record_hash: Generated<string>;
-}
-
-// ── asset_links ────────────────────────────────────────────
-export interface AssetLinks {
-  asset_id: string;
-  entity_type: AssetLinkEntity;
-  entity_id: string;
-  label: string | null;
-  sort_order: Generated<number>;
-  created_at: Generated<string>;
-}
-
-// ── asset_shares ────────────────────────────────────────────
-export interface AssetShares {
-  id: Generated<string>;
-  asset_id: string;
-  shared_with_id: string;
-  shared_by_id: string;
-  created_at: Generated<string>;
 }
