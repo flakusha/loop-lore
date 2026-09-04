@@ -357,3 +357,27 @@ describe("migration staleness guard", () => {
     freshDb.close();
   });
 });
+
+// ── Loader filter (BUG-migrate-ts-loader-imports-test-ts-files) ─
+
+describe("migration loader excludes colocated *.test.ts", () => {
+  test("getMigrationFiles does not register *.test.ts as migrations", async () => {
+    const { getMigrationFiles, } = await import("./migrate");
+    const migrations = await getMigrationFiles();
+    const names = Object.keys(migrations,);
+    expect(names.length,).toBeGreaterThan(0,);
+    for (const name of names) {
+      expect(name,).not.toMatch(/\.test$/);
+    }
+  });
+
+  test("readdirSync of migrations dir contains no *.test.ts files", () => {
+    // Defensive: if a future migration colocates a *.test.ts, the loader
+    // filter above is the load-bearing safety net. This assertion fails
+    // fast if someone bypasses the filter by accident (e.g. by adding a
+    // colocated test that the loader must skip).
+    const files = readdirSync(MIGRATIONS_DIR,);
+    const strayTests = files.filter((f,) => f.endsWith(".test.ts",),);
+    expect(strayTests,).toEqual([]);
+  });
+});
