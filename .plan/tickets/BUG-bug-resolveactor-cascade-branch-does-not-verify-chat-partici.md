@@ -1,6 +1,6 @@
 # BUG: BUG: resolveActor cascade branch does not verify chat participant membership
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ src/generation/auto-gen/resolve-actor.ts cascade branch selects the actor by id 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in commit `43d0de6e` — `src/generation/auto-gen/resolve-actor.ts` cascade branch now verifies the selected actor is a member of `chat_participants` for the target `chatId` before returning it (defense-in-depth against future client-controlled callers). Index marked done; this file was out of sync.
