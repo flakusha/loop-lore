@@ -47,7 +47,7 @@ describe("initAlpineStores — chat store defaults", () => {
     (globalThis as { Alpine?: unknown }).Alpine = alpine;
     initAlpineStores();
 
-    const chat = stores.chat;
+    const chat = stores.chat as Record<string, unknown>;
     expect(chat, "chat store must be registered",).toBeDefined();
     expect(Array.isArray(chat.children,), "chat.children must be an array",).toBe(true,);
     expect(chat.children,).toEqual([],);
@@ -60,10 +60,10 @@ describe("initAlpineStores — chat store defaults", () => {
     (globalThis as { Alpine?: unknown }).Alpine = alpine;
     initAlpineStores();
 
-    const chat = stores.chat;
+    const chat = stores.chat as Record<string, unknown>;
     // Reading `chat.children` or `chat.visibility` must never throw — this is
     // the regression scenario the original ticket flagged.
-    expect(() => { void chat.children?.length; },).not.toThrow();
+    expect(() => { void (chat.children as { length: number } | undefined)?.length; },).not.toThrow();
     expect(() => { void (chat.visibility as string | undefined)?.length; },).not.toThrow();
   },);
 });
