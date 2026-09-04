@@ -369,7 +369,7 @@ describe("migration loader excludes colocated *.test.ts", () => {
     const names = Object.keys(migrations,);
     expect(names.length,).toBeGreaterThan(0,);
     for (const name of names) {
-      expect(name,).not.toMatch(/\.test$/);
+      expect(name,).not.toMatch(/\.test$/,);
     }
   });
 
@@ -379,7 +379,7 @@ describe("migration loader excludes colocated *.test.ts", () => {
     // fast if someone bypasses the filter by accident (e.g. by adding a
     // colocated test that the loader must skip).
     const files = readdirSync(MIGRATIONS_DIR,);
-    const strayTests = files.filter((f,) => f.endsWith(".test.ts",),);
-    expect(strayTests,).toEqual([]);
+    const strayTests = files.filter((f,) => f.endsWith(".test.ts",));
+    expect(strayTests,).toEqual([],);
   });
 });
