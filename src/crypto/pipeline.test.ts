@@ -196,6 +196,22 @@ describe("error paths", () => {
     ).rejects.toThrow("missing required fields",);
   });
 
+  test("payload with unknown algo field throws (downgrade detection)", async () => {
+    const encrypted = await compressThenEncrypt({ plaintext: SHORT_TEXT, chatKey: cryptoKey, keyId: KEY_ID, },);
+    const payload = JSON.parse(encrypted,) as {
+      enc: string;
+      nonce: string;
+      algo: string;
+      comp: boolean;
+      compAlgo?: string;
+      key_id: string;
+    };
+    payload.algo = "aes-128-cbc";
+    await expect(decryptThenDecompress(JSON.stringify(payload,), cryptoKey,),).rejects.toThrow(
+      "Unsupported encryption algorithm",
+    );
+  });
+
   test("tampered ciphertext (flip last byte) throws", async () => {
     const encrypted = await compressThenEncrypt({ plaintext: SHORT_TEXT, chatKey: cryptoKey, keyId: KEY_ID, },);
     const payload = JSON.parse(encrypted,) as {

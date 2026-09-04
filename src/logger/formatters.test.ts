@@ -69,6 +69,32 @@ describe("formatConsole", () => {
     expect(result,).toContain("99",);
     // No color code applied
   });
+
+  test("strips control chars and collapses newlines in message (log-line forgery)", () => {
+    const entry: LogEntry = {
+      ...baseEntry,
+      message: "safe [\x1b[31mFAKE\x1b[0m] \n[FATAL] forged line\r\nanother",
+    };
+    const result = formatConsole(entry, false,);
+    // No raw newline survives — a single logical line only.
+    expect(result,).not.toContain("\n[FATAL] forged",);
+    // The injected ANSI escape is stripped.
+    expect(result,).not.toContain("\u{1B}[31mFAKE",);
+    // Content is collapsed onto one line, not removed.
+    expect(result.split("\n",).length,).toBe(2,); // body + trailing newline only
+  });
+
+  test("strips control chars in module and error", () => {
+    const entry: LogEntry = {
+      ...baseEntry,
+      module: "auth\x1b[31m",
+      error: "boom\ninjected",
+    };
+    const result = formatConsole(entry, false,);
+    expect(result,).not.toContain("\u{1B}[31m",);
+    // The error's newline must be collapsed (single logical line).
+    expect(result.indexOf("\n",),).toBe(result.length - 1,);
+  });
 });
 
 describe("formatJSONL", () => {

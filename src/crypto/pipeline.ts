@@ -199,6 +199,15 @@ export async function decryptThenDecompress(storedContent: string, chatKey: Cryp
     throw new Error("Malformed encrypted payload: missing required fields",);
   }
 
+  // Reject unknown algorithm identifiers. The write side always emits
+  // "aes-256-gcm"; accepting any other value would allow a downgrade attack
+  // where a client re-labels the algo field to route decryption through a
+  // weaker (or future-removed) path. Only the single supported algorithm
+  // passes.
+  if (payload.algo !== "aes-256-gcm") {
+    throw new Error(`Unsupported encryption algorithm: ${String(payload.algo,)}`,);
+  }
+
   // 2. Decode from base64 — ensure ArrayBuffer-backed for Web Crypto
   const ciphertext = new Uint8Array(Uint8Array.fromBase64(payload.enc,),);
   const nonce = new Uint8Array(Uint8Array.fromBase64(payload.nonce,),);
