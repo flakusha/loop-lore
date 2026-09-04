@@ -22,6 +22,21 @@ const LEVEL_COLORS: Record<number, string> = {
 
 const RESET = "\u{1B}[0m";
 
+// Strip C0 control chars and collapse embedded newlines so a user-controlled
+// message/module/error cannot forge log lines or spoof levels in the console
+// sink (JSONL escapes these correctly; only the human-readable console path is
+// vulnerable). Tabs are preserved (common in message text); all other C0 chars
+// are replaced with a space and CR/LF are collapsed to a single space.
+const CONTROL_CHAR_RE = /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g;
+const NEWLINE_RE = /[\r\n]+/g;
+
+/**
+ * @param text
+ */
+function sanitizeConsoleText(text: string,): string {
+  return text.replace(CONTROL_CHAR_RE, " ",).replace(NEWLINE_RE, " ",);
+}
+
 /**
  * Format entry for human-readable console output.
  * ANSI mode (default) — uses ANSI escape codes. Output: "[time] [LEVEL] [module] message"
@@ -44,14 +59,14 @@ export function formatConsole(
   mode: "ansi" | "css" = "ansi",
 ): string | { formatted: string; css: string } {
   const levelLabel = numericToLabel(entry.level,).padEnd(5,);
-  const modulePart = entry.module ? ` [${entry.module}]` : "";
+  const modulePart = entry.module ? ` [${sanitizeConsoleText(entry.module,)}]` : "";
   const msgResult = safeJsonStringify(entry.message,);
   const msg = typeof entry.message === "string" ? entry.message : (msgResult.ok ? msgResult.value : "[unserializable]");
 
-  let line = `[${entry.time}] [${levelLabel}]${modulePart} ${msg}`;
+  let line = `[${entry.time}] [${levelLabel}]${modulePart} ${sanitizeConsoleText(msg,)}`;
 
   if (entry.error) {
-    line += ` — ${entry.error}`;
+    line += ` — ${sanitizeConsoleText(entry.error,)}`;
   }
 
   if (!isColor) {

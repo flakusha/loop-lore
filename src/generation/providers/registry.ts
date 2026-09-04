@@ -7,7 +7,7 @@
 // resolveProvider() handles resolution order: user BYO key → chat → server default.
 // See .plan/epics/epic-provider-plugin-ecosystem.md.
 
-// size-allow: 270
+// size-allow: 275
 
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
@@ -15,6 +15,7 @@ import { decryptValue, } from "../../crypto";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
 import { GenerationCancelledError, } from "../cancellation-actions/error";
 import { AnthropicProvider, } from "./anthropic";
 import { circuitBreaker, } from "./circuit-breaker";
@@ -113,8 +114,14 @@ export async function resolveProvider({
       if (row) {
         resolvedApiKey = await decryptValue(row.api_key_encrypted, config.byoKey.encryptionKey,);
       }
-    } catch {
-      // Logged but non-fatal — fall through to server key
+    } catch (error) {
+      // Non-fatal fallback — log provider + userId (never key material).
+      const reason = error instanceof Error ? error.message : String(error,);
+      getLogger().warn("BYO API key decrypt failed — falling back to server key", {
+        provider: resolvedProviderName,
+        userId,
+        error: reason,
+      },);
     }
   }
 
