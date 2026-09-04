@@ -10,7 +10,7 @@
 
 ## Summary
 
-Add CharacterState enum and state machine (active, injured, unconscious, dead) to replace Generated<string> on character_stats.character_state. The 063_rpg_cognition_state.ts migration already documents these states in comments. Must create src/db/enums-core/character-state.ts with StateDef + createMachine, export from index, and update schema-core.ts to use Generated<CharacterState>.
+Add CharacterState enum and state machine (active, injured, unconscious, dead) to replace Generated<string> on character_stats.character_state. Must create src/db/enums-core/character-state.ts with StateDef + createMachine, export from index, and add a `CharacterStats.character_state` COLUMN_TYPE_OVERRIDES mapping (then `bun run db:sync-types`). No migration.
 
 ## Analysis (2026-09-04)
 
