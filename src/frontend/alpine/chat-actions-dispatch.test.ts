@@ -406,61 +406,64 @@ describe("dispatchCommandAction", () => {
 // ── handleCommandInput ───────────────────────────────────────
 
 describe("handleCommandInput", () => {
+  // _commandList is hydrated at runtime from GET /api/commands; tests need a
+  // populated list to exercise the filter logic.
+  type CommandEntry = { name: string; descriptionKey: string; description: string };
+  const seededCommandList: CommandEntry[] = [
+    { name: "help", descriptionKey: "commands.help", description: "help" },
+    { name: "roll", descriptionKey: "commands.roll", description: "roll" },
+    { name: "summarize", descriptionKey: "commands.summarize", description: "summarize" },
+    { name: "impersonate", descriptionKey: "commands.impersonate", description: "impersonate" },
+    { name: "image", descriptionKey: "commands.image", description: "image" },
+    { name: "improve", descriptionKey: "commands.improve", description: "improve" },
+  ];
+
+  type CommandInputState = {
+    _showCommandPalette: boolean;
+    _filteredCommands: CommandEntry[];
+    _commandList: CommandEntry[];
+  };
+
+  const makeState = (init: { show: boolean; },): CommandInputState => ({
+    _showCommandPalette: init.show,
+    _filteredCommands: [],
+    _commandList: seededCommandList,
+  });
+  const invokeHandle = (state: CommandInputState, value: string,) => {
+    const event: Event = { target: { value, }, } as unknown as Event;
+    // handleCommandInput is typed as `Partial<ChatState>`; the test exercises
+    // a minimal state slice, so we widen via unknown at the call boundary.
+    chatActions.handleCommandInput!.call(state as unknown as Parameters<NonNullable<typeof chatActions.handleCommandInput>>[0], event,);
+  };
+
   test("shows palette when typing slash without space", () => {
-    const state = {
-      _showCommandPalette: false,
-      _filteredCommands: [],
-      _commandList: chatActions._commandList,
-    };
-    const event = { target: { value: "/im", }, } as unknown as Event;
-
-    chatActions.handleCommandInput!.call(state as any, event,);
-
+    const state = makeState({ show: false, });
+    invokeHandle(state, "/im",);
     expect(state._showCommandPalette,).toBe(true,);
     expect(state._filteredCommands.length,).toBeGreaterThan(0,);
-    expect(state._filteredCommands.every((c: { name: string },) => c.name.includes("im",)),).toBe(true,);
+    expect(state._filteredCommands.every((c,) => c.name.includes("im",)),).toBe(true,);
   });
 
   test("hides palette when no slash prefix", () => {
-    const state = {
-      _showCommandPalette: true,
-      _filteredCommands: [],
-      _commandList: chatActions._commandList,
-    };
-    const event = { target: { value: "hello", }, } as unknown as Event;
-
-    chatActions.handleCommandInput!.call(state as any, event,);
-
+    const state = makeState({ show: true, });
+    invokeHandle(state, "hello",);
     expect(state._showCommandPalette,).toBe(false,);
   });
 
   test("hides palette when space follows slash", () => {
-    const state = {
-      _showCommandPalette: true,
-      _filteredCommands: [],
-      _commandList: chatActions._commandList,
-    };
-    const event = { target: { value: "/im hello", }, } as unknown as Event;
-
-    chatActions.handleCommandInput!.call(state as any, event,);
-
+    const state = makeState({ show: true, });
+    invokeHandle(state, "/im hello",);
     expect(state._showCommandPalette,).toBe(false,);
   });
 
   test("shows all commands when just /", () => {
-    const state = {
-      _showCommandPalette: false,
-      _filteredCommands: [],
-      _commandList: chatActions._commandList,
-    };
-    const event = { target: { value: "/", }, } as unknown as Event;
-
-    chatActions.handleCommandInput!.call(state as any, event,);
-
+    const state = makeState({ show: false, });
+    invokeHandle(state, "/",);
     expect(state._showCommandPalette,).toBe(true,);
-    expect(state._filteredCommands.length,).toBe(state._commandList?.length ?? 0,);
+    expect(state._filteredCommands.length,).toBe(seededCommandList.length,);
   });
 });
+
 
 // ── selectCommand ────────────────────────────────────────────
 
