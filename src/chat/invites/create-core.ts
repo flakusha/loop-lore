@@ -10,6 +10,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
+import { parseExpiryMs, } from "../../utils/date";
 import { generateInviteCode, } from "./code";
 import type { InviteError, } from "./types";
 
@@ -43,11 +44,7 @@ export async function createInviteRow<Input extends InviteCreateCommon,>(
   if (input.maxUses !== null && input.maxUses !== undefined && input.maxUses < 1) {
     return { ok: false, error: { code: "bad_request", message: "maxUses must be at least 1", }, };
   }
-  if (
-    input.expiresAt &&
-    input.expiresAt !== null &&
-    Number.isNaN(Date.parse(input.expiresAt,),)
-  ) {
+  if (input.expiresAt != null && parseExpiryMs(input.expiresAt,) === null) {
     return { ok: false, error: { code: "bad_request", message: "Invalid expiresAt", }, };
   }
 

@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, test, } from "bun:test";
-import { formatHuman, formatTime, serializeDate, toDate, tzOffset, unixMs, unixSec, } from "./date";
+import { formatHuman, formatTime, parseExpiryMs, serializeDate, toDate, tzOffset, unixMs, unixSec, } from "./date";
 
 describe("unixMs", () => {
   test("returns a number close to Date.now()", () => {
@@ -196,5 +196,44 @@ describe("serializeDate", () => {
 
   test("invalid input yields NaN for unix", () => {
     expect(Number.isNaN(serializeDate("", "unix",) as number,),).toBe(true,);
+  });
+});
+
+describe("parseExpiryMs", () => {
+  test("returns null for non-string input", () => {
+    expect(parseExpiryMs(undefined,),).toBeNull();
+    expect(parseExpiryMs(null,),).toBeNull();
+    expect(parseExpiryMs(123,),).toBeNull();
+    expect(parseExpiryMs({},),).toBeNull();
+    expect(parseExpiryMs([],),).toBeNull();
+    expect(parseExpiryMs(true,),).toBeNull();
+  });
+
+  test("returns null for empty string", () => {
+    expect(parseExpiryMs("",),).toBeNull();
+  });
+
+  test("returns null for unparseable strings", () => {
+    expect(parseExpiryMs("not-a-date",),).toBeNull();
+    expect(parseExpiryMs("garbage",),).toBeNull();
+    expect(parseExpiryMs("2026-13-99",),).toBeNull();
+  });
+
+  test("returns epoch ms for valid ISO strings", () => {
+    const iso = "2026-12-31T23:59:59.000Z";
+    expect(parseExpiryMs(iso,),).toBe(Date.parse(iso,),);
+  });
+
+  test("returns epoch ms for date-only strings", () => {
+    const dateOnly = "2026-12-31";
+    expect(parseExpiryMs(dateOnly,),).toBe(Date.parse(dateOnly,),);
+  });
+
+  test("never returns NaN", () => {
+    const inputs: unknown[] = [null, undefined, "", "garbage", "2026-13-99", "foo",];
+    for (const input of inputs) {
+      const result = parseExpiryMs(input,);
+      expect(result === null || Number.isFinite(result,),).toBe(true,);
+    }
   });
 });
