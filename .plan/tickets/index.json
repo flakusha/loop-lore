@@ -1765,7 +1765,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-frontend-music-embed-fallback-esc-allows-stored-xss-via-attr.md"
+    "source": ".plan/tickets/BUG-frontend-music-embed-fallback-esc-allows-stored-xss-via-attr.md",
+    "status": "done"
   },
   "BUG-GALLERY-DUPLICATE-SERVEGALLERYGRID": {
     "hash": "pending",
@@ -7057,6 +7058,174 @@
     "tags": [],
     "source": ".plan/tickets/TASK-adaptive-audio.md"
   },
+  "TASK-ADD-ACHIEVEMENTCATEGORY-AND-ACHIEVEMENTTIER-ENUMS-FOR-ACHIEV": {
+    "hash": "a21f31e",
+    "git_issue": "a21f31e",
+    "extid": "TASK-ADD-ACHIEVEMENTCATEGORY-AND-ACHIEVEMENTTIER-ENUMS-FOR-ACHIEV",
+    "type": "TASK",
+    "title": "Add AchievementCategory and AchievementTier enums for achievements",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-achievements",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-achievementcategory-and-achievementtier-enums-for-achiev.md"
+  },
+  "TASK-ADD-ACTIVITYPUBKEYSTATUS-STATE-MACHINE-FOR-ACTIVITYPUB-ACTOR": {
+    "hash": "f130c73",
+    "git_issue": "f130c73",
+    "extid": "TASK-ADD-ACTIVITYPUBKEYSTATUS-STATE-MACHINE-FOR-ACTIVITYPUB-ACTOR",
+    "type": "TASK",
+    "title": "Add ActivitypubKeyStatus state machine for activitypub_actor_keys.status",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-federation-swarm-sync",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-activitypubkeystatus-state-machine-for-activitypub-actor.md"
+  },
+  "TASK-ADD-APPEALSTATUS-STATE-MACHINE-FOR-MODERATION-APPEALS-STATUS": {
+    "hash": "0d3fc0f",
+    "git_issue": "0d3fc0f",
+    "extid": "TASK-ADD-APPEALSTATUS-STATE-MACHINE-FOR-MODERATION-APPEALS-STATUS",
+    "type": "TASK",
+    "title": "Add AppealStatus state machine for moderation_appeals.status",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-appealstatus-state-machine-for-moderation-appeals-status.md"
+  },
+  "TASK-ADD-BATTLESTATUS-STATE-MACHINE-FOR-BATTLES-STATUS": {
+    "hash": "1d38d2a",
+    "git_issue": "1d38d2a",
+    "extid": "TASK-ADD-BATTLESTATUS-STATE-MACHINE-FOR-BATTLES-STATUS",
+    "type": "TASK",
+    "title": "Add BattleStatus state machine for battles.status",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-battle-action-systems",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-battlestatus-state-machine-for-battles-status.md"
+  },
+  "TASK-ADD-BLOG-STATE-MACHINES-BLOGPOSTSTATUS-BLOGPOSTVISIBILITY-BL": {
+    "hash": "aa3698a",
+    "git_issue": "aa3698a",
+    "extid": "TASK-ADD-BLOG-STATE-MACHINES-BLOGPOSTSTATUS-BLOGPOSTVISIBILITY-BL",
+    "type": "TASK",
+    "title": "Add blog state machines: BlogPostStatus, BlogPostVisibility, BlogCommentStatus",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-blog-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-blog-state-machines-blogpoststatus-blogpostvisibility-bl.md"
+  },
+  "TASK-ADD-CHARACTERSTATE-STATE-MACHINE-FOR-CHARACTER-STATS-CHARACT": {
+    "hash": "b2b3f48",
+    "git_issue": "b2b3f48",
+    "extid": "TASK-ADD-CHARACTERSTATE-STATE-MACHINE-FOR-CHARACTER-STATS-CHARACT",
+    "type": "TASK",
+    "title": "Add CharacterState state machine for character_stats.character_state",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-characterstate-state-machine-for-character-stats-charact.md"
+  },
+  "TASK-ADD-COMPOSITEVALIDATOR-FOR-BOOLEAN-ENUM-STATE-COMBINATIONS": {
+    "hash": "50517c0",
+    "git_issue": "50517c0",
+    "extid": "TASK-ADD-COMPOSITEVALIDATOR-FOR-BOOLEAN-ENUM-STATE-COMBINATIONS",
+    "type": "TASK",
+    "title": "Add CompositeValidator for boolean × enum state combinations",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-data-integrity-acid",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-compositevalidator-for-boolean-enum-state-combinations.md"
+  },
+  "TASK-ADD-CONSENTACTION-AND-CONSENTSCOPE-ENUMS-FOR-NSFW-CONSENT-ST": {
+    "hash": "86d6e7a",
+    "git_issue": "86d6e7a",
+    "extid": "TASK-ADD-CONSENTACTION-AND-CONSENTSCOPE-ENUMS-FOR-NSFW-CONSENT-ST",
+    "type": "TASK",
+    "title": "Add ConsentAction and ConsentScope enums for nsfw_consent_state",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-consentaction-and-consentscope-enums-for-nsfw-consent-st.md"
+  },
+  "TASK-ADD-DIFFICULTYLEVEL-ENUM-FOR-PLAYTHROUGHS-DIFFICULTY": {
+    "hash": "4d05e92",
+    "git_issue": "4d05e92",
+    "extid": "TASK-ADD-DIFFICULTYLEVEL-ENUM-FOR-PLAYTHROUGHS-DIFFICULTY",
+    "type": "TASK",
+    "title": "Add DifficultyLevel enum for playthroughs.difficulty",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-achievements",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-difficultylevel-enum-for-playthroughs-difficulty.md"
+  },
+  "TASK-ADD-E2EALGORITHM-AND-E2ESESSIONKIND-ENUMS-FOR-E2E-TABLES": {
+    "hash": "8119c7f",
+    "git_issue": "8119c7f",
+    "extid": "TASK-ADD-E2EALGORITHM-AND-E2ESESSIONKIND-ENUMS-FOR-E2E-TABLES",
+    "type": "TASK",
+    "title": "Add E2eAlgorithm and E2eSessionKind enums for e2e tables",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-e2e-integration-testing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-e2ealgorithm-and-e2esessionkind-enums-for-e2e-tables.md"
+  },
+  "TASK-ADD-EVENTSOURCE-ENUM-FOR-CHAT-LOCATION-EVENTS-SOURCE": {
+    "hash": "e8f2f54",
+    "git_issue": "e8f2f54",
+    "extid": "TASK-ADD-EVENTSOURCE-ENUM-FOR-CHAT-LOCATION-EVENTS-SOURCE",
+    "type": "TASK",
+    "title": "Add EventSource enum for chat_location_events.source",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-eventsource-enum-for-chat-location-events-source.md"
+  },
+  "TASK-ADD-FANTASYCATEGORY-AND-INTENSITYLEVEL-ENUMS-FOR-CHARACTER-F": {
+    "hash": "8065648",
+    "git_issue": "8065648",
+    "extid": "TASK-ADD-FANTASYCATEGORY-AND-INTENSITYLEVEL-ENUMS-FOR-CHARACTER-F",
+    "type": "TASK",
+    "title": "Add FantasyCategory and IntensityLevel enums for character_fantasies",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-fantasycategory-and-intensitylevel-enums-for-character-f.md"
+  },
+  "TASK-ADD-HEATPHASE-STATE-MACHINE-FOR-CHARACTER-HEAT-CYCLE-CURRENT": {
+    "hash": "be73377",
+    "git_issue": "be73377",
+    "extid": "TASK-ADD-HEATPHASE-STATE-MACHINE-FOR-CHARACTER-HEAT-CYCLE-CURRENT",
+    "type": "TASK",
+    "title": "Add HeatPhase state machine for character_heat_cycle.current_phase",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-heatphase-state-machine-for-character-heat-cycle-current.md"
+  },
+  "TASK-ADD-NSFWENCOUNTERSTATUS-STATE-MACHINE-FOR-NSFW-ENCOUNTERS-ST": {
+    "hash": "6606e07",
+    "git_issue": "6606e07",
+    "extid": "TASK-ADD-NSFWENCOUNTERSTATUS-STATE-MACHINE-FOR-NSFW-ENCOUNTERS-ST",
+    "type": "TASK",
+    "title": "Add NsfwEncounterStatus state machine for nsfw_encounters.status",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-nsfwencounterstatus-state-machine-for-nsfw-encounters-st.md"
+  },
   "TASK-ADD-OWNERSHIP-CHECKS-CHARACTERS": {
     "hash": "60c2d8f",
     "extid": "TASK-ADD-OWNERSHIP-CHECKS-CHARACTERS",
@@ -7069,6 +7238,18 @@
     "source": ".plan/tickets/TASK-add-ownership-checks-characters.md",
     "status": "done",
     "git_issue": "60c2d8f"
+  },
+  "TASK-ADD-REQUESTRESULTSTATUS-AND-REQUESTPROGRESS-STATE-MACHINES-F": {
+    "hash": "0861633",
+    "git_issue": "0861633",
+    "extid": "TASK-ADD-REQUESTRESULTSTATUS-AND-REQUESTPROGRESS-STATE-MACHINES-F",
+    "type": "TASK",
+    "title": "Add RequestResultStatus and RequestProgress state machines for request_results",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-middleware-request-lifecycle",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-requestresultstatus-and-requestprogress-state-machines-f.md"
   },
   "TASK-ADD-RESPONSE-SCHEMAS-REMAINING-ROUTES": {
     "hash": "33d4b6c",
@@ -7106,6 +7287,18 @@
     "source": ".plan/tickets/TASK-add-security-regression-tests-for-critical-high-bugs.md",
     "git_issue": "e9c30c5"
   },
+  "TASK-ADD-SKILLCATEGORY-AND-PROFICIENCYLEVEL-ENUMS-FOR-CHARACTER-S": {
+    "hash": "c1d6bf1",
+    "git_issue": "c1d6bf1",
+    "extid": "TASK-ADD-SKILLCATEGORY-AND-PROFICIENCYLEVEL-ENUMS-FOR-CHARACTER-S",
+    "type": "TASK",
+    "title": "Add SkillCategory and ProficiencyLevel enums for character_skills",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-skillcategory-and-proficiencylevel-enums-for-character-s.md"
+  },
   "TASK-ADD-TRACE-FATAL-LOG-LEVELS-AND-API-METHODS": {
     "hash": "b8b74dc",
     "extid": "TASK-ADD-TRACE-FATAL-LOG-LEVELS-AND-API-METHODS",
@@ -7118,6 +7311,18 @@
     "source": ".plan/tickets/TASK-add-trace-fatal-log-levels-and-api-methods.md",
     "git_issue": "b8b74dc",
     "status": "done"
+  },
+  "TASK-ADD-TRADETYPE-ENUM-FOR-TRADE-HISTORY-TRADE-TYPE": {
+    "hash": "90ab0fc",
+    "git_issue": "90ab0fc",
+    "extid": "TASK-ADD-TRADETYPE-ENUM-FOR-TRADE-HISTORY-TRADE-TYPE",
+    "type": "TASK",
+    "title": "Add TradeType enum for trade_history.trade_type",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-economy-trading",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-tradetype-enum-for-trade-history-trade-type.md"
   },
   "TASK-ADDITIONAL-CARD-IMPORTS": {
     "hash": "pending",
@@ -10835,6 +11040,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-conversation-branching.md"
   },
+  "TASK-CONVERT-GENERATED-NUMBER-BOOLEAN-SHIMS-TO-BOOLEAN-ACROSS-SCH": {
+    "hash": "cf6f558",
+    "git_issue": "cf6f558",
+    "extid": "TASK-CONVERT-GENERATED-NUMBER-BOOLEAN-SHIMS-TO-BOOLEAN-ACROSS-SCH",
+    "type": "TASK",
+    "title": "Convert Generated<number> boolean shims to boolean state machines across schema",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-data-integrity-acid",
+    "tags": [],
+    "source": ".plan/tickets/TASK-convert-generated-number-boolean-shims-to-boolean-across-sch.md"
+  },
   "TASK-CORS-MIDDLEWARE": {
     "hash": "60592ef",
     "extid": "TASK-CORS-MIDDLEWARE",
@@ -11581,6 +11798,18 @@
     "epic": "Wardrobe / Loadout Avatar Variants",
     "tags": [],
     "source": ".plan/tickets/TASK-deferred-equipped-items-outfit-auto-mapping.md"
+  },
+  "TASK-DEFINE-BOOLEANSTATE-STATE-MACHINE-FOR-SINGLE-BOOLEAN-FIELDS": {
+    "hash": "e90da19",
+    "git_issue": "e90da19",
+    "extid": "TASK-DEFINE-BOOLEANSTATE-STATE-MACHINE-FOR-SINGLE-BOOLEAN-FIELDS",
+    "type": "TASK",
+    "title": "Define BooleanState state machine for single-boolean fields",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-data-integrity-acid",
+    "tags": [],
+    "source": ".plan/tickets/TASK-define-booleanstate-state-machine-for-single-boolean-fields.md"
   },
   "TASK-DEFINED-BUT-NOT-ENFORCED-DEBT-UNUSED-SCHEMAS-AND-DEAD-VALIDA": {
     "hash": "06df3a3",
@@ -12766,6 +12995,18 @@
     "source": ".plan/tickets/TASK-fix-actor-item-value-type.md",
     "status": "done",
     "git_issue": "a97459f"
+  },
+  "TASK-FIX-CHAT-SETUP-TEMPLATES-VISUAL-NOVEL-REMOVE-OR-TYPE-AS-CHAT": {
+    "hash": "679c84c",
+    "git_issue": "679c84c",
+    "extid": "TASK-FIX-CHAT-SETUP-TEMPLATES-VISUAL-NOVEL-REMOVE-OR-TYPE-AS-CHAT",
+    "type": "TASK",
+    "title": "Fix chat_setup_templates.visual_novel: remove or type as ChatRenderingOverride",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fix-chat-setup-templates-visual-novel-remove-or-type-as-chat.md"
   },
   "TASK-FIX-CRYPTO-ISOLATION": {
     "hash": "8948c86",
@@ -19874,6 +20115,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-two-tier-custom-instructions.md",
     "status": "done"
+  },
+  "TASK-TYPESCRIPT-7-MIGRATION-TYPECHECK-FAILURES": {
+    "hash": "a889d1f",
+    "git_issue": "a889d1f",
+    "extid": "TASK-TYPESCRIPT-7-MIGRATION-TYPECHECK-FAILURES",
+    "type": "TASK",
+    "title": "TypeScript 7 migration — typecheck failures from incomplete visualNovel → renderingOverride migration",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
   },
   "TASK-TYPESCRIPT-MJS-RECONCILIATION": {
     "hash": "728c3ff",
