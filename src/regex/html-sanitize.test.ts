@@ -7,31 +7,48 @@ import {
   JS_URL_ATTR,
   ON_EVENT_DOUBLE,
   ON_EVENT_SINGLE,
-  ON_EVENT_UNQUOTED,
-  SCRIPT_TAG,
+  stripScriptTags,
 } from "./html-sanitize";
 
-describe("SCRIPT_TAG", () => {
-  test("strips <script>...</script>", () => {
-    expect("<script>alert(1)</script>hello".replace(SCRIPT_TAG, "",),).toBe("hello",);
+// ── Script Tag ────────────────────────────────────────────
+
+describe("stripScriptTags", () => {
+  test("removes simple script tag", () => {
+    const html = '<p>Hello</p><script>alert("xss")</script><p>World</p>';
+    expect(stripScriptTags(html,),).toBe("<p>Hello</p><p>World</p>",);
   });
 
-  test("strips multiline <script> block", () => {
-    const input = "before<script>\n  alert(1);\n</script>after";
-    expect(input.replace(SCRIPT_TAG, "",),).toBe("beforeafter",);
+  test("removes multiline script tag", () => {
+    const html = '<script type="text/javascript">\nalert("xss");\n</script>';
+    expect(stripScriptTags(html,),).toBe("",);
   });
 
-  test("strips <script> with attributes", () => {
-    expect('<script src="evil.js"></script>safe'.replace(SCRIPT_TAG, "",),).toBe("safe",);
+  test("removes script with attributes", () => {
+    const html = '<script src="/evil.js" async></script>';
+    expect(stripScriptTags(html,),).toBe("",);
   });
 
-  test("does not match <script> without closing tag (pair-only regex)", () => {
-    const input = "before<script>alert(1)after";
-    expect(input.replace(SCRIPT_TAG, "",),).toBe(input,);
+  test("preserves non-script content", () => {
+    const html = "<p>Safe content</p>";
+    expect(stripScriptTags(html,),).toBe("<p>Safe content</p>",);
   });
 
-  test("leaves non-script content intact", () => {
-    expect("<p>hello</p>".replace(SCRIPT_TAG, "",),).toBe("<p>hello</p>",);
+  test("preserves non-script words sharing the prefix", () => {
+    const html = "<scripture>not script</scripture>";
+    expect(stripScriptTags(html,),).toBe(html,);
+  });
+
+  test("removes uppercase script tag case-insensitively", () => {
+    const html = "<SCRIPT>alert(1)</SCRIPT>";
+    expect(stripScriptTags(html,),).toBe("",);
+  });
+
+  test("handles many unterminated <script prefixes in linear time", () => {
+    // The former SCRIPT_TAG regex nested-quantifier backtracked quadratically
+    // here (~428ms on a 56KB input and minutes on 280KB); the linear scanner
+    // must complete and return the input unchanged.
+    const s = "<script".repeat(40_000,);
+    expect(stripScriptTags(s,),).toBe(s,);
   });
 });
 
@@ -118,8 +135,7 @@ describe("DANGEROUS_TAGS", () => {
 describe("full sanitizeHtml pipeline", () => {
   // Replicate the sanitizeHtml logic from stream-render.ts
   function sanitizeHtml(html: string,): string {
-    return html
-      .replaceAll(SCRIPT_TAG, "",)
+    return stripScriptTags(html,)
       .replaceAll(ON_EVENT_DOUBLE, "",)
       .replaceAll(ON_EVENT_SINGLE, "",)
       .replaceAll(ON_EVENT_UNQUOTED, "",)

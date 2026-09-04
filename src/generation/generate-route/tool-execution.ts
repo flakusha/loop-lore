@@ -15,14 +15,7 @@
 
 import { registry, } from "../../plugins/registry";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
-import {
-  DANGEROUS_TAGS,
-  JS_URL_ATTR,
-  ON_EVENT_DOUBLE,
-  ON_EVENT_SINGLE,
-  ON_EVENT_UNQUOTED,
-  SCRIPT_TAG,
-} from "../../regex/html-sanitize";
+import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, stripScriptTags, } from "../../regex/html-sanitize";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 
@@ -39,8 +32,7 @@ export const MAX_TOOL_ROUNDS = 5;
  */
 export function sanitizeToolOutput(content: string,): string {
   if (!content) { return content; }
-  return content
-    .replace(SCRIPT_TAG, "",)
+  return stripScriptTags(content,)
     .replace(ON_EVENT_DOUBLE, "",)
     .replace(ON_EVENT_SINGLE, "",)
     .replace(ON_EVENT_UNQUOTED, "",)
