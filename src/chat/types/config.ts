@@ -102,9 +102,8 @@ export function resolveFeatureFlags(
   overrides?: Partial<ModeFeatureFlags>,
 ): ModeFeatureFlags {
   const defaults = MODE_DEFAULTS[mode] ?? MODE_DEFAULTS.direct;
-  return { ...defaults, ...overrides };
+  return { ...defaults, ...overrides, };
 }
-
 
 /**
  * Chat-level GM configuration. Stored as JSON in `chats.gm_config`.

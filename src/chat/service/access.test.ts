@@ -9,10 +9,6 @@
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import { type Kysely, } from "kysely";
-import {
-  checkChatAccess,
-  checkChatSettingsAccess,
-} from "./access";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
@@ -22,6 +18,10 @@ import {
   insertChats,
   insertUsers,
 } from "../../test-utils/insert-helpers";
+import {
+  checkChatAccess,
+  checkChatSettingsAccess,
+} from "./access";
 
 let dbHandle: TestDb;
 let database: Kysely<DB>;
@@ -47,7 +47,7 @@ beforeEach(async () => {
 async function seedChatWithParticipants(opts: {
   creatorId: string;
   participants?: { userId: string; role: "owner" | "member" | "observer" | "guest" }[];
-}): Promise<string> {
+},): Promise<string> {
   await insertUsers(database, `u-${opts.creatorId}`, "User", { id: opts.creatorId, } as never,);
   await insertActors(database, opts.creatorId, {
     id: opts.creatorId,
@@ -80,20 +80,20 @@ async function seedChatWithParticipants(opts: {
     }
   }
   return `chat-${opts.creatorId}`;
-};
+}
 
 describe("checkChatAccess (broad read/join)", () => {
   it("grants admin role via admin.chat permission", async () => {
     const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
     const result = await checkChatAccess(database, chatId, "u-other", "admin",);
     expect(result.ok,).toBe(true,);
-  },);
+  });
 
   it("grants chat creator", async () => {
     const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
     const result = await checkChatAccess(database, chatId, "u-owner", null,);
     expect(result.ok,).toBe(true,);
-  },);
+  });
 
   it("grants any participant (member)", async () => {
     const chatId = await seedChatWithParticipants({
@@ -102,27 +102,27 @@ describe("checkChatAccess (broad read/join)", () => {
     },);
     const result = await checkChatAccess(database, chatId, "u-member", null,);
     expect(result.ok,).toBe(true,);
-  },);
+  });
 
   it("denies non-participant", async () => {
     const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
     const result = await checkChatAccess(database, chatId, "u-stranger", null,);
     expect(result.ok,).toBe(false,);
-  },);
-},);
+  });
+});
 
 describe("checkChatSettingsAccess (strict settings-mutation)", () => {
   it("grants admin role", async () => {
     const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
     const result = await checkChatSettingsAccess(database, chatId, "u-other", "admin",);
     expect(result.ok,).toBe(true,);
-  },);
+  });
 
   it("grants chat creator", async () => {
     const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
     const result = await checkChatSettingsAccess(database, chatId, "u-owner", null,);
     expect(result.ok,).toBe(true,);
-  },);
+  });
 
   it("grants participant with role_in_chat=owner", async () => {
     const chatId = await seedChatWithParticipants({
@@ -131,7 +131,7 @@ describe("checkChatSettingsAccess (strict settings-mutation)", () => {
     },);
     const result = await checkChatSettingsAccess(database, chatId, "u-coowner", null,);
     expect(result.ok,).toBe(true,);
-  },);
+  });
 
   it("denies participant with role_in_chat=member", async () => {
     const chatId = await seedChatWithParticipants({
@@ -141,7 +141,7 @@ describe("checkChatSettingsAccess (strict settings-mutation)", () => {
     const result = await checkChatSettingsAccess(database, chatId, "u-member", null,);
     expect(result.ok,).toBe(false,);
     if (!result.ok) { expect(result.error.code,).toBe("forbidden",); }
-  },);
+  });
 
   it("denies observer participant", async () => {
     const chatId = await seedChatWithParticipants({
@@ -150,7 +150,7 @@ describe("checkChatSettingsAccess (strict settings-mutation)", () => {
     },);
     const result = await checkChatSettingsAccess(database, chatId, "u-observer", null,);
     expect(result.ok,).toBe(false,);
-  },);
+  });
 
   it("denies guest participant", async () => {
     const chatId = await seedChatWithParticipants({
@@ -159,11 +159,11 @@ describe("checkChatSettingsAccess (strict settings-mutation)", () => {
     },);
     const result = await checkChatSettingsAccess(database, chatId, "u-guest", null,);
     expect(result.ok,).toBe(false,);
-  },);
+  });
 
   it("denies non-participant", async () => {
     const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
     const result = await checkChatSettingsAccess(database, chatId, "u-stranger", null,);
     expect(result.ok,).toBe(false,);
-  },);
-},);
+  });
+});
