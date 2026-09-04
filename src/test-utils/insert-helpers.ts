@@ -992,6 +992,8 @@ export async function insertActors(
     data_source_format?: string | null;
     data_raw?: string | null;
     agent_role?: string | null;
+    growth_mode?: Generated<string>;
+    llm_assist_enabled?: Generated<number>;
   },
 ): Promise<void> {
   await db.insertInto("actors",).values({
@@ -1346,6 +1348,8 @@ export async function insertCharacterLocationTraits(
     penalty?: number | null;
     effects?: string | null;
     equipment_override?: string | null;
+    last_drifted_at?: string | null;
+    drift_count?: Generated<number>;
   },
 ): Promise<void> {
   await db.insertInto("character_location_traits",).values({
@@ -1426,6 +1430,8 @@ export async function insertCharacterRelationships(
     familiarity?: Generated<number>;
     is_bidirectional?: Generated<number>;
     metadata?: string | null;
+    evolution_tracked?: Generated<number>;
+    last_evolution_at?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("character_relationships",).values({
@@ -1485,6 +1491,9 @@ export async function insertCharacterSkills(
     metadata?: Generated<string>;
     created_at?: Generated<string>;
     updated_at?: Generated<string>;
+    acquired_at?: string | null;
+    acquisition_reason?: string | null;
+    acquisition_source?: Generated<string>;
   },
 ): Promise<void> {
   await db.insertInto("character_skills",).values({
@@ -1579,7 +1588,7 @@ export async function insertCharacterWorldTraits(
   trait_value: string,
   created_at: string,
   updated_at: string,
-  opts?: { id?: Generated<string> },
+  opts?: { id?: Generated<string>; last_drifted_at?: string | null; drift_count?: Generated<number> },
 ): Promise<void> {
   await db.insertInto("character_world_traits",).values({
     id: crypto.randomUUID(),
@@ -3426,6 +3435,53 @@ export async function insertE2eSkippedMessageKeys(
     recipient_actor_id,
     chain_index,
     message_key,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a character_arc row. */
+export async function insertCharacterArc(
+  db: Db,
+  actor_id: string,
+  current_stage: string,
+  updated_at: string,
+  opts?: { id?: Generated<string>; stage_description?: string | null },
+): Promise<void> {
+  await db.insertInto("character_arc",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    current_stage,
+    updated_at,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a growth_log row. */
+export async function insertGrowthLog(
+  db: Db,
+  actor_id: string,
+  axis: string,
+  event_type: string,
+  recorded_at: string,
+  opts?: {
+    id?: Generated<string>;
+    status?: Generated<string>;
+    subject_kind?: string | null;
+    subject_id?: string | null;
+    before_json?: string | null;
+    after_json?: string | null;
+    reason?: Generated<string>;
+    source_event_id?: string | null;
+    confirmed_at?: string | null;
+    confirmed_by?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("growth_log",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    axis,
+    event_type,
+    recorded_at,
     ...opts,
   } as any,).execute();
 }
