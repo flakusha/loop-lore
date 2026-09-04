@@ -12,6 +12,7 @@ import type {
   StorageFormat,
   WorldModifierType,
 } from "./enums";
+import type { GrowthMode, } from "./growth";
 
 // ── Feature Flags ───────────────────────────────────
 /** */
@@ -112,6 +113,10 @@ export interface CanonicalCharacter {
   content_rating?: ContentRating;
   nsfw_categories?: string[];
   nsfw_hard_limits?: string[];
+  /** Per-character author toggle (`.plan/epics/epic-character-growth.md` D1). */
+  growth_mode?: GrowthMode;
+  /** Opt-in LLM-assist pass (D6). Default false. */
+  llm_assist_enabled?: boolean;
   lorebook?: LorebookData;
   assets?: CharacterAsset[];
   extensions?: CharacterExtensions;

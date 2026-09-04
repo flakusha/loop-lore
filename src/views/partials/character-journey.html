@@ -1,0 +1,40 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Character Journey — player-facing partial.
+
+  Renders the character's current arc stage + last 3 applied growth
+  entries (no internal drift details, no pending entries). Used by the
+  character card / detail modal.
+
+  Server-rendered template — no Alpine.js needed.
+
+  See .plan/epics/epic-character-growth.md (D7, Q7 redaction).
+-->
+{{if .Arc}}
+<div class="character-journey" data-testid="character-journey">
+  <h4 class="character-journey-title">Character Journey</h4>
+  <p class="character-journey-arc">
+    Current arc:
+    <strong>{{.Arc.CurrentStage}}</strong>
+    {{if .Arc.StageDescription}}
+    — {{.Arc.StageDescription}}
+    {{end}}
+  </p>
+
+  {{if .GrowthEntries}}
+  <ul class="character-journey-entries">
+    {{range .GrowthEntries}}
+    <li class="character-journey-entry" data-axis="{{.Axis}}" data-event="{{.EventType}}">
+      <span class="entry-axis">{{.Axis}}</span>
+      <span class="entry-reason">{{.Reason}}</span>
+      <span class="entry-time">{{.RecordedAt}}</span>
+    </li>
+    {{end}}
+  </ul>
+  {{else}}
+  <p class="character-journey-empty">No growth recorded yet.</p>
+  {{end}}
+</div>
+{{end}}
