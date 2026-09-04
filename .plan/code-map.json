@@ -7058,6 +7058,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-heatphase-state-machine-for-character-heat-cycle-current.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-nsfwencounterstatus-state-machine-for-nsfw-encounters-st.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-encounter-system.md"
     },
     {
@@ -7506,6 +7514,10 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-db-migration-compaction.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-local-process-swarm.md"
     },
     {
@@ -7553,6 +7565,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-actors.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-db-migration-compaction.md"
     },
     {
       "kind": "spec",
@@ -8033,6 +8049,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-db-migration-compaction.md"
     },
     {
       "kind": "epic",
@@ -9024,6 +9044,10 @@
     }
   ],
   "src/db/state.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-compositevalidator-for-boolean-enum-state-combinations.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
@@ -22075,6 +22099,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-cross-platform-portability.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-db-migration-compaction.md"
     },
     {
       "kind": "epic",
