@@ -20,7 +20,7 @@ describe("insertUnique", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
-    ({ db, } = await createTestDb(),);
+    ({ db, } = await createTestDb());
   },);
 
   afterAll(async () => {
@@ -86,7 +86,7 @@ describe("upsertByUnique", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
-    ({ db, } = await createTestDb(),);
+    ({ db, } = await createTestDb());
   },);
 
   afterAll(async () => {
@@ -202,7 +202,7 @@ describe("upsertByUniqueWith", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
-    ({ db, } = await createTestDb(),);
+    ({ db, } = await createTestDb());
   },);
   afterAll(async () => {
     await db.destroy();
