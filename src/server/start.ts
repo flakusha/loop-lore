@@ -203,7 +203,9 @@ export async function start() {
 
   process.on("uncaughtException", (err,) => {
     try {
-      logger.fatal({ message: "Uncaught exception", error: String(err,), },);
+      // Pass the Error object (not String(err)) so the logger captures the
+      // full stack for maxStackBytes post-mortem analysis.
+      logger.fatal({ message: "Uncaught exception", }, err,);
     } catch {
       /* last resort */
     }
@@ -212,7 +214,8 @@ export async function start() {
 
   process.on("unhandledRejection", (reason,) => {
     try {
-      logger.fatal({ message: "Unhandled rejection", error: String(reason,), },);
+      const err = reason instanceof Error ? reason : new Error(String(reason,),);
+      logger.fatal({ message: "Unhandled rejection", }, err,);
     } catch {
       /* last resort */
     }
