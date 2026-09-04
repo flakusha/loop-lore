@@ -22,7 +22,6 @@ const ChatIdParams = {
 } as const;
 
 const splitBody = t.Object({
-  actorId: t.Optional(t.String(),),
   branches: t.Array(
     t.Object({
       name: t.Optional(t.String(),),
@@ -34,7 +33,6 @@ const splitBody = t.Object({
 
 const reuniteBody = t.Object({
   secondaryChatId: t.String(),
-  actorId: t.Optional(t.String(),),
 },);
 
 /**
@@ -70,8 +68,10 @@ function handleSplit(database: Kysely<DB>,) {
     const { id: chatId, } = ctx.params;
     const body = ctx.body as (typeof splitBody)["static"];
 
-    const actorId = body.actorId ?? userId;
-    const result = await splitParty(database, { chatId, actorId, branches: body.branches, },);
+    // Ownership is derived from the session user, NOT a client-supplied
+    // actorId — the latter would let a non-owner spoof the chat owner and
+    // bypass the `created_by` guard in `splitParty` (trust-boundary IDOR).
+    const result = await splitParty(database, { chatId, actorId: userId, branches: body.branches, },);
 
     if ("code" in result) {
       const status = result.code === "not_found"
@@ -97,11 +97,13 @@ function handleReunite(database: Kysely<DB>,) {
     const { id: primaryChatId, } = ctx.params;
     const body = ctx.body as (typeof reuniteBody)["static"];
 
-    const actorId = body.actorId ?? userId;
+    // Ownership is derived from the session user, NOT a client-supplied
+    // actorId — the latter would let a non-owner spoof the primary/secondary
+    // chat owner and bypass the `created_by` guard in `reuniteChats`.
     const result = await reuniteChats(database, {
       primaryChatId,
       secondaryChatId: body.secondaryChatId,
-      actorId,
+      actorId: userId,
     },);
 
     if ("code" in result) {
