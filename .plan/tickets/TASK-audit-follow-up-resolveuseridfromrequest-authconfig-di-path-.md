@@ -3,7 +3,7 @@
 
 # TASK: Audit follow-up: resolveUserIdFromRequest authConfig DI path untested
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (commit `00d5e0f2`)
 **Priority:** low
 **Effort:** Medium
 
@@ -13,6 +13,50 @@ Audit found c9ca8edd added optional 4th authConfig param to resolveUserIdFromReq
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Fixed in commit `00d5e0f2` (`feat(auth): wire DI authConfig in export routes; tests for triggerAutoGeneration catch path + DI override`).
+
+Both call sites now pass the 4th `authConfig` arg:
+
+```diff
+- const userId = await resolveUserIdFromRequest(ctx.request, database, "solo",);
++ const { auth: authConfig, } = loadConfig();
++ const userId = await resolveUserIdFromRequest(ctx.request, database, "solo", authConfig,);
+```
+
+- `src/routes/export.ts` (POST `/api/export`) — calls `loadConfig()` to obtain `authConfig`, then passes it as the 4th arg.
+- `src/routes/export-sse/start.ts` (POST `/api/export/progress`) — same wiring.
+
+The DI contract is also covered by a regression test in `src/middleware/auth.test.ts`:
+
+```ts
+it("uses the authConfig 4th-arg over env when DI is provided (BUG-resolveuseridfromrequest-authconfig-di)", async () => {
+  // …seeds a sessions row keyed by sha256(token) and confirms:
+  //  – env fallback ON + no DI = resolves via sha256 (legacy path active)
+  //  – DI with legacyOpaqueTokenFallback=false suppresses the env-driven fallback
+  expect(await resolveUserIdFromRequest(req, db, "demo",)).toBe(userId,);
+  expect(
+    await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_DI_CONFIG,),
+  ).toBe(solo?.id ?? null,);
+});
+```
+
+DI is now wired in production AND pinned by a test, so a future refactor cannot silently regress to "callers pass 3 args and the 4th arg is dead code again".
+
+Verification (scoped, no project-wide check):
+
+```
+$ bun test src/middleware/auth.test.ts src/generation/auto-gen/auto-generation.test.ts
+ 20 pass
+ 0 fail
+```
+
+## Related
+
+- `TASK-audit-follow-up-triggerautogeneration-catch-path-untested` — sibling ticket in the same batch
+- git issue `0735878`
