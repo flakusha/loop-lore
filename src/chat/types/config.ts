@@ -130,6 +130,28 @@ export interface GmConfig {
   assistantRole?: "off" | "helper" | "gm" | "moderator";
   /** Per-chat rendering override. `null` (default) means "render per ChatMode default" — see `resolveRendering()`. */
   renderingOverride?: ChatRenderingOverride | null;
+  /** Visual novel mode (legacy boolean, superseded by `renderingOverride`). */
+  visualNovel?: boolean;
+  /** VN panel layout. */
+  vnLayout?: "overlay" | "below" | "split";
+  /** VN typewriter effect enabled. */
+  vnTypewriter?: boolean;
+  /** VN typewriter speed (ms per character). */
+  vnTypewriterSpeed?: number;
+  /** VN scene transition style. */
+  vnTransition?: "fade" | "cut" | "dissolve" | "slide" | "wipe";
+  /** VN auto-advance between scenes. */
+  vnAutoAdvance?: boolean;
+  /** VN image scaling (contain/cover/fill/auto). */
+  vnImageScaling?: "contain" | "cover" | "fill" | "auto";
+  /** VN auto-advance delay in seconds. */
+  vnAutoAdvanceDelay?: number;
+  /** VN dialogue-box opacity (0–1, overlay layout). */
+  vnDialogueBoxOpacity?: number;
+  /** VN portrait size as percentage of scene width. */
+  vnPortraitSize?: number;
+  /** VN portrait:text split ratio (split layout). */
+  vnSplitRatio?: number;
   storyMode?: boolean;
   /** Active human-GM narrative guidance (persisted, mutable at runtime). */
   gmGuidance?: GmGuidance;
@@ -161,6 +183,10 @@ export interface GmConfig {
    * GM `llmConfig` (or the chat's resolved model).
    */
   actorModels?: Record<string, { model: string; provider: string }>;
+  /** Response length preset: short, medium, long, or custom. */
+  responseLengthPreset?: "short" | "medium" | "long" | "custom";
+  /** Custom token count when preset is "custom" (50–2000). */
+  responseLengthCustom?: number;
   /**
    * Output styling (genre/register/tone) for this chat. Resolved via the
    * chat → user → server fallback and injected as a prompt section.
