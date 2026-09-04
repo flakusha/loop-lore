@@ -431,6 +431,22 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("growth_log", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    axis: col("text", { notNull: true, },),
+    event_type: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    subject_kind: col("text",),
+    subject_id: col("text",),
+    before_json: col("text",),
+    after_json: col("text",),
+    reason: col("text", { notNull: true, hasDefault: true, },),
+    source_event_id: col("text",),
+    recorded_at: col("text", { notNull: true, },),
+    confirmed_at: col("text",),
+    confirmed_by: col("text",),
+  },)
   .table("log_entries", {
     id: col("text", { primaryKey: true, },),
     level: col("integer", { notNull: true, hasDefault: true, },),
@@ -882,6 +898,13 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("character_arc", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    current_stage: col("text", { notNull: true, },),
+    stage_description: col("text",),
+    updated_at: col("text", { notNull: true, },),
+  },)
   .table("character_arousal", {
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
@@ -1042,6 +1065,8 @@ export const SCHEMA = new SchemaManifest()
     equipment_override: col("text", { hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    last_drifted_at: col("text",),
+    drift_count: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("character_mood", {
     id: col("text", { primaryKey: true, },),
@@ -1079,6 +1104,8 @@ export const SCHEMA = new SchemaManifest()
     metadata: col("text", { hasDefault: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    evolution_tracked: col("integer", { notNull: true, hasDefault: true, },),
+    last_evolution_at: col("text",),
   },)
   .table("character_seduction_skills", {
     id: col("text", { primaryKey: true, },),
@@ -1108,6 +1135,9 @@ export const SCHEMA = new SchemaManifest()
     metadata: col("text", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
+    acquired_at: col("text",),
+    acquisition_reason: col("text",),
+    acquisition_source: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("character_stats", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
@@ -1165,6 +1195,8 @@ export const SCHEMA = new SchemaManifest()
     trait_value: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+    last_drifted_at: col("text",),
+    drift_count: col("integer", { notNull: true, hasDefault: true, },),
   },)
   // ── Core: Actors & Characters ──────────────────────────────────────────────
   .table("actors", {
@@ -1197,6 +1229,8 @@ export const SCHEMA = new SchemaManifest()
     data_source_format: col("text", { hasDefault: true, },),
     data_raw: col("text",),
     agent_role: col("text",),
+    growth_mode: col("text", { notNull: true, hasDefault: true, },),
+    llm_assist_enabled: col("integer", { notNull: true, hasDefault: true, },),
   },)
   .table("characters", {
     id: col("text", { primaryKey: true, },),
