@@ -138,14 +138,19 @@ function buildChatUpdates(
   if (typeof params.freezePanel === "boolean" && can(params.userRole, "admin.chat",)) {
     updates.story_state = patchStoryState(fullChat, { isPanelFrozen: params.freezePanel, },);
   }
+  // `fullChat.gm_config` is a JSON string (or null), not a record. Parse it
+  // before spreading — spreading a string produces numeric-index garbage keys.
+  const parsedGmConfig = fullChat.gm_config
+    ? safeJsonParse<Record<string, unknown>>(fullChat.gm_config,)
+    : null;
+  const baseGmConfig = parsedGmConfig?.ok ? parsedGmConfig.value : {};
   let nextGmConfig: Record<string, unknown> | null | undefined;
   if (params.renderingOverride !== undefined) {
-    const base = (fullChat.gm_config as Record<string, unknown> | null) ?? {};
-    nextGmConfig = { ...base, renderingOverride: params.renderingOverride, };
+    nextGmConfig = { ...baseGmConfig, renderingOverride: params.renderingOverride, };
   }
   if (params.gmConfig !== undefined) {
     nextGmConfig = {
-      ...(nextGmConfig ?? (fullChat.gm_config as Record<string, unknown> | null) ?? {}),
+      ...(nextGmConfig ?? baseGmConfig),
       ...params.gmConfig,
     };
   }
