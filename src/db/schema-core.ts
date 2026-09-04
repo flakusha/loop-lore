@@ -80,6 +80,31 @@ export interface Personas {
   max_tokens: number | null;
   model: string | null;
 }
+
+export interface CharacterArc {
+  id: Generated<string>;
+  actor_id: string;
+  current_stage: string;
+  stage_description: string | null;
+  updated_at: string;
+}
+
+export interface GrowthLog {
+  id: Generated<string>;
+  actor_id: string;
+  axis: string;
+  event_type: string;
+  status: Generated<string>;
+  subject_kind: string | null;
+  subject_id: string | null;
+  before_json: string | null;
+  after_json: string | null;
+  reason: Generated<string>;
+  source_event_id: string | null;
+  recorded_at: string;
+  confirmed_at: string | null;
+  confirmed_by: string | null;
+}
 export interface GroupInitiatives {
   chat_id: string;
   scene_id: string;
@@ -168,7 +193,11 @@ export interface Actors {
   data_source_format: string | null;
   data_raw: string | null;
   agent_role: string | null;
+  growth_mode: Generated<string>;
+  llm_assist_enabled: Generated<number>;
 }
+
+
 // ── chat_participants ────────────────────────────────────────────
 export interface ChatParticipants {
   chat_id: string;
@@ -652,7 +681,12 @@ export interface CharacterSkills {
   prerequisites: Generated<string>;
   metadata: Generated<string>;
   created_at: Generated<string>;
+  created_at: Generated<string>;
   updated_at: Generated<string>;
+  acquired_at: string | null;
+  acquisition_reason: string | null;
+  acquisition_source: Generated<string>;
+}
 }
 
 // ── chat_location_events ────────────────────────────────────────────
