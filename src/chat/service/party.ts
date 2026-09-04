@@ -11,6 +11,7 @@
  */
 import type { Kysely, } from "kysely";
 import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../crypto";
+import { jsonParseOr } from "../../utils";
 import {
   ChatParticipantRole,
   ContentEncoding,

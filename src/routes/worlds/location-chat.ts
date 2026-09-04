@@ -13,6 +13,7 @@ import { createChat, getChatSetupTemplate, } from "../../chat/service";
 import type { ChatSetupTemplate, } from "../../chat/service/types";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils";
+import type { ChatRenderingOverride } from "../../db/enums-core/chat";
 
 /** */
 export interface CreateLocationChatInput {
