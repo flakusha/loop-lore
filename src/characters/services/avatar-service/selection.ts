@@ -12,33 +12,73 @@ import { getWorldAvatarConfig, } from "./world-config";
 /** All tag types for iteration */
 const ALL_TAG_TYPES: AvatarTagType[] = ["emotion", "mood", "action", "location", "time", "outfit",];
 
+/** Default fallback chain used when no avatar_config is set. */
+const DEFAULT_FALLBACK_CHAIN: AvatarTagType[] = ["emotion", "mood", "action", "location", "time", "outfit",];
+
+/**
+ * Resolve a base avatar for an actor that has zero emotion avatars.
+ *
+ * Returns the synthesized base `Avatar` when the actor has a base asset;
+ * returns `null` when neither emotion avatars nor a base asset exist.
+ * BUG-avatar-select-empty-throws-no-frontend-fallback.
+ */
+async function resolveBaseAvatar(
+  db: Kysely<DB>,
+  actorId: string,
+): Promise<Avatar | null> {
+  const actor = await db
+    .selectFrom("actors",)
+    .select(["id", "avatar_asset_id", "created_at", "updated_at",],)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  if (!actor?.avatar_asset_id) { return null; }
+  const now = new Date().toISOString();
+  return {
+    id: `base:${actorId}`,
+    actorId,
+    assetId: actor.avatar_asset_id,
+    label: "base portrait",
+    tags: {},
+    isPrimary: true,
+    sortOrder: -1,
+    createdAt: actor.created_at,
+    updatedAt: actor.updated_at ?? now,
+  };
+}
+
 /**
  * Select the best avatar based on context.
- * @param db
- * @param actorId
- * @param context
- * @param worldId
+ *
+ * Resolution order:
+ *  1. Empty-list: zero emotion avatars → return base portrait (or null).
+ *  2. Primary pass: weighted-score ≥ 1 → return that avatar.
+ *  3. Fallback chain: when primary score is below 1 (no tag actually
+ *     matched), walk `fallback_chain` and pick the first avatar that has
+ *     a value for that chain tag at all (tag-presence, not value-match).
+ *  4. Base portrait: when chain yields nothing, return base portrait.
+ *
+ * BUG-avatar-select-fallback-chain-unwired.
  */
 export async function selectAvatar(
   db: Kysely<DB>,
   actorId: string,
   context: AvatarSelectionContext,
   worldId?: string,
-): Promise<Avatar> {
+): Promise<Avatar | null> {
   const avatars = await getAvatars(db, actorId,);
   if (avatars.length === 0) {
-    throw new Error(`No avatars found for actor ${actorId}`,);
+    return resolveBaseAvatar(db, actorId,);
   }
 
-  // Get config (world-specific or default)
   const worldConfig = worldId
     ? await getWorldAvatarConfig(db, actorId, worldId,)
     : undefined;
   const defaultConfig = await getAvatarConfig(db, actorId,);
 
-  // Merge world-specific overrides with default config
-  const selectionRule = worldConfig?.selectionRuleOverride ?? defaultConfig?.selectionRule ?? "emotion_first";
-  const weights = worldConfig?.weightsOverride
+  const selectionRule: AvatarSelectionRule = worldConfig?.selectionRuleOverride ??
+    defaultConfig?.selectionRule ??
+    "emotion_first";
+  const weights: Record<AvatarTagType, number> = worldConfig?.weightsOverride
     ? { ...defaultConfig?.weights, ...worldConfig.weightsOverride, }
     : defaultConfig?.weights ?? {
       emotion: 0.4,
@@ -48,35 +88,41 @@ export async function selectAvatar(
       time: 0.05,
       outfit: 0.05,
     };
+  const fallbackChain: AvatarTagType[] = defaultConfig?.fallbackChain ??
+    DEFAULT_FALLBACK_CHAIN;
 
-  // Apply selection rule
-  const rule = selectionRule;
-
-  let bestAvatar: Avatar | undefined = avatars[0];
-  let bestScore = -1;
-
+  let primaryAvatar: Avatar | undefined;
+  let primaryScore = -1;
   for (const avatar of avatars) {
-    const score = calculateAvatarScore(avatar, context, weights, rule,);
-    if (score > bestScore) {
-      bestScore = score;
-      bestAvatar = avatar;
+    const score = calculateAvatarScore(avatar, context, weights, selectionRule,);
+    if (score > primaryScore) {
+      primaryScore = score;
+      primaryAvatar = avatar;
     }
   }
 
-  if (!bestAvatar) {
-    throw new Error(`No avatars found for actor ${actorId}`,);
+  // Threshold of 1.0: at least one tag type must have matched (the
+  // isPrimary 0.1 tiebreak alone is not enough to claim a winner). Below
+  // the threshold we treat the primary pass as inconclusive and defer to
+  // the fallback chain.
+  if (primaryScore >= 1 && primaryAvatar) {
+    return primaryAvatar;
   }
 
-  return bestAvatar;
+  // Fallback chain walk: pick the first avatar that has a value for each
+  // chain tag in order. This is tag-presence based — the chain decides
+  // which tag type is most authoritative when the weighted-score pass
+  // cannot produce a clear winner.
+  for (const tag of fallbackChain) {
+    const match = avatars.find((a,) => typeof a.tags[tag] === "string" && a.tags[tag].length > 0);
+    if (match) { return match; }
+  }
+
+  return resolveBaseAvatar(db, actorId,);
 }
 
 /**
  * Calculate score for an avatar based on context and weights.
- * Iterates over all tag types, comparing context values to avatar tags.
- * @param avatar
- * @param context
- * @param weights
- * @param rule
  */
 export function calculateAvatarScore(
   avatar: Avatar,
@@ -86,7 +132,6 @@ export function calculateAvatarScore(
 ): number {
   let score = 0;
 
-  // Score each tag type
   for (const tag of ALL_TAG_TYPES) {
     const contextValue = context[tag];
     const avatarValue = avatar.tags[tag];
@@ -96,7 +141,6 @@ export function calculateAvatarScore(
     }
   }
 
-  // Apply rule modifiers
   switch (rule) {
     case "emotion_first":
       if (context.emotion && avatar.tags.emotion) { score *= 1.5; }
@@ -113,10 +157,8 @@ export function calculateAvatarScore(
         context.time && avatar.tags.time === context.time
       ) { score *= 1.5; }
       break;
-      // "weighted", "random", "fixed" - no boost
   }
 
-  // Bonus for primary avatar (tiebreaker)
   if (avatar.isPrimary) {
     score += 0.1;
   }

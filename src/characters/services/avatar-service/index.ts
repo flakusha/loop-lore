@@ -111,7 +111,7 @@ export class AvatarService {
     actorId: string,
     context: AvatarSelectionContext,
     worldId?: string,
-  ): Promise<Avatar> {
+  ): Promise<Avatar | null> {
     return selectAvatarDispatch(this.db, actorId, context, worldId,);
   }
 
