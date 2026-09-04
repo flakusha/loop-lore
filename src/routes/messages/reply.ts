@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 import { type Kysely, sql, } from "kysely";
+import type { AsyncStore, } from "../../async/store";
 import { generateResponse, isAssistantEnabled, } from "../../assistant/service";
 import type { Config, } from "../../config/schema";
+
 import {
   encryptMessageContent,
   getSmk,
@@ -22,6 +23,23 @@ import { filter as filterProfanity, } from "../../profanity/service";
 import { uid, } from "../../utils";
 import { ErrorCode, jsonCreated, jsonError, } from "../http-utils";
 import { log, } from "./helpers";
+
+/**
+ * Detect whether an error from the swipe-index INSERT path is the unique
+ * violation we expect to retry. Matches BOTH the Kysely/SQLite text form
+ * (`UNIQUE constraint failed: messages.swipe_index`) AND a more specific
+ * guard against the unique index name (`idx_messages_swipe_unique`) in
+ * case the driver changes the message text. Scoped to the columns covered
+ * by the unique index so we never accidentally swallow an unrelated unique
+ * violation (e.g. `idx_messages_idempotency` on a colliding idempotency_key —
+ * that is a real conflict and must NOT trigger a swipe_index retry).
+ */
+export function isSwipeIndexUniqueViolation(err: unknown,): boolean {
+  if (!(err instanceof Error)) { return false; }
+  const msg = err.message;
+  return /UNIQUE constraint failed:\s*messages\.(chat_id|parent_id|swipe_index)\b/i.test(msg,)
+    || /SQLITE_CONSTRAINT(?:_UNIQUE)?\b.*idx_messages_swipe_unique/i.test(msg,);
+}
 
 /**
  * Trigger post-create generation: kick off async LLM auto-generation when
@@ -44,7 +62,7 @@ export async function maybeAutoReply(
   parentMessageId: string,
   userMessage: string,
   request: Request,
-  asyncStore?: import("../../async/store").AsyncStore,
+  asyncStore?: AsyncStore,
 ): Promise<{ replied: boolean; response?: Response }> {
   // If the request carries a request id and an async store is wired, register
   // it now so the frontend can poll /api/requests/:id/status while generation
@@ -171,9 +189,15 @@ export async function maybeAutoReply(
           if (inserted) { break; }
           swipeIndex++;
         } catch (err) {
-          // Cascade shift (N → N+1 collides with an existing row at N+1)
-          // raises SQLITE_CONSTRAINT_ABORT. Same retry semantics as
-          // before — bump and reattempt.
+          // Only the specific swipe-index unique-constraint race is
+          // retryable. Everything else (FK violation, encryption error,
+          // DB down, schema mismatch, idempotency_key collision, etc.)
+          // is a real error — rethrow so Elysia's handler surfaces the
+          // original cause as a 5xx instead of mislabeling it as
+          // "high concurrency 503" after 8 silent retries.
+          if (!isSwipeIndexUniqueViolation(err,)) {
+            throw err;
+          }
           lastError = err;
           swipeIndex++;
         }
