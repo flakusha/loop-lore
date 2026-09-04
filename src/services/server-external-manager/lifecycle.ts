@@ -64,4 +64,3 @@ export function killAllSync(host: ServerExternalHost,): void {
   }
   host.instances.length = 0;
 }
-

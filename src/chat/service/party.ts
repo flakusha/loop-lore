@@ -20,7 +20,10 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../../db/enums";
+import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 import type { DB, } from "../../db/schema";
+import { safeJsonParse, } from "../../utils";
+import { resolveRendering, } from "../types/config";
 import type { ServiceError, } from "./types";
 
 /** Parameters for a party join. */
@@ -117,6 +120,22 @@ async function injectPartyNarration(
 }
 
 /**
+ * Determine whether the chat is currently rendered as a visual novel by
+ * resolving `gm_config.renderingOverride` (the typed source of truth)
+ * against the ChatMode default. Replaces the legacy `chats.visual_novel`
+ * integer column dropped in migration 076.
+ * @param chat
+ */
+function chatIsVisualNovel(chat: { gm_config: string | null; mode: string },): boolean {
+  if (!chat.gm_config) { return false; }
+  const parsed = safeJsonParse<{ renderingOverride?: ChatRenderingOverride | null }>(chat.gm_config,);
+  const override: ChatRenderingOverride | null = parsed.ok
+    ? (parsed.value.renderingOverride ?? null)
+    : null;
+  return resolveRendering(chat.mode as never, override,) === "visual_novel";
+}
+
+/**
  * Join a party: add a chat participant, returning the participant on success.
  * VN narration is emitted when the chat is in visual-novel mode.
  * @param database
@@ -129,7 +148,7 @@ export async function joinParty(
 ): Promise<PartyJoinResult> {
   const chat = await database
     .selectFrom("chats",)
-    .select(["id", "visual_novel",],)
+    .select(["id", "mode", "gm_config",],)
     .where("id", "=", params.chatId,)
     .executeTakeFirst();
 
@@ -168,7 +187,7 @@ export async function joinParty(
     },)
     .execute();
 
-  if (chat.visual_novel) {
+  if (chatIsVisualNovel(chat,)) {
     await injectPartyNarration(
       database,
       params.chatId,
@@ -192,7 +211,7 @@ export async function leaveParty(
 ): Promise<PartyLeaveResult> {
   const chat = await database
     .selectFrom("chats",)
-    .select(["id", "visual_novel",],)
+    .select(["id", "mode", "gm_config",],)
     .where("id", "=", params.chatId,)
     .executeTakeFirst();
 
@@ -217,7 +236,7 @@ export async function leaveParty(
     .where("actor_id", "=", params.actorId,)
     .execute();
 
-  if (chat.visual_novel) {
+  if (chatIsVisualNovel(chat,)) {
     await injectPartyNarration(
       database,
       params.chatId,

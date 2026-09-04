@@ -44,7 +44,8 @@ export interface GmSettingsFields {
 export function readGmSettings(config: GmConfig,): GmSettingsFields {
   return {
     assistantRole: config.assistantRole ?? "off",
-    vnEnabled: config.visualNovel ?? false,
+    vnEnabled: config.renderingOverride === "visual_novel" ||
+      (config.renderingOverride == null && (config.visualNovel ?? false)),
     vnLayout: config.vnLayout ?? "overlay",
     vnTypewriter: config.vnTypewriter ?? true,
     vnTypewriterSpeed: config.vnTypewriterSpeed ?? 30,
@@ -79,7 +80,7 @@ export function buildGmConfig(
   const gmConfig: Record<string, unknown> = {
     ...existing,
     assistantRole: fields.assistantRole,
-    visualNovel: fields.vnEnabled,
+    renderingOverride: fields.vnEnabled ? "visual_novel" : null,
     vnLayout: fields.vnLayout,
     vnTypewriter: fields.vnTypewriter,
     vnTypewriterSpeed: fields.vnTypewriterSpeed,
