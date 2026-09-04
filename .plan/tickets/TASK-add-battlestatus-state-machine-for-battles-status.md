@@ -10,7 +10,7 @@
 
 ## Summary
 
-Replace string-typed status in battles with BattleStatus state machine (active→paused/ended/forfeited). The 062_battles.ts migration adds status defaulting to 'active'. Must create src/db/enums-core/battle-status.ts with StateDef + createMachine, export from index, and update schema-core.ts.
+Replace string-typed status in battles with BattleStatus state machine (active→paused/ended/forfeited). Must create src/db/enums-core/battle-status.ts with StateDef + createMachine, export from index, and add a `Battles.status` COLUMN_TYPE_OVERRIDES mapping (then `bun run db:sync-types`). No migration.
 
 ## Analysis (2026-09-04)
 
