@@ -21,8 +21,8 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createSkill, } from "../../rpg/skills/service/crud";
-import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 import type { Skill, } from "../../rpg/skills/service/types";
+import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 
 /** Options for `recordSkillAcquisition`. */
 export interface RecordSkillAcquisitionOpts {
@@ -45,7 +45,7 @@ export interface RecordSkillAcquisitionOpts {
 export async function recordSkillAcquisition(
   db: Kysely<DB>,
   opts: RecordSkillAcquisitionOpts,
-): Promise<{ skill: Skill; growthEntryId: string | null; }> {
+): Promise<{ skill: Skill; growthEntryId: string | null }> {
   const mode = await getGrowthMode(db, opts.input.actorId,);
   // Force story-source on this path: bridges are always story-driven.
   const skill = await createSkill(db, {

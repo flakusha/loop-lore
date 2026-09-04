@@ -21,14 +21,14 @@ import { characterGrowthService, } from "../../../characters/services/growth-ser
 import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
 
-const STATIC_DIRECTIVE = "This character is in static mode. They do not grow, change, or "
-  + "evolve. Do not let them acquire skills, shift traits, or deepen "
-  + "relationships without explicit player invocation. Maintain their "
-  + "author-defined personality, voice, and behavior throughout.";
+const STATIC_DIRECTIVE = "This character is in static mode. They do not grow, change, or " +
+  "evolve. Do not let them acquire skills, shift traits, or deepen " +
+  "relationships without explicit player invocation. Maintain their " +
+  "author-defined personality, voice, and behavior throughout.";
 
-const DYNAMIC_DIRECTIVE = "This character grows through the story. Acquired skills, "
-  + "drifted traits, and shifted bonds are recorded in their growth "
-  + "log. Honor what has changed; do not revert to baseline.";
+const DYNAMIC_DIRECTIVE = "This character grows through the story. Acquired skills, " +
+  "drifted traits, and shifted bonds are recorded in their growth " +
+  "log. Honor what has changed; do not revert to baseline.";
 
 export const actorGrowthSection: SectionBuilder = {
   name: "actorGrowth",
@@ -59,18 +59,18 @@ export const actorGrowthSection: SectionBuilder = {
       }
 
       if (log.length > 0) {
-        lines.push("Recent growth log (most recent first):");
+        lines.push("Recent growth log (most recent first):",);
         for (const entry of log) {
           const subject = entry.subjectKind && entry.subjectId
             ? ` (${entry.subjectKind}:${entry.subjectId})`
             : "";
-          lines.push(`- ${entry.recordedAt} [${entry.axis}/${entry.eventType}]${subject}: ${entry.reason}`);
+          lines.push(`- ${entry.recordedAt} [${entry.axis}/${entry.eventType}]${subject}: ${entry.reason}`,);
         }
       }
 
       const directive = mode.growthMode === "static" ? STATIC_DIRECTIVE : DYNAMIC_DIRECTIVE;
-      lines.push("");
-      lines.push(directive);
+      lines.push("",);
+      lines.push(directive,);
 
       return [
         {

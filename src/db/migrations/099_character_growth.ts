@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import type { Kysely, } from "kysely";
 
-
 /**
  * Migration 099 — Character Growth & Arc Progression
  *
@@ -51,22 +50,19 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── actors: growth_mode + llm_assist_enabled ──────────────────────
   await database.schema
     .alterTable("actors",)
-    .addColumn("growth_mode", "text", (col,) =>
-      col.notNull().defaultTo("dynamic",),)
+    .addColumn("growth_mode", "text", (col,) => col.notNull().defaultTo("dynamic",),)
     .execute();
 
   await database.schema
     .alterTable("actors",)
-    .addColumn("llm_assist_enabled", "integer", (col,) =>
-      col.notNull().defaultTo(0,),)
+    .addColumn("llm_assist_enabled", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
 
   // ── character_arc ─────────────────────────────────────────────────
   await database.schema
     .createTable("character_arc",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
-    .addColumn("actor_id", "text", (col,) =>
-      col.notNull().references("actors.id",).onDelete("cascade",),)
+    .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id",).onDelete("cascade",),)
     .addColumn("current_stage", "text", (col,) => col.notNull(),)
     .addColumn("stage_description", "text",)
     .addColumn("updated_at", "text", (col,) => col.notNull(),)
@@ -83,8 +79,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .createTable("growth_log",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
-    .addColumn("actor_id", "text", (col,) =>
-      col.notNull().references("actors.id",).onDelete("cascade",),)
+    .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id",).onDelete("cascade",),)
     .addColumn("axis", "text", (col,) => col.notNull(),)
     .addColumn("event_type", "text", (col,) => col.notNull(),)
     .addColumn("status", "text", (col,) => col.notNull().defaultTo("applied",),)
@@ -124,15 +119,13 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema
     .alterTable("character_skills",)
-    .addColumn("acquisition_source", "text", (col,) =>
-      col.notNull().defaultTo("baseline",),)
+    .addColumn("acquisition_source", "text", (col,) => col.notNull().defaultTo("baseline",),)
     .execute();
 
   // ── character_relationships: evolution tracking ───────────────────
   await database.schema
     .alterTable("character_relationships",)
-    .addColumn("evolution_tracked", "integer", (col,) =>
-      col.notNull().defaultTo(1,),)
+    .addColumn("evolution_tracked", "integer", (col,) => col.notNull().defaultTo(1,),)
     .execute();
 
   await database.schema
@@ -148,8 +141,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema
     .alterTable("character_world_traits",)
-    .addColumn("drift_count", "integer", (col,) =>
-      col.notNull().defaultTo(0,),)
+    .addColumn("drift_count", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
 
   // ── character_location_traits: drift bookkeeping ──────────────────
@@ -160,8 +152,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema
     .alterTable("character_location_traits",)
-    .addColumn("drift_count", "integer", (col,) =>
-      col.notNull().defaultTo(0,),)
+    .addColumn("drift_count", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
 
   // ── Backfill: pre-existing rows must respect opt-in defaults ──────

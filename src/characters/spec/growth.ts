@@ -93,8 +93,7 @@ export const SkillAcquisitionSource = {
   Config: "config",
 } as const;
 /** */
-export type SkillAcquisitionSource =
-  (typeof SkillAcquisitionSource)[keyof typeof SkillAcquisitionSource];
+export type SkillAcquisitionSource = (typeof SkillAcquisitionSource)[keyof typeof SkillAcquisitionSource];
 
 // ── Public data shapes ─────────────────────────────────────────────
 
