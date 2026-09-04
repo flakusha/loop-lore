@@ -9,11 +9,11 @@
  * via the FK `on delete set null`).
  */
 import type { Kysely, } from "kysely";
+import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, } from "../../utils";
 import { getChatSetupTemplate, } from "./templates";
 import type { TemplateMutationResult, } from "./types";
-import type { ChatRenderingOverride } from "../../db/enums-core/chat";
 
 /**
  * Create a chat setup template (admin).
@@ -123,7 +123,11 @@ export async function updateChatSetupTemplate(
   if (params.gmConfig !== undefined) {
     updates.gm_config = params.gmConfig ? jsonStringifyOr(params.gmConfig, "{}",) : null;
   }
-  if (params.renderingOverride !== undefined) { updates.visual_novel = params.renderingOverride === "visual_novel" ? 1 : 0; }
+  if (params.renderingOverride !== undefined) {
+    updates.visual_novel = params.renderingOverride === "visual_novel"
+      ? 1
+      : 0;
+  }
   if (params.features !== undefined) {
     updates.features = params.features ? jsonStringifyOr(params.features, "[]",) : "[]";
   }

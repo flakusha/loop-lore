@@ -45,7 +45,7 @@ The project has `@typescript/native-preview@7.0.0-dev.20260707.2` installed. `ts
 
 - `BUG-visualnovel-type-mismatch-across-api-db-layers.md` — marked done without running typecheck
 - `BUG-redundant-vn-state-stored-in-two-independent-locations.md` — same
-- Closed based on commit `1b9b0cdf` without verifying the typecheck passes
+- [x] `bun run typecheck` passes with 0 errors (backend, via `tsgo` / TS7) — all 19 errors resolved in commits `984b0b08` + `3e053406`
 
 ## Acceptance Criteria
 

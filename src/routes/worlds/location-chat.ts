@@ -11,9 +11,9 @@
 import type { Kysely, Transaction, } from "kysely";
 import { createChat, getChatSetupTemplate, } from "../../chat/service";
 import type { ChatSetupTemplate, } from "../../chat/service/types";
+import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils";
-import type { ChatRenderingOverride } from "../../db/enums-core/chat";
 
 /** */
 export interface CreateLocationChatInput {
@@ -89,7 +89,8 @@ export async function createLocationChat(
       : (template.gm_config ? jsonParseOr(template.gm_config, {},) : null),
     renderingOverride: hasExplicit("renderingOverride",)
       ? (body.renderingOverride as ChatRenderingOverride | undefined)
-      : ((jsonParseOr<Record<string, unknown>>(template.gm_config ?? "", {}).renderingOverride as ChatRenderingOverride) ?? null),
+      : ((jsonParseOr<Record<string, unknown>>(template.gm_config ?? "", {},)
+        .renderingOverride as ChatRenderingOverride) ?? null),
     visibility: hasExplicit("visibility",)
       ? (body.visibility as string)
       : (template.visibility ?? "private"),
