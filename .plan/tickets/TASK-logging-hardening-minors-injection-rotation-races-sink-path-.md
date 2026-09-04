@@ -1,6 +1,6 @@
 # TASK: Logging hardening minors: injection, rotation races, sink path, stack loss
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (2026-09-04)
 **Priority:** low
 **Effort:** Medium
 
@@ -15,6 +15,19 @@ Four minors in the logging pipeline:
 5. `server/start.ts:206,215` — fatal handlers pass `String(err)`, losing stack; pass `Error` object for `maxStackBytes` capture.
 
 **Fix**: address all five. Stack capture is highest-impact (loses post-mortem data today).
+
+## Resolution
+
+Resolved by `516643b6` (`fix(security): logging + crypto hardening minors`).
+
+Fixed:
+- `src/logger/formatters.ts` — `sanitizeConsoleText()` strips C0 control chars and collapses newlines on `module`/`msg`/`error` in the console sink.
+- `src/logger/transports/file.ts` — serialized `write()` through a `writeChain` promise mutex, closing the rotation-vs-append race.
+- `src/server/start.ts` — fatal handlers now pass the `Error` object (not `String(err)`) so `maxStackBytes` captures the full stack.
+
+Dropped (stale / deliberate design):
+- `maxFiles=0` unbounded-growth premise is wrong — default is `?? 5`, and `maxFiles=0` is a tested drop-all mode.
+- `jsonlPath` constraint is low-value — trusted admin config, not user input.
 
 ## Acceptance Criteria
 
