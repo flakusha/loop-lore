@@ -4392,6 +4392,10 @@
   "src/chat/service/crud/update.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-gm-config-corrupted-by-string-spread-in-buildchatupdates-mer.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
     },
     {
