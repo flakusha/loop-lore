@@ -3,7 +3,7 @@
 
 # BUG: battle/equipment.ts loot POST handler has no auth guard
 
-**Status:** open
+**Status:** ✅ Resolved (commit a4503d43 — fix(battle): gate loot POST on user session + world-owner + actor/location ownership)
 **Priority:** critical
 **Priority Tier:** P0
 **Effort:** Small
@@ -45,4 +45,4 @@ mint `world_items` rows into any `worldId` / `actorId` / `locationId`.
 
 ## Resolution
 
-(filled in at fix time)
+Resolved by `a4503d43`. The loot POST handler now requires `requireUserId(ctx)` (returns 401 on anonymous) and gates persistence on `assertWorldOwner(database, userId, worldId,)`. When an `actorId` is supplied, `resolveActorAccess` (from `src/routes/trade/shared`) confirms the actor's `user_id` matches. When a `locationId` is supplied, it's resolved via `locations.world_id` and rejected with 400 if it doesn't match the request's `worldId`. The non-persistence branch (no `worldId`, or no destination) remains unguarded because no row is written. Eight tests in `src/routes/battle/equipment.test.ts` cover the four reject paths, two happy paths, and one anon-non-persistence regression.
