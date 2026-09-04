@@ -4372,6 +4372,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-chat-vn-toggle-sends-visualnovel-but-backend-reads-rende.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
     },
     {
@@ -4387,6 +4391,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.md"
+    }
+  ],
+  "src/chat/service/crud/update.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-gm-config-corrupted-by-string-spread-in-buildchatupdates-mer.md"
     }
   ],
   "src/chat/service/crud/update.ts": [
