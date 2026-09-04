@@ -201,6 +201,8 @@ export interface CharacterLicensing {
   share_alike: Generated<number>;
   created_at: string;
   updated_at: string;
+  last_drifted_at: string | null;
+  drift_count: Generated<number>;
 }
 
 // ── character_location_traits ────────────────────────────────────────────
@@ -216,6 +218,8 @@ export interface CharacterLocationTraits {
   equipment_override: string | null;
   created_at: string;
   updated_at: string;
+  last_drifted_at: string | null;
+  drift_count: Generated<number>;
 }
 
 // ── character_mood ────────────────────────────────────────────
@@ -259,6 +263,8 @@ export interface CharacterRelationships {
   metadata: string | null;
   created_at: string;
   updated_at: string;
+  evolution_tracked: Generated<number>;
+  last_evolution_at: string | null;
 }
 
 // ── character_seduction_skills ────────────────────────────────────────────

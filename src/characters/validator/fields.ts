@@ -9,6 +9,8 @@ import type {
   ValidationMode,
   ValidationWarning,
 } from "../spec";
+import type { GrowthMode, } from "../spec/growth";
+import { GrowthMode as GrowthModeEnum, } from "../spec/growth";
 import { CONSTRAINTS, } from "./constants";
 
 /**
@@ -195,6 +197,52 @@ export function validateOptionalFields(
       code: "INVALID_TYPE",
       message: "tags must be an array of strings",
       value: tags,
+    },);
+  }
+}
+
+const VALID_GROWTH_MODES: Readonly<Record<GrowthMode, true>> = {
+  [GrowthModeEnum.Dynamic]: true,
+  [GrowthModeEnum.Static]: true,
+};
+
+/**
+ * Validate the character growth-mode + llm-assist toggle fields.
+ *
+ * Per `.plan/epics/epic-character-growth.md`:
+ * - `growth_mode` must be one of `'dynamic' | 'static'` when provided
+ * - `llm_assist_enabled` must be a boolean when provided
+ * - Both fields are optional: relaxed mode accepts their absence
+ *
+ * @param character
+ * @param errors
+ */
+export function validateGrowthFields(
+  character: CanonicalCharacter,
+  errors: ValidationError[],
+): void {
+  const record = character as unknown as Record<string, unknown>;
+
+  const mode = record["growth_mode"];
+  if (mode !== undefined && mode !== null) {
+    if (typeof mode !== "string" || !(mode in VALID_GROWTH_MODES)) {
+      errors.push({
+        field: "growth_mode",
+        code: "INVALID_VALUE",
+        message:
+          `growth_mode must be one of ${Object.keys(VALID_GROWTH_MODES,).join(", ")}`,
+        value: mode,
+      },);
+    }
+  }
+
+  const llmAssist = record["llm_assist_enabled"];
+  if (llmAssist !== undefined && llmAssist !== null && typeof llmAssist !== "boolean") {
+    errors.push({
+      field: "llm_assist_enabled",
+      code: "INVALID_TYPE",
+      message: "llm_assist_enabled must be a boolean",
+      value: llmAssist,
     },);
   }
 }

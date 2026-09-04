@@ -19,6 +19,7 @@ import { validateContentRating, } from "./content-rating";
 import { validateExtensions, } from "./extensions";
 import {
   validateArrayConstraints,
+  validateGrowthFields,
   validateOptionalFields,
   validateRequiredString,
   validateStringLength,
@@ -87,9 +88,11 @@ export function validateCharacter(
   if (mode === "strict") {
     validateOptionalFields(character, errors, warnings,);
   }
-
   // ── Extensions validation ───────────────────
   validateExtensions(character, errors, warnings, mode,);
+
+  // ── Growth fields (`.plan/epics/epic-character-growth.md`) ──
+  validateGrowthFields(character, errors,);
 
   return {
     ok: errors.length === 0,

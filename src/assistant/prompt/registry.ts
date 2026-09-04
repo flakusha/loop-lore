@@ -6,6 +6,7 @@
  * assembly order. Add a section: create a builder under ./sections and add it
  * here. The orchestrator runs them in this exact order.
  */
+import { actorGrowthSection, } from "./sections/actor-growth";
 import { actorHeaderSection, } from "./sections/actor-header";
 import { authorNoteSection, } from "./sections/author-note";
 import { chatHistorySection, } from "./sections/chat-history";
@@ -44,6 +45,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   userPersonaSection,
   emotionAvatarSection,
   internalTraitsSection,
+  actorGrowthSection,
   loreSection,
   memorySection,
   eventSection,
