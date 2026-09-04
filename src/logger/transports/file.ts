@@ -36,6 +36,8 @@ export class FileTransport implements Transport {
   private readonly activePath: string;
   private readonly maxBytes: number;
   private readonly maxFiles: number;
+  /** Serializes write() calls so rotation + append never interleave. */
+  private writeChain: Promise<void> = Promise.resolve();
 
   /**
    * @param options
@@ -50,6 +52,22 @@ export class FileTransport implements Transport {
    * @param entry
    */
   async write(entry: LogEntry,): Promise<void> {
+    // Chain writes through a mutex: a size-check-then-append is not atomic,
+    // so concurrent writes can race the rotate() step and lose/misplace lines.
+    // Each write awaits the previous one's completion before starting.
+    const next = this.writeChain.then(() => this.writeLocked(entry,));
+    // Detach the error so a single failed write (already swallowed internally)
+    // does not poison every subsequent queued write with a rejection.
+    this.writeChain = next.catch(() => {
+      // already swallowed by writeLocked
+    },);
+    return next;
+  }
+
+  /**
+   * @param entry
+   */
+  private async writeLocked(entry: LogEntry,): Promise<void> {
     try {
       const line = formatJSONL(entry,);
       await mkdir(dirname(this.activePath,), { recursive: true, },);
