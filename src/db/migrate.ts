@@ -9,12 +9,20 @@ import path from "node:path";
 import { createLogger, getLogger, } from "../logger";
 import { getDatabase, } from "./index";
 
-/** Load schema migrations from src/db/migrations/ (filename = migration name). */
-async function getMigrationFiles(): Promise<Record<string, Migration>> {
+/** Load schema migrations from src/db/migrations/ (filename = migration name).
+ * Exported for testing — production callers should use {@link runMigrations}. */
+export async function getMigrationFiles(): Promise<Record<string, Migration>> {
   const migrationsDirectory = path.join(__dirname, "migrations",);
   const matched: string[] = [];
+  // Filter out colocated test files. The loader previously re-imported
+  // every `*.ts` in src/db/migrations/, which means a `*.test.ts` placed
+  // there would re-register its `describe()` inside whatever test held
+  // the migrator, breaking the run with "Cannot call describe() inside a
+  // test". Only `.ts` files that are NOT tests are migration modules.
+  // BUG-migrate-ts-loader-imports-test-ts-files-from-src-db-migratio.
   for (const f of readdirSync(migrationsDirectory,)) {
-    if (f.endsWith(".ts",)) { matched.push(f,); }
+    if (!f.endsWith(".ts",) || f.endsWith(".test.ts",)) { continue; }
+    matched.push(f,);
   }
   const files = matched.toSorted((a, b,) => a.localeCompare(b,));
   const migrations: Record<string, Migration> = {};
