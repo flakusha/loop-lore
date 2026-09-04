@@ -201,8 +201,6 @@ export interface CharacterLicensing {
   share_alike: Generated<number>;
   created_at: string;
   updated_at: string;
-  last_drifted_at: string | null;
-  drift_count: Generated<number>;
 }
 
 // ── character_location_traits ────────────────────────────────────────────
@@ -306,6 +304,8 @@ export interface CharacterWorldTraits {
   trait_value: string;
   created_at: string;
   updated_at: string;
+  last_drifted_at: string | null;
+  drift_count: Generated<number>;
 }
 
 // ── emotions ────────────────────────────────────────────
