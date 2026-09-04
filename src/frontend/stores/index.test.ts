@@ -53,7 +53,7 @@ describe("initAlpineStores — chat store defaults", () => {
     expect(chat.children,).toEqual([],);
     expect(chat.visibility,).toBe("visible",);
     expect("currentChat" in chat,).toBe(true,);
-  },);
+  });
 
   test("chat store children + visibility are never null/undefined out of the box", () => {
     const { alpine, stores, } = makeAlpineStub();
@@ -63,7 +63,11 @@ describe("initAlpineStores — chat store defaults", () => {
     const chat = stores.chat as Record<string, unknown>;
     // Reading `chat.children` or `chat.visibility` must never throw — this is
     // the regression scenario the original ticket flagged.
-    expect(() => { void (chat.children as { length: number } | undefined)?.length; },).not.toThrow();
-    expect(() => { void (chat.visibility as string | undefined)?.length; },).not.toThrow();
-  },);
+    expect(() => {
+      void (chat.children as { length: number } | undefined)?.length;
+    },).not.toThrow();
+    expect(() => {
+      void (chat.visibility as string | undefined)?.length;
+    },).not.toThrow();
+  });
 });

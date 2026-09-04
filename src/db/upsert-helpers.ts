@@ -24,7 +24,7 @@
  * @see BUG-chat-swipe-index-race for the original motivating use site.
  */
 
-import { sql, type AnyColumn, type InsertObject, type Kysely, type RawBuilder, } from "kysely";
+import { type AnyColumn, type InsertObject, type Kysely, type RawBuilder, sql, } from "kysely";
 import type { DB, } from "./schema";
 
 /**
@@ -67,7 +67,7 @@ export async function upsertByUnique<
   const valueKeys = Object.keys(values as object,);
   const inferredUpdate: string[] = updateColumns
     ? updateColumns.map(String,)
-    : valueKeys.filter((col,) => !conflictSet.has(col,),);
+    : valueKeys.filter((col,) => !conflictSet.has(col,));
 
   // Build the SET clause as a partial-column map. We use sql.ref to point
   // each SET column at `excluded.<column>`, which is the Kysely idiom for
@@ -84,7 +84,7 @@ export async function upsertByUnique<
     await db
       .insertInto(table,)
       .values(values,)
-      .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doNothing(),)
+      .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doNothing())
       .execute();
     return;
   }
@@ -92,7 +92,7 @@ export async function upsertByUnique<
   await db
     .insertInto(table,)
     .values(values,)
-    .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doUpdateSet(setObject as never,),)
+    .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doUpdateSet(setObject as never,))
     .execute();
 }
 
@@ -137,7 +137,7 @@ export async function upsertByUniqueWith<
   await db
     .insertInto(table,)
     .values(values,)
-    .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doUpdateSet(updateSet as never,),)
+    .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doUpdateSet(updateSet as never,))
     .execute();
   // Disambiguate insert vs update via a guarded SELECT on the PK. The
   // ON CONFLICT DO UPDATE preserves the existing row's identity
@@ -150,7 +150,9 @@ export async function upsertByUniqueWith<
     // No PK to probe — caller must inspect the row themselves.
     return "updated";
   }
-  const exists = await sql<{ found: number, }>`select 1 as found from ${sql.table(table,)} where ${sql.ref("id",)} = ${probeId}`.execute(db,);
+  const exists = await sql<{ found: number }>`select 1 as found from ${sql.table(table,)} where ${
+    sql.ref("id",)
+  } = ${probeId}`.execute(db,);
   return exists.rows.length > 0 ? "inserted" : "updated";
 }
 
@@ -185,7 +187,7 @@ export async function insertUnique<
   const result = await db
     .insertInto(table,)
     .values(values,)
-    .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doNothing(),)
+    .onConflict((oc,) => oc.columns(conflictColumns as readonly AnyColumn<DB, T>[],).doNothing())
     .execute();
   const first = result[0];
   const inserted = first !== undefined && Number(first.numInsertedOrUpdatedRows,) > 0;

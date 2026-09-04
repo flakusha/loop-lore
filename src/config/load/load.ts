@@ -5,6 +5,7 @@
 
 import { readFileSync, } from "node:fs";
 import path from "node:path";
+import { findMainRepoRoot, } from "../../utils/git-worktree";
 import type { Config, } from "../schema";
 import { createConfigSchema, validate, } from "../schema-class";
 import { runTemplateExpansion, } from "../template-expansion";
@@ -13,7 +14,6 @@ import { DEFAULT_CONFIG_FILES, ENV_MAP, LOCAL_CONFIG_FILES, } from "./constants"
 import { loadDomainConfigs, } from "./domain";
 import { applyEnvironmentOverrides, applyProviderEnvVars, } from "./env";
 import { findConfigFile, firstExisting, } from "./fs";
-import { findMainRepoRoot, } from "../../utils/git-worktree";
 import { deepMerge, parseFileContent, } from "./parse";
 import { validateAuthSafety, validateDatabaseSafety, } from "./safety";
 

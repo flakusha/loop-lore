@@ -8,9 +8,9 @@
 // Merges all found characters by name (user wins on conflict).
 
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
-import { findMainRepoRoot, } from "../utils/git-worktree";
 import path from "node:path";
 import type { ContentRating, } from "../characters/spec";
+import { findMainRepoRoot, } from "../utils/git-worktree";
 import type { CharacterTemplateConfig, } from "./sections/templates";
 
 // ── Types ─────────────────────────────────────────────────────

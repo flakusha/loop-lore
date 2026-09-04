@@ -5,8 +5,8 @@
 
 import { existsSync, readFileSync, } from "node:fs";
 import path from "node:path";
-import { CONFIG_FILES, NETWORK_FS_PREFIXES, } from "./constants";
 import { findMainRepoRoot, } from "../../utils/git-worktree";
+import { CONFIG_FILES, NETWORK_FS_PREFIXES, } from "./constants";
 
 /**
  * Detect if a path is on a network filesystem.

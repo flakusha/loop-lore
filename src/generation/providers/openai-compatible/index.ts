@@ -11,8 +11,8 @@
 // provider-specific bits live in sibling dispatcher modules.
 
 import type { ProviderInstanceConfig, } from "../../../config/schema";
-import type { ProviderCapabilities, } from "../types";
 import { BaseProvider, type BaseProviderDispatchers, } from "../base";
+import type { ProviderCapabilities, } from "../types";
 import { completeDispatch, streamDispatch, } from "./core";
 import { healthCheckDispatch, listModelsDispatch, } from "./operations";
 import type { OpenAiCompatibleState, } from "./types";
@@ -40,10 +40,10 @@ export class OpenAiCompatibleProvider extends BaseProvider<OpenAiCompatibleState
   /**
    * @param config
    */
-  constructor(config: ProviderInstanceConfig) {
+  constructor(config: ProviderInstanceConfig,) {
     super(config, {
       capabilities: CAPABILITIES,
       dispatchers: DISPATCHERS,
-    });
+    },);
   }
 }
