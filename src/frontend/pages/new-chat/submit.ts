@@ -82,8 +82,11 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
   if (turnStrategy) { fineTunePayload.turnStrategy = turnStrategy; }
   if (visibility) { fineTunePayload.visibility = visibility; }
   // VN checkbox is only visible with a template selected, and the template
-  // pre-fills it — send the real state so it can be toggled off too.
-  if (templateId) { fineTunePayload.visualNovel = visualNovel === true; }
+  // pre-fills it — send the real state so it can be toggled off too. The
+  // legacy `visualNovel` field was replaced by `renderingOverride` (see
+  // `ChatCreateBody`); `null` means "no explicit override" (let the template
+  // default decide).
+  if (templateId) { fineTunePayload.renderingOverride = visualNovel === true ? "visual_novel" : null; }
 
   return {
     name,
