@@ -3,7 +3,7 @@
 import type { ChatState, GmConfig, } from "./types";
 import type { OutputStylePreset, } from "../../chat/output-style";
 import { apiFetch, } from "./htmx";
-import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
+import { buildGmConfig, presentationGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
 import { personaActions, } from "./chat-settings/persona";
@@ -39,6 +39,11 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _vnTypewriterSpeed: 30,
   _vnTransition: "fade" as "fade" | "cut" | "dissolve" | "slide" | "wipe",
   _vnAutoAdvance: false,
+  _imageScaling: "auto" as "contain" | "cover" | "fill" | "auto",
+  _autoAdvanceDelay: 5,
+  _dialogueBoxOpacity: 0.75,
+  _portraitSize: 35,
+  _splitRatio: 40,
   // Response length settings
   _responseLengthPreset: "medium" as "short" | "medium" | "long" | "custom",
   _responseLengthCustom: 1000,
@@ -74,6 +79,11 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._vnTypewriterSpeed = fields.vnTypewriterSpeed;
     this._vnTransition = fields.vnTransition;
     this._vnAutoAdvance = fields.vnAutoAdvance;
+    this._imageScaling = fields.imageScaling;
+    this._autoAdvanceDelay = fields.autoAdvanceDelay;
+    this._dialogueBoxOpacity = fields.dialogueBoxOpacity;
+    this._portraitSize = fields.portraitSize;
+    this._splitRatio = fields.splitRatio;
     this._gmType = fields.gmType;
     this._gmHumanActorId = fields.gmHumanActorId;
     this._gmEscalationThreshold = fields.gmEscalationThreshold;
@@ -137,6 +147,11 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         vnTypewriterSpeed: this._vnTypewriterSpeed,
         vnTransition: this._vnTransition,
         vnAutoAdvance: this._vnAutoAdvance,
+        imageScaling: this._imageScaling,
+        autoAdvanceDelay: this._autoAdvanceDelay,
+        dialogueBoxOpacity: this._dialogueBoxOpacity,
+        portraitSize: this._portraitSize,
+        splitRatio: this._splitRatio,
         gmType: this._gmType,
         gmHumanActorId: this._gmHumanActorId,
         gmEscalationThreshold: this._gmEscalationThreshold,
@@ -156,12 +171,16 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         outputStylePreset: this._outputStylePreset,
         customInstructions: this._customInstructions.trim() || null,
       };
-      // Key mechanics are immutable once the chat is online — the backend rejects
-      // them with 409, so only send them for draft (offline) chats.
+      // Key mechanics (mode, turnStrategy, full gmConfig) are immutable once the
+      // chat is online — the backend rejects them with 409. Offline (draft) chats
+      // send the full gmConfig blob. Online chats send only the presentation
+      // (VN/display) subset, which the backend permits.
       if (!this._chatOnline) {
         body.mode = this._chatSettingsMode;
         body.turnStrategy = this._chatSettingsTurnStrategy;
-        body.gmConfig = jsonBody(gmConfig,);
+        body.gmConfig = gmConfig;
+      } else {
+        body.gmConfig = presentationGmConfig(gmConfig,);
       }
       const res = await apiFetch(`/api/v1/chats/${this.activeChat}`, {
         method: "PUT",
