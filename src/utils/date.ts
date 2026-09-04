@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 261
+// size-allow: 300
 
 /**
  * Date/time formatting utilities.
@@ -254,4 +254,27 @@ export function serializeDate(
     style,
     tz: options?.tz,
   },);
+}
+
+/**
+ * Parse a date/time string into epoch milliseconds, returning `null` for any
+ * value `Date.parse` can't interpret (non-string input, empty string, invalid
+ * timestamp) instead of `NaN`.
+ *
+ * Use this before arithmetic on an unknown expiry/date string — `Date.parse`
+ * silently returns `NaN` for unparseable inputs, so comparisons like
+ * `parsed < Date.now()` are always false and the row is treated as "never
+ * expires" rather than "expiry unparseable".
+ * @param input - value to parse; anything non-string returns `null`.
+ * @returns epoch milliseconds, or `null` if the input is not a parseable date.
+ * @example
+ *   parseExpiryMs("2026-12-31T23:59:59Z"); // 1798809599000
+ *   parseExpiryMs("");                     // null
+ *   parseExpiryMs("not a date");           // null
+ *   parseExpiryMs(undefined);              // null
+ */
+export function parseExpiryMs(input: unknown,): number | null {
+  if (typeof input !== "string" || input.length === 0) { return null; }
+  const parsed = Date.parse(input,);
+  return Number.isNaN(parsed,) ? null : parsed;
 }

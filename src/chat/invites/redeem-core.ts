@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { InviteStatus, inviteStatusMachine, } from "../../db/enums";
+import { parseExpiryMs, } from "../../utils/date";
 import type { InviteError, } from "./types";
 
 /**
@@ -95,7 +96,8 @@ export async function redeemInviteCode<Invite extends RedeemableInvite,>(
   if (invite.status === InviteStatus.Exhausted) {
     return { ok: false, error: usedUpError(), };
   }
-  if (invite.expires_at && Date.parse(invite.expires_at,) < Date.now()) {
+  const expiresMs = parseExpiryMs(invite.expires_at,);
+  if (expiresMs !== null && expiresMs < Date.now()) {
     if (!inviteStatusMachine.canTransition(invite.status, InviteStatus.Expired,)) {
       return { ok: false, error: expiredError(), };
     }
