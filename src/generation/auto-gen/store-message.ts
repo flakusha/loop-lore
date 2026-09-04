@@ -102,44 +102,79 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
     },
   },);
 
-  // ── Swipe index ───────────────────────────────────────────────
+  // ── Swipe index (BUG-store-message-swipe-race-atomic) ──────────
+  // The original read-modify-write (SELECT MAX → INSERT swipe_index=max+1)
+  // raced: two concurrent storeMessage calls both read the same max, both
+  // inserted with swipe_index=N, second one violated the
+  // idx_messages_swipe_unique constraint. We now perform the SELECT and
+  // INSERT inside a single transaction. On UNIQUE-constraint conflict we
+  // bump the swipe_index and retry up to MAX_ATTEMPTS — same atomicity
+  // pattern as routes/messages/swipe-race-insert.ts.
+  //
+  // Non-UNIQUE errors (FK violation, encryption failure, DB down) are
+  // rethrown: retrying would mask the real cause.
   const messageId = uid();
-  const maxSwipe = parentMessageId
-    ? await database
-      .selectFrom("messages",)
-      .select(database.fn.max("swipe_index",).as("max_idx",),)
-      .where("chat_id", "=", chatId,)
-      .where("parent_id", "=", parentMessageId,)
-      .executeTakeFirst()
-    : undefined;
-  const swipeIndex = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
-
-  // ── Persist ──────────────────────────────────────────────────
-  await database
-    .insertInto("messages",)
-    .values({
-      id: messageId,
-      chat_id: chatId,
-      actor_id: actorId,
-      parent_id: parentMessageId,
-      role: MessageRole.Assistant,
-      content: encResult.storedContent,
-      key_id: encResult.keyId,
-      content_type: MessageContentType.Text,
-      content_format: MessageContentFormat.Markdown,
-      content_encoding: ContentEncoding.Identity,
-      model_id: resolved.resolvedModel,
-      provider: resolved.resolvedProviderName,
-      token_count_prompt: tokenUsage.promptTokens,
-      token_count_completion: tokenUsage.completionTokens,
-      token_count_total: tokenUsage.totalTokens,
-      status: MessageStatus.Confirmed,
-      visibility: MessageVisibility.Visible,
-      swipe_index: swipeIndex,
-      emotion: dominantEmotion ?? null,
-      thinking: thinking ?? null,
-    },)
-    .execute();
+  await database.transaction().execute(async (trx,) => {
+    let resolvedSwipeIndex: number | null = parentMessageId ? 1 : null;
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 8; attempt++) {
+      const maxSwipe = parentMessageId
+        ? await trx
+          .selectFrom("messages",)
+          .select(trx.fn.max("swipe_index",).as("max_idx",),)
+          .where("chat_id", "=", chatId,)
+          .where("parent_id", "=", parentMessageId,)
+          .executeTakeFirst()
+        : undefined;
+      const candidate = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
+      try {
+        await trx
+          .insertInto("messages",)
+          .values({
+            id: messageId,
+            chat_id: chatId,
+            actor_id: actorId,
+            parent_id: parentMessageId,
+            role: MessageRole.Assistant,
+            content: encResult.storedContent,
+            key_id: encResult.keyId,
+            content_type: MessageContentType.Text,
+            content_format: MessageContentFormat.Markdown,
+            content_encoding: ContentEncoding.Identity,
+            model_id: resolved.resolvedModel,
+            provider: resolved.resolvedProviderName,
+            token_count_prompt: tokenUsage.promptTokens,
+            token_count_completion: tokenUsage.completionTokens,
+            token_count_total: tokenUsage.totalTokens,
+            status: MessageStatus.Confirmed,
+            visibility: MessageVisibility.Visible,
+            swipe_index: candidate,
+            emotion: dominantEmotion ?? null,
+            thinking: thinking ?? null,
+          },)
+          .execute();
+        resolvedSwipeIndex = candidate;
+        lastError = undefined;
+        break;
+      } catch (err) {
+        // Only the swipe-index UNIQUE race is retryable. Anything else
+        // (FK violation, encryption error, DB down, schema mismatch) is
+        // a real error — rethrow to surface the actual cause.
+        const msg = err instanceof Error ? err.message : String(err,);
+        if (!/UNIQUE constraint failed:\s*messages\.(chat_id|parent_id|swipe_index)\b/i.test(msg,)
+            && !/SQLITE_CONSTRAINT(?:_UNIQUE)?\b.*idx_messages_swipe_unique/i.test(msg,)) {
+          throw err;
+        }
+        lastError = err;
+        // bump candidate for the next attempt
+        if (candidate !== null) { resolvedSwipeIndex = candidate + 1; }
+      }
+    }
+    if (lastError !== undefined) {
+      throw lastError;
+    }
+    return { swipeIndex: resolvedSwipeIndex, };
+  },);
 
   return { messageId, transformed, };
 }
