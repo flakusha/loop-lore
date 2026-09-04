@@ -39,8 +39,10 @@ export interface GmParticipant {
 export interface GmConfig {
   /** Assistant's role in this chat: off, helper, gm, or moderator */
   assistantRole?: "off" | "helper" | "gm" | "moderator";
-  /** Visual novel mode (image-heavy, sequential panel display) */
+  /** Visual novel mode (image-heavy, sequential panel display) — legacy boolean, superseded by `renderingOverride` (tri-state). Read by the chat-settings modal for legacy chats; new writes go through `renderingOverride`. */
   visualNovel?: boolean;
+  /** Per-chat rendering override tri-state: "text" | "visual_novel" | null. */
+  renderingOverride?: "text" | "visual_novel" | null;
   /** VN panel layout */
   vnLayout?: "overlay" | "below" | "split";
   /** VN typewriter effect enabled */

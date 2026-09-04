@@ -1428,7 +1428,6 @@ export const SCHEMA = new SchemaManifest()
     context_max_tokens: col("integer",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
-    visual_novel: col("integer", { notNull: true, hasDefault: true, },),
     streaming: col("integer",),
     nsfw_override: col("text",),
     name_source: col("text",),

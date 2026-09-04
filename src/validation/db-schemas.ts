@@ -562,7 +562,6 @@ export const ChatsSchema = t.Object({
   context_max_tokens: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
-  visual_novel: t.Optional(t.Number(),),
   streaming: t.Optional(t.Number(),),
   nsfw_override: t.Optional(t.String(),),
   name_source: t.Optional(t.String(),),

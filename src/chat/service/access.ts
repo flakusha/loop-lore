@@ -21,7 +21,7 @@ export const KEY_MECHANIC_PARAMS = [
   "turnStrategy",
   "worldId",
   "gmConfig",
-  "visualNovel",
+  "renderingOverride",
 ] as const;
 
 /** */
