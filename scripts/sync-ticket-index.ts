@@ -344,7 +344,13 @@ function applyFixes(
         break;
       }
     }
-    if (!gitIssueHash) { gitIssueHash = tf.gitIssue ?? tf.hash ?? null; }
+    // Fall back to the ticket's own "git issue:" reference only if it still
+    // resolves to an OPEN issue — a closed/stale hash (or one no longer in
+    // the registry) must not leak a dead git_issue link into the index.
+    const fallback = tf.gitIssue;
+    if (!gitIssueHash && fallback && gitIssues.get(fallback,)?.status === "open") {
+      gitIssueHash = fallback;
+    }
 
     fixed[extid] = {
       hash: gitIssueHash ?? "pending",
