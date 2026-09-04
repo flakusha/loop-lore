@@ -71,7 +71,7 @@ async function checkChatUpdateLock(
     return {
       code: "key_mechanic_conflict",
       message:
-        "This chat is online and its key mechanics are locked. To change mode, turn strategy, world, GM config, or visual novel, migrate to a new chat.",
+        "This chat is online and its key mechanics are locked. To change mode, turn strategy, world, GM config, or rendering override, migrate to a new chat.",
       details: {
         fields: [...attemptedMechanics,],
         migrateEndpoint: `/api/chats/${chatId}/migrate`,
@@ -125,11 +125,16 @@ function buildChatUpdates(
   if (typeof params.freezePanel === "boolean" && can(params.userRole, "admin.chat",)) {
     updates.story_state = patchStoryState(fullChat, { isPanelFrozen: params.freezePanel, },);
   }
-  if (params.gmConfig !== undefined) {
-    updates.gm_config = params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null;
+  let nextGmConfig: Record<string, unknown> | null | undefined;
+  if (params.renderingOverride !== undefined) {
+    const base = (fullChat.gm_config as Record<string, unknown> | null) ?? {};
+    nextGmConfig = { ...base, renderingOverride: params.renderingOverride, };
   }
-  if (typeof params.visualNovel === "boolean") {
-    updates.visual_novel = params.visualNovel ? 1 : 0;
+  if (params.gmConfig !== undefined) {
+    nextGmConfig = { ...(nextGmConfig ?? (fullChat.gm_config as Record<string, unknown> | null) ?? {}), ...params.gmConfig, };
+  }
+  if (nextGmConfig !== undefined) {
+    updates.gm_config = jsonStringifyOr(nextGmConfig,);
   }
   if (params.thinkingVisibility) {
     updates.thinking_visibility = params.thinkingVisibility;

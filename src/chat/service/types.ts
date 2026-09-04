@@ -7,6 +7,7 @@
  * Colocated here so the domain function modules stay small and import the
  * types they need. Everything exported is re-exported by the service barrel.
  */
+import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 
 /** */
 export interface ServiceError {
@@ -38,7 +39,7 @@ export interface CreateChatParams {
   turnStrategy?: string | null;
   participantIds?: string[];
   gmConfig?: Record<string, unknown> | null;
-  visualNovel?: boolean;
+  renderingOverride?: ChatRenderingOverride | null;
   templateId?: string;
   /** Parent chat id — links this chat as a side-channel (C1). */
   parentChatId?: string;
@@ -117,7 +118,7 @@ export interface UpdateChatParams {
   freezePanel?: boolean;
   userRole?: string | null;
   gmConfig?: Record<string, unknown> | null;
-  visualNovel?: boolean;
+  renderingOverride?: ChatRenderingOverride | null;
   thinkingVisibility?: string;
   promptOverride?: string | null;
   quickReplies?: QuickReplyButton[] | null;
