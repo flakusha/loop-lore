@@ -97,6 +97,7 @@ complex multi-step business logic.
   shutdown with data safety guarantees (not immediate exit).
 
 ### `bun run check` green; unit and integration tests for atomic
+
   operations, shutdown data safety, subprocess preservation, and signal-safe mutation.
 
 ## Implementation Notes

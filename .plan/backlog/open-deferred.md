@@ -39,15 +39,18 @@
 ## Recent bug clusters (filed 2026-09-03)
 
 ### Config schema + DevEx bug cluster
+
 | Git issue | Type | Severity | Problem | Where |
 | --------- | ---- | -------- | ------- | ----- |
 | `2d7a60c` | BUG | Medium | Config schema emitter missing top-level sections | `src/config/schema` |
 | `8f17329` | BUG | Medium | Config schema defaults leak absolute paths (resolved in `2f5c5f17`, needs verification) | `src/config/schema` |
 | `94675a8` | BUG | Medium | size-strict pre-existing dev drift | `check:size` gate |
 | `508a7ea` | BUG | Medium | worktree finalize must hard-fail on non-mergeable/multi-merge dev state | `scripts/worktree/` |
+
 **Status**: config-schema-emitter fix landed (`2f5c5f17`); size-strict drift tracked; worktree finalize hardening needed. → `open-build-integrity.md`
 
 ### Audit follow-up cluster (8 tickets)
+
 | Git issue | Severity | Problem |
 | --------- | -------- | ------- |
 | `864a2bc` | NIT-1 | Check report `name` field dropped after ratchet-perf changes |
@@ -57,6 +60,7 @@
 | `1448001` | NIT-2 | `.catch()` path of triggerAutoGeneration not isolated |
 | `6caa51a` | NIT-2 | Secondary chat-ownership check in reuniteChats untested |
 | `06d25f6` | LOW | Proposed removal of `reapStale(): boolean` as dead-code pattern |
+
 | `3afdeb2` | NIT-1 | Chat-swipe-index-race test uses Promise.all (JS-thread serial, no real concurrency) |
 **Status**: all 8 filed as git issues + `.plan/tickets/TASK-audit-follow-up-*` files. → `open-debt.md` § Audit Follow-up Cluster
 

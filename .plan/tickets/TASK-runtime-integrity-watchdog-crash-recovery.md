@@ -81,6 +81,7 @@ scheduled revalidation or backup verification, which may be hours late.
   can be identified post-crash.
 
 ### `bun run check` green; unit and integration tests for watchdog,
+
 crash detection, and recovery.
 
 ## Implementation Notes

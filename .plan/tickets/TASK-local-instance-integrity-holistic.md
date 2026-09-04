@@ -100,6 +100,7 @@ exist but are not operationally useful.
 - [ ] Troubleshooting guide for common integrity failure scenarios.
 
 ### `bun run check` green; integration tests for health endpoint,
+
   safe mode, and integrity reporting.
 
 ## Implementation Notes

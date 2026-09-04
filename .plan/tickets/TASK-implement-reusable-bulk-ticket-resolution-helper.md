@@ -10,6 +10,7 @@
 ## Summary
 
 see attached description
+
 ## Goal
 
 Provide a permanent, reusable CLI for bulk-updating `.plan/tickets/*.md` Status lines + injecting `## Resolution` evidence blocks. Replaces the ad-hoc `.tmp/resolve-bucket-{b,c,d}.mjs` pattern used in 3 recent sessions.
