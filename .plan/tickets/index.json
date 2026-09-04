@@ -1330,7 +1330,8 @@
     "priority": "low",
     "epic": "epic-i18n",
     "tags": [],
-    "source": ".plan/tickets/BUG-date-parse-results-unchecked-for-nan-10-sites.md"
+    "source": ".plan/tickets/BUG-date-parse-results-unchecked-for-nan-10-sites.md",
+    "status": "done"
   },
   "BUG-DB-REINIT-ARCHIVE-DESTROYS-PREVIOUS-DB-ON-RENAME-FAILURE": {
     "hash": "376cd61",
@@ -1842,6 +1843,30 @@
     "tags": [],
     "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md",
     "git_issue": "f52b255"
+  },
+  "BUG-GM-CONFIG-CORRUPTED-BY-STRING-SPREAD-IN-BUILDCHATUPDATES-MER": {
+    "hash": "499e87c",
+    "git_issue": "499e87c",
+    "extid": "BUG-GM-CONFIG-CORRUPTED-BY-STRING-SPREAD-IN-BUILDCHATUPDATES-MER",
+    "type": "BUG",
+    "title": "gm_config corrupted by string-spread in buildChatUpdates merge",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gm-config-corrupted-by-string-spread-in-buildchatupdates-mer.md"
+  },
+  "BUG-GM-GUIDANCE-ROUTE-USES-BROAD-CHECKCHATACCESS-ALLOWS-NON-OWNE": {
+    "hash": "80880b9",
+    "git_issue": "80880b9",
+    "extid": "BUG-GM-GUIDANCE-ROUTE-USES-BROAD-CHECKCHATACCESS-ALLOWS-NON-OWNE",
+    "type": "BUG",
+    "title": "gm-guidance route uses broad checkChatAccess, allows non-owner to steer story",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gm-guidance-route-uses-broad-checkchataccess-allows-non-owne.md"
   },
   "BUG-GM-NOTES-GET-500-SQL-SYNTAX-ERROR": {
     "hash": "2a271d7",
@@ -2473,6 +2498,18 @@
     "source": ".plan/tickets/BUG-n-1-queries-in-story-world-state-context-per-participant.md",
     "git_issue": "e874b71"
   },
+  "BUG-NEW-CHAT-VN-TOGGLE-SENDS-VISUALNOVEL-BUT-BACKEND-READS-RENDE": {
+    "hash": "7ca468e",
+    "git_issue": "7ca468e",
+    "extid": "BUG-NEW-CHAT-VN-TOGGLE-SENDS-VISUALNOVEL-BUT-BACKEND-READS-RENDE",
+    "type": "BUG",
+    "title": "New-chat VN toggle sends visualNovel but backend reads renderingOverride",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-new-chat-vn-toggle-sends-visualnovel-but-backend-reads-rende.md"
+  },
   "BUG-NO-IN-FLIGHT-GENERATION-CHECK-CONCURRENT-GENERATE-REQUESTS-L": {
     "hash": "a33c6f6",
     "extid": "BUG-NO-IN-FLIGHT-GENERATION-CHECK-CONCURRENT-GENERATE-REQUESTS-L",
@@ -2906,7 +2943,8 @@
     "priority": "low",
     "epic": "epic-code-quality",
     "tags": [],
-    "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
+    "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md",
+    "status": "done"
   },
   "BUG-REDOS-IN-HTML-SANITIZE-SCRIPT-TAG-PATTERN-CHUNK-BOUNDARY-SAN": {
     "hash": "b465b08",
