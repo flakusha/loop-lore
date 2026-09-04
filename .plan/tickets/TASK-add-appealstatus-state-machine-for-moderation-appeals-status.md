@@ -10,7 +10,7 @@
 
 ## Summary
 
-Replace string-typed status in moderation_appeals with AppealStatus state machine (pending→approved/denied). The 021_nsfw_appeals.ts migration has status defaulting to 'pending' with comment 'pending | approved | denied'. Must create src/db/enums-core/appeal-status.ts with StateDef + createMachine, export from index, and update schema-core.ts.
+Replace string-typed status in moderation_appeals with AppealStatus state machine (pending→approved/denied). Must create src/db/enums-core/appeal-status.ts with StateDef + createMachine, export from index, and add a `ModerationAppeals.status` COLUMN_TYPE_OVERRIDES mapping (then `bun run db:sync-types`). No migration.
 
 ## Analysis (2026-09-04)
 
