@@ -18,152 +18,6 @@ import type {
   QualityLevel,
 } from "./enums";
 
-// ── crafting_recipes ────────────────────────────────────────────
-export interface CraftingRecipes {
-  id: Generated<string>;
-  world_id: string;
-  name: string;
-  description: string | null;
-  discipline: CraftingDiscipline;
-  tier: Generated<number>;
-  level_required: Generated<number>;
-  output_item_id: string;
-  output_quantity: Generated<number>;
-  crafting_time_seconds: Generated<number>;
-  base_success_chance: Generated<number>;
-  base_quality_min: Generated<number>;
-  base_quality_max: Generated<number>;
-  perfect_threshold: Generated<number>;
-  station_type_required: CraftingStationType | null;
-  discovered_by_default: Generated<number>;
-  tags: Generated<string>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── crafting_recipe_materials ────────────────────────────────────────────
-export interface CraftingRecipeMaterials {
-  id: Generated<string>;
-  recipe_id: string;
-  item_id: string;
-  quantity: Generated<number>;
-  slot_type: Generated<MaterialSlotType>;
-  quality_requirement: QualityLevel | null;
-  bonus_effect: string | null;
-  sort_order: Generated<number>;
-  created_at: string;
-}
-
-// ── crafting_station_defs ────────────────────────────────────────────
-export interface CraftingStationDefs {
-  id: Generated<string>;
-  world_id: string;
-  name: string;
-  description: string | null;
-  station_type: CraftingStationType;
-  tier: Generated<number>;
-  speed_bonus: Generated<number>;
-  quality_bonus: Generated<number>;
-  success_bonus: Generated<number>;
-  material_saving_chance: Generated<number>;
-  max_durability: Generated<number>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── crafting_station_instances ────────────────────────────────────────────
-export interface CraftingStationInstances {
-  id: Generated<string>;
-  station_def_id: string;
-  world_id: string;
-  location_id: string | null;
-  owner_actor_id: string | null;
-  current_durability: number;
-  is_active: Generated<number>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── professions ────────────────────────────────────────────
-export interface Professions {
-  id: Generated<string>;
-  actor_id: string;
-  world_id: string;
-  discipline: CraftingDiscipline;
-  level: Generated<number>;
-  experience: Generated<number>;
-  title: Generated<ProfessionTitle>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── profession_specializations ────────────────────────────────────────────
-export interface ProfessionSpecializations {
-  id: Generated<string>;
-  profession_id: string;
-  name: string;
-  description: string | null;
-  bonus_type: ProfessionBonusType;
-  bonus_value: Generated<number>;
-  requirement_level: Generated<number>;
-  requirement_specializations: Generated<string>;
-  is_active: Generated<number>;
-  created_at: string;
-}
-
-// ── recipe_discoveries ────────────────────────────────────────────
-export interface RecipeDiscoveries {
-  id: Generated<string>;
-  actor_id: string;
-  world_id: string;
-  recipe_id: string;
-  discovery_method: DiscoveryMethod;
-  discovered_at: string;
-  mastery_level: Generated<number>;
-}
-
-// ── gathering_node_defs ────────────────────────────────────────────
-export interface GatheringNodeDefs {
-  id: Generated<string>;
-  world_id: string;
-  name: string;
-  description: string | null;
-  node_type: GatheringNodeType;
-  skill_required: Generated<number>;
-  respawn_time_seconds: Generated<number>;
-  rarity: Generated<QualityLevel>;
-  max_uses: Generated<number>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── gathering_node_materials ────────────────────────────────────────────
-export interface GatheringNodeMaterials {
-  id: Generated<string>;
-  node_def_id: string;
-  item_id: string;
-  min_quantity: Generated<number>;
-  max_quantity: Generated<number>;
-  drop_chance: Generated<number>;
-  min_quality: QualityLevel | null;
-  max_quality: QualityLevel | null;
-  sort_order: Generated<number>;
-  created_at: string;
-}
-
-// ── gathering_node_instances ────────────────────────────────────────────
-export interface GatheringNodeInstances {
-  id: Generated<string>;
-  node_def_id: string;
-  world_id: string;
-  location_id: string | null;
-  current_uses: number;
-  state: Generated<NodeInstanceState>;
-  respawn_at: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
 // ── crafting_attempts ────────────────────────────────────────────
 export interface CraftingAttempts {
   id: Generated<string>;
@@ -199,4 +53,150 @@ export interface CraftingOrders {
   created_at: string;
   updated_at: string;
   trade_type: Generated<string>;
+}
+
+// ── crafting_recipe_materials ────────────────────────────────────────────
+export interface CraftingRecipeMaterials {
+  id: Generated<string>;
+  recipe_id: string;
+  item_id: string;
+  quantity: Generated<number>;
+  slot_type: Generated<MaterialSlotType>;
+  quality_requirement: QualityLevel | null;
+  bonus_effect: string | null;
+  sort_order: Generated<number>;
+  created_at: string;
+}
+
+// ── crafting_recipes ────────────────────────────────────────────
+export interface CraftingRecipes {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  description: string | null;
+  discipline: CraftingDiscipline;
+  tier: Generated<number>;
+  level_required: Generated<number>;
+  output_item_id: string;
+  output_quantity: Generated<number>;
+  crafting_time_seconds: Generated<number>;
+  base_success_chance: Generated<number>;
+  base_quality_min: Generated<number>;
+  base_quality_max: Generated<number>;
+  perfect_threshold: Generated<number>;
+  station_type_required: CraftingStationType | null;
+  discovered_by_default: Generated<number>;
+  tags: Generated<string>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── crafting_station_defs ────────────────────────────────────────────
+export interface CraftingStationDefs {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  description: string | null;
+  station_type: CraftingStationType;
+  tier: Generated<number>;
+  speed_bonus: Generated<number>;
+  quality_bonus: Generated<number>;
+  success_bonus: Generated<number>;
+  material_saving_chance: Generated<number>;
+  max_durability: Generated<number>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── crafting_station_instances ────────────────────────────────────────────
+export interface CraftingStationInstances {
+  id: Generated<string>;
+  station_def_id: string;
+  world_id: string;
+  location_id: string | null;
+  owner_actor_id: string | null;
+  current_durability: number;
+  is_active: Generated<number>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── gathering_node_defs ────────────────────────────────────────────
+export interface GatheringNodeDefs {
+  id: Generated<string>;
+  world_id: string;
+  name: string;
+  description: string | null;
+  node_type: GatheringNodeType;
+  skill_required: Generated<number>;
+  respawn_time_seconds: Generated<number>;
+  rarity: Generated<QualityLevel>;
+  max_uses: Generated<number>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── gathering_node_instances ────────────────────────────────────────────
+export interface GatheringNodeInstances {
+  id: Generated<string>;
+  node_def_id: string;
+  world_id: string;
+  location_id: string | null;
+  current_uses: number;
+  state: Generated<NodeInstanceState>;
+  respawn_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── gathering_node_materials ────────────────────────────────────────────
+export interface GatheringNodeMaterials {
+  id: Generated<string>;
+  node_def_id: string;
+  item_id: string;
+  min_quantity: Generated<number>;
+  max_quantity: Generated<number>;
+  drop_chance: Generated<number>;
+  min_quality: QualityLevel | null;
+  max_quality: QualityLevel | null;
+  sort_order: Generated<number>;
+  created_at: string;
+}
+
+// ── profession_specializations ────────────────────────────────────────────
+export interface ProfessionSpecializations {
+  id: Generated<string>;
+  profession_id: string;
+  name: string;
+  description: string | null;
+  bonus_type: ProfessionBonusType;
+  bonus_value: Generated<number>;
+  requirement_level: Generated<number>;
+  requirement_specializations: Generated<string>;
+  is_active: Generated<number>;
+  created_at: string;
+}
+
+// ── professions ────────────────────────────────────────────
+export interface Professions {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string;
+  discipline: CraftingDiscipline;
+  level: Generated<number>;
+  experience: Generated<number>;
+  title: Generated<ProfessionTitle>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── recipe_discoveries ────────────────────────────────────────────
+export interface RecipeDiscoveries {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string;
+  recipe_id: string;
+  discovery_method: DiscoveryMethod;
+  discovered_at: string;
+  mastery_level: Generated<number>;
 }

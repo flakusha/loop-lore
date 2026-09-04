@@ -1470,7 +1470,7 @@ export const SCHEMA = new SchemaManifest()
     swipe_index: col("integer",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     edited_at: col("text",),
-    attachments: col("text", { hasDefault: true, },),
+    attachments: col("text",),
     archived_at: col("text",),
     format_version: col("integer", { notNull: true, hasDefault: true, },),
     section_id: col("text",),

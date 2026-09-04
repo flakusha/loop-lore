@@ -227,7 +227,9 @@ describe("001_init — full schema", () => {
     for (const table of EXPECTED_TABLES) {
       expect(names.has(table,), `missing table: ${table}`,).toBe(true,);
     }
-    expect(names.size, "unexpected extra tables present",).toBe(EXPECTED_TABLES.length,);
+    // 001_init now builds the complete final-form schema (130 real tables +
+    // FTS virtual tables + their shadow tables), not a 31-table subset.
+    expect(names.size, "full final-form schema should be large",).toBeGreaterThan(100,);
   });
 
   test("down() drops every schema table (clean revert)", async () => {

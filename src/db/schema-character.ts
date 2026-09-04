@@ -22,26 +22,183 @@ import type {
   WorldTraitCategory,
 } from "./enums";
 
-// ── character_permanent_traits ────────────────────────────────────────────
-export interface CharacterPermanentTraits {
+// ── world_avatar_config ────────────────────────────────────────────
+export interface WorldAvatarConfig {
   id: Generated<string>;
+  world_id: string;
   actor_id: string;
-  trait_category: TraitCategory;
-  trait_name: string;
-  trait_value: string;
-  immutable: Generated<number>;
+  selection_rule_override: AvatarSelectionRule | null;
+  weights_override: string | null;
   created_at: string;
   updated_at: string;
 }
 
-// ── character_world_traits ────────────────────────────────────────────
-export interface CharacterWorldTraits {
+// ── admin_character_overrides ────────────────────────────────────────────
+export interface AdminCharacterOverrides {
   id: Generated<string>;
   actor_id: string;
-  world_id: string;
-  trait_category: WorldTraitCategory;
-  trait_name: string;
-  trait_value: string;
+  admin_id: string;
+  action: AdminOverrideAction;
+  visibility_override: VisibilityOverride | null;
+  license_override: LicenseType | null;
+  reason: string | null;
+  expires_at: string | null;
+  created_at: string;
+}
+
+// ── character_arousal ────────────────────────────────────────────
+export interface CharacterArousal {
+  id: Generated<string>;
+  actor_id: string;
+  world_id: string | null;
+  level: Generated<number>;
+  buildup_rate: Generated<number>;
+  decay_rate: Generated<number>;
+  modifiers: Generated<string>;
+  last_update: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── character_availability ────────────────────────────────────────────
+export interface CharacterAvailability {
+  id: Generated<string>;
+  actor_id: string;
+  status: Generated<string>;
+  usage_policy: string | null;
+  activity_restrictions: string | null;
+  content_policy: string | null;
+  nsfw_policy: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── character_avatar_config ────────────────────────────────────────────
+export interface CharacterAvatarConfig {
+  id: Generated<string>;
+  actor_id: string;
+  selection_rule: Generated<string>;
+  weights: string | null;
+  fallback_chain: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── character_avatars ────────────────────────────────────────────
+export interface CharacterAvatars {
+  id: Generated<string>;
+  actor_id: string;
+  asset_id: string;
+  label: string;
+  tags: Generated<string>;
+  is_primary: Generated<number>;
+  sort_order: Generated<number>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── character_body_profile ────────────────────────────────────────────
+export interface CharacterBodyProfile {
+  id: Generated<string>;
+  actor_id: string;
+  stamina: Generated<number>;
+  flexibility: Generated<number>;
+  sensitivity: Generated<number>;
+  endurance: Generated<number>;
+  size_category: Generated<string>;
+  build: Generated<string>;
+  beauty: Generated<number>;
+  charisma: Generated<number>;
+  style: Generated<number>;
+  scent: string | null;
+  modifications: Generated<string>;
+  created_at: string;
+  updated_at: string;
+  world_id: string | null;
+}
+
+// ── character_desire_profile ────────────────────────────────────────────
+export interface CharacterDesireProfile {
+  id: Generated<string>;
+  actor_id: string;
+  turn_ons: Generated<string>;
+  turn_offs: Generated<string>;
+  fetishes: Generated<string>;
+  hard_limits: Generated<string>;
+  current_desire: Generated<number>;
+  desire_decay_rate: Generated<number>;
+  desire_buildup_rate: Generated<number>;
+  created_at: string;
+  updated_at: string;
+  world_id: string | null;
+}
+
+// ── character_emotions ────────────────────────────────────────────
+export interface CharacterEmotions {
+  id: Generated<string>;
+  actor_id: string;
+  emotion_id: string;
+  intensity: Generated<number>;
+  context: string | null;
+  expires_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── character_fantasies ────────────────────────────────────────────
+export interface CharacterFantasies {
+  id: Generated<string>;
+  actor_id: string;
+  fantasy_name: string;
+  category: FantasyCategory;
+  intensity: Generated<string>;
+  requirements: Generated<string>;
+  fulfillment_effects: Generated<string>;
+  risks: Generated<string>;
+  discovered_through: string | null;
+  initial_reaction: Generated<string>;
+  current_feeling: Generated<string>;
+  times_explored: Generated<number>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── character_heat_cycle ────────────────────────────────────────────
+export interface CharacterHeatCycle {
+  id: Generated<string>;
+  actor_id: string;
+  species: Generated<string>;
+  cycle_length_days: Generated<number>;
+  current_phase: Generated<string>;
+  days_until_next_heat: Generated<number>;
+  effects: Generated<string>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── character_intimacy ────────────────────────────────────────────
+export interface CharacterIntimacy {
+  id: Generated<string>;
+  actor_id: string;
+  target_actor_id: string;
+  world_id: string | null;
+  score: Generated<number>;
+  action_history: Generated<string>;
+  unlocked_thresholds: Generated<string>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ── character_licensing ────────────────────────────────────────────
+export interface CharacterLicensing {
+  id: Generated<string>;
+  actor_id: string;
+  license_type: LicenseType;
+  custom_license_text: string | null;
+  attribution: string | null;
+  allow_derivatives: Generated<number>;
+  allow_commercial: Generated<number>;
+  share_alike: Generated<number>;
   created_at: string;
   updated_at: string;
 }
@@ -76,17 +233,16 @@ export interface CharacterMood {
   updated_at: string;
 }
 
-// ── mood_events ────────────────────────────────────────────
-export interface MoodEvents {
+// ── character_permanent_traits ────────────────────────────────────────────
+export interface CharacterPermanentTraits {
   id: Generated<string>;
   actor_id: string;
-  world_id: string | null;
-  event_type: string;
-  happiness_delta: number;
-  mood_override: string | null;
-  source: string;
-  source_id: string | null;
+  trait_category: TraitCategory;
+  trait_name: string;
+  trait_value: string;
+  immutable: Generated<number>;
   created_at: string;
+  updated_at: string;
 }
 
 // ── character_relationships ────────────────────────────────────────────
@@ -105,37 +261,43 @@ export interface CharacterRelationships {
   updated_at: string;
 }
 
-// ── character_avatars ────────────────────────────────────────────
-export interface CharacterAvatars {
+// ── character_seduction_skills ────────────────────────────────────────────
+export interface CharacterSeductionSkills {
   id: Generated<string>;
   actor_id: string;
-  asset_id: string;
-  label: string;
-  tags: Generated<string>;
-  is_primary: Generated<number>;
-  sort_order: Generated<number>;
+  skill_category: SeductionSkillCategory;
+  skill_name: string;
+  level: Generated<number>;
+  xp: Generated<number>;
+  xp_to_next: Generated<number>;
   created_at: string;
   updated_at: string;
+  world_id: string | null;
 }
 
-// ── character_avatar_config ────────────────────────────────────────────
-export interface CharacterAvatarConfig {
+// ── character_world_setup ────────────────────────────────────────────
+export interface CharacterWorldSetup {
   id: Generated<string>;
   actor_id: string;
-  selection_rule: Generated<string>;
-  weights: string | null;
-  fallback_chain: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── world_avatar_config ────────────────────────────────────────────
-export interface WorldAvatarConfig {
-  id: Generated<string>;
   world_id: string;
+  starting_inventory: Generated<string>;
+  lore_entries: Generated<string>;
+  backstory: string | null;
+  scenario_override: string | null;
+  system_prompt_override: string | null;
+  initial_state: Generated<string>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── character_world_traits ────────────────────────────────────────────
+export interface CharacterWorldTraits {
+  id: Generated<string>;
   actor_id: string;
-  selection_rule_override: AvatarSelectionRule | null;
-  weights_override: string | null;
+  world_id: string;
+  trait_category: WorldTraitCategory;
+  trait_name: string;
+  trait_value: string;
   created_at: string;
   updated_at: string;
 }
@@ -152,113 +314,31 @@ export interface Emotions {
   created_at: string;
 }
 
-// ── character_emotions ────────────────────────────────────────────
-export interface CharacterEmotions {
-  id: Generated<string>;
-  actor_id: string;
-  emotion_id: string;
-  intensity: Generated<number>;
-  context: string | null;
-  expires_at: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── character_availability ────────────────────────────────────────────
-export interface CharacterAvailability {
-  id: Generated<string>;
-  actor_id: string;
-  status: Generated<string>;
-  usage_policy: string | null;
-  activity_restrictions: string | null;
-  content_policy: string | null;
-  nsfw_policy: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── character_licensing ────────────────────────────────────────────
-export interface CharacterLicensing {
-  id: Generated<string>;
-  actor_id: string;
-  license_type: LicenseType;
-  custom_license_text: string | null;
-  attribution: string | null;
-  allow_derivatives: Generated<number>;
-  allow_commercial: Generated<number>;
-  share_alike: Generated<number>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── admin_character_overrides ────────────────────────────────────────────
-export interface AdminCharacterOverrides {
-  id: Generated<string>;
-  actor_id: string;
-  admin_id: string;
-  action: AdminOverrideAction;
-  visibility_override: VisibilityOverride | null;
-  license_override: LicenseType | null;
-  reason: string | null;
-  expires_at: string | null;
-  created_at: string;
-}
-
-// ── character_intimacy ────────────────────────────────────────────
-export interface CharacterIntimacy {
-  id: Generated<string>;
-  actor_id: string;
-  target_actor_id: string;
-  world_id: string | null;
-  score: Generated<number>;
-  action_history: Generated<string>;
-  unlocked_thresholds: Generated<string>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── character_arousal ────────────────────────────────────────────
-export interface CharacterArousal {
+// ── mood_events ────────────────────────────────────────────
+export interface MoodEvents {
   id: Generated<string>;
   actor_id: string;
   world_id: string | null;
-  level: Generated<number>;
-  buildup_rate: Generated<number>;
-  decay_rate: Generated<number>;
-  modifiers: Generated<string>;
-  last_update: string;
+  event_type: string;
+  happiness_delta: number;
+  mood_override: string | null;
+  source: string;
+  source_id: string | null;
   created_at: string;
-  updated_at: string;
 }
 
-// ── character_desire_profile ────────────────────────────────────────────
-export interface CharacterDesireProfile {
+// ── location_nsfw_config ────────────────────────────────────────────
+export interface LocationNsfwConfig {
   id: Generated<string>;
-  actor_id: string;
-  turn_ons: Generated<string>;
-  turn_offs: Generated<string>;
-  fetishes: Generated<string>;
-  hard_limits: Generated<string>;
-  current_desire: Generated<number>;
-  desire_decay_rate: Generated<number>;
-  desire_buildup_rate: Generated<number>;
+  location_id: string;
+  location_type: NsfwLocationType;
+  privacy_level: Generated<string>;
+  discovery_chance: Generated<number>;
+  atmosphere: Generated<string>;
+  equipment: Generated<string>;
+  risks: Generated<string>;
   created_at: string;
   updated_at: string;
-  world_id: string | null;
-}
-
-// ── character_seduction_skills ────────────────────────────────────────────
-export interface CharacterSeductionSkills {
-  id: Generated<string>;
-  actor_id: string;
-  skill_category: SeductionSkillCategory;
-  skill_name: string;
-  level: Generated<number>;
-  xp: Generated<number>;
-  xp_to_next: Generated<number>;
-  created_at: string;
-  updated_at: string;
-  world_id: string | null;
 }
 
 // ── nsfw_encounters ────────────────────────────────────────────
@@ -276,84 +356,4 @@ export interface NsfwEncounters {
   status: Generated<NsfwEncounterStatus>;
   created_at: string;
   updated_at: string;
-}
-
-// ── character_body_profile ────────────────────────────────────────────
-export interface CharacterBodyProfile {
-  id: Generated<string>;
-  actor_id: string;
-  stamina: Generated<number>;
-  flexibility: Generated<number>;
-  sensitivity: Generated<number>;
-  endurance: Generated<number>;
-  size_category: Generated<string>;
-  build: Generated<string>;
-  beauty: Generated<number>;
-  charisma: Generated<number>;
-  style: Generated<number>;
-  scent: string | null;
-  modifications: Generated<string>;
-  created_at: string;
-  updated_at: string;
-  world_id: string | null;
-}
-
-// ── character_heat_cycle ────────────────────────────────────────────
-export interface CharacterHeatCycle {
-  id: Generated<string>;
-  actor_id: string;
-  species: Generated<string>;
-  cycle_length_days: Generated<number>;
-  current_phase: Generated<string>;
-  days_until_next_heat: Generated<number>;
-  effects: Generated<string>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── character_fantasies ────────────────────────────────────────────
-export interface CharacterFantasies {
-  id: Generated<string>;
-  actor_id: string;
-  fantasy_name: string;
-  category: FantasyCategory;
-  intensity: Generated<string>;
-  requirements: Generated<string>;
-  fulfillment_effects: Generated<string>;
-  risks: Generated<string>;
-  discovered_through: string | null;
-  initial_reaction: Generated<string>;
-  current_feeling: Generated<string>;
-  times_explored: Generated<number>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── location_nsfw_config ────────────────────────────────────────────
-export interface LocationNsfwConfig {
-  id: Generated<string>;
-  location_id: string;
-  location_type: NsfwLocationType;
-  privacy_level: Generated<string>;
-  discovery_chance: Generated<number>;
-  atmosphere: Generated<string>;
-  equipment: Generated<string>;
-  risks: Generated<string>;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── character_world_setup ────────────────────────────────────────────
-export interface CharacterWorldSetup {
-  id: Generated<string>;
-  actor_id: string;
-  world_id: string;
-  starting_inventory: Generated<string>;
-  lore_entries: Generated<string>;
-  backstory: string | null;
-  scenario_override: string | null;
-  system_prompt_override: string | null;
-  initial_state: Generated<string>;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
 }
