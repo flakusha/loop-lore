@@ -14683,6 +14683,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-log-files-created-world-readable-0644.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-logging-hardening-minors-injection-rotation-races-sink-path-.md"
     }
   ],
   "src/logger/types.ts": [
@@ -17379,6 +17383,12 @@
       "source": "docs/spec/battle.md"
     }
   ],
+  "src/routes/battle/equipment.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
+    }
+  ],
   "src/routes/battle/equipment.ts": [
     {
       "kind": "ticket",
@@ -19809,6 +19819,12 @@
       "source": ".plan/tickets/TASK-trade-history-npc-counterparty.md"
     }
   ],
+  "src/routes/trade/shared": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
+    }
+  ],
   "src/routes/v1/index.ts": [
     {
       "kind": "epic",
@@ -22162,6 +22178,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-logging-hardening-minors-injection-rotation-races-sink-path-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-ocsp-stapling-for-tls-certificate-status.md"
     },
     {
@@ -23657,6 +23677,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
+  "src/validation/schemas/api-keys.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md"
     }
   ],
   "src/validation/schemas/chat.ts": [
