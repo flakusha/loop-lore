@@ -98,7 +98,7 @@ export class StationsService {
       .orderBy("tier", "asc",)
       .orderBy("name", "asc",);
     if (type) { q = q.where("station_type", "=", type,); }
-    const rows = await q.selectAll().execute();
+    const rows = (await q.selectAll().execute()) as unknown as Parameters<typeof mapDef>[0][];
     return Array.from(rows, mapDef,);
   }
 
@@ -202,7 +202,7 @@ export class StationsService {
     let q = worldScoped(this.db, "crafting_station_instances", worldId,)
       .orderBy("created_at", "asc",);
     if (locationId) { q = q.where("location_id", "=", locationId,); }
-    const rows = await q.selectAll().execute();
+    const rows = (await q.selectAll().execute()) as unknown as Parameters<typeof mapInstance>[0][];
     return Array.from(rows, mapInstance,);
   }
 
