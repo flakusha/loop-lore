@@ -20,21 +20,6 @@ export interface ModelComparisons {
   created_at: string;
 }
 
-// ── nsfw_user_preferences ────────────────────────────────────────────
-export interface NsfwUserPreferences {
-  id: Generated<string>;
-  user_id: string;
-  nsfw_enabled: Generated<number>;
-  max_rating: Generated<string>;
-  access_status: Generated<NsfwAccessStatus>;
-  shadow_nsfw: Generated<number>;
-  block_reason: string | null;
-  banned_at: string | null;
-  banned_by: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
 // ── content_flags ────────────────────────────────────────────
 export interface ContentFlags {
   id: Generated<string>;
@@ -80,4 +65,19 @@ export interface ModerationAppeals {
   review_note: string | null;
   created_at: string;
   updated_at: string | null;
+}
+
+// ── nsfw_user_preferences ────────────────────────────────────────────
+export interface NsfwUserPreferences {
+  id: Generated<string>;
+  user_id: string;
+  nsfw_enabled: Generated<number>;
+  max_rating: Generated<string>;
+  access_status: Generated<NsfwAccessStatus>;
+  shadow_nsfw: Generated<number>;
+  block_reason: string | null;
+  banned_at: string | null;
+  banned_by: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
 }
