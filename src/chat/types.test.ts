@@ -6,24 +6,24 @@ describe("resolveFeatureFlags", () => {
     const flags = resolveFeatureFlags("direct",);
     expect(flags.contextWindow,).toBe(true,);
     expect(flags.turnOrchestration,).toBe(false,);
-    expect(flags.visualNovel,).toBe(true,);
+    expect(flags.defaultRendering,).toBe("visual_novel",);
   });
 
   it("returns defaults for group mode", () => {
     const flags = resolveFeatureFlags("group",);
     expect(flags.turnOrchestration,).toBe(true,);
-    expect(flags.visualNovel,).toBe(false,);
+    expect(flags.defaultRendering,).toBe("text",);
   });
 
   it("returns defaults for story mode", () => {
     const flags = resolveFeatureFlags("story",);
     expect(flags.turnOrchestration,).toBe(true,);
-    expect(flags.visualNovel,).toBe(true,);
+    expect(flags.defaultRendering,).toBe("visual_novel",);
   });
 
   it("applies overrides", () => {
-    const flags = resolveFeatureFlags("direct", { visualNovel: false, },);
-    expect(flags.visualNovel,).toBe(false,);
+    const flags = resolveFeatureFlags("direct", { defaultRendering: "text", },);
+    expect(flags.defaultRendering,).toBe("text",);
     expect(flags.contextWindow,).toBe(true,); // default preserved
   });
 

@@ -76,7 +76,8 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       updated_at: new Date().toISOString(),
     },).execute();
 
-    // Seed chat
+    // Seed chat (rendering state now lives in gm_config.renderingOverride;
+    // the legacy chats.visual_novel column was dropped in migration 076).
     await db.insertInto("chats",).values({
       id: chatId,
       name: "Test Chat",
@@ -84,7 +85,6 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
       mode: "direct",
       turn_strategy: null,
       created_by: userId,
-      visual_novel: 0,
       is_pinned: "unpinned",
       encryption_level: "standard",
     },).execute();

@@ -4362,6 +4362,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     },
     {
@@ -4373,6 +4377,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.md"
+    }
+  ],
+  "src/chat/service/crud/update.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
     }
   ],
   "src/chat/service/location-events.ts": [
@@ -4477,6 +4487,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md"
     },
     {
       "kind": "ticket",
@@ -7051,6 +7065,12 @@
       "source": "docs/spec/messages.md"
     }
   ],
+  "src/db/enums-core/chat.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md"
+    }
+  ],
   "src/db/enums-core/flags.ts": [
     {
       "kind": "epic",
@@ -7431,6 +7451,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-state-schema.md"
+    }
+  ],
+  "src/db/migrations/012_features.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redundant-vn-state-stored-in-two-independent-locations.md"
     }
   ],
   "src/db/migrations/016_asset_encryption.ts": [

@@ -29,9 +29,9 @@ export async function revokeInviteRow(
   let status: InviteStatus | undefined;
   if (table === "chat_invites") {
     const row = await database
-      .selectFrom("chat_invites")
-      .select(["id", "chat_id", "status"])
-      .where("id", "=", inviteId)
+      .selectFrom("chat_invites",)
+      .select(["id", "chat_id", "status",],)
+      .where("id", "=", inviteId,)
       .executeTakeFirst();
     if (row && row.chat_id === scopeId) {
       scopeMatched = true;
@@ -39,9 +39,9 @@ export async function revokeInviteRow(
     }
   } else {
     const row = await database
-      .selectFrom("world_invites")
-      .select(["id", "world_id", "status"])
-      .where("id", "=", inviteId)
+      .selectFrom("world_invites",)
+      .select(["id", "world_id", "status",],)
+      .where("id", "=", inviteId,)
       .executeTakeFirst();
     if (row && row.world_id === scopeId) {
       scopeMatched = true;
@@ -50,21 +50,21 @@ export async function revokeInviteRow(
   }
 
   if (!scopeMatched || status === undefined) {
-    return { ok: false, error: { code: "not_found", message: "Invite not found" } };
+    return { ok: false, error: { code: "not_found", message: "Invite not found", }, };
   }
 
-  if (!inviteStatusMachine.canTransition(status, InviteStatus.Revoked)) {
+  if (!inviteStatusMachine.canTransition(status, InviteStatus.Revoked,)) {
     if (status === InviteStatus.Revoked) {
-      return { ok: true, value: { id: inviteId, status: InviteStatus.Revoked } };
+      return { ok: true, value: { id: inviteId, status: InviteStatus.Revoked, }, };
     }
-    return { ok: false, error: { code: "revoked", message: "Invite has been revoked" } };
+    return { ok: false, error: { code: "revoked", message: "Invite has been revoked", }, };
   }
 
   await database
-    .updateTable(table)
-    .set({ status: InviteStatus.Revoked })
-    .where("id", "=", inviteId)
+    .updateTable(table,)
+    .set({ status: InviteStatus.Revoked, },)
+    .where("id", "=", inviteId,)
     .execute();
 
-  return { ok: true, value: { id: inviteId, status: InviteStatus.Revoked } };
+  return { ok: true, value: { id: inviteId, status: InviteStatus.Revoked, }, };
 }

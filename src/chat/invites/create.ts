@@ -20,10 +20,10 @@ export async function createInvite(
     database,
     table: "chat_invites",
     input,
-    resolveScope: (i) => i.chatId,
-  });
+    resolveScope: (i,) => i.chatId,
+  },);
   if (!result.ok) {
     return result;
   }
-  return { ok: true, value: toRow(result.value as never) };
+  return { ok: true, value: toRow(result.value as never,), };
 }

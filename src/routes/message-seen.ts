@@ -16,8 +16,8 @@ import { Elysia, t, } from "elysia";
 import { type Kysely, sql, } from "kysely";
 import { checkChatAccess, } from "../chat/service";
 import type { DB, } from "../db/schema";
-import { notFound, } from "../validation/middleware";
 import { requireActorFromSession, } from "../middleware/scope-by-user";
+import { notFound, } from "../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 

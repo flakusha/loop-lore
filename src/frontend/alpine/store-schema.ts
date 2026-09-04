@@ -15,6 +15,7 @@
  * registry at module init); `assertChatViewShape` is the dev-only guard that
  * fails loud if a future caller forgets to seed those fields.
  */
+import { safeJsonStringify, } from "../../utils";
 
 /** Visibility modes accepted by chat-view templates. */
 export type ChatVisibility = "visible" | "hidden" | "collapsed";
@@ -75,7 +76,7 @@ export function assertChatViewShape(store: unknown,): void {
   }
   if (typeof draft.visibility !== "string" || draft.visibility === "") {
     throw new TypeError(
-      `[store-schema] chat.visibility must be a non-empty string, got ${JSON.stringify(draft.visibility,)}`,
+      `[store-schema] chat.visibility must be a non-empty string, got ${safeJsonStringify(draft.visibility,)}`,
     );
   }
 }

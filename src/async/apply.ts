@@ -66,11 +66,11 @@ export type Write =
  * @param where
  * @param userId
  */
-async function executeScopedByUser<O>(
+async function executeScopedByUser<O,>(
   where: UpdateQueryBuilder<DB, "request_results", "request_results", O>,
   userId: string | null,
 ): Promise<void> {
-  await (userId !== null ? where.where("user_id", "=", userId) : where).execute();
+  await (userId !== null ? where.where("user_id", "=", userId,) : where).execute();
 }
 
 /**

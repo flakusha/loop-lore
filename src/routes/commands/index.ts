@@ -41,7 +41,7 @@ export function commandsRoutes(opts: { prefix?: string },) {
         const data: CommandDescriptor[] = listCommands().map((name,) => ({
           name,
           descriptionKey: `commands.${name}`,
-        }),);
+        }));
         return Response.json({ data, },);
       },
       {

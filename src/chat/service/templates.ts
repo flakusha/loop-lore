@@ -13,9 +13,9 @@
 import type { Kysely, } from "kysely";
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
-import { findMainRepoRoot, } from "../../utils/git-worktree";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
+import { findMainRepoRoot, } from "../../utils/git-worktree";
 import { CHAT_SETUP_TEMPLATE_DEFAULTS, type ChatSetupTemplateDefault, } from "./template-defaults";
 import type { ChatSetupTemplate, } from "./types";
 

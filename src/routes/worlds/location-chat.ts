@@ -86,9 +86,9 @@ export async function createLocationChat(
     gmConfig: hasExplicit("gmConfig",)
       ? (body.gmConfig as Record<string, unknown> | null)
       : (template.gm_config ? jsonParseOr(template.gm_config, {},) : null),
-    visualNovel: hasExplicit("visualNovel",)
-      ? (body.visualNovel as boolean)
-      : template.visual_novel === 1,
+    renderingOverride: hasExplicit("renderingOverride",)
+      ? (body.renderingOverride as "text" | "visual_novel" | null)
+      : (template.visual_novel === 1 ? "visual_novel" : null),
     visibility: hasExplicit("visibility",)
       ? (body.visibility as string)
       : (template.visibility ?? "private"),

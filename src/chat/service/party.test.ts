@@ -57,13 +57,23 @@ describe("party join/leave (C7)", () => {
       db,
       "VN Group",
       userA,
-      { id: vnChatId, type: "group", mode: "group", visual_novel: 1, } as never,
+      {
+        id: vnChatId,
+        type: "group",
+        mode: "group",
+        gm_config: JSON.stringify({ renderingOverride: "visual_novel", },),
+      } as never,
     );
     await insertChats(
       db,
       "Plain Group",
       userA,
-      { id: plainChatId, type: "group", mode: "group", visual_novel: 0, } as never,
+      {
+        id: plainChatId,
+        type: "group",
+        mode: "group",
+        gm_config: JSON.stringify({ renderingOverride: null, },),
+      } as never,
     );
 
     // Owner is always a participant of the group.

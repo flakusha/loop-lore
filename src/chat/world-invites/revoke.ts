@@ -3,8 +3,8 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { revokeInviteRow, } from "../invites/revoke-core";
 import type { InviteResult, } from "../invites";
+import { revokeInviteRow, } from "../invites/revoke-core";
 
 /**
  * Revoke a world invite so it can no longer be redeemed.
@@ -17,5 +17,5 @@ export async function revokeWorldInvite(
   worldId: string,
   inviteId: string,
 ): Promise<InviteResult<{ id: string; status: "active" | "revoked" | "expired" | "exhausted" }>> {
-  return revokeInviteRow({ database, table: "world_invites", scopeId: worldId, inviteId });
+  return revokeInviteRow({ database, table: "world_invites", scopeId: worldId, inviteId, },);
 }
