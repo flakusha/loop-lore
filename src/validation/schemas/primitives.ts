@@ -52,7 +52,11 @@ export const GmGuidanceSchema = t.Object({
 
 export const GmConfigSchema = t.Object({
   assistantRole: t.Optional(t.UnionEnum(["off", "helper", "gm", "moderator",],),),
-  visualNovel: t.Optional(t.Boolean(),),
+  renderingOverride: t.Optional(t.Union([
+    t.Literal("text",),
+    t.Literal("visual_novel",),
+    t.Null(),
+  ],),),
   storyMode: t.Optional(t.Boolean(),),
   gmGuidance: t.Optional(GmGuidanceSchema,),
   type: t.Optional(t.UnionEnum(["llm", "human", "hybrid",],),),

@@ -29,8 +29,13 @@ export async function createChat(
       world_id: params.worldId ?? null,
       current_location_id: params.currentLocationId ?? null,
       turn_strategy: (params.turnStrategy as never) ?? null,
-      gm_config: params.gmConfig ? jsonStringifyOr(params.gmConfig,) : null,
-      visual_novel: params.visualNovel ? 1 : 0,
+      gm_config:
+        params.gmConfig !== undefined || params.renderingOverride !== undefined
+          ? jsonStringifyOr({
+            ...(typeof params.gmConfig === "object" && params.gmConfig !== null ? params.gmConfig : {}),
+            renderingOverride: params.renderingOverride ?? null,
+          },)
+          : null,
       template_id: params.templateId ?? null,
       parent_chat_id: params.parentChatId ?? null,
       visibility: params.visibility ?? "private",
