@@ -3,6 +3,18 @@
 
 /**
  * Music embed renderer — returns sanitized iframe HTML for music link messages.
+ *
+ * XSS defense layers used by the fallback card interpolation:
+ *   - `escText` escapes `& < >` for safe insertion as child text.
+ *   - `escAttr` further escapes `"` for safe insertion inside a double-quoted
+ *     attribute value (closes the attribute-breakout vector that the previous
+ *     `esc()` missed when interpolating into `src=` / `href=`).
+ *   - `safeUrl` enforces an http(s)/mailto scheme allowlist for navigation
+ *     targets so `javascript:` and `data:` URLs cannot reach rendered markup
+ *     (closes the URL-scheme vector that previously slipped through the same
+ *     helper). Non-matching URLs are rewritten to a benign `#blocked` anchor.
+ *
+ * All three helpers are exported so they can be unit-tested without a DOM.
  */
 import type { MusicLinkMessage, } from "../chat-types/messages";
 import type { ChatState, } from "../types";
@@ -17,6 +29,21 @@ const getDOMPurify = () =>
 
 const NSFW_PLACEHOLDER = '<span class="music-embed-nsfw">🔒 Explicit content hidden</span>';
 
+const SAFE_URL = /^(?:https?:\/\/|mailto:)/i;
+
+/** Escape `& < >` for safe insertion as HTML child text. */
+export const escText = (s: string | null | undefined,): string =>
+  (s ?? "").replaceAll("&", "&amp;",).replaceAll("<", "&lt;",).replaceAll(">", "&gt;",);
+
+/** Escape for safe insertion inside a double-quoted attribute value (& < > "). */
+export const escAttr = (s: string | null | undefined,): string => escText(s,).replaceAll('"', "&quot;",);
+
+/** Allowlist http(s)/mailto schemes; rewrite everything else to a benign `#blocked`. */
+export const safeUrl = (s: string | null | undefined,): string => {
+  const u = s ?? "";
+  return SAFE_URL.test(u,) ? escAttr(u,) : "#blocked";
+};
+
 export const chatMusicEmbed: ChatMusicEmbed = {
   renderMusicEmbed(msg: MusicLinkMessage,): string {
     const DOMPurify = getDOMPurify();
@@ -26,20 +53,16 @@ export const chatMusicEmbed: ChatMusicEmbed = {
     }
 
     if (!msg.embedHtml) {
-      // Fallback: render a linked title card with escaped values to prevent
-      // stored XSS from LLM/regex-extracted metadata (thumbnailUrl/title/artist/serviceUrl).
-      const esc = (s: string | null | undefined,) => {
-        const div = document.createElement("div",);
-        div.textContent = s ?? "";
-        return div.getHTML();
-      };
+      // Fallback: render a linked title card with strictly escaped values to
+      // prevent stored XSS from LLM/regex-extracted metadata
+      // (thumbnailUrl/title/artist/serviceUrl).
       const thumb = msg.thumbnailUrl
-        ? `<img src="${esc(msg.thumbnailUrl,)}" alt="${esc(msg.title,)}" class="music-embed-thumb" />`
+        ? `<img src="${safeUrl(msg.thumbnailUrl,)}" alt="${escAttr(msg.title,)}" class="music-embed-thumb" />`
         : "";
       return `<div class="music-embed-card">
         ${thumb}
-        <a href="${esc(msg.serviceUrl,)}" target="_blank" rel="noopener" class="music-embed-link">
-          ${esc(msg.title,)} — ${esc(msg.artist,)}
+        <a href="${safeUrl(msg.serviceUrl,)}" target="_blank" rel="noopener" class="music-embed-link">
+          ${escText(msg.title,)} — ${escText(msg.artist,)}
         </a>
       </div>`;
     }
