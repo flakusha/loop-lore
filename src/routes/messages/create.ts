@@ -91,19 +91,53 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (existingId) {
           return jsonCreated({ id: existingId, context: {}, },);
         }
+        // ── Cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR) ──
+        // Verify the parent message actually belongs to the target chat INSIDE
+        // the same transaction as the INSERT, eliminating the TOCTOU window
+        // between SELECT and INSERT. A parent from a different chat → 403;
+        // a missing parent → 404. Both return before any row is written.
         try {
-          await insertUserMessageWithRetry(database, {
-            id,
-            chatId,
-            actorId,
-            parentId,
-            storedContent,
-            storedKeyId,
-            storedPlaintext,
-            contentEncoding: contentEncoding as ContentEncoding,
-            idempotencyKey,
+          await database.transaction().execute(async (trx,) => {
+            if (parentId !== null) {
+              const parent = await trx
+                .selectFrom("messages",)
+                .select("chat_id",)
+                .where("id", "=", parentId,)
+                .executeTakeFirst();
+              if (!parent) {
+                ctx.set.status = 404;
+                throw new ParentMessageNotFoundError();
+              }
+              if (parent.chat_id !== chatId) {
+                ctx.set.status = 403;
+                throw new ParentMessageNotInChatError();
+              }
+            }
+            await insertUserMessageWithRetry(trx, {
+              id,
+              chatId,
+              actorId,
+              parentId,
+              storedContent,
+              storedKeyId,
+              storedPlaintext,
+              contentEncoding: contentEncoding as ContentEncoding,
+              idempotencyKey,
+            },);
           },);
         } catch (err) {
+          if (err instanceof ParentMessageNotFoundError) {
+            return jsonResponse(
+              { error: "parent_message_not_found", message: "parentId does not reference any message.", },
+              404 as HttpStatusCode,
+            );
+          }
+          if (err instanceof ParentMessageNotInChatError) {
+            return jsonResponse(
+              { error: "parent_message_not_in_chat", message: "parentId belongs to a different chat.", },
+              403 as HttpStatusCode,
+            );
+          }
           if (err instanceof SwipeInsertExhaustedError) {
             return jsonResponse(
               { error: "service_busy", message: err.message, },
@@ -194,4 +228,26 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
       },
     )
     .use(createEntityConfirmRoutes(opts, prefix,),);
+}
+
+
+// ── Cross-chat parentId IDOR guard errors (BUG-cross-chat-parentId-IDOR) ──
+// Sentinel errors thrown inside the transaction body to drive the 404/403
+// branches in the catch above. Using class instances (not plain objects) so
+// the `instanceof` narrowing in the catch is type-safe.
+
+/** Thrown when parentId references a message that does not exist. */
+export class ParentMessageNotFoundError extends Error {
+  constructor() {
+    super("parent message not found",);
+    this.name = "ParentMessageNotFoundError";
+  }
+}
+
+/** Thrown when parentId references a message that belongs to a different chat. */
+export class ParentMessageNotInChatError extends Error {
+  constructor() {
+    super("parent message belongs to a different chat",);
+    this.name = "ParentMessageNotInChatError";
+  }
 }
