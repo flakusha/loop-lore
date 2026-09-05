@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import { type Kysely, sql, } from "kysely";
-import type { AsyncStore, } from "../../async/store";
+import { type Kysely, } from "kysely";
 import { generateResponse, isAssistantEnabled, } from "../../assistant/service";
+import type { AsyncStore, } from "../../async/store";
 import type { Config, } from "../../config/schema";
 
 import {
@@ -37,8 +37,8 @@ import { log, } from "./helpers";
 export function isSwipeIndexUniqueViolation(err: unknown,): boolean {
   if (!(err instanceof Error)) { return false; }
   const msg = err.message;
-  return /UNIQUE constraint failed:\s*messages\.(chat_id|parent_id|swipe_index)\b/i.test(msg,)
-    || /SQLITE_CONSTRAINT(?:_UNIQUE)?\b.*idx_messages_swipe_unique/i.test(msg,);
+  return /UNIQUE constraint failed:\s*messages\.(chat_id|parent_id|swipe_index)\b/i.test(msg,) ||
+    /SQLITE_CONSTRAINT(?:_UNIQUE)?\b.*idx_messages_swipe_unique/i.test(msg,);
 }
 
 /**
@@ -98,15 +98,7 @@ export async function maybeAutoReply(
   if (isAssistantEnabled(config,)) {
     const assistantResponse = generateResponse({ userInput: userMessage, },);
     if (assistantResponse) {
-      const assistantId = uid();
       const assistantContent = filterProfanity(assistantResponse.content,);
-
-      log().debug("Assistant reply (rule-based)", {
-        parentId: parentMessageId,
-        chatId,
-        assistantId,
-        contentLength: assistantContent.length,
-      },);
 
       let replyStoredContent = assistantContent;
       const replyEncoding = "identity";
@@ -131,30 +123,30 @@ export async function maybeAutoReply(
       // Concurrent assistant replies used to read MAX(swipe_index) and race
       // on INSERT. The unique index `idx_messages_swipe_unique` on
       // (chat_id, parent_id, swipe_index) makes that race detectable. We
-      // start at 1 and use `INSERT ... ON CONFLICT ... DO UPDATE SET
-      // swipe_index = excluded.swipe_index + 1 RETURNING id`: when our
-      // row is inserted, RETURNING yields our id; when the slot is taken,
-      // ON CONFLICT bumps the colliding row to N+1 and RETURNING yields
-      // that existing row's id (NOT ours) — the dropped INSERT is the
-      // signal to retry the next attempt with the same index. Bounded
-      // retries handle pathological contention (cascading shifts raising
-      // SQLITE_CONSTRAINT_ABORT) without infinite spin; 8 attempts is
+      // start at 1 and plain-INSERT; on a unique violation we bump the
+      // candidate and retry — the same retry semantics as the user-message
+      // path (routes/messages/swipe-race-insert.ts) minus the SELECT-MAX
+      // (starting at 1 converges to the same distinct slots under
+      // contention and keeps the "slots pre-filled → 503" contract).
+      // Bounded retries handle pathological contention; 8 attempts is
       // far above realistic concurrent-fanout.
       //
       // BUG-rule-based-reply-only-retry-unique-conflict: only retry on
-      // the specific unique-constraint race. Any other failure
+      // the specific swipe-index unique-constraint race. Any other failure
       // (FK violation, encryption error, DB down, schema mismatch) is
       // a real error and must surface as-is — retrying just masks the
       // cause and then mislabels it as concurrency 503.
-      let swipeIndex = 1;
+      let candidate = 1;
       let lastError: unknown;
       let inserted = false;
+      let assistantId: string | null = null;
       for (let attempt = 0; attempt < 8; attempt++) {
         try {
-          const result = await database
+          const attemptId = uid();
+          await database
             .insertInto("messages",)
             .values({
-              id: assistantId,
+              id: attemptId,
               chat_id: chatId,
               actor_id: actorId,
               parent_id: parentMessageId,
@@ -166,28 +158,13 @@ export async function maybeAutoReply(
               content_encoding: replyEncoding as ContentEncoding,
               status: MessageStatus.Confirmed,
               visibility: "visible",
-              swipe_index: swipeIndex,
+              swipe_index: candidate,
             },)
-            .onConflict((oc,) =>
-              oc
-                .columns(["chat_id", "parent_id", "swipe_index",],)
-                .doUpdateSet({
-                  // Shift the colliding row out of our slot — frees the
-                  // index for our retry and preserves the existing row's
-                  // identity. `excluded.swipe_index + 1` cascades into
-                  // SQLite's UPSERT machinery.
-                  swipe_index: sql`excluded.swipe_index + 1`,
-                },)
-            )
-            .returning("id",)
-            .executeTakeFirst();
-          // RETURNING yields the inserted row's id on success, OR the
-          // existing (now shifted) row's id when ON CONFLICT DO UPDATE
-          // fired — our INSERT was silently dropped in that case.
-          inserted = result?.id === assistantId;
+            .execute();
+          inserted = true;
+          assistantId = attemptId;
           lastError = undefined;
-          if (inserted) { break; }
-          swipeIndex++;
+          break;
         } catch (err) {
           // Only the specific swipe-index unique-constraint race is
           // retryable. Everything else (FK violation, encryption error,
@@ -199,7 +176,7 @@ export async function maybeAutoReply(
             throw err;
           }
           lastError = err;
-          swipeIndex++;
+          candidate++;
         }
       }
       if (!inserted) {
