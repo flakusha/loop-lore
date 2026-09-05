@@ -92,7 +92,6 @@ import { telemetryRoutes, } from "../routes/telemetry";
 import { tradeRoutes, } from "../routes/trade";
 import { usersRoutes, } from "../routes/users";
 import { viewRoutes, } from "../routes/views";
-import { vnChoiceRoutes, } from "../routes/vn-choices";
 import { vnGenerateRoutes, } from "../routes/vn-generate";
 import { worldImportRoutes, } from "../routes/world-import";
 import { worldInvitesRoutes, } from "../routes/world-invites";
@@ -184,7 +183,6 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(invitesRoutes(handleOpts,),);
   app.use(worldInvitesRoutes(handleOpts,),);
   app.use(gmNotesRoutes(handleOpts,),);
-  app.use(vnChoiceRoutes({ database: handleOpts.database, },),);
   app.use(vnGenerateRoutes({ database: handleOpts.database, config, },),);
   app.use(chatPinRoutes(handleOpts,),);
   app.use(commandsRoutes({},),);
