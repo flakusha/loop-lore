@@ -25,6 +25,11 @@ export const ActorCreateBody = t.Object({
   description: t.Optional(t.String(),),
   systemPrompt: t.Optional(t.String(),),
   assetId: OptionalId,
+  tags: t.Optional(t.String(),),
+  personality: t.Optional(t.String(),),
+  scenario: t.Optional(t.String(),),
+  welcomeMessage: t.Optional(t.String(),),
+  agentRole: t.Optional(t.String(),),
 },);
 
 export const ActorUpdateBody = t.Object({

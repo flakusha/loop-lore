@@ -30,6 +30,8 @@ export const WhiteneoteType = {
   Tone: "tone",
   Pacing: "pacing",
   Theme: "theme",
+  CharacterContext: "character_context",
+  WorldState: "world_state",
 } as const;
 /** */
 export type WhiteneoteType = (typeof WhiteneoteType)[keyof typeof WhiteneoteType];
