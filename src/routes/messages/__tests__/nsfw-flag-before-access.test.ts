@@ -32,7 +32,7 @@ mock.module("../../../nsfw/moderation-service", () => {
 },);
 mock.module("../nsfw-user-flag", () => {
   return {
-    flagNsfwUserMessage: async (database: unknown, userId: string, chatId: string, content: string) => {
+    flagNsfwUserMessage: async (_database: unknown, userId: string, chatId: string, content: string,) => {
       flagCalls.push({ userId, chatId, content, },);
       throw new Error("flagNsfwUserMessage must not run before the access check",);
     },
