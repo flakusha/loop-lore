@@ -5,7 +5,7 @@
  * GM Notes — whitenotes CRUD.
  */
 import { Elysia, } from "elysia";
-import { checkChatAccess, } from "../../chat/service";
+import { checkChatSettingsAccess, } from "../../chat/service";
 import { uid, } from "../../utils";
 import {
   ChatIdParams,
@@ -39,7 +39,7 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           const page = (ctx.query.page as number) ?? 1;
@@ -75,7 +75,7 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           const body = ctx.body as typeof WhiteneoteBody.static;
@@ -108,7 +108,7 @@ export function whitenoteRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const { id, noteId, } = ctx.params as { id: string; noteId: string };
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           const result = await database

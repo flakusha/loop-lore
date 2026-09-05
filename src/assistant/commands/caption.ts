@@ -73,11 +73,15 @@ registerCommand("caption", async (args, ctx,): Promise<CommandResult> => {
   const assetIds = Array.from(linkedAssets, (a,) => a.id,);
 
   try {
-    const response = await handleImageCaption({
-      assetIds,
-      chatId: ctx.chatId,
-      messageId,
-    }, ctx.userId,);
+    const response = await handleImageCaption(
+      {
+        assetIds,
+        chatId: ctx.chatId,
+        messageId,
+      },
+      db,
+      ctx.userId,
+    );
 
     const data = await response.json() as {
       data?: { assetId: string; caption: string }[];

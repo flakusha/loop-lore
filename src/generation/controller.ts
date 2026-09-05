@@ -64,32 +64,44 @@ export function generationRoutes({ database, config, }: { database: Kysely<DB>; 
   const app = new Elysia({ name: "generation", },);
 
   app.post("/api/generation/generate", async (ctx,) => {
-    const auth = ctx as unknown as { userId?: string };
-    return handleGenerate({ body: readBody(ctx,), database, config, userId: auth.userId, },);
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleGenerate({
+      body: readBody(ctx,),
+      database,
+      config,
+      userId: auth.userId,
+      userRole: auth.userRole,
+    },);
   },);
 
   app.post("/api/generation/cancel", async (ctx,) => {
-    return handleCancelGeneration(readBody(ctx,), database,);
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleCancelGeneration(readBody(ctx,), database, auth.userId, auth.userRole,);
   },);
 
-  app.get("/api/generation/status/:chatId", (ctx,) => {
-    return handleGenerationStatus(ctx.params.chatId, database,);
+  app.get("/api/generation/status/:chatId", async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleGenerationStatus(ctx.params.chatId, database, auth.userId, auth.userRole,);
   },);
 
-  app.get("/api/generation/stream/:chatId", (ctx,) => {
-    return handleGenerationStream(ctx.params.chatId, ctx.request.headers,);
+  app.get("/api/generation/stream/:chatId", async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleGenerationStream(ctx.params.chatId, ctx.request.headers, database, auth.userId, auth.userRole,);
   },);
 
-  app.get("/api/generation/active", () => {
-    return handleListActiveGenerations(database,);
+  app.get("/api/generation/active", async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleListActiveGenerations(database, auth.userId, auth.userRole,);
   },);
 
   app.post("/api/generation/retry", async (ctx,) => {
-    return handleRetryGeneration(readBody(ctx,), database,);
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleRetryGeneration(readBody(ctx,), database, auth.userId, auth.userRole,);
   },);
 
   app.post("/api/generation/continue", async (ctx,) => {
-    return handleContinueGeneration(readBody(ctx,), database,);
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleContinueGeneration(readBody(ctx,), database, auth.userId, auth.userRole,);
   },);
 
   app.post("/api/generation/regenerate", async (ctx,) => {
@@ -101,17 +113,18 @@ export function generationRoutes({ database, config, }: { database: Kysely<DB>; 
   },);
 
   app.post("/api/generation/image", async (ctx,) => {
-    const auth = ctx as unknown as { userId?: string | null };
-    return handleImageGeneration(readBody(ctx,), auth.userId ?? undefined,);
+    const auth = ctx as unknown as { userId?: string | null; userRole?: string | null };
+    return handleImageGeneration(readBody(ctx,), database, auth.userId ?? undefined, auth.userRole,);
   },);
 
   app.post("/api/generation/caption", async (ctx,) => {
-    const auth = ctx as unknown as { userId?: string };
-    return handleImageCaption(readBody(ctx,), auth.userId,);
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handleImageCaption(readBody(ctx,), database, auth.userId, auth.userRole,);
   },);
 
   app.post("/api/generation/test-connection", async (ctx,) => {
-    return handleTestConnection(readBody(ctx,), config,);
+    const auth = ctx as unknown as { userId?: string };
+    return handleTestConnection(readBody(ctx,), config, auth.userId,);
   },);
 
   return app;
