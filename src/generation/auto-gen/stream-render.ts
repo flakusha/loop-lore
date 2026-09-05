@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, SCRIPT_TAG, } from "../../regex/html-sanitize";
+import { DANGEROUS_TAGS, JS_URL_ATTR, ON_EVENT_DOUBLE, ON_EVENT_SINGLE, ON_EVENT_UNQUOTED, SCRIPT_TAG, } from "../../regex/html-sanitize";
 
 /**
  * @param str
@@ -22,7 +22,10 @@ function sanitizeHtml(html: string,): string {
   return html
     .replaceAll(SCRIPT_TAG, "",)
     .replaceAll(ON_EVENT_DOUBLE, "",)
-    .replaceAll(ON_EVENT_SINGLE, "",);
+    .replaceAll(ON_EVENT_SINGLE, "",)
+    .replaceAll(ON_EVENT_UNQUOTED, "",)
+    .replaceAll(JS_URL_ATTR, "",)
+    .replaceAll(DANGEROUS_TAGS, "",);
 }
 
 /**
