@@ -15,7 +15,7 @@
 
 import { registry, } from "../../plugins/registry";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
-import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, SCRIPT_TAG, } from "../../regex/html-sanitize";
+import { DANGEROUS_TAGS, JS_URL_ATTR, ON_EVENT_DOUBLE, ON_EVENT_SINGLE, ON_EVENT_UNQUOTED, SCRIPT_TAG, } from "../../regex/html-sanitize";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 
@@ -35,7 +35,10 @@ export function sanitizeToolOutput(content: string,): string {
   return content
     .replace(SCRIPT_TAG, "",)
     .replace(ON_EVENT_DOUBLE, "",)
-    .replace(ON_EVENT_SINGLE, "",);
+    .replace(ON_EVENT_SINGLE, "",)
+    .replace(ON_EVENT_UNQUOTED, "",)
+    .replace(JS_URL_ATTR, "",)
+    .replace(DANGEROUS_TAGS, "",);
 }
 
 /**
