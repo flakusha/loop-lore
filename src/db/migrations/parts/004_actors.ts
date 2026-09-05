@@ -158,6 +158,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("data_source_format", "text", (col,) => col.defaultTo("json",),)
     .addColumn("data_raw", "text",)
     .addColumn("agent_role", "text",)
+    .addColumn("growth_mode", "text", (col,) => col.notNull().defaultTo("dynamic",),)
+    .addColumn("llm_assist_enabled", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
 
   await database.schema
