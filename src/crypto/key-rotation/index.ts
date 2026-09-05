@@ -9,6 +9,6 @@
  */
 export { runAutoRotation, } from "./auto-run";
 export { findExpiredKeys, } from "./find-expired";
-export { rotateActorKeyAndReEncrypt, } from "./rotate";
+export { rotateActorKey, } from "./rotate";
 export { startAutoRotationTimer, } from "./timer";
 export type { RotationResult, RotationSummary, } from "./types";
