@@ -11,6 +11,8 @@
 **Epic:** epic-chat-context-optimization
 **Files:** src/db/migrations/034_message_search_fts.ts:35-58; src/db/migrations/054_chat_keys.ts:141-163; src/routes/message-search/index.ts:80-100
 
+> **DB Migration Strategy**: Before implementation, decide: append new migration part vs. fold into existing part. This fix proposes a new `content_plaintext` column → append a new part (`parts/0xx_messages_content_plaintext.ts`) wired into `001_init.ts`; do not modify shipped `034_message_search_fts.ts`/`054_chat_keys.ts` in place. See `src/db/migrations/README.md` (append-only policy). After migration edits: `bun run db:sync-types && bun run db:sync-manifest && bun run schemas:check`.
+
 ## Issue
 
 `messages_fts_ai` / `_au` triggers copy `new.content` verbatim into `messages_fts.content`. But `prepareContentStorage` in `src/routes/messages/post.ts:39-75` stores the **ciphertext + key_id** in `messages.content` for `standard`/`private` tier chats. The FTS5 index is therefore populated with base64 / AES bytes, not the plaintext the user typed. Migration 054 re-creates the same triggers unmodified, so the bug is preserved across the chat-keys drop+rebuild.

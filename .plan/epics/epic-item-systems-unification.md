@@ -109,7 +109,7 @@ Affected schema edits: `items` category/rarity CHECK (unify), `world_items` `CHE
 table (trade).
 
 Generate-after edits: `bun run db:sync-types && bun run db:sync-manifest`, verify
-`bun run db:schemas:check`.
+`bun run schemas:check`.
 
 ## Implementation Order (dependency-first)
 
