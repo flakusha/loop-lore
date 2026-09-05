@@ -188,7 +188,7 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           await deleteChat(database, id,);
