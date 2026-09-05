@@ -24,7 +24,11 @@ Correctness. Battle / scene initiative ordering becomes nonsensical as soon as m
 ## Evidence
 
 - `src/routes/messages/post.ts:110-146` — `currentScene = "main"` TODO.
+- `src/turning/turn-manager/selection.ts:67` — `const currentScene = "main"` TODO (initiative strategy reads/decrements `group_initiatives` for the wrong scene).
+- `src/turning/turn-manager/participants.ts:41` — same hardcoded `"main"` (participant initiative read path).
 - `epic-battle-action-systems.md` — expects `story_state.current_scene_id` lookup.
+
+All three sites must derive `current_scene_id` from `story_state` consistently (fix below), not just `post.ts`.
 
 ## Concrete fix
 
