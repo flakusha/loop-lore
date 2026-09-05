@@ -68,16 +68,16 @@ export function requestStatusRoutes(deps: { asyncStore: AsyncStore }, prefix = "
             code: ErrorCode.NotFound,
           },);
         }
-        // Ownership: missing userId ⇒ anonymous; the public polling surface
-        // for a non-authenticated client is intentionally hidden. Admins
-        // (auth derive sets `userRole === "admin"`) may read any row.
-        if (row.userId !== null) {
-          const userId = ctx.userId ?? null;
-          const isAdmin = ctx.userRole === "admin";
-          const allowed = userId !== null && (userId === row.userId || isAdmin);
-          if (!allowed) {
-            return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
-          }
+        // Ownership: BUG-bug-request-status-endpoint-fail-open-when-row-userid-is-nul.
+        // Previous `if (row.userId !== null) { … }` skipped the check entirely
+        // for anonymous rows, letting any caller who knew the id read the row.
+        // Fix: anonymous rows are visible ONLY to admins; everyone else
+        // gets 404 (same as missing row, so existence is not leaked).
+        const callerId = ctx.userId ?? null;
+        const isAdmin = ctx.userRole === "admin";
+        const ownsRow = callerId !== null && callerId === row.userId;
+        if (!ownsRow && !isAdmin) {
+          return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
         }
 
         // Resolve offloaded body if the row is no longer inlined.
