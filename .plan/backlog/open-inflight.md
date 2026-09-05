@@ -134,6 +134,9 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
   `open-vn-settings-bugs.md`. Umbrella ticket `66c4c3d` (TASK, HIGH). Blocks
   0.1.0 release quality — visualNovel must be toggleable, type-consistent, and
   role-guarded per spec. See also `FEAT-expose-full-vn-settings-from-spec` (`8a1613e`).
+  ✅ **All resolved 2026-09-05** — code landed via `1b9b0cdf`/`5266f2cb` (type+unify+drop
+  column), `e14d3aaa` (role gate), `a16490a7` (online gmConfig + 5 VN fields);
+  ticket statuses + cluster file updated. No remaining open work.
 
 - **Build Integrity Cluster** — 3 untracked tsc errors + plan:sync orphan bug,
   filed 2026-09-03 (`25420d13`, `e11f57d6`), tracked in `open-build-integrity.md`.

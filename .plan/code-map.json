@@ -4467,10 +4467,20 @@
       "source": "docs/spec/worlds.md"
     }
   ],
+  "src/chat/service/access.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
+    }
+  ],
   "src/chat/service/access.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
     },
     {
       "kind": "ticket",
@@ -4565,6 +4575,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gm-config-corrupted-by-string-spread-in-buildchatupdates-mer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
     }
   ],
   "src/chat/service/crud/update.ts": [
@@ -4578,7 +4592,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    }
+  ],
+  "src/chat/service/gm-guidance.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
+    }
+  ],
+  "src/chat/service/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
     }
   ],
   "src/chat/service/location-events.ts": [
@@ -10074,6 +10104,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
     },
     {
@@ -10085,7 +10119,17 @@
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     }
   ],
+  "src/frontend/alpine/chat-settings/gm-config.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
+    }
+  ],
   "src/frontend/alpine/chat-settings/gm-config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-settings-modal-output-styling-control.md"
@@ -18124,6 +18168,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
@@ -23979,6 +24027,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-promptoverride-schema-has-no-maxlength-token-bomb-storage-ve.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md"
     },
     {
       "kind": "ticket",
