@@ -3705,6 +3705,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fix-lint-baseline-debt.md"
     }
   ],
   "src/characters/services/relationships-service.ts": [
@@ -3723,12 +3727,20 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fix-lint-baseline-debt.md"
     }
   ],
   "src/characters/services/traits-service-bridge.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fix-lint-baseline-debt.md"
     }
   ],
   "src/characters/services/traits-service.ts": [
@@ -11369,6 +11381,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fix-lint-baseline-debt.md"
     }
   ],
   "src/frontend/chat-vendor.ts": [
@@ -23651,6 +23667,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-code-quality.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fix-lint-baseline-debt.md"
     },
     {
       "kind": "ticket",
