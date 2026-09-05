@@ -3,7 +3,7 @@
 
 # BUG: NSFW `getPreferences` lazily INSERTs default row on miss — admin read materializes phantom row
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (already implemented in code)
 **Severity:** Medium
 **Priority:** medium
 **Effort:** Small
