@@ -12,16 +12,15 @@
  * during telemetry does not produce an unhandled rejection that crashes the
  * post-store call site.
  */
-import { type Kysely, sql, } from "kysely";
+import type { Kysely, } from "kysely";
 import { MoodService, } from "../../characters/services/mood-service";
-import { detectHallucinations, generateRandomEvent, } from "../../chat";
-import { randomEventToEventRef, } from "../../chat/random-events";
+import { detectHallucinations, } from "../../chat";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import type { GenDeps, } from "./deps";
-import { loadChatLocation, loadChatParticipants, } from "./random-event-context";
+import { fireRandomEvent, } from "./fire-random-event";
 import { renderStreamMessage, } from "./stream-render";
 
 /** */
@@ -182,68 +181,17 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
 
   if (worldId) {
     try {
-      // Random ambient events: count messages for cooldown tracking, look up
-      // chat participants + current location for `{npc}` / `{location}` /
-      // `{weather}` substitution, generate a candidate, and convert it to an
-      // `EventRef` ready for the next prompt's context window.
-      const [msgCount, chatRow,] = await Promise.all([
-        database
-          .selectFrom("messages",)
-          .select(database.fn.count("id",).as("cnt",),)
-          .where("chat_id", "=", chatId,)
-          .executeTakeFirst(),
-        database
-          .selectFrom("chats",)
-          .select(["current_location_id",],)
-          .where("id", "=", chatId,)
-          .executeTakeFirst(),
-      ],);
-
-      const [participants, location,] = await Promise.all([
-        loadChatParticipants(database, chatId,),
-        loadChatLocation(database, chatRow?.current_location_id ?? null,),
-      ],);
-
-      const event = generateRandomEvent({
-        currentLocation: location ?? undefined,
-        messageCount: Number(msgCount?.cnt ?? 0,),
-        participants,
-      },);
-
-      if (event) {
-        const eventRef = randomEventToEventRef(event,);
-        // Persist the fired event so the next prompt build can inject it
-        // into the context window (eventSection reads chat_random_events).
-        const now = Date.now();
-        await database
-          .insertInto("chat_random_events",)
-          .values({
-            chat_id: chatId,
-            content: event.content,
-            event_id: event.id,
-            category: event.category,
-            fired_at: now,
-            // Keep the event injectable for one day; expiry bounds how long
-            // stale events linger in the context window.
-            expires_at: now + 24 * 60 * 60 * 1000,
-            token_count: eventRef.tokenCount,
-          },)
-          .onConflict((oc,) =>
-            oc.columns(["chat_id", "event_id",],).doUpdateSet({
-              content: event.content,
-              fired_at: now,
-              expires_at: now + 24 * 60 * 60 * 1000,
-              token_count: eventRef.tokenCount,
-              fired_count: sql`fired_count + 1`,
-            },)
-          )
-          .execute();
+      // Random ambient events: generate + persist for the next prompt build.
+      // fireRandomEvent handles message-count cooldown tracking, participant/
+      // location lookup, generation, and chat_random_events upsert.
+      const fired = await fireRandomEvent(database, chatId,);
+      if (fired) {
         log.debug("random event generated + persisted", {
           chatId,
-          eventId: event.id,
-          category: event.category,
-          content: event.content.slice(0, 100,),
-          tokenCount: eventRef.tokenCount,
+          eventId: fired.event.id,
+          category: fired.event.category,
+          content: fired.event.content.slice(0, 100,),
+          tokenCount: fired.eventRef.tokenCount,
         },);
       }
     } catch (error) {
