@@ -9,7 +9,7 @@ import type { DB, } from "../../db/schema";
 import { getSmk, isEncryptionEnabled, } from "../smk";
 import { findExpiredKeys, } from "./find-expired";
 import { log, } from "./log";
-import { rotateActorKeyAndReEncrypt, } from "./rotate";
+import { rotateActorKey, } from "./rotate";
 import type { RotationResult, RotationSummary, } from "./types";
 
 /**
@@ -57,7 +57,7 @@ export async function runAutoRotation(
   // Rotate each actor's key
   for (const actorId of expiredActorIds) {
     try {
-      const result = await rotateActorKeyAndReEncrypt(
+      const result = await rotateActorKey(
         database,
         actorId,
         smk,
