@@ -9,7 +9,7 @@
 
 ## Summary
 
-Add migration `099_character_growth.ts` with `character_arc` + `growth_log` tables and growth-mode columns on `actors` / `character_skills` / `character_relationships` / trait tables. Regenerate DB schemas via `db:sync-types` + `db:sync-manifest`.
+Fold growth schema into the parts tree: `character_arc` + `growth_log` tables and growth-mode columns on `actors` / `character_skills` / `character_relationships` / trait tables. Regenerate DB schemas via `db:sync-types` + `db:sync-manifest`.
 
 See `.plan/epics/epic-character-growth.md` (Schema section).
 
