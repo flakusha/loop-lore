@@ -209,6 +209,16 @@ export async function handleServeCompressed({
     signedUrlAction,
   },);
   if ("response" in resolved) { return resolved.response; }
+  const { asset, } = resolved;
+
+  // Encrypted assets cannot be served as compressed/thumb variants: the
+  // compressed file on disk is pre-compressed ciphertext, and decrypting it
+  // would require the raw ciphertext + chat key + re-encode — the variant
+  // file itself is not decryptable in place. Serving it would leak ciphertext
+  // bytes as a "preview". Explicit 4xx keeps the behavior safe.
+  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
+    return new Response("Encrypted asset preview requires the raw endpoint", { status: 400, },);
+  }
 
   const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
   const compressedPath = `compressed/${subDir}/${assetId}_${variant}.webp`;

@@ -69,4 +69,15 @@ describe("GET /api/commands", () => {
     const body = await res.json() as { data: { name: string; descriptionKey: string }[] };
     expect(body.data.map((entry,) => entry.name),).toContain(freshName,);
   });
+
+  it("excludes stub commands registered with available:false", async () => {
+    const app = makeApp("user-1",);
+    const stubName = `stub-cmd-${Date.now()}`;
+    registerCommand(stubName, () => ({ handled: true, }), { available: false, },);
+    const res = await app.handle(new Request("http://localhost/api/commands",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { data: { name: string; descriptionKey: string }[] };
+    const names = body.data.map((entry,) => entry.name);
+    expect(names,).not.toContain(stubName,);
+  });
 });
