@@ -177,6 +177,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("fired_at", "integer", (col,) => col.notNull(),)
     .addColumn("expires_at", "integer", (col,) => col.notNull(),)
     .addColumn("fired_count", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addUniqueConstraint("uq_chat_random_events_chat_event", ["chat_id", "event_id",],)
     .execute();
 
   await database.schema
