@@ -7399,12 +7399,6 @@
       "source": ".plan/tickets/TASK-unify-item-types.md"
     }
   ],
-  "src/db/enums-core/heat-phase.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-add-heatphase-state-machine-for-character-heat-cycle-current.md"
-    }
-  ],
   "src/db/enums-core/messages.test.ts": [
     {
       "kind": "ticket",
@@ -7425,12 +7419,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
-    }
-  ],
-  "src/db/enums-core/nsfw-encounter-status.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-add-nsfwencounterstatus-state-machine-for-nsfw-encounters-st.md"
     }
   ],
   "src/db/enums-core/rename-verification.test.ts": [
@@ -7997,12 +7985,6 @@
       "source": ".plan/tickets/TASK-migration-076-harden-against-malformed-gm-config-json.md"
     }
   ],
-  "src/db/migrations/099_character_growth.ts": [
-    {
-      "kind": "epic",
-      "source": ".plan/epics/epic-character-growth.md"
-    }
-  ],
   "src/db/migrations/0XX_audio_templates.ts": [
     {
       "kind": "ticket",
@@ -8069,6 +8051,16 @@
       "source": ".plan/tickets/TASK-runtime-migration-staleness-guard.md"
     }
   ],
+  "src/db/migrations/README.md": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-message-delete-soft-fails-compliance.md"
+    }
+  ],
   "src/db/migrations/XXXX-create-actor-stats.ts": [
     {
       "kind": "ticket",
@@ -8101,6 +8093,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-item-types.md"
+    }
+  ],
+  "src/db/migrations/parts/004_actors.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-growth.md"
     }
   ],
   "src/db/migrations/parts/004_chats_actors.ts": [
@@ -8137,6 +8135,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-item-types.md"
+    }
+  ],
+  "src/db/migrations/parts/005_characters.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-character-growth.md"
     }
   ],
   "src/db/migrations/parts/006_messages_keys.ts": [
@@ -12950,6 +12954,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-random-events-no-character-binding.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
     },
     {
@@ -13293,6 +13301,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-plugin-tool-gating-empty-role-bypass.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
     },
     {
       "kind": "ticket",
@@ -16977,6 +16989,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
     }
   ],
   "src/regex/html-sanitize.ts": [
@@ -16990,6 +17006,10 @@
     }
   ],
   "src/regex/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-doc-spec-regex-extraction.md"
