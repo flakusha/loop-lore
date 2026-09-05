@@ -63,7 +63,6 @@ export interface ChatSetupTemplate {
   turn_strategy: string | null;
   world_id: string | null;
   gm_config: string | null;
-  visual_novel: number;
   /** Short display tags ("rpg mode", "vn mode", "no gm", ...). JSON array column. */
   features: string[] | null;
   /** Chat visibility state seeded onto chats created from this template. */

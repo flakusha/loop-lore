@@ -8,7 +8,7 @@
  * set out of the box; `seedChatSetupTemplates` upserts them idempotently by
  * slug (see `templates.ts`). Admin-created templates survive reseeding.
  */
-
+import { safeJsonStringify, } from "../../utils";
 /** Default chat setup template shape (code-defined). */
 export interface ChatSetupTemplateDefault {
   id: string;
@@ -17,11 +17,22 @@ export interface ChatSetupTemplateDefault {
   description: string;
   mode: string;
   turn_strategy: string;
-  visual_novel: number;
+  /** `gm_config` JSON to seed onto chats created from this template (stringified). */
+  gmConfig: string | null;
   /** Short display tags shown as a feature list on template selection. */
   features: string[];
   /** Chat visibility state seeded onto chats created from this template. */
   visibility?: string;
+}
+/**
+ * Build the seed `gm_config` JSON for a template. Visual-novel templates
+ * opt into `renderingOverride="visual_novel"`; everything else is null.
+ * @param visualNovel
+ */
+function buildGmConfig(visualNovel: boolean,): string | null {
+  if (!visualNovel) { return null; }
+  const result = safeJsonStringify({ renderingOverride: "visual_novel" as const, },);
+  return result.ok ? result.value : null;
 }
 
 /**
@@ -37,7 +48,7 @@ export const CHAT_SETUP_TEMPLATE_DEFAULTS: ChatSetupTemplateDefault[] = [
     description: "A lightweight direct chat with a single character, round-robin turns.",
     mode: "direct",
     turn_strategy: "round_robin",
-    visual_novel: 0,
+    gmConfig: buildGmConfig(false,),
     features: ["no gm", "no assistant",],
     visibility: "private",
   },
@@ -48,7 +59,7 @@ export const CHAT_SETUP_TEMPLATE_DEFAULTS: ChatSetupTemplateDefault[] = [
     description: "Story-driven 1:1 roleplay with scene-based narration.",
     mode: "story",
     turn_strategy: "scene_based",
-    visual_novel: 0,
+    gmConfig: buildGmConfig(false,),
     features: ["rpg mode", "no gm", "no assistant",],
     visibility: "private",
   },
@@ -59,7 +70,7 @@ export const CHAT_SETUP_TEMPLATE_DEFAULTS: ChatSetupTemplateDefault[] = [
     description: "A group chat with a game-master driver and round-robin turns.",
     mode: "group",
     turn_strategy: "round_robin",
-    visual_novel: 0,
+    gmConfig: buildGmConfig(false,),
     features: ["gm", "group",],
     visibility: "private",
   },
@@ -70,7 +81,7 @@ export const CHAT_SETUP_TEMPLATE_DEFAULTS: ChatSetupTemplateDefault[] = [
     description: "A direct chat for ideation and working through a topic.",
     mode: "direct",
     turn_strategy: "round_robin",
-    visual_novel: 0,
+    gmConfig: buildGmConfig(false,),
     features: ["assistant", "no gm",],
     visibility: "private",
   },
@@ -81,7 +92,7 @@ export const CHAT_SETUP_TEMPLATE_DEFAULTS: ChatSetupTemplateDefault[] = [
     description: "Story mode with the visual-novel overlay enabled for choice cards.",
     mode: "story",
     turn_strategy: "scene_based",
-    visual_novel: 1,
+    gmConfig: buildGmConfig(true,),
     features: ["vn mode", "rpg mode",],
     visibility: "private",
   },
@@ -93,7 +104,7 @@ export const CHAT_SETUP_TEMPLATE_DEFAULTS: ChatSetupTemplateDefault[] = [
       "Public world/location chat: RPG narration, round-robin turns, no GM/assistant. Default binding for chats auto-created at location creation.",
     mode: "story",
     turn_strategy: "round_robin",
-    visual_novel: 0,
+    gmConfig: buildGmConfig(false,),
     features: ["rpg mode", "no gm", "no assistant", "public",],
     visibility: "public",
   },

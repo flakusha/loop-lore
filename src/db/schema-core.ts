@@ -593,7 +593,6 @@ export interface ChatSetupTemplates {
   turn_strategy: string | null;
   world_id: string | null;
   gm_config: string | null;
-  visual_novel: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
   features: string | null;
