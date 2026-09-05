@@ -5,7 +5,7 @@
  * toggle live enforcement effect: seeding from file config, live updates,
  * and overlaying persisted system_config values on startup.
  */
-import { describe, expect, test, } from "bun:test";
+import { afterEach, describe, expect, test, } from "bun:test";
 import type { Generated, Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -18,6 +18,20 @@ import {
 } from "./runtime-config";
 
 describe("nsfw runtime config store", () => {
+  // The runtime config is a module-level singleton shared across the test
+  // process. Restore defaults after every test so a mutated allowNsfw never
+  // leaks into later test files (order-dependent false failures, e.g.
+  // assistant/prompt/sections/nsfw-policy).
+  afterEach(() => {
+    initNsfwRuntimeConfig({
+      allowNsfw: true,
+      nsfwMinAge: 18,
+      defaultNsfwScope: "chat",
+      consentRequired: true,
+      auditLogging: true,
+      useLlmClassifier: false,
+    },);
+  },);
   test("init seeds defaults and preserves file-provided values", () => {
     initNsfwRuntimeConfig({
       allowNsfw: false,
