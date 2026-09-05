@@ -16,17 +16,23 @@ contract: the `visualNovel` field must be (1) type-consistent across API/DB,
 and syncable via the settings save path, (4) guarded by Master/GM role on
 change, and (5) accompanied by the full set of VN settings fields from spec.
 
+> **Cluster status:** ✅ All 7 issues resolved on `dev`. The two tickets that
+> still showed "Not Started" (settings-save, no-role-restriction) were code-
+> complete since 2026-09-04 (commits `a16490a7` + `e14d3aaa`) but the ticket
+> files lagged; ticket files now updated to Done with resolution evidence
+> (2026-09-05).
+
 ## Issues
 
-| Git issue | Type | Severity | Problem |
-| --------- | ---- | -------- | ------- |
-| `66c4c3d` | TASK | High | Umbrella: validate + fix all 6 gaps below |
-| `c7f002c` | BUG | High | VN mode locked once chat has confirmed messages — `visualNovel` is in `KEY_MECHANIC_PARAMS` (`src/chat/service/access.ts:19`), immutable after first message |
-| `e5219e3` | BUG | High | Settings save omits `gmConfig` for online chats — `saveChatSettings()` in `src/frontend/alpine/chat-settings.ts` only sends `gmConfig` when `!this._chatOnline` |
-| `90d9e30` | BUG | High | No role restriction for changing chat settings — `checkChatAccess()` allows any participant to modify `visualNovel`, `gmConfig`, `mode` |
-| `c0c51c2` | BUG | Medium | `visualNovel` type mismatch — API schema validates Boolean, DB stores Number (0/1); no conversion layer |
-| `9db5fef` | BUG | Medium | Redundant VN state in two locations — `chats.visual_novel` (int) + `chats.gm_config.visualNovel` (Boolean), no sync |
-| `8a1613e` | FEAT | Medium | Expose full VN settings from spec — 5 missing fields: `imageScaling`, `autoAdvanceDelay`, `dialogueBoxOpacity`, `portraitSize`, `splitRatio` |
+| Git issue | Type | Severity | Problem | Status |
+| --------- | ---- | -------- | ------- | ------ |
+| `66c4c3d` | TASK | High | Umbrella: validate + fix all 6 gaps below | ✅ Resolved |
+| `c7f002c` | BUG | High | VN mode locked once chat has confirmed messages — `visualNovel` is in `KEY_MECHANIC_PARAMS` (`src/chat/service/access.ts:19`), immutable after first message | ✅ Resolved (`1b9b0cdf` + `e14d3aaa`) |
+| `e5219e3` | BUG | High | Settings save omits `gmConfig` for online chats — `saveChatSettings()` in `src/frontend/alpine/chat-settings.ts` only sends `gmConfig` when `!this._chatOnline` | ✅ Resolved (`a16490a7`) |
+| `90d9e30` | BUG | High | No role restriction for changing chat settings — `checkChatAccess()` allows any participant to modify `visualNovel`, `gmConfig`, `mode` | ✅ Resolved (`e14d3aaa`) |
+| `c0c51c2` | BUG | Medium | `visualNovel` type mismatch — API schema validates Boolean, DB stores Number (0/1); no conversion layer | ✅ Resolved (`1b9b0cdf`) |
+| `9db5fef` | BUG | Medium | Redundant VN state in two locations — `chats.visual_novel` (int) + `chats.gm_config.visualNovel` (Boolean), no sync | ✅ Resolved (`1b9b0cdf` + `5266f2cb`) |
+| `8a1613e` | FEAT | Medium | Expose full VN settings from spec — 5 missing fields: `imageScaling`, `autoAdvanceDelay`, `dialogueBoxOpacity`, `portraitSize`, `splitRatio` | ✅ Resolved (`a16490a7`) |
 
 ## Acceptance Criteria (composite)
 
