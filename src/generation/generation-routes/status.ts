@@ -2,8 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../../chat/service";
 import type { DB, } from "../../db/schema";
-import { jsonError, jsonResponse, } from "../../routes/http-utils";
+import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { getActiveAttemptId, listActiveGenerations, } from "../cancellation-manager";
 import { isChatGenerating, } from "../index";
 
@@ -14,12 +15,27 @@ import { isChatGenerating, } from "../index";
  *
  * Check whether a chat currently has an active generation.
  * @param chatId
- * @param _database
+ * @param database
+ * @param userId
+ * @param userRole
  */
-export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>,): Response {
+export async function handleGenerationStatus(
+  chatId: string,
+  database: Kysely<DB>,
+  userId?: string,
+  userRole?: string | null,
+): Promise<Response> {
   if (!chatId) {
     return jsonError({ message: "chatId is required", status: 400, },);
   }
+
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
+
+  // Authorization: participants may poll generation status for their chat
+  // (BUG-generation-control-plane-routes-lack-authorization).
+  const access = await checkChatAccess(database, chatId, authUserId, userRole,);
+  if (!access.ok) { return forbiddenResponse(); }
 
   const isActive = isChatGenerating(chatId,);
   const attemptId = getActiveAttemptId(chatId,);
