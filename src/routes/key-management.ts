@@ -139,11 +139,8 @@ export function keyManagementRoutes({ database, }: { database: Kysely<DB> }, pre
           },);
         }
 
-        const newKeyId = await rotateActorKey({
-          database,
-          actorId: userId,
-          smk,
-        },);
+        const result = await rotateActorKey(database, userId, smk,);
+        const newKeyId = result.newKeyId;
 
         log().info("Rotated primary key", { actorId: userId, newKeyId, },);
 

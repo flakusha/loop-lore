@@ -5,7 +5,7 @@
  * NOT actor-derived HKDF keys. Actor key rotation does NOT require message re-encryption.
  *
  * Verifies:
- * - `rotateActorKeyAndReEncrypt` rotates the actor key without touching messages.
+ * - `rotateActorKey` rotates the actor key without touching messages.
  * - Messages remain decryptable with the original (stable) chat key after rotation.
  * - `messagesReEncrypted` is 0 (no re-encryption needed).
  * - The OLD actor key has `status="expired"`.
@@ -16,7 +16,7 @@ import type { DB, } from "../db/schema";
 import { createTestDb, resetTestDb, } from "../test-utils/create-test-db";
 import { generateActorKey, } from "./actor-keys";
 import { deriveChatKeyForChat, } from "./chat-keys";
-import { rotateActorKeyAndReEncrypt, } from "./key-rotation/rotate";
+import { rotateActorKey, } from "./key-rotation/rotate";
 import { compressThenEncrypt, decryptThenDecompress, } from "./pipeline";
 import { getSmk, initSmk, } from "./smk";
 
@@ -130,7 +130,7 @@ afterAll(async () => {
   db.destroy();
 },);
 
-describe("rotateActorKeyAndReEncrypt — stable per-chat keys", () => {
+describe("rotateActorKey — stable per-chat keys", () => {
   test("actor key rotation does not re-encrypt messages (stable chat key)", async () => {
     const smk = getSmkSafe();
 
@@ -153,7 +153,7 @@ describe("rotateActorKeyAndReEncrypt — stable per-chat keys", () => {
     }
 
     // ── 3. Rotate PARTICIPANT_1's actor key ───────────────────────────────
-    const result = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk,);
+    const result = await rotateActorKey(db, PARTICIPANT_1, smk,);
 
     expect(result.actorId,).toBe(PARTICIPANT_1,);
     expect(result.chatsAffected,).toBeGreaterThanOrEqual(1,);
@@ -187,7 +187,7 @@ describe("rotateActorKeyAndReEncrypt — stable per-chat keys", () => {
 
   test("rotation with no messages succeeds without re-encrypting", async () => {
     const smk = getSmkSafe();
-    const result = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk,);
+    const result = await rotateActorKey(db, PARTICIPANT_1, smk,);
     expect(result.messagesReEncrypted,).toBe(0,);
     expect(result.actorId,).toBe(PARTICIPANT_1,);
     expect(result.newKeyId,).not.toBe(result.oldKeyId,);
@@ -218,7 +218,7 @@ describe("rotateActorKeyAndReEncrypt — stable per-chat keys", () => {
     }
 
     // First rotation — messages untouched.
-    const r1 = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk,);
+    const r1 = await rotateActorKey(db, PARTICIPANT_1, smk,);
     expect(r1.messagesReEncrypted,).toBe(0,);
 
     // Verify round-1 messages still decrypt with the SAME chat key.
@@ -249,7 +249,7 @@ describe("rotateActorKeyAndReEncrypt — stable per-chat keys", () => {
       },).execute();
     }
 
-    const r2 = await rotateActorKeyAndReEncrypt(db, PARTICIPANT_1, smk,);
+    const r2 = await rotateActorKey(db, PARTICIPANT_1, smk,);
     expect(r2.messagesReEncrypted,).toBe(0,);
     expect(r2.newKeyId,).not.toBe(r1.newKeyId,);
 
