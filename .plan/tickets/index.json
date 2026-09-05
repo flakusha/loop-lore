@@ -89,6 +89,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-activitypub-federation-does-not-leverage-the-blog-system-lem.md"
   },
+  "BUG-ACTORTYPE-PERSONA-422-ON-VALID-UI-INPUT": {
+    "hash": "2d0e365",
+    "git_issue": "2d0e365",
+    "extid": "BUG-ACTORTYPE-PERSONA-422-ON-VALID-UI-INPUT",
+    "type": "BUG",
+    "title": "actorType persona 422 on valid UI input",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
+  },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "hash": "pending",
     "extid": "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY",
@@ -115,6 +127,18 @@
     "git_issue": "ac11385",
     "status": "open"
   },
+  "BUG-ADVERTISED-SFX-MUSIC-VIDEO-COMMANDS-ARE-STUBS": {
+    "hash": "9e39b51",
+    "git_issue": "9e39b51",
+    "extid": "BUG-ADVERTISED-SFX-MUSIC-VIDEO-COMMANDS-ARE-STUBS",
+    "type": "BUG",
+    "title": "advertised /sfx /music /video commands are stubs",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
+  },
   "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED": {
     "hash": "0c39d4f",
     "extid": "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED",
@@ -140,6 +164,18 @@
     "source": ".plan/tickets/BUG-alpine-init-hydration.md",
     "git_issue": "20354a1",
     "status": "done"
+  },
+  "BUG-ANY-CHAT-PARTICIPANT-CAN-HARD-DELETE-ANY-MESSAGE": {
+    "hash": "7d3c8b8",
+    "git_issue": "7d3c8b8",
+    "extid": "BUG-ANY-CHAT-PARTICIPANT-CAN-HARD-DELETE-ANY-MESSAGE",
+    "type": "BUG",
+    "title": "any chat participant can hard-delete any message",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-any-chat-participant-can-hard-delete-any-message.md"
   },
   "BUG-APP-REGISTERPLUGINS-ACCEPTS-ASYNCSTORE-BUT-NEVER-USES-IT": {
     "hash": "3638006",
@@ -749,6 +785,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-carryhistory-copies-key-id-into-migrated-chat-history-breaks.md"
   },
+  "BUG-CHARACTER-CREATE-SILENTLY-DROPS-PERSONALITY-SCENARIO-WELCOME": {
+    "hash": "8bc0659",
+    "git_issue": "8bc0659",
+    "extid": "BUG-CHARACTER-CREATE-SILENTLY-DROPS-PERSONALITY-SCENARIO-WELCOME",
+    "type": "BUG",
+    "title": "character create silently drops personality/scenario/welcomeMessage/tags",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-create-silently-drops-personality-scenario-welcome.md"
+  },
   "BUG-CHARACTER-CREATION-WIZARD-BUG-WIZARDID-UNUSED": {
     "hash": "pending",
     "extid": "BUG-CHARACTER-CREATION-WIZARD-BUG-WIZARDID-UNUSED",
@@ -1237,6 +1285,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-content-hooks-ts-missing-imports-breaks-typecheck.md"
   },
+  "BUG-CONTEXT-PRUNING-IS-A-SILENT-NO-OP": {
+    "hash": "f47ced7",
+    "git_issue": "f47ced7",
+    "extid": "BUG-CONTEXT-PRUNING-IS-A-SILENT-NO-OP",
+    "type": "BUG",
+    "title": "context pruning is a silent no-op",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-context-pruning-is-a-silent-no-op.md"
+  },
   "BUG-CONTEXT-WINDOW-TRIM-KEEPS-OLDEST-MESSAGES-DROPS-NEWEST-WHEN-": {
     "hash": "65693a3",
     "extid": "BUG-CONTEXT-WINDOW-TRIM-KEEPS-OLDEST-MESSAGES-DROPS-NEWEST-WHEN-",
@@ -1274,6 +1334,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-crdt-conflict-policy-missing-leader-vs-swarm-precedence-and-.md",
     "status": "not-yet-implemented"
+  },
+  "BUG-CREATE-ENTITY-CONFIRM-BYPASSES-WORLD-OWNERSHIP": {
+    "hash": "17f8425",
+    "git_issue": "17f8425",
+    "extid": "BUG-CREATE-ENTITY-CONFIRM-BYPASSES-WORLD-OWNERSHIP",
+    "type": "BUG",
+    "title": "create-entity confirm bypasses world ownership",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-create-entity-confirm-bypasses-world-ownership.md"
   },
   "BUG-CRYPTO-ACTIVITYPUB-KEY-ROTATION-IS-NON-ATOMIC-INSERT-FAILURE": {
     "hash": "af75120",
@@ -1361,6 +1433,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-db-reinit-archive-directory-has-no-rotation-pii-accumulates-.md"
   },
+  "BUG-DELETE-CHAT-GATED-ONLY-AT-PARTICIPANT-LEVEL": {
+    "hash": "c80979f",
+    "git_issue": "c80979f",
+    "extid": "BUG-DELETE-CHAT-GATED-ONLY-AT-PARTICIPANT-LEVEL",
+    "type": "BUG",
+    "title": "DELETE chat gated only at participant level",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-delete-chat-gated-only-at-participant-level.md"
+  },
   "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER": {
     "hash": "63f8f29",
     "git_issue": "63f8f29",
@@ -1423,6 +1507,18 @@
     "source": ".plan/tickets/BUG-dhratchetdecrypt-mutates-opts-state-aliasing-hazard.md",
     "git_issue": "6fb9cbd",
     "status": "done"
+  },
+  "BUG-DUAL-VN-CHOICES-ROUTE-REGISTRATION-SHADOWS-GUARDED-ROUTE": {
+    "hash": "df61a36",
+    "git_issue": "df61a36",
+    "extid": "BUG-DUAL-VN-CHOICES-ROUTE-REGISTRATION-SHADOWS-GUARDED-ROUTE",
+    "type": "BUG",
+    "title": "dual vn-choices route registration shadows guarded route",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-dual-vn-choices-route-registration-shadows-guarded-route.md"
   },
   "BUG-DUPLICATE-OPENASSETPREVIEW-DEFINITIONS-WITH-DIVERGENT-BEHAVI": {
     "hash": "fbd71df",
@@ -1532,6 +1628,18 @@
     "epic": "epic-emotion-avatar-message-binding",
     "tags": [],
     "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
+  },
+  "BUG-ENCRYPTED-ASSET-THUMB-COMPRESSED-PREVIEW-SERVES-RAW-CIPHERTE": {
+    "hash": "ede86bb",
+    "git_issue": "ede86bb",
+    "extid": "BUG-ENCRYPTED-ASSET-THUMB-COMPRESSED-PREVIEW-SERVES-RAW-CIPHERTE",
+    "type": "BUG",
+    "title": "encrypted asset thumb/compressed preview serves raw ciphertext",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte.md"
   },
   "BUG-ENCRYPTED-PAYLOAD-SNIFFING-MISCLASSIFIES-USER-JSON-AS-PRE-EN": {
     "hash": "546662e",
@@ -1822,6 +1930,18 @@
     "git_issue": "5d355aa",
     "status": "fixed-in-worktree"
   },
+  "BUG-GENERATION-CONTROL-PLANE-ROUTES-LACK-AUTHORIZATION": {
+    "hash": "8746eca",
+    "git_issue": "8746eca",
+    "extid": "BUG-GENERATION-CONTROL-PLANE-ROUTES-LACK-AUTHORIZATION",
+    "type": "BUG",
+    "title": "generation control-plane routes lack authorization",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-auth-permissions",
+    "tags": [],
+    "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+  },
   "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC": {
     "hash": "8d307ae",
     "git_issue": "8d307ae",
@@ -1885,6 +2005,18 @@
     "source": ".plan/tickets/BUG-gm-notes-get-500-sql-syntax-error.md",
     "git_issue": "2a271d7",
     "status": "done"
+  },
+  "BUG-GMNOTESSECTION-INJECTS-SHADOW-NOTES-INTO-ALL-ACTORS-PROMPTS": {
+    "hash": "324c5e7",
+    "git_issue": "324c5e7",
+    "extid": "BUG-GMNOTESSECTION-INJECTS-SHADOW-NOTES-INTO-ALL-ACTORS-PROMPTS",
+    "type": "BUG",
+    "title": "gmNotesSection injects shadow notes into all actors' prompts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gmnotessection-injects-shadow-notes-into-all-actors-prompts.md"
   },
   "BUG-GROUP-CASCADE-CONSECUTIVE-TURN-GUARD": {
     "hash": "pending",
@@ -2157,6 +2289,18 @@
     "git_issue": "86a2a1b",
     "status": "done"
   },
+  "BUG-INJECTNARRATION-HARDCODES-ACTOR-ID-SYSTEM-FK-DROPS-SPLIT-REU": {
+    "hash": "6dc73c8",
+    "git_issue": "6dc73c8",
+    "extid": "BUG-INJECTNARRATION-HARDCODES-ACTOR-ID-SYSTEM-FK-DROPS-SPLIT-REU",
+    "type": "BUG",
+    "title": "injectNarration hardcodes actor_id system, FK-drops split/reunite narration",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-injectnarration-hardcodes-actor-id-system-fk-drops-split-reu.md"
+  },
   "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
     "hash": "27cc7ab",
     "git_issue": "27cc7ab",
@@ -2283,6 +2427,30 @@
     "git_issue": "72706d2",
     "status": "fixed-in-worktree"
   },
+  "BUG-LOCATION-CONNECTIONS-VALIDATION-ACCEPTS-JUNK-AND-PERSISTS-IT": {
+    "hash": "c94e69c",
+    "git_issue": "c94e69c",
+    "extid": "BUG-LOCATION-CONNECTIONS-VALIDATION-ACCEPTS-JUNK-AND-PERSISTS-IT",
+    "type": "BUG",
+    "title": "location connections validation accepts junk and persists it",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-location-connections-validation-accepts-junk-and-persists-it.md"
+  },
+  "BUG-LOCATION-DELETE-CRASHES-ON-LOCATION-STATES-FK": {
+    "hash": "57603d2",
+    "git_issue": "57603d2",
+    "extid": "BUG-LOCATION-DELETE-CRASHES-ON-LOCATION-STATES-FK",
+    "type": "BUG",
+    "title": "location DELETE crashes on location_states FK",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-location-delete-crashes-on-location-states-fk.md"
+  },
   "BUG-LOGGER-CENSOR-DEPTH-CUTOFF-RETURNS-SUBTREE-UNTOUCHED-NESTED-": {
     "hash": "b23b7fb",
     "git_issue": "b23b7fb",
@@ -2320,6 +2488,18 @@
     "source": ".plan/tickets/BUG-logout-deletes-session-without-signature-or-ownership-check.md",
     "git_issue": "fafb5a9",
     "status": "done"
+  },
+  "BUG-MEMORY-DECAY-WRITES-NAN-STRENGTH": {
+    "hash": "8b01cbe",
+    "git_issue": "8b01cbe",
+    "extid": "BUG-MEMORY-DECAY-WRITES-NAN-STRENGTH",
+    "type": "BUG",
+    "title": "memory decay writes NaN strength",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-memory-decay-writes-nan-strength.md"
   },
   "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
     "hash": "1fbe78c",
@@ -2617,6 +2797,18 @@
     "git_issue": "9d02c08",
     "status": "done"
   },
+  "BUG-NSFW-FLAG-SIDE-EFFECT-RUNS-BEFORE-ACCESS-CHECK": {
+    "hash": "0b9b1f1",
+    "git_issue": "0b9b1f1",
+    "extid": "BUG-NSFW-FLAG-SIDE-EFFECT-RUNS-BEFORE-ACCESS-CHECK",
+    "type": "BUG",
+    "title": "NSFW flag side effect runs before access check",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-nsfw-flag-side-effect-runs-before-access-check.md"
+  },
   "BUG-NSFW-FLAGQUEUE-LEAKS-REPORTER-PII": {
     "hash": "c48d5fb",
     "extid": "BUG-NSFW-FLAGQUEUE-LEAKS-REPORTER-PII",
@@ -2796,6 +2988,18 @@
     "source": ".plan/tickets/BUG-nsfwmoderationservice-missing-getorcreateown-wiring-block-ba.md",
     "status": "done"
   },
+  "BUG-OLLAMA-OUTAGE-HARD-FAILS-ALL-GENERATIONS": {
+    "hash": "ce2ef5e",
+    "git_issue": "ce2ef5e",
+    "extid": "BUG-OLLAMA-OUTAGE-HARD-FAILS-ALL-GENERATIONS",
+    "type": "BUG",
+    "title": "Ollama outage hard-fails all generations",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-ollama-outage-hard-fails-all-generations.md"
+  },
   "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES": {
     "hash": "b91c284",
     "extid": "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES",
@@ -2965,6 +3169,14 @@
     "tags": [],
     "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md",
     "status": "done"
+  },
+  "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san": {
+    "hash": "1a15200b",
+    "git_issue": "1a15200b",
+    "extid": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
+    "title": "ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap",
+    "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md",
+    "status": "🔧 Partial (ReDoS done; chunk-boundary open)"
   },
   "BUG-REDOS-IN-HTML-SANITIZE-SCRIPT-TAG-PATTERN-CHUNK-BOUNDARY-SAN": {
     "hash": "b465b08",
@@ -3201,6 +3413,18 @@
     "source": ".plan/tickets/BUG-settings-save-omits-gmconfig-for-online-chats.md",
     "status": "done"
   },
+  "BUG-SHADOW-AND-WHITENOTE-CRUD-OPEN-TO-ANY-CHAT-PARTICIPANT": {
+    "hash": "0416d70",
+    "git_issue": "0416d70",
+    "extid": "BUG-SHADOW-AND-WHITENOTE-CRUD-OPEN-TO-ANY-CHAT-PARTICIPANT",
+    "type": "BUG",
+    "title": "shadow and whitenote CRUD open to any chat participant",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-shadow-and-whitenote-crud-open-to-any-chat-participant.md"
+  },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
     "hash": "3ba1095",
     "git_issue": "3ba1095",
@@ -3373,6 +3597,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md",
     "status": "done"
+  },
+  "BUG-STORY-MODE-CHAT-WITHOUT-GM-CONFIG-SILENTLY-SKIPS-GENERATION": {
+    "hash": "b99be81",
+    "git_issue": "b99be81",
+    "extid": "BUG-STORY-MODE-CHAT-WITHOUT-GM-CONFIG-SILENTLY-SKIPS-GENERATION",
+    "type": "BUG",
+    "title": "story-mode chat without gm_config silently skips generation",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-story-mode-chat-without-gm-config-silently-skips-generation.md"
   },
   "BUG-STORY-MODE-PROMPT-STORED-AS-CONTENT": {
     "hash": "pending",
@@ -3671,6 +3907,18 @@
     "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md",
     "status": "done"
   },
+  "BUG-VN-CHOICE-FE-BE-CONTRACT-MISMATCH-RENDERS-BLANK-LABELS": {
+    "hash": "c855cf3",
+    "git_issue": "c855cf3",
+    "extid": "BUG-VN-CHOICE-FE-BE-CONTRACT-MISMATCH-RENDERS-BLANK-LABELS",
+    "type": "BUG",
+    "title": "vn choice FE/BE contract mismatch renders blank labels",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels.md"
+  },
   "BUG-VN-CHOICES-IDOR-GUARD-NON-COMPILING": {
     "hash": "pending",
     "extid": "BUG-VN-CHOICES-IDOR-GUARD-NON-COMPILING",
@@ -3682,6 +3930,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-vn-choices-idor-guard-non-compiling.md",
     "status": "fixed-in-worktree"
+  },
+  "BUG-VN-GENERATE-CHOICES-NEVER-PERSISTS-TO-VN-CHOICES": {
+    "hash": "98cd31c",
+    "git_issue": "98cd31c",
+    "extid": "BUG-VN-GENERATE-CHOICES-NEVER-PERSISTS-TO-VN-CHOICES",
+    "type": "BUG",
+    "title": "vn generate-choices never persists to vn_choices",
+    "label": "bug",
+    "priority": "critical",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-vn-generate-choices-never-persists-to-vn-choices.md"
   },
   "BUG-VN-MODE-LOCKED-ONCE-CHAT-HAS-CONFIRMED-MESSAGES": {
     "hash": "c7f002c",
@@ -3695,6 +3955,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md",
     "status": "done"
+  },
+  "BUG-WHITENOTE-UI-TYPES-REJECTED-422": {
+    "hash": "3cbb825",
+    "git_issue": "3cbb825",
+    "extid": "BUG-WHITENOTE-UI-TYPES-REJECTED-422",
+    "type": "BUG",
+    "title": "whitenote UI types rejected 422",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-whitenote-ui-types-rejected-422.md"
   },
   "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M": {
     "hash": "508a7ea",
@@ -3733,6 +4005,30 @@
     "tags": [],
     "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md",
     "git_issue": "ca69118"
+  },
+  "BUG-WORLD-LORE-SILENTLY-STRIPPED-ON-CREATE-AND-UPDATE": {
+    "hash": "81aaf55",
+    "git_issue": "81aaf55",
+    "extid": "BUG-WORLD-LORE-SILENTLY-STRIPPED-ON-CREATE-AND-UPDATE",
+    "type": "BUG",
+    "title": "world lore silently stripped on create and update",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-world-lore-silently-stripped-on-create-and-update.md"
+  },
+  "BUG-WORLD-STATE-INIT-SEEDS-ALL-DB-ACTORS-INTO-EVERY-WORLD": {
+    "hash": "ee49c41",
+    "git_issue": "ee49c41",
+    "extid": "BUG-WORLD-STATE-INIT-SEEDS-ALL-DB-ACTORS-INTO-EVERY-WORLD",
+    "type": "BUG",
+    "title": "world-state init seeds all DB actors into every world",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-world-state-init-seeds-all-db-actors-into-every-world.md"
   },
   "BUG-WORLD-TIMELINES-UNAUTHENTICATED-READ-AND-CREATE": {
     "hash": "dae8112",
@@ -13126,15 +13422,11 @@
   },
   "TASK-FINALIZE-MUST-GATE-POST-REBASE-TREE-BEFORE-MERGE": {
     "hash": "cf15f9f",
+    "git_issue": "cf15f9f",
     "extid": "TASK-FINALIZE-MUST-GATE-POST-REBASE-TREE-BEFORE-MERGE",
-    "type": "TASK",
-    "title": "Finalize must gate the post-rebase tree (check runs before merge)",
-    "label": "task",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
+    "title": "finalize must hard-fail on non-mergeable or multi-merge dev state",
     "source": ".plan/tickets/TASK-finalize-must-gate-post-rebase-tree-before-merge.md",
-    "git_issue": "cf15f9f"
+    "status": "open"
   },
   "TASK-FINALIZE-NOTIFICATION-BELL-HEADER-WIRING": {
     "hash": "3bf85e0",
@@ -17887,13 +18179,9 @@
     "hash": "730954a",
     "git_issue": "730954a",
     "extid": "TASK-RECONCILE-LEFTOVER-FINALIZE-STASH-0-RANDOM-EVENTS-POST-STORE",
-    "type": "TASK",
-    "title": "Reconcile leftover finalize stash @{0} (random-events post-store.ts edit)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md"
+    "title": "reconcile leftover finalize stash 0 random events post store",
+    "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md",
+    "status": "open"
   },
   "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION": {
     "hash": "8700aac",
@@ -21377,29 +21665,5 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
-  },
-  "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san": {
-    "hash": "1a15200b",
-    "git_issue": "1a15200b",
-    "extid": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
-    "title": "ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap",
-    "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md",
-    "status": "🔧 Partial (ReDoS done; chunk-boundary open)"
-  },
-  "TASK-FINALIZE-MUST-GATE-POST-REBASE-TREE-BEFORE-MERGE": {
-    "hash": "cf15f9f",
-    "git_issue": "cf15f9f",
-    "extid": "TASK-FINALIZE-MUST-GATE-POST-REBASE-TREE-BEFORE-MERGE",
-    "title": "finalize must hard-fail on non-mergeable or multi-merge dev state",
-    "source": ".plan/tickets/TASK-finalize-must-gate-post-rebase-tree-before-merge.md",
-    "status": "open"
-  },
-  "TASK-RECONCILE-LEFTOVER-FINALIZE-STASH-0-RANDOM-EVENTS-POST-STORE": {
-    "hash": "730954a",
-    "git_issue": "730954a",
-    "extid": "TASK-RECONCILE-LEFTOVER-FINALIZE-STASH-0-RANDOM-EVENTS-POST-STORE",
-    "title": "reconcile leftover finalize stash 0 random events post store",
-    "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md",
-    "status": "open"
   }
 }
