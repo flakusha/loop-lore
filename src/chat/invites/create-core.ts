@@ -7,6 +7,7 @@
 // The two tables share shape: id, code, created_by, expires_at, max_uses,
 // uses, status. They differ only in the scope column (chat_id vs world_id).
 
+/* eslint-disable jsdoc/require-jsdoc */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
