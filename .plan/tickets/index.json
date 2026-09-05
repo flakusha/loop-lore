@@ -13124,6 +13124,18 @@
     "source": ".plan/tickets/TASK-file-split-routes.md",
     "git_issue": "e18b91c"
   },
+  "TASK-FINALIZE-MUST-GATE-POST-REBASE-TREE-BEFORE-MERGE": {
+    "hash": "cf15f9f",
+    "extid": "TASK-FINALIZE-MUST-GATE-POST-REBASE-TREE-BEFORE-MERGE",
+    "type": "TASK",
+    "title": "Finalize must gate the post-rebase tree (check runs before merge)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-finalize-must-gate-post-rebase-tree-before-merge.md",
+    "git_issue": "cf15f9f"
+  },
   "TASK-FINALIZE-NOTIFICATION-BELL-HEADER-WIRING": {
     "hash": "3bf85e0",
     "git_issue": "3bf85e0",
@@ -17847,6 +17859,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-reconcile-epic-frontend-settings-verify-settings-ui-capture-.md",
     "git_issue": "84fc44e"
+  },
+  "TASK-RECONCILE-LEFTOVER-FINALIZE-STASH-0-RANDOM-EVENTS-POST-STORE": {
+    "hash": "730954a",
+    "git_issue": "730954a",
+    "extid": "TASK-RECONCILE-LEFTOVER-FINALIZE-STASH-0-RANDOM-EVENTS-POST-STORE",
+    "type": "TASK",
+    "title": "Reconcile leftover finalize stash @{0} (random-events post-store.ts edit)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md"
   },
   "TASK-RECONCILE-TS-IMPORT-EXTENSIONS-USER-SEEDING-SESSION": {
     "hash": "8700aac",
