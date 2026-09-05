@@ -99,8 +99,11 @@ export type {
 export {
   generateRandomEvent,
   type RandomEvent,
+  type RandomEventLocation,
   type RandomEventOpts,
+  type RandomEventParticipant,
   randomEventToEventRef,
+  type RandomEventWorldTime,
 } from "./random-events";
 
 // ── Budget Advisor (FEAT-068) ────────────────────────────────
