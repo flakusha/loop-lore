@@ -1479,6 +1479,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-prompt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fix-character-growth-pre-existing-gate-failures.md"
     }
   ],
   "src/assistant/prompt/sections/actor-header.ts": [
