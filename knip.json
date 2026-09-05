@@ -114,6 +114,10 @@
     // Schema check scripts: standalone CLI tools, not entry-reachable
     // (consumed via bun run scripts/..., not import)
     "scripts/check-db-schemas.ts",
+    // Coverage gate script: run via check-parallel.mjs shell string
+    // (bun run test:coverage && bun run scripts/check/coverage.mjs --floor=40),
+    // not import-reachable — same class as check-db-schemas.ts above.
+    "scripts/check/coverage.mjs",
     // Frontend audit scripts: standalone CLI reporters (bun run scripts/...),
     // not import-reachable. Promoted from .tmp/ investigation scripts.
     "scripts/check-frontend-banned-patterns.ts",
