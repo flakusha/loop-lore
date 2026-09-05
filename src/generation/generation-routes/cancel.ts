@@ -2,9 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../../chat/service";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { jsonError, jsonResponse, } from "../../routes/http-utils";
+import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { cancelGenerationByChat, listActiveGenerations, } from "../cancellation-manager";
 
 // ── Route: Cancel generation (validator) ───────────────────
@@ -42,14 +43,24 @@ function validateCancel(
  *   { reason?: string, source?: string, detail?: string }
  * @param body
  * @param database
+ * @param userId
+ * @param userRole
  */
-export function handleCancelGeneration(body: unknown, database: Kysely<DB>,): Response {
+export async function handleCancelGeneration(
+  body: unknown,
+  database: Kysely<DB>,
+  userId?: string,
+  userRole?: string | null,
+): Promise<Response> {
   const db = database;
   const input = validateCancel(body,);
 
   if (!input) {
     return jsonError({ message: "Invalid request body", status: 400, },);
   }
+
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
 
   const reason = (input.reason ?? CancelReason.UserCancel) as CancelReason;
   const source = (input.source ?? CancelSource.User) as CancelSource;
@@ -72,6 +83,12 @@ export function handleCancelGeneration(body: unknown, database: Kysely<DB>,): Re
   if (!resolvedChatId) {
     return jsonError({ message: "No active generation found for the given ID", status: 404, },);
   }
+
+  // Authorization: only admin, creator, or a participant of the target chat
+  // may cancel its generation — including attemptId-only cancels resolved
+  // above (BUG-generation-control-plane-routes-lack-authorization).
+  const access = await checkChatAccess(db, resolvedChatId, authUserId, userRole,);
+  if (!access.ok) { return forbiddenResponse(); }
 
   const isCancelled = cancelGenerationByChat({ db, chatId: resolvedChatId, reason, source, detail, },);
 
