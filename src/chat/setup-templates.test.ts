@@ -130,7 +130,7 @@ describe("chat setup templates", () => {
     expect(r.ok,).toBe(true,);
     if (!r.ok) { return; }
     expect(r.template.name,).toBe("After",);
-    expect(r.template.visual_novel,).toBe(1,);
+    expect(JSON.parse(r.template.gm_config ?? "{}",).renderingOverride,).toBe("visual_novel",);
   });
 
   it("deleteChatSetupTemplate removes the row", async () => {

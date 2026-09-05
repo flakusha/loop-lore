@@ -301,7 +301,7 @@ export default [
       "src/scripts/version-bump.ts",
       "src/routes/character-growth/index.ts",
       "src/frontend/alpine/i18n.test-helper.ts",
-      "src/frontend/character-growth-editor.js",
+      "src/frontend/character-growth-editor.ts",
     ],
     rules: {
       "no-restricted-syntax": "off",
