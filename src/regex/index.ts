@@ -53,10 +53,13 @@ export {
 export { EXTERNAL_MUSIC_PATTERNS, } from "./music-urls";
 
 export {
+  DANGEROUS_TAGS,
   HASH_INJECTION_LINK,
   HASH_INJECTION_SCRIPT,
+  JS_URL_ATTR,
   ON_EVENT_DOUBLE,
   ON_EVENT_SINGLE,
+  ON_EVENT_UNQUOTED,
   stripScriptTags,
 } from "./html-sanitize";
 

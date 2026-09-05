@@ -15,7 +15,14 @@
 
 import { registry, } from "../../plugins/registry";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
-import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, stripScriptTags, } from "../../regex/html-sanitize";
+import {
+  DANGEROUS_TAGS,
+  JS_URL_ATTR,
+  ON_EVENT_DOUBLE,
+  ON_EVENT_SINGLE,
+  ON_EVENT_UNQUOTED,
+  stripScriptTags,
+} from "../../regex/html-sanitize";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import type { GenerationMessage, } from "../types";
 
