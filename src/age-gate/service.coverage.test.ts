@@ -3,6 +3,6 @@ import { validateAge, } from "./service";
 
 describe("age-gate boundary", () => {
   test("validateAge throws on invalid date string", () => {
-    expect(() => validateAge("not-a-date", 18)).toThrow();
+    expect(() => validateAge("not-a-date", 18,)).toThrow();
   });
 });
