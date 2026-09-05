@@ -3,7 +3,7 @@ import { describe, expect, test, } from "bun:test";
 
 describe("personas boundary", () => {
   test("service class exists", () => {
-    const { PersonasService } = require("./service");
-    expect(typeof PersonasService).toBe("function");
+    const { PersonasService, } = require("./service",);
+    expect(typeof PersonasService,).toBe("function",);
   });
 });

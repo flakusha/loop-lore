@@ -360,6 +360,8 @@ export const WhiteneoteTypeSchema = t.UnionEnum([
   "tone",
   "pacing",
   "theme",
+  "character_context",
+  "world_state",
 ],);
 export const WorldKindSchema = t.UnionEnum(["rpg", "chat",],);
 export const WorldTraitCategorySchema = t.UnionEnum(["environmental", "cultural", "magical", "social", "equipment",],);
