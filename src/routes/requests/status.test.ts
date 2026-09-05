@@ -87,4 +87,33 @@ describe("GET /api/requests/:id/status", () => {
     const res = await app.handle(new Request("http://localhost/api/requests/req-x/status",),);
     expect(res.status,).toBe(200,);
   });
+
+  // BUG-bug-request-status-endpoint-fail-open-when-row-userid-is-nul:
+  // the previous `if (row.userId !== null)` guard skipped the ownership
+  // check entirely for anonymous rows, letting any caller who knew the id
+  // read the row. Fix: anonymous rows are visible only to admins; everyone
+  // else gets 404 (same response as a missing row, so existence is not leaked).
+  test("anonymous row returns 404 for an anonymous caller", async () => {
+    store.track({ id: "req-anon", method: "POST", routePattern: "/api/x", userId: null, },);
+    await store.flush();
+    const app = buildApp(store, null, null,);
+    const res = await app.handle(new Request("http://localhost/api/requests/req-anon/status",),);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("anonymous row returns 404 for a non-admin authenticated caller", async () => {
+    store.track({ id: "req-anon", method: "POST", routePattern: "/api/x", userId: null, },);
+    await store.flush();
+    const app = buildApp(store, "alice", "user",);
+    const res = await app.handle(new Request("http://localhost/api/requests/req-anon/status",),);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("admin can read an anonymous row", async () => {
+    store.track({ id: "req-anon", method: "POST", routePattern: "/api/x", userId: null, },);
+    await store.flush();
+    const app = buildApp(store, "admin-uid", "admin",);
+    const res = await app.handle(new Request("http://localhost/api/requests/req-anon/status",),);
+    expect(res.status,).toBe(200,);
+  });
 });
