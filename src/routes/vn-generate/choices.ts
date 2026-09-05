@@ -11,11 +11,17 @@ import { checkChatAccess, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { resolveProvider, } from "../../generation/providers/registry";
+import { getLogger, type Logger, } from "../../logger";
 import { resolveSystemPrompt, } from "../../prompts";
-import { jsonParseOr, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
 import { forbidden, } from "../../validation/middleware";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { ChoiceGenerationResult, GenerateChoicesBody, VnGenerateRouteOpts, } from "./types";
+
+/** */
+function log(): Logger {
+  return getLogger().child({ module: "vn-generate-choices", },);
+}
 
 // ── Prompt Templates ───────────────────────────────────────
 // VN system prompts live in src/prompts/vn.ts (registry defaults); the
@@ -153,6 +159,35 @@ export function choicesRoutes(opts: VnGenerateRouteOpts,) {
               opts.config,
               userId,
             );
+
+            // Persist every generated choice so the creator-side
+            // GET /api/chats/:id/vn-choices?sceneIndex=N can list them.
+            // Without this insert, generation produced nothing the UI
+            // could ever read (BUG-vn-generate-choices-never-persists-
+            // to-vn-choices). Column mapping mirrors src/routes/vn-choices.ts.
+            const choices = result.choices ?? [];
+            for (const choice of choices) {
+              await database
+                .insertInto("vn_choices",)
+                .values({
+                  id: uid(),
+                  chat_id: chatId,
+                  scene_index: result.sceneIndex ?? body.sceneIndex,
+                  label: choice.label ?? "Untitled choice",
+                  description: choice.description ?? null,
+                  consequences: jsonStringifyOr(choice.consequences ?? {},),
+                  relationship_impact: jsonStringifyOr(choice.relationshipImpact ?? {},),
+                  mood_impact: jsonStringifyOr(choice.moodImpact ?? {},),
+                  unlock_conditions: jsonStringifyOr({},),
+                  created_at: new Date().toISOString(),
+                },)
+                .execute();
+            }
+            log().info("Persisted generated VN choices", {
+              chatId,
+              sceneIndex: result.sceneIndex ?? body.sceneIndex,
+              count: choices.length,
+            },);
 
             return jsonResponse({ data: result, },);
           } catch {
