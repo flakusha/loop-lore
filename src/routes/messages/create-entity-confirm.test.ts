@@ -354,4 +354,30 @@ describe("POST /api/chats/:id/create-entity", () => {
     );
     expect(res.ok,).toBe(false,);
   });
+
+  // ── World ownership guard ────────────────────────────────────
+
+  test("forbids targeting a world owned by another user", async () => {
+    // Create a chat owned by userId and add otherUserId as a participant
+    // with READ access — but otherUserId does NOT own worldId. This
+    // isolates the world-ownership guard from the chat-access gate.
+    const chatId = uid();
+    await insertChats(db, "Shared Chat", userId, { id: chatId, } as never,);
+    await insertChatParticipants(db, chatId, userId, { role_in_chat: ChatParticipantRole.Owner, } as never,);
+    await insertChatParticipants(db, chatId, otherUserId, { role_in_chat: ChatParticipantRole.Member, } as never,);
+
+    const app = createApp(db, otherUserId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "item",
+          data: { name: "Stolen Sword", description: "Should fail", },
+          worldId,
+        },),
+      },),
+    );
+    expect(res.status,).toBe(403,);
+  });
 });

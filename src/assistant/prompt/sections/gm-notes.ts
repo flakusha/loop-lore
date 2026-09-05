@@ -15,6 +15,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
+import { jsonParseOr, } from "../../../utils";
 import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
 
@@ -91,9 +92,20 @@ export const gmNotesSection: SectionBuilder = {
   name: "gmNotes",
   enabled: () => true,
   build: async (ctx,) => {
+    // Shadow notes are GM-only narrative metadata (foreshadowing, world
+    // secrets, player motivations). Only expose them when the chat's
+    // effective assistant role is `gm` — a non-GM chat leaking them into
+    // the prompt would be an information leak (BUG-gm-shadow-notes-leak-
+    // into-any-prompt). Whitenotes stay unconditional: they are story-
+    // steering directives for any chat.
+    const assistantRole = ctx.chat.gm_config
+      ? jsonParseOr<{ assistantRole?: string }>(ctx.chat.gm_config, {},).assistantRole
+      : undefined;
+    const isGmRole = assistantRole === "gm";
+
     const noteResults = await Promise.allSettled([
       fetchActiveWhitenotes(ctx.db, ctx.chat.id,),
-      fetchUnrevealedShadowNotes(ctx.db, ctx.chat.id,),
+      isGmRole ? fetchUnrevealedShadowNotes(ctx.db, ctx.chat.id,) : Promise.resolve([],),
     ],);
     const whitenotesResult = noteResults[0];
     const shadowNotesResult = noteResults[1];

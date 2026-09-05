@@ -187,7 +187,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
   it("does NOT pass lora to generateImages when lora field is absent", async () => {
     const body = makeBody({ prompt: "no lora prompt", },);
-    await handleImageGeneration(body, "test-user",);
+    await handleImageGeneration(body, undefined, "test-user",);
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
@@ -201,7 +201,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
       prompt: "lora prompt",
       lora: LORA_CONFIG,
     },);
-    await handleImageGeneration(body, "test-user",);
+    await handleImageGeneration(body, undefined, "test-user",);
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
@@ -247,7 +247,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
       prompt: "comfyui lora prompt",
       lora: COMFYUI_CONFIG,
     },);
-    await handleComfyUI(body, "test-user",);
+    await handleComfyUI(body, undefined, "test-user",);
 
     expect(generateImagesCalls.length,).toBeGreaterThan(0,);
     const [, opts,] = generateImagesCalls[0]!;
@@ -258,7 +258,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
   it("returns HTTP 400 when prompt is missing", async () => {
     const body = makeBody({ prompt: undefined, },);
-    const res = await handleImageGeneration(body, "test-user",);
+    const res = await handleImageGeneration(body, undefined, "test-user",);
 
     expect(res.status,).toBe(400,);
     const json = await res.json() as { error: string };
@@ -278,7 +278,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
     const { handleImageGeneration: handleNoProvider, } = await import("./image-gen-route");
     const body = makeBody({ prompt: "any prompt", },);
-    const res = await handleNoProvider(body, "test-user",);
+    const res = await handleNoProvider(body, undefined, "test-user",);
 
     expect(res.status,).toBe(501,);
   });
@@ -321,7 +321,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
       prompt: "lora with openai",
       lora: LORA_CONFIG,
     },);
-    const res = await handleOpenAI(body, "test-user",);
+    const res = await handleOpenAI(body, undefined, "test-user",);
 
     expect(res.status,).toBe(400,);
     const json = await res.json() as { error: string };
@@ -364,7 +364,7 @@ describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
     const { handleImageGeneration: handleOpenAINoLora, } = await import("./image-gen-route");
     const body = makeBody({ prompt: "normal openai request", },);
-    const res = await handleOpenAINoLora(body, "test-user",);
+    const res = await handleOpenAINoLora(body, undefined, "test-user",);
 
     expect(res.status,).toBe(200,);
   });

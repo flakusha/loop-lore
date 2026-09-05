@@ -14,12 +14,16 @@
  * Ownership: only assets owned by the calling user are captioned; foreign or
  * unknown asset ids yield empty captions instead of leaking or overwriting.
  */
+import type { Kysely, } from "kysely";
 import { resolveModelRole, } from "../admin/model-roles";
 import { getAsset, } from "../assets/service";
+import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
 import { ModelRole, } from "../db/enums-core";
 import { getDatabase, } from "../db/index";
+import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger/index";
+import { forbiddenResponse, } from "../routes/http-utils";
 import { getProvider, resolveProvider, } from "./providers/registry";
 import type { GenerateRequest, } from "./providers/types";
 
@@ -34,9 +38,16 @@ interface CaptionBody {
 
 /**
  * @param body
+ * @param database
  * @param userId
+ * @param userRole
  */
-export async function handleImageCaption(body: unknown, userId?: string,): Promise<Response> {
+export async function handleImageCaption(
+  body: unknown,
+  database?: Kysely<DB>,
+  userId?: string,
+  userRole?: string | null,
+): Promise<Response> {
   const log = getLogger().child({ module: "generation/caption-route", },);
   const req = body as CaptionBody;
 
@@ -45,6 +56,14 @@ export async function handleImageCaption(body: unknown, userId?: string,): Promi
   }
   if (!req.assetIds || req.assetIds.length === 0) {
     return Response.json({ error: "Missing required field: assetIds", status: 400, }, { status: 400, },);
+  }
+
+  // Authorization: when scoped to a chat, only admin, creator, or a
+  // participant may caption assets for it (BUG-generation-control-plane-routes-lack-authorization).
+  if (req.chatId) {
+    const dbForAccess = database ?? getDatabase();
+    const access = await checkChatAccess(dbForAccess, req.chatId, userId, userRole,);
+    if (!access.ok) { return forbiddenResponse(); }
   }
 
   const config = loadConfig();

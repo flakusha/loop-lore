@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Config, } from "../../config/schema";
-import { jsonError, jsonResponse, } from "../../routes/http-utils";
+import { jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { getProvider, } from "../providers/registry";
 
 // ── Route: Test connection (validator) ────────────────────
@@ -26,8 +26,13 @@ function validateTestConnection(body: unknown,): { provider: string } | null {
  *   { provider: string, model?: string }
  * @param body
  * @param _config
+ * @param userId
  */
-export async function handleTestConnection(body: unknown, _config?: Config,): Promise<Response> {
+export async function handleTestConnection(body: unknown, _config?: Config, userId?: string,): Promise<Response> {
+  // Authenticated-only: provider test hits the caller's BYO key resolution.
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
+
   const input = validateTestConnection(body,);
 
   if (!input) {
