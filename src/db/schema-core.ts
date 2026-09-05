@@ -368,6 +368,33 @@ export interface Actors {
   llm_assist_enabled: Generated<number>;
 }
 
+// ── character_arc ────────────────────────────────────────────
+export interface CharacterArc {
+  id: Generated<string>;
+  actor_id: string;
+  current_stage: string;
+  stage_description: string | null;
+  updated_at: string;
+}
+
+// ── growth_log ────────────────────────────────────────────
+export interface GrowthLog {
+  id: Generated<string>;
+  actor_id: string;
+  axis: string;
+  event_type: string;
+  status: Generated<string>;
+  subject_kind: string | null;
+  subject_id: string | null;
+  before_json: string | null;
+  after_json: string | null;
+  reason: Generated<string>;
+  source_event_id: string | null;
+  recorded_at: string;
+  confirmed_at: string | null;
+  confirmed_by: string | null;
+}
+
 // ── character_internal_traits ────────────────────────────────────────────
 export interface CharacterInternalTraits {
   id: Generated<string>;
@@ -607,6 +634,19 @@ export interface Chats {
   data_version: Generated<number>;
   record_hash: Generated<string>;
   custom_instructions: string | null;
+}
+
+// ── chat_random_events ────────────────────────────────────────────
+export interface ChatRandomEvents {
+  id: Generated<string>;
+  chat_id: string;
+  event_id: string;
+  category: string;
+  content: string;
+  token_count: number;
+  fired_at: number;
+  expires_at: number;
+  fired_count: Generated<number>;
 }
 
 // ── group_initiatives ────────────────────────────────────────────
@@ -978,31 +1018,4 @@ export interface E2eSkippedMessageKeys {
   chain_index: number;
   message_key: string;
   created_at: Generated<string>;
-}
-
-// ── character_arc ────────────────────────────────────────────
-export interface CharacterArc {
-  id: Generated<string>;
-  actor_id: string;
-  current_stage: string;
-  stage_description: string | null;
-  updated_at: string;
-}
-
-// ── growth_log ────────────────────────────────────────────
-export interface GrowthLog {
-  id: Generated<string>;
-  actor_id: string;
-  axis: string;
-  event_type: string;
-  status: Generated<string>;
-  subject_kind: string | null;
-  subject_id: string | null;
-  before_json: string | null;
-  after_json: string | null;
-  reason: Generated<string>;
-  source_event_id: string | null;
-  recorded_at: string;
-  confirmed_at: string | null;
-  confirmed_by: string | null;
 }
