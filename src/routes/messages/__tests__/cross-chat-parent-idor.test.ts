@@ -161,7 +161,7 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
 
     const row = await db.selectFrom("messages",).select("id",).where("id", "=", newId,).executeTakeFirst();
     expect(row?.id,).toBe(newId,);
-  },);
+  });
 
   test("cross-chat parent (chat A chat_id, parent belongs to chat B) throws ParentMessageNotInChatError", async () => {
     const newId = uid();
@@ -179,7 +179,7 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
         content_format: "markdown",
         content_encoding: "identity",
         status: MessageStatus.Confirmed,
-      visibility: MessageVisibility.Visible,
+        visibility: MessageVisibility.Visible,
         idempotency_key: null,
         swipe_index: 1,
       },),
@@ -188,7 +188,7 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
     // Negative-path coverage: assert no row was inserted.
     const row = await db.selectFrom("messages",).select("id",).where("id", "=", newId,).executeTakeFirst();
     expect(row,).toBeUndefined();
-  },);
+  });
 
   test("missing parent throws ParentMessageNotFoundError", async () => {
     const newId = uid();
@@ -207,7 +207,7 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
         content_format: "markdown",
         content_encoding: "identity",
         status: MessageStatus.Confirmed,
-      visibility: MessageVisibility.Visible,
+        visibility: MessageVisibility.Visible,
         idempotency_key: null,
         swipe_index: 1,
       },),
@@ -216,7 +216,7 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
     // Negative-path coverage: assert no row was inserted.
     const row = await db.selectFrom("messages",).select("id",).where("id", "=", newId,).executeTakeFirst();
     expect(row,).toBeUndefined();
-  },);
+  });
 
   test("null parentId (root message) skips the guard and inserts", async () => {
     const newId = uid();
@@ -240,5 +240,5 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
 
     const row = await db.selectFrom("messages",).select("id",).where("id", "=", newId,).executeTakeFirst();
     expect(row?.id,).toBe(newId,);
-  },);
+  });
 });
