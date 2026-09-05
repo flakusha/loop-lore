@@ -658,7 +658,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-random-events-generator-is-dead-incomplete-phantom-param.md"
+    "source": ".plan/tickets/BUG-bug-random-events-generator-is-dead-incomplete-phantom-param.md",
+    "status": "done"
   },
   "BUG-BUG-REQUEST-STATUS-ENDPOINT-FAIL-OPEN-WHEN-ROW-USERID-IS-NUL": {
     "hash": "fdaa266",
@@ -9740,6 +9741,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-char-editor-validation-spec-compliance.md"
   },
+  "TASK-CHAR-GROWTH-API": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-GROWTH-API",
+    "type": "TASK",
+    "title": "char-growth-api",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-growth-api.md"
+  },
   "TASK-CHAR-GROWTH-ARCS": {
     "hash": "pending",
     "extid": "TASK-CHAR-GROWTH-ARCS",
@@ -9751,6 +9763,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-char-growth-arcs.md"
   },
+  "TASK-CHAR-GROWTH-BRIDGES": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-GROWTH-BRIDGES",
+    "type": "TASK",
+    "title": "char-growth-bridges",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-growth-bridges.md"
+  },
   "TASK-CHAR-GROWTH-EVENTS": {
     "hash": "pending",
     "extid": "TASK-CHAR-GROWTH-EVENTS",
@@ -9761,6 +9784,28 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-char-growth-events.md"
+  },
+  "TASK-CHAR-GROWTH-FRONTEND": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-GROWTH-FRONTEND",
+    "type": "TASK",
+    "title": "char-growth-frontend",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-growth-frontend.md"
+  },
+  "TASK-CHAR-GROWTH-LLM-ASSIST": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-GROWTH-LLM-ASSIST",
+    "type": "TASK",
+    "title": "char-growth-llm-assist",
+    "label": "task",
+    "priority": "Low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-growth-llm-assist.md"
   },
   "TASK-CHAR-GROWTH-MEMORY": {
     "hash": "pending",
@@ -9806,6 +9851,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-char-growth-schema.md"
   },
+  "TASK-CHAR-GROWTH-SERVICE": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-GROWTH-SERVICE",
+    "type": "TASK",
+    "title": "char-growth-service",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-growth-service.md"
+  },
   "TASK-CHAR-GROWTH-TESTS": {
     "hash": "pending",
     "extid": "TASK-CHAR-GROWTH-TESTS",
@@ -9816,6 +9872,28 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-char-growth-tests.md"
+  },
+  "TASK-CHAR-GROWTH-TYPES": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-GROWTH-TYPES",
+    "type": "TASK",
+    "title": "char-growth-types",
+    "label": "task",
+    "priority": "High",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-growth-types.md"
+  },
+  "TASK-CHAR-GROWTH-VALIDATION": {
+    "hash": "pending",
+    "extid": "TASK-CHAR-GROWTH-VALIDATION",
+    "type": "TASK",
+    "title": "char-growth-validation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-char-growth-validation.md"
   },
   "TASK-CHAR-INTERNAL-API": {
     "hash": "pending",
@@ -18309,7 +18387,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-resolve-10-oxlint-warnings-in-src-chat-random-events-ts.md",
-    "git_issue": "7ffa7c7"
+    "git_issue": "7ffa7c7",
+    "status": "done"
   },
   "TASK-RESOLVE-MESSAGE-CONTENT-UNIT-TEST-ALL-ENCODINGS": {
     "hash": "c90d3f1",

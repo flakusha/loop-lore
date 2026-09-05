@@ -15,11 +15,13 @@
 import type { Kysely, } from "kysely";
 import { MoodService, } from "../../characters/services/mood-service";
 import { detectHallucinations, generateRandomEvent, } from "../../chat";
+import { randomEventToEventRef, } from "../../chat/random-events";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import type { GenDeps, } from "./deps";
+import { loadChatLocation, loadChatParticipants, } from "./random-event-context";
 import { renderStreamMessage, } from "./stream-render";
 
 /** */
@@ -42,7 +44,7 @@ export interface PostStoreOpts {
   /** The stored message ID (for the final buffer render). */
   messageId: string;
   content: string;
-  thinking: string | undefined;
+  thinking: undefined | string;
   tokenUsage: { promptTokens: number; completionTokens: number; totalTokens: number };
   finishReason: "stop" | "length" | "error" | "cancelled";
   /** Mood-shift delta from the content hooks (undefined = none). */
@@ -180,23 +182,42 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
 
   if (worldId) {
     try {
-      const msgCount = await database
-        .selectFrom("messages",)
-        .select(database.fn.count("id",).as("cnt",),)
-        .where("chat_id", "=", chatId,)
-        .executeTakeFirst();
+      // Random ambient events: count messages for cooldown tracking, look up
+      // chat participants + current location for `{npc}` / `{location}` /
+      // `{weather}` substitution, generate a candidate, and convert it to an
+      // `EventRef` ready for the next prompt's context window.
+      const [msgCount, chatRow,] = await Promise.all([
+        database
+          .selectFrom("messages",)
+          .select(database.fn.count("id",).as("cnt",),)
+          .where("chat_id", "=", chatId,)
+          .executeTakeFirst(),
+        database
+          .selectFrom("chats",)
+          .select(["current_location_id",],)
+          .where("id", "=", chatId,)
+          .executeTakeFirst(),
+      ],);
+
+      const [participants, location,] = await Promise.all([
+        loadChatParticipants(database, chatId,),
+        loadChatLocation(database, chatRow?.current_location_id ?? null,),
+      ],);
 
       const event = generateRandomEvent({
-        db: database,
-        worldId,
+        currentLocation: location ?? undefined,
         messageCount: Number(msgCount?.cnt ?? 0,),
+        participants,
       },);
 
       if (event) {
-        log.debug("random event generated", {
+        const eventRef = randomEventToEventRef(event,);
+        log.debug("random event generated + converted to EventRef", {
+          chatId,
           eventId: event.id,
           category: event.category,
           content: event.content.slice(0, 100,),
+          tokenCount: eventRef.tokenCount,
         },);
       }
     } catch (error) {
