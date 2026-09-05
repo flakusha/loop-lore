@@ -35,3 +35,4 @@ Unquoted event handlers (`onerror=alert(1)>`), `iframe`/`object`/`embed`/`svg fo
 - [ ] Chunk-boundary sanitization: buffer SSE chunks before sanitizing (separate ticket to file)
 - [ ] Additional tag/attribute coverage audit (separate ticket to file)
 - [ ] Documentation updated
+
