@@ -10,6 +10,7 @@
  * re-ranked by cosine similarity against recent conversation context after
  * privacy/provision filtering but before injection filtering.
  */
+import { getLogger, } from "../../../logger";
 import { selectWithinBudget, } from "../../../memory/budget";
 import { semanticRecall, } from "../../../memory/embeddings";
 import {
@@ -77,31 +78,44 @@ export const memorySection: SectionBuilder = {
     const pinned = allAccepted.filter((m,) => m.pinned);
     const mutable = allAccepted.filter((m,) => !m.pinned);
     if (mutable.length > 0) {
-      const recent = await ctx.db
-        .selectFrom("messages",)
-        .select("content",)
-        .where("chat_id", "=", ctx.chat.id,)
-        .orderBy("created_at", "desc",)
-        .limit(5,)
-        .execute();
-      if (recent.length > 0) {
-        const queryText = recent.map((r,) => r.content ?? "").join(" ",);
-        const matched = await semanticRecall(
-          ctx.db,
-          mutable.map((m,) => m.id),
-          queryText,
-          mutable.length,
-          0.3,
-        );
-        if (matched.length > 0) {
-          const scoreMap = new Map(matched.map((m,) => [m.memoryId, m.score,]),);
-          mutable.sort((a, b,) => {
-            const sa = scoreMap.get(a.id,) ?? 0;
-            const sb = scoreMap.get(b.id,) ?? 0;
-            if (sa !== sb) { return sb - sa; }
-            return b.importance - a.importance;
-          },);
+      try {
+        const recent = await ctx.db
+          .selectFrom("messages",)
+          .select("content",)
+          .where("chat_id", "=", ctx.chat.id,)
+          .orderBy("created_at", "desc",)
+          .limit(5,)
+          .execute();
+        if (recent.length > 0) {
+          const queryText = recent.map((r,) => r.content ?? "").join(" ",);
+          const matched = await semanticRecall(
+            ctx.db,
+            mutable.map((m,) => m.id),
+            queryText,
+            mutable.length,
+            0.3,
+          );
+          if (matched.length > 0) {
+            const scoreMap = new Map(matched.map((m,) => [m.memoryId, m.score,]),);
+            mutable.sort((a, b,) => {
+              const sa = scoreMap.get(a.id,) ?? 0;
+              const sb = scoreMap.get(b.id,) ?? 0;
+              if (sa !== sb) { return sb - sa; }
+              return b.importance - a.importance;
+            },);
+          }
         }
+      } catch (err) {
+        // Graceful degradation: if semantic recall fails (e.g. Ollama/embed
+        // provider down), keep the keyword-ranked order and continue. The
+        // token-budget + injection-filter phases below still run.
+        getLogger().warn(
+          "memory section: semantic re-rank skipped (provider unavailable)",
+          {
+            err: err instanceof Error ? err.message : String(err,),
+            chatId: ctx.chat.id,
+          },
+        );
       }
     }
     const ranked = [...pinned, ...mutable,];
