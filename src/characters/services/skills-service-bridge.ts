@@ -23,7 +23,6 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createSkill, } from "../../rpg/skills/service/crud";
 import type { Skill, } from "../../rpg/skills/service/types";
-import { jsonStringifyOr, } from "../../utils/safe-json";
 import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 
 /** Options for `recordSkillAcquisition`. */
