@@ -453,8 +453,8 @@ describe("chatsRoutes", () => {
     await insertChatSetupTemplates(db, "vn-story", "VN Story", {
       mode: "story",
       turn_strategy: "scene_based",
-      visual_novel: 1,
-    } as any,);
+      gm_config: JSON.stringify({ renderingOverride: "visual_novel", },),
+    },);
 
     const app = createApp(db, userId,);
     const res = await app.handle(
@@ -589,8 +589,8 @@ describe("chatsRoutes", () => {
     await insertChatSetupTemplates(db, "migrate-target", "Migrate Target", {
       mode: "story",
       turn_strategy: "scene_based",
-      visual_novel: 1,
-    } as any,);
+      gm_config: JSON.stringify({ renderingOverride: "visual_novel", },),
+    },);
     const app = createApp(db, userId,);
     const chatCreate = await app.handle(
       new Request("http://localhost/api/chats", {

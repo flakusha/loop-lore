@@ -169,9 +169,9 @@ export interface TestServer {
   db: Kysely<DB>;
   config: Config;
   mockProvider: MockLLMProvider | null;
+  context: { chatId: string };
   close: () => void;
 }
-
 /**
  * Factory that builds a Kysely `Dialect`. Defaults to in-memory SQLite;
  * override with a Postgres/MySQL factory (gated by `TEST_DB=postgres`) to
@@ -393,19 +393,19 @@ export async function createTestServer(
   process.env.NO_PROXY = process.env.NO_PROXY
     ? `${process.env.NO_PROXY},127.0.0.1,localhost`
     : "127.0.0.1,localhost";
+  const SEED_DEFAULT_CHAT_ID = "a0000004-0000-4000-a000-000000000000";
 
   return {
     url,
     db,
     config,
     mockProvider,
+    context: { chatId: SEED_DEFAULT_CHAT_ID, },
     close: () => {
       bunServer.stop();
       setTestDatabase(null,);
       resetSoloUserCache();
-      // Reset process-global login rate limiter so each test file starts fresh
       resetLoginRateLimiter();
-      // Clean up temp upload directory
       const testDir = resolve("/tmp", testRunId,);
       if (existsSync(testDir,)) {
         rmSync(testDir, { recursive: true, force: true, },);

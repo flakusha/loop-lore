@@ -182,6 +182,37 @@ describe("updateChat online key-mechanic guard (presentation vs GM-execution)", 
     expect(res,).toEqual({ ok: true, },);
   });
 
+  it("accepts presentation-only patch with vnLayout + visualNovel after first message", async () => {
+    const res = await updateChat(db, chatId, {
+      gmConfig: { visualNovel: true, vnLayout: "split", vnImageScaling: "contain", },
+    },);
+    expect(res,).toEqual({ ok: true, },);
+    const row = await db.selectFrom("chats",).select("gm_config",).where("id", "=", chatId,)
+      .executeTakeFirst();
+    const parsed = row?.gm_config ? JSON.parse(row.gm_config,) : null;
+    expect(parsed?.visualNovel,).toBe(true,);
+    expect(parsed?.vnLayout,).toBe("split",);
+    expect(parsed?.vnImageScaling,).toBe("contain",);
+  });
+
+  it("rejects llmConfig online with migrateEndpoint hint preserved", async () => {
+    const res = await updateChat(db, chatId, {
+      gmConfig: {
+        llmConfig: {
+          model: "gpt-4o",
+          provider: "openai",
+          systemPrompt: "",
+          temperature: 0.7,
+          maxTokens: 2000,
+        },
+      },
+    },);
+    expect(res,).toMatchObject({ code: "key_mechanic_conflict", },);
+    const details = (res as { details?: { fields: string[]; migrateEndpoint: string } }).details;
+    expect(details?.fields,).toContain("gmConfig.llmConfig",);
+    expect(details?.migrateEndpoint,).toBe(`/api/chats/${chatId}/migrate`,);
+  });
+
   it("still rejects top-level key-mechanic fields once online", async () => {
     const res = await updateChat(db, chatId, { mode: "direct", },);
     expect(res,).toMatchObject({ code: "key_mechanic_conflict", },);

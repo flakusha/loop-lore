@@ -188,7 +188,12 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
               : (template?.gm_config ? jsonParseOr(template.gm_config, {},) : undefined),
             renderingOverride: hasExplicit("renderingOverride",)
               ? body.renderingOverride
-              : (template ? (template.visual_novel === 1 ? "visual_novel" : null) : undefined),
+              : (template
+                ? (jsonParseOr<Record<string, unknown>>(template.gm_config ?? "{}", {},).renderingOverride ===
+                    "visual_novel"
+                  ? "visual_novel"
+                  : null)
+                : undefined),
             visibility: hasExplicit("visibility",)
               ? body.visibility
               : (template?.visibility ?? undefined),

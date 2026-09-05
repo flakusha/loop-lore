@@ -13,6 +13,7 @@ import { escapeHtml, fetchPartial, filterCards, } from "./shared";
 import { initProactive, } from "./characters-proactive";
 import "./characters-edit-form";
 import { initTraits, } from "./characters-traits";
+import "../character-growth-editor";
 
 const log = rootLog.child({ module: "characters-page", },);
 

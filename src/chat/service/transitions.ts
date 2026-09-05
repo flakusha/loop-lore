@@ -72,12 +72,17 @@ export async function migrateChat(
   }
 
   const newChatId = crypto.randomUUID();
-  const renderingOverride = template.visual_novel === 1 ? "visual_novel" : null;
   const gmConfig = template.gm_config
     ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
     : { ok: false as const, value: null, };
+  const baseGmConfig = gmConfig.ok && gmConfig.value
+    ? (gmConfig.value as Record<string, unknown>)
+    : {};
+  const renderingOverride = baseGmConfig.renderingOverride === "visual_novel"
+    ? "visual_novel"
+    : null;
   const mergedGmConfig = {
-    ...(gmConfig.ok && gmConfig.value ? (gmConfig.value as Record<string, unknown>) : {}),
+    ...baseGmConfig,
     renderingOverride,
   };
 
