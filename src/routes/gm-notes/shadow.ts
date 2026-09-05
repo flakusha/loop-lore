@@ -6,7 +6,7 @@
  */
 import { Elysia, } from "elysia";
 import { randomUUID, } from "node:crypto";
-import { checkChatAccess, } from "../../chat/service";
+import { checkChatSettingsAccess, } from "../../chat/service";
 import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../crypto";
 import {
   ContentEncoding,
@@ -108,7 +108,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           const page = (ctx.query.page as number) ?? 1;
@@ -147,7 +147,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           const body = ctx.body as typeof ShadowNoteBody.static;
@@ -178,7 +178,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const { id, noteId, } = ctx.params as { id: string; noteId: string };
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           // Fetch content before update so we can use it in narration.
@@ -218,7 +218,7 @@ export function shadowRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const { id, noteId, } = ctx.params as { id: string; noteId: string };
 
-          const access = await checkChatAccess(database, id, userId, userRole,);
+          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
           if (!access.ok) { return forbidden(); }
 
           const result = await database

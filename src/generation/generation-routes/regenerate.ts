@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { regenerateMessageVariant, } from "../../chat/service";
+import { checkChatAccess, regenerateMessageVariant, } from "../../chat/service";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { jsonError, jsonResponse, } from "../../routes/http-utils";
+import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { cancelGenerationByChat, } from "../cancellation-manager";
 import { buildStylePrompt, isValidRegenStyle, type RegenStyle, } from "../smart-regen";
 
@@ -61,6 +61,13 @@ export async function handleRegenerate(
   const { chatId, style, } = input;
   const userId = auth?.userId ?? null;
   const userRole = auth?.userRole ?? null;
+
+  // Authorization: only admin, creator, or a participant may regenerate a
+  // chat's message (BUG-generation-control-plane-routes-lack-authorization).
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
+  const access = await checkChatAccess(db, chatId, authUserId, userRole,);
+  if (!access.ok) { return forbiddenResponse(); }
 
   const wasActive = cancelGenerationByChat({
     db,

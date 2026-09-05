@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { jsonError, } from "../../routes/http-utils";
+import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../../chat/service";
+import type { DB, } from "../../db/schema";
+import { forbiddenResponse, jsonError, requireUserId, } from "../../routes/http-utils";
 import { safeJsonStringify, } from "../../utils";
 import { parseIntOr, } from "../../utils/parse-number";
 import { getBuffer, } from "../index";
@@ -16,11 +19,29 @@ import { getBuffer, } from "../index";
  * - Closes connection on done/error or 30s of idle (no buffer)
  * @param chatId
  * @param headers
+ * @param database
+ * @param userId
+ * @param userRole
  */
-export function handleGenerationStream(chatId: string, headers?: Headers,): Response {
+export async function handleGenerationStream(
+  chatId: string,
+  headers: Headers,
+  database: Kysely<DB>,
+  userId?: string,
+  userRole?: string | null,
+): Promise<Response> {
   if (!chatId) {
     return jsonError({ message: "chatId is required", status: 400, },);
   }
+
+  // Authorization: only admin, creator, or a participant may subscribe to a
+  // chat's SSE stream — the buffered events can contain message content
+  // (BUG-generation-control-plane-routes-lack-authorization). Deny before
+  // opening the stream.
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
+  const access = await checkChatAccess(database, chatId, authUserId, userRole,);
+  if (!access.ok) { return forbiddenResponse(); }
 
   // Parse Last-Event-ID for SSE reconnect
   const lastEventId = headers?.get("Last-Event-ID",);

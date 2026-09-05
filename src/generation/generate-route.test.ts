@@ -275,9 +275,10 @@ describe("handleGenerate — provider resolution", () => {
   test("returns 422 when provider not found in registry", async () => {
     const config = makeConfig();
     config.generation.defaultProvider = "nonexistent";
-    // Don't seed chat/actor — should fail at provider resolution before DB
+    // Seed chat so the access check passes; provider resolution fails after.
+    await seedChat(testDb, { id: "chat-1", },);
     const body = makeRequest({ provider: "nonexistent", },);
-    const res = await handleGenerate({ body, database: testDb, config, },);
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
     expect(res.status,).toBe(422,);
     const data = (await res.json()) as Record<string, unknown>;
     expect(data.error,).toContain("Provider resolution failed",);
@@ -298,7 +299,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
       stream: false,
     },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, database: testDb, config, },);
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
     const data = (await res.json()) as Record<string, unknown>;
 
     expect(res.status,).toBe(200,);
@@ -322,7 +323,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
       stream: false,
     },);
     const config = makeConfig();
-    await handleGenerate({ body, database: testDb, config, },);
+    await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 
     const messages = await testDb.selectFrom("messages",).selectAll().execute();
     expect(messages.length,).toBeGreaterThanOrEqual(1,);
@@ -352,7 +353,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
       stream: false,
     },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, database: testDb, config, },);
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
     expect(res.status,).toBe(500,);
     const data = (await res.json()) as Record<string, unknown>;
     expect(data.error,).toContain("Generation failed",);
@@ -373,7 +374,7 @@ describe("handleGenerate — streaming (SSE)", () => {
       stream: true,
     },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, database: testDb, config, },);
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 
     expect(res.status,).toBe(200,);
     expect(res.headers.get("Content-Type",),).toBe("text/event-stream",);
@@ -398,7 +399,7 @@ describe("handleGenerate — streaming (SSE)", () => {
       stream: true,
     },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, database: testDb, config, },);
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 
     // Consume the SSE stream to trigger the start() callback which stores the message
     const reader = res.body?.getReader();
@@ -434,7 +435,7 @@ describe("handleGenerate — streaming (SSE)", () => {
       stream: true,
     },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, database: testDb, config, },);
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 
     const text = await res.text();
     // Should contain error event
@@ -461,7 +462,7 @@ describe("handleGenerate — prompt assembly path", () => {
       // No prompt property — triggers PromptAssembler
     },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, database: testDb, config, },);
+    const res = await handleGenerate({ body, database: testDb, config, userId: "user-1", },);
 
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as Record<string, unknown>;

@@ -21,6 +21,7 @@ import {
 import { checkChatAccess, } from "../../chat/service";
 import { ChatIdParams, ErrorResponse, } from "../../validation/schemas";
 import { jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
+import { requireWorldOwner, } from "../worlds/access";
 import { serviceErrorToResponse, } from "./helpers";
 import type { HandlerOpts, } from "./types";
 
@@ -55,6 +56,14 @@ export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
           description?: string;
           worldId?: string | null;
         };
+
+        // Cross-user write guard: when a world is targeted, the caller must
+        // own it — otherwise a user could inject entities into a world they
+        // do not control (IDOR write, BUG-create-entity-confirm-bypasses-world-ownership).
+        if (typeof body.worldId === "string" && body.worldId.length > 0) {
+          const worldGuard = await requireWorldOwner(database, body.worldId, actorId, null,);
+          if (worldGuard) { return worldGuard; }
+        }
 
         if (!body.kind || !ALLOWED_KINDS[body.kind]) {
           return jsonResponse({ error: "Invalid entity kind.", }, 400,);

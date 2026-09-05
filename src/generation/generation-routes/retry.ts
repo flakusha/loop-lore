@@ -2,9 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../../chat/service";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { jsonError, jsonResponse, } from "../../routes/http-utils";
+import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { cancelGenerationByChat, } from "../cancellation-manager";
 import type { RetryFromPointResponse, } from "../types";
 
@@ -33,8 +34,15 @@ function validateRetryFromPoint(body: unknown,): { chatId: string; attemptId?: s
  * including which step to resume from in a multi-step pipeline.
  * @param body
  * @param database
+ * @param userId
+ * @param userRole
  */
-export async function handleRetryGeneration(body: unknown, database: Kysely<DB>,): Promise<Response> {
+export async function handleRetryGeneration(
+  body: unknown,
+  database: Kysely<DB>,
+  userId?: string,
+  userRole?: string | null,
+): Promise<Response> {
   const db = database;
   const input = validateRetryFromPoint(body,);
 
@@ -42,7 +50,15 @@ export async function handleRetryGeneration(body: unknown, database: Kysely<DB>,
     return jsonError({ message: "chatId is required", status: 400, },);
   }
 
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
+
   const { chatId, attemptId, step, } = input;
+
+  // Authorization: only admin, creator, or a participant may cancel/retry a
+  // chat's generation (BUG-generation-control-plane-routes-lack-authorization).
+  const access = await checkChatAccess(db, chatId, authUserId, userRole,);
+  if (!access.ok) { return forbiddenResponse(); }
 
   const wasActive = cancelGenerationByChat({
     db,

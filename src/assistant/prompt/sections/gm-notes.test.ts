@@ -26,7 +26,7 @@ import { gmNotesSection, } from "./gm-notes";
  * @param db
  * @param chatId
  */
-function makeCtx(db: Kysely<DB>, chatId: string,) {
+function makeCtx(db: Kysely<DB>, chatId: string, gmRole = true,) {
   return {
     db,
     actor: {
@@ -40,7 +40,13 @@ function makeCtx(db: Kysely<DB>, chatId: string,) {
       mes_example: null,
       agent_role: null,
     },
-    chat: { id: chatId, mode: "story", world_id: "world-1", current_location_id: null, },
+    chat: {
+      id: chatId,
+      mode: "story",
+      world_id: "world-1",
+      current_location_id: null,
+      gm_config: gmRole ? JSON.stringify({ assistantRole: "gm", },) : null,
+    },
     params: { actorId: "actor-1", chatId, modelId: "test-model", },
     isStory: true,
     tokenBudget: 32_000,
@@ -52,7 +58,11 @@ describe("gmNotesSection", () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "user1", "User 1", { id: "user-1", } as any,);
     await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
-    await insertChats(db, "Test Chat", "user-1", { id: "chat-1", world_id: "world-1", } as any,);
+    await insertChats(db, "Test Chat", "user-1", {
+      id: "chat-1",
+      world_id: "world-1",
+      gm_config: JSON.stringify({ assistantRole: "gm", },),
+    } as any,);
     await insertWhitenotes(
       db,
       "chat-1",
@@ -106,7 +116,11 @@ describe("gmNotesSection", () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "user1", "User 1", { id: "user-1", } as any,);
     await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
-    await insertChats(db, "Test Chat", "user-1", { id: "chat-1", world_id: "world-1", } as any,);
+    await insertChats(db, "Test Chat", "user-1", {
+      id: "chat-1",
+      world_id: "world-1",
+      gm_config: JSON.stringify({ assistantRole: "gm", },),
+    } as any,);
     await insertShadowNotes(
       db,
       "chat-1",
@@ -128,6 +142,17 @@ describe("gmNotesSection", () => {
     const content = messages[0]?.content ?? "";
     expect(content,).not.toContain("Hidden one.",);
     expect(content,).toContain("Hidden two.",);
+  });
+
+  test("does not render shadow notes for non-GM chats", async () => {
+    const { db, } = await createTestDb();
+    await insertUsers(db, "user1", "User 1", { id: "user-1", } as any,);
+    await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
+    await insertChats(db, "Test Chat", "user-1", { id: "chat-1", world_id: "world-1", } as any,);
+    await insertShadowNotes(db, "chat-1", ShadowNoteType.WorldSecret, "The king is a lich.", "2026-08-01T00:00:00Z",);
+
+    const messages = await gmNotesSection.build(makeCtx(db, "chat-1", false,),);
+    expect(messages,).toHaveLength(0,);
   });
 
   test("returns empty when no notes exist (and other chats are isolated)", async () => {

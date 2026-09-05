@@ -229,9 +229,17 @@ describe("Generation E2E", () => {
 
   test("POST /api/generation/cancel returns 404 when no active generation", async () => {
     const res = await api.post("/api/generation/cancel", {
-      chatId: "00000000-0000-4000-a000-000000000099",
+      chatId: SEED.chat.id,
     },);
     expect(res.status,).toBe(404,);
+    expect(res.code,).toBeTruthy(); // TEST.2 error envelope
+  });
+
+  test("POST /api/generation/cancel returns 403 for a foreign chat", async () => {
+    const res = await api.post("/api/generation/cancel", {
+      chatId: "00000000-0000-4000-a000-000000000099",
+    },);
+    expect(res.status,).toBe(403,);
     expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
@@ -255,13 +263,10 @@ describe("Generation E2E", () => {
 
   // ── Active list ─────────────────────────────────────────
 
-  test("GET /api/generation/active returns empty list when idle", async () => {
-    const res = await api.get<{ count: number; generations: unknown[] }>(
-      "/api/generation/active",
-    );
-    expect(res.ok,).toBe(true,);
-    expect(res.data!.count,).toBe(0,);
-    expect(res.data!.generations,).toEqual([],);
+  test("GET /api/generation/active is admin-gated", async () => {
+    const res = await api.get("/api/generation/active",);
+    expect(res.status,).toBe(403,);
+    expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
   // ── Retry ───────────────────────────────────────────────

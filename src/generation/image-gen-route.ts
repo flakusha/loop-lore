@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { Kysely, } from "kysely";
 import { extractImageMetadata, } from "../assets/metadata";
 import { createAsset, linkAsset, } from "../assets/service";
+import { checkChatAccess, } from "../chat/service";
 import { loadConfig, } from "../config/load";
 import { pickSdProvider, } from "../config/schema";
 import { getDatabase, } from "../db/index";
+import type { DB, } from "../db/schema";
+import { forbiddenResponse, } from "../routes/http-utils";
 import { uid, } from "../utils";
 import { generateImages, } from "./image-engine";
 import type { LoRAConfig, } from "./lora/types";
@@ -33,13 +37,30 @@ interface ImageGenBody {
 
 /**
  * @param body
+ * @param database
  * @param userId
+ * @param userRole
  */
-export async function handleImageGeneration(body: unknown, userId?: string,): Promise<Response> {
+export async function handleImageGeneration(
+  body: unknown,
+  database?: Kysely<DB>,
+  userId?: string,
+  userRole?: string | null,
+): Promise<Response> {
   const req = body as ImageGenBody;
 
   if (!userId) {
     return Response.json({ error: "Authentication required", status: 401, }, { status: 401, },);
+  }
+
+  // Authorization: when linked to a chat, only admin, creator, or a
+  // participant may generate images for it — otherwise a user could
+  // attach generated assets to a foreign chat (IDOR write).
+  // (BUG-generation-control-plane-routes-lack-authorization)
+  if (req.chatId) {
+    const db = database ?? getDatabase();
+    const access = await checkChatAccess(db, req.chatId, userId, userRole,);
+    if (!access.ok) { return forbiddenResponse(); }
   }
 
   if (!req.prompt) {
