@@ -225,24 +225,53 @@ stale w.r.t. the tree's current HEAD; treat a stale or failed report as
 "unverified". `bun run check:report-ls` (or `bun run scripts/worktree/ report`)
 aggregates report status across all worktrees.
 
-### DB schema regeneration (required after any migration change)
+### DB schema migrations — parts/ layout & workflow
 
-Migrations (`src/db/migrations/*.ts`) are the single source of truth for the
-DB schema. All downstream schema artifacts are **auto-generated** from them
-and must be regenerated whenever a migration is added or edited. The `check`
-gate (`schemas:check`) fails red until they are:
+Migrations are the single source of truth for the DB schema. They live in
+`src/db/migrations/` as **modular parts** (`parts/NNN_name.ts`), each exporting
+`up(db)`/`down(db)`, orchestrated by `001_init.ts` (runs `up()` in part order,
+`down()` in reverse). `src/db/migrate.ts` runs them via Kysely's `Migrator`
+with an `assertMigrationsNotStale` guard that fails fast on deleted/renamed/
+renumbered migrations. The migration chain is covered by
+`src/db/migrations.test.ts` and `src/db/migration-roundtrip.test.ts`
+(up→down→up consistency).
+
+**Append-only policy** — applied migrations are never deleted, renamed, or
+renumbered (the filename is the identity stored in `kysely_migration`). To
+change schema behavior, add a **new forward migration** that alters the schema
+to the desired state. Full policy: `src/db/migrations/README.md`.
+
+**Before implementing any migration change, request the user's DB migration
+strategy — append (new `parts/NNN_*.ts`) vs. fold (extend an existing part)** —
+and proceed only after the decision. This is a mandatory pre-implementation
+step; extend a shipped part only when the new state hasn't been released.
+
+All downstream schema artifacts are **auto-generated** from migrations and must
+be regenerated on any migration add/edit. The `check` gate (`schemas:check`)
+fails red until they are:
 
 ```bash
 # Regenerate after a migration change:
 bun run db:sync-types && bun run db:sync-manifest
 # Verify the gate is green:
 bun run schemas:check
+# Verify the migration chain + roundtrip:
+bun test src/db/migrations.test.ts src/db/migration-roundtrip.test.ts
 ```
 
 Generated (never hand-edit): `src/db/schema-*.ts`, `src/db/schema.ts`,
 `src/db/schema-manifest.ts`, `src/test-utils/insert-helpers.ts`,
 `src/validation/db-schemas.ts`. e2e provisioning and unit tests build the
 schema directly from migrations, so they pick changes up automatically.
+
+Migration helper utilities:
+
+- `src/db/migration-helpers.ts` — `boolToEnum`/`batchBoolToEnum` for
+  boolean → text-enum column conversions (transactional; logs non-0/1 values).
+- `src/db/column-types.ts` — maps `table.column` → TS enum type for generated
+  schemas; update here when adding a text-enum column that needs a typed type.
+- One `ADD COLUMN` / `DROP COLUMN` per `alterTable` statement (SQLite
+  limitation) — see `src/db/migrations/README.md`.
 
 ## Worktree Workflow
 

@@ -54,7 +54,7 @@ per-`(actor, world)` record.
 - [ ] `character_world_setup` migration applies cleanly; schema regenerated
 - [ ] `CharacterWorldSetupService` CRUD + resolution unit-tested green
 - [ ] `initializeCharacterWorldSetup` idempotent (no dup rows on re-run)
-- [ ] `bun test src/` green; `bun run check` green (incl. `db:schemas:check`)
+- [ ] `bun test src/` green; `bun run check` green (incl. `schemas:check`)
 - [ ] No edits to base `actors` setup semantics
 
 ## Files
