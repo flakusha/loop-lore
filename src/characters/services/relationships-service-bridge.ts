@@ -16,7 +16,6 @@
 import { jsonStringifyOr, } from "@/utils";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonStringifyOr, } from "../../utils/safe-json";
 import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 import {
   GrowthServiceError,
