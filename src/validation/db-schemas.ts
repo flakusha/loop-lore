@@ -1367,7 +1367,6 @@ export const ChatSetupTemplatesSchema = t.Object({
   turn_strategy: t.Optional(t.String(),),
   world_id: t.Optional(t.String(),),
   gm_config: t.Optional(t.String(),),
-  visual_novel: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
   features: t.Optional(t.String(),),

@@ -13,9 +13,9 @@
  * row, the bridge refuses to record a growth_log entry. The actual
  * relationship write still happens (callers handle that).
  */
-import { jsonStringifyOr, } from "@/utils";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { safeJsonStringify, } from "../../utils";
 import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 import {
   GrowthServiceError,
@@ -87,14 +87,16 @@ export async function recordRelationshipShift(
   }
 
   const now = new Date().toISOString();
+  const beforeJson = safeJsonStringify(opts.before,);
+  const afterJson = safeJsonStringify(opts.after,);
   const entry = await insertGrowthLog(db, {
     actorId: opts.actorId,
     axis: "relationship",
     eventType: "relationship_shifted",
     subjectKind: "character_relationship",
     subjectId: relRow.id,
-    beforeJson: jsonStringifyOr(opts.before,),
-    afterJson: jsonStringifyOr(opts.after,),
+    beforeJson: beforeJson.ok ? beforeJson.value : "{}",
+    afterJson: afterJson.ok ? afterJson.value : "{}",
     reason: opts.reason,
     sourceEventId: opts.sourceEventId ?? null,
   },);

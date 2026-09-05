@@ -52,7 +52,8 @@ export function templatesRoutes(opts: HandlerOpts, prefix = "/api",) {
             turnStrategy: tmpl.turn_strategy,
             worldId: tmpl.world_id,
             gmConfig: tmpl.gm_config ? jsonParseOr(tmpl.gm_config, {},) : null,
-            visualNovel: tmpl.visual_novel === 1,
+            visualNovel:
+              jsonParseOr<Record<string, unknown>>(tmpl.gm_config ?? "{}", {},).renderingOverride === "visual_novel",
             features: tmpl.features ?? [],
             visibility: tmpl.visibility ?? null,
           }),);

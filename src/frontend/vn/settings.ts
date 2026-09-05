@@ -48,7 +48,8 @@ export function getVnSettings(gmConfig?: Record<string, unknown>,): VnSettings {
   const stored = loadFromStorage();
 
   return {
-    enabled: Boolean(gmConfig?.visualNovel ?? stored.enabled,),
+    enabled: gmConfig?.renderingOverride === "visual_novel" ||
+      (gmConfig?.renderingOverride == null && Boolean(gmConfig?.visualNovel ?? stored.enabled,)),
     layout: (gmConfig?.vnLayout as VnSettings["layout"]) ?? stored.layout ?? DEFAULTS.layout,
     imageScaling: (gmConfig?.vnImageScaling as VnSettings["imageScaling"]) ?? stored.imageScaling ??
       DEFAULTS.imageScaling,
