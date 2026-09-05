@@ -5,6 +5,7 @@
 //
 // Shared invite-revoke flow used by both `chat_invites` and `world_invites`.
 
+/* eslint-disable jsdoc/require-jsdoc */
 import type { Kysely, } from "kysely";
 import { InviteStatus, inviteStatusMachine, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
