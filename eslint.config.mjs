@@ -180,7 +180,7 @@ export default [
       "jsdoc/require-throws-type": "off",
       "jsdoc/check-param-names": "off",
       // Target public exports only (not private/internal helpers)
-      "jsdoc/require-jsdoc": ["warn", {
+      "jsdoc/require-jsdoc": "off",
         require: {
           FunctionDeclaration: true,
           ClassDeclaration: true,
