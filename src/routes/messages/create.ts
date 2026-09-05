@@ -45,6 +45,13 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         const { id: chatId, } = ctx.params as { id: string };
         const body = ctx.body as typeof MessageCreateBody.static;
 
+        // ── Access check before any side effects ───────────────────
+        // Must run before NSFW flagging / profanity filtering so a
+        // non-participant cannot trigger moderation writes scoped to an
+        // arbitrary chatId (BUG-nsfw-flag-side-effect-runs-before-access-check).
+        const access = await checkChatAccess(database, chatId, actorId, ctx.userRole as string | null,);
+        if (!access.ok) { return serviceErrorToResponse(access.error,); }
+
         const filteredContent = filterProfanity(body.content,);
         const hasProfanity = containsProfanity(body.content,);
 
@@ -55,9 +62,6 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const { isInitiative, cleanMessage, } = parseInitiativeFlag(filteredContent,);
         const effectiveContent = isInitiative ? cleanMessage : filteredContent;
-
-        const access = await checkChatAccess(database, chatId, actorId, ctx.userRole as string | null,);
-        if (!access.ok) { return serviceErrorToResponse(access.error,); }
 
         // ── Proactive-messaging backoff reset ────────────────────────
         // When the user responds, reset the anti-spam backoff for every
