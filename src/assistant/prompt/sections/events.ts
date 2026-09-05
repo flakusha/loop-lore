@@ -31,7 +31,6 @@ async function fetchWorldEvents(
 ): Promise<ChatEvent[]> {
   const events: ChatEvent[] = [];
 
-  // Fetch recent world states as events
   const worldStates = await db
     .selectFrom("world_states",)
     .select(["description", "created_at",],)
@@ -50,7 +49,6 @@ async function fetchWorldEvents(
     }
   }
 
-  // Fetch location states if location is set
   if (locationId) {
     const locStates = await db
       .selectFrom("location_states",)
@@ -118,7 +116,7 @@ async function fetchRandomEvents(
 ): Promise<ChatEvent[]> {
   const rows = await db
     .selectFrom("chat_random_events",)
-    .select(["content", "category",],)
+    .select(["content",],)
     .where("chat_id", "=", chatId,)
     .where("expires_at", ">", Date.now(),)
     .orderBy("fired_at", "desc",)
@@ -150,7 +148,6 @@ function generateAmbientEvents(worldId: string,): ChatEvent[] {
     { type: "ambient", content: "A bird calls somewhere in the distance.", importance: 0.2, },
   ];
 
-  // Use worldId as a simple seed for deterministic selection
   let seed = 0;
   for (const c of worldId.split("",)) { seed += c.charCodeAt(0,); }
   const idx = seed % ambientPool.length;
@@ -169,17 +166,13 @@ export const eventSection: SectionBuilder = {
       ctx.chat.current_location_id,
     );
 
-    // Add persisted random events fired by the previous generation
-    // (applyPostStoreEffects writes to chat_random_events).
     const randomEvents = await fetchRandomEvents(ctx.db, ctx.chat.id,);
 
-    // Add ambient events (1-2 random atmospheric additions)
     const ambientEvents = generateAmbientEvents(ctx.chat.world_id,);
 
     const allEvents = [...worldEvents, ...randomEvents, ...ambientEvents,];
     if (allEvents.length === 0) { return []; }
 
-    // Sort by importance descending, take top 5
     allEvents.sort((a, b,) => b.importance - a.importance);
     const topEvents = allEvents.slice(0, 5,);
 
