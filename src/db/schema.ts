@@ -56,6 +56,8 @@ export interface DB {
   actor_notes: import("./schema-core").ActorNotes;
   actors: import("./schema-core").Actors;
   admin_character_overrides: import("./schema-character").AdminCharacterOverrides;
+  character_arc: import("./schema-core").CharacterArc;
+  growth_log: import("./schema-core").GrowthLog;
   character_arousal: import("./schema-character").CharacterArousal;
   character_availability: import("./schema-character").CharacterAvailability;
   character_avatar_config: import("./schema-character").CharacterAvatarConfig;
@@ -91,6 +93,7 @@ export interface DB {
   chat_sections: import("./schema-core").ChatSections;
   chat_setup_templates: import("./schema-core").ChatSetupTemplates;
   chats: import("./schema-core").Chats;
+  chat_random_events: import("./schema-core").ChatRandomEvents;
   group_initiatives: import("./schema-core").GroupInitiatives;
   message_reactions: import("./schema-core").MessageReactions;
   message_seen: import("./schema-core").MessageSeen;
@@ -148,6 +151,4 @@ export interface DB {
   e2e_sessions: import("./schema-core").E2eSessions;
   e2e_skipped_keys: import("./schema-core").E2eSkippedKeys;
   e2e_skipped_message_keys: import("./schema-core").E2eSkippedMessageKeys;
-  character_arc: import("./schema-core").CharacterArc;
-  growth_log: import("./schema-core").GrowthLog;
 }
