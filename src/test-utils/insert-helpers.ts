@@ -1028,6 +1028,53 @@ export async function insertAdminCharacterOverrides(
   } as any,).execute();
 }
 
+/** Insert a character_arc row. */
+export async function insertCharacterArc(
+  db: Db,
+  actor_id: string,
+  current_stage: string,
+  updated_at: string,
+  opts?: { id?: Generated<string>; stage_description?: string | null },
+): Promise<void> {
+  await db.insertInto("character_arc",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    current_stage,
+    updated_at,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a growth_log row. */
+export async function insertGrowthLog(
+  db: Db,
+  actor_id: string,
+  axis: string,
+  event_type: string,
+  recorded_at: string,
+  opts?: {
+    id?: Generated<string>;
+    status?: Generated<string>;
+    subject_kind?: string | null;
+    subject_id?: string | null;
+    before_json?: string | null;
+    after_json?: string | null;
+    reason?: Generated<string>;
+    source_event_id?: string | null;
+    confirmed_at?: string | null;
+    confirmed_by?: string | null;
+  },
+): Promise<void> {
+  await db.insertInto("growth_log",).values({
+    id: crypto.randomUUID(),
+    actor_id,
+    axis,
+    event_type,
+    recorded_at,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a character_arousal row. */
 export async function insertCharacterArousal(
   db: Db,
@@ -1917,6 +1964,31 @@ export async function insertChats(
     id: crypto.randomUUID(),
     name,
     created_by,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a chat_random_events row. */
+export async function insertChatRandomEvents(
+  db: Db,
+  chat_id: string,
+  event_id: string,
+  category: string,
+  content: string,
+  token_count: number,
+  fired_at: number,
+  expires_at: number,
+  opts?: { id?: Generated<string>; fired_count?: Generated<number> },
+): Promise<void> {
+  await db.insertInto("chat_random_events",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    event_id,
+    category,
+    content,
+    token_count,
+    fired_at,
+    expires_at,
     ...opts,
   } as any,).execute();
 }
@@ -3435,53 +3507,6 @@ export async function insertE2eSkippedMessageKeys(
     recipient_actor_id,
     chain_index,
     message_key,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a character_arc row. */
-export async function insertCharacterArc(
-  db: Db,
-  actor_id: string,
-  current_stage: string,
-  updated_at: string,
-  opts?: { id?: Generated<string>; stage_description?: string | null },
-): Promise<void> {
-  await db.insertInto("character_arc",).values({
-    id: crypto.randomUUID(),
-    actor_id,
-    current_stage,
-    updated_at,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a growth_log row. */
-export async function insertGrowthLog(
-  db: Db,
-  actor_id: string,
-  axis: string,
-  event_type: string,
-  recorded_at: string,
-  opts?: {
-    id?: Generated<string>;
-    status?: Generated<string>;
-    subject_kind?: string | null;
-    subject_id?: string | null;
-    before_json?: string | null;
-    after_json?: string | null;
-    reason?: Generated<string>;
-    source_event_id?: string | null;
-    confirmed_at?: string | null;
-    confirmed_by?: string | null;
-  },
-): Promise<void> {
-  await db.insertInto("growth_log",).values({
-    id: crypto.randomUUID(),
-    actor_id,
-    axis,
-    event_type,
-    recorded_at,
     ...opts,
   } as any,).execute();
 }

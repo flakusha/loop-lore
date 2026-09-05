@@ -167,6 +167,19 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 
   await database.schema
+    .createTable("chat_random_events",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("chat_id", "text", (col,) => col.notNull().references("chats.id",).onDelete("cascade",),)
+    .addColumn("event_id", "text", (col,) => col.notNull(),)
+    .addColumn("category", "text", (col,) => col.notNull(),)
+    .addColumn("content", "text", (col,) => col.notNull(),)
+    .addColumn("token_count", "integer", (col,) => col.notNull(),)
+    .addColumn("fired_at", "integer", (col,) => col.notNull(),)
+    .addColumn("expires_at", "integer", (col,) => col.notNull(),)
+    .addColumn("fired_count", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .execute();
+
+  await database.schema
     .createTable("group_initiatives",)
     .addColumn("chat_id", "text", (col,) => col.notNull().references("chats.id",).onDelete("cascade",),)
     .addColumn("scene_id", "text", (col,) => col.notNull(),)
@@ -652,6 +665,18 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .on("music_links",)
     .column("sender_id",)
     .execute();
+
+  await database.schema
+    .createIndex("idx_chat_random_events_chat_expires",)
+    .on("chat_random_events",)
+    .columns(["chat_id", "expires_at",],)
+    .execute();
+
+  await database.schema
+    .createIndex("idx_chat_random_events_chat_fired",)
+    .on("chat_random_events",)
+    .columns(["chat_id", "fired_at",],)
+    .execute();
 }
 /**
  * @param database
@@ -665,6 +690,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("message_seen",).execute();
   await database.schema.dropTable("message_reactions",).execute();
   await database.schema.dropTable("group_initiatives",).execute();
+  await database.schema.dropTable("chat_random_events",).execute();
   await database.schema.dropTable("chat_pins",).execute();
   await database.schema.dropTable("chat_participants",).execute();
   await database.schema.dropTable("chat_mentions",).execute();

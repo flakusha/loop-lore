@@ -11,6 +11,34 @@ import { type Kysely, sql, } from "kysely";
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
+    .createTable("character_arc",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id",).onDelete("cascade",),)
+    .addColumn("current_stage", "text", (col,) => col.notNull(),)
+    .addColumn("stage_description", "text",)
+    .addColumn("updated_at", "text", (col,) => col.notNull(),)
+    .addUniqueConstraint("uq_character_arc_actor", ["actor_id",],)
+    .execute();
+
+  await database.schema
+    .createTable("growth_log",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id",).onDelete("cascade",),)
+    .addColumn("axis", "text", (col,) => col.notNull(),)
+    .addColumn("event_type", "text", (col,) => col.notNull(),)
+    .addColumn("status", "text", (col,) => col.notNull().defaultTo("applied",),)
+    .addColumn("subject_kind", "text",)
+    .addColumn("subject_id", "text",)
+    .addColumn("before_json", "text",)
+    .addColumn("after_json", "text",)
+    .addColumn("reason", "text", (col,) => col.notNull().defaultTo("",),)
+    .addColumn("source_event_id", "text",)
+    .addColumn("recorded_at", "text", (col,) => col.notNull(),)
+    .addColumn("confirmed_at", "text",)
+    .addColumn("confirmed_by", "text",)
+    .execute();
+
+  await database.schema
     .createTable("character_arousal",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
     .addColumn("actor_id", "text", (col,) => col.notNull().references("actors.id",).onDelete("cascade",),)
@@ -204,6 +232,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("equipment_override", "text", (col,) => col.defaultTo("{}",),)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .addColumn("updated_at", "text", (col,) => col.notNull(),)
+    .addColumn("last_drifted_at", "text",)
+    .addColumn("drift_count", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addUniqueConstraint("uq_location_traits_actor_location_name", ["actor_id", "location_id", "trait_name",],)
     .execute();
 
@@ -250,6 +280,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("metadata", "text", (col,) => col.defaultTo("{}",),)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .addColumn("updated_at", "text", (col,) => col.notNull(),)
+    .addColumn("evolution_tracked", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("last_evolution_at", "text",)
     .addUniqueConstraint("uq_relationships_actor_target_world", ["actor_id", "target_actor_id", "world_id",],)
     .execute();
 
@@ -285,6 +317,9 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("metadata", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addColumn("acquired_at", "text",)
+    .addColumn("acquisition_reason", "text",)
+    .addColumn("acquisition_source", "text", (col,) => col.notNull().defaultTo("baseline",),)
     .execute();
 
   await database.schema
@@ -349,6 +384,8 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("trait_value", "text", (col,) => col.notNull(),)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .addColumn("updated_at", "text", (col,) => col.notNull(),)
+    .addColumn("last_drifted_at", "text",)
+    .addColumn("drift_count", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addUniqueConstraint("uq_world_traits_actor_world_name", ["actor_id", "world_id", "trait_name",],)
     .execute();
 
@@ -400,6 +437,24 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .createIndex("idx_body_profile_world",)
     .on("character_body_profile",)
     .column("world_id",)
+    .execute();
+
+  await database.schema
+    .createIndex("idx_character_arc_actor",)
+    .on("character_arc",)
+    .column("actor_id",)
+    .execute();
+
+  await database.schema
+    .createIndex("idx_growth_log_actor_recorded",)
+    .on("growth_log",)
+    .columns(["actor_id", "recorded_at",],)
+    .execute();
+
+  await database.schema
+    .createIndex("idx_growth_log_actor_axis_status",)
+    .on("growth_log",)
+    .columns(["actor_id", "axis", "status",],)
     .execute();
 
   await database.schema
@@ -525,5 +580,7 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("character_avatar_config",).execute();
   await database.schema.dropTable("character_availability",).execute();
   await database.schema.dropTable("character_arousal",).execute();
+  await database.schema.dropTable("growth_log",).execute();
+  await database.schema.dropTable("character_arc",).execute();
   await database.schema.dropTable("emotions",).execute();
 }
