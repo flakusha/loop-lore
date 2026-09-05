@@ -12,7 +12,7 @@
  * during telemetry does not produce an unhandled rejection that crashes the
  * post-store call site.
  */
-import type { Kysely, } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import { MoodService, } from "../../characters/services/mood-service";
 import { detectHallucinations, generateRandomEvent, } from "../../chat";
 import { randomEventToEventRef, } from "../../chat/random-events";
@@ -212,7 +212,33 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
 
       if (event) {
         const eventRef = randomEventToEventRef(event,);
-        log.debug("random event generated + converted to EventRef", {
+        // Persist the fired event so the next prompt build can inject it
+        // into the context window (eventSection reads chat_random_events).
+        const now = Date.now();
+        await database
+          .insertInto("chat_random_events",)
+          .values({
+            chat_id: chatId,
+            content: event.content,
+            event_id: event.id,
+            category: event.category,
+            fired_at: now,
+            // Keep the event injectable for one day; expiry bounds how long
+            // stale events linger in the context window.
+            expires_at: now + 24 * 60 * 60 * 1000,
+            token_count: eventRef.tokenCount,
+          },)
+          .onConflict((oc,) =>
+            oc.columns(["chat_id", "event_id",],).doUpdateSet({
+              content: event.content,
+              fired_at: now,
+              expires_at: now + 24 * 60 * 60 * 1000,
+              token_count: eventRef.tokenCount,
+              fired_count: sql`fired_count + 1`,
+            },)
+          )
+          .execute();
+        log.debug("random event generated + persisted", {
           chatId,
           eventId: event.id,
           category: event.category,
