@@ -179,21 +179,6 @@ export default [
       "jsdoc/require-yields": "off",
       "jsdoc/require-throws-type": "off",
       "jsdoc/check-param-names": "off",
-      // Target public exports only (not private/internal helpers)
-      "jsdoc/require-jsdoc": "off",
-        require: {
-          FunctionDeclaration: true,
-          ClassDeclaration: true,
-          MethodDefinition: true,
-        },
-        contexts: [
-          "ExportNamedDeclaration > FunctionDeclaration",
-          "ExportNamedDeclaration > ClassDeclaration",
-          "ExportNamedDeclaration > TSTypeAliasDeclaration",
-          "ExportNamedDeclaration > TSInterfaceDeclaration",
-          "ExportNamedDeclaration > VariableDeclaration > ArrowFunctionExpression",
-        ],
-      }],
     },
   },
   // E2E tests
