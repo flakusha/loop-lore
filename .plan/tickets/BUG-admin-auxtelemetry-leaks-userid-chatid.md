@@ -3,7 +3,7 @@
 
 # BUG: `/api/admin/telemetry/aux` returns `userId` + `chatId` + raw `error` string per AUX call — no scoping, no hashing
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (already implemented in code)
 **Severity:** Medium
 **Priority:** medium
 **Effort:** Small
