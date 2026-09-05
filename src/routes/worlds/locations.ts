@@ -76,7 +76,14 @@ export async function validateConnections(
 
   const connIds: string[] = [];
   for (const id of connections) {
-    if (typeof id === "string") { connIds.push(id,); }
+    if (typeof id !== "string") {
+      return jsonError({
+        message: "connections must be an array of location id strings",
+        status: HttpStatus.BadRequest,
+        code: ErrorCode.ValidationError,
+      },);
+    }
+    connIds.push(id,);
   }
   if (connIds.length === 0) { return null; }
 
@@ -286,6 +293,10 @@ export async function handleDeleteLocation(
     .set({ current_location_id: null, },)
     .where("current_location_id", "=", locId,)
     .execute();
+
+  // location_states rows hold an FK to locations.id without ON DELETE CASCADE —
+  // delete them first or the location delete violates the FK (500).
+  await database.deleteFrom("location_states",).where("location_id", "=", locId,).execute();
 
   await database.deleteFrom("locations",).where("id", "=", locId,).where("world_id", "=", worldId,).execute();
   return jsonNoContent();
