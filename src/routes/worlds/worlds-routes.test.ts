@@ -70,7 +70,7 @@ describe("worldRoutes — lore persistence (BUG-world-lore-silently-stripped)", 
       },),
     );
     expect(createRes.status,).toBe(201,);
-    const { id, } = createRes.json() as { id: string };
+    const { id, } = await createRes.json() as { id: string };
 
     const got = await app.handle(
       new Request(`${BASE}/api/worlds/${id}`,),
@@ -107,7 +107,7 @@ describe("worldRoutes — lore persistence (BUG-world-lore-silently-stripped)", 
       },),
     );
     expect(createRes.status,).toBe(201,);
-    const { id, } = createRes.json() as { id: string };
+    const { id, } = await createRes.json() as { id: string };
 
     const got = await app.handle(
       new Request(`${BASE}/api/worlds/${id}`,),
