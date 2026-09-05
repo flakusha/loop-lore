@@ -267,7 +267,7 @@ export interface GrowthLogEntry {
 
 ## Files (proposed)
 
-- `src/db/migrations/099_character_growth.ts` — schema migration
+- Folded into `src/db/migrations/parts/004_actors.ts` (actors growth columns) + `src/db/migrations/parts/005_characters.ts` (`character_arc` / `growth_log` tables) — schema migration
 - Generated (via `db:sync-types && db:sync-manifest`):
   `src/db/schema-*.ts`, `src/db/schema.ts`, `src/db/schema-manifest.ts`,
   `src/test-utils/insert-helpers.ts`, `src/validation/db-schemas.ts`
@@ -296,7 +296,7 @@ export interface GrowthLogEntry {
 
 | Task                                  | Description                                                                                            | Priority | Status      |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------- | ----------- |
-| TASK-char-growth-schema               | Migration `099_character_growth.ts` + regenerate schemas                                               | High     | Not Started |
+| TASK-char-growth-schema               | Fold growth schema into `parts/004_actors.ts` + `parts/005_characters.ts` + regenerate schemas                                                                      | High     | Not Started |
 | TASK-char-growth-types                | `src/characters/spec/growth.ts` + `CanonicalCharacter` extension                                       | High     | Not Started |
 | TASK-char-growth-service              | `src/characters/services/growth-service/` (CRUD, redact, llm-assist)                                  | High     | Not Started |
 | TASK-char-growth-bridges              | Skills / traits / relationships bridges                                                                | High     | Not Started |
