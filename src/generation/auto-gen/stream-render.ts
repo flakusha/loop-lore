@@ -1,7 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { ON_EVENT_DOUBLE, ON_EVENT_SINGLE, stripScriptTags, } from "../../regex/html-sanitize";
+import {
+  DANGEROUS_TAGS,
+  JS_URL_ATTR,
+  ON_EVENT_DOUBLE,
+  ON_EVENT_SINGLE,
+  ON_EVENT_UNQUOTED,
+  stripScriptTags,
+} from "../../regex/html-sanitize";
 
 /**
  * @param str
