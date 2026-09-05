@@ -161,8 +161,10 @@ export async function storeMessage(opts: StoreMessageOpts,): Promise<StoreMessag
         // (FK violation, encryption error, DB down, schema mismatch) is
         // a real error — rethrow to surface the actual cause.
         const msg = err instanceof Error ? err.message : String(err,);
-        if (!/UNIQUE constraint failed:\s*messages\.(chat_id|parent_id|swipe_index)\b/i.test(msg,)
-            && !/SQLITE_CONSTRAINT(?:_UNIQUE)?\b.*idx_messages_swipe_unique/i.test(msg,)) {
+        if (
+          !/UNIQUE constraint failed:\s*messages\.(chat_id|parent_id|swipe_index)\b/i.test(msg,) &&
+          !/SQLITE_CONSTRAINT(?:_UNIQUE)?\b.*idx_messages_swipe_unique/i.test(msg,)
+        ) {
           throw err;
         }
         lastError = err;
