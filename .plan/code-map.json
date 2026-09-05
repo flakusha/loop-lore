@@ -5268,6 +5268,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-whitenote-ui-types-rejected-422.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-gm-flows.md"
     },
     {
@@ -10556,6 +10560,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-whitenote-ui-types-rejected-422.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-gm-flows.md"
     },
     {
@@ -13388,6 +13396,10 @@
   "src/generation/generate-route/handler.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
     },
     {
@@ -13459,6 +13471,18 @@
       "source": ".plan/tickets/TASK-response-validation-logic-additions.md"
     }
   ],
+  "src/generation/generation-routes/active.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    }
+  ],
+  "src/generation/generation-routes/cancel.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    }
+  ],
   "src/generation/generation-routes/regenerate.test.ts": [
     {
       "kind": "ticket",
@@ -13469,6 +13493,30 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md"
+    }
+  ],
+  "src/generation/generation-routes/retry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    }
+  ],
+  "src/generation/generation-routes/status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    }
+  ],
+  "src/generation/generation-routes/stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    }
+  ],
+  "src/generation/generation-routes/test-connection.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
     }
   ],
   "src/generation/hooks/_tokenize.ts": [
@@ -13655,6 +13703,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-lora-discovery-application.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
     },
     {
       "kind": "ticket",
@@ -16068,6 +16120,10 @@
   "src/partials/characters/create-modal.html": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-character-create-silently-drops-personality-scenario-welcome.md"
     },
     {
@@ -16155,6 +16211,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
     }
   ],
   "src/personas/service.test.ts": [
@@ -17943,6 +18003,16 @@
       "source": "docs/spec/character-spec.md"
     }
   ],
+  "src/routes/characters/create.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-create-silently-drops-personality-scenario-welcome.md"
+    }
+  ],
   "src/routes/characters/create.ts": [
     {
       "kind": "ticket",
@@ -18620,6 +18690,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-whitenote-ui-types-rejected-422.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-shadow-notes.md"
     },
     {
@@ -18652,6 +18726,12 @@
     }
   ],
   "src/routes/gm-notes/shadow.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-shadow-and-whitenote-crud-open-to-any-chat-participant.md"
+    }
+  ],
+  "src/routes/gm-notes/whitenotes.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-shadow-and-whitenote-crud-open-to-any-chat-participant.md"
@@ -20585,6 +20665,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md"
+    }
+  ],
+  "src/routes/worlds/worlds-routes.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-world-lore-silently-stripped-on-create-and-update.md"
     }
   ],
   "src/routes/worlds/worlds.ts": [
