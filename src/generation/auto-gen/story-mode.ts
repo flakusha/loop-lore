@@ -41,24 +41,24 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   // human-GM guidance and derive a `GameMasterConfig` for the service.
   const gmConfigRaw = gmConfig ? jsonParseOr<Record<string, unknown> | null>(gmConfig, null,) : null;
   if (!gmConfigRaw) {
-    log.warn("Story mode chat has no valid GM config — skipping", { chatId, },);
-    return;
+    // Story-mode chat with no GM config: don't silently skip generation (the
+    // caller is fire-and-forget — a return here leaves the user's message with
+    // no reply and no surfaced error). Synthesize a minimal config so
+    // GameMasterService falls back to LLM mode with defaults. Operators still
+    // see the missing-config signal via the warn below.
+    log.warn("Story mode chat has no valid GM config — synthesizing default LLM config", { chatId, },);
   }
-  const gmGuidance = gmConfigRaw.gmGuidance as GmGuidance | undefined;
+  const gmGuidance = gmConfigRaw?.gmGuidance as GmGuidance | undefined;
   const gameMasterConfig: GameMasterConfig = {
-    type: (gmConfigRaw.type as GameMasterType | undefined) ?? GameMasterType.Llm,
-
-    ...(gmConfigRaw.llmConfig
+    type: (gmConfigRaw?.type as GameMasterType | undefined) ?? GameMasterType.Llm,
+    ...(gmConfigRaw?.llmConfig
       ? { llmConfig: gmConfigRaw.llmConfig as GameMasterConfig["llmConfig"], }
       : {}),
-
-    ...(gmConfigRaw.actorModels
+    ...(gmConfigRaw?.actorModels
       ? { actorModels: gmConfigRaw.actorModels as GameMasterConfig["actorModels"], }
       : {}),
-
-    ...(gmConfigRaw.humanGM ? { humanGM: gmConfigRaw.humanGM as GameMasterConfig["humanGM"], } : {}),
-
-    ...(typeof gmConfigRaw.escalationThreshold === "number"
+    ...(gmConfigRaw?.humanGM ? { humanGM: gmConfigRaw.humanGM as GameMasterConfig["humanGM"], } : {}),
+    ...(typeof gmConfigRaw?.escalationThreshold === "number"
       ? { escalationThreshold: gmConfigRaw.escalationThreshold, }
       : {}),
   };
