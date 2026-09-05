@@ -89,3 +89,24 @@ deleted), remove the directive — stale exemptions pass silently.
 When the CLI is run by an agent harness (opencode/omp) or CI, ANSI color codes
 are stripped from command output. Do not rely on color in output you parse
 programmatically; treat colorized output as human-facing only.
+
+## 9. Migration workflow — ask strategy, then follow the regeneration chain
+
+Before implementing any DB schema change, **ask the user for the migration
+strategy: append a new part (`src/db/migrations/parts/NNN_*.ts`) vs. fold into
+an existing part.** Shipped parts are append-only; extend one only when the
+new state hasn't been released. Proceed only after the decision.
+
+After editing a migration part, run the full regeneration + verification chain
+in the same turn before reporting done:
+
+```bash
+bun run db:sync-types && bun run db:sync-manifest
+bun run schemas:check
+bun test src/db/migrations.test.ts src/db/migration-roundtrip.test.ts
+```
+
+Never hand-edit the generated artifacts (`schema-*.ts`, `schema-manifest.ts`,
+`insert-helpers.ts`, `db-schemas.ts`); always regenerate from the migration.
+If a `.plan/tickets/` file touching the migration was edited, run
+`bun run plan:sync:fix` to reconcile the index.

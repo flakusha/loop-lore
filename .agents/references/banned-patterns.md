@@ -118,3 +118,28 @@ Rationale: Promise rejection in `.then()` chain crashes process if unhandled.
 Violation: `items.map(f).filter(g).map(h).reduce(r, init)` in request handlers, generation pipelines, loops processing 1000+ items, or any O(n) function called per-request.
 Fix: Single `for..of` pass with combined transform/filter logic, or single `.reduce()` accumulating transformed + filtered results. Pre-allocate result array when size is known (`new Array(len)`). Use in-place mutation (`splice`, index assignment) for same-collection edits.
 Rationale: Each chain link allocates a full intermediate array (k·n memory). GC pressure scales linearly with input size and chain length. Single pass is O(n) memory, O(n) time. Chained is O(n) time but O(k·n) allocation — multiplies GC cost for zero semantic benefit. Exception: chains on tiny arrays (&lt;100 items, non-critical path) where readability justifies allocations.
+
+## Migration anti-patterns
+
+- **Modifying a shipped migration / part** (`src/db/migrations/parts/`) to
+  change already-applied behavior. Fix: add a new forward migration that
+  alters the schema to the desired state (append-only policy). Exception: an
+  unshipped part still on an in-flight branch may be edited.
+- **Deleting, renaming, or renumbering a migration** — the filename is the
+  identity in `kysely_migration`; deleting/renumbering orphans the row and
+  trips `assertMigrationsNotStale` at startup. Fix: never touch a shipped
+  name; add `NNN_*` with a fresh unique number.
+- **Hand-editing generated schema artifacts** (`src/db/schema-*.ts`,
+  `src/db/schema.ts`, `src/db/schema-manifest.ts`, `src/test-utils/insert-helpers.ts`,
+  `src/validation/db-schemas.ts`). Fix: edit the migration part, then run
+  `bun run db:sync-types && bun run db:sync-manifest`.
+- **Skipping the regeneration/`schemas:check` gate after a migration change.**
+  Fix: always run `bun run db:sync-types && bun run db:sync-manifest` then
+  `bun run schemas:check` before declaring done.
+- **Hand-rolling boolean → enum conversion in a migration** instead of using
+  `boolToEnum`/`batchBoolToEnum` from `src/db/migration-helpers.ts`. Fix: use
+  the helpers — they wrap the conversion in a transaction and log non-0/1
+  values rather than silently coercing them.
+- **Multiple `ADD COLUMN` / `DROP COLUMN` in one `alterTable` statement.**
+  Fix: one schema alteration per statement — SQLite does not support
+  multi-column ALTER TABLE.

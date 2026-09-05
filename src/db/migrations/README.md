@@ -1,8 +1,12 @@
 # Database Migrations
 
-Schema migrations live here as `NNN_name.ts`. Each file exports `up(db)` and
-`down(db)`; the filename (without `.ts`) is the migration name stored in
-`kysely_migration`.
+Schema migrations live in **modular parts** under `parts/NNN_name.ts`. Each
+part file exports `up(db)` and `down(db)`; `001_init.ts` orchestrates them —
+it imports every part and runs `up()` in part order and `down()` in reverse.
+Migration names recorded in `kysely_migration` are the part names
+(`001_core`, `002_assets`, …). When adding a part, create
+`parts/NNN_description.ts`, export `up`/`down`, and wire it into
+`001_init.ts` in dependency order.
 
 ## Append-Only Policy
 
@@ -38,5 +42,22 @@ migration, regenerate the derived artifacts:
 
 ```bash
 bun run db:sync-types && bun run db:sync-manifest
-bun run db:schemas:check
+bun run schemas:check
 ```
+
+## Agent Workflow
+
+When a ticket requires schema changes:
+
+1. **Ask the user first**: append a new part (`parts/NNN_*.ts`) vs. fold into
+   an existing part. Shipped parts are append-only — extend one only when the
+   new state hasn't been released.
+2. Create the new part (or edit the unshipped part), export `up`/`down`, and
+   wire it into `001_init.ts` in dependency order.
+3. Run the regeneration chain: `bun run db:sync-types && bun run db:sync-manifest`
+   then `bun run schemas:check`.
+4. Verify the migration chain + roundtrip:
+   `bun test src/db/migrations.test.ts src/db/migration-roundtrip.test.ts`.
+5. Run `bun run check` to verify all gates.
+6. If a `.plan/tickets/` file was edited, run `bun run plan:sync:fix` to
+   reconcile the ticket index.
