@@ -52,6 +52,13 @@ export async function resolveModelRole(
     throw new Error(`Invalid model role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,);
   }
 
+  // Graceful degradation: a missing/partial `config.generation` section must
+  // resolve to an empty role (callAux treats empty provider/model as `null`
+  // and returns without throwing), not crash on `config.generation.<field>`.
+  if (!config?.generation) {
+    return { role, provider: "", model: "", source: "default", };
+  }
+
   // 1. DB overrides
   try {
     const dbOverride = await db
