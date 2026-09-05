@@ -6,6 +6,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { getLogger, } from "../../logger";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { carryHistory, } from "./carry-history";
 import { carryLocation, } from "./carry-location";
@@ -169,12 +170,27 @@ export async function injectNarration(
   text: string,
 ): Promise<void> {
   try {
+    // `messages.actor_id` is an FK to `actors.id` — "system" is not a real
+    // actor row, so inserting it raised a FK violation that the old catch-all
+    // silently swallowed (split/reunion narration was lost). Resolve the real
+    // narrator actor instead; if none exists, skip (still non-fatal).
+    const narrator = await database
+      .selectFrom("actors",)
+      .select("id",)
+      .where("actor_type", "=", "narrator",)
+      .where("agent_type", "=", "narrator",)
+      .executeTakeFirst();
+    if (!narrator) {
+      getLogger().warn("injectNarration: no narrator actor found — skipping", { chatId, },);
+      return;
+    }
+
     await database
       .insertInto("messages",)
       .values({
         id: crypto.randomUUID(),
         chat_id: chatId,
-        actor_id: "system",
+        actor_id: narrator.id,
         role: "system" as never,
         content: text,
         content_plaintext: text,
@@ -185,7 +201,13 @@ export async function injectNarration(
         visibility: "visible" as never,
       },)
       .execute();
-  } catch {
-    /* non-fatal */
+  } catch (err) {
+    // Keep non-fatal (split/reunion must not break the party flow), but stop
+    // swallowing the error silently — surface it for operators.
+    getLogger().error(
+      "injectNarration failed",
+      err instanceof Error ? err : new Error(String(err,),),
+      { chatId, },
+    );
   }
 }
