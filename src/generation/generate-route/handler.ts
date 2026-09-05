@@ -13,10 +13,11 @@
  */
 
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../../chat/service";
 import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
-import { jsonError, } from "../../routes/http-utils";
+import { forbiddenResponse, jsonError, requireUserId, } from "../../routes/http-utils";
 import { hasInFlightGeneration, IdempotencyKeyConflictError, startGenerationTracking, } from "../cancellation-manager";
 import {
   buildFailoverList,
@@ -26,8 +27,8 @@ import type { ResolvedProvider, } from "../providers/registry";
 import type { GenerationMessage, GenerationOptions, } from "../types";
 import { buildPrompt, } from "./build-prompt";
 import { runNonStreaming, } from "./non-stream";
+import { buildProviderRequest, } from "./provider-request";
 import { streamToClient, } from "./stream-to-client";
-import { gatePluginToolsByRole, } from "./tool-execution";
 import type { GenerateRequest, } from "./types";
 
 /**
@@ -41,6 +42,7 @@ export interface HandleGenerateOpts {
   database: Kysely<DB>;
   config?: Config;
   userId?: string;
+  userRole?: string | null;
 }
 
 /**
@@ -49,12 +51,14 @@ export interface HandleGenerateOpts {
  * @param root0.database
  * @param root0.config
  * @param root0.userId
+ * @param root0.userRole
  */
 export async function handleGenerate({
   body,
   database,
   config: _config,
   userId,
+  userRole,
 }: HandleGenerateOpts,): Promise<Response> {
   const cfg = _config ?? loadConfig();
   const input = body as GenerateRequest;
@@ -76,6 +80,14 @@ export async function handleGenerate({
   if (!input.idempotencyKey || typeof input.idempotencyKey !== "string") {
     return jsonError({ message: "idempotencyKey is required", status: 400, },);
   }
+
+  // ── Authorization: chat access ─────────────────────────
+  // Cross-user write guard: only admin, creator, or a participant of
+  // `chatId` may trigger generation (BUG-generation-control-plane-routes-lack-authorization).
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
+  const access = await checkChatAccess(database, input.chatId, authUserId, userRole,);
+  if (!access.ok) { return forbiddenResponse(); }
   if (input.prompt !== undefined && !Array.isArray(input.prompt,)) {
     return jsonError({ message: "prompt must be an array", status: 400, },);
   }
@@ -194,51 +206,14 @@ export async function handleGenerate({
   }
 
   // ── Build provider request ────────────────────────────
-
-  // If the generating actor has a plugin agent role assigned, gate the
-  // exposed plugin tools to only those the role declares. Otherwise expose
-  // all registered plugin tools.
-  let roleRow: { agent_role: string | null } | undefined;
-  try {
-    roleRow = await database
-      .selectFrom("actors",)
-      .select(["agent_role",],)
-      .where("id", "=", input.actorId,)
-      .executeTakeFirst();
-  } catch {
-    // Role lookup is best-effort — default to exposing all plugin tools.
-  }
-  const pluginTools = gatePluginToolsByRole(roleRow?.agent_role ?? null,);
-
-  const tools = pluginTools.length > 0
-    ? Array.from(pluginTools, (t,) => ({
-      type: "function" as const,
-      function: { name: t.name, description: t.description, parameters: t.parameters, },
-    }),)
-    : undefined;
-
-  const providerReq = {
-    model: resolved.resolvedModel,
+  const providerReq = await buildProviderRequest({
+    input,
+    resolved,
     messages,
-    tools,
-    apiKey: resolved.resolvedApiKey,
-    params: {
-      stream: resolvedStream,
-      temperature: input.temperature,
-      maxTokens: input.maxTokens,
-      topP: input.topP,
-      stop: input.stop,
-      minP: input.minP,
-      topK: input.topK,
-      typicalP: input.typicalP,
-      repeatPenalty: input.repeatPenalty,
-      dryMultiplier: input.dryMultiplier,
-      xtcProbability: input.xtcProbability,
-      dynatempRange: input.dynatempRange,
-      reasoningBudget: input.reasoningBudget,
-    },
-    signal: abortSignal,
-  };
+    database,
+    abortSignal,
+    stream: resolvedStream,
+  },);
 
   // Build failover list: primary provider first, then all others
   const failoverList = buildFailoverList(resolved.resolvedProviderName, cfg,);
