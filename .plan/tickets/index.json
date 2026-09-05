@@ -13244,6 +13244,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-fix-import-ssrf.md"
   },
+  "TASK-FIX-LINT-BASELINE-DEBT": {
+    "hash": "pending",
+    "extid": "TASK-FIX-LINT-BASELINE-DEBT",
+    "type": "TASK",
+    "title": "Fix lint baseline debt (11 no-restricted-syntax errors)",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fix-lint-baseline-debt.md"
+  },
   "TASK-FIX-MESSAGE-REACTIONS-ACCESS": {
     "hash": "23351af",
     "extid": "TASK-FIX-MESSAGE-REACTIONS-ACCESS",
