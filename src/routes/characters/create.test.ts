@@ -95,4 +95,42 @@ describe("createRoutes avatar asset linking", () => {
     expect(res.status,).toBe(201,);
     expect(linkAssetCalls,).toHaveLength(0,);
   });
+
+  test("persists personality/scenario/welcomeMessage/tags/agentRole (BUG-character-create-silently-drops)", async () => {
+    const res = await app.handle(
+      new Request("http://test/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          displayName: "DetailsChar",
+          personality: "witty, loyal",
+          scenario: "in a tavern",
+          welcomeMessage: "Hello traveller!",
+          tags: "fantasy, elf, mentor",
+          agentRole: "guide",
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const { id, } = (await res.json()) as { id: string };
+
+    const row = await testEnv.db
+      .selectFrom("actors",)
+      .select([
+        "personality",
+        "scenario",
+        "welcome_message",
+        "settings",
+        "agent_role",
+      ],)
+      .where("id", "=", id,)
+      .executeTakeFirst();
+    expect(row?.personality,).toBe("witty, loyal",);
+    expect(row?.scenario,).toBe("in a tavern",);
+    expect(row?.welcome_message,).toBe("Hello traveller!",);
+    expect(row?.agent_role,).toBe("guide",);
+    // tags are parsed into settings JSON {tags: [...]}
+    const settings = JSON.parse(row?.settings ?? "{}") as { tags?: string[] };
+    expect(settings.tags,).toEqual(["fantasy", "elf", "mentor",],);
+  });
 });
