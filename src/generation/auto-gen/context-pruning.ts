@@ -66,10 +66,36 @@ export async function checkAndPruneContext(
 
   const pruneResult = pruneMessages(scorable,);
   if (pruneResult.pruned.length > 0) {
+    // PruneResult.pruned is typed CountableMessage[] (role+content only, no
+    // id) — re-associate each pruned message with its DB row via a
+    // role+content key built from the freshly-fetched `recentMessages`.
+    const idByKey = new Map(
+      recentMessages.map((m,) => [`${m.role}:${m.content}`, m.id,]),
+    );
+    // Persist the pruning decision: soft-hide (visibility="auto_hidden"),
+    // matching the soft-delete convention used elsewhere. Per-message update
+    // (no bulk builder) keeps the write simple and idempotent.
+    for (const m of pruneResult.pruned) {
+      const id = idByKey.get(`${m.role}:${m.content}`,);
+      if (!id) { continue; }
+      await database
+        .updateTable("messages",)
+        .set({ visibility: "auto_hidden", },)
+        .where("id", "=", id,)
+        .execute();
+    }
     log.info("context pruned", {
       pruned: pruneResult.pruned.length,
       promoted: pruneResult.promoted.length,
       tokensSaved: pruneResult.tokensSaved,
+    },);
+  } else if (pruneResult.promoted.length > 0) {
+    // Promotion to long-term memory requires the memory-write pipeline; that
+    // handoff is out of scope this round. Log the count so the signal is not
+    // lost (the messages themselves stay visible).
+    log.info("context pruning: promotion candidates identified (memory write deferred)", {
+      promoted: pruneResult.promoted.length,
+      chatId,
     },);
   }
 
