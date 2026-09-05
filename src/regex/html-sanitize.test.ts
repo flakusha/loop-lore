@@ -7,6 +7,7 @@ import {
   JS_URL_ATTR,
   ON_EVENT_DOUBLE,
   ON_EVENT_SINGLE,
+  ON_EVENT_UNQUOTED,
   stripScriptTags,
 } from "./html-sanitize";
 
