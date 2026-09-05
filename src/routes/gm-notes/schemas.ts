@@ -28,6 +28,8 @@ export const WhiteneoteBody = t.Object({
     "tone",
     "pacing",
     "theme",
+    "character_context",
+    "world_state",
   ],),
   content: t.String({ minLength: 1, },),
   priority: t.Optional(t.Numeric({ minimum: 1, maximum: 10, default: 5, },),),
