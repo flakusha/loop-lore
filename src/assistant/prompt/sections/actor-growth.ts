@@ -69,6 +69,7 @@ export const actorGrowthSection: SectionBuilder = {
         }
       }
 
+      if (!mode) { return []; }
       const directive = mode.growthMode === "static" ? STATIC_DIRECTIVE : DYNAMIC_DIRECTIVE;
       lines.push("",);
       lines.push(directive,);
