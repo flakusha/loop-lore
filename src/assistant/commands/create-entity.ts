@@ -107,7 +107,10 @@ export async function insertGeneratedEntity(
           currentLocationId: id,
           turnStrategy: template.turn_strategy,
           gmConfig: gmParsed?.ok ? gmParsed.value : null,
-          renderingOverride: template.visual_novel === 1 ? "visual_novel" : null,
+          renderingOverride: gmParsed?.ok && (gmParsed.value.renderingOverride === "visual_novel" ||
+              gmParsed.value.renderingOverride === "text")
+            ? gmParsed.value.renderingOverride
+            : null,
           visibility: template.visibility ?? "private",
           templateId: template.id,
         },);

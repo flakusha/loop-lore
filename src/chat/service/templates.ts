@@ -112,6 +112,7 @@ function toTemplateDefault(item: unknown,): ChatSetupTemplateDefault | null {
   const slug = typeof t.slug === "string" && t.slug ? t.slug : null;
   const name = typeof t.name === "string" && t.name ? t.name : null;
   if (!slug || !name) { return null; }
+  const visualNovel = t.visualNovel === true;
   return {
     id: `template-${slug}`,
     slug,
@@ -119,7 +120,7 @@ function toTemplateDefault(item: unknown,): ChatSetupTemplateDefault | null {
     description: typeof t.description === "string" ? t.description : "",
     mode: typeof t.mode === "string" ? t.mode : "direct",
     turn_strategy: typeof t.turnStrategy === "string" ? t.turnStrategy : "round_robin",
-    visual_novel: t.visualNovel === true ? 1 : 0,
+    gmConfig: visualNovel ? jsonStringifyOr({ renderingOverride: "visual_novel" as const, }, "{}",) : null,
     features: Array.isArray(t.features,)
       ? Array.from(t.features, String,)
       : [],
@@ -210,7 +211,7 @@ export async function seedChatSetupTemplates(
         description: t.description,
         mode: t.mode,
         turn_strategy: t.turn_strategy,
-        visual_novel: t.visual_novel,
+        gm_config: t.gmConfig,
         features: jsonStringifyOr(t.features, "[]",),
         visibility: t.visibility ?? null,
       },)
