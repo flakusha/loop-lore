@@ -19,6 +19,7 @@ import { createEntityConfirmRoutes, } from "./create-entity-confirm";
 import { handleSceneTransitions, } from "./handle-scene-transitions";
 import { serviceErrorToResponse, } from "./helpers";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
+import { ParentMessageNotFoundError, ParentMessageNotInChatError, } from "./parent-message-errors";
 import { attachMessageAttachments, persistInitiative, persistMentions, prepareContentStorage, } from "./post";
 import { maybeAutoReply, } from "./reply";
 import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
@@ -230,24 +231,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
     .use(createEntityConfirmRoutes(opts, prefix,),);
 }
 
-
 // ── Cross-chat parentId IDOR guard errors (BUG-cross-chat-parentId-IDOR) ──
-// Sentinel errors thrown inside the transaction body to drive the 404/403
-// branches in the catch above. Using class instances (not plain objects) so
-// the `instanceof` narrowing in the catch is type-safe.
-
-/** Thrown when parentId references a message that does not exist. */
-export class ParentMessageNotFoundError extends Error {
-  constructor() {
-    super("parent message not found",);
-    this.name = "ParentMessageNotFoundError";
-  }
-}
-
-/** Thrown when parentId references a message that belongs to a different chat. */
-export class ParentMessageNotInChatError extends Error {
-  constructor() {
-    super("parent message belongs to a different chat",);
-    this.name = "ParentMessageNotInChatError";
-  }
-}
+// Sentinel errors live in ./parent-message-errors; re-exported here for
+// callers that import them from the route module.
+export { ParentMessageNotFoundError, ParentMessageNotInChatError, } from "./parent-message-errors";
