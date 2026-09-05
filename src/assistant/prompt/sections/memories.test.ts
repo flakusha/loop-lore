@@ -11,7 +11,7 @@
  * withheld from a human viewer in the same chat, proving the per-viewer path
  * is live (regression guard for `IDEA-memory-knowledge-isolation-and-world-timeline.md`).
  */
-import { describe, expect, test, } from "bun:test";
+import { beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Generated, } from "kysely";
 import type { ChatMode, } from "../../../db/enums-core";
 import { createLogger, } from "../../../logger";
@@ -23,6 +23,7 @@ import {
   insertChats,
   insertUsers,
 } from "../../../test-utils/insert-helpers";
+import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import type { AssembleContext, } from "../types";
 import { memorySection, } from "./memories";
 
@@ -119,3 +120,72 @@ describe("memorySection — per-viewer cross-actor isolation", () => {
     }
   });
 });
+
+// ── BUG-ollama-outage-hard-fails-all-generations ───────────────────────
+// If semanticRecall throws (embed provider down), the memory section must
+// degrade gracefully: keep the keyword-ranked order and still build.
+// mock.module is gated to the isolated canonical gate (bun run test:unit /
+// bun run check). See src/test-utils/isolate-only.ts.
+if (ISOLATED) {
+  mock.module("../../../memory/embeddings", () => ({
+    semanticRecall: async () => {
+      throw new Error("ollama: connection refused",);
+    },
+  }),);
+}
+
+const { memorySection: isolatedMemorySection, } = await import("./memories");
+
+describeOrSkip("memorySection — semantic recall outage degrades gracefully", () => {
+  beforeEach(async () => {
+    createLogger({ level: "error", },);
+  },);
+
+  test("build still returns the keyword-ranked section when semanticRecall throws", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertUsers(db, "island", "Islander",);
+      const users = await db.selectFrom("users",).select("id",).execute();
+      const userId = users[0]!.id;
+      await insertActors(db, "Wanderer",);
+      const actors = await db.selectFrom("actors",).select(["id", "display_name",],).execute();
+      const actorId = actors.find((a,) => a.display_name === "Wanderer")!.id;
+
+      await insertChats(db, "Island chat", userId,);
+      const chat = await db.selectFrom("chats",).select("id",).limit(1,).executeTakeFirstOrThrow();
+      await insertChatParticipants(db, chat.id, actorId,);
+
+      // A public character-scope memory so the section has material to rank.
+      await insertActorMemories(db, actorId, "The island's southern shore is calm.", {
+        scope: "character" as unknown as Generated<string>,
+        privacy: "public" as unknown as Generated<string>,
+      },);
+
+      const ctx: AssembleContext = {
+        db,
+        actor: {
+          id: actorId,
+          display_name: "Wanderer",
+          system_prompt: null,
+          description: null,
+          personality: null,
+          scenario: null,
+          post_history_instructions: null,
+          mes_example: null,
+          agent_role: null,
+        },
+        chat: { id: chat.id, mode: "story", world_id: null, current_location_id: null, },
+        params: { actorId, chatId: chat.id, modelId: "test-model", },
+        isStory: false,
+        tokenBudget: 4000,
+      };
+
+      // Must not throw; must return the memory section (non-empty).
+      const messages = await isolatedMemorySection.build(ctx,);
+      expect(messages.length,).toBeGreaterThan(0,);
+      expect(messages[0]!.content,).toContain("memory_context",);
+    } finally {
+      sqlite.close();
+    }
+  });
+},);
