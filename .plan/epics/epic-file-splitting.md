@@ -184,7 +184,7 @@ kept (violates guard), runtime code-splitting for server modules (no benefit —
 - **db-schema generator fix (in `6c372968`)**: `scripts/generate-db-types.ts` read enum
   sources via `readdirSync(ENUM_DIR).filter(f => f.startsWith("enums-") && f.endsWith(".ts"))`
   which returned nothing once `enums-*.ts` became dirs. Now recurses into `enums-*/`
-  subdirectories so enum schemas regenerate. `db:sync-types` + `db:schemas:check` green.
+  subdirectories so enum schemas regenerate. `db:sync-types` + `schemas:check` green.
 - Offenders: 137 → 125 (rounds 1-3) → **1 (rounds 4-7: the documented `server/start.ts`)**.
   Core `size:strict` debt now zero.
 

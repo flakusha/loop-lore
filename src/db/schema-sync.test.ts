@@ -11,7 +11,7 @@ import { SCHEMA, } from "./schema-manifest";
  * changing a table/column:
  *   1. Add/edit the migration file
  *   2. Regenerate the schema artifacts: bun run db:sync-types && bun run db:sync-manifest
- *   3. Run `bun run db:schemas:check` (the `check` gate) to confirm nothing is stale
+ *   3. Run `bun run schemas:check` (the `check` gate) to confirm nothing is stale
  *   4. This test validates the migrated DB matches the manifest
  */
 
