@@ -149,6 +149,33 @@ describe("applyDecay", () => {
 
     expect(updated?.strength,).toBe(0,);
   });
+
+  it("should not write NaN strength when last_accessed_at is NULL (BUG-memory-decay-writes-nan-strength)", async () => {
+    // last_accessed_at NULL → fall back to created_at (2024-01-01), never the
+    // uuid id (new Date(uuid) is Invalid → elapsedMs NaN → strength NaN).
+    await seedMemory(db, {
+      id: "mem-1",
+      strength: 0.5,
+      decay_rate: 0.1,
+      last_accessed_at: null,
+    },);
+
+    const now = new Date("2024-01-11T00:00:00Z",); // 10 days after created_at
+    const affected = await applyDecay(db, { now, },);
+
+    expect(affected,).toBe(1,);
+
+    const updated = await db
+      .selectFrom("actor_memories",)
+      .select("strength",)
+      .where("id", "=", "mem-1",)
+      .executeTakeFirst();
+
+    // 0.5 - (0.1 * 10) = -0.5 → clamped to 0; must be finite, never NaN.
+    expect(updated?.strength,).toBeDefined();
+    expect(Number.isFinite(updated?.strength,),).toBe(true,);
+    expect(updated?.strength!,).toBeLessThanOrEqual(0.5,);
+  });
 });
 
 describe("touchMemory", () => {
