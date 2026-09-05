@@ -80,16 +80,16 @@ export function destroyChoiceCards(): void {
 export async function loadChoices(): Promise<void> {
   if (!chatId) { return; }
   try {
-    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices?scene=${sceneIndex}`,);
+    const res = await apiFetch(`/api/v1/chats/${chatId}/vn-choices?sceneIndex=${sceneIndex}`,);
     if (!res.ok) { return; }
     const data = await res.json();
-    const raw: VnChoice[] = data.data ?? [];
+    const raw: VnChoice[] = data.choices ?? data.data ?? [];
     choices = [];
     for (const c of raw) {
       choices.push({
         ...c,
-        selected: c.is_active === 1,
-        label: c.text,
+        selected: c.is_active === 1 || c.selected === true,
+        label: c.label ?? c.text ?? "Untitled choice",
       },);
     }
     renderChoices();
@@ -154,9 +154,10 @@ export async function selectChoice(choiceId: string,): Promise<SelectChoiceResul
     },);
     if (!res.ok) { return null; }
     const data = await res.json();
-    const { choice: returned, locationId, } = data.data as { choice: VnChoice; locationId?: string };
+    const { choice: returned, locationId, } = (data.choice ?? data.data) as { choice: VnChoice; locationId?: string };
+    const returnedLabel = returned.label ?? returned.text ?? "Untitled choice";
 
-    const updated: VnChoice = { ...returned, selected: true, label: returned.text, };
+    const updated = { ...returned, selected: true, label: returnedLabel, } as VnChoice;
     choices = Array.from(choices, (c, i,) => (i === idx ? updated : c),);
 
     let locationChanged = false;
