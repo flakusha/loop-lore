@@ -18,6 +18,7 @@
  * itself is the source service's responsibility; growth only owns
  * its own log.
  */
+import { jsonStringifyOr, } from "@/utils";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createSkill, } from "../../rpg/skills/service/crud";
@@ -68,7 +69,7 @@ export async function recordSkillAcquisition(
     eventType: "skill_acquired",
     subjectKind: "character_skill",
     subjectId: skill.id,
-    afterJson: JSON.stringify({
+    afterJson: jsonStringifyOr({
       name: skill.name,
       category: skill.category,
       level: skill.level,

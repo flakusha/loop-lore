@@ -14,6 +14,7 @@
  * allowed only on `social` / `world` categories; `identity`,
  * `personality`, `background` are refused with `integrity_forbidden`.
  */
+import { jsonStringifyOr, } from "@/utils";
 import type { Kysely, } from "kysely";
 import type { TraitCategory, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -66,8 +67,8 @@ export async function recordTraitDrift(
     eventType: "trait_drifted",
     subjectKind: `character_${opts.traitCategory}_trait`,
     subjectId: opts.traitName,
-    beforeJson: JSON.stringify({ value: opts.beforeValue, },),
-    afterJson: JSON.stringify({ value: opts.afterValue, },),
+    beforeJson: jsonStringifyOr({ value: opts.beforeValue, },),
+    afterJson: jsonStringifyOr({ value: opts.afterValue, },),
     reason: opts.reason,
     sourceEventId: opts.sourceEventId ?? null,
   },);

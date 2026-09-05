@@ -13,8 +13,8 @@
  * row, the bridge refuses to record a growth_log entry. The actual
  * relationship write still happens (callers handle that).
  */
+import { jsonStringifyOr, } from "@/utils";
 import type { Kysely, } from "kysely";
-import { safeJsonStringify, } from "../../../utils";
 import type { DB, } from "../../db/schema";
 import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 import {
