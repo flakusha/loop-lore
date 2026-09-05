@@ -13161,6 +13161,18 @@
     "status": "done",
     "git_issue": "a97459f"
   },
+  "TASK-FIX-CHARACTER-GROWTH-PRE-EXISTING-GATE-FAILURES": {
+    "hash": "a4409d9",
+    "git_issue": "a4409d9",
+    "extid": "TASK-FIX-CHARACTER-GROWTH-PRE-EXISTING-GATE-FAILURES",
+    "type": "TASK",
+    "title": "fix-character-growth-pre-existing-gate-failures",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fix-character-growth-pre-existing-gate-failures.md"
+  },
   "TASK-FIX-CHAT-SETUP-TEMPLATES-VISUAL-NOVEL-REMOVE-OR-TYPE-AS-CHAT": {
     "hash": "679c84c",
     "git_issue": "679c84c",
