@@ -33,9 +33,9 @@ function handleSfx(args: string[],): CommandResult {
 
 registerCommand("sfx", (args,): CommandResult => {
   return handleSfx(args,);
-},);
+}, { available: false, },);
 
 // Alias: /sound → /sfx
 registerCommand("sound", (args,): CommandResult => {
   return handleSfx(args,);
-},);
+}, { available: false, },);
