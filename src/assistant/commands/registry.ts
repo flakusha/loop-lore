@@ -47,11 +47,21 @@ export interface CommandOptions {
    * who can message may run it (the historical default).
    */
   requiredRole?: ChatParticipantRole;
+  /**
+   * Whether the command is fully implemented and should be advertised.
+   *
+   * Stub commands (e.g. `/sfx`, `/music`, `/video` before an audio/video
+   * provider is configured) register with `available: false` so they are
+   * hidden from `GET /api/commands` and the FE command palette while
+   * remaining callable for direct input.
+   */
+  available?: boolean;
 }
 
 interface CommandRegistration {
   handler: CommandHandler;
   requiredRole?: ChatParticipantRole;
+  available: boolean;
 }
 
 const handlers = new Map<string, CommandRegistration>();
@@ -89,7 +99,11 @@ export function registerCommand(
   handler: CommandHandler,
   opts?: CommandOptions,
 ): void {
-  handlers.set(name.toLowerCase(), { handler, requiredRole: opts?.requiredRole, },);
+  handlers.set(name.toLowerCase(), {
+    handler,
+    requiredRole: opts?.requiredRole,
+    available: opts?.available ?? true,
+  },);
 }
 
 /**
@@ -112,8 +126,10 @@ export function getCommandRequirement(name: string,): ChatParticipantRole | unde
 
 /**
  * List all registered command names.
- * @returns Array of command names
+ * @returns Array of available command names (stub/unavailable commands excluded)
  */
 export function listCommands(): string[] {
-  return Array.from(handlers.keys(),);
+  return Array.from(handlers.entries(),)
+    .filter(([, reg,],) => reg.available)
+    .map(([name,],) => name);
 }
