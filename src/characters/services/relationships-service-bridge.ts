@@ -14,6 +14,7 @@
  * relationship write still happens (callers handle that).
  */
 import type { Kysely, } from "kysely";
+import { safeJsonStringify, } from "../../../utils";
 import type { DB, } from "../../db/schema";
 import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 import {
@@ -92,8 +93,8 @@ export async function recordRelationshipShift(
     eventType: "relationship_shifted",
     subjectKind: "character_relationship",
     subjectId: relRow.id,
-    beforeJson: JSON.stringify(opts.before,),
-    afterJson: JSON.stringify(opts.after,),
+    beforeJson: safeJsonStringify(opts.before,),
+    afterJson: safeJsonStringify(opts.after,),
     reason: opts.reason,
     sourceEventId: opts.sourceEventId ?? null,
   },);
