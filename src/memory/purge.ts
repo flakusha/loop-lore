@@ -45,14 +45,17 @@ export async function applyDecay(
 
   const memories = await db
     .selectFrom("actor_memories",)
-    .select(["id", "strength", "decay_rate", "last_accessed_at",],)
+    .select(["id", "strength", "decay_rate", "last_accessed_at", "created_at",],)
     .where("strength", ">", 0,)
     .where("decay_rate", ">", 0,)
     .execute();
 
   let affected = 0;
   for (const mem of memories) {
-    const lastAccessed = mem.last_accessed_at ?? mem.id; // fallback to creation
+    // last_accessed_at may be NULL (never accessed / legacy rows). Fall back
+    // to created_at, then to now — never the UUID id (new Date(uuid) is
+    // Invalid, which made elapsedMs NaN and persisted strength NaN).
+    const lastAccessed = mem.last_accessed_at ?? mem.created_at ?? now.toISOString();
     const elapsedMs = now.getTime() - new Date(lastAccessed,).getTime();
     const elapsedDays = Math.max(0, elapsedMs / (1000 * 60 * 60 * 24),);
     const decay = mem.decay_rate * elapsedDays;
