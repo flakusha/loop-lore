@@ -130,7 +130,7 @@ describe("createRoutes avatar asset linking", () => {
     expect(row?.welcome_message,).toBe("Hello traveller!",);
     expect(row?.agent_role,).toBe("guide",);
     // tags are parsed into settings JSON {tags: [...]}
-    const settings = JSON.parse(row?.settings ?? "{}") as { tags?: string[] };
+    const settings = JSON.parse(row?.settings ?? "{}",) as { tags?: string[] };
     expect(settings.tags,).toEqual(["fantasy", "elf", "mentor",],);
   });
 });

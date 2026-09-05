@@ -2,11 +2,12 @@
  * Tests for admin NSFW routes — config get/update, policy listing
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { adminNsfwRoutes, } from "./admin-nsfw";
@@ -71,6 +72,20 @@ describe("PUT /api/admin/nsfw", () => {
   beforeAll(async () => {
     createLogger({ level: "warn", },);
     ({ db, sqlite, } = await createTestDb());
+  },);
+
+  // The admin PUT mutates the shared runtime NSFW singleton. Restore the
+  // module default each test so allowNsfw=false never leaks into later test
+  // files in the same worker (order-dependent false failures).
+  beforeEach(() => {
+    initNsfwRuntimeConfig({
+      allowNsfw: true,
+      nsfwMinAge: 18,
+      defaultNsfwScope: "chat",
+      consentRequired: true,
+      auditLogging: true,
+      useLlmClassifier: false,
+    },);
   },);
 
   afterAll(async () => {
