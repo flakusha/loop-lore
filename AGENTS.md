@@ -20,6 +20,13 @@ fd . src/ --type f -e ts | head -30
 
 # 4. Verify changes
 bun run check && bun test src/
+
+# Coverage gate (new):
+# - `bun run test:coverage` writes `.tmp/coverage/lcov.info`
+# - `bun run scripts/check/coverage.mjs --floor=40` gates each module
+# - Floor: 40% line / 30% branch; tighten to 60% after one cycle
+# - New module tests must raise line coverage >= 70% to land (else waiver + ticket)
+# - Generated artifacts (`.tmp/coverage/`) are scratchpad; never commit
 ```
 
 ## Source of Truth (Precedence Order)
