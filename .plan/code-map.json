@@ -4625,10 +4625,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-chat-service-seen-ts-is-dead-code-and-its-upsert-is-brok.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-bug-message-seen-re-mark-clobbers-first-seen-timestamp.md"
     }
   ],
   "src/chat/service/split-utils.ts": [
@@ -12788,6 +12784,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-hallucination-guard-runs-outside-try-catch-after-message.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
     },
     {
@@ -12931,10 +12931,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-bug-hallucination-guard-runs-outside-try-catch-after-message.md"
     },
     {
       "kind": "ticket",
