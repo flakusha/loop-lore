@@ -1,58 +1,35 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 # BUG: random-event templates substitute `{npc}` from a generic pool, never from the chat's actual participants
 
-**Status:** Not Started
-**Severity:** low
+**Status:** ✅ Done
 **Priority:** low
+**Severity:** low
 **Effort:** small
 **Type:** BUG
 **Epic:** epic-creative-studio
-**Files:** src/chat/random-events.ts:147-218
+**Files:** src/chat/random-events.ts, src/generation/auto-gen/post-store.ts
 
 ## Issue
 
-`resolveTemplate` substitutes `{npc}` from a hardcoded `NPC_OPTIONS = ['a traveler', 'a merchant', ...]` pool — generic labels that ignore which NPCs are participants in the chat. Result: ambient events never mention characters the user knows. Same shape for `{location}` (falls back to a fixed list) and `{weather}`/`{scent}` (no awareness of the chat's location).
+`resolveTemplate` substituted `{npc}` from a hardcoded `NPC_OPTIONS` pool — generic labels that ignore which NPCs are participants in the chat. Same shape for `{location}` (fixed-list fallback) and `{weather}` (no awareness of the chat's location or world-time).
 
-Additionally, `generateRandomEvent` is purely local with no awareness of:
-- Chat participants (which NPCs / characters are actually in the conversation).
-- Current location (the chat's active location).
-- Time of day / world time.
+## Resolution
 
-`RandomEventOpts` accepts no participant or location context.
+`RandomEventOpts` already accepted `participants`, `currentLocation`, and `worldTime` (the bug filed against the previous ticket BUG-chat-random-events-no-character-binding); the placeholder logic in `resolveTemplate` already preferred AI participants + the chat's location + period-derived weather. The actual defect was that **no caller passed those options**. Fixed in the random-events-wiring worktree:
 
-## Why it matters
+1. `applyPostStoreEffects` now loads chat participants via
+   `chat_participants JOIN actors` (mapping `actor_type === "character"`
+   → role `"ai"`, others → `"user"`) and the chat's current location
+   (`chats.current_location_id` → `locations` row) in parallel with the
+   message count.
+2. Both are passed to `generateRandomEvent`. Generated events now
+   substitute real AI participant display names for `{npc}` and the chat's
+   location name for `{location}` when present; `NPC_OPTIONS` and
+   `LOCATION_OPTIONS` are now actual fallbacks rather than the only path.
+3. Tests at `src/chat/random-events.test.ts` cover the four cases listed
+   in the bug (AI participants, currentLocation, worldTime period,
+   no-AI-participants fallback) — all pass.
 
-Immersion. Random events are ambient world-building flavor — they feel hollow if they never reference the cast or setting the user is engaging with. A group chat with Alice, Bob, and Charlie gets "A merchant walks by" instead of "Alice glances at Bob, then at the strange merchant".
-
-## Evidence
-
-- `src/chat/random-events.ts:147-218` — `resolveTemplate` substitutes from fixed lists.
-- `src/chat/random-events.ts:1-50` — `RandomEventOpts` shape lacks participants / location fields.
-
-## Concrete fix
-
-1. Extend `RandomEventOpts` with:
-   - `participants?: { id: string; displayName: string; role: 'user' | 'ai' }[]`
-   - `currentLocation?: { id: string; name: string; description?: string }`
-   - `worldTime?: { hour: number; period: 'dawn' | 'day' | 'dusk' | 'night' }`
-2. In `resolveTemplate`:
-   - `{npc}` → first pick from `participants` (AI roles only), fall back to `NPC_OPTIONS`.
-   - `{location}` → use `currentLocation.name`, fall back to `LOCATION_OPTIONS`.
-   - `{weather}` → derive from `worldTime.period` (e.g. dawn = misty, day = clear, dusk = breezy, night = cold).
-3. Update the caller (`post-store.ts:runAmbientEvents` or wherever `generateRandomEvent` is invoked) to pass participants and location from the chat context.
-4. Tests:
-   - Chat with participants `[Alice, Bob]` and `{npc}` template → output contains "Alice" or "Bob", not "a merchant".
-   - No participants, `{npc}` template → falls back to `NPC_OPTIONS` pool.
-   - `currentLocation.name = "Goblin Caves"` → `{location}` substitutes "Goblin Caves".
-   - `worldTime.period = "night"` → `{weather}` substitutes "cold" or similar.
-
-## Tests
-
-- `bun test src/chat/random-events.test.ts` — add 4 cases.
-
-## Related
-
-- `TASK-random-encounters-events.md` (broader scope; this is a focused fix).
-- `epic-creative-studio.md` (ambient world-building slice).
+Files: `src/chat/random-events.ts` (cleanup), `src/chat/random-events.test.ts` (updated tests), `src/generation/auto-gen/post-store.ts` (wiring + helpers `loadChatParticipants` / `loadChatLocation`).
