@@ -199,13 +199,14 @@ a `growth_log` entry. Proposed entries have `status='pending'` and are
 
 ### D7. Prompt assembly surfaces current arc + recent growth
 
-`actorGrowthSection` emits current arc stage + last 5 growth_log entries
-+ the growth-mode directive. Registered after `internalTraitsSection`
+`actorGrowthSection` emits current arc stage, last 5 growth_log entries,
+and the growth-mode directive. Registered after `internalTraitsSection`
 (currently position 12 in `PROMPT_SECTIONS`).
 
 ### D8. Growth log is shared, not duplicated per axis
 
 One `growth_log` table covers all four axes; `axis` column discriminates.
+
 
 ### D9. Relationship evolution is opt-in per relationship
 
