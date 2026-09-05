@@ -1,116 +1,146 @@
-import { describe, expect, test, } from "bun:test";
-import {
-  HASH_INJECTION_LINK,
-  HASH_INJECTION_SCRIPT,
-  ON_EVENT_DOUBLE,
-  ON_EVENT_SINGLE,
-  SCRIPT_TAG,
-} from "./html-sanitize";
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// ── Script Tag ────────────────────────────────────────────
+import { describe, expect, test, } from "bun:test";
+import { DANGEROUS_TAGS, JS_URL_ATTR, ON_EVENT_DOUBLE, ON_EVENT_SINGLE, ON_EVENT_UNQUOTED, SCRIPT_TAG, } from "./html-sanitize";
 
 describe("SCRIPT_TAG", () => {
-  test("removes simple script tag", () => {
-    const html = '<p>Hello</p><script>alert("xss")</script><p>World</p>';
-    expect(html.replaceAll(SCRIPT_TAG, "",),).toBe("<p>Hello</p><p>World</p>",);
+  test("strips <script>...</script>", () => {
+    expect("<script>alert(1)</script>hello".replace(SCRIPT_TAG, ""),).toBe("hello",);
   });
 
-  test("removes multiline script tag", () => {
-    const html = '<script type="text/javascript">\nalert("xss");\n</script>';
-    expect(html.replaceAll(SCRIPT_TAG, "",),).toBe("",);
+  test("strips multiline <script> block", () => {
+    const input = "before<script>\n  alert(1);\n</script>after";
+    expect(input.replace(SCRIPT_TAG, ""),).toBe("beforeafter",);
   });
 
-  test("removes script with attributes", () => {
-    const html = '<script src="/evil.js" async></script>';
-    expect(html.replaceAll(SCRIPT_TAG, "",),).toBe("",);
+  test("strips <script> with attributes", () => {
+    expect("<script src=\"evil.js\"></script>safe".replace(SCRIPT_TAG, ""),).toBe("safe",);
   });
 
-  test("preserves non-script content", () => {
-    const html = "<p>Safe content</p>";
-    expect(html.replaceAll(SCRIPT_TAG, "",),).toBe("<p>Safe content</p>",);
+  test("does not match <script> without closing tag (pair-only regex)", () => {
+    const input = "before<script>alert(1)after";
+    expect(input.replace(SCRIPT_TAG, ""),).toBe(input,);
+  });
+
+  test("leaves non-script content intact", () => {
+    expect("<p>hello</p>".replace(SCRIPT_TAG, ""),).toBe("<p>hello</p>",);
   });
 });
 
-// ── On Event Handlers ─────────────────────────────────────
-
 describe("ON_EVENT_DOUBLE", () => {
-  test("removes onclick handler", () => {
-    const html = '<button onclick="steal()">Click</button>';
-    // Regex doesn't consume the space before the attribute
-    expect(html.replaceAll(ON_EVENT_DOUBLE, "",),).toBe("<button >Click</button>",);
+  test("strips onclick=\"...\"", () => {
+    expect("<div onclick=\"alert(1)\">click</div>".replace(ON_EVENT_DOUBLE, ""),).toBe("<div >click</div>",);
   });
 
-  test("removes onerror handler", () => {
-    const img = '<img src=x onerror="alert(1)">';
-    expect(img.replaceAll(ON_EVENT_DOUBLE, "",),).toBe("<img src=x >",);
+  test("strips onerror=\"...\"", () => {
+    expect("<img src=\"x\" onerror=\"alert(1)\">".replace(ON_EVENT_DOUBLE, ""),).toBe("<img src=\"x\" >",);
   });
 
-  test("preserves other attributes", () => {
-    const html = '<button class="btn" onclick="fn()" id="ok">Click</button>';
-    expect(html.replaceAll(ON_EVENT_DOUBLE, "",),).toBe('<button class="btn"  id="ok">Click</button>',);
+  test("strips onload=\"...\"", () => {
+    expect("<body onload=\"evil()\">".replace(ON_EVENT_DOUBLE, ""),).toBe("<body >",);
   });
 });
 
 describe("ON_EVENT_SINGLE", () => {
-  test("removes onclick handler with single quotes", () => {
-    const html = "<button onclick='steal()'>Click</button>";
-    expect(html.replaceAll(ON_EVENT_SINGLE, "",),).toBe("<button >Click</button>",);
-  });
-
-  test("removes onerror with single quotes", () => {
-    const img = "<img src=x onerror='alert(1)'>";
-    expect(img.replaceAll(ON_EVENT_SINGLE, "",),).toBe("<img src=x >",);
+  test("strips onclick='...'", () => {
+    expect("<div onclick='alert(1)'>click</div>".replace(ON_EVENT_SINGLE, ""),).toBe("<div >click</div>",);
   });
 });
 
-// ── Hash Injection ────────────────────────────────────────
-
-describe("HASH_INJECTION_SCRIPT", () => {
-  test("captures script src components", () => {
-    const html = '<script src="/app.js"></script>';
-    const match = HASH_INJECTION_SCRIPT.exec(html,);
-    expect(match,).not.toBeNull();
-    // First group includes the trailing /
-    expect(match?.[1],).toBe('<script src="/',);
-    expect(match?.[2],).toBe("app.js",);
-    expect(match?.[3],).toBe('"></script>',);
+describe("ON_EVENT_UNQUOTED", () => {
+  test("strips unquoted onerror=...", () => {
+    expect("<img src=x onerror=alert(1)>".replace(ON_EVENT_UNQUOTED, ""),).toBe("<img src=x >",);
   });
 
-  test("captures css file", () => {
-    const html = '<script src="/styles.css"></script>';
-    HASH_INJECTION_SCRIPT.lastIndex = 0;
-    const match = HASH_INJECTION_SCRIPT.exec(html,);
-    expect(match?.[2],).toBe("styles.css",);
+  test("strips unquoted onload=...", () => {
+    expect("<img src=x onload=evil()>".replace(ON_EVENT_UNQUOTED, ""),).toBe("<img src=x >",);
   });
 
-  test("does not match non-root paths", () => {
-    const html = '<script src="https://evil.com/x.js"></script>';
-    const match = HASH_INJECTION_SCRIPT.exec(html,);
-    expect(match,).toBeNull();
+  test("strips unquoted onclick=... before >", () => {
+    expect("<div onclick=alert(1) >".replace(ON_EVENT_UNQUOTED, ""),).toBe("<div  >",);
   });
 });
 
-describe("HASH_INJECTION_LINK", () => {
-  test("captures link href components", () => {
-    const html = '<link rel="stylesheet" href="/styles.css">';
-    const match = HASH_INJECTION_LINK.exec(html,);
-    expect(match,).not.toBeNull();
-    // First group includes the trailing /
-    expect(match?.[1],).toBe('<link rel="stylesheet" href="/',);
-    expect(match?.[2],).toBe("styles.css",);
-    expect(match?.[3],).toBe('">',);
+describe("JS_URL_ATTR", () => {
+  test("strips href=\"javascript:...\"", () => {
+    expect("<a href=\"javascript:alert(1)\">link</a>".replace(JS_URL_ATTR, ""),).toBe("<a >link</a>",);
   });
 
-  test("captures js file in link", () => {
-    const html = '<link href="/app.js" rel="preload">';
-    HASH_INJECTION_LINK.lastIndex = 0;
-    const match = HASH_INJECTION_LINK.exec(html,);
-    expect(match?.[2],).toBe("app.js",);
+  test("strips src=\"javascript:...\"", () => {
+    expect("<iframe src=\"javascript:void(0)\">".replace(JS_URL_ATTR, ""),).toBe("<iframe >",);
   });
 
-  test("does not match CDN URLs", () => {
-    const html = '<link href="https://cdn.example.com/style.css" rel="stylesheet">';
-    const match = HASH_INJECTION_LINK.exec(html,);
-    expect(match,).toBeNull();
+  test("strips href='javascript:...'", () => {
+    expect("<a href='javascript:void(0)'>link</a>".replace(JS_URL_ATTR, ""),).toBe("<a >link</a>",);
+  });
+
+  test("preserves normal href", () => {
+    expect("<a href=\"https://example.com\">link</a>".replace(JS_URL_ATTR, ""),).toBe("<a href=\"https://example.com\">link</a>",);
+  });
+});
+
+describe("DANGEROUS_TAGS", () => {
+  const vectors: Array<[string, string, string]> = [
+    ["<iframe>", "<iframe src=\"https://evil.com\"></iframe>", ""],
+    ["<object>", "<object data=\"evil.swf\"></object>", ""],
+    ["<embed>", "<embed src=\"evil.swf\">", ""],
+    ["<style>", "<style>body { background: url(evil) }</style>", ""],
+    ["<base>", "<base href=\"https://evil.com/\">", ""],
+    ["<form>", "<form action=\"https://evil.com\"><input></form>", ""],
+    ["<button>", "<button onclick=\"alert(1)\">click</button>", ""],
+    ["<svg>", "<svg onload=\"alert(1)\"></svg>", ""],
+    ["<math>", "<math><mscript>alert(1)</mscript></math>", ""],
+  ];
+
+  for (const [label, input, expected] of vectors) {
+    test(`strips ${label}`, () => {
+      expect(input.replace(DANGEROUS_TAGS, ""),).toBe(expected,);
+    });
+  }
+
+  test("preserves <input> (markdown task list)", () => {
+    expect("<input type=\"checkbox\" disabled=\"\">".replace(DANGEROUS_TAGS, ""),).toBe("<input type=\"checkbox\" disabled=\"\">",);
+  });
+});
+
+describe("full sanitizeHtml pipeline", () => {
+  // Replicate the sanitizeHtml logic from stream-render.ts
+  function sanitizeHtml(html: string): string {
+    return html
+      .replaceAll(SCRIPT_TAG, "")
+      .replaceAll(ON_EVENT_DOUBLE, "")
+      .replaceAll(ON_EVENT_SINGLE, "")
+      .replaceAll(ON_EVENT_UNQUOTED, "")
+      .replaceAll(JS_URL_ATTR, "")
+      .replaceAll(DANGEROUS_TAGS, "");
+  }
+
+  test("strips script tag", () => {
+    expect(sanitizeHtml("<script>alert(1)</script>hello"),).toBe("hello",);
+  });
+
+  test("strips iframe with javascript: src", () => {
+    const input = '<iframe src="javascript:void(0)"></iframe>safe';
+    expect(sanitizeHtml(input),).toBe("safe",);
+  });
+
+  test("strips event handlers on img", () => {
+    const input = '<img src="x" onerror="alert(1)">';
+    expect(sanitizeHtml(input),).toBe("<img src=\"x\" >",);
+  });
+
+  test("strips unquoted event handler", () => {
+    expect(sanitizeHtml("<img src=x onerror=alert(1)>"),).toBe("<img src=x >",);
+  });
+
+  test("strips javascript: href", () => {
+    const input = '<a href="javascript:alert(1)">link</a>';
+    expect(sanitizeHtml(input),).toBe("<a >link</a>",);
+  });
+
+  test("preserves safe markdown output", () => {
+    const input = '<p>Hello <strong>world</strong></p><a href="https://example.com">link</a><ul><li>item</li></ul>';
+    expect(sanitizeHtml(input),).toBe(input,);
   });
 });
