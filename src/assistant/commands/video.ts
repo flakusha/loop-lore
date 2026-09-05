@@ -27,4 +27,4 @@ registerCommand("video", (args,): CommandResult => {
     actionPayload: { prompt, },
     handled: true,
   };
-},);
+}, { available: false, },);

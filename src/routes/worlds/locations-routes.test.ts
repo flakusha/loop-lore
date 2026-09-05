@@ -3,8 +3,8 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { seedChatSetupTemplates, } from "../../chat/service";
 import type { Config, } from "../../config/schema";
-import { createLogger, } from "../../logger";
 import type { DB, } from "../../db/schema";
+import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertLocations, insertLocationStates, insertWorlds, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
@@ -75,7 +75,11 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
    * @param app
    * @param body
    */
-  async function createLocationViaApi(app: Elysia, worldId: string, body: Record<string, unknown>,): Promise<{ status: number; body: Record<string, unknown> }> {
+  async function createLocationViaApi(
+    app: Elysia,
+    worldId: string,
+    body: Record<string, unknown>,
+  ): Promise<{ status: number; body: Record<string, unknown> }> {
     const res = await app.handle(
       new Request(`${BASE}/api/worlds/${worldId}/locations`, {
         method: "POST",
@@ -129,7 +133,7 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
 
     const created = await createLocationViaApi(app, worldId, { name: "Crossroads", connections: [123, {},], },);
     expect(created.status,).toBe(400,);
-    expect(String(created.body.error ?? ""),).toContain("strings",);
+    expect(String(created.body.error ?? "",),).toContain("strings",);
 
     // Nothing persisted.
     const count = await db
@@ -160,7 +164,7 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
       .executeTakeFirst();
     expect(row?.connections,).toBe(JSON.stringify([otherId,],),);
     // Stored value must round-trip as strings only.
-    const stored = JSON.parse(row?.connections ?? "[]") as unknown[];
-    expect(stored.every((c,) => typeof c === "string",),).toBe(true,);
+    const stored = JSON.parse(row?.connections ?? "[]",) as unknown[];
+    expect(stored.every((c,) => typeof c === "string"),).toBe(true,);
   });
 });
