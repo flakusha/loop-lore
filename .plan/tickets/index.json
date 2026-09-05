@@ -21366,5 +21366,29 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
+  },
+  "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san": {
+    "hash": "1a15200b",
+    "git_issue": "1a15200b",
+    "extid": "BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san",
+    "title": "ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap",
+    "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md",
+    "status": "🔧 Partial (ReDoS done; chunk-boundary open)"
+  },
+  "TASK-FINALIZE-MUST-GATE-POST-REBASE-TREE-BEFORE-MERGE": {
+    "hash": "cf15f9f",
+    "git_issue": "cf15f9f",
+    "extid": "TASK-FINALIZE-MUST-GATE-POST-REBASE-TREE-BEFORE-MERGE",
+    "title": "finalize must hard-fail on non-mergeable or multi-merge dev state",
+    "source": ".plan/tickets/TASK-finalize-must-gate-post-rebase-tree-before-merge.md",
+    "status": "open"
+  },
+  "TASK-RECONCILE-LEFTOVER-FINALIZE-STASH-0-RANDOM-EVENTS-POST-STORE": {
+    "hash": "730954a",
+    "git_issue": "730954a",
+    "extid": "TASK-RECONCILE-LEFTOVER-FINALIZE-STASH-0-RANDOM-EVENTS-POST-STORE",
+    "title": "reconcile leftover finalize stash 0 random events post store",
+    "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md",
+    "status": "open"
   }
 }
