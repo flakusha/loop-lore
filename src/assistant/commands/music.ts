@@ -45,4 +45,4 @@ registerCommand("music", (args,): CommandResult => {
     actionPayload: { prompt, },
     handled: true,
   };
-},);
+}, { available: false, },);

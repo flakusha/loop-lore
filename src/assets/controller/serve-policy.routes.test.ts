@@ -28,6 +28,8 @@ const OWNER = "owner-pol-1";
 const POLICY_SECRET = "policy-test-secret";
 const PNG_ID = "b1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
 const SVG_ID = "c2b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
+const ENCRYPTED_ID = "d3b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
+const PUBLIC_ID = "e4b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
 
 /**
  * @param uploadDir
@@ -88,9 +90,47 @@ describe("asset serve policy (handler-level)", () => {
       { id: SVG_ID as never, visibility: AssetVisibility.Private as never, storage_backend: "local" as never, },
     );
 
+    await insertAssets(
+      db,
+      OWNER,
+      "encrypted.png",
+      "image/png",
+      AssetType.Image,
+      4,
+      `raw/${ENCRYPTED_ID.slice(0, 2,)}/${ENCRYPTED_ID.slice(2, 4,)}/${ENCRYPTED_ID}.png`,
+      {
+        id: ENCRYPTED_ID as never,
+        visibility: AssetVisibility.Private as never,
+        storage_backend: "local" as never,
+        encryption_tier: "standard" as never,
+        encrypted_key_id: "key-1" as never,
+      },
+    );
+    await insertAssets(
+      db,
+      OWNER,
+      "public.png",
+      "image/png",
+      AssetType.Image,
+      4,
+      `raw/${PUBLIC_ID.slice(0, 2,)}/${PUBLIC_ID.slice(2, 4,)}/${PUBLIC_ID}.png`,
+      { id: PUBLIC_ID as never, visibility: AssetVisibility.Public as never, storage_backend: "local" as never, },
+    );
+
     const pngPath = join(uploadDir, "raw", PNG_ID.slice(0, 2,), PNG_ID.slice(2, 4,),);
     mkdirSync(pngPath, { recursive: true, },);
     writeFileSync(join(pngPath, `${PNG_ID}.png`,), "PNGDATA",);
+    const encryptedPath = join(uploadDir, "raw", ENCRYPTED_ID.slice(0, 2,), ENCRYPTED_ID.slice(2, 4,),);
+    mkdirSync(encryptedPath, { recursive: true, },);
+    writeFileSync(join(encryptedPath, `${ENCRYPTED_ID}.png`,), "CIPHERTEXT",);
+    const publicPath = join(uploadDir, "raw", PUBLIC_ID.slice(0, 2,), PUBLIC_ID.slice(2, 4,),);
+    mkdirSync(publicPath, { recursive: true, },);
+    writeFileSync(join(publicPath, `${PUBLIC_ID}.png`,), "PUBLICDATA",);
+
+    // Compressed variant exists for public asset
+    const compressedPath = join(uploadDir, "compressed", PUBLIC_ID.slice(0, 2,), PUBLIC_ID.slice(2, 4,),);
+    mkdirSync(compressedPath, { recursive: true, },);
+    writeFileSync(join(compressedPath, `${PUBLIC_ID}_thumb.webp`,), "WEBPDATA",);
     const svgPath = join(uploadDir, "raw", SVG_ID.slice(0, 2,), SVG_ID.slice(2, 4,),);
     mkdirSync(svgPath, { recursive: true, },);
     writeFileSync(join(svgPath, `${SVG_ID}.svg`,), "<svg xmlns='http://www.w3.org/2000/svg'/>",);
@@ -138,5 +178,23 @@ describe("asset serve policy (handler-level)", () => {
     const res = await app.handle(new Request(url,),);
     expect(res.status,).toBe(200,);
     expect(res.headers.get("cache-control",),).toBe("private, max-age=3600",);
+  });
+
+  test("encrypted asset compressed variant: 400 (never raw ciphertext)", async () => {
+    const res = await app.handle(
+      new Request(`http://local/api/assets/${ENCRYPTED_ID}/thumb`,),
+    );
+    expect(res.status,).toBe(400,);
+    const text = await res.text();
+    expect(text,).toContain("raw endpoint",);
+  });
+
+  test("public asset compressed variant: serves webp when variant exists", async () => {
+    const res = await app.handle(
+      new Request(`http://local/api/assets/${PUBLIC_ID}/thumb`,),
+    );
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("content-type",),).toBe("image/webp",);
+    expect(await res.text(),).toBe("WEBPDATA",);
   });
 });
