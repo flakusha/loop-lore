@@ -18,11 +18,11 @@
  * itself is the source service's responsibility; growth only owns
  * its own log.
  */
-import { jsonStringifyOr, } from "@/utils";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createSkill, } from "../../rpg/skills/service/crud";
 import type { Skill, } from "../../rpg/skills/service/types";
+import { safeJsonStringify, } from "../../utils";
 import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 
 /** Options for `recordSkillAcquisition`. */
@@ -63,18 +63,19 @@ export async function recordSkillAcquisition(
     return { skill, growthEntryId: null, };
   }
 
+  const snapshotResult = safeJsonStringify({
+    name: skill.name,
+    category: skill.category,
+    level: skill.level,
+    proficiency: skill.proficiency,
+  },);
   const entry = await insertGrowthLog(db, {
     actorId: opts.input.actorId,
     axis: "skill",
     eventType: "skill_acquired",
     subjectKind: "character_skill",
     subjectId: skill.id,
-    afterJson: jsonStringifyOr({
-      name: skill.name,
-      category: skill.category,
-      level: skill.level,
-      proficiency: skill.proficiency,
-    },),
+    afterJson: snapshotResult.ok ? snapshotResult.value : "{}",
     reason: opts.reason,
     sourceEventId: opts.sourceEventId ?? null,
   },);

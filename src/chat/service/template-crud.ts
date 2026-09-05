@@ -11,7 +11,7 @@
 import type { Kysely, } from "kysely";
 import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 import type { DB, } from "../../db/schema";
-import { jsonStringifyOr, } from "../../utils";
+import { jsonStringifyOr, safeJsonParse, } from "../../utils";
 import { getChatSetupTemplate, } from "./templates";
 import type { TemplateMutationResult, } from "./types";
 
@@ -65,8 +65,13 @@ export async function createChatSetupTemplate(
       mode: params.mode ?? null,
       turn_strategy: params.turnStrategy ?? null,
       world_id: params.worldId ?? null,
-      gm_config: params.gmConfig ? jsonStringifyOr(params.gmConfig, "{}",) : null,
-      visual_novel: params.renderingOverride === "visual_novel" ? 1 : 0,
+      gm_config: (() => {
+        const base = params.gmConfig ?? {};
+        const merged: Record<string, unknown> = params.renderingOverride !== undefined
+          ? { ...base, renderingOverride: params.renderingOverride, }
+          : { ...base, };
+        return Object.keys(merged,).length > 0 ? jsonStringifyOr(merged, "{}",) : null;
+      })(),
       features: params.features ? jsonStringifyOr(params.features, "[]",) : "[]",
       visibility: params.visibility ?? null,
     },)
@@ -120,19 +125,21 @@ export async function updateChatSetupTemplate(
   if (params.mode !== undefined) { updates.mode = params.mode; }
   if (params.turnStrategy !== undefined) { updates.turn_strategy = params.turnStrategy; }
   if (params.worldId !== undefined) { updates.world_id = params.worldId; }
-  if (params.gmConfig !== undefined) {
-    updates.gm_config = params.gmConfig ? jsonStringifyOr(params.gmConfig, "{}",) : null;
-  }
-  if (params.renderingOverride !== undefined) {
-    updates.visual_novel = params.renderingOverride === "visual_novel"
-      ? 1
-      : 0;
+  if (params.gmConfig !== undefined || params.renderingOverride !== undefined) {
+    const existingGmConfig = existing.gm_config
+      ? safeJsonParse<Record<string, unknown>>(existing.gm_config,)
+      : null;
+    const base = existingGmConfig?.ok ? existingGmConfig.value : {};
+    const merged: Record<string, unknown> = params.gmConfig
+      ? { ...base, ...params.gmConfig, }
+      : { ...base, };
+    if (params.renderingOverride !== undefined) { merged.renderingOverride = params.renderingOverride; }
+    updates.gm_config = Object.keys(merged,).length > 0 ? jsonStringifyOr(merged, "{}",) : null;
   }
   if (params.features !== undefined) {
     updates.features = params.features ? jsonStringifyOr(params.features, "[]",) : "[]";
   }
   if (params.visibility !== undefined) { updates.visibility = params.visibility; }
-  updates.updated_at = new Date().toISOString();
 
   await database
     .updateTable("chat_setup_templates",)

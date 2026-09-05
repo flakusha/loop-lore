@@ -14,10 +14,10 @@
  * allowed only on `social` / `world` categories; `identity`,
  * `personality`, `background` are refused with `integrity_forbidden`.
  */
-import { jsonStringifyOr, } from "@/utils";
 import type { Kysely, } from "kysely";
 import type { TraitCategory, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { safeJsonStringify, } from "../../utils";
 import { getGrowthMode, insertGrowthLog, } from "./growth-service/crud";
 import { GrowthServiceError, } from "./growth-service/types";
 import { checkPersonalityIntegrity, } from "./personality-service/integrity";
@@ -61,14 +61,16 @@ export async function recordTraitDrift(
     );
   }
 
+  const beforeResult = safeJsonStringify({ value: opts.beforeValue, },);
+  const afterResult = safeJsonStringify({ value: opts.afterValue, },);
   const entry = await insertGrowthLog(db, {
     actorId: opts.actorId,
     axis: "trait",
     eventType: "trait_drifted",
     subjectKind: `character_${opts.traitCategory}_trait`,
     subjectId: opts.traitName,
-    beforeJson: jsonStringifyOr({ value: opts.beforeValue, },),
-    afterJson: jsonStringifyOr({ value: opts.afterValue, },),
+    beforeJson: beforeResult.ok ? beforeResult.value : "{}",
+    afterJson: afterResult.ok ? afterResult.value : "{}",
     reason: opts.reason,
     sourceEventId: opts.sourceEventId ?? null,
   },);

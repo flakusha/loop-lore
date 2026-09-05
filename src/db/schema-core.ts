@@ -179,6 +179,21 @@ export interface ChatParticipants {
   initiative: Generated<number>;
 }
 
+export interface ChatSetupTemplates {
+  id: Generated<string>;
+  slug: string;
+  name: string;
+  description: string | null;
+  mode: string | null;
+  turn_strategy: string | null;
+  world_id: string | null;
+  gm_config: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+  features: string | null;
+  visibility: string | null;
+}
+
 export interface Characters {
   id: Generated<string>;
   owner_id: string;

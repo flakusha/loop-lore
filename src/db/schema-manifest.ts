@@ -1446,7 +1446,6 @@ export const SCHEMA = new SchemaManifest()
     turn_strategy: col("text",),
     world_id: col("text",),
     gm_config: col("text",),
-    visual_novel: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     features: col("text", { hasDefault: true, },),
