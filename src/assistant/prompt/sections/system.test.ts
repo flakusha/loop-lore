@@ -9,7 +9,7 @@
  */
 import { describe, expect, test, } from "bun:test";
 import { systemSection, } from "./system";
-
+/** Creates a test Context with optional overrides. */
 function makeCtx(overrides: {
   actorSystemPrompt?: string | null;
   paramsSystemPromptOverride?: string | null;
