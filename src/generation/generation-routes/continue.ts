@@ -2,9 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
+import { checkChatAccess, } from "../../chat/service";
 import { GenerationStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { jsonError, jsonResponse, } from "../../routes/http-utils";
+import { forbiddenResponse, jsonError, jsonResponse, requireUserId, } from "../../routes/http-utils";
 import { getPartialContent, } from "../continuation";
 import type { ContinueResponse, } from "../types";
 
@@ -39,8 +40,15 @@ function validateContinue(
  * and returns attempt metadata for the frontend to send the LLM request.
  * @param body
  * @param database
+ * @param userId
+ * @param userRole
  */
-export async function handleContinueGeneration(body: unknown, database: Kysely<DB>,): Promise<Response> {
+export async function handleContinueGeneration(
+  body: unknown,
+  database: Kysely<DB>,
+  userId?: string,
+  userRole?: string | null,
+): Promise<Response> {
   const db = database;
   const input = validateContinue(body,);
 
@@ -48,11 +56,19 @@ export async function handleContinueGeneration(body: unknown, database: Kysely<D
     return jsonError({ message: "messageId, chatId, and actorId are required", status: 400, },);
   }
 
+  const authUserId = requireUserId({ userId, },);
+  if (typeof authUserId !== "string") { return authUserId; }
+
   const { messageId, chatId, actorId, modelId, provider, } = input;
+
+  // Authorization: only admin, creator, or a participant may continue a
+  // generation in this chat (BUG-generation-control-plane-routes-lack-authorization).
+  const access = await checkChatAccess(db, chatId, authUserId, userRole,);
+  if (!access.ok) { return forbiddenResponse(); }
 
   const lastAttempt = await db
     .selectFrom("generation_attempts",)
-    .select(["id", "status", "model_id", "provider", "step_index", "total_steps",],)
+    .select(["id", "status", "model_id", "provider", "step_index", "total_steps", "chat_id",],)
     .where("parent_message_id", "=", messageId,)
     .where("status", "in", [GenerationStatus.Cancelled, GenerationStatus.Failed,],)
     .orderBy("created_at", "desc",)
@@ -63,6 +79,13 @@ export async function handleContinueGeneration(body: unknown, database: Kysely<D
       message: "No cancelled/failed generation attempt found for this message",
       status: 404,
     },);
+  }
+
+  // Row-level check: the attempt must belong to the chat the caller named.
+  // Otherwise a participant of chat A could read chat B's partial content
+  // by passing a foreign messageId with their own chatId (IDOR).
+  if (lastAttempt.chat_id !== chatId) {
+    return jsonError({ message: "Generation attempt not found", status: 404, },);
   }
 
   const attempt = lastAttempt;
