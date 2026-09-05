@@ -12770,6 +12770,10 @@
   "src/generation/auto-gen/auto-generation.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-triggerautogeneration-catch-path-untested.md"
     }
   ],
@@ -12924,6 +12928,10 @@
   "src/generation/auto-gen/post-store.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-post-store-test-ts-32-imports-missing-completegenerationopts.md"
     }
   ],
@@ -12931,6 +12939,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-lifecycle-moderation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md"
     },
     {
       "kind": "ticket",
@@ -13274,6 +13286,10 @@
     }
   ],
   "src/generation/generate-route/tool-execution.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-plugin-tool-gating-empty-role-bypass.md"
@@ -16957,6 +16973,12 @@
       "source": ".plan/epics/epic-narration-actor-separation.md"
     }
   ],
+  "src/regex/html-sanitize.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
+    }
+  ],
   "src/regex/html-sanitize.ts": [
     {
       "kind": "ticket",
@@ -19569,6 +19591,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-queue.md"
+    }
+  ],
+  "src/routes/requests/status.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-request-status-endpoint-fail-open-when-row-userid-is-nul.md"
     }
   ],
   "src/routes/requests/status.ts": [
