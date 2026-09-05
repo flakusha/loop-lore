@@ -27,7 +27,6 @@ export {
   listActorKeys,
   loadActorKeys,
   revokeActorKey,
-  rotateActorKey,
 } from "./actor-keys";
 export type { ActorKeyData, ActorKeyMeta, } from "./actor-keys";
 export {
@@ -55,7 +54,7 @@ export type { ChatKey, } from "./chat-keys";
 export { distributeKeysOnJoin, resolveChatKey, rotateKeyOnLeave, } from "./key-distribution";
 export {
   findExpiredKeys,
-  rotateActorKeyAndReEncrypt,
+  rotateActorKey,
   runAutoRotation,
   startAutoRotationTimer,
 } from "./key-rotation";

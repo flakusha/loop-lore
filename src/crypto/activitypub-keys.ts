@@ -69,27 +69,31 @@ export async function generateActivityPubKey(
   const keyId = `ap-key-${actorId}-${Date.now()}`;
   const now = new Date().toISOString();
 
-  // Expire any existing active keys for this actor.
-  await database
-    .updateTable("activitypub_actor_keys",)
-    .set({ status: "rotated", rotated_at: now, },)
-    .where("actor_id", "=", actorId,)
-    .where("status", "=", "active",)
-    .execute();
-
   const id = crypto.randomUUID();
-  await database
-    .insertInto("activitypub_actor_keys",)
-    .values({
-      id,
-      actor_id: actorId,
-      key_id: keyId,
-      public_jwk: publicJwkResult.value,
-      encrypted_private_jwk: Buffer.from(encryptedPrivate,).toString("base64",),
-      status: "active",
-      created_at: now,
-    },)
-    .execute();
+
+  // Wrap expire + insert in a single transaction to prevent
+  // insert failure from leaving all keys rotated with no active key.
+  await database.transaction().execute(async (trx,) => {
+    await trx
+      .updateTable("activitypub_actor_keys",)
+      .set({ status: "rotated", rotated_at: now, },)
+      .where("actor_id", "=", actorId,)
+      .where("status", "=", "active",)
+      .execute();
+
+    await trx
+      .insertInto("activitypub_actor_keys",)
+      .values({
+        id,
+        actor_id: actorId,
+        key_id: keyId,
+        public_jwk: publicJwkResult.value,
+        encrypted_private_jwk: Buffer.from(encryptedPrivate,).toString("base64",),
+        status: "active",
+        created_at: now,
+      },)
+      .execute();
+  },);
 
   return {
     key: {

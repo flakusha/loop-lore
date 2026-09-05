@@ -107,8 +107,30 @@ export async function rotateKeyOnLeave(
   );
   const newChatKey: ChatKey = { key: newKey, keyId: newId, rawKey: newRawKey, };
 
-  // Wrap re-encryption + key swap in a single transaction.
+  // Re-encrypt asset files BEFORE opening the transaction.
+  // Asset files are written via writeFileSync — if the DB txn rolls back
+  // after asset overwrite, files are encrypted under new key but DB reverts
+  // to old key, making assets permanently undecryptable.
+  const assetResult = await reEncryptChatAssets(
+    database,
+    chatId,
+    process.env["UPLOAD_DIR"] ?? "./uploads",
+    { algorithm: "zstd", threshold: 1024, },
+    oldChatKey,
+    newChatKey,
+  );
+
+  if (assetResult.failures.length > 0) {
+    throw new Error(
+      `rotateKeyOnLeave: ${assetResult.failures.length} asset(s) failed to re-encrypt: ${
+        assetResult.failures[0]!.reason
+      }`,
+    );
+  }
+
+  // Wrap message re-encryption + key swap in a single transaction.
   // On any failure, the entire rotation is rolled back — no mixed key state.
+  // Asset files are already written and are independent of the DB transaction.
   await database.transaction().execute(async (trx,) => {
     // Re-encrypt all messages (visible + non-visible) OLD→NEW.
     const { reEncrypted, failures, } = await reEncryptWithKeys(
@@ -122,25 +144,6 @@ export async function rotateKeyOnLeave(
 
     if (failures.length > 0) {
       throw new Error(`rotateKeyOnLeave: ${failures.length} message(s) failed to re-encrypt: ${failures[0]!.reason}`,);
-    }
-
-    // Re-encrypt encrypted asset blobs OLD→NEW.
-    // Asset subkeys are derived from the chat key, so they must be rotated too.
-    const assetResult = await reEncryptChatAssets(
-      trx,
-      chatId,
-      process.env["UPLOAD_DIR"] ?? "./uploads",
-      { algorithm: "zstd", threshold: 1024, },
-      oldChatKey,
-      newChatKey,
-    );
-
-    if (assetResult.failures.length > 0) {
-      throw new Error(
-        `rotateKeyOnLeave: ${assetResult.failures.length} asset(s) failed to re-encrypt: ${
-          assetResult.failures[0]!.reason
-        }`,
-      );
     }
 
     // Swap the chat key row ONLY after all re-encryption succeeds.

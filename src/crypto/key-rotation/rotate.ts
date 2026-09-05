@@ -14,7 +14,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { rotateActorKey, } from "../actor-keys";
+import { listActorKeys, rotateActorKey as rotateActorKeyCrud, } from "../actor-keys";
 import { log, } from "./log";
 import type { RotationResult, } from "./types";
 
@@ -29,7 +29,7 @@ import type { RotationResult, } from "./types";
  * @param actorId
  * @param smk
  */
-export async function rotateActorKeyAndReEncrypt(
+export async function rotateActorKey(
   database: Kysely<DB>,
   actorId: string,
   smk: CryptoKey,
@@ -43,16 +43,21 @@ export async function rotateActorKeyAndReEncrypt(
     .where("actor_id", "=", actorId,)
     .execute();
 
+  // Get the old key id before rotation.
+  const oldKeys = await listActorKeys(database, actorId,);
+  const oldKeyId = oldKeys.find((k,) => k.status === "primary" || k.status === "active")?.id ?? "unknown";
+
   // Rotate the actor key (atomically: expire old + create new).
-  const newKeyId = await rotateActorKey({ database, actorId, smk, },);
+  const newKeyId = await rotateActorKeyCrud({ database, actorId, smk, },);
 
   log2.info(
-    `Rotated key for actor ${actorId}: new=${newKeyId}; ${participations.length} chats affected (no message re-encrypt needed — stable per-chat keys)`,
+    "Rotated key for actor " + actorId + ": old=" + oldKeyId + " new=" + newKeyId + "; " + participations.length +
+      " chats affected (no message re-encrypt needed — stable per-chat keys)",
   );
 
   return {
     actorId,
-    oldKeyId: "rotated",
+    oldKeyId,
     newKeyId,
     chatsAffected: participations.length,
     messagesReEncrypted: 0,
