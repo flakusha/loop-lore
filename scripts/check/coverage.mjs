@@ -1,9 +1,13 @@
 // Coverage reporter: parse .tmp/coverage/lcov.info, emit per-module line %
 // Usage: bun run scripts/check/coverage.mjs [--floor 40]
 const fs = require("fs");
-const floor = parseInt(process.argv.find((a) => a.startsWith("--floor="))?.split("=")[1], 10) || 40;
+const lcovPath = ".tmp/coverage/lcov.info";
+if (!fs.existsSync(lcovPath)) {
+  console.error("lcov not found at " + lcovPath + " — run 'bun test --coverage' first");
+  process.exit(1);
+}
 
-const lcov = fs.readFileSync(".tmp/coverage/lcov.info", "utf8");
+const lcov = fs.readFileSync(lcovPath, "utf8");
 const records = lcov.split("end_of_record").filter(Boolean);
 const modules = {};
 
