@@ -15,7 +15,8 @@
  * to expand when the feature grows.
  *
  * See .plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md.
-import type { DB, } from "../../db/schema";
+ */
+import type { Kysely, } from "kysely";
 /** Error raised when federation consent requirements are not met. */
 export class FederationConsentError extends Error {
   constructor(
