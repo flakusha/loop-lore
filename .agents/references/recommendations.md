@@ -57,6 +57,28 @@ Apply `StateDef` + `StateMachine` to any entity with lifecycle states:
 - Kysely Migrator for schema changes; migration = source of truth
 - Test assertions against raw SQL inserts to catch migration drift
 
+### Schema changes (migration workflow)
+
+- Migrations are modular parts in `src/db/migrations/parts/NNN_name.ts`, each
+  exporting `up(db)`/`down(db)`; `001_init.ts` orchestrates them (up in part
+  order, down in reverse). Add a part following the existing numbering and
+  wire it into `001_init.ts`.
+- **Ask the user first: append a new part vs. fold into an existing part.**
+  Shipped parts are append-only — extending one changes already-run state.
+- Prefer `boolToEnum`/`batchBoolToEnum` (from `src/db/migration-helpers.ts`)
+  for boolean → text-enum conversions over raw `ALTER TABLE`; they are
+  transactional and log non-0/1 values instead of coercing silently.
+- One `ADD COLUMN` / `DROP COLUMN` per `alterTable` statement (SQLite
+  limitation).
+- When a new text-enum column needs a typed generated schema, map it in
+  `src/db/column-types.ts` (`COLUMN_TYPE_OVERRIDES`).
+- After any migration add/edit: `bun run db:sync-types && bun run
+  db:sync-manifest`, then `bun run schemas:check` (regenerates
+  `schema-*.ts`, `schema.ts`, `schema-manifest.ts`, `insert-helpers.ts`,
+  `db-schemas.ts` — never hand-edit these).
+- Verify `bun test src/db/migrations.test.ts src/db/migration-roundtrip.test.ts`
+  (full chain + up→down→up roundtrip) before declaring done.
+
 ## Discriminated Unions for State Modeling
 
 Use tagged unions instead of optional properties when an entity can be in one of several distinct states:
