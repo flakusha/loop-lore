@@ -11,6 +11,8 @@
 **Epic:** epic-chat-lifecycle-moderation
 **Files:** src/routes/messages/update.ts:31-56; src/db/migrations/034_message_search_fts.ts; src/routes/messages/post.ts
 
+> **DB Migration Strategy**: Before implementation, decide: append new migration part vs. fold into existing part. The hard-delete path manipulates existing `messages` columns and the `messages_fts` index (built by `034_message_search_fts.ts`); do not modify that shipped part in place — if a schema change is needed (e.g. an FTS trigger rebuild or purge-related column), append a new part wired into `001_init.ts`. See `src/db/migrations/README.md` (append-only policy). After migration edits: `bun run db:sync-types && bun run db:sync-manifest && bun run schemas:check`.
+
 ## Issue
 
 The endpoint uses `DELETE` HTTP verb but only sets `visibility='hidden_by_user'`. Two consequences:
