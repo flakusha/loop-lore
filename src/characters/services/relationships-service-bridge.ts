@@ -93,8 +93,8 @@ export async function recordRelationshipShift(
     eventType: "relationship_shifted",
     subjectKind: "character_relationship",
     subjectId: relRow.id,
-    beforeJson: safeJsonStringify(opts.before,),
-    afterJson: safeJsonStringify(opts.after,),
+    beforeJson: jsonStringifyOr(opts.before,),
+    afterJson: jsonStringifyOr(opts.after,),
     reason: opts.reason,
     sourceEventId: opts.sourceEventId ?? null,
   },);
