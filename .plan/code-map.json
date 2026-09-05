@@ -12901,6 +12901,12 @@
       "source": ".plan/tickets/TASK-inject-runcontenthooks-into-gendeps-for-testable-story-mode-.md"
     }
   ],
+  "src/generation/auto-gen/fire-random-event.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md"
+    }
+  ],
   "src/generation/auto-gen/group-cascade.ts": [
     {
       "kind": "ticket",
@@ -12975,6 +12981,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-reconcile-leftover-finalize-stash-0-random-events-post-store.md"
     }
   ],
   "src/generation/auto-gen/prepare-generation.ts": [

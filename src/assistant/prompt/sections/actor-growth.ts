@@ -37,11 +37,12 @@ export const actorGrowthSection: SectionBuilder = {
   build: async (ctx,) => {
     try {
       const svc = characterGrowthService(ctx.db,);
-      const [mode, arc, log,] = await Promise.all([
-        svc.getGrowthMode(ctx.actor.id,),
-        svc.getArc(ctx.actor.id,),
-        svc.listGrowthLog(ctx.actor.id, { limit: 5, includePending: false, },),
-      ],);
+      // Sequential awaits: eslint bans Promise.all (unhandled-rejection risk).
+      // These reads are required for the section to render meaningfully, so a
+      // partial-failure mode (allSettled) buys nothing — fall through to [].
+      const mode = await svc.getGrowthMode(ctx.actor.id,);
+      const arc = await svc.getArc(ctx.actor.id,);
+      const log = await svc.listGrowthLog(ctx.actor.id, { limit: 5, includePending: false, },);
 
       if (!arc && log.length === 0) {
         // No growth state yet — emit nothing rather than padding the
