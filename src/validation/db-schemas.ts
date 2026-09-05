@@ -890,6 +890,31 @@ export const AdminCharacterOverridesSchema = t.Object({
   expires_at: t.Optional(t.String(),),
 },);
 
+// ── character_arc ────────────────────────────────────────────
+export const CharacterArcSchema = t.Object({
+  actor_id: t.String(),
+  current_stage: t.String(),
+  updated_at: t.String(),
+  stage_description: t.Optional(t.String(),),
+},);
+
+// ── growth_log ────────────────────────────────────────────
+export const GrowthLogSchema = t.Object({
+  actor_id: t.String(),
+  axis: t.String(),
+  event_type: t.String(),
+  recorded_at: t.String(),
+  status: t.Optional(t.String(),),
+  subject_kind: t.Optional(t.String(),),
+  subject_id: t.Optional(t.String(),),
+  before_json: t.Optional(t.String(),),
+  after_json: t.Optional(t.String(),),
+  reason: t.Optional(t.String(),),
+  source_event_id: t.Optional(t.String(),),
+  confirmed_at: t.Optional(t.String(),),
+  confirmed_by: t.Optional(t.String(),),
+},);
+
 // ── character_arousal ────────────────────────────────────────────
 export const CharacterArousalSchema = t.Object({
   actor_id: t.String(),
@@ -1382,6 +1407,18 @@ export const ChatsSchema = t.Object({
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
   custom_instructions: t.Optional(t.String(),),
+},);
+
+// ── chat_random_events ────────────────────────────────────────────
+export const ChatRandomEventsSchema = t.Object({
+  chat_id: t.String(),
+  event_id: t.String(),
+  category: t.String(),
+  content: t.String(),
+  token_count: t.Number(),
+  fired_at: t.Number(),
+  expires_at: t.Number(),
+  fired_count: t.Optional(t.Number(),),
 },);
 
 // ── group_initiatives ────────────────────────────────────────────
@@ -2227,29 +2264,4 @@ export const E2eSkippedMessageKeysSchema = t.Object({
   chain_index: t.Number(),
   message_key: t.String(),
   created_at: t.Optional(t.String(),),
-},);
-
-// ── character_arc ────────────────────────────────────────────
-export const CharacterArcSchema = t.Object({
-  actor_id: t.String(),
-  current_stage: t.String(),
-  updated_at: t.String(),
-  stage_description: t.Optional(t.String(),),
-},);
-
-// ── growth_log ────────────────────────────────────────────
-export const GrowthLogSchema = t.Object({
-  actor_id: t.String(),
-  axis: t.String(),
-  event_type: t.String(),
-  recorded_at: t.String(),
-  status: t.Optional(t.String(),),
-  subject_kind: t.Optional(t.String(),),
-  subject_id: t.Optional(t.String(),),
-  before_json: t.Optional(t.String(),),
-  after_json: t.Optional(t.String(),),
-  reason: t.Optional(t.String(),),
-  source_event_id: t.Optional(t.String(),),
-  confirmed_at: t.Optional(t.String(),),
-  confirmed_by: t.Optional(t.String(),),
 },);
