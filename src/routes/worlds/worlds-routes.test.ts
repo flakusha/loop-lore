@@ -16,8 +16,8 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { worldRoutes, } from "./worlds-routes";
 import type { HandleOpts, } from "./types";
+import { worldRoutes, } from "./worlds-routes";
 
 type TestDb = Awaited<ReturnType<typeof createTestDb>>;
 
