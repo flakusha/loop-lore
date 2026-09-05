@@ -1415,6 +1415,17 @@ export const SCHEMA = new SchemaManifest()
     pinned_by: col("text", { notNull: true, },),
     pinned_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("chat_random_events", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    event_id: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, },),
+    content: col("text", { notNull: true, },),
+    token_count: col("integer", { notNull: true, },),
+    fired_at: col("integer", { notNull: true, },),
+    expires_at: col("integer", { notNull: true, },),
+    fired_count: col("integer", { notNull: true, hasDefault: true, },),
+  },)
   .table("chat_sections", {
     id: col("text", { primaryKey: true, },),
     chat_id: col("text", { notNull: true, },),

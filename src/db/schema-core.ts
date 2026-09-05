@@ -81,40 +81,8 @@ export interface Personas {
   model: string | null;
 }
 
-export interface CharacterArc {
-  id: Generated<string>;
-  actor_id: string;
-  current_stage: string;
-  stage_description: string | null;
-  updated_at: string;
-}
-
-export interface GrowthLog {
-  id: Generated<string>;
-  actor_id: string;
-  axis: string;
-  event_type: string;
-  status: Generated<string>;
-  subject_kind: string | null;
-  subject_id: string | null;
-  before_json: string | null;
-  after_json: string | null;
-  reason: Generated<string>;
-  source_event_id: string | null;
-  recorded_at: string;
-  confirmed_at: string | null;
-  confirmed_by: string | null;
-}
-export interface GroupInitiatives {
-  chat_id: string;
-  scene_id: string;
-  actor_id: string;
-  score: number;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
-
-
+// ── chat_mentions ────────────────────────────────────────────
+export interface ChatMentions {
   id: Generated<string>;
   message_id: string;
   actor_id: string;
@@ -265,10 +233,24 @@ export interface SystemConfig {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
-
-
+// ── log_entries ────────────────────────────────────────────
+export interface LogEntries {
   id: Generated<string>;
-  actor_id: string;
+  level: Generated<number>;
+  timestamp: number;
+  time: string;
+  message: string;
+  module: string | null;
+  user_id: string | null;
+  session_id: string | null;
+  request_id: string | null;
+  meta: string | null;
+  event_type: string | null;
+  entity_type: string | null;
+  entity_id: string | null;
+  action: string | null;
+  created_at: Generated<string>;
+}
 
 // ── plugin_state ────────────────────────────────────────────
 export interface PluginState {
@@ -394,8 +376,35 @@ export interface MessageTranslations {
   updated_at: string | null;
 }
 
-// ── vn_choices ────────────────────────────────────────────
-export interface VnChoices {
+// ── character_arc ────────────────────────────────────────────
+export interface CharacterArc {
+  id: Generated<string>;
+  actor_id: string;
+  current_stage: string;
+  stage_description: string | null;
+  updated_at: string;
+}
+
+// ── growth_log ────────────────────────────────────────────
+export interface GrowthLog {
+  id: Generated<string>;
+  actor_id: string;
+  axis: string;
+  event_type: string;
+  status: Generated<string>;
+  subject_kind: string | null;
+  subject_id: string | null;
+  before_json: string | null;
+  after_json: string | null;
+  reason: Generated<string>;
+  source_event_id: string | null;
+  recorded_at: string;
+  confirmed_at: string | null;
+  confirmed_by: string | null;
+}
+
+// ── character_internal_traits ────────────────────────────────────────────
+export interface CharacterInternalTraits {
   id: Generated<string>;
   chat_id: string;
   scene_index: number;
@@ -600,19 +609,25 @@ export interface WorldInvites {
   status: Generated<InviteStatus>;
 }
 
-// ── achievements ────────────────────────────────────────────
-export interface Achievements {
+// ── chat_random_events ────────────────────────────────────────────
+export interface ChatRandomEvents {
   id: Generated<string>;
-  name: string;
-  description: string;
+  chat_id: string;
+  event_id: string;
   category: string;
-  tier: string;
-  icon: string | null;
-  is_secret: Generated<number>;
-  is_hidden: Generated<number>;
-  unlock_condition: Generated<string>;
-  rewards: Generated<string>;
-  metadata: Generated<string>;
+  content: string;
+  token_count: number;
+  fired_at: number;
+  expires_at: number;
+  fired_count: Generated<number>;
+}
+
+// ── group_initiatives ────────────────────────────────────────────
+export interface GroupInitiatives {
+  chat_id: string;
+  scene_id: string;
+  actor_id: string;
+  score: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -902,47 +917,4 @@ export interface E2eSkippedMessageKeys {
   chain_index: number;
   message_key: string;
   created_at: Generated<string>;
-}
-
-// ── request_results ────────────────────────────────────────────
-export interface RequestResults {
-  id: Generated<string>;
-  method: string;
-  route_pattern: string;
-  user_id: string | null;
-  status: string;
-  progress: string | null;
-  response_status: number | null;
-  response_headers: string | null;
-  response_body: string | null;
-  error: string | null;
-  started_at: string;
-  completed_at: string | null;
-  offloaded_at: string | null;
-  offload_path: string | null;
-}
-
-// ── activitypub_actor_keys ────────────────────────────────────────────
-export interface ActivitypubActorKeys {
-  id: Generated<string>;
-  actor_id: string;
-  key_id: string;
-  public_jwk: string;
-  encrypted_private_jwk: string;
-  status: Generated<string>;
-  rotated_at: string | null;
-  created_at: string;
-  expires_at: string | null;
-}
-
-// ── nsfw_consent_state ────────────────────────────────────────────
-export interface NsfwConsentState {
-  id: Generated<string>;
-  user_id: string;
-  chat_id: string;
-  action: string;
-  scope: Generated<string>;
-  reason: string | null;
-  created_at: string;
-  revoked_at: string | null;
 }
