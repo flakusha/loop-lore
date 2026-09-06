@@ -9,6 +9,17 @@
  * BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle:
  * the attempt must be persisted as Cancelled (never Failed), released from
  * in-memory tracking, and buffered as done so reconnects resolve.
+ *
+ * Parallel-safety contract:
+ * - Each test owns a UNIQUE chatId (`${Date.now()}-${Math.random()}`) and a
+ *   fresh in-memory SQLite DB via createTestDb() in beforeEach.
+ * - Shared module-level maps (`activeGenerations`, `chatToAttempt`) are
+ *   cleared in beforeEach and afterEach; getOrCreateBuffer(chatId) is
+ *   per-chat and removeBuffer(chatId) tears it down in each test.
+ * - No fixed file paths, no ports, no wall-clock timers; the disconnect
+ *   test yields via Promise.resolve() polling, never sleeps.
+ * - afterEach closes the SQLite handle, so a failed test still releases
+ *   its DB before the next file worker starts.
  */
 import { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, expect, test, } from "bun:test";
