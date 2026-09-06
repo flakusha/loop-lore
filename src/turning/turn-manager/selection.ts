@@ -29,17 +29,24 @@ export async function selectNextActor(
 
   if (participants.length === 0) { return null; }
 
-  host.state.currentTurn++;
-
+  // Selection happens inside persistState's mutation closure: on a CAS
+  // conflict, the closure re-runs against the freshest committed state, so
+  // currentTurn increments relative to (and currentActorId reads from) the
+  // concurrent writer's values instead of a stale snapshot. Blind
+  // read-modify-write would clobber the other writer's turn (BUG-turn-state).
   const selectFn = STRATEGY_MAP[resolvedStrategy];
-  const selectedId = selectFn(
-    participants,
-    host.state.currentActorId,
-    host.state.currentTurn,
-    host.state.turnOrder,
-    context,
-  );
-  host.state.currentActorId = selectedId;
+  let selectedId: string | null = null;
+  await persistState(host, (state,) => {
+    state.currentTurn = state.currentTurn + 1;
+    selectedId = selectFn(
+      participants,
+      state.currentActorId,
+      state.currentTurn,
+      state.turnOrder,
+      context,
+    );
+    state.currentActorId = selectedId;
+  },);
   return selectedId;
 }
 
@@ -49,13 +56,16 @@ export async function selectNextActor(
  */
 export async function recordTurn(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
-  host.state.lastTurnCompletedAt = new Date().toISOString();
+  const completedAt = new Date().toISOString();
+  host.state.lastTurnCompletedAt = completedAt;
   // Initiative strategy: spending a turn consumes one initiative point, so an
   // actor can't dominate every turn (docs/frontend/chat/group-chat.md Step 2).
   if (host.state.strategy === TurnStrategy.Initiative && host.state.currentActorId) {
     await decrementInitiative(host, host.state.currentActorId,);
   }
-  await persistState(host,);
+  await persistState(host, (state,) => {
+    state.lastTurnCompletedAt = completedAt;
+  },);
 }
 
 /**
