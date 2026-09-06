@@ -313,3 +313,93 @@ test("streamToClient cancel path persists real cancel detail to the attempt reco
 
   removeBuffer(chatId,);
 });
+
+test("client disconnect persists Cancelled with the AbortError detail", async () => {
+  // Client-disconnect seam: streamToClient.cancel() aborts its internal
+  // provider controller (no reason) → provider throws AbortError → catch
+  // classifies cancel and persists the AbortError message as detail
+  // (never the generic wire "Generation failed").
+  const chatId = `chat-disc-${Date.now()}-${Math.random()}`;
+  const { attemptId, } = await startAttempt(chatId,);
+
+  let firstChunk = false;
+  let sawAbort = false;
+  const provider: LLMProvider = {
+    capabilities: { streaming: true, },
+    complete: async () => { throw new Error("unused",); },
+    stream: async (req: ProviderRequest, handler: Parameters<NonNullable<LLMProvider["stream"]>>[1],) => {
+      if (!firstChunk) {
+        firstChunk = true;
+        handler({ type: "content", content: "partial ", },);
+      }
+      const sig = req.signal;
+      await new Promise<void>((resolve,) => {
+        if (!sig) { resolve(); return; }
+        if (sig.aborted) { resolve(); return; }
+        sig.addEventListener("abort", () => resolve(), { once: true, },);
+      },);
+      sawAbort = true;
+      // The stream's own controller aborted with no reason → providers
+      // typically throw AbortError; the catch classifies it as cancel.
+      throw new DOMException("The operation was aborted", "AbortError",);
+    },
+    healthCheck: async () => ({ status: "ok" as const, }),
+    listModels: async () => [],
+  } as unknown as LLMProvider;
+
+  const response = streamToClient({
+    input: {
+      chatId,
+      actorId: "actor-ai-1",
+      parentMessageId: `msg-${chatId}`,
+      continuationNumber: 0,
+    } as unknown as Parameters<typeof streamToClient>[0]["input"],
+    database: db,
+    messages: [],
+    cfg: {} as Config,
+    userId,
+    attemptId,
+    modelId: "m",
+    providerName: "p",
+    providerReq: { model: "m", params: { stream: true, }, signal: new AbortController().signal, } as ProviderRequest,
+    failoverList: [{ name: "p", provider, },],
+  },);
+
+  const reader = response.body!.getReader();
+  // Client disconnect: cancel the stream once the first chunk landed.
+  const { promise: firstChunkSeen, resolve: markFirstChunk, } = Promise.withResolvers<void>();
+  void (async () => {
+    for (;;) {
+      const { done, value, } = await reader.read();
+      if (done) { break; }
+      if (value) { markFirstChunk(); break; }
+    }
+  })();
+  await firstChunkSeen;
+  await reader.cancel().catch(() => {});
+  // The provider throws post-abort; the catch runs streamCancelCleanup which
+  // persists Cancelled. Wait for that write without a real-time sleep: poll
+  // the row's status transition.
+  let row: { status: string; cancel_reason: string; cancel_source: string; cancel_reason_detail: string } | undefined;
+  for (let i = 0; i < 100; i++) {
+    const candidate = await db
+      .selectFrom("generation_attempts",)
+      .select(["status", "cancel_reason", "cancel_source", "cancel_reason_detail",],)
+      .where("id", "=", attemptId,)
+      .executeTakeFirst();
+    if (candidate?.status === GenerationStatus.Cancelled) {
+      row = candidate;
+      break;
+    }
+    await Promise.resolve(); // yield to the event loop; no wall-clock timer
+  }
+
+  expect(sawAbort,).toBe(true,);
+  expect(row,).toBeDefined();
+  expect(row!.cancel_reason,).toBe(CancelReason.UserCancel,);
+  expect(row!.cancel_source,).toBe(CancelSource.User,);
+  expect(row!.cancel_reason_detail,).toBe("The operation was aborted",);
+  expect(row!.cancel_reason_detail,).not.toBe("Generation failed",);
+
+  removeBuffer(chatId,);
+});
