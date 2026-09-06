@@ -1,6 +1,6 @@
 # BUG: untrusted new Date() parse without Invalid Date guard
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Small
 **Epic:** epic-code-quality
@@ -20,6 +20,10 @@
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Fixed in bugfix-round-7. The age-gate site (`src/age-gate/service.ts`) was already NaN-guarded; the remaining site was NSFW: `calculateAge` in `src/middleware/nsfw-gate/constants.ts` now returns `null` on Invalid Date, and `src/middleware/nsfw-gate/access.ts` denies NSFW with `invalid_birth_date` instead of letting `NaN < minAge === false` allow access. Regression tests in `src/middleware/nsfw-gate/age.test.ts`.
