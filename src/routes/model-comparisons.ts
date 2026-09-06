@@ -79,6 +79,19 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
         return jsonError({ message: "confidence must be a number between 0 and 1", status: 400, },);
       }
 
+      // Verify the message belongs to a chat owned by the authenticated user;
+      // otherwise anyone could forge analytics rows for arbitrary ids.
+      const owned = await database
+        .selectFrom("messages")
+        .innerJoin("chats", "chats.id", "messages.chat_id")
+        .select("messages.id")
+        .where("messages.id", "=", messageId)
+        .where("chats.created_by", "=", userId)
+        .executeTakeFirst();
+      if (!owned) {
+        return jsonError({ message: "messageId does not belong to the authenticated user", status: 400, },);
+      }
+
       const id = uid();
       const now = new Date().toISOString();
 
@@ -106,7 +119,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
       }, 201,);
     }, {
       response: {
-        200: SuccessResponse,
+        201: SuccessResponse,
         401: ErrorResponse,
       },
       detail: {
@@ -125,6 +138,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
 
       const rows = await database
         .selectFrom("model_comparisons",)
+        .where("user_id", "=", userId)
         .select([
           "reference_model",
           sql<number>`count(*)`.as("totalComparisons",),
@@ -143,7 +157,8 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
         betterCount: r.betterCount,
         worseCount: r.worseCount,
         sameCount: r.sameCount,
-        avgConfidence: Math.round(r.avgConfidence * 100,) / 100,
+        avgConfidence:
+          r.avgConfidence == null ? null : Math.round(r.avgConfidence * 100,) / 100,
       }),);
 
       return jsonResponse({ leaderboard, },);
@@ -172,6 +187,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts, prefix = "/api
       const rows = await database
         .selectFrom("model_comparisons",)
         .selectAll()
+        .where("user_id", "=", userId)
         .orderBy("created_at", "desc",)
         .limit(limit,)
         .execute();
