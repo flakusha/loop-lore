@@ -67,7 +67,7 @@ beforeEach(async () => {
     import_spec: "raw",
     data_source_format: "json",
     data_raw: null,
-  },);
+  } as never,);
 },);
 
 afterEach(() => {
@@ -92,7 +92,7 @@ async function startAttempt(chatId: string,): Promise<{ attemptId: string; abort
     talkativity: 5,
   } as never,).execute();
   const parentMessageId = `msg-${chatId}`;
-  await insertMessages(db, chatId, "actor-ai-1", "user", "hi", { id: parentMessageId, },);
+  await insertMessages(db, chatId, "actor-ai-1", "user", "hi", { id: parentMessageId, } as never,);
 
   return startGenerationTracking({
     options: {
