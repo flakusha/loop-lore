@@ -16,6 +16,7 @@ describe("logger", () => {
 
   test("getLogger returns the global root logger", () => {
     const global = createLogger({ level: "info" });
+    setGlobalLogger(global);
     expect(getLogger()).toBe(global);
   });
 

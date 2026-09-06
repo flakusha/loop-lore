@@ -7,7 +7,7 @@ describe("test-utils mock-provider", () => {
     expect(typeof MockLLMProvider).toBe("function");
   });
   test("MockLLMProvider can be instantiated", () => {
-    const instance = new MockLLMProvider({} as any);
+    const instance = new MockLLMProvider();
     expect(instance).toBeDefined();
   });
 });

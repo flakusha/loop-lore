@@ -186,7 +186,7 @@ describe("AsyncLogQueueBase", () => {
     // Enqueue again should add warning entry
     queue.enqueue(entry,);
     expect(queue["buffer"].length).toBe(2,); // warning + actual entry
-    expect(queue["buffer"][0].message).toContain("dropped",);
+    expect(queue["buffer"][0]?.message,).toContain("dropped",);
     expect(queue["droppedCount"]).toBe(0,);
 
     queue.stop();

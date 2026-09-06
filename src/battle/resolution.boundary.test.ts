@@ -2,13 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
-createLogger();
 import {
   calculateDamage,
   makeAttackRoll,
   makeSavingThrow,
   rollDice,
 } from "./index";
+
+createLogger();
 
 describe("battle resolution boundary", () => {
   test("makeAttackRoll accepts empty modifiers and no target AC edge", () => {

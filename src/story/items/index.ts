@@ -28,7 +28,7 @@ import {
   placeInLocation as placeInLocationDispatch,
   transfer as transferDispatch,
 } from "./instances";
-import type { ItemDefinition, ItemState, TransferResult, } from "./types";
+import type { ItemDefinition, ItemInstance, ItemState, TransferResult, } from "./types";
 
 export type {
   ItemDefinition,
