@@ -116,6 +116,47 @@ describe("censorMeta", () => {
     expect(result!.Authorization,).toBe("[REDACTED]",);
   });
 
+  test("censors set-cookie / session / bearer / auth glob keys", () => {
+    const result = censorMeta({
+      meta: {
+        "set-cookie": "session=abc",
+        session_id: "s-123",
+        bearer_token: "bt-456",
+        auth_header: "Bearer xxx",
+      },
+    },);
+    expect(result!["set-cookie"],).toBe("[REDACTED]",);
+    expect(result!.session_id,).toBe("[REDACTED]",);
+    expect(result!.bearer_token,).toBe("[REDACTED]",);
+    expect(result!.auth_header,).toBe("[REDACTED]",);
+  });
+
+  test("redacts whole nested subtree at depth cutoff (no secret leak)", () => {
+    const deep = {
+      level1: {
+        level2: {
+          level3: {
+            authToken: "leaked-secret",
+            keep: "visible",
+          },
+        },
+      },
+    };
+    const result = censorMeta({ meta: deep, maxDepth: 2, },);
+    const l1 = result!.level1 as Record<string, unknown>;
+    const l2 = l1.level2 as Record<string, unknown>;
+    // Past maxDepth=2 the subtree is replaced with the placeholder, never returned raw.
+    expect(l2.level3,).toBe("[REDACTED]",);
+  });
+
+  test("does not redact subtree when within maxDepth", () => {
+    const deep = { a: { b: { name: "ok", }, }, };
+    const result = censorMeta({ meta: deep, maxDepth: 2, },);
+    const a = result!.a as Record<string, unknown>;
+    const b = a.b as Record<string, unknown>;
+    expect(b.name,).toBe("ok",);
+  });
+
   test("handles empty object", () => {
     const result = censorMeta({ meta: {}, },);
     expect(result,).toEqual({},);
