@@ -22,7 +22,10 @@ import { startGenerationTracking, } from "../cancellation-manager";
 import { activeGenerations, chatToAttempt, } from "../cancellation-tracker";
 import { getOrCreateBuffer, removeBuffer, } from "../stream-buffer";
 import { DEFAULT_POLICY_DETECTION, DEFAULT_REPETITION_DETECTION, DEFAULT_RESPONSE_LIMIT, } from "../types";
+import type { Config, } from "../../config/schema";
+import type { LLMProvider, GenerateRequest as ProviderRequest, } from "../providers/types";
 import { streamCancelCleanup, } from "./cancel-stream";
+import { streamToClient, } from "./stream-to-client";
 
 let db: Kysely<DB>;
 let sqlite: Database;
@@ -228,6 +231,85 @@ test("streamCancelCleanup still cleans up when the status write fails", async ()
 
   expect(activeGenerations.has(attemptId,),).toBe(false,);
   expect(buffer.isDone,).toBe(true,);
+
+  removeBuffer(chatId,);
+});
+
+test("streamToClient cancel path persists real cancel detail to the attempt record", async () => {
+  // Seam regression (BUG-sse-streams-leak interaction): the catch block must
+  // classify cancel BEFORE genericizing streamError, so the persisted
+  // cancel_reason_detail is the actual reason ("user stop"), not the generic
+  // wire message ("Generation failed").
+  const chatId = `chat-seam-${Date.now()}-${Math.random()}`;
+  const { attemptId, } = await startAttempt(chatId,);
+
+  const tracker = new AbortController();
+  let sawAbort = false;
+  const provider: LLMProvider = {
+    capabilities: { streaming: true, },
+    complete: async () => { throw new Error("unused",); },
+    stream: async (_req: ProviderRequest, handler: Parameters<NonNullable<LLMProvider["stream"]>>[1],) => {
+      handler({ type: "content", content: "partial ", },);
+      await new Promise<void>((resolve,) => {
+        if (tracker.signal.aborted) { resolve(); return; }
+        tracker.signal.addEventListener("abort", () => resolve(), { once: true, },);
+      },);
+      sawAbort = true;
+      // Surface the cancel as the typed error (registry wraps aborts this way).
+      throw new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "user stop",);
+    },
+    healthCheck: async () => ({ status: "ok" as const, }),
+    listModels: async () => [],
+  } as unknown as LLMProvider;
+
+  const response = streamToClient({
+    input: {
+      chatId,
+      actorId: "actor-ai-1",
+      parentMessageId: `msg-${chatId}`,
+      continuationNumber: 0,
+    } as unknown as Parameters<typeof streamToClient>[0]["input"],
+    database: db,
+    messages: [],
+    cfg: {} as Config,
+    userId,
+    attemptId,
+    modelId: "m",
+    providerName: "p",
+    providerReq: { model: "m", params: { stream: true, }, signal: tracker.signal, } as ProviderRequest,
+    failoverList: [{ name: "p", provider, },],
+  },);
+
+  // Drain the SSE stream until close.
+  const reader = response.body!.getReader();
+  // Trigger the cancel once the stream is listening (provider waits on it).
+  setTimeout(() => {
+    tracker.abort(new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "user stop",),);
+  }, 10,);
+  await new Promise<void>((resolve, reject,) => {
+    void (async () => {
+      try {
+        for (;;) {
+          const { done, } = await reader.read();
+          if (done) { break; }
+        }
+        resolve();
+      } catch (e) { reject(e,); }
+    })();
+  },);
+
+  expect(sawAbort,).toBe(true,);
+
+  const row = await db
+    .selectFrom("generation_attempts",)
+    .select(["status", "cancel_reason", "cancel_source", "cancel_reason_detail",],)
+    .where("id", "=", attemptId,)
+    .executeTakeFirstOrThrow();
+  expect(row.status,).toBe(GenerationStatus.Cancelled,);
+  expect(row.cancel_reason,).toBe(CancelReason.UserCancel,);
+  expect(row.cancel_source,).toBe(CancelSource.User,);
+  expect(row.cancel_reason_detail,).toBe("user stop",);
+  expect(row.cancel_reason_detail,).not.toBe("Generation failed",);
 
   removeBuffer(chatId,);
 });
