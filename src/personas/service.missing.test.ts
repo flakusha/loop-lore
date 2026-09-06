@@ -157,11 +157,7 @@ describe("PersonasService — update() individual field branches", () => {
   });
 
   test("isDefault=false sets is_default to DefaultState.NotDefault", async () => {
-    const id = await service.create({
-      userId,
-      name: "Not Default Test",
-      isDefault: true,
-    },);
+    const id = await service.create({ userId, name: "Not Default Test", },);
 
     // Manually set to default first via setDefault to ensure we have a default
     await service.setDefault(id, userId,);
@@ -204,15 +200,21 @@ describe("PersonasService — delete() cascade", () => {
         name: "Delete Cascade Chat",
         type: "direct",
         mode: "direct",
-        format_version: 0,
       },)
+      .execute();
+
+    // chat_participants.actor_id has an FK to actors.id — seed an actor for it.
+    const actorId = "missing-test-actor";
+    await db
+      .insertInto("actors",)
+      .values({ id: actorId, display_name: "Participant Actor", user_id: userId, },)
       .execute();
 
     await db
       .insertInto("chat_participants",)
       .values({
         chat_id: chatId,
-        actor_id: userId,
+        actor_id: actorId,
         persona_id: personaId,
         role_in_chat: "member",
       },)
@@ -223,7 +225,7 @@ describe("PersonasService — delete() cascade", () => {
       .selectFrom("chat_participants",)
       .selectAll()
       .where("chat_id", "=", chatId,)
-      .where("actor_id", "=", userId,)
+      .where("actor_id", "=", actorId,)
       .executeTakeFirst();
     expect(before!.persona_id,).toBe(personaId);
 
@@ -235,7 +237,7 @@ describe("PersonasService — delete() cascade", () => {
       .selectFrom("chat_participants",)
       .selectAll()
       .where("chat_id", "=", chatId,)
-      .where("actor_id", "=", userId,)
+      .where("actor_id", "=", actorId,)
       .executeTakeFirst();
     expect(after!.persona_id,).toBeNull();
   });
@@ -258,7 +260,7 @@ describe("PersonasService — getDefault()", () => {
       .execute();
 
     const defaultId = await service.create({ userId: freshUser, name: "Default Persona", },);
-    const otherId = await service.create({ userId: freshUser, name: "Other Persona", },);
+    await service.create({ userId: freshUser, name: "Other Persona", },);
 
     await service.setDefault(defaultId, freshUser,);
 
