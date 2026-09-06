@@ -241,4 +241,26 @@ describeOrSkip("streamToClient — tracker cancel reaches the provider", () => {
     expect(done?.finishReason,).toBe("cancelled",);
     expect(events.some((e,) => e.type === "error"),).toBe(false,);
   });
+
+  test("provider failure emits generic error event without internal message", async () => {
+    const tracker = new AbortController();
+    const provider = {
+      capabilities: { streaming: true, },
+      complete: async () => {
+        throw new Error("unused",);
+      },
+      stream: async () => {
+        throw new Error("SECRET: pg-dsn=postgres://user:pw@db.internal/host",);
+      },
+      healthCheck: async () => ({ status: "ok" as const, }),
+      listModels: async () => [],
+    } as unknown as LLMProvider;
+
+    const events = await collectEvents(run(tracker.signal, provider,),);
+    const err = events.find((e,) => e.type === "error",) as { error?: string } | undefined;
+    expect(err,).toBeDefined();
+    expect(err?.error,).toBe("Generation failed",);
+    const raw = JSON.stringify(events,);
+    expect(raw.includes("SECRET"),).toBe(false,);
+  });
 },);
