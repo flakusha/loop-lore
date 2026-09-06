@@ -139,6 +139,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
   },
+  "BUG-ALIGN-SEEDDEFAULTS-NULL-HANDLING-WITH-RESOLVEMODELROLE-DEFEN": {
+    "hash": "c0f8f3e",
+    "git_issue": "c0f8f3e",
+    "extid": "BUG-ALIGN-SEEDDEFAULTS-NULL-HANDLING-WITH-RESOLVEMODELROLE-DEFEN",
+    "type": "BUG",
+    "title": "Align seedDefaults null handling with resolveModelRole defensive checks",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md"
+  },
   "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED": {
     "hash": "0c39d4f",
     "extid": "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED",
@@ -446,6 +458,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
   },
+  "BUG-BATTLE-RESOLUTION-MISSING-EMPTY-INPUT-ADAPTER": {
+    "hash": "pending",
+    "extid": "BUG-BATTLE-RESOLUTION-MISSING-EMPTY-INPUT-ADAPTER",
+    "type": "BUG",
+    "title": "battle resolution-integration missing empty-input adapter",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-battle-resolution-missing-empty-input-adapter.md",
+    "git_issue": "pending",
+    "status": "open"
+  },
   "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM": {
     "hash": "69d45a5",
     "git_issue": "69d45a5",
@@ -746,6 +771,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
+  },
+  "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG": {
+    "hash": "pending",
+    "extid": "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG",
+    "type": "BUG",
+    "title": "callAux graceful failure throws on empty config",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-callaux-graceful-failure-throws-on-empty-config.md",
+    "git_issue": "pending",
+    "status": "open"
   },
   "BUG-CANCELLATION-LIFECYCLE-DB-FAILURE-PERMANENTLY-MARKS-CHAT-GEN": {
     "hash": "cfc029f",
@@ -2501,6 +2539,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-memory-decay-writes-nan-strength.md"
   },
+  "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES": {
+    "hash": "pending",
+    "extid": "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES",
+    "type": "BUG",
+    "title": "mention-parser regex fails on multi-word names",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-mention-parser-regex-fails-on-multi-word-names.md",
+    "git_issue": "pending",
+    "status": "open"
+  },
   "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
     "hash": "1fbe78c",
     "extid": "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH",
@@ -3805,6 +3856,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren.md",
     "git_issue": "02abf8a"
+  },
+  "BUG-TYPE-SCANALLPROVIDERS-DB-PARAM-AS-KYSELY-DB-INSTEAD-OF-UNKNO": {
+    "hash": "c514218",
+    "git_issue": "c514218",
+    "extid": "BUG-TYPE-SCANALLPROVIDERS-DB-PARAM-AS-KYSELY-DB-INSTEAD-OF-UNKNO",
+    "type": "BUG",
+    "title": "Type scanAllProviders db param as Kysely<DB> instead of unknown",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-type-scanallproviders-db-param-as-kysely-db-instead-of-unkno.md"
   },
   "BUG-UNDEFINED-CSS-CUSTOM-PROPERTIES-BREAK-RENDERING": {
     "hash": "6c5ec87",
@@ -7575,6 +7638,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-add-heatphase-state-machine-for-character-heat-cycle-current.md"
   },
+  "TASK-ADD-MODEL-ROLES-TEST-TS-FOR-SRC-ADMIN-MODEL-ROLES-TS": {
+    "hash": "0423c27",
+    "git_issue": "0423c27",
+    "extid": "TASK-ADD-MODEL-ROLES-TEST-TS-FOR-SRC-ADMIN-MODEL-ROLES-TS",
+    "type": "TASK",
+    "title": "Add model-roles.test.ts for src/admin/model-roles.ts",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts.md"
+  },
   "TASK-ADD-NSFWENCOUNTERSTATUS-STATE-MACHINE-FOR-NSFW-ENCOUNTERS-ST": {
     "hash": "6606e07",
     "git_issue": "6606e07",
@@ -7752,6 +7827,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-admin-handlers-lack-explicit-requireuserid-fail-open-structu.md",
     "git_issue": "67ed226"
+  },
+  "TASK-ADMIN-MODULE-CLEANUP-INDEX-TS-EXPORTS-CONSISTENT-ERROR-HANDL": {
+    "hash": "bc0b75f",
+    "git_issue": "bc0b75f",
+    "extid": "TASK-ADMIN-MODULE-CLEANUP-INDEX-TS-EXPORTS-CONSISTENT-ERROR-HANDL",
+    "type": "TASK",
+    "title": "Admin module cleanup: index.ts exports, consistent error handling, test isolation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-module-cleanup-index-ts-exports-consistent-error-handl.md"
   },
   "TASK-ADMIN-OVERVIEW-DASHBOARD": {
     "hash": "pending",
@@ -21667,44 +21754,5 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
-  },
-  "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG": {
-    "hash": "pending",
-    "extid": "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG",
-    "type": "BUG",
-    "title": "callAux graceful failure throws on empty config",
-    "label": "bug",
-    "priority": "high",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-callaux-graceful-failure-throws-on-empty-config.md",
-    "git_issue": "pending",
-    "status": "open"
-  },
-  "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES": {
-    "hash": "pending",
-    "extid": "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES",
-    "type": "BUG",
-    "title": "mention-parser regex fails on multi-word names",
-    "label": "bug",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-mention-parser-regex-fails-on-multi-word-names.md",
-    "git_issue": "pending",
-    "status": "open"
-  },
-  "BUG-BATTLE-RESOLUTION-MISSING-EMPTY-INPUT-ADAPTER": {
-    "hash": "pending",
-    "extid": "BUG-BATTLE-RESOLUTION-MISSING-EMPTY-INPUT-ADAPTER",
-    "type": "BUG",
-    "title": "battle resolution-integration missing empty-input adapter",
-    "label": "bug",
-    "priority": "low",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/BUG-battle-resolution-missing-empty-input-adapter.md",
-    "git_issue": "pending",
-    "status": "open"
   }
 }

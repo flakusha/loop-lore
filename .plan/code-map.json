@@ -13469,6 +13469,18 @@
       "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
     }
   ],
+  "src/generation/generate-route/cancel-stream.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
+    }
+  ],
+  "src/generation/generate-route/cancel-stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
+    }
+  ],
   "src/generation/generate-route/group-participants.test.ts": [
     {
       "kind": "ticket",
