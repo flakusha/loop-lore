@@ -42,6 +42,13 @@ const fakeStorage: Storage = {
 
 (globalThis as unknown as { localStorage: Storage }).localStorage = fakeStorage;
 
+// bun:test has no DOM; command-buttons.ts touches document at registration
+// and runCommand looks up #message-input.
+(globalThis as unknown as { document: Document }).document = {
+  querySelector: () => null,
+  addEventListener: () => {},
+} as unknown as Document;
+
 /** */
 function loadCommandButtons(): CommandButtonsApi {
   const factory = (globalThis as unknown as { commandButtons?: () => CommandButtonsApi }).commandButtons;
