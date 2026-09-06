@@ -1,6 +1,6 @@
 # BUG: SSE streams leak String(error) internals to clients
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Small
 
@@ -12,6 +12,10 @@
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Fixed in `faec1501` (round 3): `src/routes/activity-stream.ts` and `src/routes/notifications/stream.ts` now send a generic "stream error, retry" client message and route full error detail (with correlation id) to the server-side logger. Verified present on dev; status flipped from Not Started.
