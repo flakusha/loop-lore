@@ -1,6 +1,6 @@
 # BUG: gzip-stored unencrypted messages reach LLM prompt and exports as base64
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Small
 
@@ -19,6 +19,10 @@ Acceptance:
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Fixed on dev (verified against HEAD a263608e): all three consumers (`src/assistant/prompt/sections/chat-history.ts`, `src/routes/export-shared/chats.ts`, `src/routes/chat-export/export-route.ts`) now route through `resolveMessageContent` (`src/routes/messages/helpers.ts`), which decodes gzip/brotli/zstd rows (encoding ≠ identity) and decrypts `key_id` rows; identity rows pass through unchanged. Zero remaining inline `smk && row.key_id`-style transforms.
