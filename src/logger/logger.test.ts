@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 import { describe, expect, test, } from "bun:test";
-import { createLogger, getLogger, setGlobalLogger, } from "./logger";
+import { createLogger, getLogger, setGlobalLogger, } from ".";
 
 describe("logger", () => {
   test("createLogger returns a logger instance", () => {
