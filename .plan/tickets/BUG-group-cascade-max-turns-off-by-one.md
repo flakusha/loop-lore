@@ -3,7 +3,7 @@
 
 # BUG: Group cascade depth boundary semantics off-by-one — max_turns=3 produces 4 AI messages
 
-**Status:** Not Started
+**Status:** ✅ Resolved
 **Severity:** high
 **Priority:** high
 **Effort:** small
@@ -48,3 +48,7 @@ UX / cost predictability. Chat creators set `max_turns` based on documentation s
 - `BUG-group-cascade-mid-cascade-pause-ignored` (companion).
 - `TASK-reconciliation-plan.md` (mentions cascade as one of 6 unwired paths).
 - `epic-chat-lifecycle-moderation.md`, `epic-chat-context-optimization.md`.
+
+## Resolution
+
+Fixed in `684cb0d7` (round 4): the depth guard is now `depth + 1 >= maxTurns` — `max_turns` counts total AI replies including the initial one, so `max_turns=3` yields exactly 3 replies (was 4). Default stays `?? 3`. `src/generation/auto-gen-cascade.test.ts` extended with `maxTurns=1` immediate-stop, `max_turns=3` at depth 2/3 boundaries, and the auto-advance fallback boundary; the pre-existing `maxTurns:1` fallback test now uses `maxTurns:2` to preserve its intent under the corrected semantics.
