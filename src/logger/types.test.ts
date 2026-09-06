@@ -25,7 +25,7 @@ describe("types", () => {
   });
 
   test("LogLevelNumeric values are integers", () => {
-    for (const [key, value] of Object.entries(LogLevelNumeric)) {
+    for (const value of Object.values(LogLevelNumeric,)) {
       expect(typeof value).toBe("number");
       expect(Number.isInteger(value)).toBe(true);
       expect(value).toBeGreaterThan(0);

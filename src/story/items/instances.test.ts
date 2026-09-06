@@ -145,9 +145,9 @@ describe("ItemsService.getNpcInventoryBatch", () => {
     const byActor = await svc.getNpcInventoryBatch([actorA, actorB,],);
 
     expect(byActor.get(actorA,),).toHaveLength(1,);
-    expect(byActor.get(actorA,)?.[0].quantity,).toBe(3,);
+    expect(byActor.get(actorA,)?.[0]?.quantity,).toBe(3,);
     expect(byActor.get(actorB,),).toHaveLength(1,);
-    expect(byActor.get(actorB,)?.[0].quantity,).toBe(1,);
+    expect(byActor.get(actorB,)?.[0]?.quantity,).toBe(1,);
     // Empty list short-circuits — no query, empty map.
     expect((await svc.getNpcInventoryBatch([],)).size,).toBe(0,);
   });
@@ -162,7 +162,7 @@ describe("ItemsService.getNpcInventoryBatch", () => {
     await insertWorldItems(db, worldId, item, { owner_actor_id: actor, quantity: 2, } as never,);
     const svc = new ItemsService(db,);
     const single = await svc.getNpcInventory(actor,);
-    const batch = (await svc.getNpcInventoryBatch([actor,])).get(actor,);
+    const batch = (await svc.getNpcInventoryBatch([actor,],)).get(actor,);
     expect(batch,).toEqual(single,);
   });
 });
