@@ -1,6 +1,6 @@
 # BUG: N+1 queries in story world-state context per participant
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Medium
 

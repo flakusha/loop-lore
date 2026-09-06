@@ -11,6 +11,7 @@ import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
+  insertActors,
   insertItems,
   insertLocations,
   insertUsers,
@@ -122,6 +123,47 @@ describe("ItemsService.transfer", () => {
     const res = await svc.transfer(wId, worldId, 1, locationB,);
     expect(res.success,).toBe(false,);
     expect(res.transferred,).toBe(0,);
+  });
+});
+
+describe("ItemsService.getNpcInventoryBatch", () => {
+  test("returns per-actor inventories in one query", async () => {
+    const owner = uid();
+    await insertUsers(db, `user-${owner}`, "Batch Owner", { id: owner, } as never,);
+    const actorA = uid();
+    const actorB = uid();
+    const itemA = uid();
+    const itemB = uid();
+    await insertActors(db, "NPC A", { id: actorA, user_id: owner, owner_id: owner, } as never,);
+    await insertActors(db, "NPC B", { id: actorB, user_id: owner, owner_id: owner, } as never,);
+    await insertItems(db, worldId, "Gold Coin", "consumable", { id: itemA, } as never,);
+    await insertItems(db, worldId, "Health Potion", "consumable", { id: itemB, } as never,);
+    await insertWorldItems(db, worldId, itemA, { owner_actor_id: actorA, quantity: 3, } as never,);
+    await insertWorldItems(db, worldId, itemB, { owner_actor_id: actorB, quantity: 1, } as never,);
+
+    const svc = new ItemsService(db,);
+    const byActor = await svc.getNpcInventoryBatch([actorA, actorB,],);
+
+    expect(byActor.get(actorA,),).toHaveLength(1,);
+    expect(byActor.get(actorA,)?.[0].quantity,).toBe(3,);
+    expect(byActor.get(actorB,),).toHaveLength(1,);
+    expect(byActor.get(actorB,)?.[0].quantity,).toBe(1,);
+    // Empty list short-circuits — no query, empty map.
+    expect((await svc.getNpcInventoryBatch([],),).size,).toBe(0,);
+  });
+
+  test("matches getNpcInventory per-actor result", async () => {
+    const owner = uid();
+    await insertUsers(db, `user-${owner}`, "Batch Owner 2", { id: owner, } as never,);
+    const actor = uid();
+    const item = uid();
+    await insertActors(db, "Lone NPC", { id: actor, user_id: owner, owner_id: owner, } as never,);
+    await insertItems(db, worldId, "Iron Sword", "weapon", { id: item, } as never,);
+    await insertWorldItems(db, worldId, item, { owner_actor_id: actor, quantity: 2, } as never,);
+    const svc = new ItemsService(db,);
+    const single = await svc.getNpcInventory(actor,);
+    const batch = (await svc.getNpcInventoryBatch([actor,],),).get(actor,);
+    expect(batch,).toEqual(single,);
   });
 });
 
