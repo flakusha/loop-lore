@@ -13507,6 +13507,12 @@
       "source": ".plan/tickets/TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos.md"
     }
   ],
+  "src/generation/generate-route/stream-to-client.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
+    }
+  ],
   "src/generation/generate-route/stream-to-client.ts": [
     {
       "kind": "ticket",
@@ -24035,6 +24041,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-patterns.md"
+    }
+  ],
+  "src/turning/turn-manager.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren.md"
     }
   ],
   "src/turning/turn-manager.ts": [
