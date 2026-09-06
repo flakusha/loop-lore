@@ -43,8 +43,11 @@ export interface ParsedMention {
  */
 export function parseMentions(text: string,): ParsedMention[] {
   const mentions: ParsedMention[] = [];
-  // Match @ followed by a name (alphanumeric, underscore, hyphen, spaces)
-  const mentionRegex = /@([A-Za-z0-9_-]+(?:\s+[A-Za-z0-9_-]+)*)/g;
+  // Match @ followed by a single name token (alphanumeric, underscore, hyphen).
+  // Multi-word display names resolve downstream via `resolveMention` prefix
+  // matching — capturing trailing prose here would poison exact/prefix matching
+  // ("@Luna hello" must parse to "Luna", not "Luna hello").
+  const mentionRegex = /@([A-Za-z0-9_-]+)/g;
   let match = mentionRegex.exec(text,);
 
   while (match !== null) {
