@@ -110,10 +110,19 @@ export async function buildContext(
 
   const actors: StoryContext["actors"] = [];
   const items = new ItemsService(state.db,);
+  const npcActorIds = Array.from(participantRows, (p,) => p.id,);
+  // Single npc_states fetch + single inventory fetch per participant list
+  // instead of one query per participant (N+1).
+  // BUG-n-1-queries-in-story-world-state-context-per-participant.
+  const npcRows = npcActorIds.length === 0
+    ? []
+    : await state.db.selectFrom("npc_states",).selectAll().where("actor_id", "in", npcActorIds,).execute();
+  const inventoryByActor = await items.getNpcInventoryBatch(npcActorIds,);
+  const npcRowById = new Map(npcRows.map((r,) => [r.actor_id, r,],),);
+
   for (const p of participantRows) {
-    const npcRow = p.agent_type === "npc" || p.agent_type === "ai"
-      ? await state.db.selectFrom("npc_states",).selectAll().where("actor_id", "=", p.id,).executeTakeFirst()
-      : null;
+    const isNpc = p.agent_type === "npc" || p.agent_type === "ai";
+    const npcRow = isNpc ? (npcRowById.get(p.id,) ?? null) : null;
 
     let npcState: NpcState | undefined;
     if (npcRow) {
@@ -123,7 +132,7 @@ export async function buildContext(
         mental_state: npcRow.mental_state,
         knowledge: jsonParseOr(npcRow.knowledge, {},),
         relationships: jsonParseOr(npcRow.relationships, {},),
-        inventory: await items.getNpcInventory(p.id,),
+        inventory: inventoryByActor.get(p.id,) ?? [],
         schedule: jsonParseOr(npcRow.schedule, {},),
         movementPattern: (scheduleData.movementPattern as string) ?? "stationary",
         movementTarget: (scheduleData.targetLocationId as string) ?? (scheduleData.followTargetId as string) ?? null,
