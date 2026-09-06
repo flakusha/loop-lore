@@ -1,6 +1,6 @@
 # BUG: chat key lazy-create race violates chat_id unique constraint on concurrent first messages
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Small
 
@@ -21,3 +21,7 @@ Acceptance:
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in `cdd167ee` (round 4): the unique index on `chat_keys(chat_id)` is enforced (folded into `src/db/migrations/parts/006_chat.ts` as `idx_chat_keys_chat_id` unique), and `deriveChatKeyForChat` now retries once on `SQLITE_CONSTRAINT_UNIQUE` — re-SELECTs the winner's row and returns it, keeping single-flight semantics per chat. `src/crypto/chat-keys.test.ts` has a concurrency test firing 8 parallel derives on a fresh chat and asserting a single `chat_keys` row and identical `keyId`; sequential path unchanged.
