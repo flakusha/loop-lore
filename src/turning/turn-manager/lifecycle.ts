@@ -20,8 +20,11 @@ export async function requestRegeneration(
   const currentAttempt = host.state.pendingRegeneration?.attempt ?? 0;
   if (currentAttempt >= host.maxRegenerations) { return false; }
 
-  host.state.pendingRegeneration = { turnId, attempt: currentAttempt + 1, reason, };
-  await persistState(host,);
+  const nextAttempt = currentAttempt + 1;
+  host.state.pendingRegeneration = { turnId, attempt: nextAttempt, reason, };
+  await persistState(host, (state,) => {
+    state.pendingRegeneration = { turnId, attempt: nextAttempt, reason, };
+  },);
   return true;
 }
 
@@ -32,7 +35,9 @@ export async function requestRegeneration(
 export async function clearRegeneration(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { return; }
   host.state.pendingRegeneration = null;
-  await persistState(host,);
+  await persistState(host, (state,) => {
+    state.pendingRegeneration = null;
+  },);
 }
 
 /**
@@ -42,7 +47,9 @@ export async function clearRegeneration(host: TurnManagerHost,): Promise<void> {
 export async function pause(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
   host.state.isPaused = true;
-  await persistState(host,);
+  await persistState(host, (state,) => {
+    state.isPaused = true;
+  },);
 }
 
 /**
@@ -52,7 +59,9 @@ export async function pause(host: TurnManagerHost,): Promise<void> {
 export async function resume(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
   host.state.isPaused = false;
-  await persistState(host,);
+  await persistState(host, (state,) => {
+    state.isPaused = false;
+  },);
 }
 
 /**
@@ -63,5 +72,8 @@ export async function resetTurnCounter(host: TurnManagerHost,): Promise<void> {
   if (!host.state) { throw new Error("TurnManager not initialized",); }
   host.state.currentTurn = 0;
   host.state.currentActorId = null;
-  await persistState(host,);
+  await persistState(host, (state,) => {
+    state.currentTurn = 0;
+    state.currentActorId = null;
+  },);
 }
