@@ -55,8 +55,8 @@ export async function canAccessNsfw(
   // Check minimum age for NSFW
   if (user.birth_date) {
     const age = calculateAge(user.birth_date,);
-    if (age < config.nsfw.nsfwMinAge) {
-      return { allowed: false, reason: `underage:${age}`, };
+    if (age === null || age < config.nsfw.nsfwMinAge) {
+      return { allowed: false, reason: age === null ? "invalid_birth_date" : `underage:${age}`, };
     }
   }
 
