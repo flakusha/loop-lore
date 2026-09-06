@@ -171,6 +171,9 @@ export async function transfer(
       .updateTable("world_items",)
       .set({ quantity: remaining, },)
       .where("id", "=", worldItemId,)
+      // Match the delete path: scope the partial-quantity update to the
+      // world so a stale id can never mutate a foreign world's row.
+      .where("world_id", "=", worldId,)
       .execute();
   }
 
