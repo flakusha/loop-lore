@@ -1,6 +1,6 @@
 # BUG: services: tradeCore validateLines lacks world_id filter (cross-world item IDOR)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ src/services/trade/core.ts validateLines (lines 44-56) queries world_items by id
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+trade/core.ts validateLines: world_items query now scoped by world_id — an item id from world A cannot validate in world B. (resolved 2026-09-06)
