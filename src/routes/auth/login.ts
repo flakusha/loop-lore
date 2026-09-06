@@ -10,6 +10,7 @@ import type { TranslatorFn, } from "../../i18n/types";
 import { getOrCreateSoloUserForAuth, } from "../../middleware/auth";
 import { HttpStatus, jsonError, } from "../http-utils";
 import { createSessionAndCookie, } from "./session";
+import type { RateLimiter, } from "../../middleware/rate-limit";
 import {
   demoLoginLimiter,
   errorHtml,
@@ -25,6 +26,8 @@ import {
  * @param config
  * @param t
  * @param peerIp
+ * @param limiter Optional per-call limiter override (tests); defaults to the
+ *   module singleton.
  */
 async function handleLogin(
   request: Request,
@@ -32,11 +35,12 @@ async function handleLogin(
   config: Config,
   t?: TranslatorFn,
   peerIp?: string | null,
+  limiter: RateLimiter = loginLimiter,
 ): Promise<Response> {
   const ip = getClientIp(request, config, peerIp ?? null,);
   // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers: emit
   // X-RateLimit-* + Retry-After so well-behaved clients back off correctly.
-  const loginLimit = loginLimiter.consume(ip,);
+  const loginLimit = limiter.consume(ip,);
   if (!loginLimit.allowed) {
     return rateLimitHtml({
       limit: loginLimit,
@@ -86,6 +90,8 @@ async function handleLogin(
  * @param config
  * @param t
  * @param peerIp
+ * @param limiter Optional per-call limiter override (tests); defaults to the
+ *   module singleton.
  */
 async function handleDemoLogin(
   request: Request,
@@ -93,12 +99,13 @@ async function handleDemoLogin(
   config: Config,
   t?: TranslatorFn,
   peerIp?: string | null,
+  limiter: RateLimiter = demoLoginLimiter,
 ): Promise<Response> {
   const ip = getClientIp(request, config, peerIp ?? null,);
   // BUG-demo-login-endpoint-bypasses-rate-limiter: enforce the same per-IP
   // gate as /api/auth/login. Without this, an attacker can spam session
   // creation (one DB row per request) and exhaust the sessions table.
-  const demoLimit = demoLoginLimiter.consume(ip,);
+  const demoLimit = limiter.consume(ip,);
   if (!demoLimit.allowed) {
     return rateLimitHtml({
       limit: demoLimit,
