@@ -151,6 +151,11 @@ describe("CharacterWorldSetupService", () => {
 
   describe("initializeCharacterWorldSetup (seed hook)", () => {
     it("seeds an empty setup row per actor+world and is idempotent", async () => {
+      // The seed hook targets world members (actors joined to world_members) —
+      // add a fresh actor with no setup row so the seed pass has work to do.
+      const { actorId: memberActor, } = await createTestActors(db, "test-actor-006",);
+      await db.insertInto("world_members",).values({ world_id: worldId, actor_id: memberActor, },).execute();
+
       const worldState = new WorldStateService(db,);
       const first = await worldState.initializeCharacterWorldSetup(worldId,);
       const second = await worldState.initializeCharacterWorldSetup(worldId,);
