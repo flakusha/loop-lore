@@ -219,10 +219,13 @@ describe("Generation E2E", () => {
       },),
     },);
 
-    // SSE error event should be emitted before connection closes
+    // SSE error event should be emitted before connection closes. The wire
+    // message is generic — provider error internals must never reach the
+    // client (BUG-sse-streams-leak-string-error-internals-to-clients).
     const text = await res.text();
     expect(text,).toContain('"type":"error"',);
-    expect(text,).toContain("Mock stream failure",);
+    expect(text,).toContain("Generation failed",);
+    expect(text,).not.toContain("Mock stream failure",);
   });
 
   // ── Cancel ──────────────────────────────────────────────
