@@ -13,7 +13,7 @@
  * surfaced to the user for confirmation rather than blocking.
  */
 
-import type { Kysely, } from "kysely";
+import { Kysely, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 import type { EntityKind, } from "../prompt/templates/entity-generation";
 
@@ -112,49 +112,55 @@ export async function checkDuplicate(
   scope: { ownerId: string; worldId?: string },
 ): Promise<QualityReport["duplicate"]> {
   const needle = entity.name.toLowerCase();
+  const lowered = sql<string>`lower(name)`;
 
-  // Typed per-table so the name column access is checked, not asserted.
-  let rows: { id: string; name: string }[];
+  // Case-insensitive name match pushed into SQL: only the candidate row(s) are
+  // returned instead of every owner-scoped row (O(N) JS filter removed).
+  // Note: `actors` stores the entity name in `display_name` (no `name` column).
+  let row: { id: string } | undefined;
   switch (kind) {
     case "character": {
-      rows = await db
+      row = await db
         .selectFrom("actors",)
-        .select(["id", "display_name as name",],)
+        .select("id",)
         .where("owner_id", "=", scope.ownerId,)
-        .execute();
+        .where(sql<string>`lower(display_name)`, "=", needle,)
+        .executeTakeFirst();
       break;
     }
     case "world": {
-      rows = await db
+      row = await db
         .selectFrom("worlds",)
-        .select(["id", "name",],)
+        .select("id",)
         .where("owner_id", "=", scope.ownerId,)
-        .execute();
+        .where(lowered, "=", needle,)
+        .executeTakeFirst();
       break;
     }
     case "location": {
-      rows = await db
+      row = await db
         .selectFrom("locations",)
-        .select(["id", "name",],)
+        .select("id",)
         .where("world_id", "=", scope.worldId ?? "default",)
-        .execute();
+        .where(lowered, "=", needle,)
+        .executeTakeFirst();
       break;
     }
     case "item": {
-      rows = await db
+      row = await db
         .selectFrom("items",)
-        .select(["id", "name",],)
+        .select("id",)
         .where("world_id", "=", scope.worldId ?? "default",)
-        .execute();
+        .where(lowered, "=", needle,)
+        .executeTakeFirst();
       break;
     }
   }
 
-  const match = rows.find((r,) => r.name.toLowerCase() === needle);
-  if (match) {
+  if (row) {
     return {
       found: true,
-      existingId: match.id,
+      existingId: row.id,
       message: `A ${kind} named "${entity.name}" already exists in this scope.`,
     };
   }
