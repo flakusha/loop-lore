@@ -1,6 +1,6 @@
 # BUG: story: destroy() partial-quantity update path missing world_id where-clause
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** low
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ src/story/items/instances.ts lines 219-224: the partial-quantity UPDATE path omi
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+story/items/instances.ts partial-quantity UPDATE now includes .where('world_id') matching the delete path — closes latent cross-world mutation. (resolved 2026-09-06)
