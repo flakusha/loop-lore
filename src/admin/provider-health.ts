@@ -7,6 +7,8 @@
  * Manages provider health status and model discovery.
  * Provides rescan capability and cached health results.
  */
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
 import { getProvider, listProviders, } from "../generation/providers/registry";
 import type { ModelInfo, } from "../generation/providers/types";
 import { getLogger, } from "../logger";
@@ -32,7 +34,7 @@ const state = { cache: [] as ProviderHealthStatus[], };
  * @param db - Optional database instance for capabilities sync.
  * @returns Updated health cache.
  */
-export async function scanAllProviders(db?: unknown,): Promise<ProviderHealthStatus[]> {
+export async function scanAllProviders(db?: Kysely<DB>,): Promise<ProviderHealthStatus[]> {
   const providers = listProviders();
   getLogger().child({ module: "provider-health", },).info("Scanning providers", { count: providers.length, },);
 
@@ -93,7 +95,7 @@ export async function scanAllProviders(db?: unknown,): Promise<ProviderHealthSta
     for (const p of updated) {
       if (p.status === "healthy" && p.models.length > 0) {
         try {
-          await upsertModelCapabilities(db as never, p.name, p.models,);
+          await upsertModelCapabilities(db, p.name, p.models,);
         } catch (error) {
           getLogger().child({ module: "provider-health", },).warn("Failed to upsert model capabilities", {
             provider: p.name,
