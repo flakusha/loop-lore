@@ -1,5 +1,5 @@
 import { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
@@ -12,8 +12,8 @@ import { decryptAtRest, encryptAtRest, } from "./at-rest";
 import { isEncryptedPayload, } from "./pipeline";
 import { initSmk, } from "./smk";
 
-const VALID_HEX_KEY = "e".repeat(64,);
-const USER_ID = "corruption-user-001";
+const VALID_HEX_KEY = "d".repeat(64,);
+const USER_ID = "robustness-user-001";
 
 let db: Kysely<DB>;
 
@@ -85,65 +85,15 @@ async function ensureChat(chatId: string,): Promise<void> {
   },).execute();
 }
 
-describe("Crypto Corruption Resistance", () => {
-  describe("decryptAtRest failure modes", () => {
-    it("returns invalid JSON verbatim for at-rest tier (server is a passthrough)", async () => {
-      const result = await decryptAtRest({
-        database: db,
-        chatId: "test",
-        storedContent: "{ invalid json",
-        encryptionLevel: "at-rest",
-      },);
-      expect(result,).toBe("{ invalid json",);
-    });
-
-    it("returns truncated payloads as-is for standard tier (not-a-payload legacy path)", async () => {
-      await ensureChat("trunc-std",);
-      const valid = await encryptAtRest({
-        database: db,
-        chatId: "trunc-std",
-        plaintext: "test content",
-        encryptionLevel: "standard",
-      },);
-      expect(isEncryptedPayload(valid.storedContent,),).toBeTrue();
-
-      const corrupted = valid.storedContent.slice(0, valid.storedContent.length - 10,);
-      expect(isEncryptedPayload(corrupted,),).toBeFalse();
-      const result = await decryptAtRest({
-        database: db,
-        chatId: "trunc-std",
-        storedContent: corrupted,
-        encryptionLevel: "standard",
-      },);
-      expect(result,).toBe(corrupted,);
-    });
-
-    it("returns truncated payloads verbatim for at-rest tier (passthrough never throws)", async () => {
-      await ensureChat("trunc-rest",);
-      const valid = await encryptAtRest({
-        database: db,
-        chatId: "trunc-rest",
-        plaintext: "test content",
-        encryptionLevel: "standard",
-      },);
-      const corrupted = valid.storedContent.slice(0, valid.storedContent.length - 10,);
-      const result = await decryptAtRest({
-        database: db,
-        chatId: "trunc-rest",
-        storedContent: corrupted,
-        encryptionLevel: "at-rest",
-      },);
-      expect(result,).toBe(corrupted,);
-    });
-  });
-
-  describe("boundary conditions for encryptAtRest", () => {
-    it("encrypts empty strings to a valid blob that round-trips", async () => {
-      await ensureChat("empty-corrupt",);
+describe("Crypto Robustness Tests", () => {
+  describe("Robustness in encryptAtRest", () => {
+    test("1MB compressible payload encrypts and round-trips", async () => {
+      await ensureChat("test-large",);
+      const hugeString = "a".repeat(1_000_000,);
       const result = await encryptAtRest({
         database: db,
-        chatId: "empty-corrupt",
-        plaintext: "",
+        chatId: "test-large",
+        plaintext: hugeString,
         encryptionLevel: "standard",
       },);
       expect(result.wasEncrypted,).toBeTrue();
@@ -151,31 +101,92 @@ describe("Crypto Corruption Resistance", () => {
 
       const roundTrip = await decryptAtRest({
         database: db,
-        chatId: "empty-corrupt",
+        chatId: "test-large",
         storedContent: result.storedContent,
         encryptionLevel: "standard",
       },);
-      expect(roundTrip,).toBe("",);
+      expect(roundTrip.length,).toBe(1_000_000,);
+      expect(roundTrip,).toBe(hugeString,);
     });
 
-    it("encrypts very long strings and round-trips them", async () => {
-      await ensureChat("long-corrupt",);
-      const longString = "a".repeat(10000,);
+    test("large incompressible payload round-trips without compression", async () => {
+      await ensureChat("test-random",);
+      const randomBytes = crypto.getRandomValues(new Uint8Array(100_000,),);
+      const randomString = Buffer.from(randomBytes,).toString("base64",);
       const result = await encryptAtRest({
         database: db,
-        chatId: "long-corrupt",
-        plaintext: longString,
+        chatId: "test-random",
+        plaintext: randomString,
         encryptionLevel: "standard",
       },);
       expect(result.wasEncrypted,).toBeTrue();
 
       const roundTrip = await decryptAtRest({
         database: db,
-        chatId: "long-corrupt",
+        chatId: "test-random",
         storedContent: result.storedContent,
         encryptionLevel: "standard",
       },);
-      expect(roundTrip,).toBe(longString,);
+      expect(roundTrip,).toBe(randomString,);
+    });
+
+    test("non-string input rejects with TypeError instead of silent coercion", async () => {
+      expect(
+        encryptAtRest({
+          database: db,
+          chatId: "test-number",
+          plaintext: 12345 as unknown as string,
+          encryptionLevel: "standard",
+        },),
+      ).rejects.toThrow(TypeError,);
+    });
+  });
+
+  describe("Error propagation in decryptAtRest", () => {
+    test("malformed JSON with standard tier returns legacy plaintext as-is", async () => {
+      const result = await decryptAtRest({
+        database: db,
+        chatId: "test-invalid",
+        storedContent: "{ invalid: json ",
+        encryptionLevel: "standard",
+      },);
+      expect(result,).toBe("{ invalid: json ",);
+    });
+
+    test("tampered ciphertext fails closed instead of returning garbage", async () => {
+      await ensureChat("test-key",);
+      const enc = await encryptAtRest({
+        database: db,
+        chatId: "test-key",
+        plaintext: "integrity-probe",
+        encryptionLevel: "standard",
+      },);
+      expect(enc.keyId,).not.toBeNull();
+
+      const payload = JSON.parse(enc.storedContent,) as { enc: string };
+      const current = payload.enc[5];
+      const swapped = current === "A" ? "B" : "A";
+      const tampered = { ...payload, enc: payload.enc.slice(0, 5,) + swapped + payload.enc.slice(6,), };
+      expect(isEncryptedPayload(JSON.stringify(tampered,),),).toBeTrue();
+
+      await expect(
+        decryptAtRest({
+          database: db,
+          chatId: "test-key",
+          storedContent: JSON.stringify(tampered,),
+          encryptionLevel: "standard",
+        },),
+      ).rejects.toThrow("Decryption failed",);
+    });
+
+    test("at-rest tier returns malformed JSON verbatim", async () => {
+      const result = await decryptAtRest({
+        database: db,
+        chatId: "test-invalid",
+        storedContent: "{ invalid: json ",
+        encryptionLevel: "at-rest",
+      },);
+      expect(result,).toBe("{ invalid: json ",);
     });
   });
 });
