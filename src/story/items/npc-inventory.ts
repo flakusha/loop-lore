@@ -83,6 +83,11 @@ export async function getNpcInventoryBatch(state: ItemState, actorIds: string[],
     .execute();
   const byActor = new Map<string, ItemInstance[]>();
   for (const row of rows) {
+    const ownerId = row.owner_actor_id;
+    if (ownerId === null) {
+      // Unowned row cannot be attributed to any requested actor.
+      continue;
+    }
     const instance: ItemInstance = {
       worldItemId: row.world_item_id,
       itemId: row.item_id,
@@ -96,11 +101,11 @@ export async function getNpcInventoryBatch(state: ItemState, actorIds: string[],
       weight: row.weight,
       visibility: row.visibility,
     };
-    const list = byActor.get(row.owner_actor_id);
+    const list = byActor.get(ownerId);
     if (list) {
       list.push(instance,);
     } else {
-      byActor.set(row.owner_actor_id, [instance,],);
+      byActor.set(ownerId, [instance,],);
     }
   }
   return byActor;
