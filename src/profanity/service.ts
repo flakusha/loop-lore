@@ -7,7 +7,7 @@
  * Uses `obscenity` library for word-list-based filtering with leetspeak
  * and confusable resolution. Replaces matches with asterisks.
  * @example
- *   filter("fuck you")     // "*** you"
+ *   filter("fuck you")     // "**** you"
  *   containsProfanity("hello world") // false
  */
 

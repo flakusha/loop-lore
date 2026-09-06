@@ -96,7 +96,7 @@ export async function importWorldBundle(
       const oldId = str(row, "id",);
       const newId = oldId ? locationIdMap.get(oldId,) : undefined;
       if (newParent && newId) {
-        await database
+        await trx
           .updateTable("locations",)
           .set({ parent_location_id: newParent, },)
           .where("id", "=", newId,)
