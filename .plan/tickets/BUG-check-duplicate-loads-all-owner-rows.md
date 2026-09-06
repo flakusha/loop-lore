@@ -3,7 +3,7 @@
 
 # BUG: `/create` duplicate check loads every owner-scoped entity row and filters in JS — O(N) on /create per chat
 
-**Status:** Not Started
+**Status:** ✅ Resolved
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -77,3 +77,7 @@ Add an index: `CREATE INDEX idx_actors_display_name ON actors(owner_id, display_
 
 - `epic-assistant-gm-flows.md`, `epic-creative-studio.md`.
 - `PERF-chat-dispatch-command-three-sequential-queries.md` (similar pattern elsewhere).
+
+## Resolution
+
+Fixed in `3916d6ab` (round 4): `checkDuplicate` pushes the case-insensitive name match into SQL — `lower(display_name) = lower(needle)` for characters (actors has no `name` column), `lower(name) = lower(needle)` for worlds/locations/items — returning `executeTakeFirst()` (one row or null) instead of loading every owner-scoped row and filtering in JS. Existing `src/assistant/quality/entity-creation.test.ts` covers the SQL path via `display_name`; no index added (unique index on the pair would be a follow-up if profile data grows — the query is now single-row bounded).
