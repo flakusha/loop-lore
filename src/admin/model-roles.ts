@@ -6,6 +6,11 @@
  *
  * Resolves model role assignments (main, captioning, moderation)
  * with fallback: DB overrides → config defaults → server defaults.
+ *
+ * Error-handling strategy (deliberate, do not "unify"): reads degrade to
+ * the next fallback with a warn-log, while writes throw for the caller to
+ * handle. The aux-pipeline callAux path relies on graceful read
+ * degradation, so reads MUST NOT throw.
  */
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";

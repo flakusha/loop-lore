@@ -127,6 +127,14 @@ export function getHealthCache(): ProviderHealthStatus[] {
 }
 
 /**
+ * Reset the provider health cache to empty.
+ * Primarily for test isolation between test cases.
+ */
+export function resetHealthCache(): void {
+  state.cache = [];
+}
+
+/**
  * Get health for a single provider by name.
  * @param name - Provider name.
  * @returns Health status or undefined if not found.
