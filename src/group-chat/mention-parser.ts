@@ -36,8 +36,9 @@ export interface ParsedMention {
  *
  * Matches patterns like:
  * - @Luna
- * - @Luna hello
- * - @Luna, @Max hello
+ * - @Luna, @Max (each captured as a single token)
+ * - @Dark in "@Dark Knight" (multi-word display names resolve downstream
+ *   via `resolveMention` prefix matching against the participant list)
  * @param text - User message content
  * @returns Array of parsed mentions (may be empty)
  */
