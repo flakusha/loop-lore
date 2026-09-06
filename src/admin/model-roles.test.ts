@@ -27,8 +27,11 @@ const TEST_PROVIDER = "test-roles-provider";
  * @returns A minimal LLMProvider cast from a stub shape.
  */
 function makeProvider(): LLMProvider {
+  // NOTE: label is required — the provider registry is process-global, so
+  // this stub is visible to other test files in the same bun process
+  // (e.g. routes/admin/providers.test.ts shape-checks capabilities.label).
   return {
-    capabilities: { streaming: false, },
+    capabilities: { label: "Test Roles Provider", streaming: false, },
     complete: async () => {
       throw new Error("unused",);
     },
