@@ -1,6 +1,6 @@
 # TASK: ReDoS: lore activation builds RegExp from author-controlled key
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already fixed on dev)
 **Priority:** critical
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ src/assistant/prompt/sections/lore-activation.ts:45 does new RegExp(key,'i') fro
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Bookkeeping (bugfix-round-7 audit): `compileKeyRegex` in `src/assistant/prompt/sections/lore-activation.ts` already routes through `compileSafeRegExp`, which rejects catastrophic-backtracking shapes; invalid patterns are treated as no-match. Verified present on dev 2026-09-06; ticket was stale.
