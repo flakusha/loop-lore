@@ -110,23 +110,26 @@ export async function recordNsfwConsent(
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
 
-  await database
-    .insertInto("nsfw_consent_state",)
-    .values({
-      id,
-      user_id: userId,
-      chat_id: chatId,
-      action,
-      scope,
-      reason,
-      created_at: now,
-      revoked_at: null,
-    },)
-    .execute();
+  // INSERT + UPDATE are wrapped in a single transaction so two concurrent
+  // `given` requests cannot revoke each other's rows (BUG-nsfw-recordnsfwconsent).
+  await database.transaction().execute(async (trx,) => {
+    await trx
+      .insertInto("nsfw_consent_state",)
+      .values({
+        id,
+        user_id: userId,
+        chat_id: chatId,
+        action,
+        scope,
+        reason,
+        created_at: now,
+        revoked_at: null,
+      },)
+      .execute();
 
   // Whatever the new action, close any prior open `given` rows so the latest
   // row is the unique signal for `hasActiveConsent`.
-  await database
+  await trx
     .updateTable("nsfw_consent_state",)
     .set({ revoked_at: now, },)
     .where("user_id", "=", userId,)
@@ -135,6 +138,7 @@ export async function recordNsfwConsent(
     .where("revoked_at", "is", null,)
     .where("id", "!=", id,)
     .execute();
+  });
 
   return {
     id,
