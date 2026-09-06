@@ -128,13 +128,40 @@ export async function deriveChatKeyForChat(
   const id = crypto.randomUUID();
   const rawKey = crypto.getRandomValues(new Uint8Array(32,),);
   const encryptedChatKey = await encryptBytes(smk, rawKey,);
-  await database.insertInto("chat_keys",).values({
-    id,
-    chat_id: chatId,
-    encrypted_chat_key: encryptedChatKey,
-    created_at: new Date().toISOString(),
-    expires_at: null,
-  },).execute();
+  // Concurrent first-message derives can both see "no row" and INSERT.
+  // `chat_keys.chat_id` is unique (idx_chat_keys_chat_id); retry once on a
+  // constraint violation by re-reading the winner's row instead of failing.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      await database.insertInto("chat_keys",).values({
+        id,
+        chat_id: chatId,
+        encrypted_chat_key: encryptedChatKey,
+        created_at: new Date().toISOString(),
+        expires_at: null,
+      },).execute();
+      break;
+    } catch (error) {
+      if (attempt === 1) { throw error; }
+      const winner = await database
+        .selectFrom("chat_keys",)
+        .selectAll()
+        .where("chat_id", "=", chatId,)
+        .executeTakeFirst();
+      if (winner?.encrypted_chat_key) {
+        const rawKey2 = await decryptBytes(smk, winner.encrypted_chat_key,);
+        const key2 = await crypto.subtle.importKey(
+          "raw",
+          rawKey2 as unknown as Parameters<typeof crypto.subtle.importKey>[1],
+          "AES-GCM",
+          true,
+          ["encrypt", "decrypt",],
+        );
+        return { key: key2, keyId: winner.id, rawKey: rawKey2, };
+      }
+      // No winner yet — the other insert also raced; retry the INSERT.
+    }
+  }
   const key = await crypto.subtle.importKey(
     "raw",
     rawKey as unknown as Parameters<typeof crypto.subtle.importKey>[1],
