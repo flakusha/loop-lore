@@ -1,6 +1,6 @@
 # BUG: Model comparisons analytics leaks all users' rows — missing user_id filter
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ src/routes/model-comparisons.ts:166 — GET /analytics/comparisons selects ALL u
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in src/routes/model-comparisons.ts (round-7 worktree): GET list + leaderboard scoped to the authenticated user; POST verifies messageId ownership via chats.created_by join; avgConfidence null-guarded for empty groups; OpenAPI response corrected to 201. (resolved 2026-09-06)
