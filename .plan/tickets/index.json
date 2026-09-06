@@ -5713,7 +5713,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/FEAT-expose-full-vn-settings-from-spec.md"
+    "source": ".plan/tickets/FEAT-expose-full-vn-settings-from-spec.md",
+    "status": "done"
   },
   "FEAT-FEDERATE-BLOG-SYSTEM-VIA-ACTIVITYPUB-LEMMY-MASTODON-REDDIT": {
     "hash": "9c1c458",
@@ -20784,7 +20785,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
+    "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md",
+    "status": "done"
   },
   "TASK-VERIFY-LOGGING-CHANGES-GREEN": {
     "hash": "a51c266",
