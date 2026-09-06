@@ -45,6 +45,17 @@ export function getProvider(name: string,): LLMProvider | undefined {
   return registry.get(name,);
 }
 
+/**
+ * Remove a provider from the registry. Test suites must call this for any
+ * provider they register: the registry is process-global, and a leftover
+ * provider silently flips isLlmGenerationConfigured() to true in every
+ * later test file sharing the process.
+ * @param name
+ */
+export function unregisterProvider(name: string,): void {
+  registry.delete(name,);
+}
+
 /** */
 export function listProviders(): { name: string; capabilities: LLMProvider["capabilities"] }[] {
   return Array.from(registry, ([name, provider,],) => ({

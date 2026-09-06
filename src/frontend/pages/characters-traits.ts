@@ -25,6 +25,7 @@ let _feFetch: typeof feFetch;
 export function initTraits(fetchFn: typeof feFetch,) {
   _feFetch = fetchFn;
   // Wire slider display updates
+  if (typeof document.addEventListener !== "function") { return; }
   document.addEventListener("input", (e,) => {
     const target = e.target as HTMLInputElement;
     if (target.type === "range") {
