@@ -1,6 +1,6 @@
 # BUG: routes: message-seen POST/DELETE trusts client actorId (IDOR) and races on insert
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ src/routes/message-seen.ts lines 118-178 read actorId from the request body/quer
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in src/routes/message-seen.ts (requireActorAccess before mutation; unique-index upsert replaces select-then-insert; migration 072). Verified in this worktree (round-6 batch, 2026-09-06).
