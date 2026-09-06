@@ -3,7 +3,7 @@
 
 # BUG: worktree finalize must hard-fail on non-mergeable or multi-merge dev state, never blind stash round-trip
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already implemented in scripts/worktree/commands/finalize.ts — checkDevMergeable hard-fail precheck L381, acquireFinalizeLock single-flight L382, transactional restoreDevFromStash with reset-on-conflict; --force skips gates only, never these invariants)
 **Priority:** high
 **Effort:** Medium
 **Epic:** epic-tooling-improvement
@@ -62,3 +62,10 @@ HARD FAILURE REQUIRED at precheck (before any merge) when the dev checkout holds
 - [ ] `--force` still enforces all of the above (test pins invariant-over-gate semantics).
 - [ ] AGENTS.md "Stop on tooling failure" section gains one line: finalize aborts on
       non-mergeable dev checkout by design.
+
+## Resolution
+
+Implemented in `scripts/worktree/commands/finalize.ts` (landed on dev before this
+ticket was closed): pre-finalize hard-fail checks (mergeable dev, no staged content),
+single-flight finalize lock, and transactional stash restore with reset-on-conflict.
+`--force` skips the check/test gates only; the invariant checks always run.
