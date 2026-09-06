@@ -345,5 +345,29 @@ describe("TurnManager", () => {
       expect(tm2.isPaused,).toBe(true,);
       expect(tm2.currentTurn,).toBe(tm1.currentTurn,);
     });
+
+    test("concurrent selectNextActor does not lose updates (BUG-turn-state blind RMW)", async () => {
+      const { chatId, } = await makeChat();
+      const tm1 = new TurnManager({ db, chatId, },);
+      const tm2 = new TurnManager({ db, chatId, },);
+      await tm1.initialize();
+      await tm2.initialize();
+
+      // Both instances read the same base state, then each advances. With
+      // blind RMW one write would clobber the other (both end at 1). With
+      // CAS+rebase, both increments survive (final state = 2).
+      await Promise.all([tm1.selectNextActor(), tm2.selectNextActor(),],);
+
+      // Fresh instance sees the merged result — neither increment was lost.
+      const tm3 = new TurnManager({ db, chatId, },);
+      await tm3.initialize();
+      expect(tm3.currentTurn,).toBe(2,);
+
+      // In-memory instances never over-increment (a retried closure would
+      // double-advance); a stale instance may legitimately lag one behind
+      // if it won the first CAS round — it must not exceed the merged total.
+      expect(tm1.currentTurn,).toBeLessThanOrEqual(2,);
+      expect(tm2.currentTurn,).toBeLessThanOrEqual(2,);
+    });
   });
 });
