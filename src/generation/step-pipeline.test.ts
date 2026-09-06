@@ -48,10 +48,29 @@ describe("step-pipeline", () => {
 
   beforeAll(async () => {
     const sqlite = new Database(":memory:",);
-    sqlite.run("PRAGMA foreign_keys = OFF",);
     db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
     await migrate(db as unknown as Kysely<unknown>,);
 
+    // createSqliteDialect enforces PRAGMA foreign_keys = ON, so the FK
+    // parents of generation_attempts (user → chat/message/actor) must exist.
+    await db
+      .insertInto("users",)
+      .values({ id: "user-1", username: "user-1", display_name: "User 1", },)
+      .execute();
+    await db
+      .insertInto("actors",)
+      .values({ id: "actor-1", display_name: "Actor 1", },)
+      .execute();
+    await db
+      .insertInto("chats",)
+      .values({ id: "chat-1", name: "Chat 1", created_by: "user-1", },)
+      .execute();
+    await db
+      .insertInto("messages",)
+      .values(
+        { id: "msg-1", chat_id: "chat-1", actor_id: "actor-1", role: "user", content: "hello", },
+      )
+      .execute();
     await db
       .insertInto("generation_attempts",)
       .values({
