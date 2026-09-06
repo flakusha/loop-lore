@@ -1,7 +1,7 @@
 /**
  * Tests for provider-health cache service (scan, cache, summary helpers).
  */
-import { afterAll, beforeAll, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, expect, mock, test, } from "bun:test";
 import { createLogger, } from "../logger";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
@@ -11,6 +11,7 @@ import {
   getUnhealthyProviders,
   hasUnhealthyProviders,
   providerToSummary,
+  resetHealthCache,
   scanAllProviders,
 } from "./provider-health";
 
@@ -61,8 +62,12 @@ describeOrSkip("provider-health", () => {
     createLogger({ level: "warn", },);
   },);
 
+  beforeEach(() => {
+    resetHealthCache();
+  },);
+
   afterAll(() => {
-    // Reset the module-level cache between files via re-scan semantics.
+    resetHealthCache();
   },);
 
   describeOrSkip("scanAllProviders", () => {
@@ -82,6 +87,10 @@ describeOrSkip("provider-health", () => {
   },);
 
   describeOrSkip("cache accessors", () => {
+    beforeEach(async () => {
+      await scanAllProviders();
+    },);
+
     test("getHealthCache returns the last scan", async () => {
       const cache = getHealthCache();
       expect(cache,).toHaveLength(4,);
