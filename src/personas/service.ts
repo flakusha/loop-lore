@@ -122,14 +122,26 @@ export class PersonasService {
    * @param userId
    */
   async delete(id: string, userId: string,): Promise<void> {
-    await this.db.deleteFrom("personas",).where("id", "=", id,).where("user_id", "=", userId,).execute();
+    // Ownership check first: only the persona's owner may delete it, and the
+    // chat_participants cleanup below must never run for a persona that stays.
+    const owned = await this.db
+      .selectFrom("personas",)
+      .select("id",)
+      .where("id", "=", id,)
+      .where("user_id", "=", userId,)
+      .executeTakeFirst();
+    if (!owned) { return; }
 
-    // Remove persona reference from chat_participants
+    // Clear chat_participants.persona_id BEFORE deleting the persona — the
+    // column carries an FK to personas.id, so the delete would otherwise
+    // fail with SQLITE_CONSTRAINT_FOREIGNKEY.
     await this.db
       .updateTable("chat_participants",)
       .set({ persona_id: null, },)
       .where("persona_id", "=", id,)
       .execute();
+
+    await this.db.deleteFrom("personas",).where("id", "=", id,).where("user_id", "=", userId,).execute();
   }
 
   /**
