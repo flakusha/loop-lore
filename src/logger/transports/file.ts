@@ -70,14 +70,14 @@ export class FileTransport implements Transport {
   private async writeLocked(entry: LogEntry,): Promise<void> {
     try {
       const line = formatJSONL(entry,);
-      await mkdir(dirname(this.activePath,), { recursive: true, },);
+      await mkdir(dirname(this.activePath,), { recursive: true, mode: 0o700, },);
 
       const currentSize = await this.fileSize(this.activePath,);
       if (currentSize >= this.maxBytes) {
         await this.rotate();
       }
 
-      await appendFile(this.activePath, line, "utf8",);
+      await appendFile(this.activePath, line, { encoding: "utf8", mode: 0o600, },);
     } catch {
       // Silently ignore — logging must not crash the app
     }

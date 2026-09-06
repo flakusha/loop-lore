@@ -70,6 +70,17 @@ describe("FileTransport", () => {
     expect(files.has("rot.log.3",),).toBe(false,);
   });
 
+  test("creates log file 0600 and parent dir 0700 (no world access)", async () => {
+    const privatePath = join(dir, "priv", "secret.log",);
+    const t = new FileTransport({ path: privatePath, },);
+    await t.write(entry(20, "pii",),);
+
+    const fileMode = (await stat(privatePath,)).mode & 0o777;
+    const dirMode = (await stat(join(dir, "priv",),)).mode & 0o777;
+    expect(fileMode,).toBe(0o600,);
+    expect(dirMode,).toBe(0o700,);
+  });
+
   test("drop-all rotation keeps only active file when maxFiles is 0", async () => {
     const dropPath = join(dir, "drop.log",);
     const t = new FileTransport({ path: dropPath, maxBytes: 10, maxFiles: 0, },);
