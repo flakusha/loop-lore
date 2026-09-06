@@ -1,6 +1,6 @@
 # TASK: Log files created world-readable (0644)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ src/logger/transports/file.ts:38,52 writes JSONL with default umask so files 064
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Fixed in bugfix-round-7: `src/logger/transports/file.ts` `writeLocked` now passes `mode: 0o700` to `mkdir` and `mode: 0o600` to `appendFile`, so JSONL logs (emails, userIds, sessionIds, censor-missed secrets) are no longer world-readable. Regression test `src/logger/transports/file.test.ts` asserts file 0600 / dir 0700.
