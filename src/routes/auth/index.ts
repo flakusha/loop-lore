@@ -24,7 +24,14 @@ import { handleRegister, } from "./register";
 import { handleLogout, handleMe, } from "./session";
 import type { HandleOpts, } from "./types";
 
-export { resetLoginRateLimiter, resetRegisterRateLimiter, } from "./shared";
+export {
+  createDemoLoginLimiter,
+  createLoginLimiter,
+  createRegisterLimiter,
+  resetDemoLoginRateLimiter,
+  resetLoginRateLimiter,
+  resetRegisterRateLimiter,
+} from "./shared";
 
 // ── Public routes: auth runs but won't block ─────────────────
 
@@ -32,9 +39,10 @@ export { resetLoginRateLimiter, resetRegisterRateLimiter, } from "./shared";
  * @param root0
  * @param root0.database
  * @param root0.config
+ * @param root0.limiters
  * @param prefix
  */
-export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/api",): Elysia {
+export function authPublicRoutes({ database, config, limiters, }: HandleOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "auth-public", },)
     .post(
       `${prefix}/auth/login`,
@@ -45,6 +53,7 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
           config,
           (rest as any).t as TranslatorFn | undefined,
           server?.requestIP(request,)?.address ?? null,
+          limiters?.loginLimiter,
         ),
       {
         // Form-encoded POST; Request-first handlers trigger sucrose
@@ -70,6 +79,7 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
           config,
           (rest as any).t as TranslatorFn | undefined,
           server?.requestIP(request,)?.address ?? null,
+          limiters?.demoLoginLimiter,
         ),
       {
         parse: "none",
@@ -92,6 +102,7 @@ export function authPublicRoutes({ database, config, }: HandleOpts, prefix = "/a
           config,
           (rest as any).t as TranslatorFn | undefined,
           server?.requestIP(request,)?.address ?? null,
+          limiters?.registerLimiter,
         ),
       {
         parse: "none",
