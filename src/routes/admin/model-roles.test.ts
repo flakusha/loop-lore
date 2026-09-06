@@ -13,7 +13,7 @@ import { modelRolesRoutes, } from "./model-roles";
 
 // Fake provider registration via the real registry (registration is global
 // and idempotent per name).
-import { getProvider, registerProvider, } from "../../generation/providers/registry";
+import { getProvider, registerProvider, unregisterProvider, } from "../../generation/providers/registry";
 import type { LLMProvider, } from "../../generation/providers/types";
 
 /** */
@@ -75,6 +75,10 @@ describe("admin model-roles routes", () => {
   },);
 
   afterAll(async () => {
+    // The registry is process-global: leftover fake providers would flip
+    // isLlmGenerationConfigured() to true for every later test file.
+    unregisterProvider("fake-provider",);
+    unregisterProvider("default-prov",);
     await db.destroy();
     sqlite.close();
   },);

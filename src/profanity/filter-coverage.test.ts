@@ -5,7 +5,7 @@ describe('profanity filter', () => {
   it('replaces profanity with asterisks', () => {
     const result = filter('fuck you');
     expect(typeof result).toBe('string');
-    expect(result).toBe('*** you');
+    expect(result).toBe('**** you');
   });
 
   it('passes through clean text unchanged', () => {
