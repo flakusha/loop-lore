@@ -26,6 +26,8 @@ export interface MessageSearchRow {
   content: string;
   contentEncoding: string;
   keyId: string | null;
+  /** Plaintext mirror indexed by FTS5 (null for client-pre-encrypted rows). */
+  contentPlaintext: string | null;
   matchContext: string;
   createdAt: string;
   attachments: string | null;
