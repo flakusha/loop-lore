@@ -5,7 +5,7 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { loadConfig, } from "../config/load";
+import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -13,6 +13,17 @@ import { uid, } from "../utils";
 import { adminRoutes, } from "./admin";
 
 const mockConfig = {} as any;
+
+/**
+ * Explicit config fixture for routes that seed defaults. Avoids calling
+ * loadConfig() at request time, which other test files can poison via
+ * process-global mock.module("../config/load") registrations.
+ */
+const testConfig = {
+  auth: { registrationOpen: true, sessionTimeoutHours: 24, maxSessionsPerUser: 5, },
+  assets: { maxFileSize: 10_485_760, },
+  generation: { defaultProvider: "mock", defaultModels: { mock: "mock-model", }, },
+} as unknown as Config;
 
 /**
  * @param db
@@ -315,7 +326,7 @@ describe("Admin danger zone", () => {
   });
 
   test("settings reset restores defaults", async () => {
-    const app = createAdminApp(db, "admin", loadConfig(),);
+    const app = createAdminApp(db, "admin", testConfig,);
     const res = await app.handle(
       new Request("http://localhost/api/admin/settings/reset", {
         method: "POST",
