@@ -20,24 +20,37 @@ import { up as migrate, } from "../db/migrations/001_init";
 import type { DB, } from "../db/schema";
 import { getSmk, initSmk, } from "./smk";
 
-/**
- * Tests for crypto/actor-keys.ts — Actor key CRUD
- */
-
-/**
- * Tests for crypto/actor-keys.ts — Actor key CRUD
- */
-
 const VALID_HEX_KEY = "a".repeat(64,);
 const ACTOR_ID = "actor-test-001";
 
 let db: Kysely<DB>;
+/** Actors that receive keys — actor_keys.actor_id references actors.id. */
+const KEY_BEARING_ACTORS = [
+  ACTOR_ID,
+  "actor-ensure",
+  "actor-no-key",
+  "actor-load-test",
+  "actor-a",
+  "actor-b",
+  "actor-single",
+  "actor-rotate",
+  "actor-revoke",
+  "actor-list",
+];
+
+/**
+ * @param actorId
+ */
+async function ensureActor(actorId: string,): Promise<void> {
+  await db.insertInto("actors",).values({ id: actorId, display_name: actorId, },).execute();
+}
 
 beforeAll(async () => {
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = OFF",);
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
   await migrate(db as unknown as Kysely<unknown>,);
+  for (const actorId of KEY_BEARING_ACTORS) { await ensureActor(actorId,); }
   await initSmk({
     serverEncryptionKey: VALID_HEX_KEY,
     required: false,
