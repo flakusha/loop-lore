@@ -20,7 +20,7 @@ import type { ToolDefinition, } from "../plugins/types";
 import { createTestDb, resetTestDb, } from "../test-utils/create-test-db";
 import { MockLLMProvider, } from "../test-utils/mock-provider";
 import { gatePluginToolsByRole, handleGenerate, } from "./generate-route";
-import { getProvider, registerProvider, } from "./providers/registry";
+import { getProvider, registerProvider, unregisterProvider, } from "./providers/registry";
 
 // ── Test DB ──────────────────────────────────────────────────
 
@@ -175,6 +175,10 @@ beforeEach(async () => {
 },);
 
 afterAll(() => {
+  // The registry is process-global: a leftover mock provider would flip
+  // isLlmGenerationConfigured() to true for every later test file (e.g.
+  // routes/messages/reply.test.ts takes the LLM path and returns replied:false).
+  unregisterProvider("mock-provider",);
   setTestDatabase(null,);
   testSqlite.close();
 },);
