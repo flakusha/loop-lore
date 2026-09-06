@@ -394,6 +394,38 @@ describe("NsfwHook", () => {
     expect(result.data?.actorId,).toBe("actor-1",);
     expect(result.data?.chatId,).toBe("chat-1",);
   });
+
+  test("blocked_by_override data carries actorId and chatId", async () => {
+    const overriddenHook = makeNsfwHook({
+      modService: {
+        getEffectiveNsfw: async () => ({ enabled: false, source: "user_override", }),
+        recordAction: async () => ({}) as never,
+      } as unknown as NsfwModerationService,
+    },);
+    const ctx = makeContext({ chatId: "chat-9", actorId: "actor-9", },);
+    const result = await overriddenHook.execute("Whatever content here", ctx,);
+    expect(result.handled,).toBe(true,);
+    expect(result.suppressContent,).toBe(true,);
+    expect(result.data?.nsfwLevel,).toBe("blocked_by_override",);
+    expect(result.data?.actorId,).toBe("actor-9",);
+    expect(result.data?.chatId,).toBe("chat-9",);
+  });
+
+  test("blocked_by_error data carries actorId and chatId", async () => {
+    const errorHook = makeNsfwHook({
+      modService: {
+        getEffectiveNsfw: async () => { throw new Error("mod service down",); },
+        recordAction: async () => ({}) as never,
+      } as unknown as NsfwModerationService,
+    },);
+    const ctx = makeContext({ chatId: "chat-9", actorId: "actor-9", },);
+    const result = await errorHook.execute("Whatever content here", ctx,);
+    expect(result.handled,).toBe(true,);
+    expect(result.suppressContent,).toBe(true,);
+    expect(result.data?.nsfwLevel,).toBe("blocked_by_error",);
+    expect(result.data?.actorId,).toBe("actor-9",);
+    expect(result.data?.chatId,).toBe("chat-9",);
+  });
   test("contract enforcement: blocks content exceeding user max_rating", async () => {
     const ctx = makeContext({
       content: "The suggestive and provocative dance was steamy.",
