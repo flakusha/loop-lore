@@ -19,3 +19,5 @@
 ## Resolution
 
 Fixed in `faec1501` (round 3): `src/routes/activity-stream.ts` and `src/routes/notifications/stream.ts` now send a generic "stream error, retry" client message and route full error detail (with correlation id) to the server-side logger. Verified present on dev; status flipped from Not Started.
+
+Addendum (bugfix-round-7): a third SSE site still leaked — the generation stream path `src/generation/generate-route/stream-to-client.ts` sent raw `(error as Error).message` (provider auth/driver internals) to both the poll buffer and the SSE frame. It now emits generic "Generation failed" and logs full detail server-side. Regression test in `stream-to-client.test.ts` asserts the SECRET marker never appears on the wire.

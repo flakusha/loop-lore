@@ -309,7 +309,11 @@ export function streamToClient({
 
         controller.close();
       } catch (error) {
-        streamError = (error as Error).message;
+        // Full detail goes to the attempt record and the log; the wire message
+        // is generic so internal error strings (provider auth, stack text,
+        // driver messages) never reach the client (BUG-sse-streams-leak...).
+        log.error("Generation stream failed", error instanceof Error ? error : undefined,);
+        streamError = "Generation failed";
 
         // BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle:
         // cancel/abort → status Cancelled + buffer done (never Failed/error).
