@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { fromBase64, toBase64, } from "../utils/base64";
+import {
+  base64ToUint8Array,
+  stringToUint8Array,
+  uint8ArrayToBase64,
+  uint8ArrayToString,
+} from "./compress-codecs";
 
 /** */
 export type BrowserContentEncoding = "identity" | "gzip" | "brotli" | "zstd";
@@ -12,33 +17,6 @@ export interface BrowserEncodeResult {
   encoding: BrowserContentEncoding;
 }
 
-/**
- * @param str
- */
-function stringToUint8Array(str: string,): Uint8Array {
-  return new TextEncoder().encode(str,);
-}
-
-/**
- * @param buf
- */
-function uint8ArrayToString(buf: Uint8Array,): string {
-  return new TextDecoder().decode(buf,);
-}
-
-/**
- * @param buf
- */
-function uint8ArrayToBase64(buf: Uint8Array,): string {
-  return toBase64(buf,);
-}
-
-/**
- * @param b64
- */
-function base64ToUint8Array(b64: string,): Uint8Array {
-  return fromBase64(b64,);
-}
 
 /**
  * @param data

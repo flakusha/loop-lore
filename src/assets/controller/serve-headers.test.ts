@@ -6,7 +6,7 @@ import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { join, } from "node:path";
 import type { AssetRecord, } from "../service/types";
 import { serveFile, } from "./files";
-import { cacheControlFor, contentDispositionFor, } from "./serve";
+import { cacheControlFor, contentDispositionFor, } from "./serve-headers";
 
 /**
  * @param overrides
