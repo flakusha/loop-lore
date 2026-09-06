@@ -1,6 +1,6 @@
 # BUG: nsfw: recordNsfwConsent INSERT+UPDATE not wrapped in a transaction
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ src/middleware/nsfw-gate/consent-ledger.ts lines 97-118 run INSERT then UPDATE a
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+consent-ledger.ts recordNsfwConsent: INSERT + prior-given-ROW UPDATE now inside database.transaction() — concurrent given requests cannot revoke each other. (resolved 2026-09-06)
