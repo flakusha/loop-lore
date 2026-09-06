@@ -102,6 +102,14 @@ describe("createHttp1Handler", () => {
     expect(() => handler.send("test",)).toThrow(TransportError,);
     expect(() => handler.get("test",)).toThrow(TransportError,);
   });
+
+  test("send while connected throws (non-sending stub)", async () => {
+    const handler = createHttp1Handler({},);
+    await handler.connect();
+    expect(() => handler.send("payload",)).toThrow(TransportError,);
+    expect(() => handler.send("payload",)).toThrow(/not supported/);
+    await handler.close();
+  });
 });
 
 describe("createH2Handler", () => {
@@ -135,6 +143,14 @@ describe("createH2Handler", () => {
     await handler.close();
     expect(() => handler.send("test",)).toThrow(TransportError,);
     expect(() => handler.get("test",)).toThrow(TransportError,);
+  });
+
+  test("send while connected throws (non-sending stub)", async () => {
+    const handler = createH2Handler({},);
+    await handler.connect();
+    expect(() => handler.send("payload",)).toThrow(TransportError,);
+    expect(() => handler.send("payload",)).toThrow(/not supported/);
+    await handler.close();
   });
 });
 
