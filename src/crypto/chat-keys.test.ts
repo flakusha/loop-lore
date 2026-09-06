@@ -192,4 +192,34 @@ describe("deriveChatKeyForChat", () => {
       Buffer.from(chatKey2.rawKey,).toString("hex",),
     );
   });
+
+  test("concurrent lazy-create calls agree on a single chat_key row", async () => {
+    const smk = getSmkKeySafe();
+    const chatId = "chat-race-" + Math.random().toString(36,).slice(2, 8,);
+    await db
+      .insertInto("chat_participants",)
+      .values([
+        { chat_id: chatId, actor_id: ACTOR_A, role_in_chat: "member", },
+        { chat_id: chatId, actor_id: ACTOR_B, role_in_chat: "member", },
+      ],)
+      .execute();
+
+    // Fire 8 concurrent derives on a chat with no existing chat_key row.
+    const results = await Promise.all(
+      Array.from({ length: 8, }, () => deriveChatKeyForChat(db, chatId, smk,),),
+    );
+
+    // All callers succeed with the same keyId.
+    const keyIds = new Set(results.map((r,) => r.keyId,),);
+    expect(keyIds.size,).toBe(1,);
+
+    // Exactly one chat_keys row exists for the chat (unique index enforced).
+    const rows = await db
+      .selectFrom("chat_keys",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+    expect(rows,).toHaveLength(1,);
+    expect(rows[0]!.id,).toBe(results[0]!.keyId,);
+  });
 });
