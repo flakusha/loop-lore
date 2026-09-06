@@ -39,7 +39,7 @@ describe("growth-service arc + confirm", () => {
       id: entryId,
       actor_id: actorId,
       axis: "trait",
-      event_type: "trait_shift",
+      event_type: "trait_drifted",
       status: "pending",
       subject_kind: "trait",
       subject_id: "t1",
@@ -70,13 +70,13 @@ describe("growth-service insert/list", () => {
 
   it("defaults to dynamic mode and inserts applied entries", async () => {
     expect((await getGrowthMode(db, actorId,)).growthMode,).toBe("dynamic",);
-    const entry = await insertGrowthLog(db, { actorId, axis: "trait", eventType: "trait_shift", },);
+    const entry = await insertGrowthLog(db, { actorId, axis: "trait", eventType: "trait_drifted", },);
     expect(entry.status,).toBe("applied",);
     expect(entry.confirmedAt,).not.toBeNull();
   });
 
   it("player view hides pending entries", async () => {
-    await insertGrowthLog(db, { actorId, axis: "trait", eventType: "trait_shift", status: "pending", },);
+    await insertGrowthLog(db, { actorId, axis: "trait", eventType: "trait_drifted", status: "pending", },);
     expect((await listGrowthLog(db, actorId,)).every((e,) => e.status === "applied"),).toBe(true,);
     expect(await listGrowthLog(db, actorId, { includePending: true, status: "pending", },),).toHaveLength(1,);
     expect(await listGrowthLog(db, actorId, { axis: "trait", includePending: true, },),).toHaveLength(2,);
@@ -84,7 +84,7 @@ describe("growth-service insert/list", () => {
 
   it("static mode refuses non-author events but allows arc stages", async () => {
     await db.updateTable("actors",).set({ growth_mode: "static", },).where("id", "=", actorId,).execute();
-    await expect(insertGrowthLog(db, { actorId, axis: "trait", eventType: "trait_shift", },),)
+    await expect(insertGrowthLog(db, { actorId, axis: "trait", eventType: "trait_drifted", },),)
       .rejects.toMatchObject({ code: "static_mode_forbidden", },);
     const arc = await insertGrowthLog(db, { actorId, axis: "arc", eventType: "arc_stage_set", },);
     expect(arc.status,).toBe("applied",);
