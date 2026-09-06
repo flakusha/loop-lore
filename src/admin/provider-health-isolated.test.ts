@@ -6,6 +6,14 @@
  */
 import { beforeAll, describe, expect, mock, test, } from "bun:test";
 import { createLogger, } from "../logger/index.js";
+import {
+  getHealthCache,
+  getProviderHealth,
+  getUnhealthyProviders,
+  hasUnhealthyProviders,
+  providerToSummary,
+  scanAllProviders,
+} from "./provider-health.js";
 
 mock.module("../generation/providers/registry.js", () => ({
   listProviders: () => [
@@ -29,15 +37,6 @@ mock.module("../generation/providers/registry.js", () => ({
     return undefined;
   },
 }),);
-
-import {
-  getHealthCache,
-  getProviderHealth,
-  getUnhealthyProviders,
-  hasUnhealthyProviders,
-  providerToSummary,
-  scanAllProviders,
-} from "./provider-health.js";
 
 describe("provider-health (isolated)", () => {
   beforeAll(() => {
