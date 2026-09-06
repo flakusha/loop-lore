@@ -1,6 +1,6 @@
 # BUG: dynamic-response Accept-Encoding negotiation uses substring match, ignores q-values
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Medium
 
@@ -19,3 +19,7 @@ Fix: Reuse parseAcceptEncoding(accept) and pick the highest-q server-supported a
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed on dev (verified against HEAD a263608e): `src/middleware/dynamic-response.ts` `negotiateEncoding`/`compressBody` now reuse `parseAcceptEncoding` (`src/transport/negotiation-parsers.ts`) — q-value sorted, `q<=0` excluded, no substring matching — consistent with the transport layer. Covered by `negotiation-parsers.test.ts` and `dynamic-response.test.ts`. Residual narrow case: `src/server/static-files.ts` `findCompressedVariant` still splits naively (tracked separately as a FEAT ticket).
