@@ -106,8 +106,9 @@ export function showToast(type: string, message: string,): void {
 // app.js and pages.js. Module-level flags don't work across bundles,
 // so we use a DOM property on document (shared across bundles).
 const LISTENER_KEY = "__toastListenerRegistered";
-if (!(document as any)[LISTENER_KEY]) {
-  (document as any)[LISTENER_KEY] = true;
+const doc = document as Document & { [LISTENER_KEY]?: boolean };
+if (typeof doc.addEventListener === "function" && !doc[LISTENER_KEY]) {
+  doc[LISTENER_KEY] = true;
   document.addEventListener(
     "show-toast",
     (e: CustomEvent<{ type?: string; message: string; icon?: string }>,) => {
@@ -253,14 +254,16 @@ export function setLocale(localeId: string,): void {
 }
 
 // ── Avatar image fallback ──────────────────────────────────────
-document.addEventListener(
-  "error",
-  (e: Event,) => {
-    const img = eventTarget<HTMLImageElement>(e,);
-    if (img?.dataset?.avatar === "user") { img.style.display = "none"; }
-  },
-  { capture: true, },
-);
+if (typeof document.addEventListener === "function") {
+  document.addEventListener(
+    "error",
+    (e: Event,) => {
+      const img = eventTarget<HTMLImageElement>(e,);
+      if (img?.dataset?.avatar === "user") { img.style.display = "none"; }
+    },
+    { capture: true, },
+  );
+}
 
 // Reveal helpers globally for onclick="" usage
 globalThis.toggleSidebar = toggleSidebar;
