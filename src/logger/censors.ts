@@ -15,6 +15,10 @@ export const DEFAULT_RULES: CensorRule[] = [
   { field: "*password*", },
   { field: "*authorization*", },
   { field: "*credential*", },
+  { field: "*cookie*", },
+  { field: "*session*", },
+  { field: "*bearer*", },
+  { field: "*auth*", },
   { field: "email", },
   { field: "ssn", },
   { field: "phone", },
@@ -79,19 +83,25 @@ function censorObject(
   depth: number,
   maxDepth: number,
 ): Record<string, unknown> {
-  if (depth > maxDepth) { return obj; }
   const result: Record<string, unknown> = {};
   for (const [key, val,] of Object.entries(obj,)) {
     const rule = matchRule(key, rules,);
     if (rule) {
       result[key] = censorScalar(val, rule,);
     } else if (val !== null && typeof val === "object" && !Array.isArray(val,)) {
-      result[key] = censorObject(val as Record<string, unknown>, rules, depth + 1, maxDepth,);
+      // At the depth cap we can no longer crawl; redact the whole subtree
+      // rather than returning it untouched (nested secrets bypass the
+      // denylist when deep — BUG-logger-censor-depth-cutoff).
+      result[key] = depth + 1 > maxDepth
+        ? PLACEHOLDER
+        : censorObject(val as Record<string, unknown>, rules, depth + 1, maxDepth,);
     } else if (Array.isArray(val,)) {
-      result[key] = Array.from(val, (item: unknown,) =>
-        typeof item === "object" && item !== null
-          ? censorObject(item as Record<string, unknown>, rules, depth + 1, maxDepth,)
-          : item,);
+      result[key] = depth + 1 > maxDepth
+        ? PLACEHOLDER
+        : Array.from(val, (item: unknown,) =>
+          typeof item === "object" && item !== null
+            ? censorObject(item as Record<string, unknown>, rules, depth + 1, maxDepth,)
+            : item,);
     } else {
       result[key] = val;
     }
@@ -106,7 +116,9 @@ function censorObject(
  * @param maxDepth
  */
 function censorValue(value: unknown, rules: CensorRule[], depth: number, maxDepth: number,): unknown {
-  if (value === null || value === undefined || depth > maxDepth) { return value; }
+  if (value === null || value === undefined) { return value; }
+
+  if (depth > maxDepth) { return PLACEHOLDER; }
 
   if (Array.isArray(value,)) {
     return Array.from(value, (item: unknown,) => censorValue(item, rules, depth, maxDepth,),);
