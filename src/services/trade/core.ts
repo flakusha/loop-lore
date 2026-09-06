@@ -54,7 +54,10 @@ export async function tradeCore(
       const row = await trx
         .selectFrom("world_items",)
         .select(["owner_actor_id", "quantity",],)
+        // Scope to the trade's world — an item id from world A must not
+        // validate in world B (BUG-services-tradecore-validatelines).
         .where("id", "=", line.worldItemId,)
+        .where("world_id", "=", worldId,)
         .executeTakeFirst();
       if (!row) { return `item ${line.worldItemId} not found`; }
       if (row.owner_actor_id !== actorId) { return `item ${line.worldItemId} not owned by intended party`; }
