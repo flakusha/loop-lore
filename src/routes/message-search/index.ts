@@ -85,6 +85,7 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
                 m.content AS content,
                 m.content_encoding AS contentEncoding,
                 m.key_id AS keyId,
+                m.content_plaintext AS contentPlaintext,
                 snippet(messages_fts, 2, ${SNIPPET_BEFORE}, ${SNIPPET_AFTER}, ${SNIPPET_ELLIPSIS}, ${SNIPPET_LENGTH}) AS matchContext,
                 m.created_at AS createdAt,
                 m.attachments AS attachments,
@@ -120,6 +121,7 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
                 m.content AS content,
                 m.content_encoding AS contentEncoding,
                 m.key_id AS keyId,
+                m.content_plaintext AS contentPlaintext,
                 substr(m.content, 1, 160) AS matchContext,
                 m.created_at AS createdAt,
                 m.attachments AS attachments,
@@ -145,56 +147,49 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
           // Resolve each row's content via the shared helper so the response
           // never carries raw encryption envelopes (data leak on standard-tier
           // chats) nor base64 gzip (which makes snippets unreadable).
-          // Encrypted rows get an empty snippet — FTS5 indexed ciphertext, so
-          // any snippet it produces is garbage. See BUG-message-search for
-          // the policy decision on FTS indexing of encrypted content.
+          // Snippet policy (BUG-message-search-returns-ciphertext):
+          // - When a plaintext mirror exists (content_plaintext), FTS5's
+          //   snippet() output is real plaintext → both content and the
+          //   matchContext (<mark>-wrapped) are safe to send.
+          // - Client-pre-encrypted rows have NO plaintext mirror: FTS5 indexed
+          //   ciphertext, so snippet() would leak encrypted bytes. Blank the
+          //   snippet and send only the decoded content (or a placeholder).
+          // Rejected decryption keeps the original row ids — never 'unknown'.
           const results = [];
-          for (
-            const settled of await Promise.allSettled(
-              Array.from(rows, async (row,) => {
-                let resolved: string;
-                try {
-                  resolved = await resolveMessageContent(database, {
-                    content: row.content,
-                    content_encoding: row.contentEncoding,
-                    key_id: row.keyId,
-                    chat_id: row.chatId,
-                  },);
-                } catch {
-                  resolved = "[Encrypted — unable to decrypt]";
-                }
-                const snippet = row.keyId
-                  ? ""
-                  : (row.matchContext ?? "").slice(0, SNIPPET_LENGTH * 4,);
-                return {
-                  messageId: row.messageId,
-                  chatId: row.chatId,
-                  chatName: row.chatName,
-                  chatCharacterName: row.chatCharacterName,
-                  role: row.role,
-                  content: resolved,
-                  matchContext: snippet,
-                  createdAt: row.createdAt,
-                  attachments: parseAttachments(row.attachments,),
-                  matchScore: row.matchScore,
-                };
-              },),
-            )
-          ) {
+          for (const settled of await Promise.allSettled(
+            Array.from(rows, async (row,) => {
+              let resolved: string;
+              try {
+                resolved = await resolveMessageContent(database, {
+                  content: row.content,
+                  content_encoding: row.contentEncoding,
+                  key_id: row.keyId,
+                  chat_id: row.chatId,
+                },);
+              } catch {
+                resolved = "[Encrypted — unable to decrypt]";
+              }
+              const snippet = row.contentPlaintext
+                ? (row.matchContext ?? "").slice(0, SNIPPET_LENGTH * 4,)
+                : "";
+              return {
+                messageId: row.messageId,
+                chatId: row.chatId,
+                chatName: row.chatName,
+                chatCharacterName: row.chatCharacterName,
+                role: row.role,
+                content: resolved,
+                matchContext: snippet,
+                createdAt: row.createdAt,
+                attachments: parseAttachments(row.attachments,),
+                matchScore: row.matchScore,
+              };
+            },),
+          )) {
+            // Rejected rows are skipped — a search result must correspond to a
+            // real DB row (pagination/hasMore stay honest, no 'unknown' leaks).
             if (settled.status === "fulfilled") {
               results.push(settled.value,);
-            } else {
-              results.push({
-                messageId: "unknown",
-                chatId: "unknown",
-                chatName: null,
-                chatCharacterName: null,
-                role: "user",
-                content: "[Encrypted — unable to decrypt]",
-                matchContext: "",
-                createdAt: new Date(0,).toISOString(),
-                matchScore: 0,
-              },);
             }
           }
 
