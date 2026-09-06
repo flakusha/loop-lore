@@ -44,13 +44,29 @@
   "src/admin/config.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md"
+    }
+  ],
+  "src/admin/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-module-cleanup-index-ts-exports-consistent-error-handl.md"
     }
   ],
   "src/admin/model-capabilities.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
+    }
+  ],
+  "src/admin/model-roles.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts.md"
     }
   ],
   "src/admin/model-roles.ts": [
@@ -64,11 +80,33 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-callaux-graceful-failure-throws-on-empty-config.md"
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-module-cleanup-index-ts-exports-consistent-error-handl.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md"
+    }
+  ],
+  "src/admin/provider-health.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-type-scanallproviders-db-param-as-kysely-db-instead-of-unkno.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-module-cleanup-index-ts-exports-consistent-error-handl.md"
     }
   ],
   "src/admin/provider-health.ts": [
@@ -79,6 +117,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-type-scanallproviders-db-param-as-kysely-db-instead-of-unkno.md"
     }
   ],
   "src/age-gate": [
@@ -2486,6 +2528,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-aux-llm-emotion-classifier.md"
     }
   ],
@@ -4565,6 +4611,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
     }
   ],
   "src/chat/service/batch.test.ts": [
@@ -7491,6 +7541,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-visualnovel-type-mismatch-across-api-db-layers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
     }
   ],
   "src/db/enums-core/consent-type.ts": [
@@ -10263,6 +10317,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-expose-full-vn-settings-from-spec.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
     }
   ],
   "src/frontend/alpine/chat-settings/vn.ts": [
@@ -10765,6 +10823,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-inventory-alpine.md"
+    }
+  ],
+  "src/frontend/alpine/json.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
     }
   ],
   "src/frontend/alpine/key-management.ts": [
@@ -13333,6 +13397,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-caption-route-has-no-ownership-check-and-overwrites-foreign-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-add-model-roles-test-ts-for-src-admin-model-roles-ts.md"
     }
   ],
   "src/generation/context-compactor.ts": [
@@ -13529,6 +13597,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
     },
     {
       "kind": "ticket",
@@ -15187,6 +15259,12 @@
       "source": "docs/spec/logging.md"
     }
   ],
+  "src/logger/transports/file.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-log-files-created-world-readable-0644.md"
+    }
+  ],
   "src/logger/transports/file.ts": [
     {
       "kind": "ticket",
@@ -15673,6 +15751,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-nsfw-weakest-link-violated-enforcement-hardcodes-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
+    }
+  ],
+  "src/middleware/nsfw-gate/age.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
     }
   ],
   "src/middleware/nsfw-gate/consent-ledger.ts": [
@@ -17648,6 +17736,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-factory-reset-deletes-tables-without-transaction-silent-per-.md"
     },
     {
@@ -17681,6 +17773,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/providers.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-type-scanallproviders-db-param-as-kysely-db-instead-of-unkno.md"
     }
   ],
   "src/routes/admin/providers.ts": [
@@ -20612,6 +20710,10 @@
   "src/routes/views/layout.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-raw-json-parse-outside-safe-json-3-sites.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-docs-ui-endpoint-linkage.md"
     },
     {
@@ -22902,6 +23004,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-auto-key-rotation-derives-chat-keys-from-participant-actor-k.md"
     },
     {
@@ -24509,6 +24615,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-bound-linked-travel-prompts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
     }
   ],
   "src/validation/schemas/entities.ts": [

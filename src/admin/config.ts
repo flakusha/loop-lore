@@ -97,47 +97,67 @@ export async function deleteConfig(db: Kysely<DB>, key: string,): Promise<void> 
 
 /**
  * Seed default config values from the app config. Skips existing keys.
+ * Missing config sections degrade gracefully: keys sourced from them are skipped.
  * @param db - Database instance.
  * @param config - App config to source defaults from.
  */
 export async function seedDefaults(db: Kysely<DB>, config: Config,): Promise<void> {
-  const defaults: { key: string; value: string; description: string }[] = [
-    {
-      key: "registration_open",
-      value: String(config.auth.registrationOpen,),
-      description: "Allow new user registration",
-    },
-    {
-      key: "session_timeout_hours",
-      value: String(config.auth.sessionTimeoutHours,),
-      description: "Idle session expiry in hours",
-    },
-    {
-      key: "max_sessions_per_user",
-      value: String(config.auth.maxSessionsPerUser,),
-      description: "Concurrent session limit",
-    },
-    {
+  const defaults: { key: string; value: string; description: string }[] = [];
+
+  // Graceful degradation (mirrors resolveModelRole in model-roles.ts):
+  // skip keys sourced from config sections that are missing. Non-config
+  // defaults always seed.
+  if (config?.auth) {
+    defaults.push(
+      {
+        key: "registration_open",
+        value: String(config.auth.registrationOpen,),
+        description: "Allow new user registration",
+      },
+      {
+        key: "session_timeout_hours",
+        value: String(config.auth.sessionTimeoutHours,),
+        description: "Idle session expiry in hours",
+      },
+      {
+        key: "max_sessions_per_user",
+        value: String(config.auth.maxSessionsPerUser,),
+        description: "Concurrent session limit",
+      },
+    );
+  }
+
+  if (config?.assets) {
+    defaults.push({
       key: "max_upload_size_bytes",
       value: String(config.assets.maxFileSize,),
       description: "Per-file upload size limit in bytes",
-    },
-    { key: "log_retention_days", value: "90", description: "Audit log retention in days", },
-    {
-      key: "default_provider",
-      value: config.generation.defaultProvider,
-      description: "Default LLM provider",
-    },
-    {
-      key: "default_model",
-      value: config.generation.defaultModels[config.generation.defaultProvider] ?? "",
-      description: "Default LLM model",
-    },
+    },);
+  }
+
+  defaults.push({ key: "log_retention_days", value: "90", description: "Audit log retention in days", },);
+
+  if (config?.generation?.defaultProvider) {
+    defaults.push(
+      {
+        key: "default_provider",
+        value: config.generation.defaultProvider,
+        description: "Default LLM provider",
+      },
+      {
+        key: "default_model",
+        value: config.generation.defaultModels?.[config.generation.defaultProvider] ?? "",
+        description: "Default LLM model",
+      },
+    );
+  }
+
+  defaults.push(
     { key: "auto_moderation", value: "false", description: "Enable auto-moderation rules", },
     { key: "profanity_filter", value: "false", description: "Enable profanity filter", },
     { key: "spam_detection", value: "false", description: "Enable spam detection", },
     { key: "max_flags_before_hide", value: "3", description: "Auto-hide content after N flags", },
-  ];
+  );
 
   for (const d of defaults) {
     const existing = await getConfig(db, d.key,);
