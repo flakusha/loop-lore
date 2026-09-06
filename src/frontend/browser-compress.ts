@@ -74,29 +74,13 @@ async function tryGzipDecompress(data: Uint8Array,): Promise<Uint8Array | null> 
 }
 
 /** WASM module type (avoids cross-bundle import). */
-interface WasmZstdModule {
+export interface WasmZstdModule {
   zstd: {
     compress(data: Uint8Array, level: number,): Uint8Array | null;
     decompress(data: Uint8Array, outCapacity: number,): Uint8Array | null;
     /** Optional probe; returns exact decompressed size when the module exposes it. */
     decompressBound?(data: Uint8Array,): number;
   };
-}
-
-/** Module-scoped zstd resolver; production reads window.__loopLoreWasm. */
-type ZstdResolver = () => Promise<WasmZstdModule | null>;
-
-let zstdResolver: ZstdResolver = () => getWasmZstd();
-
-/**
- * Test/DI seam: install a module-local zstd resolver. Overrides the global
- * (window.__loopLoreWasm) lookup without touching any shared mutable state —
- * module scope is per-worker, so tests stay parallel-safe.
- * @param resolver Resolver returning a zstd module or null (falls back to
- *   identity/no-op decode).
- */
-export function __setZstdResolverForTests(resolver: ZstdResolver | null,): void {
-  zstdResolver = resolver === null ? () => getWasmZstd() : resolver;
 }
 
 /**
@@ -115,9 +99,11 @@ async function getWasmZstd(): Promise<WasmZstdModule | null> {
 
 /**
  * @param data
+ * @param zstd Optional pre-resolved module — passed only by callers that
+ *   already hold one (tests); omitted in production.
  */
-async function tryZstdCompress(data: Uint8Array,): Promise<Uint8Array | null> {
-  const wasm = await zstdResolver();
+async function tryZstdCompress(data: Uint8Array, zstd?: WasmZstdModule | null,): Promise<Uint8Array | null> {
+  const wasm = zstd !== undefined ? zstd : await getWasmZstd();
   if (wasm === null) { return null; }
   return wasm.zstd.compress(data, 3,);
 }
@@ -164,11 +150,13 @@ const MAX_ZSTD_DECOMPRESS_RATIO = 1000;
 
 /**
  * @param data
+ * @param zstd Optional pre-resolved module — passed only by callers that
+ *   already hold one (tests); omitted in production.
  * @returns decompressed bytes, or null when zstd is unavailable or the
  *   payload cannot be decoded (caller distinguishes identity content).
  */
-async function tryZstdDecompress(data: Uint8Array,): Promise<Uint8Array | null> {
-  const wasm = await zstdResolver();
+async function tryZstdDecompress(data: Uint8Array, zstd?: WasmZstdModule | null,): Promise<Uint8Array | null> {
+  const wasm = zstd !== undefined ? zstd : await getWasmZstd();
   if (wasm === null) { return null; }
 
   const bound = wasm.zstd.decompressBound?.(data,);
@@ -206,13 +194,21 @@ function getDecoderPriority(encoding: BrowserContentEncoding,): ("zstd" | "brotl
   return ["gzip", "brotli", "zstd",];
 }
 
+/** Optional per-call overrides — currently only a pre-resolved zstd module. */
+export interface BrowserContentOptions {
+  /** Pre-resolved zstd module (tests); default reads window.__loopLoreWasm. */
+  zstd?: WasmZstdModule | null;
+}
+
 /**
  * @param plaintext
  * @param encoding
+ * @param options Optional per-call overrides (zstd module injection).
  */
 export async function browserEncodeContent(
   plaintext: string,
   encoding: BrowserContentEncoding = "gzip",
+  options: BrowserContentOptions = {},
 ): Promise<BrowserEncodeResult> {
   if (encoding === "identity" || !plaintext) {
     return { encoded: plaintext, encoding: "identity", };
@@ -223,7 +219,7 @@ export async function browserEncodeContent(
   }
   for (const algo of getEncoderPriority(encoding,)) {
     let result: Uint8Array | null;
-    if (algo === "zstd") { result = await tryZstdCompress(uint8,); }
+    if (algo === "zstd") { result = await tryZstdCompress(uint8, options.zstd,); }
     else if (algo === "brotli") { result = await tryBrotliCompress(uint8,); }
     else { result = await tryGzipCompress(uint8,); }
     if (result && result.length < uint8.length) {
@@ -236,16 +232,18 @@ export async function browserEncodeContent(
 /**
  * @param stored
  * @param encoding
+ * @param options Optional per-call overrides (zstd module injection).
  */
 export async function browserDecodeContent(
   stored: string,
   encoding: BrowserContentEncoding,
+  options: BrowserContentOptions = {},
 ): Promise<string> {
   if (encoding === "identity" || !stored) { return stored; }
   const uint8 = base64ToUint8Array(stored,);
   for (const algo of getDecoderPriority(encoding,)) {
     let result: Uint8Array | null;
-    if (algo === "zstd") { result = await tryZstdDecompress(uint8,); }
+    if (algo === "zstd") { result = await tryZstdDecompress(uint8, options.zstd,); }
     else if (algo === "brotli") { result = await tryBrotliDecompress(uint8,); }
     else { result = await tryGzipDecompress(uint8,); }
     if (result) { return uint8ArrayToString(result,); }
