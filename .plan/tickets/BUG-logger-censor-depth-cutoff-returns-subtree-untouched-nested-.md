@@ -1,6 +1,6 @@
 # BUG: Logger censor depth cutoff returns subtree untouched — nested secrets bypass denylist
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Small
 
@@ -20,3 +20,7 @@ Minor `censors.ts:6-15` default rules miss `cookie*`, `session*`, `bearer`, `set
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in `bd73c670` (round 4): `censorValue`/`censorObject` now return the `[REDACTED]` placeholder for any subtree at/past `maxDepth` instead of the nested object, so keys deeper than the cutoff are never returned; `DEFAULT_RULES` extended with `*cookie*`, `*session*`, `*bearer*`, `*auth*` globs. `src/logger/censors.test.ts` covers the depth-cutoff redaction and the new globs.
