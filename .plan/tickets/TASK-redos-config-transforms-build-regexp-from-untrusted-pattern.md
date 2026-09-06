@@ -1,6 +1,6 @@
 # TASK: ReDoS: config transforms build RegExp from untrusted pattern
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (already fixed on dev)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ src/generation/transforms.ts:47 does new RegExp(t.pattern, t.flags) from config 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Bookkeeping (bugfix-round-7 audit): `src/generation/transforms.ts` already compiles transform patterns via `compileSafeRegExp` with an explicit untrusted-source comment; non-compiling patterns are skipped. Verified present on dev 2026-09-06; ticket was stale.
