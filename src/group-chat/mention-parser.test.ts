@@ -11,8 +11,8 @@ describe("Mention Parser", () => {
     test("extracts single @mention", () => {
       const result = parseMentions("@Luna hello",);
       expect(result,).toHaveLength(1,);
-      expect(result[0]!.raw,).toBe("@Luna hello",);
-      expect(result[0]!.name,).toBe("Luna hello",);
+      expect(result[0]!.raw,).toBe("@Luna",);
+      expect(result[0]!.name,).toBe("Luna",);
       expect(result[0]!.start,).toBe(0,);
     });
 
@@ -20,7 +20,7 @@ describe("Mention Parser", () => {
       const result = parseMentions("@Luna, @Max hello",);
       expect(result,).toHaveLength(2,);
       expect(result[0]!.name,).toBe("Luna",);
-      expect(result[1]!.name,).toBe("Max hello",);
+      expect(result[1]!.name,).toBe("Max",);
     });
 
     test("returns empty array for no mentions", () => {
@@ -40,14 +40,15 @@ describe("Mention Parser", () => {
     test("handles names with underscores and hyphens", () => {
       const result = parseMentions("@user_name-123 hi",);
       expect(result,).toHaveLength(1,);
-      expect(result[0]!.name,).toBe("user_name-123 hi",);
+      expect(result[0]!.name,).toBe("user_name-123",);
     });
 
-    test("handles multi-word names", () => {
-      // The regex greedily captures following words
+    test("single token: multi-word name resolves via prefix downstream", () => {
+      // parseMentions captures one token; multi-word display names resolve
+      // through resolveMention prefix matching, not greedy regex capture.
       const result = parseMentions("@Dark Knight",);
       expect(result,).toHaveLength(1,);
-      expect(result[0]!.name,).toBe("Dark Knight",);
+      expect(result[0]!.name,).toBe("Dark",);
     });
 
     test("does not match @ alone without a name", () => {
@@ -149,6 +150,16 @@ describe("Mention Parser", () => {
     test("returns empty array for no matches", () => {
       const result = extractMentionedActorIds("@Zelda hi", participants,);
       expect(result,).toEqual([],);
+    });
+
+    test("resolves multi-word display name from single-token mention", () => {
+      // "@Dark Knight" → token "Dark" → prefix-match resolves "Dark Knight"
+      // (only one participant starts with "dark").
+      const p = [
+        { actorId: "a3", displayName: "Dark Knight", },
+        { actorId: "a4", displayName: "Luna", },
+      ];
+      expect(extractMentionedActorIds("@Dark Knight", p,),).toEqual(["a3",],);
     });
   });
 });
