@@ -19,6 +19,7 @@ import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
 import { telemetryRoutes, } from "./telemetry";
+import { hashId, } from "../telemetry/service";
 
 /**
  * @param db
@@ -76,8 +77,8 @@ describe("telemetry routes — enabled", () => {
       .where("event_type", "=", "frontend.page_view",)
       .execute();
     expect(rows,).toHaveLength(1,);
-    expect(rows[0]?.session_id,).toBe("sess-user1",);
-    expect(rows[0]?.user_id,).toBe("user1",);
+    expect(rows[0]?.session_id,).toBe(hashId("sess-user1",),);
+    expect(rows[0]?.user_id,).toBe(hashId("user1",),);
     expect(rows[0]?.chat_id,).toBeNull();
     expect(rows[0]?.source,).toBe("frontend",);
     expect(rows[0]?.event_data,).toBe(JSON.stringify({ path: "/home", referrer: "https://example.test", },),);
@@ -101,7 +102,7 @@ describe("telemetry routes — enabled", () => {
       .select(["event_data", "user_id",],)
       .where("event_type", "=", "generation.started",)
       .executeTakeFirst();
-    expect(row?.user_id,).toBe("user2",);
+    expect(row?.user_id,).toBe(hashId("user2",),);
     expect(JSON.parse(row?.event_data ?? "{}",),).toEqual({ provider: "openai", model: "gpt-4o", },);
   });
 
@@ -131,8 +132,8 @@ describe("telemetry routes — enabled", () => {
       .orderBy("created_at", "desc",)
       .limit(1,)
       .executeTakeFirst();
-    expect(row?.session_id,).toBe("sess-user1",);
-    expect(row?.user_id,).toBe("user1",);
+    expect(row?.session_id,).toBe(hashId("sess-user1",),);
+    expect(row?.user_id,).toBe(hashId("user1",),);
   });
 
   test("POST without a type fails schema validation", async () => {
