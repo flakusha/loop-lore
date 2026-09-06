@@ -3,21 +3,46 @@
 
 import type { Config, } from "../../config/schema";
 import type { TranslatorFn, } from "../../i18n/types";
-import { createRateLimiter, } from "../../middleware/rate-limit";
-import { rateLimitHeaders, type RateLimitResult, } from "../../middleware/rate-limit";
+import { createRateLimiter, rateLimitHeaders, type RateLimiter, type RateLimitResult, } from "../../middleware/rate-limit";
 import { LL_TOKEN, } from "../../regex/cookies";
 import { HttpStatus, } from "../http-utils";
 
 // ── Rate limiting (per-IP, in-memory) ─────────────────────────
 
 const LOGIN_MAX_ATTEMPTS = 10;
-const loginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MAX_ATTEMPTS, },);
-
 const REGISTER_MAX_ATTEMPTS = 3;
-const registerLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS, },);
-
 const DEMO_LOGIN_MAX_ATTEMPTS = 5;
+
+// Module singletons are the production default; tests inject their own
+// instance per file so parallel files never share mutable limiter state
+// (BUG-rate-limiter-module-singletons-shared-across-test-files). Callers
+// that need isolation pass a fresh `create*Limiter()` — each instance owns
+// its own Map + prune timer.
+const loginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MAX_ATTEMPTS, },);
+const registerLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS, },);
 const demoLoginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
+
+/**
+ * Build an isolated login limiter (same policy as the production default).
+ * Tests call this per-file so resets never cross file boundaries.
+ */
+export function createLoginLimiter(): RateLimiter {
+  return createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MAX_ATTEMPTS, },);
+}
+
+/**
+ * Build an isolated register limiter (same policy as the production default).
+ */
+export function createRegisterLimiter(): RateLimiter {
+  return createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS, },);
+}
+
+/**
+ * Build an isolated demo-login limiter (same policy as the production default).
+ */
+export function createDemoLoginLimiter(): RateLimiter {
+  return createRateLimiter({ windowMs: 60_000, maxRequests: DEMO_LOGIN_MAX_ATTEMPTS, },);
+}
 
 // ── Cookie helpers ────────────────────────────────────────────
 
