@@ -7,7 +7,7 @@
  */
 import { describe, expect, it, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { getRetentionDays, isFrontendTelemetryEnabled, isTelemetryEnabled, record, } from "./service";
+import { getRetentionDays, hashId, isFrontendTelemetryEnabled, isTelemetryEnabled, record, } from "./service";
 
 describe("Telemetry Service", () => {
   it("should record events with full metadata", async () => {
@@ -22,9 +22,9 @@ describe("Telemetry Service", () => {
     const result = await db.selectFrom("telemetry_events",).selectAll().limit(1,).execute();
     expect(result.length,).toBe(1,);
     expect(result[0]?.event_type,).toBe("test",);
-    expect(result[0]?.session_id,).toBe("1",);
-    expect(result[0]?.user_id,).toBe("2",);
-    expect(result[0]?.chat_id,).toBe("3",);
+    expect(result[0]?.session_id,).toBe(hashId("1",),);
+    expect(result[0]?.user_id,).toBe(hashId("2",),);
+    expect(result[0]?.chat_id,).toBe(hashId("3",),);
     expect(JSON.parse(result[0]!.event_data,),).toEqual({ test: true, },);
     sqlite.close();
   });
