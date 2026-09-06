@@ -4,8 +4,9 @@
  * Tests the handleRegister logic via the Elysia plugin.
  * Uses mock database and config to verify behavior without a real DB.
  */
-import { beforeEach, describe, expect, test, } from "bun:test";
-import { authPublicRoutes, resetRegisterRateLimiter, } from "./auth";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import type { RateLimiter, } from "../middleware/rate-limit";
+import { authPublicRoutes, createRegisterLimiter, } from "./auth";
 
 // ── Helpers ───────────────────────────────────────────────────
 
@@ -97,15 +98,22 @@ describe("authPublicRoutes", () => {
 });
 
 describe("POST /api/auth/register", () => {
+  // Isolated limiter — no shared module state; destroyed after each test.
+  let registerLimiter: RateLimiter;
   beforeEach(() => {
-    resetRegisterRateLimiter();
+    registerLimiter = createRegisterLimiter();
+  },);
+  afterEach(() => {
+    registerLimiter.destroy();
   },);
 
+  /** Build the plugin with the isolated register limiter injected. */
+  function makeApp(database: ReturnType<typeof makeDb>, config: ReturnType<typeof makeConfig>,) {
+    return authPublicRoutes({ database, config, limiters: { registerLimiter, }, },);
+  }
+
   test("returns error when registration is closed", async () => {
-    const app = authPublicRoutes({
-      database: makeDb(),
-      config: makeConfig({ registrationOpen: false, },),
-    },);
+    const app = makeApp(makeDb(), makeConfig({ registrationOpen: false, },),);
 
     const req = makeRequest("username=testuser&password=secret123",);
     const res = await app.handle(req,);
@@ -116,10 +124,7 @@ describe("POST /api/auth/register", () => {
   });
 
   test("returns error for missing username", async () => {
-    const app = authPublicRoutes({
-      database: makeDb(),
-      config: makeConfig(),
-    },);
+    const app = makeApp(makeDb(), makeConfig(),);
 
     const req = makeRequest("password=secret123",);
     const res = await app.handle(req,);
@@ -129,10 +134,7 @@ describe("POST /api/auth/register", () => {
   });
 
   test("returns error for missing password", async () => {
-    const app = authPublicRoutes({
-      database: makeDb(),
-      config: makeConfig(),
-    },);
+    const app = makeApp(makeDb(), makeConfig(),);
 
     const req = makeRequest("username=testuser",);
     const res = await app.handle(req,);
@@ -142,10 +144,7 @@ describe("POST /api/auth/register", () => {
   });
 
   test("returns error for username too short", async () => {
-    const app = authPublicRoutes({
-      database: makeDb(),
-      config: makeConfig(),
-    },);
+    const app = makeApp(makeDb(), makeConfig(),);
 
     const req = makeRequest("username=ab&password=secret123",);
     const res = await app.handle(req,);
@@ -155,10 +154,7 @@ describe("POST /api/auth/register", () => {
   });
 
   test("returns error for username too long", async () => {
-    const app = authPublicRoutes({
-      database: makeDb(),
-      config: makeConfig(),
-    },);
+    const app = makeApp(makeDb(), makeConfig(),);
 
     const longUsername = "a".repeat(33,);
     const req = makeRequest(`username=${longUsername}&password=secret123`,);
@@ -169,10 +165,7 @@ describe("POST /api/auth/register", () => {
   });
 
   test("returns error for password too short", async () => {
-    const app = authPublicRoutes({
-      database: makeDb(),
-      config: makeConfig(),
-    },);
+    const app = makeApp(makeDb(), makeConfig(),);
 
     const req = makeRequest("username=testuser&password=12345",);
     const res = await app.handle(req,);
@@ -182,10 +175,7 @@ describe("POST /api/auth/register", () => {
   });
 
   test("returns error for duplicate username", async () => {
-    const app = authPublicRoutes({
-      database: makeDb({ existingUser: true, },),
-      config: makeConfig(),
-    },);
+    const app = makeApp(makeDb({ existingUser: true, },), makeConfig(),);
 
     const req = makeRequest("username=existinguser&password=secret123",);
     const res = await app.handle(req,);
@@ -195,10 +185,7 @@ describe("POST /api/auth/register", () => {
   });
 
   test("rate limits registration attempts", async () => {
-    const app = authPublicRoutes({
-      database: makeDb({ existingUser: true, },),
-      config: makeConfig(),
-    },);
+    const app = makeApp(makeDb({ existingUser: true, },), makeConfig(),);
 
     // Exhaust rate limit (3 per hour)
     for (let i = 0; i < 3; i++) {
@@ -217,10 +204,7 @@ describe("POST /api/auth/register", () => {
 
   test("successful registration returns 200 with HX-Redirect", async () => {
     const db = makeDb();
-    const app = authPublicRoutes({
-      database: db,
-      config: makeConfig(),
-    },);
+    const app = makeApp(db, makeConfig(),);
 
     const req = makeRequest("username=newuser&password=secret123",);
     const res = await app.handle(req,);
