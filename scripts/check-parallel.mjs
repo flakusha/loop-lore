@@ -102,8 +102,8 @@ const checks = {
     // Tests
     "test - unit": "bun run test:unit",
     "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",
-    // Coverage gate: per-module line % vs 40% floor (see AGENTS.md Verification Gates).
-    "coverage - per-module line %": "bun run test:coverage && bun run scripts/check/coverage.mjs --floor=40",
+    // Coverage gate: per-module line % vs 80% floor (see AGENTS.md Verification Gates).
+    "coverage - per-module line %": "bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80",
 
     // Frontend security + hygiene gates (promoted from .tmp investigation scripts)
     // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
