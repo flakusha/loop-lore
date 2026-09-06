@@ -5,30 +5,15 @@
 
 /**
  * StreamToClient — streaming (SSE) generation path for
- * POST /api/generation/generate. Extracted from generate-route.ts
- * (pure refactor, no behavior change).
+ * POST /api/generation/generate. Pure refactor from generate-route.ts.
  *
- * BUG-generation-error-handling-gaps-detector-abort-void-promises:
- * - Abort signal is checked via `throwIfAborted()` AFTER each chunk so
- *   cancellation terminates accumulation promptly (not only at start).
- * - Telemetry `record()` and memory `extractAndStoreMemories()` void calls
- *   gain explicit `.catch(…)` so a DB outage during background tasks
- *   cannot surface as unhandled rejections.
- * - Empty final content is rejected as an explicit error.
- *
- * Stop-and-respond interrupt (TASK-stop-and-respond-interrupt-semantics):
- * - Each successful controller.enqueue() updates `lastRenderedChunkIndex`
- *   on the active generation so cancellation can persist the truncation
- *   point the user actually saw.
- * - The final SSE frame is `done` with `cancelled: true` for truncated
- *   responses and `deliveryConfirmed: false` is kept on the in-memory
- *   active record. Telemetry `generation.completed` is emitted ONLY when
- *   `deliveryConfirmed === true` (full response delivered); undelivered
- *   output is NEVER charged and gets a separate `generation.truncated`
- *   analytics event.
- * - When the client disconnects (ReadableStream cancel callback) we
- *   forward the abort into the in-memory active generation so any
- *   registered side-effect jobs (TTS / image-queue) cancel cleanly.
+ * Prior fixes: BUG-generation-error-handling-gaps-detector-abort-void-promises
+ * (abort check after chunk, explicit .catch on async voids, empty-content
+ * rejection); TASK-stop-and-respond-interrupt-semantics (lastRenderedChunkIndex
+ * per enqueue, done frame with cancelled:true, telemetry gated on
+ * deliveryConfirmed, client-disconnect forwards abort to side-effect jobs);
+ * BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle (cancel →
+ * streamCancelCleanup: status Cancelled + buffer done, never Failed).
  */
 
 import type { Kysely, } from "kysely";
@@ -38,6 +23,7 @@ import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { extractAndStoreMemories, } from "../../memory";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
+import { GenerationCancelledError, } from "../cancellation-actions/error";
 import {
   activeGenerations,
   cancelGeneration,
@@ -48,6 +34,7 @@ import { callWithFailover, } from "../providers/registry";
 import type { ChunkEvent, GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
 import { getOrCreateBuffer, scheduleBufferCleanup, StreamBuffer, } from "../stream-buffer";
 import type { GenerationMessage, } from "../types";
+import { streamCancelCleanup, } from "./cancel-stream";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { renderToolCallBlock, sseData, } from "./sse-utils";
 import { buildToolCallAssistantMessage, toGenerationToolCalls, } from "./stream-messages";
@@ -206,6 +193,7 @@ export function streamToClient({
           throw new Error(`Tool call loop exceeded max rounds (${MAX_TOOL_ROUNDS})`,);
         }
 
+        const finalCancelled = finalResponse.finishReason === "cancelled";
         const result = buildGenerationResult(
           {
             ...finalResponse,
@@ -213,16 +201,12 @@ export function streamToClient({
             thinking: finalResponse.thinking || accumulatedThinking || undefined,
             toolCalls: collectedToolCalls.length > 0 ? collectedToolCalls : undefined,
           },
-          finalResponse.finishReason === "cancelled",
-          finalResponse.finishReason === "cancelled" ? CancelReason.UserCancel : undefined,
+          finalCancelled,
+          finalCancelled ? CancelReason.UserCancel : undefined,
         );
 
         // BUG-generation-error-handling-gaps: reject empty streamed content.
-        if (!result.content.trim() && finalResponse.finishReason !== "cancelled") {
-          log.warn("Streamed provider returned empty content — rejecting as empty response", {
-            attemptId,
-            finishReason: finalResponse.finishReason,
-          },);
+        if (!result.content.trim() && !finalCancelled) {
           throw new Error(`LLM returned empty content (finishReason=${finalResponse.finishReason})`,);
         }
 
@@ -238,10 +222,8 @@ export function streamToClient({
           continuationNumber: input.continuationNumber,
         },);
 
-        // Flush the final "done" frame BEFORE recording telemetry. The
-        // delivery-confirmed flag is what protects undelivered output
-        // from being billed: only flip it when controller.enqueue has
-        // synchronously handed the frame to the underlying transport.
+        // Flush "done" BEFORE telemetry: deliveryConfirmed flips only after
+        // the frame is synchronously enqueued to the transport.
         const activeForDone = activeGenerations.get(attemptId,);
         const isCancelled = finalResponse.finishReason === "cancelled";
         const doneFrame = sseData({
@@ -264,11 +246,9 @@ export function streamToClient({
         }
 
         if (isTelemetryEnabled() && activeForDone?.deliveryConfirmed) {
-          // BUG-generation-error-handling-gaps: explicit .catch on telemetry.
-          // Stop-and-respond interrupt: only emit generation.completed when
-          // the full response was delivered. Undelivered / truncated
-          // streams leave deliveryConfirmed false; billing queries
-          // additionally gate on delivery_confirmed_at NOT NULL.
+          // BUG-generation-error-handling-gaps: only generation.completed
+          // when the full response was flushed; billing gates on
+          // delivery_confirmed_at NOT NULL.
           void record(database, {
             eventType: "generation.completed",
             userId,
@@ -288,9 +268,7 @@ export function streamToClient({
             log.error("Telemetry record failed", error instanceof Error ? error : undefined,);
           },);
         } else if (isTelemetryEnabled()) {
-          // Stop-and-respond: track the truncation explicitly so analytics
-          // can surface stop-and-respond usage. Marked separately so it
-          // doesn't pollute the billing pipeline.
+          // Stop-and-respond: explicit analytics for truncation (no billing).
           void record(database, {
             eventType: "generation.truncated",
             userId,
@@ -332,6 +310,26 @@ export function streamToClient({
         controller.close();
       } catch (error) {
         streamError = (error as Error).message;
+
+        // BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle:
+        // cancel/abort → status Cancelled + buffer done (never Failed/error).
+        const err = error as Error;
+        const isCancel = err instanceof GenerationCancelledError ||
+          err.name === "AbortError" ||
+          (err.cause instanceof GenerationCancelledError);
+        if (isCancel) {
+          await streamCancelCleanup({
+            db: database,
+            attemptId,
+            chatId: input.chatId,
+            error,
+            streamError,
+            accumulatedContent,
+            buffer,
+            controller,
+          },);
+          return;
+        }
 
         try {
           await failGeneration({ attemptId, error: error as Error, db: database, },);
