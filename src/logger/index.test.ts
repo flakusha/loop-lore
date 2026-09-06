@@ -1,37 +1,25 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
-import { describe, expect, test, } from "bun:test";
+// Focused logger coverage
+import { describe, expect, it, } from "bun:test";
 import { createLogger, getLogger, setGlobalLogger, } from "./index";
 
-describe("logger index boundary", () => {
-  test("getLogger throws before init", () => {
-    expect(() => getLogger()).toThrow();
+describe("logger coverage", () => {
+  it("createLogger returns instance", () => {
+    const log = createLogger({ level: "info", },);
+    expect(log,).toBeDefined();
+    expect(typeof log.info,).toBe("function",);
   });
-
-  test("createLogger creates a logger", () => {
-    const log = createLogger({ level: "info" });
-    expect(log).toBeDefined();
+  it("getLogger returns created logger", () => {
+    createLogger();
+    const log = getLogger();
+    expect(log,).toBeDefined();
   });
-
-  test("createLogger assigns root so getLogger works", () => {
-    createLogger({ level: "info" });
-    const root = getLogger();
-    expect(typeof root.info).toBe("function");
+  it("getLogger throws before init", () => {
+    setGlobalLogger(null as any,);
+    expect(() => getLogger()).toThrow("Logger not initialized",);
   });
-
-  test("setGlobalLogger replaces root", () => {
-    const log = createLogger({ level: "info" });
-    setGlobalLogger(log);
-    expect(getLogger()).toBe(log);
-  });
-
-  test("createLogger accepts partial config", () => {
-    const log = createLogger({ level: "debug" });
-    expect(log).toBeDefined();
-  });
-
-  test("export types are available", () => {
-    expect(typeof createLogger).toBe("function");
-    expect(typeof getLogger).toBe("function");
-    expect(typeof setGlobalLogger).toBe("function");
+  it("setGlobalLogger replaces root", () => {
+    const log = createLogger({ level: "debug", },);
+    setGlobalLogger(log,);
+    expect(getLogger(),).toBe(log,);
   });
 });
