@@ -27,6 +27,13 @@ interface BunSqliteWrapper {
  * @param database
  */
 export function createSqliteDialect(database: Database,): SqliteDialect {
+  // Always enforce WAL + foreign keys on the underlying connection, whether
+  // the caller passed a fresh file path or an existing Database. Skipping
+  // these on the existing-Database path silently disables FK enforcement
+  // (BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data).
+  database.run("PRAGMA journal_mode = WAL",);
+  database.run("PRAGMA foreign_keys = ON",);
+
   const wrapped: BunSqliteWrapper = {
     close() {
       database.close();
@@ -56,10 +63,8 @@ export function createSqliteDialect(database: Database,): SqliteDialect {
  * @param databasePath
  */
 function createDialect(databasePath: string,): SqliteDialect {
-  const sqlite = new Database(databasePath,);
-  sqlite.run("PRAGMA journal_mode = WAL",);
-  sqlite.run("PRAGMA foreign_keys = ON",);
-  return createSqliteDialect(sqlite,);
+  // Pragmas are applied inside createSqliteDialect so both paths are enforced.
+  return createSqliteDialect(new Database(databasePath,),);
 }
 
 // Initialize database connection eagerly
