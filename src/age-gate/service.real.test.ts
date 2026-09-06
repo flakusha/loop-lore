@@ -9,18 +9,18 @@ describe('age-gate getStatus', () => {
   });
 
   it('returns disabled when enabled false', () => {
-    const s = getStatus({ enabled: false, mode: 'strict', minimumAge: 18 }, { birth_date: '1990-01-01', age_gate_accepted_at: '2024-01-01' });
+    const s = getStatus({ enabled: false, mode: 'self-declaration', minimumAge: 18 }, { birth_date: '1990-01-01', age_gate_accepted_at: '2024-01-01' });
     expect(s.isEnabled).toBe(false);
   });
 
   it('passes with birth date + accepted', () => {
-    const s = getStatus({ enabled: true, mode: 'strict', minimumAge: 18 }, { birth_date: '1990-01-01', age_gate_accepted_at: '2024-01-01' });
+    const s = getStatus({ enabled: true, mode: 'self-declaration', minimumAge: 18 }, { birth_date: '1990-01-01', age_gate_accepted_at: '2024-01-01' });
     expect(s.isEnabled).toBe(true);
     expect(s.hasPassed).toBe(true);
   });
 
   it('fails when birth missing', () => {
-    const s = getStatus({ enabled: true, mode: 'strict', minimumAge: 18 }, { birth_date: null, age_gate_accepted_at: '2024-01-01' });
+    const s = getStatus({ enabled: true, mode: 'self-declaration', minimumAge: 18 }, { birth_date: null, age_gate_accepted_at: '2024-01-01' });
     expect(s.hasPassed).toBe(false);
   });
 });
