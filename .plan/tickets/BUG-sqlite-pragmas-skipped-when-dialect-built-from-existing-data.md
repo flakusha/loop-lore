@@ -1,6 +1,6 @@
 # BUG: SQLite pragmas skipped when dialect built from existing Database
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ src/db/index.ts:52-56 — WAL/foreign_keys pragmas only set in createDialect(pat
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+db/index.ts createSqliteDialect now applies PRAGMA journal_mode=WAL + foreign_keys=ON on every Database — both file-path and existing-connection paths enforce FK. (resolved 2026-09-06)
