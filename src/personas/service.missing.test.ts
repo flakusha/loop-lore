@@ -41,6 +41,22 @@ beforeAll(async () => {
     },)
     .execute();
 
+  // Create a valid asset for avatarAssetId tests
+  await db
+    .insertInto("assets",)
+    .values({
+      id: "test-asset-1",
+      owner_id: userId,
+      filename: "test.png",
+      mime_type: "image/png",
+      asset_type: "image",
+      size_bytes: 1024,
+      storage_path: "/tmp/test.png",
+      storage_backend: "local",
+      visibility: "private",
+    },)
+    .execute();
+
   service = new PersonasService(db,);
 },);
 
@@ -85,7 +101,7 @@ describe("PersonasService — convertToCharacter()", () => {
   });
 
   test("maps avatar_asset_id from persona to actor", async () => {
-    const avatarId = "avatar-123";
+    const avatarId = "test-asset-1";
     const personaId = await service.create({
       userId,
       name: "Avatar Persona",
@@ -119,11 +135,11 @@ describe("PersonasService — convertToCharacter()", () => {
 });
 
 describe("PersonasService — update() individual field branches", () => {
-  test("updates avatarAssetId", async () => {
+  test("updates avatarAssetId with existing asset reference", async () => {
     const id = await service.create({ userId, name: "Avatar Test", },);
-    await service.update(id, { avatarAssetId: "new-avatar-99", }, userId,);
+    await service.update(id, { avatarAssetId: "test-asset-1", }, userId,);
     const persona = await service.getById(id, userId,);
-    expect(persona!.avatar_asset_id,).toBe("new-avatar-99");
+    expect(persona!.avatar_asset_id,).toBe("test-asset-1");
   });
 
   test("updates title", async () => {
@@ -184,14 +200,11 @@ describe("PersonasService — delete() cascade", () => {
       .insertInto("chats",)
       .values({
         id: chatId,
-        owner_id: userId,
-        title: "Delete Cascade Chat",
-        chat_type: "direct",
-        chat_mode: "direct",
-        visibility: "private",
-        settings: "{}",
+        created_by: userId,
+        name: "Delete Cascade Chat",
+        type: "direct",
+        mode: "direct",
         format_version: 0,
-        auto_name: false,
       },)
       .execute();
 
@@ -199,9 +212,9 @@ describe("PersonasService — delete() cascade", () => {
       .insertInto("chat_participants",)
       .values({
         chat_id: chatId,
-        user_id: userId,
+        actor_id: userId,
         persona_id: personaId,
-        role: "user",
+        role_in_chat: "member",
       },)
       .execute();
 
@@ -210,7 +223,7 @@ describe("PersonasService — delete() cascade", () => {
       .selectFrom("chat_participants",)
       .selectAll()
       .where("chat_id", "=", chatId,)
-      .where("user_id", "=", userId,)
+      .where("actor_id", "=", userId,)
       .executeTakeFirst();
     expect(before!.persona_id,).toBe(personaId);
 
@@ -222,7 +235,7 @@ describe("PersonasService — delete() cascade", () => {
       .selectFrom("chat_participants",)
       .selectAll()
       .where("chat_id", "=", chatId,)
-      .where("user_id", "=", userId,)
+      .where("actor_id", "=", userId,)
       .executeTakeFirst();
     expect(after!.persona_id,).toBeNull();
   });
@@ -257,15 +270,15 @@ describe("PersonasService — getDefault()", () => {
 });
 
 describe("PersonasService — create() with avatarAssetId", () => {
-  test("creates persona with avatarAssetId", async () => {
+  test("creates persona with avatarAssetId referencing valid asset", async () => {
     const id = await service.create({
       userId,
       name: "Avatar Creator",
-      avatarAssetId: "asset-abc-123",
+      avatarAssetId: "test-asset-1",
     },);
     const persona = await service.getById(id, userId,);
     expect(persona,).toBeTruthy();
-    expect(persona!.avatar_asset_id,).toBe("asset-abc-123");
+    expect(persona!.avatar_asset_id,).toBe("test-asset-1");
   });
 
   test("creates persona with null avatarAssetId", async () => {
