@@ -309,15 +309,10 @@ export function streamToClient({
 
         controller.close();
       } catch (error) {
-        // Full detail goes to the attempt record and the log; the wire message
-        // is generic so internal error strings (provider auth, stack text,
-        // driver messages) never reach the client (BUG-sse-streams-leak...).
-        log.error("Generation stream failed", error instanceof Error ? error : undefined,);
-        streamError = "Generation failed";
-
-        // BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle:
-        // cancel/abort → status Cancelled + buffer done (never Failed/error).
         const err = error as Error;
+        // BUG-stream-cancel: classify cancel first so the persisted
+        // cancel_reason_detail carries the real reason, not the generic
+        // wire message (BUG-sse-streams-leak kept the wire generic).
         const isCancel = err instanceof GenerationCancelledError ||
           err.name === "AbortError" ||
           (err.cause instanceof GenerationCancelledError);
@@ -327,13 +322,17 @@ export function streamToClient({
             attemptId,
             chatId: input.chatId,
             error,
-            streamError,
+            streamError: err instanceof GenerationCancelledError ? (err.detail || err.message) : err.message,
             accumulatedContent,
             buffer,
             controller,
           },);
           return;
         }
+
+        // Non-cancel: full detail to log/attempt; generic wire message.
+        log.error("Generation stream failed", error instanceof Error ? error : undefined,);
+        streamError = "Generation failed";
 
         try {
           await failGeneration({ attemptId, error: error as Error, db: database, },);
