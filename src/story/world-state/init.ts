@@ -18,8 +18,10 @@ import type { WorldState, } from "./types";
  */
 export async function initializeNpcStates(state: WorldState, worldId: string,): Promise<number> {
   const characters = await state.db
-    .selectFrom("actors",)
-    .selectAll()
+    .selectFrom("actors")
+    .innerJoin("world_members", "world_members.actor_id", "actors.id")
+    .selectAll("actors")
+    .where("world_members.world_id", "=", worldId)
     .where("actor_type", "in", ["character", "narrator",] as ("character" | "narrator")[],)
     .where("agent_type", "in", ["ai", "npc",] as ("ai" | "npc")[],)
     .execute();
@@ -61,8 +63,10 @@ export async function initializeNpcStates(state: WorldState, worldId: string,): 
  */
 export async function initializeCharacterWorldSetup(state: WorldState, worldId: string,): Promise<number> {
   const characters = await state.db
-    .selectFrom("actors",)
-    .selectAll()
+    .selectFrom("actors")
+    .innerJoin("world_members", "world_members.actor_id", "actors.id")
+    .selectAll("actors")
+    .where("world_members.world_id", "=", worldId)
     .where("actor_type", "in", ["character", "narrator",] as ("character" | "narrator")[],)
     .where("agent_type", "in", ["ai", "npc",] as ("ai" | "npc")[],)
     .execute();
