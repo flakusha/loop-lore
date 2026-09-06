@@ -8,6 +8,7 @@ import { UserRole, UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { TranslatorFn, } from "../../i18n/types";
 import { uid, } from "../../utils";
+import type { RateLimiter, } from "../../middleware/rate-limit";
 import { createSessionAndCookie, } from "./session";
 import { errorHtml, getClientIp, parseCredentials, rateLimitHtml, registerLimiter, } from "./shared";
 
@@ -67,17 +68,20 @@ async function insertRegisteredUser(
  * @param config
  * @param ip
  * @param t
+ * @param limiter Optional per-call limiter override (tests); defaults to the
+ *   module singleton.
  */
 function checkRegisterGate(
   config: Config,
   ip: string,
   t: TranslatorFn | undefined,
+  limiter: RateLimiter = registerLimiter,
 ): Response | null {
   if (!config.auth.registrationOpen) {
     return errorHtml(t ? t("auth.registrationClosed",) : "Registration is closed.",);
   }
   // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers: emit headers.
-  const regLimit = registerLimiter.consume(ip,);
+  const regLimit = limiter.consume(ip,);
   if (!regLimit.allowed) {
     return rateLimitHtml({
       limit: regLimit,
@@ -94,6 +98,8 @@ function checkRegisterGate(
  * @param config
  * @param t
  * @param peerIp
+ * @param limiter Optional per-call limiter override (tests); defaults to the
+ *   module singleton.
  */
 async function handleRegister(
   request: Request,
@@ -101,9 +107,10 @@ async function handleRegister(
   config: Config,
   t?: TranslatorFn,
   peerIp?: string | null,
+  limiter: RateLimiter = registerLimiter,
 ): Promise<Response> {
   const ip = getClientIp(request, config, peerIp ?? null,);
-  const gateError = checkRegisterGate(config, ip, t,);
+  const gateError = checkRegisterGate(config, ip, t, limiter,);
   if (gateError) { return gateError; }
 
   const formData = await parseCredentials(request,);
