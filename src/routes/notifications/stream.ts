@@ -10,6 +10,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { NotificationService, } from "../../notifications/service";
+import { getLogger, } from "../../logger";
 import { safeJsonStringify, } from "../../utils";
 
 export const POLL_INTERVAL_MS = 5000;
@@ -76,7 +77,14 @@ export class NotificationStreamer {
           lastSnapshot = `${count}:${recent[0]?.id ?? ""}`;
           send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10,), },);
         } catch (error) {
-          send(controller, "stream-error", { error: String(error,), },);
+          // Never leak error internals to the client; log with a correlation id.
+          const correlationId = crypto.randomUUID();
+          getLogger().error(
+            "notification-stream: initial snapshot failed",
+            error instanceof Error ? error : new Error(String(error,),),
+            { correlationId, },
+          );
+          send(controller, "stream-error", { message: "stream error, retry", correlationId, },);
         }
 
         timer = setInterval(() => {
