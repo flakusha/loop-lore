@@ -37,7 +37,10 @@ export function levelToRating(level: string,): NSFWContentRating {
       return NSFWContentRating.NSFW_MILD;
     }
     default: {
-      return NSFWContentRating.SFW;
+      // Fail closed: an unknown level string is treated as the strictest
+      // rating (NSFW_EXTREME), never downgraded to SFW. A classifier tag
+      // outside the known set must not bypass the gate (BUG-nsfw-leveltorating).
+      return NSFWContentRating.NSFW_EXTREME;
     }
   }
 }
