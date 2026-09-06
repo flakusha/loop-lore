@@ -60,13 +60,16 @@ export async function callAux(
     userId,
     chatId,
   } = opts;
-
-  // Resolve the model role → provider/model (DB override → config → default)
-  const auxRole = await resolveModelRole(role, config, db,);
-  if (!auxRole.provider || !auxRole.model) {
+  // Resolve the model role → provider/model; graceful failure => null (BUG-1 fix)
+  let auxRole;
+  try {
+    auxRole = await resolveModelRole(role, config, db,);
+  } catch {
     return null;
   }
-
+  if (!auxRole || !auxRole.provider || !auxRole.model) {
+    return null;
+  }
   // BYO apiKey parity: user key → chat/actor override → server default
   let apiKey: string | undefined;
   try {
