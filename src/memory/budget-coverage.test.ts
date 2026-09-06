@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { selectWithinBudget, getMemoriesWithinBudget } from './budget';
+import { selectWithinBudget, } from './budget';
 
 describe('memory budget', () => {
   it('drops low-confidence unpinned memories first', () => {
