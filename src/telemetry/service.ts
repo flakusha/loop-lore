@@ -28,6 +28,17 @@ import { loadTelemetryConfig, } from "./config";
 
 const config = loadTelemetryConfig();
 
+/**
+ * PII-safe stable id: SHA-256, truncated to 12 hex chars — enough to
+ * correlate per-entity event flows without storing raw user/chat/session ids
+ * (BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids).
+ * @param id
+ */
+export function hashId(id?: string | null,): string | null {
+  if (!id) { return null; }
+  return new Bun.CryptoHasher("sha256",).update(id,).digest("hex",).slice(0, 12,);
+}
+
 interface EventParams {
   eventType: string;
   /** Server-derived from session context. */
@@ -81,9 +92,9 @@ export async function record(
         id: crypto.randomUUID(),
         event_type: eventType,
         source: source ?? "server",
-        session_id: sessionId ?? null,
-        user_id: userId ?? null,
-        chat_id: chatId ?? null,
+        session_id: hashId(sessionId,),
+        user_id: hashId(userId,),
+        chat_id: hashId(chatId,),
         event_data: payload,
         created_at: new Date().toISOString(),
       },)
