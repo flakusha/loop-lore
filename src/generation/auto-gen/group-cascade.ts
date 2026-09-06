@@ -115,9 +115,13 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
   const maxTurns = chat.max_turns ?? 3;
   const autoAdvance = (chat.auto_advance ?? 0) > 0;
 
-  // Depth check: max_turns=0 means no cascade, max_turns=1 means 1 AI reply per user message
+  // Depth check: max_turns=0 means no cascade, max_turns=1 means 1 AI reply
+  // per user message (the initial reply; no cascade). At this call `depth`
+  // completed replies exist (depth=0 → the user-triggered reply is done);
+  // scheduling the next one would make `depth+2` total replies, which must
+  // stay ≤ max_turns. So we stop once `depth + 1 >= max_turns`.
   if (maxTurns === 0) { return; }
-  if (depth >= maxTurns) {
+  if (depth + 1 >= maxTurns) {
     log.debug("Cascade depth limit reached", { depth, maxTurns, },);
     return;
   }

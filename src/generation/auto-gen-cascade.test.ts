@@ -353,6 +353,93 @@ describe("triggerGroupCascade edge cases", () => {
     expect(messages,).toHaveLength(1,);
   });
 
+  // 2b. max_turns off-by-one regression: max_turns=1 → exactly 1 AI reply
+  test("max_turns=1: cascade schedules exactly one AI reply total", async () => {
+    const chatId = await createGroupChat(db, userId, { maxTurns: 1, },);
+    const actorA = await createAiActor(db, "Alice",);
+    const actorB = await createAiActor(db, "Bob",);
+    await addParticipant(db, chatId, actorA,);
+    await addParticipant(db, chatId, actorB,);
+    // The user-triggered reply already exists (depth=0 call decides about the NEXT one).
+    await insertMessage(db, chatId, actorA, "Hello @Bob",);
+
+    await triggerGroupCascade({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      userId,
+      aiContent: "Hello @Bob",
+      previousActorId: actorA,
+      depth: 0,
+      deps: createMockDeps(),
+    },);
+
+    // depth=0, max_turns=1 → depth+1=1 >= 1 → stop; no cascade reply added.
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+    expect(messages,).toHaveLength(1,);
+  });
+
+  // 2c. max_turns=3 with depth=2 → stop (the initial reply is 1, depth=2 is the 3rd)
+  test("max_turns=3 depth=2: cascade stops (3rd AI reply complete)", async () => {
+    const chatId = await createGroupChat(db, userId, { maxTurns: 3, },);
+    const actorA = await createAiActor(db, "Alice",);
+    const actorB = await createAiActor(db, "Bob",);
+    await addParticipant(db, chatId, actorA,);
+    await addParticipant(db, chatId, actorB,);
+    await insertMessage(db, chatId, actorA, "Hello @Bob",);
+
+    await triggerGroupCascade({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      userId,
+      aiContent: "Hello @Bob",
+      previousActorId: actorA,
+      depth: 2,
+      deps: createMockDeps(),
+    },);
+
+    // depth=2, max_turns=3 → depth+1=3 not < 3 → no cascade scheduling.
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+    expect(messages,).toHaveLength(1,);
+  });
+
+  // 2d. max_turns=3 with depth=3 → stop (no 4th reply)
+  test("max_turns=3 depth=3: cascade stops (depth+1=4 >= 3)", async () => {
+    const chatId = await createGroupChat(db, userId, { maxTurns: 3, },);
+    const actorA = await createAiActor(db, "Alice",);
+    const actorB = await createAiActor(db, "Bob",);
+    await addParticipant(db, chatId, actorA,);
+    await addParticipant(db, chatId, actorB,);
+    await insertMessage(db, chatId, actorA, "Hello @Bob",);
+
+    await triggerGroupCascade({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      userId,
+      aiContent: "Hello @Bob",
+      previousActorId: actorA,
+      depth: 3,
+      deps: createMockDeps(),
+    },);
+
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
+    expect(messages,).toHaveLength(1,);
+  });
+
   // 3. Chat paused → cascade stops
   test("chat paused: cascade stops when story_state.isPaused=true", async () => {
     const chatId = await createGroupChat(db, userId, {
@@ -532,7 +619,7 @@ describe("triggerGroupCascade edge cases", () => {
   // 8. Auto-advance selects same actor → falls back to different actor
   test("auto-advance same-actor fallback: picks a different actor", async () => {
     const chatId = await createGroupChat(db, userId, {
-      maxTurns: 1,
+      maxTurns: 2, // depth=0 → depth+1=1 < 2 → cascade proceeds
       autoAdvance: 1,
     },);
     const actorA = await createAiActor(db, "Alice",);
