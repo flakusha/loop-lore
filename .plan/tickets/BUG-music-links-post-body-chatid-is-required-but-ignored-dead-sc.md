@@ -1,6 +1,6 @@
 # BUG: music-links POST body.chatId is required-but-ignored dead schema field
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Medium
 
@@ -24,3 +24,7 @@ Tests: add a regression asserting the schema rejects body without chatId OR the 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Already fixed on dev: MusicLinkCreateBody omits chatId entirely (single authority = route param); schema comment documents the rationale. (resolved 2026-09-06)

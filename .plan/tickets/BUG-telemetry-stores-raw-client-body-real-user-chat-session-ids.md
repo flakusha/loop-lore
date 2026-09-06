@@ -1,6 +1,6 @@
 # BUG: Telemetry stores raw client body + real user/chat/session ids
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Medium
 
@@ -23,3 +23,7 @@ Related: `generation/auto-gen/post-store.ts:109-113` persists hallucination `ent
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in src/telemetry/service.ts (round-7 worktree): user_id/chat_id/session_id hashed at write time via SHA-256 12-char digest (hashId); route already typed/whitelisted. Regression tests updated to assert hashed values. (resolved 2026-09-06)
