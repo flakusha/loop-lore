@@ -1,6 +1,6 @@
 # BUG: safeDecompress pre-check rejects compressed payloads over ~10KB (silent garbage reads)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Small
 
@@ -28,3 +28,7 @@ Acceptance:
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in src/utils/safe-buffer/compression.ts (pre-check deleted; post-decompress checks intact; docstring ratio corrected). Verified in this worktree (round-6 batch, 2026-09-06).
