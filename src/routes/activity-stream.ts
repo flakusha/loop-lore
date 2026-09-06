@@ -14,6 +14,7 @@
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
 import { safeJsonStringify, } from "../utils";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { computeActivity, } from "./activity";
@@ -92,7 +93,14 @@ export class ActivityStreamer {
           lastSnapshot = snapshotOf(initial,);
           send(controller, "activity", { chats: initial, },);
         } catch (error) {
-          send(controller, "stream-error", { error: String(error,), },);
+          // Never leak error internals to the client; log with a correlation id.
+          const correlationId = crypto.randomUUID();
+          getLogger().error(
+            "activity-stream: initial snapshot failed",
+            error instanceof Error ? error : new Error(String(error,),),
+            { correlationId, },
+          );
+          send(controller, "stream-error", { message: "stream error, retry", correlationId, },);
         }
 
         timer = setInterval(() => {
