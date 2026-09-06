@@ -83,6 +83,22 @@ interface WasmZstdModule {
   };
 }
 
+/** Module-scoped zstd resolver; production reads window.__loopLoreWasm. */
+type ZstdResolver = () => Promise<WasmZstdModule | null>;
+
+let zstdResolver: ZstdResolver = () => getWasmZstd();
+
+/**
+ * Test/DI seam: install a module-local zstd resolver. Overrides the global
+ * (window.__loopLoreWasm) lookup without touching any shared mutable state —
+ * module scope is per-worker, so tests stay parallel-safe.
+ * @param resolver Resolver returning a zstd module or null (falls back to
+ *   identity/no-op decode).
+ */
+export function __setZstdResolverForTests(resolver: ZstdResolver | null,): void {
+  zstdResolver = resolver === null ? () => getWasmZstd() : resolver;
+}
+
 /**
  * Resolve WASM module from global (set by wasm-loader.ts).
  * Returns null when unavailable or loading fails.
@@ -101,7 +117,7 @@ async function getWasmZstd(): Promise<WasmZstdModule | null> {
  * @param data
  */
 async function tryZstdCompress(data: Uint8Array,): Promise<Uint8Array | null> {
-  const wasm = await getWasmZstd();
+  const wasm = await zstdResolver();
   if (wasm === null) { return null; }
   return wasm.zstd.compress(data, 3,);
 }
@@ -152,7 +168,7 @@ const MAX_ZSTD_DECOMPRESS_RATIO = 1000;
  *   payload cannot be decoded (caller distinguishes identity content).
  */
 async function tryZstdDecompress(data: Uint8Array,): Promise<Uint8Array | null> {
-  const wasm = await getWasmZstd();
+  const wasm = await zstdResolver();
   if (wasm === null) { return null; }
 
   const bound = wasm.zstd.decompressBound?.(data,);
