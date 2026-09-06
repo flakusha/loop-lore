@@ -28,9 +28,11 @@ export function isNsfwRating(rating: ContentRating,): boolean {
 /**
  * Calculate age from birth date string.
  * @param birthDate
+ * @returns age in years, or null when birthDate is not a valid date
  */
-export function calculateAge(birthDate: string,): number {
+export function calculateAge(birthDate: string,): number | null {
   const birth = new Date(birthDate,);
+  if (Number.isNaN(birth.getTime(),)) { return null; }
   const now = new Date();
   let age = now.getFullYear() - birth.getFullYear();
   const monthDiff = now.getMonth() - birth.getMonth();
