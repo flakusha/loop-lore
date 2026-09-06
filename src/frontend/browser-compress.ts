@@ -78,6 +78,8 @@ interface WasmZstdModule {
   zstd: {
     compress(data: Uint8Array, level: number,): Uint8Array | null;
     decompress(data: Uint8Array, outCapacity: number,): Uint8Array | null;
+    /** Optional probe; returns exact decompressed size when the module exposes it. */
+    decompressBound?(data: Uint8Array,): number;
   };
 }
 
@@ -138,13 +140,37 @@ async function tryBrotliDecompress(data: Uint8Array,): Promise<Uint8Array | null
 }
 
 /**
+ * Maximum output capacity for zstd decompression, matching backend
+ * `safeDecompress` DEFAULT_MAX_RATIO (1000x) so server-produced payloads
+ * never fail on the browser side.
+ */
+const MAX_ZSTD_DECOMPRESS_RATIO = 1000;
+
+/**
  * @param data
+ * @returns decompressed bytes, or null when zstd is unavailable or the
+ *   payload cannot be decoded (caller distinguishes identity content).
  */
 async function tryZstdDecompress(data: Uint8Array,): Promise<Uint8Array | null> {
   const wasm = await getWasmZstd();
   if (wasm === null) { return null; }
-  // Probe decompress bound first via try (wasm.decompressBound called internally).
-  return wasm.zstd.decompress(data, data.length * 16,); // generous initial capacity
+
+  const bound = wasm.zstd.decompressBound?.(data,);
+  if (typeof bound === "number" && Number.isFinite(bound,)) {
+    // Exact-size probe (internal zstd API) — single pass, no growth loop.
+    return wasm.zstd.decompress(data, Math.max(bound, data.length,),);
+  }
+
+  // No bound probe: grow from 16x up to the backend parity cap. wasm returns
+  // null when the output capacity is too small, so retry with a larger buffer.
+  let capacity = data.length * 16;
+  let result: Uint8Array | null = null;
+  while (capacity <= data.length * MAX_ZSTD_DECOMPRESS_RATIO) {
+    result = wasm.zstd.decompress(data, capacity,);
+    if (result !== null) { return result; }
+    capacity *= 2;
+  }
+  return null;
 }
 
 /**
@@ -208,5 +234,7 @@ export async function browserDecodeContent(
     else { result = await tryGzipDecompress(uint8,); }
     if (result) { return uint8ArrayToString(result,); }
   }
-  return stored;
+  // Declared non-identity content that no decoder could open is corruption,
+  // not plaintext — surfacing it as "decoded" would render base64 soup.
+  throw new Error(`browserDecodeContent: failed to decode ${encoding} content (all decoders returned null)`,);
 }
