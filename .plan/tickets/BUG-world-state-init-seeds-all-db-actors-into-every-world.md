@@ -3,7 +3,7 @@
 
 # BUG: world-state init seeds all DB actors into every world
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Medium
 
@@ -16,3 +16,7 @@ src/story/world-state/init.ts initializeNpcStates:19-55, initializeCharacterWorl
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+world-state/init.ts initializeNpcStates + initializeCharacterWorldSetup now innerJoin world_members scoped to the target world — new worlds no longer tainted with every DB character/narrator. (resolved 2026-09-06)
