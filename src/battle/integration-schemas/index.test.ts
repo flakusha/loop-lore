@@ -77,7 +77,7 @@ describe("battle integration schemas exports", () => {
       getCombatTerrainModifiers: IntegrationSchemas.getCombatTerrainModifiers,
       getCombatWeatherModifiers: IntegrationSchemas.getCombatWeatherModifiers,
     };
-    for (const [name, fn] of Object.entries(exports,)) {
+    for (const [, fn] of Object.entries(exports,)) {
       expect(typeof fn).toBe("function");
     }
   });

@@ -5,9 +5,7 @@ import {
   categoryToType,
   categoryToSlot,
   toEquipmentItem,
-  type EquipmentItem,
   type EquipmentSource,
-  type ItemType,
 } from "./item-mapping";
 
 describe("categoryToType", () => {

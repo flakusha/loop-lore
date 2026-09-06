@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { type Kysely, sql, } from "kysely";
+import { sql, } from "kysely";
 import { TurnStrategy, } from "../../db/enums";
 import { getLogger, } from "../../logger";
 import { jsonParseOr, safeJsonStringify, } from "../../utils";

@@ -88,7 +88,7 @@ export async function loadChoices(): Promise<void> {
     for (const c of raw) {
       choices.push({
         ...c,
-        selected: c.selected === 1 || c.selected === true || c.is_active === 1,
+        selected: c.selected === true || c.is_active === 1,
         label: c.label ?? c.text ?? "Untitled choice",
       },);
     }
