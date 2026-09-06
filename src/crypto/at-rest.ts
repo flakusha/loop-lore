@@ -73,6 +73,9 @@ export interface AtRestResult {
  */
 export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestResult> {
   const { database, chatId, plaintext, encryptionLevel, config, } = opts;
+  if (typeof plaintext !== "string") {
+    throw new TypeError(`encryptAtRest requires plaintext string, got ${typeof plaintext}`,);
+  }
   if (isEncryptedPayload(plaintext,)) {
     return { storedContent: plaintext, keyId: extractKeyIdFromPayload(plaintext,), wasEncrypted: true, };
   }
@@ -108,6 +111,9 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
  */
 export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
   const { database, storedContent, encryptionLevel, } = opts;
+  if (typeof storedContent !== "string") {
+    throw new TypeError(`decryptAtRest requires storedContent string, got ${typeof storedContent}`,);
+  }
   switch (encryptionLevel) {
     case "none":
       return storedContent;
