@@ -26,9 +26,8 @@
  */
 import { callAux, } from "../../aux-pipeline";
 import { getLogger, } from "../../logger";
-import { logNsfwEvent, } from "../../middleware/nsfw-gate/logging";
+import { logGateDecision, } from "./nsfw-hook-log";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
-import type { NsfwGateReason, } from "../../nsfw/pii-redaction";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
 import { detectNsfwLevel, detectNsfwWithLlm, type NsfwLevel, } from "./nsfw-classifier";
@@ -103,7 +102,7 @@ export class NsfwHook implements HookHandler {
       effectiveSource = effective.source;
       if (!effective.enabled) {
         log.debug("nsfw-hook: NSFW disabled by override", { source: effective.source, },);
-        await this.logGateDecision(_context, "blocked", "user_override_disabled", { source: effective.source, },);
+        await logGateDecision(_context, "blocked", "user_override_disabled", { source: effective.source, },);
         return {
           handled: true,
           eventType: "nsfw_gate",
@@ -119,7 +118,7 @@ export class NsfwHook implements HookHandler {
         "nsfw-hook: effective-NSFW lookup failed; failing closed",
         error instanceof Error ? error : new Error(String(error,),),
       );
-      await this.logGateDecision(_context, "blocked", "admin_emergency_block", {
+      await logGateDecision(_context, "blocked", "admin_emergency_block", {
         error: String(error,),
       },);
       return {
@@ -150,13 +149,13 @@ export class NsfwHook implements HookHandler {
     if (nsfwLevel === "none") {
       // SFW content: audit "allowed" with no severity bucket so the log shows
       // the hook saw it and chose to pass through.
-      await this.logGateDecision(_context, "allowed", "explicit_content_detected", { level: "none", },);
+      await logGateDecision(_context, "allowed", "explicit_content_detected", { level: "none", },);
       return { handled: false, eventType: "nsfw_gate", data: { actorId: _context.actorId, chatId: _context.chatId, }, };
     }
 
     const allowed = isAllowed(nsfwLevel, _context,);
     const reason = allowed ? "explicit_content_detected" : "rating_exceeded";
-    await this.logGateDecision(_context, allowed ? "allowed" : "blocked", reason, {
+    await logGateDecision(_context, allowed ? "allowed" : "blocked", reason, {
       level: nsfwLevel,
       effectiveSource,
     },);
@@ -192,34 +191,6 @@ export class NsfwHook implements HookHandler {
       this.modService = new NsfwModerationService(context.db,);
     }
     return this.modService;
-  }
-
-  /**
-   * Audit every gate decision through `logNsfwEvent`. Wrapped in try/catch so
-   * a logging failure cannot itself fail the gate decision.
-   * @param context
-   * @param action
-   * @param reason
-   * @param metadata
-   */
-  private async logGateDecision(
-    context: HookContext,
-    action: "allowed" | "blocked" | "warning",
-    reason: NsfwGateReason,
-    metadata: Record<string, unknown> = {},
-  ): Promise<void> {
-    try {
-      await logNsfwEvent(context.db, {
-        userId: context.userId,
-        actorId: context.actorId,
-        chatId: context.chatId,
-        action,
-        reason,
-        metadata,
-      },);
-    } catch (error) {
-      getLogger().warn("nsfw-hook: logNsfwEvent failed", { error: String(error,), },);
-    }
   }
 
   /**
