@@ -15,10 +15,16 @@ import {
 } from "./auth";
 
 /**
- * Minimal AuthConfig used by status-gate tests. Only fields that
- * `resolveUserIdFromRequest` consults are configured; `jwtSecret: ""`
- * skips the JWT branch, and `legacyOpaqueTokenFallback: true` forces
- * the sha256(token) lookup.
+ * Minimal AuthConfig fixtures passed as the explicit DI 4th argument to
+ * `resolveUserIdFromRequest`. Only fields the resolver consults are
+ * configured; `jwtSecret: ""` skips the JWT branch, and
+ * `legacyOpaqueTokenFallback` selects the sha256(token) lookup.
+ *
+ * Every call in this suite passes a fixture explicitly: other test files
+ * `mock.module("../config/load", ...)` at the top level (Bun module mocks
+ * are process-global and leak across files), so any test relying on the
+ * no-DI `loadConfig()` path would observe a foreign partial config whose
+ * `auth` section is missing (TypeError inside resolveUserIdFromSession).
  */
 const LEGACY_ONLY_AUTH_CONFIG = {
   required: false,
@@ -29,6 +35,12 @@ const LEGACY_ONLY_AUTH_CONFIG = {
   demoAutoSetup: false,
   jwtSecret: "",
   legacyOpaqueTokenFallback: true,
+} as const satisfies AuthConfig;
+
+/** Same shape with the legacy sha256(token) fallback OFF — mirrors the schema default. */
+const LEGACY_OFF_AUTH_CONFIG = {
+  ...LEGACY_ONLY_AUTH_CONFIG,
+  legacyOpaqueTokenFallback: false,
 } as const satisfies AuthConfig;
 
 describe("extractBearerToken", () => {
@@ -75,11 +87,15 @@ describe("resolveUserIdFromRequest", () => {
   beforeEach(async () => {
     createLogger({ level: "warn", },);
     ({ db, } = await createTestDb());
-    // Enable the legacy sha256(token) lookup path so the tests below (which
-    // seed sessions with `token_hash = sha256(raw_token)`) resolve. Real
+    // Keep the env-driven fallback ON: the DI-contract test below relies on
+    // the ambient fallback being active to prove that an explicit authConfig
+    // fixture (legacyOpaqueTokenFallback: false) wins over it. The other
+    // tests never consult the env — they pass config fixtures explicitly,
+    // because other test files mock `config/load` process-globally and the
+    // no-DI loadConfig() path is untestable in a full-suite run. Real
     // deployments leave this off; login.ts now writes `token_hash =
-    // "jwt:" + sessionId` so JWT-issued sessions never collide with this
-    // path regardless of the flag.
+    // "jwt:" + sessionId` so JWT-issued sessions never collide with the
+    // legacy path regardless of the flag.
     prevLegacyFallback = process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK;
     process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "1";
   },);
@@ -137,7 +153,7 @@ describe("resolveUserIdFromRequest", () => {
       headers: { Cookie: `ll_token=${token}`, },
     },);
 
-    expect(await resolveUserIdFromRequest(req, db, "demo",),).toBe(userId,);
+    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),).toBe(userId,);
   });
 
   it("handles a mid-header ll_token cookie (canonical LL_TOKEN boundary)", async () => {
@@ -171,7 +187,7 @@ describe("resolveUserIdFromRequest", () => {
       headers: { Cookie: "theme=dark; ll_token=mid-header-token; ll_locale=en", },
     },);
 
-    expect(await resolveUserIdFromRequest(req, db, "demo",),).toBe(userId,);
+    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),).toBe(userId,);
   });
 
   it("falls back to solo user when token has no matching session", async () => {
@@ -181,7 +197,7 @@ describe("resolveUserIdFromRequest", () => {
       headers: { Cookie: "ll_token=no-such-session", },
     },);
 
-    expect(await resolveUserIdFromRequest(req, db, "demo",),).toBe(solo?.id ?? null,);
+    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),).toBe(solo?.id ?? null,);
   });
 
   it("falls back to solo user when no cookie is present", async () => {
@@ -189,7 +205,7 @@ describe("resolveUserIdFromRequest", () => {
 
     const req = new Request("http://localhost",);
 
-    expect(await resolveUserIdFromRequest(req, db, "demo",),).toBe(solo?.id ?? null,);
+    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_ONLY_AUTH_CONFIG,),).toBe(solo?.id ?? null,);
   });
 
   it("does NOT resolve via sha256 lookup when legacyOpaqueTokenFallback is off", async () => {
@@ -197,7 +213,6 @@ describe("resolveUserIdFromRequest", () => {
     // sha256(raw_token) is the pre-JWT-era compat surface. Without the explicit
     // opt-in flag, a secret-less deployment must not silently authenticate
     // anyone whose hash happens to be in the table. The flag is OFF by default.
-    delete process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK;
 
     const userId = uid();
     await db
@@ -231,17 +246,13 @@ describe("resolveUserIdFromRequest", () => {
 
     // The fallback must NOT fire — falls through to solo user.
     const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    expect(await resolveUserIdFromRequest(req, db, "demo",),).toBe(solo?.id ?? null,);
-
-    // Restore for any subsequent tests in the suite.
-    process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "1";
+    expect(await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_AUTH_CONFIG,),).toBe(solo?.id ?? null,);
   });
 
   it("does NOT resolve via sha256 lookup when jwtSecret is empty even with legacy flag on — because jwt is checked first and falls through", async () => {
     // Belt-and-suspenders: the gate is on `legacyOpaqueTokenFallback`, not on
     // jwtSecret presence. Verify the gate alone is sufficient: with the flag
     // off, even a populated sessions table is unauthenticated.
-    delete process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK;
 
     const userId = uid();
     await db
@@ -274,11 +285,9 @@ describe("resolveUserIdFromRequest", () => {
     },);
 
     const solo = await getOrCreateSoloUserForAuth(db, "demo",);
-    const resolved = await resolveUserIdFromRequest(req, db, "demo",);
+    const resolved = await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_AUTH_CONFIG,);
     expect(resolved,).not.toBe(userId,);
     expect(resolved,).toBe(solo?.id ?? null,);
-
-    process.env.AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK = "1";
   });
 
   it("falls back to solo when the resolved user is Disabled (BUG-resolveuseridfromrequest-missing-user-status-check)", async () => {
@@ -394,17 +403,15 @@ describe("resolveUserIdFromRequest", () => {
     ).toBe(userId,);
   });
   it("uses the authConfig 4th-arg over env when DI is provided (BUG-resolveuseridfromrequest-authconfig-di)", async () => {
-    // With AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1 set globally (via beforeEach), a
-    // bare resolveUserIdFromRequest(req, db, "demo") would consult the legacy
-    // sha256(token) path. When callers pass an `authConfig` whose
-    // `legacyOpaqueTokenFallback` is false, that DI must win — otherwise the
-    // caller has no way to opt out of the env-driven fallback from inside a
-    // route handler. This guards the DI contract used by export.ts and
-    // export-sse/start.ts.
-    const LEGACY_OFF_DI_CONFIG = {
-      ...LEGACY_ONLY_AUTH_CONFIG,
-      legacyOpaqueTokenFallback: false,
-    } as const satisfies AuthConfig;
+    // With AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1 set globally (via beforeEach),
+    // a caller without DI would consult the legacy sha256(token) path. When a
+    // caller passes an `authConfig` whose `legacyOpaqueTokenFallback` is
+    // false, that DI must win — otherwise the caller has no way to opt out of
+    // the env-driven fallback from inside a route handler. This guards the DI
+    // contract used by export.ts and export-sse/start.ts. The fixture is the
+    // shared LEGACY_OFF_AUTH_CONFIG; the former no-DI sanity call depended on
+    // the real loadConfig(), which other test files mock process-globally —
+    // the env plumbing is covered by the config-layer tests instead.
 
     const userId = uid();
     await db
@@ -436,14 +443,11 @@ describe("resolveUserIdFromRequest", () => {
       headers: { Cookie: `ll_token=${token}`, },
     },);
 
-    // Sanity: env fallback ON + no DI = resolves via sha256 (legacy path active).
-    expect(await resolveUserIdFromRequest(req, db, "demo",),).toBe(userId,);
-
     // Contract: DI with legacyOpaqueTokenFallback=false suppresses the env-driven fallback.
     const solo = await getOrCreateSoloUserForAuth(db, "demo",);
     expect(solo?.id ?? null,).not.toBe(userId,); // sanity: test user is NOT the solo user
     expect(
-      await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_DI_CONFIG,),
+      await resolveUserIdFromRequest(req, db, "demo", LEGACY_OFF_AUTH_CONFIG,),
     ).toBe(solo?.id ?? null,);
   });
 });
