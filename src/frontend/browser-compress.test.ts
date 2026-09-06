@@ -6,30 +6,33 @@
  * capacity handling (fixed 16x output cap regression) and corruption surfacing.
  *
  * RESOURCE CONTRACT (parallel-safe):
- * - Shared mutable state: `globalThis.__loopLoreWasm` (the app's wasm seam).
- *   Each test installs its OWN fake via `installFakeZstd`; `afterEach` resets
- *   the global to null so a failing test cannot poison later tests.
- * - No temp files, ports, DBs, or ordering dependence: every test builds its
- *   inputs inline and is independent of test order.
- * - Files run in isolated bun workers; the seam is worker-local, so no
- *   cross-file collision. Within this file, tests run serially (bun default).
+ * - No shared mutable globals: zstd fakes are injected via the module-local
+ *   `__setZstdResolverForTests` seam (per-worker module scope, not
+ *   `globalThis`), so parallel worker files can never collide.
+ * - Each test owns its fake (installed inline) and `afterEach` restores the
+ *   default resolver — a failing test still cleans up before the next.
+ * - No temp files, ports, DBs, or ordering dependence.
+ * - The gzip test uses the real `CompressionStream` when present and skips to
+ *   the documented identity fallback otherwise (no external resources).
  */
 import { afterEach, describe, expect, test, } from "bun:test";
-import { browserDecodeContent, browserEncodeContent, } from "./browser-compress";
+import {
+  __setZstdResolverForTests,
+  browserDecodeContent,
+  browserEncodeContent,
+} from "./browser-compress";
 
-// ── fake wasm module harness ──────────────────────────────────
+// ── fake wasm module harness (module-local seam) ───────────────
 
+/** Minimal zstd surface the seam must provide. */
 interface FakeZstd {
   compress(data: Uint8Array, level: number,): Uint8Array | null;
   decompress(data: Uint8Array, outCapacity: number,): Uint8Array | null;
   decompressBound?(data: Uint8Array,): number | null;
 }
 
-/** Store the active fake so individual tests can mutate it. */
-function installFakeZstd(fake: FakeZstd | null,): void {
-  (globalThis as Record<string, unknown>).__loopLoreWasm = fake === null
-    ? null
-    : Promise.resolve({ zstd: fake, },);
+function installFakeZstd(fake: FakeZstd,): void {
+  __setZstdResolverForTests(() => Promise.resolve({ zstd: fake, },),);
 }
 
 const textEncoder = new TextEncoder();
@@ -37,7 +40,7 @@ const textEncoder = new TextEncoder();
 const REAL_DECOMPRESSED = textEncoder.encode("hello",);
 
 afterEach(() => {
-  installFakeZstd(null,);
+  __setZstdResolverForTests(null,); // restore production resolver
 },);
 
 // ── helpers ───────────────────────────────────────────────────
@@ -125,4 +128,3 @@ describe("browserDecodeContent non-zstd paths", () => {
     expect(await browserDecodeContent(encoded.encoded, "gzip",),).toBe(plaintext,);
   },);
 },);
-
