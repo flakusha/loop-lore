@@ -1,7 +1,7 @@
 /**
  * Tests for admin/config.ts — System Config CRUD
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
@@ -165,5 +165,104 @@ describe("seedDefaults", () => {
     for (const k of expectedKeys) {
       expect(keys,).toContain(k,);
     }
+  });
+});
+
+describe("seedDefaults with partial config", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    createLogger({ level: "warn", },);
+    ({ db, } = await createTestDb());
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  beforeEach(async () => {
+    await db.deleteFrom("system_config",).execute();
+  },);
+
+  test("empty config resolves without throwing and seeds only non-config defaults", async () => {
+    await expect(seedDefaults(db, {} as Config,),).resolves.toBeUndefined();
+    const rows = await db.selectFrom("system_config",).selectAll().execute();
+    const keys = rows.map((r,) => r.key,);
+    for (const k of [
+      "log_retention_days",
+      "auto_moderation",
+      "profanity_filter",
+      "spam_detection",
+      "max_flags_before_hide",
+    ]) {
+      expect(keys,).toContain(k,);
+    }
+    for (const k of [
+      "registration_open",
+      "session_timeout_hours",
+      "max_sessions_per_user",
+      "max_upload_size_bytes",
+      "default_provider",
+      "default_model",
+    ]) {
+      expect(keys,).not.toContain(k,);
+    }
+  });
+
+  test("missing generation skips provider/model keys but seeds auth keys", async () => {
+    const cfg = {
+      auth: {
+        registrationOpen: true,
+        sessionTimeoutHours: 24,
+        maxSessionsPerUser: 5,
+      },
+      assets: { maxFileSize: 10485760, },
+    } as unknown as Config;
+    await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
+    const rows = await db.selectFrom("system_config",).selectAll().execute();
+    const keys = rows.map((r,) => r.key,);
+    for (const k of [
+      "registration_open",
+      "session_timeout_hours",
+      "max_sessions_per_user",
+      "max_upload_size_bytes",
+    ]) {
+      expect(keys,).toContain(k,);
+    }
+    expect(keys,).not.toContain("default_provider",);
+    expect(keys,).not.toContain("default_model",);
+  });
+
+  test("missing auth skips auth/asset keys but seeds provider/model keys", async () => {
+    const cfg = {
+      generation: {
+        defaultProvider: "openai",
+        defaultModels: { openai: "gpt-4o-mini", },
+      },
+    } as unknown as Config;
+    await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
+    const rows = await db.selectFrom("system_config",).selectAll().execute();
+    const keys = rows.map((r,) => r.key,);
+    expect(keys,).toContain("default_provider",);
+    expect(keys,).toContain("default_model",);
+    for (const k of [
+      "registration_open",
+      "session_timeout_hours",
+      "max_sessions_per_user",
+      "max_upload_size_bytes",
+    ]) {
+      expect(keys,).not.toContain(k,);
+    }
+  });
+
+  test("missing defaultModels seeds default_model as empty string", async () => {
+    const cfg = {
+      generation: { defaultProvider: "openai", },
+    } as unknown as Config;
+    await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
+    const provider = await getConfig(db, "default_provider",);
+    expect(provider?.value,).toBe("openai",);
+    const model = await getConfig(db, "default_model",);
+    expect(model?.value,).toBe("",);
   });
 });
