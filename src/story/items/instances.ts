@@ -124,7 +124,7 @@ export async function getAtLocation(state: ItemState, locationId: string, includ
   return query.execute();
 }
 
-export { getNpcInventory, } from "./npc-inventory";
+export { getNpcInventory, getNpcInventoryBatch, } from "./npc-inventory";
 
 /**
  * Transfer items between locations, NPCs, or from world to actor. Requires worldId to prevent cross-world IDOR.

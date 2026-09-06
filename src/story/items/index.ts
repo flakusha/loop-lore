@@ -23,6 +23,7 @@ import {
   destroy as destroyDispatch,
   getAtLocation as getAtLocationDispatch,
   getNpcInventory as getNpcInventoryDispatch,
+  getNpcInventoryBatch as getNpcInventoryBatchDispatch,
   giveToNpc as giveToNpcDispatch,
   placeInLocation as placeInLocationDispatch,
   transfer as transferDispatch,
@@ -138,6 +139,15 @@ export class ItemsService {
    */
   async getNpcInventory(actorId: string,) {
     return getNpcInventoryDispatch(this.state, actorId,);
+  }
+
+  /**
+   * Get items carried by multiple NPCs in one query (avoids N+1).
+   * Returns actorId -> inventory. BUG-n-1-queries-in-story-world-state-context-per-participant.
+   * @param actorIds
+   */
+  async getNpcInventoryBatch(actorIds: string[],): Promise<Map<string, ItemInstance[]>> {
+    return getNpcInventoryBatchDispatch(this.state, actorIds,);
   }
 
   /**
