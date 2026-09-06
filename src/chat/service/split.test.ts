@@ -39,8 +39,18 @@ describe("party split / reunion (C7 Phase 3)", () => {
     await insertActors(db, "Hero", { id: heroId, user_id: ownerId, owner_id: ownerId, } as never,);
     await insertActors(db, "Rogue", { id: rogueId, user_id: ownerId, owner_id: ownerId, } as never,);
     await insertActors(db, "Mage", { id: mageId, user_id: ownerId, owner_id: ownerId, } as never,);
-    // system actor required by injectNarration (messages.actor_id FK → actors.id)
-    await insertActors(db, "System", { id: "system", } as never,);
+    // narrator actor resolved by injectNarration (actor_type + agent_type 'narrator')
+    await insertActors(
+      db,
+      "Narrator",
+      {
+        id: "narrator",
+        user_id: ownerId,
+        owner_id: ownerId,
+        actor_type: "narrator",
+        agent_type: "narrator",
+      } as never,
+    );
 
     await insertChats(
       db,
