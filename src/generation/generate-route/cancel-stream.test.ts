@@ -13,6 +13,7 @@
 import { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, GenerationStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -20,10 +21,9 @@ import { insertActors, insertMessages, } from "../../test-utils/insert-helpers";
 import { GenerationCancelledError, } from "../cancellation-actions/error";
 import { startGenerationTracking, } from "../cancellation-manager";
 import { activeGenerations, chatToAttempt, } from "../cancellation-tracker";
+import type { GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
 import { getOrCreateBuffer, removeBuffer, } from "../stream-buffer";
 import { DEFAULT_POLICY_DETECTION, DEFAULT_REPETITION_DETECTION, DEFAULT_RESPONSE_LIMIT, } from "../types";
-import type { Config, } from "../../config/schema";
-import type { LLMProvider, GenerateRequest as ProviderRequest, } from "../providers/types";
 import { streamCancelCleanup, } from "./cancel-stream";
 import { streamToClient, } from "./stream-to-client";
 
@@ -247,11 +247,16 @@ test("streamToClient cancel path persists real cancel detail to the attempt reco
   let sawAbort = false;
   const provider: LLMProvider = {
     capabilities: { streaming: true, },
-    complete: async () => { throw new Error("unused",); },
+    complete: async () => {
+      throw new Error("unused",);
+    },
     stream: async (_req: ProviderRequest, handler: Parameters<NonNullable<LLMProvider["stream"]>>[1],) => {
       handler({ type: "content", content: "partial ", },);
       await new Promise<void>((resolve,) => {
-        if (tracker.signal.aborted) { resolve(); return; }
+        if (tracker.signal.aborted) {
+          resolve();
+          return;
+        }
         tracker.signal.addEventListener("abort", () => resolve(), { once: true, },);
       },);
       sawAbort = true;
@@ -294,7 +299,9 @@ test("streamToClient cancel path persists real cancel detail to the attempt reco
           if (done) { break; }
         }
         resolve();
-      } catch (e) { reject(e,); }
+      } catch (e) {
+        reject(e,);
+      }
     })();
   },);
 
@@ -326,7 +333,9 @@ test("client disconnect persists Cancelled with the AbortError detail", async ()
   let sawAbort = false;
   const provider: LLMProvider = {
     capabilities: { streaming: true, },
-    complete: async () => { throw new Error("unused",); },
+    complete: async () => {
+      throw new Error("unused",);
+    },
     stream: async (req: ProviderRequest, handler: Parameters<NonNullable<LLMProvider["stream"]>>[1],) => {
       if (!firstChunk) {
         firstChunk = true;
@@ -334,8 +343,14 @@ test("client disconnect persists Cancelled with the AbortError detail", async ()
       }
       const sig = req.signal;
       await new Promise<void>((resolve,) => {
-        if (!sig) { resolve(); return; }
-        if (sig.aborted) { resolve(); return; }
+        if (!sig) {
+          resolve();
+          return;
+        }
+        if (sig.aborted) {
+          resolve();
+          return;
+        }
         sig.addEventListener("abort", () => resolve(), { once: true, },);
       },);
       sawAbort = true;
@@ -372,11 +387,14 @@ test("client disconnect persists Cancelled with the AbortError detail", async ()
     for (;;) {
       const { done, value, } = await reader.read();
       if (done) { break; }
-      if (value) { markFirstChunk(); break; }
+      if (value) {
+        markFirstChunk();
+        break;
+      }
     }
   })();
   await firstChunkSeen;
-  await reader.cancel().catch(() => {});
+  await reader.cancel().catch(() => {},);
   // The provider throws post-abort; the catch runs streamCancelCleanup which
   // persists Cancelled. Wait for that write without a real-time sleep: poll
   // the row's status transition.
