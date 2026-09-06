@@ -196,4 +196,49 @@ describeOrSkip("streamToClient — tracker cancel reaches the provider", () => {
     const done = events.find((e,) => e.type === "done");
     expect(done?.cancelled,).toBe(true,);
   });
+
+  test("provider throw post-abort classifies as cancelled done, not error (BUG-stream-cancel)", async () => {
+    // A provider that THROWS (instead of returning) after observing the abort
+    // propagates a GenerationCancelledError through callWithFailover. The
+    // stream catch must route it to cancelled-done — not failGeneration/error.
+    const tracker = new AbortController();
+    let aborted = false;
+    const provider: LLMProvider = {
+      capabilities: { streaming: true, },
+      complete: async () => {
+        throw new Error("unused",);
+      },
+      stream: async (req: ProviderRequest, handler: StreamHandler,) => {
+        handler({ type: "content", content: "partial ", },);
+        const sig = req.signal;
+        if (sig) {
+          await new Promise<void>((resolve,) => {
+            if (sig.aborted) {
+              resolve();
+              return;
+            }
+            sig.addEventListener("abort", () => resolve(), { once: true, },);
+          },);
+          aborted = true;
+        }
+        // Simulate the underlying SDK surfacing the abort as a thrown error.
+        throw new Error("stream aborted",);
+      },
+      healthCheck: async () => ({ status: "ok" as const, }),
+      listModels: async () => [],
+    } as unknown as LLMProvider;
+
+    const response = run(tracker.signal, provider,);
+    const eventsPromise = collectEvents(response,);
+    await new Promise((r,) => setTimeout(r, 10,));
+    tracker.abort(new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, "user stop",),);
+    const events = await eventsPromise;
+
+    expect(aborted,).toBe(true,);
+    const done = events.find((e,) => e.type === "done");
+    expect(done,).toBeDefined();
+    expect(done?.cancelled,).toBe(true,);
+    expect(done?.finishReason,).toBe("cancelled",);
+    expect(events.some((e,) => e.type === "error"),).toBe(false,);
+  });
 },);
