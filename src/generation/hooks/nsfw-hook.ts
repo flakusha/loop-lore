@@ -29,11 +29,24 @@ import { getLogger, } from "../../logger";
 import { logNsfwEvent, } from "../../middleware/nsfw-gate/logging";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import type { NsfwGateReason, } from "../../nsfw/pii-redaction";
-import { NSFW_RATING_SEVERITY, } from "../../schemas";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
-import { detectNsfwLevel, detectNsfwWithLlm, } from "./nsfw-classifier";
-import { isAllowed, levelToRating, } from "./nsfw-rating";
+import { detectNsfwLevel, detectNsfwWithLlm, type NsfwLevel, } from "./nsfw-classifier";
+import { isAllowed, } from "./nsfw-rating";
+
+/**
+ * Detection-level severity for the LLM-escalation comparison.
+ * `none` = no detection (severity 0); higher = more severe.
+ * Distinct from NSFW_RATING_SEVERITY (enforcement ratings, where unknown
+ * values fail closed to EXTREME).
+ */
+const NSFW_LEVEL_SEVERITY: Record<NsfwLevel, number> = {
+  none: 0,
+  mild: 1,
+  moderate: 2,
+  intense: 3,
+  extreme: 4,
+};
 
 /** */
 export interface NsfwHookDeps {
@@ -94,7 +107,7 @@ export class NsfwHook implements HookHandler {
         return {
           handled: true,
           eventType: "nsfw_gate",
-          data: { nsfwLevel: "blocked_by_override", blocked: true, source: effective.source, },
+          data: { nsfwLevel: "blocked_by_override", blocked: true, source: effective.source, actorId: _context.actorId, chatId: _context.chatId, },
           suppressContent: true,
           reason: `NSFW disabled by ${effective.source}`,
         };
@@ -112,7 +125,7 @@ export class NsfwHook implements HookHandler {
       return {
         handled: true,
         eventType: "nsfw_gate",
-        data: { nsfwLevel: "blocked_by_error", blocked: true, },
+        data: { nsfwLevel: "blocked_by_error", blocked: true, actorId: _context.actorId, chatId: _context.chatId, },
         suppressContent: true,
         reason: "NSFW gate lookup failed; content blocked as defense-in-depth.",
       };
@@ -125,7 +138,11 @@ export class NsfwHook implements HookHandler {
     // cannot name; let it escalate, keeping the more severe of the two ratings.
     if (_context.nsfwConfig.useLlmClassifier) {
       const llmLevel = await detectNsfwWithLlm(_content, _context, this.callAuxFn,);
-      if (NSFW_RATING_SEVERITY[levelToRating(llmLevel,)] > NSFW_RATING_SEVERITY[levelToRating(nsfwLevel,)]) {
+      // Compare detection *levels* (not enforcement ratings): "none" means no
+      // detection (severity 0). The levelToRating() default maps unknown values
+      // to NSFW_EXTREME for fail-closed enforcement, which would make the LLM
+      // appear less severe than keyword-clean ("none") content and suppress it.
+      if (NSFW_LEVEL_SEVERITY[llmLevel] > NSFW_LEVEL_SEVERITY[nsfwLevel]) {
         nsfwLevel = llmLevel;
       }
     }
