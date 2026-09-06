@@ -17,11 +17,20 @@ describe("dice", () => {
   });
 
   test("rollDice with bonus modifier increases total", () => {
-    const result1 = rollDice("d20", 1);
-    const modifier: RollModifier = { source: "spell", value: 5, type: "bonus" };
-    const result2 = rollDice("d20", 1, [modifier]);
-    // The total with bonus should be at least 1 greater than without
-    expect(result2.total).toBeGreaterThanOrEqual(result1.total);
+    // Deterministic: pin Math.random so the d20 always rolls floor(0.5 * 20) + 1 = 11.
+    const originalRandom = Math.random;
+    Math.random = () => 0.5;
+    try {
+      const result1 = rollDice("d20", 1);
+      const modifier: RollModifier = { source: "spell", value: 5, type: "bonus" };
+      const result2 = rollDice("d20", 1, [modifier]);
+      expect(result1.total).toBe(11);
+      expect(result2.total).toBe(16);
+      expect(result2.total - result1.total).toBe(5);
+      expect(result2.modifiers).toEqual([modifier]);
+    } finally {
+      Math.random = originalRandom;
+    }
   });
 
   test("rollDice detects critical success on d20", () => {

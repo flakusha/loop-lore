@@ -47,7 +47,6 @@ async function ensureActor(actorId: string,): Promise<void> {
 
 beforeAll(async () => {
   const sqlite = new Database(":memory:",);
-  sqlite.run("PRAGMA foreign_keys = OFF",);
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite,), },);
   await migrate(db as unknown as Kysely<unknown>,);
   for (const actorId of KEY_BEARING_ACTORS) { await ensureActor(actorId,); }
