@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import type { Kysely, } from "kysely";
 import { getHealthCache, getProviderHealth, providerToSummary, scanAllProviders, } from "../../admin/provider-health";
+import type { DB, } from "../../db/schema";
 import { listProviders, } from "../../generation/providers/registry";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
@@ -13,7 +15,7 @@ import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
  * @param opts.database
  * @param prefix
  */
-export function providersRoutes(opts: { database?: unknown } = {}, prefix = "/api",) {
+export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-providers", },)
       // ── Public providers list (no auth) ───────────────────
