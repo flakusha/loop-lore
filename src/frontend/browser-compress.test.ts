@@ -4,6 +4,15 @@
 /**
  * Tests for browser content encoding/decode — especially zstd decompression
  * capacity handling (fixed 16x output cap regression) and corruption surfacing.
+ *
+ * RESOURCE CONTRACT (parallel-safe):
+ * - Shared mutable state: `globalThis.__loopLoreWasm` (the app's wasm seam).
+ *   Each test installs its OWN fake via `installFakeZstd`; `afterEach` resets
+ *   the global to null so a failing test cannot poison later tests.
+ * - No temp files, ports, DBs, or ordering dependence: every test builds its
+ *   inputs inline and is independent of test order.
+ * - Files run in isolated bun workers; the seam is worker-local, so no
+ *   cross-file collision. Within this file, tests run serially (bun default).
  */
 import { afterEach, describe, expect, test, } from "bun:test";
 import { browserDecodeContent, browserEncodeContent, } from "./browser-compress";
