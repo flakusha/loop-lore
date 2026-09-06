@@ -1,6 +1,6 @@
 # BUG: carryHistory copies key_id into migrated chat - history breaks when source chat is deleted or rotated
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Medium
 
