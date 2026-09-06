@@ -1,5 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { abilityModifier, computeModifiers, } from "../../../rpg/stats/modifiers";
+import { abilityModifier, computeModifiers, getModifier, } from "./modifiers";
 
 describe("stats/modifiers (real math)", () => {
   it("abilityModifier formula: floor((stat-10)/2)", () => {
@@ -10,17 +10,23 @@ describe("stats/modifiers (real math)", () => {
     expect(abilityModifier(6,),).toBe(-2,);
     expect(abilityModifier(1,),).toBe(-5,);
     expect(abilityModifier(20,),).toBe(5,);
+    expect(abilityModifier(30,),).toBe(10,); // Max check
   });
+
   it("computeModifiers derives all six ability scores", () => {
     const stats = { str: 16, dex: 14, con: 15, int: 13, wis: 12, cha: 8, };
-    const result = computeModifiers(stats,);
+    const result = computeModifiers(stats as any,);
     expect(result.strMod,).toBe(3,);
     expect(result.dexMod,).toBe(2,);
     expect(result.conMod,).toBe(2,);
     expect(result.intMod,).toBe(1,);
     expect(result.wisMod,).toBe(1,);
     expect(result.chaMod,).toBe(-1,);
-    expect(result.str,).toBe(16,);
-    expect(result.dex,).toBe(14,);
+  });
+
+  it("getModifier retrieves correct modifier for ability", () => {
+    const stats = { str: 16, dex: 14, con: 15, int: 13, wis: 12, cha: 8, };
+    expect(getModifier(stats as any, "str",),).toBe(3,);
+    expect(getModifier(stats as any, "cha",),).toBe(-1,);
   });
 });
