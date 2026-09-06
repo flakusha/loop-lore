@@ -1,6 +1,6 @@
 # BUG: parseAcceptLanguage ignores quality values (returns header order, not preference)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Medium
 
@@ -21,3 +21,7 @@ Note: the docstring example (ja,en-US;q=0.9,en;q=0.8 -> [ja,en-US,en]) only pass
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in src/middleware/i18n.ts (q-value parse + sort, q<=0 excluded); verified in this worktree (round-6 batch, 2026-09-06).

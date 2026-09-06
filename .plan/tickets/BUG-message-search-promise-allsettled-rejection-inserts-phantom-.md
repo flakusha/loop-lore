@@ -1,6 +1,6 @@
 # BUG: message-search Promise.allSettled rejection inserts phantom row
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Medium
 
@@ -21,3 +21,7 @@ Tests: regression covering a 1-row search where that row's resolveMessageContent
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Fixed in src/routes/message-search/index.ts (round-6 worktree): rejected rows skipped, original row ids kept, pagination honest. Regression test: "rejected decryption never inserts a phantom row" (2026-09-06).
