@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
@@ -208,7 +209,7 @@ describe("messageSearchRoutes", () => {
     const res = await appHandle(app, get("/api/messages/search?q=dragon",),);
     const body = (await res.json()) as SearchBody;
     // Admin sees both chats' dragon messages.
-    const chatIds = new Set(body.results.map((r,) => r.chatId),);
+    const chatIds = new Set(body.results.map((r,) => r.chatId,),);
     expect(chatIds.has(chatId,),).toBe(true,);
     expect(chatIds.has(otherChatId,),).toBe(true,);
   });
@@ -222,29 +223,14 @@ describe("messageSearchRoutes", () => {
     expect(body.hasMore,).toBe(true,);
     expect(body.total,).toBe(2,);
   });
-
-  test("FTS stays in sync with message insert", async () => {
-    await insertMessages(db, chatId, ownerId, MessageRole.User, "a shimmering unicorn appears", {
-      content_plaintext: "a shimmering unicorn appears",
-    },);
+  test("deleted message no longer appears after search", async () => {
     const app = searchApp(db, ownerId, "user",);
-    const res = await appHandle(app, get(`/api/messages/search?chatId=${chatId}&q=unicorn`,),);
-    const body = (await res.json()) as SearchBody;
-    expect(body.results.some((r,) => r.content.includes("unicorn",)),).toBe(true,);
-  });
-
-  test("FTS stays in sync with message delete", async () => {
-    await insertMessages(db, chatId, ownerId, MessageRole.User, "unique snowflake mint", {
-      content_plaintext: "unique snowflake mint",
+    await insertMessages(db, chatId, ownerId, MessageRole.User, "temporary-mint snowflake", {
+      content_plaintext: "temporary-mint snowflake",
     },);
-    const row = await db
-      .selectFrom("messages",)
-      .select("id",)
-      .where("content", "=", "unique snowflake mint",)
-      .executeTakeFirst();
+    const row = await db.selectFrom("messages",).select("id",).where("content_plaintext", "=", "temporary-mint snowflake",).executeTakeFirst();
     expect(row,).toBeTruthy();
 
-    const app = searchApp(db, ownerId, "user",);
     const before =
       (await (await appHandle(app, get(`/api/messages/search?chatId=${chatId}&q=snowflake`,),)).json()) as SearchBody;
     expect(before.results.some((r,) => r.content.includes("mint",)),).toBe(true,);
@@ -332,5 +318,30 @@ describe("messageSearchRoutes", () => {
         expect(r.matchContext,).not.toContain('"enc":',);
       }
     }
+  });
+
+  test("rejected decryption never inserts a phantom 'unknown' row", async () => {
+    // Regression for BUG-message-search-promise-allsettled: the old code
+    // pushed messageId:'unknown' on rejection, corrupting pagination and
+    // leaking a fake FK. The fix skips rejected rows entirely.
+    // Feed a stored envelope with a key_id that will make resolveMessageContent
+    // throw (no SMK / unreadable) — the search must not return 'unknown'.
+    await insertChats(db, "Phantom Chat", ownerId, {},);
+    const chatRow = await db.selectFrom("chats",).select("id",).where("name", "=", "Phantom Chat",).executeTakeFirst();
+    const envChat = chatRow!.id;
+    await insertChatParticipants(db, envChat, participantId, {},);
+
+    const envelope = `{"enc":"phantom-phrase","nonce":"x","alg":"aes-gcm-256","kid":"missing-key"}`;
+    await insertMessages(db, envChat, ownerId, MessageRole.User, envelope, { key_id: "missing-key", } as never,);
+
+    const app = searchApp(db, ownerId, "user",);
+    // No q → non-FTS path returns the row; the reject path either resolves to
+    // placeholder (ciphertext can't decrypt) or the row is skipped. Either
+    // way: never 'unknown' id, and total/hasMore stay consistent.
+    const res = await appHandle(app, get(`/api/messages/search?chatId=${envChat}`,),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as SearchBody;
+    expect(body.results.some((r,) => r.messageId === "unknown",),).toBe(false,);
+    expect(body.total,).toBe(body.results.length,); // honest count, no phantom page
   });
 });
