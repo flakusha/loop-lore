@@ -1,9 +1,10 @@
 // Full logger
 import { describe, expect, it, } from "bun:test";
-import { createLogger, getLogger, LoggerImpl, } from "../logger";
+import { createLogger, } from "../logger";
+import { LoggerImpl, } from "./logger";
 describe("logger full", () => {
   it("impl creates", () => {
-    const l = new (await import("../logger/logger")).LoggerImpl({ level: "info", },);
+    const l = new LoggerImpl({ level: "info", },);
     expect(l,).toBeDefined();
   });
   it("child log", () => {
