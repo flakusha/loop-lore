@@ -35,6 +35,26 @@ describe("Turn Strategies", () => {
       const result = roundRobinSelect(participants, "a3", 3, turnOrder,);
       expect(result,).toBe("a1",);
     });
+
+    test("rotation follows turnOrder, not participants array order", () => {
+      // Participants listed [a1, a2, a3] but the caller-owned order is
+      // reversed: after "a3" comes "a2", not "a1". A participants-array
+      // cycle would return "a1" here.
+      const result = roundRobinSelect(participants, "a3", 3, ["a1", "a3", "a2",], undefined, null,);
+      expect(result,).toBe("a2",);
+    });
+
+    test("guard advances past the previous speaker within turnOrder", () => {
+      // After "a1" the order schedules "a2", but "a2" spoke last and
+      // alternatives exist → advance to "a3".
+      const result = roundRobinSelect(participants, "a1", 1, turnOrder, undefined, "a2",);
+      expect(result,).toBe("a3",);
+    });
+
+    test("stale turnOrder falls back to first non-last participant", () => {
+      const result = roundRobinSelect(participants, "a1", 1, ["gone-1", "gone-2",], undefined, "a1",);
+      expect(result,).toBe("a2",);
+    });
   });
 
   describe("sceneBasedSelect", () => {
