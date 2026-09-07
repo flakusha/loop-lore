@@ -72,6 +72,12 @@ background).
 - [ ] Tests: alpha flag detection (png rgba vs rgb, webp vp8l), capability
       negotiation, matting-job lifecycle (success/fail keeps raw usable), VN
       layer order unit test
+- [ ] `TASK-vn-character-sprite-roster-per-chat.md` — per-chat sprite roster
+- [ ] `TASK-vn-multi-character-sprite-ordering-and-positioning.md` — stage slots + z-order
+- [ ] `TASK-vn-active-speaker-sprite-highlight-and-dimming.md` — speaker focus (VN epic host)
+- [ ] `TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md` — matting fallback implementation
+- [ ] `TASK-vn-sprite-center-face-anchor-setup-and-detection-for-generat.md` — face/center anchor setup + detection
+- [ ] `TASK-vn-emotion-mood-and-action-driven-sprite-staging.md` — staging directives (emotion binding host)
 
 ## Non-Goals
 
