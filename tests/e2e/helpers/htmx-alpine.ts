@@ -132,7 +132,6 @@ export async function getAlpineStore<T = Record<string, unknown>,>(
   return page.evaluate((name,) => {
     if (typeof Alpine === "undefined") { throw new Error("Alpine not loaded",); }
     // JSON round-trip strips Alpine Proxy objects safely.
-    // eslint-disable-next-line unicorn/prefer-structured-clone -- Alpine Proxy objects cannot be structuredClone'd
     return JSON.parse(JSON.stringify(Alpine.store(name,),),);
   }, storeName,) as Promise<T>;
 }
@@ -208,7 +207,6 @@ export async function getAlpineData<T = Record<string, unknown>,>(
     if (raw === undefined || raw === null) {
       throw new Error(`Alpine state not available on ${sel} (element not initialized)`,);
     }
-    // eslint-disable-next-line unicorn/prefer-structured-clone -- Alpine Proxy objects cannot be structuredClone'd
     return JSON.parse(JSON.stringify(raw,),);
   }, selector,) as Promise<T>;
 }

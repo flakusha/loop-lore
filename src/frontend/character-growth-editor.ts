@@ -84,7 +84,6 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
         this.message = "Saved.";
       } catch (err) {
         this.message = "Failed to save growth mode.";
-        // eslint-disable-next-line no-console
         console.error(err,);
       }
     },
@@ -106,7 +105,6 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
         this.message = "Arc saved.";
       } catch (err) {
         this.message = "Failed to save arc.";
-        // eslint-disable-next-line no-console
         console.error(err,);
       }
     },
@@ -123,7 +121,6 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
         this.message = "Entry confirmed.";
       } catch (err) {
         this.message = "Failed to confirm entry.";
-        // eslint-disable-next-line no-console
         console.error(err,);
       }
     },
@@ -140,7 +137,6 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
         this.message = "Entry rejected.";
       } catch (err) {
         this.message = "Failed to reject entry.";
-        // eslint-disable-next-line no-console
         console.error(err,);
       }
     },

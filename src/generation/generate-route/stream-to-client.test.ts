@@ -257,10 +257,10 @@ describeOrSkip("streamToClient — tracker cancel reaches the provider", () => {
     } as unknown as LLMProvider;
 
     const events = await collectEvents(run(tracker.signal, provider,),);
-    const err = events.find((e,) => e.type === "error",) as { error?: string } | undefined;
+    const err = events.find((e,) => e.type === "error") as { error?: string } | undefined;
     expect(err,).toBeDefined();
     expect(err?.error,).toBe("Generation failed",);
     const raw = JSON.stringify(events,);
-    expect(raw.includes("SECRET"),).toBe(false,);
+    expect(raw.includes("SECRET",),).toBe(false,);
   });
 },);

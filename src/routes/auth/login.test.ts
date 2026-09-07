@@ -136,7 +136,14 @@ describe("handleLogin — credential validation", () => {
   });
 
   test("returns invalid credentials for unknown user", async () => {
-    const res = await handleLogin(makeRequest(loginBody("nobody", "x",),), db, makeConfig(), undefined, null, loginLimiter,);
+    const res = await handleLogin(
+      makeRequest(loginBody("nobody", "x",),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     const body = await res.text();
     expect(body,).toContain("Invalid username or password",);
   });
@@ -154,14 +161,28 @@ describe("handleLogin — credential validation", () => {
   });
 
   test("returns invalid credentials for wrong password", async () => {
-    const res = await handleLogin(makeRequest(loginBody(USERNAME, "wrong-password",),), db, makeConfig(), undefined, null, loginLimiter,);
+    const res = await handleLogin(
+      makeRequest(loginBody(USERNAME, "wrong-password",),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     expect(await res.text(),).toContain("Invalid username or password",);
   });
 });
 
 describe("handleLogin — success", () => {
   test("creates a session, returns HX-Redirect and auth cookie", async () => {
-    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(), undefined, null, loginLimiter,);
+    const res = await handleLogin(
+      makeRequest(loginBody(USERNAME, PASSWORD,),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     expect(res.status,).toBe(200,);
     expect(res.headers.get("HX-Redirect",),).toBe("/views/chat",);
     const cookie = res.headers.get("Set-Cookie",);
@@ -182,10 +203,24 @@ describe("handleLogin — success", () => {
 describe("handleLogin — rate limiting", () => {
   test("returns 429 after 10 attempts", async () => {
     for (let i = 0; i < 10; i++) {
-      const res = await handleLogin(makeRequest(loginBody(USERNAME, "wrong",),), db, makeConfig(), undefined, null, loginLimiter,);
+      const res = await handleLogin(
+        makeRequest(loginBody(USERNAME, "wrong",),),
+        db,
+        makeConfig(),
+        undefined,
+        null,
+        loginLimiter,
+      );
       expect(res.status,).toBe(200,);
     }
-    const blocked = await handleLogin(makeRequest(loginBody(USERNAME, "wrong",),), db, makeConfig(), undefined, null, loginLimiter,);
+    const blocked = await handleLogin(
+      makeRequest(loginBody(USERNAME, "wrong",),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     expect(blocked.status,).toBe(429,);
     expect(await blocked.text(),).toContain("Too many attempts",);
   });
@@ -195,7 +230,14 @@ describe("handleLogin — rate limiting", () => {
     for (let i = 0; i < 10; i++) {
       await handleLogin(makeRequest(loginBody(USERNAME, "wrong",),), db, makeConfig(), undefined, null, loginLimiter,);
     }
-    const blocked = await handleLogin(makeRequest(loginBody(USERNAME, "wrong",),), db, makeConfig(), undefined, null, loginLimiter,);
+    const blocked = await handleLogin(
+      makeRequest(loginBody(USERNAME, "wrong",),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     expect(blocked.status,).toBe(429,);
     expect(blocked.headers.get("Retry-After",),).toBeDefined();
     expect(blocked.headers.get("X-RateLimit-Limit",),).toBe("10",);
@@ -204,7 +246,14 @@ describe("handleLogin — rate limiting", () => {
   });
 
   test("successful login emits X-RateLimit-Remaining (informational)", async () => {
-    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(), undefined, null, loginLimiter,);
+    const res = await handleLogin(
+      makeRequest(loginBody(USERNAME, PASSWORD,),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     expect(res.status,).toBe(200,);
     // No Retry-After on 200 — only X-RateLimit-* informational headers.
     expect(res.headers.get("Retry-After",),).toBeNull();
@@ -226,7 +275,14 @@ describe("handleDemoLogin", () => {
   });
 
   test("returns 500 when the JWT secret is missing", async () => {
-    const res = await handleDemoLogin(makeRequest(), db, makeConfig({ jwtSecret: undefined, },), undefined, null, demoLimiter,);
+    const res = await handleDemoLogin(
+      makeRequest(),
+      db,
+      makeConfig({ jwtSecret: undefined, },),
+      undefined,
+      null,
+      demoLimiter,
+    );
     expect(res.status,).toBe(500,);
   });
 
@@ -275,7 +331,14 @@ describe("handleLogin — Secure cookie", () => {
   test("omits Secure when neither NODE_ENV=production nor LL_COOKIE_SECURE is set", async () => {
     delete process.env.NODE_ENV;
     delete process.env.LL_COOKIE_SECURE;
-    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(), undefined, null, loginLimiter,);
+    const res = await handleLogin(
+      makeRequest(loginBody(USERNAME, PASSWORD,),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     const cookie = res.headers.get("Set-Cookie",) ?? "";
     expect(cookie,).not.toContain("Secure",);
     expect(cookie,).toContain("HttpOnly",);
@@ -285,21 +348,42 @@ describe("handleLogin — Secure cookie", () => {
   test("emits Secure when NODE_ENV=production", async () => {
     process.env.NODE_ENV = "production";
     delete process.env.LL_COOKIE_SECURE;
-    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(), undefined, null, loginLimiter,);
+    const res = await handleLogin(
+      makeRequest(loginBody(USERNAME, PASSWORD,),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
   });
 
   test("emits Secure when LL_COOKIE_SECURE=true overrides NODE_ENV=development", async () => {
     process.env.NODE_ENV = "development";
     process.env.LL_COOKIE_SECURE = "true";
-    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(), undefined, null, loginLimiter,);
+    const res = await handleLogin(
+      makeRequest(loginBody(USERNAME, PASSWORD,),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     expect(res.headers.get("Set-Cookie",),).toContain("Secure",);
   });
 
   test("omits Secure when LL_COOKIE_SECURE=false overrides NODE_ENV=production", async () => {
     process.env.NODE_ENV = "production";
     process.env.LL_COOKIE_SECURE = "false";
-    const res = await handleLogin(makeRequest(loginBody(USERNAME, PASSWORD,),), db, makeConfig(), undefined, null, loginLimiter,);
+    const res = await handleLogin(
+      makeRequest(loginBody(USERNAME, PASSWORD,),),
+      db,
+      makeConfig(),
+      undefined,
+      null,
+      loginLimiter,
+    );
     expect(res.headers.get("Set-Cookie",),).not.toContain("Secure",);
   });
 });

@@ -58,7 +58,10 @@ export async function getNpcInventory(state: ItemState, actorId: string,): Promi
  * @param state
  * @param actorIds
  */
-export async function getNpcInventoryBatch(state: ItemState, actorIds: string[],): Promise<Map<string, ItemInstance[]>> {
+export async function getNpcInventoryBatch(
+  state: ItemState,
+  actorIds: string[],
+): Promise<Map<string, ItemInstance[]>> {
   if (actorIds.length === 0) {
     return new Map();
   }
@@ -101,7 +104,7 @@ export async function getNpcInventoryBatch(state: ItemState, actorIds: string[],
       weight: row.weight,
       visibility: row.visibility,
     };
-    const list = byActor.get(ownerId);
+    const list = byActor.get(ownerId,);
     if (list) {
       list.push(instance,);
     } else {

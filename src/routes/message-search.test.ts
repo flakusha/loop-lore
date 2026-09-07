@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
@@ -209,7 +208,7 @@ describe("messageSearchRoutes", () => {
     const res = await appHandle(app, get("/api/messages/search?q=dragon",),);
     const body = (await res.json()) as SearchBody;
     // Admin sees both chats' dragon messages.
-    const chatIds = new Set(body.results.map((r,) => r.chatId,),);
+    const chatIds = new Set(body.results.map((r,) => r.chatId),);
     expect(chatIds.has(chatId,),).toBe(true,);
     expect(chatIds.has(otherChatId,),).toBe(true,);
   });
@@ -228,7 +227,11 @@ describe("messageSearchRoutes", () => {
     await insertMessages(db, chatId, ownerId, MessageRole.User, "temporary-mint snowflake", {
       content_plaintext: "temporary-mint snowflake",
     },);
-    const row = await db.selectFrom("messages",).select("id",).where("content_plaintext", "=", "temporary-mint snowflake",).executeTakeFirst();
+    const row = await db.selectFrom("messages",).select("id",).where(
+      "content_plaintext",
+      "=",
+      "temporary-mint snowflake",
+    ).executeTakeFirst();
     expect(row,).toBeTruthy();
 
     const before =
@@ -341,7 +344,7 @@ describe("messageSearchRoutes", () => {
     const res = await appHandle(app, get(`/api/messages/search?chatId=${envChat}`,),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
-    expect(body.results.some((r,) => r.messageId === "unknown",),).toBe(false,);
+    expect(body.results.some((r,) => r.messageId === "unknown"),).toBe(false,);
     expect(body.total,).toBe(body.results.length,); // honest count, no phantom page
   });
 });

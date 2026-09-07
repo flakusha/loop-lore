@@ -34,7 +34,7 @@ import { extractAndStoreMemories, } from "../../memory";
 import { jsonError, jsonResponse, } from "../../routes/http-utils";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import { activeGenerations, failGeneration, } from "../cancellation-manager";
-import { callWithFailover, } from "../providers/registry";
+import { callWithFailover, } from "../providers/call-with-failover";
 import type { GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
 import type { GenerationMessage, } from "../types";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
