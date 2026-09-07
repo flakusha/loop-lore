@@ -118,7 +118,7 @@ export async function buildContext(
     ? []
     : await state.db.selectFrom("npc_states",).selectAll().where("actor_id", "in", npcActorIds,).execute();
   const inventoryByActor = await items.getNpcInventoryBatch(npcActorIds,);
-  const npcRowById = new Map(npcRows.map((r,) => [r.actor_id, r,],),);
+  const npcRowById = new Map(npcRows.map((r,) => [r.actor_id, r,]),);
 
   for (const p of participantRows) {
     const isNpc = p.agent_type === "npc" || p.agent_type === "ai";

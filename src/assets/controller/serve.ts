@@ -11,10 +11,9 @@ import { getAsset, getAssetData, getAssetFilePath, } from "../service";
 import type { AssetRecord, } from "../service";
 import { resolveAsset, } from "./access";
 import { serveFile, } from "./files";
-import { verifyAssetUrl, } from "./signed-url";
 import { cacheControlFor, contentDispositionFor, } from "./serve-headers";
+import { verifyAssetUrl, } from "./signed-url";
 import type { ServeCompressedOpts, ServeRawOpts, } from "./types";
-
 
 /**
  * Resolve the actor-facing asset record for a serve request.

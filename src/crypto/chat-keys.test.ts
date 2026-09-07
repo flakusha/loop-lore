@@ -210,7 +210,7 @@ describe("deriveChatKeyForChat", () => {
     );
 
     // All callers succeed with the same keyId.
-    const keyIds = new Set(results.map((r,) => r.keyId,),);
+    const keyIds = new Set(results.map((r,) => r.keyId),);
     expect(keyIds.size,).toBe(1,);
 
     // Exactly one chat_keys row exists for the chat (unique index enforced).

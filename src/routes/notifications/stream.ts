@@ -9,8 +9,8 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { NotificationService, } from "../../notifications/service";
 import { getLogger, } from "../../logger";
+import { NotificationService, } from "../../notifications/service";
 import { safeJsonStringify, } from "../../utils";
 
 export const POLL_INTERVAL_MS = 5000;
