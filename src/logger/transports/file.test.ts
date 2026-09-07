@@ -1,6 +1,9 @@
-/**
- * Tests for logger/transports/file.ts — FileTransport (JSONL + rotation)
- */
+// Tests for logger/transports/file.ts — FileTransport (JSONL + rotation)
+//
+// Resource contract: each run owns a unique mkdtemp dir (`ll-filelog-*`),
+// created in beforeAll and removed in afterAll. All fixtures (app.log,
+// nested/, rot.log*, priv/) live inside that dir, so files run in parallel
+// never collide and a failed run leaves at most one temp dir behind.
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { mkdtemp, readdir, readFile, rm, stat, } from "node:fs/promises";
 import { tmpdir, } from "node:os";
