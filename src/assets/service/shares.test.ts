@@ -7,11 +7,11 @@
  */
 
 import { describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
 import { AssetVisibility, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import type { Kysely, } from "kysely";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertAssetShares, insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
+import { insertAssets, insertAssetShares, insertUsers, } from "../../test-utils/insert-helpers";
 import {
   getAssetShares,
   shareAsset,
@@ -29,9 +29,9 @@ async function seed(db: Kysely<DB>,): Promise<{ ownerId: string; peerId: string;
   await insertUsers(db, PEER, "Share Peer",);
   await insertUsers(db, THIRD, "Share Third",);
   const users = await db.selectFrom("users",).select(["id", "username",],).execute();
-  const ownerId = users.find((u,) => u.username === OWNER,)!.id;
-  const peerId = users.find((u,) => u.username === PEER,)!.id;
-  const thirdId = users.find((u,) => u.username === THIRD,)!.id;
+  const ownerId = users.find((u,) => u.username === OWNER)!.id;
+  const peerId = users.find((u,) => u.username === PEER)!.id;
+  const thirdId = users.find((u,) => u.username === THIRD)!.id;
   // asset_shares FKs point at actors.id — mirror each user as an actor
   await db.insertInto("actors",).values({ id: ownerId, display_name: "Owner Actor", },).execute();
   await db.insertInto("actors",).values({ id: peerId, display_name: "Peer Actor", },).execute();
@@ -53,12 +53,14 @@ describe("updateAssetVisibility", () => {
   test("returns null for a missing asset", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
-      expect(await updateAssetVisibility({
-        database: db,
-        assetId: "ghost",
-        visibility: AssetVisibility.Public,
-        actorId: "someone",
-      },),).toBeNull();
+      expect(
+        await updateAssetVisibility({
+          database: db,
+          assetId: "ghost",
+          visibility: AssetVisibility.Public,
+          actorId: "someone",
+        },),
+      ).toBeNull();
     } finally {
       sqlite.close();
     }
@@ -68,12 +70,14 @@ describe("updateAssetVisibility", () => {
     const { db, sqlite, } = await createTestDb();
     try {
       const { peerId, } = await seed(db,);
-      expect(await updateAssetVisibility({
-        database: db,
-        assetId: ASSET_ID,
-        visibility: AssetVisibility.Public,
-        actorId: peerId,
-      },),).toBeNull();
+      expect(
+        await updateAssetVisibility({
+          database: db,
+          assetId: ASSET_ID,
+          visibility: AssetVisibility.Public,
+          actorId: peerId,
+        },),
+      ).toBeNull();
     } finally {
       sqlite.close();
     }
@@ -92,7 +96,8 @@ describe("updateAssetVisibility", () => {
       expect(updated,).not.toBeNull();
       expect(updated!.visibility,).toBe("public",);
       expect(updated!.id,).toBe(ASSET_ID,);
-      const row = await db.selectFrom("assets",).select("visibility",).where("id", "=", ASSET_ID,).executeTakeFirstOrThrow();
+      const row = await db.selectFrom("assets",).select("visibility",).where("id", "=", ASSET_ID,)
+        .executeTakeFirstOrThrow();
       expect(row.visibility,).toBe("public",);
     } finally {
       sqlite.close();
@@ -104,12 +109,14 @@ describe("shareAsset", () => {
   test("returns null for a missing asset", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
-      expect(await shareAsset({
-        database: db,
-        assetId: "ghost",
-        sharedWithId: "a",
-        sharedById: "b",
-      },),).toBeNull();
+      expect(
+        await shareAsset({
+          database: db,
+          assetId: "ghost",
+          sharedWithId: "a",
+          sharedById: "b",
+        },),
+      ).toBeNull();
     } finally {
       sqlite.close();
     }
@@ -120,13 +127,15 @@ describe("shareAsset", () => {
     try {
       const { peerId, } = await seed(db,);
       // peerId is not the owner — shareAsset owner check returns null
-      expect(await shareAsset({
-        database: db,
-        assetId: ASSET_ID,
-        sharedWithId: peerId,
-        sharedById: peerId,
-      },),).toBeNull();
-      expect(await getAssetShares(db, ASSET_ID,),).toEqual([]);
+      expect(
+        await shareAsset({
+          database: db,
+          assetId: ASSET_ID,
+          sharedWithId: peerId,
+          sharedById: peerId,
+        },),
+      ).toBeNull();
+      expect(await getAssetShares(db, ASSET_ID,),).toEqual([],);
     } finally {
       sqlite.close();
     }
@@ -148,7 +157,8 @@ describe("shareAsset", () => {
       expect(share!.shared_by_id,).toBe(ownerId,);
       expect(share!.id,).toBeTruthy();
       expect(share!.created_at,).toBeTruthy();
-      const asset = await db.selectFrom("assets",).select("visibility",).where("id", "=", ASSET_ID,).executeTakeFirstOrThrow();
+      const asset = await db.selectFrom("assets",).select("visibility",).where("id", "=", ASSET_ID,)
+        .executeTakeFirstOrThrow();
       expect(asset.visibility,).toBe("shared",);
       const rows = await getAssetShares(db, ASSET_ID,);
       expect(rows,).toHaveLength(1,);
@@ -169,7 +179,8 @@ describe("shareAsset", () => {
         sharedById: ownerId,
       },);
       expect(share,).not.toBeNull();
-      const asset = await db.selectFrom("assets",).select("visibility",).where("id", "=", ASSET_ID,).executeTakeFirstOrThrow();
+      const asset = await db.selectFrom("assets",).select("visibility",).where("id", "=", ASSET_ID,)
+        .executeTakeFirstOrThrow();
       expect(asset.visibility,).toBe("public",);
     } finally {
       sqlite.close();
@@ -181,12 +192,14 @@ describe("shareAsset", () => {
     try {
       const { ownerId, } = await seed(db,);
       // sharedWithId is not an existing actor — FK failure caught → null
-      expect(await shareAsset({
-        database: db,
-        assetId: ASSET_ID,
-        sharedWithId: "no-such-actor",
-        sharedById: ownerId,
-      },),).toBeNull();
+      expect(
+        await shareAsset({
+          database: db,
+          assetId: ASSET_ID,
+          sharedWithId: "no-such-actor",
+          sharedById: ownerId,
+        },),
+      ).toBeNull();
     } finally {
       sqlite.close();
     }
@@ -229,7 +242,7 @@ describe("getAssetShares", () => {
     const { db, sqlite, } = await createTestDb();
     try {
       await seed(db,);
-      expect(await getAssetShares(db, ASSET_ID,),).toEqual([]);
+      expect(await getAssetShares(db, ASSET_ID,),).toEqual([],);
     } finally {
       sqlite.close();
     }

@@ -16,7 +16,7 @@ mock.module("../fe-fetch", () => ({
 afterEach(() => {
   seenUrls = [];
   handler = async () => Response.json({ requestId: "r1", status: "complete", },);
-});
+},);
 
 interface Recorder {
   updates: string[];
@@ -31,9 +31,12 @@ function record(): Recorder {
 describe("useRequestStatus", () => {
   test("polls the status endpoint and terminates on complete", async () => {
     const rec = record();
-    const { subscribe, cancel, } = useRequestStatus({ onUpdate: (p,) => rec.updates.push(p.status,), onTerminal: (p,) => rec.terminals.push(p.status,), },);
+    const { subscribe, cancel, } = useRequestStatus({
+      onUpdate: (p,) => rec.updates.push(p.status,),
+      onTerminal: (p,) => rec.terminals.push(p.status,),
+    },);
     subscribe("r1",);
-    await new Promise<void>((resolve,) => setTimeout(resolve, 0,),); // let the first poll settle
+    await new Promise<void>((resolve,) => setTimeout(resolve, 0,)); // let the first poll settle
     expect(seenUrls,).toEqual(["/api/v1/requests/r1/status",],);
     expect(rec.updates,).toEqual(["complete",],);
     expect(rec.terminals,).toEqual(["complete",],);
@@ -43,9 +46,12 @@ describe("useRequestStatus", () => {
   test("reports failure when the endpoint returns non-ok", async () => {
     const rec = record();
     handler = async () => new Response("", { status: 500, },);
-    const { subscribe, cancel, } = useRequestStatus({ onUpdate: (p,) => rec.updates.push(p.error ?? "",), onTerminal: (p,) => rec.terminals.push(p.status,), },);
+    const { subscribe, cancel, } = useRequestStatus({
+      onUpdate: (p,) => rec.updates.push(p.error ?? "",),
+      onTerminal: (p,) => rec.terminals.push(p.status,),
+    },);
     subscribe("r1",);
-    await new Promise<void>((resolve,) => setTimeout(resolve, 0,),);
+    await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
     expect(rec.updates[0],).toContain("500",);
     expect(rec.terminals,).toEqual(["failed",],);
     cancel();
@@ -56,9 +62,12 @@ describe("useRequestStatus", () => {
     handler = async () => {
       throw new Error("offline",);
     };
-    const { subscribe, cancel, } = useRequestStatus({ onUpdate: (p,) => rec.updates.push(p.error ?? "",), onTerminal: (p,) => rec.terminals.push(p.status,), },);
+    const { subscribe, cancel, } = useRequestStatus({
+      onUpdate: (p,) => rec.updates.push(p.error ?? "",),
+      onTerminal: (p,) => rec.terminals.push(p.status,),
+    },);
     subscribe("r1",);
-    await new Promise<void>((resolve,) => setTimeout(resolve, 0,),);
+    await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
     expect(rec.updates,).toEqual(["offline",],);
     expect(rec.terminals,).toEqual(["failed",],);
     cancel();
@@ -72,7 +81,7 @@ describe("useRequestStatus", () => {
       onTerminal: (p,) => rec.terminals.push(p.status,),
     },);
     subscribe("r1",);
-    await new Promise<void>((resolve,) => setTimeout(resolve, 0,),);
+    await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
     expect(seenUrls,).toHaveLength(1,);
     expect(rec.terminals,).toEqual(["in_progress",],);
     cancel();
@@ -96,13 +105,13 @@ describe("useRequestStatus", () => {
       onTerminal: (p,) => rec.terminals.push(p.status,),
     },);
     subscribe("r1",);
-    await new Promise<void>((resolve,) => setTimeout(resolve, 0,),); // first poll done, timer pending
+    await new Promise<void>((resolve,) => setTimeout(resolve, 0,)); // first poll done, timer pending
     expect(rec.updates,).toEqual(["in_progress",],);
     cancel();
     gate.resolve();
     // Drain the already-scheduled timer callback: a single zero-delay macro
     // task is the deterministic, zero-latency way to let it run or die.
-    await new Promise<void>((resolve,) => setTimeout(resolve, 0,),);
+    await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
     expect(rec.updates,).toEqual(["in_progress",],);
     expect(rec.terminals,).toEqual([],);
   });
@@ -119,7 +128,7 @@ describe("useRequestStatus — odd failure payloads", () => {
       onTerminal: (p,) => rec.terminals.push(p.status,),
     },);
     subscribe("r1",);
-    await new Promise<void>((resolve,) => setTimeout(resolve, 0,),);
+    await new Promise<void>((resolve,) => setTimeout(resolve, 0,));
     expect(rec.updates,).toEqual(["boom-str",],);
     expect(rec.terminals,).toEqual(["failed",],);
     cancel();

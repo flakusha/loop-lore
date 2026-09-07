@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, } from "bun:test";
-import { BrowserConsoleTransport, } from "./console";
 import type { LogEntry, } from "../../../logger/types";
+import { BrowserConsoleTransport, } from "./console";
 
 function makeEntry(level: number, message = "msg",): LogEntry {
   return {
@@ -24,7 +24,7 @@ function captureConsole(): {
     error: [],
   };
   const originals: Record<string, (...args: unknown[]) => void> = {};
-  for (const name of ["debug", "info", "warn", "error"] as const) {
+  for (const name of ["debug", "info", "warn", "error",] as const) {
     originals[name] = console[name];
     console[name] = (...args: unknown[]) => {
       calls[name]!.push(args,);
@@ -33,7 +33,7 @@ function captureConsole(): {
   return {
     calls,
     restore: () => {
-      for (const name of ["debug", "info", "warn", "error"] as const) {
+      for (const name of ["debug", "info", "warn", "error",] as const) {
         console[name] = originals[name]!;
       }
     },
@@ -102,7 +102,9 @@ describe("BrowserConsoleTransport", () => {
       const transport = new BrowserConsoleTransport(false,);
       const hostile: LogEntry = makeEntry(50, "ok",);
       Object.defineProperty(hostile, "message", {
-        get() { throw new Error("getter bomb",); },
+        get() {
+          throw new Error("getter bomb",);
+        },
       },);
       await expect(transport.write(hostile,),).resolves.toBeUndefined();
       expect(sink.calls.error,).toHaveLength(0,);

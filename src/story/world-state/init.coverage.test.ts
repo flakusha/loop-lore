@@ -20,13 +20,13 @@ import {
   insertWorlds,
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import type { WorldState, } from "./types";
 import {
   initializeCharacterWorldSetup,
   initializeLocationStates,
   initializeNpcStates,
   seedStartingInventory,
 } from "./init";
+import type { WorldState, } from "./types";
 
 let db: Kysely<DB>;
 let state: WorldState;
@@ -137,7 +137,7 @@ describe("seedStartingInventory", () => {
     await insertItems(db, worldId, "Torch", "tool", { id: defId, } as never,);
     await db
       .updateTable("character_world_setup",)
-      .set({ starting_inventory: JSON.stringify([{ item_id: defId, quantity: 2, },]), },)
+      .set({ starting_inventory: JSON.stringify([{ item_id: defId, quantity: 2, },],), },)
       .where("actor_id", "=", actor,)
       .where("world_id", "=", worldId,)
       .execute();
@@ -157,7 +157,7 @@ describe("seedStartingInventory", () => {
     await initializeCharacterWorldSetup(state, worldId,);
     await db
       .updateTable("character_world_setup",)
-      .set({ starting_inventory: JSON.stringify([{ item_id: uid(), quantity: 1, },]), },)
+      .set({ starting_inventory: JSON.stringify([{ item_id: uid(), quantity: 1, },],), },)
       .where("world_id", "=", worldId,)
       .execute();
     expect(await seedStartingInventory(state, worldId,),).toBe(0,);
@@ -170,7 +170,7 @@ describe("seedStartingInventory", () => {
     await insertItems(db, worldId, "Torch", "tool", { id: defId, } as never,);
     await db
       .updateTable("character_world_setup",)
-      .set({ starting_inventory: JSON.stringify([{ item_id: defId, quantity: 1, },]), },)
+      .set({ starting_inventory: JSON.stringify([{ item_id: defId, quantity: 1, },],), },)
       .where("actor_id", "=", actor,)
       .execute();
     expect(await seedStartingInventory(state, worldId,),).toBe(1,);
@@ -185,7 +185,7 @@ describe("seedStartingInventory", () => {
     await insertItems(db, worldId, "Torch", "tool", { id: defId, } as never,);
     await db
       .updateTable("character_world_setup",)
-      .set({ starting_inventory: JSON.stringify([{ item_id: defId, quantity: 0, },]), },)
+      .set({ starting_inventory: JSON.stringify([{ item_id: defId, quantity: 0, },],), },)
       .where("world_id", "=", worldId,)
       .execute();
     expect(await seedStartingInventory(state, worldId,),).toBe(1,);

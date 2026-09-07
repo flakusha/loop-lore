@@ -11,8 +11,8 @@
  */
 import { describe, expect, it, } from "bun:test";
 import type { Config, } from "../../config/schema";
-import type { LLMProvider, } from "../providers/types";
 import { listProviders, registerProvider, } from "../providers/registry";
+import type { LLMProvider, } from "../providers/types";
 import { isLlmGenerationConfigured, } from "./llm-config";
 
 function makeConfig(overrides: {
@@ -55,7 +55,7 @@ describe("isLlmGenerationConfigured", () => {
     registerProvider("llm-config-registered", {
       capabilities: {},
     } as unknown as LLMProvider,);
-    expect(listProviders().some((p,) => p.name === "llm-config-registered",),).toBe(true,);
+    expect(listProviders().some((p,) => p.name === "llm-config-registered"),).toBe(true,);
     expect(isLlmGenerationConfigured(makeConfig({},),),).toBe(true,);
   });
 
