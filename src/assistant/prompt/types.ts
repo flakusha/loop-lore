@@ -174,6 +174,7 @@ export const PRIORITY = {
   actorHeader: 0,
   authorNote: 0,
   groupParticipants: 0,
+  groupTalkativity: 0,
   userPersona: 0,
   emotionAvatar: 0,
   internalTraits: 1,

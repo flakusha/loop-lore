@@ -38,6 +38,14 @@ export interface TurnManagerState {
     attempt: number;
     reason: string;
   } | null;
+  /**
+   * Active scene id for initiative/battle grouping. Defaults to "main" when
+   * the chat has no persisted scene context. Read by `decrementInitiative`
+   * (selection.ts) and the participants loader to scope `group_initiatives`
+   * writes/reads to the active scene rather than collapsing every claim onto
+   * "main" (BUG-chat-persist-init-hardcoded-scene).
+   */
+  currentSceneId: string;
 }
 
 // ─── Group Chat Turn Context ──────────────────────────────────
@@ -63,4 +71,12 @@ export type TurnStrategyFn = (
   currentTurn: number,
   turnOrder: string[],
   context?: GroupTurnContext | Record<string, unknown>,
+  /**
+   * Last actor that produced a message in this chat. Strategies MUST skip
+   * this actor when at least one alternative candidate exists, to prevent
+   * the same character from monopolizing the cascade when strategy weights
+   * tie (BUG-group-cascade-consecutive-turn-guard). May be `null` when the
+   * turn order has not started yet.
+   */
+  lastActorId?: string | null,
 ) => string;

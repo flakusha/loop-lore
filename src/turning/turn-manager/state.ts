@@ -34,6 +34,11 @@ export function createInitialState(): TurnManagerState {
     isPaused: false,
     lastTurnCompletedAt: null,
     pendingRegeneration: null,
+    // Default scene id. Multi-scene support (epic-battle-action-systems)
+    // will persist a different value through `persistState`; this default
+    // keeps existing single-scene chats working unchanged
+    // (BUG-chat-persist-init-hardcoded-scene).
+    currentSceneId: "main",
   };
 }
 

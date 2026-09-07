@@ -1,6 +1,6 @@
 # BUG: message search returns ciphertext and indexes ciphertext for encrypted chats
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Priority:** medium
 **Effort:** Medium
 
@@ -24,3 +24,7 @@ Acceptance:
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Verified on dev HEAD (2026-09-07). src/routes/message-search/index.ts:142-178 resolves each row's content via `resolveMessageContent` (decrypt + decompress) and blanks the FTS5 snippet for client-pre-encrypted rows (no plaintext mirror exists). Search results never carry raw {enc,nonce,...} envelopes or base64 gzip blobs. Covered by src/routes/message-search.test.ts (ciphertext and gzip rows handled).

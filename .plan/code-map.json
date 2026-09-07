@@ -4187,6 +4187,12 @@
       "source": ".plan/tickets/FEAT-068.md"
     }
   ],
+  "src/chat/context-window.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-context-window-trim-keeps-oldest-messages-drops-newest-when-.md"
+    }
+  ],
   "src/chat/context-window.ts": [
     {
       "kind": "epic",
@@ -4820,6 +4826,10 @@
     }
   ],
   "src/chat/service/split.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-reunite-secondary-ownership-check-missing.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
@@ -8377,6 +8387,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-link-npc-inventory.md"
+    }
+  ],
+  "src/db/migrations/parts/016_fts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-message-update-no-fts-refresh.md"
     }
   ],
   "src/db/migrations/rag.ts": [
@@ -13587,6 +13607,12 @@
       "source": ".plan/tickets/TASK-generation-maxtokens-and-prompt-array-unvalidated-cost-dos.md"
     }
   ],
+  "src/generation/generate-route/non-stream.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fix-cross-file-mock-module-leaks-under-non-isolated-and-cove.md"
+    }
+  ],
   "src/generation/generate-route/stream-to-client.test.ts": [
     {
       "kind": "ticket",
@@ -14231,6 +14257,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-067.md"
+    }
+  ],
+  "src/generation/providers/registry.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-fix-cross-file-mock-module-leaks-under-non-isolated-and-cove.md"
     }
   ],
   "src/generation/providers/registry.ts": [
@@ -15961,6 +15993,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-static-asset-caching-unconditional-vary-immutable-on-short-t.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-headers-additional-useful-response-headers.md"
     },
     {
       "kind": "frontend",
@@ -19297,6 +19333,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
     }
   ],
   "src/routes/message-search.ts": [
@@ -19461,6 +19501,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/encryption-workflow.md"
+    }
+  ],
+  "src/routes/messages/__tests__/fts-lifecycle.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md"
     }
   ],
   "src/routes/messages/__tests__/nsfw-flag-before-access.test.ts": [
@@ -19809,6 +19855,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
+    }
+  ],
+  "src/routes/middleware/deprecation-headers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-headers-additional-useful-response-headers.md"
     }
   ],
   "src/routes/middleware/version-redirect.ts": [
@@ -22931,6 +22983,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-store-complete-fail-lifecycle-hooks.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-headers-additional-useful-response-headers.md"
     },
     {
       "kind": "ticket",
