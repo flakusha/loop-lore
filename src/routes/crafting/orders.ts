@@ -21,7 +21,7 @@ import { CraftingOrderService, } from "../../rpg/crafting/orders";
 import { ErrorResponse, Id, } from "../../validation/schemas";
 import { jsonError, jsonResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
-import { resolveActorAccess, } from "../trade/shared";
+import { resolveActorAccess, } from "../actor-access";
 
 /** A single crafting order as returned by list/detail. */
 const orderResponse = t.Object({

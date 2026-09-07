@@ -14,30 +14,12 @@
  * The caller must own the crafting actor (actors.user_id).
  */
 import { Elysia, t, } from "elysia";
-import type { Kysely, } from "kysely";
 import type { Db, } from "../../db";
-import type { DB, } from "../../db/schema";
 import { CraftingProcessService, } from "../../rpg/crafting";
 import { ErrorResponse, Id, } from "../../validation/schemas";
 import { jsonResponse, notFoundResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
-
-/**
- * Ensure the user owns the given actor. Returns a denial Response or null.
- * @param db
- * @param actorId
- * @param userId
- */
-async function resolveActorAccess(
-  db: Kysely<DB>,
-  actorId: string,
-  userId: string,
-): Promise<Response | null> {
-  const actor = await db.selectFrom("actors",).select("user_id",).where("id", "=", actorId,).executeTakeFirst();
-  if (!actor) { return notFoundResponse("Actor",); }
-  if (actor.user_id !== userId) { return jsonResponse({ error: "Not allowed", }, 403,); }
-  return null;
-}
+import { resolveActorAccess, } from "../actor-access";
 
 const materialRecordSchema = t.Object({
   itemId: Id,
