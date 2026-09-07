@@ -22,15 +22,8 @@ import {
   getTradeHistory,
   tradeCore,
 } from "./core";
+import { OfferService, } from "./lifecycle";
 import { buyFromNpc, sellToNpc, } from "./npc";
-import {
-  cancelOffer as cancelOfferFn,
-  createOffer as createOfferFn,
-  listOffers as listOffersFn,
-  loadOfferForAccept,
-  markOfferStatus,
-  TRADE_RECIPE_SENTINEL,
-} from "./offers";
 import { DEFAULT_CURRENCY, } from "./types";
 import type { TradeHistoryEntry, TradeLine, TradeResult, } from "./types";
 
@@ -43,12 +36,14 @@ export type {
   TradeType,
 } from "./types";
 
-/** */
-export class TradeService {
+/** Facade over split trade modules; offer lifecycle inherited. */
+export class TradeService extends OfferService {
   /**
    * @param db
    */
-  constructor(private readonly db: Kysely<DB>,) {}
+  constructor(db: Kysely<DB>,) {
+    super(db,);
+  }
 
   /**
    * Current gold (or other currency) balance for an actor in a world.
@@ -185,93 +180,5 @@ export class TradeService {
     price: number;
   },): Promise<TradeResult> {
     return sellToNpc(this.db, opts,);
-  }
-
-  // ── Trade Offer Lifecycle ─────────────────────────────
-
-  static readonly TRADE_RECIPE_SENTINEL = TRADE_RECIPE_SENTINEL;
-
-  /**
-   * Create a pending trade offer. Returns the offer ID.
-   * @param opts
-   * @param opts.worldId
-   * @param opts.buyerActorId
-   * @param opts.sellerActorId
-   * @param opts.buyerItems
-   * @param opts.price
-   * @param opts.deadline
-   */
-  createOffer(opts: {
-    worldId: string;
-    buyerActorId: string;
-    sellerActorId: string;
-    buyerItems: TradeLine[];
-    price: number;
-    deadline?: string;
-  },): Promise<string> {
-    return createOfferFn(this.db, opts,);
-  }
-
-  /**
-   * Accept a pending trade offer. Only the seller can accept.
-   * @param offerId
-   * @param acceptorActorId
-   */
-  async acceptOffer(
-    offerId: string,
-    acceptorActorId: string,
-  ): Promise<TradeResult> {
-    const loaded = await loadOfferForAccept(this.db, offerId, acceptorActorId,);
-    if ("success" in loaded && !loaded.success) { return loaded; }
-
-    const { offer, buyerItems, } = loaded as {
-      offer: { world_id: string; requester_actor_id: string; crafter_actor_id: string | null; offered_payment: number };
-      buyerItems: TradeLine[];
-    };
-
-    const result = await tradeCore(this.db, {
-      worldId: offer.world_id,
-      buyerActorId: offer.requester_actor_id,
-      sellerActorId: offer.crafter_actor_id!,
-      buyerItems,
-      sellerItems: [],
-      price: offer.offered_payment,
-    },);
-
-    await markOfferStatus(this.db, offerId, result.success,);
-    return result;
-  }
-
-  /**
-   * Cancel a pending trade offer. Only the offer creator can cancel.
-   * @param offerId
-   * @param cancellerActorId
-   */
-  cancelOffer(
-    offerId: string,
-    cancellerActorId: string,
-  ): Promise<{ success: boolean; reason?: string }> {
-    return cancelOfferFn(this.db, offerId, cancellerActorId,);
-  }
-
-  /**
-   * List pending trade offers for an actor.
-   * @param worldId
-   * @param actorId
-   */
-  listOffers(
-    worldId: string,
-    actorId: string,
-  ): Promise<{
-    id: string;
-    buyerActorId: string;
-    sellerActorId: string | null;
-    price: number;
-    items: TradeLine[];
-    status: string;
-    deadline: string | null;
-    createdAt: string;
-  }[]> {
-    return listOffersFn(this.db, worldId, actorId,);
   }
 }
