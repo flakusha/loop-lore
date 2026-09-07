@@ -139,3 +139,24 @@ export function parseInitiativeFlag(input: string,): { isInitiative: boolean; cl
   }
   return { isInitiative: false, cleanMessage: trimmed, };
 }
+
+/**
+ * Detect an opt-out `[PASS]` token at the end of a message body. Common in
+ * group chat RP — actors type `[PASS]` to decline their turn without
+ * forcing the cascade to spin up an LLM call for them. Pattern is
+ * whitespace-tolerant and case-insensitive to match human typing habits
+ * (BUG-group-chat-silence-pass-not-implemented).
+ *
+ * Examples:
+ *   `"I have nothing to add [PASS]"` -> true
+ *   `"[pass]"`                       -> true
+ *   `"hello"`                        -> false
+ *   `"I should PASS this"`           -> false (mid-message, not opt-out)
+ * @param text - Message content (plaintext, pre-encryption)
+ */
+export function detectPassToken(text: string,): boolean {
+  const trimmed = text.trim();
+  if (trimmed.length === 0) { return false; }
+  // Standalone trailing token, optionally surrounded by whitespace.
+  return /\[\s*pass\s*\]\s*$/i.test(trimmed,);
+}
