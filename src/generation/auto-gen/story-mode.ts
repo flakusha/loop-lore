@@ -20,6 +20,7 @@ import { jsonParseOr, uid, } from "../../utils";
 import { runContentHooks, } from "./content-hooks";
 import type { StoryModeOpts, } from "./story-mode-opts";
 export type { StoryModeOpts, } from "./story-mode-opts";
+
 /**
  * Story mode generation using GameMasterService for full GM orchestration.
  *
@@ -30,11 +31,15 @@ export type { StoryModeOpts, } from "./story-mode-opts";
  * - World event extraction and application
  * - Quest tracking
  * - Escalation/regeneration handling
+ *
+ * Stores the AI's `response` text (the assistant message the user should see),
+ * NOT the LLM-bound `prompt` text — see BUG-story-mode-prompt-stored-as-content.
  * @param opts
  */
 export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<void> {
   const { database, config, chatId, parentMessageId, userId, gmConfig, worldId, deps, } = opts;
   const log = getLogger().child({ module: "auto-gen-story", },);
+
   // Parse GM config from chat record. The chat's `gm_config` column stores the
   // chat-level `GmConfig` (assistantRole / visualNovel / storyMode / gmGuidance)
   // — a different shape from the story-domain `GameMasterConfig`. Extract the
@@ -62,12 +67,14 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
       ? { escalationThreshold: gmConfigRaw.escalationThreshold, }
       : {}),
   };
+
   // Resolve the chat's default provider once, to seed the metadata stored on
   // the generated message when no per-actor override is applied (e.g. Human
   // mode, or an actor with no actorModels entry).
   const defaultResolved = await deps.resolveProvider({ userId, config, db: database, },);
   let usedProviderName = defaultResolved.resolvedProviderName;
   let usedModel = defaultResolved.resolvedModel;
+
   // Create generateText callback that calls the provider. The GM service may
   // request a per-actor provider/model (params.provider / params.model sourced
   // from GameMasterConfig.actorModels); resolve that provider per-call so each
@@ -94,6 +101,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
     },);
     return response.content;
   };
+
   // Create GameMasterService
   const gm = new GameMasterService({
     db: database,
@@ -110,10 +118,26 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   // Execute turn — calls generateText internally to get GM decision
   const turnResult = await gm.executeTurn();
 
-  // Check generated content against known world entities before storing
+  // In Human GM mode `turnResult.response` is null — there is no AI reply
+  // to store. The GM IS the user and posts via the chat input directly,
+  // so we must NOT auto-store a message (otherwise the user sees their
+  // own GM prompt echoed back as the AI's reply — see
+  // BUG-story-mode-prompt-stored-as-content). An empty-string response
+  // is also skipped: there is no assistant message worth persisting.
+  if (!turnResult.response) {
+    log.info(
+      "story-mode: Human GM turn produced no response — skipping auto-store",
+      { chatId, turnId: turnResult.turnId, actorId: turnResult.actorId, },
+    );
+    return;
+  }
+
+  // Check generated content against known world entities before storing.
+  // Hallucination detection runs on the AI response (`turnResult.response`),
+  // not the prompt we sent to the LLM.
   const hallucinationAnalysis = await detectHallucinations({
     db: database,
-    text: turnResult.prompt,
+    text: turnResult.response,
     worldId: worldId ?? undefined,
   },);
 
@@ -133,7 +157,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   // Store the generated response as a message
   const messageId = uid();
 
-  let storedContent = turnResult.prompt;
+  let storedContent = turnResult.response;
 
   let storedKeyId: string | null = null;
   const contentEncoding = ContentEncoding.Identity;
@@ -145,7 +169,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   const result = await deps.encryptAtRest({
     database,
     chatId,
-    plaintext: turnResult.prompt,
+    plaintext: turnResult.response,
     encryptionLevel,
     config: {
       threshold: config.encryption.compressThreshold,
@@ -179,7 +203,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
       chatId,
       actorId: turnResult.actorId,
       userId,
-      content: turnResult.prompt,
+      content: turnResult.response,
     },);
     if (!hooks.allowed) {
       log.warn("story-mode: generation blocked by content hooks", {
@@ -197,6 +221,7 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
     );
     throw error;
   }
+
   // Compute swipe index for variant support
   let swipeIndex: number | null = null;
   if (parentMessageId) {
@@ -231,8 +256,10 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
     },)
     .execute();
 
-  // Accept response through GM pipeline (quality evaluation, world events, etc.)
-  await gm.acceptResponse(turnResult.turnId, turnResult.prompt,);
+  // Accept the AI's RESPONSE (not the prompt) through the GM pipeline.
+  // acceptResponse(turnId, response) records quality evaluation, world
+  // events, etc. against the actual assistant message.
+  await gm.acceptResponse(turnResult.turnId, turnResult.response,);
 
   log.info("Story mode generation complete", {
     chatId,
