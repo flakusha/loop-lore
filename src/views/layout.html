@@ -125,6 +125,19 @@
           <span>🌍</span> <span>{{{t("navigation.worlds")}}}</span>
         </a>
 
+        <a
+          class="nav-item"
+          href="/views/blog"
+          hx-get="/views/blog"
+          hx-target="#app-root"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          x-on:click="window.closeSidebar()"
+          data-testid="nav-blog"
+        >
+          <span>📝</span> <span>{{{t("navigation.blog")}}}</span>
+        </a>
+
         <div class="nav-divider" aria-hidden="true"></div>
 
         <a
