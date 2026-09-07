@@ -360,6 +360,24 @@ describe("TradeService — offer lifecycle", () => {
     expect(listed.find(o => o.id === offerId,)!.status,).toBe("expired",);
   });
 
+  test("counter with no changes is rejected", async () => {
+    const svc = new TradeService(db,);
+    const offerId = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 8,
+    },);
+    const noop = await svc.counterOffer({ offerId, counterActorId: seller, },);
+    expect(noop.success,).toBe(false,);
+    expect(noop.reason,).toContain("no changes",);
+
+    // Offer still pending; seller can still accept.
+    const result = await svc.acceptOffer(offerId, seller,);
+    expect(result.success,).toBe(true,);
+  });
+
   test("creator can cancel a countered offer", async () => {
     const svc = new TradeService(db,);
     const offerId = await svc.createOffer({
