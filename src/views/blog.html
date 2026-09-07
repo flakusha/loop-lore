@@ -1,0 +1,206 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!-- Blog View: post list + detail with threaded comments -->
+<header id="header-slot" class="main-header" data-page="blog" data-testid="blog-header">
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
+  <span class="title">{{{t("blog.title")}}}</span>
+</header>
+
+<div class="app-layout" x-data="blogPage()" x-init="init()">
+  <main class="main-content">
+    <div class="chat-area" style="overflow-y: auto">
+      <div class="list-toolbar">
+        <button
+          class="btn btn-primary"
+          x-on:click="toggleCreate()"
+          data-testid="create-post"
+        >
+          + {{{t("blog.newPost")}}}
+        </button>
+        <input
+          class="form-input list-search"
+          type="search"
+          placeholder="{{{t("blog.searchPosts")}}}"
+          x-bind:aria-label="t('blog.searchPosts')"
+          x-model="store._blogFilter"
+          x-on:input="store.searchPosts(store._blogFilter)"
+          data-testid="blog-search"
+        />
+        <template x-if="store._blogTag !== null">
+          <button
+            class="btn btn-secondary btn-sm"
+            x-on:click="setTag(null)"
+            data-testid="blog-tag-clear"
+          >
+            <span x-text="'#' + store._blogTag"></span> ✕
+          </button>
+        </template>
+      </div>
+
+      <template x-if="showCreate">
+        <div class="list-card" data-testid="blog-create-form" style="padding: var(--space-4); margin-bottom: var(--space-4)">
+          <input
+            class="form-input"
+            type="text"
+            x-bind:placeholder="t('blog.postTitle')"
+            x-model="formTitle"
+            data-testid="blog-form-title"
+            style="margin-bottom: var(--space-2)"
+          />
+          <textarea
+            class="form-input"
+            rows="8"
+            x-bind:placeholder="t('blog.postBody')"
+            x-model="formBody"
+            data-testid="blog-form-body"
+            style="margin-bottom: var(--space-2)"
+          ></textarea>
+          <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2); flex-wrap: wrap">
+            <select class="form-input" x-model="formVisibility" data-testid="blog-form-visibility" style="max-width: 12rem">
+              <option value="public">public</option>
+              <option value="followers">followers</option>
+              <option value="private">private</option>
+            </select>
+            <input
+              class="form-input"
+              type="text"
+              x-bind:placeholder="t('blog.tags')"
+              x-model="formTags"
+              data-testid="blog-form-tags"
+              style="flex: 1; min-width: 10rem"
+            />
+          </div>
+          <template x-if="formError !== '' || (store._blogError !== '' && store._blogError !== null)">
+            <div class="form-error" data-testid="blog-form-error" x-text="t('errors.createFailed')"></div>
+          </template>
+          <div style="display: flex; gap: var(--space-2)">
+            <button class="btn btn-primary" x-on:click="submitPost()" data-testid="blog-form-submit">
+              <span x-text="t('blog.publish')"></span>
+            </button>
+            <button class="btn btn-secondary" x-on:click="toggleCreate()">
+              <span x-text="t('common.cancel')"></span>
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <template x-if="selectedPostId === null">
+        <div id="blog-grid" data-testid="blog-grid">
+          <template x-if="store._blogLoading">
+            <div class="empty-state" style="padding: var(--space-12)">
+              <div class="icon">⏳</div>
+              <div class="title" x-text="t('common.loading')"></div>
+            </div>
+          </template>
+          <template x-if="!store._blogLoading && posts.length === 0">
+            <div class="empty-state" style="padding: var(--space-12)">
+              <div class="icon">📝</div>
+              <div class="title" x-text="t('blog.title')"></div>
+            </div>
+          </template>
+          <template x-for="p in posts" :key="p.id">
+            <div
+              class="list-card"
+              style="padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-default); cursor: pointer"
+              x-on:click="selectPost(p.id)"
+              data-testid="post-item"
+            >
+              <div style="font-weight: 600" x-text="p.title"></div>
+              <div
+                style="font-size: var(--fs-base-sm); color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+                x-text="excerpt(p.body)"
+              >
+              </div>
+              <div style="display: flex; gap: var(--space-2); align-items: center; margin-top: var(--space-1); flex-wrap: wrap">
+                <span class="badge" x-text="p.visibility"></span>
+                <template x-for="tag in (p.tags ?? [])" :key="tag">
+                  <button
+                    class="btn btn-secondary btn-sm"
+                    x-on:click.stop="setTag(tag)"
+                    x-text="'#' + tag"
+                    data-testid="post-tag"
+                  ></button>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <template x-if="selected !== null && selected !== undefined">
+        <div data-testid="post-detail">
+          <button class="btn btn-secondary btn-sm" x-on:click="backToList()" data-testid="blog-back">←</button>
+          <h2 x-text="selected.title"></h2>
+          <div style="display: flex; gap: var(--space-2); align-items: center; margin-bottom: var(--space-3); flex-wrap: wrap">
+            <span class="badge" x-text="selected.visibility"></span>
+            <button
+              class="btn btn-secondary btn-sm"
+              x-on:click="toggleFollow()"
+              data-testid="blog-follow-toggle"
+              x-text="following ? t('blog.unfollow') : t('blog.follow')"
+            ></button>
+          </div>
+          <div class="post-body" x-html="renderBody(selected.body)"></div>
+
+          <template x-if="store._blogSources.length > 0">
+            <div data-testid="blog-sources" style="margin-top: var(--space-4)">
+              <h3 x-text="t('blog.sources')"></h3>
+              <template x-for="s in store._blogSources" :key="s.uri">
+                <div class="list-card" style="padding: var(--space-2) var(--space-3)">
+                  <div style="font-weight: 600" x-text="s.title"></div>
+                  <div style="font-size: var(--fs-base-sm); color: var(--text-secondary)" x-text="s.snippet"></div>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <div style="margin-top: var(--space-4)" data-testid="blog-comments">
+            <h3>
+              <span x-text="t('blog.comments')"></span>
+              (<span x-text="commentCount()"></span>)
+            </h3>
+            <template x-for="fc in flatComments()" :key="fc.comment.id">
+              <div
+                class="list-card"
+                style="padding: var(--space-2) var(--space-3); margin-bottom: var(--space-2)"
+                x-bind:style="'margin-left: ' + (fc.depth * 1.5) + 'rem'"
+                data-testid="blog-comment"
+              >
+                <div style="font-size: var(--fs-base-sm)" x-text="fc.comment.body"></div>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  x-on:click="startReply(fc.comment.id)"
+                  x-text="t('blog.reply')"
+                  data-testid="blog-reply"
+                ></button>
+              </div>
+            </template>
+            <template x-if="replyTo !== null">
+              <div style="margin-bottom: var(--space-2)">
+                <button class="btn btn-secondary btn-sm" x-on:click="startReply(null)">✕</button>
+              </div>
+            </template>
+            <div style="display: flex; gap: var(--space-2)">
+              <input
+                class="form-input"
+                type="text"
+                x-bind:placeholder="t('blog.addComment')"
+                x-model="commentBody"
+                x-on:keydown.enter="submitComment()"
+                data-testid="blog-comment-input"
+                style="flex: 1"
+              />
+              <button class="btn btn-primary" x-on:click="submitComment()" data-testid="blog-comment-submit">
+                <span x-text="t('blog.addComment')"></span>
+              </button>
+            </div>
+            <template x-if="store._blogError !== '' && store._blogError !== null">
+              <div class="form-error" data-testid="blog-comment-error" x-text="store._blogError"></div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </div>
+  </main>
+</div>
