@@ -401,10 +401,10 @@ interface FollowerTierConfig {
 - [ ] Follower tiers (reader / subscriber / patron / vip)
 - [ ] Follow relationships + notification preferences
 - [ ] Blog post CRUD routes
-- [ ] Blog frontend: post list, post detail, create/edit form
+- [x] Blog frontend: post list, post detail, create form (`src/views/blog.html` + sidebar link on `blog-frontend-left-menu`; edit form open)
 - [ ] Blog moderation UI (admin + author)
 - [ ] Follower management UI
-- [ ] Human authoring UI (markdown editor, media insertion, preview)
+- [ ] Human authoring UI (markdown editor, media insertion, preview; plain-markdown create form landed on `blog-frontend-left-menu`)
 - [ ] Draft management (list, resume, delete, auto-save)
 - [ ] Version history (edit tracking, restore previous versions)
 - [ ] Tags & categories (free tags, categories, world/character links)
