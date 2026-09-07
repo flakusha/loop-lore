@@ -2266,3 +2266,10 @@ export const E2eSkippedMessageKeysSchema = t.Object({
   message_key: t.String(),
   created_at: t.Optional(t.String(),),
 },);
+
+// ── schema_version ────────────────────────────────────────────
+export const SchemaVersionSchema = t.Object({
+  version: t.Optional(t.Number(),),
+  applied_at: t.Optional(t.String(),),
+  description: t.Optional(t.String(),),
+},);

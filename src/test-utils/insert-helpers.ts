@@ -3509,3 +3509,13 @@ export async function insertE2eSkippedMessageKeys(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a schema_version row. */
+export async function insertSchemaVersion(
+  db: Db,
+  opts?: { version?: Generated<number>; applied_at?: Generated<string>; description?: string | null },
+): Promise<void> {
+  await db.insertInto("schema_version",).values({
+    ...opts,
+  } as any,).execute();
+}

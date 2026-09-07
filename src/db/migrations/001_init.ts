@@ -24,6 +24,7 @@ import { down as downModeration, up as upModeration, } from "./parts/014_moderat
 import { down as downE2E, up as upE2E, } from "./parts/015_e2e";
 import { down as downFts, up as upFts, } from "./parts/016_fts";
 import { down as downDropTemplateVn, up as upDropTemplateVn, } from "./parts/017_drop_template_visual_novel";
+import { down as downSchemaVersion, up as upSchemaVersion, } from "./parts/018_schema_version";
 
 /**
  * @param database
@@ -46,12 +47,14 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await upE2E(database,);
   await upFts(database,);
   await upDropTemplateVn(database,);
+  await upSchemaVersion(database,);
 }
 
 /**
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await downSchemaVersion(database,);
   await downDropTemplateVn(database,);
   await downFts(database,);
   await downE2E(database,);
