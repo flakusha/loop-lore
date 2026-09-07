@@ -1,7 +1,7 @@
 // Full logger
 import { describe, expect, it, } from "bun:test";
 import { createLogger, } from "../logger";
-import { LoggerImpl, } from "./logger";
+import { LoggerImpl, } from "../logger/logger";
 describe("logger full", () => {
   it("impl creates", () => {
     const l = new LoggerImpl({ level: "info", },);
