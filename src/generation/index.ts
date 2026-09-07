@@ -114,6 +114,7 @@ export {
 } from "./providers/registry";
 
 export type { IntentClassification, } from "./auto-gen";
+export { callWithFailover, } from "./providers/call-with-failover";
 export { CircuitBreaker, circuitBreaker, type CircuitBreakerConfig, } from "./providers/circuit-breaker";
 export {
   ComfyUIClient,
@@ -122,5 +123,5 @@ export {
   type ComfyUIWorkflow,
 } from "./providers/comfyui";
 export { OpenAiCompatibleProvider, } from "./providers/openai-compatible";
-export { buildFailoverList, callWithFailover, } from "./providers/registry";
+export { buildFailoverList, } from "./providers/registry";
 // TODO: export additional providers when implemented.

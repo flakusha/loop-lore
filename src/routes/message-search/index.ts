@@ -156,36 +156,38 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
           //   snippet and send only the decoded content (or a placeholder).
           // Rejected decryption keeps the original row ids — never 'unknown'.
           const results = [];
-          for (const settled of await Promise.allSettled(
-            Array.from(rows, async (row,) => {
-              let resolved: string;
-              try {
-                resolved = await resolveMessageContent(database, {
-                  content: row.content,
-                  content_encoding: row.contentEncoding,
-                  key_id: row.keyId,
-                  chat_id: row.chatId,
-                },);
-              } catch {
-                resolved = "[Encrypted — unable to decrypt]";
-              }
-              const snippet = row.contentPlaintext
-                ? (row.matchContext ?? "").slice(0, SNIPPET_LENGTH * 4,)
-                : "";
-              return {
-                messageId: row.messageId,
-                chatId: row.chatId,
-                chatName: row.chatName,
-                chatCharacterName: row.chatCharacterName,
-                role: row.role,
-                content: resolved,
-                matchContext: snippet,
-                createdAt: row.createdAt,
-                attachments: parseAttachments(row.attachments,),
-                matchScore: row.matchScore,
-              };
-            },),
-          )) {
+          for (
+            const settled of await Promise.allSettled(
+              Array.from(rows, async (row,) => {
+                let resolved: string;
+                try {
+                  resolved = await resolveMessageContent(database, {
+                    content: row.content,
+                    content_encoding: row.contentEncoding,
+                    key_id: row.keyId,
+                    chat_id: row.chatId,
+                  },);
+                } catch {
+                  resolved = "[Encrypted — unable to decrypt]";
+                }
+                const snippet = row.contentPlaintext
+                  ? (row.matchContext ?? "").slice(0, SNIPPET_LENGTH * 4,)
+                  : "";
+                return {
+                  messageId: row.messageId,
+                  chatId: row.chatId,
+                  chatName: row.chatName,
+                  chatCharacterName: row.chatCharacterName,
+                  role: row.role,
+                  content: resolved,
+                  matchContext: snippet,
+                  createdAt: row.createdAt,
+                  attachments: parseAttachments(row.attachments,),
+                  matchScore: row.matchScore,
+                };
+              },),
+            )
+          ) {
             // Rejected rows are skipped — a search result must correspond to a
             // real DB row (pagination/hasMore stay honest, no 'unknown' leaks).
             if (settled.status === "fulfilled") {

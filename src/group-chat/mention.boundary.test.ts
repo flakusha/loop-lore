@@ -2,8 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
-createLogger();
 import { extractMentionedActorIds, parseInitiativeFlag, parseMentions, resolveMention, } from "./index";
+
+createLogger();
 
 describe("group-chat mention boundary", () => {
   test("parseMentions returns empty array on no @", () => {

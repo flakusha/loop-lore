@@ -414,7 +414,9 @@ describe("NsfwHook", () => {
   test("blocked_by_error data carries actorId and chatId", async () => {
     const errorHook = makeNsfwHook({
       modService: {
-        getEffectiveNsfw: async () => { throw new Error("mod service down",); },
+        getEffectiveNsfw: async () => {
+          throw new Error("mod service down",);
+        },
         recordAction: async () => ({}) as never,
       } as unknown as NsfwModerationService,
     },);
