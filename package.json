@@ -20,6 +20,7 @@
     "db:reinit": "bun run src/db/reinit.ts",
     "db:sync-types": "bun run scripts/generate-db-types.ts",
     "db:sync-manifest": "bun run scripts/generate-schema-manifest.ts",
+    "openapi": "NODE_ENV=development bun run scripts/generate-openapi.ts",
     "schemas:check": "bun run scripts/check-schemas.ts",
     "schemas:check:fix": "bun run scripts/fix-schemas.ts",
     "config:generate-schema": "bun run src/config/generate-schema.ts",
