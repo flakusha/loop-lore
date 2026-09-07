@@ -8,7 +8,7 @@
 **Effort:** High
 **Type:** Feature Task (RAG external)
 **Tags:** rag, internet-search, search-providers, robots-txt, retry, rate-limit, paid-api, free-api, public-cache, private-cache
-**Epic:** epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`)
+**Epic:** epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`), epic-api-rate-limiting
 
 ## Summary
 

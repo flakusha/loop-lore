@@ -8,7 +8,7 @@
 **Effort:** High
 **Type:** Feature Task
 **Tags:** context-window, chat, byok, llm-context-cap, degradation, per-world, per-chat, group-chat, admin, gm, moderator, user
-**Epic:** epic-chat-context-optimization.md
+**Epic:** epic-chat-context-optimization.md, epic-lore-knowledge, epic-memory-knowledge-systems
 - `chat.contextWindowSize` is a single per-chat integer (no per-LLM variant) — verified 2026-09-07 (`src/db/schema-core.ts:context_window: number | null`, `src/db/migrations/parts/001_core.ts:context_window: integer`)
 - Per-world override: **NOT VERIFIED** — verify against `epic-chat-context-optimization.md` and `chats.world_id` lookup before claiming absent. If absent, this ticket adds the column; if present, integrate with existing scope.
 - Per-group-chat override: **NOT VERIFIED** — same as above.
