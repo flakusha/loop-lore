@@ -3,7 +3,7 @@
 
 # BUG: TurnManager strategies have no consecutive-turn guard — an actor can speak twice in a row when strategy weight ties
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified via commit 359a3d3; bookkeeping)
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -50,3 +50,7 @@ Coherence. A strategy tied on weights produces ping-pong (A→B→A→B) or a si
 
 - `BUG-group-cascade-max-turns-off-by-one` (covers the `others[0]` half of this same code area; the *consecutive guard* here is the strategy-level fix).
 - `epic-chat-lifecycle-moderation.md`.
+
+## Resolution
+
+Verified via commit 359a3d3. All five turn strategies (roundRobinSelect / sceneBasedSelect / initiativeSelect / questDrivenSelect / hybridSelect) in src/turning/turn-strategies.ts now skip `lastActorId` when at least one alternative exists. Single-participant chats still pick that actor (no alternative). Covered by src/turning/turn-strategies-consecutive.test.ts (9 cases).
