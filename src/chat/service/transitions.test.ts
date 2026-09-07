@@ -10,7 +10,7 @@
  * (actor_type="narrator" AND agent_type="narrator") and inserts with its id.
  */
 import { describe, expect, test, } from "bun:test";
-import type { Generated, } from "kysely";
+import type {} from "kysely";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
@@ -28,8 +28,8 @@ describe("injectNarration — real narrator actor, no FK drop", () => {
 
       // Seed the narrator actor the way world/chats provisioning does.
       await insertActors(db, "Narrator", {
-        actor_type: "narrator" as unknown as Generated<"narrator">,
-        agent_type: "narrator" as unknown as Generated<"narrator">,
+        actor_type: "narrator",
+        agent_type: "narrator",
         user_id: userId,
         owner_id: userId,
       },);

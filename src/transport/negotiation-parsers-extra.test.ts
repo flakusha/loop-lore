@@ -1,5 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { parseAcceptEncoding, parseAcceptProtocols, } from "../../../transport/negotiation-parsers";
+import { parseAcceptEncoding, parseAcceptProtocols, } from "./negotiation-parsers";
 
 describe("transport/negotiation-parsers (real logic)", () => {
   it("parseAcceptProtocols returns empty for null", () => {
