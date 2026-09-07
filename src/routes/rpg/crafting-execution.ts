@@ -11,6 +11,7 @@ import { CraftingProcessService, } from "../../rpg/crafting";
 import { ErrorResponse, Id, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { HttpStatus, } from "../http-utils/status";
+import { resolveActorAccess, } from "../actor-access";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
@@ -42,12 +43,9 @@ export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): El
           recipeId: string;
           stationInstanceId?: string;
         };
-
-        // Actor ownership check
-        const actor = await opts.database.selectFrom("actors",)
-          .select("user_id",).where("id", "=", body.actorId,).executeTakeFirst();
-        if (!actor) { return jsonError("Actor not found", HttpStatus.NotFound,); }
-        if (actor.user_id !== userId) { return jsonError("Forbidden", HttpStatus.Forbidden,); }
+        // Actor ownership check — shared trust-boundary guard.
+        const denied = await resolveActorAccess(opts.database, body.actorId, userId,);
+        if (denied) { return denied; }
 
         // Get worldId from recipe
         const recipe = await opts.database.selectFrom("crafting_recipes",)
@@ -73,7 +71,7 @@ export function craftingExecutionRoutes(opts: HandlerOpts, prefix = "/api",): El
         }
       }, {
         body: CraftBody,
-        response: { 200: SuccessResponse, 401: ErrorResponse, },
+        response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
         detail: {
           summary: "Attempt a craft",
           description: "Consume materials and roll for craft outcome. Optionally uses a station.",

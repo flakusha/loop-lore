@@ -4,7 +4,7 @@
 import { Elysia, } from "elysia";
 import { IntimacyService, } from "../../rpg/intimacy/service";
 import { jsonError, jsonResponse, } from "../http-utils";
-import { log, requireActorAccess, } from "./shared";
+import { log, requireNsfwActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -20,7 +20,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
       .get(
         `${prefix}/nsfw/intimacy/:actorId/:targetId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             const worldId = (ctx.query.worldId as string) ?? null;
@@ -39,7 +39,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
       .get(
         `${prefix}/nsfw/intimacy/:actorId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             const worldId = (ctx.query.worldId as string) ?? undefined;
@@ -59,7 +59,7 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
-            const auth = await requireActorAccess(database, (body.actorId as string) ?? "", ctx,);
+            const auth = await requireNsfwActorAccess(database, (body.actorId as string) ?? "", ctx,);
             if (typeof auth !== "string") { return auth; }
             const result = await intimacyService.applyAction({
               database,
