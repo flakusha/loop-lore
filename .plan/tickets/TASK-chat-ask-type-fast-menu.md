@@ -8,7 +8,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** chat, ask-type, fast-menu, modals, choices, trade, inventory, battle, transition, modal-above-chat, user-action, opt-in
-**Epic:** epic-game-frontend-scenes.md (parent: epic-embeddable-engine-game-frontend.md)
+**Epic:** epic-game-frontend-scenes.md (parent: epic-embeddable-engine-game-frontend.md), epic-lore-knowledge
 
 ## Summary
 

@@ -4,6 +4,7 @@
 # FEAT: LLM-enhance for chat and text windows with leveled rewrites
 
 **Status:** ⬜ Not Started
+**Epic:** epic-assistant-gm-flows, epic-conversation-branching
 **Priority:** medium
 **Effort:** Medium
 
