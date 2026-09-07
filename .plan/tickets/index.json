@@ -989,7 +989,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat.md"
+    "source": ".plan/tickets/BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat.md",
+    "status": "done"
   },
   "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
     "hash": "61c7072",
@@ -1122,7 +1123,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-reunite-secondary-ownership-check-missing.md"
+    "source": ".plan/tickets/BUG-chat-reunite-secondary-ownership-check-missing.md",
+    "status": "done"
   },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "hash": "e5bf24b",
@@ -1345,7 +1347,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-context-window-trim-keeps-oldest-messages-drops-newest-when-.md",
-    "git_issue": "65693a3"
+    "git_issue": "65693a3",
+    "status": "done"
   },
   "BUG-CRAFTING-STATION-INSTANCES-SCOPED-ACROSS-WORLDS-CROSS-WORLD-": {
     "hash": "7bde6bd",
@@ -2587,7 +2590,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
+    "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md",
+    "status": "done"
   },
   "BUG-MIDDLEWARE-ASYNCSTORE-FAIL-DEAD-CODE": {
     "hash": "pending",
@@ -4693,7 +4697,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-038.md",
-    "git_issue": "e25c9ee"
+    "git_issue": "e25c9ee",
+    "status": "done"
   },
   "FEAT-039": {
     "hash": "f1b66c6",
@@ -4705,7 +4710,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-039.md",
-    "git_issue": "f1b66c6"
+    "git_issue": "f1b66c6",
+    "status": "done"
   },
   "FEAT-040": {
     "hash": "4a5d79f",
@@ -4717,7 +4723,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/FEAT-040.md",
-    "git_issue": "4a5d79f"
+    "git_issue": "4a5d79f",
+    "status": "done"
   },
   "FEAT-041": {
     "hash": "312e315",
