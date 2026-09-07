@@ -4,7 +4,7 @@
 import { Elysia, } from "elysia";
 import { SeductionService, } from "../../rpg/seduction/service";
 import { jsonError, jsonResponse, } from "../http-utils";
-import { log, requireActorAccess, } from "./shared";
+import { log, requireNsfwActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -20,7 +20,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
       .get(
         `${prefix}/nsfw/desire/:actorId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             const profile = await seductionService.getDesireProfile(ctx.params.actorId,);
@@ -34,7 +34,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
       .put(
         `${prefix}/nsfw/desire/:actorId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             const body = ctx.body as Record<string, unknown>;
@@ -52,7 +52,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
       .get(
         `${prefix}/nsfw/skills/:actorId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             const skills = await seductionService.getActorSkills(ctx.params.actorId,);
@@ -68,7 +68,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
-            const auth = await requireActorAccess(database, (body.actorId as string) ?? "", ctx,);
+            const auth = await requireNsfwActorAccess(database, (body.actorId as string) ?? "", ctx,);
             if (typeof auth !== "string") { return auth; }
             const result = await seductionService.attemptSeduction({
               database,
@@ -88,7 +88,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
       .get(
         `${prefix}/nsfw/arousal/:actorId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             const worldId = (ctx.query.worldId as string) ?? null;
@@ -103,7 +103,7 @@ export function seductionRoutes(opts: HandlerOpts, prefix = "/api",) {
       .post(
         `${prefix}/nsfw/arousal/:actorId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             const body = ctx.body as Record<string, unknown>;

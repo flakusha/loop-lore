@@ -43,38 +43,6 @@ export async function resolveMessageAccess(
   return msg.chat_id;
 }
 
-/**
- * Resolve an actor and verify the session user owns it.
- *
- * The POST and DELETE handlers previously trusted the client-supplied
- * `actorId` (from request body or query string). Any chat participant
- * could mutate another participant's seen-state — a classic IDOR. This
- * helper gates the mutation on server-side ownership.
- *
- * @returns `null` on success (the actor belongs to the session user),
- *          or a 403 `Response` if the actor does not exist or is owned
- *          by a different user.
- */
-export async function authorizeActor(
-  database: Kysely<DB>,
-  userId: string,
-  actorId: string,
-): Promise<Response | null> {
-  const actor = await database
-    .selectFrom("actors",)
-    .select("user_id",)
-    .where("id", "=", actorId,)
-    .executeTakeFirst();
-  if (!actor || actor.user_id !== userId) {
-    return jsonError({
-      message: "Forbidden: actor does not belong to the session user",
-      status: HttpStatus.Forbidden,
-      code: ErrorCode.Forbidden,
-    },);
-  }
-  return null;
-}
-
 /** `seen_at` is recorded when state first reaches "seen" or "processing". */
 export function seenAtFor(state: string,): string | null {
   return state === "seen" || state === "processing" ? new Date().toISOString() : null;
