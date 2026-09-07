@@ -26,7 +26,7 @@ try {
 } catch (error) {
   modulePristine = error instanceof Error && error.message.startsWith("All providers failed",);
 }
-const describeReal: typeof describe = modulePristine
+const describeReal: (name: string, fn: () => void,) => void = modulePristine
   ? describe
   : (name, fn,) => describe.skip(name, fn,);
 
