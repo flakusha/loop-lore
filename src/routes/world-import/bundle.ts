@@ -197,5 +197,5 @@ export async function importWorldBundle(
     }
 
     return { worldId, counts, };
-  });
+  },);
 }

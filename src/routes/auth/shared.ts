@@ -3,7 +3,12 @@
 
 import type { Config, } from "../../config/schema";
 import type { TranslatorFn, } from "../../i18n/types";
-import { createRateLimiter, rateLimitHeaders, type RateLimiter, type RateLimitResult, } from "../../middleware/rate-limit";
+import {
+  createRateLimiter,
+  type RateLimiter,
+  rateLimitHeaders,
+  type RateLimitResult,
+} from "../../middleware/rate-limit";
 import { LL_TOKEN, } from "../../regex/cookies";
 import { HttpStatus, } from "../http-utils";
 

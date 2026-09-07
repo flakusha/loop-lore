@@ -7,9 +7,10 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
 import { MessageRole, } from "../db/enums";
+import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { createTestDb, } from "../test-utils/create-test-db";
 import {
   insertActors,
   insertChatParticipants,
@@ -17,7 +18,6 @@ import {
   insertMessages,
   insertUsers,
 } from "../test-utils/insert-helpers";
-import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { modelComparisonsRoutes, } from "./model-comparisons";
 

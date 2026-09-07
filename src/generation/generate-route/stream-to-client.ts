@@ -30,7 +30,7 @@ import {
   failGeneration,
   processStreamingChunk,
 } from "../cancellation-manager";
-import { callWithFailover, } from "../providers/registry";
+import { callWithFailover, } from "../providers/call-with-failover";
 import type { ChunkEvent, GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
 import { getOrCreateBuffer, scheduleBufferCleanup, StreamBuffer, } from "../stream-buffer";
 import type { GenerationMessage, } from "../types";

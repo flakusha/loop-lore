@@ -7,19 +7,19 @@
  * Scope: input validation, LoRA passthrough, unsupported-backend guard.
  * generateImages is mocked so no real image generation occurs.
  */
-import { beforeEach, describe, expect, it, mock, } from "bun:test";
-import { ISOLATED, describeOrSkip, } from "../test-utils/isolate-only";
+import { beforeEach, expect, it, mock, } from "bun:test";
 import { randomUUID, } from "node:crypto";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 // Capture real modules before mocking so each mock re-exposes the module's
 // other exports and overrides only the specific function under test. Bun's
 // mock.module leaks across files without --isolate; mocking a whole module
 // clobbers every other export it provides (e.g. safeJsonParse in ../utils),
 // breaking unrelated tests that import the same barrel/module.
+import * as realAssetCreate from "../assets/service/create";
 import * as realAssetLinks from "../assets/service/links";
 import * as realConfigLoad from "../config/load";
 import * as realDb from "../db/index";
 import * as realUtils from "../utils";
-import * as realAssetCreate from "../assets/service/create";
 import * as realImageEngine from "./image-engine";
 import type * as imageGenRoute from "./image-gen-route";
 
@@ -43,13 +43,6 @@ async function mockGenerateImages(
     images: [Buffer.from("fake-image-bytes",),],
     mimeType: "image/png",
   };
-}
-
-/**
- * @param _buf
- */
-function mockExtractImageMetadata(_buf: Buffer,) {
-  return { width: 512, height: 512, format: "png", };
 }
 
 /** */
@@ -157,7 +150,7 @@ if (ISOLATED) {
 
   // Dynamic import is required: mock.module must be registered BEFORE the
   // SUT module is evaluated, which a static import cannot guarantee.
-  ({ handleImageGeneration, } = await import("./image-gen-route"),);
+  ({ handleImageGeneration, } = await import("./image-gen-route"));
 }
 // ── Helpers ─────────────────────────────────────────────────────────────────────
 
@@ -185,13 +178,11 @@ const COMFYUI_CONFIG = {
   backend: "comfyui" as const,
 };
 
-
 // ── Tests ───────────────────────────────────────────────────────────────────────
 describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
   },);
-
 
   // (1) Opt-out: no lora field → generateImages called WITHOUT lora
 
@@ -378,4 +369,4 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
 
     expect(res.status,).toBe(200,);
   });
-});
+},);

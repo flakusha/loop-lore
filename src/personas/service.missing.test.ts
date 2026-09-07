@@ -86,17 +86,17 @@ describe("PersonasService — convertToCharacter()", () => {
       .executeTakeFirst();
 
     expect(actor,).toBeTruthy();
-    expect(actor!.display_name,).toBe("Sir Galahad");
-    expect(actor!.description,).toBe("A brave knight of the Round Table");
-    expect(actor!.actor_type,).toBe("character");
+    expect(actor!.display_name,).toBe("Sir Galahad",);
+    expect(actor!.description,).toBe("A brave knight of the Round Table",);
+    expect(actor!.actor_type,).toBe("character",);
     expect(actor!.user_id,).toBeNull();
-    expect(actor!.owner_id,).toBe(userId);
+    expect(actor!.owner_id,).toBe(userId,);
     expect(actor!.system_prompt,).toBeNull();
-    expect(actor!.agent_type,).toBe("ai");
-    expect(actor!.settings,).toBe("{}");
-    expect(actor!.format_version,).toBe(0);
-    expect(actor!.import_spec,).toBe("raw");
-    expect(actor!.data_source_format,).toBe("json");
+    expect(actor!.agent_type,).toBe("ai",);
+    expect(actor!.settings,).toBe("{}",);
+    expect(actor!.format_version,).toBe(0,);
+    expect(actor!.import_spec,).toBe("raw",);
+    expect(actor!.data_source_format,).toBe("json",);
     expect(actor!.data_raw,).toBeNull();
   });
 
@@ -116,7 +116,7 @@ describe("PersonasService — convertToCharacter()", () => {
       .where("id", "=", result.actorId,)
       .executeTakeFirst();
 
-    expect(actor!.avatar_asset_id,).toBe(avatarId);
+    expect(actor!.avatar_asset_id,).toBe(avatarId,);
   });
 
   test("throws when persona not found", async () => {
@@ -130,7 +130,7 @@ describe("PersonasService — convertToCharacter()", () => {
 
     await expect(
       service.convertToCharacter(personaId, "other-user-id",),
-    ).rejects.toThrow("Persona not found");
+    ).rejects.toThrow("Persona not found",);
   });
 });
 
@@ -139,21 +139,21 @@ describe("PersonasService — update() individual field branches", () => {
     const id = await service.create({ userId, name: "Avatar Test", },);
     await service.update(id, { avatarAssetId: "test-asset-1", }, userId,);
     const persona = await service.getById(id, userId,);
-    expect(persona!.avatar_asset_id,).toBe("test-asset-1");
+    expect(persona!.avatar_asset_id,).toBe("test-asset-1",);
   });
 
   test("updates title", async () => {
     const id = await service.create({ userId, name: "Title Test", },);
     await service.update(id, { title: "Supreme Overlord", }, userId,);
     const persona = await service.getById(id, userId,);
-    expect(persona!.title,).toBe("Supreme Overlord");
+    expect(persona!.title,).toBe("Supreme Overlord",);
   });
 
   test("isDefault=true sets is_default to DefaultState.Default", async () => {
     const id = await service.create({ userId, name: "Default Toggle Test", },);
     await service.update(id, { isDefault: true, }, userId,);
     const persona = await service.getById(id, userId,);
-    expect(persona!.is_default,).toBe(DefaultState.Default);
+    expect(persona!.is_default,).toBe(DefaultState.Default,);
   });
 
   test("isDefault=false sets is_default to DefaultState.NotDefault", async () => {
@@ -169,7 +169,7 @@ describe("PersonasService — update() individual field branches", () => {
     // Now explicitly set isDefault=false on the original
     await service.update(id, { isDefault: false, }, userId,);
     const persona = await service.getById(id, userId,);
-    expect(persona!.is_default,).toBe(DefaultState.NotDefault);
+    expect(persona!.is_default,).toBe(DefaultState.NotDefault,);
   });
 
   test("isDefault=false does not affect other fields", async () => {
@@ -181,8 +181,8 @@ describe("PersonasService — update() individual field branches", () => {
 
     await service.update(id, { isDefault: false, }, userId,);
     const persona = await service.getById(id, userId,);
-    expect(persona!.name,).toBe("Side Effects Test");
-    expect(persona!.description,).toBe("Original description");
+    expect(persona!.name,).toBe("Side Effects Test",);
+    expect(persona!.description,).toBe("Original description",);
   });
 });
 
@@ -227,7 +227,7 @@ describe("PersonasService — delete() cascade", () => {
       .where("chat_id", "=", chatId,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
-    expect(before!.persona_id,).toBe(personaId);
+    expect(before!.persona_id,).toBe(personaId,);
 
     // Delete the persona
     await service.delete(personaId, userId,);
@@ -266,8 +266,8 @@ describe("PersonasService — getDefault()", () => {
 
     const def = await service.getDefault(freshUser,);
     expect(def,).toBeTruthy();
-    expect(def!.id,).toBe(defaultId);
-    expect(def!.name,).toBe("Default Persona");
+    expect(def!.id,).toBe(defaultId,);
+    expect(def!.name,).toBe("Default Persona",);
   });
 });
 
@@ -280,7 +280,7 @@ describe("PersonasService — create() with avatarAssetId", () => {
     },);
     const persona = await service.getById(id, userId,);
     expect(persona,).toBeTruthy();
-    expect(persona!.avatar_asset_id,).toBe("test-asset-1");
+    expect(persona!.avatar_asset_id,).toBe("test-asset-1",);
   });
 
   test("creates persona with null avatarAssetId", async () => {

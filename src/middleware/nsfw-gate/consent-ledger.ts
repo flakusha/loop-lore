@@ -127,18 +127,18 @@ export async function recordNsfwConsent(
       },)
       .execute();
 
-  // Whatever the new action, close any prior open `given` rows so the latest
-  // row is the unique signal for `hasActiveConsent`.
-  await trx
-    .updateTable("nsfw_consent_state",)
-    .set({ revoked_at: now, },)
-    .where("user_id", "=", userId,)
-    .where("chat_id", "=", chatId,)
-    .where("action", "=", "given",)
-    .where("revoked_at", "is", null,)
-    .where("id", "!=", id,)
-    .execute();
-  });
+    // Whatever the new action, close any prior open `given` rows so the latest
+    // row is the unique signal for `hasActiveConsent`.
+    await trx
+      .updateTable("nsfw_consent_state",)
+      .set({ revoked_at: now, },)
+      .where("user_id", "=", userId,)
+      .where("chat_id", "=", chatId,)
+      .where("action", "=", "given",)
+      .where("revoked_at", "is", null,)
+      .where("id", "!=", id,)
+      .execute();
+  },);
 
   return {
     id,

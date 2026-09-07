@@ -17,7 +17,6 @@ export interface BrowserEncodeResult {
   encoding: BrowserContentEncoding;
 }
 
-
 /**
  * @param data
  */

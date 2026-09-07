@@ -72,8 +72,8 @@ describe("tryZstdDecompress capacity (regression: fixed 16x cap)", () => {
     // Growth sequence started at 16x and doubled until the payload fit —
     // beyond the old fixed 16x cap.
     expect(attempts[0],).toBe(16,);
-    expect(attempts.at(-1) ?? 0,).toBeGreaterThan(16,);
-  },);
+    expect(attempts.at(-1,) ?? 0,).toBeGreaterThan(16,);
+  });
 
   test("uses decompressBound probe when available (single pass)", async () => {
     let capacityUsed = 0;
@@ -94,7 +94,7 @@ describe("tryZstdDecompress capacity (regression: fixed 16x cap)", () => {
     expect(result,).toBe("hello",);
     // Exact bound: max(bound, input length), no growth loop.
     expect(capacityUsed,).toBe(7,);
-  },);
+  });
 
   test("throws on undecodable declared zstd content instead of returning base64", async () => {
     const fake = asModule({
@@ -105,20 +105,20 @@ describe("tryZstdDecompress capacity (regression: fixed 16x cap)", () => {
     },);
 
     const encoded = b64(textEncoder.encode("x",),);
-    expect(browserDecodeContent(encoded, "zstd", { zstd: fake, },),).rejects.toThrow(/failed to decode/);
-  },);
-},);
+    expect(browserDecodeContent(encoded, "zstd", { zstd: fake, },),).rejects.toThrow(/failed to decode/,);
+  });
+});
 
 // ── identity / gzip / brotli ───────────────────────────────────
 
 describe("browserDecodeContent non-zstd paths", () => {
   test("identity returns stored string unchanged", async () => {
     expect(await browserDecodeContent("plain-text", "identity",),).toBe("plain-text",);
-  },);
+  });
 
   test("empty stored returns empty", async () => {
     expect(await browserDecodeContent("", "gzip",),).toBe("",);
-  },);
+  });
 
   test("gzip round-trips through CompressionStream when available", async () => {
     const plaintext = "hello gzip world".repeat(20,);
@@ -130,5 +130,5 @@ describe("browserDecodeContent non-zstd paths", () => {
     }
     expect(encoded.encoding,).toBe("gzip",);
     expect(await browserDecodeContent(encoded.encoded, "gzip",),).toBe(plaintext,);
-  },);
-},);
+  });
+});
