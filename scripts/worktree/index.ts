@@ -7,6 +7,7 @@
  * All commands are registered here and delegated to ./commands/ modules.
  */
 
+import { abort, } from "./commands/abort";
 import { agentCommit, } from "./commands/agent-commit";
 import { agentMerge, } from "./commands/agent-merge";
 import { attach, } from "./commands/attach";
@@ -45,6 +46,11 @@ interface CommandHandler {
 }
 
 const commands: Record<string, CommandHandler> = {
+  "abort": {
+    description:
+      "Manually recover a finalize that left dev in a bad state (in-progress merge, leftover stash, stale lock)",
+    run: abort,
+  },
   "agent-commit": {
     description: "GPG-signed commit in worktree",
     run: agentCommit,
