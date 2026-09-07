@@ -90,6 +90,8 @@ describe("groupTalkativitySection", () => {
     expect(content,).toContain("Alpha: 8/10",);
     expect(content,).toContain("Beta: 3/10",);
     expect(content,).toContain("Group Talkativity",);
+    // Deterministic line order (ORDER BY display_name).
+    expect(content.indexOf("Alpha: 8/10",),).toBeLessThan(content.indexOf("Beta: 3/10",),);
   });
 
   test("disabled when no group participants set", () => {
