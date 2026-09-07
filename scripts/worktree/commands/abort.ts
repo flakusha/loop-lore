@@ -26,6 +26,16 @@
  *   contains `worktree-finalize-`.
  * - Never force-deletes branches, never resets to a remote ref, never
  *   touches the worktree under `tree/`. The user owns those decisions.
+ *
+ * Testability:
+ * - The pure helpers (lockfile scan / remove, stash list parsing) take an
+ *   injectable file-system so unit tests can drive them without touching
+ *   real repo state. Parallel-safe by construction: each call resolves
+ *   files relative to the `repoRoot` argument and reads them via the
+ *   injected `readFile` / `unlink` callbacks — no module-level mutable
+ *   state, no shared temp dir.
+ * - The full `abort` orchestrator still calls `git` via spawnSync and
+ *   therefore must run against a real git repo (one per test fixture).
  */
 import { existsSync, readFileSync, unlinkSync, } from "node:fs";
 import { resolve, } from "path";
@@ -33,13 +43,109 @@ import { type WorktreeConfig, } from "../utils/config";
 import { gitSync, gitSyncQuiet, } from "../utils/git";
 import { log, section, } from "../utils/output";
 
-const LOCK_FILENAME = ".worktree-finalize.lock";
-const FINALIZE_STASH_PREFIX = "worktree-finalize-";
+export const LOCK_FILENAME = ".worktree-finalize.lock";
+export const FINALIZE_STASH_PREFIX = "worktree-finalize-";
 // Sentinel files git drops into .git/ during in-progress operations. We
 // abort each one we find. Order matters: abort merge before pop stash, so
 // a stash entry created for a merge doesn't get pulled onto a conflicted
 // tree.
-const DEV_IN_PROGRESS_HEADS = ["MERGE_HEAD", "REBASE_HEAD", "CHERRY_PICK_HEAD",] as const;
+export const DEV_IN_PROGRESS_HEADS = ["MERGE_HEAD", "REBASE_HEAD", "CHERRY_PICK_HEAD",] as const;
+
+/**
+ * Minimal fs surface for the pure helpers. Production code uses the
+ * default `{ existsSync, readFileSync, unlinkSync }` from `node:fs`; tests
+ * can pass an in-memory map-backed implementation to avoid touching the
+ * real filesystem.
+ */
+export interface FsOps {
+  existsSync: (path: string,) => boolean;
+  readFileSync: (path: string, encoding: "utf8",) => string;
+  unlinkSync: (path: string,) => void;
+}
+
+const defaultFs: FsOps = { existsSync, readFileSync, unlinkSync, };
+
+/**
+ * Result of inspecting the finalize lockfile at `repoRoot`. All fields are
+ * populated even when the lockfile is absent — `present: false` simply
+ * means the rest is undefined / zeroed.
+ */
+export interface LockfileScan {
+  present: boolean;
+  /** Absolute path to the lockfile (resolved against repoRoot). */
+  path: string;
+  /** PID string from the lockfile, or "<unknown>" if unparseable. */
+  owner: string;
+}
+
+export function scanLockfile(
+  repoRoot: string,
+  fs: FsOps = defaultFs,
+): LockfileScan {
+  const lockPath = resolve(repoRoot, LOCK_FILENAME,);
+  if (!fs.existsSync(lockPath,)) {
+    return { present: false, path: lockPath, owner: "<unknown>", };
+  }
+  let owner = "<unknown>";
+  try {
+    const raw = fs.readFileSync(lockPath, "utf8",);
+    const trimmed = raw.trim();
+    if (trimmed.length > 0) { owner = trimmed; }
+  } catch { /* ignore read errors; surface as unknown */ }
+  return { present: true, path: lockPath, owner, };
+}
+
+/**
+ * Remove the finalize lockfile if present. Returns true if a file was
+ * removed, false if absent or already gone. Errors are swallowed (best-
+ * effort GC, like the existing acquireFinalizeLock.release path).
+ */
+export function removeLockfile(
+  repoRoot: string,
+  fs: FsOps = defaultFs,
+): boolean {
+  const scan = scanLockfile(repoRoot, fs,);
+  if (!scan.present) { return false; }
+  try {
+    fs.unlinkSync(scan.path,);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Parse `git stash list` output into structured stash refs. Returns an
+ * array of `{ ref, message }` for each line. Empty lines are skipped.
+ * Exported so tests can drive it against canned stash output without
+ * spawning `git`.
+ */
+export interface StashEntry {
+  ref: string;
+  message: string;
+}
+
+export function parseStashList(raw: string,): StashEntry[] {
+  const out: StashEntry[] = [];
+  for (const line of raw.split("\n",)) {
+    if (line.length === 0) { continue; }
+    const colonIdx = line.indexOf(":",);
+    if (colonIdx < 0) { continue; }
+    const ref = line.slice(0, colonIdx,).trim();
+    const message = line.slice(colonIdx + 1,).trim();
+    out.push({ ref, message, },);
+  }
+  return out;
+}
+
+/**
+ * Filter a parsed stash list to only the entries that the finalize flow
+ * pushed (message contains FINALIZE_STASH_PREFIX). User-authored stashes
+ * are NEVER returned — abort must not touch them.
+ */
+export function selectFinalizeStashes(entries: StashEntry[],): StashEntry[] {
+  return entries.filter((e,) => e.message.includes(FINALIZE_STASH_PREFIX,));
+}
 
 export async function abort(
   _args: string[],
@@ -71,27 +177,26 @@ export async function abort(
     }
   }
 
-  // 2. Pop leftover finalize stashes.
-  const stashList = gitSync(repoRoot, "stash", "list",);
-  const finalizeStashes = stashList.split("\n",).filter((l,) => l.includes(FINALIZE_STASH_PREFIX,));
+  // 2. Pop leftover finalize stashes. Use the pure helpers so the
+  // selection is testable in isolation; the actual `git stash pop` is a
+  // subprocess that we run only against a real repo in production.
+  const finalizeStashes = selectFinalizeStashes(parseStashList(gitSync(repoRoot, "stash", "list",) ?? "",),);
   if (finalizeStashes.length === 0) {
     log("info", "No leftover finalize stashes",);
   } else {
     log("info", `Found ${finalizeStashes.length} finalize stash(es)`,);
-    for (const line of finalizeStashes) {
-      const stashRef = line.split(":",)[0].trim();
-      log("info", `Restoring ${stashRef}...`,);
+    for (const entry of finalizeStashes) {
+      log("info", `Restoring ${entry.ref}...`,);
       if (dryRun) { continue; }
       const pop = Bun.spawnSync(
-        ["git", "-C", repoRoot, "stash", "pop", stashRef,],
+        ["git", "-C", repoRoot, "stash", "pop", entry.ref,],
         { stdout: "pipe", stderr: "pipe", },
       );
       if (pop.exitCode === 0) {
-        log("success", `restored ${stashRef}`,);
+        log("success", `restored ${entry.ref}`,);
         continue;
       }
-      // Pop conflicted — fall back to `reset --hard HEAD` and preserve the stash.
-      log("warn", `${stashRef} pop conflicted — preserving stash, cleaning tree`,);
+      log("warn", `${entry.ref} pop conflicted — preserving stash, cleaning tree`,);
       const head = gitSyncQuiet(repoRoot, "rev-parse", "HEAD",);
       const reset = Bun.spawnSync(
         ["git", "-C", repoRoot, "reset", "--hard", head,],
@@ -104,20 +209,17 @@ export async function abort(
     }
   }
 
-  // 3. Remove lockfile if present.
-  const lockPath = resolve(repoRoot, LOCK_FILENAME,);
-  if (existsSync(lockPath,)) {
-    let owner = "<unknown>";
-    try {
-      owner = readFileSync(lockPath, "utf8",).trim() || owner;
-    } catch { /* ignore */ }
-    log("info", `Found lockfile at ${lockPath} (owner PID ${owner})`,);
+  // 3. Remove lockfile if present. Use the pure helper so the path is
+  // computed identically to scanLockfile — no chance of drift.
+  const lockScan = scanLockfile(repoRoot,);
+  if (lockScan.present) {
+    log("info", `Found lockfile at ${lockScan.path} (owner PID ${lockScan.owner})`,);
     if (!dryRun) {
-      try {
-        unlinkSync(lockPath,);
+      const removed = removeLockfile(repoRoot,);
+      if (removed) {
         log("success", "lockfile removed",);
-      } catch (err) {
-        log("warn", `could not remove lockfile: ${(err as Error).message}`,);
+      } else {
+        log("warn", `could not remove lockfile`,);
       }
     }
   } else {
