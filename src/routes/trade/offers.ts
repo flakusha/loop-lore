@@ -12,8 +12,8 @@ import { executeResponse, tradeLineSchema, } from "./shared";
 
 /**
  * Trade offer routes — create, list, accept and cancel pending offers.
- * The buyer proposes items + gold; only the seller accepts, only the
- * creator cancels.
+ * The buyer proposes items + gold; a pending offer is accepted by the seller,
+ * a countered offer by the buyer; only the creator cancels.
  * @param opts
  * @param prefix
  */
@@ -81,6 +81,7 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
                 sellerActorId: t.Union([Id, t.Null(),],),
                 price: t.Integer(),
                 items: t.Array(tradeLineSchema,),
+                sellerItems: t.Array(tradeLineSchema,),
                 status: t.String(),
                 deadline: t.Union([t.String(), t.Null(),],),
                 createdAt: t.String(),
@@ -99,15 +100,15 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
       .post(`${prefix}/worlds/:worldId/trade/offers/:offerId/accept`, async (ctx: any,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
-        const body = ctx.body as { sellerActorId: string };
-        const denied = await resolveActorAccess(opts.database, body.sellerActorId, userId,);
+        const body = ctx.body as { actorId: string };
+        const denied = await resolveActorAccess(opts.database, body.actorId, userId,);
         if (denied) { return denied; }
-        const res = await opts.svc().acceptOffer(ctx.params.offerId, body.sellerActorId,);
+        const res = await opts.svc().acceptOffer(ctx.params.offerId, body.actorId,);
         if (!res.success) { return badRequestResponse(res.reason ?? "Accept failed",); }
         return jsonResponse({ ok: true, ...res, },);
       }, {
         params: t.Object({ worldId: Id, offerId: Id, },),
-        body: t.Object({ sellerActorId: Id, },),
+        body: t.Object({ actorId: Id, },),
         response: {
           200: executeResponse,
           400: ErrorResponse,
@@ -116,7 +117,47 @@ export function tradeOfferRoutes(opts: TradeRoutesOptions, prefix = "/api",) {
         },
         detail: {
           summary: "Accept trade offer",
-          description: "Accept a pending trade offer. Only the seller can accept.",
+          description: "Accept a pending offer (seller accepts) or a countered offer (buyer accepts).",
+          tags: ["Trade",],
+        },
+      },)
+      .post(`${prefix}/worlds/:worldId/trade/offers/:offerId/counter`, async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const body = ctx.body as {
+          counterActorId: string;
+          buyerItems?: TradeLine[];
+          sellerItems?: TradeLine[];
+          price?: number;
+        };
+        const denied = await resolveActorAccess(opts.database, body.counterActorId, userId,);
+        if (denied) { return denied; }
+        const res = await opts.svc().counterOffer({
+          offerId: ctx.params.offerId,
+          counterActorId: body.counterActorId,
+          buyerItems: body.buyerItems,
+          sellerItems: body.sellerItems,
+          price: body.price,
+        },);
+        if (!res.success) { return badRequestResponse(res.reason ?? "Counter failed",); }
+        return jsonResponse({ ok: true, },);
+      }, {
+        params: t.Object({ worldId: Id, offerId: Id, },),
+        body: t.Object({
+          counterActorId: Id,
+          buyerItems: t.Optional(t.Array(tradeLineSchema,),),
+          sellerItems: t.Optional(t.Array(tradeLineSchema,),),
+          price: t.Optional(t.Integer({ minimum: 0, },),),
+        },),
+        response: {
+          200: t.Object({ ok: t.Boolean(), },),
+          400: ErrorResponse,
+          401: ErrorResponse,
+          403: ErrorResponse,
+        },
+        detail: {
+          summary: "Counter trade offer",
+          description: "Counter a pending offer with revised terms.",
           tags: ["Trade",],
         },
       },)
