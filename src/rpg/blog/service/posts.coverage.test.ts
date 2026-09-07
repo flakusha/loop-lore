@@ -83,7 +83,7 @@ describe("createPost", () => {
 
   test("notifies followers of public posts", async () => {
     await follow(db, "user-follower", "user-author",);
-    const row = await createPost(db, {
+    await createPost(db, {
       author_id: "user-author",
       title: "Announcement",
       body: "body",
@@ -172,7 +172,7 @@ describe("listPosts", () => {
     const page2 = await listPosts(db, { limit: 2, offset: 2, },);
     expect(page1.length,).toBe(2,);
     expect(page2.length,).toBe(1,);
-    expect(page1[0].created_at >= page1[1].created_at,).toBeTrue();
+    expect(page1[0]!.created_at >= page1[1]!.created_at,).toBeTrue();
   });
 
   test("batch-fetches tags for listed posts", async () => {
@@ -183,7 +183,7 @@ describe("listPosts", () => {
       tags: ["solo",],
     },);
     const rows = await listPosts(db, { author_id: "user-author", },);
-    expect(rows[0].tags,).toEqual(["solo",],);
+    expect(rows[0]!.tags,).toEqual(["solo",],);
   });
 });
 

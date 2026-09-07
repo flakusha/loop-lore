@@ -120,7 +120,7 @@ describe("getConfigs", () => {
     await svc.getConfig(locationId,);
     const rows = await svc.getConfigs([locationId, otherLocationId, "missing",],);
     expect(rows.length,).toBe(1,);
-    expect(rows[0].locationId,).toBe(locationId,);
+    expect(rows[0]!.locationId,).toBe(locationId,);
   });
 
   test("returns multiple configs", async () => {

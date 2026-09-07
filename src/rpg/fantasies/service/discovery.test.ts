@@ -1,6 +1,7 @@
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { FantasyCategory, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { createTestDb, resetTestDb, } from "../../../test-utils/create-test-db";
@@ -75,7 +76,7 @@ describe("attemptDiscovery", () => {
     ["playful pet puppy training games", "pet_play",],
     ["sweet praise compliments whispered softly", "praise",],
     ["mystical moonlit castle adventure", "roleplay",],
-  ] as Array<[string, string,]>,)(
+  ] as Array<[string, FantasyCategory,]>,)(
     "infers %s as %s",
     async (context, category,) => {
       const actorId = `actor-${category}-${context.length}`;

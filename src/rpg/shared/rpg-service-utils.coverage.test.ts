@@ -99,6 +99,11 @@ describe("getOrCreateRow", () => {
       id,
       name: "Fresh Table",
       source_type: "test",
+      source_id: null,
+      total_weight: 0,
+      used: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     },);
     expect(result.id,).toBe(id,);
     expect(result.name,).toBe("Fresh Table",);
@@ -123,6 +128,11 @@ describe("getOrCreateRow", () => {
       id,
       name: "Replacement",
       source_type: "test",
+      source_id: null,
+      total_weight: 0,
+      used: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     },);
     expect(result.name,).toBe("Original",);
 

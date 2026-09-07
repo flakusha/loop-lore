@@ -10,7 +10,7 @@
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
-import type { Generated, Kysely, } from "kysely";
+import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -105,7 +105,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
     if (!w) { throw new Error("seed: world not inserted",); }
     worldId = w.id;
 
-    await insertWorldTimelines(db, worldId, "Prime", { is_prime: 1 as unknown as Generated<number>, },);
+    await insertWorldTimelines(db, worldId, "Prime", { is_prime: 1, },);
     const tl = await db
       .selectFrom("world_timelines",)
       .select("id",)
@@ -189,7 +189,7 @@ describe("timelinesRoutes — auth guards (BUG-world-timelines-unauthenticated)"
 
   test("DELETE rejects non-owner (403), unauthenticated (401), succeeds for owner (204)", async () => {
     // First seed a non-prime branch to delete.
-    await insertWorldTimelines(db, worldId, "scratch-branch", { is_prime: 0 as unknown as Generated<number>, },);
+    await insertWorldTimelines(db, worldId, "scratch-branch", { is_prime: 0, },);
     const branch = await db
       .selectFrom("world_timelines",)
       .select("id",)

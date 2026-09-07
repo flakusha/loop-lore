@@ -9,7 +9,7 @@
  * shrank. The fix soft-hides pruned messages (visibility="auto_hidden").
  */
 import { describe, expect, test, } from "bun:test";
-import type { Generated, } from "kysely";
+import type {} from "kysely";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
@@ -44,9 +44,9 @@ describe("checkAndPruneContext — persists pruning decisions", () => {
         // role+content, so identical content would collapse all rows to one id.
         const content = `${CHUNK}-${i}`;
         await insertMessages(db, chat.id, actor.id, "user", content, {
-          id: id as unknown as Generated<string>,
+          id: id,
           token_count_total: 32_000,
-          visibility: "visible" as unknown as Generated<"visible">,
+          visibility: "visible",
         },);
       }
 
