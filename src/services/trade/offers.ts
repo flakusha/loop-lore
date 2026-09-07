@@ -9,6 +9,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
+import { isExpired, markOfferExpired, } from "./counter";
 import type { TradeLine, TradeResult, } from "./types";
 
 /** Sentinel recipe_id for trade offers (crafting_orders.recipe_id is NOT NULL). */
@@ -103,6 +104,7 @@ export async function createOffer(
     quantity: 1,
     offered_payment: opts.price,
     offered_materials: jsonStringifyOr(opts.buyerItems, "[]",),
+    requested_materials: "[]",
     status: "pending",
     trade_type: "trade",
     deadline: opts.deadline ?? null,
@@ -132,8 +134,10 @@ export async function loadOfferForAccept(
       crafter_actor_id: string | null;
       offered_payment: number;
       offered_materials: string;
+      requested_materials: string;
     };
     buyerItems: TradeLine[];
+    sellerItems: TradeLine[];
   }
 > {
   const offer = await db.selectFrom("crafting_orders",)
@@ -142,13 +146,24 @@ export async function loadOfferForAccept(
     .executeTakeFirst();
 
   if (!offer) { return { success: false, reason: "offer not found", }; }
-  if (offer.status !== "pending") { return { success: false, reason: `offer is ${offer.status}`, }; }
-  if (offer.crafter_actor_id !== acceptorActorId) {
+  if (offer.status === "pending" || offer.status === "countered") {
+    if (isExpired(offer.deadline,)) {
+      await markOfferExpired(db, offerId,);
+      return { success: false, reason: "offer expired", };
+    }
+  } else {
+    return { success: false, reason: `offer is ${offer.status}`, };
+  }
+  if (offer.status === "pending" && offer.crafter_actor_id !== acceptorActorId) {
     return { success: false, reason: "only the seller can accept", };
+  }
+  if (offer.status === "countered" && offer.requester_actor_id !== acceptorActorId) {
+    return { success: false, reason: "only the buyer can accept a countered offer", };
   }
 
   const buyerItems: TradeLine[] = jsonParseOr(offer.offered_materials, [] as TradeLine[],);
-  return { offer, buyerItems, };
+  const sellerItems: TradeLine[] = jsonParseOr(offer.requested_materials, [] as TradeLine[],);
+  return { offer, buyerItems, sellerItems, };
 }
 
 /**
@@ -185,7 +200,9 @@ export async function cancelOffer(
     .executeTakeFirst();
 
   if (!offer) { return { success: false, reason: "offer not found", }; }
-  if (offer.status !== "pending") { return { success: false, reason: `offer is ${offer.status}`, }; }
+  if (offer.status !== "pending" && offer.status !== "countered") {
+    return { success: false, reason: `offer is ${offer.status}`, };
+  }
   if (offer.requester_actor_id !== cancellerActorId) {
     return { success: false, reason: "only the offer creator can cancel", };
   }
@@ -196,49 +213,4 @@ export async function cancelOffer(
     .execute();
 
   return { success: true, };
-}
-
-/**
- * List pending trade offers for an actor (as buyer or seller).
- * @param db
- * @param worldId
- * @param actorId
- */
-export async function listOffers(
-  db: Kysely<DB>,
-  worldId: string,
-  actorId: string,
-): Promise<{
-  id: string;
-  buyerActorId: string;
-  sellerActorId: string | null;
-  price: number;
-  items: TradeLine[];
-  status: string;
-  deadline: string | null;
-  createdAt: string;
-}[]> {
-  const rows = await db.selectFrom("crafting_orders",)
-    .where("world_id", "=", worldId,)
-    .where("trade_type", "=", "trade",)
-    .where((eb,) =>
-      eb.or([
-        eb("requester_actor_id", "=", actorId,),
-        eb("crafter_actor_id", "=", actorId,),
-      ],)
-    )
-    .orderBy("created_at", "desc",)
-    .selectAll()
-    .execute();
-
-  return Array.from(rows, (r,) => ({
-    id: r.id,
-    buyerActorId: r.requester_actor_id,
-    sellerActorId: r.crafter_actor_id,
-    price: r.offered_payment,
-    items: jsonParseOr(r.offered_materials, [] as TradeLine[],),
-    status: r.status,
-    deadline: r.deadline,
-    createdAt: r.created_at,
-  }),);
 }

@@ -48,6 +48,7 @@ export interface CraftingOrders {
   max_quality: QualityLevel | null;
   offered_payment: Generated<number>;
   offered_materials: Generated<string>;
+  requested_materials: Generated<string>;
   status: Generated<string>;
   deadline: string | null;
   created_at: string;

@@ -36,6 +36,7 @@ export interface TradeOffer {
   maxQuality: string | null;
   offeredPayment: number;
   offeredMaterials: string[];
+  requestedMaterials: string[];
   status: string;
   deadline: string | null;
   createdAt: string;
