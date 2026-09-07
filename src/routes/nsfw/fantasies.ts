@@ -4,7 +4,7 @@
 import { Elysia, } from "elysia";
 import { FantasyService, } from "../../rpg/fantasies/service";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
-import { log, requireActorAccess, } from "./shared";
+import { log, requireNsfwActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -20,7 +20,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
       .get(
         `${prefix}/nsfw/fantasies/:actorId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             const fantasies = await fantasyService.getActorFantasies(ctx.params.actorId,);
@@ -36,7 +36,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
-            const auth = await requireActorAccess(database, (body.actorId as string) ?? "", ctx,);
+            const auth = await requireNsfwActorAccess(database, (body.actorId as string) ?? "", ctx,);
             if (typeof auth !== "string") { return auth; }
             const fantasy = await fantasyService.createFantasy({
               database,
@@ -58,7 +58,7 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           try {
             const body = ctx.body as Record<string, unknown>;
-            const auth = await requireActorAccess(database, (body.actorId as string) ?? "", ctx,);
+            const auth = await requireNsfwActorAccess(database, (body.actorId as string) ?? "", ctx,);
             if (typeof auth !== "string") { return auth; }
             const result = await fantasyService.attemptDiscovery(
               body.actorId as string,

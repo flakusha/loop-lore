@@ -4,7 +4,7 @@
 import { Elysia, t, } from "elysia";
 import { BodySystemService, } from "../../rpg/body-systems/service";
 import { jsonError, jsonResponse, } from "../http-utils";
-import { log, requireActorAccess, } from "./shared";
+import { log, requireNsfwActorAccess, } from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -56,7 +56,7 @@ export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
       .get(
         `${prefix}/nsfw/body/:actorId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             const profile = await bodyService.getProfile(ctx.params.actorId,);
@@ -70,7 +70,7 @@ export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
       .put(
         `${prefix}/nsfw/body/:actorId`,
         async (ctx: any,) => {
-          const auth = await requireActorAccess(database, ctx.params.actorId, ctx,);
+          const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
           try {
             // bodyUpdateSchema whitelists the allowed fields above. Elysia will
