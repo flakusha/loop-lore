@@ -6,6 +6,7 @@
  */
 import type { Generated, } from "kysely";
 import type {
+  AssetAlphaStatus,
   AssetLinkEntity,
   AssetType,
   AssetVisibility,
@@ -49,6 +50,7 @@ export interface Assets {
   created_at: Generated<string>;
   encryption_tier: Generated<string>;
   encrypted_key_id: string | null;
+  alpha_status: Generated<AssetAlphaStatus>;
   content_hash: string | null;
   data_version: Generated<number>;
   record_hash: Generated<string>;
