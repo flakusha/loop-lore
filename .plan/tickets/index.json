@@ -13565,6 +13565,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-fix-chat-setup-templates-visual-novel-remove-or-type-as-chat.md"
   },
+  "TASK-FIX-CROSS-FILE-MOCK-MODULE-LEAKS-UNDER-NON-ISOLATED-AND-COVE": {
+    "hash": "fd7ab3b",
+    "git_issue": "fd7ab3b",
+    "extid": "TASK-FIX-CROSS-FILE-MOCK-MODULE-LEAKS-UNDER-NON-ISOLATED-AND-COVE",
+    "type": "TASK",
+    "title": "Fix cross-file mock.module leaks under non-isolated and coverage-mode test runs",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fix-cross-file-mock-module-leaks-under-non-isolated-and-cove.md"
+  },
   "TASK-FIX-CRYPTO-ISOLATION": {
     "hash": "8948c86",
     "extid": "TASK-FIX-CRYPTO-ISOLATION",
