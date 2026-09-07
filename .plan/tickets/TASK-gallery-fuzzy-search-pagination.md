@@ -97,3 +97,4 @@ Reuses `TASK-search-service-unified.md` 3-tier config. Admin can set stricter pe
 - Builds on: `src/routes/views.ts:serveGalleryGrid`, `src/assets/controller.ts` upload flow
 - Bridges: `epic-gallery-batch-operations.md` (selection state preserved across search)
 - Frontend: existing `src/frontend/pages/gallery.ts` + `src/partials/gallery/preview-modal.html`
+- Overlaps: epic-rag-assets-unified-storage-and-assistant-flows B-R6 gallery unified search bar (same surface, different backends — reconcile or explicitly layer before implementing)
