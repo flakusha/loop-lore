@@ -5,8 +5,8 @@
  * provider-health.test.ts suite skips in that mode).
  */
 import { beforeAll, expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { createLogger, } from "../logger/index.js";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import {
   getHealthCache,
   getProviderHealth,
@@ -82,4 +82,4 @@ describeOrSkip("provider-health (isolated)", () => {
     } as never,);
     expect(summary,).toMatchObject({ name: "h", status: "healthy", modelCount: 1, },);
   });
-});
+},);

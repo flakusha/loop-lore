@@ -7,9 +7,9 @@
  * exercised through structural fake contexts (no Elysia import needed).
  */
 import { describe, expect, test, } from "bun:test";
+import { applyCsrfPlugin, csrfForbiddenResponse, csrfPlugin, } from "./csrf-plugin.js";
 import { mintCsrfToken, } from "./csrf.js";
 import type { CsrfMiddlewareOptions, } from "./csrf.js";
-import { applyCsrfPlugin, csrfForbiddenResponse, csrfPlugin, } from "./csrf-plugin.js";
 
 const OPTS: CsrfMiddlewareOptions = {
   secret: "test-csrf-secret-0123456789abcdef",
@@ -47,7 +47,7 @@ describe("csrfForbiddenResponse", () => {
   test("returns a 403 JSON body with the stable error code", async () => {
     const res = csrfForbiddenResponse();
     expect(res.status,).toBe(403,);
-    expect(res.headers.get("content-type"),).toContain("application/json",);
+    expect(res.headers.get("content-type",),).toContain("application/json",);
     const body = (await res.json()) as { error: string; message: string };
     expect(body.error,).toBe("csrf_verification_failed",);
     expect(typeof body.message,).toBe("string",);

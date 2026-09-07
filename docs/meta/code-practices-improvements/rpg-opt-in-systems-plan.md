@@ -64,7 +64,7 @@ Worktree: `rpg-opt-in-systems`. Sources: `epic-rpg-mechanics.md` (hub, 6 sub-epi
    proficiency (level from sheet) + conditions → delegate to battle
    `makeSkillCheck`. Pure function + tests; callers migrate later.
 3. **TASK-rpg-check-command** (builds on #2): `/check <skill> [dc]` chat command
-   + `gm-tool-detection` intent, output shows `d20 + mod (source breakdown) vs
+   plus `gm-tool-detection` intent, output shows `d20 + mod (source breakdown) vs
    DC → success/margin`, logged to history.
 4. **TASK-rpg-gate-chat-commands** (G4): `checkRpgEnabled` in assistant RPG
    commands (`/roll`, `/attack`, `/battle`, `/check`, …); disabled world →
@@ -81,17 +81,17 @@ schema; the gate wiring (#4) then reads it instead of the boolean.
 
 ## 4. Task split, batch 2 — checks / XP / levels / stats (G6–G8)
 
-6. **TASK-rpg-level-up-flow** (G6): `applyLevelUp(actorId)` — load sheet →
+1. **TASK-rpg-level-up-flow** (G6): `applyLevelUp(actorId)` — load sheet →
    while `canLevelUp`: level+1, hp += `hpOnLevelUp`, ASI flag when `grantsAsi`
    (levels 4/8/12/16/19, cap 20) → persist via `updateCharacterStats` + ledger
    event. Auto-check at end of `awardXp` + explicit POST `/api/rpg/xp/levelup`
-   + `/levelup` command (gated). Tests: multi-level jumps, cap.
+   and `/levelup` command (gated). Tests: multi-level jumps, cap.
    Epic: `epic-rpg-progression.md`.
-7. **TASK-rpg-ability-checks** (G7, builds on #2): `resolveAbilityCheck(actorId,
+2. **TASK-rpg-ability-checks** (G7, builds on #2): `resolveAbilityCheck(actorId,
    ability, dc)` reusing the sheet→modifier pipeline without proficiency;
    extend `/check` (`/check str` ability vs `/check athletics` skill) +
    gm-tool-detection. Epic: `epic-rpg-mechanics.md`.
-8. **TASK-rpg-timed-conditions** (G8): `addCondition(actorId, {condition,
+3. **TASK-rpg-timed-conditions** (G8): `addCondition(actorId, {condition,
    statDeltas, expires})` on the sheet; modifier hook consumed by #2/#7
    resolvers and attack rolls (blessed +1d4, poisoned disadvantage — no
    double-disadvantage stacking bug); expiry on combat rounds + wall-clock.
@@ -100,27 +100,26 @@ schema; the gate wiring (#4) then reads it instead of the boolean.
 
 ## 5. Task split, batch 3 — world ruleset templates + enforcement (G9–G11)
 
-9. **TASK-rpg-ruleset-templates**: `ruleset_templates` table (append-only
+1. **TASK-rpg-ruleset-templates**: `ruleset_templates` table (append-only
    migration) + `worlds.ruleset_id`; built-in seeds (e.g. `d20-gritty`,
    `narrative-freeform`, `lore-strict-canon`) carrying mechanics flags +
-   difficulty + allowed check set + lore-strictness; `templateId` accepted in
    POST `/api/worlds` (`handleCreateWorld`) replacing hardcoded defaults;
    custom user templates CRUD. WorldBundle export includes `ruleset_id`.
    Epic: `epic-mechanics-governance.md` (creation-time enforcement of its config).
-10. **TASK-rpg-ruleset-enforcement** (G10, builds on #9): active ruleset injected
+2. **TASK-rpg-ruleset-enforcement** (G10, builds on #1): active ruleset injected
     into prompt assembly (hard section, not keyword-gated) + post-generation
     compliance check on the `hallucination-guard` seam for `lore-strict` worlds
     (lore contradiction → regen-with-correction or GM-flag, never silent).
     `world-traits` wired into prompts as part of this (currently stored only).
     Epic: `epic-mechanics-governance.md`.
-11. **TASK-rpg-history-committing-chats** (G11, builds on #9): per-world
+3. **TASK-rpg-history-committing-chats** (G11, builds on #1): per-world
     `history_mode: mutable | committed`; committed chats reject PATCH content
     edits and soft-hide (403 + reason), canon events append to world timeline
     via existing `promote-lore` path. Constraint: GDPR `?hard=true` delete MUST
     keep working (legal override, logged). Epic: `epic-mechanics-governance.md`.
 
-Order: #6 independent (anytime after #2's sheet pattern); #7 after #2; #8 after
-#2+#7; #9 after #5 (reads its flags); #10–#11 after #9.
+Order: batch-3 #1 (ruleset templates) after batch-1 #5 (reads its flags); #2
+(ruleset enforcement) and #3 (history committing) after #1.
 
 ## 6. Non-goals (stay in their epics)
 

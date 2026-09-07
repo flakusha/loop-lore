@@ -128,6 +128,18 @@
     "git_issue": "ac11385",
     "status": "open"
   },
+  "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE": {
+    "hash": "ad3d51f",
+    "git_issue": "ad3d51f",
+    "extid": "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE",
+    "type": "BUG",
+    "title": "admin-templates update-remove lack admin.settings gate",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-admin-templates-update-remove-lack-admin-settings-gate.md"
+  },
   "BUG-ADVERTISED-SFX-MUSIC-VIDEO-COMMANDS-ARE-STUBS": {
     "hash": "9e39b51",
     "git_issue": "9e39b51",
@@ -890,6 +902,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md",
     "status": "done"
+  },
+  "BUG-CHARACTER-GROWTH-PATCH-CONFIRM-REJECT-ALWAYS-422-DEAD-ENDPOI": {
+    "hash": "4d88513",
+    "git_issue": "4d88513",
+    "extid": "BUG-CHARACTER-GROWTH-PATCH-CONFIRM-REJECT-ALWAYS-422-DEAD-ENDPOI",
+    "type": "BUG",
+    "title": "character-growth PATCH-confirm-reject always 422 dead endpoints",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-character-growth-patch-confirm-reject-always-422-dead-endpoi.md"
   },
   "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-ACTOR-OWNERSHIP-NEVER-CHECKED": {
     "hash": "d6c64be",
@@ -1787,6 +1811,18 @@
     "epic": "epic-nsfw-moderation-priority",
     "tags": [],
     "source": ".plan/tickets/BUG-executereversal-and-reviewappeal-do-not-exclude-soft-deleted.md"
+  },
+  "BUG-EXPORT-SSE-START-THROWS-CONTROLLER-IS-ALREADY-CLOSED-ON-CLIE": {
+    "hash": "dad17cb",
+    "git_issue": "dad17cb",
+    "extid": "BUG-EXPORT-SSE-START-THROWS-CONTROLLER-IS-ALREADY-CLOSED-ON-CLIE",
+    "type": "BUG",
+    "title": "export-sse start throws Controller is already closed on client disconnect",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-export-sse-start-throws-controller-is-already-closed-on-clie.md"
   },
   "BUG-FACTORY-RESET-DELETES-TABLES-WITHOUT-TRANSACTION-SILENT-PER-": {
     "hash": "dc5a8b8",
@@ -2790,6 +2826,18 @@
     "git_issue": "43587b3",
     "status": "done"
   },
+  "BUG-MODELSUITABILITY-FINETUNEREADINESS-NEVER-PARSE-B-SUFFIXED-SI": {
+    "hash": "04931ee",
+    "git_issue": "04931ee",
+    "extid": "BUG-MODELSUITABILITY-FINETUNEREADINESS-NEVER-PARSE-B-SUFFIXED-SI",
+    "type": "BUG",
+    "title": "modelSuitability fineTuneReadiness never parse B-suffixed sizes",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-modelsuitability-finetunereadiness-never-parse-b-suffixed-si.md"
+  },
   "BUG-MUSIC-LINKS-POST-BODY-CHATID-IS-REQUIRED-BUT-IGNORED-DEAD-SC": {
     "hash": "63e7492",
     "git_issue": "63e7492",
@@ -3233,6 +3281,18 @@
     "source": ".plan/tickets/BUG-post-store-test-ts-32-imports-missing-completegenerationopts.md",
     "git_issue": "d660ce1",
     "status": "done"
+  },
+  "BUG-PRE-EXISTING-UNIT-TEST-FAILURES-BLOCKING-CLEAN-SUITE": {
+    "hash": "1dfb12a",
+    "git_issue": "1dfb12a",
+    "extid": "BUG-PRE-EXISTING-UNIT-TEST-FAILURES-BLOCKING-CLEAN-SUITE",
+    "type": "BUG",
+    "title": "pre-existing unit test failures blocking clean suite",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
   },
   "BUG-PRIVATE-TIER-NO-TRUE-E2E": {
     "hash": "bc54f30",
@@ -11866,6 +11926,18 @@
     "source": ".plan/tickets/TASK-cors-middleware.md",
     "git_issue": "60592ef"
   },
+  "TASK-COVERAGE-WAIVERS-FOR-3-MODULES-BELOW-80-FLOOR": {
+    "hash": "f67b1ca",
+    "git_issue": "f67b1ca",
+    "extid": "TASK-COVERAGE-WAIVERS-FOR-3-MODULES-BELOW-80-FLOOR",
+    "type": "TASK",
+    "title": "coverage waivers for 3 modules below 80 floor",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-waivers-for-3-modules-below-80-floor.md"
+  },
   "TASK-CRAFTING-ENCHANTING": {
     "hash": "32bcaa6",
     "extid": "TASK-CRAFTING-ENCHANTING",
@@ -19434,6 +19506,18 @@
     "source": ".plan/tickets/TASK-rigged-model-buffer-render.md",
     "git_issue": "65cbebe"
   },
+  "TASK-RPG-ACTOR-RESOLVED-SKILL-CHECKS-FROM-CHARACTER-SHEETS": {
+    "hash": "6629f0d",
+    "git_issue": "6629f0d",
+    "extid": "TASK-RPG-ACTOR-RESOLVED-SKILL-CHECKS-FROM-CHARACTER-SHEETS",
+    "type": "TASK",
+    "title": "RPG: actor-resolved skill checks from character sheets",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-mechanics.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-actor-resolved-skill-checks-from-character-sheets.md"
+  },
   "TASK-RPG-BATTLE-ACTION-SYSTEMS": {
     "hash": "95cf0da",
     "extid": "TASK-RPG-BATTLE-ACTION-SYSTEMS",
@@ -19458,6 +19542,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-chat-questions.md",
     "git_issue": "c712140"
+  },
+  "TASK-RPG-CHECK-CHAT-COMMAND-WITH-MODIFIER-BREAKDOWN": {
+    "hash": "f26f456",
+    "git_issue": "f26f456",
+    "extid": "TASK-RPG-CHECK-CHAT-COMMAND-WITH-MODIFIER-BREAKDOWN",
+    "type": "TASK",
+    "title": "RPG: /check chat command with modifier breakdown",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-mechanics.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-check-chat-command-with-modifier-breakdown.md"
   },
   "TASK-RPG-COMPANION-PET-MOUNT": {
     "hash": "d34a475",
@@ -19563,6 +19659,30 @@
     "status": "done",
     "git_issue": "e06dba6"
   },
+  "TASK-RPG-GATE-CHAT-COMMANDS-BEHIND-WORLD-OPT-IN": {
+    "hash": "f2b98e3",
+    "git_issue": "f2b98e3",
+    "extid": "TASK-RPG-GATE-CHAT-COMMANDS-BEHIND-WORLD-OPT-IN",
+    "type": "TASK",
+    "title": "RPG: gate chat commands behind world opt-in",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-mechanics-governance.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
+  },
+  "TASK-RPG-HISTORY-COMMITTING-CHATS-PER-WORLD": {
+    "hash": "baf7d71",
+    "git_issue": "baf7d71",
+    "extid": "TASK-RPG-HISTORY-COMMITTING-CHATS-PER-WORLD",
+    "type": "TASK",
+    "title": "RPG: history-committing chats per world",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-mechanics-governance.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-history-committing-chats-per-world.md"
+  },
   "TASK-RPG-HOUSING-BASE-BUILDING": {
     "hash": "4398db2",
     "extid": "TASK-RPG-HOUSING-BASE-BUILDING",
@@ -19575,6 +19695,18 @@
     "source": ".plan/tickets/TASK-rpg-housing-base-building.md",
     "status": "done",
     "git_issue": "4398db2"
+  },
+  "TASK-RPG-LEVEL-UP-APPLICATION-FLOW-XP-TO-LEVELS": {
+    "hash": "c29e560",
+    "git_issue": "c29e560",
+    "extid": "TASK-RPG-LEVEL-UP-APPLICATION-FLOW-XP-TO-LEVELS",
+    "type": "TASK",
+    "title": "RPG: level-up application flow (XP to levels)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-progression.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-level-up-application-flow-xp-to-levels.md"
   },
   "TASK-RPG-MAGIC-SPELL-SYSTEMS": {
     "hash": "3054c11",
@@ -19653,6 +19785,18 @@
     "source": ".plan/tickets/TASK-rpg-patterns.md",
     "git_issue": "2dd42ad"
   },
+  "TASK-RPG-PER-MECHANIC-OPT-IN-CONFIG-WORLDMECHANICSCONFIG-SCHEMA-S": {
+    "hash": "e98ab7f",
+    "git_issue": "e98ab7f",
+    "extid": "TASK-RPG-PER-MECHANIC-OPT-IN-CONFIG-WORLDMECHANICSCONFIG-SCHEMA-S",
+    "type": "TASK",
+    "title": "RPG: per-mechanic opt-in config (WorldMechanicsConfig schema slice)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-mechanics-governance.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
+  },
   "TASK-RPG-PLAYER-AGENCY-STORY-POINTS": {
     "hash": "b4ec3f5",
     "extid": "TASK-RPG-PLAYER-AGENCY-STORY-POINTS",
@@ -19664,6 +19808,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-player-agency-story-points.md",
     "git_issue": "b4ec3f5"
+  },
+  "TASK-RPG-PURE-ABILITY-CHECKS-OUTSIDE-COMBAT": {
+    "hash": "a8442ec",
+    "git_issue": "a8442ec",
+    "extid": "TASK-RPG-PURE-ABILITY-CHECKS-OUTSIDE-COMBAT",
+    "type": "TASK",
+    "title": "RPG: pure ability checks outside combat",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-mechanics.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-pure-ability-checks-outside-combat.md"
   },
   "TASK-RPG-QUEST-SYSTEM": {
     "hash": "bc688a1",
@@ -19690,6 +19846,18 @@
     "source": ".plan/tickets/TASK-rpg-resolution-system.md",
     "status": "done",
     "git_issue": "2e640bb"
+  },
+  "TASK-RPG-RULESET-ENFORCEMENT-IN-PROMPTS-AND-POST-GENERATION": {
+    "hash": "1dd08b9",
+    "git_issue": "1dd08b9",
+    "extid": "TASK-RPG-RULESET-ENFORCEMENT-IN-PROMPTS-AND-POST-GENERATION",
+    "type": "TASK",
+    "title": "RPG: ruleset enforcement in prompts and post-generation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-mechanics-governance.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-ruleset-enforcement-in-prompts-and-post-generation.md"
   },
   "TASK-RPG-SOCIAL-INTERACTION": {
     "hash": "f21d739",
@@ -19729,6 +19897,30 @@
     "status": "done",
     "git_issue": "0ee8def"
   },
+  "TASK-RPG-TIMED-CONDITIONS-BUFFS-WITH-STAT-DELTAS": {
+    "hash": "4c37f99",
+    "git_issue": "4c37f99",
+    "extid": "TASK-RPG-TIMED-CONDITIONS-BUFFS-WITH-STAT-DELTAS",
+    "type": "TASK",
+    "title": "RPG: timed conditions/buffs with stat deltas",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-progression.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-timed-conditions-buffs-with-stat-deltas.md"
+  },
+  "TASK-RPG-UNIFY-ROLL-RNG-ONTO-CRYPTO-DICE-ENGINE-LOG-HISTORY": {
+    "hash": "d5506a5",
+    "git_issue": "d5506a5",
+    "extid": "TASK-RPG-UNIFY-ROLL-RNG-ONTO-CRYPTO-DICE-ENGINE-LOG-HISTORY",
+    "type": "TASK",
+    "title": "RPG: unify /roll RNG onto crypto dice engine + log history",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rpg-mechanics.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history.md"
+  },
   "TASK-RPG-WEATHER-ENVIRONMENT": {
     "hash": "9bd0f42",
     "extid": "TASK-RPG-WEATHER-ENVIRONMENT",
@@ -19741,6 +19933,18 @@
     "source": ".plan/tickets/TASK-rpg-weather-environment.md",
     "status": "done",
     "git_issue": "9bd0f42"
+  },
+  "TASK-RPG-WORLD-RULESET-TEMPLATES-APPLIED-AT-CREATION": {
+    "hash": "83e9718",
+    "git_issue": "83e9718",
+    "extid": "TASK-RPG-WORLD-RULESET-TEMPLATES-APPLIED-AT-CREATION",
+    "type": "TASK",
+    "title": "RPG: world ruleset templates applied at creation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-mechanics-governance.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rpg-world-ruleset-templates-applied-at-creation.md"
   },
   "TASK-RPG-XP-INTIMACY-READ-MODIFY-WRITE-LOST-UPDATES-UNDER-CONCURR": {
     "hash": "d239395",

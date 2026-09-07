@@ -22,15 +22,16 @@
  * pattern as story-mode.test.ts).
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import type { Config, } from "../../config/schema";
 import { ContentRating, MessageRole, MessageStatus, } from "../../db/enums";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import type { GenDeps, } from "./deps";
 
 // ── GM boundary mock (isolate-gated; see story-mode.test.ts) ───
@@ -297,7 +298,7 @@ function makeDeps(): GenDeps {
       resolvedModel: "stub-model",
       resolvedApiKey: null,
       provider: {
-        complete: async () => ({ content: "unused — GM boundary is mocked" }),
+        complete: async () => ({ content: "unused — GM boundary is mocked", }),
       },
     })) as unknown as GenDeps["resolveProvider"],
     getSmk: (() => null) as unknown as GenDeps["getSmk"],
@@ -305,7 +306,8 @@ function makeDeps(): GenDeps {
       /* noop */
     }) as unknown as GenDeps["ensureActorKey"],
     getChatEncryptionLevel: (async () => "none") as unknown as GenDeps["getChatEncryptionLevel"],
-    encryptAtRest: (async () => ({ storedContent: "stored-content", keyId: null, })) as unknown as GenDeps["encryptAtRest"],
+    encryptAtRest:
+      (async () => ({ storedContent: "stored-content", keyId: null, })) as unknown as GenDeps["encryptAtRest"],
   } as unknown as GenDeps;
 }
 
@@ -333,7 +335,7 @@ async function seedScenario(
   const chatId = await seedChat(testDb, worldId, locationId, overrides?.chat,);
   const actorId = await seedActor(testDb, overrides?.actor,);
   await seedParticipant(testDb, chatId, actorId,);
-  return { chatId, actorId, worldId, locationId };
+  return { chatId, actorId, worldId, locationId, };
 }
 
 /** Run one generation turn against a freshly seeded scenario. */
@@ -360,15 +362,17 @@ async function runTurn(opts: {
 
 describeOrSkip("triggerStoryModeGeneration", () => {
   test("stores the GM response through encrypt + hooks and calls acceptResponse", async () => {
-    const { chatId, actorId, worldId } = await seedScenario();
+    const { chatId, actorId, worldId, } = await seedScenario();
     mockActorId = actorId;
 
     await runTurn({ chatId, worldId, },);
 
     const messages = await testDb.selectFrom("messages",).selectAll().where(
-      "chat_id", "=", chatId,
+      "chat_id",
+      "=",
+      chatId,
     ).execute();
-    const assistant = messages.find((m,) => m.role === MessageRole.Assistant,);
+    const assistant = messages.find((m,) => m.role === MessageRole.Assistant);
     expect(assistant,).toBeDefined();
     expect(assistant?.content,).toBe("stored-content",);
     expect(assistant?.key_id,).toBeNull();
@@ -381,42 +385,48 @@ describeOrSkip("triggerStoryModeGeneration", () => {
   });
 
   test("Human-GM turn (null response) stores no message and skips acceptResponse", async () => {
-    const { chatId, worldId } = await seedScenario();
+    const { chatId, worldId, } = await seedScenario();
     mockTurnResponse = null;
 
     await runTurn({ chatId, worldId, },);
 
     const messages = await testDb.selectFrom("messages",).selectAll().where(
-      "chat_id", "=", chatId,
+      "chat_id",
+      "=",
+      chatId,
     ).execute();
     expect(messages,).toHaveLength(0,);
     expect(capturedAcceptResponse,).toBeNull();
   });
 
   test("synthesizes a default config and still stores when gm_config is missing", async () => {
-    const { chatId, actorId, worldId } = await seedScenario();
+    const { chatId, actorId, worldId, } = await seedScenario();
     mockActorId = actorId;
 
     await runTurn({ chatId, worldId, gmConfig: null, },);
 
     const messages = await testDb.selectFrom("messages",).selectAll().where(
-      "chat_id", "=", chatId,
+      "chat_id",
+      "=",
+      chatId,
     ).execute();
-    expect(messages.some((m,) => m.role === MessageRole.Assistant,),).toBe(true,);
+    expect(messages.some((m,) => m.role === MessageRole.Assistant),).toBe(true,);
     expect(capturedAcceptResponse,).not.toBeNull();
   });
 
   test("computes the next swipe index and parent link when parentMessageId is set", async () => {
-    const { chatId, actorId, worldId } = await seedScenario();
+    const { chatId, actorId, worldId, } = await seedScenario();
     mockActorId = actorId;
     const parentId = await seedParentMessage(testDb, chatId, actorId, 0,);
 
     await runTurn({ chatId, worldId, parentMessageId: parentId, },);
 
     const messages = await testDb.selectFrom("messages",).selectAll().where(
-      "chat_id", "=", chatId,
+      "chat_id",
+      "=",
+      chatId,
     ).execute();
-    const assistant = messages.find((m,) => m.role === MessageRole.Assistant,);
+    const assistant = messages.find((m,) => m.role === MessageRole.Assistant);
     expect(assistant,).toBeDefined();
     expect(assistant?.parent_id,).toBe(parentId,);
     expect(assistant?.swipe_index,).toBe(1,);
@@ -429,18 +439,20 @@ describeOrSkip("triggerStoryModeGeneration", () => {
       birthDate: "1990-01-01",
       ageGateAcceptedAt: null,
     },);
-    const { chatId, actorId, worldId } = await seedScenario({
+    const { chatId, actorId, worldId, } = await seedScenario({
       chat: { created_by: gatelessUser, },
       actor: { content_rating: ContentRating.NsfwMild, },
-    });
+    },);
     mockActorId = actorId;
 
     await runTurn({ chatId, worldId, userId: gatelessUser, },);
 
     const messages = await testDb.selectFrom("messages",).selectAll().where(
-      "chat_id", "=", chatId,
+      "chat_id",
+      "=",
+      chatId,
     ).execute();
     expect(messages,).toHaveLength(0,);
     expect(capturedAcceptResponse,).toBeNull();
   });
-});
+},);

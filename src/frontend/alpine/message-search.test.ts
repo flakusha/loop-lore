@@ -43,9 +43,9 @@ function searchCtx(overrides: Record<string, unknown> = {},): Record<string, unk
     _msgSearchLoading: false,
     _msgSearchDebounce: null,
     $refs: {},
-    applyMessageSearchHighlights: mock(() => {}),
-    applySearchMatchActive: mock(() => {}),
-    scrollToSearchMatch: mock(() => {}),
+    applyMessageSearchHighlights: mock(() => {},),
+    applySearchMatchActive: mock(() => {},),
+    scrollToSearchMatch: mock(() => {},),
     ...overrides,
   };
 }
@@ -55,7 +55,7 @@ describe("messageSearch.runMessageSearch", () => {
     const ctx = searchCtx({ activeChat: null, _msgSearchQuery: "hi", },);
     await messageSearch.runMessageSearch!.call(ctx,);
     expect(fetchCalls,).toHaveLength(0,);
-  },);
+  });
 
   test("clears matches on a blank query", async () => {
     const ctx = searchCtx({ _msgSearchQuery: "   ", _msgSearchMatches: ["m1",], _msgSearchTotal: 5, },);
@@ -63,9 +63,9 @@ describe("messageSearch.runMessageSearch", () => {
     expect(ctx._msgSearchMatches,).toEqual([],);
     expect(ctx._msgSearchTotal,).toBe(0,);
     expect(ctx._msgSearchIndex,).toBe(0,);
-    expect((ctx.applyMessageSearchHighlights as ReturnType<typeof mock>),).toHaveBeenCalledTimes(1,);
+    expect(ctx.applyMessageSearchHighlights as ReturnType<typeof mock>,).toHaveBeenCalledTimes(1,);
     expect(fetchCalls,).toHaveLength(0,);
-  },);
+  });
 
   test("maps results and totals on success", async () => {
     mockFetch(200, { results: [{ messageId: "m1", }, { messageId: "m2", },], total: 2, },);
@@ -76,16 +76,16 @@ describe("messageSearch.runMessageSearch", () => {
     expect(ctx._msgSearchTotal,).toBe(2,);
     expect(ctx._msgSearchIndex,).toBe(0,);
     expect(ctx._msgSearchLoading,).toBe(false,);
-    expect((ctx.applyMessageSearchHighlights as ReturnType<typeof mock>),).toHaveBeenCalledTimes(1,);
-    expect((ctx.scrollToSearchMatch as ReturnType<typeof mock>),).toHaveBeenCalledWith(0,);
-  },);
+    expect(ctx.applyMessageSearchHighlights as ReturnType<typeof mock>,).toHaveBeenCalledTimes(1,);
+    expect(ctx.scrollToSearchMatch as ReturnType<typeof mock>,).toHaveBeenCalledWith(0,);
+  });
 
   test("defaults the total to the match count", async () => {
     mockFetch(200, { results: [{ messageId: "m1", },], },);
     const ctx = searchCtx({ _msgSearchQuery: "x", },);
     await messageSearch.runMessageSearch!.call(ctx,);
     expect(ctx._msgSearchTotal,).toBe(1,);
-  },);
+  });
 
   test("clears matches on non-ok responses", async () => {
     mockFetch(500, {},);
@@ -94,7 +94,7 @@ describe("messageSearch.runMessageSearch", () => {
     expect(ctx._msgSearchMatches,).toEqual([],);
     expect(ctx._msgSearchTotal,).toBe(0,);
     expect(ctx._msgSearchLoading,).toBe(false,);
-  },);
+  });
 
   test("clears matches on network error", async () => {
     fetchHandler = () => {
@@ -104,7 +104,7 @@ describe("messageSearch.runMessageSearch", () => {
     await messageSearch.runMessageSearch!.call(ctx,);
     expect(ctx._msgSearchMatches,).toEqual([],);
     expect(ctx._msgSearchLoading,).toBe(false,);
-  },);
+  });
 
   test("encodes chat ids and unicode queries", async () => {
     mockFetch(200, { results: [], total: 0, },);
@@ -112,41 +112,41 @@ describe("messageSearch.runMessageSearch", () => {
     await messageSearch.runMessageSearch!.call(ctx,);
     expect(fetchCalls[0]!.url,).toContain(`chatId=${encodeURIComponent("chat/1",)}`,);
     expect(fetchCalls[0]!.url,).toContain(`q=${encodeURIComponent("酒場",)}`,);
-  },);
-},);
+  });
+});
 
 describe("messageSearch navigation", () => {
   test("next wraps around the match list", () => {
     const ctx = searchCtx({ _msgSearchMatches: ["a", "b",], _msgSearchIndex: 1, },);
     messageSearch.nextMessageMatch!.call(ctx,);
     expect(ctx._msgSearchIndex,).toBe(0,);
-    expect((ctx.scrollToSearchMatch as ReturnType<typeof mock>),).toHaveBeenCalledWith(0,);
-  },);
+    expect(ctx.scrollToSearchMatch as ReturnType<typeof mock>,).toHaveBeenCalledWith(0,);
+  });
 
   test("prev wraps around the match list", () => {
     const ctx = searchCtx({ _msgSearchMatches: ["a", "b",], _msgSearchIndex: 0, },);
     messageSearch.prevMessageMatch!.call(ctx,);
     expect(ctx._msgSearchIndex,).toBe(1,);
-  },);
+  });
 
   test("next and prev ignore empty match lists", () => {
     const ctx = searchCtx({ _msgSearchMatches: [], _msgSearchIndex: 0, },);
     messageSearch.nextMessageMatch!.call(ctx,);
     messageSearch.prevMessageMatch!.call(ctx,);
     expect(ctx._msgSearchIndex,).toBe(0,);
-    expect((ctx.scrollToSearchMatch as ReturnType<typeof mock>),).not.toHaveBeenCalled();
-  },);
+    expect(ctx.scrollToSearchMatch as ReturnType<typeof mock>,).not.toHaveBeenCalled();
+  });
 
   test("Enter advances, Shift+Enter goes back", () => {
-    const next = mock(() => {});
-    const prev = mock(() => {});
+    const next = mock(() => {},);
+    const prev = mock(() => {},);
     const ctx = searchCtx({ nextMessageMatch: next, prevMessageMatch: prev, },);
     messageSearch.onMessageSearchEnter!.call(ctx, { shiftKey: false, } as KeyboardEvent,);
     expect(next,).toHaveBeenCalledTimes(1,);
     messageSearch.onMessageSearchEnter!.call(ctx, { shiftKey: true, } as KeyboardEvent,);
     expect(prev,).toHaveBeenCalledTimes(1,);
-  },);
-},);
+  });
+});
 
 describe("messageSearch open/close", () => {
   test("closeMessageSearch resets every field", () => {
@@ -164,56 +164,68 @@ describe("messageSearch open/close", () => {
     expect(ctx._msgSearchTotal,).toBe(0,);
     expect(ctx._msgSearchIndex,).toBe(0,);
     expect(ctx._msgSearchDebounce,).toBeNull();
-  },);
+  });
 
   test("toggle opens, resets, and focuses the input", () => {
     let focused = 0;
     const ctx = searchCtx({
       _msgSearchOpen: false,
-      $nextTick: (fn: () => void,) => { fn(); },
-      $refs: { msgSearchInput: { focus: () => { focused++; }, }, },
+      $nextTick: (fn: () => void,) => {
+        fn();
+      },
+      $refs: {
+        msgSearchInput: {
+          focus: () => {
+            focused++;
+          },
+        },
+      },
     },);
     messageSearch.toggleMessageSearch!.call(ctx,);
     expect(ctx._msgSearchOpen,).toBe(true,);
     expect(focused,).toBe(1,);
-  },);
+  });
 
   test("toggle closes via closeMessageSearch", () => {
-    const close = mock(() => {});
+    const close = mock(() => {},);
     const ctx = searchCtx({ _msgSearchOpen: true, closeMessageSearch: close, },);
     messageSearch.toggleMessageSearch!.call(ctx,);
     expect(close,).toHaveBeenCalledTimes(1,);
-  },);
+  });
 
   test("onMessageSearchInput debounces the search", async () => {
     const ctx = searchCtx({ _msgSearchQuery: "x", },);
     let runs = 0;
-    (ctx as Record<string, unknown>).runMessageSearch = () => { runs++; };
+    (ctx as Record<string, unknown>).runMessageSearch = () => {
+      runs++;
+    };
     messageSearch.onMessageSearchInput!.call(ctx,);
     expect(ctx._msgSearchDebounce,).not.toBeNull();
     // Poll for the debounced run instead of a fixed sleep: under full-suite
     // load a 300ms timer can fire well past a fixed 350ms wait (flake).
     const deadline = Date.now() + 10_000;
     while (runs === 0 && Date.now() < deadline) {
-      await new Promise<void>((resolve,) => setTimeout(resolve, 25,),);
+      await new Promise<void>((resolve,) => setTimeout(resolve, 25,));
     }
     expect(runs,).toBe(1,);
     messageSearch.closeMessageSearch!.call(ctx,);
     expect(ctx._msgSearchDebounce,).toBeNull();
-  },);
+  });
 
   test("rapid input coalesces into a single search", async () => {
     const ctx = searchCtx({ _msgSearchQuery: "x", },);
     let runs = 0;
-    (ctx as Record<string, unknown>).runMessageSearch = () => { runs++; };
+    (ctx as Record<string, unknown>).runMessageSearch = () => {
+      runs++;
+    };
     messageSearch.onMessageSearchInput!.call(ctx,);
     messageSearch.onMessageSearchInput!.call(ctx,);
     messageSearch.onMessageSearchInput!.call(ctx,);
     const deadline = Date.now() + 10_000;
     while (runs === 0 && Date.now() < deadline) {
-      await new Promise<void>((resolve,) => setTimeout(resolve, 25,),);
+      await new Promise<void>((resolve,) => setTimeout(resolve, 25,));
     }
     expect(runs,).toBe(1,);
     messageSearch.closeMessageSearch!.call(ctx,);
-  },);
-},);
+  });
+});

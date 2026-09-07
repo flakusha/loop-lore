@@ -62,14 +62,14 @@ describe("worldLocations.loadLocations", () => {
     expect(c.locationsLoaded,).toBe(true,);
     expect(c.loadingLocations,).toBe(false,);
     expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/locations",);
-  },);
+  });
 
   test("defaults missing connections to empty list", async () => {
     mockFetch(200, { data: [{ id: "l1", name: "Town", description: null, parent_location_id: null, },], },);
     const c = ctx();
     await c.loadLocations();
     expect((c.locations[0] as unknown as { connections: unknown[] }).connections,).toEqual([],);
-  },);
+  });
 
   test("keeps stale rows on failure", async () => {
     mockFetch(500, {},);
@@ -78,22 +78,22 @@ describe("worldLocations.loadLocations", () => {
     expect(c.locations,).toHaveLength(0,);
     expect(c.locationsLoaded,).toBe(false,);
     expect(c.loadingLocations,).toBe(false,);
-  },);
+  });
 
   test("tolerates malformed payloads", async () => {
     mockFetch(200, { data: null, },);
     const c = ctx();
     await c.loadLocations();
     expect(c.locations,).toEqual([],);
-  },);
-},);
+  });
+});
 
 describe("worldLocations.addLocation", () => {
   test("ignores blank names", async () => {
     const c = ctx({ newLocName: "   ", },);
     await c.addLocation();
     expect(fetchCalls,).toHaveLength(0,);
-  },);
+  });
 
   test("POSTs the form and reloads", async () => {
     mockFetch(201, { id: "l2", },);
@@ -106,15 +106,15 @@ describe("worldLocations.addLocation", () => {
     },);
     expect(c.newLocName,).toBe("",);
     expect(c.newLocConnections,).toEqual([],);
-  },);
+  });
 
   test("surfaces server errors without clearing the form", async () => {
     mockFetch(400, { error: "bad", },);
     const c = ctx({ newLocName: "Tavern", },);
     await c.addLocation();
     expect(c.newLocName,).toBe("Tavern",);
-  },);
-},);
+  });
+});
 
 describe("worldLocations.expandLoc", () => {
   const loc = { id: "l1", name: "Town", description: "hub", parent_location_id: null, };
@@ -125,20 +125,20 @@ describe("worldLocations.expandLoc", () => {
     expect(c.expandedLoc,).toBe("l1",);
     expect(c.editLocName,).toBe("Town",);
     expect(c.editLocDesc,).toBe("hub",);
-  },);
+  });
 
   test("collapses when the same location is toggled", () => {
     const c = ctx({ locations: [loc,], expandedLoc: "l1", },);
     c.expandLoc("l1",);
     expect(c.expandedLoc,).toBe("",);
-  },);
+  });
 
   test("expanding an unknown id clears nothing and sets the id", () => {
     const c = ctx({ locations: [loc,], expandedLoc: "", editLocName: "keep", },);
     c.expandLoc("missing",);
     expect(c.expandedLoc,).toBe("missing",);
     expect(c.editLocName,).toBe("keep",);
-  },);
+  });
 
   test("null descriptions become empty strings", () => {
     const c = ctx({
@@ -148,8 +148,8 @@ describe("worldLocations.expandLoc", () => {
     },);
     c.expandLoc("l1",);
     expect(c.editLocDesc,).toBe("",);
-  },);
-},);
+  });
+});
 
 describe("worldLocations.saveLocation", () => {
   test("PUTs trimmed fields and updates the local row", async () => {
@@ -168,7 +168,7 @@ describe("worldLocations.saveLocation", () => {
     },);
     expect(c.locations[0]!.name,).toBe("New Town",);
     expect(c.expandedLoc,).toBe("",);
-  },);
+  });
 
   test("handles unicode names", async () => {
     mockFetch(200, {},);
@@ -180,8 +180,8 @@ describe("worldLocations.saveLocation", () => {
     },);
     await c.saveLocation("l1",);
     expect(c.locations[0]!.name,).toBe("酒場・影",);
-  },);
-},);
+  });
+});
 
 describe("worldLocations.deleteLocation", () => {
   test("DELETEs and reloads", async () => {
@@ -190,12 +190,12 @@ describe("worldLocations.deleteLocation", () => {
     await c.deleteLocation("l1",);
     expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/locations/l1",);
     expect(fetchCalls[0]!.opts?.method,).toBe("DELETE",);
-  },);
+  });
 
   test("aborts when confirm is declined", async () => {
     globalThis.confirm = () => false;
     const c = ctx();
     await c.deleteLocation("l1",);
     expect(fetchCalls,).toHaveLength(0,);
-  },);
-},);
+  });
+});

@@ -20,11 +20,11 @@ beforeEach(() => {
   commandPalette._filteredCommands = [];
   commandPalette._showCommandPalette = false;
   commandPalette._activeCommand = "";
-});
+},);
 
 afterEach(() => {
   calls = [];
-});
+},);
 
 interface PaletteCtx {
   $refs?: { messageInput: { value: string; focus: () => void } };
@@ -51,14 +51,17 @@ const listFixture = [
 
 describe("commandPalette._loadCommandList", () => {
   test("maps server entries into the command list", async () => {
-    handler = async () => Response.json({ data: [
-      { name: "roll", descriptionKey: "commands.roll", },
-      { name: "insult", descriptionKey: "commands.insult", },
-    ], },);
+    handler = async () =>
+      Response.json({
+        data: [
+          { name: "roll", descriptionKey: "commands.roll", },
+          { name: "insult", descriptionKey: "commands.insult", },
+        ],
+      },);
     await commandPalette.init!();
     expect(calls,).toHaveLength(1,);
     expect(calls[0]!.url,).toBe("/api/commands",);
-    expect(commandPalette._commandList!.map((c,) => [c.name, c.descriptionKey,],),).toEqual([
+    expect(commandPalette._commandList!.map((c,) => [c.name, c.descriptionKey,]),).toEqual([
       ["roll", "commands.roll",],
       ["insult", "commands.insult",],
     ],);
@@ -92,12 +95,12 @@ describe("commandPalette._loadCommandList", () => {
 
 describe("commandPalette.handleCommandInput", () => {
   function inputEvent(value: string,): Event {
-    return { target: { value }, } as unknown as Event;
+    return { target: { value, }, } as unknown as Event;
   }
 
   test("opens the palette for slash prefixes and filters by substring", () => {
     const ctx = buildCtx();
-    ctx._commandList = listFixture.map((c,) => ({ ...c }),);
+    ctx._commandList = listFixture.map((c,) => ({ ...c, }));
     commandPalette.handleCommandInput!.call(ctx as never, inputEvent("/INS",),);
     expect(ctx._showCommandPalette,).toBe(true,);
     expect(ctx._filteredCommands,).toEqual([{ name: "insult", descriptionKey: "k2", description: "d2", },],);
@@ -105,7 +108,7 @@ describe("commandPalette.handleCommandInput", () => {
 
   test("a bare slash shows everything; text with a space closes it", () => {
     const ctx = buildCtx();
-    ctx._commandList = listFixture.map((c,) => ({ ...c }),);
+    ctx._commandList = listFixture.map((c,) => ({ ...c, }));
     commandPalette.handleCommandInput!.call(ctx as never, inputEvent("/",),);
     expect(ctx._showCommandPalette,).toBe(true,);
     expect(ctx._filteredCommands,).toEqual(listFixture,);

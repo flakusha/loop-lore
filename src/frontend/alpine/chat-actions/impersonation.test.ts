@@ -13,7 +13,10 @@ mock.module("../htmx", () => ({
   }) satisfies ApiFetchMock,
 }),);
 
-interface Toast { type: string; message: string }
+interface Toast {
+  type: string;
+  message: string;
+}
 
 interface ImpersonationCtx {
   activeChat: string | null;
@@ -38,7 +41,7 @@ function buildCtx(overrides?: Partial<ImpersonationCtx>,): ImpersonationCtx {
     toasts: [],
     $dispatch: (event, detail,) => {
       if (event === "show-toast") {
-        ctx.toasts.push(detail as Toast,)
+        ctx.toasts.push(detail as Toast,);
       }
     },
     ...overrides,
@@ -49,13 +52,13 @@ function buildCtx(overrides?: Partial<ImpersonationCtx>,): ImpersonationCtx {
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
-});
+},);
 
 describe("impersonation.toggleImpersonate", () => {
   test("warns when there is no chat or character", async () => {
     const ctx = buildCtx({ activeChat: null, currentCharacter: null, },);
     await impersonation.toggleImpersonate!.call(ctx as never,);
-    expect(ctx.toasts,).toEqual([{ type: "warning", message: expect.any(String,) },],);
+    expect(ctx.toasts,).toEqual([{ type: "warning", message: expect.any(String,), },],);
     expect(calls,).toEqual([],);
   });
 
@@ -149,9 +152,10 @@ describe("impersonation.loadImpersonationState", () => {
 
   test("activates when the current user is impersonating", async () => {
     const ctx = buildCtx({ userRole: "gm", },);
-    handler = async () => Response.json({
-      data: [{ actor_id: "gm", impersonate_actor_id: "actor-3", },],
-    },);
+    handler = async () =>
+      Response.json({
+        data: [{ actor_id: "gm", impersonate_actor_id: "actor-3", },],
+      },);
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(true,);
     expect(ctx.impersonatingActorId,).toBe("actor-3",);
@@ -159,9 +163,10 @@ describe("impersonation.loadImpersonationState", () => {
 
   test("deactivates when the current user is not impersonating", async () => {
     const ctx = buildCtx({ impersonationActive: true, impersonatingActorId: "x", userRole: "gm", },);
-    handler = async () => Response.json({
-      data: [{ actor_id: "gm", impersonate_actor_id: null, },],
-    },);
+    handler = async () =>
+      Response.json({
+        data: [{ actor_id: "gm", impersonate_actor_id: null, },],
+      },);
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(false,);
     expect(ctx.impersonatingActorId,).toBeNull();
@@ -169,9 +174,10 @@ describe("impersonation.loadImpersonationState", () => {
 
   test("matches the current user by display name when actor_id differs", async () => {
     const ctx = buildCtx({ userRole: "nobody", userDisplayName: "mee", },);
-    handler = async () => Response.json({
-      data: [{ actor_id: "other", display_name: "mee", impersonate_actor_id: "actor-5", },],
-    },);
+    handler = async () =>
+      Response.json({
+        data: [{ actor_id: "other", display_name: "mee", impersonate_actor_id: "actor-5", },],
+      },);
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(true,);
     expect(ctx.impersonatingActorId,).toBe("actor-5",);
@@ -179,9 +185,10 @@ describe("impersonation.loadImpersonationState", () => {
 
   test("adopts an in-flight impersonation when the user has no participant row", async () => {
     const ctx = buildCtx({ userRole: "nobody", userDisplayName: "mee", },);
-    handler = async () => Response.json({
-      data: [{ actor_id: "other", impersonate_actor_id: "actor-7", },],
-    },);
+    handler = async () =>
+      Response.json({
+        data: [{ actor_id: "other", impersonate_actor_id: "actor-7", },],
+      },);
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(true,);
     expect(ctx.impersonatingActorId,).toBe("actor-7",);
@@ -189,9 +196,10 @@ describe("impersonation.loadImpersonationState", () => {
 
   test("stays inactive when no participant impersonates anyone", async () => {
     const ctx = buildCtx({ userRole: "nobody", userDisplayName: "mee", },);
-    handler = async () => Response.json({
-      data: [{ actor_id: "other", impersonate_actor_id: null, },],
-    },);
+    handler = async () =>
+      Response.json({
+        data: [{ actor_id: "other", impersonate_actor_id: null, },],
+      },);
     await impersonation.loadImpersonationState!.call(ctx as never,);
     expect(ctx.impersonationActive,).toBe(false,);
     expect(ctx.impersonatingActorId,).toBeNull();

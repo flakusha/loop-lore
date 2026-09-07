@@ -108,7 +108,7 @@ describe("createRoutes coverage", () => {
     const app = makeApp(db, null, null,);
     const res = await postMessage(app, chatA, { content: "hi", },);
     expect(res.status,).toBe(401,);
-  },);
+  });
 
   test("happy path persists the message and returns its id", async () => {
     const app = makeApp(db, owner, "user",);
@@ -122,38 +122,38 @@ describe("createRoutes coverage", () => {
       .where("id", "=", created.id,)
       .executeTakeFirst();
     expect(row?.chat_id,).toBe(chatA,);
-  },);
+  });
 
   test("reply with a same-chat parent succeeds", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await postMessage(app, chatA, { content: "reply", parentId: parentInA, },);
     expect(res.status,).toBe(201,);
-  },);
+  });
 
   test("missing parent yields 404 and writes nothing", async () => {
     const app = makeApp(db, owner, "user",);
     const ghost = uid();
     const res = await postMessage(app, chatA, { content: "orphan", parentId: ghost, },);
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("cross-chat parent yields 403", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await postMessage(app, chatB, { content: "idor", parentId: parentInA, },);
     expect(res.status,).toBe(403,);
-  },);
+  });
 
   test("unknown chat yields 404", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await postMessage(app, uid(), { content: "lost", },);
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("stranger without access yields 404", async () => {
     const app = makeApp(db, stranger, "user",);
     const res = await postMessage(app, chatA, { content: "intrude", },);
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("idempotency key collapses retried POSTs to one row", async () => {
     const app = makeApp(db, owner, "user",);
@@ -165,11 +165,11 @@ describe("createRoutes coverage", () => {
     expect(second.status,).toBe(201,);
     const secondBody: { id: string } = await second.json();
     expect(secondBody.id,).toBe(firstBody.id,);
-  },);
+  });
 
   test("empty content is rejected by validation", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await postMessage(app, chatA, { content: "", },);
     expect([400, 422,],).toContain(res.status,);
-  },);
+  });
 });

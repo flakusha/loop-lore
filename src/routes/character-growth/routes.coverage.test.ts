@@ -126,7 +126,7 @@ describe("characterGrowthRoutes coverage", () => {
       new Request(`http://localhost/api/character-growth/arc?actorId=${actorId}`,),
     );
     expect(outsider.status,).toBe(404,);
-  },);
+  });
 
   test("GET arc returns null arc plus growth mode before authoring", async () => {
     const res = await app.handle(
@@ -137,7 +137,7 @@ describe("characterGrowthRoutes coverage", () => {
     expect(body.arc,).toBeNull();
     expect(body.growthMode,).toBe("dynamic",);
     expect(typeof body.llmAssistEnabled,).toBe("boolean",);
-  },);
+  });
 
   test("GET arc reflects a stored arc stage", async () => {
     await insertCharacterArc(db, actorId, "crisis", new Date().toISOString(), {
@@ -150,7 +150,7 @@ describe("characterGrowthRoutes coverage", () => {
     const body = (await res.json()) as ArcBody;
     expect(body.arc?.currentStage,).toBe("crisis",);
     expect(body.arc?.stageDescription,).toBe("low point",);
-  },);
+  });
 
   test("GET growth-log defaults to applied entries with filters", async () => {
     const base = `http://localhost/api/character-growth/growth-log?actorId=${actorId}`;
@@ -166,7 +166,7 @@ describe("characterGrowthRoutes coverage", () => {
     expect(unknown.status,).toBe(404,);
     const def = (await (await app.handle(new Request(base,),)).json()) as LogBody;
     expect(def.entries.length,).toBe(1,);
-    expect(def.entries.every((e,) => e.status === "applied",),).toBe(true,);
+    expect(def.entries.every((e,) => e.status === "applied"),).toBe(true,);
     const all = (await (await app.handle(
       new Request(`${base}&includePending=true`,),
     )).json()) as LogBody;
@@ -186,14 +186,16 @@ describe("characterGrowthRoutes coverage", () => {
     expect(limited.entries.length,).toBe(1,);
     const badAxis = await app.handle(new Request(`${base}&axis=bogus`,),);
     expect(badAxis.status,).toBe(422,);
-  },);
+  });
 
   test("PATCH arc and confirm/reject are rejected by param validation", async () => {
-    const patch = await app.handle(new Request("http://localhost/api/character-growth/arc", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ currentStage: "crisis", },),
-    },),);
+    const patch = await app.handle(
+      new Request("http://localhost/api/character-growth/arc", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ currentStage: "crisis", },),
+      },),
+    );
     expect(patch.status,).toBe(422,);
     const confirm = await app.handle(
       new Request(`http://localhost/api/character-growth/growth-log/${uid()}/confirm`, {
@@ -207,7 +209,7 @@ describe("characterGrowthRoutes coverage", () => {
       },),
     );
     expect(reject.status,).toBe(422,);
-  },);
+  });
 });
 
 describe("character-growth helpers", () => {
@@ -219,7 +221,7 @@ describe("character-growth helpers", () => {
     expect(errResponse(new GrowthServiceError("x", "invalid_input",),).status,).toBe(400,);
     expect(errResponse(new Error("boom",),).status,).toBe(500,);
     expect(errResponse("boom",).status,).toBe(500,);
-  },);
+  });
 
   test("param guards reject nulls, non-objects, and mistyped values", () => {
     expect(getString(null, "a",),).toBeUndefined();
@@ -232,5 +234,5 @@ describe("character-growth helpers", () => {
     expect(getBoolean(null, "a",),).toBeUndefined();
     expect(getBoolean({ a: "true", }, "a",),).toBeUndefined();
     expect(getBoolean({ a: true, }, "a",),).toBe(true,);
-  },);
+  });
 });

@@ -7,23 +7,25 @@
  */
 
 import { describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import type { DB, } from "../../db/schema";
-import type { Kysely, } from "kysely";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
 import { canAccessAsset, getAsset, getAssetData, isAssetEncrypted, listAssets, } from "./read";
 
 const ASSET_ID = "d1a2b3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
-const ASSET_PATH = `raw/${ASSET_ID.slice(0, 2)}/${ASSET_ID.slice(2, 4)}/${ASSET_ID}.png`;
+const ASSET_PATH = `raw/${ASSET_ID.slice(0, 2,)}/${ASSET_ID.slice(2, 4,)}/${ASSET_ID}.png`;
 const OWNER = "read-owner";
 const OTHER = "read-other";
 
-async function makeUser(db: Kysely<DB>, username: string, display: string): Promise<string> {
+async function makeUser(db: Kysely<DB>, username: string, display: string,): Promise<string> {
   await insertUsers(db, username, display,);
-  return db.selectFrom("users",).select("id",).where("username", "=", username,).executeTakeFirstOrThrow().then((r,) => r.id);
+  return db.selectFrom("users",).select("id",).where("username", "=", username,).executeTakeFirstOrThrow().then((r,) =>
+    r.id
+  );
 }
 
 async function seedOwner(
@@ -32,11 +34,12 @@ async function seedOwner(
   writeFile = true,
 ): Promise<string> {
   const ownerId = await makeUser(db, OWNER, "Read Owner",);
-  await insertAssets(db, ownerId, "readme.png", "image/png", "image" as never, 8,
-    ASSET_PATH, { id: ASSET_ID as never },);
+  await insertAssets(db, ownerId, "readme.png", "image/png", "image" as never, 8, ASSET_PATH, {
+    id: ASSET_ID as never,
+  },);
   if (writeFile) {
-    mkdirSync(join(uploadDir, "raw", ASSET_ID.slice(0, 2), ASSET_ID.slice(2, 4),), { recursive: true, },);
-    writeFileSync(join(uploadDir, ASSET_PATH,), "PNGCONTENT");
+    mkdirSync(join(uploadDir, "raw", ASSET_ID.slice(0, 2,), ASSET_ID.slice(2, 4,),), { recursive: true, },);
+    writeFileSync(join(uploadDir, ASSET_PATH,), "PNGCONTENT",);
   }
   return ownerId;
 }
@@ -49,7 +52,7 @@ describe("getAsset", () => {
       await seedOwner(db, uploadDir,);
       const asset = await getAsset(db, ASSET_ID,);
       expect(asset,).not.toBeNull();
-      expect(asset!.filename,).toBe("readme.png");
+      expect(asset!.filename,).toBe("readme.png",);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -98,7 +101,7 @@ describe("getAssetData", () => {
       await seedOwner(db, uploadDir,);
       const data = await getAssetData(db, ASSET_ID, uploadDir,);
       expect(data,).toBeInstanceOf(Buffer,);
-      expect(data!.toString(),).toBe("PNGCONTENT");
+      expect(data!.toString(),).toBe("PNGCONTENT",);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -112,7 +115,7 @@ describe("getAssetData", () => {
       const ownerId = await seedOwner(db, uploadDir,);
       const encPath = `raw/e1/e2/secret.png`;
       mkdirSync(join(uploadDir, "raw", "e1", "e2",), { recursive: true, },);
-      writeFileSync(join(uploadDir, encPath,), "CIPHERTEXT");
+      writeFileSync(join(uploadDir, encPath,), "CIPHERTEXT",);
       await insertAssets(db, ownerId, "secret.png", "image/png", "image" as never, 8, encPath, {
         id: "encrypted-asset" as never,
         encryption_tier: "standard" as never,
@@ -132,7 +135,7 @@ describe("isAssetEncrypted", () => {
   test("returns false for a missing asset", async () => {
     const { db, sqlite, } = await createTestDb();
     try {
-      expect(await isAssetEncrypted(db, "ghost",),).toBe(false);
+      expect(await isAssetEncrypted(db, "ghost",),).toBe(false,);
     } finally {
       sqlite.close();
     }
@@ -143,7 +146,7 @@ describe("isAssetEncrypted", () => {
     const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
     try {
       await seedOwner(db, uploadDir,);
-      expect(await isAssetEncrypted(db, ASSET_ID,),).toBe(false);
+      expect(await isAssetEncrypted(db, ASSET_ID,),).toBe(false,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -155,10 +158,12 @@ describe("isAssetEncrypted", () => {
     const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
     try {
       const ownerId = await seedOwner(db, uploadDir,);
-      await insertAssets(db, ownerId, "secret.png", "image/png", "image" as never, 8,
-        "raw/e1/e2/secret.png",
-        { id: "enc-asset" as never, encryption_tier: "standard" as never, encrypted_key_id: "key-x" as never },);
-      expect(await isAssetEncrypted(db, "enc-asset",),).toBe(true);
+      await insertAssets(db, ownerId, "secret.png", "image/png", "image" as never, 8, "raw/e1/e2/secret.png", {
+        id: "enc-asset" as never,
+        encryption_tier: "standard" as never,
+        encrypted_key_id: "key-x" as never,
+      },);
+      expect(await isAssetEncrypted(db, "enc-asset",),).toBe(true,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -172,7 +177,7 @@ describe("canAccessAsset", () => {
     const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
     try {
       await seedOwner(db, uploadDir,);
-      expect(await canAccessAsset(db, ASSET_ID, "anyone", "admin",),).toBe(true);
+      expect(await canAccessAsset(db, ASSET_ID, "anyone", "admin",),).toBe(true,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -183,7 +188,7 @@ describe("canAccessAsset", () => {
     const { db, sqlite, } = await createTestDb();
     try {
       // Non-admin + no ownership → asset not found → false
-      expect(await canAccessAsset(db, "ghost", "someone", null,),).toBe(false);
+      expect(await canAccessAsset(db, "ghost", "someone", null,),).toBe(false,);
     } finally {
       sqlite.close();
     }
@@ -194,7 +199,7 @@ describe("canAccessAsset", () => {
     const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
     try {
       const ownerId = await seedOwner(db, uploadDir,);
-      expect(await canAccessAsset(db, ASSET_ID, ownerId, null,),).toBe(true);
+      expect(await canAccessAsset(db, ASSET_ID, ownerId, null,),).toBe(true,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -206,7 +211,7 @@ describe("canAccessAsset", () => {
     const uploadDir = mkdtempSync(join(tmpdir(), "ll-read-",),);
     try {
       await seedOwner(db, uploadDir,);
-      expect(await canAccessAsset(db, ASSET_ID, null, null,),).toBe(false);
+      expect(await canAccessAsset(db, ASSET_ID, null, null,),).toBe(false,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -219,11 +224,12 @@ describe("canAccessAsset", () => {
     try {
       const ownerId = await seedOwner(db, uploadDir,);
       const strangerId = await makeUser(db, OTHER, "Read Other",);
-      await insertAssets(db, ownerId, "public.png", "image/png", "image" as never, 8,
-        "raw/pu/blic/public.png",
-        { id: "public-asset" as never, visibility: "public" as never },);
+      await insertAssets(db, ownerId, "public.png", "image/png", "image" as never, 8, "raw/pu/blic/public.png", {
+        id: "public-asset" as never,
+        visibility: "public" as never,
+      },);
       // Public + non-null actor (stranger, not owner) → can access
-      expect(await canAccessAsset(db, "public-asset", strangerId, null,),).toBe(true);
+      expect(await canAccessAsset(db, "public-asset", strangerId, null,),).toBe(true,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -236,7 +242,7 @@ describe("canAccessAsset", () => {
     try {
       await seedOwner(db, uploadDir,);
       const strangerId = await makeUser(db, OTHER, "Read Other",);
-      expect(await canAccessAsset(db, ASSET_ID, strangerId, null,),).toBe(false);
+      expect(await canAccessAsset(db, ASSET_ID, strangerId, null,),).toBe(false,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -252,16 +258,17 @@ describe("canAccessAsset", () => {
       // asset_shares FKs reference actors.id — create actor mirror rows
       await db.insertInto("actors",).values({ id: ownerId, display_name: "Owner Actor", },).execute();
       await db.insertInto("actors",).values({ id: otherId, display_name: "Other Actor", },).execute();
-      await insertAssets(db, ownerId, "shared.png", "image/png", "image" as never, 8,
-        "raw/sh/are/shared.png",
-        { id: "shared-asset" as never, visibility: "shared" as never },);
+      await insertAssets(db, ownerId, "shared.png", "image/png", "image" as never, 8, "raw/sh/are/shared.png", {
+        id: "shared-asset" as never,
+        visibility: "shared" as never,
+      },);
       await db.insertInto("asset_shares",).values({
         id: "share-row-1",
         asset_id: "shared-asset",
         shared_with_id: otherId,
         shared_by_id: ownerId,
       },).execute();
-      expect(await canAccessAsset(db, "shared-asset", otherId, null,),).toBe(true);
+      expect(await canAccessAsset(db, "shared-asset", otherId, null,),).toBe(true,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -274,10 +281,11 @@ describe("canAccessAsset", () => {
     try {
       const ownerId = await seedOwner(db, uploadDir,);
       const strangerId = await makeUser(db, OTHER, "Read Other",);
-      await insertAssets(db, ownerId, "shared2.png", "image/png", "image" as never, 8,
-        "raw/s2/shared2.png",
-        { id: "shared2-asset" as never, visibility: "shared" as never },);
-      expect(await canAccessAsset(db, "shared2-asset", strangerId, null,),).toBe(false);
+      await insertAssets(db, ownerId, "shared2.png", "image/png", "image" as never, 8, "raw/s2/shared2.png", {
+        id: "shared2-asset" as never,
+        visibility: "shared" as never,
+      },);
+      expect(await canAccessAsset(db, "shared2-asset", strangerId, null,),).toBe(false,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -292,10 +300,17 @@ describe("listAssets", () => {
     try {
       await seedOwner(db, uploadDir,);
       const otherId = await makeUser(db, OTHER, "Read Other",);
-      await insertAssets(db, otherId, "other-private.png", "image/png", "image" as never, 8,
+      await insertAssets(
+        db,
+        otherId,
+        "other-private.png",
+        "image/png",
+        "image" as never,
+        8,
         "raw/op/ther/other-private.png",
-        { id: "other-private-asset" as never, visibility: "private" as never },);
-      const result = await listAssets(db, { actorRole: "admin" },);
+        { id: "other-private-asset" as never, visibility: "private" as never, },
+      );
+      const result = await listAssets(db, { actorRole: "admin", },);
       expect(result.data.length,).toBeGreaterThanOrEqual(2,);
     } finally {
       sqlite.close();
@@ -309,13 +324,20 @@ describe("listAssets", () => {
     try {
       const ownerId = await seedOwner(db, uploadDir,);
       const otherId = await makeUser(db, OTHER, "Read Other",);
-      await insertAssets(db, otherId, "other-public.png", "image/png", "image" as never, 8,
+      await insertAssets(
+        db,
+        otherId,
+        "other-public.png",
+        "image/png",
+        "image" as never,
+        8,
         "raw/op/ublic/other-public.png",
-        { id: "other-public-asset" as never, visibility: "public" as never },);
-      const result = await listAssets(db, { actorId: ownerId },);
-      expect(result.data.some((a,) => a.id === ASSET_ID,),).toBe(true);
-      expect(result.data.some((a,) => a.id === "other-public-asset",),).toBe(true);
-      expect(result.data.some((a,) => a.id === "other-private-asset",),).toBe(false);
+        { id: "other-public-asset" as never, visibility: "public" as never, },
+      );
+      const result = await listAssets(db, { actorId: ownerId, },);
+      expect(result.data.some((a,) => a.id === ASSET_ID),).toBe(true,);
+      expect(result.data.some((a,) => a.id === "other-public-asset"),).toBe(true,);
+      expect(result.data.some((a,) => a.id === "other-private-asset"),).toBe(false,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -332,8 +354,8 @@ describe("listAssets", () => {
         entity_type: "character",
         entity_id: "char-linked",
       },).execute();
-      const result = await listAssets(db, { entityType: "character", actorId: ownerId },);
-      expect(result.data.some((a,) => a.id === ASSET_ID,),).toBe(true);
+      const result = await listAssets(db, { entityType: "character", actorId: ownerId, },);
+      expect(result.data.some((a,) => a.id === ASSET_ID),).toBe(true,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -350,8 +372,8 @@ describe("listAssets", () => {
         entity_type: "world",
         entity_id: "world-linked",
       },).execute();
-      const result = await listAssets(db, { entityType: "world", entityId: "world-linked", actorId: ownerId },);
-      expect(result.data.some((a,) => a.id === ASSET_ID,),).toBe(true);
+      const result = await listAssets(db, { entityType: "world", entityId: "world-linked", actorId: ownerId, },);
+      expect(result.data.some((a,) => a.id === ASSET_ID),).toBe(true,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -375,7 +397,7 @@ describe("listAssets", () => {
         label: "hero-portrait",
         actorId: ownerId,
       },);
-      expect(result.data.some((a,) => a.id === ASSET_ID,),).toBe(true);
+      expect(result.data.some((a,) => a.id === ASSET_ID),).toBe(true,);
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
@@ -388,11 +410,11 @@ describe("listAssets", () => {
     try {
       const ownerId = await seedOwner(db, uploadDir,);
       for (let i = 0; i < 3; i++) {
-        await insertAssets(db, ownerId, `page${i}.png`, "image/png", "image" as never, 8,
-          `raw/p${i}/page${i}.png`,
-          { id: `page-asset-${i}` as never },);
+        await insertAssets(db, ownerId, `page${i}.png`, "image/png", "image" as never, 8, `raw/p${i}/page${i}.png`, {
+          id: `page-asset-${i}` as never,
+        },);
       }
-      const page1 = await listAssets(db, { page: 1, pageSize: 2, actorId: ownerId },);
+      const page1 = await listAssets(db, { page: 1, pageSize: 2, actorId: ownerId, },);
       expect(page1.data.length,).toBeLessThanOrEqual(2,);
       expect(page1.total,).toBeGreaterThan(0,);
     } finally {

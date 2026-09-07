@@ -36,12 +36,12 @@ describe("handleTestConnection", () => {
     ["missing provider field", { model: "m", },],
     ["non-string provider field", { provider: 42, },],
     ["empty provider field", { provider: "", },],
-  ])("returns 400 for %s", async (_label, body,) => {
+  ],)("returns 400 for %s", async (_label, body,) => {
     const response = await handleTestConnection(body, undefined, "user-1",);
     expect(response.status,).toBe(400,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(data.error,).toBe("provider is required",);
-  });
+  },);
 
   it("returns 404 for an unregistered provider", async () => {
     const response = await handleTestConnection(
@@ -76,8 +76,7 @@ describe("handleTestConnection", () => {
   });
 
   it("reports not-ok for a degraded provider", async () => {
-    registerFake("test-conn-degraded", async () =>
-      ({ status: "degraded" as const, latencyMs: 1, }),);
+    registerFake("test-conn-degraded", async () => ({ status: "degraded" as const, latencyMs: 1, }),);
 
     const response = await handleTestConnection(
       { provider: "test-conn-degraded", },
@@ -91,7 +90,7 @@ describe("handleTestConnection", () => {
 
   it("reports an error payload when healthCheck throws", async () => {
     registerFake("test-conn-throwing", async () => {
-      throw new Error("connection refused");
+      throw new Error("connection refused",);
     },);
 
     const response = await handleTestConnection(
