@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
-import { extractMentionedActorIds, parseMentions, resolveMention, } from "./mention-parser";
+import { detectPassToken, extractMentionedActorIds, parseMentions, resolveMention, } from "./mention-parser";
 
 beforeAll(() => {
   createLogger({ level: "error", },);
@@ -161,5 +161,38 @@ describe("Mention Parser", () => {
       ];
       expect(extractMentionedActorIds("@Dark Knight", p,),).toEqual(["a3",],);
     });
+  });
+});
+
+describe("detectPassToken (BUG-group-chat-silence-pass-not-implemented)", () => {
+  test("detects trailing [PASS]", () => {
+    expect(detectPassToken("I have nothing to add [PASS]",),).toBe(true,);
+  });
+
+  test("case-insensitive", () => {
+    expect(detectPassToken("[pass]",),).toBe(true,);
+    expect(detectPassToken("Hello [Pass]",),).toBe(true,);
+  });
+
+  test("tolerates extra whitespace inside brackets", () => {
+    expect(detectPassToken("hello [  PASS  ]",),).toBe(true,);
+  });
+
+  test("rejects mid-sentence PASS (not an opt-out)", () => {
+    expect(detectPassToken("I should PASS this turn",),).toBe(false,);
+    expect(detectPassToken("pasta for dinner",),).toBe(false,);
+  });
+
+  test("detects PASS as the entire message", () => {
+    expect(detectPassToken("[PASS]",),).toBe(true,);
+  });
+
+  test("rejects empty / whitespace-only input", () => {
+    expect(detectPassToken("",),).toBe(false,);
+    expect(detectPassToken("   ",),).toBe(false,);
+  });
+
+  test("rejects trailing text after PASS", () => {
+    expect(detectPassToken("[PASS] tomorrow",),).toBe(false,);
   });
 });
