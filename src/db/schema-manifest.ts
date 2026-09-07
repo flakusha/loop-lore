@@ -1299,6 +1299,7 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, hasDefault: true, },),
     encryption_tier: col("text", { notNull: true, hasDefault: true, },),
     encrypted_key_id: col("text",),
+    alpha_status: col("text", { notNull: true, hasDefault: true, },),
     content_hash: col("text",),
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),

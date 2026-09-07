@@ -33,6 +33,22 @@ export const AssetType = {
 } as const;
 /** */
 export type AssetType = (typeof AssetType)[keyof typeof AssetType];
+export const AssetAlphaStatus = {
+  /** Non-image assets, or images not yet inspected. */
+  Unknown: "unknown",
+  /** Opaque image — cut-out candidate for matting. */
+  Raw: "raw",
+  /** Alpha present at store time (provider transparency or upload with alpha). */
+  Native: "native",
+  /** Matting job enqueued, not yet finished. */
+  MattingPending: "matting_pending",
+  /** Cut-out derivative produced and linked. */
+  Matted: "matted",
+  /** Matting attempt failed; raw remains usable. */
+  MattingFailed: "matting_failed",
+} as const;
+/** */
+export type AssetAlphaStatus = (typeof AssetAlphaStatus)[keyof typeof AssetAlphaStatus];
 
 export const StorageBackend = {
   Local: "local",
@@ -53,6 +69,7 @@ export const AssetLinkEntity = {
   Item: "item",
   Memory: "memory",
   Message: "message",
+  Asset: "asset",
 } as const;
 /** */
 export type AssetLinkEntity = (typeof AssetLinkEntity)[keyof typeof AssetLinkEntity];

@@ -7,7 +7,13 @@
 import type { Kysely, } from "kysely";
 import type { ChatKey, } from "../../crypto/chat-keys";
 import type { PipelineConfig, } from "../../crypto/pipeline";
-import type { AssetLinkEntity, AssetType as AssetTypeT, AssetVisibility, StorageBackend, } from "../../db/enums";
+import type {
+  AssetAlphaStatus,
+  AssetLinkEntity,
+  AssetType as AssetTypeT,
+  AssetVisibility,
+  StorageBackend,
+} from "../../db/enums";
 import type { DB, } from "../../db/schema";
 
 /** */
@@ -28,6 +34,7 @@ export interface AssetRecord {
   created_at: string;
   encryption_tier: string;
   encrypted_key_id: string | null;
+  alpha_status: AssetAlphaStatus;
 }
 
 /** */
