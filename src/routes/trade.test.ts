@@ -137,6 +137,69 @@ describe("trade routes (auth-gated)", () => {
     expect(await new TradeService(db,).getBalance(seller, worldId,),).toBe(75,);
   });
 
+  test("counter + buyer-accept flows through HTTP", async () => {
+    const app = authedApp();
+    const svc = new TradeService(db,);
+    const buyerBalBefore = await svc.getBalance(buyer, worldId,);
+    const offerId = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 10,
+    },);
+
+    const counterRes = await app.handle(
+      new Request(`http://localhost/api/worlds/${worldId}/trade/offers/${offerId}/counter`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          counterActorId: seller,
+          sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
+          price: 12,
+        },),
+      },),
+    );
+    expect(counterRes.status,).toBe(200,);
+
+    const acceptRes = await app.handle(
+      new Request(`http://localhost/api/worlds/${worldId}/trade/offers/${offerId}/accept`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ actorId: buyer, },),
+      },),
+    );
+    expect(acceptRes.status,).toBe(200,);
+    expect(await svc.getBalance(buyer, worldId,),).toBe(buyerBalBefore - 12,);
+  });
+
+  test("counter rejected for foreign actor with 403", async () => {
+    const app = authedApp();
+    const svc = new TradeService(db,);
+    const offerId = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 10,
+    },);
+    const strangerUser = uid();
+    await insertUsers(db, `sx-${strangerUser}`, "Stranger", {
+      id: strangerUser, role: "solo", status: "active", settings: "{}",
+    } as never,);
+    const stranger = uid();
+    await db.insertInto("actors",).values({ id: stranger, display_name: "Stranger", user_id: strangerUser, },)
+      .execute();
+    const res = await app.handle(
+      new Request(`http://localhost/api/worlds/${worldId}/trade/offers/${offerId}/counter`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ counterActorId: stranger, price: 1, },),
+      },),
+    );
+    expect(res.status,).toBe(403,);
+  });
+
   test("execute rejects insufficient funds with 400", async () => {
     const app = authedApp();
     const res = await app.handle(

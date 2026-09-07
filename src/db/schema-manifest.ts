@@ -210,6 +210,7 @@ export const SCHEMA = new SchemaManifest()
     max_quality: col("text",),
     offered_payment: col("integer", { notNull: true, hasDefault: true, },),
     offered_materials: col("text", { notNull: true, hasDefault: true, },),
+    requested_materials: col("text", { notNull: true, hasDefault: true, },),
     status: col("text", { notNull: true, hasDefault: true, },),
     deadline: col("text",),
     created_at: col("text", { notNull: true, },),
