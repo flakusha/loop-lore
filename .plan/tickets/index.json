@@ -14246,6 +14246,17 @@
     "source": ".plan/tickets/TASK-harmonize-quest-type-taxonomy.md",
     "git_issue": "2918503"
   },
+  "TASK-HEADERS-ADDITIONAL-USEFUL-RESPONSE-HEADERS": {
+    "hash": "pending",
+    "extid": "TASK-HEADERS-ADDITIONAL-USEFUL-RESPONSE-HEADERS",
+    "type": "TASK",
+    "title": "additional useful response headers (Origin-Agent-Cluster, DNS-prefetch, api no-store, statusText, Report-To)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-headers-additional-useful-response-headers.md"
+  },
   "TASK-HEADLESS-ALTERNATIVE-FRONTENDS": {
     "hash": "190ae11",
     "extid": "TASK-HEADLESS-ALTERNATIVE-FRONTENDS",
