@@ -16,9 +16,10 @@ import { Elysia, t, } from "elysia";
 import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { requireActorFromSession, } from "../middleware/scope-by-user";
+import { resolveActorAccess, } from "./actor-access";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { extractAuth, jsonResponse, requireUserId, } from "./http-utils";
-import { authorizeActor, resolveMessageAccess, seenAtFor, } from "./message-seen-helpers";
+import { resolveMessageAccess, seenAtFor, } from "./message-seen-helpers";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -108,7 +109,7 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           // IDOR guard: the client-supplied actorId must belong to the session user.
           // Covers BOTH the reset branch (state==="unseen") and the record branch.
-          const authz = await authorizeActor(database, userId, actorId,);
+          const authz = await resolveActorAccess(database, actorId, userId,);
           if (authz) { return authz; }
 
           const chatId = await resolveMessageAccess(database, messageId, userId, userRole,);
@@ -191,7 +192,7 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
           const { actorId, } = ctx.query as { actorId: string };
 
           // IDOR guard: must own the actor whose record is being deleted.
-          const authz = await authorizeActor(database, userId, actorId,);
+          const authz = await resolveActorAccess(database, actorId, userId,);
           if (authz) { return authz; }
 
           const chatId = await resolveMessageAccess(database, messageId, userId, userRole,);

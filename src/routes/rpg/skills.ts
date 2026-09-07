@@ -15,7 +15,7 @@
  *   POST /api/rpg/skills/:id/specialize
  *   POST /api/rpg/skills/prerequisites/check
  *
- * Actor-scoped routes are gated via `requireActorAccess` so the caller must
+ * Actor-scoped routes are gated via `requireNsfwActorAccess` so the caller must
  * own the actor (or be admin/solo).
  */
 import { Elysia, t, } from "elysia";
@@ -23,7 +23,7 @@ import { parseJsonField, } from "../../rpg/shared/rpg-service-utils";
 import { SkillsService, } from "../../rpg/skills";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
-import { requireActorAccess, } from "../nsfw/shared";
+import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import {
   skillBody,
@@ -97,7 +97,7 @@ export function skillsRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
     // ── Create skill ─────────────────────────────────────
     .post(R, async (ctx: any,) => {
       const body = ctx.body as { actorId: string };
-      const userId = await requireActorAccess(database, body.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, body.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const skill = await svc().createSkill(ctx.body as never,);
