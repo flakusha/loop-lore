@@ -4,7 +4,8 @@
  * Runs the scan/cache contract under `--isolate` (the companion
  * provider-health.test.ts suite skips in that mode).
  */
-import { beforeAll, describe, expect, mock, test, } from "bun:test";
+import { beforeAll, expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import { createLogger, } from "../logger/index.js";
 import {
   getHealthCache,
@@ -15,30 +16,38 @@ import {
   scanAllProviders,
 } from "./provider-health.js";
 
-mock.module("../generation/providers/registry.js", () => ({
-  listProviders: () => [
-    { name: "healthy-prov", capabilities: { label: "Healthy", supports: [], }, },
-    { name: "sick-prov", capabilities: { label: "Sick", supports: [], }, },
-    { name: "ghost-prov", capabilities: { label: "Ghost", supports: [], }, },
-  ],
-  getProvider: (name: string,) => {
-    if (name === "healthy-prov") {
-      return {
-        healthCheck: async () => ({ status: "ok" as const, latencyMs: 12, }),
-        listModels: async () => [{ id: "m1", },],
-      };
-    }
-    if (name === "sick-prov") {
-      return {
-        healthCheck: async () => ({ status: "down" as const, error: "boom", }),
-        listModels: async () => [],
-      };
-    }
-    return undefined;
-  },
-}),);
+// mock.module is process-global in bun: without --isolate this stub replaces
+// generation/providers/registry for every later test file (registerProvider
+// writes the real Map while listProviders/getProvider read the stub), which
+// breaks llm-config, test-connection, extraction, and caption suites in
+// shared-process runs. Gate to the isolated canonical gate (`bun run
+// test:unit` / `bun run check`); plain `bun test src/` skips this file.
+if (ISOLATED) {
+  mock.module("../generation/providers/registry.js", () => ({
+    listProviders: () => [
+      { name: "healthy-prov", capabilities: { label: "Healthy", supports: [], }, },
+      { name: "sick-prov", capabilities: { label: "Sick", supports: [], }, },
+      { name: "ghost-prov", capabilities: { label: "Ghost", supports: [], }, },
+    ],
+    getProvider: (name: string,) => {
+      if (name === "healthy-prov") {
+        return {
+          healthCheck: async () => ({ status: "ok" as const, latencyMs: 12, }),
+          listModels: async () => [{ id: "m1", },],
+        };
+      }
+      if (name === "sick-prov") {
+        return {
+          healthCheck: async () => ({ status: "down" as const, error: "boom", }),
+          listModels: async () => [],
+        };
+      }
+      return undefined;
+    },
+  }),);
+}
 
-describe("provider-health (isolated)", () => {
+describeOrSkip("provider-health (isolated)", () => {
   beforeAll(() => {
     createLogger({ level: "error", },);
   },);
