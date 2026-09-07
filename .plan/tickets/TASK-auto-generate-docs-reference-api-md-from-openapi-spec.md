@@ -4,6 +4,7 @@
 # TASK: Auto-generate docs/reference/api.md from OpenAPI spec
 
 **Status:** ⬜ Not Started
+**Epic:** epic-openapi-reference
 **Priority:** Medium
 **Effort:** Medium
 
