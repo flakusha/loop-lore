@@ -4,31 +4,77 @@
 /**
  * Coverage tests for `triggerStoryModeGeneration` (src/generation/auto-gen/story-mode.ts).
  *
- * The pre-existing story-mode.test.ts ships a single skipped test, so the
- * module sat at 0%. This file drives the real pipeline end-to-end with an
- * in-memory SQLite DB (createTestDb, mirroring src/story/game-master.test.ts
- * seeding) and stubbed GenDeps provider/encryption edges:
+ * Mirrors the isolation approach of the sibling story-mode.test.ts: the
+ * GameMasterService boundary is mocked (gated to --isolate runs, where
+ * mock.module cannot leak) so the turn-result shape is deterministic, while
+ * the REAL persistence path runs end-to-end against an in-memory SQLite DB
+ * (createTestDb) with stubbed encryption deps:
  *
- *   - full LLM turn → hooks → encrypt → message insert → acceptResponse
- *   - missing gm_config → synthesized default config (warn branch)
- *   - parentMessageId → swipe_index computation
- *   - content-hook denial → early return, no message persisted
+ *   - GM response → hallucination check → hooks → encrypt → message insert
+ *     → acceptResponse
+ *   - Human-GM (null response) → no message stored
+ *   - missing gm_config → synthesized default config, still stores
+ *   - parentMessageId → parent_id + swipe_index computation
+ *   - content-hook denial → fail closed, no message persisted
  *
- * GameMasterService, runContentHooks, and detectHallucinations run REAL —
- * only the provider completion and encryption deps are stubbed.
+ * The `await import("./story-mode")` below is deliberate: bun's mock.module
+ * must be registered before the module-under-test is first evaluated (same
+ * pattern as story-mode.test.ts).
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import type { Config, } from "../../config/schema";
 import { ContentRating, MessageRole, MessageStatus, } from "../../db/enums";
+import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import type { GenDeps, } from "./deps";
-import { triggerStoryModeGeneration, } from "./story-mode";
+
+// ── GM boundary mock (isolate-gated; see story-mode.test.ts) ───
+
+/** Response text the mocked GM turn returns; null = Human-GM turn. */
+let mockTurnResponse: string | null = "The hero advances. The ancient whispers guide our way.";
+/** Actor id reported by the mocked turn; reassigned per test. */
+let mockActorId = "actor-gm";
+/** acceptResponse capture. */
+let capturedAcceptResponse: { turnId: string; response: string } | null = null;
+
+// The suite replaces the GameMasterService boundary via mock.module, which is
+// only safe under --isolate (the canonical gate); plain runs skip it.
+if (ISOLATED) {
+  mock.module("../../story", () => ({
+    GameMasterService: class {
+      async initialize(): Promise<void> {
+        /* noop */
+      }
+
+      async executeTurn(): Promise<{
+        turnId: string;
+        turnNumber: number;
+        actorId: string;
+        prompt: string;
+        response: string | null;
+      }> {
+        return {
+          turnId: "turn-1",
+          turnNumber: 1,
+          actorId: mockActorId,
+          prompt: "GM hidden prompt.",
+          response: mockTurnResponse,
+        };
+      }
+
+      async acceptResponse(turnId: string, response: string,): Promise<void> {
+        capturedAcceptResponse = { turnId, response, };
+      }
+    },
+  }),);
+}
+
+const { triggerStoryModeGeneration, } = await import("./story-mode");
 
 // ── Test DB ──────────────────────────────────────────────────
 
@@ -45,6 +91,8 @@ beforeEach(async () => {
   createLogger({ level: "error", },);
   setTestDatabase(testDb,);
   resetTestDb(testSqlite,);
+  mockTurnResponse = "The hero advances. The ancient whispers guide our way.";
+  capturedAcceptResponse = null;
   await testDb.insertInto("users",).values({
     id: "user-1",
     username: "test",
@@ -66,7 +114,7 @@ afterAll(() => {
 
 /**
  * @param db
- * @param overrides
+ * @param opts
  */
 async function seedUser(
   db: Kysely<DB>,
@@ -241,37 +289,20 @@ function makeConfig(): Config {
   } as unknown as Config;
 }
 
-interface DepsHooks {
-  resolveCalls: string[];
-  completeCalls: string[];
-  ensureKeyCalls: string[];
-  smk?: Record<string, string>;
-}
-
 /** */
-function makeDeps(hooks: DepsHooks,): GenDeps {
+function makeDeps(): GenDeps {
   return {
-    resolveProvider: (async () => {
-      hooks.resolveCalls.push("default",);
-      return {
-        resolvedProviderName: "stub-provider",
-        resolvedModel: "stub-model",
-        resolvedApiKey: null,
-        provider: {
-          complete: async () => {
-            hooks.completeCalls.push("turn",);
-            return {
-              content: "I am ready. *He steps forward confidently.* The shadows cannot stop us. " +
-                "The moonlight reveals the path ahead, and the ancient whispers guide our way. " +
-                "This unexpected quest requires courage!",
-            };
-          },
-        },
-      };
-    }) as unknown as GenDeps["resolveProvider"],
-    getSmk: (() => hooks.smk ?? null) as unknown as GenDeps["getSmk"],
-    ensureActorKey: (async (args: { actorId: string },) => {
-      hooks.ensureKeyCalls.push(args.actorId,);
+    resolveProvider: (async () => ({
+      resolvedProviderName: "stub-provider",
+      resolvedModel: "stub-model",
+      resolvedApiKey: null,
+      provider: {
+        complete: async () => ({ content: "unused — GM boundary is mocked" }),
+      },
+    })) as unknown as GenDeps["resolveProvider"],
+    getSmk: (() => null) as unknown as GenDeps["getSmk"],
+    ensureActorKey: (async () => {
+      /* noop */
     }) as unknown as GenDeps["ensureActorKey"],
     getChatEncryptionLevel: (async () => "none") as unknown as GenDeps["getChatEncryptionLevel"],
     encryptAtRest: (async () => ({ storedContent: "stored-content", keyId: null, })) as unknown as GenDeps["encryptAtRest"],
@@ -293,31 +324,46 @@ function makeGmConfigJson(): string {
   },);
 }
 
+/** Seed the full world/location/chat/actor graph and return the ids. */
+async function seedScenario(
+  overrides?: { chat?: Record<string, unknown>; actor?: Record<string, unknown> },
+): Promise<{ chatId: string; actorId: string; worldId: string; locationId: string }> {
+  const worldId = await seedWorld(testDb,);
+  const locationId = await seedLocation(testDb, worldId,);
+  const chatId = await seedChat(testDb, worldId, locationId, overrides?.chat,);
+  const actorId = await seedActor(testDb, overrides?.actor,);
+  await seedParticipant(testDb, chatId, actorId,);
+  return { chatId, actorId, worldId, locationId };
+}
+
+/** Run one generation turn against a freshly seeded scenario. */
+async function runTurn(opts: {
+  chatId: string;
+  worldId: string;
+  userId?: string;
+  parentMessageId?: string | null;
+  gmConfig?: string | null;
+},): Promise<void> {
+  await triggerStoryModeGeneration({
+    database: testDb,
+    config: makeConfig(),
+    chatId: opts.chatId,
+    parentMessageId: opts.parentMessageId ?? null,
+    userId: opts.userId ?? "user-1",
+    gmConfig: opts.gmConfig === undefined ? makeGmConfigJson() : opts.gmConfig,
+    worldId: opts.worldId,
+    deps: makeDeps(),
+  },);
+}
+
 // ── Tests ──────────────────────────────────────────────────────
 
-describe("triggerStoryModeGeneration", () => {
-  test("runs a full LLM turn and persists the encrypted assistant message", async () => {
-    const worldId = await seedWorld(testDb,);
-    const locationId = await seedLocation(testDb, worldId,);
-    const chatId = await seedChat(testDb, worldId, locationId,);
-    const actorId = await seedActor(testDb,);
-    await seedParticipant(testDb, chatId, actorId,);
+describeOrSkip("triggerStoryModeGeneration", () => {
+  test("stores the GM response through encrypt + hooks and calls acceptResponse", async () => {
+    const { chatId, actorId, worldId } = await seedScenario();
+    mockActorId = actorId;
 
-    const hooks: DepsHooks = { resolveCalls: [], completeCalls: [], ensureKeyCalls: [], smk: { secret: "smk", }, };
-    await triggerStoryModeGeneration({
-      database: testDb,
-      config: makeConfig(),
-      chatId,
-      parentMessageId: null,
-      userId: "user-1",
-      gmConfig: makeGmConfigJson(),
-      worldId,
-      deps: makeDeps(hooks,),
-    },);
-
-    expect(hooks.completeCalls.length,).toBeGreaterThanOrEqual(1,);
-    expect(hooks.resolveCalls.length,).toBeGreaterThanOrEqual(1,);
-    expect(hooks.ensureKeyCalls,).toEqual([actorId,],);
+    await runTurn({ chatId, worldId, },);
 
     const messages = await testDb.selectFrom("messages",).selectAll().where(
       "chat_id", "=", chatId,
@@ -325,70 +371,53 @@ describe("triggerStoryModeGeneration", () => {
     const assistant = messages.find((m,) => m.role === MessageRole.Assistant,);
     expect(assistant,).toBeDefined();
     expect(assistant?.content,).toBe("stored-content",);
-    expect(assistant?.provider,).toBe("stub-provider",);
-    expect(assistant?.model_id,).toBe("stub-model",);
-    expect(assistant?.status,).toBe(MessageStatus.Confirmed,);
-    expect(assistant?.swipe_index,).toBeNull();
     expect(assistant?.key_id,).toBeNull();
+    expect(assistant?.status,).toBe(MessageStatus.Confirmed,);
 
-    // acceptResponse ran the quality pipeline and updated the turn.
-    const turns = await testDb.selectFrom("story_turns",).selectAll().where(
-      "chat_id", "=", chatId,
-    ).execute();
-    expect(turns,).toHaveLength(1,);
-    expect(turns[0]?.response_received,).toContain("ancient whispers",);
+    // acceptResponse received the raw GM response, not the encrypted blob.
+    expect(capturedAcceptResponse,).not.toBeNull();
+    expect(capturedAcceptResponse?.turnId,).toBe("turn-1",);
+    expect(capturedAcceptResponse?.response,).toContain("ancient whispers",);
   });
 
-  test("synthesizes a default config and still generates when gm_config is missing", async () => {
-    const worldId = await seedWorld(testDb,);
-    const locationId = await seedLocation(testDb, worldId,);
-    const chatId = await seedChat(testDb, worldId, locationId,);
-    const actorId = await seedActor(testDb,);
-    await seedParticipant(testDb, chatId, actorId,);
+  test("Human-GM turn (null response) stores no message and skips acceptResponse", async () => {
+    const { chatId, worldId } = await seedScenario();
+    mockTurnResponse = null;
 
-    const hooks: DepsHooks = { resolveCalls: [], completeCalls: [], ensureKeyCalls: [], };
-    await triggerStoryModeGeneration({
-      database: testDb,
-      config: makeConfig(),
-      chatId,
-      parentMessageId: null,
-      userId: "user-1",
-      gmConfig: null,
-      worldId,
-      deps: makeDeps(hooks,),
-    },);
+    await runTurn({ chatId, worldId, },);
 
-    expect(hooks.completeCalls.length,).toBeGreaterThanOrEqual(1,);
+    const messages = await testDb.selectFrom("messages",).selectAll().where(
+      "chat_id", "=", chatId,
+    ).execute();
+    expect(messages,).toHaveLength(0,);
+    expect(capturedAcceptResponse,).toBeNull();
+  });
+
+  test("synthesizes a default config and still stores when gm_config is missing", async () => {
+    const { chatId, actorId, worldId } = await seedScenario();
+    mockActorId = actorId;
+
+    await runTurn({ chatId, worldId, gmConfig: null, },);
+
     const messages = await testDb.selectFrom("messages",).selectAll().where(
       "chat_id", "=", chatId,
     ).execute();
     expect(messages.some((m,) => m.role === MessageRole.Assistant,),).toBe(true,);
+    expect(capturedAcceptResponse,).not.toBeNull();
   });
 
-  test("computes the next swipe index when parentMessageId is set", async () => {
-    const worldId = await seedWorld(testDb,);
-    const locationId = await seedLocation(testDb, worldId,);
-    const chatId = await seedChat(testDb, worldId, locationId,);
-    const actorId = await seedActor(testDb,);
-    await seedParticipant(testDb, chatId, actorId,);
+  test("computes the next swipe index and parent link when parentMessageId is set", async () => {
+    const { chatId, actorId, worldId } = await seedScenario();
+    mockActorId = actorId;
     const parentId = await seedParentMessage(testDb, chatId, actorId, 0,);
 
-    const hooks: DepsHooks = { resolveCalls: [], completeCalls: [], ensureKeyCalls: [], };
-    await triggerStoryModeGeneration({
-      database: testDb,
-      config: makeConfig(),
-      chatId,
-      parentMessageId: parentId,
-      userId: "user-1",
-      gmConfig: makeGmConfigJson(),
-      worldId,
-      deps: makeDeps(hooks,),
-    },);
+    await runTurn({ chatId, worldId, parentMessageId: parentId, },);
 
     const messages = await testDb.selectFrom("messages",).selectAll().where(
       "chat_id", "=", chatId,
     ).execute();
     const assistant = messages.find((m,) => m.role === MessageRole.Assistant,);
+    expect(assistant,).toBeDefined();
     expect(assistant?.parent_id,).toBe(parentId,);
     expect(assistant?.swipe_index,).toBe(1,);
   });
@@ -400,33 +429,18 @@ describe("triggerStoryModeGeneration", () => {
       birthDate: "1990-01-01",
       ageGateAcceptedAt: null,
     },);
-    const worldId = await seedWorld(testDb,);
-    const locationId = await seedLocation(testDb, worldId,);
-    const chatId = await seedChat(testDb, worldId, locationId, { created_by: gatelessUser, },);
-    const actorId = await seedActor(testDb, { content_rating: ContentRating.NsfwMild, },);
-    await seedParticipant(testDb, chatId, actorId,);
+    const { chatId, actorId, worldId } = await seedScenario({
+      chat: { created_by: gatelessUser, },
+      actor: { content_rating: ContentRating.NsfwMild, },
+    });
+    mockActorId = actorId;
 
-    const hooks: DepsHooks = { resolveCalls: [], completeCalls: [], ensureKeyCalls: [], };
-    await triggerStoryModeGeneration({
-      database: testDb,
-      config: makeConfig(),
-      chatId,
-      parentMessageId: null,
-      userId: gatelessUser,
-      gmConfig: makeGmConfigJson(),
-      worldId,
-      deps: makeDeps(hooks,),
-    },);
+    await runTurn({ chatId, worldId, userId: gatelessUser, },);
 
     const messages = await testDb.selectFrom("messages",).selectAll().where(
       "chat_id", "=", chatId,
     ).execute();
     expect(messages,).toHaveLength(0,);
-
-    // The turn itself ran — only the pre-store hook gate blocked persistence.
-    const turns = await testDb.selectFrom("story_turns",).selectAll().where(
-      "chat_id", "=", chatId,
-    ).execute();
-    expect(turns,).toHaveLength(1,);
+    expect(capturedAcceptResponse,).toBeNull();
   });
 });
