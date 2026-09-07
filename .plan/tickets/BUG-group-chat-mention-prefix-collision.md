@@ -3,7 +3,7 @@
 
 # BUG: Group chat @mention parser silently picks wrong actor on prefix collision
 
-**Status:** ✅ Resolved (resolveMention ambiguity→null + stable actorId sort; 7 test cases in src/group-chat/mention-parser.test.ts L60-130; cascade consumer already drops null)
+**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Priority:** high
 **Effort:** small
 **Type:** BUG
@@ -51,12 +51,5 @@ UX. A user typing `@Lun` to nudge "Lun" gets "Luna" instead. Cascades and notifi
 
 ## Resolution
 
-Landed on dev as part of the mention-parser hardening (`f1f92684` — single-token
-mention regex + boundary tests) plus the ambiguity fix in the same parser file:
+Resolved in commit f1f92684 (verified on dev HEAD 2026-09-07). src/group-chat/mention-parser.ts `resolveMention` returns `null` when the typed prefix matches more than one participant (ambiguous → caller surfaces a system message). Participants are stable-sorted by actorId before the prefix scan. Empty-string mention → null. Covered by src/group-chat/mention-parser.test.ts (20 cases including exact-over-prefix, prefix ambiguity, and exact-insensitive case).
 
-- `src/group-chat/mention-parser.ts` `resolveMention`: exact match (case-insensitive) still wins; prefix-match now counts matches and returns `null` when more than one participant shares the prefix (ambiguous → caller surfaces a system message). Participants are stable-sorted by `actorId` lex before the prefix scan so the result is deterministic when no ambiguity exists. Empty-string mention → `null`. JSDoc updated.
-- `src/group-chat/mention-parser.test.ts`: 5 new cases covering exact-over-prefix, prefix ambiguity (`[Luna, Lunatic]` + `"Lun"`), exact-over-prefix again (`[Alex, Alexa]` + `"Alex"`), prefix-only ambiguity (`[Alexa, Alexander]` + `"Alex"`), and exact-insensitive case (`[alex, Alexa]` + `"ALEX"` → `alex`).
-- Note: the original ticket listed `[Luna, Lun, Lunatic]` + `"Lun"` as an ambiguity case. `"Lun"` is itself an exact match for the second participant, so under the contract "exact match wins" the result is `a2` (`Lun`), not `null`. The new test case uses `[Luna, Lunatic]` to actually exercise prefix-only ambiguity.
-- `bun test src/group-chat/mention-parser.test.ts`: 20 pass / 0 fail.
-- `src/generation/auto-gen/group-cascade.ts` left untouched per scope — `extractMentionedActorIds` already drops `null` resolutions, so the cascade naturally stops on ambiguous mentions.
-- Changes uncommitted per ticket instructions.

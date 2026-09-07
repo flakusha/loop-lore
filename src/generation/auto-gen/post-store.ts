@@ -212,8 +212,17 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
           depth: cascadeDepth,
           deps,
         },);
-      } catch {
-        /* errors logged inside triggerGroupCascade */
+      } catch (error) {
+        // Surface cascade errors via the structured logger instead of
+        // emitting a silent rejection. The cascade itself already logs
+        // per-depth failures; this is the outer safety net for the
+        // fire-and-forget wrapper (BUG-group-cascade-mid-cascade-pause-
+        // ignored — empty catch masked pause-toggled-during-cascade).
+        log.error(
+          "triggerGroupCascade failed (outer wrapper)",
+          error instanceof Error ? error : new Error(String(error,),),
+          { chatId, cascadeDepth, },
+        );
       }
     })();
   }

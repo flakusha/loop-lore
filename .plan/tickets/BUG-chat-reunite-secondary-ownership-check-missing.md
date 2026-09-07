@@ -1,6 +1,6 @@
 # BUG: chat reunite secondary ownership check missing
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Priority:** medium
 **Effort:** Small
 
@@ -21,3 +21,7 @@ Acceptance: reunite with a non-owned secondary chat is denied; owned-secondary s
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Verified on dev HEAD (2026-09-07). src/chat/service/split.ts `reuniteChats` (called by src/routes/chats/split.ts `handleReunite`) checks both `primary.created_by !== actorId` AND `secondary.created_by !== actorId` before merging — returns `{ code: "forbidden", ... }` when the user is not the secondary chat owner. The route layer passes `actorId: userId` from the session so client-supplied actor spoofing is impossible.
