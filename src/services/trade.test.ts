@@ -251,6 +251,129 @@ describe("TradeService — offer lifecycle", () => {
     expect(npcTrade,).toBeTruthy();
   });
 
+  // ── counterOffer — two-sided counter + accept ──────────
+
+  test("counterOffer moves both sides on accept after seller counter", async () => {
+    const svc = new TradeService(db,);
+    const buyerBalBefore = await svc.getBalance(buyer, worldId,);
+    const sellerBalBefore = await svc.getBalance(seller, worldId,);
+
+    const offerId = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 20,
+    },);
+
+    // Stranger cannot counter.
+    const strangerCounter = await svc.counterOffer({
+      offerId,
+      counterActorId: stranger,
+      price: 999,
+    },);
+    expect(strangerCounter.success,).toBe(false,);
+    expect(strangerCounter.reason,).toContain("participants",);
+
+    // Seller counters: demands same buyer item, offers 1 sword, raises price.
+    const counter = await svc.counterOffer({
+      offerId,
+      counterActorId: seller,
+      sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
+      price: 25,
+    },);
+    expect(counter.success,).toBe(true,);
+
+    const listed = await svc.listOffers(worldId, buyer,);
+    const found = listed.find(o => o.id === offerId,);
+    expect(found!.status,).toBe("countered",);
+    expect(found!.sellerItems.length,).toBe(1,);
+    expect(found!.price,).toBe(25,);
+
+    // Seller cannot accept their own counter.
+    const sellerAccept = await svc.acceptOffer(offerId, seller,);
+    expect(sellerAccept.success,).toBe(false,);
+    expect(sellerAccept.reason,).toContain("buyer",);
+
+    // Buyer accepts: both sides move.
+    const result = await svc.acceptOffer(offerId, buyer,);
+    expect(result.success,).toBe(true,);
+    expect(result.pricePaid,).toBe(25,);
+
+    expect(await svc.getBalance(buyer, worldId,),).toBe(buyerBalBefore - 25,);
+    expect(await svc.getBalance(seller, worldId,),).toBe(sellerBalBefore + 25,);
+
+    // Buyer gained the sword (1 from the earlier NPC buy + 1 from this
+    // counter-accept; transfer may merge into one row, so sum).
+    const buyerSwords = await db.selectFrom("world_items",)
+      .select(["quantity",],)
+      .where("owner_actor_id", "=", buyer,)
+      .where("item_id", "=", defB,)
+      .execute();
+    const totalSwords = buyerSwords.reduce((n, i,) => n + i.quantity, 0,);
+    expect(totalSwords,).toBe(2,);
+  });
+
+  test("buyer amendment returns a countered offer to pending", async () => {
+    const svc = new TradeService(db,);
+    const offerId = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 10,
+    },);
+    expect((await svc.counterOffer({ offerId, counterActorId: seller, price: 15, },)).success,).toBe(true,);
+    expect((await svc.counterOffer({ offerId, counterActorId: buyer, price: 12, },)).success,).toBe(true,);
+
+    const listed = await svc.listOffers(worldId, seller,);
+    expect(listed.find(o => o.id === offerId,)!.status,).toBe("pending",);
+
+    // Seller accepts the amended terms.
+    const result = await svc.acceptOffer(offerId, seller,);
+    expect(result.success,).toBe(true,);
+    expect(result.pricePaid,).toBe(12,);
+  });
+
+  test("expired offers reject accept and counter", async () => {
+    const svc = new TradeService(db,);
+    const past = new Date(Date.now() - 60_000,).toISOString();
+    const offerId = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 5,
+      deadline: past,
+    },);
+
+    const accept = await svc.acceptOffer(offerId, seller,);
+    expect(accept.success,).toBe(false,);
+    expect(accept.reason,).toContain("expired",);
+
+    const counter = await svc.counterOffer({ offerId, counterActorId: seller, price: 6, },);
+    expect(counter.success,).toBe(false,);
+    expect(counter.reason,).toContain("expired",);
+
+    // Lazy expiry visible in listing.
+    const listed = await svc.listOffers(worldId, buyer,);
+    expect(listed.find(o => o.id === offerId,)!.status,).toBe("expired",);
+  });
+
+  test("creator can cancel a countered offer", async () => {
+    const svc = new TradeService(db,);
+    const offerId = await svc.createOffer({
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 8,
+    },);
+    expect((await svc.counterOffer({ offerId, counterActorId: seller, price: 9, },)).success,).toBe(true,);
+    const cancel = await svc.cancelOffer(offerId, buyer,);
+    expect(cancel.success,).toBe(true,);
+  });
+
   // ── trade history ─────────────────────────────────────
 
   test("getTradeHistory filters by actor and returns all", async () => {
