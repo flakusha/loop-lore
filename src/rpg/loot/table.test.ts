@@ -1,5 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { createLootTable, mergeLootTables, } from "../../../rpg/loot/table";
+import { createLootTable, mergeLootTables, } from "../../rpg/loot/table";
 
 describe("rpg/loot/table (real logic)", () => {
   it("createLootTable maps rarity to weight", () => {
@@ -20,6 +20,8 @@ describe("rpg/loot/table (real logic)", () => {
         type: "misc",
         goldValue: 0,
         metadata: {},
+        minQuantity: 1,
+        maxQuantity: 1,
       },],
       [{
         name: "B",
@@ -30,6 +32,8 @@ describe("rpg/loot/table (real logic)", () => {
         type: "misc",
         goldValue: 0,
         metadata: {},
+        minQuantity: 1,
+        maxQuantity: 1,
       },],
     );
     expect(merged,).toHaveLength(2,);

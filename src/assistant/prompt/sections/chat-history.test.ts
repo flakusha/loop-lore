@@ -17,9 +17,9 @@
  * (worse) feeding the model garbage that looked like chat history.
  */
 import { describe, expect, test, } from "bun:test";
-import type { Generated, Kysely, } from "kysely";
+import type { Kysely, } from "kysely";
 import { encodeContent, } from "../../../content/encode";
-import type { ContentEncoding, } from "../../../content/types";
+
 import {
   MessageRole,
   MessageStatus,
@@ -100,23 +100,23 @@ describe("chatHistorySection — content_encoding pass-through vs gzip decode", 
       // encoder uses the same threshold as `prepareContentStorage` (10240).
       const longBody = "A".repeat(11_000,);
       const encoded = encodeContent(longBody, "gzip",);
-      const identityEnc = "identity" as unknown as Generated<ContentEncoding>;
-      const gzipEnc = encoded.encoding as unknown as Generated<ContentEncoding>;
-      const confirmed = MessageStatus.Confirmed as unknown as Generated<MessageStatus>;
-      const visible = MessageVisibility.Visible as unknown as Generated<MessageVisibility>;
+      const identityEnc = "identity";
+      const gzipEnc = encoded.encoding;
+      const confirmed = MessageStatus.Confirmed;
+      const visible = MessageVisibility.Visible;
       // Explicit, monotonically increasing created_at so the section's
       // "most-recent-first then reverse" ordering is deterministic.
       await insertMessages(db, chat.id, actor.id, MessageRole.User, identityBody, {
         content_encoding: identityEnc,
         status: confirmed,
         visibility: visible,
-        created_at: "2025-01-01T00:00:00.000Z" as unknown as Generated<string>,
+        created_at: "2025-01-01T00:00:00.000Z",
       },);
       await insertMessages(db, chat.id, actor.id, MessageRole.Assistant, encoded.encoded, {
         content_encoding: gzipEnc,
         status: confirmed,
         visibility: visible,
-        created_at: "2025-01-01T00:00:01.000Z" as unknown as Generated<string>,
+        created_at: "2025-01-01T00:00:01.000Z",
       },);
 
       const out = await chatHistorySection.build(ctx,);
@@ -153,8 +153,8 @@ describe("chatHistorySection — content_encoding pass-through vs gzip decode", 
       const actor = await db.selectFrom("actors",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
       const chat = await db.selectFrom("chats",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
 
-      const confirmed = MessageStatus.Confirmed as unknown as Generated<MessageStatus>;
-      const visible = MessageVisibility.Visible as unknown as Generated<MessageVisibility>;
+      const confirmed = MessageStatus.Confirmed;
+      const visible = MessageVisibility.Visible;
 
       // Seed 15 rows with strictly increasing timestamps so order is
       // unambiguous. Mark every 5th with a sentinel so we can detect which
@@ -165,7 +165,7 @@ describe("chatHistorySection — content_encoding pass-through vs gzip decode", 
         await insertMessages(db, chat.id, actor.id, role, body, {
           status: confirmed,
           visibility: visible,
-          created_at: `2025-01-01T00:00:${i.toString().padStart(2, "0",)}.000Z` as unknown as Generated<string>,
+          created_at: `2025-01-01T00:00:${i.toString().padStart(2, "0",)}.000Z`,
         },);
       }
 

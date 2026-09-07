@@ -80,7 +80,7 @@ describe("select gaps — ordering and caps", () => {
   });
 
   test("decision rejections carry the decision reason and probability", () => {
-    const memories = [makeMemory({ id: "blocked", privacy: "absolute", },),];
+    const memories = [makeMemory({ id: "blocked", privacy: "absolute" as MemoryEntry["privacy"], },),];
     const { selected, rejected, } = selectMemoriesForInjection(memories, config, ctx,);
     expect(selected,).toEqual([],);
     expect(rejected,).toHaveLength(1,);
