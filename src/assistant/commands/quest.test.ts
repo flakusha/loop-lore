@@ -35,7 +35,7 @@ async function ensureWorld(worldId: string,): Promise<void> {
 /** Resolve the registered /quest handler. */
 function questHandler(): (args: string[], ctx: CommandContext,) => Promise<CommandResult> {
   const handler = getCommand("quest",);
-  if (!handler) { throw new Error("/quest not registered"); }
+  if (!handler) { throw new Error("/quest not registered",); }
   return handler as (args: string[], ctx: CommandContext,) => Promise<CommandResult>;
 }
 
@@ -136,7 +136,7 @@ describe("/quest create", () => {
   it("creates an active discovery quest in the chat's world", async () => {
     await ensureWorld("world-create",);
     const result = await questHandler()(
-      ["create", "Defeat", "the", "dragon"],
+      ["create", "Defeat", "the", "dragon",],
       ctxFor("world-create",),
     );
     expect(result.handled,).toBe(true,);

@@ -57,7 +57,7 @@ function ctxWith(note: string | null,): AssembleContext {
     db: DUMMY_DB,
     actor,
     chat,
-    params: { actorId: "actor-1", chatId: "chat-1", modelId: "m" },
+    params: { actorId: "actor-1", chatId: "chat-1", modelId: "m", },
     isStory: true,
     tokenBudget: 4000,
   };
@@ -69,7 +69,7 @@ async function messages(
   ctx: AssembleContext,
 ): Promise<GenerationMessage[]> {
   const out = await builder.build(ctx,);
-  return Array.isArray(out) ? out : [];
+  return Array.isArray(out,) ? out : [];
 }
 
 describe("authorNoteSection (author-note placement, top of prompt)", () => {
@@ -107,7 +107,7 @@ describe("postHistorySection (post-history placement, end of prompt)", () => {
 
   test("disabled when post_history_instructions is null/blank", () => {
     expect(postHistorySection.enabled(ctxWith(null,),),).toBe(false,);
-    expect(postHistorySection.enabled(ctxWith(""),),).toBe(false,);
+    expect(postHistorySection.enabled(ctxWith("",),),).toBe(false,);
   });
 
   test("name matches the registry identifier", () => {

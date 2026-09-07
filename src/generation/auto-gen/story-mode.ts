@@ -10,7 +10,8 @@ import { type GameMasterConfig, GameMasterService, } from "../../story";
 import type { GenerateTextFn, } from "../../story/game-master";
 import { jsonParseOr, } from "../../utils";
 import { storeStoryResponse, } from "./story-store";
-export type { StoryModeOpts, } from "./story-mode-opts";
+import type { StoryModeOpts, } from "./story-mode-opts";
+export type { StoryModeOpts, };
 
 /**
  * Story mode generation using GameMasterService for full GM orchestration.

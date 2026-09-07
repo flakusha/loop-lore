@@ -119,7 +119,7 @@ describe("invitesRoutes coverage", () => {
       new Request("http://localhost/api/invites/abc/join", { method: "POST", },),
     );
     expect(join.status,).toBe(401,);
-  },);
+  });
 
   test("create + list round-trip for the owner", async () => {
     const app = makeApp(db, owner, "user",);
@@ -129,8 +129,8 @@ describe("invitesRoutes coverage", () => {
     const list = await app.handle(new Request(`http://localhost/api/chats/${chatId}/invites`,),);
     expect(list.status,).toBe(200,);
     const parsed = (await list.json()) as { data: InviteBody[] };
-    expect(parsed.data.some((i,) => i.id === invite.id,),).toBe(true,);
-  },);
+    expect(parsed.data.some((i,) => i.id === invite.id),).toBe(true,);
+  });
 
   test("create 404 for non-owner and missing chat", async () => {
     const other = makeApp(db, joiner, "user",);
@@ -151,13 +151,13 @@ describe("invitesRoutes coverage", () => {
       },),
     );
     expect(missing.status,).toBe(404,);
-  },);
+  });
 
   test("list 404 for non-owner", async () => {
     const other = makeApp(db, joiner, "user",);
     const res = await other.handle(new Request(`http://localhost/api/chats/${chatId}/invites`,),);
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("revoke removes the invite and is idempotent", async () => {
     const app = makeApp(db, owner, "user",);
@@ -171,7 +171,7 @@ describe("invitesRoutes coverage", () => {
     );
     // Revoking twice stays 204 (idempotent revoke path).
     expect(again.status,).toBe(204,);
-  },);
+  });
 
   test("revoke 404 for non-owner", async () => {
     const app = makeApp(db, owner, "user",);
@@ -181,7 +181,7 @@ describe("invitesRoutes coverage", () => {
       new Request(`http://localhost/api/chats/${chatId}/invites/${invite.id}`, { method: "DELETE", },),
     );
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("join adds the participant; repeat join reports alreadyMember", async () => {
     const app = makeApp(db, owner, "user",);
@@ -200,7 +200,7 @@ describe("invitesRoutes coverage", () => {
     expect(second.status,).toBe(200,);
     const secondBody = (await second.json()) as { alreadyMember: boolean };
     expect(secondBody.alreadyMember,).toBe(true,);
-  },);
+  });
 
   test("join 404 for unknown or revoked codes", async () => {
     const app = makeApp(db, joiner, "user",);
@@ -217,7 +217,7 @@ describe("invitesRoutes coverage", () => {
       new Request(`http://localhost/api/invites/${invite.code}/join`, { method: "POST", },),
     );
     expect(revoked.status,).toBe(404,);
-  },);
+  });
 
   test("join 410 for expired invites", async () => {
     const ownerApp = makeApp(db, owner, "user",);
@@ -228,7 +228,7 @@ describe("invitesRoutes coverage", () => {
       new Request(`http://localhost/api/invites/${invite.code}/join`, { method: "POST", },),
     );
     expect(res.status,).toBe(410,);
-  },);
+  });
   test("join 410 once maxUses is exhausted", async () => {
     // Fresh chat: neither joiner is a member, so both redemptions consume a use.
     const freshChat = uid();
@@ -245,5 +245,5 @@ describe("invitesRoutes coverage", () => {
       new Request(`http://localhost/api/invites/${invite.code}/join`, { method: "POST", },),
     );
     expect(gone.status,).toBe(410,);
-  },);
+  });
 });

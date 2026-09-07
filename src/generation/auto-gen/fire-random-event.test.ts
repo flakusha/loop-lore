@@ -10,9 +10,9 @@
  * The conflict-upsert branch needs a repeated event_id, which the
  * generator derives from a random uid — not reachable deterministically.
  */
+import type { Database, } from "bun:sqlite";
 import { beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { Database, } from "bun:sqlite";
 import type { DB, } from "../../db/schema";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import { fireRandomEvent, } from "./fire-random-event";

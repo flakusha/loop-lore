@@ -11,8 +11,8 @@
  * instead of aborting.
  */
 
-import { CaptchaBlockedError, ProviderRateLimitedError, SearchProviderError } from "./errors";
-import { maySearch, quarantineOnCaptcha, quarantineOnRateLimit, searchBreaker } from "./quarantine";
+import { CaptchaBlockedError, ProviderRateLimitedError, SearchProviderError, } from "./errors";
+import { maySearch, quarantineOnCaptcha, quarantineOnRateLimit, searchBreaker, } from "./quarantine";
 
 /** Normalized web-search hit. */
 export interface SearchResult {
@@ -25,7 +25,7 @@ export interface SearchResult {
 /** Minimal provider surface the orchestrator drives. */
 export interface SearchProvider {
   name: string;
-  search(query: string, maxResults: number): Promise<SearchResult[]>;
+  search(query: string, maxResults: number,): Promise<SearchResult[]>;
 }
 
 /** Options for a fallback search run. */
@@ -47,32 +47,32 @@ export async function searchWithFallback(
   query: string,
   opts: FallbackSearchOptions = {},
 ): Promise<SearchResult[]> {
-  const { maxResults = 10, quarantineMs } = opts;
+  const { maxResults = 10, quarantineMs, } = opts;
   const failures: string[] = [];
 
   for (const provider of providers) {
-    if (!maySearch(provider.name)) {
-      const state = searchBreaker.getState(provider.name);
-      failures.push(`${provider.name}: quarantined (${Math.ceil((state?.cooldownRemainingMs ?? 0) / 1000)}s left)`);
+    if (!maySearch(provider.name,)) {
+      const state = searchBreaker.getState(provider.name,);
+      failures.push(`${provider.name}: quarantined (${Math.ceil((state?.cooldownRemainingMs ?? 0) / 1000,)}s left)`,);
       continue;
     }
     try {
-      const results = await provider.search(query, maxResults);
-      searchBreaker.onSuccess(provider.name);
+      const results = await provider.search(query, maxResults,);
+      searchBreaker.onSuccess(provider.name,);
       return results;
     } catch (error) {
       if (error instanceof CaptchaBlockedError) {
-        quarantineOnCaptcha(error.provider, quarantineMs ?? error.quarantineMs);
+        quarantineOnCaptcha(error.provider, quarantineMs ?? error.quarantineMs,);
       } else if (error instanceof ProviderRateLimitedError) {
-        quarantineOnRateLimit(error.provider, error.retryAfterMs);
+        quarantineOnRateLimit(error.provider, error.retryAfterMs,);
       } else if (error instanceof SearchProviderError) {
-        quarantineOnRateLimit(provider.name, 30_000);
+        quarantineOnRateLimit(provider.name, 30_000,);
       } else {
-        searchBreaker.onFailure(provider.name);
+        searchBreaker.onFailure(provider.name,);
       }
-      failures.push(`${provider.name}: ${(error as Error).message}`);
+      failures.push(`${provider.name}: ${(error as Error).message}`,);
     }
   }
 
-  throw new Error(`All search providers failed: ${failures.join("; ")}`);
+  throw new Error(`All search providers failed: ${failures.join("; ",)}`,);
 }

@@ -760,7 +760,7 @@ describe("triggerGroupCascade edge cases", () => {
 
     const deps = {
       ...createMockDeps(),
-      decryptAtRest: mock(async () => "nothing to add [PASS]",),
+      decryptAtRest: mock(async () => "nothing to add [PASS]"),
     };
     mockStartGenerationTracking.mockClear();
     await triggerGroupCascade({

@@ -105,7 +105,7 @@ describe("updateRoutes coverage", () => {
       },),
     );
     expect(vis.status,).toBe(401,);
-  },);
+  });
 
   test("soft delete hides the message", async () => {
     const id = await seedMessage("soft me",);
@@ -119,7 +119,7 @@ describe("updateRoutes coverage", () => {
       .executeTakeFirst();
     expect(row?.visibility,).toBe("hidden_by_user",);
     expect(row?.hidden_by,).toBe(owner,);
-  },);
+  });
 
   test("hard delete by author wipes the row", async () => {
     const id = await seedMessage("wipe me",);
@@ -130,7 +130,7 @@ describe("updateRoutes coverage", () => {
     expect(res.status,).toBe(204,);
     const gone = await db.selectFrom("messages",).select("id",).where("id", "=", id,).executeTakeFirst();
     expect(gone,).toBeUndefined();
-  },);
+  });
 
   test("hard delete guards authorship but allows chat admins", async () => {
     const id = await seedMessage("not yours",);
@@ -155,7 +155,7 @@ describe("updateRoutes coverage", () => {
       new Request(`http://localhost/api/messages/${id}?hard=true`, { method: "DELETE", },),
     );
     expect(wiped.status,).toBe(204,);
-  },);
+  });
 
   test("delete 404 for missing message", async () => {
     const app = makeApp(db, owner, "user",);
@@ -163,7 +163,7 @@ describe("updateRoutes coverage", () => {
       new Request(`http://localhost/api/messages/${uid()}`, { method: "DELETE", },),
     );
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("patch rejects empty content", async () => {
     const id = await seedMessage("patch me",);
@@ -178,7 +178,7 @@ describe("updateRoutes coverage", () => {
       );
       expect(res.status,).toBe(400,);
     }
-  },);
+  });
 
   test("patch happy path edits a user message", async () => {
     const id = await seedMessage("before",);
@@ -200,7 +200,7 @@ describe("updateRoutes coverage", () => {
       .where("id", "=", id,)
       .executeTakeFirst();
     expect(row?.edited_at,).not.toBeNull();
-  },);
+  });
 
   test("patch 404 for missing message and 403 for non-author", async () => {
     const id = await seedMessage("mine",);
@@ -222,7 +222,7 @@ describe("updateRoutes coverage", () => {
       },),
     );
     expect(denied.status,).toBe(403,);
-  },);
+  });
 
   test("patch rejects non-user roles", async () => {
     const id = await seedMessage("assistant text", MessageRole.Assistant,);
@@ -235,7 +235,7 @@ describe("updateRoutes coverage", () => {
       },),
     );
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("visibility update round-trips", async () => {
     const id = await seedMessage("visible?",);
@@ -255,7 +255,7 @@ describe("updateRoutes coverage", () => {
       .executeTakeFirst();
     expect(row?.visibility,).toBe("redacted",);
     expect(row?.hidden_reason,).toBe("test",);
-  },);
+  });
 
   test("visibility 404 for missing message and stranger", async () => {
     const id = await seedMessage("v",);
@@ -277,7 +277,7 @@ describe("updateRoutes coverage", () => {
       },),
     );
     expect(denied.status,).toBe(404,);
-  },);
+  });
 
   test("status update requires admin but succeeds for admin", async () => {
     const id = await seedMessage("status me",);
@@ -301,5 +301,5 @@ describe("updateRoutes coverage", () => {
     expect(ok.status,).toBe(200,);
     const row = await db.selectFrom("messages",).select("status",).where("id", "=", id,).executeTakeFirst();
     expect(row?.status,).toBe("failed",);
-  },);
+  });
 });

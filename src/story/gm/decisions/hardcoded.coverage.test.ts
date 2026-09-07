@@ -9,8 +9,8 @@
 import { describe, expect, test, } from "bun:test";
 import { QuestType, } from "../../../db/enums.js";
 import type { StoryContext, } from "../../types.js";
-import type { GmDecisionDeps, } from "./types.js";
 import { hardcodedDecision, } from "./hardcoded.js";
+import type { GmDecisionDeps, } from "./types.js";
 
 /**
  * @param partial
@@ -177,7 +177,11 @@ describe("hardcodedDecision", () => {
 
   test("gm guidance constraints and scene direction are injected", async () => {
     const d = await hardcodedDecision(
-      deps({ gmGuidance: { constraints: ["no violence", "stay inside",], sceneDescription: "Rain hammers the roof.", }, } as never,),
+      deps(
+        {
+          gmGuidance: { constraints: ["no violence", "stay inside",], sceneDescription: "Rain hammers the roof.", },
+        } as never,
+      ),
       context(),
       "actor-1",
     );

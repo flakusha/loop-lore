@@ -91,7 +91,7 @@ function routeResponses(opts?: {
 afterEach(() => {
   calls = [];
   handler = async () => Response.json([],);
-});
+},);
 
 describe("moodStateLoading.loadMood", () => {
   test("returns early without an active chat", async () => {
@@ -119,7 +119,7 @@ describe("moodStateLoading.loadMood", () => {
 
   test("handles non-array participant envelopes", async () => {
     const ctx = buildCtx();
-    routeResponses({ participants: { data: [] }, },);
+    routeResponses({ participants: { data: [], }, },);
     await moodStateLoading.loadMood!.call(ctx,);
     expect(calls,).toHaveLength(1,);
   });
@@ -137,7 +137,7 @@ describe("moodStateLoading.loadMood", () => {
     },);
     routeResponses({ mood: { happiness: 72, }, },);
     await moodStateLoading.loadMood!.call(ctx,);
-    expect(calls.some((c,) => c.url === "/api/actors/actor-9/mood?worldId=w1",),).toBe(true,);
+    expect(calls.some((c,) => c.url === "/api/actors/actor-9/mood?worldId=w1"),).toBe(true,);
     expect(ctx._activeChatWorldId,).toBe("w1",);
     expect(ctx._mood,).toEqual({
       happiness: 72,
@@ -211,7 +211,7 @@ describe("moodStateLoading.updateMoodHappiness", () => {
     const ctx = buildCtx({ _mood: mood(50,), },);
     routeResponses({},);
     await moodStateLoading.updateMoodHappiness!.call(ctx, 66,);
-    const put = calls.find((c,) => c.opts.method === "PUT",)!;
+    const put = calls.find((c,) => c.opts.method === "PUT")!;
     expect(put.url,).toBe("/api/actors/actor-9/mood",);
     expect(JSON.parse(String(put.opts.body,),),).toEqual({ happiness: 66, worldId: undefined, },);
     expect(ctx._mood!.happiness,).toBe(66,);
@@ -240,7 +240,7 @@ describe("moodStateLoading.applyMoodDelta", () => {
     const ctx = buildCtx({ _mood: mood(30,), },);
     routeResponses({ mood: { happiness: 35, current_mood: "neutral", }, },);
     await moodStateLoading.applyMoodDelta!.call(ctx, 5,);
-    const post = calls.find((c,) => c.opts.method === "POST",)!;
+    const post = calls.find((c,) => c.opts.method === "POST")!;
     expect(post.url,).toBe("/api/actors/actor-9/mood/delta",);
     expect(JSON.parse(String(post.opts.body,),),).toEqual({ delta: 5, worldId: undefined, },);
     expect(ctx._mood!.happiness,).toBe(35,);

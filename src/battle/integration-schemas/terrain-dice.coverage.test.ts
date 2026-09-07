@@ -8,11 +8,11 @@
  */
 import { describe, expect, test, } from "bun:test";
 import {
+  type DiceType,
   makeSkillCheck,
   rollDice,
-  STANDARD_DC,
-  type DiceType,
   type RollModifier,
+  STANDARD_DC,
 } from "./dice.js";
 import {
   getCombatTerrainModifiers,
@@ -23,7 +23,7 @@ describe("getCombatTerrainModifiers", () => {
   test("forest grants dodge cover but hurts ranged accuracy", () => {
     const mods = getCombatTerrainModifiers("forest",);
     expect(mods,).toHaveLength(2,);
-    expect(mods.map((m,) => m.id,),).toEqual(["forest_dodge", "forest_ranged",],);
+    expect(mods.map((m,) => m.id),).toEqual(["forest_dodge", "forest_ranged",],);
     expect(mods[0],).toMatchObject({ affectedStat: "dodgeChance", value: 15, source: "terrain", },);
     expect(mods[1],).toMatchObject({ affectedStat: "accuracy", value: -10, },);
   });
@@ -31,7 +31,7 @@ describe("getCombatTerrainModifiers", () => {
   test("mountain trades defense for speed", () => {
     const mods = getCombatTerrainModifiers("mountain",);
     expect(mods,).toHaveLength(2,);
-    expect(mods.map((m,) => m.id,),).toEqual(["mountain_defense", "mountain_speed",],);
+    expect(mods.map((m,) => m.id),).toEqual(["mountain_defense", "mountain_speed",],);
   });
 
   test("open ground, desert, urban, and dungeon are unmodified", () => {
@@ -42,14 +42,14 @@ describe("getCombatTerrainModifiers", () => {
 
   test("swamp slows and clumsies", () => {
     const mods = getCombatTerrainModifiers("swamp",);
-    expect(mods.map((m,) => m.id,),).toEqual(["swamp_speed", "swamp_dodge",],);
+    expect(mods.map((m,) => m.id),).toEqual(["swamp_speed", "swamp_dodge",],);
     expect(mods[0]?.value,).toBe(-20,);
   });
 
   test("underwater heavily slows but boosts water magic (percentage)", () => {
     const mods = getCombatTerrainModifiers("underwater",);
     expect(mods,).toHaveLength(2,);
-    const magic = mods.find((m,) => m.id === "water_magic",);
+    const magic = mods.find((m,) => m.id === "water_magic");
     expect(magic?.isPercentage,).toBe(true,);
     expect(magic?.value,).toBe(20,);
   });
@@ -168,6 +168,6 @@ describe("makeSkillCheck", () => {
   test("extra modifiers are forwarded into the roll", () => {
     const extra: RollModifier[] = [{ source: "guidance", value: 4, type: "bonus", },];
     const check = makeSkillCheck(0, STANDARD_DC["trivial"]!, extra,);
-    expect(check.roll.modifiers.map((m,) => m.source,),).toContain("guidance",);
+    expect(check.roll.modifiers.map((m,) => m.source),).toContain("guidance",);
   });
 });

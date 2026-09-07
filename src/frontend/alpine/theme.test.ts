@@ -8,7 +8,7 @@ describe("theme registry", () => {
       .__THEMES;
     expect(Array.isArray(themes,),).toBe(true,);
     expect(themes,).toHaveLength(10,);
-    const ids = themes!.map((t,) => t.id,);
+    const ids = themes!.map((t,) => t.id);
     expect(new Set(ids,).size,).toBe(10,);
     for (const theme of themes!) {
       expect(theme.name.length,).toBeGreaterThan(0,);
@@ -18,7 +18,7 @@ describe("theme registry", () => {
 
   test("includes the default and no-icons themes", () => {
     const themes = (globalThis as unknown as { __THEMES?: { id: string }[] }).__THEMES!;
-    expect(themes.some((t,) => t.id === "default",),).toBe(true,);
-    expect(themes.some((t,) => t.id === "no-icons",),).toBe(true,);
+    expect(themes.some((t,) => t.id === "default"),).toBe(true,);
+    expect(themes.some((t,) => t.id === "no-icons"),).toBe(true,);
   });
 });

@@ -56,24 +56,24 @@ describe("getPersonalityMoraleModifier", () => {
   });
 
   test("brave loyal commander hits the +20 clamp", () => {
-    const m = getPersonalityMoraleModifier(personality({ courage: 100, loyalty: 100, caution: 0, }),);
+    const m = getPersonalityMoraleModifier(personality({ courage: 100, loyalty: 100, caution: 0, },),);
     expect(m,).toBe(20,);
   });
 
   test("cowardly disloyal worrier hits the -20 clamp", () => {
-    const m = getPersonalityMoraleModifier(personality({ courage: 0, loyalty: 0, caution: 100, }),);
+    const m = getPersonalityMoraleModifier(personality({ courage: 0, loyalty: 0, caution: 100, },),);
     expect(m,).toBe(-20,);
   });
 
   test("extreme values stay clamped, never beyond ±20", () => {
-    const m = getPersonalityMoraleModifier(personality({ courage: 100, loyalty: 100, caution: 0, }),);
+    const m = getPersonalityMoraleModifier(personality({ courage: 100, loyalty: 100, caution: 0, },),);
     expect(m,).toBeLessThanOrEqual(20,);
     expect(m,).toBeGreaterThanOrEqual(-20,);
   });
 
   test("caution drags morale down when outnumbered-minded", () => {
-    const calm = getPersonalityMoraleModifier(personality({ caution: 0, }),);
-    const wary = getPersonalityMoraleModifier(personality({ caution: 100, }),);
+    const calm = getPersonalityMoraleModifier(personality({ caution: 0, },),);
+    const wary = getPersonalityMoraleModifier(personality({ caution: 100, },),);
     expect(wary,).toBeLessThan(calm,);
   });
 });
@@ -81,7 +81,7 @@ describe("getPersonalityMoraleModifier", () => {
 describe("wouldNPCSurrender", () => {
   test("courage above 80 never surrenders (deterministic)", () => {
     for (const hp of [1, 10, 50, 100,]) {
-      const r = wouldNPCSurrender(personality({ courage: 81, }), hp, 100, [],);
+      const r = wouldNPCSurrender(personality({ courage: 81, },), hp, 100, [],);
       expect(r.surrender,).toBe(false,);
       expect(r.confidence,).toBe(90,);
     }
@@ -122,7 +122,7 @@ describe("wouldNPCSurrender", () => {
       memory("defeat", -30,),
       memory("defeat", -30,),
     ];
-    const r = wouldNPCSurrender(personality({ courage: 0, }), 1, 100, defeats,);
+    const r = wouldNPCSurrender(personality({ courage: 0, },), 1, 100, defeats,);
     expect(r.confidence,).toBe(95,);
   });
 
@@ -135,12 +135,12 @@ describe("wouldNPCSurrender", () => {
 
 describe("shouldRememberBattle", () => {
   test("zero intelligence never remembers (deterministic)", () => {
-    expect(shouldRememberBattle(personality({ intelligence: 0, }), "defeat", 99,),).toBe(false,);
-    expect(shouldRememberBattle(personality({ intelligence: 0, }), "victory", 99,),).toBe(false,);
+    expect(shouldRememberBattle(personality({ intelligence: 0, },), "defeat", 99,),).toBe(false,);
+    expect(shouldRememberBattle(personality({ intelligence: 0, },), "victory", 99,),).toBe(false,);
   });
 
   test("genius crushed by a stronger foe always remembers (deterministic)", () => {
-    expect(shouldRememberBattle(personality({ intelligence: 100, }), "defeat", 20,),).toBe(true,);
+    expect(shouldRememberBattle(personality({ intelligence: 100, },), "defeat", 20,),).toBe(true,);
   });
 
   test("mid-range cases return a boolean", () => {

@@ -11,14 +11,22 @@
  */
 import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { setTestDatabase, } from "../../db/index";
 import { AssetLinkEntity, AssetType, MessageRole, ModelRole, } from "../../db/enums";
+import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
+import { registerProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../../generation/providers/types";
 import { createLogger, } from "../../logger";
-import { registerProvider, } from "../../generation/providers/registry";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertAssetLinks, insertAssets, insertActors, insertChats, insertMessages, insertModelRoleOverrides, insertUsers, } from "../../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertAssetLinks,
+  insertAssets,
+  insertChats,
+  insertMessages,
+  insertModelRoleOverrides,
+  insertUsers,
+} from "../../test-utils/insert-helpers";
 import "./caption";
 import { type CommandContext, type CommandResult, getCommand, } from "./registry";
 
@@ -30,13 +38,13 @@ beforeAll(async () => {
   createLogger({ level: "error", },);
   const testDb = await createTestDb();
   db = testDb.db;
-  setTestDatabase(db);
+  setTestDatabase(db,);
   await insertUsers(db, "caption-tester", "Caption Tester", { id: USER, password_hash: "hash", } as never,);
   await insertUsers(db, "other-user", "Other User", { id: "some-other-user", password_hash: "hash", } as never,);
   await insertActors(db, "Caption Speaker", { id: "caption-actor", owner_id: USER, } as never,);
   // Role override so the route resolves the mock provider deterministically.
   await insertModelRoleOverrides(db, "mock", "mock-caption-model", { role: ModelRole.Captioning, } as never,);
-  registerProvider("mock", makeStubProvider('"  A towering castle at dusk.  "'),);
+  registerProvider("mock", makeStubProvider('"  A towering castle at dusk.  "',),);
 },);
 
 afterAll(() => {
@@ -71,7 +79,7 @@ function makeStubProvider(caption: string,): LLMProvider {
 /** Resolve the registered /caption handler. */
 function captionHandler(): (args: string[], ctx: CommandContext,) => Promise<CommandResult> {
   const handler = getCommand("caption",);
-  if (!handler) { throw new Error("/caption not registered"); }
+  if (!handler) { throw new Error("/caption not registered",); }
   return handler as (args: string[], ctx: CommandContext,) => Promise<CommandResult>;
 }
 
@@ -117,21 +125,31 @@ describe("/caption", () => {
   it("reports when an explicit message id has no image assets", async () => {
     const messageId = await seedMessage(crypto.randomUUID(),);
     const result = await captionHandler()([messageId,], ctxFor(),);
-    expect(result.systemMessage,).toBe(`No image assets found for message ${messageId}.`);
+    expect(result.systemMessage,).toBe(`No image assets found for message ${messageId}.`,);
   });
 
   it("finds the latest image-bearing message via the reversed scan", async () => {
     await seedMessage("msg-no-image",);
     const withImage = "msg-with-image";
-    await insertMessages(db, "chat-1", "caption-actor", MessageRole.Assistant, "an image", { id: withImage, } as never,);
+    await insertMessages(
+      db,
+      "chat-1",
+      "caption-actor",
+      MessageRole.Assistant,
+      "an image",
+      { id: withImage, } as never,
+    );
     await seedImageAsset(withImage,);
 
-    const result = await captionHandler()([], ctxFor({
-      messages: [
-        { id: "msg-no-image", role: "user", content: "text only", created_at: new Date().toISOString(), },
-        { id: withImage, role: "assistant", content: "an image", created_at: new Date().toISOString(), },
-      ],
-    },),);
+    const result = await captionHandler()(
+      [],
+      ctxFor({
+        messages: [
+          { id: "msg-no-image", role: "user", content: "text only", created_at: new Date().toISOString(), },
+          { id: withImage, role: "assistant", content: "an image", created_at: new Date().toISOString(), },
+        ],
+      },),
+    );
 
     expect(result.action,).toBe("caption-image",);
     expect(result.systemMessage,).toContain("**Image captions:**",);
@@ -146,9 +164,12 @@ describe("/caption", () => {
     await seedMessage(messageId,);
     const assetId = await seedImageAsset(messageId,);
 
-    const result = await captionHandler()([messageId,], ctxFor({
-      messages: [{ id: messageId, role: "user", content: "x", created_at: new Date().toISOString(), },],
-    },),);
+    const result = await captionHandler()(
+      [messageId,],
+      ctxFor({
+        messages: [{ id: messageId, role: "user", content: "x", created_at: new Date().toISOString(), },],
+      },),
+    );
 
     expect(result.handled,).toBe(true,);
     const row = await db.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirstOrThrow();
@@ -160,7 +181,7 @@ describe("/caption", () => {
     await seedMessage(messageId,);
     await seedImageAsset(messageId,);
 
-    const result = await captionHandler()([messageId,], ctxFor({ userId: undefined, },));
+    const result = await captionHandler()([messageId,], ctxFor({ userId: undefined, },),);
     expect(result.systemMessage,).toContain("**Caption generation failed:**",);
     expect(result.systemMessage,).toContain("Authentication required",);
   });
@@ -170,10 +191,13 @@ describe("/caption", () => {
     await seedMessage(messageId,);
     await seedImageAsset(messageId, "some-other-user",);
 
-    const result = await captionHandler()([messageId,], ctxFor({
-      messages: [{ id: messageId, role: "user", content: "x", created_at: new Date().toISOString(), },],
-    },),);
+    const result = await captionHandler()(
+      [messageId,],
+      ctxFor({
+        messages: [{ id: messageId, role: "user", content: "x", created_at: new Date().toISOString(), },],
+      },),
+    );
 
-    expect(result.systemMessage,).toBe("No captions could be generated for the image.");
+    expect(result.systemMessage,).toBe("No captions could be generated for the image.",);
   });
 });

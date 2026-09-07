@@ -86,19 +86,19 @@ describe("story-items handlers coverage", () => {
     expect(enumOr("nope", Object.values(ItemCategory,), "other",),).toBe("other",);
     expect(enumOr(42, Object.values(ItemCategory,), "other",),).toBe("other",);
     expect(enumOr(undefined, Object.values(ItemCategory,), "other",),).toBe("other",);
-  },);
+  });
 
   test("checkWorldOwnership gates on owner, admin, and existence", async () => {
     expect(await checkWorldOwnership(db, worldId, owner, "user",),).toBe(true,);
     expect(await checkWorldOwnership(db, worldId, stranger, "user",),).toBe(false,);
     expect(await checkWorldOwnership(db, worldId, stranger, "admin",),).toBe(true,);
     expect(await checkWorldOwnership(db, uid(), owner, "user",),).toBe(false,);
-  },);
+  });
 
   test("definitions POST requires a name", async () => {
     const res = await handleDefinitions(db, "POST", worldId, owner, "user", 1, 20, undefined, {},);
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("definitions POST creates and GET lists with pagination", async () => {
     const created = await handleDefinitions(
@@ -122,8 +122,8 @@ describe("story-items handlers coverage", () => {
     const listed = await handleDefinitions(db, "GET", worldId, owner, "user", 1, 20, "weapon",);
     expect(listed.status,).toBe(200,);
     const page: { data: { id: string }[]; pagination: { total: number } } = await listed.json();
-    expect(page.data.some((d,) => d.id === createdBody.id,),).toBe(true,);
-  },);
+    expect(page.data.some((d,) => d.id === createdBody.id),).toBe(true,);
+  });
 
   test("definitions reject strangers and missing worlds", async () => {
     const deniedGet = await handleDefinitions(db, "GET", worldId, stranger, "user", 1, 20,);
@@ -134,7 +134,7 @@ describe("story-items handlers coverage", () => {
     expect(deniedPost.status,).toBe(404,);
     const missing = await handleDefinitions(db, "GET", uid(), owner, "user", 1, 20,);
     expect(missing.status,).toBe(404,);
-  },);
+  });
 
   test("definition GET reflects PUT updates", async () => {
     const created = await handleDefinitions(
@@ -162,7 +162,7 @@ describe("story-items handlers coverage", () => {
     expect(updated.status,).toBe(200,);
     const updatedBody: { name: string } = await updated.json();
     expect(updatedBody.name,).toBe("Aegis",);
-  },);
+  });
 
   test("definition GET/PUT 404 for strangers, missing items, and missing worlds", async () => {
     const created = await handleDefinitions(
@@ -188,7 +188,7 @@ describe("story-items handlers coverage", () => {
       name: "Z",
     },);
     expect(deniedPut.status,).toBe(404,);
-  },);
+  });
 
   test("delete definition wipes rows; strangers are denied", async () => {
     const created = await handleDefinitions(
@@ -209,7 +209,7 @@ describe("story-items handlers coverage", () => {
     expect(deleted.status,).toBe(204,);
     const gone = await handleDefinition(db, "GET", worldId, createdBody.id, owner, "user",);
     expect(gone.status,).toBe(404,);
-  },);
+  });
 
   test("instances list seeded rows; strangers are denied", async () => {
     const created = await handleDefinitions(
@@ -230,11 +230,11 @@ describe("story-items handlers coverage", () => {
     const listed = await handleInstances(db, worldId, createdBody.id, owner, "user",);
     expect(listed.status,).toBe(200,);
     const rows: { id: string }[] = await listed.json();
-    expect(rows.some((r,) => r.id === instanceId,),).toBe(true,);
+    expect(rows.some((r,) => r.id === instanceId),).toBe(true,);
 
     const denied = await handleInstances(db, worldId, createdBody.id, stranger, "user",);
     expect(denied.status,).toBe(404,);
-  },);
+  });
 
   test("transfer and destroy instance round-trip; strangers are denied", async () => {
     const created = await handleDefinitions(
@@ -266,5 +266,5 @@ describe("story-items handlers coverage", () => {
     expect(deniedDestroy.status,).toBe(404,);
     const destroyed = await handleInstance(db, worldId, instanceId, owner, "user",);
     expect(destroyed.status,).toBe(204,);
-  },);
+  });
 });

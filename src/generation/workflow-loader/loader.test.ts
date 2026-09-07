@@ -30,7 +30,7 @@ async function fixtures(): Promise<void> {
 beforeAll(async () => {
   resetWorkflowLoaderForTests();
   await fixtures();
-});
+},);
 
 afterAll(async () => {
   await rm(DIR, { recursive: true, force: true, },);

@@ -115,7 +115,7 @@ describe("readRoutes coverage", () => {
       },),
     );
     expect(select.status,).toBe(401,);
-  },);
+  });
 
   test("list returns paginated messages with content", async () => {
     const app = makeApp(db, owner, "user",);
@@ -127,9 +127,9 @@ describe("readRoutes coverage", () => {
     };
     expect(parsed.pagination.total,).toBeGreaterThanOrEqual(4,);
     expect(parsed.data.length,).toBeGreaterThan(0,);
-    const first = parsed.data.find((m,) => m.id === firstMessageId,);
+    const first = parsed.data.find((m,) => m.id === firstMessageId);
     expect(first?.content,).toBe("hello",);
-  },);
+  });
 
   test("list honors pageSize and parentId filter", async () => {
     const app = makeApp(db, owner, "user",);
@@ -144,11 +144,11 @@ describe("readRoutes coverage", () => {
     );
     expect(filtered.status,).toBe(200,);
     const filteredBody = (await filtered.json()) as { data: { id: string }[] };
-    const ids = filteredBody.data.map((m,) => m.id,);
+    const ids = filteredBody.data.map((m,) => m.id);
     expect(ids,).toContain(swipeA,);
     expect(ids,).toContain(swipeB,);
     expect(ids,).not.toContain(firstMessageId,);
-  },);
+  });
 
   test("list 404 for missing chat and stranger", async () => {
     const app = makeApp(db, owner, "user",);
@@ -161,7 +161,7 @@ describe("readRoutes coverage", () => {
       new Request(`http://localhost/api/chats/${chatId}/messages`,),
     );
     expect(denied.status,).toBe(404,);
-  },);
+  });
 
   test("get single message by id", async () => {
     const app = makeApp(db, owner, "user",);
@@ -170,7 +170,7 @@ describe("readRoutes coverage", () => {
     const parsed = (await res.json()) as { id: string; content: string };
     expect(parsed.id,).toBe(firstMessageId,);
     expect(parsed.content,).toBe("hello",);
-  },);
+  });
 
   test("get 404 for missing id and stranger", async () => {
     const app = makeApp(db, owner, "user",);
@@ -181,24 +181,24 @@ describe("readRoutes coverage", () => {
       new Request(`http://localhost/api/messages/${firstMessageId}`,),
     );
     expect(denied.status,).toBe(404,);
-  },);
+  });
 
   test("variants lists sibling swipes", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await app.handle(new Request(`http://localhost/api/messages/${swipeA}/variants`,),);
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as { id: string; content: string }[];
-    const ids = parsed.map((m,) => m.id,);
+    const ids = parsed.map((m,) => m.id);
     expect(ids,).toContain(swipeA,);
     expect(ids,).toContain(swipeB,);
-    expect(parsed.find((m,) => m.id === swipeB,)?.content,).toBe("swipe two",);
-  },);
+    expect(parsed.find((m,) => m.id === swipeB)?.content,).toBe("swipe two",);
+  });
 
   test("variants 404 for missing id", async () => {
     const app = makeApp(db, owner, "user",);
     const res = await app.handle(new Request(`http://localhost/api/messages/${uid()}/variants`,),);
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("select variant returns the indexed sibling", async () => {
     const app = makeApp(db, owner, "user",);
@@ -212,7 +212,7 @@ describe("readRoutes coverage", () => {
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as { id: string };
     expect(parsed.id,).toBe(swipeB,);
-  },);
+  });
 
   test("select variant 400 for out-of-range index", async () => {
     const app = makeApp(db, owner, "user",);
@@ -224,7 +224,7 @@ describe("readRoutes coverage", () => {
       },),
     );
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("select variant 404 for missing id", async () => {
     const app = makeApp(db, owner, "user",);
@@ -236,5 +236,5 @@ describe("readRoutes coverage", () => {
       },),
     );
     expect(res.status,).toBe(404,);
-  },);
+  });
 });

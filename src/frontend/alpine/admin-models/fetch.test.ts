@@ -50,7 +50,7 @@ describe("capabilitiesState fetch", () => {
     expect(ctx.modelCapabilities,).toHaveLength(1,);
     expect(ctx.loadingCapabilities,).toBe(false,);
     expect(calls[0]!.url,).toBe("/api/admin/model-capabilities",);
-  },);
+  });
 
   test("loadModelCapabilities appends provider filter and keeps stale data on error", async () => {
     mockFetch(200, { capabilities: [], },);
@@ -77,7 +77,7 @@ describe("capabilitiesState fetch", () => {
     expect(stale.modelCapabilities,).toHaveLength(1,);
     expect(stale.modelCapabilities[0],).toMatchObject({ providerId: "old", },);
     expect(stale.loadingCapabilities,).toBe(false,);
-  },);
+  });
 
   test("saveCapabilityOverride reloads on success and toasts errors", async () => {
     let n = 0;
@@ -94,7 +94,7 @@ describe("capabilitiesState fetch", () => {
     mockFetch(500, {},);
     await capabilitiesState.saveCapabilityOverride!.call(ctx, "p", "m", {},);
     expect(toasts[toasts.length - 1]?.type,).toBe("error",);
-  },);
+  });
 
   test("clearCapabilityOverride toasts network errors", async () => {
     handler = async () => {
@@ -103,8 +103,8 @@ describe("capabilitiesState fetch", () => {
     const ctx = { ...capabilitiesState, };
     await capabilitiesState.clearCapabilityOverride!.call(ctx, "p", "m",);
     expect(toasts[0]?.type,).toBe("error",);
-  },);
-},);
+  });
+});
 
 describe("providerState fetch", () => {
   test("loadModels fans out per provider", async () => {
@@ -119,7 +119,7 @@ describe("providerState fetch", () => {
     expect(ctx.providers,).toHaveLength(2,);
     expect((ctx.providerModels as Record<string, { id: string }[]>)["p1"],).toHaveLength(1,);
     expect(ctx.loadingModels,).toBe(false,);
-  },);
+  });
 
   test("loadProviderModels keeps stale data on network error", async () => {
     handler = async () => {
@@ -128,7 +128,7 @@ describe("providerState fetch", () => {
     const ctx = { ...providerState, providerModels: {}, };
     await expect(providerState.loadProviderModels!.call(ctx, "p1",),).resolves.toBeUndefined();
     expect((ctx.providerModels as Record<string, unknown>)["p1"],).toBeUndefined();
-  },);
+  });
 
   test("rescanProviders merges status and rescans models", async () => {
     handler = async (url,) => {
@@ -147,7 +147,7 @@ describe("providerState fetch", () => {
     expect(ctx.providers[0],).toMatchObject({ name: "p1", status: "up", modelCount: 3, },);
     expect(ctx.scanning,).toBe(false,);
     expect(toasts[0]?.type,).toBe("success",);
-  },);
+  });
 
   test("rescanProviders toasts on failure", async () => {
     mockFetch(500, {},);
@@ -155,8 +155,8 @@ describe("providerState fetch", () => {
     await providerState.rescanProviders!.call(ctx,);
     expect(ctx.scanning,).toBe(false,);
     expect(toasts[0]?.type,).toBe("error",);
-  },);
-},);
+  });
+});
 
 describe("roleState fetch", () => {
   test("loadModelRoles builds a stable list plus tuning strings", async () => {
@@ -172,13 +172,13 @@ describe("roleState fetch", () => {
       { role: "caption", provider: "", model: "", },
     ] as never,);
     expect((ctx.roleTuning as Record<string, unknown>)["chat"],).toEqual({ temperature: "0.5", maxTokens: "", },);
-  },);
+  });
 
   test("saveModelRole skips when provider or model missing", async () => {
     const ctx = { ...roleState, modelRoleList: [{ role: "chat", provider: "", model: "", },], roleTuning: {}, };
     await roleState.saveModelRole!.call(ctx, "chat",);
     expect(calls,).toHaveLength(0,);
-  },);
+  });
 
   test("saveModelRole PUTs tuning with null for blanks", async () => {
     mockFetch(200, {},);
@@ -196,17 +196,22 @@ describe("roleState fetch", () => {
       temperature: null,
       maxTokens: 100,
     },);
-  },);
+  });
 
   test("clearModelRole reloads on success", async () => {
     mockFetch(200, {},);
     let reloaded = 0;
-    const ctx = { ...roleState, loadModelRoles: async () => { reloaded++; }, };
+    const ctx = {
+      ...roleState,
+      loadModelRoles: async () => {
+        reloaded++;
+      },
+    };
     await roleState.clearModelRole!.call(ctx, "chat",);
     expect(reloaded,).toBe(1,);
     expect(toasts[0]?.type,).toBe("success",);
-  },);
-},);
+  });
+});
 
 describe("pluginState fetch", () => {
   test("loadPlugins stores the list and clears loading", async () => {
@@ -215,24 +220,29 @@ describe("pluginState fetch", () => {
     await pluginState.loadPlugins!.call(ctx,);
     expect(ctx.pluginList,).toHaveLength(1,);
     expect(ctx.loadingPlugins,).toBe(false,);
-  },);
+  });
 
   test("togglePlugin reloads on success", async () => {
     mockFetch(200, {},);
     let reloaded = 0;
-    const ctx = { ...pluginState, loadPlugins: async () => { reloaded++; }, };
+    const ctx = {
+      ...pluginState,
+      loadPlugins: async () => {
+        reloaded++;
+      },
+    };
     await pluginState.togglePlugin!.call(ctx, "pl", true,);
     expect(calls[0]!.url,).toBe("/api/plugins/pl/enable",);
     expect(reloaded,).toBe(1,);
-  },);
+  });
 
   test("togglePlugin toasts server errors", async () => {
     mockFetch(400, { message: "nope", },);
     const ctx = { ...pluginState, loadPlugins: async () => {}, };
     await pluginState.togglePlugin!.call(ctx, "pl", false,);
     expect(toasts[0]?.type,).toBe("error",);
-  },);
-},);
+  });
+});
 
 describe("sdState fetch", () => {
   test("loadSdStatus stores running state", async () => {
@@ -242,7 +252,7 @@ describe("sdState fetch", () => {
     expect(ctx.sdStatus,).toBe("running",);
     expect(ctx.sdPort,).toBe(9011,);
     expect(ctx.sdLatencyMs,).toBe(12,);
-  },);
+  });
 
   test("loadSdStatus falls back to unknown on network error", async () => {
     handler = async () => {
@@ -251,7 +261,7 @@ describe("sdState fetch", () => {
     const ctx = { ...sdState, sdStatus: "running", };
     await sdState.loadSdStatus!.call(ctx,);
     expect(ctx.sdStatus,).toBe("unknown",);
-  },);
+  });
 
   test("loadSdConfig maps every known key and ignores unknown keys", async () => {
     mockFetch(200, [
@@ -265,7 +275,14 @@ describe("sdState fetch", () => {
     ],);
     const ctx = {
       ...sdState,
-      sdConfig: { enabled: true, port: 9010, modelPath: "", modelType: "checkpoint", llmPath: "", preferredBackend: "sd-server", },
+      sdConfig: {
+        enabled: true,
+        port: 9010,
+        modelPath: "",
+        modelType: "checkpoint",
+        llmPath: "",
+        preferredBackend: "sd-server",
+      },
       comfyuiConfig: { url: "http://localhost:8188", enabled: false, },
     };
     await sdState.loadSdConfig!.call(ctx,);
@@ -275,7 +292,7 @@ describe("sdState fetch", () => {
     expect(ctx.sdConfig.enabled,).toBe(false,);
     expect(ctx.comfyuiConfig.url,).toBe("http://x:8188",);
     expect(ctx.comfyuiConfig.enabled,).toBe(true,);
-  },);
+  });
 
   test("loadSdConfig tolerates malformed port values", async () => {
     mockFetch(200, [{ key: "sd_server_port", value: "not-a-port", },],);
@@ -286,17 +303,24 @@ describe("sdState fetch", () => {
     };
     await sdState.loadSdConfig!.call(ctx,);
     expect(ctx.sdConfig.port,).toBe(9010,);
-  },);
+  });
 
   test("saveSdConfig PATCHes seven entries", async () => {
     mockFetch(200, {},);
     const ctx = {
       ...sdState,
-      sdConfig: { enabled: true, port: 9010, modelPath: "/m", modelType: "checkpoint", llmPath: "", preferredBackend: "b", },
+      sdConfig: {
+        enabled: true,
+        port: 9010,
+        modelPath: "/m",
+        modelType: "checkpoint",
+        llmPath: "",
+        preferredBackend: "b",
+      },
       comfyuiConfig: { url: "http://localhost:8188", enabled: false, },
     };
     await sdState.saveSdConfig!.call(ctx,);
     expect(calls,).toHaveLength(7,);
     expect(JSON.parse(calls[0]!.opts.body as string,),).toMatchObject({ key: "sd_enabled", },);
-  },);
-},);
+  });
+});

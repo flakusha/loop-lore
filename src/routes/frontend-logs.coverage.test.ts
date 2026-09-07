@@ -17,7 +17,7 @@ function makeApp(): Elysia {
 /**
  * @param entries
  */
-function batchBody(entries: unknown[]): { body: string; headers: Record<string, string> } {
+function batchBody(entries: unknown[],): { body: string; headers: Record<string, string> } {
   return {
     body: JSON.stringify({ entries, },),
     headers: { "Content-Type": "application/json", },
@@ -38,7 +38,7 @@ describe("frontendLogsRoutes coverage", () => {
       message: `msg-${level}`,
       meta: { k: 1, },
       timestamp: new Date().toISOString(),
-    }),);
+    }));
     const { body, headers, } = batchBody(entries,);
     const res = await app.handle(
       new Request("http://localhost/api/frontend/logs", { method: "POST", headers, body, },),
@@ -47,7 +47,7 @@ describe("frontendLogsRoutes coverage", () => {
     const parsed = (await res.json()) as { ok: boolean; ingested: number };
     expect(parsed.ok,).toBe(true,);
     expect(parsed.ingested,).toBe(levels.length,);
-  },);
+  });
 
   test("unknown level falls back to info and still ingests", async () => {
     const app = makeApp();
@@ -60,7 +60,7 @@ describe("frontendLogsRoutes coverage", () => {
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as { ingested: number };
     expect(parsed.ingested,).toBe(1,);
-  },);
+  });
 
   test("ingests entries without optional meta", async () => {
     const app = makeApp();
@@ -71,7 +71,7 @@ describe("frontendLogsRoutes coverage", () => {
       new Request("http://localhost/api/frontend/logs", { method: "POST", headers, body, },),
     );
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("400 on malformed JSON body", async () => {
     const app = makeApp();
@@ -85,7 +85,7 @@ describe("frontendLogsRoutes coverage", () => {
     expect(res.status,).toBe(400,);
     const parsed = (await res.json()) as { error: string };
     expect(typeof parsed.error,).toBe("string",);
-  },);
+  });
 
   test("400 on empty entries array", async () => {
     const app = makeApp();
@@ -94,7 +94,7 @@ describe("frontendLogsRoutes coverage", () => {
       new Request("http://localhost/api/frontend/logs", { method: "POST", headers, body, },),
     );
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("400 when entries is missing or not an array", async () => {
     const app = makeApp();
@@ -108,5 +108,5 @@ describe("frontendLogsRoutes coverage", () => {
       );
       expect(res.status,).toBe(400,);
     }
-  },);
+  });
 });

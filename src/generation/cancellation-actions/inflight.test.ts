@@ -12,8 +12,8 @@
  */
 import { beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
 import { GenerationStatus, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { hasInFlightGeneration, } from "./inflight";
 
@@ -89,22 +89,26 @@ describe("hasInFlightGeneration", () => {
     expect(await hasInFlightGeneration(db, "key-empty",),).toBe(false,);
   });
 
-  for (const status of [
-    GenerationStatus.Pending,
-    GenerationStatus.Processing,
-    GenerationStatus.Streaming,
-  ] as const) {
+  for (
+    const status of [
+      GenerationStatus.Pending,
+      GenerationStatus.Processing,
+      GenerationStatus.Streaming,
+    ] as const
+  ) {
     it(`returns true for an in-flight attempt in status ${status}`, async () => {
       await seedAttempt(`att-inflight-${status}`, `key-${status}`, status,);
       expect(await hasInFlightGeneration(db, `key-${status}`,),).toBe(true,);
     });
   }
 
-  for (const status of [
-    GenerationStatus.Completed,
-    GenerationStatus.Cancelled,
-    GenerationStatus.Failed,
-  ] as const) {
+  for (
+    const status of [
+      GenerationStatus.Completed,
+      GenerationStatus.Cancelled,
+      GenerationStatus.Failed,
+    ] as const
+  ) {
     it(`returns false for a settled attempt in status ${status}`, async () => {
       await seedAttempt(`att-settled-${status}`, `key-${status}`, status,);
       expect(await hasInFlightGeneration(db, `key-${status}`,),).toBe(false,);

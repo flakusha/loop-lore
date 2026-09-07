@@ -42,7 +42,7 @@ describe("chatWorld.loadWorldChannels", () => {
     const ctx = worldCtx({ _worldsLoading: true, },);
     await chatWorld.loadWorldChannels!.call(ctx,);
     expect(fetchCalls,).toHaveLength(0,);
-  },);
+  });
 
   test("keeps only chat-kind worlds and loads their channels", async () => {
     const loaded: string[] = [];
@@ -64,7 +64,7 @@ describe("chatWorld.loadWorldChannels", () => {
     expect(ctx._worlds,).toEqual([{ id: "w1", name: "Chat World", },],);
     expect(loaded,).toEqual(["/api/worlds/w1/chats",],);
     expect(ctx._worldsLoading,).toBe(false,);
-  },);
+  });
 
   test("ignores non-ok responses", async () => {
     mockFetch(500, {},);
@@ -72,7 +72,7 @@ describe("chatWorld.loadWorldChannels", () => {
     await chatWorld.loadWorldChannels!.call(ctx,);
     expect(ctx._worlds,).toEqual([],);
     expect(ctx._worldsLoading,).toBe(false,);
-  },);
+  });
 
   test("keeps the tree working when the network fails", async () => {
     handler = () => {
@@ -81,8 +81,8 @@ describe("chatWorld.loadWorldChannels", () => {
     const ctx = worldCtx();
     await expect(chatWorld.loadWorldChannels!.call(ctx,),).resolves.toBeUndefined();
     expect(ctx._worldsLoading,).toBe(false,);
-  },);
-},);
+  });
+});
 
 describe("chatWorld.loadWorldChats", () => {
   test("stores rows per world", async () => {
@@ -91,21 +91,21 @@ describe("chatWorld.loadWorldChats", () => {
     await chatWorld.loadWorldChats!.call(ctx, "w1",);
     expect((ctx._worldChats as Record<string, unknown[]>)["w1"],).toHaveLength(1,);
     expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/chats",);
-  },);
+  });
 
   test("keeps previous rows on non-ok responses", async () => {
     mockFetch(500, {},);
     const ctx = worldCtx({ _worldChats: { w1: [{ id: "keep", },], }, },);
     await chatWorld.loadWorldChats!.call(ctx, "w1",);
     expect((ctx._worldChats as Record<string, unknown[]>)["w1"],).toEqual([{ id: "keep", },],);
-  },);
+  });
 
   test("defaults to an empty list on malformed payloads", async () => {
     mockFetch(200, {},);
     const ctx = worldCtx();
     await chatWorld.loadWorldChats!.call(ctx, "w1",);
     expect((ctx._worldChats as Record<string, unknown[]>)["w1"],).toEqual([],);
-  },);
+  });
 
   test("clears the world on network error", async () => {
     handler = () => {
@@ -114,8 +114,8 @@ describe("chatWorld.loadWorldChats", () => {
     const ctx = worldCtx();
     await chatWorld.loadWorldChats!.call(ctx, "w1",);
     expect((ctx._worldChats as Record<string, unknown[]>)["w1"],).toEqual([],);
-  },);
-},);
+  });
+});
 
 describe("chatWorld.toggleWorld", () => {
   test("expands and loads uncached worlds", () => {
@@ -123,59 +123,72 @@ describe("chatWorld.toggleWorld", () => {
     const ctx = worldCtx({
       _worldExpanded: {},
       _worldChats: {},
-      loadWorldChats: (id: string,) => { loaded.push(id,); },
+      loadWorldChats: (id: string,) => {
+        loaded.push(id,);
+      },
     },);
     chatWorld.toggleWorld!.call(ctx, "w1",);
     expect((ctx._worldExpanded as Record<string, boolean>)["w1"],).toBe(true,);
     expect(loaded,).toEqual(["w1",],);
-  },);
+  });
 
   test("collapsing does not reload", () => {
     let loads = 0;
     const ctx = worldCtx({
       _worldExpanded: { w1: true, },
       _worldChats: {},
-      loadWorldChats: () => { loads++; },
+      loadWorldChats: () => {
+        loads++;
+      },
     },);
     chatWorld.toggleWorld!.call(ctx, "w1",);
     expect((ctx._worldExpanded as Record<string, boolean>)["w1"],).toBe(false,);
     expect(loads,).toBe(0,);
-  },);
+  });
 
   test("expanding a cached world does not reload", () => {
     let loads = 0;
     const ctx = worldCtx({
       _worldExpanded: {},
       _worldChats: { w1: [], },
-      loadWorldChats: () => { loads++; },
+      loadWorldChats: () => {
+        loads++;
+      },
     },);
     chatWorld.toggleWorld!.call(ctx, "w1",);
     expect(loads,).toBe(0,);
-  },);
-},);
+  });
+});
 
 describe("chatWorld.getChatId", () => {
   test("returns the active chat", () => {
     expect(chatWorld.getChatId!.call({ activeChat: "c1", },),).toBe("c1",);
     expect(chatWorld.getChatId!.call({ activeChat: null, },),).toBeNull();
-  },);
-},);
+  });
+});
 
 describe("chatWorld.selectChat guards", () => {
   test("ignores reentrant calls while a selection is in flight", async () => {
     let inner = 0;
-    const ctx = worldCtx({ _selectingChat: true, _selectChatInner: async () => { inner++; }, },);
+    const ctx = worldCtx({
+      _selectingChat: true,
+      _selectChatInner: async () => {
+        inner++;
+      },
+    },);
     await chatWorld.selectChat!.call(ctx, "c1",);
     expect(inner,).toBe(0,);
     expect(fetchCalls,).toHaveLength(0,);
-  },);
+  });
 
   test("warns when a generation is running instead of switching", async () => {
     const toasts: { type: string; message: string }[] = [];
     let inner = 0;
     const ctx = worldCtx({
       isGenerating: true,
-      _selectChatInner: async () => { inner++; },
+      _selectChatInner: async () => {
+        inner++;
+      },
       $dispatch: (e: string, d: { type: string; message: string },) => {
         if (e === "show-toast") { toasts.push(d,); }
       },
@@ -183,11 +196,11 @@ describe("chatWorld.selectChat guards", () => {
     await chatWorld.selectChat!.call(ctx, "c1",);
     expect(inner,).toBe(0,);
     expect(toasts[0]?.type,).toBe("warning",);
-  },);
+  });
 
   test("clears the guard after a successful selection", async () => {
     const ctx = worldCtx({ _selectingChat: false, _selectChatInner: async () => {}, },);
     await chatWorld.selectChat!.call(ctx, "c1",);
     expect(ctx._selectingChat,).toBe(false,);
-  },);
-},);
+  });
+});

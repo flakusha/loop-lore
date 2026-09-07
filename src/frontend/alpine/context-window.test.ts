@@ -66,7 +66,7 @@ describe("contextWindow display getters", () => {
     expect(s.statusColor,).toBe("bg-red-600",);
     s.status = "bogus" as never;
     expect(s.statusColor,).toBe("bg-green-500",);
-  },);
+  });
 
   test("statusText describes every status", () => {
     const s = fresh();
@@ -80,7 +80,7 @@ describe("contextWindow display getters", () => {
     expect(s.statusText,).toContain("capacity",);
     s.status = "bogus" as never;
     expect(s.statusText,).toBe("",);
-  },);
+  });
 
   test("sectionColor maps known sections and defaults to history", () => {
     const s = fresh();
@@ -89,7 +89,7 @@ describe("contextWindow display getters", () => {
     expect(s.sectionColor("memories",),).toBe("ctx-seg-memories",);
     expect(s.sectionColor("history",),).toBe("ctx-seg-history",);
     expect(s.sectionColor("unknown-section",),).toBe("ctx-seg-history",);
-  },);
+  });
 
   test("sectionGrow returns the budget share with a 0.5 floor", () => {
     const s = fresh();
@@ -97,7 +97,7 @@ describe("contextWindow display getters", () => {
     expect(s.sectionGrow("system",),).toBe(25,);
     expect(s.sectionGrow("tiny",),).toBe(0.5,);
     expect(s.sectionGrow("missing",),).toBe(0.5,);
-  },);
+  });
 
   test("formatted getters include both counts", () => {
     const s = fresh();
@@ -110,8 +110,8 @@ describe("contextWindow display getters", () => {
     expect(s.hasSections,).toBe(false,);
     s.sections = [{ name: "history", tokens: 5, pct: 1, },];
     expect(s.hasSections,).toBe(true,);
-  },);
-},);
+  });
+});
 
 describe("contextWindow.load", () => {
   test("returns early without a chat id", async () => {
@@ -119,7 +119,7 @@ describe("contextWindow.load", () => {
     await s.load("",);
     expect(fetchCalls,).toHaveLength(0,);
     expect(s.loading,).toBe(false,);
-  },);
+  });
 
   test("stores the snapshot and clears loading", async () => {
     mockFetch(200, {
@@ -141,7 +141,7 @@ describe("contextWindow.load", () => {
     expect(s.suggestions,).toHaveLength(1,);
     expect(s.loading,).toBe(false,);
     expect(fetchCalls[0]!.url,).toBe("/api/chats/chat-1/context",);
-  },);
+  });
 
   test("falls back between status and threshold", async () => {
     mockFetch(200, { threshold: "warning", },);
@@ -149,7 +149,7 @@ describe("contextWindow.load", () => {
     await s.load("c1",);
     expect(s.status,).toBe("warning",);
     expect(s.threshold,).toBe("warning",);
-  },);
+  });
 
   test("coerces non-array sections to empty", async () => {
     mockFetch(200, { sections: "bad", suggestions: null, },);
@@ -157,7 +157,7 @@ describe("contextWindow.load", () => {
     await s.load("c1",);
     expect(s.sections,).toEqual([],);
     expect(s.suggestions,).toEqual([],);
-  },);
+  });
 
   test("keeps last-known state on network error", async () => {
     fetchHandler = () => {
@@ -168,7 +168,7 @@ describe("contextWindow.load", () => {
     await s.load("c1",);
     expect(s.currentTokens,).toBe(42,);
     expect(s.loading,).toBe(false,);
-  },);
+  });
 
   test("ignores non-ok responses", async () => {
     mockFetch(500, {},);
@@ -176,8 +176,8 @@ describe("contextWindow.load", () => {
     await s.load("c1",);
     expect(s.currentTokens,).toBe(0,);
     expect(s.loading,).toBe(false,);
-  },);
-},);
+  });
+});
 
 describe("contextWindow.refresh", () => {
   test("skips the network without a chat id", async () => {
@@ -185,7 +185,7 @@ describe("contextWindow.refresh", () => {
     s.chatId = null;
     await s.refresh();
     expect(fetchCalls,).toHaveLength(0,);
-  },);
+  });
 
   test("reloads the active chat", async () => {
     mockFetch(200, { currentTokens: 7, },);
@@ -194,12 +194,12 @@ describe("contextWindow.refresh", () => {
     await s.refresh();
     expect(fetchCalls[0]!.url,).toBe("/api/chats/chat-9/context",);
     expect(s.currentTokens,).toBe(7,);
-  },);
+  });
 
   test("refresh does not throw when load is stubbed", async () => {
     const s = fresh();
     s.chatId = "c1";
-    s.load = mock(async () => {}) as unknown as CtxWindowState["load"];
+    s.load = mock(async () => {},) as unknown as CtxWindowState["load"];
     await expect(s.refresh(),).resolves.toBeUndefined();
-  },);
-},);
+  });
+});

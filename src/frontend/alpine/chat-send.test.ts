@@ -18,17 +18,20 @@ beforeEach(() => {
     calls.push({ url, opts: opts ?? {}, },);
     return handler(url, opts,);
   };
-});
+},);
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
   globalState.apiFetch = originalFetch;
-});
+},);
 afterAll(() => {
   globalState.apiFetch = originalFetch;
-});
+},);
 
-interface Toast { type: string; message: string }
+interface Toast {
+  type: string;
+  message: string;
+}
 
 interface SendCtx {
   activeChat: string | null;
@@ -65,7 +68,7 @@ function buildCtx(overrides?: Partial<SendCtx>,): SendCtx {
     _encryptionEnabled: false,
     _chatKey: null,
     _keyId: null,
-    $refs: { messageInput: { value: "" }, },
+    $refs: { messageInput: { value: "", }, },
     autoResize: () => {},
     scrollToBottom: () => {},
     loadMessages: async () => {},
@@ -86,7 +89,7 @@ function buildCtx(overrides?: Partial<SendCtx>,): SendCtx {
 }
 
 function postBody(): Record<string, unknown> {
-  const post = calls.find((c,) => c.opts.method === "POST",)!;
+  const post = calls.find((c,) => c.opts.method === "POST")!;
   return JSON.parse(String(post.opts.body,),) as Record<string, unknown>;
 }
 
@@ -142,7 +145,12 @@ describe("chatSendMethods.sendMessage — success paths", () => {
 
   test("sets parentId to the last real message and orders attachments", async () => {
     const ctx = buildCtx({
-      messages: [{ id: "real-1", role: "assistant", content: "", created_at: "2026-01-01T00:00:00.000Z", }, { id: "tmp-old", role: "user", content: "", created_at: "2026-01-01T00:00:00.000Z", },],
+      messages: [{ id: "real-1", role: "assistant", content: "", created_at: "2026-01-01T00:00:00.000Z", }, {
+        id: "tmp-old",
+        role: "user",
+        content: "",
+        created_at: "2026-01-01T00:00:00.000Z",
+      },],
       pendingAssets: [
         { assetId: "b", filename: "b.png", },
         { assetId: "a", filename: "a.png", },
