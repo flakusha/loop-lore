@@ -11,7 +11,7 @@
  *   - the SAME entry is REVEALED to a dark-elf speaker in the same world.
  */
 import { describe, expect, test, } from "bun:test";
-import type { Generated, Kysely, } from "kysely";
+import type { Kysely, } from "kysely";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../../../db/enums";
 import { TraitCategory, } from "../../../db/enums-character";
 import {
@@ -38,10 +38,10 @@ describe("loreSection — audience-constrained world-lore injection", () => {
 
   // Insert-helper opts type generated columns as Generated<T>; cast through `unknown`
   // (plain literals are otherwise rejected by the branded type).
-  const enabled = LoreEntryStatus.Enabled as unknown as Generated<LoreEntryStatus>;
-  const constantOne = 1 as unknown as Generated<number>;
-  const beforeChar = LorePosition.BeforeChar as unknown as Generated<LorePosition>;
-  const noCooldown = 0 as unknown as Generated<number>;
+  const enabled = LoreEntryStatus.Enabled;
+  const constantOne = 1;
+  const beforeChar = LorePosition.BeforeChar;
+  const noCooldown = 0;
 
   /**
    * @param db
@@ -150,11 +150,11 @@ describe("loreSection — audience-constrained world-lore injection", () => {
  * purely by the condition under test.
  */
 describe("loreSection — activation conditions (FEAT-055)", () => {
-  const enabled = LoreEntryStatus.Enabled as unknown as Generated<LoreEntryStatus>;
-  const selectiveOne = 1 as unknown as Generated<number>;
-  const constantZero = 0 as unknown as Generated<number>;
-  const beforeChar = LorePosition.BeforeChar as unknown as Generated<LorePosition>;
-  const noCooldown = 0 as unknown as Generated<number>;
+  const enabled = LoreEntryStatus.Enabled;
+  const selectiveOne = 1;
+  const constantZero = 0;
+  const beforeChar = LorePosition.BeforeChar;
+  const noCooldown = 0;
 
   const CHAT_ID = "lore-activation-chat";
 
@@ -191,9 +191,9 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         MessageRole.User,
         msg,
         {
-          status: MessageStatus.Confirmed as unknown as Generated<MessageStatus>,
-          visibility: MessageVisibility.Visible as unknown as Generated<MessageVisibility>,
-          created_at: new Date(baseTime + i * 60_000,).toISOString() as unknown as Generated<string>,
+          status: MessageStatus.Confirmed,
+          visibility: MessageVisibility.Visible,
+          created_at: new Date(baseTime + i * 60_000,).toISOString(),
         },
       );
     }
@@ -230,12 +230,12 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
 
   /** Fields the activation tests vary — structurally compatible with the helper opts. */
   interface ActivationLoreOpts {
-    keys?: Generated<string>;
+    keys?: string;
     key_type?: string;
     key_groups?: string;
     scan_depth?: number;
     activation_chance?: number;
-    priority?: Generated<number>;
+    priority?: number;
   }
 
   /**
@@ -275,7 +275,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         worldId,
         actorId,
         "Elara is the rightful queen.",
-        { key_type: "regex", keys: JSON.stringify([String.raw`\bElara\b`,],) as unknown as Generated<string>, },
+        { key_type: "regex", keys: JSON.stringify([String.raw`\bElara\b`,],), },
       );
       expect(text,).toContain("Elara is the rightful queen.",);
     } finally {
@@ -293,7 +293,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         worldId,
         actorId,
         "Unreachable lore.",
-        { key_type: "regex", keys: JSON.stringify(["[",],) as unknown as Generated<string>, },
+        { key_type: "regex", keys: JSON.stringify(["[",],), },
       );
       expect(text,).not.toContain("Unreachable lore.",);
     } finally {
@@ -367,7 +367,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         worldId,
         actorId,
         "Deep forest lore.",
-        { keys: JSON.stringify(["forest",],) as unknown as Generated<string>, },
+        { keys: JSON.stringify(["forest",],), },
       );
       expect(text,).not.toContain("Deep forest lore.",);
     } finally {
@@ -386,7 +386,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         worldId,
         actorId,
         "Deep forest lore.",
-        { keys: JSON.stringify(["forest",],) as unknown as Generated<string>, scan_depth: 2, },
+        { keys: JSON.stringify(["forest",],), scan_depth: 2, },
       );
       expect(text,).toContain("Deep forest lore.",);
     } finally {
@@ -405,7 +405,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         worldId,
         actorId,
         "Deep forest lore.",
-        { keys: JSON.stringify(["forest",],) as unknown as Generated<string>, scan_depth: 99, },
+        { keys: JSON.stringify(["forest",],), scan_depth: 99, },
       );
       // Clamped max 10 still covers the 2-message window → activates.
       expect(text,).toContain("Deep forest lore.",);
@@ -424,7 +424,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         worldId,
         actorId,
         "Always lore.",
-        { keys: JSON.stringify(["wolf",],) as unknown as Generated<string>, activation_chance: 1, },
+        { keys: JSON.stringify(["wolf",],), activation_chance: 1, },
       );
       expect(text,).toContain("Always lore.",);
     } finally {
@@ -442,7 +442,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         worldId,
         actorId,
         "Never lore.",
-        { keys: JSON.stringify(["wolf",],) as unknown as Generated<string>, activation_chance: 0, },
+        { keys: JSON.stringify(["wolf",],), activation_chance: 0, },
       );
       expect(text,).not.toContain("Never lore.",);
     } finally {
@@ -476,7 +476,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         enabled,
         position: beforeChar,
         cooldown_seconds: noCooldown,
-        priority: 1 as unknown as Generated<number>,
+        priority: 1,
       } as never,);
       await insertWorldLoreEntries(db, worldId, "High priority lore.", {
         keys: '["wolf"]',
@@ -485,7 +485,7 @@ describe("loreSection — activation conditions (FEAT-055)", () => {
         enabled,
         position: beforeChar,
         cooldown_seconds: noCooldown,
-        priority: 10 as unknown as Generated<number>,
+        priority: 10,
       } as never,);
 
       const text = (await loreSection.build(ctxFor(db, worldId, actorId,),))

@@ -8,7 +8,7 @@ import type { InjectionContext, } from "./types";
 /**
  * @param overrides
  */
-function makeCtx(overrides: Partial<InjectionContext>,): InjectionContext {
+function makeCtx(overrides: Partial<InjectionContext> = {},): InjectionContext {
   return {
     chatId: "chat-1",
     worldId: null,

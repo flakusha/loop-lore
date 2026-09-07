@@ -1,5 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { extractTrackId, toEmbedSrc, toServiceUrl, } from "./url";
+import { extractTrackId, toServiceUrl, } from "./url";
 
 describe("chat/music-links/url (0% -> real logic)", () => {
   it("extractTrackId extracts Spotify track ID", () => {
