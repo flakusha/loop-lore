@@ -6,7 +6,7 @@
  * and overlaying persisted system_config values on startup.
  */
 import { afterEach, describe, expect, test, } from "bun:test";
-import type { Generated, Kysely, } from "kysely";
+import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertSystemConfig, } from "../test-utils/insert-helpers";
@@ -130,5 +130,5 @@ async function insertConfig(
   key: string,
   value: string,
 ): Promise<void> {
-  await insertSystemConfig(db, value, { key: key as unknown as Generated<string>, },);
+  await insertSystemConfig(db, value, { key: key, },);
 }

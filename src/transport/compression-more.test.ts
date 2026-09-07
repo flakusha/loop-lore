@@ -1,5 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { compress, type CompressionOptions, decompress, withCompression, } from "../../../transport/compression";
+import { compress, type CompressionOptions, decompress, withCompression, } from "./compression";
 
 describe("transport/compression (real logic)", () => {
   it("withCompression exports a ProtocolHandler wrapper", () => {

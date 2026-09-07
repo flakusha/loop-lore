@@ -1,5 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { rollD20WithAdvantage, rollDie, rollMultiple, } from "./roll";
+import { rollD20WithAdvantage, rollMultiple, } from "./roll";
 import { AdvantageMode, } from "./types";
 
 describe("dice/real-computation", () => {

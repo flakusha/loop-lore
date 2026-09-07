@@ -10,7 +10,7 @@
  *      world-scoped mood via MoodService.applyHappinessDelta.
  */
 import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
-import type { Generated, Kysely, } from "kysely";
+import type { Kysely, } from "kysely";
 import { MoodService, } from "../characters/services/mood-service";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
@@ -271,9 +271,9 @@ describe("emotion avatar content hooks in auto-gen", () => {
       now,
       now,
       {
-        happiness: 50 as unknown as Generated<number>,
-        current_mood: "neutral" as unknown as Generated<string>,
-        mood_stability: 0 as unknown as Generated<number>,
+        happiness: 50,
+        current_mood: "neutral",
+        mood_stability: 0,
       },
     );
 

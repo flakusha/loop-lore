@@ -6,8 +6,15 @@ describe("story/quests/calculators/social (0% -> real)", () => {
     expect(
       calculateSocialProgress(
         {} as any,
-        { targetActorId: "t", requiredInteractions: 4, },
-        { type: "npc_state_change", actorId: "x", data: { npcActorId: "t", }, } as any,
+        {
+          type: "social",
+          targetActorId: "t",
+          targetDisposition: 0,
+          requiredInteractions: 4,
+          favoredTopics: [],
+          disfavoredActions: [],
+        },
+        { type: "npc_state_change", actorId: "x", data: { npcActorId: "x", }, } as any,
       ),
     ).toBe(0,);
   });
@@ -15,7 +22,14 @@ describe("story/quests/calculators/social (0% -> real)", () => {
     expect(
       calculateSocialProgress(
         {} as any,
-        { targetActorId: "t", requiredInteractions: 4, },
+        {
+          type: "social",
+          targetActorId: "t",
+          targetDisposition: 0,
+          requiredInteractions: 4,
+          favoredTopics: [],
+          disfavoredActions: [],
+        },
         { type: "combat", actorId: "t", data: { npcActorId: "t", }, } as any,
       ),
     ).toBe(0,);
@@ -24,7 +38,14 @@ describe("story/quests/calculators/social (0% -> real)", () => {
     expect(
       calculateSocialProgress(
         {} as any,
-        { targetActorId: "t", requiredInteractions: 4, },
+        {
+          type: "social",
+          targetActorId: "t",
+          targetDisposition: 0,
+          requiredInteractions: 4,
+          favoredTopics: [],
+          disfavoredActions: [],
+        },
         { type: "npc_state_change", actorId: "t", data: { npcActorId: "t", }, } as any,
       ),
     ).toBe(25,);

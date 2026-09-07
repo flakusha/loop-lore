@@ -409,7 +409,12 @@ test("client disconnect persists Cancelled with the AbortError detail", async ()
   // The provider throws post-abort; the catch runs streamCancelCleanup which
   // persists Cancelled. Wait for that write without a real-time sleep: poll
   // the row's status transition.
-  let row: { status: string; cancel_reason: string; cancel_source: string; cancel_reason_detail: string } | undefined;
+  let row: {
+    status: GenerationStatus;
+    cancel_reason: CancelReason | null;
+    cancel_source: CancelSource | null;
+    cancel_reason_detail: string | null;
+  } | undefined;
   for (let i = 0; i < 100; i++) {
     const candidate = await db
       .selectFrom("generation_attempts",)
