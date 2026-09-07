@@ -7,20 +7,21 @@
  * Scope: input validation, LoRA passthrough, unsupported-backend guard.
  * generateImages is mocked so no real image generation occurs.
  */
-
 import { beforeEach, describe, expect, it, mock, } from "bun:test";
+import { ISOLATED, describeOrSkip, } from "../test-utils/isolate-only";
 import { randomUUID, } from "node:crypto";
 // Capture real modules before mocking so each mock re-exposes the module's
 // other exports and overrides only the specific function under test. Bun's
 // mock.module leaks across files without --isolate; mocking a whole module
 // clobbers every other export it provides (e.g. safeJsonParse in ../utils),
 // breaking unrelated tests that import the same barrel/module.
-import * as realAssetMetadata from "../assets/metadata";
 import * as realAssetLinks from "../assets/service/links";
 import * as realConfigLoad from "../config/load";
 import * as realDb from "../db/index";
 import * as realUtils from "../utils";
+import * as realAssetCreate from "../assets/service/create";
 import * as realImageEngine from "./image-engine";
+import type * as imageGenRoute from "./image-gen-route";
 
 // ── Mutable call-history containers (mutated in beforeEach, read in tests) ──────
 
@@ -109,47 +110,55 @@ const defaultConfig = {
 };
 
 // ── Register mocks BEFORE importing module-under-test ────────────────────────────
+//
+// Bun's mock.module is process-global for a whole `bun test` invocation and
+// cannot be unmocked: without isolation these stubs leak into every later
+// test file (the fixed extractImageMetadata made emotion-avatar metadata
+// tests see PNG/512x512 for every buffer; a partial loadConfig dropped
+// required config sections like byoKey downstream). The repo convention for
+// such files is `describeOrSkip` + an ISOLATED guard: plain `bun test src/`
+// skips registration entirely, and the canonical gate (`bun run check` /
+// `test:unit`) runs with `--isolate`, where each file gets its own module
+// registry and the mocks cannot leak.
+let handleImageGeneration: typeof imageGenRoute.handleImageGeneration;
 
-mock.module("../config/load", () => ({
-  ...realConfigLoad,
-  loadConfig: () => defaultConfig,
-}),);
+if (ISOLATED) {
+  mock.module("../config/load", () => ({
+    ...realConfigLoad,
+    loadConfig: () => defaultConfig,
+  }),);
 
-mock.module("./image-engine", () => ({
-  ...realImageEngine,
-  generateImages: mockGenerateImages,
-}),);
+  mock.module("./image-engine", () => ({
+    ...realImageEngine,
+    generateImages: mockGenerateImages,
+  }),);
 
-mock.module("../assets/metadata", () => ({
-  ...realAssetMetadata,
-  extractImageMetadata: mockExtractImageMetadata,
-}),);
+  mock.module("../utils", () => ({
+    ...realUtils,
+    uid: mockUid,
+  }),);
 
-mock.module("../utils", () => ({
-  ...realUtils,
-  uid: mockUid,
-}),);
+  // Narrow mocks to the specific submodules the SUT imports. Mocking the
+  // whole `../assets/service` barrel would clobber
+  // detectAssetType/unlinkAsset/getAsset/etc.
+  mock.module("../assets/service/create", () => ({
+    ...realAssetCreate,
+    createAsset: mockCreateAsset,
+  }),);
+  mock.module("../assets/service/links", () => ({
+    ...realAssetLinks,
+    linkAsset: mockLinkAsset,
+  }),);
 
-// Narrow mocks to the specific submodules the SUT imports. Mocking the whole
-// `../assets/service` barrel leaks (without --isolate) and clobbers
-// detectAssetType/unlinkAsset/getAsset/etc. for every later test file.
-mock.module("../assets/service/create", () => ({
-  createAsset: mockCreateAsset,
-}),);
-mock.module("../assets/service/links", () => ({
-  ...realAssetLinks,
-  linkAsset: mockLinkAsset,
-}),);
+  mock.module("../db/index", () => ({
+    ...realDb,
+    getDatabase: mockGetDatabase,
+  }),);
 
-mock.module("../db/index", () => ({
-  ...realDb,
-  getDatabase: mockGetDatabase,
-}),);
-
-// ── Import after mocks are in place ─────────────────────────────────────────────
-
-const { handleImageGeneration, } = await import("./image-gen-route");
-
+  // Dynamic import is required: mock.module must be registered BEFORE the
+  // SUT module is evaluated, which a static import cannot guarantee.
+  ({ handleImageGeneration, } = await import("./image-gen-route"),);
+}
 // ── Helpers ─────────────────────────────────────────────────────────────────────
 
 /**
@@ -176,12 +185,13 @@ const COMFYUI_CONFIG = {
   backend: "comfyui" as const,
 };
 
-// ── Tests ───────────────────────────────────────────────────────────────────────
 
-describe("handleImageGeneration — LoRA opt-in / opt-out", () => {
+// ── Tests ───────────────────────────────────────────────────────────────────────
+describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   beforeEach(() => {
     generateImagesCalls.length = 0;
   },);
+
 
   // (1) Opt-out: no lora field → generateImages called WITHOUT lora
 

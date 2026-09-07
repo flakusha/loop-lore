@@ -10,7 +10,7 @@ import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import { loadConfig, } from "../config/load";
+import { configSchema, } from "../config/schema-class";
 import type { Config, } from "../config/schema";
 import { setTestDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
@@ -123,11 +123,14 @@ function makeRequest(overrides?: Partial<Record<string, unknown>>,): Record<stri
     ...overrides,
   };
 }
-
-/** */
+/**
+ * Fully deterministic config: schema defaults (not ambient loadConfig(),
+ * which can be another file's partial mock in a full-suite run) plus the
+ * mock-provider generation wiring these tests assert against.
+ */
 function makeConfig(): Config {
   return {
-    ...loadConfig(),
+    ...configSchema.defaults,
     generation: {
       providers: {
         openaiCompatible: [],
