@@ -15,6 +15,21 @@ import { GenerationCancelledError, } from "../cancellation-actions/error";
 import { callWithFailover, } from "./call-with-failover";
 import type { GenerateRequest, GenerateResponse, LLMProvider, StreamHandler, } from "./types";
 
+// Bun's mock.module is process-global and cannot be unmocked. Without
+// --isolate, an earlier file (e.g. generate-route/non-stream.test.ts) may
+// have replaced this module, which would silently test the stub instead of
+// the real implementation. Probe for the real module: only the genuine
+// callWithFailover throws "All providers failed" on an empty provider list.
+let modulePristine = false;
+try {
+  await callWithFailover([], { model: "m", messages: [], params: {}, },);
+} catch (error) {
+  modulePristine = error instanceof Error && error.message.startsWith("All providers failed",);
+}
+const describeReal: typeof describe = modulePristine
+  ? describe
+  : (name, fn,) => describe.skip(name, fn,);
+
 /** Minimal request shape for the failover tests. */
 function makeReq(signal?: AbortSignal,): GenerateRequest {
   return {
@@ -49,7 +64,7 @@ const okResponse = {
   usage: { promptTokens: 1, completionTokens: 1, totalTokens: 2, },
 } satisfies GenerateResponse;
 
-describe("callWithFailover — cancellation vs provider failure", () => {
+describeReal("callWithFailover — cancellation vs provider failure", () => {
   test("aborted stream rethrows the tracker's GenerationCancelledError without failover", async () => {
     const cancelled = new GenerationCancelledError(
       CancelReason.RepetitionDetected,
@@ -127,4 +142,4 @@ describe("callWithFailover — cancellation vs provider failure", () => {
     );
     expect(response.content,).toBe("fallback won",);
   });
-});
+},);
