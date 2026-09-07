@@ -3,10 +3,10 @@
 
 import { Elysia, t, } from "elysia";
 import { ErrorResponse, Id, } from "../../validation/schemas";
+import { resolveActorAccess, } from "../actor-access";
 import { jsonResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
 import type { TradeRoutesOptions, } from "./shared";
-import { resolveActorAccess, } from "../actor-access";
 
 /**
  * Trade history route — query past trades for a world, optionally
