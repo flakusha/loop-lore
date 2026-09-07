@@ -8,7 +8,7 @@
 **Effort:** Medium
 **Type:** Feature Task
 **Tags:** search, rag, bm25, vector, encryption, decrypted, unified, assistant, context
-**Epic:** epic-rag-document-processing.md
+**Epic:** epic-rag-document-processing.md, epic-lore-knowledge, epic-memory-knowledge-systems
 
 ## Summary
 

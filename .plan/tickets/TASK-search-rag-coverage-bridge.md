@@ -8,7 +8,7 @@
 **Effort:** Low (planning + glue tasks; no implementation in this ticket)
 **Type:** Recommendation Task
 **Tags:** rag, search, planning, epic, cross-ticket, recommendation
-**Epic:** epic-rag-assets-unified-storage-and-assistant-flows.md (recommended as bridge) + epic-rag-document-processing.md (core)
+**Epic:** epic-rag-assets-unified-storage-and-assistant-flows.md (recommended as bridge) + epic-rag-document-processing.md (core), epic-lore-knowledge
 
 ## Summary
 

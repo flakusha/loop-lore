@@ -101,4 +101,4 @@ export async function getAssistantCapabilities(
 
 - Builds on: `TASK-assistant-tool-injection-guard.md` (capability matrix + tags)
 - Builds on: `src/assistant/commands/registry.ts:listCommands`
-- Bridges: `epic-admin-tooling-allowlist.md` (admin tooling UI extends this)
+- Bridges: `TASK-admin-assistant-tooling-allowlist.md` (admin tooling UI extends this)

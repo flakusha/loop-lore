@@ -8854,6 +8854,18 @@
     "source": ".plan/tickets/TASK-artifact-system.md",
     "git_issue": "ecff9f5"
   },
+  "TASK-ASK-MENU-LORE-GATED-ACTIONS": {
+    "hash": "49ff902",
+    "git_issue": "49ff902",
+    "extid": "TASK-ASK-MENU-LORE-GATED-ACTIONS",
+    "type": "TASK",
+    "title": "Ask-menu lore-gated actions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ask-menu-lore-gated-actions.md"
+  },
   "TASK-ASSET-3D-MODELS": {
     "hash": "2346652",
     "extid": "TASK-ASSET-3D-MODELS",
@@ -9325,6 +9337,18 @@
     "git_issue": "b035376",
     "status": "done"
   },
+  "TASK-ASSISTANT-LOREBOOK-TOOLS": {
+    "hash": "1bedeb1",
+    "git_issue": "1bedeb1",
+    "extid": "TASK-ASSISTANT-LOREBOOK-TOOLS",
+    "type": "TASK",
+    "title": "Assistant lorebook tools",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-lorebook-tools.md"
+  },
   "TASK-ASSISTANT-NSFW-API-PREFILTERING": {
     "hash": "pending",
     "extid": "TASK-ASSISTANT-NSFW-API-PREFILTERING",
@@ -9346,6 +9370,18 @@
     "epic": "epic-assistant-generation-extensions (Phase 4), epic-blog-system",
     "tags": [],
     "source": ".plan/tickets/TASK-assistant-scenario-source.md"
+  },
+  "TASK-ASSISTANT-SECRET-LORE-ACCESS-GUARD": {
+    "hash": "8b8d8e2",
+    "git_issue": "8b8d8e2",
+    "extid": "TASK-ASSISTANT-SECRET-LORE-ACCESS-GUARD",
+    "type": "TASK",
+    "title": "Assistant secret-lore access guard",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-secret-lore-access-guard.md"
   },
   "TASK-ASSISTANT-THIRD-PARTY-API-INTEGRATION": {
     "hash": "pending",
@@ -10240,6 +10276,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-byok-api-keys.md",
     "git_issue": "e665ded"
+  },
+  "TASK-CAPABILITY-DISCLOSURE-LORE-CEILING": {
+    "hash": "c622d40",
+    "git_issue": "c622d40",
+    "extid": "TASK-CAPABILITY-DISCLOSURE-LORE-CEILING",
+    "type": "TASK",
+    "title": "Capability disclosure lore ceiling",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-capability-disclosure-lore-ceiling.md"
   },
   "TASK-CAPTION-VARIANTS-CREATE-RECREATE-PICK-BEST-SCENARIO": {
     "hash": "bba2547",
@@ -11747,6 +11795,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-content-hash-consistency.md"
   },
+  "TASK-CONTEXT-BUDGET-LORE-PRUNE-ORDER": {
+    "hash": "bb93887",
+    "git_issue": "bb93887",
+    "extid": "TASK-CONTEXT-BUDGET-LORE-PRUNE-ORDER",
+    "type": "TASK",
+    "title": "Context budget lore prune order",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-context-budget-lore-prune-order.md"
+  },
   "TASK-CONTEXT-CUT-MEMORY-PROMOTION": {
     "hash": "90f0396",
     "extid": "TASK-CONTEXT-CUT-MEMORY-PROMOTION",
@@ -13185,6 +13245,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-enable-http-2-via-single-tls-port-consolidation.md"
   },
+  "TASK-ENCRYPTED-LORE-SEARCH-TOKENS": {
+    "hash": "e9d50cf",
+    "git_issue": "e9d50cf",
+    "extid": "TASK-ENCRYPTED-LORE-SEARCH-TOKENS",
+    "type": "TASK",
+    "title": "Encrypted lore search tokens",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-encrypted-lore-search-tokens.md"
+  },
   "TASK-ENCRYPTION-ACCESS-MANAGEMENT": {
     "hash": "377b6d5",
     "extid": "TASK-ENCRYPTION-ACCESS-MANAGEMENT",
@@ -13341,6 +13413,18 @@
     "epic": "epic-battle-action-systems",
     "tags": [],
     "source": ".plan/tickets/TASK-enemies-monsters-systems.md"
+  },
+  "TASK-ENHANCE-PREVIEW-SHARED-DRAFT-STORE": {
+    "hash": "219124a",
+    "git_issue": "219124a",
+    "extid": "TASK-ENHANCE-PREVIEW-SHARED-DRAFT-STORE",
+    "type": "TASK",
+    "title": "Enhance preview shared draft store",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-enhance-preview-shared-draft-store.md"
   },
   "TASK-EPIC-36-LINT-COGNITIVE-COMPLEXITY-MISC": {
     "hash": "d20d31f",
@@ -13913,6 +13997,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-fix-test-failures.md",
     "git_issue": "cc5ba3f"
+  },
+  "TASK-FIX-TEST-SUITE-TYPE-ROT-200-TSC-ERRORS-ACROSS-54-FILES": {
+    "hash": "970b7e6",
+    "git_issue": "970b7e6",
+    "extid": "TASK-FIX-TEST-SUITE-TYPE-ROT-200-TSC-ERRORS-ACROSS-54-FILES",
+    "type": "TASK",
+    "title": "Fix test-suite type-rot: 200 tsc errors across 54 files",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-code-quality",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fix-test-suite-type-rot-200-tsc-errors-across-54-files.md"
   },
   "TASK-FIX-TS2322-EXPORTERS-TEST": {
     "hash": "aed8c23",
@@ -15350,6 +15446,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-living-world-persistence.md"
   },
+  "TASK-LLM-ENHANCE-LORE-STYLE-GROUNDING": {
+    "hash": "8d002b8",
+    "git_issue": "8d002b8",
+    "extid": "TASK-LLM-ENHANCE-LORE-STYLE-GROUNDING",
+    "type": "TASK",
+    "title": "LLM-enhance lore style grounding",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llm-enhance-lore-style-grounding.md"
+  },
   "TASK-LLM-QUEUE": {
     "hash": "d7fe8bf",
     "extid": "TASK-LLM-QUEUE",
@@ -15656,6 +15764,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-lore-timeline-reveal.md"
   },
+  "TASK-LOREBOOK-ACTIVATION-SEARCH-SCORING": {
+    "hash": "51a1563",
+    "git_issue": "51a1563",
+    "extid": "TASK-LOREBOOK-ACTIVATION-SEARCH-SCORING",
+    "type": "TASK",
+    "title": "Lorebook activation search scoring",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lorebook-activation-search-scoring.md"
+  },
   "TASK-LOREBOOK-EXPORT": {
     "hash": "ff096fa",
     "extid": "TASK-LOREBOOK-EXPORT",
@@ -15679,6 +15799,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-lorebook-template-seeding.md",
     "git_issue": "98ecdbb"
+  },
+  "TASK-LOREBOOK-UNIFIED-SEARCH-INDEX": {
+    "hash": "ada3166",
+    "git_issue": "ada3166",
+    "extid": "TASK-LOREBOOK-UNIFIED-SEARCH-INDEX",
+    "type": "TASK",
+    "title": "Lorebook unified search index",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-lorebook-unified-search-index.md"
   },
   "TASK-MAGIC-SPELL-CRAFTING": {
     "hash": "pending",
@@ -20644,6 +20776,18 @@
     "source": ".plan/tickets/TASK-thinking-tag-context-prune.md",
     "git_issue": "d02e61f"
   },
+  "TASK-TICKET-EPIC-LINK-BACKFILL": {
+    "hash": "c667507",
+    "git_issue": "c667507",
+    "extid": "TASK-TICKET-EPIC-LINK-BACKFILL",
+    "type": "TASK",
+    "title": "Ticket epic-link backfill",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ticket-epic-link-backfill.md"
+  },
   "TASK-TIER-1-OPENAI-COMPATIBLE-PLATFORM-CATALOG": {
     "hash": "d0ba5cb",
     "extid": "TASK-TIER-1-OPENAI-COMPATIBLE-PLATFORM-CATALOG",
@@ -21855,6 +21999,18 @@
     "epic": "epic-world-locations (config-templates sub-area)",
     "tags": [],
     "source": ".plan/tickets/TASK-world-template-full-model-coverage.md"
+  },
+  "TASK-WORLDBOOK-RAG-DECOMPOSER": {
+    "hash": "bd70e95",
+    "git_issue": "bd70e95",
+    "extid": "TASK-WORLDBOOK-RAG-DECOMPOSER",
+    "type": "TASK",
+    "title": "Worldbook RAG decomposer",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-worldbook-rag-decomposer.md"
   },
   "TASK-WORLDINFO-ENGINE-PARITY": {
     "hash": "pending",
