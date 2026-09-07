@@ -8,6 +8,7 @@ import { encryptAssetBlob, } from "../../crypto/asset-encryption";
 import { AssetVisibility, StorageBackend, } from "../../db/enums";
 import { uid, } from "../../utils";
 import { extractImageMetadata, } from "../metadata";
+import { initialAlphaStatus, } from "./alpha-status";
 import { storeFile, } from "./file-system";
 import type { AssetRecord, CreateAssetOpts, CreateAssetResult, } from "./types";
 
@@ -42,6 +43,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       "width",
       "height",
       "duration_secs",
+      "alpha_status",
       "owner_id",
     ],)
     .where("content_hash", "=", contentHash,)
@@ -67,6 +69,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
         created_at: existing.created_at,
         encryption_tier: existing.encryption_tier,
         encrypted_key_id: existing.encrypted_key_id,
+        alpha_status: existing.alpha_status,
       },
       duplicate: true,
     };
@@ -103,11 +106,13 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
   let width = input.width ?? null;
   let height = input.height ?? null;
   let altText = input.altText ?? null;
+  let alphaStatus: AssetRecord["alpha_status"] = "unknown";
   if (input.mimeType.startsWith("image/",)) {
     const meta = extractImageMetadata(input.buffer,);
     if (width === null && meta.width > 0) { width = meta.width; }
     if (height === null && meta.height > 0) { height = meta.height; }
     if (altText === null && meta.caption) { altText = meta.caption; }
+    alphaStatus = initialAlphaStatus(input.mimeType, meta.hasAlpha,);
   }
 
   // Sanitize alt_text: strip HTML tags, limit length
@@ -132,6 +137,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
     created_at: new Date().toISOString(),
     encryption_tier: encryptionTier,
     encrypted_key_id: encryptedKeyId,
+    alpha_status: alphaStatus,
   };
 
   await database
@@ -152,6 +158,7 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       alt_text: asset.alt_text,
       encryption_tier: asset.encryption_tier,
       encrypted_key_id: asset.encrypted_key_id,
+      alpha_status: asset.alpha_status,
       content_hash: contentHash,
     },)
     .execute();

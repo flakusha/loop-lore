@@ -13,11 +13,14 @@ export interface ImageMetadata {
   height: number;
   caption?: string; // extracted from metadata fields
   format: "png" | "jpeg" | "webp" | "gif" | "unknown";
+  /** Header-level alpha presence (PNG color type/tRNS, WebP ALPH flag, GIF transparency). */
+  hasAlpha: boolean;
 }
 
 const PNG_HEADER = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10,],);
 const TEXTSIG = 0x74_45_58_74; // 'tEXt' in big-endian
 const ZTXTSIG = 0x7A_54_58_74; // 'zTXt' in big-endian
+const TRNSSIG = 0x74_52_4E_53; // 'tRNS' in big-endian
 
 /**
  * @param buf
@@ -72,11 +75,19 @@ function startsWith(buf: Uint8Array, prefix: Uint8Array,): boolean {
 /**
  * @param buf
  */
-function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; caption?: string } {
+function parsePngMetadata(buf: Uint8Array,): {
+  width: number;
+  height: number;
+  caption?: string;
+  hasAlpha: boolean;
+} {
   const width = readUint32BE(buf, 16,);
   const height = readUint32BE(buf, 20,);
+  // IHDR: byte 25 (data offset 9) is color type: 4 = grayscale+alpha, 6 = RGBA
+  const colorType = buf[25]!;
+  let hasAlpha = colorType === 4 || colorType === 6;
 
-  // Scan for tEXt/zTXt chunks for caption
+  // Scan for tEXt/zTXt chunks for caption; tRNS chunk also implies alpha
   let offset = 33; // after IHDR chunk (8 sig + 4 len + 4 type + 13 data + 4 CRC)
   let caption: string | undefined;
 
@@ -86,6 +97,7 @@ function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; ca
 
     if (chunkType === 0x49_45_4E_44) { break; // IEND
      }
+    if (chunkType === TRNSSIG) { hasAlpha = true; }
     if (chunkType === TEXTSIG || chunkType === ZTXTSIG) {
       const dataStart = offset + 8;
       const dataEnd = dataStart + chunkLen;
@@ -100,7 +112,7 @@ function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; ca
     offset += 12 + chunkLen; // skip chunk (len + type + data + CRC)
   }
 
-  return { width, height, caption, };
+  return { width, height, caption, hasAlpha, };
 }
 
 /**
@@ -179,10 +191,14 @@ function parseJpegMetadata(buf: Uint8Array,): { width: number; height: number; c
 /**
  * @param buf
  */
-function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } {
+function parseWebpMetadata(buf: Uint8Array,): {
+  width: number;
+  height: number;
+  hasAlpha: boolean;
+} {
   // RIFF header: 4 bytes "RIFF" + 4 bytes file size + 4 bytes "WEBP"
   // VP8/VP8L/VP8X chunk follows
-  if (buf.length < 20) { return { width: 0, height: 0, }; }
+  if (buf.length < 20) { return { width: 0, height: 0, hasAlpha: false, }; }
 
   let offset = 12; // Start of chunk header after RIFF header
 
@@ -196,7 +212,7 @@ function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } 
       const raw = readUint16LE(buf, offset + 14,);
       const width = raw & 0x3F_FF;
       const height = readUint16LE(buf, offset + 16,) & 0x3F_FF;
-      return { width, height, };
+      return { width, height, hasAlpha: false, };
     }
 
     if (chunkTag === "VP8L" && chunkSize >= 5) {
@@ -205,14 +221,17 @@ function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } 
       const bits = readUint32LE(buf, offset + 9,);
       const width = (bits & 0x3F_FF) + 1;
       const height = ((bits >> 14) & 0x3F_FF) + 1;
-      return { width, height, };
+      // VP8L carries alpha in-stream; no cheap header probe — assume present
+      return { width, height, hasAlpha: true, };
     }
 
     if (chunkTag === "VP8X") {
-      // VP8X extended: 1-byte flags + 3 reserved + 24-bit LE width-1 + 24-bit LE height-1
+      // VP8X extended: 1-byte flags (bit 4 = alpha) + 3 reserved + 24-bit LE width-1 + 24-bit LE height-1
+      const flags = buf[offset + 8]!;
+      const hasAlpha = (flags & 0x10) !== 0;
       const width = readUint24LE(buf, offset + 12,) + 1;
       const height = readUint24LE(buf, offset + 15,) + 1;
-      return { width, height, };
+      return { width, height, hasAlpha, };
     }
 
     // Check for EXIF chunk (metadata) — skip
@@ -223,16 +242,37 @@ function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } 
     if (chunkEnd % 2 !== 0) { offset++; }
   }
 
-  return { width: 0, height: 0, };
+  return { width: 0, height: 0, hasAlpha: false, };
 }
 
-/**
- * @param buf
- */
-function parseGifMetadata(buf: Uint8Array,): { width: number; height: number; caption?: string } {
+function parseGifMetadata(buf: Uint8Array,): {
+  width: number;
+  height: number;
+  caption?: string;
+  hasAlpha: boolean;
+} {
   const width = readUint16LE(buf, 6,);
   const height = readUint16LE(buf, 8,);
-  return { width, height, };
+
+  // Scan blocks for a Graphic Control Extension (0x21 0xF9) with transparency flag (packed bit 0)
+  let hasAlpha = false;
+  let offset = 13 + (2 << (buf[10]! & 0x07)); // skip logical screen descriptor + global color table
+  while (offset + 2 < buf.length) {
+    const intro = buf[offset]!;
+    if (intro === 0x3B) { break; } // trailer
+    if (intro === 0x21 && buf[offset + 1] === 0xF9) {
+      const packed = buf[offset + 3]!;
+      hasAlpha = (packed & 0x01) !== 0;
+      break;
+    }
+    // Skip any block: label byte(s) then length-prefixed sub-blocks
+    const labelLen = intro === 0x21 ? 2 : 1;
+    offset += labelLen;
+    if (offset >= buf.length) { break; }
+    offset += 1 + buf[offset]!; // skip sub-block size + data
+  }
+
+  return { width, height, hasAlpha, };
 }
 
 /**
@@ -242,13 +282,13 @@ function parseGifMetadata(buf: Uint8Array,): { width: number; height: number; ca
  */
 export function extractImageMetadata(buffer: Uint8Array,): ImageMetadata {
   if (startsWith(buffer, PNG_HEADER,)) {
-    const { width, height, caption, } = parsePngMetadata(buffer,);
-    return { width, height, caption, format: "png", };
+    const { width, height, caption, hasAlpha, } = parsePngMetadata(buffer,);
+    return { width, height, caption, hasAlpha, format: "png", };
   }
 
   if (buffer[0] === 0xFF && buffer[1] === 0xD8) {
     const { width, height, caption, } = parseJpegMetadata(buffer,);
-    return { width, height, caption, format: "jpeg", };
+    return { width, height, caption, hasAlpha: false, format: "jpeg", };
   }
 
   if (
@@ -256,17 +296,17 @@ export function extractImageMetadata(buffer: Uint8Array,): ImageMetadata {
     new TextDecoder().decode(buffer.slice(0, 4,),) === "RIFF" &&
     new TextDecoder().decode(buffer.slice(8, 12,),) === "WEBP"
   ) {
-    const { width, height, } = parseWebpMetadata(buffer,);
-    return { width, height, format: "webp", };
+    const { width, height, hasAlpha, } = parseWebpMetadata(buffer,);
+    return { width, height, hasAlpha, format: "webp", };
   }
 
   if (
     new TextDecoder().decode(buffer.slice(0, 6,),) === "GIF87a" ||
     new TextDecoder().decode(buffer.slice(0, 6,),) === "GIF89a"
   ) {
-    const { width, height, } = parseGifMetadata(buffer,);
-    return { width, height, format: "gif", };
+    const { width, height, hasAlpha, } = parseGifMetadata(buffer,);
+    return { width, height, hasAlpha, format: "gif", };
   }
 
-  return { width: 0, height: 0, format: "unknown", };
+  return { width: 0, height: 0, hasAlpha: false, format: "unknown", };
 }

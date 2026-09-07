@@ -48,6 +48,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("encryption_tier", "text", (col,) => col.notNull().defaultTo("public",),)
     .addColumn("encrypted_key_id", "text",)
+    .addColumn("alpha_status", "text", (col,) => col.notNull().defaultTo("unknown",),)
     .addColumn("content_hash", "text",)
     .addColumn("data_version", "integer", (col,) => col.notNull().defaultTo(1,),)
     .addColumn("record_hash", "text", (col,) => col.notNull().defaultTo("",),)
