@@ -225,3 +225,14 @@ export function getWorkflowLoader(workflowsDir?: string,): WorkflowLoader {
   }
   return _instance;
 }
+
+/**
+ * Reset the singleton workflow loader (test-only).
+ *
+ * Mirrors resetHealthCache in admin/provider-health: the singleton binds the
+ * first workflowsDir process-wide, so each test file resets before binding
+ * its own directory in shared-process runs.
+ */
+export function resetWorkflowLoaderForTests(): void {
+  _instance = null;
+}
