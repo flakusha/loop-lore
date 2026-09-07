@@ -13,6 +13,7 @@ import {
   ChatParticipantRoleSchema,
   ChatParticipantUpdateBody,
 } from "../../validation/schemas";
+import { resolveActorAccess, } from "../actor-access";
 import {
   HttpStatus,
   jsonCreated,
@@ -22,7 +23,6 @@ import {
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
-import { resolveActorAccess, } from "../actor-access";
 import type { HandlerOpts, } from "./types";
 
 /** */

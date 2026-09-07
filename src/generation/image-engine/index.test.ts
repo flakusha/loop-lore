@@ -21,9 +21,9 @@
  */
 import { describe, expect, it, } from "bun:test";
 import type { ImageProviderConfig, } from "../../config/schema";
+import { createLogger, } from "../../logger";
 import { generateImages, } from "./index";
 import type { ImageGenFailure, } from "./types";
-import { createLogger, } from "../../logger";
 
 // Backend warn paths and the workflow loader call getLogger(), which
 // throws when the root logger is uninitialized — mirror the repo-wide
@@ -60,7 +60,7 @@ const probe = await generateImages(
 );
 const dispatchIsReal = probe.ok === false;
 
-const itRealDispatch = it.skipIf(!dispatchIsReal);
+const itRealDispatch = it.skipIf(!dispatchIsReal,);
 
 describe("generateImages", () => {
   itRealDispatch("rejects unparseable base URLs with a 400 failure", async () => {
@@ -72,7 +72,7 @@ describe("generateImages", () => {
     const failure = outcome as ImageGenFailure;
     expect(failure.status,).toBe(400,);
     expect(failure.error,).toContain("Invalid image provider URL",);
-  });
+  },);
 
   itRealDispatch("rejects unsupported API families with a 501 failure", async () => {
     const outcome = await generateImages(
@@ -84,7 +84,7 @@ describe("generateImages", () => {
     expect(failure.status,).toBe(501,);
     expect(failure.error,).toContain("carrier-pigeon",);
     expect(failure.error,).toContain("not supported",);
-  });
+  },);
 
   itRealDispatch.each(["openai", "sdapi", "sdcpp",] as const,)(
     "dispatches the %s family and fails fast on a refused endpoint",
@@ -104,7 +104,7 @@ describe("generateImages", () => {
     );
     expect(settled.ok,).toBe(false,);
     expect(settled.error.length,).toBeGreaterThan(0,);
-  });
+  },);
 
   it("reports a skipped real-dispatch suite when the module is leaked-mocked", () => {
     // Documents the leak guard: when image-gen-route.test.ts loaded first,

@@ -101,7 +101,7 @@ function makeDeps(): GenDeps {
         storedContent: "cipher",
         keyId: null,
       };
-    }) as unknown as GenDeps["encryptAtRest"],
+    },) as unknown as GenDeps["encryptAtRest"],
   } as unknown as GenDeps;
 }
 

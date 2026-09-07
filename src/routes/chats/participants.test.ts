@@ -121,7 +121,7 @@ describe("participantRoutes — invite ownership derived from session, not body"
       .select("actor_id",)
       .where("chat_id", "=", CHAT_ID,)
       .execute();
-    expect(rows.map((r,) => r.actor_id,),).toContain(INVITER_ID,);
+    expect(rows.map((r,) => r.actor_id),).toContain(INVITER_ID,);
 
     await db.destroy();
   });

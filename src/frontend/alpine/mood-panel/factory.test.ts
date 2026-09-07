@@ -16,7 +16,7 @@ mock.module("../htmx", () => ({
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
-});
+},);
 
 describe("createMoodPanelState", () => {
   test("starts with empty defaults", () => {

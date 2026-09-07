@@ -11,10 +11,10 @@ let fetchMock: ApiFetchMock = async () => Response.json({},);
 const dispatchFetch: ApiFetchMock = (url, opts,) => fetchMock(url, opts,);
 beforeEach(() => {
   globalState.apiFetch = dispatchFetch;
-});
+},);
 afterEach(() => {
   globalState.apiFetch = originalFetch;
-});
+},);
 
 describe("anonymous mode flag", () => {
   test("isAnonymousMode defaults to false before any check", () => {

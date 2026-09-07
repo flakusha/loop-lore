@@ -16,9 +16,9 @@ import { createLogger, } from "../../logger";
 import type { ActiveGeneration, SideEffectJob, } from "../cancellation-tracker";
 import { activeGenerations, chatToAttempt, } from "../cancellation-tracker";
 import { StreamingRepetitionDetector, } from "../repetition-detector";
+import { DEFAULT_REPETITION_DETECTION, } from "../types";
 import { cancelGeneration, } from "./cancel";
 import { listSideEffectJobs, registerSideEffectJob, unregisterSideEffectJob, } from "./side-effects";
-import { DEFAULT_REPETITION_DETECTION, } from "../types";
 
 // Initialize logger (side-effects warns on inactive-attempt registration)
 createLogger({ level: "error", },);
@@ -224,7 +224,7 @@ describe("cancellation fan-out over registered side-effect jobs", () => {
       id: "job-boom",
       kind: "other",
       cancel: () => {
-        throw new Error("job exploded");
+        throw new Error("job exploded",);
       },
     },);
     registerSideEffectJob("att-1", trackingJob("job-after", "image-queue", calls,),);
@@ -249,7 +249,7 @@ describe("cancellation fan-out over registered side-effect jobs", () => {
     registerSideEffectJob("att-1", {
       id: "job-reject",
       kind: "image-queue",
-      cancel: () => Promise.reject(new Error("async teardown failed"),),
+      cancel: () => Promise.reject(new Error("async teardown failed",),),
     },);
 
     const result = cancelGeneration({
