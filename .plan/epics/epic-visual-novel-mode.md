@@ -134,3 +134,9 @@ interface VNConsequence {
 - TASK-vn-qa-mode.md
 - TASK-vn-template-actions.md
 - TASK-vn-scene-template-system.md
+- TASK-vn-character-sprite-roster-per-chat.md
+- TASK-vn-multi-character-sprite-ordering-and-positioning.md
+- TASK-vn-active-speaker-sprite-highlight-and-dimming.md
+- TASK-vn-sprite-center-face-anchor-setup-and-detection-for-generat.md
+- TASK-vn-emotion-mood-and-action-driven-sprite-staging.md
+- TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md
