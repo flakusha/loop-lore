@@ -290,7 +290,8 @@
     "epic": "epic-assistant-gm-flows, epic-output-control-transforms",
     "tags": [],
     "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md",
-    "git_issue": "821e0d1"
+    "git_issue": "821e0d1",
+    "status": "done"
   },
   "BUG-AUTH-RATE-LIMITER-TESTS-SEED-PER-IP-BUCKETS-VIA-GETCLIENTIP-": {
     "hash": "a877274",
