@@ -15321,6 +15321,18 @@
     "source": ".plan/tickets/TASK-io-formats.md",
     "git_issue": "58fa43b"
   },
+  "TASK-ITEM-ASSET-AVATAR-DISPLAY-IN-INVENTORY-TRADING-AND-PROVISION": {
+    "hash": "0f594ed",
+    "git_issue": "0f594ed",
+    "extid": "TASK-ITEM-ASSET-AVATAR-DISPLAY-IN-INVENTORY-TRADING-AND-PROVISION",
+    "type": "TASK",
+    "title": "Item asset/avatar display in inventory, trading, and provisioning views",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
+  },
   "TASK-ITEM-CONFIG-TEMPLATES": {
     "hash": "pending",
     "extid": "TASK-ITEM-CONFIG-TEMPLATES",
@@ -17631,6 +17643,18 @@
     "epic": "Emotion Avatar Regeneration Control",
     "tags": [],
     "source": ".plan/tickets/TASK-persistent-regen-job-store-migration.md"
+  },
+  "TASK-PERSISTENT-TRADE-OFFER-ACCEPT-CANCEL-LIFECYCLE-WITH-COUNTER-": {
+    "hash": "86022b5",
+    "git_issue": "86022b5",
+    "extid": "TASK-PERSISTENT-TRADE-OFFER-ACCEPT-CANCEL-LIFECYCLE-WITH-COUNTER-",
+    "type": "TASK",
+    "title": "Two-sided trade counter-offers + offer deadline enforcement + trade-window UI (barter/swap)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-persistent-trade-offer-accept-cancel-lifecycle-with-counter-.md"
   },
   "TASK-PLAN-E2E-STABILIZATION": {
     "hash": "5fb353d",
