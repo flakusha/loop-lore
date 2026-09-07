@@ -12,9 +12,11 @@ import { loadConfig, } from "../../../config/load";
 import { pickSdProvider, } from "../../../config/schema";
 import type { ImageProviderConfig, } from "../../../config/schema";
 import type { EmotionEntry, } from "../../../config/sections/templates";
-import { EmotionType, } from "../../../db/enums";
+import { AssetAlphaStatus, EmotionType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { generateImages, } from "../../../generation/image-engine";
+import { MattingService, } from "../../../generation/matting";
+import type { MattingProvider, } from "../../../generation/matting";
 import { getLogger, } from "../../../logger";
 import { validateProviderUrl, } from "../../../utils/url-validation";
 import type { AvatarService, } from "../avatar-service";
@@ -48,6 +50,8 @@ export interface GenerateEmotionAvatarOpts {
   baseAvatarId?: string;
   fallbackMode?: "generation" | "none";
   avatarEmotions?: Record<string, EmotionEntry>;
+  /** When set, opaque generated sprites are auto-enqueued for matting. */
+  mattingProvider?: MattingProvider;
 }
 
 /**
@@ -115,6 +119,7 @@ export async function runBatchGeneration(
         baseAvatarId: opts.baseAvatarId,
         fallbackMode,
         avatarEmotions,
+        mattingProvider: opts.mattingProvider,
       },);
 
       result.avatarId = generated.avatarId;
@@ -157,10 +162,10 @@ export async function generateEmotionAvatar(
     sdConfig: ImageProviderConfig;
     uploadDir: string;
     promptPrefix?: string;
-    negativePrompt?: string;
     baseAvatarId?: string;
     fallbackMode?: "generation" | "none";
     avatarEmotions?: Record<string, EmotionEntry>;
+    mattingProvider?: MattingProvider;
   },
 ): Promise<{ avatarId: string; assetId: string }> {
   const emotionModifier = svc.resolveEmotionPromptModifier(opts.emotion, opts.avatarEmotions,);
@@ -255,6 +260,19 @@ export async function generateEmotionAvatar(
         label: `emotion:${opts.emotion}`,
       },
     },);
+
+    // Auto-enqueue matting for opaque generated sprites (alpha extraction).
+    if (opts.mattingProvider && asset.alpha_status === AssetAlphaStatus.Raw) {
+      const matting = new MattingService({
+        database: svc.db,
+        uploadDir: opts.uploadDir,
+        resolveProvider: () => opts.mattingProvider ?? null,
+      },);
+      const enqueued = await matting.startMatting({ assetId: asset.id, ownerId: opts.actorId, },);
+      if (!enqueued.ok) {
+        getLogger().warn({ event: "matting.auto_enqueue_skipped", assetId: asset.id, reason: enqueued.error, },);
+      }
+    }
   }
 
   return { avatarId, assetId, };

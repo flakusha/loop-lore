@@ -12,6 +12,14 @@ import { t, } from "elysia";
 export const ActorTypeSchema = t.UnionEnum(["user", "character", "narrator", "system",],);
 export const AdminOverrideActionSchema = t.UnionEnum(["ban", "approve", "restrict", "restore",],);
 export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
+export const AssetAlphaStatusSchema = t.UnionEnum([
+  "unknown",
+  "raw",
+  "native",
+  "matting_pending",
+  "matted",
+  "matting_failed",
+],);
 export const AssetLinkEntitySchema = t.UnionEnum([
   "chat",
   "character",
@@ -22,6 +30,7 @@ export const AssetLinkEntitySchema = t.UnionEnum([
   "item",
   "memory",
   "message",
+  "asset",
 ],);
 export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
 export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
@@ -588,6 +597,7 @@ export const AssetsSchema = t.Object({
   created_at: t.Optional(t.String(),),
   encryption_tier: t.Optional(t.String(),),
   encrypted_key_id: t.Optional(t.String(),),
+  alpha_status: t.Optional(AssetAlphaStatusSchema,),
   content_hash: t.Optional(t.String(),),
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
