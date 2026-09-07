@@ -7910,6 +7910,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-additional-card-imports.md"
   },
+  "TASK-ADMIN-ASSISTANT-TOOLING-ALLOWLIST": {
+    "hash": "pending",
+    "extid": "TASK-ADMIN-ASSISTANT-TOOLING-ALLOWLIST",
+    "type": "TASK",
+    "title": "Admin / Moderator Frontend for Assistant Tooling Allowlist + Capability Levels",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-byok-local-models.md (admin model surface extension) + epic-assistant-gm-flows.md (tooling)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+  },
   "TASK-ADMIN-CHARACTER-OVERRIDES-FRONTEND": {
     "hash": "pending",
     "extid": "TASK-ADMIN-CHARACTER-OVERRIDES-FRONTEND",
@@ -8540,6 +8551,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-agent-memory-scoring.md"
   },
+  "TASK-AGENTIC-CODING-SANDBOX-COMMUNITY-PLUGINS": {
+    "hash": "pending",
+    "extid": "TASK-AGENTIC-CODING-SANDBOX-COMMUNITY-PLUGINS",
+    "type": "TASK",
+    "title": "Agentic Coding Sandbox — Per-Project `.git` Repo + External Coding Agents + Community Plugins",
+    "label": "task",
+    "priority": "Low (P6+, far-fetched but on-theme)",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+  },
   "TASK-AGENTIC-WORKSPACE-MODE": {
     "hash": "c94bade",
     "extid": "TASK-AGENTIC-WORKSPACE-MODE",
@@ -9012,6 +9034,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md"
   },
+  "TASK-ASSISTANT-CAPABILITY-DISCLOSURE": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-CAPABILITY-DISCLOSURE",
+    "type": "TASK",
+    "title": "By-Role, By-Capability Assistant Capability Disclosure",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-assistant-gm-flows.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+  },
   "TASK-ASSISTANT-COMMAND-EXECUTION-INTENT-DETECTION": {
     "hash": "6df69d5",
     "extid": "TASK-ASSISTANT-COMMAND-EXECUTION-INTENT-DETECTION",
@@ -9324,6 +9357,17 @@
     "epic": "`epic-assistant-creative-studio-workflows`",
     "tags": [],
     "source": ".plan/tickets/TASK-assistant-third-party-api-integration.md"
+  },
+  "TASK-ASSISTANT-TOOL-INJECTION-GUARD": {
+    "hash": "pending",
+    "extid": "TASK-ASSISTANT-TOOL-INJECTION-GUARD",
+    "type": "TASK",
+    "title": "Assistant Tool Capability Matrix + 2+ Level Prompt-Injection Guard",
+    "label": "task",
+    "priority": "High (security)",
+    "epic": "epic-assistant-gm-flows.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
   },
   "TASK-ASYMMETRIC-KEY-PAIRS": {
     "hash": "c926456",
@@ -11017,6 +11061,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-charx-jpeg-rcc-support.md"
   },
+  "TASK-CHAT-ASK-TYPE-FAST-MENU": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-ASK-TYPE-FAST-MENU",
+    "type": "TASK",
+    "title": "Opt-in `ask`-Type Chat Event for Direct User Interactions + Story Development",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-game-frontend-scenes.md (parent: epic-embeddable-engine-game-frontend.md)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+  },
   "TASK-CHAT-AUTORENAMING": {
     "hash": "7d85e7e",
     "extid": "TASK-CHAT-AUTORENAMING",
@@ -11077,6 +11132,17 @@
     "source": ".plan/tickets/TASK-chat-context-feature-permissions.md",
     "status": "done",
     "git_issue": "a3d9b3d"
+  },
+  "TASK-CHAT-CONTEXT-PREFERENCE-PER-SCOPE": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-CONTEXT-PREFERENCE-PER-SCOPE",
+    "type": "TASK",
+    "title": "Per-Scope Preferred Chat Context Window with Pre-Cap Degradation",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-chat-context-optimization.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
   },
   "TASK-CHAT-EXTERNAL-MUSIC-LINKING": {
     "hash": "54abd35",
@@ -14131,6 +14197,17 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-gallery-editor-structured-ui.md"
+  },
+  "TASK-GALLERY-FUZZY-SEARCH-PAGINATION": {
+    "hash": "pending",
+    "extid": "TASK-GALLERY-FUZZY-SEARCH-PAGINATION",
+    "type": "TASK",
+    "title": "Gallery Fuzzy Search + Pagination + Backend Sort/Relevance",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-gallery.md (Phase 3 Polish)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
   },
   "TASK-GALLERY-MINIMAL-IMAGE-ASSET-VIEWER": {
     "hash": "4e59b5f",
@@ -18203,6 +18280,17 @@
     "source": ".plan/tickets/TASK-rag-search-providers.md",
     "git_issue": "dc8ba02"
   },
+  "TASK-RAG-SEARCH-ROBOTS-QUOTA": {
+    "hash": "pending",
+    "extid": "TASK-RAG-SEARCH-ROBOTS-QUOTA",
+    "type": "TASK",
+    "title": "RAG Internet Search — robots.txt, Retry, Rate Limits, Public/Private Split",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
+  },
   "TASK-RAG-UNIFIED-ENRICHMENT": {
     "hash": "pending",
     "extid": "TASK-RAG-UNIFIED-ENRICHMENT",
@@ -19662,6 +19750,72 @@
     "epic": "epic-e2e-integration-testing.md (Pillar 3 — real-server tier)",
     "tags": [],
     "source": ".plan/tickets/TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene.md"
+  },
+  "TASK-SEARCH-ALGORITHM-RESEARCH-RUST-FFI": {
+    "hash": "pending",
+    "extid": "TASK-SEARCH-ALGORITHM-RESEARCH-RUST-FFI",
+    "type": "TASK",
+    "title": "Search Algorithm Deep Research — Multi-Algorithm + Rust FFI `rg` + TS Fallback + Dynamic Per-Task Selection",
+    "label": "task",
+    "priority": "Medium (research) → High (impl)",
+    "epic": "epic-platform-research.md (research) + epic-rag-document-processing.md (impl)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+  },
+  "TASK-SEARCH-ENCRYPTED-BACKFILL": {
+    "hash": "pending",
+    "extid": "TASK-SEARCH-ENCRYPTED-BACKFILL",
+    "type": "TASK",
+    "title": "Encrypted-Content Backfill Migration",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-rag-document-processing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-search-encrypted-backfill.md"
+  },
+  "TASK-SEARCH-QUOTA-COST-CEILING": {
+    "hash": "pending",
+    "extid": "TASK-SEARCH-QUOTA-COST-CEILING",
+    "type": "TASK",
+    "title": "Search Quota + Cost Ceiling (per-user / per-chat)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-assistant-entity-access.md (extends quota engine)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-search-quota-cost-ceiling.md"
+  },
+  "TASK-SEARCH-RAG-COVERAGE-BRIDGE": {
+    "hash": "pending",
+    "extid": "TASK-SEARCH-RAG-COVERAGE-BRIDGE",
+    "type": "TASK",
+    "title": "Search/RAG Coverage Bridge — epic recommendation + cross-ticket glue",
+    "label": "task",
+    "priority": "High (planning only)",
+    "epic": "epic-rag-assets-unified-storage-and-assistant-flows.md (recommended as bridge) + epic-rag-document-processing.md (core)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-search-rag-coverage-bridge.md"
+  },
+  "TASK-SEARCH-SERVICE-UNIFIED": {
+    "hash": "pending",
+    "extid": "TASK-SEARCH-SERVICE-UNIFIED",
+    "type": "TASK",
+    "title": "Unified Search Service (DB-direct / rg / BM25 / vector / decrypted)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-rag-document-processing.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-search-service-unified.md"
+  },
+  "TASK-SEARCH-TELEMETRY-OBSERVABILITY": {
+    "hash": "pending",
+    "extid": "TASK-SEARCH-TELEMETRY-OBSERVABILITY",
+    "type": "TASK",
+    "title": "Search Telemetry & Quota Observability",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-analytics-observability.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-search-telemetry-observability.md"
   },
   "TASK-SELECTION-ALGORITHM-V2-OUTFIT-EMOTION": {
     "hash": "6e22de3",
