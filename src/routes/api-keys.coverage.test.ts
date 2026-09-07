@@ -67,10 +67,10 @@ describe("apiKeysRoutes coverage", () => {
       new Request("http://localhost/api/user-api-keys/test-prov", { method: "DELETE", },),
     );
     expect(del.status,).toBe(401,);
-  },);
+  });
 
   test("403 when the BYO feature is disabled", async () => {
-    const app = makeApp(db, userId, testConfig(false),);
+    const app = makeApp(db, userId, testConfig(false,),);
     const list = await app.handle(new Request("http://localhost/api/user-api-keys",),);
     expect(list.status,).toBe(403,);
     const store = await app.handle(
@@ -81,7 +81,7 @@ describe("apiKeysRoutes coverage", () => {
       },),
     );
     expect(store.status,).toBe(403,);
-  },);
+  });
 
   test("500 when no server encryption key is configured", async () => {
     const cfg = testConfig(true, "",);
@@ -94,7 +94,7 @@ describe("apiKeysRoutes coverage", () => {
       },),
     );
     expect(res.status,).toBe(500,);
-  },);
+  });
 
   test("400 for unknown providers", async () => {
     const app = makeApp(db, userId, testConfig(),);
@@ -106,7 +106,7 @@ describe("apiKeysRoutes coverage", () => {
       },),
     );
     expect(res.status,).toBe(400,);
-  },);
+  });
 
   test("store → list → upsert → delete lifecycle", async () => {
     const app = makeApp(db, userId, testConfig(),);
@@ -126,7 +126,7 @@ describe("apiKeysRoutes coverage", () => {
     const list = await app.handle(new Request("http://localhost/api/user-api-keys",),);
     expect(list.status,).toBe(200,);
     const keys: { provider_name: string }[] = await list.json();
-    expect(keys.some((k,) => k.provider_name === "test-prov",),).toBe(true,);
+    expect(keys.some((k,) => k.provider_name === "test-prov"),).toBe(true,);
 
     const upsert = await app.handle(
       new Request("http://localhost/api/user-api-keys", {
@@ -152,7 +152,7 @@ describe("apiKeysRoutes coverage", () => {
       new Request("http://localhost/api/user-api-keys/test-prov", { method: "DELETE", },),
     );
     expect(gone.status,).toBe(404,);
-  },);
+  });
 
   test("stored keys are scoped per user", async () => {
     const otherId = uid();
@@ -169,10 +169,10 @@ describe("apiKeysRoutes coverage", () => {
     const list = await theirs.handle(new Request("http://localhost/api/user-api-keys",),);
     expect(list.status,).toBe(200,);
     const keys: { provider_name: string }[] = await list.json();
-    expect(keys.some((k,) => k.provider_name === "test-prov",),).toBe(false,);
+    expect(keys.some((k,) => k.provider_name === "test-prov"),).toBe(false,);
     const del = await theirs.handle(
       new Request("http://localhost/api/user-api-keys/test-prov", { method: "DELETE", },),
     );
     expect(del.status,).toBe(404,);
-  },);
+  });
 });

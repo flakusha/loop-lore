@@ -11,9 +11,9 @@
  */
 import { afterEach, describe, expect, it, } from "bun:test";
 import type { ImageProviderConfig, } from "../../config/schema";
-import { generateComfyUI, } from "./comfyui";
 import { createLogger, } from "../../logger";
 import { clearDiscoveryCache, } from "../lora/discovery";
+import { generateComfyUI, } from "./comfyui";
 
 // The workflow loader's per-file logging calls getLogger(), which throws
 // when the root logger is uninitialized and aborts the directory scan —
@@ -24,7 +24,7 @@ const originalFetch = globalThis.fetch;
 
 afterEach(() => {
   globalThis.fetch = originalFetch;
-});
+},);
 
 const CONFIG = {
   name: "test-comfy",
@@ -101,7 +101,7 @@ describe("generateComfyUI", () => {
       if (target.includes("/view",)) {
         return new Response(png, { status: 200, headers: { "Content-Type": "image/png", }, },);
       }
-      throw new Error(`unexpected stub call: ${target}`);
+      throw new Error(`unexpected stub call: ${target}`,);
     }) as typeof fetch;
 
     const outcome = await generateComfyUI(CONFIG, OPTS,);
@@ -112,7 +112,9 @@ describe("generateComfyUI", () => {
       expect(outcome.images,).toHaveLength(1,);
       expect(outcome.images[0]?.toString("utf8",),).toBe("comfy-png",);
     }
-    const parsed = JSON.parse(submitted,) as { prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }> };
+    const parsed = JSON.parse(submitted,) as {
+      prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }>;
+    };
     expect(parsed.prompt["2"]?.inputs.text,).toBe("a tiny castle",);
     expect(parsed.prompt["2"]?.class_type,).toBe("CLIPTextEncode",);
     expect(parsed.prompt["1"]?.class_type,).toBe("CheckpointLoaderSimple",);
@@ -127,7 +129,7 @@ describe("generateComfyUI", () => {
         return new Response(
           JSON.stringify({
             LoraLoader: {
-              input: { required: { lora_name: [["char.safetensors", "other.safetensors"], {},], }, },
+              input: { required: { lora_name: [["char.safetensors", "other.safetensors",], {},], }, },
             },
           },),
           { status: 200, },
@@ -143,7 +145,7 @@ describe("generateComfyUI", () => {
           { status: 200, },
         );
       }
-      throw new Error(`unexpected stub call: ${target}`);
+      throw new Error(`unexpected stub call: ${target}`,);
     }) as typeof fetch;
 
     const outcome = await generateComfyUI(CONFIG, {
@@ -152,8 +154,10 @@ describe("generateComfyUI", () => {
     },);
 
     expect(outcome.ok,).toBe(true,);
-    const parsed = JSON.parse(submitted,) as { prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }> };
-    const loraNodes = Object.values(parsed.prompt,).filter((n,) => n.class_type === "LoraLoader",);
+    const parsed = JSON.parse(submitted,) as {
+      prompt: Record<string, { inputs: Record<string, unknown>; class_type: string }>;
+    };
+    const loraNodes = Object.values(parsed.prompt,).filter((n,) => n.class_type === "LoraLoader");
     expect(loraNodes,).toHaveLength(1,);
     expect(loraNodes[0]?.inputs.lora_name,).toBe("char",);
   });
@@ -167,7 +171,7 @@ describe("generateComfyUI", () => {
         return new Response(
           JSON.stringify({
             LoraLoader: {
-              input: { required: { lora_name: [["other.safetensors"], {},], }, },
+              input: { required: { lora_name: [["other.safetensors",], {},], }, },
             },
           },),
           { status: 200, },
@@ -183,7 +187,7 @@ describe("generateComfyUI", () => {
           { status: 200, },
         );
       }
-      throw new Error(`unexpected stub call: ${target}`);
+      throw new Error(`unexpected stub call: ${target}`,);
     }) as typeof fetch;
 
     const outcome = await generateComfyUI(CONFIG, {
@@ -193,7 +197,7 @@ describe("generateComfyUI", () => {
 
     expect(outcome.ok,).toBe(true,);
     const parsed = JSON.parse(submitted,) as { prompt: Record<string, { class_type: string }> };
-    const loraNodes = Object.values(parsed.prompt,).filter((n,) => n.class_type === "LoraLoader",);
+    const loraNodes = Object.values(parsed.prompt,).filter((n,) => n.class_type === "LoraLoader");
     expect(loraNodes,).toHaveLength(0,);
   });
 });

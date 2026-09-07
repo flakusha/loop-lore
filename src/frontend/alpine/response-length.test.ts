@@ -2,7 +2,11 @@ import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
 // Import attaches the component factory to globalThis (side effect under test).
 import "./response-length";
 
-interface LengthPreset { value: string; label: string; maxTokens: number }
+interface LengthPreset {
+  value: string;
+  label: string;
+  maxTokens: number;
+}
 
 interface LengthState {
   preset: string;
@@ -33,19 +37,26 @@ function installMemoryStorage(): { store: Map<string, string>; restore: () => vo
     },
     clear: () => store.clear(),
     key: () => null,
-    get length() { return store.size; },
+    get length() {
+      return store.size;
+    },
   } as Storage;
-  return { store, restore: () => { g.localStorage = original; }, };
+  return {
+    store,
+    restore: () => {
+      g.localStorage = original;
+    },
+  };
 }
 
 let storage: ReturnType<typeof installMemoryStorage>;
 
 beforeEach(() => {
   storage = installMemoryStorage();
-});
+},);
 afterAll(() => {
   storage.restore();
-});
+},);
 
 function freshState(): LengthState {
   const factory = (globalThis as unknown as { responseLength: () => LengthState }).responseLength;
@@ -65,8 +76,8 @@ describe("responseLength factory", () => {
 
   test("exposes the four presets", () => {
     const state = freshState();
-    expect(state.presets.map((p,) => p.value,),).toEqual(["short", "medium", "long", "custom",],);
-    expect(state.presets.map((p,) => p.maxTokens,),).toEqual([150, 400, 1000, 0,],);
+    expect(state.presets.map((p,) => p.value),).toEqual(["short", "medium", "long", "custom",],);
+    expect(state.presets.map((p,) => p.maxTokens),).toEqual([150, 400, 1000, 0,],);
   });
 
   test("maps each preset to its token budget", () => {

@@ -24,12 +24,12 @@ beforeEach(() => {
   globalState.showToast = (type, message,) => {
     toasts.push({ type, message, },);
   };
-});
+},);
 
 afterEach(() => {
   globalState.apiFetch = originalFetch;
   globalState.showToast = originalToast;
-});
+},);
 
 /** Route health / aux / provider-model endpoints; unhandled 404. */
 function routeResponses(opts?: {
@@ -47,20 +47,22 @@ function routeResponses(opts?: {
       if (opts?.rejectHealth) { throw new Error("offline",); }
       return opts?.healthStatus
         ? new Response("", { status: opts.healthStatus, },)
-        : Response.json(opts?.health
-          ?? { status: "ok", uptime: 99, timestamp: "ts-1", providers: [{ name: "p1", status: "up", },], },);
+        : Response.json(
+          opts?.health ??
+            { status: "ok", uptime: 99, timestamp: "ts-1", providers: [{ name: "p1", status: "up", },], },
+        );
     }
-    if (url.startsWith("/api/admin/telemetry/aux")) {
+    if (url.startsWith("/api/admin/telemetry/aux",)) {
       return opts?.auxStatus
         ? new Response("", { status: opts.auxStatus, },)
         : Response.json(opts?.aux ?? { aggregates: [{ task: "chat", },], events: [{ id: "e1", },], total: 7, },);
     }
-    if (url.startsWith("/api/admin/providers/")) {
+    if (url.startsWith("/api/admin/providers/",)) {
       if (opts?.rejectProviderModels) { throw new Error("offline",); }
-      const name = url.split("/")[4];
+      const name = url.split("/",)[4];
       return opts?.providerModelsStatus
         ? new Response("", { status: opts.providerModelsStatus, },)
-        : Response.json(opts?.providerModels?.[name ?? ""] ?? { models: [`models-${name}`], },);
+        : Response.json(opts?.providerModels?.[name ?? ""] ?? { models: [`models-${name}`,], },);
     }
     return new Response("", { status: 404, },);
   };
@@ -117,7 +119,7 @@ describe("healthPanelMethods.refreshHealthWithRescan", () => {
     const panel = healthPanelMethods();
     routeResponses({},);
     await panel.refreshHealthWithRescan();
-    const post = calls.find((c,) => c.opts.method === "POST",)!;
+    const post = calls.find((c,) => c.opts.method === "POST")!;
     expect(post.url,).toBe("/api/admin/providers/rescan",);
     expect(toasts[0]!.type,).toBe("success",);
     expect(panel.healthStatus,).toBe("ok",);
@@ -185,10 +187,9 @@ describe("healthPanelMethods NSFW config", () => {
 
   test("saveNsfwConfig PUTs and toasts each outcome", async () => {
     const panel = healthPanelMethods();
-    handler = async (_url, opts,) =>
-      opts?.method === "PUT" ? Response.json({},) : new Response("", { status: 404, },);
+    handler = async (_url, opts,) => opts?.method === "PUT" ? Response.json({},) : new Response("", { status: 404, },);
     await panel.saveNsfwConfig();
-    const put = calls.find((c,) => c.opts.method === "PUT",)!;
+    const put = calls.find((c,) => c.opts.method === "PUT")!;
     expect(put.url,).toBe("/api/admin/nsfw",);
     expect(JSON.parse(String(put.opts.body,),),).toEqual({ allowNsfw: true, nsfwMinAge: 18, },);
     expect(toasts[0]!.type,).toBe("success",);

@@ -95,8 +95,8 @@ describe("AsyncStore backpressure", () => {
     // Exactly the three accepted writes land; the overflow write never does.
     expect(insertedIds,).toEqual(["w1", "w2", "w3",],);
     expect(insertedIds.includes("w4",),).toBe(false,);
-  },);
-},);
+  });
+});
 
 describe("AsyncStore shutdown", () => {
   let db: Kysely<DB>;
@@ -123,5 +123,5 @@ describe("AsyncStore shutdown", () => {
 
     const row = await store.read("post-destroy",);
     expect(row,).toBeNull();
-  },);
-},);
+  });
+});

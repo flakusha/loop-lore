@@ -81,7 +81,7 @@ describe("computeSections", () => {
       ],
       1000,
     );
-    expect(out,).toEqual([{ name: "lore", tokens: 200, pct: 20, },]);
+    expect(out,).toEqual([{ name: "lore", tokens: 200, pct: 20, },],);
   });
 
   test("empty input yields empty output", () => {
@@ -90,7 +90,7 @@ describe("computeSections", () => {
 
   test("zero budget yields 0% shares instead of NaN", () => {
     const out = computeSections([{ name: "lore", tokens: 50, dropped: false, },], 0,);
-    expect(out,).toEqual([{ name: "lore", tokens: 50, pct: 0, },]);
+    expect(out,).toEqual([{ name: "lore", tokens: 50, pct: 0, },],);
   });
 });
 
