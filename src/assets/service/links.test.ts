@@ -7,9 +7,9 @@
  */
 
 import { describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
 import { AssetLinkEntity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import type { Kysely, } from "kysely";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssetLinks, insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
 import { getAssetLinks, linkAsset, unlinkAsset, } from "./links";
@@ -95,7 +95,7 @@ describe("linkAsset", () => {
         database: db,
         assetId: "nonexistent-asset",
         link: { entityType: AssetLinkEntity.Chat, entityId: "chat-1", },
-      },),).rejects.toThrow("FOREIGN KEY constraint failed");
+      },),).rejects.toThrow("FOREIGN KEY constraint failed",);
     } finally {
       sqlite.close();
     }
@@ -156,7 +156,8 @@ describe("getAssetLinks", () => {
     const { db, sqlite, } = await createTestDb();
     try {
       await seedAsset(db,);
-      const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,).executeTakeFirstOrThrow();
+      const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
+        .executeTakeFirstOrThrow();
       await insertAssets(
         db,
         owner.id,

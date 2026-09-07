@@ -127,11 +127,13 @@ function makeActiveGen(overrides: Partial<ActiveGeneration>,): ActiveGeneration 
 }
 
 /** Read one attempt row's pipeline columns back from the DB. */
-async function attemptRow(id: string,): Promise<{
-  status: string;
-  error_message: string | null;
-  step_index: number | null;
-} | undefined> {
+async function attemptRow(id: string,): Promise<
+  {
+    status: string;
+    error_message: string | null;
+    step_index: number | null;
+  } | undefined
+> {
   return db
     .selectFrom("generation_attempts",)
     .select(["status", "error_message", "step_index",],)
@@ -172,7 +174,7 @@ describe("completeStep", () => {
     activeGenerations.set("att-cs-err", makeActiveGen({ attemptId: "att-cs-err", stepIndex: 2, },),);
     const brokenDb = {
       updateTable: () => {
-        throw new Error("db down");
+        throw new Error("db down",);
       },
     } as unknown as Kysely<DB>;
 
@@ -210,7 +212,7 @@ describe("failStep", () => {
   it("swallows DB failures", async () => {
     const brokenDb = {
       updateTable: () => {
-        throw new Error("db down");
+        throw new Error("db down",);
       },
     } as unknown as Kysely<DB>;
 
@@ -225,12 +227,15 @@ describe("failStep", () => {
 
 describe("getPipelineState", () => {
   it("prefers the in-memory record", async () => {
-    activeGenerations.set("att-mem", makeActiveGen({
-      attemptId: "att-mem",
-      stepIndex: 2,
-      totalSteps: 7,
-      status: GenerationStatus.Streaming,
-    },),);
+    activeGenerations.set(
+      "att-mem",
+      makeActiveGen({
+        attemptId: "att-mem",
+        stepIndex: 2,
+        totalSteps: 7,
+        status: GenerationStatus.Streaming,
+      },),
+    );
 
     const state = await getPipelineState("att-mem", db,);
     expect(state,).toEqual({

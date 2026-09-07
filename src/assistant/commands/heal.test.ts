@@ -7,10 +7,10 @@
  */
 import { beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { createLogger, } from "../../logger";
-import { buildCombatant, BattleStatus, } from "../../rpg/service/battles";
-import type { Combatant, } from "../../rpg/combat";
 import type { DB, } from "../../db/schema";
+import { createLogger, } from "../../logger";
+import type { Combatant, } from "../../rpg/combat";
+import { BattleStatus, buildCombatant, } from "../../rpg/service/battles";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertBattles, } from "../../test-utils/insert-helpers";
 import "./heal";
@@ -27,7 +27,7 @@ beforeAll(async () => {
 /** Resolve the registered /heal handler. */
 function healHandler(): (args: string[], ctx: CommandContext,) => Promise<CommandResult> {
   const handler = getCommand("heal",);
-  if (!handler) { throw new Error("/heal not registered"); }
+  if (!handler) { throw new Error("/heal not registered",); }
   return handler as (args: string[], ctx: CommandContext,) => Promise<CommandResult>;
 }
 
@@ -96,7 +96,7 @@ describe("/heal", () => {
 
   it("lists the roster when the target does not match", async () => {
     const { chatId, } = await seedBattle(
-      [makeCombatant("e1", "Goblin", 5, 10,), makeCombatant("e2", "Orc", 8, 20,)],
+      [makeCombatant("e1", "Goblin", 5, 10,), makeCombatant("e2", "Orc", 8, 20,),],
     );
     const result = await healHandler()(["troll",], ctxFor(chatId,),);
     expect(result.systemMessage,).toContain('target "troll" not found',);
@@ -112,19 +112,19 @@ describe("/heal", () => {
   });
 
   it("refuses to heal a combatant already at full HP", async () => {
-    const { chatId, } = await seedBattle([makeCombatant("e1", "Orc", 20, 20,)],);
+    const { chatId, } = await seedBattle([makeCombatant("e1", "Orc", 20, 20,),],);
     const result = await healHandler()(["Orc",], ctxFor(chatId,),);
     expect(result.systemMessage,).toContain("already at full HP",);
   });
 
   it("rejects a zero amount", async () => {
-    const { chatId, } = await seedBattle([makeCombatant("e1", "Orc", 10, 20,)],);
+    const { chatId, } = await seedBattle([makeCombatant("e1", "Orc", 10, 20,),],);
     const result = await healHandler()(["Orc", "0",], ctxFor(chatId,),);
     expect(result.systemMessage,).toContain("amount must be a positive number",);
   });
 
   it("defaults to a full heal when the amount is not numeric", async () => {
-    const { chatId, battleId, } = await seedBattle([makeCombatant("e1", "Orc", 10, 20,)],);
+    const { chatId, battleId, } = await seedBattle([makeCombatant("e1", "Orc", 10, 20,),],);
     const result = await healHandler()(["Orc", "lots",], ctxFor(chatId,),);
     expect(result.action,).toBe("battle-updated",);
     expect(result.actionPayload,).toEqual({ battleId, },);
@@ -136,7 +136,7 @@ describe("/heal", () => {
   });
 
   it("heals a partial amount and persists the new HP", async () => {
-    const { chatId, battleId, } = await seedBattle([makeCombatant("e1", "Orc", 10, 30,)],);
+    const { chatId, battleId, } = await seedBattle([makeCombatant("e1", "Orc", 10, 30,),],);
     const result = await healHandler()(["orc", "5",], ctxFor(chatId,),);
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("**Orc** healed for **5 HP** (15/30)",);
@@ -148,7 +148,7 @@ describe("/heal", () => {
   });
 
   it("matches targets case-insensitively by name substring", async () => {
-    const { chatId, } = await seedBattle([makeCombatant("e1", "Goblin Chief", 4, 12,)],);
+    const { chatId, } = await seedBattle([makeCombatant("e1", "Goblin Chief", 4, 12,),],);
     const result = await healHandler()(["chief", "3",], ctxFor(chatId,),);
     expect(result.systemMessage,).toContain("**Goblin Chief** healed for **3 HP** (7/12)",);
   });

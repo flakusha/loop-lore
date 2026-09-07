@@ -21,7 +21,7 @@ mock.module("../htmx", () => ({
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
-});
+},);
 
 describe("fetchMood", () => {
   test("returns parsed mood on ok", async () => {

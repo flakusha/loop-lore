@@ -19,7 +19,7 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import type { CommandContext, CommandHandler, CommandResult, } from "./registry";
 import { getCommand, } from "./registry";
-import { LANGUAGES, runTranslate } from "./translate";
+import { LANGUAGES, runTranslate, } from "./translate";
 
 /** Resolve a registered handler, failing loudly when missing. */
 function mustGet(name: string,): CommandHandler {

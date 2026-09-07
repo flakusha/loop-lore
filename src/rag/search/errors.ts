@@ -15,8 +15,8 @@ export class SearchProviderError extends Error {
   readonly code: string;
   /** True when retrying the same provider may succeed. */
   readonly retryable: boolean;
-  constructor(code: string, message: string, retryable: boolean) {
-    super(message);
+  constructor(code: string, message: string, retryable: boolean,) {
+    super(message,);
     this.name = "SearchProviderError";
     this.code = code;
     this.retryable = retryable;
@@ -33,8 +33,8 @@ export class CaptchaBlockedError extends SearchProviderError {
   readonly provider: string;
   /** Requested quarantine duration in ms. */
   readonly quarantineMs: number;
-  constructor(provider: string, quarantineMs: number, detail = "captcha challenge") {
-    super("CAPTCHA_BLOCKED", `${provider} blocked by ${detail}; quarantined`, false);
+  constructor(provider: string, quarantineMs: number, detail = "captcha challenge",) {
+    super("CAPTCHA_BLOCKED", `${provider} blocked by ${detail}; quarantined`, false,);
     this.name = "CaptchaBlockedError";
     this.provider = provider;
     this.quarantineMs = quarantineMs;
@@ -51,8 +51,8 @@ export class ProviderRateLimitedError extends SearchProviderError {
   readonly provider: string;
   /** Delay before retry in ms. */
   readonly retryAfterMs: number;
-  constructor(provider: string, retryAfterMs: number) {
-    super("RATE_LIMITED", `${provider} rate limited; retry after ${retryAfterMs}ms`, true);
+  constructor(provider: string, retryAfterMs: number,) {
+    super("RATE_LIMITED", `${provider} rate limited; retry after ${retryAfterMs}ms`, true,);
     this.name = "ProviderRateLimitedError";
     this.provider = provider;
     this.retryAfterMs = retryAfterMs;

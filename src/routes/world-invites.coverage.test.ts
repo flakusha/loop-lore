@@ -111,8 +111,7 @@ describe("worldInvitesRoutes coverage", () => {
     return (await res.json()) as WorldInviteBody;
   }
 
-  /**
-   */
+  /** */
   async function createWorld(name: string,): Promise<string> {
     const worldsApp = new Elysia({ name: "test-world-create-more", },)
       .derive({ as: "scoped", }, () => ({ userId: owner, userRole: "user", }),)
@@ -151,7 +150,7 @@ describe("worldInvitesRoutes coverage", () => {
       new Request("http://localhost/api/world-invites/abc/join", { method: "POST", },),
     );
     expect(join.status,).toBe(401,);
-  },);
+  });
 
   test("create + list round-trip for the owner", async () => {
     const app = makeApp(db, owner, "user",);
@@ -163,8 +162,8 @@ describe("worldInvitesRoutes coverage", () => {
     );
     expect(list.status,).toBe(200,);
     const parsed = (await list.json()) as { data: WorldInviteBody[] };
-    expect(parsed.data.some((i,) => i.id === invite.id,),).toBe(true,);
-  },);
+    expect(parsed.data.some((i,) => i.id === invite.id),).toBe(true,);
+  });
 
   test("create/list 404 for non-owner and missing world", async () => {
     const other = makeApp(db, joiner, "user",);
@@ -189,7 +188,7 @@ describe("worldInvitesRoutes coverage", () => {
       },),
     );
     expect(missing.status,).toBe(404,);
-  },);
+  });
 
   test("revoke is idempotent; non-owner gets 404", async () => {
     const app = makeApp(db, owner, "user",);
@@ -214,7 +213,7 @@ describe("worldInvitesRoutes coverage", () => {
       },),
     );
     expect(denied.status,).toBe(404,);
-  },);
+  });
 
   test("join adds the member; repeat join reports alreadyMember", async () => {
     const app = makeApp(db, owner, "user",);
@@ -232,7 +231,7 @@ describe("worldInvitesRoutes coverage", () => {
     );
     expect(second.status,).toBe(200,);
     expect(((await second.json()) as { alreadyMember: boolean }).alreadyMember,).toBe(true,);
-  },);
+  });
 
   test("join 404 for unknown or revoked codes", async () => {
     const app = makeApp(db, joiner, "user",);
@@ -249,7 +248,7 @@ describe("worldInvitesRoutes coverage", () => {
       new Request(`http://localhost/api/world-invites/${invite.code}/join`, { method: "POST", },),
     );
     expect(revoked.status,).toBe(404,);
-  },);
+  });
 
   test("join 410 for expired and exhausted invites", async () => {
     const ownerApp = makeApp(db, owner, "user",);
@@ -273,5 +272,5 @@ describe("worldInvitesRoutes coverage", () => {
       new Request(`http://localhost/api/world-invites/${single.code}/join`, { method: "POST", },),
     );
     expect(used.status,).toBe(410,);
-  },);
+  });
 });

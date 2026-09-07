@@ -9,10 +9,10 @@
 import { describe, expect, test, } from "bun:test";
 import { QualityDimension, } from "../../../db/enums.js";
 import { getReasoning, } from "../reasoning.js";
+import type { ScorerContext, } from "../types.js";
 import { scoreCreativity, } from "./creativity.js";
 import { scoreLoreConsistency, } from "./lore-consistency.js";
 import { scoreNarrativeQuality, } from "./narrative-quality.js";
-import type { ScorerContext, } from "../types.js";
 
 /**
  * @param partial
@@ -84,7 +84,7 @@ describe("getReasoning", () => {
 
 describe("scoreCreativity", () => {
   test("plain prose scores near the base", () => {
-    expect(scoreCreativity(ctx({ response: "The knight drew his sword.", }),),).toBe(65,);
+    expect(scoreCreativity(ctx({ response: "The knight drew his sword.", },),),).toBe(65,);
   });
 
   test("evocative words raise the score", () => {
@@ -106,7 +106,7 @@ describe("scoreCreativity", () => {
   test("near-duplicate recent turns penalize repetition", () => {
     const response = `The ancient forgotten shadow whispered a mysterious warning across the
       glimmering hall while the terrifying beast emerged from the unsettling dark.`;
-    const s = scoreCreativity(ctx({ response, recentTurns: [{ response, },], }),);
+    const s = scoreCreativity(ctx({ response, recentTurns: [{ response, },], },),);
     // boosted then -20 for similarity 1.0
     expect(s,).toBeLessThan(100,);
     expect(s,).toBeGreaterThanOrEqual(10,);
@@ -114,19 +114,20 @@ describe("scoreCreativity", () => {
 
   test("short recent turns are ignored for similarity", () => {
     const response = "The knight drew his sword.";
-    const s = scoreCreativity(ctx({ response, recentTurns: [{ response: "Hi.", },], }),);
+    const s = scoreCreativity(ctx({ response, recentTurns: [{ response: "Hi.", },], },),);
     expect(s,).toBe(65,);
   });
 
   test("null recent responses do not crash", () => {
-    const s = scoreCreativity(ctx({ response: "x", recentTurns: [{ response: null, },], }),);
+    const s = scoreCreativity(ctx({ response: "x", recentTurns: [{ response: null, },], },),);
     expect(s,).toBeGreaterThanOrEqual(10,);
   });
 
   test("score clamps at 100 under heavy evocation", () => {
     const s = scoreCreativity(
       ctx({
-        response: "unexpected surprising peculiar strange mysterious unsettling beautiful terrifying ancient forgotten glimmer shadow whisper fade emerge",
+        response:
+          "unexpected surprising peculiar strange mysterious unsettling beautiful terrifying ancient forgotten glimmer shadow whisper fade emerge",
       },),
     );
     expect(s,).toBe(100,);
@@ -135,7 +136,7 @@ describe("scoreCreativity", () => {
   test("score never drops below 10", () => {
     const response = `It was a dark and stormy night. Little did they know, the answer was
       inside them all along. It was all a dream in the nick of time. Destiny called.`;
-    const s = scoreCreativity(ctx({ response, }),);
+    const s = scoreCreativity(ctx({ response, },),);
     expect(s,).toBeGreaterThanOrEqual(10,);
   });
 });
@@ -150,20 +151,20 @@ describe("scoreNarrativeQuality", () => {
   });
 
   test("very short responses are penalized", () => {
-    expect(scoreNarrativeQuality(ctx({ response: "Go.", }),),).toBeLessThan(60,);
+    expect(scoreNarrativeQuality(ctx({ response: "Go.", },),),).toBeLessThan(60,);
   });
 
   test("consistent past tense earns the steadiness bonus", () => {
     const words = Array.from({ length: 60, }, (_, i,) => `word${i}`,).join(" ",);
     const past = `${words} He was walking and she had gone. They said nothing.`;
     const mixed = `${words} He was walking and she is going. They say nothing and do things.`;
-    expect(scoreNarrativeQuality(ctx({ response: past, }),),).toBeGreaterThan(
-      scoreNarrativeQuality(ctx({ response: mixed, }),),
+    expect(scoreNarrativeQuality(ctx({ response: past, },),),).toBeGreaterThan(
+      scoreNarrativeQuality(ctx({ response: mixed, },),),
     );
   });
 
   test("empty response stays within bounds", () => {
-    const s = scoreNarrativeQuality(ctx({ response: "", }),);
+    const s = scoreNarrativeQuality(ctx({ response: "", },),);
     expect(s,).toBeGreaterThanOrEqual(10,);
     expect(s,).toBeLessThanOrEqual(100,);
   });
@@ -171,24 +172,24 @@ describe("scoreNarrativeQuality", () => {
 
 describe("scoreLoreConsistency", () => {
   test("missing lore returns the neutral default", () => {
-    expect(scoreLoreConsistency(ctx({ response: "Anything.", lore: null, }),),).toBe(75,);
-    expect(scoreLoreConsistency(ctx({ response: "Anything.", lore: "", }),),).toBe(75,);
+    expect(scoreLoreConsistency(ctx({ response: "Anything.", lore: null, },),),).toBe(75,);
+    expect(scoreLoreConsistency(ctx({ response: "Anything.", lore: "", },),),).toBe(75,);
   });
 
   test("lowercased input yields no extractable entities, so the base holds", () => {
     expect(
-      scoreLoreConsistency(ctx({ response: "Aldoria has fallen.", lore: "Aldoria has fallen.", }),),
+      scoreLoreConsistency(ctx({ response: "Aldoria has fallen.", lore: "Aldoria has fallen.", },),),
     ).toBe(70,);
   });
 
   test("unrelated lore keeps the base score", () => {
     expect(
-      scoreLoreConsistency(ctx({ response: "Soup.", lore: "Dragons.", }),),
+      scoreLoreConsistency(ctx({ response: "Soup.", lore: "Dragons.", },),),
     ).toBe(70,);
   });
 
   test("empty response against lore stays in bounds", () => {
-    const s = scoreLoreConsistency(ctx({ response: "", lore: "Some lore here.", }),);
+    const s = scoreLoreConsistency(ctx({ response: "", lore: "Some lore here.", },),);
     expect(s,).toBeGreaterThanOrEqual(10,);
     expect(s,).toBeLessThanOrEqual(100,);
   });

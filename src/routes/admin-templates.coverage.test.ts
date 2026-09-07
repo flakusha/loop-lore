@@ -73,7 +73,7 @@ describe("adminTemplateRoutes coverage", () => {
     expect(anonRes.status,).toBe(401,);
     const userRes = await user.handle(new Request("http://localhost/api/admin/templates",),);
     expect(userRes.status,).toBe(403,);
-  },);
+  });
 
   test("list returns builtin profiles with counts", async () => {
     const res = await admin.handle(new Request("http://localhost/api/admin/templates",),);
@@ -82,10 +82,10 @@ describe("adminTemplateRoutes coverage", () => {
     expect(body.defaultProfileId,).toBe("sdxl",);
     expect(body.builtinCount,).toBeGreaterThan(0,);
     expect(body.customCount,).toBe(0,);
-    const sdxl = body.profiles.find((p,) => p.id === "sdxl",);
+    const sdxl = body.profiles.find((p,) => p.id === "sdxl");
     expect(sdxl?.isBuiltin,).toBe(true,);
     expect(sdxl?.templateCount,).toBeGreaterThan(0,);
-  },);
+  });
 
   test("registry exposes full profiles plus model matching", async () => {
     const res = await admin.handle(
@@ -104,7 +104,7 @@ describe("adminTemplateRoutes coverage", () => {
       new Request("http://localhost/api/admin/templates/registry",),
     );
     expect(denied.status,).toBe(403,);
-  },);
+  });
 
   test("get one profile resolves builtins and 404s unknowns", async () => {
     const res = await admin.handle(
@@ -121,67 +121,83 @@ describe("adminTemplateRoutes coverage", () => {
       new Request("http://localhost/api/admin/templates/sdxl",),
     );
     expect(denied.status,).toBe(403,);
-  },);
+  });
 
   test("create rejects auth, missing fields, and bad ids", async () => {
-    const anonRes = await anon.handle(new Request("http://localhost/api/admin/templates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ id: "cov-a", name: "A", families: ["sdxl",], },),
-    },),);
+    const anonRes = await anon.handle(
+      new Request("http://localhost/api/admin/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ id: "cov-a", name: "A", families: ["sdxl",], },),
+      },),
+    );
     expect(anonRes.status,).toBe(401,);
-    const userRes = await user.handle(new Request("http://localhost/api/admin/templates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ id: "cov-a", name: "A", families: ["sdxl",], },),
-    },),);
+    const userRes = await user.handle(
+      new Request("http://localhost/api/admin/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ id: "cov-a", name: "A", families: ["sdxl",], },),
+      },),
+    );
     expect(userRes.status,).toBe(403,);
-    const missing = await admin.handle(new Request("http://localhost/api/admin/templates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ id: "cov-a", },),
-    },),);
+    const missing = await admin.handle(
+      new Request("http://localhost/api/admin/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ id: "cov-a", },),
+      },),
+    );
     expect(missing.status,).toBe(400,);
-    const badId = await admin.handle(new Request("http://localhost/api/admin/templates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ id: "BAD ID!", name: "A", families: ["sdxl",], },),
-    },),);
+    const badId = await admin.handle(
+      new Request("http://localhost/api/admin/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ id: "BAD ID!", name: "A", families: ["sdxl",], },),
+      },),
+    );
     expect(badId.status,).toBe(400,);
-  },);
+  });
 
   test("create persists a profile and rejects duplicates", async () => {
-    const created = await admin.handle(new Request("http://localhost/api/admin/templates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ id: "cov-custom", name: "Custom", families: ["sdxl",], },),
-    },),);
+    const created = await admin.handle(
+      new Request("http://localhost/api/admin/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ id: "cov-custom", name: "Custom", families: ["sdxl",], },),
+      },),
+    );
     expect(created.status,).toBe(200,);
     const list = (await (await admin.handle(
       new Request("http://localhost/api/admin/templates",),
     )).json()) as ListBody;
     expect(list.customCount,).toBe(1,);
-    expect(list.profiles.some((p,) => p.id === "cov-custom" && !p.isBuiltin,),).toBe(true,);
-    const dup = await admin.handle(new Request("http://localhost/api/admin/templates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ id: "cov-custom", name: "Custom", families: ["sdxl",], },),
-    },),);
+    expect(list.profiles.some((p,) => p.id === "cov-custom" && !p.isBuiltin),).toBe(true,);
+    const dup = await admin.handle(
+      new Request("http://localhost/api/admin/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ id: "cov-custom", name: "Custom", families: ["sdxl",], },),
+      },),
+    );
     expect(dup.status,).toBe(422,);
-    const builtinDup = await admin.handle(new Request("http://localhost/api/admin/templates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ id: "sdxl", name: "Custom", families: ["sdxl",], },),
-    },),);
+    const builtinDup = await admin.handle(
+      new Request("http://localhost/api/admin/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ id: "sdxl", name: "Custom", families: ["sdxl",], },),
+      },),
+    );
     expect(builtinDup.status,).toBe(422,);
-  },);
+  });
 
   test("update writes template text and model defaults", async () => {
-    const put = await admin.handle(new Request("http://localhost/api/admin/templates/cov-custom", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "cover me {prompt}", },),
-    },),);
+    const put = await admin.handle(
+      new Request("http://localhost/api/admin/templates/cov-custom", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "cover me {prompt}", },),
+      },),
+    );
     expect(put.status,).toBe(200,);
     const fetched = (await (await admin.handle(
       new Request("http://localhost/api/admin/templates/cov-custom",),
@@ -200,26 +216,32 @@ describe("adminTemplateRoutes coverage", () => {
       new Request("http://localhost/api/admin/templates/cov-custom",),
     )).json()) as FullProfile;
     expect(refetched.defaults.cfgScale,).toBe(9,);
-  },);
+  });
 
   test("update rejects bad input and unknown profiles", async () => {
-    const anonRes = await anon.handle(new Request("http://localhost/api/admin/templates/sdxl", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "x", },),
-    },),);
+    const anonRes = await anon.handle(
+      new Request("http://localhost/api/admin/templates/sdxl", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "x", },),
+      },),
+    );
     expect(anonRes.status,).toBe(401,);
-    const missing = await admin.handle(new Request("http://localhost/api/admin/templates/sdxl", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ detail: "balanced", },),
-    },),);
+    const missing = await admin.handle(
+      new Request("http://localhost/api/admin/templates/sdxl", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ detail: "balanced", },),
+      },),
+    );
     expect(missing.status,).toBe(400,);
-    const unknown = await admin.handle(new Request("http://localhost/api/admin/templates/nope", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "x", },),
-    },),);
+    const unknown = await admin.handle(
+      new Request("http://localhost/api/admin/templates/nope", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ detail: "balanced", mode: "yourself", template: "x", },),
+      },),
+    );
     expect(unknown.status,).toBe(404,);
     const unknownDefaults = await admin.handle(
       new Request("http://localhost/api/admin/templates/nope/defaults", {
@@ -229,22 +251,24 @@ describe("adminTemplateRoutes coverage", () => {
       },),
     );
     expect(unknownDefaults.status,).toBe(404,);
-  },);
+  });
 
   test("update and remove currently accept any authenticated caller", async () => {
     // Documents the missing admin gate on the update/remove sub-plugins:
     // create/list require admin.settings but these do not.
-    const put = await user.handle(new Request("http://localhost/api/admin/templates/sdxl", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ detail: "balanced", mode: "last", template: "cov-user-write", },),
-    },),);
+    const put = await user.handle(
+      new Request("http://localhost/api/admin/templates/sdxl", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ detail: "balanced", mode: "last", template: "cov-user-write", },),
+      },),
+    );
     expect(put.status,).toBe(200,);
     const fetched = (await (await admin.handle(
       new Request("http://localhost/api/admin/templates/sdxl",),
     )).json()) as FullProfile;
     expect(fetched.templates.balanced,).toBeDefined();
-  },);
+  });
 
   test("remove protects builtins, 404s unknowns, and deletes customs", async () => {
     const anonRes = await anon.handle(
@@ -267,7 +291,7 @@ describe("adminTemplateRoutes coverage", () => {
       new Request("http://localhost/api/admin/templates/cov-custom",),
     );
     expect(gone.status,).toBe(404,);
-  },);
+  });
 
   test("corrupt stored JSON resets to defaults instead of failing", async () => {
     await db.updateTable("system_config",)
@@ -279,7 +303,7 @@ describe("adminTemplateRoutes coverage", () => {
     const body = (await res.json()) as ListBody;
     expect(body.customCount,).toBe(0,);
     expect(body.defaultProfileId,).toBe("sdxl",);
-  },);
+  });
 
   test("list and registry report 500 when storage fails", async () => {
     const broken = (await createTestDb()).db;
@@ -293,5 +317,5 @@ describe("adminTemplateRoutes coverage", () => {
       new Request("http://localhost/api/admin/templates/registry",),
     );
     expect(registry.status,).toBe(500,);
-  },);
+  });
 });

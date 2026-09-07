@@ -57,7 +57,7 @@ describe("worldInvites.loadInvites", () => {
     const c = ctx({ worldId: null, },);
     await c.loadInvites();
     expect(fetchCalls,).toHaveLength(0,);
-  },);
+  });
 
   test("stores rows and marks loaded", async () => {
     mockFetch(200, { data: [{ id: "i1", code: "ABC", },], },);
@@ -67,7 +67,7 @@ describe("worldInvites.loadInvites", () => {
     expect(c.invitesLoaded,).toBe(true,);
     expect(c.loadingInvites,).toBe(false,);
     expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/invites",);
-  },);
+  });
 
   test("keeps stale rows on failure", async () => {
     mockFetch(500, {},);
@@ -76,7 +76,7 @@ describe("worldInvites.loadInvites", () => {
     expect(c.invites,).toEqual([],);
     expect(c.invitesLoaded,).toBe(false,);
     expect(c.loadingInvites,).toBe(false,);
-  },);
+  });
 
   test("tolerates missing data field", async () => {
     mockFetch(200, {},);
@@ -84,15 +84,15 @@ describe("worldInvites.loadInvites", () => {
     await c.loadInvites();
     expect(c.invites,).toEqual([],);
     expect(c.invitesLoaded,).toBe(true,);
-  },);
-},);
+  });
+});
 
 describe("worldInvites.createInvite", () => {
   test("returns early without a world id", async () => {
     const c = ctx({ worldId: null, newInviteMaxUses: "3", },);
     await c.createInvite();
     expect(fetchCalls,).toHaveLength(0,);
-  },);
+  });
 
   test("rejects non-positive and fractional max uses", async () => {
     for (const bad of ["0", "-2", "1.5", "abc",]) {
@@ -103,7 +103,7 @@ describe("worldInvites.createInvite", () => {
       expect(fetchCalls,).toHaveLength(0,);
       expect(toasts[0]?.type,).toBe("error",);
     }
-  },);
+  });
 
   test("creates with null maxUses when the field is blank", async () => {
     mockFetch(201, { id: "i1", code: "XYZ", },);
@@ -119,7 +119,7 @@ describe("worldInvites.createInvite", () => {
     expect(c.newInviteMaxUses,).toBe("",);
     expect(c.showInviteForm,).toBe(false,);
     expect(toasts[0]?.type,).toBe("success",);
-  },);
+  });
 
   test("creates with an integer cap and unicode-safe code", async () => {
     mockFetch(201, { id: "i2", code: "招待-12", },);
@@ -132,7 +132,7 @@ describe("worldInvites.createInvite", () => {
     expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({ maxUses: 5, },);
     expect(c.invites[0],).toMatchObject({ code: "招待-12", },);
     expect(c.invites,).toHaveLength(2,);
-  },);
+  });
 
   test("surfaces server errors", async () => {
     mockFetch(400, { error: "bad", },);
@@ -140,8 +140,8 @@ describe("worldInvites.createInvite", () => {
     await c.createInvite();
     expect(c.invites,).toHaveLength(0,);
     expect(toasts[0]?.type,).toBe("error",);
-  },);
-},);
+  });
+});
 
 describe("worldInvites.copyInviteCode", () => {
   test("returns early when the clipboard is unavailable", async () => {
@@ -163,7 +163,7 @@ describe("worldInvites.copyInviteCode", () => {
         /* ignore */
       }
     }
-  },);
+  });
 
   test("writes the code when a clipboard is present", async () => {
     const written: string[] = [];
@@ -173,7 +173,11 @@ describe("worldInvites.copyInviteCode", () => {
     }
     const prev = nav.clipboard;
     try {
-      nav.clipboard = { writeText: async (s: string,) => { written.push(s,); }, };
+      nav.clipboard = {
+        writeText: async (s: string,) => {
+          written.push(s,);
+        },
+      };
     } catch {
       return;
     }
@@ -185,7 +189,7 @@ describe("worldInvites.copyInviteCode", () => {
     } catch {
       /* ignore */
     }
-  },);
+  });
 
   test("swallows clipboard write failures", async () => {
     const nav = globalThis.navigator as unknown as Record<string, unknown> | undefined;
@@ -209,8 +213,8 @@ describe("worldInvites.copyInviteCode", () => {
     } catch {
       /* ignore */
     }
-  },);
-},);
+  });
+});
 
 describe("worldInvites.revokeInvite", () => {
   test("returns early without a world id or for unknown ids", async () => {
@@ -219,16 +223,16 @@ describe("worldInvites.revokeInvite", () => {
     const unknown = ctx({ invites: [], },);
     await unknown.revokeInvite("missing",);
     expect(fetchCalls,).toHaveLength(0,);
-  },);
+  });
 
   test("DELETEs and removes the row", async () => {
     mockFetch(200, {},);
     const c = ctx({ invites: [{ id: "i1", code: "A", }, { id: "i2", code: "B", },] as never, },);
     await c.revokeInvite("i1",);
     expect(fetchCalls[0]!.url,).toBe("/api/worlds/w1/invites/i1",);
-    expect(c.invites.map((r,) => r.id,),).toEqual(["i2",],);
+    expect(c.invites.map((r,) => r.id),).toEqual(["i2",],);
     expect(toasts[0]?.type,).toBe("success",);
-  },);
+  });
 
   test("aborts when confirm is declined", async () => {
     globalThis.confirm = () => false;
@@ -236,7 +240,7 @@ describe("worldInvites.revokeInvite", () => {
     await c.revokeInvite("i1",);
     expect(fetchCalls,).toHaveLength(0,);
     expect(c.invites,).toHaveLength(1,);
-  },);
+  });
 
   test("surfaces server errors", async () => {
     mockFetch(400, { error: "gone", },);
@@ -244,5 +248,5 @@ describe("worldInvites.revokeInvite", () => {
     await c.revokeInvite("i1",);
     expect(c.invites,).toHaveLength(1,);
     expect(toasts[0]?.type,).toBe("error",);
-  },);
-},);
+  });
+});

@@ -90,20 +90,20 @@ describe("purgeStaleMemories — soft purge", () => {
     expect(await field(db, "stale-1", "confidence",),).toBe(0.01,);
     const count = await db.selectFrom("actor_memories",).select("id",).execute();
     expect(count,).toHaveLength(1,);
-  },);
+  });
 
   it("matches never-accessed memories via the IS NULL branch", async () => {
     await seedMemory(db, { id: "never-1", confidence: 0.5, strength: 0.05, lastAccessedAt: null, },);
     const result = await purgeStaleMemories(db, { staleAfterChats: 10, },);
     expect(result.stale,).toBe(1,);
-  },);
+  });
 
   it("leaves recently-accessed memories alone", async () => {
     await seedMemory(db, { id: "fresh-1", confidence: 0.5, strength: 0.05, lastAccessedAt: daysAgo(1,), },);
     const result = await purgeStaleMemories(db, { staleAfterChats: 10, },);
     expect(result,).toEqual({ stale: 0, deleted: 0, },);
     expect(await field(db, "fresh-1", "confidence",),).toBe(0.5,);
-  },);
+  });
 
   it("skips memories whose confidence is already at or below the floor", async () => {
     // Soft purge requires confidence > minConfidence (0.2); a demoted memory
@@ -112,26 +112,26 @@ describe("purgeStaleMemories — soft purge", () => {
     await seedMemory(db, { id: "below-floor", confidence: 0.05, strength: 0.05, lastAccessedAt: daysAgo(30,), },);
     const result = await purgeStaleMemories(db, { staleAfterChats: 10, },);
     expect(result.stale,).toBe(0,);
-  },);
+  });
 
   it("skips memories whose strength is above the survival threshold", async () => {
     await seedMemory(db, { id: "strong-1", confidence: 0.5, strength: 0.5, lastAccessedAt: daysAgo(30,), },);
     const result = await purgeStaleMemories(db, { staleAfterChats: 10, },);
     expect(result.stale,).toBe(0,);
     expect(await field(db, "strong-1", "strength",),).toBe(0.5,);
-  },);
+  });
 
   it("zero staleAfterChats treats every accessed memory as stale", async () => {
     await seedMemory(db, { id: "z-1", confidence: 0.5, strength: 0.05, lastAccessedAt: daysAgo(0.001,), },);
     const result = await purgeStaleMemories(db, { staleAfterChats: 0, },);
     expect(result.stale,).toBeGreaterThanOrEqual(1,);
-  },);
+  });
 
   it("returns zero counts on an empty memory table", async () => {
     const result = await purgeStaleMemories(db, {},);
     expect(result,).toEqual({ stale: 0, deleted: 0, },);
-  },);
-},);
+  });
+});
 
 describe("purgeStaleMemories — hard delete", () => {
   let db: Kysely<DB>;
@@ -158,15 +158,15 @@ describe("purgeStaleMemories — hard delete", () => {
 
     expect(result,).toEqual({ stale: 2, deleted: 2, },);
     const remaining = await db.selectFrom("actor_memories",).select("id",).execute();
-    expect(remaining.map((r,) => r.id,),).toEqual(["kept-1",],);
-  },);
+    expect(remaining.map((r,) => r.id),).toEqual(["kept-1",],);
+  });
 
   it("keeps recently-touched memories even when hard-deleting", async () => {
     await seedMemory(db, { id: "recent-strong", confidence: 0.1, strength: 0.05, lastAccessedAt: daysAgo(1,), },);
     const result = await purgeStaleMemories(db, { staleAfterChats: 10, hardDelete: true, },);
     expect(result.deleted,).toBe(0,);
     expect(await field(db, "recent-strong", "confidence",),).toBe(0.1,);
-  },);
+  });
 
   it("respects custom minConfidence/minStrength thresholds", async () => {
     // confidence 0.4 < custom 0.5 floor → eligible for deletion.
@@ -178,10 +178,10 @@ describe("purgeStaleMemories — hard delete", () => {
       minStrength: 0.1,
     },);
     expect(result.deleted,).toBe(1,);
-  },);
+  });
 
   it("returns zero deletions on an empty memory table", async () => {
     const result = await purgeStaleMemories(db, { hardDelete: true, },);
     expect(result,).toEqual({ stale: 0, deleted: 0, },);
-  },);
-},);
+  });
+});

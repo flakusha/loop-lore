@@ -15,28 +15,28 @@ describe("toGenerationToolCalls", () => {
 
   it("maps provider tool calls to the canonical shape", () => {
     const result = toGenerationToolCalls([
-      { id: "call-1", function: { name: "roll_dice", arguments: "{\"sides\":20}" }, },
-      { id: "call-2", function: { name: "lookup_lore", arguments: "{\"q\":\"dragon\"}" }, },
+      { id: "call-1", function: { name: "roll_dice", arguments: '{"sides":20}', }, },
+      { id: "call-2", function: { name: "lookup_lore", arguments: '{"q":"dragon"}', }, },
     ],);
 
     expect(result,).toEqual([
       {
         id: "call-1",
         type: "function",
-        function: { name: "roll_dice", arguments: "{\"sides\":20}", },
+        function: { name: "roll_dice", arguments: '{"sides":20}', },
       },
       {
         id: "call-2",
         type: "function",
-        function: { name: "lookup_lore", arguments: "{\"q\":\"dragon\"}", },
+        function: { name: "lookup_lore", arguments: '{"q":"dragon"}', },
       },
     ],);
   });
 
   it("preserves argument strings verbatim without parsing", () => {
-    const raw = "{\"nested\":{\"deep\":[1,2,3]}}";
+    const raw = '{"nested":{"deep":[1,2,3]}}';
     const [only,] = toGenerationToolCalls([
-      { id: "x", function: { name: "n", arguments: raw }, },
+      { id: "x", function: { name: "n", arguments: raw, }, },
     ],);
     expect(only?.function.arguments,).toBe(raw,);
   });
@@ -45,20 +45,20 @@ describe("toGenerationToolCalls", () => {
 describe("buildToolCallAssistantMessage", () => {
   it("coerces empty content to an empty string", () => {
     const message = buildToolCallAssistantMessage("", [
-      { id: "call-1", function: { name: "f", arguments: "{}" }, },
+      { id: "call-1", function: { name: "f", arguments: "{}", }, },
     ],);
     expect(message,).toEqual({
       role: "assistant",
       content: "",
       tool_calls: [
-        { id: "call-1", type: "function", function: { name: "f", arguments: "{}" }, },
+        { id: "call-1", type: "function", function: { name: "f", arguments: "{}", }, },
       ],
     },);
   });
 
   it("keeps non-empty content and maps the tool calls", () => {
     const message = buildToolCallAssistantMessage("Let me check that.", [
-      { id: "call-9", function: { name: "inspect", arguments: "[1]" }, },
+      { id: "call-9", function: { name: "inspect", arguments: "[1]", }, },
     ],);
     expect(message.role,).toBe("assistant",);
     expect(message.content,).toBe("Let me check that.",);

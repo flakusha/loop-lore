@@ -31,13 +31,13 @@ beforeEach(() => {
   g.showToast = (type, message,) => {
     toasts.push({ type, message, },);
   };
-});
+},);
 
 afterEach(() => {
   g.window = original.window;
   g.t = original.t;
   g.showToast = original.showToast;
-});
+},);
 
 interface InteractionCtx {
   _contextMenu: { visible: boolean; messageId: string | null; x: number; y: number };

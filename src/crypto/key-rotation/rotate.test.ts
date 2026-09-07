@@ -74,12 +74,12 @@ async function setupActor(
     smk,
     name: "primary",
   },);
-  return { actorId, smk };
+  return { actorId, smk, };
 }
 
 describe("rotateActorKey (BUG-crypto-...sentinel)", () => {
   test("returns the REAL pre-rotation key id, not a sentinel string", async () => {
-    const { actorId, smk } = await setupActor("rot-real");
+    const { actorId, smk, } = await setupActor("rot-real",);
     const preKeys = await db
       .selectFrom("actor_keys",)
       .select("id",)
@@ -98,13 +98,13 @@ describe("rotateActorKey (BUG-crypto-...sentinel)", () => {
   });
 
   test("messagesReEncrypted is always 0 (stable per-chat keys)", async () => {
-    const { actorId, smk } = await setupActor("rot-no-msg");
+    const { actorId, smk, } = await setupActor("rot-no-msg",);
     const result = await rotateActorKey(db, actorId, smk,);
     expect(result.messagesReEncrypted,).toBe(0,);
   });
 
   test("oldKeyId returns 'unknown' when actor has no primary/active key (never the sentinel)", async () => {
-    const { actorId, smk } = await setupActor("rot-no-key");
+    const { actorId, smk, } = await setupActor("rot-no-key",);
     await db
       .updateTable("actor_keys",)
       .set({ status: "expired", },)

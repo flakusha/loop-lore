@@ -11,8 +11,8 @@
 
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../db/schema";
 import type { MemoryType, PinnedState, } from "../db/enums";
+import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, } from "../test-utils/insert-helpers";
@@ -66,42 +66,78 @@ describe("getMemoriesWithinBudget", () => {
   },);
 
   it("returns memories above the confidence floor, ordered by importance", async () => {
-    await seedMemory(db, { id: "m-low", actorId: "actor-bud", content: "weak claim here", confidence: 0.1, importance: 10, },);
-    await seedMemory(db, { id: "m-hi", actorId: "actor-bud", content: "vital survival fact", confidence: 0.9, importance: 5, },);
+    await seedMemory(db, {
+      id: "m-low",
+      actorId: "actor-bud",
+      content: "weak claim here",
+      confidence: 0.1,
+      importance: 10,
+    },);
+    await seedMemory(db, {
+      id: "m-hi",
+      actorId: "actor-bud",
+      content: "vital survival fact",
+      confidence: 0.9,
+      importance: 5,
+    },);
 
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
 
-    expect(result.map((m,) => m.content,),).toEqual(["vital survival fact",],);
-  },);
+    expect(result.map((m,) => m.content),).toEqual(["vital survival fact",],);
+  });
 
   it("drops lowest-importance memories first when the budget is tight", async () => {
-    await seedMemory(db, { id: "m-1", actorId: "actor-bud", content: "alpha".repeat(8,), confidence: 0.9, importance: 9, },);
-    await seedMemory(db, { id: "m-2", actorId: "actor-bud", content: "beta".repeat(8,), confidence: 0.9, importance: 7, },);
-    await seedMemory(db, { id: "m-3", actorId: "actor-bud", content: "gamma".repeat(8,), confidence: 0.9, importance: 3, },);
+    await seedMemory(db, {
+      id: "m-1",
+      actorId: "actor-bud",
+      content: "alpha".repeat(8,),
+      confidence: 0.9,
+      importance: 9,
+    },);
+    await seedMemory(db, {
+      id: "m-2",
+      actorId: "actor-bud",
+      content: "beta".repeat(8,),
+      confidence: 0.9,
+      importance: 7,
+    },);
+    await seedMemory(db, {
+      id: "m-3",
+      actorId: "actor-bud",
+      content: "gamma".repeat(8,),
+      confidence: 0.9,
+      importance: 3,
+    },);
 
     // Each 40-char content ≈ 10 tokens; budget admits two of the three.
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 20, },);
 
     expect(result,).toHaveLength(2,);
-    expect(result.map((m,) => m.importance,),).toEqual([9, 7,],);
-  },);
+    expect(result.map((m,) => m.importance),).toEqual([9, 7,],);
+  });
 
   it("returns an empty list for an actor with no memories", async () => {
     await insertActors(db, "Empty Actor", { id: "actor-empty", } as never,);
     const result = await getMemoriesWithinBudget(db, "actor-empty", {},);
     expect(result,).toEqual([],);
-  },);
+  });
 
   it("returns an empty list for an unknown actor id", async () => {
     const result = await getMemoriesWithinBudget(db, "actor-who-does-not-exist", {},);
     expect(result,).toEqual([],);
-  },);
+  });
 
   it("zero-size budget selects nothing", async () => {
-    await seedMemory(db, { id: "m-z", actorId: "actor-bud", content: "some content", confidence: 0.9, importance: 5, },);
+    await seedMemory(db, {
+      id: "m-z",
+      actorId: "actor-bud",
+      content: "some content",
+      confidence: 0.9,
+      importance: 5,
+    },);
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 0, },);
     expect(result,).toEqual([],);
-  },);
+  });
 
   it("respectPins: false still returns rows (pinned state is not read from the DB here)", async () => {
     await seedMemory(db, {
@@ -115,24 +151,42 @@ describe("getMemoriesWithinBudget", () => {
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, respectPins: false, },);
     expect(result,).toHaveLength(1,);
     expect(result[0]?.content,).toBe("pinned row in db",);
-  },);
+  });
 
   it("survives damaged rows with out-of-range confidence (NaN guard via min filter)", async () => {
     // confidence stored out of the documented [0,1] range: -5 is below any
     // meaningful floor and must be filtered, 5 passes the floor but must not
     // corrupt ordering or budget math.
-    await seedMemory(db, { id: "m-neg", actorId: "actor-bud", content: "negative confidence row", confidence: -5, importance: 9, },);
-    await seedMemory(db, { id: "m-big", actorId: "actor-bud", content: "overconfident row", confidence: 5, importance: 2, },);
+    await seedMemory(db, {
+      id: "m-neg",
+      actorId: "actor-bud",
+      content: "negative confidence row",
+      confidence: -5,
+      importance: 9,
+    },);
+    await seedMemory(db, {
+      id: "m-big",
+      actorId: "actor-bud",
+      content: "overconfident row",
+      confidence: 5,
+      importance: 2,
+    },);
 
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
 
-    expect(result.map((m,) => m.content,),).toEqual(["overconfident row",],);
+    expect(result.map((m,) => m.content),).toEqual(["overconfident row",],);
     expect(result[0]?.confidence,).toBe(5,);
-  },);
+  });
 
   it("negative importance does not crash ordering", async () => {
-    await seedMemory(db, { id: "m-negimp", actorId: "actor-bud", content: "dread importance", confidence: 0.9, importance: -3, },);
+    await seedMemory(db, {
+      id: "m-negimp",
+      actorId: "actor-bud",
+      content: "dread importance",
+      confidence: 0.9,
+      importance: -3,
+    },);
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
     expect(result,).toHaveLength(1,);
-  },);
-},);
+  });
+});

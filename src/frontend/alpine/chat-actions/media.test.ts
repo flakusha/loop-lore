@@ -13,7 +13,10 @@ mock.module("../htmx", () => ({
   }) satisfies ApiFetchMock,
 }),);
 
-interface Toast { type: string; message: string }
+interface Toast {
+  type: string;
+  message: string;
+}
 
 interface MediaMsg {
   id: string;
@@ -46,13 +49,13 @@ function buildCtx(overrides?: Partial<MediaCtx>,): MediaCtx {
 afterEach(() => {
   calls = [];
   handler = async () => Response.json({},);
-});
+},);
 
 describe("media.generateImageFromMessage", () => {
   test("warns when there is no active chat", async () => {
     const ctx = buildCtx({ activeChat: null, },);
     await media.generateImageFromMessage!.call(ctx as never, "m1",);
-    expect(ctx.toasts,).toEqual([{ type: "warning", message: expect.any(String,) },],);
+    expect(ctx.toasts,).toEqual([{ type: "warning", message: expect.any(String,), },],);
     expect(calls,).toEqual([],);
   });
 
