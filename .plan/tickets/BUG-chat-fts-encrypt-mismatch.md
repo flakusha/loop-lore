@@ -3,7 +3,7 @@
 
 # BUG: FTS5 triggers index encrypted ciphertext — chat search is non-functional for at-rest encrypted chats
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Severity:** high
 **Priority:** high
 **Effort:** medium
@@ -53,3 +53,7 @@ Either path must:
 - `TASK-chat-message-search.md` — parent feature
 - `epic-chat-context-optimization.md`
 - Companion tickets: `BUG-chat-message-update-no-fts-refresh`, `BUG-chat-encryption-edit-key-drift`
+
+## Resolution
+
+Verified on dev HEAD (2026-09-07). The `messages.content_plaintext` shadow column (added in migration `parts/006_chat.ts:265`) carries the user-typed plaintext alongside the encrypted `content`. The FTS5 triggers in `src/db/migrations/parts/016_fts.ts:27-39` source from `new.content_plaintext`, never from `new.content`. Covered by `src/routes/messages/__tests__/fts-lifecycle.test.ts` (5 cases including `insertUserMessageWithRetry writes content + content_plaintext; FTS row carries plaintext`). The ticket body is stale; code is already correct.

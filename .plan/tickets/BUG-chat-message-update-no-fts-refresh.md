@@ -3,7 +3,7 @@
 
 # BUG: PATCH /messages/:id edit does not re-tokenize FTS — edited messages are searchable only against the original plaintext
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -44,3 +44,7 @@ Tied to the parent FTS-encryption fix:
 
 - `BUG-chat-fts-encrypt-mismatch` (parent).
 - `epic-chat-context-optimization.md`.
+
+## Resolution
+
+Verified on dev HEAD (2026-09-07). The `messages_fts_au` trigger in src/db/migrations/parts/016_fts.ts:34-39 fires on `UPDATE OF content_plaintext` and re-tokenizes from the new plaintext value. PATCH /messages/:id writes both `content` and `content_plaintext` (src/routes/messages/update.ts:118-123). Covered by fts-lifecycle.test.ts (`UPDATE content_plaintext on existing row re-tokenizes FTS row`).
