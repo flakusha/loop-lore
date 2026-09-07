@@ -107,7 +107,7 @@ describe("createHttp1Handler", () => {
     const handler = createHttp1Handler({},);
     await handler.connect();
     expect(() => handler.send("payload",)).toThrow(TransportError,);
-    expect(() => handler.send("payload",)).toThrow(/not supported/);
+    expect(() => handler.send("payload",)).toThrow(/not supported/,);
     await handler.close();
   });
 });
@@ -149,7 +149,7 @@ describe("createH2Handler", () => {
     const handler = createH2Handler({},);
     await handler.connect();
     expect(() => handler.send("payload",)).toThrow(TransportError,);
-    expect(() => handler.send("payload",)).toThrow(/not supported/);
+    expect(() => handler.send("payload",)).toThrow(/not supported/,);
     await handler.close();
   });
 });
