@@ -1498,6 +1498,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-065-prompt-library-expanded.md"
     },
     {
@@ -1575,10 +1583,20 @@
       "source": ".plan/epics/epic-character-internal-traits.md"
     }
   ],
+  "src/assistant/prompt/sections/author-note.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md"
+    }
+  ],
   "src/assistant/prompt/sections/author-note.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md"
     }
   ],
   "src/assistant/prompt/sections/character-traits.ts": [
@@ -1739,12 +1757,20 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
     }
   ],
   "src/assistant/prompt/sections/group-talkativity.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
     }
   ],
   "src/assistant/prompt/sections/index.ts": [
@@ -1881,6 +1907,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    }
+  ],
+  "src/assistant/prompt/sections/post-history.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md"
     }
   ],
   "src/assistant/prompt/sections/registry.ts": [
@@ -7064,6 +7096,10 @@
   "src/crypto/key-rotation-history.integration.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-crypto-rotateactorkeyandreencrypt-returns-sentinel-string-ro.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-key-rotation-noop-orphans-history.md"
     }
   ],
@@ -7123,6 +7159,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rotatekeyonleave-re-encrypts-messages-only-encrypted-assets-.md"
+    }
+  ],
+  "src/crypto/key-rotation/rotate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-crypto-rotateactorkeyandreencrypt-returns-sentinel-string-ro.md"
     }
   ],
   "src/crypto/key-rotation/rotate.ts": [
@@ -24257,6 +24299,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren.md"
+    }
+  ],
+  "src/turning/turn-strategies-consecutive.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md"
     }
   ],
   "src/turning/turn-strategies.test.ts": [
