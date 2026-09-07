@@ -16,10 +16,10 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import { hashId, } from "../telemetry/service";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
 import { telemetryRoutes, } from "./telemetry";
-import { hashId, } from "../telemetry/service";
 
 /**
  * @param db

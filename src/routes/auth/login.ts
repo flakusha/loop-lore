@@ -8,9 +8,9 @@ import { UserRole, UserStatus, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import type { TranslatorFn, } from "../../i18n/types";
 import { getOrCreateSoloUserForAuth, } from "../../middleware/auth";
+import type { RateLimiter, } from "../../middleware/rate-limit";
 import { HttpStatus, jsonError, } from "../http-utils";
 import { createSessionAndCookie, } from "./session";
-import type { RateLimiter, } from "../../middleware/rate-limit";
 import {
   demoLoginLimiter,
   errorHtml,

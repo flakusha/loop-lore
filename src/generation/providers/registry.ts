@@ -12,16 +12,14 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { decryptValue, } from "../../crypto";
-import { CancelReason, CancelSource, } from "../../db/enums";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { GenerationCancelledError, } from "../cancellation-actions/error";
 import { AnthropicProvider, } from "./anthropic";
 import { circuitBreaker, } from "./circuit-breaker";
 import { OllamaNativeProvider, } from "./ollama-native";
 import { OpenAiCompatibleProvider, } from "./openai-compatible";
-import type { ChunkEvent, GenerateRequest, GenerateResponse, LLMProvider, } from "./types";
+import type { LLMProvider, } from "./types";
 
 // ── Registry ──────────────────────────────────────────────
 
@@ -229,56 +227,4 @@ export function initializeProviders(config: Config,): void {
     registerProvider(config.generation.providers.ollamaNative.name, provider,);
     circuitBreaker.register(config.generation.providers.ollamaNative.name,);
   }
-}
-
-/**
- * Call a provider with circuit breaker failover.
- *
- * Tries providers in order: primary → configured fallback list.
- * Skips providers whose circuit is open.
- * Records success/failure in circuit breaker.
- * Respects Retry-After headers from ProviderRateLimitError.
- * @param providers
- * @param req
- * @param handler
- */
-export async function callWithFailover(
-  providers: { name: string; provider: LLMProvider }[],
-  req: GenerateRequest,
-  handler?: (chunk: ChunkEvent,) => void,
-): Promise<GenerateResponse> {
-  const errors: string[] = [];
-
-  for (const { name, provider: prov, } of providers) {
-    if (!circuitBreaker.allowRequest(name,)) {
-      const state = circuitBreaker.getState(name,);
-      const remaining = state?.cooldownRemainingMs ?? 0;
-      errors.push(`${name}: circuit open (${Math.ceil(remaining / 1000,)}s cooldown remaining)`,);
-      continue;
-    }
-
-    try {
-      const response = handler ? await prov.stream(req, handler,) : await prov.complete(req,);
-
-      circuitBreaker.onSuccess(name,);
-      return response;
-    } catch (error) {
-      const err = error as Error & { retryable?: boolean; retryAfter?: number };
-      // A cancelled generation is not a provider failure: never count it
-      // against the circuit breaker and never restart the request on a
-      // fallback provider — a throw during an aborted stream must
-      // propagate the cancellation to the caller.
-      if (req.signal?.aborted) {
-        const reason: unknown = req.signal.reason;
-        if (reason instanceof GenerationCancelledError) { throw reason; }
-        throw new GenerationCancelledError(CancelReason.UserCancel, CancelSource.User, err.message, {
-          cause: err,
-        },);
-      }
-      circuitBreaker.onFailure(name, err.retryAfter ? err.retryAfter * 1000 : undefined,);
-      errors.push(`${name}: ${err.message}`,);
-    }
-  }
-
-  throw new Error(`All providers failed: ${errors.join("; ",)}`,);
 }

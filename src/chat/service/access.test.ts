@@ -7,7 +7,6 @@
  * restriction-for-changing-chat-settings fix) denies member/observer/guest
  * participants while still allowing admin, creator, and `role_in_chat=owner`.
  */
-/* eslint-disable jsdoc/require-jsdoc */
 import { afterAll, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import { type Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";

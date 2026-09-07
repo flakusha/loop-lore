@@ -79,7 +79,8 @@ describe("aux-pipeline types", () => {
 describe("callAux graceful failure", () => {
   test("returns null when no model role is resolved", async () => {
     // Minimal in-memory DB + empty config: resolveModelRole returns null.
-    // BUG-1: if resolveModelRole throws instead, this test fails and documents the regression.
+    // BUG-callaux: if resolveModelRole throws instead, this test fails and
+    // documents the regression (empty config.generation must not crash).
     const sqlite = new Database(":memory:",);
     const dialect = createSqliteDialect(sqlite,);
     const db = new Kysely<DB>({ dialect, },);

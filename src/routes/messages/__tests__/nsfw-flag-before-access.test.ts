@@ -39,7 +39,7 @@ mock.module("../nsfw-user-flag", () => {
   };
 },);
 
-// Must be imported AFTER mock.module rebinding.
+// eslint-disable-next-line import/first -- must be imported AFTER mock.module rebinding
 import { createRoutes, } from "../create";
 
 const BASE = "http://localhost";
