@@ -3,7 +3,7 @@
 
 # BUG: `persistInitiative` writes against the literal scene "main" — group-scene initiative ordering is broken
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified via commit 359a3d3; bookkeeping)
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -56,3 +56,7 @@ All three sites must derive `current_scene_id` from `story_state` consistently (
 
 - `epic-battle-action-systems.md`, `TASK-battle-encounter-template-system.md`, `TASK-battle-template-actions.md`.
 - `epic-chat-lifecycle-moderation.md`.
+
+## Resolution
+
+Verified via commit 359a3d3. TurnManagerState.currentSceneId is now read from `chats.story_state` at init (`TurnManagerHost.resolveStrategy` in src/turning/turn-manager/selection.ts:25-35). `persistInitiative` in src/routes/messages/post.ts:148-178 derives `currentScene` from the same source instead of hardcoding "main". The `persistInitiative` site now writes a real row keyed by the active scene.
