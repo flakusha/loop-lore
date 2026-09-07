@@ -2,13 +2,19 @@
  * Workflow Loader Tests
  *
  * Pins directory scan, validation skips, substitution, and errors.
+ *
+ * getWorkflowLoader is a process-global singleton (first workflowsDir wins),
+ * so this file resets it in beforeAll (resetWorkflowLoaderForTests, mirroring
+ * resetHealthCache) and uses its own fixture directory — otherwise
+ * image-engine/convenience tests that bind it to configs/workflows (which
+ * ships img2img) make the fixture assertions see a ghost workflow.
  */
-import { afterAll, describe, expect, it, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it, } from "bun:test";
 import { mkdir, rm, writeFile, } from "node:fs/promises";
 import { createLogger, } from "../../logger/index.js";
-import { getWorkflowLoader, } from "./loader.js";
+import { getWorkflowLoader, resetWorkflowLoaderForTests, } from "./loader.js";
 
-const DIR = ".tmp/wf-fixtures";
+const DIR = ".tmp/wf-fixtures-loader";
 const WORKFLOW = {
   "5": { class_type: "CLIPTextEncode", inputs: { text: "{{prompt}}", cfg: 1, }, },
 };
@@ -20,6 +26,11 @@ async function fixtures(): Promise<void> {
   await writeFile(`${DIR}/empty.json`, "{}",);
   await writeFile(`${DIR}/readme.txt`, "ignored",);
 }
+
+beforeAll(async () => {
+  resetWorkflowLoaderForTests();
+  await fixtures();
+});
 
 afterAll(async () => {
   await rm(DIR, { recursive: true, force: true, },);

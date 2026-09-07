@@ -13,7 +13,7 @@
  */
 
 // ── Loader / singleton ─────────────────────────────────────
-export { getWorkflowLoader, } from "./loader";
+export { getWorkflowLoader, resetWorkflowLoaderForTests, } from "./loader";
 
 // ── Convenience one-shot loader ────────────────────────────
 export { loadComfyUIWorkflow, } from "./convenience";
