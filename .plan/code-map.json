@@ -1073,6 +1073,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history.md"
     }
   ],
   "src/assistant/commands/duplicate.test.ts": [
@@ -2013,6 +2017,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-seed-default-characters-identity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-secret-lore-access-guard.md"
     },
     {
       "kind": "ticket",
@@ -4329,6 +4337,12 @@
       "source": ".plan/epics/epic-character-world-setup.md"
     }
   ],
+  "src/characters/world-setup/service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
+    }
+  ],
   "src/characters/world-setup/types.ts": [
     {
       "kind": "epic",
@@ -5112,6 +5126,10 @@
     }
   ],
   "src/chat/service/split.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
@@ -10158,6 +10176,10 @@
   "src/frontend": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waivers-for-3-modules-below-80-floor.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-equipment-stat-preview.md"
     },
     {
@@ -10511,6 +10533,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
+    }
+  ],
+  "src/frontend/alpine/admin-models/logic.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-modelsuitability-finetunereadiness-never-parse-b-suffixed-si.md"
     }
   ],
   "src/frontend/alpine/admin-plugins.ts": [
@@ -14949,6 +14977,12 @@
       "source": ".plan/epics/epic-immersion-presentation.md"
     }
   ],
+  "src/generation/step-pipeline.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
+    }
+  ],
   "src/generation/step-pipeline.ts": [
     {
       "kind": "epic",
@@ -15791,6 +15825,12 @@
       "source": "docs/spec/logging.md"
     }
   ],
+  "src/logger/full.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
+    }
+  ],
   "src/logger/index.ts": [
     {
       "kind": "ticket",
@@ -15815,6 +15855,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/logging.md"
+    }
+  ],
+  "src/logger/logger.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
     }
   ],
   "src/logger/logger.ts": [
@@ -17061,6 +17107,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-rpg-patterns.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
     }
   ],
   "src/personas/controller.ts": [
@@ -17253,6 +17303,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    }
+  ],
+  "src/profanity/filter-coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
     }
   ],
   "src/profanity/service.test.ts": [
@@ -18357,6 +18413,12 @@
       "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md"
     }
   ],
+  "src/routes/admin-templates/update.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-templates-update-remove-lack-admin-settings-gate.md"
+    }
+  ],
   "src/routes/admin.ts": [
     {
       "kind": "epic",
@@ -18863,6 +18925,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-character-growth-patch-confirm-reject-always-422-dead-endpoi.md"
     }
   ],
   "src/routes/character-import.ts": [
@@ -19606,6 +19672,10 @@
     }
   ],
   "src/routes/export-sse/start.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-sse-start-throws-controller-is-already-closed-on-clie.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md"
@@ -21123,6 +21193,12 @@
       "source": ".plan/tickets/TASK-wire-skills-routes.md"
     }
   ],
+  "src/routes/rpg/stats-actor.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
+    }
+  ],
   "src/routes/rpg/world-location-traits.ts": [
     {
       "kind": "epic",
@@ -22095,6 +22171,12 @@
       "source": ".plan/tickets/TASK-rpg-mechanics.md"
     }
   ],
+  "src/rpg/dice/roll.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history.md"
+    }
+  ],
   "src/rpg/disease/cures.ts": [
     {
       "kind": "epic",
@@ -22583,6 +22665,12 @@
       "source": ".plan/tickets/TASK-persist-loot-drops.md"
     }
   ],
+  "src/rpg/loot/table.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
+    }
+  ],
   "src/rpg/loot/templates.ts": [
     {
       "kind": "ticket",
@@ -23041,6 +23129,12 @@
       "source": ".plan/tickets/TASK-nsfw-seduction-desire.md"
     }
   ],
+  "src/rpg/seduction/service/attempt.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
+    }
+  ],
   "src/rpg/seduction/service/skills.ts": [
     {
       "kind": "ticket",
@@ -23373,6 +23467,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-weather-environment.md"
+    }
+  ],
+  "src/rpg/xp": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-level-up-application-flow-xp-to-levels.md"
     }
   ],
   "src/rpg/xp.test.ts": [
@@ -24639,6 +24739,12 @@
       "source": ".plan/epics/epic-perspective-narration-voice.md"
     }
   ],
+  "src/story/quality/scorers/quest-relevance.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
+    }
+  ],
   "src/story/quest-engine": [
     {
       "kind": "epic",
@@ -24667,6 +24773,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/quests-encounters.md"
+    }
+  ],
+  "src/story/quests/calculators/social.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
     }
   ],
   "src/story/quests/registry.ts": [
@@ -24789,6 +24901,12 @@
       "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md"
     }
   ],
+  "src/test-utils": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waivers-for-3-modules-below-80-floor.md"
+    }
+  ],
   "src/test-utils/create-test-db.ts": [
     {
       "kind": "ticket",
@@ -24831,6 +24949,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-consolidate-quest-engines.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waivers-for-3-modules-below-80-floor.md"
     },
     {
       "kind": "ticket",
@@ -24921,6 +25043,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-battle-action-systems.md"
+    }
+  ],
+  "src/transport/compression-more.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
     }
   ],
   "src/transport/compression.test.ts": [
@@ -25232,6 +25360,10 @@
     }
   ],
   "src/types/search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-lorebook-unified-search-index.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-rag-coverage-bridge.md"
