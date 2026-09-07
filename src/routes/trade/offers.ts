@@ -7,7 +7,8 @@ import { ErrorResponse, Id, } from "../../validation/schemas";
 import { badRequestResponse, jsonResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
 import type { TradeRoutesOptions, } from "./shared";
-import { executeResponse, resolveActorAccess, tradeLineSchema, } from "./shared";
+import { executeResponse, tradeLineSchema, } from "./shared";
+import { resolveActorAccess, } from "../actor-access";
 
 /**
  * Trade offer routes — create, list, accept and cancel pending offers.

@@ -19,7 +19,7 @@ import { SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { HttpStatus, } from "../http-utils/status";
 import { assertWorldOwner, } from "../rpg/crafting-station-instances";
-import { resolveActorAccess, } from "../trade/shared";
+import { resolveActorAccess, } from "../actor-access";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 
