@@ -8,7 +8,7 @@
 **Effort:** Low
 **Type:** Feature Task (observability)
 **Tags:** search, telemetry, observability, metrics, quota, cost
-**Epic:** epic-analytics-observability.md
+**Epic:** epic-analytics-observability.md, epic-rag-evaluation-observability
 
 ## Summary
 

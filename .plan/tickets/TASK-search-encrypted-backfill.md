@@ -8,7 +8,7 @@
 **Effort:** Low
 **Type:** Feature Task (data migration)
 **Tags:** rag, search, encryption, backfill, migration
-**Epic:** epic-rag-document-processing.md
+**Epic:** epic-rag-document-processing.md, epic-encryption-workflow, epic-memory-knowledge-systems
 
 ## Summary
 
