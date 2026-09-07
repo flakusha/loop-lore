@@ -3,7 +3,7 @@
 
 # BUG: assistant reply unique-constraint retry exhausts then throws raw SQLite error to the client
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -52,3 +52,7 @@ Security / UX. Database constraint names and column names leak to the caller (in
 
 - `BUG-chat-message-create-swipe-race` (same invariant, user-message path).
 - `epic-chat-lifecycle-moderation.md`.
+
+## Resolution
+
+Verified on dev HEAD (2026-09-07). src/routes/messages/reply.ts:79-180 scopes the retry loop to `isSwipeIndexUniqueViolation(err)` — other errors (FK violation, encryption error, schema mismatch) are rethrown immediately so Elysia's handler surfaces the real cause as 5xx. On exhausted retries the response is a structured 503 with `code: "service_busy"` and `retryAfterMs: 200`. Stale `lastError` variable is cleared after a successful insert (line `lastError = undefined;`).

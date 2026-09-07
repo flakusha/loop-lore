@@ -44,6 +44,10 @@ export async function selectNextActor(
       state.currentTurn,
       state.turnOrder,
       context,
+      // Pass the previous speaker as `lastActorId` so the strategy can
+      // skip them when alternatives exist (consecutive-turn guard —
+      // BUG-group-cascade-consecutive-turn-guard).
+      state.currentActorId,
     );
     state.currentActorId = selectedId;
   },);
@@ -74,7 +78,7 @@ export async function recordTurn(host: TurnManagerHost,): Promise<void> {
  * @param actorId
  */
 async function decrementInitiative(host: TurnManagerHost, actorId: string,): Promise<void> {
-  const currentScene = "main"; // TODO: detect actual current scene from story_state
+  const currentScene = host.state?.currentSceneId ?? "main";
   const current = await host.db
     .selectFrom("group_initiatives",)
     .select("score",)
