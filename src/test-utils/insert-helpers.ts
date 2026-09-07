@@ -12,6 +12,7 @@ import type {
   ActorType,
   AdminOverrideAction,
   AgentType,
+  AssetAlphaStatus,
   AssetLinkEntity,
   AssetType,
   AssetVisibility,
@@ -482,6 +483,7 @@ export async function insertAssets(
     created_at?: string;
     encryption_tier?: string;
     encrypted_key_id?: string | null;
+    alpha_status?: AssetAlphaStatus;
     content_hash?: string | null;
     data_version?: number;
     record_hash?: string;

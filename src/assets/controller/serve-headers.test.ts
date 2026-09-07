@@ -29,6 +29,7 @@ function asset(overrides: Partial<AssetRecord>,): AssetRecord {
     created_at: "2026-01-01",
     encryption_tier: "public",
     encrypted_key_id: null,
+    alpha_status: "raw",
     ...overrides,
   };
 }
