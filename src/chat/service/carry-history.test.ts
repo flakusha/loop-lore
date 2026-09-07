@@ -131,6 +131,6 @@ describe("carryHistory", () => {
       .where("chat_id", "=", newChatId,)
       .execute();
 
-    expect(carried.some((m,) => m.content === "cipher-only",),).toBe(false,);
+    expect(carried.some((m,) => m.content === "cipher-only"),).toBe(false,);
   });
 });

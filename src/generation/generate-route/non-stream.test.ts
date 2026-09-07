@@ -64,10 +64,6 @@ if (ISOLATED) {
 }
 
 // Stub callWithFailover — we control the provider response.
-// Import the module reference so we can spy on it.
-// eslint-disable-next-line import/first -- mock.module calls must precede this import
-import * as registry from "../providers/registry";
-
 let callDelayMs = 0;
 const fakeResponse = {
   content: '{"ok":true}',
@@ -77,8 +73,7 @@ const fakeResponse = {
 };
 
 if (ISOLATED) {
-  mock.module("../providers/registry", () => ({
-    ...registry,
+  mock.module("../providers/call-with-failover", () => ({
     callWithFailover: async () => {
       if (callDelayMs > 0) {
         await new Promise<void>(r => setTimeout(r, callDelayMs,));

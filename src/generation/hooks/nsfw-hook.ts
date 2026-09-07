@@ -26,8 +26,8 @@
  */
 import { callAux, } from "../../aux-pipeline";
 import { getLogger, } from "../../logger";
-import { logGateDecision, } from "./nsfw-hook-log";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
+import { logGateDecision, } from "./nsfw-hook-log";
 import type { HookContext, HookEventType, HookHandler, HookResult, } from "./types";
 
 import { detectNsfwLevel, detectNsfwWithLlm, type NsfwLevel, } from "./nsfw-classifier";
@@ -106,7 +106,13 @@ export class NsfwHook implements HookHandler {
         return {
           handled: true,
           eventType: "nsfw_gate",
-          data: { nsfwLevel: "blocked_by_override", blocked: true, source: effective.source, actorId: _context.actorId, chatId: _context.chatId, },
+          data: {
+            nsfwLevel: "blocked_by_override",
+            blocked: true,
+            source: effective.source,
+            actorId: _context.actorId,
+            chatId: _context.chatId,
+          },
           suppressContent: true,
           reason: `NSFW disabled by ${effective.source}`,
         };
