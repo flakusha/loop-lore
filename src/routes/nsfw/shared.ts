@@ -20,7 +20,7 @@ export { log, };
  * @param targetActor
  * @param ctx
  */
-export async function requireActorAccess(
+export async function requireNsfwActorAccess(
   database: Kysely<DB>,
   targetActor: string,
   ctx: any,

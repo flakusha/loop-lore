@@ -12,14 +12,14 @@
  *   POST /api/rpg/npc-navigation/actors/:actorId/move
  *   POST /api/rpg/npc-navigation/worlds/:worldId/tick
  *
- * Actor-scoped routes are gated via `requireActorAccess`.
+ * Actor-scoped routes are gated via `requireNsfwActorAccess`.
  * World-mutation routes are gated via `requireWorldOwner`.
  */
 import { Elysia, t, } from "elysia";
 import { type MovementPattern, NpcNavigationService, } from "../../rpg/npc-navigation";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
-import { requireActorAccess, } from "../nsfw/shared";
+import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { requireWorldOwner, } from "../worlds/access";
 import { log, } from "./log";
 import {
@@ -42,7 +42,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
   return new Elysia({ name: "rpg-npc-navigation", },)
     // ── Get movement state ───────────────────────────────
     .get(`${R}/actors/:actorId/state`, async (ctx: any,) => {
-      const userId = await requireActorAccess(database, ctx.params.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const { worldId, } = ctx.query as { worldId: string };
@@ -65,7 +65,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
     },)
     // ── Update movement state ────────────────────────────
     .put(`${R}/actors/:actorId/state`, async (ctx: any,) => {
-      const userId = await requireActorAccess(database, ctx.params.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const body = ctx.body as { worldId: string; updates: never };
@@ -87,7 +87,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
     },)
     // ── Set movement pattern ─────────────────────────────
     .post(`${R}/actors/:actorId/pattern`, async (ctx: any,) => {
-      const userId = await requireActorAccess(database, ctx.params.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const body = ctx.body as {
@@ -118,7 +118,7 @@ export function npcNavigationRoutes({ database, }: HandlerOpts, prefix = "/api",
     },)
     // ── Move to location ─────────────────────────────────
     .post(`${R}/actors/:actorId/move`, async (ctx: any,) => {
-      const userId = await requireActorAccess(database, ctx.params.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const body = ctx.body as { worldId: string; targetLocationId: string };

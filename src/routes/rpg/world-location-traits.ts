@@ -19,7 +19,7 @@ import { Elysia, t, } from "elysia";
 import { WorldLocationTraitsService, } from "../../rpg/world-location-traits";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, notFoundResponse, requireUserId, } from "../http-utils";
-import { requireActorAccess, } from "../nsfw/shared";
+import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 import {
@@ -44,7 +44,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
     // ── World traits: list ───────────────────────────────
     .get(`${R}/worlds/:worldId`, async (ctx: any,) => {
       const { actorId, } = ctx.query as { actorId: string };
-      const userId = await requireActorAccess(database, actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const traits = await svc().getWorldTraits(actorId, ctx.params.worldId,);
@@ -66,7 +66,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
     // ── World traits: create ─────────────────────────────
     .post(`${R}/worlds/:worldId`, async (ctx: any,) => {
       const body = ctx.body as { actor_id: string };
-      const userId = await requireActorAccess(database, body.actor_id, ctx,);
+      const userId = await requireNsfwActorAccess(database, body.actor_id, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const trait = await svc().createWorldTrait(ctx.body as never,);
@@ -131,7 +131,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
     // ── Location traits: list ────────────────────────────
     .get(`${R}/locations/:locationId`, async (ctx: any,) => {
       const { actorId, } = ctx.query as { actorId: string };
-      const userId = await requireActorAccess(database, actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const traits = await svc().getLocationTraits(actorId, ctx.params.locationId,);
@@ -153,7 +153,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
     // ── Location traits: create ──────────────────────────
     .post(`${R}/locations/:locationId`, async (ctx: any,) => {
       const body = ctx.body as { actor_id: string };
-      const userId = await requireActorAccess(database, body.actor_id, ctx,);
+      const userId = await requireNsfwActorAccess(database, body.actor_id, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const trait = await svc().createLocationTrait(ctx.body as never,);
@@ -217,7 +217,7 @@ export function worldLocationTraitsRoutes({ database, }: HandlerOpts, prefix = "
     },)
     // ── Aggregate: actor's all traits ────────────────────
     .get(`${R}/actors/:actorId`, async (ctx: any,) => {
-      const userId = await requireActorAccess(database, ctx.params.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const result = await svc().getAllTraitsForActor(ctx.params.actorId,);

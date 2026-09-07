@@ -26,7 +26,7 @@ import { getXpHistory, logXp, } from "../../rpg/service/xp";
 import { awardXp, levelFromXp, xpToNextLevel, } from "../../rpg/xp";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
-import { requireActorAccess, } from "../nsfw/shared";
+import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import type { HandlerOpts, } from "./types";
 import { AwardBody, GenerateBody, LevelBody, NextBody, PersistBody, } from "./xp-loot-schemas";
@@ -56,7 +56,7 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
           currentLevel?: number;
           currentXp?: number;
         };
-        const actorId = await requireActorAccess(database, body.actorId, ctx,);
+        const actorId = await requireNsfwActorAccess(database, body.actorId, ctx,);
         if (typeof actorId !== "string") { return actorId; }
         try {
           const ledgerId = await logXp(deps, {
@@ -91,7 +91,7 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         try {
           const { actorId, limit, } = ctx.query as { actorId?: string; limit?: string };
           if (!actorId) { return jsonError("actorId query param required", 400,); }
-          const actorErr = await requireActorAccess(database, actorId, ctx,);
+          const actorErr = await requireNsfwActorAccess(database, actorId, ctx,);
           if (typeof actorErr !== "string") { return actorErr; }
           const rows = await getXpHistory(deps, actorId, limit ? Number(limit,) : 50,);
           return jsonResponse({ entries: rows, },);
@@ -190,6 +190,13 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
             locationId?: string;
             defaultCategory?: string;
           };
+          // Trust boundary: loot may only be persisted to the caller's own
+          // actor (or by admin/solo). Location drops are world-scoped and
+          // covered by the world's own guards downstream.
+          if (body.actorId) {
+            const actorErr = await requireNsfwActorAccess(database, body.actorId, ctx,);
+            if (typeof actorErr !== "string") { return actorErr; }
+          }
           const persisted = await persistLoot(database, body.result, {
             worldId: body.worldId,
             actorId: body.actorId,
@@ -203,7 +210,7 @@ export function xpLootRoutes({ database, }: HandlerOpts, prefix = "/api",): Elys
         }
       }, {
         body: PersistBody,
-        response: { 200: SuccessResponse, 401: ErrorResponse, },
+        response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
         detail: {
           summary: "Persist loot",
           description: "Turn generated loot into world_items instances.",

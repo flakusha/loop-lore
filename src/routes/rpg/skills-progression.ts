@@ -10,7 +10,7 @@ import { Elysia, t, } from "elysia";
 import { type SkillCategory, SkillsService, } from "../../rpg/skills";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
-import { requireActorAccess, } from "../nsfw/shared";
+import { requireNsfwActorAccess, } from "../nsfw/shared";
 import { log, } from "./log";
 import {
   actorParams,
@@ -34,7 +34,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
   return new Elysia({ name: "rpg-skills-progression", },)
     // ── Actor skills ─────────────────────────────────────
     .get(`${R}/actors/:actorId`, async (ctx: any,) => {
-      const userId = await requireActorAccess(database, ctx.params.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const { worldId, } = ctx.query as { worldId?: string };
@@ -56,7 +56,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
     },)
     // ── Actor skills by category ─────────────────────────
     .get(`${R}/actors/:actorId/category/:category`, async (ctx: any,) => {
-      const userId = await requireActorAccess(database, ctx.params.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const { worldId, } = ctx.query as { worldId?: string };
@@ -82,7 +82,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
     },)
     // ── Actor skill tree ─────────────────────────────────
     .get(`${R}/actors/:actorId/tree`, async (ctx: any,) => {
-      const userId = await requireActorAccess(database, ctx.params.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const { worldId, } = ctx.query as { worldId?: string };
@@ -105,7 +105,7 @@ export function skillsProgressionRoutes({ database, }: HandlerOpts, prefix = "/a
     // ── Check prerequisites ──────────────────────────────
     .post(`${R}/prerequisites/check`, async (ctx: any,) => {
       const body = ctx.body as { actorId: string; prerequisites: string[]; worldId?: string };
-      const userId = await requireActorAccess(database, body.actorId, ctx,);
+      const userId = await requireNsfwActorAccess(database, body.actorId, ctx,);
       if (typeof userId !== "string") { return userId; }
       try {
         const result = await svc().checkPrerequisites(body.actorId, body.prerequisites, body.worldId,);
