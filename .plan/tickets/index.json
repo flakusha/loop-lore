@@ -462,7 +462,8 @@
     "priority": "critical",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
+    "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md",
+    "status": "done"
   },
   "BUG-BATTLE-RESOLUTION-MISSING-EMPTY-INPUT-ADAPTER": {
     "hash": "pending",
@@ -475,7 +476,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-battle-resolution-missing-empty-input-adapter.md",
     "git_issue": "pending",
-    "status": "open"
+    "status": "done"
   },
   "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM": {
     "hash": "69d45a5",
@@ -798,7 +799,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-callaux-graceful-failure-throws-on-empty-config.md",
     "git_issue": "pending",
-    "status": "open"
+    "status": "done"
   },
   "BUG-CANCELLATION-LIFECYCLE-DB-FAILURE-PERMANENTLY-MARKS-CHAT-GEN": {
     "hash": "cfc029f",
@@ -924,7 +925,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-characters-creation-wizard-wizardid-unused.md"
+    "source": ".plan/tickets/BUG-characters-creation-wizard-wizardid-unused.md",
+    "status": "done"
   },
   "BUG-CHAT-ASSISTANT-RETRY-SILENT-500": {
     "hash": "pending",
@@ -948,7 +950,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md"
+    "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md",
+    "status": "done"
   },
   "BUG-CHAT-FTS-ENCRYPT-MISMATCH": {
     "hash": "pending",
@@ -1048,7 +1051,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-mention-silent-error-swall.md"
+    "source": ".plan/tickets/BUG-chat-mention-silent-error-swall.md",
+    "status": "done"
   },
   "BUG-CHAT-MESSAGE-CREATE-SWIPE-RACE": {
     "hash": "000589c",
@@ -1099,7 +1103,8 @@
     "epic": "epic-battle-action-systems, epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-persist-init-hardcoded-scene.md",
-    "git_issue": "2239de6"
+    "git_issue": "2239de6",
+    "status": "done"
   },
   "BUG-CHAT-PROMPT-OVERRIDE-BYPASS-ON-REPLY": {
     "hash": "pending",
@@ -1123,7 +1128,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md"
+    "source": ".plan/tickets/BUG-chat-quiet-hours-boundary.md",
+    "status": "done"
   },
   "BUG-CHAT-RANDOM-EVENTS-NO-CHARACTER-BINDING": {
     "hash": "pending",
@@ -1135,7 +1141,8 @@
     "epic": "epic-creative-studio",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-random-events-no-character-binding.md",
-    "git_issue": "31e8676"
+    "git_issue": "31e8676",
+    "status": "done"
   },
   "BUG-CHAT-REUNITE-SECONDARY-OWNERSHIP-CHECK-MISSING": {
     "hash": "a27d730",
@@ -1249,7 +1256,8 @@
     "epic": "epic-assistant-gm-flows, epic-creative-studio",
     "tags": [],
     "source": ".plan/tickets/BUG-check-duplicate-loads-all-owner-rows.md",
-    "git_issue": "2b01c97"
+    "git_issue": "2b01c97",
+    "status": "done"
   },
   "BUG-CHECK-PARALLEL-GPG-PREFLIGHT-CRASHES-ON-UNDEFINED-M": {
     "hash": "a99ba70",
@@ -1702,7 +1710,8 @@
     "priority": "P3",
     "epic": "epic-emotion-avatar-message-binding",
     "tags": [],
-    "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md"
+    "source": ".plan/tickets/BUG-emotion-mood-hook-stale-llm-javadoc.md",
+    "status": "done"
   },
   "BUG-ENCRYPTED-ASSET-THUMB-COMPRESSED-PREVIEW-SERVES-RAW-CIPHERTE": {
     "hash": "ede86bb",
@@ -1991,7 +2000,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+    "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md",
+    "status": "done"
   },
   "BUG-GENERATED-IMAGES-OWNED-BY-SYSTEM-ARE-INVISIBLE-TO-THE-REQUES": {
     "hash": "5d355aa",
@@ -2107,7 +2117,8 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md",
-    "git_issue": "f2d2b95"
+    "git_issue": "f2d2b95",
+    "status": "done"
   },
   "BUG-GROUP-CASCADE-MAX-TURNS-OFF-BY-ONE": {
     "hash": "pending",
@@ -2119,7 +2130,8 @@
     "epic": "epic-chat-lifecycle-moderation, epic-chat-context-optimization",
     "tags": [],
     "source": ".plan/tickets/BUG-group-cascade-max-turns-off-by-one.md",
-    "git_issue": "bb174eb"
+    "git_issue": "bb174eb",
+    "status": "done"
   },
   "BUG-GROUP-CASCADE-MID-CASCADE-PAUSE-IGNORED": {
     "hash": "pending",
@@ -2131,7 +2143,8 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-group-cascade-mid-cascade-pause-ignored.md",
-    "git_issue": "1d1b2f3"
+    "git_issue": "1d1b2f3",
+    "status": "done"
   },
   "BUG-GROUP-CHAT-MENTION-PREFIX-COLLISION": {
     "hash": "pending",
@@ -2181,7 +2194,8 @@
     "epic": "epic-chat-context-optimization",
     "tags": [],
     "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md",
-    "git_issue": "87098c5"
+    "git_issue": "87098c5",
+    "status": "done"
   },
   "BUG-GROUP-PARTICIPANT-INJECTION-ABSENT-ON-MANUAL-GENERATE-ROUTE": {
     "hash": "807abdb",
@@ -2320,7 +2334,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-impersonate-buildimpresult-referenceerror.md",
-    "status": "not-a-bug"
+    "status": "done"
   },
   "BUG-IMPERSONATE-COMMANDS-REGISTER-EMPTY-CALLBACK": {
     "hash": "pending",
@@ -2332,7 +2346,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-impersonate-commands-register-empty-callback.md",
-    "status": "not-a-bug"
+    "status": "done"
   },
   "BUG-IN-MEMORY-LIMITER-NOT-SHARED-ACROSS-INSTANCES-NO-SHUTDOWN-CL": {
     "hash": "8a630ce",
@@ -2600,7 +2614,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-mention-parser-regex-fails-on-multi-word-names.md",
     "git_issue": "pending",
-    "status": "open"
+    "status": "done"
   },
   "BUG-MESSAGE-ATTACHMENTS-LINK-ARBITRARY-ASSET-IDS-WITHOUT-OWNERSH": {
     "hash": "1fbe78c",
@@ -2850,7 +2864,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-npc-navigation-routes-all-stubbed.md",
-    "status": "not-a-bug"
+    "status": "done"
   },
   "BUG-NSFW-APPEALS-AS-ANY-AND-DEAD-ROUTE": {
     "hash": "f8b5a20",
@@ -3478,7 +3492,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-security-merge-build-break-instances-ts.md",
-    "status": "fixed-in-worktree"
+    "status": "done"
   },
   "BUG-SELECTCHAT-RESETS-FRESHLY-LOADED-STATE-AND-LACKS-REENTRANCY-": {
     "hash": "df71725",
