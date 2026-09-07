@@ -3,22 +3,13 @@
 
 import { detectHallucinations, } from "../../chat";
 import type { GmGuidance, } from "../../chat/types/config";
-import {
-  ContentEncoding,
-  GameMasterType,
-  MessageContentFormat,
-  MessageContentType,
-  MessageRole,
-  MessageStatus,
-  MessageVisibility,
-} from "../../db/enums";
+import { GameMasterType, } from "../../db/enums";
 import { getLogger, } from "../../logger";
 import { resolveSystemPrompt, } from "../../prompts";
 import { type GameMasterConfig, GameMasterService, } from "../../story";
 import type { GenerateTextFn, } from "../../story/game-master";
-import { jsonParseOr, uid, } from "../../utils";
-import { runContentHooks, } from "./content-hooks";
-import type { StoryModeOpts, } from "./story-mode-opts";
+import { jsonParseOr, } from "../../utils";
+import { storeStoryResponse, } from "./story-store";
 export type { StoryModeOpts, } from "./story-mode-opts";
 
 /**
@@ -154,107 +145,24 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
     },);
   }
 
-  // Store the generated response as a message
-  const messageId = uid();
-
-  let storedContent = turnResult.response;
-
-  let storedKeyId: string | null = null;
-  const contentEncoding = ContentEncoding.Identity;
-  // ensureActorKey is required before deriveChatKeyForChat in the standard path —
-  // without it the actor_keys row is missing and per-chat derivation crashes.
-  const smk = deps.getSmk() ?? undefined;
-  if (smk) { await deps.ensureActorKey({ database, actorId: turnResult.actorId, smk, },); }
-  const encryptionLevel = await deps.getChatEncryptionLevel(database, chatId,);
-  const result = await deps.encryptAtRest({
+  // Persist the response (encrypt + content-hook gate + swipe + insert).
+  // A null return means the content hooks blocked the turn — acceptResponse
+  // and the completion log are skipped exactly as before.
+  const stored = await storeStoryResponse({
     database,
+    config,
     chatId,
-    plaintext: turnResult.response,
-    encryptionLevel,
-    config: {
-      threshold: config.encryption.compressThreshold,
-      algorithm: config.encryption.compressAlgorithm,
-    },
+    userId,
+    parentMessageId,
+    actorId: turnResult.actorId,
+    response: turnResult.response,
+    usedModel,
+    usedProviderName,
+    deps,
+    log,
   },);
-  storedContent = result.storedContent;
-  storedKeyId = result.keyId;
-
-  // Run the full content-hook chain (NSFW gate + emotion + mood + moderation)
-  // BEFORE persisting the generated story/GM content. Previously this path
-  // only invoked the emotion hook via a bare runHookChain call with
-  // eventTypes=["emotion_change"], which silently bypassed the NSFW gate
-  // (eventTypes "nsfw_gate" / "privacy_check") and the moderation hook
-  // (BUG-f0683a8 — story/GM generation never NSFW-gated, content safety
-  // bypass). Reusing runContentHooks guarantees the same pre-store policy
-  // enforcement as the regular auto-gen path (auto-generation.ts:163).
-  //
-  // Failure policy: if the hook chain throws, fail CLOSED and abort the
-  // turn (no message persisted). This is a deliberate change from the
-  // prior emotion-hook try/catch which swallowed errors — fail-closed is
-  // safer for a NSFW-gated pipeline (per-content safety bypass is worse
-  // than a missed emotion for one turn). The outer `triggerStoryModeGeneration`
-  // is called from a try/catch in the auto-gen orchestrator that records
-  // the error.
-  let dominantEmotion: string | null = null;
-  try {
-    const hooks = await runContentHooks({
-      database,
-      config,
-      chatId,
-      actorId: turnResult.actorId,
-      userId,
-      content: turnResult.response,
-    },);
-    if (!hooks.allowed) {
-      log.warn("story-mode: generation blocked by content hooks", {
-        chatId,
-        actorId: turnResult.actorId,
-      },);
-      return;
-    }
-    dominantEmotion = hooks.dominantEmotion ?? null;
-  } catch (error) {
-    log.error(
-      "story-mode: content-hook chain threw — aborting turn (fail-closed)",
-      error instanceof Error ? error : new Error(String(error,),),
-      { chatId, actorId: turnResult.actorId, },
-    );
-    throw error;
-  }
-
-  // Compute swipe index for variant support
-  let swipeIndex: number | null = null;
-  if (parentMessageId) {
-    const maxSwipe = await database
-      .selectFrom("messages",)
-      .select(database.fn.max("swipe_index",).as("max_idx",),)
-      .where("chat_id", "=", chatId,)
-      .where("parent_id", "=", parentMessageId,)
-      .executeTakeFirst();
-    swipeIndex = (maxSwipe?.max_idx ?? 0) + 1;
-  }
-
-  await database
-    .insertInto("messages",)
-    .values({
-      id: messageId,
-      chat_id: chatId,
-      actor_id: turnResult.actorId,
-      parent_id: parentMessageId,
-      role: MessageRole.Assistant,
-      content: storedContent,
-      key_id: storedKeyId,
-      content_type: MessageContentType.Text,
-      content_format: MessageContentFormat.Markdown,
-      content_encoding: contentEncoding,
-      model_id: usedModel,
-      provider: usedProviderName,
-      status: MessageStatus.Confirmed,
-      visibility: MessageVisibility.Visible,
-      swipe_index: swipeIndex,
-      emotion: dominantEmotion,
-    },)
-    .execute();
+  if (!stored) { return; }
+  const messageId = stored.messageId;
 
   // Accept the AI's RESPONSE (not the prompt) through the GM pipeline.
   // acceptResponse(turnId, response) records quality evaluation, world
