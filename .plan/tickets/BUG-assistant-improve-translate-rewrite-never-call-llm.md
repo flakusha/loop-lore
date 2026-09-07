@@ -3,7 +3,7 @@
 
 # BUG: /improve, /translate, /rewrite advertise LLM behaviour but only do local string manipulation
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified 2026-09-07; LLM-first path already wired)
 **Severity:** high
 **Priority:** high
 **Effort:** medium
@@ -52,3 +52,35 @@ UX / trust. Users invoking `/improve` to clean up a passage before sending it as
 
 - `TASK-precompiled-templates-injection` (related epic — see pre-compiled template registry).
 - `epic-assistant-gm-flows.md`, `epic-output-control-transforms.md`.
+
+## Resolution
+
+Ticket claims are stale on dev HEAD (2026-09-07). All three commands
+already implement the LLM-first pattern via `resolveProvider` + a
+`complete` injection seam. The local heuristics are a documented
+fallback when no provider resolves, mirroring `runCreateGeneration`.
+
+- `src/assistant/commands/improve.ts:54-77` — calls `deps.complete`
+  with the verbatim system prompt "Rewrite the following text for
+  clarity and flow. Preserve meaning." and falls back to local
+  capitalization/punctuation cleanup on failure or missing deps.
+  Tested in `src/assistant/commands/improve.test.ts` (5/5 pass).
+- `src/assistant/commands/translate.ts:144-167` — calls
+  `resolveProvider(...)` in the registered handler, builds the
+  appropriate "Translate the following text into ${langName}.
+  Output ONLY the translated text." prompt, and emits the LLM
+  output. The old `[Translation to ${langName}: ${text}]`
+  placeholder is gone — a source-level guard at
+  `src/assistant/commands/translate.test.ts:99-105` asserts the
+  literal `[Translation to` substring no longer appears. (8/8 pass.)
+- `src/assistant/commands/rewrite.ts:50-124` — `runRewrite` accepts
+  a `complete` dep, builds the per-style system prompt
+  ("Rewrite the following text in a ${style} style. ..."), and
+  falls back to the local regex transforms on failure or missing
+  deps. Tested in `src/assistant/commands/rewrite.test.ts` (12/12
+  pass).
+
+The ticket body was written against an earlier shape of these
+commands (before the LLM seam was wired in). The seams and tests
+already match the contract described in the ticket's "Concrete
+fix" section; no further code change is required.
