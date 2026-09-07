@@ -22,9 +22,9 @@ import {
   scheduleBufferCleanup,
   startGenerationTracking,
 } from "../index";
+import { callWithFailover, } from "../providers/call-with-failover";
 import {
   buildFailoverList,
-  callWithFailover,
   listProviders,
   resolveProvider,
 } from "../providers/registry";

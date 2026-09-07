@@ -12,7 +12,7 @@
 import { describe, expect, mock, test, } from "bun:test";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import { GenerationCancelledError, } from "../cancellation-actions/error";
-import { callWithFailover, } from "./registry";
+import { callWithFailover, } from "./call-with-failover";
 import type { GenerateRequest, GenerateResponse, LLMProvider, StreamHandler, } from "./types";
 
 /** Minimal request shape for the failover tests. */
