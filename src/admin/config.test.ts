@@ -187,24 +187,28 @@ describe("seedDefaults with partial config", () => {
   test("empty config resolves without throwing and seeds only non-config defaults", async () => {
     await expect(seedDefaults(db, {} as Config,),).resolves.toBeUndefined();
     const rows = await db.selectFrom("system_config",).selectAll().execute();
-    const keys = rows.map((r,) => r.key,);
-    for (const k of [
-      "log_retention_days",
-      "auto_moderation",
-      "profanity_filter",
-      "spam_detection",
-      "max_flags_before_hide",
-    ]) {
+    const keys = rows.map((r,) => r.key);
+    for (
+      const k of [
+        "log_retention_days",
+        "auto_moderation",
+        "profanity_filter",
+        "spam_detection",
+        "max_flags_before_hide",
+      ]
+    ) {
       expect(keys,).toContain(k,);
     }
-    for (const k of [
-      "registration_open",
-      "session_timeout_hours",
-      "max_sessions_per_user",
-      "max_upload_size_bytes",
-      "default_provider",
-      "default_model",
-    ]) {
+    for (
+      const k of [
+        "registration_open",
+        "session_timeout_hours",
+        "max_sessions_per_user",
+        "max_upload_size_bytes",
+        "default_provider",
+        "default_model",
+      ]
+    ) {
       expect(keys,).not.toContain(k,);
     }
   });
@@ -220,13 +224,15 @@ describe("seedDefaults with partial config", () => {
     } as unknown as Config;
     await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
     const rows = await db.selectFrom("system_config",).selectAll().execute();
-    const keys = rows.map((r,) => r.key,);
-    for (const k of [
-      "registration_open",
-      "session_timeout_hours",
-      "max_sessions_per_user",
-      "max_upload_size_bytes",
-    ]) {
+    const keys = rows.map((r,) => r.key);
+    for (
+      const k of [
+        "registration_open",
+        "session_timeout_hours",
+        "max_sessions_per_user",
+        "max_upload_size_bytes",
+      ]
+    ) {
       expect(keys,).toContain(k,);
     }
     expect(keys,).not.toContain("default_provider",);
@@ -242,15 +248,17 @@ describe("seedDefaults with partial config", () => {
     } as unknown as Config;
     await expect(seedDefaults(db, cfg,),).resolves.toBeUndefined();
     const rows = await db.selectFrom("system_config",).selectAll().execute();
-    const keys = rows.map((r,) => r.key,);
+    const keys = rows.map((r,) => r.key);
     expect(keys,).toContain("default_provider",);
     expect(keys,).toContain("default_model",);
-    for (const k of [
-      "registration_open",
-      "session_timeout_hours",
-      "max_sessions_per_user",
-      "max_upload_size_bytes",
-    ]) {
+    for (
+      const k of [
+        "registration_open",
+        "session_timeout_hours",
+        "max_sessions_per_user",
+        "max_upload_size_bytes",
+      ]
+    ) {
       expect(keys,).not.toContain(k,);
     }
   });

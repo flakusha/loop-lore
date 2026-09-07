@@ -12,6 +12,9 @@
  */
 
 /** Options for building a versioned OpenAPI document. */
+import { openapi as createOpenApiPlugin, } from "@elysia/openapi";
+import type { Elysia, } from "elysia";
+
 export interface VersionedOpenApiOptions {
   /** API version, e.g. `"1"` → served under `/api/v1`. */
   version: string;
@@ -61,9 +64,6 @@ export function buildVersionedOpenApiSpec(
   };
 }
 
-import { openapi as createOpenApiPlugin, } from "@elysia/openapi";
-import type { Elysia, } from "elysia";
-
 /**
  * Create an Elysia sub-plugin that mounts `@elysiajs/openapi` configured
  * for one API version.
@@ -82,7 +82,7 @@ import type { Elysia, } from "elysia";
 export function versionedOpenApiPlugin(
   opts: VersionedOpenApiOptions,
 ): Elysia {
-  const spec = buildVersionedOpenApiSpec(opts);
+  const spec = buildVersionedOpenApiSpec(opts,);
   const versionedPath = `/api/v${opts.version}`;
 
   return createOpenApiPlugin({
@@ -93,5 +93,5 @@ export function versionedOpenApiPlugin(
       info: spec.info,
       servers: spec.servers,
     },
-  });
+  },);
 }

@@ -8,49 +8,49 @@
  * keep working; new code SHOULD import from here instead.
  */
 export {
-  VALID_ROLES,
-  resolveModelRole,
-  resolveAllModelRoles,
-  setModelRoleOverride,
-  clearModelRoleOverride,
-  getModelRoleOverrides,
-} from "./model-roles";
-export type {
-  ResolvedModelRole,
-  ModelRole,
-} from "./model-roles";
-export {
+  deleteConfig,
   getAllConfig,
   getConfig,
   getConfigValue,
-  setConfig,
-  deleteConfig,
   seedDefaults,
+  setConfig,
 } from "./config";
 export type {
   ConfigEntry,
 } from "./config";
 export {
-  scanAllProviders,
-  getHealthCache,
-  getProviderHealth,
-  hasUnhealthyProviders,
-  getUnhealthyProviders,
-  providerToSummary,
-  resetHealthCache,
-} from "./provider-health";
-export type {
-  ProviderHealthStatus,
-} from "./provider-health";
-export {
-  upsertModelCapabilities,
-  resolveModelCapabilities,
-  listModelCapabilities,
-  setModelOverride,
   clearModelOverride,
   getContextWindowForModel,
+  listModelCapabilities,
+  resolveModelCapabilities,
+  setModelOverride,
+  upsertModelCapabilities,
 } from "./model-capabilities";
 export type {
   ModelCapabilityRow,
   ResolvedModelCapabilities,
 } from "./model-capabilities";
+export {
+  clearModelRoleOverride,
+  getModelRoleOverrides,
+  resolveAllModelRoles,
+  resolveModelRole,
+  setModelRoleOverride,
+  VALID_ROLES,
+} from "./model-roles";
+export type {
+  ModelRole,
+  ResolvedModelRole,
+} from "./model-roles";
+export {
+  getHealthCache,
+  getProviderHealth,
+  getUnhealthyProviders,
+  hasUnhealthyProviders,
+  providerToSummary,
+  resetHealthCache,
+  scanAllProviders,
+} from "./provider-health";
+export type {
+  ProviderHealthStatus,
+} from "./provider-health";

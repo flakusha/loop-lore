@@ -12,12 +12,12 @@ import type { LLMProvider, } from "../generation/providers/types";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
-  VALID_ROLES,
   clearModelRoleOverride,
   getModelRoleOverrides,
   resolveAllModelRoles,
   resolveModelRole,
   setModelRoleOverride,
+  VALID_ROLES,
 } from "./model-roles";
 
 const TEST_PROVIDER = "test-roles-provider";
@@ -82,7 +82,7 @@ describe("model-roles", () => {
       expect(resolved.source,).toBe("db",);
       expect(resolved.provider,).toBe(TEST_PROVIDER,);
       expect(resolved.model,).toBe("db-model",);
-    },);
+    });
 
     test("falls back to config modelRoles when no DB override exists", async () => {
       const config = makeConfig({
@@ -93,14 +93,14 @@ describe("model-roles", () => {
       expect(resolved.source,).toBe("config",);
       expect(resolved.provider,).toBe("cfg-provider",);
       expect(resolved.model,).toBe("cfg-model",);
-    },);
+    });
 
     test("falls back to server defaults when neither DB nor config specifies the role", async () => {
       const resolved = await resolveModelRole(ModelRole.Main, makeConfig(), db,);
       expect(resolved.source,).toBe("default",);
       expect(resolved.provider,).toBe(TEST_PROVIDER,);
       expect(resolved.model,).toBe("test-default-model",);
-    },);
+    });
 
     test("degrades gracefully to an empty role when config.generation is missing", async () => {
       const resolved = await resolveModelRole(
@@ -111,20 +111,20 @@ describe("model-roles", () => {
       expect(resolved.source,).toBe("default",);
       expect(resolved.provider,).toBe("",);
       expect(resolved.model,).toBe("",);
-    },);
+    });
 
     test("throws for a role outside VALID_ROLES", async () => {
       await expect(resolveModelRole(ModelRole.Moderation, makeConfig(), db,),).rejects.toThrow();
-    },);
-  },);
+    });
+  });
 
   describe("resolveAllModelRoles", () => {
     test("returns every VALID_ROLES entry", async () => {
       const roles = await resolveAllModelRoles(makeConfig(), db,);
       expect(roles.length,).toBe(VALID_ROLES.length,);
-      expect(roles.map((r,) => r.role,).sort(),).toEqual([...VALID_ROLES,].sort(),);
-    },);
-  },);
+      expect(roles.map((r,) => r.role).sort(),).toEqual([...VALID_ROLES,].sort(),);
+    });
+  });
 
   describe("model role override CRUD", () => {
     test("set/clear/get roundtrip with tuning", async () => {
@@ -152,16 +152,16 @@ describe("model-roles", () => {
 
       const afterClear = await resolveModelRole(ModelRole.Auxiliary, makeConfig(), db,);
       expect(afterClear.source,).toBe("default",);
-    },);
+    });
 
     test("set throws on unknown provider", async () => {
       await expect(
         setModelRoleOverride(ModelRole.Main, "no-such-provider", "m", db,),
       ).rejects.toThrow(/not found/,);
-    },);
+    });
 
     test("clear throws on invalid role", async () => {
       await expect(clearModelRoleOverride(ModelRole.Moderation, db,),).rejects.toThrow();
-    },);
-  },);
-},);
+    });
+  });
+});
