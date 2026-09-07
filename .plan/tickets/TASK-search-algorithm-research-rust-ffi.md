@@ -8,7 +8,7 @@
 **Effort:** High (research) + Very High (impl + dynamic selector)
 **Type:** Research + Feature Task
 **Tags:** search, ripgrep, rust, ffi, bun, performance, research, algorithm-comparison, dynamic-selection, rag, context-management, asset-search, chat-search
-**Epic:** epic-platform-research.md (research) + epic-rag-document-processing.md (impl)
+**Epic:** epic-platform-research.md (research) + epic-rag-document-processing.md (impl), epic-lore-knowledge, epic-memory-knowledge-systems
 
 ## Summary
 
