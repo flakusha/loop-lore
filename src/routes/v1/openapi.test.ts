@@ -35,26 +35,26 @@ describe("versionedOpenApiPlugin", () => {
     const res = await app.handle(new Request("http://localhost/api/v1/openapi/json",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as Record<string, unknown>;
-    expect((body.openapi as string).startsWith("3.1.")).toBe(true);
-    expect((body.info as Record<string, unknown>).version).toBe("1");
-    const servers = (body.servers as Array<Record<string, unknown>>);
-    expect(servers[0]?.url).toBe("/api/v1");
+    expect((body.openapi as string).startsWith("3.1.",),).toBe(true,);
+    expect((body.info as Record<string, unknown>).version,).toBe("1",);
+    const servers = body.servers as Array<Record<string, unknown>>;
+    expect(servers[0]?.url,).toBe("/api/v1",);
     const paths = body.paths as Record<string, unknown>;
-    expect("/probe" in paths).toBe(true);
+    expect("/probe" in paths,).toBe(true,);
   });
 
   test("GET /api/v1/openapi returns HTML (Scalar UI)", async () => {
     const app = new Elysia()
       .use(versionedOpenApiPlugin({ version: "1", },),)
       .get("/probe", () => ({ ok: true, }), {
-        detail: { summary: "Probe", tags: ["Probe"], },
+        detail: { summary: "Probe", tags: ["Probe",], },
       },);
 
     const res = await app.handle(new Request("http://localhost/api/v1/openapi",),);
     expect(res.status,).toBe(200,);
-    const contentType = res.headers.get("content-type") ?? "";
-    expect(contentType.startsWith("text/html")).toBe(true);
+    const contentType = res.headers.get("content-type",) ?? "";
+    expect(contentType.startsWith("text/html",),).toBe(true,);
     const text = await res.text();
-    expect(text.length).toBeGreaterThan(100);
+    expect(text.length,).toBeGreaterThan(100,);
   });
 });

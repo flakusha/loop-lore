@@ -99,7 +99,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
+    "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md",
+    "status": "done"
   },
   "BUG-ADMIN-AUDIT-SELECTALL-SCHEMA-MISMATCH-EMPTY": {
     "hash": "pending",
@@ -137,7 +138,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
+    "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md",
+    "status": "done"
   },
   "BUG-ALIGN-SEEDDEFAULTS-NULL-HANDLING-WITH-RESOLVEMODELROLE-DEFEN": {
     "hash": "c0f8f3e",
@@ -187,7 +189,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-any-chat-participant-can-hard-delete-any-message.md"
+    "source": ".plan/tickets/BUG-any-chat-participant-can-hard-delete-any-message.md",
+    "status": "done"
   },
   "BUG-APP-REGISTERPLUGINS-ACCEPTS-ASYNCSTORE-BUT-NEVER-USES-IT": {
     "hash": "3638006",
@@ -199,7 +202,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it.md"
+    "source": ".plan/tickets/BUG-app-registerplugins-accepts-asyncstore-but-never-uses-it.md",
+    "status": "done"
   },
   "BUG-ASSET-LINK-SHARE-HANDLERS-AND-GALLERY-GRID-PARAM-LACK-VALIDA": {
     "hash": "64464bf",
@@ -311,7 +315,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-author-note-section-duplicates-post-history-instructions-sam.md",
-    "git_issue": "1bc8ffd"
+    "git_issue": "1bc8ffd",
+    "status": "done"
   },
   "BUG-AUTO-GEN-ASSEMBLE-OMITS-PROVIDERID-TOKENBUDGET-AND-NEVER-COM": {
     "hash": "8a5e407",
@@ -336,7 +341,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-auto-gen-streaming-path-unhandled-rejection-abort-never-wire.md",
-    "git_issue": "7a4cc5d"
+    "git_issue": "7a4cc5d",
+    "status": "done"
   },
   "BUG-AUTO-KEY-ROTATION-DERIVES-CHAT-KEYS-FROM-PARTICIPANT-ACTOR-K": {
     "hash": "2f79f0e",
@@ -505,7 +511,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-assistant-message-swipe-index-read-modify-write-is-not-a.md"
+    "source": ".plan/tickets/BUG-bug-assistant-message-swipe-index-read-modify-write-is-not-a.md",
+    "status": "done"
   },
   "BUG-BUG-ASYNC-LIFECYCLE-WRITES-REQUEST-RESULTS-UNSCOPED-BY-USER-": {
     "hash": "86c3f76",
@@ -543,7 +550,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-async-store-complete-drops-response-body-larger-than-max.md"
+    "source": ".plan/tickets/BUG-bug-async-store-complete-drops-response-body-larger-than-max.md",
+    "status": "done"
   },
   "BUG-BUG-AUTO-GENERATION-APPLIES-MOOD-DELTA-TO-HOOK-PAYLOAD-ACTOR": {
     "hash": "88ef36f",
@@ -555,7 +563,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md"
+    "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md",
+    "status": "done"
   },
   "BUG-BUG-CHAT-SEEN-STOPSEENPOLLING-IS-NEVER-CALLED-5S-POLLING-INT": {
     "hash": "5e8fba1",
@@ -580,7 +589,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-chat-service-seen-ts-is-dead-code-and-its-upsert-is-brok.md"
+    "source": ".plan/tickets/BUG-bug-chat-service-seen-ts-is-dead-code-and-its-upsert-is-brok.md",
+    "status": "done"
   },
   "BUG-BUG-CSRF-COOKIE-SECURE-FLAG-HARDCODED-TRUE-BREAKS-OVER-PLAIN": {
     "hash": "b95800a",
@@ -656,7 +666,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-message-create-accepts-parentid-from-any-chat-cross-chat.md"
+    "source": ".plan/tickets/BUG-bug-message-create-accepts-parentid-from-any-chat-cross-chat.md",
+    "status": "done"
   },
   "BUG-BUG-MESSAGE-SEEN-DELETE-HANDLER-TRUSTS-CLIENT-ACTORID-IDOR": {
     "hash": "d40ecf3",
@@ -682,7 +693,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-message-seen-post-accepts-arbitrary-state-string-enum-ne.md"
+    "source": ".plan/tickets/BUG-bug-message-seen-post-accepts-arbitrary-state-string-enum-ne.md",
+    "status": "done"
   },
   "BUG-BUG-MESSAGE-SEEN-POST-RACES-ON-DETERMINISTIC-PRIMARY-KEY-500": {
     "hash": "3480c2d",
@@ -694,7 +706,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-message-seen-post-races-on-deterministic-primary-key-500.md"
+    "source": ".plan/tickets/BUG-bug-message-seen-post-races-on-deterministic-primary-key-500.md",
+    "status": "done"
   },
   "BUG-BUG-MESSAGE-SEEN-RE-MARK-CLOBBERS-FIRST-SEEN-TIMESTAMP": {
     "hash": "2f5b279",
@@ -732,7 +745,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-request-status-endpoint-fail-open-when-row-userid-is-nul.md"
+    "source": ".plan/tickets/BUG-bug-request-status-endpoint-fail-open-when-row-userid-is-nul.md",
+    "status": "done"
   },
   "BUG-BUG-RESOLVEACTOR-CASCADE-BRANCH-DOES-NOT-VERIFY-CHAT-PARTICI": {
     "hash": "55efa59",
@@ -770,7 +784,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md"
+    "source": ".plan/tickets/BUG-bug-sse-stream-render-relies-on-weak-regex-html-sanitizer-re.md",
+    "status": "done"
   },
   "BUG-CALLAUX-GRACEFUL-FAILURE-THROWS-ON-EMPTY-CONFIG": {
     "hash": "pending",
@@ -821,7 +836,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-carryhistory-copies-key-id-into-migrated-chat-history-breaks.md"
+    "source": ".plan/tickets/BUG-carryhistory-copies-key-id-into-migrated-chat-history-breaks.md",
+    "status": "done"
   },
   "BUG-CHARACTER-CREATE-SILENTLY-DROPS-PERSONALITY-SCENARIO-WELCOME": {
     "hash": "8bc0659",
@@ -833,7 +849,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-character-create-silently-drops-personality-scenario-welcome.md"
+    "source": ".plan/tickets/BUG-character-create-silently-drops-personality-scenario-welcome.md",
+    "status": "done"
   },
   "BUG-CHARACTER-CREATION-WIZARD-BUG-WIZARDID-UNUSED": {
     "hash": "pending",
@@ -856,7 +873,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-character-export-broken-export-modal-missing-data-character-.md",
-    "git_issue": "d2861ca"
+    "git_issue": "d2861ca",
+    "status": "done"
   },
   "BUG-CHARACTER-FEDERATION-LACKS-OWNER-CONSENT-OR-NSFW-GATE": {
     "hash": "beff3bd",
@@ -869,7 +887,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md",
-    "status": "not-yet-implemented"
+    "status": "done"
   },
   "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-ACTOR-OWNERSHIP-NEVER-CHECKED": {
     "hash": "d6c64be",
@@ -894,7 +912,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-character-internal-traits-idor-cross-user-read-write-delete.md"
+    "source": ".plan/tickets/BUG-character-internal-traits-idor-cross-user-read-write-delete.md",
+    "status": "done"
   },
   "BUG-CHARACTERS-CREATION-WIZARD-WIZARDID-UNUSED": {
     "hash": "pending",
@@ -1015,7 +1034,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint.md"
+    "source": ".plan/tickets/BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint.md",
+    "status": "done"
   },
   "BUG-CHAT-MENTION-SILENT-ERROR-SWALL": {
     "hash": "pending",
@@ -1311,7 +1331,8 @@
     "epic": "epic-nsfw-integration-gaps",
     "tags": [],
     "source": ".plan/tickets/BUG-consent-state-not-persisted-in-memory-only.md",
-    "git_issue": "5f00999"
+    "git_issue": "5f00999",
+    "status": "done"
   },
   "BUG-CONTENT-HOOKS-TS-MISSING-IMPORTS-BREAKS-TYPECHECK": {
     "hash": "6cae038",
@@ -1323,7 +1344,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-content-hooks-ts-missing-imports-breaks-typecheck.md"
+    "source": ".plan/tickets/BUG-content-hooks-ts-missing-imports-breaks-typecheck.md",
+    "status": "done"
   },
   "BUG-CONTEXT-PRUNING-IS-A-SILENT-NO-OP": {
     "hash": "f47ced7",
@@ -1335,7 +1357,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-context-pruning-is-a-silent-no-op.md"
+    "source": ".plan/tickets/BUG-context-pruning-is-a-silent-no-op.md",
+    "status": "done"
   },
   "BUG-CONTEXT-WINDOW-TRIM-KEEPS-OLDEST-MESSAGES-DROPS-NEWEST-WHEN-": {
     "hash": "65693a3",
@@ -1386,7 +1409,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-create-entity-confirm-bypasses-world-ownership.md"
+    "source": ".plan/tickets/BUG-create-entity-confirm-bypasses-world-ownership.md",
+    "status": "done"
   },
   "BUG-CRYPTO-ACTIVITYPUB-KEY-ROTATION-IS-NON-ATOMIC-INSERT-FAILURE": {
     "hash": "af75120",
@@ -1422,7 +1446,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-crypto-rotateactorkeyandreencrypt-returns-sentinel-string-ro.md"
+    "source": ".plan/tickets/BUG-crypto-rotateactorkeyandreencrypt-returns-sentinel-string-ro.md",
+    "status": "done"
   },
   "BUG-CSP-UNSAFE-INLINE-DEFEATS-PER-REQUEST-NONCE": {
     "hash": "b2fa212",
@@ -1484,7 +1509,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-delete-chat-gated-only-at-participant-level.md"
+    "source": ".plan/tickets/BUG-delete-chat-gated-only-at-participant-level.md",
+    "status": "done"
   },
   "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER": {
     "hash": "63f8f29",
@@ -1534,7 +1560,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-sta.md"
+    "source": ".plan/tickets/BUG-dhratchetdecrypt-dh-step-branch-derives-message-key-from-sta.md",
+    "status": "done"
   },
   "BUG-DHRATCHETDECRYPT-MUTATES-OPTS-STATE-ALIASING-HAZARD": {
     "hash": "6fb9cbd",
@@ -1559,7 +1586,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-dual-vn-choices-route-registration-shadows-guarded-route.md"
+    "source": ".plan/tickets/BUG-dual-vn-choices-route-registration-shadows-guarded-route.md",
+    "status": "done"
   },
   "BUG-DUPLICATE-OPENASSETPREVIEW-DEFINITIONS-WITH-DIVERGENT-BEHAVI": {
     "hash": "fbd71df",
@@ -1584,7 +1612,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md"
+    "source": ".plan/tickets/BUG-dynamic-response-accept-encoding-negotiation-uses-substring-.md",
+    "status": "done"
   },
   "BUG-E2E-ACTOR-IMPORT-AND-ASSET-ENDPOINTS-RETURN-500-WHERE-4XX-VA": {
     "hash": "2e964d4",
@@ -1680,7 +1709,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte.md"
+    "source": ".plan/tickets/BUG-encrypted-asset-thumb-compressed-preview-serves-raw-cipherte.md",
+    "status": "done"
   },
   "BUG-ENCRYPTED-PAYLOAD-SNIFFING-MISCLASSIFIES-USER-JSON-AS-PRE-EN": {
     "hash": "546662e",
@@ -1981,7 +2011,8 @@
     "priority": "critical",
     "epic": "epic-auth-permissions",
     "tags": [],
-    "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
+    "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md",
+    "status": "done"
   },
   "BUG-GETCLIENTIP-IS-UNTESTABLE-WITHOUT-A-LIVE-BUN-SERVER-IP-SOURC": {
     "hash": "8d307ae",
@@ -2006,7 +2037,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md",
-    "git_issue": "f52b255"
+    "git_issue": "f52b255",
+    "status": "done"
   },
   "BUG-GM-CONFIG-CORRUPTED-BY-STRING-SPREAD-IN-BUILDCHATUPDATES-MER": {
     "hash": "499e87c",
@@ -2057,7 +2089,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-gmnotessection-injects-shadow-notes-into-all-actors-prompts.md"
+    "source": ".plan/tickets/BUG-gmnotessection-injects-shadow-notes-into-all-actors-prompts.md",
+    "status": "done"
   },
   "BUG-GROUP-CASCADE-CONSECUTIVE-TURN-GUARD": {
     "hash": "pending",
@@ -2154,7 +2187,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md",
-    "git_issue": "807abdb"
+    "git_issue": "807abdb",
+    "status": "done"
   },
   "BUG-GZIP-STORED-UNENCRYPTED-MESSAGES-REACH-LLM-PROMPT-AND-EXPORT": {
     "hash": "e336dc6",
@@ -2166,7 +2200,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md"
+    "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md",
+    "status": "done"
   },
   "BUG-HALLUCINATION-GUARD-KNOWN-PARAMS-IGNORED": {
     "hash": "pending",
@@ -2215,7 +2250,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md"
+    "source": ".plan/tickets/BUG-hsts-header-missing-from-response-policy.md",
+    "status": "done"
   },
   "BUG-HTML-LANG-HARDCODED-NO-DIR-HANDLING-FOR-I18N": {
     "hash": "f835588",
@@ -2340,7 +2376,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-injectnarration-hardcodes-actor-id-system-fk-drops-split-reu.md"
+    "source": ".plan/tickets/BUG-injectnarration-hardcodes-actor-id-system-fk-drops-split-reu.md",
+    "status": "done"
   },
   "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
     "hash": "27cc7ab",
@@ -2478,7 +2515,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-location-connections-validation-accepts-junk-and-persists-it.md"
+    "source": ".plan/tickets/BUG-location-connections-validation-accepts-junk-and-persists-it.md",
+    "status": "done"
   },
   "BUG-LOCATION-DELETE-CRASHES-ON-LOCATION-STATES-FK": {
     "hash": "57603d2",
@@ -2490,7 +2528,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-location-delete-crashes-on-location-states-fk.md"
+    "source": ".plan/tickets/BUG-location-delete-crashes-on-location-states-fk.md",
+    "status": "done"
   },
   "BUG-LOGGER-CENSOR-DEPTH-CUTOFF-RETURNS-SUBTREE-UNTOUCHED-NESTED-": {
     "hash": "b23b7fb",
@@ -2502,7 +2541,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested-.md"
+    "source": ".plan/tickets/BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested-.md",
+    "status": "done"
   },
   "BUG-LOGNSFWEVENT-HAS-ZERO-CALLERS-NO-NSFW-GATE-DECISION-EVER-AUD": {
     "hash": "e241317",
@@ -2540,7 +2580,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-memory-decay-writes-nan-strength.md"
+    "source": ".plan/tickets/BUG-memory-decay-writes-nan-strength.md",
+    "status": "done"
   },
   "BUG-MENTION-PARSER-REGEX-FAILS-ON-MULTI-WORD-NAMES": {
     "hash": "pending",
@@ -2578,7 +2619,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-message-search-promise-allsettled-rejection-inserts-phantom-.md"
+    "source": ".plan/tickets/BUG-message-search-promise-allsettled-rejection-inserts-phantom-.md",
+    "status": "done"
   },
   "BUG-MESSAGE-SEARCH-RETURNS-CIPHERTEXT-AND-INDEXES-CIPHERTEXT-FOR": {
     "hash": "baf5c4b",
@@ -2711,7 +2753,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-model-comparisons-analytics-leaks-all-users-rows-missing-use.md",
-    "git_issue": "43587b3"
+    "git_issue": "43587b3",
+    "status": "done"
   },
   "BUG-MUSIC-LINKS-POST-BODY-CHATID-IS-REQUIRED-BUT-IGNORED-DEAD-SC": {
     "hash": "63e7492",
@@ -2723,7 +2766,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-music-links-post-body-chatid-is-required-but-ignored-dead-sc.md"
+    "source": ".plan/tickets/BUG-music-links-post-body-chatid-is-required-but-ignored-dead-sc.md",
+    "status": "done"
   },
   "BUG-MUSIC-LINKS-ROUTES-LACK-CHAT-ACCESS-CHECKS-CROSS-CHAT-READ-W": {
     "hash": "d283ff9",
@@ -2748,7 +2792,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-n-1-queries-in-story-world-state-context-per-participant.md",
-    "git_issue": "e874b71"
+    "git_issue": "e874b71",
+    "status": "done"
   },
   "BUG-NEW-CHAT-VN-TOGGLE-SENDS-VISUALNOVEL-BUT-BACKEND-READS-RENDE": {
     "hash": "7ca468e",
@@ -2862,7 +2907,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-flag-side-effect-runs-before-access-check.md"
+    "source": ".plan/tickets/BUG-nsfw-flag-side-effect-runs-before-access-check.md",
+    "status": "done"
   },
   "BUG-NSFW-FLAGQUEUE-LEAKS-REPORTER-PII": {
     "hash": "c48d5fb",
@@ -2926,7 +2972,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-leveltorating-maps-unknown-levels-to-sfw-fail-open.md"
+    "source": ".plan/tickets/BUG-nsfw-leveltorating-maps-unknown-levels-to-sfw-fail-open.md",
+    "status": "done"
   },
   "BUG-NSFW-MODACTIONS-PERFORMEDBY-FROM-BODY": {
     "hash": "bd2b3b5",
@@ -2977,7 +3024,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-nsfwhook-blocked-by-override-and-blocked-by-error-paths.md"
+    "source": ".plan/tickets/BUG-nsfw-nsfwhook-blocked-by-override-and-blocked-by-error-paths.md",
+    "status": "done"
   },
   "BUG-NSFW-PREFERENCES-ADMIN-READ-MATERIALIZES-ROW": {
     "hash": "pending",
@@ -3002,7 +3050,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa.md"
+    "source": ".plan/tickets/BUG-nsfw-recordnsfwconsent-insert-update-not-wrapped-in-a-transa.md",
+    "status": "done"
   },
   "BUG-NSFW-REVIEWAPPEAL-AUTO-REVERSES-ACTIONS": {
     "hash": "b3c47b2",
@@ -3027,7 +3076,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-runtime-config-singleton-leaks-across-tests.md",
-    "status": "identified",
+    "status": "done",
     "git_issue": "7d8723d"
   },
   "BUG-NSFWMODERATIONSERVICE-MISSING-GETORCREATEOWN-WIRING-BLOCK-BA": {
@@ -3053,7 +3102,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-ollama-outage-hard-fails-all-generations.md"
+    "source": ".plan/tickets/BUG-ollama-outage-hard-fails-all-generations.md",
+    "status": "done"
   },
   "BUG-OUT-OF-ORDER-FETCH-RACE-IN-LOADMESSAGES": {
     "hash": "b91c284",
@@ -3078,7 +3128,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md"
+    "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md",
+    "status": "done"
   },
   "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD": {
     "hash": "c04aa89",
@@ -3243,7 +3294,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md"
+    "source": ".plan/tickets/BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san.md",
+    "status": "done"
   },
   "BUG-REDUNDANT-VN-STATE-STORED-IN-TWO-INDEPENDENT-LOCATIONS": {
     "hash": "9db5fef",
@@ -3311,7 +3363,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md"
+    "source": ".plan/tickets/BUG-resolveuseridfromrequest-missing-user-status-check.md",
+    "status": "done"
   },
   "BUG-ROTATEKEYONLEAVE-PARTIAL-FAILURE-LEAVES-MIXED-KEY-STATE-NON-": {
     "hash": "d503b9c",
@@ -3365,7 +3418,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-routes-message-seen-post-delete-trusts-client-actorid-idor-a.md"
+    "source": ".plan/tickets/BUG-routes-message-seen-post-delete-trusts-client-actorid-idor-a.md",
+    "status": "done"
   },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
@@ -3392,7 +3446,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md"
+    "source": ".plan/tickets/BUG-safedecompress-pre-check-rejects-compressed-payloads-over-10.md",
+    "status": "done"
   },
   "BUG-SCRIPTS-WORKTREE-TICKET-WRITES-TO-CWD-INSTEAD-OF-WORKTREE-PA": {
     "hash": "81dc8f9",
@@ -3404,7 +3459,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-scripts-worktree-ticket-writes-to-cwd-instead-of-worktree-pa.md"
+    "source": ".plan/tickets/BUG-scripts-worktree-ticket-writes-to-cwd-instead-of-worktree-pa.md",
+    "status": "done"
   },
   "BUG-SECURITY-MERGE-BUILD-BREAK-INSTANCES-TS": {
     "hash": "pending",
@@ -3453,7 +3509,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-services-tradecore-validatelines-lacks-world-id-filter-cross.md"
+    "source": ".plan/tickets/BUG-services-tradecore-validatelines-lacks-world-id-filter-cross.md",
+    "status": "done"
   },
   "BUG-SETTINGS-SAVE-OMITS-GMCONFIG-FOR-ONLINE-CHATS": {
     "hash": "e5219e3",
@@ -3478,7 +3535,8 @@
     "priority": "critical",
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
-    "source": ".plan/tickets/BUG-shadow-and-whitenote-crud-open-to-any-chat-participant.md"
+    "source": ".plan/tickets/BUG-shadow-and-whitenote-crud-open-to-any-chat-participant.md",
+    "status": "done"
   },
   "BUG-SIGNAL-BRIDGE-ACTIVATION-TRIGGER-UNDEFINED": {
     "hash": "3ba1095",
@@ -3540,7 +3598,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-sqlite-pragmas-skipped-when-dialect-built-from-existing-data.md",
-    "git_issue": "3e90ae3"
+    "git_issue": "3e90ae3",
+    "status": "done"
   },
   "BUG-SSE-STREAMS-LEAK-STRING-ERROR-INTERNALS-TO-CLIENTS": {
     "hash": "1a3a97a",
@@ -3552,7 +3611,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
+    "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md",
+    "status": "done"
   },
   "BUG-STALE-AUDIT-CLAIM-AUX-EMOTION-MOOD-TASK-TABLES": {
     "hash": "pending",
@@ -3589,7 +3649,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-standard-tier-at-rest-encryption-silently-stores-plaintext-w.md",
-    "git_issue": "566d06c"
+    "git_issue": "566d06c",
+    "status": "done"
   },
   "BUG-STATIC-ASSET-CACHING-UNCONDITIONAL-VARY-IMMUTABLE-ON-SHORT-T": {
     "hash": "f0bd959",
@@ -3638,7 +3699,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-story-destroy-partial-quantity-update-path-missing-world-id-.md"
+    "source": ".plan/tickets/BUG-story-destroy-partial-quantity-update-path-missing-world-id-.md",
+    "status": "done"
   },
   "BUG-STORY-ITEMS-CROSS-WORLD-IDOR-READ-TRANSFER-DESTROY": {
     "hash": "0ffc5e5",
@@ -3663,7 +3725,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-story-mode-chat-without-gm-config-silently-skips-generation.md"
+    "source": ".plan/tickets/BUG-story-mode-chat-without-gm-config-silently-skips-generation.md",
+    "status": "done"
   },
   "BUG-STORY-MODE-PROMPT-STORED-AS-CONTENT": {
     "hash": "pending",
@@ -3700,7 +3763,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md",
-    "git_issue": "268fdae"
+    "git_issue": "268fdae",
+    "status": "done"
   },
   "BUG-T-ANY-SCHEMAS-PERSIST-ARBITRARY-JSON-ACTOR-SETTINGS-ENTITY-D": {
     "hash": "8be98b3",
@@ -3774,7 +3838,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md"
+    "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md",
+    "status": "done"
   },
   "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22": {
     "hash": "1e5d5dc",
@@ -3859,7 +3924,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-turn-state-blind-read-modify-write-lost-updates-on-concurren.md",
-    "git_issue": "02abf8a"
+    "git_issue": "02abf8a",
+    "status": "done"
   },
   "BUG-TYPE-SCANALLPROVIDERS-DB-PARAM-AS-KYSELY-DB-INSTEAD-OF-UNKNO": {
     "hash": "c514218",
@@ -3895,7 +3961,8 @@
     "priority": "medium",
     "epic": "epic-code-quality",
     "tags": [],
-    "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
+    "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md",
+    "status": "done"
   },
   "BUG-USE-MULTIPLE-L-FLAGS-INSTEAD-POTENTIAL-DX-IMPROVEMENT": {
     "hash": "0cd09d6",
@@ -3933,7 +4000,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-validation-avatarselectionruleschema-missing-action-first-an.md"
+    "source": ".plan/tickets/BUG-validation-avatarselectionruleschema-missing-action-first-an.md",
+    "status": "done"
   },
   "BUG-VALIDATION-MIDDLEWARE-LEAKS-RAW-ERR-MESSAGE-IN-500-ENVELOPE": {
     "hash": "50af91c",
@@ -3984,7 +4052,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels.md"
+    "source": ".plan/tickets/BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels.md",
+    "status": "done"
   },
   "BUG-VN-CHOICES-IDOR-GUARD-NON-COMPILING": {
     "hash": "pending",
@@ -4008,7 +4077,8 @@
     "priority": "critical",
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
-    "source": ".plan/tickets/BUG-vn-generate-choices-never-persists-to-vn-choices.md"
+    "source": ".plan/tickets/BUG-vn-generate-choices-never-persists-to-vn-choices.md",
+    "status": "done"
   },
   "BUG-VN-MODE-LOCKED-ONCE-CHAT-HAS-CONFIRMED-MESSAGES": {
     "hash": "c7f002c",
@@ -4033,7 +4103,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-whitenote-ui-types-rejected-422.md"
+    "source": ".plan/tickets/BUG-whitenote-ui-types-rejected-422.md",
+    "status": "done"
   },
   "BUG-WORKTREE-FINALIZE-MUST-HARD-FAIL-ON-NON-MERGEABLE-OR-MULTI-M": {
     "hash": "508a7ea",
@@ -4071,7 +4142,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-world-bundle-import-untransacted-partial-import-corrupts-wor.md",
-    "git_issue": "ca69118"
+    "git_issue": "ca69118",
+    "status": "done"
   },
   "BUG-WORLD-LORE-SILENTLY-STRIPPED-ON-CREATE-AND-UPDATE": {
     "hash": "81aaf55",
@@ -4083,7 +4155,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-world-lore-silently-stripped-on-create-and-update.md"
+    "source": ".plan/tickets/BUG-world-lore-silently-stripped-on-create-and-update.md",
+    "status": "done"
   },
   "BUG-WORLD-STATE-INIT-SEEDS-ALL-DB-ACTORS-INTO-EVERY-WORLD": {
     "hash": "ee49c41",
@@ -4095,7 +4168,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-world-state-init-seeds-all-db-actors-into-every-world.md"
+    "source": ".plan/tickets/BUG-world-state-init-seeds-all-db-actors-into-every-world.md",
+    "status": "done"
   },
   "BUG-WORLD-TIMELINES-UNAUTHENTICATED-READ-AND-CREATE": {
     "hash": "dae8112",
@@ -9432,6 +9506,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-authoring-creation.md",
     "git_issue": "eb42411"
+  },
+  "TASK-AUTO-GENERATE-DOCS-REFERENCE-API-MD-FROM-OPENAPI-SPEC": {
+    "hash": "93c3764",
+    "git_issue": "93c3764",
+    "extid": "TASK-AUTO-GENERATE-DOCS-REFERENCE-API-MD-FROM-OPENAPI-SPEC",
+    "type": "TASK",
+    "title": "Auto-generate docs/reference/api.md from OpenAPI spec",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-auto-generate-docs-reference-api-md-from-openapi-spec.md"
   },
   "TASK-AUTO-TRANSLATION-LAYER": {
     "hash": "pending",
