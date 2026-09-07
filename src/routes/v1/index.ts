@@ -37,12 +37,8 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
 
   return (
     new Elysia({ name: "v1", },)
-      .use(versionResolver(),)
-      .use(healthRoutes(handleOpts, prefix,),)
-      .use(chatsRoutes(handleOpts, prefix,),)
-      .use(usersRoutes(handleOpts, prefix,),)
-      .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
-      .use(versionedOpenApiPlugin({ version: "1", },),)
+      // MUST be registered BEFORE the route plugins: Elysia's onAfterHandle
+      // only wraps routes declared after the hook (proven by probe test).
       .onAfterHandle(
         deprecationAfterHandle({
           enabled: () => process.env.API_V1_DEPRECATED === "1",
@@ -51,5 +47,11 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
           sunset: "Sat, 01 Jan 2028 00:00:00 GMT",
         },),
       )
+      .use(versionResolver(),)
+      .use(healthRoutes(handleOpts, prefix,),)
+      .use(chatsRoutes(handleOpts, prefix,),)
+      .use(usersRoutes(handleOpts, prefix,),)
+      .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
+      .use(versionedOpenApiPlugin({ version: "1", },),)
   );
 }
