@@ -3,7 +3,7 @@
 
 # BUG: talkativity selection-rate is consumed by TurnManager but never surfaced to the LLM as group-chat context
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified via commit 359a3d3; bookkeeping)
 **Severity:** low
 **Priority:** low
 **Effort:** small
@@ -64,3 +64,7 @@ UX / coherence. The LLM currently cannot distinguish "this group has one quiet c
 - `TASK-talkativity-influence-response-verbosity.md` — separate design proposal for length-bias.
 - `epic-chat-context-optimization.md` (per-actor prompt shaping).
 - `TASK-prompt-feature-flags-conditional-injection.md` (related prompt-injection work).
+
+## Resolution
+
+Verified via commit 359a3d3. New section src/assistant/prompt/sections/group-talkativity.ts renders a system message listing each participant as `<Name>: <talkativity>/10` so the LLM knows who is loud vs quiet in a group chat. Registered in src/assistant/prompt/registry.ts with priority 0 (kept longest when trimming). Covered by src/assistant/prompt/sections/group-talkativity.test.ts (4 cases).

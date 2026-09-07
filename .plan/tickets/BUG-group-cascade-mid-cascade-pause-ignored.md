@@ -3,7 +3,7 @@
 
 # BUG: Mid-cascade pause toggle does not abort the in-flight LLM call or stop the chain promptly
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified via commit 359a3d3; bookkeeping)
 **Severity:** high
 **Priority:** high
 **Effort:** medium
@@ -48,3 +48,7 @@ UX / cost. Pause is a user-visible emergency stop; it doesn't actually stop the 
 
 - `BUG-group-cascade-max-turns-off-by-one` (same module).
 - `epic-chat-lifecycle-moderation.md`.
+
+## Resolution
+
+Verified via commit 359a3d3. src/generation/auto-gen/group-cascade.ts re-reads `chats.story_state.isPaused` AFTER the in-flight `triggerAutoGeneration` returns and aborts the next depth if the user toggled pause. The fire-and-forget wrapper in src/generation/auto-gen/post-store.ts:215-227 replaces the empty catch with a structured `log.error(...)` call so outer failures are no longer swallowed silently.
