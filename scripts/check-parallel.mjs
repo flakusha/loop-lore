@@ -35,7 +35,17 @@
 // oxlint-disable-next-line import/no-nodejs-modules
 import { execFileSync, } from "node:child_process";
 // oxlint-disable-next-line import/no-nodejs-modules
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync, } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  renameSync,
+  statSync,
+  symlinkSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 // oxlint-disable-next-line import/no-nodejs-modules
 import path from "node:path";
 
@@ -119,17 +129,32 @@ const checks = {
   PROJECT_ROOT = path.resolve(import.meta.dir, "..",),
   // Machine-readable report: written after every run, git-ignored (.tmp/).
   REPORT_DIR_RELATIVE = ".tmp",
+  // Canonical (latest-run) report path. Updated atomically on every run;
+  // consumers that only care about "the most recent report" read this file.
   REPORT_RELATIVE = ".tmp/check-report.json",
   REPORT_PATH = path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE, "check-report.json",),
+  // `.latest` symlink always points at the per-run filename written for the
+  // most recent run, so external tools that don't know RUN_ID can chase a
+  // stable filename. Symlink target is updated atomically via temp + rename.
+  REPORT_LATEST_RELATIVE = ".tmp/check-report.latest.json",
+  REPORT_LATEST_PATH = path.resolve(PROJECT_ROOT, REPORT_LATEST_RELATIVE,),
+  // Per-run retention: how many historical `.tmp/check-report-<RUN_ID>.json`
+  // files to keep. Older reports are pruned on each new run. ~200KB per
+  // report × 20 = ~4MB worst-case disk footprint per worktree, auto-GC'd.
+  REPORT_RETENTION_COUNT = 20,
   // Per-check output cap for the report (guards against multi-MB failure dumps).
   MAX_OUTPUT_CHARS = 100_000,
-  // Run identity: unique per invocation; embedded in the report and used to make
-  // oxlint-disable-next-line capitalized-comments
-  // the on-disk write atomic (temp file → rename).
+  // Run identity: unique per invocation; embedded in the report, used as the
+  // per-run filename, and used to make the on-disk write atomic.
   RUN_ID = `${process.pid}-${Date.now().toString(36,)}`,
-  // Invocation mode — the runner is mode-agnostic; the label only records how the
-  // oxlint-disable-next-line capitalized-comments
-  // check was invoked so fix/ci runs can't masquerade as plain ones.
+  // Per-run file path. Same JSON content as REPORT_PATH at any given moment.
+  PER_RUN_REPORT_PATH = path.resolve(
+    PROJECT_ROOT,
+    REPORT_DIR_RELATIVE,
+    `check-report-${RUN_ID}.json`,
+  ),
+  // Invocation mode — the runner is mode-agnostic; the label only records
+  // how the check was invoked so fix/ci runs can't masquerade as plain ones.
   MODE = (() => {
     if (process.argv.includes("--ci",)) { return "ci"; }
     if (process.argv.includes("--fix",)) { return "fix"; }
@@ -412,13 +437,83 @@ function buildReport({ exitCode, checks, nonBlocking, gpgPrecheck, },) {
 
 function writeReport(report,) {
   mkdirSync(path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE,), { recursive: true, },);
-  // Atomic write: temp file + rename, so concurrent readers never observe a
-  // partially-written report (last complete run wins).
-  const tmpPath = `${REPORT_PATH}.${RUN_ID}.tmp`;
-  writeFileSync(tmpPath, JSON.stringify(report, null, 2,) + "\n", "utf8",);
-  renameSync(tmpPath, REPORT_PATH,);
+
+  // 1. Per-run file: full run-specific path. Survives concurrent runs because
+  //    each RUN_ID is unique. Atomic write via temp + rename (no torn writes).
+  const perRunTmp = `${PER_RUN_REPORT_PATH}.tmp`;
+  const json = JSON.stringify(report, null, 2,) + "\n";
+  writeFileSync(perRunTmp, json, "utf8",);
+  renameSync(perRunTmp, PER_RUN_REPORT_PATH,);
+
+  // 2. Canonical (latest) report: atomic rename from the per-run file. Last
+  //    complete run wins. Concurrent readers see either the previous run's
+  //    content or the new run's content — never torn. We then re-emit the
+  //    per-run file so by-RUN_ID lookups still resolve.
+  renameSync(PER_RUN_REPORT_PATH, REPORT_PATH,);
+  writeFileSync(PER_RUN_REPORT_PATH, json, "utf8",);
+
+  // 3. `.latest` symlink: a stable filename pointing at this run's per-run
+  //    path. Atomic swap via temp + rename so consumers never see a dangling
+  //    symlink mid-rotation.
+  const latestTmp = `${REPORT_LATEST_PATH}.tmp`;
+  try {
+    unlinkSync(latestTmp,);
+  } catch { /* expected if file doesn't exist */ }
+  symlinkSync(`check-report-${RUN_ID}.json`, latestTmp,);
+  renameSync(latestTmp, REPORT_LATEST_PATH,);
+
+  // 4. Retention: prune oldest per-run files beyond REPORT_RETENTION_COUNT.
+  //    The canonical `check-report.json` and `.latest.json` symlink are never
+  //    touched — only `check-report-<RUN_ID>.json` files are GC'd.
+  pruneOldReports();
+
+  // 5. Stdout contract (Ticket 1):
+  //    - Human-readable line with emoji for live terminals (existing behavior).
+  //    - Machine-greppable lines, one per fact, no prefix noise. Downstream
+  //      agents `grep ^CHECK_REPORT_` to extract facts without parsing the
+  //      rest of the report. The `=` form is safe to feed to `cat` / `jq`.
   console.log(`\n📄 Check report: ${REPORT_PATH}`,);
+  console.log(`CHECK_REPORT_PATH=${REPORT_PATH}`,);
+  console.log(`CHECK_REPORT_LATEST=${REPORT_LATEST_PATH}`,);
+  console.log(`CHECK_REPORT_RUN_ID=${RUN_ID}`,);
   return REPORT_PATH;
+}
+
+/**
+ * Prune oldest per-run reports beyond `REPORT_RETENTION_COUNT`. The canonical
+ * `check-report.json` and `.latest.json` symlink are never touched — only
+ * `check-report-<RUN_ID>.json` files are GC'd. RUN_IDs embed `<pid>-<base36-time>`
+ * so lexicographic sort is also chronological within a single worktree.
+ */
+function pruneOldReports() {
+  const dir = path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE,);
+  let entries;
+  try {
+    entries = readdirSync(dir,);
+  } catch {
+    return; // dir missing → nothing to prune
+  }
+  const perRun = entries
+    .filter((name,) =>
+      name.startsWith("check-report-",) &&
+      name.endsWith(".json",) &&
+      name !== "check-report.json" &&
+      name !== "check-report.latest.json"
+    )
+    .sort((a, b,) => b.localeCompare(a,)); // newest first
+  if (perRun.length <= REPORT_RETENTION_COUNT) { return; }
+  const toDelete = perRun.slice(REPORT_RETENTION_COUNT,);
+  for (const name of toDelete) {
+    const target = path.join(dir, name,);
+    try {
+      // Defensive: never delete a symlink (the `.latest` filter above is
+      // belt-and-suspenders). Avoids following a symlink and unlinking an
+      // arbitrary target if a future naming change makes one slip through.
+      const st = statSync(target,);
+      if (st.isSymbolicLink()) { continue; }
+      unlinkSync(target,);
+    } catch { /* best-effort GC; race with concurrent prune is harmless */ }
+  }
 }
 
 // ── Git provenance ─────────────────────────────────────────────
@@ -497,7 +592,11 @@ function cmdReportLs() {
   }
 
   console.log("=== Check reports across worktrees ===",);
-  console.log(`${"worktree".padEnd(32,)} ${"branch".padEnd(28,)} ${"head".padEnd(8,)} ${"report".padEnd(8,)} status`,);
+  console.log(
+    `${"worktree".padEnd(32,)} ${"branch".padEnd(28,)} ${"head".padEnd(8,)} ${"report".padEnd(8,)} ${
+      "kept".padEnd(5,)
+    } status`,
+  );
   for (const wt of worktrees) {
     const reportPath = path.join(wt.path, REPORT_DIR_RELATIVE, "check-report.json",);
     let report = null;
@@ -507,6 +606,20 @@ function cmdReportLs() {
     } catch {
       corrupt = existsSync(reportPath,);
     }
+
+    // Count historical per-run reports retained on disk. Used to surface
+    // worktrees that are filling `.tmp/` (e.g. CI churning through 100s of
+    // runs without manual cleanup). Retention cap is REPORT_RETENTION_COUNT
+    // but each worktree runs its own GC; the column exposes the current
+    // population so operators can spot retention policy violations.
+    const tmpDir = path.join(wt.path, REPORT_DIR_RELATIVE,);
+    let kept = 0;
+    try {
+      kept = readdirSync(tmpDir,).filter((n,) =>
+        n.startsWith("check-report-",) && n.endsWith(".json",) &&
+        n !== "check-report.json" && n !== "check-report.latest.json"
+      ).length;
+    } catch { /* dir missing → 0 */ }
 
     const head = wt.head.slice(0, 7,);
     let status;
@@ -519,7 +632,9 @@ function cmdReportLs() {
     const reportHead = report?.gitHead ?? "-";
     const name = path.basename(wt.path,).padEnd(32,);
     const branch = (wt.branch || "(detached)").padEnd(28,);
-    console.log(`${name} ${branch} ${head.padEnd(8,)} ${reportHead.padEnd(8,)} ${status}`,);
+    console.log(
+      `${name} ${branch} ${head.padEnd(8,)} ${reportHead.padEnd(8,)} ${String(kept,).padEnd(5,)} ${status}`,
+    );
   }
 }
 

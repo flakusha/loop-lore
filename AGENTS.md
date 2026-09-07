@@ -232,10 +232,35 @@ stale w.r.t. the tree's current HEAD; treat a stale or failed report as
 "unverified". `bun run check:report-ls` (or `bun run scripts/worktree/ report`)
 aggregates report status across all worktrees.
 
+### Check report stdout contract (programmatic consumption)
+
+The runner emits machine-greppable lines on stdout for downstream tooling:
+
+```
+CHECK_REPORT_PATH=/abs/path/.tmp/check-report.json
+CHECK_REPORT_LATEST=/abs/path/.tmp/check-report.latest.json
+CHECK_REPORT_RUN_ID=<pid>-<base36-time>
+```
+
+`grep ^CHECK_REPORT_` extracts the facts; `CHECK_REPORT_PATH=$(...)` captures
+the canonical (latest) path. The canonical file is the same content as the
+per-run file at any moment — a stable target for tools that don't track
+`RUN_ID`. `.latest.json` is a symlink to the most recent per-run file; it's
+atomic-rotated so consumers never see a dangling pointer.
+
+### Check report retention
+
+Per-run files live at `.tmp/check-report-<RUN_ID>.json`. The runner keeps the
+most recent `REPORT_RETENTION_COUNT = 20` and prunes older entries on each new
+run. ~200KB per report × 20 = ~4MB worst-case disk footprint per worktree.
+`check:report-ls` shows the current kept-count in the `kept` column.
+
+Concurrent runs in the same worktree each get a unique `RUN_ID`; both per-run
+files survive, and the canonical `check-report.json` reflects the last writer.
+No torn writes — atomic temp + rename on every step.
+
 ### DB schema migrations — parts/ layout & workflow
 
-Migrations are the single source of truth for the DB schema. They live in
-`src/db/migrations/` as **modular parts** (`parts/NNN_name.ts`), each exporting
 `up(db)`/`down(db)`, orchestrated by `001_init.ts` (runs `up()` in part order,
 `down()` in reverse). `src/db/migrate.ts` runs them via Kysely's `Migrator`
 with an `assertMigrationsNotStale` guard that fails fast on deleted/renamed/
@@ -327,6 +352,26 @@ When a `scripts/worktree/` command (or any other tool) fails, agents MUST
 stop and surface the error. Do NOT retry the failing step with a workaround
 (different binary, force flag, raw git, manual signing, etc.) without
 explicit user direction. If a workaround is genuinely necessary, ASK first.
+
+### Finalize signal safety + manual recovery
+
+`finalize` installs SIGINT/SIGTERM/SIGHUP handlers around the in-place merge
+on `dev`. On signal, it runs a transactional rollback in order: `git merge
+--abort`, then pop the auto-stashed dev state, then release the lock, then
+`exit 130`.
+
+`kill -9` (SIGKILL) bypasses the handler and may leave dev mid-merge. Recover
+manually:
+
+```bash
+bun run scripts/worktree/ abort              # recover (idempotent)
+bun run scripts/worktree/ abort --dry-run   # preview what would happen
+```
+
+`abort` aborts any in-progress merge/rebase/cherry-pick, pops leftover
+`worktree-finalize-*` stashes (preserving them if pop conflicts), and removes
+a stale lockfile. It NEVER deletes user-authored stashes, force-deletes
+branches, or resets to a remote ref.
 
 ````
 ## Issue Tracking
