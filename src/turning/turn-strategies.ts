@@ -70,16 +70,16 @@ export const roundRobinSelect: TurnStrategyFn = (
   _context,
   lastActorId,
 ) => {
-  const order = turnOrder.length > 0 ? turnOrder : participants.map((p,) => p.actorId,);
+  const order = turnOrder.length > 0 ? turnOrder : participants.map((p,) => p.actorId);
   const lastIndex = currentActorId ? order.indexOf(currentActorId,) : -1;
   for (let step = 1; step <= order.length; step++) {
     const candidateId = order[(lastIndex + step) % order.length]!;
-    if (!participants.some((p,) => p.actorId === candidateId,)) { continue; }
+    if (!participants.some((p,) => p.actorId === candidateId)) { continue; }
     if (candidateId !== lastActorId || participants.length < 2) { return candidateId; }
   }
   // Stale order (nothing matched) or every candidate is the last speaker:
   // first non-last participant, else the first participant.
-  return participants.find((p,) => p.actorId !== lastActorId,)?.actorId ?? participants[0]!.actorId;
+  return participants.find((p,) => p.actorId !== lastActorId)?.actorId ?? participants[0]!.actorId;
 };
 
 export const sceneBasedSelect: TurnStrategyFn = (

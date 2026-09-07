@@ -46,7 +46,9 @@ This ticket fills the **coding-agent-specific** implementation details: which ex
 ### Note on entity naming
 
 The spec calls `World` → `Epic` (agentic), but **no `epics` table exists on dev**. The "Epic" rename is **conceptual only** — `worlds.id` is the Epic key in both RPG and agentic modes. `chat.mode = 'agentic'` is the discriminator (per spec). Schema unchanged.
+
 ## Design
+
 
 ### Sandboxed `.git` repo per Epic
 
