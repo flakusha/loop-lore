@@ -15,11 +15,13 @@
 import { Elysia, } from "elysia";
 import { chatsRoutes, } from "../chats";
 import { healthRoutes, } from "../health";
+import { deprecationAfterHandle, } from "../middleware/deprecation-headers";
 import { versionResolver, } from "../middleware/version-resolver";
 import { requestStatusRoutes, } from "../requests";
 import { usersRoutes, } from "../users";
 
 import type { RegisterPluginsOpts, } from "../../app/register-plugins";
+import { versionedOpenApiPlugin, } from "./openapi";
 
 /**
  * Create v1 versioned routes.
@@ -40,5 +42,14 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
       .use(chatsRoutes(handleOpts, prefix,),)
       .use(usersRoutes(handleOpts, prefix,),)
       .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
+      .use(versionedOpenApiPlugin({ version: "1", },),)
+      .onAfterHandle(
+        deprecationAfterHandle({
+          enabled: () => process.env.API_V1_DEPRECATED === "1",
+          deprecatedVersion: "1",
+          successorVersion: "2",
+          sunset: "Sat, 01 Jan 2028 00:00:00 GMT",
+        },),
+      )
   );
 }
