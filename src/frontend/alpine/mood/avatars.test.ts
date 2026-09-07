@@ -13,7 +13,11 @@ mock.module("../htmx", () => ({
   }) satisfies ApiFetchMock,
 }),);
 
-interface EmotionAvatar { emotion: string; avatarId: string; assetId: string }
+interface EmotionAvatar {
+  emotion: string;
+  avatarId: string;
+  assetId: string;
+}
 
 interface AvatarCtx {
   activeChat: string | null;
@@ -83,7 +87,7 @@ function routeResponses(opts?: {
 afterEach(() => {
   calls = [];
   handler = async () => Response.json([],);
-});
+},);
 
 describe("moodStateAvatars.loadEmotionAvatars", () => {
   test("returns early without an active chat", async () => {
@@ -219,18 +223,23 @@ describe("moodStateAvatars.avatarForMessage", () => {
         { emotion: "neutral", avatarId: "b", assetId: "as-neutral", },
       ],
     },);
-    expect(moodStateAvatars.avatarForMessage!.call(ctx as never, { role: "assistant", emotion: "happy", },),).toBe("as-happy",);
+    expect(moodStateAvatars.avatarForMessage!.call(ctx as never, { role: "assistant", emotion: "happy", },),).toBe(
+      "as-happy",
+    );
   });
 
   test("falls back to neutral, then to the first available avatar", () => {
     const ctx = buildCtx({
       _emotionAvatars: [{ emotion: "neutral", avatarId: "b", assetId: "as-neutral", },],
     },);
-    expect(moodStateAvatars.avatarForMessage!.call(ctx as never, { role: "assistant", emotion: "angry", },),).toBe("as-neutral",);
+    expect(moodStateAvatars.avatarForMessage!.call(ctx as never, { role: "assistant", emotion: "angry", },),).toBe(
+      "as-neutral",
+    );
     const firstOnly = buildCtx({
       _emotionAvatars: [{ emotion: "happy", avatarId: "a", assetId: "as-first", },],
     },);
-    expect(moodStateAvatars.avatarForMessage!.call(firstOnly as never, { role: "assistant", emotion: "angry", },),).toBe("as-first",);
+    expect(moodStateAvatars.avatarForMessage!.call(firstOnly as never, { role: "assistant", emotion: "angry", },),)
+      .toBe("as-first",);
   });
 
   test("uses the character base avatar when no emotion applies", () => {

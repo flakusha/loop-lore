@@ -1,14 +1,14 @@
 import { describe, expect, test, } from "bun:test";
+import type { GmConfig, } from "../types";
 import {
-  GM_CONFIG_PRESENTATION_KEYS,
   buildActorModels,
   buildGmConfig,
+  GM_CONFIG_PRESENTATION_KEYS,
+  type GmSettingsFields,
   presentationGmConfig,
   readGmSettings,
   setStoryPaused,
-  type GmSettingsFields,
 } from "./gm-config";
-import type { GmConfig, } from "../types";
 
 const fullFields = {
   assistantRole: "gm",
@@ -129,7 +129,13 @@ describe("buildGmConfig", () => {
   });
 
   test("llm-only config prunes human GM, escalation and custom length", () => {
-    const fields: GmSettingsFields = { ...fullFields, gmType: "llm", responseLengthPreset: "long", outputStylePreset: "", vnEnabled: false, };
+    const fields: GmSettingsFields = {
+      ...fullFields,
+      gmType: "llm",
+      responseLengthPreset: "long",
+      outputStylePreset: "",
+      vnEnabled: false,
+    };
     const out = buildGmConfig({}, fields, {},);
     expect(out.renderingOverride,).toBeNull();
     expect("humanGM" in out,).toBe(false,);
@@ -187,7 +193,9 @@ describe("presentationGmConfig", () => {
       responseLengthPreset: "long",
     },);
     expect(out,).toEqual({ renderingOverride: "visual_novel", responseLengthPreset: "long", },);
-    expect(Object.keys(out,).every((k,) => (GM_CONFIG_PRESENTATION_KEYS as readonly string[]).includes(k,),),).toBe(true,);
+    expect(Object.keys(out,).every((k,) => (GM_CONFIG_PRESENTATION_KEYS as readonly string[]).includes(k,)),).toBe(
+      true,
+    );
   });
 
   test("returns an empty object for an empty or foreign blob", () => {

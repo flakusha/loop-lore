@@ -16,8 +16,8 @@ import { Elysia, t, } from "elysia";
 import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { requireActorFromSession, } from "../middleware/scope-by-user";
-import { resolveActorAccess, } from "./actor-access";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
+import { resolveActorAccess, } from "./actor-access";
 import { extractAuth, jsonResponse, requireUserId, } from "./http-utils";
 import { resolveMessageAccess, seenAtFor, } from "./message-seen-helpers";
 
