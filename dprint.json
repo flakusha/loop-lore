@@ -27,6 +27,7 @@
     ".env.*",
     ".example",
     "src/views/layout.html",
+    "src/views/blog.html",
     "src/views/characters.html",
     "src/views/gallery.html",
     "src/views/worlds.html",
