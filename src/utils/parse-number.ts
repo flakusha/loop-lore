@@ -73,3 +73,28 @@ export function parseFloatOr(text: string, fallback: number,): number {
   const result = safeParseFloat(text,);
   return result.ok ? result.value : fallback;
 }
+
+/**
+ * Parse a model parameter-size string into billions of parameters.
+ *
+ * Provider-reported sizes carry an SI suffix ("8B", "3.2B", "110M") that the
+ * strict `parseFloatOr` rejects (it requires the whole string to be a bare
+ * number). This helper strips a trailing `B`/`M` suffix and scales to the
+ * billion-count tier scale: `"8B"` → 8, `"110M"` → 0.11, `"13"` → 13.
+ * A bare number is assumed already in billions (backward-compatible with the
+ * pre-suffix tier thresholds).
+ *
+ * @param text - Raw size string, e.g. "8B", "70B", "110M", "13".
+ * @returns Parameter count in billions, or `NaN` when unparseable.
+ * @example
+ * parseParamSize("8B");   // 8
+ * parseParamSize("110M"); // 0.11
+ * parseParamSize("huge"); // NaN
+ */
+export function parseParamSize(text: string,): number {
+  const match = /^(\d+(?:\.\d+)?)\s*([bBmM])?$/.exec(text.trim(),);
+  if (!match) { return Number.NaN; }
+  const value = Number(match[1],);
+  if (!Number.isFinite(value,)) { return Number.NaN; }
+  return match[2]?.toUpperCase() === "M" ? value / 1000 : value;
+}

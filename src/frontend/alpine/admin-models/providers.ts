@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { parseFloatOr, } from "../../../utils/parse-number";
+import { parseParamSize, } from "../../../utils/parse-number";
 import { t, } from "../i18n";
 import { log, } from "./shared";
 import type { ModelInfo, ModelsState, ProviderInfo, } from "./types";
@@ -68,7 +68,7 @@ export const providerState: Partial<ModelsState> & ThisType<ModelsState> = {
   modelSuitability(m: ModelInfo | undefined,): string {
     if (!m) { return ""; }
     const ctx = m.contextWindow ?? 0;
-    const size = m.paramSize ? parseFloatOr(m.paramSize, Number.NaN,) : Number.NaN;
+    const size = m.paramSize ? parseParamSize(m.paramSize,) : Number.NaN;
     const lightweight = (!Number.isNaN(size,) && size <= 3) || (ctx > 0 && ctx < 8192);
     if (lightweight) {
       return "Lightweight — better for captioning, moderation, monitoring, censoring than roleplay";
