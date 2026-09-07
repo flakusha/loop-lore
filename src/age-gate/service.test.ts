@@ -1,6 +1,6 @@
 import { Database, } from "bun:sqlite";
 import { describe, expect, test, } from "bun:test";
-import { Kysely, } from "kysely";
+import { Kysely, sql, } from "kysely";
 import type { AgeGateConfig, } from "../config/schema";
 import { createSqliteDialect, } from "../db/index";
 import { acceptAgeGate, AgeGateError, getStatus, UnderageError, validateAge, } from "./service";
@@ -142,7 +142,10 @@ describe("acceptAgeGate", () => {
       .executeTakeFirst();
 
     expect(user?.birth_date,).toBe("2000-06-15",);
-    expect(user?.age_gate_accepted_at,).toBeTruthy();
+    // age_gate_accepted_at written by service.ts must be ISO-8601 with TZ suffix
+    expect(user?.age_gate_accepted_at,).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,);
+    // Must also parse as a valid Date
+    expect(Number.isNaN(Date.parse(user!.age_gate_accepted_at!,),),).toBe(false,);
   });
 
   test("throws UnderageError when user is too young", async () => {
@@ -192,6 +195,21 @@ describe("acceptAgeGate", () => {
       acceptAgeGate({ database, config, userId: "test-user-1", input: { birthDate: "2020-01-01", }, },),
     ).resolves.toBeUndefined();
   });
+  test("created_at default matches production migration format (SQLite datetime('now'))", async () => {
+    const database = await createTestDatabase();
+    // created_at is set by the DEFAULT (datetime('now')) — not by the service.
+    // datetime('now') emits "YYYY-MM-DD HH:MM:SS" (space separator, no TZ).
+    // This test pins the format so schema changes to the default are caught.
+    const user = await database
+      .selectFrom("users",)
+      .select(["created_at",],)
+      .where("id", "=", "test-user-1",)
+      .executeTakeFirst();
+
+    expect(user?.created_at,).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/,);
+    // Date.parse accepts this format per SQLite spec
+    expect(Number.isNaN(Date.parse(user!.created_at!,),),).toBe(false,);
+  });
 });
 
 // ── In-memory DB setup (helper, not a test) ──────────────────
@@ -201,38 +219,33 @@ describe("acceptAgeGate", () => {
  * containing the age gate columns. Returns the Kysely instance.
  * @returns Kysely instance with users table.
  */
-async function createTestDatabase() {
+async function createTestDatabase(): Promise<Kysely<import("../db/schema").DB>> {
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = ON",);
 
+  // Use raw SQL for DDL/DML to bypass Kysely type issues with sql`` defaults.
+  // Kysely accepts sql`(expr)` as a DefaultValue, but passing a string
+  // `"datetime('now')"` causes Kysely to store the literal string.
+  sqlite.exec(`
+    CREATE TABLE users (
+      id TEXT PRIMARY KEY,
+      username TEXT NOT NULL UNIQUE,
+      display_name TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'user',
+      status TEXT NOT NULL DEFAULT 'active',
+      settings TEXT NOT NULL DEFAULT '{}',
+      birth_date TEXT,
+      age_gate_accepted_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `,);
+  sqlite.exec(`
+    INSERT INTO users (id, username, display_name, role, status, settings)
+    VALUES ('test-user-1', 'tester', 'Tester', 'user', 'active', '{}')
+  `,);
+
   const dialect = createSqliteDialect(sqlite,);
   const database = new Kysely<import("../db/schema").DB>({ dialect, },);
-
-  await database.schema
-    .createTable("users",)
-    .addColumn("id", "text", (col,) => col.primaryKey(),)
-    .addColumn("username", "text", (col,) => col.notNull().unique(),)
-    .addColumn("display_name", "text", (col,) => col.notNull(),)
-    .addColumn("role", "text", (col,) => col.notNull().defaultTo("user",),)
-    .addColumn("status", "text", (col,) => col.notNull().defaultTo("active",),)
-    .addColumn("settings", "text", (col,) => col.notNull().defaultTo("{}",),)
-    .addColumn("birth_date", "text",)
-    .addColumn("age_gate_accepted_at", "text",)
-    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo("(datetime('now'))",),)
-    .execute();
-
-  await database
-    .insertInto("users",)
-    .values({
-      id: "test-user-1",
-      username: "tester",
-      display_name: "Tester",
-      role: "user",
-      status: "active",
-      settings: "{}",
-    },)
-    .execute();
-
   return database;
 }
 

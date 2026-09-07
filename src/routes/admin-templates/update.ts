@@ -5,8 +5,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { BUILTIN_PROFILES, type DetailLevel, type SdGenMode, } from "../../generation/prompt-templates";
-import { can, } from "../../users/permissions";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import { loadStoredTemplates, log, mergeProfiles, saveStoredTemplates, } from "./shared";
 
 /**
@@ -25,14 +24,6 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
-
-          if (!can(ctx.userRole as string | null, "admin.settings",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
 
           const { id, } = ctx.params as { id: string };
           const body = ctx.body as {
@@ -82,14 +73,6 @@ export function updateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
-
-          if (!can(ctx.userRole as string | null, "admin.settings",)) {
-            return jsonError({
-              message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
-              status: HttpStatus.Forbidden,
-              code: ErrorCode.Forbidden,
-            },);
-          }
 
           const { id, } = ctx.params as { id: string };
           const body = ctx.body as {
