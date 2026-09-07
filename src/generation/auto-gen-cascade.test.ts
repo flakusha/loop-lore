@@ -718,4 +718,142 @@ describe("triggerGroupCascade edge cases", () => {
     // No new generation should be triggered.
     expect(mockStartGenerationTracking,).not.toHaveBeenCalled();
   });
+
+  test("[PASS] opt-out: stale PASS with same timestamp does not opt out (rowid tiebreak)", async () => {
+    const chatId = await createGroupChat(db, userId, { maxTurns: 5, autoAdvance: 1, },);
+    const alice = await createAiActor(db, "Alice",);
+    const bob = await createAiActor(db, "Bob",);
+    const carol = await createAiActor(db, "Carol",);
+    await addParticipant(db, chatId, alice,);
+    await addParticipant(db, chatId, bob,);
+    await addParticipant(db, chatId, carol,);
+
+    // Alice passed earlier but has since spoken again. Pin both rows to
+    // the SAME second-resolution timestamp: a `max(created_at)` lookup
+    // would see the stale [PASS] as "latest" and wrongly filter Alice.
+    const stalePass = await insertMessage(db, chatId, alice, "nothing from me [PASS]",);
+    const retraction = await insertMessage(db, chatId, alice, "actually, I'm back",);
+    const frozenTs = "2026-01-01 00:00:00";
+    await db.updateTable("messages",).set({ created_at: frozenTs, },).where("id", "=", stalePass,).execute();
+    await db.updateTable("messages",).set({ created_at: frozenTs, },).where("id", "=", retraction,).execute();
+    // Bob genuinely opted out; Carol is a normal participant.
+    await insertMessage(db, chatId, bob, "[PASS]",);
+    await insertMessage(db, chatId, carol, "hello",);
+
+    mockStartGenerationTracking.mockClear();
+    await triggerGroupCascade({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      userId,
+      aiContent: "actually, I'm back",
+      previousActorId: alice,
+      depth: 0,
+      deps: createMockDeps(),
+    },);
+
+    // Alice (retracted) + Carol remain eligible -> auto-advance fires.
+    // Under the old max-timestamp lookup Alice would be filtered and only
+    // Carol would remain (length 1 -> no auto-advance -> silent stop).
+    expect(mockStartGenerationTracking,).toHaveBeenCalledTimes(1,);
+  });
+
+  test("[PASS] opt-out: encrypted PASS detected via decryptAtRest", async () => {
+    const chatId = await createGroupChat(db, userId, { maxTurns: 5, autoAdvance: 1, },);
+    const alice = await createAiActor(db, "Alice",);
+    const bob = await createAiActor(db, "Bob",);
+    await addParticipant(db, chatId, alice,);
+    await addParticipant(db, chatId, bob,);
+
+    await insertMessage(db, chatId, alice, "hello",);
+    // Bob's row carries no plaintext (client-encrypted chat): content is
+    // opaque, key_id marks it encrypted.
+    await db
+      .insertInto("messages",)
+      .values({
+        id: "msg-bob-encrypted",
+        chat_id: chatId,
+        actor_id: bob,
+        role: "assistant",
+        content: "ENCRYPTED-BLOB",
+        content_plaintext: null,
+        key_id: "key-1",
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: "confirmed",
+        visibility: "visible",
+      },)
+      .execute();
+
+    const deps = {
+      ...createMockDeps(),
+      decryptAtRest: mock(async () => "nothing to add [PASS]",),
+    };
+    mockStartGenerationTracking.mockClear();
+    await triggerGroupCascade({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      userId,
+      aiContent: "hello",
+      previousActorId: alice,
+      depth: 0,
+      deps,
+    },);
+
+    // Bob opted out via the decrypted body; only Alice remains (length 1
+    // -> no auto-advance). Without the decrypt fallback Bob would stay
+    // eligible and the cascade would fire.
+    expect(mockStartGenerationTracking,).not.toHaveBeenCalled();
+  });
+
+  test("[PASS] opt-out: undecryptable message fails open (stays eligible)", async () => {
+    const chatId = await createGroupChat(db, userId, { maxTurns: 5, autoAdvance: 1, },);
+    const alice = await createAiActor(db, "Alice",);
+    const bob = await createAiActor(db, "Bob",);
+    await addParticipant(db, chatId, alice,);
+    await addParticipant(db, chatId, bob,);
+
+    await insertMessage(db, chatId, alice, "hello",);
+    await db
+      .insertInto("messages",)
+      .values({
+        id: "msg-bob-unreadable",
+        chat_id: chatId,
+        actor_id: bob,
+        role: "assistant",
+        content: "TAMPERED-BLOB",
+        content_plaintext: null,
+        key_id: "key-1",
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: "confirmed",
+        visibility: "visible",
+      },)
+      .execute();
+
+    const deps = {
+      ...createMockDeps(),
+      decryptAtRest: mock(async () => {
+        throw new Error("Chat key not found",);
+      },),
+    };
+    mockStartGenerationTracking.mockClear();
+    await triggerGroupCascade({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      userId,
+      aiContent: "hello",
+      previousActorId: alice,
+      depth: 0,
+      deps,
+    },);
+
+    // Decryption failed → Bob stays eligible → auto-advance fires once.
+    // Fail-closed would silently drop Bob and stop the cascade.
+    expect(mockStartGenerationTracking,).toHaveBeenCalledTimes(1,);
+  });
 });
