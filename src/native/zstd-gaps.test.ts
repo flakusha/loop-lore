@@ -47,7 +47,6 @@ const { isNativeZstdAvailable, zstdCompress, zstdDecompress, } = await import(".
 
 describe("zstd gaps — native compress path", () => {
   test("native success returns the sliced output", () => {
-    stub.compressStatus = -1000;
     const input = new Uint8Array([9, 8, 7, 6,],);
     expect(zstdCompress(input,),).toEqual(input,);
   });

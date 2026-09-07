@@ -4,7 +4,7 @@
 /**
  * Shared RPG service utilities — deduplicated helpers used across service files.
  */
-import type { Kysely, } from "kysely";
+import type { InsertObject, Kysely, Selectable, } from "kysely";
 import { getLogger, } from "../../logger";
 import type { Logger, } from "../../logger";
 import { safeJsonParse, uid, } from "../../utils";
@@ -66,11 +66,11 @@ export function parseJsonField<T,>(raw: unknown, fallback: T,): T {
 export async function getOrCreateRow<DB, T extends keyof DB & string,>(
   db: Kysely<DB>,
   table: T,
-  findFn: () => Promise<DB[T] | undefined>,
-  insertData: DB[T],
-): Promise<DB[T]> {
+  findFn: () => Promise<Selectable<DB[T]> | undefined>,
+  insertData: InsertObject<DB, T>,
+): Promise<Selectable<DB[T]>> {
   const existing = await findFn();
   if (existing) { return existing; }
-  await db.insertInto(table,).values(insertData as any,).execute();
-  return insertData;
+  await db.insertInto(table,).values(insertData,).execute();
+  return insertData as unknown as Selectable<DB[T]>;
 }

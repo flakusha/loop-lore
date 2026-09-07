@@ -16,7 +16,7 @@
  */
 import type { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import type { Generated, Kysely, } from "kysely";
+import type { Kysely, } from "kysely";
 import { MessageRole, MessageStatus, MessageVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
@@ -263,22 +263,22 @@ describe("PromptAssembler post-history position", () => {
     // `chatHistorySection` reads ascending by created_at and emits the
     // user/assistant roles. After the fix, the post-history `<user>`
     // message must appear AFTER every one of these.
-    const confirmed = MessageStatus.Confirmed as unknown as Generated<MessageStatus>;
-    const visible = MessageVisibility.Visible as unknown as Generated<MessageVisibility>;
+    const confirmed = MessageStatus.Confirmed;
+    const visible = MessageVisibility.Visible;
     await insertMessages(db, chatId, actorId, MessageRole.User, "first user turn", {
       status: confirmed,
       visibility: visible,
-      created_at: "2025-01-01T00:00:00.000Z" as unknown as Generated<string>,
+      created_at: "2025-01-01T00:00:00.000Z",
     },);
     await insertMessages(db, chatId, actorId, MessageRole.Assistant, "first assistant turn", {
       status: confirmed,
       visibility: visible,
-      created_at: "2025-01-01T00:00:01.000Z" as unknown as Generated<string>,
+      created_at: "2025-01-01T00:00:01.000Z",
     },);
     await insertMessages(db, chatId, actorId, MessageRole.User, "second user turn", {
       status: confirmed,
       visibility: visible,
-      created_at: "2025-01-01T00:00:02.000Z" as unknown as Generated<string>,
+      created_at: "2025-01-01T00:00:02.000Z",
     },);
   },);
 

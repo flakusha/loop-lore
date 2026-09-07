@@ -11,28 +11,34 @@ describe("rpg/loot/generation (real logic)", () => {
   });
   it("entry below minLevel is excluded", () => {
     const entry: LootEntry = {
-      id: "e1",
+      itemId: "e1",
       name: "Sword",
       rarity: "common",
       weight: 1,
       minLevel: 10,
       goldValue: 100,
-      tags: [],
       description: "",
+      type: "weapon",
+      minQuantity: 1,
+      maxQuantity: 1,
+      metadata: {},
     };
     const result = generateLoot([entry,], 5, 1, 0,);
     expect(result.drops,).toHaveLength(0,);
   });
   it("eligible entry is included in drops", () => {
     const entry: LootEntry = {
-      id: "e1",
+      itemId: "e1",
       name: "Sword",
       rarity: "common",
       weight: 1,
       minLevel: 1,
       goldValue: 100,
-      tags: [],
       description: "",
+      type: "weapon",
+      minQuantity: 1,
+      maxQuantity: 1,
+      metadata: {},
     };
     const result = generateLoot([entry,], 5, 1, 0,);
     expect(result.drops.length,).toBeGreaterThanOrEqual(1,);

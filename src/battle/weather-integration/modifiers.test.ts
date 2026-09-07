@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
-import type { CombatStats, EnvironmentalModifier, } from "../integration-schemas/stats.ts";
+import type { CombatStats, EnvironmentalModifier, } from "../integration-schemas";
 import { applyEnvironmentalModifiers, getEnvironmentalModifiers, } from "./modifiers.ts";
 import type { BattleTerrain, } from "./types.ts";
 

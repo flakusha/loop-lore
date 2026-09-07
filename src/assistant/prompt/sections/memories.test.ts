@@ -12,8 +12,8 @@
  * is live (regression guard for `IDEA-memory-knowledge-isolation-and-world-timeline.md`).
  */
 import { beforeEach, describe, expect, mock, test, } from "bun:test";
-import type { Generated, } from "kysely";
-import type { ChatMode, } from "../../../db/enums-core";
+import type {} from "kysely";
+
 import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import {
@@ -33,11 +33,11 @@ describe("memorySection — per-viewer cross-actor isolation", () => {
   const humanPublic = "human memory: I met a merchant at the crossroads.";
   // Insert-helper opts type generated columns as Generated<T>; cast through `unknown`
   // (plain-literals are otherwise rejected by the branded type).
-  const characterScope = "character" as unknown as Generated<string>;
-  const privatePrivacy = "private" as unknown as Generated<string>;
-  const secretPrivacy = "secret" as unknown as Generated<string>;
-  const publicPrivacy = "public" as unknown as Generated<string>;
-  const storyMode = "story" as unknown as Generated<ChatMode>;
+  const characterScope = "character";
+  const privatePrivacy = "private";
+  const secretPrivacy = "secret";
+  const publicPrivacy = "public";
+  const storyMode = "story";
 
   test("withholds a non-owner's private and blocked memories from the speaker", async () => {
     // Logger must be present before migration runs (createTestDb calls runMigrations).
@@ -157,8 +157,8 @@ describeOrSkip("memorySection — semantic recall outage degrades gracefully", (
 
       // A public character-scope memory so the section has material to rank.
       await insertActorMemories(db, actorId, "The island's southern shore is calm.", {
-        scope: "character" as unknown as Generated<string>,
-        privacy: "public" as unknown as Generated<string>,
+        scope: "character",
+        privacy: "public",
       },);
 
       const ctx: AssembleContext = {

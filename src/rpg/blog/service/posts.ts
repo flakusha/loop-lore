@@ -184,7 +184,7 @@ export async function updatePost(
   db: Kysely<any>,
   id: string,
   input: UpdateBlogPostInput,
-): Promise<BlogPostRow | undefined> {
+): Promise<BlogPostWithTags | undefined> {
   const updates: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
   };

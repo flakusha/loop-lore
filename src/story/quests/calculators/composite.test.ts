@@ -3,6 +3,6 @@ import { calculateCompositeProgress, } from "../../../story/quests/calculators/c
 
 describe("story/quests/calculators/composite (stub, real)", () => {
   it("stub always returns 0", () => {
-    expect(calculateCompositeProgress({ progress: 99, }, null, { type: "any", } as any,),).toBe(0,);
+    expect(calculateCompositeProgress({ progress: 99, target: 0, }, null, { type: "any", } as any,),).toBe(0,);
   });
 });
