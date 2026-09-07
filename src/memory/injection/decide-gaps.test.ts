@@ -13,7 +13,7 @@ import {
 /**
  * @param overrides
  */
-function makeMemory(overrides: Partial<MemoryEntry>,): MemoryEntry {
+function makeMemory(overrides: Partial<MemoryEntry> = {},): MemoryEntry {
   return {
     id: "mem-1",
     content: "the dragon sleeps under the castle",
@@ -52,7 +52,7 @@ function makeCtx(overrides: Partial<InjectionContext>,): InjectionContext {
 describe("decide gaps — privacy gate", () => {
   test("absolute privacy blocks with zero probability", () => {
     const d = shouldInjectMemory(
-      makeMemory({ privacy: "absolute", },),
+      makeMemory({ privacy: "absolute" as MemoryEntry["privacy"], },),
       DEFAULT_INJECTION_CONFIG,
       makeCtx({ randomFn: () => 0, },),
     );
@@ -63,7 +63,7 @@ describe("decide gaps — privacy gate", () => {
 
   test("privacy wins over pinned", () => {
     const d = shouldInjectMemory(
-      makeMemory({ privacy: "absolute", pinned: true, },),
+      makeMemory({ privacy: "absolute" as MemoryEntry["privacy"], pinned: true, },),
       DEFAULT_INJECTION_CONFIG,
       makeCtx({ randomFn: () => 0, },),
     );
