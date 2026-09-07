@@ -38,7 +38,7 @@ export async function fetchTurnParticipants(
 
   // Inject initiative scores when using initiative strategy
   if (host.state?.strategy === TurnStrategy.Initiative) {
-    const currentScene = "main"; // TODO: detect actual current scene from story_state
+    const currentScene = host.state?.currentSceneId ?? "main";
     const initiatives = await host.db
       .selectFrom("group_initiatives",)
       .select(["actor_id", "score",],)
