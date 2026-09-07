@@ -29,7 +29,8 @@ import { requireUserId, } from "../http-utils/responses";
 import { tradeHistoryRoutes, } from "./history";
 import { npcTradeRoutes, } from "./npc";
 import { tradeOfferRoutes, } from "./offers";
-import { executeBody, executeResponse, resolveActorAccess, } from "./shared";
+import { executeBody, executeResponse, } from "./shared";
+import { resolveActorAccess, } from "../actor-access";
 
 /**
  * @param root0
