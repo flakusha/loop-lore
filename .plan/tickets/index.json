@@ -936,7 +936,8 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-assistant-retry-silent-500.md",
-    "git_issue": "31f5098"
+    "git_issue": "31f5098",
+    "status": "done"
   },
   "BUG-CHAT-BATCH-EXPORT-N-PLUS-ONE": {
     "hash": "pending",
@@ -959,7 +960,8 @@
     "epic": "epic-chat-context-optimization",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-fts-encrypt-mismatch.md",
-    "git_issue": "1b233cc"
+    "git_issue": "1b233cc",
+    "status": "done"
   },
   "BUG-CHAT-HISTORY-TRUNCATES-TO-OLDEST-MESSAGES-DROPS-RECENT-TURNS": {
     "hash": "d4547f8",
@@ -1071,7 +1073,8 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-message-delete-soft-fails-compliance.md",
-    "git_issue": "4217100"
+    "git_issue": "4217100",
+    "status": "done"
   },
   "BUG-CHAT-MESSAGE-UPDATE-NO-FTS-REFRESH": {
     "hash": "pending",
@@ -1083,7 +1086,8 @@
     "epic": "epic-chat-context-optimization",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-message-update-no-fts-refresh.md",
-    "git_issue": "aef8b4f"
+    "git_issue": "aef8b4f",
+    "status": "done"
   },
   "BUG-CHAT-PERSIST-INIT-HARDCODED-SCENE": {
     "hash": "pending",
@@ -1194,7 +1198,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md"
+    "source": ".plan/tickets/BUG-chat-trigger-auto-generation-unhandled-rejection.md",
+    "status": "done"
   },
   "BUG-CHAT-VN-CHOICES-IDOR-CROSS-USER-READ-AND-SELECT": {
     "hash": "8d91314",
@@ -2138,7 +2143,8 @@
     "epic": "epic-chat-lifecycle-moderation, epic-chat-context-optimization",
     "tags": [],
     "source": ".plan/tickets/BUG-group-chat-mention-prefix-collision.md",
-    "git_issue": "5d75396"
+    "git_issue": "5d75396",
+    "status": "done"
   },
   "BUG-GROUP-CHAT-NSFW-WEAKEST-LINK-VIOLATED-ENFORCEMENT-HARDCODES-": {
     "hash": "c4c24f2",

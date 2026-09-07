@@ -1,6 +1,6 @@
 # BUG: chat: injectNarration silently swallows all errors (silent catch)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Priority:** low
 **Effort:** Medium
 
@@ -19,3 +19,7 @@ Fix direction: resolve a real narrator actor via the `findNarrator` pattern used
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Verified on dev HEAD (2026-09-07). src/chat/service/transitions.ts `injectNarration` resolves a real narrator actor from the `actors` table (`actor_type = 'narrator' AND agent_type = 'narrator'`) and logs errors via `getLogger().error("injectNarration failed", ...)` with the chatId context. The previously hardcoded `actor_id = "system"` FK violation that masked split/reunite narration is gone (see also BUG-INJECTNARRATION-HARDCODES-ACTOR-ID-SYSTEM-FK-DROPS-SPLIT-REU which is also resolved).

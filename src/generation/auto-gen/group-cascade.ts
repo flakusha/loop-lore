@@ -191,6 +191,23 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
       deps: opts.deps,
     },);
   } catch (error) {
-    log.error("Cascade generation failed", error as Error,);
+    log.error("Cascade generation failed", error as Error, { chatId, depth: depth + 1, },);
+  }
+
+  // Re-check pause flag AFTER the in-flight LLM completes. The user may
+  // have toggled pause while generation was running; we accept the cost of
+  // the in-flight call but must NOT schedule another depth on top of a
+  // stale state (BUG-group-cascade-mid-cascade-pause-ignored).
+  const postChat = await database
+    .selectFrom("chats",)
+    .select("story_state",)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+  if (postChat?.story_state) {
+    const postState = jsonParseOr<{ isPaused?: boolean }>(postChat.story_state, {},);
+    if (postState.isPaused) {
+      log.info("Cascade: pause toggled mid-flight; next depth skipped", { chatId, depth: depth + 1, },);
+      return;
+    }
   }
 }
