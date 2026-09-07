@@ -18,6 +18,37 @@ const DEV_IN_PROGRESS_HEADS = ["MERGE_HEAD", "REBASE_HEAD", "CHERRY_PICK_HEAD",]
 // Stash label prefix used by `stashDevForMerge` so `restoreDevFromStash` and
 // the precheck can recognize the agent's own leftover entries.
 const FINALIZE_STASH_PREFIX = "worktree-finalize-";
+// Signals we treat as user-initiated cancellation. SIGINT (Ctrl-C), SIGTERM
+// (orchestrator kill), SIGHUP (terminal close / parent shell exit). All three
+// must trigger the same transactional rollback: release lock + abort in-
+// progress merge + pop stash. SIGHUP is included because Node's default
+// disposition is to exit on SIGHUP just like SIGTERM; without a handler,
+// finalize silently loses the lock and leaves dev in a mid-merge state.
+const FINALIZE_SIGNALS = ["SIGINT", "SIGTERM", "SIGHUP",] as const;
+type FinalizeSignal = typeof FINALIZE_SIGNALS[number];
+// Exit code used when a signal aborts finalize. 128 + signo is the convention
+// shell tools use; we use the same so a wrapper script can distinguish
+// signal abort (130 = 128+2=SIGINT) from operator refusal (1).
+const SIGNAL_EXIT_CODE = 130;
+// Module-scope mutable slot: tracks the most recent rollback target so the
+// signal handler can act without arguments. We keep it module-scoped (not
+// closure-scoped) because process.on() registrations survive across nested
+// finalize calls and we want exactly one rollback path active per process.
+// Tests MUST reset this between cases (see scripts/worktree/commands/abort.ts).
+interface AbortState {
+  stashLabel: string | null;
+  mergeHead: string | null;
+  mergeInProgress: boolean;
+  repoRoot: string;
+  branch: string;
+}
+let ACTIVE_ABORT_STATE: AbortState | null = null;
+// Counted reference: each finalize call increments on entry, decrements on
+// exit. Signal handlers only fire rollback when refcount drops to 0, so a
+// nested finalize (e.g. an inner finalize called from a test fixture) gets
+// its own signal-handler lifecycle without prematurely tearing down the
+// outer call's lock.
+let ACTIVE_FINALIZE_COUNT = 0;
 
 /**
  * Precheck: refuse to start if the dev checkout is mid-merge / mid-rebase /
@@ -145,6 +176,142 @@ function acquireFinalizeLock(repoRoot: string,): () => void {
   console.log("  If no other finalize is running, remove the lockfile manually:",);
   console.log(`    rm ${lockPath}`,);
   process.exit(1,);
+}
+
+/**
+ * Install SIGINT/SIGTERM/SIGHUP handlers that run a transactional rollback
+ * when the user (or orchestrator) interrupts finalize mid-flight.
+ *
+ * The handler reads `ACTIVE_ABORT_STATE` to know what to roll back:
+ *   - `mergeInProgress`: run `git merge --abort` to leave dev clean
+ *   - `stashLabel`:      pop the stash back so the user's pre-merge work
+ *                        is preserved (or stays on the stack if pop conflicts)
+ *   - repoRoot/branch:   printed in the abort log so the user can recover
+ *                        manually if anything in the rollback fails
+ *
+ * The handler is installed exactly once per finalize call. A refcount
+ * (`ACTIVE_FINALIZE_COUNT`) ensures nested calls don't double-register or
+ * prematurely tear down an outer call's state. After the rollback we exit
+ * with code 130 (the convention for SIGINT-terminated processes) — the
+ * orchestrator can distinguish signal-abort (130) from operator refusal (1).
+ *
+ * IMPORTANT: this function MUST be called after `acquireFinalizeLock` and
+ * BEFORE any dev-checkout mutation. The companion `uninstallSignalHandlers`
+ * runs in the success path of finalize to restore Node's default disposition.
+ */
+function installSignalHandlers(): void {
+  if (ACTIVE_FINALIZE_COUNT === 0) {
+    for (const sig of FINALIZE_SIGNALS) {
+      // Node's signal listener accepts NodeJS.Signals; the union is closed
+      // by FINALIZE_SIGNALS so the cast is total. We don't carry the
+      // runtime signal number — the loop index already tells us which
+      // signal was raised.
+      const listener: NodeJS.SignalsListener = () => {
+        handleSignalAbort(sig,);
+      };
+      process.on(sig, listener,);
+    }
+  }
+  ACTIVE_FINALIZE_COUNT++;
+}
+
+/**
+ * Counterpart to `installSignalHandlers`. Call exactly once per matching
+ * install, in the success/error path of finalize, BEFORE releasing the lock.
+ * Restoring the default disposition (rather than removing the listener) is
+ * important because Node tracks listeners by reference; calling
+ * `removeListener` with the exact closure is fragile if the function is
+ * re-exported. Restoring the default also covers the case where the same
+ * process later runs another command that doesn't want our handlers.
+ */
+function uninstallSignalHandlers(): void {
+  ACTIVE_FINALIZE_COUNT = Math.max(0, ACTIVE_FINALIZE_COUNT - 1,);
+  if (ACTIVE_FINALIZE_COUNT === 0) {
+    for (const sig of FINALIZE_SIGNALS) {
+      // `removeAllListeners(sig)` removes every listener for that signal
+      // and restores Node's default disposition. Safe because we only ever
+      // add one listener per signal in installSignalHandlers above.
+      process.removeAllListeners(sig,);
+    }
+  }
+}
+
+/**
+ * Signal handler: transactional rollback + exit 130. Runs even if the
+ * surrounding `try { await runFinalize(...) } finally { release() }` would
+ * have run — we explicitly do NOT rely on that finally for two reasons:
+ *
+ *   1. Signal-triggered exit bypasses user JS code entirely. The first
+ *      Ctrl-C makes Node run this handler; a SECOND Ctrl-C (or `kill -9`)
+ *      bypasses it. Relying on `try/finally` for signal safety is unsafe.
+ *
+ *   2. The rollback order matters and must happen BEFORE lock release,
+ *      otherwise another finalize could acquire the lock mid-rollback and
+ *      find dev in a half-restored state.
+ */
+function handleSignalAbort(sig: FinalizeSignal,): void {
+  const state = ACTIVE_ABORT_STATE;
+  log("warn", `Finalize aborted by ${sig} — rolling back`,);
+  if (state) {
+    if (state.mergeInProgress) {
+      log("info", `Aborting in-progress merge on ${state.branch}...`,);
+      const abort = Bun.spawnSync(
+        ["git", "-C", state.repoRoot, "merge", "--abort",],
+        { stdout: "pipe", stderr: "pipe", },
+      );
+      if (abort.exitCode === 0) {
+        log("success", `merge --abort succeeded on ${state.branch}`,);
+      } else {
+        log("warn", `merge --abort failed — manual cleanup may be required`,);
+        console.log(`  Stderr: ${abort.stderr.toString().trim()}`,);
+      }
+    }
+    if (state.stashLabel) {
+      log("info", `Restoring stash '${state.stashLabel}'...`,);
+      // Use the same restoreDevFromStash logic the success path uses, but
+      // pass `state.mergeHead ?? state.repoRoot` as the recovery HEAD —
+      // if no merge was in progress, we just want to pop the stash back
+      // onto a clean tree (HEAD is fine).
+      const fallbackHead = state.mergeHead ?? "HEAD";
+      try {
+        restoreDevFromStash(state.repoRoot, state.stashLabel, fallbackHead,);
+      } catch (err) {
+        // restoreDevFromStash calls process.exit on unrecoverable errors;
+        // we wrap defensively so a thrown JS error doesn't bypass our exit.
+        log("warn", `stash restore errored: ${(err as Error).message}`,);
+      }
+    }
+    console.log("",);
+    console.log(`  Recovery commands if anything looks off:`,);
+    console.log(`    cd ${state.repoRoot}`,);
+    if (state.mergeInProgress) {
+      console.log(`    git merge --abort          # clean dev if not already`,);
+    }
+    if (state.stashLabel) {
+      console.log(`    git stash list             # find your pre-merge stash`,);
+    }
+  } else {
+    log("warn", "no in-progress merge or stash to roll back",);
+  }
+  // Lock release is owned by the outer `finally`; signal handler runs in
+  // a separate async tick and the lock release path runs first on normal
+  // teardown. We exit explicitly so any pending timers can't keep us alive.
+  process.exit(SIGNAL_EXIT_CODE,);
+}
+
+/**
+ * Mark/unmark the merge as in-progress. Centralizing the ACTIVE_ABORT_STATE
+ * mutation here means the signal handler has exactly one source of truth —
+ * every merge site updates this slot instead of scattering the logic.
+ */
+function setMergeInProgress(
+  repoRoot: string,
+  branch: string,
+  mergeHead: string,
+  stashLabel: string | null,
+  inProgress: boolean,
+): void {
+  ACTIVE_ABORT_STATE = { stashLabel, mergeHead, mergeInProgress: inProgress, repoRoot, branch, };
 }
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
@@ -380,8 +547,21 @@ export async function finalize(
   // hard invariant; the lock is best-effort single-flight.
   checkDevMergeable(config.repoRoot,);
   const releaseFinalizeLock = acquireFinalizeLock(config.repoRoot,);
+  // Install signal handlers AFTER acquiring the lock. Order matters:
+  // 1. lock first — so a signal can't race against an unlocked dev tree;
+  // 2. handlers second — they release the lock during rollback.
+  // Uninstall runs in `finally` BEFORE releasing the lock; otherwise the
+  // signal handler could observe `release` already called and try to roll
+  // back a torn-down state. The signal exit code (130) is propagated by
+  // process.exit inside the handler, so the cleanup below only runs on the
+  // happy / operator-error path.
+  installSignalHandlers();
   try {
-    await runFinalize(branch, mergeStrategy, force, config, wtPath, targetBranch,);
+    try {
+      await runFinalize(branch, mergeStrategy, force, config, wtPath, targetBranch,);
+    } finally {
+      uninstallSignalHandlers();
+    }
   } finally {
     releaseFinalizeLock();
   }
@@ -486,6 +666,8 @@ async function runFinalize(
       assertAgentGpgUnlocked();
       const flags = gpgMergeFlags(config,);
       const devStash = stashDevForMerge(config.repoRoot,);
+      const preMergeHead = gitSyncQuiet(config.repoRoot, "rev-parse", "HEAD",);
+      setMergeInProgress(config.repoRoot, branch, preMergeHead, devStash, true,);
       try {
         const mergeResult = Bun.spawnSync(
           ["git", "-C", config.repoRoot, ...flags, "merge", branch, "--squash", "-m", msg,],
@@ -495,6 +677,7 @@ async function runFinalize(
           log("error", "Squash merge failed",);
           process.exit(1,);
         }
+        setMergeInProgress(config.repoRoot, branch, preMergeHead, devStash, false,);
         log("success", `Squash merged: ${msg}`,);
       } finally {
         if (devStash !== null) {
@@ -506,6 +689,8 @@ async function runFinalize(
       log("info", `Step 5b: Fast-forward merging into ${targetBranch}...`,);
       const devStash = stashDevForMerge(config.repoRoot,);
       let ffOk = false;
+      const preMergeHead = gitSyncQuiet(config.repoRoot, "rev-parse", "HEAD",);
+      setMergeInProgress(config.repoRoot, branch, preMergeHead, devStash, true,);
       try {
         const mergeResult = Bun.spawnSync(
           ["git", "-C", config.repoRoot, "merge", branch, "--ff-only",],
@@ -516,6 +701,7 @@ async function runFinalize(
           process.exit(1,);
         }
         ffOk = true;
+        setMergeInProgress(config.repoRoot, branch, preMergeHead, devStash, false,);
         log("success", "Fast-forward merged",);
       } finally {
         if (devStash !== null) {
@@ -548,6 +734,8 @@ async function runFinalize(
     assertAgentGpgUnlocked();
     const flags = gpgMergeFlags(config,);
     const devStash = stashDevForMerge(config.repoRoot,);
+    const preMergeHead = gitSyncQuiet(config.repoRoot, "rev-parse", "HEAD",);
+    setMergeInProgress(config.repoRoot, branch, preMergeHead, devStash, true,);
     try {
       const mergeResult = Bun.spawnSync(
         ["git", "-C", config.repoRoot, ...flags, "merge", branch, "--no-edit",],
@@ -557,6 +745,7 @@ async function runFinalize(
         log("error", `Merge conflicts — resolve on ${targetBranch}`,);
         process.exit(1,);
       }
+      setMergeInProgress(config.repoRoot, branch, preMergeHead, devStash, false,);
       log("success", `Merged into ${targetBranch}`,);
     } finally {
       if (devStash !== null) {
