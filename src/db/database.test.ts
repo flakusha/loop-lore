@@ -90,6 +90,16 @@ describe("Database schema", () => {
       expect(actor.display_name,).toBe("Alice",);
       expect(actor.user_id,).toBe("user-1",);
       expect(actor.agent_type,).toBe("none",);
+      // Verify the users row fields that were inserted
+      const user = sqlite.query("SELECT role, status, settings FROM users WHERE id = ?",).get("user-1",) as Row;
+      expect(user.role,).toBe("user",);
+      expect(user.status,).toBe("active",);
+      expect(user.settings,).toBe("{}",);
+      // Verify actor import fields
+      expect(actor.settings,).toBe("{}",);
+      expect(actor.import_spec,).toBe("raw",);
+      expect(actor.data_source_format,).toBe("json",);
+      expect(actor.data_raw,).toBeNull();
     });
 
     test("insert AI character as actor", async () => {
@@ -177,8 +187,13 @@ describe("Database schema", () => {
         },)
         .execute();
 
-      const message = sqlite.query("SELECT visibility FROM messages WHERE id = ?",).get("msg-vis",) as Row;
+      // Verify all inserted message fields — not just visibility
+      const message = sqlite.query("SELECT * FROM messages WHERE id = ?",).get("msg-vis",) as Row;
       expect(message.visibility,).toBe("visible",);
+      expect(message.content_type,).toBe("text",);
+      expect(message.content_format,).toBe("markdown",);
+      expect(message.content_encoding,).toBe("identity",);
+      expect(message.status,).toBe("sending",);
     });
 
     test("can set different visibility states", async () => {
@@ -242,7 +257,6 @@ describe("Database schema", () => {
         { id: "msg-auto", visibility: "auto_hidden", },
       ],);
     });
-
     test("only visible messages appear in default query", () => {
       const visible = sqlite
         .query("SELECT COUNT(*) as cnt FROM messages WHERE visibility = 'visible'",)
@@ -282,6 +296,14 @@ describe("Database schema", () => {
       expect(participants[0]!.display_name,).toBe("Alice",);
       expect(participants[0]!.role_in_chat,).toBe("owner",);
       expect(participants[1]!.display_name,).toBe("Bob",);
+    });
+    test("chat fields are persisted correctly", async () => {
+      // Verify chats inserted as FK targets have correct field values
+      const chat = sqlite.query("SELECT name, type, mode, created_by FROM chats WHERE id = ?",).get("chat-cp",) as Row;
+      expect(chat.name,).toBe("CP Test",);
+      expect(chat.type,).toBe("group",);
+      expect(chat.mode,).toBe("group",);
+      expect(chat.created_by,).toBe("user-1",);
     });
 
     test("composite PK prevents duplicate actor in same chat", async () => {
