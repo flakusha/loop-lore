@@ -1017,6 +1017,18 @@
     "source": ".plan/tickets/BUG-chat-injectnarration-silently-swallows-all-errors-silent-cat.md",
     "status": "done"
   },
+  "BUG-CHAT-INPUT-FILLS-UP-BUT-SEND-IS-IMPOSSIBLE": {
+    "hash": "5403913",
+    "git_issue": "5403913",
+    "extid": "BUG-CHAT-INPUT-FILLS-UP-BUT-SEND-IS-IMPOSSIBLE",
+    "type": "BUG",
+    "title": "Chat input fills up but send is impossible",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-input-fills-up-but-send-is-impossible.md"
+  },
   "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE": {
     "hash": "61c7072",
     "extid": "BUG-CHAT-KEY-HISTORY-LOSS-JOIN-LEAVE",
@@ -5639,6 +5651,18 @@
     "source": ".plan/tickets/FEAT-blog-system.md",
     "git_issue": "4a18214"
   },
+  "FEAT-BROWSER-SIDE-CHAT-INPUT-VERSIONING-WITH-TRANSPARENT-ROLLBACK": {
+    "hash": "6024446",
+    "git_issue": "6024446",
+    "extid": "FEAT-BROWSER-SIDE-CHAT-INPUT-VERSIONING-WITH-TRANSPARENT-ROLLBACK",
+    "type": "FEAT",
+    "title": "Browser-side chat input versioning with transparent rollback",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-browser-side-chat-input-versioning-with-transparent-rollback.md"
+  },
   "FEAT-BYOK-API-KEYS": {
     "hash": "412e543",
     "extid": "FEAT-BYOK-API-KEYS",
@@ -5955,6 +5979,18 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-item-system-extensions.md",
     "git_issue": "4a1f830"
+  },
+  "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES": {
+    "hash": "487812f",
+    "git_issue": "487812f",
+    "extid": "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES",
+    "type": "FEAT",
+    "title": "LLM-enhance for chat and text windows with leveled rewrites",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-llm-enhance-for-chat-and-text-windows-with-leveled-rewrites.md"
   },
   "FEAT-LORA-ADMIN-ANNOTATION-ARCHIVAL": {
     "hash": "7492d4b",
