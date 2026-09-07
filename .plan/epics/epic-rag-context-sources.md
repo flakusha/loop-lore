@@ -25,6 +25,8 @@ Extend RAG context beyond local documents: pluggable web search providers (DuckD
 ### Search Providers & Context Enrichment
 
 - [ ] **TASK-rag-search-providers.md** — Web search providers (DuckDuckGo, SearXNG, Brave, Google, Bing, Tavily)
+- [ ] **TASK-rag-search-robots-quota.md** — Internet-search operational correctness (robots.txt, retry, rate limits, public/private split)
+- [ ] **TASK-rag-search-captcha-resilience-detection-quarantine-fallback.md** — Captcha detection, provider quarantine, fallback-chain degradation for deep research
 - [ ] **TASK-rag-local-search-cache.md** — Local search providers & caching (SQLite FTS5, memory/disk cache, offline mode)
 - [ ] **TASK-rag-context-enrichment.md** — Context enrichment (RSS, email, Slack/Discord, databases, knowledge graph)
 - [ ] **TASK-rag-search-robots-quota.md** — Internet-search operational correctness: robots.txt cache/crawl-delay, retry with jitter + Retry-After, per-provider/per-user rate limits, gzip result cache with ACL, paid-provider cost budget (extends TASK-rag-search-providers)
