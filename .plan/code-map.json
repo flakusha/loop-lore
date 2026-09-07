@@ -92,6 +92,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-module-cleanup-index-ts-exports-consistent-error-handl.md"
     },
     {
@@ -139,6 +143,78 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-untrusted-new-date-parse-without-invalid-date-guard.md"
+    }
+  ],
+  "src/agentic-workspace/agents/claude-code.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/agents/codex.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/agents/custom.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/agents/omp.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/agents/opencode.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/agents/subprocess-sandbox.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/agents/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/repo.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/repo.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/review.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/agentic-workspace/security.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
     }
   ],
   "src/anonymity/tor/circuits.ts": [
@@ -407,6 +483,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     }
   ],
   "src/assets/controller/files.ts": [
@@ -825,6 +905,18 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
     }
   ],
+  "src/assistant/capabilities-disclosure.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    }
+  ],
+  "src/assistant/capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
   "src/assistant/command-parser.ts": [
     {
       "kind": "epic",
@@ -883,6 +975,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
+    }
+  ],
+  "src/assistant/commands/capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
     }
   ],
   "src/assistant/commands/caption.ts": [
@@ -1089,6 +1187,12 @@
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
     }
   ],
+  "src/assistant/commands/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
   "src/assistant/commands/items.test.ts": [
     {
       "kind": "ticket",
@@ -1192,7 +1296,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-adapter.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
     },
     {
       "kind": "ticket",
@@ -1305,6 +1417,58 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-classify-intent-confidence-unbounded.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
+  "src/assistant/guard/judge.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
+  "src/assistant/guard/judge.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
+  "src/assistant/guard/matrix.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
+  "src/assistant/guard/matrix.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
+  "src/assistant/guard/pipeline.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
+  "src/assistant/guard/pipeline.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
+  "src/assistant/guard/sandbox.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
+    }
+  ],
+  "src/assistant/guard/sandbox.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
     }
   ],
   "src/assistant/intent-detection.ts": [
@@ -1337,6 +1501,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-detectAvatarChangeIntent-runs-on-user-message-wrong-direction.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
     },
     {
       "kind": "ticket",
@@ -1522,6 +1690,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-char-growth-prompt.md"
     },
     {
@@ -1581,6 +1753,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-internal-traits.md"
+    }
+  ],
+  "src/assistant/prompt/sections/assistant-capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
     }
   ],
   "src/assistant/prompt/sections/author-note.test.ts": [
@@ -4195,6 +4373,30 @@
       "source": ".plan/tickets/TASK-wire-auto-rename.md"
     }
   ],
+  "src/chat/context-degradation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
+  "src/chat/context-degradation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
+  "src/chat/context-preference.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
+  "src/chat/context-preference.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
   "src/chat/context-pruner.ts": [
     {
       "kind": "ticket",
@@ -4249,6 +4451,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-memory-injection.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     },
     {
       "kind": "ticket",
@@ -4655,6 +4861,60 @@
       "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
     }
   ],
+  "src/chat/service/ask": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/chat/service/ask/capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/chat/service/ask/dispatch-integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/chat/service/ask/dispatch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/chat/service/ask/messages.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/chat/service/ask/messages.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/chat/service/ask/opt-in.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/chat/service/ask/sources.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/chat/service/ask/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
   "src/chat/service/batch.test.ts": [
     {
       "kind": "ticket",
@@ -4945,6 +5205,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-vn-choices-idor-cross-user-read-and-select.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
     }
   ],
   "src/chat/service/write.test.ts": [
@@ -4969,6 +5233,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     },
     {
       "kind": "ticket",
@@ -5397,6 +5665,12 @@
       "source": ".plan/tickets/TASK-vn-template-actions.md"
     }
   ],
+  "src/components/chat/context-window-banner.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
   "src/components/chat/gallery-sidebar.html": [
     {
       "kind": "epic",
@@ -5409,6 +5683,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-in-chat-asset-preview-linkage-side-panel.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     }
   ],
   "src/components/chat/gm-panel.html": [
@@ -6052,6 +6330,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-code-quality.md"
     },
     {
@@ -6089,6 +6371,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rag-search-providers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
     },
     {
       "kind": "ticket",
@@ -7648,6 +7934,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-message-seen-state-schema.md"
     },
     {
@@ -7930,6 +8220,10 @@
     },
     {
       "kind": "spec",
+      "source": "docs/spec/migrations.md"
+    },
+    {
+      "kind": "spec",
       "source": "docs/spec/multi-instance-reconciliation.md"
     },
     {
@@ -7941,6 +8235,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
+    }
+  ],
+  "src/db/migrations": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
     }
   ],
   "src/db/migrations.test.ts": [
@@ -7969,6 +8269,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/messages.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/migrations.md"
     },
     {
       "kind": "spec",
@@ -8321,6 +8625,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-delete-soft-fails-compliance.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/migrations.md"
     }
   ],
   "src/db/migrations/XXXX-create-actor-stats.ts": [
@@ -8339,6 +8647,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    }
+  ],
+  "src/db/migrations/parts/001_core.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
   "src/db/migrations/parts/002_assets.ts": [
@@ -8409,6 +8723,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-lazy-create-race-violates-chat-id-unique-constraint.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
     }
   ],
   "src/db/migrations/parts/006_messages_keys.ts": [
@@ -8439,6 +8757,74 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-message-update-no-fts-refresh.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_admin_assistant_tooling.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_agentic_workspace.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_chat_ask_support.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_chat_ask_support.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_context_preferences.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_name.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/migrations.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_search_infra.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_search_quotas.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-quota-cost-ceiling.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_search_tokens.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-encrypted-backfill.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_tool_audit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-tool-injection-guard.md"
     }
   ],
   "src/db/migrations/rag.ts": [
@@ -8569,6 +8955,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/implementation.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/migrations.md"
     },
     {
       "kind": "spec",
@@ -8848,6 +9238,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
     },
     {
@@ -9084,6 +9478,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-transfer-location.md"
     },
     {
@@ -9101,6 +9499,10 @@
     {
       "kind": "spec",
       "source": "docs/spec/gm-shadow-notes.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/migrations.md"
     },
     {
       "kind": "spec",
@@ -9359,6 +9761,16 @@
       "source": ".plan/tickets/TASK-thinking-tag-context-prune.md"
     }
   ],
+  "src/db/schema-version.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-040.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/migrations.md"
+    }
+  ],
   "src/db/schema-weather.ts": [
     {
       "kind": "epic",
@@ -9602,6 +10014,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
     },
     {
@@ -9627,6 +10043,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-creative-studio-search-api.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     },
     {
       "kind": "ticket",
@@ -10655,6 +11075,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-068.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
   "src/frontend/alpine/creation-wizard.test.ts": [
@@ -10721,6 +11145,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-accessibility-input.md"
+    }
+  ],
+  "src/frontend/alpine/gallery-search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     }
   ],
   "src/frontend/alpine/games.ts": [
@@ -11697,6 +12127,18 @@
       "source": ".plan/tickets/TASK-frontend-lazy-vendor.md"
     }
   ],
+  "src/frontend/chat/ask-menu.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
+  "src/frontend/chat/ask-menu.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
   "src/frontend/components/asset-3d-viewer.html": [
     {
       "kind": "ticket",
@@ -12107,6 +12549,30 @@
       "source": ".plan/tickets/TASK-frontend-lazy-pages.md"
     }
   ],
+  "src/frontend/pages/admin-assistant-capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    }
+  ],
+  "src/frontend/pages/admin-assistant-tooling.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    }
+  ],
+  "src/frontend/pages/admin-context-window.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
+  "src/frontend/pages/admin-observability-search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-telemetry-observability.md"
+    }
+  ],
   "src/frontend/pages/analytics.ts": [
     {
       "kind": "ticket",
@@ -12185,6 +12651,18 @@
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
     }
   ],
+  "src/frontend/pages/epic-agentic-workspace.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
+  "src/frontend/pages/gallery.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
+    }
+  ],
   "src/frontend/pages/gallery.ts": [
     {
       "kind": "epic",
@@ -12204,11 +12682,37 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-minimal-image-asset-viewer.md"
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-signed-urls-for-asset-downloads.md"
+    }
+  ],
+  "src/frontend/pages/moderator-assistant-capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    }
+  ],
+  "src/frontend/pages/moderator-assistant-tooling.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    }
+  ],
+  "src/frontend/pages/moderator-context-window.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
   "src/frontend/pages/new-chat/index.ts": [
@@ -12231,6 +12735,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stored-xss-unescaped-server-derived-asset-ids-labels-in-inne.md"
+    }
+  ],
+  "src/frontend/pages/world-context-window.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
   "src/frontend/pages/worlds.ts": [
@@ -12617,6 +13127,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
     },
     {
       "kind": "ticket",
@@ -14209,6 +14723,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-provider-plugin-ecosystem.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-captcha-resilience-detection-quarantine-fallback.md"
     }
   ],
   "src/generation/providers/comfyui.test.ts": [
@@ -15375,6 +15893,12 @@
       "source": ".plan/tickets/IDEA-memory-knowledge-isolation-and-world-timeline.md"
     }
   ],
+  "src/memory/embeddings.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
   "src/memory/extraction.ts": [
     {
       "kind": "epic",
@@ -16415,6 +16939,24 @@
       "source": "docs/spec/nsfw-integration.md"
     }
   ],
+  "src/observability/search.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-telemetry-observability.md"
+    }
+  ],
+  "src/observability/search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-telemetry-observability.md"
+    }
+  ],
+  "src/partials/admin/tool-capability-row.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    }
+  ],
   "src/partials/characters/create-modal.html": [
     {
       "kind": "ticket",
@@ -16470,7 +17012,17 @@
   "src/partials/gallery/preview-modal.html": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-minimal-image-asset-viewer.md"
+    }
+  ],
+  "src/partials/gallery/search-result.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     }
   ],
   "src/partials/gallery/upload-modal.html": [
@@ -16485,6 +17037,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-minimal-image-asset-viewer.md"
+    }
+  ],
+  "src/partials/moderator/audit-row.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
     }
   ],
   "src/partials/worlds/edit-modal.html": [
@@ -17213,6 +17771,12 @@
       "source": ".plan/tickets/TASK-rag-search-providers.md"
     }
   ],
+  "src/rag/search/budget.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
+    }
+  ],
   "src/rag/search/cache.ts": [
     {
       "kind": "ticket",
@@ -17267,6 +17831,18 @@
       "source": ".plan/tickets/TASK-rag-local-search-cache.md"
     }
   ],
+  "src/rag/search/captcha.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-captcha-resilience-detection-quarantine-fallback.md"
+    }
+  ],
+  "src/rag/search/errors.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-captcha-resilience-detection-quarantine-fallback.md"
+    }
+  ],
   "src/rag/search/local/crawler-cache.ts": [
     {
       "kind": "ticket",
@@ -17306,7 +17882,15 @@
   "src/rag/search/orchestrator.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-captcha-resilience-detection-quarantine-fallback.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-rag-search-providers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
     }
   ],
   "src/rag/search/provider.ts": [
@@ -17351,6 +17935,18 @@
       "source": ".plan/tickets/TASK-rag-search-providers.md"
     }
   ],
+  "src/rag/search/quarantine.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-captcha-resilience-detection-quarantine-fallback.md"
+    }
+  ],
+  "src/rag/search/rate-limit.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
+    }
+  ],
   "src/rag/search/registry.ts": [
     {
       "kind": "ticket",
@@ -17361,6 +17957,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-rag-search-providers.md"
+    }
+  ],
+  "src/rag/search/retry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
+    }
+  ],
+  "src/rag/search/robots.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
+    }
+  ],
+  "src/rag/search/visibility.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
     }
   ],
   "src/rag/sources/api/rest.ts": [
@@ -17670,6 +18284,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-npc-inventory-frontend.md"
     },
     {
@@ -17757,6 +18375,18 @@
       "source": ".plan/tickets/TASK-file-split-routes.md"
     }
   ],
+  "src/routes/admin/assistant-capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    }
+  ],
+  "src/routes/admin/assistant-tooling.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    }
+  ],
   "src/routes/admin/audit.test.ts": [
     {
       "kind": "ticket",
@@ -17805,6 +18435,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/context-window.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
   "src/routes/admin/danger-zone.ts": [
@@ -17869,6 +18505,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    }
+  ],
+  "src/routes/admin/search-providers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
+    }
+  ],
+  "src/routes/admin/search-quotas.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-quota-cost-ceiling.md"
     }
   ],
   "src/routes/admin/stats.ts": [
@@ -18593,6 +19241,12 @@
       "source": "docs/spec/chat-privacy.md"
     }
   ],
+  "src/routes/chats/ask.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
   "src/routes/chats/create.ts": [
     {
       "kind": "ticket",
@@ -18623,6 +19277,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
+    }
+  ],
+  "src/routes/chats/location.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
     }
   ],
   "src/routes/chats/manage.ts": [
@@ -18889,6 +19549,12 @@
       "source": "docs/spec/lore.md"
     }
   ],
+  "src/routes/epics/agentic-workspace.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-agentic-coding-sandbox-community-plugins.md"
+    }
+  ],
   "src/routes/exploration.ts": [
     {
       "kind": "epic",
@@ -18985,6 +19651,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/quests-encounters.md"
+    }
+  ],
+  "src/routes/gallery-search.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
+    }
+  ],
+  "src/routes/gallery-search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     }
   ],
   "src/routes/gallery/batch.ts": [
@@ -19403,6 +20081,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-telemetry-observability.md"
     }
   ],
   "src/routes/message-seen.test.ts": [
@@ -19902,6 +20584,10 @@
   "src/routes/middleware/deprecation-headers.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-038.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-headers-additional-useful-response-headers.md"
     }
   ],
@@ -19971,6 +20657,30 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-byok-local-models.md"
+    }
+  ],
+  "src/routes/moderator/assistant-capabilities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    }
+  ],
+  "src/routes/moderator/assistant-tooling.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    }
+  ],
+  "src/routes/moderator/context-window.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    }
+  ],
+  "src/routes/moderator/search-quotas.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-quota-cost-ceiling.md"
     }
   ],
   "src/routes/music-links.ts": [
@@ -20243,6 +20953,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-llm-queue.md"
+    }
+  ],
+  "src/routes/rag/search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rag-search-robots-quota.md"
     }
   ],
   "src/routes/requests/status.test.ts": [
@@ -20689,6 +21405,12 @@
       "source": ".plan/tickets/TASK-trade-history-npc-counterparty.md"
     }
   ],
+  "src/routes/trade/offers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
+    }
+  ],
   "src/routes/trade/shared": [
     {
       "kind": "ticket",
@@ -20703,6 +21425,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels.md"
+    }
+  ],
+  "src/routes/v1/openapi.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-039.md"
     }
   ],
   "src/routes/views.test.ts": [
@@ -20739,6 +21467,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     },
     {
       "kind": "ticket",
@@ -21001,6 +21733,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    }
+  ],
+  "src/routes/worlds/context-window.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
   "src/routes/worlds/location-chat.ts": [
@@ -22847,10 +23585,170 @@
       "source": ".plan/tickets/TASK-audit-follow-up-templates-ts-at-190l-convention-ceiling.md"
     }
   ],
+  "src/search/config.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/search/config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/search/encrypted-tokens-backfill.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-encrypted-backfill.md"
+    }
+  ],
+  "src/search/encrypted-tokens-backfill.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-encrypted-backfill.md"
+    }
+  ],
+  "src/search/encrypted-tokens.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/search/encrypted-tokens.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/search/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/search/native/build.sh": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/native/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/native/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/native/ripgrep-fallback.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/native/ripgrep-fallback.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/native/ripgrep-native.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/native/ripgrep-native.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/native/ripgrep.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
   "src/search/plugin-types.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-creative-studio.md"
+    }
+  ],
+  "src/search/quota.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-quota-cost-ceiling.md"
+    }
+  ],
+  "src/search/quota.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-quota-cost-ceiling.md"
+    }
+  ],
+  "src/search/research/benchmark.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/research/benchmark.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/research/results.json": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/selector.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/selector.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-algorithm-research-rust-ffi.md"
+    }
+  ],
+  "src/search/service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/search/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/search/telemetry.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-quota-cost-ceiling.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-telemetry-observability.md"
+    }
+  ],
+  "src/search/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
     }
   ],
   "src/security/sandbox/audit.ts": [
@@ -23985,6 +24883,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-xp-loot-routes.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/migrations.md"
     }
   ],
   "src/test-utils/mock-provider.ts": [
@@ -24329,6 +25231,12 @@
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
     }
   ],
+  "src/types/search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-rag-coverage-bridge.md"
+    }
+  ],
   "src/users/index.ts": [
     {
       "kind": "ticket",
@@ -24551,6 +25459,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/migrations.md"
     }
   ],
   "src/validation/middleware.ts": [
@@ -24644,11 +25556,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-capability-disclosure.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-character-rpg-stats.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-consent-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-fuzzy-search-pagination.md"
     },
     {
       "kind": "ticket",
