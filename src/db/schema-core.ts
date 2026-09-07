@@ -1018,3 +1018,10 @@ export interface E2eSkippedMessageKeys {
   message_key: string;
   created_at: Generated<string>;
 }
+
+// ── schema_version ────────────────────────────────────────────
+export interface SchemaVersion {
+  version: Generated<number>;
+  applied_at: Generated<string>;
+  description: string | null;
+}
