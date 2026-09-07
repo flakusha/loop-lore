@@ -17,9 +17,9 @@ import { Elysia, t, } from "elysia";
 import type { Db, } from "../../db";
 import { CraftingProcessService, } from "../../rpg/crafting";
 import { ErrorResponse, Id, } from "../../validation/schemas";
+import { resolveActorAccess, } from "../actor-access";
 import { jsonResponse, notFoundResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
-import { resolveActorAccess, } from "../actor-access";
 
 const materialRecordSchema = t.Object({
   itemId: Id,

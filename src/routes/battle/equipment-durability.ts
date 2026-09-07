@@ -19,9 +19,9 @@ import { EquipState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils/safe-json";
 import { ErrorResponse, Id, } from "../../validation/schemas";
+import { resolveActorAccess, } from "../actor-access";
 import { jsonResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
-import { resolveActorAccess, } from "../actor-access";
 import type { HandlerOpts, } from "./types";
 
 /**
