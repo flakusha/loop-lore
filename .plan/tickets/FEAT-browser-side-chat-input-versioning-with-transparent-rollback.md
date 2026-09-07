@@ -4,6 +4,7 @@
 # FEAT: Browser-side chat input versioning with transparent rollback
 
 **Status:** ⬜ Not Started
+**Epic:** epic-conversation-branching
 **Priority:** medium
 **Effort:** Medium
 
