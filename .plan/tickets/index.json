@@ -12471,17 +12471,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-db-reinit-archives-previous-database-instead-of-deleting.md"
   },
-  "TASK-DBRT-VALIDATION-GAPS": {
-    "hash": "pending",
-    "extid": "TASK-DBRT-VALIDATION-GAPS",
-    "type": "TASK",
-    "title": "DB Roundtrip Tests — Validate Inserted Values",
-    "label": "task",
-    "priority": "High",
-    "epic": "epic-testing",
-    "tags": [],
-    "source": ".plan/tickets/TASK-dbrt-validation-gaps.md"
-  },
   "TASK-DEAD-REJECTBODYIMPERSONATION-GUARD-NEVER-FIRES-ELYSIA-TYPEBO": {
     "hash": "2abec61",
     "git_issue": "2abec61",
@@ -19445,18 +19434,6 @@
     "source": ".plan/tickets/TASK-rigged-model-buffer-render.md",
     "git_issue": "65cbebe"
   },
-  "TASK-RPG-ACTOR-RESOLVED-SKILL-CHECKS-FROM-CHARACTER-SHEETS": {
-    "hash": "6629f0d",
-    "extid": "TASK-RPG-ACTOR-RESOLVED-SKILL-CHECKS-FROM-CHARACTER-SHEETS",
-    "type": "TASK",
-    "title": "# TASK: RPG: actor-resolved skill checks from character sheets",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-rpg-mechanics.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-actor-resolved-skill-checks-from-character-sheets.md",
-    "git_issue": "6629f0d"
-  },
   "TASK-RPG-BATTLE-ACTION-SYSTEMS": {
     "hash": "95cf0da",
     "extid": "TASK-RPG-BATTLE-ACTION-SYSTEMS",
@@ -19481,18 +19458,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-chat-questions.md",
     "git_issue": "c712140"
-  },
-  "TASK-RPG-CHECK-CHAT-COMMAND-WITH-MODIFIER-BREAKDOWN": {
-    "hash": "f26f456",
-    "extid": "TASK-RPG-CHECK-CHAT-COMMAND-WITH-MODIFIER-BREAKDOWN",
-    "type": "TASK",
-    "title": "# TASK: RPG: /check chat command with modifier breakdown",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-rpg-mechanics.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-check-chat-command-with-modifier-breakdown.md",
-    "git_issue": "f26f456"
   },
   "TASK-RPG-COMPANION-PET-MOUNT": {
     "hash": "d34a475",
@@ -19598,30 +19563,6 @@
     "status": "done",
     "git_issue": "e06dba6"
   },
-  "TASK-RPG-GATE-CHAT-COMMANDS-BEHIND-WORLD-OPT-IN": {
-    "hash": "f2b98e3",
-    "extid": "TASK-RPG-GATE-CHAT-COMMANDS-BEHIND-WORLD-OPT-IN",
-    "type": "TASK",
-    "title": "# TASK: RPG: gate chat commands behind world opt-in",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-mechanics-governance.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md",
-    "git_issue": "f2b98e3"
-  },
-  "TASK-RPG-HISTORY-COMMITTING-CHATS-PER-WORLD": {
-    "hash": "baf7d71",
-    "extid": "TASK-RPG-HISTORY-COMMITTING-CHATS-PER-WORLD",
-    "type": "TASK",
-    "title": "# TASK: RPG: history-committing chats per world",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-mechanics-governance.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-history-committing-chats-per-world.md",
-    "git_issue": "baf7d71"
-  },
   "TASK-RPG-HOUSING-BASE-BUILDING": {
     "hash": "4398db2",
     "extid": "TASK-RPG-HOUSING-BASE-BUILDING",
@@ -19634,18 +19575,6 @@
     "source": ".plan/tickets/TASK-rpg-housing-base-building.md",
     "status": "done",
     "git_issue": "4398db2"
-  },
-  "TASK-RPG-LEVEL-UP-APPLICATION-FLOW-XP-TO-LEVELS": {
-    "hash": "c29e560",
-    "extid": "TASK-RPG-LEVEL-UP-APPLICATION-FLOW-XP-TO-LEVELS",
-    "type": "TASK",
-    "title": "# TASK: RPG: level-up application flow (XP to levels)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-rpg-progression.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-level-up-application-flow-xp-to-levels.md",
-    "git_issue": "c29e560"
   },
   "TASK-RPG-MAGIC-SPELL-SYSTEMS": {
     "hash": "3054c11",
@@ -19724,18 +19653,6 @@
     "source": ".plan/tickets/TASK-rpg-patterns.md",
     "git_issue": "2dd42ad"
   },
-  "TASK-RPG-PER-MECHANIC-OPT-IN-CONFIG-WORLDMECHANICSCONFIG-SCHEMA-S": {
-    "hash": "e98ab7f",
-    "extid": "TASK-RPG-PER-MECHANIC-OPT-IN-CONFIG-WORLDMECHANICSCONFIG-SCHEMA-S",
-    "type": "TASK",
-    "title": "# TASK: RPG: per-mechanic opt-in config (WorldMechanicsConfig schema slice)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-mechanics-governance.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md",
-    "git_issue": "e98ab7f"
-  },
   "TASK-RPG-PLAYER-AGENCY-STORY-POINTS": {
     "hash": "b4ec3f5",
     "extid": "TASK-RPG-PLAYER-AGENCY-STORY-POINTS",
@@ -19747,18 +19664,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-player-agency-story-points.md",
     "git_issue": "b4ec3f5"
-  },
-  "TASK-RPG-PURE-ABILITY-CHECKS-OUTSIDE-COMBAT": {
-    "hash": "a8442ec",
-    "extid": "TASK-RPG-PURE-ABILITY-CHECKS-OUTSIDE-COMBAT",
-    "type": "TASK",
-    "title": "# TASK: RPG: pure ability checks outside combat",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-rpg-mechanics.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-pure-ability-checks-outside-combat.md",
-    "git_issue": "a8442ec"
   },
   "TASK-RPG-QUEST-SYSTEM": {
     "hash": "bc688a1",
@@ -19785,18 +19690,6 @@
     "source": ".plan/tickets/TASK-rpg-resolution-system.md",
     "status": "done",
     "git_issue": "2e640bb"
-  },
-  "TASK-RPG-RULESET-ENFORCEMENT-IN-PROMPTS-AND-POST-GENERATION": {
-    "hash": "1dd08b9",
-    "extid": "TASK-RPG-RULESET-ENFORCEMENT-IN-PROMPTS-AND-POST-GENERATION",
-    "type": "TASK",
-    "title": "# TASK: RPG: ruleset enforcement in prompts and post-generation",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-mechanics-governance.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-ruleset-enforcement-in-prompts-and-post-generation.md",
-    "git_issue": "1dd08b9"
   },
   "TASK-RPG-SOCIAL-INTERACTION": {
     "hash": "f21d739",
@@ -19836,30 +19729,6 @@
     "status": "done",
     "git_issue": "0ee8def"
   },
-  "TASK-RPG-TIMED-CONDITIONS-BUFFS-WITH-STAT-DELTAS": {
-    "hash": "4c37f99",
-    "extid": "TASK-RPG-TIMED-CONDITIONS-BUFFS-WITH-STAT-DELTAS",
-    "type": "TASK",
-    "title": "# TASK: RPG: timed conditions/buffs with stat deltas",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-rpg-progression.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-timed-conditions-buffs-with-stat-deltas.md",
-    "git_issue": "4c37f99"
-  },
-  "TASK-RPG-UNIFY-ROLL-RNG-ONTO-CRYPTO-DICE-ENGINE-LOG-HISTORY": {
-    "hash": "d5506a5",
-    "extid": "TASK-RPG-UNIFY-ROLL-RNG-ONTO-CRYPTO-DICE-ENGINE-LOG-HISTORY",
-    "type": "TASK",
-    "title": "# TASK: RPG: unify /roll RNG onto crypto dice engine + log history",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-rpg-mechanics.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-unify-roll-rng-onto-crypto-dice-engine-log-history.md",
-    "git_issue": "d5506a5"
-  },
   "TASK-RPG-WEATHER-ENVIRONMENT": {
     "hash": "9bd0f42",
     "extid": "TASK-RPG-WEATHER-ENVIRONMENT",
@@ -19872,18 +19741,6 @@
     "source": ".plan/tickets/TASK-rpg-weather-environment.md",
     "status": "done",
     "git_issue": "9bd0f42"
-  },
-  "TASK-RPG-WORLD-RULESET-TEMPLATES-APPLIED-AT-CREATION": {
-    "hash": "83e9718",
-    "extid": "TASK-RPG-WORLD-RULESET-TEMPLATES-APPLIED-AT-CREATION",
-    "type": "TASK",
-    "title": "# TASK: RPG: world ruleset templates applied at creation",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-mechanics-governance.md",
-    "tags": [],
-    "source": ".plan/tickets/TASK-rpg-world-ruleset-templates-applied-at-creation.md",
-    "git_issue": "83e9718"
   },
   "TASK-RPG-XP-INTIMACY-READ-MODIFY-WRITE-LOST-UPDATES-UNDER-CONCURR": {
     "hash": "d239395",
@@ -21538,30 +21395,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-visual-novel-mode.md"
   },
-  "TASK-VN-ACTIVE-SPEAKER-SPRITE-HIGHLIGHT-AND-DIMMING": {
-    "hash": "2fba05b",
-    "git_issue": "2fba05b",
-    "extid": "TASK-VN-ACTIVE-SPEAKER-SPRITE-HIGHLIGHT-AND-DIMMING",
-    "type": "TASK",
-    "title": "VN: active-speaker sprite highlight and dimming",
-    "label": "task",
-    "priority": "medium",
-    "epic": "Visual Novel Mode; Immersion & Presentation",
-    "tags": [],
-    "source": ".plan/tickets/TASK-vn-active-speaker-sprite-highlight-and-dimming.md"
-  },
-  "TASK-VN-ALPHA-EXTRACTION-MATTING-JOB-FOR-OPAQUE-CHARACTER-IMAGES": {
-    "hash": "ea6d881",
-    "git_issue": "ea6d881",
-    "extid": "TASK-VN-ALPHA-EXTRACTION-MATTING-JOB-FOR-OPAQUE-CHARACTER-IMAGES",
-    "type": "TASK",
-    "title": "VN: alpha extraction matting job for opaque character images",
-    "label": "task",
-    "priority": "high",
-    "epic": "Avatar Alpha Channel + VN Layering; Aux Enrichment Pipeline",
-    "tags": [],
-    "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
-  },
   "TASK-VN-BRANCHING-CHOICES": {
     "hash": "768f67a",
     "extid": "TASK-VN-BRANCHING-CHOICES",
@@ -21575,18 +21408,6 @@
     "status": "done",
     "git_issue": "768f67a"
   },
-  "TASK-VN-CHARACTER-SPRITE-ROSTER-PER-CHAT": {
-    "hash": "9cac2d4",
-    "git_issue": "9cac2d4",
-    "extid": "TASK-VN-CHARACTER-SPRITE-ROSTER-PER-CHAT",
-    "type": "TASK",
-    "title": "VN: character sprite roster per chat",
-    "label": "task",
-    "priority": "medium",
-    "epic": "Avatar Alpha Channel + VN Layering; Visual Novel Mode",
-    "tags": [],
-    "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
-  },
   "TASK-VN-DYNAMIC-GENERATION": {
     "hash": "d539123",
     "extid": "TASK-VN-DYNAMIC-GENERATION",
@@ -21599,30 +21420,6 @@
     "source": ".plan/tickets/TASK-vn-dynamic-generation.md",
     "status": "done",
     "git_issue": "d539123"
-  },
-  "TASK-VN-EMOTION-MOOD-AND-ACTION-DRIVEN-SPRITE-STAGING": {
-    "hash": "e99e21e",
-    "git_issue": "e99e21e",
-    "extid": "TASK-VN-EMOTION-MOOD-AND-ACTION-DRIVEN-SPRITE-STAGING",
-    "type": "TASK",
-    "title": "VN: emotion mood and action driven sprite staging",
-    "label": "task",
-    "priority": "high",
-    "epic": "Emotion Avatar Message Binding; Visual Novel Mode",
-    "tags": [],
-    "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
-  },
-  "TASK-VN-MULTI-CHARACTER-SPRITE-ORDERING-AND-POSITIONING": {
-    "hash": "9da9517",
-    "git_issue": "9da9517",
-    "extid": "TASK-VN-MULTI-CHARACTER-SPRITE-ORDERING-AND-POSITIONING",
-    "type": "TASK",
-    "title": "VN: multi-character sprite ordering and positioning",
-    "label": "task",
-    "priority": "medium",
-    "epic": "Avatar Alpha Channel + VN Layering; Visual Novel Mode",
-    "tags": [],
-    "source": ".plan/tickets/TASK-vn-multi-character-sprite-ordering-and-positioning.md"
   },
   "TASK-VN-QA-MODE": {
     "hash": "0f9d87d",
@@ -21649,18 +21446,6 @@
     "source": ".plan/tickets/TASK-vn-scene-template-system.md",
     "status": "done",
     "git_issue": "83a03a9"
-  },
-  "TASK-VN-SPRITE-CENTER-FACE-ANCHOR-SETUP-AND-DETECTION-FOR-GENERAT": {
-    "hash": "5cf8b16",
-    "git_issue": "5cf8b16",
-    "extid": "TASK-VN-SPRITE-CENTER-FACE-ANCHOR-SETUP-AND-DETECTION-FOR-GENERAT",
-    "type": "TASK",
-    "title": "VN: sprite center/face anchor setup and detection for generated and uploaded images",
-    "label": "task",
-    "priority": "medium",
-    "epic": "Avatar Alpha Channel + VN Layering; Asset Transform Metadata",
-    "tags": [],
-    "source": ".plan/tickets/TASK-vn-sprite-center-face-anchor-setup-and-detection-for-generat.md"
   },
   "TASK-VN-SPRITE-LAYER-COMPOSITING": {
     "hash": "8b15b89",
@@ -22465,31 +22250,5 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
-  },
-  "TASK-FEDERATION-CONTENT-CLEARANCE-GATE-PER-CHAT-CONSENT-BEFORE-ME": {
-    "hash": "41f4f83",
-    "extid": "TASK-FEDERATION-CONTENT-CLEARANCE-GATE-PER-CHAT-CONSENT-BEFORE-ME",
-    "type": "TASK",
-    "title": "Federation content clearance gate: per-chat consent before mesh push",
-    "label": "task",
-    "priority": "high",
-    "epic": "epic-mesh-federation-content-sharing",
-    "tags": [],
-    "source": ".plan/tickets/TASK-federation-content-clearance-gate-per-chat-consent-before-me.md",
-    "git_issue": "41f4f83",
-    "status": "open"
-  },
-  "TASK-FEDERATION-DEK-RE-WRAP-PROTOCOL-SERVER-TO-SERVER-KEY-EXPORT": {
-    "hash": "035958e",
-    "extid": "TASK-FEDERATION-DEK-RE-WRAP-PROTOCOL-SERVER-TO-SERVER-KEY-EXPORT",
-    "type": "TASK",
-    "title": "Federation DEK re-wrap protocol: server-to-server key export",
-    "label": "task",
-    "priority": "high",
-    "epic": "epic-mesh-federation-content-sharing",
-    "tags": [],
-    "source": ".plan/tickets/TASK-federation-dek-re-wrap-protocol-server-to-server-key-export.md",
-    "git_issue": "035958e",
-    "status": "open"
   }
 }
