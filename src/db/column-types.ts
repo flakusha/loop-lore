@@ -46,6 +46,7 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   },
   "Assets": {
     "asset_type": "AssetType",
+    "alpha_status": "AssetAlphaStatus",
     "storage_backend": "StorageBackend",
     "visibility": "AssetVisibility",
   },

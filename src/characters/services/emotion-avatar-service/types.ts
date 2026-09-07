@@ -4,6 +4,7 @@
 // src/characters/services/emotion-avatar-service/types.ts — Public types
 
 import type { EmotionType, } from "../../../db/enums";
+import type { MattingProvider, } from "../../../generation/matting/types";
 
 /** Branded type for batch job IDs */
 export type BatchJobId = string & { readonly __brand: "BatchJobId" };
@@ -22,6 +23,11 @@ export interface GenerateEmotionAvatarsOpts {
   promptPrefix?: string;
   /** Negative prompt to apply */
   negativePrompt?: string;
+  /**
+   * Background-removal provider for alpha extraction; when set, opaque
+   * generated sprites are auto-enqueued for matting after storage.
+   */
+  mattingProvider?: MattingProvider;
 }
 
 /** Status of a single emotion generation */

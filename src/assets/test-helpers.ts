@@ -46,6 +46,29 @@ export function makeMinimalPng(width = 2, height = 1,): Buffer {
 /**
  * Build a minimal valid PNG with a tEXt caption chunk.
  *
+/**
+ * Build a minimal valid PNG buffer with RGBA color type (alpha present).
+ * @param width
+ * @param height
+ */
+export function makeMinimalPngWithAlpha(width = 2, height = 1,): Buffer {
+  const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10,],);
+  const ihdr = Buffer.alloc(25,);
+  ihdr.writeUInt32BE(13, 0,);
+  ihdr.write("IHDR", 4, "ascii",);
+  ihdr.writeUInt32BE(width, 8,);
+  ihdr.writeUInt32BE(height, 12,);
+  ihdr[16] = 8; // bit depth
+  ihdr[17] = 6; // color type (RGBA)
+  ihdr[18] = 0;
+  ihdr[19] = 0;
+  ihdr[20] = 0;
+  ihdr.writeUInt32BE(0, 21,);
+  const iend = Buffer.from([0, 0, 0, 0, 73, 69, 78, 68, 0, 0, 0, 0,],);
+  return Buffer.concat([sig, ihdr, iend,],);
+}
+
+/**
  * Structure: signature + IHDR + tEXt("Description\0{caption}") + IEND
  * @param caption
  * @param width
