@@ -2182,7 +2182,8 @@
     "epic": "epic-chat-lifecycle-moderation",
     "tags": [],
     "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md",
-    "git_issue": "35643c7"
+    "git_issue": "35643c7",
+    "status": "done"
   },
   "BUG-GROUP-CHAT-TALKATIVITY-NOT-SURFACED-IN-PROMPT": {
     "hash": "pending",
