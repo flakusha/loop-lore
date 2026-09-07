@@ -27,7 +27,7 @@ class TestQueue extends AsyncLogQueueBase {
     } finally {
       this.flushing = false;
     }
-    this.flushedEntries.push(...this.buffer.splice(0, this.buffer.length,),);
+    this.flushedEntries.push(...this.buffer.splice(0, this.buffer.length,));
   }
 
   protected setupTimerUnref(): void {
@@ -39,7 +39,7 @@ class TestQueue extends AsyncLogQueueBase {
   }
 
   flushSync(): void {
-    this.flushedEntries.push(...this.buffer.splice(0, this.buffer.length,),);
+    this.flushedEntries.push(...this.buffer.splice(0, this.buffer.length,));
   }
 }
 
@@ -49,7 +49,7 @@ class MockTransport implements Transport {
   written: LogEntry[] = [];
   flushCalled = false;
 
-  async write(entry: LogEntry,): Promise<void> {
+  async write(entry: LogEntry): Promise<void> {
     this.written.push(entry,);
   }
 
@@ -61,10 +61,10 @@ class MockTransport implements Transport {
 describe("AsyncLogQueueBase", () => {
   test("has correct default configuration", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,],);
-    expect(queue["flushInterval"],).toBe(100,);
-    expect(queue["batchSize"],).toBe(50,);
-    expect(queue["queueMaxSize"],).toBe(10_000,);
+    const queue = new TestQueue([transport,]);
+    expect(queue["flushInterval"]).toBe(100,);
+    expect(queue["batchSize"]).toBe(50,);
+    expect(queue["queueMaxSize"]).toBe(10_000,);
   });
 
   test("accepts custom options", () => {
@@ -74,47 +74,47 @@ describe("AsyncLogQueueBase", () => {
       batchSize: 10,
       queueMaxSize: 500,
     },);
-    expect(queue["flushInterval"],).toBe(200,);
-    expect(queue["batchSize"],).toBe(10,);
-    expect(queue["queueMaxSize"],).toBe(500,);
+    expect(queue["flushInterval"]).toBe(200,);
+    expect(queue["batchSize"]).toBe(10,);
+    expect(queue["queueMaxSize"]).toBe(500,);
   });
 
   test("start begins the timer", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,],);
+    const queue = new TestQueue([transport,]);
     queue.start();
-    expect(queue["timer"],).not.toBeNull();
+    expect(queue["timer"]).not.toBeNull();
     queue.stop();
   });
 
   test("stop clears the timer", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,],);
+    const queue = new TestQueue([transport,]);
     queue.start();
-    expect(queue["timer"],).not.toBeNull();
+    expect(queue["timer"]).not.toBeNull();
     queue.stop();
-    expect(queue["timer"],).toBeNull();
+    expect(queue["timer"]).toBeNull();
   });
 
   test("start is idempotent", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,],);
+    const queue = new TestQueue([transport,]);
     queue.start();
     const timer1 = queue["timer"];
     queue.start();
-    expect(queue["timer"],).toBe(timer1,);
+    expect(queue["timer"]).toBe(timer1,);
     queue.stop();
   });
 
   test("stop does nothing when timer not started", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,],);
+    const queue = new TestQueue([transport,]);
     expect(() => queue.stop()).not.toThrow();
   });
 
   test("enqueue adds entry to buffer", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,], { queueMaxSize: 100, },);
+    const queue = new TestQueue([transport,], { queueMaxSize: 100, });
 
     const entry: LogEntry = {
       level: 20,
@@ -124,14 +124,14 @@ describe("AsyncLogQueueBase", () => {
     };
 
     queue.enqueue(entry,);
-    expect(queue["buffer"].length,).toBe(1,);
-    expect(queue["buffer"][0],).toBe(entry,);
+    expect(queue["buffer"].length).toBe(1,);
+    expect(queue["buffer"][0]).toBe(entry,);
     queue.stop();
   });
 
   test("enqueue respects queueMaxSize and drops when full", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,], { queueMaxSize: 2, },);
+    const queue = new TestQueue([transport,], { queueMaxSize: 2, });
 
     const entry1: LogEntry = {
       level: 20,
@@ -158,14 +158,14 @@ describe("AsyncLogQueueBase", () => {
     queue.enqueue(entry2,);
     queue.enqueue(entry3,); // Should be dropped
 
-    expect(queue["buffer"].length,).toBe(2,);
-    expect(queue["droppedCount"],).toBe(1,);
+    expect(queue["buffer"].length).toBe(2,);
+    expect(queue["droppedCount"]).toBe(1,);
     queue.stop();
   });
 
   test("enqueue logs warning when buffer recovers from full after drop", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,], { queueMaxSize: 2, },);
+    const queue = new TestQueue([transport,], { queueMaxSize: 2, });
 
     const entry: LogEntry = {
       level: 20,
@@ -178,46 +178,46 @@ describe("AsyncLogQueueBase", () => {
     queue.enqueue(entry,);
     queue.enqueue(entry,);
     queue.enqueue(entry,);
-    expect(queue["droppedCount"],).toBe(1,);
+    expect(queue["droppedCount"]).toBe(1,);
 
     // Clear buffer
     queue["buffer"].length = 0;
 
     // Enqueue again should add warning entry
     queue.enqueue(entry,);
-    expect(queue["buffer"].length,).toBe(2,); // warning + actual entry
-    expect(queue["buffer"][0]?.message,).toContain("dropped",);
-    expect(queue["droppedCount"],).toBe(0,);
+    expect(queue["buffer"].length).toBe(2,); // warning + actual entry
+    expect(queue["buffer"][0]!.message).toContain("dropped",);
+    expect(queue["droppedCount"]).toBe(0,);
 
     queue.stop();
   });
 
   test("enqueue triggers immediate flush when batch size reached", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,], { queueMaxSize: 100, batchSize: 3, },);
+    const queue = new TestQueue([transport,], { queueMaxSize: 100, batchSize: 3, });
 
-    const makeEntry = (n: number,): LogEntry => ({
+    const makeEntry = (n: number): LogEntry => ({
       level: 20,
       timestamp: 1_800_000_000 + n,
       time: "20260704T143000.123+02:00",
       message: `msg ${n}`,
     });
 
-    queue.enqueue(makeEntry(1,),);
-    queue.enqueue(makeEntry(2,),);
-    expect(queue["buffer"].length,).toBe(2,);
+    queue.enqueue(makeEntry(1),);
+    queue.enqueue(makeEntry(2),);
+    expect(queue["buffer"].length).toBe(2,);
 
-    queue.enqueue(makeEntry(3,),); // batch size reached
+    queue.enqueue(makeEntry(3),); // batch size reached
     // Note: actual flush happens in microtask, so buffer may still have items
     // but the microtask callback schedules a flush
-    expect(queue["buffer"].length,).toBe(3,); // still there before microtask runs
+    expect(queue["buffer"].length).toBe(3,); // still there before microtask runs
 
     queue.stop();
   });
 
   test("flush processes all entries", async () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,], { queueMaxSize: 100, },);
+    const queue = new TestQueue([transport,], { queueMaxSize: 100, });
 
     const entries: LogEntry[] = [];
     for (let i = 0; i < 3; i++) {
@@ -233,14 +233,14 @@ describe("AsyncLogQueueBase", () => {
 
     await queue.flush();
 
-    expect(transport.written.length,).toBe(3,);
-    expect(queue["buffer"].length,).toBe(0,);
+    expect(transport.written.length).toBe(3,);
+    expect(queue["buffer"].length).toBe(0,);
     queue.stop();
   });
 
   test("flush is idempotent when already flushing", async () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,], { queueMaxSize: 100, },);
+    const queue = new TestQueue([transport,], { queueMaxSize: 100, });
 
     queue.enqueue({ level: 20, timestamp: 1, time: "", message: "test", },);
 
@@ -257,24 +257,24 @@ describe("AsyncLogQueueBase", () => {
 
   test("flush does nothing when buffer empty", async () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,], { queueMaxSize: 100, },);
+    const queue = new TestQueue([transport,], { queueMaxSize: 100, });
 
     await queue.flush();
-    expect(transport.written.length,).toBe(0,);
+    expect(transport.written.length).toBe(0,);
     queue.stop();
   });
 
   test("flushSync clears buffer and returns entries", () => {
     const transport = new MockTransport();
-    const queue = new TestQueue([transport,], { queueMaxSize: 100, },);
+    const queue = new TestQueue([transport,], { queueMaxSize: 100, });
 
     queue.enqueue({ level: 20, timestamp: 1, time: "", message: "test", },);
     queue.enqueue({ level: 30, timestamp: 2, time: "", message: "test2", },);
 
     queue.flushSync();
 
-    expect(queue["buffer"].length,).toBe(0,);
-    expect(queue.flushedEntries.length,).toBe(2,);
+    expect(queue["buffer"].length).toBe(0,);
+    expect(queue.flushedEntries.length).toBe(2,);
     queue.stop();
   });
 });
