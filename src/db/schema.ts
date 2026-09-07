@@ -151,4 +151,5 @@ export interface DB {
   e2e_sessions: import("./schema-core").E2eSessions;
   e2e_skipped_keys: import("./schema-core").E2eSkippedKeys;
   e2e_skipped_message_keys: import("./schema-core").E2eSkippedMessageKeys;
+  schema_version: import("./schema-core").SchemaVersion;
 }
