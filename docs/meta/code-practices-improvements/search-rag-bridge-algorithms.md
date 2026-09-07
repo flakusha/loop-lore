@@ -93,3 +93,42 @@ gzip'd public/private cache split with ACL). Two interactions to record:
 3. External vector services (Qdrant/Pinecone) permanently out? Assumed yes.
 4. Ground-truth labeling (100+ queries × 6 surfaces × 4 locales) — who labels?
    Without it the benchmark's recall/MRR numbers are fiction.
+
+## 8. Tiered search + filtering (harmonized model)
+
+Every search surface exposes the same tier ladder. Tiers escalate only on
+thin results (`hits < minHits`, default 3) and only while latency budget
+remains. Structured filters (chat/role/date/visibility/tag/type) apply
+**orthogonally at every tier** — filtering never escalates, it constrains.
+
+| Tier | Name | Technology (this repo) | Maps to `SearchMode` |
+|---|---|---|---|
+| T0 | Exact | Direct DB query (`WHERE col = ?`), query-hash cache hits | `exact` |
+| T1 | Precise keyword | FTS5 `MATCH` + BM25 (`porter unicode61`), snippets | `keyword` |
+| T2 | Fuzzy | FTS5 trigram aux table; HMAC tokens for encrypted rows; pure-TS Levenshtein only for short tag/entity strings | `fuzzy` |
+| T3 | Semantic | Ollama cosine (`rankBySimilarity`); RRF fusion T1+T3 | `vector` / `hybrid` |
+| T4 | External/deep | Provider search (DDG/SearXNG/Brave/…), deep-research pipeline | (intent `rag-research` only) |
+
+Per-surface tier wiring:
+
+- **Messages**: T0 (id lookup) → T1 (existing `message-search/`) → T2
+  (trigram + HMAC tokens when `includeEncrypted`) → T3 only for
+  `rag-deep-retrieval` intent. T4 never.
+- **Gallery/assets**: T0 → T2 first (names are typo-prone; keyword BM25 adds
+  little on filenames) → T1 on descriptions → T3 deferred until asset
+  embeddings exist. Filtering (type/tag/visibility) is the primary axis here.
+- **Characters/worlds/lore**: T0 → T1 → T2. No T3 (no embedding corpus).
+- **Memories**: T1 (keyword overlap, existing) → T3 (semantic recall,
+  existing) → RRF both. T2 rarely helps memory prose; skip unless benchmark
+  says otherwise.
+- **Internet cache**: T0 (query-hash) → T1 (FTS5 over snippets). T2+ never —
+  cache misses go to providers, not fuzzier tiers.
+- **Admin audit**: T0 → T1 only. No fuzzy/semantic on audit trails (exactness
+  is a correctness property there).
+
+Escalation rule (runs inside the unified service, per call):
+`for tier in [requested..max]: run; if hits >= minHits or budget exhausted:
+return`. Default entry tier = T1, except gallery (T2) and audit (T0).
+`userOverride` (a `SearchMode` or explicit tier) bypasses escalation.
+Every response carries `query: { tierReached, mode, durationMs }` so the
+frontend can show "fuzzy results" / "semantic results" provenance.
