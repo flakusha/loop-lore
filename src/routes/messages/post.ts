@@ -19,7 +19,7 @@ import {
 import type { DB, } from "../../db/schema";
 import { extractMentionedActorIds, } from "../../group-chat/mention-parser";
 import { notifyMention, } from "../../notifications/service";
-import { safeJsonStringify, uid, } from "../../utils";
+import { jsonParseOr, safeJsonStringify, uid, } from "../../utils";
 import { verifyAttachmentsOwned, } from "./attachment-ownership";
 import { log, } from "./helpers";
 
@@ -142,8 +142,16 @@ export async function persistInitiative(
   chatId: string,
   actorId: string,
 ): Promise<void> {
-  const currentScene = "main"; // TODO: detect actual current scene from story_state
-
+  // Read the chat's persisted story_state to discover the active scene.
+  // Falls back to "main" for chats with no scene metadata — preserves
+  // existing single-scene behavior (BUG-chat-persist-init-hardcoded-scene).
+  const chatRow = await database
+    .selectFrom("chats",)
+    .select("story_state",)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+  const parsed = jsonParseOr<{ currentSceneId?: string }>(chatRow?.story_state ?? "", {},);
+  const currentScene = parsed.currentSceneId ?? "main";
   const existing = await database
     .selectFrom("group_initiatives",)
     .select("score",)
