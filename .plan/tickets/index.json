@@ -21538,6 +21538,30 @@
     "tags": [],
     "source": ".plan/tickets/TASK-visual-novel-mode.md"
   },
+  "TASK-VN-ACTIVE-SPEAKER-SPRITE-HIGHLIGHT-AND-DIMMING": {
+    "hash": "2fba05b",
+    "git_issue": "2fba05b",
+    "extid": "TASK-VN-ACTIVE-SPEAKER-SPRITE-HIGHLIGHT-AND-DIMMING",
+    "type": "TASK",
+    "title": "VN: active-speaker sprite highlight and dimming",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Visual Novel Mode; Immersion & Presentation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-active-speaker-sprite-highlight-and-dimming.md"
+  },
+  "TASK-VN-ALPHA-EXTRACTION-MATTING-JOB-FOR-OPAQUE-CHARACTER-IMAGES": {
+    "hash": "ea6d881",
+    "git_issue": "ea6d881",
+    "extid": "TASK-VN-ALPHA-EXTRACTION-MATTING-JOB-FOR-OPAQUE-CHARACTER-IMAGES",
+    "type": "TASK",
+    "title": "VN: alpha extraction matting job for opaque character images",
+    "label": "task",
+    "priority": "high",
+    "epic": "Avatar Alpha Channel + VN Layering; Aux Enrichment Pipeline",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
+  },
   "TASK-VN-BRANCHING-CHOICES": {
     "hash": "768f67a",
     "extid": "TASK-VN-BRANCHING-CHOICES",
@@ -21551,6 +21575,18 @@
     "status": "done",
     "git_issue": "768f67a"
   },
+  "TASK-VN-CHARACTER-SPRITE-ROSTER-PER-CHAT": {
+    "hash": "9cac2d4",
+    "git_issue": "9cac2d4",
+    "extid": "TASK-VN-CHARACTER-SPRITE-ROSTER-PER-CHAT",
+    "type": "TASK",
+    "title": "VN: character sprite roster per chat",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering; Visual Novel Mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
+  },
   "TASK-VN-DYNAMIC-GENERATION": {
     "hash": "d539123",
     "extid": "TASK-VN-DYNAMIC-GENERATION",
@@ -21563,6 +21599,30 @@
     "source": ".plan/tickets/TASK-vn-dynamic-generation.md",
     "status": "done",
     "git_issue": "d539123"
+  },
+  "TASK-VN-EMOTION-MOOD-AND-ACTION-DRIVEN-SPRITE-STAGING": {
+    "hash": "e99e21e",
+    "git_issue": "e99e21e",
+    "extid": "TASK-VN-EMOTION-MOOD-AND-ACTION-DRIVEN-SPRITE-STAGING",
+    "type": "TASK",
+    "title": "VN: emotion mood and action driven sprite staging",
+    "label": "task",
+    "priority": "high",
+    "epic": "Emotion Avatar Message Binding; Visual Novel Mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
+  },
+  "TASK-VN-MULTI-CHARACTER-SPRITE-ORDERING-AND-POSITIONING": {
+    "hash": "9da9517",
+    "git_issue": "9da9517",
+    "extid": "TASK-VN-MULTI-CHARACTER-SPRITE-ORDERING-AND-POSITIONING",
+    "type": "TASK",
+    "title": "VN: multi-character sprite ordering and positioning",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering; Visual Novel Mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-multi-character-sprite-ordering-and-positioning.md"
   },
   "TASK-VN-QA-MODE": {
     "hash": "0f9d87d",
@@ -21589,6 +21649,18 @@
     "source": ".plan/tickets/TASK-vn-scene-template-system.md",
     "status": "done",
     "git_issue": "83a03a9"
+  },
+  "TASK-VN-SPRITE-CENTER-FACE-ANCHOR-SETUP-AND-DETECTION-FOR-GENERAT": {
+    "hash": "5cf8b16",
+    "git_issue": "5cf8b16",
+    "extid": "TASK-VN-SPRITE-CENTER-FACE-ANCHOR-SETUP-AND-DETECTION-FOR-GENERAT",
+    "type": "TASK",
+    "title": "VN: sprite center/face anchor setup and detection for generated and uploaded images",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering; Asset Transform Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-sprite-center-face-anchor-setup-and-detection-for-generat.md"
   },
   "TASK-VN-SPRITE-LAYER-COMPOSITING": {
     "hash": "8b15b89",
