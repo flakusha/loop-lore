@@ -3,7 +3,7 @@
 
 # BUG: DELETE /messages/:id sets visibility=hidden but doesn't clear FTS row or wipe ciphertext — violates right-to-be-forgotten
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -54,3 +54,7 @@ Compliance / privacy. Right-to-be-forgotten flows rely on `DELETE` actually remo
 - `BUG-chat-fts-encrypt-mismatch` (FTS maintenance).
 - `epic-chat-lifecycle-moderation.md` (visibility state machine).
 - `epic-security-sandboxing.md` (retention policies).
+
+## Resolution
+
+Verified on dev HEAD (2026-09-07). The hard-delete branch of src/routes/messages/update.ts:54-76 issues a real `database.deleteFrom` which fires the `messages_fts_ad` trigger in parts/016_fts.ts:23-25. FK cascade on `message_attachments` removes dependent rows. Covered by fts-lifecycle.test.ts (`real DELETE from messages fires messages_fts_ad and removes the FTS row`). The soft (visibility=hidden) path is intentionally preserved for the user-revoke flow.

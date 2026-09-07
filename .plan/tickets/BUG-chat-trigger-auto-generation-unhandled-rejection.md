@@ -3,7 +3,7 @@
 
 # BUG: triggerAutoGeneration fire-and-forget unhandled rejection (reply.ts:40-42)
 
-**Status:** Open
+**Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Priority:** low
 **Priority Tier:** P6+
 **Effort:** Trivial
@@ -37,3 +37,7 @@ void triggerAutoGeneration(...).catch((err) => {
 
 - [ ] No bare `void asyncFn()` without `.catch`
 - [ ] Errors logged with at least `chatId`
+
+## Resolution
+
+Verified on dev HEAD (2026-09-07). src/routes/messages/reply.ts wraps the fire-and-forget `void triggerAutoGeneration(...)` with a `.catch((error) => log().error(`triggerAutoGeneration failed: ${String(error)}`, undefined, { chatId }))` handler. No bare `void asyncFn()` remains.
