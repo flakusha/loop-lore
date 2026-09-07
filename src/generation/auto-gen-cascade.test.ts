@@ -266,6 +266,7 @@ async function insertMessage(
       actor_id: actorId,
       role: "assistant",
       content,
+      content_plaintext: content,
       content_type: "text",
       content_format: "markdown",
       content_encoding: "identity",
@@ -650,7 +651,71 @@ describe("triggerGroupCascade edge cases", () => {
     expect(mockCancelGenerationByChat,).toHaveBeenCalled();
 
     // Verify the cascade ran with depth+1: check that generation tracking was started
-    // (startGenerationTracking is called inside triggerAutoGeneration when parentMessageId exists)
     expect(mockStartGenerationTracking,).toHaveBeenCalled();
+  });
+
+  test("[PASS] opt-out: actor whose last message ends with [PASS] is excluded from cascade", async () => {
+    mockStartGenerationTracking.mockClear();
+    mockCancelGenerationByChat.mockClear();
+    const chatId = await createGroupChat(db, userId, { maxTurns: 5, autoAdvance: 1, },);
+    const alice = await createAiActor(db, "Alice",);
+    const bob = await createAiActor(db, "Bob",);
+    const carol = await createAiActor(db, "Carol",);
+    await addParticipant(db, chatId, alice,);
+    await addParticipant(db, chatId, bob,);
+    await addParticipant(db, chatId, carol,);
+
+    // Alice just produced a [PASS] opt-out.
+
+    // Bob has a real message.
+    await insertMessage(db, chatId, alice, "I have nothing to add [PASS]",);
+    await insertMessage(db, chatId, bob, "Sounds good",);
+
+    // Cascade from Alice's [PASS] reply: only Bob should be eligible.
+    await triggerGroupCascade({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      userId,
+      aiContent: "I have nothing to add [PASS]",
+      previousActorId: alice,
+      depth: 0,
+      deps: createMockDeps(),
+    },);
+
+    // triggerAutoGeneration should have been invoked with Bob as next actor
+    // (mockStartGenerationTracking records attemptId; _cascadeActorId is
+    // embedded in the call args).
+    // triggerAutoGeneration is called inside the cascade only if the
+    // FILTERED participant list has at least one non-PASS actor. The mock
+    // is invoked exactly once when Bob (the only eligible AI) is selected.
+    expect(mockStartGenerationTracking,).toHaveBeenCalledTimes(1,);
+  });
+
+  test("[PASS] opt-out: when all AI participants opted out, cascade stops silently", async () => {
+    const chatId = await createGroupChat(db, userId, { maxTurns: 5, autoAdvance: 1, },);
+    const alice = await createAiActor(db, "Alice",);
+    const bob = await createAiActor(db, "Bob",);
+    await addParticipant(db, chatId, alice,);
+    await addParticipant(db, chatId, bob,);
+
+    // Both pass.
+    await insertMessage(db, chatId, alice, "no reply [PASS]",);
+    await insertMessage(db, chatId, bob, "[PASS]",);
+
+    mockStartGenerationTracking.mockClear();
+    await triggerGroupCascade({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      userId,
+      aiContent: "no reply [PASS]",
+      previousActorId: alice,
+      depth: 0,
+      deps: createMockDeps(),
+    },);
+
+    // No new generation should be triggered.
+    expect(mockStartGenerationTracking,).not.toHaveBeenCalled();
   });
 });

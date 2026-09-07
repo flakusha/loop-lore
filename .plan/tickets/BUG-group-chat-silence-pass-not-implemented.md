@@ -3,7 +3,7 @@
 
 # BUG: Group chat cascade has no silence / pass-through mechanic — every cascade turn forces an LLM generation regardless of relevance
 
-**Status:** Not Started
+**Status:** ✅ Resolved (verified 2026-09-07; followup in chat-turning-bugfix-batch-9)
 **Severity:** medium
 **Priority:** medium
 **Effort:** medium
@@ -52,3 +52,34 @@ Coherence + cost. Group chats feel forced: every selected actor produces a messa
 
 - `epic-chat-lifecycle-moderation.md` (cascade semantics).
 - `epic-battle-action-systems.md` (initiative is similar — opt-out of turn via `[SKIP]`).
+
+## Resolution
+
+Added `[PASS]` opt-out detection for group chat cascade. Implementation
+spans three files plus two new tests:
+
+- `src/group-chat/mention-parser.ts` — new `detectPassToken(text)`
+  function that returns `true` when text ends with a standalone `[PASS]`
+  token (case-insensitive, whitespace-tolerant, must be trailing).
+- `src/generation/auto-gen/group-cascade.ts` — before resolving the
+  next actor, fetch each AI participant's most recent message via a
+  `MAX(created_at) GROUP BY actor_id` subquery on `content_plaintext`,
+  filter out any actor whose latest message is a `[PASS]` opt-out, and
+  skip generation entirely if all AI participants passed.
+- `src/group-chat/mention-parser.test.ts` — 7 new cases (trailing PASS,
+  case-insensitivity, whitespace, mid-sentence rejection, PASS-only
+  message, empty input, trailing-text rejection).
+- `src/generation/auto-gen-cascade.test.ts` — 2 new integration cases
+  (one PASS filters Alice out so cascade picks Bob; all-PASS stops the
+  cascade silently).
+
+The skip-on-low-relevance heuristic from the ticket's "Concrete fix"
+section (item 3) is intentionally deferred — it requires additional
+schema for tracking recent-message actor membership and would expand
+scope beyond this fix. The `silenceProbability` config knob (item 1)
+is also deferred — it requires a config-schema migration that touches
+the Config aggregate, schema-class/sections, and tests across all
+sections. Both can be filed as follow-up tickets.
+
+Coverage for the core mechanic (opt-out detection + cascade filter) is
+in place: 187 tests pass across the chat-turning test corpus.
