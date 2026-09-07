@@ -14006,7 +14006,7 @@
     "title": "Fix test-suite type-rot: 200 tsc errors across 54 files",
     "label": "task",
     "priority": "Medium",
-    "epic": "epic-code-quality",
+    "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-fix-test-suite-type-rot-200-tsc-errors-across-54-files.md"
   },
@@ -18387,6 +18387,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rag-pipeline-context.md",
     "git_issue": "378b3b1"
+  },
+  "TASK-RAG-SEARCH-CAPTCHA-RESILIENCE-DETECTION-QUARANTINE-FALLBACK": {
+    "hash": "9b837f9",
+    "git_issue": "9b837f9",
+    "extid": "TASK-RAG-SEARCH-CAPTCHA-RESILIENCE-DETECTION-QUARANTINE-FALLBACK",
+    "type": "TASK",
+    "title": "RAG search captcha resilience — detection, quarantine, fallback",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-rag-context-sources.md (extends `TASK-rag-search-providers.md`, `TASK-rag-search-robots-quota.md`)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rag-search-captcha-resilience-detection-quarantine-fallback.md"
   },
   "TASK-RAG-SEARCH-INTERFACE": {
     "hash": "e77ef93",
