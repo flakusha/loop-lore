@@ -4,7 +4,7 @@
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
-import { extractMentionedActorIds, } from "../../group-chat/mention-parser";
+import { detectPassToken, extractMentionedActorIds, } from "../../group-chat/mention-parser";
 import { selectNextGroupActor, } from "../../group-chat/turn-selector";
 import { getLogger, } from "../../logger";
 import type { Logger, } from "../../logger/types";
@@ -144,9 +144,50 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
     .where("actors.agent_type", "!=", "none",)
     .execute();
 
+  const aiParticipantsRaw: (typeof participants)[number][] = [];
+  for (const p of participants) { if (p.actor_type !== "user") { aiParticipantsRaw.push(p,); } }
+  if (aiParticipantsRaw.length === 0) { return; }
+
+  // Filter out actors who opted out of the cascade by ending their most
+  // recent message with `[PASS]` (BUG-group-chat-silence-pass-not-
+  // implemented). Without this, the cascade would force an LLM call for
+  // every selected actor even when they already said "nothing from me".
+  const passedActorIds = new Set<string>();
+  const recentPassRows = await database
+    .selectFrom("messages",)
+    .select(["messages.actor_id", "messages.content_plaintext", "messages.created_at",],)
+    .where("messages.chat_id", "=", chatId,)
+    .where(
+      "messages.created_at",
+      "in",
+      database.selectFrom("messages as m2",)
+        .select((eb,) => eb.fn.max("m2.created_at",).as("last_at",))
+        .where("m2.chat_id", "=", chatId,)
+        .groupBy("m2.actor_id",),
+    )
+    .execute();
+  for (const row of recentPassRows) {
+    if (detectPassToken(row.content_plaintext ?? "",)) { passedActorIds.add(row.actor_id,); }
+  }
   const aiParticipants: (typeof participants)[number][] = [];
-  for (const p of participants) { if (p.actor_type !== "user") { aiParticipants.push(p,); } }
-  if (aiParticipants.length === 0) { return; }
+  let passFiltered = 0;
+  for (const p of aiParticipantsRaw) {
+    if (passedActorIds.has(p.actor_id,)) {
+      passFiltered++;
+      log.debug("Cascade: actor opted out via [PASS]", { actorId: p.actor_id, chatId, },);
+    } else { aiParticipants.push(p,); }
+  }
+  if (passFiltered > 0) {
+    log.info("Cascade: filtered opted-out actors", {
+      chatId,
+      filtered: passFiltered,
+      remaining: aiParticipants.length,
+    },);
+  }
+  if (aiParticipants.length === 0) {
+    log.info("Cascade: all AI participants opted out via [PASS]; stopping", { chatId, },);
+    return;
+  }
 
   const nextActorId = await resolveNextCascadeActor(
     aiParticipants,
