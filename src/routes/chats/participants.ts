@@ -22,6 +22,7 @@ import {
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
+import { resolveActorAccess, } from "../actor-access";
 import type { HandlerOpts, } from "./types";
 
 /** */
@@ -91,6 +92,17 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
             return notFound("Chat not found",);
           }
 
+          // Trust boundary: the invited actor must exist and belong to the
+          // inviter. Cross-user joins go through the invite-code flow
+          // (`POST /api/invites/:code/join`), where the joiner consents.
+          const owned = await resolveActorAccess(database, body.actorId, userId,);
+          if (owned) { return owned; }
+          const invited = await database
+            .selectFrom("actors",)
+            .select("user_id",)
+            .where("id", "=", body.actorId,)
+            .executeTakeFirst();
+
           const result = await joinParty(database, {
             chatId: id,
             actorId: body.actorId,
@@ -127,7 +139,7 @@ export function participantRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           void notifyChatInvite(database, {
             chatId: id,
-            invitedUserId: body.actorId,
+            invitedUserId: invited?.user_id ?? userId,
             inviterId: userId,
           },)
             // Notification failure is non-fatal — swallow.
