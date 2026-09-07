@@ -17094,6 +17094,15 @@
     "source": ".plan/tickets/TASK-nsfw-game-mechanics.md",
     "git_issue": "dffee6b"
   },
+  "TASK-NSFW-GATE-API-NSFW-ROUTES-AUTHZ-ACCESS-CONSENT.MD": {
+    "hash": "e8f7a75",
+    "extid": "TASK-NSFW-GATE-API-NSFW-ROUTES-AUTHZ-ACCESS-CONSENT.MD",
+    "title": "# TASK: NSFW: gate /api/nsfw routes (authZ + access + consent)",
+    "priority": "medium",
+    "epic": "epic-nsfw-integration-gaps.md",
+    "source": ".plan/tickets/TASK-nsfw-gate-api-nsfw-routes-authz-access-consent.md",
+    "git_issue": "e8f7a75"
+  },
   "TASK-NSFW-GATE-GAPS-PERFORMEDBY-SPOOF-AUDIT-TARGET-MISCONFIG-DISA": {
     "hash": "7ba53d1",
     "extid": "TASK-NSFW-GATE-GAPS-PERFORMEDBY-SPOOF-AUDIT-TARGET-MISCONFIG-DISA",
@@ -17417,6 +17426,24 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-weather-integration.md"
+  },
+  "TASK-NSFW-WIRE-CONSENT-GATE-INTO-NSFW-SURFACES.MD": {
+    "hash": "d7c0253",
+    "extid": "TASK-NSFW-WIRE-CONSENT-GATE-INTO-NSFW-SURFACES.MD",
+    "title": "# TASK: NSFW: wire consent gate into NSFW surfaces",
+    "priority": "medium",
+    "epic": "epic-nsfw-integration-gaps.md",
+    "source": ".plan/tickets/TASK-nsfw-wire-consent-gate-into-nsfw-surfaces.md",
+    "git_issue": "d7c0253"
+  },
+  "TASK-NSFW-WIRE-SEDUCTION-ENCOUNTER-PRECONDITIONS.MD": {
+    "hash": "e0d7c5c",
+    "extid": "TASK-NSFW-WIRE-SEDUCTION-ENCOUNTER-PRECONDITIONS.MD",
+    "title": "# TASK: NSFW: wire seduction/encounter preconditions",
+    "priority": "medium",
+    "epic": "epic-nsfw-game-mechanics.md",
+    "source": ".plan/tickets/TASK-nsfw-wire-seduction-encounter-preconditions.md",
+    "git_issue": "e0d7c5c"
   },
   "TASK-OBSERVABILITY-TELEMETRY": {
     "hash": "4218340",
