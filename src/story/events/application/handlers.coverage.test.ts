@@ -105,24 +105,24 @@ async function npcHealth(): Promise<{ health: number; mental_state: string; loca
 
 describe("applyLocationChange", () => {
   test("moves the actor to the new location", async () => {
-    await applyLocationChange(db, event(WorldEventType.LocationChange, {}, { actorId, locationId: locB, }),);
+    await applyLocationChange(db, event(WorldEventType.LocationChange, {}, { actorId, locationId: locB, },),);
     expect((await npcHealth()).location_id,).toBe(locB,);
   });
 
   test("no locationId is a no-op", async () => {
-    await applyLocationChange(db, event(WorldEventType.LocationChange, {}, { actorId, }),);
+    await applyLocationChange(db, event(WorldEventType.LocationChange, {}, { actorId, },),);
     expect((await npcHealth()).location_id,).toBe(locA,);
   });
 
   test("no actorId is a no-op", async () => {
-    await applyLocationChange(db, event(WorldEventType.LocationChange, {}, { locationId: locB, }),);
+    await applyLocationChange(db, event(WorldEventType.LocationChange, {}, { locationId: locB, },),);
     expect((await npcHealth()).location_id,).toBe(locA,);
   });
 
   test("unknown actor id touches nothing and does not throw", async () => {
     await applyLocationChange(
       db,
-      event(WorldEventType.LocationChange, {}, { actorId: uid(), locationId: locB, }),
+      event(WorldEventType.LocationChange, {}, { actorId: uid(), locationId: locB, },),
     );
     expect((await npcHealth()).location_id,).toBe(locA,);
   });
@@ -145,7 +145,7 @@ describe("applyNpcStateChange", () => {
   test("falls back to event.actorId when npcActorId is absent", async () => {
     await applyNpcStateChange(
       db,
-      event(WorldEventType.NpcStateChange, { changes: { health: 10, }, }, { actorId, }),
+      event(WorldEventType.NpcStateChange, { changes: { health: 10, }, }, { actorId, },),
     );
     expect((await npcHealth()).health,).toBe(10,);
   });
@@ -182,20 +182,20 @@ describe("applyNpcStateChange", () => {
   });
 
   test("no actor anywhere is a no-op", async () => {
-    await applyNpcStateChange(db, event(WorldEventType.NpcStateChange, { changes: { health: 1, }, }),);
+    await applyNpcStateChange(db, event(WorldEventType.NpcStateChange, { changes: { health: 1, }, },),);
     expect((await npcHealth()).health,).toBe(80,);
   });
 
   test("damaged data — missing changes object rejects", async () => {
     await expect(
-      applyNpcStateChange(db, event(WorldEventType.NpcStateChange, {}, { actorId, }),),
+      applyNpcStateChange(db, event(WorldEventType.NpcStateChange, {}, { actorId, },),),
     ).rejects.toThrow();
   });
 });
 
 describe("applyTimeAdvancement", () => {
   test("short advances stay in the same period", async () => {
-    await applyTimeAdvancement(db, worldId, event(WorldEventType.TimeAdvancement, { minutesAdvanced: 60, }),);
+    await applyTimeAdvancement(db, worldId, event(WorldEventType.TimeAdvancement, { minutesAdvanced: 60, },),);
     const row = await db
       .selectFrom("location_states",)
       .select("time_of_day",)
@@ -205,7 +205,7 @@ describe("applyTimeAdvancement", () => {
   });
 
   test("200 minutes advance one step and wrap around midnight", async () => {
-    await applyTimeAdvancement(db, worldId, event(WorldEventType.TimeAdvancement, { minutesAdvanced: 200, }),);
+    await applyTimeAdvancement(db, worldId, event(WorldEventType.TimeAdvancement, { minutesAdvanced: 200, },),);
     const row = await db
       .selectFrom("location_states",)
       .select("time_of_day",)
@@ -226,7 +226,7 @@ describe("applyTimeAdvancement", () => {
 
   test("corrupt time_of_day resets to morning instead of crashing", async () => {
     await insertLocationStates(db, locB, worldId, { time_of_day: "o'clock", },);
-    await applyTimeAdvancement(db, worldId, event(WorldEventType.TimeAdvancement, { minutesAdvanced: 200, }),);
+    await applyTimeAdvancement(db, worldId, event(WorldEventType.TimeAdvancement, { minutesAdvanced: 200, },),);
     const row = await db
       .selectFrom("location_states",)
       .select("time_of_day",)
@@ -236,7 +236,7 @@ describe("applyTimeAdvancement", () => {
   });
 
   test("FK-violating world id touches nothing", async () => {
-    await applyTimeAdvancement(db, uid(), event(WorldEventType.TimeAdvancement, { minutesAdvanced: 500, }),);
+    await applyTimeAdvancement(db, uid(), event(WorldEventType.TimeAdvancement, { minutesAdvanced: 500, },),);
     const row = await db
       .selectFrom("location_states",)
       .select("time_of_day",)
@@ -274,7 +274,7 @@ describe("applyLocationModification", () => {
   test("falls back to event.locationId", async () => {
     await applyLocationModification(
       db,
-      event(WorldEventType.LocationModification, { changes: { atmosphere: "calm", }, }, { locationId: locA, }),
+      event(WorldEventType.LocationModification, { changes: { atmosphere: "calm", }, }, { locationId: locA, },),
     );
     const row = await db
       .selectFrom("location_states",)
@@ -285,7 +285,7 @@ describe("applyLocationModification", () => {
   });
 
   test("missing location is a no-op", async () => {
-    await applyLocationModification(db, event(WorldEventType.LocationModification, { changes: {}, }),);
+    await applyLocationModification(db, event(WorldEventType.LocationModification, { changes: {}, },),);
   });
 });
 
@@ -312,7 +312,7 @@ describe("applyWorldLoreUpdate", () => {
       .select("content",)
       .where("world_id", "=", worldId,)
       .execute();
-    expect(rows.map((r,) => r.content,),).toContain("Promoted fact.",);
+    expect(rows.map((r,) => r.content),).toContain("Promoted fact.",);
   });
 
   test("promoteToLore false skips the structured row", async () => {
@@ -376,7 +376,7 @@ describe("applyCombatEvent", () => {
   });
 
   test("falls back to actorId and default damage", async () => {
-    await applyCombatEvent(db, event(WorldEventType.CombatEvent, {}, { actorId, }),);
+    await applyCombatEvent(db, event(WorldEventType.CombatEvent, {}, { actorId, },),);
     expect((await npcHealth()).health,).toBe(70,);
   });
 
@@ -394,7 +394,7 @@ describe("applyCombatEvent", () => {
 describe("applySingleEvent dispatch", () => {
   test("routes each type and reports applied", async () => {
     const cases: WorldEvent[] = [
-      event(WorldEventType.LocationChange, {}, { actorId, locationId: locB, }),
+      event(WorldEventType.LocationChange, {}, { actorId, locationId: locB, },),
       event(WorldEventType.NpcStateChange, { npcActorId: actorId, changes: { health: 77, }, },),
       event(WorldEventType.TimeAdvancement, { minutesAdvanced: 60, },),
       event(WorldEventType.LocationModification, { locationId: locA, changes: { atmosphere: "x", }, },),

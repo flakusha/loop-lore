@@ -10,8 +10,8 @@
  * re-admits after cooldown expiry.
  */
 
-import { CircuitBreaker } from "../../generation/providers/circuit-breaker";
-import { CaptchaBlockedError, ProviderRateLimitedError } from "./errors";
+import { CircuitBreaker, } from "../../generation/providers/circuit-breaker";
+import { CaptchaBlockedError, ProviderRateLimitedError, } from "./errors";
 
 /** Default quarantine after a captcha block (15 min). */
 export const DEFAULT_CAPTCHA_QUARANTINE_MS = 15 * 60_000;
@@ -21,8 +21,8 @@ export const DEFAULT_RATELIMIT_COOLDOWN_MS = 30_000;
 /** Search-scoped breaker: thresholds tuned for bursty scrape paths. */
 export const searchBreaker = new CircuitBreaker();
 
-function ensure(provider: string): void {
-  searchBreaker.register(provider, { threshold: 1, baseCooldownMs: 30_000, maxCooldownMs: 3_600_000 });
+function ensure(provider: string,): void {
+  searchBreaker.register(provider, { threshold: 1, baseCooldownMs: 30_000, maxCooldownMs: 3_600_000, },);
 }
 
 /**
@@ -30,11 +30,11 @@ function ensure(provider: string): void {
  * @param provider - Blocked provider
  * @param quarantineMs - Quarantine duration
  */
-export function quarantineOnCaptcha(provider: string, quarantineMs: number = DEFAULT_CAPTCHA_QUARANTINE_MS): void {
-  ensure(provider);
+export function quarantineOnCaptcha(provider: string, quarantineMs: number = DEFAULT_CAPTCHA_QUARANTINE_MS,): void {
+  ensure(provider,);
   // Threshold 1 → single onFailure opens the circuit; Retry-After-equivalent
   // slot carries the long quarantine duration.
-  searchBreaker.onFailure(provider, quarantineMs);
+  searchBreaker.onFailure(provider, quarantineMs,);
 }
 
 /**
@@ -46,24 +46,24 @@ export function quarantineOnRateLimit(
   provider: string,
   retryAfterMs: number = DEFAULT_RATELIMIT_COOLDOWN_MS,
 ): void {
-  ensure(provider);
-  searchBreaker.onFailure(provider, retryAfterMs);
+  ensure(provider,);
+  searchBreaker.onFailure(provider, retryAfterMs,);
 }
 
 /**
  * Whether a provider may receive a search request now.
  * @param provider - Provider name
  */
-export function maySearch(provider: string): boolean {
-  return searchBreaker.allowRequest(provider);
+export function maySearch(provider: string,): boolean {
+  return searchBreaker.allowRequest(provider,);
 }
 
 /** Re-throw helper: captcha errors quarantine as a side effect. */
-export function trackSearchError(error: unknown): never {
+export function trackSearchError(error: unknown,): never {
   if (error instanceof CaptchaBlockedError) {
-    quarantineOnCaptcha(error.provider, error.quarantineMs);
+    quarantineOnCaptcha(error.provider, error.quarantineMs,);
   } else if (error instanceof ProviderRateLimitedError) {
-    quarantineOnRateLimit(error.provider, error.retryAfterMs);
+    quarantineOnRateLimit(error.provider, error.retryAfterMs,);
   }
   throw error;
 }

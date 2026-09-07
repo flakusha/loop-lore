@@ -31,7 +31,7 @@ function buildCtx(actorId: string | null,): EmotionsCtx {
 afterEach(() => {
   calls = [];
   handler = async () => Response.json([],);
-});
+},);
 
 describe("moodStateEmotions.loadEmotions", () => {
   test("returns early when the chat has no character actor", async () => {
@@ -46,14 +46,14 @@ describe("moodStateEmotions.loadEmotions", () => {
     handler = async (url,) =>
       url === "/api/actors/actor-1/emotions"
         ? Response.json([
-            { emotion_id: "joy", intensity: 0.9, },
-            { emotion_id: "calm", intensity: 0.1, },
-            { emotion_id: "ghost", intensity: 1, },
-          ],)
+          { emotion_id: "joy", intensity: 0.9, },
+          { emotion_id: "calm", intensity: 0.1, },
+          { emotion_id: "ghost", intensity: 1, },
+        ],)
         : Response.json([
-            { id: "joy", display_name: "Joy", icon: "😊", },
-            { id: "calm", display_name: "Calm", },
-          ],);
+          { id: "joy", display_name: "Joy", icon: "😊", },
+          { id: "calm", display_name: "Calm", },
+        ],);
     await moodStateEmotions.loadEmotions!.call(ctx as never,);
     expect(calls,).toEqual(["/api/actors/actor-1/emotions", "/api/emotions",],);
     expect(ctx._activeEmotions,).toEqual([

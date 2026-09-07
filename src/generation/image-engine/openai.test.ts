@@ -7,8 +7,8 @@
  */
 import { afterEach, describe, expect, it, } from "bun:test";
 import type { ImageProviderConfig, } from "../../config/schema";
-import { generateOpenAI, } from "./openai";
 import { createLogger, } from "../../logger";
+import { generateOpenAI, } from "./openai";
 
 // Warn paths in the fetch stack call getLogger(), which throws when the
 // root logger is uninitialized — mirror the repo-wide test convention.
@@ -18,7 +18,7 @@ const originalFetch = globalThis.fetch;
 
 afterEach(() => {
   globalThis.fetch = originalFetch;
-});
+},);
 
 const CONFIG = {
   name: "test-openai",

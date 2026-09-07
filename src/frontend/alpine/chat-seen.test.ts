@@ -15,15 +15,19 @@ beforeEach(() => {
     calls.push({ url, opts: opts ?? {}, },);
     return handler(url, opts,);
   };
-});
+},);
 
 afterEach(() => {
   calls = [];
   handler = async () => Response.json([],);
   globalState.apiFetch = originalFetch;
-});
+},);
 
-interface SeenStateRow { actorId: string; state: string; seenAt: string | null }
+interface SeenStateRow {
+  actorId: string;
+  state: string;
+  seenAt: string | null;
+}
 
 interface SeenCtx {
   activeChat: string | null;
@@ -63,13 +67,15 @@ function buildCtx(overrides?: Partial<SeenCtx>,): SeenCtx {
 }
 
 // The popover handler only reads `currentTarget` — a plain stand-in is enough.
-const fakeTarget = { currentTarget: { getBoundingClientRect: () => ({ left: 12, bottom: 34, }), } };
+const fakeTarget = { currentTarget: { getBoundingClientRect: () => ({ left: 12, bottom: 34, }), }, };
 const fakeEvent = fakeTarget as unknown as Event; // structurally sufficient for openSeenPopover
 
 describe("chatSeenMethods.loadMessageSeen", () => {
   test("attaches the viewer list to the matching message", async () => {
     const viewers: SeenStateRow[] = [{ actorId: "a", state: "seen", seenAt: null, },];
-    const ctx = buildCtx({ messages: [{ id: "m1", role: "user", content: "hi", created_at: "2026-01-01T00:00:00.000Z", },], },);
+    const ctx = buildCtx({
+      messages: [{ id: "m1", role: "user", content: "hi", created_at: "2026-01-01T00:00:00.000Z", },],
+    },);
     handler = async () => Response.json(viewers,);
     await chatSeenMethods.loadMessageSeen!.call(ctx, "m1",);
     expect(calls[0]!.url,).toBe("/api/messages/m1/seen",);
@@ -77,7 +83,9 @@ describe("chatSeenMethods.loadMessageSeen", () => {
   });
 
   test("ignores non-ok responses and network failures", async () => {
-    const ctx = buildCtx({ messages: [{ id: "m1", role: "user", content: "hi", created_at: "2026-01-01T00:00:00.000Z", },], },);
+    const ctx = buildCtx({
+      messages: [{ id: "m1", role: "user", content: "hi", created_at: "2026-01-01T00:00:00.000Z", },],
+    },);
     handler = async () => new Response("", { status: 500, },);
     await chatSeenMethods.loadMessageSeen!.call(ctx, "m1",);
     expect(ctx.messages[0]!.seenState,).toBeUndefined();
@@ -103,7 +111,7 @@ describe("chatSeenMethods.loadAllSeen", () => {
       ],
     },);
     await chatSeenMethods.loadAllSeen!.call(ctx,);
-    expect(calls.map((c,) => c.url,).sort(),).toEqual(["/api/messages/m1/seen", "/api/messages/m2/seen",],);
+    expect(calls.map((c,) => c.url).sort(),).toEqual(["/api/messages/m1/seen", "/api/messages/m2/seen",],);
   });
 
   test("skips when there is no chat or no messages", async () => {
@@ -119,11 +127,12 @@ describe("chatSeenMethods.loadAllSeen", () => {
 describe("chatSeenMethods.markSeen", () => {
   test("POSTs the seen state and reloads viewers on success", async () => {
     const viewers: SeenStateRow[] = [{ actorId: "me-1", state: "seen", seenAt: null, },];
-    const ctx = buildCtx({ messages: [{ id: "m1", role: "user", content: "", created_at: "2026-01-01T00:00:00.000Z", },], },);
-    handler = async (_url, opts,) =>
-      opts?.method === "POST" ? Response.json({},) : Response.json(viewers,);
+    const ctx = buildCtx({
+      messages: [{ id: "m1", role: "user", content: "", created_at: "2026-01-01T00:00:00.000Z", },],
+    },);
+    handler = async (_url, opts,) => opts?.method === "POST" ? Response.json({},) : Response.json(viewers,);
     await chatSeenMethods.markSeen!.call(ctx, "m1", "seen",);
-    const post = calls.find((c,) => c.opts.method === "POST",)!;
+    const post = calls.find((c,) => c.opts.method === "POST")!;
     expect(post.url,).toBe("/api/messages/m1/seen",);
     expect(JSON.parse(String(post.opts.body,),),).toEqual({ actorId: "me-1", state: "seen", },);
     expect(ctx.messages[0]!.seenState,).toEqual(viewers,);
@@ -133,7 +142,7 @@ describe("chatSeenMethods.markSeen", () => {
     const ctx = buildCtx();
     handler = async () => new Response("", { status: 500, },);
     await chatSeenMethods.markSeen!.call(ctx, "m1", "processing",);
-    const post = calls.find((c,) => c.opts.method === "POST",)!;
+    const post = calls.find((c,) => c.opts.method === "POST")!;
     expect(JSON.parse(String(post.opts.body,),),).toEqual({ actorId: "me-1", state: "processing", },);
     expect(calls,).toHaveLength(1,);
   });
@@ -169,7 +178,9 @@ describe("chatSeenMethods popover + summary", () => {
   });
 
   test("openSeenPopover ignores unknown messages and empty seen state", () => {
-    const ctx = buildCtx({ messages: [{ id: "m1", role: "assistant", content: "", created_at: "2026-01-01T00:00:00.000Z", },], },);
+    const ctx = buildCtx({
+      messages: [{ id: "m1", role: "assistant", content: "", created_at: "2026-01-01T00:00:00.000Z", },],
+    },);
     chatSeenMethods.openSeenPopover!.call(ctx, "ghost", fakeEvent,);
     chatSeenMethods.openSeenPopover!.call(ctx, "m1", fakeEvent,);
     expect(ctx.dispatched,).toEqual([],);
@@ -213,7 +224,9 @@ describe("chatSeenMethods polling", () => {
 
 describe("chatSeenMethods.initSeenPopover", () => {
   test("registers a listener that positions and opens the popover", () => {
-    const doc = globalThis as unknown as { document: { addEventListener: (t: string, cb: (e: unknown,) => void, ) => void } };
+    const doc = globalThis as unknown as {
+      document: { addEventListener: (t: string, cb: (e: unknown,) => void,) => void };
+    };
     const original = doc.document.addEventListener;
     let captured: ((e: unknown,) => void) | null = null;
     doc.document.addEventListener = (_type, cb,) => {

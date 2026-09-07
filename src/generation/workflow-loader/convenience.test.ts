@@ -8,8 +8,8 @@
  */
 import { beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import { createLogger, } from "../../logger";
-import { resetWorkflowLoaderForTests, } from "./index.js";
 import { loadComfyUIWorkflow, } from "./convenience";
+import { resetWorkflowLoaderForTests, } from "./index.js";
 
 describe("loadComfyUIWorkflow", () => {
   beforeAll(() => {
@@ -38,17 +38,17 @@ describe("loadComfyUIWorkflow", () => {
     const serialized = JSON.stringify(workflow,);
     expect(serialized,).toContain("a tiny castle at dusk",);
     expect(serialized,).not.toContain("{{prompt}}",);
-  },);
+  });
 
   it("applies default params when optional fields are omitted", async () => {
     const workflow = await loadComfyUIWorkflow("txt2img", {
       prompt: "prompt-only",
     },);
     expect(JSON.stringify(workflow,),).toContain("prompt-only",);
-  },);
+  });
 
   it("rejects with a helpful error for unknown workflow names", async () => {
     await expect(loadComfyUIWorkflow("no-such-workflow", { prompt: "x", },),)
-      .rejects.toThrow(/no-such-workflow/);
-  },);
-},);
+      .rejects.toThrow(/no-such-workflow/,);
+  });
+});

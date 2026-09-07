@@ -108,7 +108,7 @@ describe("characters exportRoutes coverage", () => {
       display_name: "Raw Toml",
       visibility: "private",
       data_source_format: "toml",
-      data_raw: "name = \"Raw Toml\"\n",
+      data_raw: 'name = "Raw Toml"\n',
     },).execute();
     await db.insertInto("actors",).values({
       ...base,
@@ -144,7 +144,7 @@ describe("characters exportRoutes coverage", () => {
       new Request("http://localhost/api/actors/not-a-uuid/export",),
     );
     expect(badId.status,).toBe(422,);
-  },);
+  });
 
   test("public actors export for strangers; admins bypass ownership", async () => {
     const outsider = makeApp(stranger, "user",);
@@ -157,7 +157,7 @@ describe("characters exportRoutes coverage", () => {
       new Request(`http://localhost/api/actors/${actorId}/export`,),
     );
     expect(byAdmin.status,).toBe(200,);
-  },);
+  });
 
   test("default and ccv3 formats return character-card JSON", async () => {
     for (const suffix of ["", "?format=json", "?format=ccv3", "?format=ccv2", "?format=bogus",]) {
@@ -165,29 +165,29 @@ describe("characters exportRoutes coverage", () => {
         new Request(`http://localhost/api/actors/${actorId}/export${suffix}`,),
       );
       expect(res.status,).toBe(200,);
-      expect(res.headers.get("content-type"),).toContain("application/json",);
-      expect(res.headers.get("content-disposition"),).toContain(".json",);
+      expect(res.headers.get("content-type",),).toContain("application/json",);
+      expect(res.headers.get("content-disposition",),).toContain(".json",);
       const text = await res.text();
       expect(text,).toContain("Aldric the Brave",);
     }
-  },);
+  });
 
   test("yaml and toml formats return text attachments", async () => {
     const yaml = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export?format=yaml`,),
     );
     expect(yaml.status,).toBe(200,);
-    expect(yaml.headers.get("content-type"),).toContain("text/yaml",);
-    expect(yaml.headers.get("content-disposition"),).toContain(".yaml",);
+    expect(yaml.headers.get("content-type",),).toContain("text/yaml",);
+    expect(yaml.headers.get("content-disposition",),).toContain(".yaml",);
     expect(await yaml.text(),).toContain("Aldric the Brave",);
     const toml = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export?format=toml`,),
     );
     expect(toml.status,).toBe(200,);
-    expect(toml.headers.get("content-type"),).toContain("text/plain",);
-    expect(toml.headers.get("content-disposition"),).toContain(".toml",);
+    expect(toml.headers.get("content-type",),).toContain("text/plain",);
+    expect(toml.headers.get("content-disposition",),).toContain(".toml",);
     expect(await toml.text(),).toContain("Aldric the Brave",);
-  },);
+  });
 
   test("yaml/toml raw sources return verbatim for fidelity", async () => {
     const yaml = await app.handle(
@@ -199,30 +199,30 @@ describe("characters exportRoutes coverage", () => {
       new Request(`http://localhost/api/actors/${rawTomlId}/export?format=toml`,),
     );
     expect(toml.status,).toBe(200,);
-    expect(await toml.text(),).toBe("name = \"Raw Toml\"\n",);
-  },);
+    expect(await toml.text(),).toBe('name = "Raw Toml"\n',);
+  });
 
   test("png format returns a PNG attachment", async () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export?format=png`,),
     );
     expect(res.status,).toBe(200,);
-    expect(res.headers.get("content-type"),).toBe("image/png",);
-    expect(res.headers.get("content-disposition"),).toContain(".png",);
+    expect(res.headers.get("content-type",),).toBe("image/png",);
+    expect(res.headers.get("content-disposition",),).toContain(".png",);
     const bytes = new Uint8Array(await res.arrayBuffer(),);
-    expect([...bytes.slice(0, 4,)],).toEqual([137, 80, 78, 71,],);
-  },);
+    expect([...bytes.slice(0, 4,),],).toEqual([137, 80, 78, 71,],);
+  });
 
   test("charx format returns a zip without linked assets", async () => {
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/export?format=charx`,),
     );
     expect(res.status,).toBe(200,);
-    expect(res.headers.get("content-type"),).toBe("application/zip",);
-    expect(res.headers.get("content-disposition"),).toContain(".charx",);
+    expect(res.headers.get("content-type",),).toBe("application/zip",);
+    expect(res.headers.get("content-disposition",),).toContain(".charx",);
     const bytes = new Uint8Array(await res.arrayBuffer(),);
-    expect([...bytes.slice(0, 2,)],).toEqual([80, 75,],);
-  },);
+    expect([...bytes.slice(0, 2,),],).toEqual([80, 75,],);
+  });
 
   test("malformed alternate_greetings falls back instead of failing", async () => {
     const res = await app.handle(
@@ -230,7 +230,7 @@ describe("characters exportRoutes coverage", () => {
     );
     expect(res.status,).toBe(200,);
     expect(await res.text(),).toContain("Broken Greetings",);
-  },);
+  });
 
   test("charx bundles linked asset files", async () => {
     const dir = fixtureDir();
@@ -257,7 +257,7 @@ describe("characters exportRoutes coverage", () => {
     );
     expect(res.status,).toBe(200,);
     const bytes = new Uint8Array(await res.arrayBuffer(),);
-    expect([...bytes.slice(0, 2,)],).toEqual([80, 75,],);
+    expect([...bytes.slice(0, 2,),],).toEqual([80, 75,],);
     expect(bytes.length,).toBeGreaterThan(0,);
-  },);
+  });
 });

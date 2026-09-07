@@ -12,9 +12,9 @@
  */
 
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
 import { existsSync, mkdirSync, rmSync, writeFileSync, } from "node:fs";
 import path from "node:path";
-import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
@@ -88,15 +88,15 @@ describe("spill() disk round-trip", () => {
     expect(offloadExists(id,),).toBe(true,);
     expect(readOffloadedBody(filePath,),).toBe(body,);
     expect(offloadDiskBytes(),).toBeGreaterThan(0,);
-  },);
+  });
 
   test("spill is self-sufficient before daemon mkdir (overwrites atomically)", async () => {
     const first = await spill("offload-spill-twice", "first",);
     const second = await spill("offload-spill-twice", "second-payload",);
     expect(second,).toBe(first,);
     expect(readOffloadedBody(second,),).toBe("second-payload",);
-  },);
-},);
+  });
+});
 
 describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
   let db: Kysely<DB>;
@@ -182,7 +182,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
     expect(pending?.response_body,).toBe("x".repeat(64,),);
 
     daemon.stop();
-  },);
+  });
 
   test("skips rows younger than minAgeMs", async () => {
     await seedRequest(db, {
@@ -203,7 +203,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .executeTakeFirst();
     expect(row?.response_body,).toBe("x".repeat(64,),);
     daemon.stop();
-  },);
+  });
 
   test("daemon maxInlineBytes override wins over the store config", async () => {
     await seedRequest(db, {
@@ -221,7 +221,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
     const result = await daemon.runOnce();
     expect(result.offloaded,).toBe(1,);
     daemon.stop();
-  },);
+  });
 
   test("falls back to the store-config threshold when no daemon override", async () => {
     await seedRequest(db, {
@@ -235,7 +235,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
     const result = await daemon.runOnce();
     expect(result.offloaded,).toBe(1,);
     daemon.stop();
-  },);
+  });
 
   test("body exactly at the threshold stays inline (<= boundary)", async () => {
     await seedRequest(db, {
@@ -255,7 +255,7 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .executeTakeFirst();
     expect(row?.response_body,).toBe("b".repeat(10,),);
     daemon.stop();
-  },);
+  });
 
   test("logs and skips a row whose id breaks the spill path (no crash)", async () => {
     // A row id containing "/" makes spill() try to write into a missing
@@ -295,8 +295,8 @@ describe("OffloadDaemon.runOnce — phase 1: offload ripe rows", () => {
       .executeTakeFirst();
     expect(bad?.offload_path,).toBeNull();
     daemon.stop();
-  },);
-},);
+  });
+});
 describe("OffloadDaemon.runOnce — phase 2: TTL expiry", () => {
   let db: Kysely<DB>;
   let sqlite: { close(): void };
@@ -342,15 +342,15 @@ describe("OffloadDaemon.runOnce — phase 2: TTL expiry", () => {
       .selectFrom("request_results",)
       .select(["id", "status", "response_body",],)
       .execute();
-    const byId = new Map(Array.from(statuses, (r,) => [r.id, r],),);
-    expect(byId.get("old-complete")?.status,).toBe("expired",);
-    expect(byId.get("old-complete")?.response_body,).toBeNull();
-    expect(byId.get("old-failed")?.status,).toBe("expired",);
-    expect(byId.get("fresh-complete")?.status,).toBe("complete",);
-    expect(byId.get("fresh-complete")?.response_body,).toBe("fresh-body",);
-    expect(byId.get("old-pending")?.status,).toBe("pending",);
+    const byId = new Map(Array.from(statuses, (r,) => [r.id, r,],),);
+    expect(byId.get("old-complete",)?.status,).toBe("expired",);
+    expect(byId.get("old-complete",)?.response_body,).toBeNull();
+    expect(byId.get("old-failed",)?.status,).toBe("expired",);
+    expect(byId.get("fresh-complete",)?.status,).toBe("complete",);
+    expect(byId.get("fresh-complete",)?.response_body,).toBe("fresh-body",);
+    expect(byId.get("old-pending",)?.status,).toBe("pending",);
     daemon.stop();
-  },);
+  });
 
   test("zero-size TTL expires everything completed in the past", async () => {
     await seedRequest(db, {
@@ -363,8 +363,8 @@ describe("OffloadDaemon.runOnce — phase 2: TTL expiry", () => {
     const result = await daemon.runOnce();
     expect(result.expired,).toBeGreaterThanOrEqual(1,);
     daemon.stop();
-  },);
-},);
+  });
+});
 
 describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
   let db: Kysely<DB>;
@@ -435,7 +435,7 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
       .executeTakeFirst();
     expect(recentRow?.offload_path,).toBe(staysFile,);
     daemon.stop();
-  },);
+  });
 
   test("tolerates an already-vanished spill file (still nulls the path)", async () => {
     const missingFile = path.join(OFFLOAD_DIR, "cleanup-missing.json.gz",);
@@ -456,8 +456,8 @@ describe("OffloadDaemon.runOnce — phase 3: expired spill cleanup", () => {
       .executeTakeFirst();
     expect(row?.offload_path,).toBeNull();
     daemon.stop();
-  },);
-},);
+  });
+});
 
 describe("OffloadDaemon lifecycle", () => {
   let db: Kysely<DB>;
@@ -509,7 +509,7 @@ describe("OffloadDaemon lifecycle", () => {
     expect(row?.response_body,).toBeNull();
     expect(row?.offload_path,).toBeTypeOf("string",);
     if (row?.offload_path) { rmSync(row.offload_path, { force: true, },); }
-  },);
+  });
 
   test("runOnce on an empty store reports zero work", async () => {
     const daemon = startOffloadDaemon(db, {}, { minAgeMs: 0, ttlMs: 0, },);
@@ -518,8 +518,8 @@ describe("OffloadDaemon lifecycle", () => {
     expect(result.expired,).toBe(0,);
     expect(daemon.state.rowCount,).toBe(0,);
     daemon.stop();
-  },);
-},);
+  });
+});
 
 describe("OffloadDaemon.runOnce — reentrancy", () => {
   test("a second overlapping runOnce is a no-op while the first is in flight", async () => {
@@ -538,5 +538,5 @@ describe("OffloadDaemon.runOnce — reentrancy", () => {
       await ctx.db.destroy();
       ctx.sqlite.close();
     }
-  },);
-},);
+  });
+});

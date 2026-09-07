@@ -8,14 +8,14 @@
  */
 import { afterAll, afterEach, describe, expect, it, } from "bun:test";
 import { ProviderAuthError, } from "../types";
-import type { OpenAiCompatibleState, } from "./types";
 import { healthCheckDispatch, listModelsDispatch, } from "./operations";
+import type { OpenAiCompatibleState, } from "./types";
 
 const originalFetch = globalThis.fetch;
 
 afterAll(() => {
   globalThis.fetch = originalFetch;
-});
+},);
 
 function makeState(overrides: Partial<OpenAiCompatibleState>,): OpenAiCompatibleState {
   return {
@@ -39,7 +39,7 @@ function jsonResponse(payload: unknown, status = 200,): Response {
 describe("listModelsDispatch", () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
-  });
+  },);
 
   it("maps /models entries to ModelInfo", async () => {
     globalThis.fetch = (async () =>
@@ -76,15 +76,13 @@ describe("listModelsDispatch", () => {
   });
 
   it("throws ProviderAuthError on a 401 response", async () => {
-    globalThis.fetch = (async () =>
-      jsonResponse({ error: { message: "bad key", }, }, 401,)) as unknown as typeof fetch;
+    globalThis.fetch = (async () => jsonResponse({ error: { message: "bad key", }, }, 401,)) as unknown as typeof fetch;
 
     await expect(listModelsDispatch(makeState({},),),).rejects.toBeInstanceOf(ProviderAuthError,);
   });
 
   it("throws the mapped provider error on a 500 response", async () => {
-    globalThis.fetch = (async () =>
-      jsonResponse({ error: { message: "kaboom", }, }, 500,)) as unknown as typeof fetch;
+    globalThis.fetch = (async () => jsonResponse({ error: { message: "kaboom", }, }, 500,)) as unknown as typeof fetch;
 
     await expect(listModelsDispatch(makeState({},),),).rejects.toThrow("kaboom",);
   });
@@ -93,11 +91,11 @@ describe("listModelsDispatch", () => {
 describe("healthCheckDispatch", () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
-  });
+  },);
 
   it("reports ok with the first model when models exist", async () => {
-    globalThis.fetch = (async () =>
-      jsonResponse({ data: [{ id: "model-a", }, { id: "model-b", },], },)) as unknown as typeof fetch;
+    globalThis.fetch =
+      (async () => jsonResponse({ data: [{ id: "model-a", }, { id: "model-b", },], },)) as unknown as typeof fetch;
 
     const health = await healthCheckDispatch(makeState({},),);
     expect(health.status,).toBe("ok",);
@@ -115,7 +113,7 @@ describe("healthCheckDispatch", () => {
 
   it("reports down with the error message when the request fails", async () => {
     globalThis.fetch = (async () => {
-      throw new Error("ECONNREFUSED");
+      throw new Error("ECONNREFUSED",);
     }) as unknown as typeof fetch;
 
     const health = await healthCheckDispatch(makeState({},),);

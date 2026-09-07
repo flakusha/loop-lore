@@ -30,13 +30,13 @@ describe("wizardActionHandlers.wizard-preview", () => {
       wizardId: "w1",
       entityType: "character",
       label: "New Character",
-      fields: { name: "Aria", species: undefined },
+      fields: { name: "Aria", species: undefined, },
     }, "chat-1",);
     expect(ctx.wizardDraft,).toEqual({
       wizardId: "w1",
       entityType: "character",
       label: "New Character",
-      fields: { name: "Aria", species: undefined },
+      fields: { name: "Aria", species: undefined, },
     },);
     expect(ctx.wizardPreviewOpen,).toBe(true,);
   });
@@ -103,7 +103,7 @@ describe("wizardActionHandlers.create-entity-preview", () => {
       data: { name: "Aria", level: 7, bio: "Brave", },
       description: "A test entity",
       worldId: "world-1",
-      warnings: ["low-mana"],
+      warnings: ["low-mana",],
     }, "chat-1",);
     const draft = ctx.wizardDraft as Record<string, unknown>;
     expect(draft.entityType,).toBe("entity",);
@@ -111,7 +111,7 @@ describe("wizardActionHandlers.create-entity-preview", () => {
     expect(draft.fields,).toEqual({ name: "Aria", bio: "Brave", },);
     expect(draft.worldId,).toBe("world-1",);
     expect(draft.description,).toBe("A test entity",);
-    expect(draft.warnings,).toEqual(["low-mana"],);
+    expect(draft.warnings,).toEqual(["low-mana",],);
     // Prefix + non-empty unique suffix (uuid source may be mocked by sibling files).
     expect(String(draft.wizardId,),).toMatch(/^preview_entity_.+$/,);
     expect(ctx.wizardPreviewOpen,).toBe(true,);

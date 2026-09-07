@@ -28,7 +28,7 @@ beforeAll(async () => {
 /** Resolve the registered /review handler. */
 function reviewHandler(): (args: string[], ctx: CommandContext,) => Promise<CommandResult> {
   const handler = getCommand("review",);
-  if (!handler) { throw new Error("/review not registered"); }
+  if (!handler) { throw new Error("/review not registered",); }
   return handler as (args: string[], ctx: CommandContext,) => Promise<CommandResult>;
 }
 
@@ -222,7 +222,7 @@ describe("/review location", () => {
     await seedLocation("loc-linked", {
       name: "Market Row",
       description: "too short",
-      connections: JSON.stringify(["loc-bare", "loc-damaged"],),
+      connections: JSON.stringify(["loc-bare", "loc-damaged",],),
     },);
     const result = await reviewHandler()(["location",], ctxFor("loc-linked",),);
     expect(result.systemMessage,).toContain("💡 description: Description is brief",);

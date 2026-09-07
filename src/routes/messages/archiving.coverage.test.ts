@@ -91,7 +91,7 @@ describe("archivingRoutes coverage", () => {
       new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
     );
     expect(purge.status,).toBe(401,);
-  },);
+  });
 
   test("archive happy path marks message auto_hidden", async () => {
     const app = makeApp(db, owner, "user",);
@@ -106,7 +106,7 @@ describe("archivingRoutes coverage", () => {
       .executeTakeFirst();
     expect(row?.archived_at,).not.toBeNull();
     expect(row?.visibility,).toBe("auto_hidden",);
-  },);
+  });
 
   test("archive 404 for well-formed but missing id", async () => {
     const app = makeApp(db, owner, "user",);
@@ -114,7 +114,7 @@ describe("archivingRoutes coverage", () => {
       new Request(`http://localhost/api/messages/${uid()}/archive`, { method: "POST", },),
     );
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("archive rejects malformed id", async () => {
     const app = makeApp(db, owner, "user",);
@@ -122,7 +122,7 @@ describe("archivingRoutes coverage", () => {
       new Request("http://localhost/api/messages/not-a-uuid/archive", { method: "POST", },),
     );
     expect([400, 404, 422,],).toContain(res.status,);
-  },);
+  });
 
   test("archive 404 for non-owner without admin role", async () => {
     const app = makeApp(db, stranger, "user",);
@@ -130,7 +130,7 @@ describe("archivingRoutes coverage", () => {
       new Request(`http://localhost/api/messages/${messageId}/archive`, { method: "POST", },),
     );
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("admin can archive another user's message", async () => {
     const app = makeApp(db, stranger, "admin",);
@@ -138,7 +138,7 @@ describe("archivingRoutes coverage", () => {
       new Request(`http://localhost/api/messages/${messageId}/archive`, { method: "POST", },),
     );
     expect(res.status,).toBe(200,);
-  },);
+  });
 
   test("restore happy path clears archived_at", async () => {
     const app = makeApp(db, owner, "user",);
@@ -154,7 +154,7 @@ describe("archivingRoutes coverage", () => {
       .executeTakeFirst();
     expect(row?.archived_at,).toBeNull();
     expect(row?.visibility,).toBe("visible",);
-  },);
+  });
 
   test("restore 404 for missing id and non-owner", async () => {
     const app = makeApp(db, owner, "user",);
@@ -167,7 +167,7 @@ describe("archivingRoutes coverage", () => {
       new Request(`http://localhost/api/messages/${messageId}/restore`, { method: "POST", },),
     );
     expect(denied.status,).toBe(404,);
-  },);
+  });
 
   test("purge removes only archived messages older than 30 days", async () => {
     const app = makeApp(db, owner, "user",);
@@ -196,7 +196,7 @@ describe("archivingRoutes coverage", () => {
     expect(gone,).toBeUndefined();
     const kept = await db.selectFrom("messages",).select("id",).where("id", "=", freshId,).executeTakeFirst();
     expect(kept?.id,).toBe(freshId,);
-  },);
+  });
 
   test("purge returns zero when nothing is eligible", async () => {
     const app = makeApp(db, owner, "user",);
@@ -206,7 +206,7 @@ describe("archivingRoutes coverage", () => {
     expect(res.status,).toBe(200,);
     const parsed = (await res.json()) as { purged: number };
     expect(parsed.purged,).toBe(0,);
-  },);
+  });
 
   test("purge 404 for missing chat and non-owner", async () => {
     const app = makeApp(db, owner, "user",);
@@ -219,5 +219,5 @@ describe("archivingRoutes coverage", () => {
       new Request(`http://localhost/api/chats/${chatId}/messages/purge`, { method: "POST", },),
     );
     expect(denied.status,).toBe(404,);
-  },);
+  });
 });

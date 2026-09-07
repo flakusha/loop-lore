@@ -95,7 +95,7 @@ async function questStatus(id: string,): Promise<string> {
 describe("processEvent", () => {
   test("matching item_transfer advances a collection quest", async () => {
     const id = await createCollectionQuest();
-    const entries = await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword"),],);
+    const entries = await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],);
     expect(entries,).toHaveLength(1,);
     expect(entries[0],).toMatchObject({
       questId: id,
@@ -110,7 +110,7 @@ describe("processEvent", () => {
 
   test("non-matching items and event types leave progress untouched", async () => {
     await createCollectionQuest();
-    expect(await engine.processEvent(worldId, chatId, [transferEvent("Wooden Shield"),],),).toEqual([],);
+    expect(await engine.processEvent(worldId, chatId, [transferEvent("Wooden Shield",),],),).toEqual([],);
     expect(
       await engine.processEvent(worldId, chatId, [{
         type: WorldEventType.CombatEvent,
@@ -123,30 +123,30 @@ describe("processEvent", () => {
 
   test("completed quests no longer match events", async () => {
     const id = await createCollectionQuest(50,);
-    await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword"),],);
+    await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],);
     expect(await questStatus(id,),).toBe(QuestStatus.Completed,);
-    expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword"),],),).toEqual([],);
+    expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],),).toEqual([],);
   });
 
   test("damaged data — malformed config JSON is skipped, not fatal", async () => {
     await insertQuests(db, worldId, creatorId, "Broken", QuestType.Collection, 100, {
       config: "{not-json",
     } as never,);
-    expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword"),],),).toEqual([],);
+    expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],),).toEqual([],);
   });
 
   test("damaged data — unknown quest type is skipped, not fatal", async () => {
     await insertQuests(db, worldId, creatorId, "Weird", "bogus" as never, 100, {
       config: JSON.stringify({ type: "bogus", },),
     } as never,);
-    expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword"),],),).toEqual([],);
+    expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],),).toEqual([],);
   });
 
   test("damaged data — config without a type string is skipped", async () => {
     await insertQuests(db, worldId, creatorId, "Typeless", QuestType.Collection, 100, {
       config: JSON.stringify({ items: [], },),
     } as never,);
-    expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword"),],),).toEqual([],);
+    expect(await engine.processEvent(worldId, chatId, [transferEvent("Iron Sword",),],),).toEqual([],);
   });
 });
 
@@ -250,7 +250,7 @@ describe("advanceProgress", () => {
     },);
     await withItems.advanceProgress(id, chatId, 10,);
     const rows = await db.selectFrom("items",).select("name",).where("world_id", "=", worldId,).execute();
-    expect(rows.filter((r,) => r.name === "reward-blade",),).toHaveLength(2,);
+    expect(rows.filter((r,) => r.name === "reward-blade"),).toHaveLength(2,);
   });
 
   test("empty rewards distribute nothing and still complete", async () => {
@@ -344,7 +344,7 @@ describe("lifecycle via engine", () => {
 
   test("active-quest and chat-progress queries read back state", async () => {
     const id = await createCollectionQuest();
-    expect((await engine.getActiveQuests(worldId,)).map((q,) => q.id,),).toContain(id,);
+    expect((await engine.getActiveQuests(worldId,)).map((q,) => q.id),).toContain(id,);
     await engine.advanceProgress(id, chatId, 20,);
     const progress = await engine.getChatProgress(id, chatId,);
     expect(progress?.progress,).toBe(20,);

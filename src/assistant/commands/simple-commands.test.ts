@@ -22,12 +22,19 @@ import "./ooc";
 import "./sfx";
 import "./summarize";
 import "./video";
-import { type CommandContext, type CommandHandler, type CommandResult, getCommand, getCommandRequirement, listCommands, } from "./registry";
+import {
+  type CommandContext,
+  type CommandHandler,
+  type CommandResult,
+  getCommand,
+  getCommandRequirement,
+  listCommands,
+} from "./registry";
 
 /** Resolve a registered handler, failing loudly when the module didn't register. */
 function mustGet(name: string,): CommandHandler {
   const handler = getCommand(name,);
-  if (!handler) { throw new Error(`command not registered: /${name}`); }
+  if (!handler) { throw new Error(`command not registered: /${name}`,); }
   return handler;
 }
 
@@ -59,11 +66,14 @@ describe("/help", () => {
 
 describe("/context", () => {
   it("reports chat, character and message count from context", () => {
-    const result = mustGet("context",)([], baseCtx({
-      activeChat: { id: "chat-9", worldId: "w1", },
-      currentCharacter: { id: "a1", name: "fallback", display_name: "Aria", },
-      messages: msgs(3,),
-    },),) as CommandResult;
+    const result = mustGet("context",)(
+      [],
+      baseCtx({
+        activeChat: { id: "chat-9", worldId: "w1", },
+        currentCharacter: { id: "a1", name: "fallback", display_name: "Aria", },
+        messages: msgs(3,),
+      },),
+    ) as CommandResult;
     expect(result.handled,).toBe(true,);
     expect(result.systemMessage,).toContain("**Context Info:**",);
     expect(result.systemMessage,).toContain("- Chat: `chat-9`",);
@@ -72,9 +82,12 @@ describe("/context", () => {
   });
 
   it("falls back to character name when display_name is empty", () => {
-    const result = mustGet("context",)([], baseCtx({
-      currentCharacter: { id: "a1", name: "Borin", display_name: "", },
-    },),) as CommandResult;
+    const result = mustGet("context",)(
+      [],
+      baseCtx({
+        currentCharacter: { id: "a1", name: "Borin", display_name: "", },
+      },),
+    ) as CommandResult;
     expect(result.systemMessage,).toContain("- Character: Borin",);
   });
 
@@ -103,7 +116,7 @@ describe("/detail", () => {
     expect(result.action,).toBe("set-detail-level",);
     expect(result.actionPayload,).toEqual({ level, },);
     expect(result.systemMessage,).toBeUndefined();
-  });
+  },);
 
   it("normalizes case", () => {
     const result = mustGet("detail",)(["DETAILED",], baseCtx(),) as CommandResult;
@@ -112,13 +125,13 @@ describe("/detail", () => {
 
   it.each([
     { args: [] as string[], hint: "empty", },
-    { args: ["verbose"], hint: "verbose", },
-    { args: [""], hint: "blank", },
+    { args: ["verbose",], hint: "verbose", },
+    { args: ["",], hint: "blank", },
   ],)("rejects $hint args with a usage hint", ({ args, },) => {
     const result = mustGet("detail",)([...args,], baseCtx(),) as CommandResult;
     expect(result.action,).toBeUndefined();
     expect(result.systemMessage,).toContain("Usage: /detail",);
-  });
+  },);
 });
 
 describe("/image", () => {
@@ -198,13 +211,13 @@ describe("/sfx and /sound", () => {
     const result = mustGet(name,)([], baseCtx(),) as CommandResult;
     expect(result.action,).toBeUndefined();
     expect(result.systemMessage,).toContain("Usage: /sfx <prompt>",);
-  });
+  },);
 
   it.each(["sfx", "sound",],)("queues a sound effect via /%s", (name,) => {
     const result = mustGet(name,)(["thunder", "crash",], baseCtx(),) as CommandResult;
     expect(result.action,).toBe("generate-sfx",);
     expect(result.actionPayload,).toEqual({ prompt: "thunder crash", },);
-  });
+  },);
 
   it("registers both aliases as unavailable", () => {
     expect(listCommands(),).not.toContain("sfx",);
@@ -283,14 +296,14 @@ describe("/impersonate and /char", () => {
     expect(result.action,).toBe("impersonate-toggle",);
     expect(result.actionPayload,).toEqual({ mode: "toggle", },);
     expect(result.systemMessage,).toContain("Usage:",);
-  });
+  },);
 
   it.each(["off", "stop", "OFF",],)("stops impersonating on /%s-style arg", (arg,) => {
     const result = mustGet("impersonate",)([arg,], baseCtx(),) as CommandResult;
     expect(result.action,).toBe("impersonate-toggle",);
     expect(result.actionPayload,).toEqual({ mode: "off", },);
     expect(result.systemMessage,).toBe("Stopped impersonating.",);
-  });
+  },);
 
   it("selects a character by joined name", () => {
     const result = mustGet("impersonate",)(["Lady", "Aria",], baseCtx(),) as CommandResult;

@@ -8,9 +8,9 @@
  */
 import { afterEach, describe, expect, it, } from "bun:test";
 import type { ImageProviderConfig, } from "../../config/schema";
-import { generateSDCPP, } from "./sdcpp";
-import { clearDiscoveryCache, } from "../lora/discovery";
 import { createLogger, } from "../../logger";
+import { clearDiscoveryCache, } from "../lora/discovery";
+import { generateSDCPP, } from "./sdcpp";
 
 // Warn paths in the fetch stack call getLogger(), which throws when the
 // root logger is uninitialized — mirror the repo-wide test convention.
@@ -20,7 +20,7 @@ const originalFetch = globalThis.fetch;
 
 afterEach(() => {
   globalThis.fetch = originalFetch;
-});
+},);
 
 const CONFIG = {
   name: "test-sdcpp",
@@ -57,7 +57,7 @@ function stubJobServer(handlers: {
 },): void {
   globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit,) => {
     if (handlers.failAll) {
-      throw new Error("ECONNREFUSED");
+      throw new Error("ECONNREFUSED",);
     }
     const method = (init?.method ?? "GET").toUpperCase();
     const target = String(url,);
@@ -67,7 +67,7 @@ function stubJobServer(handlers: {
     if (method === "GET" && target.includes("/sdcpp/v1/jobs/",)) {
       return new Response(JSON.stringify(handlers.onPoll?.() ?? {},), { status: 200, },);
     }
-    throw new Error(`unexpected stub call: ${method} ${target}`);
+    throw new Error(`unexpected stub call: ${method} ${target}`,);
   }) as typeof fetch;
 }
 
@@ -138,9 +138,9 @@ describe("generateSDCPP", () => {
       }
       if (method === "GET") {
         polls++;
-        throw new Error("polling socket closed");
+        throw new Error("polling socket closed",);
       }
-      throw new Error(`unexpected stub call: ${method} ${target}`);
+      throw new Error(`unexpected stub call: ${method} ${target}`,);
     }) as typeof fetch;
 
     const outcome = await generateSDCPP(CONFIG, OPTS,);

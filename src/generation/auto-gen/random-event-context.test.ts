@@ -5,11 +5,11 @@
  * Tests for generation/auto-gen/random-event-context.ts — participant and
  * location lookups feeding random-event placeholder substitution.
  */
-import { beforeAll, describe, expect, it, } from "bun:test";
 import type { Database, } from "bun:sqlite";
+import { beforeAll, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
 import type { ActorType, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import { loadChatLocation, loadChatParticipants, } from "./random-event-context";
 

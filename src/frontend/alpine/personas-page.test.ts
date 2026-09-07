@@ -84,15 +84,15 @@ describe("personasPage.filterList", () => {
     s.search = "   ";
     s.filterList();
     expect(s.filtered,).toHaveLength(2,);
-  },);
+  });
 
   test("matches case-insensitively on name", () => {
     const s = fresh();
     s.personas = [persona({ name: "Aria Star", },), persona({ name: "Bob", },),];
     s.search = "aria";
     s.filterList();
-    expect(s.filtered.map((p,) => p.name,),).toEqual(["Aria Star",],);
-  },);
+    expect(s.filtered.map((p,) => p.name),).toEqual(["Aria Star",],);
+  });
 
   test("matches unicode queries", () => {
     const s = fresh();
@@ -100,7 +100,7 @@ describe("personasPage.filterList", () => {
     s.search = "影の";
     s.filterList();
     expect(s.filtered,).toHaveLength(1,);
-  },);
+  });
 
   test("returns an empty list when nothing matches", () => {
     const s = fresh();
@@ -108,8 +108,8 @@ describe("personasPage.filterList", () => {
     s.search = "zzz-no-match";
     s.filterList();
     expect(s.filtered,).toEqual([],);
-  },);
-},);
+  });
+});
 
 describe("personasPage.loadPersonas", () => {
   test("stores the array and filters", async () => {
@@ -120,7 +120,7 @@ describe("personasPage.loadPersonas", () => {
     expect(s.personas,).toHaveLength(2,);
     expect(s.filtered,).toHaveLength(2,);
     expect(s.loading,).toBe(false,);
-  },);
+  });
 
   test("coerces non-array payloads to an empty list", async () => {
     handler = async () => Response.json({ data: [], },);
@@ -129,7 +129,7 @@ describe("personasPage.loadPersonas", () => {
     expect(s.personas,).toEqual([],);
     expect(s.filtered,).toEqual([],);
     expect(s.loading,).toBe(false,);
-  },);
+  });
 
   test("keeps stale rows on network error", async () => {
     handler = async () => {
@@ -140,8 +140,8 @@ describe("personasPage.loadPersonas", () => {
     await s.loadPersonas();
     expect(s.personas,).toHaveLength(1,);
     expect(s.loading,).toBe(false,);
-  },);
-},);
+  });
+});
 
 describe("personasPage.loadPersonaModels", () => {
   test("collects models from healthy providers only", async () => {
@@ -162,8 +162,8 @@ describe("personasPage.loadPersonaModels", () => {
     const s = fresh();
     await s.loadPersonaModels();
     expect(s.personaAvailableModels,).toEqual(["m1", "m2",],);
-    expect(calls.some((c,) => c.url.includes("/bad/"),),).toBe(false,);
-  },);
+    expect(calls.some((c,) => c.url.includes("/bad/",)),).toBe(false,);
+  });
 
   test("dedupes models across providers", async () => {
     handler = async (url,) => {
@@ -175,14 +175,14 @@ describe("personasPage.loadPersonaModels", () => {
     const s = fresh();
     await s.loadPersonaModels();
     expect(s.personaAvailableModels,).toEqual(["same",],);
-  },);
+  });
 
   test("keeps an empty list when the provider list fails", async () => {
     handler = async () => new Response("x", { status: 500, },);
     const s = fresh();
     await s.loadPersonaModels();
     expect(s.personaAvailableModels,).toEqual([],);
-  },);
+  });
 
   test("skips providers whose model fetch fails", async () => {
     handler = async (url,) => {
@@ -194,21 +194,25 @@ describe("personasPage.loadPersonaModels", () => {
     const s = fresh();
     await s.loadPersonaModels();
     expect(s.personaAvailableModels,).toEqual([],);
-  },);
-},);
+  });
+});
 
 describe("personasPage.init", () => {
   test("loads personas and models", async () => {
     const s = fresh();
     let personas = 0;
     let models = 0;
-    s.loadPersonas = async () => { personas++; };
-    s.loadPersonaModels = async () => { models++; };
+    s.loadPersonas = async () => {
+      personas++;
+    };
+    s.loadPersonaModels = async () => {
+      models++;
+    };
     await (s as unknown as { init(): Promise<void> }).init();
     expect(personas,).toBe(1,);
     expect(models,).toBe(1,);
-  },);
-},);
+  });
+});
 
 describe("personasPage.editPersona", () => {
   test("seeds the form from the row", () => {
@@ -222,7 +226,17 @@ describe("personasPage.editPersona", () => {
       formMaxTokens: unknown;
       formTemperature: unknown;
     };
-    s.editPersona(persona({ name: "Aria", title: "Guide", description: "helps", is_default: "default", model: "m1", max_tokens: 100, temperature: 0.5, },),);
+    s.editPersona(
+      persona({
+        name: "Aria",
+        title: "Guide",
+        description: "helps",
+        is_default: "default",
+        model: "m1",
+        max_tokens: 100,
+        temperature: 0.5,
+      },),
+    );
     expect(s.formName,).toBe("Aria",);
     expect(s.formTitle,).toBe("Guide",);
     expect(s.formDescription,).toBe("helps",);
@@ -230,7 +244,7 @@ describe("personasPage.editPersona", () => {
     expect(s.formModel,).toBe("m1",);
     expect(s.formMaxTokens,).toBe(100,);
     expect(s.formTemperature,).toBe(0.5,);
-  },);
+  });
 
   test("defaults blank optional fields", () => {
     const s = fresh() as unknown as Record<string, unknown> & {
@@ -243,8 +257,8 @@ describe("personasPage.editPersona", () => {
     expect(s.formTitle,).toBe("",);
     expect(s.formIsDefault,).toBe(false,);
     expect(s.formModel,).toBe("",);
-  },);
-},);
+  });
+});
 
 describe("personasPage.savePersona", () => {
   test("ignores blank names", async () => {
@@ -252,7 +266,7 @@ describe("personasPage.savePersona", () => {
     s.formName = "   ";
     await s.savePersona();
     expect(calls,).toHaveLength(0,);
-  },);
+  });
 
   test("creates via POST and resets the form", async () => {
     handler = async () => Response.json({ id: "p9", }, { status: 201, },);
@@ -273,20 +287,22 @@ describe("personasPage.savePersona", () => {
     s.formMaxTokens = "";
     s.formTemperature = "";
     let reloaded = 0;
-    s.loadPersonas = async () => { reloaded++; };
+    s.loadPersonas = async () => {
+      reloaded++;
+    };
     await s.savePersona();
     expect(calls[0]!.url,).toBe("/api/personas",);
     expect(calls[0]!.opts.method,).toBe("POST",);
     expect(JSON.parse(calls[0]!.opts.body as string,),).toMatchObject({ name: "New", title: "T", model: "m1", },);
     expect(s.formName,).toBe("",);
     expect(reloaded,).toBe(1,);
-  },);
+  });
 
   test("updates via PATCH when a persona is active", async () => {
     handler = async () => Response.json({}, { status: 200, },);
     const g = globalThis as unknown as { Alpine?: unknown };
     const prev = g.Alpine;
-    uiStore.activePersona = persona({ id: "p1", });
+    uiStore.activePersona = persona({ id: "p1", },);
     uiStore.showPersonaForm = true;
     const ui: Record<string, unknown> = uiStore;
     try {
@@ -307,7 +323,7 @@ describe("personasPage.savePersona", () => {
     } finally {
       g.Alpine = prev;
     }
-  },);
+  });
 
   test("keeps the form when the network fails", async () => {
     handler = async () => {
@@ -324,8 +340,8 @@ describe("personasPage.savePersona", () => {
     await s.savePersona();
     expect(s.formName,).toBe("Keep",);
     expect(s.saving,).toBe(false,);
-  },);
-},);
+  });
+});
 
 describe("personasPage.deletePersona", () => {
   test("DELETEs and filters the row", async () => {
@@ -339,12 +355,12 @@ describe("personasPage.deletePersona", () => {
       s.search = "";
       await (s as unknown as { deletePersona(id: string,): Promise<void> }).deletePersona("p1",);
       expect(calls[0]!.url,).toBe("/api/personas/p1",);
-      expect(s.personas.map((p,) => p.id,),).toEqual(["p2",],);
-      expect(s.filtered.map((p,) => p.id,),).toEqual(["p2",],);
+      expect(s.personas.map((p,) => p.id),).toEqual(["p2",],);
+      expect(s.filtered.map((p,) => p.id),).toEqual(["p2",],);
     } finally {
       g.confirm = prev;
     }
-  },);
+  });
 
   test("aborts when confirm is declined", async () => {
     const g = globalThis as unknown as { confirm?: (msg?: string,) => boolean };
@@ -359,7 +375,7 @@ describe("personasPage.deletePersona", () => {
     } finally {
       g.confirm = prev;
     }
-  },);
+  });
 
   test("handles unicode names in the filter after delete", async () => {
     handler = async () => Response.json({}, { status: 200, },);
@@ -375,12 +391,12 @@ describe("personasPage.deletePersona", () => {
     } finally {
       g.confirm = prev;
     }
-  },);
-},);
+  });
+});
 
 describe("personasPage.onDefaultChange", () => {
   test("is a no-op handled on save", () => {
     const s = fresh();
-    expect(() => (s as unknown as { onDefaultChange(): void }).onDefaultChange(),).not.toThrow();
-  },);
-},);
+    expect(() => (s as unknown as { onDefaultChange(): void }).onDefaultChange()).not.toThrow();
+  });
+});

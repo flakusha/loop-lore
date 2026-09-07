@@ -7,7 +7,12 @@ interface PanelCtx {
 }
 
 function buildCtx(): PanelCtx {
-  const ctx: PanelCtx = { rendered: [], renderBattlePanel(view,) { ctx.rendered.push(view,); }, };
+  const ctx: PanelCtx = {
+    rendered: [],
+    renderBattlePanel(view,) {
+      ctx.rendered.push(view,);
+    },
+  };
   return ctx;
 }
 
@@ -37,7 +42,7 @@ describe("battleActionHandlers rendering actions", () => {
         { id: "c1", name: "Hero", hp: 80, maxHp: 100, initiative: 12, },
         { id: "c2", name: "Ogre", hp: 150, maxHp: 150, initiative: 6, },
       ],
-    }],);
+    },],);
   });
 
   test("battle-updated and battle-status route through the same renderer", () => {
@@ -90,6 +95,6 @@ describe("battleActionHandlers rendering actions", () => {
   test("battle-ended clears the panel with null", () => {
     const ctx = buildCtx();
     battleActionHandlers["battle-ended"]!(ctx, null, "chat-1",);
-    expect(ctx.rendered,).toEqual([null],);
+    expect(ctx.rendered,).toEqual([null,],);
   });
 });
