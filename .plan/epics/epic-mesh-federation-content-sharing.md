@@ -273,6 +273,8 @@ Out of scope (owned by other epics):
 - `TASK-mesh-encrypted-content-sharing-reservation-duplication` — encrypted
   content sharing, reservation, and duplication between federated servers
 - `TASK-mesh-content-federation-quota` — content federation quota between servers
+- `TASK-federation-content-clearance-gate-per-chat-consent-before-me` — per-chat explicit consent gate before mesh push (Phase 2 prerequisite; mesh membership alone never implies clearance)
+- `TASK-federation-dek-re-wrap-protocol-server-to-server-key-export` — server-to-server DEK re-wrap protocol; no verbatim `chat_keys` copy to peers
 
 ## References
 
