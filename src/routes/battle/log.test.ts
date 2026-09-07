@@ -19,6 +19,6 @@ describe("battle log", () => {
 
   test("child loggers accept log calls without throwing", () => {
     expect(() => log().debug("battle test debug",)).not.toThrow();
-    expect(() => log().child({ extra: "scope", },)).not.toThrow();
+    expect(() => log().child({ module: "battle", },)).not.toThrow();
   });
 });
