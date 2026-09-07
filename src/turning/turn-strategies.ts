@@ -49,30 +49,37 @@ function weightedRandomSelect(
 }
 
 /**
- * Round-robin: deterministic cycle through participants
+ * Round-robin: deterministic cycle through the caller-owned turn order.
+ *
+ * The consecutive-turn guard (BUG-group-cascade-consecutive-turn-guard)
+ * advances past the scheduled actor when it is the previous speaker AND
+ * alternatives exist. Falls back to the participants array when turnOrder
+ * is empty or stale (names no current participant).
  * @param participants
  * @param currentActorId
  * @param _currentTurn
  * @param turnOrder
+ * @param _context
+ * @param lastActorId
  */
 export const roundRobinSelect: TurnStrategyFn = (
   participants,
   currentActorId,
   _currentTurn,
-  _turnOrder,
+  turnOrder,
   _context,
   lastActorId,
 ) => {
-  // Consecutive-turn guard (BUG-group-cascade-consecutive-turn-guard):
-  // when the previous actor is present in `participants` AND alternatives
-  // exist, treat the round-robin as "cycle from the previous speaker" so
-  // the same actor isn't picked twice in a row.
-  const candidate = lastActorId && participants.length > 1 && participants.some((p,) => p.actorId === lastActorId)
-    ? participants.filter((p,) => p.actorId !== lastActorId)
-    : participants;
-  const lastIndex = currentActorId ? candidate.findIndex((p,) => p.actorId === currentActorId) : -1;
-  const nextIndex = (lastIndex + 1) % candidate.length;
-  return candidate[nextIndex]!.actorId;
+  const order = turnOrder.length > 0 ? turnOrder : participants.map((p,) => p.actorId,);
+  const lastIndex = currentActorId ? order.indexOf(currentActorId,) : -1;
+  for (let step = 1; step <= order.length; step++) {
+    const candidateId = order[(lastIndex + step) % order.length]!;
+    if (!participants.some((p,) => p.actorId === candidateId,)) { continue; }
+    if (candidateId !== lastActorId || participants.length < 2) { return candidateId; }
+  }
+  // Stale order (nothing matched) or every candidate is the last speaker:
+  // first non-last participant, else the first participant.
+  return participants.find((p,) => p.actorId !== lastActorId,)?.actorId ?? participants[0]!.actorId;
 };
 
 export const sceneBasedSelect: TurnStrategyFn = (
