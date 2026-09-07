@@ -19,26 +19,10 @@ import { EquipState, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils/safe-json";
 import { ErrorResponse, Id, } from "../../validation/schemas";
-import { jsonResponse, notFoundResponse, } from "../http-utils";
+import { jsonResponse, } from "../http-utils";
 import { requireUserId, } from "../http-utils/responses";
+import { resolveActorAccess, } from "../actor-access";
 import type { HandlerOpts, } from "./types";
-
-/**
- * Ensure the user owns the given actor. Returns a denial Response or null.
- * @param db
- * @param actorId
- * @param userId
- */
-async function resolveActorAccess(
-  db: Kysely<DB>,
-  actorId: string,
-  userId: string,
-): Promise<Response | null> {
-  const actor = await db.selectFrom("actors",).select("user_id",).where("id", "=", actorId,).executeTakeFirst();
-  if (!actor) { return notFoundResponse("Actor",); }
-  if (actor.user_id !== userId) { return jsonResponse({ error: "Not allowed", }, 403,); }
-  return null;
-}
 
 /**
  * Apply `damage` to every equipped item an actor owns and persist it.
