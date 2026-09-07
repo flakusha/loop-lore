@@ -87,15 +87,26 @@ export async function counterOffer(
     return { success: false, reason: "only participants can counter", };
   }
 
+  const offeredMaterials = opts.buyerItems !== undefined
+    ? jsonStringifyOr(opts.buyerItems, "[]",)
+    : offer.offered_materials;
+  const requestedMaterials = opts.sellerItems !== undefined
+    ? jsonStringifyOr(opts.sellerItems, "[]",)
+    : offer.requested_materials;
+  const offeredPayment = opts.price ?? offer.offered_payment;
+  if (
+    offeredMaterials === offer.offered_materials &&
+    requestedMaterials === offer.requested_materials &&
+    offeredPayment === offer.offered_payment
+  ) {
+    return { success: false, reason: "no changes proposed", };
+  }
+
   await db.updateTable("crafting_orders",)
     .set({
-      offered_materials: opts.buyerItems !== undefined
-        ? jsonStringifyOr(opts.buyerItems, "[]",)
-        : offer.offered_materials,
-      requested_materials: opts.sellerItems !== undefined
-        ? jsonStringifyOr(opts.sellerItems, "[]",)
-        : offer.requested_materials,
-      offered_payment: opts.price ?? offer.offered_payment,
+      offered_materials: offeredMaterials,
+      requested_materials: requestedMaterials,
+      offered_payment: offeredPayment,
       status: isSeller ? "countered" : "pending",
       updated_at: new Date().toISOString(),
     },)
