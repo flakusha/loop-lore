@@ -57,7 +57,7 @@ function compress(
   switch (algorithm) {
     case "zstd": {
       return new Uint8Array(
-        (Bun.zstdCompressSync as (buf: Buffer, opts?: { level?: number },) => Buffer)(buffer, {
+        (Bun.zstdCompressSync as (buf: Uint8Array, opts?: { level?: number },) => Buffer)(strictIn, {
           level: options.level,
         },),
       );
@@ -65,7 +65,7 @@ function compress(
 
     case "br": {
       return new Uint8Array(
-        brotliCompressSync(buffer, {
+        brotliCompressSync(strictIn, {
           params: {
             1: options.level ?? 6, // BROTLI_PARAM_QUALITY
           },
@@ -101,11 +101,11 @@ function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Ar
 
   switch (algorithm) {
     case "zstd": {
-      return new Uint8Array((Bun.zstdDecompressSync as (buf: Buffer,) => Buffer)(buffer,),);
+      return new Uint8Array((Bun.zstdDecompressSync as (buf: Uint8Array,) => Buffer)(strictIn,),);
     }
 
     case "br": {
-      return new Uint8Array(brotliDecompressSync(buffer,),);
+      return new Uint8Array(brotliDecompressSync(strictIn,),);
     }
 
     case "gzip": {

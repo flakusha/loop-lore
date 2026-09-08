@@ -3,7 +3,7 @@
 
 # BUG: export-sse start throws Controller is already closed on client disconnect
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -16,3 +16,8 @@ src/routes/export-sse/start.ts: polling interval throws when the client disconne
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+SSE poller reworked: closed flag + safeEnqueue/teardown guard all controller ops; disconnect mid-stream tears down quietly instead of throwing from the interval tick.
+Landed on `fix-transport-bugs` (transport-domain batch, 2026-09-08).
