@@ -7,6 +7,7 @@ import type { Db, } from "../../db";
 import { auditRoutes, } from "./audit";
 import { auxTelemetryRoutes, } from "./aux-telemetry";
 import { chatsRoutes, } from "./chats";
+import { cronRoutes, } from "./cron";
 import { dangerZoneRoutes, } from "./danger-zone";
 import { keyRotationRoutes, } from "./key-rotation";
 import { modelCapabilitiesRoutes, } from "./model-capabilities";
@@ -35,6 +36,8 @@ import { worldsRoutes, } from "./worlds";
  *   GET  /api/admin/model-roles    — get current role assignments
  *   PUT  /api/admin/model-roles/:role — set role override
  *   DELETE /api/admin/model-roles/:role — clear role override
+ *   GET  /api/admin/cron/jobs      — list scheduled job statuses
+ *   POST /api/admin/cron/jobs/:name/run — manually trigger a job
  * @param opts
  * @param opts.database
  * @param opts.config
@@ -53,6 +56,7 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(systemConfigRoutes(opts, prefix,),)
       .use(worldsRoutes(opts, prefix,),)
       .use(chatsRoutes(opts, prefix,),)
+      .use(cronRoutes(opts, prefix,),)
       .use(templatesRoutes(opts, prefix,),)
       .use(auditRoutes(opts, prefix,),)
       .use(dangerZoneRoutes(opts, prefix,),)

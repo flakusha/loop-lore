@@ -76,6 +76,7 @@ export default defineConfig({
             { text: 'Asset Attribution', link: '/spec/assets-attribution' },
             { text: 'Regex Extraction', link: '/spec/regex-extraction' },
             { text: 'Profanity Filter', link: '/spec/profanity-filter' },
+            { text: 'Scheduler', link: '/spec/scheduler' },
           ],
         },
         {

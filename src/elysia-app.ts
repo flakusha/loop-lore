@@ -15,9 +15,12 @@
 import { Elysia, } from "elysia";
 import { BunAdapter, } from "elysia/adapter/bun";
 import { registerPlugins, } from "./app/register-plugins";
-import { createAsyncStore, startOffloadDaemon, } from "./async";
+import { createAsyncStore, } from "./async";
 import type { Config, } from "./config/schema";
+import { defaultJobs, startScheduler, } from "./cron";
 import type { Db, } from "./db";
+import { createLogger, getLogger, } from "./logger";
+import type { Logger, } from "./logger/types";
 import { authenticate, } from "./middleware/auth";
 import { CSRF_EXEMPT_ROUTES, CSRF_HEADER, } from "./middleware/csrf";
 import { applyCsrfPlugin, type CsrfMiddlewareOptions, } from "./middleware/csrf-plugin";
@@ -46,6 +49,20 @@ export interface AppDeps {
   database: Db;
   config: Config;
   handleNonApiRequest: (request: Request,) => Promise<Response>;
+  logger?: Logger;
+}
+
+/**
+ * Resolve the scheduler logger: explicit dep wins, else the global root,
+ * else a quiet error-level instance (scripts that never init logging).
+ */
+function resolveLogger(explicit?: Logger,): Logger {
+  if (explicit) { return explicit; }
+  try {
+    return getLogger();
+  } catch {
+    return createLogger({ level: "error", },);
+  }
 }
 
 /**
@@ -54,12 +71,22 @@ export interface AppDeps {
 export function createApp(deps: AppDeps,): Elysia {
   const { database, config, handleNonApiRequest, } = deps;
 
-  // Wire the async request-result store + offload daemon once at boot.
+  // Wire the async request-result store once at boot.
   // The status endpoint, idempotency replay, and `triggerAutoGeneration`
   // all read/write the same `request_results` table.
   const asyncStore = createAsyncStore(database,);
-  const offloadDaemon = startOffloadDaemon(database, asyncStore.config,);
-  offloadDaemon.start();
+
+  // ── Internal scheduled tasks (cron registry) ─────────────
+  // Owns the offload scan (replaces startOffloadDaemon), telemetry
+  // retention, key-rotation checks, memory decay/purge, and provider
+  // rescans. Jobs are unref'd minute-granularity timers — safe to start
+  // under e2e servers and invisible to unit tests (never imported there).
+  const scheduler = startScheduler({
+    database,
+    config,
+    logger: resolveLogger(deps.logger,),
+    jobs: defaultJobs(),
+  },);
 
   const app = new Elysia({ adapter: BunAdapter, },)
     // ── Validation error handler (must be first) ─────────────
@@ -176,9 +203,10 @@ export function createApp(deps: AppDeps,): Elysia {
     }
   },);
 
-  // ── Graceful shutdown: flush pending async-store writes
+  // ── Graceful shutdown: flush pending async-store writes + stop scheduler
   app.onStop(() => {
     void asyncStore.flush();
+    scheduler.stop();
   },);
   // ── API version resolver ───────────────────────────────────
   // Populates ctx.apiVersion for every request via global derive().
