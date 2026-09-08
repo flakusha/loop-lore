@@ -14,6 +14,11 @@ import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { initialAlphaStatus, } from "../../assets/service/alpha-status";
 import { createAsset, } from "../../assets/service/create";
+import { describePristine, } from "../../test-utils/pristine";
+
+// lifecycle tests persist real assets via createAsset, which
+// image-gen-route.test.ts replaces process-wide with mockCreateAsset.
+const describeReal = describePristine(createAsset, "createAsset",);
 import { getAssetLinks, } from "../../assets/service/links";
 import { makeMinimalPng, } from "../../assets/test-helpers";
 import { AssetAlphaStatus, AssetLinkEntity, AssetType, } from "../../db/enums";
@@ -91,7 +96,7 @@ describe("alpha status state machine", () => {
   });
 });
 
-describe("matting job lifecycle", () => {
+describeReal("matting job lifecycle", () => {
   test("success stores matted derivative, links it, and sets alpha_status=matted", async () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "m owner", "M Owner",);

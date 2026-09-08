@@ -220,7 +220,11 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   it("passes lora config to generateImages when ComfyUI backend is selected", async () => {
     mock.module("../config/load", () => ({
       ...realConfigLoad,
+      // Full schema defaults underneath: this stub is process-global and
+      // persists for every later file (e2e runs last); a bare
+      // defaultConfig drops required sections (server, auth, ...) there.
       loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
         ...defaultConfig,
         generation: {
           providers: {
@@ -277,7 +281,11 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   it("returns HTTP 501 when no image generation provider is configured", async () => {
     mock.module("../config/load", () => ({
       ...realConfigLoad,
+      // Full schema defaults underneath: this stub is process-global and
+      // persists for every later file (e2e runs last); a bare
+      // defaultConfig drops required sections (server, auth, ...) there.
       loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
         ...defaultConfig,
         generation: { providers: { sd: [], }, },
       }),
@@ -295,10 +303,16 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   it("returns HTTP 400 when LoRA is requested with an unsupported backend (openai)", async () => {
     mock.module("../config/load", () => ({
       ...realConfigLoad,
+      // Full schema defaults underneath: this stub is process-global and
+      // persists for every later file (e2e runs last); a bare
+      // defaultConfig drops required sections (server, auth, ...) there.
       loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
         ...defaultConfig,
         generation: {
+          ...structuredClone(createConfigSchema().defaults,).generation,
           providers: {
+            ...structuredClone(createConfigSchema().defaults,).generation.providers,
             sd: [
               {
                 name: "test-openai",
@@ -341,10 +355,16 @@ describeOrSkip("handleImageGeneration — LoRA opt-in / opt-out", () => {
   it("returns HTTP 200 when no lora is requested, regardless of backend", async () => {
     mock.module("../config/load", () => ({
       ...realConfigLoad,
+      // Full schema defaults underneath: this stub is process-global and
+      // persists for every later file (e2e runs last); a bare
+      // defaultConfig drops required sections (server, auth, ...) there.
       loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
         ...defaultConfig,
         generation: {
+          ...structuredClone(createConfigSchema().defaults,).generation,
           providers: {
+            ...structuredClone(createConfigSchema().defaults,).generation.providers,
             sd: [
               {
                 name: "test-openai",

@@ -13,6 +13,11 @@ import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssetLinks, insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
 import { getAssetLinks, linkAsset, unlinkAsset, } from "./links";
+import { describePristine, } from "../../test-utils/pristine";
+
+// image-gen-route.test.ts replaces ../assets/service/links process-wide
+// with mockLinkAsset (no-op); skip rather than assert the stub.
+const describeReal = describePristine(linkAsset, "linkAsset",);
 
 const ASSET_ID = "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d";
 const OWNER = "link-owner";
@@ -32,7 +37,7 @@ async function seedAsset(db: Kysely<DB>,): Promise<void> {
   );
 }
 
-describe("linkAsset", () => {
+describeReal("linkAsset", () => {
   test("inserts a link row with a label", async () => {
     const { db, sqlite, } = await createTestDb();
     try {

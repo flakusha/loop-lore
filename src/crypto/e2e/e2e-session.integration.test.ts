@@ -16,6 +16,7 @@
 import { Database, } from "bun:sqlite";
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -229,8 +230,15 @@ function bindStubFetch(): void {
   globalThis.fetch = stub as unknown as typeof fetch;
 }
 
+// bindStubFetch replaces globalThis.fetch: capture the real one and restore
+// after each test, otherwise every later file sharing the process (e2e HTTP
+// clients) throws "Unexpected fetch in test" on real network calls.
+const realFetch = globalThis.fetch;
 beforeEach(() => {
   bindStubFetch();
+},);
+afterEach(() => {
+  globalThis.fetch = realFetch;
 },);
 
 // ── Tests ────────────────────────────────────────────────────
