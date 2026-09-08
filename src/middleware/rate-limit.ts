@@ -8,6 +8,8 @@
  * request timestamps; a request is allowed iff fewer than `maxRequests`
  * timestamps fall within the trailing `windowMs`.
  *
+ * Lifecycle & multi-instance: each `createRateLimiter()` call produces an independent limiter with its own Map. In a single-process server (the current deployment), one limiter instance is shared application-wide via module-level singletons (createLoginLimiter etc.). Call `destroy()` on server shutdown to stop pruning and clear state. In multi-process or test contexts each process/test must create its own limiter via the factory.
+ *
  * Why a timestamp queue (not the previous counter-and-window-start):
  * a counter reset at window boundaries lets a client spend the full budget
  * at the end of one window and again at the start of the next — a 2x burst
