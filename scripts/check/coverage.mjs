@@ -15,8 +15,8 @@
  * when the module recovers.
  *
  * Modules are identified by the top-level directory under `src/` (e.g.
- * `frontend`, `tests`, `server`), or by the basename for top-level files
- * (`elysia-app.ts`, `utils.ts`).
+ * `frontend`, `tests`, `server`). Top-level source files are omitted from
+ * the per-module table because they are not directories.
  */
 const fs = require("fs",);
 const floor = parseInt(process.argv.find((a,) => a.startsWith("--floor=",))?.split("=",)[1], 10,) || 80;
@@ -120,6 +120,7 @@ for (const r of records) {
   const sf = r.match(/SF:(.+)/,)?.[1];
   if (!sf) { continue; }
   const mod = sf.replace(/^src\//, "",).split("/",)[0];
+  if (mod.includes(".",)) { continue; }
   const lf = parseInt(r.match(/LF:(\d+)/,)?.[1] || "0", 10,);
   const lh = parseInt(r.match(/LH:(\d+)/,)?.[1] || "0", 10,);
   modules[mod] = modules[mod] || { lf: 0, lh: 0, };
