@@ -19,7 +19,7 @@ import * as realAssetCreate from "../assets/service/create";
 import * as realAssetLinks from "../assets/service/links";
 import * as realConfigLoad from "../config/load";
 import { createConfigSchema, } from "../config/schema-class";
-import * as realDb from "../db/index";
+// (no realDb import: ../db/index is intentionally unstubbed; see NOTE above)
 import * as realUtils from "../utils";
 import * as realImageEngine from "./image-engine";
 import type * as imageGenRoute from "./image-gen-route";
@@ -69,10 +69,10 @@ async function mockCreateAsset(_opts: unknown,) {
  */
 async function mockLinkAsset(_opts: unknown,) {}
 
-/** */
-function mockGetDatabase() {
-  return {} as ReturnType<typeof import("../db/index").getDatabase>;
-}
+// NOTE: no getDatabase stub on purpose. The SUT only threads the handle to
+// the (mocked) createAsset, and a process-global stub breaks later files'
+// setTestDatabase visibility (caption-route, e2e). The real file database is
+// never touched because createAsset/linkAsset are mocked.
 
 // ── Default config (sdcpp provider selected) ───────────────────────────────────
 
@@ -149,10 +149,7 @@ if (ISOLATED) {
     linkAsset: mockLinkAsset,
   }),);
 
-  mock.module("../db/index", () => ({
-    ...realDb,
-    getDatabase: mockGetDatabase,
-  }),);
+  // No ../db/index stub (see NOTE above).
 
   // Dynamic import is required: mock.module must be registered BEFORE the
   // SUT module is evaluated, which a static import cannot guarantee.

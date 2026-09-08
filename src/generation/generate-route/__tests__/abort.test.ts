@@ -31,7 +31,7 @@ import { CancelReason, CancelSource, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
-import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
+import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../../test-utils/isolate-only";
 import type {
   GenerateRequest as ProviderRequest,
   GenerateResponse,
@@ -67,7 +67,7 @@ const {
   registerSideEffectJob,
   startGenerationTracking,
 } = (managerPristine ? managerModule : {}) as typeof import("../../cancellation-manager");
-const describeReal = managerPristine ? describeOrSkip : describe.skip;
+const describeReal = managerPristine ? describeOrSkipStrict : describe.skip;
 
 // The stop-and-respond tests assert on telemetry captured via this file's
 // own ../../../telemetry/service stub (record pushes into recordedEvents).
@@ -97,7 +97,7 @@ createLogger({ level: "error", },);
 
 const recordedEvents: { eventType: string; data: Record<string, unknown> }[] = [];
 
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("../../../telemetry/service", () => ({
     record: async (_db: Kysely<DB>, params: { eventType: string; data: Record<string, unknown> },) => {
       recordedEvents.push(params,);
