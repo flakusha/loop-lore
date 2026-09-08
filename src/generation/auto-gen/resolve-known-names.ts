@@ -47,13 +47,14 @@ export async function resolveChatKnownEntityNames(
         .then((row,) => loadChatLocation(database, row?.current_location_id ?? null,)),
     ],);
     const participants = participantsResult.status === "fulfilled" ? participantsResult.value : [];
+    const locationValue = locationRow.status === "fulfilled" ? locationRow.value : null;
     const names = new Set<string>();
     for (const p of participants) {
       const trimmed = p.displayName.trim();
       if (trimmed) { names.add(trimmed,); }
     }
-    if (locationRow) {
-      const trimmed = locationRow.name.trim();
+    if (locationValue) {
+      const trimmed = locationValue.name.trim();
       if (trimmed) { names.add(trimmed,); }
     }
     return Array.from(names,);
