@@ -20,7 +20,7 @@ import {
   insertWhitenotes,
   insertWorlds,
 } from "../../../test-utils/insert-helpers";
-import { gmNotesSection, } from "./gm-notes";
+import { fetchUnrevealedShadowNotes, formatShadowSteering, gmNotesSection, } from "./gm-notes";
 
 /**
  * @param db
@@ -183,5 +183,32 @@ describe("gmNotesSection", () => {
     const messages = await gmNotesSection.build(makeCtx(db, "chat-1",),);
     const content = messages[0]!.content;
     expect(content.match(/Whitenote \d+/g,),).toHaveLength(10,);
+  });
+});
+
+describe("fetchUnrevealedShadowNotes + formatShadowSteering", () => {
+  test("fetch returns hidden notes only, formatter wraps section", async () => {
+    const { db, } = await createTestDb();
+    await insertUsers(db, "user1", "User 1", { id: "user-1", } as any,);
+    await insertWorlds(db, "user-1", "Test World", { id: "world-1", } as any,);
+    await insertChats(db, "Test Chat", "user-1", { id: "chat-1", world_id: "world-1", } as any,);
+    await insertShadowNotes(db, "chat-1", ShadowNoteType.WorldSecret, "The king is a lich.", "2026-08-01T00:00:00Z",);
+    await insertShadowNotes(
+      db,
+      "chat-1",
+      ShadowNoteType.Foreshadowing,
+      "Surfaced already.",
+      "2026-08-01T00:00:00Z",
+      { status: ShadowNoteStatus.Revealed, } as any,
+    );
+
+    const notes = await fetchUnrevealedShadowNotes(db, "chat-1",);
+    expect(notes,).toHaveLength(1,);
+    expect(notes[0]?.content,).toBe("The king is a lich.",);
+
+    const block = formatShadowSteering(notes,);
+    expect(block,).toContain("The king is a lich.",);
+    expect(block,).toContain("shadow_notes",);
+    expect(formatShadowSteering([],),).toBe("",);
   });
 });
