@@ -2,10 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Plugin UI mount points placeholder (FEAT-050).
+ * Plugin UI mount points (FEAT-050).
  *
- * No-op integration: resolves which registered components belong to a
- * mount-point location. Pure lookup — nothing renders until views consume it.
+ * Resolves which registered components belong to a mount-point location.
+ * Pure lookup — rendering is consumed by the views layer, which calls
+ * {@link getComponentsForMountPoint} per location when building pages.
  */
 
 import type { UIComponentDefinition } from "./types";
@@ -23,9 +24,6 @@ export type MountPointLocation = (typeof KNOWN_MOUNT_POINTS)[number] | string;
 
 /**
  * Return components registered for one mount-point location.
- *
- * Placeholder: pure filter over `UIComponentDefinition.location`. Rendering
- * integration lands in the views layer.
  * @param components - All registered UI components.
  * @param location - Mount-point location to resolve.
  * @returns Components targeting `location`, in registration order.
