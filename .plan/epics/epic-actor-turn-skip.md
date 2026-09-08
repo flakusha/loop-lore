@@ -21,15 +21,22 @@ the absence plausibly, and no fake action is attributed to the skipping actor.
 implements resume-of-partial-cancelled-output. This feature MUST ship under a distinct
 name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 
-## Current State (reviewed 2026-09-01)
+## Current State (reviewed 2026-09-07)
 
-- No skip/pass mechanism: generation is driven by user messages only
-  (`GameMasterService` is reactive — see epic-actor-autonomy-story-drive Current State).
+- PASS primitive exists as a message-suffix opt-out convention: `filterPassedActors`
+  in `src/generation/auto-gen/pass-filter.ts` (latest-per-actor via
+  `(created_at, rowid)` NOT EXISTS tiebreak, decrypt-aware, fail-open) drops passed
+  actors from the group-chat cascade; `detectPassToken` in
+  `src/group-chat/mention-parser.ts` detects the trailing `[PASS]` token;
+  consecutive-turn guard + `turnOrder` cycling live in
+  `src/turning/turn-strategies.ts`.
+- Still missing: first-class `turn_skip` event, hold/advance modes, solo-chat path,
+  absence rendering, UI control, gate interlock.
 - `Continue` exists with different semantics (partial-output resume).
-- Group-chat cascade has max-turns / consecutive-turn guards but no notion of an actor
-  *passing* its slot.
 - A user with nothing to do today either writes filler action (immersion risk — the
-  exact pressure epic-immersion-consistency-gate defends against) or stalls the scene.
+  exact pressure epic-immersion-consistency-gate defends against), stalls the scene,
+  or relies on the informal `[PASS]` suffix, which carries no beat semantics, no
+  hold/advance distinction, and no absence rendering.
 
 ## Design
 
@@ -53,7 +60,9 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 
 - [ ] **turn_skip event + persistence** — schema, API route, context-assembly rendering. → TASK-turn-skip-event
 - [ ] **GM absence contract** — prompt + acceptance rules for hold/advance handling. → TASK-turn-skip-gm-handling
-- [ ] **Cascade integration** — slot release in group chat; budgeted beat in solo. → TASK-turn-skip-cascade
+- [ ] **Cascade integration** — build on `filterPassedActors` (promote the `[PASS]`
+  convention to the `turn_skip` event) rather than greenfield; slot release in group
+  chat; budgeted beat in solo. → TASK-turn-skip-cascade
 - [ ] **Gate interlock** — refusal-notice offers skip; refused-beat cannot also be skipped. → TASK-turn-skip-gate-interlock
 - [ ] **UI** — 'Skip turn' composer control with hold/advance choice. → TASK-turn-skip-ui
 
@@ -78,6 +87,8 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 | epic-immersion-consistency-gate.md | `GateVerdict` | interlock rules SC3 |
 | epic-narration-actor-separation.md | `MessageKind` | skip renders as `system` absence record (SC8) |
 | epic-group-chat.md cascade / epic-assistant-gm-flows.md | turn slots, GM beats | slot release + beat generation |
+| TASK-turn-send-gate | send gate verdict | skip offered as escape hatch when send is blocked |
+| TASK-narration-levels | `MessageKind` system record | absence rendering via system record |
 
 ### Systems That Depend On This Epic
 
@@ -98,4 +109,3 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 | ----- | --------- | ------- |
 | `gate.verdict` | subscribes | offer skip on hard-block |
 | `turn.skipped` | emits | cascade advance, ambient beat |
-

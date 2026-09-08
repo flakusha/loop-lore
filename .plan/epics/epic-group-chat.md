@@ -3,7 +3,7 @@
 
 # EPIC: Group Chat
 
-**Status:** 🟡 Partial — `src/group-chat` modules exist (mention-parser, turn-selector, index) but the feature was never captured as a first-class epic; 3 bug tickets open, 2 feature tickets now track completion.
+**Status:** 🟡 Partial — `src/group-chat` modules exist (mention-parser, turn-selector, index) but the feature was never captured as a first-class epic; linked defects resolved, feature tickets track remaining completion.
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Epic
@@ -34,6 +34,6 @@ Out of scope:
 | --- | --- | --- |
 | TASK-group-chat-mention-routing | TASK | ⬜ Not Started |
 | TASK-group-chat-turn-orchestration | TASK | ⬜ Not Started |
-| BUG-group-chat-mention-prefix-collision | BUG | Open |
-| BUG-group-chat-talkativity-not-surfaced-in-prompt | BUG | Not Started |
-| BUG-group-chat-silence-pass-not-implemented | BUG | Not Started |
+| BUG-group-chat-mention-prefix-collision | BUG | ✅ Resolved — ambiguous prefix returns null, disambiguation prompt |
+| BUG-group-chat-talkativity-not-surfaced-in-prompt | BUG | ✅ Resolved — 359a3d3, group-talkativity prompt section |
+| BUG-group-chat-silence-pass-not-implemented | BUG | ✅ Resolved — batch-9, pass-filter.ts |

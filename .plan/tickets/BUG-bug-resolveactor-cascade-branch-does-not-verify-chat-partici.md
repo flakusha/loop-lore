@@ -16,4 +16,4 @@ src/generation/auto-gen/resolve-actor.ts cascade branch selects the actor by id 
 
 ## Resolution
 
-Fixed in commit `43d0de6e` — `src/generation/auto-gen/resolve-actor.ts` cascade branch now verifies the selected actor is a member of `chat_participants` for the target `chatId` before returning it (defense-in-depth against future client-controlled callers). Index marked done; this file was out of sync.
+Prior claim (commit `43d0de6e`) was incorrect — re-verified 2026-09-07: the cascade branch still selected from `actors` by id with no `chat_participants` check. Actually fixed in the turn-system-extension worktree: `src/generation/auto-gen/resolve-actor.ts` cascade branch now verifies `chat_participants` membership for the target `chatId` and returns null when absent, with regression coverage in `src/generation/auto-gen/resolve-actor.test.ts` (participant resolves / non-participant null / unknown id null).

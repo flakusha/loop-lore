@@ -46,7 +46,16 @@ export async function resolveActor(
 
   if (type === "group") {
     if (cascadeActorId) {
-      // Cascade mode: use the pre-selected actor
+      // Cascade mode: use the pre-selected actor, but verify it is still a
+      // participant — the id arrives from the prior cascade depth and may be
+      // stale (actor left) or forged (direct triggerAutoGeneration call).
+      const membership = await database
+        .selectFrom("chat_participants",)
+        .select("actor_id",)
+        .where("chat_id", "=", chatId,)
+        .where("actor_id", "=", cascadeActorId,)
+        .executeTakeFirst();
+      if (!membership) { return null; }
       const selected = await database
         .selectFrom("actors",)
         .select(["display_name",],)
