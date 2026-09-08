@@ -737,6 +737,12 @@
       "source": ".plan/tickets/TASK-cross-platform-portability.md"
     }
   ],
+  "src/assets/service/links.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
+    }
+  ],
   "src/assets/service/read.ts": [
     {
       "kind": "ticket",
@@ -2403,6 +2409,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-nsfw-api-prefiltering.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
     }
   ],
   "src/assistant/workflow-runner.ts": [
@@ -2457,6 +2467,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-third-party-api-integration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
     }
   ],
   "src/assistant/workflows/gallery-edit.ts": [
@@ -6757,6 +6771,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-talkativity-influence-response-verbosity.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-engine-schema-loader-template-types-workflow-discov.md"
     }
   ],
   "src/config/seeding.ts": [
@@ -6809,6 +6827,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-engine-schema-loader-template-types-workflow-discov.md"
     }
   ],
   "src/config/templates-loader/discovery.ts": [
@@ -7853,6 +7875,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-avatar-gallery-binding.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
     }
   ],
   "src/db/enums-core.ts": [
@@ -12323,6 +12349,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
     }
   ],
   "src/frontend/e2e/decrypt-message.ts": [
@@ -13177,6 +13207,10 @@
       "source": ".plan/epics/epic-chat-transfer-location.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-visual-novel-mode.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-resolution-missing-empty-input-adapter.md"
     },
@@ -13851,6 +13885,12 @@
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
     }
   ],
+  "src/generation/auto-gen/pass-filter.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actor-turn-skip.md"
+    }
+  ],
   "src/generation/auto-gen/post-store.test.ts": [
     {
       "kind": "ticket",
@@ -13917,6 +13957,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md"
+    }
+  ],
+  "src/generation/auto-gen/resolve-actor.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-resolveactor-cascade-branch-does-not-verify-chat-partici.md"
     }
   ],
   "src/generation/auto-gen/resolve-actor.ts": [
@@ -15178,6 +15224,10 @@
     }
   ],
   "src/group-chat/mention-parser.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-actor-turn-skip.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-context-injection-correctness.md"
@@ -20431,6 +20481,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-proactive-messaging.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-turn-send-gate.md"
     }
   ],
   "src/routes/messages/handle-scene-transitions.ts": [
@@ -21363,6 +21417,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/chat-privacy.md"
+    }
+  ],
+  "src/routes/story-items": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
     }
   ],
   "src/routes/story-items.ts": [
@@ -25392,11 +25452,23 @@
   "src/turning/turn-strategies.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-actor-turn-skip.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-narration-actor-separation.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-cascade-consecutive-turn-guard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-narration-levels.md"
     }
   ],
   "src/turning/types.ts": [
