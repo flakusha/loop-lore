@@ -75,18 +75,43 @@ export function detectWebpAlpha(buf: Uint8Array,): boolean {
  * @param buf
  */
 export function detectGifAlpha(buf: Uint8Array,): boolean {
-  // Skip logical screen descriptor + global color table
-  let offset = 13 + (2 << (buf[10]! & 0x07));
+  // Skip logical screen descriptor; global color table (if flagged) is
+  // 3 * 2^(N+1) bytes where N = packed-field low 3 bits.
+  const packed = buf[10]!;
+  const gctSize = (packed & 0x80) !== 0 ? 3 * (2 << (packed & 0x07)) : 0;
+  let offset = 13 + gctSize;
   while (offset + 2 < buf.length) {
     const intro = buf[offset]!;
     if (intro === 0x3B) { break; } // trailer
     if (intro === 0x21 && buf[offset + 1] === 0xF9) {
       return (buf[offset + 3]! & 0x01) !== 0;
     }
-    // Skip any block: label byte(s) then length-prefixed sub-blocks
-    offset += intro === 0x21 ? 2 : 1;
-    if (offset >= buf.length) { break; }
-    offset += 1 + buf[offset]!;
+    if (intro === 0x21) {
+      // Extension: label byte(s) done, now walk length-prefixed sub-blocks
+      // through the 0x00 terminator.
+      offset += 2;
+      while (offset < buf.length) {
+        const size = buf[offset]!;
+        offset += 1 + size;
+        if (size === 0) { break; }
+      }
+      continue;
+    }
+    if (intro === 0x2C) {
+      // Image descriptor: 9 fixed bytes + optional local color table,
+      // then LZW minimum code byte + sub-blocks.
+      const lctFlags = buf[offset + 9]!;
+      offset += 10;
+      if ((lctFlags & 0x80) !== 0) { offset += 3 * (2 << (lctFlags & 0x07)); }
+      offset += 1; // LZW minimum code size
+      while (offset < buf.length) {
+        const size = buf[offset]!;
+        offset += 1 + size;
+        if (size === 0) { break; }
+      }
+      continue;
+    }
+    offset += 1; // unknown byte: step forward instead of guessing a size
   }
   return false;
 }
