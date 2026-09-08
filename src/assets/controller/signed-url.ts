@@ -230,10 +230,10 @@ export function resolveSignedUrlSecret(
     if (!_fallbackWarned) {
       _fallbackWarned = true;
       getLog()?.warn(
-        "assets.signedUrlSecret is unset — falling back to auth.jwtSecret. "
-        + "Set ASSETS_SIGNED_URL_SECRET to stop sharing one upstream secret "
-        + "across JWT signing, asset URL signing, and PII pseudonymization.",
-        { domains: ["jwt-sign", "assets-signed-url", "nsfw-pii", "telemetry-pii",] },
+        "assets.signedUrlSecret is unset — falling back to auth.jwtSecret. " +
+          "Set ASSETS_SIGNED_URL_SECRET to stop sharing one upstream secret " +
+          "across JWT signing, asset URL signing, and PII pseudonymization.",
+        { domains: ["jwt-sign", "assets-signed-url", "nsfw-pii", "telemetry-pii",], },
       );
     }
     return jwtSecret!;
