@@ -1,6 +1,6 @@
 # BUG: Rate-limiter module singletons shared across test files cause cross-file flakiness
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ ROOT CAUSE: loginLimiter/registerLimiter in src/routes/auth/shared.ts are module
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: shared.ts limiter factories; per-file instances.
