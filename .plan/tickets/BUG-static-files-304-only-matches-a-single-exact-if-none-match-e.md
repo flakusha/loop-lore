@@ -1,6 +1,6 @@
 # BUG: static-files 304 only matches a single exact If-None-Match ETag
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -16,6 +16,10 @@ Fix: Parse ifNoneMatch into tokens; match if any token equals etag (weak compari
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: static-files.ts:159-161 If-None-Match * + comma list (RFC7232).

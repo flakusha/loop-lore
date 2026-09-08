@@ -1,6 +1,6 @@
 # BUG: Legacy sha256 token-hash fallback authenticates when JWT secret unset
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ src/middleware/auth/token.ts:75-83 — when JWT verify fails or secret unset, fa
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: token.ts:136 gates legacy fallback behind config.legacyOpaqueTokenFallback.

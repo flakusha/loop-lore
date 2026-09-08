@@ -1,6 +1,6 @@
 # BUG: E2E: actor-import and asset endpoints return 500 where 4xx validation expected
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ Evidence 2026-08-25: after repairing an unrelated parse crash in src/generation/
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: import.test.ts 8/8, assets.test.ts 6/6 with 400 assertions.

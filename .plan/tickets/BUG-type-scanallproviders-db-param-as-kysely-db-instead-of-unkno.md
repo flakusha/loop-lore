@@ -3,7 +3,7 @@
 
 # BUG: Type scanAllProviders db param as Kysely<DB> instead of unknown
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -13,6 +13,10 @@ src/admin/provider-health.ts:54 declares scanAllProviders(db?: unknown) and cast
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: provider-health.ts:37 Kysely<DB>; routes pass opts.database.

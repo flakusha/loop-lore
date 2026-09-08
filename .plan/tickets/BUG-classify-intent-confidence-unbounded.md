@@ -3,7 +3,7 @@
 
 # BUG: classifyIntent / parseGmToolDetection accept LLM confidence without numeric bounds check
 
-**Status:** Not Started
+**Status:** ✅ Done
 **Severity:** low
 **Priority:** low
 **Effort:** small
@@ -66,3 +66,7 @@ Correctness / robustness. The `confidence` field is documented as `0.0–1.0` in
 
 - Low-priority defensive hardening; not urgent.
 - `epic-chat-lifecycle-moderation.md`, `epic-assistant-gm-flows.md`.
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: classify-intent.ts:76-80 clampUnit NaN->0.5; gm-tool-detection.ts:85-91.
