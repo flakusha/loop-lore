@@ -10218,6 +10218,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
     },
     {
