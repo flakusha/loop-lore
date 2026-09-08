@@ -560,6 +560,7 @@ export const UsersSchema = t.Object({
   format_version: t.Optional(t.Number(),),
   created_at: t.Optional(t.String(),),
   last_seen_at: t.Optional(t.String(),),
+  encryption_secret: t.Optional(t.String(),),
 },);
 
 // ── asset_links ────────────────────────────────────────────
@@ -2276,6 +2277,13 @@ export const E2eSkippedMessageKeysSchema = t.Object({
   chain_index: t.Number(),
   message_key: t.String(),
   created_at: t.Optional(t.String(),),
+},);
+
+// ── message_search_tokens ────────────────────────────────────────────
+export const MessageSearchTokensSchema = t.Object({
+  message_id: t.String(),
+  token: t.String(),
+  scope: t.String(),
 },);
 
 // ── schema_version ────────────────────────────────────────────

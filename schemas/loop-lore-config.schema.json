@@ -518,6 +518,50 @@
         "nsfwMinAge"
       ]
     },
+    "observability": {
+      "type": "object",
+      "description": "Observability exposure (liveness/readiness probes + Prometheus metrics). All opt-in.",
+      "properties": {
+        "health": {
+          "type": "object",
+          "description": "Liveness/readiness probe opt-in.",
+          "properties": {
+            "liveness": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable /health/live liveness probe."
+            },
+            "readiness": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable /health/ready readiness probe."
+            }
+          },
+          "required": [
+            "liveness",
+            "readiness"
+          ]
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Prometheus scrape opt-in.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable the /metrics Prometheus text-format endpoint."
+            }
+          },
+          "required": [
+            "enabled"
+          ]
+        }
+      },
+      "required": [
+        "health",
+        "metrics"
+      ]
+    },
     "hooks": {
       "type": "object",
       "description": "Content hooks configuration (mood, emotion, NSFW, moderation)",
@@ -1322,6 +1366,60 @@
       },
       "required": [
         "mode"
+      ]
+    },
+    "federation": {
+      "type": "object",
+      "description": "Federation/mesh interconnect opt-in. Disabled by default; an instance must explicitly opt in and list seeds before it advertises or connects.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable federation/mesh interconnect."
+        },
+        "seeds": {
+          "type": "array",
+          "default": [],
+          "description": "Peer origins to bootstrap discovery from.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "peers": {
+          "type": "array",
+          "default": [],
+          "description": "Per-peer endpoint + trust overrides.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "origin": {
+                "type": "string"
+              },
+              "trust": {
+                "type": "object",
+                "properties": {
+                  "caBundle": {
+                    "type": "string"
+                  },
+                  "spkiPins": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          }
+        }
+      },
+      "required": [
+        "enabled",
+        "seeds",
+        "peers"
       ]
     },
     "seeding": {

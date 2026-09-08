@@ -503,6 +503,11 @@ export const SCHEMA = new SchemaManifest()
     emoji: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("message_search_tokens", {
+    message_id: col("text", { notNull: true, },),
+    token: col("text", { notNull: true, },),
+    scope: col("text", { notNull: true, },),
+  },)
   .table("message_seen", {
     id: col("text", { primaryKey: true, },),
     message_id: col("text", { notNull: true, },),
@@ -1907,6 +1912,7 @@ export const SCHEMA = new SchemaManifest()
     format_version: col("integer", { notNull: true, hasDefault: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
     last_seen_at: col("text",),
+    encryption_secret: col("text",),
   },)
   // ── Plugin System ──────────────────────────────────────────────
   .table("plugin_state", {
