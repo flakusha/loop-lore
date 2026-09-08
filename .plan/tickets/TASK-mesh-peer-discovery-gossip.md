@@ -3,7 +3,7 @@
 
 # TASK: Mesh peer discovery and gossip transport
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Implemented
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-federation-swarm-sync.md
