@@ -29,7 +29,8 @@ import { createTestActors, } from "./test-helpers";
 // ./emotion-avatar-service with a stub class lacking generateEmotionAvatar.
 // Probe the real prototype and skip instead of testing the stub
 // (pristine-module guard; see generation/providers/registry.test.ts).
-const emotionServicePristine = typeof EmotionAvatarService.prototype.generateEmotionAvatar === "function";
+const emotionServicePristine = typeof EmotionAvatarService.prototype.generateEmotionAvatar === "function"
+  && typeof EmotionAvatarService.prototype.resolveEmotionPromptModifier === "function";
 const describeReal = emotionServicePristine ? describe : describe.skip;
 
 // ── Mocks ──────────────────────────────────────────────────────
