@@ -107,7 +107,7 @@ async function hmacHexFromKey(
  */
 export async function actorHash(
   userId: string | null,
-  authConfig: AuthConfig | undefined,
+  authConfig: Pick<AuthConfig, "jwtSecret"> | undefined,
 ): Promise<string | null> {
   if (userId === null) { return null; }
   if (!authConfig?.jwtSecret) { return null; }
@@ -123,7 +123,7 @@ export async function actorHash(
  */
 export async function chatHash(
   chatId: string | null,
-  authConfig: AuthConfig | undefined,
+  authConfig: Pick<AuthConfig, "jwtSecret"> | undefined,
 ): Promise<string | null> {
   if (chatId === null) { return null; }
   if (!authConfig?.jwtSecret) { return null; }
