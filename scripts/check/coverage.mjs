@@ -93,7 +93,11 @@ const WAIVERS = {
   // world-setup + character-bundle pipelines whose happy paths live in
   // e2e and whose error branches dominate the uncovered count.
   "characters": { floor: 75, reason: "large module (3968L); error branches + bundle pipeline mostly e2e", },
-};
+  // Gate pass: src/native/ loads a Rust cdylib (BLAKE3 + zstd) whose
+  // success branches are not exercisable from unit tests without the
+  // prebuilt .so on PATH; e2e runs the smoke native loader flow.
+  "native": { floor: 60, reason: "Rust cdylib success-paths covered by e2e native smoke; unit tests cover Bun fallback + ABI guards", },
+ };
 
 /**
  * Resolve the effective floor for a module. Defaults to the global --floor.
