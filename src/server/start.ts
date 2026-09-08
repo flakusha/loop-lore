@@ -7,6 +7,7 @@ import { ensureTlsCerts, } from "../config/cert";
 import { loadConfig, } from "../config/load";
 import { getScheduler, } from "../cron";
 import { initAnonymousMode, initSmk, } from "../crypto";
+import { runDataMigrations, } from "../db/data-migrations/runner";
 import { getDatabase, } from "../db/index";
 import { runMigrations, } from "../db/migrate";
 import { runSchemaBackfill, } from "../db/schema-backfill";
@@ -106,6 +107,7 @@ export async function start() {
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database,);
   await runSchemaBackfill(database,);
+  await runDataMigrations(database,);
   await seedDefaultActors(database, config,);
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);
