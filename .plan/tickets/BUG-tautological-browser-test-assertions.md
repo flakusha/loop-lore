@@ -1,6 +1,6 @@
 # BUG: Tautological browser test assertions
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ HIGH: characters-flow.browser.ts:57 and smoke.browser.ts:146 assert OR-locator '
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: three browser tests rewritten behaviorally.

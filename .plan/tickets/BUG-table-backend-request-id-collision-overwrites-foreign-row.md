@@ -1,6 +1,6 @@
 # BUG: Table backend `request_results.complete`/`fail` overwrite foreign row on request-id collision
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 
@@ -26,12 +26,16 @@ Option (2) is the minimum fix and can ship without a migration.
 
 ## Acceptance Criteria
 
-- [ ] Reproduction test: User A tracks `id=X`; User B calls complete with `id=X`. Assert row X retains User A's body (or update was no-op).
-- [ ] complete/fail/progress guarded by user_id match.
-- [ ] Existing status endpoint ownership check still passes.
-- [ ] No behavior change for the legitimate same-user replay path.
+- [x] Reproduction test: User A tracks `id=X`; User B calls complete with `id=X`. Assert row X retains User A's body (or update was no-op).
+- [x] complete/fail/progress guarded by user_id match.
+- [x] Existing status endpoint ownership check still passes.
+- [x] No behavior change for the legitimate same-user replay path.
 
 ## Related
 
 - Originally identified during strict review of `c1cd4d8b` (the in-memory idempotency user-scoping fix).
 - The original BUG-idempotency-cache-key-lacks-user-scope ticket only closed the in-memory replay vector; this ticket covers the parallel table-backend vector.
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: apply.ts executeScopedByUser AND user_id=? on progress/complete/fail.

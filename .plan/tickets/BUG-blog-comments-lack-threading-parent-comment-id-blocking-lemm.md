@@ -1,6 +1,6 @@
 # BUG: Blog comments lack threading (parent_comment_id) blocking Lemmy/Mastodon/Reddit parity
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 
@@ -12,6 +12,10 @@ Blog comments are flat — no `parent_comment_id` column or self-reference. Bloc
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: 011_blog.ts:21 parent_comment_id self-FK cascade; comments.ts:41; blog-types.ts:27.

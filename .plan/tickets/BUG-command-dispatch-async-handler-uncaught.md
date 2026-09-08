@@ -3,7 +3,7 @@
 
 # BUG: dispatchCommand awaits async handler without safety net — a thrown promise becomes a 500 instead of a friendly systemMessage
 
-**Status:** Not Started
+**Status:** ✅ Done
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -56,3 +56,7 @@ New async commands silently degrade to a generic 500 instead of a friendly syste
 
 - `BUG-chat-trigger-auto-generation-unhandled-rejection.md` (parallel pattern, different layer).
 - `epic-chat-lifecycle-moderation.md`.
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: command.ts:141-144 chokepoint try/catch -> systemMessage, no 500.
