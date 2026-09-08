@@ -52,3 +52,35 @@ export async function resolveActorAccess(
   if (actor.user_id !== userId && actor.owner_id !== userId) { return jsonError("Not allowed", 403,); }
   return null;
 }
+
+
+/**
+ * Resolve the authenticated user's primary persona actor id.
+ *
+ * The primary persona is the actor row where `user_id = $userId AND
+ * owner_id IS NULL` — the user's own player-actor, not a character
+ * they own. At most one such row per user in normal operation.
+ *
+ * Returns `null` when no primary persona exists (the user has not been
+ * provisioned yet — typically only during a race on first login). Routes
+ * that require an actor should treat `null` as 404.
+ *
+ * Used by seen-state endpoints to derive the actor server-side from the
+ * session, closing the trust-boundary inversion where the client
+ * previously supplied `actorId` (always null on the frontend, see
+ * BUG-chat-seen-currentActorId-never-assigned).
+ * @param db     Kysely database handle.
+ * @param userId Authenticated user id (from `ctx.userId`).
+ * @returns Primary persona actor id, or `null` when none exists.
+ */
+export async function resolvePrimaryActorId(
+  db: Kysely<DB>,
+  userId: string,
+): Promise<string | null> {
+  const row = await db.selectFrom("actors",)
+    .select("id",)
+    .where("user_id", "=", userId,)
+    .where("owner_id", "is", null,)
+    .executeTakeFirst();
+  return row?.id ?? null;
+}
