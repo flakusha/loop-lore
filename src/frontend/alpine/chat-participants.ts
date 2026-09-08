@@ -61,7 +61,7 @@ export const chatParticipants: Partial<ChatParticipantsState> & ThisType<ChatSta
       // "me"-scoped call) can attribute to the right actor. Without this,
       // markSeen posts actorId:null and the server rejects with 400
       // (BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po).
-      const me = participants.find((p,) => p.actor_type === "user",);
+      const me = participants.find((p,) => p.actor_type === "user");
       this.currentActorId = me?.actor_id ?? null;
     } catch {
       /* ignore */
