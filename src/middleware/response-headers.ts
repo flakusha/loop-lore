@@ -21,6 +21,7 @@
  */
 
 import type { HeadersConfig, } from "../config/schema";
+import { jsonStringifyOr, } from "../utils/safe-json";
 import { getNonce, } from "./csp-nonce";
 
 /** Canonical header names for case-insensitive comparison. */
@@ -44,7 +45,35 @@ const CANONICAL_HEADER_NAMES = new Map<string, string>([
   ["cache-control", "Cache-Control",],
   ["content-encoding", "Content-Encoding",],
   ["timing-allow-origin", "Timing-Allow-Origin",],
+  ["strict-transport-security", "Strict-Transport-Security",],
+  ["report-to", "Report-To",],
+  ["origin-agent-cluster", "Origin-Agent-Cluster",],
+  ["x-dns-prefetch-control", "X-DNS-Prefetch-Control",],
 ],);
+
+/** Default `Cache-Control` value applied to `application/json` API responses
+ *  when the route omitted one. Asset bytes under `/api/assets/*` carry
+ *  non-JSON `Content-Type` and are excluded from this default. */
+const API_JSON_DEFAULT_CACHE_CONTROL = "no-store";
+
+/** Enables origin-keyed agent clusters (process-isolation hardening). Pairs
+ *  with COOP/COEP; emitted on HTML unless a route opts out via the additive
+ *  precedence rule. */
+const ORIGIN_AGENT_CLUSTER_VALUE = "?1";
+
+/** Default `X-DNS-Prefetch-Control` value for HTML: opt out of speculative
+ *  DNS lookups for privacy. Routes can override. */
+const DNS_PREFETCH_CONTROL_VALUE = "off";
+
+/** Reporting-endpoints header pair — both formats are emitted when at least
+ *  one endpoint is configured. */
+interface ReportingEndpointsValue {
+  /** `Reporting-Endpoints: name="url", …` (current spec). */
+  reporting: string;
+  /** `Report-To: {"group":…,"max_age":…,"endpoints":[…]}` legacy format
+   *  used by Chromium < 96 and Safari. */
+  reportTo: string;
+}
 
 /**
  * Normalize header key to canonical casing for case-insensitive comparison.
@@ -88,7 +117,7 @@ export class ResponseHeaderPolicy {
 
     const kind = this.classify({ request, response, },);
 
-    // SSE and streaming responses pass through without wrapping
+    // SSE and streaming responses pass through without wrapping (preserve body stream).
     if (kind === "sse") { return response; }
 
     const additions = this.buildHeaders(kind, request,);
@@ -105,7 +134,26 @@ export class ResponseHeaderPolicy {
       this.augmentImmutable({ request, headers, },);
     }
 
-    return new Response(response.body, { status: response.status, headers, },);
+    // Default `Cache-Control: no-store` for `application/json` API responses
+    // when the route did not set one. Asset bytes served under `/api/assets/*`
+    // carry non-JSON content-types and are exempt from this gate.
+    if (kind === "api") {
+      const contentType = headers.get("content-type",) ?? "";
+      if (
+        contentType.includes("application/json",) &&
+        !headers.has("cache-control",)
+      ) {
+        headers.set("Cache-Control", API_JSON_DEFAULT_CACHE_CONTROL,);
+      }
+    }
+
+    // Preserve `statusText` on re-wrap — `new Response(body, { status, headers })`
+    // drops the reason phrase, breaking HTTP/1.1 clients that read it.
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    },);
   }
 
   /**
@@ -154,7 +202,10 @@ export class ResponseHeaderPolicy {
     // Headers shared by html and api
     if (kind === "html" || kind === "api") {
       const reporting = this.buildReportingEndpoints();
-      if (reporting) { headers["Reporting-Endpoints"] = reporting; }
+      if (reporting) {
+        headers["Reporting-Endpoints"] = reporting.reporting;
+        if (reporting.reportTo) { headers["Report-To"] = reporting.reportTo; }
+      }
       if (cfg.nel) { headers.NEL = cfg.nel; }
     }
 
@@ -170,9 +221,9 @@ export class ResponseHeaderPolicy {
     return headers;
   }
 
-  /** Serialize the CSP directive set into a single header value. */
+  /** Apply document-specific security/policy headers (CSP, COOP, COEP, hints,
+   *  origin-agent-cluster, dns-prefetch-control). */
   /**
-   * Apply document-specific security/policy headers (CSP, COOP, COEP, hints).
    * @param headers
    * @param request
    */
@@ -200,6 +251,10 @@ export class ResponseHeaderPolicy {
       headers["Critical-CH"] = hints;
       if (cfg.saveData) { headers["Save-Data"] = "on"; }
     }
+    // Process-isolation hardening. Routes win via the additive merge in `apply()`.
+    headers["Origin-Agent-Cluster"] = ORIGIN_AGENT_CLUSTER_VALUE;
+    // Privacy default: opt HTML out of speculative DNS lookups.
+    headers["X-DNS-Prefetch-Control"] = DNS_PREFETCH_CONTROL_VALUE;
   }
 
   /**
@@ -245,11 +300,22 @@ export class ResponseHeaderPolicy {
     },).join(", ",);
   }
 
-  /** Build `Reporting-Endpoints: name="url", …` from the config map. */
-  private buildReportingEndpoints(): string {
+  /** Build the dual-format reporting pair. Returns `null` when no endpoints
+   *  are configured. `reportTo` follows the legacy `Report-To` JSON shape
+   *  using the first configured endpoint as the single group, with a 1-day
+   *  `max_age`. Older Chromium/Safari only read `Report-To`. */
+  private buildReportingEndpoints(): ReportingEndpointsValue | null {
     const entries = Object.entries(this.config.reportingEndpoints,);
-    if (entries.length === 0) { return ""; }
-    return Array.from(entries, ([name, url,],) => `${name}="${url}"`,).join(", ",);
+    if (entries.length === 0) { return null; }
+    const reporting = Array.from(entries, ([name, url,],) => `${name}="${url}"`,).join(", ",);
+    const [firstName, firstUrl,] = entries[0] ?? ["", "",];
+    if (!firstName) { return { reporting, reportTo: "", }; }
+    const reportTo = jsonStringifyOr({
+      group: firstName,
+      max_age: 86400,
+      endpoints: [{ url: firstUrl, },],
+    }, "",);
+    return { reporting, reportTo, };
   }
 
   /**
