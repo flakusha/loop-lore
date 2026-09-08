@@ -1638,6 +1638,18 @@
     "git_issue": "6fb9cbd",
     "status": "done"
   },
+  "BUG-DIFF-SCOPED-COVERAGE-GATE-FLOORS-WHOLE-MODULES-ON-PARTIAL-LC": {
+    "hash": "37a3763",
+    "git_issue": "37a3763",
+    "extid": "BUG-DIFF-SCOPED-COVERAGE-GATE-FLOORS-WHOLE-MODULES-ON-PARTIAL-LC",
+    "type": "BUG",
+    "title": "Diff-scoped coverage gate floors whole modules on partial lcov",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-diff-scoped-coverage-gate-floors-whole-modules-on-partial-lc.md"
+  },
   "BUG-DUAL-VN-CHOICES-ROUTE-REGISTRATION-SHADOWS-GUARDED-ROUTE": {
     "hash": "df61a36",
     "git_issue": "df61a36",
@@ -2901,6 +2913,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-new-chat-vn-toggle-sends-visualnovel-but-backend-reads-rende.md",
     "status": "done"
+  },
+  "BUG-NEW-MIGRATION-PARTS-NEVER-APPLY-TO-EXISTING-DATABASES": {
+    "hash": "2d1a281",
+    "git_issue": "2d1a281",
+    "extid": "BUG-NEW-MIGRATION-PARTS-NEVER-APPLY-TO-EXISTING-DATABASES",
+    "type": "BUG",
+    "title": "New migration parts never apply to existing databases",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
   },
   "BUG-NO-IN-FLIGHT-GENERATION-CHECK-CONCURRENT-GENERATE-REQUESTS-L": {
     "hash": "a33c6f6",
@@ -12044,6 +12068,18 @@
     "source": ".plan/tickets/TASK-crafting-uses-shared-sync-connection-causing-database-is-loc.md",
     "git_issue": "3a009b6"
   },
+  "TASK-CREATE-ITEM-GENERATION-DISCOVERABILITY-DOCUMENT-SUBCOMMANDS-": {
+    "hash": "0d771c9",
+    "git_issue": "0d771c9",
+    "extid": "TASK-CREATE-ITEM-GENERATION-DISCOVERABILITY-DOCUMENT-SUBCOMMANDS-",
+    "type": "TASK",
+    "title": "Create/item generation discoverability: document subcommands in help and palette",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-create-item-generation-discoverability-document-subcommands-.md"
+  },
   "TASK-CREATE-LIBRARY-PACKAGE": {
     "hash": "a12dd85",
     "extid": "TASK-CREATE-LIBRARY-PACKAGE",
@@ -14598,6 +14634,18 @@
     "source": ".plan/tickets/TASK-generation-error-handling-gaps-detector-abort-void-promises.md",
     "git_issue": "d14fd85"
   },
+  "TASK-GENERATION-FAILURE-EXPOSURE-SANITIZE-RAW-LLM-ERROR-OUTPUT-IN": {
+    "hash": "b9d9181",
+    "git_issue": "b9d9181",
+    "extid": "TASK-GENERATION-FAILURE-EXPOSURE-SANITIZE-RAW-LLM-ERROR-OUTPUT-IN",
+    "type": "TASK",
+    "title": "Generation failure exposure: sanitize raw LLM/error output in chat-visible messages",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generation-failure-exposure-sanitize-raw-llm-error-output-in.md"
+  },
   "TASK-GENERATION-MAXTOKENS-AND-PROMPT-ARRAY-UNVALIDATED-COST-DOS": {
     "hash": "3457e6b",
     "extid": "TASK-GENERATION-MAXTOKENS-AND-PROMPT-ARRAY-UNVALIDATED-COST-DOS",
@@ -15563,6 +15611,30 @@
     "epic": "epic-item-systems-unification",
     "tags": [],
     "source": ".plan/tickets/TASK-item-generation.md"
+  },
+  "TASK-ITEM-GENERATION-REVIEW-PARITY-EXTRACT-CATEGORY-RARITY-STATS-": {
+    "hash": "b95bbff",
+    "git_issue": "b95bbff",
+    "extid": "TASK-ITEM-GENERATION-REVIEW-PARITY-EXTRACT-CATEGORY-RARITY-STATS-",
+    "type": "TASK",
+    "title": "Item generation review parity: extract category/rarity/stats, preview them, accept confirm overrides",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-generation-review-parity-extract-category-rarity-stats-.md"
+  },
+  "TASK-ITEM-GENERATION-WEB-PAGE-DIRECT-DESCRIBE-PREVIEW-CONFIRM-UI-": {
+    "hash": "0f840fd",
+    "git_issue": "0f840fd",
+    "extid": "TASK-ITEM-GENERATION-WEB-PAGE-DIRECT-DESCRIBE-PREVIEW-CONFIRM-UI-",
+    "type": "TASK",
+    "title": "Item generation web page: direct describe-preview-confirm UI reusing the assistant pipeline",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-item-generation-web-page-direct-describe-preview-confirm-ui-.md"
   },
   "TASK-ITEM-PROVISIONING-DASHBOARD": {
     "hash": "pending",
@@ -22132,6 +22204,18 @@
     "source": ".plan/tickets/TASK-vn-template-actions.md",
     "status": "done",
     "git_issue": "5cf3d0c"
+  },
+  "TASK-WAIVER-COVERAGE-FLOOR-BELOW-80-FOR-PLUGINS-FRONTEND-NATIVE-I": {
+    "hash": "be72331",
+    "git_issue": "be72331",
+    "extid": "TASK-WAIVER-COVERAGE-FLOOR-BELOW-80-FOR-PLUGINS-FRONTEND-NATIVE-I",
+    "type": "TASK",
+    "title": "Waiver: coverage floor below 80 for plugins/frontend/native in coverage-batch-2 scope",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-waiver-coverage-floor-below-80-for-plugins-frontend-native-i.md"
   },
   "TASK-WARDROBE-DEFERRED-EQUIPPED-ITEMS-OUTFIT-AUTO-MAPPING-FLAG-GA": {
     "hash": "850e55d",
