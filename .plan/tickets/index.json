@@ -22424,6 +22424,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-workflow-engine-schema-loader-template-types-workflow-discov.md"
   },
+  "TASK-WORKFLOW-PERSIST-RUN-SESSIONS-BEYOND-PROCESS-MEMORY": {
+    "hash": "7637627",
+    "git_issue": "7637627",
+    "extid": "TASK-WORKFLOW-PERSIST-RUN-SESSIONS-BEYOND-PROCESS-MEMORY",
+    "type": "TASK",
+    "title": "Workflow: persist run sessions beyond process memory",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-workflow-persist-run-sessions-beyond-process-memory.md"
+  },
   "TASK-WORKFLOW-RUNNER-START-PREVIEW-STEP-CONFIRM-DISPATCH-STEP-UI": {
     "hash": "8ced621",
     "git_issue": "8ced621",
@@ -22435,6 +22447,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
+  },
+  "TASK-WORKFLOW-STRIP-GROUP-CHAT-MENTION-PREFIX-BEFORE-TRIGGER-MATC": {
+    "hash": "83622b7",
+    "git_issue": "83622b7",
+    "extid": "TASK-WORKFLOW-STRIP-GROUP-CHAT-MENTION-PREFIX-BEFORE-TRIGGER-MATC",
+    "type": "TASK",
+    "title": "Workflow: strip group-chat mention prefix before trigger match",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc.md"
   },
   "TASK-WORLD-ALPINE": {
     "hash": "3e0c7b6",
