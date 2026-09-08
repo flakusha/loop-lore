@@ -77,6 +77,7 @@ if (ISOLATED) {
 const { streamToClient, } = await import("./stream-to-client");
 const { buildGenerationResult: buildResultFn, } = await import("./persist");
 const { processStreamingChunk: chunkFn, } = await import("../cancellation-manager");
+const { callWithFailover: failoverFn, } = await import("../providers/call-with-failover");
 
 // Bun's mock.module is process-global: without --isolate, an earlier file
 // may have replaced these modules first (first-wins), so the factories
@@ -102,7 +103,20 @@ const chunkSelfCheck = await (async () => {
     return false;
   }
 })(); 
-const streamSelfOk = persistSelfCheck && chunkSelfCheck;
+// This file does NOT mock call-with-failover: the SUT's abort-link runs
+// through the real failover. Another file's `async () => fakeResponse`
+// stub resolves without touching the provider, so the tracker signal never
+// reaches it. Require the real module (throws "All providers failed"
+// on []) as well.
+const failoverRealCheck = await (async () => {
+  try {
+    await (failoverFn as unknown as (providers: never, req: never,) => Promise<never>)([] as never, {} as never,);
+    return false;
+  } catch (error) {
+    return error instanceof Error && error.message.startsWith("All providers failed",);
+  }
+})();
+const streamSelfOk = persistSelfCheck && chunkSelfCheck && failoverRealCheck;
 const describeSelf = streamSelfOk ? describeOrSkip : describe.skip;
 
 type Event = { type: string; cancelled?: boolean; finishReason?: string; content?: string };
