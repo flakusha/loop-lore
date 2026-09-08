@@ -6,9 +6,12 @@
  *
  * Covers: eligible raw asset enqueues a job, ineligible inputs are silent
  * no-ops, and an ineligible enqueue (e.g. missing asset) is logged not thrown.
+ *
+ * Resource contract: each test owns an isolated `createTestDb()` instance and
+ * a fresh UUID owner, so the in-memory job-store and upload dir never collide
+ * across tests or parallel workers. The temp upload dir is per-process
+ * (mkdtemp) and shared read-write only via asset-id-keyed files.
  */
-import { describe, expect, test, } from "bun:test";
-import type { Kysely, } from "kysely";
 import { mkdtempSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
