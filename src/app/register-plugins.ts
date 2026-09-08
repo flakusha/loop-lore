@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * Plugin registration for the Elysia app.
  *
@@ -8,15 +7,9 @@
  * depends on registration order). Extracted from elysia-app.ts so the app
  * builder stays small; behavior is identical.
  */
-import type { Elysia, } from "elysia";
-import { ageGateRoutes, } from "../age-gate/controller";
-import { assetRoutes, } from "../assets/controller";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
-import { generationRoutes, } from "../generation/controller";
-import { loraRoutes, } from "../generation/lora/routes";
-import { imageEditRoutes, } from "../image-edit/routes";
-import { personaRoutes, } from "../personas/controller";
+import type { Elysia, } from "elysia";
 import { activityRoutes, } from "../routes/activity";
 import { activityStreamRoutes, } from "../routes/activity-stream";
 import { actorE2EPubkeyRoutes, } from "../routes/actor-e2e-pubkeys";
@@ -24,12 +17,14 @@ import { actorItemsRoutes, } from "../routes/actor-items";
 import { actorLoreEntriesRoutes, } from "../routes/actor-lore-entries";
 import { actorMemoriesRoutes, } from "../routes/actor-memories";
 import { actorNotesRoutes, } from "../routes/actor-notes";
-import { adminRoutes, } from "../routes/admin";
 import { adminCharacterOverridesRoutes, } from "../routes/admin-character-overrides";
 import { adminNsfwRoutes, } from "../routes/admin-nsfw";
+import { adminRoutes, } from "../routes/admin";
 import { adminTemplateRoutes, } from "../routes/admin-templates";
+import { ageGateRoutes, } from "../age-gate/controller";
 import { analyticsRoutes, } from "../routes/analytics";
 import { apiKeysRoutes, } from "../routes/api-keys";
+import { assetRoutes, } from "../assets/controller";
 import { assetSearchRoutes, } from "../routes/asset-search";
 import { authProtectedRoutes, authPublicRoutes, } from "../routes/auth";
 import { battleRoutes, } from "../routes/battle";
@@ -55,22 +50,25 @@ import { chatSearchRoutes, } from "../routes/chat-search";
 import { chatSectionsRoutes, } from "../routes/chat-sections";
 import { chatsRoutes, } from "../routes/chats";
 import { commandsRoutes, } from "../routes/commands";
-import { craftingRecipeRoutes, } from "../routes/crafting";
 import { craftingAttemptRoutes, } from "../routes/crafting/attempt";
 import { craftingOrderRoutes, } from "../routes/crafting/orders";
+import { craftingRecipeRoutes, } from "../routes/crafting";
 import { craftingStationRoutes, } from "../routes/crafting/stations";
 import { exportRoutes, } from "../routes/export";
 import { exportSseRoutes, } from "../routes/export-sse";
 import { federationRoutes, } from "../routes/federation";
 import { frontendLogsRoutes, } from "../routes/frontend-logs";
+import { generationRoutes, } from "../generation/controller";
 import { gmNotesRoutes, } from "../routes/gm-notes";
 import { healthRoutes, } from "../routes/health";
 import { i18nRoutes, } from "../routes/i18n";
+import { imageEditRoutes, } from "../image-edit/routes";
 import { importRoutes, } from "../routes/import";
 import { invitesRoutes, } from "../routes/invites";
 import { keyManagementRoutes, } from "../routes/key-management";
 import { livenessRoutes, } from "../routes/liveness";
 import { locationExplorerRoutes, } from "../routes/location-explorer";
+import { loraRoutes, } from "../generation/lora/routes";
 import { messageEncryptionRoutes, } from "../routes/message-encryption";
 import { messageReactionsRoutes, } from "../routes/message-reactions";
 import { messageSearchRoutes, } from "../routes/message-search";
@@ -81,8 +79,9 @@ import { modelComparisonsRoutes, } from "../routes/model-comparisons";
 import { musicLinksRoutes, } from "../routes/music-links";
 import { notificationsRoutes, } from "../routes/notifications";
 import { npcMovementRoutes, } from "../routes/npc-movement";
-import { nsfwRoutes, } from "../routes/nsfw";
 import { nsfwModerationRoutes, } from "../routes/nsfw-moderation";
+import { nsfwRoutes, } from "../routes/nsfw";
+import { personaRoutes, } from "../personas/controller";
 import { pluginRoutes, } from "../routes/plugins";
 import { proactiveMessagingRoutes, } from "../routes/proactive-messaging";
 import { questsRoutes, } from "../routes/quests";
