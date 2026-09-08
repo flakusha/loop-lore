@@ -225,6 +225,7 @@ afterAll(() => {
   // isLlmGenerationConfigured() to true for every later test file (e.g.
   // routes/messages/reply.test.ts takes the LLM path and returns replied:false).
   unregisterProvider("mock-provider",);
+  registry.unregisterAll();
   setTestDatabase(null,);
   testSqlite.close();
 },);

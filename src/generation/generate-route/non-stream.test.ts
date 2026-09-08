@@ -8,14 +8,14 @@
  * latencyMs (not the old hardcoded 0).
  */
 import { describe, expect, it, mock, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../test-utils/isolate-only";
 
 // Telemetry calls are fire-and-forget (void record(...)).
 // To capture them we spy on the module's `record` export.
 const recordedEvents: { eventType: string; data: Record<string, unknown> }[] = [];
 
 // Stub the telemetry service before importing the module under test.
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("../../telemetry/service", () => ({
     record: async (...args: unknown[]) => {
       const params = args[1] as { eventType: string; data: Record<string, unknown> };
@@ -26,7 +26,7 @@ if (ISOLATED) {
 }
 
 // Stub extractAndStoreMemories — it's a background side-effect, not under test.
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("../../memory", () => ({
     extractAndStoreMemories: async () => {},
   }),);
@@ -35,7 +35,7 @@ if (ISOLATED) {
 // Stub failGeneration + activeGenerations — non-stream.ts imports both from
 // the cancellation-manager barrel (stop-and-respond records the last-rendered
 // chunk index); an incomplete mock throws "Export named not found" at import.
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("../cancellation-manager", () => ({
     failGeneration: async () => {},
     activeGenerations: new Map(),
@@ -43,7 +43,7 @@ if (ISOLATED) {
 }
 
 // Stub persist helpers — DB writes are not under test.
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("./persist", () => ({
     buildGenerationResult: () => ({
       content: "test response",
@@ -56,7 +56,7 @@ if (ISOLATED) {
 }
 
 // Stub tool-execution — not exercised in the no-tool-call path.
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("./tool-execution", () => ({
     executeToolCalls: async () => [],
     MAX_TOOL_ROUNDS: 3,
@@ -72,7 +72,7 @@ const fakeResponse = {
   toolCalls: null,
 };
 
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("../providers/call-with-failover", () => ({
     callWithFailover: async () => {
       if (callDelayMs > 0) {
@@ -109,7 +109,7 @@ const persistSelfCheck = (buildResultFn({
   usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
 } as never, false,) as { content?: string }).content === "test response";
 const nonStreamSelfOk = failoverSelfCheck && persistSelfCheck;
-const describeSelf = nonStreamSelfOk ? describeOrSkip : describe.skip;
+const describeSelf = nonStreamSelfOk ? describeOrSkipStrict : describe.skip;
 
 const mockConfig = {
   generation: { defaultProvider: "p", defaultModels: {}, },

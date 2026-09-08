@@ -30,6 +30,21 @@ import {
 import "./caption";
 import { type CommandContext, type CommandResult, getCommand, } from "./registry";
 
+import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../../generation/providers/types";
+import { createLogger, } from "../../logger";
+import { createTestDb, } from "../../test-utils/create-test-db";
+import {
+  insertActors,
+  insertAssetLinks,
+  insertAssets,
+  insertChats,
+  insertMessages,
+  insertModelRoleOverrides,
+  insertUsers,
+} from "../../test-utils/insert-helpers";
+import "./caption";
+import { type CommandContext, type CommandResult, getCommand, } from "./registry";
+
 // Bun's mock.module is process-global and cannot be unmocked: under
 // `bun run` an earlier file (e.g. admin/provider-health.test.ts) may have
 // replaced the provider registry with fakes lacking register/unregister,
@@ -68,6 +83,10 @@ beforeAll(async () => {
 },);
 
 afterAll(() => {
+  // The provider registry is process-global: a leftover "mock" entry flips
+  // isLlmGenerationConfigured() for later suites (reply takes the LLM path)
+  // and pollutes the providers list route.
+  unregisterProvider("mock",);
   setTestDatabase(null,);
 },);
 

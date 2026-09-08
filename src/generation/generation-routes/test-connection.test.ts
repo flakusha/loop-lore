@@ -10,8 +10,8 @@
  * provider, healthy / degraded / failing health checks. Each test uses a
  * unique registry name because registerProvider is first-write-wins.
  */
-import { describe, expect, it, } from "bun:test";
-import { registerProvider, } from "../providers/registry";
+import { afterAll, describe, expect, it, } from "bun:test";
+import { registerProvider, unregisterProvider, } from "../providers/registry";
 import type { LLMProvider, } from "../providers/types";
 import { handleTestConnection, } from "./test-connection";
 
@@ -23,6 +23,12 @@ function registerFake(name: string, healthCheck: LLMProvider["healthCheck"],): v
   } as unknown as LLMProvider,);
 }
 
+// The provider registry is process-global: unregister fakes so later suites see a pristine registry.
+afterAll(() => {
+  unregisterProvider("test-conn-healthy",);
+  unregisterProvider("test-conn-degraded",);
+  unregisterProvider("test-conn-throwing",);
+},);
 describe("handleTestConnection", () => {
   it("returns 401 when the request is unauthenticated", async () => {
     const response = await handleTestConnection({ provider: "anything", },);

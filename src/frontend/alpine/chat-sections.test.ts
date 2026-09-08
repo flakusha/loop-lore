@@ -263,6 +263,10 @@ describe("chatSectionsNav.transferToSection", () => {
 });
 
 describe("chatSectionsNav.trackCurrentSection", () => {
+  // tests/setup-globals.ts installs a shared globalThis.document for all
+  // frontend tests: save/restore it instead of deleting, so later files
+  // (e.g. chat-seen.test.ts) keep their DOM shim.
+  const originalDocument = (globalThis as any).document;
   const divider = (sectionId: string, top: number,) => ({
     dataset: { sectionId, },
     offsetTop: top,
@@ -276,7 +280,7 @@ describe("chatSectionsNav.trackCurrentSection", () => {
     const ctx = Object.create(chatSectionsNav,);
     (chatSectionsNav as any).trackCurrentSection.call(ctx,);
     expect(ctx._currentSectionId,).toBe("s2",);
-    delete (globalThis as any).document;
+    (globalThis as any).document = originalDocument;
   });
 
   test("null when no dividers mounted", () => {
@@ -286,7 +290,7 @@ describe("chatSectionsNav.trackCurrentSection", () => {
     const ctx = Object.assign(Object.create(chatSectionsNav,), { _currentSectionId: "s1", },);
     (chatSectionsNav as any).trackCurrentSection.call(ctx,);
     expect(ctx._currentSectionId,).toBeNull();
-    delete (globalThis as any).document;
+    (globalThis as any).document = originalDocument;
   });
 
   test("null when message list not mounted", () => {
@@ -294,7 +298,7 @@ describe("chatSectionsNav.trackCurrentSection", () => {
     const ctx = Object.assign(Object.create(chatSectionsNav,), { _currentSectionId: "s1", },);
     (chatSectionsNav as any).trackCurrentSection.call(ctx,);
     expect(ctx._currentSectionId,).toBe("s1",);
-    delete (globalThis as any).document;
+    (globalThis as any).document = originalDocument;
   });
 });
 
