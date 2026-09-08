@@ -24097,6 +24097,12 @@
       "source": ".plan/epics/epic-creative-studio.md"
     }
   ],
+  "src/search/providers/messages.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
   "src/search/quota.test.ts": [
     {
       "kind": "ticket",
@@ -24159,6 +24165,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-telemetry-observability.md"
+    }
+  ],
+  "src/search/token-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-search-service-unified.md"
     }
   ],
   "src/search/types.ts": [
