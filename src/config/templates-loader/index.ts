@@ -8,15 +8,20 @@
 // Applies per-domain merge strategies (replace, extend, override).
 
 import { loadCharacterFiles, } from "../character-loader";
-import type { MergeStrategy, TemplatesConfig, } from "../sections/templates";
+import type {
+  AssistantWorkflowConfig,
+  MergeStrategy,
+  TemplatesConfig,
+} from "../sections/templates";
 import { TEMPLATES_DEFAULTS, } from "../sections/templates";
-import { findTemplateFiles, parseTemplateFile, } from "./discovery.js";
+import { findTemplateFiles, findWorkflowFiles, parseTemplateFile, } from "./discovery.js";
 import {
   mergeAvatarConfig,
   mergeCharacterConfig,
   mergeImageEditConfig,
   mergeLlmConfig,
   mergeSdConfig,
+  mergeWorkflowConfig,
 } from "./merge.js";
 import {
   validateAvatarConfig,
@@ -24,6 +29,7 @@ import {
   validateImageEditConfig,
   validateLlmConfig,
   validateSdConfig,
+  validateWorkflowConfig,
   warnUnknownPromptPurposes,
 } from "./validation.js";
 
@@ -112,11 +118,36 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
     }
   }
 
+  // Assistant workflow templates: multi-file workflows/*.yaml, merged in
+  // discovery order (defaults first, user overrides layer over them).
+  for (const filePath of findWorkflowFiles(directory,)) {
+    try {
+      const raw = parseTemplateFile(filePath,);
+      const strategy = (raw.merge as MergeStrategy) ?? "extend";
+      validateWorkflowConfig(raw,);
+      const table = {
+        ...((raw.workflows !== undefined ? raw.workflows : raw) as Record<string, unknown>),
+      };
+      delete table.merge;
+      config.workflows = mergeWorkflowConfig(
+        config.workflows,
+        { workflows: table as unknown as Record<string, AssistantWorkflowConfig>, },
+        strategy,
+      );
+    } catch (error) {
+      throw new Error(
+        `Failed to load workflow template ${filePath}: ${(error as Error).message}`,
+        { cause: error, },
+      );
+    }
+  }
+
   return config;
 }
 
 export {
   findTemplateFiles,
+  findWorkflowFiles,
   TEMPLATE_FILES,
 } from "./discovery.js";
 export {
@@ -125,6 +156,7 @@ export {
   mergeImageEditConfig,
   mergeLlmConfig,
   mergeSdConfig,
+  mergeWorkflowConfig,
 } from "./merge.js";
 export {
   validateAvatarConfig,
@@ -132,4 +164,5 @@ export {
   validateImageEditConfig,
   validateLlmConfig,
   validateSdConfig,
+  validateWorkflowConfig,
 } from "./validation.js";

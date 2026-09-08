@@ -3,7 +3,7 @@
 
 # TASK: Workflow engine schema + loader (template types, workflow discovery, defaults)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (shipped: WorkflowTemplateConfig + step/dispatch/approval types in src/config/sections/templates.ts; findWorkflowFiles multi-file discovery; mergeWorkflowConfig; validateWorkflowConfig; loader wiring; configs/templates/workflows/defaults.yaml with Minimax H3 example; 15 tests with runner slice in src/config/workflow-templates.test.ts. Deferred: ModelFamilyPreset matrix + model-families.yaml — new follow-up.)
 **Priority:** high
 **Effort:** Medium
 
