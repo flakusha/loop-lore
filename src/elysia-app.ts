@@ -17,10 +17,8 @@ import { BunAdapter, } from "elysia/adapter/bun";
 import { registerPlugins, } from "./app/register-plugins";
 import { createAsyncStore, } from "./async";
 import type { Config, } from "./config/schema";
-import { defaultJobs, startScheduler, } from "./cron";
+import { startAppScheduler, } from "./cron";
 import type { Db, } from "./db";
-import { createLogger, getLogger, } from "./logger";
-import type { Logger, } from "./logger/types";
 import { authenticate, } from "./middleware/auth";
 import { CSRF_EXEMPT_ROUTES, CSRF_HEADER, } from "./middleware/csrf";
 import { applyCsrfPlugin, type CsrfMiddlewareOptions, } from "./middleware/csrf-plugin";
@@ -30,6 +28,7 @@ import type { IdempotencyCtx, } from "./middleware/idempotency";
 import { requestIdMiddleware, } from "./middleware/request-id";
 
 import { recordLifecycle, } from "./middleware/lifecycle";
+import { redirectTo, } from "./routes/http-utils";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
 import { versionResolver, } from "./routes/middleware/version-resolver";
 import { v1Routes, } from "./routes/v1";
@@ -37,32 +36,11 @@ import { handleApiRequest, } from "./server";
 
 import { onValidationError, } from "./validation";
 
-/**
- * 302 redirect helper (module scope — no closure capture).
- * @param location
- */
-const redirectTo = (location: string,): Response =>
-  new Response(null, { status: 302, headers: { Location: location, }, },);
-
 /** */
 export interface AppDeps {
   database: Db;
   config: Config;
   handleNonApiRequest: (request: Request,) => Promise<Response>;
-  logger?: Logger;
-}
-
-/**
- * Resolve the scheduler logger: explicit dep wins, else the global root,
- * else a quiet error-level instance (scripts that never init logging).
- */
-function resolveLogger(explicit?: Logger,): Logger {
-  if (explicit) { return explicit; }
-  try {
-    return getLogger();
-  } catch {
-    return createLogger({ level: "error", },);
-  }
 }
 
 /**
@@ -76,17 +54,7 @@ export function createApp(deps: AppDeps,): Elysia {
   // all read/write the same `request_results` table.
   const asyncStore = createAsyncStore(database,);
 
-  // ── Internal scheduled tasks (cron registry) ─────────────
-  // Owns the offload scan (replaces startOffloadDaemon), telemetry
-  // retention, key-rotation checks, memory decay/purge, and provider
-  // rescans. Jobs are unref'd minute-granularity timers — safe to start
-  // under e2e servers and invisible to unit tests (never imported there).
-  const scheduler = startScheduler({
-    database,
-    config,
-    logger: resolveLogger(deps.logger,),
-    jobs: defaultJobs(),
-  },);
+  const scheduler = startAppScheduler({ database, config, },);
 
   const app = new Elysia({ adapter: BunAdapter, },)
     // ── Validation error handler (must be first) ─────────────
