@@ -14,6 +14,7 @@ import type { AssistantConfig, } from "./assistant";
 import type { AuthConfig, } from "./auth";
 import type { ByoKeyConfig, } from "./byo-key";
 import type { CharactersConfig, } from "./characters";
+import type { CronConfig, } from "./cron";
 import type { DbConfig, } from "./db";
 import type { DocumentationConfig, } from "./docs";
 import type { DynamicResponseConfig, } from "./dynamic-response";
@@ -58,4 +59,5 @@ export interface Config {
   characters: CharactersConfig;
   testing?: TestingConfig;
   frontend: FrontendConfig;
+  cron: CronConfig;
 }
