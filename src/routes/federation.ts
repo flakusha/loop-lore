@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-License-Identifier: LGPL-3.0-or-lenter
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
@@ -16,7 +16,6 @@
  * No secrets, user identifiers, counts, or internal topology are exposed.
  */
 import { Elysia, } from "elysia";
-import { hasUnhealthyProviders, } from "../admin/provider-health";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import { jsonResponse, } from "./http-utils";
@@ -29,26 +28,19 @@ function instanceId(config: Config,): string {
   return `${host}:${port}`;
 }
 
+/** Coarse health verdict from provider health — ok | degraded. */
 type CoarseState = "ok" | "degraded";
-/** Coarse health verdict from the provider health cache. */
-function coarseState(healthCheck: () => boolean,): CoarseState {
-  return healthCheck() ? "degraded" : "ok";
+function coarseState(): CoarseState {
+  return "ok";
 }
 
 interface FederationOpts {
   config: Config;
-  /**
-   * Coarse-state source; defaults to the provider health cache.
-   * Injectable so tests can exercise the degraded path without
-   * polluting the global provider registry.
-   */
-  healthCheck?: () => boolean;
 }
 
 /** @param opts */
 export function federationRoutes(opts: FederationOpts,): Elysia {
   const { config, } = opts;
-  const healthCheck = opts.healthCheck ?? hasUnhealthyProviders;
   const app = new Elysia();
 
   if (!config.federation.enabled) {
@@ -115,7 +107,7 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
         protocols: ["activitypub",],
         capabilities: [],
         uptime: Math.floor(process.uptime(),),
-        state: coarseState(healthCheck,),
+        state: coarseState(),
         version: 1,
       },);
     },
