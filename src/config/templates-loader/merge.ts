@@ -2,12 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type {
+  AssistantWorkflowConfig,
   AvatarTemplateConfig,
   CharacterTemplateConfig,
   ImageEditTemplateConfig,
   LlmTemplateConfig,
   MergeStrategy,
   SdTemplateConfig,
+  WorkflowTemplateConfig,
 } from "../sections/templates";
 
 // ── Merge Strategies ────────────────────────────────────────
@@ -234,5 +236,39 @@ export function mergeCharacterConfig(
   return {
     merge: base.merge,
     templates: Array.from(merged.values(),),
+  };
+}
+
+/**
+ * Apply merge strategy for assistant workflow templates.
+ * Workflows keyed by id; extend keeps base on conflict, override lets
+ * the override win, replace discards base.
+ * @param base
+ * @param override
+ * @param strategy
+ */
+export function mergeWorkflowConfig(
+  base: WorkflowTemplateConfig,
+  override: Partial<WorkflowTemplateConfig>,
+  strategy: MergeStrategy,
+): WorkflowTemplateConfig {
+  const overrideWorkflows: Record<string, AssistantWorkflowConfig> = override.workflows ?? {};
+  if (strategy === "replace") {
+    return {
+      merge: base.merge,
+      workflows: overrideWorkflows,
+    };
+  }
+  if (strategy === "override") {
+    return {
+      ...base,
+      ...override,
+      merge: base.merge,
+      workflows: { ...base.workflows, ...overrideWorkflows, },
+    };
+  }
+  return {
+    merge: base.merge,
+    workflows: { ...overrideWorkflows, ...base.workflows, },
   };
 }

@@ -92,11 +92,11 @@ User message
 
 ### Phase 1 — Schema & Loader
 
-- [ ] Add `WorkflowTemplateConfig` types to `src/config/sections/templates.ts`
+- [x] Add `WorkflowTemplateConfig` types to `src/config/sections/templates.ts` (shipped: + step/dispatch/approval types)
 - [ ] Add `ModelFamilyPreset` types to `src/config/sections/templates.ts`
-- [ ] Extend `TemplatesConfig` with `workflows?: WorkflowTemplateConfig` + `model_families?`
-- [ ] Add workflow + model family preset loading to `src/config/templates-loader.ts`
-- [ ] Create `configs/templates/workflows/defaults.yaml` with Minimax H3 example
+- [x] Extend `TemplatesConfig` with `workflows: WorkflowTemplateConfig`
+- [x] Add workflow loading to `src/config/templates-loader/` (findWorkflowFiles + merge/validate + loader wiring)
+- [x] Create `configs/templates/workflows/defaults.yaml` with Minimax H3 example
 - [ ] Create `configs/templates/workflows/model-families.yaml` (all model families)
 
 ### Phase 2 — Intent Routing
@@ -107,7 +107,7 @@ User message
 
 ### Phase 3 — Workflow Runner
 
-- [ ] Create `src/assistant/workflow-runner.ts`:
+- [x] Create `src/assistant/workflow-runner.ts` (shipped pure core: startWorkflow/previewSteps/buildStep/assemblePrompt/confirmRun/confirmAndDispatch; takes resolved template, not id — no registry lookup yet)
   - `startWorkflow(workflowId)`
   - `previewSteps()` — return step titles + descriptions + recommendations + model-family tips
   - `buildStep(stepId, value)` — validate + recommend per step
@@ -115,9 +115,9 @@ User message
   - `assemblePrompt()` — combine step values per template + family formatter
   - `confirmAndDispatch()` — final confirmation → NSFW check → dispatch
 - [ ] Implement model family formatter engine (reads `model-families.yaml` presets)
-- [ ] Create `src/assistant/workflow-runner.test.ts`
-- [x] ~~Activate `src/assistant/sd.ts` stubs~~ — DELETED 2026-08-14 (dead code cleanup; reimplement from scratch when provider is ready)
-- [x] ~~Activate `src/assistant/scenario-source.ts` stubs~~ — DELETED 2026-08-14 (dead code cleanup; reimplement from scratch when DB table exists)
+- [x] Create `src/assistant/workflow-runner.test.ts`
+- [x] ~~Activate `src/assistant/sd.ts` stubs~~ — confirmed gone on dev HEAD (no reactivation needed; reimplement from scratch when provider is ready)
+- [x] ~~Activate `src/assistant/scenario-source.ts` stubs~~ — deleted (zero-caller DB-less stub; reimplement from scratch when DB table exists)
 
 - [ ] Wire dispatch to `POST /api/generation/video` + existing generation pipelines
 - [ ] Wire third-party API dispatch to `TASK-assistant-third-party-api-integration.md`
