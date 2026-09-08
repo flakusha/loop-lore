@@ -3,8 +3,14 @@
 
 import { Elysia, } from "elysia";
 import { EncounterService, } from "../../rpg/encounters/service";
+import { LocationNsfwService, } from "../../rpg/location-nsfw/service";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
-import { log, } from "./shared";
+import {
+  log,
+  nsfwAccessErrorResponse,
+  requireNsfwActorAccess,
+  requireNsfwRouteAccess,
+} from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -12,8 +18,9 @@ import type { HandlerOpts, } from "./types";
  * @param prefix
  */
 export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, } = opts;
+  const { database, config, } = opts;
   const encounterService = new EncounterService(database,);
+  const locationNsfwService = new LocationNsfwService(database,);
 
   return (
     new Elysia({ name: "nsfw-encounters", },)
@@ -24,9 +31,31 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (typeof userId !== "string") { return userId; }
           try {
             const body = ctx.body as Record<string, unknown>;
+            const actorId = (body.actorId as string) ?? "";
+            const chatId = (body.chatId as string) ?? null;
+            const locationId = (body.locationId as string) ?? null;
+
+            const ownership = await requireNsfwActorAccess(database, actorId, ctx,);
+            if (typeof ownership !== "string") { return ownership; }
+
+            const access = await requireNsfwRouteAccess(database, config, userId, {
+              chatId,
+              actorId,
+            },);
+            if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
+
+            // N3: location must be suitable for NSFW encounters (privacy).
+            if (locationId) {
+              const suitable = await locationNsfwService.isSuitableForEncounter(locationId,);
+              if (!suitable.suitable) {
+                return jsonError(`Location not suitable for NSFW encounter: ${suitable.reason ?? "unknown"}`, 400,);
+              }
+            }
+
             const encounter = await encounterService.createEncounter({
               database,
               worldId: (body.worldId as string) ?? null,
+              locationId,
               encounterType: body.encounterType as any,
               intensity: body.intensity as any,
               narrativeStyle: body.narrativeStyle as any,
@@ -45,6 +74,8 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             const encounter = await encounterService.getEncounter(ctx.params.id,);
             if (!encounter) {
@@ -62,6 +93,8 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             const result = await encounterService.advancePhase(ctx.params.id,);
             return jsonResponse(result,);
@@ -76,6 +109,8 @@ export function encounterRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             const encounters = await encounterService.listEncounters(ctx.params.worldId,);
             return jsonResponse(encounters,);
