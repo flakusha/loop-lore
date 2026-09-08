@@ -9,7 +9,28 @@ import { describe, expect, it, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { getRetentionDays, hashId, isFrontendTelemetryEnabled, isTelemetryEnabled, record, } from "./service";
 
-describe("Telemetry Service", () => {
+// Bun's mock.module is process-global and cannot be unmocked: under
+// `bun run` an earlier file (e.g.
+// generate-route/__tests__/abort.test.ts) may have replaced ./service with
+// a capture stub whose record has the SAME arity but never writes.
+// Arity probes cannot detect it — behavior probe: write a row through a
+// scratch DB and skip unless the row lands (pristine-module guard; see
+// generation/providers/registry.test.ts).
+const telemetryPristine = await (async () => {
+  const probe = await createTestDb();
+  try {
+    await record(probe.db, { eventType: "__probe__", data: {}, },);
+    const rows = await probe.db.selectFrom("telemetry_events",).select("id",).limit(1,).execute();
+    return rows.length === 1;
+  } catch {
+    return false;
+  } finally {
+    probe.sqlite.close();
+  }
+})();
+const describeReal = telemetryPristine ? describe : describe.skip;
+
+describeReal("Telemetry Service", () => {
   it("should record events with full metadata", async () => {
     const { db, sqlite, } = await createTestDb();
     await record(db, {
