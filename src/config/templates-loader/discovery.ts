@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { existsSync, readFileSync, statSync, } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
 import { findMainRepoRoot, } from "../../utils/git-worktree";
 import type { TemplatesConfig, } from "../sections/templates";
@@ -60,6 +60,48 @@ export function findTemplateFiles(cwd: string,): Map<string, string> {
     }
   }
 
+  return found;
+}
+
+// ── Workflow Directory Discovery ─────────────────────────────
+//
+// Assistant workflow templates are multi-file: every
+// `configs/templates/workflows/*.yaml` (or *.yml) file contributes one or
+// more workflows keyed by id. Unlike single-file domains, all matching files
+// are returned (not first-match-wins) so user overrides layer over defaults.
+
+/** Workflow file extensions (YAML only — workflows have no TOML shape) */
+const WORKFLOW_EXTENSIONS = [".yaml", ".yml",] as const;
+
+/**
+ * Find assistant workflow template files across search directories.
+ * Returns every matching file (defaults + overrides); callers merge in order.
+ * @param cwd - Working directory to search from
+ */
+export function findWorkflowFiles(cwd: string,): string[] {
+  const mainRoot = findMainRepoRoot(cwd,);
+  const searchDirs = [
+    path.join(cwd, "configs", "templates", "workflows",),
+    path.join(cwd, "templates", "workflows",),
+  ];
+  if (mainRoot && mainRoot !== cwd) {
+    searchDirs.push(
+      path.join(mainRoot, "configs", "templates", "workflows",),
+      path.join(mainRoot, "templates", "workflows",),
+    );
+  }
+  const found: string[] = [];
+  const seen: Record<string, true> = {};
+  for (const dir of searchDirs) {
+    if (!existsSync(dir,) || !statSync(dir,).isDirectory()) { continue; }
+    for (const name of readdirSync(dir,).sort()) {
+      if (!WORKFLOW_EXTENSIONS.some((ext,) => name.endsWith(ext,))) { continue; }
+      const fullPath = path.join(dir, name,);
+      if (seen[fullPath]) { continue; }
+      seen[fullPath] = true;
+      found.push(fullPath,);
+    }
+  }
   return found;
 }
 

@@ -1,0 +1,63 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+# Default assistant workflow templates (epic-assistant-creative-studio-workflows).
+# Loaded by loadTemplateConfig via findWorkflowFiles; user files with the same
+# workflow id layer over these per the file's `merge` strategy.
+merge: extend
+
+workflows:
+  video-minimax-h3:
+    id: video-minimax-h3
+    name: Minimax H3 video generation
+    description: Step-by-step prompt building for Minimax Hailuo H3 text-to-video.
+    triggers:
+      - minimax video
+      - h3 video
+      - hailuo video
+    modelFamily: minimax-h3
+    steps:
+      - id: subject
+        name: Subject
+        type: text
+        description: Main subject of the shot.
+        recommendations:
+          - a lone astronaut crossing a neon-lit alley in the rain
+        minLength: 4
+        maxLength: 400
+        formatTemplate: "Subject: {value}"
+      - id: motion
+        name: Camera motion
+        type: choice
+        description: How the camera moves through the shot.
+        options:
+          - static
+          - slow push-in
+          - orbit
+          - tracking shot
+        recommendations:
+          - slow push-in
+        formatTemplate: "Motion: {value}"
+      - id: style
+        name: Visual style
+        type: multi
+        description: Style tags applied to the render.
+        options:
+          - cinematic
+          - photorealistic
+          - anime
+          - noir
+        recommendations:
+          - cinematic
+          - photorealistic
+        formatTemplate: "Style: {value}"
+    dispatch:
+      backend: generation-video
+      target: POST /api/generation/video
+      payloadTemplate:
+        model: minimax-h3
+        prompt: "{prompt}"
+      nsfwPolicy: prefilter
+    approval:
+      type: confirm
+      preview: true
