@@ -67,6 +67,8 @@ export interface NsfwEncounter {
 export interface CreateEncounterOpts {
   database: Kysely<DB>;
   worldId?: string | null;
+  /** Location where the encounter takes place (NSFW suitability check). */
+  locationId?: string | null;
   encounterType: NsfwEncounterType;
   intensity?: ContentIntensity;
   narrativeStyle?: NarrativeStyle;
