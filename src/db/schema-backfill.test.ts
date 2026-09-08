@@ -158,6 +158,10 @@ describe("schema-backfill", () => {
       kysely,
     );
     expect(version.rows.map((row,) => row.version),).toEqual([21,],);
+    const legacy = await sql<{ version: number }>`SELECT version FROM schema_version WHERE version = 19`.execute(
+      kysely,
+    );
+    expect(legacy.rows.map((row,) => row.version),).toEqual([19,],);
 
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });

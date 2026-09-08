@@ -182,13 +182,20 @@ async function repairRequestedMaterials(database: Kysely<DB>,): Promise<boolean>
     log.warn("crafting_orders absent; skipping requested_materials repair",);
     return false;
   }
-  if (columns.rows.some((row,) => row.name === "requested_materials")) { return false; }
-  await database.schema
-    .alterTable("crafting_orders",)
-    .addColumn("requested_materials", "text", (column,) => column.notNull().defaultTo("[]",),)
-    .execute();
-  log.info("Schema backfill applied: crafting_orders.requested_materials added",);
-  return true;
+  const missing = !columns.rows.some((row,) => row.name === "requested_materials");
+  if (missing) {
+    await database.schema
+      .alterTable("crafting_orders",)
+      .addColumn("requested_materials", "text", (column,) => column.notNull().defaultTo("[]",),)
+      .execute();
+    log.info("Schema backfill applied: crafting_orders.requested_materials added",);
+  }
+  // Part 019 never recorded its version; converge the record wherever the
+  // column is verified present so MAX(schema_version) stays truthful.
+  if ((await tableSql(database, "schema_version",)) !== null) {
+    await recordSchemaVersion(database, 19, "trade requested_materials column",);
+  }
+  return missing;
 }
 
 /**
