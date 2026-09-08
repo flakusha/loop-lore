@@ -129,6 +129,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-type-scanallproviders-db-param-as-kysely-db-instead-of-unkno.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-provider-health-rescan.md"
     }
   ],
   "src/age-gate": [
@@ -2530,6 +2534,10 @@
   "src/async/offload.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
     },
     {
@@ -2543,6 +2551,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-migrate-existing-timers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-registry-core.md"
     },
     {
       "kind": "ticket",
@@ -6619,6 +6635,16 @@
       "source": ".plan/tickets/TASK-crypto-config-algorithm.md"
     }
   ],
+  "src/config/sections/cron.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-registry-core.md"
+    }
+  ],
   "src/config/sections/database.ts": [
     {
       "kind": "epic",
@@ -6969,6 +6995,32 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-content-assets-gallery-hashing-validation.md"
+    }
+  ],
+  "src/cron/jobs.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/scheduler.md"
+    }
+  ],
+  "src/cron/registry.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-registry-core.md"
+    }
+  ],
+  "src/cron/types.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-registry-core.md"
     }
   ],
   "src/crypto": [
@@ -7484,7 +7536,19 @@
     },
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-encryption-workflow.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-migrate-existing-timers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-registry-core.md"
     },
     {
       "kind": "ticket",
@@ -16121,8 +16185,16 @@
       "source": ".plan/epics/epic-crafting-professions.md"
     },
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-memory-decay-writes-nan-strength.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-memory-maintenance-jobs.md"
     },
     {
       "kind": "ticket",
@@ -17269,6 +17341,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-algorithm-tests.md"
+    }
+  ],
+  "src/plugins/event-bus.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/scheduler.md"
     }
   ],
   "src/plugins/events.ts": [
@@ -24197,10 +24279,20 @@
       "source": ".plan/tickets/TASK-cross-platform-single-binary.md"
     }
   ],
+  "src/server/init-background-services.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
+    }
+  ],
   "src/server/start.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-certificate-and-tls-management.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
     },
     {
       "kind": "epic",
@@ -24245,6 +24337,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-migrate-existing-timers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-provider-health-rescan.md"
     },
     {
       "kind": "ticket",
@@ -25019,8 +25119,20 @@
   ],
   "src/telemetry/cleanup.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cron-scheduler.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-purge-unbounded-days.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-migrate-existing-timers.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cron-registry-core.md"
     }
   ],
   "src/telemetry/service.ts": [
