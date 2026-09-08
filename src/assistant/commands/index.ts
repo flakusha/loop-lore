@@ -29,6 +29,7 @@ import "./battle";
 import "./heal";
 import "./rewrite";
 import "./translate";
+import "./workflow";
 
 export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "../command-parser";
 export type { ParsedCommand, } from "../command-parser";
