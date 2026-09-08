@@ -134,8 +134,15 @@ function scopedTestFiles(files,) {
 function changedModules(files,) {
   const mods = new Set();
   for (const f of files) {
-    if (!f.startsWith("src/",)) { continue; }
-    mods.add(f.split("/",)[1],);
+    if (f.startsWith("src/",)) {
+      mods.add(f.split("/",)[1],);
+      continue;
+    }
+    // Top-level files and tests/ trees map to their own module name so the
+    // coverage gate's `--only` never ends up empty when test files changed
+    // (an empty --only disables the filter and floors every module against
+    // a partial lcov — guaranteed false red).
+    mods.add(f.split("/",)[0],);
   }
   return mods.size > 0 ? [...mods,].sort() : null;
 }
