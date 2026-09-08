@@ -73,14 +73,20 @@ export async function report(
       continue;
     }
 
-    const raw = await readFile(reportPath, "utf-8",);
-    const report: CheckReport = JSON.parse(raw,);
-    const overall = report.passed ? colorize("PASSED", "green",) : colorize("FAILED", "red",);
-    console.log(`  ${colorize(wt.name, "cyan",)} ${overall} — ${report.branch} @ ${report.gitHead}`,);
-    console.log(`    run: ${report.runId} | mode: ${report.mode} | ${report.timestamp}`,);
-    for (const [gate, result,] of Object.entries(report.gates,)) {
-      console.log(`    ${gate}: ${formatStatus(result.status,)}`,);
+    try {
+      const raw = await readFile(reportPath, "utf-8",);
+      const report: CheckReport = JSON.parse(raw,);
+      const overall = report.passed ? colorize("PASSED", "green",) : colorize("FAILED", "red",);
+      console.log(`  ${colorize(wt.name, "cyan",)} ${overall} — ${report.branch} @ ${report.gitHead}`,);
+      console.log(`    run: ${report.runId} | mode: ${report.mode} | ${report.timestamp}`,);
+      for (const [gate, result,] of Object.entries(report.gates,)) {
+        console.log(`    ${gate}: ${formatStatus(result.status,)}`,);
+      }
+      console.log("",);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error,);
+      console.log(`  ${colorize(wt.name, "cyan",)} ${colorize("malformed report", "red",)} — ${message}`,);
+      continue;
     }
-    console.log("",);
   }
 }
