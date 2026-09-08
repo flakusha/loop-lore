@@ -38,6 +38,10 @@
   "src/admin/config.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-dbrt-validation-gaps.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md"
     }
   ],
@@ -133,10 +137,22 @@
       "source": ".plan/tickets/TASK-reconcile-epic-frontend-age-gate-verify-age-gate-frontend-ca.md"
     }
   ],
+  "src/age-gate/controller.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-dbrt-validation-gaps.md"
+    }
+  ],
   "src/age-gate/controller.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    }
+  ],
+  "src/age-gate/service.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-dbrt-validation-gaps.md"
     }
   ],
   "src/age-gate/service.ts": [
@@ -4653,6 +4669,12 @@
       "source": ".plan/tickets/TASK-user-block-ban-shadow.md"
     }
   ],
+  "src/chat/music-links.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-dbrt-validation-gaps.md"
+    }
+  ],
   "src/chat/music-links.ts": [
     {
       "kind": "ticket",
@@ -7687,6 +7709,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
+    }
+  ],
+  "src/db/database.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-dbrt-validation-gaps.md"
     }
   ],
   "src/db/enums": [
@@ -13191,6 +13219,14 @@
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-multi-character-sprite-ordering-and-positioning.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
@@ -16443,6 +16479,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-consent-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-wire-consent-gate-into-nsfw-surfaces.md"
     }
   ],
   "src/middleware/nsfw-gate/constants.ts": [
@@ -16953,6 +16993,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
+    }
+  ],
+  "src/nsfw/seduction-prerequisites.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nsfw-wire-seduction-encounter-preconditions.md"
     }
   ],
   "src/nsfw/social-integration.test.ts": [
@@ -25865,6 +25911,16 @@
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
     }
   ],
+  "src/views/blog.html": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-blog-system.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
+    }
+  ],
   "src/views/character-chat-list.html": [
     {
       "kind": "ticket",
@@ -26093,6 +26149,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-html-lang-hardcoded-no-dir-handling-for-i18n.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
     },
     {
       "kind": "ticket",
