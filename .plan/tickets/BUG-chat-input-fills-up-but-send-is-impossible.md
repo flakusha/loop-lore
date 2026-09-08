@@ -3,7 +3,7 @@
 
 # BUG: Chat input fills up but send is impossible
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 
@@ -16,3 +16,7 @@ User can type into the chat input until it is full, but SEND is then impossible 
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Send has no server length cap (MessageCreateBody: content minLength 1 only) so send is always possible; the stranding defect was text loss on failed send — input was cleared optimistically and never restored. sendMessage now restores the typed text on send failure/network error (guarded so it never clobbers newly typed text).

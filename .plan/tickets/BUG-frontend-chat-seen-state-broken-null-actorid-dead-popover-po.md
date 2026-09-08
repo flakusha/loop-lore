@@ -1,6 +1,6 @@
 # BUG: frontend: chat-seen state broken — null actorId, dead popover, polling leak
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ src/frontend/alpine/chat-seen.ts: currentActorId is never assigned (line 38 send
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Residual gap fixed: loadParticipants now assigns currentActorId from the actor_type==='user' participant row, so markSeen posts a real actorId instead of null (server 400). startSeenPolling/stopSeenPolling/loadAllSeen wiring already landed (chat-messages.ts) and initSeenPopover is registered.
