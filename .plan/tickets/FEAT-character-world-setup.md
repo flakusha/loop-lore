@@ -4,7 +4,7 @@
 # FEAT: Character World Setup Bundle (Per-World Overlay)
 
 **Epic:** epic-character-world-setup
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** High
 **Effort:** Medium
 **Tags:** characters, worlds, setup, inventory, lore, backstory, overlay
@@ -51,11 +51,11 @@ per-`(actor, world)` record.
 
 ## Acceptance Criteria
 
-- [ ] `character_world_setup` migration applies cleanly; schema regenerated
-- [ ] `CharacterWorldSetupService` CRUD + resolution unit-tested green
-- [ ] `initializeCharacterWorldSetup` idempotent (no dup rows on re-run)
-- [ ] `bun test src/` green; `bun run check` green (incl. `schemas:check`)
-- [ ] No edits to base `actors` setup semantics
+- [x] `character_world_setup` migration applies cleanly; schema regenerated
+- [x] `CharacterWorldSetupService` CRUD + resolution unit-tested green
+- [x] `initializeCharacterWorldSetup` idempotent (no dup rows on re-run)
+- [x] `bun test src/` green; `bun run check` green (incl. `schemas:check`)
+- [x] No edits to base `actors` setup semantics
 
 ## Files
 
@@ -70,3 +70,7 @@ per-`(actor, world)` record.
 - `TASK-character-world-data-separation.md` — parent 4-layer model
 - `TASK-link-npc-inventory.md` — current inventory lives in `world_items`
 - `TASK-world-item-instance-npc.md` — item placement onto NPCs
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: 005_characters.ts character_world_setup + world-setup crud/resolve + tests.

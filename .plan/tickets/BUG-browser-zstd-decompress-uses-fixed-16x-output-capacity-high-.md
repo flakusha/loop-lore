@@ -1,6 +1,6 @@
 # BUG: browser zstd decompress uses fixed 16x output capacity - high-ratio payloads silently return base64
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Small
 
@@ -13,12 +13,16 @@ Symptom: backend safeDecompress allows expansion up to 1000x; the browser decode
 Fix: two-pass sizing - call a decompressedSize()/decompressBound probe if the WASM exports one, else grow-and-retry loop (cap at safeDecompress's 1000x for parity); on final failure, THROW instead of returning stored input so callers can distinguish corruption from identity content. While there: getDecoderPriority brute-forces gzip/brotli/zstd regardless of declared encoding - keep, but log when the declared algo was not the one that succeeded.
 
 Acceptance:
-- [ ] round-trip test with >16x ratio zstd payload decodes correctly
-- [ ] undecodable payload throws rather than returning base64
-- [ ] parity unit test vs backend safeDecompress limits
+- [x] round-trip test with >16x ratio zstd payload decodes correctly
+- [x] undecodable payload throws rather than returning base64
+- [x] parity unit test vs backend safeDecompress limits
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: browser-compress.ts bound probe :59, grow-retry :139-150, THROWS :230; browser.test.ts.

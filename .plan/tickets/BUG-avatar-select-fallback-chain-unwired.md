@@ -3,7 +3,7 @@
 
 # BUG: selectAvatar ignores fallback_chain (config column is dead)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** P2
 **Epic:** epic-character-core-system
 **Labels:** avatar, selection, fallback, dead-code
@@ -62,15 +62,19 @@ minimum observable fix is **the chain is consulted**.
 
 ## Acceptance Criteria
 
-- [ ] `selectAvatar` consults `defaultConfig.fallbackChain` when weighted
+- [x] `selectAvatar` consults `defaultConfig.fallbackChain` when weighted
       scoring finds no clear match.
-- [ ] World-config `fallbackChain` (when set) overrides default chain.
-- [ ] Chain exhausted → primary avatar → first avatar (existing behavior).
-- [ ] New unit tests in `avatar-service.test.ts` covering:
+- [x] World-config `fallbackChain` (when set) overrides default chain.
+- [x] Chain exhausted → primary avatar → first avatar (existing behavior).
+- [x] New unit tests in `avatar-service.test.ts` covering:
       chain consulted when no emotion match exists / world override wins /
       chain exhausted falls back to primary.
-- [ ] `bun run check` green.
+- [x] `bun run check` green.
 
 ## Notes
 
 **Reconciliation (2026-09-02)**: Prerequisite for epic Wardrobe selection ladder (TASK-selection-algorithm-v2-outfit-emotion.md) — fix first; ladder tests pin these branches. Matrix: matrix-emotion-avatar-assets.md → Ticket Reconciliation.
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: selection.ts:91 fallbackChain, :116 walk, :121 terminal fallback; test:201.

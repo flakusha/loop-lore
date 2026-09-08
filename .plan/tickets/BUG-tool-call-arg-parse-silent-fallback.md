@@ -3,7 +3,7 @@
 
 # BUG: executeToolCalls silently passes empty `{}` to handlers when tool-call arguments JSON is malformed
 
-**Status:** Not Started
+**Status:** ✅ Done
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -59,3 +59,7 @@ Debuggability / tool-call loop reliability. A non-conforming provider or a model
 - `BUG-plugin-tool-gating-empty-role-bypass` (same tool-execution hardening slice).
 - `TASK-tool-call-user-text-sanitization` (companion: input sanitization vs output sanitization).
 - `epic-plugin-system.md`.
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: tool-execution.ts:99+ safeJsonParse explicit tool-result error, handler skipped.
