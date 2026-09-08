@@ -253,9 +253,9 @@ describe("adminTemplateRoutes coverage", () => {
     expect(unknownDefaults.status,).toBe(404,);
   });
 
-  test("update and remove currently accept any authenticated caller", async () => {
-    // Documents the missing admin gate on the update/remove sub-plugins:
-    // create/list require admin.settings but these do not.
+  test("update and remove gate non-admin callers", async () => {
+    // update/remove require admin.settings like create/list: non-admin
+    // callers get 403 instead of a silent write path.
     const put = await user.handle(
       new Request("http://localhost/api/admin/templates/sdxl", {
         method: "PUT",
@@ -263,11 +263,11 @@ describe("adminTemplateRoutes coverage", () => {
         body: JSON.stringify({ detail: "balanced", mode: "last", template: "cov-user-write", },),
       },),
     );
-    expect(put.status,).toBe(200,);
-    const fetched = (await (await admin.handle(
-      new Request("http://localhost/api/admin/templates/sdxl",),
-    )).json()) as FullProfile;
-    expect(fetched.templates.balanced,).toBeDefined();
+    expect(put.status,).toBe(403,);
+    const del = await user.handle(
+      new Request("http://localhost/api/admin/templates/cov-custom", { method: "DELETE", },),
+    );
+    expect(del.status,).toBe(403,);
   });
 
   test("remove protects builtins, 404s unknowns, and deletes customs", async () => {
