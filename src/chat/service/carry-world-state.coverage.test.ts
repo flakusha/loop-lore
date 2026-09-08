@@ -16,7 +16,6 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
   insertActors,
-  insertChats,
   insertLocations,
   insertLocationStates,
   insertNpcStates,
