@@ -1930,6 +1930,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-shadow-notes.md"
     },
     {
@@ -2399,6 +2403,20 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    }
+  ],
+  "src/assistant/workflow-routing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-chat-assistant-gm-handoff-via-intent-to-workflow-routing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-reuse-workflowrunner-for-guided-entity-creation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts.md"
     }
   ],
   "src/assistant/workflow-runner.test.ts": [
