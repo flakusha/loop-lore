@@ -12,11 +12,11 @@ import { loadConfig, } from "../../../config/load";
 import { pickSdProvider, } from "../../../config/schema";
 import type { ImageProviderConfig, } from "../../../config/schema";
 import type { EmotionEntry, } from "../../../config/sections/templates";
-import { AssetAlphaStatus, EmotionType, } from "../../../db/enums";
+import { EmotionType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { generateImages, } from "../../../generation/image-engine";
-import { MattingService, } from "../../../generation/matting";
-import type { MattingProvider, } from "../../../generation/matting";
+import { enqueueAutoMatting, } from "../../../generation/matting/auto-matte";
+import type { MattingProvider, } from "../../../generation/matting/types";
 import { getLogger, } from "../../../logger";
 import { validateProviderUrl, } from "../../../utils/url-validation";
 import type { AvatarService, } from "../avatar-service";
@@ -156,17 +156,7 @@ export async function runBatchGeneration(
  */
 export async function generateEmotionAvatar(
   svc: GenerationDispatchHandle,
-  opts: {
-    actorId: string;
-    emotion: EmotionType;
-    sdConfig: ImageProviderConfig;
-    uploadDir: string;
-    promptPrefix?: string;
-    baseAvatarId?: string;
-    fallbackMode?: "generation" | "none";
-    avatarEmotions?: Record<string, EmotionEntry>;
-    mattingProvider?: MattingProvider;
-  },
+  opts: GenerateEmotionAvatarOpts,
 ): Promise<{ avatarId: string; assetId: string }> {
   const emotionModifier = svc.resolveEmotionPromptModifier(opts.emotion, opts.avatarEmotions,);
 
@@ -189,26 +179,15 @@ export async function generateEmotionAvatar(
     prompt = `character portrait, ${emotionModifier}, detailed face, high quality`;
   }
 
-  // Log fallback usage for monitoring
   if (usedFallback) {
-    getLogger().info(
-      "Using metadata fallback for emotion avatar prompt",
-      {
-        emotion: opts.emotion,
-        baseAvatarId: opts.baseAvatarId,
-        promptLength: prompt.length,
-      },
-    );
+    getLogger().info("Using metadata fallback for emotion avatar prompt", {
+      emotion: opts.emotion,
+      baseAvatarId: opts.baseAvatarId,
+      promptLength: prompt.length,
+    },);
   }
 
-  const n = 1;
-  const outputFormat = "png";
-
-  const outcome = await generateImages(opts.sdConfig, {
-    prompt,
-    n,
-    outputFormat,
-  },);
+  const outcome = await generateImages(opts.sdConfig, { prompt, n: 1, outputFormat: "png", },);
 
   if (!outcome.ok) {
     throw new Error(outcome.error,);
@@ -222,7 +201,7 @@ export async function generateEmotionAvatar(
 
   for (const buffer of images) {
     const id = randomUUID();
-    const filename = `emotion-${opts.emotion}-${id.slice(0, 8,)}.${outputFormat}`;
+    const filename = `emotion-${opts.emotion}-${id.slice(0, 8,)}.png`;
 
     const { asset, } = await createAsset({
       database: svc.db,
@@ -262,17 +241,14 @@ export async function generateEmotionAvatar(
     },);
 
     // Auto-enqueue matting for opaque generated sprites (alpha extraction).
-    if (opts.mattingProvider && asset.alpha_status === AssetAlphaStatus.Raw) {
-      const matting = new MattingService({
-        database: svc.db,
-        uploadDir: opts.uploadDir,
-        resolveProvider: () => opts.mattingProvider ?? null,
-      },);
-      const enqueued = await matting.startMatting({ assetId: asset.id, ownerId: opts.actorId, },);
-      if (!enqueued.ok) {
-        getLogger().warn({ event: "matting.auto_enqueue_skipped", assetId: asset.id, reason: enqueued.error, },);
-      }
-    }
+    await enqueueAutoMatting({
+      database: svc.db,
+      uploadDir: opts.uploadDir,
+      assetId: asset.id,
+      alphaStatus: asset.alpha_status,
+      ownerId: opts.actorId,
+      provider: opts.mattingProvider,
+    },);
   }
 
   return { avatarId, assetId, };
