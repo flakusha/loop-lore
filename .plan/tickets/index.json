@@ -12115,6 +12115,61 @@
     "source": ".plan/tickets/TASK-creative-studio-world-modal.md",
     "git_issue": "f2de730"
   },
+  "TASK-CRON-ADMIN-OBSERVABILITY-DOCS": {
+    "hash": "pending",
+    "extid": "TASK-CRON-ADMIN-OBSERVABILITY-DOCS",
+    "type": "TASK",
+    "title": "TASK-cron-admin-observability-docs",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-cron-scheduler",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cron-admin-observability-docs.md"
+  },
+  "TASK-CRON-MEMORY-MAINTENANCE-JOBS": {
+    "hash": "pending",
+    "extid": "TASK-CRON-MEMORY-MAINTENANCE-JOBS",
+    "type": "TASK",
+    "title": "TASK-cron-memory-maintenance-jobs",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-cron-scheduler",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cron-memory-maintenance-jobs.md"
+  },
+  "TASK-CRON-MIGRATE-EXISTING-TIMERS": {
+    "hash": "pending",
+    "extid": "TASK-CRON-MIGRATE-EXISTING-TIMERS",
+    "type": "TASK",
+    "title": "TASK-cron-migrate-existing-timers",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cron-scheduler",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cron-migrate-existing-timers.md"
+  },
+  "TASK-CRON-PROVIDER-HEALTH-RESCAN": {
+    "hash": "pending",
+    "extid": "TASK-CRON-PROVIDER-HEALTH-RESCAN",
+    "type": "TASK",
+    "title": "TASK-cron-provider-health-rescan",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-cron-scheduler",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cron-provider-health-rescan.md"
+  },
+  "TASK-CRON-REGISTRY-CORE": {
+    "hash": "pending",
+    "extid": "TASK-CRON-REGISTRY-CORE",
+    "type": "TASK",
+    "title": "TASK-cron-registry-core",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-cron-scheduler",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cron-registry-core.md"
+  },
   "TASK-CROSS-PLATFORM-CI-MATRIX": {
     "hash": "pending",
     "extid": "TASK-CROSS-PLATFORM-CI-MATRIX",
