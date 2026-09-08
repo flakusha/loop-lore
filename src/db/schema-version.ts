@@ -21,7 +21,7 @@ import { type Kysely, sql, } from "kysely";
  * const version = await getSchemaVersion(db);
  * // 18 on a fully migrated database
  */
-export async function getSchemaVersion(database: Kysely<unknown>,): Promise<number> {
+export async function getSchemaVersion<Schema,>(database: Kysely<Schema>,): Promise<number> {
   try {
     const result = await sql<{ version: number | null }>`
       SELECT MAX(version) AS version FROM schema_version
@@ -41,8 +41,8 @@ export async function getSchemaVersion(database: Kysely<unknown>,): Promise<numb
  * @example
  * await recordSchemaVersion(database, 19, "chat branches");
  */
-export async function recordSchemaVersion(
-  database: Kysely<unknown>,
+export async function recordSchemaVersion<Schema,>(
+  database: Kysely<Schema>,
   version: number,
   description: string,
 ): Promise<void> {

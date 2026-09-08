@@ -27,6 +27,11 @@ describe("schema-backfill", () => {
   test("no-ops on a converged database", async () => {
     await sql`CREATE TABLE chat_setup_templates (id TEXT PRIMARY KEY, gm_config TEXT)`.execute(kysely,);
     await sql`CREATE VIRTUAL TABLE memories_fts USING fts5(memory_id UNINDEXED, content)`.execute(kysely,);
+    await sql`CREATE TABLE crafting_orders (id TEXT PRIMARY KEY, requested_materials TEXT NOT NULL DEFAULT '[]')`
+      .execute(
+        kysely,
+      );
+    await sql`CREATE TABLE workflow_sessions (chat_id TEXT PRIMARY KEY)`.execute(kysely,);
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });
 
@@ -105,5 +110,55 @@ describe("schema-backfill", () => {
     expect(ddl.rows[0]?.sql.includes("content_rowid",),).toBe(false,);
     const count = await sql<{ n: number }>`SELECT COUNT(*) AS n FROM memories_fts`.execute(kysely,);
     expect(count.rows[0]?.n,).toBe(0,);
+  });
+
+  test("adds a stranded requested_materials column with defaults", async () => {
+    await sql`CREATE TABLE chat_setup_templates (id TEXT PRIMARY KEY, gm_config TEXT)`.execute(kysely,);
+    await sql`CREATE VIRTUAL TABLE memories_fts USING fts5(memory_id UNINDEXED, content)`.execute(kysely,);
+    await sql`CREATE TABLE workflow_sessions (chat_id TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`CREATE TABLE crafting_orders (id TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`INSERT INTO crafting_orders (id) VALUES ('o1')`.execute(kysely,);
+
+    expect(await runSchemaBackfill(kysely,),).toBe(true,);
+
+    const columns = await sql<{ name: string }>`SELECT name FROM pragma_table_info('crafting_orders')`.execute(
+      kysely,
+    );
+    expect(columns.rows.some((row,) => row.name === "requested_materials"),).toBe(true,);
+    const orders = await sql<{ requested_materials: string }>`SELECT requested_materials FROM crafting_orders`.execute(
+      kysely,
+    );
+    expect(orders.rows.map((row,) => row.requested_materials),).toEqual(["[]",],);
+
+    expect(await runSchemaBackfill(kysely,),).toBe(false,);
+  });
+
+  test("creates a stranded workflow_sessions table with version record", async () => {
+    await sql`CREATE TABLE chat_setup_templates (id TEXT PRIMARY KEY, gm_config TEXT)`.execute(kysely,);
+    await sql`CREATE VIRTUAL TABLE memories_fts USING fts5(memory_id UNINDEXED, content)`.execute(kysely,);
+    await sql`CREATE TABLE crafting_orders (id TEXT PRIMARY KEY, requested_materials TEXT NOT NULL DEFAULT '[]')`
+      .execute(
+        kysely,
+      );
+    await sql`CREATE TABLE schema_version (version INTEGER PRIMARY KEY, description TEXT)`.execute(kysely,);
+
+    expect(await runSchemaBackfill(kysely,),).toBe(true,);
+
+    const columns = await sql<{ name: string }>`SELECT name FROM pragma_table_info('workflow_sessions')`.execute(
+      kysely,
+    );
+    expect(columns.rows.map((row,) => row.name),).toEqual([
+      "chat_id",
+      "workflow_id",
+      "step_values",
+      "confirmed",
+      "updated_at",
+    ],);
+    const version = await sql<{ version: number }>`SELECT version FROM schema_version WHERE version = 21`.execute(
+      kysely,
+    );
+    expect(version.rows.map((row,) => row.version),).toEqual([21,],);
+
+    expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });
 });
