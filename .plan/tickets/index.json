@@ -1423,6 +1423,18 @@
     "git_issue": "65693a3",
     "status": "done"
   },
+  "BUG-COVERAGE-MJS-COUNTS-TOP-LEVEL-SRC-FILES-AS-MODULES": {
+    "hash": "eafc759",
+    "git_issue": "eafc759",
+    "extid": "BUG-COVERAGE-MJS-COUNTS-TOP-LEVEL-SRC-FILES-AS-MODULES",
+    "type": "BUG",
+    "title": "coverage.mjs counts top-level src files as modules",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md"
+  },
   "BUG-CRAFTING-STATION-INSTANCES-SCOPED-ACROSS-WORLDS-CROSS-WORLD-": {
     "hash": "7bde6bd",
     "extid": "BUG-CRAFTING-STATION-INSTANCES-SCOPED-ACROSS-WORLDS-CROSS-WORLD-",
@@ -4212,6 +4224,18 @@
     "tags": [],
     "source": ".plan/tickets/BUG-worktree-finalize-must-hard-fail-on-non-mergeable-or-multi-m.md",
     "status": "done"
+  },
+  "BUG-WORKTREE-REPORT-CRASHES-ON-MALFORMED-OR-MISSING-CHECK-REPORT": {
+    "hash": "64ba8b4",
+    "git_issue": "64ba8b4",
+    "extid": "BUG-WORKTREE-REPORT-CRASHES-ON-MALFORMED-OR-MISSING-CHECK-REPORT",
+    "type": "BUG",
+    "title": "worktree report crashes on malformed or missing check reports",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-worktree-report-crashes-on-malformed-or-missing-check-report.md"
   },
   "BUG-WORKTREE-TICKET-WRITES-PLAN-FILES-TO-MAIN-CHECKOUT": {
     "hash": "ab13e3c",
@@ -18705,6 +18729,18 @@
     "epic": "epic-rag-document-processing.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rag-unified-enrichment.md"
+  },
+  "TASK-RAISE-12-BELOW-FLOOR-SRC-MODULES-TO-THE-80-COVERAGE-GATE": {
+    "hash": "b4789c2",
+    "git_issue": "b4789c2",
+    "extid": "TASK-RAISE-12-BELOW-FLOOR-SRC-MODULES-TO-THE-80-COVERAGE-GATE",
+    "type": "TASK",
+    "title": "raise 12 below-floor src modules to the 80% coverage gate",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-raise-12-below-floor-src-modules-to-the-80-coverage-gate.md"
   },
   "TASK-RANDOM-ENCOUNTERS-EVENTS": {
     "hash": "e53d2f0",
