@@ -14,12 +14,12 @@
  * storing describes seed a user + chat row first.
  */
 
-import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { afterAll, afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { MemoryType, } from "../db/enums";
 import type { DB, } from "../db/schema";
-import { registerProvider, } from "../generation/providers/registry";
+import { registerProvider, unregisterProvider, } from "../generation/providers/registry";
 import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../generation/providers/types";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -73,6 +73,10 @@ registerProvider(
   } satisfies LLMProvider,
 );
 
+// The provider registry is process-global: unregister so later suites see a pristine registry.
+afterAll(() => {
+  unregisterProvider("stub-extraction",);
+},);
 /** Minimal Config sufficient for resolveModelRole + resolveSystemPrompt. */
 function makeConfig(): Config {
   return {
