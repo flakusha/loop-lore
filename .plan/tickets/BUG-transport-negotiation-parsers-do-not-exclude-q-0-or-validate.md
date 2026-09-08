@@ -1,6 +1,6 @@
 # BUG: transport negotiation parsers do not exclude q=0 or validate q-values
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -14,6 +14,10 @@ Fix: Drop entries with q <= 0; clamp q to [0,1]; coerce unparseable q to a defau
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: negotiation-parsers clamp q [0,1], drop q<=0 (RFC7231).

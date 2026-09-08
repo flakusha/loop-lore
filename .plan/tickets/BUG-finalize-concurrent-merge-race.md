@@ -3,7 +3,7 @@
 
 # BUG: finalize concurrent-merge race corrupts dev checkout
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** High
 **Epic:** epic-tooling.md
 
@@ -41,5 +41,9 @@ All three are implemented in this branch.
 - [x] Precheck refuses dev-in-progress state
 - [x] Single-flight lock prevents concurrent finalizes
 - [x] Transactional restore on stash-pop conflict preserves work
-- [ ] `bun run check` passes (no regressions)
-- [ ] `bun run schemas:check` passes (no regressions)
+- [x] `bun run check` passes (no regressions)
+- [x] `bun run schemas:check` passes (no regressions)
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: finalize.ts mergeable check :54, lock :113, stash restore :407; signal-safety 20/20.

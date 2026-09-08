@@ -3,7 +3,7 @@
 
 # BUG: Emotion-avatar fallback prompt only sees `alt_text`; never uses character description
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding / epic-character-core-system
 **Labels:** emotion-avatar, fallback, character-description
@@ -101,16 +101,16 @@ the prompt builder — it already prefers caption over altText.
 
 ## Acceptance Criteria
 
-- [ ] `extractAvatarMetadata(db, assetId, { actorId })` returns
+- [x] `extractAvatarMetadata(db, assetId, { actorId })` returns
       `caption: <actors.description>` when no alt text is set.
-- [ ] `extractAvatarMetadata(db, assetId)` (no opts) returns the
+- [x] `extractAvatarMetadata(db, assetId)` (no opts) returns the
       existing shape unchanged (drop-in compat).
-- [ ] Caller in `generation.ts:160` is updated to pass
+- [x] Caller in `generation.ts:160` is updated to pass
       `{ actorId: opts.actorId }`.
-- [ ] For a character with `description = "Aria, the elven mage"`
+- [x] For a character with `description = "Aria, the elven mage"`
       and no alt text, `buildEmotionPrompt` produces
       `"Aria, the elven mage, <emotionModifier>, <qualityTags>"`.
-- [ ] New unit tests in `emotion-avatar-fallback.test.ts` cover:
+- [x] New unit tests in `emotion-avatar-fallback.test.ts` cover:
       alt text wins over description / description used as caption when
       alt text missing / `character_avatars.tags` surfaced /
       malformed `tags` JSON ignored (no throw) /
@@ -152,3 +152,7 @@ once the spec calls.
 ## Notes
 
 **Reconciliation (2026-09-02)**: Prerequisite for epic Emotion Avatar Message Binding persist path (regeneration/render work blocked until hook payload carries actor+chat).
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: emotion-avatar-fallback.ts:65-110 extractAvatarMetadata with caption+tags.

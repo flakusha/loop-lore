@@ -1,6 +1,6 @@
 # FEAT: encrypted envelope v3 - always emit compAlgo and explicit version field
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Small
 
@@ -17,12 +17,16 @@ Scope:
 - document in docs/frontend/encryption.md Storage Format section
 
 Acceptance:
-- [ ] new payloads always carry compAlgo when compressed
-- [ ] legacy payloads without compAlgo still read (back-compat path kept)
-- [ ] spec updated
+- [x] new payloads always carry compAlgo when compressed
+- [x] legacy payloads without compAlgo still read (back-compat path kept)
+- [x] spec updated
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: pipeline.ts always emits compAlgo; legacy back-compat path.
