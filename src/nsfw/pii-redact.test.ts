@@ -12,11 +12,11 @@
  * - different secrets produce different hashes (domain isolation)
  * - domainKey is called with "nsfw-pii" info string
  */
+import { describe, expect, it, } from "bun:test";
 import type { AuthConfig, } from "../config/schema/auth";
 import { actorHash, chatHash, } from "./pii-redact";
 
 const SECRET = "s".repeat(32,);
-
 describe("actorHash", () => {
   it("returns null when userId is null", async () => {
     const result = await actorHash(null, { jwtSecret: SECRET, },);
@@ -46,14 +46,14 @@ describe("actorHash", () => {
   });
 
   it("is deterministic — same inputs give same hash", async () => {
-    const cfg: AuthConfig = { jwtSecret: SECRET, };
+    const cfg: Pick<AuthConfig, "jwtSecret"> = { jwtSecret: SECRET, };
     const r1 = await actorHash("user-123", cfg,);
     const r2 = await actorHash("user-123", cfg,);
     expect(r1,).toBe(r2,);
   });
 
   it("different userIds give different hashes", async () => {
-    const cfg: AuthConfig = { jwtSecret: SECRET, };
+    const cfg: Pick<AuthConfig, "jwtSecret"> = { jwtSecret: SECRET, };
     const r1 = await actorHash("user-123", cfg,);
     const r2 = await actorHash("user-456", cfg,);
     expect(r1,).not.toBe(r2,);
@@ -95,14 +95,14 @@ describe("chatHash", () => {
   });
 
   it("is deterministic — same inputs give same hash", async () => {
-    const cfg: AuthConfig = { jwtSecret: SECRET, };
+    const cfg: Pick<AuthConfig, "jwtSecret"> = { jwtSecret: SECRET, };
     const r1 = await chatHash("chat-abc", cfg,);
     const r2 = await chatHash("chat-abc", cfg,);
     expect(r1,).toBe(r2,);
   });
 
   it("different chatIds give different hashes", async () => {
-    const cfg: AuthConfig = { jwtSecret: SECRET, };
+    const cfg: Pick<AuthConfig, "jwtSecret"> = { jwtSecret: SECRET, };
     const r1 = await chatHash("chat-abc", cfg,);
     const r2 = await chatHash("chat-def", cfg,);
     expect(r1,).not.toBe(r2,);
