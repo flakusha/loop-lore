@@ -142,6 +142,20 @@ class PluginRegistry {
   }
 
   /**
+   * Routes of enabled plugins only. Powers per-request dispatch so
+   * disabling a plugin stops its routes. Unknown (never-registered)
+   * plugin names count as disabled.
+   */
+  getEnabledRoutes(): RouteDefinition[] {
+    const out: RouteDefinition[] = [];
+    for (const [name, defs] of this.routes.entries()) {
+      if (!this.isEnabled(name,)) { continue; }
+      for (const r of defs) { out.push(r); }
+    }
+    return out;
+  }
+
+  /**
    *
    * @param pluginName
    */
