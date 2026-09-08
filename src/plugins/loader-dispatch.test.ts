@@ -1,8 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { dispatchPluginRoute, registry, unloadAllPlugins, } from "./loader";
+
+beforeEach(() => {
+  registry.register({
+    manifest: { name: "demo", version: "1", description: "d", author: "t", },
+    origin: "local",
+    directory: "test",
+  },);
+});
 
 afterEach(() => {
   registry.unregisterAll();
@@ -45,6 +53,29 @@ describe("dispatchPluginRoute", () => {
     ],);
     const res = await dispatchPluginRoute(new Request("http://localhost/x",));
     expect(await res?.text(),).toBe("second",);
+  });
+});
+
+describe("dispatch respects enabled state", () => {
+  test("skips routes of disabled plugins", async () => {
+    registry.addRoutes("demo", [
+      { method: "GET", path: "/x", handler: async () => new Response("x",), },
+    ],);
+    registry.setEnabled("demo", false,);
+    expect(
+      await dispatchPluginRoute(new Request("http://localhost/x",)),
+    ).toBeNull();
+    expect(registry.getAllRoutes(),).toHaveLength(1,);
+    expect(registry.getEnabledRoutes(),).toEqual([],);
+  });
+
+  test("unknown plugin names count as disabled", async () => {
+    registry.addRoutes("ghost", [
+      { method: "GET", path: "/g", handler: async () => new Response("g",), },
+    ],);
+    expect(
+      await dispatchPluginRoute(new Request("http://localhost/g",)),
+    ).toBeNull();
   });
 });
 

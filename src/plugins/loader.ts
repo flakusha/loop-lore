@@ -192,7 +192,7 @@ async function persistPluginState(db: Kysely<DB>, name: string,): Promise<void> 
  * @param request
  */
 export async function dispatchPluginRoute(request: Request): Promise<Response | null> {
-  for (const route of registry.getAllRoutes()) {
+  for (const route of registry.getEnabledRoutes()) {
     const url = new URL(request.url);
     if (url.pathname === route.path && request.method === route.method) {
       const result = await route.handler(request);
