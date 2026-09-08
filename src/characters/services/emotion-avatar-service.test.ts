@@ -23,6 +23,15 @@ import { AvatarService, } from "./avatar-service";
 import { EmotionAvatarService, } from "./emotion-avatar-service";
 import { createTestActors, } from "./test-helpers";
 
+// Bun's mock.module is process-global and cannot be unmocked: without
+// --isolate, an earlier file (e.g.
+// routes/character-emotion-avatars.test.ts) may have replaced
+// ./emotion-avatar-service with a stub class lacking generateEmotionAvatar.
+// Probe the real prototype and skip instead of testing the stub
+// (pristine-module guard; see generation/providers/registry.test.ts).
+const emotionServicePristine = typeof EmotionAvatarService.prototype.generateEmotionAvatar === "function";
+const describeReal = emotionServicePristine ? describe : describe.skip;
+
 // ── Mocks ──────────────────────────────────────────────────────
 
 const originalFetch = globalThis.fetch;
@@ -111,7 +120,7 @@ describe("EmotionAvatarService", () => {
   // They use mock module replacement for createAsset/linkAsset to avoid
   // real filesystem + FK-constrained DB writes.
 
-  describe("API family routing", () => {
+  describeReal("API family routing", () => {
     const baseSdConfig = {
       name: "test-provider",
       label: "Test",
@@ -238,7 +247,7 @@ describe("EmotionAvatarService", () => {
         uploadDir: "/tmp/test-uploads",
       },),).rejects.toThrow("not supported",);
     });
-  });
+  },);
 
   // ── Emotion tags ───────────────────────────────────────────────
 

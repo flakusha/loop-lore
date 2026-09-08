@@ -25,20 +25,13 @@
  * streamToClient actually emits. This is the canonical Bun pattern for
  * `mock.module` interception.
  */
-import { afterEach, beforeEach, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { CancelReason, CancelSource, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { createLogger, } from "../../../logger";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
-import {
-  activeGenerations,
-  cancelGenerationByChat,
-  GenerationCancelledError,
-  registerSideEffectJob,
-  startGenerationTracking,
-} from "../../cancellation-manager";
 import type {
   GenerateRequest as ProviderRequest,
   GenerateResponse,
@@ -51,6 +44,30 @@ import {
   DEFAULT_RESPONSE_LIMIT,
 } from "../../types";
 import type { GenerateRequest, } from "../types";
+
+// Bun's mock.module is process-global and cannot be unmocked. Without
+// --isolate, an earlier file (e.g. stream-to-client.test.ts) may have
+// replaced ../../cancellation-manager with an incomplete stub that omits
+// cancelGenerationByChat/startGenerationTracking/GenerationCancelledError.
+// A static import would then throw SyntaxError at load, and testing the
+// stub would be silently wrong. Dynamic-import + probe: only the genuine
+// module carries cancelGenerationByChat as a function (same guard shape as
+// the pristine-module probe in generation/providers/registry.test.ts).
+// NOTE: placed after the last static import (import/first) and before the
+// mock.module calls below; the probe reads the process-global registry,
+// so in-file order vs this file's own (unrelated) mocks is immaterial.
+const managerModule: unknown = await import("../../cancellation-manager").catch(() => null);
+const managerPristine = !!managerModule &&
+  typeof (managerModule as Record<string, unknown>).cancelGenerationByChat === "function" &&
+  typeof (managerModule as Record<string, unknown>).startGenerationTracking === "function";
+const {
+  activeGenerations,
+  cancelGenerationByChat,
+  GenerationCancelledError,
+  registerSideEffectJob,
+  startGenerationTracking,
+} = (managerPristine ? managerModule : {}) as typeof import("../../cancellation-manager");
+const describeReal = managerPristine ? describeOrSkip : describe.skip;
 
 createLogger({ level: "error", },);
 
@@ -231,7 +248,7 @@ afterEach(() => {
   activeGenerations.clear();
 },);
 
-describeOrSkip("streamToClient — stop-and-respond interrupt", () => {
+describeReal("streamToClient — stop-and-respond interrupt", () => {
   test(
     "cancelGenerationByChat fans out to registered side-effect jobs",
     async () => {
