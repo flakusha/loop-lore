@@ -12543,6 +12543,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-db-reinit-archives-previous-database-instead-of-deleting.md"
   },
+  "TASK-DBRT-VALIDATION-GAPS": {
+    "hash": "pending",
+    "extid": "TASK-DBRT-VALIDATION-GAPS",
+    "type": "TASK",
+    "title": "DB Roundtrip Tests — Validate Inserted Values",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-testing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dbrt-validation-gaps.md"
+  },
   "TASK-DEAD-REJECTBODYIMPERSONATION-GUARD-NEVER-FIRES-ELYSIA-TYPEBO": {
     "hash": "2abec61",
     "git_issue": "2abec61",
@@ -13833,6 +13844,30 @@
     "epic": "epic-runtime-integrity-fail-safes",
     "tags": [],
     "source": ".plan/tickets/TASK-fail-safe-execution-work-safety.md"
+  },
+  "TASK-FEDERATION-CONTENT-CLEARANCE-GATE-PER-CHAT-CONSENT-BEFORE-ME": {
+    "hash": "41f4f83",
+    "git_issue": "41f4f83",
+    "extid": "TASK-FEDERATION-CONTENT-CLEARANCE-GATE-PER-CHAT-CONSENT-BEFORE-ME",
+    "type": "TASK",
+    "title": "Federation content clearance gate: per-chat consent before mesh push",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-mesh-federation-content-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-content-clearance-gate-per-chat-consent-before-me.md"
+  },
+  "TASK-FEDERATION-DEK-RE-WRAP-PROTOCOL-SERVER-TO-SERVER-KEY-EXPORT": {
+    "hash": "035958e",
+    "git_issue": "035958e",
+    "extid": "TASK-FEDERATION-DEK-RE-WRAP-PROTOCOL-SERVER-TO-SERVER-KEY-EXPORT",
+    "type": "TASK",
+    "title": "Federation DEK re-wrap protocol: server-to-server key export",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-mesh-federation-content-sharing",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-dek-re-wrap-protocol-server-to-server-key-export.md"
   },
   "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL": {
     "hash": "99c122b",
@@ -17106,6 +17141,15 @@
     "source": ".plan/tickets/TASK-nsfw-game-mechanics.md",
     "git_issue": "dffee6b"
   },
+  "TASK-NSFW-GATE-API-NSFW-ROUTES-AUTHZ-ACCESS-CONSENT": {
+    "hash": "e8f7a75",
+    "extid": "TASK-NSFW-GATE-API-NSFW-ROUTES-AUTHZ-ACCESS-CONSENT",
+    "title": "# TASK: NSFW: gate /api/nsfw routes (authZ + access + consent)",
+    "priority": "medium",
+    "epic": "epic-nsfw-integration-gaps.md",
+    "source": ".plan/tickets/TASK-nsfw-gate-api-nsfw-routes-authz-access-consent.md",
+    "git_issue": "e8f7a75"
+  },
   "TASK-NSFW-GATE-GAPS-PERFORMEDBY-SPOOF-AUDIT-TARGET-MISCONFIG-DISA": {
     "hash": "7ba53d1",
     "extid": "TASK-NSFW-GATE-GAPS-PERFORMEDBY-SPOOF-AUDIT-TARGET-MISCONFIG-DISA",
@@ -17429,6 +17473,24 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-nsfw-weather-integration.md"
+  },
+  "TASK-NSFW-WIRE-CONSENT-GATE-INTO-NSFW-SURFACES": {
+    "hash": "d7c0253",
+    "extid": "TASK-NSFW-WIRE-CONSENT-GATE-INTO-NSFW-SURFACES",
+    "title": "# TASK: NSFW: wire consent gate into NSFW surfaces",
+    "priority": "medium",
+    "epic": "epic-nsfw-integration-gaps.md",
+    "source": ".plan/tickets/TASK-nsfw-wire-consent-gate-into-nsfw-surfaces.md",
+    "git_issue": "d7c0253"
+  },
+  "TASK-NSFW-WIRE-SEDUCTION-ENCOUNTER-PRECONDITIONS": {
+    "hash": "e0d7c5c",
+    "extid": "TASK-NSFW-WIRE-SEDUCTION-ENCOUNTER-PRECONDITIONS",
+    "title": "# TASK: NSFW: wire seduction/encounter preconditions",
+    "priority": "medium",
+    "epic": "epic-nsfw-game-mechanics.md",
+    "source": ".plan/tickets/TASK-nsfw-wire-seduction-encounter-preconditions.md",
+    "git_issue": "e0d7c5c"
   },
   "TASK-OBSERVABILITY-TELEMETRY": {
     "hash": "4218340",
@@ -21623,6 +21685,30 @@
     "tags": [],
     "source": ".plan/tickets/TASK-visual-novel-mode.md"
   },
+  "TASK-VN-ACTIVE-SPEAKER-SPRITE-HIGHLIGHT-AND-DIMMING": {
+    "hash": "2fba05b",
+    "git_issue": "2fba05b",
+    "extid": "TASK-VN-ACTIVE-SPEAKER-SPRITE-HIGHLIGHT-AND-DIMMING",
+    "type": "TASK",
+    "title": "VN: active-speaker sprite highlight and dimming",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Visual Novel Mode; Immersion & Presentation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-active-speaker-sprite-highlight-and-dimming.md"
+  },
+  "TASK-VN-ALPHA-EXTRACTION-MATTING-JOB-FOR-OPAQUE-CHARACTER-IMAGES": {
+    "hash": "ea6d881",
+    "git_issue": "ea6d881",
+    "extid": "TASK-VN-ALPHA-EXTRACTION-MATTING-JOB-FOR-OPAQUE-CHARACTER-IMAGES",
+    "type": "TASK",
+    "title": "VN: alpha extraction matting job for opaque character images",
+    "label": "task",
+    "priority": "high",
+    "epic": "Avatar Alpha Channel + VN Layering; Aux Enrichment Pipeline",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-alpha-extraction-matting-job-for-opaque-character-images.md"
+  },
   "TASK-VN-BRANCHING-CHOICES": {
     "hash": "768f67a",
     "extid": "TASK-VN-BRANCHING-CHOICES",
@@ -21636,6 +21722,18 @@
     "status": "done",
     "git_issue": "768f67a"
   },
+  "TASK-VN-CHARACTER-SPRITE-ROSTER-PER-CHAT": {
+    "hash": "9cac2d4",
+    "git_issue": "9cac2d4",
+    "extid": "TASK-VN-CHARACTER-SPRITE-ROSTER-PER-CHAT",
+    "type": "TASK",
+    "title": "VN: character sprite roster per chat",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering; Visual Novel Mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
+  },
   "TASK-VN-DYNAMIC-GENERATION": {
     "hash": "d539123",
     "extid": "TASK-VN-DYNAMIC-GENERATION",
@@ -21648,6 +21746,30 @@
     "source": ".plan/tickets/TASK-vn-dynamic-generation.md",
     "status": "done",
     "git_issue": "d539123"
+  },
+  "TASK-VN-EMOTION-MOOD-AND-ACTION-DRIVEN-SPRITE-STAGING": {
+    "hash": "e99e21e",
+    "git_issue": "e99e21e",
+    "extid": "TASK-VN-EMOTION-MOOD-AND-ACTION-DRIVEN-SPRITE-STAGING",
+    "type": "TASK",
+    "title": "VN: emotion mood and action driven sprite staging",
+    "label": "task",
+    "priority": "high",
+    "epic": "Emotion Avatar Message Binding; Visual Novel Mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
+  },
+  "TASK-VN-MULTI-CHARACTER-SPRITE-ORDERING-AND-POSITIONING": {
+    "hash": "9da9517",
+    "git_issue": "9da9517",
+    "extid": "TASK-VN-MULTI-CHARACTER-SPRITE-ORDERING-AND-POSITIONING",
+    "type": "TASK",
+    "title": "VN: multi-character sprite ordering and positioning",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering; Visual Novel Mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-multi-character-sprite-ordering-and-positioning.md"
   },
   "TASK-VN-QA-MODE": {
     "hash": "0f9d87d",
@@ -21674,6 +21796,18 @@
     "source": ".plan/tickets/TASK-vn-scene-template-system.md",
     "status": "done",
     "git_issue": "83a03a9"
+  },
+  "TASK-VN-SPRITE-CENTER-FACE-ANCHOR-SETUP-AND-DETECTION-FOR-GENERAT": {
+    "hash": "5cf8b16",
+    "git_issue": "5cf8b16",
+    "extid": "TASK-VN-SPRITE-CENTER-FACE-ANCHOR-SETUP-AND-DETECTION-FOR-GENERAT",
+    "type": "TASK",
+    "title": "VN: sprite center/face anchor setup and detection for generated and uploaded images",
+    "label": "task",
+    "priority": "medium",
+    "epic": "Avatar Alpha Channel + VN Layering; Asset Transform Metadata",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-sprite-center-face-anchor-setup-and-detection-for-generat.md"
   },
   "TASK-VN-SPRITE-LAYER-COMPOSITING": {
     "hash": "8b15b89",
@@ -22099,6 +22233,30 @@
     "tags": [],
     "source": ".plan/tickets/TASK-wiring-dead-code-gate.md"
   },
+  "TASK-WORKFLOW-ENGINE-SCHEMA-LOADER-TEMPLATE-TYPES-WORKFLOW-DISCOV": {
+    "hash": "79218e3",
+    "git_issue": "79218e3",
+    "extid": "TASK-WORKFLOW-ENGINE-SCHEMA-LOADER-TEMPLATE-TYPES-WORKFLOW-DISCOV",
+    "type": "TASK",
+    "title": "Workflow engine schema + loader (template types, workflow discovery, defaults)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-workflow-engine-schema-loader-template-types-workflow-discov.md"
+  },
+  "TASK-WORKFLOW-RUNNER-START-PREVIEW-STEP-CONFIRM-DISPATCH-STEP-UI": {
+    "hash": "8ced621",
+    "git_issue": "8ced621",
+    "extid": "TASK-WORKFLOW-RUNNER-START-PREVIEW-STEP-CONFIRM-DISPATCH-STEP-UI",
+    "type": "TASK",
+    "title": "Workflow runner (start/preview/step/confirm/dispatch + step UI)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
+  },
   "TASK-WORLD-ALPINE": {
     "hash": "3e0c7b6",
     "extid": "TASK-WORLD-ALPINE",
@@ -22478,32 +22636,5 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
-  },
-  "TASK-NSFW-GATE-API-NSFW-ROUTES-AUTHZ-ACCESS-CONSENT": {
-    "hash": "e8f7a75",
-    "extid": "TASK-NSFW-GATE-API-NSFW-ROUTES-AUTHZ-ACCESS-CONSENT",
-    "title": "# TASK: NSFW: gate /api/nsfw routes (authZ + access + consent)",
-    "priority": "medium",
-    "epic": "epic-nsfw-integration-gaps.md",
-    "source": ".plan/tickets/TASK-nsfw-gate-api-nsfw-routes-authz-access-consent.md",
-    "git_issue": "e8f7a75"
-  },
-  "TASK-NSFW-WIRE-CONSENT-GATE-INTO-NSFW-SURFACES": {
-    "hash": "d7c0253",
-    "extid": "TASK-NSFW-WIRE-CONSENT-GATE-INTO-NSFW-SURFACES",
-    "title": "# TASK: NSFW: wire consent gate into NSFW surfaces",
-    "priority": "medium",
-    "epic": "epic-nsfw-integration-gaps.md",
-    "source": ".plan/tickets/TASK-nsfw-wire-consent-gate-into-nsfw-surfaces.md",
-    "git_issue": "d7c0253"
-  },
-  "TASK-NSFW-WIRE-SEDUCTION-ENCOUNTER-PRECONDITIONS": {
-    "hash": "e0d7c5c",
-    "extid": "TASK-NSFW-WIRE-SEDUCTION-ENCOUNTER-PRECONDITIONS",
-    "title": "# TASK: NSFW: wire seduction/encounter preconditions",
-    "priority": "medium",
-    "epic": "epic-nsfw-game-mechanics.md",
-    "source": ".plan/tickets/TASK-nsfw-wire-seduction-encounter-preconditions.md",
-    "git_issue": "e0d7c5c"
   }
 }
