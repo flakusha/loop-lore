@@ -3,7 +3,7 @@
 
 ## TASK: Migrate existing timers onto the cron registry
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-cron-scheduler

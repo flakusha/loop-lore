@@ -3,7 +3,7 @@
 
 ## TASK: Cron admin observability + docs
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Small
 **Epic:** epic-cron-scheduler
