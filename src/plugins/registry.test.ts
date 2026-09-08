@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach } from "bun:test";
+import { describe, test, expect, beforeEach, afterAll } from "bun:test";
 import { registry } from "./registry";
 import type { LoadedPlugin, RouteDefinition, ToolDefinition } from "./types";
 
@@ -20,6 +20,9 @@ function makePlugin(name: string, origin: "core" | "community" | "local" = "comm
   };
 }
 
+afterAll(() => {
+  registry.unregisterAll();
+},);
 describe("Plugin Registry", () => {
   beforeEach(() => {
     registry.unregisterAll();

@@ -1,5 +1,5 @@
 import "./i18n.test-helper";
-import { afterEach, describe, expect, test, } from "bun:test";
+import { afterAll, afterEach, describe, expect, test, } from "bun:test";
 import { chatMessages, } from "./chat-messages";
 import type { ChatState, Message, } from "./types";
 
@@ -36,7 +36,12 @@ const mockMessage = (id: string, role = "user",): Message => ({
   created_at: new Date().toISOString(),
 });
 
-globalThis.document = {
+// tests/setup-globals.ts installs a shared globalThis.document for all frontend
+// tests: extend it for these tests (querySelector: null) and restore after,
+// so later files keep a working DOM shim (showToast needs querySelector).
+const originalDocument = globalThis.document;
+const messagesDocument = {
+  ...originalDocument,
   createElement: (tag: string,) => {
     const el: any = { style: {}, value: "", tagName: tag.toUpperCase(), };
     Object.defineProperty(el, "scrollHeight", { value: 20, writable: true, configurable: true, },);
@@ -45,6 +50,10 @@ globalThis.document = {
   },
   querySelector: null,
 } as any;
+globalThis.document = messagesDocument;
+afterAll(() => {
+  globalThis.document = originalDocument;
+},);
 
 describe("chatMessages", () => {
   describe("autoResize", () => {
