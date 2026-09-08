@@ -21,8 +21,8 @@ import { getLogger, } from "../../logger";
 import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import type { GenDeps, } from "./deps";
 import { fireRandomEvent, } from "./fire-random-event";
-import { renderStreamMessage, } from "./stream-render";
 import { resolveChatKnownEntityNames, } from "./resolve-known-names";
+import { renderStreamMessage, } from "./stream-render";
 
 /** */
 export interface PostStoreOpts {

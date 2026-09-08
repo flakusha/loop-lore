@@ -53,7 +53,6 @@ export async function resolveActorAccess(
   return null;
 }
 
-
 /**
  * Resolve the authenticated user's primary persona actor id.
  *
