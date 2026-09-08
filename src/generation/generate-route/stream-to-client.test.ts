@@ -90,8 +90,8 @@ const persistProbeOut = buildResultFn({
   finishReason: "stop",
   usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
 } as never, false,) as { content?: string };
-const persistSelfCheck = persistProbeOut.content === "__stream_selfcheck__"
-  && !("generationTimeMs" in (persistProbeOut as Record<string, unknown>));
+const persistSelfCheck = persistProbeOut.content === "__stream_selfcheck__" &&
+  !("generationTimeMs" in (persistProbeOut as Record<string, unknown>));
 const chunkSelfCheck = await (async () => {
   try {
     return await (chunkFn as unknown as (opts: unknown,) => Promise<unknown>)({
@@ -102,7 +102,7 @@ const chunkSelfCheck = await (async () => {
   } catch {
     return false;
   }
-})(); 
+})();
 // This file does NOT mock call-with-failover: the SUT's abort-link runs
 // through the real failover. Another file's `async () => fakeResponse`
 // stub resolves without touching the provider, so the tracker signal never

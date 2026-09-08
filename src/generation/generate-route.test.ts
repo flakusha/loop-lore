@@ -61,7 +61,7 @@ const registryPristine = (() => {
   } catch {
     return false;
   }
-})(); 
+})();
 const generateFlowPristine = failoverPristine && persistPristine && toolExecPristine && registryPristine;
 const describeReal = generateFlowPristine ? describe : describe.skip;
 
@@ -408,7 +408,7 @@ describeReal("handleGenerate — non-streaming (complete)", () => {
     const data = (await res.json()) as Record<string, unknown>;
     expect(data.error,).toContain("Generation failed",);
   });
-});
+},);
 
 describeReal("handleGenerate — streaming (SSE)", () => {
   test("returns SSE stream with content and done events", async () => {
@@ -491,7 +491,7 @@ describeReal("handleGenerate — streaming (SSE)", () => {
     // Should contain error event
     expect(text,).toContain("error",);
   });
-});
+},);
 
 describeReal("handleGenerate — prompt assembly path", () => {
   test("uses PromptAssembler when no explicit prompt given", async () => {
@@ -520,4 +520,4 @@ describeReal("handleGenerate — prompt assembly path", () => {
     // PromptAssembler should have included the system prompt
     expect(data.content,).toBeDefined();
   });
-});
+},);

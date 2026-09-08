@@ -140,7 +140,7 @@ describeReal("executeToolCalls context forwarding", () => {
     expect(parsed.error,).toContain("tool arguments must be a JSON object",);
     expect(parsed.error,).toContain("null",);
   });
-});
+},);
 
 describeReal("tool output sanitization (BUG-generation-error-handling-gaps)", () => {
   const ctx = { db: {} as never, actorId: "actor-1", chatId: "chat-1", };
@@ -191,4 +191,4 @@ describeReal("tool output sanitization (BUG-generation-error-handling-gaps)", ()
     expect(results[0]?.content,).not.toMatch(/onerror/i,);
     expect(results[0]?.content,).toContain('<a href="x"',);
   });
-});
+},);

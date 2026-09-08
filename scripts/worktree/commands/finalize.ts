@@ -8,16 +8,9 @@ import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { getRootBranch, gitSync, gitSyncQuiet, } from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { colorize, log, section, } from "../utils/output";
+import { DEV_IN_PROGRESS_HEADS, FINALIZE_STASH_PREFIX, } from "./abort";
 
 const LOCK_FILENAME = ".worktree-finalize.lock";
-// Git-state sentinel files that indicate an unfinished operation on the dev
-// checkout. If any of these exist, popping a stash or fast-forwarding onto
-// the tree would compound damage — files end up "modified" instead of the
-// operation cancelling cleanly. See BUG-finalize-race.
-const DEV_IN_PROGRESS_HEADS = ["MERGE_HEAD", "REBASE_HEAD", "CHERRY_PICK_HEAD",] as const;
-// Stash label prefix used by `stashDevForMerge` so `restoreDevFromStash` and
-// the precheck can recognize the agent's own leftover entries.
-const FINALIZE_STASH_PREFIX = "worktree-finalize-";
 // Signals we treat as user-initiated cancellation. SIGINT (Ctrl-C), SIGTERM
 // (orchestrator kill), SIGHUP (terminal close / parent shell exit). All three
 // must trigger the same transactional rollback: release lock + abort in-
@@ -464,9 +457,9 @@ function restoreDevFromStash(
   console.log(`  When ready: cd ${repoRoot} && git stash pop ${stashRef}`,);
 }
 
-function runCheck(wtPath: string,): boolean {
+function runCheck(wtPath: string, diffBase: string,): boolean {
   const result = Bun.spawnSync(
-    ["bun", "run", "check",],
+    ["bun", "run", "check", "--diff-base", diffBase,],
     { stdout: "pipe", stderr: "pipe", cwd: wtPath, },
   );
   return result.exitCode === 0;
@@ -601,7 +594,7 @@ async function runFinalize(
     log("warn", "Skipped: --force flag set",);
   } else {
     const hasBunLock = existsSync(resolve(wtPath, "bun.lock",),);
-    if (hasBunLock && runCheck(wtPath,)) {
+    if (hasBunLock && runCheck(wtPath, targetBranch,)) {
       log("success", "Checks passed",);
     } else if (!hasBunLock) {
       log("warn", "Skipped: no bun.lock found",);

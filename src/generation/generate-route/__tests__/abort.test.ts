@@ -78,11 +78,14 @@ const describeReal = managerPristine ? describeOrSkip : describe.skip;
 async function isTelemetryCaptureOurs(): Promise<boolean> {
   try {
     const { record: recordFn, } = await import("../../../telemetry/service");
-    await (recordFn as unknown as (_db: unknown, params: { eventType: string; data: Record<string, unknown> },) => Promise<void>)(
+    await (recordFn as unknown as (
+      _db: unknown,
+      params: { eventType: string; data: Record<string, unknown> },
+    ) => Promise<void>)(
       undefined,
       { eventType: "__abort_selfcheck__", data: {}, },
     );
-    return recordedEvents.some((e,) => e.eventType === "__abort_selfcheck__",);
+    return recordedEvents.some((e,) => e.eventType === "__abort_selfcheck__");
   } catch {
     return false;
   }
