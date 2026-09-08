@@ -14,6 +14,7 @@ import { docs, } from "./docs";
 import { dynamicResponse, } from "./dynamic-response";
 import { encryption, } from "./encryption";
 import { frontend, } from "./frontend";
+import { federation, } from "./federation";
 import { generation, } from "./generation";
 import { headers, } from "./headers";
 import { hooks, } from "./hooks";
@@ -21,6 +22,7 @@ import { idempotency, } from "./idempotency";
 import { logging, } from "./logging";
 import { messages, } from "./messages";
 import { nsfw, } from "./nsfw";
+import { observability, } from "./observability";
 import { seeding, } from "./seeding";
 import { server, } from "./server";
 import { templates, } from "./templates";
@@ -47,6 +49,7 @@ export const jsonSchema = (): JSONSchema => {
       transport,
       messages,
       nsfw,
+      observability,
       hooks,
       idempotency,
       generation,
@@ -55,6 +58,7 @@ export const jsonSchema = (): JSONSchema => {
       headers,
       dynamicResponse,
       frontend,
+      federation,
       seeding,
       templates,
       characters,

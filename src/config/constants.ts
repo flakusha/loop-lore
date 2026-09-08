@@ -16,3 +16,11 @@ export const DATA_DIR = path.resolve(__dirname, "..", "..", "loop-lore-data",);
  * Used for hashed filenames, compressed variants, and other cache-safe resources.
  */
 export const IMMUTABLE_CACHE_MAX_AGE = 31_536_000;
+
+/**
+ * Application identity. Imported from package.json so the version stays in
+ * one place — `package.json` is the source of truth, not duplicated literals.
+ */
+import pkg from "../../package.json" with { type: "json" };
+export const APP_NAME: string = pkg.name;
+export const APP_VERSION: string = pkg.version;

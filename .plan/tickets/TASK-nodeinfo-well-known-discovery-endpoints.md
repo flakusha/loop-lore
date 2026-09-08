@@ -3,7 +3,7 @@
 
 # TASK: NodeInfo and well-known discovery endpoints for federation
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Implemented
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-federation-swarm-sync.md
