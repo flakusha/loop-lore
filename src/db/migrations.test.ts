@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import type { Migration, } from "kysely/migration";
 import { Migrator, } from "kysely/migration";
-import { readdirSync, } from "node:fs";
+import { readdirSync, readFileSync, } from "node:fs";
 import path from "node:path";
 import { createLogger, } from "../logger";
 import { createSqliteDialect, } from "./index";
@@ -381,5 +381,46 @@ describe("migration loader excludes colocated *.test.ts", () => {
     const files = readdirSync(MIGRATIONS_DIR,);
     const strayTests = files.filter((f,) => f.endsWith(".test.ts",));
     expect(strayTests,).toEqual([],);
+  });
+});
+
+// ── 001_init part freeze ─────────────────────────────────────────
+
+describe("001_init part freeze", () => {
+  const FROZEN_PARTS = [
+    "001_core",
+    "002_assets",
+    "003_worlds",
+    "004_actors",
+    "005_characters",
+    "006_chat",
+    "007_personas",
+    "008_story",
+    "009_crafting",
+    "010_progression",
+    "011_blog",
+    "012_memory",
+    "013_generation",
+    "014_moderation",
+    "015_e2e",
+    "016_fts",
+    "018_schema_version",
+    "019_trade_requested_materials",
+    "021_workflow_sessions",
+  ];
+
+  test("001_init.ts wires exactly the frozen part set", () => {
+    const source = readFileSync(path.join(MIGRATIONS_DIR, "001_init.ts",), "utf8",);
+    const wired = [
+      ...new Set(
+        [...source.matchAll(/\.\/parts\/([A-Za-z0-9_]+)/g,),].map((match,) => match[1] as string),
+      ),
+    ].sort((a, b,) => a.localeCompare(b,));
+    expect(
+      wired,
+      "001_init.ts is frozen: do NOT append parts (Kysely tracks 001_init as one " +
+        "unit, so appended parts silently skip on existing databases). Create a new " +
+        "top-level NNN_name.ts migration instead.",
+    ).toEqual([...FROZEN_PARTS,].sort((a, b,) => a.localeCompare(b,)),);
   });
 });
