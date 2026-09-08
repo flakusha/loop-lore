@@ -266,9 +266,6 @@ export interface ChatCoreState
   registerPanelHandlers(): void;
   unregisterPanelHandlers(): void;
 
-  /** Current actor ID for the logged-in user (for seen-state tracking). */
-  currentActorId: string | null;
-
   // ── Seen-state popover ─────────────────────────────────────────
   _seenPopoverOpen: boolean;
   _seenPopoverX: number;
