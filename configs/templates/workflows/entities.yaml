@@ -1,0 +1,198 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+# Guided entity-creation workflows (TASK-gm-reuse-workflowrunner-for-guided-entity-creation).
+# Each workflow walks the user through prompt construction step by step via
+# src/assistant/workflow-runner.ts; the assembled prompt feeds the /create
+# description, which keeps generate → quality gates → create-entity-preview
+# confirmation (entities are never persisted without user approval).
+merge: extend
+
+workflows:
+  entity-character:
+    id: entity-character
+    name: Guided character creation
+    description: Step-by-step character prompt building for GM-guided creation.
+    triggers:
+      - create a character
+      - new character
+      - guided character
+    steps:
+      - id: name
+        name: Name
+        type: text
+        description: Character name.
+        minLength: 1
+        maxLength: 120
+        formatTemplate: "Name: {value}"
+      - id: description
+        name: Description
+        type: text
+        description: Physical description and background.
+        minLength: 4
+        maxLength: 2000
+        formatTemplate: "Description: {value}"
+      - id: personality
+        name: Personality
+        type: text
+        description: Personality traits and voice.
+        recommendations:
+          - brave but cautious, dry humor
+        minLength: 2
+        maxLength: 1000
+        formatTemplate: "Personality: {value}"
+      - id: scenario
+        name: Scenario
+        type: text
+        description: Opening scenario for the character.
+        minLength: 2
+        maxLength: 2000
+        formatTemplate: "Scenario: {value}"
+    dispatch:
+      backend: assistant-create
+      target: /create char
+      payloadTemplate:
+        description: "{prompt}"
+      nsfwPolicy: prefilter
+    approval:
+      type: confirm
+      preview: true
+
+  entity-world:
+    id: entity-world
+    name: Guided world creation
+    description: Step-by-step world prompt building for GM-guided creation.
+    triggers:
+      - create a world
+      - new world
+      - guided world
+    steps:
+      - id: name
+        name: Name
+        type: text
+        description: World name.
+        minLength: 1
+        maxLength: 120
+        formatTemplate: "Name: {value}"
+      - id: description
+        name: Description
+        type: text
+        description: Geography, cultures, and hook.
+        minLength: 4
+        maxLength: 2000
+        formatTemplate: "Description: {value}"
+    dispatch:
+      backend: assistant-create
+      target: /create world
+      payloadTemplate:
+        description: "{prompt}"
+      nsfwPolicy: prefilter
+    approval:
+      type: confirm
+      preview: true
+
+  entity-location:
+    id: entity-location
+    name: Guided location creation
+    description: Step-by-step location prompt building for GM-guided creation.
+    triggers:
+      - create a location
+      - new location
+      - guided location
+    steps:
+      - id: name
+        name: Name
+        type: text
+        description: Location name.
+        minLength: 1
+        maxLength: 120
+        formatTemplate: "Name: {value}"
+      - id: description
+        name: Description
+        type: text
+        description: Sights, sounds, and inhabitants.
+        minLength: 4
+        maxLength: 2000
+        formatTemplate: "Description: {value}"
+    dispatch:
+      backend: assistant-create
+      target: /create loc
+      payloadTemplate:
+        description: "{prompt}"
+      nsfwPolicy: prefilter
+    approval:
+      type: confirm
+      preview: true
+
+  entity-item:
+    id: entity-item
+    name: Guided item creation
+    description: Step-by-step item prompt building for GM-guided creation.
+    triggers:
+      - create an item
+      - new item
+      - guided item
+    steps:
+      - id: name
+        name: Name
+        type: text
+        description: Item name.
+        minLength: 1
+        maxLength: 120
+        formatTemplate: "Name: {value}"
+      - id: description
+        name: Description
+        type: text
+        description: Appearance, powers, and history.
+        minLength: 4
+        maxLength: 2000
+        formatTemplate: "Description: {value}"
+    dispatch:
+      backend: assistant-create
+      target: /create item
+      payloadTemplate:
+        description: "{prompt}"
+      nsfwPolicy: prefilter
+    approval:
+      type: confirm
+      preview: true
+
+  entity-npc:
+    id: entity-npc
+    name: Guided NPC creation
+    description: Step-by-step NPC prompt building for GM-guided creation.
+    triggers:
+      - create an npc
+      - new npc
+      - guided npc
+    steps:
+      - id: name
+        name: Name
+        type: text
+        description: NPC name.
+        minLength: 1
+        maxLength: 120
+        formatTemplate: "Name: {value}"
+      - id: description
+        name: Description
+        type: text
+        description: Role, mannerisms, and secret.
+        minLength: 4
+        maxLength: 2000
+        formatTemplate: "Description: {value}"
+      - id: personality
+        name: Personality
+        type: text
+        description: How the NPC talks and acts.
+        minLength: 2
+        maxLength: 1000
+        formatTemplate: "Personality: {value}"
+    dispatch:
+      backend: assistant-create
+      target: /create char
+      payloadTemplate:
+        description: "{prompt}"
+      nsfwPolicy: prefilter
+    approval:
+      type: confirm
+      preview: true
