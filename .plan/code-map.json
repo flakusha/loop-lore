@@ -4680,10 +4680,24 @@
   "src/chat/hallucination-guard/known.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md"
     }
   ],
+  "src/chat/hallucination-guard/story-mode-types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
+    }
+  ],
   "src/chat/hallucination-guard/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md"
@@ -11016,6 +11030,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po.md"
     }
   ],
@@ -11103,6 +11121,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-gallery-batch-operations.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
     },
     {
       "kind": "ticket",
@@ -14077,6 +14099,12 @@
       "source": ".plan/epics/epic-actor-turn-skip.md"
     }
   ],
+  "src/generation/auto-gen/post-store-types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
+    }
+  ],
   "src/generation/auto-gen/post-store.test.ts": [
     {
       "kind": "ticket",
@@ -14111,6 +14139,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-cascade-mid-cascade-pause-ignored.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
     },
     {
       "kind": "ticket",
@@ -14191,6 +14223,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
     },
     {
       "kind": "ticket",
@@ -20507,6 +20543,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-message-seen-re-mark-clobbers-first-seen-timestamp.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
     },
     {
       "kind": "ticket",
