@@ -116,7 +116,7 @@
     // (consumed via bun run scripts/..., not import)
     "scripts/check-db-schemas.ts",
     // Coverage gate script: run via check-parallel.mjs shell string
-    // (bun run test:coverage && bun run scripts/check/coverage.mjs --floor=40),
+    // (bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80),
     // not import-reachable — same class as check-db-schemas.ts above.
     "scripts/check/coverage.mjs",
     // Frontend audit scripts: standalone CLI reporters (bun run scripts/...),
