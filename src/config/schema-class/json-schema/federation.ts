@@ -17,7 +17,7 @@ export const federation = {
       type: "array",
       default: [],
       description: "Peer origins to bootstrap discovery from.",
-      items: { type: "string" },
+      items: { type: "string", },
     },
     peers: {
       type: "array",
@@ -26,18 +26,18 @@ export const federation = {
       items: {
         type: "object",
         properties: {
-          origin: { type: "string" },
+          origin: { type: "string", },
           trust: {
             type: "object",
             properties: {
-              caBundle: { type: "string" },
-              spkiPins: { type: "array", items: { type: "string" } },
+              caBundle: { type: "string", },
+              spkiPins: { type: "array", items: { type: "string", }, },
             },
           },
         },
-        required: ["origin"],
+        required: ["origin",],
       },
     },
   },
-  required: ["enabled", "seeds", "peers"],
+  required: ["enabled", "seeds", "peers",],
 };

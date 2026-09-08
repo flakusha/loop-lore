@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /** Centralized runtime paths. Single source of truth — import from here, not hardcoded. */
-import pkg from "../../package.json" with { type: "json" };
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, } from "node:url";
+import pkg from "../../package.json" with { type: "json", };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url,);
+const __dirname = path.dirname(__filename,);
 
 /** Resolve DATA_DIR relative to this file's location, not CWD */
-export const DATA_DIR = path.resolve(__dirname, "..", "..", "loop-lore-data");
+export const DATA_DIR = path.resolve(__dirname, "..", "..", "loop-lore-data",);
 
 /**
  * Cache-Control max-age for immutable static assets (1 year in seconds).

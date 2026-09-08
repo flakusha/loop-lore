@@ -63,7 +63,7 @@ export class PeerTable {
   private started = false;
 
   /** @param opts */
-  constructor(opts: PeerTableOptions) {
+  constructor(opts: PeerTableOptions,) {
     this.ttl = opts.ttl ?? DEFAULT_TTL;
     this.now = opts.now ?? (() => Date.now());
     this.sweepInterval = opts.sweepInterval ?? DEFAULT_SWEEP;
@@ -74,61 +74,61 @@ export class PeerTable {
         lastSeen: this.now(),
         lastSeq: -1,
         ttl: this.ttl,
-      });
+      },);
     }
   }
 
   /** Start the eviction sweep timer. Idempotent. */
   start(): void {
-    if (this.started) return;
+    if (this.started) { return; }
     this.started = true;
-    this.sweepTimer = setInterval(() => this.sweep(), this.sweepInterval);
+    this.sweepTimer = setInterval(() => this.sweep(), this.sweepInterval,);
   }
 
   /** Stop the eviction sweep timer. Idempotent. */
   stop(): void {
-    if (!this.started) return;
+    if (!this.started) { return; }
     this.started = false;
     if (this.sweepTimer !== null) {
-      clearInterval(this.sweepTimer);
+      clearInterval(this.sweepTimer,);
       this.sweepTimer = null;
     }
   }
 
   /** Discover a new peer origin. No-op if already known. */
-  discoverPeer(origin: string): void {
-    if (this.peers.has(origin)) return;
+  discoverPeer(origin: string,): void {
+    if (this.peers.has(origin,)) { return; }
     this.peers.set(origin, {
       origin,
       state: "pending",
       lastSeen: this.now(),
       lastSeq: -1,
       ttl: this.ttl,
-    });
+    },);
   }
 
   /**
    * Promote a peer from `pending` to `trusted` (verdict enforced).
    * Unknown peers are discovered first, then promoted.
    */
-  trustPeer(origin: string): void {
-    this.discoverPeer(origin);
-    const peer = this.peers.get(origin);
-    if (peer) peer.state = "trusted";
+  trustPeer(origin: string,): void {
+    this.discoverPeer(origin,);
+    const peer = this.peers.get(origin,);
+    if (peer) { peer.state = "trusted"; }
   }
 
   /**
    * Record an inbound heartbeat with replay protection.
    * @returns `true` if accepted (seq > lastSeq), `false` if stale/replayed.
    */
-  recordHeartbeat(origin: string, seq: number): boolean {
-    this.discoverPeer(origin);
-    const peer = this.peers.get(origin);
-    if (!peer) return false;
-    if (seq <= peer.lastSeq) return false;
+  recordHeartbeat(origin: string, seq: number,): boolean {
+    this.discoverPeer(origin,);
+    const peer = this.peers.get(origin,);
+    if (!peer) { return false; }
+    if (seq <= peer.lastSeq) { return false; }
     peer.lastSeq = seq;
     peer.lastSeen = this.now();
-    if (peer.state === "dead") peer.state = "pending";
+    if (peer.state === "dead") { peer.state = "pending"; }
     return true;
   }
 
@@ -136,10 +136,10 @@ export class PeerTable {
   sweep(): number {
     const now = this.now();
     let evicted = 0;
-    for (const [origin, peer] of this.peers) {
+    for (const [origin, peer,] of this.peers) {
       if (now - peer.lastSeen > peer.ttl) {
         peer.state = "dead";
-        this.peers.delete(origin);
+        this.peers.delete(origin,);
         evicted++;
       }
     }
@@ -148,13 +148,13 @@ export class PeerTable {
 
   /** Get a snapshot of all known peers (defensive copy). */
   listPeers(): PeerEntry[] {
-    return Array.from(this.peers.values()).map((p) => ({ ...p }));
+    return Array.from(this.peers.values(),).map((p,) => ({ ...p, }));
   }
 
   /** Get a single peer by origin. */
-  getPeer(origin: string): PeerEntry | undefined {
-    const peer = this.peers.get(origin);
-    return peer ? { ...peer } : undefined;
+  getPeer(origin: string,): PeerEntry | undefined {
+    const peer = this.peers.get(origin,);
+    return peer ? { ...peer, } : undefined;
   }
 
   /** Number of known peers. */
