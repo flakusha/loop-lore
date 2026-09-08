@@ -3,7 +3,7 @@
 
 # TASK: Instance state advertisement endpoint (mesh/federation)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Implemented
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-federation-swarm-sync.md
