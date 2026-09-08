@@ -6,7 +6,7 @@
  */
 import { beforeAll, expect, mock, test, } from "bun:test";
 import { createLogger, } from "../logger/index.js";
-import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../test-utils/isolate-only";
 import {
   getHealthCache,
   getProviderHealth,
@@ -22,7 +22,7 @@ import {
 // breaks llm-config, test-connection, extraction, and caption suites in
 // shared-process runs. Gate to the isolated canonical gate (`bun run
 // test:unit` / `bun run check`); plain `bun test src/` skips this file.
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("../generation/providers/registry.js", () => ({
     listProviders: () => [
       { name: "healthy-prov", capabilities: { label: "Healthy", supports: [], }, },
@@ -47,7 +47,7 @@ if (ISOLATED) {
   }),);
 }
 
-describeOrSkip("provider-health (isolated)", () => {
+describeOrSkipStrict("provider-health (isolated)", () => {
   beforeAll(() => {
     createLogger({ level: "error", },);
   },);

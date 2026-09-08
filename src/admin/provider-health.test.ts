@@ -3,7 +3,7 @@
  */
 import { afterAll, beforeAll, beforeEach, expect, mock, test, } from "bun:test";
 import { createLogger, } from "../logger";
-import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../test-utils/isolate-only";
 
 import {
   getHealthCache,
@@ -40,7 +40,11 @@ const throwingProvider = {
   },
 } as never;
 
-if (ISOLATED) {
+// STRICTLY_ISOLATED only: this stub pins listProviders/getProvider to fixed
+// fakes, which poisons every later file in a shared process (registry reads
+// split-brain). Under test:coverage the suite skips and the real registry
+// serves all consumers.
+if (STRICTLY_ISOLATED) {
   mock.module("../generation/providers/registry", () => ({
     listProviders: () => [
       { name: "healthy-prov", capabilities: { label: "Healthy", supports: [], }, },
@@ -57,7 +61,7 @@ if (ISOLATED) {
   }),);
 }
 
-describeOrSkip("provider-health", () => {
+describeOrSkipStrict("provider-health", () => {
   beforeAll(() => {
     createLogger({ level: "warn", },);
   },);
@@ -70,7 +74,7 @@ describeOrSkip("provider-health", () => {
     resetHealthCache();
   },);
 
-  describeOrSkip("scanAllProviders", () => {
+  describeOrSkipStrict("scanAllProviders", () => {
     test("reports healthy, unreachable, error and missing providers", async () => {
       const results = await scanAllProviders();
       const byName = new Map(results.map(r => [r.name, r,]),);
@@ -86,7 +90,7 @@ describeOrSkip("provider-health", () => {
     });
   },);
 
-  describeOrSkip("cache accessors", () => {
+  describeOrSkipStrict("cache accessors", () => {
     beforeEach(async () => {
       await scanAllProviders();
     },);
@@ -111,7 +115,7 @@ describeOrSkip("provider-health", () => {
     });
   },);
 
-  describeOrSkip("providerToSummary", () => {
+  describeOrSkipStrict("providerToSummary", () => {
     test("serializes health status", () => {
       const summary = providerToSummary({
         name: "healthy-prov",
