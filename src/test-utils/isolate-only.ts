@@ -24,3 +24,18 @@ export const ISOLATED = !!process.env.npm_lifecycle_event;
  * via `mock.module` — those mocks leak across files without `--isolate`.
  */
 export const describeOrSkip = ISOLATED ? describe : describe.skip;
+
+/**
+ * True only under `bun run test:unit` (`bun test src/ --isolate`, one module
+ * registry per file). `bun run test:coverage` shares one process across all
+ * files, so stubs that pin a module to fixed fakes (provider registry) must
+ * stay off there — even though ISOLATED is also set for that run.
+ */
+export const STRICTLY_ISOLATED = process.env.npm_lifecycle_event === "test:unit";
+
+/**
+ * `describe` only under the per-file `--isolate` gate, otherwise
+ * `describe.skip`. For suites whose `mock.module` doubles cannot survive a
+ * shared process (fixed-fake pins that poison later files).
+ */
+export const describeOrSkipStrict = STRICTLY_ISOLATED ? describe : describe.skip;

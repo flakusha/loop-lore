@@ -2470,6 +2470,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-reuse-workflowrunner-for-guided-entity-creation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
     }
   ],
@@ -6869,6 +6877,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-065.md"
+    }
+  ],
+  "src/config/workflow-templates.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-engine-schema-loader-template-types-workflow-discov.md"
     }
   ],
   "src/content": [
@@ -19549,6 +19563,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-routes-commands-index-ts-19-has-unused-import-t.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
     }
   ],
   "src/routes/companions.ts": [
