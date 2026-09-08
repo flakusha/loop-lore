@@ -16,8 +16,8 @@
  * No secrets, user identifiers, counts, or internal topology are exposed.
  */
 import { Elysia, } from "elysia";
-import type { Config, } from "../config/schema";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
+import type { Config, } from "../config/schema";
 import { jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";

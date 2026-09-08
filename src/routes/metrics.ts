@@ -13,7 +13,6 @@
 import { Elysia, } from "elysia";
 import type { Config, } from "../config/schema";
 
-
 const MimeType = "text/plain; version=0.0.4; charset=utf-8";
 
 interface MetricsOpts {
@@ -93,18 +92,16 @@ export function metricsRoutes(opts: MetricsOpts,): Elysia {
     app.get("/metrics", () => {
       return new Response(renderMetrics(), {
         status: 200,
-        headers: { "content-type": MimeType },
-      });
+        headers: { "content-type": MimeType, },
+      },);
     }, {
       detail: {
         summary: "Prometheus metrics",
-        description:
-          "Process-level metrics in Prometheus text exposition format. No auth; opt-in.",
-        tags: ["Metrics"],
+        description: "Process-level metrics in Prometheus text exposition format. No auth; opt-in.",
+        tags: ["Metrics",],
       },
-    });
+    },);
   }
 
   return app;
 }
-
