@@ -37,7 +37,7 @@ export async function resolveChatKnownEntityNames(
   chatId: string,
 ): Promise<string[]> {
   try {
-    const [participants, locationRow,] = await Promise.all([
+    const [participantsResult, locationRow,] = await Promise.allSettled([
       loadChatParticipants(database, chatId,),
       database
         .selectFrom("chats",)
@@ -46,6 +46,7 @@ export async function resolveChatKnownEntityNames(
         .executeTakeFirst()
         .then((row,) => loadChatLocation(database, row?.current_location_id ?? null,)),
     ],);
+    const participants = participantsResult.status === "fulfilled" ? participantsResult.value : [];
     const names = new Set<string>();
     for (const p of participants) {
       const trimmed = p.displayName.trim();
