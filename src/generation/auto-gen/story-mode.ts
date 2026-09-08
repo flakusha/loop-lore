@@ -10,6 +10,7 @@ import { type GameMasterConfig, GameMasterService, } from "../../story";
 import type { GenerateTextFn, } from "../../story/game-master";
 import { jsonParseOr, } from "../../utils";
 import type { StoryModeOpts, } from "./story-mode-opts";
+import { resolveChatKnownEntityNames, } from "./resolve-known-names";
 import { storeStoryResponse, } from "./story-store";
 export type { StoryModeOpts, };
 
@@ -127,10 +128,15 @@ export async function triggerStoryModeGeneration(opts: StoryModeOpts,): Promise<
   // Check generated content against known world entities before storing.
   // Hallucination detection runs on the AI response (`turnResult.response`),
   // not the prompt we sent to the LLM.
+  // BUG-hallucination-guard-isKnownEntity-stubs-unused — thread
+  // chat-scoped known entity names (participants + current location)
+  // through knownEntityNames so participants are not false-flagged.
+  const knownEntityNames = await resolveChatKnownEntityNames(database, chatId,);
   const hallucinationAnalysis = await detectHallucinations({
     db: database,
     text: turnResult.response,
     worldId: worldId ?? undefined,
+    knownEntityNames,
   },);
 
   if (hallucinationAnalysis.detected) {
