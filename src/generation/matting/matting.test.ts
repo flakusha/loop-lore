@@ -15,13 +15,28 @@ import { join, } from "node:path";
 import { initialAlphaStatus, } from "../../assets/service/alpha-status";
 import { createAsset, } from "../../assets/service/create";
 import { getAssetLinks, } from "../../assets/service/links";
-import { makeMinimalPng, makeMinimalPngWithAlpha, } from "../../assets/test-helpers";
+import { makeMinimalPng, } from "../../assets/test-helpers";
 import { AssetAlphaStatus, AssetLinkEntity, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { MattingService, } from "./service";
 import type { MattingProvider, } from "./types";
+
+/** Minimal RGBA PNG (color type 6) for matting derivative assertions. */
+function makeMinimalPngWithAlpha(width = 2, height = 1,): Buffer {
+  const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10,],);
+  const ihdr = Buffer.alloc(25,);
+  ihdr.writeUInt32BE(13, 0,);
+  ihdr.write("IHDR", 4, "ascii",);
+  ihdr.writeUInt32BE(width, 8,);
+  ihdr.writeUInt32BE(height, 12,);
+  ihdr[16] = 8;
+  ihdr[17] = 6;
+  ihdr.writeUInt32BE(0, 21,);
+  const iend = Buffer.from([0, 0, 0, 0, 73, 69, 78, 68, 0, 0, 0, 0,],);
+  return Buffer.concat([sig, ihdr, iend,],);
+}
 
 const uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-matting-test-",),);
 

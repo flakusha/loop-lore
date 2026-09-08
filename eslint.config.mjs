@@ -287,6 +287,7 @@ export default [
       "src/generation/providers/ollama-native/http.ts",
       "src/generation/providers/openai-compatible/http.ts",
       "src/generation/lora/discovery-http.ts",
+      "src/generation/matting/providers.ts",
       "src/generation/providers/comfyui.ts",
     ],
     rules: {
