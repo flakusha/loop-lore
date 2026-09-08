@@ -3,7 +3,7 @@
 
 # FEAT: Liveness and readiness endpoints (opt-in by config)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Implemented
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-telemetry.md

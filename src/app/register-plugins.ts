@@ -60,9 +60,12 @@ import { craftingOrderRoutes, } from "../routes/crafting/orders";
 import { craftingStationRoutes, } from "../routes/crafting/stations";
 import { exportRoutes, } from "../routes/export";
 import { exportSseRoutes, } from "../routes/export-sse";
+import { federationRoutes, } from "../routes/federation";
 import { frontendLogsRoutes, } from "../routes/frontend-logs";
 import { gmNotesRoutes, } from "../routes/gm-notes";
 import { healthRoutes, } from "../routes/health";
+import { livenessRoutes, } from "../routes/liveness";
+import { metricsRoutes, } from "../routes/metrics";
 import { i18nRoutes, } from "../routes/i18n";
 import { importRoutes, } from "../routes/import";
 import { invitesRoutes, } from "../routes/invites";
@@ -119,6 +122,9 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   // ── Public routes (auth runs but won't block) ───────────────────────────────
   app.use(authPublicRoutes(handleOpts,),);
   app.use(healthRoutes(handleOpts,),);
+  app.use(livenessRoutes({ database: handleOpts.database, config, },),);
+  app.use(metricsRoutes({ config, },),);
+  app.use(federationRoutes({ config, },),);
   app.use(i18nRoutes(handleOpts,),);
   app.use(telemetryRoutes(handleOpts,),);
   app.use(frontendLogsRoutes(),);
