@@ -3,6 +3,7 @@
 
 // src/cron/index.ts — Cron scheduler barrel.
 
+export { type AppSchedulerDeps, startAppScheduler, } from "./boot";
 export { defaultJobs, } from "./jobs";
 export { defineJob, getScheduler, setScheduler, startScheduler, } from "./registry";
 export type {
