@@ -1,6 +1,6 @@
 # FEAT: Chat settings modal: output styling control
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ Expose outputStyle preset + intensity in the chat-settings modal (src/components
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: chat-settings-modal.html:492-509 + gm-config.ts:41-74 + test.

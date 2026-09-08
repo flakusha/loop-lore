@@ -3,7 +3,7 @@
 
 # BUG: story-mode.ts stores `turnResult.prompt` as the message content — `gmDecision.turnPrompt` is the prompt to LLM, not the user-visible AI response
 
-**Status:** Not Started
+**Status:** ✅ Done
 **Severity:** high
 **Priority:** high
 **Effort:** small
@@ -54,3 +54,7 @@ Correctness. Story-mode chats show inverted conversation: the AI "messages" cont
 
 - `epic-assistant-gm-flows.md` — `TASK-wire-gm-service-story-mode.md` already shipped the wiring but missed this content-swap bug.
 - `BUG-chat-prompt-override-bypass-on-reply` (same pipeline).
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: story-mode.ts stores response, skips empty Human-GM, hallucination check on response.

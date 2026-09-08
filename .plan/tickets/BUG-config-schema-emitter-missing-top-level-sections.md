@@ -3,7 +3,7 @@
 
 # BUG: config schema emitter missing top-level sections
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Epic:** epic-api-validation-guardrails.md
 
@@ -59,6 +59,10 @@ The wardrobe epic (commit `651854da`, 2026-09-02) discovered this when auditing 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: json-schema/index.ts registers templates/characters/frontend/encryption/seeding sub-schemas.
