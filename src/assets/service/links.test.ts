@@ -12,8 +12,8 @@ import { AssetLinkEntity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssetLinks, insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
-import { getAssetLinks, linkAsset, unlinkAsset, } from "./links";
 import { describePristine, } from "../../test-utils/pristine";
+import { getAssetLinks, linkAsset, unlinkAsset, } from "./links";
 
 // image-gen-route.test.ts replaces ../assets/service/links process-wide
 // with mockLinkAsset (no-op); skip rather than assert the stub.
@@ -105,7 +105,7 @@ describeReal("linkAsset", () => {
       sqlite.close();
     }
   });
-});
+},);
 
 describe("unlinkAsset", () => {
   test("removes only the matching entity link", async () => {

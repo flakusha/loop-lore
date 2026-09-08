@@ -72,4 +72,4 @@ describeReal("Telemetry Service", () => {
     expect(typeof isFrontendTelemetryEnabled(),).toBe("boolean",);
     expect(getRetentionDays(),).toBeGreaterThan(0,);
   });
-});
+},);

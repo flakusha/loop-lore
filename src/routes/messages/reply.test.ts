@@ -17,12 +17,12 @@ import type { AsyncStore, } from "../../async/store";
 import type { Config, } from "../../config/schema";
 import { MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { getProvider, registerProvider, unregisterProvider, } from "../../generation/providers/registry";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { maybeAutoReply, } from "./reply";
-import { getProvider, registerProvider, unregisterProvider, } from "../../generation/providers/registry";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
 // `bun run` an earlier file (e.g.
@@ -45,7 +45,7 @@ const registryPristine = (() => {
   } catch {
     return false;
   }
-})(); 
+})();
 const describeReal = registryPristine ? describe : describe.skip;
 
 /**
@@ -201,7 +201,7 @@ describeReal("maybeAutoReply — swipe_index race", () => {
     expect(result.replied,).toBe(false,);
     expect(result.response,).toBeUndefined();
   });
-});
+},);
 
 describeReal("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-discards-asyncStore)", () => {
   let db: Kysely<DB>;
@@ -319,4 +319,4 @@ describeReal("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-dis
     // Synchronous rule-based assistant path; must reply successfully.
     expect(result.replied,).toBe(true,);
   });
-});
+},);
