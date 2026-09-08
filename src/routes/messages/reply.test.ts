@@ -22,6 +22,31 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { maybeAutoReply, } from "./reply";
+import { getProvider, registerProvider, unregisterProvider, } from "../../generation/providers/registry";
+
+// Bun's mock.module is process-global and cannot be unmocked: under
+// `bun run` an earlier file (e.g.
+// admin/provider-health-isolated.test.ts) may have replaced the provider
+// registry with fakes, flipping isLlmGenerationConfigured() on and
+// diverting these tests from the rule-based assistant path onto the LLM
+// path. A sentinel roundtrip detects ANY registry stub (names-checks miss
+// stubs with different fake names); skip instead of asserting against one
+// (pristine-module guard; see generation/providers/registry.test.ts).
+const REGISTRY_PROBE_PROVIDER = "__reply_pristine_probe__";
+const registryPristine = (() => {
+  try {
+    // Registry stubs export only listProviders/getProvider — a missing
+    // register/unregister means stubbed.
+    if (typeof registerProvider !== "function" || typeof unregisterProvider !== "function") { return false; }
+    registerProvider(REGISTRY_PROBE_PROVIDER, { label: "probe", } as never,);
+    const hit = getProvider(REGISTRY_PROBE_PROVIDER,) !== undefined;
+    unregisterProvider(REGISTRY_PROBE_PROVIDER,);
+    return hit;
+  } catch {
+    return false;
+  }
+})(); 
+const describeReal = registryPristine ? describe : describe.skip;
 
 /**
  * Minimal Config that takes the synchronous rule-based assistant path
@@ -37,7 +62,7 @@ const testConfig = {
   },
 } as unknown as Config;
 
-describe("maybeAutoReply — swipe_index race", () => {
+describeReal("maybeAutoReply — swipe_index race", () => {
   let db: Kysely<DB>;
   let chatId: string;
   let actorId: string;
@@ -178,7 +203,7 @@ describe("maybeAutoReply — swipe_index race", () => {
   });
 });
 
-describe("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-discards-asyncStore)", () => {
+describeReal("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-discards-asyncStore)", () => {
   let db: Kysely<DB>;
   let chatId: string;
   let actorId: string;

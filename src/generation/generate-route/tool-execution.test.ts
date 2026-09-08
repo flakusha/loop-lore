@@ -10,7 +10,16 @@ import { registry, } from "../../plugins/registry";
 import { WRITE_MEMORY_NOTE, writeMemoryNoteTool, } from "../tools/write-memory-note";
 import { executeToolCalls, } from "./tool-execution";
 
-describe("executeToolCalls context forwarding", () => {
+// Bun's mock.module is process-global and cannot be unmocked: without
+// --isolate, an earlier file (e.g. generate-route/non-stream.test.ts) may
+// have replaced ./tool-execution with an `async () => []` stub. Probe the
+// real arity (executeToolCalls(toolCalls, ctx?)) and skip instead of
+// asserting against the stub (pristine-module guard; see
+// generation/providers/registry.test.ts).
+const toolExecPristine = executeToolCalls.length > 0;
+const describeReal = toolExecPristine ? describe : describe.skip;
+
+describeReal("executeToolCalls context forwarding", () => {
   const ctx = { db: {} as never, actorId: "actor-1", chatId: "chat-1", };
 
   afterEach(() => {
@@ -133,7 +142,7 @@ describe("executeToolCalls context forwarding", () => {
   });
 });
 
-describe("tool output sanitization (BUG-generation-error-handling-gaps)", () => {
+describeReal("tool output sanitization (BUG-generation-error-handling-gaps)", () => {
   const ctx = { db: {} as never, actorId: "actor-1", chatId: "chat-1", };
 
   afterEach(() => {

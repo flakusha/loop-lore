@@ -12,7 +12,7 @@
  * mock.module is gated to the isolated canonical gate (`bun run test:unit` /
  * `bun run check`). See src/test-utils/isolate-only.ts.
  */
-import { beforeEach, expect, mock, test, } from "bun:test";
+import { beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -20,6 +20,16 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, } from "../../test-utils/insert-helpers";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 import type { GenDeps, } from "./deps";
+import { detectHallucinations, } from "../../chat";
+
+// Bun's mock.module is process-global and cannot be unmocked: under
+// `bun run` (ISOLATED=true) an earlier file (e.g.
+// auto-gen/post-store.test.ts) replaces ../../chat with a stub whose
+// detectHallucinations throws SQLITE_BUSY. Probe the real arity and skip
+// instead of failing against the stub (pristine-module guard; see
+// generation/providers/registry.test.ts).
+const chatPristine = detectHallucinations.length > 0;
+const describeReal = chatPristine ? describeOrSkip : describe.skip;
 
 createLogger({ level: "error", },);
 
@@ -146,7 +156,7 @@ async function seedStoryChat(db: Kysely<DB>,): Promise<void> {
   await insertChats(db, "Story chat", "user-1", { id: "chat-1", } as never,);
 }
 
-describeOrSkip("triggerStoryModeGeneration — gm_config NULL must not skip generation", () => {
+describeReal("triggerStoryModeGeneration — gm_config NULL must not skip generation", () => {
   let db: Kysely<DB>;
 
   beforeEach(async () => {
