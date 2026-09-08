@@ -28,6 +28,7 @@ import {
   listProviders,
   registerProvider,
   resolveProvider,
+  unregisterProvider,
 } from "./registry";
 
 /** Base generation config with no providers and an unresolvable default. */
@@ -71,6 +72,20 @@ beforeAll(async () => {
 },);
 
 afterAll(() => {
+  for (
+    const name of [
+      "sm-cov-list-a",
+      "sm-cov-list-b",
+      "sm-cov-fail-a",
+      "sm-cov-fail-b",
+      "sm-cov-fail-c",
+      "sm-cov-res-a",
+      "sm-cov-res-fb",
+      "sm-cov-byo-a",
+      "sm-cov-byo-b",
+      "sm-cov-init-a",
+    ]
+  ) { unregisterProvider(name,); }
   testSqlite.close();
 },);
 

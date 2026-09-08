@@ -19,7 +19,7 @@ import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../test-utils/isolate-only";
 import { GenerationCancelledError, } from "../cancellation-actions/error";
 import type {
   GenerateRequest as ProviderRequest,
@@ -30,7 +30,7 @@ import type {
 
 createLogger({ level: "error", },);
 
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("../cancellation-manager", () => ({
     processStreamingChunk: async () => "continue",
     activeGenerations: {
@@ -117,7 +117,7 @@ const failoverRealCheck = await (async () => {
   }
 })();
 const streamSelfOk = persistSelfCheck && chunkSelfCheck && failoverRealCheck;
-const describeSelf = streamSelfOk ? describeOrSkip : describe.skip;
+const describeSelf = streamSelfOk ? describeOrSkipStrict : describe.skip;
 
 type Event = { type: string; cancelled?: boolean; finishReason?: string; content?: string };
 
