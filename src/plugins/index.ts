@@ -5,6 +5,14 @@
  * Plugin System — Barrel exports
  */
 export { loadAllPlugins, dispatchPluginRoute, unloadAllPlugins, registry } from "./loader";
+export { emitPluginEvent, type EmitOptions } from "./event-bus";
+export { executePluginTool, DEFAULT_TOOL_TIMEOUT_MS } from "./tool-executor";
+export {
+  getComponentsForMountPoint,
+  KNOWN_MOUNT_POINTS,
+  type MountPointLocation,
+} from "./mount-points";
+export { mergePluginConfig } from "./config-merge";
 export type {
   PluginManifest,
   PluginContext,
@@ -14,6 +22,7 @@ export type {
   RouteDefinition,
   ToolDefinition,
   ToolResult,
+  ToolExecutionContext,
   AgentRoleDefinition,
   UIComponentDefinition,
   EventHandlerDefinition,
