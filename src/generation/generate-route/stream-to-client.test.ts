@@ -13,7 +13,7 @@
  * mock.module is gated to the isolated canonical gate (bun run test:unit /
  * check); plain `bun test src/` skips this file.
  */
-import { expect, mock, test, } from "bun:test";
+import { describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
@@ -75,6 +75,35 @@ if (ISOLATED) {
 }
 
 const { streamToClient, } = await import("./stream-to-client");
+const { buildGenerationResult: buildResultFn, } = await import("./persist");
+const { processStreamingChunk: chunkFn, } = await import("../cancellation-manager");
+
+// Bun's mock.module is process-global: without --isolate, an earlier file
+// may have replaced these modules first (first-wins), so the factories
+// above never apply. Fail-closed: verify this file's own doubles are the
+// ones in effect (persist stub passes content through but omits
+// generationTimeMs; manager stub answers "continue" for any chunk) and
+// skip otherwise instead of testing through another file's stubs.
+const persistProbeOut = buildResultFn({
+  content: "__stream_selfcheck__",
+  finishReason: "stop",
+  usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
+} as never, false,) as { content?: string };
+const persistSelfCheck = persistProbeOut.content === "__stream_selfcheck__"
+  && !("generationTimeMs" in (persistProbeOut as Record<string, unknown>));
+const chunkSelfCheck = await (async () => {
+  try {
+    return await (chunkFn as unknown as (opts: unknown,) => Promise<unknown>)({
+      attemptId: "__stream_selfcheck__",
+      chunk: "x",
+      db: {},
+    },) === "continue";
+  } catch {
+    return false;
+  }
+})(); 
+const streamSelfOk = persistSelfCheck && chunkSelfCheck;
+const describeSelf = streamSelfOk ? describeOrSkip : describe.skip;
 
 type Event = { type: string; cancelled?: boolean; finishReason?: string; content?: string };
 
@@ -166,7 +195,7 @@ function run(trackerSignal: AbortSignal, provider: LLMProvider,): Response {
   },);
 }
 
-describeOrSkip("streamToClient — tracker cancel reaches the provider", () => {
+describeSelf("streamToClient — tracker cancel reaches the provider", () => {
   test("tracker abort mid-stream cancels the provider and yields a cancelled done event", async () => {
     const tracker = new AbortController();
     const state = { calls: 0, sawAbort: false, };

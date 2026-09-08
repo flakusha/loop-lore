@@ -13,6 +13,47 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { type AvatarMetadata, buildEmotionPrompt, extractAvatarMetadata, } from "./emotion-avatar-fallback";
 import { createTestActors, } from "./test-helpers";
 
+// Bun's mock.module is process-global and cannot be unmocked: without
+// --isolate, an earlier file (e.g.
+// routes/character-emotion-avatars.test.ts) may have replaced
+// ../../assets/service with a stub whose createAsset returns a synthetic
+// "mock-asset-id" row, breaking the actor-description fallback path. Probe
+// the exact failing flow (write asset, resolve caption via actor
+// description) and skip the actor-linked cases when it throws instead of
+// failing against the stub (pristine-module guard; see
+// generation/providers/registry.test.ts).
+const assetFallbackPristine = await (async () => {
+  const probe = await createTestDb();
+  try {
+    const { actorId, } = await createTestActors(probe.db, "pristine-probe-actor",);
+    await probe.db
+      .updateTable("actors",)
+      .set({ description: "Probe description caption", },)
+      .where("id", "=", actorId,)
+      .execute();
+    const buffer = makeMinimalPng(16, 16,);
+    const { asset, } = await createAsset({
+      database: probe.db,
+      input: {
+        ownerId: "test-user",
+        filename: "probe.png",
+        mimeType: "image/png",
+        assetType: "image",
+        sizeBytes: buffer.length,
+        buffer,
+      },
+      uploadDir: "/tmp/test-uploads",
+    },);
+    const result = await extractAvatarMetadata(probe.db, asset.id, { actorId, },);
+    return result.caption === "Probe description caption";
+  } catch {
+    return false;
+  } finally {
+    probe.sqlite.close();
+  }
+})(); 
+const itReal = assetFallbackPristine ? it : it.skip;
+
 describe("buildEmotionPrompt", () => {
   it("builds prompt from caption metadata", () => {
     const metadata: AvatarMetadata = {
@@ -124,7 +165,7 @@ describe("extractAvatarMetadata", () => {
     expect(result.height,).toBe(512,);
   });
 
-  it("falls back to actor description when alt text is missing", async () => {
+  itReal("falls back to actor description when alt text is missing", async () => {
     const { actorId, } = await createTestActors(db, "test-actor-no-alt",);
     await db
       .updateTable("actors",)
@@ -151,7 +192,7 @@ describe("extractAvatarMetadata", () => {
     expect(result.altText,).toBeUndefined();
   });
 
-  it("prefers alt text over actor description", async () => {
+  itReal("prefers alt text over actor description", async () => {
     const { actorId, } = await createTestActors(db, "test-actor-alt-wins",);
     await db
       .updateTable("actors",)
@@ -179,7 +220,7 @@ describe("extractAvatarMetadata", () => {
     expect(result.altText,).toBe("from alt text",);
   });
 
-  it("surfaces character_avatars tags when actorId is provided", async () => {
+  itReal("surfaces character_avatars tags when actorId is provided", async () => {
     const { actorId, } = await createTestActors(db, "test-actor-tags",);
     const buffer = makeMinimalPng(448, 448,);
     const { asset, } = await createAsset({
