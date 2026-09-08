@@ -14,7 +14,7 @@ import type {
   TemplatesConfig,
 } from "../sections/templates";
 import { TEMPLATES_DEFAULTS, } from "../sections/templates";
-import { findTemplateFiles, findWorkflowFiles, parseTemplateFile, } from "./discovery.js";
+import { findTemplateFiles, findWorkflowFiles, parseTemplateFile, } from "./discovery";
 import {
   mergeAvatarConfig,
   mergeCharacterConfig,
@@ -22,7 +22,7 @@ import {
   mergeLlmConfig,
   mergeSdConfig,
   mergeWorkflowConfig,
-} from "./merge.js";
+} from "./merge";
 import {
   validateAvatarConfig,
   validateCharacterConfig,
@@ -31,7 +31,7 @@ import {
   validateSdConfig,
   validateWorkflowConfig,
   warnUnknownPromptPurposes,
-} from "./validation.js";
+} from "./validation";
 
 /**
  * Load template configuration from configs/templates/ directory.
