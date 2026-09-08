@@ -27,7 +27,7 @@ describe("resolveChatKnownEntityNames", () => {
   let chatId: string;
 
   beforeAll(async () => {
-    createLogger({ level: "error" },);
+    createLogger({ level: "error", },);
     const testDb = await createTestDb();
     db = testDb.db;
 
@@ -45,7 +45,7 @@ describe("resolveChatKnownEntityNames", () => {
 
   test("returns an empty array for a chat with no participants and no location", async () => {
     const names = await resolveChatKnownEntityNames(db, chatId,);
-    expect(names,).toEqual([]);
+    expect(names,).toEqual([],);
   });
 
   test("returns participant display names", async () => {
@@ -65,7 +65,7 @@ describe("resolveChatKnownEntityNames", () => {
       .execute();
 
     const names = await resolveChatKnownEntityNames(db, chatId,);
-    expect(names.sort(),).toEqual(["Alice", "Bob",]);
+    expect(names.sort(),).toEqual(["Alice", "Bob",],);
   });
 
   test("includes the current location name", async () => {
@@ -102,12 +102,12 @@ describe("resolveChatKnownEntityNames", () => {
       .execute();
 
     const names = await resolveChatKnownEntityNames(db, chatId,);
-    const aliceCount = names.filter((n,) => n === "Alice",).length;
+    const aliceCount = names.filter((n,) => n === "Alice").length;
     expect(aliceCount,).toBe(1,);
   });
 
   test("returns empty array when chat does not exist (graceful failure)", async () => {
     const names = await resolveChatKnownEntityNames(db, "nonexistent-chat-id",);
-    expect(names,).toEqual([]);
+    expect(names,).toEqual([],);
   });
 });

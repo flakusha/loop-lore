@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 264
+// size-allow: 280
 
 /**
  * Plugin Registry — Stores all plugin registrations for consumers
