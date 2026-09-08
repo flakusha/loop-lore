@@ -83,6 +83,7 @@ export class PeerTable {
     if (this.started) { return; }
     this.started = true;
     this.sweepTimer = setInterval(() => this.sweep(), this.sweepInterval,);
+    this.sweepTimer.unref?.();
   }
 
   /** Stop the eviction sweep timer. Idempotent. */
