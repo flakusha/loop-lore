@@ -195,6 +195,25 @@ describe("PersonasService — delete() cascade", () => {
 
     // Create a chat and add the persona as a participant
     const chatId = "chat-for-delete-cascade";
+
+    // chat_participants.actor_id carries an FK to actors.id, so the
+    // participant needs a real actor row (the user id alone violates it).
+    const participantActorId = "actor-for-delete-cascade";
+    await db
+      .insertInto("actors",)
+      .values({
+        id: participantActorId,
+        actor_type: "user",
+        display_name: "Missing User",
+        agent_type: "none",
+        owner_id: userId,
+        settings: "{}",
+        format_version: 0,
+        import_spec: "raw",
+        data_source_format: "json",
+        data_raw: null,
+      },)
+      .execute();
     await db
       .insertInto("chats",)
       .values({
@@ -210,7 +229,7 @@ describe("PersonasService — delete() cascade", () => {
       .insertInto("chat_participants",)
       .values({
         chat_id: chatId,
-        actor_id: userId,
+        actor_id: participantActorId,
         persona_id: personaId,
         role_in_chat: "member",
       },)
@@ -221,7 +240,7 @@ describe("PersonasService — delete() cascade", () => {
       .selectFrom("chat_participants",)
       .selectAll()
       .where("chat_id", "=", chatId,)
-      .where("actor_id", "=", userId,)
+      .where("actor_id", "=", participantActorId,)
       .executeTakeFirst();
     expect(before!.persona_id,).toBe(personaId,);
 
@@ -233,7 +252,7 @@ describe("PersonasService — delete() cascade", () => {
       .selectFrom("chat_participants",)
       .selectAll()
       .where("chat_id", "=", chatId,)
-      .where("actor_id", "=", userId,)
+      .where("actor_id", "=", participantActorId,)
       .executeTakeFirst();
     expect(after!.persona_id,).toBeNull();
   });

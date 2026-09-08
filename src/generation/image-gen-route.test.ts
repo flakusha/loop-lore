@@ -18,6 +18,7 @@ import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 import * as realAssetCreate from "../assets/service/create";
 import * as realAssetLinks from "../assets/service/links";
 import * as realConfigLoad from "../config/load";
+import { createConfigSchema, } from "../config/schema-class";
 import * as realDb from "../db/index";
 import * as realUtils from "../utils";
 import * as realImageEngine from "./image-engine";
@@ -118,7 +119,12 @@ let handleImageGeneration: typeof imageGenRoute.handleImageGeneration;
 if (ISOLATED) {
   mock.module("../config/load", () => ({
     ...realConfigLoad,
-    loadConfig: () => defaultConfig,
+    // Merge test overrides over full schema defaults: a bare defaultConfig
+    // drops required sections (server, db, auth, byoKey, dynamicResponse)
+    // for every later file in the process (e2e server boot, handler
+    // policy wiring). Test behavior unchanged — assets/generation still
+    // come from defaultConfig.
+    loadConfig: () => ({ ...structuredClone(createConfigSchema().defaults,), ...defaultConfig, }),
   }),);
 
   mock.module("./image-engine", () => ({

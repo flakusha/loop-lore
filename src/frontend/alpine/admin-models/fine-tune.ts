@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { parseFloatOr, } from "../../../utils/parse-number";
+import { parseParamSizeOr, } from "./shared";
 import type { FineTuneCandidate, ModelsState, } from "./types";
 
 /**
@@ -87,7 +87,7 @@ export const fineTuneState: Partial<ModelsState> & ThisType<ModelsState> = {
    * @param c
    */
   fineTuneReadiness(c: FineTuneCandidate,): string {
-    const size = c.paramSize ? parseFloatOr(c.paramSize, Number.NaN,) : Number.NaN;
+    const size = c.paramSize ? parseParamSizeOr(c.paramSize, Number.NaN,) : Number.NaN;
     const ctx = c.contextWindow ?? 0;
     if (!Number.isNaN(size,) && size >= 8) {
       return "Suitable base — large param count";
