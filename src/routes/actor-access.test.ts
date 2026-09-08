@@ -28,7 +28,7 @@ describe("resolveActorAccess", () => {
   let otherActorId: string;
 
   beforeAll(async () => {
-    createLogger({ level: "error" },);
+    createLogger({ level: "error", },);
     const testDb = await createTestDb();
     db = testDb.db;
 
@@ -77,7 +77,7 @@ describe("resolvePrimaryActorId", () => {
   let ownerCharId: string;
 
   beforeAll(async () => {
-    createLogger({ level: "error" },);
+    createLogger({ level: "error", },);
     const testDb = await createTestDb();
     db = testDb.db;
 

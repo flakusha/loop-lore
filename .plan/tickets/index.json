@@ -1194,6 +1194,17 @@
     "source": ".plan/tickets/BUG-chat-reunite-secondary-ownership-check-missing.md",
     "status": "done"
   },
+  "BUG-CHAT-SEEN-CURRENTACTORID-NEVER-ASSIGNED-MARKSEEN-SENDS-NULL": {
+    "hash": "pending",
+    "extid": "BUG-CHAT-SEEN-CURRENTACTORID-NEVER-ASSIGNED-MARKSEEN-SENDS-NULL",
+    "type": "BUG",
+    "title": "chat-seen-currentActorId-never-assigned-markSeen-sends-null",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
+  },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "hash": "e5bf24b",
     "extid": "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE",
@@ -2296,6 +2307,17 @@
     "tags": [],
     "source": ".plan/tickets/BUG-gzip-stored-unencrypted-messages-reach-llm-prompt-and-export.md",
     "status": "done"
+  },
+  "BUG-HALLUCINATION-GUARD-ISKNOWNENTITY-STUBS-UNUSED-FALLS-THROUGH": {
+    "hash": "pending",
+    "extid": "BUG-HALLUCINATION-GUARD-ISKNOWNENTITY-STUBS-UNUSED-FALLS-THROUGH",
+    "type": "BUG",
+    "title": "hallucination-guard-isKnownEntity-stubs-unused-falls-through-to-name-match",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
   },
   "BUG-HALLUCINATION-GUARD-KNOWN-PARAMS-IGNORED": {
     "hash": "pending",
