@@ -13,6 +13,7 @@ import type { FSWatcher, watch as NodeWatch, } from "node:fs";
 import { mkdirSync, rmSync, } from "node:fs";
 import path from "node:path";
 import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { createConfigSchema, } from "./schema-class";
 
 // ── Stubs ────────────────────────────────────────────────────
 
@@ -57,7 +58,11 @@ if (ISOLATED) {
 
 if (ISOLATED) {
   mock.module("./load", () => ({
-    loadConfig: () => ({}),
+    // Return full schema defaults (no file I/O): {} poisoned every other
+    // file in the process that calls loadConfig() (e2e server boot,
+    // server handler policy wiring). Defaults keep the reload path
+    // meaningful and cross-file consumers functional.
+    loadConfig: () => structuredClone(createConfigSchema().defaults,),
   }),);
 }
 
