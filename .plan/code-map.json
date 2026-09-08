@@ -17249,12 +17249,6 @@
       "source": ".plan/tickets/BUG-nsfw-preferences-admin-read-materializes-row.md"
     }
   ],
-  "src/nsfw/pii-redact.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f.md"
-    }
-  ],
   "src/nsfw/pii-redaction.ts": [
     {
       "kind": "ticket",
@@ -17319,6 +17313,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/nsfw-integration.md"
+    }
+  ],
+  "src/nsfw/telemetry-id-hashes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-jwtsecret-reused-across-three-security-domains-byok-pbkdf2-f.md"
     }
   ],
   "src/nsfw/weather-integration.ts": [
