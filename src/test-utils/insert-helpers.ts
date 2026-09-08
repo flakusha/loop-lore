@@ -3446,3 +3446,15 @@ export async function insertSchemaVersion(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a workflow_sessions row. */
+export async function insertWorkflowSessions(
+  db: Db,
+  workflow_id: string,
+  opts?: { chat_id?: string; step_values?: string; confirmed?: number; updated_at?: string },
+): Promise<void> {
+  await db.insertInto("workflow_sessions",).values({
+    workflow_id,
+    ...opts,
+  } as any,).execute();
+}

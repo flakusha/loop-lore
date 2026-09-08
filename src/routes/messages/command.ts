@@ -15,6 +15,7 @@ import {
 import { matchWorkflowTrigger, } from "../../assistant/workflow-routing";
 import { previewSteps, } from "../../assistant/workflow-runner";
 import { getSession, startSession, } from "../../assistant/workflow-session";
+import { loadPersistedSession, saveSession, } from "../../assistant/workflow-session-store";
 import type { Config, } from "../../config/schema";
 import {
   encryptMessageContent,
@@ -30,6 +31,7 @@ import {
 } from "../../db/enums";
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { stripLeadingMention, } from "../../group-chat/mention-parser";
 import { uid, } from "../../utils";
 import { jsonResponse, } from "../http-utils";
 import { log, } from "./helpers";
@@ -53,15 +55,21 @@ export async function dispatchCommand(
   chatId: string,
   content: string,
 ): Promise<{ handled: true; response: Response } | { handled: false }> {
-  const parsed = parseCommand(content,);
+  // Group-chat messages may address the bot first ("@Luna make a video").
+  // Slash parsing, trigger matching, and step capture all run on the
+  // remainder so addressed messages behave like bare ones.
+  const effectiveContent = stripLeadingMention(content,);
+  if (effectiveContent.length === 0) { return { handled: false, }; }
+  const parsed = parseCommand(effectiveContent,);
   const handler = parsed ? getCommand(parsed.command,) : undefined;
-  // Registered slash commands keep existing behavior. Anything else may
-  // still belong to a workflow: an active run captures plain messages as
-  // step values, and trigger phrases start a new run. All other content
-  // falls through to the normal message path.
   const loadedWorkflows = Object.values(config.templates?.workflows?.workflows ?? {},);
-  if (!handler && !getSession(chatId,) && !matchWorkflowTrigger(content, loadedWorkflows,)) {
-    return { handled: false, };
+  if (!handler) {
+    // Rehydrate persisted runs (restart/second process) into memory before
+    // deciding whether this message belongs to a workflow.
+    const session = getSession(chatId,) ?? await loadPersistedSession(database, chatId, loadedWorkflows,);
+    if (!session && !matchWorkflowTrigger(effectiveContent, loadedWorkflows,)) {
+      return { handled: false, };
+    }
   }
   // Issue chat context, recent-message history, and participant lookup
   // concurrently — they are independent reads and used downstream only
@@ -151,14 +159,16 @@ export async function dispatchCommand(
     const session = getSession(chatId,);
     if (session) {
       result = {
-        systemMessage: fillNextStep(session, content,),
+        systemMessage: fillNextStep(session, effectiveContent,),
         handled: true,
         action: "workflow-progress",
         actionPayload: { workflowId: session.workflow.id, },
       };
+      await saveSession(database, chatId, session,);
     } else {
-      const match = matchWorkflowTrigger(content, loadedWorkflows,)!;
+      const match = matchWorkflowTrigger(effectiveContent, loadedWorkflows,)!;
       const started = startSession(chatId, match,);
+      await saveSession(database, chatId, started,);
       result = {
         systemMessage: formatWorkflowPreview(started,),
         handled: true,

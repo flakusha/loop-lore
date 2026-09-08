@@ -23,6 +23,7 @@ import {
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
 import { clearSessions, } from "../workflow-session";
+import { deletePersistedSession, } from "../workflow-session-store";
 import "./index"; // register all slash commands (self-registering)
 
 const CALLER_ID = "workflow-user";
@@ -115,8 +116,9 @@ describe("workflow dispatch via message route", () => {
     await insertChatParticipants(db, chatId, CALLER_ID, { role_in_chat: "member", } as never,);
   },);
 
-  beforeEach(() => {
+  beforeEach(async () => {
     clearSessions();
+    await deletePersistedSession(db, chatId,);
   },);
 
   test("unrelated messages fall through to the normal path", async () => {
@@ -183,5 +185,42 @@ describe("workflow dispatch via message route", () => {
     const confirmed = await send(db, chatId, "/workflow confirm",);
     expect(confirmed.handled,).toBe(true,);
     expect(String(confirmed.body?.systemMessage ?? "",),).toContain("Entity creation unavailable",);
+  });
+
+  test("leading @mention is stripped before trigger match and step fill", async () => {
+    const started = await send(db, chatId, "@helper please make a video",);
+    expect(started.handled,).toBe(true,);
+    expect(started.body?.action,).toBe("workflow-preview",);
+
+    await send(db, chatId, "@helper neon alley at night",);
+    await send(db, chatId, "@helper static",);
+    const confirmed = await send(db, chatId, "/workflow confirm",);
+    const payload = confirmed.body?.actionPayload as Record<string, unknown>;
+    // Stored step values carry no addressing prefix.
+    expect(payload.prompt,).toBe("Subject: neon alley at night\nMotion: static",);
+  });
+
+  test("addressed slash commands dispatch", async () => {
+    const help = await send(db, chatId, "@helper /help",);
+    expect(help.handled,).toBe(true,);
+    expect(help.body?.command,).toBe("help",);
+  });
+
+  test("lone mention falls through", async () => {
+    expect(await send(db, chatId, "@helper",),).toEqual({ handled: false, },);
+  });
+
+  test("run resumes from persistence after memory loss (restart)", async () => {
+    await send(db, chatId, "make a video",);
+    await send(db, chatId, "neon alley at night",);
+    // Simulate a restart: memory gone, DB row remains.
+    clearSessions();
+    const resumed = await send(db, chatId, "static",);
+    expect(resumed.body?.action,).toBe("workflow-progress",);
+    expect(String(resumed.body?.systemMessage ?? "",),).toContain("/workflow confirm",);
+    // Cancel clears both memory and the persisted row.
+    await send(db, chatId, "/workflow cancel",);
+    clearSessions();
+    expect(await send(db, chatId, "static",),).toEqual({ handled: false, },);
   });
 });

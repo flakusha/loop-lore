@@ -160,3 +160,20 @@ export function detectPassToken(text: string,): boolean {
   // Standalone trailing token, optionally surrounded by whitespace.
   return /\[\s*pass\s*\]\s*$/i.test(trimmed,);
 }
+
+/**
+ * Strip a leading @actor addressing prefix from message text.
+ *
+ * Group-chat messages often address the bot first ("@Luna make a video").
+ * Command parsing and workflow trigger matching run on the remainder so
+ * addressed messages behave like bare ones. Only a prefix is stripped —
+ * mid-message mentions are content, not addressing. Returns the original
+ * text when it does not start with a mention.
+ * @param text - Raw message content
+ * @returns Text after the leading mention, trimmed; original when absent
+ */
+export function stripLeadingMention(text: string,): string {
+  const match = /^@[A-Za-z0-9_-]+\s*/.exec(text.trimStart(),);
+  if (!match) { return text; }
+  return text.trimStart().slice(match[0].length,).trimStart();
+}
