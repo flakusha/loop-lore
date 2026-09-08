@@ -65,6 +65,16 @@ export interface RateLimitConfig {
 }
 
 /**
+ * Build an in-memory sliding-window rate limiter.
+ *
+ * Scope assumptions (BUG-in-memory-limiter-not-shared-across-instances):
+ * buckets live in this closure's Map, so limits are per-process — behind a
+ * load balancer or multiple workers the effective per-client limit is N× the
+ * configured value and restarts reset all buckets. Single-instance solo
+ * deployments (this app's target) are unaffected; scaled deployments must
+ * back the limiter with a shared store. The prune timer keeps running for
+ * the process lifetime; call {@link destroy} on the returned instance to
+ * stop it (tests, per-request instantiation, shutdown hooks).
  * @param config
  */
 export function createRateLimiter(config: RateLimitConfig,) {
