@@ -420,6 +420,7 @@ export async function insertUsers(
     format_version?: number;
     created_at?: string;
     last_seen_at?: string | null;
+    encryption_secret?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("users",).values({
@@ -3434,6 +3435,20 @@ export async function insertE2eSkippedMessageKeys(
     chain_index,
     message_key,
     ...opts,
+  } as any,).execute();
+}
+
+/** Insert a message_search_tokens row. */
+export async function insertMessageSearchTokens(
+  db: Db,
+  message_id: string,
+  token: string,
+  scope: string,
+): Promise<void> {
+  await db.insertInto("message_search_tokens",).values({
+    message_id,
+    token,
+    scope,
   } as any,).execute();
 }
 
