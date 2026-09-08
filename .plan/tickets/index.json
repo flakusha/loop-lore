@@ -22636,5 +22636,93 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
+  },
+  "TASK-NARRATION-LEVELS": {
+    "hash": "pending",
+    "extid": "TASK-NARRATION-LEVELS",
+    "type": "TASK",
+    "title": "Narration levels (actor-only vs actor+narrator)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-narration-actor-separation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-narration-levels.md"
+  },
+  "TASK-TURN-SEND-GATE": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SEND-GATE",
+    "type": "TASK",
+    "title": "Turn send gate (block send/accept, allow edit)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-group-chat",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-send-gate.md"
+  },
+  "TASK-TURN-SKIP-CASCADE-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-CASCADE-INTEGRATION",
+    "type": "TASK",
+    "title": "Turn skip cascade integration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-cascade-integration.md"
+  },
+  "TASK-TURN-SKIP-COMPOSER-UI": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-COMPOSER-UI",
+    "type": "TASK",
+    "title": "Turn skip composer UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-composer-ui.md"
+  },
+  "TASK-TURN-SKIP-EVENT-AND-PERSISTENCE": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-EVENT-AND-PERSISTENCE",
+    "type": "TASK",
+    "title": "Turn skip event and persistence",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-event-and-persistence.md"
+  },
+  "TASK-TURN-SKIP-GATE-INTERLOCK": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-GATE-INTERLOCK",
+    "type": "TASK",
+    "title": "Turn skip gate interlock",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-gate-interlock.md"
+  },
+  "TASK-TURN-SKIP-GM-ABSENCE-CONTRACT": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-GM-ABSENCE-CONTRACT",
+    "type": "TASK",
+    "title": "Turn skip GM absence contract",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-gm-absence-contract.md"
+  },
+  "TASK-VN-CHOICE-OPT-IN": {
+    "hash": "pending",
+    "extid": "TASK-VN-CHOICE-OPT-IN",
+    "type": "TASK",
+    "title": "VN choice opt-in with pending-choice send block",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-visual-novel-mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-choice-opt-in.md"
   }
 }
