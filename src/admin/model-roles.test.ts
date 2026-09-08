@@ -7,7 +7,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
-import { registerProvider, } from "../generation/providers/registry";
+import { registerProvider, unregisterProvider, } from "../generation/providers/registry";
 import type { LLMProvider, } from "../generation/providers/types";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -68,6 +68,10 @@ describe("model-roles", () => {
   },);
 
   afterEach(() => {
+    // The provider registry is process-global: a leftover registration flips
+    // isLlmGenerationConfigured() to true for every later suite (e.g.
+    // routes/messages/reply.test.ts takes the LLM path and returns replied:false).
+    unregisterProvider(TEST_PROVIDER,);
     sqlite.close();
   },);
 
