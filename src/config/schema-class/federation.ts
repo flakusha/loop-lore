@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 // src/config/schema-class/federation.ts — federation section defaults
-import type { FederationConfig } from "../schema";
+import type { FederationConfig, } from "../schema";
 
 export const FEDERATION_DEFAULTS = {
   enabled: false,

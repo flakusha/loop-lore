@@ -11,8 +11,8 @@
  * probe is disabled, its route is NOT mounted (not merely hidden), so an
  * unprovisioned surface returns 404 rather than advertising readiness.
  */
-import { sql, } from "kysely";
 import { Elysia, } from "elysia";
+import { sql, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
@@ -49,7 +49,7 @@ export function livenessRoutes(opts: LivenessOpts,): Elysia {
     app.get("/health/live", () => {
       return jsonResponse({
         status: "ok",
-        uptime: Math.floor((Date.now() - startTime) / 1000),
+        uptime: Math.floor((Date.now() - startTime) / 1000,),
         timestamp: new Date().toISOString(),
       },);
     }, {
