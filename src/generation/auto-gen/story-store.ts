@@ -96,6 +96,7 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
   storedKeyId = result.keyId;
 
   let dominantEmotion: string | null = null;
+  let effectiveActorId = actorId;
   try {
     const hooks = await runContentHooks({
       database,
@@ -108,11 +109,14 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
     if (!hooks.allowed) {
       log.warn("story-mode: generation blocked by content hooks", {
         chatId,
-        actorId,
+        actorId: hooks.actorId ?? actorId,
       },);
       return null;
     }
     dominantEmotion = hooks.dominantEmotion ?? null;
+    // Prefer the hook payload actorId (mirrors auto-generation.ts); fall back to opts for back-compat.
+    effectiveActorId = hooks.actorId ?? actorId;
+    if (smk && effectiveActorId !== actorId) { await deps.ensureActorKey({ database, actorId: effectiveActorId, smk, },); }
   } catch (error) {
     log.error(
       "story-mode: content-hook chain threw — aborting turn (fail-closed)",
@@ -139,7 +143,7 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
     .values({
       id: messageId,
       chat_id: chatId,
-      actor_id: actorId,
+      actor_id: effectiveActorId,
       parent_id: parentMessageId,
       role: MessageRole.Assistant,
       content: storedContent,
