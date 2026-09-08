@@ -2517,6 +2517,12 @@
       "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
     }
   ],
+  "src/assistant/workflow-session-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-persist-run-sessions-beyond-process-memory.md"
+    }
+  ],
   "src/assistant/workflow-session.ts": [
     {
       "kind": "ticket",
@@ -15407,6 +15413,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-group-chat-mention-routing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc.md"
     }
   ],
   "src/group-chat/mention-queue.ts": [
