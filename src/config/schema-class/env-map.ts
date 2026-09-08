@@ -7,6 +7,7 @@ import { ASSETS_DEFAULTS, } from "./assets";
 import { ASSISTANT_DEFAULTS, } from "./assistant";
 import { AUTH_DEFAULTS, } from "./auth";
 import { BYO_KEY_DEFAULTS, } from "./byo-key";
+import { CRON_DEFAULTS, } from "./cron";
 import { DB_DEFAULTS, } from "./db";
 import { DOCS_DEFAULTS, } from "./docs";
 import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
@@ -49,6 +50,7 @@ export const envMap = (): EnvMap => {
     headers: HEADERS_SECTION_DEFAULTS,
     dynamicResponse: DYNAMIC_RESPONSE_DEFAULTS,
     frontend: FRONTEND_DEFAULTS,
+    cron: CRON_DEFAULTS,
   };
 
   const add = (prefix: string, obj: Record<string, unknown>,) => {
@@ -83,6 +85,7 @@ export const envMap = (): EnvMap => {
   add("headers", s.headers,);
   add("dynamicResponse", s.dynamicResponse,);
   add("frontend", s.frontend,);
+  add("cron", s.cron,);
 
   // Manual overrides for renamed/mapped env vars
   map.PORT = "server.port";
@@ -155,6 +158,7 @@ export const envMap = (): EnvMap => {
   map.TESTING_SD_MODEL = "testing.sdModel";
   map.TESTING_LLAMA_PORT = "testing.llamaPort";
   map.TESTING_SD_PORT = "testing.sdPort";
+  map.CRON_ENABLED = "cron.enabled";
 
   return map;
 };

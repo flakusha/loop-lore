@@ -4,8 +4,9 @@
 /**
  * Telemetry Cleanup
  *
- * On startup + every 24h: delete events older than TELEMETRY_RETENTION_DAYS.
- * Only runs when telemetry is enabled.
+ * Deletes events older than TELEMETRY_RETENTION_DAYS. Scheduling belongs to
+ * the cron registry (`telemetry.retention` job); this module only owns the
+ * single-pass unit so it stays directly testable.
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
@@ -13,25 +14,12 @@ import { getLogger, } from "../logger";
 import { getRetentionDays, isTelemetryEnabled, } from "./service";
 
 /**
+ * Run one retention cleanup pass. No-op when telemetry is disabled.
  * @param db
  */
-export function startRetentionCleanup(db: Kysely<DB>,): void {
+export async function runRetentionCleanup(db: Kysely<DB>,): Promise<void> {
   if (!isTelemetryEnabled()) { return; }
 
-  runCleanup(db,);
-
-  setInterval(
-    () => {
-      runCleanup(db,);
-    },
-    24 * 60 * 60 * 1000,
-  );
-}
-
-/**
- * @param db
- */
-async function runCleanup(db: Kysely<DB>,): Promise<void> {
   const days = getRetentionDays();
   const cutoff = new Date(Date.now() - days * 86_400_000,).toISOString();
 

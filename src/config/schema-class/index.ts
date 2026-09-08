@@ -17,6 +17,7 @@ import { ASSETS_DEFAULTS, } from "./assets";
 import { ASSISTANT_DEFAULTS, } from "./assistant";
 import { AUTH_DEFAULTS, } from "./auth";
 import { BYO_KEY_DEFAULTS, } from "./byo-key";
+import { CRON_DEFAULTS, } from "./cron";
 import { DB_DEFAULTS, } from "./db";
 import { DOCS_DEFAULTS, } from "./docs";
 import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
@@ -79,6 +80,7 @@ export const createConfigSchema = () => {
     dynamicResponse: deepClone(DYNAMIC_RESPONSE_DEFAULTS,),
     frontend: deepClone(FRONTEND_DEFAULTS,),
     seeding: deepClone(SEEDING_DEFAULTS,),
+    cron: deepClone(CRON_DEFAULTS,),
   };
 
   return {
@@ -106,6 +108,7 @@ export const createConfigSchema = () => {
         dynamicResponse: sections.dynamicResponse,
         frontend: sections.frontend,
         seeding: sections.seeding,
+        cron: sections.cron,
         templates: TEMPLATES_DEFAULTS,
         characters: CHARACTERS_DEFAULTS,
       };

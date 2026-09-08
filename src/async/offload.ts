@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import type { Kysely, } from "kysely";
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, unlinkSync, writeFileSync, } from "node:fs";
 import path from "node:path";
@@ -36,6 +39,13 @@ export interface DaState {
   eventLoopLagMs: number;
 }
 
+/** Options for a single offload scan pass. */
+export interface OffloadPassOpts {
+  minAgeMs: number;
+  ttlMs: number;
+  maxInlineBytes: number;
+}
+
 const DEFAULT_INTERVAL_MS = 5 * 60 * 1000;
 const DEFAULT_MIN_AGE_MS = 5 * 60 * 1000;
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -48,6 +58,84 @@ const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 function getMaxInlineBytes(override: number | undefined, fallback: AsyncStoreConfig,): number {
   if (override !== undefined) { return override; }
   return fallback.maxInlineBytes ?? 1024 * 1024;
+}
+
+/**
+ * Run one offload scan: spill oversized completed bodies to disk, then mark
+ * rows past TTL as expired. Scheduling belongs to the caller (daemon timer
+ * or the cron registry's `async.offload` job); this unit stays directly
+ * testable.
+ * @param database
+ * @param opts
+ */
+export async function runOffloadPass(
+  database: Kysely<DB>,
+  opts: OffloadPassOpts,
+): Promise<{ offloaded: number; expired: number }> {
+  const log = getLogger().child({ module: "async-offload", },);
+  const { minAgeMs, ttlMs, maxInlineBytes, } = opts;
+  let offloaded = 0;
+  let expired = 0;
+  const now = Date.now();
+  const minAgeCutoff = new Date(now - minAgeMs,).toISOString();
+  const ttlCutoff = new Date(now - ttlMs,).toISOString();
+
+  // Offload ripe completed rows.
+  const ripe = await database
+    .selectFrom("request_results",)
+    .select(["id", "response_body", "completed_at",],)
+    .where("status", "=", "complete",)
+    .where("completed_at", "<=", minAgeCutoff,)
+    .where("offloaded_at", "is", null,)
+    .execute();
+  for (const row of ripe) {
+    if (row.response_body === null) { continue; }
+    if (row.response_body.length <= maxInlineBytes) { continue; }
+    try {
+      const spillPath = await spill(row.id, row.response_body,);
+      await database
+        .updateTable("request_results",)
+        .set({ offloaded_at: new Date(now,).toISOString(), offload_path: spillPath, response_body: null, },)
+        .where("id", "=", row.id,)
+        .execute();
+      offloaded++;
+    } catch (error) {
+      log.error("offload spill failed", undefined, { id: row.id, error: String(error,), },);
+    }
+  }
+
+  // Mark expired rows.
+  const expiredResult = await database
+    .updateTable("request_results",)
+    .set({ status: "expired", response_body: null, },)
+    .where("status", "in", ["complete", "failed",],)
+    .where("completed_at", "<=", ttlCutoff,)
+    .execute();
+  expired = Number(expiredResult[0]?.numUpdatedRows ?? 0,);
+
+  // Best-effort cleanup of spill files for rows that have been expired
+  // past an extra TTL window. We only delete files we can map back to
+  // an `expired` row that has been around for at least 2× ttl.
+  const oldCutoff = new Date(now - 2 * ttlMs,).toISOString();
+  const expiredOld = await database
+    .selectFrom("request_results",)
+    .select(["id", "offload_path",],)
+    .where("status", "=", "expired",)
+    .where("completed_at", "<=", oldCutoff,)
+    .where("offload_path", "is not", null,)
+    .execute();
+  for (const row of expiredOld) {
+    if (row.offload_path === null) { continue; }
+    try {
+      unlinkSync(row.offload_path,);
+    } catch { /* already gone */ }
+    await database
+      .updateTable("request_results",)
+      .set({ offload_path: null, },)
+      .where("id", "=", row.id,)
+      .execute();
+  }
+  return { offloaded, expired, };
 }
 
 /**
@@ -79,73 +167,12 @@ export function startOffloadDaemon(
   async function runOnce(): Promise<{ offloaded: number; expired: number }> {
     if (running) { return { offloaded: 0, expired: 0, }; }
     running = true;
-    let offloaded = 0;
-    let expired = 0;
     try {
-      const now = Date.now();
-      const minAgeCutoff = new Date(now - minAgeMs,).toISOString();
-      const ttlCutoff = new Date(now - ttlMs,).toISOString();
-
-      // Offload ripe completed rows.
-      const ripe = await database
-        .selectFrom("request_results",)
-        .select(["id", "response_body", "completed_at",],)
-        .where("status", "=", "complete",)
-        .where("completed_at", "<=", minAgeCutoff,)
-        .where("offloaded_at", "is", null,)
-        .execute();
-      for (const row of ripe) {
-        if (row.response_body === null) { continue; }
-        if (row.response_body.length <= maxInlineBytes) { continue; }
-        try {
-          const spillPath = await spill(row.id, row.response_body,);
-          await database
-            .updateTable("request_results",)
-            .set({ offloaded_at: new Date(now,).toISOString(), offload_path: spillPath, response_body: null, },)
-            .where("id", "=", row.id,)
-            .execute();
-          offloaded++;
-        } catch (error) {
-          log.error("offload spill failed", undefined, { id: row.id, error: String(error,), },);
-        }
-      }
-
-      // Mark expired rows.
-      const expiredResult = await database
-        .updateTable("request_results",)
-        .set({ status: "expired", response_body: null, },)
-        .where("status", "in", ["complete", "failed",],)
-        .where("completed_at", "<=", ttlCutoff,)
-        .execute();
-      expired = Number(expiredResult[0]?.numUpdatedRows ?? 0,);
-
-      // Best-effort cleanup of spill files for rows that have been expired
-      // past an extra TTL window. We only delete files we can map back to
-      // an `expired` row that has been around for at least 2× ttl.
-      const oldCutoff = new Date(now - 2 * ttlMs,).toISOString();
-      const expiredOld = await database
-        .selectFrom("request_results",)
-        .select(["id", "offload_path",],)
-        .where("status", "=", "expired",)
-        .where("completed_at", "<=", oldCutoff,)
-        .where("offload_path", "is not", null,)
-        .execute();
-      for (const row of expiredOld) {
-        if (row.offload_path === null) { continue; }
-        try {
-          unlinkSync(row.offload_path,);
-        } catch { /* already gone */ }
-        await database
-          .updateTable("request_results",)
-          .set({ offload_path: null, },)
-          .where("id", "=", row.id,)
-          .execute();
-      }
+      return await runOffloadPass(database, { minAgeMs, ttlMs, maxInlineBytes, },);
     } finally {
       running = false;
       state.lastWriteAt = Date.now();
     }
-    return { offloaded, expired, };
   }
 
   return {
