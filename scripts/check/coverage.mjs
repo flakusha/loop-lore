@@ -98,8 +98,11 @@ const WAIVERS = {
   // ABI-mismatch/null-handle guards. The Rust cdylib smoke is exercised
   // via `benchmarks/zstd.bench.ts` and `benchmarks/blake3.bench.ts`,
   // which run the live native module against the Bun fallback.
-  "native": { floor: 60, reason: "Rust cdylib fast-path exercised by benchmarks (zstd/blake3); unit tests cover Bun fallback + ABI guards", },
- };
+  "native": {
+    floor: 60,
+    reason: "Rust cdylib fast-path exercised by benchmarks (zstd/blake3); unit tests cover Bun fallback + ABI guards",
+  },
+};
 
 /**
  * Resolve the effective floor for a module. Defaults to the global --floor.
