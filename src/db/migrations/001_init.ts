@@ -3,8 +3,9 @@
 
 /**
  * Initial schema migration — final-form DDL (single atomic migration).
- * Orcograms the extensive parts/ tree in dependency order; every part
- * holds pure CREATE (no DROP, no PRAGMA foreign_keys toggle).
+ * Orchestrates the extensive parts/ tree in dependency order. Parts hold
+ * final-form CREATE, except 020_memories_fts_triggers which reshapes the
+ * FTS table created by 016 (drop + recreate, required for the new shape).
  */
 import type { Kysely, } from "kysely";
 import { down as downCore, up as upCore, } from "./parts/001_core";
@@ -23,7 +24,6 @@ import { down as downGeneration, up as upGeneration, } from "./parts/013_generat
 import { down as downModeration, up as upModeration, } from "./parts/014_moderation";
 import { down as downE2E, up as upE2E, } from "./parts/015_e2e";
 import { down as downFts, up as upFts, } from "./parts/016_fts";
-import { down as downDropTemplateVn, up as upDropTemplateVn, } from "./parts/017_drop_template_visual_novel";
 import { down as downSchemaVersion, up as upSchemaVersion, } from "./parts/018_schema_version";
 import {
   down as downTradeRequestedMaterials,
@@ -58,7 +58,6 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await upModeration(database,);
   await upE2E(database,);
   await upFts(database,);
-  await upDropTemplateVn(database,);
   await upSchemaVersion(database,);
   await upTradeRequestedMaterials(database,);
   await upMemoriesFtsTriggers(database,);
@@ -73,7 +72,6 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await downMemoriesFtsTriggers(database,);
   await downTradeRequestedMaterials(database,);
   await downSchemaVersion(database,);
-  await downDropTemplateVn(database,);
   await downFts(database,);
   await downE2E(database,);
   await downModeration(database,);
