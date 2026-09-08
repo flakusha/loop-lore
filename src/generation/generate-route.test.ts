@@ -318,7 +318,7 @@ describe("handleGenerate — provider resolution", () => {
   });
 });
 
-describe("handleGenerate — non-streaming (complete)", () => {
+describeReal("handleGenerate — non-streaming (complete)", () => {
   test("returns 200 with generated content using explicit prompt", async () => {
     const chatId = await seedChat(testDb,);
     const actorId = await seedActor(testDb,);
@@ -393,7 +393,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
   });
 });
 
-describe("handleGenerate — streaming (SSE)", () => {
+describeReal("handleGenerate — streaming (SSE)", () => {
   test("returns SSE stream with content and done events", async () => {
     const chatId = await seedChat(testDb,);
     const actorId = await seedActor(testDb,);
@@ -476,7 +476,7 @@ describe("handleGenerate — streaming (SSE)", () => {
   });
 });
 
-describe("handleGenerate — prompt assembly path", () => {
+describeReal("handleGenerate — prompt assembly path", () => {
   test("uses PromptAssembler when no explicit prompt given", async () => {
     const chatId = await seedChat(testDb,);
     const actorId = await seedActor(testDb, {
