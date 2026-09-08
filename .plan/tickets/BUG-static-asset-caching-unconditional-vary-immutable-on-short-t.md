@@ -1,6 +1,6 @@
 # BUG: static asset caching: unconditional Vary + immutable on short-TTL hashed assets
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
 
@@ -19,3 +19,8 @@ Fix: (1) only set Vary: Accept-Encoding when a compressed variant could actually
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Residual middleware half fixed: augmentImmutable now appends immutable only when max-age >= 1y and immutable not already present; static-files half (Vary only for compressible variants, hashed assets get 1y immutable directly) already landed on dev.
+Landed on `fix-transport-bugs` (transport-domain batch, 2026-09-08).
