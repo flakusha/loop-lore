@@ -242,21 +242,53 @@ describe("messageSeenRoutes", () => {
     expect(row,).toBeDefined();
   });
 
-  test("POST record branch with mismatched body.actorId returns 403 (IDOR guard)", async () => {
+  // ─── Server-derived actor (replaces client-supplied actorId) ────
+  //
+  // The POST handler now derives the actor from the session via
+  // resolvePrimaryActorId (user-actor row where owner_id IS NULL). The
+  // client no longer sends actorId — and even if a stale body carries one,
+  // the server ignores it. These tests pin that contract.
+
+  test("POST derives actor from session — body actorId is ignored", async () => {
+    // Isolation: clear any prior seen state from earlier tests.
+    await db.deleteFrom("message_seen",)
+      .where("message_id", "=", messageId,)
+      .execute();
     const app = seenApp(db, userId, null,);
-    // userId session tries to record state for otherActorId
+    // Send otherActorId in body; session is userId. Server must use
+    // userId's primary actor (actorId), not otherActorId.
     const res = await app.handle(
       postSeen(`/api/messages/${messageId}/seen`, { actorId: otherActorId, state: "seen", },),
     );
-    expect(res.status,).toBe(403,);
+    expect(res.status,).toBe(200,);
+    // GET should show actorId (not otherActorId) as the viewer.
+    const listRes = await app.handle(get(`/api/messages/${messageId}/seen`,),);
+    const list = await listRes.json();
+    const ids = list.map((r: { actorId: string },) => r.actorId);
+    expect(ids,).toContain(actorId,);
+    expect(ids,).not.toContain(otherActorId,);
   });
 
-  test("POST reset branch (state=unseen) with mismatched body.actorId returns 403", async () => {
+  test("POST without body.actorId still works (new contract)", async () => {
+    // Clear prior state for isolation.
+    await db.deleteFrom("message_seen",)
+      .where("message_id", "=", messageId,)
+      .execute();
     const app = seenApp(db, userId, null,);
-    // userId session tries to reset otherActorId's record
     const res = await app.handle(
-      postSeen(`/api/messages/${messageId}/seen`, { actorId: otherActorId, state: "unseen", },),
+      postSeen(`/api/messages/${messageId}/seen`, { state: "seen", },),
     );
-    expect(res.status,).toBe(403,);
+    expect(res.status,).toBe(200,);
+  });
+
+  test("POST 404s when session user has no primary persona actor", async () => {
+    // Third user with no actor row at all.
+    const lonelyUserId = uid();
+    await insertUsers(db, "seen-lonely", "Seen Lonely", { id: lonelyUserId, } as never,);
+    const app = seenApp(db, lonelyUserId, null,);
+    const res = await app.handle(
+      postSeen(`/api/messages/${messageId}/seen`, { state: "seen", },),
+    );
+    expect(res.status,).toBe(404,);
   });
 });

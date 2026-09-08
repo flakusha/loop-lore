@@ -32,10 +32,15 @@ export const chatSeenMethods: Partial<ChatState> & ThisType<ChatState> = {
   async markSeen(msgId: string, state: "seen" | "processing" = "seen",) {
     if (!this.activeChat) { return; }
     try {
+      // The server derives the actor from the session user (POST handler
+      // resolves the user's primary persona via resolvePrimaryActorId).
+      // Sending actorId from the client is no longer needed and would be
+      // a spoofable trust-boundary inversion — see
+      // BUG-chat-seen-currentActorId-never-assigned.
       const res = await apiFetch(`/api/messages/${msgId}/seen`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ actorId: this.currentActorId, state, },),
+        body: jsonBody({ state, },),
       },);
       if (res.ok) {
         await this.loadMessageSeen(msgId,);
