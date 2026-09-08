@@ -24,8 +24,9 @@ describe("schema-backfill", () => {
     db.close();
   },);
 
-  test("no-ops when the legacy column is absent", async () => {
+  test("no-ops on a converged database", async () => {
     await sql`CREATE TABLE chat_setup_templates (id TEXT PRIMARY KEY, gm_config TEXT)`.execute(kysely,);
+    await sql`CREATE VIRTUAL TABLE memories_fts USING fts5(memory_id UNINDEXED, content)`.execute(kysely,);
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });
 
@@ -56,6 +57,53 @@ describe("schema-backfill", () => {
       kysely,
     );
     expect(columns.rows.some((row,) => row.name === "visual_novel"),).toBe(false,);
+  });
+
+  test("rebuilds a broken-shape memories_fts with triggers and backfill", async () => {
+    await sql`CREATE TABLE chat_setup_templates (id TEXT PRIMARY KEY, gm_config TEXT)`.execute(kysely,);
+    await sql`CREATE TABLE actor_memories (id TEXT PRIMARY KEY, content TEXT)`.execute(kysely,);
+    await sql`INSERT INTO actor_memories (id, content) VALUES ('m1', 'the tavern keeper hides a brass key')`.execute(
+      kysely,
+    );
+    await sql`CREATE VIRTUAL TABLE memories_fts USING fts5(
+      memory_id UNINDEXED,
+      content,
+      content_rowid='memory_id'
+    )`.execute(kysely,);
+
+    expect(await runSchemaBackfill(kysely,),).toBe(true,);
+
+    const ddl = await sql<{ sql: string }>`SELECT sql FROM sqlite_master WHERE name = 'memories_fts'`.execute(kysely,);
+    expect(ddl.rows[0]?.sql.includes("content_rowid",),).toBe(false,);
+
+    const triggers = await sql<
+      { name: string }
+    >`SELECT name FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'actor_memories_fts_%'`.execute(kysely,);
+    expect(triggers.rows,).toHaveLength(3,);
+
+    const hits = await sql<{ memory_id: string }>`SELECT memory_id FROM memories_fts WHERE memories_fts MATCH 'brass'`
+      .execute(kysely,);
+    expect(hits.rows.map((row,) => row.memory_id),).toEqual(["m1",],);
+
+    await sql`INSERT INTO actor_memories (id, content) VALUES ('m2', 'a clockwork owl watches silently')`.execute(
+      kysely,
+    );
+    const live = await sql<
+      { memory_id: string }
+    >`SELECT memory_id FROM memories_fts WHERE memories_fts MATCH 'clockwork'`.execute(kysely,);
+    expect(live.rows.map((row,) => row.memory_id),).toEqual(["m2",],);
+
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
+  });
+
+  test("rebuilds a missing memories_fts and skips backfill without actor_memories", async () => {
+    await sql`CREATE TABLE chat_setup_templates (id TEXT PRIMARY KEY, gm_config TEXT)`.execute(kysely,);
+
+    expect(await runSchemaBackfill(kysely,),).toBe(true,);
+
+    const ddl = await sql<{ sql: string }>`SELECT sql FROM sqlite_master WHERE name = 'memories_fts'`.execute(kysely,);
+    expect(ddl.rows[0]?.sql.includes("content_rowid",),).toBe(false,);
+    const count = await sql<{ n: number }>`SELECT COUNT(*) AS n FROM memories_fts`.execute(kysely,);
+    expect(count.rows[0]?.n,).toBe(0,);
   });
 });
