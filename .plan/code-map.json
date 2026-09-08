@@ -1399,6 +1399,12 @@
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
     }
   ],
+  "src/assistant/commands/workflow.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
+    }
+  ],
   "src/assistant/commands/worlds-access.ts": [
     {
       "kind": "epic",
@@ -2497,6 +2503,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
+    }
+  ],
+  "src/assistant/workflow-session.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-persist-run-sessions-beyond-process-memory.md"
     },
     {
       "kind": "ticket",
@@ -15305,6 +15321,12 @@
       "source": ".plan/epics/epic-rpg-patterns.md"
     }
   ],
+  "src/group-chat/mention-parser": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc.md"
+    }
+  ],
   "src/group-chat/mention-parser.test.ts": [
     {
       "kind": "epic",
@@ -20545,6 +20567,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/PERF-chat-dispatch-command-three-sequential-queries.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-runner-start-preview-step-confirm-dispatch-step-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc.md"
     }
   ],
   "src/routes/messages/create-entity-confirm.ts": [
@@ -20701,6 +20731,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc.md"
     }
   ],
   "src/routes/messages/read.ts": [
