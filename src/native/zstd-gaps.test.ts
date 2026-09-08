@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { describe, expect, mock, test, } from "bun:test";
+import { expect, mock, test, } from "bun:test";
+import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
 
 /** Typed view of Bun's built-in zstd (mirrors the unit under test). */
 interface BunZstd {
@@ -36,16 +37,21 @@ const fakeHandle = {
   },
 };
 
-mock.module("./loader", () => ({
-  getNativeModule: () => ({ handle: fakeHandle, version: 3, }),
-  isNativeAvailable: () => true,
-}),);
+// Loader mock leaks process-globally without --isolate (fake native handle
+// would serve later suites, e.g. zstd.test.ts): gate it like other
+// mock.module suites so plain `bun test src/` keeps the real loader.
+if (ISOLATED) {
+  mock.module("./loader", () => ({
+    getNativeModule: () => ({ handle: fakeHandle, version: 3, }),
+    isNativeAvailable: () => true,
+  }),);
+}
 
 // Dynamic import: mock.module must register before ./zstd evaluates, so a
 // static import (hoisted above the mock) cannot work here.
 const { isNativeZstdAvailable, zstdCompress, zstdDecompress, } = await import("./zstd");
 
-describe("zstd gaps — native compress path", () => {
+describeOrSkip("zstd gaps — native compress path", () => {
   test("native success returns the sliced output", () => {
     const input = new Uint8Array([9, 8, 7, 6,],);
     expect(zstdCompress(input,),).toEqual(input,);
@@ -87,9 +93,9 @@ describe("zstd gaps — native compress path", () => {
       stub.compressFail = 0;
     }
   });
-});
+},);
 
-describe("zstd gaps — native decompress path", () => {
+describeOrSkip("zstd gaps — native decompress path", () => {
   test("native success returns the sliced output", () => {
     const input = new Uint8Array([4, 5, 6,],);
     expect(zstdDecompress(input,),).toEqual(input,);
@@ -116,10 +122,10 @@ describe("zstd gaps — native decompress path", () => {
       stub.decompressFail = 0;
     }
   });
-});
+},);
 
-describe("zstd gaps — availability", () => {
+describeOrSkip("zstd gaps — availability", () => {
   test("reports native available when the loader resolves", () => {
     expect(isNativeZstdAvailable(),).toBe(true,);
   });
-});
+},);
