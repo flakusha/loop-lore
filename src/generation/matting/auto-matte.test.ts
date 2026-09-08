@@ -18,6 +18,11 @@ import { mkdtempSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { createAsset, } from "../../assets/service/create";
+import { describePristine, } from "../../test-utils/pristine";
+
+// matting enqueues real assets via createAsset, which
+// image-gen-route.test.ts replaces process-wide with mockCreateAsset.
+const describeReal = describePristine(createAsset, "createAsset",);
 import { makeMinimalPng, } from "../../assets/test-helpers";
 import { AssetAlphaStatus, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -53,7 +58,7 @@ async function seedAsset(db: Kysely<DB>, ownerId: string,): Promise<string> {
   return asset.id;
 }
 
-describe("enqueueAutoMatting", () => {
+describeReal("enqueueAutoMatting", () => {
   test("eligible raw asset + provider → job created", async () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "m owner", "M Owner",);

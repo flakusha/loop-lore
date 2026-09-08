@@ -16,7 +16,7 @@ import { existsSync, mkdirSync, rmSync, } from "node:fs";
 import { resolve, } from "node:path";
 import "./logger-init";
 import { initAgeGate, } from "@/age-gate/controller";
-import { loadConfig, } from "@/config/load";
+import { createConfigSchema, } from "@/config/schema-class";
 import type { Config, } from "@/config/schema";
 import { initSmk, } from "@/crypto";
 import type { DB, } from "@/db/schema";
@@ -258,7 +258,12 @@ function enforceE2eSafeguard(config: Config,): void {
 export function loadTestConfig(
   overrides?: Omit<Partial<Config>, "auth"> & { auth?: Partial<Config["auth"]> },
 ): Config {
-  const config = loadConfig();
+  // Build from schema defaults, NOT loadConfig(): src test files register
+  // process-global mock.module("../config/load") stubs (e.g. image-gen
+  // partial configs) that persist for every later file, and e2e suites run
+  // last. loadConfig() would return the stub; defaults + the explicit
+  // overrides below are the entire e2e contract.
+  const config = structuredClone(createConfigSchema().defaults,) as Config;
   // Apply safe defaults BEFORE safeguard check so real config
   // values (real DB path, real upload dir) don't trigger rejection.
   config.server.port = 0;
