@@ -12,7 +12,7 @@ import { loadConfig, } from "../../../config/load";
 import { pickSdProvider, } from "../../../config/schema";
 import type { ImageProviderConfig, } from "../../../config/schema";
 import type { EmotionEntry, } from "../../../config/sections/templates";
-import { EmotionType, } from "../../../db/enums";
+import { AssetAlphaStatus, EmotionType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { generateImages, } from "../../../generation/image-engine";
 import { enqueueAutoMatting, } from "../../../generation/matting/auto-matte";
@@ -239,13 +239,16 @@ export async function generateEmotionAvatar(
         label: `emotion:${opts.emotion}`,
       },
     },);
-
-    // Auto-enqueue matting for opaque generated sprites (alpha extraction).
+    // Auto-enqueue matting for generated sprites. Providers typically emit
+    // RGBA PNGs with fully opaque pixels, so header-level detection marks the
+    // asset `native` and would skip matting — force the raw path here.
+    // TODO(matting): once providers gain true-alpha output or store-time
+    // pixel sampling lands, drop this override and trust `asset.alpha_status`.
     await enqueueAutoMatting({
       database: svc.db,
       uploadDir: opts.uploadDir,
       assetId: asset.id,
-      alphaStatus: asset.alpha_status,
+      alphaStatus: opts.mattingProvider ? AssetAlphaStatus.Raw : asset.alpha_status,
       ownerId: opts.actorId,
       provider: opts.mattingProvider,
     },);
