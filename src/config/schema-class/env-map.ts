@@ -13,6 +13,7 @@ import { DOCS_DEFAULTS, } from "./docs";
 import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
 import { ENCRYPTION_DEFAULTS, } from "./encryption";
 import { FRONTEND_DEFAULTS, } from "./frontend";
+import { FEDERATION_DEFAULTS, } from "./federation";
 import { GENERATION_DEFAULTS, } from "./generation";
 import { HEADERS_SECTION_DEFAULTS, } from "./headers";
 import { HOOKS_DEFAULTS, } from "./hooks";
@@ -20,6 +21,7 @@ import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
 import { LOGGING_DEFAULTS, } from "./logging";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
+import { OBSERVABILITY_DEFAULTS, } from "./observability";
 import { SERVER_DEFAULTS, } from "./server";
 import { TRANSPORT_DEFAULTS, } from "./transport";
 import { TUI_DEFAULTS, } from "./tui";
@@ -42,6 +44,7 @@ export const envMap = (): EnvMap => {
     transport: TRANSPORT_DEFAULTS,
     messages: MESSAGES_DEFAULTS,
     nsfw: NSFW_DEFAULTS,
+    observability: OBSERVABILITY_DEFAULTS,
     hooks: HOOKS_DEFAULTS,
     idempotency: IDEMPOTENCY_DEFAULTS,
     generation: GENERATION_DEFAULTS,
@@ -51,6 +54,7 @@ export const envMap = (): EnvMap => {
     dynamicResponse: DYNAMIC_RESPONSE_DEFAULTS,
     frontend: FRONTEND_DEFAULTS,
     cron: CRON_DEFAULTS,
+    federation: FEDERATION_DEFAULTS,
   };
 
   const add = (prefix: string, obj: Record<string, unknown>,) => {
@@ -77,6 +81,7 @@ export const envMap = (): EnvMap => {
   add("transport", s.transport,);
   add("messages", s.messages,);
   add("nsfw", s.nsfw,);
+  add("observability", s.observability,);
   add("hooks", s.hooks,);
   add("idempotency", s.idempotency,);
   add("generation", s.generation,);
@@ -85,7 +90,8 @@ export const envMap = (): EnvMap => {
   add("headers", s.headers,);
   add("dynamicResponse", s.dynamicResponse,);
   add("frontend", s.frontend,);
-  add("cron", s.cron,);
+  add("cron", s.cron);
+  add("federation", s.federation);
 
   // Manual overrides for renamed/mapped env vars
   map.PORT = "server.port";
