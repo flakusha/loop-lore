@@ -185,7 +185,10 @@ describe("trade routes (auth-gated)", () => {
     },);
     const strangerUser = uid();
     await insertUsers(db, `sx-${strangerUser}`, "Stranger", {
-      id: strangerUser, role: "solo", status: "active", settings: "{}",
+      id: strangerUser,
+      role: "solo",
+      status: "active",
+      settings: "{}",
     } as never,);
     const stranger = uid();
     await db.insertInto("actors",).values({ id: stranger, display_name: "Stranger", user_id: strangerUser, },)

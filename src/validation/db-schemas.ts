@@ -1721,10 +1721,10 @@ export const CraftingOrdersSchema = t.Object({
   max_quality: t.Optional(QualityLevelSchema,),
   offered_payment: t.Optional(t.Number(),),
   offered_materials: t.Optional(t.String(),),
-  requested_materials: t.Optional(t.String(),),
   status: t.Optional(t.String(),),
   deadline: t.Optional(t.String(),),
   trade_type: t.Optional(t.String(),),
+  requested_materials: t.Optional(t.String(),),
 },);
 
 // ── crafting_recipe_materials ────────────────────────────────────────────
