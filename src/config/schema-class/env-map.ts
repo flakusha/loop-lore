@@ -12,8 +12,8 @@ import { DB_DEFAULTS, } from "./db";
 import { DOCS_DEFAULTS, } from "./docs";
 import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
 import { ENCRYPTION_DEFAULTS, } from "./encryption";
-import { FRONTEND_DEFAULTS, } from "./frontend";
 import { FEDERATION_DEFAULTS, } from "./federation";
+import { FRONTEND_DEFAULTS, } from "./frontend";
 import { GENERATION_DEFAULTS, } from "./generation";
 import { HEADERS_SECTION_DEFAULTS, } from "./headers";
 import { HOOKS_DEFAULTS, } from "./hooks";
@@ -90,8 +90,8 @@ export const envMap = (): EnvMap => {
   add("headers", s.headers,);
   add("dynamicResponse", s.dynamicResponse,);
   add("frontend", s.frontend,);
-  add("cron", s.cron);
-  add("federation", s.federation);
+  add("cron", s.cron,);
+  add("federation", s.federation,);
 
   // Manual overrides for renamed/mapped env vars
   map.PORT = "server.port";
