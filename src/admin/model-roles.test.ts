@@ -7,7 +7,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import { ModelRole, } from "../db/enums-core";
 import type { DB, } from "../db/schema";
-import { registerProvider, unregisterProvider, } from "../generation/providers/registry";
+import { getProvider, registerProvider, unregisterProvider, } from "../generation/providers/registry";
 import type { LLMProvider, } from "../generation/providers/types";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -55,7 +55,19 @@ function makeConfig(generation: Record<string, unknown> = {},): Config {
   } as unknown as Config;
 }
 
-describe("model-roles", () => {
+// Bun's mock.module is process-global and cannot be unmocked: without
+// --isolate, an earlier file (e.g. admin/provider-health-isolated.test.ts)
+// may have replaced the provider registry with fakes whose register/get
+// are disconnected. Sentinel roundtrip: register + read back; skip when
+// the registry is a stub instead of asserting against it
+// (pristine-module guard; see generation/providers/registry.test.ts).
+const REGISTRY_PROBE_PROVIDER = "__registry_pristine_probe__";
+registerProvider(REGISTRY_PROBE_PROVIDER, makeProvider(),);
+const registryPristine = getProvider(REGISTRY_PROBE_PROVIDER,) !== undefined;
+unregisterProvider(REGISTRY_PROBE_PROVIDER,);
+const describeReal = registryPristine ? describe : describe.skip;
+
+describeReal("model-roles", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
 
@@ -168,4 +180,4 @@ describe("model-roles", () => {
       await expect(clearModelRoleOverride(ModelRole.Moderation, db,),).rejects.toThrow();
     });
   });
-});
+},);

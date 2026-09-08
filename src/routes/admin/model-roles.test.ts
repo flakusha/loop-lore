@@ -59,7 +59,19 @@ interface OverrideBody {
   error?: string;
 }
 
-describe("admin model-roles routes", () => {
+// Bun's mock.module is process-global and cannot be unmocked: without
+// --isolate, an earlier file (e.g. admin/provider-health-isolated.test.ts)
+// may have replaced the provider registry with fakes whose register/get
+// are disconnected. Sentinel roundtrip: register + read back; skip when
+// the registry is a stub instead of asserting against it
+// (pristine-module guard; see generation/providers/registry.test.ts).
+const REGISTRY_PROBE_PROVIDER = "__registry_pristine_probe__";
+registerProvider(REGISTRY_PROBE_PROVIDER, fakeProvider(),);
+const registryPristine = getProvider(REGISTRY_PROBE_PROVIDER,) !== undefined;
+unregisterProvider(REGISTRY_PROBE_PROVIDER,);
+const describeReal = registryPristine ? describe : describe.skip;
+
+describeReal("admin model-roles routes", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
 
@@ -231,4 +243,4 @@ describe("admin model-roles routes", () => {
       expect(res.status,).toBe(403,);
     });
   });
-});
+},);
