@@ -23,6 +23,10 @@ import { jsonError, notFoundResponse, } from "./http-utils";
 /**
  * Ensure the given actor row belongs to the requesting user.
  *
+ * Ownership is either link: `user_id` (user-actors) or `owner_id`
+ * (character companions created with `owner_id: userId` — the same predicate
+ * as `checkActorOwnership` in actor-auth.ts).
+ *
  * Returns `null` when the user owns the actor, a 404 `Response` when the actor
  * does not exist, and a 403 `Response` when the actor belongs to another user.
  * The caller short-circuits by returning a non-null response as-is:
@@ -41,10 +45,10 @@ export async function resolveActorAccess(
   userId: string,
 ): Promise<Response | null> {
   const actor = await db.selectFrom("actors",)
-    .select("user_id",)
+    .select(["user_id", "owner_id",],)
     .where("id", "=", actorId,)
     .executeTakeFirst();
   if (!actor) { return notFoundResponse("Actor",); }
-  if (actor.user_id !== userId) { return jsonError("Not allowed", 403,); }
+  if (actor.user_id !== userId && actor.owner_id !== userId) { return jsonError("Not allowed", 403,); }
   return null;
 }
