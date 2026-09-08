@@ -3,7 +3,7 @@
 
 # TASK: Workflow runner (start/preview/step/confirm/dispatch + step UI)
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Partial — core shipped (src/assistant/workflow-runner.ts: startWorkflow/previewSteps/buildStep/assemblePrompt/confirmRun/confirmAndDispatch + src/assistant/workflow-runner.test.ts, pure state machine, no I/O). Remaining: model-family formatter engine, POST /api/generation/video dispatch wiring, frontend step UI + confirmation modal, assistant-workflows plugin extension point, Minimax H3 integration test — new follow-ups.
 **Priority:** high
 **Effort:** Medium
 

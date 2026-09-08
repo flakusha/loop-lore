@@ -228,6 +228,100 @@ export function validateCharacterConfig(raw: Record<string, unknown>,): void {
   }
 }
 
+const LEGAL_WORKFLOW_STEP_TYPES = ["text", "choice", "multi",] as const;
+
+/**
+ * Validate one workflow step entry.
+ * @param entry
+ * @param workflowId
+ * @param index
+ */
+function validateWorkflowStepEntry(entry: unknown, workflowId: string, index: number,): void {
+  if (typeof entry !== "object" || entry === null) {
+    throw new Error(`workflows.${workflowId}.steps[${index}] must be an object`,);
+  }
+  const s = entry as Partial<{
+    id: unknown;
+    name: unknown;
+    type: unknown;
+    formatTemplate: unknown;
+    options: unknown;
+    recommendations: unknown;
+  }>;
+  if (typeof s.id !== "string" || s.id === "") {
+    throw new TypeError(`workflows.${workflowId}.steps[${index}].id must be a non-empty string`,);
+  }
+  if (typeof s.name !== "string" || s.name === "") {
+    throw new TypeError(`workflows.${workflowId}.steps[${index}].name must be a non-empty string`,);
+  }
+  if (typeof s.type !== "string" || !(LEGAL_WORKFLOW_STEP_TYPES as readonly string[]).includes(s.type,)) {
+    throw new TypeError(
+      `workflows.${workflowId}.steps[${index}].type must be one of ${LEGAL_WORKFLOW_STEP_TYPES.join("|",)}`,
+    );
+  }
+  if (typeof s.formatTemplate !== "string" || s.formatTemplate === "") {
+    throw new TypeError(`workflows.${workflowId}.steps[${index}].formatTemplate must be a non-empty string`,);
+  }
+  if ((s.type === "choice" || s.type === "multi") && !Array.isArray(s.options,)) {
+    throw new TypeError(`workflows.${workflowId}.steps[${index}].options must be an array for choice/multi steps`,);
+  }
+  if (s.recommendations !== undefined && !Array.isArray(s.recommendations,)) {
+    throw new TypeError(`workflows.${workflowId}.steps[${index}].recommendations must be an array`,);
+  }
+}
+
+/**
+ * Validate the `workflows` domain raw config before merging.
+ * Accepts either `{ workflows: {...} }` (single-file domain shape) or a
+ * bare `{ [id]: workflow }` map (multi-file workflows/*.yaml shape).
+ * @param raw
+ */
+export function validateWorkflowConfig(raw: Record<string, unknown>,): void {
+  const table = (
+    raw.workflows !== undefined ? raw.workflows : raw
+  ) as Record<string, unknown>;
+  if (typeof table !== "object" || table === null || Array.isArray(table,)) {
+    throw new Error("workflows must be an object mapping id -> workflow",);
+  }
+  for (const [id, value,] of Object.entries(table,)) {
+    if (id === "merge") { continue; }
+    if (typeof value !== "object" || value === null) {
+      throw new Error(`workflows.${id} must be an object`,);
+    }
+    const w = value as Partial<{
+      id: unknown;
+      name: unknown;
+      steps: unknown;
+      dispatch: unknown;
+      triggers: unknown;
+      modelFamily: unknown;
+    }>;
+    if (w.id !== undefined && typeof w.id !== "string") {
+      throw new TypeError(`workflows.${id}.id must be a string`,);
+    }
+    if (w.name !== undefined && typeof w.name !== "string") {
+      throw new TypeError(`workflows.${id}.name must be a string`,);
+    }
+    if (w.steps !== undefined) {
+      if (!Array.isArray(w.steps,)) {
+        throw new Error(`workflows.${id}.steps must be an array`,);
+      }
+      w.steps.forEach((entry, i,) => {
+        validateWorkflowStepEntry(entry, id, i,);
+      },);
+    }
+    if (w.dispatch !== undefined && (typeof w.dispatch !== "object" || w.dispatch === null)) {
+      throw new TypeError(`workflows.${id}.dispatch must be an object`,);
+    }
+    if (w.triggers !== undefined && !Array.isArray(w.triggers,)) {
+      throw new TypeError(`workflows.${id}.triggers must be an array`,);
+    }
+    if (w.modelFamily !== undefined && typeof w.modelFamily !== "string") {
+      throw new TypeError(`workflows.${id}.modelFamily must be a string`,);
+    }
+  }
+}
+
 // ── Unknown-Purpose Typo Detection ───────────────────────────
 
 /**
