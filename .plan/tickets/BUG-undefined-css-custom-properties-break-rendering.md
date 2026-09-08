@@ -1,6 +1,6 @@
 # BUG: Undefined CSS custom properties break rendering
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 
@@ -13,3 +13,7 @@ Multiple rules reference tokens defined in no theme file: (1) src/public/css/app
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Mapped foreign tokens to canonical theme tokens: app.css --bg-elevated→--bg-secondary; chip/command blocks --color-border→--border-default, --color-surface→--bg-secondary, --color-primary→--accent-primary, --color-text-secondary→--text-secondary; vn.css --border-color→--border-default and .badge-current --accent→--accent-primary. Added shared --success/--warning/--danger semantic tokens to theme-base.css so story.css badges resolve real tokens. Remaining --color-surface-1/2/-hover keep hardcoded fallbacks (graceful).

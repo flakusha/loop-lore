@@ -96,8 +96,18 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
       content: text || "(attached media)",
       created_at: new Date().toISOString(),
     },);
+    // Optimistic clear — restored below when the send fails so typed text is
+    // never lost (BUG-chat-input-fills-up-but-send-is-impossible).
     input.value = "";
     this.autoResize(input,);
+
+    const restoreInput = () => {
+      // Only when the user has not started typing a new message meanwhile.
+      if (input.value === "") {
+        input.value = text;
+        this.autoResize(input,);
+      }
+    };
     this.$nextTick?.(() => this.scrollToBottom());
 
     const body = await buildSendBody(this, text, msgs, pendingAssets,);
@@ -143,12 +153,14 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         const err = await res.json();
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
         removeTempMessage(this, tempId,);
+        restoreInput();
       }
     } catch {
       this.isGenerating = false;
       this._autoFired = false;
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
       removeTempMessage(this, tempId,);
+      restoreInput();
     }
   },
 };

@@ -47,6 +47,14 @@
   --transition-normal: 250ms ease;
   --transition-slow: 400ms ease;
 
+  /* ── Semantic status colors ─────────────────────────────── */
+  /* Shared across all themes so status UI (story quality badges, etc.)
+     resolves real tokens instead of frozen hardcoded fallbacks
+     (BUG-undefined-css-custom-properties-break-rendering). */
+  --success: #4caf50;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
   /* ── Z-Index Scale ──────────────────────────────────────── */
   --z-base: 1;
   --z-dropdown: 100;
