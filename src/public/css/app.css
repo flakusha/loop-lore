@@ -555,7 +555,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: color-mix(in srgb, var(--bg-elevated) 60%, transparent);
+  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
   border: 1px solid color-mix(in srgb, var(--text-secondary) 25%, transparent);
   border-radius: var(--radius-full, 999px);
 }
@@ -2740,8 +2740,8 @@ html {
   gap: 2px;
   padding: 2px 6px;
   border-radius: 12px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
+  border: 1px solid var(--border-default);
+  background: var(--bg-secondary);
   font-size: 13px;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
@@ -2752,22 +2752,22 @@ html {
   background: var(--color-surface-hover, rgb(128 128 128 / 10%));
 }
 .reaction-active {
-  border-color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  border-color: var(--accent-primary);
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
 }
 .reaction-count {
   font-size: 11px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .reaction-add-btn {
   width: 24px;
   height: 24px;
   border-radius: 12px;
-  border: 1px dashed var(--color-border);
+  border: 1px dashed var(--border-default);
   background: transparent;
   cursor: pointer;
   font-size: 14px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2775,14 +2775,14 @@ html {
   transition: opacity 0.15s;
 }
 .reaction-add-btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
 }
 .reaction-picker {
   position: fixed;
   z-index: 100;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
   padding: 6px;
   display: flex;
@@ -2817,8 +2817,8 @@ html {
   gap: 2px;
   padding: 2px 6px;
   border-radius: 12px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
+  border: 1px solid var(--border-default);
+  background: var(--bg-secondary);
   font-size: 12px;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
@@ -2828,7 +2828,7 @@ html {
 }
 .seen-badge.seen-empty {
   cursor: default;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   border-style: dashed;
 }
 .seen-icon {
@@ -2836,13 +2836,13 @@ html {
 }
 .seen-count {
   font-size: 11px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .seen-popover {
   position: fixed;
   z-index: 100;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
@@ -2855,12 +2855,12 @@ html {
   align-items: center;
   margin-bottom: 6px;
   padding-bottom: 4px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--border-default);
 }
 .seen-popover-title {
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .seen-popover-list {
   display: flex;
@@ -2895,11 +2895,11 @@ html {
 }
 .seen-viewer-state.state-unseen {
   background: var(--color-surface-hover, rgb(128 128 128 / 10%));
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .seen-viewer-time {
   font-size: 10px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 
 /* ── Debug Panel ─────────────────────────────────── */
@@ -2907,8 +2907,8 @@ html {
   margin-top: 8px;
   padding: 8px;
   border-radius: 6px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
   font-size: 11px;
   font-family: var(--font-mono, monospace);
 }
@@ -2919,7 +2919,7 @@ html {
 }
 .debug-label,
 .command-desc {
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 
 /* ── Command Palette ─────────────────────────────── */
@@ -2928,8 +2928,8 @@ html {
   bottom: 100%;
   left: 0;
   right: 0;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
   max-height: 200px;
   overflow-y: auto;
@@ -2951,7 +2951,7 @@ html {
 .command-item:hover,
 .command-name {
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--accent-primary);
   min-width: 100px;
 }
 
@@ -2977,8 +2977,8 @@ html {
   width: 320px;
   max-height: 420px;
   overflow-y: auto;
-  background: var(--color-surface, #1f2430);
-  border: 1px solid var(--color-border, #333);
+  background: var(--bg-secondary, #1f2430);
+  border: 1px solid var(--border-default, #333);
   border-radius: 8px;
   box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
   z-index: 50;
@@ -2988,7 +2988,7 @@ html {
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--color-border, #333);
+  border-bottom: 1px solid var(--border-default, #333);
   font-weight: 600;
 }
 .notif-item {
@@ -2996,7 +2996,7 @@ html {
   gap: 8px;
   align-items: flex-start;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--color-border, #333);
+  border-bottom: 1px solid var(--border-default, #333);
   cursor: pointer;
 }
 .notif-item.unread {
@@ -3017,30 +3017,30 @@ html {
 }
 .notif-sub {
   font-size: 12px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .notif-empty {
   padding: 16px;
   text-align: center;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .notif-footer {
   padding: 8px 12px;
-  border-top: 1px solid var(--color-border, #333);
+  border-top: 1px solid var(--border-default, #333);
   text-align: center;
 }
 .btn-icon-sm {
   flex: 0 0 auto;
   background: none;
   border: none;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: 13px;
 }
 .btn-link {
   background: none;
   border: none;
-  color: var(--color-primary);
+  color: var(--accent-primary);
   cursor: pointer;
   font-size: 12px;
 }
@@ -3052,7 +3052,7 @@ html {
 }
 .notif-time {
   font-size: 11px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   margin-top: 2px;
 }
 .notif-dot {
@@ -3060,7 +3060,7 @@ html {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--color-primary, #4f8cff);
+  background: var(--accent-primary, #4f8cff);
   margin-top: 6px;
 }
 .segmented {
@@ -3380,8 +3380,8 @@ html {
 }
 
 .wizard-panel-inner {
-  background: var(--color-surface, #1a1a2e);
-  border-top: 2px solid var(--color-primary, #6366f1);
+  background: var(--bg-secondary, #1a1a2e);
+  border-top: 2px solid var(--accent-primary, #6366f1);
   padding: 1rem;
   box-shadow: 0 -4px 12px rgb(0 0 0 / 30%);
 }
@@ -3414,13 +3414,13 @@ html {
 
 .wizard-field-label {
   font-size: 0.8rem;
-  color: var(--color-text-secondary, #a0a0a0);
+  color: var(--text-secondary, #a0a0a0);
   text-transform: capitalize;
 }
 
 .wizard-field-input {
   background: var(--color-input-bg, #2a2a3e);
-  border: 1px solid var(--color-border, #3a3a4e);
+  border: 1px solid var(--border-default, #3a3a4e);
   color: var(--color-text, #e0e0e0);
   padding: 0.5rem;
   border-radius: 4px;
@@ -3429,7 +3429,7 @@ html {
 
 .wizard-field-input:focus {
   outline: none;
-  border-color: var(--color-primary, #6366f1);
+  border-color: var(--accent-primary, #6366f1);
   box-shadow: 0 0 0 2px rgb(99 102 241 / 20%);
 }
 

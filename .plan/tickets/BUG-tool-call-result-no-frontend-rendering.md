@@ -59,3 +59,7 @@ UX / observability. Tool calling is a primary UX surface for the assistant (per 
 - `BUG-tool-call-arg-parse-silent-fallback` (sibling — tool-call input handling).
 - `TASK-tool-call-user-text-sanitization` (sibling).
 - `epic-assistant-gm-flows.md`, `epic-chat-lifecycle-moderation.md`.
+
+## Notes
+
+PROGRESS 2026-09-08: frontend half landed (message-list.html renders msg.tool_calls as collapsible blocks; chat-panels.ts surfaces calls). Remaining backend half (MessageContentType ToolCall/ToolResult enum + ToolResult message rows in executeToolCalls) requires a migration — pending user's append-vs-fold migration strategy decision per AGENTS.md.
