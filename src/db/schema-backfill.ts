@@ -15,6 +15,10 @@
  *   fixed in-place by removing the rowid alias and adding the sync trigger
  *   trio): broken or missing tables are rebuilt in the fixed shape with
  *   triggers, then backfilled from `actor_memories`.
+ * - `crafting_orders.requested_materials` (added by part 019): databases
+ *   frozen before 019 get the column with its `[]` default.
+ * - `workflow_sessions` (added by part 021): databases frozen before 021
+ *   get the table plus its schema-version record.
  *
  * Runs after `runMigrations` in `src/server/start.ts`. Add future
  * stranded guards here following the same probe-then-repair shape.
@@ -24,6 +28,7 @@ import { safeJsonParse, safeJsonStringify, } from "@/utils/safe-json";
 import { type Kysely, sql, } from "kysely";
 import { getLogger, } from "../logger";
 import type { DB, } from "./schema";
+import { recordSchemaVersion, } from "./schema-version";
 
 interface LegacyTemplateRow {
   id: string;
@@ -158,6 +163,62 @@ async function repairMemoriesFts(database: Kysely<DB>,): Promise<boolean> {
   log.info("Schema backfill applied: memories_fts rebuilt in fixed shape with sync triggers",);
   return true;
 }
+/**
+ * Add a stranded `crafting_orders.requested_materials` column.
+ *
+ * Part 019 added the column (TEXT NOT NULL DEFAULT '[]') for trade
+ * material tracking; databases frozen before 019 lack it and trade reads
+ * fail. Detection is the pragma column list; pre-009 databases without
+ * `crafting_orders` at all are left alone with a warning.
+ * @param database - Migrated database handle.
+ * @returns True when the column was added, false when already present.
+ */
+async function repairRequestedMaterials(database: Kysely<DB>,): Promise<boolean> {
+  const log = getLogger().child({ module: "schema-backfill", },);
+  const columns = await sql<{ name: string }>`SELECT name FROM pragma_table_info('crafting_orders')`.execute(
+    database,
+  );
+  if (columns.rows.length === 0) {
+    log.warn("crafting_orders absent; skipping requested_materials repair",);
+    return false;
+  }
+  if (columns.rows.some((row,) => row.name === "requested_materials")) { return false; }
+  await database.schema
+    .alterTable("crafting_orders",)
+    .addColumn("requested_materials", "text", (column,) => column.notNull().defaultTo("[]",),)
+    .execute();
+  log.info("Schema backfill applied: crafting_orders.requested_materials added",);
+  return true;
+}
+
+/**
+ * Create a stranded `workflow_sessions` table.
+ *
+ * Part 021 persists assistant workflow runs; databases frozen before 021
+ * lack the table. Detection is `sqlite_master`; the repair mirrors 021
+ * exactly, including its schema-version record.
+ * @param database - Migrated database handle.
+ * @returns True when the table was created, false when already present.
+ */
+async function repairWorkflowSessions(database: Kysely<DB>,): Promise<boolean> {
+  if ((await tableSql(database, "workflow_sessions",)) !== null) { return false; }
+  const log = getLogger().child({ module: "schema-backfill", },);
+  await database.schema
+    .createTable("workflow_sessions",)
+    .addColumn("chat_id", "text", (column,) => column.primaryKey().references("chats.id",).onDelete("cascade",),)
+    .addColumn("workflow_id", "text", (column,) => column.notNull(),)
+    .addColumn("step_values", "text", (column,) => column.notNull().defaultTo("{}",),)
+    .addColumn("confirmed", "integer", (column,) => column.notNull().defaultTo(0,),)
+    .addColumn("updated_at", "text", (column,) => column.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .execute();
+  // Pre-018 databases have no schema_version table; the table itself is
+  // the convergence signal there, so record only when the table exists.
+  if ((await tableSql(database, "schema_version",)) !== null) {
+    await recordSchemaVersion(database, 21, "workflow run sessions",);
+  }
+  log.info("Schema backfill applied: workflow_sessions created",);
+  return true;
+}
 
 /**
  * Converge all stranded schema cases. Idempotent: converged databases
@@ -171,5 +232,7 @@ async function repairMemoriesFts(database: Kysely<DB>,): Promise<boolean> {
 export async function runSchemaBackfill(database: Kysely<DB>,): Promise<boolean> {
   const template = await repairTemplateVisualNovel(database,);
   const fts = await repairMemoriesFts(database,);
-  return template || fts;
+  const materials = await repairRequestedMaterials(database,);
+  const sessions = await repairWorkflowSessions(database,);
+  return template || fts || materials || sessions;
 }
