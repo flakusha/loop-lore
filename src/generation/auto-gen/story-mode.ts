@@ -9,8 +9,8 @@ import { resolveSystemPrompt, } from "../../prompts";
 import { type GameMasterConfig, GameMasterService, } from "../../story";
 import type { GenerateTextFn, } from "../../story/game-master";
 import { jsonParseOr, } from "../../utils";
-import type { StoryModeOpts, } from "./story-mode-opts";
 import { resolveChatKnownEntityNames, } from "./resolve-known-names";
+import type { StoryModeOpts, } from "./story-mode-opts";
 import { storeStoryResponse, } from "./story-store";
 export type { StoryModeOpts, };
 
