@@ -63,6 +63,22 @@ embodiment) — better prompts and better rendering for both.
 5. **Rendering** — distinct visual treatment per kind (typography/indent/color token) in
    web + TUI; i18n-safe labels.
 
+## Narration levels (extension design)
+
+- Per-chat narration level: `off | actors-only | actors-plus-narrator`,
+  stored in chat config.
+  - `off`: no narrator turns are scheduled; absence renders as `system`
+    `MessageKind` records (same contract as `turn.skipped` above).
+  - `actors-only`: the narrator never takes a turn; actors carry scene
+    state through their own POV via the ambient-notice clause.
+  - `actors-plus-narrator`: the narrator interleaves on a parametrized cadence.
+- Cadence becomes a parameter instead of a constant: today `sceneBasedSelect`
+  (`src/turning/turn-strategies.ts`) hardcodes the narrator override to every
+  3rd turn. The extension replaces the literal with per-chat cadence config, so
+  dreamrunner-style variants (all-actor runs vs actor/narrator interleavings)
+  are configuration rather than forks.
+- → `TASK-narration-levels`.
+
 ## Work Items
 
 - [ ] **Message kind column + backfill** — schema, migration, generation-path stamping. → TASK-narration-sep-message-kind
