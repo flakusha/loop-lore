@@ -1,6 +1,6 @@
 # BUG: rotateKeyOnLeave partial failure leaves mixed key state - non-transactional and swallowed
 
-**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
+**Status:** ✅ Done (verified landed on dev — single transaction for re-encrypt + swap, `includeAll: true` covers non-visible messages, failures throw so the route returns 500)
 **Priority:** high
 **Effort:** Medium
 
@@ -15,12 +15,12 @@ Also: reEncryptWithKeys filters visibility='visible'; hidden/archived/deleted me
 Fix: wrap re-encrypt + chat_keys swap in one Kysely transaction; on failure roll back and propagate (route should return 5xx, not 204+warn). Include non-visible messages in re-encryption (or explicitly document + null their key_id). Consider inserting the new chat_keys row first and deleting the old row inside the tx instead of PK-update-in-place.
 
 Acceptance:
-- [ ] forced failure mid-rotation leaves chat fully readable with OLD key
-- [ ] hidden messages remain decryptable after leave
-- [ ] route returns error status when rotation fails
+- [x] forced failure mid-rotation leaves chat fully readable with OLD key
+- [x] hidden messages remain decryptable after leave
+- [x] route returns error status when rotation fails
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

@@ -1,6 +1,6 @@
 # BUG: rotateKeyOnLeave re-encrypts messages only - encrypted assets become undecryptable
 
-**Status:** 🔧 In Progress (worktree `fix-auth-security-bugs`)
+**Status:** ✅ Done (verified landed on dev — `rotateKeyOnLeave` calls `reEncryptChatAssets` with explicit old+new keys before the swap; asset failures abort rotation)
 **Priority:** high
 **Effort:** Medium
 
@@ -15,11 +15,11 @@ Root cause: rotateKeyOnLeave calls reEncryptWithKeys(messages) but never reEncry
 Fix: call an asset re-encryption step inside rotateKeyOnLeave BEFORE swapping chat_keys.id, using oldChatKey/newChatKey explicitly (mirror reEncryptWithKeys signature); surface asset failures into the same failures array that aborts rotation. Note encryptAssetBlob also base64-encodes binary before compressing (~33% pre-expansion) - optional follow-up, not required here.
 
 Acceptance:
-- [ ] integration test: standard chat + encrypted asset -> member leaves -> asset decrypts
-- [ ] asset failures abort rotation like message failures do
+- [x] integration test: standard chat + encrypted asset -> member leaves -> asset decrypts
+- [x] asset failures abort rotation like message failures do
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
