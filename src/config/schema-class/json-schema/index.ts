@@ -8,6 +8,7 @@ import { assistant, } from "./assistant";
 import { auth, } from "./auth";
 import { byoKey, } from "./byo-key";
 import { characters, } from "./characters";
+import { cron, } from "./cron";
 import { db, } from "./db";
 import { docs, } from "./docs";
 import { dynamicResponse, } from "./dynamic-response";
@@ -57,6 +58,7 @@ export const jsonSchema = (): JSONSchema => {
       seeding,
       templates,
       characters,
+      cron,
     },
     required: [
       "server",
