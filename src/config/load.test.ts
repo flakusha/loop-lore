@@ -447,7 +447,7 @@ configPath = "~/models/llama-swap.yaml"
       cleanup();
     }
   });
-});
+},);
 
 describe("validateDatabaseSafety", () => {
   /**

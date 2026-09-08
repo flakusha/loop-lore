@@ -9,16 +9,16 @@
  * duplicate content+owner is detected by hash; non-public tier without key
  * material is stored unencrypted.
  */
-import { afterAll, describe, expect, test, } from "bun:test";
+import { afterAll, expect, test, } from "bun:test";
 import { mkdtempSync, rmSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { AssetType, } from "../../db/enums";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
+import { describePristine, } from "../../test-utils/pristine";
 import { makeMinimalPng, } from "../test-helpers";
 import { createAsset, } from "./create";
-import { describePristine, } from "../../test-utils/pristine";
 
 // image-gen-route.test.ts replaces ../assets/service/create process-wide
 // with mockCreateAsset (fixed fixture row); skip rather than assert the stub.
@@ -180,4 +180,4 @@ describeReal("createAsset coverage", () => {
   afterAll(() => {
     rmSync(uploadDir, { recursive: true, force: true, },);
   },);
-});
+},);

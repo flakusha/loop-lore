@@ -102,7 +102,7 @@ const failoverSelfCheck = await (async () => {
   } catch {
     return false;
   }
-})(); 
+})();
 const persistSelfCheck = (buildResultFn({
   content: "__nonstream_selfcheck__",
   finishReason: "stop",

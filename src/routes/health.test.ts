@@ -6,8 +6,8 @@
  * from the global provider health cache.
  */
 import { describe, expect, test, } from "bun:test";
-import { healthRoutes, } from "./health";
 import { getProvider, registerProvider, unregisterProvider, } from "../generation/providers/registry";
+import { healthRoutes, } from "./health";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
 // `bun run` an earlier file (e.g.
@@ -29,7 +29,7 @@ const registryPristine = (() => {
   } catch {
     return false;
   }
-})(); 
+})();
 const describeReal = registryPristine ? describe : describe.skip;
 
 describeReal("healthRoutes", () => {
@@ -96,4 +96,4 @@ describeReal("healthRoutes", () => {
     const res = await app.handle(new Request("http://localhost/api/health",),);
     expect(res.headers.get("content-type",),).toStartWith("application/json",);
   });
-});
+},);

@@ -5,11 +5,11 @@
  * Requires seeded chat for link tests.
  */
 
+import { describePristine, } from "@/test-utils/pristine";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedChat, seedUsers, } from "../helpers/seed";
 import { createTestServer, type TestServer, } from "../helpers/server";
-import { describePristine, } from "@/test-utils/pristine";
 
 // The upload route stores via createAsset, which
 // src/generation/image-gen-route.test.ts replaces process-wide with
@@ -139,4 +139,4 @@ describeReal("Assets E2E", () => {
     expect(getRes.status,).toBe(404,);
     expect(getRes.code,).toBeTruthy(); // TEST.2 error envelope
   });
-});
+},);
