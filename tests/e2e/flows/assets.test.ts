@@ -9,8 +9,16 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedChat, seedUsers, } from "../helpers/seed";
 import { createTestServer, type TestServer, } from "../helpers/server";
+import { describePristine, } from "@/test-utils/pristine";
 
-describe("Assets E2E", () => {
+// The upload route stores via createAsset, which
+// src/generation/image-gen-route.test.ts replaces process-wide with
+// mockCreateAsset (fixed fixture row). Probe the loaded module and skip
+// rather than assert the stub (e2e suites run last, so the stub wins).
+const { createAsset, } = await import("@/assets/service/create");
+const describeReal = describePristine(createAsset, "createAsset",);
+
+describeReal("Assets E2E", () => {
   let server: TestServer;
   let api: ApiClient;
 
