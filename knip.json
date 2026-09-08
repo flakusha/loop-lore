@@ -56,6 +56,7 @@
     "@noble/hashes"
   ],
   "ignoreBinaries": [
+    "abort", // worktree CLI subcommand literal in finalize-signal-safety.test.ts spawnSync; knip mistakes it for a binary
     "sha256sum", // CI checksum step
     "wait", // shell helper
     "scancode", // license compliance gate (scripts/check-licenses.ts)

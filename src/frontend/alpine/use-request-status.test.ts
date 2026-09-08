@@ -121,7 +121,7 @@ describe("useRequestStatus — odd failure payloads", () => {
   test("stringifies a non-Error rejection into the error channel", async () => {
     const rec: { updates: string[]; terminals: string[] } = { updates: [], terminals: [], };
     handler = async () => {
-      throw "boom-str"; // eslint-disable-line no-throw-literal
+      throw "boom-str";
     };
     const { subscribe, cancel, } = useRequestStatus({
       onUpdate: (p,) => rec.updates.push(p.error ?? "",),
