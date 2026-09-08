@@ -15,6 +15,12 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import type { UploadOpts, } from "./types";
 import { handleUpload, } from "./upload";
+import { createAsset, } from "../service/create";
+import { describePristine, } from "../../test-utils/pristine";
+
+// handleUpload stores via createAsset, which image-gen-route.test.ts
+// replaces process-wide with mockCreateAsset; skip rather than assert it.
+const describeReal = describePristine(createAsset, "createAsset",);
 
 const MAX_SIZE = 10 * 1_048_576;
 let uploadDir: string;
@@ -71,7 +77,7 @@ afterAll(() => {
   db?.sqlite.close();
 },);
 
-describe("handleUpload", () => {
+describeReal("handleUpload", () => {
   test("rejects non-multipart content-type", async () => {
     const result = await setup();
     db = result.db;

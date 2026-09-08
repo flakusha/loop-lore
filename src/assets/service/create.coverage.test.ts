@@ -18,8 +18,13 @@ import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { makeMinimalPng, } from "../test-helpers";
 import { createAsset, } from "./create";
+import { describePristine, } from "../../test-utils/pristine";
 
-describe("createAsset coverage", () => {
+// image-gen-route.test.ts replaces ../assets/service/create process-wide
+// with mockCreateAsset (fixed fixture row); skip rather than assert the stub.
+const describeReal = describePristine(createAsset, "createAsset",);
+
+describeReal("createAsset coverage", () => {
   const uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-create-asset-",),);
 
   /** @param db */
