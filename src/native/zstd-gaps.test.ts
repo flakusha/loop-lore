@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { expect, mock, test, } from "bun:test";
-import { describeOrSkip, ISOLATED, } from "../test-utils/isolate-only";
+import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../test-utils/isolate-only";
 
 /** Typed view of Bun's built-in zstd (mirrors the unit under test). */
 interface BunZstd {
@@ -40,7 +40,7 @@ const fakeHandle = {
 // Loader mock leaks process-globally without --isolate (fake native handle
 // would serve later suites, e.g. zstd.test.ts): gate it like other
 // mock.module suites so plain `bun test src/` keeps the real loader.
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("./loader", () => ({
     getNativeModule: () => ({ handle: fakeHandle, version: 3, }),
     isNativeAvailable: () => true,
@@ -51,7 +51,7 @@ if (ISOLATED) {
 // static import (hoisted above the mock) cannot work here.
 const { isNativeZstdAvailable, zstdCompress, zstdDecompress, } = await import("./zstd");
 
-describeOrSkip("zstd gaps — native compress path", () => {
+describeOrSkipStrict("zstd gaps — native compress path", () => {
   test("native success returns the sliced output", () => {
     const input = new Uint8Array([9, 8, 7, 6,],);
     expect(zstdCompress(input,),).toEqual(input,);
@@ -95,7 +95,7 @@ describeOrSkip("zstd gaps — native compress path", () => {
   });
 },);
 
-describeOrSkip("zstd gaps — native decompress path", () => {
+describeOrSkipStrict("zstd gaps — native decompress path", () => {
   test("native success returns the sliced output", () => {
     const input = new Uint8Array([4, 5, 6,],);
     expect(zstdDecompress(input,),).toEqual(input,);
@@ -124,7 +124,7 @@ describeOrSkip("zstd gaps — native decompress path", () => {
   });
 },);
 
-describeOrSkip("zstd gaps — availability", () => {
+describeOrSkipStrict("zstd gaps — availability", () => {
   test("reports native available when the loader resolves", () => {
     expect(isNativeZstdAvailable(),).toBe(true,);
   });

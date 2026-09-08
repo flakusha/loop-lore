@@ -19,7 +19,7 @@ import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, } from "../../test-utils/insert-helpers";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../test-utils/isolate-only";
 import type { GenDeps, } from "./deps";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
@@ -29,7 +29,7 @@ import type { GenDeps, } from "./deps";
 // instead of failing against the stub (pristine-module guard; see
 // generation/providers/registry.test.ts).
 const chatPristine = detectHallucinations.length > 0;
-const describeReal = chatPristine ? describeOrSkip : describe.skip;
+const describeReal = chatPristine ? describeOrSkipStrict : describe.skip;
 
 createLogger({ level: "error", },);
 
@@ -45,7 +45,7 @@ let capturedEncryptPlaintext: unknown = null;
 let capturedHooksContent: unknown = null;
 let capturedAcceptResponse: unknown = null;
 
-if (ISOLATED) {
+if (STRICTLY_ISOLATED) {
   mock.module("../../story", () => ({
     GameMasterService: class {
       constructor(opts: { gmConfig: unknown },) {
