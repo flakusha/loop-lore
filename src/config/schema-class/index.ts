@@ -23,6 +23,7 @@ import { DOCS_DEFAULTS, } from "./docs";
 import { DYNAMIC_RESPONSE_DEFAULTS, } from "./dynamic-response";
 import { ENCRYPTION_DEFAULTS, } from "./encryption";
 import { FRONTEND_DEFAULTS, } from "./frontend";
+import { FEDERATION_DEFAULTS, } from "./federation";
 import { GENERATION_DEFAULTS, } from "./generation";
 import { HEADERS_SECTION_DEFAULTS, } from "./headers";
 import { HOOKS_DEFAULTS, } from "./hooks";
@@ -30,6 +31,7 @@ import { IDEMPOTENCY_DEFAULTS, } from "./idempotency";
 import { LOGGING_DEFAULTS, } from "./logging";
 import { MESSAGES_DEFAULTS, } from "./messages";
 import { NSFW_DEFAULTS, } from "./nsfw";
+import { OBSERVABILITY_DEFAULTS, } from "./observability";
 import { SEEDING_DEFAULTS, } from "./seeding";
 import { SERVER_DEFAULTS, } from "./server";
 import { TRANSPORT_DEFAULTS, } from "./transport";
@@ -71,6 +73,7 @@ export const createConfigSchema = () => {
     transport: deepClone(TRANSPORT_DEFAULTS,),
     messages: deepClone(MESSAGES_DEFAULTS,),
     nsfw: deepClone(NSFW_DEFAULTS,),
+    observability: deepClone(OBSERVABILITY_DEFAULTS,),
     hooks: deepClone(HOOKS_DEFAULTS,),
     idempotency: deepClone(IDEMPOTENCY_DEFAULTS,),
     generation: deepClone(GENERATION_DEFAULTS,),
@@ -79,6 +82,7 @@ export const createConfigSchema = () => {
     headers: deepClone(HEADERS_SECTION_DEFAULTS,),
     dynamicResponse: deepClone(DYNAMIC_RESPONSE_DEFAULTS,),
     frontend: deepClone(FRONTEND_DEFAULTS,),
+    federation: deepClone(FEDERATION_DEFAULTS,),
     seeding: deepClone(SEEDING_DEFAULTS,),
     cron: deepClone(CRON_DEFAULTS,),
   };
@@ -99,6 +103,7 @@ export const createConfigSchema = () => {
         transport: sections.transport,
         messages: sections.messages,
         nsfw: sections.nsfw,
+        observability: sections.observability,
         hooks: sections.hooks,
         idempotency: sections.idempotency,
         generation: sections.generation,
@@ -107,6 +112,7 @@ export const createConfigSchema = () => {
         headers: sections.headers,
         dynamicResponse: sections.dynamicResponse,
         frontend: sections.frontend,
+        federation: sections.federation,
         seeding: sections.seeding,
         cron: sections.cron,
         templates: TEMPLATES_DEFAULTS,

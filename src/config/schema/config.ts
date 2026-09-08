@@ -20,6 +20,7 @@ import type { DocumentationConfig, } from "./docs";
 import type { DynamicResponseConfig, } from "./dynamic-response";
 import type { EncryptionConfig, } from "./encryption";
 import type { FrontendConfig, } from "./frontend";
+import type { FederationConfig, } from "./federation";
 import type { GenerationConfig, } from "./generation";
 import type { HeadersConfig, } from "./headers";
 import type { HooksConfig, } from "./hooks";
@@ -27,6 +28,7 @@ import type { IdempotencyConfig, } from "./idempotency";
 import type { LoggingConfig, } from "./logging";
 import type { MessagesConfig, } from "./messages";
 import type { NsfwConfig, } from "./nsfw";
+import type { ObservabilityConfig, } from "./observability";
 import type { SeedingConfig, } from "./seeding";
 import type { ServerConfig, } from "./server";
 import type { TestingConfig, } from "./testing";
@@ -48,6 +50,7 @@ export interface Config {
   messages: MessagesConfig;
   idempotency: IdempotencyConfig;
   nsfw: NsfwConfig;
+  observability: ObservabilityConfig;
   hooks: HooksConfig;
   generation: GenerationConfig;
   byoKey: ByoKeyConfig;
@@ -60,4 +63,5 @@ export interface Config {
   testing?: TestingConfig;
   frontend: FrontendConfig;
   cron: CronConfig;
+  federation: FederationConfig;
 }

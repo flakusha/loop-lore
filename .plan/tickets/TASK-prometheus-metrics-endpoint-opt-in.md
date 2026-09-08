@@ -3,7 +3,7 @@
 
 # TASK: Prometheus metrics endpoint (opt-in)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Implemented
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-api-telemetry.md
