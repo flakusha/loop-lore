@@ -17,6 +17,9 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { hashId, record, } from "../telemetry/service";
+import { createTestDb, } from "../test-utils/create-test-db";
+import { insertUsers, } from "../test-utils/insert-helpers";
+import { telemetryRoutes, } from "./telemetry";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
 // `bun run` an earlier file (e.g.
@@ -38,9 +41,6 @@ const telemetryPristine = await (async () => {
   }
 })();
 const describeReal = telemetryPristine ? describe : describe.skip;
-import { createTestDb, } from "../test-utils/create-test-db";
-import { insertUsers, } from "../test-utils/insert-helpers";
-import { telemetryRoutes, } from "./telemetry";
 
 /**
  * @param db
@@ -428,4 +428,4 @@ describeReal("telemetry routes — enabled", () => {
     );
     expect(res.status,).toBe(400,);
   });
-});
+},);
