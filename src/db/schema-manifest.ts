@@ -761,6 +761,13 @@ export const SCHEMA = new SchemaManifest()
     expires_at: col("text",),
     created_at: col("text", { notNull: true, },),
   },)
+  .table("workflow_sessions", {
+    chat_id: col("text", { primaryKey: true, },),
+    workflow_id: col("text", { notNull: true, },),
+    step_values: col("text", { notNull: true, hasDefault: true, },),
+    confirmed: col("integer", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("xp_ledger", {
     id: col("text", { primaryKey: true, hasDefault: true, },),
     actor_id: col("text", { notNull: true, },),

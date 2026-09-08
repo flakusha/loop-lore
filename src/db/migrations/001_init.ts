@@ -29,6 +29,10 @@ import {
   down as downTradeRequestedMaterials,
   up as upTradeRequestedMaterials,
 } from "./parts/019_trade_requested_materials";
+import {
+  down as downWorkflowSessions,
+  up as upWorkflowSessions,
+} from "./parts/021_workflow_sessions";
 
 /**
  * @param database
@@ -53,12 +57,14 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await upDropTemplateVn(database,);
   await upSchemaVersion(database,);
   await upTradeRequestedMaterials(database,);
+  await upWorkflowSessions(database,);
 }
 
 /**
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await downWorkflowSessions(database,);
   await downTradeRequestedMaterials(database,);
   await downSchemaVersion(database,);
   await downDropTemplateVn(database,);
