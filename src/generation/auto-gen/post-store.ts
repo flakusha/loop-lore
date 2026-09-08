@@ -22,6 +22,7 @@ import { isTelemetryEnabled, record, } from "../../telemetry/service";
 import type { GenDeps, } from "./deps";
 import { fireRandomEvent, } from "./fire-random-event";
 import { renderStreamMessage, } from "./stream-render";
+import { resolveChatKnownEntityNames, } from "./resolve-known-names";
 
 /** */
 export interface PostStoreOpts {
@@ -111,10 +112,17 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
     flags: readonly { entityName: string; entityType: string; confidence: number }[];
   };
   try {
+    // Resolve chat-scoped known entity names (participants + current
+    // location) so the detector does not flag them as hallucinations.
+    // BUG-hallucination-guard-isKnownEntity-stubs-unused — reuses the
+    // existing knownEntityNames pathway instead of populating the unused
+    // _knownActorIds/_knownLocationIds stubs in isKnownEntity.
+    const knownEntityNames = await resolveChatKnownEntityNames(database, chatId,);
     hallucinationAnalysis = await detectHallucinations({
       db: database,
       text: content,
       worldId: worldId ?? undefined,
+      knownEntityNames,
     },);
   } catch (error) {
     log.warn("hallucination-guard: failed to detect hallucinations", { err: error, },);
