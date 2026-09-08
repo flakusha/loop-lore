@@ -18,6 +18,7 @@ import { initDefaultHooks, } from "../generation/hooks";
 import { initializeProviders, } from "../generation";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
+import { runDataMigrations, } from "../db/data-migrations/runner";
 import { runMigrations, } from "../db/migrate";
 import { runSchemaBackfill, } from "../db/schema-backfill";
 import { seedDefaultActors, } from "../db/seed";
@@ -104,6 +105,7 @@ export async function start() {
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database,);
   await runSchemaBackfill(database,);
+  await runDataMigrations(database,);
   await seedDefaultActors(database, config,);
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);
