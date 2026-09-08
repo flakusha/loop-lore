@@ -3,7 +3,7 @@
 
 # BUG: TASK-assistant-creative-studio-workflows.md claims `sd.ts` and `scenario-source.ts` were "deleted 2026-08-14" but both files still exist on disk
 
-**Status:** Not Started
+**Status:** ✅ Done (both files now gone: sd.ts already absent on dev HEAD; scenario-source.ts deleted as a zero-caller DB-less stub — storeScenarioSource returned fake `scenario-${Date.now()}` ids with no table. Parent TASK Phase-3 stub-reactivation lines now historical; see TASK-assistant-creative-studio-workflows.md update.)
 **Severity:** low
 **Priority:** low
 **Effort:** small
