@@ -38,7 +38,7 @@ describe("emotion-avatar job store", () => {
       emotions: [],
     },);
     storeJob(job,);
-    expect(getJob("job-2" as BatchJobId,)?.id,).toBe("job-2",);
+    expect(getJob("job-2" as BatchJobId,)?.id,).toBe("job-2" as BatchJobId,);
     expect(getJob("nope" as BatchJobId,),).toBeUndefined();
   });
 
@@ -61,7 +61,7 @@ describe("emotion-avatar job store", () => {
     storeJob(newer,);
 
     const jobs = listJobs("actor-list",);
-    expect(jobs.map((j,) => j.id),).toEqual(["job-new", "job-old",],);
+    expect(jobs.map((j,) => j.id),).toEqual(["job-new", "job-old",] as BatchJobId[],);
     expect(listJobs("actor-none",),).toEqual([],);
   });
 
