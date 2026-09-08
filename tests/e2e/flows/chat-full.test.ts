@@ -11,11 +11,18 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedAll, } from "../helpers/seed";
 import { createTestServer, type TestServer, } from "../helpers/server";
+import { describePristine, } from "@/test-utils/pristine";
+
+// Chat asset upload stores via createAsset, which
+// src/generation/image-gen-route.test.ts replaces process-wide with
+// mockCreateAsset. Probe and skip rather than assert the stub.
+const { createAsset: probeCreateAsset, } = await import("@/assets/service/create");
+const describeRealAsset = describePristine(probeCreateAsset, "createAsset",);
 
 describe("Chat Full Functionality", () => {
   // ── Assets linked to chat ──────────────────────────────────
 
-  describe("chat assets", () => {
+  describeRealAsset("chat assets", () => {
     let server: TestServer;
     let api: ApiClient;
 
