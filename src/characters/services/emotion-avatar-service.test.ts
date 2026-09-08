@@ -30,8 +30,8 @@ import { createTestActors, } from "./test-helpers";
 // Probe the real prototype and skip instead of testing the stub
 // (pristine-module guard; see generation/providers/registry.test.ts).
 const proto = EmotionAvatarService.prototype as unknown as Record<string, unknown>;
-const emotionServicePristine = typeof proto.generateEmotionAvatar === "function"
-  && typeof proto.resolveEmotionPromptModifier === "function";
+const emotionServicePristine = typeof proto.generateEmotionAvatar === "function" &&
+  typeof proto.resolveEmotionPromptModifier === "function";
 const describeReal = emotionServicePristine ? describe : describe.skip;
 
 // ── Mocks ──────────────────────────────────────────────────────
@@ -249,7 +249,7 @@ describeReal("EmotionAvatarService", () => {
         uploadDir: "/tmp/test-uploads",
       },),).rejects.toThrow("not supported",);
     });
-  },);
+  });
 
   // ── Emotion tags ───────────────────────────────────────────────
 
@@ -341,4 +341,4 @@ describeReal("EmotionAvatarService", () => {
       expect(meta.height,).toBe(512,);
     });
   });
-});
+},);
