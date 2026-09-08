@@ -2434,10 +2434,10 @@ export async function insertCraftingOrders(
     max_quality?: QualityLevel | null;
     offered_payment?: number;
     offered_materials?: string;
-    requested_materials?: string;
     status?: string;
     deadline?: string | null;
     trade_type?: string;
+    requested_materials?: string;
   },
 ): Promise<void> {
   await db.insertInto("crafting_orders",).values({

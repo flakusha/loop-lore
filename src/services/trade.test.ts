@@ -285,7 +285,7 @@ describe("TradeService — offer lifecycle", () => {
     expect(counter.success,).toBe(true,);
 
     const listed = await svc.listOffers(worldId, buyer,);
-    const found = listed.find(o => o.id === offerId,);
+    const found = listed.find(o => o.id === offerId);
     expect(found!.status,).toBe("countered",);
     expect(found!.sellerItems.length,).toBe(1,);
     expect(found!.price,).toBe(25,);
@@ -327,7 +327,7 @@ describe("TradeService — offer lifecycle", () => {
     expect((await svc.counterOffer({ offerId, counterActorId: buyer, price: 12, },)).success,).toBe(true,);
 
     const listed = await svc.listOffers(worldId, seller,);
-    expect(listed.find(o => o.id === offerId,)!.status,).toBe("pending",);
+    expect(listed.find(o => o.id === offerId)!.status,).toBe("pending",);
 
     // Seller accepts the amended terms.
     const result = await svc.acceptOffer(offerId, seller,);
@@ -357,7 +357,7 @@ describe("TradeService — offer lifecycle", () => {
 
     // Lazy expiry visible in listing.
     const listed = await svc.listOffers(worldId, buyer,);
-    expect(listed.find(o => o.id === offerId,)!.status,).toBe("expired",);
+    expect(listed.find(o => o.id === offerId)!.status,).toBe("expired",);
   });
 
   test("counter with no changes is rejected", async () => {
