@@ -9,11 +9,8 @@
 import { describe, expect, test, } from "bun:test";
 import type { HeadersConfig, } from "../config/schema";
 import { generateNonce, } from "./csp-nonce";
-import { ResponseHeaderPolicy, } from "./response-headers";
+import { normalizeHeaderKey, ResponseHeaderPolicy, } from "./response-headers";
 
-/**
- * @param overrides
- */
 function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
   const base: HeadersConfig = {
     enabled: true,
@@ -52,20 +49,11 @@ function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
   return { ...base, ...overrides, };
 }
 
-/**
- * @param method
- * @param url
- */
 function req(method: string, url: string,): Request {
   return new Request(url, { method, },);
 }
 
-/**
- * @param status
- * @param headers
- * @param body
- */
-function res(status: number, headers: Record<string, string>, body = "",): Response {
+function res(status: number, headers: Record<string, string>, body: BodyInit | null = "",): Response {
   return new Response(body, { status, headers, },);
 }
 
@@ -135,7 +123,7 @@ describe("ResponseHeaderPolicy.apply — precedence", () => {
     },);
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("content-type",),).toBe("text/html; charset=utf-8",);
-    expect(out.headers.get("x-frame-options",),).toBe("SAMEORIGIN",); // route wins
+    expect(out.headers.get("x-frame-options",),).toBe("SAMEORIGIN",);
     expect(out.headers.get("cache-control",),).toBe("public, max-age=60",);
   });
 });
@@ -275,11 +263,6 @@ describe("ResponseHeaderPolicy.apply — CSP nonce", () => {
   });
 });
 
-/**
- * BUG-hsts-header-missing-from-response-policy: Strict-Transport-Security
- * must be emitted only on HTTPS, only when enabled, and with the
- * configured max-age / includeSubDomains / preload flags.
- */
 describe("ResponseHeaderPolicy.apply — HSTS (BUG-hsts-header-missing-from-response-policy)", () => {
   test("emits HSTS on HTTPS with max-age + includeSubDomains when enabled", async () => {
     const policy = new ResponseHeaderPolicy(
@@ -322,6 +305,153 @@ describe("ResponseHeaderPolicy.apply — HSTS (BUG-hsts-header-missing-from-resp
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Strict-Transport-Security",),).toBe(
       "max-age=63072000; includeSubDomains; preload",
+    );
+  });
+});
+
+/** Coverage for TASK-headers-additional-useful-response-headers.
+ *  - apply() preserves statusText on re-wrap
+ *  - canonical header-name map covers strict-transport-security + report-to +
+ *    origin-agent-cluster + x-dns-prefetch-control
+ *  - html responses emit Origin-Agent-Cluster: ?1 + X-DNS-Prefetch-Control: off
+ *  - non-empty reportingEndpoints emits Reporting-Endpoints + legacy Report-To
+ *  - application/json api responses default to Cache-Control: no-store
+ *    when the route omitted it; non-JSON and route-set values win
+ */
+describe("ResponseHeaderPolicy — task additions (TASK-headers-additional-useful-response-headers)", () => {
+  test("apply() preserves statusText on re-wrap", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const original = new Response("page", {
+      status: 404,
+      statusText: "Not Found",
+      headers: { "content-type": "text/html; charset=utf-8", },
+    },);
+    const out = policy.apply({ request: req("GET", "https://x/missing",), response: original, },);
+    expect(out.status,).toBe(404,);
+    expect(out.statusText,).toBe("Not Found",);
+  });
+
+  test("apply() defaults statusText to empty string when response had none (no throw)", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const original = new Response("page", {
+      status: 200,
+      headers: { "content-type": "text/html; charset=utf-8", },
+    },);
+    const out = policy.apply({ request: req("GET", "https://x/",), response: original, },);
+    expect(typeof out.statusText,).toBe("string",);
+  });
+
+  test("html response emits Origin-Agent-Cluster: ?1 + X-DNS-Prefetch-Control: off", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, { "content-type": "text/html; charset=utf-8", }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "https://x/",), response, },);
+    expect(out.headers.get("Origin-Agent-Cluster",),).toBe("?1",);
+    expect(out.headers.get("X-DNS-Prefetch-Control",),).toBe("off",);
+  });
+
+  test("api response does not emit Origin-Agent-Cluster or X-DNS-Prefetch-Control", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, { "content-type": "application/json", }, "{}",);
+    const out = policy.apply({ request: req("GET", "https://x/api/chats",), response, },);
+    expect(out.headers.get("Origin-Agent-Cluster",),).toBeNull();
+    expect(out.headers.get("X-DNS-Prefetch-Control",),).toBeNull();
+  });
+
+  test("route-set Origin-Agent-Cluster wins over default (?1)", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, {
+      "content-type": "text/html; charset=utf-8",
+      "origin-agent-cluster": "?0",
+    }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "https://x/",), response, },);
+    expect(out.headers.get("Origin-Agent-Cluster",),).toBe("?0",);
+  });
+
+  test("non-empty reportingEndpoints emits Reporting-Endpoints + legacy Report-To", () => {
+    const policy = new ResponseHeaderPolicy(
+      makeConfig({
+        reportingEndpoints: { default: "https://reports.example.com/ingest", },
+      },),
+    );
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "https://x/",), response, },);
+    expect(out.headers.get("Reporting-Endpoints",),).toBe(
+      'default="https://reports.example.com/ingest"',
+    );
+    const reportTo = out.headers.get("Report-To",);
+    expect(reportTo,).toContain('"group":"default"',);
+    expect(reportTo,).toContain('"url":"https://reports.example.com/ingest"',);
+  });
+
+  test("empty reportingEndpoints emits neither Reporting-Endpoints nor Report-To", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig({ reportingEndpoints: {}, },),);
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "https://x/",), response, },);
+    expect(out.headers.get("Reporting-Endpoints",),).toBeNull();
+    expect(out.headers.get("Report-To",),).toBeNull();
+  });
+
+  test("api application/json response gets Cache-Control: no-store by default", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, { "content-type": "application/json", }, "{}",);
+    const out = policy.apply({ request: req("GET", "https://x/api/chats",), response, },);
+    expect(out.headers.get("Cache-Control",),).toBe("no-store",);
+  });
+
+  test("api application/json response keeps route-set Cache-Control (no clobber)", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, {
+      "content-type": "application/json",
+      "cache-control": "public, max-age=60",
+    }, "{}",);
+    const out = policy.apply({ request: req("GET", "https://x/api/chats",), response, },);
+    expect(out.headers.get("Cache-Control",),).toBe("public, max-age=60",);
+  });
+
+  test("asset bytes served under /api/assets do not get no-store (Content-Type non-JSON)", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, {
+      "content-type": "image/png",
+      "cache-control": "public, max-age=31536000, immutable",
+    }, new Uint8Array(1,),);
+    const out = policy.apply({ request: req("GET", "https://x/api/assets/abc.png",), response, },);
+    expect(out.headers.get("Cache-Control",),).toBe(
+      "public, max-age=31536000, immutable",
+    );
+  });
+
+  test("non-api responses are not affected by the JSON no-store default", () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const html = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const htmlOut = policy.apply({ request: req("GET", "https://x/",), response: html, },);
+    expect(htmlOut.headers.get("Cache-Control",),).toBeNull();
+
+    const stat = res(200, { "content-type": "text/css", }, "/* */",);
+    const statOut = policy.apply({ request: req("GET", "https://x/app.css",), response: stat, },);
+    expect(statOut.headers.get("Cache-Control",),).toBeNull();
+  });
+});
+
+describe("normalizeHeaderKey — additional entries (TASK-headers-additional-useful-response-headers)", () => {
+  test("strict-transport-security", () => {
+    expect(normalizeHeaderKey("strict-transport-security",),).toBe(
+      "Strict-Transport-Security",
+    );
+  });
+
+  test("report-to", () => {
+    expect(normalizeHeaderKey("report-to",),).toBe("Report-To",);
+  });
+
+  test("origin-agent-cluster", () => {
+    expect(normalizeHeaderKey("origin-agent-cluster",),).toBe(
+      "Origin-Agent-Cluster",
+    );
+  });
+
+  test("x-dns-prefetch-control", () => {
+    expect(normalizeHeaderKey("x-dns-prefetch-control",),).toBe(
+      "X-DNS-Prefetch-Control",
     );
   });
 });
