@@ -26,3 +26,7 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Notes
+
+DEFERRED 2026-09-08: MINOR severity; fix requires either a user-timezone preference plumbed into server render paths (new feature) or client-side date rendering (template rework across 3 sites). Both are feature-sized; needs product decision before implementation.
