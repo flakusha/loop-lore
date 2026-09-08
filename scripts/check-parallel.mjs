@@ -112,7 +112,10 @@ function changedFiles(base,) {
 function scopedTestFiles(files,) {
   const out = new Set();
   for (const f of files) {
-    if (f.endsWith(".test.ts",)) {
+    // Existence check applies to BOTH branches: a deleted `foo.test.ts` is
+    // still "changed" in the diff, and passing the missing path to
+    // `bun test` fails the gate with a filter error.
+    if (f.endsWith(".test.ts",) && existsSync(path.resolve(DIFF_ROOT, f,),)) {
       out.add(f,);
       continue;
     }
