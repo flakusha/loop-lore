@@ -29,8 +29,9 @@ import { createTestActors, } from "./test-helpers";
 // ./emotion-avatar-service with a stub class lacking generateEmotionAvatar.
 // Probe the real prototype and skip instead of testing the stub
 // (pristine-module guard; see generation/providers/registry.test.ts).
-const emotionServicePristine = typeof EmotionAvatarService.prototype.generateEmotionAvatar === "function"
-  && typeof EmotionAvatarService.prototype.resolveEmotionPromptModifier === "function";
+const proto = EmotionAvatarService.prototype as unknown as Record<string, unknown>;
+const emotionServicePristine = typeof proto.generateEmotionAvatar === "function"
+  && typeof proto.resolveEmotionPromptModifier === "function";
 const describeReal = emotionServicePristine ? describe : describe.skip;
 
 // ── Mocks ──────────────────────────────────────────────────────
@@ -56,7 +57,7 @@ function restoreFetch() {
 
 // ── Tests ──────────────────────────────────────────────────────
 
-describe("EmotionAvatarService", () => {
+describeReal("EmotionAvatarService", () => {
   let db: Kysely<DB>;
   let sqlite: { close(): void; run(sql: string,): void };
   let emotionService: EmotionAvatarService;
@@ -121,7 +122,7 @@ describe("EmotionAvatarService", () => {
   // They use mock module replacement for createAsset/linkAsset to avoid
   // real filesystem + FK-constrained DB writes.
 
-  describeReal("API family routing", () => {
+  describe("API family routing", () => {
     const baseSdConfig = {
       name: "test-provider",
       label: "Test",
