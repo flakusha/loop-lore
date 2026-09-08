@@ -69,6 +69,25 @@ const {
 } = (managerPristine ? managerModule : {}) as typeof import("../../cancellation-manager");
 const describeReal = managerPristine ? describeOrSkip : describe.skip;
 
+// The stop-and-respond tests assert on telemetry captured via this file's
+// own ../../../telemetry/service stub (record pushes into recordedEvents).
+// Other files stub the same module with same-arity noops/captures
+// (post-store, non-stream), so a structural check cannot detect the loss:
+// sentinel push — only this file's stub appends to OUR array. Verified
+// after the mock.module calls below, at first use.
+async function isTelemetryCaptureOurs(): Promise<boolean> {
+  try {
+    const { record: recordFn, } = await import("../../../telemetry/service");
+    await (recordFn as unknown as (_db: unknown, params: { eventType: string; data: Record<string, unknown> },) => Promise<void>)(
+      undefined,
+      { eventType: "__abort_selfcheck__", data: {}, },
+    );
+    return recordedEvents.some((e,) => e.eventType === "__abort_selfcheck__",);
+  } catch {
+    return false;
+  }
+}
+
 createLogger({ level: "error", },);
 
 // ── Telemetry capture ───────────────────────────────────────
@@ -100,6 +119,9 @@ if (ISOLATED) {
     extractAndStoreMemories: async () => {/* noop */},
   }),);
 }
+
+const telemetryOurs = await isTelemetryCaptureOurs();
+const describeFullyOurs = telemetryOurs ? describeReal : describe.skip;
 
 const { streamToClient, } = await import("../stream-to-client");
 
@@ -248,7 +270,7 @@ afterEach(() => {
   activeGenerations.clear();
 },);
 
-describeReal("streamToClient — stop-and-respond interrupt", () => {
+describeFullyOurs("streamToClient — stop-and-respond interrupt", () => {
   test(
     "cancelGenerationByChat fans out to registered side-effect jobs",
     async () => {

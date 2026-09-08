@@ -58,7 +58,7 @@
     "check:full": "bun run build:frontend && bun run check",
     "test": "bun test --isolate",
     "test:watch": "bun test --watch",
-    "test:coverage": "E2E_SAFEGUARD=1 bun test src/ tests/e2e/ --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage",
+    "test:coverage": "E2E_SAFEGUARD=1 bun test tests/e2e/ src/ --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage",
     "test:unit": "bun test src/ --isolate",
     "test:unit:parallel": "bun test src/ --concurrency=$(nproc)",
     "test:e2e": "HTTP_PROXY= NO_PROXY=* bun test tests/e2e/",

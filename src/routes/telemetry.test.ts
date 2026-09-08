@@ -16,7 +16,28 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
-import { hashId, } from "../telemetry/service";
+import { hashId, record, } from "../telemetry/service";
+
+// Bun's mock.module is process-global and cannot be unmocked: under
+// `bun run` an earlier file (e.g.
+// generate-route/__tests__/abort.test.ts) may have replaced
+// ../telemetry/service with a capture stub whose record has the SAME arity
+// but never writes. Behavior probe: write a row through a scratch DB and
+// skip unless the row lands (pristine-module guard; see
+// generation/providers/registry.test.ts).
+const telemetryPristine = await (async () => {
+  const probe = await createTestDb();
+  try {
+    await record(probe.db, { eventType: "__probe__", data: {}, },);
+    const rows = await probe.db.selectFrom("telemetry_events",).select("id",).limit(1,).execute();
+    return rows.length === 1;
+  } catch {
+    return false;
+  } finally {
+    probe.sqlite.close();
+  }
+})();
+const describeReal = telemetryPristine ? describe : describe.skip;
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertUsers, } from "../test-utils/insert-helpers";
 import { telemetryRoutes, } from "./telemetry";
@@ -42,7 +63,7 @@ interface EventBody {
   total?: number;
 }
 
-describe("telemetry routes — enabled", () => {
+describeReal("telemetry routes — enabled", () => {
   let db: Kysely<DB>;
   let sqlite: Database;
 
