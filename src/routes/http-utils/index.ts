@@ -8,6 +8,7 @@
  * for consistent API response handling across all route handlers.
  */
 export * from "./parse";
+export * from "./redirect";
 export * from "./responses";
 export * from "./status";
 export * from "./types";
