@@ -6,6 +6,8 @@ import type {
   SeductionSkillCategory,
 } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
+import type { SeductionPrerequisite, } from "../../../nsfw/seduction-prerequisites";
+import type { ReputationTier, } from "../../../schemas";
 
 /** Desire profile — what a character finds attractive. */
 export interface DesireProfile {
@@ -75,6 +77,12 @@ export interface SeductionResult {
   description: string;
   /** Whether a hard limit was triggered. */
   hardLimitTriggered: boolean;
+  /** True when the attempt was refused by a tier-gated skill prerequisite. */
+  prerequisiteBlocked?: boolean;
+  /** The unmet prerequisites (when `prerequisiteBlocked`). */
+  missingPrerequisite?: SeductionPrerequisite[];
+  /** Consent refusal reason (`consent_required` / `consent_revoked`), if any. */
+  consentReason?: string;
 }
 
 /** Options for a seduction attempt. */
@@ -90,4 +98,10 @@ export interface SeductionAttemptOpts {
   approach: string;
   /** Optional world context. */
   worldId?: string | null;
+  /**
+   * Target reputation tier — gates the skill prerequisites. Omitted → the
+   * most permissive tier (`devoted`, no prerequisites) so callers that do
+   * not resolve reputation skip the block.
+   */
+  reputationTier?: ReputationTier;
 }

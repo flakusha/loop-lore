@@ -4,7 +4,12 @@
 import { Elysia, } from "elysia";
 import { FantasyService, } from "../../rpg/fantasies/service";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
-import { log, requireNsfwActorAccess, } from "./shared";
+import {
+  log,
+  nsfwAccessErrorResponse,
+  requireNsfwActorAccess,
+  requireNsfwRouteAccess,
+} from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -12,7 +17,7 @@ import type { HandlerOpts, } from "./types";
  * @param prefix
  */
 export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, } = opts;
+  const { database, config, } = opts;
   const fantasyService = new FantasyService(database,);
 
   return (
@@ -22,6 +27,10 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             const fantasies = await fantasyService.getActorFantasies(ctx.params.actorId,);
             return jsonResponse(fantasies,);
@@ -35,12 +44,24 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
         `${prefix}/nsfw/fantasies`,
         async (ctx: any,) => {
           try {
+            const userId = requireUserId(ctx,);
+            if (typeof userId !== "string") { return userId; }
             const body = ctx.body as Record<string, unknown>;
-            const auth = await requireNsfwActorAccess(database, (body.actorId as string) ?? "", ctx,);
-            if (typeof auth !== "string") { return auth; }
+            const actorId = (body.actorId as string) ?? "";
+            const chatId = (body.chatId as string) ?? null;
+
+            const ownership = await requireNsfwActorAccess(database, actorId, ctx,);
+            if (typeof ownership !== "string") { return ownership; }
+
+            const consent = await requireNsfwRouteAccess(database, config, userId, {
+              chatId,
+              actorId,
+            },);
+            if (!consent.ok) { return nsfwAccessErrorResponse(consent.reason,); }
+
             const fantasy = await fantasyService.createFantasy({
               database,
-              actorId: body.actorId as string,
+              actorId,
               name: body.name as string,
               category: body.category as any,
               intensity: body.intensity as any,
@@ -57,11 +78,23 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
         `${prefix}/nsfw/fantasies/discover`,
         async (ctx: any,) => {
           try {
+            const userId = requireUserId(ctx,);
+            if (typeof userId !== "string") { return userId; }
             const body = ctx.body as Record<string, unknown>;
-            const auth = await requireNsfwActorAccess(database, (body.actorId as string) ?? "", ctx,);
-            if (typeof auth !== "string") { return auth; }
+            const actorId = (body.actorId as string) ?? "";
+            const chatId = (body.chatId as string) ?? null;
+
+            const ownership = await requireNsfwActorAccess(database, actorId, ctx,);
+            if (typeof ownership !== "string") { return ownership; }
+
+            const consent = await requireNsfwRouteAccess(database, config, userId, {
+              chatId,
+              actorId,
+            },);
+            if (!consent.ok) { return nsfwAccessErrorResponse(consent.reason,); }
+
             const result = await fantasyService.attemptDiscovery(
-              body.actorId as string,
+              actorId,
               body.context as string,
               (body.discoveryChance as number) ?? 0.1,
             );
@@ -77,6 +110,8 @@ export function fantasyRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             const body = ctx.body as Record<string, unknown>;
             const success = await fantasyService.recordExploration(
