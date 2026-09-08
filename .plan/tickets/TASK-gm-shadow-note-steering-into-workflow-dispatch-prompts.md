@@ -3,7 +3,7 @@
 
 # TASK: GM: shadow-note steering into workflow dispatch prompts
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (shipped: exported fetchUnrevealedShadowNotes + formatShadowSteering + ShadowSteeringNote from src/assistant/prompt/sections/gm-notes.ts — section reuses the formatter, behavior identical; withShadowSteering(prompt, steering) merge point in src/assistant/workflow-routing.ts applied caller-side between assemblePrompt and confirmAndDispatch, runner stays pure. GM-role leak gate stays in the section; raw-fetch callers must enforce it. NSFW ordering: steering merges pre-confirm, so prefilter/consent gates see the final prompt.)
 **Priority:** Medium
 **Effort:** Medium
 

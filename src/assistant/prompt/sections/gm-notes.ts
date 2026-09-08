@@ -29,11 +29,6 @@ interface WhiteneoteRow {
   scope: string;
 }
 
-interface ShadowNoteRow {
-  type: string;
-  content: string;
-}
-
 /**
  * Fetch active (non-expired) whitenotes for the chat, highest priority first.
  * @param db
@@ -67,15 +62,25 @@ async function fetchActiveWhitenotes(
   }),);
 }
 
+/** One hidden narrative influence steering generation */
+export interface ShadowSteeringNote {
+  type: string;
+  content: string;
+}
+
 /**
  * Fetch unrevealed shadow notes (hidden influences) for the chat.
+ * Shared by the gmNotes prompt section and workflow dispatch callers
+ * (TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts) so both
+ * read the same hidden-note set. Callers MUST enforce the GM-role gate
+ * themselves — this fetch does not check roles.
  * @param db
  * @param chatId
  */
-async function fetchUnrevealedShadowNotes(
+export async function fetchUnrevealedShadowNotes(
   db: Kysely<DB>,
   chatId: string,
-): Promise<ShadowNoteRow[]> {
+): Promise<ShadowSteeringNote[]> {
   const rows = await db
     .selectFrom("shadow_notes",)
     .select(["type", "content",],)
@@ -86,6 +91,18 @@ async function fetchUnrevealedShadowNotes(
     .execute();
 
   return Array.from(rows, (r,) => ({ type: r.type, content: r.content, }),);
+}
+
+/**
+ * Format shadow notes as a hidden steering block for prompt injection.
+ * Same `<shadow_notes>` shape the gmNotes section emits.
+ * @param notes - Unrevealed shadow notes
+ * @returns Wrapped block, or empty string when no notes
+ */
+export function formatShadowSteering(notes: readonly ShadowSteeringNote[],): string {
+  if (notes.length === 0) { return ""; }
+  const text = Array.from(notes, (n,) => `- [${n.type}] ${n.content}`,).join("\n",);
+  return wrapSection("shadow_notes", text,);
 }
 
 export const gmNotesSection: SectionBuilder = {
@@ -123,8 +140,7 @@ export const gmNotesSection: SectionBuilder = {
       parts.push(wrapSection("whitenotes", text,),);
     }
     if (shadowNotes.length > 0) {
-      const text = Array.from(shadowNotes, (n,) => `- [${n.type}] ${n.content}`,).join("\n",);
-      parts.push(wrapSection("shadow_notes", text,),);
+      parts.push(formatShadowSteering(shadowNotes,),);
     }
 
     return [{ role: "system", content: parts.join("\n\n",), },];

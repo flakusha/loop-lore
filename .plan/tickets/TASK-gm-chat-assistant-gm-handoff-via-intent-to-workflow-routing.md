@@ -3,7 +3,7 @@
 
 # TASK: GM/chat: assistant-GM handoff via intent-to-workflow routing
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (shipped: routeAssistantMessage in src/assistant/workflow-routing.ts — slash command → workflow trigger → story GM → chat, never undefined; matchWorkflowTrigger over per-template triggers; group-chat callers pass per-actor isStoryMode. Route-layer wiring into messages dispatch is follow-up work; contract tested incl. no-silent-fallthrough cases.)
 **Priority:** Medium
 **Effort:** Medium
 
