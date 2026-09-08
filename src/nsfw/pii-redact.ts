@@ -14,8 +14,7 @@
  * signal and surface it in the response.
  */
 import type { AuthConfig, } from "../config/schema/auth";
-import { domainKey } from "../utils/hkdf";
-
+import { domainKey, } from "../utils/hkdf";
 
 // ── Error category ──────────────────────────────────────────────────────
 
@@ -87,15 +86,15 @@ async function hmacHexFromKey(
   const encoder = new TextEncoder();
   const cryptoKey = await crypto.subtle.importKey(
     "raw",
-    new Uint8Array(key),
-    { name: "HMAC", hash: "SHA-256" },
+    new Uint8Array(key,),
+    { name: "HMAC", hash: "SHA-256", },
     false,
-    ["sign"],
+    ["sign",],
   );
-  const sig = await crypto.subtle.sign("HMAC", cryptoKey, encoder.encode(value));
-  return Array.from(new Uint8Array(sig, 0, byteCount))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
+  const sig = await crypto.subtle.sign("HMAC", cryptoKey, encoder.encode(value,),);
+  return Array.from(new Uint8Array(sig, 0, byteCount,),)
+    .map((b,) => b.toString(16,).padStart(2, "0",))
+    .join("",);
 }
 
 // ── ID hasher ───────────────────────────────────────────────────────────
@@ -112,8 +111,8 @@ export async function actorHash(
 ): Promise<string | null> {
   if (userId === null) { return null; }
   if (!authConfig?.jwtSecret) { return null; }
-  const key = await domainKey(authConfig.jwtSecret, "nsfw-pii", 32);
-  return hmacHexFromKey(key, userId, 8);
+  const key = await domainKey(authConfig.jwtSecret, "nsfw-pii", 32,);
+  return hmacHexFromKey(key, userId, 8,);
 }
 
 /**
@@ -128,8 +127,8 @@ export async function chatHash(
 ): Promise<string | null> {
   if (chatId === null) { return null; }
   if (!authConfig?.jwtSecret) { return null; }
-  const key = await domainKey(authConfig.jwtSecret, "nsfw-pii", 32);
-  return hmacHexFromKey(key, chatId, 8);
+  const key = await domainKey(authConfig.jwtSecret, "nsfw-pii", 32,);
+  return hmacHexFromKey(key, chatId, 8,);
 }
 
 // ── Error redaction ─────────────────────────────────────────────────────
