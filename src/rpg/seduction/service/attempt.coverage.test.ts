@@ -267,4 +267,91 @@ describe("attemptSeduction", () => {
     expect(skill.xp,).toBe(7,);
     expect(skill.level,).toBe(20,);
   });
+
+  test("hostile reputation tier blocks the attempt before any roll or mutation", async () => {
+    const { actorId, targetId, } = await makePair();
+    await seedDesire(targetId,);
+    Math.random = () => 0.999999;
+    try {
+      const result = await attemptSeduction(db, {
+        database: db,
+        actorId,
+        targetId,
+        skillCategory: "communication",
+        approach: "a dark persuasive whisper",
+        reputationTier: "hostile",
+      },);
+      expect(result.success,).toBe(false,);
+      expect(result.roll,).toBe(0,);
+      expect(result.dc,).toBe(0,);
+      expect(result.arousalDelta,).toBe(0,);
+      expect(result.intimacyDelta,).toBe(0,);
+      expect(result.xpGained,).toBe(0,);
+      expect(result.prerequisiteBlocked,).toBe(true,);
+      expect(result.missingPrerequisite?.length,).toBeGreaterThan(0,);
+    } finally {
+      Math.random = originalRandom;
+    }
+    // No state mutated on refusal: no arousal row, no skill row.
+    const arousal = await db.selectFrom("character_arousal",)
+      .where("actor_id", "=", targetId,)
+      .selectAll()
+      .execute();
+    expect(arousal,).toEqual([],);
+  });
+
+  test("dominance skill maps to intimidation but deception still blocks hostile", async () => {
+    const { actorId, targetId, } = await makePair();
+    await seedDesire(targetId,);
+    await insertCharacterSeductionSkills(
+      db,
+      actorId,
+      "dominance",
+      "Commanding Presence",
+      NOW,
+      NOW,
+      { level: 7, xp: 0, xp_to_next: 1000, },
+    );
+    const result = await attemptSeduction(db, {
+      database: db,
+      actorId,
+      targetId,
+      skillCategory: "communication",
+      approach: "an imperious demand",
+      reputationTier: "hostile",
+    },);
+    expect(result.prerequisiteBlocked,).toBe(true,);
+    // intimidation level 7×10 = 70 ≥ 70 passes; deception (CHA 10) < 80 blocks.
+    expect(result.missingPrerequisite?.map((p,) => p.skill),).toEqual(["deception",],);
+  });
+
+  test("friendly tier prerequisites pass with a communication skill", async () => {
+    const { actorId, targetId, } = await makePair();
+    await seedDesire(targetId,);
+    await insertCharacterSeductionSkills(
+      db,
+      actorId,
+      "communication",
+      "Silver Tongue",
+      NOW,
+      NOW,
+      { level: 4, xp: 0, xp_to_next: 1000, },
+    );
+    Math.random = () => 0.999999;
+    try {
+      const result = await attemptSeduction(db, {
+        database: db,
+        actorId,
+        targetId,
+        skillCategory: "communication",
+        approach: "warm friendly conversation",
+        reputationTier: "friendly",
+      },);
+      // charisma proxy = 4×10 = 40 ≥ 20 → no prerequisite block.
+      expect(result.prerequisiteBlocked ?? false,).toBe(false,);
+      expect(result.success,).toBe(true,);
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
 });

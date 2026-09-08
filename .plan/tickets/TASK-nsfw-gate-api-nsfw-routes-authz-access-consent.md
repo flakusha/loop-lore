@@ -3,7 +3,7 @@
 
 # TASK: NSFW: gate /api/nsfw routes (authZ + access + consent)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — commit `nsfw-consent-gate-wiring` (see `agent-commit`); wired 2026-09-09
 **Priority:** Medium
 **Effort:** Medium
 **Epic:** epic-nsfw-integration-gaps.md
