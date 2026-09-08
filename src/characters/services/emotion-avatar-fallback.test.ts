@@ -51,7 +51,7 @@ const assetFallbackPristine = await (async () => {
   } finally {
     probe.sqlite.close();
   }
-})(); 
+})();
 const itReal = assetFallbackPristine ? it : it.skip;
 const describeReal = assetFallbackPristine ? describe : describe.skip;
 
@@ -194,7 +194,7 @@ describeReal("extractAvatarMetadata", () => {
     const result = await extractAvatarMetadata(db, asset.id, { actorId, },);
     expect(result.caption,).toBe("Aria, the elven mage with silver hair",);
     expect(result.altText,).toBeUndefined();
-  });
+  },);
 
   itReal("prefers alt text over actor description", async () => {
     const { actorId, } = await createTestActors(db, "test-actor-alt-wins",);
@@ -222,7 +222,7 @@ describeReal("extractAvatarMetadata", () => {
     const result = await extractAvatarMetadata(db, asset.id, { actorId, },);
     expect(result.caption,).toBe("from alt text",);
     expect(result.altText,).toBe("from alt text",);
-  });
+  },);
 
   itReal("surfaces character_avatars tags when actorId is provided", async () => {
     const { actorId, } = await createTestActors(db, "test-actor-tags",);
@@ -262,7 +262,7 @@ describeReal("extractAvatarMetadata", () => {
       mood: "cheerful",
       action: "smile",
     },);
-  });
+  },);
 
   it("ignores malformed tags JSON without throwing", async () => {
     const { actorId, } = await createTestActors(db, "test-actor-bad-tags",);
@@ -323,4 +323,4 @@ describeReal("extractAvatarMetadata", () => {
       height: 640,
     },);
   });
-});
+},);

@@ -59,6 +59,92 @@ import { prolongCachedPassphrase, warmCache, } from "./gpg-unlock.mjs";
 
 // ── Check definitions ───────────────────────────────────────────
 
+// ── Diff-scoped mode ────────────────────────────────────────────
+const DIFF_ROOT = path.resolve(import.meta.dir, "..",);
+// `--diff-base <ref>` scopes the expensive test gates to the branch diff
+// (lint-staged style): only test files adjacent to changed source files run
+// under `test - unit`, and the coverage gate gates only modules touched by
+// the diff. Static/whole-project gates (typecheck, db schema, dead:code, …)
+// are unchanged — they are cheap or inherently project-wide.
+function parseDiffBase() {
+  const idx = process.argv.indexOf("--diff-base",);
+  if (idx !== -1 && idx + 1 < process.argv.length) {
+    return process.argv[idx + 1];
+  }
+  return null;
+}
+
+const DIFF_BASE = parseDiffBase();
+
+/**
+ * Files changed on this branch vs `base`, plus uncommitted working-tree
+ * changes. Empty when `base` is null.
+ * @param base - Git ref to diff against, or null.
+ * @returns Sorted list of changed paths (repo-relative).
+ */
+function changedFiles(base,) {
+  if (!base) { return []; }
+  const mergeBase = execFileSync(
+    "git",
+    ["merge-base", base, "HEAD",],
+    { cwd: DIFF_ROOT, encoding: "utf8", },
+  ).trim();
+  const committed = execFileSync(
+    "git",
+    ["diff", "--name-only", mergeBase,],
+    { cwd: DIFF_ROOT, encoding: "utf8", },
+  );
+  const dirty = execFileSync(
+    "git",
+    ["diff", "--name-only", "HEAD",],
+    { cwd: DIFF_ROOT, encoding: "utf8", },
+  );
+  return [...new Set(`${committed}\n${dirty}`.split("\n",).map((f,) => f.trim()).filter(Boolean,),),].sort();
+}
+
+/**
+ * Test files to run for a diff-scoped check: changed `*.test.ts` files plus
+ * the co-located test files of changed source files
+ * (`src/foo/bar.ts` → `src/foo/bar.test.ts` when it exists).
+ * @param files - Changed paths.
+ * @returns Test file paths that exist on disk.
+ */
+function scopedTestFiles(files,) {
+  const out = new Set();
+  for (const f of files) {
+    if (f.endsWith(".test.ts",)) {
+      out.add(f,);
+      continue;
+    }
+    if (!f.startsWith("src/",) || !f.endsWith(".ts",)) { continue; }
+    const testPath = f.replace(/\.ts$/, ".test.ts",);
+    if (existsSync(path.resolve(DIFF_ROOT, testPath,),)) {
+      out.add(testPath,);
+    }
+  }
+  return [...out,];
+}
+
+/**
+ * Top-level `src/` modules touched by the changed files
+ * (`src/chat/service/x.ts` → `chat`). Feeds the coverage gate's `--only`.
+ * @param files - Changed paths.
+ * @returns Sorted unique module names, or null when nothing under src/ changed.
+ */
+function changedModules(files,) {
+  const mods = new Set();
+  for (const f of files) {
+    if (!f.startsWith("src/",)) { continue; }
+    mods.add(f.split("/",)[1],);
+  }
+  return mods.size > 0 ? [...mods,].sort() : null;
+}
+
+const CHANGED = changedFiles(DIFF_BASE,);
+const SCOPED_TESTS = scopedTestFiles(CHANGED,);
+const SCOPED_MODULES = changedModules(CHANGED,);
+const NOOP_OK = "true # diff-scope: no matching files";
+
 // oxlint-disable-next-line sort-keys
 const checks = {
     // Type checking
@@ -110,10 +196,18 @@ const checks = {
     "no - shell - refs": "bun run scripts/check-no-shell-refs.ts",
 
     // Tests
-    "test - unit": "bun run test:unit",
+    "test - unit": DIFF_BASE
+      ? (SCOPED_TESTS.length > 0 ? `bun test --isolate ${SCOPED_TESTS.join(" ",)}` : NOOP_OK)
+      : "bun run test:unit",
     "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",
     // Coverage gate: per-module line % vs 80% floor (see AGENTS.md Verification Gates).
-    "coverage - per-module line %": "bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80",
+    "coverage - per-module line %": DIFF_BASE
+      ? (SCOPED_TESTS.length > 0
+        ? `bun test --isolate --coverage ${
+          SCOPED_TESTS.join(" ",)
+        } && bun run scripts/check/coverage.mjs --floor=80 --only=${(SCOPED_MODULES ?? []).join(",",)}`
+        : NOOP_OK)
+      : "bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80",
 
     // Frontend security + hygiene gates (promoted from .tmp investigation scripts)
     // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
@@ -310,15 +404,28 @@ async function runCheck(name, command,) {
   }
 }
 
+// Heavy gates (bun test processes: unit/e2e/coverage) each peak at multiple
+// GB RSS. Two of them co-scheduled in one JOBS chunk OOM-kills the runner
+// (observed: `test - unit` dying after ~300 bytes of output when chunked
+// alongside the coverage run). They are therefore pulled out of the chunked
+// pool and run strictly one-at-a-time after the light gates.
+const HEAVY_NAMES = new Set([
+  "test - unit",
+  "test - e2e",
+  "coverage - per-module line %",
+],);
+
 async function runAllChecks() {
-  const entries = Object.entries(checks,);
-  const total = entries.length;
+  const allEntries = Object.entries(checks,);
+  const entries = allEntries.filter(([name,],) => !HEAVY_NAMES.has(name,));
+  const heavyEntries = allEntries.filter(([name,],) => HEAVY_NAMES.has(name,));
+  const total = allEntries.length;
   console.log("=== loop-lore parallel check runner ===",);
   console.log(
     `Running ${total} checks with concurrency=${JOBS} (override via --jobs N or CHECK_JOBS=N)...\n`,
   );
-  // Cap the number of in-flight checks at JOBS. We schedule chunks of size
-  // JOBS and await each chunk before starting the next; this keeps peak
+  // Cap the number of in-flight light checks at JOBS. We schedule chunks of
+  // size JOBS and await each chunk before starting the next; this keeps peak
   // RSS roughly bounded at JOBS × max-check-RSS instead of total × max-check-RSS.
   // Order is preserved per chunk so the report's per-check duration numbers
   // remain comparable across runs (the slowest check sits in the final chunk).
@@ -330,7 +437,7 @@ async function runAllChecks() {
   // makes the per-chunk invariant explicit (collect every result, no early
   // short-circuit on a single failure).
   const results = [];
-  for (let offset = 0; offset < total; offset += JOBS) {
+  for (let offset = 0; offset < entries.length; offset += JOBS) {
     const chunk = entries.slice(offset, offset + JOBS,);
     const chunkResults = await Promise.allSettled(
       chunk.map(([name, command,],) => runCheck(name, command,)),
@@ -359,6 +466,11 @@ async function runAllChecks() {
         truncated: false,
       },);
     }
+  }
+  // Heavy gates strictly serial: each is a multi-GB bun test process; even
+  // two concurrently can OOM (see HEAVY_NAMES above).
+  for (const [name, command,] of heavyEntries) {
+    results.push(await runCheck(name, command,),);
   }
   return results;
 }

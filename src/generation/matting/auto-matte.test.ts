@@ -12,25 +12,25 @@
  * across tests or parallel workers. The temp upload dir is per-process
  * (mkdtemp) and shared read-write only via asset-id-keyed files.
  */
-import { describe, expect, test, } from "bun:test";
+import { expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { mkdtempSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { createAsset, } from "../../assets/service/create";
-import { describePristine, } from "../../test-utils/pristine";
-
-// matting enqueues real assets via createAsset, which
-// image-gen-route.test.ts replaces process-wide with mockCreateAsset.
-const describeReal = describePristine(createAsset, "createAsset",);
 import { makeMinimalPng, } from "../../assets/test-helpers";
 import { AssetAlphaStatus, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
+import { describePristine, } from "../../test-utils/pristine";
 import { enqueueAutoMatting, } from "./auto-matte";
 import { listJobs, } from "./job-store";
 import type { MattingProvider, } from "./types";
+
+// matting enqueues real assets via createAsset, which
+// image-gen-route.test.ts replaces process-wide with mockCreateAsset.
+const describeReal = describePristine(createAsset, "createAsset",);
 
 const uploadDir = mkdtempSync(join(tmpdir(), "loop-lore-auto-matte-test-",),);
 
@@ -131,4 +131,4 @@ describeReal("enqueueAutoMatting", () => {
     },);
     expect(listJobs(ownerId,).length,).toBe(0,);
   });
-});
+},);

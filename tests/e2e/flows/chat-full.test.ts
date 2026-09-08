@@ -7,11 +7,11 @@
  *   - Message swipe variants
  */
 
+import { describePristine, } from "@/test-utils/pristine";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedAll, } from "../helpers/seed";
 import { createTestServer, type TestServer, } from "../helpers/server";
-import { describePristine, } from "@/test-utils/pristine";
 
 // Chat asset upload stores via createAsset, which
 // src/generation/image-gen-route.test.ts replaces process-wide with
@@ -64,7 +64,7 @@ describe("Chat Full Functionality", () => {
       expect(assetsRes.data!.data.length,).toBeGreaterThanOrEqual(1,);
       expect(assetsRes.data!.data.some((a,) => a.id === assetId),).toBe(true,);
     });
-  });
+  },);
 
   // ── Regenerate / re-roll ───────────────────────────────────
 

@@ -14,19 +14,19 @@ import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { initialAlphaStatus, } from "../../assets/service/alpha-status";
 import { createAsset, } from "../../assets/service/create";
-import { describePristine, } from "../../test-utils/pristine";
-
-// lifecycle tests persist real assets via createAsset, which
-// image-gen-route.test.ts replaces process-wide with mockCreateAsset.
-const describeReal = describePristine(createAsset, "createAsset",);
 import { getAssetLinks, } from "../../assets/service/links";
 import { makeMinimalPng, } from "../../assets/test-helpers";
 import { AssetAlphaStatus, AssetLinkEntity, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
+import { describePristine, } from "../../test-utils/pristine";
 import { MattingService, } from "./service";
 import type { MattingProvider, } from "./types";
+
+// lifecycle tests persist real assets via createAsset, which
+// image-gen-route.test.ts replaces process-wide with mockCreateAsset.
+const describeReal = describePristine(createAsset, "createAsset",);
 
 /** Minimal RGBA PNG (color type 6) for matting derivative assertions. */
 function makeMinimalPngWithAlpha(width = 2, height = 1,): Buffer {
@@ -172,4 +172,4 @@ describeReal("matting job lifecycle", () => {
     const result = await service.startMatting({ assetId, ownerId: ownerB, },);
     expect(result,).toEqual({ ok: false, error: "forbidden", },);
   });
-});
+},);

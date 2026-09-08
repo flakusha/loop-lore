@@ -1,7 +1,13 @@
 // Coverage reporter: parse .tmp/coverage/lcov.info, emit per-module line %
-// Usage: bun run scripts/check/coverage.mjs [--floor 80]
+// Usage: bun run scripts/check/coverage.mjs [--floor 80] [--only=mod1,mod2]
 const fs = require("fs",);
 const floor = parseInt(process.argv.find((a,) => a.startsWith("--floor=",))?.split("=",)[1], 10,) || 80;
+// --only: gate only the named top-level src/ modules (diff-scoped runs).
+// A scoped `bun test --coverage` lcov only records exercised modules anyway;
+// --only additionally ignores incidental transitive imports so unrelated
+// low-coverage modules can't fail a scoped run.
+const onlyArg = process.argv.find((a,) => a.startsWith("--only=",))?.split("=",)[1];
+const only = onlyArg ? new Set(onlyArg.split(",",).filter(Boolean,),) : null;
 const lcovPath = ".tmp/coverage/lcov.info";
 if (!fs.existsSync(lcovPath,)) {
   console.error("lcov not found at " + lcovPath + " — run 'bun test --coverage' first",);
@@ -24,6 +30,7 @@ for (const r of records) {
 }
 
 const rows = Object.entries(modules,)
+  .filter(([m,],) => !only || only.has(m,))
   .map(([m, v,],) => ({ mod: m, pct: v.lf ? (v.lh / v.lf) * 100 : 0, lf: v.lf, lh: v.lh, }))
   .sort((a, b,) => a.pct - b.pct);
 
