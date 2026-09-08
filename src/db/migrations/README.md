@@ -1,12 +1,17 @@
 # Database Migrations
 
-Schema migrations live in **modular parts** under `parts/NNN_name.ts`. Each
-part file exports `up(db)` and `down(db)`; `001_init.ts` orchestrates them —
-it imports every part and runs `up()` in part order and `down()` in reverse.
-Migration names recorded in `kysely_migration` are the part names
-(`001_core`, `002_assets`, …). When adding a part, create
-`parts/NNN_description.ts`, export `up`/`down`, and wire it into
-`001_init.ts` in dependency order.
+Schema migrations are top-level `NNN_name.ts` files auto-discovered by
+`getMigrationFiles()` in `src/db/migrate.ts`; each exports `up(db)` and
+`down(db)`. `kysely_migration` holds one row per file (`001_init`, …).
+
+`001_init.ts` is **frozen**: it orchestrates the historical `parts/` tree
+(001–016, 018, 019, 021; 017/020 retired) and must gain no new parts —
+Kysely tracks `001_init` as one unit, so appended parts silently skip on
+existing databases (the drift class `runSchemaBackfill` converges at boot).
+New schema changes go in as new top-level `NNN_name.ts` files, which
+Kysely applies exactly once per database. A test in
+`src/db/migrations.test.ts` ("001_init part freeze") fails if a part is
+added to `001_init.ts`.
 
 ## Append-Only Policy
 
@@ -32,8 +37,9 @@ migration that alters the schema to the desired state.
 - Use `src/db/migration-helpers.ts` (`boolToEnum`, `batchBoolToEnum`) for
   boolean → text-enum conversions; helpers are transactional and log
   non-0/1 values instead of silently coercing them.
-- Data (row-level) migrations live in `src/db/data-migrations/` with their
-  own runner and versioning — see its README.
+- Data (row-level) migrations live in `src/db/data-migrations/` (runner +
+  types; discovery-based, no registry to edit). No row migrations ship
+  currently — the unshipped v1_to_v2 baselines were folded.
 
 ## Regeneration
 
@@ -49,11 +55,12 @@ bun run schemas:check
 
 When a ticket requires schema changes:
 
-1. **Ask the user first**: append a new part (`parts/NNN_*.ts`) vs. fold into
-   an existing part. Shipped parts are append-only — extend one only when the
-   new state hasn't been released.
-2. Create the new part (or edit the unshipped part), export `up`/`down`, and
-   wire it into `001_init.ts` in dependency order.
+1. **Ask the user first**: new top-level migration (`NNN_*.ts`) vs. fold into
+   an existing unshipped file. Never append a part to `001_init.ts` (frozen —
+   the tripwire test fails) and never extend a shipped migration.
+2. Create `src/db/migrations/NNN_description.ts`, export `up`/`down`, and
+   call `recordSchemaVersion(db, NNN, "label")` from `up()`. It is
+   auto-discovered by `getMigrationFiles()` — no wiring step.
 3. Run the regeneration chain: `bun run db:sync-types && bun run db:sync-manifest`
    then `bun run schemas:check`.
 4. Verify the migration chain + roundtrip:
