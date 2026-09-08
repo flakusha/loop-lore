@@ -14567,6 +14567,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-global-generation-pause-kill-switch.md"
   },
+  "TASK-GM-CHAT-ASSISTANT-GM-HANDOFF-VIA-INTENT-TO-WORKFLOW-ROUTING": {
+    "hash": "f4fd21e",
+    "git_issue": "f4fd21e",
+    "extid": "TASK-GM-CHAT-ASSISTANT-GM-HANDOFF-VIA-INTENT-TO-WORKFLOW-ROUTING",
+    "type": "TASK",
+    "title": "GM/chat: assistant-GM handoff via intent-to-workflow routing",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gm-chat-assistant-gm-handoff-via-intent-to-workflow-routing.md"
+  },
   "TASK-GM-CONFIG-UI-AUTHORING": {
     "hash": "pending",
     "extid": "TASK-GM-CONFIG-UI-AUTHORING",
@@ -14602,6 +14614,30 @@
     "source": ".plan/tickets/TASK-gm-panel.md",
     "status": "done",
     "git_issue": "d92e5b7"
+  },
+  "TASK-GM-REUSE-WORKFLOWRUNNER-FOR-GUIDED-ENTITY-CREATION": {
+    "hash": "30803ca",
+    "git_issue": "30803ca",
+    "extid": "TASK-GM-REUSE-WORKFLOWRUNNER-FOR-GUIDED-ENTITY-CREATION",
+    "type": "TASK",
+    "title": "GM: reuse WorkflowRunner for guided entity creation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gm-reuse-workflowrunner-for-guided-entity-creation.md"
+  },
+  "TASK-GM-SHADOW-NOTE-STEERING-INTO-WORKFLOW-DISPATCH-PROMPTS": {
+    "hash": "becc58b",
+    "git_issue": "becc58b",
+    "extid": "TASK-GM-SHADOW-NOTE-STEERING-INTO-WORKFLOW-DISPATCH-PROMPTS",
+    "type": "TASK",
+    "title": "GM: shadow-note steering into workflow dispatch prompts",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gm-shadow-note-steering-into-workflow-dispatch-prompts.md"
   },
   "TASK-GM-SHADOW-NOTES": {
     "hash": "4d07b28",
@@ -16580,6 +16616,17 @@
     "epic": "epic-audio-video-sound (Phase 5)",
     "tags": [],
     "source": ".plan/tickets/TASK-multimodal-asset-reuse.md"
+  },
+  "TASK-NARRATION-LEVELS": {
+    "hash": "pending",
+    "extid": "TASK-NARRATION-LEVELS",
+    "type": "TASK",
+    "title": "Narration levels (actor-only vs actor+narrator)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-narration-actor-separation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-narration-levels.md"
   },
   "TASK-NARRATION-PIPELINE": {
     "hash": "95b140e",
@@ -21466,6 +21513,72 @@
     "source": ".plan/tickets/TASK-tui.md",
     "git_issue": "62b2783"
   },
+  "TASK-TURN-SEND-GATE": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SEND-GATE",
+    "type": "TASK",
+    "title": "Turn send gate (block send/accept, allow edit)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-group-chat",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-send-gate.md"
+  },
+  "TASK-TURN-SKIP-CASCADE-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-CASCADE-INTEGRATION",
+    "type": "TASK",
+    "title": "Turn skip cascade integration",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-cascade-integration.md"
+  },
+  "TASK-TURN-SKIP-COMPOSER-UI": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-COMPOSER-UI",
+    "type": "TASK",
+    "title": "Turn skip composer UI",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-composer-ui.md"
+  },
+  "TASK-TURN-SKIP-EVENT-AND-PERSISTENCE": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-EVENT-AND-PERSISTENCE",
+    "type": "TASK",
+    "title": "Turn skip event and persistence",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-event-and-persistence.md"
+  },
+  "TASK-TURN-SKIP-GATE-INTERLOCK": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-GATE-INTERLOCK",
+    "type": "TASK",
+    "title": "Turn skip gate interlock",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-gate-interlock.md"
+  },
+  "TASK-TURN-SKIP-GM-ABSENCE-CONTRACT": {
+    "hash": "pending",
+    "extid": "TASK-TURN-SKIP-GM-ABSENCE-CONTRACT",
+    "type": "TASK",
+    "title": "Turn skip GM absence contract",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-actor-turn-skip",
+    "tags": [],
+    "source": ".plan/tickets/TASK-turn-skip-gm-absence-contract.md"
+  },
   "TASK-TWO-FACTOR-MULTI-FACTOR-AUTH": {
     "hash": "83fdcea",
     "extid": "TASK-TWO-FACTOR-MULTI-FACTOR-AUTH",
@@ -21733,6 +21846,17 @@
     "epic": "Avatar Alpha Channel + VN Layering; Visual Novel Mode",
     "tags": [],
     "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
+  },
+  "TASK-VN-CHOICE-OPT-IN": {
+    "hash": "pending",
+    "extid": "TASK-VN-CHOICE-OPT-IN",
+    "type": "TASK",
+    "title": "VN choice opt-in with pending-choice send block",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-visual-novel-mode",
+    "tags": [],
+    "source": ".plan/tickets/TASK-vn-choice-opt-in.md"
   },
   "TASK-VN-DYNAMIC-GENERATION": {
     "hash": "d539123",
@@ -22636,93 +22760,5 @@
     "source": ".plan/tickets/WIRE-nsfw-audit-page-missing-inline-authz.md",
     "status": "done",
     "resolved_by": "2ac5cf29"
-  },
-  "TASK-NARRATION-LEVELS": {
-    "hash": "pending",
-    "extid": "TASK-NARRATION-LEVELS",
-    "type": "TASK",
-    "title": "Narration levels (actor-only vs actor+narrator)",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-narration-actor-separation",
-    "tags": [],
-    "source": ".plan/tickets/TASK-narration-levels.md"
-  },
-  "TASK-TURN-SEND-GATE": {
-    "hash": "pending",
-    "extid": "TASK-TURN-SEND-GATE",
-    "type": "TASK",
-    "title": "Turn send gate (block send/accept, allow edit)",
-    "label": "task",
-    "priority": "high",
-    "epic": "epic-group-chat",
-    "tags": [],
-    "source": ".plan/tickets/TASK-turn-send-gate.md"
-  },
-  "TASK-TURN-SKIP-CASCADE-INTEGRATION": {
-    "hash": "pending",
-    "extid": "TASK-TURN-SKIP-CASCADE-INTEGRATION",
-    "type": "TASK",
-    "title": "Turn skip cascade integration",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-actor-turn-skip",
-    "tags": [],
-    "source": ".plan/tickets/TASK-turn-skip-cascade-integration.md"
-  },
-  "TASK-TURN-SKIP-COMPOSER-UI": {
-    "hash": "pending",
-    "extid": "TASK-TURN-SKIP-COMPOSER-UI",
-    "type": "TASK",
-    "title": "Turn skip composer UI",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-actor-turn-skip",
-    "tags": [],
-    "source": ".plan/tickets/TASK-turn-skip-composer-ui.md"
-  },
-  "TASK-TURN-SKIP-EVENT-AND-PERSISTENCE": {
-    "hash": "pending",
-    "extid": "TASK-TURN-SKIP-EVENT-AND-PERSISTENCE",
-    "type": "TASK",
-    "title": "Turn skip event and persistence",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-actor-turn-skip",
-    "tags": [],
-    "source": ".plan/tickets/TASK-turn-skip-event-and-persistence.md"
-  },
-  "TASK-TURN-SKIP-GATE-INTERLOCK": {
-    "hash": "pending",
-    "extid": "TASK-TURN-SKIP-GATE-INTERLOCK",
-    "type": "TASK",
-    "title": "Turn skip gate interlock",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-actor-turn-skip",
-    "tags": [],
-    "source": ".plan/tickets/TASK-turn-skip-gate-interlock.md"
-  },
-  "TASK-TURN-SKIP-GM-ABSENCE-CONTRACT": {
-    "hash": "pending",
-    "extid": "TASK-TURN-SKIP-GM-ABSENCE-CONTRACT",
-    "type": "TASK",
-    "title": "Turn skip GM absence contract",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-actor-turn-skip",
-    "tags": [],
-    "source": ".plan/tickets/TASK-turn-skip-gm-absence-contract.md"
-  },
-  "TASK-VN-CHOICE-OPT-IN": {
-    "hash": "pending",
-    "extid": "TASK-VN-CHOICE-OPT-IN",
-    "type": "TASK",
-    "title": "VN choice opt-in with pending-choice send block",
-    "label": "task",
-    "priority": "medium",
-    "epic": "epic-visual-novel-mode",
-    "tags": [],
-    "source": ".plan/tickets/TASK-vn-choice-opt-in.md"
   }
 }
