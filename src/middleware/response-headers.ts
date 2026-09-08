@@ -90,6 +90,9 @@ export type RouteKind = "html" | "api" | "static" | "sse";
 /** Matches bun's content-hashed asset names, e.g. `alpine-tx4kdwfm.js`. */
 const HASHED_ASSET_PATTERN = /-[a-z0-9]{8}\.(?:js|css|svg|png|jpe?g|webp|gif|woff2?)$/;
 
+/** Max-age at/above which `immutable` is semantically valid (1 year, matching static-files hashed assets). */
+const IMMUTABLE_CACHE_MAX_AGE = 31_536_000;
+
 /** Options for {@link ResponseHeaderPolicy.apply}. */
 export interface ApplyOptions {
   /** Incoming request (used for hashed-asset detection). */
@@ -320,14 +323,20 @@ export class ResponseHeaderPolicy {
 
   /**
    * Append `immutable` to an existing `Cache-Control: …max-age…` value when the
-   * requested path is a content-hashed asset (safe long-term caching).
+   * requested path is a content-hashed asset AND the TTL is already long-lived.
+   * Appending to a short dev TTL (e.g. max-age=60) would pin stale content in
+   * shared caches; duplicating immutable after static-files already set it is
+   * redundant
+   * (BUG-static-asset-caching-unconditional-vary-immutable-on-short-t).
    * @param root0
    * @param root0.request
    * @param root0.headers
    */
   private augmentImmutable({ request, headers, }: { request: Request; headers: Headers },): void {
     const cacheControl = headers.get("Cache-Control",);
-    if (!cacheControl?.includes("max-age",)) { return; }
+    if (!cacheControl?.includes("max-age",) || cacheControl.includes("immutable",)) { return; }
+    const maxAge = /max-age=(\d+)/.exec(cacheControl,);
+    if (!maxAge || Number(maxAge[1],) < IMMUTABLE_CACHE_MAX_AGE) { return; }
     if (HASHED_ASSET_PATTERN.test(new URL(request.url,).pathname,)) {
       headers.set("Cache-Control", `${cacheControl}, immutable`,);
     }
