@@ -14,7 +14,7 @@
  */
 import { describe, expect, it, } from "bun:test";
 import type { AuthConfig, } from "../config/schema/auth";
-import { actorHash, chatHash, } from "./telemetry-id-hashes";
+import { actorHash, categoriseError, chatHash, hmacHex, redactError, } from "./telemetry-id-hashes";
 
 const SECRET = "s".repeat(32,);
 describe("actorHash", () => {
@@ -123,5 +123,47 @@ describe("cross-type isolation", () => {
     expect(actor,).not.toBeNull();
     expect(chat,).not.toBeNull();
     expect(actor,).not.toBe(chat,);
+  });
+});
+
+describe("hmacHex", () => {
+  it("returns null when secret is empty (fail-closed)", async () => {
+    expect(await hmacHex("value", "",),).toBeNull();
+  });
+
+  it("returns deterministic hex scaled by byteCount", async () => {
+    const full = await hmacHex("value", SECRET,);
+    expect(full,).toMatch(/^[0-9a-f]{16}$/,);
+    expect(await hmacHex("value", SECRET,),).toBe(full,);
+    expect(await hmacHex("value", SECRET, 4,),).toMatch(/^[0-9a-f]{8}$/,);
+  });
+});
+
+describe("categoriseError", () => {
+  it("buckets known patterns and falls back to other", () => {
+    expect(categoriseError("connection timeout after 30s",),).toBe("timeout",);
+    expect(categoriseError("429 too many requests",),).toBe("rate_limit",);
+    expect(categoriseError("invalid json body",),).toBe("schema_validation",);
+    expect(categoriseError("unauthorized 401",),).toBe("auth_failure",);
+    expect(categoriseError("something completely odd",),).toBe("other",);
+  });
+});
+
+describe("redactError", () => {
+  it("passes null through with other category", () => {
+    expect(redactError(null,),).toEqual({ category: "other", text: null, },);
+  });
+
+  it("strips credential values and keeps the category", () => {
+    const result = redactError("auth_failure password=hunter2",);
+    expect(result.category,).toBe("auth_failure",);
+    expect(result.text,).not.toContain("hunter2",);
+    expect(result.text,).toContain("[key_redacted]",);
+  });
+
+  it("truncates long text to the max length", () => {
+    const result = redactError(`timeout ${"x".repeat(300,)}`,);
+    expect(result.category,).toBe("timeout",);
+    expect(result.text!.length,).toBe(200,);
   });
 });
