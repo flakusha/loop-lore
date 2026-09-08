@@ -2284,3 +2284,12 @@ export const SchemaVersionSchema = t.Object({
   applied_at: t.Optional(t.String(),),
   description: t.Optional(t.String(),),
 },);
+
+// ── workflow_sessions ────────────────────────────────────────────
+export const WorkflowSessionsSchema = t.Object({
+  workflow_id: t.String(),
+  chat_id: t.Optional(t.String(),),
+  step_values: t.Optional(t.String(),),
+  confirmed: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
+},);
