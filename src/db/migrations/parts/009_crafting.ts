@@ -44,7 +44,6 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("max_quality", "text",)
     .addColumn("offered_payment", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("offered_materials", "text", (col,) => col.notNull().defaultTo("[]",),)
-    .addColumn("requested_materials", "text", (col,) => col.notNull().defaultTo("[]",),)
     .addColumn("status", "text", (col,) => col.notNull().defaultTo("open",),)
     .addColumn("deadline", "text",)
     .addColumn("created_at", "text", (col,) => col.notNull(),)
