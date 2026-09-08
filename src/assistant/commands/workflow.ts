@@ -31,6 +31,11 @@ import {
   nextStepId,
   type WorkflowSession,
 } from "../workflow-session";
+import {
+  cancelPersistedSession,
+  deletePersistedSession,
+  loadPersistedSession,
+} from "../workflow-session-store";
 import { runCreateGeneration, } from "./create";
 import {
   type CommandContext,
@@ -97,12 +102,26 @@ export function fillNextStep(session: WorkflowSession, value: string,): string {
 }
 
 /**
+ * Active run for a command: memory first, persisted second (restart cover).
+ * @param ctx - Command context
+ * @returns Live or rehydrated session, or undefined
+ */
+async function activeSession(ctx: CommandContext,): Promise<WorkflowSession | undefined> {
+  const live = getSession(ctx.chatId,);
+  if (live) { return live; }
+  if (!ctx.db || !ctx.config) { return undefined; }
+  const workflows = Object.values(ctx.config.templates?.workflows?.workflows ?? {},);
+  return loadPersistedSession(ctx.db, ctx.chatId, workflows,);
+}
+
+/**
  * Confirm a fully-filled run and dispatch.
- * Entity workflows run `/create` generation (preview, never direct persist);
- * other backends return the dispatch envelope.
- * @param session - Active session (all steps must be filled)
- * @param ctx - Command context (db/config for steering + providers)
- * @returns Dispatch result carrying preview or envelope payload
+ * Entity workflows (`assistant-create` backend) feed the assembled prompt
+ * into `/create` generation (preview, never direct persist); other backends
+ * return the dispatch envelope for the caller to POST.
+ * @param session - Active session
+ * @param ctx - Command context
+ * @returns Dispatch result or graceful degradation
  */
 export async function confirmSession(
   session: WorkflowSession,
@@ -129,6 +148,7 @@ export async function confirmSession(
   }
   if (dispatch.backend !== "assistant-create") {
     cancelSession(ctx.chatId,);
+    if (ctx.db) { await deletePersistedSession(ctx.db, ctx.chatId,); }
     return {
       systemMessage: `**${session.workflow.name}** dispatched to \`${dispatch.target}\`.`,
       action: "workflow-dispatch",
@@ -155,7 +175,10 @@ export async function confirmSession(
     return { systemMessage: `**Entity creation unavailable:** ${msg}`, handled: true, };
   }
   const result = await runCreateGeneration([token, prompt,], ctx, complete, model,);
-  if (result.action === "create-entity-preview") { cancelSession(ctx.chatId,); }
+  if (result.action === "create-entity-preview") {
+    cancelSession(ctx.chatId,);
+    await deletePersistedSession(db, ctx.chatId,);
+  }
   return result;
 }
 
@@ -182,9 +205,12 @@ async function loadShadowSteering(ctx: CommandContext,): Promise<string> {
 
 registerCommand("workflow", async (args, ctx,): Promise<CommandResult> => {
   const sub = (args[0] ?? "status").toLowerCase();
-  const session = getSession(ctx.chatId,);
+  const session = await activeSession(ctx,);
   if (sub === "cancel") {
-    const had = cancelSession(ctx.chatId,);
+    const hadMemory = session !== undefined;
+    if (hadMemory) { cancelSession(ctx.chatId,); }
+    const hadPersisted = ctx.db ? await cancelPersistedSession(ctx.db, ctx.chatId,) : false;
+    const had = hadMemory || hadPersisted;
     return { systemMessage: had ? "**Workflow cancelled.**" : "No active workflow run in this chat.", handled: true, };
   }
   if (!session) {
