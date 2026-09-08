@@ -133,6 +133,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cron-provider-health-rescan.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-instance-state-advertisement-endpoint.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prometheus-metrics-endpoint-opt-in.md"
     }
   ],
   "src/age-gate": [
@@ -6093,6 +6101,10 @@
   ],
   "src/config": [
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-observability-config-section.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/chat/prompt-creation.md"
     }
@@ -6563,6 +6575,12 @@
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
     }
   ],
+  "src/config/schema/observability.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-observability-config-section.md"
+    }
+  ],
   "src/config/schema/seeding.ts": [
     {
       "kind": "ticket",
@@ -6733,6 +6751,12 @@
       "source": ".plan/tickets/TASK-csp-allows-unsafe-inline-and-unsafe-eval-defeating-nonce.md"
     }
   ],
+  "src/config/sections/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-observability-config-section.md"
+    }
+  ],
   "src/config/sections/items/defaults.ts": [
     {
       "kind": "ticket",
@@ -6779,6 +6803,12 @@
       "source": ".plan/tickets/TASK-prompt-template-registry.md"
     }
   ],
+  "src/config/sections/observability.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-observability-config-section.md"
+    }
+  ],
   "src/config/sections/server.ts": [
     {
       "kind": "epic",
@@ -6791,6 +6821,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-rate-limiter-collapses-to-global-bucket-getclientip-returns-.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-interconnect-peer-config.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-observability-config-section.md"
     },
     {
       "kind": "ticket",
@@ -18511,6 +18549,12 @@
       "source": ".plan/tickets/TASK-resource-provision-credential-store.md"
     }
   ],
+  "src/routes": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-nodeinfo-well-known-discovery-endpoints.md"
+    }
+  ],
   "src/routes/achievements.ts": [
     {
       "kind": "epic",
@@ -20071,6 +20115,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-multi-instance-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-liveness-readiness-endpoints-opt-in-config.md"
     },
     {
       "kind": "spec",
@@ -25453,6 +25501,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-transport-negotiation-parsers-do-not-exclude-q-0-or-validate.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-instance-state-advertisement-endpoint.md"
     },
     {
       "kind": "spec",
