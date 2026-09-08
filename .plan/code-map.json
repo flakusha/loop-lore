@@ -16576,6 +16576,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-templates-update-remove-lack-admin-settings-gate.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
     },
     {
@@ -18711,6 +18715,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-frontend-admin.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-admin-templates-update-remove-lack-admin-settings-gate.md"
     },
     {
       "kind": "ticket",
