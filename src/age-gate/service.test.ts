@@ -1,6 +1,6 @@
 import { Database, } from "bun:sqlite";
 import { describe, expect, test, } from "bun:test";
-import { Kysely, sql, } from "kysely";
+import { Kysely, } from "kysely";
 import type { AgeGateConfig, } from "../config/schema";
 import { createSqliteDialect, } from "../db/index";
 import { acceptAgeGate, AgeGateError, getStatus, UnderageError, validateAge, } from "./service";
