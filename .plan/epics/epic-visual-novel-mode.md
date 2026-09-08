@@ -39,6 +39,19 @@ Extend Visual Novel Mode with dynamic image and story generation capabilities, p
 - ✅ QA mode validation
 - ❌ Image generation (deferred — uses ComfyUI)
 
+## Opt-in + pending-choice gate (extension gap)
+
+- Branching choices exist today: `POST /api/chats/:id/vn/generate-choices`
+  produces options backed by the `vn_choices` table and rendered by
+  `src/frontend/vn/choice-cards.ts` — but they are always on, with no
+  per-chat opt-in flag to disable them.
+- Send is never blocked by pending choices: a player can talk past an
+  unresolved decision point and leave it dangling.
+- Extension design (→ `TASK-vn-choice-opt-in`):
+  - per-chat opt-in flag for choice prompts;
+  - send blocked until a pending choice is resolved or explicitly dismissed;
+  - choices framed as ask-tool-like decisions that consume a beat when taken.
+
 ## Core Features
 
 ### Dynamic Image Generation
