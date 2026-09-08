@@ -28,13 +28,16 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
+import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../test-utils/isolate-only";
 import type { CompleteGenerationOpts, } from "../cancellation-tracker/types";
 import type { GenDeps, } from "./deps";
 
 createLogger({ level: "error", },);
 
-if (ISOLATED) {
+// STRICTLY_ISOLATED only: the detectHallucinations-throw stub poisons every
+// later file in a shared process (story-mode coverage imports ../../chat).
+// Under test:coverage the suite skips; the per-file --isolate gate runs it.
+if (STRICTLY_ISOLATED) {
   // Force detectHallucinations to throw a DB-style error so we exercise the
   // try/catch added around it. Everything else from the chat module keeps
   // its real implementation via the source module path.
@@ -88,7 +91,7 @@ function makeDeps(
   } as unknown as GenDeps;
 }
 
-describeOrSkip("applyPostStoreEffects — hallucination guard failure must not strand the message", () => {
+describeOrSkipStrict("applyPostStoreEffects — hallucination guard failure must not strand the message", () => {
   let db: Kysely<DB>;
 
   beforeEach(async () => {
