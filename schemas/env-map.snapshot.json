@@ -105,6 +105,7 @@
   "DYNAMICRESPONSE_COMPRESSALGORITHM": "dynamicResponse.compressAlgorithm",
   "DYNAMICRESPONSE_COMPRESSTHRESHOLD": "dynamicResponse.compressThreshold",
   "FRONTEND_MODE": "frontend.mode",
+  "CRON_ENABLED": "cron.enabled",
   "PORT": "server.port",
   "HOST": "server.host",
   "SQLITE_FILENAME": "db.sqliteFilename",

@@ -5,6 +5,7 @@ import { serve, } from "bun";
 import { initAgeGate, } from "../age-gate/controller";
 import { ensureTlsCerts, } from "../config/cert";
 import { loadConfig, } from "../config/load";
+import { getScheduler, } from "../cron";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
 import { runMigrations, } from "../db/migrate";
@@ -80,20 +81,9 @@ export async function start() {
   const database = getDatabase();
   const logger = getLogger();
 
-  // ── Auto-key rotation timer ────────────────────────────────
-  const { startAutoRotationTimer, } = await import("../crypto/key-rotation");
-  const rotationTimer = startAutoRotationTimer(
-    database,
-    config.encryption.keyRotationDays ?? 0,
-  );
-
-  // Clean up timer on shutdown
-  process.on("SIGTERM", () => {
-    if (rotationTimer) { clearInterval(rotationTimer,); }
-  },);
-  process.on("SIGINT", () => {
-    if (rotationTimer) { clearInterval(rotationTimer,); }
-  },);
+  // ── Periodic key rotation + telemetry retention ──────────
+  // Owned by the cron scheduler (started in createApp below): jobs
+  // `crypto.key-rotation-check` and `telemetry.retention`. No raw timers here.
 
   const serverManager = new ServerExternalManager(logger,);
   const serverLogger = logger.child({ module: "server", },);
@@ -155,9 +145,9 @@ export async function start() {
     logger.addTransport(new DBTransport(database,),);
   }
 
-  // ── Telemetry retention cleanup (startup + every 24h) ────
-  const { startRetentionCleanup, } = await import("../telemetry/cleanup");
-  startRetentionCleanup(database,);
+  // ── Telemetry retention cleanup ──────────────────────────
+  // Owned by the cron scheduler (`telemetry.retention` job, started in
+  // createApp). No direct call here.
 
   // ── Background init (character templates + external AI servers) ──
   await initBackgroundServices(database, config, serverLogger, serverManager,);
@@ -178,6 +168,7 @@ export async function start() {
 
   // ── Graceful shutdown ────────────────────────────────────
   const shutdown = async (_signal: string,) => {
+    getScheduler()?.stop();
     await serverManager.stopAll();
     await unloadAllPlugins();
     httpServer.stop();
