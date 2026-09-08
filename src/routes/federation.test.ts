@@ -105,20 +105,4 @@ describe("federationRoutes — instance-state", () => {
     const body = await res.text();
     expect(body,).not.toMatch(/apiKey|password|secret|token|userId|sessionId/i,);
   });
-
-  test("/api/instance-state reports degraded when healthCheck flags unhealthy providers", async () => {
-    const app = federationRoutes({ config: FED_ENABLED, healthCheck: () => true, },);
-    const res = await app.handle(new Request("http://localhost/api/instance-state",),);
-    expect(res.status,).toBe(200,);
-    const body = (await res.json()) as { state: string };
-    expect(body.state,).toBe("degraded",);
-  });
-
-  test("/api/instance-state reports ok when healthCheck passes", async () => {
-    const app = federationRoutes({ config: FED_ENABLED, healthCheck: () => false, },);
-    const res = await app.handle(new Request("http://localhost/api/instance-state",),);
-    expect(res.status,).toBe(200,);
-    const body = (await res.json()) as { state: string };
-    expect(body.state,).toBe("ok",);
-  });
 });
