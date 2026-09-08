@@ -3,7 +3,7 @@
 
 # BUG: New migration parts never apply to existing databases
 
-**Status:** ⬜ Not Started
+**Status:** 🔄 In Progress (`migrations-cleanup`: `src/db/schema-backfill.ts` converges all three stranded cases at boot; 017/020 removed in-place, 016 fixed)
 **Priority:** Medium
 **Effort:** Medium
 
