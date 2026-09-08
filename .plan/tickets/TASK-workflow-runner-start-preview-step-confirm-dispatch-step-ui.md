@@ -3,7 +3,7 @@
 
 # TASK: Workflow runner (start/preview/step/confirm/dispatch + step UI)
 
-**Status:** 🟡 Partial — core shipped (src/assistant/workflow-runner.ts: startWorkflow/previewSteps/buildStep/assemblePrompt/confirmRun/confirmAndDispatch + src/assistant/workflow-runner.test.ts, pure state machine, no I/O). Remaining: model-family formatter engine, POST /api/generation/video dispatch wiring, frontend step UI + confirmation modal, assistant-workflows plugin extension point, Minimax H3 integration test — new follow-ups.
+**Status:** 🟡 Partial — core + chat runtime shipped (runner state machine; NEW: src/assistant/workflow-session.ts per-chat runs, src/assistant/commands/workflow.ts `/workflow` status/cancel/confirm + entity dispatch via runCreateGeneration, dispatch hook in src/routes/messages/command.ts covering 1:1 + group-chat post path, 10 dispatch/session tests + 33-file workflow suite green). Remaining: model-family formatter engine, real POST /api/generation/video backend (stub envelope only), frontend step UI + confirmation modal, plugin extension point, session persistence + group-chat mention strip (filed as follow-ups).
 **Priority:** high
 **Effort:** Medium
 
