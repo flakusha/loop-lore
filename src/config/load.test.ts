@@ -303,7 +303,7 @@ function isLoadConfigFunctional(): boolean {
   // loadConfig requires an initialized logger (normally set up in
   // beforeAll); init a throwaway one so the probe tests the module, not
   // the logger lifecycle.
-  createLogger({ level: "silent", },);
+  createLogger({ level: "error", },);
   const dir = mkdtempSync(join(tmpdir(), "load-probe-",),);
   try {
     writeFileSync(join(dir, "config.toml",), "[server]\nport = 4141\n",);
