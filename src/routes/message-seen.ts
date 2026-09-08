@@ -17,8 +17,8 @@ import { type Kysely, sql, } from "kysely";
 import type { DB, } from "../db/schema";
 import { requireActorFromSession, } from "../middleware/scope-by-user";
 import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
-import { resolveActorAccess, } from "./actor-access";
-import { extractAuth, jsonResponse, requireUserId, } from "./http-utils";
+import { resolveActorAccess, resolvePrimaryActorId, } from "./actor-access";
+import { extractAuth, jsonResponse, notFoundResponse, requireUserId, } from "./http-utils";
 import { resolveMessageAccess, seenAtFor, } from "./message-seen-helpers";
 
 interface HandlerOpts {
@@ -105,12 +105,18 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
           if (typeof userId !== "string") { return userId; }
           const { userRole, } = extractAuth(ctx,);
           const messageId = ctx.params.id;
-          const { actorId, state, } = ctx.body as { actorId: string; state?: "unseen" | "processing" | "seen" };
+          const { state, } = ctx.body as { state?: "unseen" | "processing" | "seen" };
 
-          // IDOR guard: the client-supplied actorId must belong to the session user.
-          // Covers BOTH the reset branch (state==="unseen") and the record branch.
-          const authz = await resolveActorAccess(database, actorId, userId,);
-          if (authz) { return authz; }
+          // SECURITY: derive the actor from the session, not the client.
+          // The previous client-supplied actorId path was a trust-boundary
+          // inversion: the field was always null on the frontend
+          // (currentActorId was declared in ChatCoreState but never
+          // assigned anywhere), so every request 401'd via resolveActorAccess.
+          // Deriving server-side from the session user's primary persona
+          // (user-actor row, owner_id IS NULL) closes the bug AND removes
+          // the surface for actorId spoofing.
+          const actorId = await resolvePrimaryActorId(database, userId,);
+          if (!actorId) { return notFoundResponse("User actor",); }
 
           const chatId = await resolveMessageAccess(database, messageId, userId, userRole,);
           if (typeof chatId !== "string") { return chatId; }
@@ -161,7 +167,7 @@ export function messageSeenRoutes(opts: HandlerOpts, prefix = "/api",) {
         },
         {
           params: t.Object({ id: t.String(), },),
-          body: t.Object({ actorId: t.String(), state: t.Optional(seenStateSchema,), },),
+          body: t.Object({ state: t.Optional(seenStateSchema,), },),
           response: {
             200: SuccessResponse,
             401: ErrorResponse,
