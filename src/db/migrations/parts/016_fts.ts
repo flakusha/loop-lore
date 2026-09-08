@@ -21,9 +21,26 @@ import { type Kysely, sql, } from "kysely";
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await sql`CREATE VIRTUAL TABLE memories_fts USING fts5(
       memory_id UNINDEXED,
-      content,
-      content_rowid='memory_id'
+      content
     )`.execute(database,);
+
+  await sql`CREATE TRIGGER actor_memories_fts_ad
+    AFTER DELETE ON actor_memories BEGIN
+      DELETE FROM memories_fts WHERE memory_id = old.id;
+    END`.execute(database,);
+
+  await sql`CREATE TRIGGER actor_memories_fts_ai
+    AFTER INSERT ON actor_memories BEGIN
+      INSERT INTO memories_fts(memory_id, content)
+      VALUES (new.id, new.content);
+    END`.execute(database,);
+
+  await sql`CREATE TRIGGER actor_memories_fts_au
+    AFTER UPDATE OF content ON actor_memories BEGIN
+      DELETE FROM memories_fts WHERE memory_id = old.id;
+      INSERT INTO memories_fts(memory_id, content)
+      VALUES (new.id, new.content);
+    END`.execute(database,);
 
   await sql`CREATE VIRTUAL TABLE messages_fts USING fts5(
       message_id UNINDEXED,
