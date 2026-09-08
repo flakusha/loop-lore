@@ -3,8 +3,13 @@
 
 import { Elysia, t, } from "elysia";
 import { BodySystemService, } from "../../rpg/body-systems/service";
-import { jsonError, jsonResponse, } from "../http-utils";
-import { log, requireNsfwActorAccess, } from "./shared";
+import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  log,
+  nsfwAccessErrorResponse,
+  requireNsfwActorAccess,
+  requireNsfwRouteAccess,
+} from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -48,7 +53,7 @@ const bodyUpdateSchema = t.Object({
  * @param prefix
  */
 export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, } = opts;
+  const { database, config, } = opts;
   const bodyService = new BodySystemService(database,);
 
   return (
@@ -58,6 +63,10 @@ export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             const profile = await bodyService.getProfile(ctx.params.actorId,);
             return jsonResponse(profile,);
@@ -72,6 +81,10 @@ export function bodyRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             // bodyUpdateSchema whitelists the allowed fields above. Elysia will
             // reject any unrecognised key with a 422 before this handler runs.

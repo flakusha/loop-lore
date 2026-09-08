@@ -3,8 +3,13 @@
 
 import { Elysia, } from "elysia";
 import { IntimacyService, } from "../../rpg/intimacy/service";
-import { jsonError, jsonResponse, } from "../http-utils";
-import { log, requireNsfwActorAccess, } from "./shared";
+import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
+import {
+  log,
+  nsfwAccessErrorResponse,
+  requireNsfwActorAccess,
+  requireNsfwRouteAccess,
+} from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -12,7 +17,7 @@ import type { HandlerOpts, } from "./types";
  * @param prefix
  */
 export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, } = opts;
+  const { database, config, } = opts;
   const intimacyService = new IntimacyService(database,);
 
   return (
@@ -22,6 +27,10 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             const worldId = (ctx.query.worldId as string) ?? null;
             const pair = await intimacyService.getPair(
@@ -41,6 +50,10 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const auth = await requireNsfwActorAccess(database, ctx.params.actorId, ctx,);
           if (typeof auth !== "string") { return auth; }
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             const worldId = (ctx.query.worldId as string) ?? undefined;
             const pairs = await intimacyService.getActorPairs(
@@ -58,13 +71,26 @@ export function intimacyRoutes(opts: HandlerOpts, prefix = "/api",) {
         `${prefix}/nsfw/intimacy/action`,
         async (ctx: any,) => {
           try {
+            const userId = requireUserId(ctx,);
+            if (typeof userId !== "string") { return userId; }
             const body = ctx.body as Record<string, unknown>;
-            const auth = await requireNsfwActorAccess(database, (body.actorId as string) ?? "", ctx,);
-            if (typeof auth !== "string") { return auth; }
+            const chatId = (body.chatId as string) ?? null;
+            const actorId = (body.actorId as string) ?? "";
+            const targetActorId = (body.targetActorId as string) ?? "";
+
+            const ownership = await requireNsfwActorAccess(database, actorId, ctx,);
+            if (typeof ownership !== "string") { return ownership; }
+
+            const consent = await requireNsfwRouteAccess(database, config, userId, {
+              chatId,
+              actorId,
+            },);
+            if (!consent.ok) { return nsfwAccessErrorResponse(consent.reason,); }
+
             const result = await intimacyService.applyAction({
               database,
-              actorId: body.actorId as string,
-              targetActorId: body.targetActorId as string,
+              actorId,
+              targetActorId,
               worldId: (body.worldId as string) ?? null,
               action: {
                 id: body.actionId as string,

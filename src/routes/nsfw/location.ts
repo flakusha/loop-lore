@@ -4,7 +4,11 @@
 import { Elysia, } from "elysia";
 import { LocationNsfwService, } from "../../rpg/location-nsfw/service";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
-import { log, } from "./shared";
+import {
+  log,
+  nsfwAccessErrorResponse,
+  requireNsfwRouteAccess,
+} from "./shared";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -12,7 +16,7 @@ import type { HandlerOpts, } from "./types";
  * @param prefix
  */
 export function locationRoutes(opts: HandlerOpts, prefix = "/api",) {
-  const { database, } = opts;
+  const { database, config, } = opts;
   const locationService = new LocationNsfwService(database,);
 
   return (
@@ -22,9 +26,11 @@ export function locationRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
-            const config = await locationService.getConfig(ctx.params.locationId,);
-            return jsonResponse(config,);
+            const configObj = await locationService.getConfig(ctx.params.locationId,);
+            return jsonResponse(configObj,);
           } catch (error) {
             log().error("Failed to get location config", error instanceof Error ? error : undefined,);
             return jsonError("Internal server error", 500,);
@@ -36,6 +42,8 @@ export function locationRoutes(opts: HandlerOpts, prefix = "/api",) {
         async (ctx: any,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
+          const access = await requireNsfwRouteAccess(database, config, userId,);
+          if (!access.ok) { return nsfwAccessErrorResponse(access.reason,); }
           try {
             const body = ctx.body as Record<string, unknown>;
             const success = await locationService.updateConfig(
