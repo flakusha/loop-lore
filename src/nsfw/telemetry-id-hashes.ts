@@ -14,7 +14,7 @@
  * signal and surface it in the response.
  */
 import type { AuthConfig, } from "../config/schema/auth";
-import { domainKey, } from "../utils/hkdf";
+import { DOMAIN_INFO, hashWithDomain, } from "../utils/hkdf";
 
 // ── Error category ──────────────────────────────────────────────────────
 
@@ -78,30 +78,12 @@ export async function hmacHex(value: string, secret: string, byteCount = 8,): Pr
     .join("",);
 }
 
-async function hmacHexFromKey(
-  key: Uint8Array,
-  value: string,
-  byteCount = 8,
-): Promise<string> {
-  const encoder = new TextEncoder();
-  const cryptoKey = await crypto.subtle.importKey(
-    "raw",
-    new Uint8Array(key,),
-    { name: "HMAC", hash: "SHA-256", },
-    false,
-    ["sign",],
-  );
-  const sig = await crypto.subtle.sign("HMAC", cryptoKey, encoder.encode(value,),);
-  return Array.from(new Uint8Array(sig, 0, byteCount,),)
-    .map((b,) => b.toString(16,).padStart(2, "0",))
-    .join("",);
-}
-
 // ── ID hasher ───────────────────────────────────────────────────────────
 
 /**
  * Stable HMAC hash of a userId for admin telemetry. Returns 16-char hex or null.
- * Uses HKDF domain separation so jwtSecret compromise does not affect other domains.
+ * Uses its own HKDF domain (`NSFW_PII_ACTOR`) so a subkey leaked from the
+ * chat-ID domain cannot be reused to forge or correlate actor hashes.
  * @param userId
  * @param authConfig
  */
@@ -111,13 +93,13 @@ export async function actorHash(
 ): Promise<string | null> {
   if (userId === null) { return null; }
   if (!authConfig?.jwtSecret) { return null; }
-  const key = await domainKey(authConfig.jwtSecret, "nsfw-pii", 32,);
-  return hmacHexFromKey(key, userId, 8,);
+  return hashWithDomain(authConfig.jwtSecret, DOMAIN_INFO.NSFW_PII_ACTOR, userId,);
 }
 
 /**
  * Stable HMAC hash of a chatId for admin telemetry. Returns 16-char hex or null.
- * Uses HKDF domain separation so jwtSecret compromise does not affect other domains.
+ * Uses its own HKDF domain (`NSFW_PII_CHAT`) so a subkey leaked from the
+ * actor-ID domain cannot be reused to forge or correlate chat hashes.
  * @param chatId
  * @param authConfig
  */
@@ -127,8 +109,7 @@ export async function chatHash(
 ): Promise<string | null> {
   if (chatId === null) { return null; }
   if (!authConfig?.jwtSecret) { return null; }
-  const key = await domainKey(authConfig.jwtSecret, "nsfw-pii", 32,);
-  return hmacHexFromKey(key, chatId, 8,);
+  return hashWithDomain(authConfig.jwtSecret, DOMAIN_INFO.NSFW_PII_CHAT, chatId,);
 }
 
 // ── Error redaction ─────────────────────────────────────────────────────
