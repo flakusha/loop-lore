@@ -19,6 +19,7 @@ import { initializeProviders, } from "../generation";
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { loadConfig, } from "../config/load";
 import { runMigrations, } from "../db/migrate";
+import { runSchemaBackfill, } from "../db/schema-backfill";
 import { seedDefaultActors, } from "../db/seed";
 import { serve, } from "bun";
 /**
@@ -102,6 +103,7 @@ export async function start() {
 
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database,);
+  await runSchemaBackfill(database,);
   await seedDefaultActors(database, config,);
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);
