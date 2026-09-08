@@ -134,7 +134,7 @@ describe("chatSeenMethods.markSeen", () => {
     await chatSeenMethods.markSeen!.call(ctx, "m1", "seen",);
     const post = calls.find((c,) => c.opts.method === "POST")!;
     expect(post.url,).toBe("/api/messages/m1/seen",);
-    expect(JSON.parse(String(post.opts.body,),),).toEqual({ actorId: "me-1", state: "seen", },);
+    expect(JSON.parse(String(post.opts.body,),),).toEqual({ state: "seen", },);
     expect(ctx.messages[0]!.seenState,).toEqual(viewers,);
   });
 
@@ -143,7 +143,7 @@ describe("chatSeenMethods.markSeen", () => {
     handler = async () => new Response("", { status: 500, },);
     await chatSeenMethods.markSeen!.call(ctx, "m1", "processing",);
     const post = calls.find((c,) => c.opts.method === "POST")!;
-    expect(JSON.parse(String(post.opts.body,),),).toEqual({ actorId: "me-1", state: "processing", },);
+    expect(JSON.parse(String(post.opts.body,),),).toEqual({ state: "processing", },);
     expect(calls,).toHaveLength(1,);
   });
 
