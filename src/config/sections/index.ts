@@ -12,6 +12,7 @@ export { ASSISTANT_DEFAULTS, assistantMeta, AssistantSection, } from "./assistan
 export { AUTH_DEFAULTS, authMeta, AuthSection, } from "./auth";
 export { BYO_KEY_DEFAULTS, byoKeyMeta, ByoKeySection, } from "./byo-key";
 export { CHARACTERS_DEFAULTS, charactersMeta, CharactersSection, } from "./characters";
+export { CRON_DEFAULTS, cronMeta, CronSection, } from "./cron";
 export { DATABASE_DEFAULTS, databaseMeta, DatabaseSection, } from "./database";
 export { DOCS_DEFAULTS, docsMeta, DocsSection, } from "./docs";
 export { DYNAMIC_RESPONSE_DEFAULTS, dynamicResponseMeta, DynamicResponseSection, } from "./dynamic-response";

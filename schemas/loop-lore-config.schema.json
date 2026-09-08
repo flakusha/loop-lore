@@ -1974,6 +1974,37 @@
         "enabled",
         "templates"
       ]
+    },
+    "cron": {
+      "type": "object",
+      "description": "Internal scheduled tasks (Bun.cron registry)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Master toggle"
+        },
+        "jobs": {
+          "type": "object",
+          "description": "Per-job overrides keyed by job name",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "Enable this job"
+              },
+              "schedule": {
+                "type": "string",
+                "description": "Cron expression override"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "enabled"
+      ]
     }
   },
   "required": [

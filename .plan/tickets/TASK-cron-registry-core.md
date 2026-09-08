@@ -3,7 +3,7 @@
 
 ## TASK: Cron registry core (`src/cron/`)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-cron-scheduler
