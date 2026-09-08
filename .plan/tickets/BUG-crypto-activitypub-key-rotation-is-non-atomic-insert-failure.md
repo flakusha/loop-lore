@@ -1,6 +1,6 @@
 # BUG: crypto: ActivityPub key rotation is non-atomic; insert failure drops all signing keys
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (verified landed on dev — expire + insert wrapped in a single `database.transaction()`)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,6 @@ src/crypto/activitypub-keys.ts generateActivityPubKey does UPDATE-expire (lines 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
