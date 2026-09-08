@@ -7,8 +7,32 @@
  */
 import { describe, expect, test, } from "bun:test";
 import { healthRoutes, } from "./health";
+import { getProvider, registerProvider, unregisterProvider, } from "../generation/providers/registry";
 
-describe("healthRoutes", () => {
+// Bun's mock.module is process-global and cannot be unmocked: under
+// `bun run` an earlier file (e.g.
+// admin/provider-health-isolated.test.ts) may have replaced the provider
+// registry with fakes including an unhealthy provider, flipping health to
+// degraded. A sentinel roundtrip detects ANY registry stub; skip instead
+// of asserting against one (pristine-module guard; see
+// generation/providers/registry.test.ts).
+const REGISTRY_PROBE_PROVIDER = "__health_pristine_probe__";
+const registryPristine = (() => {
+  try {
+    // Registry stubs export only listProviders/getProvider — a missing
+    // register/unregister means stubbed.
+    if (typeof registerProvider !== "function" || typeof unregisterProvider !== "function") { return false; }
+    registerProvider(REGISTRY_PROBE_PROVIDER, { label: "probe", } as never,);
+    const hit = getProvider(REGISTRY_PROBE_PROVIDER,) !== undefined;
+    unregisterProvider(REGISTRY_PROBE_PROVIDER,);
+    return hit;
+  } catch {
+    return false;
+  }
+})(); 
+const describeReal = registryPristine ? describe : describe.skip;
+
+describeReal("healthRoutes", () => {
   test("GET /api/health returns 200", async () => {
     const app = healthRoutes({} as never,);
     const res = await app.handle(new Request("http://localhost/api/health",),);

@@ -45,7 +45,24 @@ const persistProbe = buildGenerationResult({
 } as never, false,);
 const persistPristine = persistProbe.content === "__generate_route_probe__";
 const toolExecPristine = executeToolCalls.length > 0;
-const generateFlowPristine = failoverPristine && persistPristine && toolExecPristine;
+// The provider registry is also process-global (e.g.
+// admin/provider-health-isolated.test.ts replaces it with fakes): a
+// sentinel roundtrip detects ANY stub, disconnected or not.
+const REGISTRY_PROBE_PROVIDER = "__generate_route_probe__";
+const registryPristine = (() => {
+  try {
+    // Registry stubs (e.g. provider-health.test.ts) export only
+    // listProviders/getProvider — a missing register/unregister means stubbed.
+    if (typeof registerProvider !== "function" || typeof unregisterProvider !== "function") { return false; }
+    registerProvider(REGISTRY_PROBE_PROVIDER, new MockLLMProvider(),);
+    const hit = getProvider(REGISTRY_PROBE_PROVIDER,) instanceof MockLLMProvider;
+    unregisterProvider(REGISTRY_PROBE_PROVIDER,);
+    return hit;
+  } catch {
+    return false;
+  }
+})(); 
+const generateFlowPristine = failoverPristine && persistPristine && toolExecPristine && registryPristine;
 const describeReal = generateFlowPristine ? describe : describe.skip;
 
 // ── Test DB ──────────────────────────────────────────────────

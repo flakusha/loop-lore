@@ -66,9 +66,19 @@ interface OverrideBody {
 // the registry is a stub instead of asserting against it
 // (pristine-module guard; see generation/providers/registry.test.ts).
 const REGISTRY_PROBE_PROVIDER = "__registry_pristine_probe__";
-registerProvider(REGISTRY_PROBE_PROVIDER, fakeProvider(),);
-const registryPristine = getProvider(REGISTRY_PROBE_PROVIDER,) !== undefined;
-unregisterProvider(REGISTRY_PROBE_PROVIDER,);
+const registryPristine = (() => {
+  try {
+    // Registry stubs export only listProviders/getProvider — a missing
+    // register/unregister means stubbed.
+    if (typeof registerProvider !== "function" || typeof unregisterProvider !== "function") { return false; }
+    registerProvider(REGISTRY_PROBE_PROVIDER, fakeProvider(),);
+    const hit = getProvider(REGISTRY_PROBE_PROVIDER,) !== undefined;
+    unregisterProvider(REGISTRY_PROBE_PROVIDER,);
+    return hit;
+  } catch {
+    return false;
+  }
+})(); 
 const describeReal = registryPristine ? describe : describe.skip;
 
 describeReal("admin model-roles routes", () => {
