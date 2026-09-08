@@ -9267,6 +9267,12 @@
       "source": ".plan/tickets/TASK-character-multi-avatar.md"
     }
   ],
+  "src/db/schema-backfill.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
+    }
+  ],
   "src/db/schema-backgrounds.ts": [
     {
       "kind": "ticket",
