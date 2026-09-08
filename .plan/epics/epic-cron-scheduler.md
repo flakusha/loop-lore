@@ -3,7 +3,7 @@
 
 # Epic: Cron Scheduler (Internal Scheduled Tasks)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Medium
 **Type:** Infrastructure Epic

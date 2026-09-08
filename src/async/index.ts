@@ -6,8 +6,15 @@
  * @see epic-middleware-request-lifecycle.md
  */
 
-export type { DaState, OffloadDaemon, OffloadDaemonConfig, } from "./offload";
-export { OFFLOAD_DIR, offloadDiskBytes, offloadExists, readOffloadedBody, startOffloadDaemon, } from "./offload";
+export type { DaState, OffloadDaemon, OffloadDaemonConfig, OffloadPassOpts, } from "./offload";
+export {
+  OFFLOAD_DIR,
+  offloadDiskBytes,
+  offloadExists,
+  readOffloadedBody,
+  runOffloadPass,
+  startOffloadDaemon,
+} from "./offload";
 export type {
   AsyncStore,
   AsyncStoreConfig,
