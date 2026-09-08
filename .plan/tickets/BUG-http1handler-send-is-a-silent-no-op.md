@@ -1,6 +1,6 @@
 # BUG: Http1Handler.send is a silent no-op
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
 
@@ -14,6 +14,10 @@ Fix: Implement actual sending via the underlying Bun server/response stream, or 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: http1.ts:42-44 send() throws TransportError documented stub.

@@ -3,7 +3,7 @@
 
 # BUG: selectAvatar throws on actors with no avatars; no safe-fallback API
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** P2
 **Epic:** epic-character-core-system
 **Labels:** avatar, fallback, error-handling
@@ -76,16 +76,20 @@ the `kind: "base"` shape from the API.
 
 ## Acceptance Criteria
 
-- [ ] `selectAvatar` returns `kind: "base"` + `avatarAssetId` when no
+- [x] `selectAvatar` returns `kind: "base"` + `avatarAssetId` when no
       `character_avatars` row matches.
-- [ ] Route `POST /api/actors/:actorId/avatars/select` returns 200 + base
+- [x] Route `POST /api/actors/:actorId/avatars/select` returns 200 + base
       payload (not 404) for the empty-avatar case.
-- [ ] Frontend `mood/avatars.ts` handles the new payload without breaking
+- [x] Frontend `mood/avatars.ts` handles the new payload without breaking
       existing `avatarForMessage` tests.
-- [ ] New unit tests cover: no avatars at all, no matching tag, fallback
+- [x] New unit tests cover: no avatars at all, no matching tag, fallback
       chain exhausted → base, base + world override.
-- [ ] `bun run check` green.
+- [x] `bun run check` green.
 
 ## Notes
 
 **Reconciliation (2026-09-02)**: Prerequisite for epic Wardrobe selection ladder (TASK-selection-algorithm-v2-outfit-emotion.md) — fix first; ladder tests pin these branches. Matrix: matrix-emotion-avatar-assets.md → Ticket Reconciliation.
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: selection.ts:resolveBaseAvatar synthesizes base portrait; avatar-service.test.ts:156 pins fallback.

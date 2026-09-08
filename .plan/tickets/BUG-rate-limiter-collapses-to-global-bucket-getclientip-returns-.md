@@ -1,6 +1,6 @@
 # BUG: Rate limiter collapses to global bucket (getClientIp returns 'unknown')
 
-**Status:** ✅ Resolved (commit e3f1dd84 — getClientIp now sources peerIp from server.requestIP; proxy headers only when trustProxy)
+**Status:** ✅ Done
 **Priority:** critical
 **Effort:** Medium
 
@@ -10,9 +10,9 @@ ROOT CAUSE: src/routes/auth/shared.ts getClientIp (L50-68) relies on request.rem
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 
 ## Verification (reproduced 2026-08-25)
 
@@ -33,3 +33,7 @@ Correct fix: source the peer address from the Bun server connection (server.requ
 ## Blast radius (beyond rate limiting)
 
 getClientIp is the single IP source for session creation, not just the limiter. login.ts (handleLogin L64, createSessionAndCookie L97), register.ts L118, and login.ts handleDemoLogin (L142-153) all pass getClientIp(request) into createSessionAndCookie, which stores it in the sessions.ip column. Because getClientIp always returns "unknown" (proven above), EVERY session row records ip="unknown" — destroying IP-based audit/forensics and any downstream IP logic. The regression is also invisible to tests: auth/login.test.ts L144-145 asserts user_id/token_hash but never asserts sessions.ip, so the bug is uncaught.
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: shared.ts:121 getClientIp peerIp when trustProxy off; auth/index.ts threads server.requestIP; get-client-ip.test.ts.

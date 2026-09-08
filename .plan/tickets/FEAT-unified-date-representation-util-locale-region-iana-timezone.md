@@ -1,6 +1,6 @@
 # FEAT: Unified date representation util: locale/region + IANA timezone (backend + frontend)
 
-**Status:** 🟡 In Progress — implemented in worktree `datetime-utils` (awaiting finalize)
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-i18n
@@ -64,4 +64,8 @@ Verification: backend `date.test.ts` + new frontend `chat-utils/time.test.ts`
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: utils/date.ts locale+tz contract; chat-utils/time.ts consumes.

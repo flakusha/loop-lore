@@ -1,6 +1,6 @@
 # BUG: NSFW body profile mass assignment — raw body into updateProfile
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ src/routes/nsfw/body.ts:37 — PUT passes raw ctx.body as Record<string,unknown>
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: body.ts bodyUpdateSchema bounds/enums; Elysia 422s unknown keys.

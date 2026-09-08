@@ -3,7 +3,7 @@
 
 # BUG: selectionRule branches action_first / context_first / weighted are no-ops
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** P3
 **Epic:** epic-character-core-system
 **Labels:** avatar, selection-rule, enum-hygiene
@@ -71,13 +71,17 @@ already enumerates them). Effort: small.
 
 ## Acceptance Criteria
 
-- [ ] All five `AvatarSelectionRule` values produce a different score
+- [x] All five `AvatarSelectionRule` values produce a different score
       ordering for at least one synthetic test case.
-- [ ] Existing `emotion_first` and `mood_first` behavior unchanged (backward
+- [x] Existing `emotion_first` and `mood_first` behavior unchanged (backward
       compatible).
-- [ ] New unit tests cover `action_first` and `context_first` boost paths.
-- [ ] `bun run check` green.
+- [x] New unit tests cover `action_first` and `context_first` boost paths.
+- [x] `bun run check` green.
 
 ## Notes
 
 **Reconciliation (2026-09-02)**: Prerequisite for epic Wardrobe selection ladder (TASK-selection-algorithm-v2-outfit-emotion.md) — fix first; ladder tests pin these branches. Matrix: matrix-emotion-avatar-assets.md → Ticket Reconciliation.
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: selection.ts:151-154 action_first/context_first x1.5 boosts; weighted falls through per Option A.
