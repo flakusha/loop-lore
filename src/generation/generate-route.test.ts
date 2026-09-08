@@ -20,7 +20,33 @@ import type { ToolDefinition, } from "../plugins/types";
 import { createTestDb, resetTestDb, } from "../test-utils/create-test-db";
 import { MockLLMProvider, } from "../test-utils/mock-provider";
 import { gatePluginToolsByRole, handleGenerate, } from "./generate-route";
+import { buildGenerationResult, } from "./generate-route/persist";
+import { executeToolCalls, } from "./generate-route/tool-execution";
+import { callWithFailover, } from "./providers/call-with-failover";
 import { getProvider, registerProvider, unregisterProvider, } from "./providers/registry";
+
+// Bun's mock.module is process-global and cannot be unmocked: without
+// --isolate, earlier files (e.g. generate-route/non-stream.test.ts) may have
+// replaced call-with-failover / persist / tool-execution with stubs. Probe
+// all three (failover throws "All providers failed" on [], persist passes
+// content through, tool calls take (toolCalls, ctx?)) and skip instead of
+// testing the stubs (pristine-module guard; see
+// providers/registry.test.ts).
+let failoverPristine = false;
+try {
+  await callWithFailover([], { model: "m", messages: [], params: {}, },);
+} catch (error) {
+  failoverPristine = error instanceof Error && error.message.startsWith("All providers failed",);
+}
+const persistProbe = buildGenerationResult({
+  content: "__generate_route_probe__",
+  finishReason: "stop",
+  usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
+} as never, false,);
+const persistPristine = persistProbe.content === "__generate_route_probe__";
+const toolExecPristine = executeToolCalls.length > 0;
+const generateFlowPristine = failoverPristine && persistPristine && toolExecPristine;
+const describeReal = generateFlowPristine ? describe : describe.skip;
 
 // ── Test DB ──────────────────────────────────────────────────
 
