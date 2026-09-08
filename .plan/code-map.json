@@ -1054,6 +1054,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-generation-review-parity-extract-category-rarity-stats-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
@@ -1097,6 +1101,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-creation-quality-gating-confirmation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generation-failure-exposure-sanitize-raw-llm-error-output-in.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-generation-review-parity-extract-category-rarity-stats-.md"
     },
     {
       "kind": "ticket",
@@ -1157,6 +1169,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-create-item-generation-discoverability-document-subcommands-.md"
     }
   ],
   "src/assistant/commands/image.ts": [
@@ -2210,6 +2226,10 @@
     }
   ],
   "src/assistant/prompt/templates/entity-generation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-generation-review-parity-extract-category-rarity-stats-.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-precompiled-templates-injection.md"
@@ -7859,6 +7879,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    }
+  ],
+  "src/db/data-migrations": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
     }
   ],
   "src/db/data-migrations/messages/v1_to_v2.ts": [
@@ -26471,6 +26497,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-2025-002-reference-error-view-not-defined.md"
+    }
+  ],
+  "src/views/item-generate.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-generation-web-page-direct-describe-preview-confirm-ui-.md"
     }
   ],
   "src/views/layout.html": [
