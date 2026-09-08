@@ -1,6 +1,6 @@
 # BUG: story-mode chat without gm_config silently skips generation
 
-**Status:** ✅ Resolved (fixed 2026-09-05)
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Small
 
@@ -18,4 +18,4 @@ Tests: `src/generation/auto-gen/story-mode.test.ts` (isolated gate via `mock.mod
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated
+- [x] Documentation updated

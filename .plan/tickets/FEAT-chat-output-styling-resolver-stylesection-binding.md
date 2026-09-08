@@ -1,6 +1,6 @@
 # FEAT: Chat output styling: resolver + styleSection binding
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ Add outputStyle chat setting (preset + customInstruction + intensity) with chat-
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: output-style.ts resolveOutputStyle wired into prompt-assembler; styleSection registered.

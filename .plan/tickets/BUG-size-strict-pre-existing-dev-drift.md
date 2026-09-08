@@ -3,7 +3,7 @@
 
 # BUG: size-strict pre-existing dev drift
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Epic:** epic-code-quality.md
 
@@ -94,6 +94,10 @@ Prefer splitting over `@size:allow`. The `@size:allow` directive exists exactly 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: check-file-size --strict exit 0 in worktree.

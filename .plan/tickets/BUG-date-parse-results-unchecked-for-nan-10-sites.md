@@ -1,6 +1,6 @@
 # BUG: Date.parse results unchecked for NaN — 10 sites
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Small
 **Epic:** epic-i18n
@@ -17,6 +17,10 @@
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: captcha/aux-telemetry/age-gate guards + date-gaps.test.ts 19/19.

@@ -1,6 +1,6 @@
 # BUG: Chat/IM adapter abstraction duplicated (ProtocolAdapter vs SocialAdapter), no code
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -12,6 +12,10 @@ Chat/IM adapter abstraction duplicated: `ProtocolAdapter` (chat/IM) vs `SocialAd
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: ProtocolAdapter/SocialAdapter removed from src/ (zero hits); consolidation resolved by removal.

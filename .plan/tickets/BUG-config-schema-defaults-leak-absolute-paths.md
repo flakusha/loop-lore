@@ -3,7 +3,7 @@
 
 # BUG: config schema defaults leak absolute paths
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Epic:** epic-api-validation-guardrails.md
 
@@ -59,6 +59,10 @@ Per AGENTS.md ("Never create git tags... agents prepare release artifacts... but
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: no /home/ hits in loop-lore-config.schema.json; defaults portable.

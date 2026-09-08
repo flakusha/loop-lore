@@ -1,6 +1,6 @@
 # BUG: stray-input-close-tags-corrupt-three-planning-docs
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
 
@@ -10,6 +10,10 @@ Edit-heredoc artifact from f69d0229's doc pass left literal '</input>' lines in 
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: no stray </input> in .plan/docs outside ticket prose.

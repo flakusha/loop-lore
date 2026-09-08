@@ -3,7 +3,7 @@
 
 # BUG: modelSuitability fineTuneReadiness never parse B-suffixed sizes
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Medium
 
@@ -13,6 +13,10 @@ src/frontend/alpine/admin-models/logic.ts: modelSuitability/fineTuneReadiness pa
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified against src/ in ticket-closeout-audit: shared.ts parseParamSizeOr B-suffix tiers; logic.test.ts:95-103.
