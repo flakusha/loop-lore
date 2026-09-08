@@ -78,6 +78,10 @@ export const DOMAIN_INFO = {
   ASSETS_SIGNED_URL: "assets-signed-url",
   /** NSFW PII pseudonymization salt (`src/nsfw/pii-redaction.ts`). */
   NSFW_PII: "nsfw-pii",
+  /** Admin-telemetry actor IDs (`src/nsfw/telemetry-id-hashes.ts` `actorHash`). */
+  NSFW_PII_ACTOR: "nsfw-pii-actor",
+  /** Admin-telemetry chat IDs (`src/nsfw/telemetry-id-hashes.ts` `chatHash`). */
+  NSFW_PII_CHAT: "nsfw-pii-chat",
   /**
   Admin telemetry PII hashing (`src/routes/admin/aux-telemetry.ts`).
  Stable, HMAC-derived hash for user_id and chat_id surfaced on the

@@ -9,12 +9,12 @@
  * - missing/empty jwtSecret → null (fail-closed)
  * - valid jwtSecret → deterministic 16-char hex hash
  * - same inputs produce same hash (determinism)
- * - different secrets produce different hashes (domain isolation)
- * - domainKey is called with "nsfw-pii" info string
+ * - different secrets produce different hashes (secret isolation)
+ * - actor and chat IDs hash under separate domains (cross-type isolation)
  */
 import { describe, expect, it, } from "bun:test";
 import type { AuthConfig, } from "../config/schema/auth";
-import { actorHash, chatHash, } from "./pii-redact";
+import { actorHash, chatHash, } from "./telemetry-id-hashes";
 
 const SECRET = "s".repeat(32,);
 describe("actorHash", () => {
@@ -112,5 +112,16 @@ describe("chatHash", () => {
     const r1 = await chatHash("chat-abc", { jwtSecret: "a".repeat(32,), },);
     const r2 = await chatHash("chat-abc", { jwtSecret: "b".repeat(32,), },);
     expect(r1,).not.toBe(r2,);
+  });
+});
+
+describe("cross-type isolation", () => {
+  it("same raw id hashes differently as actor vs chat", async () => {
+    const cfg: Pick<AuthConfig, "jwtSecret"> = { jwtSecret: SECRET, };
+    const actor = await actorHash("shared-id", cfg,);
+    const chat = await chatHash("shared-id", cfg,);
+    expect(actor,).not.toBeNull();
+    expect(chat,).not.toBeNull();
+    expect(actor,).not.toBe(chat,);
   });
 });
