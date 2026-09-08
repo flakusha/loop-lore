@@ -15,6 +15,20 @@ import { AssetLinkEntity, AssetType, MessageRole, ModelRole, } from "../../db/en
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
 import { getProvider, registerProvider, unregisterProvider, } from "../../generation/providers/registry";
+import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../../generation/providers/types";
+import { createLogger, } from "../../logger";
+import { createTestDb, } from "../../test-utils/create-test-db";
+import {
+  insertActors,
+  insertAssetLinks,
+  insertAssets,
+  insertChats,
+  insertMessages,
+  insertModelRoleOverrides,
+  insertUsers,
+} from "../../test-utils/insert-helpers";
+import "./caption";
+import { type CommandContext, type CommandResult, getCommand, } from "./registry";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
 // `bun run` an earlier file (e.g. admin/provider-health.test.ts) may have
@@ -35,20 +49,6 @@ const registryPristine = (() => {
   }
 })();
 const describeReal = registryPristine ? describe : describe.skip;
-import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../../generation/providers/types";
-import { createLogger, } from "../../logger";
-import { createTestDb, } from "../../test-utils/create-test-db";
-import {
-  insertActors,
-  insertAssetLinks,
-  insertAssets,
-  insertChats,
-  insertMessages,
-  insertModelRoleOverrides,
-  insertUsers,
-} from "../../test-utils/insert-helpers";
-import "./caption";
-import { type CommandContext, type CommandResult, getCommand, } from "./registry";
 
 let db: Kysely<DB>;
 
@@ -220,4 +220,4 @@ describeReal("/caption", () => {
 
     expect(result.systemMessage,).toBe("No captions could be generated for the image.",);
   });
-});
+},);
