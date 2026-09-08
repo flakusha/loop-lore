@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
 import { registry, } from "../../../plugins/registry";
 import type { AssembleContext, } from "../types";
 import { pluginAgentRoleSection, } from "./plugin-agent-role";
@@ -27,6 +27,9 @@ function makeContext(agentRole: string | null,): AssembleContext {
   };
 }
 
+afterAll(() => {
+  registry.unregisterAll();
+},);
 describe("pluginAgentRoleSection", () => {
   beforeEach(() => {
     registry.unregisterAll();

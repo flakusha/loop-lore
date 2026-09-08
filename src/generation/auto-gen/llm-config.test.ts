@@ -11,7 +11,7 @@
  */
 import { describe, expect, it, } from "bun:test";
 import type { Config, } from "../../config/schema";
-import { listProviders, registerProvider, } from "../providers/registry";
+import { listProviders, registerProvider, unregisterProvider, } from "../providers/registry";
 import type { LLMProvider, } from "../providers/types";
 import { isLlmGenerationConfigured, } from "./llm-config";
 
@@ -57,6 +57,7 @@ describe("isLlmGenerationConfigured", () => {
     } as unknown as LLMProvider,);
     expect(listProviders().some((p,) => p.name === "llm-config-registered"),).toBe(true,);
     expect(isLlmGenerationConfigured(makeConfig({},),),).toBe(true,);
+    unregisterProvider("llm-config-registered",);
   });
 
   it("ORs provider-name, configured instances, and the registry", () => {
