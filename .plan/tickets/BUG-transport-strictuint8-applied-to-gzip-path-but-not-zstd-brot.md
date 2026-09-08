@@ -1,6 +1,6 @@
 # BUG: transport: strictUint8 applied to gzip path but not zstd/brotli
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
 
@@ -13,3 +13,8 @@ src/transport/compression.ts lines 56-75: strictUint8() was added for Bun.gzipSy
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+strictUint8 output is now threaded through the zstd and brotli compress+decompress paths (Bun.zstd* casts widened to Uint8Array); gzip already complied.
+Landed on `fix-transport-bugs` (transport-domain batch, 2026-09-08).

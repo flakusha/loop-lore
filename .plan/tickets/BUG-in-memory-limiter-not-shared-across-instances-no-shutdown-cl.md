@@ -1,6 +1,6 @@
 # BUG: In-memory limiter not shared across instances; no shutdown cleanup
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -13,3 +13,8 @@ src/middleware/rate-limit.ts holds buckets in a per-process Map; src/routes/auth
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+createRateLimiter doc comment now states the per-process scope assumption, restart-reset behavior, scaled-deployment requirement (shared store), and destroy() for timer teardown. Redis/DB backing intentionally out of scope (solo deployment target).
+Landed on `fix-transport-bugs` (transport-domain batch, 2026-09-08).

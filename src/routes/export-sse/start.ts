@@ -53,19 +53,38 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         start(controller,) {
-          // Send initial job info
-          controller.enqueue(encoder.encode(sseData({
-            type: "job_created",
-            jobId,
-            status: job.status,
-          },),),);
+          // Client disconnects mid-stream make any further controller op throw
+          // ("Controller is already closed"). Every enqueue/close below runs
+          // through safeEnqueue/safeClose so the poller tears down quietly
+          // instead of throwing from a setInterval tick
+          // (BUG-export-sse-start-throws-controller-is-already-closed-on-clie).
+          let closed = false;
+          const interval = setInterval(poll, 100,);
 
-          // Poll job status and send updates
-          const interval = setInterval(() => {
+          function teardown(): void {
+            closed = true;
+            clearInterval(interval,);
+            try {
+              controller.close();
+            } catch {
+              // Already closed by the runtime after client disconnect.
+            }
+          }
+
+          function safeEnqueue(chunk: Uint8Array,): void {
+            if (closed) { return; }
+            try {
+              controller.enqueue(chunk,);
+            } catch {
+              teardown();
+            }
+          }
+
+          function poll(): void {
+            if (closed) { return; }
             const currentJob = jobs.get(jobId,);
             if (!currentJob) {
-              clearInterval(interval,);
-              controller.close();
+              teardown();
               return;
             }
 
@@ -73,38 +92,41 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
             const percentage = currentJob.total > 0
               ? Math.round((currentJob.progress / currentJob.total) * 100,)
               : 0;
-            const progressData = sseData({
+            safeEnqueue(encoder.encode(sseData({
               type: "progress",
               jobId,
               progress: currentJob.progress,
               total: currentJob.total,
               percentage,
               currentStep: currentJob.currentStep,
-            },);
-            controller.enqueue(encoder.encode(progressData,),);
+            },),),);
+            if (closed) { return; }
 
             // Send completion event
             if (currentJob.status === "completed") {
-              const completedData = sseData({
+              safeEnqueue(encoder.encode(sseData({
                 type: "completed",
                 jobId,
                 downloadUrl: `/api/export/download/${jobId}`,
                 totalItems: currentJob.total,
                 completedAt: currentJob.completedAt?.toISOString(),
-              },);
-              controller.enqueue(encoder.encode(completedData,),);
-              clearInterval(interval,);
-              controller.close();
+              },),),);
+              teardown();
             } else if (currentJob.status === "failed") {
-              controller.enqueue(encoder.encode(sseData({
+              safeEnqueue(encoder.encode(sseData({
                 type: "failed",
                 jobId,
                 error: currentJob.error,
               },),),);
-              clearInterval(interval,);
-              controller.close();
+              teardown();
             }
-          }, 100,);
+          }
+
+          safeEnqueue(encoder.encode(sseData({
+            type: "job_created",
+            jobId,
+            status: job.status,
+          },),),);
         },
       },);
 
