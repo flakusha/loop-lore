@@ -209,6 +209,13 @@ export async function verifyAssetUrl(opts: VerifyAssetUrlOpts,): Promise<SignedU
  * Resolve the effective HMAC secret for signed URLs.
  * Prefers `assets.signedUrlSecret`; falls back to `auth.jwtSecret`.
  * Returns null when neither is configured — callers must fail closed.
+ *
+ * SECURITY (BUG-jwtsecret-reused-across-three-security-domains): when the
+ * fallback path engages, the same `auth.jwtSecret` is consumed here AND by
+ * `src/auth/jwt.ts` AND by `src/nsfw/pii-redaction.ts`. HKDF domain
+ * separation makes the subkeys independent, but sharing the upstream
+ * secret still concentrates blast radius. Emit a one-shot warn so the
+ * operator knows to set `ASSETS_SIGNED_URL_SECRET` and stop sharing.
  * @param assetsSecret
  * @param jwtSecret
  */
@@ -216,6 +223,23 @@ export function resolveSignedUrlSecret(
   assetsSecret: string | undefined,
   jwtSecret: string | undefined,
 ): string | null {
-  const secret = assetsSecret || jwtSecret || "";
-  return secret.length > 0 ? secret : null;
+  const hasAssets = !!(assetsSecret && assetsSecret.length > 0);
+  const hasJwt = !!(jwtSecret && jwtSecret.length > 0);
+  if (hasAssets) { return assetsSecret!; }
+  if (hasJwt) {
+    if (!_fallbackWarned) {
+      _fallbackWarned = true;
+      getLog()?.warn(
+        "assets.signedUrlSecret is unset — falling back to auth.jwtSecret. "
+        + "Set ASSETS_SIGNED_URL_SECRET to stop sharing one upstream secret "
+        + "across JWT signing, asset URL signing, and PII pseudonymization.",
+        { domains: ["jwt-sign", "assets-signed-url", "nsfw-pii", "telemetry-pii",] },
+      );
+    }
+    return jwtSecret!;
+  }
+  return null;
 }
+
+/** One-shot latch so the warn fires at most once per process. */
+let _fallbackWarned = false;
