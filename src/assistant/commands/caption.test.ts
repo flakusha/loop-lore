@@ -14,7 +14,27 @@ import type { Kysely, } from "kysely";
 import { AssetLinkEntity, AssetType, MessageRole, ModelRole, } from "../../db/enums";
 import { setTestDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
-import { registerProvider, } from "../../generation/providers/registry";
+import { getProvider, registerProvider, unregisterProvider, } from "../../generation/providers/registry";
+
+// Bun's mock.module is process-global and cannot be unmocked: under
+// `bun run` an earlier file (e.g. admin/provider-health.test.ts) may have
+// replaced the provider registry with fakes lacking register/unregister,
+// so the "mock" provider below never registers and captioning silently
+// no-ops. Sentinel roundtrip; skip instead of asserting against the stub
+// (pristine-module guard; see generation/providers/registry.test.ts).
+const REGISTRY_PROBE_PROVIDER = "__caption_pristine_probe__";
+const registryPristine = (() => {
+  try {
+    if (typeof registerProvider !== "function" || typeof unregisterProvider !== "function") { return false; }
+    registerProvider(REGISTRY_PROBE_PROVIDER, { label: "probe", } as never,);
+    const hit = getProvider(REGISTRY_PROBE_PROVIDER,) !== undefined;
+    unregisterProvider(REGISTRY_PROBE_PROVIDER,);
+    return hit;
+  } catch {
+    return false;
+  }
+})();
+const describeReal = registryPristine ? describe : describe.skip;
 import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../../generation/providers/types";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -108,7 +128,7 @@ async function seedImageAsset(messageId: string, ownerId?: string,): Promise<str
   return assetId;
 }
 
-describe("/caption", () => {
+describeReal("/caption", () => {
   it("reports a missing database context", async () => {
     const result = await captionHandler()([], ctxFor({ db: undefined, },),);
     expect(result.handled,).toBe(true,);
