@@ -7,7 +7,7 @@
  * Verifies that the non-streaming generation path records a real elapsed
  * latencyMs (not the old hardcoded 0).
  */
-import { expect, it, mock, } from "bun:test";
+import { describe, expect, it, mock, } from "bun:test";
 import { describeOrSkip, ISOLATED, } from "../../test-utils/isolate-only";
 
 // Telemetry calls are fire-and-forget (void record(...)).
@@ -85,6 +85,31 @@ if (ISOLATED) {
 
 // Now import the function under test (after all mocks are in place).
 const { runNonStreaming, } = await import("./non-stream");
+const { callWithFailover: failoverFn, } = await import("../providers/call-with-failover");
+const { buildGenerationResult: buildResultFn, } = await import("./persist");
+
+// Bun's mock.module is process-global: without --isolate, an earlier file
+// may have replaced these modules first (first-wins), so the factories
+// above never apply. Fail-closed: verify this file's own doubles are the
+// ones in effect (failover returns our fakeResponse identity; persist
+// returns our fixed stub content) and skip otherwise instead of testing
+// through another file's stubs.
+const failoverSelfCheck = await (async () => {
+  try {
+    // The real failover throws "All providers failed" on []; our stub
+    // resolves fakeResponse. A throw means our double is not in effect.
+    return (await failoverFn([], { model: "m", messages: [], params: {}, },) as unknown) === fakeResponse;
+  } catch {
+    return false;
+  }
+})(); 
+const persistSelfCheck = (buildResultFn({
+  content: "__nonstream_selfcheck__",
+  finishReason: "stop",
+  usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
+} as never, false,) as { content?: string }).content === "test response";
+const nonStreamSelfOk = failoverSelfCheck && persistSelfCheck;
+const describeSelf = nonStreamSelfOk ? describeOrSkip : describe.skip;
 
 const mockConfig = {
   generation: { defaultProvider: "p", defaultModels: {}, },
@@ -97,7 +122,7 @@ const mockInput = {
   parentMessageId: null,
 } as unknown as import("./types").GenerateRequest;
 
-describeOrSkip("runNonStreaming — generation.completed latencyMs", () => {
+describeSelf("runNonStreaming — generation.completed latencyMs", () => {
   it("records a non-zero latencyMs in the telemetry event", async () => {
     recordedEvents.length = 0;
     callDelayMs = 5; // 5ms simulated provider delay
