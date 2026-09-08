@@ -1025,3 +1025,12 @@ export interface SchemaVersion {
   applied_at: Generated<string>;
   description: string | null;
 }
+
+// ── workflow_sessions ────────────────────────────────────────────
+export interface WorkflowSessions {
+  chat_id: Generated<string>;
+  workflow_id: string;
+  step_values: Generated<string>;
+  confirmed: Generated<number>;
+  updated_at: Generated<string>;
+}

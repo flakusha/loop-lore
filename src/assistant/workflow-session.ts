@@ -63,6 +63,16 @@ export function nextStepId(session: WorkflowSession,): string | undefined {
   return session.workflow.steps.find((step,) => session.run.values[step.id] === undefined)?.id;
 }
 
+/**
+ * Place a session into the store (rehydration from persistence).
+ * Overwrites any active run for the chat.
+ * @param chatId - Chat owning the session
+ * @param session - Session to restore
+ */
+export function restoreSession(chatId: string, session: WorkflowSession,): void {
+  sessions[chatId] = session;
+}
+
 /** Clear all sessions (tests only). */
 export function clearSessions(): void {
   for (const key of Object.keys(sessions,)) { delete sessions[key]; }
