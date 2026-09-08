@@ -9,6 +9,7 @@ import { getScheduler, } from "../cron";
 import { initAnonymousMode, initSmk, } from "../crypto";
 import { getDatabase, } from "../db/index";
 import { runMigrations, } from "../db/migrate";
+import { runSchemaBackfill, } from "../db/schema-backfill";
 import { seedDefaultActors, } from "../db/seed";
 import { createApp, } from "../elysia-app";
 import { initializeProviders, } from "../generation";
@@ -104,6 +105,7 @@ export async function start() {
 
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database,);
+  await runSchemaBackfill(database,);
   await seedDefaultActors(database, config,);
   const effectiveSeeding = applyEnvironmentOverrides(config.seeding,);
   await seedConfiguredUsers(database, { ...config, seeding: effectiveSeeding, },);
