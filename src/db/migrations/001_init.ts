@@ -30,6 +30,10 @@ import {
   up as upTradeRequestedMaterials,
 } from "./parts/019_trade_requested_materials";
 import {
+  down as downMemoriesFtsTriggers,
+  up as upMemoriesFtsTriggers,
+} from "./parts/020_memories_fts_triggers";
+import {
   down as downWorkflowSessions,
   up as upWorkflowSessions,
 } from "./parts/021_workflow_sessions";
@@ -57,6 +61,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await upDropTemplateVn(database,);
   await upSchemaVersion(database,);
   await upTradeRequestedMaterials(database,);
+  await upMemoriesFtsTriggers(database,);
   await upWorkflowSessions(database,);
 }
 
@@ -65,6 +70,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await downWorkflowSessions(database,);
+  await downMemoriesFtsTriggers(database,);
   await downTradeRequestedMaterials(database,);
   await downSchemaVersion(database,);
   await downDropTemplateVn(database,);
