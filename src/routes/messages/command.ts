@@ -3,13 +3,18 @@
 
 import type { Kysely, } from "kysely";
 import { parseCommand, } from "../../assistant/command-parser";
-import {
-  type CommandContext,
-  type CommandResult,
-  getCommand,
-  getCommandRequirement,
-  satisfiesRole,
+import type {
+  CommandContext,
+  CommandResult,
 } from "../../assistant/commands/registry";
+import { getCommand, getCommandRequirement, satisfiesRole, } from "../../assistant/commands/registry";
+import {
+  fillNextStep,
+  formatWorkflowPreview,
+} from "../../assistant/commands/workflow";
+import { matchWorkflowTrigger, } from "../../assistant/workflow-routing";
+import { previewSteps, } from "../../assistant/workflow-runner";
+import { getSession, startSession, } from "../../assistant/workflow-session";
 import type { Config, } from "../../config/schema";
 import {
   encryptMessageContent,
@@ -49,10 +54,15 @@ export async function dispatchCommand(
   content: string,
 ): Promise<{ handled: true; response: Response } | { handled: false }> {
   const parsed = parseCommand(content,);
-  if (!parsed) { return { handled: false, }; }
-  const handler = getCommand(parsed.command,);
-  if (!handler) { return { handled: false, }; }
-
+  const handler = parsed ? getCommand(parsed.command,) : undefined;
+  // Registered slash commands keep existing behavior. Anything else may
+  // still belong to a workflow: an active run captures plain messages as
+  // step values, and trigger phrases start a new run. All other content
+  // falls through to the normal message path.
+  const loadedWorkflows = Object.values(config.templates?.workflows?.workflows ?? {},);
+  if (!handler && !getSession(chatId,) && !matchWorkflowTrigger(content, loadedWorkflows,)) {
+    return { handled: false, };
+  }
   // Issue chat context, recent-message history, and participant lookup
   // concurrently — they are independent reads and used downstream only
   // after this point. (Was 3 sequential awaits: ~3× round-trip latency.)
@@ -89,10 +99,11 @@ export async function dispatchCommand(
   const recentMessages = settled[1]?.status === "fulfilled" ? settled[1].value : [];
   const participant = settled[2]?.status === "fulfilled" ? settled[2].value : undefined;
   const roleInChat: ChatParticipantRole = participant?.role_in_chat ?? ChatParticipantRole.Member;
-
   // Tiered access: deny when the participant's role is below the command's minimum.
-  const requiredRole = getCommandRequirement(parsed.command,);
-  if (requiredRole && !satisfiesRole(roleInChat, requiredRole,)) {
+  // Slash path only — workflow runs need no role beyond chat access (checked by the caller).
+  const requiredRole = handler && parsed ? getCommandRequirement(parsed.command,) : undefined;
+
+  if (requiredRole && parsed && !satisfiesRole(roleInChat, requiredRole,)) {
     return {
       handled: true,
       response: jsonResponse({
@@ -122,12 +133,39 @@ export async function dispatchCommand(
   };
 
   let result: CommandResult;
-  try {
-    result = await handler(parsed.args, cmdCtx,);
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error,);
-    log().warn("command handler threw", { command: parsed.command, error: msg, },);
-    result = { handled: true, systemMessage: `**Command failed:** ${msg}`, };
+  let commandName: string;
+  if (handler && parsed) {
+    commandName = parsed.command;
+    try {
+      result = await handler(parsed.args, cmdCtx,);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error,);
+      log().warn("command handler threw", { command: parsed.command, error: msg, },);
+      result = { handled: true, systemMessage: `**Command failed:** ${msg}`, };
+    }
+  } else {
+    // Workflow path: active runs capture plain messages as step values,
+    // otherwise a trigger phrase starts a new run. The early return above
+    // guarantees one of the two applies here.
+    commandName = "workflow";
+    const session = getSession(chatId,);
+    if (session) {
+      result = {
+        systemMessage: fillNextStep(session, content,),
+        handled: true,
+        action: "workflow-progress",
+        actionPayload: { workflowId: session.workflow.id, },
+      };
+    } else {
+      const match = matchWorkflowTrigger(content, loadedWorkflows,)!;
+      const started = startSession(chatId, match,);
+      result = {
+        systemMessage: formatWorkflowPreview(started,),
+        handled: true,
+        action: "workflow-preview",
+        actionPayload: { workflowId: match.id, steps: previewSteps(match,), },
+      };
+    }
   }
 
   if (!result.handled) { return { handled: false, }; }
@@ -176,11 +214,11 @@ export async function dispatchCommand(
       .execute();
   }
 
-  log().info("Command dispatched", { command: parsed.command, handled: true, },);
+  log().info("Command dispatched", { command: commandName, handled: true, },);
   return {
     handled: true,
     response: jsonResponse({
-      command: parsed.command,
+      command: commandName,
       systemMessage: result.systemMessage ?? null,
       action: result.action ?? null,
       actionPayload: result.actionPayload ?? null,
