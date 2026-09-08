@@ -92,15 +92,15 @@ describe("providerState pure helpers", () => {
   });
 
   test("modelSuitability flags lightweight, capable, and neutral", () => {
-    // NOTE: paramSize parses strictly (whole-string number), so "8B"-style
-    // sizes do NOT parse — size tiers only trigger on plain numeric strings.
+    // NOTE: paramSize parsing is suffix-tolerant ("8B", "110M"), so
+    // B-suffixed labels now drive size tiers.
     expect(providerState.modelSuitability!.call({}, undefined,),).toBe("",);
     expect(providerState.modelSuitability!.call({}, { id: "s", paramSize: "1", },),).toContain("Lightweight",);
     expect(providerState.modelSuitability!.call({}, { id: "s", contextWindow: 4096, },),).toContain("Lightweight",);
     expect(providerState.modelSuitability!.call({}, { id: "c", contextWindow: 64_000, },),).toContain("Capable",);
     expect(providerState.modelSuitability!.call({}, { id: "c", paramSize: "13", },),).toContain("Capable",);
     expect(providerState.modelSuitability!.call({}, { id: "n", paramSize: "7", },),).toBe("",);
-    expect(providerState.modelSuitability!.call({}, { id: "b", paramSize: "8B", },),).toBe("",);
+    expect(providerState.modelSuitability!.call({}, { id: "b", paramSize: "8B", },),).toContain("Capable",);
   });
 
   test("modelSuitability handles unicode param sizes and missing data", () => {
@@ -199,7 +199,7 @@ describe("fineTuneState", () => {
       toolCalling: false,
       ownedBy: null,
     };
-    // Strict numeric parsing: plain "13" parses, "13B" does not.
+    // Plain "13" and suffixed "13B" both parse to the same size.
     expect(fineTuneState.fineTuneReadiness!.call({}, { ...base, paramSize: "13", },),).toContain("large param",);
     expect(fineTuneState.fineTuneReadiness!.call({}, { ...base, contextWindow: 64_000, },),).toContain(
       "large context",
@@ -223,6 +223,6 @@ describe("fineTuneState", () => {
     expect(fineTuneState.fineTuneReadiness!.call({}, base,),).toContain("prefer a larger model",);
     expect(
       fineTuneState.fineTuneReadiness!.call({}, { ...base, paramSize: "13B", contextWindow: 64_000, },),
-    ).toContain("large context",);
+    ).toContain("large param",);
   });
 });
