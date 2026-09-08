@@ -27,6 +27,14 @@ bun run check && bun test src/
 # - Floor: 80% line coverage per module (no lower transitional floor)
 # - New module tests must raise line coverage >= 80% to land (else waiver + ticket)
 # - Generated artifacts (`.tmp/coverage/`) are scratchpad; never commit
+#
+# Check runner modes (`scripts/check-parallel.mjs`):
+# - Heavy test gates (unit, e2e, coverage) always run serialized after the
+#   light gates — two concurrent bun-test processes OOM on this host.
+# - `bun run check --diff-base <ref>` scopes unit + coverage gates to the
+#   branch diff (test files adjacent to changed src files; coverage floored
+#   only for modules the diff touches). `worktree finalize` Step 2 passes
+#   this automatically; static gates always run project-wide.
 ```
 
 ## Source of Truth (Precedence Order)
