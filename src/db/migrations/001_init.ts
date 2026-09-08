@@ -3,9 +3,10 @@
 
 /**
  * Initial schema migration — final-form DDL (single atomic migration).
- * Orchestrates the extensive parts/ tree in dependency order. Parts hold
- * final-form CREATE, except 020_memories_fts_triggers which reshapes the
- * FTS table created by 016 (drop + recreate, required for the new shape).
+ * Orchestrates the extensive parts/ tree in dependency order. Every part
+ * holds pure final-form CREATE — no DROP, no reshapes. Databases frozen
+ * before a part shipped converge via the boot backfill in
+ * `src/db/schema-backfill.ts` (see its module doc for the stranded cases).
  */
 import type { Kysely, } from "kysely";
 import { down as downCore, up as upCore, } from "./parts/001_core";
@@ -29,10 +30,6 @@ import {
   down as downTradeRequestedMaterials,
   up as upTradeRequestedMaterials,
 } from "./parts/019_trade_requested_materials";
-import {
-  down as downMemoriesFtsTriggers,
-  up as upMemoriesFtsTriggers,
-} from "./parts/020_memories_fts_triggers";
 import {
   down as downWorkflowSessions,
   up as upWorkflowSessions,
@@ -60,7 +57,6 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await upFts(database,);
   await upSchemaVersion(database,);
   await upTradeRequestedMaterials(database,);
-  await upMemoriesFtsTriggers(database,);
   await upWorkflowSessions(database,);
 }
 
@@ -69,7 +65,6 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await downWorkflowSessions(database,);
-  await downMemoriesFtsTriggers(database,);
   await downTradeRequestedMaterials(database,);
   await downSchemaVersion(database,);
   await downFts(database,);
