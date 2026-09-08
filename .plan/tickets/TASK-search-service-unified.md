@@ -3,7 +3,7 @@
 
 # TASK: Unified Search Service (DB-direct / rg / BM25 / vector / decrypted)
 
-**Status:** ⬜ Not Started
+**Status:** 🔄 In Progress — providers, conveniences, gallery endpoint, memories-FTS migration landed; assistant/RAG consumers pending
 **Priority:** High
 **Effort:** Medium
 **Type:** Feature Task
@@ -152,4 +152,52 @@ Resolved precedence: **user > admin > global**. The `defaultMs` caps typical que
 
 - Builds on: `src/db/migrations/parts/016_fts.ts` (FTS5 schema), `src/memory/embeddings.ts` (vector cosine)
 - Enables: `TASK-gallery-fuzzy-search-pagination.md`, `TASK-assistant-rag-access-extensions.md`, `epic-rag-retrieval.md`
-- Schema strategy: **single atomic migration** adds `users.encryption_secret` + `message_search_tokens` + FTS5 + triggers. Never alter `016_fts` (append-only policy).
+- Schema strategy: **folded into `016_fts.ts`** per user decision (DB regenerated anyway) — `users.encryption_secret` + `message_search_tokens` + lookup index live alongside the FTS tables, one atomic part. No `NNN_search_tokens` part.
+
+## Progress (search-unified worktree)
+
+Foundation module `src/search/` landed: `types` (modes, query, hit, scope,
+`SearchTimeoutError`), `config` (3-tier time-cap resolver, user > admin >
+global), `rank` (RRF fusion + isomorphic fuzzy baseline for gallery),
+`encrypted-tokens` (tokenizer + HMAC derivation; key sourcing waits on the
+migration), `service` (provider-injected dispatch + timeout with partials).
+Unit tests green; eslint/dprint clean; backend typecheck clean for the module.
+
+Still open: wiring real providers (FTS5 keyword, vector recall, gallery
+fuzzy), and gallery/assistant consumers.
+
+Fold landed: `016_fts.ts` extended (nullable `users.encryption_secret` TEXT —
+lazy-issued, consistent with `api_key_encrypted`/`token_hash` TEXT secrets;
+`message_search_tokens(message_id, token, scope)` PK + `(scope, token)` lookup
+index) plus `src/search/token-store.ts` (`reindexMessageTokens`,
+`deleteMessageTokens`, `matchMessageIdsByTokens`) with real-SQLite tests.
+Schema artifacts regenerated; `schemas:check` green; migration roundtrip
+green. No backfill for encrypted rows is possible (no plaintext to derive
+from) — the table fills on encrypt-time writes.
+
+Providers landed: `src/search/providers/messages.ts` (exact id lookup,
+keyword over `messages_fts` with BM25 snippets, token via `token-store` +
+per-user key resolver), `memories.ts` (keyword over `memories_fts`, vector
+via `memory_embeddings` + injected `embedQuery`), `assets.ts` (exact +
+fuzzy over the `visibleAssetFilter` candidate set, capped). `convenience.ts`
+exposes `searchMessages`/`searchMemories`/`searchAssets`; `index.ts` is the
+single umbrella barrel. Tests cover dispatch, RRF, token determinism,
+config precedence, scope authz.
+
+`020_memories_fts_triggers` (new forward part): `016` created `memories_fts`
+but nothing populated it, and its `content_rowid='memory_id'` made
+`memory_id` unselectable for TEXT uuids — 020 recreates the table with a
+plain shape, adds the DELETE/INSERT/UPDATE trigger trio mirroring
+`messages_fts`, and backfills. `down` drops triggers and restores the 016
+shape; roundtrip green.
+
+Gallery endpoint `GET /api/assets/search` (`src/routes/asset-search/`,
+wired in `register-plugins.ts`): fuzzy ranking + limit/offset pagination
+with honest `hasMore`, 401 for anonymous. Notable trap fixed in the route:
+Elysia coerces absent Optional enum query params to union member 0
+(`visibility` arrived as `"private"`), so presence is read from raw
+`searchParams` while the schema still 422s bogus values.
+
+Still open: gallery frontend swap (`TASK-gallery-fuzzy-search-pagination`),
+assistant/RAG consumers (`TASK-assistant-rag-access-extensions`,
+`epic-rag-retrieval`).

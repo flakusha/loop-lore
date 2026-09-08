@@ -60,9 +60,9 @@ export interface Users {
   settings: Generated<string>;
   birth_date: string | null;
   age_gate_accepted_at: string | null;
-  format_version: Generated<number>;
   created_at: Generated<string>;
   last_seen_at: string | null;
+  encryption_secret: string | null;
 }
 
 export interface Personas {
@@ -932,6 +932,13 @@ export interface E2eSkippedMessageKeys {
   chain_index: number;
   message_key: string;
   created_at: Generated<string>;
+}
+
+// ── message_search_tokens ────────────────────────────────────────────
+export interface MessageSearchTokens {
+  message_id: string;
+  token: string;
+  scope: string;
 }
 
 // ── schema_version ────────────────────────────────────────────
