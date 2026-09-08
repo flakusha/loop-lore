@@ -14,14 +14,14 @@
  * for the failure path. Liveness-only cases pass a hollow object since the
  * probe never touches it.
  */
-import { Elysia, } from "elysia";
-import { describe, expect, test, } from "bun:test";
 import { Database, } from "bun:sqlite";
+import { describe, expect, test, } from "bun:test";
+import { Elysia, } from "elysia";
 import { Kysely, } from "kysely";
 import type { Config, ObservabilityConfig, } from "../config/schema";
 import { createSqliteDialect, } from "../db";
-import type { DB, } from "../db/schema";
 import type { Db, } from "../db";
+import type { DB, } from "../db/schema";
 import { livenessRoutes, } from "./liveness";
 
 interface HealthOverrides {
@@ -78,7 +78,7 @@ describe("livenessRoutes", () => {
     expect(body.status,).toBe("ok",);
     expect(Number.isInteger(body.uptime,),).toBe(true,);
     const ts = body.timestamp as string;
-    expect(new Date(ts).toISOString()).toBe(ts);
+    expect(new Date(ts,).toISOString(),).toBe(ts,);
   });
 
   test("liveness enabled does not mount readiness", async () => {
