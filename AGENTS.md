@@ -23,9 +23,9 @@ bun run check && bun test src/
 
 # Coverage gate (new):
 # - `bun run test:coverage` writes `.tmp/coverage/lcov.info`
-# - `bun run scripts/check/coverage.mjs --floor=40` gates each module
-# - Floor: 40% line / 30% branch; tighten to 60% after one cycle
-# - New module tests must raise line coverage >= 70% to land (else waiver + ticket)
+# - `bun run scripts/check/coverage.mjs --floor=80` gates each module
+# - Floor: 80% line coverage per module (no lower transitional floor)
+# - New module tests must raise line coverage >= 80% to land (else waiver + ticket)
 # - Generated artifacts (`.tmp/coverage/`) are scratchpad; never commit
 ```
 
