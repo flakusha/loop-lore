@@ -116,7 +116,9 @@ export async function storeStoryResponse(opts: StoryStoreOpts,): Promise<StorySt
     dominantEmotion = hooks.dominantEmotion ?? null;
     // Prefer the hook payload actorId (mirrors auto-generation.ts); fall back to opts for back-compat.
     effectiveActorId = hooks.actorId ?? actorId;
-    if (smk && effectiveActorId !== actorId) { await deps.ensureActorKey({ database, actorId: effectiveActorId, smk, },); }
+    if (smk && effectiveActorId !== actorId) {
+      await deps.ensureActorKey({ database, actorId: effectiveActorId, smk, },);
+    }
   } catch (error) {
     log.error(
       "story-mode: content-hook chain threw — aborting turn (fail-closed)",
