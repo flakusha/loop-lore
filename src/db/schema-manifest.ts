@@ -210,12 +210,12 @@ export const SCHEMA = new SchemaManifest()
     max_quality: col("text",),
     offered_payment: col("integer", { notNull: true, hasDefault: true, },),
     offered_materials: col("text", { notNull: true, hasDefault: true, },),
-    requested_materials: col("text", { notNull: true, hasDefault: true, },),
     status: col("text", { notNull: true, hasDefault: true, },),
     deadline: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
     trade_type: col("text", { notNull: true, hasDefault: true, },),
+    requested_materials: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("crafting_recipe_materials", {
     id: col("text", { primaryKey: true, },),
