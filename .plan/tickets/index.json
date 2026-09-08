@@ -6064,6 +6064,18 @@
     "source": ".plan/tickets/FEAT-item-system-extensions.md",
     "git_issue": "4a1f830"
   },
+  "FEAT-LIVENESS-READINESS-ENDPOINTS-OPT-IN-CONFIG": {
+    "hash": "7c8cf4b",
+    "extid": "FEAT-LIVENESS-READINESS-ENDPOINTS-OPT-IN-CONFIG",
+    "type": "FEAT",
+    "title": "Liveness and readiness endpoints (opt-in by config)",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-api-telemetry.md",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-liveness-readiness-endpoints-opt-in-config.md",
+    "git_issue": "7c8cf4b"
+  },
   "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES": {
     "hash": "487812f",
     "git_issue": "487812f",
@@ -13948,6 +13960,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-federation-dek-re-wrap-protocol-server-to-server-key-export.md"
   },
+  "TASK-FEDERATION-INTERCONNECT-PEER-CONFIG": {
+    "hash": "6bf6ddc",
+    "extid": "TASK-FEDERATION-INTERCONNECT-PEER-CONFIG",
+    "type": "TASK",
+    "title": "Federation interconnect peer connectivity config",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-federation-swarm-sync.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-federation-interconnect-peer-config.md",
+    "git_issue": "6bf6ddc"
+  },
   "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL": {
     "hash": "99c122b",
     "git_issue": "99c122b",
@@ -15387,6 +15411,18 @@
     "source": ".plan/tickets/TASK-installed-plugins.md",
     "git_issue": "aa58f86"
   },
+  "TASK-INSTANCE-STATE-ADVERTISEMENT-ENDPOINT": {
+    "hash": "e23054f",
+    "extid": "TASK-INSTANCE-STATE-ADVERTISEMENT-ENDPOINT",
+    "type": "TASK",
+    "title": "Instance state advertisement endpoint (mesh/federation)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-federation-swarm-sync.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-instance-state-advertisement-endpoint.md",
+    "git_issue": "e23054f"
+  },
   "TASK-INTEGRATION-INFRASTRUCTURE": {
     "hash": "3c7d8c0",
     "extid": "TASK-INTEGRATION-INFRASTRUCTURE",
@@ -16269,6 +16305,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
   },
+  "TASK-MESH-PEER-DISCOVERY-GOSSIP": {
+    "hash": "6b9c01e",
+    "extid": "TASK-MESH-PEER-DISCOVERY-GOSSIP",
+    "type": "TASK",
+    "title": "Mesh peer discovery and gossip transport",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-federation-swarm-sync.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-mesh-peer-discovery-gossip.md",
+    "git_issue": "6b9c01e"
+  },
   "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND": {
     "hash": "eb021bb",
     "extid": "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND",
@@ -16802,6 +16850,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-no-browser-test-vn-scene-view-battle-ui-command-palette.md"
+  },
+  "TASK-NODEINFO-WELL-KNOWN-DISCOVERY-ENDPOINTS": {
+    "hash": "d6d3793",
+    "extid": "TASK-NODEINFO-WELL-KNOWN-DISCOVERY-ENDPOINTS",
+    "type": "TASK",
+    "title": "NodeInfo and well-known discovery endpoints for federation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-federation-swarm-sync.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-nodeinfo-well-known-discovery-endpoints.md",
+    "git_issue": "d6d3793"
   },
   "TASK-NON-ISOLATED-BUN-TEST-SRC-RED-SHARED-STATE-CONTAMINATION": {
     "hash": "70c23fb",
@@ -17618,6 +17678,18 @@
     "source": ".plan/tickets/TASK-nsfw-wire-seduction-encounter-preconditions.md",
     "git_issue": "e0d7c5c"
   },
+  "TASK-OBSERVABILITY-CONFIG-SECTION": {
+    "hash": "2e34de8",
+    "extid": "TASK-OBSERVABILITY-CONFIG-SECTION",
+    "type": "TASK",
+    "title": "Observability config section (health/metrics opt-in)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-telemetry.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-observability-config-section.md",
+    "git_issue": "2e34de8"
+  },
   "TASK-OBSERVABILITY-TELEMETRY": {
     "hash": "4218340",
     "extid": "TASK-OBSERVABILITY-TELEMETRY",
@@ -18275,6 +18347,18 @@
     "epic": "epic-skills-professions-config",
     "tags": [],
     "source": ".plan/tickets/TASK-professions-service-routes.md"
+  },
+  "TASK-PROMETHEUS-METRICS-ENDPOINT-OPT-IN": {
+    "hash": "8f695c2",
+    "extid": "TASK-PROMETHEUS-METRICS-ENDPOINT-OPT-IN",
+    "type": "TASK",
+    "title": "Prometheus metrics endpoint (opt-in)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-api-telemetry.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prometheus-metrics-endpoint-opt-in.md",
+    "git_issue": "8f695c2"
   },
   "TASK-PROMOTE-SIZE-CHECK-TO-CI": {
     "hash": "2a932ab",
