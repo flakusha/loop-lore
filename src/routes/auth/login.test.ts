@@ -9,6 +9,7 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
+import { initSmk, } from "../../crypto/smk";
 import type { DB, } from "../../db/schema";
 import type { RateLimiter, } from "../../middleware/rate-limit";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
@@ -71,6 +72,10 @@ function loginBody(username: string, password: string,): string {
 }
 
 beforeAll(async () => {
+  // Clear process-global SMK — crypto suites running earlier in the same
+  // bun process arm encryption and flip the route's isEncryptionEnabled()
+  // gate, changing this file's expected (encryption-disabled) behavior.
+  await initSmk({ required: false, compressThreshold: 128, compressAlgorithm: "gzip", },);
   const created = await createTestDb();
   db = created.db;
   sqlite = created.sqlite;
