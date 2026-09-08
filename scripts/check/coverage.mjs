@@ -92,8 +92,14 @@ const WAIVERS = {
   // Gate pass: src/characters/ is large (3968 lines) and contains
   // world-setup + character-bundle pipelines whose happy paths live in
   // e2e and whose error branches dominate the uncovered count.
-  "characters": { floor: 75, reason: "large module (3968L); error branches + bundle pipeline mostly e2e", },
-};
+  // Gate pass: src/native/ loads a Rust cdylib (BLAKE3 + zstd) whose
+  // cdylib fast-paths are not exercisable from unit tests without the
+  // prebuilt .so on PATH. Unit tests cover the Bun-fallback path and
+  // ABI-mismatch/null-handle guards. The Rust cdylib smoke is exercised
+  // via `benchmarks/zstd.bench.ts` and `benchmarks/blake3.bench.ts`,
+  // which run the live native module against the Bun fallback.
+  "native": { floor: 60, reason: "Rust cdylib fast-path exercised by benchmarks (zstd/blake3); unit tests cover Bun fallback + ABI guards", },
+ };
 
 /**
  * Resolve the effective floor for a module. Defaults to the global --floor.
