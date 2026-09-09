@@ -15,7 +15,7 @@ import { getKeymap, } from "./shortcuts";
  * Alpine component for the keynav help overlay.
  * Reads shortcuts from the keymap registry.
  */
-export function keynavHelp(): Record<string, unknown> {
+export function keynavHelp() {
   return {
     open: false,
     shortcuts: getKeymap(),
