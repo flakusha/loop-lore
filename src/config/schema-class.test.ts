@@ -47,6 +47,7 @@ describe("ConfigSchema", () => {
   test("envMap includes nested fields", () => {
     const map = envMap();
     expect(map.TLS_KEY,).toBe("server.tls.key",);
+    expect(map.SERVER_PUBLIC_ORIGIN,).toBe("server.publicOrigin",);
     expect(map.TRANSPORT_COMPRESSION_ENABLED,).toBe("transport.compression.enabled",);
     expect(map.TRANSPORT_MAX_FRAME_SIZE,).toBe("transport.limits.maxFrameSize",);
   });
