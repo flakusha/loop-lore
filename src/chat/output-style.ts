@@ -4,7 +4,7 @@
 /**
  * Output Styling — genre / register / tone control for generated text.
  *
- * Orthogonal to response *length* (owned by resolveResponseLength): styling is
+ * Orthogonal to response *length* (owned by buildLengthConfig): styling is
  * about HOW the model writes (high fantasy, noir, cyberpunk, …), length about
  * HOW MUCH. The two compose (e.g. `long` + `cyberpunk`).
  *

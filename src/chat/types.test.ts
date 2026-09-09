@@ -1,5 +1,5 @@
 import { describe, expect, it, } from "bun:test";
-import { MODE_DEFAULTS, resolveFeatureFlags, RESPONSE_LENGTH_DEFAULTS, } from "./types";
+import { MODE_DEFAULTS, resolveFeatureFlags, } from "./types";
 
 describe("resolveFeatureFlags", () => {
   it("returns defaults for direct mode", () => {
@@ -46,14 +46,5 @@ describe("MODE_DEFAULTS", () => {
 
   it("group mode has turnOrchestration enabled", () => {
     expect(MODE_DEFAULTS.group.turnOrchestration,).toBe(true,);
-  });
-});
-
-describe("RESPONSE_LENGTH_DEFAULTS", () => {
-  it("has all presets", () => {
-    expect(RESPONSE_LENGTH_DEFAULTS.short,).toBe(150,);
-    expect(RESPONSE_LENGTH_DEFAULTS.medium,).toBe(500,);
-    expect(RESPONSE_LENGTH_DEFAULTS.long,).toBe(1000,);
-    expect(RESPONSE_LENGTH_DEFAULTS.custom,).toBe(500,);
   });
 });

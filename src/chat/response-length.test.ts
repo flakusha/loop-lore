@@ -1,28 +1,78 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 import { describe, expect, it, } from "bun:test";
 import {
-  clampTokenCount,
+  buildLengthConfig,
+  computeMaxTokens,
+  DEFAULT_RESPONSE_LENGTH,
   isValidPreset,
-  resolveResponseLength,
+  LENGTH_PRESETS,
+  parseLengthConfig,
 } from "./response-length";
-import { RESPONSE_LENGTH_DEFAULTS, } from "./types";
 
-describe("clampTokenCount", () => {
-  it("returns value within range", () => {
-    expect(clampTokenCount(500,),).toBe(500,);
+describe("computeMaxTokens", () => {
+  it("returns the preset max for short/medium/long", () => {
+    expect(computeMaxTokens("short",),).toBe(150,);
+    expect(computeMaxTokens("medium",),).toBe(400,);
+    expect(computeMaxTokens("long",),).toBe(1000,);
   });
 
-  it("clamps to minimum 50", () => {
-    expect(clampTokenCount(0,),).toBe(50,);
-    expect(clampTokenCount(-10,),).toBe(50,);
+  it("returns the custom value for the custom preset", () => {
+    expect(computeMaxTokens("custom", 750,),).toBe(750,);
   });
 
-  it("clamps to maximum 2000", () => {
-    expect(clampTokenCount(5000,),).toBe(2000,);
+  it("falls back to medium max when custom has no value", () => {
+    expect(computeMaxTokens("custom",),).toBe(400,);
   });
 
-  it("rounds to nearest integer", () => {
-    expect(clampTokenCount(100.4,),).toBe(100,);
-    expect(clampTokenCount(100.6,),).toBe(101,);
+  it("floors custom values at 1", () => {
+    expect(computeMaxTokens("custom", 0,),).toBe(1,);
+    expect(computeMaxTokens("custom", -10,),).toBe(1,);
+  });
+});
+
+describe("buildLengthConfig", () => {
+  it("builds a full config with computed maxTokens", () => {
+    expect(buildLengthConfig("long",),).toEqual({
+      preset: "long",
+      customMin: undefined,
+      customMax: undefined,
+      maxTokens: 1000,
+    },);
+  });
+
+  it("carries custom bounds through", () => {
+    const config = buildLengthConfig("custom", 50, 750,);
+    expect(config.customMin,).toBe(50,);
+    expect(config.customMax,).toBe(750,);
+    expect(config.maxTokens,).toBe(750,);
+  });
+});
+
+describe("parseLengthConfig", () => {
+  it("returns the default for null/undefined/empty settings", () => {
+    expect(parseLengthConfig(null,),).toEqual(DEFAULT_RESPONSE_LENGTH,);
+    expect(parseLengthConfig(undefined,),).toEqual(DEFAULT_RESPONSE_LENGTH,);
+    expect(parseLengthConfig({},),).toEqual(DEFAULT_RESPONSE_LENGTH,);
+  });
+
+  it("parses a preset from settings JSON", () => {
+    const config = parseLengthConfig({ responseLength: { preset: "long", }, },);
+    expect(config.preset,).toBe("long",);
+    expect(config.maxTokens,).toBe(1000,);
+  });
+
+  it("falls back to the default preset for invalid values", () => {
+    const config = parseLengthConfig({ responseLength: { preset: "huge", }, },);
+    expect(config.preset,).toBe(DEFAULT_RESPONSE_LENGTH.preset,);
+  });
+
+  it("passes custom bounds through", () => {
+    const config = parseLengthConfig(
+      { responseLength: { preset: "custom", customMin: 50, customMax: 750, }, },
+    );
+    expect(config.maxTokens,).toBe(750,);
   });
 });
 
@@ -41,39 +91,17 @@ describe("isValidPreset", () => {
   });
 });
 
-describe("resolveResponseLength", () => {
-  it("uses server default when nothing set", () => {
-    const result = resolveResponseLength(null, null, null,);
-    expect(result.preset,).toBe("medium",);
-    expect(result.maxTokens,).toBe(RESPONSE_LENGTH_DEFAULTS.medium,);
+describe("LENGTH_PRESETS", () => {
+  it("defines short/medium/long ranges", () => {
+    expect(LENGTH_PRESETS.short,).toEqual({ label: "Short", min: 50, max: 150, },);
+    expect(LENGTH_PRESETS.medium,).toEqual({ label: "Medium", min: 150, max: 400, },);
+    expect(LENGTH_PRESETS.long,).toEqual({ label: "Long", min: 400, max: 1000, },);
   });
+});
 
-  it("chat preset overrides user preset", () => {
-    const result = resolveResponseLength("long", null, "short",);
-    expect(result.preset,).toBe("long",);
-    expect(result.maxTokens,).toBe(RESPONSE_LENGTH_DEFAULTS.long,);
-  });
-
-  it("user preset overrides server default", () => {
-    const result = resolveResponseLength(null, null, "long",);
-    expect(result.preset,).toBe("long",);
-    expect(result.maxTokens,).toBe(RESPONSE_LENGTH_DEFAULTS.long,);
-  });
-
-  it("handles custom preset with chat custom value", () => {
-    const result = resolveResponseLength("custom", 750, null,);
-    expect(result.preset,).toBe("custom",);
-    expect(result.maxTokens,).toBe(750,);
-  });
-
-  it("clamps custom token count", () => {
-    const result = resolveResponseLength("custom", 10_000, null,);
-    expect(result.maxTokens,).toBe(2000,); // clamped to max
-  });
-
-  it("uses default custom value when chat custom is null", () => {
-    const result = resolveResponseLength("custom", null, null,);
-    expect(result.preset,).toBe("custom",);
-    expect(result.maxTokens,).toBe(RESPONSE_LENGTH_DEFAULTS.custom,);
+describe("DEFAULT_RESPONSE_LENGTH", () => {
+  it("defaults to medium", () => {
+    expect(DEFAULT_RESPONSE_LENGTH.preset,).toBe("medium",);
+    expect(DEFAULT_RESPONSE_LENGTH.maxTokens,).toBe(400,);
   });
 });
