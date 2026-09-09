@@ -24,6 +24,10 @@ export const server = {
       default: false,
       description: "Honor X-Forwarded-For / X-Real-IP / CF-Connecting-IP. Default false. Env: SERVER_TRUST_PROXY=1.",
     },
+    publicOrigin: {
+      type: "string",
+      description: "Public origin (scheme + host) when behind a TLS-terminating proxy. Env: SERVER_PUBLIC_ORIGIN.",
+    },
     tls: {
       type: "object",
       description: "TLS certificate configuration",

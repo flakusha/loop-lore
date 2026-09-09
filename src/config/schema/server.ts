@@ -26,4 +26,11 @@ export interface ServerConfig {
    * overwrites the header on every request.
    */
   trustProxy?: boolean;
+  /**
+   * Public origin (scheme + host, e.g. "https://lore.example.com").
+   * Set when running behind a TLS-terminating reverse proxy (Caddy) so
+   * self-referential URLs (federation nodeinfo, redirects) use the public
+   * address instead of the internal host:port. Env: SERVER_PUBLIC_ORIGIN.
+   */
+  publicOrigin?: string;
 }
