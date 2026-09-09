@@ -132,6 +132,18 @@ export function gitSyncQuiet(repoRoot: string, ...args: string[]): string {
   return result.stdout.toString().trim();
 }
 
+/**
+ * Staged paths that are dependency directories — never committable.
+ * The worktree `node_modules` symlink (→ root install) is not matched by
+ * dir-only ignore patterns, so `git add -A` can stage it silently; three
+ * accidental commits came through this path before the guard existed.
+ */
+export function stagedDependencyPaths(root: string,): string[] {
+  return gitSyncQuiet(root, "diff", "--cached", "--name-only",)
+    .split("\n",)
+    .filter((p,) => p === "node_modules" || p.split("/",).includes("node_modules",));
+}
+
 export async function getBranches(repoRoot: string,): Promise<GitBranch[]> {
   const output = gitSync(repoRoot, "branch", "--format=%(refname:short)",);
   const current = gitSync(repoRoot, "branch", "--show-current",);

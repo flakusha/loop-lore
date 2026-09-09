@@ -2,7 +2,10 @@
 .gitattributes
 
 dist/
-node_modules/
+# Dependency install — bare pattern (no trailing slash) so the per-worktree
+# symlink form (`node_modules` → root install) is ignored too; dir-only
+# patterns (trailing slash) never match symlinks.
+node_modules
 
 # Runtime data (stale in-project location — migrated to ../loop-lore-data/)
 data/
@@ -77,10 +80,6 @@ omp-session-*.html
 
 # Git worktrees (parallel branch development)
 tree/*
-# Per-worktree dependency symlinks — auto-linked by `scripts/worktree/`.
-# Listed explicitly (instead of inheriting from `tree/*` above) so the rule
-# survives any future narrowing of the worktree-ignore pattern.
-tree/*/node_modules
 # Worktree finalize single-flight lock (atomic O_CREAT|O_EXCL sentinel)
 .worktree-finalize.lock
 # Agent credentials (GPG keys, signing config — never commit)
