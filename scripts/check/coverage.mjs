@@ -27,9 +27,17 @@ const onlyArg = process.argv.find((a,) => a.startsWith("--only=",))?.split("=",)
 // (e.g. `scripts/`, never loaded in-process) are reported as unmeasured and
 // skipped — failing on unobservable data would be false red.
 const onlySet = onlyArg ? new Set(onlyArg.split(",",).map((s,) => s.trim()).filter(Boolean,),) : null;
-const lcovPath = ".tmp/coverage/lcov.info";
+// `check-parallel.mjs` writes lcov into a per-RUN dir (`.tmp/run-<RUN_ID>/coverage/`)
+// so concurrent and successive runs do not clobber each other. The runner
+// passes the matching `--coverage-dir=<dir>`; we resolve `lcov.info` inside
+// that directory. Falls back to the legacy `.tmp/coverage/` path for manual
+// `bun run scripts/check/coverage.mjs` invocations outside the runner.
+const coverageDir = process.argv.find((a,) => a.startsWith("--coverage-dir=",))?.split("=",)[1] ??
+  process.env.COVERAGE_DIR ??
+  ".tmp/coverage";
+const lcovPath = `${coverageDir.replace(/\/+$/, "",)}/lcov.info`;
 if (!fs.existsSync(lcovPath,)) {
-  console.error("lcov not found at " + lcovPath + " — run 'bun test --coverage' first",);
+  console.error(`lcov not found at ${lcovPath} — run 'bun test --coverage' first`,);
   process.exit(1,);
 }
 
