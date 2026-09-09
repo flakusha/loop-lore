@@ -33,6 +33,8 @@ export type NsfwRouteAccessFailure =
   | "underage"
   | "invalid_birth_date"
   | "user_not_found"
+  | "blocked"
+  | "banned"
   | "consent_required"
   | "consent_revoked"
   | "participant_blocked"

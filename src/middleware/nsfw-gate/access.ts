@@ -47,6 +47,21 @@ export async function canAccessNsfw(
     return { allowed: false, reason: "user_not_found", };
   }
 
+  // Moderation state: blocked/banned users are denied NSFW outright,
+  // regardless of age or config. Read-only — a missing prefs row means
+  // "clear" (rows materialize on demand via getOrCreateOwn elsewhere).
+  const prefs = await database
+    .selectFrom("nsfw_user_preferences",)
+    .select("access_status",)
+    .where("user_id", "=", userId,)
+    .executeTakeFirst();
+  if (prefs?.access_status === "banned") {
+    return { allowed: false, reason: "banned", };
+  }
+  if (prefs?.access_status === "blocked") {
+    return { allowed: false, reason: "blocked", };
+  }
+
   // Age gate must be accepted
   if (!user.age_gate_accepted_at) {
     return { allowed: false, reason: "age_gate_not_accepted", };
