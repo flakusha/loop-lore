@@ -354,4 +354,103 @@ describe("attemptSeduction", () => {
       Math.random = originalRandom;
     }
   });
+
+  // ── Edge cases ──────────────────────────────────────────────
+
+  test("attemptSeduction against a non-existent target throws (FK violation on desire profile)", async () => {
+    // getDesireProfile inserts a default row when missing — but that
+    // insert hits the actor FK and fails because no actor with that id
+    // exists. Pin the observable behavior.
+    const { actorId, } = await makePair();
+    const ghostTargetId = uid();
+    Math.random = () => 0.5;
+    try {
+      await expect(
+        attemptSeduction(db, {
+          database: db,
+          actorId,
+          targetId: ghostTargetId,
+          skillCategory: "communication",
+          approach: "polite greeting",
+        },),
+      ).rejects.toThrow();
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
+
+  test("DC floor of 10 applies when multiple negative contributions push below zero", async () => {
+    const { actorId, targetId, } = await makePair();
+    await seedDesire(targetId, {
+      turnOns: ["silk", "velvet", "roses", "intelligence",],
+      currentDesire: 100,
+    },);
+    await insertCharacterArousal(db, targetId, NOW, NOW, NOW, { level: 100, },);
+    await insertCharacterSeductionSkills(
+      db,
+      actorId,
+      "communication",
+      "Charmer",
+      NOW,
+      NOW,
+      { level: 1, xp: 0, xp_to_next: 1000, },
+    );
+    Math.random = () => 0;
+    try {
+      const result = await attemptSeduction(db, {
+        database: db,
+        actorId,
+        targetId,
+        skillCategory: "communication",
+        approach: "soft silk velvet roses with intelligence and care",
+      },);
+      expect(result.dc,).toBe(10,);
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
+
+  test("hard-limit trigger does not consume Math.random (early return)", async () => {
+    const { actorId, targetId, } = await makePair();
+    await seedDesire(targetId, { hardLimits: ["fire",], },);
+    let randomCalled = false;
+    Math.random = () => {
+      randomCalled = true;
+      return 0.5;
+    };
+    try {
+      const result = await attemptSeduction(db, {
+        database: db,
+        actorId,
+        targetId,
+        skillCategory: "communication",
+        approach: "fire play on skin",
+      },);
+      expect(result.hardLimitTriggered,).toBe(true,);
+      expect(randomCalled,).toBe(false,);
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
+
+  test("devoted reputation tier with no skills passes prerequisite check", async () => {
+    const { actorId, targetId, } = await makePair();
+    await seedDesire(targetId,);
+    // No skills, no stats — devoted tier has no prerequisites.
+    Math.random = () => 0;
+    try {
+      const result = await attemptSeduction(db, {
+        database: db,
+        actorId,
+        targetId,
+        skillCategory: "communication",
+        approach: "a loving whisper",
+        reputationTier: "devoted",
+      },);
+      expect(result.prerequisiteBlocked ?? false,).toBe(false,);
+      expect(result.hardLimitTriggered,).toBe(false,);
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
 });

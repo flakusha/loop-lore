@@ -191,4 +191,221 @@ describe("IntimacyService", () => {
     const pair = await service.getPair("actor-1", "actor-2",);
     expect(pair.score,).toBe(5,);
   });
+
+  // ── Edge cases ──────────────────────────────────────────────
+
+  test("applyAction with delta=0 leaves score unchanged but records history", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: {
+        id: "action-1",
+        name: "Wave",
+        type: "verbal",
+        delta: 0,
+        minIntimacy: 0,
+        requiresConsent: false,
+      },
+    },);
+
+    expect(result.applied,).toBe(true,);
+    expect(result.actualDelta,).toBe(0,);
+    expect(result.newScore,).toBe(0,);
+
+    const pair = await service.getPair("actor-1", "actor-2",);
+    expect(pair.actionHistory.length,).toBe(1,);
+  });
+
+  test("applyAction with negative delta reduces score", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    // First build up some intimacy.
+    await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a1", name: "Gift", type: "gift", delta: 20, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    // Now apply a negative-delta action.
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a2", name: "Betrayal", type: "physical", delta: -10, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    expect(result.applied,).toBe(true,);
+    expect(result.newScore,).toBe(10,);
+    expect(result.actualDelta,).toBe(-10,);
+  });
+
+  test("applyAction clamps score at MAX_SCORE (100) for huge positive delta", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a1", name: "Mega-gift", type: "gift", delta: 9_999_999, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    expect(result.applied,).toBe(true,);
+    expect(result.newScore,).toBe(100,);
+    expect(result.actualDelta,).toBe(100,);
+  });
+
+  test("applyAction clamps score at MIN_SCORE (0) for huge negative delta", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    // Seed a small score first.
+    await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a0", name: "Warmup", type: "gift", delta: 10, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: {
+        id: "a1",
+        name: "Catastrophe",
+        type: "physical",
+        delta: -9_999_999,
+        minIntimacy: 0,
+        requiresConsent: false,
+      },
+    },);
+
+    expect(result.applied,).toBe(true,);
+    expect(result.newScore,).toBe(0,);
+    expect(result.actualDelta,).toBe(-10,);
+  });
+
+  test("applyAction with Number.MAX_SAFE_INTEGER as delta clamps to MAX_SCORE", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: {
+        id: "a1",
+        name: "MAX",
+        type: "gift",
+        delta: Number.MAX_SAFE_INTEGER,
+        minIntimacy: 0,
+        requiresConsent: false,
+      },
+    },);
+
+    expect(result.newScore,).toBe(100,);
+  });
+
+  test("applyAction with NaN delta throws (NOT NULL constraint on score column)", async () => {
+    // SQLite coerces JavaScript NaN to NULL; the score column is
+    // NOT NULL, so the insert fails. Pin the observable behavior so
+    // a future refactor must guard against NaN explicitly.
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    await expect(
+      service.applyAction({
+        database: db,
+        actorId: "actor-1",
+        targetActorId: "actor-2",
+        action: { id: "a1", name: "NaN", type: "gift", delta: NaN, minIntimacy: 0, requiresConsent: false, },
+      },),
+    ).rejects.toThrow();
+  });
+
+  test("same-actor self-pair stores a pair with score 0", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    const self = await service.getPair("actor-1", "actor-1",);
+    expect(self.actorId,).toBe("actor-1",);
+    expect(self.targetActorId,).toBe("actor-1",);
+    expect(self.score,).toBe(0,);
+  });
+
+  test("action with empty id is still persisted", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "", name: "Empty-id", type: "gift", delta: 5, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    expect(result.applied,).toBe(true,);
+    const pair = await service.getPair("actor-1", "actor-2",);
+    expect(pair.actionHistory.length,).toBe(1,);
+  });
+
+  test("requiresConsent=true does not block the action (consent is caller's responsibility)", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    const result = await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a1", name: "Consented", type: "physical", delta: 5, minIntimacy: 0, requiresConsent: true, },
+    },);
+
+    expect(result.applied,).toBe(true,);
+    expect(result.newScore,).toBe(5,);
+  });
+
+  test("decayAll returns 0 affected when actor has no pairs", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    const affected = await service.decayAll("actor-3", 5,);
+    expect(affected,).toBe(0,);
+  });
+
+  test("decayAll skips pairs already at 0", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    await service.getPair("actor-1", "actor-2",);
+    const affected = await service.decayAll("actor-1", 5,);
+    expect(affected,).toBe(0,);
+  });
+
+  test("multiple actor-1 pairs all decay in one call", async () => {
+    const db = await seedTestDb();
+    const service = new IntimacyService(db,);
+
+    await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-2",
+      action: { id: "a", name: "Gift", type: "gift", delta: 10, minIntimacy: 0, requiresConsent: false, },
+    },);
+    await service.applyAction({
+      database: db,
+      actorId: "actor-1",
+      targetActorId: "actor-3",
+      action: { id: "a", name: "Gift", type: "gift", delta: 10, minIntimacy: 0, requiresConsent: false, },
+    },);
+
+    const affected = await service.decayAll("actor-1", 3,);
+    expect(affected,).toBe(2,);
+  });
 });

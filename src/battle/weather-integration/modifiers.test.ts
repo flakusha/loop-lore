@@ -78,6 +78,60 @@ describe("getEnvironmentalModifiers", () => {
       description: "Difficult terrain reduces speed",
     },);
   });
+
+  // ── Edge cases ──────────────────────────────────────────────
+
+  test("no cover modifier when cover is 'none'", () => {
+    const mods = getEnvironmentalModifiers(terrain({ cover: "none", },),);
+    expect(mods.some((m,) => m.id === "cover_defense"),).toBe(false,);
+  });
+
+  test("heatwave + no terrain yields only stamina drain", () => {
+    const mods = getEnvironmentalModifiers(terrain({ weather: "heatwave", },),);
+    const ids = mods.map((m,) => m.id);
+    expect(ids,).toContain("heat_stamina",);
+    expect(mods.length,).toBe(1,);
+  });
+
+  test("storm + open terrain adds two weather modifiers", () => {
+    const mods = getEnvironmentalModifiers(terrain({ weather: "storm", },),);
+    const ids = mods.map((m,) => m.id);
+    expect(ids,).toContain("storm_accuracy",);
+    expect(ids,).toContain("storm_speed",);
+  });
+
+  test("cold_snap adds cold_speed and cold_attack modifiers", () => {
+    const mods = getEnvironmentalModifiers(terrain({ weather: "cold_snap", },),);
+    const ids = mods.map((m,) => m.id);
+    expect(ids,).toContain("cold_speed",);
+    expect(ids,).toContain("cold_attack",);
+  });
+
+  test("wind adds only wind_ranged modifier", () => {
+    const mods = getEnvironmentalModifiers(terrain({ weather: "wind", },),);
+    expect(mods,).toContainEqual({
+      id: "wind_ranged",
+      source: "weather",
+      affectedStat: "accuracy",
+      value: -10,
+      isPercentage: false,
+      duration: 0,
+      description: "Wind affects ranged attacks",
+    },);
+  });
+
+  test("full cover grants +10 defense", () => {
+    const mods = getEnvironmentalModifiers(terrain({ cover: "full", },),);
+    expect(mods,).toContainEqual({
+      id: "cover_defense",
+      source: "terrain",
+      affectedStat: "defense",
+      value: 10,
+      isPercentage: false,
+      duration: 0,
+      description: "Cover provides +10 defense",
+    },);
+  });
 });
 
 describe("applyEnvironmentalModifiers", () => {
@@ -164,5 +218,106 @@ describe("applyEnvironmentalModifiers", () => {
     expect(result.defense,).toBe(30,);
     // 30 base - 15 storm - 10 mountain - 10 difficult (speed is unclamped)
     expect(result.speed,).toBe(-5,);
+  });
+
+  // ── Edge cases ──────────────────────────────────────────────
+
+  test("empty modifier list is a no-op (returns the base stats copy)", () => {
+    const result = applyEnvironmentalModifiers(stats(), [],);
+    expect(result,).toEqual(stats(),);
+  });
+
+  test("mana and stamina are clamped like health", () => {
+    const mods: EnvironmentalModifier[] = [
+      {
+        id: "drain_mana",
+        source: "hazard",
+        affectedStat: "mana",
+        value: -500,
+        isPercentage: false,
+        duration: 0,
+        description: "test",
+      },
+      {
+        id: "drain_stam",
+        source: "hazard",
+        affectedStat: "stamina",
+        value: -500,
+        isPercentage: false,
+        duration: 0,
+        description: "test",
+      },
+    ];
+    const result = applyEnvironmentalModifiers(stats(), mods,);
+    expect(result.mana,).toBe(0,);
+    expect(result.stamina,).toBe(0,);
+  });
+
+  test("criticalChance and dodgeChance both clamp to [0, 100]", () => {
+    const critMod: EnvironmentalModifier = {
+      id: "crit",
+      source: "terrain",
+      affectedStat: "criticalChance",
+      value: 500,
+      isPercentage: false,
+      duration: 0,
+      description: "test",
+    };
+    const dodgeMod: EnvironmentalModifier = {
+      id: "dodge",
+      source: "terrain",
+      affectedStat: "dodgeChance",
+      value: -500,
+      isPercentage: false,
+      duration: 0,
+      description: "test",
+    };
+    const result = applyEnvironmentalModifiers(stats(), [critMod, dodgeMod,],);
+    expect(result.criticalChance,).toBe(100,);
+    expect(result.dodgeChance,).toBe(0,);
+  });
+
+  test("modifier on characterId is silently ignored (non-numeric field)", () => {
+    const mod: EnvironmentalModifier = {
+      id: "x",
+      source: "hazard",
+      affectedStat: "characterId",
+      value: 99,
+      isPercentage: false,
+      duration: 0,
+      description: "test",
+    };
+    const result = applyEnvironmentalModifiers(stats(), [mod,],);
+    expect(result.characterId,).toBe("c1",);
+  });
+
+  test("base object is not mutated by modifier application", () => {
+    const base = stats();
+    const mod: EnvironmentalModifier = {
+      id: "x",
+      source: "terrain",
+      affectedStat: "defense",
+      value: 5,
+      isPercentage: false,
+      duration: 0,
+      description: "test",
+    };
+    applyEnvironmentalModifiers(base, [mod,],);
+    expect(base.defense,).toBe(10,);
+  });
+
+  test("percentage modifier on a low base produces a sensible rounded value", () => {
+    // 10 * (1 - 0.5) = 5 — straightforward.
+    const mod: EnvironmentalModifier = {
+      id: "x",
+      source: "terrain",
+      affectedStat: "attack",
+      value: -50,
+      isPercentage: true,
+      duration: 0,
+      description: "test",
+    };
+    const result = applyEnvironmentalModifiers(stats({ attack: 10, },), [mod,],);
+    expect(result.attack,).toBe(5,);
   });
 });

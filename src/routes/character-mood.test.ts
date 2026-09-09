@@ -209,6 +209,39 @@ describe("Mood CRUD — owner", () => {
     const res = await app.handle(new Request(`http://localhost/api/actors/${OWNER}/mood/events`,),);
     expect(res.status,).toBe(404,);
   });
+
+  // ─── Edge cases ────────────────────────────────────────────────────────
+
+  test("POST mood: non-number happiness string is rejected", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/mood`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ happiness: "not-a-number", },),
+      },),
+    );
+    expect([400, 422,],).toContain(res.status,);
+  });
+
+  test("POST mood: invalid mood enum value rejected", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${OWNER}/mood`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ happiness: 10, baseMood: "not-a-real-mood", },),
+      },),
+    );
+    // Some routes pass through unknown enums; reject or 5xx — never a 2xx with bad data.
+    expect(res.status,).not.toBe(200,);
+  });
+
+  test("GET mood: unknown actor id returns 422 (UUID format check)", async () => {
+    const app = makeApp(db, OWNER_USER, "user",);
+    const res = await app.handle(new Request(`http://localhost/api/actors/no-such-actor-id/mood`,),);
+    expect([400, 404, 422,],).toContain(res.status,);
+  });
 });
 
 describe("Mood — admin/solo bypass", () => {

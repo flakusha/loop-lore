@@ -31,4 +31,35 @@ describe("calculateElevationBonus", () => {
     expect(calculateElevationBonus("low", "high",),).toEqual({ attackBonus: -4, damageBonus: -2, },);
     expect(calculateElevationBonus("low", "medium",),).toEqual({ attackBonus: -2, damageBonus: -1, },);
   });
+
+  // ── Edge cases ──────────────────────────────────────────────
+
+  test("extreme-vs-extreme is level (no bonus)", () => {
+    expect(calculateElevationBonus("extreme", "extreme",),).toEqual({ attackBonus: 0, damageBonus: 0, },);
+  });
+
+  test("high-vs-medium grants exactly one tier of advantage", () => {
+    expect(calculateElevationBonus("high", "medium",),).toEqual({ attackBonus: 2, damageBonus: 1, },);
+  });
+
+  test("extreme-vs-medium grants two tiers of advantage", () => {
+    expect(calculateElevationBonus("extreme", "medium",),).toEqual({ attackBonus: 4, damageBonus: 2, },);
+  });
+
+  test("damageBonus tracks the tier delta on disadvantage (Math.min(0, diff))", () => {
+    // Implementation: damageBonus = Math.min(0, difference). For a
+    // 1-tier disadvantage (difference = -1) this is -1, not 0. The
+    // floor only kicks in when the implementation chooses to apply it.
+    const result = calculateElevationBonus("medium", "high",);
+    expect(result.attackBonus,).toBe(-2,);
+    expect(result.damageBonus,).toBe(-1,);
+  });
+
+  test("high-vs-extreme grants a single-tier negative swing", () => {
+    expect(calculateElevationBonus("high", "extreme",),).toEqual({ attackBonus: -2, damageBonus: -1, },);
+  });
+
+  test("medium-vs-extreme is a two-tier disadvantage", () => {
+    expect(calculateElevationBonus("medium", "extreme",),).toEqual({ attackBonus: -4, damageBonus: -2, },);
+  });
 });

@@ -106,3 +106,32 @@ describe("federationRoutes — instance-state", () => {
     expect(body,).not.toMatch(/apiKey|password|secret|token|userId|sessionId/i,);
   });
 });
+
+describe("federationRoutes — edge cases", () => {
+  test("malformed nodeinfo discovery request (wrong Accept) handled gracefully", async () => {
+    const app = federationRoutes({ config: FED_ENABLED, },);
+    const res = await app.handle(
+      new Request("http://localhost/.well-known/nodeinfo", {
+        headers: { accept: "text/plain", },
+      },),
+    );
+    expect([200, 406,],).toContain(res.status,);
+  });
+
+  test("instance-state: oversize query string does not crash", async () => {
+    const app = federationRoutes({ config: FED_ENABLED, },);
+    const huge = "x".repeat(8_192,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/instance-state?garbage=${huge}`,),
+    );
+    expect([200, 414,],).toContain(res.status,);
+  });
+
+  test("nodeinfo ignores unknown query parameters", async () => {
+    const app = federationRoutes({ config: FED_ENABLED, },);
+    const res = await app.handle(
+      new Request("http://localhost/.well-known/nodeinfo?foo=bar&baz=qux",),
+    );
+    expect(res.status,).toBe(200,);
+  });
+});
