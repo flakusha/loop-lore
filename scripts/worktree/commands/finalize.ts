@@ -123,6 +123,9 @@ function checkDevMergeable(repoRoot: string,): void {
  * that exercise the lock-acquire / exit-handler contract in isolation,
  * without requiring the full `finalize()` entry point (which needs a real
  * worktree + GPG key + dev checkout).
+ * knip: only reachable from the test's child-process fixture
+ * (`finalize-lock-fixture.ts`, run via spawn — not a static import knip
+ * can trace), plus one intra-file call knip doesn't track.
  */
 export function acquireFinalizeLock(repoRoot: string,): () => void {
   const lockPath = resolve(repoRoot, LOCK_FILENAME,);
@@ -269,10 +272,12 @@ function releaseLockOnExit(): void {
   const release = ACTIVE_LOCK_RELEASE;
   if (!release) { return; }
   // Clear the slot first so a synchronous release+exit cycle cannot
- // re-enter this handler with a stale closure (defensive — Node fires
- // `exit` exactly once, but defensive is cheap).
+  // re-enter this handler with a stale closure (defensive — Node fires
+  // `exit` exactly once, but defensive is cheap).
   ACTIVE_LOCK_RELEASE = null;
-  try { release(); } catch { /* best-effort; nothing useful we can do */ }
+  try {
+    release();
+  } catch { /* best-effort; nothing useful we can do */ }
 }
 /**
  * Signal handler: transactional rollback + exit 130. Runs even if the
