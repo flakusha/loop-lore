@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/db/schema-backfill-mesh.ts — stranded guard for parts 022 + 002.
+// src/db/schema-backfill-mesh.ts — stranded guard for parts 022 + 002 + 003.
 //
 // Part 022 persists send-side reservations and received-delivery records;
 // databases frozen before 022 lack both tables. Migration 002 adds
 // `mesh_peers.capacity_bytes`; databases frozen between 022 and 002 keep the
-// tables but lack the column. Detection is `sqlite_master`; the repair
-// mirrors 022 + 002 exactly, including their schema-version records.
+// tables but lack the column. Migration 003 adds `mesh_inbound_keys` for
+// per-sender content keys. Detection is `sqlite_master`; the repair mirrors
+// 022 + 002 + 003 exactly, including their schema-version records.
 // @module schema-backfill-mesh
 
 import type { Kysely, } from "kysely";
@@ -30,10 +31,11 @@ import { recordSchemaVersion, } from "./schema-version";
 export async function repairMeshSharing(database: Kysely<DB>,): Promise<boolean> {
   const hasReservations = (await tableSql(database, "mesh_reservations",)) !== null;
   const hasDeliveries = (await tableSql(database, "mesh_deliveries",)) !== null;
+  const hasInboundKeys = (await tableSql(database, "mesh_inbound_keys",)) !== null;
   const peersDdl = await tableSql(database, "mesh_peers",);
   const needsCapacity = peersDdl !== null &&
     !peersDdl.toLowerCase().includes("capacity_bytes",);
-  if (hasReservations && hasDeliveries && !needsCapacity) { return false; }
+  if (hasReservations && hasDeliveries && hasInboundKeys && !needsCapacity) { return false; }
   const log = getLogger().child({ module: "schema-backfill", },);
   if (!hasReservations) {
     await database.schema
@@ -62,6 +64,16 @@ export async function repairMeshSharing(database: Kysely<DB>,): Promise<boolean>
       .addColumn("received_at", "text", (column,) => column.notNull().defaultTo(sql`(datetime('now'))`,),)
       .execute();
   }
+  if (!hasInboundKeys) {
+    await database.schema
+      .createTable("mesh_inbound_keys",)
+      .addColumn("peer_origin", "text", (column,) => column.primaryKey(),)
+      .addColumn("encrypted_key", "text", (column,) => column.notNull(),)
+      .addColumn("previous_encrypted_key", "text",)
+      .addColumn("created_at", "text", (column,) => column.notNull().defaultTo(sql`(datetime('now'))`,),)
+      .addColumn("updated_at", "text", (column,) => column.notNull().defaultTo(sql`(datetime('now'))`,),)
+      .execute();
+  }
   if (needsCapacity) {
     await database.schema
       .alterTable("mesh_peers",)
@@ -71,6 +83,7 @@ export async function repairMeshSharing(database: Kysely<DB>,): Promise<boolean>
   if ((await tableSql(database, "schema_version",)) !== null) {
     await recordSchemaVersion(database, 22, "mesh sharing reservations and deliveries",);
     await recordSchemaVersion(database, 23, "mesh peer inbound capacity",);
+    await recordSchemaVersion(database, 24, "mesh per-sender inbound keys",);
   }
   log.info("Schema backfill applied: mesh sharing tables created",);
   return true;

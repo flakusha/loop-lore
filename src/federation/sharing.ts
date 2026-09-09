@@ -85,7 +85,9 @@ export async function createInboundReservation(
     .where("origin", "=", origin,)
     .executeTakeFirst();
   if (!peer || peer.state !== "trusted") { throw new Error(`untrusted peer: ${origin}`,); }
-  if (input.sizeBytes <= 0) { throw new Error(`invalid size: ${input.sizeBytes}`,); }
+  if (!Number.isFinite(input.sizeBytes,) || input.sizeBytes <= 0) {
+    throw new Error(`invalid size: ${input.sizeBytes}`,);
+  }
   if (peer.capacity_bytes !== null) {
     const held = await outstandingBytes(database, origin,);
     if (held + input.sizeBytes > peer.capacity_bytes) {
@@ -193,11 +195,24 @@ export async function sweepExpiredReservations(
 }
 
 /**
- * Request capacity on a receiving peer (sender side).
+ * Granted reservation: capacity id plus the receiver's inbound content key
+ * for this sender (absent when the receiver runs PSK-only without an SMK).
+ */
+export interface GrantedReservation {
+  /** Receiver-side reservation id. */
+  reservationId: string;
+  /** Base64 inbound key to seal with (via `pskCipher`). Omitted on PSK fallback. */
+  contentKey?: string;
+}
+
+/**
+ * Request capacity on a receiving peer (sender side). The response carries
+ * the receiver's inbound content key for this sender — seal the push with
+ * it instead of the mesh PSK whenever present.
  * @param post Transport POST.
  * @param origin Receiver origin.
  * @param request Reservation request.
- * @returns Receiver-side reservation id.
+ * @returns Reservation id plus optional inbound content key.
  * @throws When the peer refuses or is unreachable.
  */
 export async function requestReservation(
@@ -210,7 +225,7 @@ export async function requestReservation(
     contentType?: string;
     ttlMs?: number;
   },
-): Promise<string> {
+): Promise<GrantedReservation> {
   const response = await post(`${origin}/api/mesh-reserve`, {
     senderOrigin: request.senderOrigin,
     contentHash: request.contentHash,
@@ -218,11 +233,16 @@ export async function requestReservation(
     contentType: request.contentType ?? "blob",
     ttlMs: request.ttlMs ?? DEFAULT_RESERVATION_TTL_MS,
   },);
-  const reservationId = (response.body as { reservationId?: unknown } | null)?.reservationId;
+  const body = (response.body ?? null) as { reservationId?: unknown; contentKey?: unknown } | null;
+  const reservationId = body?.reservationId;
   if (!response.ok || typeof reservationId !== "string") {
     throw new Error(`reservation refused by ${origin} (status ${response.status})`,);
   }
-  return reservationId;
+  const contentKey = body?.contentKey;
+  return {
+    reservationId,
+    ...(typeof contentKey === "string" ? { contentKey, } : {}),
+  };
 }
 
 /** Delivery outcome. */
