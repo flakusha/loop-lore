@@ -76,20 +76,29 @@ export function buildLengthConfig(
 }
 
 /**
- * Clamp a token count to the allowed range (50–2000).
- * @param tokens - Raw token count
- * @returns Clamped value within bounds
+ * Parse a ResponseLengthConfig from a settings JSON object.
+ * @param settings - Settings object with an optional `responseLength` key
+ * @returns Parsed config, or the default when absent or invalid
  */
 export function parseLengthConfig(settings: Record<string, unknown> | null | undefined,): ResponseLengthConfig {
-  if (!settings?.responseLength) {
+  const raw = settings?.responseLength;
+  if (typeof raw !== "object" || raw === null) {
     return { ...DEFAULT_RESPONSE_LENGTH, };
   }
+  const record = raw as Record<string, unknown>;
+  const preset = typeof record.preset === "string" && isValidPreset(record.preset,)
+    ? record.preset
+    : DEFAULT_RESPONSE_LENGTH.preset;
+  const customMin = typeof record.customMin === "number" ? record.customMin : undefined;
+  const customMax = typeof record.customMax === "number" ? record.customMax : undefined;
+  return buildLengthConfig(preset, customMin, customMax,);
+}
 
 /**
- * Check if a preset string is a valid ResponseLengthPreset.
+ * Check if a preset string is a valid LengthPreset.
  * @param value - String to validate
  * @returns True if valid preset
  */
-export function isValidPreset(value: string,): value is ResponseLengthPreset {
+export function isValidPreset(value: string,): value is LengthPreset {
   return (["short", "medium", "long", "custom",] as const).includes(value as never,);
 }
