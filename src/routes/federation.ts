@@ -47,7 +47,8 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
     return app;
   }
 
-  const origin = `${config.server.tls?.cert ? "https" : "http"}://${config.server.host}:${config.server.port}`;
+  const origin = config.server.publicOrigin ??
+    `${config.server.tls?.cert ? "https" : "http"}://${config.server.host}:${config.server.port}`;
 
   app.get(
     "/.well-known/nodeinfo",

@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+# Production Caddyfile — automatic HTTPS via ACME (Let's Encrypt).
+#
+# Usage:
+#   DOMAIN=lore.example.com bun run scripts/worktree/ ... (see deploy/docker-compose.yml)
+#   # or: caddy run --config deploy/Caddyfile --adapter caddyfile
+#
+# Caddy obtains and renews the certificate automatically (HTTP-01 on :80,
+# TLS-ALPN on :443 — both ports must be reachable). No certbot, no cron,
+# no reload hooks: renewal is internal and hot.
+#
+# The app runs plain HTTP behind Caddy. Required app env:
+#   SERVER_TRUST_PROXY=1
+#   SERVER_PUBLIC_ORIGIN=https://{$DOMAIN}
+
+{$DOMAIN} {
+	# ACME contact (Let's Encrypt expiry / policy notices)
+	tls {$ACME_EMAIL}
+
+	# Harden TLS: modern defaults are already Caddy's; keep curves explicit
+	# for stable scans across Caddy upgrades.
+	# (Caddy manages protocols/ciphers securely by default — no overrides.)
+
+	encode gzip
+
+	# Security headers on every response (app also sets its own; proxy
+	# layer is the reliable place for HSTS since it always sees TLS).
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# CSP is owned by the app (per-route); do not duplicate here.
+	}
+
+	# Long-lived WebSocket / htmx SSE streams must not be buffered.
+	reverse_proxy app:3000 {
+		flush_interval -1
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+	}
+}
