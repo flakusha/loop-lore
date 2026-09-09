@@ -18,12 +18,18 @@
 import { Elysia, } from "elysia";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
+import { getSmk, } from "../crypto/smk";
 import type { Db, } from "../db";
 import { pskCipher, } from "../federation/cipher";
 import { createMeshClock, } from "../federation/clock";
 import { type ContentEnvelope, } from "../federation/envelope";
 import { getGossipOrigins, } from "../federation/gossip";
-import { createInboundReservation, receiveDelivery, } from "../federation/sharing";
+import { ciphersForSender, getOrCreateInboundKey, } from "../federation/peer-keys";
+import {
+  createInboundReservation,
+  type DeliveryVerdict,
+  receiveDelivery,
+} from "../federation/sharing";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
@@ -170,7 +176,20 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
           contentType: typeof request.contentType === "string" ? request.contentType : undefined,
           ttlMs: typeof request.ttlMs === "number" ? request.ttlMs : undefined,
         },);
-        return jsonResponse({ reservationId, },);
+        // Hand the sender our inbound key for its origin (single-writer:
+        // only the receiver mints these). Issued only over a sealed wire —
+        // direct TLS or a TLS-terminating proxy — since the key travels in
+        // the response body: over plaintext HTTP it would ride the same
+        // wire as the ciphertexts it protects. Absent without an SMK or
+        // on a plaintext wire — the sender then seals with the shared PSK.
+        const wireSealed = Boolean(config.server.tls?.cert,) || config.server.trustProxy === true;
+        const smk = getSmk();
+        const contentKey = smk === null || !wireSealed
+          ? undefined
+          : await getOrCreateInboundKey(opts.database, smk, request.senderOrigin,);
+        return jsonResponse(
+          contentKey === undefined ? { reservationId, } : { reservationId, contentKey, },
+        );
       } catch (error) {
         const message = error instanceof Error ? error.message : "reservation failed";
         const status = message.includes("untrusted peer",)
@@ -226,22 +245,35 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
       const reservationId = typeof request?.reservationId === "string"
         ? request.reservationId
         : undefined;
-      try {
-        const verdict = await receiveDelivery(
-          opts.database,
-          envelope as ContentEnvelope,
-          pskCipher(secret,),
-          reservationId === undefined ? {} : { reservationId, },
-        );
-        meshClock.observe(envelope.clock,);
-        return jsonResponse({ verdict, },);
-      } catch {
+      const ciphers = await ciphersForSender(
+        opts.database,
+        envelope.origin,
+        pskCipher(secret,),
+        getSmk(),
+      );
+      let verdict: DeliveryVerdict | null = null;
+      for (const cipher of ciphers) {
+        try {
+          verdict = await receiveDelivery(
+            opts.database,
+            envelope as ContentEnvelope,
+            cipher,
+            reservationId === undefined ? {} : { reservationId, },
+          );
+          break;
+        } catch {
+          // Try the next cipher (current → grace previous → PSK fallback).
+        }
+      }
+      if (verdict === null) {
         return jsonError({
           message: "envelope failed integrity verification",
           status: HttpStatus.BadRequest,
           code: ErrorCode.BadRequest,
         },);
       }
+      meshClock.observe(envelope.clock,);
+      return jsonResponse({ verdict, },);
     },
     {
       detail: {

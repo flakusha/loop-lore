@@ -2,12 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Mesh peer inbound capacity (Phase 2: coordinator-mediated reservation).
+ * Mesh peer inbound capacity (Phase 2.5: reservation quota).
  *
- * `mesh_peers.capacity_bytes` caps the total plaintext bytes a peer accepts
- * via inbound reservations (reserved + pushed states). NULL means unlimited.
- * Reservations record intent against this allowance; the quota ticket owns
- * dynamic/negotiated limits later.
+ * Adds `mesh_peers.capacity_bytes` — max aggregate reserved bytes per peer
+ * (NULL = unlimited). Enforced at reservation time; existing rows keep
+ * NULL (unlimited) so the upgrade is behavior-preserving.
  */
 import type { Kysely, } from "kysely";
 import { recordSchemaVersion, } from "../schema-version";

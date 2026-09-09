@@ -502,6 +502,18 @@ export async function insertAssets(
   } as any,).execute();
 }
 
+/** Insert a mesh_inbound_keys row. */
+export async function insertMeshInboundKeys(
+  db: Db,
+  encrypted_key: string,
+  opts?: { peer_origin?: string; previous_encrypted_key?: string | null; created_at?: string; updated_at?: string },
+): Promise<void> {
+  await db.insertInto("mesh_inbound_keys",).values({
+    encrypted_key,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a location_states row. */
 export async function insertLocationStates(
   db: Db,

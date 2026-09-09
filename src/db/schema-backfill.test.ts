@@ -34,6 +34,7 @@ describe("schema-backfill", () => {
     await sql`CREATE TABLE workflow_sessions (chat_id TEXT PRIMARY KEY)`.execute(kysely,);
     await sql`CREATE TABLE mesh_reservations (id TEXT PRIMARY KEY)`.execute(kysely,);
     await sql`CREATE TABLE mesh_deliveries (content_id TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`CREATE TABLE mesh_inbound_keys (peer_origin TEXT PRIMARY KEY)`.execute(kysely,);
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });
 
@@ -230,6 +231,34 @@ describe("schema-backfill", () => {
     );
     expect(version.rows.map((row,) => row.version),).toEqual([23,],);
 
+    expect(await runSchemaBackfill(kysely,),).toBe(false,);
+  });
+  test("creates stranded mesh inbound keys table with version record", async () => {
+    await sql`CREATE TABLE mesh_reservations (id TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`CREATE TABLE mesh_deliveries (content_id TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`CREATE TABLE mesh_peers (origin TEXT PRIMARY KEY, state TEXT NOT NULL, capacity_bytes INTEGER)`.execute(
+      kysely,
+    );
+    await sql`CREATE TABLE schema_version (version INTEGER PRIMARY KEY, description TEXT)`.execute(
+      kysely,
+    );
+
+    expect(await runSchemaBackfill(kysely,),).toBe(true,);
+
+    const columns = await sql<{ name: string }>`SELECT name FROM pragma_table_info('mesh_inbound_keys')`.execute(
+      kysely,
+    );
+    expect(columns.rows.map((row,) => row.name),).toEqual([
+      "peer_origin",
+      "encrypted_key",
+      "previous_encrypted_key",
+      "created_at",
+      "updated_at",
+    ],);
+    const version = await sql<{ version: number }>`SELECT version FROM schema_version WHERE version = 23`.execute(
+      kysely,
+    );
+    expect(version.rows.map((row,) => row.version),).toEqual([23,],);
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });
 });
