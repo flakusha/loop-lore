@@ -10433,6 +10433,12 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/federation/coordinator.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mesh-coordinator-server-knowledge-db.md"
+    }
+  ],
   "src/federation/gossip.test.ts": [
     {
       "kind": "ticket",
