@@ -8,4 +8,5 @@ export const FEDERATION_DEFAULTS = {
   enabled: false,
   seeds: [],
   peers: [],
+  meshPsk: "",
 } satisfies FederationConfig;
