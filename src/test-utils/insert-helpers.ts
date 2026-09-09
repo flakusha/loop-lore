@@ -3496,3 +3496,38 @@ export async function insertMeshNegotiations(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a mesh_reservations row. */
+export async function insertMeshReservations(
+  db: Db,
+  peer_origin: string,
+  content_hash: string,
+  size_bytes: number,
+  expires_at: string,
+  opts?: { id?: string; content_type?: string; state?: string; created_at?: string },
+): Promise<void> {
+  await db.insertInto("mesh_reservations",).values({
+    id: crypto.randomUUID(),
+    peer_origin,
+    content_hash,
+    size_bytes,
+    expires_at,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a mesh_deliveries row. */
+export async function insertMeshDeliveries(
+  db: Db,
+  origin: string,
+  content_hash: string,
+  clock: number,
+  opts?: { content_id?: string; received_at?: string },
+): Promise<void> {
+  await db.insertInto("mesh_deliveries",).values({
+    origin,
+    content_hash,
+    clock,
+    ...opts,
+  } as any,).execute();
+}

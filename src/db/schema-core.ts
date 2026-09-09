@@ -1059,3 +1059,24 @@ export interface MeshNegotiations {
   state: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── mesh_reservations ────────────────────────────────────────────
+export interface MeshReservations {
+  id: Generated<string>;
+  peer_origin: string;
+  content_hash: string;
+  size_bytes: number;
+  content_type: Generated<string>;
+  state: Generated<string>;
+  expires_at: string;
+  created_at: Generated<string>;
+}
+
+// ── mesh_deliveries ────────────────────────────────────────────
+export interface MeshDeliveries {
+  content_id: Generated<string>;
+  origin: string;
+  content_hash: string;
+  clock: number;
+  received_at: Generated<string>;
+}

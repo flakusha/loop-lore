@@ -38,6 +38,11 @@ export const federation = {
         required: ["origin",],
       },
     },
+    meshPsk: {
+      type: "string",
+      default: "",
+      description: "Mesh content PSK for envelope seal/open. Env-only: MESH_PSK.",
+    },
   },
-  required: ["enabled", "seeds", "peers",],
+  required: ["enabled", "seeds", "peers", "meshPsk",],
 };
