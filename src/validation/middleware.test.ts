@@ -341,3 +341,40 @@ describe("onValidationError", () => {
     expect(body.error,).not.toContain("SQLITE_CANTOPEN",);
   });
 });
+
+// ── Per-schema minLength/maxLength/format edge sweep ────────
+
+describe("Primitive schema edges", () => {
+  test("Name accepts a string at the 255-char cap and rejects one over", () => {
+    const C = compile(t.String({ minLength: 1, maxLength: 255, },),);
+    expect(C.Check("x".repeat(255,),),).toBe(true,);
+    expect(C.Check("x".repeat(256,),),).toBe(false,);
+    expect(C.Check("",),).toBe(false,);
+  });
+
+  test("DisplayName rejects strings above the 128-char cap", () => {
+    const C = compile(t.String({ minLength: 1, maxLength: 128, },),);
+    expect(C.Check("x".repeat(128,),),).toBe(true,);
+    expect(C.Check("x".repeat(129,),),).toBe(false,);
+  });
+
+  test("Id rejects a non-uuid string", () => {
+    const C = compile(t.String({ format: "uuid", },),);
+    expect(C.Check("550e8400-e29b-41d4-a716-446655440000",),).toBe(true,);
+    expect(C.Check("not-a-uuid",),).toBe(false,);
+    expect(C.Check("",),).toBe(false,);
+  });
+
+  test("PaginationQuery rejects pageSize > 200 and page < 1", () => {
+    const C = compile(PaginationQuery,);
+    expect(C.Check({ pageSize: 200, },),).toBe(true,);
+    expect(C.Check({ pageSize: 201, },),).toBe(false,);
+    expect(C.Check({ page: 0, },),).toBe(false,);
+  });
+
+  test("WorldCreateBody rejects a name above the 255-char Name cap", () => {
+    const C = compile(WorldCreateBody,);
+    expect(C.Check({ name: "x".repeat(255,), },),).toBe(true,);
+    expect(C.Check({ name: "x".repeat(256,), },),).toBe(false,);
+  });
+});
