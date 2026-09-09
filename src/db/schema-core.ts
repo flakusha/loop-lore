@@ -1042,3 +1042,20 @@ export interface WorkflowSessions {
   confirmed: Generated<number>;
   updated_at: Generated<string>;
 }
+
+// ── mesh_peers ────────────────────────────────────────────
+export interface MeshPeers {
+  origin: Generated<string>;
+  state: Generated<string>;
+  capabilities: Generated<string>;
+  last_seen: string | null;
+  created_at: Generated<string>;
+}
+
+// ── mesh_negotiations ────────────────────────────────────────────
+export interface MeshNegotiations {
+  id: Generated<string>;
+  peer_origin: string;
+  state: Generated<string>;
+  updated_at: Generated<string>;
+}

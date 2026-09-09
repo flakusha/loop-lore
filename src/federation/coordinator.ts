@@ -1,0 +1,232 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+// src/federation/coordinator.ts — Coordinator role: peer registry +
+// negotiation state machine + resync pass over the mesh knowledge tables.
+//
+// Decision (mesh-coordinator worktree): the coordinator runs as a role of the
+// loop-lore server, not a separate app — registry tables live in the main
+// schema (part 020), negotiation runs in-process, and resync rides the cron
+// scheduler. Quota and encrypted-sharing phases build on this registry.
+// Metadata/control plane only — plaintext content never touches these paths.
+
+import type { Kysely, } from "kysely";
+import { sql, } from "kysely";
+import type { DB, } from "../db/schema";
+import {
+  canonicalOrigin,
+  fetchPeerAdvertisement,
+  type InstanceAdvertisement,
+  type PeerFetch,
+} from "./peer-fetch";
+
+/** Registry states for a known peer. */
+export const PEER_STATES = ["pending", "trusted", "suspended",] as const;
+/** Registry state. */
+export type PeerState = (typeof PEER_STATES)[number];
+
+/** Negotiation states (linear handshake, closed terminal). */
+export const NEGOTIATION_STATES = [
+  "idle",
+  "handshake",
+  "capability-exchange",
+  "quota-agreement",
+  "established",
+  "closed",
+] as const;
+/** Negotiation state. */
+export type NegotiationState = (typeof NEGOTIATION_STATES)[number];
+
+/** Forward chain; any state may jump to closed. */
+const NEXT: Record<Exclude<NegotiationState, "closed">, NegotiationState> = {
+  "idle": "handshake",
+  "handshake": "capability-exchange",
+  "capability-exchange": "quota-agreement",
+  "quota-agreement": "established",
+  "established": "established",
+};
+
+/** Summary of one resync pass over trusted peers. */
+export interface ResyncSummary {
+  /** Trusted peers checked. */
+  checked: number;
+  /** Peers that answered 200 with a parseable body. */
+  alive: number;
+}
+
+/**
+ * Insert a peer or refresh its row when already known.
+ * @param database
+ * @param peer
+ * @returns Canonical origin stored.
+ */
+export async function upsertPeer(
+  database: Kysely<DB>,
+  peer: { origin: string; state?: PeerState; capabilities?: string[] },
+): Promise<string> {
+  const origin = canonicalOrigin(peer.origin,);
+  if (origin === null) { throw new Error(`invalid peer origin: ${peer.origin}`,); }
+  const row = {
+    origin,
+    state: peer.state ?? "pending",
+    capabilities: JSON.stringify(peer.capabilities ?? [],),
+  };
+  await database
+    .insertInto("mesh_peers",)
+    .values(row,)
+    .onConflict((oc,) => oc.column("origin",).doUpdateSet({
+      state: row.state,
+      capabilities: row.capabilities,
+    },),)
+    .execute();
+  return origin;
+}
+
+/**
+ * Set a peer's registry state.
+ * @param database
+ * @param origin
+ * @param state
+ */
+export async function setPeerState(
+  database: Kysely<DB>,
+  origin: string,
+  state: PeerState,
+): Promise<void> {
+  const result = await database
+    .updateTable("mesh_peers",)
+    .set({ state, },)
+    .where("origin", "=", origin,)
+    .executeTakeFirst();
+  // Custom sqlite dialect reports numUpdatedRows (not kysely's
+  // numUpdatedOrDeletedRows) — see profile.ts / orders.ts precedent.
+  if (Number(result?.numUpdatedRows ?? 0,) === 0) {
+    throw new Error(`unknown peer: ${origin}`,);
+  }
+}
+
+/**
+ * List registry peers, optionally filtered by state.
+ * @param database
+ * @param state
+ */
+export async function listPeers(database: Kysely<DB>, state?: PeerState,) {
+  let query = database.selectFrom("mesh_peers",).selectAll();
+  if (state !== undefined) { query = query.where("state", "=", state,); }
+  return query.orderBy("origin",).execute();
+}
+
+/**
+ * Record a successful advertisement fetch: refresh capabilities + last_seen.
+ * @param database
+ * @param origin
+ * @param advertisement
+ */
+export async function touchPeer(
+  database: Kysely<DB>,
+  origin: string,
+  advertisement: InstanceAdvertisement,
+): Promise<void> {
+  const peers = Array.isArray(advertisement.peers,)
+    ? advertisement.peers.filter((p,): p is string => typeof p === "string",).slice(0, 128,)
+    : [];
+  await database
+    .updateTable("mesh_peers",)
+    .set({
+      capabilities: JSON.stringify(peers,),
+      last_seen: sql`(datetime('now'))`,
+    },)
+    .where("origin", "=", origin,)
+    .execute();
+}
+
+/**
+ * Open a negotiation with a known peer.
+ * @param database
+ * @param peerOrigin
+ * @returns Negotiation id.
+ */
+export async function beginNegotiation(
+  database: Kysely<DB>,
+  peerOrigin: string,
+): Promise<string> {
+  const peer = await database
+    .selectFrom("mesh_peers",)
+    .select("origin",)
+    .where("origin", "=", peerOrigin,)
+    .executeTakeFirst();
+  if (!peer) { throw new Error(`unknown peer: ${peerOrigin}`,); }
+  const id = crypto.randomUUID();
+  await database
+    .insertInto("mesh_negotiations",)
+    .values({ id, peer_origin: peerOrigin, state: "idle", },)
+    .execute();
+  return id;
+}
+
+/**
+ * Advance a negotiation one step. Only the forward transition or close is
+ * legal; anything else throws and leaves the row untouched.
+ * @param database
+ * @param id
+ * @param next
+ */
+export async function advanceNegotiation(
+  database: Kysely<DB>,
+  id: string,
+  next: NegotiationState,
+): Promise<void> {
+  const row = await database
+    .selectFrom("mesh_negotiations",)
+    .select(["state",],)
+    .where("id", "=", id,)
+    .executeTakeFirst();
+  if (!row) { throw new Error(`unknown negotiation: ${id}`,); }
+  const current = row.state as NegotiationState;
+  const legal = next === "closed" || (current !== "closed" && NEXT[current] === next);
+  if (!legal) {
+    throw new Error(`illegal negotiation transition: ${current} -> ${next}`,);
+  }
+  await database
+    .updateTable("mesh_negotiations",)
+    .set({ state: next, updated_at: sql`(datetime('now'))`, },)
+    .where("id", "=", id,)
+    .execute();
+}
+
+/**
+ * One resync pass: re-fetch every trusted peer's advertisement and refresh
+ * the registry. Per-peer misses never abort the pass.
+ * @param database
+ * @param opts
+ */
+export async function runResyncPass(
+  database: Kysely<DB>,
+  opts: {
+    trustByOrigin?: Record<string, { caBundle?: string } | undefined>;
+    fetchImpl?: PeerFetch;
+  } = {},
+): Promise<ResyncSummary> {
+  const fetchImpl = opts.fetchImpl ?? fetchPeerAdvertisement;
+  const trusted = await listPeers(database, "trusted",);
+  let alive = 0;
+  await Promise.allSettled(trusted.map(async (peer,) => {
+    let res;
+    try {
+      res = await fetchImpl(
+        `${peer.origin}/api/instance-state`,
+        opts.trustByOrigin?.[peer.origin],
+      );
+    } catch {
+      return;
+    }
+    if (!res.ok) { return; }
+    alive += 1;
+    await touchPeer(
+      database,
+      peer.origin,
+      (res.body ?? {}) as InstanceAdvertisement,
+    );
+  },),);
+  return { checked: trusted.length, alive, };
+}

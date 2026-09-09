@@ -154,4 +154,6 @@ export interface DB {
   message_search_tokens: import("./schema-core").MessageSearchTokens;
   schema_version: import("./schema-core").SchemaVersion;
   workflow_sessions: import("./schema-core").WorkflowSessions;
+  mesh_peers: import("./schema-core").MeshPeers;
+  mesh_negotiations: import("./schema-core").MeshNegotiations;
 }
