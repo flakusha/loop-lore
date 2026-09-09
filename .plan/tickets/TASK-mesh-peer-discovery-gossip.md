@@ -44,6 +44,7 @@ other or share liveness.
 - [ ] Tests cover discovery, timeout eviction, and replay rejection.
 - [ ] `bun run check` green.
 
+
 ## Progress 2026-09-09 (federation-mesh-core)
 - PeerTable primitive existed unwired (no consumers). Added `src/federation/gossip.ts`:
   GossipService pollOnce over all known peers (per-poll tick seq; stale async
