@@ -228,13 +228,14 @@ describe("createRoutes coverage", () => {
     expect(res.status,).toBe(201,);
   });
 
-  test("content: whitespace-only ('   ') is accepted (minLength counts characters)", async () => {
-    // t.String({ minLength: 1 }) accepts any string of length >= 1. Three
-    // spaces is length 3. Pin: whitespace-only content passes validation;
-    // downstream rendering/profanity filtering is responsible for handling.
+  test("content: whitespace-only ('   ') is rejected with 400 (BUG-message-whitespace-only-accepted)", async () => {
+    // Route trims content and rejects whitespace-only payloads with 400
+    // before any side effect (access check, NSFW flag, profanity filter).
+    // BUG-message-whitespace-only-accepted — strict contract since the
+    // auth/messages body-validation fix.
     const app = makeApp(db, owner, "user",);
     const res = await postMessage(app, chatA, { content: "   ", },);
-    expect(res.status,).toBe(201,);
+    expect(res.status,).toBe(400,);
   });
 
   test("content: 1 MB payload is accepted (no maxLength cap on content)", async () => {
