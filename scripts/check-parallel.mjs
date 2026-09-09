@@ -150,10 +150,25 @@ function changedModules(files,) {
   return mods.size > 0 ? [...mods,].sort() : null;
 }
 
+/**
+ * Test paths for the scoped coverage gate: every test under each touched
+ * top-level `src/` module. Adjacent-files scoping (see `scopedTestFiles`)
+ * stays for the unit gate (fast signal); coverage needs module breadth to
+ * meaningfully floor a module.
+ * @param files - Changed paths.
+ * @returns Existing `src/<mod>` dirs, sorted.
+ */
+function scopedCoveragePaths(files,) {
+  const mods = changedModules(files,) ?? [];
+  return mods
+    .map((m,) => `src/${m}`)
+    .filter((p,) => existsSync(path.resolve(DIFF_ROOT, p,),));
+}
+
 const CHANGED = changedFiles(DIFF_BASE,);
 const SCOPED_TESTS = scopedTestFiles(CHANGED,);
 const SCOPED_MODULES = changedModules(CHANGED,);
-const NOOP_OK = "true # diff-scope: no matching files";
+const SCOPED_COVERAGE_PATHS = scopedCoveragePaths(CHANGED,);
 
 // oxlint-disable-next-line sort-keys
 const checks = {
@@ -205,23 +220,23 @@ const checks = {
     // Shell reference guard (no .sh references in docs)
     "no - shell - refs": "bun run scripts/check-no-shell-refs.ts",
 
-    // Tests
-    "test - unit": DIFF_BASE
-      ? (SCOPED_TESTS.length > 0 ? `bun test --isolate ${SCOPED_TESTS.join(" ",)}` : NOOP_OK)
-      : "bun run test:unit",
-    "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",
     // Coverage gate: per-module line % vs 80% floor (see AGENTS.md Verification Gates).
     // NOTE: the scoped bun invocation must pass the same lcov reporter flags
     // as `test:coverage` — bare `--coverage` emits no lcov.info, so
     // `coverage.mjs` (which reads `.tmp/coverage/lcov.info`) always failed.
+    // The test set is every test under each touched top-level `src/` module:
+    // adjacent test files alone cannot floor a whole module (e.g. two
+    // gate test files cover ~16% of `generation/`; the module suite ~88%).
+    // `coverage.mjs --only` floors just the touched modules; touched
+    // non-`src/` trees (e.g. `scripts/`) have no lcov rows and SKIP.
     "coverage - per-module line %": DIFF_BASE
-      ? (SCOPED_TESTS.length > 0
+      ? (SCOPED_COVERAGE_PATHS.length > 0
         ? `bun test --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage ${
-          SCOPED_TESTS.join(" ",)
+          SCOPED_COVERAGE_PATHS.join(" ",)
         } && bun run scripts/check/coverage.mjs --floor=80 --only=${(SCOPED_MODULES ?? []).join(",",)}`
         : NOOP_OK)
       : "bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80",
-
+    "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",
     // Frontend security + hygiene gates (promoted from .tmp investigation scripts)
     // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
     "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
