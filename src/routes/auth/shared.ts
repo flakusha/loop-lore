@@ -2,15 +2,19 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Config, } from "../../config/schema";
-import type { TranslatorFn, } from "../../i18n/types";
 import {
   createRateLimiter,
   type RateLimiter,
-  rateLimitHeaders,
-  type RateLimitResult,
 } from "../../middleware/rate-limit";
-import { LL_TOKEN, } from "../../regex/cookies";
-import { HttpStatus, } from "../http-utils";
+import { parseCredentials, rateLimitHtml, } from "./request";
+import {
+  errorHtml,
+  errorJson,
+  errorResponse,
+  escapeHtml,
+  getTokenFromCookie,
+  wantsJson,
+} from "./responses";
 
 // ── Rate limiting (per-IP, in-memory) ─────────────────────────
 
@@ -64,10 +68,10 @@ function setTokenCookie(token: string, maxAgeSecs: number,): string {
   // when the page is loaded over plain HTTP (e.g. local dev), breaking auth.
   //
   // Decision matrix (first match wins):
-  //   LL_COOKIE_SECURE=true   → emit Secure (override; e.g. behind TLS-terminating proxy on a custom port)
-  //   LL_COOKIE_SECURE=false  → never emit Secure (override)
-  //   NODE_ENV === "production" → emit Secure
-  //   otherwise                → omit Secure (dev / solo / unknown)
+  // LL_COOKIE_SECURE=true → emit Secure (override; e.g. behind TLS-terminating proxy on a custom port)
+  // LL_COOKIE_SECURE=false → never emit Secure (override)
+  // NODE_ENV === "production" → emit Secure
+  // otherwise → omit Secure (dev / solo / unknown)
   const override = process.env.LL_COOKIE_SECURE;
   let secure: boolean;
   if (override === "true") { secure = true; }
@@ -85,23 +89,8 @@ function setTokenCookie(token: string, maxAgeSecs: number,): string {
   return parts.join("; ",);
 }
 
-// ── Helpers ───────────────────────────────────────────────────
+// ── Client IP ─────────────────────────────────────────────────
 
-/**
- * Resolve the rate-limiter bucket key for a request.
- *
- * `peerIp` is the connection-derived address (Bun server.requestIP(request)),
- * threaded in from the Elysia route context — `request.remoteAddress` is never
- * set for plain HTTP, so it cannot be sourced from the Request alone.
- *
- * Policy:
- * - peerIp known, trustProxy off → use the peer address (spoofed XFF ignored).
- * - peerIp known, trustProxy on  → the nearest trusted proxy appended the
- *   client IP to X-Forwarded-For; trust only its LAST (proxy-appended) entry, falling back to
- *   x-real-ip / CF-Connecting-IP / the peer address.
- * - no peerIp (unit tests, exotic runtimes) → default deny: "unknown". All
- *   such callers share one bucket by design rather than trusting headers.
- */
 /**
  * Rightmost XFF entry = the one the nearest trusted proxy appended.
  * @param request
@@ -114,6 +103,17 @@ function forwardedForLast(request: Request,): string | null {
 }
 
 /**
+ * Resolve the rate-limiter bucket key for a request.
+ * `peerIp` is the connection-derived address (Bun server.requestIP(request)),
+ * threaded in from the Elysia route context — `request.remoteAddress` is never
+ * set for plain HTTP, so it cannot be sourced from the Request alone.
+ * Policy:
+ * - peerIp known, trustProxy off → use the peer address (spoofed XFF ignored).
+ * - peerIp known, trustProxy on → the nearest trusted proxy appended the
+ * client IP to X-Forwarded-For; trust only its LAST (proxy-appended) entry, falling back to
+ * x-real-ip / CF-Connecting-IP / the peer address.
+ * - no peerIp (unit tests, exotic runtimes) → default deny: "unknown". All
+ * such callers share one bucket by design rather than trusting headers.
  * @param request
  * @param config
  * @param peerIp
@@ -127,40 +127,6 @@ function getClientIp(request: Request, config: Config, peerIp?: string | null,):
       request.headers.get("CF-Connecting-IP",) ??
       peerIp
   );
-}
-
-/**
- * @param str
- */
-function escapeHtml(str: string,): string {
-  return str
-    .replaceAll("&", "&amp;",)
-    .replaceAll("<", "&lt;",)
-    .replaceAll(">", "&gt;",)
-    .replaceAll('"', "&quot;",);
-}
-
-/**
- * @param msg
- */
-function errorHtml(msg: string,): Response {
-  return new Response(`<p class="error-msg">${escapeHtml(msg,)}</p>`, {
-    headers: { "Content-Type": "text/html; charset=utf-8", },
-  },);
-}
-// SECURITY NOTE: intentionally NO unverified-JWT extractors here. Previous
-// versions exposed extractSessionIdFromJwt/extractUserIdFromJwt which decoded
-// the JWT payload without checking the signature. Those helpers were used by
-// /me and logout and allowed impersonation / logout-DoS attacks when an
-// attacker could set a forged cookie. Always go through verifyJwt().
-
-/**
- * @param request
- */
-function getTokenFromCookie(request: Request,): string | null {
-  const cookieHeader = request.headers.get("Cookie",);
-  if (!cookieHeader) { return null; }
-  return LL_TOKEN.exec(cookieHeader,)?.[1] ?? null;
 }
 
 // ── Test utilities ───────────────────────────────────────────
@@ -184,53 +150,16 @@ export {
   COOKIE_PATH,
   demoLoginLimiter,
   errorHtml,
+  errorJson,
+  errorResponse,
+  escapeHtml,
   getClientIp,
   getTokenFromCookie,
   loginLimiter,
+  parseCredentials,
+  rateLimitHtml,
   registerLimiter,
   setTokenCookie,
   TOKEN_COOKIE,
+  wantsJson,
 };
-
-// ── Shared request/response helpers (login + register + demo) ─
-
-/**
- * Parse the registration/login form body, or null when malformed.
- * Shared by handleLogin and handleRegister (dedup: exact clone pair).
- * @param request
- */
-async function parseCredentials(
-  request: Request,
-): Promise<URLSearchParams | null> {
-  try {
-    return new URLSearchParams(await request.text(),);
-  } catch {
-    return null;
-  }
-}
-
-/**
- * 429 rate-limit response with X-RateLimit-* + Retry-After headers
- * (BUG-429-responses-omit-retry-after-and-x-ratelimit-headers).
- * @param options
- * @param options.limit - limiter decision carrying the reset window
- * @param options.t - translator; when absent `fallbackMessage` is shown
- * @param options.fallbackMessage - English fallback for the shared key
- */
-function rateLimitHtml(
-  options: { limit: RateLimitResult; t?: TranslatorFn; fallbackMessage: string },
-): Response {
-  const { limit, t, fallbackMessage, } = options;
-  return new Response(
-    `<p class="error-msg">${escapeHtml(t ? t("errors.rateLimited",) : fallbackMessage,)}</p>`,
-    {
-      status: HttpStatus.TooManyRequests,
-      headers: {
-        "Content-Type": "text/html; charset=utf-8",
-        ...rateLimitHeaders(limit, limit.resetSec,),
-      },
-    },
-  );
-}
-
-export { parseCredentials, rateLimitHtml, };
