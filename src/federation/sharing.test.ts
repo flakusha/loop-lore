@@ -4,14 +4,12 @@
 import { describe, expect, test, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { upsertPeer, } from "./coordinator";
+import { type ContentEnvelope, sealContent, } from "./envelope";
 import {
   advanceReservation,
-  type ContentEnvelope,
-  openEnvelope,
   receiveDelivery,
   releaseReservation,
   reserveSlot,
-  sealContent,
   selectDuplicationTargets,
   sweepExpiredReservations,
 } from "./sharing";
@@ -28,32 +26,6 @@ async function sealed(overrides: Partial<ContentEnvelope> = {},): Promise<Conten
   },);
   return { ...envelope, ...overrides, };
 }
-
-describe("content envelopes", () => {
-  test("seal → open roundtrips bytes with hash and size", async () => {
-    const envelope = await sealContent({
-      id: "c1",
-      origin: "https://a.example",
-      content: "hello mesh",
-      secret: SECRET,
-    },);
-    expect(envelope.hash,).toHaveLength(64,);
-    expect(envelope.size,).toBe(10,);
-    expect(envelope.ciphertext,).not.toContain("hello",);
-    const bytes = await openEnvelope(envelope, SECRET,);
-    expect(new TextDecoder().decode(bytes,),).toBe("hello mesh",);
-  });
-
-  test("wrong secret fails to open", async () => {
-    const envelope = await sealed();
-    await expect(openEnvelope(envelope, "wrong-secret",),).rejects.toThrow();
-  });
-
-  test("tampered hash fails to open", async () => {
-    const envelope = await sealed({ hash: "0".repeat(64,), },);
-    await expect(openEnvelope(envelope, SECRET,),).rejects.toThrow("hash mismatch",);
-  });
-});
 
 describe("reservation lifecycle", () => {
   test("reserve → push → confirm advances state", async () => {
