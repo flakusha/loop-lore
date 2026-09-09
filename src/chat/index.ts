@@ -8,9 +8,9 @@
  * moderation primitives, and service layer.
  */
 
-export { computeContextWindow, countMessageTokens, getStatus, THRESHOLDS, } from "./token-counter";
+export { countMessageTokens, getStatus, THRESHOLDS, } from "./token-counter";
 export type { ContextStatus, CountableMessage, TokenCountResult, } from "./token-counter";
-export { MODE_DEFAULTS, resolveFeatureFlags, } from "./types";
+export type { MessageRef, } from "./types";
 
 export { availableTokens, computeContextStats, computeSections, } from "./context-stats";
 export type { BudgetStats, ContextSection, ContextStats, } from "./context-stats";
@@ -67,23 +67,6 @@ export {
   type HallucinationCheckOpts,
   type HallucinationFlag,
 } from "./hallucination-guard";
-
-// ── Pruning ──────────────────────────────────────────────────
-export {
-  DEFAULT_PRUNING_CONFIG,
-  pruneMessages,
-  scoreMessage,
-  SCORING_WEIGHTS,
-  STRATEGY_CONFIGS,
-} from "./pruning";
-
-export type {
-  MessageScore as PruningMessageScore,
-  PruneResult,
-  PruningConfig,
-  PruningStrategy,
-  ScorableMessage,
-} from "./pruning";
 
 // ── Random Events ────────────────────────────────────────────
 export {
