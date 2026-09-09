@@ -17,7 +17,7 @@
  *   triggers, then backfilled from `actor_memories`.
  * - `crafting_orders.requested_materials` (added by part 019): databases
  *   frozen before 019 get the column with its `[]` default.
- * - `workflow_sessions` (added by part 021): databases frozen before 021
+ * - `workflow_sessions` (added by part 020, renamed from 021): databases frozen before 020
  *   get the table plus its schema-version record.
  *
  * Runs after `runMigrations` in `src/server/start.ts`. Add future
@@ -201,8 +201,8 @@ async function repairRequestedMaterials(database: Kysely<DB>,): Promise<boolean>
 /**
  * Create a stranded `workflow_sessions` table.
  *
- * Part 021 persists assistant workflow runs; databases frozen before 021
- * lack the table. Detection is `sqlite_master`; the repair mirrors 021
+ * Part 020 persists assistant workflow runs; databases frozen before 020
+ * lack the table. Detection is `sqlite_master`; the repair mirrors 020
  * exactly, including its schema-version record.
  * @param database - Migrated database handle.
  * @returns True when the table was created, false when already present.

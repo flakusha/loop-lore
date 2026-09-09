@@ -101,6 +101,23 @@ export function defaultJobs(): CronJobDef[] {
       },
     },),
     defineJob({
+      name: "federation.resync",
+      schedule: "@hourly",
+      enabled: true,
+      // Lazy like the gossip body above: keeps coordinator out of the import graph until the job fires.
+      run: async ({ config, database, logger, },) => {
+        if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
+        const { runResyncPass, } = await import("../federation/coordinator");
+        const trustByOrigin: Record<string, import("../config/schema").FederationPeerTrustConfig | undefined> = {};
+        for (const peer of config.federation.peers) {
+          trustByOrigin[peer.origin] = peer.trust;
+        }
+        const summary = await runResyncPass(database, { trustByOrigin, },);
+        logger.info("federation resync pass complete", { module: "cron", ...summary, },);
+        return summary;
+      },
+    },),
+    defineJob({
       name: "providers.health-rescan",
       schedule: "*/15 * * * *",
       enabled: true,

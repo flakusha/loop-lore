@@ -31,6 +31,7 @@ describe("cron default jobs", () => {
       "memory.decay",
       "memory.purge",
       "federation.gossip",
+      "federation.resync",
       "providers.health-rescan",
     ],);
     for (const job of jobs) {
