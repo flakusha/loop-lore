@@ -23040,6 +23040,72 @@
     "tags": [],
     "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
   },
+  "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY": {
+    "hash": "pending",
+    "extid": "WIRE-FRONTEND-KEYBOARD-HELP-OVERLAY",
+    "type": "WIRE",
+    "title": "Frontend Keyboard Navigation Help Overlay (`?`)",
+    "label": "wire",
+    "priority": "Medium",
+    "epic": "`epic-frontend-keynav-mobile`",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+  },
+  "WIRE-FRONTEND-KEYBOARD-MODAL-FOCUS-TRAP": {
+    "hash": "pending",
+    "extid": "WIRE-FRONTEND-KEYBOARD-MODAL-FOCUS-TRAP",
+    "type": "WIRE",
+    "title": "Frontend Modal Focus Trap Directive + Alpine x-trap",
+    "label": "wire",
+    "priority": "High",
+    "epic": "`epic-frontend-keynav-mobile`",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-frontend-keyboard-modal-focus-trap.md"
+  },
+  "WIRE-FRONTEND-KEYBOARD-NAVIGATION-GLOBAL-KEYMAP": {
+    "hash": "pending",
+    "extid": "WIRE-FRONTEND-KEYBOARD-NAVIGATION-GLOBAL-KEYMAP",
+    "type": "WIRE",
+    "title": "Frontend Global Keyboard Navigation Keymap (Opt-In)",
+    "label": "wire",
+    "priority": "High",
+    "epic": "`epic-frontend-keynav-mobile`",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-frontend-keyboard-navigation-global-keymap.md"
+  },
+  "WIRE-FRONTEND-MOBILE-OFF-CANVAS-DRAWER": {
+    "hash": "pending",
+    "extid": "WIRE-FRONTEND-MOBILE-OFF-CANVAS-DRAWER",
+    "type": "WIRE",
+    "title": "Frontend Mobile Off-Canvas Drawer — Opt-In Guard + Improvements",
+    "label": "wire",
+    "priority": "High",
+    "epic": "`epic-frontend-keynav-mobile`",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-frontend-mobile-off-canvas-drawer.md"
+  },
+  "WIRE-FRONTEND-MOBILE-STICKY-BOTTOM-COMPOSER": {
+    "hash": "pending",
+    "extid": "WIRE-FRONTEND-MOBILE-STICKY-BOTTOM-COMPOSER",
+    "type": "WIRE",
+    "title": "Frontend Mobile Sticky Bottom Composer Bar",
+    "label": "wire",
+    "priority": "High",
+    "epic": "`epic-frontend-keynav-mobile`",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
+  },
+  "WIRE-FRONTEND-TOUCH-SWIPE-GESTURES": {
+    "hash": "pending",
+    "extid": "WIRE-FRONTEND-TOUCH-SWIPE-GESTURES",
+    "type": "WIRE",
+    "title": "Frontend Touch Gestures — Swipe Navigation + Pull-to-Refresh (Opt-In)",
+    "label": "wire",
+    "priority": "Medium",
+    "epic": "`epic-frontend-keynav-mobile`",
+    "tags": [],
+    "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
+  },
   "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH": {
     "hash": "pending",
     "extid": "WIRE-IMPERSONATE-COMMAND-PALETTE-NO-ACTIONPAYLOAD-DISPATCH",
