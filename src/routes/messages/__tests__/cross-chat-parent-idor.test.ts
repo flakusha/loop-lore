@@ -27,7 +27,7 @@ import { uid, } from "../../../utils";
 import {
   ParentMessageNotFoundError,
   ParentMessageNotInChatError,
-} from "../create";
+} from "../parent-message-errors";
 
 type MessageRowInput = {
   id: string;
