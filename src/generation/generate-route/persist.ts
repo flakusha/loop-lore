@@ -10,7 +10,6 @@
 
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../crypto";
 import {
   ContentEncoding,
   MessageContentFormat,
@@ -24,6 +23,7 @@ import type { DB, } from "../../db/schema";
 import { safeJsonStringify, } from "../../utils";
 import { completeGeneration, } from "../cancellation-manager";
 import type { GenerationResult, GenerationToolCall, } from "../types";
+import { encryptStoredContent, } from "./tool-result-persist";
 
 interface StoreMessageOpts {
   database: Kysely<DB>;
@@ -60,24 +60,14 @@ async function storeGeneratedMessage({
   const messageId = randomUUID();
   const status = result.cancelled ? MessageStatus.Partial : MessageStatus.Confirmed;
 
-  // Encrypt (and compress) the body when server-side encryption is enabled, so
-  // the generate-route write path matches auto-gen (which already encrypts).
-  // Encrypted rows carry content_encoding=identity + key_id set; the read path
-  // keys on key_id presence, not content_encoding.
-  let storedContent = result.content;
-  let storedKeyId: string | null = null;
-  if (isEncryptionEnabled()) {
-    const smk = getSmk()!;
-    const enc = await encryptMessageContent({
-      database,
-      chatId,
-      actorId,
-      plaintext: result.content,
-      smk,
-    },);
-    storedContent = enc.storedContent;
-    storedKeyId = enc.keyId;
-  }
+  // Encrypted rows carry content_encoding=identity + key_id set; the read
+  // path keys on key_id presence, not content_encoding.
+  const { storedContent, storedKeyId, } = await encryptStoredContent({
+    database,
+    chatId,
+    actorId,
+    plaintext: result.content,
+  },);
 
   let toolCallsJson: string | null = null;
   if (result.toolCalls && result.toolCalls.length > 0) {

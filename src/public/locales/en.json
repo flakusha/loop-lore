@@ -887,7 +887,8 @@
     "budgetUsage": "Context budget used:",
     "noSections": "No section breakdown available yet.",
     "trimSuggestions": "Trim suggestions",
-    "budgetHealthy": "Context budget healthy — no trimming needed."
+    "budgetHealthy": "Context budget healthy — no trimming needed.",
+    "toolResult": "Tool result"
   },
   "participants": {
     "title": "Participants",

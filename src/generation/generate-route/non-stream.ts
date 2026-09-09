@@ -39,6 +39,7 @@ import type { GenerateRequest as ProviderRequest, LLMProvider, } from "../provid
 import type { GenerationMessage, } from "../types";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
+import { storeToolResultRows, } from "./tool-result-persist";
 import type { GenerateRequest, } from "./types";
 
 /** */
@@ -86,6 +87,7 @@ export async function runNonStreaming({
     let currentMessages = messages;
     let finalResponse: Awaited<ReturnType<typeof callWithFailover>> | null = null;
 
+    const allToolResults: GenerationMessage[] = [];
     for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
       const response = await callWithFailover(failoverList, {
         ...providerReq,
@@ -116,6 +118,7 @@ export async function runNonStreaming({
         chatId: input.chatId,
       },);
       currentMessages = [...currentMessages, ...toolResults,];
+      allToolResults.push(...toolResults,);
     }
 
     if (!finalResponse) {
@@ -147,6 +150,8 @@ export async function runNonStreaming({
       modelId,
       provider: providerName,
     },);
+
+    await storeToolResultRows(database, input, messageId, allToolResults,);
 
     // Stop-and-respond: non-stream responses are fully delivered before
     // storeGenerationResult returns (no SSE transport to race). Mark

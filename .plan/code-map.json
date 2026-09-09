@@ -5759,6 +5759,12 @@
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
     }
   ],
+  "src/components/chat/chat-list.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
+    }
+  ],
   "src/components/chat/chat-settings-modal.html": [
     {
       "kind": "epic",
@@ -5795,6 +5801,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-template-actions.md"
+    }
+  ],
+  "src/components/chat/chat.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
   "src/components/chat/context-window-banner.html": [
@@ -5857,6 +5869,18 @@
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
     }
   ],
+  "src/components/chat/input-area.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
+    }
+  ],
+  "src/components/chat/keynav-help.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    }
+  ],
   "src/components/chat/location-panel.html": [
     {
       "kind": "ticket",
@@ -5895,6 +5919,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-story-mode-ui.md"
+    }
+  ],
+  "src/components/chat/mobile-composer.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
   "src/components/chat/pins-panel.html": [
@@ -6397,6 +6427,12 @@
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
     }
   ],
+  "src/config/schema-class/frontend.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-navigation-global-keymap.md"
+    }
+  ],
   "src/config/schema-class/hooks.ts": [
     {
       "kind": "ticket",
@@ -6567,6 +6603,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-item-config-templates.md"
+    }
+  ],
+  "src/config/schema/frontend.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-navigation-global-keymap.md"
     }
   ],
   "src/config/schema/generation.ts": [
@@ -10967,6 +11009,16 @@
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
     }
   ],
+  "src/frontend/alpine/chat-panels.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-modal-focus-trap.md"
+    }
+  ],
   "src/frontend/alpine/chat-pins.ts": [
     {
       "kind": "ticket",
@@ -11389,10 +11441,32 @@
       "source": ".plan/tickets/TASK-chat-context-feature-permissions.md"
     }
   ],
+  "src/frontend/alpine/focus.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-modal-focus-trap.md"
+    }
+  ],
   "src/frontend/alpine/focus.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-accessibility-input.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-modal-focus-trap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-navigation-global-keymap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-off-canvas-drawer.md"
     }
   ],
   "src/frontend/alpine/gallery-search.ts": [
@@ -11509,6 +11583,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-reconcile-epic-frontend-i18n-verify-i18n-wiring-capture-gaps.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     }
   ],
   "src/frontend/alpine/index.ts": [
@@ -11523,6 +11601,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-browser-side-storage-request-hash-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-navigation-global-keymap.md"
     }
   ],
   "src/frontend/alpine/info-bubble.test.ts": [
@@ -11585,6 +11667,18 @@
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
     }
   ],
+  "src/frontend/alpine/keynav-help.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    }
+  ],
+  "src/frontend/alpine/keynav-help.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    }
+  ],
   "src/frontend/alpine/location-explorer.test.ts": [
     {
       "kind": "ticket",
@@ -11629,6 +11723,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-message-search.md"
+    }
+  ],
+  "src/frontend/alpine/mobile-composer.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
   "src/frontend/alpine/mood.test.ts": [
@@ -11845,6 +11945,20 @@
       "source": ".plan/tickets/TASK-response-length-control.md"
     }
   ],
+  "src/frontend/alpine/shortcuts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-navigation-global-keymap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
+    }
+  ],
   "src/frontend/alpine/sidebar.ts": [
     {
       "kind": "ticket",
@@ -11857,6 +11971,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-off-canvas-drawer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
     }
   ],
   "src/frontend/alpine/skill-tree.ts": [
@@ -11891,6 +12013,18 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-story-mode-ui.md"
+    }
+  ],
+  "src/frontend/alpine/swipe-gestures.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
+    }
+  ],
+  "src/frontend/alpine/swipe-gestures.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
     }
   ],
   "src/frontend/alpine/trading-interface.ts": [
@@ -13289,6 +13423,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-e2e-state-contracts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-navigation-global-keymap.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-off-canvas-drawer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
     }
   ],
   "src/frontend/story/gm-controls.ts": [
@@ -13369,6 +13515,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-touch-gestures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
     }
   ],
   "src/frontend/ui.ts": [
@@ -15537,6 +15691,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-reconciliation-script.md"
+    }
+  ],
+  "src/i18n/locales/en.json": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     }
   ],
   "src/image-edit": [
@@ -17799,6 +17959,22 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-visual-novel-mode.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-off-canvas-drawer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-touch-swipe-gestures.md"
     },
     {
       "kind": "frontend",
@@ -26501,6 +26677,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     },
     {
       "kind": "frontend",

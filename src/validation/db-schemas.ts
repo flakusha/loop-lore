@@ -187,6 +187,7 @@ export const MessageContentTypeSchema = t.UnionEnum([
   "system",
   "continuation",
   "music_link",
+  "tool_result",
 ],);
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
 export const MessageStatusSchema = t.UnionEnum([
