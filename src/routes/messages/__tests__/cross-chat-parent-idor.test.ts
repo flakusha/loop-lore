@@ -242,3 +242,190 @@ describe("cross-chat parentId IDOR guard (BUG-cross-chat-parentId-IDOR)", () => 
     expect(row?.id,).toBe(newId,);
   });
 });
+
+describe("cross-chat parentId IDOR guard — input edge cases", () => {
+  // The guard mirrors create.ts lines 107-122. The function uses
+  // parentId !== null to skip the check, then runs SELECT WHERE id = ?
+  // and throws NotFoundError on no row / InChatError on chat_id mismatch.
+  // These tests pin the contract for malformed / degenerate parentId
+  // values so the security boundary can't regress silently.
+
+  let db: Kysely<DB>;
+  let actorA: string;
+  let chatA: string;
+  let parentInA: string;
+
+  beforeAll(async () => {
+    ({ db, } = await createTestDb());
+
+    const userA = uid();
+    await insertUsers(db, `user-edge-${userA}`, "Edge User", { id: userA, } as never,);
+    actorA = userA;
+    await db.insertInto("actors",).values({
+      id: actorA,
+      actor_type: "user",
+      display_name: "Edge User",
+      user_id: userA,
+      owner_id: userA,
+      agent_type: "none",
+      settings: "{}",
+      format_version: 0,
+      visibility: "private",
+      import_spec: "{}",
+    },).execute();
+
+    chatA = uid();
+    await insertChats(db, "Edge Chat A", actorA, { id: chatA, } as never,);
+
+    parentInA = uid();
+    await insertMessages(db, chatA, actorA, MessageRole.User, "edge parent", {
+      id: parentInA as never,
+    },);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("empty-string parentId throws ParentMessageNotFoundError (treated as missing)", async () => {
+    // The guard uses parentId !== null to skip — empty string passes that
+    // check, then SELECT WHERE id = '' returns no rows, so NotFoundError.
+    // This is the correct security outcome: empty parentId is not a
+    // privilege escalation vector.
+    const newId = uid();
+    await expect(
+      runGuard(db, chatA, "", {
+        id: newId,
+        chat_id: chatA,
+        actor_id: actorA,
+        parent_id: "",
+        role: MessageRole.User,
+        content: "should not insert",
+        key_id: null,
+        content_plaintext: null,
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: MessageStatus.Confirmed,
+        visibility: MessageVisibility.Visible,
+        idempotency_key: null,
+        swipe_index: 1,
+      },),
+    ).rejects.toBeInstanceOf(ParentMessageNotFoundError,);
+
+    const row = await db.selectFrom("messages",).select("id",).where("id", "=", newId,).executeTakeFirst();
+    expect(row,).toBeUndefined();
+  });
+
+  test("non-UUID parentId throws ParentMessageNotFoundError", async () => {
+    // Pin: any string that doesn't match a real messages.id row → not found.
+    // The route layer's schema validation rejects non-UUIDs upstream, but
+    // the guard must not assume schema-validated input.
+    const newId = uid();
+    await expect(
+      runGuard(db, chatA, "not-a-uuid-at-all", {
+        id: newId,
+        chat_id: chatA,
+        actor_id: actorA,
+        parent_id: "not-a-uuid-at-all",
+        role: MessageRole.User,
+        content: "should not insert",
+        key_id: null,
+        content_plaintext: null,
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: MessageStatus.Confirmed,
+        visibility: MessageVisibility.Visible,
+        idempotency_key: null,
+        swipe_index: 1,
+      },),
+    ).rejects.toBeInstanceOf(ParentMessageNotFoundError,);
+  });
+
+  test("parentId with SQL-meta characters is treated as a literal string", async () => {
+    // SQL-injection smoke test: parameterized queries are used, but pin
+    // that the SELECT WHERE id = ? treats the value as a literal — no
+    // parsing, no row match, → NotFoundError. The route never builds SQL
+    // by string interpolation, but document the contract here.
+    const newId = uid();
+    await expect(
+      runGuard(db, chatA, "x' OR 1=1 --", {
+        id: newId,
+        chat_id: chatA,
+        actor_id: actorA,
+        parent_id: "x' OR 1=1 --",
+        role: MessageRole.User,
+        content: "should not insert",
+        key_id: null,
+        content_plaintext: null,
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: MessageStatus.Confirmed,
+        visibility: MessageVisibility.Visible,
+        idempotency_key: null,
+        swipe_index: 1,
+      },),
+    ).rejects.toBeInstanceOf(ParentMessageNotFoundError,);
+  });
+
+  test("very long parentId string throws ParentMessageNotFoundError", async () => {
+    // 100k chars: no row matches → not found. No DoS vector: SQLite handles
+    // the long string fine and the SELECT returns immediately.
+    const longId = "x".repeat(100_000,);
+    const newId = uid();
+    await expect(
+      runGuard(db, chatA, longId, {
+        id: newId,
+        chat_id: chatA,
+        actor_id: actorA,
+        parent_id: longId,
+        role: MessageRole.User,
+        content: "should not insert",
+        key_id: null,
+        content_plaintext: null,
+        content_type: "text",
+        content_format: "markdown",
+        content_encoding: "identity",
+        status: MessageStatus.Confirmed,
+        visibility: MessageVisibility.Visible,
+        idempotency_key: null,
+        swipe_index: 1,
+      },),
+    ).rejects.toBeInstanceOf(ParentMessageNotFoundError,);
+  });
+
+  test("valid parentId from same chat inserts even when other chats also have rows", async () => {
+    // Smoke test for the happy path under population: existing rows in
+    // other chats must not interfere with a valid same-chat parent.
+    const otherChat = uid();
+    const otherParent = uid();
+    await insertChats(db, "Decoy Chat", actorA, { id: otherChat, } as never,);
+    await insertMessages(db, otherChat, actorA, MessageRole.User, "decoy", {
+      id: otherParent as never,
+    },);
+
+    const newId = uid();
+    await runGuard(db, chatA, parentInA, {
+      id: newId,
+      chat_id: chatA,
+      actor_id: actorA,
+      parent_id: parentInA,
+      role: MessageRole.User,
+      content: "valid insert",
+      key_id: null,
+      content_plaintext: "valid insert",
+      content_type: "text",
+      content_format: "markdown",
+      content_encoding: "identity",
+      status: MessageStatus.Confirmed,
+      visibility: MessageVisibility.Visible,
+      idempotency_key: null,
+      swipe_index: 1,
+    },);
+
+    const row = await db.selectFrom("messages",).select("id",).where("id", "=", newId,).executeTakeFirst();
+    expect(row?.id,).toBe(newId,);
+  });
+});
