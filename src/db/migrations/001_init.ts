@@ -34,6 +34,10 @@ import {
   down as downWorkflowSessions,
   up as upWorkflowSessions,
 } from "./parts/020_workflow_sessions";
+import {
+  down as downMeshSharing,
+  up as upMeshSharing,
+} from "./parts/022_mesh_sharing";
 
 /**
  * @param database
@@ -58,12 +62,14 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
   await upSchemaVersion(database,);
   await upTradeRequestedMaterials(database,);
   await upWorkflowSessions(database,);
+  await upMeshSharing(database,);
 }
 
 /**
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await downMeshSharing(database,);
   await downWorkflowSessions(database,);
   await downTradeRequestedMaterials(database,);
   await downSchemaVersion(database,);
