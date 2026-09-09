@@ -12,7 +12,7 @@ import { describe, expect, test, } from "bun:test";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, FederationConfig, } from "../config/schema";
 import type { Db, } from "../db";
-import { sealContent, } from "../federation/sharing";
+import { sealContent, } from "../federation/envelope";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { federationRoutes, } from "./federation";
 
