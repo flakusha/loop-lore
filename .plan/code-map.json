@@ -10457,6 +10457,12 @@
       "source": ".plan/tickets/TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl.md"
     }
   ],
+  "src/federation/sharing.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
+    }
+  ],
   "src/frontend": [
     {
       "kind": "ticket",
