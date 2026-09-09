@@ -26,6 +26,7 @@ import type { Config, } from "../../config/schema";
 import { ContentRating, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { recordNsfwConsent, } from "../../middleware/nsfw-gate/consent-ledger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { uid, } from "../../utils";
 import { runContentHooks, } from "./content-hooks";
@@ -177,6 +178,7 @@ describe("runContentHooks NSFW age-gate precheck", () => {
   test("NSFW actor with adult age-gated user: gate passes, generation allowed", async () => {
     const actorId = await createAiActor(db, ContentRating.NsfwMild,);
     const chatId = await createChat(db, userId,);
+    await recordNsfwConsent({ database: db, chatId, userId, action: "given", },);
 
     const result = await runContentHooks({
       database: db,
@@ -276,7 +278,7 @@ describe("runContentHooks NSFW age-gate precheck", () => {
     ) {
       const actorId = await createAiActor(db, rating,);
       const chatId = await createChat(db, userId,);
-
+      await recordNsfwConsent({ database: db, chatId, userId, action: "given", },);
       const result = await runContentHooks({
         database: db,
         config: makeConfig(),
@@ -288,5 +290,66 @@ describe("runContentHooks NSFW age-gate precheck", () => {
       // Adult + age-gated user → all NSFW tiers pass through.
       expect(result.allowed,).toBe(true,);
     }
+  });
+
+  // ── Consent ledger now enforced pre-LLM ───────────────────────────
+
+  test("NSFW actor without persisted consent: gate blocks generation (no auto-grant)", async () => {
+    const actorId = await createAiActor(db, ContentRating.NsfwMild,);
+    const chatId = await createChat(db, userId,);
+    // No recordNsfwConsent — consentRequired:true in makeConfig must deny.
+    const result = await runContentHooks({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      actorId,
+      userId,
+      content: "NSFW content",
+    },);
+    expect(result.allowed,).toBe(false,);
+    expect(result.dominantEmotion,).toBeUndefined();
+    expect(result.moodShiftDelta,).toBeUndefined();
+  });
+
+  test("NSFW actor with co-participant missing age gate: weakest-link deny", async () => {
+    const minorId = await seedUser(db, {
+      birthDate: "2015-01-01",
+      ageGateAcceptedAt: "2025-01-01T00:00:00Z",
+    },);
+    const minorActorId = uid();
+    await db
+      .insertInto("actors",)
+      .values({
+        id: minorActorId,
+        actor_type: "character",
+        display_name: "MinorActor",
+        user_id: minorId,
+        owner_id: null,
+        agent_type: "ai",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+        content_rating: ContentRating.Sfw,
+      },)
+      .execute();
+    const actorId = await createAiActor(db, ContentRating.NsfwMild,);
+    const chatId = await createChat(db, userId,);
+    await db
+      .insertInto("chat_participants",)
+      .values({ chat_id: chatId, actor_id: minorActorId, },)
+      .execute();
+    await recordNsfwConsent({ database: db, chatId, userId, action: "given", },);
+    const result = await runContentHooks({
+      database: db,
+      config: makeConfig(),
+      chatId,
+      actorId,
+      userId,
+      content: "NSFW content",
+    },);
+    // Requester clears every check (adult, gated, consent given) — the
+    // underage co-participant alone must block generation.
+    expect(result.allowed,).toBe(false,);
   });
 });
