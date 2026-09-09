@@ -356,4 +356,36 @@ describe("checkNsfwWithConsent (DB-backed)", () => {
     expect(result.allowed,).toBe(false,);
     expect(result.reason,).toBe("participant_blocked:age_gate_not_accepted",);
   });
+  test("participant without age gate is denied by the consent gate (weakest-link deny)", async () => {
+    const userE = "u-deny-ok";
+    const userF = "u-deny-no";
+    await insertUsers(db, userE, "Deny OK", {
+      id: userE as never,
+      birth_date: "1990-01-01",
+      age_gate_accepted_at: "2026-01-01T00:00:00Z",
+    },);
+    await insertUsers(db, userF, "Deny No", {
+      id: userF as never,
+      birth_date: "1990-01-01",
+      age_gate_accepted_at: null,
+    },);
+    await insertChats(db, "deny-link", userE, { id: "chat-deny-link" as never, },);
+    const actorE = "actor-deny-ok";
+    const actorF = "actor-deny-no";
+    await insertActors(db, actorE, { id: actorE as never, user_id: userE, },);
+    await insertActors(db, actorF, { id: actorF as never, user_id: userF, },);
+    await insertChatParticipants(db, "chat-deny-link", actorE,);
+    await insertChatParticipants(db, "chat-deny-link", actorF,);
+
+    const config = makeConfig({ consentRequired: false, },);
+    const result = await checkNsfwWithConsent({
+      database: db,
+      config,
+      userId: userE,
+      chatId: "chat-deny-link",
+      actorId: actorE,
+    },);
+    expect(result.allowed,).toBe(false,);
+    expect(result.reason,).toBe("participant_blocked:age_gate_not_accepted",);
+  });
 });

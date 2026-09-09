@@ -115,9 +115,11 @@ export interface CheckNsfwWithConsentResult {
  *
  * Order:
  *   1. Authenticated user required.
- *   2. Base NSFW access (config + age gate + nsfwMinAge).
- *   3. Persisted consent (when `consentRequired`), no auto-grant.
- *   4. Real enforcement object using persisted user max_rating,
+ *   2. Base NSFW access (config + age gate + nsfwMinAge + moderation state).
+ *   3. Participant weakest link: every user-backed participant must clear
+ *      the base gate (`participant_blocked:<reason>`).
+ *   4. Persisted consent (when `consentRequired`), no auto-grant.
+ *   5. Real enforcement object using persisted user max_rating,
  *      weakest-link intersected across chat participants.
  * @param args
  */
@@ -146,6 +148,31 @@ export async function checkNsfwWithConsent(
       enforcement: await buildEnforcement(database, actorId, userId, chatId,),
       consent: emptyConsent(),
     };
+  }
+
+  // Participant weakest link (group-chat minor protection): every human
+  // participant must individually clear the base gate — the requester's
+  // clearance alone is not sufficient. Previously only the rating ceiling
+  // was intersected (buildEnforcement); age/config failures of co-participants
+  // never denied. Reason mirrors checkChatNsfwAccess for log continuity.
+  const participantUserIds = await getChatParticipantUserIds(database, chatId,);
+  for (const pid of participantUserIds) {
+    if (pid === userId) { continue; }
+    const participantAccess = await canAccessNsfw(database, config, pid,);
+    if (!participantAccess.allowed) {
+      log.info("nsfw-gate: participant blocked", {
+        chatId,
+        userId,
+        participantId: pid,
+        reason: participantAccess.reason,
+      },);
+      return {
+        allowed: false,
+        reason: `participant_blocked:${participantAccess.reason ?? "unknown"}`,
+        enforcement: await buildEnforcement(database, actorId, userId, chatId,),
+        consent: emptyConsent(),
+      };
+    }
   }
 
   if (config.nsfw.consentRequired) {
