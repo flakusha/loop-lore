@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
+import type { DuplicationPolicy, } from "../config/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { pskCipher, } from "./cipher";
 import { upsertPeer, } from "./coordinator";
@@ -15,10 +16,10 @@ import {
   receiveDelivery,
   releaseReservation,
   requestReservation,
+  resolveDuplicationPolicy,
   selectDuplicationTargets,
   sweepExpiredReservations,
 } from "./sharing";
-
 const SECRET = "mesh-test-psk";
 const cipher = pskCipher(SECRET,);
 
@@ -250,5 +251,36 @@ describe("duplication targets", () => {
       ),
     ).toEqual(["https://c.example",],);
     expect(await selectDuplicationTargets(db, { mode: "none", peers: [], },),).toEqual([],);
+  });
+
+  test("world override applies; unknown world falls back", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
+    await upsertPeer(db, { origin: "https://c.example", state: "trusted", },);
+    const policy: DuplicationPolicy = {
+      mode: "trusted",
+      peers: [],
+      worlds: {
+        "world-1": { mode: "listed", peers: ["https://c.example",], },
+        "world-2": { mode: "none", peers: [], },
+      },
+    };
+    expect(await selectDuplicationTargets(db, policy, undefined, "world-1",),).toEqual([
+      "https://c.example",
+    ],);
+    expect(await selectDuplicationTargets(db, policy, undefined, "world-2",),).toEqual([],);
+    expect(await selectDuplicationTargets(db, policy, undefined, "unknown",),).toEqual([
+      "https://b.example",
+      "https://c.example",
+    ],);
+    expect(await selectDuplicationTargets(db, policy,),).toEqual([
+      "https://b.example",
+      "https://c.example",
+    ],);
+    expect(resolveDuplicationPolicy(policy, "world-1",),).toEqual({
+      mode: "listed",
+      peers: ["https://c.example",],
+    },);
+    expect(resolveDuplicationPolicy(policy, "unknown",),).toBe(policy,);
   });
 });
