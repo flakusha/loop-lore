@@ -20,6 +20,13 @@
  */
 const fs = require("fs",);
 const floor = parseInt(process.argv.find((a,) => a.startsWith("--floor=",))?.split("=",)[1], 10,) || 80;
+const onlyArg = process.argv.find((a,) => a.startsWith("--only=",))?.split("=",)[1];
+// Diff-scoped runs floor only the touched modules (see AGENTS.md Verification
+// Gates + check-parallel.mjs `changedModules`). Empty/absent --only disables
+// the filter and floors every module. Touched modules with no lcov rows
+// (e.g. `scripts/`, never loaded in-process) are reported as unmeasured and
+// skipped — failing on unobservable data would be false red.
+const onlySet = onlyArg ? new Set(onlyArg.split(",",).map((s,) => s.trim()).filter(Boolean,),) : null;
 const lcovPath = ".tmp/coverage/lcov.info";
 if (!fs.existsSync(lcovPath,)) {
   console.error("lcov not found at " + lcovPath + " — run 'bun test --coverage' first",);
@@ -141,13 +148,20 @@ for (const r of rows) {
 }
 
 const waivedSet = new Set(Object.keys(WAIVERS,),);
-const fails = rows.filter((r,) => !waivedSet.has(r.mod,) && r.pct < floor);
+const inScope = (mod,) => !onlySet || onlySet.has(mod,);
+const fails = rows.filter((r,) => inScope(r.mod,) && !waivedSet.has(r.mod,) && r.pct < floor);
 // Surfaced separately: waived modules below global floor but passing their own floor
 const waivedBelow = rows.filter((r,) => waivedSet.has(r.mod,) && r.pct < floor);
+const unmeasured = onlySet ? [...onlySet,].filter((m,) => !waivedSet.has(m,) && !rows.some((r,) => r.mod === m)) : [];
+for (const m of unmeasured) {
+  console.error(`| ${m} | n/a (unmeasured) | 0/0 | ${floor}% | SKIP |`,);
+}
 console.log(JSON.stringify({
   floor,
+  only: onlySet ? [...onlySet,] : null,
   total: rows.length,
   fail: fails.length,
+  unmeasured,
   waivedBelowGlobal: waivedBelow.length,
   waivers: WAIVERS,
   modules: rows,
