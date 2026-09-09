@@ -46,12 +46,12 @@ export interface FakeEl {
   isConnected: boolean;
   src: string;
   alt: string;
-  listeners: Map<string, Array<() => void>>;
+  listeners: Map<string, Array<(e?: unknown,) => void>>;
   append: (...nodes: FakeEl[]) => void;
   replaceChildren: () => void;
   querySelector: (sel: string,) => FakeEl | null;
-  addEventListener: (type: string, fn: () => void,) => void;
-  removeEventListener?: (type: string, fn: (e: unknown,) => void,) => void;
+  addEventListener: (type: string, fn: (e?: unknown,) => void,) => void;
+  removeEventListener: (type: string, fn: (e?: unknown,) => void,) => void;
   dispatch: (type: string,) => void;
 }
 
@@ -94,8 +94,15 @@ export function makeEl(tag = "div",): FakeEl {
     addEventListener(type, fn,) {
       listeners.set(type, [...(listeners.get(type,) ?? []), fn,],);
     },
+    removeEventListener(type, fn,) {
+      listeners.set(
+        type,
+        (listeners.get(type,) ?? []).filter((l,) => l !== fn),
+      );
+    },
     dispatch(type,) {
-      for (const fn of [...(listeners.get(type,) ?? []),]) { fn(); }
+      const event = { type, target: null, };
+      for (const fn of [...(listeners.get(type,) ?? []),]) { fn(event,); }
     },
   };
 }
