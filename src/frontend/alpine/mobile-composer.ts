@@ -16,7 +16,7 @@ import { isKeyboardNavEnabled, } from "./shortcuts";
  * Alpine component for the mobile sticky composer.
  * Delegates send to the nearest parent chatState().
  */
-export function mobileComposer(): Record<string, unknown> {
+export function mobileComposer() {
   let unlisten: (() => void) | null = null;
 
   return {
@@ -44,15 +44,16 @@ export function mobileComposer(): Record<string, unknown> {
      */
     async submitMobile() {
       if (!isKeyboardNavEnabled()) { return; }
-      const input = this.$refs.mobileInput as HTMLInputElement | null;
+      const input = (this as unknown as { $refs: { mobileInput?: HTMLInputElement } }).$refs.mobileInput ?? null;
       if (!input) { return; }
       const text = input.value.trim();
       if (!text) { return; }
 
       // Delegate to parent chatState() sendMessage — uses the same
       // encryption, optimistic update, and SSE pipeline as input-area.
+      const el = (this as unknown as { $el: Element }).$el;
       const parent = (globalThis as unknown as { Alpine?: { $data?: (el: Element,) => Record<string, unknown> } })
-        .Alpine?.$data(this.$el,);
+        .Alpine?.$data?.(el,);
       if (parent && typeof parent.sendMessage === "function") {
         // Forward the text into the parent's messageInput ref
         const parentInput = (parent as Record<string, unknown>).$refs as Record<string, unknown> | undefined;
