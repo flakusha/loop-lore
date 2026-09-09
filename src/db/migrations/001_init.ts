@@ -33,7 +33,7 @@ import {
 import {
   down as downWorkflowSessions,
   up as upWorkflowSessions,
-} from "./parts/021_workflow_sessions";
+} from "./parts/020_workflow_sessions";
 
 /**
  * @param database

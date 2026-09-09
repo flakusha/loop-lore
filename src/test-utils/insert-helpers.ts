@@ -3473,3 +3473,26 @@ export async function insertWorkflowSessions(
     ...opts,
   } as any,).execute();
 }
+
+/** Insert a mesh_peers row. */
+export async function insertMeshPeers(
+  db: Db,
+  opts?: { origin?: string; state?: string; capabilities?: string; last_seen?: string | null; created_at?: string },
+): Promise<void> {
+  await db.insertInto("mesh_peers",).values({
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a mesh_negotiations row. */
+export async function insertMeshNegotiations(
+  db: Db,
+  peer_origin: string,
+  opts?: { id?: string; state?: string; updated_at?: string },
+): Promise<void> {
+  await db.insertInto("mesh_negotiations",).values({
+    id: crypto.randomUUID(),
+    peer_origin,
+    ...opts,
+  } as any,).execute();
+}

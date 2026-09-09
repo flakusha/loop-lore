@@ -2302,3 +2302,19 @@ export const WorkflowSessionsSchema = t.Object({
   confirmed: t.Optional(t.Number(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── mesh_peers ────────────────────────────────────────────
+export const MeshPeersSchema = t.Object({
+  origin: t.Optional(t.String(),),
+  state: t.Optional(t.String(),),
+  capabilities: t.Optional(t.String(),),
+  last_seen: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── mesh_negotiations ────────────────────────────────────────────
+export const MeshNegotiationsSchema = t.Object({
+  peer_origin: t.String(),
+  state: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
