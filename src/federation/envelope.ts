@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/federation/envelope.ts — AES-256-GCM content envelopes for mesh pushes.
+// src/federation/envelope.ts — Sealed content envelopes for mesh pushes.
 //
-// Crypto reuses the existing `encryptValue` seam with an operator-supplied
-// mesh PSK — no new primitives, no plaintext on the wire. Key distribution
-// (per-peer wrapping) is follow-up work tied to the peer signing key store.
+// Crypto programs against the `ContentCipher` seam (`./cipher`); the only
+// implementation today is the shared mesh PSK. No plaintext on the wire.
 
 import { createHash, } from "node:crypto";
-import { decryptValue, encryptValue, } from "../crypto/byok";
+import type { ContentCipher, } from "./cipher";
 
 /** Wire envelope for one content push. */
 export interface ContentEnvelope {
@@ -38,13 +37,12 @@ export async function sealContent(input: {
   clock?: number;
   type?: string;
   content: Uint8Array | string;
-  secret: string;
+  cipher: ContentCipher;
 },): Promise<ContentEnvelope> {
   const bytes = typeof input.content === "string"
     ? new TextEncoder().encode(input.content,)
     : input.content;
   const hash = createHash("sha256",).update(bytes,).digest("hex",);
-  const base64 = Buffer.from(bytes,).toString("base64",);
   return {
     id: input.id,
     origin: input.origin,
@@ -52,22 +50,21 @@ export async function sealContent(input: {
     type: input.type ?? "blob",
     hash,
     size: bytes.length,
-    ciphertext: await encryptValue(base64, input.secret,),
+    ciphertext: await input.cipher.seal(bytes,),
   };
 }
 
 /**
  * Open an envelope: decrypt and verify the plaintext hash.
  * @param envelope
- * @param secret
+ * @param cipher
  * @throws On decrypt failure or hash mismatch.
  */
 export async function openEnvelope(
   envelope: ContentEnvelope,
-  secret: string,
+  cipher: ContentCipher,
 ): Promise<Uint8Array> {
-  const base64 = await decryptValue(envelope.ciphertext, secret,);
-  const bytes = Buffer.from(base64, "base64",);
+  const bytes = await cipher.open(envelope.ciphertext,);
   const hash = createHash("sha256",).update(bytes,).digest("hex",);
   if (hash !== envelope.hash) {
     throw new Error(`content hash mismatch for ${envelope.id}`,);

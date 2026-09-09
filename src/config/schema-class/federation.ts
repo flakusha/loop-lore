@@ -9,4 +9,5 @@ export const FEDERATION_DEFAULTS = {
   seeds: [],
   peers: [],
   meshPsk: "",
+  duplication: { mode: "trusted", peers: [], },
 } satisfies FederationConfig;

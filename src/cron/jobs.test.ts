@@ -66,7 +66,13 @@ describe("federation jobs", () => {
     const config = {
       ...configSchema.defaults,
       server: { ...configSchema.defaults.server, host: "localhost", port: 1, },
-      federation: { enabled: true, seeds: [], peers: [], meshPsk: "", },
+      federation: {
+        enabled: true,
+        seeds: [],
+        peers: [],
+        meshPsk: "",
+        duplication: { mode: "trusted" as const, peers: [], },
+      },
     };
     const scheduler = startScheduler({
       database: db,
@@ -79,7 +85,7 @@ describe("federation jobs", () => {
       const gossip = await scheduler.runOnce("federation.gossip",) as { tick: number };
       expect(gossip.tick,).toBe(1,);
       const resync = await scheduler.runOnce("federation.resync",);
-      expect(resync,).toEqual({ checked: 0, alive: 0, },);
+      expect(resync,).toEqual({ checked: 0, alive: 0, expired: 0, },);
     } finally {
       scheduler.stop();
     }
