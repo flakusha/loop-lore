@@ -986,6 +986,31 @@ body {
   max-height: 240px;
   overflow: auto;
 }
+.tool-result-block {
+  font-size: 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-secondary);
+}
+.tool-result-block summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  user-select: none;
+}
+.tool-result-content {
+  margin: var(--space-2) 0 0;
+  padding: var(--space-2);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary, var(--bg-secondary));
+  border-radius: 4px;
+  max-height: 240px;
+  overflow: auto;
+}
 
 /* --- Message action buttons (shared) --- */
 .btn-icon-action {
