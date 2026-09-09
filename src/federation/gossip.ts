@@ -7,8 +7,7 @@
 // drives it: each poll fetches every known peer's `/api/instance-state`
 // advertisement, records heartbeats with per-poll sequence numbers (late or
 // replayed responses for an older tick are rejected), and discovers new peers
-// from advertised membership lists. Peer fetches honor per-peer TLS trust
-// overrides (custom CA bundles) from `config.federation.peers`.
+// from advertised membership lists.
 //
 // Verdict policy (no self-reported identity is trusted):
 // - Origins listed in `config.federation.peers` are explicit admin trust → `trusted`.
@@ -17,20 +16,18 @@
 //   entry today; signature-based promotion is future work (actor-key infra).
 
 import type { FederationPeerTrustConfig, ServerConfig, } from "../config/schema";
-import { PeerTable, type PeerEntry, } from "../transport/peer-table";
+import { type PeerEntry, PeerTable, } from "../transport/peer-table";
+import {
+  canonicalOrigin,
+  fetchPeerAdvertisement,
+  type InstanceAdvertisement,
+  type PeerFetch,
+} from "./peer-fetch";
 
-/** Per-poll fetch timeout for peer advertisements. */
-const POLL_TIMEOUT_MS = 5_000;
 /** Cap on membership entries accepted from one advertisement. */
 const MAX_PAYLOAD_PEERS = 128;
 /** Cap on total table size (bounds memory against hostile peer lists). */
 const MAX_TABLE_SIZE = 1_024;
-
-/** Minimal shape of a peer `/api/instance-state` advertisement. */
-export interface InstanceAdvertisement {
-  /** Mesh origins known to the advertising peer. */
-  peers?: unknown;
-}
 
 /** Result of one gossip poll across all known peers. */
 export interface GossipPollSummary {
@@ -42,68 +39,6 @@ export interface GossipPollSummary {
   alive: number;
   /** New origins learned this poll. */
   discovered: number;
-}
-
-/** Fetch implementation seam (injectable for tests). */
-export type GossipFetch = (
-  url: string,
-  trust: FederationPeerTrustConfig | undefined,
-) => Promise<{ ok: boolean; status: number; body: unknown }>;
-
-/**
- * Fetch a URL with an optional per-peer CA bundle and a bounded timeout.
- * SPKI pins / mTLS are NOT enforced here — Bun's fetch surface exposes no
- * peer-certificate handle for pin comparison; custom-CA trust is the
- * enforceable subset today.
- * @param url
- * @param trust
- * @param timeoutMs
- * @returns Status + parsed JSON body (null when unparseable).
- */
-export async function fetchWithPeerTrust(
-  url: string,
-  trust: FederationPeerTrustConfig | undefined,
-  timeoutMs: number = POLL_TIMEOUT_MS,
-): Promise<{ ok: boolean; status: number; body: unknown }> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs,);
-  try {
-    const init: RequestInit & { tls?: { ca?: string[] } } = { signal: controller.signal, };
-    if (trust?.caBundle) {
-      init.tls = { ca: [trust.caBundle,], };
-    }
-    const res = await fetch(url, init,);
-    let body: unknown = null;
-    try {
-      body = await res.json();
-    } catch {
-      body = null;
-    }
-    return { ok: res.ok, status: res.status, body, };
-  } catch {
-    return { ok: false, status: 0, body: null, };
-  } finally {
-    clearTimeout(timer,);
-  }
-}
-
-/**
- * Canonicalize a peer origin to `URL.origin` (lowercased host, no path).
- * @param raw
- * @returns Canonical origin, or null when not an http(s) URL.
- */
-export function canonicalOrigin(raw: unknown,): string | null {
-  if (typeof raw !== "string") { return null; }
-  let url: URL;
-  try {
-    url = new URL(raw,);
-  } catch {
-    return null;
-  }
-  if (url.protocol !== "http:" && url.protocol !== "https:") { return null; }
-  if (url.username !== "" || url.password !== "") { return null; }
-  if (url.hostname === "") { return null; }
-  return url.origin;
 }
 
 /** Options for constructing a GossipService. */
@@ -118,10 +53,14 @@ export interface GossipServiceOptions {
   selfOrigin: string;
   /** Heartbeat TTL in ms. */
   ttl?: number;
+  /** Cap on membership entries accepted per advertisement (tests). */
+  maxPayloadPeers?: number;
+  /** Cap on total table size (tests). */
+  maxTableSize?: number;
   /** Monotonic clock (injectable for tests). */
   now?: () => number;
   /** Fetch seam (injectable for tests). */
-  fetchImpl?: GossipFetch;
+  fetchImpl?: PeerFetch;
 }
 
 /** Mesh gossip driver: polls advertisements, feeds the peer table. */
@@ -129,7 +68,9 @@ export class GossipService {
   private readonly table: PeerTable;
   private readonly trustByOrigin: Record<string, FederationPeerTrustConfig | undefined>;
   private readonly selfOrigin: string;
-  private readonly fetchImpl: GossipFetch;
+  private readonly fetchImpl: PeerFetch;
+  private readonly maxPayloadPeers: number;
+  private readonly maxTableSize: number;
   private tick = 0;
 
   /** @param opts */
@@ -148,9 +89,9 @@ export class GossipService {
     }
     this.trustByOrigin = opts.trustByOrigin ?? {};
     this.selfOrigin = opts.selfOrigin;
-    this.fetchImpl = opts.fetchImpl ??
-      ((url: string, trust: FederationPeerTrustConfig | undefined,) =>
-        fetchWithPeerTrust(url, trust,));
+    this.maxPayloadPeers = opts.maxPayloadPeers ?? MAX_PAYLOAD_PEERS;
+    this.maxTableSize = opts.maxTableSize ?? MAX_TABLE_SIZE;
+    this.fetchImpl = opts.fetchImpl ?? fetchPeerAdvertisement;
   }
 
   /** Start the table eviction sweep. Idempotent. */
@@ -170,7 +111,7 @@ export class GossipService {
 
   /** Canonical origins of all known peers (for instance-state exposure). */
   origins(): string[] {
-    return this.table.listPeers().map((p,) => p.origin,);
+    return this.table.listPeers().map((p,) => p.origin);
   }
 
   /** Get a peer entry by canonical origin. */
@@ -180,8 +121,8 @@ export class GossipService {
 
   /**
    * One gossip round: fetch every known peer's advertisement, record
-   * heartbeats keyed by this poll's tick (stale async responses from an
-   * older tick are rejected by the table), and discover advertised peers.
+   * heartbeats keyed by this poll's tick, and discover advertised peers.
+   * Per-peer misses never abort the round — they just go stale.
    * @returns Per-poll summary.
    */
   async pollOnce(): Promise<GossipPollSummary> {
@@ -190,11 +131,12 @@ export class GossipService {
     const known = this.table.listPeers();
     let alive = 0;
     let discovered = 0;
-    await Promise.all(known.map(async (peer,) => {
+    // allSettled: a throwing custom fetchImpl still resolves the round
+    // (the default seam never throws, but injected ones may).
+    await Promise.allSettled(known.map(async (peer,) => {
       let body: unknown = null;
       let ok = false;
       try {
-        // A dead peer must never abort the round — misses just go stale.
         const res = await this.fetchImpl(
           `${peer.origin}/api/instance-state`,
           this.trustByOrigin[peer.origin],
@@ -208,12 +150,12 @@ export class GossipService {
       if (!this.table.recordHeartbeat(peer.origin, tick,)) { return; }
       alive += 1;
       const advertised = (body as InstanceAdvertisement | null)?.peers;
-      if (!Array.isArray(advertised)) { return; }
-      for (const raw of advertised.slice(0, MAX_PAYLOAD_PEERS,)) {
+      if (!Array.isArray(advertised,)) { return; }
+      for (const raw of advertised.slice(0, this.maxPayloadPeers,)) {
         const origin = canonicalOrigin(raw,);
         if (origin === null || origin === this.selfOrigin) { continue; }
         if (this.table.getPeer(origin,) !== undefined) { continue; }
-        if (this.table.size >= MAX_TABLE_SIZE) { break; }
+        if (this.table.size >= this.maxTableSize) { break; }
         this.table.discoverPeer(origin,);
         discovered += 1;
       }
