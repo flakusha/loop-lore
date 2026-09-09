@@ -503,6 +503,13 @@ export const SCHEMA = new SchemaManifest()
     clock: col("integer", { notNull: true, },),
     received_at: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("mesh_inbound_keys", {
+    peer_origin: col("text", { primaryKey: true, },),
+    encrypted_key: col("text", { notNull: true, },),
+    previous_encrypted_key: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("mesh_negotiations", {
     id: col("text", { primaryKey: true, },),
     peer_origin: col("text", { notNull: true, },),

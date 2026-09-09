@@ -210,6 +210,15 @@ export interface Users {
   encryption_secret: string | null;
 }
 
+// ── mesh_inbound_keys ────────────────────────────────────────────
+export interface MeshInboundKeys {
+  peer_origin: Generated<string>;
+  encrypted_key: string;
+  previous_encrypted_key: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
 // ── world_invites ────────────────────────────────────────────
 export interface WorldInvites {
   id: Generated<string>;

@@ -36,6 +36,7 @@ export interface DB {
   asset_links: import("./schema-content").AssetLinks;
   asset_shares: import("./schema-content").AssetShares;
   assets: import("./schema-content").Assets;
+  mesh_inbound_keys: import("./schema-core").MeshInboundKeys;
   location_states: import("./schema-story").LocationStates;
   locations: import("./schema-story").Locations;
   world_avatar_config: import("./schema-character").WorldAvatarConfig;
