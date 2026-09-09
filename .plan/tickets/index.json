@@ -10420,7 +10420,7 @@
     "git_issue": "e665ded"
   },
   "TASK-CADDY-TLS-TERMINATION-WITH-AUTOMATIC-HTTPS": {
-    "hash": "pending",
+    "hash": "382541c",
     "extid": "TASK-CADDY-TLS-TERMINATION-WITH-AUTOMATIC-HTTPS",
     "type": "TASK",
     "title": "Caddy TLS termination with automatic HTTPS",
@@ -10428,7 +10428,9 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-caddy-tls-termination-with-automatic-https.md"
+    "source": ".plan/tickets/TASK-caddy-tls-termination-with-automatic-https.md",
+    "git_issue": "382541c",
+    "status": "done"
   },
   "TASK-CAPABILITY-DISCLOSURE-LORE-CEILING": {
     "hash": "c622d40",
