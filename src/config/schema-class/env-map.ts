@@ -115,6 +115,7 @@ export const envMap = (): EnvMap => {
   map.TLS_CERT = "server.tls.cert";
   map.TLS_KEY = "server.tls.key";
   map.SERVER_TRUST_PROXY = "server.trustProxy";
+  map.SERVER_PUBLIC_ORIGIN = "server.publicOrigin";
   map.AUTH_REQUIRED = "auth.required";
   map.AUTH_REGISTRATION_OPEN = "auth.registrationOpen";
   map.SESSION_TIMEOUT_HOURS = "auth.sessionTimeoutHours";

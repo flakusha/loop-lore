@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+# Production compose: Caddy (automatic HTTPS) + app + Postgres.
+#
+# Usage:
+#   DOMAIN=lore.example.com ACME_EMAIL=admin@example.com docker compose -f deploy/docker-compose.yml up -d
+#
+# Requirements: ports 80 + 443 reachable on the VPS (ACME HTTP-01/TLS-ALPN).
+# Certs live in the `caddy_data` volume; renewal is automatic, no reload needed.
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:?DOMAIN is required (e.g. lore.example.com)}
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL is required}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+  app:
+    build: ..
+    restart: unless-stopped
+    # No published ports — reachable only via Caddy.
+    expose:
+      - "3000"
+    environment:
+      DB_TYPE: postgres
+      DATABASE_URL: postgres://user:pass@db:5432/looplore
+      AUTH_REQUIRED: "true"
+      DOCS_ENABLED: "false"
+      SERVER_TRUST_PROXY: "1"
+      SERVER_PUBLIC_ORIGIN: https://${DOMAIN:?DOMAIN is required}
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: looplore
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  caddy_data:
+  caddy_config:
+  pgdata:
