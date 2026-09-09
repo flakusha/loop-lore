@@ -7356,6 +7356,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-resource-provision-credential-store.md"
     },
     {
@@ -10431,6 +10435,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/testing.md"
+    }
+  ],
+  "src/federation/clock.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
     }
   ],
   "src/federation/coordinator.ts": [
@@ -20273,6 +20283,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/quests-encounters.md"
+    }
+  ],
+  "src/routes/federation-transfer.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
     }
   ],
   "src/routes/gallery-search.test.ts": [
