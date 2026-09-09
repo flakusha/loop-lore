@@ -8,11 +8,9 @@
  * moderation primitives, and service layer.
  */
 
-
-
 export { computeContextWindow, countMessageTokens, getStatus, THRESHOLDS, } from "./token-counter";
 export type { ContextStatus, CountableMessage, TokenCountResult, } from "./token-counter";
-export { MODE_DEFAULTS, resolveFeatureFlags, RESPONSE_LENGTH_DEFAULTS, } from "./types";
+export { MODE_DEFAULTS, resolveFeatureFlags, } from "./types";
 
 export { availableTokens, computeContextStats, computeSections, } from "./context-stats";
 export type { BudgetStats, ContextSection, ContextStats, } from "./context-stats";
@@ -40,14 +38,9 @@ export {
   buildLengthConfig,
   computeMaxTokens,
   DEFAULT_RESPONSE_LENGTH,
+  isValidPreset,
   LENGTH_PRESETS,
   parseLengthConfig,
-} from "./response-length";
-
-export {
-  clampTokenCount,
-  isValidPreset,
-  resolveResponseLength,
 } from "./response-length";
 export type { LengthPreset, ResponseLengthConfig, } from "./response-length";
 

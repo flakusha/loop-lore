@@ -15,8 +15,7 @@ import { getContextWindowForModel, } from "../admin/model-capabilities";
 import { MoodService, } from "../characters/services/mood-service";
 import { resolveOutputStyle, } from "../chat/output-style";
 import type { OutputStylePreset, } from "../chat/output-style";
-import { resolveResponseLength, } from "../chat/response-length";
-import type { ResponseLengthPreset, } from "../chat/types";
+import { buildLengthConfig, isValidPreset, type LengthPreset, } from "../chat/response-length";
 import type { GmConfig, } from "../chat/types/config";
 import { ChatMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
@@ -102,7 +101,7 @@ export class PromptAssembler {
     // ── Resolve output style + response length (chat → user → server) ──
     const gmConfig = parseJsonOr<GmConfig | null>(chat.gm_config, null,);
     let userOutputStylePreset: OutputStylePreset | null = null;
-    let userResponseLengthPreset: ResponseLengthPreset | null = null;
+    let userResponseLengthPreset: LengthPreset | null = null;
     let userCustomInstructions: string | null = null;
     if (params.userId) {
       const userRow = await this.db
@@ -113,12 +112,15 @@ export class PromptAssembler {
       const userSettings = parseJsonOr<
         {
           outputStyle?: { preset?: OutputStylePreset };
-          responseLength?: { preset?: ResponseLengthPreset };
+          responseLength?: { preset?: LengthPreset };
           customInstructions?: string | null;
         } | null
       >(userRow?.settings ?? null, null,);
       userOutputStylePreset = userSettings?.outputStyle?.preset ?? null;
-      userResponseLengthPreset = userSettings?.responseLength?.preset ?? null;
+      userResponseLengthPreset =
+        typeof userSettings?.responseLength?.preset === "string" && isValidPreset(userSettings.responseLength.preset,)
+          ? userSettings.responseLength.preset
+          : null;
       userCustomInstructions = typeof userSettings?.customInstructions === "string"
         ? userSettings.customInstructions
         : null;
@@ -129,11 +131,12 @@ export class PromptAssembler {
       userOutputStylePreset,
       params.config?.generation?.chatDefaults?.outputStyle ?? null,
     );
-    const resolvedResponseLength = resolveResponseLength(
-      chat.response_length_preset as ResponseLengthPreset | null,
-      chat.response_length_custom,
-      userResponseLengthPreset,
-      "medium",
+    const rawChatPreset: unknown = chat.response_length_preset;
+    const chatPreset = typeof rawChatPreset === "string" && isValidPreset(rawChatPreset,) ? rawChatPreset : null;
+    const resolvedResponseLength = buildLengthConfig(
+      chatPreset ?? userResponseLengthPreset ?? "medium",
+      undefined,
+      chat.response_length_custom ?? undefined,
     );
 
     // Per-world setup overlay: apply scenario/system-prompt overrides for the
