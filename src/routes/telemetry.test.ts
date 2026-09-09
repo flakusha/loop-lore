@@ -428,4 +428,38 @@ describeReal("telemetry routes — enabled", () => {
     );
     expect(res.status,).toBe(400,);
   });
+
+  test("POST /telemetry/event: oversize event payload (~1MB) does not crash", async () => {
+    const hugeData = { big: "x".repeat(1_000_000,), };
+    const res = await makeApp(db, "user1", "user",).handle(
+      new Request("http://localhost/api/telemetry/event", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ type: "frontend.page_view", data: hugeData, },),
+      },),
+    );
+    expect([200, 400, 413, 422,],).toContain(res.status,);
+  });
+
+  test("POST /telemetry/event: malformed JSON body returns 4xx", async () => {
+    const res = await makeApp(db, "user1", "user",).handle(
+      new Request("http://localhost/api/telemetry/event", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: "{this is not valid JSON",
+      },),
+    );
+    expect([400, 422,],).toContain(res.status,);
+  });
+
+  test("POST /telemetry/event: missing required 'data' field returns 422", async () => {
+    const res = await makeApp(db, "user1", "user",).handle(
+      new Request("http://localhost/api/telemetry/event", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ type: "frontend.page_view", },),
+      },),
+    );
+    expect(res.status,).toBe(422,);
+  });
 },);

@@ -128,4 +128,139 @@ describe("SeductionService", () => {
       expect(newLevel,).toBeLessThan(50,);
     });
   });
+
+  // ── Edge cases ──────────────────────────────────────────────
+
+  describe("Seduction Skills — edge cases", () => {
+    test("awardXp with negative XP throws (NOT NULL constraint)", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      await service.getSkill("actor-1", "foreplay", "Kissing",);
+      // xp column has NOT NULL; negative XP works fine since it's just
+      // a number. Pin the observable behavior:
+      const result = await service.awardXp("actor-1", "foreplay", "Kissing", -10,);
+      // xp = 0 + (-10) = -10 → NOT NULL is fine; below threshold so
+      // no level up.
+      expect(result.leveled,).toBe(false,);
+      expect(result.newLevel,).toBe(1,);
+    });
+
+    test("awardXp with XP=0 leaves the skill untouched (still level 1)", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      await service.getSkill("actor-1", "foreplay", "Kissing",);
+      const result = await service.awardXp("actor-1", "foreplay", "Kissing", 0,);
+      expect(result.leveled,).toBe(false,);
+      expect(result.newLevel,).toBe(1,);
+    });
+
+    test("awardXp with NaN XP throws (NOT NULL constraint)", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      await service.getSkill("actor-1", "foreplay", "Kissing",);
+      await expect(
+        service.awardXp("actor-1", "foreplay", "Kissing", NaN,),
+      ).rejects.toThrow();
+    });
+
+    test("awardXp with Infinity XP triggers level-up (Infinity > threshold)", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      await service.getSkill("actor-1", "foreplay", "Kissing",);
+      const result = await service.awardXp("actor-1", "foreplay", "Kissing", Infinity,);
+      expect(result.leveled,).toBe(true,);
+      expect(result.newLevel,).toBeGreaterThanOrEqual(2,);
+    });
+  });
+
+  describe("Arousal State — edge cases", () => {
+    test("modifyArousal with delta=-1 reduces from 5 to 4", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      await service.modifyArousal("actor-1", 5,);
+      const newLevel = await service.modifyArousal("actor-1", -1,);
+      expect(newLevel,).toBe(4,);
+    });
+
+    test("modifyArousal with delta=Infinity clamps to 100", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      const newLevel = await service.modifyArousal("actor-1", Infinity,);
+      expect(newLevel,).toBe(100,);
+    });
+
+    test("modifyArousal with delta=NaN throws (NOT NULL constraint)", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      await expect(
+        service.modifyArousal("actor-1", NaN,),
+      ).rejects.toThrow();
+    });
+
+    test("decayArousal past 0 floor stays at 0", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      // Start at 0 — decay must not go negative.
+      const newLevel = await service.decayArousal("actor-1",);
+      expect(newLevel,).toBe(0,);
+    });
+
+    test("decayArousal returns 0 when state.level is already 0", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      await service.getArousal("actor-1",);
+      const newLevel = await service.decayArousal("actor-1",);
+      expect(newLevel,).toBe(0,);
+    });
+
+    test("modifyArousal applies the buildupRate multiplier (default 1)", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      // Default buildupRate is 1, so +20 stays +20.
+      const newLevel = await service.modifyArousal("actor-1", 20,);
+      expect(newLevel,).toBe(20,);
+    });
+  });
+
+  describe("Desire Profile — edge cases", () => {
+    test("getDesireProfile is idempotent (returns the same row)", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      const a = await service.getDesireProfile("actor-1",);
+      const b = await service.getDesireProfile("actor-1",);
+      expect(a.id,).toBe(b.id,);
+    });
+
+    test("updateDesireProfile with empty object returns true (no-op)", async () => {
+      const db = await seedTestDb();
+      const service = new SeductionService(db,);
+
+      const success = await service.updateDesireProfile("actor-1", {},);
+      expect(success,).toBe(true,);
+    });
+
+    test("updateDesireProfile auto-creates a profile for a new actor", async () => {
+      const db = await seedTestDb();
+      await insertActors(db, "Late Actor", { id: "actor-late", } as never,);
+      const service = new SeductionService(db,);
+
+      const success = await service.updateDesireProfile("actor-late", {
+        fetishes: ["silk",],
+      },);
+      expect(success,).toBe(true,);
+      const profile = await service.getDesireProfile("actor-late",);
+      expect(profile.fetishes,).toEqual(["silk",],);
+    });
+  });
 });

@@ -94,8 +94,6 @@ describe("POST /api/plugins/:name/enable", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/disable-me/enable", { method: "POST", },),
     );
-    const body = await res.text();
-    console.log("enable response:", res.status, body,);
     expect(res.status,).toBe(200,);
     expect(registry.isEnabled("disable-me",),).toBe(true,);
   });
@@ -132,8 +130,6 @@ describe("POST /api/plugins/:name/disable", () => {
     const res = await app.handle(
       new Request("http://localhost/api/plugins/enable-me/disable", { method: "POST", },),
     );
-    const body = await res.text();
-    console.log("disable response:", res.status, body,);
     expect(res.status,).toBe(200,);
     expect(registry.isEnabled("enable-me",),).toBe(false,);
   });
@@ -152,5 +148,76 @@ describe("POST /api/plugins/:name/disable", () => {
       new Request("http://localhost/api/plugins/unknown/disable", { method: "POST", },),
     );
     expect(res.status,).toBe(404,);
+  });
+});
+
+describe("plugin routes — edge cases", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    ({ db, } = await createTestDb());
+    registry.register({
+      manifest: { name: "edge-test", version: "1.0", description: "", author: "test", },
+      origin: "core",
+      directory: "/tmp",
+    },);
+    registry.setEnabled("edge-test", false,);
+  },);
+
+  afterAll(async () => {
+    registry.unregisterAll();
+    await db.destroy();
+  },);
+
+  test("enable returns 404 for unknown plugin name", async () => {
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/does-not-exist/enable", { method: "POST", },),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("enable returns 400 for already-enabled plugin", async () => {
+    registry.setEnabled("edge-test", true,);
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/edge-test/enable", { method: "POST", },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("oversized plugin name in URL path does not crash", async () => {
+    const app = createPluginApp(db, "admin",);
+    const huge = "p".repeat(2048,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/plugins/${huge}/enable`, { method: "POST", },),
+    );
+    expect([400, 404,],).toContain(res.status,);
+  });
+
+  test("list endpoint tolerates many registrations", async () => {
+    for (let i = 0; i < 50; i++) {
+      registry.register({
+        manifest: { name: `bulk-${i}`, version: "1.0", description: "", author: "test", },
+        origin: "core",
+        directory: "/tmp",
+      },);
+    }
+    const app = createPluginApp(db, "admin",);
+    const res = await app.handle(new Request("http://localhost/api/plugins",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as unknown[];
+    expect(body.length,).toBeGreaterThanOrEqual(50,);
+    const cleanup: string[] = [];
+    for (let i = 0; i < 50; i++) {
+      const name = `bulk-${i}`;
+      registry.register({
+        manifest: { name, version: "1.0", description: "", author: "test", },
+        origin: "core",
+        directory: "/tmp",
+      },);
+      cleanup.push(name,);
+    }
+    void cleanup;
   });
 });

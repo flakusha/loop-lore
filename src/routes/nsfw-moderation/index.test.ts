@@ -54,4 +54,30 @@ describe("nsfwModerationRoutes barrel", () => {
     );
     expect(res.status,).toBe(404,);
   });
+
+  test("preferences lookup with non-UUID id returns 4xx", async () => {
+    const res = await makeApp("u1",).handle(
+      new Request("http://localhost/api/nsfw/moderation/preferences/not-a-valid-uuid",),
+    );
+    expect([400, 403, 404, 422,],).toContain(res.status,);
+  });
+
+  test("oversized preferences path returns 4xx/403 without crashing", async () => {
+    const huge = "u".repeat(4096,);
+    const res = await makeApp("u1",).handle(
+      new Request(`http://localhost/api/nsfw/moderation/preferences/${huge}`,),
+    );
+    expect([400, 403, 404, 414, 422,],).toContain(res.status,);
+  });
+
+  test("appeal action with malformed JSON returns 4xx/403", async () => {
+    const res = await makeApp("u1",).handle(
+      new Request("http://localhost/api/nsfw/moderation/appeals", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: "{not-valid-json",
+      },),
+    );
+    expect([400, 403, 422,],).toContain(res.status,);
+  });
 });

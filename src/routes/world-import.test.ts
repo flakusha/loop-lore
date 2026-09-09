@@ -249,4 +249,63 @@ describe("worldImportRoutes — POST /api/import/world", () => {
     );
     expect(res.status,).toBe(400,);
   });
+  test("route returns 400/422 on malformed payload (not an object)", async () => {
+    const app = createApp(db,);
+    const res = await app.handle(
+      new Request("http://localhost/api/import/world", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify("not-an-object",),
+      },),
+    );
+    expect([400, 422,],).toContain(res.status,);
+  });
+
+  test("route accepts bundle with missing schema_version (legacy import)", async () => {
+    const app = createApp(db,);
+    const res = await app.handle(
+      new Request("http://localhost/api/import/world", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ world: { name: "no-version", }, },),
+      },),
+    );
+    expect([201, 400, 422,],).toContain(res.status,);
+  });
+  test("route accepts unicode world name", async () => {
+    const app = createApp(db,);
+    const res = await app.handle(
+      new Request("http://localhost/api/import/world", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          schema_version: "1.0",
+          world: { name: "Mundo 世界 🌍", description: "🌍", },
+          locations: [],
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const parsed = (await res.json()) as { id: string };
+    const w = await db.selectFrom("worlds",).select(["name",],).where("id", "=", parsed.id,).executeTakeFirst();
+    expect(w?.name,).toBe("Mundo 世界 🌍",);
+  });
+
+  test("route accepts ~1MB JSON payload without crashing", async () => {
+    const app = createApp(db,);
+    const hugeDescription = "x".repeat(1_000_000,);
+    const res = await app.handle(
+      new Request("http://localhost/api/import/world", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          schema_version: "1.0",
+          world: { name: "Huge", description: hugeDescription, },
+          locations: [],
+        },),
+      },),
+    );
+    // Should succeed or fail validation; should not crash the process.
+    expect([201, 400, 413, 422,],).toContain(res.status,);
+  });
 });

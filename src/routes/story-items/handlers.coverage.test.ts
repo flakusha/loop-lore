@@ -267,4 +267,65 @@ describe("story-items handlers coverage", () => {
     const destroyed = await handleInstance(db, worldId, instanceId, owner, "user",);
     expect(destroyed.status,).toBe(204,);
   });
+
+  // Edge cases: oversize/unicode/control chars/invalid category/nested JSON
+
+  test("definitions POST: 100KB name (huge string) succeeds and round-trips", async () => {
+    const hugeName = "x".repeat(100_000,);
+    const res = await handleDefinitions(db, "POST", worldId, owner, "user", 1, 20, undefined, {
+      name: hugeName,
+    },);
+    expect(res.status,).toBe(201,);
+    const body: { id: string } = await res.json();
+    const fetched = await handleDefinition(db, "GET", worldId, body.id, owner, "user",);
+    const def: { name: string } = await fetched.json();
+    expect(def.name.length,).toBe(100_000,);
+  });
+
+  test("definitions POST: name with control characters", async () => {
+    const weirdName = "Tab\tNewline\nReturn\r";
+    const res = await handleDefinitions(db, "POST", worldId, owner, "user", 1, 20, undefined, {
+      name: weirdName,
+    },);
+    expect(res.status,).toBe(201,);
+  });
+
+  test("definitions POST: name with unicode (emoji + CJK)", async () => {
+    const unicode = "🗡️ 伝説の剣 ⚔️";
+    const res = await handleDefinitions(db, "POST", worldId, owner, "user", 1, 20, undefined, {
+      name: unicode,
+    },);
+    expect(res.status,).toBe(201,);
+    const body: { id: string } = await res.json();
+    const fetched = await handleDefinition(db, "GET", worldId, body.id, owner, "user",);
+    const def: { name: string } = await fetched.json();
+    expect(def.name,).toBe(unicode,);
+  });
+
+  test("definitions POST: invalid category falls back to 'other'", async () => {
+    const res = await handleDefinitions(db, "POST", worldId, owner, "user", 1, 20, undefined, {
+      name: "Mystery",
+      category: "definitely-not-valid",
+    },);
+    expect(res.status,).toBe(201,);
+    const body: { id: string } = await res.json();
+    const fetched = await handleDefinition(db, "GET", worldId, body.id, owner, "user",);
+    const def: { category: string } = await fetched.json();
+    expect(def.category,).toBe("other",);
+  });
+
+  test("definitions POST: deeply nested properties JSON persists round-trip", async () => {
+    const deep = { a: { b: { c: { d: { e: { f: { g: "leaf", }, }, }, }, }, }, };
+    const res = await handleDefinitions(db, "POST", worldId, owner, "user", 1, 20, undefined, {
+      name: "Nested",
+      properties: deep,
+    },);
+    expect(res.status,).toBe(201,);
+    const body: { id: string } = await res.json();
+    const fetched = await handleDefinition(db, "GET", worldId, body.id, owner, "user",);
+    const def: { properties: unknown } = await fetched.json();
+    expect(JSON.parse(typeof def.properties === "string" ? def.properties : JSON.stringify(def.properties,),),).toEqual(
+      deep,
+    );
+  });
 });
