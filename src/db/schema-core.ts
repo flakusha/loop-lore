@@ -154,6 +154,21 @@ export interface Actors {
   creator: string | null;
   character_version: string | null;
 
+// ── mesh_inbound_keys ────────────────────────────────────────────
+export interface MeshInboundKeys {
+  peer_origin: Generated<string>;
+  encrypted_key: string;
+  previous_encrypted_key: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── world_invites ────────────────────────────────────────────
+export interface WorldInvites {
+  id: Generated<string>;
+  world_id: string;
+  code: string;
+  created_by: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
   content_rating: Generated<string>;

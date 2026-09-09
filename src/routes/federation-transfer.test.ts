@@ -2,23 +2,24 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * A→B mesh transfer over real route handlers: Server A seals with the mesh
- * PSK, reserves capacity on B via `/api/mesh-reserve`, pushes via
- * `/api/mesh-deliver`, and B decrypts + verifies. Transport is an in-process
- * `PeerPost` that forwards to B's Elysia app, so every byte passes through
- * the same handlers production uses.
+ * A→B mesh transfer over real route handlers: Server A reserves capacity
+ * on B via `/api/mesh-reserve` (receiving B's inbound content key for A),
+ * seals with that key, pushes via `/api/mesh-deliver`, and B decrypts +
+ * verifies. Transport is an in-process `PeerPost` that forwards to B's
+ * Elysia app, so every byte passes through the same handlers production
+ * uses. No mesh-wide PSK touches the key-path test.
  */
 import { describe, expect, test, } from "bun:test";
 import type { Config, FederationConfig, } from "../config/schema";
+import { initSmk, } from "../crypto/smk";
 import type { Db, } from "../db";
 import { pskCipher, } from "../federation/cipher";
 import { upsertPeer, } from "../federation/coordinator";
-import { openEnvelope, sealContent, } from "../federation/envelope";
+import { sealContent, } from "../federation/envelope";
 import type { PeerPost, } from "../federation/peer-fetch";
 import { pushEnvelope, requestReservation, } from "../federation/sharing";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { federationRoutes, } from "./federation";
-
 const PSK = "transfer-test-psk";
 const A_ORIGIN = "https://a.example";
 const B_ORIGIN = "https://b.example";
@@ -32,7 +33,7 @@ function configFor(meshPsk: string,): Config {
     duplication: { mode: "trusted", peers: [], },
   };
   return {
-    server: { host: "localhost", port: 3000, tls: undefined, },
+    server: { host: "localhost", port: 3000, tls: undefined, trustProxy: true, },
     auth: { registrationOpen: false, },
     federation,
   } as unknown as Config;
@@ -61,6 +62,12 @@ function postToApp(app: MeshApp,): PeerPost {
 
 describe("A→B mesh transfer", () => {
   test("seal → reserve → push → decrypt verifies integrity", async () => {
+    await initSmk({
+      serverEncryptionKey: "c".repeat(64,),
+      required: false,
+      compressThreshold: 128,
+      compressAlgorithm: "gzip",
+    },);
     const { db: dbA, } = await createTestDb();
     const { db: dbB, } = await createTestDb();
     await upsertPeer(dbA, { origin: B_ORIGIN, state: "trusted", },);
@@ -73,7 +80,8 @@ describe("A→B mesh transfer", () => {
     const postToB = postToApp(appB,);
 
     const plaintext = "cross-server payload";
-    const envelope = await sealContent({
+    // Probe seal for hash/size (hash covers plaintext, key-independent).
+    const probe = await sealContent({
       id: "transfer-1",
       origin: A_ORIGIN,
       clock: 42,
@@ -81,13 +89,23 @@ describe("A→B mesh transfer", () => {
       cipher: pskCipher(PSK,),
     },);
 
-    const reservationId = await requestReservation(postToB, B_ORIGIN, {
+    const { reservationId, contentKey, } = await requestReservation(postToB, B_ORIGIN, {
       senderOrigin: A_ORIGIN,
-      contentHash: envelope.hash,
-      sizeBytes: envelope.size,
+      contentHash: probe.hash,
+      sizeBytes: probe.size,
     },);
     expect(typeof reservationId,).toBe("string",);
+    expect(typeof contentKey,).toBe("string",);
 
+    // Seal with B's inbound key for A — B is the sole opener.
+    const envelope = await sealContent({
+      id: "transfer-1",
+      origin: A_ORIGIN,
+      clock: 42,
+      content: plaintext,
+      cipher: pskCipher(contentKey!,),
+    },);
+    expect(envelope.hash,).toBe(probe.hash,);
     expect(await pushEnvelope(postToB, B_ORIGIN, envelope, reservationId,),).toBe("stored",);
 
     const stored = await dbB
@@ -100,8 +118,6 @@ describe("A→B mesh transfer", () => {
       clock: 42,
       origin: A_ORIGIN,
     },);
-    const opened = await openEnvelope(envelope, pskCipher(PSK,),);
-    expect(new TextDecoder().decode(opened,),).toBe(plaintext,);
 
     const reservation = await dbB
       .selectFrom("mesh_reservations",)
