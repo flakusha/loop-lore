@@ -107,33 +107,33 @@ describe("placeholders regex", () => {
   describe("DOUBLE_BRACE — boundary", () => {
     it.each([
       // empty, whitespace-only, single-char, deeply nested
-      ["{{}}", 0],
-      ["{{ }}", 1],    // single space counts (capture is non-empty)
-      ["{{name}}", 1],
-      ["{{a.b.c.d.e}}", 1],
-      ["{{a-b-c-d}}", 1],        // hyphens allowed
-      ["{{a_b_c_d}}", 1],        // underscores allowed
-      ["{{{triple}}}", 1],       // matches 'triple' (inner \{\{ consumed)
-      ["{{name.with.dots.very.deeply.nested.path}}", 1],
+      ["{{}}", 0,],
+      ["{{ }}", 1,], // single space counts (capture is non-empty)
+      ["{{name}}", 1,],
+      ["{{a.b.c.d.e}}", 1,],
+      ["{{a-b-c-d}}", 1,], // hyphens allowed
+      ["{{a_b_c_d}}", 1,], // underscores allowed
+      ["{{{triple}}}", 1,], // matches 'triple' (inner \{\{ consumed)
+      ["{{name.with.dots.very.deeply.nested.path}}", 1,],
     ],)("match count of '%s'", (input, count,) => {
-      const matches = [...input.matchAll(DOUBLE_BRACE,)];
+      const matches = [...input.matchAll(DOUBLE_BRACE,),];
       expect(matches.length,).toBe(count,);
     },);
 
     it("does not match a string with no closing braces", () => {
-      const matches = [..."{{name".matchAll(DOUBLE_BRACE,)];
+      const matches = [..."{{name".matchAll(DOUBLE_BRACE,),];
       expect(matches.length,).toBe(0,);
     });
 
     it("does not match a string with no opening braces", () => {
-      const matches = [..."name}}".matchAll(DOUBLE_BRACE,)];
+      const matches = [..."name}}".matchAll(DOUBLE_BRACE,),];
       expect(matches.length,).toBe(0,);
     });
 
     it("matches many placeholders in a row (handles count)", () => {
       const matches = [...("{{a}}{{b}}{{c}}{{d}}".matchAll(DOUBLE_BRACE,)),];
       expect(matches.length,).toBe(4,);
-      expect(matches.map(m => m[1],),).toEqual(["a", "b", "c", "d",]);
+      expect(matches.map(m => m[1]),).toEqual(["a", "b", "c", "d",],);
     });
 
     it("extracts names with whitespaces around them (capture is everything between braces)", () => {
@@ -155,7 +155,7 @@ describe("placeholders regex", () => {
   describe("SINGLE_BRACE — boundary", () => {
     it("matches word-char single-brace placeholders", () => {
       const matches = [..."{name}".matchAll(SINGLE_BRACE,),];
-      expect(matches.map(m => m[1],),).toEqual(["name",]);
+      expect(matches.map(m => m[1]),).toEqual(["name",],);
     });
 
     it("does NOT match hyphenated names (\w only)", () => {
@@ -171,14 +171,14 @@ describe("placeholders regex", () => {
     });
 
     it("matches {0} (digits allowed in \w)", () => {
-      expect([..."{0}".matchAll(SINGLE_BRACE,)][0]?.[1],).toBe("0",);
+      expect([..."{0}".matchAll(SINGLE_BRACE,),][0]?.[1],).toBe("0",);
     });
 
     it("matches within '{{name}}' as '{name}' (overlapping bracket patterns)", () => {
       // Both DOUBLE_BRACE and SINGLE_BRACE match '{{name}}'. SINGLE_BRACE
       // finds '{name}' inside (the outer '{' is consumed by DOUBLE_BRACE).
       // Documenting this overlap so a single-brace-only parser knows.
-      const matches = [... "{{name}}".matchAll(SINGLE_BRACE,),];
+      const matches = [..."{{name}}".matchAll(SINGLE_BRACE,),];
       expect(matches.length,).toBe(1,);
       expect(matches[0]?.[0],).toBe("{name}",);
     });
@@ -186,18 +186,18 @@ describe("placeholders regex", () => {
 
   describe("MENTION — boundary", () => {
     it("matches alphanumeric + underscores + hyphens", () => {
-      const matches = [... "@alice @bob_c @charlie-b".matchAll(MENTION,),];
-      expect(matches.map(m => m[1],),).toEqual(["alice", "bob_c", "charlie-b",]);
+      const matches = [..."@alice @bob_c @charlie-b".matchAll(MENTION,),];
+      expect(matches.map(m => m[1]),).toEqual(["alice", "bob_c", "charlie-b",],);
     });
 
     it("does not match @-only (no body)", () => {
-      const matches = [... "@".matchAll(MENTION,),];
+      const matches = [..."@".matchAll(MENTION,),];
       expect(matches.length,).toBe(0,);
     });
     it("captures @a when followed by .b (first segment wins)", () => {
       // Pin: '@a.b' matches '@a' (the regex stops at '.' which is not in
       // the allowed character class). The trailing '.b' is unmatched.
-      const matches = [... "@a.b".matchAll(MENTION,),];
+      const matches = [..."@a.b".matchAll(MENTION,),];
       expect(matches.length,).toBe(1,);
       expect(matches[0]?.[1],).toBe("a",);
     });
@@ -205,12 +205,12 @@ describe("placeholders regex", () => {
     it("captures the first segment before '@' (chained at-mentions)", () => {
       // '@a@b' → first match is 'a', '@b' does NOT match because the
       // second '@' starts a new mention capture.
-      const matches = [... "@a@b".matchAll(MENTION,),];
-      expect(matches.map(m => m[1],),).toEqual(["a", "b",]);
+      const matches = [..."@a@b".matchAll(MENTION,),];
+      expect(matches.map(m => m[1]),).toEqual(["a", "b",],);
     });
 
     it("is case-sensitive (Alice vs alice)", () => {
-      const matches = [... "@Alice @alice".matchAll(MENTION,),];
+      const matches = [..."@Alice @alice".matchAll(MENTION,),];
       // Pin: case-sensitive. Resolution to canonical user-id is downstream.
       expect(matches.length,).toBe(2,);
       expect(matches[0]?.[1],).toBe("Alice",);
@@ -219,9 +219,9 @@ describe("placeholders regex", () => {
 
     it("handles huge mention names (no max length)", () => {
       const name = "x".repeat(1000,);
-      const matches = [...(`@${name}`.matchAll(MENTION,),)];
+      const matches = [...`@${name}`.matchAll(MENTION,),];
       expect(matches.length,).toBe(1,);
-      expect(matches[0]?.[1].length,).toBe(1000,);
+      expect(matches[0]?.[1]?.length,).toBe(1000,);
     });
   });
 
@@ -240,7 +240,7 @@ describe("placeholders regex", () => {
       // The regex has no \s anchor, so a trailing space before @ counts.
       expect(MENTION_AT_END.exec("@end",)?.[1],).toBe("end",);
       // With trailing space, the @ is no longer at end.
-      expect(MENTION_AT_END.exec("hello @ "),).toBeNull();
+      expect(MENTION_AT_END.exec("hello @ ",),).toBeNull();
     });
 
     it("stops at the first non-word character", () => {
@@ -267,17 +267,17 @@ describe("placeholders regex", () => {
     },);
 
     it.each([
-      ["CHARACTER:IMAGE", null],         // case-sensitive
-      ["Character:Image", null],         // case-sensitive
-      ["character", null],               // missing modality
-      [":image", null],                  // missing kind
-      ["character:image:foo", null],     // extra segment
-      ["character: image", null],        // whitespace between segments
-      ["character:audio", null],        // unsupported modality
-      ["other:image", null],             // unknown kind
-      ["", null],
-      ["character:", null],              // missing modality
-      [":image", null],
+      ["CHARACTER:IMAGE", null,], // case-sensitive
+      ["Character:Image", null,], // case-sensitive
+      ["character", null,], // missing modality
+      [":image", null,], // missing kind
+      ["character:image:foo", null,], // extra segment
+      ["character: image", null,], // whitespace between segments
+      ["character:audio", null,], // unsupported modality
+      ["other:image", null,], // unknown kind
+      ["", null,],
+      ["character:", null,], // missing modality
+      [":image", null,],
     ],)("rejects '%s'", (input,) => {
       expect(WORKFLOW_TAG.exec(input,),).toBeNull();
     },);
@@ -291,12 +291,12 @@ describe("placeholders regex", () => {
 
   describe("OBJECT_TYPE — boundary", () => {
     it("extracts custom class names from toString output", () => {
-      expect(OBJECT_TYPE.exec("[object MyClass]")?.[1],).toBe("MyClass",);
+      expect(OBJECT_TYPE.exec("[object MyClass]",)?.[1],).toBe("MyClass",);
     });
 
     it("rejects strings with no leading '[object '", () => {
       expect(OBJECT_TYPE.exec("Array",),).toBeNull();
-      expect(OBJECT_TYPE.exec("[object]"),).toBeNull();
+      expect(OBJECT_TYPE.exec("[object]",),).toBeNull();
     });
 
     it("rejects multi-word type labels (regex anchored at end)", () => {
