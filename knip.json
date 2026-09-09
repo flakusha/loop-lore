@@ -96,7 +96,12 @@
     // - isProtected: called at line 34 within agent-commit.ts; knip only tracks
     //   inter-file imports, not intra-file calls.
     // - stripMarkdownCode: called at line 117 within src-refs.ts (same file).
+    // - acquireFinalizeLock: called within finalize.ts (same file); the only
+    //   other consumer is the spawn-run child-process fixture
+    //   (finalize-lock-fixture.ts, ignored below), whose import edge knip
+    //   drops with the file.
     "scripts/worktree/commands/agent-commit.ts",
+    "scripts/worktree/commands/finalize.ts",
     "scripts/lib/src-refs.ts",
     //
     // Test helpers barrel re-exports used via seedAll; knip can't trace
@@ -115,6 +120,12 @@
     // Schema check scripts: standalone CLI tools, not entry-reachable
     // (consumed via bun run scripts/..., not import)
     "scripts/check-db-schemas.ts",
+    // Finalize-lock child-process fixture: spawned by
+    // scripts/worktree/finalize-lock-cleanup.test.ts via path (not a static
+    // import knip can trace) — same class as the chat-state-contract
+    // fixture below.
+    "scripts/worktree/finalize-lock-fixture.ts",
+
     // Coverage gate script: run via check-parallel.mjs shell string
     // (bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80),
     // not import-reachable — same class as check-db-schemas.ts above.
