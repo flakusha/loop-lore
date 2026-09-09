@@ -10,9 +10,9 @@
 // scheduler. Quota and encrypted-sharing phases build on this registry.
 // Metadata/control plane only — plaintext content never touches these paths.
 
-import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../db/schema";
+import { safeJsonStringify, } from "../utils/safe-json";
 import {
   canonicalOrigin,
   fetchPeerAdvertisement,
@@ -66,18 +66,22 @@ export async function upsertPeer(
 ): Promise<string> {
   const origin = canonicalOrigin(peer.origin,);
   if (origin === null) { throw new Error(`invalid peer origin: ${peer.origin}`,); }
+  const encoded = safeJsonStringify(peer.capabilities ?? [],);
+  if (!encoded.ok) { throw new Error("peer capabilities not serializable",); }
   const row = {
     origin,
     state: peer.state ?? "pending",
-    capabilities: JSON.stringify(peer.capabilities ?? [],),
+    capabilities: encoded.value,
   };
   await database
     .insertInto("mesh_peers",)
     .values(row,)
-    .onConflict((oc,) => oc.column("origin",).doUpdateSet({
-      state: row.state,
-      capabilities: row.capabilities,
-    },),)
+    .onConflict((oc,) =>
+      oc.column("origin",).doUpdateSet({
+        state: row.state,
+        capabilities: row.capabilities,
+      },)
+    )
     .execute();
   return origin;
 }
@@ -128,12 +132,14 @@ export async function touchPeer(
   advertisement: InstanceAdvertisement,
 ): Promise<void> {
   const peers = Array.isArray(advertisement.peers,)
-    ? advertisement.peers.filter((p,): p is string => typeof p === "string",).slice(0, 128,)
+    ? advertisement.peers.filter((p,): p is string => typeof p === "string").slice(0, 128,)
     : [];
+  const encoded = safeJsonStringify(peers,);
+  if (!encoded.ok) { throw new Error("peer capabilities not serializable",); }
   await database
     .updateTable("mesh_peers",)
     .set({
-      capabilities: JSON.stringify(peers,),
+      capabilities: encoded.value,
       last_seen: sql`(datetime('now'))`,
     },)
     .where("origin", "=", origin,)
