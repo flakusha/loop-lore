@@ -3,7 +3,7 @@
 
 # TASK: Mesh Coordinator Server — Knowledge DB, Addresses, Trusted Keys, Negotiations, Resync Cron
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress — coordinator role landed (registry + negotiation + resync); peer-handshake transport + key store remain
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-mesh-federation-content-sharing
@@ -112,3 +112,19 @@ for this control plane.
 - `epic-federation-swarm-sync.md` — fediverse federation (distinct axis)
 - `FEAT-swarm-mode-reconciliation.md` — CRDT state sync, HLC/vector clocks
   (for conflict detection during resync)
+
+## Progress 2026-09-09 (mesh-coordinator worktree)
+
+Adaptations (user decisions): coordinator runs as a server role, not a
+separate app. Registry tables folded into part 020 (renamed from
+021_workflow_sessions; search-unified holder of old-020 is gone).
+Landed: `mesh_peers` + `mesh_negotiations` tables,
+`src/federation/coordinator.ts` (upsertPeer/setPeerState/listPeers/
+touchPeer/beginNegotiation/advanceNegotiation/runResyncPass),
+`federation.resync` hourly cron job, generated types + manifest, contract +
+migration + roundtrip + schema-sync tests green, schemas:check green.
+Remaining: peer-handshake transport (needs content-encryption story —
+Encrypted-Sharing phase), peer signing key store (actor-key infra).
+DB recovery for pre-rename instances:
+`update kysely_migration set name='020_workflow_sessions' where
+name='021_workflow_sessions'` (or db:reinit on disposable DBs).

@@ -496,6 +496,19 @@ export const SCHEMA = new SchemaManifest()
     vector_blob: col("blob", { notNull: true, },),
     created_at: col("integer", { notNull: true, },),
   },)
+  .table("mesh_negotiations", {
+    id: col("text", { primaryKey: true, },),
+    peer_origin: col("text", { notNull: true, },),
+    state: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("mesh_peers", {
+    origin: col("text", { primaryKey: true, },),
+    state: col("text", { notNull: true, hasDefault: true, },),
+    capabilities: col("text", { notNull: true, hasDefault: true, },),
+    last_seen: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("message_reactions", {
     id: col("text", { primaryKey: true, },),
     message_id: col("text", { notNull: true, },),
