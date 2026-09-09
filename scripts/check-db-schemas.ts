@@ -15,7 +15,7 @@
  *   - STALE SCHEMA    — generator output differs from committed files; run
  *                       `bun run db:sync-types && bun run db:sync-manifest`
  *
- * Usage: bun run scripts/check-db-schemas.ts
+ * Usage: bun run scripts/check-db-schemas.ts [--smoke]
  */
 import { execFileSync, } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
@@ -25,6 +25,35 @@ import { fileURLToPath, } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url,),);
 const ROOT = resolve(__dirname, "..",);
+
+/**
+ * dprint exit-code 20 = "files were reformatted / check found non-formatted files".
+ * (Source: https://dprint.dev/cli/ — Exit codes section.) Treat it as benign —
+ * the file is now formatted; fall through to the diff loop.
+ */
+export const DPRINT_REFORMATTED_EXIT_CODE = 20;
+
+/**
+ * Classify an `execFileSync` rejection for the dprint step.
+ *
+ * - `benign`   → dprint exit 20; the file was reformatted in place, continue.
+ * - `tooling`  → any other non-zero status, missing binary, or generic Error;
+ *                the dprint invocation itself crashed.
+ *
+ * Exported so the smoke test (and any future caller) can exercise the same
+ * decision matrix the main script uses.
+ */
+export type DprintExitClassification = "benign" | "tooling";
+
+export function classifyDprintExit(err: unknown,): DprintExitClassification {
+  if (err && typeof err === "object") {
+    const status = (err as { status?: unknown }).status;
+    if (status === DPRINT_REFORMATTED_EXIT_CODE) {
+      return "benign";
+    }
+  }
+  return "tooling";
+}
 
 /** Committed artifact → temp-dir file (relative to temp output dir). */
 const ARTIFACTS: Array<{ committed: string; generated: string; label: string }> = [
@@ -93,9 +122,14 @@ try {
     stdio: ["ignore", "ignore", "pipe",],
   },);
 } catch (err) {
-  const detail = err instanceof Error ? err.message.split("\n",).slice(0, 5,).join("\n",) : String(err,);
-  console.error("[TOOLING ERROR] dprint fmt on generated output failed:\n", detail,);
-  process.exit(1,);
+  // dprint exit 20 = files were reformatted in place (benign); the temp file
+  // is now dprint-clean and ready to diff. Anything else (crash, missing
+  // binary, signal) is a real tooling failure.
+  if (classifyDprintExit(err,) !== "benign") {
+    const detail = err instanceof Error ? err.message.split("\n",).slice(0, 5,).join("\n",) : String(err,);
+    console.error("[TOOLING ERROR] dprint fmt on generated output failed:\n", detail,);
+    process.exit(1,);
+  }
 }
 
 // ── Diff generated vs committed ──────────────────────────────
