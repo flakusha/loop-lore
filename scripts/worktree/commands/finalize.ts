@@ -42,7 +42,16 @@ let ACTIVE_ABORT_STATE: AbortState | null = null;
 // its own signal-handler lifecycle without prematurely tearing down the
 // outer call's lock.
 let ACTIVE_FINALIZE_COUNT = 0;
-
+// Module-scoped lock-release function: the `process.on('exit')` cleanup
+// handler calls this on every process termination path. `process.exit()` and
+// any unhandled throw unwind through the `exit` event before the process
+// actually terminates, so this catches the operator-error paths
+// (`process.exit(1)` inside helper functions, signal-triggered exit) that
+// bypass the outer `try { runFinalize(...) } finally { release() }` block.
+// SIGKILL (`kill -9`) bypasses every handler; that's what `scripts/worktree/
+// abort` is for. release is idempotent (catches ENOENT) so double-release
+// from a benign race is harmless.
+let ACTIVE_LOCK_RELEASE: (() => void) | null = null;
 /**
  * Precheck: refuse to start if the dev checkout is mid-merge / mid-rebase /
  * mid-cherry-pick, has unmerged paths, or has staged-but-uncommitted entries.
@@ -109,8 +118,13 @@ function checkDevMergeable(repoRoot: string,): void {
  * `kill -0` and reaped automatically.
  *
  * Returns a release function the caller MUST invoke in a finally block.
+ *
+ * Exported for unit tests (`scripts/worktree/finalize-lock-cleanup.test.ts`)
+ * that exercise the lock-acquire / exit-handler contract in isolation,
+ * without requiring the full `finalize()` entry point (which needs a real
+ * worktree + GPG key + dev checkout).
  */
-function acquireFinalizeLock(repoRoot: string,): () => void {
+export function acquireFinalizeLock(repoRoot: string,): () => void {
   const lockPath = resolve(repoRoot, LOCK_FILENAME,);
   const myPid = process.pid;
 
@@ -204,6 +218,13 @@ function installSignalHandlers(): void {
       };
       process.on(sig, listener,);
     }
+    // Catch-all cleanup: release the lock on every termination path
+    // (`process.exit()`, unhandled throw, signal). Node fires the `exit`
+    // event AFTER all signal handlers have run but BEFORE the process
+    // actually terminates, so the lock release here runs even when the
+    // operator-error paths in `runFinalize` call `process.exit(1)`
+    // directly (which bypasses our outer try/finally).
+    process.on("exit", releaseLockOnExit,);
   }
   ACTIVE_FINALIZE_COUNT++;
 }
@@ -226,9 +247,33 @@ function uninstallSignalHandlers(): void {
       // add one listener per signal in installSignalHandlers above.
       process.removeAllListeners(sig,);
     }
+    // Drop the `exit` cleanup now that the outer finally has released the
+    // lock. After this point no finalize is in flight, so a stale `exit`
+    // listener would just call release() against a null
+    // ACTIVE_LOCK_RELEASE (no-op).
+    process.removeAllListeners("exit",);
   }
 }
 
+/**
+ * `exit` handler: release the finalize lock on every process termination
+ * path. Fires synchronously before the process actually exits, after any
+ * signal handlers and unhandled-throw propagation but before stdio is
+ * closed. We MUST NOT call `process.exit()` from here (the `exit` event
+ * fires exactly once — recursing would throw) and we MUST NOT throw (any
+ * uncaught throw inside an `exit` handler terminates the process abruptly
+ * with no further cleanup). release is idempotent (catches ENOENT) so a
+ * double-release is harmless.
+ */
+function releaseLockOnExit(): void {
+  const release = ACTIVE_LOCK_RELEASE;
+  if (!release) { return; }
+  // Clear the slot first so a synchronous release+exit cycle cannot
+ // re-enter this handler with a stale closure (defensive — Node fires
+ // `exit` exactly once, but defensive is cheap).
+  ACTIVE_LOCK_RELEASE = null;
+  try { release(); } catch { /* best-effort; nothing useful we can do */ }
+}
 /**
  * Signal handler: transactional rollback + exit 130. Runs even if the
  * surrounding `try { await runFinalize(...) } finally { release() }` would
@@ -286,9 +331,12 @@ function handleSignalAbort(sig: FinalizeSignal,): void {
   } else {
     log("warn", "no in-progress merge or stash to roll back",);
   }
-  // Lock release is owned by the outer `finally`; signal handler runs in
-  // a separate async tick and the lock release path runs first on normal
-  // teardown. We exit explicitly so any pending timers can't keep us alive.
+  // Lock release is handled by the `process.on('exit')` cleanup installed
+  // in installSignalHandlers — Node fires `exit` synchronously between
+  // this handler returning and the process actually terminating, so the
+  // release runs regardless of which termination path we took (signal,
+  // process.exit, unhandled throw). We exit explicitly so any pending
+  // timers can't keep us alive.
   process.exit(SIGNAL_EXIT_CODE,);
 }
 
@@ -540,14 +588,21 @@ export async function finalize(
   // hard invariant; the lock is best-effort single-flight.
   checkDevMergeable(config.repoRoot,);
   const releaseFinalizeLock = acquireFinalizeLock(config.repoRoot,);
+  // Publish the release fn so the `process.on('exit')` cleanup (installed
+  // by installSignalHandlers) can call it on every termination path —
+  // including operator-error paths inside runFinalize that call
+  // `process.exit(1)` directly and bypass the outer try/finally. The outer
+  // finally still calls release() on the success/error path; release is
+  // idempotent so the `exit` handler and the finally racing is harmless.
+  ACTIVE_LOCK_RELEASE = releaseFinalizeLock;
   // Install signal handlers AFTER acquiring the lock. Order matters:
   // 1. lock first — so a signal can't race against an unlocked dev tree;
   // 2. handlers second — they release the lock during rollback.
-  // Uninstall runs in `finally` BEFORE releasing the lock; otherwise the
-  // signal handler could observe `release` already called and try to roll
-  // back a torn-down state. The signal exit code (130) is propagated by
-  // process.exit inside the handler, so the cleanup below only runs on the
-  // happy / operator-error path.
+  // Uninstall runs in `finally` BEFORE clearing the module-scoped release,
+  // otherwise the handler could be invoked after the release fn is gone and
+  // try to call a stale closure. The signal exit code (130) is propagated
+  // by process.exit inside the handler, so the cleanup below only runs on
+  // the happy / operator-error path.
   installSignalHandlers();
   try {
     try {
@@ -557,6 +612,7 @@ export async function finalize(
     }
   } finally {
     releaseFinalizeLock();
+    ACTIVE_LOCK_RELEASE = null;
   }
 }
 
@@ -569,7 +625,6 @@ async function runFinalize(
   targetBranch: string,
 ): Promise<void> {
   section(`Finalizing '${branch}'`,);
-
   // Step 1: Check worktree clean
   log("info", "Step 1: Checking worktree state...",);
   const dirty = Bun.spawnSync(

@@ -11,7 +11,7 @@ import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
 import { gitSyncQuiet, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
-import { extractMessageInput, } from "../utils/message";
+import { extractMessageInput, validateMessage, } from "../utils/message";
 import { log, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
@@ -28,10 +28,16 @@ export async function agentCommit(
   const [branch, ...messageParts] = rest;
   const message = messageInput ?? messageParts.join(" ",);
 
-  if (!branch || !message) {
-    log("error", "branch and message required",);
+  if (!branch) {
+    log("error", "branch required",);
     console.log('  Usage: index.mjs agent-commit <branch> [-F <file>|--message-file <file>] "<message>"',);
-    console.log('  Multi-line: index.mjs agent-commit <branch> -F .tmp/msg.txt   (or pipe via "-F -")',);
+    process.exit(1,);
+  }
+
+  const validation = validateMessage(message,);
+  if (!validation.ok) {
+    log("error", `commit message rejected: ${validation.reason}`,);
+    console.log('  Example: index.mjs agent-commit <branch> -F - <<< "fix(worktree): handle empty stdin"',);
     process.exit(1,);
   }
 

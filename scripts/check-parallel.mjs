@@ -41,6 +41,7 @@ import {
   readdirSync,
   readFileSync,
   renameSync,
+  rmSync,
   statSync,
   symlinkSync,
   unlinkSync,
@@ -149,6 +150,20 @@ function changedModules(files,) {
   }
   return mods.size > 0 ? [...mods,].sort() : null;
 }
+/**
+ * Test paths for the scoped coverage gate: every test under each touched
+ * top-level `src/` module. Adjacent-files scoping (see `scopedTestFiles`)
+ * stays for the unit gate (fast signal); coverage needs module breadth to
+ * meaningfully floor a module.
+ * @param files - Changed paths.
+ * @returns Existing `src/<mod>` dirs, sorted.
+ */
+function scopedCoveragePaths(files,) {
+  const mods = changedModules(files,) ?? [];
+  return mods
+    .map((m,) => `src/${m}`)
+    .filter((p,) => existsSync(path.resolve(DIFF_ROOT, p,),));
+}
 
 /**
  * Test paths for the scoped coverage gate: every test under each touched
@@ -169,6 +184,7 @@ const CHANGED = changedFiles(DIFF_BASE,);
 const SCOPED_TESTS = scopedTestFiles(CHANGED,);
 const SCOPED_MODULES = changedModules(CHANGED,);
 const SCOPED_COVERAGE_PATHS = scopedCoveragePaths(CHANGED,);
+const NOOP_OK = "true # diff-scope: no matching files";
 
 // oxlint-disable-next-line sort-keys
 const checks = {
@@ -221,23 +237,12 @@ const checks = {
     "no - shell - refs": "bun run scripts/check-no-shell-refs.ts",
 
     // Coverage gate: per-module line % vs 80% floor (see AGENTS.md Verification Gates).
-    // NOTE: the scoped bun invocation must pass the same lcov reporter flags
-    // as `test:coverage` — bare `--coverage` emits no lcov.info, so
-    // `coverage.mjs` (which reads `.tmp/coverage/lcov.info`) always failed.
-    // The test set is every test under each touched top-level `src/` module:
-    // adjacent test files alone cannot floor a whole module (e.g. two
-    // gate test files cover ~16% of `generation/`; the module suite ~88%).
-    // `coverage.mjs --only` floors just the touched modules; touched
-    // non-`src/` trees (e.g. `scripts/`) have no lcov rows and SKIP.
-    "coverage - per-module line %": DIFF_BASE
-      ? (SCOPED_COVERAGE_PATHS.length > 0
-        ? `bun test --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage ${
-          SCOPED_COVERAGE_PATHS.join(" ",)
-        } && bun run scripts/check/coverage.mjs --floor=80 --only=${(SCOPED_MODULES ?? []).join(",",)}`
-        : NOOP_OK)
-      : "bun run test:coverage && bun run scripts/check/coverage.mjs --floor=80",
-    "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",
-    // Frontend security + hygiene gates (promoted from .tmp investigation scripts)
+    // Bun writes lcov into the per-RUN coverage dir so concurrent and
+    // successive runs do not clobber each other. `coverage.mjs` is told
+    // where to read from via `--coverage-dir=<COVERAGE_DIR_RELATIVE>`.
+    // The actual command is built lazily in `coverageCommand()` below so
+    // it can reference the per-RUN constants (declared after this block).
+    "coverage - per-module line %": NOOP_OK, // placeholder; replaced before run
     // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
     "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
     // Advisory: reports pre-existing banned-pattern debt; not blocking.
@@ -267,8 +272,27 @@ const checks = {
   // Per-check output cap for the report (guards against multi-MB failure dumps).
   MAX_OUTPUT_CHARS = 100_000,
   // Run identity: unique per invocation; embedded in the report, used as the
-  // per-run filename, and used to make the on-disk write atomic.
+  // per-run filename, and used to make the on-disk write atomic. Declared
+  // before the per-tool scratch dirs because they embed it in their paths.
   RUN_ID = `${process.pid}-${Date.now().toString(36,)}`,
+  // Per-tool scratch dir under .tmp/, keyed by RUN_ID so concurrent or
+  // successive runs do not clobber each other's coverage/jscpd output.
+  // The paths are exposed as `CHECK_REPORT_COVERAGE_LCOV` /
+  // `CHECK_REPORT_JSCPD` for downstream consumers and pruned alongside the
+  // check-report retention count to keep disk usage bounded.
+  RUN_TMP_DIR_RELATIVE = `.tmp/run-${RUN_ID}`,
+  RUN_TMP_DIR = path.resolve(PROJECT_ROOT, RUN_TMP_DIR_RELATIVE,),
+  // Sub-paths consumed by `scripts/check/coverage.mjs` and the inline jscpd
+  // reporter. Tools read their default location unless an env override is
+  // passed in the gate command below.
+  COVERAGE_DIR_RELATIVE = `${RUN_TMP_DIR_RELATIVE}/coverage`,
+  COVERAGE_DIR = path.resolve(PROJECT_ROOT, COVERAGE_DIR_RELATIVE,),
+  COVERAGE_LCOV_RELATIVE = `${COVERAGE_DIR_RELATIVE}/lcov.info`,
+  COVERAGE_LCOV = path.resolve(PROJECT_ROOT, COVERAGE_LCOV_RELATIVE,),
+  JSCPD_DIR_RELATIVE = `${RUN_TMP_DIR_RELATIVE}/jscpd`,
+  JSCPD_DIR = path.resolve(PROJECT_ROOT, JSCPD_DIR_RELATIVE,),
+  JSCPD_REPORT_RELATIVE = `${JSCPD_DIR_RELATIVE}/jscpd-report.json`,
+  JSCPD_REPORT = path.resolve(PROJECT_ROOT, JSCPD_REPORT_RELATIVE,),
   // Per-run file path. Same JSON content as REPORT_PATH at any given moment.
   PER_RUN_REPORT_PATH = path.resolve(
     PROJECT_ROOT,
@@ -283,6 +307,41 @@ const checks = {
     return "plain";
   })(),
   IS_REPORT_LS = process.argv.includes("--report-ls",);
+
+/**
+ * Build the coverage gate command. Lives here — after the multi-declarator
+ * `const` above — because it reads both the diff-scope results (`SCOPED_*`,
+ * declared above the checks table) and the per-RUN scratch paths
+ * (`COVERAGE_DIR_RELATIVE`, initialized inside that statement). The checks
+ * table carries a NOOP placeholder at parse time; this assignment is the
+ * "replaced before run" step promised there.
+ *
+ * Both modes write lcov into the per-RUN coverage dir so concurrent and
+ * successive runs never clobber each other, and so the stdout contract can
+ * emit `CHECK_REPORT_COVERAGE_LCOV` pointing at this run's file. The scoped
+ * invocation must pass the same lcov reporter flags as `test:coverage` —
+ * bare `--coverage` emits no lcov.info and the floor check always failed.
+ * Scoped test set is every test under each touched top-level `src/` module:
+ * adjacent test files alone cannot floor a whole module (e.g. two gate test
+ * files cover ~16% of `generation/`; the module suite ~88%). `--only` floors
+ * just the touched modules; touched non-`src/` trees (e.g. `scripts/`) have
+ * no lcov rows and are reported as unmeasured + SKIP by `coverage.mjs`.
+ */
+function coverageCommand() {
+  if (!DIFF_BASE) {
+    // Plain mode: same flags and test set as `bun run test:coverage`
+    // (e2e safeguard included), but into the per-RUN dir.
+    return `E2E_SAFEGUARD=1 bun test tests/e2e/ src/ --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}`;
+  }
+  if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
+  return `bun test --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
+    SCOPED_COVERAGE_PATHS.join(" ",)
+  } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE} --only=${
+    (SCOPED_MODULES ?? []).join(",",)
+  }`;
+}
+
+checks["coverage - per-module line %"] = coverageCommand();
 
 // ── GPG pre-flight ──────────────────────────────────────────────
 // Tracks the cache state for provenance in the report. Shape:
@@ -601,24 +660,33 @@ function writeReport(report,) {
   } catch { /* expected if file doesn't exist */ }
   symlinkSync(`check-report-${RUN_ID}.json`, latestTmp,);
   renameSync(latestTmp, REPORT_LATEST_PATH,);
-
   // 4. Retention: prune oldest per-run files beyond REPORT_RETENTION_COUNT.
   //    The canonical `check-report.json` and `.latest.json` symlink are never
-  //    touched — only `check-report-<RUN_ID>.json` files are GC'd.
+  //    touched — only `check-report-<RUN_ID>.json` files are GC'd. Same
+  //    retention policy is applied to per-tool scratch dirs (`.tmp/run-*/`)
+  //    so coverage/jscpd outputs from old runs don't accumulate.
   pruneOldReports();
+  pruneOldRunTmpDirs();
 
   // 5. Stdout contract (Ticket 1):
   //    - Human-readable line with emoji for live terminals (existing behavior).
   //    - Machine-greppable lines, one per fact, no prefix noise. Downstream
-  //      agents `grep ^CHECK_REPORT_` to extract facts without parsing the
-  //      rest of the report. The `=` form is safe to feed to `cat` / `jq`.
+  //    agents `grep ^CHECK_REPORT_` to extract facts without parsing the
+  //    rest of the report. The `=` form is safe to feed to `cat` / `jq`.
+  //    - Per-tool scratch paths are emitted only when the tool actually
+  //    ran and produced output (CHECK_REPORT_COVERAGE_LCOV / _JSCPD).
   console.log(`\n📄 Check report: ${REPORT_PATH}`,);
   console.log(`CHECK_REPORT_PATH=${REPORT_PATH}`,);
   console.log(`CHECK_REPORT_LATEST=${REPORT_LATEST_PATH}`,);
   console.log(`CHECK_REPORT_RUN_ID=${RUN_ID}`,);
+  if (existsSync(COVERAGE_LCOV,)) {
+    console.log(`CHECK_REPORT_COVERAGE_LCOV=${COVERAGE_LCOV}`,);
+  }
+  if (existsSync(JSCPD_REPORT,)) {
+    console.log(`CHECK_REPORT_JSCPD=${JSCPD_REPORT}`,);
+  }
   return REPORT_PATH;
 }
-
 /**
  * Prune oldest per-run reports beyond `REPORT_RETENTION_COUNT`. The canonical
  * `check-report.json` and `.latest.json` symlink are never touched — only
@@ -656,7 +724,41 @@ function pruneOldReports() {
   }
 }
 
-// ── Git provenance ─────────────────────────────────────────────
+/**
+ * Same retention policy as `pruneOldReports`, but applied to per-tool
+ * scratch dirs created under `.tmp/run-<RUN_ID>/`. Coverage and jscpd
+ * both write into those dirs, so capping their footprint keeps `.tmp/`
+ * from growing unbounded across many check runs.
+ *
+ * Only the directories themselves are GC'd; symlinks (defensive: there
+ * shouldn't be any today) are skipped, matching `pruneOldReports`.
+ */
+function pruneOldRunTmpDirs() {
+  const dir = path.resolve(PROJECT_ROOT, REPORT_DIR_RELATIVE,);
+  let entries;
+  try {
+    entries = readdirSync(dir,);
+  } catch {
+    return; // .tmp/ missing → nothing to prune
+  }
+  // run-<RUN_ID> directories, sorted by RUN_ID (which embeds pid + time,
+  // so lexicographic sort is chronological within a single worktree).
+  const perRun = entries
+    .filter((name,) => name.startsWith("run-",) && name !== RUN_TMP_DIR_RELATIVE.slice(REPORT_DIR_RELATIVE.length + 1,))
+    .sort((a, b,) => b.localeCompare(a,));
+  if (perRun.length === 0) { return; }
+  // Always keep the current run; prune oldest beyond the retention budget.
+  const keepCurrent = 1;
+  const toDelete = perRun.slice(Math.max(0, REPORT_RETENTION_COUNT - keepCurrent,),);
+  for (const name of toDelete) {
+    const target = path.join(dir, name,);
+    try {
+      const st = statSync(target,);
+      if (st.isSymbolicLink()) { continue; }
+      rmSync(target, { recursive: true, force: true, },);
+    } catch { /* best-effort GC; harmless to skip on race */ }
+  }
+}
 
 // Resolve the git binary once: fixed path satisfies
 // sonarjs/no-os-command-from-path and avoids PATH-order surprises.
@@ -829,25 +931,25 @@ async function runNonBlockingChecks(notes,) {
   }
 
   // Code duplication check (jscpd:full) — parses the JSON report the script
-  // writes to .tmp/jscpd/; falls back to counting console "Clone found" lines
-  // only when the report is missing/corrupt. Advisory (never blocking), but
-  // reports clone count + duplicated-lines % and records clones in
-  // .tmp/jscpd/prev.json so the next run can show a regression trend.
+  // writes under the per-RUN JSCPD_DIR; falls back to counting console
+  // "Clone found" lines only when the report is missing/corrupt. Advisory
+  // (never blocking), reports clone count + duplicated-lines % and records
+  // the trend under .tmp/run-<prev_RUN_ID>/jscpd/prev.json when present.
   try {
-    const jscpdProc = Bun.spawn(["bash", "-c", "bun run jscpd:full",], {
+    mkdirSync(JSCPD_DIR, { recursive: true, },);
+    const jscpdCmd =
+      `jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts' --reporters console,json --output ${JSCPD_DIR_RELATIVE}`;
+    const jscpdProc = Bun.spawn(["bash", "-c", jscpdCmd,], {
       cwd: PROJECT_ROOT,
       stdout: "pipe",
       stderr: "pipe",
     },);
     await jscpdProc.exited;
     const jscpdText = await new Response(jscpdProc.stdout,).text();
-    const jscpdDir = path.resolve(PROJECT_ROOT, ".tmp/jscpd",);
     let cloneCount = null;
     let pctText = "";
     try {
-      const report = JSON.parse(
-        readFileSync(path.resolve(jscpdDir, "jscpd-report.json",), "utf8",),
-      );
+      const report = JSON.parse(readFileSync(JSCPD_REPORT, "utf8",),);
       cloneCount = report.duplicates.length;
       const formats = Object.values(report.statistics?.formats ?? {},);
       const dupLines = formats.reduce((sum, f,) => sum + f.duplicatedLines, 0,);
@@ -856,8 +958,13 @@ async function runNonBlockingChecks(notes,) {
     } catch {
       cloneCount = (jscpdText.match(/Clone found/g,) ?? []).length;
     }
+    // Trend baseline is taken from the most-recent prior run that left a
+    // prev.json behind (we don't compare per-RUN counts — jscpd output is
+    // a property of the source tree, which is stable across runs in the
+    // same checkout).
     let trend = " (first run: baseline recorded)";
-    const prevPath = path.resolve(jscpdDir, "prev.json",);
+    const baselineDir = path.resolve(PROJECT_ROOT, ".tmp/jscpd",);
+    const prevPath = path.resolve(baselineDir, "prev.json",);
     try {
       const prev = JSON.parse(readFileSync(prevPath, "utf8",),);
       const delta = cloneCount - prev.clones;
@@ -869,7 +976,7 @@ async function runNonBlockingChecks(notes,) {
     } catch {
       // no previous report in this checkout — baseline gets recorded below
     }
-    mkdirSync(jscpdDir, { recursive: true, },);
+    mkdirSync(baselineDir, { recursive: true, },);
     writeFileSync(
       prevPath,
       `${JSON.stringify({ clones: cloneCount, generatedAt: new Date().toISOString(), },)}\n`,
@@ -877,7 +984,7 @@ async function runNonBlockingChecks(notes,) {
     );
     if (cloneCount > 0) {
       console.log(`⚠ Code duplication detected (jscpd:full): ${cloneCount} clones${pctText}${trend}`,);
-      console.log("  Full report: .tmp/jscpd/jscpd-report.json",);
+      console.log(`  Full report: ${JSCPD_REPORT_RELATIVE}`,);
       notes.push({
         level: "warn",
         message: `Code duplication (jscpd:full): ${cloneCount} clones${pctText}${trend}`,
@@ -893,8 +1000,6 @@ async function runNonBlockingChecks(notes,) {
       message: `Code duplication check skipped: ${error.message}`,
     },);
   }
-
-  // Markdown stale-link check (non-blocking — reports broken internal links)
   try {
     const linksProc = Bun.spawn(["bash", "-c", "bun run md:links",], {
       cwd: PROJECT_ROOT,
