@@ -41,6 +41,7 @@ export interface FakeEl {
     [prop: string]: string | ((name: string, value: string,) => void);
   };
   children: FakeEl[];
+  parent: FakeEl | null;
   textContent: string;
   disabled: boolean;
   isConnected: boolean;
@@ -49,7 +50,9 @@ export interface FakeEl {
   listeners: Map<string, Array<(e?: unknown,) => void>>;
   append: (...nodes: FakeEl[]) => void;
   replaceChildren: () => void;
+  remove: () => void;
   querySelector: (sel: string,) => FakeEl | null;
+  classList: { contains: (cls: string,) => boolean };
   addEventListener: (type: string, fn: (e?: unknown,) => void,) => void;
   removeEventListener: (type: string, fn: (e?: unknown,) => void,) => void;
   dispatch: (type: string,) => void;
@@ -76,6 +79,7 @@ export function makeEl(tag = "div",): FakeEl {
     className: "",
     style,
     children,
+    parent: null,
     textContent: "",
     disabled: false,
     isConnected: true,
@@ -83,10 +87,23 @@ export function makeEl(tag = "div",): FakeEl {
     alt: "",
     listeners,
     append(...nodes) {
+      for (const node of nodes) { node.parent = this; }
       children.push(...nodes,);
     },
     replaceChildren() {
+      for (const child of children) { child.parent = null; }
       children.length = 0;
+    },
+    remove() {
+      const p = this.parent;
+      if (p) {
+        const i = p.children.indexOf(this,);
+        if (i >= 0) { p.children.splice(i, 1,); }
+      }
+      this.parent = null;
+    },
+    get classList() {
+      return { contains: (cls: string,) => this.className.split(" ",).includes(cls,), };
     },
     querySelector(sel,) {
       return find(this, sel.replace(/^\./, "",),);

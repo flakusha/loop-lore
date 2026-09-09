@@ -88,6 +88,8 @@ describe("initVnRenderer", () => {
     const sceneEl = container.querySelector(".vn-scene",)!;
     expect(sceneEl.querySelector(".vn-text",)!.textContent,).toBe("Second.",);
 
+    expect(container.querySelector(".vn-loading-indicator",),).not.toBeNull();
+
     expect(added.filter(([type,],) => type === "chat:location-changed"),).toHaveLength(1,);
     expect(state.locationChangeHandler,).not.toBeNull();
   });
@@ -107,6 +109,20 @@ describe("initVnRenderer", () => {
     expect(added,).toHaveLength(2,);
     expect(removed,).toHaveLength(1,);
     expect(removed[0]![1],).toBe(added[0]![1],);
+  });
+
+  test("with zero messages it mounts no scene and keeps the indicator", async () => {
+    const container = freshContainer();
+    initVnRenderer(
+      container as unknown as HTMLElement,
+      [],
+      GM_CONFIG,
+    );
+    await tick();
+
+    expect(getSceneCount(),).toBe(0,);
+    expect(container.querySelector(".vn-scene",),).toBeNull();
+    expect(container.querySelector(".vn-loading-indicator",),).not.toBeNull();
   });
 });
 

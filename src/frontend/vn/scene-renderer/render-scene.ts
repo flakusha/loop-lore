@@ -168,6 +168,17 @@ function createAttachments(
 }
 
 /**
+ * Remove previously rendered scene elements from the container while
+ * preserving sibling overlays such as the loading indicator.
+ * @param container
+ */
+function removeRenderedScenes(container: HTMLElement,): void {
+  for (const child of [...container.children,]) {
+    if (child.classList.contains("vn-scene",)) { child.remove(); }
+  }
+}
+
+/**
  * @param animate
  * @param navigate
  */
@@ -179,7 +190,8 @@ export async function renderCurrentScene(
   const settings = state.settings;
   if (!container || !settings) { return; }
 
-  const scene = state.scenes[state.currentIndex]!;
+  const scene = state.scenes[state.currentIndex];
+  if (!scene) { return; }
   const prevIndex = animate ? state.currentIndex - 1 : -1;
   const outgoing = animate && prevIndex >= 0 ? container.querySelector<HTMLElement>(".vn-scene",) : null;
 
@@ -210,9 +222,13 @@ export async function renderCurrentScene(
 
   if (animate && outgoing) {
     const transitionType = scene.transition ?? settings.transition;
+    // Wire the incoming scene into the DOM before the transition so CSS
+    // transitions actually run, then drop the outgoing scene once done.
+    container.append(sceneEl,);
     await transitionScene(outgoing, sceneEl, { type: transitionType, },);
+    outgoing.remove();
   } else {
-    container.replaceChildren();
+    removeRenderedScenes(container,);
     container.append(sceneEl,);
   }
 
