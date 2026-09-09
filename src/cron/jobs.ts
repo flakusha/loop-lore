@@ -77,6 +77,30 @@ export function defaultJobs(): CronJobDef[] {
       },
     },),
     defineJob({
+      name: "federation.gossip",
+      schedule: "* * * * *",
+      enabled: true,
+      run: async ({ config, logger, },) => {
+        if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
+        const { getGossipService, publicOriginOf, } = await import("../federation/gossip");
+        const trusted = config.federation.peers.map((peer,) => peer.origin,);
+        const trustByOrigin: Record<string, import("../config/schema").FederationPeerTrustConfig | undefined> = {};
+        for (const peer of config.federation.peers) {
+          trustByOrigin[peer.origin] = peer.trust;
+        }
+        const service = getGossipService({
+          seeds: config.federation.seeds,
+          trusted,
+          trustByOrigin,
+          selfOrigin: publicOriginOf(config.server,),
+        },);
+        service.start();
+        const summary = await service.pollOnce();
+        logger.info("federation gossip poll complete", { module: "cron", ...summary, },);
+        return summary;
+      },
+    },),
+    defineJob({
       name: "providers.health-rescan",
       schedule: "*/15 * * * *",
       enabled: true,

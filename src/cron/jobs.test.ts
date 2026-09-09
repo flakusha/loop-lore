@@ -30,6 +30,7 @@ describe("cron default jobs", () => {
       "crypto.key-rotation-check",
       "memory.decay",
       "memory.purge",
+      "federation.gossip",
       "providers.health-rescan",
     ],);
     for (const job of jobs) {
