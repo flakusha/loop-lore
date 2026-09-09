@@ -1,0 +1,30 @@
+<!--
+  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+  Mobile Sticky Bottom Composer
+  Conditionally shown via x-show="isMobile" in chat.html.
+  Delegates send to parent chatState() via Alpine.$data.
+-->
+<div
+  x-data="mobileComposer()"
+  x-show="isMobile"
+  x-cloak
+  class="mobile-composer"
+  aria-label="Mobile message composer"
+>
+  <form @submit.prevent="submitMobile()">
+    <input
+      type="text"
+      name="content"
+      x-ref="mobileInput"
+      placeholder="Message..."
+      autocomplete="off"
+      @keydown.enter.prevent="submitMobile()"
+      class="mobile-composer__input"
+    />
+    <button type="submit" class="mobile-composer__send" aria-label="Send">
+      &#x2712;
+    </button>
+  </form>
+</div>
