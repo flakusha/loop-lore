@@ -126,7 +126,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-admin-auxtelemetry-leaks-userid-chatid.md",
     "git_issue": "ac11385",
-    "status": "open"
+    "status": "done"
   },
   "BUG-ADMIN-TEMPLATES-UPDATE-REMOVE-LACK-ADMIN-SETTINGS-GATE": {
     "hash": "ad3d51f",
@@ -3178,7 +3178,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-nsfw-preferences-admin-read-materializes-row.md",
     "git_issue": "3cf439b",
-    "status": "open"
+    "status": "done"
   },
   "BUG-NSFW-RECORDNSFWCONSENT-INSERT-UPDATE-NOT-WRAPPED-IN-A-TRANSA": {
     "hash": "66f16bd",
@@ -3978,7 +3978,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-telemetry-purge-unbounded-days.md",
     "git_issue": "a697ad3",
-    "status": "open"
+    "status": "done"
   },
   "BUG-TELEMETRY-STORES-RAW-CLIENT-BODY-REAL-USER-CHAT-SESSION-IDS": {
     "hash": "a06b99e",
