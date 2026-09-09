@@ -21,7 +21,6 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db";
 import type { ContentRating, } from "../../db/enums";
-import { getLogger, } from "../../logger";
 import { NsfwModerationService, } from "../../nsfw/moderation-service";
 import { getPreferences, } from "../../nsfw/moderation-service/preferences";
 import {
@@ -33,8 +32,8 @@ import {
   type NSFWRatingEnforcement,
   recordConsentAction,
 } from "../../schemas";
-import { canAccessNsfw, getActorContentRating, getChatParticipantUserIds, } from "./access";
-import { getLatestConsent, hasActiveConsent, } from "./consent-ledger";
+import { getActorContentRating, getChatParticipantUserIds, } from "./access";
+import { resolveRequestContext, } from "./request-context";
 
 const CONTENT_RATING_TO_NSFW: Record<ContentRating, NSFWContentRating> = {
   sfw: NSFWContentRating.SFW,
@@ -113,94 +112,44 @@ export interface CheckNsfwWithConsentResult {
 /**
  * Check NSFW access with consent awareness.
  *
- * Order:
- *   1. Authenticated user required.
- *   2. Base NSFW access (config + age gate + nsfwMinAge + moderation state).
- *   3. Participant weakest link: every user-backed participant must clear
- *      the base gate (`participant_blocked:<reason>`).
- *   4. Persisted consent (when `consentRequired`), no auto-grant.
- *   5. Real enforcement object using persisted user max_rating,
- *      weakest-link intersected across chat participants.
+ * Delegates the verdict to `resolveRequestContext` (auth → base →
+ * participants → consent, batched and fail-fast) and maps the result onto
+ * the legacy shape: always-present enforcement object plus a `ConsentState`
+ * marked `given` only when the ledger holds an active grant.
  * @param args
  */
 export async function checkNsfwWithConsent(
   args: CheckNsfwWithConsentArgs,
 ): Promise<CheckNsfwWithConsentResult> {
   const { database, config, userId, chatId, actorId, } = args;
-  const log = getLogger().child({ module: "nsfw-gate-consent", },);
 
   const emptyConsent = (): ConsentState => createConsentState(["nsfw_encounter", "nsfw_dialogue", "nsfw_visual",],);
+  // Anonymous callers get the same enforcement shape with no identity.
+  const effectiveUserId = userId ?? "_anon";
 
-  if (!userId) {
-    return {
-      allowed: false,
-      reason: "auth_required",
-      enforcement: await buildEnforcement(database, actorId, "_anon", chatId,),
-      consent: emptyConsent(),
-    };
-  }
+  const context = await resolveRequestContext({
+    database,
+    config,
+    userId,
+    chatId,
+    actorId,
+    buildEnforcement: ({ actorId: a, userId: u, chatId: c, },) => buildEnforcement(database, a, u, c,),
+  },);
 
-  const baseAccess = await canAccessNsfw(database, config, userId,);
-  if (!baseAccess.allowed) {
-    return {
-      allowed: false,
-      reason: baseAccess.reason,
-      enforcement: await buildEnforcement(database, actorId, userId, chatId,),
-      consent: emptyConsent(),
-    };
-  }
-
-  // Participant weakest link (group-chat minor protection): every human
-  // participant must individually clear the base gate — the requester's
-  // clearance alone is not sufficient. Previously only the rating ceiling
-  // was intersected (buildEnforcement); age/config failures of co-participants
-  // never denied. Reason mirrors checkChatNsfwAccess for log continuity.
-  const participantUserIds = await getChatParticipantUserIds(database, chatId,);
-  for (const pid of participantUserIds) {
-    if (pid === userId) { continue; }
-    const participantAccess = await canAccessNsfw(database, config, pid,);
-    if (!participantAccess.allowed) {
-      log.info("nsfw-gate: participant blocked", {
-        chatId,
-        userId,
-        participantId: pid,
-        reason: participantAccess.reason,
-      },);
-      return {
-        allowed: false,
-        reason: `participant_blocked:${participantAccess.reason ?? "unknown"}`,
-        enforcement: await buildEnforcement(database, actorId, userId, chatId,),
-        consent: emptyConsent(),
-      };
-    }
-  }
-
-  if (config.nsfw.consentRequired) {
-    const persisted = await getLatestConsent(database, chatId, userId,);
-    if (!hasActiveConsent(persisted,)) {
-      log.info("nsfw-gate: consent required but not granted", { chatId, userId, },);
-      return {
-        allowed: false,
-        reason: persisted ? "consent_revoked" : "consent_required",
-        enforcement: await buildEnforcement(database, actorId, userId, chatId,),
-        consent: emptyConsent(),
-      };
-    }
-  }
-
-  const enforcement = await buildEnforcement(database, actorId, userId, chatId,);
+  const enforcement = context.enforcement ??
+    await buildEnforcement(database, actorId, effectiveUserId, chatId,);
   const consent = emptyConsent();
-  const persisted = await getLatestConsent(database, chatId, userId,);
-  if (hasActiveConsent(persisted,)) {
+  if (context.consentGranted) {
     recordConsentAction(consent, "given", {
-      actor: userId,
+      actor: effectiveUserId,
       reason: "persisted consent",
       context: { chat_id: chatId, },
     },);
   }
 
   return {
-    allowed: true,
+    allowed: context.allowed,
+    ...(context.reason ? { reason: context.reason, } : {}),
     enforcement,
     consent,
   };
