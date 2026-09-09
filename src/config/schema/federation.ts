@@ -18,15 +18,24 @@ export interface FederationPeerConfig {
   /** Optional trust overrides for this peer. */
   trust?: FederationPeerTrustConfig;
 }
-/** Where pushed content is duplicated. Per-world rules are a follow-up. */
+/** Where pushed content is duplicated. */
 export type DuplicationMode = "trusted" | "listed" | "none";
 
-/** Duplication policy for pushed mesh content. */
-export interface DuplicationPolicy {
+/** Per-world duplication override (same semantics as the top-level policy). */
+export interface WorldDuplicationPolicy {
   /** `trusted`: all trusted peers; `listed`: only `peers`; `none`: no copies. */
   mode: DuplicationMode;
   /** Candidate origins for `listed` mode. Default empty. */
   peers: string[];
+}
+
+/** Duplication policy for pushed mesh content. */
+export interface DuplicationPolicy extends WorldDuplicationPolicy {
+  /**
+   * Per-world overrides keyed by world id. A push carrying a world id uses
+   * its entry when present, otherwise the top-level policy. Default empty.
+   */
+  worlds?: Record<string, WorldDuplicationPolicy>;
 }
 /** Federation/mesh interconnect config. All opt-in; disabled by default. */
 export interface FederationConfig {
