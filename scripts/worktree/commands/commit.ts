@@ -6,7 +6,7 @@
  */
 
 import { type WorktreeConfig, } from "../utils/config";
-import { gitSync, gitSyncQuiet, } from "../utils/git";
+import { gitSync, gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
 import { extractMessageInput, validateMessage, } from "../utils/message";
 import { log, } from "../utils/output";
@@ -44,6 +44,14 @@ export async function commit(
   if (staged.exitCode === 0) {
     log("error", "no staged changes",);
     console.log("  Stage files first: git add <files>",);
+    process.exit(1,);
+  }
+
+  // Guard: dependency directories must never be committed.
+  const stagedDepPaths = stagedDependencyPaths(config.repoRoot,);
+  if (stagedDepPaths.length > 0) {
+    log("error", `refusing to commit dependency directory: ${stagedDepPaths.join(", ",)}`,);
+    console.log("  Unstage with: git restore --staged <path>",);
     process.exit(1,);
   }
 
