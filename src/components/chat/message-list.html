@@ -179,7 +179,14 @@
                 </template>
               </div>
             </template>
-            <template x-if="editingMessageId !== msg.id">
+            <!-- Tool result rows persisted by the generation pipeline -->
+            <template x-if="msg.content_type === 'tool_result'">
+              <details class="tool-result-block" data-testid="tool-result-block">
+                <summary>🛠 {{{t("chats.toolResult")}}}</summary>
+                <pre class="tool-result-content" x-text="msg.content"></pre>
+              </details>
+            </template>
+            <template x-if="editingMessageId !== msg.id && msg.content_type !== 'tool_result'">
               <div class="content" x-html="renderMarkdown(msg.content)"></div>
             </template>
             <template x-if="editingMessageId === msg.id">

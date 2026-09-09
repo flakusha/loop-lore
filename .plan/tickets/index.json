@@ -10419,6 +10419,17 @@
     "source": ".plan/tickets/TASK-byok-api-keys.md",
     "git_issue": "e665ded"
   },
+  "TASK-CADDY-TLS-TERMINATION-WITH-AUTOMATIC-HTTPS": {
+    "hash": "pending",
+    "extid": "TASK-CADDY-TLS-TERMINATION-WITH-AUTOMATIC-HTTPS",
+    "type": "TASK",
+    "title": "Caddy TLS termination with automatic HTTPS",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-caddy-tls-termination-with-automatic-https.md"
+  },
   "TASK-CAPABILITY-DISCLOSURE-LORE-CEILING": {
     "hash": "c622d40",
     "git_issue": "c622d40",
@@ -12007,6 +12018,30 @@
     "tags": [],
     "source": ".plan/tickets/TASK-cors-middleware.md",
     "git_issue": "60592ef"
+  },
+  "TASK-COVER-ALPINE-ADMIN-NPC-SETTINGS-CLUSTERS-AND-DOM-BOUND-WAIVE": {
+    "hash": "78c179f",
+    "git_issue": "78c179f",
+    "extid": "TASK-COVER-ALPINE-ADMIN-NPC-SETTINGS-CLUSTERS-AND-DOM-BOUND-WAIVE",
+    "type": "TASK",
+    "title": "Cover alpine admin/npc/settings clusters and DOM-bound waiver track",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cover-alpine-admin-npc-settings-clusters-and-dom-bound-waive.md"
+  },
+  "TASK-COVER-FRONTEND-VN-PAGES-NEW-CHAT-QUESTS-WORLDS": {
+    "hash": "55f201f",
+    "git_issue": "55f201f",
+    "extid": "TASK-COVER-FRONTEND-VN-PAGES-NEW-CHAT-QUESTS-WORLDS",
+    "type": "TASK",
+    "title": "Cover frontend VN pages: new-chat, quests, worlds",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-cover-frontend-vn-pages-new-chat-quests-worlds.md"
   },
   "TASK-COVERAGE-WAIVERS-FOR-3-MODULES-BELOW-80-FLOOR": {
     "hash": "f67b1ca",
