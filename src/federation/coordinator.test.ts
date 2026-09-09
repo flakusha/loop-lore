@@ -86,9 +86,10 @@ describe("resync pass", () => {
     await upsertPeer(db, { origin: "https://dead.example", state: "trusted", },);
     await upsertPeer(db, { origin: "https://pending.example", },);
     const summary = await runResyncPass(db, {
-      fetchImpl: async (url,) => url.startsWith("https://alive.example",)
-        ? { ok: true, status: 200, body: { peers: ["https://friend.example",], }, }
-        : { ok: false, status: 0, body: null, },
+      fetchImpl: async (url,) =>
+        url.startsWith("https://alive.example",)
+          ? { ok: true, status: 200, body: { peers: ["https://friend.example",], }, }
+          : { ok: false, status: 0, body: null, },
     },);
     expect(summary,).toEqual({ checked: 2, alive: 1, },);
     const alive = await db
