@@ -183,7 +183,11 @@ function scopedCoveragePaths(files,) {
     .map((m,) => `src/${m}`)
     .filter((p,) => {
       const abs = path.resolve(DIFF_ROOT, p,);
-      return existsSync(abs,) && dirHasTests(abs,);
+      // Guard: a top-level changed FILE (e.g. `.gitignore`) maps to a
+      // same-named `src/<file>` path that may exist as a file — scandir on
+      // it throws ENOTDIR, crashing the whole scoped run.
+      return statSync(abs, { throwIfNoEntry: false, },)?.isDirectory() === true &&
+        dirHasTests(abs,);
     },);
 }
 
