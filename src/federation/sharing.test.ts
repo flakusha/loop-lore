@@ -2,15 +2,18 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
 import type { DuplicationPolicy, } from "../config/schema";
+import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { pskCipher, } from "./cipher";
 import { upsertPeer, } from "./coordinator";
-import { type ContentEnvelope, sealContent, } from "./envelope";
+import { type ContentEnvelope, openEnvelope, sealContent, } from "./envelope";
 import type { PeerPost, } from "./peer-fetch";
 import {
   advanceReservation,
   createInboundReservation,
+  fanOutContent,
   outstandingBytes,
   pushEnvelope,
   receiveDelivery,
@@ -308,5 +311,123 @@ describe("duplication targets", () => {
       peers: ["https://c.example",],
     },);
     expect(resolveDuplicationPolicy(policy, "unknown",),).toBe(policy,);
+  });
+});
+
+describe("sender fan-out", () => {
+  const POLICY: DuplicationPolicy = { mode: "trusted", peers: [], };
+  const KEY = Buffer.from("k".repeat(32,),).toString("base64",);
+
+  /** @param db */
+  async function twoPeers(db: Kysely<DB>,): Promise<void> {
+    await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
+    await upsertPeer(db, { origin: "https://c.example", state: "trusted", },);
+  }
+
+  /**
+   * Test-fake deliver bodies always carry an envelope; guard the shape
+   * once instead of casting at every access.
+   * @param body Fake transport body.
+   */
+  function pushEnvelopeOf(body: unknown,): ContentEnvelope {
+    if (typeof body !== "object" || body === null || !("envelope" in body)) {
+      throw new Error("expected deliver body with envelope",);
+    }
+    // Guarded above: fakes only ever send ContentEnvelope payloads.
+    return body.envelope as ContentEnvelope;
+  }
+
+  test("seals with the issued contentKey and reports stored", async () => {
+    const { db, } = await createTestDb();
+    await twoPeers(db,);
+    const delivered: ContentEnvelope[] = [];
+    const post = (async (url: string, body: unknown,) => {
+      if (url.endsWith("/api/mesh-reserve",)) {
+        return { ok: true, status: 200, body: { reservationId: "r-fan", contentKey: KEY, }, };
+      }
+      delivered.push(pushEnvelopeOf(body,),);
+      return { ok: true, status: 200, body: { verdict: "stored", }, };
+    }) as PeerPost;
+    const result = await fanOutContent(db, post, "https://a.example", POLICY, cipher, {
+      id: "fan-1",
+      content: "fan payload",
+      clock: 7,
+    },);
+    expect(result.targets,).toEqual(["https://b.example", "https://c.example",],);
+    expect(result.stored,).toEqual(["https://b.example", "https://c.example",],);
+    expect(result.failed,).toEqual([],);
+    expect(delivered,).toHaveLength(2,);
+    for (const envelope of delivered) {
+      const bytes = await openEnvelope(envelope, pskCipher(KEY,),);
+      expect(new TextDecoder().decode(bytes,),).toBe("fan payload",);
+      await expect(openEnvelope(envelope, cipher,),).rejects.toThrow();
+    }
+  });
+
+  test("falls back to the PSK when no contentKey is issued", async () => {
+    const { db, } = await createTestDb();
+    await twoPeers(db,);
+    const delivered: ContentEnvelope[] = [];
+    const post = (async (url: string, body: unknown,) => {
+      if (url.endsWith("/api/mesh-reserve",)) {
+        return { ok: true, status: 200, body: { reservationId: "r-fan", }, };
+      }
+      delivered.push(pushEnvelopeOf(body,),);
+      return { ok: true, status: 200, body: { verdict: "stale", }, };
+    }) as PeerPost;
+    const result = await fanOutContent(db, post, "https://a.example", POLICY, cipher, {
+      id: "fan-2",
+      content: "fallback payload",
+      clock: 8,
+    },);
+    expect(result.stored,).toEqual([],);
+    expect(result.stale,).toEqual(["https://b.example", "https://c.example",],);
+    for (const envelope of delivered) {
+      const bytes = await openEnvelope(envelope, cipher,);
+      expect(new TextDecoder().decode(bytes,),).toBe("fallback payload",);
+    }
+  });
+
+  test("one target's refusal never blocks the others", async () => {
+    const { db, } = await createTestDb();
+    await twoPeers(db,);
+    const post = (async (url: string,) => {
+      if (url.endsWith("/api/mesh-reserve",)) {
+        if (url.startsWith("https://c.example",)) {
+          return { ok: false, status: 409, body: null, };
+        }
+        return { ok: true, status: 200, body: { reservationId: "r-fan", }, };
+      }
+      return { ok: true, status: 200, body: { verdict: "stored", }, };
+    }) as PeerPost;
+    const result = await fanOutContent(db, post, "https://a.example", POLICY, cipher, {
+      id: "fan-3",
+      content: "partial payload",
+      clock: 9,
+    },);
+    expect(result.stored,).toEqual(["https://b.example",],);
+    expect(result.failed,).toHaveLength(1,);
+    expect(result.failed[0]?.origin,).toBe("https://c.example",);
+    expect(result.failed[0]?.error,).toMatch(/reservation refused/,);
+  });
+
+  test("disabled policy attempts nothing", async () => {
+    const { db, } = await createTestDb();
+    await twoPeers(db,);
+    let calls = 0;
+    const post = (async () => {
+      calls += 1;
+      return { ok: true, status: 200, body: {}, };
+    }) as PeerPost;
+    const result = await fanOutContent(
+      db,
+      post,
+      "https://a.example",
+      { mode: "none", peers: [], },
+      cipher,
+      { id: "fan-4", content: "nowhere", clock: 10, },
+    );
+    expect(result,).toEqual({ targets: [], stored: [], stale: [], failed: [], },);
+    expect(calls,).toBe(0,);
   });
 });
