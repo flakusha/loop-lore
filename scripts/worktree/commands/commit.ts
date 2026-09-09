@@ -8,9 +8,8 @@
 import { type WorktreeConfig, } from "../utils/config";
 import { gitSync, gitSyncQuiet, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
-import { extractMessageInput, } from "../utils/message";
+import { extractMessageInput, validateMessage, } from "../utils/message";
 import { log, } from "../utils/output";
-
 export async function commit(
   args: string[],
   config: WorktreeConfig,
@@ -18,10 +17,11 @@ export async function commit(
   const { rest, message: messageInput, } = await extractMessageInput(args,);
   const message = messageInput ?? rest.join(" ",);
 
-  if (!message) {
-    log("error", "commit message required",);
-    console.log('  Usage: worktree commit [-F <file>|--message-file <file>] "<message>"',);
-    console.log('  Multi-line: worktree commit -F .tmp/msg.txt   (or pipe via "-F -")',);
+  const validation = validateMessage(message,);
+  if (!validation.ok) {
+    log("error", `commit message rejected: ${validation.reason}`,);
+    console.log('  Usage: worktree commit [-F <file>|--message-file <file>] "<type>(scope): <description>"',);
+    console.log('  Example: worktree commit -F - <<< "fix(worktree): handle empty stdin"',);
     process.exit(1,);
   }
 
