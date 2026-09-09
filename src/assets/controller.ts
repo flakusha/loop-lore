@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 590
+
 /**
  * Asset Controller
  *
@@ -58,7 +62,6 @@ import {
   validateMimeType,
 } from "./service";
 import type { AssetRecord, } from "./service";
-
 
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
 export interface UploadOpts {
