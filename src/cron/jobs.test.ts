@@ -59,3 +59,29 @@ describe("cron default jobs", () => {
     }
   });
 });
+
+describe("federation jobs", () => {
+  test("gossip and resync run enabled against an empty registry", async () => {
+    const { db, } = await createTestDb();
+    const config = {
+      ...configSchema.defaults,
+      server: { ...configSchema.defaults.server, host: "localhost", port: 1, },
+      federation: { enabled: true, seeds: [], peers: [], },
+    };
+    const scheduler = startScheduler({
+      database: db,
+      config,
+      logger: createLogger({ level: "fatal", },),
+      jobs: defaultJobs(),
+      cronImpl: () => stubFactory(),
+    },);
+    try {
+      const gossip = await scheduler.runOnce("federation.gossip",) as { tick: number };
+      expect(gossip.tick,).toBe(1,);
+      const resync = await scheduler.runOnce("federation.resync",);
+      expect(resync,).toEqual({ checked: 0, alive: 0, },);
+    } finally {
+      scheduler.stop();
+    }
+  });
+});
