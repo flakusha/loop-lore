@@ -189,8 +189,13 @@ function scopedCoveragePaths(files,) {
 
 const CHANGED = changedFiles(DIFF_BASE,);
 const SCOPED_TESTS = scopedTestFiles(CHANGED,);
-const SCOPED_MODULES = changedModules(CHANGED,);
 const SCOPED_COVERAGE_PATHS = scopedCoveragePaths(CHANGED,);
+// BUG-37a3763: floor diff-touched FILES, not whole modules — a scoped lcov
+// only contains files the scoped tests loaded, so module aggregates are
+// structurally unpassable. Test files and non-src trees are excluded (no
+// meaningful per-file line coverage; non-src paths are unmeasured SKIPs).
+const SCOPED_DIFF_SRC_FILES = (DIFF_BASE ? CHANGED : [])
+  .filter((f,) => f.startsWith("src/",) && f.endsWith(".ts",) && !f.endsWith(".test.ts",));
 const NOOP_OK = "true # diff-scope: no matching files";
 
 // oxlint-disable-next-line sort-keys
@@ -328,11 +333,12 @@ const checks = {
  * emit `CHECK_REPORT_COVERAGE_LCOV` pointing at this run's file. The scoped
  * invocation must pass the same lcov reporter flags as `test:coverage` —
  * bare `--coverage` emits no lcov.info and the floor check always failed.
- * Scoped test set is every test under each touched top-level `src/` module:
- * adjacent test files alone cannot floor a whole module (e.g. two gate test
- * files cover ~16% of `generation/`; the module suite ~88%). `--only` floors
- * just the touched modules; touched non-`src/` trees (e.g. `scripts/`) have
- * no lcov rows and are reported as unmeasured + SKIP by `coverage.mjs`.
+ * Scoped test set is every test under each touched top-level `src/` module
+ * (adjacent test files alone cover too little to floor anything). Since
+ * BUG-37a3763 the scoped gate floors each diff-touched src file
+ * individually (`--files=`) instead of whole modules: a scoped lcov only
+ * contains files the scoped tests loaded, so module aggregates were
+ * structurally unpassable. Files never loaded are SKIPped as unmeasured.
  */
 function coverageCommand() {
   if (!DIFF_BASE) {
@@ -341,11 +347,15 @@ function coverageCommand() {
     return `E2E_SAFEGUARD=1 bun test tests/e2e/ src/ --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}`;
   }
   if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
+  // BUG-37a3763: floor diff-touched files individually — a scoped lcov can
+  // never satisfy whole-module floors (bun emits records only for files the
+  // scoped tests loaded).
+  const filesFlag = SCOPED_DIFF_SRC_FILES.length > 0
+    ? ` --files=${SCOPED_DIFF_SRC_FILES.join(",",)}`
+    : "";
   return `bun test --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
     SCOPED_COVERAGE_PATHS.join(" ",)
-  } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE} --only=${
-    (SCOPED_MODULES ?? []).join(",",)
-  }`;
+  } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}`;
 }
 
 checks["coverage - per-module line %"] = coverageCommand();
