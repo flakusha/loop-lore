@@ -13,8 +13,8 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DuplicationPolicy, WorldDuplicationPolicy, } from "../config/schema";
 import type { DB, } from "../db/schema";
-import type { ContentCipher, } from "./cipher";
-import { type ContentEnvelope, openEnvelope, } from "./envelope";
+import { type ContentCipher, pskCipher, } from "./cipher";
+import { type ContentEnvelope, openEnvelope, sealContent, } from "./envelope";
 import { canonicalOrigin, type PeerPost, } from "./peer-fetch";
 
 /** Reservation states (forward chain with release/expire exits). */
@@ -369,4 +369,105 @@ export async function selectDuplicationTargets(
     ? effective.peers.map((raw,) => canonicalOrigin(raw,))
     : [...trusted,];
   return candidates.filter((origin,): origin is string => origin !== null && origin !== except && trusted.has(origin,));
+}
+
+/**
+ * Content to replicate to duplication targets.
+ */
+export interface FanOutContent {
+  /** Stable content id (shared across retries/duplicates). */
+  id: string;
+  /** Plaintext payload. */
+  content: Uint8Array | string;
+  /** Content type label. */
+  contentType?: string;
+  /** World id for per-world duplication overrides. */
+  worldId?: string;
+  /** Sender wall-clock ms (defaults to now). */
+  clock?: number;
+}
+
+/** One target that did not receive the content. */
+export interface FanOutFailure {
+  /** Target origin. */
+  origin: string;
+  /** Reserve, seal, or push error message. */
+  error: string;
+}
+
+/** Per-target outcome of one fan-out pass. */
+export interface FanOutResult {
+  /** Targets attempted (trusted, policy-selected, self excluded). */
+  targets: string[];
+  /** Targets that stored the content. */
+  stored: string[];
+  /** Targets that already held newer content. */
+  stale: string[];
+  /** Targets that failed at any step. */
+  failed: FanOutFailure[];
+}
+
+/**
+ * Replicate content to every duplication target: reserve, seal (with the
+ * receiver's inbound key when issued, else the mesh PSK), push. Targets
+ * are independent — one target's failure never blocks the others.
+ * Reservations left open by a failed push expire via the sweep; there is
+ * no sender-side release route.
+ * @param database Sender database handle (peer registry + policy read).
+ * @param post Transport POST (bind peer TLS trust before passing).
+ * @param senderOrigin This instance's canonical origin.
+ * @param policy Configured duplication policy.
+ * @param psk Mesh PSK cipher (probe seal + fallback).
+ * @param content Payload to replicate.
+ */
+export async function fanOutContent(
+  database: Kysely<DB>,
+  post: PeerPost,
+  senderOrigin: string,
+  policy: DuplicationPolicy,
+  psk: ContentCipher,
+  content: FanOutContent,
+): Promise<FanOutResult> {
+  const type = content.contentType ?? "blob";
+  const clock = content.clock ?? Date.now();
+  // Probe seal for hash/size (hash covers plaintext, key-independent).
+  const probe = await sealContent({
+    id: content.id,
+    origin: senderOrigin,
+    clock,
+    type,
+    content: content.content,
+    cipher: psk,
+  },);
+  const targets = await selectDuplicationTargets(database, policy, senderOrigin, content.worldId,);
+  const settled = await Promise.allSettled(targets.map(async (target,) => {
+    const granted = await requestReservation(post, target, {
+      senderOrigin,
+      contentHash: probe.hash,
+      sizeBytes: probe.size,
+      contentType: type,
+    },);
+    const cipher = granted.contentKey !== undefined ? pskCipher(granted.contentKey,) : psk;
+    const envelope = await sealContent({
+      id: content.id,
+      origin: senderOrigin,
+      clock,
+      type,
+      content: content.content,
+      cipher,
+    },);
+    const verdict = await pushEnvelope(post, target, envelope, granted.reservationId,);
+    return { target, verdict, };
+  },),);
+  const result: FanOutResult = { targets, stored: [], stale: [], failed: [], };
+  for (const [index, outcome,] of settled.entries()) {
+    const target = targets[index]!;
+    if (outcome.status === "fulfilled") {
+      result[outcome.value.verdict === "stored" ? "stored" : "stale"].push(target,);
+    } else {
+      const error = outcome.reason instanceof Error ? outcome.reason.message : String(outcome.reason,);
+      result.failed.push({ origin: target, error, },);
+    }
+  }
+  return result;
 }
