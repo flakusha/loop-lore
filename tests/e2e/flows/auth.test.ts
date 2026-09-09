@@ -71,10 +71,10 @@ describe("Auth E2E", () => {
       // Seed users before test
       await seedUsers(server.db,);
 
-      const loginRes = await api.post("/api/auth/login", {
-        username: SEED.user.username,
-        password: SEED.user.password,
-      },);
+      // BUG-auth-login-silent-fail fixed: /api/auth/login only accepts
+      // form-urlencoded bodies. JSON is rejected with 400 (covered by
+      // edge-cases-auth E2E). Use api.loginAs() which posts form-encoded.
+      const loginRes = { ok: await api.loginAs(SEED.user.username, SEED.user.password,), };
 
       // Demo-login works without seeding (creates solo user)
       // For regular login, we need seeded users

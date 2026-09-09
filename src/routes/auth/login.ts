@@ -13,7 +13,7 @@ import { HttpStatus, jsonError, } from "../http-utils";
 import { createSessionAndCookie, } from "./session";
 import {
   demoLoginLimiter,
-  errorHtml,
+  errorResponse,
   getClientIp,
   loginLimiter,
   parseCredentials,
@@ -58,7 +58,13 @@ async function handleLogin(
   const username = formData.get("username",)?.trim();
   const password = formData.get("password",);
   if (!username || !password) {
-    return errorHtml(t ? t("errors.missingField",) : "Username and password are required.",);
+    return errorResponse(
+      request,
+      HttpStatus.Unauthorized,
+      "errors.missingField",
+      t,
+      "Username and password are required.",
+    );
   }
 
   const user = await database
@@ -67,14 +73,38 @@ async function handleLogin(
     .where("username", "=", username,)
     .executeTakeFirst();
 
-  if (!user) { return errorHtml(t ? t("auth.invalidCredentials",) : "Invalid username or password.",); }
-  if (user.status === UserStatus.Disabled || user.status === UserStatus.Deactivated) {
-    return errorHtml(t ? t("auth.accountLocked",) : "Account is disabled.",);
+  if (!user) {
+    return errorResponse(
+      request,
+      HttpStatus.Unauthorized,
+      "auth.invalidCredentials",
+      t,
+      "Invalid username or password.",
+    );
   }
-  if (!user.password_hash) { return errorHtml(t ? t("auth.invalidCredentials",) : "Invalid username or password.",); }
+  if (user.status === UserStatus.Disabled || user.status === UserStatus.Deactivated) {
+    return errorResponse(request, HttpStatus.Forbidden, "auth.accountLocked", t, "Account is disabled.",);
+  }
+  if (!user.password_hash) {
+    return errorResponse(
+      request,
+      HttpStatus.Unauthorized,
+      "auth.invalidCredentials",
+      t,
+      "Invalid username or password.",
+    );
+  }
 
   const passwordValid = await Bun.password.verify(password, user.password_hash,);
-  if (!passwordValid) { return errorHtml(t ? t("auth.invalidCredentials",) : "Invalid username or password.",); }
+  if (!passwordValid) {
+    return errorResponse(
+      request,
+      HttpStatus.Unauthorized,
+      "auth.invalidCredentials",
+      t,
+      "Invalid username or password.",
+    );
+  }
 
   if (isEncryptionEnabled()) {
     const smk = getSmk()!;
