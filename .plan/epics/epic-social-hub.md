@@ -104,35 +104,22 @@ src/social-hub/
 
 ## Adapter Interface
 
-```typescript
-interface SocialAdapter {
-  name: string;
-  platform: string;
+> RETIRED 2026-09-09 (TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle):
+> `SocialAdapter` is retired as a competing root interface. The single seam is
+> `ProtocolAdapter` in `src/integrations/adapter.ts`. Social-hub requirements
+> survive as capability-gated extensions — see the mapping below.
+> Original spec preserved in git history.
 
-  // Lifecycle
-  connect(config: AdapterConfig,): Promise<void>;
-  disconnect(): Promise<void>;
-  isConnected(): boolean;
+| SocialAdapter member | ProtocolAdapter equivalent |
+| --- | --- |
+| `name` / `connect` / `disconnect` | core `ProtocolAdapter` members |
+| `isConnected` | core `ProtocolAdapter.isConnected` |
+| `sendMessage` / `onMessage` | core members (send resolves protocol-side id) |
+| channels / users | `ChannelCapable` (`channels` capability) |
+| `onPresence` | `PresenceCapable` (`presence` capability) |
+| `onReaction` | `ReactionCapable` (`reactions` capability) |
+| `editMessage` / `deleteMessage` | `MessageEditCapable` (`message-edit` capability) |
 
-  // Messaging
-  sendMessage(channel: string, message: Message,): Promise<string>;
-  editMessage(channel: string, messageId: string, message: Message,): Promise<void>;
-  deleteMessage(channel: string, messageId: string,): Promise<void>;
-
-  // Receiving
-  onMessage(handler: MessageHandler,): void;
-  onReaction(handler: ReactionHandler,): void;
-  onPresence(handler: PresenceHandler,): void;
-
-  // Channels
-  listChannels(): Promise<Channel[]>;
-  getChannel(channelId: string,): Promise<Channel>;
-
-  // Users
-  listUsers(): Promise<User[]>;
-  getUser(userId: string,): Promise<User>;
-}
-```
 
 ## Message Format
 
