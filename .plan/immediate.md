@@ -338,7 +338,7 @@ latency + BYO-key + dead-role gaps. Actionable queue:
 
 ---
 
-### P2-Da — GM-Guided Story Creation *(NEW)*
+### P2-Da — GM-Guided Story Creation _(NEW)_
 
 **Ticket**: [`TASK-gm-guided-story-creation.md`](TASK-gm-guided-story-creation.md)
 
@@ -449,6 +449,7 @@ Deferred until P2-A through P2-F (including the new GM-guided story creation tas
 | **P3**   | **Artifact System**     | Code/docs/datasets as assets                   | ⬜ Not Started                                                                             | [`TASK-artifact-system.md`](TASK-artifact-system.md)                                                                                                                         |
 | **P3**   | **ComfyUI Integration** | Node discovery, workflow templates             | ⬜ Not Started                                                                             | [`TASK-comfyui-node-discovery.md`](TASK-comfyui-node-discovery.md), [`FEAT-comfyui-plugin-workflow-templates.md`](FEAT-comfyui-plugin-workflow-templates.md)                 |
 | **P3**   | **Provider Ecosystem**  | Anthropic/Ollama/Bedrock support               | ⬜ Not Started                                                                             | [`FEAT-provider-plugin-ecosystem.md`](FEAT-provider-plugin-ecosystem.md)                                                                                                     |
+
 > **Alignment (2026-08-05)**: P3→P5 follow the **0.1.0 highest-value features** — user-centric core (identity, access, encryption, all chat types, NSFW, image captioning, i18n, VN, gallery, panels/settings, LLM support, assistant tooling, IO, notifications, filtering/search, memory+template injection). Everything else → **P6+** unless it blocks P3–P5. Full per-item map lives in `backlog.md` `## P3`.
 
 | #  | Value feature                                                                                      | Status                     | Where / next                                                                                                                                                                                                                                        |
@@ -582,6 +583,7 @@ P3→P5 are aligned to the **0.1.0 highest-value feature list** (see `backlog.md
   | `src/frontend/alpine/chat-settings.ts`   | Chat settings modal with `_assistantRole`, `gm_config` parsing, persona/impersonation                      | C, D, Da    |
   | `src/frontend/fe-fetch.ts`               | Unified fetch with CSRF/session token injection, 401 redirect                                              | E           |
   | `src/frontend/alpine/admin-users.ts`     | Admin user list, role editing, pagination, search/filter                                                   | E           |
+
   | `src/frontend/pages/gallery.ts`          | Gallery page with search, preview, download, delete, type filtering                                        | F           |
 - **Reconciliation complete** — backlog/roadmap now reflect actual implementation state (see `backlog.md`)
 - **Knowledge systems pair** — lore audience scoping + per-viewer memory injection shipped 2026-08-01 (see "Recent Wiring" table at top). Greenfield next: world timeline (`docs/spec/lore.md` §5) + event→lore promotion (§4) under `IDEA-memory-knowledge-isolation-and-world-timeline.md` (cluster B). Hardening: per-viewer `memorySection` cross-actor test.
