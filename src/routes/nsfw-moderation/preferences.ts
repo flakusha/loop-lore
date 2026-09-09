@@ -37,7 +37,7 @@ export function preferencesRoutes(opts: HandlerOpts, prefix = "/api",) {
           log().error("Failed to get NSFW preferences", error instanceof Error ? error : undefined,);
           return jsonError(msg, 500,);
         }
-      }, { params: userIdParam, response: { 200: SuccessResponse, 500: ErrorResponse, }, },)
+      }, { params: userIdParam, response: { 200: SuccessResponse, 404: ErrorResponse, 500: ErrorResponse, }, },)
       .put(`${prefix}/nsfw/moderation/preferences/:userId`, async (ctx: any,) => {
         const auth = requireOwnOrAdmin(ctx, ctx.params.userId,);
         if (typeof auth !== "string") { return auth; }
