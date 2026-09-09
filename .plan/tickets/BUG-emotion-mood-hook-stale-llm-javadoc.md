@@ -34,6 +34,7 @@ replacement work:
   AUX classifier
 - `TASK-aux-mood-classification.md` — replace keyword `MoodHook` with AUX
   classifier
+
 ## Adjacent nit: spurious `async` on `canHandle`
 
 All 4 hooks (`emotion-hook.ts:20`, `mood-hook.ts:20`, `moderation-hook.ts:109`,
@@ -53,6 +54,7 @@ disable comment in one pass. Trivial, low-risk, but cross-cuts the
 (custom user-defined hooks via `registerHook`) before changing.
 
 ## Fix
+
 - `TASK-aux-enrichment-emotion-avatar-task.md` — wrapper scaffolding for
   `src/aux-pipeline/tasks/emotion-avatar.ts`
 
