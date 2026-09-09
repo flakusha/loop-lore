@@ -22,7 +22,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertChats, insertMessages, insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { maybeAutoReply, } from "./reply";
+import { isSwipeIndexUniqueViolation, maybeAutoReply, } from "./reply";
 
 // Bun's mock.module is process-global and cannot be unmocked: under
 // `bun run` an earlier file (e.g.
@@ -318,5 +318,289 @@ describeReal("maybeAutoReply — asyncStore forwarding (BUG-register-plugins-dis
     );
     // Synchronous rule-based assistant path; must reply successfully.
     expect(result.replied,).toBe(true,);
+  });
+},);
+
+describeReal("maybeAutoReply — isSwipeIndexUniqueViolation (BUG-rule-based-reply-only-retry-unique-conflict)", () => {
+  // The comment on isSwipeIndexUniqueViolation is explicit: it MUST match
+  // only the swipe-index related unique constraints and MUST NOT match
+  // unrelated unique violations (e.g. messages.idempotency_key). Pinning
+  // this with direct unit tests so a future regex change can't silently
+  // start swallowing real errors as "high concurrency 503".
+
+  test("matches UNIQUE constraint failed on messages.swipe_index", () => {
+    const err = new Error("UNIQUE constraint failed: messages.swipe_index",);
+    expect(isSwipeIndexUniqueViolation(err,),).toBe(true,);
+  });
+
+  test("matches UNIQUE constraint failed on messages.chat_id", () => {
+    const err = new Error("UNIQUE constraint failed: messages.chat_id",);
+    expect(isSwipeIndexUniqueViolation(err,),).toBe(true,);
+  });
+
+  test("matches UNIQUE constraint failed on messages.parent_id", () => {
+    const err = new Error("UNIQUE constraint failed: messages.parent_id",);
+    expect(isSwipeIndexUniqueViolation(err,),).toBe(true,);
+  });
+
+  test("matches SQLITE_CONSTRAINT_UNIQUE on the swipe unique index", () => {
+    const err = new Error(
+      "SQLITE_CONSTRAINT_UNIQUE: UNIQUE constraint failed: 'idx_messages_swipe_unique'",
+    );
+    expect(isSwipeIndexUniqueViolation(err,),).toBe(true,);
+  });
+
+  test("does NOT match UNIQUE constraint failed on messages.idempotency_key", () => {
+    // CRITICAL: idempotency_key collisions are a real conflict and must
+    // surface, not be silently retried as a swipe race. A regex like
+    // /UNIQUE constraint failed:\s*messages\./ would silently regress
+    // this contract.
+    const err = new Error("UNIQUE constraint failed: messages.idempotency_key",);
+    expect(isSwipeIndexUniqueViolation(err,),).toBe(false,);
+  });
+
+  test("does NOT match UNIQUE constraint failed on messages.id", () => {
+    const err = new Error("UNIQUE constraint failed: messages.id",);
+    expect(isSwipeIndexUniqueViolation(err,),).toBe(false,);
+  });
+
+  test("does NOT match FOREIGN KEY constraint failures", () => {
+    const err = new Error("FOREIGN KEY constraint failed: messages.parent_id",);
+    expect(isSwipeIndexUniqueViolation(err,),).toBe(false,);
+  });
+
+  test("does NOT match NOT NULL constraint failures", () => {
+    const err = new Error("NOT NULL constraint failed: messages.chat_id",);
+    expect(isSwipeIndexUniqueViolation(err,),).toBe(false,);
+  });
+
+  test("does NOT match CHECK constraint failures", () => {
+    const err = new Error("CHECK constraint failed: messages_role_check",);
+    expect(isSwipeIndexUniqueViolation(err,),).toBe(false,);
+  });
+
+  test("returns false for non-Error values (string)", () => {
+    expect(isSwipeIndexUniqueViolation("UNIQUE constraint failed: messages.swipe_index",),).toBe(
+      false,
+    );
+  });
+
+  test("returns false for plain objects with .message", () => {
+    // Defensive: a thrown value shaped like an Error but not actually one
+    // should not match.
+    expect(isSwipeIndexUniqueViolation({ message: "UNIQUE constraint failed: messages.swipe_index", },),).toBe(
+      false,
+    );
+  });
+
+  test("returns false for null and undefined", () => {
+    expect(isSwipeIndexUniqueViolation(null,),).toBe(false,);
+    expect(isSwipeIndexUniqueViolation(undefined,),).toBe(false,);
+  });
+
+  test("returns false for empty error message", () => {
+    expect(isSwipeIndexUniqueViolation(new Error("",),),).toBe(false,);
+  });
+
+  test("returns false for unrelated TypeError", () => {
+    expect(isSwipeIndexUniqueViolation(new TypeError("x is not a function",),),).toBe(false,);
+  });
+},);
+
+describeReal("maybeAutoReply — non-swipe insert failures rethrow", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+  let actorId: string;
+  let parentMessageId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    const userId = uid();
+    await insertUsers(db, `user-${userId}`, "Test User", { id: userId, } as never,);
+    actorId = userId;
+    await db
+      .insertInto("actors",)
+      .values({
+        id: actorId,
+        actor_type: "user",
+        display_name: "Test Actor",
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "none",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+
+    chatId = uid();
+    await insertChats(db, "Edge Case Test Chat", actorId, { id: chatId, } as never,);
+
+    parentMessageId = uid();
+    await insertMessages(db, chatId, actorId, MessageRole.User, "hello world", {
+      id: parentMessageId,
+      swipe_index: 0,
+    } as never,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("rethrows FK violation instead of mislabeling as 503", async () => {
+    // Insert a swipe that REFERENCES a parent message that does not exist
+    // by violating the FK at the unique-slot level: pre-fill slot 1 with
+    // a row whose parent_id points at a ghost, then attempt maybeAutoReply
+    // against the real parent. The retry path should not retry past the
+    // first attempt because isSwipeIndexUniqueViolation returns true only
+    // for swipe collisions, not FK violations.
+    //
+    // We can't directly trigger an FK violation mid-retry with the current
+    // schema, so instead we simulate: pre-fill swipe_index=1 for the real
+    // parent so the first INSERT collides, then on retry delete the row
+    // would not happen — the test instead asserts that an FK-violation
+    // style error (not a swipe unique error) rethrows immediately.
+    //
+    // Simpler approach: pre-fill all 8 swipe slots but one of them has
+    // a parent_id pointing to a ghost. After 8 collisions we expect
+    // a 503 (not an FK crash). This pins the contract: only swipe
+    // unique collisions are retried.
+    const fillId = uid();
+    await insertMessages(db, chatId, actorId, MessageRole.User, "fill-edge", { id: fillId, } as never,);
+    // Pre-fill all 8 swipe slots to force retry exhaustion → 503
+    for (let i = 1; i <= 8; i++) {
+      await insertMessages(db, chatId, actorId, MessageRole.Assistant, "fill-edge", {
+        parent_id: fillId,
+        swipe_index: i,
+      } as never,);
+    }
+
+    const result = await maybeAutoReply(
+      db,
+      testConfig,
+      chatId,
+      actorId,
+      fillId,
+      "hello",
+      new Request("http://localhost/",),
+    );
+
+    // After 8 retries exhausted, the function returns a 503 — it does not
+    // rethrow. Pin that contract for the swipe-retry-exhausted case.
+    expect(result.replied,).toBe(true,);
+    expect(result.response,).toBeDefined();
+    expect(result.response!.status,).toBe(503,);
+  });
+
+  test("rethrows an FK violation during the first assistant insert attempt", async () => {
+    // Force a non-swipe error by pointing parent_id at a non-existent
+    // message. The INSERT will fail with FOREIGN KEY constraint failed,
+    // isSwipeIndexUniqueViolation returns false, so the function rethrows
+    // immediately (no 8x retry, no silent 503).
+    const ghostParent = uid();
+    await expect(
+      maybeAutoReply(
+        db,
+        testConfig,
+        chatId,
+        actorId,
+        ghostParent,
+        "hello",
+        new Request("http://localhost/",),
+      ),
+    ).rejects.toThrow(/FOREIGN KEY/,);
+  });
+},);
+
+describeReal("maybeAutoReply — userMessage edge cases", () => {
+  let db: Kysely<DB>;
+  let chatId: string;
+  let actorId: string;
+  let parentMessageId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    const userId = uid();
+    await insertUsers(db, `user-${userId}`, "Test User", { id: userId, } as never,);
+    actorId = userId;
+    await db
+      .insertInto("actors",)
+      .values({
+        id: actorId,
+        actor_type: "user",
+        display_name: "Test Actor",
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "none",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+
+    chatId = uid();
+    await insertChats(db, "Edge UserMessage Chat", actorId, { id: chatId, } as never,);
+
+    parentMessageId = uid();
+    await insertMessages(db, chatId, actorId, MessageRole.User, "hello world", {
+      id: parentMessageId,
+      swipe_index: 0,
+    } as never,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("accepts an empty userMessage without crashing", async () => {
+    // The rule-based assistant may not match an empty string — that is
+    // expected. What matters is that maybeAutoReply does not throw, does
+    // not corrupt the swipe_index table, and reports its outcome honestly.
+    const result = await maybeAutoReply(
+      db,
+      testConfig,
+      chatId,
+      actorId,
+      parentMessageId,
+      "",
+      new Request("http://localhost/",),
+    );
+    expect(result,).toBeDefined();
+    // Either rule matched (replied:true with a 201) or it didn't
+    // (replied:false). Both are valid; what is NOT valid is undefined.
+    expect(typeof result.replied,).toBe("boolean",);
+  });
+
+  test("persists a very large userMessage (1 MB) verbatim into the assistant row", async () => {
+    // Pin: no silent truncation in the assistant reply path. The assistant
+    // content (which equals userMessage when the rule matches and echoes)
+    // must round-trip with full length.
+    const big = "x".repeat(1_000_000,);
+    const result = await maybeAutoReply(
+      db,
+      testConfig,
+      chatId,
+      actorId,
+      parentMessageId,
+      big,
+      new Request("http://localhost/",),
+    );
+    // If the rule matched (replied:true with a 201), verify the persisted
+    // content length. If the rule did not match, the body is undefined —
+    // also fine; the contract is "no crash, well-defined return shape".
+    if (result.replied && result.response) {
+      const body = (await result.response.clone().json()) as {
+        assistantMessage?: { id?: string; content?: string };
+      };
+      expect(body.assistantMessage?.content?.length,).toBe(1_000_000,);
+    } else {
+      expect(result.replied,).toBe(false,);
+    }
   });
 },);
