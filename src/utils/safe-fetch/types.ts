@@ -53,4 +53,12 @@ export interface SafeFetchOptions extends Omit<RequestInit, "body" | "signal"> {
   handle401?: boolean;
   /** Callback for 401 responses — redirect to login, etc. */
   onAuthError?: () => void;
+  /**
+   * TLS overrides for server runtimes (Bun/Node). Passed through to the
+   * underlying fetch; never set from browser code.
+   */
+  tls?: {
+    /** PEM CA bundle(s) to trust for this request (overrides system store). */
+    ca?: string[];
+  };
 }
