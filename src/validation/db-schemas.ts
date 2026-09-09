@@ -2310,6 +2310,7 @@ export const MeshPeersSchema = t.Object({
   capabilities: t.Optional(t.String(),),
   last_seen: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
+  capacity_bytes: t.Optional(t.Number(),),
 },);
 
 // ── mesh_negotiations ────────────────────────────────────────────
