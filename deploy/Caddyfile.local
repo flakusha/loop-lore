@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+# Local-dev Caddyfile — trusted HTTPS on localhost via Caddy's internal CA.
+#
+# Usage (one-time trust, then run):
+#   caddy trust            # install internal CA into system/browser stores
+#   caddy run --config deploy/Caddyfile.local --adapter caddyfile
+#
+# Then open https://localhost:8443 (app must listen on 127.0.0.1:3000).
+# `tls internal` certs are NOT publicly trusted — dev machines only.
+# No ports 80/443 needed; nothing leaves the machine.
+
+https://localhost:8443 {
+	tls internal
+
+	encode gzip
+
+	reverse_proxy 127.0.0.1:3000 {
+		flush_interval -1
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-Host {host}
+	}
+}

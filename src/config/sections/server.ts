@@ -24,6 +24,7 @@ export class ServerSection implements ServerConfig {
   port = SERVER_DEFAULTS.port;
   host = SERVER_DEFAULTS.host;
   trustProxy = SERVER_DEFAULTS.trustProxy;
+  publicOrigin?: string;
   tls: TlsConfig = { ...SERVER_DEFAULTS.tls, };
 
   /**
@@ -58,6 +59,11 @@ export const serverMeta = {
       default: SERVER_DEFAULTS.trustProxy,
       description: "Honor X-Forwarded-For / X-Real-IP / CF-Connecting-IP for getClientIp. " +
         "Default false (headers are spoofable). Env: SERVER_TRUST_PROXY=1.",
+    },
+    publicOrigin: {
+      type: "string",
+      description: "Public origin (scheme + host) when behind a TLS-terminating proxy. " +
+        "Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN.",
     },
     tls: {
       type: "object",

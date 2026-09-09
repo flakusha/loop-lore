@@ -108,16 +108,22 @@ CMD ["bun", "run", "dist/server.js"]
 
 Production topology with three tiers:
 
-1. **nginx** (TLS termination, static cache, rate limiting, load balancing) receives client traffic
+1. **Caddy** (automatic HTTPS via ACME, static cache, rate limiting, load balancing) receives client traffic
 2. **Bun** (dynamic API routes, session management, WebSocket connections) processes application logic
 3. **Postgres** (persistent data, concurrent writes, cross-session consistency) stores all state
 
-nginx handles:
+Caddy handles (see `deploy/Caddyfile` + `deploy/docker-compose.yml`):
 
-- SSL termination
+- TLS termination with automatic issuance + renewal (no certbot, no cron)
 - Static file serving (cached)
 - Rate limiting
 - Load balancing (multiple Bun workers)
+
+Required app env behind Caddy: `SERVER_TRUST_PROXY=1` (honor
+`X-Forwarded-*`) and `SERVER_PUBLIC_ORIGIN=https://<domain>` (public
+origin for federation nodeinfo + self-referential URLs). For trusted local
+HTTPS use `deploy/Caddyfile.local` (`tls internal`, one-time
+`caddy trust`).
 
 Bun handles:
 
@@ -144,30 +150,12 @@ See [`docs/spec/config-file-separation.md`](./config-file-separation.md) for ful
 
 ## Docker Compose (Production Template)
 
-```yaml
-version: "3.8"
-services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - DB_TYPE=postgres
-      - DATABASE_URL=postgres://user:pass@db:5432/looplore
-      - AUTH_REQUIRED=true
-      - DOCS_ENABLED=false
-    depends_on:
-      - db
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: looplore
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-volumes:
-  pgdata:
+Canonical file: `deploy/docker-compose.yml` (Caddy + app + Postgres).
+Start with:
+
+```bash
+DOMAIN=lore.example.com ACME_EMAIL=admin@example.com \
+  POSTGRES_PASSWORD=<secret> docker compose -f deploy/docker-compose.yml up -d
 ```
 
 ## Platform Support
