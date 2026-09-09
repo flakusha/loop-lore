@@ -911,7 +911,8 @@
     "flagOtherPlaceholder": "Describe the issue...",
     "flagSubmitted": "Content flagged for review",
     "flagFailed": "Failed to flag content.",
-    "flagReasonRequired": "Select a reason or describe the issue."
+    "flagReasonRequired": "Select a reason or describe the issue.",
+    "toolResult": "Результат инструмента"
   },
   "personas": {
     "title": "Personas",
