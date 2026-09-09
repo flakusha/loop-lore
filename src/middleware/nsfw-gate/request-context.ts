@@ -20,12 +20,12 @@ import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db";
 import { getLogger, } from "../../logger";
 import type { NSFWRatingEnforcement, } from "../../schemas/nsfw-rating";
+import { getChatParticipantUserIds, } from "./access";
 import {
   evaluateNsfwBase,
   type GateInputs,
-  getChatParticipantUserIds,
   loadGateInputs,
-} from "./access";
+} from "./base-eval";
 import { getLatestConsent, hasActiveConsent, } from "./consent-ledger";
 
 /**
