@@ -1659,7 +1659,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-diff-scoped-coverage-gate-floors-whole-modules-on-partial-lc.md"
+    "source": ".plan/tickets/BUG-diff-scoped-coverage-gate-floors-whole-modules-on-partial-lc.md",
+    "status": "done"
   },
   "BUG-DUAL-VN-CHOICES-ROUTE-REGISTRATION-SHADOWS-GUARDED-ROUTE": {
     "hash": "df61a36",
@@ -20853,6 +20854,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-solo-user-cold-start-race-caches-phantom-uid.md",
     "git_issue": "bee01ca"
+  },
+  "TASK-SPKI-PIN-VERIFICATION-FOR-FEDERATION-PEERS": {
+    "hash": "271e08d",
+    "extid": "TASK-SPKI-PIN-VERIFICATION-FOR-FEDERATION-PEERS",
+    "type": "TASK",
+    "title": "SPKI pin verification for federation peers",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-certificate-and-tls-management.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-spki-pin-verification-for-federation-peers.md",
+    "git_issue": "271e08d"
   },
   "TASK-SPLIT-CONFIG-SCHEMA": {
     "hash": "d50f59c",
