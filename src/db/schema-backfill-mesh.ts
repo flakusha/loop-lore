@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/db/schema-backfill-mesh.ts — stranded guard for part 022 tables.
+// src/db/schema-backfill-mesh.ts — stranded guard for parts 022 + 002.
 //
 // Part 022 persists send-side reservations and received-delivery records;
-// databases frozen before 022 lack both tables. Detection is
-// `sqlite_master`; the repair mirrors 022 exactly, including its
-// schema-version record.
+// databases frozen before 022 lack both tables. Migration 002 adds
+// `mesh_peers.capacity_bytes`; databases frozen between 022 and 002 keep the
+// tables but lack the column. Detection is `sqlite_master`; the repair
+// mirrors 022 + 002 exactly, including their schema-version records.
 // @module schema-backfill-mesh
 
 import type { Kysely, } from "kysely";
@@ -29,7 +30,10 @@ import { recordSchemaVersion, } from "./schema-version";
 export async function repairMeshSharing(database: Kysely<DB>,): Promise<boolean> {
   const hasReservations = (await tableSql(database, "mesh_reservations",)) !== null;
   const hasDeliveries = (await tableSql(database, "mesh_deliveries",)) !== null;
-  if (hasReservations && hasDeliveries) { return false; }
+  const peersDdl = await tableSql(database, "mesh_peers",);
+  const needsCapacity = peersDdl !== null &&
+    !peersDdl.toLowerCase().includes("capacity_bytes",);
+  if (hasReservations && hasDeliveries && !needsCapacity) { return false; }
   const log = getLogger().child({ module: "schema-backfill", },);
   if (!hasReservations) {
     await database.schema
@@ -58,8 +62,15 @@ export async function repairMeshSharing(database: Kysely<DB>,): Promise<boolean>
       .addColumn("received_at", "text", (column,) => column.notNull().defaultTo(sql`(datetime('now'))`,),)
       .execute();
   }
+  if (needsCapacity) {
+    await database.schema
+      .alterTable("mesh_peers",)
+      .addColumn("capacity_bytes", "integer",)
+      .execute();
+  }
   if ((await tableSql(database, "schema_version",)) !== null) {
     await recordSchemaVersion(database, 22, "mesh sharing reservations and deliveries",);
+    await recordSchemaVersion(database, 23, "mesh peer inbound capacity",);
   }
   log.info("Schema backfill applied: mesh sharing tables created",);
   return true;

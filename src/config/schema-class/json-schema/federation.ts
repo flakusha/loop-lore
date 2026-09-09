@@ -43,6 +43,16 @@ export const federation = {
       default: "",
       description: "Mesh content PSK for envelope seal/open. Env-only: MESH_PSK.",
     },
+    duplication: {
+      type: "object",
+      default: { mode: "trusted", peers: [], },
+      description: "Duplication policy for pushed content. Per-world rules are a follow-up.",
+      properties: {
+        mode: { type: "string", enum: ["trusted", "listed", "none",], },
+        peers: { type: "array", default: [], items: { type: "string", }, },
+      },
+      required: ["mode", "peers",],
+    },
   },
-  required: ["enabled", "seeds", "peers", "meshPsk",],
+  required: ["enabled", "seeds", "peers", "meshPsk", "duplication",],
 };

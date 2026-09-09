@@ -108,13 +108,15 @@ export function defaultJobs(): CronJobDef[] {
       run: async ({ config, database, logger, },) => {
         if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
         const { runResyncPass, } = await import("../federation/coordinator");
+        const { sweepExpiredReservations, } = await import("../federation/sharing");
         const trustByOrigin: Record<string, import("../config/schema").FederationPeerTrustConfig | undefined> = {};
         for (const peer of config.federation.peers) {
           trustByOrigin[peer.origin] = peer.trust;
         }
         const summary = await runResyncPass(database, { trustByOrigin, },);
-        logger.info("federation resync pass complete", { module: "cron", ...summary, },);
-        return summary;
+        const expired = await sweepExpiredReservations(database,);
+        logger.info("federation resync pass complete", { module: "cron", ...summary, expired, },);
+        return { ...summary, expired, };
       },
     },),
     defineJob({

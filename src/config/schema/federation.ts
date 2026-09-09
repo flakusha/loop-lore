@@ -18,7 +18,16 @@ export interface FederationPeerConfig {
   /** Optional trust overrides for this peer. */
   trust?: FederationPeerTrustConfig;
 }
+/** Where pushed content is duplicated. Per-world rules are a follow-up. */
+export type DuplicationMode = "trusted" | "listed" | "none";
 
+/** Duplication policy for pushed mesh content. */
+export interface DuplicationPolicy {
+  /** `trusted`: all trusted peers; `listed`: only `peers`; `none`: no copies. */
+  mode: DuplicationMode;
+  /** Candidate origins for `listed` mode. Default empty. */
+  peers: string[];
+}
 /** Federation/mesh interconnect config. All opt-in; disabled by default. */
 export interface FederationConfig {
   /** Enable federation/mesh interconnect. Default false. */
@@ -29,4 +38,6 @@ export interface FederationConfig {
   peers: FederationPeerConfig[];
   /** Mesh content PSK for envelope seal/open. Env-only: MESH_PSK. Default "". */
   meshPsk: string;
+  /** Duplication policy for pushed content. Default `{ mode: "trusted", peers: [] }`. */
+  duplication: DuplicationPolicy;
 }
