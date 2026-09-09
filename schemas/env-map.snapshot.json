@@ -131,6 +131,7 @@
   "TLS_CERT": "server.tls.cert",
   "TLS_KEY": "server.tls.key",
   "SERVER_TRUST_PROXY": "server.trustProxy",
+  "SERVER_PUBLIC_ORIGIN": "server.publicOrigin",
   "AUTH_REGISTRATION_OPEN": "auth.registrationOpen",
   "SESSION_TIMEOUT_HOURS": "auth.sessionTimeoutHours",
   "SESSION_MAX_PER_USER": "auth.maxSessionsPerUser",
