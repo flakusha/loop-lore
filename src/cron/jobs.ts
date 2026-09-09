@@ -83,7 +83,7 @@ export function defaultJobs(): CronJobDef[] {
       run: async ({ config, logger, },) => {
         if (!config.federation.enabled) { return { skipped: "federation.disabled", }; }
         const { getGossipService, publicOriginOf, } = await import("../federation/gossip");
-        const trusted = config.federation.peers.map((peer,) => peer.origin,);
+        const trusted = config.federation.peers.map((peer,) => peer.origin);
         const trustByOrigin: Record<string, import("../config/schema").FederationPeerTrustConfig | undefined> = {};
         for (const peer of config.federation.peers) {
           trustByOrigin[peer.origin] = peer.trust;
