@@ -27,12 +27,13 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { createStreamingSanitizer, } from "../../regex/html-sanitize";
 import { activeGenerations, processStreamingChunk, } from "../cancellation-manager";
 import type { ChunkEvent, } from "../providers/types";
 import type { GenerationMessage, } from "../types";
 import { classifyIntent, } from "./classify-intent";
 import type { GenDeps, } from "./deps";
-import { renderStreamMessage, } from "./stream-render";
+import { renderStreamMessage, renderStreamMessageWithSanitizer, } from "./stream-render";
 
 /** */
 export interface CallLlmOpts {
@@ -134,6 +135,7 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
     signal: tracking?.abortSignal,
   };
 
+  const streamSanitizer = canStream ? createStreamingSanitizer() : null;
   if (canStream) {
     if (!tracking) {
       log.warn("Streaming without generation tracking — repetition/policy detection disabled", {
@@ -154,12 +156,19 @@ export async function callLlm(opts: CallLlmOpts,): Promise<CallLlmResult> {
                 log.error("Streaming chunk detection failed", error instanceof Error ? error : undefined,);
               },);
           }
-          if (buffer) {
+          if (buffer && streamSanitizer) {
             const seq = buffer.append(
               "stream-update",
-              renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", d.markedParse, {
-                thinking: accumulatedThinking,
-              },),
+              renderStreamMessageWithSanitizer(
+                actorName,
+                accumulatedContent,
+                tracking?.attemptId ?? "",
+                d.markedParse,
+                streamSanitizer,
+                {
+                  thinking: accumulatedThinking,
+                },
+              ),
             );
             bumpLastRendered(tracking?.attemptId, seq,);
           }

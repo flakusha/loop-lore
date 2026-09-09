@@ -1,18 +1,4 @@
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
-import {
-  DANGEROUS_TAGS,
-  JS_URL_ATTR,
-  ON_EVENT_DOUBLE,
-  ON_EVENT_SINGLE,
-  ON_EVENT_UNQUOTED,
-  stripScriptTags,
-} from "../../regex/html-sanitize";
-
-/**
- * @param str
- */
+import { sanitizeHtml, } from "../../regex/html-sanitize";
 function escapeHtml(str: string,): string {
   return str
     .replaceAll("&", "&amp;",)
@@ -23,18 +9,69 @@ function escapeHtml(str: string,): string {
 }
 
 /**
- * @param html
+ * Render the streaming bubble for one SSE chunk update.
+ *
+ * `content` is the FULL accumulated response text as of this chunk. The
+ * `sanitizer` is a stateful streaming sanitizer (created once per stream
+ * via {@link createStreamingSanitizer}) that tracks how much of the
+ * sanitized accumulated HTML has been emitted so far and defers any tail
+ * that might still be inside an unclosed tag until the next chunk closes
+ * the boundary.
+ *
+ * The emitted bubble contains the FULL sanitized accumulated content
+ * MINUS the held-back tail — i.e. monotonically growing. As new chunks
+ * arrive, the bubble body grows; once streaming ends, the final render
+ * emits the full sanitized content with no held tail (see {@link
+ * renderStreamMessage}).
+ *
+ * BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san:
+ * the previous per-chunk `sanitizeHtml(rendered)` let a
+ * `<script>...</script>` split across SSE chunks pass through
+ * unsanitized (the close arrived in a later chunk, after the bubble had
+ * already been emitted).
+ * @param actorName
+ * @param content  full accumulated response text
+ * @param attemptId
+ * @param markedParse
+ * @param sanitizer  per-stream streaming sanitizer
+ * @param opts
+ * @param opts.messageId
+ * @param opts.thinking
  */
-function sanitizeHtml(html: string,): string {
-  return stripScriptTags(html,)
-    .replaceAll(ON_EVENT_DOUBLE, "",)
-    .replaceAll(ON_EVENT_SINGLE, "",)
-    .replaceAll(ON_EVENT_UNQUOTED, "",)
-    .replaceAll(JS_URL_ATTR, "",)
-    .replaceAll(DANGEROUS_TAGS, "",);
-}
+export function renderStreamMessageWithSanitizer(
+  actorName: string,
+  content: string,
+  attemptId: string,
+  markedParse: (s: string,) => string,
+  sanitizer: (accumulated: string,) => string,
+  opts?: { messageId?: string; thinking?: string },
+): string {
+  const safeName = escapeHtml(actorName,);
+  const rendered = markedParse(content,);
+  const fullSanitized = sanitizeHtml(rendered,);
+  // `sanitizer` returns the newly-safe prefix since the previous call —
+  // i.e. everything in `fullSanitized` that the streaming sanitizer has
+  // committed to safe. Any tail that might still be inside an unclosed
+  // tag is held back until the next chunk.
+  const safeIncrement = sanitizer(fullSanitized,);
+  const streamingAttr = ' data-streaming="true"';
+  const msgId = opts?.messageId ?? attemptId;
 
+  const thinkingBlock = opts?.thinking
+    ? `<details class="thinking-block"><summary>Thinking process</summary><div class="thinking-content">${
+      sanitizeHtml(markedParse(opts.thinking,),)
+    }</div></details>`
+    : "";
+
+  return `<div class="message assistant" data-message-id="${msgId}"${streamingAttr}><div class="bubble"><div class="meta"><span class="name">${safeName}</span><span class="time">just now</span></div>${thinkingBlock}<div class="content">${safeIncrement}</div></div></div>`;
+}
 /**
+ * Render the final streaming bubble after the response is complete.
+ *
+ * Unlike {@link renderStreamMessageWithSanitizer}, this renders the
+ * full sanitized content with no held-back tail — the response is
+ * complete, so any cross-chunk boundary that was previously deferred
+ * is now closed and the sanitized content is safe to emit end-to-end.
  * @param actorName
  * @param content
  * @param attemptId
