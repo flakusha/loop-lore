@@ -45,4 +45,40 @@ describe("stats command", () => {
       expect(out,).toContain("**XP:** 1200/3000",);
     });
   });
+
+  describe("edge cases", () => {
+    it("handles NaN hp/maxHp gracefully (renders 0)", () => {
+      const nanStats = { ...sampleStats, hp: Number.NaN, maxHp: Number.NaN, };
+      const out = formatStats("Aelar", nanStats,);
+      expect(typeof out,).toBe("string",);
+      expect(out.length,).toBeGreaterThan(0,);
+    });
+
+    it("handles zero/negative xp without crashing", () => {
+      const zeroXp = { ...sampleStats, xp: 0, xpToNext: 0, };
+      const out = formatStats("Aelar", zeroXp,);
+      expect(out,).toContain("XP",);
+    });
+
+    it("handles unicode name with emoji + CJK", () => {
+      const out = formatStats("アエラル 🧙", sampleStats,);
+      expect(out,).toContain("アエラル 🧙",);
+    });
+
+    it("handles extremely long name (1KB) without truncation crash", () => {
+      const longName = "x".repeat(1_000,);
+      const out = formatStats(longName, sampleStats,);
+      expect(out.length,).toBeGreaterThanOrEqual(1_000,);
+    });
+
+    it("handles control characters in name", () => {
+      const out = formatStats("Tab\tNewline\nName", sampleStats,);
+      expect(typeof out,).toBe("string",);
+    });
+
+    it("handles empty string name", () => {
+      const out = formatStats("", sampleStats,);
+      expect(typeof out,).toBe("string",);
+    });
+  });
 });

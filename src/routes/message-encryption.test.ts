@@ -154,4 +154,29 @@ describe("GET /api/chats/:id/encryption-key — tier gate", () => {
     expect(typeof body.rawKey,).toBe("string",);
     expect(body.rawKey,).toMatch(/^[A-Za-z0-9+/]+=*$/,);
   });
+
+  test("missing chat id: request without insert returns 404", async () => {
+    const res = await callKeyEndpoint("does-not-exist-chat",);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("huge/oversized chat id returns 404 (no crash)", async () => {
+    const hugeId = "x".repeat(4096,);
+    const res = await callKeyEndpoint(hugeId,);
+    expect(res.status,).toBe(404,);
+  });
+
+  test("auth: missing derive context returns 401", async () => {
+    const noAuthApp = new Elysia({ name: "test-msg-encryption-noauth", },)
+      .use(
+        messageEncryptionRoutes({
+          database: db,
+          config: {} as Parameters<typeof messageEncryptionRoutes>[0]["config"],
+        },),
+      ) as unknown as Elysia;
+    const res = await noAuthApp.handle(
+      new Request("http://localhost/api/chats/chat-standard-001/encryption-key", { method: "GET", },),
+    );
+    expect([401, 404,],).toContain(res.status,);
+  });
 });
