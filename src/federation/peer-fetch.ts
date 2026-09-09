@@ -69,3 +69,43 @@ export function canonicalOrigin(raw: unknown,): string | null {
   if (url.hostname === "") { return null; }
   return url.origin;
 }
+
+/** POST implementation seam (injectable for tests). */
+export type PeerPost = (
+  url: string,
+  body: unknown,
+) => Promise<{ ok: boolean; status: number; body: unknown }>;
+
+/**
+ * POST JSON to a peer with an optional per-peer CA bundle.
+ * Never throws — misses surface as `{ ok: false, status: 0 }`.
+ * @param url
+ * @param body
+ * @param trust
+ * @param timeoutMs
+ * @returns Status + parsed JSON body (null when unparseable).
+ */
+export async function postPeerJson(
+  url: string,
+  body: unknown,
+  trust: FederationPeerTrustConfig | undefined,
+  timeoutMs: number = PEER_FETCH_TIMEOUT_MS,
+): Promise<{ ok: boolean; status: number; body: unknown }> {
+  let result;
+  try {
+    result = await safeFetch<unknown>(url, {
+      method: "POST",
+      body,
+      timeout: timeoutMs,
+      parseJson: true,
+      handle401: false,
+      tls: trust?.caBundle ? { ca: [trust.caBundle,], } : undefined,
+    },);
+  } catch {
+    return { ok: false, status: 0, body: null, };
+  }
+  if (!result.ok) {
+    return { ok: false, status: result.status ?? 0, body: null, };
+  }
+  return { ok: true, status: result.status, body: result.data, };
+}

@@ -19,9 +19,11 @@ import { Elysia, } from "elysia";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
+import { pskCipher, } from "../federation/cipher";
+import { createMeshClock, } from "../federation/clock";
 import { type ContentEnvelope, } from "../federation/envelope";
 import { getGossipOrigins, } from "../federation/gossip";
-import { receiveDelivery, } from "../federation/sharing";
+import { createInboundReservation, receiveDelivery, } from "../federation/sharing";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
@@ -127,6 +129,72 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
     },
   );
 
+  // Receiver-side mesh clock: adopts sender stamps (HLC receive rule) so
+  // this instance's future sends order after everything it has seen.
+  const meshClock = createMeshClock();
+
+  app.post(
+    "/api/mesh-reserve",
+    async ({ body, },) => {
+      const secret = config.federation.meshPsk;
+      if (!secret) {
+        return jsonError({
+          message: "mesh sharing not configured (MESH_PSK unset)",
+          status: HttpStatus.ServiceUnavailable,
+          code: ErrorCode.ServiceUnavailable,
+        },);
+      }
+      const request = body as {
+        senderOrigin?: unknown;
+        contentHash?: unknown;
+        sizeBytes?: unknown;
+        contentType?: unknown;
+        ttlMs?: unknown;
+      } | null;
+      if (
+        !request || typeof request.senderOrigin !== "string" ||
+        typeof request.contentHash !== "string" ||
+        typeof request.sizeBytes !== "number"
+      ) {
+        return jsonError({
+          message: "invalid reservation request",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.BadRequest,
+        },);
+      }
+      try {
+        const reservationId = await createInboundReservation(opts.database, {
+          senderOrigin: request.senderOrigin,
+          contentHash: request.contentHash,
+          sizeBytes: request.sizeBytes,
+          contentType: typeof request.contentType === "string" ? request.contentType : undefined,
+          ttlMs: typeof request.ttlMs === "number" ? request.ttlMs : undefined,
+        },);
+        return jsonResponse({ reservationId, },);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "reservation failed";
+        const status = message.includes("untrusted peer",)
+          ? HttpStatus.Forbidden
+          : message.includes("capacity exhausted",)
+          ? HttpStatus.Conflict
+          : HttpStatus.BadRequest;
+        const code = status === HttpStatus.Forbidden
+          ? ErrorCode.Forbidden
+          : status === HttpStatus.Conflict
+          ? ErrorCode.Conflict
+          : ErrorCode.BadRequest;
+        return jsonError({ message, status, code, },);
+      }
+    },
+    {
+      detail: {
+        summary: "Reserve inbound mesh capacity",
+        description: "Trusted peers reserve bytes before pushing content. Federation opt-in.",
+        tags: ["Federation",],
+      },
+    },
+  );
+
   app.post(
     "/api/mesh-deliver",
     async ({ body, },) => {
@@ -138,7 +206,11 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
           code: ErrorCode.ServiceUnavailable,
         },);
       }
-      const envelope = body as Partial<ContentEnvelope> | null;
+      const request = body as {
+        envelope?: Partial<ContentEnvelope> | null;
+        reservationId?: unknown;
+      } | null;
+      const envelope = request?.envelope;
       if (
         !envelope || typeof envelope.id !== "string" || typeof envelope.origin !== "string" ||
         typeof envelope.clock !== "number" || typeof envelope.type !== "string" ||
@@ -151,8 +223,17 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
           code: ErrorCode.BadRequest,
         },);
       }
+      const reservationId = typeof request?.reservationId === "string"
+        ? request.reservationId
+        : undefined;
       try {
-        const verdict = await receiveDelivery(opts.database, envelope as ContentEnvelope, secret,);
+        const verdict = await receiveDelivery(
+          opts.database,
+          envelope as ContentEnvelope,
+          pskCipher(secret,),
+          reservationId === undefined ? {} : { reservationId, },
+        );
+        meshClock.observe(envelope.clock,);
         return jsonResponse({ verdict, },);
       } catch {
         return jsonError({

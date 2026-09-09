@@ -3477,7 +3477,14 @@ export async function insertWorkflowSessions(
 /** Insert a mesh_peers row. */
 export async function insertMeshPeers(
   db: Db,
-  opts?: { origin?: string; state?: string; capabilities?: string; last_seen?: string | null; created_at?: string },
+  opts?: {
+    origin?: string;
+    state?: string;
+    capabilities?: string;
+    last_seen?: string | null;
+    created_at?: string;
+    capacity_bytes?: number | null;
+  },
 ): Promise<void> {
   await db.insertInto("mesh_peers",).values({
     ...opts,

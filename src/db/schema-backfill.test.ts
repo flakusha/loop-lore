@@ -210,4 +210,26 @@ describe("schema-backfill", () => {
 
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });
+
+  test("adds stranded mesh_peers capacity column with version record", async () => {
+    await sql`CREATE TABLE mesh_peers (origin TEXT PRIMARY KEY, state TEXT NOT NULL)`.execute(
+      kysely,
+    );
+    await sql`CREATE TABLE schema_version (version INTEGER PRIMARY KEY, description TEXT)`.execute(
+      kysely,
+    );
+
+    expect(await runSchemaBackfill(kysely,),).toBe(true,);
+
+    const columns = await sql<{ name: string }>`SELECT name FROM pragma_table_info('mesh_peers')`.execute(
+      kysely,
+    );
+    expect(columns.rows.map((row,) => row.name),).toContain("capacity_bytes",);
+    const version = await sql<{ version: number }>`SELECT version FROM schema_version WHERE version = 23`.execute(
+      kysely,
+    );
+    expect(version.rows.map((row,) => row.version),).toEqual([23,],);
+
+    expect(await runSchemaBackfill(kysely,),).toBe(false,);
+  });
 });

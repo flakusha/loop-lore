@@ -515,6 +515,7 @@ export const SCHEMA = new SchemaManifest()
     capabilities: col("text", { notNull: true, hasDefault: true, },),
     last_seen: col("text",),
     created_at: col("text", { notNull: true, hasDefault: true, },),
+    capacity_bytes: col("integer",),
   },)
   .table("mesh_reservations", {
     id: col("text", { primaryKey: true, },),
