@@ -86,6 +86,23 @@ export const JS_URL_ATTR = /(?:href|src)\s*=\s*["']\s*javascript:[^"']*["']/gi;
 export const DANGEROUS_TAGS =
   /<(?:iframe|object|embed|style|base|form|button|svg|math)\b[^>]*>[\s\S]*?<\/(?:iframe|object|embed|style|base|form|button|svg|math)>|<(?:iframe|object|embed|style|base|form|button|svg|math)\b[^>]*\/?>/gi;
 
+/**
+ * The same sanitization pipeline as the per-chunk `sanitizeHtml()` in
+ * stream-render.ts. Exported here so streaming + non-streaming callers
+ * share one definition (single source of truth for which patterns apply
+ * in which order).
+ * @param html
+ */
+export function sanitizeHtml(html: string,): string {
+  return stripScriptTags(html,)
+    .replaceAll(ON_EVENT_DOUBLE, "",)
+    .replaceAll(ON_EVENT_SINGLE, "",)
+    .replaceAll(ON_EVENT_UNQUOTED, "",)
+    .replaceAll(JS_URL_ATTR, "",)
+    .replaceAll(DANGEROUS_TAGS, "",);
+}
+export { createStreamingSanitizer, } from "./html-sanitize-streaming";
+
 /** Content hash injection pattern for <script src="..."> */
 export const HASH_INJECTION_SCRIPT = /(<script[^>]*\bsrc\s*=\s*"\/)([^"]+\.(?:js|css))("[^>]*><\/script>)/g;
 
