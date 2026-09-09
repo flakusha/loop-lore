@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { existsSync, mkdirSync, symlinkSync, } from "fs";
+import { existsSync, mkdirSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, } from "../utils/config";
+import { linkNodeModules, } from "../utils/modules";
 import { log, } from "../utils/output";
 
 interface GhPr {
@@ -77,12 +78,7 @@ export async function execute(
     if (addResult.exitCode === 0) {
       log("success", `Created: ${wtPath}`,);
 
-      // Link node_modules
-      const mainModules = resolve(config.repoRoot, "node_modules",);
-      const wtModules = resolve(wtPath, "node_modules",);
-      if (existsSync(mainModules,) && !existsSync(wtModules,)) {
-        symlinkSync(mainModules, wtModules,);
-      }
+      linkNodeModules(config.repoRoot, wtPath,);
 
       created++;
     } else {
