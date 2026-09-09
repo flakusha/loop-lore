@@ -21,7 +21,19 @@
 const fs = require("fs",);
 const floor = parseInt(process.argv.find((a,) => a.startsWith("--floor=",))?.split("=",)[1], 10,) || 80;
 const onlyArg = process.argv.find((a,) => a.startsWith("--only=",))?.split("=",)[1];
-// Diff-scoped runs floor only the touched modules (see AGENTS.md Verification
+// BUG-37a3763: diff-scoped runs previously passed `--only=<modules>` and
+// floored whole-module aggregates computed from a PARTIAL lcov (bun only
+// emits records for files the scoped tests actually loaded). Scoped runs
+// can never reach module-level floors, so the gate was structurally
+// unpassable. The scoped runner now passes `--files=<changed src files>`
+// instead: each diff-touched non-test file that appears in lcov is floored
+// individually (module waivers still set that file's floor); files absent
+// from lcov were never loaded and are reported as SKIP (unmeasured).
+const filesArg = process.argv.find((a,) => a.startsWith("--files=",))?.split("=",)[1];
+const diffFiles = filesArg
+  ? filesArg.split(",",).map((s,) => s.trim()).filter(Boolean,)
+  : null;
+// Module-scoped runs floor only the touched modules (see AGENTS.md Verification
 // Gates + check-parallel.mjs `changedModules`). Empty/absent --only disables
 // the filter and floors every module. Touched modules with no lcov rows
 // (e.g. `scripts/`, never loaded in-process) are reported as unmeasured and
@@ -143,6 +155,59 @@ for (const r of records) {
   modules[mod].lh += lh;
 }
 
+const waivedSet = new Set(Object.keys(WAIVERS,),);
+
+// ── Diff-file mode (--files=): floor each touched file individually ──
+if (diffFiles) {
+  const perFile = {};
+  for (const r of records) {
+    const sf = r.match(/SF:(.+)/,)?.[1];
+    if (!sf) { continue; }
+    const lf = parseInt(r.match(/LF:(\d+)/,)?.[1] || "0", 10,);
+    const lh = parseInt(r.match(/LH:(\d+)/,)?.[1] || "0", 10,);
+    perFile[sf] = { lf, lh, };
+  }
+
+  const fileRows = diffFiles.map((f,) => {
+    const mod = f.startsWith("src/",) ? f.slice(4,).split("/",)[0] : f.split("/",)[0];
+    const hit = perFile[f];
+    return {
+      file: f,
+      mod,
+      pct: hit && hit.lf ? (hit.lh / hit.lf) * 100 : null,
+      lf: hit?.lf ?? 0,
+      lh: hit?.lh ?? 0,
+      floor: floorFor(mod,),
+      measured: !!hit,
+    };
+  },);
+
+  console.error("\n| file | line % | lines hit / total | floor | status |",);
+  console.error("|---|---|---|---|---|",);
+  for (const r of fileRows) {
+    const status = !r.measured
+      ? "SKIP (not loaded by scoped tests)"
+      : r.pct >= r.floor
+      ? "ok"
+      : "FAIL";
+    console.error(
+      `| ${r.file} | ${r.measured ? `${r.pct.toFixed(1,)}%` : "n/a"} | ${r.lh}/${r.lf} | ${r.floor}% | ${status} |`,
+    );
+  }
+
+  const fileFails = fileRows.filter((r,) => r.measured && r.pct < r.floor);
+  const skipped = fileRows.filter((r,) => !r.measured).map((r,) => r.file);
+  console.log(JSON.stringify({
+    mode: "diff-files",
+    floor,
+    total: fileRows.length,
+    fail: fileFails.length,
+    skipped,
+    files: fileRows,
+  },),);
+  process.exit(fileFails.length ? 1 : 0,);
+}
+
 const rows = Object.entries(modules,)
   .map(([m, v,],) => ({ mod: m, pct: v.lf ? (v.lh / v.lf) * 100 : 0, lf: v.lf, lh: v.lh, waived: !!WAIVERS[m], }))
   .sort((a, b,) => a.pct - b.pct);
@@ -155,7 +220,6 @@ for (const r of rows) {
   console.error(`| ${r.mod} | ${r.pct.toFixed(1,)}% | ${r.lh}/${r.lf} | ${effectiveFloor}% | ${status} |`,);
 }
 
-const waivedSet = new Set(Object.keys(WAIVERS,),);
 const inScope = (mod,) => !onlySet || onlySet.has(mod,);
 const fails = rows.filter((r,) => inScope(r.mod,) && !waivedSet.has(r.mod,) && r.pct < floor);
 // Surfaced separately: waived modules below global floor but passing their own floor
