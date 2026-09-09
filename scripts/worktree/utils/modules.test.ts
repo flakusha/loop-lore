@@ -11,7 +11,7 @@ import { join, } from "node:path";
 import { isUsableModulesDir, linkNodeModules, } from "./modules";
 
 function scratch(): string {
-  const dir = join(tmpdir(), `wt-modules-${Date.now()}-${Math.floor(Math.random() * 1e6)}`,);
+  const dir = join(tmpdir(), `wt-modules-${Date.now()}-${Math.floor(Math.random() * 1e6,)}`,);
   mkdirSync(dir, { recursive: true, },);
   return dir;
 }

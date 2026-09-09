@@ -10445,6 +10445,12 @@
       "source": ".plan/tickets/TASK-mesh-peer-discovery-gossip.md"
     }
   ],
+  "src/federation/peer-fetch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl.md"
+    }
+  ],
   "src/frontend": [
     {
       "kind": "ticket",
@@ -15845,6 +15851,26 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-byok-local-models.md"
+    }
+  ],
+  "src/integrations/adapter.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle.md"
+    }
+  ],
+  "src/integrations/adapter.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-integrations-core.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-social-hub.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle.md"
     }
   ],
   "src/integrations/bridge.ts": [
