@@ -57,7 +57,7 @@ export interface FakeEl {
 
 export function makeEl(tag = "div",): FakeEl {
   const children: FakeEl[] = [];
-  const listeners = new Map<string, Array<() => void>>();
+  const listeners = new Map<string, Array<(e?: unknown,) => void>>();
   const style: FakeEl["style"] = {
     setProperty(name, value,) {
       style[name] = value;
