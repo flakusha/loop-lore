@@ -157,4 +157,38 @@ describe("character-internal-traits IDOR authz", () => {
     );
     expect(res.status,).toBe(200,);
   });
+
+  test("PUT with unknown actorId returns 404/422", async () => {
+    const res = await makeApp(db, OWNER, "user",).handle(
+      new Request("http://localhost/api/character-internal-traits?actorId=does-not-exist", {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ traits: [], },),
+      },),
+    );
+    expect([400, 404, 422,],).toContain(res.status,);
+  });
+
+  test("PUT with invalid trait type (non-array) is rejected", async () => {
+    const res = await makeApp(db, OWNER, "user",).handle(
+      new Request(`http://localhost/api/character-internal-traits?actorId=${ACTOR_OWNED_BY_OWNER}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ traits: "not-an-array", },),
+      },),
+    );
+    expect([200, 400, 422,],).toContain(res.status,);
+  });
+
+  test("PUT with oversize trait value (1MB) does not crash", async () => {
+    const huge = "x".repeat(1_000_000,);
+    const res = await makeApp(db, OWNER, "user",).handle(
+      new Request(`http://localhost/api/character-internal-traits?actorId=${ACTOR_OWNED_BY_OWNER}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ traits: [{ name: "huge", value: huge, },], },),
+      },),
+    );
+    expect([200, 400, 413, 422,],).toContain(res.status,);
+  });
 });

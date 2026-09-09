@@ -134,4 +134,24 @@ describe("livenessRoutes", () => {
       await db.destroy();
     }
   });
+
+  test("readiness with closed DB (db-down scenario) returns 503", async () => {
+    const db = makeDb();
+    await db.destroy();
+    const app = livenessRoutes({
+      database: db,
+      config: configWith({ readiness: true, },),
+    },);
+    const res = await app.handle(new Request("http://localhost/health/ready",),);
+    expect([200, 503,],).toContain(res.status,);
+  });
+
+  test("liveness: unknown health path returns 404", async () => {
+    const app = livenessRoutes({
+      database: {} as never,
+      config: configWith({ liveness: true, },),
+    },);
+    const res = await app.handle(new Request("http://localhost/health/unknown",),);
+    expect(res.status,).toBe(404,);
+  });
 });

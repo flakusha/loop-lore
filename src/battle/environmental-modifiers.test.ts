@@ -53,6 +53,28 @@ describe("getEnvironmentalModifiers", () => {
     const slow = mods.find((m,) => m.id === "difficult_terrain_speed");
     expect(slow?.value,).toBe(-10,);
   });
+
+  // ── Edge cases ──────────────────────────────────────────────
+
+  it("returns no modifiers when weather and cover are both neutral", () => {
+    const mods = getEnvironmentalModifiers(PLAIN,);
+    expect(mods,).toEqual([],);
+  });
+
+  it("combines full cover + difficult terrain + weather (storm) into 4 modifiers", () => {
+    const mods = getEnvironmentalModifiers({
+      ...PLAIN,
+      cover: "full",
+      difficultTerrain: true,
+      weather: "storm",
+    },);
+    const ids = mods.map((m,) => m.id);
+    expect(ids,).toContain("cover_defense",);
+    expect(ids,).toContain("difficult_terrain_speed",);
+    expect(ids,).toContain("storm_accuracy",);
+    expect(ids,).toContain("storm_speed",);
+    expect(mods.length,).toBe(4,);
+  });
 });
 
 describe("applyEnvironmentalModifiers", () => {
@@ -75,5 +97,85 @@ describe("applyEnvironmentalModifiers", () => {
     );
     expect(out.health,).toBe(50,);
     expect(out.accuracy,).toBe(100,);
+  });
+
+  // ── Edge cases ──────────────────────────────────────────────
+
+  it("applies a zero modifier (no-op)", () => {
+    const out = applyEnvironmentalModifiers(STATS, [{
+      id: "x",
+      source: "terrain",
+      affectedStat: "speed",
+      value: 0,
+      isPercentage: false,
+      duration: 0,
+      description: "noop",
+    },],);
+    expect(out.speed,).toBe(30,);
+  });
+
+  it("applies a negative percentage modifier (50% speed reduction)", () => {
+    const out = applyEnvironmentalModifiers(STATS, [{
+      id: "slow",
+      source: "hazard",
+      affectedStat: "speed",
+      value: -50,
+      isPercentage: true,
+      duration: 0,
+      description: "halved",
+    },],);
+    expect(out.speed,).toBe(15,);
+  });
+
+  it("clamps health to 0 (never goes negative)", () => {
+    const out = applyEnvironmentalModifiers(STATS, [{
+      id: "x",
+      source: "hazard",
+      affectedStat: "health",
+      value: -1000,
+      isPercentage: false,
+      duration: 0,
+      description: "dmg",
+    },],);
+    expect(out.health,).toBe(0,);
+  });
+
+  it("clamps mana and stamina to their respective maxes", () => {
+    const out = applyEnvironmentalModifiers(
+      { ...STATS, mana: 5, stamina: 5, },
+      [
+        {
+          id: "x1",
+          source: "terrain",
+          affectedStat: "mana",
+          value: 100,
+          isPercentage: false,
+          duration: 0,
+          description: "x",
+        },
+        {
+          id: "x2",
+          source: "terrain",
+          affectedStat: "stamina",
+          value: 100,
+          isPercentage: false,
+          duration: 0,
+          description: "x",
+        },
+      ],
+    );
+    expect(out.mana,).toBe(20,);
+    expect(out.stamina,).toBe(10,);
+  });
+
+  it("unknown weather value produces no weather modifiers", () => {
+    // TypeBox would normally prevent this, but at runtime the source can
+    // be asked for an unrecognized weather. The function should not throw.
+    const mods = getEnvironmentalModifiers({
+      ...PLAIN,
+      // @ts-expect-error testing runtime behavior with invalid weather
+      weather: "hurricane_typhoon",
+    },);
+    expect(mods,).toEqual([],);
   });
 });

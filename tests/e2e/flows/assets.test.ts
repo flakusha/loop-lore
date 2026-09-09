@@ -6,7 +6,7 @@
  */
 
 import { describePristine, } from "@/test-utils/pristine";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, expect, test, } from "bun:test";
 import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedChat, seedUsers, } from "../helpers/seed";
 import { createTestServer, type TestServer, } from "../helpers/server";
