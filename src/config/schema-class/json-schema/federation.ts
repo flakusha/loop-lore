@@ -46,10 +46,23 @@ export const federation = {
     duplication: {
       type: "object",
       default: { mode: "trusted", peers: [], },
-      description: "Duplication policy for pushed content. Per-world rules are a follow-up.",
+      description: "Duplication policy for pushed content, with optional per-world overrides.",
       properties: {
         mode: { type: "string", enum: ["trusted", "listed", "none",], },
         peers: { type: "array", default: [], items: { type: "string", }, },
+        worlds: {
+          type: "object",
+          default: {},
+          description: "Per-world overrides keyed by world id.",
+          additionalProperties: {
+            type: "object",
+            properties: {
+              mode: { type: "string", enum: ["trusted", "listed", "none",], },
+              peers: { type: "array", default: [], items: { type: "string", }, },
+            },
+            required: ["mode", "peers",],
+          },
+        },
       },
       required: ["mode", "peers",],
     },
