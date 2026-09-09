@@ -18,6 +18,7 @@
 import { Elysia, } from "elysia";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
+import { getGossipOrigins, } from "../federation/gossip";
 import { jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
@@ -109,6 +110,7 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
         capabilities: [],
         uptime: Math.floor(process.uptime(),),
         state: coarseState(),
+        peers: getGossipOrigins(),
         version: 1,
       },);
     },

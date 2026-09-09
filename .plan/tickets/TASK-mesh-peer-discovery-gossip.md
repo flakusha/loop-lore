@@ -3,7 +3,7 @@
 
 # TASK: Mesh peer discovery and gossip transport
 
-**Status:** ✅ Implemented
+**Status:** 🟡 In Progress — gossip loop wired (federation-mesh-core)
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-federation-swarm-sync.md
@@ -43,3 +43,19 @@ other or share liveness.
 - [ ] Untrusted-peer claims are not trusted (signature/verdict enforced).
 - [ ] Tests cover discovery, timeout eviction, and replay rejection.
 - [ ] `bun run check` green.
+
+## Progress 2026-09-09 (federation-mesh-core)
+- PeerTable primitive existed unwired (no consumers). Added `src/federation/gossip.ts`:
+  GossipService pollOnce over all known peers (per-poll tick seq; stale async
+  responses rejected), membership discovery from instance-state `peers` with
+  canonicalization + caps (128/payload, 1024 table), verdict policy
+  (config peers → trusted; seeds/gossip-learned → pending), per-peer CA-bundle
+  fetch (Bun `fetch(tls:{ca})` verified against self-signed probe), per-peer
+  failure isolation (one dead peer never aborts the round).
+- `federation.gossip` cron job (* * * * *, skips when federation disabled).
+- instance-state advertises `peers: string[]` (origins only, no topology).
+- Tests: `src/federation/gossip.test.ts` (12 tests: verdict, eviction, replay,
+  caps, trust passthrough, singleton). 41 pass across gossip + peer-table +
+  federation + cron-jobs.
+- Residual: SPKI-pin/mTLS enforcement (Bun fetch exposes no peer-cert handle);
+  signature-based trust promotion (needs actor-key infra).
