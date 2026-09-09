@@ -211,9 +211,12 @@ const checks = {
       : "bun run test:unit",
     "test - e2e": "E2E_SAFEGUARD=1 bun run test:e2e",
     // Coverage gate: per-module line % vs 80% floor (see AGENTS.md Verification Gates).
+    // NOTE: the scoped bun invocation must pass the same lcov reporter flags
+    // as `test:coverage` — bare `--coverage` emits no lcov.info, so
+    // `coverage.mjs` (which reads `.tmp/coverage/lcov.info`) always failed.
     "coverage - per-module line %": DIFF_BASE
       ? (SCOPED_TESTS.length > 0
-        ? `bun test --isolate --coverage ${
+        ? `bun test --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage ${
           SCOPED_TESTS.join(" ",)
         } && bun run scripts/check/coverage.mjs --floor=80 --only=${(SCOPED_MODULES ?? []).join(",",)}`
         : NOOP_OK)
