@@ -18,8 +18,10 @@
 import { Elysia, } from "elysia";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
+import type { Db, } from "../db";
 import { getGossipOrigins, } from "../federation/gossip";
-import { jsonResponse, } from "./http-utils";
+import { receiveDelivery, type ContentEnvelope, } from "../federation/sharing";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
 
@@ -37,6 +39,7 @@ function coarseState(): CoarseState {
 
 interface FederationOpts {
   config: Config;
+  database: Db;
 }
 
 /** @param opts */
@@ -118,6 +121,50 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
       detail: {
         summary: "Instance state advertisement",
         description: "Peer-bootstrap payload: identity, version, protocols, uptime, state. No secrets.",
+        tags: ["Federation",],
+      },
+    },
+  );
+
+  app.post(
+    "/api/mesh-deliver",
+    async ({ body, }) => {
+      const secret = config.federation.meshPsk;
+      if (!secret) {
+        return jsonError({
+          message: "mesh delivery not configured (MESH_PSK unset)",
+          status: HttpStatus.ServiceUnavailable,
+          code: ErrorCode.ServiceUnavailable,
+        },);
+      }
+      const envelope = body as Partial<ContentEnvelope> | null;
+      if (
+        !envelope || typeof envelope.id !== "string" || typeof envelope.origin !== "string" ||
+        typeof envelope.clock !== "number" || typeof envelope.type !== "string" ||
+        typeof envelope.hash !== "string" || typeof envelope.size !== "number" ||
+        typeof envelope.ciphertext !== "string"
+      ) {
+        return jsonError({
+          message: "invalid content envelope",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.BadRequest,
+        },);
+      }
+      try {
+        const verdict = await receiveDelivery(opts.database, envelope as ContentEnvelope, secret,);
+        return jsonResponse({ verdict, },);
+      } catch {
+        return jsonError({
+          message: "envelope failed integrity verification",
+          status: HttpStatus.BadRequest,
+          code: ErrorCode.BadRequest,
+        },);
+      }
+    },
+    {
+      detail: {
+        summary: "Receive mesh content delivery",
+        description: "Decrypts, verifies, and stores a pushed content envelope (LWW). Federation opt-in.",
         tags: ["Federation",],
       },
     },
