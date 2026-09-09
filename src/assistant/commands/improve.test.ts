@@ -69,4 +69,43 @@ describe("improve command", () => {
     const result = await runImprove([], { chatId: "c1", }, { complete: async () => ({ content: "x", }), },);
     expect(result.systemMessage,).toContain("Usage",);
   });
+
+  describe("edge cases", () => {
+    it("handles 10KB input prompt", async () => {
+      const huge = "lorem ipsum dolor sit amet ".repeat(500,);
+      const result = await runImprove([huge,], { chatId: "c1", }, {},);
+      expect(typeof result.systemMessage,).toBe("string",);
+      expect(result.systemMessage?.length ?? 0,).toBeGreaterThan(0,);
+    });
+
+    it("handles unicode + emoji input", async () => {
+      const result = await runImprove(["日本語 🎌 test",], { chatId: "c1", }, {},);
+      expect(result.systemMessage,).toContain("LLM unavailable",);
+    });
+
+    it("handles LLM returning empty string", async () => {
+      const result = await runImprove(["hello",], { chatId: "c1", }, { complete: async () => ({ content: "", }), },);
+      expect(typeof result.systemMessage,).toBe("string",);
+    });
+
+    it("handles LLM returning non-JSON garbage", async () => {
+      const result = await runImprove(["hello",], { chatId: "c1", }, {
+        complete: async () => ({ content: "{not-valid json", }),
+      },);
+      expect(typeof result.systemMessage,).toBe("string",);
+    });
+
+    it("handles LLM throwing non-Error", async () => {
+      const complete = async (): Promise<{ content: string }> => {
+        throw "string-error";
+      };
+      const result = await runImprove(["hello",], { chatId: "c1", }, { complete, },);
+      expect(result.systemMessage,).toContain("LLM unavailable",);
+    });
+
+    it("handles control characters in input", async () => {
+      const result = await runImprove(["tab\there\nnewline",], { chatId: "c1", }, {},);
+      expect(typeof result.systemMessage,).toBe("string",);
+    });
+  });
 });
