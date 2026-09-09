@@ -10433,6 +10433,18 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/federation/gossip.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mesh-peer-discovery-gossip.md"
+    }
+  ],
+  "src/federation/gossip.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mesh-peer-discovery-gossip.md"
+    }
+  ],
   "src/frontend": [
     {
       "kind": "ticket",
