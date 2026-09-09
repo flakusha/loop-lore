@@ -11,7 +11,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { OutputStyleConfig, } from "../../chat/output-style";
-import type { ResponseLengthConfig, } from "../../chat/types";
+import type { ResponseLengthConfig, } from "../../chat/response-length";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import type { GenerationMessage, } from "../../generation/gen-types-options";
@@ -84,7 +84,7 @@ export interface AssembledPrompt {
   tokenBudget: number;
   /** Per-section breakdown for debug UI */
   sections: PromptSectionReport[];
-  /** Resolved response-length config (wires resolveResponseLength into assembly). */
+  /** Resolved response-length config (wires buildLengthConfig into assembly). */
   responseLength?: ResponseLengthConfig | null;
 }
 
@@ -152,7 +152,7 @@ export interface AssembleContext {
   gmName?: string;
   /** Resolved output style (null when none configured). */
   outputStyle?: OutputStyleConfig | null;
-  /** Resolved response-length config (wires resolveResponseLength into assembly). */
+  /** Resolved response-length config (wires buildLengthConfig into assembly). */
   responseLength?: ResponseLengthConfig | null;
   /** Account tier of the two-tier custom instructions (null when unset). */
   userCustomInstructions?: string | null;
