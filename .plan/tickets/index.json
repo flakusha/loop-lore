@@ -16446,7 +16446,8 @@
     "epic": "epic-federation-swarm-sync.md",
     "tags": [],
     "source": ".plan/tickets/TASK-mesh-peer-discovery-gossip.md",
-    "git_issue": "6b9c01e"
+    "git_issue": "6b9c01e",
+    "status": "done"
   },
   "TASK-MESSAGE-ARCHIVE-RESTORE-FRONTEND": {
     "hash": "eb021bb",
