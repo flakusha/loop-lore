@@ -23,6 +23,7 @@ export const MessageContentType = {
   System: "system",
   Continuation: "continuation",
   MusicLink: "music_link",
+  ToolResult: "tool_result",
 } as const;
 /** */
 export type MessageContentType = (typeof MessageContentType)[keyof typeof MessageContentType];

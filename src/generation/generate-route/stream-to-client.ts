@@ -39,6 +39,7 @@ import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { renderToolCallBlock, sseData, } from "./sse-utils";
 import { buildToolCallAssistantMessage, toGenerationToolCalls, } from "./stream-messages";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
+import { storeToolResultRows, } from "./tool-result-persist";
 import type { GenerateRequest, } from "./types";
 
 /** */
@@ -128,7 +129,7 @@ export function streamToClient({
         }
         let currentMessages = messages;
         let finalResponse: Awaited<ReturnType<typeof callWithFailover>> | null = null;
-
+        const allToolResults: GenerationMessage[] = [];
         for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
           let roundContent = "";
           let _roundThinking = "";
@@ -187,6 +188,7 @@ export function streamToClient({
             chatId: input.chatId,
           },);
           currentMessages = [...currentMessages, ...toolResults,];
+          allToolResults.push(...toolResults,);
         }
 
         if (!finalResponse) {
@@ -222,8 +224,8 @@ export function streamToClient({
           continuationNumber: input.continuationNumber,
         },);
 
-        // Flush "done" BEFORE telemetry: deliveryConfirmed flips only after
-        // the frame is synchronously enqueued to the transport.
+        await storeToolResultRows(database, input, messageId, allToolResults,);
+
         const activeForDone = activeGenerations.get(attemptId,);
         const isCancelled = finalResponse.finishReason === "cancelled";
         const doneFrame = sseData({
