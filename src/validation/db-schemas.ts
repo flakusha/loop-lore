@@ -605,6 +605,15 @@ export const AssetsSchema = t.Object({
   record_hash: t.Optional(t.String(),),
 },);
 
+// ── mesh_inbound_keys ────────────────────────────────────────────
+export const MeshInboundKeysSchema = t.Object({
+  encrypted_key: t.String(),
+  peer_origin: t.Optional(t.String(),),
+  previous_encrypted_key: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
 // ── location_states ────────────────────────────────────────────
 export const LocationStatesSchema = t.Object({
   location_id: t.String(),

@@ -11,6 +11,7 @@
 import { describe, expect, test, } from "bun:test";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, FederationConfig, } from "../config/schema";
+import { initSmk, } from "../crypto/smk";
 import type { Db, } from "../db";
 import { pskCipher, } from "../federation/cipher";
 import { upsertPeer, } from "../federation/coordinator";
@@ -300,5 +301,48 @@ describe("federationRoutes — mesh-deliver", () => {
     expect(second.status,).toBe(409,);
     const malformed = await postReserve(PSK_CONFIG, { senderOrigin: "x", },);
     expect(malformed.status,).toBe(400,);
+  });
+  test("reserve omits contentKey on a plaintext wire even with an SMK", async () => {
+    await initSmk({
+      serverEncryptionKey: "d".repeat(64,),
+      required: false,
+      compressThreshold: 128,
+      compressAlgorithm: "gzip",
+    },);
+    const db = await dbFor();
+    await upsertPeer(db, { origin: "https://plain-peer.example", state: "trusted", },);
+    const res = await postReserve(PSK_CONFIG, {
+      senderOrigin: "https://plain-peer.example",
+      contentHash: "plain-hash",
+      sizeBytes: 4,
+    },);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { reservationId: string; contentKey?: unknown };
+    expect(typeof body.reservationId,).toBe("string",);
+    expect(body.contentKey,).toBeUndefined();
+  });
+
+  test("reserve issues contentKey behind a TLS-terminating proxy", async () => {
+    await initSmk({
+      serverEncryptionKey: "d".repeat(64,),
+      required: false,
+      compressThreshold: 128,
+      compressAlgorithm: "gzip",
+    },);
+    const db = await dbFor();
+    await upsertPeer(db, { origin: "https://proxy-peer.example", state: "trusted", },);
+    const proxied: Config = {
+      ...PSK_CONFIG,
+      server: { ...PSK_CONFIG.server, trustProxy: true, },
+    };
+    const res = await postReserve(proxied, {
+      senderOrigin: "https://proxy-peer.example",
+      contentHash: "proxy-hash",
+      sizeBytes: 4,
+    },);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { reservationId: string; contentKey?: unknown };
+    expect(typeof body.reservationId,).toBe("string",);
+    expect(typeof body.contentKey,).toBe("string",);
   });
 });
