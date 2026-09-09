@@ -4,11 +4,13 @@
 import { describe, expect, it, } from "bun:test";
 import {
   buildLengthConfig,
+  clampTokenCount,
   computeMaxTokens,
   DEFAULT_RESPONSE_LENGTH,
   isValidPreset,
   LENGTH_PRESETS,
   parseLengthConfig,
+  resolveResponseLength,
 } from "./response-length";
 
 describe("computeMaxTokens", () => {
@@ -103,5 +105,42 @@ describe("DEFAULT_RESPONSE_LENGTH", () => {
   it("defaults to medium", () => {
     expect(DEFAULT_RESPONSE_LENGTH.preset,).toBe("medium",);
     expect(DEFAULT_RESPONSE_LENGTH.maxTokens,).toBe(400,);
+  });
+});
+
+describe("clampTokenCount", () => {
+  it("clamps to the 50–2000 range", () => {
+    expect(clampTokenCount(1,),).toBe(50,);
+    expect(clampTokenCount(400,),).toBe(400,);
+    expect(clampTokenCount(9999,),).toBe(2000,);
+  });
+
+  it("rounds fractional counts", () => {
+    expect(clampTokenCount(150.6,),).toBe(151,);
+  });
+});
+
+describe("resolveResponseLength", () => {
+  it("prefers chat preset over user preset over server default", () => {
+    expect(resolveResponseLength("short", null, "long", "medium",).preset,).toBe("short",);
+    expect(resolveResponseLength(null, null, "long", "medium",).preset,).toBe("long",);
+    expect(resolveResponseLength(null, null, null, "medium",).preset,).toBe("medium",);
+  });
+
+  it("resolves preset maxTokens from the preset table", () => {
+    expect(resolveResponseLength("long", null, null, "short",).maxTokens,).toBe(
+      LENGTH_PRESETS.long.max,
+    );
+  });
+
+  it("clamps custom chat values", () => {
+    expect(resolveResponseLength("custom", 750, null, "medium",),).toEqual({
+      preset: "custom",
+      maxTokens: 750,
+    },);
+    expect(resolveResponseLength("custom", 9999, null, "medium",).maxTokens,).toBe(2000,);
+    expect(resolveResponseLength("custom", null, null, "medium",).maxTokens,).toBe(
+      LENGTH_PRESETS.medium.max,
+    );
   });
 });
