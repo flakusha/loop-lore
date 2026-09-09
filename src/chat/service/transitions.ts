@@ -73,16 +73,14 @@ export async function migrateChat(
   }
 
   const newChatId = crypto.randomUUID();
-  // The template's `visual_novel` integer flag is migrated into the new chat's
-  // `gm_config.renderingOverride` typed enum so we don't need the legacy
-  // `chats.visual_novel` column (dropped in migration 076).
+  // The template's VN-ness already lives in its own `gm_config.renderingOverride`
+  // (see template-defaults.ts) — spread carries it into the new chat, so no
+  // legacy `visual_novel` column read is needed (dropped in migration 076).
   const baseGmConfig = template.gm_config
     ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
     : { ok: false as const, value: null, };
-  const renderingOverride = template.visual_novel === 1 ? "visual_novel" : null;
   const mergedGmConfig: Record<string, unknown> = {
     ...(baseGmConfig.ok && baseGmConfig.value ? baseGmConfig.value : {}),
-    ...(renderingOverride !== null ? { renderingOverride, } : {}),
   };
   const finalGmConfig = Object.keys(mergedGmConfig,).length > 0
     ? jsonStringifyOr(mergedGmConfig,)
