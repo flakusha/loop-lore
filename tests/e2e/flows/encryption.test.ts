@@ -225,8 +225,12 @@ describe("Encryption Workflow", () => {
       expect(chatRes.ok,).toBe(true,);
       const chatId = chatRes.data!.id;
 
-      // Generate content above compression threshold
-      const longContent = "The quick brown fox jumps over the lazy dog. ".repeat(100,);
+      // Generate content above compression threshold.
+      // BUG-message-whitespace-only-accepted fixed: leading/trailing
+      // whitespace is trimmed at the route boundary. Use a string that
+      // roundtrips cleanly through trim (no trailing whitespace).
+      const longContent = "The quick brown fox jumps over the lazy dog. ".repeat(99,) +
+        "The quick brown fox jumps over the lazy dog.";
       const sendRes = await api.post<{ id: string }>(
         `/api/chats/${chatId}/messages`,
         { content: longContent, role: "user", },

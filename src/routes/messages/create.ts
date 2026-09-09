@@ -11,7 +11,7 @@ import { parseInitiativeFlag, } from "../../group-chat/mention-parser";
 import { containsProfanity, filter as filterProfanity, } from "../../profanity/service";
 import { safeJsonStringify, uid, } from "../../utils";
 import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validation/schemas";
-import { jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
+import { badRequestResponse, jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
 import type { HttpStatusCode, } from "../http-utils";
 import { AttachmentOwnershipError, } from "./attachment-ownership";
 import { dispatchCommand, } from "./command";
@@ -45,6 +45,16 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (typeof actorId !== "string") { return actorId; }
         const { id: chatId, } = ctx.params as { id: string };
         const body = ctx.body as typeof MessageCreateBody.static;
+        // BUG-message-whitespace-only-accepted: trim content and reject
+        // whitespace-only payloads before any side effect (access check,
+        // NSFW flag, profanity filter). Trailing/leading whitespace is
+        // normalized here; mid-string whitespace is preserved.
+        const trimmedContent = body.content.trim();
+        if (trimmedContent.length === 0) {
+          return badRequestResponse("Message content cannot be empty or whitespace-only.",);
+        }
+        const effectiveBody = { ...body, content: trimmedContent, };
+        void body;
 
         // ── Access check before any side effects ───────────────────
         // Must run before NSFW flagging / profanity filtering so a
@@ -53,13 +63,13 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         const access = await checkChatAccess(database, chatId, actorId, ctx.userRole as string | null,);
         if (!access.ok) { return serviceErrorToResponse(access.error,); }
 
-        const filteredContent = filterProfanity(body.content,);
-        const hasProfanity = containsProfanity(body.content,);
+        const filteredContent = filterProfanity(effectiveBody.content,);
+        const hasProfanity = containsProfanity(effectiveBody.content,);
 
         // ── NSFW content check on user message ─────────────────────
         // Lightweight flag/warn — does not suppress the message, just logs
         // when user-submitted content exceeds their max rating.
-        await flagNsfwUserMessage(database, actorId, chatId, body.content,);
+        await flagNsfwUserMessage(database, actorId, chatId, effectiveBody.content,);
 
         const { isInitiative, cleanMessage, } = parseInitiativeFlag(filteredContent,);
         const effectiveContent = isInitiative ? cleanMessage : filteredContent;
@@ -235,8 +245,3 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
     )
     .use(createEntityConfirmRoutes(opts, prefix,),);
 }
-
-// ── Cross-chat parentId IDOR guard errors (BUG-cross-chat-parentId-IDOR) ──
-// Sentinel errors live in ./parent-message-errors; re-exported here for
-// callers that import them from the route module.
-export { ParentMessageNotFoundError, ParentMessageNotInChatError, } from "./parent-message-errors";

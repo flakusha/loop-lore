@@ -9,8 +9,9 @@ import type { DB, } from "../../db/schema";
 import type { TranslatorFn, } from "../../i18n/types";
 import type { RateLimiter, } from "../../middleware/rate-limit";
 import { uid, } from "../../utils";
+import { HttpStatus, } from "../http-utils";
 import { createSessionAndCookie, } from "./session";
-import { errorHtml, getClientIp, parseCredentials, rateLimitHtml, registerLimiter, } from "./shared";
+import { errorResponse, getClientIp, parseCredentials, rateLimitHtml, registerLimiter, } from "./shared";
 
 /**
  * Hash the password and insert the user row + mirror actor.
@@ -72,13 +73,14 @@ async function insertRegisteredUser(
  *   module singleton.
  */
 function checkRegisterGate(
+  request: Request,
   config: Config,
   ip: string,
   t: TranslatorFn | undefined,
   limiter: RateLimiter = registerLimiter,
 ): Response | null {
   if (!config.auth.registrationOpen) {
-    return errorHtml(t ? t("auth.registrationClosed",) : "Registration is closed.",);
+    return errorResponse(request, HttpStatus.Forbidden, "auth.registrationClosed", t, "Registration is closed.",);
   }
   // BUG-429-responses-omit-retry-after-and-x-ratelimit-headers: emit headers.
   const regLimit = limiter.consume(ip,);
@@ -110,22 +112,48 @@ async function handleRegister(
   limiter: RateLimiter = registerLimiter,
 ): Promise<Response> {
   const ip = getClientIp(request, config, peerIp ?? null,);
-  const gateError = checkRegisterGate(config, ip, t, limiter,);
+  const gateError = checkRegisterGate(request, config, ip, t, limiter,);
   if (gateError) { return gateError; }
 
   const formData = await parseCredentials(request,);
-  if (!formData) { return errorHtml(t ? t("errors.badRequest",) : "Invalid request body",); }
+  if (!formData) {
+    return errorResponse(
+      request,
+      HttpStatus.BadRequest,
+      "errors.badRequest",
+      t,
+      "Invalid request body",
+    );
+  }
 
   const username = formData.get("username",)?.trim();
   const password = formData.get("password",);
   if (!username || !password) {
-    return errorHtml(t ? t("errors.missingField",) : "Username and password are required.",);
+    return errorResponse(
+      request,
+      HttpStatus.UnprocessableEntity,
+      "errors.missingField",
+      t,
+      "Username and password are required.",
+    );
   }
   if (username.length < 3 || username.length > 32) {
-    return errorHtml(t ? t("auth.usernameLength",) : "Username must be 3–32 characters.",);
+    return errorResponse(
+      request,
+      HttpStatus.UnprocessableEntity,
+      "auth.usernameLength",
+      t,
+      "Username must be 3–32 characters.",
+    );
   }
   if (password.length < 6) {
-    return errorHtml(t ? t("auth.passwordLength",) : "Password must be at least 6 characters.",);
+    return errorResponse(
+      request,
+      HttpStatus.UnprocessableEntity,
+      "auth.passwordLength",
+      t,
+      "Password must be at least 6 characters.",
+    );
   }
 
   const existing = await database
@@ -135,7 +163,7 @@ async function handleRegister(
     .executeTakeFirst();
 
   if (existing) {
-    return errorHtml(t ? t("auth.usernameTaken",) : "Username already taken.",);
+    return errorResponse(request, HttpStatus.Conflict, "auth.usernameTaken", t, "Username already taken.",);
   }
 
   const userId = await insertRegisteredUser(database, username, password,);
