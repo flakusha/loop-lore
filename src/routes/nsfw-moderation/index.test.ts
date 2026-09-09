@@ -53,6 +53,8 @@ describe("nsfwModerationRoutes barrel", () => {
       new Request("http://localhost/api/nsfw/moderation/preferences/u1",),
     );
     expect(res.status,).toBe(404,);
+    const rows = await db.selectFrom("nsfw_user_preferences",).select("id",).execute();
+    expect(rows,).toEqual([],);
   });
 
   test("preferences lookup with non-UUID id returns 4xx", async () => {
