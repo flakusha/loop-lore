@@ -13,7 +13,7 @@ import { createChat, getChatSetupTemplate, } from "../../chat/service";
 import type { ChatSetupTemplate, } from "../../chat/service/types";
 import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, } from "../../utils";
+import { jsonParseOr, safeJsonParse, } from "../../utils";
 
 /** */
 export interface CreateLocationChatInput {
@@ -42,6 +42,19 @@ export async function resolveLocationTemplate(
     ? body.templateId
     : "template-world";
   return getChatSetupTemplate(database, templateId,);
+}
+
+/**
+ * Read the template's rendering override from its gm_config JSON.
+ * Templates carry VN-ness in gm_config (see template-defaults.ts), never in
+ * a dedicated column — a direct property read would always be undefined.
+ * @param gmConfig Raw gm_config JSON from the template row.
+ * @returns The stored override, or null when absent/unparseable.
+ */
+function readTemplateRenderingOverride(gmConfig: string | null,): ChatRenderingOverride | null {
+  if (!gmConfig) { return null; }
+  const parsed = safeJsonParse<{ renderingOverride?: ChatRenderingOverride | null }>(gmConfig,);
+  return parsed.ok ? (parsed.value.renderingOverride ?? null) : null;
 }
 
 /**
@@ -89,7 +102,7 @@ export async function createLocationChat(
       : (template.gm_config ? jsonParseOr(template.gm_config, {},) : null),
     renderingOverride: hasExplicit("renderingOverride",)
       ? (body.renderingOverride as "text" | "visual_novel" | null)
-      : (template.visual_novel === 1 ? "visual_novel" : null),
+      : readTemplateRenderingOverride(template.gm_config,),
     visibility: hasExplicit("visibility",)
       ? (body.visibility as string)
       : (template.visibility ?? "private"),
