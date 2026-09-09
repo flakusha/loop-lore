@@ -27,4 +27,6 @@ export interface FederationConfig {
   seeds: string[];
   /** Per-peer endpoint + trust overrides. Default empty. */
   peers: FederationPeerConfig[];
+  /** Mesh content PSK for envelope seal/open. Env-only: MESH_PSK. Default "". */
+  meshPsk: string;
 }

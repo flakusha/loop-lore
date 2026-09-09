@@ -124,7 +124,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(healthRoutes(handleOpts,),);
   app.use(livenessRoutes({ database: handleOpts.database, config, },),);
   app.use(metricsRoutes({ config, },),);
-  app.use(federationRoutes({ config, },),);
+  app.use(federationRoutes({ config, database, },),);
   app.use(i18nRoutes(handleOpts,),);
   app.use(telemetryRoutes(handleOpts,),);
   app.use(frontendLogsRoutes(),);
