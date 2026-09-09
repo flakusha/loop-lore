@@ -351,6 +351,7 @@ function coverageCommand() {
     return `E2E_SAFEGUARD=1 bun test tests/e2e/ src/ --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}`;
   }
   if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
+  if (SCOPED_DIFF_SRC_FILES.length === 0) { return NOOP_OK; }
   // BUG-37a3763: floor diff-touched files individually — a scoped lcov can
   // never satisfy whole-module floors (bun emits records only for files the
   // scoped tests loaded).
