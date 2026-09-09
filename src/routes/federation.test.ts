@@ -61,6 +61,19 @@ describe("federationRoutes — NodeInfo 2.1", () => {
     expect(link.href,).toContain("/nodeinfo/2.1",);
   });
 
+  test("publicOrigin overrides the built-in host:port origin", async () => {
+    const base = configWith({ enabled: true, },);
+    const config = {
+      ...base,
+      server: { ...base.server, publicOrigin: "https://lore.example.com", },
+    } as unknown as Config;
+    const app = federationRoutes({ config, },);
+    const res = await app.handle(new Request("http://localhost/.well-known/nodeinfo",),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { links: { rel: string; href: string }[] };
+    expect(body.links[0]?.href,).toBe("https://lore.example.com/nodeinfo/2.1",);
+  });
+
   test("/nodeinfo/2.1 returns valid NodeInfo 2.1 document", async () => {
     const app = federationRoutes({ config: FED_ENABLED, },);
     const res = await app.handle(new Request("http://localhost/nodeinfo/2.1",),);
