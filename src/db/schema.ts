@@ -156,4 +156,6 @@ export interface DB {
   workflow_sessions: import("./schema-core").WorkflowSessions;
   mesh_peers: import("./schema-core").MeshPeers;
   mesh_negotiations: import("./schema-core").MeshNegotiations;
+  mesh_reservations: import("./schema-core").MeshReservations;
+  mesh_deliveries: import("./schema-core").MeshDeliveries;
 }

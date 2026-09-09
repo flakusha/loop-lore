@@ -3,7 +3,7 @@
 
 # TASK: Mesh Encrypted Content Sharing, Reservation & Duplication
 
-**Status:** ⬜ Not Started
+ **Status:** 🟡 In Progress — transfer foundation landed (see Progress 2026-09-09)
 **Priority:** high
 **Effort:** Large
 **Epic:** epic-mesh-federation-content-sharing
@@ -113,3 +113,21 @@ distribution exists.
 - `FEAT-swarm-mode-reconciliation.md` — HLC/vector clocks for conflict
   detection during content push
 - `epic-crypto.md` — encryption key management
+
+ ## Progress 2026-09-09 (branch `mesh-sharing`)
+
+ Landed transfer foundation: `src/federation/sharing.ts` (AES-256-GCM PSK
+ envelope `sealContent`/`openEnvelope`, `reserveSlot`,
+ `advanceReservation`, `sweepExpiredReservations`, `receiveDelivery` LWW on
+ `(clock, contentHash)`), `022_mesh_sharing` migration
+ (`mesh_reservations`, `mesh_deliveries`), `/api/mesh-deliver` route,
+ `MESH_PSK` env-only config, backfill repair.
+ - Reservation lifecycle reserve → push → confirm/consume → release,
+   plus idempotent expiry sweep: delivered.
+ - Conflict handling: Lamport-style `clock` per content id, newer wins,
+   ties toward smaller hash: delivered. HLC/vector clocks NOT done.
+ - A→B integrity (seal on A, deliver, open + hash-verify on B): covered
+   at route level (`federation.test.ts` mesh-deliver block).
+ - NOT done (follow-up): swap PSK envelope for the `EncryptionProvider`
+   seam, coordinator-mediated capacity validation, per-world/channel
+   duplication policy, full `bun run check` gate.

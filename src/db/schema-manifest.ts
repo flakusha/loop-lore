@@ -496,6 +496,13 @@ export const SCHEMA = new SchemaManifest()
     vector_blob: col("blob", { notNull: true, },),
     created_at: col("integer", { notNull: true, },),
   },)
+  .table("mesh_deliveries", {
+    content_id: col("text", { primaryKey: true, },),
+    origin: col("text", { notNull: true, },),
+    content_hash: col("text", { notNull: true, },),
+    clock: col("integer", { notNull: true, },),
+    received_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("mesh_negotiations", {
     id: col("text", { primaryKey: true, },),
     peer_origin: col("text", { notNull: true, },),
@@ -507,6 +514,16 @@ export const SCHEMA = new SchemaManifest()
     state: col("text", { notNull: true, hasDefault: true, },),
     capabilities: col("text", { notNull: true, hasDefault: true, },),
     last_seen: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
+  .table("mesh_reservations", {
+    id: col("text", { primaryKey: true, },),
+    peer_origin: col("text", { notNull: true, },),
+    content_hash: col("text", { notNull: true, },),
+    size_bytes: col("integer", { notNull: true, },),
+    content_type: col("text", { notNull: true, hasDefault: true, },),
+    state: col("text", { notNull: true, hasDefault: true, },),
+    expires_at: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("message_reactions", {

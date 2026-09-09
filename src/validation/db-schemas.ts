@@ -2318,3 +2318,23 @@ export const MeshNegotiationsSchema = t.Object({
   state: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
+
+// ── mesh_reservations ────────────────────────────────────────────
+export const MeshReservationsSchema = t.Object({
+  peer_origin: t.String(),
+  content_hash: t.String(),
+  size_bytes: t.Number(),
+  expires_at: t.String(),
+  content_type: t.Optional(t.String(),),
+  state: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── mesh_deliveries ────────────────────────────────────────────
+export const MeshDeliveriesSchema = t.Object({
+  origin: t.String(),
+  content_hash: t.String(),
+  clock: t.Number(),
+  content_id: t.Optional(t.String(),),
+  received_at: t.Optional(t.String(),),
+},);

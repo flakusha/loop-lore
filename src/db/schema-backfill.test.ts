@@ -32,6 +32,8 @@ describe("schema-backfill", () => {
         kysely,
       );
     await sql`CREATE TABLE workflow_sessions (chat_id TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`CREATE TABLE mesh_reservations (id TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`CREATE TABLE mesh_deliveries (content_id TEXT PRIMARY KEY)`.execute(kysely,);
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });
 
@@ -162,6 +164,49 @@ describe("schema-backfill", () => {
       kysely,
     );
     expect(legacy.rows.map((row,) => row.version),).toEqual([19,],);
+
+    expect(await runSchemaBackfill(kysely,),).toBe(false,);
+  });
+
+  test("creates stranded mesh sharing tables with version record", async () => {
+    await sql`CREATE TABLE chat_setup_templates (id TEXT PRIMARY KEY, gm_config TEXT)`.execute(kysely,);
+    await sql`CREATE VIRTUAL TABLE memories_fts USING fts5(memory_id UNINDEXED, content)`.execute(kysely,);
+    await sql`CREATE TABLE crafting_orders (id TEXT PRIMARY KEY, requested_materials TEXT NOT NULL DEFAULT '[]')`
+      .execute(
+        kysely,
+      );
+    await sql`CREATE TABLE workflow_sessions (chat_id TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`CREATE TABLE schema_version (version INTEGER PRIMARY KEY, description TEXT)`.execute(kysely,);
+
+    expect(await runSchemaBackfill(kysely,),).toBe(true,);
+
+    const reservations = await sql<{ name: string }>`SELECT name FROM pragma_table_info('mesh_reservations')`.execute(
+      kysely,
+    );
+    expect(reservations.rows.map((row,) => row.name,),).toEqual([
+      "id",
+      "peer_origin",
+      "content_hash",
+      "size_bytes",
+      "content_type",
+      "state",
+      "expires_at",
+      "created_at",
+    ],);
+    const deliveries = await sql<{ name: string }>`SELECT name FROM pragma_table_info('mesh_deliveries')`.execute(
+      kysely,
+    );
+    expect(deliveries.rows.map((row,) => row.name,),).toEqual([
+      "content_id",
+      "origin",
+      "content_hash",
+      "clock",
+      "received_at",
+    ],);
+    const version = await sql<{ version: number }>`SELECT version FROM schema_version WHERE version = 22`.execute(
+      kysely,
+    );
+    expect(version.rows.map((row,) => row.version,),).toEqual([22,],);
 
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });

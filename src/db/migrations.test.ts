@@ -407,6 +407,7 @@ describe("001_init part freeze", () => {
     "018_schema_version",
     "019_trade_requested_materials",
     "020_workflow_sessions",
+    "022_mesh_sharing",
   ];
 
   test("001_init.ts wires exactly the frozen part set", () => {
