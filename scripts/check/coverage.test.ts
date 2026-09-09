@@ -3,7 +3,7 @@
 
 import { afterEach, describe, expect, test, } from "bun:test";
 import { spawnSync, } from "node:child_process";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync, } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, resolve, } from "node:path";
 
@@ -11,7 +11,7 @@ const SCRIPT_PATH = resolve(import.meta.dir, "coverage.mjs",);
 const tempDirs: string[] = [];
 
 afterEach(() => {
-  for (const dir of tempDirs.splice(0)) {
+  for (const dir of tempDirs.splice(0,)) {
     rmSync(dir, { recursive: true, force: true, },);
   }
 },);
@@ -47,6 +47,6 @@ describe("coverage.mjs", () => {
     expect(result.status,).toBe(0,);
     expect(result.stderr,).not.toContain("elysia-app.ts",);
     const report = JSON.parse(result.stdout,);
-    expect(report.modules.map((row: { mod: string },) => row.mod,),).toEqual(["server",],);
-  },);
-},);
+    expect(report.modules.map((row: { mod: string },) => row.mod),).toEqual(["server",],);
+  });
+});
