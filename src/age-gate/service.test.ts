@@ -235,3 +235,23 @@ async function createTestDatabase() {
 
   return database;
 }
+
+describe("getStatus boundary", () => {
+  test("empty birth_date => hasPassed false", () => {
+    const s = getStatus(gateConfig(), { birth_date: "", age_gate_accepted_at: null });
+    expect(s.hasPassed).toBe(false);
+  });
+  test("undefined user fields => hasPassed false", () => {
+    const s = getStatus(gateConfig(), { birth_date: undefined as unknown as null, age_gate_accepted_at: undefined as unknown as null });
+    expect(s.hasPassed).toBe(false);
+  });
+});
+
+describe("validateAge boundary", () => {
+  test("minimum 0 => still throws AgeGateError (birth in future)", () => {
+    expect(() => validateAge("2030-01-01", 0)).toThrow(AgeGateError);
+  });
+  test("very old date passes any reasonable minimum", () => {
+    expect(() => validateAge("1900-01-01", 18)).not.toThrow();
+  });
+});
