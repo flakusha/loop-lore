@@ -96,7 +96,7 @@ describe("ProtocolAdapter seam", () => {
     const adapter: ProtocolAdapter = new StubAdapter();
     expect(adapter.capabilities(),).toContain("channels",);
     const channels = await (adapter as unknown as ChannelCapable).listChannels();
-    expect(channels,).toEqual([{ id: "general", name: "General", },]);
+    expect(channels,).toEqual([{ id: "general", name: "General", },],);
   });
 
   test("capability registry covers the retired SocialAdapter surface", () => {
