@@ -195,6 +195,24 @@ describe("renderCurrentScene guards and interaction", () => {
     expect(container.children,).toHaveLength(0,);
   });
 
+  test("without scenes it resolves and renders nothing", async () => {
+    const container = install([], 0,);
+    await renderCurrentScene(false, spyNavigator().nav,);
+    expect(container.children,).toHaveLength(0,);
+  });
+
+  test("a re-render keeps non-scene overlays such as the loading indicator", async () => {
+    const container = install([baseScene({},),], 0,);
+    const overlay = makeEl();
+    overlay.className = "vn-loading-indicator";
+    container.append(overlay,);
+
+    await renderCurrentScene(false, spyNavigator().nav,);
+
+    expect(container.querySelector(".vn-loading-indicator",),).not.toBeNull();
+    expect(container.children.includes(overlay,),).toBe(true,);
+  });
+
   test("with typewriter off a click advances to the next scene", async () => {
     const container = install([baseScene({},), baseScene({ messageId: "m2", },),], 0,);
     const { nav, next, prev, } = spyNavigator();
@@ -224,15 +242,19 @@ describe("renderCurrentScene guards and interaction", () => {
     expect(container.querySelector(".vn-text",)!.textContent,).toBe("Well met.",);
   });
 
-  test("animated render delegates to the transition engine on the old scene", async () => {
+  test("animated render wires the incoming scene and drops the old one", async () => {
     dom.reducedMotion.value = true;
-    const container = install([baseScene({},), baseScene({ messageId: "m2", },),], 0,);
+    const container = install([baseScene({},), baseScene({ messageId: "m2", text: "Second.", },),], 0,);
     await renderCurrentScene(false, spyNavigator().nav,);
     const outgoing = container.querySelector(".vn-scene",)!;
-    expect(outgoing.style.display,).toBeUndefined();
 
     state.currentIndex = 1;
     await renderCurrentScene(true, spyNavigator().nav,);
     expect(outgoing.style.display,).toBe("none",);
+    expect(container.children.includes(outgoing,),).toBe(false,);
+
+    const sceneEls = container.children.filter((c,) => c.className.startsWith("vn-scene",));
+    expect(sceneEls,).toHaveLength(1,);
+    expect(sceneEls[0]!.querySelector(".vn-text",)!.textContent,).toBe("Second.",);
   });
 });
