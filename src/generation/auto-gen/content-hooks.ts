@@ -18,7 +18,7 @@ import type { Config, } from "../../config/schema";
 import { ContentRating, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { canAccessNsfw, } from "../../middleware/nsfw-gate/access";
+import { checkNsfwWithConsent, } from "../../middleware/nsfw-gate/consent";
 import { isNsfwRating, } from "../../middleware/nsfw-gate/constants";
 import { jsonParseOr, } from "../../utils";
 import { getRegisteredHooks, runHookChain, } from "../hooks";
@@ -52,7 +52,7 @@ export interface ContentHooksResult {
 export interface NsfwEligibilityResult {
   /** True when generation may proceed; false when blocked. */
   allowed: boolean;
-  /** Reason code (matches canAccessNsfw.reason) — present when allowed=false. */
+  /** Reason code (matches checkNsfwWithConsent.reason) — present when allowed=false. */
   reason?: string;
   /** Resolved actor content_rating (canonical enum) — reused by post-LLM hook chain. */
   actorContentRating: ContentRating;
@@ -67,7 +67,7 @@ export interface NsfwEligibilityResult {
  *
  * This is the single source of truth for NSFW gating — both the pre-LLM
  * eligibility check and the post-LLM defense-in-depth scan use the same
- * `canAccessNsfw` helper.
+ * `checkNsfwWithConsent` choke point the NSFW route layer uses.
  * @param opts
  * @param opts.database
  * @param opts.config
@@ -92,21 +92,21 @@ export async function checkNsfwEligibility(opts: {
     .executeTakeFirst();
   const actorContentRating = (actorRow?.content_rating ?? ContentRating.Sfw) as ContentRating;
 
-  // Age-gate precheck (BUG-5232abe — NSFW age gate never verified at generation).
-  // canAccessNsfw enforces: NSFW globally enabled, user authenticated, age
-  // gate accepted, user above nsfwMinAge. Only NSFW-rated actors require the
-  // gate — SFW content never crosses the age threshold, so we skip the DB
-  // roundtrip and the false-negative on users without an age-gate accept.
-  // Use the canonical isNsfwRating helper (single source of truth for the
-  // rating tiers).
+  // Full pre-LLM gate (consent ledger + participant weakest link + base
+  // access) via the same check the NSFW route layer uses — generation must
+  // not be more permissive than the explicit API surfaces. Only NSFW-rated
+  // actors require the gate — SFW content never crosses the age threshold,
+  // so we skip the DB roundtrip and the false-negative on users without an
+  // age-gate accept. Uses the canonical isNsfwRating helper (single source
+  // of truth for the rating tiers).
   if (isNsfwRating(actorContentRating,)) {
-    const access = await canAccessNsfw(database, config, userId,);
-    if (!access.allowed) {
+    const gate = await checkNsfwWithConsent({ database, config, userId, chatId, actorId, },);
+    if (!gate.allowed) {
       getLogger().child({ module: "auto-gen", },).warn(
-        "Generation blocked by NSFW age-gate precheck",
-        { actorId, userId, reason: access.reason, chatId, },
+        "Generation blocked by NSFW precheck",
+        { actorId, userId, reason: gate.reason, chatId, },
       );
-      return { allowed: false, reason: access.reason, actorContentRating, };
+      return { allowed: false, reason: gate.reason, actorContentRating, };
     }
   }
 
@@ -126,31 +126,20 @@ export async function runContentHooks(opts: RunContentHooksOpts,): Promise<Conte
   // fall back to the caller-provided actorId for backward compatibility.
   const fallbackActorId = opts.actorId;
 
-  // Fetch actor's canonical content_rating from actors table
-  const actorRow = fallbackActorId
-    ? await database
-      .selectFrom("actors",)
-      .select(["content_rating",],)
-      .where("id", "=", fallbackActorId,)
-      .executeTakeFirst()
-    : undefined;
-  const actorContentRating = (actorRow?.content_rating ?? ContentRating.Sfw) as ContentRating;
-  // Age-gate precheck (BUG-5232abe — NSFW age gate never verified at generation).
-  // canAccessNsfw enforces: NSFW globally enabled, user authenticated, age
-  // gate accepted, user above nsfwMinAge. Only NSFW-rated actors require the
-  // gate — SFW content never crosses the age threshold, so we skip the DB
-  // roundtrip and the false-negative on users without an age-gate accept.
-  // Use the canonical isNsfwRating helper (single source of truth for the
-  // rating tiers).
-  if (isNsfwRating(actorContentRating,)) {
-    const access = await canAccessNsfw(database, config, userId,);
-    if (!access.allowed) {
+  // Pre-LLM gate: single choke point via checkNsfwEligibility (base access +
+  // participant weakest link + consent ledger). Without a resolved actorId
+  // there is no rating to gate on — SFW default, gate skipped (unchanged).
+  let actorContentRating = ContentRating.Sfw as ContentRating;
+  if (fallbackActorId) {
+    const eligibility = await checkNsfwEligibility({ database, config, chatId, actorId: fallbackActorId, userId, },);
+    if (!eligibility.allowed) {
       getLogger().child({ module: "auto-gen", },).warn(
-        "Generation blocked by NSFW age-gate precheck",
-        { actorId: fallbackActorId, userId, reason: access.reason, chatId, },
+        "Generation blocked by NSFW precheck",
+        { actorId: fallbackActorId, userId, reason: eligibility.reason, chatId, },
       );
       return { allowed: false, dominantEmotion: undefined, moodShiftDelta: undefined, actorId: fallbackActorId, };
     }
+    actorContentRating = eligibility.actorContentRating;
   }
 
   // Also fetch legacy nsfw_policy from character_availability for backward compat

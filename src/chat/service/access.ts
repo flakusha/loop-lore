@@ -68,13 +68,40 @@ export const GM_CONFIG_PRESENTATION_KEYS = [
 ] as const;
 
 /**
- * Broad chat-access check: admin, creator, or any participant.
+ * Read live chat/global moderation state for a user.
+ *
+ * Gives `chat/moderation.ts` teeth: ban/block rows in `moderation_actions`
+ * (scope `global`, or scope `chat` bound to this chat) deny access until
+ * revoked (`deleted_at`) or expired (`expires_at`). NSFW-scope rows belong
+ * to the NSFW access_status machine and are ignored here.
  * @param database
- * @param chatId
- * @param userId
- * @param userRole
- * @returns if access granted, or { ok: false, error } with reason
+ * @param chatId Chat scope for chat-bound rows.
+ * @param userId `target_user_id` to match.
+ * @returns "ban" | "block" when a live row exists, else null. Ban wins.
  */
+export async function getModerationBlock(
+  database: Kysely<DB>,
+  chatId: string,
+  userId: string,
+): Promise<"ban" | "block" | null> {
+  const now = new Date().toISOString();
+  const rows = await database
+    .selectFrom("moderation_actions",)
+    .select(["action_type", "scope", "scope_id", "expires_at",],)
+    .where("target_user_id", "=", userId,)
+    .where("deleted_at", "is", null,)
+    .execute();
+  let blocked = false;
+  for (const row of rows) {
+    if (row.action_type !== "ban" && row.action_type !== "block") { continue; }
+    if (row.scope !== "global" && !(row.scope === "chat" && row.scope_id === chatId)) { continue; }
+    if (row.expires_at != null && row.expires_at <= now) { continue; }
+    if (row.action_type === "ban") { return "ban"; }
+    blocked = true;
+  }
+  return blocked ? "block" : null;
+}
+
 export async function checkChatAccess(
   database: Kysely<DB>,
   chatId: string,
@@ -104,6 +131,18 @@ export async function checkChatAccess(
 
   if (!participant) {
     return { ok: false, error: { code: "not_found", message: "Chat not found", }, };
+  }
+
+  // Moderation enforcement (chat/moderation.ts): live ban/block rows deny
+  // even participants. Runs after the participation check so outsiders keep
+  // getting `not_found` (no ban-state oracle for non-members).
+  // Admins/creators bypassed above for moderation duties.
+  const block = await getModerationBlock(database, chatId, userId,);
+  if (block === "ban") {
+    return { ok: false, error: { code: "forbidden", message: "User is banned", }, };
+  }
+  if (block === "block") {
+    return { ok: false, error: { code: "forbidden", message: "User is blocked", }, };
   }
 
   return { ok: true, };
