@@ -1050,6 +1050,7 @@ export interface MeshPeers {
   capabilities: Generated<string>;
   last_seen: string | null;
   created_at: Generated<string>;
+  capacity_bytes: number | null;
 }
 
 // ── mesh_negotiations ────────────────────────────────────────────
