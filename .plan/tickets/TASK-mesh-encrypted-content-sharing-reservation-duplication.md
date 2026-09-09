@@ -129,5 +129,34 @@ distribution exists.
 - A→B integrity (seal on A, deliver, open + hash-verify on B): covered
  at route level (`federation.test.ts` mesh-deliver block).
 - NOT done (follow-up): swap PSK envelope for the `EncryptionProvider`
- seam, coordinator-mediated capacity validation, per-world/channel
- duplication policy, full `bun run check` gate.
+  seam, coordinator-mediated capacity validation, per-world/channel
+  duplication policy, full `bun run check` gate.
+
+## Progress 2026-09-10 (branch `mesh-sharing-2`)
+
+ Landed receiver-side reservation + server clock + duplication policy:
+ `createInboundReservation` (trusted-peer gate, per-peer `capacity_bytes`
+ via migration `002_mesh_capacity`, `outstandingBytes` over open states),
+ `/api/mesh-reserve` (403 untrusted / 409 exhausted / 400 malformed),
+ `/api/mesh-deliver` now takes `{ envelope, reservationId? }` and confirms
+ the reservation on store, `MeshClock` HLC (`src/federation/clock.ts`,
+ observed on every accepted delivery), `selectDuplicationTargets`
+- Per-world/channel duplication rules: still follow-up (no policy surface).
+- Sender push orchestration (`requestReservation`/`pushEnvelope` used from
+  a queue): still follow-up — transport seams unit-tested only.
+
+## Progress 2026-09-10 continued (`mesh-sharing-2`)
+
+- A→B integration (`src/routes/federation-transfer.test.ts`): seal on A →
+  reserve on B → push → decrypt + hash-verify on B, tampered-ciphertext
+  refusal; all through the real route handlers.
+- Per-world duplication overrides: `DuplicationPolicy.worlds`
+  (`Record<worldId, { mode, peers }>`, optional, JSON Schema published),
+  `resolveDuplicationPolicy` + `worldId` param on
+  `selectDuplicationTargets`, fallback to top-level policy.
+- Deferred (blocked on missing seams, not started): `EncryptionProvider`
+   swap — no `EncryptionProvider` interface exists in `src/` (only
+   `encryptValue`/`decryptValue` string-secrets in `src/crypto/byok.ts`;
+   per-peer key distribution/rotation is a separate epic); coordinator-
+   mediated capacity — negotiation states exist but no quota-enforcement
+   plumbing to route reserves through.
