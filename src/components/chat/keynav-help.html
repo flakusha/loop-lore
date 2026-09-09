@@ -1,0 +1,45 @@
+<!--
+  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+  Keyboard Navigation Help Overlay
+  Opened by pressing ? or clicking a help button.
+  Lists all shortcuts from shortcuts.ts getKeymap().
+-->
+<div
+  x-data="keynavHelp()"
+  x-show="open"
+  x-cloak
+  class="keynav-help-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Keyboard shortcuts"
+  x-trap="open"
+  @click.self="close()"
+>
+  <div class="keynav-help__panel" @click.stop>
+    <header class="keynav-help__header">
+      <h2 id="keynav-help-title">Keyboard Shortcuts</h2>
+      <button @click="close()" aria-label="Close" class="keynav-help__close">&#x2715;</button>
+    </header>
+    <table class="keynav-help__table" aria-labelledby="keynav-help-title">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="s in shortcuts" :key="s.action">
+          <tr>
+            <td><kbd x-text="s.combo"></kbd></td>
+            <td x-text="label(s.action)"></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+    <p class="keynav-help__footer">
+      Press <kbd>?</kbd> to toggle this overlay
+    </p>
+  </div>
+</div>
