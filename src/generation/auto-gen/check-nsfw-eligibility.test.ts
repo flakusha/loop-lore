@@ -22,6 +22,7 @@ import type { Config, } from "../../config/schema";
 import { ContentRating, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { recordNsfwConsent, } from "../../middleware/nsfw-gate/consent-ledger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { uid, } from "../../utils";
 import { checkNsfwEligibility, } from "./content-hooks";
@@ -137,6 +138,7 @@ describe("checkNsfwEligibility (pre-LLM NSFW gate)", () => {
   test("NSFW actor + adult age-gated user: allowed", async () => {
     const actorId = await createAiActor(db, ContentRating.NsfwMild,);
 
+    await recordNsfwConsent({ database: db, chatId: "test-chat", userId: adultUserId, action: "given", },);
     const result = await checkNsfwEligibility({
       database: db,
       config: makeConfig(),
@@ -223,6 +225,7 @@ describe("checkNsfwEligibility (pre-LLM NSFW gate)", () => {
       ]
     ) {
       const actorId = await createAiActor(db, rating,);
+      await recordNsfwConsent({ database: db, chatId: "test-chat", userId: adultUserId, action: "given", },);
       const result = await checkNsfwEligibility({
         database: db,
         config: makeConfig(),

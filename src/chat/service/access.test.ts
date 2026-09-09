@@ -16,11 +16,13 @@ import {
   insertActors,
   insertChatParticipants,
   insertChats,
+  insertModerationActions,
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import {
   checkChatAccess,
   checkChatSettingsAccess,
+  getModerationBlock,
 } from "./access";
 
 let dbHandle: TestDb;
@@ -42,6 +44,7 @@ beforeEach(async () => {
   await database.deleteFrom("chats",).execute();
   await database.deleteFrom("actors",).execute();
   await database.deleteFrom("users",).execute();
+  await database.deleteFrom("moderation_actions",).execute();
 },);
 
 async function seedChatWithParticipants(opts: {
@@ -165,5 +168,81 @@ describe("checkChatSettingsAccess (strict settings-mutation)", () => {
     const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
     const result = await checkChatSettingsAccess(database, chatId, "u-stranger", null,);
     expect(result.ok,).toBe(false,);
+  });
+});
+
+describe("checkChatAccess moderation enforcement (chat/moderation.ts wiring)", () => {
+  it("denies globally banned participant with forbidden", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-member", role: "member", },],
+    },);
+    await insertModerationActions(database, "ban", "u-member", "u-owner", "spam", "global",);
+    const result = await checkChatAccess(database, chatId, "u-member", null,);
+    expect(result,).toEqual({ ok: false, error: { code: "forbidden", message: "User is banned", }, },);
+  });
+
+  it("denies chat-scoped blocked participant", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-member", role: "member", },],
+    },);
+    await insertModerationActions(database, "block", "u-member", "u-owner", "spam", "chat", { scope_id: chatId, },);
+    const result = await checkChatAccess(database, chatId, "u-member", null,);
+    expect(result,).toEqual({ ok: false, error: { code: "forbidden", message: "User is blocked", }, },);
+  });
+
+  it("ignores block scoped to a different chat", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-member", role: "member", },],
+    },);
+    await insertModerationActions(database, "block", "u-member", "u-owner", "spam", "chat", {
+      scope_id: "other-chat",
+    },);
+    const result = await checkChatAccess(database, chatId, "u-member", null,);
+    expect(result,).toEqual({ ok: true, },);
+  });
+
+  it("ignores expired and revoked rows", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-member", role: "member", },],
+    },);
+    await insertModerationActions(database, "ban", "u-member", "u-owner", "old", "global", {
+      expires_at: "2000-01-01T00:00:00Z",
+    },);
+    await insertModerationActions(database, "ban", "u-member", "u-owner", "lifted", "global", {
+      deleted_at: "2026-01-01T00:00:00Z",
+    },);
+    const result = await checkChatAccess(database, chatId, "u-member", null,);
+    expect(result,).toEqual({ ok: true, },);
+    expect(await getModerationBlock(database, chatId, "u-member",),).toBeNull();
+  });
+
+  it("ignores nsfw-scope rows (separate access_status machine)", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-member", role: "member", },],
+    },);
+    await insertModerationActions(database, "ban", "u-member", "admin", "nsfw", "nsfw",);
+    const result = await checkChatAccess(database, chatId, "u-member", null,);
+    expect(result,).toEqual({ ok: true, },);
+  });
+
+  it("keeps not_found for banned non-participant (no ban oracle)", async () => {
+    const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
+    await insertUsers(database, "u-stranger", "User", { id: "u-stranger", } as never,);
+    await insertModerationActions(database, "ban", "u-stranger", "u-owner", "spam", "global",);
+    const result = await checkChatAccess(database, chatId, "u-stranger", null,);
+    expect(result,).toEqual({ ok: false, error: { code: "not_found", message: "Chat not found", }, },);
+  });
+
+  it("admin bypasses ban for moderation duties", async () => {
+    const chatId = await seedChatWithParticipants({ creatorId: "u-owner", },);
+    await insertUsers(database, "u-admin", "User", { id: "u-admin", } as never,);
+    await insertModerationActions(database, "ban", "u-admin", "u-owner", "spam", "global",);
+    const result = await checkChatAccess(database, chatId, "u-admin", "admin",);
+    expect(result.ok,).toBe(true,);
   });
 });
