@@ -5,6 +5,7 @@ import { existsSync, mkdirSync, symlinkSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { gitSync, isProtected, } from "../utils/git";
+import { linkNodeModules, } from "../utils/modules";
 import { log, } from "../utils/output";
 
 export async function execute(
@@ -92,13 +93,7 @@ export async function execute(
     log("success", "hooks configured",);
   }
 
-  // Link node_modules
-  const mainModules = resolve(config.repoRoot, "node_modules",);
-  const wtModules = resolve(wtPath, "node_modules",);
-  if (existsSync(mainModules,) && !existsSync(wtModules,)) {
-    symlinkSync(mainModules, wtModules,);
-    log("success", "node_modules linked",);
-  }
+  linkNodeModules(config.repoRoot, wtPath,);
 
   // Link .credentials.env so worktree-local scripts (check-parallel.mjs,
   // gpg-unlock.mjs — both resolve REPO_ROOT = import.meta.dir + "/..") can
