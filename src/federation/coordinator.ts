@@ -63,7 +63,12 @@ export interface ResyncSummary {
  */
 export async function upsertPeer(
   database: Kysely<DB>,
-  peer: { origin: string; state?: PeerState; capabilities?: string[] },
+  peer: {
+    origin: string;
+    state?: PeerState;
+    capabilities?: string[];
+    capacityBytes?: number | null;
+  },
 ): Promise<string> {
   const origin = canonicalOrigin(peer.origin,);
   if (origin === null) { throw new Error(`invalid peer origin: ${peer.origin}`,); }
@@ -73,6 +78,7 @@ export async function upsertPeer(
     origin,
     state: peer.state ?? "pending",
     capabilities: encoded.value,
+    capacity_bytes: peer.capacityBytes ?? null,
   };
   await database
     .insertInto("mesh_peers",)
@@ -81,6 +87,7 @@ export async function upsertPeer(
       oc.column("origin",).doUpdateSet({
         state: row.state,
         capabilities: row.capabilities,
+        capacity_bytes: row.capacity_bytes,
       },)
     )
     .execute();

@@ -3,36 +3,122 @@
 
 import { describe, expect, test, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { pskCipher, } from "./cipher";
 import { upsertPeer, } from "./coordinator";
 import { type ContentEnvelope, sealContent, } from "./envelope";
+import type { PeerPost, } from "./peer-fetch";
 import {
   advanceReservation,
+  createInboundReservation,
+  outstandingBytes,
+  pushEnvelope,
   receiveDelivery,
   releaseReservation,
-  reserveSlot,
+  requestReservation,
   selectDuplicationTargets,
   sweepExpiredReservations,
 } from "./sharing";
 
 const SECRET = "mesh-test-psk";
+const cipher = pskCipher(SECRET,);
 
-async function sealed(overrides: Partial<ContentEnvelope> = {},): Promise<ContentEnvelope> {
-  const envelope = await sealContent({
-    id: "content-1",
-    origin: "https://a.example",
-    clock: 1_000,
-    content: "hello mesh",
-    secret: SECRET,
+async function sealed(
+  overrides: { id?: string; origin?: string; clock?: number; content?: string } = {},
+): Promise<ContentEnvelope> {
+  return sealContent({
+    id: overrides.id ?? "content-1",
+    origin: overrides.origin ?? "https://a.example",
+    clock: overrides.clock ?? 1_000,
+    content: overrides.content ?? "hello mesh",
+    cipher,
   },);
-  return { ...envelope, ...overrides, };
 }
+
+const OK_POST: PeerPost = (async (url: string,) => {
+  if (url.endsWith("/api/mesh-reserve",)) {
+    return { ok: true, status: 200, body: { reservationId: "r-1", }, };
+  }
+  return { ok: true, status: 200, body: { verdict: "stored", }, };
+}) as PeerPost;
+
+describe("inbound reservation", () => {
+  test("trusted peer reserves, unknown peer rejected", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
+    const id = await createInboundReservation(db, {
+      senderOrigin: "https://b.example",
+      contentHash: "abc",
+      sizeBytes: 12,
+    },);
+    expect(typeof id,).toBe("string",);
+    await expect(createInboundReservation(db, {
+      senderOrigin: "https://stranger.example",
+      contentHash: "abc",
+      sizeBytes: 1,
+    },),).rejects.toThrow("untrusted peer",);
+  });
+
+  test("pending peer and invalid input rejected", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://b.example", },);
+    await expect(createInboundReservation(db, {
+      senderOrigin: "https://b.example",
+      contentHash: "abc",
+      sizeBytes: 1,
+    },),).rejects.toThrow("untrusted peer",);
+    await expect(createInboundReservation(db, {
+      senderOrigin: "not a url",
+      contentHash: "abc",
+      sizeBytes: 1,
+    },),).rejects.toThrow("invalid sender origin",);
+  });
+
+  test("capacity enforced and freed on release", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, {
+      origin: "https://b.example",
+      state: "trusted",
+      capacityBytes: 100,
+    },);
+    const id = await createInboundReservation(db, {
+      senderOrigin: "https://b.example",
+      contentHash: "a",
+      sizeBytes: 60,
+    },);
+    expect(await outstandingBytes(db, "https://b.example",),).toBe(60,);
+    await expect(createInboundReservation(db, {
+      senderOrigin: "https://b.example",
+      contentHash: "b",
+      sizeBytes: 50,
+    },),).rejects.toThrow("capacity exhausted",);
+    await releaseReservation(db, id,);
+    expect(await outstandingBytes(db, "https://b.example",),).toBe(0,);
+    const retry = await createInboundReservation(db, {
+      senderOrigin: "https://b.example",
+      contentHash: "b",
+      sizeBytes: 50,
+    },);
+    expect(typeof retry,).toBe("string",);
+  });
+
+  test("null capacity is unlimited", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
+    const id = await createInboundReservation(db, {
+      senderOrigin: "https://b.example",
+      contentHash: "a",
+      sizeBytes: 10 ** 9,
+    },);
+    expect(typeof id,).toBe("string",);
+  });
+});
 
 describe("reservation lifecycle", () => {
   test("reserve → push → confirm advances state", async () => {
     const { db, } = await createTestDb();
     await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
-    const id = await reserveSlot(db, {
-      peerOrigin: "https://b.example",
+    const id = await createInboundReservation(db, {
+      senderOrigin: "https://b.example",
       contentHash: "abc",
       sizeBytes: 12,
     },);
@@ -49,8 +135,8 @@ describe("reservation lifecycle", () => {
   test("skipping a step and confirming twice both throw", async () => {
     const { db, } = await createTestDb();
     await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
-    const id = await reserveSlot(db, {
-      peerOrigin: "https://b.example",
+    const id = await createInboundReservation(db, {
+      senderOrigin: "https://b.example",
       contentHash: "abc",
       sizeBytes: 1,
     },);
@@ -59,103 +145,110 @@ describe("reservation lifecycle", () => {
     );
   });
 
-  test("release aborts an open reservation but not a confirmed one", async () => {
+  test("release is terminal; sweep expires stale reservations", async () => {
     const { db, } = await createTestDb();
     await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
-    const open = await reserveSlot(db, {
-      peerOrigin: "https://b.example",
-      contentHash: "a",
+    const id = await createInboundReservation(db, {
+      senderOrigin: "https://b.example",
+      contentHash: "abc",
       sizeBytes: 1,
+      ttlMs: 1,
     },);
-    await releaseReservation(db, open,);
-    const done = await reserveSlot(db, {
-      peerOrigin: "https://b.example",
-      contentHash: "b",
+    await releaseReservation(db, id,);
+    await expect(releaseReservation(db, id,),).rejects.toThrow("already terminal",);
+    const stale = await createInboundReservation(db, {
+      senderOrigin: "https://b.example",
+      contentHash: "def",
       sizeBytes: 1,
+      ttlMs: 1,
     },);
-    await advanceReservation(db, done, "pushed",);
-    await advanceReservation(db, done, "confirmed",);
-    await expect(releaseReservation(db, done,),).rejects.toThrow("already terminal",);
-  });
-
-  test("reserve rejects unknown and invalid peers", async () => {
-    const { db, } = await createTestDb();
-    await expect(reserveSlot(db, {
-      peerOrigin: "https://ghost.example",
-      contentHash: "a",
-      sizeBytes: 1,
-    },),).rejects.toThrow("unknown peer",);
-    await expect(reserveSlot(db, {
-      peerOrigin: "not-a-url",
-      contentHash: "a",
-      sizeBytes: 1,
-    },),).rejects.toThrow("invalid peer origin",);
-  });
-
-  test("sweep expires only stale open reservations", async () => {
-    const { db, } = await createTestDb();
-    await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
-    const stale = await reserveSlot(db, {
-      peerOrigin: "https://b.example",
-      contentHash: "old",
-      sizeBytes: 1,
-      ttlMs: 1_000,
-      now: 1_000,
-    },);
-    const fresh = await reserveSlot(db, {
-      peerOrigin: "https://b.example",
-      contentHash: "new",
-      sizeBytes: 1,
-      ttlMs: 60_000,
-      now: 1_000,
-    },);
-    expect(await sweepExpiredReservations(db, 1_000 + 59_000,),).toBe(1,);
-    expect(await sweepExpiredReservations(db, 1_000 + 59_000,),).toBe(0,);
-    const states = await db
+    expect(await sweepExpiredReservations(db, Date.now() + 60_000,),).toBe(1,);
+    const row = await db
       .selectFrom("mesh_reservations",)
-      .select(["id", "state",],)
-      .execute();
-    expect(states.find((r,) => r.id === stale)?.state,).toBe("expired",);
-    expect(states.find((r,) => r.id === fresh)?.state,).toBe("reserved",);
+      .select(["state",],)
+      .where("id", "=", stale,)
+      .executeTakeFirstOrThrow();
+    expect(row.state,).toBe("expired",);
   });
 });
 
-describe("delivery with last-writer-wins", () => {
-  test("newer clock replaces, older clock goes stale", async () => {
+describe("delivery", () => {
+  test("stored delivery confirms its reservation", async () => {
     const { db, } = await createTestDb();
-    expect(await receiveDelivery(db, await sealed({ clock: 100, },), SECRET,),).toBe("stored",);
-    expect(await receiveDelivery(db, await sealed({ clock: 50, },), SECRET,),).toBe("stale",);
-    expect(await receiveDelivery(db, await sealed({ clock: 200, },), SECRET,),).toBe("stored",);
+    await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
+    const envelope = await sealed({ origin: "https://b.example", clock: 5, },);
+    const reservationId = await createInboundReservation(db, {
+      senderOrigin: "https://b.example",
+      contentHash: envelope.hash,
+      sizeBytes: envelope.size,
+    },);
+    expect(
+      await receiveDelivery(db, envelope, cipher, { reservationId, },),
+    ).toBe("stored",);
+    const row = await db
+      .selectFrom("mesh_reservations",)
+      .select(["state",],)
+      .where("id", "=", reservationId,)
+      .executeTakeFirstOrThrow();
+    expect(row.state,).toBe("confirmed",);
   });
 
-  test("clock tie breaks toward smaller hash", async () => {
+  test("lower clock is stale; tampered hash throws", async () => {
     const { db, } = await createTestDb();
-    const first = await sealed({ clock: 100, },);
-    const second = await sealed({ clock: 100, },);
-    expect(first.hash,).toBe(second.hash,);
-    expect(await receiveDelivery(db, first, SECRET,),).toBe("stored",);
-    // Same clock + same hash: existing wins (<=), duplicate is stale.
-    expect(await receiveDelivery(db, second, SECRET,),).toBe("stale",);
-  });
-
-  test("corrupt envelope never records a delivery", async () => {
-    const { db, } = await createTestDb();
+    expect(await receiveDelivery(db, await sealed({ clock: 10, },), cipher,),).toBe("stored",);
+    expect(await receiveDelivery(db, await sealed({ clock: 5, },), cipher,),).toBe("stale",);
+    const tampered = await sealed();
     await expect(
-      receiveDelivery(db, await sealed({ hash: "f".repeat(64,), },), SECRET,),
+      receiveDelivery(db, { ...tampered, hash: "0".repeat(64,), }, cipher,),
     ).rejects.toThrow("hash mismatch",);
-    const rows = await db.selectFrom("mesh_deliveries",).select(["content_id",],).execute();
-    expect(rows,).toHaveLength(0,);
+  });
+});
+
+describe("sender transport", () => {
+  test("requestReservation returns the receiver id; refusal throws", async () => {
+    expect(
+      await requestReservation(OK_POST, "https://b.example", {
+        senderOrigin: "https://a.example",
+        contentHash: "abc",
+        sizeBytes: 3,
+      },),
+    ).toBe("r-1",);
+    const refuse: PeerPost = (async () => ({ ok: false, status: 409, body: null, })) as PeerPost;
+    await expect(
+      requestReservation(refuse, "https://b.example", {
+        senderOrigin: "https://a.example",
+        contentHash: "abc",
+        sizeBytes: 3,
+      },),
+    ).rejects.toThrow("reservation refused",);
+  });
+
+  test("pushEnvelope returns the verdict; refusal throws", async () => {
+    expect(await pushEnvelope(OK_POST, "https://b.example", await sealed(), "r-1",),).toBe(
+      "stored",
+    );
+    const refuse: PeerPost = (async () => ({ ok: false, status: 400, body: null, })) as PeerPost;
+    await expect(
+      pushEnvelope(refuse, "https://b.example", await sealed(),),
+    ).rejects.toThrow("delivery refused",);
   });
 });
 
 describe("duplication targets", () => {
-  test("trusted peers minus the source origin", async () => {
+  test("trusted fans out, listed intersects, none disables", async () => {
     const { db, } = await createTestDb();
-    await upsertPeer(db, { origin: "https://a.example", state: "trusted", },);
     await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
-    await upsertPeer(db, { origin: "https://c.example", },);
-    expect(await selectDuplicationTargets(db, "https://a.example",),).toEqual([
-      "https://b.example",
-    ],);
+    await upsertPeer(db, { origin: "https://c.example", state: "trusted", },);
+    await upsertPeer(db, { origin: "https://pending.example", },);
+    expect(
+      await selectDuplicationTargets(db, { mode: "trusted", peers: [], }, "https://b.example",),
+    ).toEqual(["https://c.example",],);
+    expect(
+      await selectDuplicationTargets(
+        db,
+        { mode: "listed", peers: ["https://c.example", "https://pending.example",], },
+      ),
+    ).toEqual(["https://c.example",],);
+    expect(await selectDuplicationTargets(db, { mode: "none", peers: [], },),).toEqual([],);
   });
 });

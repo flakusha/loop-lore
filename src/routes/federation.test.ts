@@ -12,9 +12,14 @@ import { describe, expect, test, } from "bun:test";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, FederationConfig, } from "../config/schema";
 import type { Db, } from "../db";
+import { pskCipher, } from "../federation/cipher";
+import { upsertPeer, } from "../federation/coordinator";
 import { sealContent, } from "../federation/envelope";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { federationRoutes, } from "./federation";
+
+const ROUTE_PSK = "route-test-psk";
+const routeCipher = pskCipher(ROUTE_PSK,);
 
 function configWith(federation: Partial<FederationConfig>,): Config {
   const fed: FederationConfig = {
@@ -22,6 +27,7 @@ function configWith(federation: Partial<FederationConfig>,): Config {
     seeds: federation.seeds ?? [],
     peers: federation.peers ?? [],
     meshPsk: federation.meshPsk ?? "",
+    duplication: federation.duplication ?? { mode: "trusted", peers: [], },
   };
   return {
     server: { host: "localhost", port: 3000, tls: undefined, },
@@ -34,10 +40,13 @@ const FED_ENABLED = configWith({ enabled: true, },);
 
 /** Shared migrated db for route tests (distinct content ids per test). */
 let sharedDb: Db | null = null;
+async function dbFor(): Promise<Db> {
+  sharedDb ??= (await createTestDb()).db;
+  return sharedDb;
+}
 /** @param config */
 async function appFor(config: Config,) {
-  sharedDb ??= (await createTestDb()).db;
-  return federationRoutes({ config, database: sharedDb, },);
+  return federationRoutes({ config, database: await dbFor(), },);
 }
 const FED_DISABLED = configWith({ enabled: false, },);
 
@@ -164,17 +173,32 @@ describe("federationRoutes — edge cases", () => {
 describe("federationRoutes — mesh-deliver", () => {
   const PSK_CONFIG = configWith({ enabled: true, meshPsk: "route-test-psk", },);
 
-  /** @param envelope */
+  /** @param body */
   async function postDeliver(
     config: Config,
-    envelope: unknown,
+    body: unknown,
   ): Promise<Response> {
     const app = await appFor(config,);
     return app.handle(
       new Request("http://localhost/api/mesh-deliver", {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify(envelope,),
+        body: JSON.stringify(body,),
+      },),
+    );
+  }
+
+  /** @param body */
+  async function postReserve(
+    config: Config,
+    body: unknown,
+  ): Promise<Response> {
+    const app = await appFor(config,);
+    return app.handle(
+      new Request("http://localhost/api/mesh-reserve", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify(body,),
       },),
     );
   }
@@ -190,21 +214,22 @@ describe("federationRoutes — mesh-deliver", () => {
   });
 
   test("malformed envelope returns 400", async () => {
-    const res = await postDeliver(PSK_CONFIG, { id: "x", },);
+    const res = await postDeliver(PSK_CONFIG, { envelope: { id: "x", }, },);
     expect(res.status,).toBe(400,);
   });
+
   test("valid envelope stores and verifies (A→B integrity)", async () => {
     const envelope = await sealContent({
       id: "route-content-1",
       origin: "https://a.example",
       content: "cross-server payload",
-      secret: "route-test-psk",
+      cipher: routeCipher,
     },);
-    const res = await postDeliver(PSK_CONFIG, envelope,);
+    const res = await postDeliver(PSK_CONFIG, { envelope, },);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { verdict: string };
     expect(body.verdict,).toBe("stored",);
-    const replay = await postDeliver(PSK_CONFIG, envelope,);
+    const replay = await postDeliver(PSK_CONFIG, { envelope, },);
     const replayBody = (await replay.json()) as { verdict: string };
     expect(replayBody.verdict,).toBe("stale",);
   });
@@ -214,9 +239,66 @@ describe("federationRoutes — mesh-deliver", () => {
       id: "route-content-2",
       origin: "https://a.example",
       content: "tampered payload",
-      secret: "other-psk",
+      cipher: pskCipher("other-psk",),
     },);
-    const res = await postDeliver(PSK_CONFIG, envelope,);
+    const res = await postDeliver(PSK_CONFIG, { envelope, },);
     expect(res.status,).toBe(400,);
+  });
+
+  test("reserve → deliver confirms the reservation", async () => {
+    const db = await dbFor();
+    await upsertPeer(db, { origin: "https://route-peer.example", state: "trusted", },);
+    const reserve = await postReserve(PSK_CONFIG, {
+      senderOrigin: "https://route-peer.example",
+      contentHash: "route-hash-1",
+      sizeBytes: 18,
+    },);
+    expect(reserve.status,).toBe(200,);
+    const { reservationId, } = (await reserve.json()) as { reservationId: string };
+    expect(typeof reservationId,).toBe("string",);
+    const envelope = await sealContent({
+      id: "route-content-3",
+      origin: "https://route-peer.example",
+      content: "reserved payload!!",
+      cipher: routeCipher,
+    },);
+    const deliver = await postDeliver(PSK_CONFIG, { envelope, reservationId, },);
+    expect(deliver.status,).toBe(200,);
+    expect(((await deliver.json()) as { verdict: string }).verdict,).toBe("stored",);
+    const row = await db
+      .selectFrom("mesh_reservations",)
+      .select(["state",],)
+      .where("id", "=", reservationId,)
+      .executeTakeFirstOrThrow();
+    expect(row.state,).toBe("confirmed",);
+  });
+
+  test("reserve rejects untrusted peers (403) and exhausted capacity (409)", async () => {
+    const db = await dbFor();
+    await upsertPeer(db, {
+      origin: "https://small-peer.example",
+      state: "trusted",
+      capacityBytes: 5,
+    },);
+    const stranger = await postReserve(PSK_CONFIG, {
+      senderOrigin: "https://stranger.example",
+      contentHash: "x",
+      sizeBytes: 1,
+    },);
+    expect(stranger.status,).toBe(403,);
+    const first = await postReserve(PSK_CONFIG, {
+      senderOrigin: "https://small-peer.example",
+      contentHash: "y",
+      sizeBytes: 3,
+    },);
+    expect(first.status,).toBe(200,);
+    const second = await postReserve(PSK_CONFIG, {
+      senderOrigin: "https://small-peer.example",
+      contentHash: "z",
+      sizeBytes: 3,
+    },);
+    expect(second.status,).toBe(409,);
+    const malformed = await postReserve(PSK_CONFIG, { senderOrigin: "x", },);
+    expect(malformed.status,).toBe(400,);
   });
 });

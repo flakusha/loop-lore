@@ -4,14 +4,18 @@
 // src/federation/sharing.ts — reservation lifecycle + delivery with
 // last-writer-wins conflict handling. Envelope crypto lives in ./envelope.
 //
-// Capacity enforcement hooks into the quota ticket; reservations record
-// intent + expiry, not allowance.
+// Reservations live on the RECEIVING side: the sender requests capacity via
+// `requestReservation` (POST /api/mesh-reserve), pushes the envelope, and the
+// receiver confirms on store. Capacity is per-peer (`capacity_bytes`, NULL =
+// unlimited); dynamic quota negotiation stays a follow-up.
 
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
+import type { DuplicationPolicy, } from "../config/schema";
 import type { DB, } from "../db/schema";
+import type { ContentCipher, } from "./cipher";
 import { type ContentEnvelope, openEnvelope, } from "./envelope";
-import { canonicalOrigin, } from "./peer-fetch";
+import { canonicalOrigin, type PeerPost, } from "./peer-fetch";
 
 /** Reservation states (forward chain with release/expire exits). */
 export const RESERVATION_STATES = [
@@ -33,16 +37,39 @@ const NEXT_RESERVATION: Record<"reserved" | "pushed", ReservationState> = {
 /** Default reservation TTL (push must complete within this window). */
 export const DEFAULT_RESERVATION_TTL_MS = 10 * 60 * 1_000;
 
+/** Open (non-terminal) reservation states holding capacity. */
+const OPEN_RESERVATION_STATES = ["reserved", "pushed",] as const;
+
 /**
- * Reserve a push slot on a known peer. The peer row must exist.
+ * Bytes currently held by open reservations for one peer.
  * @param database
+ * @param peerOrigin Canonical peer origin.
+ */
+export async function outstandingBytes(
+  database: Kysely<DB>,
+  peerOrigin: string,
+): Promise<number> {
+  const row = await database
+    .selectFrom("mesh_reservations",)
+    .select(sql<number>`coalesce(sum(size_bytes), 0)`.as("held",),)
+    .where("peer_origin", "=", peerOrigin,)
+    .where("state", "in", [...OPEN_RESERVATION_STATES,],)
+    .executeTakeFirst();
+  return row?.held ?? 0;
+}
+
+/**
+ * Create an inbound reservation (receiver side). The sender peer must be
+ * trusted, and the push must fit its remaining capacity.
+ * @param database Receiver database handle.
  * @param input
  * @returns Reservation id.
+ * @throws On unknown/untrusted peer or exhausted capacity.
  */
-export async function reserveSlot(
+export async function createInboundReservation(
   database: Kysely<DB>,
   input: {
-    peerOrigin: string;
+    senderOrigin: string;
     contentHash: string;
     sizeBytes: number;
     contentType?: string;
@@ -50,14 +77,21 @@ export async function reserveSlot(
     now?: number;
   },
 ): Promise<string> {
-  const origin = canonicalOrigin(input.peerOrigin,);
-  if (origin === null) { throw new Error(`invalid peer origin: ${input.peerOrigin}`,); }
+  const origin = canonicalOrigin(input.senderOrigin,);
+  if (origin === null) { throw new Error(`invalid sender origin: ${input.senderOrigin}`,); }
   const peer = await database
     .selectFrom("mesh_peers",)
-    .select("origin",)
+    .select(["origin", "state", "capacity_bytes",],)
     .where("origin", "=", origin,)
     .executeTakeFirst();
-  if (!peer) { throw new Error(`unknown peer: ${origin}`,); }
+  if (!peer || peer.state !== "trusted") { throw new Error(`untrusted peer: ${origin}`,); }
+  if (input.sizeBytes <= 0) { throw new Error(`invalid size: ${input.sizeBytes}`,); }
+  if (peer.capacity_bytes !== null) {
+    const held = await outstandingBytes(database, origin,);
+    if (held + input.sizeBytes > peer.capacity_bytes) {
+      throw new Error(`peer capacity exhausted: ${origin}`,);
+    }
+  }
   const now = input.now ?? Date.now();
   const id = crypto.randomUUID();
   await database
@@ -146,7 +180,7 @@ export async function sweepExpiredReservations(
     .selectFrom("mesh_reservations",)
     .select(["id",],)
     .where("expires_at", "<", cutoff,)
-    .where("state", "in", ["reserved", "pushed",],)
+    .where("state", "in", [...OPEN_RESERVATION_STATES,],)
     .execute();
   for (const row of stale) {
     await database
@@ -158,23 +192,59 @@ export async function sweepExpiredReservations(
   return stale.length;
 }
 
+/**
+ * Request capacity on a receiving peer (sender side).
+ * @param post Transport POST.
+ * @param origin Receiver origin.
+ * @param request Reservation request.
+ * @returns Receiver-side reservation id.
+ * @throws When the peer refuses or is unreachable.
+ */
+export async function requestReservation(
+  post: PeerPost,
+  origin: string,
+  request: {
+    senderOrigin: string;
+    contentHash: string;
+    sizeBytes: number;
+    contentType?: string;
+    ttlMs?: number;
+  },
+): Promise<string> {
+  const response = await post(`${origin}/api/mesh-reserve`, {
+    senderOrigin: request.senderOrigin,
+    contentHash: request.contentHash,
+    sizeBytes: request.sizeBytes,
+    contentType: request.contentType ?? "blob",
+    ttlMs: request.ttlMs ?? DEFAULT_RESERVATION_TTL_MS,
+  },);
+  const reservationId = (response.body as { reservationId?: unknown } | null)?.reservationId;
+  if (!response.ok || typeof reservationId !== "string") {
+    throw new Error(`reservation refused by ${origin} (status ${response.status})`,);
+  }
+  return reservationId;
+}
+
 /** Delivery outcome. */
 export type DeliveryVerdict = "stored" | "stale";
 
 /**
  * Receive a pushed envelope: decrypt, verify integrity, and apply
  * last-writer-wins against the deliveries record. Higher clock wins;
- * clock ties break toward the lexicographically smaller hash.
- * @param database
+ * clock ties break toward the lexicographically smaller hash. A stored
+ * delivery confirms its reservation (reserved → pushed → confirmed).
+ * @param database Receiver database handle.
  * @param envelope
- * @param secret
+ * @param cipher
+ * @param opts Optional reservation confirmation.
  */
 export async function receiveDelivery(
   database: Kysely<DB>,
   envelope: ContentEnvelope,
-  secret: string,
+  cipher: ContentCipher,
+  opts: { reservationId?: string } = {},
 ): Promise<DeliveryVerdict> {
-  await openEnvelope(envelope, secret,);
+  await openEnvelope(envelope, cipher,);
   const existing = await database
     .selectFrom("mesh_deliveries",)
     .select(["clock", "content_hash",],)
@@ -204,25 +274,59 @@ export async function receiveDelivery(
       },)
     )
     .execute();
+  if (opts.reservationId !== undefined) {
+    await advanceReservation(database, opts.reservationId, "pushed",);
+    await advanceReservation(database, opts.reservationId, "confirmed",);
+  }
   return "stored";
 }
 
 /**
- * Duplication targets: trusted peers excluding the source origin.
- * Policy is an explicit trusted set today; region/nearest rules are quota-
- * phase follow-ups.
+ * Push an envelope to a receiving peer (sender side).
+ * @param post Transport POST.
+ * @param origin Receiver origin.
+ * @param envelope Sealed envelope.
+ * @param reservationId Receiver-side reservation to confirm.
+ * @returns Delivery verdict.
+ */
+export async function pushEnvelope(
+  post: PeerPost,
+  origin: string,
+  envelope: ContentEnvelope,
+  reservationId?: string,
+): Promise<DeliveryVerdict> {
+  const response = await post(`${origin}/api/mesh-deliver`, { envelope, reservationId, },);
+  const verdict = (response.body as { verdict?: unknown } | null)?.verdict;
+  if (!response.ok || (verdict !== "stored" && verdict !== "stale")) {
+    throw new Error(`delivery refused by ${origin} (status ${response.status})`,);
+  }
+  return verdict;
+}
+
+/**
+ * Duplication targets under the configured policy, excluding one origin.
+ * `trusted` fans out to every trusted peer; `listed` intersects the
+ * configured peers with the trusted set; `none` disables duplication.
+ * Per-world rules are a follow-up (no world/channel policy surface yet).
  * @param database
- * @param except
+ * @param policy
+ * @param except Origin to exclude (usually the push source).
  */
 export async function selectDuplicationTargets(
   database: Kysely<DB>,
+  policy: DuplicationPolicy,
   except?: string,
 ): Promise<string[]> {
+  if (policy.mode === "none") { return []; }
   const rows = await database
     .selectFrom("mesh_peers",)
     .select(["origin",],)
     .where("state", "=", "trusted",)
     .orderBy("origin",)
     .execute();
-  return rows.map((row,) => row.origin).filter((origin,) => origin !== except);
+  const trusted = new Set(rows.map((row,) => row.origin),);
+  const candidates = policy.mode === "listed"
+    ? policy.peers.map((raw,) => canonicalOrigin(raw,))
+    : [...trusted,];
+  return candidates.filter((origin,): origin is string => origin !== null && origin !== except && trusted.has(origin,));
 }
