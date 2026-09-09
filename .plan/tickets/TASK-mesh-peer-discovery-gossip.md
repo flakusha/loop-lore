@@ -44,8 +44,8 @@ other or share liveness.
 - [ ] Tests cover discovery, timeout eviction, and replay rejection.
 - [ ] `bun run check` green.
 
-
 ## Progress 2026-09-09 (federation-mesh-core)
+
 - PeerTable primitive existed unwired (no consumers). Added `src/federation/gossip.ts`:
   GossipService pollOnce over all known peers (per-poll tick seq; stale async
   responses rejected), membership discovery from instance-state `peers` with
@@ -53,7 +53,7 @@ other or share liveness.
   (config peers → trusted; seeds/gossip-learned → pending), per-peer CA-bundle
   fetch (Bun `fetch(tls:{ca})` verified against self-signed probe), per-peer
   failure isolation (one dead peer never aborts the round).
-- `federation.gossip` cron job (* * * * *, skips when federation disabled).
+- `federation.gossip` cron job (`* * * * *`, skips when federation disabled).
 - instance-state advertises `peers: string[]` (origins only, no topology).
 - Tests: `src/federation/gossip.test.ts` (12 tests: verdict, eviction, replay,
   caps, trust passthrough, singleton). 41 pass across gossip + peer-table +
