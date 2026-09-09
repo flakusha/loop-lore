@@ -11,12 +11,6 @@
       "source": ".plan/tickets/TASK-rigged-model-buffer-render.md"
     }
   ],
-  "src/actor-memories/service.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-smart-context-pruning.md"
-    }
-  ],
   "src/actors.md": [
     {
       "kind": "epic",
@@ -4533,12 +4527,6 @@
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
     }
   ],
-  "src/chat/context-pruner.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-smart-context-pruning.md"
-    }
-  ],
   "src/chat/context-stats.ts": [
     {
       "kind": "epic",
@@ -4599,10 +4587,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-cut-memory-promotion.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-context-window-monitor.md"
     },
     {
       "kind": "ticket",
@@ -4703,12 +4687,6 @@
       "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md"
     }
   ],
-  "src/chat/index.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-context-window-monitor.md"
-    }
-  ],
   "src/chat/join-flow.ts": [
     {
       "kind": "ticket",
@@ -4757,12 +4735,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recon-test-coverage.md"
-    }
-  ],
-  "src/chat/message-scorer.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-smart-context-pruning.md"
     }
   ],
   "src/chat/mode-switch.ts": [
@@ -4838,6 +4810,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-smart-context-pruning.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-context-pruning.md"
     }
   ],
@@ -4897,10 +4873,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recon-test-coverage.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-response-length-control.md"
     }
   ],
   "src/chat/service.ts": [
@@ -7901,12 +7873,6 @@
       "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
     }
   ],
-  "src/db/data-migrations/messages/v1_to_v2.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-smart-context-pruning.md"
-    }
-  ],
   "src/db/data-migrations/registry.ts": [
     {
       "kind": "ticket",
@@ -8581,14 +8547,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-response-length-control.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-smart-context-pruning.md"
     }
   ],
   "src/db/migrations/008_moderation.ts": [
@@ -10929,6 +10887,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-quick-regen-button.md"
     }
   ],
   "src/frontend/alpine/chat-actions/command-palette.ts": [
@@ -11270,14 +11232,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-quick-regen-button.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-response-length-control.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-rigged-model-buffer-render.md"
     },
     {
@@ -11345,12 +11299,6 @@
       "source": ".plan/tickets/WIRE-impersonate-command-palette-no-actionpayload-dispatch.md"
     }
   ],
-  "src/frontend/alpine/context-monitor.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-context-window-monitor.md"
-    }
-  ],
   "src/frontend/alpine/context-window.ts": [
     {
       "kind": "epic",
@@ -11375,6 +11323,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-context-preference-per-scope.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-window-monitor.md"
     }
   ],
   "src/frontend/alpine/creation-wizard.test.ts": [
@@ -11791,6 +11743,12 @@
       "source": ".plan/tickets/TASK-professions-frontend.md"
     }
   ],
+  "src/frontend/alpine/pruning.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-smart-context-pruning.md"
+    }
+  ],
   "src/frontend/alpine/qa-mode.ts": [
     {
       "kind": "ticket",
@@ -11881,6 +11839,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-settings-wiring.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-response-length-control.md"
     }
   ],
   "src/frontend/alpine/sidebar.ts": [
@@ -12447,6 +12409,12 @@
       "source": ".plan/tickets/TASK-asset-3d-models.md"
     }
   ],
+  "src/frontend/components/context-window-bar.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-window-monitor.md"
+    }
+  ],
   "src/frontend/components/feature-permission-editor.html": [
     {
       "kind": "ticket",
@@ -12463,10 +12431,28 @@
       "source": ".plan/tickets/TASK-info-bubbles.md"
     }
   ],
+  "src/frontend/components/message-actions.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-quick-regen-button.md"
+    }
+  ],
   "src/frontend/components/music-player.html": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-external-music-linking.md"
+    }
+  ],
+  "src/frontend/components/pruning-settings.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-smart-context-pruning.md"
+    }
+  ],
+  "src/frontend/components/response-length-control.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-response-length-control.md"
     }
   ],
   "src/frontend/creative-studio/context-menu.ts": [
@@ -13914,14 +13900,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-quick-regen-button.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-response-length-control.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-gm-service-story-mode.md"
     }
   ],
@@ -14423,6 +14401,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-code-quality.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-response-length-control.md"
     },
     {
       "kind": "ticket",
@@ -17808,19 +17790,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-context-window-monitor.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-location-explorer.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-quick-regen-button.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-response-length-control.md"
     },
     {
       "kind": "ticket",
@@ -19491,10 +19461,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-message-swipe-replay-branch.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-quick-regen-button.md"
     }
   ],
   "src/routes/chat-search.ts": [
@@ -19622,10 +19588,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-context-window-monitor.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-avatar-message-binding.md"
     },
     {
@@ -19647,10 +19609,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-extract-chat-route-business-logic.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-response-length-control.md"
     },
     {
       "kind": "frontend",
@@ -20632,10 +20590,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-context-window-monitor.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-conversation-branching.md"
     },
     {
@@ -20652,7 +20606,7 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-smart-context-pruning.md"
+      "source": ".plan/tickets/TASK-quick-regen-button.md"
     },
     {
       "kind": "ticket",
@@ -20747,10 +20701,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-flag-side-effect-runs-before-access-check.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-context-window-monitor.md"
     },
     {
       "kind": "ticket",
@@ -21451,10 +21401,6 @@
       "source": ".plan/tickets/TASK-chat-message-search.md"
     },
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-quick-regen-button.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/testing.md"
     }
@@ -21669,6 +21615,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-response-length-control.md"
     },
     {
       "kind": "ticket",
@@ -25741,10 +25691,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-turn-number-double-count.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-smart-context-pruning.md"
     }
   ],
   "src/turning/turn-manager/participants.ts": [
@@ -26419,12 +26365,6 @@
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     }
   ],
-  "src/views/chat-settings.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-response-length-control.md"
-    }
-  ],
   "src/views/chat.html": [
     {
       "kind": "epic",
@@ -26468,10 +26408,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-context-window-monitor.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-conversation-branching.md"
     },
     {
@@ -26493,10 +26429,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-panel.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-quick-regen-button.md"
     },
     {
       "kind": "ticket",
@@ -26531,12 +26463,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-comfyui-plugin.md"
-    }
-  ],
-  "src/views/context-monitor.html": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-context-window-monitor.md"
     }
   ],
   "src/views/gallery.html": [
