@@ -13501,6 +13501,12 @@
       "source": ".plan/tickets/TASK-story-world-state.md"
     }
   ],
+  "src/frontend/tests/vn-fake-dom.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-cover-frontend-vn-pages-new-chat-quests-worlds.md"
+    }
+  ],
   "src/frontend/touch.test.ts": [
     {
       "kind": "ticket",
