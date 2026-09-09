@@ -22,6 +22,12 @@ export interface Connection {
 }
 
 /**
+ * Message-level external-protocol adapters (Matrix/XMPP/IRC bridges) live one
+ * layer up: see `src/integrations/adapter.ts` (`ProtocolAdapter`). This
+ * file owns byte transports only.
+ */
+
+/**
  * Unified protocol handler — all transport adapters implement this.
  *
  * `connect()` establishes the connection.
