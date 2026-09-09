@@ -112,6 +112,20 @@ describe("inbound reservation", () => {
     },);
     expect(typeof id,).toBe("string",);
   });
+
+  test("non-finite sizes are rejected", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://b.example", state: "trusted", },);
+    for (const sizeBytes of [NaN, Infinity, -Infinity, 0, -3,]) {
+      await expect(
+        createInboundReservation(db, {
+          senderOrigin: "https://b.example",
+          contentHash: "a",
+          sizeBytes,
+        },),
+      ).rejects.toThrow("invalid size",);
+    }
+  });
 });
 
 describe("reservation lifecycle", () => {
@@ -206,14 +220,26 @@ describe("delivery", () => {
 });
 
 describe("sender transport", () => {
-  test("requestReservation returns the receiver id; refusal throws", async () => {
+  test("requestReservation returns id plus content key; refusal throws", async () => {
+    const keyed = (async () => ({
+      ok: true,
+      status: 200,
+      body: { reservationId: "r-1", contentKey: "a2V5", },
+    })) as unknown as PeerPost;
+    expect(
+      await requestReservation(keyed, "https://b.example", {
+        senderOrigin: "https://a.example",
+        contentHash: "abc",
+        sizeBytes: 3,
+      },),
+    ).toEqual({ reservationId: "r-1", contentKey: "a2V5", },);
     expect(
       await requestReservation(OK_POST, "https://b.example", {
         senderOrigin: "https://a.example",
         contentHash: "abc",
         sizeBytes: 3,
       },),
-    ).toBe("r-1",);
+    ).toEqual({ reservationId: "r-1", },);
     const refuse: PeerPost = (async () => ({ ok: false, status: 409, body: null, })) as PeerPost;
     await expect(
       requestReservation(refuse, "https://b.example", {
