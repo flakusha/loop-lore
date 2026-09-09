@@ -124,3 +124,7 @@ Key material and primitives come from the encryption foundation epic.
 ## Related Epics
 
 - `epic-auth-channel-provisioning.md` — consumes `ProtocolAdapter` for 2FA challenge delivery and inbound approval; capability flags `auth-challenge`/`auth-approval` must be added to the adapter capability registry (see `matrix-authentication-channels.md` AC3).
+
+## Decision 2026-09-09: ProtocolAdapter is the single seam
+
+(TASK-consolidate-chat-im-adapter-abstraction-above-protocolhandle) `ProtocolAdapter` (`src/integrations/adapter.ts`) is THE message-level contract for all bridges. The social-hub `SocialAdapter` sketch is retired; its unique surface (channels/users, presence, reactions, edit/delete) lives on as optional capability interfaces (`ChannelCapable`, `PresenceCapable`, `ReactionCapable`, `MessageEditCapable`) advertised via `capabilities()` and the `ADAPTER_CAPABILITIES` registry. Bridge work (Matrix, XMPP, IRC, IM, email) implements against this file; transport-level fetch (e.g. federation gossip `PeerFetch`) stays below it, on `ProtocolHandler`.
