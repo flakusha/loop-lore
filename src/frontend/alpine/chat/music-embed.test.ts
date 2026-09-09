@@ -2,21 +2,20 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * @file Tests for the music-embed fallback card XSS hardening helpers.
- *
- * Defense layers under test:
- *   1. `escText` escapes & < > for HTML child text.
- *   2. `escAttr` additionally escapes `"` to `&quot;` for attribute contexts.
- *   3. `safeUrl` enforces an http(s)/mailto scheme allowlist; everything else
- *      is rewritten to a benign `#blocked` anchor.
- *
- * These three helpers are pure functions (no DOM dependency) so the tests
- * run without `document` polyfills.
+ * @file Tests for the music-embed XSS hardening helpers (`escText`, `escAttr`,
+ * `safeUrl`) and the `chatMusicEmbed.renderMusicEmbed` card/sanitizer flow.
  *
  * Regression target: `BUG-frontend-music-embed-fallback-esc-allows-stored-xss-via-attr`.
  */
-import { describe, expect, test, } from "bun:test";
-import { escAttr, escText, safeUrl, } from "./music-embed";
+import { afterEach, describe, expect, test, } from "bun:test";
+import type { MusicLinkMessage, } from "../chat-types/messages";
+import { chatMusicEmbed as chatMusicEmbedState, escAttr, escText, safeUrl, } from "./music-embed";
+
+/** ChatMusicEmbed is the empty `Pick<ChatState, never>` slice; the object
+ * exposes the renderer at runtime — view it through its real shape here. */
+const chatMusicEmbed = chatMusicEmbedState as {
+  renderMusicEmbed(msg: MusicLinkMessage,): string;
+};
 
 describe("escText", () => {
   test("escapes ampersand, less-than, greater-than", () => {
@@ -33,9 +32,7 @@ describe("escText", () => {
   });
 
   test("does not double-escape `&lt;` (already-escaped values stay raw)", () => {
-    // Match browser textContent behavior: rendering treats `&lt;` as plain
-    // text. We do not normalize here; downstream consumers should not feed
-    // pre-escaped values to escText.
+    // Browser textContent renders `&lt;` as plain text; no normalization here.
     expect(escText("&lt;",),).toBe("&amp;lt;",);
   });
 });
@@ -121,5 +118,138 @@ describe("safeUrl", () => {
     expect(safeUrl(`https://x.y/?a"b&c=d"`,),).toBe(
       `https://x.y/?a&quot;b&amp;c=d&quot;`,
     );
+  });
+});
+
+// ── chatMusicEmbed.renderMusicEmbed ─────────────────────────
+
+/** Full MusicLinkMessage with sensible defaults; tests override per case. */
+function musicMsg(overrides: Partial<MusicLinkMessage> = {},): MusicLinkMessage {
+  return {
+    id: "m1",
+    role: "assistant",
+    content: "",
+    created_at: "2026-01-01T00:00:00Z",
+    type: "music_link",
+    musicService: "spotify",
+    url: "https://open.spotify.com/track/1",
+    embedHtml: null,
+    title: "Song",
+    artist: "Artist",
+    thumbnailUrl: null,
+    durationSecs: 180,
+    serviceTrackId: "t1",
+    serviceUrl: "https://open.spotify.com/track/1",
+    isPlaylist: false,
+    trackCount: null,
+    explicit: false,
+    nsfwHidden: false,
+    ...overrides,
+  };
+}
+
+interface SanitizeCall {
+  html: string;
+  config: { ALLOWED_TAGS: string[]; ALLOWED_ATTR: string[] };
+}
+
+/** chat-vendor.ts installs the real sanitizer under this well-known key; tests inject a stub. */
+const domPurifyHost = globalThis as {
+  __DOMPurify?: { sanitize(html: string, config: SanitizeCall["config"],): string };
+};
+
+/** Install a recording DOMPurify stub; returns the calls it captured. */
+function installDomPurify(result = "<iframe></iframe>",): { calls: SanitizeCall[] } {
+  const calls: SanitizeCall[] = [];
+  domPurifyHost.__DOMPurify = {
+    sanitize: (html: string, config: SanitizeCall["config"],) => {
+      calls.push({ html, config, },);
+      return result;
+    },
+  };
+  return { calls, };
+}
+
+afterEach(() => {
+  domPurifyHost.__DOMPurify = undefined;
+},);
+
+describe("chatMusicEmbed.renderMusicEmbed", () => {
+  test("nsfwHidden returns the lock placeholder even when embedHtml exists", () => {
+    const html = chatMusicEmbed.renderMusicEmbed(
+      musicMsg({ nsfwHidden: true, embedHtml: "<iframe src=https://e.com></iframe>", },),
+    );
+    expect(html,).toBe('<span class="music-embed-nsfw">🔒 Explicit content hidden</span>',);
+    expect(html,).not.toContain("iframe src",);
+  });
+
+  test("fallback card renders title — artist link without a thumbnail", () => {
+    const html = chatMusicEmbed.renderMusicEmbed(musicMsg(),);
+    expect(html,).toContain('class="music-embed-card"',);
+    expect(html,).toContain(
+      `href="https://open.spotify.com/track/1" target="_blank" rel="noopener" class="music-embed-link"`,
+    );
+    expect(html,).toContain("Song — Artist",);
+    expect(html,).not.toContain("<img",);
+  });
+
+  test("fallback card includes an escaped thumbnail when thumbnailUrl is set", () => {
+    const html = chatMusicEmbed.renderMusicEmbed(
+      musicMsg({ thumbnailUrl: "https://cdn.example.com/a.jpg", title: `A"B&C`, },),
+    );
+    expect(html,).toContain(
+      `<img src="https://cdn.example.com/a.jpg" alt="A&quot;B&amp;C" class="music-embed-thumb" />`,
+    );
+  });
+
+  test("fallback escapes metadata so a hostile title cannot inject markup", () => {
+    const html = chatMusicEmbed.renderMusicEmbed(
+      musicMsg({ title: `"><script>alert(1)</script>`, artist: "<b>x</b>", },),
+    );
+    // Link text: escText neutralizes tags (& < >); a bare " is inert as text.
+    expect(html,).toContain(`"&gt;&lt;script&gt;alert(1)&lt;/script&gt;`,);
+    expect(html,).not.toContain("<script>",);
+    expect(html,).toContain("&lt;b&gt;x&lt;/b&gt;",);
+  });
+
+  test("hostile title cannot break out of the thumbnail alt attribute", () => {
+    const html = chatMusicEmbed.renderMusicEmbed(
+      musicMsg({ title: `x" onerror="alert(1)`, thumbnailUrl: "https://cdn.example.com/a.jpg", },),
+    );
+    expect(html,).toContain(`alt="x&quot; onerror=&quot;alert(1)"`,);
+    expect(html,).not.toContain(`alt="x" onerror="alert(1)"`,);
+  });
+
+  test("blocked serviceUrl and thumbnailUrl schemes become #blocked anchors", () => {
+    const html = chatMusicEmbed.renderMusicEmbed(
+      musicMsg({ serviceUrl: "javascript:alert(1)", thumbnailUrl: "data:text/html,x", },),
+    );
+    expect(html,).toContain('href="#blocked"',);
+    expect(html,).toContain('src="#blocked"',);
+    expect(html,).not.toContain("javascript:",);
+    expect(html,).not.toContain("data:text/html",);
+  });
+
+  test("embedHtml without a sanitizer fails closed to an error placeholder", () => {
+    const html = chatMusicEmbed.renderMusicEmbed(
+      musicMsg({ embedHtml: `<img src=x onerror="alert(1)">`, },),
+    );
+    expect(html,).toBe(
+      '<span class="music-embed-error">Embed unavailable (sanitizer missing)</span>',
+    );
+    expect(html,).not.toContain("onerror",);
+  });
+
+  test("embedHtml is sanitized through DOMPurify with the iframe allowlist", () => {
+    const { calls, } = installDomPurify("<iframe sanitized></iframe>",);
+    const html = chatMusicEmbed.renderMusicEmbed(
+      musicMsg({ embedHtml: `<iframe src="https://e.com"></iframe>`, },),
+    );
+    expect(html,).toBe("<iframe sanitized></iframe>",);
+    expect(calls.length,).toBe(1,);
+    expect(calls[0]!.html,).toBe(`<iframe src="https://e.com"></iframe>`,);
+    expect(calls[0]!.config.ALLOWED_TAGS,).toEqual(["iframe", "span",],);
+    expect(calls[0]!.config.ALLOWED_ATTR,).toContain("src",);
+    expect(calls[0]!.config.ALLOWED_ATTR,).not.toContain("onerror",);
   });
 });
