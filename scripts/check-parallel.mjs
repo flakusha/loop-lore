@@ -151,33 +151,40 @@ function changedModules(files,) {
   return mods.size > 0 ? [...mods,].sort() : null;
 }
 /**
- * Test paths for the scoped coverage gate: every test under each touched
- * top-level `src/` module. Adjacent-files scoping (see `scopedTestFiles`)
- * stays for the unit gate (fast signal); coverage needs module breadth to
- * meaningfully floor a module.
- * @param files - Changed paths.
- * @returns Existing `src/<mod>` dirs, sorted.
+ * Whether a directory tree contains at least one bun test file. A module
+ * dir can exist without tests (`src/scripts/` holds helpers, no tests);
+ * passing such a dir to `bun test` fails the run ("filters did not match
+ * any test files"), so the coverage gate must skip test-less modules.
+ * @param dir - Absolute directory path.
+ * @returns True when a `*.test.ts` file exists anywhere under `dir`.
  */
-function scopedCoveragePaths(files,) {
-  const mods = changedModules(files,) ?? [];
-  return mods
-    .map((m,) => `src/${m}`)
-    .filter((p,) => existsSync(path.resolve(DIFF_ROOT, p,),));
+function dirHasTests(dir,) {
+  for (const entry of readdirSync(dir, { withFileTypes: true, },)) {
+    const full = path.join(dir, entry.name,);
+    if (entry.isDirectory()) {
+      if (dirHasTests(full,)) { return true; }
+    } else if (entry.isFile() && entry.name.endsWith(".test.ts",)) {
+      return true;
+    }
+  }
+  return false;
 }
-
 /**
  * Test paths for the scoped coverage gate: every test under each touched
  * top-level `src/` module. Adjacent-files scoping (see `scopedTestFiles`)
  * stays for the unit gate (fast signal); coverage needs module breadth to
  * meaningfully floor a module.
  * @param files - Changed paths.
- * @returns Existing `src/<mod>` dirs, sorted.
+ * @returns Existing `src/<mod>` dirs that contain tests, sorted.
  */
 function scopedCoveragePaths(files,) {
   const mods = changedModules(files,) ?? [];
   return mods
     .map((m,) => `src/${m}`)
-    .filter((p,) => existsSync(path.resolve(DIFF_ROOT, p,),));
+    .filter((p,) => {
+      const abs = path.resolve(DIFF_ROOT, p,);
+      return existsSync(abs,) && dirHasTests(abs,);
+    },);
 }
 
 const CHANGED = changedFiles(DIFF_BASE,);
