@@ -19,8 +19,9 @@ import { Elysia, } from "elysia";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
+import { type ContentEnvelope, } from "../federation/envelope";
 import { getGossipOrigins, } from "../federation/gossip";
-import { receiveDelivery, type ContentEnvelope, } from "../federation/sharing";
+import { receiveDelivery, } from "../federation/sharing";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
@@ -128,7 +129,7 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
 
   app.post(
     "/api/mesh-deliver",
-    async ({ body, }) => {
+    async ({ body, },) => {
       const secret = config.federation.meshPsk;
       if (!secret) {
         return jsonError({

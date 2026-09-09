@@ -66,7 +66,7 @@ describe("federation jobs", () => {
     const config = {
       ...configSchema.defaults,
       server: { ...configSchema.defaults.server, host: "localhost", port: 1, },
-      federation: { enabled: true, seeds: [], peers: [], },
+      federation: { enabled: true, seeds: [], peers: [], meshPsk: "", },
     };
     const scheduler = startScheduler({
       database: db,

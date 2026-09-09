@@ -183,7 +183,7 @@ describe("schema-backfill", () => {
     const reservations = await sql<{ name: string }>`SELECT name FROM pragma_table_info('mesh_reservations')`.execute(
       kysely,
     );
-    expect(reservations.rows.map((row,) => row.name,),).toEqual([
+    expect(reservations.rows.map((row,) => row.name),).toEqual([
       "id",
       "peer_origin",
       "content_hash",
@@ -196,7 +196,7 @@ describe("schema-backfill", () => {
     const deliveries = await sql<{ name: string }>`SELECT name FROM pragma_table_info('mesh_deliveries')`.execute(
       kysely,
     );
-    expect(deliveries.rows.map((row,) => row.name,),).toEqual([
+    expect(deliveries.rows.map((row,) => row.name),).toEqual([
       "content_id",
       "origin",
       "content_hash",
@@ -206,7 +206,7 @@ describe("schema-backfill", () => {
     const version = await sql<{ version: number }>`SELECT version FROM schema_version WHERE version = 22`.execute(
       kysely,
     );
-    expect(version.rows.map((row,) => row.version,),).toEqual([22,],);
+    expect(version.rows.map((row,) => row.version),).toEqual([22,],);
 
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });

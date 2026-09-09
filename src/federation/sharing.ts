@@ -1,20 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/federation/sharing.ts — Phase 2: encrypted content envelopes +
-// reservation lifecycle + delivery with last-writer-wins conflict handling.
+// src/federation/sharing.ts — reservation lifecycle + delivery with
+// last-writer-wins conflict handling. Envelope crypto lives in ./envelope.
 //
-// Content crypto reuses the existing `encryptValue` seam (AES-GCM, salted)
-// with an operator-supplied mesh PSK — no new primitives, no plaintext on
-// the wire. Key distribution (per-peer wrapping) is follow-up work tied to
-// the peer signing key store. Capacity enforcement hooks into the quota
-// ticket; reservations record intent + expiry, not allowance.
+// Capacity enforcement hooks into the quota ticket; reservations record
+// intent + expiry, not allowance.
 
-import { createHash, } from "node:crypto";
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
-import { decryptValue, encryptValue, } from "../crypto/byok";
 import type { DB, } from "../db/schema";
+import { type ContentEnvelope, openEnvelope, } from "./envelope";
 import { canonicalOrigin, } from "./peer-fetch";
 
 /** Reservation states (forward chain with release/expire exits). */
@@ -36,74 +32,6 @@ const NEXT_RESERVATION: Record<"reserved" | "pushed", ReservationState> = {
 
 /** Default reservation TTL (push must complete within this window). */
 export const DEFAULT_RESERVATION_TTL_MS = 10 * 60 * 1_000;
-
-/** Wire envelope for one content push. */
-export interface ContentEnvelope {
-  /** Content id (stable across retries/duplicates). */
-  id: string;
-  /** Sending origin. */
-  origin: string;
-  /** Sender wall-clock ms (LWW ordering). */
-  clock: number;
-  /** Content type label. */
-  type: string;
-  /** SHA-256 hex of the plaintext. */
-  hash: string;
-  /** Plaintext byte length. */
-  size: number;
-  /** AES-GCM ciphertext over base64 plaintext. */
-  ciphertext: string;
-}
-
-/**
- * Seal plaintext into a content envelope.
- * @param input
- */
-export async function sealContent(input: {
-  id: string;
-  origin: string;
-  clock?: number;
-  type?: string;
-  content: Uint8Array | string;
-  secret: string;
-},): Promise<ContentEnvelope> {
-  const bytes = typeof input.content === "string"
-    ? new TextEncoder().encode(input.content,)
-    : input.content;
-  const hash = createHash("sha256",).update(bytes,).digest("hex",);
-  const base64 = Buffer.from(bytes,).toString("base64",);
-  return {
-    id: input.id,
-    origin: input.origin,
-    clock: input.clock ?? Date.now(),
-    type: input.type ?? "blob",
-    hash,
-    size: bytes.length,
-    ciphertext: await encryptValue(base64, input.secret,),
-  };
-}
-
-/**
- * Open an envelope: decrypt and verify the plaintext hash.
- * @param envelope
- * @param secret
- * @throws On decrypt failure or hash mismatch.
- */
-export async function openEnvelope(
-  envelope: ContentEnvelope,
-  secret: string,
-): Promise<Uint8Array> {
-  const base64 = await decryptValue(envelope.ciphertext, secret,);
-  const bytes = Buffer.from(base64, "base64",);
-  const hash = createHash("sha256",).update(bytes,).digest("hex",);
-  if (hash !== envelope.hash) {
-    throw new Error(`content hash mismatch for ${envelope.id}`,);
-  }
-  if (bytes.length !== envelope.size) {
-    throw new Error(`content size mismatch for ${envelope.id}`,);
-  }
-  return bytes;
-}
 
 /**
  * Reserve a push slot on a known peer. The peer row must exist.
@@ -267,12 +195,14 @@ export async function receiveDelivery(
       content_hash: envelope.hash,
       clock: envelope.clock,
     },)
-    .onConflict((oc,) => oc.column("content_id",).doUpdateSet({
-      origin: envelope.origin,
-      content_hash: envelope.hash,
-      clock: envelope.clock,
-      received_at: sql`(datetime('now'))`,
-    },),)
+    .onConflict((oc,) =>
+      oc.column("content_id",).doUpdateSet({
+        origin: envelope.origin,
+        content_hash: envelope.hash,
+        clock: envelope.clock,
+        received_at: sql`(datetime('now'))`,
+      },)
+    )
     .execute();
   return "stored";
 }
@@ -294,5 +224,5 @@ export async function selectDuplicationTargets(
     .where("state", "=", "trusted",)
     .orderBy("origin",)
     .execute();
-  return rows.map((row,) => row.origin,).filter((origin,) => origin !== except);
+  return rows.map((row,) => row.origin).filter((origin,) => origin !== except);
 }
