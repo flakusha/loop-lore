@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/**
- * Asset Service — tags (gallery tagging G7). Two scopes: `user` (viewer's
- * own set, keyed by `owner_id`) and `global` (shared, `owner_id` NULL).
- * Users edit own `user` tags; the asset owner curates `global` tags.
- */
+/** Asset Service — tags (gallery tagging G7): per-viewer `user` tags and shared `global` tags. */
 import type { ExpressionBuilder, ExpressionWrapper, Kysely, SqlBool, } from "kysely";
 import { AssetTagScope, AssetTagSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
@@ -127,8 +123,8 @@ async function insertTag(opts: UpsertTagOptions,): Promise<AssetTagRecord> {
 }
 
 /**
- * Add a tag to an asset in the given scope. Deduplicates by normalized tag.
- * Caller enforces ownership (user scope → owner; global scope → asset owner).
+ * Add a tag to an asset in the given scope; null when the normalized tag is
+ * empty. Deduplicates by normalized tag. Caller enforces scope ownership.
  * @param options
  */
 export async function addAssetTag(options: {
@@ -137,11 +133,13 @@ export async function addAssetTag(options: {
   tag: string;
   scope: AssetTagScope;
   ownerId: string | null;
-},): Promise<AssetTagRecord> {
+},): Promise<AssetTagRecord | null> {
+  const tag = normalizeTag(options.tag,);
+  if (tag === "") { return null; }
   return insertTag({
     database: options.database,
     assetId: options.assetId,
-    tag: normalizeTag(options.tag,),
+    tag,
     scope: options.scope,
     ownerId: options.ownerId,
   },);
@@ -174,9 +172,9 @@ export async function removeAssetTag(
 }
 
 /**
- * Rename a tag within a scope. Idempotent: if the target already exists the
- * old row is dropped; otherwise the old row's tag is updated in place so its
- * `id` is stable (item-detail and facet references keep working).
+ * Rename a tag within a scope; null when the pair is identical or the new
+ * tag is empty. When the target exists the old row is dropped; otherwise
+ * the old row's tag is updated in place so its `id` is stable.
  * @param options
  */
 export async function renameAssetTag(options: {
@@ -190,6 +188,7 @@ export async function renameAssetTag(options: {
   const { database, assetId, oldTag, newTag, scope, ownerId, } = options;
   const normalizedNew = normalizeTag(newTag,);
   const normalizedOld = normalizeTag(oldTag,);
+  if (normalizedNew === "") { return null; }
 
   if (normalizedNew === normalizedOld) {
     return null;

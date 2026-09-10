@@ -19,7 +19,6 @@
  *     the `admin.character` override.
  */
 import { Elysia, t, } from "elysia";
-import { getAsset, } from "../../assets/service";
 import {
   dismissProposition,
   proposeTags,
@@ -48,7 +47,6 @@ import {
   forbiddenResponse,
   jsonNoContent,
   jsonResponse,
-  notFoundResponse,
   requireUserId,
 } from "../http-utils";
 import { AssetIdParams, canCurateGlobal, resolveAccessibleAsset, } from "./helpers";
@@ -100,30 +98,25 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
         const auth = ctx as unknown as AuthContext;
         const { id, } = ctx.params;
         const body = ctx.body as typeof AddAssetTagBody.static;
-        const asset = await getAsset(database, id,);
-        if (!asset) { return notFoundResponse("Asset not found",); }
+        const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
+        if (asset instanceof Response) { return asset; }
 
-        if (body.scope === AssetTagScope.Global) {
-          if (!canCurateGlobal(userId, auth.userRole, asset.owner_id,)) {
-            return forbiddenResponse("Only the asset owner can add global tags",);
-          }
-          const tag = await addAssetTag({
-            database,
-            assetId: id,
-            tag: body.tag,
-            scope: AssetTagScope.Global,
-            ownerId: null,
-          },);
-          return jsonResponse({ tag, },);
+        if (
+          body.scope === AssetTagScope.Global &&
+          !canCurateGlobal(userId, auth.userRole, asset.owner_id,)
+        ) {
+          return forbiddenResponse("Only the asset owner can add global tags",);
         }
 
+        const ownerId = body.scope === AssetTagScope.User ? userId : null;
         const tag = await addAssetTag({
           database,
           assetId: id,
           tag: body.tag,
-          scope: AssetTagScope.User,
-          ownerId: userId,
+          scope: body.scope,
+          ownerId,
         },);
+        if (!tag) { return badRequestResponse("tag must not be empty",); }
         return jsonResponse({ tag, },);
       },
       {
@@ -131,6 +124,7 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
         body: AddAssetTagBody,
         response: {
           200: AssetTagResponse,
+          400: ErrorResponse,
           401: ErrorResponse,
           403: ErrorResponse,
           404: ErrorResponse,
@@ -151,8 +145,8 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
         const auth = ctx as unknown as AuthContext;
         const { id, } = ctx.params;
         const body = ctx.body as typeof RemoveAssetTagBody.static;
-        const asset = await getAsset(database, id,);
-        if (!asset) { return notFoundResponse("Asset not found",); }
+        const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
+        if (asset instanceof Response) { return asset; }
 
         const ownerId = body.scope === AssetTagScope.User ? userId : null;
         if (body.scope === AssetTagScope.Global) {
@@ -189,8 +183,8 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
         const auth = ctx as unknown as AuthContext;
         const { id, } = ctx.params;
         const body = ctx.body as typeof RenameAssetTagBody.static;
-        const asset = await getAsset(database, id,);
-        if (!asset) { return notFoundResponse("Asset not found",); }
+        const asset = await resolveAccessibleAsset(database, id, userId, auth.userRole,);
+        if (asset instanceof Response) { return asset; }
 
         const ownerId = body.scope === AssetTagScope.User ? userId : null;
         if (body.scope === AssetTagScope.Global) {
@@ -207,7 +201,7 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
           scope: body.scope,
           ownerId,
         },);
-        if (!tag) { return badRequestResponse("oldTag and newTag must differ",); }
+        if (!tag) { return badRequestResponse("oldTag and newTag must differ and must not be empty",); }
         return jsonResponse({ tag, },);
       },
       {
@@ -287,8 +281,8 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
     .get(
       `${prefix}/tag-autocomplete`,
       async (ctx,) => {
-        const auth = ctx as unknown as AuthContext;
-        const userId = auth.userId;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
         const url = new URL(ctx.request.url,);
         const q = url.searchParams.get("q",) ?? undefined;
         const tags = await tagVocabulary(database, userId, q,);
@@ -297,6 +291,7 @@ export function assetTagRoutes(opts: HandlerOpts, prefix = "/api",): Elysia {
       {
         response: {
           200: TagAutocompleteResponse,
+          401: ErrorResponse,
         },
         detail: {
           summary: "Tag autocomplete vocabulary",
