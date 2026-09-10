@@ -35,7 +35,7 @@ export interface MeshRouteOpts {
  * @param app Elysia app under construction.
  * @param opts Server config + database.
  */
- export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
+export function mountMeshApi(app: Elysia, opts: MeshRouteOpts,): void {
   const { config, } = opts;
   // Receiver-side mesh clock: adopts sender stamps (HLC receive rule) so
   // this instance's future sends order after everything it has seen.
