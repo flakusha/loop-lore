@@ -4,6 +4,7 @@
 import { destroyChoiceCards, } from "../choice-cards";
 import { createLoadingIndicator, } from "../image-preloader";
 import { getVnSettings, } from "../settings";
+import { addToRoster, createRoster, } from "../sprite-stage";
 import {
   handleLocationChanged,
   msgToScene,
@@ -17,6 +18,21 @@ import { state, } from "./state";
 import type { VnMessage, } from "./types";
 
 const navigate: SceneNavigator = { next: nextScene, prev: prevScene, };
+
+/**
+ * Rebuild the per-chat sprite roster from the loaded scenes.
+ * Scenes already carry their cast (msgToScene synthesizes single-speaker
+ * entries), so the roster is the union of every scene cast in order.
+ */
+function syncRosterFromScenes(): void {
+  const roster = createRoster();
+  for (const scene of state.scenes) {
+    for (const member of scene.cast ?? []) {
+      addToRoster(roster, member,);
+    }
+  }
+  state.roster = roster;
+}
 
 /**
  * Initialize the VN scene renderer.
@@ -34,6 +50,7 @@ export function initVnRenderer(
   state.container = containerEl;
   state.settings = getVnSettings(gmConfig,);
   state.scenes = Array.from(messages, (msg,) => msgToScene(msg,),);
+  syncRosterFromScenes();
   state.currentIndex = Math.max(0, state.scenes.length - 1,);
   state.currentChatId = chatId ?? null;
   state.loadingIndicator = createLoadingIndicator(containerEl,);
@@ -71,6 +88,7 @@ export function destroyVnRenderer(): void {
   state.currentIndex = 0;
   state.settings = null;
   state.currentChatId = null;
+  state.roster = null;
 }
 
 /**
@@ -132,7 +150,12 @@ export function getSceneCount(): number {
  * @param message
  */
 export function addScene(message: VnMessage,): void {
-  state.scenes.push(msgToScene(message,),);
+  const scene = msgToScene(message,);
+  state.scenes.push(scene,);
+  if (!state.roster) { state.roster = createRoster(); }
+  for (const member of scene.cast ?? []) {
+    addToRoster(state.roster, member,);
+  }
   state.currentIndex = state.scenes.length - 1;
   void preloadCurrentAndUpcoming();
   renderCurrentScene(true, navigate,);
