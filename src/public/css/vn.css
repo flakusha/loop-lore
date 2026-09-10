@@ -895,3 +895,70 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* ── Sprite Stage (multi-character group scenes) ─────────────── */
+
+.vn-stage {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  min-height: 0;
+}
+
+.vn-layout-split .vn-stage {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.vn-stage-sprite {
+  flex: 1 1 0;
+  max-width: 220px;
+  transition: filter 250ms ease, opacity 250ms ease, transform 250ms ease;
+}
+
+.vn-slot-center {
+  order: 3;
+}
+
+.vn-slot-left {
+  order: 2;
+}
+
+.vn-slot-right {
+  order: 4;
+}
+
+.vn-slot-far-left {
+  order: 1;
+}
+
+.vn-slot-far-right {
+  order: 5;
+}
+
+/* Speaking sprite: full presence with a subtle lift. */
+.vn-speaker-active {
+  filter: none;
+  opacity: 1;
+  transform: scale(1.03);
+}
+
+/* Idle sprites: dimmed but still visible; filter-only so layout never shifts. */
+.vn-speaker-dimmed {
+  filter: brightness(0.55) saturate(0.6);
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-stage-sprite {
+    transition: none;
+  }
+
+  .vn-speaker-active {
+    transform: none;
+  }
+}

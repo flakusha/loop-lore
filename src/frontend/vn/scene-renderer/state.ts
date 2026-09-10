@@ -3,6 +3,7 @@
 
 import type { LoadingIndicator, } from "../image-preloader";
 import type { VnSettings, } from "../settings";
+import type { SpriteRoster, } from "../sprite-stage";
 import type { VnScene, } from "./types";
 
 /**
@@ -19,6 +20,7 @@ export const state: {
   currentChatId: string | null;
   loadingIndicator: LoadingIndicator | null;
   locationChangeHandler: ((e: Event,) => void) | null;
+  roster: SpriteRoster | null;
 } = {
   scenes: [],
   currentIndex: 0,
@@ -27,4 +29,5 @@ export const state: {
   currentChatId: null,
   loadingIndicator: null,
   locationChangeHandler: null,
+  roster: null,
 };

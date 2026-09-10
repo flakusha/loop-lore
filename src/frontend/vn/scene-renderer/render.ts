@@ -13,15 +13,24 @@ import type { VnMessage, VnScene, } from "./types";
  * @param msg
  */
 export function msgToScene(msg: VnMessage,): VnScene {
+  const displayName = msg.name ?? (msg.role === "user" ? "You" : (msg.role === "system" ? "System" : "Character"));
+  const speakerId = msg.speakerId ?? (msg.role === "narration"
+    ? null
+    : (displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-",).replace(/^-+|-+$/g, "",) || msg.role));
   return {
     messageId: msg.id,
     backgroundUrl: msg.background_url,
-    characterName: msg.name ?? (msg.role === "user" ? "You" : (msg.role === "system" ? "System" : "Character")),
+    characterName: displayName,
     characterAvatar: msg.avatar_asset_id,
     text: msg.content,
     thinking: msg.thinking,
     role: msg.role,
     attachments: msg.attachments,
+    cast: msg.cast ?? (speakerId === null
+      ? []
+      : [{ characterId: speakerId, name: displayName, avatarAssetId: msg.avatar_asset_id, },]),
+    speakerId,
+    emotion: msg.emotion,
   };
 }
 

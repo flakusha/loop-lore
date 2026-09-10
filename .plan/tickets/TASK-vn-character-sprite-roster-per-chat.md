@@ -3,7 +3,7 @@
 
 # TASK: VN: character sprite roster per chat
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-09-10) — per-chat roster lives in scene-renderer state, synced on init/addScene, cleared on destroy
 **Priority:** medium
 **Epic:** Avatar Alpha Channel + VN Layering; Visual Novel Mode
 
@@ -13,6 +13,6 @@ Per-chat sprite roster: registry of cast members present in a VN scene, each map
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — `src/frontend/vn/sprite-stage.ts` (roster CRUD, visibility, emotion-variant fallback to base sprite); `scene-renderer/state.ts` holds the per-chat roster; `controller.ts` syncs on init/addScene and clears on destroy; scenes carry `cast`/`speakerId`/`emotion` via `msgToScene` (single-speaker entries synthesized, narration yields empty cast)
+- [x] Tests passing — `sprite-stage.test.ts` (roster CRUD, variant fallback, unknown-id reports) plus `stage.test.ts` and updated `render`/`controller` contract tests; full `bun run check` green at CHECK_JOBS=2
+- [x] Documentation updated — JSDoc on all stage exports; ownership checks on routes not needed (frontend-only, no new routes; asset URLs reuse the existing thumb route)
