@@ -13494,6 +13494,17 @@
     "source": ".plan/tickets/TASK-emergent-narrative-design.md",
     "git_issue": "7bb9e9d"
   },
+  "TASK-EMOJI-COLON-FORMAT-FRONTEND": {
+    "hash": "pending",
+    "extid": "TASK-EMOJI-COLON-FORMAT-FRONTEND",
+    "type": "TASK",
+    "title": "`:...:` emoji shortcode support (frontend)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-emoji-reactions.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-emoji-colon-format-frontend.md"
+  },
   "TASK-EMOTION-AVATAR-MESSAGE-BINDING": {
     "hash": "cbf8ec95",
     "extid": "TASK-EMOTION-AVATAR-MESSAGE-BINDING",
@@ -14617,6 +14628,17 @@
     "source": ".plan/tickets/TASK-gallery-asset-reuse-picker-for-world-location-item-creation.md",
     "git_issue": "7532037"
   },
+  "TASK-GALLERY-DOWNLOAD-REVIEW": {
+    "hash": "pending",
+    "extid": "TASK-GALLERY-DOWNLOAD-REVIEW",
+    "type": "TASK",
+    "title": "Gallery item download + review UI",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-gallery.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gallery-download-review.md"
+  },
   "TASK-GALLERY-EDITOR-STRUCTURED-UI": {
     "hash": "pending",
     "extid": "TASK-GALLERY-EDITOR-STRUCTURED-UI",
@@ -14675,6 +14697,28 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-gallery-review-minors-sweep-pagination-sync-io-formatsize-de.md"
+  },
+  "TASK-GALLERY-SEARCH-FILTER-RAG-FEEDBACK": {
+    "hash": "pending",
+    "extid": "TASK-GALLERY-SEARCH-FILTER-RAG-FEEDBACK",
+    "type": "TASK",
+    "title": "Gallery search/filter + RAG feedback loop",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-gallery.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gallery-search-filter-rag-feedback.md"
+  },
+  "TASK-GALLERY-USER-TAGGING-PROPOSITIONS": {
+    "hash": "pending",
+    "extid": "TASK-GALLERY-USER-TAGGING-PROPOSITIONS",
+    "type": "TASK",
+    "title": "User-side gallery tagging + tag propositions",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-gallery.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
   },
   "TASK-GEMINI-PROVIDER": {
     "hash": "pending",
@@ -15010,6 +15054,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-health-bar.md",
     "git_issue": "330ccdd"
+  },
+  "TASK-HIDDEN-CARRIAGE-TOML-CONTEXT": {
+    "hash": "pending",
+    "extid": "TASK-HIDDEN-CARRIAGE-TOML-CONTEXT",
+    "type": "TASK",
+    "title": "Hidden carriage TOML context block (chat config + injection)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-hidden-carriage-context.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-hidden-carriage-toml-context.md"
   },
   "TASK-HOLD-INBOUND-HTTP-3-UNTIL-BUN-SUPPORTS-WEBSOCKET-OVER-H3": {
     "hash": "438905f",
@@ -16538,6 +16593,17 @@
     "source": ".plan/tickets/TASK-message-quick-emojis-frontend.md",
     "git_issue": "cb9cc57"
   },
+  "TASK-MESSAGE-REACTIONS-IN-OUT-CONTEXT": {
+    "hash": "pending",
+    "extid": "TASK-MESSAGE-REACTIONS-IN-OUT-CONTEXT",
+    "type": "TASK",
+    "title": "In-context / out-of-context message reactions",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-frontend-emoji-reactions.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-reactions-in-out-context.md"
+  },
   "TASK-MESSAGE-SEARCH-CANNOT-INDEX-COMPRESSED-OR-ENCRYPTED-CONTENT": {
     "hash": "c0020da",
     "git_issue": "c0020da",
@@ -16800,6 +16866,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-model-comparison-reactions.md",
     "git_issue": "2bd26a0"
+  },
+  "TASK-MODERATION-ACTIONS-FRONTEND": {
+    "hash": "pending",
+    "extid": "TASK-MODERATION-ACTIONS-FRONTEND",
+    "type": "TASK",
+    "title": "Invite/block/mute/ban/kick actions (frontend)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-world-chat-channels-invites.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-moderation-actions-frontend.md"
   },
   "TASK-MODERATION-PRIVACY-FIRST-FOUNDATION": {
     "hash": "d0b9bb7",
@@ -18781,6 +18858,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-quest-system.md"
   },
+  "TASK-QUEST-TRACKING-NOTES-SHADOW": {
+    "hash": "pending",
+    "extid": "TASK-QUEST-TRACKING-NOTES-SHADOW",
+    "type": "TASK",
+    "title": "Quest tracking, notes + shadow notes (frontend reuse)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-quests-encounters.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-quest-tracking-notes-shadow.md"
+  },
   "TASK-QUESTS-ENCOUNTERS": {
     "hash": "b02141d",
     "extid": "TASK-QUESTS-ENCOUNTERS",
@@ -20548,6 +20636,17 @@
     "source": ".plan/tickets/TASK-scenario-system-authoring.md",
     "git_issue": "cbb7cd3"
   },
+  "TASK-SCENE-CHAT-TRANSITION-CONTEXT": {
+    "hash": "pending",
+    "extid": "TASK-SCENE-CHAT-TRANSITION-CONTEXT",
+    "type": "TASK",
+    "title": "Scene + chat/group transition with optional context inclusion",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-chat-transfer-location.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-scene-chat-transition-context.md"
+  },
   "TASK-SCHEMA": {
     "hash": "a4f6353",
     "extid": "TASK-SCHEMA",
@@ -20863,6 +20962,17 @@
     "epic": "epic-skills-professions-config",
     "tags": [],
     "source": ".plan/tickets/TASK-skills-routes.md"
+  },
+  "TASK-SLASH-COMMANDS-CHAT-GROUP-ASSISTANT": {
+    "hash": "pending",
+    "extid": "TASK-SLASH-COMMANDS-CHAT-GROUP-ASSISTANT",
+    "type": "TASK",
+    "title": "`/...` slash commands for chat, group chat, assistant continuation",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-frontend-chat-commands.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-slash-commands-chat-group-assistant.md"
   },
   "TASK-SLOT-REPLACE-TRANSACTIONAL-REBIND-SEMANTICS": {
     "hash": "f2f155d",
@@ -21218,6 +21328,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-story-world-state.md",
     "git_issue": "4ffae25"
+  },
+  "TASK-STRUCTURED-LLM-OUTPUT-HEALING-UTILS": {
+    "hash": "pending",
+    "extid": "TASK-STRUCTURED-LLM-OUTPUT-HEALING-UTILS",
+    "type": "TASK",
+    "title": "Structured LLM output utils — heal, revalidate, size-check, approve/cancel",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-hidden-carriage-context.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-structured-llm-output-healing-utils.md"
   },
   "TASK-SVG-UPLOAD-LEADS-TO-STORED-XSS": {
     "hash": "962618b",
