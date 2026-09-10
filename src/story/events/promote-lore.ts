@@ -20,7 +20,7 @@ import type { DB, } from "../../db/schema";
 import { safeJsonStringify, } from "../../utils";
 
 /** Known subject kinds accepted at promotion time (docs/spec/lore.md §3.2). */
-const KNOWN_SUBJECT_KINDS = new Set([
+export const KNOWN_SUBJECT_KINDS = new Set([
   "world",
   "location",
   "profession",
@@ -35,7 +35,7 @@ const KNOWN_SUBJECT_KINDS = new Set([
  * already-parsed object (events carry objects, not JSON strings).
  * @param value
  */
-function normalizeAudienceScope(value: unknown,): LoreScope | null {
+export function normalizeAudienceScope(value: unknown,): LoreScope | null {
   if (!value || typeof value !== "object") { return null; }
   const scope = value as Record<string, unknown>;
 
