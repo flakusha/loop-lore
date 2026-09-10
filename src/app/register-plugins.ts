@@ -15,6 +15,7 @@ import type { Db, } from "../db";
 import { generationRoutes, } from "../generation/controller";
 import { loraRoutes, } from "../generation/lora/routes";
 import { imageEditRoutes, } from "../image-edit/routes";
+import { localInferenceRoutes, } from "../inference/routes";
 import { personaRoutes, } from "../personas/controller";
 import { activityRoutes, } from "../routes/activity";
 import { activityStreamRoutes, } from "../routes/activity-stream";
@@ -198,6 +199,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(personaRoutes(handleOpts,),);
   app.use(generationRoutes(handleOpts,),);
   app.use(loraRoutes({ config, },),);
+  app.use(localInferenceRoutes(),);
   app.use(ageGateRoutes(handleOpts,),);
   app.use(nsfwRoutes(handleOpts,),);
   app.use(nsfwModerationRoutes(handleOpts,),);
