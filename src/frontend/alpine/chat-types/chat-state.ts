@@ -12,6 +12,7 @@ import type { ChatMovementState, } from "./movement-state";
 import type { ChatNpcState, } from "./npc-state";
 import type { ChatParticipantsState, } from "./participants-state";
 import type { ChatPinsState, } from "./pins-state";
+import type { ChatPromptImproveState, } from "./prompt-improve-state";
 import type { ChatRpgState, } from "./rpg-state";
 import type { ChatSideChannelsState, } from "./side-channels-state";
 import type { ChatWizardState, } from "./wizard-state";
@@ -32,5 +33,6 @@ export interface ChatState
     ChatArchiveState,
     ChatMovementState,
     ChatNpcState,
-    ChatWizardState
+    ChatWizardState,
+    ChatPromptImproveState
 {}

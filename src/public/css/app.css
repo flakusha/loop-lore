@@ -3505,3 +3505,54 @@ html {
     opacity: 0;
   }
 }
+
+/* ============================================================
+   PROMPT IMPROVE (epic-prompt-improvement)
+   ============================================================ */
+
+.prompt-improve {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.prompt-improve .btn {
+  padding: var(--space-2);
+  line-height: 1;
+  font-size: 14px;
+}
+
+.prompt-improve-levels {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  z-index: var(--z-modal);
+  min-width: 200px;
+  background: var(--color-surface-1, #1a1a2e);
+  border: 1px solid var(--border-default, #333);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-1);
+  box-shadow: 0 -4px 16px rgb(0 0 0 / 30%);
+  display: flex;
+  flex-direction: column;
+}
+
+.prompt-improve-level {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  background: none;
+  color: var(--text-secondary, #ccc);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+}
+
+.prompt-improve-level:hover {
+  background: var(--bg-tertiary, #262636);
+  color: var(--text-primary, #eee);
+}
