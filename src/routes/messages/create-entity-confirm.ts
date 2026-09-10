@@ -17,9 +17,10 @@ import type { EntityKind, } from "../../assistant/prompt/templates/entity-genera
 import {
   normalizeEntity,
   validateEntitySchema,
+  validateRawLoreEntries,
 } from "../../assistant/quality/entity-creation";
 import { checkChatAccess, } from "../../chat/service";
-import { ChatIdParams, ErrorResponse, } from "../../validation/schemas";
+import { ChatIdParams, ErrorResponse, LoreEntrySchema, } from "../../validation/schemas";
 import { jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
 import { requireWorldOwner, } from "../worlds/access";
 import { serviceErrorToResponse, } from "./helpers";
@@ -72,6 +73,16 @@ export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
           return jsonResponse({ error: "Entity data missing a name.", }, 400,);
         }
 
+        // Pre-normalize validation of raw lore entries — catches invalid
+        // subjects, incomplete selectors, and invalid positions before
+        // normalizeLoreEntries silently strips/clamps them.
+        if (Array.isArray(body.data?.lore,)) {
+          const rawLoreErrors = validateRawLoreEntries(body.data.lore,);
+          if (rawLoreErrors.length > 0) {
+            return jsonResponse({ error: `Invalid lore entries: ${rawLoreErrors.join("; ",)}`, }, 422,);
+          }
+        }
+
         // Re-validate the draft server-side before persisting.
         const kind = body.kind as EntityKind;
         const entity = normalizeEntity(body.data,);
@@ -97,7 +108,15 @@ export function createEntityConfirmRoutes(opts: HandlerOpts, prefix = "/api",) {
         params: ChatIdParams,
         body: t.Object({
           kind: t.String(),
-          data: t.Object({ name: t.String(), }, { additionalProperties: true, },),
+          data: t.Object({
+            name: t.String(),
+            lore: t.Optional(
+              t.Union([
+                t.String(),
+                t.Array(LoreEntrySchema, { additionalProperties: false, },),
+              ],),
+            ),
+          }, { additionalProperties: true, },),
           description: t.Optional(t.String(),),
           worldId: t.Optional(t.Union([t.String(), t.Null(),],),),
         },),
