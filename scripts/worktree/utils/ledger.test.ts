@@ -204,7 +204,13 @@ describe("appendCommitOutcome", () => {
   it("writes a commit record with short SHA and subject", () => {
     const dir = makeTreeDir();
     try {
-      appendCommitOutcome(dir, "agent-commit", "my-branch", "abc1234567890", "fix(worktree): handle empty stdin\n\nBody here",);
+      appendCommitOutcome(
+        dir,
+        "agent-commit",
+        "my-branch",
+        "abc1234567890",
+        "fix(worktree): handle empty stdin\n\nBody here",
+      );
       const records = readLedger(dir, 10,);
       expect(records.length,).toBe(1,);
       expect(records[0].cmd,).toBe("agent-commit",);
