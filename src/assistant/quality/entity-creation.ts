@@ -63,13 +63,78 @@ const REQUIRED_FIELDS: Record<EntityKind, string[]> = {
   world: ["name", "description",],
   item: ["name", "description",],
 };
-/*** Outcome of a single gate. */
+
+/**
+ * Validate raw LLM lore entries BEFORE normalization.
+ *
+ * This is the pre-normalize gate: it inspects the raw `unknown[]` output from the
+ * LLM and rejects entries with invalid subjects, incomplete selectors, or invalid
+ * positions — issues that {@link normalizeLoreEntries} would otherwise silently
+ * strip. Call this before {@link normalizeEntity} to ensure end-to-end rejection
+ * of malformed lore rather than silent acceptance.
+ * @param raw
+ * @returns Array of human-readable error strings (empty when all valid).
+ */
+export function validateRawLoreEntries(raw: unknown[],): string[] {
+  const errors: string[] = [];
+  for (let i = 0; i < raw.length; i++) {
+    const entry = raw[i];
+    if (!entry || typeof entry !== "object") {
+      errors.push(`lore[${i}] is not a valid object`,);
+      continue;
+    }
+    const e = entry as Record<string, unknown>;
+
+    if (typeof e.name !== "string" || e.name.trim() === "") {
+      errors.push(`lore[${i}].name is required`,);
+    }
+    if (typeof e.content !== "string" || e.content.trim() === "") {
+      errors.push(`lore[${i}].content is required`,);
+    }
+
+    if (e.keys !== undefined) {
+      if (!Array.isArray(e.keys,)) {
+        errors.push(`lore[${i}].keys must be an array`,);
+      } else {
+        if (e.keys.length > MAX_KEYS) {
+          errors.push(`lore[${i}].keys exceeds ${MAX_KEYS} entries`,);
+        }
+        for (let j = 0; j < e.keys.length; j++) {
+          if (typeof e.keys![j] !== "string" || e.keys![j]!.trim().length > MAX_KEY_LENGTH) {
+            errors.push(`lore[${i}].keys[${j}] must be a string of at most ${MAX_KEY_LENGTH} characters`,);
+          }
+        }
+      }
+    }
+
+    if (e.subject !== undefined && e.subject !== null) {
+      const scope = normalizeAudienceScope({ subject: e.subject, },);
+      if (!scope || !scope.subject) {
+        errors.push(`lore[${i}].subject is invalid or has incomplete selectors`,);
+      }
+    }
+
+    if (e.position !== undefined && typeof e.position !== "string") {
+      errors.push(`lore[${i}].position must be a string`,);
+    }
+    if (typeof e.position === "string" && !isValidLorePosition(e.position,)) {
+      errors.push(`lore[${i}].position is not a valid LorePosition`,);
+    }
+  }
+  return errors;
+}
+
 /**
  * Normalize raw LLM lore entries into typed {@link GeneratedEntityLoreEntry[]}.
  *
  * Clamps `keys` to a maximum of 5 entries, each no longer than 100 characters.
  * Validates `subject` via {@link normalizeAudienceScope}. Clamps boolean flags
  * and sanitizes numeric fields to their valid ranges.
+ *
+ * NOTE: This function performs clamping for storage safety, not validation.
+ * Validation of raw input (subject kinds, selectors, position, key count/length)
+ * must be performed by {@link validateRawLoreEntries} BEFORE normalization —
+ * `normalizeLoreEntries` silently strips anything it can't normalize.
  * @param raw
  */
 export function normalizeLoreEntries(raw: unknown[],): GeneratedEntityLoreEntry[] {
@@ -127,9 +192,15 @@ export function normalizeLoreEntries(raw: unknown[],): GeneratedEntityLoreEntry[
 }
 
 /**
- * Validate normalized lore entries. Returns a list of human-readable errors
- * (empty when all entries are valid).
+ * Validate normalized lore entries (post-normalization defense-in-depth).
+ *
+ * Checks name/content presence, key count/length, subject kind membership,
+ * and position validity on already-normalized entries. Since
+ * {@link normalizeLoreEntries} clamps keys and strips invalid subjects/positions,
+ * these checks are primarily effective on hand-built entries — for raw LLM
+ * output, use {@link validateRawLoreEntries} which runs before clamping.
  * @param lore
+ * @returns string[] of error messages (empty when all valid).
  */
 export function validateLoreEntries(lore: GeneratedEntityLoreEntry[],): string[] {
   const errors: string[] = [];
@@ -151,7 +222,7 @@ export function validateLoreEntries(lore: GeneratedEntityLoreEntry[],): string[]
         }
       }
     }
-    if (entry.subject && entry.subject.kind !== undefined && !KNOWN_SUBJECT_KINDS.has(entry.subject.kind,)) {
+    if (entry.subject && entry.subject.kind !== undefined && !(entry.subject.kind in KNOWN_SUBJECT_KINDS)) {
       errors.push(`lore[${i}].subject.kind is not a known subject kind`,);
     }
     if (entry.position !== undefined && !isValidLorePosition(entry.position,)) {
@@ -189,14 +260,14 @@ function isValidLorePosition(value: string,): boolean {
   return Object.values(LorePosition,).includes(value as LorePosition,);
 }
 
-/** */
+/** Outcome of a single gate. */
 export interface GateResult {
   ok: boolean;
   /** When not ok, a human-readable reason (used to reject or warn). */
   message?: string;
 }
 
-/** */
+/** Aggregated quality report from {@link runQualityGates}. */
 export interface QualityReport {
   /** Schema gate — hard reject when false. */
   schema: GateResult;
@@ -336,9 +407,8 @@ export async function checkDuplicate(
 /**
  * Lightweight consistency check against the active world's lore/description.
  *
- * Flags when the generated description contains a direct self-contradiction of
- * the world name, or is empty where the world context is present. This is a
- * best-effort heuristic; it only ever produces warnings, never a reject.
+ * Flags when the generated description is empty where the world context is present.
+ * This is a best-effort heuristic; it only ever produces warnings, never a reject.
  * @param kind
  * @param entity
  * @param worldContext

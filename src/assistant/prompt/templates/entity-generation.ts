@@ -9,7 +9,11 @@
  * config-overridable via {@link resolveEntityGenerationPrompt}.
  */
 
+// Value import — ENTITY_TEMPLATES is used lazily inside resolveEntityGenerationPrompt,
+// avoiding a circular-runtime dependency (entity-templates.ts only imports a type).
 import type { Config, } from "../../../config/schema";
+import { safeJsonStringify, } from "../../../utils";
+import { ENTITY_TEMPLATES, } from "./entity-templates";
 
 /** Entity kinds the `/create` command can generate. */
 export type EntityKind = "character" | "location" | "world" | "item";
@@ -30,15 +34,18 @@ export const VALID_ENTITY_TOKENS = Object.keys(ENTITY_KIND_ALIASES,);
 /** Prompt body building a canonical entity shape from a description. */
 type EntityPrompt = (description: string,) => string;
 
+const LORE_SCHEMA =
+  `lore (array of lore entries, optional) — each entry: name (string, required), content (string, required), keys (array of strings, max 5), subject (object with kind and selectors), requires_presence (boolean), constant (boolean), selective (boolean), position ("before_char"|"after_char"|"in_char"), insertion_order (integer), priority (integer), cooldown_seconds (integer). When selective is true, keys must be non-empty for keyword matching to activate.`;
+
 const DEFAULT_PROMPTS: Record<EntityKind, EntityPrompt> = {
   character: (description,) =>
-    `Generate a character profile from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), personality (string), scenario (string, 1 sentence). Description: ${description}`,
+    `Generate a character profile from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), personality (string), scenario (string, 1 sentence), ${LORE_SCHEMA} Description: ${description}`,
   location: (description,) =>
-    `Generate a location from this description. Return JSON with: name (string), description (string, 1-2 paragraphs). Description: ${description}`,
+    `Generate a location from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), ${LORE_SCHEMA} Description: ${description}`,
   world: (description,) =>
-    `Generate a world setting from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), lore (string, 1 paragraph). Description: ${description}`,
+    `Generate a world setting from this description. Return JSON with: name (string), description (string, 1-2 paragraphs), ${LORE_SCHEMA} Description: ${description}`,
   item: (description,) =>
-    `Generate an item from this description. Return JSON with: name (string), description (string, 1 paragraph). Description: ${description}`,
+    `Generate an item from this description. Return JSON with: name (string), description (string, 1 paragraph), ${LORE_SCHEMA} Description: ${description}`,
 };
 
 /**
@@ -48,6 +55,9 @@ const DEFAULT_PROMPTS: Record<EntityKind, EntityPrompt> = {
  * present, otherwise the built-in default. The override must be a full prompt
  * string containing a `{description}` placeholder; if it lacks the placeholder
  * it is appended automatically so callers can rely on substitution.
+ *
+ * When using the built-in default, the entity template (schema + example) from
+ * {@link ENTITY_TEMPLATES} is appended so the LLM sees the full field guidance.
  * @param config - Active resolved config (may be undefined in tests)
  * @param kind - Canonical entity kind
  * @param description - User-supplied description to embed
@@ -59,11 +69,15 @@ export function resolveEntityGenerationPrompt(
   description: string,
 ): string {
   const override = config?.templates?.llm?.entityGeneration?.[kind];
-  const template = override ?? DEFAULT_PROMPTS[kind](description,);
   if (override) {
-    return template.includes("{description}",)
-      ? template.replace("{description}", description,)
-      : `${template} Description: ${description}`;
+    return override.includes("{description}",)
+      ? override.replace("{description}", description,)
+      : `${override} Description: ${description}`;
   }
-  return template;
+  const template = DEFAULT_PROMPTS[kind](description,);
+  const entityTemplate = ENTITY_TEMPLATES[kind];
+  const exampleResult = safeJsonStringify(entityTemplate.example, 2,);
+  return `${template}\n\nFollow this schema and use the example as a model:\nSchema: ${entityTemplate.schema}\nExample: ${
+    exampleResult.ok ? exampleResult.value : "{}"
+  }`;
 }
