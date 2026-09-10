@@ -70,6 +70,50 @@ describe("/create command — preview flow", () => {
     expect(lastReq?.model,).toBe("stub-model",);
   });
 
+  it("returns create-entity-preview with structured lore entries in preview", async () => {
+    const { db, } = await createTestDb();
+    stubBody = JSON.stringify({
+      name: "The Ancient One",
+      description: "An old mage",
+      lore: [
+        {
+          name: "First Knowledge",
+          content: "The first spell was fire.",
+          keys: ["fire", "spell",],
+          subject: { kind: "race", race: "human", },
+          constant: false,
+          selective: true,
+          position: "before_char",
+        },
+      ],
+    },);
+
+    const result: CommandResult = await runCreateGeneration(
+      ["char", "an ancient mage",],
+      {
+        chatId: "c1",
+        activeChat: { id: "c1", worldId: undefined, },
+        db,
+        config: makeConfig(),
+        userId: "u1",
+      },
+      stubComplete,
+      "stub-model",
+    );
+
+    expect(result.handled,).toBe(true,);
+    expect(result.action,).toBe("create-entity-preview",);
+    const payload = result.actionPayload as {
+      kind: string;
+      data: { name: string; lore: unknown[] };
+    };
+    expect(payload.kind,).toBe("character",);
+    expect(payload.data.name,).toBe("The Ancient One",);
+    expect(Array.isArray(payload.data.lore,),).toBe(true,);
+    const loreArr = payload.data.lore as Array<{ name: string }>;
+    expect(loreArr[0]!.name,).toBe("First Knowledge",);
+    expect(result.systemMessage,).toContain("Lore entries:",);
+  });
   it("rejects schema-invalid generation without inserting", async () => {
     const { db, } = await createTestDb();
     stubBody = JSON.stringify({ name: "NoDesc", },);

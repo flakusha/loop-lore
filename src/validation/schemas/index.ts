@@ -29,6 +29,7 @@ export * from "./blog";
 export * from "./character-systems";
 export * from "./character-relations";
 export * from "./story-items";
+export * from "./lore";
 export * from "./world-state";
 export * from "./world-setup";
 export * from "./api-keys";
