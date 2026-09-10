@@ -9,26 +9,23 @@ import { checkChatAccess, updateMessageVisibility, } from "../../chat/service";
 import type { ContentEncoding, } from "../../db/enums";
 import { parseInitiativeFlag, } from "../../group-chat/mention-parser";
 import { containsProfanity, filter as filterProfanity, } from "../../profanity/service";
-import { safeJsonStringify, uid, } from "../../utils";
+import { uid, } from "../../utils";
 import { ChatIdParams, ErrorResponse, MessageCreateBody, } from "../../validation/schemas";
 import { badRequestResponse, jsonCreated, jsonResponse, requireUserId, } from "../http-utils";
 import type { HttpStatusCode, } from "../http-utils";
-import { AttachmentOwnershipError, } from "./attachment-ownership";
 import { dispatchCommand, } from "./command";
 import { createEntityConfirmRoutes, } from "./create-entity-confirm";
+import { attachAttachmentsOrForbidden, enforceInjectionGate, } from "./guards";
 import { handleSceneTransitions, } from "./handle-scene-transitions";
 import { serviceErrorToResponse, } from "./helpers";
 import { persistInitiative, } from "./initiative";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
 import { ParentMessageNotFoundError, ParentMessageNotInChatError, } from "./parent-message-errors";
-import { attachMessageAttachments, persistMentions, prepareContentStorage, } from "./post";
+import { persistMentions, prepareContentStorage, } from "./post";
 import { maybeAutoReply, } from "./reply";
 import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
 import { autoRenameChat, } from "./transitions";
 import type { HandlerOpts, } from "./types";
-
-// SPDX-License-Identifier: LGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
  * @param opts
@@ -70,6 +67,18 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         // Lightweight flag/warn — does not suppress the message, just logs
         // when user-submitted content exceeds their max rating.
         await flagNsfwUserMessage(database, actorId, chatId, effectiveBody.content,);
+
+        // ── Two-step prompt/message injection validation ─────────────
+        // Opt-in via hooks.enableModerationHooks; a blocked verdict here
+        // returns 403 before any message row is written.
+        const injectionRejection = await enforceInjectionGate(
+          config,
+          database,
+          effectiveBody.content,
+          actorId,
+          chatId,
+        );
+        if (injectionRejection) { return injectionRejection; }
 
         const { isInitiative, cleanMessage, } = parseInitiativeFlag(filteredContent,);
         const effectiveContent = isInitiative ? cleanMessage : filteredContent;
@@ -172,18 +181,8 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           }
         }
         if (attachments && attachments.length > 0) {
-          try {
-            await attachMessageAttachments(database, id, attachments, actorId,);
-          } catch (err) {
-            if (err instanceof AttachmentOwnershipError) {
-              const payload = safeJsonStringify({ error: "forbidden", message: err.message, },);
-              return new Response(payload.ok ? payload.value : "{}", {
-                status: 403 as HttpStatusCode,
-                headers: { "Content-Type": "application/json", },
-              },);
-            }
-            throw err;
-          }
+          const attachmentRejection = await attachAttachmentsOrForbidden(database, id, attachments, actorId,);
+          if (attachmentRejection) { return attachmentRejection; }
         }
 
         // ── Persist initiative claim ────────────────────────────────
