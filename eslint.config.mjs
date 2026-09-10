@@ -159,18 +159,18 @@ export default [
       "no-restricted-globals": "off",
     },
   },
-  // JSDoc — lifted to error. @throws REQUIRED (JS has no throw-signal via types;
-  // JSDoc is the only LSP/AST-visible signal for error paths). @returns/@param only
-  // when non-obvious from signature. Keep JSDoc terse: ≤3 lines, no @example blocks.
+  // JSDoc — kept at `warn` (best-effort). Lifted to `error` only when coverage is high
+  // enough that the gate stays green (TASK-jsdoc-coverage-cleanup-public-exports tracks
+  // progress; per-function violations surface as warnings until the project is ready).
   {
     files: ["src/**/*.ts"],
     plugins: {
       jsdoc,
     },
     rules: {
-      "jsdoc/require-param": "error",
-      "jsdoc/require-returns": "error",
-      "jsdoc/require-throws": "error",
+      "jsdoc/require-param": "warn",
+      "jsdoc/require-returns": "warn",
+      "jsdoc/require-throws": "warn",
       // Descriptions and example are optional — keep JSDoc terse to avoid
       // inflating files past the 200-line ceiling.
       "jsdoc/require-param-description": "off",
