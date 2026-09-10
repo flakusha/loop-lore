@@ -80,7 +80,11 @@ export async function resolveWorldOwner(
   return null;
 }
 
-/** Adapter: bind `database` and `worldId` into a (userId) => Promise<Response | null>. */
+/**
+ * Adapter: bind `database` and `worldId` into a (userId) => Promise<Response | null>.
+ * @param db
+ * @param worldId
+ */
 function worldOwnerCheck(db: Kysely<DB>, worldId: string,): (userId: string,) => Promise<Response | null> {
   return (userId,) => resolveWorldOwner(db, worldId, userId,);
 }

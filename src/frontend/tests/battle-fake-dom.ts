@@ -136,12 +136,21 @@ export function makeEl(tag = "div",): FakeEl {
   return el;
 }
 
-/** Invoke the listeners registered for `type` with a synthetic event. */
+/**
+ * Invoke the listeners registered for `type` with a synthetic event.
+ * @param el
+ * @param type
+ * @param event
+ */
 export function fire(el: FakeEl, type: string, event: Record<string, unknown> = {},): void {
   for (const fn of [...(el.listeners[type] ?? []),]) { fn(event,); }
 }
 
-/** Send a keydown to `el`; returns whether the handler preventDefault()ed. */
+/**
+ * Send a keydown to `el`; returns whether the handler preventDefault()ed.
+ * @param el
+ * @param key
+ */
 export function pressKey(el: FakeEl, key: string,): boolean {
   let prevented = false;
   fire(el, "keydown", {
@@ -153,7 +162,11 @@ export function pressKey(el: FakeEl, key: string,): boolean {
   return prevented;
 }
 
-/** Depth-first `[data-name='value']` selector match over a fake subtree. */
+/**
+ * Depth-first `[data-name='value']` selector match over a fake subtree.
+ * @param root
+ * @param selector
+ */
 export function query(root: FakeEl, selector: string,): FakeEl | null {
   const m = /^\[data-([a-z-]+)=["']([^"']+)["']\]$/.exec(selector.trim(),);
   if (!m) { return null; }
@@ -190,7 +203,10 @@ export function installBattleDom(): () => void {
 
 // ── Battle-panel mounting helpers ────────────────────────────
 
-/** Standard two-combatant battle view, overridable per test. */
+/**
+ * Standard two-combatant battle view, overridable per test.
+ * @param overrides
+ */
 export function view(overrides: Partial<BattleView> = {},): BattleView {
   return {
     id: "b1",
@@ -211,7 +227,10 @@ export interface Mounted {
   sent: string[];
 }
 
-/** Mount the panel on a fresh container and optionally render a battle. */
+/**
+ * Mount the panel on a fresh container and optionally render a battle.
+ * @param active
+ */
 export function mountBattle(active: BattleView | null,): Mounted {
   const container = makeEl("div",);
   const sent: string[] = [];
@@ -225,21 +244,32 @@ export function mountBattle(active: BattleView | null,): Mounted {
   return { container, sent, };
 }
 
-/** Find a combatant tile by its data-battle-id. */
+/**
+ * Find a combatant tile by its data-battle-id.
+ * @param container
+ * @param id
+ */
 export function tile(container: FakeEl, id: string,): FakeEl {
   const el = query(container, `[data-battle-id="${id}"]`,);
   if (!el) { throw new Error(`missing combatant tile: ${id}`,); }
   return el;
 }
 
-/** Find an action button by its data-battle-action kind. */
+/**
+ * Find an action button by its data-battle-action kind.
+ * @param container
+ * @param kind
+ */
 export function actionButton(container: FakeEl, kind: string,): FakeEl {
   const el = query(container, `[data-battle-action="${kind}"]`,);
   if (!el) { throw new Error(`missing action button: ${kind}`,); }
   return el;
 }
 
-/** Dead extra combatant for roster-state fixtures. */
+/**
+ * Dead extra combatant for roster-state fixtures.
+ * @param id
+ */
 export function deadCombatant(id = "ghost",): BattleCombatantView {
   return { id, name: "Ghost", hp: 0, maxHp: 10, initiative: 1, };
 }

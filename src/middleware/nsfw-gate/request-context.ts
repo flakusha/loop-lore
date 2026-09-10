@@ -167,6 +167,12 @@ export async function resolveRequestContext(args: RequestContextArgs,): Promise<
 /**
  * Weakest-link over pre-loaded inputs — avoids re-querying what the
  * pipeline already fetched for the base stage.
+ * @param gateConfig
+ * @param gateConfig.allowNsfw
+ * @param gateConfig.nsfwMinAge
+ * @param inputs
+ * @param participantIds
+ * @param excludeUserId
  */
 function findBlockedParticipantFrom(
   gateConfig: { allowNsfw: boolean; nsfwMinAge: number },

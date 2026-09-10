@@ -125,6 +125,8 @@ export const initiativeSelect: TurnStrategyFn = (
  * @param currentActorId
  * @param currentTurn
  * @param turnOrder
+ * @param context
+ * @param lastActorId
  */
 export const questDrivenSelect: TurnStrategyFn = (
   participants,
@@ -140,6 +142,12 @@ export const questDrivenSelect: TurnStrategyFn = (
 
 /**
  * Hybrid: scene-based with quest awareness every 5th turn.
+ * @param participants
+ * @param currentActorId
+ * @param currentTurn
+ * @param turnOrder
+ * @param context
+ * @param lastActorId
  */
 export const hybridSelect: TurnStrategyFn = (
   participants,

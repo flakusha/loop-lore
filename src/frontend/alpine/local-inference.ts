@@ -87,12 +87,16 @@ export function setLocalInferenceOptIn(optedIn: boolean,): void {
  * multi-hundred-MB downloads. Weights themselves are cached by transformers.js.
  * Set by explicit downloads (model manager UI) and by the engine itself on
  * first successful load; cleared when the user deletes the model.
+ * @param modelId
  */
 export function modelReadyKey(modelId: string,): string {
   return `local-inference-model:${modelId}`;
 }
 
-/** Whether a model finished at least one successful load. */
+/**
+ * Whether a model finished at least one successful load.
+ * @param modelId
+ */
 export function isModelReady(modelId: string,): boolean {
   try {
     return localStorage.getItem(modelReadyKey(modelId,),) === "1";
@@ -101,7 +105,10 @@ export function isModelReady(modelId: string,): boolean {
   }
 }
 
-/** Persist a successful model load. */
+/**
+ * Persist a successful model load.
+ * @param modelId
+ */
 export function markModelReady(modelId: string,): void {
   try {
     localStorage.setItem(modelReadyKey(modelId,), "1",);
@@ -110,7 +117,10 @@ export function markModelReady(modelId: string,): void {
   }
 }
 
-/** Forget a model (used when the user deletes it). */
+/**
+ * Forget a model (used when the user deletes it).
+ * @param modelId
+ */
 export function clearModelReady(modelId: string,): void {
   try {
     localStorage.removeItem(modelReadyKey(modelId,),);

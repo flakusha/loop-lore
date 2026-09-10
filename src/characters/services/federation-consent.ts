@@ -33,7 +33,11 @@ export class FederationConsentError extends Error {
   }
 }
 
-/** Raw boolean read of the actor's federation_consent flag. */
+/**
+ * Raw boolean read of the actor's federation_consent flag.
+ * @param database
+ * @param actorId
+ */
 export async function getFederationConsent(
   database: Kysely<DB>,
   actorId: string,
@@ -52,6 +56,8 @@ export async function getFederationConsent(
  * side effect (generating AP keys, publishing an Actor, signing a
  * delivery, etc.). The gate is intentionally synchronous in failure mode
  * so callers cannot accidentally forget to check.
+ * @param database
+ * @param actorId
  * @returns void
  */
 export async function assertFederationConsent(
@@ -72,6 +78,9 @@ export async function assertFederationConsent(
  * Setting consent to false does not revoke already-issued ActivityPub
  * signing keys; key revocation is handled separately by the key-rotation
  * flow in `crypto/activitypub-keys.ts`.
+ * @param database
+ * @param actorId
+ * @param consent
  * @returns void
  */
 export async function setFederationConsent(

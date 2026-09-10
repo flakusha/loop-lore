@@ -75,6 +75,8 @@ function usedUpError(): InviteError {
  * the portals.
  * @param portals - table-specific queries and the atomic join commit
  * @param input - raw invite `code` (normalized here) and joining `actorId`
+ * @param input.code
+ * @param input.actorId
  * @returns the matched invite plus `alreadyMember`, or a typed error
  */
 export async function redeemInviteCode<Invite extends RedeemableInvite,>(

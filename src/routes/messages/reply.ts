@@ -33,6 +33,7 @@ import { log, } from "./helpers";
  * by the unique index so we never accidentally swallow an unrelated unique
  * violation (e.g. `idx_messages_idempotency` on a colliding idempotency_key —
  * that is a real conflict and must NOT trigger a swipe_index retry).
+ * @param err
  */
 export function isSwipeIndexUniqueViolation(err: unknown,): boolean {
   if (!(err instanceof Error)) { return false; }

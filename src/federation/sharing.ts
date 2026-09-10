@@ -61,6 +61,12 @@ export async function outstandingBytes(
  * trusted, and the push must fit its remaining capacity.
  * @param database Receiver database handle.
  * @param input
+ * @param input.senderOrigin
+ * @param input.contentHash
+ * @param input.sizeBytes
+ * @param input.contentType
+ * @param input.ttlMs
+ * @param input.now
  * @returns Reservation id.
  * @throws On unknown/untrusted peer or exhausted capacity.
  */

@@ -31,7 +31,11 @@ export function checkpointNode(): ComfyUIWorkflow {
   };
 }
 
-/** Build the positive + negative CLIPTextEncode nodes (ids "2" + "3"). */
+/**
+ * Build the positive + negative CLIPTextEncode nodes (ids "2" + "3").
+ * @param params
+ * @param clipRef
+ */
 export function promptNodes(
   params: Record<string, unknown>,
   clipRef: [string, number,] = ["1", 1,],
@@ -62,7 +66,12 @@ export interface KSamplerOptions {
   scheduler?: string;
 }
 
-/** Build a KSampler node. */
+/**
+ * Build a KSampler node.
+ * @param params
+ * @param seed
+ * @param opts
+ */
 export function ksamplerNode(
   params: Record<string, unknown>,
   seed: number,
@@ -89,7 +98,12 @@ export function ksamplerNode(
   };
 }
 
-/** Build VAEDecode + SaveImage nodes after the sampler. */
+/**
+ * Build VAEDecode + SaveImage nodes after the sampler.
+ * @param samplerId
+ * @param vaeRef
+ * @param filenamePrefix
+ */
 export function decodeAndSave(
   samplerId: string,
   vaeRef: [string, number,] = ["1", 2,],
@@ -111,7 +125,13 @@ export function decodeAndSave(
   };
 }
 
-/** Build a LoadImage node. */
+/**
+ * Build a LoadImage node.
+ * @param id
+ * @param paramName
+ * @param params
+ * @param title
+ */
 export function loadImageNode(
   id: string,
   paramName: string,

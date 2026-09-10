@@ -65,6 +65,8 @@ export async function encryptStoredContent({
  * No-op for an empty result list.
  * @param database
  * @param input - Generation request providing `chatId` and `actorId`
+ * @param input.chatId
+ * @param input.actorId
  * @param parentMessageId - The persisted assistant message these calls belong to
  * @param toolResults - Tool outputs returned by executeToolCalls
  */

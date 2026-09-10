@@ -93,7 +93,10 @@ export function createTunnelConnector(url: string, deps: TunnelConnectorDeps = {
   };
   return api;
 
-  /** Track and emit status. */
+  /**
+   * Track and emit status.
+   * @param next
+   */
   function setStatus(next: TunnelStatus,): void {
     status = next;
     emit(next,);

@@ -103,6 +103,7 @@ export async function getPost(
  * @param filters.world_id
  * @param filters.limit
  * @param filters.offset
+ * @param filters.userId
  */
 export async function listPosts(
   db: Kysely<any>,

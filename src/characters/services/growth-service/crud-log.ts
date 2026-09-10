@@ -28,7 +28,10 @@ import { GrowthEntryStatus as Status, } from "../../spec/growth";
 import type { GrowthLogRow, GrowthModeSnapshot, ListGrowthLogOpts, } from "./types";
 import { AUTHOR_ONLY_EVENT_TYPES, GrowthServiceError, } from "./types";
 
-/** Map a DB row to the public GrowthLogEntry shape. */
+/**
+ * Map a DB row to the public GrowthLogEntry shape.
+ * @param row
+ */
 function rowToGrowthEntry(row: GrowthLogRow,): GrowthLogEntry {
   return {
     id: row.id,

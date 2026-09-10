@@ -95,7 +95,14 @@ interface ResolvedAsset {
   asset: AssetRecord;
 }
 
-/** Serve a file from disk with proper headers. */
+/**
+ * Serve a file from disk with proper headers.
+ * @param filePath
+ * @param contentType
+ * @param opts
+ * @param opts.cacheControl
+ * @param opts.extraHeaders
+ */
 function serveFile(
   filePath: string,
   contentType: string,
@@ -136,6 +143,9 @@ async function resolveAsset(
 /**
  * Load an asset and require the caller to be its owner.
  * Returns the asset on success, or a Response on failure.
+ * @param database
+ * @param assetId
+ * @param userId
  * @returns void
  */
 async function requireAssetOwner(
