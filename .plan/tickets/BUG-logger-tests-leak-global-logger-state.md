@@ -3,7 +3,7 @@
 
 # BUG: Logger tests leak global logger state
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved 2026-09-10 (worktree `core-hardening`, commit `86cee0c`): both files now capture the global root in `beforeEach` (guarded `getLogger`, tolerates uninitialized) and restore it in `afterEach` (fallback: fresh `createLogger({ level: "error" })`). `bun test src/logger/` 120 pass; full e2e suite 251 pass.
 **Priority:** Medium
 **Effort:** Medium
 
