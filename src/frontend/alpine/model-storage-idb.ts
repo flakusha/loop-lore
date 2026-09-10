@@ -9,7 +9,7 @@
  * @module alpine/model-storage-idb
  */
 
-import { type ModelByteStore, type StoredModel, sumUsage, } from "./model-storage";
+import { type ModelByteStore, type StoredModel, summarizeRecords, sumUsage, } from "./model-storage";
 
 const DB_NAME = "loop-lore-models";
 const STORE_NAME = "models";
@@ -40,9 +40,10 @@ export interface IDBTransactionLike {
 
 export interface IDBObjectStoreLike {
   get(key: string,): IDBRequestLike<StoredModel | undefined>;
+  getAll(): IDBRequestLike<StoredModel[]>;
+  getAllKeys(): IDBRequestLike<string[]>;
   put(value: StoredModel, key: string,): IDBRequestLike<unknown>;
   delete(key: string,): IDBRequestLike<unknown>;
-  getAll(): IDBRequestLike<StoredModel[]>;
   createIndex?: (name: string, keyPath: string,) => void;
 }
 
@@ -54,7 +55,9 @@ export interface IDBRequestLike<T,> {
 }
 
 /**
+ * Create an IndexedDB-backed model byte store.
  * @param factory - Defaults to global indexedDB.
+ * @returns Model byte store persisted in IndexedDB.
  */
 export function createIndexedDBStore(factory?: IDBFactoryLike,): ModelByteStore {
   const idb = factory ?? (indexedDB as unknown as IDBFactoryLike);
@@ -91,11 +94,23 @@ export function createIndexedDBStore(factory?: IDBFactoryLike,): ModelByteStore 
       const records = await requestToPromise(objectStore.getAll(),);
       return sumUsage(records,);
     },
+    list: async () => {
+      const objectStore = await store("readonly",);
+      const keys = await requestToPromise(objectStore.getAllKeys(),);
+      const entries: [id: string, record: StoredModel,][] = [];
+      for (const key of keys) {
+        const record = await requestToPromise(objectStore.get(key,),);
+        if (record) { entries.push([key, record,],); }
+      }
+      return summarizeRecords(entries,);
+    },
   };
 }
 
 /**
- * @param factory
+ * Open (or create) the model database.
+ * @param factory - IDB factory to open with.
+ * @returns Open database handle.
  */
 function openDatabase(factory: IDBFactoryLike,): Promise<IDBDatabaseLike> {
   const { promise, resolve, reject, } = Promise.withResolvers<IDBDatabaseLike>();
@@ -113,7 +128,9 @@ function openDatabase(factory: IDBFactoryLike,): Promise<IDBDatabaseLike> {
 }
 
 /**
- * @param request
+ * Await an IDB request.
+ * @param request - Request to await.
+ * @returns Request result.
  */
 function requestToPromise<T,>(request: IDBRequestLike<T>,): Promise<T> {
   const { promise, resolve, reject, } = Promise.withResolvers<T>();
