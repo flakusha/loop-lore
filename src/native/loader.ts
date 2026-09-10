@@ -21,7 +21,7 @@ import { join, } from "node:path";
 /**
 ABI version the loader requires (packed `(major<<16)|(minor<<8)|patch`).
  */
-const REQUIRED_ABI_VERSION = (0 << 16) | (3 << 8);
+const REQUIRED_ABI_VERSION = (0 << 16) | (4 << 8);
 
 /**
 Platform → shared-library filename, matching the Rust crate output name.
@@ -62,6 +62,10 @@ const SYMBOLS = {
     args: [FFIType.ptr, FFIType.u64,],
     returns: FFIType.i64,
   },
+  ll_gguf_probe: {
+    args: [FFIType.ptr, FFIType.u64, FFIType.ptr, FFIType.u64,],
+    returns: FFIType.i32,
+  },
 } as const;
 
 /** */
@@ -76,17 +80,28 @@ export interface NativeBlake3Symbols {
   ll_blake3(data: Uint8Array, len: number, out: Uint8Array, outLen: number,): number;
 }
 
-/** */
 export interface NativeZstdSymbols {
   ll_zstd_compress(data: Uint8Array, len: number, out: Uint8Array, outLen: number, level: number,): number;
   ll_zstd_decompress(data: Uint8Array, len: number, out: Uint8Array, outLen: number,): number;
   ll_zstd_decompress_bound(data: Uint8Array, len: number,): number | bigint;
 }
 
+/** GGUF header probe — mirrors `ll_gguf_probe` in the Rust crate. */
+export interface NativeGgufSymbols {
+  /**
+  Probe a GGUF blob header into a 32-byte summary. 0 = ok, -1 = bad args,
+  -2 = bad magic, -3 = truncated, -4 = corrupt.
+   */
+  ll_gguf_probe(data: Uint8Array, len: number, out: Uint8Array, outLen: number,): number;
+}
+
 /**
 Resolved native module state (lazy, cached after first load attempt).
  */
-let cachedModule: { handle: NativeBlake3Symbols & NativeZstdSymbols; version: number } | null | undefined;
+let cachedModule:
+  | { handle: NativeBlake3Symbols & NativeZstdSymbols & NativeGgufSymbols; version: number }
+  | null
+  | undefined;
 
 /**
  * Reset the cached load state — test seam so unit tests can exercise each
@@ -137,7 +152,10 @@ export function resolveNativeBinaryPath(): string | null {
  * @returns The dlopen handle + verified ABI version, or null when
  *   unavailable (missing binary, wrong platform, version mismatch, dlopen error).
  */
-export function getNativeModule(): { handle: NativeBlake3Symbols & NativeZstdSymbols; version: number } | null {
+export function getNativeModule(): {
+  handle: NativeBlake3Symbols & NativeZstdSymbols & NativeGgufSymbols;
+  version: number;
+} | null {
   if (cachedModule !== undefined) {
     return cachedModule;
   }
@@ -150,7 +168,7 @@ export function getNativeModule(): { handle: NativeBlake3Symbols & NativeZstdSym
 
   try {
     const { symbols, } = dlopen(binaryPath, SYMBOLS as any,);
-    const handle = symbols as unknown as NativeBlake3Symbols & NativeZstdSymbols;
+    const handle = symbols as unknown as NativeBlake3Symbols & NativeZstdSymbols & NativeGgufSymbols;
     const version = handle.ll_version();
     if (version !== REQUIRED_ABI_VERSION) {
       // ABI drift — refuse the binary rather than misbehave silently.

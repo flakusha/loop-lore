@@ -37,12 +37,12 @@ const fakeHandle = {
 
 if (ISOLATED_RUN) {
   mock.module("./loader", () => ({
-    getNativeModule: () => ({ handle: fakeHandle, version: 768, }),
+    getNativeModule: () => ({ handle: fakeHandle, version: (0 << 16) | (4 << 8), }),
     isNativeAvailable: () => true,
     getNativeStatus: () => ({
       available: true,
       implementation: "rust" as const,
-      version: 768,
+      version: (0 << 16) | (4 << 8),
       binaryPath: "/fake/libloop_lore_native.so",
       platform: process.platform,
     }),
