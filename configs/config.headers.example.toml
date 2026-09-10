@@ -8,7 +8,7 @@ xContentTypeOptions = true
 xFrameOptions = "DENY" # DENY | SAMEORIGIN
 permissionsPolicy = "camera=(), microphone=(), geolocation=()"
 crossOriginOpenerPolicy = "same-origin"
-crossOriginEmbedderPolicy = "require-corp"
+crossOriginEmbedderPolicy = "credentialless" # require-corp | credentialless (credentialless keeps CDN/model loads working)
 crossOriginResourcePolicy = "same-origin"
 timingAllowOrigin = ""
 immutableHashedAssets = true

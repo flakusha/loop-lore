@@ -27,6 +27,7 @@ export interface CspConfig {
   imgSrc: string[];
   fontSrc: string[];
   connectSrc: string[];
+  workerSrc: string[];
   objectSrc: string[];
   baseUri: string[];
   frameAncestors: string[];
