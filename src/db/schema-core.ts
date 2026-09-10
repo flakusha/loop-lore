@@ -262,6 +262,21 @@ export interface WorldTimelines {
   created_at: Generated<string>;
 }
 
+// ── world_event_steerings ────────────────────────────────────────────
+export interface WorldEventSteerings {
+  id: Generated<string>;
+  world_id: string;
+  timeline_id: Generated<string>;
+  description: string;
+  manifest_probability: Generated<number>;
+  conditions: string | null;
+  may_manifest: Generated<number>;
+  status: Generated<string>;
+  audience_scope: string | null;
+  resolved_at: string | null;
+  created_at: Generated<string>;
+}
+
 // ── activitypub_actor_keys ────────────────────────────────────────────
 export interface ActivitypubActorKeys {
   id: Generated<string>;
