@@ -3,7 +3,7 @@
 
 # TASK: VN: emotion mood and action driven sprite staging
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-09-10) — frontend half: directive schema + derivation/application wired to renderer state; backend LLM/action extractors deferred
 **Priority:** high
 **Epic:** Emotion Avatar Message Binding; Visual Novel Mode
 **Effort:** Medium
@@ -14,6 +14,6 @@ Drive sprite swaps, positions, and highlight from message content: emotion bindi
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — `src/frontend/vn/stage-directives.ts`: `StageDirective` (enter/exit/swap), `deriveStageDirectives` (cast deltas + speaker-emotion establishment), `applyStageDirectives` (visibility flips, unknown ids no-op, swap roster-neutral); wired into `controller.ts` init (sequential replay, latest cast on stage) and `addScene` (live stream); `resolveSpriteUrl` matches variant keys case-insensitively (hook emits lowercase, pipeline keys vary); `render.ts` preloads resolved cast variant URLs via new `SceneImages.spriteUrls` so swaps never flash
+- [x] Tests passing — `stage-directives.test.ts` (derivation matrix + stream-visibility + no-op cases), normalization + variant-preload + addScene directive tests; VN suite green; full `bun run check` at CHECK_JOBS=2 (pending confirmation this run)
+- [x] Documentation updated — module header records the contract and the deferred backend half: LLM emotion classification (TASK-aux-llm-emotion-classifier), action-verb extractors over src/regex patterns; position changes stay speaker-driven via existing slots

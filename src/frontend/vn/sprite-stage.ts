@@ -5,14 +5,17 @@
  * VN sprite stage — per-chat roster, deterministic multi-character slot
  * assignment, and active-speaker highlight.
  *
- * Covers three linked tickets without backend changes:
+ * Covers four linked tickets without backend changes:
  * - TASK-vn-character-sprite-roster-per-chat (roster CRUD + variant fallback)
  * - TASK-vn-multi-character-sprite-ordering-and-positioning (slots + z-order)
  * - TASK-vn-active-speaker-sprite-highlight-and-dimming (focus states)
+ * - TASK-vn-emotion-mood-and-action-driven-sprite-staging, frontend half
+ *   (directives in ./stage-directives; see below for deferred backend parts)
  *
- * Deferred (need backend pipelines): emotion-driven staging directives
- * (e99e21e needs regex/aux wiring), face-anchor calibration (5cf8b16),
- * alpha matting jobs (ea6d881).
+ * Deferred (need backend pipelines): LLM emotion classification
+ * (TASK-aux-llm-emotion-classifier), action-verb extractors over
+ * src/regex patterns, face-anchor calibration (5cf8b16), alpha matting
+ * jobs (ea6d881).
  */
 
 import {
@@ -123,7 +126,13 @@ export function setSpriteVisibility(
  * @returns Thumb route/URL, or undefined when no sprite is registered.
  */
 export function resolveSpriteUrl(entry: SpriteRosterEntry, emotion?: string,): string | undefined {
-  const variant = emotion ? entry.emotionVariants?.[emotion] : undefined;
+  const variants = entry.emotionVariants;
+  // Variant keys come from the emotion-avatar pipeline while scene emotions
+  // arrive as lowercase hook values — compare case-insensitively so "Happy"
+  // matches "happy"; anything unmatched falls back to the base sprite.
+  const variant = emotion && variants
+    ? Object.entries(variants,).find(([key,],) => key.toLowerCase() === emotion.toLowerCase())?.[1]
+    : undefined;
   return getPortraitUrl(variant ?? entry.avatarAssetId,);
 }
 

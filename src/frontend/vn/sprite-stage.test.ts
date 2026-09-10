@@ -74,6 +74,17 @@ describe("resolveSpriteUrl", () => {
   test("yields undefined when no sprite is registered", () => {
     expect(resolveSpriteUrl({ characterId: "x", name: "X", },),).toBeUndefined();
   });
+
+  test("matches variant keys case-insensitively", () => {
+    const entry = {
+      characterId: "rin",
+      name: "Rin",
+      avatarAssetId: "base-1",
+      emotionVariants: { Happy: "happy-9", },
+    };
+    expect(resolveSpriteUrl(entry, "happy",),).toBe("/api/assets/happy-9/thumb",);
+    expect(resolveSpriteUrl(entry, "HAPPY",),).toBe("/api/assets/happy-9/thumb",);
+  });
 });
 
 describe("assignStageSlots", () => {
