@@ -17,12 +17,15 @@ export {
   ELIGIBLE_LOCAL_TASKS,
   isEligibleLocalTask,
   isLocalOnlyLevel,
+  isModelDownloadable,
   LOCAL_ONLY_LEVELS,
 } from "./manifest";
 export type {
   LocalInferenceManifest,
   LocalInferenceTask,
   LocalModelDescriptor,
+  LocalModelDownloadOverride,
+  LocalModelDownloadPolicy,
   LocalOnlyLevel,
 } from "./manifest";
 export { localInferenceRoutes, } from "./routes";

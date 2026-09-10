@@ -17,6 +17,7 @@ export class GenerationSection implements GenerationConfig {
   defaultModels: Record<string, string> = {};
   modelRoles: Record<string, ModelRoleAssignment> = {};
   autoStart: GenerationConfig["autoStart"];
+  localModels: GenerationConfig["localModels"];
 
   /**
    * @param overrides
