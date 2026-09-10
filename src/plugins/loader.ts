@@ -110,12 +110,13 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
 
 /**
  * Load a single plugin from its directory: manifest, hooks, and state.
+ * Exported for tests, which drive it with temp-dir fixtures.
  * @param db
  * @param pluginName
  * @param pluginDir
  * @param origin
  */
-async function loadSinglePlugin(
+export async function loadSinglePlugin(
   db: Kysely<DB>,
   pluginName: string,
   pluginDir: string,
