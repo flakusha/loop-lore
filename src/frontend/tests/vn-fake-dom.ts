@@ -52,10 +52,16 @@ export interface FakeEl {
   replaceChildren: () => void;
   remove: () => void;
   querySelector: (sel: string,) => FakeEl | null;
-  classList: { contains: (cls: string,) => boolean };
   addEventListener: (type: string, fn: (e?: unknown,) => void,) => void;
   removeEventListener: (type: string, fn: (e?: unknown,) => void,) => void;
   dispatch: (type: string,) => void;
+  dataset: Record<string, string>;
+  classList: {
+    contains: (cls: string,) => boolean;
+    add: (...names: string[]) => void;
+    remove: (...names: string[]) => void;
+    toggle: (cls: string, force?: boolean,) => boolean;
+  };
 }
 
 export function makeEl(tag = "div",): FakeEl {
@@ -103,8 +109,34 @@ export function makeEl(tag = "div",): FakeEl {
       this.parent = null;
     },
     get classList() {
-      return { contains: (cls: string,) => this.className.split(" ",).includes(cls,), };
+      const tokens = (): string[] => this.className.split(" ",).filter(Boolean,);
+      const write = (list: string[],): void => {
+        this.className = list.join(" ",);
+      };
+      return {
+        contains: (cls: string,) => tokens().includes(cls,),
+        add: (...names: string[]) => {
+          const list = tokens();
+          for (const name of names) {
+            if (!list.includes(name,)) { list.push(name,); }
+          }
+          write(list,);
+        },
+        remove: (...names: string[]) => {
+          write(tokens().filter((t,) => !names.includes(t,)),);
+        },
+        toggle: (cls: string, force?: boolean,) => {
+          const list = tokens();
+          const has = list.includes(cls,);
+          const next = force ?? !has;
+          if (next && !has) { list.push(cls,); }
+          if (!next && has) { list.splice(list.indexOf(cls,), 1,); }
+          write(list,);
+          return next;
+        },
+      };
     },
+    dataset: {},
     querySelector(sel,) {
       return find(this, sel.replace(/^\./, "",),);
     },

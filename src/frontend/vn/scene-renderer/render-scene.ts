@@ -8,6 +8,7 @@ import {
 } from "../portrait-manager";
 import { transitionScene, } from "../transition-engine";
 import { isTypewriting, skipTypewrite, typewrite, } from "../typewriter";
+import { createStage, } from "./stage";
 import { state, } from "./state";
 
 /** Navigation callbacks injected by the controller to break the module cycle. */
@@ -55,7 +56,6 @@ function createPortrait(
     sizePercent: settings.portraitSize,
   },);
 }
-
 /**
  * @param scene
  * @param scene.role
@@ -199,8 +199,12 @@ export async function renderCurrentScene(
   sceneEl.className = `vn-scene vn-layout-${settings.layout}`;
 
   if (scene.backgroundUrl) { sceneEl.append(createBackground(scene, settings,),); }
-  const portraitEl = createPortrait(scene, settings,);
-  if (portraitEl) { sceneEl.append(portraitEl,); }
+  const stageEl = createStage(scene, settings,);
+  if (stageEl) { sceneEl.append(stageEl,); }
+  else {
+    const portraitEl = createPortrait(scene, settings,);
+    if (portraitEl) { sceneEl.append(portraitEl,); }
+  }
 
   const textEl = document.createElement("div",);
   textEl.className = "vn-text";

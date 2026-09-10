@@ -3,7 +3,7 @@
 
 # TASK: VN: multi-character sprite ordering and positioning
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete (2026-09-10) — deterministic slots per cast size with z-order, stage renders for 2+ cast, solo scenes keep the legacy portrait
 **Priority:** medium
 **Epic:** Avatar Alpha Channel + VN Layering; Visual Novel Mode
 **Effort:** Medium
@@ -14,6 +14,6 @@ Stage layout for 2+ sprites: ordered slots (far-left/left/center/right/far-right
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — `assignStageSlots` (centered layouts for 1–5 sprites, extras stay off-stage, active sprite lifts above the row under dialogue UI); `scene-renderer/stage.ts` composes `.vn-stage` (split out of `render-scene.ts` to respect the 250L strict gate); `render-scene.ts` renders stage or legacy portrait exclusively; flex row + slot `order` prevents overlap collisions. `getPortraitPosition` kept for the solo path (no caller migration needed); anchor+scale transform context (AV7) deferred to the anchor ticket
+- [x] Tests passing — slot determinism, hidden/off-stage capping, and stage-vs-portrait exclusivity in `sprite-stage.test.ts` + `stage.test.ts`; full `bun run check` green at CHECK_JOBS=2
+- [x] Documentation updated — JSDoc on `createStage`/`assignStageSlots`; slot/z-order rules recorded here

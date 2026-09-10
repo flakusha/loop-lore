@@ -48,3 +48,19 @@ export {
   type PortraitConfig,
   type PortraitPosition,
 } from "./portrait-manager";
+
+export {
+  addToRoster,
+  applyStageHighlight,
+  assignStageSlots,
+  buildStageElement,
+  createRoster,
+  MAX_STAGE_SPRITES,
+  removeFromRoster,
+  resolveSpriteUrl,
+  setSpriteVisibility,
+  type SpriteRoster,
+  type SpriteRosterEntry,
+  type StagedSprite,
+  type StageSlot,
+} from "./sprite-stage";

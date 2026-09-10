@@ -122,6 +122,9 @@ describe("msgToScene", () => {
       thinking: "hmm",
       role: "assistant",
       attachments,
+      cast: [{ characterId: "mira", name: "Mira", avatarAssetId: "av1", },],
+      speakerId: "mira",
+      emotion: undefined,
     },);
   });
 
@@ -134,6 +137,12 @@ describe("msgToScene", () => {
     ) {
       expect(msgToScene(msg({ role, },),).characterName,).toBe(fallback,);
     }
+  });
+
+  test("narration carries no speaker and an empty cast", () => {
+    const result = msgToScene(msg({ role: "narration", },),);
+    expect(result.speakerId,).toBeNull();
+    expect(result.cast,).toEqual([],);
   });
 });
 
