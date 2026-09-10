@@ -201,9 +201,9 @@ that file's `getLog()` returns `getLogger()` directly with no
 
 **Regression test added** (`idempotency-table.test.ts::hydrate_failed
 warn log emits module=idempotency-table via live logger`):
-  - Sets a custom global logger with a capturing transport.
-  - Forces `hydrateFromTable` to fail (DB destroyed).
-  - Asserts the captured entry has `meta.module === "idempotency-table"`,
+- Sets a custom global logger with a capturing transport.
+- Forces `hydrateFromTable` to fail (DB destroyed).
+- Asserts the captured entry has `meta.module === "idempotency-table"`,
     `meta.methodRoute === "POST /api/x"` (PII-redacted), and the serialized
     meta does not contain `user-7a3b` or `r-secret-deadbeef`.
 
@@ -214,10 +214,10 @@ empty — child's queue has no custom transport). Restoring the bare
 `getLogger()` re-greens the test.
 
 **Final state (pass 5)**:
-  - `bun test src/middleware/` → **310/310 pass** (was 309; +1 sibling test).
-  - `bun run typecheck` → clean.
-  - `bun run format` (dprint) → clean.
-  - `bun run check` → 20/21 green (1 pre-existing plan:sync NSFW mismatch,
+- `bun test src/middleware/` → **310/310 pass** (was 309; +1 sibling test).
+- `bun run typecheck` → clean.
+- `bun run format` (dprint) → clean.
+- `bun run check` → 20/21 green (1 pre-existing plan:sync NSFW mismatch,
     unrelated to F14; F14 ticket's own hash/index state 🟢).
 
 ### Strict-review pass 7 — `redactKeyForLog` dedupe (F14.S14)
@@ -253,10 +253,10 @@ so the edge-case behavior is not exercised in prod but is covered
 indirectly by the unit test.
 
 **Final state (pass 7)**:
-  - `bun test src/middleware/` → **310/310 pass** (unchanged; behavior preserved).
-  - `bun run typecheck` → clean.
-  - `bun run format` (dprint) → clean.
-  - `bun run check` → 20/21 green (same pre-existing plan:sync NSFW mismatch).
+- `bun test src/middleware/` → **310/310 pass** (unchanged; behavior preserved).
+- `bun run typecheck` → clean.
+- `bun run format` (dprint) → clean.
+- `bun run check` → 20/21 green (same pre-existing plan:sync NSFW mismatch).
 
 ### Strict-review pass 8 — post-edit whitespace damage audit (F14.S1-S4)
 
@@ -285,16 +285,16 @@ them by manual cross-reference against the surrounding conventions.
 No semantic change.
 
 **Final state (pass 8)**:
-  - `bun test src/middleware/` → **310/310 pass** (unchanged).
-  - `bun run typecheck` → clean.
-  - `bun run format` (dprint) → clean.
-  - `bun run check` → 20/21 green (same pre-existing plan:sync NSFW
+- `bun test src/middleware/` → **310/310 pass** (unchanged).
+- `bun run typecheck` → clean.
+- `bun run format` (dprint) → clean.
+- `bun run check` → 20/21 green (same pre-existing plan:sync NSFW
     mismatch).
 
 ### Strict-review pass 9 — second whitespace audit (F14.S1)
 
 **Finding**: pass 8 audit caught four sites but missed one:
-  - `idempotency-table.ts` line 60-61: missing blank line between
+- `idempotency-table.ts` line 60-61: missing blank line between
     `}` (end of `getLog()`) and `/**` (JSDoc for `rowToEntry()`).
     Caused by rewriting `getLog()` body in pass 5. Pass 8's check of
     `idempotency-table.ts` started from line 1 (correct) but the
@@ -315,10 +315,10 @@ used elsewhere in the file. dprint does not flag it. Per the
 refactor could normalize.
 
 **Final state (pass 9)**:
-  - `bun test src/middleware/` → **310/310 pass** (unchanged).
-  - `bun run typecheck` → clean.
-  - `bun run format` (dprint) → clean.
-  - `bun run check` → 20/21 green (same pre-existing plan:sync NSFW
+- `bun test src/middleware/` → **310/310 pass** (unchanged).
+- `bun run typecheck` → clean.
+- `bun run format` (dprint) → clean.
+- `bun run check` → 20/21 green (same pre-existing plan:sync NSFW
     mismatch).
 
 ### Strict-review pass 10 — test logger-leak audit (F14.S1)
@@ -357,9 +357,9 @@ After fix — only 2 warn lines, both emitted DURING the test (legitimate):
 gate clean, typecheck clean.
 
 **Final state (pass 10)**:
-  - `bun test src/middleware/` → **310/310 pass** (unchanged behavior).
-  - `bun run typecheck` → clean.
-  - `bun run format` (dprint) → clean.
-  - `bun run scripts/check-file-size` → clean.
-  - `bun test src/middleware/` warns in output → 2 (was 4) — the leak
+- `bun test src/middleware/` → **310/310 pass** (unchanged behavior).
+- `bun run typecheck` → clean.
+- `bun run format` (dprint) → clean.
+- `bun run scripts/check-file-size` → clean.
+- `bun test src/middleware/` warns in output → 2 (was 4) — the leak
     is fixed.
