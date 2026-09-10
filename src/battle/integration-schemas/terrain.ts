@@ -17,6 +17,7 @@ export type TerrainType =
 /**
  * Get terrain modifiers for combat
  * @param terrain
+ * @returns void
  */
 export function getCombatTerrainModifiers(
   terrain: TerrainType,

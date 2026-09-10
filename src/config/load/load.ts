@@ -19,6 +19,7 @@ import { validateAuthSafety, validateDatabaseSafety, } from "./safety";
 
 /**
  * @param config
+ * @returns void
  */
 export function validateConfig(config: Config,): void {
   validate(config,);
@@ -26,6 +27,7 @@ export function validateConfig(config: Config,): void {
 
 /**
  * @param cwd
+ * @returns void
  */
 export function loadConfig(cwd?: string,): Config {
   const directory = cwd ?? process.cwd();

@@ -13,6 +13,7 @@ const STRIP_TEST_IDS = process.env.STRIP_TEST_IDS !== "false";
 
 /**
  * @param content
+ * @returns string
  */
 function stripTestIds(content: string,): string {
   let result = content.replaceAll(/\s+data-testid="[^"]*"/g, "",);
@@ -87,6 +88,7 @@ async function main() {
  * @param file - Absolute path of the artifact
  * @param content - Current file bytes
  * @param log - Logger for minification failures
+ * @returns void
  */
 async function minifyByExtension(file: string, content: Buffer, log: Logger,): Promise<void> {
   const ext = extname(file,).toLowerCase();
@@ -100,6 +102,7 @@ async function minifyByExtension(file: string, content: Buffer, log: Logger,): P
  * @param file
  * @param content
  * @param log
+ * @returns void
  */
 function minifyCss(file: string, content: Buffer, log: Logger,): void {
   const original = content.toString("utf8",);
@@ -121,6 +124,7 @@ function minifyCss(file: string, content: Buffer, log: Logger,): void {
  * @param file
  * @param content
  * @param log
+ * @returns void
  */
 async function minifyHtml(file: string, content: Buffer, log: Logger,): Promise<void> {
   const original = content.toString("utf8",);
@@ -144,6 +148,7 @@ async function minifyHtml(file: string, content: Buffer, log: Logger,): Promise<
  * Strip `data-testid` attributes from an SVG artifact in place when smaller.
  * @param file
  * @param content
+ * @returns void
  */
 function stripSvgTestIds(file: string, content: Buffer,): void {
   let processed = content.toString("utf8",);

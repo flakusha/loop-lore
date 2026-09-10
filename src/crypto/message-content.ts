@@ -56,6 +56,7 @@ export interface EncryptMessageResult {
  * @param root0.plaintext
  * @param root0.smk
  * @param root0.pipeline
+ * @returns void
  */
 export async function encryptMessageContent({
   database,
@@ -93,6 +94,7 @@ export async function encryptMessageContent({
  * @param _smk
  * @throws If decryption fails (tampered / wrong key) or if no SMK is available
  *         for a standard-tier chat.
+ * @returns void
  */
 export async function decryptMessageContent(
   database: Kysely<DB>,

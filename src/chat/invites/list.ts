@@ -10,6 +10,7 @@ import type { ChatInviteRow, } from "./types";
  * List all invites for a chat (including revoked/expired), newest first.
  * @param database
  * @param chatId
+ * @returns void
  */
 export async function listInvites(
   database: Kysely<DB>,

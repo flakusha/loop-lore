@@ -198,6 +198,7 @@ const TRANSITION_TYPES = new Set<TransitionType>([
 /**
  * Check if a string is a valid transition type.
  * @param t
+ * @returns unknown
  */
 function isValidTransitionType(t: unknown,): t is TransitionType {
   return TRANSITION_TYPES.has(t as TransitionType,);
@@ -207,6 +208,7 @@ function isValidTransitionType(t: unknown,): t is TransitionType {
  * Extract location hint from message content.
  * Simple heuristic: extract text after movement prepositions.
  * @param content
+ * @returns void
  */
 function extractLocationHint(content: string,): string | null {
   const match = /(?:to|into|toward|inside|outside)\s+(.+?)(?:\.|,|$)/i.exec(content,);

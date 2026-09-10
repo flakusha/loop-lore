@@ -20,6 +20,7 @@
  * @param qb
  * @param worldId
  * @param worldCol
+ * @returns string
  */
 export function withWorldId<T,>(qb: T, worldId: string | undefined, worldCol = "world_id",): T {
   // Kysely's $if is typed per-table; the generic cast is unavoidable here.
@@ -39,6 +40,7 @@ export function withWorldId<T,>(qb: T, worldId: string | undefined, worldCol = "
  * @param existing - Truthy value means the entity already exists
  * @param entityLabel - Human-readable entity name (e.g., "Mood", "Permanent trait")
  * @param key - Identifying context for the error message
+ * @returns void
  */
 export function guardNotExists(
   existing: unknown,

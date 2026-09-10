@@ -158,6 +158,7 @@ interface ResolveOpts {
  * Resolve template placeholders using the provided context.
  * @param template - The template string with `{npc}`, `{location}`, `{weather}`, `{sound}`, `{scent}`, `{time}` placeholders.
  * @param opts - Optional substitution context.
+ * @returns string
  */
 function resolveTemplate(template: string, opts: ResolveOpts = {},): string {
   const { participants = [], currentLocation, worldTime, } = opts;
@@ -184,6 +185,7 @@ function resolveTemplate(template: string, opts: ResolveOpts = {},): string {
 /**
  * Pick a random element from a readonly array.
  * @param arr - Non-empty array of candidates.
+ * @returns void
  */
 function pickRandom<T,>(arr: readonly T[],): T {
   return arr[Math.floor(Math.random() * arr.length,)]!;

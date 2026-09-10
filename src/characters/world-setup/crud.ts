@@ -25,6 +25,7 @@ export interface GetWorldSetupArgs {
  * @param root0.thisL
  * @param root0.actorId
  * @param root0.worldId
+ * @returns void
  */
 export async function getWorldSetup(
   { thisL, actorId, worldId, }: GetWorldSetupArgs,
@@ -51,6 +52,7 @@ export interface UpsertWorldSetupArgs {
  * @param root0
  * @param root0.thisL
  * @param root0.input
+ * @returns void
  */
 export async function upsertWorldSetup(
   { thisL, input, }: UpsertWorldSetupArgs,
@@ -111,6 +113,7 @@ export interface UpdateWorldSetupArgs {
  * @param root0.actorId
  * @param root0.worldId
  * @param root0.input
+ * @returns void
  */
 export async function updateWorldSetup(
   { thisL, actorId, worldId, input, }: UpdateWorldSetupArgs,
@@ -155,6 +158,7 @@ export interface DeleteWorldSetupArgs {
  * @param root0.thisL
  * @param root0.actorId
  * @param root0.worldId
+ * @returns void
  */
 export async function deleteWorldSetup(
   { thisL, actorId, worldId, }: DeleteWorldSetupArgs,

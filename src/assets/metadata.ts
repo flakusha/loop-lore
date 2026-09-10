@@ -25,6 +25,7 @@ const ZTXTSIG = 0x7A_54_58_74; // 'zTXt' in big-endian
 /**
  * @param buf
  * @param offset
+ * @returns number
  */
 function readUint16BE(buf: Uint8Array, offset: number,): number {
   return (buf[offset]! << 8) | buf[offset + 1]!;
@@ -33,6 +34,7 @@ function readUint16BE(buf: Uint8Array, offset: number,): number {
 /**
  * @param buf
  * @param offset
+ * @returns void
  */
 function readUint32BE(buf: Uint8Array, offset: number,): number {
   return ((buf[offset]! << 24) | (buf[offset + 1]! << 16) | (buf[offset + 2]! << 8) | buf[offset + 3]!) >>> 0;
@@ -41,6 +43,7 @@ function readUint32BE(buf: Uint8Array, offset: number,): number {
 /**
  * @param buf
  * @param offset
+ * @returns void
  */
 function readUint16LE(buf: Uint8Array, offset: number,): number {
   return (buf[offset + 1]! << 8) | buf[offset]!;
@@ -49,6 +52,7 @@ function readUint16LE(buf: Uint8Array, offset: number,): number {
 /**
  * @param buf
  * @param offset
+ * @returns void
  */
 function readUint24LE(buf: Uint8Array, offset: number,): number {
   return (buf[offset]! | (buf[offset + 1]! << 8) | (buf[offset + 2]! << 16)) >>> 0;
@@ -112,6 +116,7 @@ function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; ca
  * @param chunkType
  * @param dataStart
  * @param dataEnd
+ * @returns void
  */
 function decodeTextChunk(
   buf: Uint8Array,

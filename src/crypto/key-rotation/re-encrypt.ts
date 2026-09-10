@@ -115,6 +115,7 @@ export async function reEncryptWithKeys(
  * @param chatId
  * @param smk
  * @param limit
+ * @returns void
  */
 export async function reEncryptChatMessages(
   database: Kysely<DB>,
@@ -134,6 +135,7 @@ export async function reEncryptChatMessages(
  * @param pipelineConfig
  * @param oldKey
  * @param newKey
+ * @returns void
  */
 export async function reEncryptChatAssets(
   database: Kysely<DB>,

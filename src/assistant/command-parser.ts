@@ -81,6 +81,7 @@ export const BUILTIN_COMMANDS = [
 /**
  * Check if a command name is a built-in command
  * @param command
+ * @returns boolean
  */
 export function isBuiltinCommand(command: string,): boolean {
   return (BUILTIN_COMMANDS as readonly string[]).includes(command.toLowerCase(),);

@@ -174,6 +174,7 @@ async function alignCombatant(
 /**
  * Render a battle as a readable markdown block.
  * @param battle
+ * @returns string
  */
 export function formatBattle(battle: BattleWithRoster,): string {
   const acting = battle.combatants[battle.turnIndex];
@@ -199,6 +200,7 @@ export function formatBattle(battle: BattleWithRoster,): string {
 /**
  * Serialize the battle for a frontend action payload.
  * @param battle
+ * @returns void
  */
 export function serializeBattle(battle: BattleWithRoster,): {
   id: string;

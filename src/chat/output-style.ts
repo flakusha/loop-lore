@@ -67,6 +67,7 @@ export const PRESET_DIRECTIVES: Record<OutputStylePreset, string> = {
 /**
  * Clamp intensity to 0..1 (default 0.5 when unspecified).
  * @param value
+ * @returns number
  */
 export function clampIntensity(value: number | null | undefined,): number {
   if (value === null || value === undefined || Number.isNaN(value,)) { return 0.5; }
@@ -105,6 +106,7 @@ export function resolveOutputStyle(
 /**
  * Build the emitted directive text for a resolved style config.
  * @param cfg
+ * @returns void
  */
 export function buildStyleDirective(cfg: OutputStyleConfig,): string {
   const base = PRESET_DIRECTIVES[cfg.preset];

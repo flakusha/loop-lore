@@ -54,6 +54,7 @@ export interface InitDhRatchetResult {
 }
 /**
  * @param opts
+ * @returns Promise<unknown>
  */
 export async function initDhRatchet(opts: InitDhRatchetOpts,): Promise<InitDhRatchetResult> {
   if (opts.rootKey.byteLength !== KEY_BYTES) {
@@ -96,6 +97,7 @@ export interface DhRatchetEncryptResult {
 
 /**
  * @param opts
+ * @returns void
  */
 export async function dhRatchetEncrypt(opts: DhRatchetEncryptOpts,): Promise<DhRatchetEncryptResult> {
   const step = await chainStep(opts.state.sendingChainKey,);
@@ -140,6 +142,7 @@ export interface DhRatchetDecryptResult {
 
 /**
  * @param opts
+ * @returns void
  */
 export async function dhRatchetDecrypt(opts: DhRatchetDecryptOpts,): Promise<DhRatchetDecryptResult> {
   const { state, payload, } = opts;

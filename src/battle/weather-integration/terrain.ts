@@ -11,6 +11,7 @@ import type { BattleTerrain, } from "./types";
  * Create default battle terrain
  * @param type
  * @param weather
+ * @returns void
  */
 export function createBattleTerrain(
   type: TerrainType = "open",
@@ -30,6 +31,7 @@ export function createBattleTerrain(
  * Check if terrain is affected by weather
  * @param terrain
  * @param weather
+ * @returns void
  */
 export function isTerrainAffectedByWeather(
   terrain: TerrainType,

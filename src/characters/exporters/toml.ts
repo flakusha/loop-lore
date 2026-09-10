@@ -11,6 +11,7 @@ import type { CanonicalCharacter, } from "../parser";
 /**
  * Export canonical character card to TOML format.
  * @param character
+ * @returns string
  */
 export function exportToToml(character: CanonicalCharacter,): string {
   // Build nested structure for TOML

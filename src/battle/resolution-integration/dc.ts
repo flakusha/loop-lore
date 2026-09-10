@@ -9,6 +9,7 @@ import type {
  * Get DC for common combat actions
  * @param action
  * @param targetLevel
+ * @returns void
  */
 export function getCombatDC(
   action: "disarm" | "shove" | "grapple" | "escape_grapple" | "aim",

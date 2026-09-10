@@ -101,6 +101,7 @@ export const nsfwContextSection: SectionBuilder = {
 
 /**
  * @param score
+ * @returns string
  */
 function getLevelLabel(score: number,): string {
   if (score >= 100) { return "Soulbonded"; }
@@ -115,6 +116,7 @@ function getLevelLabel(score: number,): string {
 
 /**
  * @param level
+ * @returns void
  */
 function getArousalLabel(level: number,): string {
   if (level >= 80) { return "Desperate"; }

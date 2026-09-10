@@ -68,6 +68,7 @@ export function expandAvatarConfig(
 /**
  * Extract keywords from avatar emotions and intent patterns.
  * @param config
+ * @returns string
  */
 export function extractKeywords(config: AvatarTemplateConfig,): string[] {
   const keywords = new Set<string>();
@@ -98,6 +99,7 @@ export function extractKeywords(config: AvatarTemplateConfig,): string[] {
 /**
  * Extract actions from avatar emotions.
  * @param config
+ * @returns void
  */
 export function extractActions(config: AvatarTemplateConfig,): string[] {
   const actions = new Set<string>();

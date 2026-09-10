@@ -26,6 +26,7 @@ export {
 /**
  * Calculate equipment stat modifiers
  * @param items
+ * @returns void
  */
 export function calculateEquipmentModifiers(
   items: EquipmentItem[],
@@ -55,6 +56,7 @@ export function calculateEquipmentModifiers(
  * @param item
  * @param characterLevel
  * @param characterStats
+ * @returns void
  */
 export function canEquipItem(
   item: EquipmentItem,
@@ -94,6 +96,7 @@ export function canEquipItem(
  * Apply durability damage to item
  * @param item
  * @param damage
+ * @returns void
  */
 export function applyDurabilityDamage(
   item: EquipmentItem,
@@ -111,6 +114,7 @@ export function applyDurabilityDamage(
  * @param item
  * @param repairAmount
  * @param goldCost
+ * @returns void
  */
 export function repairItem(
   item: EquipmentItem,
@@ -145,6 +149,7 @@ export interface LootTableEntry {
  * Generate loot from a loot table
  * @param lootTable
  * @param monsterLevel
+ * @returns void
  */
 export function generateLoot(
   lootTable: LootTableEntry[],

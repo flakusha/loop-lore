@@ -208,6 +208,7 @@ export async function checkChatSettingsAccess(
  * message. Before that it is a draft and key mechanics remain editable.
  * @param database
  * @param chatId
+ * @returns void
  */
 export async function isChatOnline(
   database: Kysely<DB>,

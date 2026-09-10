@@ -16,6 +16,7 @@ const activeJobs = new Map<BatchJobId, BatchGenerationJob>();
  * @param opts.actorId
  * @param opts.baseAvatarId
  * @param opts.emotions
+ * @returns void
  */
 export function createJob(opts: {
   id: BatchJobId;
@@ -39,6 +40,7 @@ export function createJob(opts: {
 /**
  * Store a job in the in-memory store.
  * @param job
+ * @returns void
  */
 export function storeJob(job: BatchGenerationJob,): void {
   activeJobs.set(job.id, job,);
@@ -47,6 +49,7 @@ export function storeJob(job: BatchGenerationJob,): void {
 /**
  * Get a batch job by id.
  * @param jobId
+ * @returns void
  */
 export function getJob(jobId: BatchJobId,): BatchGenerationJob | undefined {
   return activeJobs.get(jobId,);
@@ -55,6 +58,7 @@ export function getJob(jobId: BatchJobId,): BatchGenerationJob | undefined {
 /**
  * List all batch jobs for an actor, newest first.
  * @param actorId
+ * @returns void
  */
 export function listJobs(actorId: string,): BatchGenerationJob[] {
   const jobs: BatchGenerationJob[] = [];

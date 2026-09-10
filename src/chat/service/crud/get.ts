@@ -8,6 +8,7 @@ import type { DB, } from "../../../db/schema";
  * Get a chat with its participants.
  * @param database
  * @param chatId
+ * @returns void
  */
 export async function getChat(
   database: Kysely<DB>,

@@ -24,6 +24,7 @@ export interface RewriteDeps {
  * Extract `--style <name>` from args, returning the chosen style and the
  * remaining positional args. Defaults to "clear".
  * @param args
+ * @returns string
  */
 function parseStyle(args: string[],): { style: string; rest: string[] } {
   const idx = args.indexOf("--style",);
@@ -40,6 +41,7 @@ function parseStyle(args: string[],): { style: string; rest: string[] } {
  * @param args
  * @param ctx
  * @param deps
+ * @returns void
  */
 export async function runRewrite(
   args: string[],
@@ -123,6 +125,7 @@ registerCommand("rewrite", async (args, ctx,): Promise<CommandResult> => {
  * Local fallback: trim whitespace, style-based transforms, sentence punctuation.
  * @param text
  * @param style
+ * @returns void
  */
 function rewriteText(text: string, style: string,): string {
   let result = text.trim();

@@ -40,6 +40,7 @@ export interface RecordTraitDriftOpts {
  * owns the growth bookkeeping.
  * @param db
  * @param opts
+ * @returns void
  */
 export async function recordTraitDrift(
   db: Kysely<DB>,

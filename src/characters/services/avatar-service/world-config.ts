@@ -27,6 +27,7 @@ export interface WorldAvatarConfig {
  * @param db
  * @param actorId
  * @param worldId
+ * @returns void
  */
 export async function getWorldAvatarConfig(
   db: Kysely<DB>,
@@ -59,6 +60,7 @@ export async function getWorldAvatarConfig(
  * @param actorId
  * @param worldId
  * @param config
+ * @returns void
  */
 export async function upsertWorldAvatarConfig(
   db: Kysely<DB>,

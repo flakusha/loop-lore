@@ -12,6 +12,7 @@ import type { ExtractedEntity, } from "./types";
 /**
  * Extract proper nouns from text, classify as character/location/item.
  * @param text
+ * @returns string
  */
 export function extractProperNouns(text: string,): ExtractedEntity[] {
   const entities: ExtractedEntity[] = [];
@@ -38,6 +39,7 @@ export function extractProperNouns(text: string,): ExtractedEntity[] {
  * Classify an entity based on context clues.
  * @param name
  * @param text
+ * @returns void
  */
 export function classifyEntity(
   name: string,

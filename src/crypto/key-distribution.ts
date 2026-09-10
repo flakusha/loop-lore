@@ -37,6 +37,7 @@ function log(): Logger {
 /**
  * @param database
  * @param chatId
+ * @returns string
  */
 export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
   const smk = getSmk();
@@ -48,6 +49,7 @@ export async function getChatKey(database: Kysely<DB>, chatId: string,): Promise
  * @param database
  * @param chatId
  * @param newParticipantId
+ * @returns void
  */
 export async function distributeKeysOnJoin(
   database: Kysely<DB>,
@@ -70,6 +72,7 @@ export async function distributeKeysOnJoin(
  * @param database
  * @param chatId
  * @param departedParticipantId
+ * @returns void
  */
 export async function rotateKeyOnLeave(
   database: Kysely<DB>,
@@ -169,6 +172,7 @@ export async function rotateKeyOnLeave(
 /**
  * @param database
  * @param chatId
+ * @returns void
  */
 export async function resolveChatKey(database: Kysely<DB>, chatId: string,): Promise<ChatKey> {
   return getChatKey(database, chatId,);

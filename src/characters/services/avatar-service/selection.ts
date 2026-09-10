@@ -21,6 +21,7 @@ const DEFAULT_FALLBACK_CHAIN: AvatarTagType[] = ["emotion", "mood", "action", "l
  * Returns the synthesized base `Avatar` when the actor has a base asset;
  * returns `null` when neither emotion avatars nor a base asset exist.
  * BUG-avatar-select-empty-throws-no-frontend-fallback.
+ * @returns void
  */
 async function resolveBaseAvatar(
   db: Kysely<DB>,
@@ -58,6 +59,7 @@ async function resolveBaseAvatar(
  *  4. Base portrait: when chain yields nothing, return base portrait.
  *
  * BUG-avatar-select-fallback-chain-unwired.
+ * @returns void
  */
 export async function selectAvatar(
   db: Kysely<DB>,
@@ -123,6 +125,7 @@ export async function selectAvatar(
 
 /**
  * Calculate score for an avatar based on context and weights.
+ * @returns void
  */
 export function calculateAvatarScore(
   avatar: Avatar,

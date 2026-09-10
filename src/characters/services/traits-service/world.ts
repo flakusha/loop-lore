@@ -26,6 +26,7 @@ export interface GetWorldTraitsArgs {
  * @param root0.thisL
  * @param root0.actorId
  * @param root0.worldId
+ * @returns void
  */
 export async function getWorldTraits(
   { thisL, actorId, worldId, }: GetWorldTraitsArgs,
@@ -53,6 +54,7 @@ export interface GetWorldTraitArgs {
  * @param root0.actorId
  * @param root0.worldId
  * @param root0.name
+ * @returns void
  */
 export async function getWorldTrait(
   { thisL, actorId, worldId, name, }: GetWorldTraitArgs,
@@ -78,6 +80,7 @@ export interface CreateWorldTraitArgs {
  * @param root0.thisL
  * @param root0.opts
  * @throws If trait already exists for this actor+world
+ * @returns void
  */
 export async function createWorldTrait(
   { thisL, opts, }: CreateWorldTraitArgs,
@@ -125,6 +128,7 @@ export interface UpdateWorldTraitArgs {
  * @param root0.actorId
  * @param root0.worldId
  * @param root0.opts
+ * @returns void
  */
 export async function updateWorldTrait(
   { thisL, actorId, worldId, opts, }: UpdateWorldTraitArgs,
@@ -161,6 +165,7 @@ export interface DeleteWorldTraitArgs {
  * @param root0.actorId
  * @param root0.worldId
  * @param root0.name
+ * @returns void
  */
 export async function deleteWorldTrait(
   { thisL, actorId, worldId, name, }: DeleteWorldTraitArgs,

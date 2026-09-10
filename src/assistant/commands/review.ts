@@ -31,6 +31,7 @@ interface ReviewIssue {
 /**
  * @param items
  * @param prefix
+ * @returns string
  */
 function formatIssueLines(items: ReviewIssue[], prefix: string,): string {
   return Array.from(items, (i,) => `- ${prefix} ${i.field}: ${i.issue}`,).join("\n",);
@@ -42,6 +43,7 @@ function formatIssueLines(items: ReviewIssue[], prefix: string,): string {
  * @param entityLabel
  * @param entityName
  * @param issues
+ * @returns void
  */
 function formatReviewReport(entityLabel: string, entityName: string, issues: ReviewIssue[],): string {
   let report = `**${entityLabel} Review: ${entityName}**\n\n`;
@@ -111,6 +113,7 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
  * Review the most recently created character owned by the user.
  * @param db
  * @param userId
+ * @returns void
  */
 async function reviewCharacter(db: Kysely<DB>, userId: string,): Promise<CommandResult> {
   const actor = await db
@@ -175,6 +178,7 @@ async function reviewCharacter(db: Kysely<DB>, userId: string,): Promise<Command
  * Review the active world.
  * @param db
  * @param worldId
+ * @returns void
  */
 async function reviewWorld(db: Kysely<DB>, worldId: string,): Promise<CommandResult> {
   const world = await db
@@ -222,6 +226,7 @@ async function reviewWorld(db: Kysely<DB>, worldId: string,): Promise<CommandRes
  * Review the most recent location in the active world.
  * @param db
  * @param worldId
+ * @returns void
  */
 async function reviewLocation(db: Kysely<DB>, worldId: string,): Promise<CommandResult> {
   const location = await db
