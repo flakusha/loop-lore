@@ -44,11 +44,6 @@ function healthFetch(req) {
   return new Response("not found", { status: 404, },);
 }
 
-async function serveAfter(port, fetch) {
-  await new Promise((r,) => setTimeout(r, 100,),);
-  return Bun.serve({ port, fetch, },);
-}
-
 let result = { scenario, error: "unknown scenario", };
 if (scenario === "llama-success") {
   const port = await reservePort();
@@ -215,10 +210,17 @@ describe("ServerExternalManager facade child harness", () => {
   }, 15000,);
 
   test("start methods propagate null when binaries are missing", async () => {
-    for (const scenario of ["llama-null", "swap-null", "sd-null",]) {
-      const result = await runScenario(helperPath, paths, scenario, "/usr/bin:/bin",);
-      expect(result.null,).toBe(true,);
-      expect(result.count,).toBe(0,);
+    // Empty dir, not /usr/bin:/bin — deterministic even on hosts with
+    // these niche binaries installed system-wide.
+    const empty = makeStubDir([],);
+    try {
+      for (const scenario of ["llama-null", "swap-null", "sd-null",]) {
+        const result = await runScenario(helperPath, paths, scenario, empty.dir,);
+        expect(result.null,).toBe(true,);
+        expect(result.count,).toBe(0,);
+      }
+    } finally {
+      empty.cleanup();
     }
   }, 15000,);
 });
