@@ -13853,6 +13853,12 @@
       "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
     }
   ],
+  "src/frontend/vn/stage-directives.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
+    }
+  ],
   "src/frontend/vn/state-machine/index.ts": [
     {
       "kind": "ticket",
@@ -18945,6 +18951,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-narration-actor-separation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
     }
   ],
   "src/regex/html-sanitize.test.ts": [
@@ -25697,10 +25707,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-timeline-system.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md"
     },
     {
       "kind": "spec",
