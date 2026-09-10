@@ -1585,6 +1585,18 @@
     "source": ".plan/tickets/BUG-delete-chat-gated-only-at-participant-level.md",
     "status": "done"
   },
+  "BUG-DEMO-LOGIN-E2E-FAILS-IN-FULL-SUITE-ORDER-DUE-TO-UNRESET-PER-": {
+    "hash": "89f26c8",
+    "git_issue": "89f26c8",
+    "extid": "BUG-DEMO-LOGIN-E2E-FAILS-IN-FULL-SUITE-ORDER-DUE-TO-UNRESET-PER-",
+    "type": "BUG",
+    "title": "demo-login e2e fails in full-suite order due to unreset per-IP demoLoginLimiter",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-demo-login-e2e-fails-in-full-suite-order-due-to-unreset-per-.md"
+  },
   "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER": {
     "hash": "63f8f29",
     "git_issue": "63f8f29",
