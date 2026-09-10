@@ -30,6 +30,7 @@ import type {
   PlaythroughStatus,
   PluginStatus,
   SkillLockState,
+  TransformContext,
   TurnStrategy,
   UserRole,
   UserStatus,
@@ -208,6 +209,21 @@ export interface Users {
   created_at: Generated<string>;
   last_seen_at: string | null;
   encryption_secret: string | null;
+}
+
+// ── asset_transforms ────────────────────────────────────────────
+export interface AssetTransforms {
+  asset_id: string;
+  context: TransformContext;
+  crop_x: number | null;
+  crop_y: number | null;
+  crop_w: number | null;
+  crop_h: number | null;
+  zoom: number | null;
+  rotation: number | null;
+  focal_point_x: number | null;
+  focal_point_y: number | null;
+  updated_at: string;
 }
 
 // ── mesh_inbound_keys ────────────────────────────────────────────
