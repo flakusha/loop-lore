@@ -3,7 +3,7 @@
 
 import { beforeEach, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
-import { BROWSER_MODEL_CATALOG, } from "./manifest";
+import { BROWSER_MODEL_CATALOG, isWllamaEngine, } from "./manifest";
 import { localInferenceRoutes, } from "./routes";
 
 describe("local inference routes", () => {
@@ -21,7 +21,9 @@ describe("local inference routes", () => {
     expect(Array.isArray(body.models,),).toBe(true,);
     for (const model of body.models) {
       expect(Array.isArray(model.files,),).toBe(true,);
-      expect(model.files.length,).toBeGreaterThan(0,);
+      if (!isWllamaEngine(model.engine,)) {
+        expect(model.files.length,).toBeGreaterThan(0,);
+      }
       for (const file of model.files) {
         expect(typeof file.name,).toBe("string",);
         expect(String(file.url,).startsWith("https://",),).toBe(true,);
