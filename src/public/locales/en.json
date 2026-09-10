@@ -433,6 +433,8 @@
   },
   "filter": {
     "allTypes": "All types",
+    "allTags": "All tags",
+    "byTag": "Filter by tag",
     "images": "Images",
     "audio": "Audio",
     "video": "Video",
