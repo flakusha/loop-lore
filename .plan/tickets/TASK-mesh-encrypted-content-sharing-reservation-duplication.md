@@ -122,6 +122,7 @@ distribution exists.
  `(clock, contentHash)`), `022_mesh_sharing` migration
  (`mesh_reservations`, `mesh_deliveries`), `/api/mesh-deliver` route,
  `MESH_PSK` env-only config, backfill repair.
+
 - Reservation lifecycle reserve → push → confirm/consume → release,
  plus idempotent expiry sweep: delivered.
 - Conflict handling: Lamport-style `clock` per content id, newer wins,
@@ -141,6 +142,7 @@ distribution exists.
  `/api/mesh-deliver` now takes `{ envelope, reservationId? }` and confirms
  the reservation on store, `MeshClock` HLC (`src/federation/clock.ts`,
  observed on every accepted delivery), `selectDuplicationTargets`
+
 - Per-world/channel duplication rules: still follow-up (no policy surface).
 - Sender push orchestration (`requestReservation`/`pushEnvelope` used from
   a queue): still follow-up — transport seams unit-tested only.
@@ -154,22 +156,21 @@ distribution exists.
   (`Record<worldId, { mode, peers }>`, optional, JSON Schema published),
   `resolveDuplicationPolicy` + `worldId` param on
   `selectDuplicationTargets`, fallback to top-level policy.
+
 - Deferred (blocked on missing seams, not started): `EncryptionProvider`
    swap — no `EncryptionProvider` interface exists in `src/` (only
    `encryptValue`/`decryptValue` string-secrets in `src/crypto/byok.ts`;
    per-peer key distribution/rotation is a separate epic); coordinator-
    mediated capacity — negotiation states exist but no quota-enforcement
    plumbing to route reserves through.
- seam, coordinator-mediated capacity validation, per-world/channel
- duplication policy, full `bun run check` gate.
- 
- ## Progress 2026-09-10 (branch `mesh-sharing-2`)
- 
- - Sender fan-out `fanOutContent` (`src/federation/sharing.ts`): per-target
+
+## Progress 2026-09-10 (branch `mesh-sharing-2`)
+
+- Sender fan-out `fanOutContent` (`src/federation/sharing.ts`): per-target
    reservation, contentKey-preferring seal with PSK probe fallback, per-target
    push with stored/stale/failed classification; one target's refusal never
    blocks the others (`094caf3`).
- - Strict self-review fixes: contentKey gated on sealed TLS wire or
+- Strict self-review fixes: contentKey gated on sealed TLS wire or
    trustProxy, NaN capacity guard, rotate-then-insert key race closed.
- - Gates: federation + route suites green, tsc/eslint/dprint clean.
- - NOT done: coordinator policy wiring, EncryptionProvider swap, HLC clocks.
+- Gates: federation + route suites green, tsc/eslint/dprint clean.
+- NOT done: coordinator policy wiring, EncryptionProvider swap, HLC clocks.

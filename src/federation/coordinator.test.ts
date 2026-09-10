@@ -4,14 +4,13 @@
 import { describe, expect, test, } from "bun:test";
 import { createTestDb, } from "../test-utils/create-test-db";
 import {
-  advanceNegotiation,
-  beginNegotiation,
   listPeers,
   runResyncPass,
   setPeerState,
   touchPeer,
   upsertPeer,
 } from "./coordinator";
+import { advanceNegotiation, beginNegotiation, } from "./negotiation";
 
 describe("coordinator registry", () => {
   test("upsert inserts pending by default and re-upsert updates", async () => {
