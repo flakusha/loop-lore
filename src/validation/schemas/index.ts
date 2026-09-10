@@ -15,6 +15,7 @@ export * from "./chat";
 export * from "./invites";
 export * from "./messages";
 export * from "./assets";
+export * from "./asset-tags";
 export * from "./actors";
 export * from "./users";
 export * from "./admin";
