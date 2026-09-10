@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { isLocalInferenceOptedIn, } from "../local-inference";
 import { log as rootLog, } from "../logger";
 import type { LocaleInfoArray, SettingsState, } from "./types";
 
@@ -22,6 +23,7 @@ export function general(): Partial<SettingsState> & ThisType<SettingsState> {
       if (preview !== null) { this.inlinePreview = preview === "1"; }
       const detail = localStorage.getItem("chat-detail-level",);
       if (detail) { this.detailLevel = detail; }
+      this.localInferenceOptIn = isLocalInferenceOptedIn();
       await this.loadLocales();
       await this.loadProviders();
       await this.loadSettings();

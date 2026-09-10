@@ -10,6 +10,7 @@
  */
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
+import { LocalInferenceUnavailable, runLocalPromptImprove, shouldOffloadTask, } from "../local-inference";
 import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
 
@@ -37,6 +38,21 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
       // the 1:1 chat voice. Explicit levels from the level menu win.
       const requestedLevel = level ??
         (this.isGroupChat ? "style-group" : "style-chat");
+      // Opt-in browser inference first: eligible levels run locally so the
+      // draft never reaches the server. Unavailable → fall through to server.
+      if (shouldOffloadTask("prompt-improve",)) {
+        try {
+          const local = runLocalPromptImprove({ text, level: requestedLevel, },);
+          this._promptImproveBackup = text;
+          input.value = local.content;
+          this.autoResize(input,);
+          log.debug("Prompt improved locally, server bypassed", { engine: local.engine, },);
+          this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptImproved",), },);
+          return;
+        } catch (error) {
+          if (!(error instanceof LocalInferenceUnavailable)) { throw error; }
+        }
+      }
       const res = await apiFetch(
         "/api/generation/prompt",
         {
