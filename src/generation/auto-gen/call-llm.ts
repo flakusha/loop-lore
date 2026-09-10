@@ -72,6 +72,8 @@ export interface CallLlmResult {
  * when the attempt is no longer in flight (e.g. it completed while we
  * were still flushing chunks). The buffer's append() returns the
  * sequence number the cancel path uses as the truncation marker.
+ * @param attemptId
+ * @param seq
  */
 function bumpLastRendered(attemptId: string | undefined, seq: number,): void {
   if (!attemptId) { return; }

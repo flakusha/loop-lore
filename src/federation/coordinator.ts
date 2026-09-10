@@ -38,6 +38,10 @@ export interface ResyncSummary {
  * Insert a peer or refresh its row when already known.
  * @param database
  * @param peer
+ * @param peer.origin
+ * @param peer.state
+ * @param peer.capabilities
+ * @param peer.capacityBytes
  * @returns Canonical origin stored.
  */
 export async function upsertPeer(
@@ -146,6 +150,8 @@ export async function touchPeer(
  * the registry. Per-peer misses never abort the pass.
  * @param database
  * @param opts
+ * @param opts.trustByOrigin
+ * @param opts.fetchImpl
  */
 export async function runResyncPass(
   database: Kysely<DB>,

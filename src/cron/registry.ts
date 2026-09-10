@@ -9,7 +9,12 @@
 
 import type { CronFactory, CronJobDef, JobContext, JobStatusEntry, Scheduler, SchedulerDeps, } from "./types";
 
-/** Default factory — annotated so the `Bun.cron` overloads resolve to the callback form. */
+/**
+ * Default factory — annotated so the `Bun.cron` overloads resolve to the callback form.
+ * @param expression
+ * @param callback
+ * @param opts
+ */
 const defaultCron: CronFactory = (expression, callback, opts,) => Bun.cron(expression, callback, opts,);
 
 interface LiveJob {
@@ -73,7 +78,11 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
 
   const live = new Map<string, LiveJob>();
 
-  /** */
+  /**
+   * 
+   * @param job
+   * @param ctx
+   */
   async function invoke(job: LiveJob, ctx: JobContext,): Promise<unknown> {
     try {
       const result = await job.def.run(ctx,);

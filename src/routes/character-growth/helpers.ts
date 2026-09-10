@@ -48,7 +48,10 @@ export const listLogQuery = t.Object({
   includePending: t.Optional(t.Boolean(),),
 },);
 
-/** Map service-layer growth errors to HTTP responses. */
+/**
+ * Map service-layer growth errors to HTTP responses.
+ * @param err
+ */
 export function errResponse(err: unknown,): Response {
   if (err instanceof GrowthServiceError) {
     if (err.code === "static_mode_forbidden") { return jsonError(err.message, 409,); }
@@ -60,21 +63,33 @@ export function errResponse(err: unknown,): Response {
   return jsonError("Internal server error", 500,);
 }
 
-/** Type guard for unknown optional string params/query values. */
+/**
+ * Type guard for unknown optional string params/query values.
+ * @param obj
+ * @param key
+ */
 export function getString(obj: unknown, key: string,): string | undefined {
   if (obj === null || typeof obj !== "object") { return undefined; }
   const v = (obj as Record<string, unknown>)[key];
   return typeof v === "string" ? v : undefined;
 }
 
-/** Type guard for unknown optional numeric params/query values. */
+/**
+ * Type guard for unknown optional numeric params/query values.
+ * @param obj
+ * @param key
+ */
 export function getNumber(obj: unknown, key: string,): number | undefined {
   if (obj === null || typeof obj !== "object") { return undefined; }
   const v = (obj as Record<string, unknown>)[key];
   return typeof v === "number" ? v : undefined;
 }
 
-/** Type guard for unknown optional boolean params/query values. */
+/**
+ * Type guard for unknown optional boolean params/query values.
+ * @param obj
+ * @param key
+ */
 export function getBoolean(obj: unknown, key: string,): boolean | undefined {
   if (obj === null || typeof obj !== "object") { return undefined; }
   const v = (obj as Record<string, unknown>)[key];

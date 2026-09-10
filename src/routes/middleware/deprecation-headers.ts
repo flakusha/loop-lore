@@ -33,7 +33,10 @@ export interface DeprecationConfig {
   sunset: string;
 }
 
-/** Resolve a possibly-lazy `enabled` flag to a concrete boolean. */
+/**
+ * Resolve a possibly-lazy `enabled` flag to a concrete boolean.
+ * @param enabled
+ */
 function isEnabled(enabled: DeprecationConfig["enabled"],): boolean {
   return typeof enabled === "function" ? enabled() : enabled;
 }

@@ -20,7 +20,10 @@ import type { GrowthLogEntry, } from "../../spec/growth";
 import type { ConfirmGrowthEntryOpts, GrowthLogRow, RejectGrowthEntryOpts, } from "./types";
 import { GrowthServiceError, } from "./types";
 
-/** Map a DB row to the public GrowthLogEntry shape. */
+/**
+ * Map a DB row to the public GrowthLogEntry shape.
+ * @param row
+ */
 function rowToGrowthEntry(row: GrowthLogRow,): GrowthLogEntry {
   return {
     id: row.id,
@@ -40,7 +43,11 @@ function rowToGrowthEntry(row: GrowthLogRow,): GrowthLogEntry {
   };
 }
 
-/** Confirm a pending entry — applies its state change to ground truth. */
+/**
+ * Confirm a pending entry — applies its state change to ground truth.
+ * @param db
+ * @param opts
+ */
 export async function confirmGrowthEntry(
   db: Kysely<DB>,
   opts: ConfirmGrowthEntryOpts,
@@ -90,7 +97,11 @@ export async function confirmGrowthEntry(
   return rowToGrowthEntry(updated as GrowthLogRow,);
 }
 
-/** Reject a pending entry — no ground-truth change, just status flip. */
+/**
+ * Reject a pending entry — no ground-truth change, just status flip.
+ * @param db
+ * @param opts
+ */
 export async function rejectGrowthEntry(
   db: Kysely<DB>,
   opts: RejectGrowthEntryOpts,

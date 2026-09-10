@@ -24,6 +24,12 @@ import type { GenerateRequest, } from "./types";
  * assigned, expose only the tools that role declares; otherwise expose all
  * registered plugin tools (lookup is best-effort — failures default to all).
  * @param opts
+ * @param opts.input
+ * @param opts.resolved
+ * @param opts.messages
+ * @param opts.database
+ * @param opts.abortSignal
+ * @param opts.stream
  */
 export async function buildProviderRequest(opts: {
   input: GenerateRequest;

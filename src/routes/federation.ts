@@ -24,7 +24,10 @@ import { jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
 
-/** Stable instance identifier — derived from server config, not a secret. */
+/**
+ * Stable instance identifier — derived from server config, not a secret.
+ * @param config
+ */
 function instanceId(config: Config,): string {
   const { host, port, } = config.server;
   return `${host}:${port}`;

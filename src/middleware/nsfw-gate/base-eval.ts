@@ -32,10 +32,13 @@ export interface GateInputs {
  * `canAccessNsfw` and the batched participant check both delegate here, so
  * single and multi-user paths cannot drift.
  * @param gateConfig `allowNsfw` toggle and `nsfwMinAge` threshold.
+ * @param gateConfig.allowNsfw
+ * @param gateConfig.nsfwMinAge
  * @param inputs Pre-loaded user/prefs row, or undefined when the user is unknown.
  * @param opts `ignoreModeration` skips the banned/blocked denial — server-side
  *   backends (e.g. own-settings provisioning) that read, rather than enforce,
  *   moderation state. NEVER expose to client input.
+ * @param opts.ignoreModeration
  */
 export function evaluateNsfwBase(
   gateConfig: { allowNsfw: boolean; nsfwMinAge: number },
@@ -113,6 +116,8 @@ export async function loadGateInputs(
  * regardless of participant count.
  * @param database
  * @param gateConfig `allowNsfw` toggle and `nsfwMinAge` threshold.
+ * @param gateConfig.allowNsfw
+ * @param gateConfig.nsfwMinAge
  * @param participantUserIds User-backed participant ids (AI/system actors
  *   carry no user and are excluded upstream by `getChatParticipantUserIds`).
  * @param excludeUserId Already-checked requester to skip.

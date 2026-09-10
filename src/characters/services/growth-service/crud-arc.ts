@@ -21,7 +21,10 @@ import { jsonStringifyOr, } from "../../../utils/safe-json";
 import type { CharacterArc, UpsertArcInput, } from "../../spec/growth";
 import type { CharacterArcRow, } from "./types";
 
-/** Map a DB row to the public CharacterArc shape. */
+/**
+ * Map a DB row to the public CharacterArc shape.
+ * @param row
+ */
 function rowToArc(row: CharacterArcRow,): CharacterArc {
   return {
     actorId: row.actor_id,
