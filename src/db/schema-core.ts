@@ -66,6 +66,20 @@ export interface Users {
   encryption_secret: string | null;
 }
 
+export interface AssetTransforms {
+  asset_id: string;
+  context: TransformContext;
+  crop_x: number | null;
+  crop_y: number | null;
+  crop_w: number | null;
+  crop_h: number | null;
+  zoom: number | null;
+  rotation: number | null;
+  focal_point_x: number | null;
+  focal_point_y: number | null;
+  updated_at: Generated<string>;
+}
+
 export interface Personas {
   id: Generated<string>;
   user_id: string;
@@ -154,21 +168,6 @@ export interface Actors {
   creator_notes: string | null;
   creator: string | null;
   character_version: string | null;
-
-// ── asset_transforms ────────────────────────────────────────────
-export interface AssetTransforms {
-  asset_id: string;
-  context: TransformContext;
-  crop_x: number | null;
-  crop_y: number | null;
-  crop_w: number | null;
-  crop_h: number | null;
-  zoom: number | null;
-  rotation: number | null;
-  focal_point_x: number | null;
-  focal_point_y: number | null;
-  updated_at: string;
-}
 
 // ── mesh_inbound_keys ────────────────────────────────────────────
 export interface MeshInboundKeys {
