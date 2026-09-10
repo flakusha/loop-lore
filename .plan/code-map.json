@@ -8990,6 +8990,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-unify-item-types.md"
     }
   ],
@@ -9593,6 +9597,10 @@
       "source": ".plan/tickets/TASK-test-chat-module.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
+    },
+    {
       "kind": "frontend",
       "source": "docs/frontend/chat/assistant.md"
     },
@@ -9827,6 +9835,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resource-provision-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
     },
     {
       "kind": "spec",
@@ -10195,6 +10207,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-resource-provision-schema.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-id-world-timeline-events.md"
     },
     {
       "kind": "ticket",
@@ -25671,6 +25687,16 @@
       "source": ".plan/tickets/TASK-link-npc-inventory.md"
     }
   ],
+  "src/story/timeline/event-steering.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-timeline-system.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/lore.md"
+    }
+  ],
   "src/story/timeline/index.ts": [
     {
       "kind": "epic",
@@ -25689,10 +25715,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cross-story-propagation.md"
-    },
-    {
-      "kind": "spec",
-      "source": "docs/spec/lore.md"
     }
   ],
   "src/story/turn-strategies.ts": [

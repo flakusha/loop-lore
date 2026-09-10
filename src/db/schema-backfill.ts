@@ -17,10 +17,9 @@
  *   triggers, then backfilled from `actor_memories`.
  * - `crafting_orders.requested_materials` (added by part 019): databases
  *   frozen before 019 get the column with its `[]` default.
- * - `workflow_sessions` (added by part 020, renamed from 021): databases frozen before 020
- *   get the table plus its schema-version record.
- * - `mesh_reservations` + `mesh_deliveries` (added by part 022): databases
- *   frozen before 022 get both tables plus the schema-version record.
+ * - `workflow_sessions` (part 020): frozen pre-020 databases get the table + version record.
+ * - `mesh_reservations` + `mesh_deliveries` (part 022): frozen pre-022 databases get both + version record.
+ * - `world_event_steerings` (folded part 003): frozen pre-fold databases get the table + version record.
  *
  * Runs after `runMigrations` in `src/server/start.ts`. Add future
  * stranded guards here following the same probe-then-repair shape.
@@ -31,6 +30,7 @@ import { type Kysely, sql, } from "kysely";
 import { getLogger, } from "../logger";
 import type { DB, } from "./schema";
 import { repairMeshSharing, } from "./schema-backfill-mesh";
+import { repairEventSteerings, } from "./schema-backfill-steering";
 import { recordSchemaVersion, } from "./schema-version";
 
 interface LegacyTemplateRow {
@@ -221,14 +221,14 @@ async function repairWorkflowSessions(database: Kysely<DB>,): Promise<boolean> {
     .addColumn("confirmed", "integer", (column,) => column.notNull().defaultTo(0,),)
     .addColumn("updated_at", "text", (column,) => column.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
-  // Pre-018 databases have no schema_version table; the table itself is
-  // the convergence signal there, so record only when the table exists.
+  // Pre-018 databases have no schema_version table; the table itself is the convergence signal there, so record only when the table exists.
   if ((await tableSql(database, "schema_version",)) !== null) {
     await recordSchemaVersion(database, 21, "workflow run sessions",);
   }
   log.info("Schema backfill applied: workflow_sessions created",);
   return true;
 }
+
 /**
  * Converge all stranded schema cases. Idempotent: converged databases
  * return false without touching rows.
@@ -244,5 +244,6 @@ export async function runSchemaBackfill(database: Kysely<DB>,): Promise<boolean>
   const materials = await repairRequestedMaterials(database,);
   const sessions = await repairWorkflowSessions(database,);
   const sharing = await repairMeshSharing(database,);
-  return template || fts || materials || sessions || sharing;
+  const steerings = await repairEventSteerings(database,);
+  return template || fts || materials || sessions || sharing || steerings;
 }
