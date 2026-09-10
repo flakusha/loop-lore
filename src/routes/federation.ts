@@ -20,11 +20,11 @@ import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import { getSmk, } from "../crypto/smk";
 import type { Db, } from "../db";
-import { pskCipher, } from "../federation/cipher";
 import { createMeshClock, } from "../federation/clock";
+import { createMeshEncryption, } from "../federation/encryption";
 import { type ContentEnvelope, } from "../federation/envelope";
 import { getGossipOrigins, } from "../federation/gossip";
-import { ciphersForSender, getOrCreateInboundKey, } from "../federation/peer-keys";
+import { getOrCreateInboundKey, } from "../federation/peer-keys";
 import {
   createInboundReservation,
   type DeliveryVerdict,
@@ -245,10 +245,9 @@ export function federationRoutes(opts: FederationOpts,): Elysia {
       const reservationId = typeof request?.reservationId === "string"
         ? request.reservationId
         : undefined;
-      const ciphers = await ciphersForSender(
+      const ciphers = await createMeshEncryption(secret,).receiverCiphers(
         opts.database,
         envelope.origin,
-        pskCipher(secret,),
         getSmk(),
       );
       let verdict: DeliveryVerdict | null = null;
