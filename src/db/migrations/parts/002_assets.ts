@@ -55,6 +55,22 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 
   await database.schema
+    .createTable("asset_transforms",)
+    .addColumn("asset_id", "text", (col,) => col.notNull().references("assets.id",),)
+    .addColumn("context", "text", (col,) => col.notNull(),)
+    .addColumn("crop_x", "real",)
+    .addColumn("crop_y", "real",)
+    .addColumn("crop_w", "real",)
+    .addColumn("crop_h", "real",)
+    .addColumn("zoom", "real",)
+    .addColumn("rotation", "real",)
+    .addColumn("focal_point_x", "real",)
+    .addColumn("focal_point_y", "real",)
+    .addColumn("updated_at", "text", (col,) => col.notNull(),)
+    .addPrimaryKeyConstraint("pk_asset_transforms", ["asset_id", "context",],)
+    .execute();
+
+  await database.schema
     .createIndex("idx_asset_links_entity",)
     .on("asset_links",)
     .columns(["entity_type", "entity_id",],)
@@ -95,11 +111,18 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .on("assets",)
     .column("record_hash",)
     .execute();
+
+  await database.schema
+    .createIndex("idx_asset_transforms_asset",)
+    .on("asset_transforms",)
+    .column("asset_id",)
+    .execute();
 }
 /**
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema.dropTable("asset_transforms",).execute();
   await database.schema.dropTable("asset_shares",).execute();
   await database.schema.dropTable("asset_links",).execute();
   await database.schema.dropTable("assets",).execute();

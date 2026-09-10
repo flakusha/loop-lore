@@ -36,6 +36,7 @@ export interface DB {
   asset_links: import("./schema-content").AssetLinks;
   asset_shares: import("./schema-content").AssetShares;
   assets: import("./schema-content").Assets;
+  asset_transforms: import("./schema-core").AssetTransforms;
   mesh_inbound_keys: import("./schema-core").MeshInboundKeys;
   location_states: import("./schema-story").LocationStates;
   locations: import("./schema-story").Locations;
