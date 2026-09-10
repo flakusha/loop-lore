@@ -30,6 +30,7 @@ import "./sidebar";
 import "./shortcuts";
 import "./settings-modal";
 import "./key-management";
+import "./model-manager";
 import "./rpg-stats";
 import "./memory-panel";
 import "./context-window";

@@ -91,6 +91,9 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'keys' }" @click="activeTab = 'keys'">
           {{{t("settings.keys")}}}
         </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'models' }" @click="activeTab = 'models'">
+          {{{t("settings.models")}}}
+        </button>
       </div>
 
       <!-- General Tab -->
@@ -559,6 +562,140 @@
               </div>
             </div>
           </template>
+        </div>
+      </div>
+
+      <!-- Models Tab -->
+      <div x-show="activeTab === 'models'" class="settings-tab-content" data-testid="settings-models">
+        <div class="settings-section" x-data="modelManager()" x-init="init()">
+          <div class="section-title">{{{t("settings.browserModels")}}}</div>
+          <div class="section-description">
+            {{{t("settings.browserModelsDescription")}}}
+          </div>
+
+          <!-- Error message -->
+          <template x-if="error">
+            <div
+              class="p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-sm"
+              x-text="error"
+            >
+            </div>
+          </template>
+          <template x-if="catalogError">
+            <div class="text-sm text-gray-500" x-text="catalogError"></div>
+          </template>
+
+          <!-- Device support -->
+          <div class="text-xs text-gray-500 space-x-3">
+            <template x-if="webgpu">
+              <span>WebGPU</span>
+            </template>
+            <template x-if="!webgpu">
+              <span>WebGPU unavailable</span>
+            </template>
+            <template x-if="indexedDB">
+              <span>IndexedDB</span>
+            </template>
+            <template x-if="!indexedDB">
+              <span>IndexedDB unavailable</span>
+            </template>
+          </div>
+
+          <!-- Host catalog -->
+          <div class="section-title">{{{t("settings.hostCatalog")}}}</div>
+          <div class="space-y-2">
+            <template x-if="!loading && catalog.length === 0">
+              <p class="text-gray-500 text-sm">{{{t("settings.noCatalogModels")}}}</p>
+            </template>
+            <template x-for="model in catalog" :key="model.id">
+              <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div class="space-y-1">
+                  <div class="font-medium" x-text="model.label"></div>
+                  <div class="text-xs text-gray-500 space-x-3">
+                    <span x-text="model.engine"></span>
+                    <span x-text="model.parameters"></span>
+                    <span x-text="model.approxSizeMB + ' MB'"></span>
+                  </div>
+                </div>
+                <template x-if="stored.some((entry) => entry.id === model.id)">
+                  <span class="text-xs font-medium uppercase text-green-600 dark:text-green-400">
+                    {{{t("settings.stored")}}}
+                  </span>
+                </template>
+              </div>
+            </template>
+          </div>
+
+          <!-- Download form -->
+          <div class="section-title">{{{t("settings.downloadModel")}}}</div>
+          <div class="space-y-2">
+            <div class="form-group">
+              <label class="form-label" for="model-file-url">{{{t("settings.modelFileUrl")}}}</label>
+              <input
+                type="url"
+                class="form-input"
+                id="model-file-url"
+                x-model="downloadUrl"
+                x-bind:placeholder="t('settings.modelFileUrlPlaceholder')"
+                data-testid="model-download-url"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="model-sha256">{{{t("settings.modelSha256")}}}</label>
+              <input type="text" class="form-input" id="model-sha256" x-model="downloadSha" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="model-name">{{{t("settings.modelName")}}}</label>
+              <input type="text" class="form-input" id="model-name" x-model="downloadId" />
+            </div>
+            <div class="flex gap-2">
+              <button
+                @click="downloadFromUrl()"
+                :disabled="loading || downloadingId"
+                class="btn btn-primary disabled:opacity-50"
+                data-testid="model-download-start"
+              >
+                {{{t("common.download")}}}
+              </button>
+              <template x-if="downloadingId">
+                <button @click="cancelDownload()" class="btn btn-warning">
+                  {{{t("common.cancel")}}}
+                </button>
+              </template>
+            </div>
+            <template x-if="progress">
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                <span x-text="formatSize(progress.loadedBytes)"></span>
+                <template x-if="progress.totalBytes">
+                  <span> / <span x-text="formatSize(progress.totalBytes)"></span></span>
+                </template>
+              </div>
+            </template>
+          </div>
+
+          <!-- Stored models -->
+          <div class="section-title">
+            {{{t("settings.storedModels")}}} (<span x-text="formatSize(usageBytes)"></span>)
+          </div>
+          <div class="space-y-2" data-testid="model-stored-list">
+            <template x-if="!loading && stored.length === 0">
+              <p class="text-gray-500 text-sm">{{{t("settings.noStoredModels")}}}</p>
+            </template>
+            <template x-for="entry in stored" :key="entry.id">
+              <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div class="space-y-1">
+                  <div class="font-medium" x-text="entry.id"></div>
+                  <div class="text-xs text-gray-500 space-x-3">
+                    <span x-text="formatSize(entry.sizeBytes)"></span>
+                    <span class="font-mono" x-text="entry.sha256.slice(0, 12)"></span>
+                  </div>
+                </div>
+                <button @click="removeModel(entry.id)" class="text-red-600 hover:text-red-700 text-sm">
+                  {{{t("common.delete")}}}
+                </button>
+              </div>
+            </template>
+          </div>
         </div>
       </div>
     </div>
