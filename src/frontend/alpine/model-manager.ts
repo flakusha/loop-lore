@@ -18,18 +18,17 @@
  * @module alpine/model-manager
  */
 
-import { downloadCatalogEntry as runCatalogDownload, } from "./catalog-download";
+import { downloadCatalogEntry as runCatalogDownload, filenameFromUrl, } from "./catalog-download";
 import { detectLocalInferenceSupport, } from "./local-inference";
 import { type CatalogModel, fetchCapability, fetchCatalog, type LocalInferenceCapability, } from "./model-catalog";
 import { downloadModel, type DownloadProgress, sha256Hex, } from "./model-downloader";
 import {
-  createMemoryStore,
   isIndexedDBAvailable,
   type ModelByteStore,
   type StoredModelSummary,
 } from "./model-storage";
 import {
-  createIndexedDBStore,
+  defaultModelStore,
 } from "./model-storage-idb";
 
 /** Injectable seams for tests. */
@@ -66,18 +65,6 @@ export interface ModelManagerState {
   removeModel(modelId: string,): Promise<void>;
   formatSize(bytes: number,): string;
 }
-
-let defaultStore: ModelByteStore | null = null;
-
-/**
- * Shared store singleton for the live component.
- * @returns The default model byte store.
- */
-function defaultStoreInstance(): ModelByteStore {
-  defaultStore ??= isIndexedDBAvailable() ? createIndexedDBStore() : createMemoryStore();
-  return defaultStore;
-}
-
 /**
  * Create the model manager component state.
  * @param deps - Injectable seams for tests.
@@ -126,7 +113,7 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
     async refresh(): Promise<void> {
       this.loading = true;
       try {
-        const store = deps.store ?? defaultStoreInstance();
+        const store = deps.store ?? defaultModelStore();
         this.stored = await store.list();
         this.usageBytes = await store.usageBytes();
       } finally {
@@ -149,7 +136,7 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
         this.error = "Could not derive a model name — enter one explicitly.";
         return;
       }
-      const store = deps.store ?? defaultStoreInstance();
+      const store = deps.store ?? defaultModelStore();
       this.error = null;
       this.downloadingId = modelId;
       this.progress = { loadedBytes: 0, totalBytes: undefined, };
@@ -194,7 +181,7 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
         this.error = "Catalog entry is no longer listed.";
         return;
       }
-      const store = deps.store ?? defaultStoreInstance();
+      const store = deps.store ?? defaultModelStore();
       this.error = null;
       this.downloadingId = modelId;
       this.progress = { loadedBytes: 0, totalBytes: undefined, };
@@ -230,7 +217,7 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
     },
 
     async removeModel(modelId: string,): Promise<void> {
-      const store = deps.store ?? defaultStoreInstance();
+      const store = deps.store ?? defaultModelStore();
       await store.remove(modelId,);
       await this.refresh();
     },
@@ -243,16 +230,6 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
     },
   };
   return state;
-}
-
-/**
- * Derive a model id from a file URL's last path segment.
- * @param url - Validated http(s) URL.
- * @returns File name or empty string.
- */
-function filenameFromUrl(url: string,): string {
-  const path = url.split("?", 1,)[0] ?? "";
-  return path.slice(path.lastIndexOf("/",) + 1,);
 }
 
 globalThis.modelManager = function(): ModelManagerState {

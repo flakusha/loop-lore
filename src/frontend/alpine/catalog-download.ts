@@ -106,3 +106,13 @@ export async function downloadCatalogEntry(deps: CatalogDownloadDeps,): Promise<
   }
   return { modelId: deps.entry.id, files: stored, totalBytes: doneBytes, };
 }
+
+/**
+ * Derive a model id from a file URL's last path segment.
+ * @param url - Validated http(s) URL.
+ * @returns File name or empty string.
+ */
+export function filenameFromUrl(url: string,): string {
+  const path = url.split("?", 1,)[0] ?? "";
+  return path.slice(path.lastIndexOf("/",) + 1,);
+}
