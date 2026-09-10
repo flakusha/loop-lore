@@ -10999,6 +10999,12 @@
       "source": ".plan/tickets/WIRE-assistant-command-palette-stale-static-list.md"
     }
   ],
+  "src/frontend/alpine/chat-actions/commands.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-slash-commands-chat-group-assistant.md"
+    }
+  ],
   "src/frontend/alpine/chat-actions/dispatch.ts": [
     {
       "kind": "ticket",
@@ -26257,6 +26263,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/testing.md"
+    }
+  ],
+  "src/utils/structured-output.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-hidden-carriage-context.md"
     }
   ],
   "src/validation/db-schemas.ts": [
