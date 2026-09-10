@@ -203,7 +203,7 @@ describe("gguf split entries", () => {
       "https://cdn.example.com/g1/g-00001-of-00002.gguf",
       "https://cdn.example.com/g1/g-00002-of-00002.gguf",
     ],);
-    expect(progress.at(-1),).toEqual({ loadedBytes: 10, totalBytes: 10, },);
+    expect(progress.at(-1,),).toEqual({ loadedBytes: 10, totalBytes: 10, },);
   });
 
   test("incomplete split set throws before any download", async () => {
@@ -218,7 +218,7 @@ describe("gguf split entries", () => {
           return encode("GGUF01",);
         }) as typeof downloadModel,
       },),
-    ).rejects.toThrow('incomplete GGUF split set',);
+    ).rejects.toThrow("incomplete GGUF split set",);
     expect(called,).toBe(0,);
   });
 
