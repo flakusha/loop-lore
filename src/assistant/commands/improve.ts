@@ -3,116 +3,77 @@
 
 // src/assistant/commands/improve.ts
 //
-// /improve — rewrite user text for better quality.
+// /improve — improve user text via the shared prompt-improvement service.
 //
-// Flow: LLM-first (when a provider resolves and `complete` is injectable),
-// local-heuristics fallback otherwise. The LLM is given a clarity/flow system
-// prompt; the fallback applies basic capitalization + punctuation cleanup.
+// The command is a thin shell over `src/prompt-improve` (see
+// epic-prompt-improvement): AUX-backed LLM-first with per-level gradation
+// (`--level spelling|wording|expand|strict|creative`), deterministic
+// local-polish fallback otherwise. The composer UI calls the same service
+// through POST /api/generation/prompt.
 
-import { resolveProvider, } from "../../generation/providers/registry";
-import type { GenerateRequest, } from "../../generation/providers/types";
+import { improveOrPolish, polishText, PROMPT_IMPROVE_PARAMS, type PromptImproveLevel, } from "../../prompt-improve";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 
-/** Deps shape for /improve — matches `runCreateGeneration`'s `complete` signature. */
-export interface ImproveDeps {
-  complete?: (req: GenerateRequest,) => Promise<{ content: string }>;
-  model?: string;
-}
+const USAGE = "Usage: /improve <text> — rewrite text for better quality.\n" +
+  "Options: --level spelling|wording|expand|strict|creative (default wording).\n" +
+  "You can also reply to a message with /improve to improve it.";
 
 /**
- * Core `/improve` logic. Extractable so tests can inject a stub `complete`.
- * The production handler in this file resolves a provider and passes the
- * bound `complete` here, mirroring `runCreateGeneration`.
+ * Core `/improve` logic. Delegates to the shared prompt-improvement service;
+ * the service decides between the AUX LLM path and the deterministic local
+ * polish fallback. Extractable for tests via the CommandContext seams.
  * @param args
- * @param _ctx
- * @param deps
+ * @param ctx
  */
-export async function runImprove(
-  args: string[],
-  _ctx: CommandContext,
-  deps: ImproveDeps,
-): Promise<CommandResult> {
-  const text = args.join(" ",).trim();
+export async function runImprove(args: string[], ctx: CommandContext,): Promise<CommandResult> {
+  let level: PromptImproveLevel = "wording";
+  const textParts: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--level") {
+      const requested = args[i + 1] as PromptImproveLevel | undefined;
+      if (requested && requested in PROMPT_IMPROVE_PARAMS) { level = requested; }
+      i++;
+      continue;
+    }
+    textParts.push(args[i] as string,);
+  }
+  const text = textParts.join(" ",).trim();
 
   if (!text) {
+    return { systemMessage: USAGE, handled: true, };
+  }
+
+  // No backend context (bare unit-test ctx, headless callers): the service
+  // needs config + db to resolve the aux model — degrade to local polish.
+  if (!ctx.db || !ctx.config) {
+    const polished = polishText(text,);
     return {
-      systemMessage:
-        "Usage: /improve <text> — rewrite text for better quality.\nYou can also reply to a message with /improve to improve it.",
+      systemMessage: `**Improved:**\n\n${polished}\n\n[LLM unavailable — applied local heuristics only]`,
+      actionPayload: { original: text, improved: polished, level, fallback: true, },
       handled: true,
     };
   }
 
-  const systemPrompt = "Rewrite the following text for clarity and flow. Preserve meaning.";
-
-  if (deps.complete) {
-    try {
-      const result = await deps.complete({
-        model: deps.model ?? "",
-        messages: [
-          { role: "system", content: systemPrompt, },
-          { role: "user", content: text, },
-        ],
-        params: { maxTokens: 512, temperature: 0.7, },
-      },);
-      const content = result.content.trim();
-      if (content) {
-        return {
-          systemMessage: `**Improved:**\n\n${content}`,
-          actionPayload: { original: text, improved: content, },
-          handled: true,
-        };
-      }
-    } catch {
-      // Fall through to local heuristics on LLM failure
-    }
-  }
-
-  const improved = improveText(text,);
+  const result = await improveOrPolish({
+    level,
+    text,
+    config: ctx.config,
+    db: ctx.db,
+    userId: ctx.userId,
+    chatId: ctx.chatId,
+  },);
+  const fallback = result.model === "local-heuristics";
   return {
-    systemMessage: `**Improved:**\n\n${improved}\n\n[LLM unavailable — applied local heuristics only]`,
-    actionPayload: { original: text, improved, fallback: true, },
+    systemMessage: `**Improved:**\n\n${result.content}` +
+      (fallback ? "\n\n[LLM unavailable — applied local heuristics only]" : ""),
+    actionPayload: {
+      original: text,
+      improved: result.content,
+      level,
+      ...(fallback ? { fallback: true, } : {}),
+    },
     handled: true,
   };
 }
 
-registerCommand("improve", async (args, ctx,): Promise<CommandResult> => {
-  const { config, db, } = ctx;
-  if (!db || !config) {
-    return runImprove(args, ctx, { complete: async () => ({ content: "", }), },);
-  }
-  try {
-    const resolved = await resolveProvider({ config, userId: ctx.userId, db, },);
-    return runImprove(args, ctx, {
-      complete: (req,) => resolved.provider.complete(req,),
-      model: resolved.resolvedModel,
-    },);
-  } catch {
-    return runImprove(args, ctx, {},);
-  }
-},);
-
-/**
- * Local fallback: capitalization, punctuation, whitespace cleanup.
- * @param text
- */
-function improveText(text: string,): string {
-  let result = text.trim();
-
-  // Capitalize first letter
-  if (result.length > 0) {
-    result = result.charAt(0,).toUpperCase() + result.slice(1,);
-  }
-
-  // Ensure ends with punctuation
-  if (result.length > 0 && !/[.!?]$/.test(result,)) {
-    result += ".";
-  }
-
-  // Fix double spaces
-  result = result.replaceAll(/ {2,}/g, " ",);
-
-  // Fix space before punctuation
-  result = result.replaceAll(/ ([.,!?;:])/g, "$1",);
-
-  return result;
-}
+registerCommand("improve", async (args, ctx,): Promise<CommandResult> => runImprove(args, ctx,),);
