@@ -65,11 +65,6 @@ function healthFetch(req) {
 
 // Bind after a short delay so the isPortFree probe (which requires the port
 // to be free) runs first; the production readiness loop then observes it.
-async function serveAfter(port, fetch) {
-  await new Promise((r,) => setTimeout(r, 100,),);
-  return Bun.serve({ port, fetch, },);
-}
-
 const FULL_OPTS = {
   enabled: true,
   modelPath: "user/repo:file",
@@ -233,17 +228,29 @@ describe("start-llama child harness", () => {
   },);
 
   test("llama-missing: null + warn with no binary on PATH", async () => {
-    const result = await runScenario(helperPath, modPath, "llama-missing", { path: "/usr/bin:/bin", },);
-    expect(result.null,).toBe(true,);
-    expect(result.count,).toBe(0,);
-    expect((result.warns as string[]).some((m,) => m.includes("not found in PATH",)),).toBe(true,);
+    // Empty dir, not /usr/bin:/bin — deterministic even on hosts with
+    // these niche binaries installed system-wide.
+    const empty = makeStubDir([],);
+    try {
+      const result = await runScenario(helperPath, modPath, "llama-missing", { path: empty.dir, },);
+      expect(result.null,).toBe(true,);
+      expect(result.count,).toBe(0,);
+      expect((result.warns as string[]).some((m,) => m.includes("not found in PATH",)),).toBe(true,);
+    } finally {
+      empty.cleanup();
+    }
   }, 15000,);
 
   test("swap-missing: null + warn with no binary on PATH", async () => {
-    const result = await runScenario(helperPath, modPath, "swap-missing", { path: "/usr/bin:/bin", },);
-    expect(result.null,).toBe(true,);
-    expect(result.count,).toBe(0,);
-    expect((result.warns as string[]).some((m,) => m.includes("not found in PATH",)),).toBe(true,);
+    const empty = makeStubDir([],);
+    try {
+      const result = await runScenario(helperPath, modPath, "swap-missing", { path: empty.dir, },);
+      expect(result.null,).toBe(true,);
+      expect(result.count,).toBe(0,);
+      expect((result.warns as string[]).some((m,) => m.includes("not found in PATH",)),).toBe(true,);
+    } finally {
+      empty.cleanup();
+    }
   }, 15000,);
 
   test("llama-busy: null + warn when the port is occupied", async () => {

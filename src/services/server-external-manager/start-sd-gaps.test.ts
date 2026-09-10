@@ -203,10 +203,18 @@ describe("start-sd child harness", () => {
   },);
 
   test("sd-missing: null + warn with no binary on PATH", async () => {
-    const result = await runScenario(helperPath, modPath, "sd-missing", "/usr/bin:/bin",);
-    expect(result.null,).toBe(true,);
-    expect(result.count,).toBe(0,);
-    expect((result.warns as string[]).some((m,) => m.includes("not found in PATH",)),).toBe(true,);
+    // Bare empty dir (makeStubDir() always plants an sd-server stub, which
+    // would defeat the missing-binary premise); deterministic even where
+    // sd-server exists system-wide.
+    const emptyDir = mkdtempSync(join(tmpdir(), "sd-empty-",),);
+    try {
+      const result = await runScenario(helperPath, modPath, "sd-missing", emptyDir,);
+      expect(result.null,).toBe(true,);
+      expect(result.count,).toBe(0,);
+      expect((result.warns as string[]).some((m,) => m.includes("not found in PATH",)),).toBe(true,);
+    } finally {
+      rmSync(emptyDir, { recursive: true, force: true, },);
+    }
   }, 15000,);
 
   test("sd-busy: null + warn when the port is occupied", async () => {
