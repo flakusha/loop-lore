@@ -1762,6 +1762,19 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
+  .table("world_event_steerings", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    timeline_id: col("text", { notNull: true, hasDefault: true, },),
+    description: col("text", { notNull: true, },),
+    manifest_probability: col("real", { notNull: true, hasDefault: true, },),
+    conditions: col("text",),
+    may_manifest: col("integer", { notNull: true, hasDefault: true, },),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    audience_scope: col("text",),
+    resolved_at: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("world_invites", {
     id: col("text", { primaryKey: true, },),
     world_id: col("text", { notNull: true, },),

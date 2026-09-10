@@ -35,6 +35,7 @@ describe("schema-backfill", () => {
     await sql`CREATE TABLE mesh_reservations (id TEXT PRIMARY KEY)`.execute(kysely,);
     await sql`CREATE TABLE mesh_deliveries (content_id TEXT PRIMARY KEY)`.execute(kysely,);
     await sql`CREATE TABLE mesh_inbound_keys (peer_origin TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`CREATE TABLE world_event_steerings (id TEXT PRIMARY KEY)`.execute(kysely,);
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });
 
@@ -259,6 +260,42 @@ describe("schema-backfill", () => {
       kysely,
     );
     expect(version.rows.map((row,) => row.version),).toEqual([23,],);
+    expect(await runSchemaBackfill(kysely,),).toBe(false,);
+  });
+  test("creates stranded world event steerings table with version record", async () => {
+    await sql`CREATE TABLE worlds (id TEXT PRIMARY KEY)`.execute(kysely,);
+    await sql`CREATE TABLE schema_version (version INTEGER PRIMARY KEY, description TEXT)`.execute(
+      kysely,
+    );
+
+    expect(await runSchemaBackfill(kysely,),).toBe(true,);
+
+    const columns = await sql<{ name: string }>`SELECT name FROM pragma_table_info('world_event_steerings')`.execute(
+      kysely,
+    );
+    expect(columns.rows.map((row,) => row.name),).toEqual([
+      "id",
+      "world_id",
+      "timeline_id",
+      "description",
+      "manifest_probability",
+      "conditions",
+      "may_manifest",
+      "status",
+      "audience_scope",
+      "resolved_at",
+      "created_at",
+    ],);
+    const index = await sql<
+      { name: string }
+    >`SELECT name FROM sqlite_master WHERE type = 'index' AND name = 'idx_wes_world_status'`.execute(
+      kysely,
+    );
+    expect(index.rows.map((row,) => row.name),).toEqual(["idx_wes_world_status",],);
+    const version = await sql<{ version: number }>`SELECT version FROM schema_version WHERE version = 26`.execute(
+      kysely,
+    );
+    expect(version.rows.map((row,) => row.version),).toEqual([26,],);
     expect(await runSchemaBackfill(kysely,),).toBe(false,);
   });
 });

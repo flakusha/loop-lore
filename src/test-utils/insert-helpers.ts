@@ -738,6 +738,31 @@ export async function insertWorldTimelines(
   } as any,).execute();
 }
 
+/** Insert a world_event_steerings row. */
+export async function insertWorldEventSteerings(
+  db: Db,
+  world_id: string,
+  description: string,
+  opts?: {
+    id?: string;
+    timeline_id?: string;
+    manifest_probability?: number;
+    conditions?: string | null;
+    may_manifest?: number;
+    status?: string;
+    audience_scope?: string | null;
+    resolved_at?: string | null;
+    created_at?: string;
+  },
+): Promise<void> {
+  await db.insertInto("world_event_steerings",).values({
+    id: crypto.randomUUID(),
+    world_id,
+    description,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a worlds row. */
 export async function insertWorlds(
   db: Db,
