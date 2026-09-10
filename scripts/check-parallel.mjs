@@ -8,6 +8,7 @@
  *
  * Usage:
  *   bun run scripts/check-parallel.mjs [--fix] [--ci] [--report-ls] [--jobs N]
+ *   bun run scripts/check-parallel.mjs [--diff-base <ref>] [--gates <csv>] [--skip-gates <csv>]
  *
  * Concurrency cap (added to keep peak RSS sane across multiple worktrees):
  *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env, or 8).
@@ -76,6 +77,30 @@ function parseDiffBase() {
 }
 
 const DIFF_BASE = parseDiffBase();
+
+// ── Selective gate filter ──────────────────────────────────────
+// `--gates=<csv>` runs ONLY the named checks (whitelist).
+// `--skip-gates=<csv>` runs every check EXCEPT the named ones (inverse).
+// Both flags take a comma-separated list of gate names — exactly the keys
+// of the `checks` dictionary below. Names match verbatim after trimming
+// whitespace; unknown names exit non-zero with a hint listing available
+// names. The flag is the source of truth (trust semantics): no implicit
+// inclusion of diff-scoped gates. Combined with `--diff-base`, the
+// test/coverage entries still scope to the diff; `--gates` only narrows
+// the executed subset.
+function parseGateFlag(flag,) {
+  const idx = process.argv.indexOf(flag,);
+  if (idx === -1 || idx + 1 >= process.argv.length) { return null; }
+  const raw = process.argv[idx + 1];
+  if (raw === undefined || raw.trim() === "") { return null; }
+  return raw.split(",",).map((s,) => s.trim()).filter((s,) => s.length > 0);
+}
+const GATES_FILTER = parseGateFlag("--gates",);
+const SKIP_GATES_FILTER = parseGateFlag("--skip-gates",);
+if (GATES_FILTER && SKIP_GATES_FILTER) {
+  console.error("error: --gates and --skip-gates are mutually exclusive",);
+  process.exit(2,);
+}
 
 /**
  * Files changed on this branch vs `base`, plus uncommitted working-tree
@@ -262,7 +287,7 @@ const checks = {
     // Blocking: unescaped server-derived data in innerHTML is a stored-XSS vector.
     "frontend - innerHTML xss": "bun run scripts/check-frontend-innerhtml-xss.ts",
     // Advisory: reports pre-existing banned-pattern debt; not blocking.
-    "frontend - banned patterns (ESLint-gap heuristic, advisory)":
+    "frontend - banned patterns (ESLint-gap heuristic — advisory)":
       "bun run scripts/check-frontend-banned-patterns.ts || true",
     // Advisory: planning hygiene — stale/missing epic coverage.
     "plan - epic coverage (advisory)": "bun run scripts/check-epic-coverage.ts || true",
@@ -364,6 +389,48 @@ function coverageCommand() {
 }
 
 checks["coverage - per-module line %"] = coverageCommand();
+
+// ── Apply selective gate filter ────────────────────────────────
+// Runs after the `coverage - per-module line %` entry is registered so
+// the filter sees every check name. Validation: any unknown name in
+// either flag exits non-zero with a hint listing available names.
+function applyGateFilter() {
+  if (!GATES_FILTER && !SKIP_GATES_FILTER) { return; }
+  const available = Object.keys(checks,).sort();
+  const availableSet = new Set(available,);
+  const requested = GATES_FILTER || SKIP_GATES_FILTER || [];
+  const unknown = requested.filter((n,) => !availableSet.has(n,));
+  if (unknown.length > 0) {
+    console.error(
+      `error: unknown gate name(s): ${unknown.map((n,) => JSON.stringify(n,)).join(", ",)}`,
+    );
+    console.error("available gates:",);
+    for (const n of available) { console.error(`  ${n}`,); }
+    process.exit(2,);
+  }
+  if (GATES_FILTER) {
+    const selectedSet = new Set(GATES_FILTER,);
+    for (const name of Object.keys(checks,)) {
+      if (!selectedSet.has(name,)) { delete checks[name]; }
+    }
+    console.error(`gates filter: whitelisted ${GATES_FILTER.length} of ${available.length} gates`,);
+  } else {
+    const skipSet = new Set(SKIP_GATES_FILTER,);
+    for (const name of Object.keys(checks,)) {
+      if (skipSet.has(name,)) { delete checks[name]; }
+    }
+    console.error(
+      `gates filter: skipped ${SKIP_GATES_FILTER.length}; running ${
+        Object.keys(checks,).length
+      } of ${available.length} gates`,
+    );
+  }
+  if (Object.keys(checks,).length === 0) {
+    console.error("error: --gates/--skip-gates left no checks to run",);
+    process.exit(2,);
+  }
+}
+applyGateFilter();
 
 // ── GPG pre-flight ──────────────────────────────────────────────
 // Tracks the cache state for provenance in the report. Shape:
