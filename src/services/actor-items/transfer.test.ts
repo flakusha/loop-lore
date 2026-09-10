@@ -149,3 +149,38 @@ describe("transferItems — target stacking", () => {
     expect(allTargetRows.length,).toBe(1,);
   });
 });
+
+describe("transferItems — full-quantity transfer", () => {
+  test("deletes the source row when the full quantity moves (no zero-quantity orphan)", async () => {
+    await insertActorItems(db, fromActor, "Solo Scroll", "consumable", { quantity: 4, },);
+    const rows = await db
+      .selectFrom("actor_items",)
+      .select("id",)
+      .where("actor_id", "=", fromActor,)
+      .where("name", "=", "Solo Scroll",)
+      .execute();
+    const soloId = rows[0]!.id;
+
+    const result = await transferItems(db, fromActor, toActor, soloId, 4,);
+    expect(result.ok,).toBe(true,);
+    expect(result.transferred,).toBe(4,);
+
+    // Source row is gone — not left behind with quantity 0.
+    const sourceAfter = await db
+      .selectFrom("actor_items",)
+      .select("id",)
+      .where("id", "=", soloId,)
+      .executeTakeFirst();
+    expect(sourceAfter,).toBeUndefined();
+
+    // Target holds the moved quantity in a single row.
+    const targetRows = await db
+      .selectFrom("actor_items",)
+      .select("quantity",)
+      .where("actor_id", "=", toActor,)
+      .where("name", "=", "Solo Scroll",)
+      .execute();
+    expect(targetRows.length,).toBe(1,);
+    expect(targetRows[0]!.quantity,).toBe(4,);
+  });
+});
