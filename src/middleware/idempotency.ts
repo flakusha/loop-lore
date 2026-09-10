@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 275
+// size-allow: 285
 
 /**
  * Global idempotency middleware for re-fired requests.
@@ -31,21 +31,36 @@
  */
 
 import type { AsyncStore, } from "../async/store";
+import { getLogger, } from "../logger";
 import { ErrorCode, HttpStatus, jsonError, } from "../routes/http-utils";
+import { createMemoryBackend, type IdempotencyBackendApi, } from "./idempotency-memory";
+import { createTableBackend, redactKeyForLog, } from "./idempotency-table";
+import { filterReplayHeaders, makeKey, } from "./idempotency-utils";
 import { isValidRequestId, } from "./request-id";
+
+/**
+ * Module-scoped logger, fetched lazily on the first call. We use a
+ * plain `getLogger()` (not `.child()`) so that test code can register
+ * additional transports via `setGlobalLogger()` / `addTransport()` and
+ * observe warn-log emissions from `recordResponse`'s failure path.
+ * `getLogger()` may throw when no transport is registered (e.g. in
+ * tests with no logging backend); swallow that.
+ * @returns
+ */
+function getLog() {
+  // Fetch fresh each call so that `setGlobalLogger()` updates in tests
+  // are picked up. Caching here would lock the logger to whichever
+  // was registered at first call, breaking downstream tests that
+  // install a capturing transport.
+  try {
+    return getLogger();
+  } catch {
+    return null;
+  }
+}
 
 /** Header that bypasses the idempotency cache when set to "1". */
 export const IDEMPOTENCY_BYPASS_HEADER = "x-idempotency-bypass";
-
-/** Replay entry kept by the in-memory backend. */
-interface InMemoryEntry {
-  status: number;
-  headers: Record<string, string>;
-  body: string;
-  inFlight: boolean;
-  startedAt: number;
-  completedAt: number | null;
-}
 
 /** */
 export type IdempotencyBackend = "memory" | "table";
@@ -66,22 +81,6 @@ export interface IdempotencyConfig {
 
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24h — matches messages.idempotencyExpiryHours default
 
-// userId scopes the key (BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r) so two authenticated users sharing an X-Request-Id cannot replay each other's cached responses; unauthenticated requests share the `anon` bucket (401-bound downstream).
-/**
- * @param method
- * @param routePattern
- * @param requestId
- * @param userId
- */
-function makeKey(
-  method: string,
-  routePattern: string,
-  requestId: string,
-  userId: string | null,
-): string {
-  return `${method.toUpperCase()} ${routePattern} ${userId ?? "anon"} ${requestId}`;
-}
-
 /**
  * Build the idempotency beforeHandle for Elysia.
  *
@@ -97,41 +96,14 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
     enabled: config.enabled ?? true,
     bypassHeader: config.bypassHeader ?? true,
   };
-  const cache = new Map<string, InMemoryEntry>();
-
-  // ── Memory backend ───────────────────────────────────────
-  const memory = {
-    get(key: string,): InMemoryEntry | null {
-      const entry = cache.get(key,);
-      if (!entry) { return null; }
-      // TTL expiry: drop silently so the next call is treated as fresh.
-      if (entry.completedAt !== null && Date.now() - entry.completedAt > cfg.ttlMs) {
-        cache.delete(key,);
-        return null;
-      }
-      return entry;
-    },
-    put(key: string, entry: InMemoryEntry,): void {
-      cache.set(key, entry,);
-    },
-    markInFlight(key: string,): InMemoryEntry {
-      const entry: InMemoryEntry = {
-        status: 0,
-        headers: {},
-        body: "",
-        inFlight: true,
-        startedAt: Date.now(),
-        completedAt: null,
-      };
-      cache.set(key, entry,);
-      return entry;
-    },
-  };
+  const backend: IdempotencyBackendApi = cfg.backend === "table"
+    ? createTableBackend(cfg.ttlMs, requireAsyncStore(config, "table",),)
+    : createMemoryBackend(cfg.ttlMs,);
 
   return {
     backend: cfg.backend,
     ttlMs: cfg.ttlMs,
-    async beforeHandle(ctx: IdempotencyCtx,): Promise<Response | undefined> {
+    beforeHandle(ctx: IdempotencyCtx,): Response | undefined {
       if (!cfg.enabled) { return undefined; } // disabled ⇒ pass-through
       if (cfg.bypassHeader && ctx.request.headers.get(IDEMPOTENCY_BYPASS_HEADER,) === "1") {
         return undefined; // client asked to bypass the cache
@@ -145,8 +117,11 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
       if (!requestId) { return undefined; } // no id ⇒ not idempotent
       if (!isValidRequestId(requestId,)) { return undefined; }
 
-      const key = makeKey(ctx.request.method, ctx.route ?? "?", requestId, ctx.userId ?? null,);
-      const existing = memory.get(key,);
+      const route = ctx.route ?? "?";
+      const userId = ctx.userId ?? null;
+      const meta = { method, route, userId, };
+      const key = makeKey(method, route, requestId, userId,);
+      const existing = backend.get(key,);
       if (existing?.inFlight) {
         return jsonError({
           message: "Re-fired request still in flight",
@@ -164,9 +139,9 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
         },);
       }
       // First time on this key — reserve the slot. The handler will call
-      // `recordIdempotentResponse` (or the Elysia afterHandle hook) to
-      // capture the actual response.
-      memory.markInFlight(key,);
+      // `recordResponse` (or the Elysia afterHandle hook) to capture the
+      // actual response.
+      backend.markInFlight(key, meta,);
       return undefined;
     },
     /**
@@ -182,22 +157,39 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
     recordResponse(
       args: { method: string; route: string; requestId: string; userId?: string | null; response: Response },
     ): void {
-      const key = makeKey(args.method, args.route, args.requestId, args.userId ?? null,);
+      const method = args.method.toUpperCase();
+      const route = args.route;
+      const userId = args.userId ?? null;
+      const meta = { method, route, userId, };
+      const key = makeKey(method, route, args.requestId, userId,);
       // Clone before reading the body so the original response (sent to the
-      // client) is not consumed. .text() locks the stream.
+      // client) is not consumed. `.text()` locks the stream.
+      //
+      // This is fire-and-forget: the Elysia afterHandle has already
+      // returned by the time `.text()` settles. If `.text()` rejects
+      // (stream locked, OOM, body already consumed by upstream) the
+      // in-flight slot would remain forever — subsequent same-key
+      // requests would 409 indefinitely. The `.catch` performs
+      // `release()` so the slot is freed; the next request runs
+      // instead of permanently hitting the in-flight conflict.
       const snapshot = args.response.clone();
       void snapshot.text().then((body,) => {
         const headers: Record<string, string> = {};
         snapshot.headers.forEach((value, name,) => {
           headers[name] = value;
         },);
-        cache.set(key, {
+        backend.recordResponse(key, meta, {
           status: snapshot.status,
           headers,
           body,
-          inFlight: false,
           startedAt: Date.now(),
-          completedAt: Date.now(),
+        },);
+      },).catch((error,) => {
+        backend.release(key, meta,);
+        getLog()?.warn("idempotency.record_response.failed", {
+          module: "idempotency",
+          methodRoute: redactKeyForLog(key,),
+          error: error instanceof Error ? error.message : String(error,),
         },);
       },);
     },
@@ -210,32 +202,37 @@ export function idempotent(config: IdempotencyConfig = {},): IdempotencyBeforeHa
      * @param args.userId
      */
     release(args: { method: string; route: string; requestId: string; userId?: string | null },): void {
-      cache.delete(makeKey(args.method, args.route, args.requestId, args.userId ?? null,),);
+      const method = args.method.toUpperCase();
+      const route = args.route;
+      const userId = args.userId ?? null;
+      const meta = { method, route, userId, };
+      backend.release(makeKey(method, route, args.requestId, userId,), meta,);
     },
     /** Test seam: clear all in-flight + completed entries. */
     clear(): void {
-      cache.clear();
+      backend.clear();
     },
   };
 }
 
 /**
- * Drop headers that must NOT replay (cookies, hop-by-hop).
- * @param headers
+ * Type guard for the async store argument. Selecting `backend: "table"`
+ * without an `asyncStore` was the previous silent fallback to in-memory
+ * behaviour (BUG-bug-idempotency-table-backend-accepted-but-never-
+ * implemented); the guard now surfaces the misconfiguration as a
+ * fail-fast error so production deployments can not silently lose
+ * restart resilience.
+ * @param config
+ * @param backend
  */
-function filterReplayHeaders(headers: Record<string, string>,): Record<string, string> {
-  const out: Record<string, string> = {};
-  for (const [name, value,] of Object.entries(headers,)) {
-    const lower = name.toLowerCase();
-    if (lower === "set-cookie") { continue; }
-    if (lower.startsWith("connection",)) { continue; }
-    if (lower === "keep-alive") { continue; }
-    if (lower === "transfer-encoding") { continue; }
-    if (lower === "upgrade") { continue; }
-    if (lower === "content-length") { continue; }
-    out[name] = value;
+function requireAsyncStore(config: IdempotencyConfig, backend: "table",): AsyncStore {
+  if (!config.asyncStore) {
+    throw new Error(
+      `idempotent({ backend: "${backend}" }) requires an asyncStore; ` +
+        `pass \`createAsyncStore(database)\` from src/async/.`,
+    );
   }
-  return out;
+  return config.asyncStore;
 }
 
 /** Minimal Elysia ctx shape consumed by the idempotency beforeHandle. */
@@ -258,7 +255,7 @@ export interface IdempotencyCtx {
 export interface IdempotencyBeforeHandle {
   readonly backend: IdempotencyBackend;
   readonly ttlMs: number;
-  beforeHandle(ctx: IdempotencyCtx,): Promise<Response | undefined>;
+  beforeHandle(ctx: IdempotencyCtx,): Response | undefined;
   recordResponse(args: {
     method: string;
     route: string;
