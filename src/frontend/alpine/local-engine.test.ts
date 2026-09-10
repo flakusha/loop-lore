@@ -153,6 +153,18 @@ describe("createLocalEngine lifecycle", () => {
     await expect(pending,).rejects.toBeInstanceOf(LocalInferenceUnavailable,);
     await expect(engine.generate("hi",),).rejects.toBeInstanceOf(LocalInferenceUnavailable,);
   });
+
+  test("sync postMessage throw maps to LocalInferenceUnavailable", async () => {
+    const fake = createFake();
+    fake.postMessage = () => {
+      throw new DOMException("not cloneable", "DataCloneError",);
+    };
+    const engine = createLocalEngine({ workerFactory: () => fake as unknown as Worker, },);
+    await expect(engine.loadModel("SmolLM2-360M-Instruct",),).rejects.toBeInstanceOf(
+      LocalInferenceUnavailable,
+    );
+    expect(engine.loadedModel(),).toBeNull();
+  });
 });
 
 describe("isEngineResponse", () => {
