@@ -46,8 +46,8 @@ LoRA discovery (auto-detect available models from sd.cpp/ComfyUI) and applicatio
 
 - [x] sd.cpp prompt injection (`[lora:name:strength]`) — `buildSdCppLoraPrefix`/`injectSdCppLora` in `discovery-sdserver.ts`
 - [x] ComfyUI LoraLoader node injection — `buildComfyUILoraNode`/`injectComfyUILora` in `discovery-comfyui.ts`
+- [x] Integration with image gen pipeline — verified wired on dev 2026-09-10: `ImageGenBody.lora` + backend guard (`image-gen-route.ts:34-93`) → `generateImages` passthrough (`:112`) → `ImageGenOptions.lora` (`image-engine/types.ts:24`) → live injection in both `sdcpp.ts:26-40` and `comfyui.ts:42-56` (discovery check + graceful skip). 95 pass / 7 skip across lora + route + sdcpp suites. Wire-or-drop verdict: WIRED, no code change.
 - [ ] LoRA strength slider in UI (0.1-1.0)
-- [ ] Integration with image gen pipeline — TODO-gated hooks in `image-gen-route.ts` (imports, body field, sdcpp prompt injection all commented out)
 
 ### Phase 3: LoRA Management UI
 
@@ -95,7 +95,7 @@ const loraPrefix = `[lora:${config.name}:${config.strength}]`;
 | `src/generation/lora/routes.ts`             | Elysia plugin (wired 2026-08-18)  |
 | `src/generation/lora/discovery.test.ts`     | Discovery + cache tests           |
 | `src/generation/lora/lora.test.ts`          | Validation tests                  |
-| `src/generation/image-gen-route.ts`         | LoRA hooks (still TODO-gated)     |
+| `src/generation/image-gen-route.ts`         | LoRA body field + backend guard + passthrough (wired) |
 | `src/app/register-plugins.ts`               | `loraRoutes({config})` wired      |
 
 ## Related
