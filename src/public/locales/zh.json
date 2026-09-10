@@ -1048,6 +1048,8 @@
     "sortNewest": "Sort: Newest",
     "sortOldest": "Sort: Oldest",
     "filterType": "Filter type",
+    "allTags": "All tags",
+    "byTag": "Filter by tag",
     "sort": "Sort"
   },
   "toasts": {
