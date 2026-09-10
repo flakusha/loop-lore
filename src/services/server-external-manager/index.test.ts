@@ -110,7 +110,7 @@ describeOrSkipStrict("ServerExternalManager facade", () => {
     expect(instance?.type,).toBe("llama-cpp",);
     expect(instance?.port,).toBe(9011,);
     expect(mgr.instances,).toHaveLength(1,);
-    expect(mgr.instances[0],).toBe(instance,);
+    expect(mgr.instances[0],).toBe(instance!,);
   });
 
   test("startLlamaCpp returns null when the binary is missing", async () => {
