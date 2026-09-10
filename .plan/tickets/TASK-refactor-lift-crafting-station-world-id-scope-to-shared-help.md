@@ -3,7 +3,7 @@
 
 # TASK: Refactor: lift crafting-station world_id scope to shared helper
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — helper landed as `worldScoped` + `validateWorldAccess` (`src/db/world-scope.ts` + test); adopted in `crafting/stations.ts` list paths; sweep 2026-09-10: all other `world_id` queries carry explicit `WHERE world_id = ?` (npc-nav, playthrough, skills, encounters, intimacy, traits, blog, orders, recipes)
 **Priority:** high
 **Effort:** Medium
 
