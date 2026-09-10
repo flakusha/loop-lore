@@ -10,7 +10,15 @@
 import type { ModelRole, } from "../db/enums-core";
 
 /** Tasks that route through the shared AUX runner. */
-export type AuxTaskName = "transition" | "intent" | "memory" | "nsfw" | "gm-tool";
+export type AuxTaskName =
+  | "transition"
+  | "intent"
+  | "memory"
+  | "nsfw"
+  | "gm-tool"
+  | "prompt-improve"
+  | "prompt-analysis"
+  | "injection-check";
 
 /** Per-call options for `callAux`. All optional — runner defaults apply. */
 export interface AuxCallOptions {
