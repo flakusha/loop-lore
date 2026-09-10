@@ -157,6 +157,7 @@ export type CrossOriginOpenerPolicy = (typeof CrossOriginOpenerPolicy)[keyof typ
 
 export const CrossOriginEmbedderPolicy = {
   RequireCorp: "require-corp",
+  Credentialless: "credentialless",
 } as const;
 /** */
 export type CrossOriginEmbedderPolicy = (typeof CrossOriginEmbedderPolicy)[keyof typeof CrossOriginEmbedderPolicy];
