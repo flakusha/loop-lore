@@ -331,6 +331,14 @@ export const TraitCategorySchema = t.UnionEnum([
   "preferences",
   "background",
 ],);
+export const TransformContextSchema = t.UnionEnum([
+  "default",
+  "avatar_circle",
+  "chat_bubble",
+  "card",
+  "gallery",
+  "sprite",
+],);
 export const TurnStatusSchema = t.UnionEnum([
   "pending",
   "generating",
@@ -605,6 +613,21 @@ export const AssetsSchema = t.Object({
   content_hash: t.Optional(t.String(),),
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
+},);
+
+// ── asset_transforms ────────────────────────────────────────────
+export const AssetTransformsSchema = t.Object({
+  asset_id: t.String(),
+  context: TransformContextSchema,
+  updated_at: t.String(),
+  crop_x: t.Optional(t.Number(),),
+  crop_y: t.Optional(t.Number(),),
+  crop_w: t.Optional(t.Number(),),
+  crop_h: t.Optional(t.Number(),),
+  zoom: t.Optional(t.Number(),),
+  rotation: t.Optional(t.Number(),),
+  focal_point_x: t.Optional(t.Number(),),
+  focal_point_y: t.Optional(t.Number(),),
 },);
 
 // ── mesh_inbound_keys ────────────────────────────────────────────
