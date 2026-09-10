@@ -98,10 +98,10 @@ describe("lifecycle stop dispatch", () => {
 
     await stop(host, target,);
 
-    expect(signals,).toEqual(["SIGTERM",]);
-    expect(host.instances,).toEqual([other,]);
-    expect(host.logCalls.some((c,) => c.level === "info" && c.msg === "Stopping server",),).toBe(true,);
-  },);
+    expect(signals,).toEqual(["SIGTERM",],);
+    expect(host.instances,).toEqual([other,],);
+    expect(host.logCalls.some((c,) => c.level === "info" && c.msg === "Stopping server"),).toBe(true,);
+  });
 
   test("escalates to SIGKILL when the process ignores SIGTERM", async () => {
     const host = makeHost();
@@ -111,10 +111,10 @@ describe("lifecycle stop dispatch", () => {
 
     await stop(host, target,);
 
-    expect(signals,).toEqual(["SIGTERM", "SIGKILL",]);
+    expect(signals,).toEqual(["SIGTERM", "SIGKILL",],);
     expect(host.instances,).toHaveLength(0,);
-  },);
-},);
+  });
+});
 
 describe("lifecycle stopAll dispatch", () => {
   test("stops every instance and empties the list", async () => {
@@ -128,19 +128,19 @@ describe("lifecycle stopAll dispatch", () => {
 
     await stopAll(host,);
 
-    expect(signals,).toEqual(["SIGTERM", "SIGTERM", "SIGTERM",]);
+    expect(signals,).toEqual(["SIGTERM", "SIGTERM", "SIGTERM",],);
     expect(host.instances,).toHaveLength(0,);
-    expect(host.logCalls.some((c,) => c.level === "info" && c.msg === "Stopping all managed servers",),).toBe(
+    expect(host.logCalls.some((c,) => c.level === "info" && c.msg === "Stopping all managed servers"),).toBe(
       true,
     );
-  },);
+  });
 
   test("stopAll on an empty host logs and leaves the list empty", async () => {
     const host = makeHost();
     await stopAll(host,);
     expect(host.instances,).toHaveLength(0,);
-  },);
-},);
+  });
+});
 
 describe("lifecycle killAllSync dispatch", () => {
   test("clears instances without throwing for already-dead pids", () => {
@@ -157,11 +157,11 @@ describe("lifecycle killAllSync dispatch", () => {
     killAllSync(host,);
 
     expect(host.instances,).toHaveLength(0,);
-  },);
+  });
 
   test("killAllSync on an empty host is a no-op", () => {
     const host = makeHost();
     killAllSync(host,);
     expect(host.instances,).toHaveLength(0,);
-  },);
-},);
+  });
+});

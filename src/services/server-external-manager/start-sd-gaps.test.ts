@@ -14,7 +14,7 @@
  * fires under test:coverage.
  */
 import { afterAll, describe, expect, test, } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync, chmodSync, } from "node:fs";
+import { chmodSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { fileURLToPath, } from "node:url";
@@ -149,7 +149,13 @@ if (scenario === "sd-missing") {
 console.log(JSON.stringify(result,));
 `;
 
-async function runScenario(helperPath: string, modPath: string, scenario: string, path: string, stub?: string,): Promise<Record<string, unknown>> {
+async function runScenario(
+  helperPath: string,
+  modPath: string,
+  scenario: string,
+  path: string,
+  stub?: string,
+): Promise<Record<string, unknown>> {
   const proc = Bun.spawn([process.execPath, helperPath, scenario,], {
     env: {
       ...process.env,
@@ -176,7 +182,7 @@ async function runScenario(helperPath: string, modPath: string, scenario: string
 function makeStubDir(): { dir: string; cleanup: () => void } {
   const dir = mkdtempSync(join(tmpdir(), "sd-stub-",),);
   const stubPath = join(dir, "sd-server",);
-  writeFileSync(stubPath, `#!/bin/sh\necho "$@" > "${join(dir, "sd-server.args",)}"\nexec sleep 30\n`);
+  writeFileSync(stubPath, `#!/bin/sh\necho "$@" > "${join(dir, "sd-server.args",)}"\nexec sleep 30\n`,);
   chmodSync(stubPath, 0o755,);
   return {
     dir,
@@ -200,7 +206,7 @@ describe("start-sd child harness", () => {
     const result = await runScenario(helperPath, modPath, "sd-missing", "/usr/bin:/bin",);
     expect(result.null,).toBe(true,);
     expect(result.count,).toBe(0,);
-    expect((result.warns as string[]).some((m,) => m.includes("not found in PATH"),),).toBe(true,);
+    expect((result.warns as string[]).some((m,) => m.includes("not found in PATH",)),).toBe(true,);
   }, 15000,);
 
   test("sd-busy: null + warn when the port is occupied", async () => {
@@ -209,7 +215,7 @@ describe("start-sd child harness", () => {
       const result = await runScenario(helperPath, modPath, "sd-busy", `${stub.dir}:/usr/bin:/bin`, stub.dir,);
       expect(result.null,).toBe(true,);
       expect(result.count,).toBe(0,);
-      expect((result.warns as string[]).some((m,) => m.includes("Port in use"),),).toBe(true,);
+      expect((result.warns as string[]).some((m,) => m.includes("Port in use",)),).toBe(true,);
     } finally {
       stub.cleanup();
     }
@@ -246,43 +252,51 @@ describe("start-sd child harness", () => {
   test("sd-diffusion-full: every path/boolean/value flag plus extraArgs", async () => {
     const stub = makeStubDir();
     try {
-      const result = await runScenario(helperPath, modPath, "sd-diffusion-full", `${stub.dir}:/usr/bin:/bin`, stub.dir,);
+      const result = await runScenario(
+        helperPath,
+        modPath,
+        "sd-diffusion-full",
+        `${stub.dir}:/usr/bin:/bin`,
+        stub.dir,
+      );
       expect(result.null,).toBe(false,);
-      expect((result.warns as string[]).some((m,) => m.includes("missing llmPath"),),).toBe(false,);
+      expect((result.warns as string[]).some((m,) => m.includes("missing llmPath",)),).toBe(false,);
       const argv = result.argv as string;
-      for (const flag of [
-        "--diffusion-model",
-        "--llm",
-        "--vae",
-        "--clip_l",
-        "--clip_g",
-        "--t5xxl",
-        "--vae-format",
-        "flux",
-        "--control-net",
-        "--lora-model-dir",
-        "--taesd",
-        "--hires-upscalers-dir",
-        "--embd-dir",
-        "--photo-maker",
-        "--upscale-model",
-        "--fa",
-        "--diffusion-fa",
-        "--vae-tiling",
-        "--eager-load",
-        "--offload-to-cpu",
-        "--stream-layers",
-        "--auto-fit",
-        "--max-vram",
-        "--backend",
-        "--rng",
-        "--sampler-rng",
-        "--type",
-        "--prediction",
-        "--cache-mode",
-        "--cache-option",
-        "--extra",
-      ]) {
+      for (
+        const flag of [
+          "--diffusion-model",
+          "--llm",
+          "--vae",
+          "--clip_l",
+          "--clip_g",
+          "--t5xxl",
+          "--vae-format",
+          "flux",
+          "--control-net",
+          "--lora-model-dir",
+          "--taesd",
+          "--hires-upscalers-dir",
+          "--embd-dir",
+          "--photo-maker",
+          "--upscale-model",
+          "--fa",
+          "--diffusion-fa",
+          "--vae-tiling",
+          "--eager-load",
+          "--offload-to-cpu",
+          "--stream-layers",
+          "--auto-fit",
+          "--max-vram",
+          "--backend",
+          "--rng",
+          "--sampler-rng",
+          "--type",
+          "--prediction",
+          "--cache-mode",
+          "--cache-option",
+          "--extra",
+        ]
+      ) {
         expect(argv.includes(flag,),).toBe(true,);
       }
       expect(argv.includes("/models/diffusion",),).toBe(true,);
@@ -295,9 +309,15 @@ describe("start-sd child harness", () => {
   test("sd-diffusion-no-llm: warns but still starts without --llm", async () => {
     const stub = makeStubDir();
     try {
-      const result = await runScenario(helperPath, modPath, "sd-diffusion-no-llm", `${stub.dir}:/usr/bin:/bin`, stub.dir,);
+      const result = await runScenario(
+        helperPath,
+        modPath,
+        "sd-diffusion-no-llm",
+        `${stub.dir}:/usr/bin:/bin`,
+        stub.dir,
+      );
       expect(result.null,).toBe(false,);
-      expect((result.warns as string[]).some((m,) => m.includes("missing llmPath"),),).toBe(true,);
+      expect((result.warns as string[]).some((m,) => m.includes("missing llmPath",)),).toBe(true,);
       const argv = result.argv as string;
       expect(argv.includes("--diffusion-model",),).toBe(true,);
       expect(argv.includes("--llm",),).toBe(false,);
@@ -319,4 +339,4 @@ describe("start-sd child harness", () => {
       stub.cleanup();
     }
   }, 15000,);
-},);
+});
