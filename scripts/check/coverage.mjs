@@ -88,7 +88,10 @@ const WAIVERS = {
   // Gate pass: pure DOM-bound UI code (htmx event listeners, Alpine
   // directives, focus-trap, modals, panels). Playwright DOM-coverage is
   // the long-term fix; waivers are conservative until that harness lands.
-  "frontend": { floor: 75, reason: "DOM-bound UI (htmx listeners, panels, modals); Playwright DOM-coverage pending; 79% currently", },
+  "frontend": {
+    floor: 75,
+    reason: "DOM-bound UI (htmx listeners, panels, modals); Playwright DOM-coverage pending; 79% currently",
+  },
   // Gate pass: src/server/ holds HTTP entry points (handler, index,
   // start, static-files). They run only in `bun run start` / smoke runs.
   // The 200 e2e tests cover their routes but lcov attributes the
@@ -109,10 +112,18 @@ const WAIVERS = {
   // surface only via integration paths; individual functions tested by
   // the routes/* + admin/* + persona/* callers. Below-floor lines are
   // mostly error-paths and feature-flag branches.
-  "services": { floor: 73, reason: "trade/index + external-server-utils + server-external-manager + start-llama/sd + lifecycle + probes lifted in test-coverage worktree; remaining gaps are RPC-style service wrappers exercised by routes/* integration tests", },
+  "services": {
+    floor: 73,
+    reason:
+      "trade/index + external-server-utils + server-external-manager + start-llama/sd + lifecycle + probes lifted in test-coverage worktree; remaining gaps are RPC-style service wrappers exercised by routes/* integration tests",
+  },
   // Gate pass: src/plugins/ is the plugin loader/registry; runtime-only
   // resolution exercised via app boot and integration tests.
-  "plugins": { floor: 65, reason: "src/plugins/* lifted to 100% in test-coverage worktree (loader + registry + helpers); aggregate includes bundled plugins/core/* and plugins/community/* runtime modules covered by e2e", },
+  "plugins": {
+    floor: 65,
+    reason:
+      "src/plugins/* lifted to 100% in test-coverage worktree (loader + registry + helpers); aggregate includes bundled plugins/core/* and plugins/community/* runtime modules covered by e2e",
+  },
   // Gate pass: src/image-edit/ mixes ts/matting with native (Rust)
   // helpers. Native helpers are not exercised by unit tests; covered by
   // the matting e2e flow.
@@ -123,7 +134,10 @@ const WAIVERS = {
   // ABI-mismatch/null-handle guards (zstd + blake3 unit suites reach
   // 100% in isolated runs; aggregate drops in full e2e runs because
   // the Bun mock is registered per-file under --isolate).
-  "native": { floor: 77, reason: "Rust cdylib fast-path exercised by benchmarks (zstd/blake3); unit tests cover Bun fallback + ABI guards", },
+  "native": {
+    floor: 77,
+    reason: "Rust cdylib fast-path exercised by benchmarks (zstd/blake3); unit tests cover Bun fallback + ABI guards",
+  },
   // Gate pass: src/characters/ is large (3968 lines) and contains
   // world-setup + character-bundle pipelines whose happy paths live in
   // e2e and whose error branches dominate the uncovered count.
