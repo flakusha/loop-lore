@@ -74,6 +74,7 @@ export interface GetActorKeyOpts {
 /**
  * @param smk
  * @param rawKey
+ * @returns Promise<unknown>
  */
 function encryptWithSmk(smk: CryptoKey, rawKey: Uint8Array,): Promise<string> {
   return encryptBytes(smk, rawKey,);
@@ -82,6 +83,7 @@ function encryptWithSmk(smk: CryptoKey, rawKey: Uint8Array,): Promise<string> {
 /**
  * @param smk
  * @param encryptedValue
+ * @returns void
  */
 async function decryptWithSmk(smk: CryptoKey, encryptedValue: string,): Promise<Uint8Array> {
   return decryptBytes(smk, encryptedValue,);
@@ -90,6 +92,7 @@ async function decryptWithSmk(smk: CryptoKey, encryptedValue: string,): Promise<
 /**
  * @param key
  * @param plaintext
+ * @returns void
  */
 export async function encryptBytes(key: CryptoKey, plaintext: Uint8Array,): Promise<string> {
   const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH,),);
@@ -103,6 +106,7 @@ export async function encryptBytes(key: CryptoKey, plaintext: Uint8Array,): Prom
 /**
  * @param key
  * @param encrypted
+ * @returns void
  */
 export async function decryptBytes(key: CryptoKey, encrypted: string,): Promise<Uint8Array> {
   if (!encrypted) { throw new Error("decryptBytes: encrypted value is empty",); }
@@ -189,6 +193,7 @@ export async function ensureActorKey({ database, actorId, smk, }: EnsureActorKey
  * @param root0.database
  * @param root0.actorIds
  * @param root0.smk
+ * @returns void
  */
 export async function loadActorKeys({ database, actorIds, smk, }: LoadActorKeysOpts,): Promise<ActorKeyData[]> {
   if (actorIds.length === 0) { return []; }
@@ -223,6 +228,7 @@ export async function loadActorKeys({ database, actorIds, smk, }: LoadActorKeysO
  * @param root0.database
  * @param root0.keyId
  * @param root0.smk
+ * @returns void
  */
 export async function getActorKey({ database, keyId, smk, }: GetActorKeyOpts,): Promise<ActorKeyData | null> {
   const row = await database.selectFrom("actor_keys",).selectAll().where("id", "=", keyId,).executeTakeFirst();

@@ -33,6 +33,7 @@ import type { MigrateChatParams, MigrateChatResult, } from "./types";
  * @param database
  * @param chatId
  * @param params
+ * @returns void
  */
 export async function migrateChat(
   database: Kysely<DB>,
@@ -162,6 +163,7 @@ export async function migrateChat(
  * @param database
  * @param chatId
  * @param text
+ * @returns void
  */
 export async function injectNarration(
   database: Kysely<DB>,

@@ -29,6 +29,7 @@ import type { TemplateMutationResult, } from "./types";
  * @param params.renderingOverride
  * @param params.features
  * @param params.visibility
+ * @returns void
  */
 export async function createChatSetupTemplate(
   database: Kysely<DB>,
@@ -98,6 +99,7 @@ export async function createChatSetupTemplate(
  * @param params.renderingOverride
  * @param params.features
  * @param params.visibility
+ * @returns void
  */
 export async function updateChatSetupTemplate(
   database: Kysely<DB>,
@@ -158,6 +160,7 @@ export async function updateChatSetupTemplate(
  * (template_id set null via FK onDelete set null).
  * @param database
  * @param templateId
+ * @returns void
  */
 export async function deleteChatSetupTemplate(
   database: Kysely<DB>,

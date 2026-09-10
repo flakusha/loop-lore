@@ -79,6 +79,7 @@ export interface LocationEvent {
  * Used by future chat re-read / history-navigation features.
  * @param database
  * @param chatId
+ * @returns void
  */
 export async function getLocationHistory(
   database: Kysely<DB>,

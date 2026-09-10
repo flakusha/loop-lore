@@ -22,6 +22,7 @@ const HASH_PATTERN = /^(.+)-([a-z0-9]{8})\.((?:js|css))$/;
 /**
  * Build a map of logical → hashed filenames from a directory listing.
  * @param dir
+ * @returns string
  */
 function buildHashLookup(dir: string,): Map<string, string> {
   const map = new Map<string, string>();
@@ -45,6 +46,7 @@ function buildHashLookup(dir: string,): Map<string, string> {
  * Searches for /name.ext references (from src=, href=) and replaces with
  * /name-hash.ext if a hash variant exists. Leaves CDN URLs unchanged.
  * @param directory
+ * @returns void
  */
 export function injectContentHashes(directory: string,): { replaced: number; skipped: number } {
   const hashLookup = buildHashLookup(directory,);

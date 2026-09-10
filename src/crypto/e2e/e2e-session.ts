@@ -79,6 +79,7 @@ export interface RevokeSessionOpts {
  * revoked rows — callers that want only active sessions should filter on
  * `revokedAt === null` themselves, or use `findActiveSession`.
  * @param opts
+ * @returns Promise<unknown>
  */
 export async function findSession(opts: FindSessionOpts,): Promise<E2eSessionRow | null> {
   const row = await opts.database
@@ -93,6 +94,7 @@ export async function findSession(opts: FindSessionOpts,): Promise<E2eSessionRow
  * Find the active (non-revoked) session for a (sender, recipient) pair.
  * Returns `null` if no session exists or the only one is revoked.
  * @param opts
+ * @returns void
  */
 export async function findActiveSession(
   opts: FindActiveSessionOpts,
@@ -119,6 +121,7 @@ export async function findActiveSession(
  * `recipientActorId`; the row carries no directed recipient, only a
  * chat_id anchor.
  * @param opts
+ * @returns void
  */
 export async function ensureActiveSession(
   opts: EnsureActiveSessionOpts,
@@ -200,6 +203,7 @@ export async function ensureActiveSession(
  * Update `last_message_at` after a successful send. Best-effort — the
  * caller already has a valid `sessionId` from `ensureActiveSession`.
  * @param opts
+ * @returns void
  */
 export async function recordMessageSent(opts: RecordMessageSentOpts,): Promise<void> {
   await opts.database

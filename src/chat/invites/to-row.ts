@@ -15,6 +15,7 @@ import type { ChatInviteRow, } from "./types";
  * @param row.max_uses
  * @param row.uses
  * @param row.status
+ * @returns void
  */
 export function toRow(row: {
   id: string;

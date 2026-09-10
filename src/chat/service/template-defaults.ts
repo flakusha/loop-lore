@@ -28,6 +28,7 @@ export interface ChatSetupTemplateDefault {
  * Build the seed `gm_config` JSON for a template. Visual-novel templates
  * opt into `renderingOverride="visual_novel"`; everything else is null.
  * @param visualNovel
+ * @returns boolean
  */
 function buildGmConfig(visualNovel: boolean,): string | null {
   if (!visualNovel) { return null; }

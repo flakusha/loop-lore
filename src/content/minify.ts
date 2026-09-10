@@ -23,6 +23,7 @@ const cssMinifier = new CleanCSS({ level: 2, },);
 
 /**
  * @param content
+ * @returns string
  */
 export function minifyText(content: string,): string {
   const lines = content.split("\n",);
@@ -48,6 +49,7 @@ export function minifyText(content: string,): string {
 
 /**
  * @param content
+ * @returns void
  */
 export async function minifyHTMLContent(content: string,): Promise<string> {
   return minifyHTML(content, defaultHTMLOptions,);
@@ -55,6 +57,7 @@ export async function minifyHTMLContent(content: string,): Promise<string> {
 
 /**
  * @param content
+ * @returns void
  */
 export function minifyCSS(content: string,): string {
   const output = cssMinifier.minify(content,);

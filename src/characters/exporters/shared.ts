@@ -15,6 +15,7 @@ import type {
  * Map canonical character fields to version-agnostic data object.
  * Core fields shared between CCv2 and CCv3.
  * @param character
+ * @returns CanonicalCharacter
  */
 export function exportBaseFields(character: CanonicalCharacter,): Record<string, unknown> {
   const data: Record<string, unknown> = {};
@@ -57,6 +58,7 @@ export function exportBaseFields(character: CanonicalCharacter,): Record<string,
  * @param entries
  * @param options
  * @param options.includeUseRegex
+ * @returns void
  */
 export function exportLorebookEntries(
   entries: LorebookEntry[],
@@ -94,6 +96,7 @@ export function exportLorebookEntries(
  * @param lorebook
  * @param options
  * @param options.includeUseRegex
+ * @returns void
  */
 export function exportLorebook(
   lorebook: LorebookData,

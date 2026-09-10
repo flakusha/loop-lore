@@ -45,6 +45,7 @@ export async function getMigrationFiles(): Promise<Record<string, Migration>> {
  * @param database
  * @param migrations
  * @throws {Error} When applied migrations are missing from the provider
+ * @returns void
  */
 export async function assertMigrationsNotStale<DB,>(
   database: Kysely<DB>,
@@ -88,6 +89,7 @@ export async function assertMigrationsNotStale<DB,>(
 
 /**
  * @param database
+ * @returns void
  */
 export async function runMigrations(database: ReturnType<typeof getDatabase>,): Promise<void> {
   const log = getLogger().child({ module: "migrate", },);

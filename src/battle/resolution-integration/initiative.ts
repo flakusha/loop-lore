@@ -13,6 +13,7 @@ import {
  * Make an initiative roll
  * @param dexterity
  * @param modifiers
+ * @returns void
  */
 export function makeInitiativeRoll(
   dexterity: number,

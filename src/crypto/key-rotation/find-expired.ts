@@ -12,6 +12,7 @@ import type { DB, } from "../../db/schema";
  * Returns actor IDs with expired primary keys.
  * @param database
  * @param rotationDays
+ * @returns void
  */
 export async function findExpiredKeys(
   database: Kysely<DB>,

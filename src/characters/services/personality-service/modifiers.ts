@@ -18,6 +18,7 @@ import type { DB, } from "../../../db";
  * @param worldId
  * @param modifierName
  * @param modifierValue
+ * @returns void
  */
 export async function applyBehavioralModifier(
   database: Kysely<DB>,
@@ -52,6 +53,7 @@ export async function applyBehavioralModifier(
  * @param database
  * @param actorId
  * @param worldId
+ * @returns void
  */
 export async function getBehavioralModifiers(
   database: Kysely<DB>,

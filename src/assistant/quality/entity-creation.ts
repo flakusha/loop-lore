@@ -54,6 +54,7 @@ export interface QualityReport {
 /**
  * Normalize raw LLM JSON into a typed {@link GeneratedEntity}.
  * @param raw
+ * @returns void
  */
 export function normalizeEntity(
   raw: Record<string, unknown>,
@@ -104,6 +105,7 @@ export function validateEntitySchema(
  * @param scope
  * @param scope.ownerId
  * @param scope.worldId
+ * @returns void
  */
 export async function checkDuplicate(
   db: Kysely<DB>,
@@ -178,6 +180,7 @@ export async function checkDuplicate(
  * @param worldContext
  * @param worldContext.name
  * @param worldContext.description
+ * @returns void
  */
 export function checkConsistency(
   kind: EntityKind,

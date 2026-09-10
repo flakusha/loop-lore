@@ -11,6 +11,7 @@ import type { EnvironmentalHazard, } from "./types";
  * Generate random environmental hazard
  * @param terrain
  * @param weather
+ * @returns void
  */
 export function generateEnvironmentalHazard(
   terrain: TerrainType,

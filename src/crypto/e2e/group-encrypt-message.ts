@@ -70,6 +70,7 @@ export interface GroupEncryptedPayload {
 
 /**
  * @param opts
+ * @returns void
  */
 export async function encryptGroupMessage(
   opts: GroupEncryptOpts,
@@ -114,6 +115,7 @@ export async function encryptGroupMessage(
 
 /**
  * @param opts
+ * @returns void
  */
 export async function decryptGroupMessage(
   opts: GroupDecryptOpts,
@@ -154,6 +156,7 @@ export async function decryptGroupMessage(
 
 /**
  * @param payload
+ * @returns void
  */
 export function groupPayloadRecipients(
   payload: GroupEncryptedPayload,

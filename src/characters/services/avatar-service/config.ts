@@ -19,6 +19,7 @@ export interface UpsertAvatarConfigOpts {
  * Get avatar config for a character
  * @param db
  * @param actorId
+ * @returns string
  */
 export async function getAvatarConfig(db: Kysely<DB>, actorId: string,): Promise<AvatarConfig | undefined> {
   const row = await db
@@ -45,6 +46,7 @@ export async function getAvatarConfig(db: Kysely<DB>, actorId: string,): Promise
  * @param db
  * @param actorId
  * @param config
+ * @returns void
  */
 export async function upsertAvatarConfig(
   db: Kysely<DB>,

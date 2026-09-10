@@ -21,6 +21,7 @@ interface CharacterAIData {
 /**
  * Normalize Character.AI format to canonical character card.
  * @param data
+ * @returns Record<string
  */
 export function normalizeCharacterAI(data: Record<string, unknown>,): CanonicalCharacter {
   const cardData = data as CharacterAIData;

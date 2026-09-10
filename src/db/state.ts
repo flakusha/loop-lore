@@ -44,6 +44,7 @@ export class StateMachine<S extends string,> {
   /**
    * @param from
    * @param to
+ * @returns boolean
    */
   canTransition(from: S, to: S,): boolean {
     return (this.def.transitions[from] as readonly string[] | undefined)?.includes(to,) ?? false;
@@ -52,6 +53,7 @@ export class StateMachine<S extends string,> {
   /**
    * @param from
    * @param to
+ * @returns void
    */
   transition(from: S, to: S,): S {
     if (!this.canTransition(from, to,)) {
@@ -62,6 +64,7 @@ export class StateMachine<S extends string,> {
 
   /**
    * @param state
+ * @returns void
    */
   isTerminal(state: S,): boolean {
     return (this.def.terminal as readonly string[]).includes(state,);
@@ -97,6 +100,7 @@ export class CompositeValidator<A extends string, B extends string,> {
   /**
    * @param a
    * @param b
+ * @returns void
    */
   isValid(a: A, b: B,): boolean {
     return this.allowed.has(`${a}:${b}`,);

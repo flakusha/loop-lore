@@ -14,6 +14,7 @@ import type { MessageScore, ScorableMessage, } from "./types";
  * Count how many of the given keywords appear in lowercased content.
  * @param lowerContent
  * @param keywords
+ * @returns string
  */
 function countKeywordMatches(lowerContent: string, keywords: readonly string[],): number {
   let matches = 0;

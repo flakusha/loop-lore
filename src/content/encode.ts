@@ -7,6 +7,7 @@ import type { ContentEncoding, EncodeResult, } from "./types";
 /**
  * @param plaintext
  * @param encoding
+ * @returns string
  */
 export function encodeContent(plaintext: string, encoding: ContentEncoding,): EncodeResult {
   if (encoding === "identity" || !plaintext) {

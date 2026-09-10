@@ -35,6 +35,7 @@ function rowToArc(row: CharacterArcRow,): CharacterArc {
  * Get the current arc for an actor, or null if none has been authored.
  * @param db
  * @param actorId
+ * @returns string
  */
 export async function getArc(db: Kysely<DB>, actorId: string,): Promise<CharacterArc | null> {
   const row = await db
@@ -54,6 +55,7 @@ export async function getArc(db: Kysely<DB>, actorId: string,): Promise<Characte
  * @param db
  * @param input
  * @param confirmedBy - User id of the actor setting the stage.
+ * @returns void
  */
 export async function upsertArc(
   db: Kysely<DB>,

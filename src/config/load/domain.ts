@@ -56,6 +56,7 @@ export function loadDomainConfigs(directory: string, baseConfig: Config,): Confi
  * Validate the server domain: port range.
  * @param parsed
  * @param filePath
+ * @returns string
  */
 function validateServerDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const server = parsed.server as Record<string, unknown> | undefined;
@@ -70,6 +71,7 @@ function validateServerDomain(parsed: Record<string, unknown>, filePath: string,
  * Validate the database domain: type + postgres url requirement.
  * @param parsed
  * @param filePath
+ * @returns void
  */
 function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const db = parsed.db as Record<string, unknown> | undefined;
@@ -88,6 +90,7 @@ function validateDatabaseDomain(parsed: Record<string, unknown>, filePath: strin
  * Validate the logging domain: level enum.
  * @param parsed
  * @param filePath
+ * @returns void
  */
 function validateLoggingDomain(parsed: Record<string, unknown>, filePath: string,): void {
   const logging = parsed.logging as Record<string, unknown> | undefined;
@@ -106,6 +109,7 @@ function validateLoggingDomain(parsed: Record<string, unknown>, filePath: string
  * @param domain
  * @param parsed
  * @param filePath
+ * @returns void
  */
 export function validateDomainConfig(domain: string, parsed: Record<string, unknown>, filePath: string,): void {
   // Validate domain-specific constraints

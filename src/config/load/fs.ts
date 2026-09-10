@@ -12,6 +12,7 @@ import { CONFIG_FILES, NETWORK_FS_PREFIXES, } from "./constants";
  * Detect if a path is on a network filesystem.
  * Checks mount prefixes and /proc/mounts when available.
  * @param filePath
+ * @returns boolean
  */
 export function isNetworkFilesystem(filePath: string,): boolean {
   const normalized = path.normalize(filePath,);
@@ -57,6 +58,7 @@ export function isNetworkFilesystem(filePath: string,): boolean {
 /**
  * @param cwd
  * @param fileNames
+ * @returns void
  */
 export function findConfigFile(cwd: string, fileNames: string[] = CONFIG_FILES,): { path: string; ext: string } | null {
   // Search project root, configs/ dir, and main repo root (for worktrees).
@@ -79,6 +81,7 @@ export function findConfigFile(cwd: string, fileNames: string[] = CONFIG_FILES,)
 /**
  * Return the first existing path among candidate dirs, or null.
  * @param candidates
+ * @returns void
  */
 export function firstExisting(candidates: string[],): string | null {
   for (const candidate of candidates) {

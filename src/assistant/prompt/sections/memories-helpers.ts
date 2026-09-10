@@ -16,6 +16,7 @@ import { safeJsonParse, } from "../../../utils";
  * @param viewerId
  * @param participantIds
  * @param worldId
+ * @returns void
  */
 async function computeTrustModifier(
   db: Kysely<DB>,
@@ -53,6 +54,7 @@ async function computeTrustModifier(
  * @param chatId
  * @param worldId
  * @param ownerId
+ * @returns void
  */
 export async function buildProvisionContext(
   db: Kysely<DB>,
@@ -85,6 +87,7 @@ export async function buildProvisionContext(
  * @param db
  * @param actorId
  * @param limit
+ * @returns void
  */
 export async function fetchActorMemories(
   db: Kysely<DB>,

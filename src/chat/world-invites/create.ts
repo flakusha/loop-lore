@@ -12,6 +12,7 @@ import type { CreateWorldInviteInput, WorldInviteRow, } from "./types";
  * Create a new invite for a world with a unique code.
  * @param database
  * @param input
+ * @returns void
  */
 export async function createWorldInvite(
   database: Kysely<DB>,

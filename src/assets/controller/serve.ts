@@ -25,6 +25,7 @@ import type { ServeCompressedOpts, ServeRawOpts, } from "./types";
  *
  * Returns `{ asset, response? }` — `response` is non-null on failure.
  * @param opts
+ * @returns void
  */
 async function resolveForServe(
   opts: ServeRawOpts,
@@ -71,6 +72,7 @@ async function resolveForServe(
  * @param root0.signedUrlToken
  * @param root0.signedUrlExpires
  * @param root0.signedUrlAction
+ * @returns void
  */
 export async function handleServeRaw({
   database,
@@ -147,6 +149,7 @@ export async function handleServeRaw({
  * @param root0.signedUrlToken
  * @param root0.signedUrlExpires
  * @param root0.signedUrlAction
+ * @returns void
  */
 export async function handleServeCompressed({
   database,
@@ -209,6 +212,7 @@ export async function handleServeCompressed({
  * @param root0.signedUrlToken
  * @param root0.signedUrlExpires
  * @param root0.signedUrlAction
+ * @returns void
  */
 export async function handleDownload({
   database,

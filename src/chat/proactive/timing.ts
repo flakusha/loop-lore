@@ -24,6 +24,7 @@ export type ProactiveFrequency = keyof typeof PROACTIVE_FREQUENCY_MS;
  * @param start
  * @param end
  * @param now
+ * @returns boolean
  */
 export function isInQuietHours(start: string | null, end: string | null, now: Date,): boolean {
   if (!start || !end) { return false; }
@@ -53,6 +54,7 @@ export function isInQuietHours(start: string | null, end: string | null, now: Da
  * Each unanswered message doubles the wait time.
  * @param baseMs
  * @param backoffCount
+ * @returns void
  */
 export function backoffMs(baseMs: number, backoffCount: number,): number {
   return baseMs * Math.pow(2, backoffCount,);
@@ -62,6 +64,7 @@ export function backoffMs(baseMs: number, backoffCount: number,): number {
  * Milliseconds until quiet hours end
  * @param end
  * @param now
+ * @returns void
  */
 export function msUntilQuietHoursEnd(end: string | null, now: Date,): number {
   if (!end) { return 0; }
@@ -83,6 +86,7 @@ export function msUntilQuietHoursEnd(end: string | null, now: Date,): number {
 /**
  * Milliseconds until midnight
  * @param now
+ * @returns void
  */
 export function msUntilMidnight(now: Date,): number {
   const midnight = new Date(now,);

@@ -33,6 +33,7 @@ export interface ResolveCharacterWorldSetupArgs {
  * @param root0.thisL
  * @param root0.actorId
  * @param root0.worldId
+ * @returns void
  */
 export async function resolveCharacterWorldSetup(
   { thisL, actorId, worldId, }: ResolveCharacterWorldSetupArgs,

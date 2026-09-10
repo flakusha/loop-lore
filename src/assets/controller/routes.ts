@@ -44,6 +44,7 @@ const ShareBody = t.Object({ actor_id: t.String(), },);
  * @param root0
  * @param root0.database
  * @param root0.config
+ * @returns Kysely<T>; config: Config }
  */
 export function assetRoutes({ database, config, }: { database: Kysely<DB>; config: Config },) {
   const deps = { database, config, };

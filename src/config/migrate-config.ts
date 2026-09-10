@@ -74,6 +74,7 @@ function parseArgs(): MigrationOptions {
 
 /**
  * @param filePath
+ * @returns string
  */
 function parseConfigFile(filePath: string,): Record<string, unknown> {
   const content = readFileSync(filePath, "utf8",);
@@ -91,6 +92,7 @@ function parseConfigFile(filePath: string,): Record<string, unknown> {
 /**
  * @param fullConfig
  * @param domainPaths
+ * @returns void
  */
 function extractDomainConfig(
   fullConfig: Record<string, unknown>,
@@ -108,6 +110,7 @@ function extractDomainConfig(
 /**
  * @param config
  * @param format
+ * @returns void
  */
 function formatConfig(config: Record<string, unknown>, format: "toml" | "yaml",): string {
   return format === "yaml" ? formatYaml(config,) : formatToml(config,);
@@ -116,6 +119,7 @@ function formatConfig(config: Record<string, unknown>, format: "toml" | "yaml",)
 /**
  * Serialize a config object as simple YAML (one level of nesting).
  * @param config
+ * @returns void
  */
 function formatYaml(config: Record<string, unknown>,): string {
   const lines: string[] = [];

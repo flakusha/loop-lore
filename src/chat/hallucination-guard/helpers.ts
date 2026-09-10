@@ -7,6 +7,7 @@ import type { ExtractedEntity, } from "./types";
  * Extract the sentence containing the entity for context.
  * @param text
  * @param entityName
+ * @returns string
  */
 export function extractContext(text: string, entityName: string,): string {
   const sentences = Array.from(text.split(/[.!?]+/,), (s,) => s.trim(),);
@@ -21,6 +22,7 @@ export function extractContext(text: string, entityName: string,): string {
 /**
  * Compute confidence that an entity is a hallucination.
  * @param entity
+ * @returns void
  */
 export function computeHallucinationConfidence(
   entity: ExtractedEntity,

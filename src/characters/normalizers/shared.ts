@@ -18,6 +18,7 @@ import type {
  * CCv2/CCv3 wrap their data in `{ data: { ... } }`.
  * Other formats pass data directly.
  * @param data
+ * @returns void
  */
 export function extractEnvelope(
   data: Record<string, unknown>,
@@ -32,6 +33,7 @@ export function extractEnvelope(
  * @param raw
  * @param opts
  * @param opts.welcomeKey
+ * @returns void
  */
 export function buildCanonicalFields(
   raw: Record<string, unknown>,
@@ -61,6 +63,7 @@ export function buildCanonicalFields(
 /**
  * Normalize a single lorebook entry, applying defaults for missing fields.
  * @param entry
+ * @returns void
  */
 export function normalizeLorebookEntry(
   entry: Record<string, unknown>,
@@ -87,6 +90,7 @@ export function normalizeLorebookEntry(
  * Build LorebookData from a raw character_book object.
  * Shared by ccv2 and ccv3 normalizers.
  * @param characterBook
+ * @returns void
  */
 export function buildLorebook(
   characterBook: Record<string, unknown>,

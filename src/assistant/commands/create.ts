@@ -44,6 +44,7 @@ const getLog = (): Logger => getLogger().child({ module: "create", },);
 /**
  * @param db
  * @param worldId
+ * @returns void
  */
 async function resolveWorldContext(
   db: NonNullable<CommandContext["db"]>,
@@ -69,6 +70,7 @@ async function resolveWorldContext(
  * @param ctx
  * @param complete
  * @param model
+ * @returns void
  */
 export async function runCreateGeneration(
   args: string[],

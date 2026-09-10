@@ -52,6 +52,7 @@ export async function getFederationConsent(
  * side effect (generating AP keys, publishing an Actor, signing a
  * delivery, etc.). The gate is intentionally synchronous in failure mode
  * so callers cannot accidentally forget to check.
+ * @returns void
  */
 export async function assertFederationConsent(
   database: Kysely<DB>,
@@ -71,6 +72,7 @@ export async function assertFederationConsent(
  * Setting consent to false does not revoke already-issued ActivityPub
  * signing keys; key revocation is handled separately by the key-rotation
  * flow in `crypto/activitypub-keys.ts`.
+ * @returns void
  */
 export async function setFederationConsent(
   database: Kysely<DB>,

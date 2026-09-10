@@ -19,6 +19,7 @@ import type { AssetRecord, } from "./types";
  * Get a single asset by ID.
  * @param database
  * @param assetId
+ * @returns string
  */
 export async function getAsset(database: Kysely<DB>, assetId: string,): Promise<AssetRecord | null> {
   const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
@@ -63,6 +64,7 @@ export async function getAssetData(
  * Check if an asset is encrypted.
  * @param database
  * @param assetId
+ * @returns void
  */
 export async function isAssetEncrypted(
   database: Kysely<DB>,
@@ -80,6 +82,7 @@ export async function isAssetEncrypted(
  * @param eb
  * @param actorId
  * @param tablePrefix
+ * @returns void
  */
 export function visibleAssetFilter(
   eb: ExpressionBuilder<DB, "assets">,
@@ -115,6 +118,7 @@ export function visibleAssetFilter(
  * @param options.label
  * @param options.actorId
  * @param options.actorRole
+ * @returns void
  */
 export async function listAssets(
   database: Kysely<DB>,
@@ -210,6 +214,7 @@ export async function listAssets(
  * @param assetId
  * @param actorId
  * @param actorRole
+ * @returns void
  */
 export async function canAccessAsset(
   database: Kysely<DB>,

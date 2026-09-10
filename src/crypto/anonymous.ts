@@ -17,6 +17,7 @@ let _anonymousEnabled = false;
 /**
  * Initialize anonymous chat mode from config.
  * @param config
+ * @returns void
  */
 export function initAnonymousMode(config: Config,): void {
   _anonymousEnabled = config.encryption.anonymous ?? false;
@@ -24,6 +25,7 @@ export function initAnonymousMode(config: Config,): void {
 
 /**
  * Check if anonymous chat mode is enabled.
+ * @returns void
  */
 export function isAnonymousModeEnabled(): boolean {
   return _anonymousEnabled;
@@ -69,6 +71,7 @@ export function getAnonymousDisplayName(
  * @param _actorId
  * @param isAdmin
  * @param isSelf
+ * @returns void
  */
 export function getAnonymousAvatar(
   _actorId: string,

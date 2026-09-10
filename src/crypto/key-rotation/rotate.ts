@@ -28,6 +28,7 @@ import type { RotationResult, } from "./types";
  * @param database
  * @param actorId
  * @param smk
+ * @returns void
  */
 export async function rotateActorKey(
   database: Kysely<DB>,

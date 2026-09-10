@@ -24,6 +24,7 @@ const MAX_LOCATION_HINTS = 12;
  * @param db
  * @param worldId
  * @param excludeLocationId
+ * @returns void
  */
 async function knownLocations(
   db: Kysely<DB>,

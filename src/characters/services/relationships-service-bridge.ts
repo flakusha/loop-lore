@@ -53,6 +53,7 @@ export interface RecordRelationshipShiftOpts {
  * D4: if the actor is in `growth_mode='static'`, the bridge refuses.
  * @param db
  * @param opts
+ * @returns void
  */
 export async function recordRelationshipShift(
   db: Kysely<DB>,

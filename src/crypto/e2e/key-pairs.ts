@@ -60,6 +60,7 @@ export interface GenerateKeyPairOpts {
  * Both keys are returned as `CryptoKey` handles. Use `exportPrivateJwk` /
  * `exportPublicJwk` to serialize for storage or upload.
  * @param opts
+ * @returns Promise<unknown>
  */
 export async function generateKeyPair(opts: GenerateKeyPairOpts = {},): Promise<CryptoKeyPair> {
   const extractable = opts.extractable ?? true;
@@ -72,6 +73,7 @@ export async function generateKeyPair(opts: GenerateKeyPairOpts = {},): Promise<
 /**
  * Export a public ECDH key as a JWK (safe to upload to server).
  * @param key
+ * @returns void
  */
 export async function exportPublicJwk(key: CryptoKey,): Promise<JsonWebKey> {
   // ECDH public keys are always exportable as JWK regardless of the
@@ -85,6 +87,7 @@ export async function exportPublicJwk(key: CryptoKey,): Promise<JsonWebKey> {
  *
  * The exported JWK contains the raw private scalar; never upload it.
  * @param key
+ * @returns void
  */
 export async function exportPrivateJwk(key: CryptoKey,): Promise<JsonWebKey> {
   return crypto.subtle.exportKey("jwk", key,);
@@ -94,6 +97,7 @@ export async function exportPrivateJwk(key: CryptoKey,): Promise<JsonWebKey> {
  * Import a public ECDH key from a JWK. Always non-extractable (only used for
  * ECDH derivation, never serialized further).
  * @param jwk
+ * @returns void
  */
 export async function importPublicKey(jwk: JsonWebKey,): Promise<CryptoKey> {
   return crypto.subtle.importKey("jwk", jwk, { name: "ECDH", namedCurve: NAMED_CURVE, }, false, [],);
@@ -105,6 +109,7 @@ export async function importPublicKey(jwk: JsonWebKey,): Promise<CryptoKey> {
  * @param jwk
  * @param opts
  * @param opts.extractable
+ * @returns void
  */
 export async function importPrivateKey(jwk: JsonWebKey, opts: { extractable?: boolean } = {},): Promise<CryptoKey> {
   const extractable = opts.extractable ?? true;
@@ -123,6 +128,7 @@ export async function importPrivateKey(jwk: JsonWebKey, opts: { extractable?: bo
  * @param jwks
  * @param opts
  * @param opts.extractablePrivate
+ * @returns void
  */
 export async function importKeyPair(
   jwks: KeyPairJwk,
@@ -154,6 +160,7 @@ export interface DeriveSharedSecretOpts {
  *
  * Used by sender-key ratchet (future) and one-shot session keys (v1).
  * @param opts
+ * @returns void
  */
 export async function deriveSharedSecret(opts: DeriveSharedSecretOpts,): Promise<CryptoKey> {
   const sharedBits = await crypto.subtle.deriveBits({ name: "ECDH", public: opts.publicKey, }, opts.privateKey, 256,);
@@ -181,6 +188,7 @@ export async function deriveSharedSecret(opts: DeriveSharedSecretOpts,): Promise
  * `nextRatchetStep(rawBytes)`. Callers needing an AES-GCM session key for
  * generic purposes (not the ratchet) should use `deriveSharedSecret`.
  * @param opts
+ * @returns void
  */
 export async function deriveSharedBytes(opts: DeriveSharedSecretOpts,): Promise<Uint8Array> {
   const sharedBits = await crypto.subtle.deriveBits({ name: "ECDH", public: opts.publicKey, }, opts.privateKey, 256,);

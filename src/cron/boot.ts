@@ -20,6 +20,7 @@ export interface AppSchedulerDeps {
  * Resolve the scheduler logger: explicit dep wins, else the global root,
  * else a quiet error-level instance (scripts that never init logging).
  * @param explicit
+ * @returns Logger
  */
 function resolveLogger(explicit?: Logger,): Logger {
   if (explicit) { return explicit; }
@@ -37,6 +38,7 @@ function resolveLogger(explicit?: Logger,): Logger {
  * minute-granularity timers — safe to start under e2e servers and invisible
  * to unit tests (never imported there).
  * @param deps
+ * @returns void
  */
 export function startAppScheduler(deps: AppSchedulerDeps,): Scheduler {
   return startScheduler({

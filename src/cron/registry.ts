@@ -26,6 +26,7 @@ interface LiveJob {
  * Declare a job. Applies `unref: true` default; validation happens at
  * `startScheduler` time (unknown schedule → throw with the job name).
  * @param def
+ * @returns CronJobDef
  */
 export function defineJob(def: CronJobDef,): CronJobDef {
   return { unref: true, ...def, };
@@ -36,6 +37,7 @@ export function defineJob(def: CronJobDef,): CronJobDef {
  * returns null when it cannot compute a next fire time.
  * @param name
  * @param schedule
+ * @returns void
  */
 function assertValidSchedule(name: string, schedule: string,): void {
   let parsed: Date | null = null;
@@ -55,6 +57,7 @@ function assertValidSchedule(name: string, schedule: string,): void {
  * rejected loudly — a typo'd override must fail at boot, not silently idle.
  * Publishes itself via `setScheduler` so admin routes can reach it.
  * @param deps
+ * @returns void
  */
 export function startScheduler(deps: SchedulerDeps,): Scheduler {
   const { database, config, logger, } = deps;
@@ -156,6 +159,7 @@ let activeScheduler: Scheduler | null = null;
 /**
  * Publish the live scheduler for admin routes. Called once from app startup.
  * @param scheduler
+ * @returns void
  */
 export function setScheduler(scheduler: Scheduler | null,): void {
   activeScheduler = scheduler;
