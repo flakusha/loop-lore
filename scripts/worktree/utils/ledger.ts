@@ -215,3 +215,20 @@ export function printRecentLedger(treeDir: string, count: number = LEDGER_DUMP_D
 export function appendGripe(treeDir: string, branch: string, message: string,): void {
   appendLedger(treeDir, "gripe", branch === "" ? [] : [branch,], `😤 ${message}`,);
 }
+/**
+ * Record a commit outcome: a `<cmd>`-cmd ledger record carrying the new
+ * commit's short SHA plus subject line. Called by `commit` and
+ * `agent-commit` after a successful GPG-signed commit so the shared
+ * ledger shows what landed, not just that a commit ran (the generic
+ * auto-append in `index.ts` records the invocation). Best-effort.
+ *
+ * @param treeDir - shared tree directory
+ * @param cmd - "commit" or "agent-commit"
+ * @param branch - committed branch ("" when unknown)
+ * @param sha - full commit SHA (shortened to 9 chars)
+ * @param subject - commit message (first line only)
+ */
+export function appendCommitOutcome(treeDir: string, cmd: string, branch: string, sha: string, subject: string,): void {
+  const firstLine = (subject.split("\n",)[0] ?? "").trim();
+  appendLedger(treeDir, cmd, branch === "" ? [] : [branch,], `✅ ${sha.slice(0, 9,)} ${firstLine}`,);
+}
