@@ -10,6 +10,7 @@
     data-search-placeholder="Search…"
     data-search-label="Search"
     data-show-type-filter="true"
+    data-show-tag-filter="true"
     data-search-url="/dynamic/gallery/search"
     data-target-id="asset-grid"
 -->
@@ -33,6 +34,19 @@
     <option value="image">{{{t("filter.images")}}}</option>
     <option value="audio">{{{t("filter.audio")}}}</option>
     <option value="video">{{{t("filter.video")}}}</option>
+  </select>
+  <select
+    class="form-select list-sort"
+    :aria-label="t('filter.byTag')"
+    x-model="tagFilter"
+    @change="triggerSearch()"
+    x-show="$el.closest('[data-show-tag-filter]')?.dataset.showTagFilter === 'true'"
+    data-testid="asset-tag-filter"
+  >
+    <option value="all">{{{t("filter.allTags")}}}</option>
+    <template x-for="tag in tagOptions" :key="tag">
+      <option :value="tag" x-text="tag"></option>
+    </template>
   </select>
   <select class="form-select list-sort" :aria-label="t('filter.sort')" x-model="sortBy" @change="triggerSearch()">
     <option value="name">{{{t("filter.sortName")}}}</option>

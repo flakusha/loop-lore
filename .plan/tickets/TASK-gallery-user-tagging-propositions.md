@@ -1,7 +1,7 @@
 # TASK: User-side gallery tagging + tag propositions
 
 **Epic:** epic-frontend-gallery.md
-**Status:** ✅ Done (2026-09-10)
+**Status:** 🟡 In Progress (2026-09-11 — reopened by audit: A2 tag filter facet + S1 preview-modal rename pending)
 **Priority:** Medium
 
 ## Scope

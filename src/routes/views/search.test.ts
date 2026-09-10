@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 /**
  * Tests for views/search serve functions (gallery / characters / worlds).
  */
@@ -6,7 +9,13 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertActors, insertAssets, insertUsers, insertWorlds, } from "../../test-utils/insert-helpers";
+import {
+  insertActors,
+  insertAssets,
+  insertAssetTags,
+  insertUsers,
+  insertWorlds,
+} from "../../test-utils/insert-helpers";
 import { serveCharactersSearch, serveGallerySearch, serveWorldsSearch, } from "./search";
 
 describe("views/search — gallery", () => {
@@ -23,6 +32,7 @@ describe("views/search — gallery", () => {
     await insertAssets(db, "owner", "intro.mp4", "video/mp4", "video", 10_000_000, "path/c", {
       id: "asset-3" as never,
     },);
+    await insertAssetTags(db, "asset-1", "cozy", { scope: "global", },);
   },);
 
   afterAll(() => sqlite.close());
@@ -47,6 +57,26 @@ describe("views/search — gallery", () => {
     const html = await res.text();
     expect(html,).toContain("asset-card-asset-2",);
     expect(html,).not.toContain("asset-card-asset-1",);
+  });
+
+  test("tag param narrows to tagged assets", async () => {
+    const res = await serveGallerySearch(db, new URLSearchParams({ tag: "cozy", },),);
+    const html = await res.text();
+    expect(html,).toContain("asset-card-asset-1",);
+    expect(html,).not.toContain("asset-card-asset-2",);
+    expect(html,).not.toContain("asset-card-asset-3",);
+  });
+
+  test("tag param with no matches renders empty state", async () => {
+    const res = await serveGallerySearch(db, new URLSearchParams({ tag: "missing-tag", },),);
+    const html = await res.text();
+    expect(html,).toContain("gallery-empty",);
+  });
+
+  test("cards expose visible tags as data-tags", async () => {
+    const res = await serveGallerySearch(db, new URLSearchParams(),);
+    const html = await res.text();
+    expect(html,).toContain('data-tags="cozy"',);
   });
 
   test("no matches renders empty state", async () => {
