@@ -106,10 +106,12 @@ export async function preloadImages(urls: string[],): Promise<PreloadResult[]> {
 export interface SceneImages {
   backgroundUrl?: string;
   portraitUrl?: string;
+  /** Resolved cast sprite URLs (emotion variants) so swaps never flash. */
+  spriteUrls?: string[];
 }
 
 /**
- * Collect background + portrait URLs from current and next N scenes.
+ * Collect background + portrait + cast-sprite URLs from current and next N scenes.
  * @param scenes
  * @param currentIndex
  * @param preloadCount
@@ -124,6 +126,7 @@ function collectSceneUrls(scenes: SceneImages[], currentIndex: number, preloadCo
     const scene = scenes[idx];
     if (scene?.backgroundUrl) { urls.push(scene.backgroundUrl,); }
     if (scene?.portraitUrl) { urls.push(scene.portraitUrl,); }
+    for (const url of scene?.spriteUrls ?? []) { urls.push(url,); }
   }
   return [...new Set(urls,),];
 }

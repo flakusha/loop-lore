@@ -5,6 +5,7 @@ import { destroyChoiceCards, } from "../choice-cards";
 import { createLoadingIndicator, } from "../image-preloader";
 import { getVnSettings, } from "../settings";
 import { addToRoster, createRoster, } from "../sprite-stage";
+import { applyStageDirectives, deriveStageDirectives, type SceneCastView, } from "../stage-directives";
 import {
   handleLocationChanged,
   msgToScene,
@@ -22,14 +23,19 @@ const navigate: SceneNavigator = { next: nextScene, prev: prevScene, };
 /**
  * Rebuild the per-chat sprite roster from the loaded scenes.
  * Scenes already carry their cast (msgToScene synthesizes single-speaker
- * entries), so the roster is the union of every scene cast in order.
+ * entries). The roster is the union of every scene cast; visibility follows
+ * the directive stream, so members who exited before the latest scene stay
+ * off-stage instead of all lighting up at once.
  */
 function syncRosterFromScenes(): void {
   const roster = createRoster();
+  let prev: SceneCastView | null = null;
   for (const scene of state.scenes) {
     for (const member of scene.cast ?? []) {
       addToRoster(roster, member,);
     }
+    applyStageDirectives(roster, deriveStageDirectives(prev, scene,),);
+    prev = scene;
   }
   state.roster = roster;
 }
@@ -151,11 +157,13 @@ export function getSceneCount(): number {
  */
 export function addScene(message: VnMessage,): void {
   const scene = msgToScene(message,);
+  const prev: SceneCastView | null = state.scenes[state.scenes.length - 1] ?? null;
   state.scenes.push(scene,);
   if (!state.roster) { state.roster = createRoster(); }
   for (const member of scene.cast ?? []) {
     addToRoster(state.roster, member,);
   }
+  applyStageDirectives(state.roster, deriveStageDirectives(prev, scene,),);
   state.currentIndex = state.scenes.length - 1;
   void preloadCurrentAndUpcoming();
   renderCurrentScene(true, navigate,);
