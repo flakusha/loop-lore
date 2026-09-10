@@ -21,6 +21,14 @@ export interface StoredModel {
   updatedAt: number;
 }
 
+/** Stored model summary for management UI (no bytes). */
+export interface StoredModelSummary {
+  id: string;
+  sizeBytes: number;
+  sha256: string;
+  updatedAt: number;
+}
+
 /** Byte-store contract for model blobs. */
 export interface ModelByteStore {
   load(modelId: string,): Promise<StoredModel | null>;
@@ -28,18 +36,36 @@ export interface ModelByteStore {
   remove(modelId: string,): Promise<number>;
   /** Total stored bytes across all models. */
   usageBytes(): Promise<number>;
+  /** Stored model summaries for management UI (no bytes). */
+  list(): Promise<StoredModelSummary[]>;
 }
 
 /**
  * Tot up record sizes.
- * @param records
+ * @param records - Records to total.
+ * @returns Total byte count.
  */
 export function sumUsage(records: Pick<StoredModel, "bytes">[],): number {
   return records.reduce((sum, record,) => sum + record.bytes.length, 0,);
 }
 
 /**
+ * Summarize records without exposing bytes.
+ * @param entries - Model id + record pairs.
+ * @returns Summaries for management UI.
+ */
+export function summarizeRecords(entries: [id: string, record: StoredModel,][],): StoredModelSummary[] {
+  return entries.map(([id, record,],) => ({
+    id,
+    sizeBytes: record.bytes.length,
+    sha256: record.sha256,
+    updatedAt: record.updatedAt,
+  }));
+}
+
+/**
  * In-memory store — test seam and no-IndexedDB fallback.
+ * @returns Memory-backed model byte store.
  */
 export function createMemoryStore(): ModelByteStore {
   const records = new Map<string, StoredModel>();
@@ -50,11 +76,13 @@ export function createMemoryStore(): ModelByteStore {
     },
     remove: async (modelId,) => records.delete(modelId,) ? 1 : 0,
     usageBytes: async () => sumUsage([...records.values(),],),
+    list: async () => summarizeRecords([...records.entries(),],),
   };
 }
 
 /**
  * Whether IndexedDB is usable in this environment.
+ * @returns True when the global IndexedDB factory exists.
  */
 export function isIndexedDBAvailable(): boolean {
   return typeof indexedDB !== "undefined" && indexedDB !== null;

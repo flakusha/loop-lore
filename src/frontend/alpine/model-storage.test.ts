@@ -50,6 +50,7 @@ function createFakeFactory(data: Map<string, StoredModel>,): IDBFactoryLike {
       return makeRequest<unknown>(undefined,);
     },
     getAll: () => makeRequest([...data.values(),],),
+    getAllKeys: () => makeRequest([...data.keys(),],),
   });
   const database = {
     transaction: () => ({ objectStore: () => objectStore(), }),
@@ -80,15 +81,20 @@ async function expectStoreSemantics(label: string, make: () => ReturnType<typeof
   expect(new TextDecoder().decode((await store.load("m1",))?.bytes,),).toBe("ab",);
   expect(await store.load("missing",),).toBeNull();
   expect(await store.usageBytes(),).toBe(6,);
+  const listed = await store.list();
+  expect(listed.map((entry,) => entry.id).sort(),).toEqual(["m1", "m2",],);
+  expect(listed.find((entry,) => entry.id === "m2")?.sizeBytes,).toBe(4,);
+  expect(listed.find((entry,) => entry.id === "m2")?.sha256,).toBe("hash",);
   expect(await store.remove("m1",),).toBe(1,);
   expect(await store.remove("m1",),).toBe(0,);
   expect(await store.load("m1",),).toBeNull();
   expect(await store.usageBytes(),).toBe(4,);
+  expect((await store.list()).map((entry,) => entry.id),).toEqual(["m2",],);
   void label;
 }
 
 describe("model-storage", () => {
-  test("memory store round-trips, accounts, and removes", async () => {
+  test("memory store round-trips, accounts, lists, and removes", async () => {
     await expectStoreSemantics("memory", createMemoryStore,);
   });
 

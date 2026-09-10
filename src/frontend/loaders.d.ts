@@ -15,6 +15,7 @@
  * creates block-scoped variables that don't appear on `typeof globalThis`.
  */
 
+import type { ModelManagerState, } from "./alpine/model-manager";
 import type { TranslationMap, } from "./i18n";
 
 export {};
@@ -88,6 +89,7 @@ declare global {
   var personasPage: any;
   var settingsModal: any;
   var settingsPage: any;
+  var modelManager: () => ModelManagerState;
 
   /* ── Loose / vendor-injected globals ────────────────────────── */
 
