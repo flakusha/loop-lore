@@ -17,10 +17,10 @@ import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Db, } from "../../db";
 import type { DB, } from "../../db/schema";
-import { requireUserId, } from "../../routes/http-utils/responses";
 import { ActorItemsService, } from "../../services/actor-items";
 import { ErrorResponse, Id, } from "../../validation/schemas";
 import { badRequestResponse, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
+import { withOwnerAuth, } from "../http-utils/auth-narrowing";
 
 const carryResponse = t.Object({
   carried: t.Number(),
@@ -58,6 +58,11 @@ async function resolveActorOwner(
   return null;
 }
 
+/** Adapter: bind `database` and `actorId` into a (userId) => Promise<Response | null>. */
+function actorOwnerCheck(db: Kysely<DB>, actorId: string,): (userId: string,) => Promise<Response | null> {
+  return (userId,) => resolveActorOwner(db, actorId, userId,);
+}
+
 /**
  * @param root0
  * @param root0.database
@@ -66,13 +71,11 @@ async function resolveActorOwner(
 export function actorItemsGameplayRoutes({ database, }: { database: Db }, prefix = "/api",): Elysia {
   return new Elysia({ name: "actor-items-gameplay", },)
     .post(`${prefix}/actors/:actorId/items/:itemId/equip`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
-      if (denied) { return denied; }
-      const res = await new ActorItemsService(database,).equip(ctx.params.actorId, ctx.params.itemId,);
-      if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot equip",); }
-      return jsonResponse(res,);
+      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+        const res = await new ActorItemsService(database,).equip(ctx.params.actorId, ctx.params.itemId,);
+        if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot equip",); }
+        return jsonResponse(res,);
+      },);
     }, {
       params: t.Object({ actorId: Id, itemId: Id, },),
       response: {
@@ -89,13 +92,11 @@ export function actorItemsGameplayRoutes({ database, }: { database: Db }, prefix
       },
     },)
     .post(`${prefix}/actors/:actorId/items/:itemId/unequip`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
-      if (denied) { return denied; }
-      const res = await new ActorItemsService(database,).unequip(ctx.params.actorId, ctx.params.itemId,);
-      if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot unequip",); }
-      return jsonResponse(res,);
+      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+        const res = await new ActorItemsService(database,).unequip(ctx.params.actorId, ctx.params.itemId,);
+        if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot unequip",); }
+        return jsonResponse(res,);
+      },);
     }, {
       params: t.Object({ actorId: Id, itemId: Id, },),
       response: {
@@ -108,12 +109,10 @@ export function actorItemsGameplayRoutes({ database, }: { database: Db }, prefix
       detail: { summary: "Unequip actor item", description: "Unequip an actor item.", tags: ["Actor Items",], },
     },)
     .get(`${prefix}/actors/:actorId/items/equipped`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
-      if (denied) { return denied; }
-      const items = await new ActorItemsService(database,).getEquipped(ctx.params.actorId,);
-      return jsonResponse(items,);
+      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+        const items = await new ActorItemsService(database,).getEquipped(ctx.params.actorId,);
+        return jsonResponse(items,);
+      },);
     }, {
       params: t.Object({ actorId: Id, },),
       detail: {
@@ -123,12 +122,10 @@ export function actorItemsGameplayRoutes({ database, }: { database: Db }, prefix
       },
     },)
     .get(`${prefix}/actors/:actorId/items/carry`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
-      if (denied) { return denied; }
-      const status = await new ActorItemsService(database,).getCarryStatus(ctx.params.actorId,);
-      return jsonResponse(status,);
+      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+        const status = await new ActorItemsService(database,).getCarryStatus(ctx.params.actorId,);
+        return jsonResponse(status,);
+      },);
     }, {
       params: t.Object({ actorId: Id, },),
       response: { 200: carryResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
@@ -139,19 +136,17 @@ export function actorItemsGameplayRoutes({ database, }: { database: Db }, prefix
       },
     },)
     .post(`${prefix}/actors/:actorId/items/:itemId/transfer`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveActorOwner(database, ctx.params.actorId, userId,);
-      if (denied) { return denied; }
-      const { toActorId, quantity, } = ctx.body as { toActorId: string; quantity: number };
-      const res = await new ActorItemsService(database,).transfer(
-        ctx.params.actorId,
-        toActorId,
-        ctx.params.itemId,
-        quantity,
-      );
-      if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot transfer",); }
-      return jsonResponse(res,);
+      return withOwnerAuth(ctx, actorOwnerCheck(database, ctx.params.actorId,), async () => {
+        const { toActorId, quantity, } = ctx.body as { toActorId: string; quantity: number };
+        const res = await new ActorItemsService(database,).transfer(
+          ctx.params.actorId,
+          toActorId,
+          ctx.params.itemId,
+          quantity,
+        );
+        if (!res.ok) { return badRequestResponse(res.reason ?? "Cannot transfer",); }
+        return jsonResponse(res,);
+      },);
     }, {
       params: t.Object({ actorId: Id, itemId: Id, },),
       body: transferBody,
