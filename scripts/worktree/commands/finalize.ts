@@ -511,6 +511,26 @@ function restoreDevFromStash(
   console.log(`  When ready: cd ${repoRoot} && git stash pop ${stashRef}`,);
 }
 
+/**
+ * Resolve the diff-base ref to pass to `bun run check --diff-base`.
+ *
+ * Why: the `--diff-base` arg scopes coverage + unit gates to that ref's
+ * diff vs HEAD (see AGENTS.md). Passing the live target branch means
+ * "branch vs current target", which leaks unrelated target-only changes
+ * into the gate when the target has moved past the branch's base.
+ *
+ * This returns the merge-base of `target` and HEAD — a stable ancestor
+ * that captures exactly what this branch has contributed since forking.
+ * Falls back to `target` itself when the two have no common ancestor
+ * (degenerate history, e.g. unrelated local branch).
+ *
+ * Exported for unit tests; production callers in `runFinalize` invoke it.
+ */
+export function resolveDiffBase(wtPath: string, target: string,): string {
+  const mergeBase = gitSyncQuiet(wtPath, "merge-base", target, "HEAD",).trim();
+  return mergeBase.length > 0 ? mergeBase : target;
+}
+
 function runCheck(wtPath: string, diffBase: string,): boolean {
   const result = Bun.spawnSync(
     ["bun", "run", "check", "--diff-base", diffBase,],
@@ -694,13 +714,17 @@ async function runFinalize(
     log("warn", "Skipped: --force flag set",);
   } else {
     const hasBunLock = existsSync(resolve(wtPath, "bun.lock",),);
-    if (hasBunLock && runCheck(wtPath, targetBranch,)) {
-      log("success", "Checks passed",);
-    } else if (!hasBunLock) {
-      log("warn", "Skipped: no bun.lock found",);
+    if (hasBunLock) {
+      // See resolveDiffBase for why we don't pass targetBranch directly.
+      const diffBase = resolveDiffBase(wtPath, targetBranch,);
+      if (runCheck(wtPath, diffBase,)) {
+        log("success", `Checks passed (diff-base=${diffBase.slice(0, 8,)}…)`,);
+      } else {
+        log("error", "Checks failed — fix before finalizing (or use --force)",);
+        process.exit(1,);
+      }
     } else {
-      log("error", "Checks failed — fix before finalizing (or use --force)",);
-      process.exit(1,);
+      log("warn", "Skipped: no bun.lock found",);
     }
   }
 
