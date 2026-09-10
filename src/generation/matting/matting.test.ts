@@ -145,6 +145,30 @@ describeReal("matting job lifecycle", () => {
     expect(raw.alpha_status,).toBe(AssetAlphaStatus.MattingFailed,);
   });
 
+  test("failed jobs re-run with a newer model and complete", async () => {
+    const { db, } = await createTestDb();
+    await insertUsers(db, "r owner", "R Owner",);
+    const ownerId = await ownerIdFor(db, "r owner",);
+    const assetId = await seedAsset(db, ownerId, makeMinimalPng(2, 1,),);
+
+    const failing = makeService(db, failingProvider,);
+    const first = await failing.startMatting({ assetId, ownerId, },);
+    expect(first.ok,).toBe(true,);
+    if (!first.ok) { return; }
+    await first.done;
+    expect(failing.getJob(first.jobId,)?.status,).toBe("failed",);
+
+    const rerun = makeService(db, okProvider,);
+    const second = await rerun.startMatting({ assetId, ownerId, },);
+    expect(second.ok,).toBe(true,);
+    if (!second.ok) { return; }
+    await second.done;
+    expect(rerun.getJob(second.jobId,)?.status,).toBe("completed",);
+
+    const raw = await db.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirstOrThrow();
+    expect(raw.alpha_status,).toBe(AssetAlphaStatus.Matted,);
+  });
+
   test("native assets are not eligible and missing provider is rejected", async () => {
     const { db, } = await createTestDb();
     await insertUsers(db, "n owner", "N Owner",);
