@@ -36,6 +36,7 @@ export interface SettingsState {
   enterToSend: boolean;
   autoScroll: boolean;
   inlinePreview: boolean;
+  localInferenceOptIn: boolean;
   detailLevel: string;
   provider: string;
   providerList: { name: string; label: string; status: string }[];
