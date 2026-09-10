@@ -13847,6 +13847,12 @@
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
+  "src/frontend/vn/sprite-stage.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
+    }
+  ],
   "src/frontend/vn/state-machine/index.ts": [
     {
       "kind": "ticket",

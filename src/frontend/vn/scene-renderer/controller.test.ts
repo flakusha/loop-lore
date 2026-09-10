@@ -177,6 +177,28 @@ describe("navigation", () => {
     expect(getCurrentSceneIndex(),).toBe(2,);
     expect(state.scenes[2]!.text,).toBe("Third.",);
   });
+
+  test("addScene derives enter/exit directives on the roster", () => {
+    initVnRenderer(
+      freshContainer() as unknown as HTMLElement,
+      [{ id: "m1", role: "assistant", content: "Rin here.", name: "Rin", },],
+      GM_CONFIG,
+    );
+    expect(state.roster?.entries.map((e,) => [e.characterId, e.visible,]),).toEqual([["rin", true,],],);
+
+    addScene({ id: "m2", role: "assistant", content: "Kai here.", name: "Kai", },);
+    expect(state.roster?.entries.map((e,) => [e.characterId, e.visible,]),).toEqual([
+      ["rin", false,],
+      ["kai", true,],
+    ],);
+
+    addScene({ id: "m3", role: "assistant", content: "Rin again.", name: "Rin", emotion: "happy", },);
+    expect(state.roster?.entries.map((e,) => [e.characterId, e.visible,]),).toEqual([
+      ["rin", true,],
+      ["kai", false,],
+    ],);
+    expect(state.scenes[2]?.emotion,).toBe("happy",);
+  });
 });
 
 // ── Destroy ─────────────────────────────────────────────────────────────────

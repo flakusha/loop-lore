@@ -6,9 +6,27 @@ import {
   type SceneImages,
 } from "../image-preloader";
 import { getPortraitUrl, } from "../portrait-manager";
+import { resolveSpriteUrl, } from "../sprite-stage";
 import { state, } from "./state";
 import type { VnMessage, VnScene, } from "./types";
 
+/**
+ * Resolve every cast sprite URL for a scene (emotion variant via the
+ * roster when registered, else the scene-carried base asset) so the
+ * preloader warms them before the swap renders — no flash on rapid
+ * messages.
+ * @param s - Scene whose cast to resolve.
+ */
+function spriteUrlsForScene(s: VnScene,): string[] | undefined {
+  if (!s.cast?.length) { return undefined; }
+  const urls = new Set<string>();
+  for (const member of s.cast) {
+    const entry = state.roster?.entries.find((e,) => e.characterId === member.characterId) ?? member;
+    const url = resolveSpriteUrl(entry, s.emotion,);
+    if (url) { urls.add(url,); }
+  }
+  return urls.size > 0 ? [...urls,] : undefined;
+}
 /**
  * @param msg
  */
@@ -48,6 +66,7 @@ export async function preloadCurrentAndUpcoming(): Promise<void> {
     portraitUrl: s.characterAvatar
       ? getPortraitUrl(s.characterAvatar,)
       : undefined,
+    spriteUrls: spriteUrlsForScene(s,),
   }),);
 
   const stats = await preloadSceneImages(sceneImages, state.currentIndex, 2,);
