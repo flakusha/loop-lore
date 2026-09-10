@@ -798,6 +798,7 @@ async function runFinalize(
     } else if (skipGatesFilter) {
       checkArgs.push("--skip-gates", skipGatesFilter,);
     }
+    const hasBunLock = existsSync(resolve(wtPath, "bun.lock",),);
     if (hasBunLock) {
       // See resolveDiffBase for why we don't pass targetBranch directly.
       const diffBase = resolveDiffBase(wtPath, targetBranch,);
