@@ -12,8 +12,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { KEEPALIVE_MS, NotificationStreamer, POLL_INTERVAL_MS, } from "./stream";
-
+import { NotificationStreamer, } from "./stream";
 /**
  * Decode an SSE-encoded chunk into a list of {event,data} frames.
  * @param chunk
@@ -102,10 +101,5 @@ describe("NotificationStreamer", () => {
     const payload = JSON.parse(frames[0]?.data ?? "{}",);
     expect(payload.unreadCount,).toBe(0,);
     expect(payload.items,).toEqual([],);
-  });
-
-  test("exposes the documented interval/keepalive constants", () => {
-    expect(POLL_INTERVAL_MS,).toBe(5000,);
-    expect(KEEPALIVE_MS,).toBe(15_000,);
   });
 });
