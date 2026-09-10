@@ -13,7 +13,8 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DuplicationPolicy, WorldDuplicationPolicy, } from "../config/schema";
 import type { DB, } from "../db/schema";
-import { type ContentCipher, pskCipher, } from "./cipher";
+import { type ContentCipher, } from "./cipher";
+import type { MeshEncryptionProvider, } from "./encryption";
 import { type ContentEnvelope, openEnvelope, sealContent, } from "./envelope";
 import { canonicalOrigin, type PeerPost, } from "./peer-fetch";
 
@@ -463,8 +464,7 @@ export async function selectTargetsWithCapacity(
  * @param database Sender database handle (peer registry + policy read).
  * @param post Transport POST (bind peer TLS trust before passing).
  * @param senderOrigin This instance's canonical origin.
- * @param policy Configured duplication policy.
- * @param psk Mesh PSK cipher (probe seal + fallback).
+ * @param encryption Cipher selection (probe seal + per-target content keys).
  * @param content Payload to replicate.
  */
 export async function fanOutContent(
@@ -472,7 +472,7 @@ export async function fanOutContent(
   post: PeerPost,
   senderOrigin: string,
   policy: DuplicationPolicy,
-  psk: ContentCipher,
+  encryption: MeshEncryptionProvider,
   content: FanOutContent,
 ): Promise<FanOutResult> {
   const type = content.contentType ?? "blob";
@@ -484,7 +484,7 @@ export async function fanOutContent(
     clock,
     type,
     content: content.content,
-    cipher: psk,
+    cipher: encryption.psk,
   },);
   const candidates = await selectDuplicationTargets(database, policy, senderOrigin, content.worldId,);
   const fit = await selectTargetsWithCapacity(database, candidates, probe.size,);
@@ -495,7 +495,7 @@ export async function fanOutContent(
       sizeBytes: probe.size,
       contentType: type,
     },);
-    const cipher = granted.contentKey !== undefined ? pskCipher(granted.contentKey,) : psk;
+    const cipher = encryption.contentCipher(granted.contentKey,);
     const envelope = await sealContent({
       id: content.id,
       origin: senderOrigin,
