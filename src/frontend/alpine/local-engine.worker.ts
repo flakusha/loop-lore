@@ -153,3 +153,5 @@ scope.onmessage = (event: { data: unknown },): void => {
       },
     );
 };
+/** Module marker: keeps this worker's globals out of the shared global scope (sibling workers declare the same names). */
+export {};

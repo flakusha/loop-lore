@@ -18,66 +18,18 @@
  * @module alpine/local-engine
  */
 
-import { BROWSER_MODEL_CATALOG, isWllamaEngine, } from "../../inference/manifest";
+import { BROWSER_MODEL_CATALOG, } from "../../inference/manifest";
+import { buildLoadRequest, resolveEnginePlan, } from "./local-engine-load";
 import {
-  ENGINE_WORKER_URL,
   isEngineResponse,
   TRANSFORMERS_CDN,
   WLLAMA_CDN,
-  WLLAMA_ENGINE_WORKER_URL,
   WLLAMA_WASM_URL,
 } from "./local-engine-protocol";
 import type { EngineRequest, EngineResponse, } from "./local-engine-protocol";
+import type { LocalEngine, LocalEngineOptions, } from "./local-engine-types";
 import { LocalInferenceUnavailable, markModelReady, } from "./local-inference";
-
-/** Catalog id → transformers.js pipeline model id (quantized ONNX builds). */
-const PIPELINE_MODEL_IDS: Record<string, string> = {
-  "SmolLM2-360M-Instruct": "Xenova/SmolLM2-360M-Instruct",
-  "Qwen2.5-0.5B-Instruct": "Xenova/Qwen2.5-0.5B-Instruct",
-};
-
-/** Engine construction options. */
-export interface LocalEngineOptions {
-  /** Worker factory (test seam, receives the worker URL). Defaults to the compiled worker asset. */
-  workerFactory?: (url: string,) => Worker;
-  /** transformers.js CDN (test seam). */
-  cdn?: string;
-  /** wllama ESM CDN (test seam). */
-  wllamaCdn?: string;
-  /** wllama WASM runtime URL (test seam). */
-  wllamaWasmUrl?: string;
-  /** Load timeout ms (default 5 min — first load downloads weights). */
-  loadTimeoutMs?: number;
-  /** Generate timeout ms (default 90 s). */
-  generateTimeoutMs?: number;
-}
-
-/** Browser model engine handle. */
-export interface LocalEngine {
-  /**
-   * Load a catalog model into the worker (no-op when already loaded).
-   * @param modelId - Catalog model id.
-   * @param onProgress - Weight-download progress (loaded, total) bytes.
-   * @returns Engine device actually used (`webgpu` or `wasm`, prefixed by family).
-   * @throws {LocalInferenceUnavailable} On unknown model, worker or load failure.
-   *
-   * A successful load marks the model ready, so later composer calls pass
-   * the readiness gate without a downloader round-trip.
-   */
-  loadModel(modelId: string, onProgress?: (loaded: number, total: number,) => void,): Promise<string>;
-  /**
-   * Run text generation on the loaded model.
-   * @param input - Chat messages or prompt string.
-   * @param maxTokens - Cap on new tokens (default 256).
-   * @returns Raw `generated_text` payload.
-   * @throws {LocalInferenceUnavailable} When no model is loaded or generation fails.
-   */
-  generate(input: unknown, maxTokens?: number,): Promise<unknown>;
-  /** Loaded catalog model id, or null. */
-  loadedModel(): string | null;
-  /** Drop the worker; the next call recreates it. */
-  terminate(): void;
-}
+export type { LocalEngine, LocalEngineOptions, } from "./local-engine-types";
 
 interface Pending {
   resolve: (response: EngineResponse,) => void;
@@ -164,7 +116,12 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
     }
   }
 
-  function request(message: EngineRequest, timeoutMs: number, timeoutReason: string, url: string,): Promise<EngineResponse> {
+  function request(
+    message: EngineRequest,
+    timeoutMs: number,
+    timeoutReason: string,
+    url: string,
+  ): Promise<EngineResponse> {
     const live = ensureWorker(url,);
     const { promise, resolve, reject, } = Promise.withResolvers<EngineResponse>();
     const timer = setTimeout(() => {
@@ -188,47 +145,16 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       if (!descriptor) {
         throw new LocalInferenceUnavailable(`unknown browser model "${modelId}"`,);
       }
-      const wllama = isWllamaEngine(descriptor.engine,);
-      const workerUrl = wllama ? WLLAMA_ENGINE_WORKER_URL : ENGINE_WORKER_URL;
-      if (loaded === modelId && worker && loadedUrl === workerUrl) { return engineName; }
-      const device = descriptor.engine === "transformers-wasm" || descriptor.engine === "wllama-wasm"
-        ? "wasm"
-        : "webgpu";
+      const plan = resolveEnginePlan(descriptor,);
+      if (loaded === modelId && worker && loadedUrl === plan.workerUrl) { return engineName; }
       progressHandler = onProgress ?? null;
       try {
-        let response: EngineResponse;
-        if (wllama) {
-          if (!descriptor.gguf) {
-            throw new LocalInferenceUnavailable(`wllama model "${modelId}" has no GGUF source`,);
-          }
-          response = await request(
-            {
-              kind: "load",
-              id: nextId++,
-              model: modelId,
-              device,
-              dtype: descriptor.quantization,
-              cdn: wllamaCdn,
-              modelSource: descriptor.gguf,
-              wasmUrl: wllamaWasmUrl,
-            },
-            loadTimeoutMs,
-            `model "${modelId}" load timed out`,
-            workerUrl,
-          );
-        } else {
-          const pipelineId = PIPELINE_MODEL_IDS[modelId];
-          if (!pipelineId) {
-            throw new LocalInferenceUnavailable(`unknown browser model "${modelId}"`,);
-          }
-          const dtype = descriptor.quantization.startsWith("q4",) ? "q4" : "q8";
-          response = await request(
-            { kind: "load", id: nextId++, model: pipelineId, device, dtype, cdn, },
-            loadTimeoutMs,
-            `model "${modelId}" load timed out`,
-            workerUrl,
-          );
-        }
+        const response = await request(
+          buildLoadRequest(descriptor, modelId, plan, { cdn, wllamaCdn, wllamaWasmUrl, }, nextId++,),
+          loadTimeoutMs,
+          `model "${modelId}" load timed out`,
+          plan.workerUrl,
+        );
         if (response.kind !== "ready") {
           throw new LocalInferenceUnavailable(`unexpected load response "${response.kind}"`,);
         }
