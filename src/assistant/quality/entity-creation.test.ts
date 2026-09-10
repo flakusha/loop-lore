@@ -8,12 +8,17 @@ import {
   resolveEntityGenerationPrompt,
   VALID_ENTITY_TOKENS,
 } from "../prompt/templates/entity-generation";
+import type {
+  GeneratedEntityLoreEntry,
+} from "./entity-creation";
 import {
   checkConsistency,
   checkDuplicate,
   normalizeEntity,
+  normalizeLoreEntries,
   runQualityGates,
   validateEntitySchema,
+  validateLoreEntries,
 } from "./entity-creation";
 
 describe("normalizeEntity", () => {
@@ -171,6 +176,199 @@ describe("runQualityGates", () => {
     expect(report.schema.ok,).toBe(true,);
     expect(report.duplicate.found,).toBe(false,);
     expect(report.consistency.warnings,).toHaveLength(0,);
+  });
+});
+
+describe("normalizeLoreEntries", () => {
+  it("normalizes valid structured lore entries", () => {
+    const raw = [
+      {
+        name: "The Betrayer",
+        content: "Once a hero, now a villain.",
+        keys: ["betrayer", "hero",],
+        subject: { kind: "race", race: "elf", },
+        constant: false,
+        selective: true,
+        position: "before_char",
+        insertion_order: 1,
+        priority: 5,
+      },
+    ];
+    const entries = normalizeLoreEntries(raw,);
+    expect(entries,).toHaveLength(1,);
+    expect(entries[0]!.name,).toBe("The Betrayer",);
+    expect(entries[0]!.content,).toBe("Once a hero, now a villain.",);
+    expect(entries[0]!.keys,).toEqual(["betrayer", "hero",],);
+    expect(entries[0]!.subject,).toEqual({ kind: "race", race: "elf", },);
+    expect(entries[0]!.requires_presence,).toBeUndefined();
+    expect(entries[0]!.constant,).toBe(false,);
+    expect(entries[0]!.selective,).toBe(true,);
+    expect(entries[0]!.position,).toBe("before_char",);
+    expect(entries[0]!.insertion_order,).toBe(1,);
+    expect(entries[0]!.priority,).toBe(5,);
+  });
+
+  it("skips entries missing name or content", () => {
+    const raw = [
+      { name: "Valid", content: "Valid content", },
+      { name: "", content: "No name", },
+      { name: "No content", content: "", },
+      { content: "Missing name field", },
+      { name: "Missing content", },
+      null,
+      "not an object",
+    ];
+    const entries = normalizeLoreEntries(raw,);
+    expect(entries,).toHaveLength(1,);
+    expect(entries[0]!.name,).toBe("Valid",);
+  });
+
+  it("clamps keys to max 5 entries and max 100 chars", () => {
+    const longKey = "a".repeat(200,);
+    const raw = [
+      {
+        name: "Test",
+        content: "Content",
+        keys: [longKey, "b", "c", "d", "e", "f", "g", "h",],
+      },
+    ];
+    const entries = normalizeLoreEntries(raw,);
+    expect(entries[0]!.keys,).toHaveLength(5,);
+    expect(entries[0]!.keys![0]!.length,).toBe(100,);
+    expect(entries[0]!.keys![1]!,).toBe("b",);
+    expect(entries[0]!.keys![4]!,).toBe("e",);
+  });
+
+  it("validates subject kind via normalizeAudienceScope", () => {
+    const raw = [
+      {
+        name: "Valid Subject",
+        content: "Content",
+        subject: { kind: "world", },
+      },
+      {
+        name: "Invalid Subject",
+        content: "Content",
+        subject: { kind: "unknown_kind", },
+      },
+    ];
+    const entries = normalizeLoreEntries(raw,);
+    expect(entries,).toHaveLength(2,);
+    // Invalid subject is silently dropped by normalizeAudienceScope (returns null)
+    expect(entries[1]!.subject,).toBeUndefined();
+  });
+
+  it("ignores invalid position values", () => {
+    const raw = [
+      { name: "Valid", content: "Content", position: "before_char", },
+      { name: "Invalid", content: "Content", position: "bad_position", },
+    ];
+    const entries = normalizeLoreEntries(raw,);
+    expect(entries[0]!.position,).toBe("before_char",);
+    expect(entries[1]!.position,).toBeUndefined();
+  });
+
+  it("clamps numeric fields to valid ranges", () => {
+    const raw = [
+      {
+        name: "Test",
+        content: "Content",
+        insertion_order: -5,
+        priority: 9999,
+        cooldown_seconds: -10,
+      },
+    ];
+    const entries = normalizeLoreEntries(raw,);
+    expect(entries[0]!.insertion_order,).toBe(0,);
+    expect(entries[0]!.priority,).toBe(999,);
+    expect(entries[0]!.cooldown_seconds,).toBe(0,);
+  });
+});
+
+describe("validateLoreEntries", () => {
+  it("returns empty array for valid entries", () => {
+    const entries: GeneratedEntityLoreEntry[] = [{
+      name: "Test",
+      content: "Content",
+      keys: ["a", "b",],
+      subject: { kind: "world", } as const,
+      position: "before_char",
+    },];
+    const errors = validateLoreEntries(entries,);
+    expect(errors,).toHaveLength(0,);
+  });
+
+  it("reports missing name and content", () => {
+    const entries: GeneratedEntityLoreEntry[] = [{
+      name: "",
+      content: "",
+    },];
+    const errors = validateLoreEntries(entries,);
+    expect(errors,).toContain("lore[0].name is required",);
+    expect(errors,).toContain("lore[0].content is required",);
+  });
+
+  it("reports keys exceeding max entries", () => {
+    const entries: GeneratedEntityLoreEntry[] = [{
+      name: "T",
+      content: "c",
+      keys: Array(6,).fill("x",),
+    },];
+    const errors = validateLoreEntries(entries,);
+    expect(errors,).toContain("lore[0].keys exceeds 5 entries",);
+  });
+
+  it("reports unknown subject kind", () => {
+    const entries = [{
+      name: "T",
+      content: "c",
+      subject: { kind: "bogus", } as never,
+      position: "before_char" as const,
+    },];
+    const errors = validateLoreEntries(entries,);
+    expect(errors,).toContain("lore[0].subject.kind is not a known subject kind",);
+  });
+
+  it("reports invalid position", () => {
+    const entries = [{
+      name: "T",
+      content: "c",
+      position: "bad" as never,
+    },];
+    const errors = validateLoreEntries(entries,);
+    expect(errors,).toContain("lore[0].position is not a valid LorePosition",);
+  });
+});
+
+describe("normalizeEntity (structured lore)", () => {
+  it("normalizes array lore into lore entries", () => {
+    const raw = {
+      name: "Test",
+      description: "desc",
+      lore: [{ name: "L", content: "C", },],
+    };
+    const entity = normalizeEntity(raw,);
+    expect(Array.isArray(entity.lore,),).toBe(true,);
+    const loreArr = entity.lore as GeneratedEntityLoreEntry[];
+    expect(loreArr[0]!.name,).toBe("L",);
+  });
+
+  it("keeps string lore as-is for backward compat", () => {
+    const entity = normalizeEntity({
+      name: "T",
+      description: "d",
+      lore: "A long time ago...",
+    },);
+    expect(entity.lore,).toBe("A long time ago...",);
+  });
+
+  it("drops non-array, non-string lore", () => {
+    const entity = normalizeEntity({
+      name: "T",
+      description: "d",
+      lore: 42,
+    },);
+    expect(entity.lore,).toBeUndefined();
   });
 });
 

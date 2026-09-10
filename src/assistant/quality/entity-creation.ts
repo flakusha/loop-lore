@@ -14,8 +14,32 @@
  */
 
 import { Kysely, sql, } from "kysely";
+import { LorePosition, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
+import { KNOWN_SUBJECT_KINDS, normalizeAudienceScope, } from "../../story/events/promote-lore";
+import type { LoreSubject, } from "../lore/audience";
 import type { EntityKind, } from "../prompt/templates/entity-generation";
+
+/** Structured lore entry emitted by the LLM for `/create` entities. */
+export interface GeneratedEntityLoreEntry {
+  name: string;
+  content: string;
+  /** Keyword triggers — clamped to 5 entries, each <= 100 chars. */
+  keys?: string[];
+  /** Audience scope subject — validated via normalizeAudienceScope. */
+  subject?: LoreSubject;
+  /** Location lore is only known while the actor is present there. */
+  requires_presence?: boolean;
+  /** Always-on lore (not gated by selective activation). */
+  constant?: boolean;
+  /** Gated by keyword/scan matching rather than always-on. */
+  selective?: boolean;
+  /** Narrative position in the character sheet. */
+  position?: LorePosition;
+  insertion_order?: number;
+  priority?: number;
+  cooldown_seconds?: number;
+}
 
 /** Parsed fields produced by the LLM, all optional strings except `name`. */
 export interface GeneratedEntity {
@@ -23,8 +47,14 @@ export interface GeneratedEntity {
   description?: string;
   personality?: string;
   scenario?: string;
-  lore?: string;
+  /** Structured lore entries when the model emits `lore[]`, or prose string for backward compat. */
+  lore?: string | GeneratedEntityLoreEntry[];
 }
+
+/** Maximum number of keyword keys per lore entry. */
+const MAX_KEYS = 5;
+/** Maximum length of a single keyword key. */
+const MAX_KEY_LENGTH = 100;
 
 /** Per-kind required field sets. `name` is always required. */
 const REQUIRED_FIELDS: Record<EntityKind, string[]> = {
@@ -34,6 +64,131 @@ const REQUIRED_FIELDS: Record<EntityKind, string[]> = {
   item: ["name", "description",],
 };
 /*** Outcome of a single gate. */
+/**
+ * Normalize raw LLM lore entries into typed {@link GeneratedEntityLoreEntry[]}.
+ *
+ * Clamps `keys` to a maximum of 5 entries, each no longer than 100 characters.
+ * Validates `subject` via {@link normalizeAudienceScope}. Clamps boolean flags
+ * and sanitizes numeric fields to their valid ranges.
+ * @param raw
+ */
+export function normalizeLoreEntries(raw: unknown[],): GeneratedEntityLoreEntry[] {
+  const result: GeneratedEntityLoreEntry[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== "object") { continue; }
+    const e = entry as Record<string, unknown>;
+    const name = typeof e.name === "string" ? e.name.trim() : "";
+    const content = typeof e.content === "string" ? e.content.trim() : "";
+    if (!name || !content) { continue; }
+
+    // Clamp keys: max 5 entries, each <= 100 chars
+    let keys: string[] | undefined;
+    if (Array.isArray(e.keys,)) {
+      keys = e.keys
+        .filter((k,) => typeof k === "string")
+        .slice(0, MAX_KEYS,)
+        .map((k,) => k.trim().slice(0, MAX_KEY_LENGTH,))
+        .filter((k,) => k.length > 0);
+      if (keys.length === 0) { keys = undefined; }
+    }
+
+    // Validate subject via normalizeAudienceScope (reuse from promote-lore)
+    const scope = normalizeAudienceScope({ subject: e.subject, },);
+    const subject = scope?.subject as LoreSubject | undefined;
+
+    const requires_presence = typeof e.requires_presence === "boolean" ? e.requires_presence : undefined;
+    const constant = typeof e.constant === "boolean" ? e.constant : undefined;
+    const selective = typeof e.selective === "boolean" ? e.selective : undefined;
+
+    let position: LorePosition | undefined;
+    if (typeof e.position === "string" && isValidLorePosition(e.position,)) {
+      position = e.position as LorePosition;
+    }
+
+    const insertion_order = clampNonNegativeInt(e.insertion_order,);
+    const priority = clampInt(e.priority, -999, 999,);
+    const cooldown_seconds = clampNonNegativeInt(e.cooldown_seconds,);
+
+    result.push({
+      name,
+      content,
+      keys,
+      subject,
+      requires_presence,
+      constant,
+      selective,
+      position,
+      insertion_order,
+      priority,
+      cooldown_seconds,
+    },);
+  }
+  return result;
+}
+
+/**
+ * Validate normalized lore entries. Returns a list of human-readable errors
+ * (empty when all entries are valid).
+ * @param lore
+ */
+export function validateLoreEntries(lore: GeneratedEntityLoreEntry[],): string[] {
+  const errors: string[] = [];
+  for (let i = 0; i < lore.length; i++) {
+    const entry = lore[i]!;
+    if (!entry.name || entry.name.length === 0) {
+      errors.push(`lore[${i}].name is required`,);
+    }
+    if (!entry.content || entry.content.length === 0) {
+      errors.push(`lore[${i}].content is required`,);
+    }
+    if (entry.keys && entry.keys.length > MAX_KEYS) {
+      errors.push(`lore[${i}].keys exceeds ${MAX_KEYS} entries`,);
+    }
+    if (entry.keys) {
+      for (let j = 0; j < entry.keys.length; j++) {
+        if (entry.keys![j]!.length > MAX_KEY_LENGTH) {
+          errors.push(`lore[${i}].keys[${j}] exceeds ${MAX_KEY_LENGTH} characters`,);
+        }
+      }
+    }
+    if (entry.subject && entry.subject.kind !== undefined && !KNOWN_SUBJECT_KINDS.has(entry.subject.kind,)) {
+      errors.push(`lore[${i}].subject.kind is not a known subject kind`,);
+    }
+    if (entry.position !== undefined && !isValidLorePosition(entry.position,)) {
+      errors.push(`lore[${i}].position is not a valid LorePosition`,);
+    }
+  }
+  return errors;
+}
+
+// ── Internal helpers ──────────────────────────────────────────────────────────
+
+function clampNonNegativeInt(value: unknown,): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value,)) {
+    return Math.max(0, Math.floor(value,),);
+  }
+  if (typeof value === "string") {
+    const n = Number(value,);
+    if (Number.isFinite(n,)) { return Math.max(0, Math.floor(n,),); }
+  }
+  return undefined;
+}
+
+function clampInt(value: unknown, min: number, max: number,): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value,)) {
+    return Math.max(min, Math.min(max, Math.floor(value,),),);
+  }
+  if (typeof value === "string") {
+    const n = Number(value,);
+    if (Number.isFinite(n,)) { return Math.max(min, Math.min(max, Math.floor(n,),),); }
+  }
+  return undefined;
+}
+
+function isValidLorePosition(value: string,): boolean {
+  return Object.values(LorePosition,).includes(value as LorePosition,);
+}
+
 /** */
 export interface GateResult {
   ok: boolean;
@@ -69,7 +224,9 @@ export function normalizeEntity(
     description: str(raw.description,),
     personality: str(raw.personality,),
     scenario: str(raw.scenario,),
-    lore: str(raw.lore,),
+    lore: Array.isArray(raw.lore,)
+      ? normalizeLoreEntries(raw.lore,)
+      : str(raw.lore,),
   };
 }
 
@@ -90,6 +247,13 @@ export function validateEntitySchema(
   }
   if (missing.length > 0) {
     return { ok: false, message: `Missing required field(s): ${missing.join(", ",)}`, };
+  }
+  // Validate structured lore entries when present
+  if (Array.isArray(entity.lore,)) {
+    const errors = validateLoreEntries(entity.lore,);
+    if (errors.length > 0) {
+      return { ok: false, message: `Invalid lore entries: ${errors.join("; ",)}`, };
+    }
   }
   return { ok: true, };
 }
