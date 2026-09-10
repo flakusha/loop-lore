@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+# Automated dependency bumps. Cargo is scoped to the native crate dir so
+# updates land as normal PRs gated by `bun run check:ci` (which covers the
+# TS side; run `bun run test:native` + `lint:native` on the PR — the native
+# gates are not in check-parallel yet, see the plan ticket).
+version: 2
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/native/loop-lore-native"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "deps"
+      - "native"
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+    labels:
+      - "deps"
