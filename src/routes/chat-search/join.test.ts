@@ -27,7 +27,7 @@ function makeApp(
   db: Kysely<DB>,
   userId: string | null,
   userRole: string | null = "user",
-): Elysia {
+) {
   return new Elysia({ name: "test-join", },)
     .derive(() => ({ userId, userRole, }))
     .use(joinRoutes({ database: db, config: mockConfig as Config, },),);
