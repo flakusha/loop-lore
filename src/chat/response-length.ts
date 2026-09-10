@@ -45,6 +45,8 @@ export const DEFAULT_RESPONSE_LENGTH: ResponseLengthConfig = {
  * @param chatCustom - Per-chat custom token count from DB (null if not set)
  * @param userPreset - User's global preference (null if not set)
  * @param serverDefault - Server default from config (default: "medium")
+ * @param preset
+ * @param customMax
  * @returns Resolved configuration with effective maxTokens
  */
 export function computeMaxTokens(preset: LengthPreset, customMax?: number,): number {

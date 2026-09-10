@@ -48,7 +48,10 @@ import type {
  * (routes, prompt sections, bridges).
  */
 export class CharacterGrowthService {
-  /** */
+  /**
+   * 
+   * @param db
+   */
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
@@ -115,7 +118,10 @@ export class CharacterGrowthService {
   }
 }
 
-/** Default factory — used by routes and prompt sections. */
+/**
+ * Default factory — used by routes and prompt sections.
+ * @param db
+ */
 export function characterGrowthService(db: Kysely<DB>,): CharacterGrowthService {
   return new CharacterGrowthService(db,);
 }

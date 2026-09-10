@@ -85,7 +85,8 @@ interface CommitInfo {
 }
 
 /**
- * @param message
+ * @param message - raw commit message (may include body lines)
+ * @returns CommitInfo with `valid` flag and any `warnings` (long subject, invalid scope/type, trailing period, etc.).
  */
 function validateCommit(message: string,): CommitInfo {
   const firstLine = message.trim().split("\n",)[0];
@@ -128,13 +129,17 @@ function validateCommit(message: string,): CommitInfo {
 }
 
 /**
- * @param text
+ * @param text - text to colorize
+ * @returns text wrapped in ANSI green escape codes (terminal-friendly).
  */
 function green(text: string,): string {
   return `\x1b[32m${text}\x1b[0m`;
 }
 
-/** */
+/**
+ * Collect all commit subject lines since the last git tag (or all commits if no tag exists).
+ * @returns array of commit subject strings; empty array on `git` failure.
+ */
 function getCommitsSinceLastTag(): string[] {
   try {
     const tag = execSync("git describe --tags --abbrev=0 2>/dev/null || echo ''", {
@@ -148,7 +153,10 @@ function getCommitsSinceLastTag(): string[] {
   }
 }
 
-/** */
+/**
+ * Entry point. Validates commits against conventional-commit rules; exits 0 on success, 1 on any invalid commit.
+ * @returns resolves when validation completes (exit is via `process.exit`).
+ */
 async function main(): Promise<void> {
   const args = Bun.argv.slice(2,);
   const hookMode = !args.includes("--all",) && !process.stdin.isTTY;

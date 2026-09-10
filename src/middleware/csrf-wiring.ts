@@ -31,6 +31,7 @@ import {
  * Prefers `config.auth.csrfSecret`; falls back to `config.auth.jwtSecret`.
  * When neither is set, CSRF protection is disabled.
  *
+ * @param config
  * @returns The middleware options (always enabled here; wiring decides
  *   no-op behaviour from the `enabled` flag).
  */

@@ -66,6 +66,7 @@ async function insertRegisteredUser(
 
 /**
  * Enforce registration-open + rate-limit gates.
+ * @param request
  * @param config
  * @param ip
  * @param t

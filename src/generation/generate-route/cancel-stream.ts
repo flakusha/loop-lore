@@ -28,6 +28,14 @@ import { sseData, } from "./sse-utils";
  *
  * @param deps - DB, attempt identity, the stream error, accumulated SSE
  *   content, the stream buffer, and the readable-stream controller.
+ * @param deps.db
+ * @param deps.attemptId
+ * @param deps.chatId
+ * @param deps.error
+ * @param deps.streamError
+ * @param deps.accumulatedContent
+ * @param deps.buffer
+ * @param deps.controller
  */
 export async function streamCancelCleanup(deps: {
   db: Kysely<DB>;

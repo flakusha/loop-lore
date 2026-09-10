@@ -28,6 +28,7 @@ export type DeliveryVerdict = "stored" | "stale";
  * @param envelope
  * @param cipher
  * @param opts Optional reservation confirmation.
+ * @param opts.reservationId
  */
 export async function receiveDelivery(
   database: Kysely<DB>,

@@ -12,7 +12,10 @@
  * Not exported from `idempotency.ts`; this is implementation detail.
  */
 
-/** Drop headers that must NOT replay (cookies, hop-by-hop). */
+/**
+ * Drop headers that must NOT replay (cookies, hop-by-hop).
+ * @param headers
+ */
 export function filterReplayHeaders(headers: Record<string, string>,): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [name, value,] of Object.entries(headers,)) {
@@ -33,6 +36,10 @@ export function filterReplayHeaders(headers: Record<string, string>,): Record<st
  * (BUG-idempotency-cache-key-lacks-user-scope-cross-user-response-r) so two
  * authenticated users sharing an X-Request-Id cannot replay each other's
  * cached responses; unauthenticated requests share the `anon` bucket.
+ * @param method
+ * @param routePattern
+ * @param requestId
+ * @param userId
  */
 export function makeKey(
   method: string,
