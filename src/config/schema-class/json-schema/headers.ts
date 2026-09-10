@@ -37,7 +37,7 @@ export const headers = {
         scriptSrc: {
           type: "array",
           items: { type: "string", },
-          default: ["'self'", "'unsafe-inline'", "'unsafe-eval'",],
+          default: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net",],
         },
         styleSrc: {
           type: "array",
@@ -51,6 +51,7 @@ export const headers = {
           items: { type: "string", },
           default: ["'self'", "wss:", "https:",],
         },
+        workerSrc: { type: "array", items: { type: "string", }, default: ["'self'", "blob:",], },
         objectSrc: { type: "array", items: { type: "string", }, default: ["'none'",], },
         baseUri: { type: "array", items: { type: "string", }, default: ["'self'",], },
         frameAncestors: { type: "array", items: { type: "string", }, default: ["'none'",], },
@@ -67,14 +68,14 @@ export const headers = {
     crossOriginOpenerPolicy: {
       type: ["string", "null",],
       enum: ["same-origin", "same-origin-allow-popups", null,],
-      default: null,
+      default: "same-origin",
       description: "COOP; null omits",
     },
     crossOriginEmbedderPolicy: {
       type: ["string", "null",],
-      enum: ["require-corp", null,],
-      default: null,
-      description: "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB).",
+      enum: ["require-corp", "credentialless", null,],
+      default: "credentialless",
+      description: "COEP; credentialless keeps no-credential CDN/model loads working while enabling SAB/WASM threads.",
     },
     crossOriginResourcePolicy: {
       type: ["string", "null",],

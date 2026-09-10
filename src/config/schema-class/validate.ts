@@ -44,7 +44,7 @@ export const validate = (config: Config,): void => {
   }
   if (
     config.headers.crossOriginEmbedderPolicy !== null &&
-    config.headers.crossOriginEmbedderPolicy !== "require-corp"
+    !["require-corp", "credentialless",].includes(config.headers.crossOriginEmbedderPolicy,)
   ) {
     throw new Error(
       `Invalid headers.crossOriginEmbedderPolicy: "${config.headers.crossOriginEmbedderPolicy as string}"`,

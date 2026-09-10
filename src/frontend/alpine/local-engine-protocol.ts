@@ -18,7 +18,7 @@
 export const TRANSFORMERS_CDN = "https://cdn.jsdelivr.net/npm/@xenova/transformers@3/+esm";
 
 /** CDN serving the wllama ESM bundle (lazy, never bundled). Pinned — bump deliberately. */
-export const WLLAMA_CDN = "https://cdn.jsdelivr.net/npm/@wllama/wllama@3.6.1/+esm";
+export const WLLAMA_CDN = "https://cdn.jsdelivr.net/npm/@wllama/wllama@3.6.1/esm/index.js";
 
 /** Same-CDN wllama WASM runtime passed to the Wllama constructor. */
 export const WLLAMA_WASM_URL = "https://cdn.jsdelivr.net/npm/@wllama/wllama@3.6.1/esm/wasm/wllama.wasm";
