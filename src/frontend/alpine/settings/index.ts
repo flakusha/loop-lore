@@ -17,6 +17,7 @@ import type { LocaleInfoArray, SettingsState, } from "./types";
     enterToSend: true,
     autoScroll: true,
     inlinePreview: true,
+    localInferenceOptIn: false,
     detailLevel: "Immersion",
     provider: "OpenAI",
     providerList: [] as { name: string; label: string; status: string }[],
