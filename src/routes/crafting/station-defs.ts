@@ -19,7 +19,7 @@ import type { DB, } from "../../db/schema";
 import { StationsService, } from "../../rpg/crafting";
 import { ErrorResponse, Id, } from "../../validation/schemas";
 import { badRequestResponse, jsonError, jsonResponse, notFoundResponse, } from "../http-utils";
-import { requireUserId, } from "../http-utils/responses";
+import { withOwnerAuth, } from "../http-utils/auth-narrowing";
 
 // ── Schemas ────────────────────────────────────────────────
 
@@ -80,6 +80,11 @@ export async function resolveWorldOwner(
   return null;
 }
 
+/** Adapter: bind `database` and `worldId` into a (userId) => Promise<Response | null>. */
+function worldOwnerCheck(db: Kysely<DB>, worldId: string,): (userId: string,) => Promise<Response | null> {
+  return (userId,) => resolveWorldOwner(db, worldId, userId,);
+}
+
 // ── Routes ─────────────────────────────────────────────────
 
 /**
@@ -94,30 +99,28 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
   const svc = () => new StationsService(database,);
   return new Elysia({ name: "crafting-station-defs", },)
     .post(`${prefix}/worlds/:worldId/crafting-stations`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const body = ctx.body as Record<string, unknown>;
-      if (typeof body.name !== "string" || body.name.length === 0) {
-        return badRequestResponse("name is required",);
-      }
-      if (typeof body.stationType !== "string" || body.stationType.length === 0) {
-        return badRequestResponse("stationType is required",);
-      }
-      const id = await svc().createStationDef({
-        worldId: ctx.params.worldId,
-        name: body.name,
-        description: body.description as string | undefined,
-        stationType: body.stationType as CraftingStationType,
-        tier: body.tier as number | undefined,
-        speedBonus: body.speedBonus as number | undefined,
-        qualityBonus: body.qualityBonus as number | undefined,
-        successBonus: body.successBonus as number | undefined,
-        materialSavingChance: body.materialSavingChance as number | undefined,
-        maxDurability: body.maxDurability as number | undefined,
+      return withOwnerAuth(ctx, worldOwnerCheck(database, ctx.params.worldId,), async () => {
+        const body = ctx.body as Record<string, unknown>;
+        if (typeof body.name !== "string" || body.name.length === 0) {
+          return badRequestResponse("name is required",);
+        }
+        if (typeof body.stationType !== "string" || body.stationType.length === 0) {
+          return badRequestResponse("stationType is required",);
+        }
+        const id = await svc().createStationDef({
+          worldId: ctx.params.worldId,
+          name: body.name,
+          description: body.description as string | undefined,
+          stationType: body.stationType as CraftingStationType,
+          tier: body.tier as number | undefined,
+          speedBonus: body.speedBonus as number | undefined,
+          qualityBonus: body.qualityBonus as number | undefined,
+          successBonus: body.successBonus as number | undefined,
+          materialSavingChance: body.materialSavingChance as number | undefined,
+          maxDurability: body.maxDurability as number | undefined,
+        },);
+        return jsonResponse({ id, }, 201,);
       },);
-      return jsonResponse({ id, }, 201,);
     }, {
       params: t.Object({ worldId: Id, },),
       body: stationDefBody,
@@ -135,12 +138,13 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
       },
     },)
     .get(`${prefix}/worlds/:worldId/crafting-stations`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const defs = await svc().listStationDefs(ctx.params.worldId, ctx.query.type as CraftingStationType | undefined,);
-      return jsonResponse({ stationDefs: defs, },);
+      return withOwnerAuth(ctx, worldOwnerCheck(database, ctx.params.worldId,), async () => {
+        const defs = await svc().listStationDefs(
+          ctx.params.worldId,
+          ctx.query.type as CraftingStationType | undefined,
+        );
+        return jsonResponse({ stationDefs: defs, },);
+      },);
     }, {
       params: t.Object({ worldId: Id, },),
       query: t.Object({ type: t.Optional(t.String(),), },),
@@ -152,13 +156,11 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
       },
     },)
     .get(`${prefix}/worlds/:worldId/crafting-stations/:stationDefId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const def = await svc().getStationDef(ctx.params.stationDefId,);
-      if (!def) { return notFoundResponse("Station definition",); }
-      return jsonResponse(def,);
+      return withOwnerAuth(ctx, worldOwnerCheck(database, ctx.params.worldId,), async () => {
+        const def = await svc().getStationDef(ctx.params.stationDefId,);
+        if (!def) { return notFoundResponse("Station definition",); }
+        return jsonResponse(def,);
+      },);
     }, {
       params: t.Object({ worldId: Id, stationDefId: Id, },),
       response: { 200: stationDefSchema, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
@@ -169,24 +171,22 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
       },
     },)
     .put(`${prefix}/worlds/:worldId/crafting-stations/:stationDefId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const body = ctx.body as Record<string, unknown>;
-      const ok = await svc().updateStationDef(ctx.params.stationDefId, {
-        name: body.name as string | undefined,
-        description: body.description as string | undefined,
-        stationType: body.stationType as CraftingStationType | undefined,
-        tier: body.tier as number | undefined,
-        speedBonus: body.speedBonus as number | undefined,
-        qualityBonus: body.qualityBonus as number | undefined,
-        successBonus: body.successBonus as number | undefined,
-        materialSavingChance: body.materialSavingChance as number | undefined,
-        maxDurability: body.maxDurability as number | undefined,
+      return withOwnerAuth(ctx, worldOwnerCheck(database, ctx.params.worldId,), async () => {
+        const body = ctx.body as Record<string, unknown>;
+        const ok = await svc().updateStationDef(ctx.params.stationDefId, {
+          name: body.name as string | undefined,
+          description: body.description as string | undefined,
+          stationType: body.stationType as CraftingStationType | undefined,
+          tier: body.tier as number | undefined,
+          speedBonus: body.speedBonus as number | undefined,
+          qualityBonus: body.qualityBonus as number | undefined,
+          successBonus: body.successBonus as number | undefined,
+          materialSavingChance: body.materialSavingChance as number | undefined,
+          maxDurability: body.maxDurability as number | undefined,
+        },);
+        if (!ok) { return notFoundResponse("Station definition",); }
+        return jsonResponse({ ok: true, },);
       },);
-      if (!ok) { return notFoundResponse("Station definition",); }
-      return jsonResponse({ ok: true, },);
     }, {
       params: t.Object({ worldId: Id, stationDefId: Id, },),
       body: updateStationDefBody,
@@ -198,13 +198,11 @@ export function craftingStationDefsRoutes({ database, }: { database: Db }, prefi
       },
     },)
     .delete(`${prefix}/worlds/:worldId/crafting-stations/:stationDefId`, async (ctx: any,) => {
-      const userId = requireUserId(ctx,);
-      if (typeof userId !== "string") { return userId; }
-      const denied = await resolveWorldOwner(database, ctx.params.worldId, userId,);
-      if (denied) { return denied; }
-      const ok = await svc().deleteStationDef(ctx.params.stationDefId,);
-      if (!ok) { return notFoundResponse("Station definition",); }
-      return jsonResponse({ ok: true, },);
+      return withOwnerAuth(ctx, worldOwnerCheck(database, ctx.params.worldId,), async () => {
+        const ok = await svc().deleteStationDef(ctx.params.stationDefId,);
+        if (!ok) { return notFoundResponse("Station definition",); }
+        return jsonResponse({ ok: true, },);
+      },);
     }, {
       params: t.Object({ worldId: Id, stationDefId: Id, },),
       response: { 200: okResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },

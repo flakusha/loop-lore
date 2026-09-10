@@ -7,6 +7,7 @@
  * Status code constants, response helpers, and type shorthands
  * for consistent API response handling across all route handlers.
  */
+export * from "./auth-narrowing";
 export * from "./parse";
 export * from "./redirect";
 export * from "./responses";
