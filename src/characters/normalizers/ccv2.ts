@@ -29,6 +29,7 @@ interface CCv2Data {
 /**
  * Normalize CCv2 format to canonical character card.
  * @param data
+ * @returns Record<string
  */
 export function normalizeCcV2(data: Record<string, unknown>,): CanonicalCharacter {
   const raw = extractEnvelope(data,);

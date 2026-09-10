@@ -53,6 +53,7 @@ export type PartyLeaveResult =
 /**
  * Find the narrator actor, if one exists. Mirrors GM `injectNarration`.
  * @param database
+ * @returns void
  */
 async function findNarrator(
   database: Kysely<DB>,
@@ -73,6 +74,7 @@ async function findNarrator(
  * @param database
  * @param chatId
  * @param text
+ * @returns void
  */
 async function injectPartyNarration(
   database: Kysely<DB>,
@@ -125,6 +127,7 @@ async function injectPartyNarration(
  * against the ChatMode default. Replaces the legacy `chats.visual_novel`
  * integer column dropped in migration 076.
  * @param chat
+ * @returns void
  */
 function chatIsVisualNovel(chat: { gm_config: string | null; mode: string },): boolean {
   if (!chat.gm_config) { return false; }

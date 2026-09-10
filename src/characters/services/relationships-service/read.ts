@@ -21,6 +21,7 @@ export interface GetRelationshipsArgs {
  * @param root0.thisL
  * @param root0.actorId
  * @param root0.worldId
+ * @returns void
  */
 export async function getRelationships(
   { thisL, actorId, worldId, }: GetRelationshipsArgs,
@@ -50,6 +51,7 @@ export interface GetRelationshipArgs {
  * @param root0.actorId
  * @param root0.targetActorId
  * @param root0.worldId
+ * @returns void
  */
 export async function getRelationship(
   { thisL, actorId, targetActorId, worldId, }: GetRelationshipArgs,

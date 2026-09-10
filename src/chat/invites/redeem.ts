@@ -19,6 +19,7 @@ import type { RedeemOutcome, } from "./types";
  * @param input
  * @param input.code
  * @param input.actorId
+ * @returns void
  */
 export async function redeemInvite(
   database: Kysely<DB>,

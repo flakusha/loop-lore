@@ -15,6 +15,7 @@ import type { BattleTerrain, } from "./types";
 /**
  * Get all environmental modifiers for a battle terrain
  * @param terrain
+ * @returns void
  */
 export function getEnvironmentalModifiers(
   terrain: BattleTerrain,
@@ -61,6 +62,7 @@ export function getEnvironmentalModifiers(
  * Apply environmental modifiers to combat stats
  * @param baseStats
  * @param modifiers
+ * @returns void
  */
 export function applyEnvironmentalModifiers(
   baseStats: CombatStats,

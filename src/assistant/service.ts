@@ -56,6 +56,7 @@ const RESPONSE_MAP: Record<string, AssistantResponse[]> = {
  * Generate an assistant response based on user input.
  * Returns null if no match found (no response needed).
  * @param params
+ * @returns GenerateResponseParams
  */
 export function generateResponse(params: GenerateResponseParams,): AssistantResponse | null {
   const { userInput, } = params;
@@ -76,6 +77,7 @@ export function generateResponse(params: GenerateResponseParams,): AssistantResp
 
 /**
  * @param config
+ * @returns void
  */
 export function isAssistantEnabled(config: Config,): boolean {
   return config.assistant?.enabled ?? false;

@@ -9,6 +9,7 @@ import type { MusicService, } from "../../validation/schemas/music-links";
 /**
  * @param url
  * @param _service
+ * @returns string
  */
 export function extractTrackId(url: string, _service: MusicService,): string {
   switch (_service) {
@@ -36,6 +37,7 @@ export function extractTrackId(url: string, _service: MusicService,): string {
 /**
  * @param url
  * @param _service
+ * @returns void
  */
 export function toServiceUrl(url: string, _service: MusicService,): string {
   // Normalize to a clean https:// URL for deep linking
@@ -46,6 +48,7 @@ export function toServiceUrl(url: string, _service: MusicService,): string {
 /**
  * @param url
  * @param service
+ * @returns void
  */
 export function toEmbedSrc(url: string, service: MusicService,): string {
   const clean = url.startsWith("http",) ? url : `https://${url}`;

@@ -34,6 +34,7 @@ const ZIP_MAGIC = Buffer.from([0x50, 0x4B, 0x03, 0x04,],);
 
 /**
  * @param data
+ * @returns boolean
  */
 function isPngMagic(data: Buffer,): boolean {
   return data.length >= 4 && data.subarray(0, 4,).equals(PNG_MAGIC,);
@@ -41,6 +42,7 @@ function isPngMagic(data: Buffer,): boolean {
 
 /**
  * @param data
+ * @returns void
  */
 function isZipMagic(data: Buffer,): boolean {
   return data.length >= 4 && data.subarray(0, 4,).equals(ZIP_MAGIC,);
@@ -49,6 +51,7 @@ function isZipMagic(data: Buffer,): boolean {
 /**
  * @param input
  * @param _filename
+ * @returns void
  */
 export async function parseCharacterCard(input: Buffer | string, _filename?: string,): Promise<ParseResult> {
   const warnings: string[] = [];
@@ -91,6 +94,7 @@ export async function parseCharacterCard(input: Buffer | string, _filename?: str
 /**
  * @param data
  * @param warnings
+ * @returns void
  */
 function parsePngCard(data: Buffer, warnings: string[],): ParseResult | null {
   const result = extractCharacterDataFromPng(data,);

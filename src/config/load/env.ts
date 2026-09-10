@@ -9,6 +9,7 @@ import { coerceValue, getTypeOfPath, setByPath, } from "./parse";
 /**
  * @param config
  * @param environmentMap
+ * @returns Config
  */
 export function applyEnvironmentOverrides(config: Config, environmentMap: Record<string, string>,): Config {
   const result = structuredClone(config,) as unknown as Record<string, unknown>;
@@ -26,6 +27,7 @@ export function applyEnvironmentOverrides(config: Config, environmentMap: Record
 /**
  * Create a default provider instance from LLM_PROVIDER_* env vars
  * @param config
+ * @returns void
  */
 export function applyProviderEnvVars(config: Config,): void {
   const baseUrl = process.env.LLM_PROVIDER_BASE_URL;

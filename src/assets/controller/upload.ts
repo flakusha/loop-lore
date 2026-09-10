@@ -26,6 +26,7 @@ import type { UploadOpts, } from "./types";
  * @param root0.maxFileSize
  * @param root0.chatId
  * @param root0.config
+ * @returns void
  */
 export async function handleUpload({
   request,

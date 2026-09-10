@@ -74,6 +74,7 @@ interface InternalTraitsRow {
 
 /**
  * @param row
+ * @returns InternalTraitsRow
  */
 function rowToTraits(row: InternalTraitsRow,): CharacterInternalTraits {
   return {

@@ -7,6 +7,7 @@ import type { CombatWeather, } from "../integration-schemas";
  * Calculate weather visibility
  * @param weather
  * @param timeOfDay
+ * @returns void
  */
 export function calculateVisibility(
   weather: CombatWeather,

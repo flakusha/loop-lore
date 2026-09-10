@@ -54,6 +54,7 @@ function rowToGrowthEntry(row: GrowthLogRow,): GrowthLogEntry {
  * directly (single dependency direction: growth owns its config reads).
  * @param db
  * @param actorId
+ * @returns void
  */
 export async function getGrowthMode(
   db: Kysely<DB>,
@@ -81,6 +82,7 @@ export async function getGrowthMode(
  * `listGrowthLog()`.
  * @param db
  * @param input
+ * @returns void
  */
 export async function insertGrowthLog(
   db: Kysely<DB>,
@@ -144,6 +146,7 @@ export async function insertGrowthLog(
  * @param db
  * @param actorId
  * @param opts
+ * @returns void
  */
 export async function listGrowthLog(
   db: Kysely<DB>,

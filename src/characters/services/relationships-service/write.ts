@@ -27,6 +27,7 @@ export interface CreateRelationshipArgs {
  * @param root0.thisL
  * @param root0.opts
  * @throws If relationship already exists
+ * @returns void
  */
 export async function createRelationship(
   { thisL, opts, }: CreateRelationshipArgs,
@@ -101,6 +102,7 @@ export interface UpdateRelationshipArgs {
  * @param root0.targetActorId
  * @param root0.worldId
  * @param root0.opts
+ * @returns void
  */
 export async function updateRelationship(
   { thisL, actorId, targetActorId, worldId, opts, }: UpdateRelationshipArgs,
@@ -173,6 +175,7 @@ export interface DeleteRelationshipArgs {
  * @param root0.actorId
  * @param root0.targetActorId
  * @param root0.worldId
+ * @returns void
  */
 export async function deleteRelationship(
   { thisL, actorId, targetActorId, worldId, }: DeleteRelationshipArgs,

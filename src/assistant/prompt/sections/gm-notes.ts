@@ -33,6 +33,7 @@ interface WhiteneoteRow {
  * Fetch active (non-expired) whitenotes for the chat, highest priority first.
  * @param db
  * @param chatId
+ * @returns void
  */
 async function fetchActiveWhitenotes(
   db: Kysely<DB>,
@@ -76,6 +77,7 @@ export interface ShadowSteeringNote {
  * themselves — this fetch does not check roles.
  * @param db
  * @param chatId
+ * @returns void
  */
 export async function fetchUnrevealedShadowNotes(
   db: Kysely<DB>,

@@ -65,6 +65,7 @@ export const MODE_DEFAULTS: Record<ChatMode, ModeFeatureFlags> = {
  * Resolve feature flags for a chat, merging mode defaults with per-chat overrides.
  * @param mode Chat mode whose defaults to use.
  * @param overrides Per-flag overrides (optional).
+ * @returns void
  */
 export function resolveFeatureFlags(
   mode: ChatMode,
@@ -80,6 +81,7 @@ export function resolveFeatureFlags(
  * (prompt assembler, VN renderer, settings UI) reads.
  * @param mode Chat mode whose default to use when override is `null`/undefined.
  * @param override Per-chat override (`null` → use mode default).
+ * @returns void
  */
 export function resolveRendering(
   mode: ChatMode,

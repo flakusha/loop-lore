@@ -87,6 +87,7 @@ export async function batchDeleteChats(
  * @param database
  * @param chatIds
  * @param userId
+ * @returns void
  */
 export async function batchExportChats(
   database: Kysely<DB>,

@@ -14,6 +14,7 @@ import type { DB, } from "../../db/schema";
  * Create a test user and actor, return actorId
  * @param db
  * @param actorId
+ * @returns void
  */
 export async function createTestActors(
   db: Kysely<DB>,
@@ -62,6 +63,7 @@ export async function createTestActors(
  * Create a test world, return worldId
  * @param db
  * @param worldId
+ * @returns void
  */
 export async function createTestWorld(
   db: Kysely<DB>,
@@ -90,6 +92,7 @@ export async function createTestWorld(
  * @param db
  * @param worldId
  * @param locationId
+ * @returns void
  */
 export async function createTestLocation(
   db: Kysely<DB>,

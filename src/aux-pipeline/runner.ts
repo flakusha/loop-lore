@@ -151,6 +151,7 @@ export async function callAux(
  * keeps the process alive.
  * @param promise
  * @param ms
+ * @returns number
  */
 async function withTimeout<T,>(promise: Promise<T>, ms: number,): Promise<T | null> {
   let timer: ReturnType<typeof setTimeout> | undefined;

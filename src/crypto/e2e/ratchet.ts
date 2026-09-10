@@ -84,6 +84,7 @@ export async function nextRatchetStep(chainKey: Uint8Array,): Promise<RatchetSte
 /**
  * Import raw bytes as an HKDF base key (extract step is a no-op).
  * @param rawKey
+ * @returns Promise<unknown>
  */
 async function importHmacKey(rawKey: Uint8Array,): Promise<CryptoKey> {
   return crypto.subtle.importKey(
@@ -100,6 +101,7 @@ async function importHmacKey(rawKey: Uint8Array,): Promise<CryptoKey> {
  * @param baseKey
  * @param info
  * @param out
+ * @returns void
  */
 async function hkdfExpand(baseKey: CryptoKey, info: string, out: Uint8Array,): Promise<void> {
   const bits = out.byteLength * 8;
@@ -121,6 +123,7 @@ async function hkdfExpand(baseKey: CryptoKey, info: string, out: Uint8Array,): P
  *  signature varies by @types/web. Narrowing via fresh ArrayBuffer copy is the
  *  portable approach used across this module.
  * @param bytes
+ * @returns void
  */
 function toBufferSource(bytes: Uint8Array,): Uint8Array<ArrayBuffer> {
   const copy = new Uint8Array(bytes.byteLength,);

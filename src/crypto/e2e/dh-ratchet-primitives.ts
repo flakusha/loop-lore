@@ -38,6 +38,7 @@ export const MESSAGE_KEY_BITS = 256;
  * @param rootKey
  * @param myPriv
  * @param theirPub
+ * @returns void
  */
 export async function dhStep(
   rootKey: Uint8Array,
@@ -72,6 +73,7 @@ export async function dhStep(
  * both sides compute the same value). Used by initDhRatchet to seed
  * both sendingChainKey and receivingChainKey without an ECDH round-trip.
  * @param rootKey
+ * @returns void
  */
 export async function deriveChainKeyFromRoot(rootKey: Uint8Array,): Promise<ArrayBuffer> {
   const hkdfKey = await crypto.subtle.importKey(
@@ -96,6 +98,7 @@ export async function deriveChainKeyFromRoot(rootKey: Uint8Array,): Promise<Arra
 /**
  * Advance the chain key by one step.
  * @param chainKey
+ * @returns void
  */
 export async function chainStep(chainKey: Uint8Array,): Promise<{
   nextChainKey: Uint8Array;
@@ -155,6 +158,7 @@ export async function chainStep(chainKey: Uint8Array,): Promise<{
 /**
  * @param keyBytes
  * @param payload
+ * @returns void
  */
 export async function decryptWithMessageKey(keyBytes: Uint8Array, payload: DhMessagePayload,): Promise<string> {
   const key = await crypto.subtle.importKey(

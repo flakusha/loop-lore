@@ -173,6 +173,7 @@ export class ZipGenerationError extends ExportError {
  * Handle import/export errors and convert to structured API response.
  * Returns true if error was handled, false otherwise.
  * @param error
+ * @returns unknown
  */
 export function handleImportExportError(error: unknown,): { handled: true; response: Response } | { handled: false } {
   if (error instanceof ImportError || error instanceof ExportError) {
@@ -195,6 +196,7 @@ export function handleImportExportError(error: unknown,): { handled: true; respo
 /**
  * Get HTTP status code from error code.
  * @param code
+ * @returns void
  */
 function getHttpStatusFromErrorCode(code: ErrorCode,): number {
   switch (code) {

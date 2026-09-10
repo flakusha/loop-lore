@@ -11,6 +11,7 @@ const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg",],);
 /**
  * @param sourceDir
  * @param destDir
+ * @returns string
  */
 export function copyDirectory(sourceDir: string, destDir: string,): void {
   if (!existsSync(sourceDir,)) { return; }
@@ -31,6 +32,7 @@ export function copyDirectory(sourceDir: string, destDir: string,): void {
 
 /**
  * @param directory
+ * @returns void
  */
 export function walkDirectory(directory: string,): string[] {
   const files: string[] = [];
@@ -51,6 +53,7 @@ export function walkDirectory(directory: string,): string[] {
 /**
  * @param sourceDirectory
  * @param destinationDirectory
+ * @returns void
  */
 function _setupStaticDirectory(sourceDirectory: string, destinationDirectory: string,): void {
   if (!existsSync(destinationDirectory,)) {
@@ -74,6 +77,7 @@ function _setupStaticDirectory(sourceDirectory: string, destinationDirectory: st
 /**
  * @param content
  * @param extension
+ * @returns void
  */
 async function _getMinimizedContent(content: string, extension: string,): Promise<string> {
   switch (extension) {

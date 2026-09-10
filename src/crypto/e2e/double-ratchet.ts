@@ -104,6 +104,7 @@ export interface EphemeralRatchetDecryptOpts {
 
 /**
  * @param opts
+ * @returns void
  */
 export async function encodeEphemeralPayload(
   opts: EphemeralRatchetEncryptOpts,
@@ -163,6 +164,7 @@ export async function encodeEphemeralPayload(
 
 /**
  * @param opts
+ * @returns void
  */
 export async function decodeEphemeralPayload(
   opts: EphemeralRatchetDecryptOpts,
@@ -215,6 +217,7 @@ export async function decodeEphemeralPayload(
  * indices derive different keys even with the same shared secret.
  * @param sharedBytes
  * @param chainIndex
+ * @returns void
  */
 async function deriveChainKey(
   sharedBytes: Uint8Array,

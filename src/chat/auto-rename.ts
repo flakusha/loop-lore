@@ -89,6 +89,7 @@ Title:`;
  * Takes the first N words as the topic, filtering out common
  * filler phrases.
  * @param message
+ * @returns string
  */
 function extractTopic(message: string,): string | null {
   const cleaned = message
@@ -106,6 +107,7 @@ function extractTopic(message: string,): string | null {
  * Truncate a string to maxLen, adding "…" if truncated.
  * @param s
  * @param maxLen
+ * @returns void
  */
 function truncate(s: string, maxLen: number,): string {
   if (s.length <= maxLen) { return s; }

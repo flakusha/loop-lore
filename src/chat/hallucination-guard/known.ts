@@ -9,6 +9,7 @@ import type { KnownEntities, } from "./types";
  * Load all known entities from the database for validation.
  * @param db
  * @param worldId
+ * @returns void
  */
 export async function loadKnownEntities(
   db: Kysely<DB>,
@@ -73,6 +74,7 @@ export async function loadKnownEntities(
  * @param _knownActorIds
  * @param _knownLocationIds
  * @param allowedNames
+ * @returns void
  */
 export function isKnownEntity(
   name: string,

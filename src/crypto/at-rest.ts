@@ -70,6 +70,7 @@ export interface AtRestResult {
 
 /**
  * @param opts
+ * @returns Promise<unknown>
  */
 export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestResult> {
   const { database, chatId, plaintext, encryptionLevel, config, } = opts;
@@ -108,6 +109,7 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
 
 /**
  * @param opts
+ * @returns void
  */
 export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
   const { database, storedContent, encryptionLevel, } = opts;
@@ -144,6 +146,7 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
 /**
  * @param encryptionLevel
  * @param storedContent
+ * @returns void
  */
 export function needsEncryption(encryptionLevel: EncryptionLevel, storedContent: string,): boolean {
   if (encryptionLevel === "none") { return false; }
@@ -154,6 +157,7 @@ export function needsEncryption(encryptionLevel: EncryptionLevel, storedContent:
 /**
  * @param database
  * @param chatId
+ * @returns void
  */
 export async function getChatEncryptionLevel(database: Kysely<DB>, chatId: string,): Promise<EncryptionLevel> {
   const row = await database
@@ -174,6 +178,7 @@ export async function getChatEncryptionLevel(database: Kysely<DB>, chatId: strin
  * `e2e: true` (client-pre-encrypted envelope — server does not decrypt,
  * future Phase E+) or a string `enc` field (server-encrypted payload).
  * @param storedContent
+ * @returns true` (client-pre-encrypted envelope — server does not decrypt
  */
 export function isE2eOrEncrypted(storedContent: string,): boolean {
   if (!storedContent) { return false; }
