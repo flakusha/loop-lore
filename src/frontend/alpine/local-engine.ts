@@ -4,10 +4,13 @@
 /**
  * Browser model execution engine (BYOK local-models slice).
  *
- * Spawns the compiled `local-engine.worker.js` Web Worker, which lazy-loads
- * transformers.js from CDN and runs small instruct models for model-backed
- * prompt levels. The worker bundle is never part of the main thread bundle;
- * nothing downloads until the user opts in AND downloads a model.
+ * Spawns the compiled engine Web Worker matching the catalog model's engine
+ * family — `local-engine.worker.js` (transformers.js, ONNX) or
+ * `wllama-engine.worker.js` (llama.cpp, GGUF) — which lazy-loads its SDK
+ * from CDN and runs small models for model-backed prompt levels. Worker
+ * bundles are never part of the main thread bundle; nothing downloads until
+ * the user opts in AND downloads a model. Switching engine families drops
+ * and recreates the worker (one backend per worker).
  *
  * Every failure mode throws {@link LocalInferenceUnavailable} — callers fall
  * back to the server. Local inference never blocks and never surfaces errors.
@@ -15,8 +18,15 @@
  * @module alpine/local-engine
  */
 
-import { BROWSER_MODEL_CATALOG, } from "../../inference/manifest";
-import { ENGINE_WORKER_URL, isEngineResponse, TRANSFORMERS_CDN, } from "./local-engine-protocol";
+import { BROWSER_MODEL_CATALOG, isWllamaEngine, } from "../../inference/manifest";
+import {
+  ENGINE_WORKER_URL,
+  isEngineResponse,
+  TRANSFORMERS_CDN,
+  WLLAMA_CDN,
+  WLLAMA_ENGINE_WORKER_URL,
+  WLLAMA_WASM_URL,
+} from "./local-engine-protocol";
 import type { EngineRequest, EngineResponse, } from "./local-engine-protocol";
 import { LocalInferenceUnavailable, markModelReady, } from "./local-inference";
 
@@ -28,10 +38,14 @@ const PIPELINE_MODEL_IDS: Record<string, string> = {
 
 /** Engine construction options. */
 export interface LocalEngineOptions {
-  /** Worker factory (test seam). Defaults to the compiled worker asset. */
-  workerFactory?: () => Worker;
+  /** Worker factory (test seam, receives the worker URL). Defaults to the compiled worker asset. */
+  workerFactory?: (url: string,) => Worker;
   /** transformers.js CDN (test seam). */
   cdn?: string;
+  /** wllama ESM CDN (test seam). */
+  wllamaCdn?: string;
+  /** wllama WASM runtime URL (test seam). */
+  wllamaWasmUrl?: string;
   /** Load timeout ms (default 5 min — first load downloads weights). */
   loadTimeoutMs?: number;
   /** Generate timeout ms (default 90 s). */
@@ -44,7 +58,7 @@ export interface LocalEngine {
    * Load a catalog model into the worker (no-op when already loaded).
    * @param modelId - Catalog model id.
    * @param onProgress - Weight-download progress (loaded, total) bytes.
-   * @returns Engine device actually used (`webgpu` or `wasm`).
+   * @returns Engine device actually used (`webgpu` or `wasm`, prefixed by family).
    * @throws {LocalInferenceUnavailable} On unknown model, worker or load failure.
    *
    * A successful load marks the model ready, so later composer calls pass
@@ -78,6 +92,8 @@ interface Pending {
  */
 export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
   const cdn = opts.cdn ?? TRANSFORMERS_CDN;
+  const wllamaCdn = opts.wllamaCdn ?? WLLAMA_CDN;
+  const wllamaWasmUrl = opts.wllamaWasmUrl ?? WLLAMA_WASM_URL;
   const loadTimeoutMs = opts.loadTimeoutMs ?? 300_000;
   const generateTimeoutMs = opts.generateTimeoutMs ?? 90_000;
   let worker: Worker | null = null;
@@ -85,6 +101,7 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
   const pending = new Map<number, Pending>();
   let progressHandler: ((loaded: number, total: number,) => void) | null = null;
   let loaded: string | null = null;
+  let loadedUrl: string | null = null;
   let engineName = "";
 
   function dropWorker(reason: string,): LocalInferenceUnavailable {
@@ -102,14 +119,26 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
     }
     worker = null;
     loaded = null;
+    loadedUrl = null;
     engineName = "";
     return error;
   }
 
-  function ensureWorker(): Worker {
-    if (worker) { return worker; }
+  function ensureWorker(url: string,): Worker {
+    if (worker && loadedUrl === url) { return worker; }
+    if (worker) {
+      // Engine family switch — one backend per worker, recreate.
+      try {
+        worker.terminate();
+      } catch {
+        /* already gone */
+      }
+      worker = null;
+      loaded = null;
+      engineName = "";
+    }
     try {
-      const created = opts.workerFactory ? opts.workerFactory() : new Worker(ENGINE_WORKER_URL,);
+      const created = opts.workerFactory ? opts.workerFactory(url,) : new Worker(url,);
       created.onmessage = (event: MessageEvent,) => {
         const data: unknown = event.data;
         if (!isEngineResponse(data,)) { return; }
@@ -128,14 +157,15 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
         dropWorker("inference worker errored",);
       };
       worker = created;
+      loadedUrl = url;
       return created;
     } catch {
       throw new LocalInferenceUnavailable("web workers unavailable",);
     }
   }
 
-  function request(message: EngineRequest, timeoutMs: number, timeoutReason: string,): Promise<EngineResponse> {
-    const live = ensureWorker();
+  function request(message: EngineRequest, timeoutMs: number, timeoutReason: string, url: string,): Promise<EngineResponse> {
+    const live = ensureWorker(url,);
     const { promise, resolve, reject, } = Promise.withResolvers<EngineResponse>();
     const timer = setTimeout(() => {
       pending.delete(message.id,);
@@ -155,20 +185,50 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
   return {
     async loadModel(modelId, onProgress?,): Promise<string> {
       const descriptor = BROWSER_MODEL_CATALOG.find((m,) => m.id === modelId);
-      const pipelineId = PIPELINE_MODEL_IDS[modelId];
-      if (!descriptor || !pipelineId) {
+      if (!descriptor) {
         throw new LocalInferenceUnavailable(`unknown browser model "${modelId}"`,);
       }
-      if (loaded === modelId && worker) { return engineName; }
-      const device = descriptor.engine === "transformers-wasm" ? "wasm" : "webgpu";
-      const dtype = descriptor.quantization.startsWith("q4",) ? "q4" : "q8";
+      const wllama = isWllamaEngine(descriptor.engine,);
+      const workerUrl = wllama ? WLLAMA_ENGINE_WORKER_URL : ENGINE_WORKER_URL;
+      if (loaded === modelId && worker && loadedUrl === workerUrl) { return engineName; }
+      const device = descriptor.engine === "transformers-wasm" || descriptor.engine === "wllama-wasm"
+        ? "wasm"
+        : "webgpu";
       progressHandler = onProgress ?? null;
       try {
-        const response = await request(
-          { kind: "load", id: nextId++, model: pipelineId, device, dtype, cdn, },
-          loadTimeoutMs,
-          `model "${modelId}" load timed out`,
-        );
+        let response: EngineResponse;
+        if (wllama) {
+          if (!descriptor.gguf) {
+            throw new LocalInferenceUnavailable(`wllama model "${modelId}" has no GGUF source`,);
+          }
+          response = await request(
+            {
+              kind: "load",
+              id: nextId++,
+              model: modelId,
+              device,
+              dtype: descriptor.quantization,
+              cdn: wllamaCdn,
+              modelSource: descriptor.gguf,
+              wasmUrl: wllamaWasmUrl,
+            },
+            loadTimeoutMs,
+            `model "${modelId}" load timed out`,
+            workerUrl,
+          );
+        } else {
+          const pipelineId = PIPELINE_MODEL_IDS[modelId];
+          if (!pipelineId) {
+            throw new LocalInferenceUnavailable(`unknown browser model "${modelId}"`,);
+          }
+          const dtype = descriptor.quantization.startsWith("q4",) ? "q4" : "q8";
+          response = await request(
+            { kind: "load", id: nextId++, model: pipelineId, device, dtype, cdn, },
+            loadTimeoutMs,
+            `model "${modelId}" load timed out`,
+            workerUrl,
+          );
+        }
         if (response.kind !== "ready") {
           throw new LocalInferenceUnavailable(`unexpected load response "${response.kind}"`,);
         }
@@ -182,13 +242,14 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
     },
 
     async generate(input, maxTokens = 256,): Promise<unknown> {
-      if (!worker || !loaded) {
+      if (!worker || !loaded || !loadedUrl) {
         throw new LocalInferenceUnavailable("no browser model loaded",);
       }
       const response = await request(
         { kind: "generate", id: nextId++, input, maxTokens, },
         generateTimeoutMs,
         "model generation timed out",
+        loadedUrl,
       );
       if (response.kind !== "generated") {
         throw new LocalInferenceUnavailable(`unexpected generate response "${response.kind}"`,);

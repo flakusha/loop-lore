@@ -13247,6 +13247,18 @@
     "source": ".plan/tickets/TASK-document-processing-pipeline.md",
     "git_issue": "a4cc1e5"
   },
+  "TASK-DOWNLOAD-POLICY-UI-ENFORCEMENT": {
+    "hash": "f0e0c09",
+    "git_issue": "f0e0c09",
+    "extid": "TASK-DOWNLOAD-POLICY-UI-ENFORCEMENT",
+    "type": "TASK",
+    "title": "Download policy UI enforcement",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-download-policy-ui-enforcement.md"
+  },
   "TASK-DPRINT-FORMATTING-ENFORCED-CI-TEST-FILES": {
     "hash": "82a631b",
     "git_issue": "82a631b",
@@ -14859,6 +14871,18 @@
     "epic": "Emotion Avatar Regeneration Control",
     "tags": [],
     "source": ".plan/tickets/TASK-generation-seed-capture-and-override-per-avatar.md"
+  },
+  "TASK-GGUF-SPLIT-CHUNK-MANIFEST-CONTRACT": {
+    "hash": "4fd541d",
+    "git_issue": "4fd541d",
+    "extid": "TASK-GGUF-SPLIT-CHUNK-MANIFEST-CONTRACT",
+    "type": "TASK",
+    "title": "GGUF split-chunk manifest contract",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gguf-split-chunk-manifest-contract.md"
   },
   "TASK-GITHUB-PAGES-VITEPRESS": {
     "hash": "7a1b009",
@@ -22955,6 +22979,18 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-wiring-dead-code-gate.md"
+  },
+  "TASK-WLLAMA-GGUF-INFERENCE-ENGINE-BROWSER": {
+    "hash": "326f7c6",
+    "git_issue": "326f7c6",
+    "extid": "TASK-WLLAMA-GGUF-INFERENCE-ENGINE-BROWSER",
+    "type": "TASK",
+    "title": "wllama GGUF inference engine (browser)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wllama-gguf-inference-engine-browser.md"
   },
   "TASK-WORKFLOW-ENGINE-SCHEMA-LOADER-TEMPLATE-TYPES-WORKFLOW-DISCOV": {
     "hash": "79218e3",
