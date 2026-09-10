@@ -257,3 +257,76 @@ describe("worldRoutes — RPG opt-in flags", () => {
     expect(Object.values(flags,).every((v,) => v === 0),).toBe(true,);
   });
 });
+describe("worldRoutes — list visibility + delete", () => {
+  let db: Kysely<DB>;
+  let sqlite: TestDb["sqlite"];
+  let ownerId: string;
+
+  beforeAll(async () => {
+    ({ db, sqlite, } = await createTestDb());
+    ownerId = uid();
+    await insertUsers(db, "list-owner", "List Owner", { id: ownerId, } as never,);
+    await insertActors(db, ownerId, {
+      id: ownerId,
+      actor_type: "user",
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "none",
+      settings: "{}",
+      format_version: 0,
+    } as never,);
+  },);
+
+  afterAll(async () => {
+    await sqlite.close();
+  },);
+
+  /**
+   * @param app
+   * @param body
+   */
+  async function createWorld(app: Elysia, body: Record<string, unknown>,): Promise<string> {
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify(body,),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const { id, } = (await res.json()) as { id: string };
+    return id;
+  }
+
+  test("anonymous callers see only public worlds; owners see their own too", async () => {
+    const app = appWithAuth(db, ownerId, "user",);
+    // NOTE: visibility must be explicit — Elysia's normalizer fills an
+    // omitted enum with its first variant ("public"), so the handler's
+    // Private fallback only applies to direct calls.
+    const ownedId = await createWorld(app, { name: "Private Realm", visibility: "private", },);
+    const publicId = await createWorld(app, { name: "Public Realm", visibility: "public", },);
+
+    const anon = appWithAuth(db, null, null,);
+    const anonRes = await anon.handle(new Request(`${BASE}/api/worlds`,),);
+    expect(anonRes.status,).toBe(200,);
+    const anonIds = ((await anonRes.json()) as { data: { id: string }[] }).data.map((w,) => w.id);
+    expect(anonIds,).toContain(publicId,);
+    expect(anonIds,).not.toContain(ownedId,);
+
+    const ownerRes = await app.handle(new Request(`${BASE}/api/worlds`,),);
+    expect(ownerRes.status,).toBe(200,);
+    const ownerIds = ((await ownerRes.json()) as { data: { id: string }[] }).data.map((w,) => w.id);
+    expect(ownerIds,).toContain(ownedId,);
+    expect(ownerIds,).toContain(publicId,);
+  });
+
+  test("owner can delete their world; deleted worlds leave the list", async () => {
+    const app = appWithAuth(db, ownerId, "user",);
+    const id = await createWorld(app, { name: "Doomed Realm", },);
+    const del = await app.handle(new Request(`${BASE}/api/worlds/${id}`, { method: "DELETE", },),);
+    expect(del.status,).toBe(204,);
+    const listed = await app.handle(new Request(`${BASE}/api/worlds`,),);
+    const ids = ((await listed.json()) as { data: { id: string }[] }).data.map((w,) => w.id);
+    expect(ids,).not.toContain(id,);
+  });
+});
