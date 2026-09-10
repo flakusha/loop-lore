@@ -6,7 +6,7 @@
  *
  * Runs eligible auxiliary tasks locally so their prompts never reach the
  * server: `spellcheck` via a deterministic local cleanup (no model, no
- * network), heavier levels via a lazily-loaded transformers.js model once
+ * network), heavier levels via a lazily-loaded browser model once
  * cached. Anything unavailable throws {@link LocalInferenceUnavailable} and
  * the caller falls back to the server — local inference never blocks.
  *
@@ -43,7 +43,7 @@ export interface LocalInferenceEnv {
 /** Result of a locally-run inference task. */
 export interface LocalInferenceResult {
   content: string;
-  engine: "local-heuristics" | "transformers-webgpu" | "transformers-wasm";
+  engine: "local-heuristics" | "transformers-webgpu" | "transformers-wasm" | "wllama-webgpu" | "wllama-wasm";
   local: true;
 }
 
