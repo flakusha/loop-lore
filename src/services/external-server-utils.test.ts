@@ -25,9 +25,12 @@ import {
 // test’s pick, unlike random selection from a fixed range under parallel runs.
 async function reservePort(): Promise<number> {
   const holder = Bun.serve({ port: 0, fetch: () => new Response("ok",), },);
+  if (holder.port === undefined) {
+    await holder.stop();
+    throw new Error("reservePort: kernel did not assign a port",);
+  }
   const port = holder.port;
   await holder.stop();
-  if (port === undefined) { throw new Error("reservePort: kernel did not assign a port",); }
   return port;
 }
 
