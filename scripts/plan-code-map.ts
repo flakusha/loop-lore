@@ -162,10 +162,16 @@ function main(): void {
   }
 
   const map = buildMap();
-  writeFileSync(MAP_PATH, JSON.stringify(map, null, 2,) + "\n",);
-  console.log(`[code-map] wrote ${MAP_PATH} (${Object.keys(map,).length} src paths)`,);
+  const isCheck = args.includes("--check",);
+  // --check runs as a CI gate under `bun run check`; it must NOT modify
+  // the working tree (otherwise the next finalize's `git rebase` aborts
+  // on a dirty worktree). Plain invocations still rewrite the index.
+  if (!isCheck) {
+    writeFileSync(MAP_PATH, JSON.stringify(map, null, 2,) + "\n",);
+    console.log(`[code-map] wrote ${MAP_PATH} (${Object.keys(map,).length} src paths)`,);
+  }
 
-  if (args.includes("--check",)) {
+  if (isCheck) {
     // Freshness gate: committed index must match a fresh rebuild.
     if (!verifyFresh(map,)) { process.exit(1,); }
     console.log("[code-map] OK — index is up to date",);
