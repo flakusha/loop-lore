@@ -31,9 +31,9 @@ beforeAll(async () => {
     role: "solo" as never,
     status: "active" as never,
     settings: "{}" as never,
-  });
+  },);
   worldId = uid();
-  await insertWorlds(db, userId, "Balance Test World", { id: worldId as never });
+  await insertWorlds(db, userId, "Balance Test World", { id: worldId as never, },);
   actorA = uid();
   actorB = uid();
   await insertActors(db, "Alice", {
@@ -43,7 +43,7 @@ beforeAll(async () => {
     owner_id: userId,
     agent_type: "ai" as never,
     settings: "{}" as never,
-  });
+  },);
   await insertActors(db, "Bob", {
     id: actorB as never,
     actor_type: "character" as never,
@@ -51,33 +51,33 @@ beforeAll(async () => {
     owner_id: userId,
     agent_type: "ai" as never,
     settings: "{}" as never,
-  });
-});
+  },);
+},);
 
 afterAll(async () => {
   await db.destroy();
-});
+},);
 
 describe("transferCurrency — amount<=0 guard", () => {
   test("amount = 0 is a no-op and returns true without ledger writes", async () => {
     // Pre-credit B so we can detect an unintended ledger write.
-    await credit(db, actorB, worldId, 50);
+    await credit(db, actorB, worldId, 50,);
 
-    const result = await transferCurrency(db, actorA, actorB, worldId, 0);
+    const result = await transferCurrency(db, actorA, actorB, worldId, 0,);
 
-    expect(result).toBe(true);
-    expect(await getBalance(db, actorA, worldId)).toBe(0);
-    expect(await getBalance(db, actorB, worldId)).toBe(50);
+    expect(result,).toBe(true,);
+    expect(await getBalance(db, actorA, worldId,),).toBe(0,);
+    expect(await getBalance(db, actorB, worldId,),).toBe(50,);
   });
 
   test("amount < 0 is a no-op and returns true without ledger writes", async () => {
-    const before = await getBalance(db, actorB, worldId);
+    const before = await getBalance(db, actorB, worldId,);
 
-    const result = await transferCurrency(db, actorA, actorB, worldId, -25);
+    const result = await transferCurrency(db, actorA, actorB, worldId, -25,);
 
-    expect(result).toBe(true);
-    expect(await getBalance(db, actorA, worldId)).toBe(0);
-    expect(await getBalance(db, actorB, worldId)).toBe(before);
+    expect(result,).toBe(true,);
+    expect(await getBalance(db, actorA, worldId,),).toBe(0,);
+    expect(await getBalance(db, actorB, worldId,),).toBe(before,);
   });
 
   test("amount = 0 does not auto-create a ledger row for the source actor", async () => {
@@ -88,7 +88,7 @@ describe("transferCurrency — amount<=0 guard", () => {
       role: "solo" as never,
       status: "active" as never,
       settings: "{}" as never,
-    });
+    },);
     await insertActors(db, "Fresh", {
       id: freshActor as never,
       actor_type: "character" as never,
@@ -96,37 +96,37 @@ describe("transferCurrency — amount<=0 guard", () => {
       owner_id: orphanUserId,
       agent_type: "ai" as never,
       settings: "{}" as never,
-    });
+    },);
 
-    const result = await transferCurrency(db, freshActor, actorB, worldId, 0);
+    const result = await transferCurrency(db, freshActor, actorB, worldId, 0,);
 
-    expect(result).toBe(true);
+    expect(result,).toBe(true,);
     // Ledger row should not exist for the fresh actor (no credit/debit happened).
     const row = await db
-      .selectFrom("actor_currencies")
-      .select("id")
-      .where("actor_id", "=", freshActor)
+      .selectFrom("actor_currencies",)
+      .select("id",)
+      .where("actor_id", "=", freshActor,)
       .executeTakeFirst();
-    expect(row).toBeUndefined();
+    expect(row,).toBeUndefined();
   });
 
   test("amount = 0 does not call into debit/credit even when ledger is empty", async () => {
     // Both actors have no prior balance; the guard short-circuits before
     // debit/credit would throw on the "no row found" path.
-    const result = await transferCurrency(db, actorA, actorB, worldId, 0);
-    expect(result).toBe(true);
+    const result = await transferCurrency(db, actorA, actorB, worldId, 0,);
+    expect(result,).toBe(true,);
   });
 });
 
 describe("credit / debit — negative amount guards", () => {
   test("credit throws on negative amount (does not write ledger)", async () => {
-    expect(() => credit(db, actorA, worldId, -1)).toThrow("non-negative");
+    expect(() => credit(db, actorA, worldId, -1,)).toThrow("non-negative",);
 
-    const balance = await getBalance(db, actorA, worldId);
-    expect(balance).toBe(0);
+    const balance = await getBalance(db, actorA, worldId,);
+    expect(balance,).toBe(0,);
   });
 
   test("debit throws on negative amount", () => {
-    expect(() => debit(db, actorA, worldId, -1)).toThrow("non-negative");
+    expect(() => debit(db, actorA, worldId, -1,)).toThrow("non-negative",);
   });
 });

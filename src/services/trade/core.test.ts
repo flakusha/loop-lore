@@ -41,9 +41,9 @@ beforeAll(async () => {
     role: "solo" as never,
     status: "active" as never,
     settings: "{}" as never,
-  });
+  },);
   worldId = uid();
-  await insertWorlds(db, userId, "Core Test World", { id: worldId as never });
+  await insertWorlds(db, userId, "Core Test World", { id: worldId as never, },);
   buyer = uid();
   seller = uid();
   await insertActors(db, "Buyer", {
@@ -53,7 +53,7 @@ beforeAll(async () => {
     owner_id: userId,
     agent_type: "ai" as never,
     settings: "{}" as never,
-  });
+  },);
   await insertActors(db, "Seller", {
     id: seller as never,
     actor_type: "character" as never,
@@ -61,28 +61,28 @@ beforeAll(async () => {
     owner_id: userId,
     agent_type: "ai" as never,
     settings: "{}" as never,
-  });
+  },);
   defA = uid();
   defB = uid();
-  await insertItems(db, worldId, "Potion", "consumable", { id: defA as never });
-  await insertItems(db, worldId, "Sword", "weapon", { id: defB as never });
+  await insertItems(db, worldId, "Potion", "consumable", { id: defA as never, },);
+  await insertItems(db, worldId, "Sword", "weapon", { id: defB as never, },);
   buyerItem = uid();
   sellerItem = uid();
   await insertWorldItems(db, worldId, defA, {
     id: buyerItem as never,
     owner_actor_id: buyer,
     quantity: 5 as never,
-  });
+  },);
   await insertWorldItems(db, worldId, defB, {
     id: sellerItem as never,
     owner_actor_id: seller,
     quantity: 3 as never,
-  });
-});
+  },);
+},);
 
 afterAll(async () => {
   await db.destroy();
-});
+},);
 
 describe("tradeCore — self-trade guard", () => {
   test("rejects when buyer === seller with a self-trade reason", async () => {
@@ -90,12 +90,12 @@ describe("tradeCore — self-trade guard", () => {
       worldId,
       buyerActorId: buyer,
       sellerActorId: buyer,
-      buyerItems: [{ worldItemId: buyerItem, quantity: 1, }],
-      sellerItems: [{ worldItemId: sellerItem, quantity: 1, }],
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
-    });
-    expect(result.success).toBe(false);
-    expect(result.reason).toBe("cannot trade with yourself");
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toBe("cannot trade with yourself",);
   });
 
   test("self-trade guard runs before any DB read (validateLines untouched)", async () => {
@@ -105,12 +105,12 @@ describe("tradeCore — self-trade guard", () => {
       worldId,
       buyerActorId: seller,
       sellerActorId: seller,
-      buyerItems: [{ worldItemId: "missing", quantity: 999, }],
+      buyerItems: [{ worldItemId: "missing", quantity: 999, },],
       sellerItems: [],
       price: 0,
-    });
-    expect(result.success).toBe(false);
-    expect(result.reason).toBe("cannot trade with yourself");
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toBe("cannot trade with yourself",);
   });
 });
 
@@ -120,12 +120,12 @@ describe("tradeCore — validateLines rejection paths", () => {
       worldId,
       buyerActorId: buyer,
       sellerActorId: seller,
-      buyerItems: [{ worldItemId: "no-such-id", quantity: 1, }],
-      sellerItems: [{ worldItemId: sellerItem, quantity: 1, }],
+      buyerItems: [{ worldItemId: "no-such-id", quantity: 1, },],
+      sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
-    });
-    expect(result.success).toBe(false);
-    expect(result.reason).toMatch(/not found/);
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toMatch(/not found/,);
   });
 
   test("rejects when a buyer's item line is owned by the wrong party", async () => {
@@ -134,12 +134,12 @@ describe("tradeCore — validateLines rejection paths", () => {
       worldId,
       buyerActorId: buyer,
       sellerActorId: seller,
-      buyerItems: [{ worldItemId: sellerItem, quantity: 1, }],
-      sellerItems: [{ worldItemId: sellerItem, quantity: 1, }],
+      buyerItems: [{ worldItemId: sellerItem, quantity: 1, },],
+      sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
-    });
-    expect(result.success).toBe(false);
-    expect(result.reason).toMatch(/not owned/);
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toMatch(/not owned/,);
   });
 
   test("rejects when a buyer's item line requests more than the owned quantity", async () => {
@@ -148,12 +148,12 @@ describe("tradeCore — validateLines rejection paths", () => {
       worldId,
       buyerActorId: buyer,
       sellerActorId: seller,
-      buyerItems: [{ worldItemId: buyerItem, quantity: 99, }],
-      sellerItems: [{ worldItemId: sellerItem, quantity: 1, }],
+      buyerItems: [{ worldItemId: buyerItem, quantity: 99, },],
+      sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
       price: 0,
-    });
-    expect(result.success).toBe(false);
-    expect(result.reason).toMatch(/insufficient quantity/);
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toMatch(/insufficient quantity/,);
   });
 
   test("rejects when a seller's item line references a non-existent world_item", async () => {
@@ -161,12 +161,12 @@ describe("tradeCore — validateLines rejection paths", () => {
       worldId,
       buyerActorId: buyer,
       sellerActorId: seller,
-      buyerItems: [{ worldItemId: buyerItem, quantity: 1, }],
-      sellerItems: [{ worldItemId: "no-such-id", quantity: 1, }],
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      sellerItems: [{ worldItemId: "no-such-id", quantity: 1, },],
       price: 0,
-    });
-    expect(result.success).toBe(false);
-    expect(result.reason).toMatch(/not found/);
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toMatch(/not found/,);
   });
 
   test("rejects when a seller's item line requests more than the owned quantity", async () => {
@@ -175,11 +175,11 @@ describe("tradeCore — validateLines rejection paths", () => {
       worldId,
       buyerActorId: buyer,
       sellerActorId: seller,
-      buyerItems: [{ worldItemId: buyerItem, quantity: 1, }],
-      sellerItems: [{ worldItemId: sellerItem, quantity: 10, }],
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      sellerItems: [{ worldItemId: sellerItem, quantity: 10, },],
       price: 0,
-    });
-    expect(result.success).toBe(false);
-    expect(result.reason).toMatch(/insufficient quantity/);
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toMatch(/insufficient quantity/,);
   });
 });
