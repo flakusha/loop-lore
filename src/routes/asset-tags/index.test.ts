@@ -261,11 +261,74 @@ describe("GET /api/tag-autocomplete", () => {
   });
 });
 
+describe("private-asset access (add/remove/rename)", () => {
+  test("inaccessible asset → 404 for add, remove, and rename; no rows land", async () => {
+    const privateId = uid();
+    await insertAssets(db, ownerId, "secret.png", "image/png", AssetType.Image, 1024, "/secret.png", {
+      id: privateId,
+      visibility: AssetVisibility.Private,
+      alt_text: null,
+    },);
+
+    const add = await handle(
+      appAs(viewerId, "user",),
+      `/api/assets/${privateId}/tags`,
+      json("POST", { tag: "sneak", scope: "user", },),
+    );
+    expect(add.status,).toBe(404,);
+
+    const remove = await handle(
+      appAs(viewerId, "user",),
+      `/api/assets/${privateId}/tags`,
+      json("DELETE", { tag: "sneak", scope: "user", },),
+    );
+    expect(remove.status,).toBe(404,);
+
+    const rename = await handle(
+      appAs(viewerId, "user",),
+      `/api/assets/${privateId}/tags/rename`,
+      json("POST", { oldTag: "sneak", newTag: "quiet", scope: "user", },),
+    );
+    expect(rename.status,).toBe(404,);
+
+    const rows = await db.selectFrom("asset_tags",).select("id",).where("asset_id", "=", privateId,).execute();
+    expect(rows,).toEqual([],);
+  });
+});
+
+describe("tag integrity (empty tags)", () => {
+  test("whitespace-only tag → 422 (schema), no row", async () => {
+    const res = await handle(
+      appAs(viewerId, "user",),
+      `/api/assets/${assetId}/tags`,
+      json("POST", { tag: "   ", scope: "user", },),
+    );
+    expect(res.status,).toBe(422,);
+
+    const list = (await (await handle(appAs(viewerId, "user",), `/api/assets/${assetId}/tags`,)).json()) as {
+      tags: AssetTagRecord[];
+    };
+    expect(list.tags,).toEqual([],);
+  });
+
+  test("rename to whitespace-only newTag → 422", async () => {
+    await handle(
+      appAs(viewerId, "user",),
+      `/api/assets/${assetId}/tags`,
+      json("POST", { tag: "old", scope: "user", },),
+    );
+    const res = await handle(
+      appAs(viewerId, "user",),
+      `/api/assets/${assetId}/tags/rename`,
+      json("POST", { oldTag: "old", newTag: "  ", scope: "user", },),
+    );
+    expect(res.status,).toBe(422,);
+  });
+});
+
 describe("no-auth app", () => {
-  test("autocomplete works without a userId (empty vocab)", async () => {
+  test("autocomplete without a userId → 401", async () => {
     const res = await handle(tagsApp(), `/api/tag-autocomplete`,);
-    expect(res.status,).toBe(200,);
-    const body = (await res.json()) as { tags: string[] };
-    expect(body.tags,).toEqual([],);
+    expect(res.status,).toBe(401,);
   });
 });
