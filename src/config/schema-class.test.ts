@@ -120,6 +120,22 @@ describe("ConfigSchema", () => {
     },).toThrow("logging.level",);
   });
 
+  test("validate accepts credentialless COEP (browser wllama isolation)", () => {
+    const cfg = structuredClone(createConfigSchema().defaults,);
+    cfg.headers.crossOriginEmbedderPolicy = "credentialless";
+    expect(() => {
+      validate(cfg,);
+    },).not.toThrow();
+  });
+
+  test("validate throws for unknown COEP value", () => {
+    const cfg = structuredClone(createConfigSchema().defaults,);
+    (cfg.headers as unknown as Record<string, unknown>).crossOriginEmbedderPolicy = "unsafe-none";
+    expect(() => {
+      validate(cfg,);
+    },).toThrow("crossOriginEmbedderPolicy",);
+  });
+
   test("validate throws for provider missing baseUrl", () => {
     const cfg = structuredClone(createConfigSchema().defaults,);
     cfg.generation.providers.openaiCompatible = [
