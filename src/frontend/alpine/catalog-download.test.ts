@@ -152,3 +152,87 @@ describe("catalog-download", () => {
     expect(await store.load("m1/tok.json",),).toBeNull();
   });
 });
+
+describe("gguf split entries", () => {
+  const SPLIT: CatalogModel = {
+    id: "g1",
+    label: "Split",
+    engine: "wllama-webgpu",
+    parameters: "7B",
+    quantization: "q4_0",
+    files: [
+      {
+        name: "g-00001-of-00002.gguf",
+        url: "https://cdn.example.com/g1/g-00001-of-00002.gguf",
+        sizeBytes: 6,
+      },
+      {
+        name: "g-00002-of-00002.gguf",
+        url: "https://cdn.example.com/g1/g-00002-of-00002.gguf",
+        sizeBytes: 4,
+      },
+    ],
+  };
+
+  test("split set downloads in assembly order with aggregate progress", async () => {
+    const store = createMemoryStore();
+    const seen: string[] = [];
+    const progress: DownloadProgress[] = [];
+    const bodies: Record<string, string> = {
+      "https://cdn.example.com/g1/g-00001-of-00002.gguf": "GGUF01",
+      "https://cdn.example.com/g1/g-00002-of-00002.gguf": "0202",
+    };
+    const result = await downloadCatalogEntry({
+      entry: { ...SPLIT, files: [...SPLIT.files,].reverse(), },
+      store,
+      download: (async (opts: DownloadOpts,): Promise<Uint8Array> => {
+        seen.push(opts.url,);
+        const body = bodies[opts.url] ?? "";
+        opts.onProgress?.({ loadedBytes: body.length, totalBytes: body.length, },);
+        return encode(body,);
+      }) as typeof downloadModel,
+      digest: async () => "computed",
+      onProgress: (snapshot,) => progress.push(snapshot,),
+    },);
+    expect(result,).toEqual({
+      modelId: "g1",
+      files: ["g1/g-00001-of-00002.gguf", "g1/g-00002-of-00002.gguf",],
+      totalBytes: 10,
+    },);
+    expect(seen,).toEqual([
+      "https://cdn.example.com/g1/g-00001-of-00002.gguf",
+      "https://cdn.example.com/g1/g-00002-of-00002.gguf",
+    ],);
+    expect(progress.at(-1),).toEqual({ loadedBytes: 10, totalBytes: 10, },);
+  });
+
+  test("incomplete split set throws before any download", async () => {
+    const store = createMemoryStore();
+    let called = 0;
+    await expect(
+      downloadCatalogEntry({
+        entry: { ...SPLIT, files: SPLIT.files.slice(0, 1,), },
+        store,
+        download: (async (): Promise<Uint8Array> => {
+          called++;
+          return encode("GGUF01",);
+        }) as typeof downloadModel,
+      },),
+    ).rejects.toThrow('incomplete GGUF split set',);
+    expect(called,).toBe(0,);
+  });
+
+  test("first chunk without the GGUF magic fails the probe", async () => {
+    const store = createMemoryStore();
+    await expect(
+      downloadCatalogEntry({
+        entry: SPLIT,
+        store,
+        download: (async (): Promise<Uint8Array> => {
+          return encode("NOPE01",);
+        }) as typeof downloadModel,
+        digest: async () => "computed",
+      },),
+    ).rejects.toThrow("GGUF header probe",);
+  });
+});
