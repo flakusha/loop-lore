@@ -1,6 +1,24 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
-import { describe, expect, test, } from "bun:test";
-import { createLogger, getLogger, setGlobalLogger, } from ".";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { createLogger, getLogger, type Logger, setGlobalLogger, } from ".";
+
+/** Global root capture — restored after each test so global mutation never leaks across files. */
+let prevRoot: Logger | undefined;
+beforeEach(() => {
+  try {
+    prevRoot = getLogger();
+  } catch {
+    prevRoot = undefined;
+  }
+},);
+afterEach(() => {
+  if (prevRoot) {
+    setGlobalLogger(prevRoot,);
+  } else {
+    createLogger({ level: "error", },);
+  }
+  prevRoot = undefined;
+},);
 
 describe("logger", () => {
   test("createLogger returns a logger instance", () => {
