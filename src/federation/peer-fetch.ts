@@ -18,6 +18,8 @@ export const PEER_FETCH_TIMEOUT_MS = 5_000;
 export interface InstanceAdvertisement {
   /** Mesh origins known to the advertising peer. */
   peers?: unknown;
+  /** Receiver-side inbound capacity in bytes, when the peer reports it. */
+  capacityBytes?: unknown;
 }
 
 /** Fetch implementation seam (injectable for tests). */
