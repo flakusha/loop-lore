@@ -35,6 +35,11 @@ bun run check && bun test src/
 #   branch diff (test files adjacent to changed src files; coverage floored
 #   only for modules the diff touches). `worktree finalize` Step 2 passes
 #   this automatically; static gates always run project-wide.
+# - `bun run check --gates <csv>` / `--skip-gates <csv>` runs a subset of
+#   the 21 gates. Names are matched verbatim against the runner's check
+#   registry; unknown names exit 2 and list available gates. `--gates`
+#   and `--skip-gates` are mutually exclusive. `worktree finalize`
+#   accepts `--gates` / `--skip-gates` and forwards them to Step 2.
 ```
 
 ## Source of Truth (Precedence Order)
@@ -329,7 +334,7 @@ bun run scripts/worktree/ agent-commit feature-name "feat(scope): message"
 bun run scripts/worktree/ rebase feature-name
 
 # Finalize (checks + signed merge + cleanup; --force skips gates)
-bun run scripts/worktree/ finalize feature-name
+bun run scripts/worktree/ finalize feature-name [--gates <csv>] [--skip-gates <csv>]
 ```
 
 > **Note:** The worktree CLI is native Bun (`scripts/worktree/index.mjs`). Run via `bun run scripts/worktree/ <command>` — no shell wrapper.
