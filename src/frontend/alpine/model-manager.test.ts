@@ -186,3 +186,36 @@ describe("model-manager", () => {
     expect(manager.formatSize(2_147_483_648,),).toBe("2.00 GB",);
   });
 });
+
+describe("model-manager download policy", () => {
+  test("init picks up the capability flag", async () => {
+    const manager = createModelManager({
+      loadCatalog: async () => CATALOG,
+      store: createMemoryStore(),
+      loadCapability: async () => ({ downloadsAllowed: false, }),
+    },);
+    expect(manager.downloadsAllowed,).toBe(true,);
+    await manager.init();
+    expect(manager.downloadsAllowed,).toBe(false,);
+  });
+
+  test("blocked instance refuses both download paths without fetching", async () => {
+    let called = 0;
+    const manager = createModelManager({
+      loadCatalog: async () => CATALOG,
+      store: createMemoryStore(),
+      loadCapability: async () => ({ downloadsAllowed: false, }),
+      download: (async (): Promise<Uint8Array> => {
+        called++;
+        return encode("x",);
+      }) as typeof downloadModel,
+    },);
+    await manager.init();
+    manager.downloadUrl = "https://cdn.example.com/m.bin";
+    await manager.downloadFromUrl();
+    expect(manager.error,).toBe("Model downloads are disabled on this instance.",);
+    await manager.downloadCatalogEntry("m1",);
+    expect(manager.error,).toBe("Model downloads are disabled on this instance.",);
+    expect(called,).toBe(0,);
+  });
+});

@@ -3,7 +3,7 @@
 
 # TASK: GGUF split-chunk manifest contract
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (`gguf-downloader-policy`)
 **Priority:** high
 **Effort:** Small
 **Labels:** byok, local-models, wasm, gguf, browser
@@ -32,11 +32,11 @@ defines the chunk convention. This task pins the contract both sides share.
 
 ## Acceptance Criteria
 
-- [ ] Convention documented (naming, size class, discovery, verify rule).
-- [ ] Multi-chunk entry downloads, resumes mid-set, and probes clean.
-- [ ] Chunked entry renders as a single model with per-chunk progress.
-- [ ] Unit tests for naming/discovery/aggregate-progress; coverage >= 80%.
-- [ ] `bun run check` green in the worktree.
+- [x] Convention documented (naming, size class, discovery, verify rule).
+- [x] Multi-chunk entry downloads, resumes mid-set, and probes clean.
+- [x] Chunked entry renders as a single model with per-chunk progress.
+- [x] Unit tests for naming/discovery/aggregate-progress; coverage >= 80%.
+- [x] `bun run check` green in the worktree.
 
 ## Out of scope
 

@@ -54,10 +54,11 @@ export function localInferenceRoutes(opts?: { resolvePolicy?: () => LocalModelDo
   },);
 
   app.get("/api/local-inference/capability", () => {
-    const manifest = buildLocalInferenceManifest();
+    const manifest = buildLocalInferenceManifest(policy,);
     return jsonResponse({
       optInSupported: true,
       defaultOptIn: false,
+      downloadsAllowed: policy?.allowDownloads ?? true,
       eligibleTasks: manifest.eligibleTasks,
       localOnlyLevels: manifest.localOnlyLevels,
     },);
