@@ -2,15 +2,13 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Model manager UI component — browse the host catalog, download GGUF
- * blobs from user-supplied URLs with progress + resume, verify SHA-256,
- * and manage browser storage (list, usage, delete).
+ * Model manager UI component — browse the host catalog, download catalog
+ * entries file-by-file or GGUF blobs from user-supplied URLs with progress
+ * + resume, verify SHA-256, and manage browser storage (list, usage, delete).
  *
- * Division of labor: the transformers.js catalog models are fetched lazily
- * by the inference engine at runtime, not by this downloader. This manager
- * handles explicit blob downloads (future WASM GGUF engine) and storage
- * visibility. Catalog entries without file URLs cannot be direct-downloaded
- * until the manifest carries per-file checksums (manifest v2).
+ * Catalog entries download through `catalog-download` (per-file resume and
+ * verify-or-record checksums); ad-hoc URL downloads go straight through
+ * `model-downloader`. Both share the same byte store.
  *
  * Alpine usage: `x-data="modelManager()"`. All dependencies injectable
  * for tests via {@link createModelManager}. The `modelManager` global is
@@ -19,8 +17,9 @@
  * @module alpine/model-manager
  */
 
-import { apiFetch, } from "./htmx";
+import { downloadCatalogEntry as runCatalogDownload, } from "./catalog-download";
 import { detectLocalInferenceSupport, } from "./local-inference";
+import { type CatalogModel, fetchCatalog, } from "./model-catalog";
 import { downloadModel, type DownloadProgress, sha256Hex, } from "./model-downloader";
 import {
   createMemoryStore,
@@ -31,16 +30,6 @@ import {
 import {
   createIndexedDBStore,
 } from "./model-storage-idb";
-
-/** Catalog entry as served by GET /api/local-inference/manifest. */
-export interface CatalogModel {
-  id: string;
-  label: string;
-  engine: string;
-  parameters: string;
-  approxSizeMB: number;
-  cdn: string;
-}
 
 /** Injectable seams for tests. */
 export interface ModelManagerDeps {
@@ -68,6 +57,8 @@ export interface ModelManagerState {
   init(): Promise<void>;
   refresh(): Promise<void>;
   downloadFromUrl(): Promise<void>;
+  downloadCatalogEntry(modelId: string,): Promise<void>;
+  storedFiles(modelId: string,): number;
   cancelDownload(): void;
   removeModel(modelId: string,): Promise<void>;
   formatSize(bytes: number,): string;
@@ -82,38 +73,6 @@ let defaultStore: ModelByteStore | null = null;
 function defaultStoreInstance(): ModelByteStore {
   defaultStore ??= isIndexedDBAvailable() ? createIndexedDBStore() : createMemoryStore();
   return defaultStore;
-}
-
-/**
- * Fetch catalog models from the static manifest endpoint.
- * @returns Manifest catalog models (empty when the shape is unknown).
- */
-async function fetchCatalog(): Promise<CatalogModel[]> {
-  const res = await apiFetch("/api/local-inference/manifest",);
-  if (!res.ok) { throw new Error(`Manifest request failed (${res.status})`,); }
-  const payload: unknown = await res.json();
-  if (payload && typeof payload === "object" && "models" in payload) {
-    const models: unknown = payload.models;
-    if (Array.isArray(models,) && models.every(isCatalogModel,)) {
-      return models;
-    }
-  }
-  return [];
-}
-
-/**
- * Narrow an unknown manifest entry to a catalog model.
- * @param entry - Raw manifest entry.
- * @returns True when the entry has the catalog shape.
- */
-function isCatalogModel(entry: unknown,): entry is CatalogModel {
-  if (!entry || typeof entry !== "object") { return false; }
-  return "id" in entry && typeof entry.id === "string" &&
-    "label" in entry && typeof entry.label === "string" &&
-    "engine" in entry && typeof entry.engine === "string" &&
-    "parameters" in entry && typeof entry.parameters === "string" &&
-    "approxSizeMB" in entry && typeof entry.approxSizeMB === "number" &&
-    "cdn" in entry && typeof entry.cdn === "string";
 }
 
 /**
@@ -209,6 +168,43 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
         this.downloadingId = null;
         this.progress = null;
       }
+    },
+
+    async downloadCatalogEntry(modelId: string,): Promise<void> {
+      const entry = this.catalog.find((item,) => item.id === modelId);
+      if (!entry) {
+        this.error = "Catalog entry is no longer listed.";
+        return;
+      }
+      const store = deps.store ?? defaultStoreInstance();
+      this.error = null;
+      this.downloadingId = modelId;
+      this.progress = { loadedBytes: 0, totalBytes: undefined, };
+      controller = new AbortController();
+      try {
+        await runCatalogDownload({
+          entry,
+          store,
+          download,
+          digest,
+          signal: controller.signal,
+          onProgress: (snapshot,) => {
+            this.progress = snapshot;
+          },
+        },);
+        await this.refresh();
+      } catch (cause) {
+        this.error = cause instanceof Error ? cause.message : "Download failed.";
+      } finally {
+        controller = null;
+        this.downloadingId = null;
+        this.progress = null;
+      }
+    },
+
+    storedFiles(modelId: string,): number {
+      const prefix = `${modelId}/`;
+      return this.stored.filter((entry,) => entry.id.startsWith(prefix,)).length;
     },
 
     cancelDownload(): void {
