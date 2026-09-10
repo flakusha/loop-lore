@@ -25,6 +25,7 @@ import type { CanonicalCharacter, } from "../parser";
 /**
  * Export canonical character card to YAML format.
  * @param character
+ * @returns string
  */
 export function exportToYaml(character: CanonicalCharacter,): string {
   const yamlData: Record<string, unknown> = {};

@@ -20,6 +20,7 @@ import { jsonStringifyOr, } from "../utils";
  * @param role
  * @param worldId
  * @param _participantIds
+ * @returns void
  */
 export function detectScope(
   _content: string,
@@ -44,6 +45,7 @@ export function detectScope(
  * @param chatId
  * @param memories
  * @param scope
+ * @returns void
  */
 export async function storeMemoriesWithScope(
   db: Kysely<DB>,

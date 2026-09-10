@@ -53,6 +53,7 @@ export async function getMessageWithAccess(
  * List messages in a chat with pagination and variant info.
  * @param database
  * @param params
+ * @returns void
  */
 export async function listMessages(
   database: Kysely<DB>,
@@ -135,6 +136,7 @@ export async function listMessages(
  * @param database
  * @param parentId
  * @param chatId
+ * @returns void
  */
 export async function getMessageVariants(
   database: Kysely<DB>,

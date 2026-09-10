@@ -16,6 +16,7 @@ import type { DB, } from "../../db/schema";
  * Trims whitespace and title-cases each word (e.g. "high elf" -> "High Elf").
  * Matching in `isLoreVisibleTo` is case-insensitive, so this is for display/consistency.
  * @param value
+ * @returns string
  */
 export function normalizeSpecies(value: string,): string {
   return value
@@ -37,6 +38,7 @@ export interface ResolvedAvatar {
  * `default` produces a minimal deterministic SVG placeholder so the wiring is always exercised.
  * Returns null when a `file` source cannot be read.
  * @param source
+ * @returns void
  */
 export function resolveTemplateAvatar(
   source: NonNullable<CharactersConfig["templates"][number]["avatar"]>,
@@ -66,6 +68,7 @@ export const SYSTEM_USER_ID = "system-user";
  * FK (`NOT NULL references users.id`) when a seeded character has no real owner.
  * Returns the id to use as the asset owner.
  * @param database
+ * @returns void
  */
 export async function ensureSystemUser(database: Kysely<DB>,): Promise<string> {
   const existing = await database.selectFrom("users",).select("id",).where("id", "=", SYSTEM_USER_ID,)

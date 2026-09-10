@@ -20,6 +20,7 @@ import { join, } from "node:path";
  * Structure: signature(8) + IHDR chunk(25) + IEND chunk(12)
  * @param width
  * @param height
+ * @returns Buffer
  */
 export function makeMinimalPng(width = 2, height = 1,): Buffer {
   const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10,],);
@@ -50,6 +51,7 @@ export function makeMinimalPng(width = 2, height = 1,): Buffer {
  * @param caption
  * @param width
  * @param height
+ * @returns void
  */
 export function makeMinimalPngWithCaption(
   caption: string,
@@ -91,6 +93,7 @@ export function makeMinimalPngWithCaption(
  * Structure: SOI + APP0 + SOF0(width, height)
  * @param width
  * @param height
+ * @returns void
  */
 export function makeMinimalJpeg(width = 3, height = 4,): Buffer {
   const soi = Buffer.from([0xFF, 0xD8,],);
@@ -140,6 +143,7 @@ export function makeMinimalJpeg(width = 3, height = 4,): Buffer {
  * @param caption
  * @param width
  * @param height
+ * @returns void
  */
 export function makeMinimalJpegWithCaption(
   caption: string,
@@ -198,6 +202,7 @@ export function makeMinimalJpegWithCaption(
  * Structure: RIFF(12) + VP8 chunk(14 pad + 2w + 2h + 2 rest)
  * @param width
  * @param height
+ * @returns RIFF(12) + VP8 chunk(14 pad + 2w + 2h + 2 rest)
  */
 export function makeMinimalWebp(width = 5, height = 6,): Buffer {
   const riff = Buffer.from([0x52, 0x49, 0x46, 0x46,],); // "RIFF"

@@ -17,6 +17,7 @@ import type { AssetRecord, CreateAssetOpts, CreateAssetResult, } from "./types";
  * @param root0.database
  * @param root0.input
  * @param root0.uploadDir
+ * @returns Promise<unknown>
  */
 export async function createAsset({ database, input, uploadDir, }: CreateAssetOpts,): Promise<CreateAssetResult> {
   // Compute content hash for idempotent upload detection

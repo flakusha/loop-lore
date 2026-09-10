@@ -23,6 +23,7 @@ const smkState = { activeSmk: null as CryptoKey | null, };
  * Load the SMK at startup and store it globally.
  * Call once from server entry point.
  * @param config
+ * @returns Promise<unknown>
  */
 export async function initSmk(config: EncryptionConfig,): Promise<void> {
   smkState.activeSmk = await loadSmk(config,);
@@ -30,6 +31,7 @@ export async function initSmk(config: EncryptionConfig,): Promise<void> {
 
 /**
  * Get the loaded SMK. Returns null if encryption is disabled (dev mode).
+ * @returns void
  */
 export function getSmk(): CryptoKey | null {
   return smkState.activeSmk;
@@ -37,6 +39,7 @@ export function getSmk(): CryptoKey | null {
 
 /**
  * Check whether message encryption is active.
+ * @returns void
  */
 export function isEncryptionEnabled(): boolean {
   return smkState.activeSmk !== null;
@@ -94,6 +97,7 @@ async function loadSmk(config: EncryptionConfig,): Promise<CryptoKey | null> {
 
 /**
  * @param hex
+ * @returns string
  */
 function hexToBytes(hex: string,): Uint8Array {
   const cleaned = hex.replaceAll("-", "",).replaceAll(/\s/g, "",);

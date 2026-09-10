@@ -13,6 +13,7 @@ const LEGAL_CONTENT_RATINGS = ["sfw", "questionable", "explicit",] as const;
  * Validate one character template entry.
  * @param entry
  * @param index
+ * @returns number
  */
 function validateCharacterTemplateEntry(entry: unknown, index: number,): void {
   if (typeof entry !== "object" || entry === null) {
@@ -38,6 +39,7 @@ function validateCharacterTemplateEntry(entry: unknown, index: number,): void {
 /**
  * Validate the `character` domain raw config before merging.
  * @param raw
+ * @returns void
  */
 export function validateCharacterConfig(raw: Record<string, unknown>,): void {
   if (raw.templates !== undefined) {
@@ -57,6 +59,7 @@ const LEGAL_WORKFLOW_STEP_TYPES = ["text", "choice", "multi",] as const;
  * @param entry
  * @param workflowId
  * @param index
+ * @returns void
  */
 function validateWorkflowStepEntry(entry: unknown, workflowId: string, index: number,): void {
   if (typeof entry !== "object" || entry === null) {
@@ -97,6 +100,7 @@ function validateWorkflowStepEntry(entry: unknown, workflowId: string, index: nu
  * Accepts either `{ workflows: {...} }` (single-file domain shape) or a
  * bare `{ [id]: workflow }` map (multi-file workflows/*.yaml shape).
  * @param raw
+ * @returns workflow }` map (multi-file workflows/*.yaml shape).
  */
 export function validateWorkflowConfig(raw: Record<string, unknown>,): void {
   const table = (

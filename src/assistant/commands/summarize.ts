@@ -12,6 +12,7 @@ import { type CommandResult, registerCommand, } from "./registry";
  * @param args
  * @param ctx
  * @param ctx.messages
+ * @returns string
  */
 function buildSummary(args: string[], ctx: { messages?: { role: string; content: string }[] },): CommandResult {
   if (!ctx.messages || ctx.messages.length === 0) {

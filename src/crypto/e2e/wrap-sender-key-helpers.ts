@@ -27,6 +27,7 @@ export const WRAP_NONCE_LENGTH = 12;
 
 /**
  * @param recipientActorId
+ * @returns string
  */
 export function wrapAad(recipientActorId: string,): Uint8Array {
   return new TextEncoder().encode(`${AAD_PREFIX}:${recipientActorId}`,);
@@ -36,6 +37,7 @@ export function wrapAad(recipientActorId: string,): Uint8Array {
  * @param sharedBytes
  * @param info
  * @param outLen
+ * @returns void
  */
 export async function hkdfExpandToBytes(
   sharedBytes: Uint8Array,

@@ -27,6 +27,7 @@ export interface GetLocationTraitsArgs {
  * @param root0.thisL
  * @param root0.actorId
  * @param root0.locationId
+ * @returns void
  */
 export async function getLocationTraits(
   { thisL, actorId, locationId, }: GetLocationTraitsArgs,
@@ -54,6 +55,7 @@ export interface GetLocationTraitArgs {
  * @param root0.actorId
  * @param root0.locationId
  * @param root0.name
+ * @returns void
  */
 export async function getLocationTrait(
   { thisL, actorId, locationId, name, }: GetLocationTraitArgs,
@@ -79,6 +81,7 @@ export interface CreateLocationTraitArgs {
  * @param root0.thisL
  * @param root0.opts
  * @throws If trait already exists for this actor+location
+ * @returns void
  */
 export async function createLocationTrait(
   { thisL, opts, }: CreateLocationTraitArgs,
@@ -128,6 +131,7 @@ export interface UpdateLocationTraitArgs {
  * @param root0.actorId
  * @param root0.locationId
  * @param root0.opts
+ * @returns void
  */
 export async function updateLocationTrait(
   { thisL, actorId, locationId, opts, }: UpdateLocationTraitArgs,
@@ -167,6 +171,7 @@ export interface DeleteLocationTraitArgs {
  * @param root0.actorId
  * @param root0.locationId
  * @param root0.name
+ * @returns void
  */
 export async function deleteLocationTrait(
   { thisL, actorId, locationId, name, }: DeleteLocationTraitArgs,

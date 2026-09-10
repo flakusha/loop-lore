@@ -51,6 +51,7 @@ export const AVATAR_FIELDS = [
  * Convert DB row to export object using field map
  * @param row
  * @param fieldMap
+ * @returns void
  */
 export function toExportFields(
   row: Record<string, unknown>,
@@ -67,6 +68,7 @@ export function toExportFields(
  * Convert export data to DB fields using field map
  * @param data
  * @param fieldMap
+ * @returns void
  */
 export function toDbFields(
   data: Record<string, unknown>,
@@ -87,6 +89,7 @@ export function toDbFields(
  * @param trait.trait_category
  * @param trait.trait_name
  * @param trait.trait_value
+ * @returns void
  */
 export function mapTraitForExport(
   trait: { trait_category: string; trait_name: string; trait_value: string },
@@ -108,6 +111,7 @@ export function mapTraitForExport(
  * @param rel.familiarity
  * @param rel.isBidirectional
  * @param rel.metadata
+ * @returns void
  */
 export function mapRelationshipForExport(
   rel: {
@@ -139,6 +143,7 @@ export function mapRelationshipForExport(
  * @param avatar.tags
  * @param avatar.isPrimary
  * @param avatar.sortOrder
+ * @returns void
  */
 export function mapAvatarForExport(
   avatar: {

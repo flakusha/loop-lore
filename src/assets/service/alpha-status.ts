@@ -28,6 +28,7 @@ const ALLOWED: Readonly<Record<AssetAlphaStatus, readonly AssetAlphaStatus[]>> =
  * Initial status for a freshly stored asset.
  * @param mimeType
  * @param hasAlpha header-detected alpha presence (non-image → false)
+ * @returns boolean
  */
 export function initialAlphaStatus(mimeType: string, hasAlpha: boolean,): AssetAlphaStatus {
   if (!mimeType.startsWith("image/",)) { return AssetAlphaStatus.Unknown; }
@@ -38,6 +39,7 @@ export function initialAlphaStatus(mimeType: string, hasAlpha: boolean,): AssetA
  * Whether the `from → to` transition is part of the alpha state machine.
  * @param from
  * @param to
+ * @returns void
  */
 export function canTransitionAlphaStatus(
   from: AssetAlphaStatus,

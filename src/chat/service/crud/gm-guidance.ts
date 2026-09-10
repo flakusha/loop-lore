@@ -26,6 +26,7 @@ export interface UpdateGmGuidanceParams {
  * @param database
  * @param chatId
  * @param params
+ * @returns void
  */
 export async function updateGmGuidance(
   database: Kysely<DB>,

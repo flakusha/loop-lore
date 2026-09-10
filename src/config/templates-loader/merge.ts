@@ -22,6 +22,7 @@ import type {
  * @param base
  * @param override
  * @param strategy
+ * @returns void
  */
 export function mergeLlmConfig(
   base: LlmTemplateConfig,
@@ -59,6 +60,7 @@ export function mergeLlmConfig(
  * @param base
  * @param override
  * @param strategy
+ * @returns void
  */
 export function mergeSdConfig(
   base: SdTemplateConfig,
@@ -97,6 +99,7 @@ export function mergeSdConfig(
  * @param base
  * @param override
  * @param strategy
+ * @returns void
  */
 export function mergeAvatarConfig(
   base: AvatarTemplateConfig,

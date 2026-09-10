@@ -43,6 +43,7 @@ export const DEFAULT_EMOTIONS: EmotionType[] = [
 /**
  * Resolve the modifier for an emotion from the built-in table.
  * @param emotion
+ * @returns string
  */
 export function getEmotionPromptModifier(emotion: EmotionType,): string {
   return EMOTION_PROMPT_MODIFIERS[emotion] ?? "neutral expression";

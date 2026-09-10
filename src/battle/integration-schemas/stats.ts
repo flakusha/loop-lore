@@ -63,6 +63,7 @@ export interface EquipmentModifier {
  * Calculate effective combat stats with equipment modifiers
  * @param baseStats
  * @param modifiers
+ * @returns void
  */
 export function calculateEffectiveStats(
   baseStats: CombatStats,

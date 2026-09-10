@@ -8,6 +8,7 @@ import type { MoraleState, } from "../integration-schemas";
  * @param targetMorale
  * @param attackerReputation
  * @param targetHealthPercent
+ * @returns void
  */
 export function calculateSurrenderChance(
   targetMorale: MoraleState,

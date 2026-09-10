@@ -15,6 +15,7 @@ import type { SocialCombatResult, } from "./types";
  * @param attackerIntimidation
  * @param _targetLevel
  * @param targetMorale
+ * @returns void
  */
 export function calculateIntimidationEffect(
   attackerLevel: number,
@@ -56,6 +57,7 @@ export function calculateIntimidationEffect(
  * @param attackerCharisma
  * @param targetMorale
  * @param targetPersonality
+ * @returns void
  */
 export function calculateTauntEffect(
   attackerCharisma: number,
@@ -118,6 +120,7 @@ export function calculateTauntEffect(
  * @param attackerIntimidation
  * @param attackerLevel
  * @param targetMorale
+ * @returns void
  */
 export function calculateDemoralizeEffect(
   attackerIntimidation: number,

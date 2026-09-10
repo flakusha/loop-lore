@@ -60,6 +60,7 @@ export type {
 
 /**
  * @param opts
+ * @returns void
  */
 export async function wrapSenderKey(
   opts: WrapSenderKeyOpts,
@@ -126,6 +127,7 @@ export async function wrapSenderKey(
 
 /**
  * @param opts
+ * @returns void
  */
 export async function unwrapSenderKey(
   opts: UnwrapSenderKeyOpts,
@@ -204,6 +206,7 @@ export interface RecordGroupWrapRowOpts {
 
 /**
  * @param opts
+ * @returns void
  */
 export async function recordGroupWrap(
   opts: RecordGroupWrapRowOpts,
@@ -236,6 +239,7 @@ export async function recordGroupWrap(
  * @param database
  * @param groupSessionId
  * @param recipientActorId
+ * @returns void
  */
 export async function latestGroupWrapForRecipient(
   database: Kysely<DB>,
