@@ -10,11 +10,37 @@
  */
 import { t, } from "../i18n";
 import { jsonBody, } from "../json";
+import { getLocalEngine, } from "../local-engine";
 import { LocalInferenceUnavailable, runLocalPromptImprove, shouldOffloadTask, } from "../local-inference";
+import type { LocalInferenceResult, } from "../local-inference";
+import { runLocalModelImprove, } from "../local-model-improve";
 import { log as rootLog, } from "../logger";
 import type { ChatState, } from "../types";
 
 const log = rootLog.child({ module: "chat", },);
+
+/**
+ * Opt-in browser inference: deterministic cleanup first, then the downloaded
+ * browser model when one is flagged ready. Anything unavailable returns null
+ * and the caller falls back to the server — local inference never blocks.
+ * @param text - Draft to improve.
+ * @param level - Gradation level.
+ * @returns Local result, or null when the server should handle it.
+ */
+async function tryLocalImprove(text: string, level: string,): Promise<LocalInferenceResult | null> {
+  if (!shouldOffloadTask("prompt-improve",)) { return null; }
+  try {
+    return runLocalPromptImprove({ text, level, },);
+  } catch (error) {
+    if (!(error instanceof LocalInferenceUnavailable)) { throw error; }
+  }
+  try {
+    return await runLocalModelImprove(getLocalEngine(), { text, level, },);
+  } catch (error) {
+    if (!(error instanceof LocalInferenceUnavailable)) { throw error; }
+    return null;
+  }
+}
 
 export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
   /**
@@ -39,19 +65,15 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
       const requestedLevel = level ??
         (this.isGroupChat ? "style-group" : "style-chat");
       // Opt-in browser inference first: eligible levels run locally so the
-      // draft never reaches the server. Unavailable → fall through to server.
-      if (shouldOffloadTask("prompt-improve",)) {
-        try {
-          const local = runLocalPromptImprove({ text, level: requestedLevel, },);
-          this._promptImproveBackup = text;
-          input.value = local.content;
-          this.autoResize(input,);
-          log.debug("Prompt improved locally, server bypassed", { engine: local.engine, },);
-          this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptImproved",), },);
-          return;
-        } catch (error) {
-          if (!(error instanceof LocalInferenceUnavailable)) { throw error; }
-        }
+      // draft never reaches the server. Null → fall through to server.
+      const local = await tryLocalImprove(text, requestedLevel,);
+      if (local) {
+        this._promptImproveBackup = text;
+        input.value = local.content;
+        this.autoResize(input,);
+        log.debug("Prompt improved locally, server bypassed", { engine: local.engine, },);
+        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.promptImproved",), },);
+        return;
       }
       const res = await apiFetch(
         "/api/generation/prompt",
