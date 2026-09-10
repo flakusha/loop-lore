@@ -113,10 +113,6 @@ const WAIVERS = {
   // Gate pass: src/plugins/ is the plugin loader/registry; runtime-only
   // resolution exercised via app boot and integration tests.
   "plugins": { floor: 65, reason: "src/plugins/* lifted to 100% in test-coverage worktree (loader + registry + helpers); aggregate includes bundled plugins/core/* and plugins/community/* runtime modules covered by e2e", },
-  // Gate pass: src/personas/ is dominated by UI-side Alpine stores and
-  // upload/delete-cascade flows that are integration-tested in
-  // tests/e2e/personas.*. Unit-test paths cover the data layer only.
-  "personas": { floor: 45, reason: "Alpine stores + cascade flows; integration-tested in e2e/personas.*", },
   // Gate pass: src/image-edit/ mixes ts/matting with native (Rust)
   // helpers. Native helpers are not exercised by unit tests; covered by
   // the matting e2e flow.
@@ -124,16 +120,6 @@ const WAIVERS = {
   // Gate pass: src/characters/ is large (3968 lines) and contains
   // world-setup + character-bundle pipelines whose happy paths live in
   // e2e and whose error branches dominate the uncovered count.
-  // Gate pass: src/native/ loads a Rust cdylib (BLAKE3 + zstd) whose
-  // cdylib fast-paths are not exercisable from unit tests without the
-  // prebuilt .so on PATH. Unit tests cover the Bun-fallback path and
-  // ABI-mismatch/null-handle guards. The Rust cdylib smoke is exercised
-  // via `benchmarks/zstd.bench.ts` and `benchmarks/blake3.bench.ts`,
-  // which run the live native module against the Bun fallback.
-  "native": {
-    floor: 60,
-    reason: "Rust cdylib fast-path exercised by benchmarks (zstd/blake3); unit tests cover Bun fallback + ABI guards",
-  },
 };
 
 /**
