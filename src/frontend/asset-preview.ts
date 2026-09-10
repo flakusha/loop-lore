@@ -12,6 +12,7 @@
  */
 
 import { safeFetch, } from "../utils";
+import { renderTagsPanel, } from "./asset-preview-tags";
 import { feFetch, } from "./fe-fetch";
 
 interface PreviewAsset {
@@ -150,6 +151,7 @@ globalThis.openAssetPreview = async function openAssetPreview(id: string,): Prom
     modal.querySelector("[data-field='size']",)!.textContent = formatSize(a.size_bytes ?? 0,);
     const body = modal.querySelector<HTMLElement>("[data-field='preview-body']",)!;
     await renderPreviewBody(body, a,);
+    await renderTagsPanel(id,);
     modal.classList.add("open",);
   } catch {
     /* ignore — preview is best-effort */
@@ -211,5 +213,3 @@ globalThis.deleteAssetPreview = async function deleteAssetPreview(): Promise<voi
     showToast("error", "Failed to delete",);
   }
 };
-
-export {};

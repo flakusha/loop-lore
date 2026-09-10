@@ -14,6 +14,8 @@ import type {
   AgentType,
   AssetAlphaStatus,
   AssetLinkEntity,
+  AssetTagScope,
+  AssetTagSource,
   AssetType,
   AssetVisibility,
   AvatarSelectionRule,
@@ -1045,6 +1047,38 @@ export async function insertAdminCharacterOverrides(
     admin_id,
     action,
     created_at,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a asset_tags row. */
+export async function insertAssetTags(
+  db: Db,
+  asset_id: string,
+  tag: string,
+  opts?: { id?: string; scope?: AssetTagScope; owner_id?: string | null; source?: AssetTagSource; created_at?: string },
+): Promise<void> {
+  await db.insertInto("asset_tags",).values({
+    id: crypto.randomUUID(),
+    asset_id,
+    tag,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a asset_tag_dismissals row. */
+export async function insertAssetTagDismissals(
+  db: Db,
+  asset_id: string,
+  tag: string,
+  user_id: string,
+  opts?: { id?: string; created_at?: string },
+): Promise<void> {
+  await db.insertInto("asset_tag_dismissals",).values({
+    id: crypto.randomUUID(),
+    asset_id,
+    tag,
+    user_id,
     ...opts,
   } as any,).execute();
 }

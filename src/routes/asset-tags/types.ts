@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
+/**
+ * Asset tags — shared route options and auth-derived types.
+ */
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
+
+/** */
+export interface HandlerOpts {
+  database: Kysely<DB>;
+}
+
+/** Type for auth-derived properties added by the `derive` hook in createApp. */
+export interface AuthContext {
+  userId: string | null;
+  userRole: string | null;
+}
