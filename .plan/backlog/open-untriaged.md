@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# Open — Untriaged Tickets & Issues (2026-08-27)
+# Open — Untriaged Tickets & Issues (2026-09-10)
 
 > **Purpose:** landing zone for git issues that exist but have no index entry / epic
 > linkage yet (advisory orphans reported by `bun run plan:sync`; recompute the
@@ -57,3 +57,61 @@ issues surfaced in the same sync window:
 `TASK-CONSOLIDATE-UNSAFE-DATE-BUFFER-JSON-USAGE-INTO-SHARED-UTILS` was fixed (index
 links `ad8bb7e`) and `bun run plan:sync` is green.
 
+---
+
+## 2026-09-10 re-triage
+
+> `bun run plan:sync` is green except advisory orphans (recompute at triage time
+> rather than trusting this snapshot). The Aug-25 waves above are linked reference —
+> closed items moved to `open-closed.md` / `open-inflight.md` (§ 2026-09-03 sections).
+
+### Current advisory orphans
+
+- `e12566a` BUG-idempotency-table-backend — table backend became the default during
+  Bucket A; verify the ticket still reproduces, else close. Suggested home: middleware
+  hardening or close.
+- `dd6158e` TASK-unified — placeholder scope; scope it to a real deliverable or close.
+
+### New clusters (open issues)
+
+- **Mesh/federation interconnect** — `6bf6ddc` peer-config, `e23054f` instance-state
+  advertisement, `2e34de8` observability config, `7c8cf4b` liveness/readiness,
+  `8f695c2` prometheus metrics, `d6d3793` nodeinfo/well-known, `271e08d` SPKI pin
+  verification, `035958e` DEK re-wrap, `41f4f83` content-clearance gate. Suggested home:
+  mesh/federation epic family; schedule after encrypted-sharing lands (in flight —
+  see `open-inflight.md`).
+- **VN sprite staging** — `e99e21e` mood/action-driven staging, `5cf8b16` center/face
+  anchor, `ea6d881` alpha matting, `2fba05b` speaker highlight, `9da9517`
+  multi-character ordering, `9cac2d4` per-chat roster. Suggested home: P2-A VN follow-ups.
+- **RPG mechanics opt-in** — `e98ab7f` per-mechanic config, `f2b98e3` gate chat commands
+  behind world opt-in, `f26f456` /check breakdown, `6629f0d` actor-resolved checks,
+  `d5506a5` unify roll RNG, `c29e560` level-up flow, `a8442ec` pure ability checks,
+  `83e9718` world ruleset templates, `4c37f99` timed conditions, `baf7d71`
+  history-committing chats, `1dd08b9` ruleset enforcement. Suggested home: P6 waves;
+  land opt-in gating first (safety-relevant).
+- **Coverage waivers + frontend batches** — `be72331` sub-floor waiver, `b4789c2` raise
+  below-floor modules, `78c179f` alpine admin/npc/settings clusters, `55f201f` VN
+  pages/new-chat/quests/worlds. Suggested home: release-010 hardening.
+- **Item-generation discoverability** — `0d771c9` subcommand docs, `0f840fd`
+  describe-preview-confirm UI, `b95bbff` review parity, `219124a` shared draft store.
+  Suggested home: P2-C assistant tooling.
+- **Workflow/GM routing** — `7637627` persist run sessions, `83622b7` strip mention
+  prefix, `f4fd21e` assistant-GM handoff, `becc58b` shadow-note steering, `30803ca`
+  reuse WorkflowRunner. Suggested home: P2-C/P2-D.
+- **NSFW consent-surface follow-ups** — `d7c0253` consent gate wiring, `e0d7c5c`
+  seduction preconditions, `e8f7a75` /api/nsfw authz. Overlap with landed wiring —
+  verify each still reproduces before scheduling.
+- **Misc** — `89f26c8` demo-login e2e order dependence, `2d1a281` migration-parts never
+  apply (pairs with `open-debt.md` migration hygiene), `9b837f9` RAG captcha resilience,
+  `c667507` ticket-epic-link backfill, `c622d40` capability disclosure, `1bedeb1`
+  assistant lorebook tools.
+
+### Further steps (proposed order)
+
+1. Triage the advisory orphans (link or close).
+2. Verify NSFW follow-ups against landed wiring; close what is fixed.
+3. Land mesh-sharing remainder, then schedule the interconnect batch.
+4. Below-floor modules per waiver tickets; then frontend batches.
+5. RPG opt-in gating before new mechanics.
+6. Item-gen discoverability + workflow batches per P2-C/D capacity.
+7. Human triage: 2FA/channel provisioning scheduling, A9 tag + push.

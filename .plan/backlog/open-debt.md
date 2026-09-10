@@ -86,3 +86,21 @@ Surfaced by the 5 surgical bug fixes shipped on 2026-09-03 (`c093f56d`, `7cbcea6
 **Priority order** (from bucket-A close-out doc): #1 (report name), #2 (maxRatio), #3 (DI path), #4 (templates.ts ceiling), #5 (.catch path), #6 (reuniteChats ownership), #7 (reapStale dead code), #8 (Promise.all concurrency).
 
 **Tracking**: each ticket has a git issue + `.plan/tickets/TASK-audit-follow-up-*.md` file. These cluster with the post-bug-bucket refactoring section above — #3 (DI path) and #5 (.catch path) overlap with the refactoring items #1 and #3 respectively.
+
+---
+
+## 2026-09-10 landed (debt paydown)
+
+- **NSFW structural** — async pipeline + base-eval split give the trust-boundary sweep a
+  stable home; HKDF separation closes hash-reuse drift.
+- **Test health** — isolation gates + branded-id assertions pay down e2e/unit fragility
+  (release hardening).
+- **Coverage floors** — waivers raised to match lifted suites so the gate ratchets instead
+  of rotting.
+- **Mesh size-gate splits** — sharing/coordinator/mesh routes split per size gate; keeps
+  the size gate green while mesh lands.
+- **P6-I plugin progress** — loader/registry/config-merge/event-bus/mount-points/
+  tool-executor suites at full coverage; remaining gap is bundled shipped-plugin sources
+  exercised via the loader e2e boot path.
+- **Still open**: transport module, music/SFX/Video stubs; migration-hygiene gate
+  (duplicate prefixes, parts/ pointers); audit follow-up cluster ordering unchanged.
