@@ -1865,6 +1865,12 @@ export const SCHEMA = new SchemaManifest()
     rpg_enabled: col("integer", { notNull: true, hasDefault: true, },),
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
+    rpg_dice: col("integer", { notNull: true, hasDefault: true, },),
+    rpg_checks: col("integer", { notNull: true, hasDefault: true, },),
+    rpg_combat: col("integer", { notNull: true, hasDefault: true, },),
+    rpg_xp: col("integer", { notNull: true, hasDefault: true, },),
+    rpg_loot: col("integer", { notNull: true, hasDefault: true, },),
+    rpg_quests: col("integer", { notNull: true, hasDefault: true, },),
   },)
   // ── Generation & Prompts ──────────────────────────────────────────────
   .table("model_capabilities", {

@@ -131,6 +131,12 @@ export interface Worlds {
   rpg_enabled: Generated<number>;
   data_version: Generated<number>;
   record_hash: Generated<string>;
+  rpg_dice: Generated<number>;
+  rpg_checks: Generated<number>;
+  rpg_combat: Generated<number>;
+  rpg_xp: Generated<number>;
+  rpg_loot: Generated<number>;
+  rpg_quests: Generated<number>;
 }
 
 // ── actor_lore_entries ────────────────────────────────────────────

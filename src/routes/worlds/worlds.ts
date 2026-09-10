@@ -22,6 +22,7 @@ import {
   jsonResponse,
 } from "../http-utils";
 import { requireWorldAccess, requireWorldOwner, } from "./access";
+import { applyRpgUpdates, rpgCreateFlags, } from "./world-rpg-flags";
 
 /**
  * @param database
@@ -80,6 +81,7 @@ export async function handleCreateWorld(database: Kysely<DB>, body: Record<strin
   if (!name) { return jsonError({ message: "name is required", status: HttpStatus.BadRequest, },); }
 
   const id = uid();
+  const rpgFlags = rpgCreateFlags(body,);
   await database
     .insertInto("worlds",)
     .values({
@@ -96,6 +98,7 @@ export async function handleCreateWorld(database: Kysely<DB>, body: Record<strin
       difficulty_modifier: 1,
       difficulty_reroll: DifficultyReroll.None,
       difficulty_state: DifficultyState.Normal,
+      ...rpgFlags,
     },)
     .execute();
 
@@ -148,6 +151,9 @@ export async function handleUpdateWorld(
   if (body.difficultyState != null) { updates.difficulty_state = body.difficultyState; }
   if (body.kind != null) { updates.kind = body.kind; }
   if (body.visibility != null) { updates.visibility = body.visibility; }
+  // Master switch arms every mechanic; per-mechanic flags after it refine
+  // the result, so one request can enable RPG and opt a mechanic back out.
+  applyRpgUpdates(body, updates,);
   updates.updated_at = new Date().toISOString();
 
   await database.updateTable("worlds",).set(updates,).where("id", "=", worldId,).execute();
