@@ -622,7 +622,7 @@
                   </div>
                   <button
                     @click="downloadCatalogEntry(model.id)"
-                    :disabled="loading || downloadingId"
+                    :disabled="loading || downloadingId || !downloadsAllowed"
                     class="btn btn-primary disabled:opacity-50"
                     data-testid="model-catalog-download"
                   >
@@ -639,6 +639,7 @@
             </template>
           </div>
 
+          <template x-if="downloadsAllowed">
           <!-- Download form -->
           <div class="section-title">{{{t("settings.downloadModel")}}}</div>
           <div class="space-y-2">
@@ -685,6 +686,8 @@
               </div>
             </template>
           </div>
+
+          </template>
 
           <!-- Stored models -->
           <div class="section-title">

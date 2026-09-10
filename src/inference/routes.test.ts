@@ -39,6 +39,17 @@ describe("local inference routes", () => {
     expect(body.optInSupported,).toBe(true,);
     expect(body.defaultOptIn,).toBe(false,);
     expect(body.eligibleTasks,).toContain("prompt-analyze",);
+    expect(body.downloadsAllowed,).toBe(true,);
+  });
+  test("deny policy flips the capability downloads flag", async () => {
+    const app = localInferenceRoutes({
+      resolvePolicy: () => ({ allowDownloads: false, }),
+    },);
+    const res = await app.handle(new Request("http://localhost/api/local-inference/capability",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json();
+    expect(body.downloadsAllowed,).toBe(false,);
+    expect(body.models,).toBeUndefined();
   });
   test("injected deny policy filters the served catalog", async () => {
     const first = BROWSER_MODEL_CATALOG[0];
