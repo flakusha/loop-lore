@@ -4,15 +4,11 @@
 
 ## Problem
 
-`src/routes/notifications/stream.ts:54-58` (start callback) and `:43-58` (tick)
-both wrap their DB work in `Promise.allSettled([...])` and resolve the result
-inline. This means the surrounding `try { ... } catch` blocks can NEVER throw
+`src/routes/notifications/stream.ts:51-54` (tick) and `:74-77` (start) wrap
+their DB work in `Promise.allSettled([...])` and resolve the result inline.
+This means the surrounding `try { ... } catch` blocks can NEVER throw
 on a DB error — `allSettled` always resolves. The catch branches that emit a
 `stream-error` event with a `correlationId` are unreachable.
-
-## Evidence
-
-`src/routes/notifications/stream.ts` lines 43-66 (start + tick):
 
 ```ts
 const tick = async (controller) => {
@@ -46,11 +42,11 @@ making the initial-snapshot failure visible to the client.
 
 ## Where
 
-- `src/routes/notifications/stream.ts:43-66` (start + tick)
-- `src/routes/notifications/stream.ts:67-77` (catch branch never executes)
+- `src/routes/notifications/stream.ts:49-66` — tick callback, allSettled at :51-54, catch at :63-65
+- `src/routes/notifications/stream.ts:71-93` — start callback, allSettled at :74-77, catch at :87-93 (never executes)
 
 ## Discovered
 
 2026-09-10 — while writing coverage tests for `routes/notifications/stream.ts`
-in worktree `coverage-review-fixes`. Tests could not cover lines 73-77 because
-the code path is unreachable.
+in worktree `coverage-review-fixes`. Tests could not cover the start-callback
+catch branch because the code path is unreachable.
