@@ -538,6 +538,11 @@ function runTests(wtPath: string,): boolean {
  * abort (130, covered by handleSignalAbort) stay quiet.
  * Best-effort: never throws (see appendLedger).
  *
+ * Nested-finalize caveat: the `exit` event is process-wide, so an inner
+ * run's `process.exit(1)` also fires an outer run's hook (one extra
+ * gripe naming the outer branch). Only reachable from test fixtures —
+ * real CLI runs never nest finalize.
+ *
  * @param treeDir - shared tree directory holding the ledger
  * @param getBranch - reads the current branch hint at exit time
  */
