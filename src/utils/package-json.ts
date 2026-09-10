@@ -31,7 +31,8 @@ export type PackageJsonReadResult =
 
 /**
  * Read + parse a `package.json` safely. Never throws.
- * @param packageJsonPath
+ * @param packageJsonPath - path to `package.json`
+ * @returns discriminated result: `{ ok: true, value: PackageJson }` on success, `{ ok: false, error }` on read/parse failure.
  */
 export function readPackageJson(packageJsonPath: string,): PackageJsonReadResult {
   let text: string;
@@ -48,7 +49,8 @@ export function readPackageJson(packageJsonPath: string,): PackageJsonReadResult
 
 /**
  * Read-only fetch helper. Returns `null` on missing/unparseable input.
- * @param packageJsonPath
+ * @param packageJsonPath - path to `package.json`
+ * @returns parsed `PackageJson`, or `null` on read/parse failure.
  */
 export function readPackageJsonOrNull(packageJsonPath: string,): PackageJson | null {
   const result = readPackageJson(packageJsonPath,);
@@ -58,8 +60,9 @@ export function readPackageJsonOrNull(packageJsonPath: string,): PackageJson | n
 /**
  * Read + write `package.json` with the new version applied. Throws on
  * missing or malformed input so a corrupt `package.json` surfaces loudly.
- * @param packageJsonPath
- * @param version
+ * @param packageJsonPath - path to `package.json`
+ * @param version - version string to apply
+ * @throws {Error} when the file is missing, unreadable, malformed, or unserializable.
  */
 export function setPackageJsonVersion(packageJsonPath: string, version: string,): void {
   const result = readPackageJson(packageJsonPath,);

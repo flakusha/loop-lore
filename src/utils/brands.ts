@@ -24,7 +24,8 @@ export type Brand<Base, Tag extends string,> = Base & { readonly __brand: Tag };
 
 /**
  * Create a branded value from a raw string
- * @param raw
+ * @param raw - raw string value
+ * @returns branded value (same string with a phantom `__brand` tag).
  */
 export function brand<T extends string,>(raw: string,): Brand<string, T> {
   return raw as Brand<string, T>;
@@ -32,7 +33,8 @@ export function brand<T extends string,>(raw: string,): Brand<string, T> {
 
 /**
  * Extract the underlying string from a branded type
- * @param branded
+ * @param branded - branded value
+ * @returns the underlying string (cast removes the phantom `__brand` tag).
  */
 export function unbrand<T extends string,>(branded: Brand<string, T>,): string {
   return branded;

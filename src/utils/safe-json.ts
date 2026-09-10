@@ -16,7 +16,8 @@ export type JsonResult<T,> = { ok: true; value: T } | { ok: false; error: Error 
 
 /**
  * Extract a safe Error object from an unknown thrown value
- * @param error
+ * @param error - any thrown value
+ * @returns Error instance (coerced via `new Error(String(...))` when not already an Error).
  */
 function asError(error: unknown,): Error {
   return error instanceof Error ? error : new Error(String(error,),);
@@ -26,7 +27,8 @@ function asError(error: unknown,): Error {
 
 /**
  * Parse JSON safely. Never throws — returns a discriminated union.
- * @param text
+ * @param text - JSON string to parse
+ * @returns `{ ok: true, value: T }` on success, `{ ok: false, error }` on parse failure.
  */
 export function safeJsonParse<T = unknown,>(text: string,): JsonResult<T> {
   try {
@@ -39,8 +41,9 @@ export function safeJsonParse<T = unknown,>(text: string,): JsonResult<T> {
 
 /**
  * Parse JSON, returning the value or `fallback` on failure.
- * @param text
- * @param fallback
+ * @param text - JSON string to parse
+ * @param fallback - value returned on parse failure
+ * @returns parsed `T`, or `fallback` if parsing fails.
  */
 export function jsonParseOr<T,>(text: string, fallback: T,): T {
   const result = safeJsonParse<T>(text,);
@@ -59,8 +62,9 @@ export interface SafeJsonStringifyOptions {
 
 /**
  * Stringify JSON safely. Never throws — returns a discriminated union.
- * @param value
- * @param spaceOrOptions
+ * @param value - value to serialize
+ * @param spaceOrOptions - number of spaces, or `{ guarded?, space? }` options object
+ * @returns `{ ok: true, value: string }` on success, `{ ok: false, error }` on serialization failure.
  */
 export function safeJsonStringify(
   value: unknown,
@@ -94,8 +98,9 @@ export function safeJsonStringify(
 /**
  * Stringify JSON safely with a fallback value.
  * Never throws.
- * @param value
- * @param fallback
+ * @param value - value to serialize
+ * @param fallback - string returned on serialization failure (default `"{}"`)
+ * @returns JSON string, or `fallback` if serialization fails.
  * @example
  *   jsonStringifyOr({ a: 1 })         // '{"a":1}'
  *   jsonStringifyOr(bad, "[]")         // '[]'
@@ -109,7 +114,8 @@ export function jsonStringifyOr(value: unknown, fallback = "{}",): string {
 
 /**
  * Check if a value is a valid JSON string.
- * @param value
+ * @param value - value to test
+ * @returns `true` if `value` is a string and parses as valid JSON; `false` otherwise (type guard).
  */
 export function isJsonString(value: unknown,): value is string {
   if (typeof value !== "string") { return false; }

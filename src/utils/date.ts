@@ -12,6 +12,7 @@
 
 /**
  * Unix epoch milliseconds. Like Date.now() but explicit.
+ * @returns current epoch ms.
  */
 export function unixMs(): number {
   return Date.now();
@@ -19,6 +20,7 @@ export function unixMs(): number {
 
 /**
  * Unix epoch seconds — use for JSONL log entries.
+ * @returns current epoch seconds (Math.floor of ms/1000).
  */
 export function unixSec(): number {
   return Math.floor(Date.now() / 1000,);
@@ -30,8 +32,9 @@ export function unixSec(): number {
  * Uses Intl.DateTimeFormat for IANA timezone support.
  * Falls back to getTimezoneOffset arithmetic if Intl fails or no tz given.
  * Honors Node.js `TZ` environment variable by default.
- * @param date
- * @param tz
+ * @param date - reference date (default: now)
+ * @param tz - IANA timezone name (e.g. "Europe/Berlin")
+ * @returns timezone offset string like "+02:00", "-05:00", "+00:00".
  */
 export function tzOffset(date?: Date, tz?: string,): string {
   const d = date ?? new Date();
@@ -67,8 +70,10 @@ export function tzOffset(date?: Date, tz?: string,): string {
 }
 
 /**
- * @param n
- * @param len
+ * Zero-pad a number to a minimum width.
+ * @param n - number to format
+ * @param len - minimum width (default 2)
+ * @returns zero-padded string.
  */
 function pad(n: number, len = 2,): string {
   return String(n,).padStart(len, "0",);
@@ -89,10 +94,11 @@ function pad(n: number, len = 2,): string {
  *   — No dashes in date, colon in TZ offset retained for native JS decode
  *   — Denser, sortable
  *   — NOT parseable by Date.parse() — use only for display/compact logs
- * @param options
+ * @param options - formatting options (date, style, tz)
  * @param options.style - "standard" (default) or "compact"
  * @param options.tz - IANA timezone name (e.g., "Europe/Berlin") or offset string
  * @param options.date - Date object, timestamp, or undefined for now
+ * @returns formatted ISO 8601 string (standard or compact style).
  */
 export function formatTime(options?: {
   date?: Date | number;
@@ -164,6 +170,7 @@ export function formatTime(options?: {
  * the canonical string form (`formatTime` standard) round-trips through
  * `new Date(...)` unchanged.
  * @param input - Date, epoch ms, or ISO string. `""` → Invalid Date; `undefined` → now.
+ * @returns native `Date` instance (or Invalid Date for `""`).
  */
 export function toDate(input?: Date | number | string,): Date {
   if (input === "") { return new Date(Number.NaN,); }
@@ -189,8 +196,9 @@ export interface DateFormatOptions {
  *
  * The result is NOT parseable by `Date`. For storage/transport use `"unix"`
  * or `"iso"` from {@link serializeDate}.
- * @param input
- * @param options
+ * @param input - Date, epoch ms, or ISO string.
+ * @param options - locale/tz/humanStyle controls
+ * @returns formatted display string (empty for invalid input).
  * @example
  * formatHuman("2026-07-04T14:30:00Z", { locale: "de-DE", tz: "Europe/Berlin" })
  * // "4. Juli 2026, 16:30"
@@ -229,9 +237,10 @@ export function formatHuman(
  * - `"iso"`     → `yyyy-mm-ddTHH:MM:SS.ttt+/-xxtz` (native-`Date` round-trippable).
  * - `"compact"` → dense, sortable ISO variant (NOT `Date.parse`-able).
  * - `"human"`   → locale/region + timezone display string (see {@link formatHuman}).
- * @param input
- * @param format
- * @param options
+ * @param input - Date, epoch ms, or ISO string.
+ * @param format - output format (`"iso"` default).
+ * @param options - locale/tz for display formats.
+ * @returns formatted date (number for `"unix"`, string otherwise; `""` for invalid display input).
  * @example
  * serializeDate(1751639400000, "iso", { tz: "America/New_York" })
  * // "2026-07-04T10:30:00.000-04:00"
