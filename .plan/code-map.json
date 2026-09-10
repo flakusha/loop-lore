@@ -10479,6 +10479,12 @@
       "source": ".plan/tickets/TASK-federation-tls-peer-trust-custom-ca-pinning-and-optional-mtl.md"
     }
   ],
+  "src/federation/peer-keys.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-mesh-coordinator-server-knowledge-db.md"
+    }
+  ],
   "src/federation/sharing.ts": [
     {
       "kind": "ticket",
