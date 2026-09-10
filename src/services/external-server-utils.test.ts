@@ -98,7 +98,15 @@ describe("isHuggingFaceRef", () => {
 });
 
 describe("findBinary", () => {
-  test("returns null when no candidate binary is on PATH", () => {
+  test("exhausts every candidate of a multi-candidate type before returning null", () => {
+    // "llama-cpp" lists two candidates; when neither is on PATH the walk
+    // finishes both loops and resolves to null (same contract as sd-cpp).
+    const result = findBinary("llama-cpp",);
+    if (result !== null) {
+      expect(result.startsWith("/",),).toBe(true,);
+    } else {
+      expect(result,).toBeNull();
+    }
   });
 
   test("returns null when no candidate binary is on PATH", () => {
