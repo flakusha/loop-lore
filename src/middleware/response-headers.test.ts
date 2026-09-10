@@ -26,6 +26,7 @@ function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
       imgSrc: ["'self'", "data:",],
       fontSrc: ["'self'",],
       connectSrc: ["'self'", "wss:",],
+      workerSrc: ["'self'", "blob:",],
       objectSrc: ["'none'",],
       baseUri: ["'self'",],
       frameAncestors: ["'none'",],
@@ -74,6 +75,7 @@ describe("ResponseHeaderPolicy.apply — classification", () => {
     const response = res(200, { "content-type": "text/html; charset=utf-8", }, "<html></html>",);
     const out = policy.apply({ request: req("GET", "https://x/chat",), response, },);
     expect(out.headers.get("Content-Security-Policy",),).toContain("default-src 'self'",);
+    expect(out.headers.get("Content-Security-Policy",),).toContain("worker-src 'self' blob:",);
     expect(out.headers.get("Link",),).toContain("rel=preload; as=script",);
     expect(out.headers.get("Cross-Origin-Resource-Policy",),).toBe("same-origin",);
     expect(out.headers.get("X-Frame-Options",),).toBe("DENY",);
@@ -162,6 +164,19 @@ describe("ResponseHeaderPolicy.apply — isolation toggles", () => {
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Cross-Origin-Opener-Policy",),).toBe("same-origin",);
     expect(out.headers.get("Cross-Origin-Embedder-Policy",),).toBe("require-corp",);
+  });
+
+  test("credentialless COEP emitted on html when configured", async () => {
+    const policy = new ResponseHeaderPolicy(
+      makeConfig({
+        crossOriginOpenerPolicy: "same-origin-allow-popups",
+        crossOriginEmbedderPolicy: "credentialless",
+      },),
+    );
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "https://x/",), response, },);
+    expect(out.headers.get("Cross-Origin-Opener-Policy",),).toBe("same-origin-allow-popups",);
+    expect(out.headers.get("Cross-Origin-Embedder-Policy",),).toBe("credentialless",);
   });
 
   test("COOP/COEP omitted by default", async () => {

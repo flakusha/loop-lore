@@ -266,7 +266,8 @@ scriptSrc = [
   "'self'",
   "'unsafe-inline'",
   "'unsafe-eval'",
-] # 'unsafe-inline': Alpine.js @x directive; 'unsafe-eval': Alpine.js new Function() for expression evaluation
+  "https://cdn.jsdelivr.net",
+] # 'unsafe-inline': Alpine.js @x directive; 'unsafe-eval': Alpine.js new Function() for expression evaluation; jsdelivr: lazy wllama/transformers ESM for browser inference
 styleSrc = ["'self'", "'unsafe-inline'"] # inline style= attrs need unsafe-inline
 imgSrc = ["'self'", "data:", "blob:"]
 fontSrc = ["'self'"]
@@ -277,7 +278,7 @@ frameAncestors = ["'none'"]
 upgradeInsecureRequests = true
 # reportOnly = false                  # true = emit Content-Security-Policy-Report-Only (observe, don't enforce)
 
-# crossOriginOpenerPolicy = ""        # same-origin | same-origin-allow-popups | "" (omit)
+# crossOriginEmbedderPolicy = ""      # require-corp | credentialless | "" (omit; credentialless enables SAB/WASM threads while keeping CDN/model loads working)
 # crossOriginEmbedderPolicy = ""      # require-corp | "" (omit; keep off until wasm/SAB ready)
 crossOriginResourcePolicy = "cross-origin"
 immutableHashedAssets = true

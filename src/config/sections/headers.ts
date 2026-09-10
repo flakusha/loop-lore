@@ -8,11 +8,12 @@ import type { CspConfig, HeadersConfig, } from "../schema";
 export const CSP_DEFAULTS: CspConfig = {
   enabled: true,
   defaultSrc: ["'self'",],
-  scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'",],
+  scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net",],
   styleSrc: ["'self'", "'unsafe-inline'",],
   imgSrc: ["'self'", "data:", "blob:",],
   fontSrc: ["'self'",],
   connectSrc: ["'self'", "wss:", "https:",],
+  workerSrc: ["'self'", "blob:",],
   objectSrc: ["'none'",],
   baseUri: ["'self'",],
   frameAncestors: ["'none'",],
@@ -29,8 +30,8 @@ export const HEADERS_DEFAULTS: HeadersConfig = {
   permissionsPolicy:
     "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()",
   csp: CSP_DEFAULTS,
-  crossOriginOpenerPolicy: null,
-  crossOriginEmbedderPolicy: null,
+  crossOriginOpenerPolicy: "same-origin" as const,
+  crossOriginEmbedderPolicy: "credentialless" as const,
   crossOriginResourcePolicy: "cross-origin" as const,
   timingAllowOrigin: "",
   immutableHashedAssets: true,
@@ -127,6 +128,7 @@ export const headersMeta = {
         imgSrc: { type: "array", items: { type: "string", }, },
         fontSrc: { type: "array", items: { type: "string", }, },
         connectSrc: { type: "array", items: { type: "string", }, },
+        workerSrc: { type: "array", items: { type: "string", }, },
         objectSrc: { type: "array", items: { type: "string", }, },
         baseUri: { type: "array", items: { type: "string", }, },
         frameAncestors: { type: "array", items: { type: "string", }, },
@@ -146,8 +148,8 @@ export const headersMeta = {
     },
     crossOriginEmbedderPolicy: {
       type: ["string", "null",],
-      enum: ["require-corp", null,],
-      description: "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB).",
+      enum: ["require-corp", "credentialless", null,],
+      description: "COEP; credentialless keeps no-credential CDN/model loads working while enabling SAB/WASM threads.",
     },
     crossOriginResourcePolicy: {
       type: ["string", "null",],
