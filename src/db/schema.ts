@@ -58,6 +58,8 @@ export interface DB {
   actor_notes: import("./schema-core").ActorNotes;
   actors: import("./schema-core").Actors;
   admin_character_overrides: import("./schema-character").AdminCharacterOverrides;
+  asset_tags: import("./schema-content").AssetTags;
+  asset_tag_dismissals: import("./schema-content").AssetTagDismissals;
   character_arc: import("./schema-core").CharacterArc;
   growth_log: import("./schema-core").GrowthLog;
   character_arousal: import("./schema-character").CharacterArousal;

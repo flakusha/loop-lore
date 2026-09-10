@@ -31,6 +31,7 @@ import { adminTemplateRoutes, } from "../routes/admin-templates";
 import { analyticsRoutes, } from "../routes/analytics";
 import { apiKeysRoutes, } from "../routes/api-keys";
 import { assetSearchRoutes, } from "../routes/asset-search";
+import { assetTagRoutes, } from "../routes/asset-tags";
 import { authProtectedRoutes, authPublicRoutes, } from "../routes/auth";
 import { battleRoutes, } from "../routes/battle";
 import { blogRoutes, } from "../routes/blog";
@@ -205,6 +206,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(nsfwModerationRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
   app.use(assetSearchRoutes(handleOpts,),);
+  app.use(assetTagRoutes({ database: handleOpts.database, },),);
   app.use(imageEditRoutes({ database: handleOpts.database, },),);
   app.use(rpgRoutes(handleOpts,),);
   app.use(tradeRoutes(handleOpts,),);

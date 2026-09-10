@@ -10,7 +10,9 @@ import type { Kysely, } from "kysely";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { AssetAlphaStatus, AssetLinkEntity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { MATTING_SOURCE_LABEL, } from "../../generation/matting/service";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertAssetLinks, insertAssets, insertUsers, } from "../../test-utils/insert-helpers";
 import { deleteAsset, } from "./delete";
@@ -93,6 +95,65 @@ describe("deleteAsset", () => {
       expect(await deleteAsset({ database: db, assetId: ASSET_ID, uploadDir, },),).toBe(true,);
       const record = await db.selectFrom("assets",).selectAll().where("id", "=", ASSET_ID,).executeTakeFirst();
       expect(record,).toBeUndefined();
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("reverts a matted derivative's source asset back to raw", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-asset-del-",),);
+    try {
+      await insertUsers(db, OWNER, "Delete Owner",);
+      const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
+        .executeTakeFirstOrThrow();
+      const sourceId = "00000000-0000-4000-8000-0000000000a1";
+      const derivativeId = "00000000-0000-4000-8000-0000000000a2";
+      await insertAssets(db, owner.id, "source.png", "image/png", "image" as never, 8, "raw/00/source.png", {
+        id: sourceId as never,
+        alpha_status: AssetAlphaStatus.Raw,
+      },);
+      await insertAssets(db, owner.id, "matted.png", "image/png", "image" as never, 8, "raw/00/matted.png", {
+        id: derivativeId as never,
+        alpha_status: AssetAlphaStatus.Matted,
+      },);
+      await insertAssetLinks(db, derivativeId, AssetLinkEntity.Asset, sourceId, {
+        label: MATTING_SOURCE_LABEL,
+      },);
+
+      expect(await deleteAsset({ database: db, assetId: derivativeId, uploadDir, },),).toBe(true,);
+
+      const source = await db.selectFrom("assets",).selectAll().where("id", "=", sourceId,).executeTakeFirst();
+      expect(source,).toBeDefined();
+      expect(source?.alpha_status,).toBe(AssetAlphaStatus.Raw,);
+    } finally {
+      sqlite.close();
+      rmSync(uploadDir, { recursive: true, force: true, },);
+    }
+  });
+
+  test("recursively deletes derivatives linking to the deleted asset", async () => {
+    const { db, sqlite, } = await createTestDb();
+    const uploadDir = mkdtempSync(join(tmpdir(), "ll-asset-del-",),);
+    try {
+      await insertUsers(db, OWNER, "Delete Owner",);
+      const owner = await db.selectFrom("users",).select("id",).where("username", "=", OWNER,)
+        .executeTakeFirstOrThrow();
+      const parentId = "00000000-0000-4000-8000-0000000000b1";
+      const childId = "00000000-0000-4000-8000-0000000000b2";
+      await insertAssets(db, owner.id, "parent.png", "image/png", "image" as never, 8, "raw/00/parent.png", {
+        id: parentId as never,
+      },);
+      await insertAssets(db, owner.id, "child.png", "image/png", "image" as never, 8, "raw/00/child.png", {
+        id: childId as never,
+      },);
+      await insertAssetLinks(db, childId, AssetLinkEntity.Asset, parentId,);
+
+      expect(await deleteAsset({ database: db, assetId: parentId, uploadDir, },),).toBe(true,);
+
+      const child = await db.selectFrom("assets",).selectAll().where("id", "=", childId,).executeTakeFirst();
+      expect(child,).toBeUndefined();
     } finally {
       sqlite.close();
       rmSync(uploadDir, { recursive: true, force: true, },);
