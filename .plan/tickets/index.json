@@ -19486,6 +19486,18 @@
     "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md",
     "git_issue": "5c73739"
   },
+  "TASK-REDUCE-REQUIREUSERID-AUTH-NARROW-DUPLICATION-JSCPD-FULL": {
+    "hash": "784771d",
+    "git_issue": "784771d",
+    "extid": "TASK-REDUCE-REQUIREUSERID-AUTH-NARROW-DUPLICATION-JSCPD-FULL",
+    "type": "TASK",
+    "title": "Reduce requireUserId auth-narrow duplication (jscpd:full)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-reduce-requireuserid-auth-narrow-duplication-jscpd-full.md"
+  },
   "TASK-REFACTOR-EXTRACT-SCOPEBYUSERID-MIDDLEWARE": {
     "hash": "48a07df",
     "extid": "TASK-REFACTOR-EXTRACT-SCOPEBYUSERID-MIDDLEWARE",
