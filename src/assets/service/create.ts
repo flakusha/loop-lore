@@ -10,6 +10,7 @@ import { uid, } from "../../utils";
 import { extractImageMetadata, } from "../metadata";
 import { initialAlphaStatus, } from "./alpha-status";
 import { storeFile, } from "./file-system";
+import { seedBaseTransform, } from "./transforms";
 import type { AssetRecord, CreateAssetOpts, CreateAssetResult, } from "./types";
 
 /**
@@ -164,5 +165,8 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
     },)
     .execute();
 
+  if (input.mimeType.startsWith("image/",)) {
+    await seedBaseTransform(database, id,);
+  }
   return { asset, duplicate: false, };
 }

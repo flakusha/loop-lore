@@ -83,6 +83,7 @@ import type {
   SyntheticDataStatus,
   SyntheticDataType,
   TraitCategory,
+  TransformContext,
   TurnStatus,
   TurnStrategy,
   TurnType,
@@ -500,6 +501,31 @@ export async function insertAssets(
     asset_type,
     size_bytes,
     storage_path,
+    ...opts,
+  } as any,).execute();
+}
+
+/** Insert a asset_transforms row. */
+export async function insertAssetTransforms(
+  db: Db,
+  asset_id: string,
+  context: TransformContext,
+  updated_at: string,
+  opts?: {
+    crop_x?: number | null;
+    crop_y?: number | null;
+    crop_w?: number | null;
+    crop_h?: number | null;
+    zoom?: number | null;
+    rotation?: number | null;
+    focal_point_x?: number | null;
+    focal_point_y?: number | null;
+  },
+): Promise<void> {
+  await db.insertInto("asset_transforms",).values({
+    asset_id,
+    context,
+    updated_at,
     ...opts,
   } as any,).execute();
 }
