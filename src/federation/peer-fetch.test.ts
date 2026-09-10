@@ -12,6 +12,7 @@ import {
   canonicalOrigin,
   fetchPeerAdvertisement,
   PEER_FETCH_TIMEOUT_MS,
+  postPeerJson,
 } from "./peer-fetch";
 
 let server: ReturnType<typeof Bun.serve> | null = null;
@@ -78,5 +79,50 @@ describe("fetchPeerAdvertisement", () => {
   test("default timeout constant is sane", () => {
     expect(PEER_FETCH_TIMEOUT_MS,).toBeGreaterThan(0,);
     expect(PEER_FETCH_TIMEOUT_MS,).toBeLessThanOrEqual(30_000,);
+  });
+});
+
+describe("postPeerJson", () => {
+  test("POSTs JSON and returns parsed body on 200", async () => {
+    let method = "";
+    let received: unknown = null;
+    const origin = serve(async (req,) => {
+      method = req.method;
+      received = await req.json();
+      return Response.json({ stored: true, },);
+    },);
+    const res = await postPeerJson(origin + "/api/mesh-deliver", { id: "e1", }, undefined,);
+    expect(method,).toBe("POST",);
+    expect(received,).toEqual({ id: "e1", },);
+    expect(res.ok,).toBe(true,);
+    expect(res.status,).toBe(200,);
+    expect(res.body,).toEqual({ stored: true, },);
+  });
+
+  test("non-JSON body is a miss", async () => {
+    const origin = serve(() => new Response("not json{{{",));
+    const res = await postPeerJson(origin + "/api/mesh-deliver", {}, undefined,);
+    expect(res.ok,).toBe(false,);
+    expect(res.body,).toBeNull();
+  });
+
+  test("HTTP errors surface as misses", async () => {
+    const origin = serve(() => new Response("nope", { status: 500, },));
+    const res = await postPeerJson(origin + "/api/mesh-deliver", {}, undefined,);
+    expect(res.ok,).toBe(false,);
+    expect(res.status,).toBe(500,);
+    expect(res.body,).toBeNull();
+  });
+
+  test("unreachable peers surface as misses, never throw", async () => {
+    const res = await postPeerJson("http://127.0.0.1:1/api/mesh-deliver", {}, undefined, 200,);
+    expect(res.ok,).toBe(false,);
+    expect(res.status,).toBe(0,);
+  });
+
+  test("CA bundle path works over plain HTTP", async () => {
+    const origin = serve(() => Response.json({ stored: true, },));
+    const res = await postPeerJson(origin + "/api/mesh-deliver", {}, { caBundle: "PEM", },);
+    expect(res.ok,).toBe(true,);
   });
 });
