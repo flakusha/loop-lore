@@ -64,3 +64,10 @@ export {
   type StagedSprite,
   type StageSlot,
 } from "./sprite-stage";
+
+export {
+  applyStageDirectives,
+  deriveStageDirectives,
+  type SceneCastView,
+  type StageDirective,
+} from "./stage-directives";
