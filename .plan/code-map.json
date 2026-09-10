@@ -11773,6 +11773,12 @@
       "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     }
   ],
+  "src/frontend/alpine/local-engine-protocol.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wllama-gguf-inference-engine-browser.md"
+    }
+  ],
   "src/frontend/alpine/location-explorer.test.ts": [
     {
       "kind": "ticket",
@@ -15897,6 +15903,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-byok-local-models.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wllama-gguf-inference-engine-browser.md"
     }
   ],
   "src/inference/model-downloader.ts": [
