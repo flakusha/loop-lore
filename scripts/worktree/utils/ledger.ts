@@ -20,7 +20,7 @@
  * the command that triggered it.
  */
 
-import { existsSync, mkdirSync, } from "fs";
+import { existsSync, } from "fs";
 import { readFileSync, writeFileSync, } from "node:fs";
 import { resolve, } from "path";
 import { log, } from "./output";
@@ -122,7 +122,11 @@ export function appendLedger(
   said: string | null,
 ): void {
   try {
-    mkdirSync(treeDir, { recursive: true, },);
+    // Never create the directory as a side effect: commands probing a
+    // foreign repo (e.g. `abort --dry-run`) resolve treeDir inside it,
+    // and mkdir would mutate the very tree dry-run promises to spare.
+    // On a real host treeDir always exists (it holds the worktrees).
+    if (!existsSync(treeDir,)) { return; }
     const base = defaultMessage(cmd, args,);
     const msg = truncateMsg(said ? `${base} :: ${said}` : base,);
     const record: LedgerRecord = {
@@ -197,4 +201,16 @@ export function printRecentLedger(treeDir: string, count: number = LEDGER_DUMP_D
   for (const record of records) {
     console.log(`  ${formatRecord(record,)}`,);
   }
+}
+/**
+ * Record a gripe: a `gripe`-cmd ledger record with the 😤 prefix.
+ * Same shape the `gripe` command writes by hand; also used for
+ * automatic failure gripes (e.g. finalize). Best-effort: never throws.
+ *
+ * @param treeDir - shared tree directory
+ * @param branch - target branch hint ("" when unknown)
+ * @param message - gripe text without the emoji prefix
+ */
+export function appendGripe(treeDir: string, branch: string, message: string,): void {
+  appendLedger(treeDir, "gripe", branch === "" ? [] : [branch,], `😤 ${message}`,);
 }

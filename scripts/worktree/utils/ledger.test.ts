@@ -16,11 +16,12 @@
  */
 
 import { describe, expect, it, } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
 import {
+  appendGripe,
   appendLedger,
   defaultMessage,
   extractSayArgs,
@@ -98,6 +99,13 @@ describe("appendLedger/readLedger", () => {
     }
   });
 
+  it("never creates a missing treeDir as a side effect", () => {
+    const dir = join(makeTreeDir(), "no-such-tree",);
+    appendLedger(dir, "abort", ["--dry-run",], null,);
+    expect(existsSync(dir,),).toBe(false,);
+    expect(readLedger(dir, 10,),).toEqual([],);
+  });
+
   it("uses the default message when nothing is said", () => {
     const dir = makeTreeDir();
     try {
@@ -161,5 +169,32 @@ describe("formatRecord", () => {
       branch: "",
       msg: "status",
     },),).toContain("[-] status: status",);
+  });
+});
+describe("appendGripe", () => {
+  it("writes a gripe record with the emoji prefix", () => {
+    const dir = makeTreeDir();
+    try {
+      appendGripe(dir, "my-branch", "finalize my-branch failed (exit 1) — see console output",);
+      const records = readLedger(dir, 10,);
+      expect(records.length,).toBe(1,);
+      expect(records[0].cmd,).toBe("gripe",);
+      expect(records[0].branch,).toBe("my-branch",);
+      expect(records[0].msg,).toBe("gripe my-branch :: 😤 finalize my-branch failed (exit 1) — see console output",);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
+  });
+
+  it("tolerates an unknown branch", () => {
+    const dir = makeTreeDir();
+    try {
+      appendGripe(dir, "", "boom",);
+      const records = readLedger(dir, 10,);
+      expect(records[0].branch,).toBe("",);
+      expect(records[0].msg,).toBe("gripe :: 😤 boom",);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
   });
 });
