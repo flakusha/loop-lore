@@ -742,6 +742,20 @@ export const WorldTimelinesSchema = t.Object({
   created_at: t.Optional(t.String(),),
 },);
 
+// ── world_event_steerings ────────────────────────────────────────────
+export const WorldEventSteeringsSchema = t.Object({
+  world_id: t.String(),
+  description: t.String(),
+  timeline_id: t.Optional(t.String(),),
+  manifest_probability: t.Optional(t.Number(),),
+  conditions: t.Optional(t.String(),),
+  may_manifest: t.Optional(t.Number(),),
+  status: t.Optional(t.String(),),
+  audience_scope: t.Optional(t.String(),),
+  resolved_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
 // ── worlds ────────────────────────────────────────────
 export const WorldsSchema = t.Object({
   owner_id: t.String(),

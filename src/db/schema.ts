@@ -47,6 +47,7 @@ export interface DB {
   world_states: import("./schema-story").WorldStates;
   world_timeline_events: import("./schema-core").WorldTimelineEvents;
   world_timelines: import("./schema-core").WorldTimelines;
+  world_event_steerings: import("./schema-core").WorldEventSteerings;
   worlds: import("./schema-story").Worlds;
   activitypub_actor_keys: import("./schema-core").ActivitypubActorKeys;
   actor_currencies: import("./schema-core").ActorCurrencies;

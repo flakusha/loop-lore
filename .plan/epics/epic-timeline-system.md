@@ -30,12 +30,12 @@ Extends the time scale system (epic-time-scale.md) to manage branching world tim
 
 ## Acceptance Criteria
 
-- [ ] Timeline branching UI in `docs/frontend/worlds.md` (world detail page)
-- [ ] `world_timeline_events` schema updated with `timeline_id` (migration)
-- [ ] Timeline selection API in `src/story/timeline/world-timeline.ts`
-- [ ] Cross-story event propagation logic in `src/story/timeline/index.ts`
-- [ ] Timeline-specific lore injection in `src/assistant/prompt/sections/lore.ts`
-- [ ] Unit tests for timeline branching and event propagation
+- [ ] Timeline branching UI in `docs/frontend/worlds.md` (world detail page) — OPEN
+- [x] `world_timeline_events` schema updated with `timeline_id` (migration) — in final-form `parts/003_worlds.ts` (squash `e3b8edbf3`)
+- [x] Timeline selection API in `src/story/timeline/world-timeline.ts` — §5.3 steering service `src/story/timeline/event-steering.ts` (`createSteering`/`rollSteering`/`resolveSteering`/`listPendingSteerings`, G2 2026-09-10)
+- [x] Cross-story event propagation logic in `src/story/timeline/index.ts` — `getConvergentEvents` (sibling-story exclusion, newest-first; audience filtering stays prompt-side)
+- [ ] Timeline-specific lore injection in `src/assistant/prompt/sections/lore.ts` — OPEN (foreshadowing/convergence rows available, no prompt wiring yet)
+- [x] Unit tests for timeline branching and event propagation — `event-steering.test.ts` (12 tests)
 
 ## Dependencies
 

@@ -152,6 +152,21 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .execute();
 
   await database.schema
+    .createTable("world_event_steerings",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("world_id", "text", (col,) => col.notNull().references("worlds.id",).onDelete("cascade",),)
+    .addColumn("timeline_id", "text", (col,) => col.notNull().defaultTo("prime",),)
+    .addColumn("description", "text", (col,) => col.notNull(),)
+    .addColumn("manifest_probability", "real", (col,) => col.notNull().defaultTo(0.5,),)
+    .addColumn("conditions", "text",)
+    .addColumn("may_manifest", "integer", (col,) => col.notNull().defaultTo(1,),)
+    .addColumn("status", "text", (col,) => col.notNull().defaultTo("pending",),)
+    .addColumn("audience_scope", "text",)
+    .addColumn("resolved_at", "text",)
+    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .execute();
+
+  await database.schema
     .createTable("worlds",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
     .addColumn("owner_id", "text", (col,) => col.notNull().references("users.id",),)
@@ -287,12 +302,19 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .on("world_timeline_events",)
     .columns(["world_id", "occurred_at",],)
     .execute();
+
+  await database.schema
+    .createIndex("idx_wes_world_status",)
+    .on("world_event_steerings",)
+    .columns(["world_id", "status",],)
+    .execute();
 }
 /**
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("world_timelines",).execute();
+  await database.schema.dropTable("world_event_steerings",).execute();
   await database.schema.dropTable("world_timeline_events",).execute();
   await database.schema.dropTable("world_states",).execute();
   await database.schema.dropTable("world_members",).execute();
