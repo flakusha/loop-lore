@@ -98,9 +98,9 @@ describe("isHuggingFaceRef", () => {
 });
 
 describe("findBinary", () => {
-  test("exhausts every candidate of a multi-candidate type before returning null", () => {
-    // "llama-cpp" lists two candidates; when neither is on PATH the walk
-    // finishes both loops and resolves to null (same contract as sd-cpp).
+  test("resolves an absolute path or null without throwing", () => {
+    // "llama-cpp" lists two candidates; the walk executes both lookups.
+    // Outcome is host-dependent (binaries present or not) — pin the type either way.
     const result = findBinary("llama-cpp",);
     if (result !== null) {
       expect(result.startsWith("/",),).toBe(true,);
