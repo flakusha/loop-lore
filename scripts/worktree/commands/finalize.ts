@@ -510,7 +510,6 @@ function restoreDevFromStash(
   console.log(`  Your pre-merge work is still on the stash stack as '${stashRef}'.`,);
   console.log(`  When ready: cd ${repoRoot} && git stash pop ${stashRef}`,);
 }
-
 /**
  * Resolve the diff-base ref to pass to `bun run check --diff-base`.
  *
@@ -531,6 +530,62 @@ function restoreDevFromStash(
  *
  * Exported for unit tests; production callers in `runFinalize` invoke it.
  */
+/**
+ * Parse the CLI args for `worktree finalize`.
+ *
+ * Returns a structured object that the finalize() entry point consumes.
+ * Exported for unit testing — production callers in `finalize()` invoke it.
+ *
+ * Validation:
+ * - Unknown merge strategy: error log + process.exit(1) (immediate abort).
+ *   We can't return an error cleanly here because the CLI surface uses
+ *   process.exit directly; tests should mock process.exit if they want
+ *   to exercise this branch.
+ * - --gates and --skip-gates are mutually exclusive: same exit semantics.
+ *
+ * The returned values are forward-compatible with the bun.run check
+ * CLI: `--gates <csv>` / `--skip-gates <csv>` are passed through to
+ * the runner which validates the names itself.
+ */
+export function parseFinalizeArgs(args: string[],): {
+  branch: string;
+  mergeStrategy: string;
+  force: boolean;
+  gatesFilter: string;
+  skipGatesFilter: string;
+} {
+  const nonFlagArgs: string[] = [];
+  let mergeStrategy = "rebase";
+  let force = false;
+  let gatesFilter = "";
+  let skipGatesFilter = "";
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === "--merge-strategy") {
+      mergeStrategy = args[++i];
+    } else if (arg === "--force" || arg === "-f") {
+      force = true;
+    } else if (arg === "--gates") {
+      gatesFilter = args[++i] || "";
+    } else if (arg === "--skip-gates") {
+      skipGatesFilter = args[++i] || "";
+    } else {
+      nonFlagArgs.push(arg,);
+    }
+  }
+  if (gatesFilter && skipGatesFilter) {
+    log("error", "--gates and --skip-gates are mutually exclusive",);
+    process.exit(1,);
+  }
+  return {
+    branch: nonFlagArgs[0] || "",
+    mergeStrategy,
+    force,
+    gatesFilter,
+    skipGatesFilter,
+  };
+}
+
 export function resolveDiffBase(wtPath: string, target: string,): string {
   const mergeBase = gitSyncQuiet(wtPath, "merge-base", target, "HEAD",).trim();
   if (mergeBase.length === 0) {
@@ -543,11 +598,25 @@ export function resolveDiffBase(wtPath: string, target: string,): string {
   return mergeBase;
 }
 
-function runCheck(wtPath: string, diffBase: string,): boolean {
+function runCheck(
+  wtPath: string,
+  diffBase: string,
+  extraCheckArgs: string[] = [],
+): boolean {
   const result = Bun.spawnSync(
-    ["bun", "run", "check", "--diff-base", diffBase,],
+    ["bun", "run", "check", "--diff-base", diffBase, ...extraCheckArgs,],
     { stdout: "pipe", stderr: "pipe", cwd: wtPath, },
   );
+  if (result.exitCode !== 0) {
+    // Surface the runner's stderr so the operator can see WHICH gate
+    // failed (or why, e.g. an unknown --gates name). Without this, a
+    // user passing --gates='lint - eslint' on a failing gate would
+    // just see "Checks failed" with no actionable context.
+    const stderr = result.stderr.toString();
+    if (stderr.length > 0) {
+      process.stderr.write(stderr,);
+    }
+  }
   return result.exitCode === 0;
 }
 
@@ -598,22 +667,12 @@ export async function finalize(
   // the explicit branch arg identifies the target worktree, and loadConfig now
   // resolves repoRoot correctly via --git-common-dir regardless of cwd.
   let branch = "";
-  let mergeStrategy = "rebase";
-  let force = false;
-
-  // Parse args: first positional is branch, rest are flags
-  const nonFlagArgs: string[] = [];
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    if (arg === "--merge-strategy") {
-      mergeStrategy = args[++i];
-    } else if (arg === "--force" || arg === "-f") {
-      force = true;
-    } else {
-      nonFlagArgs.push(arg,);
-    }
-  }
-  branch = nonFlagArgs[0] || "";
+  const parsed = parseFinalizeArgs(args,);
+  branch = parsed.branch;
+  mergeStrategy = parsed.mergeStrategy;
+  force = parsed.force;
+  gatesFilter = parsed.gatesFilter;
+  skipGatesFilter = parsed.skipGatesFilter;
   gripeBranch = branch;
 
   if (!["rebase", "squash", "direct",].includes(mergeStrategy,)) {
@@ -623,7 +682,9 @@ export async function finalize(
 
   if (!branch) {
     log("error", "branch name required",);
-    console.log("  Usage: worktree finalize <branch> [--merge-strategy rebase|squash|direct] [--force]",);
+    console.log(
+      "  Usage: worktree finalize <branch> [--merge-strategy rebase|squash|direct] [--force] [--gates <csv>] [--skip-gates <csv>]",
+    );
     process.exit(1,);
   }
 
@@ -725,11 +786,16 @@ async function runFinalize(
   if (force) {
     log("warn", "Skipped: --force flag set",);
   } else {
-    const hasBunLock = existsSync(resolve(wtPath, "bun.lock",),);
+    const checkArgs: string[] = [];
+    if (gatesFilter) {
+      checkArgs.push("--gates", gatesFilter,);
+    } else if (skipGatesFilter) {
+      checkArgs.push("--skip-gates", skipGatesFilter,);
+    }
     if (hasBunLock) {
       // See resolveDiffBase for why we don't pass targetBranch directly.
       const diffBase = resolveDiffBase(wtPath, targetBranch,);
-      if (runCheck(wtPath, diffBase,)) {
+      if (runCheck(wtPath, diffBase, checkArgs,)) {
         log("success", `Checks passed (diff-base=${diffBase.slice(0, 8,)}…)`,);
       } else {
         log("error", "Checks failed — fix before finalizing (or use --force)",);
