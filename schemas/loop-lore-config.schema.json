@@ -1066,7 +1066,8 @@
               "default": [
                 "'self'",
                 "'unsafe-inline'",
-                "'unsafe-eval'"
+                "'unsafe-eval'",
+                "https://cdn.jsdelivr.net"
               ]
             },
             "styleSrc": {
@@ -1108,6 +1109,16 @@
                 "'self'",
                 "wss:",
                 "https:"
+              ]
+            },
+            "workerSrc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "'self'",
+                "blob:"
               ]
             },
             "objectSrc": {
@@ -1170,7 +1181,7 @@
             "same-origin-allow-popups",
             null
           ],
-          "default": null,
+          "default": "same-origin",
           "description": "COOP; null omits"
         },
         "crossOriginEmbedderPolicy": {
@@ -1180,10 +1191,11 @@
           ],
           "enum": [
             "require-corp",
+            "credentialless",
             null
           ],
-          "default": null,
-          "description": "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB)."
+          "default": "credentialless",
+          "description": "COEP; credentialless keeps no-credential CDN/model loads working while enabling SAB/WASM threads."
         },
         "crossOriginResourcePolicy": {
           "type": [

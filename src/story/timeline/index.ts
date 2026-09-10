@@ -4,6 +4,22 @@
 /**
  * World Timeline — public API (docs/spec/lore.md §5).
  */
+export { getConvergentEvents, } from "./convergence";
+export type { ConvergentEventsOpts, } from "./convergence";
+export {
+  createSteering,
+  listPendingSteerings,
+  resolveSteering,
+  rollSteering,
+  SteeringStatus,
+} from "./event-steering";
+export type {
+  CreateSteeringOpts,
+  ListSteeringsOpts,
+  ResolveSteeringOpts,
+  RollSteeringOpts,
+  SteeringRow,
+} from "./event-steering";
 export {
   appendTimelineEvents,
   getEstablishedHistory,
