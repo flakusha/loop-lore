@@ -14,7 +14,8 @@ import { Type, type Static, type TSchema, } from "@sinclair/typebox";
 
 /**
  * Flat admin-list envelope — `{ data, total, page, pageSize }`.
- * @param item
+ * @param item - TypeBox schema for items in the `data` array
+ * @returns TypeBox object schema for admin paginated responses.
  */
 export const AdminPaginatedEnvelope = <T extends TSchema,>(item: T,) =>
   Type.Object({

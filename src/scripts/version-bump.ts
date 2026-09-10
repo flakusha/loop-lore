@@ -33,7 +33,9 @@ interface Version {
 }
 
 /**
- * @param version
+ * @param version - bare version string like `"1.2.3"` or `"1.2.3-rc.1"`
+ * @returns parsed `Version` object (`major`, `minor`, `patch`, optional `prerelease`).
+ * @throws {Error} when the input does not match `x.y.z[-(...)]`.
  */
 function parseVersion(version: string,): Version {
   const match = /(\d+)\.(\d+)\.(\d+)(?:-(.+))?/.exec(version,);
@@ -47,7 +49,8 @@ function parseVersion(version: string,): Version {
 }
 
 /**
- * @param v
+ * @param v - parsed `Version` object
+ * @returns canonical bare version string (`x.y.z` or `x.y.z-prerelease`).
  */
 function formatVersion(v: Version,): string {
   return v.prerelease
@@ -56,7 +59,8 @@ function formatVersion(v: Version,): string {
 }
 
 /**
- * @param major
+ * @param major - optional major version filter (`undefined` returns latest overall)
+ * @returns latest matching tag string, or `null` if none found / `git` failed.
  */
 function getLatestTag(major?: number,): string | null {
   try {
@@ -74,7 +78,8 @@ function getLatestTag(major?: number,): string | null {
 }
 
 /**
- * @param tag
+ * @param tag - tag name (inclusive lower bound for commit range)
+ * @returns array of commit subject lines; empty array on `git` failure.
  */
 function getCommitsSinceTag(tag: string,): string[] {
   try {
@@ -90,7 +95,8 @@ function getCommitsSinceTag(tag: string,): string[] {
 }
 
 /**
- * @param commits
+ * @param commits - commit subject lines since the last tag
+ * @returns suggested bump (`"major"` for breaking feat/refactor, `"minor"` for feat, `"patch"` for fix), or `null` when no conventional-commit signal.
  */
 function determineBump(commits: string[],): "major" | "minor" | "patch" | null {
   let hasMajor = false;
@@ -119,7 +125,9 @@ function determineBump(commits: string[],): "major" | "minor" | "patch" | null {
   return null;
 }
 
-/** */
+/**
+ * @returns current git branch name (e.g. `"main"`, `"dev"`, `"feature/foo"`).
+ */
 function getCurrentBranch(): string {
   return execSync("git branch --show-current", { encoding: "utf-8", },).trim();
 }
@@ -139,7 +147,7 @@ function getPackageJsonVersion(): string {
 }
 
 /**
- * @param version
+ * @param version - new version string to write to `package.json`
  */
 function setPackageJsonVersion(version: string,): void {
   const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
@@ -147,7 +155,9 @@ function setPackageJsonVersion(version: string,): void {
 }
 
 // Get version from latest tag (source of truth)
-/** */
+/**
+ * @returns bare version string from the latest matching tag, or `"0.0.0"` when no tag exists.
+ */
 function getTagVersion(): string {
   const latestTag = getLatestTag();
   if (latestTag) {
@@ -157,7 +167,10 @@ function getTagVersion(): string {
 }
 
 // Predict next version based on commits since latest tag
-/** */
+/**
+ * Predict the next version based on conventional-commit signals since the latest tag.
+ * @returns bare version string; feature branches get `x.y.z-dev.YYYYMMDD.sha` dev suffix.
+ */
 function predictVersion(): string {
   const latestTag = getLatestTag();
   const commits = getCommitsSinceTag(latestTag || "",);
@@ -200,8 +213,9 @@ function predictVersion(): string {
 
 // Bump version: update package.json; create tag ONLY with explicit --tag flag
 /**
- * @param bumpType
- * @param shouldTag
+ * @param bumpType - bump level (`"major"` | `"minor"` | `"patch"`)
+ * @param shouldTag - whether to create + push an annotated git tag (`--tag` flag)
+ * @returns the new version string written to `package.json`.
  */
 function bumpVersion(bumpType: "major" | "minor" | "patch", shouldTag: boolean,): string {
   const latestTag = getLatestTag();

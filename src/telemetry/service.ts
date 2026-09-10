@@ -29,10 +29,8 @@ import { loadTelemetryConfig, } from "./config";
 const config = loadTelemetryConfig();
 
 /**
- * PII-safe stable id: SHA-256, truncated to 12 hex chars — enough to
- * correlate per-entity event flows without storing raw user/chat/session ids
- * (BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids).
- * @param id
+ * @param id - candidate identifier
+ * @returns truncated SHA-256 hex (`null` for empty input, never the raw id).
  */
 export function hashId(id?: string | null,): string | null {
   if (!id) { return null; }
@@ -106,17 +104,23 @@ export async function record(
   }
 }
 
-/** */
+/**
+ * @returns `true` when the events sink is enabled.
+ */
 export function isTelemetryEnabled(): boolean {
   return config.eventsEnabled;
 }
 
-/** */
+/**
+ * @returns `true` when frontend telemetry is enabled.
+ */
 export function isFrontendTelemetryEnabled(): boolean {
   return config.frontendEnabled;
 }
 
-/** */
+/**
+ * @returns retention window in days.
+ */
 export function getRetentionDays(): number {
   return config.retentionDays;
 }

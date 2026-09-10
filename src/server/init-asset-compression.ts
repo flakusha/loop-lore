@@ -40,8 +40,9 @@ export async function initAssetCompression(logger: Logger,): Promise<void> {
 
   // Helper: check if source is newer than destination
   /**
-   * @param srcDir
-   * @param destDir
+   * @param srcDir - source directory path
+   * @param destDir - destination directory path
+   * @returns `true` when the destination is missing or any source file has a newer mtime than its destination counterpart.
    */
   function needsCompression(srcDir: string, destDir: string,): boolean {
     if (!existsSync(destDir,)) { return true; }

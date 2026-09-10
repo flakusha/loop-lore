@@ -177,7 +177,11 @@ export async function decryptWithMessageKey(keyBytes: Uint8Array, payload: DhMes
 }
 
 /**
- * @param jwk
+ * Compute the canonical JSON-string representation of a JWK (object keys sorted
+ * in lexicographic order), used as the canonical form for hashing/signing.
+ * @param jwk - WebCrypto `JsonWebKey`
+ * @returns stable JSON string with sorted top-level keys.
+ * @throws {Error} when JSON serialization fails.
  */
 export function canonicalJwk(jwk: JsonWebKey,): string {
   const src = jwk as Record<string, unknown>;
