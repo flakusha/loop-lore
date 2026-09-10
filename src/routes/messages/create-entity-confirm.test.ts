@@ -380,4 +380,226 @@ describe("POST /api/chats/:id/create-entity", () => {
     );
     expect(res.status,).toBe(403,);
   });
+
+  // ── Lore persistence ─────────────────────────────────────────
+
+  test("creates character with structured lore entries in actor_lore_entries", async () => {
+    const chatId = await createChatWithUser();
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "character",
+          data: {
+            name: "LoreKEEPER",
+            description: "A keeper of ancient knowledge",
+            lore: [
+              {
+                name: "Ancient Secret",
+                content: "The keeper knows the location of the lost city.",
+                keys: ["lost", "city",],
+                subject: { kind: "race", race: "elf", },
+                constant: false,
+                selective: true,
+                position: "before_char",
+                insertion_order: 0,
+                priority: 1,
+                cooldown_seconds: 0,
+              },
+              {
+                name: "Silent Oath",
+                content: "Bound by a oath never to speak the old tongue.",
+                keys: ["oath", "tongue",],
+                constant: true,
+                selective: false,
+                position: "after_char",
+              },
+            ],
+          },
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const body = await res.json();
+    expect(body.kind,).toBe("character",);
+
+    // Verify lore entries persisted in actor_lore_entries
+    const loreEntries = await db
+      .selectFrom("actor_lore_entries",)
+      .selectAll()
+      .where("actor_id", "=", body.id,)
+      .execute();
+    expect(loreEntries,).toHaveLength(2,);
+    expect(loreEntries[0]!.name,).toBe("Ancient Secret",);
+    expect(loreEntries[0]!.content,).toBe("The keeper knows the location of the lost city.",);
+    expect(loreEntries[0]!.keys,).toBe(JSON.stringify(["lost", "city",],),);
+    expect(loreEntries[0]!.constant,).toBe(0,);
+    expect(loreEntries[0]!.selective,).toBe(1,);
+    expect(loreEntries[0]!.position,).toBe("before_char",);
+    expect(loreEntries[0]!.priority,).toBe(1,);
+    expect(loreEntries[0]!.enabled,).toBe("enabled",);
+    expect(loreEntries[0]!.insertion_order,).toBe(0,);
+    expect(loreEntries[0]!.cooldown_seconds,).toBe(0,);
+    expect(loreEntries[0]!.audience_scope,).not.toBeNull();
+
+    const scope = JSON.parse(loreEntries[0]!.audience_scope!,);
+    expect(scope.subject.kind,).toBe("race",);
+    expect(scope.subject.race,).toBe("elf",);
+    expect(scope.requires_presence,).toBeUndefined();
+
+    // Second entry is constant
+    expect(loreEntries[1]!.name,).toBe("Silent Oath",);
+    expect(loreEntries[1]!.constant,).toBe(1,);
+    expect(loreEntries[1]!.selective,).toBe(0,);
+    expect(loreEntries[1]!.position,).toBe("after_char",);
+    expect(loreEntries[1]!.audience_scope,).toBeNull();
+  });
+
+  test("creates world with lore entries in world_lore_entries", async () => {
+    const chatId = await createChatWithUser();
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "world",
+          data: {
+            name: "Golarion",
+            description: "A fantasy world",
+            lore: [
+              {
+                name: "The Starfall",
+                content: "A meteor crashed here centuries ago.",
+                keys: ["meteor", "star",],
+                subject: { kind: "world", },
+                constant: true,
+                selective: false,
+                position: "before_char",
+              },
+            ],
+          },
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const body = await res.json();
+
+    // Verify lore persisted in world_lore_entries
+    const loreEntries = await db
+      .selectFrom("world_lore_entries",)
+      .selectAll()
+      .where("world_id", "=", body.id,)
+      .execute();
+    expect(loreEntries,).toHaveLength(1,);
+    expect(loreEntries[0]!.name,).toBe("The Starfall",);
+    expect(loreEntries[0]!.content,).toBe("A meteor crashed here centuries ago.",);
+    expect(loreEntries[0]!.constant,).toBe(1,);
+    expect(loreEntries[0]!.selective,).toBe(0,);
+    expect(loreEntries[0]!.position,).toBe("before_char",);
+  });
+
+  test("creates location with lore entries in world_lore_entries", async () => {
+    const chatId = await createChatWithUser();
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "location",
+          data: {
+            name: "Sunken Bridge",
+            description: "An ancient bridge",
+            lore: [
+              {
+                name: "Bridge Legend",
+                content: "Built by drowned spirits.",
+                keys: ["drowned",],
+                selective: true,
+                position: "before_char",
+              },
+            ],
+          },
+          worldId,
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+
+    // Verify lore persisted in world_lore_entries with world_id = worldId
+    const loreEntries = await db
+      .selectFrom("world_lore_entries",)
+      .selectAll()
+      .where("world_id", "=", worldId,)
+      .execute();
+    expect(loreEntries,).toHaveLength(1,);
+    expect(loreEntries[0]!.name,).toBe("Bridge Legend",);
+    // Location lore gets requires_presence = true by default
+    const scope = JSON.parse(loreEntries[0]!.audience_scope!,);
+    expect(scope.requires_presence,).toBe(true,);
+  });
+
+  test("creates item with lore entries in world_lore_entries", async () => {
+    const chatId = await createChatWithUser();
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "item",
+          data: {
+            name: "Whisperwind Pendant",
+            description: "A magical pendant",
+            lore: [
+              {
+                name: "The Bard's Tale",
+                content: "Forged by a silenced bard.",
+                keys: ["bard",],
+                subject: { kind: "race", race: "human", },
+                requires_presence: true,
+              },
+            ],
+          },
+          worldId,
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+
+    const loreEntries = await db
+      .selectFrom("world_lore_entries",)
+      .selectAll()
+      .where("name", "=", "The Bard's Tale",)
+      .execute();
+    expect(loreEntries,).toHaveLength(1,);
+    expect(loreEntries[0]!.name,).toBe("The Bard's Tale",);
+  });
+
+  test("creates entity without lore when lore is absent", async () => {
+    const chatId = await createChatWithUser();
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "character",
+          data: { name: "Simple", description: "No lore here", },
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const body = await res.json();
+
+    const loreEntries = await db
+      .selectFrom("actor_lore_entries",)
+      .select("id",)
+      .where("actor_id", "=", body.id,)
+      .execute();
+    expect(loreEntries,).toHaveLength(0,);
+  });
 });
