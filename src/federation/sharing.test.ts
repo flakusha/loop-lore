@@ -8,20 +8,17 @@ import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { pskCipher, } from "./cipher";
 import { upsertPeer, } from "./coordinator";
+import { pushEnvelope, receiveDelivery, } from "./delivery";
+import { resolveDuplicationPolicy, selectDuplicationTargets, } from "./duplication";
 import { createMeshEncryption, } from "./encryption";
 import { type ContentEnvelope, openEnvelope, sealContent, } from "./envelope";
+import { fanOutContent, requestReservation, } from "./fan-out";
 import type { PeerPost, } from "./peer-fetch";
 import {
   advanceReservation,
   createInboundReservation,
-  fanOutContent,
   outstandingBytes,
-  pushEnvelope,
-  receiveDelivery,
   releaseReservation,
-  requestReservation,
-  resolveDuplicationPolicy,
-  selectDuplicationTargets,
   sweepExpiredReservations,
 } from "./sharing";
 const SECRET = "mesh-test-psk";
