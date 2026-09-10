@@ -116,3 +116,144 @@ describe("worldRoutes — lore persistence (BUG-world-lore-silently-stripped)", 
     expect(world.lore,).toBeNull();
   });
 });
+
+describe("worldRoutes — RPG opt-in flags", () => {
+  let db: Kysely<DB>;
+  let sqlite: TestDb["sqlite"];
+  let ownerId: string;
+
+  beforeAll(async () => {
+    ({ db, sqlite, } = await createTestDb());
+    ownerId = uid();
+    await insertUsers(db, "rpg-owner", "Rpg Owner", { id: ownerId, } as never,);
+    await insertActors(db, ownerId, {
+      id: ownerId,
+      actor_type: "user",
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "none",
+      settings: "{}",
+      format_version: 0,
+    } as never,);
+  },);
+
+  afterAll(async () => {
+    await sqlite.close();
+  },);
+
+  type Flags = {
+    rpg_enabled: number;
+    rpg_dice: number;
+    rpg_checks: number;
+    rpg_combat: number;
+    rpg_xp: number;
+    rpg_loot: number;
+    rpg_quests: number;
+  };
+
+  /**
+   * @param id
+   */
+  async function readFlags(app: Elysia, id: string,): Promise<Flags> {
+    const got = await app.handle(new Request(`${BASE}/api/worlds/${id}`,),);
+    expect(got.status,).toBe(200,);
+    const world = (await got.json()) as Flags;
+    const { rpg_enabled, rpg_dice, rpg_checks, rpg_combat, rpg_xp, rpg_loot, rpg_quests, } = world;
+    return { rpg_enabled, rpg_dice, rpg_checks, rpg_combat, rpg_xp, rpg_loot, rpg_quests, };
+  }
+
+  test("create without flags leaves every mechanic off", async () => {
+    const app = appWithAuth(db, ownerId, "user",);
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Plain World", },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const { id, } = (await res.json()) as { id: string };
+    expect(await readFlags(app, id,),).toEqual({
+      rpg_enabled: 0,
+      rpg_dice: 0,
+      rpg_checks: 0,
+      rpg_combat: 0,
+      rpg_xp: 0,
+      rpg_loot: 0,
+      rpg_quests: 0,
+    },);
+  });
+
+  test("create with rpgEnabled arms every mechanic", async () => {
+    const app = appWithAuth(db, ownerId, "user",);
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Rpg World", rpgEnabled: true, },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const { id, } = (await res.json()) as { id: string };
+    expect(await readFlags(app, id,),).toEqual({
+      rpg_enabled: 1,
+      rpg_dice: 1,
+      rpg_checks: 1,
+      rpg_combat: 1,
+      rpg_xp: 1,
+      rpg_loot: 1,
+      rpg_quests: 1,
+    },);
+  });
+
+  test("update can enable RPG and opt one mechanic back out", async () => {
+    const app = appWithAuth(db, ownerId, "user",);
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Mixed World", },),
+      },),
+    );
+    const { id, } = (await res.json()) as { id: string };
+    const upd = await app.handle(
+      new Request(`${BASE}/api/worlds/${id}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ rpgEnabled: 1, rpgCombat: false, },),
+      },),
+    );
+    expect(upd.status,).toBe(200,);
+    expect(await readFlags(app, id,),).toEqual({
+      rpg_enabled: 1,
+      rpg_dice: 1,
+      rpg_checks: 1,
+      rpg_combat: 0,
+      rpg_xp: 1,
+      rpg_loot: 1,
+      rpg_quests: 1,
+    },);
+  });
+
+  test("update can disarm RPG entirely", async () => {
+    const app = appWithAuth(db, ownerId, "user",);
+    const res = await app.handle(
+      new Request(`${BASE}/api/worlds`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ name: "Off World", rpgEnabled: true, },),
+      },),
+    );
+    const { id, } = (await res.json()) as { id: string };
+    const upd = await app.handle(
+      new Request(`${BASE}/api/worlds/${id}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ rpgEnabled: false, },),
+      },),
+    );
+    expect(upd.status,).toBe(200,);
+    const flags = await readFlags(app, id,);
+    expect(Object.values(flags,).every((v,) => v === 0),).toBe(true,);
+  });
+});

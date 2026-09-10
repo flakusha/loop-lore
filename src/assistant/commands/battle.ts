@@ -23,6 +23,7 @@ import {
   getActiveBattle,
   startBattle,
 } from "../../rpg/service/battles";
+import { checkCommandMechanic, RpgMechanic, } from "../../rpg/service/world-gate";
 import {
   CombatAlignment,
   findCombatant,
@@ -40,6 +41,9 @@ registerCommand("battle", async (args, ctx,): Promise<CommandResult> => {
   if (!userId) {
     return { systemMessage: "**Battle unavailable:** missing user context.", handled: true, };
   }
+
+  const denial = await checkCommandMechanic(db, ctx.activeChat?.worldId, RpgMechanic.Combat,);
+  if (denial) { return { systemMessage: denial, handled: true, }; }
 
   const sub = (args[0] ?? "").toLowerCase();
 

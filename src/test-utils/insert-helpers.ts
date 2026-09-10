@@ -761,6 +761,12 @@ export async function insertWorlds(
     rpg_enabled?: number;
     data_version?: number;
     record_hash?: string;
+    rpg_dice?: number;
+    rpg_checks?: number;
+    rpg_combat?: number;
+    rpg_xp?: number;
+    rpg_loot?: number;
+    rpg_quests?: number;
   },
 ): Promise<void> {
   await db.insertInto("worlds",).values({
