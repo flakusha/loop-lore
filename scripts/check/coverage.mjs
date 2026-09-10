@@ -112,7 +112,7 @@ const WAIVERS = {
   "services": { floor: 65, reason: "trade/index + external-server-utils + server-external-manager lifted in test-coverage worktree; remaining gaps are RPC-style service wrappers exercised by routes/* integration tests", },
   // Gate pass: src/plugins/ is the plugin loader/registry; runtime-only
   // resolution exercised via app boot and integration tests.
-  "plugins": { floor: 50, reason: "plugin registry / runtime resolver; exercised via app boot integration paths", },
+  "plugins": { floor: 65, reason: "src/plugins/* lifted to 100% in test-coverage worktree (loader + registry + helpers); aggregate includes bundled plugins/core/* and plugins/community/* runtime modules covered by e2e", },
   // Gate pass: src/personas/ is dominated by UI-side Alpine stores and
   // upload/delete-cascade flows that are integration-tested in
   // tests/e2e/personas.*. Unit-test paths cover the data layer only.
