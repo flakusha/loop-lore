@@ -69,6 +69,7 @@ describe("normalizeTag", () => {
     expect(normalizeTag("  Cozy  Tavern  ",),).toBe("cozy tavern",);
     expect(normalizeTag("ALREADY-LOWERCASE",),).toBe("already-lowercase",);
     expect(normalizeTag("a\tb\n c",),).toBe("a b c",);
+    expect(normalizeTag("   ",),).toBe("",);
   });
 });
 
@@ -103,10 +104,37 @@ describe("add + list + remove (scope isolation)", () => {
     const assetId = await seedAsset();
     const first = await addAssetTag({ database: db, assetId, tag: "Dup", scope: "user", ownerId: viewerId, },);
     const second = await addAssetTag({ database: db, assetId, tag: "dup", scope: "user", ownerId: viewerId, },);
-    expect(second.id,).toBe(first.id,);
+    expect(first,).not.toBeNull();
+    expect(second?.id,).toBe(first?.id,);
 
     await removeAssetTag(db, assetId, "dup", "user", viewerId,);
     expect(await listAssetTags(db, assetId, viewerId,),).toEqual([],);
+  });
+});
+
+describe("empty-tag rejection", () => {
+  test("addAssetTag returns null for whitespace-only tag; no row created", async () => {
+    const assetId = await seedAsset();
+    expect(
+      await addAssetTag({ database: db, assetId, tag: "  \t ", scope: "user", ownerId: viewerId, },),
+    ).toBeNull();
+    expect(await listAssetTags(db, assetId, viewerId,),).toEqual([],);
+  });
+
+  test("renameAssetTag returns null for whitespace-only newTag; original kept", async () => {
+    const assetId = await seedAsset();
+    await addAssetTag({ database: db, assetId, tag: "old", scope: "user", ownerId: viewerId, },);
+    expect(
+      await renameAssetTag({
+        database: db,
+        assetId,
+        oldTag: "old",
+        newTag: "   ",
+        scope: "user",
+        ownerId: viewerId,
+      },),
+    ).toBeNull();
+    expect((await listAssetTags(db, assetId, viewerId,)).map((t,) => t.tag),).toEqual(["old",],);
   });
 });
 

@@ -27,26 +27,26 @@ export const AssetTagRecordSchema = t.Object({
 
 /** Body for adding a tag: `POST /api/assets/:id/tags`. */
 export const AddAssetTagBody = t.Object({
-  tag: t.String({ minLength: 1, maxLength: 64, },),
+  tag: t.String({ minLength: 1, maxLength: 64, pattern: "\\S", },),
   scope: AssetTagScopeSchema,
 },);
 
 /** Body for removing a tag: `DELETE /api/assets/:id/tags`. */
 export const RemoveAssetTagBody = t.Object({
-  tag: t.String({ minLength: 1, maxLength: 64, },),
+  tag: t.String({ minLength: 1, maxLength: 64, pattern: "\\S", },),
   scope: AssetTagScopeSchema,
 },);
 
 /** Body for renaming a tag: `POST /api/assets/:id/tags/rename`. */
 export const RenameAssetTagBody = t.Object({
-  oldTag: t.String({ minLength: 1, maxLength: 64, },),
-  newTag: t.String({ minLength: 1, maxLength: 64, },),
+  oldTag: t.String({ minLength: 1, maxLength: 64, pattern: "\\S", },),
+  newTag: t.String({ minLength: 1, maxLength: 64, pattern: "\\S", },),
   scope: AssetTagScopeSchema,
 },);
 
 /** Body for dismissing a proposed tag: `DELETE /api/assets/:id/tag-propositions`. */
 export const DismissTagPropositionBody = t.Object({
-  tag: t.String({ minLength: 1, maxLength: 64, },),
+  tag: t.String({ minLength: 1, maxLength: 64, pattern: "\\S", },),
 },);
 
 /** One proposed tag. */
