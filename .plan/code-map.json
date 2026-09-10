@@ -755,6 +755,18 @@
       "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md"
     }
   ],
+  "src/assets/service/tag-propositions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    }
+  ],
+  "src/assets/service/tags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    }
+  ],
   "src/assistant": [
     {
       "kind": "ticket",
@@ -8615,6 +8627,12 @@
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
+  "src/db/migrations/005_asset_tags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    }
+  ],
   "src/db/migrations/005_utility_tables.ts": [
     {
       "kind": "ticket",
@@ -12311,6 +12329,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-archival-workflow.md"
+    }
+  ],
+  "src/frontend/asset-preview-tags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
     }
   ],
   "src/frontend/asset-preview.test.ts": [
@@ -26685,6 +26709,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md"
+    }
+  ],
+  "src/validation/schemas/asset-tags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
     }
   ],
   "src/validation/schemas/chat.ts": [
