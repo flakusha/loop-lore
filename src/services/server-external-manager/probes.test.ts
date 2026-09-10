@@ -32,7 +32,7 @@ async function reservePort(): Promise<number> {
   return port;
 }
 
-function boundPort(server: { port: number | undefined, },): number {
+function boundPort(server: { port: number | undefined },): number {
   if (server.port === undefined) { throw new Error("boundPort: server has no port",); }
   return server.port;
 }
