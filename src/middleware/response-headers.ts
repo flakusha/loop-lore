@@ -284,6 +284,7 @@ export class ResponseHeaderPolicy {
     push("img-src", c.imgSrc,);
     push("font-src", c.fontSrc,);
     push("connect-src", c.connectSrc,);
+    push("worker-src", c.workerSrc,);
     push("object-src", c.objectSrc,);
     push("base-uri", c.baseUri,);
     push("frame-ancestors", c.frameAncestors,);

@@ -22,8 +22,8 @@
 
 /** Minimal wllama surface used here (dynamic `import(cdn)`). */
 interface WllamaInstance {
-  loadModelFromHF(
-    source: { repo: string; file: string },
+  loadModelFromUrl(
+    url: string,
     params?: Record<string, unknown>,
   ): Promise<void>;
   createChatCompletion(
@@ -129,7 +129,10 @@ async function loadModel(request: LoadRequest,): Promise<string> {
         { default: request.wasmUrl, },
         { logger: module.LoggerWithoutDebug, },
       );
-      await instance.loadModelFromHF(request.modelSource, {
+      // Direct resolve URL: loadModelFromHF hits the HF API, which rejects
+      // anonymous callers (401). Same bytes, no API round-trip.
+      const directUrl = `https://huggingface.co/${request.modelSource.repo}/resolve/main/${request.modelSource.file}`;
+      await instance.loadModelFromUrl(directUrl, {
         // Default params offload to WebGPU when available; zero layers
         // forces the CPU/WASM path (mirrors the transformers worker loop).
         ...(device === "wasm" ? { n_gpu_layers: 0, } : {}),
