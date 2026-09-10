@@ -16,7 +16,7 @@
  * under test:coverage.
  */
 import { afterAll, describe, expect, test, } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync, chmodSync, } from "node:fs";
+import { chmodSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { fileURLToPath, } from "node:url";
@@ -178,7 +178,12 @@ interface ChildEnv {
   stub?: string;
 }
 
-async function runScenario(helperPath: string, modPath: string, scenario: string, env: ChildEnv,): Promise<Record<string, unknown>> {
+async function runScenario(
+  helperPath: string,
+  modPath: string,
+  scenario: string,
+  env: ChildEnv,
+): Promise<Record<string, unknown>> {
   const proc = Bun.spawn([process.execPath, helperPath, scenario,], {
     env: {
       ...process.env,
@@ -202,11 +207,11 @@ async function runScenario(helperPath: string, modPath: string, scenario: string
   }
 }
 
-function makeStubDir(names: string[]): { dir: string; cleanup: () => void } {
+function makeStubDir(names: string[],): { dir: string; cleanup: () => void } {
   const dir = mkdtempSync(join(tmpdir(), "llama-stub-",),);
   for (const name of names) {
     const stubPath = join(dir, name,);
-    writeFileSync(stubPath, `#!/bin/sh\necho "$@" > "${join(dir, `${name}.args`,)}"\nexec sleep 30\n`);
+    writeFileSync(stubPath, `#!/bin/sh\necho "$@" > "${join(dir, `${name}.args`,)}"\nexec sleep 30\n`,);
     chmodSync(stubPath, 0o755,);
   }
   return {
@@ -231,14 +236,14 @@ describe("start-llama child harness", () => {
     const result = await runScenario(helperPath, modPath, "llama-missing", { path: "/usr/bin:/bin", },);
     expect(result.null,).toBe(true,);
     expect(result.count,).toBe(0,);
-    expect((result.warns as string[]).some((m,) => m.includes("not found in PATH"),),).toBe(true,);
+    expect((result.warns as string[]).some((m,) => m.includes("not found in PATH",)),).toBe(true,);
   }, 15000,);
 
   test("swap-missing: null + warn with no binary on PATH", async () => {
     const result = await runScenario(helperPath, modPath, "swap-missing", { path: "/usr/bin:/bin", },);
     expect(result.null,).toBe(true,);
     expect(result.count,).toBe(0,);
-    expect((result.warns as string[]).some((m,) => m.includes("not found in PATH"),),).toBe(true,);
+    expect((result.warns as string[]).some((m,) => m.includes("not found in PATH",)),).toBe(true,);
   }, 15000,);
 
   test("llama-busy: null + warn when the port is occupied", async () => {
@@ -250,7 +255,7 @@ describe("start-llama child harness", () => {
       },);
       expect(result.null,).toBe(true,);
       expect(result.count,).toBe(0,);
-      expect((result.warns as string[]).some((m,) => m.includes("Port in use"),),).toBe(true,);
+      expect((result.warns as string[]).some((m,) => m.includes("Port in use",)),).toBe(true,);
     } finally {
       stub.cleanup();
     }
@@ -267,44 +272,46 @@ describe("start-llama child harness", () => {
       expect(result.type,).toBe("llama-cpp",);
       expect(result.count,).toBe(1,);
       const argv = result.argv as string;
-      for (const flag of [
-        "-hf",
-        "user/repo:file",
-        "--alias",
-        "test-model",
-        "--ctx-size",
-        "4096",
-        "-t",
-        "--gpu-layers",
-        "all",
-        "--device",
-        "--mlock",
-        "-ctk",
-        "-ctv",
-        "-ctkd",
-        "-ctvd",
-        "--cache-ram",
-        "-fa",
-        "--swa-full",
-        "--rope-scaling",
-        "--rope-scale",
-        "--temp",
-        "--top-k",
-        "--top-p",
-        "--min-p",
-        "--repeat-penalty",
-        "-np",
-        "--fit",
-        "--spec-type",
-        "--spec-draft-n-min",
-        "--spec-draft-n-max",
-        "--reasoning-budget",
-        "--no-jinja",
-        "--foo",
-        "bar",
-        "--no-ui",
-        "--port",
-      ]) {
+      for (
+        const flag of [
+          "-hf",
+          "user/repo:file",
+          "--alias",
+          "test-model",
+          "--ctx-size",
+          "4096",
+          "-t",
+          "--gpu-layers",
+          "all",
+          "--device",
+          "--mlock",
+          "-ctk",
+          "-ctv",
+          "-ctkd",
+          "-ctvd",
+          "--cache-ram",
+          "-fa",
+          "--swa-full",
+          "--rope-scaling",
+          "--rope-scale",
+          "--temp",
+          "--top-k",
+          "--top-p",
+          "--min-p",
+          "--repeat-penalty",
+          "-np",
+          "--fit",
+          "--spec-type",
+          "--spec-draft-n-min",
+          "--spec-draft-n-max",
+          "--reasoning-budget",
+          "--no-jinja",
+          "--foo",
+          "bar",
+          "--no-ui",
+          "--port",
+        ]
+      ) {
         expect(argv.includes(flag,),).toBe(true,);
       }
     } finally {
@@ -351,4 +358,4 @@ describe("start-llama child harness", () => {
       stub.cleanup();
     }
   }, 15000,);
-},);
+});
