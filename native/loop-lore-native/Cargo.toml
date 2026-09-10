@@ -18,9 +18,11 @@ zstd = { version = "0.13", optional = true }
 
 # ── Features ─────────────────────────────────────────────────────
 [features]
-default = ["blake3", "zstd"]
+default = ["blake3", "zstd", "gguf"]
 blake3 = ["dep:blake3"]
 zstd = ["dep:zstd"]
+# gguf probe is dependency-free (pure std parsing), always safe to include.
+gguf = []
 
 # ── Lints (mirror the repo's strict TS hygiene: clippy all+pedantic, docs) ──
 [lints.rust]
