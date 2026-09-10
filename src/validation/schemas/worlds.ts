@@ -10,6 +10,9 @@ import { Id, Name, WorldKindSchema, WorldVisibilitySchema, } from "./primitives"
 
 // ── World routes ───────────────────────────────────────────
 
+/** Opt-in flag: boolean or 0/1 (normalized to 0/1 by the handler). */
+const Flag = t.Union([t.Boolean(), t.Integer({ minimum: 0, maximum: 1, },),],);
+
 export const WorldCreateBody = t.Object({
   name: Name,
   description: t.Optional(t.String(),),
@@ -17,6 +20,13 @@ export const WorldCreateBody = t.Object({
   locationCount: t.Optional(t.Numeric({ minimum: 0, },),),
   kind: t.Optional(WorldKindSchema,),
   visibility: t.Optional(WorldVisibilitySchema,),
+  rpgEnabled: t.Optional(Flag,),
+  rpgDice: t.Optional(Flag,),
+  rpgChecks: t.Optional(Flag,),
+  rpgCombat: t.Optional(Flag,),
+  rpgXp: t.Optional(Flag,),
+  rpgLoot: t.Optional(Flag,),
+  rpgQuests: t.Optional(Flag,),
 },);
 
 export const WorldUpdateBody = t.Object({
@@ -25,6 +35,13 @@ export const WorldUpdateBody = t.Object({
   lore: t.Optional(t.String(),),
   kind: t.Optional(WorldKindSchema,),
   visibility: t.Optional(WorldVisibilitySchema,),
+  rpgEnabled: t.Optional(Flag,),
+  rpgDice: t.Optional(Flag,),
+  rpgChecks: t.Optional(Flag,),
+  rpgCombat: t.Optional(Flag,),
+  rpgXp: t.Optional(Flag,),
+  rpgLoot: t.Optional(Flag,),
+  rpgQuests: t.Optional(Flag,),
 },);
 
 export const WorldIdParams = t.Object({

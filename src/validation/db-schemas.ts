@@ -762,6 +762,12 @@ export const WorldsSchema = t.Object({
   rpg_enabled: t.Optional(t.Number(),),
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
+  rpg_dice: t.Optional(t.Number(),),
+  rpg_checks: t.Optional(t.Number(),),
+  rpg_combat: t.Optional(t.Number(),),
+  rpg_xp: t.Optional(t.Number(),),
+  rpg_loot: t.Optional(t.Number(),),
+  rpg_quests: t.Optional(t.Number(),),
 },);
 
 // ── activitypub_actor_keys ────────────────────────────────────────────
