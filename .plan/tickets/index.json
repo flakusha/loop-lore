@@ -12003,6 +12003,17 @@
     "status": "done",
     "git_issue": "90f0396"
   },
+  "TASK-CONTEXT-INJECTION-DEDUP": {
+    "hash": "pending",
+    "extid": "TASK-CONTEXT-INJECTION-DEDUP",
+    "type": "TASK",
+    "title": "Single-assembly dedup across carriage, notes, quests, memory injection",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-hidden-carriage-context.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-context-injection-dedup.md"
+  },
   "TASK-CONTEXT-WINDOW-MONITOR": {
     "hash": "pending",
     "extid": "TASK-CONTEXT-WINDOW-MONITOR",
@@ -20855,6 +20866,28 @@
     "tags": [],
     "source": ".plan/tickets/TASK-settings-patch-uses-t-any-body-allowing-mass-assignment.md",
     "git_issue": "ef55dc7"
+  },
+  "TASK-SHADOW-CONTEXT-ISOLATION": {
+    "hash": "pending",
+    "extid": "TASK-SHADOW-CONTEXT-ISOLATION",
+    "type": "TASK",
+    "title": "Shadow context isolation — no cross-system leaks",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-hidden-carriage-context.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-shadow-context-isolation.md"
+  },
+  "TASK-SHADOW-VISIBILITY-DEBUG-ASSISTANT": {
+    "hash": "pending",
+    "extid": "TASK-SHADOW-VISIBILITY-DEBUG-ASSISTANT",
+    "type": "TASK",
+    "title": "Relaxed shadow visibility for debug and assistant flows",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-hidden-carriage-context.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-shadow-visibility-debug-assistant.md"
   },
   "TASK-SHARED-SCHEMAS": {
     "hash": "754a395",
