@@ -9693,6 +9693,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-whitenotes.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-shadow-context-isolation.md"
     }
   ],
   "src/db/schema-housing.ts": [
@@ -16535,6 +16539,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/IDEA-memory-knowledge-isolation-and-world-timeline.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-injection-dedup.md"
     }
   ],
   "src/memory/embeddings.ts": [
@@ -16585,6 +16593,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-crafting-professions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-context-injection-dedup.md"
     },
     {
       "kind": "ticket",
