@@ -9,7 +9,14 @@
  * @module alpine/model-storage-idb
  */
 
-import { type ModelByteStore, type StoredModel, summarizeRecords, sumUsage, } from "./model-storage";
+import {
+  createMemoryStore,
+  isIndexedDBAvailable,
+  type ModelByteStore,
+  type StoredModel,
+  summarizeRecords,
+  sumUsage,
+} from "./model-storage";
 
 const DB_NAME = "loop-lore-models";
 const STORE_NAME = "models";
@@ -137,4 +144,15 @@ function requestToPromise<T,>(request: IDBRequestLike<T>,): Promise<T> {
   request.onsuccess = (event,) => resolve(event.target.result,);
   request.onerror = (event,) => reject(request.error ?? event,);
   return promise;
+}
+
+let defaultStore: ModelByteStore | null = null;
+
+/**
+ * Shared default byte store for the live component.
+ * @returns IndexedDB-backed store when available, memory store otherwise.
+ */
+export function defaultModelStore(): ModelByteStore {
+  defaultStore ??= isIndexedDBAvailable() ? createIndexedDBStore() : createMemoryStore();
+  return defaultStore;
 }
