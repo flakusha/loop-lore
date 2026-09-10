@@ -125,7 +125,8 @@ export function appendLedger(
     // Never create the directory as a side effect: commands probing a
     // foreign repo (e.g. `abort --dry-run`) resolve treeDir inside it,
     // and mkdir would mutate the very tree dry-run promises to spare.
-    // On a real host treeDir always exists (it holds the worktrees).
+    // Tradeoff: where treeDir does not exist yet, the run goes unlogged
+    // (best-effort ledger; e.g. the first `new` on a fresh host).
     if (!existsSync(treeDir,)) { return; }
     const base = defaultMessage(cmd, args,);
     const msg = truncateMsg(said ? `${base} :: ${said}` : base,);
