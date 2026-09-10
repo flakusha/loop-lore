@@ -194,7 +194,11 @@ export async function runCreateGeneration(
   } catch (error) {
     // Provider error text can carry prompt fragments or backend internals.
     // Keep the chat-visible message generic; log the detail server-side.
-    getLog().error("create generation failure", { kind, error, },);
+    getLog().error(
+      "create generation failure",
+      error instanceof Error ? error : undefined,
+      { kind, },
+    );
     return {
       systemMessage: `**${KIND_LABELS[kind]} creation failed.** Nothing was saved — retry in a moment.`,
       handled: true,
