@@ -3,7 +3,7 @@
 
 # TASK: Finalize must gate the post-rebase tree (check runs before merge)
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Priority:** high
 **Effort:** Medium
 
@@ -34,3 +34,20 @@ Two mechanisms are consistent (both mean the merged tree was never gated): (a) f
 - `scripts/worktree/commands/finalize.ts` — Step 2 check before Step 5 rebase/merge
 - `scripts/check-parallel.mjs` — size-strict live in runner
 - Post-merge failures on dev `48941fd8`: eslint, size-strict, md:lint (character-growth files)
+
+## Progress (2026-09-11)
+
+Landed commits:
+
+- `ca82e3d45` — fix(worktree): scope Step 2 check to merge-base
+- `928666425` — fix(worktree): declare hasBunLock in Step 2 before use
+- `a77fe513f` — fix(worktree): thread gatesFilter/skipGatesFilter into runFinalize
+- `9e7fb21ca` — fix(worktree): restore missing let decls in finalize()
+- `8087e8716` — fix(worktree): throw on invalid diff-base ref
+
+Still missing:
+
+- Post-rebase check re-run before merge (finalize re-runs `bun run check` after rebase, immediately before merge)
+- Refusal to merge unverified trees (reject when post-rebase tree is unverified)
+
+git issue: cf15f9f

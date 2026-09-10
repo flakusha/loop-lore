@@ -3,7 +3,7 @@
 
 # BUG: Diff-scoped coverage gate floors whole modules on partial lcov
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Priority:** Medium
 **Effort:** Medium
 
@@ -16,3 +16,12 @@ check-parallel DIFF_BASE coverage gate runs scoped bun test --isolate --coverage
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Progress (2026-09-11)
+
+- `f9df0a71a` — fix(tests): give check-parallel.gates tests a working timeout + diff-base
+
+This is a **related but distinct fix**: `f9df0a71a` fixes the test infrastructure for `check-parallel.gates` (working timeout + diff-base), not the core lcov flooring defect. The actual issue — `coverage.mjs --floor=80 --only=diff-modules` flooring whole-module line counts when scoped tests can never reach 80% coverage — remains unaddressed.
+
+
+git issue: 37a3763
