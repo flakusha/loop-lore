@@ -12,6 +12,11 @@ import type { Kysely, } from "kysely";
 import { mkdtempSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { AssetType, TransformContext, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
+import { createTestDb, } from "../../test-utils/create-test-db";
+import { insertUsers, } from "../../test-utils/insert-helpers";
+import { makeMinimalPng, } from "../test-helpers";
 import { createAsset, } from "./create";
 import {
   getAssetTransform,
@@ -19,11 +24,6 @@ import {
   SEED_FOCAL_POINT,
   upsertAssetTransform,
 } from "./transforms";
-import { makeMinimalPng, } from "../test-helpers";
-import { AssetType, TransformContext, } from "../../db/enums";
-import type { DB, } from "../../db/schema";
-import { createTestDb, } from "../../test-utils/create-test-db";
-import { insertUsers, } from "../../test-utils/insert-helpers";
 
 const uploadDir = join(tmpdir(), `transforms-${Date.now()}`,);
 mkdtempSync(uploadDir,);
@@ -71,7 +71,7 @@ describe("asset transforms", () => {
     expect(row?.zoom,).toBe(2,);
     const rows = await db.selectFrom("asset_transforms",).select("context",)
       .where("asset_id", "=", assetId,).execute();
-    expect(rows.map((r,) => r.context,).sort(),).toEqual(["default", "sprite",],);
+    expect(rows.map((r,) => r.context).sort(),).toEqual(["default", "sprite",],);
   });
 
   test("resolve falls back to default context", async () => {

@@ -10,10 +10,10 @@
  * context; `sprite` context feeds VN stage compositing.
  */
 import type { Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
 import { TransformContext, } from "../../db/enums";
-import { upsertByUnique, } from "../../db/upsert-helpers";
+import type { DB, } from "../../db/schema";
 import type { AssetTransforms, } from "../../db/schema-core";
+import { upsertByUnique, } from "../../db/upsert-helpers";
 
 export type { AssetTransforms, };
 
@@ -94,9 +94,10 @@ export async function getAssetTransform(
   assetId: string,
   context: TransformContext,
 ): Promise<AssetTransforms | undefined> {
-  return db.selectFrom("asset_transforms",).selectAll()
+  const row = await db.selectFrom("asset_transforms",).selectAll()
     .where("asset_id", "=", assetId,).where("context", "=", context,)
     .executeTakeFirst();
+  return row as AssetTransforms | undefined;
 }
 
 /**
@@ -110,8 +111,8 @@ export async function resolveAssetTransform(
   assetId: string,
   context: TransformContext,
 ): Promise<AssetTransforms | undefined> {
-  return (await getAssetTransform(db, assetId, context,))
-    ?? (context === TransformContext.Default
+  return (await getAssetTransform(db, assetId, context,)) ??
+    (context === TransformContext.Default
       ? undefined
       : await getAssetTransform(db, assetId, TransformContext.Default,));
 }
