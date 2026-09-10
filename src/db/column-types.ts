@@ -50,9 +50,8 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
     "storage_backend": "StorageBackend",
     "visibility": "AssetVisibility",
   },
-  "AssetTags": {
-    "scope": "AssetTagScope",
-    "source": "AssetTagSource",
+  "AssetTransforms": {
+    "context": "TransformContext",
   },
   "CharacterFantasies": {
     "category": "FantasyCategory",

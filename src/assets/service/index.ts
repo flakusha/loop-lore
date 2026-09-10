@@ -42,6 +42,13 @@ export {
   validateFileSize,
   validateMimeType,
 } from "./validate";
+export {
+  getAssetTransform,
+  resolveAssetTransform,
+  SEED_FOCAL_POINT,
+  seedBaseTransform,
+  upsertAssetTransform,
+} from "./transforms";
 
 export type {
   AssetLinkInput,
