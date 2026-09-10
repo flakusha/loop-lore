@@ -25,9 +25,10 @@ const ATOM_QUANTIFIER = /[+*?]/;
 /**
  * Compile `pattern` safely, or return null when it must not run.
  * Null means "treat as no-match" at the call site — never throw.
- * @param pattern
- * @param flags
- * @param maxLength
+ * @param pattern - regex source string
+ * @param flags - regex flags (default empty)
+ * @param maxLength - maximum accepted pattern length (default `MAX_SAFE_PATTERN_LENGTH`)
+ * @returns compiled `RegExp`, or `null` when the pattern is empty, too long, has catastrophic shape, or fails to compile.
  */
 export function compileSafeRegExp(
   pattern: string,
@@ -47,7 +48,8 @@ export function compileSafeRegExp(
  * Conservative catastrophic-backtracking shape check: rejects a quantifier
  * immediately following a group whose body contains a quantifier or an
  * empty alternation branch.
- * @param pattern
+ * @param pattern - regex source string
+ * @returns `true` when the pattern has no catastrophic shape; `false` when a `((a|))+` / `(a+)+` shape is detected.
  */
 export function hasSafeShape(pattern: string,): boolean {
   // Per-group frame: accumulated body text + whether any alternation branch

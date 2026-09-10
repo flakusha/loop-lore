@@ -14,7 +14,8 @@
 
 /**
  * Encode a `Uint8Array` as base64 (no URL-safe alphabet).
- * @param bytes
+ * @param bytes - input bytes
+ * @returns base64-encoded string (standard alphabet, no URL-safe).
  */
 export function toBase64(bytes: Uint8Array,): string {
   let binary = "";
@@ -24,7 +25,8 @@ export function toBase64(bytes: Uint8Array,): string {
 
 /**
  * Decode a base64 string into a fresh `Uint8Array`.
- * @param b64
+ * @param b64 - base64-encoded string
+ * @returns decoded bytes as Uint8Array.
  */
 export function fromBase64(b64: string,): Uint8Array {
   const binary = atob(b64,);

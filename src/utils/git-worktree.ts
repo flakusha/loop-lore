@@ -19,7 +19,8 @@ import path from "node:path";
  *   gitdir: /path/to/main/.git/worktrees/<branch>
  *
  * Returns the main repo root (parent of `.git/`) or null if not in a worktree.
- * @param cwd
+ * @param cwd - working directory to inspect
+ * @returns main repo root path, or `null` if cwd is not inside a worktree.
  */
 export function findMainRepoRoot(cwd: string,): string | null {
   const gitPath = path.join(cwd, ".git",);

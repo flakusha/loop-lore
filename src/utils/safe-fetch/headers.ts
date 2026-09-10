@@ -12,7 +12,8 @@ import type { FetchAuth, } from "./types";
  * - CSRF token → X-CSRF-Token header (mirrors feFetch)
  * - sessionToken/apiKey/authorization → Authorization header (mirrors feFetch)
  * - extraHeaders merged last (highest priority)
- * @param auth
+ * @param auth - auth config (csrfToken, sessionToken/apiKey/authorization, extraHeaders)
+ * @returns headers object (possibly empty `{}` when auth is undefined).
  */
 export function buildAuthHeaders(auth: FetchAuth | undefined,): Record<string, string> {
   if (!auth) { return {}; }

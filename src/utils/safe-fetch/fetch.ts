@@ -32,8 +32,9 @@ import type { FetchAuth, FetchResult, SafeFetchOptions, } from "./types";
 
 /**
  * Combine an external signal with an internal timeout signal.
- * @param external
- * @param timeoutSignal
+ * @param external - caller-provided abort signal (may be undefined)
+ * @param timeoutSignal - internal timeout-driven abort signal
+ * @returns combined AbortSignal that aborts when either input aborts.
  */
 function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortSignal,): AbortSignal {
   if (!external) { return timeoutSignal; }
@@ -54,7 +55,8 @@ function combineSignals(external: AbortSignal | undefined, timeoutSignal: AbortS
  * Serialize a request body. Native body types (FormData, Blob, stream,
  * URLSearchParams, ArrayBuffer, view, string) pass through untouched so
  * multipart/uploads work; plain objects/arrays become JSON.
- * @param body
+ * @param body - request body (any value)
+ * @returns `BodyInit` for valid bodies, `undefined` for null bodies or failed serialization.
  */
 function serializeBody(body: unknown,): BodyInit | undefined {
   if (body === undefined || body === null) { return undefined; }
@@ -76,9 +78,10 @@ function serializeBody(body: unknown,): BodyInit | undefined {
 
 /**
  * Merge auth headers with caller headers and set Content-Type for JSON bodies.
- * @param provided
- * @param auth
- * @param serializedBody
+ * @param provided - caller-provided HeadersInit
+ * @param auth - auth config (bearer/CSRF) to inject
+ * @param serializedBody - serialized body (drives Content-Type decision)
+ * @returns merged `Headers` instance with auth + content-type applied.
  */
 function buildRequestHeaders(
   provided: HeadersInit | undefined,
@@ -100,8 +103,9 @@ function buildRequestHeaders(
 }
 
 /**
- * @param url
- * @param options
+ * @param url - URL to fetch
+ * @param options - Fetch options with safety extensions (timeout, maxSize, auth, etc.)
+ * @returns `Promise<FetchResult<T>>` — discriminated `{ ok, data, status, headers }` or `{ ok, error, status, headers }`.
  */
 export async function safeFetch<T = unknown,>(
   url: string,
