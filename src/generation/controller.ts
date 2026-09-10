@@ -16,7 +16,7 @@
  *   POST /api/generation/regenerate     — Replace AI response
  *   POST /api/generation/image          — Generate image from prompt
  *   POST /api/generation/caption        — Caption image assets
- *   POST /api/generation/test-connection — Test provider connection
+ *   POST /api/generation/prompt         — Improve/analyze prompt drafts
  */
 
 import { Elysia, } from "elysia";
@@ -36,6 +36,7 @@ import {
   handleTestConnection,
 } from "./generation-routes";
 import { handleImageGeneration, } from "./image-gen-route";
+import { handlePromptImprove, } from "./prompt-route";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -120,6 +121,11 @@ export function generationRoutes({ database, config, }: { database: Kysely<DB>; 
   app.post("/api/generation/caption", async (ctx,) => {
     const auth = ctx as unknown as { userId?: string; userRole?: string | null };
     return handleImageCaption(readBody(ctx,), database, auth.userId, auth.userRole,);
+  },);
+
+  app.post("/api/generation/prompt", async (ctx,) => {
+    const auth = ctx as unknown as { userId?: string; userRole?: string | null };
+    return handlePromptImprove(readBody(ctx,), database, auth.userId, auth.userRole,);
   },);
 
   app.post("/api/generation/test-connection", async (ctx,) => {
