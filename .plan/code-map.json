@@ -1005,6 +1005,24 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-asset-access.md"
     }
   ],
+  "src/assistant/commands/attack.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
+    }
+  ],
+  "src/assistant/commands/attack.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
+    }
+  ],
+  "src/assistant/commands/battle.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
+    }
+  ],
   "src/assistant/commands/capabilities.ts": [
     {
       "kind": "ticket",
@@ -1113,6 +1131,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
     },
     {
       "kind": "ticket",
@@ -1379,6 +1401,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
+    }
+  ],
+  "src/assistant/commands/rpg-gate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md"
     }
   ],
   "src/assistant/commands/sfx.ts": [
@@ -8539,6 +8567,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-migration-compaction-data-version-hash.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
   "src/db/migrations/001_init.ts": [
@@ -8575,6 +8607,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    }
+  ],
+  "src/db/migrations/004_world_mechanics.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
   "src/db/migrations/005_utility_tables.ts": [
@@ -10211,6 +10249,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/testing.md"
+    }
+  ],
+  "src/db/upsert-helpers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-refactor-typed-kysely-upsert-by-unique-key-helpers.md"
+    }
+  ],
+  "src/db/world-scope.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-refactor-lift-crafting-station-world-id-scope-to-shared-help.md"
     }
   ],
   "src/elysia-app.ts": [
@@ -12085,6 +12135,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-skills-frontend.md"
+    }
+  ],
+  "src/frontend/alpine/store-schema.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-refactor-schema-validate-alpine-store-fields-at-init.md"
     }
   ],
   "src/frontend/alpine/stores/ui-store.ts": [
@@ -17305,6 +17361,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-refactor-extract-scopebyuserid-middleware.md"
     }
   ],
   "src/middleware/types.ts": [
@@ -19017,6 +19077,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/multi-instance-reconciliation.md"
+    }
+  ],
+  "src/routes/actor-access.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-refactor-extract-scopebyuserid-middleware.md"
     }
   ],
   "src/routes/actor-auth.test.ts": [
@@ -22623,10 +22689,20 @@
       "source": ".plan/tickets/BUG-world-timelines-unauthenticated-read-and-create.md"
     }
   ],
+  "src/routes/worlds/world-rpg-flags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
+    }
+  ],
   "src/routes/worlds/worlds-routes.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-lore-silently-stripped-on-create-and-update.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
   "src/routes/worlds/worlds.ts": [
@@ -22649,6 +22725,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-world-location-access.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
   "src/rpg": [
@@ -23903,10 +23983,20 @@
       "source": ".plan/tickets/TASK-wire-xp-loot-routes.md"
     }
   ],
+  "src/rpg/service/world-gate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
+    }
+  ],
   "src/rpg/service/world-gate.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-mechanics-governance.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
   "src/rpg/service/xp.ts": [
@@ -26627,6 +26717,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-world-lore-silently-stripped-on-create-and-update.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
   "src/views": [

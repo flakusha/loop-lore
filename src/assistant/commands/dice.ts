@@ -14,8 +14,9 @@
 // Returns individual rolls + total for display.
 
 import { getLogger, type Logger, } from "../../logger";
+import { checkCommandMechanic, RpgMechanic, } from "../../rpg/service/world-gate";
 import { parseIntOr, } from "../../utils/parse-number";
-import { registerCommand, } from "./registry";
+import { type CommandResult, registerCommand, } from "./registry";
 
 /** Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests). */
 const getLog = (): Logger => getLogger().child({ module: "dice", },);
@@ -160,12 +161,20 @@ export function handleRollCommand(args: string[],): string {
   return formatDiceResult(result,);
 }
 
-registerCommand("roll", (args,) => ({
-  systemMessage: handleRollCommand(args,),
-  handled: true,
-}),);
+registerCommand("roll", async (args, ctx,): Promise<CommandResult> => {
+  const denial = await checkCommandMechanic(ctx.db, ctx.activeChat?.worldId, RpgMechanic.Dice,);
+  if (denial) { return { systemMessage: denial, handled: true, }; }
+  return {
+    systemMessage: handleRollCommand(args,),
+    handled: true,
+  };
+},);
 
-registerCommand("dice", (args,) => ({
-  systemMessage: handleRollCommand(args,),
-  handled: true,
-}),);
+registerCommand("dice", async (args, ctx,): Promise<CommandResult> => {
+  const denial = await checkCommandMechanic(ctx.db, ctx.activeChat?.worldId, RpgMechanic.Dice,);
+  if (denial) { return { systemMessage: denial, handled: true, }; }
+  return {
+    systemMessage: handleRollCommand(args,),
+    handled: true,
+  };
+},);
