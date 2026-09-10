@@ -252,4 +252,25 @@ describe("probes.checkAllLiveliness", () => {
     const warns = host.logCalls.filter((c,) => c.level === "warn");
     expect(warns,).toHaveLength(3,);
   });
+
+  test("marks the instance unresponsive when the probe itself throws (defensive catch)", async () => {
+    const host = makeHost();
+    // A port getter that throws simulates a broken instance shape. The
+    // throw lands inside probeInstance's try, so it resolves false and the
+    // instance is reported unresponsive instead of rejecting the loop.
+    const broken = {
+      type: "llama-cpp",
+      process: makeFakeProcess(777,) as ServerInstance["process"],
+      pid: 777,
+      startedAt: Date.now(),
+      get port(): number {
+        throw new Error("port unavailable",);
+      },
+    } as unknown as ServerInstance;
+    host.instances.push(broken,);
+    await checkAllLiveliness(host,);
+    const warns = host.logCalls.filter((c,) => c.level === "warn");
+    expect(warns,).toHaveLength(1,);
+    expect(warns[0]?.meta?.type,).toBe("llama-cpp",);
+  });
 });

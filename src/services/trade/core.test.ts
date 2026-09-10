@@ -22,7 +22,10 @@ import {
   insertWorlds,
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
+import { counterOffer, } from "./counter";
 import { tradeCore, } from "./core";
+import { buyFromNpc, sellToNpc, } from "./npc";
+import { createOffer, } from "./offers";
 
 let db: Kysely<DB>;
 let worldId: string;
@@ -181,5 +184,120 @@ describe("tradeCore — validateLines rejection paths", () => {
     },);
     expect(result.success,).toBe(false,);
     expect(result.reason,).toMatch(/insufficient quantity/,);
+  });
+});
+
+describe("buyFromNpc / sellToNpc — self-trade guard", () => {
+  test("buyFromNpc rejects when buyer === npc before any DB read", async () => {
+    const result = await buyFromNpc(db, {
+      worldId,
+      buyerActorId: buyer,
+      npcActorId: buyer,
+      sellerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 0,
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toBe("cannot trade with yourself",);
+  });
+
+  test("sellToNpc rejects when seller === npc before any DB read", async () => {
+    const result = await sellToNpc(db, {
+      worldId,
+      sellerActorId: seller,
+      npcActorId: seller,
+      buyerItems: [{ worldItemId: sellerItem, quantity: 1, },],
+      price: 0,
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toBe("cannot trade with yourself",);
+  });
+});
+
+describe("tradeCore — mid-transaction transfer failure", () => {
+  test("buyer item transfer failure aborts with a buyer reason", async () => {
+    // Fresh fixtures: duplicate lines each validate on their own (5 ≤ 5,
+    // 1 ≤ 5) but together exceed stock — the first transfer consumes the
+    // row, so the second finds no source inside the transaction.
+    const defId = uid();
+    await insertItems(db, worldId, "BuyerFail Gem", "misc", { id: defId as never, },);
+    const buyerStock = uid();
+    await insertWorldItems(db, worldId, defId, {
+      id: buyerStock as never,
+      owner_actor_id: buyer,
+      quantity: 5 as never,
+    },);
+    const result = await tradeCore(db, {
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [
+        { worldItemId: buyerStock, quantity: 5, },
+        { worldItemId: buyerStock, quantity: 1, },
+      ],
+      sellerItems: [{ worldItemId: sellerItem, quantity: 1, },],
+      price: 0,
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toBe("buyer item transfer failed",);
+  });
+
+  test("seller item transfer failure aborts with a seller reason", async () => {
+    // Separate defs per side so the buyer leg cannot stack onto the
+    // seller's row (which would change the remaining quantities).
+    const buyerDef = uid();
+    const sellerDef = uid();
+    await insertItems(db, worldId, "SellerFail Buyer Gem", "misc", { id: buyerDef as never, },);
+    await insertItems(db, worldId, "SellerFail Seller Gem", "misc", { id: sellerDef as never, },);
+    const buyerStock = uid();
+    const sellerStock = uid();
+    await insertWorldItems(db, worldId, buyerDef, {
+      id: buyerStock as never,
+      owner_actor_id: buyer,
+      quantity: 1 as never,
+    },);
+    await insertWorldItems(db, worldId, sellerDef, {
+      id: sellerStock as never,
+      owner_actor_id: seller,
+      quantity: 3 as never,
+    },);
+    const result = await tradeCore(db, {
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerStock, quantity: 1, },],
+      sellerItems: [
+        { worldItemId: sellerStock, quantity: 3, },
+        { worldItemId: sellerStock, quantity: 1, },
+      ],
+      price: 0,
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toBe("seller item transfer failed",);
+  });
+});
+
+describe("counterOffer — expiry", () => {
+  test("countering an offer past its deadline marks it expired", async () => {
+    const offerId = await createOffer(db, {
+      worldId,
+      buyerActorId: buyer,
+      sellerActorId: seller,
+      buyerItems: [{ worldItemId: buyerItem, quantity: 1, },],
+      price: 10,
+      deadline: new Date(Date.now() - 1_000,).toISOString(),
+    },);
+    const result = await counterOffer(db, {
+      offerId,
+      counterActorId: buyer,
+      price: 20,
+    },);
+    expect(result.success,).toBe(false,);
+    expect(result.reason,).toBe("offer expired",);
+    const row = await db
+      .selectFrom("crafting_orders",)
+      .select("status",)
+      .where("id", "=", offerId,)
+      .executeTakeFirst();
+    expect(row?.status,).toBe("expired",);
   });
 });
