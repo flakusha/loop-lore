@@ -89,6 +89,15 @@ Resolved native module state (lazy, cached after first load attempt).
 let cachedModule: { handle: NativeBlake3Symbols & NativeZstdSymbols; version: number } | null | undefined;
 
 /**
+ * Reset the cached load state — test seam so unit tests can exercise each
+ * load path (success, ABI drift, dlopen failure) in sequence.
+ * @internal Test-only; never call from application code.
+ */
+export function __resetNativeModuleCache(): void {
+  cachedModule = undefined;
+}
+
+/**
  * Locate the shared library for the current platform/arch.
  *
  * Resolves against the repo's in-tree release target dir
