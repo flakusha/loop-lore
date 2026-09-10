@@ -14,13 +14,13 @@
  * test:coverage.
  */
 import { afterAll, describe, expect, mock, test, } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync, chmodSync, } from "node:fs";
+import { chmodSync, mkdtempSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 import { fileURLToPath, } from "node:url";
+import { createLogger, } from "../../logger";
 import { ServerExternalManager, } from "./index";
 import type { ServerInstance, } from "./types";
-import { createLogger, } from "../../logger";
 
 const HELPER_SRC = `
 const scenario = process.argv[2] ?? "";
@@ -116,7 +116,12 @@ if (scenario === "llama-success") {
 console.log(JSON.stringify(result,));
 `;
 
-async function runScenario(helperPath: string, paths: Record<string, string>, scenario: string, path: string,): Promise<Record<string, unknown>> {
+async function runScenario(
+  helperPath: string,
+  paths: Record<string, string>,
+  scenario: string,
+  path: string,
+): Promise<Record<string, unknown>> {
   const proc = Bun.spawn([process.execPath, helperPath, scenario,], {
     env: { ...process.env, PATH: path, ...paths, },
     stdout: "pipe",
@@ -135,11 +140,11 @@ async function runScenario(helperPath: string, paths: Record<string, string>, sc
   }
 }
 
-function makeStubDir(names: string[]): { dir: string; cleanup: () => void } {
+function makeStubDir(names: string[],): { dir: string; cleanup: () => void } {
   const dir = mkdtempSync(join(tmpdir(), "facade-stub-",),);
   for (const name of names) {
     const stubPath = join(dir, name,);
-    writeFileSync(stubPath, `#!/bin/sh\necho "$@" > "${join(dir, `${name}.args`,)}"\nexec sleep 30\n`);
+    writeFileSync(stubPath, `#!/bin/sh\necho "$@" > "${join(dir, `${name}.args`,)}"\nexec sleep 30\n`,);
     chmodSync(stubPath, 0o755,);
   }
   return {
@@ -216,7 +221,7 @@ describe("ServerExternalManager facade child harness", () => {
       expect(result.count,).toBe(0,);
     }
   }, 15000,);
-},);
+});
 
 describe("ServerExternalManager facade basics", () => {
   test("constructor wires a child logger and active starts empty", () => {
@@ -224,8 +229,8 @@ describe("ServerExternalManager facade basics", () => {
     expect(mgr.PROBE_INTERVAL_MS,).toBe(30_000,);
     expect(mgr.active,).toHaveLength(0,);
     expect(mgr.probeTimer,).toBeNull();
-  },);
-},);
+  });
+});
 
 describe("ServerExternalManager stop delegation", () => {
   test("stop removes the instance from active", async () => {
@@ -240,7 +245,7 @@ describe("ServerExternalManager stop delegation", () => {
     mgr.instances.push(instance,);
     await mgr.stop(instance,);
     expect(mgr.active,).toHaveLength(0,);
-  },);
+  });
 
   test("stopAll clears every instance", async () => {
     const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
@@ -255,7 +260,7 @@ describe("ServerExternalManager stop delegation", () => {
     }
     await mgr.stopAll();
     expect(mgr.active,).toHaveLength(0,);
-  },);
+  });
 
   test("killAllSync clears instances with dead pids without throwing", () => {
     const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
@@ -270,8 +275,8 @@ describe("ServerExternalManager stop delegation", () => {
     }
     mgr.killAllSync();
     expect(mgr.active,).toHaveLength(0,);
-  },);
-},);
+  });
+});
 
 describe("ServerExternalManager probe delegation", () => {
   test("startLivenessProbes sets the timer and stopLivenessProbes clears it", () => {
@@ -285,5 +290,5 @@ describe("ServerExternalManager probe delegation", () => {
       mgr.stopLivenessProbes();
     }
     expect(mgr.probeTimer,).toBeNull();
-  },);
-},);
+  });
+});
