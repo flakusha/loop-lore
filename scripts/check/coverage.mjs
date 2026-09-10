@@ -113,9 +113,9 @@ const WAIVERS = {
   // the routes/* + admin/* + persona/* callers. Below-floor lines are
   // mostly error-paths and feature-flag branches.
   "services": {
-    floor: 73,
+    floor: 78,
     reason:
-      "trade/index + external-server-utils + server-external-manager + start-llama/sd + lifecycle + probes lifted in test-coverage worktree; remaining gaps are RPC-style service wrappers exercised by routes/* integration tests",
+      "lifecycle/index/trade/transfer/utils/probe gaps covered in coverage-services worktree (78.2 measured, floored 78); start-llama/sd spawner suites run in hermetic child harnesses so parent lcov cannot count them; residual is health/port timeout-kill paths (deliberately skipped, 30-120s waits) + win32-only branches",
   },
   // Gate pass: src/plugins/ is the plugin loader/registry; runtime-only
   // resolution exercised via app boot and integration tests.
