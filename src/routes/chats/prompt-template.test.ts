@@ -17,12 +17,12 @@ import {
 import { uid, } from "../../utils";
 import { promptTemplateRoutes, } from "./prompt-template";
 
-const mockConfig: Partial<Config> = { templates: { llm: undefined, }, };
+const mockConfig = { templates: {}, };
 
 function makeApp(db: Kysely<DB>, userId: string | null, userRole: string | null = "user",) {
   return new Elysia({ name: "test-prompt-template", },)
     .derive(() => ({ userId, userRole, }))
-    .use(promptTemplateRoutes({ database: db, config: mockConfig as Config, },),);
+    .use(promptTemplateRoutes({ database: db, config: mockConfig as unknown as Config, },),);
 }
 
 interface PromptBody {
@@ -239,12 +239,12 @@ describe("promptTemplateRoutes — GET /api/chats/:id/prompt-template", () => {
       role_in_chat: "owner" as never,
     },);
 
-    const configWithOverride: Partial<Config> = {
+    const configWithOverride = {
       templates: { llm: { systemPrompts: { chat: "CUSTOM_OVERRIDE", gm: "CUSTOM_GM", }, }, },
     };
     const app = new Elysia()
       .derive(() => ({ userId, userRole: "user", }))
-      .use(promptTemplateRoutes({ database: db, config: configWithOverride as Config, },),);
+      .use(promptTemplateRoutes({ database: db, config: configWithOverride as unknown as Config, },),);
 
     const res = await app.handle(
       new Request(`http://localhost/api/chats/${chatId}/prompt-template`,),
