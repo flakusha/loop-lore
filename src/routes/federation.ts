@@ -19,7 +19,7 @@ import { Elysia, } from "elysia";
 import { APP_NAME, APP_VERSION, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import { getGossipOrigins, } from "../federation/gossip";
-import { type MeshRouteOpts, registerMeshRoutes, } from "./federation-mesh";
+ import { type MeshRouteOpts, mountMeshApi, } from "./federation-mesh";
 import { jsonResponse, } from "./http-utils";
 
 const NODEINFO_SCHEMA = "http://nodeinfo.diaspora.software/ns/schema/2.1";
@@ -120,7 +120,7 @@ export function federationRoutes(opts: MeshRouteOpts,): Elysia {
     },
   );
 
-  registerMeshRoutes(app, opts,);
+   mountMeshApi(app, opts,);
 
   return app;
 }
