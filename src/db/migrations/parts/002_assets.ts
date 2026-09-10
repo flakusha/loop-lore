@@ -66,7 +66,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("rotation", "real",)
     .addColumn("focal_point_x", "real",)
     .addColumn("focal_point_y", "real",)
-    .addColumn("updated_at", "text", (col,) => col.notNull(),)
+    .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addPrimaryKeyConstraint("pk_asset_transforms", ["asset_id", "context",],)
     .execute();
 
