@@ -223,7 +223,7 @@ export interface AssetTransforms {
   rotation: number | null;
   focal_point_x: number | null;
   focal_point_y: number | null;
-  updated_at: string;
+  updated_at: Generated<string>;
 }
 
 // ── mesh_inbound_keys ────────────────────────────────────────────

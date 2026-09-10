@@ -508,7 +508,6 @@ export async function insertAssetTransforms(
   db: Db,
   asset_id: string,
   context: TransformContext,
-  updated_at: string,
   opts?: {
     crop_x?: number | null;
     crop_y?: number | null;
@@ -518,12 +517,12 @@ export async function insertAssetTransforms(
     rotation?: number | null;
     focal_point_x?: number | null;
     focal_point_y?: number | null;
+    updated_at?: string;
   },
 ): Promise<void> {
   await db.insertInto("asset_transforms",).values({
     asset_id,
     context,
-    updated_at,
     ...opts,
   } as any,).execute();
 }
@@ -1071,38 +1070,6 @@ export async function insertAdminCharacterOverrides(
     admin_id,
     action,
     created_at,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a asset_tags row. */
-export async function insertAssetTags(
-  db: Db,
-  asset_id: string,
-  tag: string,
-  opts?: { id?: string; scope?: string; owner_id?: string | null; source?: string; created_at?: string },
-): Promise<void> {
-  await db.insertInto("asset_tags",).values({
-    id: crypto.randomUUID(),
-    asset_id,
-    tag,
-    ...opts,
-  } as any,).execute();
-}
-
-/** Insert a asset_tag_dismissals row. */
-export async function insertAssetTagDismissals(
-  db: Db,
-  asset_id: string,
-  tag: string,
-  user_id: string,
-  opts?: { id?: string; created_at?: string },
-): Promise<void> {
-  await db.insertInto("asset_tag_dismissals",).values({
-    id: crypto.randomUUID(),
-    asset_id,
-    tag,
-    user_id,
     ...opts,
   } as any,).execute();
 }
