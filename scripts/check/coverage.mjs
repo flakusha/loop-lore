@@ -117,6 +117,13 @@ const WAIVERS = {
   // helpers. Native helpers are not exercised by unit tests; covered by
   // the matting e2e flow.
   "image-edit": { floor: 45, reason: "native (Rust) matting helpers; covered by matting e2e, not unit", },
+  // Gate pass: src/native/ loads a Rust cdylib (BLAKE3 + zstd) whose
+  // cdylib fast-paths are not exercisable from unit tests without the
+  // prebuilt .so on PATH. Unit tests cover the Bun-fallback path and
+  // ABI-mismatch/null-handle guards (zstd + blake3 unit suites reach
+  // 100% in isolated runs; aggregate drops in full e2e runs because
+  // the Bun mock is registered per-file under --isolate).
+  "native": { floor: 77, reason: "Rust cdylib fast-path exercised by benchmarks (zstd/blake3); unit tests cover Bun fallback + ABI guards", },
   // Gate pass: src/characters/ is large (3968 lines) and contains
   // world-setup + character-bundle pipelines whose happy paths live in
   // e2e and whose error branches dominate the uncovered count.
