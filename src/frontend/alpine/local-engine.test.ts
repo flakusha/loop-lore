@@ -10,7 +10,7 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { createLocalEngine, resetLocalEngine, } from "./local-engine";
 import { isEngineResponse, } from "./local-engine-protocol";
-import { LocalInferenceUnavailable, } from "./local-inference";
+import { isModelReady, LocalInferenceUnavailable, } from "./local-inference";
 
 /** Fake Worker twin — engine drives it via postMessage, tests answer. */
 interface FakeWorker {
@@ -78,6 +78,34 @@ describe("createLocalEngine lifecycle", () => {
     expect(engine.loadedModel(),).toBe("SmolLM2-360M-Instruct",);
     await expect(engine.loadModel("SmolLM2-360M-Instruct",),).resolves.toBe("transformers-webgpu",);
     expect(fake.posted.length,).toBe(1,);
+  });
+  test("successful load marks the model ready", async () => {
+    const store = new Map<string, string>();
+    const globals = globalThis as unknown as { localStorage?: Storage };
+    const previous = globals.localStorage;
+    globals.localStorage = {
+      getItem: (key,) => store.get(key,) ?? null,
+      setItem: (key, value,) => {
+        store.set(key, String(value,),);
+      },
+      removeItem: (key,) => {
+        store.delete(key,);
+      },
+      clear: () => store.clear(),
+      key: () => null,
+      length: 0,
+    } as Storage;
+    try {
+      const fake = createFake();
+      const engine = createLocalEngine({ workerFactory: () => fake as unknown as Worker, },);
+      expect(isModelReady("SmolLM2-360M-Instruct",),).toBe(false,);
+      const pending = engine.loadModel("SmolLM2-360M-Instruct",);
+      fake.respond({ kind: "ready", id: (fake.posted[0] as Posted).id, engine: "transformers-webgpu", },);
+      await pending;
+      expect(isModelReady("SmolLM2-360M-Instruct",),).toBe(true,);
+    } finally {
+      globals.localStorage = previous;
+    }
   });
 
   test("progress messages route to the load handler", async () => {
