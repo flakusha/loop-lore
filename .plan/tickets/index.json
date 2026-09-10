@@ -14803,7 +14803,8 @@
     "priority": "Medium",
     "epic": "epic-frontend-gallery.md",
     "tags": [],
-    "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md",
+    "status": "done"
   },
   "TASK-GEMINI-PROVIDER": {
     "hash": "pending",
