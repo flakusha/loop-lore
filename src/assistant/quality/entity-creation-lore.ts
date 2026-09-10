@@ -13,15 +13,14 @@
  * focused module (see AGENTS.md <200L convention).
  */
 
-import { normalizeAudienceScope, } from "../../story/events/promote-lore";
-import { KNOWN_SUBJECT_KINDS, } from "../../story/events/promote-lore";
+import { KNOWN_SUBJECT_KINDS, normalizeAudienceScope, } from "../../story/events/promote-lore";
 import type { LoreSubject, } from "../lore/audience";
 import {
-  MAX_KEYS,
-  MAX_KEY_LENGTH,
   clampInt,
   clampNonNegativeInt,
   isValidLorePosition,
+  MAX_KEY_LENGTH,
+  MAX_KEYS,
 } from "./entity-creation-types";
 import type { GeneratedEntityLoreEntry, } from "./entity-creation-types";
 
