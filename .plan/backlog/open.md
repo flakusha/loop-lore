@@ -3,7 +3,7 @@
 
 # Open — Index (In-Flight, Debt, Unwired Code & Deferred)
 
-> **Last updated:** 2026-09-10 (post-August refresh — NSFW async pipeline + consent/route-authz wiring, mesh encrypted-sharing in flight, coverage lifts with raised waiver floors, test-isolation hardening, templates admin gate; untriaged waves re-triaged in `open-untriaged.md`). Split into
+> **Last updated:** 2026-09-10 (post-August refresh — NSFW async pipeline + consent/route-authz wiring, mesh encrypted-sharing landed, coverage lifts with raised waiver floors, test-isolation hardening, templates admin gate; untriaged waves re-triaged in `open-untriaged.md`). Split into
 > per-category files 2026-08-15 (was a single monolith); this index holds the status
 > header + file map. Holds what is **currently in flight / needing a decision / open debt / deferred (P6+)**. The priority ladder P0→P6+ lives in `../priority.md` (index → tier files).
 >
@@ -23,7 +23,7 @@
 
 ## Status header
 
-P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress (Gate C core shipped; NSFW async pipeline + consent/route-authz wiring landed; mesh encrypted-sharing in flight; coverage lifts with raised waiver floors; test-isolation hardening green) · Regex ✅ · P3–P5 → 0.1.0 value
+P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress (Gate C core shipped; NSFW async pipeline + consent/route-authz wiring landed; mesh encrypted-sharing landed; coverage lifts with raised waiver floors; test-isolation hardening green) · Regex ✅ · P3–P5 → 0.1.0 value
 tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da done).
 
 ## File map (split 2026-08-15)
@@ -45,8 +45,8 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
 
 ## Open / next actions (2026-09-10 refresh)
 
-- **Mesh encrypted-sharing in flight** — sender fan-out with per-target reservation, receiver reservation + clock + duplication policy, per-world overrides, central cipher selection; A-to-B transfer covered over real routes. Next: land remaining reservation/HLC/duplication work, then close the mesh/federation interconnect batch (`open-untriaged.md`). Details: `open-inflight.md`.
-- **NSFW hardening landed** — async request-context pipeline with batched gates and server-side skips, consent-gate + route-authz + preconditions wiring, bans/participant-deny/consent enforced in all gates, HKDF domain separation for actor/chat hashes. Remaining NSFW open issues are consent-surface wiring follow-ups — see `open-untriaged.md`.
+- **Mesh encrypted-sharing landed** — `src/federation/` shipped (`sharing.ts`, `envelope.ts`, `encryption.ts`, `cipher.ts`, `clock.ts`, `delivery.ts`, `duplication.ts`, `fan-out.ts`, `gossip.ts`, `negotiation.ts`, `peer-fetch.ts`, `peer-keys.ts`, `coordinator.ts` + tests), finalized to `dev` (`3e53c4ff2`). Next: close the mesh/federation interconnect batch (`open-untriaged.md`) -- scheduled after the landed content-sharing work.
+- **NSFW hardening landed** — async request-context pipeline with batched gates and server-side skips, consent-gate + route-authz + preconditions wiring, bans/participant-deny/consent enforced in all gates, HKDF domain separation for actor/chat hashes. NSFW consent-surface follow-ups (`d7c0253`, `e0d7c5c`, `e8f7a75`) closed 2026-09-09 — see `open-untriaged.md`.
 - **Coverage + test health** — plugin/persona/native suites lifted with waiver floors raised to match; cross-file pollution eliminated with pristine-module gates; templates admin gate enforced. Remaining: below-floor modules tracked by waiver tickets + new frontend coverage batches. Details: `open-inflight.md`.
 - **Release blockers: A8 ✅ closed; A9 open** (tag 0.1.0 + push) — `open-inflight.md`.
 - **Dead/unwired code**: transport module, music/SFX/Video stubs — `open-debt.md`.

@@ -167,9 +167,10 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
   pollution-prone suites; branded-id assertions.
 - **Coverage lifts** — plugin loader/registry suites lifted with waiver floors raised to
   match; personas/native/controller suites covered.
-- **Mesh sharing in flight** — encrypted sharing with reservations and delivery; sender
+- **Mesh sharing landed** — encrypted sharing with reservations and delivery; sender
   fan-out with per-target reservation and push; receiver reservation, clock, duplication
   policy with per-world overrides; central cipher selection; coordinator capacity
   pre-check; A-to-B transfer covered over real routes.
-- **Next**: close mesh remainder → interconnect batch; verify + close NSFW follow-ups;
-  triage advisory orphans (`open-untriaged.md` § 2026-09-10 re-triage).
+- **Next**: close the mesh/federation interconnect batch (mesh content-sharing shipped —
+  `open-untriaged.md` § New clusters); triage the remaining advisory orphans
+  (`open-untriaged.md` § 2026-09-10 re-triage).

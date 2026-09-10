@@ -195,7 +195,7 @@ Relevant to loop-lore's generation/cancellation/streaming architecture.
 
 ## 4. AI Roleplay Chat Platforms (2022–2026)
 
-The dominant modern form. loop-lore (SillyTavern reimplementation) competes here.
+The dominant modern form. loop-lore (a SillyTavern-class platform) competes here.
 
 ### 4.1 SillyTavern / TavernAI (the direct ancestor)
 
@@ -477,8 +477,8 @@ between MUD persistence + AI generation.
 
 # RPG & Text-RPG Landscape: Historical Survey & Mechanics
 
-> Reconciled research artifact for `loop-lore` (a clean reimplementation of the
-> SillyTavern-class RPG-chat experience). Purpose: map the games and systems — living
+> Reconciled research artifact for `loop-lore` (a SillyTavern-class RPG-chat
+> platform, not a reimplementation). Purpose: map the games and systems — living
 > and defunct — that shaped roguelikes, text-based RPGs, MUDs, interactive fiction, and
 > the modern LLM-chat RPG era, plus the _non-AI mechanics_ worth borrowing, so we can
 > reuse durable design patterns and avoid re-learning old lessons.

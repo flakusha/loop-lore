@@ -99,8 +99,9 @@ links `ad8bb7e`) and `bun run plan:sync` is green.
   prefix, `f4fd21e` assistant-GM handoff, `becc58b` shadow-note steering, `30803ca`
   reuse WorkflowRunner. Suggested home: P2-C/P2-D.
 - **NSFW consent-surface follow-ups** — `d7c0253` consent gate wiring, `e0d7c5c`
-  seduction preconditions, `e8f7a75` /api/nsfw authz. Overlap with landed wiring —
-  verify each still reproduces before scheduling.
+  seduction preconditions, `e8f7a75` /api/nsfw authz. **CLOSED 2026-09-09** — all three
+  resolved by the `nsfw-consent-gate-wiring` commit set; ticket statuses are Done and git
+  issues closed. No remaining open work.
 - **Misc** — `89f26c8` demo-login e2e order dependence, `2d1a281` migration-parts never
   apply (pairs with `open-debt.md` migration hygiene), `9b837f9` RAG captcha resilience,
   `c667507` ticket-epic-link backfill, `c622d40` capability disclosure, `1bedeb1`
@@ -108,10 +109,9 @@ links `ad8bb7e`) and `bun run plan:sync` is green.
 
 ### Further steps (proposed order)
 
-1. Triage the advisory orphans (link or close).
-2. Verify NSFW follow-ups against landed wiring; close what is fixed.
-3. Land mesh-sharing remainder, then schedule the interconnect batch.
-4. Below-floor modules per waiver tickets; then frontend batches.
-5. RPG opt-in gating before new mechanics.
-6. Item-gen discoverability + workflow batches per P2-C/D capacity.
-7. Human triage: 2FA/channel provisioning scheduling, A9 tag + push.
+1. Triage the remaining advisory orphans (link or close).
+2. Schedule the mesh/federation interconnect batch (content-sharing landed).
+3. Below-floor modules per waiver tickets; then frontend batches.
+4. RPG opt-in gating before new mechanics.
+5. Item-gen discoverability + workflow batches per P2-C/D capacity.
+6. Human triage: 2FA/channel provisioning scheduling, A9 tag + push.
