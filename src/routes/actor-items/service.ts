@@ -58,7 +58,11 @@ async function resolveActorOwner(
   return null;
 }
 
-/** Adapter: bind `database` and `actorId` into a (userId) => Promise<Response | null>. */
+/**
+ * Adapter: bind `database` and `actorId` into a (userId) => Promise<Response | null>.
+ * @param db
+ * @param actorId
+ */
 function actorOwnerCheck(db: Kysely<DB>, actorId: string,): (userId: string,) => Promise<Response | null> {
   return (userId,) => resolveActorOwner(db, actorId, userId,);
 }

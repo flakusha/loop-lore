@@ -43,7 +43,10 @@ export async function resolveMessageAccess(
   return msg.chat_id;
 }
 
-/** `seen_at` is recorded when state first reaches "seen" or "processing". */
+/**
+ * `seen_at` is recorded when state first reaches "seen" or "processing".
+ * @param state
+ */
 export function seenAtFor(state: string,): string | null {
   return state === "seen" || state === "processing" ? new Date().toISOString() : null;
 }

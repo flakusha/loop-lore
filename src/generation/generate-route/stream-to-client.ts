@@ -59,6 +59,9 @@ export interface StreamToClientOpts {
 /**
  * Flush a chunk to the SSE controller. Returns the sequence number assigned
  * by the StreamBuffer (used as `lastRenderedChunkIndex`).
+ * @param controller
+ * @param buffer
+ * @param chunk
  */
 function flushChunk(
   controller: ReadableStreamDefaultController,
@@ -74,6 +77,8 @@ function flushChunk(
  * Record that this SSE event reached the client. The active generation
  * carries `lastRenderedChunkIndex` so the cancel path can persist exactly
  * where the user-visible response was truncated.
+ * @param attemptId
+ * @param seq
  */
 function recordLastRendered(attemptId: string, seq: number,): void {
   const active = activeGenerations.get(attemptId,);

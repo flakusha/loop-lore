@@ -103,7 +103,10 @@ export class MattingService {
     return getJob(jobId,);
   }
 
-  /** List this owner's matting jobs, newest first. */
+  /**
+   * List this owner's matting jobs, newest first.
+   * @param ownerId
+   */
   listJobs(ownerId: string,): MattingJob[] {
     return listJobs(ownerId,);
   }

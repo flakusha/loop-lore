@@ -40,7 +40,10 @@ const LEVEL_INSTRUCTIONS: Record<string, string> = {
     "Rewrite the draft in a natural group-chat roleplay voice. Reply with only the rewritten text, no commentary.",
 };
 
-/** Pull text out of a transformers.js `generated_text` payload (string or chat array). */
+/**
+ * Pull text out of a transformers.js `generated_text` payload (string or chat array).
+ * @param value
+ */
 function textOf(value: unknown,): string | null {
   if (typeof value === "string") { return value; }
   if (Array.isArray(value,)) {

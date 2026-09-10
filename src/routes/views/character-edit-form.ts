@@ -11,6 +11,7 @@
 import { escapeHtml, } from "./layout";
 
 /** Stricter escape for values interpolated inside single- or double-quoted attributes
+ * @param str
  * and JavaScript string literals (e.g. `onclick='...'`). Also encodes `'`. */
 function escapeAttr(str: string,): string {
   return escapeHtml(str,).replaceAll("'", "&#39;",);

@@ -12,6 +12,10 @@ import { state, } from "./state";
  * Multi-sprite stage for group scenes (2+ cast members). Single-speaker
  * scenes keep the legacy portrait path so existing layouts stay untouched.
  * @param scene
+ * @param scene.role
+ * @param scene.speakerId
+ * @param scene.emotion
+ * @param scene.cast
  * @param settings
  * @param settings.layout
  */
