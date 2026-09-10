@@ -8,6 +8,7 @@
 import { type WorktreeConfig, } from "../utils/config";
 import { gitSync, gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
+import { appendCommitOutcome, } from "../utils/ledger";
 import { extractMessageInput, validateMessage, } from "../utils/message";
 import { log, } from "../utils/output";
 export async function commit(
@@ -122,4 +123,7 @@ export async function commit(
   } else {
     log("warn", "Commit created but signature verification failed",);
   }
+  // Outcome dispatch: the generic auto-append in index.ts recorded the
+  // invocation; this records what landed (short SHA + subject).
+  appendCommitOutcome(config.treeDir, "commit", currentBranch, commitSha, message,);
 }
