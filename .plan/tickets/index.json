@@ -2674,6 +2674,18 @@
     "source": ".plan/tickets/BUG-logger-censor-depth-cutoff-returns-subtree-untouched-nested-.md",
     "status": "done"
   },
+  "BUG-LOGGER-TESTS-LEAK-GLOBAL-LOGGER-STATE": {
+    "hash": "04efed0",
+    "git_issue": "04efed0",
+    "extid": "BUG-LOGGER-TESTS-LEAK-GLOBAL-LOGGER-STATE",
+    "type": "BUG",
+    "title": "Logger tests leak global logger state",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-logger-tests-leak-global-logger-state.md"
+  },
   "BUG-LOGNSFWEVENT-HAS-ZERO-CALLERS-NO-NSFW-GATE-DECISION-EVER-AUD": {
     "hash": "e241317",
     "git_issue": "e241317",
