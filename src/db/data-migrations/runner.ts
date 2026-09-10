@@ -39,7 +39,10 @@ async function markApplied(db: Kysely<DB>, migration: DataMigration,): Promise<v
     .execute();
 }
 
-/** */
+/**
+ * Discover and import data migrations colocated next to this runner.
+ * @returns array of `DataMigration` definitions (sorted by filename).
+ */
 async function discoverMigrations(): Promise<DataMigration[]> {
   const tasks: DataMigration[] = [];
   const { readdirSync, statSync, } = await import("node:fs");

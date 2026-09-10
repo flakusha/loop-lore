@@ -47,8 +47,9 @@ const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 
 /**
  * Lazy default — pulled from `AsyncStoreConfig` defaults to keep parity.
- * @param override
- * @param fallback
+ * @param override - explicit override (when undefined, falls back)
+ * @param fallback - config carrying the default
+ * @returns `override` when defined; otherwise `fallback.maxInlineBytes` (or `1 MiB` when that's also missing).
  */
 function getMaxInlineBytes(override: number | undefined, fallback: AsyncStoreConfig,): number {
   if (override !== undefined) { return override; }
@@ -60,8 +61,9 @@ function getMaxInlineBytes(override: number | undefined, fallback: AsyncStoreCon
  * rows past TTL as expired. Scheduling belongs to the caller (daemon timer
  * or the cron registry's `async.offload` job); this unit stays directly
  * testable.
- * @param database
- * @param opts
+ * @param database - Kysely handle
+ * @param opts - min-age, TTL, max-inline thresholds
+ * @returns counts `{ offloaded, expired }` for this pass.
  */
 export async function runOffloadPass(
   database: Kysely<DB>,
@@ -135,9 +137,10 @@ export async function runOffloadPass(
 
 /**
  * Start the offload daemon. Returns a handle exposing `stop()` + `runOnce()`.
- * @param database
- * @param asyncStoreConfig
- * @param config
+ * @param database - Kysely handle
+ * @param asyncStoreConfig - default config (used for `maxInlineBytes` fallback)
+ * @param config - daemon-specific config (intervals, TTL override)
+ * @returns `OffloadDaemon` handle.
  */
 export function startOffloadDaemon(
   database: Kysely<DB>,
@@ -158,7 +161,10 @@ export function startOffloadDaemon(
 
   const state: DaState = { rowCount: 0, lastWriteAt: Date.now(), eventLoopLagMs: 0, };
 
-  /** */
+  /**
+   * Run a single offload pass (re-entrancy guarded; returns zeros if already running).
+   * @returns counts `{ offloaded, expired }` for this pass.
+   */
   async function runOnce(): Promise<{ offloaded: number; expired: number }> {
     if (running) { return { offloaded: 0, expired: 0, }; }
     running = true;

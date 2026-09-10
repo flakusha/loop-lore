@@ -18,7 +18,10 @@ import { checkCommandMechanic, RpgMechanic, } from "../../rpg/service/world-gate
 import { parseIntOr, } from "../../utils/parse-number";
 import { type CommandResult, registerCommand, } from "./registry";
 
-/** Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests). */
+/**
+ * Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests).
+ * @returns a child logger namespaced for the `dice` module.
+ */
 const getLog = (): Logger => getLogger().child({ module: "dice", },);
 
 /** Result of a single die roll */

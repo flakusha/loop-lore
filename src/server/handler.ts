@@ -125,8 +125,9 @@ export interface HandleApiRequestOpts {
 /**
  * API request handler — dispatches to plugin routes.
  * All other API routes are handled by Elysia plugins.
- * @param root0
- * @param root0.request
+ * @param root0 - options object
+ * @param root0.request - incoming `Request` to dispatch
+ * @returns `Response` from the matched plugin route (404 when no plugin matches).
  */
 export async function handleApiRequest({ request, }: HandleApiRequestOpts,): Promise<Response> {
   let pluginResult = await dispatchPluginRoute(request,);

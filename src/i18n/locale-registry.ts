@@ -24,8 +24,8 @@ export const LOCALE_REGISTRY: Record<Locale, LocaleInfo> = {
 
 /**
  * Get locale info by ID.
- * Returns undefined for unknown locales.
- * @param locale
+ * @param locale - locale id (e.g. `"en"`, `"ja"`)
+ * @returns `LocaleInfo` for the locale, or `undefined` for unknown ids.
  */
 export function getLocaleInfo(locale: Locale,): LocaleInfo | undefined {
   return LOCALE_REGISTRY[locale];
@@ -33,7 +33,8 @@ export function getLocaleInfo(locale: Locale,): LocaleInfo | undefined {
 
 /**
  * Check if a string is a supported locale ID.
- * @param value
+ * @param value - candidate string
+ * @returns `true` when `value` is a known locale id (TS narrows `value` to `Locale`).
  */
 export function isLocale(value: string,): value is Locale {
   return value in LOCALE_REGISTRY;
@@ -41,6 +42,7 @@ export function isLocale(value: string,): value is Locale {
 
 /**
  * Get all supported locale IDs.
+ * @returns array of all locale ids in registry order.
  */
 export function getSupportedLocales(): Locale[] {
   return Object.keys(LOCALE_REGISTRY,) as Locale[];

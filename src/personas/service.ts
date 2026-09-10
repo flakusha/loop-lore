@@ -44,7 +44,8 @@ export class PersonasService {
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
-   * @param userId
+   * @param userId - owning user id
+   * @returns all personas owned by `userId`, default-first then newest.
    */
   async listByUser(userId: string,) {
     return this.db
@@ -57,8 +58,9 @@ export class PersonasService {
   }
 
   /**
-   * @param id
-   * @param userId
+   * @param id - persona id
+   * @param userId - owning user id
+   * @returns the persona row, or `undefined` if not found / not owned.
    */
   async getById(id: string, userId: string,) {
     return this.db
@@ -70,7 +72,8 @@ export class PersonasService {
   }
 
   /**
-   * @param params
+   * @param params - persona fields (userId, name, avatarAssetId, description, title, temperature, maxTokens, model)
+   * @returns the inserted persona's id.
    */
   async create(params: CreatePersonaParams,): Promise<string> {
     const id = uid();
@@ -166,7 +169,8 @@ export class PersonasService {
   }
 
   /**
-   * @param userId
+   * @param userId - owning user id
+   * @returns the default persona for `userId`, or `undefined` if none is marked default.
    */
   async getDefault(userId: string,) {
     return this.db
@@ -178,8 +182,9 @@ export class PersonasService {
   }
 
   /**
-   * @param id
-   * @param userId
+   * @param id - persona id
+   * @param userId - owning user id
+   * @returns `{ actorId }` for the newly-created character.
    */
   async convertToCharacter(id: string, userId: string,): Promise<{ actorId: string }> {
     const persona = await this.db

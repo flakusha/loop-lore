@@ -230,8 +230,9 @@ export const SuccessResponse = t.Object({
 },);
 
 /**
- *
- * @param itemSchema
+ * Generic list envelope: `{ data: T[], total }` for paginated list responses.
+ * @param itemSchema - TypeBox schema for items in the `data` array
+ * @returns TypeBox object schema `{ data: T[], total: number }`.
  */
 export function ListResponse(itemSchema: Parameters<typeof t.Array>[0],) {
   return t.Object({

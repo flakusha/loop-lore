@@ -18,10 +18,11 @@ import { ForbiddenError, NotFoundError, } from "../routes/http-utils";
  *
  * Cannot be used via `.use()` — Elysia scopes onError per-plugin instance
  * and validation errors from child routes don't bubble up to parent plugins.
- * @param code
- * @param error
- * @param set
- * @param set.status
+ * @param code - Elysia error code (number or `"VALIDATION"` / `"NOT_FOUND"` / `"PARSE"` / `"INTERNAL_SERVER_ERROR"` / `"INVALID_COOKIE_SIGNATURE"` / `"INVALID_FILE_TYPE"` / `"UNKNOWN"`)
+ * @param error - error thrown by the route handler
+ * @param set - Elysia `set` context (status is mutated in place)
+ * @param set.status - HTTP status to set (mutated by this function)
+ * @returns error payload `{ error, code, details? }` (or `{ error: "Internal server error", code: "SERVER_ERROR" }` on logger failure / unhandled errors).
  */
 export function onValidationError(
   code:
@@ -113,7 +114,8 @@ export function onValidationError(
 
 /**
  * Helper to create a 401 response for guard handlers.
- * @param message
+ * @param message - error message returned in the body
+ * @returns 401 `Response` with `{ error, code: "UNAUTHORIZED" }` JSON body.
  */
 export function unauthorized(message = "Unauthorized",): Response {
   return Response.json({ error: message, code: "UNAUTHORIZED", }, { status: 401, },);
@@ -121,7 +123,8 @@ export function unauthorized(message = "Unauthorized",): Response {
 
 /**
  * Helper to create a 403 response for guard handlers.
- * @param message
+ * @param message - error message returned in the body
+ * @returns 403 `Response` with `{ error, code: "FORBIDDEN" }` JSON body.
  */
 export function forbidden(message = "Forbidden",): Response {
   return Response.json({ error: message, code: "FORBIDDEN", }, { status: 403, },);
@@ -129,7 +132,8 @@ export function forbidden(message = "Forbidden",): Response {
 
 /**
  * Helper to create a 404 response for guard handlers.
- * @param message
+ * @param message - error message returned in the body
+ * @returns 404 `Response` with `{ error, code: "NOT_FOUND" }` JSON body.
  */
 export function notFound(message = "Not found",): Response {
   return Response.json({ error: message, code: "NOT_FOUND", }, { status: 404, },);

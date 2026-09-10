@@ -17,8 +17,9 @@ export const OFFLOAD_DIR = path.resolve(".tmp", "async-store",);
  * Exported so `apply.ts` can eagerly spill bodies that exceed the inline
  * threshold at completion time (rather than nulling them and losing the
  * data). BUG-bug-async-store-complete-drops-response-body-larger-than-max.
- * @param id
- * @param body
+ * @param id - result row id (used as filename stem)
+ * @param body - raw response body text
+ * @returns absolute path to the gzipped spill file.
  */
 export async function spill(id: string, body: string,): Promise<string> {
   // Self-sufficient: `apply()` may spill before the daemon's startup
@@ -33,7 +34,8 @@ export async function spill(id: string, body: string,): Promise<string> {
 
 /**
  * Read a body back from disk (used by the status endpoint).
- * @param filePath
+ * @param filePath - absolute path to a gzipped spill file
+ * @returns decompressed body string, or `null` if the file is missing or unreadable.
  */
 export function readOffloadedBody(filePath: string,): string | null {
   try {
@@ -47,13 +49,17 @@ export function readOffloadedBody(filePath: string,): string | null {
 
 /**
  * Test seam: report whether a spill file exists for a given id.
- * @param id
+ * @param id - result row id
+ * @returns `true` when `${OFFLOAD_DIR}/${id}.json.gz` exists.
  */
 export function offloadExists(id: string,): boolean {
   return existsSync(path.join(OFFLOAD_DIR, `${id}.json.gz`,),);
 }
 
-/** Test seam: total bytes under OFFLOAD_DIR. */
+/**
+ * Test seam: total bytes under OFFLOAD_DIR.
+ * @returns sum of `*.json.gz` file sizes under `OFFLOAD_DIR`, or `0` when the directory does not exist.
+ */
 export function offloadDiskBytes(): number {
   if (!existsSync(OFFLOAD_DIR,)) { return 0; }
   // Bun's `Glob` is overkill; a flat scan is fine for the `.tmp/async-store/`

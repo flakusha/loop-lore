@@ -10,7 +10,10 @@
 
 import { getLogger, type Logger, } from "../logger";
 
-/** Lazy logger — only resolved when first used. */
+/**
+ * Lazy logger — only resolved when first used.
+ * @returns a child logger namespaced for the `command-parser` module.
+ */
 const getLog = (): Logger => getLogger().child({ module: "command-parser", },);
 
 /** Parsed slash command result */
