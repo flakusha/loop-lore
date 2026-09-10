@@ -18,7 +18,7 @@
 import { BROWSER_MODEL_CATALOG, } from "../../inference/manifest";
 import { ENGINE_WORKER_URL, isEngineResponse, TRANSFORMERS_CDN, } from "./local-engine-protocol";
 import type { EngineRequest, EngineResponse, } from "./local-engine-protocol";
-import { LocalInferenceUnavailable, } from "./local-inference";
+import { LocalInferenceUnavailable, markModelReady, } from "./local-inference";
 
 /** Catalog id → transformers.js pipeline model id (quantized ONNX builds). */
 const PIPELINE_MODEL_IDS: Record<string, string> = {
@@ -46,6 +46,9 @@ export interface LocalEngine {
    * @param onProgress - Weight-download progress (loaded, total) bytes.
    * @returns Engine device actually used (`webgpu` or `wasm`).
    * @throws {LocalInferenceUnavailable} On unknown model, worker or load failure.
+   *
+   * A successful load marks the model ready, so later composer calls pass
+   * the readiness gate without a downloader round-trip.
    */
   loadModel(modelId: string, onProgress?: (loaded: number, total: number,) => void,): Promise<string>;
   /**
@@ -171,6 +174,7 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
         }
         loaded = modelId;
         engineName = response.engine;
+        markModelReady(modelId,);
         return engineName;
       } finally {
         progressHandler = null;
