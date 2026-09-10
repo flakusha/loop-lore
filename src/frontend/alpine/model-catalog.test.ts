@@ -122,7 +122,7 @@ describe("fetchCapability", () => {
 describe("gguf split-chunk contract", () => {
   const split = (names: string[],): CatalogModel => ({
     ...ENTRY,
-    files: names.map((name,) => ({ name, url: `https://cdn.example.com/m1/${name}`, sizeBytes: 10, }),),
+    files: names.map((name,) => ({ name, url: `https://cdn.example.com/m1/${name}`, sizeBytes: 10, })),
   });
 
   test("parseGgufSplitName accepts zero-padded chunk names", () => {
@@ -143,28 +143,28 @@ describe("gguf split-chunk contract", () => {
   });
 
   test("isGgufSplitEntry needs a single non-empty chunk family", () => {
-    expect(isGgufSplitEntry(split(["m-00001-of-00002.gguf", "m-00002-of-00002.gguf",]),),).toBe(true,);
+    expect(isGgufSplitEntry(split(["m-00001-of-00002.gguf", "m-00002-of-00002.gguf",],),),).toBe(true,);
     expect(isGgufSplitEntry(ENTRY,),).toBe(false,);
     expect(isGgufSplitEntry({ ...ENTRY, files: [], },),).toBe(false,);
-    expect(isGgufSplitEntry(split(["a-00001-of-00002.gguf", "b-00002-of-00002.gguf",]),),).toBe(false,);
-    expect(isGgufSplitEntry(split(["a-00001-of-00002.gguf", "notes.txt",]),),).toBe(false,);
+    expect(isGgufSplitEntry(split(["a-00001-of-00002.gguf", "b-00002-of-00002.gguf",],),),).toBe(false,);
+    expect(isGgufSplitEntry(split(["a-00001-of-00002.gguf", "notes.txt",],),),).toBe(false,);
   });
 
   test("orderSplitFiles sorts shuffled chunks and rejects gaps", () => {
-    const ordered = orderSplitFiles(split(["m-00002-of-00002.gguf", "m-00001-of-00002.gguf",]),);
-    expect(ordered?.map((file,) => file.name,),).toEqual([
+    const ordered = orderSplitFiles(split(["m-00002-of-00002.gguf", "m-00001-of-00002.gguf",],),);
+    expect(ordered?.map((file,) => file.name),).toEqual([
       "m-00001-of-00002.gguf",
       "m-00002-of-00002.gguf",
     ],);
-    expect(orderSplitFiles(split(["m-00001-of-00003.gguf", "m-00003-of-00003.gguf",]),),).toBeNull();
-    expect(orderSplitFiles(split(["m-00001-of-00002.gguf", "m-00001-of-00002.gguf",]),),).toBeNull();
+    expect(orderSplitFiles(split(["m-00001-of-00003.gguf", "m-00003-of-00003.gguf",],),),).toBeNull();
+    expect(orderSplitFiles(split(["m-00001-of-00002.gguf", "m-00001-of-00002.gguf",],),),).toBeNull();
     expect(orderSplitFiles(ENTRY,),).toBeNull();
   });
 
   test("isGgufMagic matches the 4-byte header", () => {
-    expect(isGgufMagic(new Uint8Array([0x47, 0x47, 0x55, 0x46, 0x00,]),),).toBe(true,);
-    expect(isGgufMagic(new Uint8Array([0x47, 0x47, 0x55, 0x00,]),),).toBe(false,);
-    expect(isGgufMagic(new Uint8Array([0x47, 0x47,]),),).toBe(false,);
+    expect(isGgufMagic(new Uint8Array([0x47, 0x47, 0x55, 0x46, 0x00,],),),).toBe(true,);
+    expect(isGgufMagic(new Uint8Array([0x47, 0x47, 0x55, 0x00,],),),).toBe(false,);
+    expect(isGgufMagic(new Uint8Array([0x47, 0x47,],),),).toBe(false,);
     expect(isGgufMagic(new Uint8Array(0,),),).toBe(false,);
   });
 });
