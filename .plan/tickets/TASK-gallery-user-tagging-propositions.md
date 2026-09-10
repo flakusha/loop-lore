@@ -1,7 +1,7 @@
 # TASK: User-side gallery tagging + tag propositions
 
 **Epic:** epic-frontend-gallery.md
-**Status:** 🟡 In Progress (2026-09-11 — reopened by audit: A2 tag filter facet + S1 preview-modal rename pending)
+**Status:** ✅ Resolved (commit c0c24103 — feat(gallery): tag facet + preview tag rename)
 **Priority:** Medium
 
 ## Scope
@@ -32,6 +32,13 @@ Shipped end-to-end gallery tagging:
   `asset-preview.ts`, wired into the preview modal partial.
 - Regenerated DB artifacts: schema files, column-types, insert-helpers,
   db-schemas, and register-plugins wiring.
+- Audit follow-ups (commit c0c24103): A2 tag filter facet — gallery/search
+  routes accept `tag` (visibleTagNames scope: global + viewer's own user
+  tags), cards expose `data-tags`, opt-in `data-show-tag-filter` filter-bar
+  select wired through `filterBar` Alpine state, `filter.byTag`/`allTags`
+  locales; S1 preview-modal inline rename editor (user-scope chips only) via
+  `POST /api/assets/:id/tags/rename`; tag-facets, shared, gallery, search,
+  and preview-tag test coverage.
 
 ## Acceptance
 
