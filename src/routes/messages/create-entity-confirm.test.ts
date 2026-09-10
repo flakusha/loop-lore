@@ -8,6 +8,7 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { insertGeneratedEntity, } from "../../assistant/commands/create-entity";
 import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -601,5 +602,190 @@ describe("POST /api/chats/:id/create-entity", () => {
       .where("actor_id", "=", body.id,)
       .execute();
     expect(loreEntries,).toHaveLength(0,);
+  });
+
+  // ── Transaction atomicity (B5) ──────────────────────────────────────────────
+
+  test("rolls back entity insert when a follow-up lore insert fails (FK violation)", async () => {
+    // insertGeneratedEntity wraps entity + lore inserts in a single transaction.
+    // A world_id that does not exist violates the locations.world_id FK,
+    // so the whole transaction must roll back — no orphaned entity row.
+    const nonExistentWorld = uid();
+    await expect(
+      insertGeneratedEntity(db, {
+        kind: "location",
+        data: { name: "Phantom Bridge", description: "will fail", },
+        description: "will fail",
+        worldId: nonExistentWorld,
+      }, userId,),
+    ).rejects.toThrow();
+
+    // Verify no location was persisted
+    const locations = await db
+      .selectFrom("locations",)
+      .select("id",)
+      .where("name", "=", "Phantom Bridge",)
+      .execute();
+    expect(locations,).toHaveLength(0,);
+  });
+
+  // ── selective flag with empty keys (N6) ─────────────────────────────────────
+
+  test("stores selective=0 when selective=true but keys are empty", async () => {
+    const chatId = await createChatWithUser();
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "item",
+          data: {
+            name: "Sealed Locket",
+            description: "A locket with no key triggers",
+            lore: [
+              {
+                name: "No Trigger",
+                content: "Cannot be triggered by keywords.",
+                selective: true,
+                // keys intentionally omitted → defaults to []
+                position: "before_char",
+              },
+            ],
+          },
+          worldId,
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+
+    const loreEntries = await db
+      .selectFrom("world_lore_entries",)
+      .selectAll()
+      .where("name", "=", "No Trigger",)
+      .execute();
+    expect(loreEntries,).toHaveLength(1,);
+    // N6: selective=true with empty keys → stored as 0
+    expect(loreEntries[0]!.selective,).toBe(0,);
+  });
+
+  test("stores selective=1 when selective=true and keys are non-empty", async () => {
+    const chatId = await createChatWithUser();
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "item",
+          data: {
+            name: "Whisper Stone",
+            description: "A stone that whispers",
+            lore: [
+              {
+                name: "Whisper Warning",
+                content: "The stone warns of danger.",
+                selective: true,
+                keys: ["danger",],
+                position: "before_char",
+              },
+            ],
+          },
+          worldId,
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+
+    const loreEntries = await db
+      .selectFrom("world_lore_entries",)
+      .selectAll()
+      .where("name", "=", "Whisper Warning",)
+      .execute();
+    expect(loreEntries,).toHaveLength(1,);
+    // selective=true with non-empty keys → stored as 1
+    expect(loreEntries[0]!.selective,).toBe(1,);
+  });
+
+  // ── Synthetic location subject for lore without a subject (N5) ─────────────────
+
+  test("location lore without a subject gets synthetic location subject in audience_scope", async () => {
+    const chatId = await createChatWithUser();
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "location",
+          data: {
+            name: "Forgotten Shrine",
+            description: "An old shrine",
+            lore: [
+              {
+                name: "Shrine History",
+                content: "Built in the old age.",
+                keys: ["old",],
+                position: "before_char",
+              },
+            ],
+          },
+          worldId,
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+    const body = await res.json();
+
+    const loreEntries = await db
+      .selectFrom("world_lore_entries",)
+      .selectAll()
+      .where("world_id", "=", worldId,)
+      .where("name", "=", "Shrine History",)
+      .execute();
+    expect(loreEntries,).toHaveLength(1,);
+    expect(loreEntries[0]!.audience_scope,).not.toBeNull();
+    const scope = JSON.parse(loreEntries[0]!.audience_scope!,);
+    // Synthetic subject: { kind: "location", locationId: <entityId> }
+    expect(scope.subject,).toBeDefined();
+    expect(scope.subject.kind,).toBe("location",);
+    expect(scope.subject.locationId,).toBe(body.id,);
+    expect(scope.requires_presence,).toBe(true,);
+  });
+
+  test("character lore without subject does NOT get synthetic subject", async () => {
+    const chatId = await createChatWithUser();
+    const app = createApp(db, userId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${chatId}/create-entity`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          kind: "character",
+          data: {
+            name: "Ranger",
+            description: "A silent hunter",
+            lore: [
+              {
+                name: "Hunting Ground",
+                content: "Knows every trail.",
+                keys: ["trail",],
+                position: "before_char",
+              },
+            ],
+          },
+        },),
+      },),
+    );
+    expect(res.status,).toBe(201,);
+
+    const loreEntries = await db
+      .selectFrom("actor_lore_entries",)
+      .selectAll()
+      .where("name", "=", "Hunting Ground",)
+      .execute();
+    expect(loreEntries,).toHaveLength(1,);
+    // Character scope without subject → no audience_scope
+    expect(loreEntries[0]!.audience_scope,).toBeNull();
   });
 });

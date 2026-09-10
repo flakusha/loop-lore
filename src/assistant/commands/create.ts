@@ -29,6 +29,7 @@ import {
   type GeneratedEntity,
   normalizeEntity,
   runQualityGates,
+  validateRawLoreEntries,
 } from "../quality/entity-creation";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 const KIND_LABELS: Record<EntityKind, string> = {
@@ -37,17 +38,13 @@ const KIND_LABELS: Record<EntityKind, string> = {
   world: "World",
   item: "Item",
 };
-/**
- * Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests).
- * @returns a child logger namespaced for the `create` module.
- */
+/** Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests). */
 const getLog = (): Logger => getLogger().child({ module: "create", },);
 
 /**
- * Resolve the active world's `{ name, description }` if a non-default world is scoped.
- * @param db - Kysely handle
- * @param worldId - world id, or `"default"` for the implicit default
- * @returns `{ name, description? }` for the named world, or `undefined` when no / default world.
+ * Pull the active world context (name + description) if a world is scoped.
+ * @param db
+ * @param worldId
  */
 async function resolveWorldContext(
   db: NonNullable<CommandContext["db"]>,
@@ -73,7 +70,6 @@ async function resolveWorldContext(
  * @param ctx
  * @param complete
  * @param model
- * @returns void
  */
 export async function runCreateGeneration(
   args: string[],
@@ -142,6 +138,20 @@ export async function runCreateGeneration(
           `**Failed to parse ${kind} data from the model response.** Nothing was saved — retry with a simpler description.`,
         handled: true,
       };
+    }
+
+    // Pre-normalize validation of raw lore entries — catches invalid
+    // subjects, incomplete selectors, and invalid positions BEFORE
+    // normalizeLoreEntries silently strips/clamps them.
+    if (Array.isArray(raw.lore,)) {
+      const rawLoreErrors = validateRawLoreEntries(raw.lore,);
+      if (rawLoreErrors.length > 0) {
+        getLog().warn("create lore validation failure", { kind, errors: rawLoreErrors, },);
+        return {
+          systemMessage: `**Generation rejected — invalid lore entries:** ${rawLoreErrors.join("; ",)}`,
+          handled: true,
+        };
+      }
     }
 
     const entity: GeneratedEntity = normalizeEntity(raw,);
