@@ -4,7 +4,7 @@
 
 ## Problem
 
-`src/routes/notifications/stream.ts:51-54` (tick) and `:74-77` (start) wrap
+`src/routes/notifications/stream.ts:51-55` (tick) and `:71-75` (start) wrap
 their DB work in `Promise.allSettled([...])` and resolve the result inline.
 This means the surrounding `try { ... } catch` blocks can NEVER throw
 on a DB error — `allSettled` always resolves. The catch branches that emit a
@@ -42,8 +42,8 @@ making the initial-snapshot failure visible to the client.
 
 ## Where
 
-- `src/routes/notifications/stream.ts:49-66` — tick callback, allSettled at :51-54, catch at :63-65
-- `src/routes/notifications/stream.ts:71-93` — start callback, allSettled at :74-77, catch at :87-93 (never executes)
+- `src/routes/notifications/stream.ts:48-65` — tick callback, allSettled at :51-55, catch at :62-64
+- `src/routes/notifications/stream.ts:67-94` — start callback, allSettled at :71-75, catch at :79-88 (never executes)
 
 ## Discovered
 
