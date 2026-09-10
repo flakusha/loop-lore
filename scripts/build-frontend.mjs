@@ -46,6 +46,11 @@ async function buildBundles() {
   // WASM module loader (pre-compiled hot binary — fetches + exposes C ABI)
   await $`bun build --target browser --minify --outdir ${DIST} --banner "(()=>{" --footer "})()" ${frontend}/wasm-loader.ts`;
 
+  // Local inference worker (standalone — no IIFE wrapper: workers run in
+  // their own scope. Lazy-loads transformers.js from CDN on first use;
+  // never part of the main-thread bundle.)
+  await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/alpine/local-engine.worker.ts`;
+
   console.log("✓ JS bundles built",);
 }
 
