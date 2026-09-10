@@ -1,4 +1,4 @@
-//! C ABI exports for the BLAKE3 sample module.
+//! C ABI exports for BLAKE3 hashing.
 //!
 //! ABI contract (keep in sync with `src/native/loader.ts`):
 //! - `ll_blake3(data, len, out, out_len) -> i32` — writes 32 digest bytes
@@ -105,7 +105,7 @@ mod tests {
 
   #[test]
   fn version_is_packed() {
-    assert_eq!(crate::ll_version(), 768); // 0.3.0 → (0 << 16) | (3 << 8) | 0
+    assert_eq!(crate::ll_version(), 1024); // 0.4.0 → (0 << 16) | (4 << 8) | 0
   }
 
   #[test]

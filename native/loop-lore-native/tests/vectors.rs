@@ -15,7 +15,7 @@ const VECTORS: &[(&[u8], &str)] = &[
   ),
 ];
 
-fn hash_via_ffi(input: &[u8]) -> [u8; 32] {
+fn hash_via_abi(input: &[u8]) -> [u8; 32] {
   let mut out = [0u8; 32];
   let status = unsafe { loop_lore_native::ll_blake3(input.as_ptr(), input.len(), out.as_mut_ptr(), out.len()) };
   assert_eq!(status, 0);
@@ -34,7 +34,7 @@ fn hex_encode(bytes: &[u8]) -> String {
 #[test]
 fn official_vectors_via_c_abi() {
   for (input, expected_hex) in VECTORS {
-    let digest = hash_via_ffi(input);
+    let digest = hash_via_abi(input);
     assert_eq!(hex_encode(&digest), *expected_hex);
   }
 }
@@ -44,7 +44,7 @@ fn multi_chunk_input_via_c_abi() {
   // 1024 × 'a' exercises the multi-chunk BLAKE3 path. Expected digest
   // cross-verified against @noble/hashes (independent implementation).
   let input = vec![b'a'; 1024];
-  let digest = hash_via_ffi(&input);
+  let digest = hash_via_abi(&input);
   assert_eq!(
     hex_encode(&digest),
     "5a1c9e5d85d9898297037e8e24f69bb0e604a84c91c3b3ef4784a374812900d9"

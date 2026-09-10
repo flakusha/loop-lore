@@ -25,7 +25,7 @@ const WASM_URL = "/wasm/loop_lore_native.wasm";
 
 /**
  * Wrapper around the wasm C ABI functions — the same contract defined in
- * the Rust crate's ffi.rs and zstd.rs, but callable from the browser.
+ * the Rust crate's blake3.rs, zstd.rs, and gguf.rs, but callable from the browser.
  */
 export interface WasmNativeModule {
   version: number;
@@ -36,6 +36,9 @@ export interface WasmNativeModule {
     compress(data: Uint8Array, level: number,): Uint8Array | null;
     decompress(data: Uint8Array, outCapacity: number,): Uint8Array | null;
     decompressBound(data: Uint8Array,): number | null;
+  };
+  gguf: {
+    probe(header: Uint8Array,): { version: number; tensorCount: number; kvCount: number } | null;
   };
 }
 
@@ -83,12 +86,14 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
     ll_zstd_compress,
     ll_zstd_decompress,
     ll_zstd_decompress_bound,
+    ll_gguf_probe,
   } = instance.exports as unknown as {
     ll_version: () => number;
     ll_blake3: (data: number, len: number, out: number, outLen: number,) => number;
     ll_zstd_compress: (data: number, len: number, out: number, outLen: number, level: number,) => number;
     ll_zstd_decompress: (data: number, len: number, out: number, outLen: number,) => number;
     ll_zstd_decompress_bound: (data: number, len: number,) => number | bigint;
+    ll_gguf_probe?: (data: number, len: number, out: number, outLen: number,) => number;
   };
 
   const version = ll_version();
@@ -142,7 +147,39 @@ function buildWrapper(instance: WebAssembly.Instance, memory: WebAssembly.Memory
         return result < 0 ? null : result;
       },
     },
+    gguf: {
+      probe(header: Uint8Array,): { version: number; tensorCount: number; kvCount: number } | null {
+        if (typeof ll_gguf_probe !== "function") { return null; }
+        const headerLen = header.length;
+        if (headerLen === 0 || headerLen > SCRATCH_SIZE - 32) { return null; }
+        const outAt = SCRATCH_SIZE - 32;
+        const view = new Uint8Array(memory.buffer,);
+        view.set(header, 0,);
+        const status = ll_gguf_probe(0, headerLen, outAt, 32,);
+        if (status !== 0) { return null; }
+        const summary = new DataView(memory.buffer, outAt, 32,);
+        const tensorCount = Number(summary.getBigUint64(8, true,),);
+        const kvCount = Number(summary.getBigUint64(16, true,),);
+        if (!Number.isSafeInteger(tensorCount,) || !Number.isSafeInteger(kvCount,)) { return null; }
+        return { version: summary.getUint32(0, true,), tensorCount, kvCount, };
+      },
+    },
   };
+}
+
+/**
+ * Test seam — build the wrapper around scripted exports without a wasm
+ * binary (bun has no wasm toolchain in unit-test envs).
+ * @param instance Fake instance whose `exports` carry the C ABI functions.
+ * @param memory Backing memory for the scratch transfers.
+ * @returns The same wrapper `getWasmModule` would return.
+ * @internal Test-only; never call from application code.
+ */
+export function __buildWasmWrapperForTest(
+  instance: WebAssembly.Instance,
+  memory: WebAssembly.Memory,
+): WasmNativeModule {
+  return buildWrapper(instance, memory,);
 }
 
 /**

@@ -29,7 +29,7 @@ if (ISOLATED_RUN) {
       if (stub.mode === "throw") { throw new Error("dlopen boom",); }
       return {
         symbols: {
-          ll_version: () => (stub.mode === "mismatch" ? 999 : 768),
+          ll_version: () => (stub.mode === "mismatch" ? 999 : (0 << 16) | (4 << 8)),
           ll_blake3: () => 0,
           ll_zstd_compress: () => 0,
           ll_zstd_decompress: () => 0,
@@ -61,7 +61,7 @@ describeOrSkipIsolated("loader gaps — dlopen success path", () => {
     __resetNativeModuleCache();
     const module = getNativeModule();
     expect(module,).not.toBeNull();
-    expect(module?.version,).toBe(768,);
+    expect(module?.version,).toBe((0 << 16) | (4 << 8),);
     expect(stub.dlopenCalls,).toBe(1,);
   });
 
@@ -80,7 +80,7 @@ describeOrSkipIsolated("loader gaps — dlopen success path", () => {
     __resetNativeModuleCache();
     expect(isNativeAvailable(),).toBe(true,);
     const status = getNativeStatus();
-    expect(status,).toMatchObject({ available: true, implementation: "rust", version: 768, },);
+    expect(status,).toMatchObject({ available: true, implementation: "rust", version: (0 << 16) | (4 << 8), },);
     expect(status.binaryPath,).toContain("loop-lore-native",);
     expect(status.platform,).toBe(process.platform,);
   });

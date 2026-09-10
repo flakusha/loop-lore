@@ -229,6 +229,6 @@ mod tests {
 
   #[test]
   fn version_is_packed_030() {
-    assert_eq!(crate::VERSION, 768); // 0.3.0 → (0 << 16) | (3 << 8) | 0
+    assert_eq!(crate::VERSION, 1024); // 0.4.0 → (0 << 16) | (4 << 8) | 0
   }
 }
