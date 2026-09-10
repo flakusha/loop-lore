@@ -22,30 +22,30 @@
  */
 
 export type {
+  GateResult,
   GeneratedEntity,
   GeneratedEntityLoreEntry,
-  GateResult,
   QualityReport,
 } from "./entity-creation-types";
 export {
-  MAX_KEYS,
-  MAX_KEY_LENGTH,
-  REQUIRED_FIELDS,
   clampInt,
   clampNonNegativeInt,
   isValidLorePosition,
+  MAX_KEY_LENGTH,
+  MAX_KEYS,
+  REQUIRED_FIELDS,
 } from "./entity-creation-types";
 
 export {
-  validateRawLoreEntries,
   normalizeLoreEntries,
   validateLoreEntries,
+  validateRawLoreEntries,
 } from "./entity-creation-lore";
 
 export {
-  normalizeEntity,
-  validateEntitySchema,
-  checkDuplicate,
   checkConsistency,
+  checkDuplicate,
+  normalizeEntity,
   runQualityGates,
+  validateEntitySchema,
 } from "./entity-creation-gates";
