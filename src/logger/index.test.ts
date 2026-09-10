@@ -1,6 +1,24 @@
 // Focused logger coverage
-import { describe, expect, it, } from "bun:test";
-import { createLogger, getLogger, setGlobalLogger, } from "./index";
+import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
+import { createLogger, getLogger, type Logger, setGlobalLogger, } from "./index";
+
+/** Global root capture — restored after each test so global mutation never leaks across files. */
+let prevRoot: Logger | undefined;
+beforeEach(() => {
+  try {
+    prevRoot = getLogger();
+  } catch {
+    prevRoot = undefined;
+  }
+},);
+afterEach(() => {
+  if (prevRoot) {
+    setGlobalLogger(prevRoot,);
+  } else {
+    createLogger({ level: "error", },);
+  }
+  prevRoot = undefined;
+},);
 
 describe("logger coverage", () => {
   it("createLogger returns instance", () => {

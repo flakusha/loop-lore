@@ -184,6 +184,12 @@ export function createClient(baseUrl: string,) {
      * Returns true on success.
      */
     async login(): Promise<boolean> {
+      // Reset the process-global demo-login limiter: it is keyed by IP and
+      // shared across test servers in the same bun process, so earlier files
+      // in a full-suite run would otherwise exhaust the budget (order-dependent
+      // demo-login failures).
+      const { resetDemoLoginRateLimiter, } = await import("@/routes/auth");
+      resetDemoLoginRateLimiter();
       const res = await this.post("/api/demo-login",);
       if (res.ok) {
         await bootstrapCsrf();
