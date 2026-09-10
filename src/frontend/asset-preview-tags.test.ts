@@ -6,9 +6,10 @@
  *
  * Drives `openAssetPreview` against a fake DOM whose elements stash real event
  * listeners, so `renderTagsPanel` / `submitTag` / `removeTag` / `dismissTag` /
- * `renderAutocomplete` are exercised through the public global. `./fe-fetch`
- * is the module seam (Bun permanently binds `fetch`); `./ui` is stubbed so the
- * fire-and-forget toast import resolves without pulling the real UI module.
+ * `renameTag` / `renderAutocomplete` are exercised through the public global.
+ * `./fe-fetch` is the module seam (mocked — no network, no localStorage);
+ * `./ui` is stubbed so the fire-and-forget toast import resolves without
+ * pulling the real UI module.
  */
 import { afterEach, beforeEach, describe, expect, mock, test, vi, } from "bun:test";
 
@@ -94,9 +95,13 @@ interface TagDom {
   input: El;
   globalEl: El;
   ac: El;
+  editSlot: El;
   removeBtn: El;
+  renameBtn: El;
   acceptBtn: El;
   dismissBtn: El;
+  renameForm: El;
+  renameInput: El;
 }
 
 function makeTagDom(): TagDom {
@@ -105,26 +110,47 @@ function makeTagDom(): TagDom {
   const input = makeEl({ value: "", },);
   const ac = makeEl({ style: { display: "none", }, },);
   const globalEl = makeEl({ checked: false, },);
+  const editSlot = makeEl({ style: { display: "none", }, },);
   const removeBtn = makeEl({ dataset: { removeTag: "chip", scope: "user", }, },);
+  const renameBtn = makeEl({ dataset: { renameTag: "chip", }, },);
   const acceptBtn = makeEl({ dataset: { acceptTag: "prop", }, },);
   const dismissBtn = makeEl({ dataset: { dismissTag: "prop", }, },);
+  const renameForm = makeEl();
+  const renameInput = makeEl({ value: "", },);
 
   const single: Record<string, El> = {
     "[data-tag-form]": form,
     "[data-tag-input]": input,
     "[data-tag-global]": globalEl,
     "[data-autocomplete]": ac,
+    "[data-tag-edit]": editSlot,
   };
   const many: Record<string, El[]> = {
     "[data-remove-tag]": [removeBtn,],
+    "[data-rename-tag]": [renameBtn,],
     "[data-accept-tag]": [acceptBtn,],
     "[data-dismiss-tag]": [dismissBtn,],
     "[data-autocomplete-tag]": [],
   };
   panel.querySelector = (sel,) => single[sel] ?? null;
   panel.querySelectorAll = (sel,) => many[sel] ?? [];
+  editSlot.querySelector = (sel,) => (sel === "[data-rename-form]" ? renameForm : null);
+  renameForm.querySelector = (sel,) => (sel === "[data-rename-input]" ? renameInput : null);
 
-  return { panel, form, input, ac, globalEl, removeBtn, acceptBtn, dismissBtn, };
+  return {
+    panel,
+    form,
+    input,
+    ac,
+    globalEl,
+    editSlot,
+    removeBtn,
+    renameBtn,
+    acceptBtn,
+    dismissBtn,
+    renameForm,
+    renameInput,
+  };
 }
 
 type FieldMap = Record<string, El>;
@@ -173,6 +199,7 @@ function serveTags(tags: unknown[], propositions: unknown[],): void {
     if (url === "/api/assets/a1/tag-propositions" && !init.method) { return jsonResponse({ propositions, },); }
     if (url === "/api/assets/a1/tags" && init.method === "POST") { return jsonResponse({},); }
     if (url === "/api/assets/a1/tags" && init.method === "DELETE") { return jsonResponse({},); }
+    if (url === "/api/assets/a1/tags/rename" && init.method === "POST") { return jsonResponse({},); }
     if (url === "/api/assets/a1/tag-propositions" && init.method === "DELETE") { return jsonResponse({},); }
     if (url.startsWith("/api/tag-autocomplete",)) { return jsonResponse({ tags: ["cellar", "tavern",], },); }
     return jsonResponse({}, 404,);
@@ -273,6 +300,81 @@ describe("remove / dismiss wiring", () => {
     const del = calls.find((c,) => c.url === "/api/assets/a1/tag-propositions" && c.opts.method === "DELETE")!;
     expect(del,).toBeDefined();
     expect(JSON.parse(String(del.opts.body,),),).toEqual({ tag: "prop", },);
+  });
+});
+
+describe("rename wiring", () => {
+  test("user-scope chips render a rename control; global chips do not", async () => {
+    serveTags(
+      [
+        { id: "t1", tag: "mine", scope: "user", source: "manual", },
+        { id: "t2", tag: "shared", scope: "global", source: "manual", },
+      ],
+      [],
+    );
+    await previewHost.openAssetPreview!("a1",);
+    expect(tagDom.panel.innerHTML,).toContain('data-rename-tag="mine"',);
+    expect(tagDom.panel.innerHTML,).not.toContain('data-rename-tag="shared"',);
+  });
+
+  test("rename editor submits POST to the rename endpoint and re-renders", async () => {
+    serveTags([{ id: "t1", tag: "chip", scope: "user", source: "manual", },], [],);
+    await previewHost.openAssetPreview!("a1",);
+
+    await tagDom.renameBtn.dispatch("click",);
+    await flushMicrotasks();
+    expect(tagDom.editSlot.style.display,).toBe("flex",);
+    expect(tagDom.editSlot.innerHTML,).toContain("data-rename-input",);
+
+    tagDom.renameInput.value = "renamed";
+    await tagDom.renameForm.dispatch("submit",);
+    await flushMicrotasks();
+
+    const post = calls.find((c,) => c.url === "/api/assets/a1/tags/rename" && c.opts.method === "POST")!;
+    expect(post,).toBeDefined();
+    expect(JSON.parse(String(post.opts.body,),),).toEqual({ oldTag: "chip", newTag: "renamed", scope: "user", },);
+    expect(calls.filter((c,) => c.url === "/api/assets/a1/tags" && !c.opts.method).length,).toBeGreaterThanOrEqual(2,);
+  });
+
+  test("unchanged or empty rename does not submit", async () => {
+    serveTags([{ id: "t1", tag: "chip", scope: "user", source: "manual", },], [],);
+    await previewHost.openAssetPreview!("a1",);
+    await tagDom.renameBtn.dispatch("click",);
+    await flushMicrotasks();
+    const before = calls.filter((c,) => c.url.includes("rename",)).length;
+
+    tagDom.renameInput.value = "chip";
+    await tagDom.renameForm.dispatch("submit",);
+    await flushMicrotasks();
+    tagDom.renameInput.value = "   ";
+    await tagDom.renameForm.dispatch("submit",);
+    await flushMicrotasks();
+
+    expect(calls.filter((c,) => c.url.includes("rename",)).length,).toBe(before,);
+  });
+
+  test("failed rename shows toast and does not re-render", async () => {
+    serveTags([{ id: "t1", tag: "chip", scope: "user", source: "manual", },], [],);
+    await previewHost.openAssetPreview!("a1",);
+    const getsBefore = calls.filter((c,) => c.url === "/api/assets/a1/tags" && !c.opts.method).length;
+
+    feHandler = (url, init,) => {
+      if (url === "/api/assets/a1/tags/rename" && init.method === "POST") {
+        return new Response("{}", { status: 500, },);
+      }
+      if (url === "/api/assets/a1/tags" && !init.method) {
+        return jsonResponse({ tags: [{ id: "t1", tag: "chip", scope: "user", source: "manual", },], },);
+      }
+      return jsonResponse({}, 404,);
+    };
+
+    await tagDom.renameBtn.dispatch("click",);
+    await flushMicrotasks();
+    tagDom.renameInput.value = "renamed";
+    await tagDom.renameForm.dispatch("submit",);
+    await flushMicrotasks();
+
+    expect(calls.filter((c,) => c.url === "/api/assets/a1/tags" && !c.opts.method).length,).toBe(getsBefore,);
   });
 });
 

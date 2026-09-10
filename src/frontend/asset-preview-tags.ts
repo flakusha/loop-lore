@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+// size-allow: 282
+
 /**
- * Gallery tagging (G7) frontend: renders the tag chips, add/remove/rename via
- * the preview modal, the metadata tag-proposition feed, and autocomplete.
+ * Gallery tagging (G7) frontend: renders the tag chips with add/remove/rename
+ * via the preview modal, the metadata tag-proposition feed, and autocomplete.
  *
  * Split from `asset-preview.ts` to keep the preview bundle under the file-size
  * gate; `renderTagsPanel` is the single entry point called from
@@ -66,6 +68,10 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
     tags.map((tag,): string =>
       '<span class="tag" data-testid="asset-tag-' + escapeHtml(tag.tag,) + '">' + escapeHtml(tag.tag,) +
       (tag.scope === "global" ? ' <span class="tag-scope">global</span>' : "") +
+      (tag.scope === "user"
+        ? '<button type="button" class="tag-rename" data-rename-tag="' + escapeHtml(tag.tag,) +
+          '" data-scope="user">\u270e</button>'
+        : "") +
       '<button type="button" class="tag-remove" data-remove-tag="' + escapeHtml(tag.tag,) + '" data-scope="' +
       escapeHtml(tag.scope,) + '">&times;</button></span>'
     ).join("",)
@@ -89,6 +95,7 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
       <label style="display:flex;align-items:center;gap:var(--space-1);font-size:12px"><input type="checkbox" name="global" data-tag-global /> global</label>
       <button type="submit" class="btn btn-ghost">Add</button>
     </form>
+    <div data-tag-edit style="display:none;margin-top:var(--space-2)"></div>
     <div data-autocomplete style="display:none;flex-wrap:wrap;gap:var(--space-1);margin-top:var(--space-2)"></div>
   </div>`;
 
@@ -110,6 +117,13 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
     },);
   },);
 
+  const edit = panel.querySelector<HTMLElement>("[data-tag-edit]",)!;
+  panel.querySelectorAll<HTMLButtonElement>("[data-rename-tag]",).forEach((btn,) => {
+    btn.addEventListener("click", () => {
+      showRenameEditor(assetId, btn.dataset.renameTag!, edit,);
+    },);
+  },);
+
   panel.querySelectorAll<HTMLButtonElement>("[data-accept-tag]",).forEach((btn,) => {
     btn.addEventListener("click", () => void submitTag(assetId, btn.dataset.acceptTag!, "user",),);
   },);
@@ -122,6 +136,31 @@ export async function renderTagsPanel(assetId: string,): Promise<void> {
   input.addEventListener("input", () => {
     clearTimeout(debounce,);
     debounce = setTimeout(() => void renderAutocomplete(input.value, ac,), 120,);
+  },);
+}
+
+/**
+ * Swap the edit slot to an inline rename form for `oldTag`. Submitting posts
+ * the rename and re-renders the panel (which resets the slot).
+ * @param assetId
+ * @param oldTag
+ * @param slot
+ */
+function showRenameEditor(assetId: string, oldTag: string, slot: HTMLElement,): void {
+  slot.style.display = "flex";
+  slot.innerHTML = `<form data-rename-form style="display:flex;gap:var(--space-2);width:100%">
+      <input type="text" name="newTag" data-rename-input value="${
+    escapeHtml(oldTag,)
+  }" autocomplete="off" style="flex:1" />
+      <button type="submit" class="btn btn-ghost">Rename</button>
+    </form>`;
+  const form = slot.querySelector<HTMLFormElement>("[data-rename-form]",)!;
+  form.addEventListener("submit", async (e,) => {
+    e.preventDefault();
+    const input = form.querySelector<HTMLInputElement>("[data-rename-input]",)!;
+    const value = input.value.trim();
+    if (!value || value === oldTag) { return; }
+    await renameTag(assetId, oldTag, value,);
   },);
 }
 
@@ -197,6 +236,28 @@ async function removeTag(assetId: string, tag: string, scope: "user" | "global",
     await renderTagsPanel(assetId,);
   } catch {
     showToast("error", "Failed to remove tag",);
+  }
+}
+
+/**
+ * Rename a user-scoped tag; the panel re-renders so chips, item detail, and
+ * (on next gallery render) filter facets all reflect the new name.
+ * @param assetId
+ * @param oldTag
+ * @param newTag
+ */
+async function renameTag(assetId: string, oldTag: string, newTag: string,): Promise<void> {
+  const { showToast, } = await import("./ui");
+  try {
+    const res = await feFetch(`/api/assets/${assetId}/tags/rename`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: jsonStringifyOr({ oldTag, newTag, scope: "user", },),
+    },);
+    if (!res.ok) { throw new Error("failed",); }
+    await renderTagsPanel(assetId,);
+  } catch {
+    showToast("error", "Failed to rename tag",);
   }
 }
 

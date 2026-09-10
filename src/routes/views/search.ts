@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { ActorType, } from "../../db/enums";
+import { visibleTagNames, } from "../../assets/service/tag-facets";
+import { ActorType, AssetLinkEntity, AssetTagScope, AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import { formatSize, inheritedHiddenAssetIds, } from "./gallery";
@@ -25,24 +26,46 @@ async function serveGallerySearch(
   const sort = params.get("sort",) ?? "name";
   const entityType = params.get("entityType",) ?? null;
   const entityId = params.get("entityId",) ?? null;
+  const tag = params.get("tag",) ?? null;
 
   let qb = database
     .selectFrom("assets",)
     .selectAll("assets",);
 
   // Filter by linked entity when entityType/entityId provided
-  if (entityType && entityId) {
+  const entityTypeValid = entityType !== null &&
+    Object.values(AssetLinkEntity,).includes(entityType as AssetLinkEntity,);
+  if (entityTypeValid && entityId) {
     qb = qb
       .innerJoin("asset_links", "asset_links.asset_id", "assets.id",)
-      .where("asset_links.entity_type", "=", entityType as any,)
+      .where("asset_links.entity_type", "=", entityType as AssetLinkEntity,)
       .where("asset_links.entity_id", "=", entityId,);
   }
 
   if (query) {
     qb = qb.where("filename", "like", `%${query}%`,);
   }
-  if (type !== "all") {
-    qb = qb.where("asset_type", "=", type as any,);
+  if (type !== "all" && Object.values(AssetType,).includes(type as AssetType,)) {
+    qb = qb.where("asset_type", "=", type as AssetType,);
+  }
+
+  // Filter by visible tag name when `tag` provided: global tags plus the
+  // viewer's own user-scoped tags — other users' private tags never match.
+  if (tag !== null && tag !== "all") {
+    qb = qb.where((eb,) =>
+      eb.exists(
+        eb.selectFrom("asset_tags as ft",)
+          .select("ft.id",)
+          .whereRef("ft.asset_id", "=", "assets.id",)
+          .where("ft.tag", "=", tag,)
+          .where((eb2,) =>
+            eb2.or([
+              eb2("ft.scope", "=", AssetTagScope.Global,),
+              eb2("ft.owner_id", "=", actorId ?? "",),
+            ],)
+          ),
+      )
+    );
   }
 
   if (sort === "newest") { qb = qb.orderBy("created_at", "desc",); }
@@ -70,6 +93,8 @@ async function serveGallerySearch(
     </div>`,);
   }
 
+  const tagMap = await visibleTagNames(database, Array.from(visible, (a,) => a.id,), actorId ?? null,);
+
   /**
    * @param a
    */
@@ -94,7 +119,8 @@ async function serveGallerySearch(
   const cards = Array.from(visible, (a,) => {
     const filename = escapeHtml(a.filename,);
     const size = formatSize(a.size_bytes,);
-    return `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
+    const tags = escapeHtml((tagMap.get(a.id,) ?? []).join(",",),);
+    return `<div class="asset-card" data-tags="${tags}" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
       <div class="thumb">${thumbForAsset(a,)}</div>
       <div class="details">
         <span class="name">${filename}</span>
