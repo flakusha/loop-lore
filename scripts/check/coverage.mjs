@@ -109,7 +109,7 @@ const WAIVERS = {
   // surface only via integration paths; individual functions tested by
   // the routes/* + admin/* + persona/* callers. Below-floor lines are
   // mostly error-paths and feature-flag branches.
-  "services": { floor: 60, reason: "cross-cutting integration glue; most paths covered transitively by caller tests", },
+  "services": { floor: 65, reason: "trade/index + external-server-utils + server-external-manager lifted in test-coverage worktree; remaining gaps are RPC-style service wrappers exercised by routes/* integration tests", },
   // Gate pass: src/plugins/ is the plugin loader/registry; runtime-only
   // resolution exercised via app boot and integration tests.
   "plugins": { floor: 50, reason: "plugin registry / runtime resolver; exercised via app boot integration paths", },
