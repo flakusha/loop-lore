@@ -13,47 +13,34 @@ import { t, } from "elysia";
 
 // ── LoreSubject ─────────────────────────────────────────────────────────────
 
-/**
- * Subject kinds recognized by the audience-resolution rules
- * (docs/spec/lore.md §3.2). Mirrors `KNOWN_SUBJECT_KINDS` in promote-lore.ts.
- */
+/** Subject kinds recognized by the audience-resolution rules (docs/spec/lore.md §3.2). */
 export const LoreSubjectKindSchema = t.UnionEnum([
   "world",
   "location",
   "profession",
   "race",
-  "faction",
-  "item",
 ],);
 
-/** Base subject with kind discriminator and optional location selector. */
+/** Base subject with kind discriminator. */
 export const LoreSubjectBaseSchema = t.Object({
   kind: LoreSubjectKindSchema,
 });
 
 export const LoreSubjectSchema = t.Union([
-  // world / faction / item subjects carry no extra fields
+  // world subjects carry no extra fields
   t.Intersect([
     LoreSubjectBaseSchema,
     t.Object({ kind: t.Literal("world",), }),
   ]),
-  t.Intersect([
-    LoreSubjectBaseSchema,
-    t.Object({ kind: t.Literal("faction",), }),
-  ]),
-  t.Intersect([
-    LoreSubjectBaseSchema,
-    t.Object({ kind: t.Literal("item",), }),
-  ]),
-  // location subject: optional locationId
+  // location subject: required UUID locationId
   t.Intersect([
     LoreSubjectBaseSchema,
     t.Object({
       kind: t.Literal("location",),
-      locationId: t.Optional(t.String({ format: "uuid", },),),
+      locationId: t.String({ format: "uuid", },),
     }),
   ]),
-  // profession subject: required profession string
+  // profession subject: required non-empty profession string
   t.Intersect([
     LoreSubjectBaseSchema,
     t.Object({
@@ -61,7 +48,7 @@ export const LoreSubjectSchema = t.Union([
       profession: t.String({ minLength: 1, maxLength: 255, },),
     }),
   ]),
-  // race subject: required race string
+  // race subject: required non-empty race string
   t.Intersect([
     LoreSubjectBaseSchema,
     t.Object({
@@ -79,7 +66,7 @@ export const LoreScopeSchema = t.Object({
 
 // ── LoreEntry ───────────────────────────────────────────────────────────────
 
-/** Position of a lore entry in the narrative rendering order. */
+/** A single structured lore entry created via the `/create` command. */
 export const LoreEntrySchema = t.Object({
   name: t.String({ minLength: 1, maxLength: 255, },),
   content: t.String({ minLength: 1, },),
