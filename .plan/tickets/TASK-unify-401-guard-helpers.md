@@ -60,3 +60,12 @@ of `err.error` — **zero consumers of the `code` field**. So unifying body shap
 | E       | `(ctx as any).t?...` or explicit `code: ErrorCode.Unauthorized`                                           | yes       | activity-stream, activity, sessions                                                                                                   |
 | —       | `unauthorizedResponse()` / `unauthorized()` no-arg                                                        | **no**    | requireUserId callers: assets(2), api-keys(3), settings(3), users(6); chats(~15), gm-notes, vn-choices, chat-search                   |
 | —       | `validation/middleware.unauthorized()` → `Response.json({ error, code: "UNAUTHORIZED" })`                 | no        | middleware family (separate module)                                                                                                   |
+
+## Progress (2026-09-11)
+
+- `fce385748` — refactor(routes): extract withUserAuth/withOwnerAuth helpers for auth narrowing
+
+Partial work landed: `withUserAuth`/`withOwnerAuth` helpers extracted for auth narrowing. Full unification across all route modules is still pending — the deliberately excluded module families (`validation/middleware.auth`, `personas/controller.ts`, `characters/errors.ts`, and the funneled `quests.ts`/`story-items.ts`/`story-states.ts` handler helpers) remain outstanding.
+
+
+git issue: 0eb225f
