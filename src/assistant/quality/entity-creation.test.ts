@@ -19,6 +19,7 @@ import {
   runQualityGates,
   validateEntitySchema,
   validateLoreEntries,
+  validateRawLoreEntries,
 } from "./entity-creation";
 
 describe("normalizeEntity", () => {
@@ -239,35 +240,6 @@ describe("normalizeLoreEntries", () => {
     expect(entries[0]!.keys![4]!,).toBe("e",);
   });
 
-  it("validates subject kind via normalizeAudienceScope", () => {
-    const raw = [
-      {
-        name: "Valid Subject",
-        content: "Content",
-        subject: { kind: "world", },
-      },
-      {
-        name: "Invalid Subject",
-        content: "Content",
-        subject: { kind: "unknown_kind", },
-      },
-    ];
-    const entries = normalizeLoreEntries(raw,);
-    expect(entries,).toHaveLength(2,);
-    // Invalid subject is silently dropped by normalizeAudienceScope (returns null)
-    expect(entries[1]!.subject,).toBeUndefined();
-  });
-
-  it("ignores invalid position values", () => {
-    const raw = [
-      { name: "Valid", content: "Content", position: "before_char", },
-      { name: "Invalid", content: "Content", position: "bad_position", },
-    ];
-    const entries = normalizeLoreEntries(raw,);
-    expect(entries[0]!.position,).toBe("before_char",);
-    expect(entries[1]!.position,).toBeUndefined();
-  });
-
   it("clamps numeric fields to valid ranges", () => {
     const raw = [
       {
@@ -282,6 +254,86 @@ describe("normalizeLoreEntries", () => {
     expect(entries[0]!.insertion_order,).toBe(0,);
     expect(entries[0]!.priority,).toBe(999,);
     expect(entries[0]!.cooldown_seconds,).toBe(0,);
+  });
+});
+
+describe("validateRawLoreEntries", () => {
+  it("returns empty array for valid raw entries", () => {
+    const raw = [{
+      name: "Test",
+      content: "Content",
+      keys: ["a", "b",],
+      subject: { kind: "world", },
+      position: "before_char",
+    },];
+    expect(validateRawLoreEntries(raw,),).toHaveLength(0,);
+  });
+
+  it("reports missing name and content", () => {
+    const raw = [{ content: "c", }, { name: "n", },];
+    const errors = validateRawLoreEntries(raw,);
+    expect(errors,).toContain("lore[0].name is required",);
+    expect(errors,).toContain("lore[1].content is required",);
+  });
+
+  it("reports keys exceeding max entries before clamping", () => {
+    const raw = [{
+      name: "T",
+      content: "c",
+      keys: Array(6,).fill("x",),
+    },];
+    const errors = validateRawLoreEntries(raw,);
+    expect(errors,).toContain("lore[0].keys exceeds 5 entries",);
+  });
+
+  it("reports keys exceeding max length before clamping", () => {
+    const raw = [{
+      name: "T",
+      content: "c",
+      keys: ["a".repeat(200,),],
+    },];
+    const errors = validateRawLoreEntries(raw,);
+    expect(errors,).toContain("lore[0].keys[0] must be a string of at most 100 characters",);
+  });
+
+  it("reports unknown subject kind", () => {
+    const raw = [{
+      name: "T",
+      content: "c",
+      subject: { kind: "bogus", },
+    },];
+    const errors = validateRawLoreEntries(raw,);
+    expect(errors,).toContain("lore[0].subject is invalid or has incomplete selectors",);
+  });
+
+  it("reports incomplete subject selectors", () => {
+    const raw: unknown[] = [
+      { name: "T", content: "c", subject: { kind: "profession", }, },
+      { name: "T", content: "c", subject: { kind: "race", }, },
+      { name: "T", content: "c", subject: { kind: "location", locationId: "not-a-uuid", }, },
+    ];
+    const errors = validateRawLoreEntries(raw,);
+    expect(errors.some(e => e.includes("lore[0].subject",)),).toBe(true,);
+    expect(errors.some(e => e.includes("lore[1].subject",)),).toBe(true,);
+    expect(errors.some(e => e.includes("lore[2].subject",)),).toBe(true,);
+  });
+
+  it("reports invalid position before stripping", () => {
+    const raw = [{
+      name: "T",
+      content: "c",
+      position: "bad",
+    },];
+    const errors = validateRawLoreEntries(raw,);
+    expect(errors,).toContain("lore[0].position is not a valid LorePosition",);
+  });
+
+  it("reports non-object entries", () => {
+    const raw: unknown[] = [null, "string", 42,];
+    const errors = validateRawLoreEntries(raw,);
+    expect(errors.some(e => e.includes("lore[0] is not a valid object",)),).toBe(true,);
+    expect(errors.some(e => e.includes("lore[1] is not a valid object",)),).toBe(true,);
+    expect(errors.some(e => e.includes("lore[2] is not a valid object",)),).toBe(true,);
   });
 });
 
@@ -377,6 +429,14 @@ describe("resolveEntityGenerationPrompt", () => {
     const p = resolveEntityGenerationPrompt(undefined, "character", "a wizard",);
     expect(p,).toContain("a wizard",);
     expect(p,).toContain("JSON",);
+  });
+
+  it("includes lore schema and example for all 4 kinds", () => {
+    for (const kind of ["character", "location", "world", "item",] as const) {
+      const p = resolveEntityGenerationPrompt(undefined, kind, "test desc",);
+      expect(p,).toContain("lore",);
+      expect(p,).toContain("Example:",);
+    }
   });
 
   it("uses the config override verbatim when present", () => {
