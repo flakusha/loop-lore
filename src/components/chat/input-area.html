@@ -148,6 +148,44 @@
       <div class="character-counter" x-show="activeChat && $refs.messageInput?.value?.length > 0">
         <span x-text="($refs.messageInput?.value?.length || 0)"></span>
       </div>
+      <!-- Prompt improve: unified "improve my prompt" (epic-prompt-improvement) -->
+      <div class="prompt-improve" x-data="{ open: false }">
+        <button
+          type="button"
+          class="btn btn-ghost"
+          title="Improve prompt (chat style)"
+          :disabled="!activeChat || _improving"
+          @click.prevent="improvePrompt()"
+          data-testid="prompt-improve-button"
+        >✨</button>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm prompt-improve-toggle"
+          title="Improve levels"
+          :disabled="!activeChat || _improving"
+          @click.prevent="open = !open"
+          data-testid="prompt-improve-menu"
+        >▾</button>
+        <template x-if="open">
+          <div class="prompt-improve-levels" @click.outside="open = false">
+            <button type="button" class="prompt-improve-level" @click.prevent="open = false; improvePrompt('spellcheck')" data-testid="prompt-improve-spellcheck">Correct spelling</button>
+            <button type="button" class="prompt-improve-level" @click.prevent="open = false; improvePrompt('wording')" data-testid="prompt-improve-wording">Improve wording</button>
+            <button type="button" class="prompt-improve-level" @click.prevent="open = false; improvePrompt('expand')" data-testid="prompt-improve-expand">Expand</button>
+            <button type="button" class="prompt-improve-level" @click.prevent="open = false; improvePrompt('strict')" data-testid="prompt-improve-strict">Strict rewrite</button>
+            <button type="button" class="prompt-improve-level" @click.prevent="open = false; improvePrompt('creative')" data-testid="prompt-improve-creative">Creative rewrite</button>
+            <button type="button" class="prompt-improve-level" @click.prevent="open = false; improvePrompt('style-chat')" data-testid="prompt-improve-style-chat">Chat style</button>
+            <button type="button" class="prompt-improve-level" @click.prevent="open = false; improvePrompt('style-group')" data-testid="prompt-improve-style-group">Group style</button>
+            <button type="button" class="prompt-improve-level" @click.prevent="open = false; analyzePrompt()" data-testid="prompt-improve-analyze">Analyze draft</button>
+            <button
+              type="button"
+              class="prompt-improve-level"
+              x-show="_promptImproveBackup"
+              @click.prevent="open = false; restorePromptDraft()"
+              data-testid="prompt-improve-undo"
+            >Undo — restore draft</button>
+          </div>
+        </template>
+      </div>
       <button
         type="submit"
         class="btn btn-primary"
