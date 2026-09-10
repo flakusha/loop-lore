@@ -7,7 +7,9 @@ import type { ChatHost, ChatMessage, } from "./types";
 export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
 
 /**
- * @param sessionToken
+ * Build the auth-header bag; attaches `Authorization: Bearer …` when a session token is present.
+ * @param sessionToken - bearer token, or `undefined` for unauthenticated requests
+ * @returns `Record<string, string>` always containing `Content-Type`.
  */
 function getAuthHeaders(sessionToken: string | undefined,): Record<string, string> {
   const headers: Record<string, string> = { "Content-Type": "application/json", };

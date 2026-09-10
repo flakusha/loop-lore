@@ -91,7 +91,8 @@ export function setTestDatabase(db: Kysely<DB> | null,): void {
 }
 
 /**
- * @param _databasePath
+ * @param _databasePath - path is unused when a test override is set; resolution falls back to the singleton DB otherwise.
+ * @returns the Kysely DB handle (test override if set, otherwise the singleton).
  */
 export function getDatabase(_databasePath?: string,): Kysely<DB> {
   return testDatabaseOverride ?? database;

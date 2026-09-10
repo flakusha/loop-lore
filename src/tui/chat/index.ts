@@ -138,7 +138,9 @@ export class ChatWidget implements ChatHost {
     this.onChatChange?.(chatId,);
   }
 
-  /** */
+  /**
+   * @returns currently-scoped chat id, or `null` when none.
+   */
   getChatId(): string | null {
     return this.chatId;
   }
@@ -146,7 +148,7 @@ export class ChatWidget implements ChatHost {
   // ── Message display ─────────────────────────────────────────
 
   /**
-   * @param message
+   * @param message - chat message to append to the list
    */
   addMessage(message: ChatMessage,): void {
     this.messages.push(message,);
@@ -156,7 +158,7 @@ export class ChatWidget implements ChatHost {
   }
 
   /**
-   * @param messages
+   * @param messages - replacement message list (cursor page or empty)
    */
   setMessages(messages: ChatMessage[],): void {
     this.messages = messages;
@@ -166,14 +168,14 @@ export class ChatWidget implements ChatHost {
     this.scrollToBottom();
   }
 
-  /** */
+  /** Clear the message list and item counter. */
   clearMessages(): void {
     this.messages = [];
     this.itemCount = 0;
     this.messageList.clearItems();
   }
 
-  /** */
+  /** Scroll the message list to the last item and re-render the screen. */
   scrollToBottom(): void {
     if (this.itemCount > 0) {
       this.messageList.select(this.itemCount - 1,);
@@ -181,14 +183,14 @@ export class ChatWidget implements ChatHost {
     this.screen.render();
   }
 
-  /** */
+  /** Append a "…typing" placeholder and re-render. */
   showTyping(): void {
     this.messageList.addItem("{italic}{yellow}... typing{/yellow}{/italic}",);
     this.itemCount++;
     this.scrollToBottom();
   }
 
-  /** */
+  /** Remove the "…typing" placeholder if present, then re-render. */
   hideTyping(): void {
     if (this.itemCount > 0) {
       this.messageList.popItem();
@@ -198,7 +200,7 @@ export class ChatWidget implements ChatHost {
   }
 
   /**
-   * @param message
+   * @param message - error text to append in red
    */
   showError(message: string,): void {
     this.messageList.addItem(`{red-fg}⚠ Error: ${message}{/red-fg}`,);
@@ -210,13 +212,17 @@ export class ChatWidget implements ChatHost {
   /**
    * Send message via POST /api/chats/:id/messages.
    * Shows typing indicator, adds user message + assistant auto-reply.
-   * @param text
+   * @param text - user message body
+   * @returns resolves after dispatching to the API and updating local state.
    */
   async handleSend(text: string,): Promise<void> {
     return handleSendDispatch(this, text,);
   }
 
-  /** Load messages from GET /api/chats/:id/messages with cursor-based pagination */
+  /**
+   * Load messages from GET /api/chats/:id/messages with cursor-based pagination.
+   * @returns resolves after updating the local message cache.
+   */
   async loadMessages(): Promise<void> {
     return loadMessagesDispatch(this,);
   }

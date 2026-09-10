@@ -6,7 +6,10 @@
  */
 import { getLogger, type Logger, } from "../../logger";
 
-/** */
+/**
+ * Shared key-rotation logger.
+ * @returns a child logger namespaced for the `crypto:key-rotation` module.
+ */
 export function log(): Logger {
   return getLogger().child({ module: "crypto:key-rotation", },);
 }

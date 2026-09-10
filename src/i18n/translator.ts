@@ -12,7 +12,8 @@ import type { FlatTranslationMap, Locale, TranslationMap, TranslatorFn, } from "
 
 /**
  * Flatten a nested translation map into dot-notation keys.
- * @param map
+ * @param map - nested `TranslationMap`
+ * @returns flat map of `"a.b.c"` keys to string values.
  * @example
  * flatten({ auth: { login: "Log In" } })
  * // => Map { "auth.login" => "Log In" }
@@ -22,8 +23,8 @@ export function flattenTranslations(map: TranslationMap,): FlatTranslationMap {
   const prefix = "";
 
   /**
-   * @param node
-   * @param path
+   * @param node - current subtree
+   * @param path - dot-accumulated key path
    */
   function walk(node: TranslationMap, path: string,): void {
     for (const [key, value,] of Object.entries(node,)) {
@@ -42,8 +43,9 @@ export function flattenTranslations(map: TranslationMap,): FlatTranslationMap {
 
 /**
  * Resolve a dot-notation key from a flat translation map.
- * @param translations
- * @param key
+ * @param translations - flat translation map
+ * @param key - dot-notation key (e.g. `"auth.login"`)
+ * @returns translated string, or `undefined` if the key is not present.
  */
 export function resolveKey(
   translations: FlatTranslationMap,
@@ -55,9 +57,10 @@ export function resolveKey(
 /**
  * Interpolate params into a translated string.
  *
- * Supports {paramName} syntax.
- * @param template
- * @param params
+ * Supports `{paramName}` syntax; unmatched placeholders are left literal.
+ * @param template - translated string with `{name}` placeholders
+ * @param params - substitution map
+ * @returns interpolated string.
  * @example
  * interpolate("Hello, {name}!", { name: "World" })
  * // => "Hello, World!"
@@ -88,7 +91,8 @@ export interface TranslatorOptions {
  * 1. Primary translations (user's locale)
  * 2. Fallback translations (e.g., English)
  * 3. Raw key (return key as-is)
- * @param options
+ * @param options - primary + optional fallback translations and metadata
+ * @returns a `TranslatorFn(key, params?)` returning the resolved string.
  */
 export function createTranslator(options: TranslatorOptions,): TranslatorFn {
   const { primary, fallback, } = options;

@@ -42,18 +42,19 @@ export class StateMachine<S extends string,> {
   constructor(readonly def: StateDef<S>,) {}
 
   /**
-   * @param from
-   * @param to
- * @returns boolean
+   * @param from - current state
+   * @param to - proposed next state
+   * @returns `true` when `to` is reachable from `from` per the transition table.
    */
   canTransition(from: S, to: S,): boolean {
     return (this.def.transitions[from] as readonly string[] | undefined)?.includes(to,) ?? false;
   }
 
   /**
-   * @param from
-   * @param to
- * @returns void
+   * @param from - current state
+   * @param to - proposed next state
+   * @returns `to` when the transition is allowed.
+   * @throws {TransitionError} when `to` is not in `from`'s allowed transitions.
    */
   transition(from: S, to: S,): S {
     if (!this.canTransition(from, to,)) {
@@ -63,15 +64,16 @@ export class StateMachine<S extends string,> {
   }
 
   /**
-   * @param state
- * @returns void
+   * @param state - state to check
+   * @returns `true` when `state` is in the terminal set (no outgoing transitions).
    */
   isTerminal(state: S,): boolean {
     return (this.def.terminal as readonly string[]).includes(state,);
   }
 
   /**
-   * @param state
+   * @param state - state to validate
+   * @returns `true` when `state` is a known value in the machine definition.
    */
   isValid(state: S,): boolean {
     return (this.def.values as readonly string[]).includes(state,);
@@ -98,17 +100,18 @@ export class CompositeValidator<A extends string, B extends string,> {
   }
 
   /**
-   * @param a
-   * @param b
- * @returns void
+   * @param a - value on axis A
+   * @param b - value on axis B
+   * @returns `true` when `${a}:${b}` is in the allowed-pairs set.
    */
   isValid(a: A, b: B,): boolean {
     return this.allowed.has(`${a}:${b}`,);
   }
 
   /**
-   * @param a
-   * @param b
+   * @param a - value on axis A
+   * @param b - value on axis B
+   * @throws {Error} `Invalid composite state: ${a}:${b}` when the pair is not in the allowed set.
    */
   assertValid(a: A, b: B,): void {
     if (!this.isValid(a, b,)) {
@@ -120,7 +123,8 @@ export class CompositeValidator<A extends string, B extends string,> {
 // ── Factory Helpers ───────────────────────────────────────
 
 /**
- * @param def
+ * @param def - StateDef describing values, transitions, and terminal states
+ * @returns a `StateMachine` bound to `def`.
  */
 export function createMachine<S extends string,>(def: StateDef<S>,): StateMachine<S> {
   return new StateMachine(def,);
