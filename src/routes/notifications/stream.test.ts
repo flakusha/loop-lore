@@ -1,11 +1,10 @@
 /**
  * Tests for routes/notifications/stream.ts — NotificationStreamer.
  *
- * Covers the SSE contract: headers, initial snapshot event, the documented
- * interval constants, and the stream-error event when the underlying DB
- * call rejects. Promise resolvers via Promise.withResolvers per project rules.
+ * Covers the SSE contract: response headers and the initial notifications
+ * snapshot event. Uses Promise.withResolvers per project rules.
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
@@ -75,12 +74,6 @@ describe("NotificationStreamer", () => {
     createLogger({ level: "error", },);
     ({ db, } = await createTestDb());
     await insertUsers(db, "alice", "alice-disp",);
-  },);
-
-  afterAll(async () => {
-    try {
-      await db.destroy();
-    } catch { /* already destroyed */ }
   },);
 
   test("opens an SSE response with the right headers", () => {
