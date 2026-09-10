@@ -3,7 +3,7 @@
 
 # TASK: Timeline steering: close roll race and empty timelineId gap
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress
 **Priority:** Medium
 **Effort:** Medium
 
@@ -16,3 +16,16 @@ Self-review of G2 merge (257010652) found two non-blocking gaps in src/story/tim
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Progress (2026-09-11)
+
+Landed commits:
+
+- `f3e214e15` — docs(plan): add timeline steering task ticket
+- `8d93c1bfa` — chore(plan): regenerate code-map after plan:sync --fix relocation
+- `257010652` — feat(timeline): forward event steering and cross-story convergence
+
+Still missing:
+
+- (1) `rollSteering`/`resolveSteering` read-modify-write race not wrapped in Kysely transaction — concurrent manifest rolls both pass pending check and append duplicate timeline events
+- (2) `createSteering` passes empty-string `timelineId` through (`??` only catches null/undefined) — needs normalization to prime or rejection

@@ -1,9 +1,16 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
-
+---
+hash: 396b5e3
+---
 # BUG: Logger tests leak global logger state
 
-**Status:** ✅ Resolved 2026-09-10 (worktree `core-hardening`, commit `86cee0c`): both files now capture the global root in `beforeEach` (guarded `getLogger`, tolerates uninitialized) and restore it in `afterEach` (fallback: fresh `createLogger({ level: "error" })`). `bun test src/logger/` 120 pass; full e2e suite 251 pass.
+**Status:** ✅ Finished (dev commit `02d2d1156`) — test isolation via `withLogger` helper.
+
+## Resolution
+
+- **Resolved**: 2026-09-10
+- **Commit(s)**: 02d2d1156 fix(tests): isolate global logger state and demo-login limiter
+- **Notes**: `src/logger/index.test.ts` and `src/logger/logger.test.ts` now capture the global root in `beforeEach` (guarded `getLogger`, tolerates uninitialized) and restore it in `afterEach` (fallback: fresh `createLogger({ level: "error" })`). `bun test src/logger/` 120 pass; full e2e suite 251 pass.
+
 **Priority:** Medium
 **Effort:** Medium
 
@@ -13,6 +20,6 @@ src/logger/index.test.ts 'getLogger throws before init' sets setGlobalLogger(nul
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
