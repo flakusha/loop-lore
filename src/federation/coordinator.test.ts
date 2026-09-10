@@ -9,6 +9,7 @@ import {
   listPeers,
   runResyncPass,
   setPeerState,
+  touchPeer,
   upsertPeer,
 } from "./coordinator";
 
@@ -32,6 +33,24 @@ describe("coordinator registry", () => {
   test("setPeerState throws for unknown peers", async () => {
     const { db, } = await createTestDb();
     await expect(setPeerState(db, "https://ghost.example", "trusted",),).rejects.toThrow("unknown peer",);
+  });
+  test("touchPeer stores valid advertised capacity", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://cap.example", state: "trusted", },);
+    await touchPeer(db, "https://cap.example", { peers: [], capacityBytes: 1024, },);
+    const peers = await listPeers(db,);
+    expect(peers[0]?.capacity_bytes,).toBe(1024,);
+  });
+
+  test("touchPeer ignores invalid capacity and keeps the stored figure", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://cap.example", state: "trusted", capacityBytes: 512, },);
+    await touchPeer(db, "https://cap.example", { peers: [], capacityBytes: Number.NaN, },);
+    await touchPeer(db, "https://cap.example", { peers: [], capacityBytes: -1, },);
+    await touchPeer(db, "https://cap.example", { peers: [], capacityBytes: "huge", },);
+    await touchPeer(db, "https://cap.example", { peers: [], },);
+    const peers = await listPeers(db,);
+    expect(peers[0]?.capacity_bytes,).toBe(512,);
   });
 });
 
