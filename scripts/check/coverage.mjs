@@ -15,8 +15,9 @@
  * when the module recovers.
  *
  * Modules are identified by the top-level directory under `src/` (e.g.
- * `frontend`, `tests`, `server`). Top-level source files are omitted from
- * the per-module table because they are not directories.
+ * `frontend`, `tests`, `server`). Top-level source files (e.g.
+ * `src/elysia-app.ts`) are grouped under the `(root)` bucket, which is
+ * matchable via `--only=(root)`.
  */
 const fs = require("fs",);
 const floor = parseInt(process.argv.find((a,) => a.startsWith("--floor=",))?.split("=",)[1], 10,) || 80;
@@ -96,10 +97,14 @@ const WAIVERS = {
     floor: 0,
     reason: "entry-point HTTP boot, exercised by smoke + e2e (lcov attributes routes to `routes/`)",
   },
-  // Gate pass: src/elysia-app.ts is the Elysia app composition root;
-  // it routes mount() registrations that are individually tested by
-  // the routes/* suites, so the boot path shows low coverage in lcov.
-  "elysia-app.ts": { floor: 75, reason: "Elysia composition root; mount() paths covered by routes/* unit tests", },
+  // Gate pass: top-level src files (e.g. src/elysia-app.ts, the Elysia app
+  // composition root) are grouped under the `(root)` bucket; mount()
+  // paths are covered by the routes/* suites, so the boot path shows low
+  // coverage in lcov.
+  "(root)": {
+    floor: 75,
+    reason: "Top-level src files (Elysia composition root); mount() paths covered by routes/* unit tests",
+  },
   // Gate pass: src/services/ holds cross-cutting services that mostly
   // surface only via integration paths; individual functions tested by
   // the routes/* + admin/* + persona/* callers. Below-floor lines are
@@ -146,8 +151,8 @@ const modules = {};
 for (const r of records) {
   const sf = r.match(/SF:(.+)/,)?.[1];
   if (!sf) { continue; }
-  const mod = sf.replace(/^src\//, "",).split("/",)[0];
-  if (mod.includes(".",)) { continue; }
+  const seg = sf.replace(/^src\//, "",).split("/",)[0];
+  const mod = seg.includes(".",) ? "(root)" : seg;
   const lf = parseInt(r.match(/LF:(\d+)/,)?.[1] || "0", 10,);
   const lh = parseInt(r.match(/LH:(\d+)/,)?.[1] || "0", 10,);
   modules[mod] = modules[mod] || { lf: 0, lh: 0, };
@@ -182,7 +187,8 @@ if (diffFiles) {
   }
 
   const fileRows = diffFiles.map((f,) => {
-    const mod = f.startsWith("src/",) ? f.slice(4,).split("/",)[0] : f.split("/",)[0];
+    const seg = f.startsWith("src/",) ? f.slice(4,).split("/",)[0] : f.split("/",)[0];
+    const mod = seg.includes(".",) ? "(root)" : seg;
     const hit = perFile[f];
     const generated = isGenerated(f,);
     return {
