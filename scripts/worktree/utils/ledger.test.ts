@@ -13,6 +13,7 @@
  *     skips corrupt lines, returns [] when missing.
  *   - append prunes to LEDGER_MAX_RECORDS and embeds --say context.
  *   - `formatRecord` renders the one-line chat shape.
+ *   - `appendCommitOutcome` records short SHA + subject for commit cmds.
  */
 
 import { describe, expect, it, } from "bun:test";
@@ -21,6 +22,7 @@ import { tmpdir, } from "node:os";
 import { join, } from "node:path";
 
 import {
+  appendCommitOutcome,
   appendGripe,
   appendLedger,
   defaultMessage,
@@ -193,6 +195,33 @@ describe("appendGripe", () => {
       const records = readLedger(dir, 10,);
       expect(records[0].branch,).toBe("",);
       expect(records[0].msg,).toBe("gripe :: 😤 boom",);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
+  });
+});
+describe("appendCommitOutcome", () => {
+  it("writes a commit record with short SHA and subject", () => {
+    const dir = makeTreeDir();
+    try {
+      appendCommitOutcome(dir, "agent-commit", "my-branch", "abc1234567890", "fix(worktree): handle empty stdin\n\nBody here",);
+      const records = readLedger(dir, 10,);
+      expect(records.length,).toBe(1,);
+      expect(records[0].cmd,).toBe("agent-commit",);
+      expect(records[0].branch,).toBe("my-branch",);
+      expect(records[0].msg,).toBe("agent-commit my-branch :: ✅ abc123456 fix(worktree): handle empty stdin",);
+    } finally {
+      rmSync(dir, { recursive: true, force: true, },);
+    }
+  });
+
+  it("tolerates an unknown branch", () => {
+    const dir = makeTreeDir();
+    try {
+      appendCommitOutcome(dir, "commit", "", "abc1234567890", "fix: x",);
+      const records = readLedger(dir, 10,);
+      expect(records[0].branch,).toBe("",);
+      expect(records[0].msg,).toBe("commit :: ✅ abc123456 fix: x",);
     } finally {
       rmSync(dir, { recursive: true, force: true, },);
     }

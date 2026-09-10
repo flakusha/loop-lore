@@ -11,6 +11,7 @@ import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
 import { gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
+import { appendCommitOutcome, } from "../utils/ledger";
 import { extractMessageInput, validateMessage, } from "../utils/message";
 import { log, } from "../utils/output";
 
@@ -150,4 +151,8 @@ export async function agentCommit(
     console.log(`\n⚠ Commit created but signature verification unclear`,);
     console.log(output,);
   }
+  // Outcome dispatch: the generic auto-append in index.ts recorded the
+  // invocation; this records what landed (short SHA + subject).
+  const commitSha = gitSyncQuiet(wtPath, "rev-parse", "HEAD",);
+  appendCommitOutcome(config.treeDir, "agent-commit", branch, commitSha, message,);
 }
