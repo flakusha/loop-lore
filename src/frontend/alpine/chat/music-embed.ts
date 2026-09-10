@@ -31,14 +31,23 @@ const NSFW_PLACEHOLDER = '<span class="music-embed-nsfw">🔒 Explicit content h
 
 const SAFE_URL = /^(?:https?:\/\/|mailto:)/i;
 
-/** Escape `& < >` for safe insertion as HTML child text. */
+/**
+ * Escape `& < >` for safe insertion as HTML child text.
+ * @param s
+ */
 export const escText = (s: string | null | undefined,): string =>
   (s ?? "").replaceAll("&", "&amp;",).replaceAll("<", "&lt;",).replaceAll(">", "&gt;",);
 
-/** Escape for safe insertion inside a double-quoted attribute value (& < > "). */
+/**
+ * Escape for safe insertion inside a double-quoted attribute value (& < > ").
+ * @param s
+ */
 export const escAttr = (s: string | null | undefined,): string => escText(s,).replaceAll('"', "&quot;",);
 
-/** Allowlist http(s)/mailto schemes; rewrite everything else to a benign `#blocked`. */
+/**
+ * Allowlist http(s)/mailto schemes; rewrite everything else to a benign `#blocked`.
+ * @param s
+ */
 export const safeUrl = (s: string | null | undefined,): string => {
   const u = s ?? "";
   return SAFE_URL.test(u,) ? escAttr(u,) : "#blocked";

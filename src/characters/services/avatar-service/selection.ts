@@ -21,6 +21,8 @@ const DEFAULT_FALLBACK_CHAIN: AvatarTagType[] = ["emotion", "mood", "action", "l
  * Returns the synthesized base `Avatar` when the actor has a base asset;
  * returns `null` when neither emotion avatars nor a base asset exist.
  * BUG-avatar-select-empty-throws-no-frontend-fallback.
+ * @param db
+ * @param actorId
  * @returns void
  */
 async function resolveBaseAvatar(
@@ -59,6 +61,10 @@ async function resolveBaseAvatar(
  *  4. Base portrait: when chain yields nothing, return base portrait.
  *
  * BUG-avatar-select-fallback-chain-unwired.
+ * @param db
+ * @param actorId
+ * @param context
+ * @param worldId
  * @returns void
  */
 export async function selectAvatar(
@@ -125,6 +131,10 @@ export async function selectAvatar(
 
 /**
  * Calculate score for an avatar based on context and weights.
+ * @param avatar
+ * @param context
+ * @param weights
+ * @param rule
  * @returns void
  */
 export function calculateAvatarScore(

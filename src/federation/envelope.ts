@@ -30,6 +30,12 @@ export interface ContentEnvelope {
 /**
  * Seal plaintext into a content envelope.
  * @param input
+ * @param input.id
+ * @param input.origin
+ * @param input.clock
+ * @param input.type
+ * @param input.content
+ * @param input.cipher
  */
 export async function sealContent(input: {
   id: string;

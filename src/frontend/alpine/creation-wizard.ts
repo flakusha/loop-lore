@@ -54,6 +54,8 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
 
   /**
    * Update a single field in the wizard draft (called from inline edit inputs).
+   * @param field
+   * @param value
    */
   updateWizardField(field: string, value: string,): void {
     if (!this.wizardDraft) { return; }
@@ -71,6 +73,7 @@ export const creationWizard: Partial<ChatState> & ThisType<ChatState> = {
    * replaced the draft (the second wizard wins, the first is silently dropped
    * by the guard rather than committing the wrong entity). Switching to a
    * keyed map would be required to support concurrent live drafts.
+   * @param wizardId
    */
   async confirmWizard(wizardId: string,): Promise<void> {
     if (this.wizardDraft?.wizardId !== wizardId) {

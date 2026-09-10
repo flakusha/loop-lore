@@ -12,7 +12,12 @@
 
 import type { MessageAttachment, } from "../alpine/chat-types/messages";
 
-/** Fully-populated MessageAttachment for fixture use. */
+/**
+ * Fully-populated MessageAttachment for fixture use.
+ * @param assetId
+ * @param caption
+ * @param overrides
+ */
 export function makeAttachment(
   assetId: string,
   caption: string,

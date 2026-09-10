@@ -36,6 +36,7 @@ export function resolveDownloadPolicy(): LocalModelDownloadPolicy {
  * Mount browser-side inference capability routes.
  * The download policy is resolved once at mount time; config edits take effect on restart.
  * @param opts - Optional policy resolver override (tests inject a static policy).
+ * @param opts.resolvePolicy
  * @returns Elysia plugin serving the manifest and capability endpoints.
  */
 export function localInferenceRoutes(opts?: { resolvePolicy?: () => LocalModelDownloadPolicy },): Elysia {

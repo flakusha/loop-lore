@@ -19,7 +19,12 @@ interface MetricsOpts {
   config: Config;
 }
 
-/** @param v */
+/**
+ * @param v
+ * @param name
+ * @param value
+ * @param help
+ */
 function gauge(name: string, value: number, help: string,): string {
   return `# HELP ${name} ${help}\n# TYPE ${name} gauge\n${name} ${value}\n`;
 }

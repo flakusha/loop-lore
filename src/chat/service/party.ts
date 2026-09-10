@@ -127,6 +127,8 @@ async function injectPartyNarration(
  * against the ChatMode default. Replaces the legacy `chats.visual_novel`
  * integer column dropped in migration 076.
  * @param chat
+ * @param chat.gm_config
+ * @param chat.mode
  * @returns void
  */
 function chatIsVisualNovel(chat: { gm_config: string | null; mode: string },): boolean {

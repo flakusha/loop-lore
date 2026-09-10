@@ -140,6 +140,10 @@ export function detectInjectionSignals(text: string,): { score: number; signals:
  * aux model configured) — the caller then falls back to the scan verdict.
  * @param text
  * @param options - `config`, `db` required; `userId`/`chatId` optional telemetry context
+ * @param options.config
+ * @param options.db
+ * @param options.userId
+ * @param options.chatId
  */
 export async function confirmInjectionWithLlm(
   text: string,
@@ -164,6 +168,10 @@ export async function confirmInjectionWithLlm(
  * never blocks. LLM-unavailable degrades to `suspicious`.
  * @param text
  * @param options
+ * @param options.config
+ * @param options.db
+ * @param options.userId
+ * @param options.chatId
  */
 export async function checkPromptInjection(
   text: string,

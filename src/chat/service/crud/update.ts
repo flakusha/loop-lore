@@ -46,6 +46,7 @@ export async function updateChat(
  * @param params
  * @param fullChat
  * @param fullChat.story_state
+ * @param fullChat.gm_config
  * @returns A conflict/forbidden result when an update is blocked, else null
  */
 async function checkChatUpdateLock(
@@ -98,6 +99,7 @@ async function checkChatUpdateLock(
  * Merge a JSON patch into the chat's story_state column.
  * @param fullChat
  * @param fullChat.story_state
+ * @param fullChat.gm_config
  * @param patch
  * @returns void
  */
@@ -119,6 +121,7 @@ function patchStoryState(
  * Assemble the update column map from the validated params.
  * @param fullChat
  * @param fullChat.story_state
+ * @param fullChat.gm_config
  * @param params
  * @returns void
  */

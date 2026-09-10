@@ -114,7 +114,10 @@ export class GossipService {
     return this.table.listPeers().map((p,) => p.origin);
   }
 
-  /** Get a peer entry by canonical origin. */
+  /**
+   * Get a peer entry by canonical origin.
+   * @param origin
+   */
   getPeer(origin: string,): PeerEntry | undefined {
     return this.table.getPeer(origin,);
   }
@@ -165,7 +168,10 @@ export class GossipService {
   }
 }
 
-/** Public origin of this instance (proxy-aware). */
+/**
+ * Public origin of this instance (proxy-aware).
+ * @param server
+ */
 export function publicOriginOf(server: ServerConfig,): string {
   return server.publicOrigin ??
     `${server.tls?.cert ? "https" : "http"}://${server.host}:${server.port}`;
@@ -180,6 +186,12 @@ let singleton: GossipService | null = null;
  * @param trustByOrigin
  * @param selfOrigin
  * @param ttl
+ * @param opts
+ * @param opts.seeds
+ * @param opts.trusted
+ * @param opts.trustByOrigin
+ * @param opts.selfOrigin
+ * @param opts.ttl
  */
 export function getGossipService(opts: {
   seeds: string[];
