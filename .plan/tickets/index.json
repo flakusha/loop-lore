@@ -11663,23 +11663,6 @@
     "status": "done",
     "git_issue": "a813daa"
   },
-  "TASK-CHECK-PARALLEL-GATES-FILTER": {
-    "hash": "6f0c0de",
-    "extid": "TASK-CHECK-PARALLEL-GATES-FILTER",
-    "type": "TASK",
-    "title": "feat(check): --gates/--skip-gates filter on parallel runner",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [
-      "check",
-      "cli",
-      "worktree"
-    ],
-    "source": ".plan/tickets/TASK-check-parallel-gates-filter.md",
-    "status": "done",
-    "git_issue": "ccf8edf24"
-  },
   "TASK-CI-CD": {
     "hash": "0636c4e",
     "extid": "TASK-CI-CD",
@@ -14233,7 +14216,7 @@
     "extid": "TASK-FINALIZE-MUST-GATE-POST-REBASE-TREE-BEFORE-MERGE",
     "title": "finalize must hard-fail on non-mergeable or multi-merge dev state",
     "source": ".plan/tickets/TASK-finalize-must-gate-post-rebase-tree-before-merge.md",
-    "status": "in_progress"
+    "status": "open"
   },
   "TASK-FINALIZE-NOTIFICATION-BELL-HEADER-WIRING": {
     "hash": "3bf85e0",
@@ -14803,8 +14786,7 @@
     "priority": "Medium",
     "epic": "epic-frontend-gallery.md",
     "tags": [],
-    "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md",
-    "status": "done"
+    "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
   },
   "TASK-GEMINI-PROVIDER": {
     "hash": "pending",
@@ -15630,25 +15612,6 @@
     "source": ".plan/tickets/TASK-import-export-io.md",
     "git_issue": "57df5ad",
     "status": "done"
-  },
-  "TASK-INFERENCE-BROWSER-WLLAMA-GGUF": {
-    "hash": "5e0fbe3",
-    "extid": "TASK-INFERENCE-BROWSER-WLLAMA-GGUF",
-    "type": "TASK",
-    "title": "feat(inference): browser wllama GGUF inference infrastructure",
-    "label": "task",
-    "priority": "high",
-    "epic": "",
-    "tags": [
-      "inference",
-      "gguf",
-      "wllama",
-      "browser",
-      "llama.cpp"
-    ],
-    "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md",
-    "status": "done",
-    "git_issue": "5e0fbe3"
   },
   "TASK-INFO-BUBBLES": {
     "hash": "pending",
@@ -21958,18 +21921,6 @@
     "tags": [],
     "source": ".plan/tickets/TASK-timeline-selection-api.md"
   },
-  "TASK-TIMELINE-STEERING-CLOSE-ROLL-RACE-AND-EMPTY-TIMELINEID-GAP": {
-    "hash": "0919933",
-    "status": "in_progress",
-    "extid": "TASK-TIMELINE-STEERING-CLOSE-ROLL-RACE-AND-EMPTY-TIMELINEID-GAP",
-    "type": "TASK",
-    "title": "Timeline steering: close roll race and empty timelineId gap",
-    "label": "task",
-    "priority": "Medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md"
-  },
   "TASK-TLS-CIPHER-SUITE-HARDENING-AND-SECURE-DEFAULTS": {
     "hash": "49a86d4",
     "extid": "TASK-TLS-CIPHER-SUITE-HARDENING-AND-SECURE-DEFAULTS",
@@ -22360,7 +22311,7 @@
     "source": ".plan/tickets/TASK-unified-hold-semantics-per-chat-pause-gates-primary-generate.md"
   },
   "TASK-UNIFY-401-GUARD-HELPERS": {
-    "hash": "0eb225f",
+    "hash": "c99704c1",
     "extid": "TASK-UNIFY-401-GUARD-HELPERS",
     "type": "TASK",
     "title": "Unify backend 401/Unauthorized guard helpers",
@@ -22369,8 +22320,7 @@
     "epic": "epic-code-quality",
     "tags": [],
     "source": ".plan/tickets/TASK-unify-401-guard-helpers.md",
-    "git_issue": "0eb225f",
-    "status": "done"
+    "git_issue": "0eb225f"
   },
   "TASK-UNIFY-ITEM-TYPES": {
     "hash": "dc711fa",
@@ -23148,23 +23098,6 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc.md"
-  },
-  "TASK-WORKTREE-AGENT-LEDGER": {
-    "hash": "b540688",
-    "extid": "TASK-WORKTREE-AGENT-LEDGER",
-    "type": "TASK",
-    "title": "feat(worktree): agent ledger and finalize failure reporting",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [
-      "worktree",
-      "ledger",
-      "agent"
-    ],
-    "source": ".plan/tickets/TASK-worktree-agent-ledger.md",
-    "status": "done",
-    "git_issue": "23aec201d"
   },
   "TASK-WORLD-ALPINE": {
     "hash": "3e0c7b6",
