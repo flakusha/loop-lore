@@ -3,7 +3,7 @@
 
 # TASK: Refactor: typed Kysely upsert-by-unique-key helpers
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — helpers landed as `upsertByUnique` + `upsertByUniqueWith` + `insertUnique` (`src/db/upsert-helpers.ts` with motivating `@see BUG-chat-swipe-index-race`)
 **Priority:** medium
 **Effort:** Medium
 
