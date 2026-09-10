@@ -22,8 +22,8 @@ import {
   insertWorlds,
 } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { counterOffer, } from "./counter";
 import { tradeCore, } from "./core";
+import { counterOffer, } from "./counter";
 import { buyFromNpc, sellToNpc, } from "./npc";
 import { createOffer, } from "./offers";
 
