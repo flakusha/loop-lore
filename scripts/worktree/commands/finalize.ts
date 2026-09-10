@@ -742,7 +742,7 @@ export async function finalize(
   installSignalHandlers();
   try {
     try {
-      await runFinalize(branch, mergeStrategy, force, config, wtPath, targetBranch,);
+      await runFinalize(branch, mergeStrategy, force, gatesFilter, skipGatesFilter, config, wtPath, targetBranch,);
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error,);
       appendGripe(config.treeDir, branch, `finalize ${branch} failed: ${reason}`,);
@@ -760,6 +760,8 @@ async function runFinalize(
   branch: string,
   mergeStrategy: string,
   force: boolean,
+  gatesFilter: string,
+  skipGatesFilter: string,
   config: WorktreeConfig,
   wtPath: string,
   targetBranch: string,
