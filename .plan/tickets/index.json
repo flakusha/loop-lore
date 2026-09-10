@@ -9669,7 +9669,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-audit-follow-up-chat-swipe-index-race-test-uses-promise-all-.md"
+    "source": ".plan/tickets/TASK-audit-follow-up-chat-swipe-index-race-test-uses-promise-all-.md",
+    "status": "done"
   },
   "TASK-AUDIT-FOLLOW-UP-CHECK-REPORT-NAME-FIELD-DROPPED": {
     "hash": "864a2bc",
@@ -9681,7 +9682,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-audit-follow-up-check-report-name-field-dropped.md"
+    "source": ".plan/tickets/TASK-audit-follow-up-check-report-name-field-dropped.md",
+    "status": "done"
   },
   "TASK-AUDIT-FOLLOW-UP-MAXRATIO-SILENTLY-RAISED-10X-WITHOUT-REGRESS": {
     "hash": "0391ad6",
@@ -9693,7 +9695,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
+    "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md",
+    "status": "done"
   },
   "TASK-AUDIT-FOLLOW-UP-RESOLVEUSERIDFROMREQUEST-AUTHCONFIG-DI-PATH-": {
     "hash": "0735878",
@@ -9705,7 +9708,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md"
+    "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md",
+    "status": "done"
   },
   "TASK-AUDIT-FOLLOW-UP-SECONDARY-CHAT-OWNERSHIP-CHECK-IN-REUNITECHA": {
     "hash": "6caa51a",
@@ -9717,7 +9721,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
+    "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md",
+    "status": "done"
   },
   "TASK-AUDIT-FOLLOW-UP-TEMPLATES-TS-AT-190L-CONVENTION-CEILING": {
     "hash": "4636043",
@@ -9729,7 +9734,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-audit-follow-up-templates-ts-at-190l-convention-ceiling.md"
+    "source": ".plan/tickets/TASK-audit-follow-up-templates-ts-at-190l-convention-ceiling.md",
+    "status": "done"
   },
   "TASK-AUDIT-FOLLOW-UP-TRIGGERAUTOGENERATION-CATCH-PATH-UNTESTED": {
     "hash": "1448001",
@@ -9741,7 +9747,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-audit-follow-up-triggerautogeneration-catch-path-untested.md"
+    "source": ".plan/tickets/TASK-audit-follow-up-triggerautogeneration-catch-path-untested.md",
+    "status": "done"
   },
   "TASK-AUDIT-FOLLOW-UP-WORKTREE-FINALIZE-REAPSTALE-VOID-DEAD-CODE": {
     "hash": "06d25f6",
@@ -9753,7 +9760,8 @@
     "priority": "low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-audit-follow-up-worktree-finalize-reapstale-void-dead-code.md"
+    "source": ".plan/tickets/TASK-audit-follow-up-worktree-finalize-reapstale-void-dead-code.md",
+    "status": "done"
   },
   "TASK-AUTH-FACTORS-SCHEMA-AND-SERVICE-CORE-F1": {
     "hash": "89e0e7b",
