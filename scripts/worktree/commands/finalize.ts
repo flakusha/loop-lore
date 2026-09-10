@@ -667,6 +667,10 @@ export async function finalize(
   // the explicit branch arg identifies the target worktree, and loadConfig now
   // resolves repoRoot correctly via --git-common-dir regardless of cwd.
   let branch = "";
+  let mergeStrategy = "rebase";
+  let force = false;
+  let gatesFilter = "";
+  let skipGatesFilter = "";
   const parsed = parseFinalizeArgs(args,);
   branch = parsed.branch;
   mergeStrategy = parsed.mergeStrategy;
