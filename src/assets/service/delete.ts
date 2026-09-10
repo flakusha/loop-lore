@@ -11,6 +11,7 @@
 import { AssetAlphaStatus, AssetLinkEntity, } from "../../db/enums";
 import { MATTING_SOURCE_LABEL, } from "../../generation/matting/service";
 import { deleteFile, } from "./file-system";
+import { deleteAssetTags, } from "./tags";
 import type { DeleteAssetOpts, } from "./types";
 
 /**
@@ -56,6 +57,9 @@ export async function deleteAsset({ database, assetId, uploadDir, }: DeleteAsset
 
   // Remove links
   await database.deleteFrom("asset_links",).where("asset_id", "=", assetId,).execute();
+
+  // Remove tags + tag-proposition dismissals
+  await deleteAssetTags(database, assetId,);
 
   // Remove record
   await database.deleteFrom("assets",).where("id", "=", assetId,).execute();

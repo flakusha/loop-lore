@@ -8,6 +8,8 @@ import type { Generated, } from "kysely";
 import type {
   AssetAlphaStatus,
   AssetLinkEntity,
+  AssetTagScope,
+  AssetTagSource,
   AssetType,
   AssetVisibility,
   StorageBackend,
@@ -54,4 +56,24 @@ export interface Assets {
   content_hash: string | null;
   data_version: Generated<number>;
   record_hash: Generated<string>;
+}
+
+// ── asset_tags ────────────────────────────────────────────
+export interface AssetTags {
+  id: Generated<string>;
+  asset_id: string;
+  tag: string;
+  scope: Generated<AssetTagScope>;
+  owner_id: string | null;
+  source: Generated<AssetTagSource>;
+  created_at: Generated<string>;
+}
+
+// ── asset_tag_dismissals ────────────────────────────────────────────
+export interface AssetTagDismissals {
+  id: Generated<string>;
+  asset_id: string;
+  tag: string;
+  user_id: string;
+  created_at: Generated<string>;
 }
