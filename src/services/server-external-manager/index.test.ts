@@ -3,7 +3,7 @@
 
 /**
  * ServerExternalManager — coverage tests for the facade's method bodies
- * (startLlamaCpp/Swap, startSdCpp, stop, stopAll, killAllSync,
+ * (startLlamaCpp, startSdCpp, stop, stopAll, killAllSync,
  * startLivenessProbes, stopLivenessProbes) plus the `active` getter and
  * `PROBE_INTERVAL_MS` constant.
  *
@@ -19,214 +19,198 @@
 import {
   afterEach,
   beforeEach,
-  describe,
   expect,
   mock,
   test,
 } from "bun:test";
-import { describeOrSkipStrict, } from "../test-utils/isolate-only";
+import { describeOrSkipStrict, } from "../../test-utils/isolate-only";
 import type {
   LlamaCppOptions,
-  LlamaSwapOptions,
   SdCppOptions,
-  ServerExternalHost,
   ServerInstance,
 } from "./types";
 
 // ── Fake subprocess for the start dispatchers ───────────────
-function makeFakeSubprocess(): any {
+function makeFakeSubprocess(): unknown {
   return {
     pid: 12345,
     killed: false,
-    kill: mock((_signal?: string,) => {
-      return true;
-    },),
+    kill: mock((_signal?: string,) => true),
     stdout: null,
     stderr: null,
   };
 }
 
-// ── Mock host with logger + mutable state ──────────────────
-function makeHost(): ServerExternalHost & { logCalls: { level: string; msg: string; meta?: any }[] } {
-  const logCalls: { level: string; msg: string; meta?: any }[] = [];
-  const log = {
-    child: () => log,
-    info: (msg: string, meta?: any,) => { logCalls.push({ level: "info", msg, meta, },); },
-    warn: (msg: string, meta?: any,) => { logCalls.push({ level: "warn", msg, meta, },); },
-    error: (msg: string, meta?: any,) => { logCalls.push({ level: "error", msg, meta, },); },
-    debug: (msg: string, meta?: any,) => { logCalls.push({ level: "debug", msg, meta, },); },
-  };
-  const host: ServerExternalHost & { logCalls: typeof logCalls } = {
-    log: log as any,
-    instances: [],
-    probeTimer: null,
-    PROBE_INTERVAL_MS: 30_000,
-    logCalls,
-  };
-  return host;
-}
-
 // ── Mock external-server-utils ─────────────────────────────
+//
+// `mock.module` must export every named export the downstream `import` uses
+// (findBinary, isPortFree, waitForHealth, waitForPort, isHuggingFaceRef,
+// BINARY_CANDIDATES) or bun throws "Export named '…' not found in module".
 const mockUtils = {
-  findBinary: mock((type: string,) => type ? `/usr/bin/${type}` : null,),
-  isHuggingFaceRef: mock((path: string,) => /^[\w-]+\/[\w.-]+:\w+$/i.test(path,),),
-  isPortFree: mock(async (_port: number,) => true,),
-  waitForHealth: mock(async (_url: string, _opts: any,) => true,),
-  waitForPort: mock(async (_port: number, _opts: any,) => true,),
+  BINARY_CANDIDATES: {
+    "llama-cpp": ["llama-server", "llama-server-vk",],
+    "llama-swap": ["llama-swap",],
+    "sd-cpp": ["sd-server",],
+  },
+  findBinary: mock((type: string,) => type ? `/usr/bin/${type}` : null),
+  isHuggingFaceRef: mock((path: string,) => /^[\w-]+\/[\w.-]+:\w+$/i.test(path,)),
+  isPortFree: mock(async (_port: number,) => true),
+  waitForHealth: mock(async (_url: string, _opts: unknown,) => true),
+  waitForPort: mock(async (_port: number, _opts: unknown,) => true),
 };
 
 // ── Mock bun.spawn to return our fake subprocess ──────────
-const spawnMock = mock((_args: any,) => makeFakeSubprocess(),);
+const spawnMock = mock((_args: unknown,) => makeFakeSubprocess());
 
-// `bun.spawn` is a top-level export; we monkey-patch in the test body.
-const originalSpawn = Bun.spawn;
+if (process.env.npm_lifecycle_event === "test:unit") {
+  mock.module("../external-server-utils", () => mockUtils,);
+  // Pin Bun.spawn for the whole file run.
+  (Bun as unknown as { spawn: unknown }).spawn = spawnMock;
+}
+
 beforeEach(() => {
-  (Bun as any).spawn = spawnMock;
   mockUtils.findBinary.mockClear();
   mockUtils.isHuggingFaceRef.mockClear();
   mockUtils.isPortFree.mockClear();
   mockUtils.waitForHealth.mockClear();
   mockUtils.waitForPort.mockClear();
   spawnMock.mockClear();
-});
+},);
 
 afterEach(() => {
-  (Bun as any).spawn = originalSpawn;
-});
+  // No restoration needed — file-level (Bun.spawn stays mocked).
+},);
 
 describeOrSkipStrict("ServerExternalManager facade", () => {
   test("PROBE_INTERVAL_MS constant is 30_000", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
-    expect(mgr.PROBE_INTERVAL_MS).toBe(30_000);
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
+    expect(mgr.PROBE_INTERVAL_MS,).toBe(30_000,);
   });
 
   test("active getter returns the instances array (read-only view)", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
-    expect(mgr.active.length).toBe(0);
-    // Instances is mutable from outside via the public array.
-    mgr.instances.push({} as ServerInstance);
-    expect(mgr.active.length).toBe(1);
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
+    expect(mgr.active.length,).toBe(0,);
+    mgr.instances.push({} as ServerInstance,);
+    expect(mgr.active.length,).toBe(1,);
   });
 
   test("startLlamaCpp dispatches and pushes the instance on success", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
-    const opts: LlamaCppOptions = { port: 9011, modelPath: "/tmp/model.gguf" } as any;
-    const instance = await mgr.startLlamaCpp(opts);
+    const opts = { port: 9011, modelPath: "/tmp/model.gguf", } as LlamaCppOptions;
+    const instance = await mgr.startLlamaCpp(opts,);
 
-    expect(instance).not.toBeNull();
-    expect(instance?.type).toBe("llama-cpp");
-    expect(instance?.port).toBe(9011);
-    expect(mgr.instances).toHaveLength(1);
-    expect(mgr.instances[0]).toBe(instance);
+    expect(instance,).not.toBeNull();
+    expect(instance?.type,).toBe("llama-cpp",);
+    expect(instance?.port,).toBe(9011,);
+    expect(mgr.instances,).toHaveLength(1,);
+    expect(mgr.instances[0],).toBe(instance,);
   });
 
   test("startLlamaCpp returns null when the binary is missing", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
-    const originalFindBinary = mockUtils.findBinary;
     mockUtils.findBinary.mockImplementationOnce(() => null);
 
-    const instance = await mgr.startLlamaCpp({ port: 9012, modelPath: "/tmp/model.gguf" } as any);
-    expect(instance).toBeNull();
-    expect(mgr.instances).toHaveLength(0);
+    const instance = await mgr.startLlamaCpp({ port: 9012, modelPath: "/tmp/model.gguf", } as LlamaCppOptions,);
+    expect(instance,).toBeNull();
+    expect(mgr.instances,).toHaveLength(0,);
   });
 
   test("startLlamaCpp returns null when the port is busy", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
     mockUtils.isPortFree.mockImplementationOnce(async () => false);
 
-    const instance = await mgr.startLlamaCpp({ port: 9013, modelPath: "/tmp/model.gguf" } as any);
-    expect(instance).toBeNull();
-    expect(mgr.instances).toHaveLength(0);
+    const instance = await mgr.startLlamaCpp({ port: 9013, modelPath: "/tmp/model.gguf", } as LlamaCppOptions,);
+    expect(instance,).toBeNull();
+    expect(mgr.instances,).toHaveLength(0,);
   });
 
   test("startLlamaCpp returns null when waitForHealth times out", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
     mockUtils.waitForHealth.mockImplementationOnce(async () => false);
 
-    const instance = await mgr.startLlamaCpp({ port: 9014, modelPath: "/tmp/model.gguf" } as any);
-    expect(instance).toBeNull();
-    expect(mgr.instances).toHaveLength(0);
+    const instance = await mgr.startLlamaCpp({ port: 9014, modelPath: "/tmp/model.gguf", } as LlamaCppOptions,);
+    expect(instance,).toBeNull();
+    expect(mgr.instances,).toHaveLength(0,);
   });
 
   test("startLlamaCpp uses HF reference flag when modelPath looks like a HF id", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
-    const instance = await mgr.startLlamaCpp({ port: 9015, modelPath: "user/repo:file" } as any);
-    expect(instance).not.toBeNull();
-    expect(spawnMock).toHaveBeenCalled();
-    const args = spawnMock.mock.calls[0]![0] as any;
-    const cmd = args.cmd as string[];
-    // -hf flag should appear before the model value
-    const hfIdx = cmd.indexOf("-hf");
-    expect(hfIdx).toBeGreaterThanOrEqual(0);
-    expect(cmd[hfIdx + 1]).toBe("user/repo:file");
+    const instance = await mgr.startLlamaCpp({ port: 9015, modelPath: "user/repo:file", } as LlamaCppOptions,);
+    expect(instance,).not.toBeNull();
+    expect(spawnMock,).toHaveBeenCalled();
+    const args = spawnMock.mock.calls[0]![0] as { cmd: string[] };
+    const cmd = args.cmd;
+    const hfIdx = cmd.indexOf("-hf",);
+    expect(hfIdx,).toBeGreaterThanOrEqual(0,);
+    expect(cmd[hfIdx + 1],).toBe("user/repo:file",);
   });
 
   test("startSdCpp dispatches and pushes an sd-cpp instance on success", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
-    const opts: SdCppOptions = { port: 9021, modelPath: "/tmp/sd-model.gguf" } as any;
-    const instance = await mgr.startSdCpp(opts);
-    expect(instance).not.toBeNull();
-    expect(instance?.type).toBe("sd-cpp");
-    expect(instance?.port).toBe(9021);
-    expect(mgr.instances).toHaveLength(1);
+    const opts = { port: 9021, modelPath: "/tmp/sd-model.gguf", } as SdCppOptions;
+    const instance = await mgr.startSdCpp(opts,);
+    expect(instance,).not.toBeNull();
+    expect(instance?.type,).toBe("sd-cpp",);
+    expect(instance?.port,).toBe(9021,);
+    expect(mgr.instances,).toHaveLength(1,);
   });
 
   test("startSdCpp returns null when binary missing", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
     mockUtils.findBinary.mockImplementationOnce(() => null);
 
-    const instance = await mgr.startSdCpp({ port: 9022, modelPath: "/tmp/m" } as any);
-    expect(instance).toBeNull();
+    const instance = await mgr.startSdCpp({ port: 9022, modelPath: "/tmp/m", } as SdCppOptions,);
+    expect(instance,).toBeNull();
   });
 
   test("startSdCpp returns null when port is busy", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
     mockUtils.isPortFree.mockImplementationOnce(async () => false);
 
-    const instance = await mgr.startSdCpp({ port: 9023, modelPath: "/tmp/m" } as any);
-    expect(instance).toBeNull();
+    const instance = await mgr.startSdCpp({ port: 9023, modelPath: "/tmp/m", } as SdCppOptions,);
+    expect(instance,).toBeNull();
   });
 
   test("startSdCpp returns null when waitForPort times out", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
     mockUtils.waitForPort.mockImplementationOnce(async () => false);
 
-    const instance = await mgr.startSdCpp({ port: 9024, modelPath: "/tmp/m" } as any);
-    expect(instance).toBeNull();
+    const instance = await mgr.startSdCpp({ port: 9024, modelPath: "/tmp/m", } as SdCppOptions,);
+    expect(instance,).toBeNull();
   });
 
   test("startSdCpp uses --diffusion-model flag in diffusion mode", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
     const instance = await mgr.startSdCpp({
       port: 9025,
@@ -234,108 +218,124 @@ describeOrSkipStrict("ServerExternalManager facade", () => {
       modelType: "diffusion",
       llmPath: "/tmp/llm",
       vaePath: "/tmp/vae",
-    } as any);
-    expect(instance).not.toBeNull();
-    const cmd = (spawnMock.mock.calls[0]![0] as any).cmd as string[];
-    expect(cmd).toContain("--diffusion-model");
-    expect(cmd).toContain("--llm");
-    expect(cmd).toContain("--vae");
+    } as unknown as SdCppOptions,);
+    expect(instance,).not.toBeNull();
+    const cmd = (spawnMock.mock.calls[0]![0] as { cmd: string[] }).cmd;
+    expect(cmd,).toContain("--diffusion-model",);
+    expect(cmd,).toContain("--llm",);
+    expect(cmd,).toContain("--vae",);
   });
 
-  test("startLivenessProbes sets probeTimer and stopLivenessProbes clears it", async () => {
+  test("startLivenessProbes sets probeTimer; stop clears it; idempotent", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
-    expect(mgr.probeTimer).toBeNull();
     mgr.startLivenessProbes();
-    expect(mgr.probeTimer).not.toBeNull();
+    expect(mgr.probeTimer,).not.toBeNull();
 
-    // Calling start again is a no-op.
     const firstTimer = mgr.probeTimer;
     mgr.startLivenessProbes();
-    expect(mgr.probeTimer).toBe(firstTimer);
+    expect(mgr.probeTimer,).toBe(firstTimer,);
 
     mgr.stopLivenessProbes();
-    expect(mgr.probeTimer).toBeNull();
-
-    // Stopping when no timer is set is a no-op.
+    expect(mgr.probeTimer,).toBeNull();
     mgr.stopLivenessProbes();
-    expect(mgr.probeTimer).toBeNull();
+    expect(mgr.probeTimer,).toBeNull();
 
-    // Cleanup
-    clearInterval(firstTimer as any);
+    clearInterval(firstTimer as unknown as ReturnType<typeof setInterval>,);
   });
+},);
 
-  test("startLivenessProbes runs the liveness probe at the configured interval", async () => {
+describeOrSkipStrict("ServerExternalManager.startLlamaSwap path", () => {
+  test("startLlamaSwap dispatches and pushes a llama-swap instance on success", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
-    mgr.PROBE_INTERVAL_MS = 50; // fast tick for the test
-    mgr.startLivenessProbes();
-    const timer = mgr.probeTimer!;
-    // Wait > interval so the probe callback fires.
-    await new Promise((r) => setTimeout(r, 120,));
-    // The probe callback is void-async and swallows errors; we only assert
-    // that the timer is still ticking (didn't error out).
-    expect(mgr.probeTimer).toBe(timer);
-    mgr.stopLivenessProbes();
-    clearInterval(timer as any);
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
+    // Provide a config file that resolveLlamaSwapPort can read.
+    const fs = await import("node:fs");
+    const os = await import("node:os");
+    const path = await import("node:path");
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "llama-swap-",),);
+    const cfgPath = path.join(tmpDir, "config.yaml",);
+    fs.writeFileSync(cfgPath, "startPort: 9091\n", "utf8",);
+    try {
+      const opts = { configPath: cfgPath, } as { configPath: string };
+      const instance = await mgr.startLlamaSwap(opts as unknown as { configPath: string },);
+      expect(instance,).not.toBeNull();
+      expect(instance?.type,).toBe("llama-swap",);
+      expect(instance?.port,).toBe(9091,);
+      expect(mgr.instances,).toHaveLength(1,);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true, },);
+    }
   });
-});
+
+  test("startLlamaSwap returns null when the binary is missing", async () => {
+    const { ServerExternalManager, } = await import("./index");
+    const { createLogger, } = await import("../../logger");
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
+    mockUtils.findBinary.mockImplementationOnce(() => null);
+    const instance = await mgr.startLlamaSwap({
+      configPath: "/tmp/nonexistent-config.yaml",
+    } as unknown as { configPath: string },);
+    expect(instance,).toBeNull();
+    expect(mgr.instances,).toHaveLength(0,);
+  });
+},);
 
 describeOrSkipStrict("ServerExternalManager.stop dispatch", () => {
   test("stop kills the subprocess and removes the instance from the array", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
     const proc = makeFakeSubprocess();
     const inst: ServerInstance = {
       type: "llama-cpp",
-      process: proc,
+      process: proc as ServerInstance["process"],
       port: 9031,
       pid: 999,
       startedAt: Date.now(),
     };
-    mgr.instances.push(inst);
-    await mgr.stop(inst);
-    expect(mgr.instances).toHaveLength(0);
+    mgr.instances.push(inst,);
+    await mgr.stop(inst,);
+    expect(mgr.instances,).toHaveLength(0,);
   });
 
   test("stopAll iterates and stops every instance then clears the list", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
     for (let i = 0; i < 3; i++) {
       mgr.instances.push({
         type: "llama-cpp",
-        process: makeFakeSubprocess(),
+        process: makeFakeSubprocess() as ServerInstance["process"],
         port: 9040 + i,
         pid: 1000 + i,
         startedAt: Date.now(),
-      });
+      },);
     }
     await mgr.stopAll();
-    expect(mgr.instances).toHaveLength(0);
+    expect(mgr.instances,).toHaveLength(0,);
   });
 
   test("killAllSync clears instances synchronously without awaiting", async () => {
     const { ServerExternalManager, } = await import("./index");
     const { createLogger, } = await import("../../logger");
-    const mgr = new ServerExternalManager(createLogger({ level: "error" }));
+    const mgr = new ServerExternalManager(createLogger({ level: "error", },),);
 
     for (let i = 0; i < 2; i++) {
       mgr.instances.push({
         type: "llama-cpp",
-        process: makeFakeSubprocess(),
+        process: makeFakeSubprocess() as ServerInstance["process"],
         port: 9050 + i,
         pid: 2000 + i,
         startedAt: Date.now(),
-      });
+      },);
     }
     mgr.killAllSync();
-    expect(mgr.instances).toHaveLength(0);
+    expect(mgr.instances,).toHaveLength(0,);
   });
-});
+},);
