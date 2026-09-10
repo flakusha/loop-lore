@@ -19,6 +19,14 @@ describe("local inference routes", () => {
     expect(body.version,).toBe(1,);
     expect(body.eligibleTasks,).toContain("prompt-improve",);
     expect(Array.isArray(body.models,),).toBe(true,);
+    for (const model of body.models) {
+      expect(Array.isArray(model.files,),).toBe(true,);
+      expect(model.files.length,).toBeGreaterThan(0,);
+      for (const file of model.files) {
+        expect(typeof file.name,).toBe("string",);
+        expect(String(file.url,).startsWith("https://",),).toBe(true,);
+      }
+    }
   });
 
   test("capability endpoint defaults to opt-out", async () => {
