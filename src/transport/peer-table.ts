@@ -95,7 +95,10 @@ export class PeerTable {
     }
   }
 
-  /** Discover a new peer origin. No-op if already known. */
+  /**
+   * Discover a new peer origin. No-op if already known.
+   * @param origin
+   */
   discoverPeer(origin: string,): void {
     if (this.peers.has(origin,)) { return; }
     this.peers.set(origin, {
@@ -110,6 +113,7 @@ export class PeerTable {
   /**
    * Promote a peer from `pending` to `trusted` (verdict enforced).
    * Unknown peers are discovered first, then promoted.
+   * @param origin
    */
   trustPeer(origin: string,): void {
     this.discoverPeer(origin,);
@@ -119,6 +123,8 @@ export class PeerTable {
 
   /**
    * Record an inbound heartbeat with replay protection.
+   * @param origin
+   * @param seq
    * @returns `true` if accepted (seq > lastSeq), `false` if stale/replayed.
    */
   recordHeartbeat(origin: string, seq: number,): boolean {
@@ -151,7 +157,10 @@ export class PeerTable {
     return Array.from(this.peers.values(),).map((p,) => ({ ...p, }));
   }
 
-  /** Get a single peer by origin. */
+  /**
+   * Get a single peer by origin.
+   * @param origin
+   */
   getPeer(origin: string,): PeerEntry | undefined {
     const peer = this.peers.get(origin,);
     return peer ? { ...peer, } : undefined;

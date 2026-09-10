@@ -105,6 +105,10 @@ export async function resolveUserIdFromRequest(
  * configured), then legacy sha256(token). Returns null on miss / expiry.
  * The caller is responsible for the user-status gate; this helper only
  * resolves the candidate id.
+ * @param database
+ * @param config
+ * @param token
+ * @param nowMs
  */
 async function resolveUserIdFromSession(
   database: Kysely<DB>,

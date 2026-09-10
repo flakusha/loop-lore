@@ -40,6 +40,7 @@ export function keynavHelp() {
     /**
      * Translate an i18n key via the global t() helper.
      * Falls back to the action name if no translation exists.
+     * @param key
      */
     label(key: string,): string {
       const fn = (globalThis as unknown as { t?: (k: string,) => string }).t;

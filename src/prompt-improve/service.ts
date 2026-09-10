@@ -164,7 +164,10 @@ export function parseAnalysis(raw: string,): PromptAnalysis | null {
   };
 }
 
-/** Local deterministic fallback: capitalization, punctuation, whitespace. */
+/**
+ * Local deterministic fallback: capitalization, punctuation, whitespace.
+ * @param text
+ */
 export function polishText(text: string,): string {
   let result = text.trim();
 
@@ -187,7 +190,10 @@ export function polishText(text: string,): string {
   return result;
 }
 
-/** Strip wrapping quotes/code fences a chatty model may add around the text. */
+/**
+ * Strip wrapping quotes/code fences a chatty model may add around the text.
+ * @param content
+ */
 function stripWrappers(content: string,): string {
   let out = content.trim();
   const fence = out.match(/^```[a-z]*\n([\s\S]*?)\n```$/,);

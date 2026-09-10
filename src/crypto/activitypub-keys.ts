@@ -36,6 +36,8 @@ export interface GeneratedActivityPubKey {
 
 /**
  * Generate a new Ed25519 keypair for an actor and store it encrypted at rest.
+ * @param database
+ * @param actorId
  * @returns void
  */
 export async function generateActivityPubKey(
@@ -113,6 +115,8 @@ export async function generateActivityPubKey(
 
 /**
  * Get the active signing key for an actor.
+ * @param database
+ * @param actorId
  * @returns void
  */
 export async function getActiveActivityPubKey(
@@ -151,6 +155,8 @@ export async function getActiveActivityPubKey(
 
 /**
  * Rotate an actor's ActivityPub signing key — generates a new keypair and expires the old one.
+ * @param database
+ * @param actorId
  * @returns void
  */
 export async function rotateActivityPubKey(

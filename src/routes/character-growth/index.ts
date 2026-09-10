@@ -29,7 +29,10 @@ import { errResponse, getBoolean, getNumber, getString, listLogQuery, upsertArcB
 
 const R = "/api/character-growth";
 
-/** Mount all character-growth routes on the supplied Elysia instance. */
+/**
+ * Mount all character-growth routes on the supplied Elysia instance.
+ * @param opts
+ */
 export function characterGrowthRoutes(opts: HandlerOpts,) {
   const svc = () => characterGrowthService(opts.database,);
 

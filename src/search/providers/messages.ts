@@ -55,6 +55,7 @@ interface MessageRow {
  * Build the access predicate shared by all message tiers: the row's chat
  * must be visible to the searching user (participant, creator, or admin),
  * optionally pinned to one chat.
+ * @param scope
  */
 function accessWhere(scope: Extract<SearchScope, { kind: "messages" }>,): ReturnType<typeof sql> {
   if (scope.isAdmin === true && scope.chatId === undefined) { return sql`1 = 1`; }

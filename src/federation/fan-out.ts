@@ -80,6 +80,11 @@ export interface GrantedReservation {
  * @param post Transport POST.
  * @param origin Receiver origin.
  * @param request Reservation request.
+ * @param request.senderOrigin
+ * @param request.contentHash
+ * @param request.sizeBytes
+ * @param request.contentType
+ * @param request.ttlMs
  * @returns Reservation id plus optional inbound content key.
  * @throws When the peer refuses or is unreachable.
  */

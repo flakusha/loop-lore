@@ -58,7 +58,10 @@ export function maySearch(provider: string,): boolean {
   return searchBreaker.allowRequest(provider,);
 }
 
-/** Re-throw helper: captcha errors quarantine as a side effect. */
+/**
+ * Re-throw helper: captcha errors quarantine as a side effect.
+ * @param error
+ */
 export function trackSearchError(error: unknown,): never {
   if (error instanceof CaptchaBlockedError) {
     quarantineOnCaptcha(error.provider, error.quarantineMs,);
