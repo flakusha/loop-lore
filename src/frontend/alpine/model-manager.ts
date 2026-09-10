@@ -20,7 +20,7 @@
 
 import { downloadCatalogEntry as runCatalogDownload, } from "./catalog-download";
 import { detectLocalInferenceSupport, } from "./local-inference";
-import { type CatalogModel, type LocalInferenceCapability, fetchCapability, fetchCatalog, } from "./model-catalog";
+import { type CatalogModel, fetchCapability, fetchCatalog, type LocalInferenceCapability, } from "./model-catalog";
 import { downloadModel, type DownloadProgress, sha256Hex, } from "./model-downloader";
 import {
   createMemoryStore,
