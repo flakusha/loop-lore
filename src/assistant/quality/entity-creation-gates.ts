@@ -13,13 +13,13 @@
 import { Kysely, sql, } from "kysely";
 import type { DB, } from "../../db/schema";
 import type { EntityKind, } from "../prompt/templates/entity-generation";
+import { normalizeLoreEntries, validateLoreEntries, } from "./entity-creation-lore";
 import {
-  REQUIRED_FIELDS,
   type GateResult,
   type GeneratedEntity,
   type QualityReport,
+  REQUIRED_FIELDS,
 } from "./entity-creation-types";
-import { normalizeLoreEntries, validateLoreEntries, } from "./entity-creation-lore";
 
 /**
  * Normalize raw LLM JSON into a typed `GeneratedEntity`.
