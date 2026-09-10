@@ -17515,7 +17515,8 @@
     "priority": "medium",
     "epic": "epic-nsfw-integration-gaps.md",
     "source": ".plan/tickets/TASK-nsfw-gate-api-nsfw-routes-authz-access-consent.md",
-    "git_issue": "e8f7a75"
+    "git_issue": "e8f7a75",
+    "status": "done"
   },
   "TASK-NSFW-GATE-GAPS-PERFORMEDBY-SPOOF-AUDIT-TARGET-MISCONFIG-DISA": {
     "hash": "7ba53d1",
@@ -17848,7 +17849,8 @@
     "priority": "medium",
     "epic": "epic-nsfw-integration-gaps.md",
     "source": ".plan/tickets/TASK-nsfw-wire-consent-gate-into-nsfw-surfaces.md",
-    "git_issue": "d7c0253"
+    "git_issue": "d7c0253",
+    "status": "done"
   },
   "TASK-NSFW-WIRE-SEDUCTION-ENCOUNTER-PRECONDITIONS": {
     "hash": "e0d7c5c",
@@ -17857,7 +17859,8 @@
     "priority": "medium",
     "epic": "epic-nsfw-game-mechanics.md",
     "source": ".plan/tickets/TASK-nsfw-wire-seduction-encounter-preconditions.md",
-    "git_issue": "e0d7c5c"
+    "git_issue": "e0d7c5c",
+    "status": "done"
   },
   "TASK-OBSERVABILITY-CONFIG-SECTION": {
     "hash": "2e34de8",
