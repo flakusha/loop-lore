@@ -13,47 +13,18 @@
 
 import { BROWSER_MODEL_CATALOG, } from "../../inference/manifest";
 import type { LocalEngine, } from "./local-engine";
-import { LocalInferenceUnavailable, } from "./local-inference";
+import { isModelReady, LocalInferenceUnavailable, markModelReady, } from "./local-inference";
 import type { LocalInferenceResult, } from "./local-inference";
 
 /** Default model for model-backed levels (smallest catalog entry). */
 export const DEFAULT_LOCAL_MODEL_ID = "SmolLM2-360M-Instruct";
 
 /**
- * localStorage key recording a successfully loaded model. The composer only
- * attempts local model inference for flagged models — never surprise
- * multi-hundred-MB downloads. Weights themselves are cached by transformers.js.
+ * Model-readiness flags live in `./local-inference` (re-exported here so
+ * existing importers keep working). The downloader UI sets them after a
+ * verified store; the engine sets them on first successful load.
  */
-export function modelReadyKey(modelId: string,): string {
-  return `local-inference-model:${modelId}`;
-}
-
-/** Whether a model finished at least one successful load. */
-export function isModelReady(modelId: string,): boolean {
-  try {
-    return localStorage.getItem(modelReadyKey(modelId,),) === "1";
-  } catch {
-    return false;
-  }
-}
-
-/** Persist a successful model load. */
-export function markModelReady(modelId: string,): void {
-  try {
-    localStorage.setItem(modelReadyKey(modelId,), "1",);
-  } catch {
-    /* storage unavailable — model simply won't be reused */
-  }
-}
-
-/** Forget a model (used when the user deletes it). */
-export function clearModelReady(modelId: string,): void {
-  try {
-    localStorage.removeItem(modelReadyKey(modelId,),);
-  } catch {
-    /* already forgotten */
-  }
-}
+export { clearModelReady, isModelReady, markModelReady, modelReadyKey, } from "./local-inference";
 
 /** Per-level system instructions for model-backed improvement. */
 const LEVEL_INSTRUCTIONS: Record<string, string> = {
