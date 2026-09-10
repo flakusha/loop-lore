@@ -3001,6 +3001,17 @@
     "source": ".plan/tickets/BUG-no-role-restriction-for-changing-chat-settings.md",
     "status": "done"
   },
+  "BUG-NOTIFICATION-STREAM-ERROR-UNREACHABLE": {
+    "hash": "pending",
+    "extid": "BUG-NOTIFICATION-STREAM-ERROR-UNREACHABLE",
+    "type": "BUG",
+    "title": "NotificationStreamer error path is unreachable — allSettled swallows failures",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-notification-stream-error-unreachable.md"
+  },
   "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED": {
     "hash": "pending",
     "extid": "BUG-NPC-NAVIGATION-ROUTES-ALL-STUBBED",
