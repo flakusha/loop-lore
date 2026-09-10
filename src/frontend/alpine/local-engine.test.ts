@@ -277,13 +277,13 @@ describe("isEngineResponse", () => {
 
 describe("wllama CDN layout contract", () => {
   test("ESM entry uses the versioned esm path (the +esm alias 404s)", () => {
-    expect(WLLAMA_CDN.endsWith("/esm/index.js"),).toBe(true,);
+    expect(WLLAMA_CDN.endsWith("/esm/index.js",),).toBe(true,);
   });
   test("WASM runtime ships next to the ESM entry at the pinned version", () => {
     const cdn = new URL(WLLAMA_CDN,);
     const wasm = new URL(WLLAMA_WASM_URL,);
     expect(`${wasm.origin}${wasm.pathname}`,).toBe(
-      `${cdn.origin}${cdn.pathname.replace(/\/esm\/index\.js$/, "/esm/wasm/wllama.wasm")}`,
+      `${cdn.origin}${cdn.pathname.replace(/\/esm\/index\.js$/, "/esm/wasm/wllama.wasm",)}`,
     );
   });
 });
