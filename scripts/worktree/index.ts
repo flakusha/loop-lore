@@ -21,7 +21,9 @@ import { execute as diffCmd, } from "./commands/diff";
 import { edit, } from "./commands/edit";
 import { finalize, } from "./commands/finalize";
 import { gi, } from "./commands/gi";
+import { gripe, } from "./commands/gripe";
 import { issues, } from "./commands/issues";
+import { ledger, } from "./commands/ledger";
 import { listWorktrees, } from "./commands/list";
 import { merge, } from "./commands/merge";
 import { execute as newBranchCmd, } from "./commands/new-branch";
@@ -38,6 +40,7 @@ import { sync, } from "./commands/sync";
 import { ticket, } from "./commands/ticket";
 import { loadConfig, resolveBranch, } from "./utils/config";
 import { assertNotInWorktree, getBranches, getStatus, getWorktrees, gitSync, } from "./utils/git";
+import { appendLedger, extractSayArgs, LEDGER_SILENT_COMMANDS, } from "./utils/ledger";
 import { colorize, colors, log, section, } from "./utils/output";
 
 interface CommandHandler {
@@ -103,9 +106,17 @@ const commands: Record<string, CommandHandler> = {
     description: "Run git-issue command directly",
     run: gi,
   },
+  "gripe": {
+    description: "Vent at another agent on the shared ledger",
+    run: gripe,
+  },
   "issues": {
     description: "List issues",
     run: issues,
+  },
+  "ledger": {
+    description: "Show recent agent ledger records",
+    run: ledger,
   },
   "list": {
     description: "Show all worktrees with status",
@@ -214,8 +225,16 @@ export async function main(): Promise<void> {
     assertNotInWorktree(cmdName,);
   }
 
+  // Agent ledger: every run leaves one compact record (default message +
+  // optional --say context). Say-flags are stripped before dispatch so
+  // subcommands never see them.
+  const { cleanArgs, said, } = extractSayArgs(cmdArgs,);
+  if (!LEDGER_SILENT_COMMANDS[cmdName]) {
+    appendLedger(config.treeDir, cmdName, cleanArgs, said,);
+  }
+
   try {
-    await commands[cmdName].run(cmdArgs, config,);
+    await commands[cmdName].run(cleanArgs, config,);
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error,);
     log("error", msg,);

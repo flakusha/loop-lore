@@ -7,6 +7,7 @@ import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { getRootBranch, gitSync, gitSyncQuiet, } from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
+import { printRecentLedger, } from "../utils/ledger";
 import { colorize, log, section, } from "../utils/output";
 import { DEV_IN_PROGRESS_HEADS, FINALIZE_STASH_PREFIX, } from "./abort";
 
@@ -630,6 +631,8 @@ async function runFinalize(
   targetBranch: string,
 ): Promise<void> {
   section(`Finalizing '${branch}'`,);
+  // Shared-state view: what agents recorded lately, before mutating dev.
+  printRecentLedger(config.treeDir, 10,);
   // Step 1: Check worktree clean
   log("info", "Step 1: Checking worktree state...",);
   const dirty = Bun.spawnSync(
