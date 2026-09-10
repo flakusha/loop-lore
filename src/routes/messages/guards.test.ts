@@ -19,7 +19,6 @@ import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../../gene
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertModelRoleOverrides, } from "../../test-utils/insert-helpers";
-import { AttachmentOwnershipError, } from "./attachment-ownership";
 import { attachAttachmentsOrForbidden, enforceInjectionGate, } from "./guards";
 
 /** Minimal Config stub sufficient for resolveModelRole + BYO resolution. */
