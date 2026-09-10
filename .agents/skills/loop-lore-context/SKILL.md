@@ -1,7 +1,7 @@
 ---
 name: loop-lore-context
 description: >
-  Use when working on loop-lore (SillyTavern clean reimplementation).
+  Use when working on loop-lore (LLM RPG chat platform, SillyTavern-inspired).
   Provides project overview, architecture, technology constraints,
   and quick-reference commands.
 version: 1.0.0
@@ -18,7 +18,7 @@ metadata:
 
 # Loop-Lore Project Context
 
-LLM RPG Chat reimplementation inspired by SillyTavern, Odysseus, and Open WebUI. Built on TypeScript + Bun with dual TUI/Web UI.
+LLM RPG chat platform inspired by SillyTavern, Odysseus, and Open WebUI. Built on TypeScript + Bun with dual TUI/Web UI.
 
 ## Technology Constraints
 
