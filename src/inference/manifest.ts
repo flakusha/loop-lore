@@ -10,6 +10,12 @@
  * filtered by the admin download policy (default allow, per-model overrides)
  * so the endpoint never advertises blocked models — shape only, never secrets.
  *
+ * Each catalog model lists its downloadable files individually (direct URL
+ * plus optional size/checksum). The static entries below carry URLs under
+ * the well-known ONNX Community layout; size and checksum are filled by
+ * the host when publishing and omitted while unknown. The downloader
+ * verifies both when present and records the digest otherwise.
+ *
  * @module inference/manifest
  */
 
@@ -54,6 +60,18 @@ export function isModelDownloadable(modelId: string, policy?: LocalModelDownload
   return policy?.allowDownloads ?? true;
 }
 
+/** One downloadable model file. */
+export interface LocalModelFile {
+  /** File name — storage key segment and display name. */
+  name: string;
+  /** Direct https download URL. */
+  url: string;
+  /** Exact byte size; enforced by the downloader when present. */
+  sizeBytes?: number;
+  /** Expected SHA-256 hex; verified when present, recorded otherwise. */
+  sha256?: string;
+}
+
 /** Browser model descriptor (transformers.js/WebGPU, lazy-loaded, never bundled). */
 export interface LocalModelDescriptor {
   id: string;
@@ -61,8 +79,7 @@ export interface LocalModelDescriptor {
   engine: "transformers-webgpu" | "transformers-wasm";
   parameters: string;
   quantization: string;
-  approxSizeMB: number;
-  cdn: string;
+  files: LocalModelFile[];
 }
 
 /** Small instruct models suitable for auxiliary tasks on consumer hardware. */
@@ -73,8 +90,20 @@ export const BROWSER_MODEL_CATALOG: readonly LocalModelDescriptor[] = [
     engine: "transformers-webgpu",
     parameters: "360M",
     quantization: "q8f16",
-    approxSizeMB: 380,
-    cdn: "https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct",
+    files: [
+      {
+        name: "model_q8f16.onnx",
+        url: "https://huggingface.co/onnx-community/SmolLM2-360M-Instruct/resolve/main/onnx/model_q8f16.onnx",
+      },
+      {
+        name: "tokenizer.json",
+        url: "https://huggingface.co/onnx-community/SmolLM2-360M-Instruct/resolve/main/tokenizer.json",
+      },
+      {
+        name: "config.json",
+        url: "https://huggingface.co/onnx-community/SmolLM2-360M-Instruct/resolve/main/config.json",
+      },
+    ],
   },
   {
     id: "Qwen2.5-0.5B-Instruct",
@@ -82,8 +111,20 @@ export const BROWSER_MODEL_CATALOG: readonly LocalModelDescriptor[] = [
     engine: "transformers-webgpu",
     parameters: "0.5B",
     quantization: "q4f16",
-    approxSizeMB: 400,
-    cdn: "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct",
+    files: [
+      {
+        name: "model_q4f16.onnx",
+        url: "https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct/resolve/main/onnx/model_q4f16.onnx",
+      },
+      {
+        name: "tokenizer.json",
+        url: "https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct/resolve/main/tokenizer.json",
+      },
+      {
+        name: "config.json",
+        url: "https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct/resolve/main/config.json",
+      },
+    ],
   },
 ];
 

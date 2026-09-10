@@ -2,13 +2,14 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * model-manager: catalog tolerance, URL download with resume, storage
- * management, and input validation.
+ * model-manager: catalog tolerance, URL download with resume, catalog entry
+ * download, storage management, and input validation.
  */
 
 import { describe, expect, test, } from "bun:test";
+import { type CatalogModel, } from "./model-catalog";
 import { downloadModel, type DownloadOpts, } from "./model-downloader";
-import { type CatalogModel, createModelManager, } from "./model-manager";
+import { createModelManager, } from "./model-manager";
 import { createMemoryStore, } from "./model-storage";
 
 const CATALOG: CatalogModel[] = [
@@ -17,8 +18,10 @@ const CATALOG: CatalogModel[] = [
     label: "Model One",
     engine: "transformers-webgpu",
     parameters: "360M",
-    approxSizeMB: 380,
-    cdn: "https://cdn.example.com/m1",
+    quantization: "q8f16",
+    files: [
+      { name: "a.onnx", url: "https://cdn.example.com/m1/a.onnx", },
+    ],
   },
 ];
 
@@ -113,6 +116,58 @@ describe("model-manager", () => {
     expect(manager.progress,).toBeNull();
   });
 
+  test("downloadCatalogEntry stores every file and refreshes", async () => {
+    const store = createMemoryStore();
+    const seen: { url: string }[] = [];
+    const manager = createModelManager({
+      store,
+      loadCatalog: async () => CATALOG,
+      download: cannedDownload(seen, "abc",),
+      digest: async () => "computed-sha",
+    },);
+    await manager.init();
+    await manager.downloadCatalogEntry("m1",);
+    expect(seen.map((call,) => call.url),).toEqual(["https://cdn.example.com/m1/a.onnx",],);
+    expect(manager.error,).toBeNull();
+    expect(manager.downloadingId,).toBeNull();
+    expect(manager.progress,).toBeNull();
+    expect(manager.storedFiles("m1",),).toBe(1,);
+    expect((await store.load("m1/a.onnx",))?.sha256,).toBe("computed-sha",);
+  });
+
+  test("downloadCatalogEntry reports unknown ids and failures", async () => {
+    const manager = createModelManager({
+      store: createMemoryStore(),
+      loadCatalog: async () => CATALOG,
+    },);
+    await manager.init();
+    await manager.downloadCatalogEntry("ghost",);
+    expect(manager.error,).not.toBeNull();
+
+    const failing = createModelManager({
+      store: createMemoryStore(),
+      loadCatalog: async () => CATALOG,
+      download: (async () => {
+        throw new Error("boom (500)",);
+      }) as typeof downloadModel,
+    },);
+    await failing.init();
+    await failing.downloadCatalogEntry("m1",);
+    expect(failing.error,).toBe("boom (500)",);
+    expect(failing.downloadingId,).toBeNull();
+    expect(failing.progress,).toBeNull();
+  });
+
+  test("storedFiles counts only namespaced entries", async () => {
+    const store = createMemoryStore();
+    await store.save("m1/a.onnx", { bytes: encode("ab",), sha256: "s", updatedAt: 1, },);
+    await store.save("other", { bytes: encode("ab",), sha256: "s", updatedAt: 1, },);
+    const manager = createModelManager({ store, loadCatalog: async () => [], },);
+    await manager.init();
+    expect(manager.storedFiles("m1",),).toBe(1,);
+    expect(manager.storedFiles("missing",),).toBe(0,);
+  });
+
   test("removeModel deletes and refreshes usage", async () => {
     const store = createMemoryStore();
     await store.save("gone", { bytes: encode("ab",), sha256: "s", updatedAt: 1, },);
@@ -123,7 +178,7 @@ describe("model-manager", () => {
     expect(manager.usageBytes,).toBe(0,);
   });
 
-  test("formatSize covers B through GB", () => {
+  test("formatSize covers B through GB", async () => {
     const manager = createModelManager({ store: createMemoryStore(), },);
     expect(manager.formatSize(512,),).toBe("512 B",);
     expect(manager.formatSize(2048,),).toBe("2.0 KB",);
