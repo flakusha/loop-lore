@@ -25709,6 +25709,10 @@
       "source": ".plan/epics/epic-timeline-system.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/lore.md"
     }
