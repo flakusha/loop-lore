@@ -10308,6 +10308,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-version-resolver-middleware-built-not-wired.md"
     },
     {
@@ -16911,10 +16915,46 @@
       "source": ".plan/tickets/TASK-server-side-i18n-middleware.md"
     }
   ],
+  "src/middleware/idempotency-memory.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    }
+  ],
+  "src/middleware/idempotency-table.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    }
+  ],
+  "src/middleware/idempotency-table.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    }
+  ],
+  "src/middleware/idempotency-table.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    }
+  ],
+  "src/middleware/idempotency-utils.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    }
+  ],
   "src/middleware/idempotency.integration.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
+    }
+  ],
+  "src/middleware/idempotency.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
     }
   ],
   "src/middleware/idempotency.ts": [
