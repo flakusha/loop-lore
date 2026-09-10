@@ -51,6 +51,7 @@ export default defineConfig({
             { text: 'Worlds', link: '/guide/worlds' },
             { text: 'Gallery', link: '/guide/gallery' },
             { text: 'Settings', link: '/guide/settings' },
+            { text: 'Browser Models', link: '/guide/local-models' },
           ],
         },
       ],
