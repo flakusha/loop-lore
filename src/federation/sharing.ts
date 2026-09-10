@@ -397,7 +397,7 @@ export interface FanOutFailure {
 
 /** Per-target outcome of one fan-out pass. */
 export interface FanOutResult {
-  /** Targets attempted (trusted, policy-selected, self excluded). */
+  /** Targets attempted (trusted, policy-selected, capacity-fitting, self excluded). */
   targets: string[];
   /** Targets that stored the content. */
   stored: string[];
@@ -405,12 +405,59 @@ export interface FanOutResult {
   stale: string[];
   /** Targets that failed at any step. */
   failed: FanOutFailure[];
+  /** Targets skipped before any network attempt (known capacity too small). */
+  skipped: FanOutSkip[];
+}
+
+/** Target skipped before any network attempt. */
+export interface FanOutSkip {
+  /** Target origin. */
+  origin: string;
+  /** Why no attempt was made. */
+  reason: string;
+}
+
+/**
+ * Filter candidate targets against coordinator-known inbound capacity.
+ * Targets with unknown capacity (null, never advertised) are kept — the
+ * receiver's reserve refusal stays the authoritative backstop. Only a
+ * known finite capacity smaller than the payload skips the target.
+ * @param database Sender database handle (peer registry read).
+ * @param candidates Policy-selected target origins.
+ * @param sizeBytes Payload byte length.
+ */
+export async function selectTargetsWithCapacity(
+  database: Kysely<DB>,
+  candidates: string[],
+  sizeBytes: number,
+): Promise<{ targets: string[]; skipped: FanOutSkip[] }> {
+  if (candidates.length === 0) { return { targets: [], skipped: [], }; }
+  const rows = await database
+    .selectFrom("mesh_peers",)
+    .select(["origin", "capacity_bytes",],)
+    .where("origin", "in", candidates,)
+    .execute();
+  // Dynamic per-call snapshot keyed by arbitrary origins — Map, not Record.
+  const capacity = new Map(rows.map((row,) => [row.origin, row.capacity_bytes,] as const),);
+  const targets: string[] = [];
+  const skipped: FanOutSkip[] = [];
+  for (const candidate of candidates) {
+    const known = capacity.get(candidate,);
+    if (typeof known === "number" && Number.isFinite(known,) && sizeBytes > known) {
+      skipped.push({ origin: candidate, reason: `known capacity ${known} < payload ${sizeBytes}`, },);
+    } else {
+      targets.push(candidate,);
+    }
+  }
+  return { targets, skipped, };
 }
 
 /**
  * Replicate content to every duplication target: reserve, seal (with the
  * receiver's inbound key when issued, else the mesh PSK), push. Targets
  * are independent — one target's failure never blocks the others.
+ * Targets whose coordinator-known capacity cannot fit the payload are
+ * skipped before any network attempt and reported in `skipped`.
  * Reservations left open by a failed push expire via the sweep; there is
  * no sender-side release route.
  * @param database Sender database handle (peer registry + policy read).
@@ -439,8 +486,9 @@ export async function fanOutContent(
     content: content.content,
     cipher: psk,
   },);
-  const targets = await selectDuplicationTargets(database, policy, senderOrigin, content.worldId,);
-  const settled = await Promise.allSettled(targets.map(async (target,) => {
+  const candidates = await selectDuplicationTargets(database, policy, senderOrigin, content.worldId,);
+  const fit = await selectTargetsWithCapacity(database, candidates, probe.size,);
+  const settled = await Promise.allSettled(fit.targets.map(async (target,) => {
     const granted = await requestReservation(post, target, {
       senderOrigin,
       contentHash: probe.hash,
@@ -459,9 +507,9 @@ export async function fanOutContent(
     const verdict = await pushEnvelope(post, target, envelope, granted.reservationId,);
     return { target, verdict, };
   },),);
-  const result: FanOutResult = { targets, stored: [], stale: [], failed: [], };
+  const result: FanOutResult = { targets: fit.targets, stored: [], stale: [], failed: [], skipped: fit.skipped, };
   for (const [index, outcome,] of settled.entries()) {
-    const target = targets[index]!;
+    const target = fit.targets[index]!;
     if (outcome.status === "fulfilled") {
       result[outcome.value.verdict === "stored" ? "stored" : "stale"].push(target,);
     } else {

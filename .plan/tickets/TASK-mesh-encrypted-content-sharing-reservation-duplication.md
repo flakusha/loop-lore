@@ -160,3 +160,16 @@ distribution exists.
    per-peer key distribution/rotation is a separate epic); coordinator-
    mediated capacity — negotiation states exist but no quota-enforcement
    plumbing to route reserves through.
+ seam, coordinator-mediated capacity validation, per-world/channel
+ duplication policy, full `bun run check` gate.
+ 
+ ## Progress 2026-09-10 (branch `mesh-sharing-2`)
+ 
+ - Sender fan-out `fanOutContent` (`src/federation/sharing.ts`): per-target
+   reservation, contentKey-preferring seal with PSK probe fallback, per-target
+   push with stored/stale/failed classification; one target's refusal never
+   blocks the others (`094caf3`).
+ - Strict self-review fixes: contentKey gated on sealed TLS wire or
+   trustProxy, NaN capacity guard, rotate-then-insert key race closed.
+ - Gates: federation + route suites green, tsc/eslint/dprint clean.
+ - NOT done: coordinator policy wiring, EncryptionProvider swap, HLC clocks.
