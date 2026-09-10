@@ -6,7 +6,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-core-testing-frameworks
+**Epic:** epic-testing-qa
 
 ## Summary
 
