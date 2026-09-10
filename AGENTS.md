@@ -107,7 +107,7 @@ be configured otherwise (e.g. `bun test --coverage` → `coverage/`).
 
 ## Project Overview
 
-Reimplement SillyTavern RPG chat:
+LLM RPG chat platform (SillyTavern-inspired, not a reimplementation):
 
 - TUI (blessed) + Web UI (htmx + Alpine.js)
 - DB: `bun:sqlite` → Kysely (PG via dialect swap)

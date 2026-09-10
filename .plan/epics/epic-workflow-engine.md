@@ -3,7 +3,7 @@
 
 # Epic: Workflow Engine
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 In Progress — schema + loader + runtime shipped (engine schema/loader, runner state machine, per-chat session persistence, group-chat mention strip, GM routing/shadow-note/reuse-runner slices all landed). Remaining: model-family formatter matrix, real video-dispatch backend, frontend step UI + confirmation modal, plugin extension point.
 **Priority:** High (MVP scoped, post-Gate C)
 **Effort:** Large
 **Type:** Feature Epic
