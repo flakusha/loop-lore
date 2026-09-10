@@ -93,18 +93,18 @@ moderation and `epic-nsfw-capabilities.md` consent infrastructure.
 
 ## Tasks
 
-- [ ] Define `WorkflowConfig` types in `src/config/sections/templates.ts`
-- [ ] Add workflow template loading to `src/config/templates-loader.ts`
-- [ ] Extend template loader discovery for multi-file directories (`configs/templates/workflows/*.yaml`)
-- [ ] Create `configs/templates/workflows/defaults.yaml` with Minimax H3 example
-- [ ] Extend `src/regex/intent.ts` `INTENT_PATTERNS` with workflow trigger rules
-- [ ] Implement `src/assistant/workflow-runner.ts` (start/preview/step/confirm/dispatch)
-- [ ] Implement step validation + recommendation engine
+- [x] Define `WorkflowConfig` types in `src/config/sections/templates.ts`
+- [x] Add workflow template loading to `src/config/templates-loader.ts`
+- [x] Extend template loader discovery for multi-file directories (`configs/templates/workflows/*.yaml`)
+- [x] Create `configs/templates/workflows/defaults.yaml` with Minimax H3 example
+- [x] Extend `src/regex/intent.ts` `INTENT_PATTERNS` with workflow trigger rules
+- [x] Implement `src/assistant/workflow-runner.ts` (start/preview/step/confirm/dispatch)
+- [x] Implement step validation + recommendation engine
 - [ ] Wire dispatch to `POST /api/generation/video` + existing generation pipelines
-- [ ] Add NSFW policy field to dispatch + integrate with `src/nsfw/` moderation
+- [x] Add NSFW policy field to dispatch + integrate with `src/nsfw/` moderation
 - [ ] Frontend: creative studio step UI + confirmation modal
 - [ ] Plugin extension point for assistant workflows
-- [ ] Unit tests for loader, step validation, intent→workflow routing
+- [x] Unit tests for loader, step validation, intent→workflow routing
 - [ ] Integration test: Minimax H3 end-to-end (intent → steps → confirm → dispatch)
 
 
