@@ -21,6 +21,22 @@ import {
 import { checkAllLiveliness, startLivenessProbes, stopLivenessProbes, } from "./probes";
 import type { ServerExternalHost, ServerInstance, } from "./types";
 
+// Reserve a kernel-assigned port and release it: nothing listens on the
+// returned port, and it can never collide with another test’s pick the
+// way random selection from a fixed range does under parallel runs.
+async function reservePort(): Promise<number> {
+  const holder = Bun.serve({ port: 0, fetch: () => new Response("ok",), },);
+  const port = holder.port;
+  await holder.stop();
+  if (port === undefined) { throw new Error("reservePort: kernel did not assign a port",); }
+  return port;
+}
+
+function boundPort(server: { port: number | undefined, },): number {
+  if (server.port === undefined) { throw new Error("boundPort: server has no port",); }
+  return server.port;
+}
+
 interface CapturedLog {
   level: string;
   msg: string;
@@ -135,7 +151,7 @@ describe("probes.stopLivenessProbes", () => {
 describe("probes.checkAllLiveliness", () => {
   test("logs a warning for a llama-cpp instance without a running server", async () => {
     const host = makeHost();
-    const port = 36000 + Math.floor(Math.random() * 30000,);
+    const port = await reservePort();
     const inst: ServerInstance = {
       type: "llama-cpp",
       process: makeFakeProcess(111,) as ServerInstance["process"],
@@ -153,14 +169,14 @@ describe("probes.checkAllLiveliness", () => {
   });
 
   test("does NOT log a warning when llama-cpp /health returns 2xx", async () => {
-    const port = 37000 + Math.floor(Math.random() * 30000,);
     const server = Bun.serve({
-      port,
+      port: 0,
       fetch: (req,) => {
         if (new URL(req.url,).pathname === "/health") { return new Response("ok",); }
         return new Response("not found", { status: 404, },);
       },
     },);
+    const port = boundPort(server,);
     try {
       const host = makeHost();
       host.instances.push({
@@ -179,11 +195,11 @@ describe("probes.checkAllLiveliness", () => {
   });
 
   test("treats llama-swap /v1/models any-status as alive", async () => {
-    const port = 38000 + Math.floor(Math.random() * 30000,);
     const server = Bun.serve({
-      port,
+      port: 0,
       fetch: () => new Response("missing", { status: 404, },), // 404 still counts as "alive"
     },);
+    const port = boundPort(server,);
     try {
       const host = makeHost();
       host.instances.push({
@@ -203,7 +219,7 @@ describe("probes.checkAllLiveliness", () => {
 
   test("logs a warning for an sd-cpp instance without a running server", async () => {
     const host = makeHost();
-    const port = 39000 + Math.floor(Math.random() * 30000,);
+    const port = await reservePort();
     host.instances.push({
       type: "sd-cpp",
       process: makeFakeProcess(444,) as ServerInstance["process"],
@@ -219,12 +235,15 @@ describe("probes.checkAllLiveliness", () => {
 
   test("iterates all instances and logs one warning per dead one", async () => {
     const host = makeHost();
-    const basePort = 40000 + Math.floor(Math.random() * 30000,);
+    const ports: number[] = [];
     for (let i = 0; i < 3; i++) {
+      ports.push(await reservePort(),);
+    }
+    for (const [i, port,] of ports.entries()) {
       host.instances.push({
         type: "llama-cpp",
         process: makeFakeProcess(500 + i,) as ServerInstance["process"],
-        port: basePort + i,
+        port,
         pid: 500 + i,
         startedAt: Date.now(),
       },);
