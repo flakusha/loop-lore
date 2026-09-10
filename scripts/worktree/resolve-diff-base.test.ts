@@ -78,20 +78,21 @@ describe("resolveDiffBase", () => {
     expect(got,).toBe(masterHead,);
   });
 
-  it("falls back to the target when no common ancestor exists", () => {
-    // Degenerate-history case: a brand-new repo with HEAD on `main`,
-    // asking for a target branch that does not exist. `git merge-base`
-    // exits non-zero (no common ancestor) and stdout is empty. The
-    // helper must NOT pass empty to `bun run check --diff-base`; it
-    // should fall back to the target branch name itself.
+  it("throws when the target is not a valid ref", () => {
+    // Strict-mode regression: the previous implementation silently
+    // returned the invalid `target`, which crashed check-parallel.mjs
+    // downstream with a confusing stack trace at changedFiles().
+    // Production callers always pass a valid ref, so this throw is
+    // unreachable in finalize flows but defensive against bad input.
     const orphanDir = mkdtempSync(join(tmpdir(), "loop-lore-orphan-",),);
     try {
       run(["git", "init", "--initial-branch=main",], orphanDir,);
       run(["git", "config", "user.email", "test@example.com",], orphanDir,);
       run(["git", "config", "user.name", "Test",], orphanDir,);
       run(["git", "commit", "--allow-empty", "-m", "lonely",], orphanDir,);
-      const got = resolveDiffBase(orphanDir, "does-not-exist",);
-      expect(got,).toBe("does-not-exist",);
+      expect(() => resolveDiffBase(orphanDir, "does-not-exist",)).toThrow(
+        /merge-base/,
+      );
     } finally {
       rmSync(orphanDir, { recursive: true, force: true, },);
     }

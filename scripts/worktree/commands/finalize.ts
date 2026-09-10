@@ -521,14 +521,26 @@ function restoreDevFromStash(
  *
  * This returns the merge-base of `target` and HEAD — a stable ancestor
  * that captures exactly what this branch has contributed since forking.
- * Falls back to `target` itself when the two have no common ancestor
- * (degenerate history, e.g. unrelated local branch).
+ *
+ * Throws when `git merge-base` exits non-zero (target is not a valid ref
+ * or has no common ancestor with HEAD). The previous implementation
+ * silently returned `target` on failure, which then crashed
+ * `check-parallel.mjs` downstream with a confusing stack trace.
+ * Production callers always pass a valid `target` (the protected target
+ * branch), so this throw is unreachable in normal finalize flows.
  *
  * Exported for unit tests; production callers in `runFinalize` invoke it.
  */
 export function resolveDiffBase(wtPath: string, target: string,): string {
   const mergeBase = gitSyncQuiet(wtPath, "merge-base", target, "HEAD",).trim();
-  return mergeBase.length > 0 ? mergeBase : target;
+  if (mergeBase.length === 0) {
+    throw new Error(
+      `git merge-base ${target} HEAD failed — target is not a valid ref ` +
+        `or has no common ancestor with HEAD. Cannot determine diff-base ` +
+        `for 'bun run check --diff-base'.`,
+    );
+  }
+  return mergeBase;
 }
 
 function runCheck(wtPath: string, diffBase: string,): boolean {
