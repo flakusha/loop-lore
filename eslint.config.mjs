@@ -159,22 +159,22 @@ export default [
       "no-restricted-globals": "off",
     },
   },
-  // JSDoc -- recommendation-level (warn, non-blocking). Ongoing cleanup task:
-  // promote to "error" after existing public-export debt is cleared.
+  // JSDoc — lifted to error. @throws REQUIRED (JS has no throw-signal via types;
+  // JSDoc is the only LSP/AST-visible signal for error paths). @returns/@param only
+  // when non-obvious from signature. Keep JSDoc terse: ≤3 lines, no @example blocks.
   {
     files: ["src/**/*.ts"],
     plugins: {
       jsdoc,
     },
     rules: {
-      // ...jsdoc.configs["flat/recommended-typescript"].rules,
-      // Relaxed rules — require-jsdoc presence but not full descriptions
-      // (can revisit once public-export debt is cleared)
+      "jsdoc/require-param": "error",
+      "jsdoc/require-returns": "error",
+      "jsdoc/require-throws": "error",
+      // Descriptions and example are optional — keep JSDoc terse to avoid
+      // inflating files past the 200-line ceiling.
       "jsdoc/require-param-description": "off",
       "jsdoc/require-returns-description": "off",
-      "jsdoc/require-param": "off",
-      "jsdoc/require-returns": "off",
-      "jsdoc/require-throws": "off",
       "jsdoc/require-example": "off",
       "jsdoc/require-yields": "off",
       "jsdoc/require-throws-type": "off",
@@ -254,13 +254,31 @@ export default [
       "no-console": "off",
     },
   },
-  // Test files: disable all restrictions
+  // Test files: disable all restrictions + JSDoc
   {
     files: ["src/**/*.test.ts", "src/**/*.integration.test.ts"],
     rules: {
       "no-restricted-syntax": "off",
       "no-empty": "off",
       "@typescript-eslint/no-empty-function": "off",
+      "jsdoc/require-param": "off",
+      "jsdoc/require-returns": "off",
+      "jsdoc/require-throws": "off",
+    },
+  },
+  // Generated artifacts (db:sync-* / db:sync-manifest) — never hand-edit
+  {
+    files: [
+      "src/db/schema*.ts",
+      "src/db/schema.ts",
+      "src/db/schema-manifest.ts",
+      "src/validation/db-schemas.ts",
+      "src/test-utils/insert-helpers.ts",
+    ],
+    rules: {
+      "jsdoc/require-param": "off",
+      "jsdoc/require-returns": "off",
+      "jsdoc/require-throws": "off",
     },
   },
   // Util implementations: base64 wraps btoa/atob; safe-fetch wraps bare fetch;
