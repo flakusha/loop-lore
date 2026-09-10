@@ -25,14 +25,24 @@ describe("local inference manifest", () => {
     expect(isLocalOnlyLevel("style-chat",),).toBe(false,);
   });
 
-  test("manifest is versioned and lists small models only", () => {
+  test("manifest lists per-file downloads with direct URLs", () => {
     const manifest = buildLocalInferenceManifest();
     expect(manifest.version,).toBe(1,);
     expect(manifest.eligibleTasks,).toEqual(["prompt-improve", "prompt-analyze",],);
     expect(manifest.models.length,).toBeGreaterThan(0,);
     for (const model of BROWSER_MODEL_CATALOG) {
-      expect(model.approxSizeMB,).toBeLessThanOrEqual(500,);
-      expect(model.cdn.startsWith("https://",),).toBe(true,);
+      expect(model.files.length,).toBeGreaterThan(0,);
+      for (const file of model.files) {
+        expect(file.name.length,).toBeGreaterThan(0,);
+        expect(file.url.startsWith("https://",),).toBe(true,);
+        if (file.sizeBytes !== undefined) {
+          expect(Number.isSafeInteger(file.sizeBytes,),).toBe(true,);
+          expect(file.sizeBytes,).toBeGreaterThan(0,);
+        }
+        if (file.sha256 !== undefined) {
+          expect(/^[0-9a-f]{64}$/.test(file.sha256,),).toBe(true,);
+        }
+      }
     }
   });
   test("absent policy allows every catalog model", () => {
