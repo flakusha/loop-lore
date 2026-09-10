@@ -129,10 +129,13 @@ export async function getErrorMessage(res: Response, fallback: string,): Promise
 }
 
 // ── Filter Bar Alpine Component ──────────────────────────────
-// Used by filter-bar.html. Manages search query, type/sort filters.
+// Used by filter-bar.html. Manages search query, type/sort/tag filters.
 // Triggers HTMX request via data attributes on parent:
 //   data-search-url="/dynamic/gallery/search"
 //   data-target-id="asset-grid"
+// The tag facet is opt-in: render the partial inside a
+// `data-show-tag-filter="true"` wrapper to fetch the caller-visible vocabulary
+// and enable the `tag` param.
 
 interface FilterChip {
   key: string;
@@ -144,7 +147,10 @@ export interface FilterBarState {
   query: string;
   typeFilter: string;
   sortBy: string;
+  tagFilter: string;
+  tagOptions: string[];
   activeChips: FilterChip[];
+  init(): void;
   triggerSearch(): void;
   removeChip(key: string,): void;
   clearAll(): void;
@@ -155,21 +161,39 @@ globalThis.filterBar = function() {
     query: "",
     typeFilter: "all",
     sortBy: "name",
+    tagFilter: "all",
+    tagOptions: [] as string[],
+    init(): void {
+      const el = (this as unknown as { $el: HTMLElement }).$el;
+      if (el.closest<HTMLElement>("[data-show-tag-filter]",)?.dataset.showTagFilter !== "true") { return; }
+      void (async () => {
+        try {
+          const res = await feFetch("/api/tag-autocomplete",);
+          if (!res.ok) { return; }
+          const { tags, } = (await res.json()) as { tags: string[] };
+          (this as unknown as { tagOptions: string[] }).tagOptions = tags;
+        } catch {
+          // Vocabulary stays empty; the facet still renders with "all".
+        }
+      })();
+    },
     get activeChips(): FilterChip[] {
       const chips: FilterChip[] = [];
       if (this.query) { chips.push({ key: "q", label: `"${this.query}"`, },); }
       if (this.typeFilter !== "all") { chips.push({ key: "type", label: this.typeFilter, },); }
       if (this.sortBy !== "name") { chips.push({ key: "sort", label: this.sortBy, },); }
+      if (this.tagFilter !== "all") { chips.push({ key: "tag", label: this.tagFilter, },); }
       return chips;
     },
     triggerSearch(): void {
-      const el = (this as any).$el as HTMLElement;
+      const el = (this as unknown as { $el: HTMLElement }).$el;
       const searchUrl = el.closest<HTMLElement>("[data-search-url]",)?.dataset.searchUrl ?? "/dynamic/gallery/search";
       const targetId = el.closest<HTMLElement>("[data-target-id]",)?.dataset.targetId ?? "asset-grid";
       const params = new URLSearchParams();
       if (this.query) { params.set("q", this.query,); }
       if (this.typeFilter !== "all") { params.set("type", this.typeFilter,); }
       if (this.sortBy !== "name") { params.set("sort", this.sortBy,); }
+      if (this.tagFilter !== "all") { params.set("tag", this.tagFilter,); }
       const url = `${searchUrl}?${params.toString()}`;
       globalThis.htmx.ajax("GET", url, { target: `#${targetId}`, swap: "innerHTML", },);
     },
@@ -177,12 +201,14 @@ globalThis.filterBar = function() {
       if (key === "q") { this.query = ""; }
       if (key === "type") { this.typeFilter = "all"; }
       if (key === "sort") { this.sortBy = "name"; }
+      if (key === "tag") { this.tagFilter = "all"; }
       this.triggerSearch();
     },
     clearAll(): void {
       this.query = "";
       this.typeFilter = "all";
       this.sortBy = "name";
+      this.tagFilter = "all";
       this.triggerSearch();
     },
   };

@@ -3,7 +3,8 @@
 
 import type { Kysely, } from "kysely";
 import { visibleAssetFilter, } from "../../assets/service/read";
-import { ActorType, ActorVisibility, AssetLinkEntity, } from "../../db/enums";
+import { visibleTagNames, } from "../../assets/service/tag-facets";
+import { ActorType, ActorVisibility, AssetLinkEntity, AssetTagScope, } from "../../db/enums";
 import type { AssetType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
@@ -121,27 +122,47 @@ async function serveGalleryGrid(
     return htmlResponse(renderErrorCard("Invalid entity type",),);
   }
 
+  // Filter by visible tag name when `tag` provided: global tags plus the
+  // viewer's own user-scoped tags — other users' private tags never match.
+  const tagParam = params?.get("tag",) ?? null;
+  if (tagParam !== null && tagParam !== "all") {
+    qb = qb.where((eb,) =>
+      eb.exists(
+        eb.selectFrom("asset_tags as ft",)
+          .select("ft.id",)
+          .whereRef("ft.asset_id", "=", "assets.id",)
+          .where("ft.tag", "=", tagParam,)
+          .where((eb2,) =>
+            eb2.or([
+              eb2("ft.scope", "=", AssetTagScope.Global,),
+              eb2("ft.owner_id", "=", actorId ?? "",),
+            ],)
+          ),
+      )
+    );
+  }
+
   const assets = await qb.execute();
 
-  if (isAdmin) {
-    return htmlResponse(renderCards(assets,),);
-  }
-  // G6 visibility inheritance — hide private-owner's character assets from non-owners. When the
-  // helper reports nothing hidden (common path: no private-actor links, or owner view), reuse
-  // the query result directly and avoid allocating a second buffer.
-  const ids = Array.from(assets, (a,) => a.id,);
-  const hidden = await inheritedHiddenAssetIds(database, ids, actorId ?? null, actorRole ?? null,);
-  if (hidden.size === 0) {
-    return htmlResponse(renderCards(assets,),);
-  }
-
-  const visible: (typeof assets)[number][] = [];
-  for (const asset of assets) {
-    if (!hidden.has(asset.id,)) {
-      visible.push(asset,);
+  let visible = assets;
+  if (!isAdmin) {
+    // G6 visibility inheritance — hide private-owner's character assets from
+    // non-owners. When nothing is hidden (common path), reuse the query result
+    // directly and avoid allocating a second buffer.
+    const ids = Array.from(assets, (a,) => a.id,);
+    const hidden = await inheritedHiddenAssetIds(database, ids, actorId ?? null, actorRole ?? null,);
+    if (hidden.size > 0) {
+      visible = [];
+      for (const asset of assets) {
+        if (!hidden.has(asset.id,)) {
+          visible.push(asset,);
+        }
+      }
     }
   }
-  return htmlResponse(renderCards(visible,),);
+
+  const tagMap = await visibleTagNames(database, Array.from(visible, (a,) => a.id,), actorId ?? null,);
+  return htmlResponse(renderCards(visible, tagMap,),);
 }
 
 /**
@@ -158,6 +179,7 @@ function renderErrorCard(message: string,): string {
  */
 function renderCards(
   assets: readonly { id: string; filename: string; asset_type: AssetType; size_bytes: number }[],
+  tagMap: ReadonlyMap<string, string[]> = new Map(),
 ): string {
   if (assets.length === 0) {
     return `<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
@@ -195,13 +217,16 @@ function renderCards(
   for (const a of assets) {
     const filename = escapeHtml(a.filename,);
     const size = formatSize(a.size_bytes,);
-    cards.push(`<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
+    const tags = escapeHtml((tagMap.get(a.id,) ?? []).join(",",),);
+    cards.push(
+      `<div class="asset-card" data-tags="${tags}" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
       <div class="thumb">${thumbForAsset(a,)}</div>
       <div class="details">
         <span class="name">${filename}</span>
         <span class="type">${size}</span>
       </div>
-    </div>`,);
+    </div>`,
+    );
   }
   return cards.join("",);
 }
