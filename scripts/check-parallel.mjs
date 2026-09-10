@@ -10,11 +10,11 @@
  *   bun run scripts/check-parallel.mjs [--fix] [--ci] [--report-ls] [--jobs N]
  *
  * Concurrency cap (added to keep peak RSS sane across multiple worktrees):
- *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env, or 4).
+ *   --jobs N    Override per-run concurrency cap (default: CHECK_JOBS env, or 8).
  *   CHECK_JOBS  Env override for the same value. The cap controls how many
  *               checks run in parallel; the script still launches all checks,
  *               but processes them in chunks of `jobs` at a time. With the
- *               default (4), peak RSS per run drops to roughly 1/6 of the
+ *               default (8), peak RSS per run stays well under half of the
  *               historical `Promise.all`-everything behaviour, which lets
  *               2 worktrees share a 64GB host without OOM.
  *
@@ -447,11 +447,11 @@ async function ensureGpgWarm() {
 
 // ── Concurrency cap ────────────────────────────────────────────
 // Resolve the per-run concurrency cap with priority: --jobs flag > CHECK_JOBS
-// env > default 4. We refuse values < 1 (would deadlock) and cap at the check
+// env > default 8. We refuse values < 1 (would deadlock) and cap at the check
 // count to avoid the Promise.all-of-empty-array footgun. The cap exists so
 // multiple worktrees can run `bun run check` simultaneously without the host
 // hitting OOM — peak RSS scales ~linearly with concurrent checks.
-const DEFAULT_JOBS = 4;
+const DEFAULT_JOBS = 8;
 function parseJobs() {
   const flagIdx = process.argv.indexOf("--jobs",);
   let raw;
