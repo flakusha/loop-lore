@@ -21498,6 +21498,10 @@
   "src/routes/notifications/stream.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-notification-stream-error-unreachable.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-sse-streams-leak-string-error-internals-to-clients.md"
     }
   ],
