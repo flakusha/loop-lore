@@ -9,8 +9,13 @@ import { describe, expect, test, } from "bun:test";
 import {
   type CatalogModel,
   catalogTotalBytes,
+  fetchCapability,
   fetchCatalog,
   isCatalogModel,
+  isGgufMagic,
+  isGgufSplitEntry,
+  orderSplitFiles,
+  parseGgufSplitName,
 } from "./model-catalog";
 
 const ENTRY: CatalogModel = {
@@ -88,5 +93,78 @@ describe("model-catalog", () => {
     ).toBe(30,);
     expect(catalogTotalBytes(ENTRY,),).toBeUndefined();
     expect(catalogTotalBytes({ ...ENTRY, files: [], },),).toBe(0,);
+  });
+});
+
+describe("fetchCapability", () => {
+  test("passes through the server flag", async () => {
+    expect(await fetchCapability(async () => jsonResponse({ downloadsAllowed: false, },)),).toEqual({
+      downloadsAllowed: false,
+    },);
+    expect(await fetchCapability(async () => jsonResponse({ downloadsAllowed: true, },)),).toEqual({
+      downloadsAllowed: true,
+    },);
+  });
+
+  test("fails open on old servers, HTTP errors, and offline", async () => {
+    expect(await fetchCapability(async () => jsonResponse({},)),).toEqual({ downloadsAllowed: true, },);
+    expect(await fetchCapability(async () => jsonResponse({ downloadsAllowed: false, }, 500,)),).toEqual({
+      downloadsAllowed: true,
+    },);
+    expect(
+      await fetchCapability(async () => {
+        throw new Error("offline",);
+      },),
+    ).toEqual({ downloadsAllowed: true, },);
+  });
+});
+
+describe("gguf split-chunk contract", () => {
+  const split = (names: string[],): CatalogModel => ({
+    ...ENTRY,
+    files: names.map((name,) => ({ name, url: `https://cdn.example.com/m1/${name}`, sizeBytes: 10, }),),
+  });
+
+  test("parseGgufSplitName accepts zero-padded chunk names", () => {
+    expect(parseGgufSplitName("model-00001-of-00003.gguf",),).toEqual({ stem: "model", index: 1, total: 3, },);
+    expect(parseGgufSplitName("my-model-q4-00012-of-00012.gguf",),).toEqual({
+      stem: "my-model-q4",
+      index: 12,
+      total: 12,
+    },);
+  });
+
+  test("parseGgufSplitName rejects non-chunk and out-of-range names", () => {
+    expect(parseGgufSplitName("model.gguf",),).toBeNull();
+    expect(parseGgufSplitName("model-1-of-3.gguf",),).toBeNull();
+    expect(parseGgufSplitName("model-00004-of-00003.gguf",),).toBeNull();
+    expect(parseGgufSplitName("model-00000-of-00003.gguf",),).toBeNull();
+    expect(parseGgufSplitName("model.onnx",),).toBeNull();
+  });
+
+  test("isGgufSplitEntry needs a single non-empty chunk family", () => {
+    expect(isGgufSplitEntry(split(["m-00001-of-00002.gguf", "m-00002-of-00002.gguf",]),),).toBe(true,);
+    expect(isGgufSplitEntry(ENTRY,),).toBe(false,);
+    expect(isGgufSplitEntry({ ...ENTRY, files: [], },),).toBe(false,);
+    expect(isGgufSplitEntry(split(["a-00001-of-00002.gguf", "b-00002-of-00002.gguf",]),),).toBe(false,);
+    expect(isGgufSplitEntry(split(["a-00001-of-00002.gguf", "notes.txt",]),),).toBe(false,);
+  });
+
+  test("orderSplitFiles sorts shuffled chunks and rejects gaps", () => {
+    const ordered = orderSplitFiles(split(["m-00002-of-00002.gguf", "m-00001-of-00002.gguf",]),);
+    expect(ordered?.map((file,) => file.name,),).toEqual([
+      "m-00001-of-00002.gguf",
+      "m-00002-of-00002.gguf",
+    ],);
+    expect(orderSplitFiles(split(["m-00001-of-00003.gguf", "m-00003-of-00003.gguf",]),),).toBeNull();
+    expect(orderSplitFiles(split(["m-00001-of-00002.gguf", "m-00001-of-00002.gguf",]),),).toBeNull();
+    expect(orderSplitFiles(ENTRY,),).toBeNull();
+  });
+
+  test("isGgufMagic matches the 4-byte header", () => {
+    expect(isGgufMagic(new Uint8Array([0x47, 0x47, 0x55, 0x46, 0x00,]),),).toBe(true,);
+    expect(isGgufMagic(new Uint8Array([0x47, 0x47, 0x55, 0x00,]),),).toBe(false,);
+    expect(isGgufMagic(new Uint8Array([0x47, 0x47,]),),).toBe(false,);
+    expect(isGgufMagic(new Uint8Array(0,),),).toBe(false,);
   });
 });

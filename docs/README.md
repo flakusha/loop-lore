@@ -250,6 +250,7 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 | [`guide/getting-started.md`](./guide/getting-started.md) | Quick start                              |
 | [`guide/installation.md`](./guide/installation.md)       | Prerequisites, setup                     |
 | [`guide/characters.md`](./guide/characters.md)           | Creating, importing, managing characters |
+| [`guide/local-models.md`](./guide/local-models.md)         | Browser models, download policy, GGUF splits   |
 
 ---
 

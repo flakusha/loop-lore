@@ -8,7 +8,8 @@
  *
  * Catalog entries download through `catalog-download` (per-file resume and
  * verify-or-record checksums); ad-hoc URL downloads go straight through
- * `model-downloader`. Both share the same byte store.
+ * `model-downloader`. Both share the same byte store. Downloads honor the
+ * instance policy flag — blocked downloads fail fast with an error.
  *
  * Alpine usage: `x-data="modelManager()"`. All dependencies injectable
  * for tests via {@link createModelManager}. The `modelManager` global is
@@ -19,7 +20,7 @@
 
 import { downloadCatalogEntry as runCatalogDownload, } from "./catalog-download";
 import { detectLocalInferenceSupport, } from "./local-inference";
-import { type CatalogModel, fetchCatalog, } from "./model-catalog";
+import { type CatalogModel, type LocalInferenceCapability, fetchCapability, fetchCatalog, } from "./model-catalog";
 import { downloadModel, type DownloadProgress, sha256Hex, } from "./model-downloader";
 import {
   createMemoryStore,
@@ -37,6 +38,7 @@ export interface ModelManagerDeps {
   store?: ModelByteStore;
   download?: typeof downloadModel;
   digest?: typeof sha256Hex;
+  loadCapability?: () => Promise<LocalInferenceCapability>;
 }
 
 /** Reactive state + actions for the model manager component. */
@@ -54,6 +56,7 @@ export interface ModelManagerState {
   downloadId: string;
   webgpu: boolean;
   indexedDB: boolean;
+  downloadsAllowed: boolean;
   init(): Promise<void>;
   refresh(): Promise<void>;
   downloadFromUrl(): Promise<void>;
@@ -82,6 +85,7 @@ function defaultStoreInstance(): ModelByteStore {
  */
 export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerState {
   const loadCatalog = deps.loadCatalog ?? fetchCatalog;
+  const loadCapability = deps.loadCapability ?? fetchCapability;
   const digest = deps.digest ?? sha256Hex;
   const download = deps.download ?? downloadModel;
   let controller: AbortController | null = null;
@@ -100,12 +104,18 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
     downloadId: "",
     webgpu: false,
     indexedDB: false,
+    downloadsAllowed: true,
 
     async init(): Promise<void> {
       const support = detectLocalInferenceSupport();
       this.webgpu = support.webgpu;
       this.indexedDB = isIndexedDBAvailable();
       await this.refresh();
+      try {
+        this.downloadsAllowed = (await loadCapability()).downloadsAllowed;
+      } catch {
+        /* capability unreachable — fail open, the manifest stays fail-closed */
+      }
       try {
         this.catalog = await loadCatalog();
       } catch {
@@ -125,6 +135,10 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
     },
 
     async downloadFromUrl(): Promise<void> {
+      if (!this.downloadsAllowed) {
+        this.error = "Model downloads are disabled on this instance.";
+        return;
+      }
       const url = this.downloadUrl.trim();
       if (!/^https?:\/\//.test(url,)) {
         this.error = "Enter an http(s) model file URL.";
@@ -171,6 +185,10 @@ export function createModelManager(deps: ModelManagerDeps = {},): ModelManagerSt
     },
 
     async downloadCatalogEntry(modelId: string,): Promise<void> {
+      if (!this.downloadsAllowed) {
+        this.error = "Model downloads are disabled on this instance.";
+        return;
+      }
       const entry = this.catalog.find((item,) => item.id === modelId);
       if (!entry) {
         this.error = "Catalog entry is no longer listed.";
