@@ -1233,6 +1233,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prompt-improve-shared-service.md"
     }
   ],
   "src/assistant/commands/index.ts": [
@@ -2755,6 +2759,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-docs-reconciliation.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-prompt-improvement.md"
     },
     {
       "kind": "epic",
@@ -5870,6 +5878,10 @@
     }
   ],
   "src/components/chat/input-area.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prompt-improve-composer-ui.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
@@ -10987,6 +10999,18 @@
       "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
     }
   ],
+  "src/frontend/alpine/chat-actions/index.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-components.md"
+    }
+  ],
+  "src/frontend/alpine/chat-actions/prompt-improve.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prompt-improve-composer-ui.md"
+    }
+  ],
   "src/frontend/alpine/chat-activity.ts": [
     {
       "kind": "epic",
@@ -11029,6 +11053,12 @@
       "source": ".plan/tickets/TASK-frontend-sanitize-fallbacks-inject-raw-html-when-lib-missing.md"
     }
   ],
+  "src/frontend/alpine/chat-group.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-components.md"
+    }
+  ],
   "src/frontend/alpine/chat-location.ts": [
     {
       "kind": "ticket",
@@ -11039,6 +11069,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-emotion-avatar-message-binding.md"
+    },
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-frontend-components.md"
     },
     {
       "kind": "ticket",
@@ -14269,6 +14303,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-chat-pause-not-gating-autoreply.md"
     }
   ],
   "src/generation/auto-gen/handle-generation-error.ts": [
@@ -15010,6 +15048,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-local-image-generation-queue.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-lora-discovery-application.md"
     },
     {
@@ -15139,6 +15181,12 @@
       "source": ".plan/tickets/TASK-lora-discovery-application.md"
     }
   ],
+  "src/generation/matting/job-store.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-local-image-generation-queue.md"
+    }
+  ],
   "src/generation/policy-detector.ts": [
     {
       "kind": "spec",
@@ -15149,6 +15197,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-emotion-intent-detection.md"
+    }
+  ],
+  "src/generation/prompt-route.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-prompt-improve-shared-service.md"
     }
   ],
   "src/generation/prompt-templates.test.ts": [
@@ -21133,6 +21187,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-requestid-dual-write-last-wins.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-chat-pause-not-gating-autoreply.md"
     },
     {
       "kind": "ticket",
