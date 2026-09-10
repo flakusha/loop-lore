@@ -6147,7 +6147,8 @@
     "epic": "epic-api-telemetry.md",
     "tags": [],
     "source": ".plan/tickets/FEAT-liveness-readiness-endpoints-opt-in-config.md",
-    "git_issue": "7c8cf4b"
+    "git_issue": "7c8cf4b",
+    "status": "done"
   },
   "FEAT-LLM-ENHANCE-FOR-CHAT-AND-TEXT-WINDOWS-WITH-LEVELED-REWRITES": {
     "hash": "487812f",
@@ -14092,7 +14093,8 @@
     "epic": "epic-federation-swarm-sync.md",
     "tags": [],
     "source": ".plan/tickets/TASK-federation-interconnect-peer-config.md",
-    "git_issue": "6bf6ddc"
+    "git_issue": "6bf6ddc",
+    "status": "done"
   },
   "TASK-FEDERATION-TLS-PEER-TRUST-CUSTOM-CA-PINNING-AND-OPTIONAL-MTL": {
     "hash": "99c122b",
@@ -15555,7 +15557,8 @@
     "epic": "epic-federation-swarm-sync.md",
     "tags": [],
     "source": ".plan/tickets/TASK-instance-state-advertisement-endpoint.md",
-    "git_issue": "e23054f"
+    "git_issue": "e23054f",
+    "status": "done"
   },
   "TASK-INTEGRATION-INFRASTRUCTURE": {
     "hash": "3c7d8c0",
@@ -17042,7 +17045,8 @@
     "epic": "epic-federation-swarm-sync.md",
     "tags": [],
     "source": ".plan/tickets/TASK-nodeinfo-well-known-discovery-endpoints.md",
-    "git_issue": "d6d3793"
+    "git_issue": "d6d3793",
+    "status": "done"
   },
   "TASK-NON-ISOLATED-BUN-TEST-SRC-RED-SHARED-STATE-CONTAMINATION": {
     "hash": "70c23fb",
@@ -17872,7 +17876,8 @@
     "epic": "epic-api-telemetry.md",
     "tags": [],
     "source": ".plan/tickets/TASK-observability-config-section.md",
-    "git_issue": "2e34de8"
+    "git_issue": "2e34de8",
+    "status": "done"
   },
   "TASK-OBSERVABILITY-TELEMETRY": {
     "hash": "4218340",
@@ -18542,7 +18547,8 @@
     "epic": "epic-api-telemetry.md",
     "tags": [],
     "source": ".plan/tickets/TASK-prometheus-metrics-endpoint-opt-in.md",
-    "git_issue": "8f695c2"
+    "git_issue": "8f695c2",
+    "status": "done"
   },
   "TASK-PROMOTE-SIZE-CHECK-TO-CI": {
     "hash": "2a932ab",
