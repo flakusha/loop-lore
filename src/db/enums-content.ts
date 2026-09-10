@@ -51,12 +51,12 @@ export const AssetAlphaStatus = {
 export type AssetAlphaStatus = (typeof AssetAlphaStatus)[keyof typeof AssetAlphaStatus];
 
 export const TransformContext = {
-  Default: "default",
-  AvatarCircle: "avatar_circle",
-  ChatBubble: "chat_bubble",
-  Card: "card",
-  Gallery: "gallery",
-  Sprite: "sprite",
+ Default: "default",
+ AvatarCircle: "avatar_circle",
+ ChatBubble: "chat_bubble",
+ Card: "card",
+ Gallery: "gallery",
+ Sprite: "sprite",
 } as const;
 /** */
 export type TransformContext = (typeof TransformContext)[keyof typeof TransformContext];
@@ -84,17 +84,3 @@ export const AssetLinkEntity = {
 } as const;
 /** */
 export type AssetLinkEntity = (typeof AssetLinkEntity)[keyof typeof AssetLinkEntity];
-
-export const AssetTagScope = {
-  User: "user",
-  Global: "global",
-} as const;
-/** */
-export type AssetTagScope = (typeof AssetTagScope)[keyof typeof AssetTagScope];
-
-export const AssetTagSource = {
-  Manual: "manual",
-  Rag: "rag",
-} as const;
-/** */
-export type AssetTagSource = (typeof AssetTagSource)[keyof typeof AssetTagSource];

@@ -617,7 +617,6 @@ export const AssetsSchema = t.Object({
 export const AssetTransformsSchema = t.Object({
   asset_id: t.String(),
   context: TransformContextSchema,
-  updated_at: t.String(),
   crop_x: t.Optional(t.Number(),),
   crop_y: t.Optional(t.Number(),),
   crop_w: t.Optional(t.Number(),),
@@ -626,6 +625,7 @@ export const AssetTransformsSchema = t.Object({
   rotation: t.Optional(t.Number(),),
   focal_point_x: t.Optional(t.Number(),),
   focal_point_y: t.Optional(t.Number(),),
+  updated_at: t.Optional(t.String(),),
 },);
 
 // ── mesh_inbound_keys ────────────────────────────────────────────
@@ -954,24 +954,6 @@ export const AdminCharacterOverridesSchema = t.Object({
   license_override: t.Optional(LicenseTypeSchema,),
   reason: t.Optional(t.String(),),
   expires_at: t.Optional(t.String(),),
-},);
-
-// ── asset_tags ────────────────────────────────────────────
-export const AssetTagsSchema = t.Object({
-  asset_id: t.String(),
-  tag: t.String(),
-  scope: t.Optional(t.String(),),
-  owner_id: t.Optional(t.String(),),
-  source: t.Optional(t.String(),),
-  created_at: t.Optional(t.String(),),
-},);
-
-// ── asset_tag_dismissals ────────────────────────────────────────────
-export const AssetTagDismissalsSchema = t.Object({
-  asset_id: t.String(),
-  tag: t.String(),
-  user_id: t.String(),
-  created_at: t.Optional(t.String(),),
 },);
 
 // ── character_arc ────────────────────────────────────────────

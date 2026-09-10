@@ -1332,22 +1332,6 @@ export const SCHEMA = new SchemaManifest()
     shared_by_id: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, hasDefault: true, },),
   },)
-  .table("asset_tag_dismissals", {
-    id: col("text", { primaryKey: true, },),
-    asset_id: col("text", { notNull: true, },),
-    tag: col("text", { notNull: true, },),
-    user_id: col("text", { notNull: true, },),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
-  },)
-  .table("asset_tags", {
-    id: col("text", { primaryKey: true, },),
-    asset_id: col("text", { notNull: true, },),
-    tag: col("text", { notNull: true, },),
-    scope: col("text", { notNull: true, hasDefault: true, },),
-    owner_id: col("text",),
-    source: col("text", { notNull: true, hasDefault: true, },),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
-  },)
   .table("asset_transforms", {
     asset_id: col("text", { notNull: true, },),
     context: col("text", { notNull: true, },),
@@ -1359,7 +1343,7 @@ export const SCHEMA = new SchemaManifest()
     rotation: col("real",),
     focal_point_x: col("real",),
     focal_point_y: col("real",),
-    updated_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   .table("assets", {
     id: col("text", { primaryKey: true, },),
