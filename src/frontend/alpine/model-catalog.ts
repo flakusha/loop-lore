@@ -209,5 +209,5 @@ const GGUF_MAGIC = [0x47, 0x47, 0x55, 0x46,] as const;
  */
 export function isGgufMagic(prefix: Uint8Array,): boolean {
   if (prefix.length < GGUF_MAGIC.length) { return false; }
-  return GGUF_MAGIC.every((byte, at,) => prefix[at] === byte,);
+  return GGUF_MAGIC.every((byte, at,) => prefix[at] === byte);
 }
