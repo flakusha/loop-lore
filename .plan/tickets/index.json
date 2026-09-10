@@ -1596,7 +1596,8 @@
     "priority": "medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-demo-login-e2e-fails-in-full-suite-order-due-to-unreset-per-.md"
+    "source": ".plan/tickets/BUG-demo-login-e2e-fails-in-full-suite-order-due-to-unreset-per-.md",
+    "status": "done"
   },
   "BUG-DEMO-LOGIN-ENDPOINT-BYPASSES-RATE-LIMITER": {
     "hash": "63f8f29",
@@ -2684,7 +2685,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-logger-tests-leak-global-logger-state.md"
+    "source": ".plan/tickets/BUG-logger-tests-leak-global-logger-state.md",
+    "status": "done"
   },
   "BUG-LOGNSFWEVENT-HAS-ZERO-CALLERS-NO-NSFW-GATE-DECISION-EVER-AUD": {
     "hash": "e241317",
@@ -14822,7 +14824,8 @@
     "priority": "high",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-generation-failure-exposure-sanitize-raw-llm-error-output-in.md"
+    "source": ".plan/tickets/TASK-generation-failure-exposure-sanitize-raw-llm-error-output-in.md",
+    "status": "done"
   },
   "TASK-GENERATION-MAXTOKENS-AND-PROMPT-ARRAY-UNVALIDATED-COST-DOS": {
     "hash": "3457e6b",
