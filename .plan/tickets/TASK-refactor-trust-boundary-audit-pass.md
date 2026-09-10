@@ -3,7 +3,7 @@
 
 # TASK: Refactor: trust-boundary audit pass
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — sweep 2026-09-10: zero unguarded `body.actorId`/`query.actorId` hits in `src/routes/` (all pass through `resolveActorAccess`); every `world_id` query scoped (`worldScoped` helper or explicit `WHERE world_id = ?`); no migration needed
 **Priority:** critical
 **Effort:** Medium
 

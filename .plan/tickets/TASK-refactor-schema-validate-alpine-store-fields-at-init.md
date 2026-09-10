@@ -3,7 +3,7 @@
 
 # TASK: Refactor: schema-validate Alpine store fields at init
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — validation landed as `assertChatViewShape` (`src/frontend/alpine/store-schema.ts`); required-field assertion replaces silent runtime defaults
 **Priority:** medium
 **Effort:** Medium
 
