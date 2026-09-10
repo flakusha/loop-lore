@@ -16,6 +16,8 @@
     "test:native": "cargo test --manifest-path native/loop-lore-native/Cargo.toml",
     "format:native": "cargo fmt --manifest-path native/loop-lore-native/Cargo.toml",
     "format:native:check": "cargo fmt --manifest-path native/loop-lore-native/Cargo.toml -- --check",
+    "update:native": "cargo update --manifest-path native/loop-lore-native/Cargo.toml && cargo test --manifest-path native/loop-lore-native/Cargo.toml",
+    "update:native:check": "cargo update --manifest-path native/loop-lore-native/Cargo.toml --dry-run",
     "db:migrate": "bun run src/db/migrate.ts",
     "db:reinit": "bun run src/db/reinit.ts",
     "db:sync-types": "bun run scripts/generate-db-types.ts",
