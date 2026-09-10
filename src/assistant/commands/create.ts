@@ -179,7 +179,17 @@ export async function runCreateGeneration(
     if (entity.description) { parts.push(`**Description:** ${entity.description}\n`,); }
     if (entity.personality) { parts.push(`**Personality:** ${entity.personality}\n`,); }
     if (entity.scenario) { parts.push(`**Scenario:** ${entity.scenario}\n`,); }
-    if (entity.lore) { parts.push(`**Lore:** ${entity.lore}\n`,); }
+    if (entity.lore) {
+      if (Array.isArray(entity.lore,)) {
+        parts.push(`**Lore entries:**\n`,);
+        for (const entry of entity.lore) {
+          parts.push(`  - **${entry.name}**: ${entry.content}\n`,);
+        }
+        parts.push(`\n`,);
+      } else {
+        parts.push(`**Lore:** ${entity.lore}\n`,);
+      }
+    }
     if (warnings.length > 0) { parts.push(`\n⚠️ ${warnings.join(" ",)}`,); }
     const summary = parts.join("",);
 

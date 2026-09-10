@@ -13,11 +13,16 @@
 
 import type { Kysely, } from "kysely";
 import { createChat, getChatSetupTemplate, } from "../../chat/service";
-import { DifficultyReroll, DifficultyState, } from "../../db/enums-story";
+import { DifficultyReroll, DifficultyState, LoreEntryStatus, LorePosition, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
-import { safeJsonParse, uid, } from "../../utils";
+import { normalizeAudienceScope, } from "../../story/events/promote-lore";
+import { safeJsonParse, safeJsonStringify, uid, } from "../../utils";
+import type { LoreScope, } from "../lore/audience";
 import type { EntityKind, } from "../prompt/templates/entity-generation";
-import type { GeneratedEntity, } from "../quality/entity-creation";
+import type {
+  GeneratedEntity,
+  GeneratedEntityLoreEntry,
+} from "../quality/entity-creation";
 
 /** A confirmed entity draft ready for persistence. */
 export interface EntityDraft {
@@ -27,6 +32,8 @@ export interface EntityDraft {
   description: string;
   /** World scope resolved at generation time. */
   worldId?: string;
+  /** Structured lore entries to persist alongside the entity. */
+  lore?: GeneratedEntityLoreEntry[];
 }
 
 /** Result of persisting an entity. */
@@ -74,6 +81,7 @@ export async function insertGeneratedEntity(
           import_spec: "llm-generated",
         },)
         .execute();
+      await insertEntityLore(db, kind, id, worldId, userId, data.lore,);
       return { id, kind, name, };
     }
 
@@ -116,6 +124,7 @@ export async function insertGeneratedEntity(
         },);
         linkedChatId = chat;
       }
+      await insertEntityLore(db, kind, id, resolvedWorld, userId, data.lore,);
       return { id, kind, name, linkedChatId, };
     }
 
@@ -127,12 +136,13 @@ export async function insertGeneratedEntity(
           owner_id: userId,
           name,
           description: data.description ?? description,
-          lore: data.lore ?? null,
+          lore: typeof data.lore === "string" ? data.lore : null,
           difficulty_modifier: 1,
           difficulty_reroll: DifficultyReroll.None,
           difficulty_state: DifficultyState.Normal,
         },)
         .execute();
+      await insertEntityLore(db, kind, id, id, userId, data.lore,);
       return { id, kind, name, };
     }
 
@@ -154,7 +164,139 @@ export async function insertGeneratedEntity(
           weight: 1,
         },)
         .execute();
+      await insertEntityLore(db, kind, id, resolvedWorld, userId, data.lore,);
       return { id, kind, name, };
+    }
+  }
+}
+
+/**
+ * Map an EntityKind to its target lore table and foreign key column.
+ */
+interface LoreTarget {
+  table: "world_lore_entries" | "actor_lore_entries";
+  fkColumn: "world_id" | "actor_id";
+}
+
+/** Resolve the lore target table and FK column for a given entity kind. */
+function resolveLoreTarget(kind: EntityKind,): LoreTarget | null {
+  switch (kind) {
+    case "world":
+    case "location":
+    case "item":
+      // World, location, and item lore all live in world_lore_entries
+      return { table: "world_lore_entries", fkColumn: "world_id", };
+    case "character":
+      // Characters get actor_lore_entries keyed by the actor's id
+      return { table: "actor_lore_entries", fkColumn: "actor_id", };
+  }
+}
+
+/**
+ * Insert structured lore entries for a generated entity into the appropriate
+ * lore table(s). Each entry becomes a separate row.
+ *
+ * - world → world_lore_entries (world_id = the world's id)
+ * - location → world_lore_entries (world_id = the parent world)
+ * - item → world_lore_entries (world_id = the parent world)
+ * - character → actor_lore_entries (actor_id = the character's id)
+ *
+ * Location and item lore entries get `requires_presence = true` by default.
+ * @param db
+ * @param kind
+ * @param entityId  The newly-inserted entity's id
+ * @param worldId   Resolved world id (for world/loc/item scope)
+ * @param userId
+ * @param lore      Structured lore entries (from normalizedEntity or draft)
+ */
+export async function insertEntityLore(
+  db: Kysely<DB>,
+  kind: EntityKind,
+  entityId: string,
+  worldId: string | undefined,
+  _userId: string,
+  lore: string | GeneratedEntityLoreEntry[] | undefined,
+): Promise<void> {
+  if (!Array.isArray(lore,)) { return; }
+  if (lore.length === 0) { return; }
+
+  const target = resolveLoreTarget(kind,);
+  if (!target) { return; }
+
+  const now = new Date().toISOString();
+
+  for (const entry of lore) {
+    // Build audience_scope JSON from subject + requires_presence
+    const scope: LoreScope = {};
+    if (entry.subject) { scope.subject = entry.subject; }
+    if (kind === "location" || kind === "item") {
+      // Location/item lore requires presence by default
+      scope.requires_presence = entry.requires_presence ?? true;
+    } else if (entry.requires_presence !== undefined) {
+      scope.requires_presence = entry.requires_presence;
+    }
+
+    // Validate subject via normalizeAudienceScope (checks subject.kind validity).
+    // If subject is present but invalid, skip this entry.
+    const validated = normalizeAudienceScope(scope,);
+    if (entry.subject && !validated) { continue; }
+
+    // Serialize the scope directly — preserves requires_presence even when
+    // no subject is set (normalizeAudienceScope drops requires_presence when
+    // subject is absent, which would lose the location/item presence flag).
+    // Only store when the scope is non-empty; otherwise null (no audience restriction).
+    const scopeStrResult = safeJsonStringify(scope,);
+    let audienceScopeStr: string | null = null;
+    if (scopeStrResult.ok && (scope.subject || scope.requires_presence !== undefined)) {
+      audienceScopeStr = scopeStrResult.value;
+    }
+
+    const keysResult = safeJsonStringify(entry.keys ?? [],);
+    const keysStr = keysResult.ok ? keysResult.value : "[]";
+
+    const loreValues = {
+      name: entry.name,
+      content: entry.content,
+      keys: keysStr,
+      constant: entry.constant ? 1 : 0,
+      selective: entry.selective ? 1 : 0,
+      position: entry.position ?? LorePosition.BeforeChar,
+      insertion_order: entry.insertion_order ?? 0,
+      priority: entry.priority ?? 0,
+      cooldown_seconds: entry.cooldown_seconds ?? 0,
+      enabled: LoreEntryStatus.Enabled,
+      sort_order: 0,
+      audience_scope: audienceScopeStr,
+      created_at: now,
+      updated_at: now,
+      secondary_keys: null,
+      case_sensitive: 0,
+      comment: null,
+      last_activated: null,
+      key_type: null,
+      key_groups: null,
+      scan_depth: null,
+      activation_chance: null,
+    };
+
+    if (target.table === "world_lore_entries") {
+      await db
+        .insertInto("world_lore_entries",)
+        .values({
+          ...loreValues,
+          world_id: worldId!,
+        },)
+        .execute();
+    } else {
+      // actor_lore_entries
+      await db
+        .insertInto("actor_lore_entries",)
+        .values({
+          ...loreValues,
+          actor_id: entityId,
+          world_id: worldId && worldId !== "default" ? worldId : null,
+        },)
+        .execute();
     }
   }
 }
