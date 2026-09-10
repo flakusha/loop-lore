@@ -108,4 +108,52 @@ describe("/create command — preview flow", () => {
     expect(result.action,).toBeUndefined();
     expect(result.systemMessage,).toContain("Usage",);
   });
+  it("never leaks raw LLM output into chat on parse failure", async () => {
+    const { db, } = await createTestDb();
+    stubBody = "SECRET-MARKER not json {{{";
+
+    const result = await runCreateGeneration(
+      ["char", "a doomed king",],
+      {
+        chatId: "c1",
+        db,
+        config: makeConfig(),
+        userId: "u1",
+      },
+      stubComplete,
+      "stub-model",
+    );
+
+    expect(result.action,).toBeUndefined();
+    expect(result.systemMessage ?? "",).not.toContain("SECRET-MARKER",);
+    expect(result.systemMessage ?? "",).toContain("Nothing was saved",);
+    const actors = await db.selectFrom("actors",).selectAll().execute();
+    expect(actors,).toHaveLength(0,);
+  });
+
+  it("never leaks provider error text into chat on generation failure", async () => {
+    const { db, } = await createTestDb();
+    const failingComplete = async (): Promise<{ content: string }> => {
+      throw new Error("Bearer sk-live-SECRET upstream 500",);
+    };
+
+    const result = await runCreateGeneration(
+      ["loc", "a dark tower",],
+      {
+        chatId: "c1",
+        db,
+        config: makeConfig(),
+        userId: "u1",
+      },
+      failingComplete,
+      "stub-model",
+    );
+
+    expect(result.action,).toBeUndefined();
+    expect(result.systemMessage ?? "",).not.toContain("sk-live-SECRET",);
+    expect(result.systemMessage ?? "",).not.toContain("upstream",);
+    expect(result.systemMessage ?? "",).toContain("Nothing was saved",);
+    const actors = await db.selectFrom("actors",).selectAll().execute();
+    expect(actors,).toHaveLength(0,);
+  });
 });

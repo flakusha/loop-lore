@@ -17,6 +17,7 @@
 import { ChatParticipantRole, } from "../../db/enums";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
+import { getLogger, type Logger, } from "../../logger";
 import { safeJsonParse, } from "../../utils";
 import {
   ENTITY_KIND_ALIASES,
@@ -36,6 +37,8 @@ const KIND_LABELS: Record<EntityKind, string> = {
   world: "World",
   item: "Item",
 };
+/** Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests). */
+const getLog = (): Logger => getLogger().child({ module: "create", },);
 
 /*** Pull the active world context (name + description) if a world is scoped. */
 /**
@@ -125,8 +128,13 @@ export async function runCreateGeneration(
       if (!parsed.ok) { throw parsed.error; }
       raw = parsed.value;
     } catch {
+      // Never echo raw LLM output into the chat: all members can read
+      // systemMessage, including those who could not invoke this Owner-gated
+      // command. Full output goes to server logs only.
+      getLog().warn("create parse failure", { kind, rawOutput: content.slice(0, 2000,), },);
       return {
-        systemMessage: `**Failed to parse entity data from LLM response.**\n\nRaw output:\n${content.slice(0, 500,)}`,
+        systemMessage:
+          `**Failed to parse ${kind} data from the model response.** Nothing was saved — retry with a simpler description.`,
         handled: true,
       };
     }
@@ -184,9 +192,11 @@ export async function runCreateGeneration(
       handled: true,
     };
   } catch (error) {
-    const msg = error instanceof Error ? error.message : "Unknown error";
+    // Provider error text can carry prompt fragments or backend internals.
+    // Keep the chat-visible message generic; log the detail server-side.
+    getLog().error("create generation failure", { kind, error, },);
     return {
-      systemMessage: `**Entity creation failed:** ${msg}`,
+      systemMessage: `**${KIND_LABELS[kind]} creation failed.** Nothing was saved — retry in a moment.`,
       handled: true,
     };
   }
