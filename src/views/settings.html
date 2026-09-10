@@ -640,53 +640,52 @@
           </div>
 
           <template x-if="downloadsAllowed">
-          <!-- Download form -->
-          <div class="section-title">{{{t("settings.downloadModel")}}}</div>
-          <div class="space-y-2">
-            <div class="form-group">
-              <label class="form-label" for="model-file-url">{{{t("settings.modelFileUrl")}}}</label>
-              <input
-                type="url"
-                class="form-input"
-                id="model-file-url"
-                x-model="downloadUrl"
-                x-bind:placeholder="t('settings.modelFileUrlPlaceholder')"
-                data-testid="model-download-url"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="model-sha256">{{{t("settings.modelSha256")}}}</label>
-              <input type="text" class="form-input" id="model-sha256" x-model="downloadSha" />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="model-name">{{{t("settings.modelName")}}}</label>
-              <input type="text" class="form-input" id="model-name" x-model="downloadId" />
-            </div>
-            <div class="flex gap-2">
-              <button
-                @click="downloadFromUrl()"
-                :disabled="loading || downloadingId"
-                class="btn btn-primary disabled:opacity-50"
-                data-testid="model-download-start"
-              >
-                {{{t("common.download")}}}
-              </button>
-              <template x-if="downloadingId">
-                <button @click="cancelDownload()" class="btn btn-warning">
-                  {{{t("common.cancel")}}}
+            <!-- Download form -->
+            <div class="section-title">{{{t("settings.downloadModel")}}}</div>
+            <div class="space-y-2">
+              <div class="form-group">
+                <label class="form-label" for="model-file-url">{{{t("settings.modelFileUrl")}}}</label>
+                <input
+                  type="url"
+                  class="form-input"
+                  id="model-file-url"
+                  x-model="downloadUrl"
+                  x-bind:placeholder="t('settings.modelFileUrlPlaceholder')"
+                  data-testid="model-download-url"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="model-sha256">{{{t("settings.modelSha256")}}}</label>
+                <input type="text" class="form-input" id="model-sha256" x-model="downloadSha" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="model-name">{{{t("settings.modelName")}}}</label>
+                <input type="text" class="form-input" id="model-name" x-model="downloadId" />
+              </div>
+              <div class="flex gap-2">
+                <button
+                  @click="downloadFromUrl()"
+                  :disabled="loading || downloadingId"
+                  class="btn btn-primary disabled:opacity-50"
+                  data-testid="model-download-start"
+                >
+                  {{{t("common.download")}}}
                 </button>
-              </template>
-            </div>
-            <template x-if="progress">
-              <div class="text-sm text-gray-600 dark:text-gray-400">
-                <span x-text="formatSize(progress.loadedBytes)"></span>
-                <template x-if="progress.totalBytes">
-                  <span> / <span x-text="formatSize(progress.totalBytes)"></span></span>
+                <template x-if="downloadingId">
+                  <button @click="cancelDownload()" class="btn btn-warning">
+                    {{{t("common.cancel")}}}
+                  </button>
                 </template>
               </div>
-            </template>
-          </div>
-
+              <template x-if="progress">
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                  <span x-text="formatSize(progress.loadedBytes)"></span>
+                  <template x-if="progress.totalBytes">
+                    <span> / <span x-text="formatSize(progress.totalBytes)"></span></span>
+                  </template>
+                </div>
+              </template>
+            </div>
           </template>
 
           <!-- Stored models -->
