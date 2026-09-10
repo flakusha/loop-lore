@@ -7,7 +7,7 @@
 
 ## Overview
 
-loop-lore is a lightweight roleplay/chat application reimagining SillyTavern with modern tooling. The architecture prioritizes minimal local setup, easy distributed deployment, and data integrity.
+loop-lore is a lightweight LLM RPG chat platform with modern tooling (SillyTavern-inspired, but architecturally distinct). The architecture prioritizes minimal local setup, easy distributed deployment, and data integrity.
 
 ## Guiding Principles
 
