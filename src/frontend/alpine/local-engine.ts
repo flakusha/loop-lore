@@ -139,7 +139,13 @@ export function createLocalEngine(opts: LocalEngineOptions = {},): LocalEngine {
       reject(dropWorker(timeoutReason,),);
     }, timeoutMs,);
     pending.set(message.id, { resolve, reject, timer, },);
-    live.postMessage(message,);
+    try {
+      live.postMessage(message,);
+    } catch {
+      pending.delete(message.id,);
+      clearTimeout(timer,);
+      throw dropWorker("inference worker rejected the request",);
+    }
     return promise;
   }
 
