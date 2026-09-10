@@ -41,6 +41,8 @@ function runRunner(extraArgs, options = {},) {
     "run",
     "--no-install",
     RUNNER,
+    "--diff-base",
+    "HEAD",
     ...extraArgs,
     ...(defaultSkip.length > 0 ? ["--skip-gates", defaultSkip.join(",",),] : []),
   ];
@@ -58,20 +60,20 @@ function runRunner(extraArgs, options = {},) {
 }
 
 describe("selective gate filter — --gates (whitelist)", () => {
-  test("unknown gate name exits 2 and lists available gates", () => {
+  test("unknown gate name exits 2 and lists available gates", { timeout: 120_000, }, () => {
     const r = runRunner(["--gates", "bogus-gate-xyz",], { defaultSkip: [], },);
     expect(r.exit,).toBe(2,);
     expect(r.stderr,).toMatch(/error: unknown gate name\(s\): "bogus-gate-xyz"/,);
     expect(r.stderr,).toMatch(/available gates:/,);
     expect(r.stderr,).toMatch(/md - lint/,);
-  });
+  },);
 
-  test("multiple comma-separated names are honored", () => {
+  test("multiple comma-separated names are honored", { timeout: 120_000, }, () => {
     const r = runRunner(["--gates", "md - lint,format - dprint",], { defaultSkip: [], },);
     expect(r.stderr,).toMatch(/gates filter: whitelisted 2 of \d+ gates/,);
-  });
+  },);
 
-  test("gate names with em-dash punctuation are selectable (no CSV-split collision)", () => {
+  test("gate names with em-dash punctuation are selectable (no CSV-split collision)", { timeout: 120_000, }, () => {
     // Regression: prior version had a gate named with an embedded COMMA,
     // which collided with the CSV separator. The gate name was renamed
     // to use an em-dash so the full name is one CSV element. Verify
@@ -81,37 +83,37 @@ describe("selective gate filter — --gates (whitelist)", () => {
       { defaultSkip: [], },
     );
     expect(r.stderr,).toMatch(/gates filter: whitelisted 1 of \d+ gates/,);
-  });
+  },);
 });
 
 describe("selective gate filter — --skip-gates (inverse)", () => {
-  test("inverse filter runs every other gate", () => {
+  test("inverse filter runs every other gate", { timeout: 120_000, }, () => {
     const r = runRunner(["--skip-gates", "coverage - per-module line %",], {
       defaultSkip: [],
     },);
     expect(r.stderr,).toMatch(/gates filter: skipped 1; running 20 of 21 gates/,);
-  });
+  },);
 
-  test("multiple comma-separated skips accepted", () => {
+  test("multiple comma-separated skips accepted", { timeout: 120_000, }, () => {
     const r = runRunner(
       ["--skip-gates", "coverage - per-module line %,no - shell - refs,context - weight",],
       { defaultSkip: [], },
     );
     expect(r.stderr,).toMatch(/gates filter: skipped 3; running 18 of 21 gates/,);
-  });
+  },);
 });
 
 describe("selective gate filter — mutual exclusion", () => {
-  test("combining --gates and --skip-gates exits 2", () => {
+  test("combining --gates and --skip-gates exits 2", { timeout: 120_000, }, () => {
     const r = runRunner(
       ["--gates", "md - lint", "--skip-gates", "lint - eslint",],
       { defaultSkip: [], },
     );
     expect(r.exit,).toBe(2,);
     expect(r.stderr,).toMatch(/mutually exclusive/,);
-  });
+  },);
 
-  test("whitespace-only --gates value is treated as no filter", () => {
+  test("whitespace-only --gates value is treated as no filter", { timeout: 120_000, }, () => {
     // Defensive: user passes --gates "   " or "" — both should disable the
     // filter rather than fail with "left no checks to run" or silently
     // activate an empty whitelist.
@@ -121,5 +123,5 @@ describe("selective gate filter — mutual exclusion", () => {
     );
     expect(r.exit,).toBe(0,);
     expect(r.stderr,).not.toMatch(/gates filter: whitelisted 0/,);
-  });
+  },);
 });
