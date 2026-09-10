@@ -6,9 +6,9 @@
  * locally in the browser (opt-in, BYOK-local-models slice).
  *
  * Only cheap auxiliary tasks are eligible (prompt cleanup, draft analysis).
- * Main RPG generation stays server-side for quality. The manifest is static
- * (no DB, no migration) so the capability endpoint is safe to expose
- * unauthenticated — it advertises shape, never secrets.
+ * Main RPG generation stays server-side for quality. The model list is
+ * filtered by the admin download policy (default allow, per-model overrides)
+ * so the endpoint never advertises blocked models — shape only, never secrets.
  *
  * @module inference/manifest
  */
@@ -24,6 +24,35 @@ export const LOCAL_ONLY_LEVELS = ["spellcheck",] as const;
 
 /** Gradation level handled locally without a model download. */
 export type LocalOnlyLevel = (typeof LOCAL_ONLY_LEVELS)[number];
+/** Per-model download override (by-model config, wins over the default). */
+export interface LocalModelDownloadOverride {
+  /** False blocks this model even when downloads are allowed by default. */
+  allowDownload?: boolean;
+}
+
+/**
+ * Browser-model download policy — admin default plus per-model overrides.
+ * The admin sets the instance default; individual models opt out (or back
+ * in) via by-model config. Absent policy means everything is downloadable.
+ */
+export interface LocalModelDownloadPolicy {
+  /** Instance default. Default true when omitted. */
+  allowDownloads?: boolean;
+  /** Per-model overrides keyed by catalog id. Unknown ids are ignored. */
+  models?: Record<string, LocalModelDownloadOverride>;
+}
+
+/**
+ * Whether a catalog model may be downloaded under a policy.
+ * @param modelId - Catalog model id.
+ * @param policy - Download policy; omitted means allow.
+ * @returns False only when blocked by per-model config or the default.
+ */
+export function isModelDownloadable(modelId: string, policy?: LocalModelDownloadPolicy,): boolean {
+  const perModel = policy?.models?.[modelId]?.allowDownload;
+  if (perModel !== undefined) { return perModel; }
+  return policy?.allowDownloads ?? true;
+}
 
 /** Browser model descriptor (transformers.js/WebGPU, lazy-loaded, never bundled). */
 export interface LocalModelDescriptor {
@@ -68,15 +97,17 @@ export interface LocalInferenceManifest {
 }
 
 /**
- * Build the static manifest payload.
+ * Build the manifest payload, excluding models blocked by policy. Blocked
+ * models are never advertised, so policy-abiding clients cannot offer them.
+ * @param policy - Download policy; omitted advertises the full catalog.
  * @returns Versioned manifest of browser-offloadable tasks and models.
  */
-export function buildLocalInferenceManifest(): LocalInferenceManifest {
+export function buildLocalInferenceManifest(policy?: LocalModelDownloadPolicy,): LocalInferenceManifest {
   return {
     version: 1,
     eligibleTasks: [...ELIGIBLE_LOCAL_TASKS,],
     localOnlyLevels: [...LOCAL_ONLY_LEVELS,],
-    models: [...BROWSER_MODEL_CATALOG,],
+    models: BROWSER_MODEL_CATALOG.filter((model,) => isModelDownloadable(model.id, policy,)),
     notes: "Opt-in only. Browser inference never sends prompts to the server for eligible tasks.",
   };
 }
