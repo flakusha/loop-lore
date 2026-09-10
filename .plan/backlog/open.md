@@ -3,8 +3,7 @@
 
 # Open — Index (In-Flight, Debt, Unwired Code & Deferred)
 
-> **Last updated:** 2026-08-25 (backlog housekeeping — untriaged orphan set refreshed
-> in `open-untriaged.md`; resolved index-defect note closed out). Split into
+> **Last updated:** 2026-09-10 (post-August refresh — NSFW async pipeline + consent/route-authz wiring, mesh encrypted-sharing in flight, coverage lifts with raised waiver floors, test-isolation hardening, templates admin gate; untriaged waves re-triaged in `open-untriaged.md`). Split into
 > per-category files 2026-08-15 (was a single monolith); this index holds the status
 > header + file map. Holds what is **currently in flight / needing a decision / open debt / deferred (P6+)**. The priority ladder P0→P6+ lives in `../priority.md` (index → tier files).
 >
@@ -24,9 +23,7 @@
 
 ## Status header
 
-P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress (Gate C core shipped 2026-08-12; item-systems
-wiring + docs reconciliation + memory-selection UI + C1 participant panel + GM-guided
-story merged 2026-08-14; **lint-ts + e2e gates closed 2026-08-14**) · Regex ✅ · P3–P5 → 0.1.0 value
+P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress (Gate C core shipped; NSFW async pipeline + consent/route-authz wiring landed; mesh encrypted-sharing in flight; coverage lifts with raised waiver floors; test-isolation hardening green) · Regex ✅ · P3–P5 → 0.1.0 value
 tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da done).
 
 ## File map (split 2026-08-15)
@@ -36,7 +33,7 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
 | [`open-inflight.md`](./open-inflight.md) | **In-flight / decision queue** — rows needing a finalize-vs-defer call (A5–W3, B/C/D/E/F/G series) + open/next actions |
 | [`open-debt.md`](./open-debt.md) | **Debt** — dead/unwired code, schema drift / latent bugs, release hardening |
 | [`open-deferred.md`](./open-deferred.md) | **Deferred** — item-systems deferred follow-ups (IS1–IS7), hardening / deferred clusters, pull-forward notes |
-| [`open-untriaged.md`](./open-untriaged.md) | **Untriaged** — git issues with no index entry (2026-08-25 security/hardening wave), cluster suggestions, known index defects |
+| [`open-untriaged.md`](./open-untriaged.md) | **Untriaged** — re-triaged 2026-09-10: Aug-25 waves closed out, current advisory orphans + new cluster suggestions (mesh/federation, VN sprites, RPG opt-in, coverage waivers, item-gen) |
 | [`open-closed.md`](./open-closed.md) | **Closed (reference)** — recent wiring log, security & access closed, resolved (moved off), preserved notes |
 | [`bucket-A-security-perf-close-out-2026-09-03.md`](./bucket-A-security-perf-close-out-2026-09-03.md) | **Bucket A close-out (2026-09-03)** — 33 commits landed (20 security + 6 perf + 7 tooling); 8 audit follow-ups filed as TASK-audit-follow-up-* |
 | [`bucket-x-build-integrity-close-out-2026-09-03.md`](./bucket-x-build-integrity-close-out-2026-09-03.md) | **Bucket X close-out (2026-09-03)** — 4 release-blocking tsc/tooling defects + 1 dprint follow-up; all Bucket X BUG tickets Resolved |
@@ -46,13 +43,12 @@ tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da d
 
 `../priority.md` holds the priority ladder P0→P6+ — see its index.
 
-## Open / next actions (2026-08-15, after 51a7bc01 wiring + GM-guided merge)
+## Open / next actions (2026-09-10 refresh)
 
-- **W3: Push `dev` → `origin/dev`** — dev ahead (unreleased: Gate C, GM-guided story,
-  item-systems + 7 wired RPG services, docs reconciliation, memory-selection UI, C1
-  panel). Before release (row A9). Pre-push hook blocks agent commits — human push
-  required. Details: `open-inflight.md`.
-- **Remaining release blockers: A8 ✅ CLOSED 2026-08-18** (`49ee5c1a`) — IS1-IS7 + LoRA all wired on `dev` (see `open-debt.md` #12 + #5) **+ A9** (tag 0.1.0 + push) — `open-inflight.md`.
+- **Mesh encrypted-sharing in flight** — sender fan-out with per-target reservation, receiver reservation + clock + duplication policy, per-world overrides, central cipher selection; A-to-B transfer covered over real routes. Next: land remaining reservation/HLC/duplication work, then close the mesh/federation interconnect batch (`open-untriaged.md`). Details: `open-inflight.md`.
+- **NSFW hardening landed** — async request-context pipeline with batched gates and server-side skips, consent-gate + route-authz + preconditions wiring, bans/participant-deny/consent enforced in all gates, HKDF domain separation for actor/chat hashes. Remaining NSFW open issues are consent-surface wiring follow-ups — see `open-untriaged.md`.
+- **Coverage + test health** — plugin/persona/native suites lifted with waiver floors raised to match; cross-file pollution eliminated with pristine-module gates; templates admin gate enforced. Remaining: below-floor modules tracked by waiver tickets + new frontend coverage batches. Details: `open-inflight.md`.
+- **Release blockers: A8 ✅ closed; A9 open** (tag 0.1.0 + push) — `open-inflight.md`.
 - **Dead/unwired code**: transport module, music/SFX/Video stubs — `open-debt.md`.
 
 ## Preserved note — concurrent author's claim (2026-08-06 → **landed on dev 2026-08-07**)
