@@ -16437,6 +16437,12 @@
       "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
     }
   ],
+  "src/logger/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-logger-tests-leak-global-logger-state.md"
+    }
+  ],
   "src/logger/index.ts": [
     {
       "kind": "ticket",
@@ -16464,6 +16470,10 @@
     }
   ],
   "src/logger/logger.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-logger-tests-leak-global-logger-state.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-pre-existing-unit-test-failures-blocking-clean-suite.md"
@@ -16952,6 +16962,10 @@
     }
   ],
   "src/middleware/idempotency.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-logger-tests-leak-global-logger-state.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
