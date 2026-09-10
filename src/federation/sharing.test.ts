@@ -8,6 +8,7 @@ import type { DB, } from "../db/schema";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { pskCipher, } from "./cipher";
 import { upsertPeer, } from "./coordinator";
+import { createMeshEncryption, } from "./encryption";
 import { type ContentEnvelope, openEnvelope, sealContent, } from "./envelope";
 import type { PeerPost, } from "./peer-fetch";
 import {
@@ -25,6 +26,7 @@ import {
 } from "./sharing";
 const SECRET = "mesh-test-psk";
 const cipher = pskCipher(SECRET,);
+const encryption = createMeshEncryption(SECRET,);
 
 async function sealed(
   overrides: { id?: string; origin?: string; clock?: number; content?: string } = {},
@@ -348,7 +350,7 @@ describe("sender fan-out", () => {
       delivered.push(pushEnvelopeOf(body,),);
       return { ok: true, status: 200, body: { verdict: "stored", }, };
     }) as PeerPost;
-    const result = await fanOutContent(db, post, "https://a.example", POLICY, cipher, {
+    const result = await fanOutContent(db, post, "https://a.example", POLICY, encryption, {
       id: "fan-1",
       content: "fan payload",
       clock: 7,
@@ -375,7 +377,7 @@ describe("sender fan-out", () => {
       delivered.push(pushEnvelopeOf(body,),);
       return { ok: true, status: 200, body: { verdict: "stale", }, };
     }) as PeerPost;
-    const result = await fanOutContent(db, post, "https://a.example", POLICY, cipher, {
+    const result = await fanOutContent(db, post, "https://a.example", POLICY, encryption, {
       id: "fan-2",
       content: "fallback payload",
       clock: 8,
@@ -400,7 +402,7 @@ describe("sender fan-out", () => {
       }
       return { ok: true, status: 200, body: { verdict: "stored", }, };
     }) as PeerPost;
-    const result = await fanOutContent(db, post, "https://a.example", POLICY, cipher, {
+    const result = await fanOutContent(db, post, "https://a.example", POLICY, encryption, {
       id: "fan-3",
       content: "partial payload",
       clock: 9,
@@ -424,7 +426,7 @@ describe("sender fan-out", () => {
       post,
       "https://a.example",
       { mode: "none", peers: [], },
-      cipher,
+      encryption,
       { id: "fan-4", content: "nowhere", clock: 10, },
     );
     expect(result,).toEqual({ targets: [], stored: [], stale: [], failed: [], skipped: [], },);
@@ -448,7 +450,7 @@ describe("sender fan-out", () => {
       post,
       "https://a.example",
       POLICY,
-      cipher,
+      encryption,
       { id: "fan-5", content: "eleven bytes!", clock: 11, },
     );
     expect(result.skipped,).toHaveLength(1,);

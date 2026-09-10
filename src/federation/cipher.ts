@@ -3,11 +3,12 @@
 
 // src/federation/cipher.ts — Content cipher seam for mesh envelopes.
 //
-// The epic-level `EncryptionProvider` (Matrix/OMEMO/PGP) exists only in
-// `.plan` — no implementation ships. This interface is the live seam:
-// envelope crypto programs against `ContentCipher`, with `pskCipher` (AES-GCM
-// via the BYOK module, operator-shared mesh PSK) as the only implementation.
-// Per-peer key wrapping stays a follow-up tied to the peer key store.
+// Envelope crypto programs against `ContentCipher`, with `pskCipher` (AES-GCM
+// via the BYOK module, operator-shared mesh PSK) as the byte cipher.
+// Cipher selection lives in `./encryption` (`MeshEncryptionProvider`):
+// issued per-target keys first, PSK fallback; inbound sender keys then PSK
+// on the receiver. Future epic-level `EncryptionProvider` backends
+// (Matrix/OMEMO/PGP) implement that interface without touching call sites.
 
 import { decryptValue, encryptValue, } from "../crypto/byok";
 
