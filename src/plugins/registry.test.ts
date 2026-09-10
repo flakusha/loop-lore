@@ -126,6 +126,28 @@ describe("Plugin Registry", () => {
     });
   });
 
+  describe("uiComponents", () => {
+    test("addUIComponents and getAllUIComponents", () => {
+      const component = { type: "web", name: "sidebar", location: "chat.sidebar", } as const;
+      registry.register(makePlugin("p1"));
+      registry.addUIComponents("p1", [component]);
+
+      expect(registry.getAllUIComponents()).toEqual([component]);
+    });
+
+    test("merges components across plugins in registration order", () => {
+      const a = { type: "web", name: "a", location: "chat.sidebar", } as const;
+      const b = { type: "tui", name: "b", location: "chat.header", } as const;
+      const c = { type: "web", name: "c", location: "chat.sidebar", } as const;
+      registry.register(makePlugin("p1"));
+      registry.register(makePlugin("p2"));
+      registry.addUIComponents("p1", [a, b]);
+      registry.addUIComponents("p2", [c]);
+
+      expect(registry.getAllUIComponents()).toEqual([a, b, c]);
+    });
+  });
+
   describe("lifecycle", () => {
     test("unregisterAll clears everything", () => {
       registry.register(makePlugin("p1"));
