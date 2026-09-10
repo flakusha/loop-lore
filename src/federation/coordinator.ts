@@ -129,7 +129,10 @@ export async function listPeers(database: Kysely<DB>, state?: PeerState,) {
 }
 
 /**
- * Record a successful advertisement fetch: refresh capabilities + last_seen.
+ * Record a successful advertisement fetch: refresh capabilities, last_seen,
+ * and — when the peer reports a valid figure — inbound capacity.
+ * Capacity from the wire is untrusted: non-finite or negative values are
+ * ignored and leave the stored figure untouched.
  * @param database
  * @param origin
  * @param advertisement
@@ -144,11 +147,16 @@ export async function touchPeer(
     : [];
   const encoded = safeJsonStringify(peers,);
   if (!encoded.ok) { throw new Error("peer capabilities not serializable",); }
+  const reported = advertisement.capacityBytes;
+  const capacity = typeof reported === "number" && Number.isFinite(reported,) && reported >= 0
+    ? reported
+    : undefined;
   await database
     .updateTable("mesh_peers",)
     .set({
       capabilities: encoded.value,
       last_seen: sql`(datetime('now'))`,
+      ...(capacity !== undefined ? { capacity_bytes: capacity, } : {}),
     },)
     .where("origin", "=", origin,)
     .execute();
