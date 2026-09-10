@@ -246,6 +246,8 @@ const DOMAIN_MAP: Record<string, string> = {
   assets: "content",
   asset_links: "content",
   asset_shares: "content",
+  asset_tags: "content",
+  asset_tag_dismissals: "content",
   // Story
   worlds: "story",
   locations: "story",

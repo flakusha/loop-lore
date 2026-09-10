@@ -32,6 +32,8 @@ export const AssetLinkEntitySchema = t.UnionEnum([
   "message",
   "asset",
 ],);
+export const AssetTagScopeSchema = t.UnionEnum(["user", "global",],);
+export const AssetTagSourceSchema = t.UnionEnum(["manual", "rag",],);
 export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
 export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
 export const AvatarSelectionRuleSchema = t.UnionEnum([
@@ -931,6 +933,24 @@ export const AdminCharacterOverridesSchema = t.Object({
   license_override: t.Optional(LicenseTypeSchema,),
   reason: t.Optional(t.String(),),
   expires_at: t.Optional(t.String(),),
+},);
+
+// ── asset_tags ────────────────────────────────────────────
+export const AssetTagsSchema = t.Object({
+  asset_id: t.String(),
+  tag: t.String(),
+  scope: t.Optional(AssetTagScopeSchema,),
+  owner_id: t.Optional(t.String(),),
+  source: t.Optional(AssetTagSourceSchema,),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── asset_tag_dismissals ────────────────────────────────────────────
+export const AssetTagDismissalsSchema = t.Object({
+  asset_id: t.String(),
+  tag: t.String(),
+  user_id: t.String(),
+  created_at: t.Optional(t.String(),),
 },);
 
 // ── character_arc ────────────────────────────────────────────
