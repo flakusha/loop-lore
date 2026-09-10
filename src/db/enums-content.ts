@@ -51,12 +51,12 @@ export const AssetAlphaStatus = {
 export type AssetAlphaStatus = (typeof AssetAlphaStatus)[keyof typeof AssetAlphaStatus];
 
 export const TransformContext = {
- Default: "default",
- AvatarCircle: "avatar_circle",
- ChatBubble: "chat_bubble",
- Card: "card",
- Gallery: "gallery",
- Sprite: "sprite",
+  Default: "default",
+  AvatarCircle: "avatar_circle",
+  ChatBubble: "chat_bubble",
+  Card: "card",
+  Gallery: "gallery",
+  Sprite: "sprite",
 } as const;
 /** */
 export type TransformContext = (typeof TransformContext)[keyof typeof TransformContext];
