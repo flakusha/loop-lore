@@ -7,7 +7,12 @@ import { createLogger, } from "../logger";
 import { createSqliteDialect, } from "../db/index";
 import { runMigrations, } from "../db/migrate";
 
-/** */
+/**
+ * Create an in-memory SQLite DB with all migrations applied.
+ * Logger is force-initialized at error level; `mock.module` stubs in
+ * individual suites are responsible for additional isolation.
+ * @returns `{ db, sqlite }` pair; `sqlite` is exposed for PRAGMA-level introspection tests.
+ */
 export async function createTestDb(): Promise<TestDb> {
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = ON",);

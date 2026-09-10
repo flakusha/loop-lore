@@ -55,7 +55,8 @@ export class PromptAssembler {
   constructor(private readonly db: Kysely<DB>,) {}
 
   /**
-   * @param params
+   * @param params - assistant prompt inputs (chat, message, history, rules, …)
+   * @returns the assembled `AssembledPrompt` ready for the LLM call.
    */
   async assemble(params: PromptParams,): Promise<AssembledPrompt> {
     const projectionResults = await Promise.allSettled([

@@ -41,7 +41,9 @@ export class MockLLMProvider implements LLMProvider {
   set failOnCall(v: boolean,) {
     this._failOnCall = v;
   }
-  /** */
+  /**
+   * @returns current `failOnCall` flag.
+   */
   get failOnCall(): boolean {
     return this._failOnCall;
   }
@@ -50,13 +52,17 @@ export class MockLLMProvider implements LLMProvider {
   set streamError(v: boolean,) {
     this._streamError = v;
   }
-  /** */
+  /**
+   * @returns current `streamError` flag.
+   */
   get streamError(): boolean {
     return this._streamError;
   }
 
   /**
-   * @param _req
+   * @param _req - generate request (ignored by the mock)
+   * @returns mock `GenerateResponse` with deterministic token usage.
+   * @throws {Error} `"Mock provider failure"` when `failOnCall` is set.
    */
   complete(_req: GenerateRequest,): Promise<GenerateResponse> {
     if (this._failOnCall) { throw new Error("Mock provider failure",); }
@@ -69,8 +75,10 @@ export class MockLLMProvider implements LLMProvider {
   }
 
   /**
-   * @param _req
-   * @param handler
+   * @param _req - generate request (ignored by the mock)
+   * @param handler - stream handler invoked for each chunk + done event
+   * @returns mock `GenerateResponse` describing the streamed completion.
+   * @throws {Error} `"Mock stream failure"` when `streamError` is set.
    */
   stream(_req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse> {
     if (this._streamError) {
@@ -92,12 +100,16 @@ export class MockLLMProvider implements LLMProvider {
     },);
   }
 
-  /** */
+  /**
+   * @returns `{ status: "ok" }` health probe response.
+   */
   healthCheck(): Promise<{ status: "ok" }> {
     return Promise.resolve({ status: "ok" as const, },);
   }
 
-  /** */
+  /**
+   * @returns array containing a single `"mock-model"` model descriptor.
+   */
   listModels(): Promise<ModelInfo[]> {
     return Promise.resolve([{ id: "mock-model", },],);
   }

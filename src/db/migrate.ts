@@ -9,8 +9,11 @@ import path from "node:path";
 import { createLogger, getLogger, } from "../logger";
 import { getDatabase, } from "./index";
 
-/** Load schema migrations from src/db/migrations/ (filename = migration name).
- * Exported for testing — production callers should use {@link runMigrations}. */
+/**
+ * Load schema migrations from src/db/migrations/ (filename = migration name).
+ * Exported for testing — production callers should use {@link runMigrations}.
+ * @returns map of migration name → `Migration` instance, in declared order.
+ */
 export async function getMigrationFiles(): Promise<Record<string, Migration>> {
   const migrationsDirectory = path.join(__dirname, "migrations",);
   const matched: string[] = [];

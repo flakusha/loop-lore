@@ -96,8 +96,10 @@ async function loadSmk(config: EncryptionConfig,): Promise<CryptoKey | null> {
 }
 
 /**
- * @param hex
- * @returns string
+ * Parse a hex string (with optional `-` / whitespace separators) into raw bytes.
+ * @param hex - hex string (even length after stripping separators)
+ * @returns parsed bytes.
+ * @throws {TypeError} when the cleaned hex has odd length or contains non-hex characters.
  */
 function hexToBytes(hex: string,): Uint8Array {
   const cleaned = hex.replaceAll("-", "",).replaceAll(/\s/g, "",);

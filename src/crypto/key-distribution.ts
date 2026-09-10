@@ -29,7 +29,10 @@ import { getSmk, } from "./smk";
 // stranded rows under expired keys.
 const RE_ENCRYPT_LIMIT = Number.MAX_SAFE_INTEGER;
 
-/** */
+/**
+ * Shared key-distribution logger.
+ * @returns a child logger namespaced for the `key-distribution` module.
+ */
 function log(): Logger {
   return getLogger().child({ module: "key-distribution", },);
 }

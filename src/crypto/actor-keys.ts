@@ -121,7 +121,8 @@ export async function decryptBytes(key: CryptoKey, encrypted: string,): Promise<
 }
 /**
  * Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource.
- * @param arr
+ * @param arr - typed array view of a key/IV
+ * @returns the same array retyped to `Uint8Array<ArrayBuffer>` for WebCrypto APIs.
  */
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
@@ -272,8 +273,8 @@ export async function rotateActorKey({ database, actorId, smk, }: GenerateActorK
 
 /**
  * Revoke a specific key by ID. Irreversible.
- * @param database
- * @param keyId
+ * @param database - Kysely handle
+ * @param keyId - actor_keys.id to revoke
  */
 export async function revokeActorKey(database: Kysely<DB>, keyId: string,): Promise<void> {
   await database.updateTable("actor_keys",).set({ status: "revoked", },).where("id", "=", keyId,).execute();
@@ -281,8 +282,9 @@ export async function revokeActorKey(database: Kysely<DB>, keyId: string,): Prom
 
 /**
  * List all keys for an actor (metadata only, no key material).
- * @param database
- * @param actorId
+ * @param database - Kysely handle
+ * @param actorId - owning actor id
+ * @returns array of `ActorKeyMeta` rows (no key material).
  */
 export async function listActorKeys(database: Kysely<DB>, actorId: string,): Promise<ActorKeyMeta[]> {
   const rows = await database
