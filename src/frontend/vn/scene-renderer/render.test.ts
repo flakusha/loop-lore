@@ -200,6 +200,30 @@ describe("preloadCurrentAndUpcoming", () => {
     await preloadCurrentAndUpcoming();
     expect(t.calls,).toEqual([[1, 2,],],);
   });
+
+  test("warms cast emotion variants so swaps never flash", async () => {
+    const t = tracker();
+    state.roster = {
+      entries: [{
+        characterId: "rin",
+        name: "Rin",
+        avatarAssetId: "base-1",
+        emotionVariants: { happy: "happy-9", },
+      },],
+    };
+    try {
+      armPreload(t, [scene({
+        characterAvatar: "base-1",
+        emotion: "happy",
+        cast: [{ characterId: "rin", name: "Rin", avatarAssetId: "base-1", },],
+      },),],);
+
+      await preloadCurrentAndUpcoming();
+      expect(FakeImage.created.map((img,) => img.src),).toContain("/api/assets/happy-9/thumb",);
+    } finally {
+      state.roster = null;
+    }
+  });
 });
 
 // ── handleLocationChanged ───────────────────────────────────────────────────
