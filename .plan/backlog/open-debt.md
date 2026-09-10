@@ -68,9 +68,9 @@ Surfaced by the 5 surgical bug fixes shipped on 2026-09-03 (`c093f56d`, `7cbcea6
 
 **Acceptance check**: after #1 + #2 + #5 land, grep `query\.actorId\|body\.actorId` in `src/routes/` returns zero production hits, and every world-scoped entity query has a `WHERE world_id = ?` (or helper call).
 
-## Audit Follow-up Cluster (from Bucket A/B/C close-outs — 2026-09-03)
+## Audit Follow-up Cluster (from Bucket A/B/C close-outs — 2026-09-03) — ✅ RESOLVED 2026-09-10
 
-> 8 follow-up tickets filed from the 2026-09-03 audit re-reviews (`docs/meta/code-practices-improvements/audit-batch-A-message-seen-gen-2026-09-03.md` and sibling Bucket B/C audits). These are NOT bucket failures — they are residual defects that the buckets landed while not yet addressing.
+> All 8 follow-up tickets closed 2026-09-10 (`audit-followups-2026-09-10` worktree). Filed from the 2026-09-03 audit re-reviews (`docs/meta/code-practices-improvements/audit-batch-A-message-seen-gen-2026-09-03.md` and sibling Bucket B/C audits). 6 verified stale against current source (the audit findings reference code states that do not exist or are already covered by tests): #1 `864a2bc` `name` field present at `check-parallel.mjs:477`; #2 `0391ad6` `DEFAULT_MAX_RATIO=1000` unchanged since `feat(utils): add safeFetch and safeBuffer utilities`, regression tests at `src/utils/safe-buffer/compression.test.ts:79,91`; #4 `4636043` `src/scripts/worktree/templates.ts` does not exist; #6 `6caa51a` covered by `src/chat/service/split.test.ts:240` "returns forbidden when actor is not the secondary chat owner" (file is `split.ts`, not `ownership.ts`); #7 `06d25f6` `finalize.ts:182` already does `if (reapStale())` synchronously — no `void reapStale()` antipattern present; #8 `3afdeb2` `test/messaging/swipe-race.test.ts` does not exist. 2 fixed by code commit `00d5e0f2` (DI authConfig 4-arg wired in `src/routes/export.ts:41` + `src/routes/export-sse/start.ts:23`, regression test in `src/middleware/auth.test.ts`; triggerAutoGeneration catch-path contract pinned by 5 tests in `src/generation/auto-gen/auto-generation.test.ts`). 41/41 audit-related tests pass; `bun run plan:sync` and 20/20 static gates green on the bookkeeping commit. Git issues closed; `plan:sync --fix` reconciled the index.
 
 | Git issue | Task | Severity | Problem | Where |
 | --------- | ---- | -------- | ------- | ----- |
