@@ -154,10 +154,11 @@ export function confirmRun(run: WorkflowRun,): WorkflowRun {
 
 /**
  * Validate one raw step value per step kind + constraints.
- * @param workflowId - Owning workflow (error context)
- * @param step - Step definition
- * @param value - Raw user input
- * @returns Normalized value (trimmed strings)
+ * @param workflowId - owning workflow (error context)
+ * @param step - step definition
+ * @param value - raw user input
+ * @returns normalized value (trimmed strings).
+ * @throws {Error} when the value fails validation for the step's kind.
  */
 function validateStepValue(
   workflowId: string,

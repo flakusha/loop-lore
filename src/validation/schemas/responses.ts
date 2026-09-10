@@ -19,7 +19,8 @@ import { Type, type Static, type TSchema, } from "@sinclair/typebox";
 
 /**
  * `jsonPaginated(...)` body — `{ data, pagination: { total, page, pageSize, totalPages } }`.
- * @param item
+ * @param item - TypeBox schema for items in the `data` array
+ * @returns TypeBox paginated envelope schema.
  */
 export const PaginatedEnvelope = <T extends TSchema,>(item: T,) =>
   Type.Object({
@@ -34,7 +35,8 @@ export const PaginatedEnvelope = <T extends TSchema,>(item: T,) =>
 
 /**
  * `jsonResponse({ data })` body — a single `data` field.
- * @param item
+ * @param item - TypeBox schema for the `data` payload
+ * @returns TypeBox single-data envelope schema.
  */
 export const DataEnvelope = <T extends TSchema,>(item: T,) =>
   Type.Object({ data: item, },);

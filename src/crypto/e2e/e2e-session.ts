@@ -215,7 +215,10 @@ export async function recordMessageSent(opts: RecordMessageSentOpts,): Promise<v
 
 /**
  * Soft-revoke a session. Idempotent: revoking a revoked session is a no-op.
- * @param opts
+ * @param opts - revoke options
+ * @param opts.database - Kysely handle
+ * @param opts.sessionId - target session id
+ * @returns `true` when this call actually marked the session revoked, `false` when it was already revoked.
  */
 export async function revokeSession(opts: RevokeSessionOpts,): Promise<boolean> {
   const result = await opts.database
@@ -241,7 +244,8 @@ interface E2eSessionsDbRow {
 }
 
 /**
- * @param row
+ * @param row - raw `e2e_sessions` row from SQLite
+ * @returns the row mapped to the camelCase `E2eSessionRow` shape.
  */
 function rowToSession(row: E2eSessionsDbRow,): E2eSessionRow {
   return {

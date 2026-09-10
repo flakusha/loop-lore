@@ -108,7 +108,9 @@ const INJECTION_TIMEOUT_MS = 2000;
 
 const MAX_INJECTION_INPUT_CHARS = 4000;
 
-/** */
+/**
+ * @returns child logger tagged with `module: "validation/prompt-injection"` for structured logging.
+ */
 function getLog() {
   return getLogger().child({ module: "validation/prompt-injection", },);
 }
@@ -116,7 +118,8 @@ function getLog() {
 /**
  * Deterministic step 1: scan the text for injection vectors.
  * Pure function — no I/O, safe on the message-submit hot path.
- * @param text
+ * @param text - candidate user-supplied text
+ * @returns `{ score, signals }` — weighted score (`number`) and the matched signal ids.
  */
 export function detectInjectionSignals(text: string,): { score: number; signals: string[] } {
   const signals: string[] = [];
@@ -138,12 +141,13 @@ export function detectInjectionSignals(text: string,): { score: number; signals:
  * Non-deterministic step 2: aux-LLM injection confirm. Runs only when the
  * deterministic scan raised suspicion; null on any failure (timeout, no
  * aux model configured) — the caller then falls back to the scan verdict.
- * @param text
+ * @param text - candidate user-supplied text (truncated to `MAX_INJECTION_INPUT_CHARS`)
  * @param options - `config`, `db` required; `userId`/`chatId` optional telemetry context
- * @param options.config
- * @param options.db
- * @param options.userId
- * @param options.chatId
+ * @param options.config - app config (resolved aux-LLM provider)
+ * @param options.db - Kysely DB handle (used by aux-pipeline telemetry)
+ * @param options.userId - optional user id for telemetry
+ * @param options.chatId - optional chat id for telemetry
+ * @returns parsed verdict `{ injected, confidence, category }`, or `null` when the aux LLM is unavailable / returns nothing.
  */
 export async function confirmInjectionWithLlm(
   text: string,
@@ -166,12 +170,13 @@ export async function confirmInjectionWithLlm(
  * only when score ≥ suspicion threshold. Block requires BOTH steps to agree
  * (strong scan score AND classifier confidence ≥ 0.8) — a heuristic alone
  * never blocks. LLM-unavailable degrades to `suspicious`.
- * @param text
- * @param options
- * @param options.config
- * @param options.db
- * @param options.userId
- * @param options.chatId
+ * @param text - candidate user-supplied text
+ * @param options - same shape as {@link confirmInjectionWithLlm}
+ * @param options.config - app config
+ * @param options.db - Kysely DB handle
+ * @param options.userId - optional user id for telemetry
+ * @param options.chatId - optional chat id for telemetry
+ * @returns `InjectionCheck` with `verdict` (`"clean"` / `"suspicious"` / `"blocked"`), `score`, `signals`, and optional `llm` confirmation.
  */
 export async function checkPromptInjection(
   text: string,
@@ -198,7 +203,8 @@ export async function checkPromptInjection(
 /**
  * Parse the classifier JSON, clamping confidence and narrowing category.
  * Malformed/injected output never yields a `blocked`-enabling shape.
- * @param raw
+ * @param raw - raw classifier output string (may contain extra prose around the JSON)
+ * @returns `{ injected, confidence, category }` with confidence clamped to `[0, 1]` and category narrowed to known values, or `null` when the JSON is missing/malformed or fields are wrong types.
  */
 export function parseInjectionVerdict(
   raw: string,
@@ -226,7 +232,10 @@ export function parseInjectionVerdict(
   return { injected, category, confidence: clamp01(obj.confidence,), };
 }
 
-/** @param value */
+/**
+ * @param value - value to clamp (any; only finite numbers pass through)
+ * @returns `value` clamped to `[0, 1]` if it is a finite number; `0` for non-numbers / `NaN` / `Infinity`.
+ */
 function clamp01(value: unknown,): number {
   return typeof value === "number" && Number.isFinite(value,) ? Math.min(1, Math.max(0, value,),) : 0;
 }
