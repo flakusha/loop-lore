@@ -35,6 +35,7 @@ export interface ActivationEntry {
 /**
  * Clamp an entry's scan_depth into the valid range (default 1, max {@link MAX_SCAN_DEPTH}).
  * @param scanDepth
+ * @returns number
  */
 export function clampScanDepth(scanDepth: number | null,): number {
   if (scanDepth == null || scanDepth <= 0) { return 1; }
@@ -48,6 +49,7 @@ export function clampScanDepth(scanDepth: number | null,): number {
  * chat turn. Invalid patterns are treated as no-match (never crash prompt
  * assembly).
  * @param key
+ * @returns void
  */
 function compileKeyRegex(key: string,): RegExp | null {
   return compileSafeRegExp(key, "i",);
@@ -63,6 +65,7 @@ function compileKeyRegex(key: string,): RegExp | null {
  * @param entry
  * @param words
  * @param text
+ * @returns void
  */
 export function matchesSelectiveKeys(
   entry: ActivationEntry,
@@ -95,6 +98,7 @@ export function matchesSelectiveKeys(
 /**
  * Whether an otherwise-relevant entry is admitted by its activation_chance.
  * @param chance
+ * @returns void
  */
 export function passesActivationChance(chance: number | null,): boolean {
   if (chance == null) { return true; }

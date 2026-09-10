@@ -30,6 +30,7 @@ export const TEMPLATE_FILES: Record<string, keyof TemplatesConfig> = {
 /**
  * Find template files in search directories
  * @param cwd
+ * @returns string
  */
 export function findTemplateFiles(cwd: string,): Map<string, string> {
   const mainRoot = findMainRepoRoot(cwd,);
@@ -77,6 +78,7 @@ const WORKFLOW_EXTENSIONS = [".yaml", ".yml",] as const;
  * Find assistant workflow template files across search directories.
  * Returns every matching file (defaults + overrides); callers merge in order.
  * @param cwd - Working directory to search from
+ * @returns void
  */
 export function findWorkflowFiles(cwd: string,): string[] {
   const mainRoot = findMainRepoRoot(cwd,);
@@ -109,6 +111,7 @@ export function findWorkflowFiles(cwd: string,): string[] {
 
 /**
  * @param filePath
+ * @returns void
  */
 export function parseTemplateFile(filePath: string,): Record<string, unknown> {
   const content = readFileSync(filePath, "utf8",);

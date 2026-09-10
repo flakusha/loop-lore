@@ -63,6 +63,7 @@ export function extractCharacterDataFromPng(buffer: Buffer,): ExtractedCharacter
  * @param start
  * @param length
  * @param type
+ * @returns string
  */
 function decodeTextChunk(buffer: Buffer, start: number, length: number, type: string,): string | null {
   const end = start + length;
@@ -107,6 +108,7 @@ function decodeTextChunk(buffer: Buffer, start: number, length: number, type: st
 
 /**
  * @param text
+ * @returns void
  */
 function tryParseCharacter(text: string | null,): ExtractedCharacter | null {
   if (!text) { return null; }
@@ -150,6 +152,7 @@ const MINIMAL_PNG = Buffer.from(
  * Build a PNG tEXt chunk: [length:4][type:4][keyword\0value][crc:4]
  * @param keyword
  * @param value
+ * @returns void
  */
 function buildTextChunk(keyword: string, value: string,): Buffer {
   const payload = Buffer.alloc(keyword.length + 1 + value.length,);
@@ -174,6 +177,7 @@ function buildTextChunk(keyword: string, value: string,): Buffer {
 /**
  * Simple CRC-32 (IEEE 802.3) for PNG chunk checksums.
  * @param buf
+ * @returns void
  */
 function crc32(buf: Buffer,): number {
   let crc = 0xFF_FF_FF_FF;

@@ -52,6 +52,7 @@ export type LocationInScope = (locId: string, scopeLocId: string,) => boolean;
 /**
  * Parse a stored audience_scope JSON string. Returns null for empty/invalid.
  * @param json
+ * @returns string
  */
 export function parseLoreScope(json: string | null | undefined,): LoreScope | null {
   if (!json) { return null; }

@@ -46,6 +46,7 @@ export interface RouteDeps {
  * @param root0
  * @param root0.database
  * @param root0.ctx
+ * @returns Promise<unknown>
  */
 export async function handleListAssets({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const searchParams = new URL(ctx.request.url,).searchParams;
@@ -73,6 +74,7 @@ export async function handleListAssets({ database, ctx, }: RouteDeps & { ctx: Ro
  * @param root0
  * @param root0.database
  * @param root0.ctx
+ * @returns void
  */
 export async function handleGetAsset({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = ctx.userId ?? null;
@@ -86,6 +88,7 @@ export async function handleGetAsset({ database, ctx, }: RouteDeps & { ctx: Rout
  * @param root0
  * @param root0.database
  * @param root0.ctx
+ * @returns void
  */
 export async function handlePatchAsset({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
@@ -118,6 +121,7 @@ export async function handlePatchAsset({ database, ctx, }: RouteDeps & { ctx: Ro
  * @param root0.database
  * @param root0.config
  * @param root0.ctx
+ * @returns void
  */
 export async function handleDeleteAsset({ database, config, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);
@@ -141,6 +145,7 @@ export async function handleDeleteAsset({ database, config, ctx, }: RouteDeps & 
  * @param root0
  * @param root0.database
  * @param root0.ctx
+ * @returns void
  */
 export async function handleListLinks({ database, ctx, }: RouteDeps & { ctx: RouteCtx },): Promise<Response> {
   const userId = requireUserId(ctx,);

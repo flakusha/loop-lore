@@ -29,6 +29,7 @@ export interface GetAllTraitsArgs {
  * @param root0.actorId
  * @param root0.worldId
  * @param root0.locationId
+ * @returns void
  */
 export async function getAllTraits(
   { thisL, actorId, worldId, locationId, }: GetAllTraitsArgs,

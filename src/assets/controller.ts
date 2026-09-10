@@ -136,6 +136,7 @@ async function resolveAsset(
 /**
  * Load an asset and require the caller to be its owner.
  * Returns the asset on success, or a Response on failure.
+ * @returns void
  */
 async function requireAssetOwner(
   database: Kysely<DB>,

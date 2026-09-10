@@ -6,6 +6,7 @@ import type { MoraleState, } from "../integration-schemas";
 /**
  * Process morale break
  * @param targetMorale
+ * @returns void
  */
 export function processMoraleBreak(
   targetMorale: MoraleState,

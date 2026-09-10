@@ -40,6 +40,7 @@ export interface TranslateDeps {
  * @param args
  * @param _ctx
  * @param deps
+ * @returns void
  */
 export async function runTranslate(
   args: string[],
@@ -137,6 +138,7 @@ export async function runTranslate(
 
 /**
  * Translate command registration.
+ * @returns void
  */
 registerCommand("translate", async (args, ctx,): Promise<CommandResult> => {
   const { config, db, } = ctx;

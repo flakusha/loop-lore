@@ -35,6 +35,7 @@ const UNTRUSTED_CLOSE = "</untrusted_user_content>";
  *   the marker so post-hoc audits can attribute a content block to its origin).
  * @param content - The raw user-supplied text. Must NOT be re-escaped — the
  *   block is a sandbox boundary, not a re-rendering step.
+ * @returns string
  */
 export function wrapUntrusted(source: string, content: string,): string {
   return [
@@ -63,6 +64,7 @@ export function wrapUntrusted(source: string, content: string,): string {
  * preamble differs. DO NOT re-duplicate either wrapper.
  * @param source - Identifies where the steering text came from.
  * @param content - The raw user-supplied steering text.
+ * @returns void
  */
 export function wrapSteering(source: string, content: string,): string {
   return [

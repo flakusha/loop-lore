@@ -29,6 +29,7 @@ export interface ProactiveRow {
 
 /**
  * @param row
+ * @returns ProactiveRow
  */
 export function rowToConfig(row: ProactiveRow,): ProactiveConfig {
   return {
@@ -51,6 +52,7 @@ export function rowToConfig(row: ProactiveRow,): ProactiveConfig {
  * @param db
  * @param chatId
  * @param actorId
+ * @returns void
  */
 export async function selectConfig(
   db: Kysely<DB>,
@@ -70,6 +72,7 @@ export async function selectConfig(
 /**
  * @param db
  * @param chatId
+ * @returns void
  */
 export async function selectChatConfigs(
   db: Kysely<DB>,
@@ -89,6 +92,7 @@ export async function selectChatConfigs(
  * @param chatId
  * @param actorId
  * @param input
+ * @returns void
  */
 export async function insertConfig(
   db: Kysely<DB>,
@@ -120,6 +124,7 @@ export async function insertConfig(
  * @param actorId
  * @param existing
  * @param input
+ * @returns void
  */
 export async function updateConfig(
   db: Kysely<DB>,
@@ -148,6 +153,7 @@ export async function updateConfig(
  * @param chatId
  * @param actorId
  * @param since
+ * @returns void
  */
 export async function countMessagesSince(
   db: Kysely<DB>,

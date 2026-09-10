@@ -35,6 +35,7 @@ const MAX_TIER_CHARS = 5000;
 /**
  * Normalize a tier value: trim, reject non-strings, clamp to the cap.
  * @param value
+ * @returns string
  */
 function normalizeTier(value: string | null | undefined,): string | null {
   if (typeof value !== "string") { return null; }

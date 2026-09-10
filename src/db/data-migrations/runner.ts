@@ -9,6 +9,7 @@ import { getLogger, } from "../../logger";
  * @param db
  * @param table
  * @param toVersion
+ * @returns string
  */
 async function isApplied(db: Kysely<DB>, table: string, toVersion: number,): Promise<boolean> {
   const row = await db
@@ -23,6 +24,7 @@ async function isApplied(db: Kysely<DB>, table: string, toVersion: number,): Pro
 /**
  * @param db
  * @param migration
+ * @returns void
  */
 async function markApplied(db: Kysely<DB>, migration: DataMigration,): Promise<void> {
   await db
@@ -94,6 +96,7 @@ export async function applyDataMigration(
 /**
  * @param db
  * @param logProgress
+ * @returns void
  */
 export async function runDataMigrations(db: Kysely<DB>, logProgress = true,): Promise<void> {
   const log = getLogger().child({ module: "data-migrations", },);

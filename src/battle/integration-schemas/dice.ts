@@ -59,6 +59,7 @@ export const STANDARD_DC: Record<string, DifficultyClass> = {
  * Roll `count` dice with `sides` faces and sum them.
  * @param sides
  * @param count
+ * @returns number
  */
 function rollSet(sides: number, count: number,): { rolls: number[]; total: number } {
   const rolls: number[] = [];
@@ -75,6 +76,7 @@ function rollSet(sides: number, count: number,): { rolls: number[]; total: numbe
  * @param type
  * @param count
  * @param modifiers
+ * @returns void
  */
 export function rollDice(
   type: DiceType,
@@ -129,6 +131,7 @@ export function rollDice(
  * @param skillBonus
  * @param dc
  * @param modifiers
+ * @returns void
  */
 export function makeSkillCheck(
   skillBonus: number,

@@ -36,6 +36,7 @@ export {
 /**
  * @param character
  * @param mode
+ * @returns void
  */
 export function validateCharacter(
   character: CanonicalCharacter,

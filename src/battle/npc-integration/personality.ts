@@ -9,6 +9,7 @@ import type {
 /**
  * Get NPC morale modifier from personality
  * @param personality
+ * @returns void
  */
 export function getPersonalityMoraleModifier(
   personality: NPCPersonality,
@@ -33,6 +34,7 @@ export function getPersonalityMoraleModifier(
  * @param currentHealth
  * @param maxHealth
  * @param battleMemories
+ * @returns void
  */
 export function wouldNPCSurrender(
   personality: NPCPersonality,

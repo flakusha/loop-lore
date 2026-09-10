@@ -98,6 +98,7 @@ registerCommand("heal", async (args, ctx,): Promise<CommandResult> => {
 /**
  * Parse a non-negative integer, or null when absent/invalid.
  * @param raw
+ * @returns string
  */
 function parseNonNegativeInt(raw: string | undefined,): number | null {
   if (!raw) { return null; }

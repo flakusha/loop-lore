@@ -25,6 +25,7 @@ interface BunSqliteWrapper {
 // that can't be expressed in Kysely's `readonly unknown[]` parameter signature.
 /**
  * @param database
+ * @returns Database
  */
 export function createSqliteDialect(database: Database,): SqliteDialect {
   // Always enforce WAL + foreign keys on the underlying connection, whether
@@ -61,6 +62,7 @@ export function createSqliteDialect(database: Database,): SqliteDialect {
 
 /**
  * @param databasePath
+ * @returns void
  */
 function createDialect(databasePath: string,): SqliteDialect {
   // Pragmas are applied inside createSqliteDialect so both paths are enforced.
@@ -82,6 +84,7 @@ let testDatabaseOverride: Kysely<DB> | null = null;
  * Override the global database instance for testing.
  * Pass null to clear the override.
  * @param db
+ * @returns void
  */
 export function setTestDatabase(db: Kysely<DB> | null,): void {
   testDatabaseOverride = db;

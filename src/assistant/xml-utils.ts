@@ -45,6 +45,7 @@ export function getSessionNonce(): string {
 
 /**
  * @param content
+ * @returns string
  */
 export function escapeXml(content: string,): string {
   return content.replaceAll("&", "&amp;",).replaceAll("<", "&lt;",).replaceAll(">", "&gt;",);
@@ -52,6 +53,7 @@ export function escapeXml(content: string,): string {
 
 /**
  * @param content
+ * @returns void
  */
 function escapeFence(content: string,): { escaped: string; fenceLen: number } {
   let maxBackticks = 0;
@@ -68,6 +70,7 @@ function escapeFence(content: string,): { escaped: string; fenceLen: number } {
 /**
  * @param content
  * @param tag
+ * @returns void
  */
 function escapeSentinel(content: string, tag: string,): string {
   return content
@@ -78,6 +81,7 @@ function escapeSentinel(content: string, tag: string,): string {
 /**
  * @param tag
  * @param content
+ * @returns void
  */
 function wrapXml(tag: string, content: string,): string {
   const safe = escapeXml(content,);
@@ -109,6 +113,7 @@ function wrapSentinel(tag: string, content: string,): string {
  * @param tag     Section tag name (e.g. "lore", "memory_context")
  * @param content The section's textual content
  * @param format  Wrapper format — "xml" (default), "fence", or "sentinel"
+ * @returns void
  */
 export function wrapContent(tag: string, content: string, format: WrapperFormat = "xml",): string {
   switch (format) {
@@ -130,6 +135,7 @@ export function wrapContent(tag: string, content: string, format: WrapperFormat 
  * with existing section builders. Calls wrapContent(tag, content, "xml").
  * @param tag
  * @param content
+ * @returns void
  */
 export function wrapSection(tag: string, content: string,): string {
   return wrapContent(tag, content, "xml",);

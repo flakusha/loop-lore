@@ -25,6 +25,7 @@ import type { MessageScore, PruneResult, PruningConfig, ScorableMessage, } from 
  * @param scores
  * @param sortedIndices
  * @param config
+ * @returns void
  */
 function selectMessagesToPrune(
   messages: ScorableMessage[],
@@ -59,6 +60,7 @@ function selectMessagesToPrune(
  * @param messages
  * @param scores
  * @param toPrune
+ * @returns void
  */
 function partitionMessages(
   messages: ScorableMessage[],
@@ -88,6 +90,7 @@ function partitionMessages(
 /**
  * @param messages
  * @param config
+ * @returns void
  */
 export function pruneMessages(
   messages: ScorableMessage[],

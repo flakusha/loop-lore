@@ -40,6 +40,7 @@ export type { AssembledPrompt, PromptParams, PromptSectionReport, } from "./prom
 /**
  * @param raw
  * @param fallback
+ * @returns string
  */
 function parseJsonOr<T,>(raw: string | null | undefined, fallback: T,): T {
   if (!raw) { return fallback; }

@@ -6,6 +6,7 @@
 /**
  * @param base
  * @param overrides
+ * @returns T
  */
 export function deepMerge<T extends Record<string, unknown>,>(base: T, overrides: Partial<T>,): T {
   const result = { ...base, };
@@ -30,6 +31,7 @@ export function deepMerge<T extends Record<string, unknown>,>(base: T, overrides
  * @param object
  * @param path
  * @param value
+ * @returns void
  */
 export function setByPath(object: Record<string, unknown>, path: string, value: unknown,): void {
   const parts = path.split(".",);
@@ -47,6 +49,7 @@ export function setByPath(object: Record<string, unknown>, path: string, value: 
 /**
  * @param value
  * @param targetType
+ * @returns void
  */
 export function coerceValue(value: string, targetType: string,): unknown {
   if (targetType === "number") { return Number(value,); }
@@ -61,6 +64,7 @@ export function coerceValue(value: string, targetType: string,): unknown {
 /**
  * @param object
  * @param configPath
+ * @returns void
  */
 export function getTypeOfPath(object: Record<string, unknown>, configPath: string,): string {
   const parts = configPath.split(".",);

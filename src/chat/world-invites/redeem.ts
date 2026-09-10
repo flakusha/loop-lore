@@ -19,6 +19,7 @@ import type { WorldRedeemOutcome, } from "./types";
  * @param input
  * @param input.code
  * @param input.actorId
+ * @returns void
  */
 export async function redeemWorldInvite(
   database: Kysely<DB>,

@@ -11,6 +11,7 @@ import { revokeInviteRow, } from "../invites/revoke-core";
  * @param database
  * @param worldId
  * @param inviteId
+ * @returns void
  */
 export async function revokeWorldInvite(
   database: Kysely<DB>,

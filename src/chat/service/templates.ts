@@ -23,6 +23,7 @@ import type { ChatSetupTemplate, } from "./types";
 /**
  * Parse the features JSON column into a string array.
  * @param raw
+ * @returns string
  */
 function parseFeatures(raw: string | null,): string[] | null {
   if (!raw) { return null; }
@@ -50,6 +51,7 @@ function parseFeatures(raw: string | null,): string[] | null {
  *     features: [rpg mode, no assistant]
  * ```
  * @param cwd
+ * @returns void
  */
 export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDefault[] {
   const base = cwd ?? process.cwd();
@@ -80,6 +82,7 @@ export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDe
 /**
  * Collect chat-setup template files under the repo config dirs.
  * @param base
+ * @returns void
  */
 function findTemplateCandidates(
   base: string,
@@ -106,6 +109,7 @@ function findTemplateCandidates(
 /**
  * Convert one raw config-file template entry into the default shape.
  * @param item
+ * @returns void
  */
 function toTemplateDefault(item: unknown,): ChatSetupTemplateDefault | null {
   const t = item as Record<string, unknown>;
@@ -161,6 +165,7 @@ export async function listChatSetupTemplates(
  * Resolve a chat setup template by id or slug.
  * @param database
  * @param templateId
+ * @returns void
  */
 export async function getChatSetupTemplate(
   database: Kysely<DB>,

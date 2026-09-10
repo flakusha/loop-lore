@@ -17,6 +17,7 @@ const EXPANSION_FILES = [
 /**
  * Find expansion config file in search directories.
  * @param cwd
+ * @returns string
  */
 export function findExpansionFile(cwd: string,): string | null {
   const searchDirs = [
@@ -41,6 +42,7 @@ export function findExpansionFile(cwd: string,): string | null {
 /**
  * Parse expansion config file (YAML or TOML).
  * @param filePath
+ * @returns void
  */
 export function parseExpansionFile(filePath: string,): ExpansionConfig {
   const content = readFileSync(filePath, "utf8",);

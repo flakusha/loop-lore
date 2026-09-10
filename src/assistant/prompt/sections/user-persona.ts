@@ -38,6 +38,7 @@ export const userPersonaSection: SectionBuilder = {
  * Build the user persona section from a stored persona.
  * @param ctx
  * @param personaId
+ * @returns void
  */
 async function buildPersonaSection(
   ctx: AssembleContext,
@@ -63,6 +64,7 @@ async function buildPersonaSection(
  * Build the user persona section from an impersonated actor.
  * @param ctx
  * @param impersonateActorId
+ * @returns void
  */
 async function buildImpersonationSection(
   ctx: AssembleContext,

@@ -73,6 +73,7 @@ export type SelectVnChoiceResult = SelectVnChoiceSuccess | ServiceError;
  * @param raw.status
  * @param raw.selected_at
  * @param raw.created_at
+ * @returns void
  */
 function parseVnChoice(raw: {
   id: string;
@@ -116,6 +117,7 @@ function parseVnChoice(raw: {
  * Returns only "available" (not yet selected) choices.
  * @param database
  * @param params
+ * @returns void
  */
 export async function listVnChoices(
   database: Kysely<DB>,
@@ -161,6 +163,7 @@ export async function listVnChoices(
  * `PUT /api/chats/:id/location` call).
  * @param database
  * @param params
+ * @returns void
  */
 export async function selectVnChoice(
   database: Kysely<DB>,

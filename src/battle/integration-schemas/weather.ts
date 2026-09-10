@@ -35,6 +35,7 @@ export interface EnvironmentalModifier {
 /**
  * Get weather modifiers for combat
  * @param weather
+ * @returns void
  */
 export function getCombatWeatherModifiers(
   weather: CombatWeather,

@@ -67,6 +67,7 @@ export interface CompressThenEncryptOpts {
  *
  * For DB-validating checks see `verifyEncryptedPayload` in at-rest.ts.
  * @param storedContent
+ * @returns boolean
  */
 export function isEncryptedPayload(storedContent: string,): boolean {
   if (typeof storedContent !== "string") { return false; }
@@ -106,6 +107,7 @@ export function isEncryptedPayload(storedContent: string,): boolean {
 /**
  * Extract key_id from an encrypted payload without full parsing.
  * @param storedContent
+ * @returns void
  */
 export function extractKeyIdFromPayload(storedContent: string,): string | null {
   const parsed = safeJsonParse<EncryptedPayload>(storedContent,);
@@ -120,6 +122,7 @@ export function extractKeyIdFromPayload(storedContent: string,): string | null {
  * @param root0.keyId
  * @param root0.config
  * @param root0.aId
+ * @returns void
  */
 export async function compressThenEncrypt({
   plaintext,
@@ -187,6 +190,7 @@ export async function compressThenEncrypt({
  * @param storedContent
  * @param chatKey
  * @throws If decryption fails (wrong key, tampered data).
+ * @returns void
  */
 export async function decryptThenDecompress(storedContent: string, chatKey: CryptoKey,): Promise<string> {
   // 1. Parse JSON

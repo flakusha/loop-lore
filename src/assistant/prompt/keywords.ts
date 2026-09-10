@@ -13,6 +13,7 @@ import { jsonParseOr, } from "../../utils";
 /**
  * Parse the `actor_memories.keywords` JSON column (string[] | null).
  * @param raw
+ * @returns string
  */
 export function parseKeywords(raw: unknown,): string[] {
   if (raw == null) { return []; }
@@ -37,6 +38,7 @@ export function parseKeywords(raw: unknown,): string[] {
  * the column is empty, invalid, or not a well-formed nest of string arrays —
  * callers should fall back to plain keyword matching.
  * @param raw
+ * @returns void
  */
 export function parseKeyGroups(raw: unknown,): string[][] | null {
   if (raw == null) { return null; }
@@ -61,6 +63,7 @@ export function parseKeyGroups(raw: unknown,): string[][] | null {
  * Tokenizes on non-alphanumeric boundaries and lowercases each word, matching
  * the keyword-matching semantics elsewhere in the project.
  * @param text
+ * @returns void
  */
 function wordsFromText(text: string,): Set<string> {
   const words: string[] = [];
@@ -75,6 +78,7 @@ function wordsFromText(text: string,): Set<string> {
  * @param db
  * @param chatId
  * @param limit
+ * @returns void
  */
 async function recentUserMessages(
   db: Kysely<DB>,
@@ -129,6 +133,7 @@ export async function recentConversation(
  * Lowercased word set of the most recent user message in a chat.
  * @param db
  * @param chatId
+ * @returns void
  */
 export async function recentUserWords(db: Kysely<DB>, chatId: string,): Promise<Set<string>> {
   const { words, } = await recentConversation(db, chatId, 1,);

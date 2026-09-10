@@ -17,6 +17,7 @@ import type { DB, } from "../../db/schema";
  * @param messageId
  * @param visibility
  * @param reason
+ * @returns void
  */
 export async function updateMessageVisibility(
   database: Kysely<DB>,

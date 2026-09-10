@@ -15,6 +15,7 @@ import type {
  * @param enemyCount
  * @param allyCount
  * @param battleMemories
+ * @returns void
  */
 export function makeNPCDecision(
   personality: NPCPersonality,
@@ -91,6 +92,7 @@ export function makeNPCDecision(
  * @param personality
  * @param healthPercent
  * @param isOutnumbered
+ * @returns void
  */
 function generateDecisionReasoning(
   type: NPCCombatDecision["type"],

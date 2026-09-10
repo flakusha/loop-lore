@@ -53,6 +53,7 @@ export async function compactPromptHistory(
  * @param sections
  * @param tokenBudget
  * @param totalTokens
+ * @returns void
  */
 export function dropOverBudgetSections(
   sections: PromptSectionReport[],
@@ -91,6 +92,7 @@ export function dropOverBudgetSections(
  * message at the same index is dropped too.
  * @param messages
  * @param sections
+ * @returns void
  */
 export function reorderPromptMessages(
   messages: GenerationMessage[],

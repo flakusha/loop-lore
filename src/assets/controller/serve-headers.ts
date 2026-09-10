@@ -18,6 +18,7 @@ const ACTIVE_CONTENT_TYPES: Record<string, true> = {
  * private/shared/restricted assets must stay out of shared caches — a
  * `public, immutable` header lets a shared cache replay private bytes to a
  * @param asset
+ * @returns string
  */
 export function cacheControlFor(asset: AssetRecord,): string {
   if (asset.visibility === "public") {
@@ -32,6 +33,7 @@ export function cacheControlFor(asset: AssetRecord,): string {
  * everything else stays inline.
  * @param asset
  * @param filename
+ * @returns void
  */
 export function contentDispositionFor(asset: AssetRecord, filename: string,): Record<string, string> {
   const safeName = filename.replace(/[^\w.\- ]+/g, "_",);

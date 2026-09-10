@@ -62,6 +62,7 @@ export interface GenerateEmotionAvatarOpts {
  * @param svc
  * @param job
  * @param opts
+ * @returns void
  */
 export async function runBatchGeneration(
   svc: GenerationDispatchHandle,
@@ -153,6 +154,7 @@ export async function runBatchGeneration(
  * @param opts.baseAvatarId
  * @param opts.fallbackMode
  * @param opts.avatarEmotions
+ * @returns void
  */
 export async function generateEmotionAvatar(
   svc: GenerationDispatchHandle,

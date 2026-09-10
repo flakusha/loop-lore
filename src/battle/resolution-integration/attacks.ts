@@ -19,6 +19,7 @@ import type {
  * @param targetAC
  * @param modifiers
  * @param criticalThreshold
+ * @returns void
  */
 export function makeAttackRoll(
   attackBonus: number,
@@ -61,6 +62,7 @@ export function makeAttackRoll(
  * @param modifiers
  * @param isCritical
  * @param damageType
+ * @returns void
  */
 export function calculateDamage(
   baseDamage: string, // e.g., "2d6+3"

@@ -49,6 +49,7 @@ interface LoreRow extends ActivationEntry {
  * Check if a lore entry's cooldown has expired.
  * @param lastActivated
  * @param cooldownSeconds
+ * @returns void
  */
 function isCooldownExpired(
   lastActivated: string | null,
