@@ -427,7 +427,33 @@ describe("sender fan-out", () => {
       cipher,
       { id: "fan-4", content: "nowhere", clock: 10, },
     );
-    expect(result,).toEqual({ targets: [], stored: [], stale: [], failed: [], },);
+    expect(result,).toEqual({ targets: [], stored: [], stale: [], failed: [], skipped: [], },);
     expect(calls,).toBe(0,);
+  });
+
+  test("skips targets whose known capacity cannot fit the payload", async () => {
+    const { db, } = await createTestDb();
+    await upsertPeer(db, { origin: "https://b.example", state: "trusted", capacityBytes: 4, },);
+    await upsertPeer(db, { origin: "https://c.example", state: "trusted", },);
+    const attempted: string[] = [];
+    const post = (async (url: string,) => {
+      attempted.push(url,);
+      if (url.endsWith("/api/mesh-reserve",)) {
+        return { ok: true, status: 200, body: { reservationId: "r-cap", }, };
+      }
+      return { ok: true, status: 200, body: { verdict: "stored", }, };
+    }) as PeerPost;
+    const result = await fanOutContent(
+      db,
+      post,
+      "https://a.example",
+      POLICY,
+      cipher,
+      { id: "fan-5", content: "eleven bytes!", clock: 11, },
+    );
+    expect(result.skipped,).toHaveLength(1,);
+    expect(result.skipped[0]?.origin,).toBe("https://b.example",);
+    expect(result.skipped[0]?.reason,).toMatch(/capacity/,);
+    expect(attempted.some((url,) => url.startsWith("https://b.example",)),).toBe(false,);
   });
 });
