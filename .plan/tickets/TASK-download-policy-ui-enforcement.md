@@ -3,7 +3,7 @@
 
 # TASK: Download policy UI enforcement
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (`gguf-downloader-policy`)
 **Priority:** high
 **Effort:** Small
 **Labels:** byok, local-models, policy, browser, security
@@ -33,11 +33,11 @@ fully client-side, so enforcement must live in the UI via an advertised flag.
 
 ## Acceptance Criteria
 
-- [ ] `allowDownloads: false` removes every download affordance in the
+- [x] `allowDownloads: false` removes every download affordance in the
       manager (catalog + direct URL); `true` restores current behavior.
-- [ ] Per-model override blocks only that entry; unknown ids ignored.
-- [ ] Bypass covered by tests (direct-URL path gated, not just hidden).
-- [ ] Coverage >= 80% on touched modules; `bun run check` green.
+- [x] Per-model override blocks only that entry; unknown ids ignored.
+- [x] Bypass covered by tests (direct-URL path gated, not just hidden).
+- [x] Coverage >= 80% on touched modules; `bun run check` green.
 
 ## Out of scope
 
