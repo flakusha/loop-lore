@@ -16,6 +16,10 @@
  * the host when publishing and omitted while unknown. The downloader
  * verifies both when present and records the digest otherwise.
  *
+ * Two engine families: transformers.js (ONNX instruct models) and wllama
+ * (llama.cpp GGUF models). The user chooses by catalog model — each entry
+ * names its engine, and the browser routes to the matching worker.
+ *
  * @module inference/manifest
  */
 
@@ -72,17 +76,31 @@ export interface LocalModelFile {
   sha256?: string;
 }
 
-/** Browser model descriptor (transformers.js/WebGPU, lazy-loaded, never bundled). */
+/** Browser model descriptor (transformers.js or wllama, lazy-loaded, never bundled). */
 export interface LocalModelDescriptor {
   id: string;
   label: string;
-  engine: "transformers-webgpu" | "transformers-wasm";
+  engine: "transformers-webgpu" | "transformers-wasm" | "wllama-webgpu" | "wllama-wasm";
   parameters: string;
   quantization: string;
   files: LocalModelFile[];
+  /** GGUF source for wllama entries (repo + file for loadModelFromHF). Absent on transformers.js entries. */
+  gguf?: {
+    repo: string;
+    file: string;
+  };
 }
 
-/** Small instruct models suitable for auxiliary tasks on consumer hardware. */
+/**
+ * Whether a catalog entry runs on the wllama (llama.cpp) backend.
+ * @param engine - Engine identifier from the catalog descriptor.
+ * @returns True for wllama engines (GGUF); false for transformers.js (ONNX).
+ */
+export function isWllamaEngine(engine: string,): boolean {
+  return engine === "wllama-webgpu" || engine === "wllama-wasm";
+}
+
+/** Small models suitable for auxiliary tasks on consumer hardware. */
 export const BROWSER_MODEL_CATALOG: readonly LocalModelDescriptor[] = [
   {
     id: "SmolLM2-360M-Instruct",
@@ -125,6 +143,33 @@ export const BROWSER_MODEL_CATALOG: readonly LocalModelDescriptor[] = [
         url: "https://huggingface.co/onnx-community/Qwen2.5-0.5B-Instruct/resolve/main/config.json",
       },
     ],
+  },
+  {
+    id: "stories260K-GGUF",
+    label: "stories260K GGUF (tiny, llama.cpp — smoke test)",
+    engine: "wllama-webgpu",
+    parameters: "0.26M",
+    quantization: "q8_0",
+    // No downloader-managed files: wllama loads GGUF itself via loadModelFromHF.
+    files: [],
+    gguf: {
+      // Upstream wllama README pair; HF redirects ggml-org/models → models-moved.
+      repo: "ggml-org/models",
+      file: "tinyllamas/stories260K.gguf",
+    },
+  },
+  {
+    id: "stories15M-q8_0-GGUF",
+    label: "stories15M Q8 GGUF (small, llama.cpp)",
+    engine: "wllama-webgpu",
+    parameters: "15M",
+    quantization: "q8_0",
+    // No downloader-managed files: wllama loads GGUF itself via loadModelFromHF.
+    files: [],
+    gguf: {
+      repo: "ggml-org/models",
+      file: "tinyllamas/stories15M-q8_0.gguf",
+    },
   },
 ];
 

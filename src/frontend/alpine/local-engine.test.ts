@@ -9,7 +9,14 @@
  */
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { createLocalEngine, resetLocalEngine, } from "./local-engine";
-import { isEngineResponse, } from "./local-engine-protocol";
+import {
+  ENGINE_WORKER_URL,
+  isEngineResponse,
+  TRANSFORMERS_CDN,
+  WLLAMA_CDN,
+  WLLAMA_ENGINE_WORKER_URL,
+  WLLAMA_WASM_URL,
+} from "./local-engine-protocol";
 import { isModelReady, LocalInferenceUnavailable, } from "./local-inference";
 
 /** Fake Worker twin — engine drives it via postMessage, tests answer. */
@@ -192,6 +199,69 @@ describe("createLocalEngine lifecycle", () => {
       LocalInferenceUnavailable,
     );
     expect(engine.loadedModel(),).toBeNull();
+  });
+});
+
+describe("createLocalEngine wllama routing", () => {
+  test("wllama load targets the wllama worker with GGUF source and CDN", async () => {
+    const fake = createFake();
+    const urls: string[] = [];
+    const engine = createLocalEngine({
+      workerFactory: (url,) => {
+        urls.push(url,);
+        return fake as unknown as Worker;
+      },
+    },);
+    const pending = engine.loadModel("stories260K-GGUF",);
+    expect(urls,).toEqual([WLLAMA_ENGINE_WORKER_URL,],);
+    const first = fake.posted[0] as Record<string, unknown>;
+    expect(first.kind,).toBe("load",);
+    expect(first.cdn,).toBe(WLLAMA_CDN,);
+    expect(first.wasmUrl,).toBe(WLLAMA_WASM_URL,);
+    expect(first.modelSource,).toEqual({ repo: "ggml-org/models", file: "tinyllamas/stories260K.gguf", },);
+    fake.respond({ kind: "ready", id: first.id, engine: "wllama-webgpu", },);
+    await expect(pending,).resolves.toBe("wllama-webgpu",);
+    expect(engine.loadedModel(),).toBe("stories260K-GGUF",);
+  });
+
+  test("transformers load still targets the transformers worker without a GGUF source", async () => {
+    const fake = createFake();
+    const urls: string[] = [];
+    const engine = createLocalEngine({
+      workerFactory: (url,) => {
+        urls.push(url,);
+        return fake as unknown as Worker;
+      },
+    },);
+    const pending = engine.loadModel("SmolLM2-360M-Instruct",);
+    expect(urls,).toEqual([ENGINE_WORKER_URL,],);
+    const first = fake.posted[0] as Record<string, unknown>;
+    expect(first.cdn,).toBe(TRANSFORMERS_CDN,);
+    expect("modelSource" in first,).toBe(false,);
+    fake.respond({ kind: "ready", id: first.id, engine: "transformers-webgpu", },);
+    await pending;
+  });
+
+  test("switching engine families recreates the worker", async () => {
+    const first = createFake();
+    const second = createFake();
+    const urls: string[] = [];
+    const fakes = [first, second,];
+    const engine = createLocalEngine({
+      workerFactory: (url,) => {
+        urls.push(url,);
+        return fakes[urls.length - 1] as unknown as Worker;
+      },
+    },);
+    const loading = engine.loadModel("SmolLM2-360M-Instruct",);
+    first.respond({ kind: "ready", id: (first.posted[0] as Posted).id, engine: "transformers-webgpu", },);
+    await loading;
+    const switching = engine.loadModel("stories260K-GGUF",);
+    expect(urls,).toEqual([ENGINE_WORKER_URL, WLLAMA_ENGINE_WORKER_URL,],);
+    expect(first.onmessage,).toBeNull();
+    second.respond({ kind: "ready", id: (second.posted[0] as Posted).id, engine: "wllama-webgpu", },);
+    await expect(switching,).resolves.toBe("wllama-webgpu",);
+    expect(engine.loadedModel(),).toBe("stories260K-GGUF",);
   });
 });
 
