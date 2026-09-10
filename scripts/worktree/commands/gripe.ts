@@ -14,7 +14,7 @@
  */
 
 import type { WorktreeConfig, } from "../utils/config";
-import { appendLedger, formatRecord, readLedger, } from "../utils/ledger";
+import { appendGripe, formatRecord, readLedger, } from "../utils/ledger";
 import { log, } from "../utils/output";
 
 export async function gripe(
@@ -48,7 +48,7 @@ export async function gripe(
     process.exit(1,);
   }
 
-  appendLedger(config.treeDir, "gripe", at === "" ? [] : [at,], `😤 ${message}`,);
+  appendGripe(config.treeDir, at, message,);
   const latest = readLedger(config.treeDir, 1,).at(-1,);
   log("success", "Gripe recorded — the ledger remembers",);
   if (latest) { console.log(`  ${formatRecord(latest,)}`,); }

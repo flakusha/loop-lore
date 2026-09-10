@@ -7,7 +7,7 @@ import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { getRootBranch, gitSync, gitSyncQuiet, } from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
-import { printRecentLedger, } from "../utils/ledger";
+import { appendGripe, printRecentLedger, } from "../utils/ledger";
 import { colorize, log, section, } from "../utils/output";
 import { DEV_IN_PROGRESS_HEADS, FINALIZE_STASH_PREFIX, } from "./abort";
 
@@ -527,10 +527,36 @@ function runTests(wtPath: string,): boolean {
   return result.exitCode === 0;
 }
 
+/**
+ * Install the failure-gripe exit hook for one finalize run.
+ *
+ * Most finalize refusals exit via `process.exit(1)` deep inside
+ * runFinalize, bypassing try/catch. The hook records a gripe for
+ * exactly those paths; the thrown-error path records its own detailed
+ * gripe (this hook is gone by then — uninstallSignalHandlers removes
+ * all exit listeners). Only exit code 1 gripes: success (0) and signal
+ * abort (130, covered by handleSignalAbort) stay quiet.
+ * Best-effort: never throws (see appendLedger).
+ *
+ * @param treeDir - shared tree directory holding the ledger
+ * @param getBranch - reads the current branch hint at exit time
+ */
+function installFailureGripe(treeDir: string, getBranch: () => string,): void {
+  const gripeOnFail = (): void => {
+    if (process.exitCode !== 1) { return; }
+    const branch = getBranch();
+    const target = branch === "" ? "?" : branch;
+    appendGripe(treeDir, branch, `finalize ${target} failed (exit 1) — see console output`,);
+  };
+  process.on("exit", gripeOnFail,);
+}
+
 export async function finalize(
   args: string[],
   config: WorktreeConfig,
 ): Promise<void> {
+  let gripeBranch = "";
+  installFailureGripe(config.treeDir, () => gripeBranch,);
   // finalize is allowed from inside the worktree (e.g. while iterating on it):
   // the explicit branch arg identifies the target worktree, and loadConfig now
   // resolves repoRoot correctly via --git-common-dir regardless of cwd.
@@ -551,6 +577,7 @@ export async function finalize(
     }
   }
   branch = nonFlagArgs[0] || "";
+  gripeBranch = branch;
 
   if (!["rebase", "squash", "direct",].includes(mergeStrategy,)) {
     log("error", `unknown merge strategy '${mergeStrategy}' — use rebase, squash, or direct`,);
@@ -571,6 +598,7 @@ export async function finalize(
     if (headRef && headRef !== branch) {
       log("info", `Resolved '${branch}' → branch '${headRef}'`,);
       branch = headRef;
+      gripeBranch = branch;
     }
   }
 
@@ -613,6 +641,10 @@ export async function finalize(
   try {
     try {
       await runFinalize(branch, mergeStrategy, force, config, wtPath, targetBranch,);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error,);
+      appendGripe(config.treeDir, branch, `finalize ${branch} failed: ${reason}`,);
+      throw error;
     } finally {
       uninstallSignalHandlers();
     }
