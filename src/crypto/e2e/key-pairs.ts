@@ -199,7 +199,8 @@ export async function deriveSharedBytes(opts: DeriveSharedSecretOpts,): Promise<
 
 /**
  * WebCrypto requires `BufferSource` for input; many lib versions don't accept `Uint8Array` directly.
- * @param bytes
+ * @param bytes - typed-array view of key material
+ * @returns a fresh `Uint8Array<ArrayBuffer>` (no shared memory with the caller).
  */
 function toBufferSource(bytes: Uint8Array,): Uint8Array<ArrayBuffer> {
   // Slice into a fresh ArrayBuffer so the typed array satisfies BufferSource's

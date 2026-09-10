@@ -37,14 +37,17 @@ const KIND_LABELS: Record<EntityKind, string> = {
   world: "World",
   item: "Item",
 };
-/** Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests). */
+/**
+ * Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests).
+ * @returns a child logger namespaced for the `create` module.
+ */
 const getLog = (): Logger => getLogger().child({ module: "create", },);
 
-/*** Pull the active world context (name + description) if a world is scoped. */
 /**
- * @param db
- * @param worldId
- * @returns void
+ * Resolve the active world's `{ name, description }` if a non-default world is scoped.
+ * @param db - Kysely handle
+ * @param worldId - world id, or `"default"` for the implicit default
+ * @returns `{ name, description? }` for the named world, or `undefined` when no / default world.
  */
 async function resolveWorldContext(
   db: NonNullable<CommandContext["db"]>,

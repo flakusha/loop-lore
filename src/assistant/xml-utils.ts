@@ -31,7 +31,9 @@ export type WrapperFormat = "xml" | "fence" | "sentinel";
 
 let _sessionNonce: string | null = null;
 
-/** */
+/**
+ * @returns the (lazily-initialized) base64 session nonce for the current process.
+ */
 export function getSessionNonce(): string {
   if (!_sessionNonce) {
     const bytes = new Uint8Array(12,);
@@ -89,8 +91,9 @@ function wrapXml(tag: string, content: string,): string {
 }
 
 /**
- * @param tag
- * @param content
+ * @param tag - section tag name
+ * @param content - section body
+ * @returns the fence-wrapped section string (backticks + tag header).
  */
 function wrapFence(tag: string, content: string,): string {
   const { escaped, fenceLen, } = escapeFence(content,);
@@ -99,8 +102,9 @@ function wrapFence(tag: string, content: string,): string {
 }
 
 /**
- * @param tag
- * @param content
+ * @param tag - section tag name
+ * @param content - section body
+ * @returns the sentinel-wrapped section string (`<<tag>>…<</tag>>`).
  */
 function wrapSentinel(tag: string, content: string,): string {
   const safe = escapeSentinel(content, tag,);
@@ -113,7 +117,7 @@ function wrapSentinel(tag: string, content: string,): string {
  * @param tag     Section tag name (e.g. "lore", "memory_context")
  * @param content The section's textual content
  * @param format  Wrapper format — "xml" (default), "fence", or "sentinel"
- * @returns void
+ * @returns the wrapped content string.
  */
 export function wrapContent(tag: string, content: string, format: WrapperFormat = "xml",): string {
   switch (format) {
@@ -133,9 +137,9 @@ export function wrapContent(tag: string, content: string, format: WrapperFormat 
 /**
  * Convenience alias — wraps content in XML tags. Kept for backward compatibility
  * with existing section builders. Calls wrapContent(tag, content, "xml").
- * @param tag
- * @param content
- * @returns void
+ * @param tag - section tag name
+ * @param content - section body
+ * @returns the XML-wrapped section string.
  */
 export function wrapSection(tag: string, content: string,): string {
   return wrapContent(tag, content, "xml",);

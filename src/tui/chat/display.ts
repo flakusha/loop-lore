@@ -4,8 +4,9 @@
 import type { ChatMessage, } from "./types";
 
 /**
- * Format a message line for display in the blessed list.
- * @param message
+ * Format a message line for display in the blessed list (truncated to 200 chars).
+ * @param message - chat message
+ * @returns blessed markup string `<bold>{actor|role}</bold>: <content…>`.
  */
 export function formatMessageLine(message: ChatMessage,): string {
   const prefix = message.actorName

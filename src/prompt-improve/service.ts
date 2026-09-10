@@ -59,7 +59,10 @@ export interface PromptAnalysis {
   confidence: number;
 }
 
-/** */
+/**
+ * Lazy logger for the prompt-improve module.
+ * @returns a child logger namespaced for `prompt-improve`.
+ */
 function getLog() {
   return getLogger().child({ module: "prompt-improve", },);
 }
@@ -68,7 +71,8 @@ function getLog() {
  * Improve the given text through the auxiliary LLM at the requested level.
  * Returns null when the aux path is unavailable or fails — callers apply the
  * local fallback themselves (or use {@link improveOrPolish}).
- * @param options
+ * @param options - improvement inputs (level, text, styleContext, config, db, userId, chatId)
+ * @returns the improvement result, or `null` when AUX is unavailable / blank.
  */
 export async function improvePrompt(options: PromptImproveOptions,): Promise<PromptImproveResult | null> {
   const { level, text, styleContext, config, db, userId, chatId, } = options;
@@ -95,7 +99,8 @@ export async function improvePrompt(options: PromptImproveOptions,): Promise<Pro
 
 /**
  * Improve-or-fallback convenience: never returns empty.
- * @param options
+ * @param options - improvement inputs (level, text, styleContext, config, db, userId, chatId)
+ * @returns the improvement result, or the local-polish fallback when AUX is unavailable.
  */
 export async function improveOrPolish(options: PromptImproveOptions,): Promise<PromptImproveResult> {
   const improved = await improvePrompt(options,);
@@ -115,7 +120,8 @@ export async function improveOrPolish(options: PromptImproveOptions,): Promise<P
 /**
  * Analyze a draft message (intent/clarity profile) through the aux LLM.
  * Returns null when the aux path fails — the analyzer is advisory only.
- * @param options - Only `text`, `config`, `db`, `userId`, `chatId` are read.
+ * @param options - only `text`, `config`, `db`, `userId`, `chatId` are read.
+ * @returns parsed `PromptAnalysis` profile, or `null` when AUX is unavailable.
  */
 export async function analyzePrompt(
   options: Omit<PromptImproveOptions, "level" | "styleContext">,
@@ -135,7 +141,8 @@ export async function analyzePrompt(
  * Extract and validate the analysis JSON, clamping every numeric field.
  * Hardened like `parseIntentClassification`: malformed/injected payloads can
  * never produce out-of-range confidence.
- * @param raw
+ * @param raw - raw LLM response text
+ * @returns parsed `PromptAnalysis`, or `null` when the payload is invalid.
  */
 export function parseAnalysis(raw: string,): PromptAnalysis | null {
   const start = raw.indexOf("{",);
@@ -166,7 +173,8 @@ export function parseAnalysis(raw: string,): PromptAnalysis | null {
 
 /**
  * Local deterministic fallback: capitalization, punctuation, whitespace.
- * @param text
+ * @param text - raw user input
+ * @returns polished text with capitalization + ending punctuation + normalized whitespace.
  */
 export function polishText(text: string,): string {
   let result = text.trim();
@@ -192,7 +200,8 @@ export function polishText(text: string,): string {
 
 /**
  * Strip wrapping quotes/code fences a chatty model may add around the text.
- * @param content
+ * @param content - raw LLM response string
+ * @returns unwrapped inner text (or the original when no wrapper matched).
  */
 function stripWrappers(content: string,): string {
   let out = content.trim();
@@ -203,14 +212,17 @@ function stripWrappers(content: string,): string {
   return out;
 }
 
-/** @param value */
+/**
+ * @param value - candidate number
+ * @returns `value` clamped to `[0, 1]`, or `0` when not a finite number.
+ */
 function clamp01(value: unknown,): number {
   return typeof value === "number" && Number.isFinite(value,) ? Math.min(1, Math.max(0, value,),) : 0;
 }
 
 /**
- * @param value
- * @returns String array, or null when not an array of strings
+ * @param value - candidate `unknown` (typically an `array` field from parsed JSON)
+ * @returns string array, or `null` when not strictly `Array<string>`.
  */
 function toStringArray(value: unknown,): string[] | null {
   if (!Array.isArray(value,)) { return null; }

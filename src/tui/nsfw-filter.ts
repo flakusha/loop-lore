@@ -52,8 +52,9 @@ export class NsfwFilter {
 
   /**
    * Check if a message contains NSFW content.
-   * @param content
-   * @param contentRating
+   * @param content - message body
+   * @param contentRating - optional upstream rating hint
+   * @returns `true` when the message matches a trigger rating or keyword.
    */
   isNsfw(content: string, contentRating?: string,): boolean {
     // Check content rating
@@ -70,8 +71,10 @@ export class NsfwFilter {
    * Filter a message based on NSFW content.
    *
    * Returns the filtered content or null if hidden.
-   * @param content
-   * @param contentRating
+   * @param content - message body
+   * @param contentRating - optional upstream rating hint
+   * @returns filtered string per the configured mode (`blur`, `hide`, `fade_to_black`, …),
+   *   or `null` when the message is fully hidden.
    */
   filter(content: string, contentRating?: string,): string | null {
     if (!this.isNsfw(content, contentRating,)) {
@@ -102,7 +105,7 @@ export class NsfwFilter {
   }
 
   /**
-   * Get the current filter mode.
+   * @returns currently-configured filter mode (`show` / `blur` / `hide` / `fade_to_black`).
    */
   getMode(): NsfwFilterMode {
     return this.config.mode;

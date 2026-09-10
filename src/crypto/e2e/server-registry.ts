@@ -176,7 +176,9 @@ interface ActorE2EPubkeyRow {
 }
 
 /**
- * @param jwk
+ * @param jwk - public JWK stored on disk
+ * @returns `safeJsonStringify`-safe canonical JSON of the JWK.
+ * @throws {Error} when JSON serialization fails.
  */
 function serializeJwk(jwk: JsonWebKey,): string {
   const r = safeJsonStringify(jwk,);
@@ -185,7 +187,9 @@ function serializeJwk(jwk: JsonWebKey,): string {
 }
 
 /**
- * @param row
+ * @param row - raw `actor_e2e_pubkeys` row from SQLite
+ * @returns the row mapped to the camelCase `PublicKeyRow` shape with parsed JWK.
+ * @throws {Error} when `public_key_jwk` is malformed JSON.
  */
 function rowToPublicKey(row: ActorE2EPubkeyRow,): PublicKeyRow {
   const parsed = safeJsonParse<JsonWebKey>(row.public_key_jwk,);

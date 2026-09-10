@@ -25,7 +25,8 @@ const MIME_TYPES: Record<string, string> = {
 };
 
 /**
- * @param filePath
+ * @param filePath - file path or URL
+ * @returns MIME type string (`text/plain` for unknown extensions).
  */
 function getContentType(filePath: string,): string {
   const extension = filePath.split(".",).pop()?.toLowerCase() ?? "";
@@ -37,7 +38,8 @@ const PUBLIC_DIR = join(import.meta.dir, "..", "..", "dist", "public",);
 const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg",],);
 
 /**
- * @param filePath
+ * @param filePath - file path
+ * @returns `true` when the file's extension is in the compressible set (css/js/html/json/svg).
  */
 function isCompressible(filePath: string,): boolean {
   const extension = filePath.split(".",).pop()?.toLowerCase();
@@ -45,8 +47,9 @@ function isCompressible(filePath: string,): boolean {
 }
 
 /**
- * @param filePath
- * @param acceptEncoding
+ * @param filePath - base file path
+ * @param acceptEncoding - HTTP `Accept-Encoding` header value
+ * @returns `{ path, encoding }` for the best matching pre-compressed variant (prefers `br` > `zstd` > `gzip`), or `null` when the file is not compressible or no variant is available.
  */
 function findCompressedVariant(
   filePath: string,
@@ -71,7 +74,8 @@ function findCompressedVariant(
 }
 
 /**
- * @param dir
+ * @param dir - directory to enumerate
+ * @returns array of file names directly inside `dir` (non-recursive; no path joining).
  */
 function walkDirectorySync(dir: string,): string[] {
   const files: string[] = [];
@@ -87,7 +91,8 @@ function walkDirectorySync(dir: string,): string[] {
 /**
  * Compute a weak ETag from file mtime + size.
  * Weak ETag (W/"…") allows semantically equivalent variants (e.g. gzip vs br).
- * @param filePath
+ * @param filePath - file path
+ * @returns weak ETag string (e.g. `W/"1700000000000-12345"`).
  */
 function computeEtag(filePath: string,): string {
   const stat = statSync(filePath,);
@@ -97,7 +102,8 @@ function computeEtag(filePath: string,): string {
 /**
  * Detect whether a file path contains a content hash (build output).
  * Hash format: filename.HASH.ext where HASH is ~8+ hex chars.
- * @param filePath
+ * @param filePath - file path
+ * @returns `true` when the basename matches `<name>.<8+ hex>.<ext>`.
  */
 function isHashedAsset(filePath: string,): boolean {
   const name = filePath.split("/",).pop() ?? "";
@@ -112,8 +118,9 @@ const STATIC_CACHE_MAX_AGE = 60;
 /**
  * Build the Cache-Control header value for a static file response.
  * Hashed assets (content-hashed filenames) get long-lived immutable caching.
- * @param filePath
- * @param maxAge
+ * @param filePath - file path (checked for content-hash segment)
+ * @param maxAge - cache lifetime in seconds (`<= 0` → `no-store`)
+ * @returns Cache-Control header value.
  */
 function buildCacheControl(filePath: string, maxAge: number,): string {
   if (maxAge <= 0) { return "no-store"; }
@@ -124,10 +131,11 @@ function buildCacheControl(filePath: string, maxAge: number,): string {
 /**
  * Serve a static file with optional compressed variant, cache headers, and ETag.
  * Shared between docs path and public path serving.
- * @param fullPath
- * @param acceptEncoding
- * @param ifNoneMatch
- * @param cacheMaxAge
+ * @param fullPath - absolute file path on disk
+ * @param acceptEncoding - `Accept-Encoding` header value (may be empty)
+ * @param ifNoneMatch - `If-None-Match` header value (may be null)
+ * @param cacheMaxAge - cache lifetime in seconds (default `STATIC_CACHE_MAX_AGE`)
+ * @returns `Response` with file body (200) or 304 when ETag matches.
  */
 function respondWithFile(
   fullPath: string,
@@ -171,10 +179,11 @@ function respondWithFile(
 }
 
 /**
- * @param url
- * @param request
- * @param docs
- * @param docs.public
+ * @param url - parsed request URL
+ * @param request - incoming request (used for headers)
+ * @param docs - docs configuration
+ * @param docs.public - optional whitelist of allowed top-level doc sections
+ * @returns served `Response`, or `null` when the URL is not under `/docs/`, docs are disabled, or path traversal is detected.
  */
 export function handleDocsRequest(
   url: URL,
@@ -220,8 +229,9 @@ export function handleDocsRequest(
 
 /**
  * Build the non-API request handler: serves views, docs, and static files.
- * @param docs
- * @param docs.public
+ * @param docs - docs configuration
+ * @param docs.public - optional whitelist of allowed top-level doc sections
+ * @returns async request handler returning a `Response` (200/302/304/404).
  */
 export function createNonApiHandler(
   docs: { public?: string[] },
@@ -256,8 +266,9 @@ export function createNonApiHandler(
 }
 
 /**
- * Resolve file path, appending .html if needed. Returns null if not found.
- * @param publicPath
+ * Resolve file path, appending .html if needed.
+ * @param publicPath - candidate file path under the public dir
+ * @returns the existing file path (possibly with `.html` appended), or `null` if neither exists.
  */
 function resolveFilePath(publicPath: string,): string | null {
   if (existsSync(publicPath,)) { return publicPath; }
@@ -266,8 +277,9 @@ function resolveFilePath(publicPath: string,): string | null {
 }
 
 /**
- * Check if a file starts with valid HTML doctype/tag.
- * @param fullPath
+ * Check if a file starts with a valid HTML doctype/tag.
+ * @param fullPath - absolute file path
+ * @returns `true` when the first non-whitespace chunk of the file is `<!doctype` / `<!DOCTYPE` / `<html`.
  */
 function isValidHtml(fullPath: string,): boolean {
   const head = readFileSync(fullPath, "utf8",).slice(0, 1024,).trimStart();

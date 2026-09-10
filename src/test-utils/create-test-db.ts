@@ -19,7 +19,12 @@ export interface TestDb {
   db: Kysely<DB>;
   sqlite: Database;
 }
-/** */
+/**
+ * Create an in-memory SQLite DB with all migrations applied.
+ * Logger is force-initialized at error level; `mock.module` stubs in
+ * individual suites are responsible for additional isolation.
+ * @returns `{ db, sqlite }` pair; `sqlite` is exposed for PRAGMA-level introspection tests.
+ */
 export async function createTestDb(): Promise<TestDb> {
   const sqlite = new Database(":memory:",);
   sqlite.run("PRAGMA foreign_keys = ON",);

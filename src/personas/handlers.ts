@@ -38,9 +38,10 @@ interface DeletePersonaOpts {
 }
 
 /**
- * @param root0
- * @param root0.database
- * @param root0.context
+ * @param root0 - options
+ * @param root0.database - Kysely DB handle
+ * @param root0.context - request context (userId, sessionId, role)
+ * @returns 200 JSON list of the user's personas, or 401 when unauthenticated.
  */
 export async function handleListPersonas({ database, context, }: ListPersonasOpts,): Promise<Response> {
   const userId = context.userId;
@@ -58,10 +59,11 @@ export async function handleListPersonas({ database, context, }: ListPersonasOpt
 }
 
 /**
- * @param root0
- * @param root0.database
- * @param root0.body
- * @param root0.context
+ * @param root0 - options
+ * @param root0.database - Kysely DB handle
+ * @param root0.body - request body
+ * @param root0.context - request context
+ * @returns 201 with new persona id, or 400/401 on validation / auth failure.
  */
 export async function handleCreatePersona({ database, body, context, }: CreatePersonaOpts,): Promise<Response> {
   const userId = context.userId;
@@ -94,10 +96,11 @@ export async function handleCreatePersona({ database, body, context, }: CreatePe
 }
 
 /**
- * @param root0
- * @param root0.database
- * @param root0.personaId
- * @param root0.context
+ * @param root0 - options
+ * @param root0.database - Kysely DB handle
+ * @param root0.personaId - target persona id
+ * @param root0.context - request context
+ * @returns 200 with the persona JSON, or 401/404 on auth / not-found.
  */
 export async function handleGetPersona({ database, personaId, context, }: GetPersonaOpts,): Promise<Response> {
   const userId = context.userId;
@@ -118,11 +121,12 @@ export async function handleGetPersona({ database, personaId, context, }: GetPer
 }
 
 /**
- * @param root0
- * @param root0.database
- * @param root0.personaId
- * @param root0.body
- * @param root0.context
+ * @param root0 - options
+ * @param root0.database - Kysely DB handle
+ * @param root0.personaId - target persona id
+ * @param root0.body - partial persona fields to update
+ * @param root0.context - request context
+ * @returns 200 with `{ ok: true }`, or 401/404 on auth / not-found.
  */
 export async function handleUpdatePersona({
   database,
@@ -166,10 +170,11 @@ export async function handleUpdatePersona({
 }
 
 /**
- * @param root0
- * @param root0.database
- * @param root0.personaId
- * @param root0.context
+ * @param root0 - options
+ * @param root0.database - Kysely DB handle
+ * @param root0.personaId - target persona id
+ * @param root0.context - request context
+ * @returns 204 No Content on success, or 401 on auth failure.
  */
 export async function handleDeletePersona({ database, personaId, context, }: DeletePersonaOpts,): Promise<Response> {
   const userId = context.userId;
@@ -187,10 +192,11 @@ export async function handleDeletePersona({ database, personaId, context, }: Del
 }
 
 /**
- * @param root0
- * @param root0.database
- * @param root0.personaId
- * @param root0.context
+ * @param root0 - options
+ * @param root0.database - Kysely DB handle
+ * @param root0.personaId - target persona id
+ * @param root0.context - request context
+ * @returns 200 with the new character id, or 401/404 on auth / not-found.
  */
 export async function handleConvertToCharacter({ database, personaId, context, }: GetPersonaOpts,): Promise<Response> {
   const userId = context.userId;

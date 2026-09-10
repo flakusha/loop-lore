@@ -80,8 +80,9 @@ Rules:
 /**
  * Build the system prompt for an improvement level, optionally binding the
  * rewrite to a style reference (recent chat messages).
- * @param level
- * @param styleContext - Recent-message style samples; empty for non-style levels.
+ * @param level - improvement level (`basic` / `style-*` / `detailed`)
+ * @param styleContext - recent-message style samples; empty for non-style levels
+ * @returns rendered system-prompt string for the LLM.
  */
 export function promptImproveSystemPrompt(
   level: PromptImproveLevel,

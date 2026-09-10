@@ -21,8 +21,10 @@ import {
 
 // ── Elysia Plugin ─────────────────────────────────────────────────
 /**
- * @param root0
- * @param root0.database
+ * Build the Elysia route plugin for persona CRUD.
+ * @param root0 - plugin config
+ * @param root0.database - Kysely DB handle
+ * @returns `Elysia` instance wired to the persona routes.
  */
 export function personaRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "personas", },)

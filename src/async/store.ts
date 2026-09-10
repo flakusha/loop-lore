@@ -89,8 +89,9 @@ const DEFAULT_QUEUE_LIMIT = 10_000;
  * The returned API is **fire-and-forget**: every method returns immediately.
  * Errors are logged but never thrown on the hot path. Drain `destroy()` at
  * shutdown to flush the in-flight queue.
- * @param database
- * @param config
+ * @param database - Kysely handle
+ * @param config - thresholds (`maxInlineBytes`, `defaultTtlMs`, `queueLimit`)
+ * @returns `AsyncStore` facade.
  */
 export function createAsyncStore(database: Kysely<DB>, config: AsyncStoreConfig = {},): AsyncStore {
   const cfg: Required<AsyncStoreConfig> = {
@@ -230,7 +231,8 @@ export interface AsyncStore {
 
 /**
  * Translate a DB row to the public `RequestResultRow`.
- * @param row
+ * @param row - raw DB row (snake_case columns)
+ * @returns camelCase `RequestResultRow` with JSON columns parsed.
  */
 function rowToResult(row: RequestResultsRow,): RequestResultRow {
   return {
