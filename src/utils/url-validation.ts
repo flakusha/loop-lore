@@ -150,7 +150,8 @@ export function validateProviderUrls(
 }
 
 /**
- * @param ip
+ * @param ip - IPv4 string to classify
+ * @returns `true` if `ip` lies in a local/private IPv4 range (10/8, 172.16/12, 192.168/16, 127/8, 169.254/16); `false` otherwise.
  */
 function isLocalIPv4(ip: string,): boolean {
   const parts = ip.split(".",);
@@ -172,7 +173,8 @@ function isLocalIPv4(ip: string,): boolean {
 }
 
 /**
- * @param ip
+ * @param ip - IPv6 string to classify
+ * @returns `true` if `ip` is `::1` (loopback) or starts with `fe80:` (link-local); `false` otherwise.
  */
 function isLocalIPv6(ip: string,): boolean {
   const lower = ip.toLowerCase();

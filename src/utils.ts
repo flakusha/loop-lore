@@ -35,17 +35,18 @@ export { clamp, clampUnit, } from "./utils/clamp";
 
 // ── ID Generation ─────────────────────────────────────────────
 
-/** Create a DB-safe UUID string (v4, RFC 4122) */
+/** Create a DB-safe UUID string (v4, RFC 4122)
+ * @returns RFC 4122 v4 UUID string. */
 export const uid = (): string => randomUUID();
-
-/** Create a cryptographically secure random token (32 hex chars = 128 bits) */
+/** Create a cryptographically secure random token (32 hex chars = 128 bits)
+ * @returns 32-char hex token (128 bits of entropy). */
 export const secureToken = (): string => randomBytes(16,).toString("hex",);
-
 // ── Error Helpers ─────────────────────────────────────────────
 
 /**
  * Extract a safe Error object from an unknown thrown value
- * @param error
+ * @param error - any thrown value
+ * @returns Error instance (coerced via `new Error(String(...))` when not already an Error).
  */
 export function asError(error: unknown,): Error {
   return error instanceof Error ? error : new Error(String(error,),);
@@ -53,7 +54,8 @@ export function asError(error: unknown,): Error {
 
 /**
  * Extract error message string from an unknown thrown value
- * @param error
+ * @param error - any thrown value
+ * @returns error message string (`"Unknown error"` fallback for non-Error values).
  */
 export function toErrorMessage(error: unknown,): string {
   return error instanceof Error ? error.message : "Unknown error";
@@ -64,7 +66,8 @@ export function toErrorMessage(error: unknown,): string {
 /**
  * Assert that a value is `never` — used in switch default cases
  * to guarantee all enum/union variants are handled at compile time.
- * @param value
+ * @param value - value asserted as never (TS exhaustiveness marker)
+ * @throws {Error} `"Unhandled case: <json>"` always (function returns never).
  * @example
  * switch (status) {
  *   case GenerationStatus.Pending: return "waiting";

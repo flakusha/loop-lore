@@ -17,7 +17,8 @@
  * getType(function(){});// "function"
  * getType('hello');     // "string"
  * getType(123);         // "number"
- * @param obj
+ * @param obj - any value
+ * @returns lowercase type tag (e.g. "array", "null", "date", "regexp", "function", "object", "string", "number", "boolean", "undefined").
  */
 export function getType(obj: unknown,) {
   const type = typeof obj;
