@@ -21885,6 +21885,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-timeline-selection-api.md"
   },
+  "TASK-TIMELINE-STEERING-CLOSE-ROLL-RACE-AND-EMPTY-TIMELINEID-GAP": {
+    "hash": "pending",
+    "extid": "TASK-TIMELINE-STEERING-CLOSE-ROLL-RACE-AND-EMPTY-TIMELINEID-GAP",
+    "type": "TASK",
+    "title": "Timeline steering: close roll race and empty timelineId gap",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md"
+  },
   "TASK-TLS-CIPHER-SUITE-HARDENING-AND-SECURE-DEFAULTS": {
     "hash": "49a86d4",
     "extid": "TASK-TLS-CIPHER-SUITE-HARDENING-AND-SECURE-DEFAULTS",

@@ -198,6 +198,7 @@ describe("destroyVnRenderer", () => {
     expect(state.currentChatId,).toBeNull();
     expect(state.loadingIndicator,).toBeNull();
     expect(state.locationChangeHandler,).toBeNull();
+    expect(state.roster,).toBeNull();
   });
 
   test("destroy without init is a safe no-op", () => {
