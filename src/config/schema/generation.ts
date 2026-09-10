@@ -38,6 +38,19 @@ export interface RegexTransform {
 
 /** Pipeline phase for a regex transform. */
 export type RegexTransformPhase = "edit-input" | "output" | "process" | "display";
+/** Per-model browser download override (wins over the instance default). */
+export interface LocalModelDownloadModelConfig {
+  /** False blocks this model even when downloads are allowed by default. */
+  allowDownload?: boolean;
+}
+
+/** Browser-model download policy (admin default plus per-model overrides). */
+export interface LocalModelDownloadConfig {
+  /** Instance default. Default true when omitted. */
+  allowDownloads?: boolean;
+  /** Per-model overrides keyed by catalog id. Unknown ids are ignored. */
+  models?: Record<string, LocalModelDownloadModelConfig>;
+}
 
 /** */
 export interface GenerationConfig {
@@ -67,6 +80,8 @@ export interface GenerationConfig {
     /** Fallback mode when edit model is unavailable: "generation" uses txt2img, "none" disables fallback */
     fallbackMode?: "generation" | "none";
   };
+  /** Browser-model download policy: admin default plus per-model overrides. */
+  localModels?: LocalModelDownloadConfig;
   /** Server-wide defaults for chat-level generation features. */
   chatDefaults?: GenerationChatDefaults;
 }
