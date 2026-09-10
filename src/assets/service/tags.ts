@@ -2,12 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Asset Service — tags (gallery tagging G7)
- *
- * Per-asset tags in two scopes (`asset_tags.scope`): `user` (a viewer's
- * personal set, keyed by `owner_id`) and `global` (the shared set, `owner_id`
- * NULL). A user edits only their own `user` tags; the asset owner (or a role
- * holding the asset-content override) edits `global` tags.
+ * Asset Service — tags (gallery tagging G7). Two scopes: `user` (viewer's
+ * own set, keyed by `owner_id`) and `global` (shared, `owner_id` NULL).
+ * Users edit own `user` tags; the asset owner curates `global` tags.
  */
 import type { ExpressionBuilder, ExpressionWrapper, Kysely, SqlBool, } from "kysely";
 import { AssetTagScope, AssetTagSource, } from "../../db/enums";
