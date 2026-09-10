@@ -52,6 +52,21 @@ next_episode = 5
 
 - `TASK-hidden-carriage-toml-context.md`
 - `TASK-structured-llm-output-healing-utils.md`
+- `TASK-context-injection-dedup.md`
+- `TASK-shadow-context-isolation.md`
+- `TASK-shadow-visibility-debug-assistant.md`
+
+## Isolation & dedup (normative rules)
+
+- Single assembly: carriage, notes, quest progress, and provisioned
+  memory dedup by content hash — no fact injected twice.
+- Shadow isolation: `{ system, visibility }` on every entry;
+  `gm`-class entries never reach player prompts, and no system reads
+  another system's shadow scope (quest × shadow, carriage × shadow).
+  Enforcement server-side in the assembler, never UI-only.
+- Relaxed only for debug sessions and assistant flows: shadow entries
+  included explicitly marked read-only, with a write-back guard
+  against player-visible stores.
 
 ## Acceptance
 
