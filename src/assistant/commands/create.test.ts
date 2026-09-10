@@ -200,4 +200,58 @@ describe("/create command — preview flow", () => {
     const actors = await db.selectFrom("actors",).selectAll().execute();
     expect(actors,).toHaveLength(0,);
   });
+  it("rejects lore entries with unknown subject kind (B2)", async () => {
+    const { db, } = await createTestDb();
+    stubBody = JSON.stringify({
+      name: "Dark Mage",
+      description: "A sorcerer",
+      lore: [
+        {
+          name: "Forbidden Knowledge",
+          content: "Learned from demons.",
+          subject: { kind: "bogus", },
+        },
+      ],
+    },);
+
+    const result = await runCreateGeneration(
+      ["char", "a dark mage",],
+      {
+        chatId: "c1",
+        db,
+        config: makeConfig(),
+        userId: "u1",
+      },
+      stubComplete,
+      "stub-model",
+    );
+
+    expect(result.action,).toBeUndefined();
+    expect(result.systemMessage,).toContain("rejected",);
+    const actors = await db.selectFrom("actors",).selectAll().execute();
+    expect(actors,).toHaveLength(0,);
+  });
+
+  it("systemMessage includes lore schema and example for each kind (B1)", async () => {
+    const { db, } = await createTestDb();
+    stubBody = JSON.stringify({ name: "Test", description: "desc", },);
+
+    for (const cmd of ["char", "loc", "world", "item",] as const) {
+      stubBody = JSON.stringify({ name: "Test", description: "desc", },);
+      const _result = await runCreateGeneration(
+        [cmd, "a test entity",],
+        {
+          chatId: "c1",
+          db,
+          config: makeConfig(),
+          userId: "u1",
+        },
+        stubComplete,
+        "stub-model",
+      );
+      expect(_result.handled,).toBe(true,);
+      expect(lastReq?.messages[1]?.content,).toContain("lore",);
+      expect(lastReq?.messages[1]?.content,).toContain("Example:",);
+    }
+  });
 });

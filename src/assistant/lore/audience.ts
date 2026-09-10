@@ -16,18 +16,16 @@
  * - `subject.kind === "profession"`                      → visible iff actor has the profession.
  * - `subject.kind === "location"`                        → visible iff actor present at the bound
  *                                                           location (or ancestor, via callback).
- * - future/unknown subjects                              → hidden until a rule is defined.
+ * - unknown subjects                                     → hidden (close by default).
  */
 import { safeJsonParse, } from "../../utils";
 
 /** Subject-based audience scope stored as JSON on a lore entry. */
 export type LoreSubject =
   | { kind: "world" }
-  | { kind: "location"; locationId?: string }
+  | { kind: "location"; locationId: string }
   | { kind: "profession"; profession: string }
-  | { kind: "race"; race: string }
-  | { kind: "faction" }
-  | { kind: "item" };
+  | { kind: "race"; race: string };
 
 /** */
 export interface LoreScope {
@@ -49,8 +47,17 @@ export interface ActorIdentity {
 /** Optional callback to test whether a location is inside another's scope tree. */
 export type LocationInScope = (locId: string, scopeLocId: string,) => boolean;
 
+/** Simple UUID v4 validator (used for subject locationId validation). */
+export function isValidUuid(value: string,): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value,);
+}
+
 /**
  * Parse a stored audience_scope JSON string. Returns null for empty/invalid.
+ *
+ * A valid scope must contain a `subject` key; scopes with only `requires_presence`
+ * (no subject) are silently dropped at parse time because `requires_presence` is
+ * only consulted inside the `location` subject branch of {@link isLoreVisibleTo}.
  * @param json
  * @returns string
  */
@@ -107,11 +114,6 @@ export function isLoreVisibleTo(
       return locationInScope
         ? locationInScope(identity.locationId, scopeLoc,)
         : identity.locationId === scopeLoc;
-    }
-    case "item":
-    case "faction": {
-      // Entity-scoped lore kinds — not modeled for audience visibility yet.
-      return false;
     }
     default: {
       // Unknown / not-yet-defined subject — close by default.

@@ -22,11 +22,15 @@ export interface EntityTemplate {
   example: Record<string, unknown>;
 }
 
+/** Schema text for a single lore entry, reused across all entity templates. */
+const LORE_ENTRY_SCHEMA =
+  `name (string, required), content (string, required), keys (array of strings, max 5, each <= 100 chars), subject (object: { kind: "world"|"location"|"profession"|"race", ... with non-empty selectors }), requires_presence (boolean), constant (boolean), selective (boolean), position ("before_char"|"after_char"|"in_char"), insertion_order (integer, >= 0), priority (integer, -999..999), cooldown_seconds (integer, >= 0)`;
+
 /** Template registry keyed by canonical entity kind. */
 export const ENTITY_TEMPLATES: Record<EntityKind, EntityTemplate> = {
   character: {
     schema:
-      `name (string, required), description (string, required, 1-2 paragraphs), personality (string), scenario (string, 1 sentence), lore (array of lore entries, optional) — each lore entry: name (string, required), content (string, required), keys (array of strings, max 5), subject (object: { kind: "world"|"location"|"profession"|"race"|"faction"|"item", ... }), requires_presence (boolean), constant (boolean), selective (boolean), position ("before_char"|"after_char"|"in_char"), insertion_order (integer), priority (integer), cooldown_seconds (integer)`,
+      `name (string, required), description (string, required, 1-2 paragraphs), personality (string), scenario (string, 1 sentence), lore (array of lore entries, optional) — each entry: ${LORE_ENTRY_SCHEMA}`,
     example: {
       name: "Eldric the Wanderer",
       description:
@@ -52,7 +56,7 @@ export const ENTITY_TEMPLATES: Record<EntityKind, EntityTemplate> = {
   },
   location: {
     schema:
-      `name (string, required), description (string, required, 1-2 paragraphs), lore (array of lore entries, optional) — each lore entry: name (string, required), content (string, required), keys (array of strings, max 5), subject (object: { kind: "world"|"location"|"profession"|"race"|"faction"|"item", ... }), requires_presence (boolean), constant (boolean), selective (boolean), position ("before_char"|"after_char"|"in_char"), insertion_order (integer), priority (integer), cooldown_seconds (integer)`,
+      `name (string, required), description (string, required, 1-2 paragraphs), lore (array of lore entries, optional) — each entry: ${LORE_ENTRY_SCHEMA}`,
     example: {
       name: "The Sunken Bridge",
       description:
@@ -72,7 +76,7 @@ export const ENTITY_TEMPLATES: Record<EntityKind, EntityTemplate> = {
   },
   world: {
     schema:
-      `name (string, required), description (string, required, 1-2 paragraphs), lore (array of lore entries, optional) — each lore entry: name (string, required), content (string, required), keys (array of strings, max 5), subject (object: { kind: "world"|"location"|"profession"|"race"|"faction"|"item", ... }), requires_presence (boolean), constant (boolean), selective (boolean), position ("before_char"|"after_char"|"in_char"), insertion_order (integer), priority (integer), cooldown_seconds (integer)`,
+      `name (string, required), description (string, required, 1-2 paragraphs), lore (array of lore entries, optional) — each entry: ${LORE_ENTRY_SCHEMA}`,
     example: {
       name: "The Shattered Realms",
       description:
@@ -92,11 +96,24 @@ export const ENTITY_TEMPLATES: Record<EntityKind, EntityTemplate> = {
     },
   },
   item: {
-    schema: `name (string, required), description (string, required, 1 paragraph)`,
+    schema:
+      `name (string, required), description (string, required, 1 paragraph), lore (array of lore entries, optional) — each entry: ${LORE_ENTRY_SCHEMA}`,
     example: {
       name: "Whisperwind Pendant",
       description:
         "A pale blue crystal pendant on a thin silver chain. When squeezed, it allows the wearer to speak without making a sound for up to one minute.",
+      lore: [
+        {
+          name: "The Bard's Tale",
+          content: "Forged by a silenced bard who poured their remaining voice into the crystal.",
+          keys: ["bard", "silenced",],
+          subject: { kind: "race", race: "human", },
+          requires_presence: true,
+          constant: true,
+          selective: false,
+          position: "before_char",
+        },
+      ],
     },
   },
 };

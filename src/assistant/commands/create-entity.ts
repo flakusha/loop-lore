@@ -32,8 +32,6 @@ export interface EntityDraft {
   description: string;
   /** World scope resolved at generation time. */
   worldId?: string;
-  /** Structured lore entries to persist alongside the entity. */
-  lore?: GeneratedEntityLoreEntry[];
 }
 
 /** Result of persisting an entity. */
@@ -47,131 +45,137 @@ export interface InsertedEntity {
 
 /**
  * Insert a validated, user-confirmed entity into the correct table.
- * @param db - Database handle
- * @param draft - The confirmed draft (must have passed quality gates)
- * @param userId
+ *
+ * Entity insert + all lore inserts are wrapped in a single transaction so a
+ * failure leaves no orphaned rows (BUG-create-entity-no-transaction-on-lore-failure).
+ *
+ * @param db     - Database handle (or open transaction)
+ * @param draft  - The confirmed draft (must have passed quality gates)
+ * @param userId - Actor id of the creating user
  * @returns The persisted entity id and name
- * @throws when the insert fails
+ * @throws when the insert fails (transaction rolls back)
  */
 export async function insertGeneratedEntity(
   db: Kysely<DB>,
   draft: EntityDraft,
   userId: string,
 ): Promise<InsertedEntity> {
-  const id = uid();
-  const { kind, data, description, worldId, } = draft;
-  const name = data.name || "Unnamed";
+  return await db.transaction().execute(async (trx,) => {
+    const id = uid();
+    const { kind, data, description, worldId, } = draft;
+    const name = data.name || "Unnamed";
 
-  switch (kind) {
-    case "character": {
-      await db
-        .insertInto("actors",)
-        .values({
-          id,
-          actor_type: "character",
-          display_name: name,
-          user_id: userId,
-          owner_id: userId,
-          agent_type: "ai",
-          description: data.description ?? description,
-          system_prompt: null,
-          settings: "{}",
-          personality: data.personality ?? null,
-          scenario: data.scenario ?? null,
-          import_spec: "llm-generated",
-        },)
-        .execute();
-      await insertEntityLore(db, kind, id, worldId, userId, data.lore,);
-      return { id, kind, name, };
-    }
-
-    case "location": {
-      const resolvedWorld = worldId ?? "default";
-      await db
-        .insertInto("locations",)
-        .values({
-          id,
-          world_id: resolvedWorld,
-          name,
-          description: data.description ?? description,
-          connections: "[]",
-        },)
-        .execute();
-
-      // Mirror the REST location creation: auto-create a public chat bound to
-      // the default `world` template so the location is immediately reachable.
-      let linkedChatId: string | undefined;
-      const template = await getChatSetupTemplate(db, "template-world",);
-      if (template) {
-        const gmParsed = template.gm_config
-          ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
-          : null;
-        const chat = await createChat(db, {
-          name,
-          type: "group",
-          mode: template.mode ?? "story",
-          createdBy: userId,
-          worldId: resolvedWorld,
-          currentLocationId: id,
-          turnStrategy: template.turn_strategy,
-          gmConfig: gmParsed?.ok ? gmParsed.value : null,
-          renderingOverride: gmParsed?.ok && (gmParsed.value.renderingOverride === "visual_novel" ||
-              gmParsed.value.renderingOverride === "text")
-            ? gmParsed.value.renderingOverride
-            : null,
-          visibility: template.visibility ?? "private",
-          templateId: template.id,
-        },);
-        linkedChatId = chat;
+    switch (kind) {
+      case "character": {
+        await trx
+          .insertInto("actors",)
+          .values({
+            id,
+            actor_type: "character",
+            display_name: name,
+            user_id: userId,
+            owner_id: userId,
+            agent_type: "ai",
+            description: data.description ?? description,
+            system_prompt: null,
+            settings: "{}",
+            personality: data.personality ?? null,
+            scenario: data.scenario ?? null,
+            import_spec: "llm-generated",
+          },)
+          .execute();
+        await insertEntityLore(trx, kind, id, worldId, data.lore,);
+        return { id, kind, name, };
       }
-      await insertEntityLore(db, kind, id, resolvedWorld, userId, data.lore,);
-      return { id, kind, name, linkedChatId, };
-    }
 
-    case "world": {
-      await db
-        .insertInto("worlds",)
-        .values({
-          id,
-          owner_id: userId,
-          name,
-          description: data.description ?? description,
-          lore: typeof data.lore === "string" ? data.lore : null,
-          difficulty_modifier: 1,
-          difficulty_reroll: DifficultyReroll.None,
-          difficulty_state: DifficultyState.Normal,
-        },)
-        .execute();
-      await insertEntityLore(db, kind, id, id, userId, data.lore,);
-      return { id, kind, name, };
-    }
+      case "location": {
+        const resolvedWorld = worldId ?? "default";
+        await trx
+          .insertInto("locations",)
+          .values({
+            id,
+            world_id: resolvedWorld,
+            name,
+            description: data.description ?? description,
+            connections: "[]",
+          },)
+          .execute();
 
-    case "item": {
-      const resolvedWorld = worldId ?? "default";
-      await db
-        .insertInto("items",)
-        .values({
-          id,
-          world_id: resolvedWorld,
-          name,
-          description: data.description ?? description,
-          category: "other",
-          rarity: "common",
-          stackable: "unique",
-          max_stack: 1,
-          properties: "{}",
-          value: 0,
-          weight: 1,
-        },)
-        .execute();
-      await insertEntityLore(db, kind, id, resolvedWorld, userId, data.lore,);
-      return { id, kind, name, };
+        // Mirror the REST location creation: auto-create a public chat bound to
+        // the default `world` template so the location is immediately reachable.
+        let linkedChatId: string | undefined;
+        const template = await getChatSetupTemplate(trx, "template-world",);
+        if (template) {
+          const gmParsed = template.gm_config
+            ? safeJsonParse<Record<string, unknown>>(template.gm_config,)
+            : null;
+          const chat = await createChat(trx, {
+            name,
+            type: "group",
+            mode: template.mode ?? "story",
+            createdBy: userId,
+            worldId: resolvedWorld,
+            currentLocationId: id,
+            turnStrategy: template.turn_strategy,
+            gmConfig: gmParsed?.ok ? gmParsed.value : null,
+            renderingOverride: gmParsed?.ok && (gmParsed.value.renderingOverride === "visual_novel" ||
+                gmParsed.value.renderingOverride === "text")
+              ? gmParsed.value.renderingOverride
+              : null,
+            visibility: template.visibility ?? "private",
+            templateId: template.id,
+          },);
+          linkedChatId = chat;
+        }
+        await insertEntityLore(trx, kind, id, resolvedWorld, data.lore,);
+        return { id, kind, name, linkedChatId, };
+      }
+
+      case "world": {
+        await trx
+          .insertInto("worlds",)
+          .values({
+            id,
+            owner_id: userId,
+            name,
+            description: data.description ?? description,
+            lore: typeof data.lore === "string" ? data.lore : null,
+            difficulty_modifier: 1,
+            difficulty_reroll: DifficultyReroll.None,
+            difficulty_state: DifficultyState.Normal,
+          },)
+          .execute();
+        await insertEntityLore(trx, kind, id, id, data.lore,);
+        return { id, kind, name, };
+      }
+
+      case "item": {
+        const resolvedWorld = worldId ?? "default";
+        await trx
+          .insertInto("items",)
+          .values({
+            id,
+            world_id: resolvedWorld,
+            name,
+            description: data.description ?? description,
+            category: "other",
+            rarity: "common",
+            stackable: "unique",
+            max_stack: 1,
+            properties: "{}",
+            value: 0,
+            weight: 1,
+          },)
+          .execute();
+        await insertEntityLore(trx, kind, id, resolvedWorld, data.lore,);
+        return { id, kind, name, };
+      }
     }
-  }
+  },);
 }
 
 /**
- * Map an EntityKind to its target lore table and foreign key column.
+ * Map an EntityKind to its target lore table.
  */
 interface LoreTarget {
   table: "world_lore_entries" | "actor_lore_entries";
@@ -184,10 +188,8 @@ function resolveLoreTarget(kind: EntityKind,): LoreTarget | null {
     case "world":
     case "location":
     case "item":
-      // World, location, and item lore all live in world_lore_entries
       return { table: "world_lore_entries", fkColumn: "world_id", };
     case "character":
-      // Characters get actor_lore_entries keyed by the actor's id
       return { table: "actor_lore_entries", fkColumn: "actor_id", };
   }
 }
@@ -202,19 +204,20 @@ function resolveLoreTarget(kind: EntityKind,): LoreTarget | null {
  * - character → actor_lore_entries (actor_id = the character's id)
  *
  * Location and item lore entries get `requires_presence = true` by default.
- * @param db
- * @param kind
- * @param entityId  The newly-inserted entity's id
- * @param worldId   Resolved world id (for world/loc/item scope)
- * @param userId
- * @param lore      Structured lore entries (from normalizedEntity or draft)
+ * Entries with `selective = true` but empty keys are stored with `selective = 0`
+ * since keyword matching cannot fire without triggers.
+ * @param db       - Database handle (or open transaction)
+ * @param kind     - Entity kind (determines target table)
+ * @param entityId - The newly-inserted entity's id
+ * @param worldId  - Resolved world id (required for world/loc/item; null for character)
+ * @param lore     - Structured lore entries from the normalized entity
+ * @throws when worldId is missing for a kind that requires it
  */
 export async function insertEntityLore(
   db: Kysely<DB>,
   kind: EntityKind,
   entityId: string,
   worldId: string | undefined,
-  _userId: string,
   lore: string | GeneratedEntityLoreEntry[] | undefined,
 ): Promise<void> {
   if (!Array.isArray(lore,)) { return; }
@@ -223,43 +226,60 @@ export async function insertEntityLore(
   const target = resolveLoreTarget(kind,);
   if (!target) { return; }
 
+  // world/location/item lore is stored in world_lore_entries which has a
+  // NOT NULL FK on world_id — the world must be known.
+  if (target.table === "world_lore_entries" && !worldId) {
+    throw new Error(`worldId is required for ${kind} lore persistence,`,);
+  }
+
   const now = new Date().toISOString();
 
   for (const entry of lore) {
-    // Build audience_scope JSON from subject + requires_presence
+    // Build audience_scope JSON from subject + requires_presence.
+    // For location/item lore without a subject, attach a synthetic
+    // { kind: "location", locationId: entityId } so parseLoreScope can
+    // read it back (it requires a subject key) and requires_presence
+    // is meaningful in isLoreVisibleTo.
     const scope: LoreScope = {};
-    if (entry.subject) { scope.subject = entry.subject; }
+    if (entry.subject) {
+      scope.subject = entry.subject;
+    } else if (kind === "location" || kind === "item") {
+      scope.subject = { kind: "location" as const, locationId: entityId, };
+    }
+
     if (kind === "location" || kind === "item") {
-      // Location/item lore requires presence by default
       scope.requires_presence = entry.requires_presence ?? true;
     } else if (entry.requires_presence !== undefined) {
       scope.requires_presence = entry.requires_presence;
     }
 
-    // Validate subject via normalizeAudienceScope (checks subject.kind validity).
+    // Validate subject via normalizeAudienceScope (checks kind + selectors).
     // If subject is present but invalid, skip this entry.
     const validated = normalizeAudienceScope(scope,);
     if (entry.subject && !validated) { continue; }
 
-    // Serialize the scope directly — preserves requires_presence even when
-    // no subject is set (normalizeAudienceScope drops requires_presence when
-    // subject is absent, which would lose the location/item presence flag).
-    // Only store when the scope is non-empty; otherwise null (no audience restriction).
+    // Serialize the scope directly — preserves requires_presence + subject.
+    // Store null when scope is empty (no audience restriction).
     const scopeStrResult = safeJsonStringify(scope,);
     let audienceScopeStr: string | null = null;
     if (scopeStrResult.ok && (scope.subject || scope.requires_presence !== undefined)) {
       audienceScopeStr = scopeStrResult.value;
     }
 
-    const keysResult = safeJsonStringify(entry.keys ?? [],);
-    const keysStr = keysResult.ok ? keysResult.value : "[]";
+    const keysStrResult = safeJsonStringify(entry.keys ?? [],);
+    const keysStr = keysStrResult.ok ? keysStrResult.value : "[]";
+
+    // N6: force selective=0 when keys are empty — selective gating requires
+    // keyword triggers to ever match.
+    const hasKeys = entry.keys && entry.keys.length > 0;
+    const selectiveFlag = entry.selective && hasKeys ? 1 : 0;
 
     const loreValues = {
       name: entry.name,
       content: entry.content,
       keys: keysStr,
       constant: entry.constant ? 1 : 0,
-      selective: entry.selective ? 1 : 0,
+      selective: selectiveFlag,
       position: entry.position ?? LorePosition.BeforeChar,
       insertion_order: entry.insertion_order ?? 0,
       priority: entry.priority ?? 0,
