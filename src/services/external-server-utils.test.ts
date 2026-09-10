@@ -7,7 +7,7 @@
  *
  * These utilities wrap Bun primitives (Bun.which, Bun.serve, fetch) so
  * the tests exercise real behavior rather than mocks: a missing binary
- * resolves to null, a random port is reported free, an in-process Bun
+ * resolves to null, a kernel-assigned port is reported free, an in-process Bun
  * server answers /health, etc. This pins observable contract without
  * requiring mock plumbing.
  */
@@ -19,6 +19,22 @@ import {
   waitForHealth,
   waitForPort,
 } from "./external-server-utils";
+
+// Reserve a kernel-assigned port and release it. The returned port is
+// guaranteed free at reservation time and can never collide with another
+// test’s pick, unlike random selection from a fixed range under parallel runs.
+async function reservePort(): Promise<number> {
+  const holder = Bun.serve({ port: 0, fetch: () => new Response("ok",), },);
+  const port = holder.port;
+  await holder.stop();
+  if (port === undefined) { throw new Error("reservePort: kernel did not assign a port",); }
+  return port;
+}
+
+function boundPort(server: { port: number | undefined, },): number {
+  if (server.port === undefined) { throw new Error("boundPort: server has no port",); }
+  return server.port;
+}
 describe("isHuggingFaceRef", () => {
   test("accepts canonical org/repo:file references", () => {
     expect(isHuggingFaceRef("user/repo:model",),).toBe(true,);
@@ -115,12 +131,12 @@ describe("isPortFree", () => {
   });
 
   test("returns false for a port already bound by another server", async () => {
-    // Spin up a real server on a fixed port, then ask if it's free.
-    const port = 30000 + Math.floor(Math.random() * 30000,);
+    // Bind a kernel-assigned port, then ask if it's free.
     const server = Bun.serve({
-      port,
+      port: 0,
       fetch: () => new Response("ok",),
     },);
+    const port = boundPort(server,);
     try {
       expect(isPortFree(port,),).toBe(false,);
     } finally {
@@ -131,14 +147,14 @@ describe("isPortFree", () => {
 
 describe("waitForHealth", () => {
   test("returns true when the health endpoint responds 2xx within timeout", async () => {
-    const port = 31000 + Math.floor(Math.random() * 30000,);
     const server = Bun.serve({
-      port,
+      port: 0,
       fetch: (req,) => {
         if (new URL(req.url,).pathname === "/health") { return new Response("ok",); }
         return new Response("not found", { status: 404, },);
       },
     },);
+    const port = boundPort(server,);
     try {
       const ok = await waitForHealth(`http://127.0.0.1:${port}/health`, { timeoutMs: 5_000, },);
       expect(ok,).toBe(true,);
@@ -148,18 +164,18 @@ describe("waitForHealth", () => {
   });
 
   test("returns false when the endpoint never becomes healthy within timeout", async () => {
-    // No server listening on this port; waitForHealth should poll and time out.
-    const port = 32000 + Math.floor(Math.random() * 30000,);
+    // Nothing listens on a reserved-then-released port; waitForHealth should poll and time out.
+    const port = await reservePort();
     const ok = await waitForHealth(`http://127.0.0.1:${port}/health`, { timeoutMs: 1_500, },);
     expect(ok,).toBe(false,);
   });
 
   test("respects the custom intervalMs polling cadence", async () => {
-    const port = 33000 + Math.floor(Math.random() * 30000,);
     const server = Bun.serve({
-      port,
+      port: 0,
       fetch: () => new Response("ok",),
     },);
+    const port = boundPort(server,);
     try {
       const start = Date.now();
       const ok = await waitForHealth(`http://127.0.0.1:${port}/`, {
@@ -178,11 +194,11 @@ describe("waitForHealth", () => {
 
 describe("waitForPort", () => {
   test("returns true when the port accepts any HTTP response within timeout", async () => {
-    const port = 34000 + Math.floor(Math.random() * 30000,);
     const server = Bun.serve({
-      port,
+      port: 0,
       fetch: () => new Response("anything", { status: 503, },), // 503 still counts as "port is serving"
     },);
+    const port = boundPort(server,);
     try {
       const ok = await waitForPort(port, { timeoutMs: 5_000, },);
       expect(ok,).toBe(true,);
@@ -192,7 +208,7 @@ describe("waitForPort", () => {
   });
 
   test("returns false when no server is listening on the port within timeout", async () => {
-    const port = 35000 + Math.floor(Math.random() * 30000,);
+    const port = await reservePort();
     const ok = await waitForPort(port, { timeoutMs: 1_500, },);
     expect(ok,).toBe(false,);
   });
