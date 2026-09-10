@@ -81,6 +81,7 @@
   "HEADERS_CSP_IMGSRC": "headers.csp.imgSrc",
   "HEADERS_CSP_FONTSRC": "headers.csp.fontSrc",
   "HEADERS_CSP_CONNECTSRC": "headers.csp.connectSrc",
+  "HEADERS_CSP_WORKERSRC": "headers.csp.workerSrc",
   "HEADERS_CSP_OBJECTSRC": "headers.csp.objectSrc",
   "HEADERS_CSP_BASEURI": "headers.csp.baseUri",
   "HEADERS_CSP_FRAMEANCESTORS": "headers.csp.frameAncestors",
