@@ -10,6 +10,7 @@ import type { ExpansionResult, } from "./types.js";
 /**
  * Check which emotions are missing avatar assets.
  * @param config
+ * @returns string
  */
 export function findMissingAvatars(config: AvatarTemplateConfig,): string[] {
   const missing: string[] = [];

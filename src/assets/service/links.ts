@@ -17,6 +17,7 @@ import type { LinkAssetOpts, UnlinkAssetOpts, } from "./types";
  * @param root0.database
  * @param root0.assetId
  * @param root0.link
+ * @returns Promise<unknown>
  */
 export async function linkAsset({ database, assetId, link, }: LinkAssetOpts,): Promise<void> {
   try {
@@ -43,6 +44,7 @@ export async function linkAsset({ database, assetId, link, }: LinkAssetOpts,): P
  * @param root0.assetId
  * @param root0.entityType
  * @param root0.entityId
+ * @returns void
  */
 export async function unlinkAsset({
   database,
@@ -62,6 +64,7 @@ export async function unlinkAsset({
  * Get all links for an asset.
  * @param database
  * @param assetId
+ * @returns void
  */
 export async function getAssetLinks(
   database: Kysely<DB>,

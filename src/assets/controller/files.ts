@@ -15,6 +15,7 @@ import { notFoundResponse, } from "../../routes/http-utils";
  * @param opts
  * @param opts.cacheControl
  * @param opts.extraHeaders
+ * @returns void
  */
 export function serveFile(
   filePath: string,

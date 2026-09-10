@@ -46,6 +46,7 @@ export interface StatusEffect {
  * @param value
  * @param duration
  * @param options
+ * @returns void
  */
 export function createStatusEffect(
   name: string,
@@ -73,6 +74,7 @@ export function createStatusEffect(
 /**
  * Tick a status effect (reduce duration)
  * @param effect
+ * @returns void
  */
 export function tickStatusEffect(effect: StatusEffect,): StatusEffect | null {
   const remaining = effect.remainingTurns - 1;
@@ -83,6 +85,7 @@ export function tickStatusEffect(effect: StatusEffect,): StatusEffect | null {
 /**
  * Check if status effect is expired
  * @param effect
+ * @returns void
  */
 export function isStatusEffectExpired(effect: StatusEffect,): boolean {
   return effect.remainingTurns <= 0;

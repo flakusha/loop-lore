@@ -17,6 +17,7 @@ const FORBIDDEN_ROOTS = ["/", "/home", "/root", "/etc", "/usr", "/bin", "/lib", 
  * Supports both absolute and relative paths.
  * Throws if resolved path is a forbidden system root.
  * @param uploadDir
+ * @returns string
  */
 export function resolveUploadDir(uploadDir: string,): string {
   const resolved = uploadDir.startsWith("/",) ? uploadDir : join(process.cwd(), uploadDir,);
@@ -45,6 +46,7 @@ export function resolveUploadDir(uploadDir: string,): string {
  * @param assetId
  * @param filename
  * @param buffer
+ * @returns void
  */
 export function storeFile(uploadDir: string, assetId: string, filename: string, buffer: Buffer,): string {
   const root = resolveUploadDir(uploadDir,);
@@ -74,6 +76,7 @@ export function storeFile(uploadDir: string, assetId: string, filename: string, 
  * Delete a file from the local filesystem.
  * @param uploadDir
  * @param storagePath
+ * @returns void
  */
 export function deleteFile(uploadDir: string, storagePath: string,): void {
   const fullPath = join(resolveUploadDir(uploadDir,), storagePath,);
@@ -84,6 +87,7 @@ export function deleteFile(uploadDir: string, storagePath: string,): void {
  * Resolve the full file path for serving.
  * @param uploadDir
  * @param storagePath
+ * @returns void
  */
 export function getAssetFilePath(uploadDir: string, storagePath: string,): string {
   return join(resolveUploadDir(uploadDir,), storagePath,);

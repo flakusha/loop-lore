@@ -24,6 +24,7 @@ const USAGE = "Usage: /improve <text> — rewrite text for better quality.\n" +
  * polish fallback. Extractable for tests via the CommandContext seams.
  * @param args
  * @param ctx
+ * @returns string
  */
 export async function runImprove(args: string[], ctx: CommandContext,): Promise<CommandResult> {
   let level: PromptImproveLevel = "wording";

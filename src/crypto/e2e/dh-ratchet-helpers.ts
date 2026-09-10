@@ -38,6 +38,7 @@ export interface SkippedKey {
  * and `state.theirCurrentPubJwk`. Does not mutate the input.
  * @param state
  * @param untilCounter
+ * @returns number
  */
 export async function skipOldChain(state: DhRatchetStateReadonly, untilCounter: number,): Promise<SkippedKey[]> {
   if (untilCounter === 0) { return []; }

@@ -99,6 +99,7 @@ async function checkChatUpdateLock(
  * @param fullChat
  * @param fullChat.story_state
  * @param patch
+ * @returns void
  */
 function patchStoryState(
   fullChat: { story_state: string | null; gm_config: string | null },
@@ -119,6 +120,7 @@ function patchStoryState(
  * @param fullChat
  * @param fullChat.story_state
  * @param params
+ * @returns void
  */
 function buildChatUpdates(
   fullChat: { story_state: string | null; gm_config: string | null },

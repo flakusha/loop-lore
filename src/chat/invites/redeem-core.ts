@@ -36,6 +36,7 @@ export interface RedeemPortals<Invite extends RedeemableInvite,> {
    * Atomically insert the membership row and increment `uses`.
    * Implementations MUST run both statements in one transaction so a
    * capped invite cannot be double-redeemed under concurrency.
+ * @returns string
    */
   insertMemberAndConsumeUse(invite: Invite, actorId: string,): Promise<void>;
 }

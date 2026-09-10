@@ -14,6 +14,7 @@ import type { SocialCombatResult, } from "./types";
  * @param leaderCharisma
  * @param leaderLevel
  * @param allyMorale
+ * @returns void
  */
 export function calculateRallyEffect(
   leaderCharisma: number,
@@ -54,6 +55,7 @@ export function calculateRallyEffect(
  * @param leaderCharisma
  * @param leaderInspiration
  * @param allyMorale
+ * @returns void
  */
 export function calculateInspireEffect(
   leaderCharisma: number,

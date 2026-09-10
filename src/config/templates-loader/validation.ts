@@ -50,6 +50,7 @@ export function validateLlmConfig(
 /**
  * Validate the `systemPrompts` map (purpose -> string).
  * @param systemPrompts
+ * @returns void
  */
 function validateSystemPrompts(systemPrompts: unknown,): void {
   if (systemPrompts === undefined) { return; }
@@ -66,6 +67,7 @@ function validateSystemPrompts(systemPrompts: unknown,): void {
 /**
  * Validate the `chatFormats` map (name -> {system,user,assistant}).
  * @param chatFormats
+ * @returns void
  */
 function validateChatFormats(chatFormats: unknown,): void {
   if (chatFormats === undefined) { return; }
@@ -95,6 +97,7 @@ function validateChatFormats(chatFormats: unknown,): void {
 /**
  * Validate the `sd` domain raw config before merging.
  * @param raw
+ * @returns void
  */
 export function validateSdConfig(raw: Record<string, unknown>,): void {
   if (raw.profiles !== undefined) {
@@ -136,6 +139,7 @@ export function validateSdConfig(raw: Record<string, unknown>,): void {
 /**
  * Validate the `avatar` domain raw config before merging.
  * @param raw
+ * @returns void
  */
 export function validateAvatarConfig(raw: Record<string, unknown>,): void {
   if (raw.emotions !== undefined) {
@@ -193,6 +197,7 @@ export { validateCharacterConfig, validateWorkflowConfig, } from "./validation-d
  * silently treated as custom prompts and never resolved.
  * Custom keys beyond distance 2 stay silent (they are legal).
  * @param systemPrompts
+ * @returns void
  */
 export function warnUnknownPromptPurposes(systemPrompts: unknown,): void {
   if (typeof systemPrompts !== "object" || systemPrompts === null) { return; }

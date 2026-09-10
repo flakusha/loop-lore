@@ -72,6 +72,7 @@ export interface RevokePublicKeyOpts {
  * active row for that actor — only one active pubkey per actor at a time.
  * The old row is soft-revoked (revoked_at set) for audit history.
  * @param opts
+ * @returns Promise<unknown>
  */
 export async function registerPublicKey(opts: RegisterPublicKeyOpts,): Promise<PublicKeyRow> {
   const { database, actorId, publicKeyJwk, } = opts;
@@ -114,6 +115,7 @@ export async function registerPublicKey(opts: RegisterPublicKeyOpts,): Promise<P
  * Read the active public key for one actor. Returns null if none is
  * registered or the only one has been revoked.
  * @param opts
+ * @returns void
  */
 export async function getActivePublicKey(opts: GetActivePublicKeyOpts,): Promise<PublicKeyRow | null> {
   const row = await opts.database
@@ -131,6 +133,7 @@ export async function getActivePublicKey(opts: GetActivePublicKeyOpts,): Promise
  * joins a chat and needs all current participants' pubkeys to seed a
  * sender-key ratchet (future ticket).
  * @param opts
+ * @returns void
  */
 export async function listActivePublicKeys(opts: ListActivePublicKeysOpts,): Promise<PublicKeyRow[]> {
   if (opts.actorIds.length === 0) { return []; }
@@ -148,6 +151,7 @@ export async function listActivePublicKeys(opts: ListActivePublicKeysOpts,): Pro
  * Soft-revoke the active public key for an actor. Idempotent: revoking when
  * no active key exists is a no-op.
  * @param opts
+ * @returns void
  */
 export async function revokePublicKey(opts: RevokePublicKeyOpts,): Promise<boolean> {
   const result = await opts.database

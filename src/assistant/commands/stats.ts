@@ -61,6 +61,7 @@ interface ResolvedStatCharacter {
  * @param db
  * @param chatId
  * @param actorId
+ * @returns void
  */
 async function resolveStatCharacter(
   db: Kysely<DB>,
@@ -123,6 +124,7 @@ interface StatRow {
  * Format a stats row as a readable markdown block.
  * @param name
  * @param s
+ * @returns void
  */
 export function formatStats(name: string, s: StatRow,): string {
   return [

@@ -41,6 +41,7 @@ export interface RunLlmAssistOpts {
  * pending-entry write only.
  * @param db
  * @param opts
+ * @returns void
  */
 export async function runLlmAssist(
   db: Kysely<DB>,

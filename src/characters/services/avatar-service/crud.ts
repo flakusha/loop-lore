@@ -21,6 +21,7 @@ import type { Avatar, CreateAvatarOpts, UpdateAvatarOpts, } from "./types";
  * @param row.sort_order
  * @param row.created_at
  * @param row.updated_at
+ * @returns void
  */
 export function rowToAvatar(row: {
   id: string;
@@ -50,6 +51,7 @@ export function rowToAvatar(row: {
  * Get all avatars for a character
  * @param db
  * @param actorId
+ * @returns void
  */
 export async function getAvatars(db: Kysely<DB>, actorId: string,): Promise<Avatar[]> {
   const rows = await db
@@ -66,6 +68,7 @@ export async function getAvatars(db: Kysely<DB>, actorId: string,): Promise<Avat
  * Get a specific avatar by ID
  * @param db
  * @param avatarId
+ * @returns void
  */
 export async function getAvatar(db: Kysely<DB>, avatarId: string,): Promise<Avatar | undefined> {
   const row = await db
@@ -81,6 +84,7 @@ export async function getAvatar(db: Kysely<DB>, avatarId: string,): Promise<Avat
  * Create a new avatar
  * @param db
  * @param opts
+ * @returns void
  */
 export async function createAvatar(db: Kysely<DB>, opts: CreateAvatarOpts,): Promise<string> {
   const id = randomUUID();
@@ -129,6 +133,7 @@ export async function createAvatar(db: Kysely<DB>, opts: CreateAvatarOpts,): Pro
  * @param db
  * @param avatarId
  * @param opts
+ * @returns void
  */
 export async function updateAvatar(
   db: Kysely<DB>,

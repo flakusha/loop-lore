@@ -44,6 +44,7 @@ export interface AssetEncryptionResult {
  * during key rotation produces an equivalent key from the new chat key.
  * @param chatKey
  * @param assetId
+ * @returns string
  */
 export async function deriveAssetSubkey(chatKey: ChatKey, assetId: string,): Promise<CryptoKey> {
   const ikm = await crypto.subtle.importKey(
@@ -139,6 +140,7 @@ export async function decryptAssetBlob(
 /**
  * Check if an asset blob is encrypted (has valid JSON structure).
  * @param buffer
+ * @returns void
  */
 export function isEncryptedAsset(buffer: Buffer,): boolean {
   try {
@@ -158,6 +160,7 @@ export function isEncryptedAsset(buffer: Buffer,): boolean {
  *
  * Returns `null` for malformed payloads or plaintext.
  * @param buffer
+ * @returns void
  */
 export function extractAssetKeyId(buffer: Buffer,): string | null {
   return extractKeyIdFromPayload(buffer.toString("utf8",),);

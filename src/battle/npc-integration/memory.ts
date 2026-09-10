@@ -11,6 +11,7 @@ import type {
  * @param personality
  * @param battleOutcome
  * @param opponentLevel
+ * @returns void
  */
 export function shouldRememberBattle(
   personality: NPCPersonality,
@@ -39,6 +40,7 @@ export function shouldRememberBattle(
  * @param opponents
  * @param opponentLevel
  * @param npcLevel
+ * @returns void
  */
 export function createBattleMemory(
   battleId: string,

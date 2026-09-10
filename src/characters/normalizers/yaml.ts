@@ -13,6 +13,7 @@ import { buildCanonicalFields, } from "./shared";
  * Normalize YAML format to canonical character card.
  * YAML keys match canonical field names directly.
  * @param data
+ * @returns Record<string
  */
 export function normalizeYaml(data: Record<string, unknown>,): CanonicalCharacter {
   // YAML uses "welcome_message" instead of "first_mes"

@@ -9,6 +9,7 @@
  * Validate file size against config limit.
  * @param sizeBytes
  * @param maxSize
+ * @returns string
  */
 export function validateFileSize(sizeBytes: number, maxSize: number,): string | null {
   if (sizeBytes > maxSize) {
@@ -33,6 +34,7 @@ const BLOCKED_MIME_TYPES = ["image/svg+xml",];
  * Validate MIME type is allowed. Active formats (SVG) are rejected outright —
  * asset bytes are served from the app origin and must stay inert.
  * @param mime
+ * @returns void
  */
 export function validateMimeType(mime: string,): string | null {
   const lowered = mime.toLowerCase();

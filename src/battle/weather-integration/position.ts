@@ -6,6 +6,7 @@ import type { CoverType, Elevation, } from "./types";
 /**
  * Calculate cover bonus to AC/defense
  * @param cover
+ * @returns number
  */
 export function calculateCoverBonus(cover: CoverType,): number {
   switch (cover) {
@@ -28,6 +29,7 @@ export function calculateCoverBonus(cover: CoverType,): number {
  * Calculate elevation advantage
  * @param attackerElevation
  * @param targetElevation
+ * @returns void
  */
 export function calculateElevationBonus(
   attackerElevation: Elevation,

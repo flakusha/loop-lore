@@ -13,6 +13,7 @@ import { buildCanonicalFields, } from "./shared";
  * Normalize flat JSON format to canonical character card.
  * Flat JSON may use either "first_mes" or "welcome_message" for the greeting.
  * @param data
+ * @returns Record<string
  */
 export function normalizeJsonFlat(data: Record<string, unknown>,): CanonicalCharacter {
   // Flatten: prefer first_mes, fall back to welcome_message

@@ -26,6 +26,7 @@ interface BranchChatFields {
  * @param locationId
  * @param actorIds
  * @param actorId
+ * @returns void
  */
 export async function createBranchChat(
   database: Kysely<DB>,
@@ -76,6 +77,7 @@ export async function createBranchChat(
  * @param database
  * @param primaryChatId
  * @param secondaryChatId
+ * @returns void
  */
 export async function mergeParticipantsIntoPrimary(
   database: Kysely<DB>,
@@ -127,6 +129,7 @@ export async function mergeParticipantsIntoPrimary(
  * @param database
  * @param primaryChatId
  * @param secondaryChatId
+ * @returns void
  */
 export async function copyMessagesToPrimary(
   database: Kysely<DB>,

@@ -15,6 +15,7 @@ import {
  * @param saveBonus
  * @param dc
  * @param modifiers
+ * @returns void
  */
 export function makeSavingThrow(
   saveBonus: number,
@@ -58,6 +59,7 @@ export function makeSavingThrow(
  * @param skillBonus
  * @param dc
  * @param modifiers
+ * @returns void
  */
 export function makeCombatSkillCheck(
   skillBonus: number,
@@ -105,6 +107,7 @@ export function makeCombatSkillCheck(
  * @param constitutionSave
  * @param damageTaken
  * @param dc
+ * @returns void
  */
 export function makeConcentrationCheck(
   constitutionSave: number,

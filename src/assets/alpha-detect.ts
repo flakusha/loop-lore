@@ -14,6 +14,7 @@ const TRNSSIG = 0x74_52_4E_53; // 'tRNS' in big-endian
 /**
  * @param buf
  * @param offset
+ * @returns number
  */
 function readUint32BE(buf: Uint8Array, offset: number,): number {
   return ((buf[offset]! << 24) | (buf[offset + 1]! << 16) | (buf[offset + 2]! << 8) | buf[offset + 3]!) >>> 0;
@@ -22,6 +23,7 @@ function readUint32BE(buf: Uint8Array, offset: number,): number {
 /**
  * @param buf
  * @param offset
+ * @returns number
  */
 function readUint32LE(buf: Uint8Array, offset: number,): number {
   return ((buf[offset + 3]! << 24) | (buf[offset + 2]! << 16) | (buf[offset + 1]! << 8) | buf[offset]!) >>> 0;
@@ -30,6 +32,7 @@ function readUint32LE(buf: Uint8Array, offset: number,): number {
 /**
  * PNG: color type 4 (grayscale+alpha) or 6 (RGBA), or any tRNS chunk.
  * @param buf
+ * @returns boolean
  */
 export function detectPngAlpha(buf: Uint8Array,): boolean {
   // IHDR: byte 25 (data offset 9) is color type
@@ -51,6 +54,7 @@ export function detectPngAlpha(buf: Uint8Array,): boolean {
  * WebP: VP8X extended flag bit 4 (alpha); VP8L carries alpha in-stream
  * with no cheap header probe — assume present; lossy VP8 has none.
  * @param buf
+ * @returns boolean
  */
 export function detectWebpAlpha(buf: Uint8Array,): boolean {
   let offset = 12; // first chunk header after RIFF header
@@ -73,6 +77,7 @@ export function detectWebpAlpha(buf: Uint8Array,): boolean {
 /**
  * GIF: first Graphic Control Extension (0x21 0xF9) packed-field bit 0.
  * @param buf
+ * @returns boolean
  */
 export function detectGifAlpha(buf: Uint8Array,): boolean {
   // Skip logical screen descriptor; global color table (if flagged) is

@@ -44,6 +44,7 @@ const REGISTRY = new Map<string, Map<number, ContentVersion>>();
  * @param dataVersion - The integer version this projection belongs to.
  * @param columns - Tracked columns (lowercase). Order matters: hashes are
  *   sensitive to the projection order via the canonical JSON envelope.
+ * @returns void
  */
 export function registerContentVersion(
   table: string,
@@ -113,6 +114,7 @@ export function getContentEnvelope(
  * Returns `null` when the projection is missing (callers log + skip).
  * @param table - Canonical table name.
  * @param row - A row object containing `id` + `data_version` + the tracked columns.
+ * @returns void
  */
 export function computeRowHash(
   table: TableName,
@@ -205,6 +207,7 @@ export async function runBatchRefresh(
  * per row's data_version; the SELECT just needs every column the registry
  * might reference across versions.
  * @param projection
+ * @returns void
  */
 function projectionColumns(projection: Map<number, ContentVersion>,): string[] {
   const seen = new Set<string>();

@@ -11,6 +11,7 @@ import type { ChatInviteRow, CreateInviteInput, InviteResult, } from "./types";
  * Create a new invite for a chat with a unique code.
  * @param database
  * @param input
+ * @returns void
  */
 export async function createInvite(
   database: Kysely<DB>,

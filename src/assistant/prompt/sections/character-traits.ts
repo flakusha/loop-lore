@@ -30,6 +30,7 @@ export const characterTraitsSection: SectionBuilder = {
 /**
  * Build `[category] trait, trait…` lines from the actor's world traits.
  * @param ctx
+ * @returns Promise<unknown>
  */
 async function buildWorldTraitParts(ctx: AssembleContext,): Promise<string[]> {
   const { actor, } = ctx;
@@ -56,6 +57,7 @@ async function buildWorldTraitParts(ctx: AssembleContext,): Promise<string[]> {
 /**
  * Build `[location] trait (+bonus/-penalty); …` lines from location traits.
  * @param ctx
+ * @returns void
  */
 async function buildLocationTraitParts(ctx: AssembleContext,): Promise<string[]> {
   const { actor, } = ctx;

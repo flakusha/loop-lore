@@ -33,6 +33,7 @@ export interface ChatKey {
 /**
  * @param database
  * @param chatId
+ * @returns string
  */
 export async function getChatParticipantActorIds(database: Kysely<DB>, chatId: string,): Promise<string[]> {
   const rows = await database
@@ -47,6 +48,7 @@ export async function getChatParticipantActorIds(database: Kysely<DB>, chatId: s
 /**
  * @param participantKeys
  * @param chatId
+ * @returns void
  */
 export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: string,): Promise<ChatKey> {
   if (participantKeys.length === 0) {
@@ -76,6 +78,7 @@ export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: str
  * @param database
  * @param keyId
  * @param smk
+ * @returns void
  */
 export async function getChatKeyById(
   database: Kysely<DB>,
@@ -103,6 +106,7 @@ export async function getChatKeyById(
  * @param database
  * @param chatId
  * @param smk
+ * @returns void
  */
 export async function deriveChatKeyForChat(
   database: Kysely<DB>,

@@ -23,6 +23,7 @@ interface ChatEvent {
  * @param db
  * @param worldId
  * @param locationId
+ * @returns void
  */
 async function fetchWorldEvents(
   db: Kysely<DB>,
@@ -74,6 +75,7 @@ async function fetchWorldEvents(
  * @param loc.atmosphere
  * @param loc.weather
  * @param loc.npcs_present
+ * @returns void
  */
 function locationStateToEvent(
   loc: {
@@ -109,6 +111,7 @@ function locationStateToEvent(
  * build aware of the ambient happenings the previous turn fired.
  * @param db
  * @param chatId
+ * @returns void
  */
 async function fetchRandomEvents(
   db: Kysely<DB>,
@@ -137,6 +140,7 @@ async function fetchRandomEvents(
  * without requiring GM intervention. Examples: wind sounds, distant
  * footsteps, flickering lights, ambient smells.
  * @param worldId
+ * @returns void
  */
 function generateAmbientEvents(worldId: string,): ChatEvent[] {
   const ambientPool: ChatEvent[] = [

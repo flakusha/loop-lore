@@ -73,6 +73,7 @@ export type ReunitePartyResult = ReuniteSuccess | ServiceError;
  * Ownership guard: only the chat owner may split.
  * @param database
  * @param params
+ * @returns void
  */
 export async function splitParty(
   database: Kysely<DB>,
@@ -146,6 +147,7 @@ export async function splitParty(
  * Ownership guard: only the primary chat owner may initiate reunion.
  * @param database
  * @param params
+ * @returns void
  */
 export async function reuniteChats(
   database: Kysely<DB>,

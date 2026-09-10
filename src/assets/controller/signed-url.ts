@@ -30,6 +30,7 @@ export type SignedUrlAction = (typeof SIGNED_URL_ACTIONS)[number];
 
 /**
  * @param value
+ * @returns string
  */
 export function isSignedUrlAction(value: string,): value is SignedUrlAction {
   return (SIGNED_URL_ACTIONS as readonly string[]).includes(value,);
@@ -50,6 +51,7 @@ function getLog() {
 
 /**
  * @param data
+ * @returns void
  */
 function base64urlEncode(data: Uint8Array,): string {
   return toBase64(data,).replaceAll("+", "-",).replaceAll("/", "_",).replace(/=+$/, "",);
@@ -57,6 +59,7 @@ function base64urlEncode(data: Uint8Array,): string {
 
 /**
  * @param str
+ * @returns void
  */
 function base64urlDecode(str: string,): Uint8Array {
   const base64 = str.replaceAll("-", "+",).replaceAll("_", "/",);
@@ -67,6 +70,7 @@ function base64urlDecode(str: string,): Uint8Array {
 /**
  * Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource.
  * @param arr
+ * @returns void
  */
 function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
@@ -81,6 +85,7 @@ function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
  * `src/nsfw/pii-redaction.ts`. HKDF-SHA256 with a domain-specific info
  * keeps the resulting HMAC keys independent.
  * @param secret
+ * @returns void
  */
 async function importSecretKey(secret: string,): Promise<CryptoKey> {
   const subkey = await domainKey(secret, DOMAIN_INFO.ASSETS_SIGNED_URL, 32,);
@@ -173,6 +178,7 @@ export type SignedUrlVerifyResult =
  * Recomputes the HMAC over `${action}:${assetId}:${expiresAt}` and compares
  * constant-time; rejects on bad signature or expiry.
  * @param opts
+ * @returns void
  */
 export async function verifyAssetUrl(opts: VerifyAssetUrlOpts,): Promise<SignedUrlVerifyResult> {
   if (!Number.isFinite(opts.expiresAt,)) {
@@ -218,6 +224,7 @@ export async function verifyAssetUrl(opts: VerifyAssetUrlOpts,): Promise<SignedU
  * operator knows to set `ASSETS_SIGNED_URL_SECRET` and stop sharing.
  * @param assetsSecret
  * @param jwtSecret
+ * @returns void
  */
 export function resolveSignedUrlSecret(
   assetsSecret: string | undefined,

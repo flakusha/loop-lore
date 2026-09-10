@@ -20,6 +20,7 @@ interface CharxResult {
 /**
  * Extract character card and assets from CHARX buffer.
  * @param buffer
+ * @returns Promise<unknown>
  */
 export async function extractCharx(buffer: Buffer,): Promise<CharxResult> {
   const zip = await JSZip.loadAsync(buffer,);
@@ -77,6 +78,7 @@ export async function extractCharx(buffer: Buffer,): Promise<CharxResult> {
  * Create CHARX buffer from character card and assets.
  * @param card
  * @param assets
+ * @returns void
  */
 export async function createCharx(
   card: Record<string, unknown>,
@@ -100,6 +102,7 @@ export async function createCharx(
 /**
  * Convert embeded:// URI to asset path.
  * @param uri
+ * @returns void
  */
 export function resolveEmbededUri(uri: string,): string | null {
   if (!uri.startsWith("embeded://",)) { return null; }

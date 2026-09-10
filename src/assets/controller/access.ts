@@ -16,6 +16,7 @@ import type { ResolvedAsset, } from "./types";
  * @param assetId
  * @param actorId
  * @param actorRole
+ * @returns void
  */
 export async function resolveAsset(
   database: Kysely<DB>,
@@ -42,6 +43,7 @@ export async function resolveAsset(
  * @param database
  * @param assetId
  * @param userId
+ * @returns void
  */
 export async function requireAssetOwner(
   database: Kysely<DB>,

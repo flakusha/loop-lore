@@ -10,6 +10,7 @@ import type { WorldInviteRow, } from "./types";
  * List all invites for a world (including revoked/expired), newest first.
  * @param database
  * @param worldId
+ * @returns void
  */
 export async function listWorldInvites(
   database: Kysely<DB>,

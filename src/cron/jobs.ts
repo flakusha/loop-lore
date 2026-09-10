@@ -13,6 +13,7 @@ import type { CronJobDef, } from "./types";
 /**
  * The default job set wired by `startScheduler` when no explicit list is
  * given. Cadences mirror the ad-hoc timers they replace.
+ * @returns CronJobDef[]
  */
 export function defaultJobs(): CronJobDef[] {
   return [

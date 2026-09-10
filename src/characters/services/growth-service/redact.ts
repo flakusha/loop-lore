@@ -51,6 +51,7 @@ export interface PublicGrowthLogEntry {
  * shape-trim. Kept as a function for symmetry with `redactGrowthLogEntry`
  * and so the merge with `toPublicCard()` converges.
  * @param arc
+ * @returns CharacterArc
  */
 export function redactArcForPlayerCard(arc: CharacterArc | null,): PublicCharacterArc | null {
   if (!arc) { return null; }
@@ -70,6 +71,7 @@ export function redactArcForPlayerCard(arc: CharacterArc | null,): PublicCharact
  *
  * Author/GM/owner views bypass this helper entirely.
  * @param entry
+ * @returns void
  */
 export function redactGrowthLogEntry(entry: GrowthLogEntry,): PublicGrowthLogEntry {
   return {
@@ -89,6 +91,7 @@ export function redactGrowthLogEntry(entry: GrowthLogEntry,): PublicGrowthLogEnt
  * For author/GM/owner views, use `listGrowthLog()` directly with
  * `includePending: true`.
  * @param entries - All entries (applied + pending + rejected)
+ * @returns void
  */
 export function redactGrowthLogForPlayerCard(
   entries: readonly GrowthLogEntry[],

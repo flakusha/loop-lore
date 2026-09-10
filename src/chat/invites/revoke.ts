@@ -11,6 +11,7 @@ import type { InviteResult, } from "./types";
  * @param database
  * @param chatId
  * @param inviteId
+ * @returns void
  */
 export async function revokeInvite(
   database: Kysely<DB>,

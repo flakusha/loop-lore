@@ -33,6 +33,7 @@ import type { RouteCtx, ServeRawOpts, } from "./types";
  * @param searchParams
  * @param action
  * @param config
+ * @returns void
  */
 function signedAuthParams(
   searchParams: URLSearchParams,
@@ -61,6 +62,7 @@ function signedAuthParams(
  * @param root0.database
  * @param root0.config
  * @param root0.ctx
+ * @returns void
  */
 export async function handleServeRawRoute(
   { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },
@@ -84,6 +86,7 @@ export async function handleServeRawRoute(
  * @param root0.database
  * @param root0.config
  * @param root0.ctx
+ * @returns void
  */
 export async function handleDownloadRoute(
   { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },
@@ -108,6 +111,7 @@ export async function handleDownloadRoute(
  * @param root0.config
  * @param root0.ctx
  * @param variant
+ * @returns void
  */
 export async function handleCompressedRoute(
   { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },
@@ -135,6 +139,7 @@ export async function handleCompressedRoute(
  * @param root0.database
  * @param root0.config
  * @param root0.ctx
+ * @returns void
  */
 export async function handleSignedUrlRoute(
   { database, config, ctx, }: RouteDeps & { ctx: RouteCtx },

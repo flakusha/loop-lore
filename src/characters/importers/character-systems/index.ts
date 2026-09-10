@@ -27,6 +27,7 @@ export type { CharacterSystemsImportResult, } from "./types";
  * @param actorId
  * @param data
  * @param worldId
+ * @returns void
  */
 export async function importCharacterSystems(
   db: Kysely<DB>,

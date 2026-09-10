@@ -18,6 +18,7 @@ import type {
  * @param base
  * @param override
  * @param strategy
+ * @returns void
  */
 export function mergeImageEditConfig(
   base: ImageEditTemplateConfig,
@@ -52,6 +53,7 @@ export function mergeImageEditConfig(
  * @param base
  * @param override
  * @param strategy
+ * @returns void
  */
 export function mergeCharacterConfig(
   base: CharacterTemplateConfig,
@@ -108,6 +110,7 @@ export function mergeCharacterConfig(
  * @param base
  * @param override
  * @param strategy
+ * @returns void
  */
 export function mergeWorkflowConfig(
   base: WorkflowTemplateConfig,

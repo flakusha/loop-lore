@@ -117,6 +117,7 @@ registerCommand("attack", async (args, ctx,): Promise<CommandResult> => {
 /**
  * Parse a positive integer, or null when absent/invalid.
  * @param raw
+ * @returns string
  */
 function parsePositiveInt(raw: string | undefined,): number | null {
   if (!raw) { return null; }
@@ -127,6 +128,7 @@ function parsePositiveInt(raw: string | undefined,): number | null {
 /**
  * Parse a dice side count; defaults to 6 (d6).
  * @param raw
+ * @returns void
  */
 function parseSides(raw: string | undefined,): DiceSides {
   if (!raw) { return 6; }

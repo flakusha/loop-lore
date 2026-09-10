@@ -42,6 +42,7 @@ export interface RecordSkillAcquisitionOpts {
  *
  * @param db
  * @param opts
+ * @returns void
  */
 export async function recordSkillAcquisition(
   db: Kysely<DB>,

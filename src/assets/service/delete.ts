@@ -19,6 +19,7 @@ import type { DeleteAssetOpts, } from "./types";
  * @param root0.database
  * @param root0.assetId
  * @param root0.uploadDir
+ * @returns Promise<unknown>
  */
 export async function deleteAsset({ database, assetId, uploadDir, }: DeleteAssetOpts,): Promise<boolean> {
   const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();

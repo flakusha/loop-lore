@@ -64,6 +64,7 @@ interface CharacterLoadout {
 /**
  * Find character files in configs/characters/ directory
  * @param cwd
+ * @returns string
  */
 function findCharacterFiles(cwd: string,): string[] {
   const mainRoot = findMainRepoRoot(cwd,);
@@ -105,6 +106,7 @@ function findCharacterFiles(cwd: string,): string[] {
 
 /**
  * @param filePath
+ * @returns void
  */
 function parseCharacterFile(filePath: string,): CharacterFileData {
   const content = readFileSync(filePath, "utf8",);
@@ -121,6 +123,7 @@ function parseCharacterFile(filePath: string,): CharacterFileData {
 /**
  * Normalize a character file data into an array of templates
  * @param data
+ * @returns void
  */
 function normalizeTemplates(data: CharacterFileData,): CharacterTemplateConfig["templates"] {
   // Multi-character file: has templates array
