@@ -3,7 +3,7 @@
 
 # Priority — Workstack Index (P0–P6+)
 
-> **Last updated:** 2026-09-10 (post-August refresh — NSFW async pipeline + consent/route-authz wiring landed, mesh encrypted-sharing in flight, coverage lifts with raised waiver floors, test-isolation hardening, untriaged waves re-triaged). Index of the priority
+> **Last updated:** 2026-09-10 (post-August refresh — NSFW async pipeline + consent/route-authz wiring landed, mesh encrypted-sharing landed, coverage lifts with raised waiver floors, test-isolation hardening, untriaged waves re-triaged). Index of the priority
 > ladder, split by priority/phasing into tier files (2026-08-15). Tier files hold the
 > detail; this index holds the status header, file map, and milestone gates.
 >
@@ -24,7 +24,7 @@
 
 P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress · Regex ✅ · P3–P5 → 0.1.0 value tiers
 (§ P3–P5 below) · P6 → § P6 (below); finer debt → `../open.md` · Gate C ✅ (GM-guided
-story P2-Da done — merged to `dev`). **Sep-10 refresh: NSFW pipeline + consent wiring landed; mesh sharing in flight; coverage floors raised.**
+story P2-Da done — merged to `dev`). **Sep-10 refresh: NSFW pipeline + consent wiring landed (follow-ups closed); mesh sharing landed; coverage floors raised.**
 
 ## File map (split 2026-08-15)
 

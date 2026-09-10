@@ -6,6 +6,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
+**Epic:** epic-entity-generation-workflows
 
 ## Summary
 

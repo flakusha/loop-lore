@@ -6,6 +6,7 @@
 **Status:** ✅ Done (shipped: `stripLeadingMention` in src/group-chat/mention-parser.ts; dispatch runs slash parse, trigger match, and step fill on the stripped remainder; lone mentions fall through; addressed slash commands dispatch. Verified: dispatch integration tests.)
 **Priority:** Medium
 **Effort:** Medium
+**Epic:** epic-workflow-engine
 
 ## Summary
 

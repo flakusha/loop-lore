@@ -22,7 +22,7 @@ hand-written spec as an authoritative current-state contract.
 
 ## Overview
 
-Reimplementation of SillyTavern with enhanced features:
+LLM RPG chat platform (SillyTavern-inspired, architecturally distinct) with enhanced features:
 
 - TUI mode + Web UI (htmx + Alpine.js)
 - Database support (`bun:sqlite` → Kysely, PG via dialect swap)
