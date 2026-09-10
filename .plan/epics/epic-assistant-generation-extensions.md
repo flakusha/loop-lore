@@ -634,3 +634,8 @@ User prompt → Intent detection → Entity type routing → Generation pipeline
 ## Linked Tasks
 
 - TASK-assistant-generation-extensions.md
+
+> 2026-09 update: `/improve` is being unified with the composer's
+>"improve my prompt" behind the shared AUX-backed service in
+>`epic-prompt-improvement.md` (`TASK-prompt-improve-shared-service.md`) —
+>new prompt-improvement work belongs to that epic, not here.

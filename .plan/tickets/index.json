@@ -1444,7 +1444,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md"
+    "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md",
+    "status": "done"
   },
   "BUG-CRAFTING-STATION-INSTANCES-SCOPED-ACROSS-WORLDS-CROSS-WORLD-": {
     "hash": "7bde6bd",
@@ -2895,7 +2896,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-modelsuitability-finetunereadiness-never-parse-b-suffixed-si.md"
+    "source": ".plan/tickets/BUG-modelsuitability-finetunereadiness-never-parse-b-suffixed-si.md",
+    "status": "done"
   },
   "BUG-MUSIC-LINKS-POST-BODY-CHATID-IS-REQUIRED-BUT-IGNORED-DEAD-SC": {
     "hash": "63e7492",
@@ -3716,6 +3718,17 @@
     "source": ".plan/tickets/BUG-signal-bridge-activation-trigger-undefined.md",
     "status": "not-yet-implemented"
   },
+  "BUG-SINGLE-CHAT-PAUSE-NOT-GATING-AUTOREPLY": {
+    "hash": "pending",
+    "extid": "BUG-SINGLE-CHAT-PAUSE-NOT-GATING-AUTOREPLY",
+    "type": "BUG",
+    "title": "Single-chat auto-reply ignores story pause",
+    "label": "bug",
+    "priority": "Medium",
+    "epic": "epic-generation-flow-control.md",
+    "tags": [],
+    "source": ".plan/tickets/BUG-single-chat-pause-not-gating-autoreply.md"
+  },
   "BUG-SIZE-STRICT-PRE-EXISTING-DEV-DRIFT": {
     "hash": "94675a8",
     "git_issue": "94675a8",
@@ -4294,7 +4307,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/BUG-worktree-report-crashes-on-malformed-or-missing-check-report.md"
+    "source": ".plan/tickets/BUG-worktree-report-crashes-on-malformed-or-missing-check-report.md",
+    "status": "done"
   },
   "BUG-WORKTREE-TICKET-WRITES-PLAN-FILES-TO-MAIN-CHECKOUT": {
     "hash": "ab13e3c",
@@ -15872,6 +15886,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-llm-enhance-lore-style-grounding.md"
   },
+  "TASK-LLM-MOCK-INTEGRATION-SUITE": {
+    "hash": "pending",
+    "extid": "TASK-LLM-MOCK-INTEGRATION-SUITE",
+    "type": "TASK",
+    "title": "LLM-mock integration test suite for generation surfaces",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-testing-qa.md (see also epic-prompt-improvement.md)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-llm-mock-integration-suite.md"
+  },
   "TASK-LLM-QUEUE": {
     "hash": "d7fe8bf",
     "extid": "TASK-LLM-QUEUE",
@@ -15907,6 +15932,17 @@
     "tags": [],
     "source": ".plan/tickets/TASK-llm-sandboxing.md",
     "git_issue": "0982d2a"
+  },
+  "TASK-LOCAL-IMAGE-GENERATION-QUEUE": {
+    "hash": "pending",
+    "extid": "TASK-LOCAL-IMAGE-GENERATION-QUEUE",
+    "type": "TASK",
+    "title": "Local image generation queue with pause and rate limit",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-llm-queue.md (see also epic-generation-flow-control.md)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-local-image-generation-queue.md"
   },
   "TASK-LOCAL-INSTANCE-INTEGRITY-HOLISTIC": {
     "hash": "pending",
@@ -18562,6 +18598,39 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-prompt-feature-flags-conditional-injection.md"
+  },
+  "TASK-PROMPT-IMPROVE-COMPOSER-UI": {
+    "hash": "pending",
+    "extid": "TASK-PROMPT-IMPROVE-COMPOSER-UI",
+    "type": "TASK",
+    "title": "Composer \"improve my prompt\" UI affordance",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-prompt-improvement.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-improve-composer-ui.md"
+  },
+  "TASK-PROMPT-IMPROVE-SHARED-SERVICE": {
+    "hash": "pending",
+    "extid": "TASK-PROMPT-IMPROVE-SHARED-SERVICE",
+    "type": "TASK",
+    "title": "Prompt improvement shared service (gradation levels)",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-prompt-improvement.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-improve-shared-service.md"
+  },
+  "TASK-PROMPT-INJECTION-TWO-STEP-VALIDATION": {
+    "hash": "pending",
+    "extid": "TASK-PROMPT-INJECTION-TWO-STEP-VALIDATION",
+    "type": "TASK",
+    "title": "Two-step prompt/message injection validation",
+    "label": "task",
+    "priority": "High",
+    "epic": "epic-prompt-improvement.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-prompt-injection-two-step-validation.md"
   },
   "TASK-PROMPT-LIBRARY": {
     "hash": "pending",
