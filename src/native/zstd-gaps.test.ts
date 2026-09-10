@@ -1,8 +1,21 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { expect, mock, test, } from "bun:test";
-import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../test-utils/isolate-only";
+import { describe, expect, mock, test, } from "bun:test";
+
+/**
+ * True only when each test file owns its module registry: the allow-list
+ * names exactly the scripts whose `bun test` runs pass `--isolate` — direct
+ * (`test`, `test:unit`, `test:coverage`) and pipeline-spawned
+ * (`check:parallel`, whose coverage command runs `bun test --isolate`
+ * in-process). The `--isolate` flag itself is invisible inside test
+ * processes, so argv cannot be used. Shared-process runs
+ * (`test:unit:parallel`, bare `bun test`) skip, keeping the real loader.
+ */
+const ISOLATED_RUN = ["test", "test:unit", "test:coverage", "check:parallel",].includes(
+  process.env.npm_lifecycle_event ?? "",
+);
+const describeOrSkipIsolated = ISOLATED_RUN ? describe : describe.skip;
 
 /** Typed view of Bun's built-in zstd (mirrors the unit under test). */
 interface BunZstd {
@@ -38,9 +51,9 @@ const fakeHandle = {
 };
 
 // Loader mock leaks process-globally without --isolate (fake native handle
-// would serve later suites, e.g. zstd.test.ts): gate it like other
-// mock.module suites so plain `bun test src/` keeps the real loader.
-if (STRICTLY_ISOLATED) {
+// would serve later suites, e.g. zstd.test.ts): run only when each file owns
+// its module registry, so shared-process runs keep the real loader.
+if (ISOLATED_RUN) {
   mock.module("./loader", () => ({
     getNativeModule: () => ({ handle: fakeHandle, version: 3, }),
     isNativeAvailable: () => true,
@@ -51,7 +64,7 @@ if (STRICTLY_ISOLATED) {
 // static import (hoisted above the mock) cannot work here.
 const { isNativeZstdAvailable, zstdCompress, zstdDecompress, } = await import("./zstd");
 
-describeOrSkipStrict("zstd gaps — native compress path", () => {
+describeOrSkipIsolated("zstd gaps — native compress path", () => {
   test("native success returns the sliced output", () => {
     const input = new Uint8Array([9, 8, 7, 6,],);
     expect(zstdCompress(input,),).toEqual(input,);
@@ -95,7 +108,7 @@ describeOrSkipStrict("zstd gaps — native compress path", () => {
   });
 },);
 
-describeOrSkipStrict("zstd gaps — native decompress path", () => {
+describeOrSkipIsolated("zstd gaps — native decompress path", () => {
   test("native success returns the sliced output", () => {
     const input = new Uint8Array([4, 5, 6,],);
     expect(zstdDecompress(input,),).toEqual(input,);
@@ -124,7 +137,7 @@ describeOrSkipStrict("zstd gaps — native decompress path", () => {
   });
 },);
 
-describeOrSkipStrict("zstd gaps — availability", () => {
+describeOrSkipIsolated("zstd gaps — availability", () => {
   test("reports native available when the loader resolves", () => {
     expect(isNativeZstdAvailable(),).toBe(true,);
   });
