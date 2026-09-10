@@ -34,7 +34,7 @@ interface WllamaInstance {
 
 /** wllama ESM surface used here (dynamic `import(cdn)`). */
 interface WllamaModule {
-  Wllama: new (
+  Wllama: new(
     paths: Record<string, string>,
     config?: Record<string, unknown>,
   ) => WllamaInstance;
@@ -91,7 +91,7 @@ function toMessages(input: unknown,): { role: string; content: string }[] {
       .map((entry,) => ({
         role: typeof entry.role === "string" ? entry.role : "user",
         content: typeof entry.content === "string" ? entry.content : "",
-      }),);
+      }));
   }
   return [{ role: "user", content: String(input ?? "",), },];
 }
@@ -135,7 +135,7 @@ async function loadModel(request: LoadRequest,): Promise<string> {
         ...(device === "wasm" ? { n_gpu_layers: 0, } : {}),
         progressCallback,
       },);
-      wllama?.exit().catch(() => undefined,);
+      wllama?.exit().catch(() => undefined);
       wllama = instance;
       loadedModel = request.model;
       return device;
@@ -204,3 +204,5 @@ scope.onmessage = (event: { data: unknown },): void => {
       },
     );
 };
+/** Module marker: keeps this worker's globals out of the shared global scope (sibling workers declare the same names). */
+export {};
