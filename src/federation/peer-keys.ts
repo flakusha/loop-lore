@@ -119,6 +119,25 @@ export async function rotateInboundKey(
     .executeTakeFirstOrThrow();
   return Buffer.from(await decryptBytes(smk, stored.encrypted_key,),).toString("base64",);
 }
+/**
+ * Revoke our inbound key for one sender: delete current + grace previous.
+ * Takes effect immediately — envelopes sealed under the revoked keys no
+ * longer open (callers fall back to the shared PSK, if configured).
+ * Revoking an unknown peer is a no-op success (idempotent).
+ * @param database
+ * @param senderOrigin Canonical sender origin.
+ */
+export async function revokeInboundKey(
+  database: Kysely<DB>,
+  senderOrigin: string,
+): Promise<void> {
+  const origin = canonicalOrigin(senderOrigin,);
+  if (origin === null) { throw new Error(`invalid sender origin: ${senderOrigin}`,); }
+  await database
+    .deleteFrom("mesh_inbound_keys",)
+    .where("peer_origin", "=", origin,)
+    .execute();
+}
 
 /**
  * Ciphers that open this sender's envelopes: current first, then the grace

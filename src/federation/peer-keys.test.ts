@@ -11,6 +11,7 @@ import {
   generateInboundKey,
   getOrCreateInboundKey,
   inboundCiphers,
+  revokeInboundKey,
   rotateInboundKey,
 } from "./peer-keys";
 
@@ -79,6 +80,19 @@ describe("per-sender inbound keys", () => {
     expect(await inboundCiphers(db, key, "not a url",),).toEqual([],);
   });
 
+  test("revoke drops current + grace keys; unknown peer is a no-op", async () => {
+    const { db, } = await createTestDb();
+    const key = await smk();
+    await getOrCreateInboundKey(db, key, "https://a.example",);
+    await rotateInboundKey(db, key, "https://a.example",);
+    expect(await inboundCiphers(db, key, "https://a.example",),).toHaveLength(2,);
+    await revokeInboundKey(db, "https://a.example",);
+    expect(await inboundCiphers(db, key, "https://a.example",),).toEqual([],);
+    // Unknown peer revoke succeeds without effect (idempotent).
+    await revokeInboundKey(db, "https://ghost.example",);
+    expect(await inboundCiphers(db, key, "https://ghost.example",),).toEqual([],);
+  });
+
   test("invalid origins throw", async () => {
     const { db, } = await createTestDb();
     const key = await smk();
@@ -86,6 +100,9 @@ describe("per-sender inbound keys", () => {
       "invalid sender origin",
     );
     await expect(rotateInboundKey(db, key, "not a url",),).rejects.toThrow(
+      "invalid sender origin",
+    );
+    await expect(revokeInboundKey(db, "not a url",),).rejects.toThrow(
       "invalid sender origin",
     );
     expect(generateInboundKey(),).toHaveLength(44,);
