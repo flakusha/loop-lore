@@ -70,7 +70,7 @@ describe("admin users routes", () => {
     const res = await app.handle(new Request("http://localhost/api/admin/users?q=ali",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { username: string }[] };
-    expect(body.data.some((u,) => u.username === "alice",),).toBe(true,);
+    expect(body.data.some((u,) => u.username === "alice"),).toBe(true,);
   });
 
   test("GET /api/admin/users?role=user filters by role", async () => {
@@ -140,4 +140,4 @@ describe("admin users routes", () => {
     );
     expect(res.status,).toBe(403,);
   });
-},);
+});

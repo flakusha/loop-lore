@@ -210,4 +210,4 @@ describe("admin danger-zone — factory reset", () => {
     );
     expect([200, 500,],).toContain(res.status,);
   });
-},);
+});

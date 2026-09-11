@@ -8,9 +8,9 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
+import { ChatType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
-import { ChatType, } from "../../db/enums";
 import { insertChats, insertUsers, } from "../../test-utils/insert-helpers";
 import { chatsRoutes, } from "./chats";
 
@@ -39,7 +39,6 @@ beforeAll(async () => {
   sqlite = tdb.sqlite;
   await insertUsers(db, "alice", "Alice", { id: TEST_USER, },);
   await insertChats(db, "Test Chat", TEST_USER, { id: TEST_CHAT, type: ChatType.Direct, },);
-
 },);
 afterAll(() => {
   sqlite.close();
@@ -147,4 +146,4 @@ describe("admin chats routes", () => {
     );
     expect(res.status,).toBe(403,);
   });
-},);
+});

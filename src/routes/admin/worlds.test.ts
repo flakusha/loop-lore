@@ -72,7 +72,7 @@ describe("admin worlds routes", () => {
     const res = await app.handle(new Request("http://localhost/api/admin/worlds?q=Eldoria",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { name: string }[] };
-    expect(body.data.some((w,) => w.name === "Eldoria",),).toBe(true,);
+    expect(body.data.some((w,) => w.name === "Eldoria"),).toBe(true,);
   });
 
   test("GET /api/admin/worlds/:id returns 200 for admin (existing world)", async () => {
@@ -113,4 +113,4 @@ describe("admin worlds routes", () => {
     );
     expect(res.status,).toBe(403,);
   });
-},);
+});
