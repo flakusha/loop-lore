@@ -371,3 +371,192 @@ describe("isEncryptedPayload strict shape validation (BUG-encrypted-payload-snif
     expect(isEncryptedPayload(enc,),).toBe(true,);
   });
 });
+
+// ── AC1 — no plaintext leak path ────────────────────────────
+
+describe("AC1 no-plaintext-leak-path", () => {
+  test("compressThenEncrypt never writes raw plaintext into payload.enc", async () => {
+    // The write path is the only public API that produces an
+    // EncryptedPayload row. Verify that whatever plaintext comes in,
+    // the bytes the pipeline stores under `enc` are never the
+    // plaintext bytes — not even for tiny inputs, not even when
+    // compression is disabled. A forged row that bypassed the wrapper
+    // could try to smuggle the user's text by claiming it was already
+    // ciphertext; the strict-shape check on the read side is the
+    // second half of the guard. Here we pin the write side: plaintext
+    // in → ciphertext out, always.
+    const plaintext = "secret hello";
+    const enc = await compressThenEncrypt({
+      plaintext,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: { threshold: 128, algorithm: "gzip", },
+    },);
+    const payload = JSON.parse(enc,) as { enc: string; nonce: string; comp: boolean };
+
+    // Below threshold: no compression, so the length reading below is
+    // meaningful — ciphertext spans exactly the plaintext plus tag.
+    expect(payload.comp,).toBe(false,);
+
+    // The ciphertext must not embed the plaintext anywhere, not even as
+    // a contiguous subsequence. Length comparison alone would miss a
+    // leak that appends a tag to raw text; the scan catches it.
+    const encBytes = Uint8Array.fromBase64(payload.enc,);
+    const plaintextBytes = new TextEncoder().encode(plaintext,);
+    expect(Buffer.from(encBytes,).indexOf(Buffer.from(plaintextBytes,),),).toBe(-1,);
+    // Sanity: ciphertext is exactly plaintext.length + 16 (AES-GCM tag).
+    expect(encBytes.length,).toBe(plaintextBytes.length + 16,);
+
+    // Decrypt with the same key — AES-GCM authentication must succeed
+    // and the recovered plaintext must match. If `enc` had been raw
+    // plaintext, this decrypt would either throw (random bytes vs key)
+    // or — worst-case — return garbage. Either outcome proves no leak.
+    const nonceBytes = Uint8Array.fromBase64(payload.nonce,);
+    const recovered = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: nonceBytes, },
+      cryptoKey,
+      encBytes,
+    );
+    expect(new TextDecoder().decode(recovered,),).toBe(plaintext,);
+
+    // Belt-and-braces: the strict-shape check must reject the
+    // plaintext itself as a forged envelope. If
+    // `isEncryptedPayload("secret hello")` returned true, a caller
+    // could submit literal text and the server would store it under
+    // the same code path as real ciphertext.
+    expect(isEncryptedPayload(plaintext,),).toBe(false,);
+    expect(isEncryptedPayload(`"secret hello"`,),).toBe(false,);
+  });
+});
+
+// ── AC2 — compress-before-encrypt ordering ─────────────────
+
+describe("AC2 compress-before-encrypt ordering", () => {
+  test("payload.enc decrypts to compressed bytes, not plaintext UTF-8", async () => {
+    // Large enough to trigger compression at the default threshold.
+    // The bytes under `enc` must be AES-GCM ciphertext OF the
+    // compressed payload, not AES-GCM ciphertext OF the plaintext.
+    // Decrypting the envelope and inspecting the plaintext reveals the
+    // compression header magic.
+    const plaintext = "compress-before-encrypt probe ".repeat(200,);
+    const enc = await compressThenEncrypt({
+      plaintext,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: { threshold: 128, algorithm: "gzip", },
+    },);
+    const payload = JSON.parse(enc,) as {
+      enc: string;
+      nonce: string;
+      comp: boolean;
+      compAlgo?: string;
+    };
+    expect(payload.comp,).toBe(true,);
+    expect(payload.compAlgo,).toBe("gzip",);
+
+    const encBytes = Uint8Array.fromBase64(payload.enc,);
+    const nonceBytes = Uint8Array.fromBase64(payload.nonce,);
+
+    const decryptedBuf = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: nonceBytes, },
+      cryptoKey,
+      encBytes,
+    );
+    const decryptedBytes = new Uint8Array(decryptedBuf,);
+
+    // Negative assertion: the decrypted bytes must NOT round-trip as
+    // the original plaintext via TextDecoder. If compression ran
+    // before encryption, the bytes here are gzip (or brotli/zstd) —
+    // not UTF-8 text. `fatal: true` throws on invalid UTF-8
+    // sequences, which is exactly what compressed bytes are.
+    let decodedAsOriginal = true;
+    try {
+      decodedAsOriginal = new TextDecoder("utf-8", { fatal: true, },).decode(decryptedBytes,) === plaintext;
+    } catch {
+      decodedAsOriginal = false;
+    }
+    expect(decodedAsOriginal,).toBe(false,);
+
+    // Positive assertion: the decrypted bytes are the base64 envelope
+    // of a gzip stream, NOT the plaintext. The first four ASCII chars
+    // `H4sI` are the standard base64 encoding of the gzip magic header
+    // `1f 8b 08` — proving compression happened first and the
+    // cipher wrapped the compressed (then base64-wrapped) stream.
+    const decAsAscii = new TextDecoder("latin1",).decode(decryptedBytes,);
+    expect(decAsAscii.slice(0, 4,),).toBe("H4sI",);
+    // Decoding that base64 prefix must yield the gzip magic bytes.
+    const gzipHeader = Uint8Array.fromBase64(decAsAscii.slice(0, 4,),);
+    expect(gzipHeader[0],).toBe(0x1f,);
+    expect(gzipHeader[1],).toBe(0x8b,);
+  });
+});
+
+// ── AC3 — lossless round-trip per recipient ─────────────────
+
+describe("AC3 lossless round-trip per recipient", () => {
+  test("every recipient decrypts + decompresses to the original bytes", async () => {
+    // The chat's current active key is shared by every current
+    // member; each participant holds a copy derived from the SMK.
+    // Simulate N recipients by reusing the same chat key 5 times —
+    // what changes per recipient is the nonce, not the key material.
+    // The contract: for every recipient, decryptThenDecompress must
+    // return the original message bytes byte-for-byte.
+    const messageBytes = new TextEncoder().encode(
+      "Hello \u4e16\u754c \ud83c\udf0d \u041f\u0440\u0438\u0432\u0435\u0442 " +
+        "\u65e5\u672c\u8a9e \ud83d\ude80 " +
+        "Za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144 " +
+        '\u2014 line1\nline2\ttab"quote"\u0000nul',
+    );
+    const originalText = new TextDecoder().decode(messageBytes,);
+
+    const recipients = [
+      { name: "alice", key: cryptoKey, },
+      { name: "bob", key: cryptoKey, },
+      { name: "carol", key: cryptoKey, },
+      { name: "dave", key: cryptoKey, },
+      { name: "eve", key: cryptoKey, },
+    ];
+
+    // Encrypt once per recipient with the active chat key. The nonce
+    // is fresh per encrypt so each recipient's stored row would carry
+    // its own payload. Loop encrypt+decrypt to exercise the round-trip
+    // for every key holder.
+    for (const r of recipients) {
+      const enc = await compressThenEncrypt({
+        plaintext: originalText,
+        chatKey: r.key,
+        keyId: `${KEY_ID}-${r.name}`,
+        config: { threshold: 128, algorithm: "gzip", },
+      },);
+
+      const decrypted = await decryptThenDecompress(enc, r.key,);
+
+      // Byte-for-byte equality, not just string equality: the bytes
+      // that round-trip must match the original encoding exactly,
+      // including the embedded NUL, tab, and non-BMP code points.
+      const decryptedBytes = new TextEncoder().encode(decrypted,);
+      expect(decryptedBytes,).toEqual(messageBytes,);
+      expect(decrypted,).toBe(originalText,);
+    }
+
+    // Same contract under compression: the 72-unit message above never
+    // reaches the 128 threshold, so the loop pins only the comp=false
+    // path. Repeat past the threshold so every recipient also round-trips
+    // multibyte + NUL content through the comp=true path.
+    const largeText = originalText.repeat(8,);
+    for (const r of recipients) {
+      const enc = await compressThenEncrypt({
+        plaintext: largeText,
+        chatKey: r.key,
+        keyId: `${KEY_ID}-${r.name}-large`,
+        config: { threshold: 128, algorithm: "gzip", },
+      },);
+      const largePayload = JSON.parse(enc,) as { comp: boolean; compAlgo?: string };
+      expect(largePayload.comp,).toBe(true,);
+      expect(largePayload.compAlgo,).toBe("gzip",);
+      const decrypted = await decryptThenDecompress(enc, r.key,);
+      expect(new TextEncoder().encode(decrypted,),).toEqual(new TextEncoder().encode(largeText,),);
+      expect(decrypted,).toBe(largeText,);
+    }
+  });
+});
