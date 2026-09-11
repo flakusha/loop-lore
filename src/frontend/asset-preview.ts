@@ -12,6 +12,7 @@
  */
 
 import { safeFetch, } from "../utils";
+import { mountPreviewAnchorEditor, } from "./asset-preview-anchor";
 import { renderTagsPanel, } from "./asset-preview-tags";
 import { feFetch, } from "./fe-fetch";
 
@@ -117,6 +118,7 @@ async function renderPreviewBody(
       body.innerHTML = `<img src="${escapeHtml(mediaSrc,)}" alt="${
         escapeHtml(a.filename ?? "",)
       }" style="width:100%;display:block" />`;
+      mountPreviewAnchorEditor(body, a.id,);
       break;
     }
     case "audio": {
