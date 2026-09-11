@@ -26,6 +26,13 @@ export {
   unlinkAsset,
 } from "./links";
 export {
+  persistGeneratedImages,
+} from "./persist-generated";
+export type {
+  PersistedGeneratedImage,
+  PersistGeneratedImagesOpts,
+} from "./persist-generated";
+export {
   canAccessAsset,
   getAsset,
   getAssetData,
