@@ -108,6 +108,7 @@ export interface DB {
   proactive_messaging_config: import("./schema-core").ProactiveMessagingConfig;
   story_turns: import("./schema-story").StoryTurns;
   vn_choices: import("./schema-core").VnChoices;
+  rotation_history: import("./schema-core").RotationHistory;
   personas: import("./schema-core").Personas;
   items: import("./schema-story").Items;
   npc_states: import("./schema-story").NpcStates;

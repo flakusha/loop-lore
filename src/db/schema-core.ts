@@ -807,6 +807,18 @@ export interface CharacterInternalTraits {
   updated_at: Generated<string>;
 }
 
+// ── rotation_history ────────────────────────────────────────────
+export interface RotationHistory {
+  id: Generated<string>;
+  chat_id: string;
+  actor_id: string | null;
+  reason: string;
+  old_key_id: string | null;
+  new_key_id: string;
+  messages_re_encrypted: Generated<number>;
+  created_at: Generated<string>;
+}
+
 // ── model_capabilities ────────────────────────────────────────────
 export interface ModelCapabilities {
   id: Generated<string>;
