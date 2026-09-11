@@ -12,9 +12,9 @@ import { describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import { MessageRole, } from "../../db/enums-core/messages";
 import type { Config, } from "../../config/schema";
 import { createConfigSchema, } from "../../config/schema-class";
+import { MessageRole, } from "../../db/enums-core/messages";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import {
@@ -91,7 +91,7 @@ describe("entity-suggestions route", () => {
 
     expect(res.status,).toBe(200,);
     const body = await res.json() as { items: { kind: string; name: string; seed: string }[] };
-    expect(body.items.find((item,) => item.name === "Mira",),).toBeDefined();
+    expect(body.items.find((item,) => item.name === "Mira"),).toBeDefined();
     expect(body.items[0]!.seed,).toContain("Mira",);
 
     await db.destroy();
