@@ -174,3 +174,44 @@ ModerationHook ✅), **B2–B6/B9, A1–A4, A#-domain, G1** (previously resolved
 - **Next**: close the mesh/federation interconnect batch (mesh content-sharing shipped —
   `open-untriaged.md` § New clusters); triage the remaining advisory orphans
   (`open-untriaged.md` § 2026-09-10 re-triage).
+
+## 2026-09-11 core-finalization wave
+
+> Scope: finish + iron out core application features for 0.1.0. Proposal-tier
+> items (FEAT-059/060/062/065/066/067/075/045-047, embeddings, asset-consistency,
+> keyphrase recall, encounter gen, emotion-avatar/wardrobe/asset-platform proposals,
+> 2FA execution, R1/R2 draft epics, API versioning) stay parked — not this wave.
+
+### F1 — wiring remainders (small, ticket-backed)
+
+- `TASK-sessions-api-routes` — `/api/sessions` pending (P3 #2 remainder)
+- `PERF-gallery-uploadChatAssets-sequential` — parallelize uploads (P3 #24)
+- World/location search (P3 filtering row remainder)
+- Detailed tuning frontend (P3 #13 remainder)
+
+### F2 — feature remainders (medium, ticket-backed)
+
+- C7 Phases 3–4 — party split/reunite engine + VN choice-card integration
+  (`TASK-chat-branch-merge.md`, child of `TASK-travel-party-migration.md`)
+- G2 remainder — timeline branching UI + `loreSection` injection
+  (service layer shipped 2026-09-10; `TASK-timeline-branching-ui.md`)
+- E2E gaps — `TEST-e2e-auth-flows-missing`, `TEST-e2e-nsfw-moderation-routes-missing`,
+  `TEST-e2e-users-personas-routes-missing`
+
+### Hygiene closed in this wave (planning only, no code)
+
+- P2-Reconcile ✅ all 9 closed (statuses verified on dev)
+- Audit Follow-up Cluster ✅ all 8 closed (resolves the 2026-09-03 open listing above)
+- Status corrections: command palette ✅, LoRA ✅, fine-tuning UI ✅ (B10),
+  unified GM↔assistant view ✅ (E1), creation wizards ✅ (C3), md links ✅,
+  memory-selection UI shipped, VN-settings cluster resolved
+- `plan:sync:fix` re-run to backfill done-statuses into `tickets/index.json`
+  (e.g. palette WIRE verified-done but unindexed)
+
+### Still blocking the 0.1.0 tag
+
+- **A9** — tag v0.1.0 + push `dev`→`origin/dev` (human-only: tags + push reserved for human)
+- **Build Integrity Cluster** — typecheck green on dev; verify the tsc trio +
+  `plan:sync` orphan fix, then close (`open-build-integrity.md`)
+- **Size-strict ceiling** — regressed since the 2026-08-12 close-out; split-down in
+  progress; must be back under ceiling before A9
