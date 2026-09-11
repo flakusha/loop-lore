@@ -32,8 +32,6 @@ export const AssetLinkEntitySchema = t.UnionEnum([
   "message",
   "asset",
 ],);
-export const AssetTagScopeSchema = t.UnionEnum(["user", "global",],);
-export const AssetTagSourceSchema = t.UnionEnum(["manual", "rag",],);
 export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
 export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
 export const AvatarSelectionRuleSchema = t.UnionEnum([
@@ -962,9 +960,9 @@ export const AdminCharacterOverridesSchema = t.Object({
 export const AssetTagsSchema = t.Object({
   asset_id: t.String(),
   tag: t.String(),
-  scope: t.Optional(AssetTagScopeSchema,),
+  scope: t.Optional(t.String(),),
   owner_id: t.Optional(t.String(),),
-  source: t.Optional(AssetTagSourceSchema,),
+  source: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
 },);
 

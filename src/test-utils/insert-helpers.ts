@@ -14,8 +14,6 @@ import type {
   AgentType,
   AssetAlphaStatus,
   AssetLinkEntity,
-  AssetTagScope,
-  AssetTagSource,
   AssetType,
   AssetVisibility,
   AvatarSelectionRule,
@@ -1082,7 +1080,7 @@ export async function insertAssetTags(
   db: Db,
   asset_id: string,
   tag: string,
-  opts?: { id?: string; scope?: AssetTagScope; owner_id?: string | null; source?: AssetTagSource; created_at?: string },
+  opts?: { id?: string; scope?: string; owner_id?: string | null; source?: string; created_at?: string },
 ): Promise<void> {
   await db.insertInto("asset_tags",).values({
     id: crypto.randomUUID(),

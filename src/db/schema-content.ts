@@ -8,8 +8,6 @@ import type { Generated, } from "kysely";
 import type {
   AssetAlphaStatus,
   AssetLinkEntity,
-  AssetTagScope,
-  AssetTagSource,
   AssetType,
   AssetVisibility,
   StorageBackend,
@@ -63,9 +61,9 @@ export interface AssetTags {
   id: Generated<string>;
   asset_id: string;
   tag: string;
-  scope: Generated<AssetTagScope>;
+  scope: Generated<string>;
   owner_id: string | null;
-  source: Generated<AssetTagSource>;
+  source: Generated<string>;
   created_at: Generated<string>;
 }
 
