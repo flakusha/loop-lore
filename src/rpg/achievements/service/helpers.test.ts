@@ -3,7 +3,16 @@
 
 /** Tests for achievement row mappers (pure, no DB). */
 import { describe, expect, test, } from "bun:test";
-import { rowToAchievement, rowToPlayerAchievement, } from "./helpers";
+import { createLogger, } from "../../../logger";
+import { getLog, rowToAchievement, rowToPlayerAchievement, } from "./helpers";
+
+createLogger({ level: "error", },);
+
+describe("getLog", () => {
+  test("returns the achievements logger", () => {
+    expect(getLog(),).toBeDefined();
+  });
+});
 
 describe("rowToAchievement", () => {
   test("maps snake_case columns and parses JSON fields", () => {
