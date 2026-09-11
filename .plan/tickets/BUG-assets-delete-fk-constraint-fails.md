@@ -93,7 +93,7 @@ CASCADE, `chat_backgrounds` SET NULL) are left to SQLite.
 
 Verified: assets e2e green, assets unit suite green, backend typecheck clean.
 Follow-up dedup candidate found during review: `src/assets/controller/routes.ts`
-+ `src/assets/controller/handlers.ts` are a dead duplicate of the live inline
+and `src/assets/controller/handlers.ts` are a dead duplicate of the live inline
 routes in `src/assets/controller.ts` (imported only by each other and
 `handlers.test.ts`) — no runtime shadowing since only one copy registers.
 

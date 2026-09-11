@@ -65,15 +65,15 @@ export async function deleteAsset({ database, assetId, uploadDir, }: DeleteAsset
   // - deleteAssetTags removes asset_tags + asset_tag_dismissals
   // Tables with a DB-level action (character_avatars CASCADE,
   // chat_backgrounds SET NULL) are handled by SQLite.
-  await database.transaction().execute(async (trx) => {
-    await trx.deleteFrom("asset_links").where("asset_id", "=", assetId).execute();
-    await trx.deleteFrom("asset_transforms").where("asset_id", "=", assetId).execute();
-    await trx.deleteFrom("asset_shares").where("asset_id", "=", assetId).execute();
+  await database.transaction().execute(async (trx,) => {
+    await trx.deleteFrom("asset_links",).where("asset_id", "=", assetId,).execute();
+    await trx.deleteFrom("asset_transforms",).where("asset_id", "=", assetId,).execute();
+    await trx.deleteFrom("asset_shares",).where("asset_id", "=", assetId,).execute();
     for (const table of ["actors", "characters", "personas",] as const) {
       await trx.updateTable(table,).set({ avatar_asset_id: null, },).where("avatar_asset_id", "=", assetId,).execute();
     }
     await deleteAssetTags(trx, assetId,);
-    await trx.deleteFrom("assets").where("id", "=", assetId).execute();
+    await trx.deleteFrom("assets",).where("id", "=", assetId,).execute();
   },);
 
   // Delete derivatives after the raw record is gone (recursive, depth-bounded

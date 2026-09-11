@@ -528,7 +528,17 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    }
+  ],
+  "src/assets/controller/routes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
     }
   ],
   "src/assets/controller/serve-policy.routes.test.ts": [
@@ -773,6 +783,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    }
+  ],
+  "src/assets/service/transforms.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
     }
   ],
   "src/assistant": [
