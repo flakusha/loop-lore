@@ -20,8 +20,8 @@
  * Uses the Web Crypto API (same as src/auth/jwt.ts). No external deps.
  */
 
-import { fromBase64, toBase64, } from "../utils/base64";
 import { getLogger, } from "../logger/index";
+import { fromBase64, toBase64, } from "../utils/base64";
 import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
 
 /** Base64url encode (RFC 4648 §5, unpadded) — mirrors src/auth/jwt.ts. */
