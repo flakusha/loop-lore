@@ -56,7 +56,7 @@ opt-in is required before these surface in the product).
 
 ### Ownership Transfer (High)
 
-- [ ] TASK-chat-feature-ownership-transfer
+- [x] TASK-chat-feature-ownership-transfer
 
 ### Location Transition & Party Handoff (Medium)
 
