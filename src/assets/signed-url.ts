@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Asset Controller — signed URL generation + verification.
+ * Asset signed URL generation + verification.
  *
  * Signed URLs allow an asset's raw/download/thumb/compressed endpoints to be
  * served to a requester who holds a valid, time-limited HMAC token, without
@@ -20,9 +20,21 @@
  * Uses the Web Crypto API (same as src/auth/jwt.ts). No external deps.
  */
 
-import { getLogger, } from "../../logger/index";
-import { DOMAIN_INFO, domainKey, } from "../../utils/hkdf";
-import { base64urlDecode, base64urlEncode, } from "./signed-url-base64";
+import { fromBase64, toBase64, } from "../utils/base64";
+import { getLogger, } from "../logger/index";
+import { DOMAIN_INFO, domainKey, } from "../utils/hkdf";
+
+/** Base64url encode (RFC 4648 §5, unpadded) — mirrors src/auth/jwt.ts. */
+function base64urlEncode(data: Uint8Array,): string {
+  return toBase64(data,).replaceAll("+", "-",).replaceAll("/", "_",).replace(/=+$/, "",);
+}
+
+/** Base64url decode (tolerates missing padding). */
+function base64urlDecode(str: string,): Uint8Array {
+  const base64 = str.replaceAll("-", "+",).replaceAll("_", "/",);
+  const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
+  return fromBase64(padded,);
+}
 
 const SIGNED_URL_ACTIONS = ["raw", "download", "thumb", "compressed",] as const;
 /** */
