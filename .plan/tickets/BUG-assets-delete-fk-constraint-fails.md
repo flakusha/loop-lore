@@ -1,6 +1,6 @@
 # BUG: Assets DELETE /api/assets/:id returns 500 (FOREIGN KEY constraint failed)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Small
 
@@ -68,10 +68,34 @@ an audit log row, or the cascade FK from `asset_tag_dismissals` → `asset_tags`
 
 ## Acceptance Criteria
 
-- [ ] `bun test tests/e2e/flows/assets.test.ts` passes (6/6)
-- [ ] `deleteAsset` wraps in a transaction (or has correct FK cascade ordering)
-- [ ] No new FK violations introduced on adjacent delete paths
+- [x] `bun test tests/e2e/flows/assets.test.ts` passes
+- [x] `deleteAsset` wraps in a transaction (or has correct FK cascade ordering)
+- [x] No new FK violations introduced on adjacent delete paths
   (`asset_links/:linkId`, `asset_links` delete via unlink, etc.)
+
+## Resolution
+
+Root cause was NOT the `asset_links` delete (the stack line above was the
+delete of `assets` itself). Runtime PRAGMA + row-count probes proved the
+violating child rows were:
+
+- `asset_transforms` — one row per fresh image, seeded by `createAsset` →
+  `seedBaseTransform` (`src/assets/service/transforms.ts`), never cleaned up
+- `asset_shares` — FK to `assets.id` with no DB-level action
+- `actors` / `characters` / `personas` `avatar_asset_id` — nullable NO ACTION
+  FKs; deleting an in-use avatar asset 500'd the same way (reproduced with a
+  persona avatar before the fix, returns 204 after)
+
+Fix (`src/assets/service/delete.ts`): child deletes + avatar-reference
+clearing + tag cleanup all run inside one transaction so a failure cannot
+leave partial state. Tables with a DB-level action (`character_avatars`
+CASCADE, `chat_backgrounds` SET NULL) are left to SQLite.
+
+Verified: assets e2e green, assets unit suite green, backend typecheck clean.
+Follow-up dedup candidate found during review: `src/assets/controller/routes.ts`
++ `src/assets/controller/handlers.ts` are a dead duplicate of the live inline
+routes in `src/assets/controller.ts` (imported only by each other and
+`handlers.test.ts`) — no runtime shadowing since only one copy registers.
 
 ## Related
 

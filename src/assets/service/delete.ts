@@ -55,14 +55,26 @@ export async function deleteAsset({ database, assetId, uploadDir, }: DeleteAsset
   // Remove file
   deleteFile(uploadDir, asset.storage_path,);
 
-  // Remove links
-  await database.deleteFrom("asset_links",).where("asset_id", "=", assetId,).execute();
-
-  // Remove tags + tag-proposition dismissals
-  await deleteAssetTags(database, assetId,);
-
-  // Remove record
-  await database.deleteFrom("assets",).where("id", "=", assetId,).execute();
+  // Remove child rows that reference assets.id via FK, inside one transaction
+  // so a failure cannot leave partial state. Order matters:
+  // - asset_links first (no inbound FKs)
+  // - asset_transforms (created by createAsset -> seedBaseTransform on upload)
+  // - asset_shares
+  // - avatar back-references (actors/characters/personas.avatar_asset_id) are
+  //   nullable NO ACTION FKs — clear them so the asset row can go
+  // - deleteAssetTags removes asset_tags + asset_tag_dismissals
+  // Tables with a DB-level action (character_avatars CASCADE,
+  // chat_backgrounds SET NULL) are handled by SQLite.
+  await database.transaction().execute(async (trx) => {
+    await trx.deleteFrom("asset_links").where("asset_id", "=", assetId).execute();
+    await trx.deleteFrom("asset_transforms").where("asset_id", "=", assetId).execute();
+    await trx.deleteFrom("asset_shares").where("asset_id", "=", assetId).execute();
+    for (const table of ["actors", "characters", "personas",] as const) {
+      await trx.updateTable(table,).set({ avatar_asset_id: null, },).where("avatar_asset_id", "=", assetId,).execute();
+    }
+    await deleteAssetTags(trx, assetId,);
+    await trx.deleteFrom("assets").where("id", "=", assetId).execute();
+  },);
 
   // Delete derivatives after the raw record is gone (recursive, depth-bounded
   // by the link structure: derivatives never link to other derivatives).
