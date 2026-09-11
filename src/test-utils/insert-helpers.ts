@@ -3267,6 +3267,30 @@ export async function insertSyntheticData(
   } as any,).execute();
 }
 
+/** Insert a generation_jobs row. */
+export async function insertGenerationJobs(
+  db: Db,
+  kind: string,
+  opts?: {
+    id?: string;
+    actor_id?: string | null;
+    status?: string;
+    payload?: string;
+    results?: string;
+    error_message?: string | null;
+    started_at?: string | null;
+    completed_at?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  },
+): Promise<void> {
+  await db.insertInto("generation_jobs",).values({
+    id: crypto.randomUUID(),
+    kind,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a content_flags row. */
 export async function insertContentFlags(
   db: Db,
