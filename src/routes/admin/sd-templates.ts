@@ -5,21 +5,35 @@ import { Elysia, t, } from "elysia";
 import { requirePermission, } from "../../middleware/permissions";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 import { AdminTemplateCreateBody, AdminTemplateUpdateBody, ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
+import {
+  ErrorCode,
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonNoContent,
+  jsonResponse,
+  requireUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
+// SD image-model prompt templates. Mounted under /api/admin/sd-templates to
+// avoid collision with the prompt-template-profiles module at
+// /api/admin/templates (src/routes/admin-templates/).
 /**
  * @param opts
  * @param prefix
  */
-export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
+export function sdTemplatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
   const guard = requirePermission("admin.settings",);
   return (
-    new Elysia({ name: "admin-templates", },)
-      // ── Template management (gated by admin.settings) ───────
+    new Elysia({ name: "admin-sd-templates", },)
+      // ── SD template management (gated by admin.settings) ───────
       .guard({ beforeHandle: guard, }, (app,) =>
         app
-          .get(`${prefix}/admin/templates`, async () => {
+          .get(`${prefix}/admin/sd-templates`, async (ctx: any,) => {
+            const userId = requireUserId(ctx,);
+            if (typeof userId !== "string") { return userId; }
+            extractAuth(ctx,);
             const row = await opts.database
               .selectFrom("system_config",)
               .select("value",)
@@ -34,11 +48,13 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },
           },)
           .put(
-            `${prefix}/admin/templates/:id`,
+            `${prefix}/admin/sd-templates/:id`,
             async (ctx: any,) => {
-              const { params: p, body, } = ctx;
-              const { id, } = p as { id: string };
-              const update = body as Record<string, unknown>;
+              const userId = requireUserId(ctx,);
+              if (typeof userId !== "string") { return userId; }
+              extractAuth(ctx,);
+              const { id, } = ctx.params as { id: string };
+              const update = ctx.body as Record<string, unknown>;
               const row = await opts.database
                 .selectFrom("system_config",)
                 .select("value",)
@@ -72,10 +88,12 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             { body: AdminTemplateUpdateBody, response: { 200: t.Any(), 403: ErrorResponse, 404: ErrorResponse, }, },
           )
           .post(
-            `${prefix}/admin/templates`,
+            `${prefix}/admin/sd-templates`,
             async (ctx: any,) => {
-              const { body, } = ctx;
-              const profile = body as Record<string, unknown>;
+              const userId = requireUserId(ctx,);
+              if (typeof userId !== "string") { return userId; }
+              extractAuth(ctx,);
+              const profile = ctx.body as Record<string, unknown>;
               const id = profile.id as string;
               const row = await opts.database
                 .selectFrom("system_config",)
@@ -109,9 +127,11 @@ export function templatesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },
             { body: AdminTemplateCreateBody, response: { 200: t.Any(), 400: ErrorResponse, 403: ErrorResponse, }, },
           )
-          .delete(`${prefix}/admin/templates/:id`, async (ctx: any,) => {
-            const { params: p, } = ctx;
-            const { id, } = p as { id: string };
+          .delete(`${prefix}/admin/sd-templates/:id`, async (ctx: any,) => {
+            const userId = requireUserId(ctx,);
+            if (typeof userId !== "string") { return userId; }
+            extractAuth(ctx,);
+            const { id, } = ctx.params as { id: string };
             const row = await opts.database
               .selectFrom("system_config",)
               .select("value",)
