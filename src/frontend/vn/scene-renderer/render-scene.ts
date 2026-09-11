@@ -6,6 +6,7 @@ import {
   getPortraitPosition,
   getPortraitUrl,
 } from "../portrait-manager";
+import { decorateStageAnchors, } from "../sprite-anchor";
 import { transitionScene, } from "../transition-engine";
 import { isTypewriting, skipTypewrite, typewrite, } from "../typewriter";
 import { createStage, } from "./stage";
@@ -200,8 +201,12 @@ export async function renderCurrentScene(
 
   if (scene.backgroundUrl) { sceneEl.append(createBackground(scene, settings,),); }
   const stageEl = createStage(scene, settings,);
-  if (stageEl) { sceneEl.append(stageEl,); }
-  else {
+  if (stageEl) {
+    sceneEl.append(stageEl,);
+    // Face-anchor pass is best-effort and never rejects: sprites keep CSS
+    // defaults when metadata is missing or unreachable.
+    void decorateStageAnchors(stageEl,);
+  } else {
     const portraitEl = createPortrait(scene, settings,);
     if (portraitEl) { sceneEl.append(portraitEl,); }
   }
