@@ -84,3 +84,17 @@ export const AssetLinkEntity = {
 } as const;
 /** */
 export type AssetLinkEntity = (typeof AssetLinkEntity)[keyof typeof AssetLinkEntity];
+
+export const AssetTagScope = {
+  User: "user",
+  Global: "global",
+} as const;
+/** */
+export type AssetTagScope = (typeof AssetTagScope)[keyof typeof AssetTagScope];
+
+export const AssetTagSource = {
+  Manual: "manual",
+  Rag: "rag",
+} as const;
+/** */
+export type AssetTagSource = (typeof AssetTagSource)[keyof typeof AssetTagSource];
