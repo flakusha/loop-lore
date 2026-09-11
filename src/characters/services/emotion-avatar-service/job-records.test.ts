@@ -106,7 +106,7 @@ describe("generation job records", () => {
         baseAvatarId: "av-base",
         emotions: [EmotionType.Happy, EmotionType.Sad,],
       },);
-      await recordBatchStart(db, job, { actorId: "actor-batch-1", baseAvatarId: "av-base", });
+      await recordBatchStart(db, job, { actorId: "actor-batch-1", baseAvatarId: "av-base", },);
       const running = await getGenerationJobRecord(db, "job-batch-1",);
       expect(running?.status,).toBe("running",);
       expect(running?.payload.emotions,).toEqual([EmotionType.Happy, EmotionType.Sad,],);
@@ -135,7 +135,7 @@ describe("generation job records", () => {
         baseAvatarId: "av-base",
         emotions: [EmotionType.Happy,],
       },);
-      await recordBatchStart(db, job, { actorId: "actor-batch-2", baseAvatarId: "av-base", });
+      await recordBatchStart(db, job, { actorId: "actor-batch-2", baseAvatarId: "av-base", },);
       job.status = "cancelled";
       await recordBatchFinish(db, job,);
       const record = await getGenerationJobRecord(db, "job-batch-2",);
