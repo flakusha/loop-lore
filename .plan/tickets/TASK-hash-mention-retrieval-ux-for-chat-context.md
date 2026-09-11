@@ -10,7 +10,7 @@
 
 ## Summary
 
-#-mention to pull docs, URLs, and gallery assets into chat context with citations (Open WebUI # pattern). Blocked on the RAG unified-storage epic; UX slice only.
+Hash-mention (Open WebUI `#` pattern) to pull docs, URLs, and gallery assets into chat context with citations. Blocked on the RAG unified-storage epic; UX slice only.
 
 ## Acceptance Criteria
 

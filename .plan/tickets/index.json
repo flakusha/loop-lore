@@ -9735,6 +9735,32 @@
     "source": ".plan/tickets/TASK-assets-has-alpha-column-and-store-computation.md",
     "status": "open"
   },
+  "TASK-ASSISTANT-ANALYZE-SLASH-COMMAND-OVER-PROMPT-ANALYSIS-SERVICE": {
+    "hash": "5fc96d0",
+    "git_issue": "5fc96d0",
+    "extid": "TASK-ASSISTANT-ANALYZE-SLASH-COMMAND-OVER-PROMPT-ANALYSIS-SERVICE",
+    "type": "TASK",
+    "title": "Assistant /analyze slash command over prompt-analysis service",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-prompt-improvement",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-analyze-slash-command-over-prompt-analysis-service.md",
+    "status": "open"
+  },
+  "TASK-ASSISTANT-CAPABILITIES-DISCOVERY-SURFACE": {
+    "hash": "7f9eb01",
+    "git_issue": "7f9eb01",
+    "extid": "TASK-ASSISTANT-CAPABILITIES-DISCOVERY-SURFACE",
+    "type": "TASK",
+    "title": "Assistant capabilities discovery surface",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-capabilities-discovery-surface.md",
+    "status": "open"
+  },
   "TASK-ASSISTANT-CAPABILITY-DISCLOSURE": {
     "hash": "pending",
     "extid": "TASK-ASSISTANT-CAPABILITY-DISCLOSURE",
@@ -10088,6 +10114,19 @@
     "source": ".plan/tickets/TASK-assistant-scenario-source.md",
     "status": "open"
   },
+  "TASK-ASSISTANT-SEARCH-OVER-RAG-ACROSS-GALLERY-ASSETS-AND-SOURCES": {
+    "hash": "0e98d4e",
+    "git_issue": "0e98d4e",
+    "extid": "TASK-ASSISTANT-SEARCH-OVER-RAG-ACROSS-GALLERY-ASSETS-AND-SOURCES",
+    "type": "TASK",
+    "title": "Assistant /search over RAG across gallery assets and sources",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-assistant-search-over-rag-across-gallery-assets-and-sources.md",
+    "status": "open"
+  },
   "TASK-ASSISTANT-SECRET-LORE-ACCESS-GUARD": {
     "hash": "8b8d8e2",
     "git_issue": "8b8d8e2",
@@ -10382,6 +10421,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-authoring-creation.md",
     "git_issue": "eb42411",
+    "status": "open"
+  },
+  "TASK-AUTO-CHAT-TITLES-VIA-ADVISORY-AUX-CALL": {
+    "hash": "2dd9eeb",
+    "git_issue": "2dd9eeb",
+    "extid": "TASK-AUTO-CHAT-TITLES-VIA-ADVISORY-AUX-CALL",
+    "type": "TASK",
+    "title": "Auto chat titles via advisory aux call",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-auto-chat-titles-via-advisory-aux-call.md",
     "status": "open"
   },
   "TASK-AUTO-GENERATE-DOCS-REFERENCE-API-MD-FROM-OPENAPI-SPEC": {
@@ -12529,6 +12581,19 @@
     "git_issue": "37f151a",
     "status": "open"
   },
+  "TASK-COMPOSER-ANALYZE-AFFORDANCE-FOR-PROMPT-ANALYSIS-MODE": {
+    "hash": "e150c6c",
+    "git_issue": "e150c6c",
+    "extid": "TASK-COMPOSER-ANALYZE-AFFORDANCE-FOR-PROMPT-ANALYSIS-MODE",
+    "type": "TASK",
+    "title": "Composer Analyze affordance for prompt-analysis mode",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-prompt-improvement",
+    "tags": [],
+    "source": ".plan/tickets/TASK-composer-analyze-affordance-for-prompt-analysis-mode.md",
+    "status": "open"
+  },
   "TASK-CONFIG-BACKWARD-COMPAT": {
     "hash": "8e16152",
     "extid": "TASK-CONFIG-BACKWARD-COMPAT",
@@ -13650,6 +13715,19 @@
     "epic": "Asset Platform Capabilities (Messenger/Social Patterns)",
     "tags": [],
     "source": ".plan/tickets/TASK-decision-av8-aux-captioning-role.md",
+    "status": "open"
+  },
+  "TASK-DEDICATED-GALLERY-PAGES-FOR-ASSISTANT-FUNCTIONALITIES": {
+    "hash": "f6ac081",
+    "git_issue": "f6ac081",
+    "extid": "TASK-DEDICATED-GALLERY-PAGES-FOR-ASSISTANT-FUNCTIONALITIES",
+    "type": "TASK",
+    "title": "Dedicated gallery pages for assistant functionalities",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-dedicated-gallery-pages-for-assistant-functionalities.md",
     "status": "open"
   },
   "TASK-DEDUP-INVITES-REDEEM-AND-AUTH-FORM-FLOWS": {
@@ -15582,6 +15660,19 @@
     "source": ".plan/tickets/TASK-frontend-tree-shake.md",
     "status": "undefined"
   },
+  "TASK-GALLERY-ASSET-LINKAGE-TO-CHAT-FROM-ASSISTANT": {
+    "hash": "6b68a12",
+    "git_issue": "6b68a12",
+    "extid": "TASK-GALLERY-ASSET-LINKAGE-TO-CHAT-FROM-ASSISTANT",
+    "type": "TASK",
+    "title": "Gallery asset linkage to chat from assistant",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gallery-asset-linkage-to-chat-from-assistant.md",
+    "status": "open"
+  },
   "TASK-GALLERY-ASSET-REUSE-PICKER-FOR-WORLD-LOCATION-ITEM-CREATION": {
     "hash": "7532037",
     "extid": "TASK-GALLERY-ASSET-REUSE-PICKER-FOR-WORLD-LOCATION-ITEM-CREATION",
@@ -15719,6 +15810,19 @@
     "source": ".plan/tickets/TASK-gemini-provider.md",
     "status": "undefined"
   },
+  "TASK-GENERALIZED-PRE-POST-GENERATION-HOOK-REGISTRY": {
+    "hash": "e4b475e",
+    "git_issue": "e4b475e",
+    "extid": "TASK-GENERALIZED-PRE-POST-GENERATION-HOOK-REGISTRY",
+    "type": "TASK",
+    "title": "Generalized pre/post-generation hook registry",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generalized-pre-post-generation-hook-registry.md",
+    "status": "open"
+  },
   "TASK-GENERATION-ASSET-PERSISTENCE-CONTRACT": {
     "hash": "f017ec3",
     "git_issue": "f017ec3",
@@ -15846,6 +15950,19 @@
     "epic": "Emotion Avatar Regeneration Control",
     "tags": [],
     "source": ".plan/tickets/TASK-generation-seed-capture-and-override-per-avatar.md",
+    "status": "open"
+  },
+  "TASK-GENERIC-GEN-COMMAND-FOR-PROMPT-TO-TEXT": {
+    "hash": "8bf916d",
+    "git_issue": "8bf916d",
+    "extid": "TASK-GENERIC-GEN-COMMAND-FOR-PROMPT-TO-TEXT",
+    "type": "TASK",
+    "title": "Generic /gen command for prompt-to-text",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-workflow-engine",
+    "tags": [],
+    "source": ".plan/tickets/TASK-generic-gen-command-for-prompt-to-text.md",
     "status": "open"
   },
   "TASK-GGUF-SPLIT-CHUNK-MANIFEST-CONTRACT": {
@@ -16029,6 +16146,19 @@
     "git_issue": "b14a507",
     "status": "open"
   },
+  "TASK-GUIDED-REGEN-ACTION-MENU-ON-ASSISTANT-MESSAGES": {
+    "hash": "bb3caaf",
+    "git_issue": "bb3caaf",
+    "extid": "TASK-GUIDED-REGEN-ACTION-MENU-ON-ASSISTANT-MESSAGES",
+    "type": "TASK",
+    "title": "Guided-regen Action menu on assistant messages",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/TASK-guided-regen-action-menu-on-assistant-messages.md",
+    "status": "open"
+  },
   "TASK-HARDEN-CANACCESSNSFW-REQUIRE-BIRTH-DATE": {
     "hash": "f70d078",
     "git_issue": "f70d078",
@@ -16054,6 +16184,19 @@
     "source": ".plan/tickets/TASK-harmonize-quest-type-taxonomy.md",
     "git_issue": "2918503",
     "status": "⬜ Todo"
+  },
+  "TASK-HASH-MENTION-RETRIEVAL-UX-FOR-CHAT-CONTEXT": {
+    "hash": "1f91b8d",
+    "git_issue": "1f91b8d",
+    "extid": "TASK-HASH-MENTION-RETRIEVAL-UX-FOR-CHAT-CONTEXT",
+    "type": "TASK",
+    "title": "Hash-mention retrieval UX for chat context",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
+    "tags": [],
+    "source": ".plan/tickets/TASK-hash-mention-retrieval-ux-for-chat-context.md",
+    "status": "open"
   },
   "TASK-HEADERS-ADDITIONAL-USEFUL-RESPONSE-HEADERS": {
     "hash": "pending",
@@ -16104,6 +16247,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-health-bar.md",
     "git_issue": "330ccdd",
+    "status": "open"
+  },
+  "TASK-HELP-FULL-COMMAND-LIST-WITH-DESCRIPTIONS": {
+    "hash": "6d04bad",
+    "git_issue": "6d04bad",
+    "extid": "TASK-HELP-FULL-COMMAND-LIST-WITH-DESCRIPTIONS",
+    "type": "TASK",
+    "title": "/help full command list with descriptions",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-help-full-command-list-with-descriptions.md",
     "status": "open"
   },
   "TASK-HIDDEN-CARRIAGE-TOML-CONTEXT": {
@@ -18212,6 +18368,19 @@
     "source": ".plan/tickets/TASK-multimodal-asset-reuse.md",
     "status": "open"
   },
+  "TASK-NAMED-ARGUMENTS-FOR-SLASH-COMMANDS": {
+    "hash": "4c2737a",
+    "git_issue": "4c2737a",
+    "extid": "TASK-NAMED-ARGUMENTS-FOR-SLASH-COMMANDS",
+    "type": "TASK",
+    "title": "Named arguments for slash commands",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-workflow-engine",
+    "tags": [],
+    "source": ".plan/tickets/TASK-named-arguments-for-slash-commands.md",
+    "status": "open"
+  },
   "TASK-NARRATION-LEVELS": {
     "hash": "pending",
     "extid": "TASK-NARRATION-LEVELS",
@@ -19437,6 +19606,32 @@
     "source": ".plan/tickets/TASK-per-actor-llm.md",
     "status": "undefined"
   },
+  "TASK-PER-CHAT-AUTO-TRANSLATION-LAYER": {
+    "hash": "5cab9a3",
+    "git_issue": "5cab9a3",
+    "extid": "TASK-PER-CHAT-AUTO-TRANSLATION-LAYER",
+    "type": "TASK",
+    "title": "Per-chat auto-translation layer",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md",
+    "status": "open"
+  },
+  "TASK-PER-COMMAND-VALVES-LIKE-OPTIONS-SCHEMA": {
+    "hash": "f402932",
+    "git_issue": "f402932",
+    "extid": "TASK-PER-COMMAND-VALVES-LIKE-OPTIONS-SCHEMA",
+    "type": "TASK",
+    "title": "Per-command Valves-like options schema",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/TASK-per-command-valves-like-options-schema.md",
+    "status": "open"
+  },
   "TASK-PERSIST-LOOT-DROPS": {
     "hash": "ecec58f",
     "extid": "TASK-PERSIST-LOOT-DROPS",
@@ -19475,6 +19670,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-persistent-trade-offer-accept-cancel-lifecycle-with-counter-.md",
     "status": "done"
+  },
+  "TASK-PIPE-OPERATOR-CHAINING-SLASH-COMMANDS": {
+    "hash": "6fa44f0",
+    "git_issue": "6fa44f0",
+    "extid": "TASK-PIPE-OPERATOR-CHAINING-SLASH-COMMANDS",
+    "type": "TASK",
+    "title": "Pipe operator chaining slash commands",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-workflow-engine",
+    "tags": [],
+    "source": ".plan/tickets/TASK-pipe-operator-chaining-slash-commands.md",
+    "status": "open"
   },
   "TASK-PLAN-E2E-STABILIZATION": {
     "hash": "5fb353d",
@@ -20170,6 +20378,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-prompt-template-registry.md",
     "status": "done"
+  },
+  "TASK-PROVIDER-CONTRIBUTIONS-VIA-PLUGIN-SYSTEM": {
+    "hash": "375d5af",
+    "git_issue": "375d5af",
+    "extid": "TASK-PROVIDER-CONTRIBUTIONS-VIA-PLUGIN-SYSTEM",
+    "type": "TASK",
+    "title": "Provider contributions via plugin system",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-provider-contributions-via-plugin-system.md",
+    "status": "open"
   },
   "TASK-PROVIDER-TRANSPARENCY-CAPABILITY-FLAG": {
     "hash": "99dbf42",
@@ -21595,6 +21816,19 @@
     "git_issue": "121a09b",
     "status": "open"
   },
+  "TASK-REWRITE-APPLY-WRITE-BACK-TO-TARGET-MESSAGE": {
+    "hash": "0286f47",
+    "git_issue": "0286f47",
+    "extid": "TASK-REWRITE-APPLY-WRITE-BACK-TO-TARGET-MESSAGE",
+    "type": "TASK",
+    "title": "/rewrite --apply write-back to target message",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/TASK-rewrite-apply-write-back-to-target-message.md",
+    "status": "open"
+  },
   "TASK-RIGGED-MODEL-BUFFER-RENDER": {
     "hash": "65cbebe",
     "extid": "TASK-RIGGED-MODEL-BUFFER-RENDER",
@@ -21606,6 +21840,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-rigged-model-buffer-render.md",
     "git_issue": "65cbebe",
+    "status": "open"
+  },
+  "TASK-ROLE-SCOPED-ASSISTANT-COMMAND-VISIBILITY": {
+    "hash": "c64d9d4",
+    "git_issue": "c64d9d4",
+    "extid": "TASK-ROLE-SCOPED-ASSISTANT-COMMAND-VISIBILITY",
+    "type": "TASK",
+    "title": "Role-scoped assistant command visibility",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-role-scoped-assistant-command-visibility.md",
     "status": "open"
   },
   "TASK-RPG-ACTOR-RESOLVED-SKILL-CHECKS-FROM-CHARACTER-SHEETS": {
@@ -22114,6 +22361,19 @@
     "git_issue": "c41b00a",
     "status": "done"
   },
+  "TASK-SAVE-IMPROVED-PROMPT-AS-REUSABLE-TEMPLATE": {
+    "hash": "e2e274a",
+    "git_issue": "e2e274a",
+    "extid": "TASK-SAVE-IMPROVED-PROMPT-AS-REUSABLE-TEMPLATE",
+    "type": "TASK",
+    "title": "Save improved prompt as reusable template",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-assistant-generation-extensions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-save-improved-prompt-as-reusable-template.md",
+    "status": "open"
+  },
   "TASK-SCAN-EPICS-FOR-PLUGIN-API-SURFACE-CANDIDATES": {
     "hash": "d8b1fc5",
     "git_issue": "d8b1fc5",
@@ -22400,6 +22660,19 @@
     "epic": "epic-hidden-carriage-context.md",
     "tags": [],
     "source": ".plan/tickets/TASK-shadow-visibility-debug-assistant.md",
+    "status": "open"
+  },
+  "TASK-SHARED-MACRO-ENGINE-FOR-TEMPLATES-AND-COMMANDS": {
+    "hash": "43e22b4",
+    "git_issue": "43e22b4",
+    "extid": "TASK-SHARED-MACRO-ENGINE-FOR-TEMPLATES-AND-COMMANDS",
+    "type": "TASK",
+    "title": "Shared macro engine for templates and commands",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-workflow-engine",
+    "tags": [],
+    "source": ".plan/tickets/TASK-shared-macro-engine-for-templates-and-commands.md",
     "status": "open"
   },
   "TASK-SHARED-SCHEMAS": {
@@ -22924,6 +23197,19 @@
     "source": ".plan/tickets/TASK-structured-llm-output-healing-utils.md",
     "status": "open"
   },
+  "TASK-SUMMARIZE-FORMAT-TLDR-BULLETS-DETAILED-GRADATION": {
+    "hash": "f856c0d",
+    "git_issue": "f856c0d",
+    "extid": "TASK-SUMMARIZE-FORMAT-TLDR-BULLETS-DETAILED-GRADATION",
+    "type": "TASK",
+    "title": "/summarize --format tldr/bullets/detailed gradation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-output-control-transforms",
+    "tags": [],
+    "source": ".plan/tickets/TASK-summarize-format-tldr-bullets-detailed-gradation.md",
+    "status": "open"
+  },
   "TASK-SVG-UPLOAD-LEADS-TO-STORED-XSS": {
     "hash": "962618b",
     "extid": "TASK-SVG-UPLOAD-LEADS-TO-STORED-XSS",
@@ -23025,6 +23311,19 @@
     "epic": "epic-nsfw-moderation-priority",
     "tags": [],
     "source": ".plan/tickets/TASK-telemetry-schema-comment-claims-additionalproperties-false-r.md",
+    "status": "open"
+  },
+  "TASK-TEMPLATE-BASED-ENTITY-CREATION-DETERMINISTIC-PLUS-LLM-PATHS": {
+    "hash": "7671ba3",
+    "git_issue": "7671ba3",
+    "extid": "TASK-TEMPLATE-BASED-ENTITY-CREATION-DETERMINISTIC-PLUS-LLM-PATHS",
+    "type": "TASK",
+    "title": "Template-based entity creation: deterministic plus LLM paths",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-workflow-engine",
+    "tags": [],
+    "source": ".plan/tickets/TASK-template-based-entity-creation-deterministic-plus-llm-paths.md",
     "status": "open"
   },
   "TASK-TEMPLATE-UNIFIED-VARIABLE-ENGINE": {
@@ -23477,6 +23776,19 @@
     "git_issue": "92adaf4",
     "status": "open"
   },
+  "TASK-TOP-LEVEL-CONFIRM-CANCEL-REFINE-ALIASES-FOR-WORKFLOW-SESSION": {
+    "hash": "813c198",
+    "git_issue": "813c198",
+    "extid": "TASK-TOP-LEVEL-CONFIRM-CANCEL-REFINE-ALIASES-FOR-WORKFLOW-SESSION",
+    "type": "TASK",
+    "title": "Top-level /confirm /cancel /refine aliases for workflow sessions",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-workflow-engine",
+    "tags": [],
+    "source": ".plan/tickets/TASK-top-level-confirm-cancel-refine-aliases-for-workflow-session.md",
+    "status": "open"
+  },
   "TASK-TOR-INTEGRATION": {
     "hash": "34bc4a2",
     "extid": "TASK-TOR-INTEGRATION",
@@ -23921,6 +24233,32 @@
     "tags": [],
     "source": ".plan/tickets/TASK-user-block-ban-shadow.md",
     "git_issue": "124e6b8",
+    "status": "open"
+  },
+  "TASK-USER-PROMPT-GALLERY-FRONTEND-PAGE": {
+    "hash": "d7d1ad7",
+    "git_issue": "d7d1ad7",
+    "extid": "TASK-USER-PROMPT-GALLERY-FRONTEND-PAGE",
+    "type": "TASK",
+    "title": "User prompt gallery frontend page",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-assistant-generation-extensions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-user-prompt-gallery-frontend-page.md",
+    "status": "open"
+  },
+  "TASK-USER-SAVED-QUICK-REPLIES-FOR-SLASH-COMMANDS": {
+    "hash": "ca55594",
+    "git_issue": "ca55594",
+    "extid": "TASK-USER-SAVED-QUICK-REPLIES-FOR-SLASH-COMMANDS",
+    "type": "TASK",
+    "title": "User-saved Quick Replies for slash commands",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-user-saved-quick-replies-for-slash-commands.md",
     "status": "open"
   },
   "TASK-USER-SEEDING-ROLE-EXPANSION": {
@@ -24643,6 +24981,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-workflow-persist-run-sessions-beyond-process-memory.md",
     "status": "done"
+  },
+  "TASK-WORKFLOW-PROGRESS-EVENTS-OVER-TRANSPORT": {
+    "hash": "46d55bc",
+    "git_issue": "46d55bc",
+    "extid": "TASK-WORKFLOW-PROGRESS-EVENTS-OVER-TRANSPORT",
+    "type": "TASK",
+    "title": "Workflow progress events over transport",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-workflow-engine",
+    "tags": [],
+    "source": ".plan/tickets/TASK-workflow-progress-events-over-transport.md",
+    "status": "open"
   },
   "TASK-WORKFLOW-RUNNER-START-PREVIEW-STEP-CONFIRM-DISPATCH-STEP-UI": {
     "hash": "8ced621",
