@@ -33,8 +33,7 @@ function makeAppWithRole(database: Kysely<DB>, userRole: string | null,) {
   return app.use(providersRoutes({ database, },),);
 }
 
-/**
- */
+/** */
 const FAKE_NAME = "test-fake-provider";
 
 let db: Kysely<DB>;
@@ -136,9 +135,7 @@ describe("providers routes", () => {
       const body = await res.json() as {
         providers: { capabilities: { label?: string } }[];
       };
-      const withCaps = body.providers.filter((p,) =>
-        p.capabilities !== null && typeof p.capabilities === "object"
-      );
+      const withCaps = body.providers.filter((p,) => p.capabilities !== null && typeof p.capabilities === "object");
       expect(withCaps.length,).toBe(body.providers.length,);
     });
   });

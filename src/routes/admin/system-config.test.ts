@@ -14,10 +14,10 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import { setConfig, } from "../../admin/config";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, type TestDb, } from "../../test-utils/create-test-db";
-import { setConfig, } from "../../admin/config";
 import { systemConfigRoutes, } from "./system-config";
 
 /**
@@ -65,7 +65,7 @@ describe("admin system-config routes", () => {
     const res = await app.handle(new Request("http://localhost/api/admin/system-config",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as unknown[];
-    expect(Array.isArray(body),).toBe(true,);
+    expect(Array.isArray(body,),).toBe(true,);
   });
 
   test("GET /api/admin/system-config returns 200 with seeded configs", async () => {
@@ -76,7 +76,7 @@ describe("admin system-config routes", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as { key: string; value: string }[];
     expect(body.length,).toBeGreaterThanOrEqual(2,);
-    expect(body.some((c,) => c.key === "test.key.1" && c.value === "value-1",),).toBe(true,);
+    expect(body.some((c,) => c.key === "test.key.1" && c.value === "value-1"),).toBe(true,);
   });
 
   test("PATCH /api/admin/system-config returns 200 with valid body", async () => {
@@ -131,4 +131,4 @@ describe("admin system-config routes", () => {
     );
     expect(res.status,).toBe(403,);
   });
-},);
+});
