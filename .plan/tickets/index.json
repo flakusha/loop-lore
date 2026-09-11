@@ -12157,6 +12157,18 @@
     "source": ".plan/tickets/TASK-chat-feature-auto-continue-continuation.md",
     "status": "open"
   },
+  "TASK-CHAT-FEATURE-CARRIAGE-VISIBILITY-TIERS": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-FEATURE-CARRIAGE-VISIBILITY-TIERS",
+    "type": "TASK",
+    "title": "Carriage Visibility Tiers — Hidden / Filtered / Visible",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-feature-carriage-visibility-tiers.md",
+    "status": "open"
+  },
   "TASK-CHAT-FEATURE-CHAT-ARTIFACTS": {
     "hash": "pending",
     "extid": "TASK-CHAT-FEATURE-CHAT-ARTIFACTS",
@@ -12265,6 +12277,18 @@
     "source": ".plan/tickets/TASK-chat-feature-message-edit-resubmit-branch.md",
     "status": "open"
   },
+  "TASK-CHAT-FEATURE-MESSAGE-FORMATTING-MODES": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-FEATURE-MESSAGE-FORMATTING-MODES",
+    "type": "TASK",
+    "title": "Message Formatting Modes — Markdown, Plain, Roleplay Asterisk",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-feature-message-formatting-modes.md",
+    "status": "open"
+  },
   "TASK-CHAT-FEATURE-MODERATION": {
     "hash": "pending",
     "extid": "TASK-CHAT-FEATURE-MODERATION",
@@ -12371,6 +12395,18 @@
     "epic": "epic-chat-product-features",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-feature-share-links-export-formats.md",
+    "status": "open"
+  },
+  "TASK-CHAT-FEATURE-SYSTEM-FORMAT-CONTRACT": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-FEATURE-SYSTEM-FORMAT-CONTRACT",
+    "type": "TASK",
+    "title": "System Format Contract — Validity of Format Requests in Prompts",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-feature-system-format-contract.md",
     "status": "open"
   },
   "TASK-CHAT-FEATURE-TOPICS-SIDE-THREADS": {
