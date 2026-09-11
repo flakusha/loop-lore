@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { Kysely, } from "kysely";
-import { sql, } from "kysely";
 import { notifyBlogPost, } from "../../../notifications/service";
 import { jsonStringifyOr, uid, } from "../../../utils.js";
 import { addTags, clearTags, getTags, } from "./tags";
@@ -234,17 +233,4 @@ export async function deletePost(db: Kysely<any>, id: string,): Promise<boolean>
   return Number(result?.numDeletedRows ?? 0,) > 0;
 }
 
-/**
- * @param db
- * @param id
- */
-export async function incrementViewCount(
-  db: Kysely<any>,
-  id: string,
-): Promise<void> {
-  await db
-    .updateTable("blog_posts",)
-    .set({ view_count: sql`COALESCE(view_count, 0) + 1`, },)
-    .where("id", "=", id,)
-    .execute();
-}
+export { incrementViewCount, } from "./posts-views";
