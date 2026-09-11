@@ -42,5 +42,6 @@ User-created sub-conversations (topics) scoped to a chat: spin an exchange off i
 - LobeChat topics + topic-reference tools (deepwiki lobehub/lobe-chat, 2026-09-11)
 
 ## Open Questions
+
 - Do topics appear to all participants, or support private (per-user) topics?
 - Can a topic itself spawn further topics, or is nesting capped at one level?
