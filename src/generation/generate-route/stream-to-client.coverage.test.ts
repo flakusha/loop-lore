@@ -508,7 +508,7 @@ describe("streamToClient coverage", () => {
       [{ type: "content", content: "ok", },],
       { content: "ok", finishReason: "stop", },
     );
-    const { response, attemptId, } = run(provider, "cov-p-swallow", undefined, true,);
+    const { response, } = run(provider, "cov-p-swallow", undefined, true,);
     const events = await collectEvents(response,);
     expect(events.find((e,) => e.type === "done")?.cancelled,).toBe(false,);
     expect(state.telemetryEvents.length,).toBe(1,);
