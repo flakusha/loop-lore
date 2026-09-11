@@ -1,6 +1,13 @@
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
-import { detectPassToken, extractMentionedActorIds, parseMentions, resolveMention, } from "./mention-parser";
+import {
+  detectPassToken,
+  extractMentionedActorIds,
+  parseInitiativeFlag,
+  parseMentions,
+  resolveMention,
+  stripLeadingMention,
+} from "./mention-parser";
 
 beforeAll(() => {
   createLogger({ level: "error", },);
@@ -194,5 +201,32 @@ describe("detectPassToken (BUG-group-chat-silence-pass-not-implemented)", () => 
 
   test("rejects trailing text after PASS", () => {
     expect(detectPassToken("[PASS] tomorrow",),).toBe(false,);
+  });
+});
+
+describe("parseInitiativeFlag", () => {
+  test(">> claims initiative and strips the prefix", () => {
+    expect(parseInitiativeFlag(">> I attack",),).toEqual({
+      isInitiative: true,
+      cleanMessage: "I attack",
+    },);
+  });
+
+  test("bare messages pass through", () => {
+    expect(parseInitiativeFlag("I attack",),).toEqual({
+      isInitiative: false,
+      cleanMessage: "I attack",
+    },);
+  });
+});
+
+describe("stripLeadingMention", () => {
+  test("strips a leading address, leaves the rest", () => {
+    expect(stripLeadingMention("@Luna make a video",),).toBe("make a video",);
+  });
+
+  test("mid-message mentions and bare text are untouched", () => {
+    expect(stripLeadingMention("hey @Luna hi",),).toBe("hey @Luna hi",);
+    expect(stripLeadingMention("just talking",),).toBe("just talking",);
   });
 });
