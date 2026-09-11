@@ -102,12 +102,8 @@ async function insertTag(opts: UpsertTagOptions,): Promise<AssetTagRecord> {
   const existing = await existingQuery.executeTakeFirst();
 
   if (existing) {
-    return {
-      id: existing.id,
-      tag: existing.tag,
-      scope: existing.scope as AssetTagScope,
-      source: existing.source as AssetTagSource,
-    };
+    const { id, tag, scope, source, } = existing;
+    return { id, tag, scope: scope as AssetTagScope, source: source as AssetTagSource, };
   }
 
   const id = uid();
