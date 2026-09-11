@@ -107,6 +107,11 @@ opt-in is required before these surface in the product).
 - [ ] TASK-chat-feature-chat-organization-folders-tags
 - [ ] TASK-chat-feature-topics-side-threads
 
+### Scene Production & Rich Content (Medium)
+
+- [ ] TASK-chat-feature-scene-art-generation
+- [ ] TASK-chat-feature-chat-artifacts
+
 ## Files (Anchor References)
 
 ### Component Buttons & Asset Attach
@@ -237,3 +242,5 @@ opt-in is required before these surface in the product).
 - TASK-chat-feature-share-links-export-formats.md
 - TASK-chat-feature-chat-organization-folders-tags.md
 - TASK-chat-feature-topics-side-threads.md
+- TASK-chat-feature-scene-art-generation.md
+- TASK-chat-feature-chat-artifacts.md
