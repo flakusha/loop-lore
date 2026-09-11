@@ -44,6 +44,14 @@ interface PromptTemplate {
 }
 ```
 
+### Macro engine (ST macro parity)
+
+`{{user}}`, `{{char}}`, `{{time}}`, `{{date}}` base; args via space or `::` (`{{getvar::name}}`, `{{random::a::b}}`), nesting inner-first (`{{getvar::{{char}}_mood}}`), scoped blocks `{{#setvar x}}...{{/setvar}}` with trim/dedent, `{{if}}...{{else}}...{{/if}}`, `{{// comment}}`, backslash escape. Editor autocompletes on `{{` + Ctrl+Space (M).
+
+### Per-template Valves/UserValves (OWUI pattern)
+
+Nested `Valves` (admin-only: model params, API keys) + `UserValves` (per-user from the chat session: toggles, thresholds) as typed fields on each template; types drive the UI (bool switch, select, masked password, multiselect). Event-style templates carry Valves but never UserValves. Stored as JSON; encrypt at rest (M).
+
 ### UI
 
 - Prompt library panel (browse, search, filter)
@@ -59,6 +67,7 @@ interface PromptTemplate {
 - [ ] Add template browser/search
 - [ ] Add "save as template" action
 - [ ] Add share/export functionality
+- [ ] Template-as-model (Pipe manifold) + Quick-Reply execution: a template may register `pipes()->[{id,name}]` so one template appears as N selectable models; plus one-click 'run as Quick Reply' (slash batch + `{{pipe}}` + local/global vars + `/buttons` confirm) with `usageCount` incremented once per turn (M).
 
 ## Files to Create
 
