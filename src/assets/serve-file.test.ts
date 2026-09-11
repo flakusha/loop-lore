@@ -5,8 +5,11 @@
 import { describe, expect, test, } from "bun:test";
 import { serveFile, } from "./serve-file";
 
+import { join, } from "node:path";
+
 // package.json doubles as the "existing file" fixture — no scratch files.
-const EXISTING = "package.json";
+// Anchored to the repo root via import.meta so cwd never matters.
+const EXISTING = join(import.meta.dir, "..", "..", "package.json",);
 
 describe("serveFile", () => {
   test("missing file returns 404", () => {
