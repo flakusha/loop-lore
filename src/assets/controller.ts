@@ -15,6 +15,7 @@
  *   GET    /api/assets/:id/download — download file (attachment)
  *   GET    /api/assets/:id/thumb    — serve thumbnail
  *   GET    /api/assets/:id/compressed — serve compressed variant
+ *   POST   /api/assets/:id/signed-url/:action — mint time-limited signed URL
  *   DELETE /api/assets/:id          — delete asset
  *   POST   /api/assets/:id/links    — link to entity
  *   DELETE /api/assets/:id/links/:linkId — unlink from entity
@@ -31,6 +32,7 @@ import { AssetVisibility, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import {
   badRequestResponse,
+  forbiddenResponse,
   HttpStatus,
   jsonCreated,
   jsonNoContent,
@@ -43,6 +45,13 @@ import {
 import { jsonStringifyOr, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import { serveFile, } from "./serve-file";
+import {
+  isSignedUrlAction,
+  resolveSignedUrlSecret,
+  signAssetUrl,
+  verifyAssetUrl,
+  type SignedUrlAction,
+} from "./signed-url";
 import {
   canAccessAsset,
   createAsset,
@@ -82,6 +91,11 @@ interface ServeRawOpts {
   uploadDir: string;
   actorId: string | null;
   actorRole: string | null;
+  /** Signed-URL auth (alternative to session) — resolved from query params. */
+  signedUrlSecret?: string;
+  signedUrlToken?: string;
+  signedUrlExpires?: number;
+  signedUrlAction?: SignedUrlAction;
 }
 interface ServeCompressedOpts {
   database: Kysely<DB>;
@@ -90,6 +104,10 @@ interface ServeCompressedOpts {
   variant: string;
   actorId: string | null;
   actorRole: string | null;
+  signedUrlSecret?: string;
+  signedUrlToken?: string;
+  signedUrlExpires?: number;
+  signedUrlAction?: SignedUrlAction;
 }
 
 interface ResolvedAsset {
@@ -113,6 +131,69 @@ async function resolveAsset(
   }
 
   return { asset, };
+}
+
+/** Signed-URL fields shared by the serve-route opts. */
+type SignedUrlAuth = Pick<
+  ServeRawOpts,
+  "signedUrlSecret" | "signedUrlToken" | "signedUrlExpires" | "signedUrlAction"
+>;
+
+/**
+ * Extract signed-URL auth params from a serve request query string.
+ * Returns {} when no `sig`+`expires` params are present (→ session auth);
+ * otherwise resolved opts the serve handlers verify fail-closed.
+ */
+function signedUrlAuth(
+  searchParams: URLSearchParams,
+  action: SignedUrlAction,
+  config: Config,
+): SignedUrlAuth {
+  const token = searchParams.get("sig",);
+  const expiresRaw = searchParams.get("expires",);
+  if (!token || !expiresRaw) { return {}; }
+  return {
+    signedUrlSecret: resolveSignedUrlSecret(config.assets.signedUrlSecret, config.auth.jwtSecret,) ?? undefined,
+    signedUrlToken: token,
+    signedUrlExpires: Number(expiresRaw,),
+    signedUrlAction: action,
+  };
+}
+
+/**
+ * Resolve the actor-facing asset record for a serve request.
+ * A valid signed-URL token replaces session auth (the token already encodes
+ * asset + action + expiry); otherwise the actor access check applies.
+ */
+async function resolveForServe(
+  opts: Pick<ServeRawOpts, "database" | "assetId" | "actorId" | "actorRole"> & SignedUrlAuth,
+): Promise<ResolvedAsset | Response> {
+  if (opts.signedUrlToken) {
+    if (
+      !opts.signedUrlSecret ||
+      !opts.signedUrlAction ||
+      !Number.isFinite(opts.signedUrlExpires ?? NaN,)
+    ) {
+      return forbiddenResponse("Invalid signed URL",);
+    }
+    const result = await verifyAssetUrl({
+      secret: opts.signedUrlSecret,
+      token: opts.signedUrlToken,
+      assetId: opts.assetId,
+      action: opts.signedUrlAction,
+      expiresAt: opts.signedUrlExpires!,
+    },);
+    if (!result.valid) {
+      return forbiddenResponse("Invalid or expired signed URL",);
+    }
+    // Token authorizes this asset — load it without the actor gate.
+    const asset = await getAsset(opts.database, opts.assetId,);
+    if (!asset) {
+      return notFoundResponse("Asset not found",);
+    }
+    return { asset, };
+  }
+  return resolveAsset(opts.database, opts.assetId, opts.actorId, opts.actorRole,);
 }
 
 /**
@@ -237,6 +318,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
           chatId,
+          ...signedUrlAuth(searchParams, "raw", config,),
         },);
       },)
       .get("/api/assets/:id/download", async (ctx,) => {
@@ -249,9 +331,11 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
           chatId,
+          ...signedUrlAuth(searchParams, "download", config,),
         },);
       },)
       .get("/api/assets/:id/thumb", async (ctx,) => {
+        const searchParams = new URL(ctx.request.url,).searchParams;
         return handleServeCompressed({
           database,
           assetId: ctx.params.id,
@@ -259,9 +343,11 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           variant: "thumb",
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
+          ...signedUrlAuth(searchParams, "thumb", config,),
         },);
       },)
       .get("/api/assets/:id/compressed", async (ctx,) => {
+        const searchParams = new URL(ctx.request.url,).searchParams;
         return handleServeCompressed({
           database,
           assetId: ctx.params.id,
@@ -269,7 +355,38 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           variant: "compressed",
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
+          ...signedUrlAuth(searchParams, "compressed", config,),
         },);
+      },)
+      // ── Signed URLs ──────────────────────────────────
+      // Mint a time-limited HMAC URL for a serve action. Gates on the same
+      // access check as serving; the token then authorizes session-less
+      // fetching (e.g. <img src>) until expiry.
+      .post("/api/assets/:id/signed-url/:action", async (ctx,) => {
+        const userId = (ctx as any).userId as string | null ?? null;
+        const userRole = (ctx as any).userRole as string | null ?? null;
+        const resolved = await resolveAsset(database, ctx.params.id, userId, userRole,);
+        if (resolved instanceof Response) { return resolved; }
+
+        const actionParam = ctx.params.action;
+        if (!isSignedUrlAction(actionParam,)) {
+          return badRequestResponse("Invalid signed-URL action",);
+        }
+
+        const secret = resolveSignedUrlSecret(config.assets.signedUrlSecret, config.auth.jwtSecret,);
+        if (!secret) {
+          return forbiddenResponse("Signed URLs are not configured",);
+        }
+
+        const expiresInSeconds = config.assets.signedUrlExpirySeconds ?? 900;
+        const signed = await signAssetUrl({
+          secret,
+          assetId: ctx.params.id,
+          action: actionParam,
+          expiresInSeconds,
+        },);
+        const url = `/api/assets/${ctx.params.id}/${actionParam}?expires=${signed.expiresAt}&sig=${signed.token}`;
+        return jsonResponse({ url, token: signed.token, expiresAt: signed.expiresAt, action: actionParam, },);
       },)
       // ── Links sub-routes ─────────────────────────────
       .get("/api/assets/:id/links", async (ctx,) => {
@@ -469,8 +586,21 @@ async function handleServeRaw({
   actorId,
   actorRole,
   chatId,
+  signedUrlSecret,
+  signedUrlToken,
+  signedUrlExpires,
+  signedUrlAction,
 }: ServeRawOpts & { chatId?: string },): Promise<Response> {
-  const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
+  const resolved = await resolveForServe({
+    database,
+    assetId,
+    actorId,
+    actorRole,
+    signedUrlSecret,
+    signedUrlToken,
+    signedUrlExpires,
+    signedUrlAction,
+  },);
   if (resolved instanceof Response) { return resolved; }
 
   const { asset, } = resolved;
@@ -513,8 +643,21 @@ async function handleServeCompressed({
   variant,
   actorId,
   actorRole,
+  signedUrlSecret,
+  signedUrlToken,
+  signedUrlExpires,
+  signedUrlAction,
 }: ServeCompressedOpts,): Promise<Response> {
-  const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
+  const resolved = await resolveForServe({
+    database,
+    assetId,
+    actorId,
+    actorRole,
+    signedUrlSecret,
+    signedUrlToken,
+    signedUrlExpires,
+    signedUrlAction,
+  },);
   if (resolved instanceof Response) { return resolved; }
 
   const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
@@ -535,8 +678,21 @@ async function handleDownload({
   actorId,
   actorRole,
   chatId,
+  signedUrlSecret,
+  signedUrlToken,
+  signedUrlExpires,
+  signedUrlAction,
 }: ServeRawOpts & { chatId?: string },): Promise<Response> {
-  const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
+  const resolved = await resolveForServe({
+    database,
+    assetId,
+    actorId,
+    actorRole,
+    signedUrlSecret,
+    signedUrlToken,
+    signedUrlExpires,
+    signedUrlAction,
+  },);
   if (resolved instanceof Response) { return resolved; }
   const { asset, } = resolved;
   const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_",);
