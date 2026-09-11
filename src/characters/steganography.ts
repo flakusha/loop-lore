@@ -141,12 +141,6 @@ function tryParseCharacter(text: string | null,): ExtractedCharacter | null {
  * Minimal 1×1 white pixel PNG (67 bytes).
  * Used as a base image when no avatar is available for export.
  */
-const MINIMAL_PNG = Buffer.from(
-  "89504e470d0a1a0a0000000d4948445200000001000000010802000000" +
-    "907753de0000000c4944415478016360f8cf000000020001e221bc3300" +
-    "00000049454e44ae426082",
-  "hex",
-);
 
 /**
  * Build a PNG tEXt chunk: [length:4][type:4][keyword\0value][crc:4]
@@ -256,9 +250,4 @@ function findIendOffset(buffer: Buffer,): number {
   return -1;
 }
 
-/**
- * Get a minimal PNG buffer suitable for character card export.
- */
-export function getMinimalPng(): Buffer {
-  return Buffer.from(MINIMAL_PNG,);
-}
+export { getMinimalPng, } from "./steganography-png";

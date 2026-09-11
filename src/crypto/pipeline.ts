@@ -13,36 +13,11 @@
 import { decodeContent, encodeContent, } from "../content";
 import type { ContentEncoding, } from "../content/types";
 import { safeJsonParse, safeJsonStringify, } from "../utils";
+import type { CompressThenEncryptOpts, EncryptedPayload, PipelineConfig, } from "./pipeline-types";
 
 const IV_LENGTH = 12;
 const DEFAULT_THRESHOLD = 128;
 const DEFAULT_PIPELINE_CONFIG: PipelineConfig = { threshold: DEFAULT_THRESHOLD, algorithm: "gzip", };
-
-/** */
-export interface EncryptedPayload {
-  enc: string; // base64 ciphertext
-  nonce: string; // base64 12-byte nonce
-  algo: "aes-256-gcm";
-  comp: boolean; // was compression applied before encrypt?
-  compAlgo?: string; // which algorithm: gzip / brotli / zstd
-  key_id: string; // FK → actor_keys.id
-  a_id?: string; // asset id salt for HKDF-derived subkey (v2 only; absent = v1 legacy)
-}
-
-/** */
-export interface PipelineConfig {
-  threshold: number;
-  algorithm: "gzip" | "brotli" | "zstd";
-}
-
-/** */
-export interface CompressThenEncryptOpts {
-  plaintext: string;
-  chatKey: CryptoKey;
-  keyId: string;
-  config?: PipelineConfig;
-  aId?: string; // asset id salt — emits v2 payload; absence = v1 legacy
-}
 
 /**
  * Write: plaintext → compress → encrypt → EncryptedPayload JSON.
@@ -248,3 +223,5 @@ export async function decryptThenDecompress(storedContent: string, chatKey: Cryp
   }
   return decodeContent(decryptedText, payload.compAlgo as ContentEncoding,);
 }
+
+export type { CompressThenEncryptOpts, EncryptedPayload, PipelineConfig, } from "./pipeline-types";
