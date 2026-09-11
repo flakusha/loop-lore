@@ -108,13 +108,16 @@ describeOrSkip("runBatchGeneration", () => {
 
   it("isolates per-emotion failures and records a failed row", async () => {
     let calls = 0;
-    const svc = makeSvc(db, mock(async () => {
-      calls += 1;
-      if (calls === 2) {
-        throw new Error("boom",);
-      }
-      return { avatarId: "av-1", assetId: "as-1", };
-    }),);
+    const svc = makeSvc(
+      db,
+      mock(async () => {
+        calls += 1;
+        if (calls === 2) {
+          throw new Error("boom",);
+        }
+        return { avatarId: "av-1", assetId: "as-1", };
+      },),
+    );
     const job = createJob({
       id: "job-batch-partial" as BatchJobId,
       actorId,
@@ -123,7 +126,7 @@ describeOrSkip("runBatchGeneration", () => {
     },);
     await runBatchGeneration(svc, job, makeOpts(),);
     expect(job.status,).toBe("failed",);
-    expect(job.results.map((result,) => result.status,),).toEqual(["completed", "failed",],);
+    expect(job.results.map((result,) => result.status),).toEqual(["completed", "failed",],);
     const record = await getGenerationJobRecord(db, job.id,);
     expect(record?.status,).toBe("failed",);
   });
@@ -131,12 +134,15 @@ describeOrSkip("runBatchGeneration", () => {
   it("stops at the cancel boundary and records cancelled", async () => {
     let calls = 0;
     let jobRef: { status: string } | undefined;
-    const svc = makeSvc(db, mock(async () => {
-      calls += 1;
-      // Simulate cancelJob() racing the batch: visible on next iteration.
-      jobRef!.status = "cancelled";
-      return { avatarId: "av-1", assetId: "as-1", };
-    }),);
+    const svc = makeSvc(
+      db,
+      mock(async () => {
+        calls += 1;
+        // Simulate cancelJob() racing the batch: visible on next iteration.
+        jobRef!.status = "cancelled";
+        return { avatarId: "av-1", assetId: "as-1", };
+      },),
+    );
     const job = createJob({
       id: "job-batch-cancel" as BatchJobId,
       actorId,
@@ -146,7 +152,7 @@ describeOrSkip("runBatchGeneration", () => {
     jobRef = job;
     await runBatchGeneration(svc, job, makeOpts(),);
     expect(calls,).toBe(1,);
-    expect(job.results.map((result,) => result.status,),).toEqual(["completed", "pending",],);
+    expect(job.results.map((result,) => result.status),).toEqual(["completed", "pending",],);
     const record = await getGenerationJobRecord(db, job.id,);
     expect(record?.status,).toBe("cancelled",);
   });
@@ -175,4 +181,4 @@ describeOrSkip("runBatchGeneration", () => {
       "No image generation provider",
     );
   });
-});
+},);
