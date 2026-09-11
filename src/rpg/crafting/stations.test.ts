@@ -139,6 +139,8 @@ describe("station defs", () => {
         stationType: CraftingStationType.Anvil,
       },);
       expect(await svc.updateStationDef(id, {},),).toBe(true,);
+      // No-op means the row is untouched.
+      expect((await svc.getStationDef(id,))?.name,).toBe("Anvil",);
       expect(await svc.updateStationDef(uid(), { name: "X", },),).toBe(false,);
     } finally {
       await s.db.destroy();
@@ -306,6 +308,8 @@ describe("station instances", () => {
         currentDurability: 50,
       },);
       expect(await svc.updateInstance(s.worldId, id, {},),).toBe(true,);
+      // No-op means the row is untouched.
+      expect((await svc.getInstance(s.worldId, id,))?.currentDurability,).toBe(50,);
       expect(await svc.updateInstance(s.worldId, uid(), { currentDurability: 1, },),).toBe(false,);
     } finally {
       await s.db.destroy();
