@@ -312,3 +312,16 @@ describe("/impersonate and /char", () => {
     expect(result.systemMessage,).toContain('Impersonating as "Lady Aria"',);
   });
 });
+
+describe("unique pins ported from per-module suites (dedup)", () => {
+  it("/image treats whitespace-only args as empty", () => {
+    const result = mustGet("image",)(["   ",], baseCtx(),) as CommandResult;
+    expect(result.action,).toBeUndefined();
+    expect(result.systemMessage,).toContain("Usage: /image <prompt>",);
+  });
+
+  it("/char usage text names /char", () => {
+    const result = mustGet("char",)([], baseCtx(),) as CommandResult;
+    expect(result.systemMessage,).toContain("/char",);
+  });
+});
