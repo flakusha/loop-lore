@@ -42,6 +42,59 @@
 | —  | Filtering & search                                      | 🟡 partial             | chat room filters + message search ✅; world/location search pending                                                                        |
 | —  | Memory injection (high priority)                        | 🟢 per-viewer ✅       | `memorySection` 1024-token budget (2026-08-01); cross-actor test shipped                                                                    |
 | —  | Template injection (high priority)                      | 🟢 shipped             | `LLM_PROMPT_DEFAULTS` + `resolveSystemPrompt`; registry impl `src/prompts/registry.ts` ✅ (2026-08-12); UX pending (P4)                     |
+### Chat Variants Taxonomy cluster (filed 2026-09-11)
+
+> Taxonomy-only epic — no schema migration. Twelve canonical chat variants map onto the existing `(chat_type, chat_mode, chat_purpose)` triple plus the auxiliary `max_turns`, `auto_advance`, `gm_config`, `talkativity`, `prompt_override` columns. Authority for "chat admin" = global admin OR creator OR owning gm.
+> Spec: `../epics/epic-chat-variants-taxonomy.md`. Status: 🟡 Design — taxonomy agreed; column mapping established; per-variant implementation open.
+
+| Variant | Tickets | chat_type | chat_mode | chat_purpose | Where / next |
+| --- | --- | --- | --- | --- | --- |
+| 1. assistant chat | `TASK-chat-variant-assistant.md` | `direct` | `story` | `assistant` | User ↔ assistant; one user, one assistant; entry-point = Assistant tab |
+| 2. assistant group chat | `TASK-chat-variant-assistant-group.md` | `group` | `story` | `assistant` | Multi-user collaborative prompt; `talkativity = 4` |
+| 3. user chat (1×1) | `TASK-chat-variant-user-1x1.md` | `direct` | `story` | `social` | Encrypted, two-user |
+| 4. user group chat | `TASK-chat-variant-user-group.md` | `group` | `story` | `social` | Classical encrypted group, public + private variants |
+| 5. user group + admin/mod | `TASK-chat-variant-user-group-admin.md` | `group` | `story` | `social` | Social group with admin/mod scope; `gm_config.moderation` block |
+| 6. llm-only chat | `TASK-chat-variant-llm-only.md` | `direct` | `battle` | `validation` | No humans; LLM ↔ LLM validation harness; `auto_advance = 1` |
+| 7. llm-only group chat | `TASK-chat-variant-llm-only-group.md` | `group` | `battle` | `validation` | Multi-LLM sandboxes, tracking, prompt fuzzing |
+| 8. llm-only group + gm | `TASK-chat-variant-llm-only-group-gm.md` | `group` | `story` | `guided` | GM-driven narrative; gm is an LLM (or LLM+user) |
+| 9. chat with character | `TASK-chat-variant-character.md` | `direct` | `story` | `roleplay` | User + one LLM character; entry-point = Characters tab |
+| 10. group chat (multi-character) | `TASK-chat-variant-character-group.md` | `group` | `story` | `roleplay` | Multi-user + multi-character; `gm_config.cast` block |
+| 11. rpg chat | `TASK-chat-variant-rpg.md` | `direct` | `story` | `rpg` | Attached to a world, in a location, rules enforced |
+| 12. rpg group chat | `TASK-chat-variant-rpg-group.md` | `group` | `battle` | `rpg` | Multi-user party, turn rules, world+location binding |
+
+**Cross-cutting** (Medium — opened if/when needed): frontend variant picker (entry-point branches); create-chat payload validator per variant (guard at `routes/chats/create`); migration of legacy chats into the taxonomy.
+
+### Chat Product Features cluster (filed 2026-09-11)
+
+> Cross-cutting product feature coverage for the chat surface. 15 tickets span rich-message controls, encryption reliability, GM annotations, context/memory/event propagation, turn/talkativity, moderation, ownership transfer, location transition with party handoff, archive + search filtering, intro-based entity generation, pre-send buffer, RPG rules, settings templates + compat matrix, RPG location uniqueness, RPG chronological/tree nav. Items 14 & 15 (RPG-gated) require `epic-rpg-wiring-phase3` and `TASK-rpg-gate-chat-commands-behind-world-opt-in`.
+> Spec: `../epics/epic-chat-product-features.md`. Status: 🟡 Not Started.
+
+#### P0-P2 visibility (app-critical — promoted to `priority-p0-p2.md`)
+
+- [ ] `TASK-chat-feature-encryption-key-rotation.md` (High / High) — effective & reliable encryption + membership-triggered deterministic key rotation; idempotent across concurrent events; in-flight sends must observe post-rotation key. **Joined `priority-p0-p2.md` P0 row 2026-09-11**.
+- [ ] `TASK-chat-feature-ownership-transfer.md` (High / Medium) — owner can hand chat to another participant; mod/GM grants re-evaluated; audit handover; `confirm: true` on backend. **Joined `priority-p0-p2.md` P0 row 2026-09-11**.
+
+#### P3-P5 remainder
+
+| # | Cluster | Tickets | Effort | Where / next |
+|---|---------|---------|--------|--------------|
+| 1 | Component & Message UX | `TASK-chat-feature-component-buttons.md` | Medium | message actions + asset picker host (`src/components/chat/`, `src/group-chat/mention-parser.ts`) |
+| 2 | Crypto Reliability (extra) | (rotation covered above) | — | `src/crypto/key-rotation/re-encrypt.ts` rollback path; `src/middleware/idempotency.ts` overlap-debounce |
+| 3 | GM Annotations | `TASK-chat-feature-notes-shadow-carriage.md` | Low | `src/chat/proactive/{types,db-helpers}.ts`, `src/chat/service/{carry-history,party-narration}.ts` |
+| 4 | Context / Memory / Event Propagation | `TASK-chat-feature-context-memory-events.md` | Medium | `src/chat/{context-window,context-stats,random-events}.ts`, `src/memory/injection/*`, `src/rag/search/orchestrator.ts` |
+| 5 | Turn & Talkativity | `TASK-chat-feature-turn-talkativity-skip.md` | Medium | `src/turning/turn-manager/{selection,participants}.ts`, `src/turning/turn-strategies.ts` |
+| 6 | Moderation | `TASK-chat-feature-moderation.md` | High | `src/chat/moderation.ts`, `src/middleware/nsfw-gate/{access,consent,logging}.ts`, `src/profanity/service.ts` |
+| 7 | Ownership Transfer (extra) | (transfer covered above) | — | `src/chat/ownership.ts`, `src/chat/service/{chats,write}.ts` |
+| 8 | Location Transition & Party Handoff | `TASK-chat-feature-location-transition-transfer.md` | Medium | `src/chat/transitions.ts`, `src/chat/service/{transitions,carry-location,party,party-narration,location-events}.ts` |
+| 9 | Archive / Deletion / Search Filtering | `TASK-chat-feature-archive-deletion-search.md` | Low | `src/chat/service/visibility.ts`, `src/chat/service/crud/`, `src/rag/search/quarantine.ts` |
+| 10 | Intro-Based Generation & Backpropagation | `TASK-chat-feature-introduction-generation-propagation.md` | High | `src/generation/auto-gen/{classify-intent,resolve-known-names}.ts`, `src/chat/hallucination-guard/detect.ts`, `src/memory/extraction.ts` |
+| 11 | Entry Field Pre-Send Buffer | `TASK-chat-feature-entry-field-pre-send.md` | Low | `src/components/chat/`, `src/group-chat/mention-parser.ts`, `src/turning/turn-manager/state.ts` |
+| 12 | RPG Rule System | `TASK-chat-feature-rpg-rule-system.md` | Low | `src/chat/service/party-narration.ts`, `src/generation/prompt-templates/{profiles,templates}.ts` |
+| 13 | Settings Templates & Compat Matrix | `TASK-chat-feature-settings-templates-compat-matrix.md` | Medium | `src/chat/{setup-templates.test.ts,service/templates.ts,service/template-crud.ts,service/template-defaults.ts,service/vn-choices.ts,types/config.ts}` |
+| 14 | RPG Location Uniqueness *(RPG-mode gated)* | `TASK-chat-feature-rpg-location-uniqueness.md` | Low | gated by `TASK-rpg-gate-chat-commands-behind-world-opt-in`; `src/chat/npc-movement/index.ts`, `src/chat/service/party.ts` |
+| 15 | RPG Chronological / Tree Navigation *(RPG-mode gated)* | `TASK-chat-feature-rpg-chronological-navigation.md` | Low | gated by `epic-rpg-wiring-phase3`; `src/chat/service/{split,split-utils}.ts`, `src/chat/service/carry-history.ts`, `src/chat/transitions.ts` |
+
+> Triage status (2026-09-11): all 15 tickets filed with realistic `src/` paths + acceptance criteria + open questions. **Triage pending** — see `open-untriaged.md`.
 
 ## P4 — Core Experience (open remainder of P3 rows)
 
