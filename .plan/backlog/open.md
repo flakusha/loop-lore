@@ -24,7 +24,7 @@
 ## Status header
 
 P0 ✅ · P1 ✅ · P1.5 ✅ · P2 🟡 in progress (Gate C core shipped; NSFW async pipeline + consent/route-authz wiring landed; mesh encrypted-sharing landed; coverage lifts with raised waiver floors; test-isolation hardening green) · Regex ✅ · P3–P5 → 0.1.0 value
-tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da done).
+tiers (see `../priority.md`) · Gate C ✅ (complete — GM-guided story P2-Da done). **Sep-11: (+) 27 chat-variant + chat-feature tickets filed 2026-09-11 in `epic-chat-variants-taxonomy` + `epic-chat-product-features` — triage pending (see `open-untriaged.md`).**
 
 ## File map (split 2026-08-15)
 
