@@ -17,7 +17,6 @@ import { reviewStatsRoutes, } from "./review-stats";
 import { sdStatusRoutes, } from "./sd-status";
 import { statsRoutes, } from "./stats";
 import { systemConfigRoutes, } from "./system-config";
-import { templatesRoutes, } from "./templates";
 import { usersRoutes, } from "./users";
 import { worldsRoutes, } from "./worlds";
 
@@ -57,7 +56,6 @@ export function adminRoutes(opts: { database: Db; config: Config }, prefix = "/a
       .use(worldsRoutes(opts, prefix,),)
       .use(chatsRoutes(opts, prefix,),)
       .use(cronRoutes(opts, prefix,),)
-      .use(templatesRoutes(opts, prefix,),)
       .use(auditRoutes(opts, prefix,),)
       .use(dangerZoneRoutes(opts, prefix,),)
       .use(keyRotationRoutes(opts, prefix,),)

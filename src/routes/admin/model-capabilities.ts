@@ -10,7 +10,7 @@ import {
 } from "../../admin/model-capabilities";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -28,7 +28,9 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
     new Elysia({ name: "admin-model-capabilities", },)
       // ── List all ───────────────────────────────────────────
       .get(`${prefix}/admin/model-capabilities`, async (ctx: any,) => {
-        const { userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -49,7 +51,9 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       },)
       // ── Resolve one model ──────────────────────────────────
       .get(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
-        const { userRole, params, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -60,8 +64,8 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
 
         const caps = await resolveModelCapabilities(
           opts.database,
-          params.provider,
-          params.model,
+          ctx.params.provider,
+          ctx.params.model,
         );
 
         if (!caps) {
@@ -82,7 +86,9 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       },)
       // ── Set user override ──────────────────────────────────
       .patch(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
-        const { userRole, params, body, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -93,15 +99,15 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
 
         const ok = await setModelOverride(
           opts.database,
-          params.provider,
-          params.model,
+          ctx.params.provider,
+          ctx.params.model,
           {
-            contextWindow: body.contextWindow ?? undefined,
-            maxOutput: body.maxOutput ?? undefined,
-            supportsTools: body.supportsTools ?? undefined,
-            supportsVision: body.supportsVision ?? undefined,
-            supportsThinking: body.supportsThinking ?? undefined,
-            notes: body.notes ?? undefined,
+            contextWindow: ctx.body.contextWindow ?? undefined,
+            maxOutput: ctx.body.maxOutput ?? undefined,
+            supportsTools: ctx.body.supportsTools ?? undefined,
+            supportsVision: ctx.body.supportsVision ?? undefined,
+            supportsThinking: ctx.body.supportsThinking ?? undefined,
+            notes: ctx.body.notes ?? undefined,
           },
         );
 
@@ -115,8 +121,8 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
 
         const caps = await resolveModelCapabilities(
           opts.database,
-          params.provider,
-          params.model,
+          ctx.params.provider,
+          ctx.params.model,
         );
 
         return jsonResponse({ capabilities: caps, },);
@@ -137,7 +143,9 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
       },)
       // ── Clear user override ────────────────────────────────
       .delete(`${prefix}/admin/model-capabilities/:provider/:model`, async (ctx: any,) => {
-        const { userRole, params, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -148,8 +156,8 @@ export function modelCapabilitiesRoutes(opts: AdminRouteOpts, prefix = "/api",) 
 
         const ok = await clearModelOverride(
           opts.database,
-          params.provider,
-          params.model,
+          ctx.params.provider,
+          ctx.params.model,
         );
 
         if (!ok) {

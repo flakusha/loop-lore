@@ -5,7 +5,15 @@ import { Elysia, t, } from "elysia";
 import { deleteConfig, getAllConfig, setConfig, } from "../../admin/config";
 import { can, } from "../../users/permissions";
 import { AdminSystemConfigBody, ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
+import {
+  ErrorCode,
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonNoContent,
+  jsonResponse,
+  requireUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -17,7 +25,9 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-system-config", },)
       // ── System configuration ───────────────────────────────
       .get(`${prefix}/admin/system-config`, async (ctx: any,) => {
-        const { userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -36,7 +46,9 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .patch(
         `${prefix}/admin/system-config`,
         async (ctx: any,) => {
-          const { userRole, body, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -44,14 +56,16 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          const { key, value, description, } = body as { key: string; value: string; description?: string };
+          const { key, value, description, } = ctx.body as { key: string; value: string; description?: string };
           await setConfig(opts.database, key, value, description,);
           return jsonResponse({ ok: true, },);
         },
         { body: AdminSystemConfigBody, response: { 200: SuccessResponse, 403: ErrorResponse, }, },
       )
       .delete(`${prefix}/admin/system-config/:key`, async (ctx: any,) => {
-        const { params: p, userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -59,7 +73,7 @@ export function systemConfigRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.Forbidden,
           },);
         }
-        const key = p.key as string;
+        const key = ctx.params.key as string;
         await deleteConfig(opts.database, key,);
         return jsonNoContent();
       }, {

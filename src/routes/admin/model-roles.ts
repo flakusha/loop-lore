@@ -16,7 +16,15 @@ import {
   ErrorResponse,
   SuccessResponse,
 } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "../http-utils";
+import {
+  ErrorCode,
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonNoContent,
+  jsonResponse,
+  requireUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -28,7 +36,9 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-model-roles", },)
       // ── Model role overrides ───────────────────────────────
       .get(`${prefix}/admin/model-roles`, async (ctx: any,) => {
-        const { userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -48,7 +58,9 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       },)
       .get(`${prefix}/admin/model-roles/:role`, async (ctx: any,) => {
-        const { params: p, userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -57,7 +69,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           },);
         }
 
-        const role = p.role as string;
+        const role = ctx.params.role as string;
         if (!(VALID_ROLES as readonly string[]).includes(role,)) {
           return jsonError({
             message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,
@@ -79,7 +91,9 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .put(
         `${prefix}/admin/model-roles/:role`,
         async (ctx: any,) => {
-          const { params: p, body, userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -88,7 +102,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           }
 
-          const role = p.role as string;
+          const role = ctx.params.role as string;
           if (!(VALID_ROLES as readonly string[]).includes(role,)) {
             return jsonError({
               message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,
@@ -97,7 +111,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           }
 
-          const { provider, model, temperature, maxTokens, } = body as {
+          const { provider, model, temperature, maxTokens, } = ctx.body as {
             provider: string;
             model: string;
             temperature?: number | null;
@@ -124,7 +138,9 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       )
       .delete(`${prefix}/admin/model-roles/:role`, async (ctx: any,) => {
-        const { params: p, userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -133,7 +149,7 @@ export function modelRolesRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           },);
         }
 
-        const role = p.role as string;
+        const role = ctx.params.role as string;
         if (!(VALID_ROLES as readonly string[]).includes(role,)) {
           return jsonError({
             message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,
