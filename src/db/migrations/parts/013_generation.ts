@@ -63,6 +63,20 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("validated_at", "text",)
     .addColumn("validated_by", "text", (col,) => col.references("actors.id",),)
     .execute();
+  await database.schema
+    .createTable("generation_jobs",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("kind", "text", (col,) => col.notNull(),)
+    .addColumn("actor_id", "text", (col,) => col.references("actors.id",),)
+    .addColumn("status", "text", (col,) => col.notNull().defaultTo("pending",),)
+    .addColumn("payload", "text", (col,) => col.notNull().defaultTo("{}",),)
+    .addColumn("results", "text", (col,) => col.notNull().defaultTo("[]",),)
+    .addColumn("error_message", "text",)
+    .addColumn("started_at", "text",)
+    .addColumn("completed_at", "text",)
+    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .execute();
 
   await database.schema
     .createIndex("idx_generation_attempts_abort_signal",)
@@ -135,11 +149,23 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .on("synthetic_data",)
     .column("world_id",)
     .execute();
+  await database.schema
+    .createIndex("idx_generation_jobs_actor",)
+    .on("generation_jobs",)
+    .column("actor_id",)
+    .execute();
+
+  await database.schema
+    .createIndex("idx_generation_jobs_status",)
+    .on("generation_jobs",)
+    .column("status",)
+    .execute();
 }
 /**
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("synthetic_data",).execute();
+  await database.schema.dropTable("generation_jobs",).execute();
   await database.schema.dropTable("generation_attempts",).execute();
 }
