@@ -156,6 +156,15 @@
                 >
                 </button>
               </div>
+              <input
+                class="form-input"
+                type="text"
+                id="location-search"
+                x-model="locationSearch"
+                @input="filterLocations()"
+                placeholder="Search locations…"
+                style="margin-bottom: var(--space-3)"
+              />
 
               <div class="add-location-form" x-show="showAddForm" x-cloak>
                 <div class="form-group">
@@ -208,7 +217,7 @@
                 <div class="title">{{{t("worlds.loadingLocations")}}}</div>
               </div>
 
-              <div x-show="!loadingLocations && locations.length > 0">
+              <div id="location-list" x-show="!loadingLocations && locations.length > 0">
                 <template x-for="loc in locations" :key="loc.id">
                   <div
                     class="location-item"

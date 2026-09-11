@@ -18,6 +18,7 @@ import { loadConfig, } from "../../config/load";
 import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { forbiddenResponse, jsonError, requireUserId, } from "../../routes/http-utils";
+import { parseAssistantTuning, resolveAssistantMaxTokens, resolveAssistantTemperature, } from "../assistant-tuning";
 import { hasInFlightGeneration, IdempotencyKeyConflictError, startGenerationTracking, } from "../cancellation-manager";
 import {
   buildFailoverList,
@@ -30,7 +31,6 @@ import { runNonStreaming, } from "./non-stream";
 import { buildProviderRequest, } from "./provider-request";
 import { streamToClient, } from "./stream-to-client";
 import type { GenerateRequest, } from "./types";
-
 /**
  * POST /api/generation/generate
  *
@@ -167,6 +167,22 @@ export async function handleGenerate({
       (chatStreaming == null && configDefault == null && providerCapable);
   }
 
+  // Sampling params: explicit request → per-chat gm_config.assistantTuning →
+  // provider default. The extra chat read is skipped when both are explicit.
+  let tuningTemperature: number | null = null;
+  let tuningMaxTokens: number | null = null;
+  if (input.temperature === undefined || input.maxTokens === undefined) {
+    const tuningRow = await database
+      .selectFrom("chats",)
+      .select(["gm_config",],)
+      .where("id", "=", input.chatId,)
+      .executeTakeFirst();
+    const tuning = parseAssistantTuning(tuningRow?.gm_config ?? null,);
+    tuningTemperature = tuning.temperature;
+    tuningMaxTokens = tuning.maxTokens;
+  }
+  const temperature = resolveAssistantTemperature(input.temperature, tuningTemperature,);
+  const maxTokens = resolveAssistantMaxTokens(input.maxTokens, tuningMaxTokens,);
   const genOptions: GenerationOptions = {
     chatId: input.chatId,
     parentMessageId: input.parentMessageId,
@@ -174,8 +190,8 @@ export async function handleGenerate({
     modelId: resolved.resolvedModel,
     provider: resolved.resolvedProviderName,
     prompt: messages,
-    temperature: input.temperature,
-    maxTokens: input.maxTokens,
+    temperature,
+    maxTokens,
     topP: input.topP,
     systemPrompt,
     stream: resolvedStream,
@@ -207,7 +223,7 @@ export async function handleGenerate({
 
   // ── Build provider request ────────────────────────────
   const providerReq = await buildProviderRequest({
-    input,
+    input: { ...input, temperature, maxTokens, },
     resolved,
     messages,
     database,
