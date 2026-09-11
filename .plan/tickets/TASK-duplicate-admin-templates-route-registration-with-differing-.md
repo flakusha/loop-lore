@@ -1,6 +1,6 @@
 # TASK: Duplicate /admin/templates route registration with differing gates
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done — landed on `authz-bug-cluster` (commit `a714a4376`)
 **Priority:** low
 **Effort:** Medium
 
