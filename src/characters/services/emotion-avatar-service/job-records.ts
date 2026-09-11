@@ -211,3 +211,19 @@ export async function recordBatchFinish(
     completedAt: job.completedAt ?? new Date().toISOString(),
   },);
 }
+/**
+ * Record batch startup failure (bad provider config, etc.) so no
+ * permanently-"running" row is left behind for the gallery to misread.
+ * @param database
+ * @param job
+ * @param error
+ */
+export async function recordBatchFailure(
+  database: Kysely<DB>,
+  job: BatchGenerationJob,
+  error: unknown,
+): Promise<void> {
+  job.status = "failed";
+  job.error = error instanceof Error ? error.message : String(error,);
+  await recordBatchFinish(database, job,);
+}
