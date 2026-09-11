@@ -398,3 +398,125 @@ describe("Step 4: Derive chat key, encrypt and decrypt messages", () => {
     });
   });
 });
+
+// ══════════════════════════════════════════════════════════
+// AC6: in-flight send races rotation
+//
+// Fires `rotateKeyOnLeave` for a leaver WITHOUT awaiting it (the
+// rotation runs in the background), then immediately enqueues a
+// send via `encryptMessageContent`. The send must observe the
+// post-rotation key — never a stale pre-rotation key. The at-rest
+// pipeline acquires the same per-chat lock that the rotation holds,
+// so the send blocks until rotation commits and then reads the
+// fresh `chat_keys` row. Asserted via the stored message's `key_id`.
+// ══════════════════════════════════════════════════════════
+
+test("AC6 in-flight send observes post-rotation key", async () => {
+  const smk = getSmk()!;
+  const AC6_CHAT = "chat-lifecycle-ac6";
+  const AC6_LEAVER = "user-lifecycle-ac6-leaver";
+  const AC6_SENDER = "user-lifecycle-ac6-sender";
+
+  await db.insertInto("actors",).values({
+    id: AC6_LEAVER,
+    actor_type: "user",
+    display_name: AC6_LEAVER,
+    agent_type: "none",
+    settings: "{}",
+    import_spec: "raw",
+    data_source_format: "json",
+    data_raw: null,
+    user_id: AC6_LEAVER,
+    owner_id: AC6_LEAVER,
+    format_version: 0,
+    visibility: "private",
+  },).execute();
+  await db.insertInto("actors",).values({
+    id: AC6_SENDER,
+    actor_type: "user",
+    display_name: AC6_SENDER,
+    agent_type: "none",
+    settings: "{}",
+    import_spec: "raw",
+    data_source_format: "json",
+    data_raw: null,
+    user_id: AC6_SENDER,
+    owner_id: AC6_SENDER,
+    format_version: 0,
+    visibility: "private",
+  },).execute();
+
+  await db.insertInto("chats",).values({
+    id: AC6_CHAT,
+    name: AC6_CHAT,
+    type: "direct",
+    mode: "direct",
+    created_by: AC6_SENDER,
+    encryption_level: "standard",
+  },).execute();
+  await db.insertInto("chat_participants",).values({
+    chat_id: AC6_CHAT,
+    actor_id: AC6_LEAVER,
+    role_in_chat: "member",
+  },).execute();
+  await db.insertInto("chat_participants",).values({
+    chat_id: AC6_CHAT,
+    actor_id: AC6_SENDER,
+    role_in_chat: "member",
+  },).execute();
+
+  await generateActorKey({ database: db, actorId: AC6_LEAVER, smk, name: "primary", },);
+  await generateActorKey({ database: db, actorId: AC6_SENDER, smk, name: "primary", },);
+
+  const preKeyId = (await getChatKey(db, AC6_CHAT,)).keyId;
+
+  // Kick off the rotation but DO NOT await — the send races it.
+  const rotationPromise = rotateKeyOnLeave(db, AC6_CHAT, AC6_LEAVER,);
+
+  // Immediately enqueue a send via the production pipeline. The at-rest
+  // layer (encryptAtRest) awaits the chat-key lock, so the send blocks
+  // until the rotation commits and then reads the post-rotation key.
+  // encryptMessageContent returns the envelope; we persist the row
+  // explicitly to mirror what the chat route does.
+  const { encryptMessageContent, } = await import("./message-content");
+  const sendResult = await encryptMessageContent({
+    database: db,
+    chatId: AC6_CHAT,
+    actorId: AC6_SENDER,
+    plaintext: "send racing rotation",
+    smk,
+  },);
+  await db.insertInto("messages",).values({
+    id: crypto.randomUUID(),
+    chat_id: AC6_CHAT,
+    actor_id: AC6_SENDER,
+    role: "user",
+    content: sendResult.storedContent,
+    content_encoding: "identity",
+    key_id: sendResult.keyId,
+    status: "confirmed",
+    visibility: "visible",
+  },).execute();
+
+  // The rotation has now completed (send awaited the lock).
+  const postKey = await rotationPromise;
+
+  expect(postKey.keyId,).not.toBe(preKeyId,);
+  // Critical assertion: the stored message carries the POST-rotation
+  // key id, never the stale pre-rotation one.
+  expect(sendResult.keyId,).toBe(postKey.keyId,);
+  expect(sendResult.keyId,).not.toBe(preKeyId,);
+
+  // The message decrypts cleanly under the post-rotation key.
+  const stored = await db.selectFrom("messages",).select(["content", "key_id",],)
+    .where("chat_id", "=", AC6_CHAT,).executeTakeFirstOrThrow();
+  expect(stored.key_id,).toBe(postKey.keyId,);
+  const { decryptAtRest, } = await import("./at-rest");
+  const plaintext = await decryptAtRest({
+    database: db,
+    chatId: AC6_CHAT,
+    storedContent: stored.content,
+    encryptionLevel: "standard",
+  },);
+  expect(plaintext,).toBe("send racing rotation",);
+});

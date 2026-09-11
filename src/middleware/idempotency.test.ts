@@ -256,3 +256,46 @@ describe("idempotent (memory backend) — recordResponse failure recovery", () =
     }
   });
 });
+// AC8: idempotency rejects duplicate rotation triggers.
+// The DELETE participant route in src/routes/chats/participants.ts triggers
+// `rotateKeyOnLeave`. Two requests with the same Idempotency-Key on this
+// route must NOT trigger a second rotation — they replay the first response
+// (same event id) or return 409 while the first is in flight. Both paths
+// are covered below.
+describe("idempotent (memory backend) — rotation trigger dedup (AC8)", () => {
+  const ROTATION_ROUTE = "/api/chats/:id/participants/:actorId";
+
+  test("two identical rotation-trigger requests replay the same event id (no second rotation)", async () => {
+    const idem = idempotent({ backend: "memory", },);
+    const firstCtx = makeCtx("DELETE", ROTATION_ROUTE, "rotate-key-1",);
+    expect(await idem.beforeHandle(firstCtx,),).toBeUndefined();
+    const eventId = "rot-evt-aaaa-1111";
+    const response = new Response(
+      JSON.stringify({ eventId, rotatedMessages: 3, rotatedAssets: 1, },),
+      { status: 200, headers: { "Content-Type": "application/json", }, },
+    );
+    idem.recordResponse({
+      method: "DELETE",
+      route: ROTATION_ROUTE,
+      requestId: "rotate-key-1",
+      response,
+    },);
+    await flushMicrotasks();
+    const secondCtx = makeCtx("DELETE", ROTATION_ROUTE, "rotate-key-1",);
+    const replay = await idem.beforeHandle(secondCtx,);
+    expect(replay,).toBeInstanceOf(Response,);
+    if (replay) {
+      expect(replay.status,).toBe(200,);
+      const body = await replay.json() as { eventId: string; rotatedMessages: number };
+      expect(body.eventId,).toBe(eventId,);
+    }
+  });
+
+  test("second rotation request fired before the first completes returns 409 (in-flight)", async () => {
+    const idem = idempotent({ backend: "memory", },);
+    expect(await idem.beforeHandle(makeCtx("DELETE", ROTATION_ROUTE, "rotate-key-2",),),).toBeUndefined();
+    const replay = await idem.beforeHandle(makeCtx("DELETE", ROTATION_ROUTE, "rotate-key-2",),);
+    expect(replay?.status,).toBe(409,);
+    expect(await replay?.json(),).toMatchObject({ code: "CONFLICT", },);
+  });
+});

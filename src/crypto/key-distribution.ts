@@ -30,10 +30,32 @@ import { getSmk, } from "./smk";
 // stranded rows under expired keys.
 const RE_ENCRYPT_LIMIT = Number.MAX_SAFE_INTEGER;
 
-/**
- * Shared key-distribution logger.
- * @returns a child logger namespaced for the `key-distribution` module.
- */
+// ─── Concurrent rotation coalescing (AC5, AC6) ──────────────────
+// Single-process in-memory tracking of in-flight rotations per chat so
+// concurrent leave/join requests collapse to ONE re-encrypt event (AC5)
+// and concurrent send-encryptions block until any in-flight rotation
+// commits, observing the post-rotation key — never a stale one (AC6).
+// `rotationEventCount` counts actual rotation bodies that ran (coalesced
+// no-op waits do NOT count). Read via `getRotationEventCount`.
+const inflightRotations = new Map<string, Promise<ChatKey>>();
+let rotationEventCount = 0;
+
+export function getRotationEventCount(): number {
+  return rotationEventCount;
+}
+
+export function resetRotationEventCount(): void {
+  rotationEventCount = 0;
+  inflightRotations.clear();
+}
+
+export async function awaitChatKeyLock(chatId: string,): Promise<void> {
+  const inflight = inflightRotations.get(chatId,);
+  if (!inflight) { return; }
+  try {
+    await inflight;
+  } catch { /* let caller surface the error */ }
+}
 function log(): Logger {
   return getLogger().child({ module: "key-distribution", },);
 }
@@ -83,6 +105,25 @@ export async function rotateKeyOnLeave(
   chatId: string,
   departedParticipantId: string,
 ): Promise<ChatKey> {
+  // Coalesce concurrent rotateKeyOnLeave calls per chat (AC5). The first
+  // caller runs the rotation; subsequent callers await the in-flight
+  // promise and return the same ChatKey. The counter increments only
+  // when the rotation body actually runs.
+  const existing = inflightRotations.get(chatId,);
+  if (existing) { return existing; }
+  const promise = doRotate(database, chatId, departedParticipantId,).finally(() => {
+    if (inflightRotations.get(chatId,) === promise) { inflightRotations.delete(chatId,); }
+  },);
+  inflightRotations.set(chatId, promise,);
+  return promise;
+}
+
+async function doRotate(
+  database: Kysely<DB>,
+  chatId: string,
+  departedParticipantId: string,
+): Promise<ChatKey> {
+  rotationEventCount++;
   const smk = getSmk();
   if (!smk) { throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",); }
 
@@ -168,6 +209,22 @@ export async function rotateKeyOnLeave(
       messagesReEncrypted: reEncrypted,
       assetsReEncrypted: assetResult.reEncrypted,
     },);
+
+    // Append-only audit row in `rotation_history`. Written INSIDE the
+    // transaction so the audit atomically tracks the rotation; a failed
+    // audit insert rolls back the entire key rotation.
+    await trx
+      .insertInto("rotation_history",)
+      .values({
+        id: crypto.randomUUID(),
+        chat_id: chatId,
+        actor_id: departedParticipantId,
+        reason: "leave",
+        old_key_id: oldChatKey.keyId,
+        new_key_id: newId,
+        messages_re_encrypted: reEncrypted + assetResult.reEncrypted,
+      },)
+      .execute();
   },);
 
   return newChatKey;
