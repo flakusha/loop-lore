@@ -19,8 +19,8 @@ import {
 } from "../helpers/client";
 import { SEED, seedUsers, } from "../helpers/seed";
 import {
-  type TestServer,
   createTestServer,
+  type TestServer,
 } from "../helpers/server";
 
 describe("Personas E2E", () => {
@@ -48,20 +48,20 @@ describe("Personas E2E", () => {
     const res = await anon.get("/api/personas",);
     expect(res.status,).toBe(401,);
     expect(res.code,).toBeTruthy();
-  },);
+  });
 
   test("POST /api/personas creates a persona for the caller", async () => {
-    const name = `p-${Date.now().toString(36)}`;
+    const name = `p-${Date.now().toString(36,)}`;
     const res = await userApi.post("/api/personas", {
       name,
       description: "e2e-spec persona",
     },);
     expect(res.ok,).toBe(true,);
     expect(res.data,).toBeTruthy();
-  },);
+  });
 
   test("GET /api/personas lists the caller's personas (created one is present)", async () => {
-    const stamp = Date.now().toString(36);
+    const stamp = Date.now().toString(36,);
     const created = await userApi.post("/api/personas", {
       name: `p-list-${stamp}`,
     },);
@@ -73,11 +73,11 @@ describe("Personas E2E", () => {
     expect(list.status,).toBe(200,);
     const items = (list.data ?? []) as Array<{ id: string }>;
     expect(Array.isArray(items,),).toBe(true,);
-    expect(items.map((p) => p.id,),).toContain(personaId,);
-  },);
+    expect(items.map((p,) => p.id),).toContain(personaId,);
+  });
 
   test("PATCH /api/personas/:id updates an owned persona", async () => {
-    const stamp = Date.now().toString(36);
+    const stamp = Date.now().toString(36,);
     const created = await userApi.post("/api/personas", {
       name: `p-patch-${stamp}`,
     },);
@@ -91,10 +91,10 @@ describe("Personas E2E", () => {
       description: "updated by e2e",
     },);
     expect(updated.ok,).toBe(true,);
-  },);
+  });
 
   test("DELETE /api/personas/:id removes an owned persona", async () => {
-    const stamp = Date.now().toString(36);
+    const stamp = Date.now().toString(36,);
     const created = await userApi.post("/api/personas", {
       name: `p-del-${stamp}`,
     },);
@@ -106,16 +106,16 @@ describe("Personas E2E", () => {
 
     const del = await userApi.del(`/api/personas/${personaId}`,);
     expect(del.ok,).toBe(true,);
-  },);
+  });
 
   test("POST /api/personas with missing name returns 400 + BAD_REQUEST", async () => {
     const res = await userApi.post("/api/personas", { description: "no name", },);
     expect(res.status,).toBe(400,);
     expect(res.code,).toBe("BAD_REQUEST",);
-  },);
+  });
 
   test("admin can convert an owned persona to a character", async () => {
-    const stamp = Date.now().toString(36);
+    const stamp = Date.now().toString(36,);
     const created = await adminApi.post("/api/personas", {
       name: `p-conv-${stamp}`,
     },);
@@ -136,10 +136,10 @@ describe("Personas E2E", () => {
 
     // The conversion actually persisted — the new actor row exists in the actors table.
     const actorRow = await server.db
-      .selectFrom("actors")
-      .select(["id", "actor_type"])
+      .selectFrom("actors",)
+      .select(["id", "actor_type",],)
       .where("id", "=", actorId ?? "",)
       .executeTakeFirst();
     expect(actorRow?.actor_type,).toBe("character",);
-  },);
+  });
 });

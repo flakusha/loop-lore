@@ -24,8 +24,8 @@ import {
 } from "../helpers/client";
 import { SEED, seedUsers, } from "../helpers/seed";
 import {
-  type TestServer,
   createTestServer,
+  type TestServer,
 } from "../helpers/server";
 
 describe("NSFW E2E", () => {
@@ -51,7 +51,7 @@ describe("NSFW E2E", () => {
   },);
 
   // Helper: write endpoint requires both fields per modBody schema.
-  const blockBody = (targetUserId: string) => ({
+  const blockBody = (targetUserId: string,) => ({
     targetUserId,
     reason: "e2e-spec block",
   });
@@ -64,7 +64,7 @@ describe("NSFW E2E", () => {
     const res = await anon.post("/api/nsfw/moderation/block", blockBody(SEED.user.id,),);
     expect(res.status,).toBe(403,);
     expect(res.error ?? "",).toContain("csrf",);
-  },);
+  });
   test("POST /api/nsfw/moderation/block returns 403 for regular user", async () => {
     const res = await userApi.post(
       "/api/nsfw/moderation/block",
@@ -72,7 +72,7 @@ describe("NSFW E2E", () => {
     );
     expect(res.status,).toBe(403,);
     expect(res.code,).toBeTruthy();
-  },);
+  });
 
   test("POST /api/nsfw/moderation/ban returns 403 for regular user", async () => {
     const res = await userApi.post(
@@ -80,7 +80,7 @@ describe("NSFW E2E", () => {
       blockBody(SEED.admin.id,),
     );
     expect(res.status,).toBe(403,);
-  },);
+  });
 
   test("admin can block then unblock a target user (round-trip)", async () => {
     // Synthetic target — endpoint records the action regardless of existence.
@@ -99,7 +99,7 @@ describe("NSFW E2E", () => {
       { targetUserId: targetId, },
     );
     expect(unblock.ok,).toBe(true,);
-  },);
+  });
 
   test("admin can shadow then unshadow a target user (round-trip)", async () => {
     const targetId = "a00000aa-0000-4000-a000-000000000000";
@@ -117,23 +117,23 @@ describe("NSFW E2E", () => {
       blockBody(targetId,),
     );
     expect(unshadow.ok,).toBe(true,);
-  },);
+  });
 
   test("GET /api/nsfw/moderation/flags (list) is reachable for admin", async () => {
     const res = await adminApi.get("/api/nsfw/moderation/flags",);
     expect(res.status,).toBe(200,);
     expect(res.data,).toBeTruthy();
-  },);
+  });
 
   test("POST /api/nsfw/moderation/block with missing targetUserId returns 422", async () => {
     // modBody schema requires targetUserId; Elysia schema validation → 422.
     const res = await adminApi.post(
       "/api/nsfw/moderation/block",
-      { reason: "no target" },
+      { reason: "no target", },
     );
     expect(res.status,).toBe(422,);
     expect(res.code,).toBeTruthy();
-  },);
+  });
 
   test("POST /api/nsfw/moderation/block with missing reason returns 422", async () => {
     const res = await adminApi.post(
@@ -141,5 +141,5 @@ describe("NSFW E2E", () => {
       { targetUserId: SEED.user.id, },
     );
     expect(res.status,).toBe(422,);
-  },);
+  });
 });
