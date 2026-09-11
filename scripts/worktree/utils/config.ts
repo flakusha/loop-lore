@@ -5,8 +5,10 @@
  * Configuration utilities for worktree management
  */
 
+import { existsSync, symlinkSync, } from "fs";
 import { dirname, resolve, } from "path";
 import { findRepoRoot, gitSync, } from "./git";
+import { log, } from "./output";
 
 export interface WorktreeConfig {
   repoRoot: string;
@@ -80,6 +82,23 @@ export async function loadConfig(): Promise<WorktreeConfig> {
 
 export function branchToPath(branch: string,): string {
   return branch.replace(/\//g, "-",);
+}
+
+/**
+ * Symlink root `.credentials.env` into a worktree so worktree-local scripts
+ * (check-parallel.mjs, gpg-unlock.mjs) find agent GPG identity without a
+ * parent-walk. Mirrors the node_modules symlink: same pattern, same
+ * idempotency, same skip-if-present.
+ * @param repoRoot
+ * @param wtPath
+ */
+export function linkWorktreeCredentials(repoRoot: string, wtPath: string,): void {
+  const mainCreds = resolve(repoRoot, ".credentials.env",);
+  const wtCreds = resolve(wtPath, ".credentials.env",);
+  if (existsSync(mainCreds,) && !existsSync(wtCreds,)) {
+    symlinkSync(mainCreds, wtCreds,);
+    log("success", ".credentials.env linked",);
+  }
 }
 
 export async function resolveBranch(

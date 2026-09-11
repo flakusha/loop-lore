@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { existsSync, mkdirSync, symlinkSync, } from "fs";
+import { existsSync, mkdirSync, } from "fs";
 import { resolve, } from "path";
-import { branchToPath, type WorktreeConfig, } from "../utils/config";
+import { branchToPath, linkWorktreeCredentials, type WorktreeConfig, } from "../utils/config";
 import { gitSync, isProtected, } from "../utils/git";
 import { linkNodeModules, } from "../utils/modules";
 import { log, } from "../utils/output";
@@ -95,16 +95,7 @@ export async function execute(
 
   linkNodeModules(config.repoRoot, wtPath,);
 
-  // Link .credentials.env so worktree-local scripts (check-parallel.mjs,
-  // gpg-unlock.mjs — both resolve REPO_ROOT = import.meta.dir + "/..") can
-  // find agent GPG identity without a parent-walk. Mirrors the node_modules
-  // symlink above: same pattern, same idempotency, same skip-if-present.
-  const mainCreds = resolve(config.repoRoot, ".credentials.env",);
-  const wtCreds = resolve(wtPath, ".credentials.env",);
-  if (existsSync(mainCreds,) && !existsSync(wtCreds,)) {
-    symlinkSync(mainCreds, wtCreds,);
-    log("success", ".credentials.env linked",);
-  }
+  linkWorktreeCredentials(config.repoRoot, wtPath,);
 
   log("success", `Created: ${wtPath}`,);
 }
