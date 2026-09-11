@@ -11,7 +11,16 @@ import {
   SuccessResponse,
 } from "../../validation/schemas";
 import { AdminChatRow, AdminPaginatedEnvelope, } from "../../validation/schemas/responses";
-import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
+import {
+  ErrorCode,
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonNoContent,
+  jsonResponse,
+  parsePagination,
+  requireUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -25,7 +34,9 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(
         `${prefix}/admin/chats`,
         async (ctx: any,) => {
-          const { userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -76,7 +87,9 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(
         `${prefix}/admin/chats/:id`,
         async (ctx: any,) => {
-          const { params: p, userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -84,7 +97,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          const { id, } = p as { id: string };
+          const { id, } = ctx.params as { id: string };
           const chat = await opts.database
             .selectFrom("chats",)
             .selectAll()
@@ -121,7 +134,9 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .patch(
         `${prefix}/admin/chats/:id`,
         async (ctx: any,) => {
-          const { params: p, userRole, body, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -129,8 +144,8 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          const { id, } = p as { id: string };
-          const { is_pinned, world_id, } = body as { is_pinned?: string; world_id?: string | null };
+          const { id, } = ctx.params as { id: string };
+          const { is_pinned, world_id, } = ctx.body as { is_pinned?: string; world_id?: string | null };
           const updates: Record<string, unknown> = {};
           if (is_pinned !== undefined) { updates.is_pinned = is_pinned; }
           if (world_id !== undefined) { updates.world_id = world_id; }
@@ -156,7 +171,9 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .delete(
         `${prefix}/admin/chats/:id`,
         async (ctx: any,) => {
-          const { params: p, userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -164,7 +181,7 @@ export function chatsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          const { id, } = p as { id: string };
+          const { id, } = ctx.params as { id: string };
           await opts.database.deleteFrom("chats",).where("id", "=", id,).execute();
           return jsonNoContent();
         },

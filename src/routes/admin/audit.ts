@@ -5,7 +5,15 @@ import { Elysia, t, } from "elysia";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, PaginationQuery, } from "../../validation/schemas";
 import { AdminAuditRow, AdminPaginatedEnvelope, } from "../../validation/schemas/responses";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, parsePagination, } from "../http-utils";
+import {
+  ErrorCode,
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonResponse,
+  parsePagination,
+  requireUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -19,7 +27,9 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(
         `${prefix}/admin/audit`,
         async (ctx: any,) => {
-          const { userRole, request, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -27,7 +37,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          const url = new URL(request.url,);
+          const url = new URL(ctx.request.url,);
           const { page, pageSize, } = parsePagination(url.searchParams,);
           const offset = (page - 1) * pageSize;
           const eventType = url.searchParams.get("event_type",);
@@ -118,7 +128,9 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },
       )
       .get(`${prefix}/admin/audit/:id`, async (ctx: any,) => {
-        const { params: p, userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -126,7 +138,7 @@ export function auditRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             code: ErrorCode.Forbidden,
           },);
         }
-        const { id, } = p as { id: string };
+        const { id, } = ctx.params as { id: string };
         const entry = await opts.database
           .selectFrom("log_entries",)
           .select([

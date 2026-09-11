@@ -5,7 +5,7 @@ import { Elysia, t, } from "elysia";
 import { getScheduler, } from "../../cron/registry";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -36,6 +36,9 @@ export function cronRoutes(_opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-cron", },)
       // ── Job status list ────────────────────────────────
       .get(`${prefix}/admin/cron/jobs`, async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        extractAuth(ctx,);
         const scheduler = requireAdmin(ctx,);
         if (scheduler instanceof Response) { return scheduler; }
         return jsonResponse(scheduler.getStatus(),);
@@ -48,6 +51,9 @@ export function cronRoutes(_opts: AdminRouteOpts, prefix = "/api",) {
       },)
       // ── Manual job trigger ─────────────────────────────
       .post(`${prefix}/admin/cron/jobs/:name/run`, async (ctx: any,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        extractAuth(ctx,);
         const scheduler = requireAdmin(ctx,);
         if (scheduler instanceof Response) { return scheduler; }
         const name = String(ctx.params?.name ?? "",);
