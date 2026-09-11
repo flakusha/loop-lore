@@ -21,7 +21,12 @@ import {
   reconnectDelayMs,
   type TunnelParams,
 } from "./tunnel-protocol";
-import { TunnelUnavailable, } from "./tunnel-types";
+import {
+  type TunnelConnectorDeps,
+  type TunnelSocket,
+  type TunnelStatus,
+  TunnelUnavailable,
+} from "./tunnel-types";
 
 /**
  * Create a tunnel connector (starts closed; call `connect()`).
