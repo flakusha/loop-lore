@@ -1,11 +1,16 @@
 import { describe, expect, test, } from "bun:test";
 import type { GmConfig, } from "../types";
 import {
+  ASSISTANT_TUNING_DEFAULTS,
   buildActorModels,
   buildGmConfig,
+  clampAssistantMaxTokens,
+  clampAssistantTemperature,
+  effectiveAssistantParams,
   GM_CONFIG_PRESENTATION_KEYS,
   type GmSettingsFields,
   presentationGmConfig,
+  readAssistantTuning,
   readGmSettings,
   setStoryPaused,
 } from "./gm-config";
@@ -30,6 +35,8 @@ const fullFields = {
   gmProvider: "zai",
   gmTemperature: 0.3,
   gmMaxTokens: 4096,
+  assistantTemperature: 1.2,
+  assistantMaxTokens: 3000,
   responseLengthPreset: "custom",
   responseLengthCustom: 777,
   outputStylePreset: "noir",
@@ -58,6 +65,8 @@ describe("readGmSettings", () => {
       gmProvider: "",
       gmTemperature: 0.7,
       gmMaxTokens: 2000,
+      assistantTemperature: null,
+      assistantMaxTokens: null,
       responseLengthPreset: "medium",
       responseLengthCustom: 1000,
       outputStylePreset: "",
@@ -73,7 +82,7 @@ describe("readGmSettings", () => {
   });
 
   test("reads every explicit field", () => {
-    const config: GmConfig = {
+    const config = {
       assistantRole: "helper",
       renderingOverride: "visual_novel",
       vnLayout: "below",
@@ -90,16 +99,19 @@ describe("readGmSettings", () => {
       humanGM: { actorId: "a9", notifications: true, },
       escalationThreshold: 0.2,
       llmConfig: { model: "m", provider: "p", systemPrompt: "", temperature: 1, maxTokens: 100, },
+      assistantTuning: { temperature: 1.5, maxTokens: 1500, },
       responseLengthPreset: "short",
       responseLengthCustom: 42,
       outputStyle: { preset: "noir", intensity: 1, },
-    };
+    } as GmConfig;
     const fields = readGmSettings(config,);
     expect(fields.assistantRole,).toBe("helper",);
     expect(fields.vnLayout,).toBe("below",);
     expect(fields.gmType,).toBe("human",);
     expect(fields.gmHumanActorId,).toBe("a9",);
     expect(fields.gmModel,).toBe("m",);
+    expect(fields.assistantTemperature,).toBe(1.5,);
+    expect(fields.assistantMaxTokens,).toBe(1500,);
     expect(fields.responseLengthPreset,).toBe("short",);
     expect(fields.outputStylePreset,).toBe("noir",);
     expect(fields.outputStyleIntensity,).toBe(1,);
@@ -126,6 +138,7 @@ describe("buildGmConfig", () => {
     expect(out.responseLengthPreset,).toBe("custom",);
     expect(out.responseLengthCustom,).toBe(777,);
     expect(out.outputStyle,).toEqual({ preset: "noir", intensity: 0.9, },);
+    expect(out.assistantTuning,).toEqual({ temperature: 1.2, maxTokens: 3000, },);
   });
 
   test("llm-only config prunes human GM, escalation and custom length", () => {
@@ -142,6 +155,8 @@ describe("buildGmConfig", () => {
     expect("escalationThreshold" in out,).toBe(false,);
     expect("responseLengthCustom" in out,).toBe(false,);
     expect("outputStyle" in out,).toBe(false,);
+    // Tuning is orthogonal to the GM sections — it survives GM pruning.
+    expect(out.assistantTuning,).toEqual({ temperature: 1.2, maxTokens: 3000, },);
   });
 
   test("a blank model deletes llmConfig even when the old config had one", () => {
@@ -225,5 +240,87 @@ describe("setStoryPaused", () => {
     expect(JSON.parse(chat.story_state!,),).toEqual({ isPaused: true, },);
     setStoryPaused(chat, false,);
     expect(JSON.parse(chat.story_state!,),).toEqual({ isPaused: false, },);
+  });
+});
+
+describe("clampAssistantTemperature", () => {
+  test("accepts the 0-2 range inclusive", () => {
+    expect(clampAssistantTemperature(0,),).toBe(0,);
+    expect(clampAssistantTemperature(2,),).toBe(2,);
+    expect(clampAssistantTemperature(1.2,),).toBe(1.2,);
+  });
+  test("rejects out-of-range and non-numeric input", () => {
+    expect(clampAssistantTemperature(-0.1,),).toBeNull();
+    expect(clampAssistantTemperature(2.1,),).toBeNull();
+    expect(clampAssistantTemperature(Number.NaN,),).toBeNull();
+    expect(clampAssistantTemperature("hot",),).toBeNull();
+    expect(clampAssistantTemperature(null,),).toBeNull();
+  });
+});
+
+describe("clampAssistantMaxTokens", () => {
+  test("accepts positive ints", () => {
+    expect(clampAssistantMaxTokens(1,),).toBe(1,);
+    expect(clampAssistantMaxTokens(3000,),).toBe(3000,);
+  });
+  test("rejects zero, negatives, fractions and non-numbers", () => {
+    expect(clampAssistantMaxTokens(0,),).toBeNull();
+    expect(clampAssistantMaxTokens(-5,),).toBeNull();
+    expect(clampAssistantMaxTokens(1.5,),).toBeNull();
+    expect(clampAssistantMaxTokens("3000",),).toBeNull();
+  });
+});
+
+describe("readAssistantTuning", () => {
+  test("degrades to nulls for missing or invalid blobs", () => {
+    expect(readAssistantTuning({},),).toEqual({ temperature: null, maxTokens: null, },);
+    expect(readAssistantTuning({ assistantTuning: "hot", } as unknown as GmConfig,),).toEqual({
+      temperature: null,
+      maxTokens: null,
+    },);
+    expect(
+      readAssistantTuning({ assistantTuning: { temperature: 9, maxTokens: -1, }, } as unknown as GmConfig,),
+    ).toEqual({ temperature: null, maxTokens: null, },);
+  });
+  test("keeps a partial override (one side null)", () => {
+    expect(readAssistantTuning({ assistantTuning: { temperature: 1.5, }, } as unknown as GmConfig,),).toEqual({
+      temperature: 1.5,
+      maxTokens: null,
+    },);
+  });
+});
+
+describe("effectiveAssistantParams", () => {
+  test("override wins, server defaults fill the gaps", () => {
+    expect(effectiveAssistantParams({ temperature: null, maxTokens: null, },),).toEqual({
+      temperature: ASSISTANT_TUNING_DEFAULTS.temperature,
+      maxTokens: ASSISTANT_TUNING_DEFAULTS.maxTokens,
+    },);
+    expect(effectiveAssistantParams({ temperature: 0.2, maxTokens: null, },),).toEqual({
+      temperature: 0.2,
+      maxTokens: ASSISTANT_TUNING_DEFAULTS.maxTokens,
+    },);
+  });
+});
+
+describe("assistantTuning round-trip", () => {
+  test("build output reads back through readGmSettings", () => {
+    const out = buildGmConfig({}, fullFields, {},);
+    const fields = readGmSettings(out as unknown as GmConfig,);
+    expect(fields.assistantTemperature,).toBe(1.2,);
+    expect(fields.assistantMaxTokens,).toBe(3000,);
+  });
+  test("null fields prune a previously persisted override", () => {
+    const seeded = buildGmConfig({}, fullFields, {},);
+    const cleared = buildGmConfig(seeded as unknown as GmConfig, {
+      ...fullFields,
+      assistantTemperature: null,
+      assistantMaxTokens: null,
+    }, {},);
+    expect("assistantTuning" in cleared,).toBe(false,);
+  });
+  test("out-of-range fields are dropped instead of persisted", () => {
+    const out = buildGmConfig({}, { ...fullFields, assistantTemperature: 9, assistantMaxTokens: -4, }, {},);
+    expect("assistantTuning" in out,).toBe(false,);
   });
 });

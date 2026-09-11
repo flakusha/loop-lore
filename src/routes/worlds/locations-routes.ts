@@ -27,7 +27,8 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, userRole, } = extractAuth(ctx,);
         const page = Number(ctx.query?.page,) || 1;
         const pageSize = Number(ctx.query?.pageSize,) || 20;
-        return handleListLocations(database, ctx.params.worldId as string, page, pageSize, userId, userRole,);
+        const q = typeof ctx.query?.q === "string" ? ctx.query.q : undefined;
+        return handleListLocations(database, ctx.params.worldId as string, page, pageSize, userId, userRole, q,);
       },
       {
         response: {
@@ -37,7 +38,7 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
         },
         detail: {
           summary: "List locations",
-          description: "List locations in a world.",
+          description: "List locations in a world. Optional q filters by name substring (case-insensitive).",
           tags: ["Worlds",],
         },
       },

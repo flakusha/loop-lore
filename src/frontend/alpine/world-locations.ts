@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { filterCards, } from "../pages/shared";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -26,6 +27,7 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
   expandedLoc: "",
   editLocName: "",
   editLocDesc: "",
+  locationSearch: "",
 
   async loadLocations() {
     this.loadingLocations = true;
@@ -53,11 +55,28 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
           }),
         );
         this.locationsLoaded = true;
+        const nextTick = (this as unknown as { $nextTick?: (callback: () => void,) => void }).$nextTick;
+        if (nextTick) { nextTick(() => this.filterLocations()); }
+        else { this.filterLocations(); }
       }
     } catch (error) {
       log.warn("loadLocations failed", { error: String(error,), },);
     }
     this.loadingLocations = false;
+  },
+
+  filterLocations() {
+    if (typeof document === "undefined" || typeof document.querySelectorAll !== "function") { return; }
+    const query = document.querySelector<HTMLInputElement>("#location-search",)?.value ?? this.locationSearch;
+    filterCards({
+      containerId: "#location-list",
+      cardSelector: ".location-item",
+      nameSelector: ".location-name",
+      descSelector: ".location-desc",
+      query,
+      emptyIcon: "🗺️",
+      emptyTitle: "No locations match your search",
+    },);
   },
 
   async addLocation() {
