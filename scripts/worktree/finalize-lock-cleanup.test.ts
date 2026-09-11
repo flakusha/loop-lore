@@ -27,9 +27,10 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
-import { mkdtempSync, rmSync, } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync, } from "node:fs";
 import { tmpdir, } from "node:os";
 import { join, } from "node:path";
+import { acquireFinalizeLock, } from "./commands/finalize";
 
 let tmp: string;
 
@@ -107,5 +108,32 @@ describe("finalize lock cleanup", () => {
     const r = await runFixture("normal",);
     expect(r.exitCode,).toBe(0,);
     expect(r.leaked,).toBe(false,);
+  });
+});
+
+describe("finalize lock stale-reap", () => {
+  const LOCK_NAME = ".worktree-finalize.lock";
+  /**
+   * @param content
+   */
+  function acquireOverStale(content: string,): () => void {
+    const lockPath = join(tmp, LOCK_NAME,);
+    writeFileSync(lockPath, content,);
+    const release = acquireFinalizeLock(tmp,);
+    expect(readFileSync(lockPath, "utf8",),).toBe(String(process.pid,),);
+    return release;
+  }
+
+  it("reaps an empty lockfile left by a SIGKILL between create and PID write", () => {
+    const release = acquireOverStale("",);
+    release();
+  });
+
+  it("reaps a corrupt lockfile", () => {
+    acquireOverStale("not-a-pid",)();
+  });
+
+  it("reaps a lockfile whose owner PID is gone", () => {
+    acquireOverStale("4194303",)();
   });
 });
