@@ -5,6 +5,7 @@ import type { OutputStylePreset, } from "../../chat/output-style";
 import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
 import { presentationGmConfig, } from "./chat-settings/gm-config-presentation";
 import { personaActions, } from "./chat-settings/persona";
+import { ownershipActions, } from "./chat-settings/ownership";
 import { syncVnRenderer, } from "./chat-settings/vn";
 import { apiFetch, } from "./htmx";
 import { t, } from "./i18n";
@@ -15,6 +16,7 @@ import type { ChatState, GmConfig, } from "./types";
 const log = rootLog.child({ module: "chat-settings", },);
 
 export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
+  ...ownershipActions,
   ...personaActions,
   _chatSettingsName: "",
   _chatSettingsMode: "story",
