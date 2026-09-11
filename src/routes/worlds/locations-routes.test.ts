@@ -168,3 +168,100 @@ describe("locationRoutes — delete + connections validation (BUG-location-*)", 
     expect(stored.every((c,) => typeof c === "string"),).toBe(true,);
   });
 });
+
+describe("locationRoutes — list q filter", () => {
+  let db: Kysely<DB>;
+  let sqlite: TestDb["sqlite"];
+  let ownerId: string;
+  let worldId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, sqlite, } = await createTestDb());
+    await seedChatSetupTemplates(db,);
+
+    ownerId = uid();
+    await db
+      .insertInto("users",)
+      .values({
+        id: ownerId,
+        username: `user-${ownerId}`,
+        display_name: "Owner",
+        role: "solo",
+        status: "active",
+        settings: "{}",
+      },)
+      .execute();
+    await db
+      .insertInto("actors",)
+      .values({
+        id: ownerId,
+        actor_type: "user",
+        display_name: "Owner",
+        user_id: ownerId,
+        owner_id: ownerId,
+        agent_type: "none",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+
+    worldId = uid();
+    await insertWorlds(db, ownerId, "Search World", { id: worldId, } as never,);
+    await insertLocations(db, worldId, "Cellar Tavern", { id: uid(), } as never,);
+    await insertLocations(db, worldId, "Hall Tavern", { id: uid(), } as never,);
+    await insertLocations(db, worldId, "Forest Edge", { id: uid(), } as never,);
+  },);
+
+  afterAll(async () => {
+    sqlite.close();
+  },);
+
+  /**
+   * @param query
+   */
+  async function listNames(query: string,): Promise<{ names: string[]; total: number }> {
+    const app = appWithAuth(db, ownerId, "solo",);
+    const res = await app.handle(new Request(`${BASE}/api/worlds/${worldId}/locations${query}`,),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { name: string }[]; pagination: { total: number } };
+    return { names: body.data.map((l,) => l.name), total: body.pagination.total, };
+  }
+
+  test("q filters by name substring", async () => {
+    const { names, total, } = await listNames("?q=tavern",);
+    expect(names,).toEqual(["Cellar Tavern", "Hall Tavern",],);
+    expect(total,).toBe(2,);
+  });
+
+  test("q is case-insensitive", async () => {
+    const { names, total, } = await listNames("?q=TAVERN",);
+    expect(names,).toEqual(["Cellar Tavern", "Hall Tavern",],);
+    expect(total,).toBe(2,);
+  });
+
+  test("empty q returns everything", async () => {
+    for (const query of ["", "?q=", "?q=%20%20",]) {
+      const { names, total, } = await listNames(query,);
+      expect(names,).toEqual(["Cellar Tavern", "Forest Edge", "Hall Tavern",],);
+      expect(total,).toBe(3,);
+    }
+  });
+
+  test("q combines with pagination", async () => {
+    const first = await listNames("?q=tavern&pageSize=1&page=1",);
+    expect(first.names,).toEqual(["Cellar Tavern",],);
+    expect(first.total,).toBe(2,);
+    const second = await listNames("?q=tavern&pageSize=1&page=2",);
+    expect(second.names,).toEqual(["Hall Tavern",],);
+    expect(second.total,).toBe(2,);
+  });
+
+  test("q with no match returns an empty list", async () => {
+    const { names, total, } = await listNames("?q=zzz-no-such-location",);
+    expect(names,).toEqual([],);
+    expect(total,).toBe(0,);
+  });
+});
