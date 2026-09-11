@@ -34,6 +34,11 @@
 
 import { $, } from "bun";
 import { existsSync, readFileSync, } from "node:fs";
+// TODO: reuse scripts/worktree/utils/credentials.mjs for .credentials.env loading
+// instead of the bespoke loader below. The shared loader already handles
+// quote-stripping, AGENT_GPG_NAME/EMAIL, and unknown-key tolerance. This script
+// only needs AGENT_GPG_KEY_ID today, but consolidating eliminates the regex
+// fragility (no `export ` prefix support, no comment-line tolerance).
 import path from "node:path";
 
 const REPO_ROOT = import.meta.dir + "/..";
@@ -79,6 +84,13 @@ function agentConfigPath() {
 }
 
 function readMaxCacheTtl() {
+  // TODO: parse gpg-agent config properly — handle inline comments, multiple
+  // values, and read BOTH default-cache-ttl (default 600s) and max-cache-ttl
+  // (default 7200s). The effective cache lifetime is min(default, max), not
+  // max alone. Setting newExp past the actual lifetime (line ~140) is a no-op
+  // in terms of forcing gpg-agent to keep the entry; the entry will still
+  // expire at the smaller bound. For correctness, this should return the
+  // effective TTL (= min of the two) once the parser supports both keys.
   const confPath = agentConfigPath();
   if (!existsSync(confPath,)) { return 7200; // gpg-agent default 2h
    }
@@ -197,6 +209,11 @@ async function warmCache(keyId) {
 
   // Opt-in: read passphrase from env or file if the user has set one up.
   // No fallback default — absent means "use pinentry".
+  // TODO: resolve ~/.gpg-passphrase via the same fallback chain as agentConfigPath():
+  //   GNUPGHOME → HOME → USERPROFILE → /tmp. Currently uses raw ${process.env.HOME},
+  //   which is "" on Windows-style shells without HOME set (the IIFE swallows the
+  //   ENOENT, so it works accidentally), and which doesn't follow GNUPGHOME if the
+  //   user keeps their keyring in a non-default location. Reuse the helper.
   const passphrase = process.env.GIT_GPG_PASSPHRASE
     ?? (() => { try { return readFileSync(`${process.env.HOME}/.gpg-passphrase`, "utf8").trim(); } catch { return ""; } })();
 
@@ -211,7 +228,6 @@ async function warmCache(keyId) {
   ];
 
   const proc = Bun.spawnSync(args, { stdin: "pipe", stdout: "pipe", stderr: "pipe" });
-  proc.stdin?.write("\n");
   proc.stdin?.end();
 
   const statusOut = proc.stdout.toString("utf-8");
@@ -245,6 +261,12 @@ async function warmCache(keyId) {
 // ensureGpgWarm()) can drive the same prolong/warm flow without spawning
 // a fresh bun subprocess. The CLI entrypoint below still runs when this
 // file is invoked directly.
+//
+// TODO: add unit tests for the public contract surface (getKeygrip,
+// prolongCachedPassphrase, warmCache). The discriminated return values
+// ({ ok, reason }, { kind: "populated" | "failed" }) are now load-bearing
+// for check-parallel.mjs's gate — pin every branch. Mock gpg via
+// bun:test's spyOn or run against a temp GNUPGHOME for end-to-end.
 export { getKeygrip, prolongCachedPassphrase, warmCache, };
 
 // ── Main ─────────────────────────────────────────────────────────
