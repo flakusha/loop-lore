@@ -17,6 +17,7 @@ import { Value, } from "@sinclair/typebox/value";
 import {
   BatchIdsBody,
   ChatCreateBody,
+  ChatImpersonateBody,
   ChatMarkReadBody,
   ChatParticipantUpdateBody,
   ChatUpdateBody,
@@ -311,4 +312,31 @@ describe("ChatMarkReadBody / BatchIdsBody — required-field contracts", () => {
   test("BatchIdsBody accepts a single-item ids array", () => {
     expect(Value.Check(BatchIdsBody, body({ ids: ["one",], },),),).toBe(true,);
   });
+
+
+describe("ChatImpersonateBody", () => {
+  test("accepts a valid UUID impersonateActorId", () => {
+    expect(Value.Check(ChatImpersonateBody, body({ impersonateActorId: "550e8400-e29b-41d4-a716-446655440000" },),),).toBe(true,);
+  });
+
+  test("accepts null impersonateActorId (clear)", () => {
+    expect(Value.Check(ChatImpersonateBody, body({ impersonateActorId: null },),),).toBe(true,);
+  });
+
+  test("rejects missing impersonateActorId", () => {
+    expect(Value.Check(ChatImpersonateBody, body({},),),).toBe(false,);
+  });
+
+  test("rejects a number as impersonateActorId", () => {
+    expect(Value.Check(ChatImpersonateBody, body({ impersonateActorId: 42 },),),).toBe(false,);
+  });
+
+  test("rejects a non-UUID string", () => {
+    expect(Value.Check(ChatImpersonateBody, body({ impersonateActorId: "not-a-uuid" },),),).toBe(false,);
+  });
+
+  test("rejects an empty string impersonateActorId", () => {
+    expect(Value.Check(ChatImpersonateBody, body({ impersonateActorId: "" },),),).toBe(false,);
+  });
+});
 },);
