@@ -15061,6 +15061,12 @@
       "source": ".plan/tickets/BUG-generation-control-plane-routes-lack-authorization.md"
     }
   ],
+  "src/generation/hooks": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generalized-pre-post-generation-hook-registry.md"
+    }
+  ],
   "src/generation/hooks/_tokenize.ts": [
     {
       "kind": "ticket",
@@ -18249,6 +18255,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/testing.md"
+    }
+  ],
+  "src/prompt-improve/service.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-analyze-slash-command-over-prompt-analysis-service.md"
     }
   ],
   "src/prompts": [
@@ -26093,6 +26105,12 @@
       "source": ".plan/epics/epic-battle-action-systems.md"
     }
   ],
+  "src/transport": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-workflow-progress-events-over-transport.md"
+    }
+  ],
   "src/transport/compression-more.test.ts": [
     {
       "kind": "ticket",
@@ -27153,6 +27171,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-2025-002-reference-error-view-not-defined.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-user-prompt-gallery-frontend-page.md"
     }
   ],
   "src/views/item-generate.html": [
