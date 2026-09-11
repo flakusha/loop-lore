@@ -62,6 +62,15 @@
       </button>
       <button
         class="btn btn-sm"
+        :class="$store.ui.gmAssistantTab === 'entities' ? 'btn-primary' : 'btn-ghost'"
+        @click="$store.ui.gmAssistantTab = 'entities'; loadEntitySuggestions()"
+        x-show="isStoryMode"
+        data-testid="gm-tab-entities"
+      >
+        Entities
+      </button>
+      <button
+        class="btn btn-sm"
         :class="$store.ui.gmAssistantTab === 'assistant' ? 'btn-primary' : 'btn-ghost'"
         @click="$store.ui.gmAssistantTab = 'assistant'"
         data-testid="gm-tab-assistant"
@@ -177,6 +186,52 @@
     <!-- Assistant Tab -->
     <div x-show="$store.ui.gmAssistantTab === 'assistant'">
       {{> chat/assistant-panel.html }}
+    </div>
+
+    <!-- Entities Tab: in-place story-entity generation -->
+    <div x-show="$store.ui.gmAssistantTab === 'entities'">
+      <div class="gm-form-group">
+        <label class="form-label">Entity kind</label>
+        <select class="form-input" x-model="entityKind" data-testid="gm-entity-kind">
+          <option value="character">Character</option>
+          <option value="location">Location</option>
+          <option value="world">World</option>
+          <option value="item">Item</option>
+        </select>
+      </div>
+      <div class="gm-form-group">
+        <textarea
+          class="form-input"
+          x-model="entitySeed"
+          placeholder="Entity information gathered from the story..."
+          rows="4"
+          data-testid="gm-entity-seed"
+        ></textarea>
+      </div>
+      <button
+        class="btn btn-primary btn-sm gm-full-width"
+        @click="generateEntity()"
+        data-testid="gm-entity-generate"
+      >
+        Start Creation Chat
+      </button>
+      <p x-show="entityMessage" class="gm-note-content" x-text="entityMessage"></p>
+      <template x-if="entitySuggestions.length > 0">
+        <div class="gm-form-group">
+          <label class="form-label">Story suggestions</label>
+          <template x-for="s in entitySuggestions" :key="s.kind + ':' + s.name">
+            <div class="gm-note-card">
+              <div class="gm-note-header">
+                <span class="gm-note-type" x-text="s.kind"></span>
+                <span x-text="s.name"></span>
+              </div>
+              <div class="gm-note-actions">
+                <button class="btn btn-ghost btn-sm" @click="useSuggestion(s)">Start creation chat</button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
     </div>
   </div>
 </div>
