@@ -14,7 +14,6 @@
  */
 
 import { Elysia, t, } from "elysia";
-import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { getLogger, } from "../logger";
 import type { Logger, } from "../logger/types";
@@ -22,7 +21,6 @@ import { can, } from "../users/permissions";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, } from "../validation/schemas";
 import { HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, requireUserId, } from "./http-utils";
-import { switchSessionRoutes, } from "./sessions-switch";
 
 function log(): Logger {
   return getLogger().child({ module: "sessions", },);
@@ -30,7 +28,6 @@ function log(): Logger {
 
 interface HandleOpts {
   database: Db;
-  config: Config;
 }
 
 /**
@@ -70,7 +67,7 @@ function sanitizeSession(
 }
 
 export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
-  const { database, config, } = opts;
+  const { database, } = opts;
 
   return (
     new Elysia({ name: "sessions", },)
@@ -244,6 +241,5 @@ export function sessionsRoutes(opts: HandleOpts, prefix = "/api",): Elysia {
           },
         },
       )
-      .use(switchSessionRoutes({ database, config, }, prefix,),)
   );
 }
