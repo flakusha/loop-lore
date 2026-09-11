@@ -24,6 +24,7 @@ import { encryptBytes, } from "./actor-key-bytes";
 import { ensureActorKey, } from "./actor-keys";
 import { type ChatKey, deriveChatKeyForChat, } from "./chat-keys";
 import { reEncryptChatAssets, reEncryptWithKeys, } from "./key-rotation/re-encrypt";
+import { recordRotationAuditLeave, } from "./key-rotation/rotation-history";
 import { getSmk, } from "./smk";
 
 // Unified re-encrypt limit: re-encrypt ALL messages (no cap) to prevent
@@ -179,9 +180,14 @@ async function doRotate(
   // Wrap message re-encryption + key swap in a single transaction.
   // On any failure, the entire rotation is rolled back — no mixed key state.
   // Asset files are already written and are independent of the DB transaction.
+  // Declared `let` so the post-transaction audit block can read the count.
+  let reEncrypted = 0;
+
+  let failures: { id: string; reason: string }[] = [];
+
   await database.transaction().execute(async (trx,) => {
     // Re-encrypt all messages (visible + non-visible) OLD→NEW.
-    const { reEncrypted, failures, } = await reEncryptWithKeys(
+    const result = await reEncryptWithKeys(
       trx,
       chatId,
       oldChatKey,
@@ -189,6 +195,8 @@ async function doRotate(
       RE_ENCRYPT_LIMIT,
       { includeAll: true, },
     );
+    reEncrypted = result.reEncrypted;
+    failures = result.failures;
 
     if (failures.length > 0) {
       throw new Error(`rotateKeyOnLeave: ${failures.length} message(s) failed to re-encrypt: ${failures[0]!.reason}`,);
@@ -209,22 +217,14 @@ async function doRotate(
       messagesReEncrypted: reEncrypted,
       assetsReEncrypted: assetResult.reEncrypted,
     },);
+  },);
 
-    // Append-only audit row in `rotation_history`. Written INSIDE the
-    // transaction so the audit atomically tracks the rotation; a failed
-    // audit insert rolls back the entire key rotation.
-    await trx
-      .insertInto("rotation_history",)
-      .values({
-        id: crypto.randomUUID(),
-        chat_id: chatId,
-        actor_id: departedParticipantId,
-        reason: "leave",
-        old_key_id: oldChatKey.keyId,
-        new_key_id: newId,
-        messages_re_encrypted: reEncrypted + assetResult.reEncrypted,
-      },)
-      .execute();
+  await recordRotationAuditLeave(database, {
+    chatId,
+    actorId: departedParticipantId,
+    oldKeyId: oldChatKey.keyId,
+    newKeyId: newId,
+    messagesReEncrypted: reEncrypted + assetResult.reEncrypted,
   },);
 
   return newChatKey;
