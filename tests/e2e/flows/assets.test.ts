@@ -139,4 +139,37 @@ describeReal("Assets E2E", () => {
     expect(getRes.status,).toBe(404,);
     expect(getRes.code,).toBeTruthy(); // TEST.2 error envelope
   });
+
+  test("signed URL roundtrip: mint with session, serve session-less", async () => {
+    const file = new File(["signed bytes",], "signed.png", { type: "image/png", },);
+    const formData = new FormData();
+    formData.append("file", file,);
+    const uploadRes = await api.upload<{ id: string }>("/api/assets", formData,);
+    const assetId = uploadRes.data!.id;
+
+    // Mint (authenticated POST) — URL carries expires + sig params.
+    const mintRes = await api.post<{ url: string; token: string; expiresAt: number }>(
+      `/api/assets/${assetId}/signed-url/raw`,
+    );
+    expect(mintRes.ok,).toBe(true,);
+    expect(mintRes.data!.url,).toContain(`?expires=`);
+    expect(mintRes.data!.url,).toContain(`&sig=`);
+    expect(mintRes.data!.expiresAt,).toBeGreaterThan(Date.now(),);
+
+    // Session-less GET with the signed URL serves the file (no cookies).
+    const serveRes = await fetch(`${server.url}${mintRes.data!.url}`,);
+    expect(serveRes.status,).toBe(200,);
+    expect(await serveRes.text(),).toBe("signed bytes",);
+
+    // Tampered token is rejected fail-closed.
+    const tampered = mintRes.data!.url.replace(/sig=./, "sig=X",);
+    const badRes = await fetch(`${server.url}${tampered}`,);
+    expect(badRes.status,).toBe(403,);
+
+    // Minting requires an authenticated actor.
+    const anonMint = await fetch(`${server.url}/api/assets/${assetId}/signed-url/raw`, {
+      method: "POST",
+    },);
+    expect(anonMint.ok,).toBe(false,);
+  });
 },);
