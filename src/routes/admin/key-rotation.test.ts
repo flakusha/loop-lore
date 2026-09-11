@@ -81,4 +81,4 @@ describe("admin key-rotation route", () => {
     );
     expect(res.status,).toBe(200,);
   });
-},);
+});
