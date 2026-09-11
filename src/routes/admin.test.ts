@@ -32,7 +32,7 @@ const testConfig = {
  */
 function createAdminApp(db: Kysely<DB>, userRole: string, config: unknown = mockConfig,): Elysia {
   return new Elysia({ name: "test-admin", },)
-    .derive(() => ({ userRole, }))
+    .derive(() => ({ userId: `test-user-${userRole}`, userRole, }))
     .use(adminRoutes({ database: db, config: config as any, },),) as unknown as Elysia;
 }
 
