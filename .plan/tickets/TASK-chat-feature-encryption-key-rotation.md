@@ -17,7 +17,7 @@ Make encryption **and compression** effective and reliable across the chat pipel
 - [ ] Every outbound message is encrypted with the current active chat key (no plaintext leak path)
 - [ ] Compression is applied (when enabled per chat policy) **before** encryption; the compressed payload is then envelope-encrypted — no plaintext leak in transit or at rest
 - [ ] Compression round-trips losslessly for every recipient — decryption + decompression yields the original message bytes for all current members
-- [ ] Member join or leave schedules a rotation that completes before the next send from any member
+- [ ] On user join: if previous history is shared with the joiner, the joiner receives the existing keys (so shared history stays decryptable); new messages from this point forward are encrypted under a fresh key. On user leave: from the moment of leaving, all subsequent messages are encrypted under a freshly issued key — the leaver cannot decrypt new messages. Bulk re-encrypt of past messages on user actions is forbidden (only **prospective** key issuance). LLM participants always have access to current keys; chat-access ACL enforces which chats each actor (LLM or human) may read.
 - [ ] Rotation is idempotent: overlapping join/leave events collapse to a single re-encrypt
 - [ ] In-flight sends observe the post-rotation key — no message is sealed with a stale key after a membership change
 - [ ] Rotation history is auditable via `src/crypto/key-rotation/log.ts` and survives restart
@@ -48,6 +48,5 @@ Make encryption **and compression** effective and reliable across the chat pipel
 
 ## Open Questions
 
-- Should rotation block the next send (synchronous) or queue sends and retry once the new key is live (async)?
-- What is the SLO for "next send after join/leave" — same request, or next user action?
+- Resolved. The join/leave model is **prospective** key issuance, not full re-encrypt. LLM ACL is enforced by the chat-access layer (already in place: actor/participant-based ACL via `chat.allowed_actors`).
 
