@@ -21,8 +21,8 @@
  */
 
 import { getLogger, } from "../../logger/index";
-import { fromBase64, toBase64, } from "../../utils/base64";
 import { DOMAIN_INFO, domainKey, } from "../../utils/hkdf";
+import { base64urlDecode, base64urlEncode, } from "./signed-url-base64";
 
 const SIGNED_URL_ACTIONS = ["raw", "download", "thumb", "compressed",] as const;
 /** */
@@ -45,26 +45,6 @@ function getLog() {
   } catch {
     return null;
   }
-}
-
-// ── Base64url helpers (mirror src/auth/jwt.ts) ──────────────────
-
-/**
- * @param data
- * @returns void
- */
-function base64urlEncode(data: Uint8Array,): string {
-  return toBase64(data,).replaceAll("+", "-",).replaceAll("/", "_",).replace(/=+$/, "",);
-}
-
-/**
- * @param str
- * @returns void
- */
-function base64urlDecode(str: string,): Uint8Array {
-  const base64 = str.replaceAll("-", "+",).replaceAll("_", "/",);
-  const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
-  return fromBase64(padded,);
 }
 
 /**

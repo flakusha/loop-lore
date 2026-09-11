@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import type { OutputStylePreset, } from "../../chat/output-style";
-import { buildGmConfig, presentationGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
+import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
+import { presentationGmConfig, } from "./chat-settings/gm-config-presentation";
 import { personaActions, } from "./chat-settings/persona";
 import { syncVnRenderer, } from "./chat-settings/vn";
 import { apiFetch, } from "./htmx";

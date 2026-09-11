@@ -10,12 +10,12 @@ import { requireWorldOwner, } from "./access";
 import type { HandleOpts, } from "./types";
 import {
   handleCreateWorld,
-  handleDeleteWorld,
   handleGetWorld,
   handleInitializeStates,
   handleListWorlds,
   handleUpdateWorld,
 } from "./worlds";
+import { handleDeleteWorld, } from "./worlds-delete";
 
 /**
  * @param opts

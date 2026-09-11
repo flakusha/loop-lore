@@ -26,18 +26,7 @@ import { sql, } from "kysely";
 
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
-
-/** */
-export interface E2eSessionRow {
-  id: string;
-  senderActorId: string;
-  recipientActorId: string | null;
-  chatId: string | null;
-  kind: "pair" | "group";
-  createdAt: string;
-  lastMessageAt: string | null;
-  revokedAt: string | null;
-}
+import { type E2eSessionRow, type E2eSessionsDbRow, rowToSession, } from "./e2e-session-row";
 
 /** */
 export interface FindSessionOpts {
@@ -228,34 +217,4 @@ export async function revokeSession(opts: RevokeSessionOpts,): Promise<boolean> 
     .where("revoked_at", "is", null,)
     .executeTakeFirst();
   return (result?.numUpdatedRows ?? 0) > 0;
-}
-
-// ── Row mapping ─────────────────────────────────────────────
-
-interface E2eSessionsDbRow {
-  id: string;
-  sender_actor_id: string;
-  recipient_actor_id: string | null;
-  chat_id: string | null;
-  kind: "pair" | "group";
-  created_at: string;
-  last_message_at: string | null;
-  revoked_at: string | null;
-}
-
-/**
- * @param row - raw `e2e_sessions` row from SQLite
- * @returns the row mapped to the camelCase `E2eSessionRow` shape.
- */
-function rowToSession(row: E2eSessionsDbRow,): E2eSessionRow {
-  return {
-    id: row.id,
-    senderActorId: row.sender_actor_id,
-    recipientActorId: row.recipient_actor_id,
-    chatId: row.chat_id,
-    kind: row.kind,
-    createdAt: row.created_at,
-    lastMessageAt: row.last_message_at,
-    revokedAt: row.revoked_at,
-  };
 }

@@ -6,11 +6,11 @@ import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import { extractAuth, } from "../http-utils";
 import {
   handleCreateLocation,
-  handleDeleteLocation,
   handleGetLocation,
   handleListLocations,
   handleUpdateLocation,
 } from "./locations";
+import { handleDeleteLocation, } from "./locations-delete";
 import type { HandleOpts, } from "./types";
 
 /**
