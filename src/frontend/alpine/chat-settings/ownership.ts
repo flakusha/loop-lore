@@ -28,9 +28,6 @@ const log = rootLog.child({ module: "chat-settings-ownership", },);
  * each module) — actions are unreachable from UI until the settings-modal markup lands.
  */
 export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
-  // TODO(chat-ownership): declare open/close/submit/canTransferOwnership on ChatCoreState —
-  // the _ownership* state fields are declared but the methods are not, so this literal fails
-  // typecheck as excess properties (same reason loadPersonas et al. are declared in core.ts).
   // ── Local UI state ────────────────────────────────────────
   // `_ownershipModalOpen` controls visibility of the transfer-ownership
   // confirmation modal. `_ownershipNewOwnerId` is the selected target.
@@ -119,9 +116,9 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
     } catch (err) {
       log.warn("ownership transfer submit failed", {
         chatId: this.activeChat,
-        error: err instanceof Error ? err.message : String(err),
+        error: err instanceof Error ? err.message : String(err,),
       },);
-      this._ownershipError = err instanceof Error ? err.message : String(err);
+      this._ownershipError = err instanceof Error ? err.message : String(err,);
     } finally {
       this._ownershipSubmitting = false;
     }
