@@ -112,6 +112,12 @@ opt-in is required before these surface in the product).
 - [ ] TASK-chat-feature-scene-art-generation
 - [ ] TASK-chat-feature-chat-artifacts
 
+### Rendering & Format Contract (Medium)
+
+- [ ] TASK-chat-feature-message-formatting-modes
+- [ ] TASK-chat-feature-system-format-contract
+- [ ] TASK-chat-feature-carriage-visibility-tiers
+
 ## Files (Anchor References)
 
 ### Component Buttons & Asset Attach
@@ -244,3 +250,6 @@ opt-in is required before these surface in the product).
 - TASK-chat-feature-topics-side-threads.md
 - TASK-chat-feature-scene-art-generation.md
 - TASK-chat-feature-chat-artifacts.md
+- TASK-chat-feature-message-formatting-modes.md
+- TASK-chat-feature-system-format-contract.md
+- TASK-chat-feature-carriage-visibility-tiers.md
