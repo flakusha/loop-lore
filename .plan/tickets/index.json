@@ -12157,6 +12157,18 @@
     "source": ".plan/tickets/TASK-chat-feature-auto-continue-continuation.md",
     "status": "open"
   },
+  "TASK-CHAT-FEATURE-CHAT-ARTIFACTS": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-FEATURE-CHAT-ARTIFACTS",
+    "type": "TASK",
+    "title": "Chat Artifacts — Rich Generated Content Rendered In-Chat",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-feature-chat-artifacts.md",
+    "status": "open"
+  },
   "TASK-CHAT-FEATURE-CHAT-ORGANIZATION-FOLDERS-TAGS": {
     "hash": "pending",
     "extid": "TASK-CHAT-FEATURE-CHAT-ORGANIZATION-FOLDERS-TAGS",
@@ -12323,6 +12335,18 @@
     "epic": "epic-chat-product-features",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-feature-rpg-rule-system.md",
+    "status": "open"
+  },
+  "TASK-CHAT-FEATURE-SCENE-ART-GENERATION": {
+    "hash": "pending",
+    "extid": "TASK-CHAT-FEATURE-SCENE-ART-GENERATION",
+    "type": "TASK",
+    "title": "Scene Art — Background Catalog & State-Driven Dynamic Generation",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-feature-scene-art-generation.md",
     "status": "open"
   },
   "TASK-CHAT-FEATURE-SETTINGS-TEMPLATES-COMPAT-MATRIX": {
