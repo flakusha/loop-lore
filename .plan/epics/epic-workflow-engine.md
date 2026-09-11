@@ -54,13 +54,17 @@ User message
   → else: fall through to chat / standard command path
 ```
 
+### Workflow Action buttons (OWUI Action pattern)
+
+Each workflow step may expose message-toolbar buttons: single action vs multi-action via `actions[]` (`id`, `name`, `icon_url`), `__id__` dispatch, `priority` valve (ascending = leftmost). An action returns `{messages:[{id, content}]}` rewrite or is side-effect-only; file attachments are reached via chat/file APIs, not the message payload. New task: 'Workflow Action buttons (single/multi + priority)' in `src/assistant/workflow-runner.ts` (Med).
+
 ### Sourceable / Configurable (§7.3)
 
 - **Default workflows** ship in-source as YAML (bundled at build time).
 - **User override** via `configs/templates/workflows/*.yaml` using the same merge
   strategies (`replace` | `extend` | `override`) from `epic-config-templates.md`.
 - **Plugin extensibility:** the workflow registry is a
-  `PluginExtensionPoint<"assistant-workflows">` (see `epic-plugin-system.md`).
+  `PluginExtensionPoint<"assistant-workflows">` (see `epic-plugin-system.md`). Manifold pattern (OWUI Pipe): one workflow plugin may expose `pipes()->[{id,name}]` so a single pack registers multiple models for the selector, with per-model dispatch in `pipe(body)` — instead of one-template-one-model (Med, reuses existing loader + registry).
 
 ### Intent Detection Integration (§7.4)
 
@@ -75,12 +79,20 @@ The existing `AssistantIntent` taxonomy (`src/regex/intent.ts`) defines
 - Intent-to-workflow routing is config-driven only — no standalone regex classifier
   module (the dead `detectIntent()` / `APPROVED_TOOLS` code stays removed).
 
+### STscript step composition (§7.5)
+
+Workflow steps may be slash-command batches piped with `|` and `{{pipe}}`: `/input|/popup|/buttons` -> `/setvar|/getvar` (local per-chat vs global settings) -> `/if left/right/rule` + `{: closures :}` + `/abort`. Variables persist across runs, so `/flushvar` discipline is required. Keeps the YAML engine; adds Quick-Replies-like power without a new abstraction (L).
+
 ### Approval / Quality Gates
 
 Workflow `approval` blocks (`type: confirm`, `preview`, `quality_gates[]`) reuse the
 quality-gating pattern from `epic-assistant-gm-flows.md`: gate types (`schema`,
 `consistency`, `duplicate`) run before dispatch; user confirmation gates dispatch
 itself. Sibling sub-epics add gate types but do not change the plumbing.
+
+### Realtime event protocol (OWUI event-emitter pattern)
+
+Steps report via `__event_emitter__`/`__event_call__`: `status` (`description`, `done`, `hidden`) with a mandatory final `done:true` (else the progress shimmer never stops), `notification` toasts, and `confirmation`/`input`/`execute` dialogs. `__event_call__` returns `{error}` on disconnect/timeout — check the error key, it never throws. Wire into runner preview/dispatch status and the confirmation gate (Med).
 
 ### NSFW Policy at Dispatch
 
