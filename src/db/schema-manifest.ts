@@ -424,6 +424,19 @@ export const SCHEMA = new SchemaManifest()
     delivery_confirmed_at: col("text",),
     side_effect_jobs_cancelled: col("integer", { hasDefault: true, },),
   },)
+  .table("generation_jobs", {
+    id: col("text", { primaryKey: true, },),
+    kind: col("text", { notNull: true, },),
+    actor_id: col("text",),
+    status: col("text", { notNull: true, hasDefault: true, },),
+    payload: col("text", { notNull: true, hasDefault: true, },),
+    results: col("text", { notNull: true, hasDefault: true, },),
+    error_message: col("text",),
+    started_at: col("text",),
+    completed_at: col("text",),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("group_initiatives", {
     chat_id: col("text", { notNull: true, },),
     scene_id: col("text", { notNull: true, },),
