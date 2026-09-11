@@ -19512,7 +19512,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-plan-phantom-src-citation-guard.md"
+    "source": ".plan/tickets/TASK-plan-phantom-src-citation-guard.md",
+    "status": "open"
   },
   "TASK-PLAN-PROMPT-REGISTRY": {
     "hash": "9bf0039",
@@ -19575,7 +19576,8 @@
     "priority": "Low",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-plan-test-ownerless-policy.md"
+    "source": ".plan/tickets/TASK-plan-test-ownerless-policy.md",
+    "status": "open"
   },
   "TASK-PLAN-TICKET-STATUS-BACKFILL": {
     "hash": "pending",
@@ -19586,7 +19588,8 @@
     "priority": "Medium",
     "epic": "",
     "tags": [],
-    "source": ".plan/tickets/TASK-plan-ticket-status-backfill.md"
+    "source": ".plan/tickets/TASK-plan-ticket-status-backfill.md",
+    "status": "open"
   },
   "TASK-PLAN-UNWIRED-CODEOUT": {
     "hash": "fea7fe2",
@@ -22335,7 +22338,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-sessions-api-routes.md",
     "git_issue": "cd27cec",
-    "status": "open"
+    "status": "done"
   },
   "TASK-SETTINGS-PATCH-USES-T-ANY-BODY-ALLOWING-MASS-ASSIGNMENT": {
     "hash": "ef55dc7",

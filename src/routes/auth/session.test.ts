@@ -20,10 +20,12 @@
 import { beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
+import { verifyJwt, } from "../../auth/jwt";
+import type { Config, } from "../../config/schema";
 import type { DB, } from "../../db/schema";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
-import { handleLogout, handleMe, } from "./session";
+import { handleListSessions, handleLogout, handleMe, handleRevokeSession, handleSwitchSession, } from "./session";
 import { TOKEN_COOKIE, } from "./shared";
 
 let db: Kysely<DB>;
@@ -191,5 +193,236 @@ describe("handleLogout — forged-cookie session deletion (regression)", () => {
 
     const row = await db.selectFrom("sessions",).selectAll().where("id", "=", sessionId,).executeTakeFirst();
     expect(row,).toBeUndefined();
+  });
+});
+
+// ── TASK-sessions-api-routes ────────────────────────────────────
+
+const JWT_SECRET = "test-jwt-secret";
+
+/** */
+function makeConfig(): Config {
+  return {
+    auth: {
+      required: true,
+      registrationOpen: true,
+      sessionTimeoutHours: 24,
+      maxSessionsPerUser: 10,
+      demoUsername: "demo",
+      demoAutoSetup: false,
+      jwtSecret: JWT_SECRET,
+      jwtExpiresIn: 86_400,
+    },
+    encryption: { enabled: false, },
+  } as unknown as Config;
+}
+
+/** */
+interface SessionSeed {
+  id: string;
+  userId: string;
+  lastActivityOffsetMs: number;
+  expired?: boolean;
+}
+
+/**
+ * @param seeds
+ */
+async function seedSessions(seeds: SessionSeed[],): Promise<void> {
+  const now = Date.now();
+  await db.insertInto("sessions",)
+    .values(seeds.map((s,) => ({
+      id: s.id,
+      user_id: s.userId,
+      token_hash: `jwt:${s.id}`,
+      ip: "127.0.0.1",
+      user_agent: `ua-${s.id}`,
+      created_at: new Date(now - 60_000,).toISOString(),
+      last_activity: new Date(now + s.lastActivityOffsetMs,).toISOString(),
+      expires_at: new Date(now + (s.expired ? -60_000 : 3_600_000),).toISOString(),
+    })),)
+    .execute();
+}
+
+/**
+ * @param res
+ */
+function getCookieToken(res: Response,): string | null {
+  const header = res.headers.get("Set-Cookie",);
+  const pair = header?.split(";",)?.at(0,);
+  if (!pair?.startsWith(`${TOKEN_COOKIE}=`,)) { return null; }
+  return pair.slice(TOKEN_COOKIE.length + 1,);
+}
+
+describe("handleListSessions", () => {
+  test("returns own sessions ordered by last_activity desc, metadata only, current flagged", async () => {
+    await seedSessions([
+      { id: "sess-old", userId: "user-alice", lastActivityOffsetMs: -30_000, },
+      { id: "sess-new", userId: "user-alice", lastActivityOffsetMs: -10_000, },
+      { id: "sess-current", userId: "user-alice", lastActivityOffsetMs: 0, },
+      { id: "sess-mallory", userId: "user-mallory", lastActivityOffsetMs: 0, },
+    ],);
+    const res = await handleListSessions(
+      new Request("http://localhost/api/sessions",),
+      db,
+      "user-alice",
+      "sess-current",
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { sessions: Record<string, unknown>[] };
+    expect(body.sessions.map((s,) => s["id"]),).toEqual(["sess-current", "sess-new", "sess-old",],);
+    for (const s of body.sessions) {
+      expect(Object.keys(s,).sort(),).toEqual(
+        ["created_at", "current", "expires_at", "id", "ip", "last_activity", "user_agent",],
+      );
+      expect(s,).not.toHaveProperty("token_hash",);
+    }
+    expect(body.sessions.map((s,) => s["current"]),).toEqual([true, false, false,],);
+  });
+
+  test("returns 401 without derivedUserId", async () => {
+    const res = await handleListSessions(new Request("http://localhost/api/sessions",), db, null, null,);
+    expect(res.status,).toBe(401,);
+  });
+});
+
+describe("handleRevokeSession", () => {
+  test("deletes the caller's own session", async () => {
+    await seedSessions([
+      { id: "sess-current", userId: "user-alice", lastActivityOffsetMs: 0, },
+      { id: "sess-spare", userId: "user-alice", lastActivityOffsetMs: -10_000, },
+    ],);
+    const res = await handleRevokeSession(
+      new Request("http://localhost/api/sessions/sess-spare", { method: "DELETE", },),
+      db,
+      "user-alice",
+      "sess-current",
+      "sess-spare",
+    );
+    expect(res.status,).toBe(200,);
+    const gone = await db.selectFrom("sessions",).selectAll().where("id", "=", "sess-spare",).executeTakeFirst();
+    expect(gone,).toBeUndefined();
+    const current = await db.selectFrom("sessions",).selectAll().where("id", "=", "sess-current",).executeTakeFirst();
+    expect(current,).toBeDefined();
+  });
+
+  test("returns 404 for another user's session and leaves it intact", async () => {
+    await seedSessions([
+      { id: "sess-current", userId: "user-alice", lastActivityOffsetMs: 0, },
+      { id: "sess-mallory", userId: "user-mallory", lastActivityOffsetMs: 0, },
+    ],);
+    const res = await handleRevokeSession(
+      new Request("http://localhost/api/sessions/sess-mallory", { method: "DELETE", },),
+      db,
+      "user-alice",
+      "sess-current",
+      "sess-mallory",
+    );
+    expect(res.status,).toBe(404,);
+    const row = await db.selectFrom("sessions",).selectAll().where("id", "=", "sess-mallory",).executeTakeFirst();
+    expect(row,).toBeDefined();
+  });
+
+  test("returns 400 when revoking the current session", async () => {
+    await seedSessions([{ id: "sess-current", userId: "user-alice", lastActivityOffsetMs: 0, },],);
+    const res = await handleRevokeSession(
+      new Request("http://localhost/api/sessions/sess-current", { method: "DELETE", },),
+      db,
+      "user-alice",
+      "sess-current",
+      "sess-current",
+    );
+    expect(res.status,).toBe(400,);
+    const row = await db.selectFrom("sessions",).selectAll().where("id", "=", "sess-current",).executeTakeFirst();
+    expect(row,).toBeDefined();
+  });
+
+  test("returns 401 without derivedUserId", async () => {
+    const res = await handleRevokeSession(
+      new Request("http://localhost/api/sessions/x", { method: "DELETE", },),
+      db,
+      null,
+      null,
+      "x",
+    );
+    expect(res.status,).toBe(401,);
+  });
+});
+
+describe("handleSwitchSession", () => {
+  test("rotates the cookie to the target session and touches last_activity", async () => {
+    await seedSessions([
+      { id: "sess-current", userId: "user-alice", lastActivityOffsetMs: 0, },
+      { id: "sess-target", userId: "user-alice", lastActivityOffsetMs: -60_000, },
+    ],);
+    const before = await db.selectFrom("sessions",).selectAll().where("id", "=", "sess-target",)
+      .executeTakeFirstOrThrow();
+    const res = await handleSwitchSession(
+      new Request("http://localhost/api/sessions/sess-target/switch", { method: "POST", },),
+      db,
+      makeConfig(),
+      "user-alice",
+      "sess-current",
+      "sess-target",
+    );
+    expect(res.status,).toBe(200,);
+    const token = getCookieToken(res,);
+    expect(token,).not.toBeNull();
+    const verified = await verifyJwt({ secret: JWT_SECRET, token: token!, },);
+    expect(verified.valid,).toBe(true,);
+    if (verified.valid) {
+      expect(verified.payload.sub,).toBe("user-alice",);
+      expect(verified.payload.sid,).toBe("sess-target",);
+    }
+    const after = await db.selectFrom("sessions",).selectAll().where("id", "=", "sess-target",)
+      .executeTakeFirstOrThrow();
+    expect(Date.parse(after.last_activity as string,),).toBeGreaterThan(Date.parse(before.last_activity as string,),);
+  });
+
+  test("returns 404 for another user's session", async () => {
+    await seedSessions([
+      { id: "sess-current", userId: "user-alice", lastActivityOffsetMs: 0, },
+      { id: "sess-mallory", userId: "user-mallory", lastActivityOffsetMs: 0, },
+    ],);
+    const res = await handleSwitchSession(
+      new Request("http://localhost/api/sessions/sess-mallory/switch", { method: "POST", },),
+      db,
+      makeConfig(),
+      "user-alice",
+      "sess-current",
+      "sess-mallory",
+    );
+    expect(res.status,).toBe(404,);
+    expect(getCookieToken(res,),).toBeNull();
+  });
+
+  test("returns 410 for an expired session and deletes the row", async () => {
+    await seedSessions([
+      { id: "sess-current", userId: "user-alice", lastActivityOffsetMs: 0, },
+      { id: "sess-stale", userId: "user-alice", lastActivityOffsetMs: -60_000, expired: true, },
+    ],);
+    const res = await handleSwitchSession(
+      new Request("http://localhost/api/sessions/sess-stale/switch", { method: "POST", },),
+      db,
+      makeConfig(),
+      "user-alice",
+      "sess-current",
+      "sess-stale",
+    );
+    expect(res.status,).toBe(410,);
+    const row = await db.selectFrom("sessions",).selectAll().where("id", "=", "sess-stale",).executeTakeFirst();
+    expect(row,).toBeUndefined();
+  });
+
+  test("returns 401 without derivedUserId", async () => {
+    const res = await handleSwitchSession(
+      new Request("http://localhost/api/sessions/x/switch", { method: "POST", },),
+      db,
+      makeConfig(),
+      null,
+      null,
+      "x",
+    );
+    expect(res.status,).toBe(401,);
   });
 });

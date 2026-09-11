@@ -29,8 +29,15 @@ import { applyRpgUpdates, rpgCreateFlags, } from "./world-rpg-flags";
  * @param page
  * @param pageSize
  * @param userId
+ * @param q
  */
-export async function handleListWorlds(database: Kysely<DB>, page: number, pageSize: number, userId: string | null,) {
+export async function handleListWorlds(
+  database: Kysely<DB>,
+  page: number,
+  pageSize: number,
+  userId: string | null,
+  q?: string,
+) {
   const offset = (page - 1) * pageSize;
 
   // Worlds visible to the user: owned, public, or joined (world member).
@@ -61,6 +68,13 @@ export async function handleListWorlds(database: Kysely<DB>, page: number, pageS
   } else {
     countQuery = countQuery.where("visibility", "=", WorldVisibility.Public,);
     listQuery = listQuery.where("visibility", "=", WorldVisibility.Public,);
+  }
+
+  const trimmedQ = q?.trim() ?? "";
+  if (trimmedQ) {
+    const like = `%${trimmedQ}%`;
+    countQuery = countQuery.where("name", "like", like,);
+    listQuery = listQuery.where("name", "like", like,);
   }
 
   const countResult = await countQuery.executeTakeFirst();

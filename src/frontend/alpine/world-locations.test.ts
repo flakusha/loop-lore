@@ -199,3 +199,103 @@ describe("worldLocations.deleteLocation", () => {
     expect(fetchCalls,).toHaveLength(0,);
   });
 });
+
+describe("worldLocations.filterLocations", () => {
+  const shimDocument = globalThis.document;
+
+  /**
+   * @param searchValue
+   * @param cards
+   */
+  function stubDom(searchValue: string | null, cards: { name: string; desc: string }[],) {
+    const elements = cards.map((c,) => ({
+      style: {} as Record<string, string>,
+      querySelector: (sel: string,) => {
+        if (sel === ".location-name") { return { textContent: c.name, }; }
+        if (sel === ".location-desc") { return { textContent: c.desc, }; }
+        return null;
+      },
+    }));
+    (globalThis as any).document = {
+      querySelector: (sel: string,) => {
+        if (sel === "#location-search") { return searchValue === null ? null : { value: searchValue, }; }
+        if (sel === "#location-list") { return { querySelector: () => null, append: () => {}, }; }
+        return null;
+      },
+      querySelectorAll: () => elements,
+      createElement: (tag: string,) => ({
+        style: {},
+        value: "",
+        tagName: tag.toUpperCase(),
+        className: "",
+        innerHTML: "",
+        textContent: "",
+        getHTML: () => "",
+      }),
+    };
+    return elements;
+  }
+
+  afterEach(() => {
+    (globalThis as any).document = shimDocument;
+  },);
+
+  test("hides cards whose name and description miss the query", () => {
+    const elements = stubDom("tav", [
+      { name: "Tavern", desc: "cozy hall", },
+      { name: "Forest", desc: "dark woods", },
+    ],);
+    ctx().filterLocations();
+    expect(elements[0]!.style.display,).toBe("",);
+    expect(elements[1]!.style.display,).toBe("none",);
+  });
+
+  test("matches case-insensitively and falls back to locationSearch", () => {
+    const elements = stubDom(null, [
+      { name: "Tavern", desc: "cozy hall", },
+      { name: "Forest", desc: "dark woods", },
+    ],);
+    ctx({ locationSearch: "TAVERN", },).filterLocations();
+    expect(elements[0]!.style.display,).toBe("",);
+    expect(elements[1]!.style.display,).toBe("none",);
+  });
+
+  test("matches descriptions and shows all on empty query", () => {
+    const descMatch = stubDom("cozy", [
+      { name: "Tavern", desc: "cozy hall", },
+      { name: "Forest", desc: "dark woods", },
+    ],);
+    ctx().filterLocations();
+    expect(descMatch[0]!.style.display,).toBe("",);
+    expect(descMatch[1]!.style.display,).toBe("none",);
+
+    const empty = stubDom("", [
+      { name: "Tavern", desc: "cozy hall", },
+      { name: "Forest", desc: "dark woods", },
+    ],);
+    ctx().filterLocations();
+    expect(empty[0]!.style.display,).toBe("",);
+    expect(empty[1]!.style.display,).toBe("",);
+  });
+
+  test("hides everything without crashing when nothing matches", () => {
+    const elements = stubDom("zzz", [{ name: "Tavern", desc: "cozy hall", },],);
+    ctx().filterLocations();
+    expect(elements[0]!.style.display,).toBe("none",);
+  });
+
+  test("re-applies the filter on the next tick after loading", async () => {
+    mockFetch(200, { data: [], },);
+    stubDom("", [],);
+    let ticked = false;
+    const c = ctx({
+      $nextTick: (fn: () => void,) => {
+        ticked = true;
+        fn();
+      },
+    } as Partial<WorldEditState>,);
+    await c.loadLocations();
+    expect(ticked,).toBe(true,);
+    expect(c.locationsLoaded,).toBe(true,);
+  });
+});

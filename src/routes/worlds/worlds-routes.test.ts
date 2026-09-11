@@ -330,3 +330,86 @@ describe("worldRoutes — list visibility + delete", () => {
     expect(ids,).not.toContain(id,);
   });
 });
+
+describe("worldRoutes — list q filter", () => {
+  let db: Kysely<DB>;
+  let sqlite: TestDb["sqlite"];
+  let ownerId: string;
+
+  beforeAll(async () => {
+    ({ db, sqlite, } = await createTestDb());
+    ownerId = uid();
+    await insertUsers(db, "search-owner", "Search Owner", { id: ownerId, } as never,);
+    await insertActors(db, ownerId, {
+      id: ownerId,
+      actor_type: "user",
+      user_id: ownerId,
+      owner_id: ownerId,
+      agent_type: "none",
+      settings: "{}",
+      format_version: 0,
+    } as never,);
+
+    const app = appWithAuth(db, ownerId, "user",);
+    for (const name of ["Blue Tavern", "Red Tavern", "Green Keep",]) {
+      const res = await app.handle(
+        new Request(`${BASE}/api/worlds`, {
+          method: "POST",
+          headers: { "content-type": "application/json", },
+          body: JSON.stringify({ name, },),
+        },),
+      );
+      expect(res.status,).toBe(201,);
+    }
+  },);
+
+  afterAll(async () => {
+    await sqlite.close();
+  },);
+
+  /**
+   * @param query
+   */
+  async function listNames(query: string,): Promise<{ names: string[]; total: number }> {
+    const app = appWithAuth(db, ownerId, "user",);
+    const res = await app.handle(new Request(`${BASE}/api/worlds${query}`,),);
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { data: { name: string }[]; pagination: { total: number } };
+    return { names: body.data.map((w,) => w.name), total: body.pagination.total, };
+  }
+
+  test("q filters by name substring", async () => {
+    const { names, total, } = await listNames("?q=tavern",);
+    expect(names,).toEqual(["Blue Tavern", "Red Tavern",],);
+    expect(total,).toBe(2,);
+  });
+
+  test("q is case-insensitive", async () => {
+    const { names, total, } = await listNames("?q=TAVERN",);
+    expect(names,).toEqual(["Blue Tavern", "Red Tavern",],);
+    expect(total,).toBe(2,);
+  });
+
+  test("empty q returns everything", async () => {
+    for (const query of ["", "?q=", "?q=%20%20",]) {
+      const { names, total, } = await listNames(query,);
+      expect(names,).toEqual(["Blue Tavern", "Green Keep", "Red Tavern",],);
+      expect(total,).toBe(3,);
+    }
+  });
+
+  test("q combines with pagination", async () => {
+    const first = await listNames("?q=tavern&pageSize=1&page=1",);
+    expect(first.names,).toEqual(["Blue Tavern",],);
+    expect(first.total,).toBe(2,);
+    const second = await listNames("?q=tavern&pageSize=1&page=2",);
+    expect(second.names,).toEqual(["Red Tavern",],);
+    expect(second.total,).toBe(2,);
+  });
+
+  test("q with no match returns an empty list", async () => {
+    const { names, total, } = await listNames("?q=zzz-no-such-world",);
+    expect(names,).toEqual([],);
+    expect(total,).toBe(0,);
+  });
+});

@@ -95,6 +95,8 @@ export interface ChatCoreState
   _gmProvider: string;
   _gmTemperature: number;
   _gmMaxTokens: number;
+  _assistantTemperature: number | null;
+  _assistantMaxTokens: number | null;
   _actorModels: Record<string, { model: string; provider: string }>;
   // VN (visual novel) mode settings — persisted to gm_config.
   _vnEnabled: boolean;
