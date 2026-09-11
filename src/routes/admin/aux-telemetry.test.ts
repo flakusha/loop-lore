@@ -24,7 +24,7 @@ beforeAll(async () => {
   db = await createTestDb();
   const opts: AdminRouteOpts = { database: db.db, config: {} as never, };
   app = new Elysia()
-    .derive(() => ({ userRole: "admin", }))
+    .derive(() => ({ userId: "test-user-admin", userRole: "admin", }))
     .use(auxTelemetryRoutes(opts, "",),);
 },);
 

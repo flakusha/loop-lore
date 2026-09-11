@@ -22,7 +22,10 @@ import { dangerZoneRoutes, } from "./danger-zone";
 
 function makeApp(db: Kysely<DB>, userRole: string,): Elysia {
   const app = new Elysia({ name: "test-danger-zone", },);
-  app.derive((): { userRole: string } => ({ userRole, }));
+  app.derive((): { userId: string; userRole: string } => ({
+    userId: `test-user-${userRole}`,
+    userRole,
+  }));
   return app.use(dangerZoneRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 

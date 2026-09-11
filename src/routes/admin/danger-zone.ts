@@ -7,7 +7,7 @@ import { seedDefaultActors, } from "../../db/seed";
 import { getLogger, } from "../../logger";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 const log = (): ReturnType<ReturnType<typeof getLogger>["child"]> =>
@@ -92,7 +92,9 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .post(
         `${prefix}/admin/audit/purge`,
         async (ctx: any,) => {
-          const { userRole, body, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -100,7 +102,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          if (body.confirmation !== "PURGE") {
+          if (ctx.body.confirmation !== "PURGE") {
             return jsonError({
               message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
               status: HttpStatus.BadRequest,
@@ -124,7 +126,9 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .post(
         `${prefix}/admin/settings/reset`,
         async (ctx: any,) => {
-          const { userRole, body, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -132,7 +136,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          if (body.confirmation !== "RESET") {
+          if (ctx.body.confirmation !== "RESET") {
             return jsonError({
               message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
               status: HttpStatus.BadRequest,
@@ -158,7 +162,9 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .post(
         `${prefix}/admin/factory-reset`,
         async (ctx: any,) => {
-          const { userRole, body, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -166,7 +172,7 @@ export function dangerZoneRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          if (body.confirmation !== "DELETE ALL") {
+          if (ctx.body.confirmation !== "DELETE ALL") {
             return jsonError({
               message: ctx.t?.("admin.invalidConfirmation",) ?? "Confirmation string mismatch",
               status: HttpStatus.BadRequest,
