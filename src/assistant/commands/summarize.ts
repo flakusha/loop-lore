@@ -15,14 +15,14 @@ import { type CommandContext, type CommandResult, registerCommand, } from "./reg
  * @param args
  * @param ctx
  * @param ctx.messages
- * @returns string
+ * @returns extractive summary result
  */
 function buildSummary(args: string[], ctx: { messages?: { role: string; content: string }[] },): CommandResult {
   if (!ctx.messages || ctx.messages.length === 0) {
     return { systemMessage: "No messages to summarize.", handled: true, };
   }
 
-  const count = Math.min(parseIntOr(args[0] ?? "10", 10,), ctx.messages.length,);
+  const count = Math.max(1, Math.min(parseIntOr(args[0] ?? "10", 10,), ctx.messages.length,),);
   const recent = ctx.messages.slice(-count,);
   const userMsgs: typeof recent = [];
   const aiMsgs: typeof recent = [];
@@ -66,11 +66,11 @@ export async function runSummarize(
   if (!ctx.messages || ctx.messages.length === 0) {
     return { systemMessage: "No messages to summarize.", handled: true, };
   }
-  const count = Math.min(parseIntOr(args[0] ?? "10", 10,), ctx.messages.length,);
+  const count = Math.max(1, Math.min(parseIntOr(args[0] ?? "10", 10,), ctx.messages.length,),);
   const recent = ctx.messages.slice(-count,);
   if (deps.complete) {
     const transcript = recent
-      .map((m,) => `${m.role}: ${m.content}`)
+      .map((m,) => `${m.role}: ${m.content.slice(0, 500,)}`)
       .join("\n",);
     try {
       const result = await deps.complete({
