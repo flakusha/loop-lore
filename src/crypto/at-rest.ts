@@ -87,6 +87,11 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
       if (!isEncryptionEnabled()) { return { storedContent: plaintext, keyId: null, wasEncrypted: false, }; }
       const smk = getSmk();
       if (!smk) { throw new Error("standard tier requires SMK — set SERVER_ENCRYPTION_KEY",); }
+      // AC6: if a rotateKeyOnLeave is in flight for this chat, block
+      // until it commits so the send observes the post-rotation key
+      // (or fails if rotation failed). Stale-key writes are forbidden.
+      const { awaitChatKeyLock, } = await import("./key-distribution");
+      await awaitChatKeyLock(chatId,);
       const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
       const stored = await compressThenEncrypt({ plaintext, chatKey: chatKey.key, keyId: chatKey.keyId, config, },);
       return { storedContent: stored, keyId: chatKey.keyId, wasEncrypted: true, };
