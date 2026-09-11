@@ -71,6 +71,7 @@ links `ad8bb7e`) and `bun run plan:sync` is green.
   Bucket A; verify the ticket still reproduces, else close. Suggested home: middleware
   hardening or close.
 - `dd6158e` TASK-unified — placeholder scope; scope it to a real deliverable or close.
+
 ### Chat Variants Taxonomy + Chat Product Features wave (filed 2026-09-11 — **NEW**)
 
 Two new epics with 27 tickets filed together on 2026-09-11 awaiting triage. Tickets live on disk; epic spec + ticket files are linked but no git issues exist yet (and `plan:sync` is not required — these are intentional new filings, not orphans). Both cluster tables are already surfaced in `priority-p3-p5.md`:
