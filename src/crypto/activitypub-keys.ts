@@ -14,7 +14,7 @@
  */
 import type { Kysely, } from "kysely";
 import { assertFederationConsent, } from "../characters/services/federation-consent";
-import { encryptBytes, } from "../crypto/actor-keys";
+import { encryptBytes, } from "../crypto/actor-key-bytes";
 import type { DB, } from "../db/schema";
 import { safeJsonStringify, } from "../utils";
 import { getSmk, } from "./smk";

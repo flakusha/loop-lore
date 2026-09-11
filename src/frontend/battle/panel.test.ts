@@ -12,16 +12,18 @@
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import {
-  actionButton,
   clearFocusLog,
-  deadCombatant,
   installBattleDom,
   lastFocus,
-  mountBattle,
   pressKey,
+} from "../tests/battle-fake-dom";
+import {
+  actionButton,
+  deadCombatant,
+  mountBattle,
   tile,
   view,
-} from "../tests/battle-fake-dom";
+} from "../tests/battle-fake-mount";
 import {
   type BattleCombatantView,
   battleCommandFor,

@@ -7,7 +7,7 @@
  * Resolution chain for sampling params on the regular assistant path:
  * explicit request value → per-chat override → provider default. Range
  * validation reuses the frontend clamp helpers
- * (`src/frontend/alpine/chat-settings/gm-config.ts`) so both boundaries
+ * (`src/frontend/alpine/chat-settings/gm-config-tuning.ts`) so both boundaries
  * enforce temperature 0–2 and positive-int maxTokens from one definition.
  * No new migration: the override rides the existing `gm_config` JSON column.
  * Online-chat caveat (enforced by the chat PUT route, not here):
@@ -15,7 +15,7 @@
  * chats; online saves forward the presentation subset and drops it.
  */
 
-import { clampAssistantMaxTokens, clampAssistantTemperature, } from "../frontend/alpine/chat-settings/gm-config";
+import { clampAssistantMaxTokens, clampAssistantTemperature, } from "../frontend/alpine/chat-settings/gm-config-tuning";
 import { safeJsonParse, } from "../utils";
 
 /** Validated per-chat override; null = no override on that axis. */

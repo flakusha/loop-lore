@@ -15,30 +15,7 @@ import type { MusicService, } from "../validation/schemas/music-links";
 // ── Types ────────────────────────────────────────────────────
 // Types split into ./music-links/types.ts
 import type { MusicLinkConfig, MusicLinkRow, MusicMetadata, StoreParams, } from "./music-links/types";
-import { extractTrackId, toEmbedSrc, toServiceUrl, } from "./music-links/url";
-
-const SERVICES = {
-  spotify: {
-    pattern: /^(https?:\/\/)?(open\.)?spotify\.com\/.+/,
-    oembed: "https://open.spotify.com/oembed",
-  },
-  youtube_music: {
-    pattern: /^(https?:\/\/)?music\.youtube\.com\/.+/,
-    oembed: null,
-  },
-  soundcloud: {
-    pattern: /^(https?:\/\/)?(www\.)?soundcloud\.com\/.+/,
-    oembed: "https://soundcloud.com/oembed",
-  },
-  apple_music: {
-    pattern: /^(https?:\/\/)?(www\.)?music\.apple\.com\/.+/,
-    oembed: null,
-  },
-  bandcamp: {
-    pattern: /^(https?:\/\/)?[\w-]+\.bandcamp\.com\/.+/,
-    oembed: null,
-  },
-} as const satisfies Record<MusicService, { pattern: RegExp; oembed: string | null }>;
+import { extractTrackId, SERVICES, toEmbedSrc, toServiceUrl, } from "./music-links/url";
 
 // ── Factory ──────────────────────────────────────────────────
 
