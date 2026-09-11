@@ -62,40 +62,21 @@ export type {
 // ── Service ──────────────────────────────────────
 /** */
 export class BlogService {
-  /**
-   * @param db
-   */
+  /** @param db */
   constructor(private readonly db: Kysely<any>,) {}
 
   // ── Posts ────────────────────────────────────
-  /**
-   * Create a post.
-   * @param input
-   */
+  /** Create a post. */
   async createPost(input: CreateBlogPostInput,): Promise<BlogPostRow> {
     return createPostDispatch(this.db, input,);
   }
 
-  /**
-   * Get a post by ID.
-   * @param id
-   */
+  /** Get a post by ID. */
   async getPost(id: string,): Promise<BlogPostWithTags | undefined> {
     return getPostDispatch(this.db, id,);
   }
 
-  /**
-   * List posts with optional filters.
-   * @param filters
-   * @param filters.author_id
-   * @param filters.visibility
-   * @param filters.status
-   * @param filters.category
-   * @param filters.world_id
-   * @param filters.limit
-   * @param filters.offset
-   * @param filters.userId
-   */
+  /** List posts (filters: author_id, visibility, status, category, world_id, limit, offset, userId). */
   async listPosts(filters: {
     author_id?: string;
     visibility?: BlogPostVisibility;
@@ -109,11 +90,7 @@ export class BlogService {
     return listPostsDispatch(this.db, filters,);
   }
 
-  /**
-   * Update a post.
-   * @param id
-   * @param input
-   */
+  /** Update a post. */
   async updatePost(
     id: string,
     input: UpdateBlogPostInput,
@@ -121,46 +98,28 @@ export class BlogService {
     return updatePostDispatch(this.db, id, input,);
   }
 
-  /**
-   * Delete a post.
-   * @param id
-   */
+  /** Delete a post. */
   async deletePost(id: string,): Promise<boolean> {
     return deletePostDispatch(this.db, id,);
   }
 
-  /**
-   * Increment a post's view count.
-   * @param id
-   */
+  /** Increment a post's view count. */
   async incrementViewCount(id: string,): Promise<void> {
     return incrementViewCountDispatch(this.db, id,);
   }
 
   // ── Comments ─────────────────────────────────
-  /**
-   * Create a comment.
-   * @param input
-   */
+  /** Create a comment. */
   async createComment(input: CreateCommentInput,): Promise<BlogCommentRow> {
     return createCommentDispatch(this.db, input,);
   }
 
-  /**
-   * Get a comment.
-   * @param id
-   */
+  /** Get a comment. */
   async getComment(id: string,): Promise<BlogCommentRow | undefined> {
     return getCommentDispatch(this.db, id,);
   }
 
-  /**
-   * List comments for a post.
-   * @param postId
-   * @param opts
-   * @param opts.limit
-   * @param opts.offset
-   */
+  /** List comments for a post (opts: limit, offset). */
   async listComments(
     postId: string,
     opts?: { limit?: number; offset?: number },
@@ -168,13 +127,7 @@ export class BlogService {
     return listCommentsDispatch(this.db, postId, opts,);
   }
 
-  /**
-   * List threaded comments for a post.
-   * @param postId
-   * @param opts
-   * @param opts.limit
-   * @param opts.offset
-   */
+  /** List threaded comments for a post (opts: limit, offset). */
   async listCommentsThreaded(
     postId: string,
     opts?: { limit?: number; offset?: number },
@@ -182,11 +135,7 @@ export class BlogService {
     return listCommentsThreadedDispatch(this.db, postId, opts,);
   }
 
-  /**
-   * Moderate a comment.
-   * @param id
-   * @param status
-   */
+  /** Moderate a comment. */
   async moderateComment(
     id: string,
     status: BlogCommentStatus,
@@ -195,11 +144,7 @@ export class BlogService {
   }
 
   // ── Follows ──────────────────────────────────
-  /**
-   * Follow an author.
-   * @param followerId
-   * @param authorId
-   */
+  /** Follow an author. */
   async follow(
     followerId: string,
     authorId: string,
@@ -207,11 +152,7 @@ export class BlogService {
     return followDispatch(this.db, followerId, authorId,);
   }
 
-  /**
-   * Unfollow an author.
-   * @param followerId
-   * @param authorId
-   */
+  /** Unfollow an author. */
   async unfollow(
     followerId: string,
     authorId: string,
@@ -219,19 +160,12 @@ export class BlogService {
     return unfollowDispatch(this.db, followerId, authorId,);
   }
 
-  /**
-   * Get followers for an author.
-   * @param authorId
-   */
+  /** Get followers for an author. */
   async getFollowers(authorId: string,): Promise<string[]> {
     return getFollowersDispatch(this.db, authorId,);
   }
 
-  /**
-   * Check if a user follows an author.
-   * @param followerId
-   * @param authorId
-   */
+  /** Check if a user follows an author. */
   async isFollowing(
     followerId: string,
     authorId: string,
@@ -239,11 +173,7 @@ export class BlogService {
     return isFollowingDispatch(this.db, followerId, authorId,);
   }
 
-  /**
-   * Get follow status for a user.
-   * @param followerId
-   * @param authorId
-   */
+  /** Get follow status for a user. */
   async getFollowStatus(
     followerId: string,
     authorId: string,
@@ -252,11 +182,7 @@ export class BlogService {
   }
 
   // ── RAG Sources ──────────────────────────────
-  /**
-   * Add a RAG source to a post.
-   * @param postId
-   * @param source
-   */
+  /** Add a RAG source to a post. */
   async addRAGSource(
     postId: string,
     source: Omit<BlogRAGSourceRow, "id" | "created_at" | "post_id">,
@@ -264,10 +190,7 @@ export class BlogService {
     return addRAGSourceDispatch(this.db, postId, source,);
   }
 
-  /**
-   * Get RAG sources for a post.
-   * @param postId
-   */
+  /** Get RAG sources for a post. */
   async getRAGSources(postId: string,): Promise<BlogRAGSourceRow[]> {
     return getRAGSourcesDispatch(this.db, postId,);
   }
