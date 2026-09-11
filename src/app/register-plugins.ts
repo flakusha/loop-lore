@@ -90,6 +90,7 @@ import { proactiveMessagingRoutes, } from "../routes/proactive-messaging";
 import { questsRoutes, } from "../routes/quests";
 import { rpgRoutes, } from "../routes/rpg";
 import { sessionsRoutes, } from "../routes/sessions";
+import { switchSessionRoutes, } from "../routes/sessions-switch";
 import { settingsRoutes, } from "../routes/settings";
 import { storyItemsRoutes, } from "../routes/story-items";
 import { storyStatesRoutes, } from "../routes/story-states";
@@ -146,6 +147,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(keyManagementRoutes({ database: handleOpts.database, },),);
   app.use(usersRoutes(handleOpts,),);
   app.use(sessionsRoutes(handleOpts,),);
+  app.use(switchSessionRoutes(handleOpts,),);
   app.use(actorE2EPubkeyRoutes(handleOpts,),);
   app.use(actorItemsRoutes(handleOpts,),);
   app.use(actorMemoriesRoutes(handleOpts,),);

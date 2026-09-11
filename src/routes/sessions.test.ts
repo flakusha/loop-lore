@@ -12,6 +12,7 @@ import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { sessionsRoutes, } from "./sessions";
+import { switchSessionRoutes, } from "./sessions-switch";
 
 /**
  * @param db
@@ -30,7 +31,8 @@ function createApp(
   } as unknown as Config;
   return new Elysia({ name: "test-sessions", },)
     .derive(() => ({ userId, userRole, sessionId, }))
-    .use(sessionsRoutes({ database: db, config, },),) as unknown as Elysia;
+    .use(sessionsRoutes({ database: db, },),)
+    .use(switchSessionRoutes({ database: db, config, },),) as unknown as Elysia;
 }
 
 /**
