@@ -180,6 +180,11 @@ describe("attemptCraft", () => {
       expect(result.materialsSaved,).toEqual([],);
       expect(await stockOf(s.db, s.actorId, "Ore",),).toBe(8,);
       expect(await stockOf(s.db, s.actorId, "Ingot",),).toBe(0,);
+      // The failed attempt itself is recorded with its consumed materials.
+      const stored = await svc.getAttempt(result.attemptId,);
+      expect(stored?.status,).toBe(CraftingAttemptStatus.Failure,);
+      expect(stored?.materialsUsed,).toEqual([{ itemId: s.materialItemId, quantity: 2, },]);
+      expect(stored?.outputItemId,).toBeNull();
     } finally {
       await s.db.destroy();
     }
@@ -193,6 +198,13 @@ describe("attemptCraft", () => {
       await withRandom(0, () => svc.attemptCraft(opts,),);
       await withRandom(0, () => svc.attemptCraft(opts,),);
       expect(await stockOf(s.db, s.actorId, "Ingot",),).toBe(2,);
+      // Both attempts were recorded, not just the stock movement.
+      const attempts = await svc.listAttempts(s.actorId, s.worldId,);
+      expect(attempts.length,).toBe(2,);
+      expect(attempts.map((a,) => a.status,),).toEqual([
+        CraftingAttemptStatus.Success,
+        CraftingAttemptStatus.Success,
+      ],);
     } finally {
       await s.db.destroy();
     }
