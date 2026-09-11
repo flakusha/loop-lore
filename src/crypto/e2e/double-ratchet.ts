@@ -58,11 +58,12 @@
  *     from the foundation phase already handles this).
  */
 
+import { deriveChainKey, } from "./double-ratchet-chain";
 import { nextRatchetStep, } from "./ratchet";
 
-const CHAIN_KEY_INFO = "loop-lore-e2e-ephemeral-chain-v1" as const;
-const KEY_LENGTH = 32;
-const NONCE_LENGTH = 12;
+export const CHAIN_KEY_INFO = "loop-lore-e2e-ephemeral-chain-v1" as const;
+export const KEY_LENGTH = 32;
+export const NONCE_LENGTH = 12;
 
 /** */
 export interface EphemeralRatchetWirePayload {
@@ -206,43 +207,6 @@ export async function decodeEphemeralPayload(
     new Uint8Array(ct,).buffer as ArrayBuffer,
   );
   return new TextDecoder().decode(pt,);
-}
-
-// ── Internal ─────────────────────────────────────────────────
-
-/**
- * Derive the 32-byte chain key from the ECDH shared secret + chain index.
- * Salt = chainIndex as 8-byte big-endian; info = CHAIN_KEY_INFO. Binds the
- * chain key to the specific message position so two messages on different
- * indices derive different keys even with the same shared secret.
- * @param sharedBytes
- * @param chainIndex
- * @returns void
- */
-async function deriveChainKey(
-  sharedBytes: Uint8Array,
-  chainIndex: number,
-): Promise<Uint8Array> {
-  const base = await crypto.subtle.importKey(
-    "raw",
-    new Uint8Array(sharedBytes,).buffer as ArrayBuffer,
-    "HKDF",
-    false,
-    ["deriveBits",],
-  );
-  const salt = new Uint8Array(8,);
-  new DataView(salt.buffer,).setBigUint64(0, BigInt(chainIndex,),);
-  const bits = await crypto.subtle.deriveBits(
-    {
-      name: "HKDF",
-      hash: "SHA-256",
-      salt: new Uint8Array(salt,).buffer as ArrayBuffer,
-      info: new TextEncoder().encode(CHAIN_KEY_INFO,),
-    },
-    base,
-    KEY_LENGTH * 8,
-  );
-  return new Uint8Array(bits,);
 }
 
 export const EPHEMERAL_RATCHET_CONSTANTS = {

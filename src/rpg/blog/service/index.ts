@@ -21,10 +21,10 @@ import {
   createPost as createPostDispatch,
   deletePost as deletePostDispatch,
   getPost as getPostDispatch,
-  incrementViewCount as incrementViewCountDispatch,
   listPosts as listPostsDispatch,
   updatePost as updatePostDispatch,
 } from "./posts";
+import { incrementViewCount as incrementViewCountDispatch, } from "./posts-views";
 import { addRAGSource as addRAGSourceDispatch, getRAGSources as getRAGSourcesDispatch, } from "./rag";
 import type {
   BlogCommentRow,

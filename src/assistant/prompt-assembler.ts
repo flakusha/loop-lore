@@ -22,8 +22,8 @@ import type { DB, } from "../db/schema";
 import { defaultTokenCount, } from "../generation/context-window-config";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
-import { jsonParseOr, } from "../utils/safe-json";
 import { dropOverBudgetSections, reorderPromptMessages, } from "./prompt-budget";
+import { parseJsonOr, } from "./prompt-utils";
 import { PROMPT_SECTIONS, } from "./prompt/registry";
 import type {
   AssembleActor,
@@ -36,16 +36,6 @@ import type {
 
 export { compactPromptHistory, } from "./prompt-budget";
 export type { AssembledPrompt, PromptParams, PromptSectionReport, } from "./prompt/types";
-
-/**
- * @param raw
- * @param fallback
- * @returns string
- */
-function parseJsonOr<T,>(raw: string | null | undefined, fallback: T,): T {
-  if (!raw) { return fallback; }
-  return jsonParseOr<T>(raw, fallback,);
-}
 
 /** */
 export class PromptAssembler {
@@ -267,3 +257,5 @@ export class PromptAssembler {
     }
   }
 }
+
+export { parseJsonOr, } from "./prompt-utils";
