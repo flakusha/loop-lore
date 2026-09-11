@@ -1,19 +1,23 @@
 import { describe, expect, test, } from "bun:test";
 import type { GmConfig, } from "../types";
 import {
-  ASSISTANT_TUNING_DEFAULTS,
   buildActorModels,
   buildGmConfig,
-  clampAssistantMaxTokens,
-  clampAssistantTemperature,
-  effectiveAssistantParams,
-  GM_CONFIG_PRESENTATION_KEYS,
   type GmSettingsFields,
-  presentationGmConfig,
-  readAssistantTuning,
   readGmSettings,
   setStoryPaused,
 } from "./gm-config";
+import {
+  GM_CONFIG_PRESENTATION_KEYS,
+  presentationGmConfig,
+} from "./gm-config-presentation";
+import {
+  ASSISTANT_TUNING_DEFAULTS,
+  clampAssistantMaxTokens,
+  clampAssistantTemperature,
+  effectiveAssistantParams,
+  readAssistantTuning,
+} from "./gm-config-tuning";
 
 const fullFields = {
   assistantRole: "gm",

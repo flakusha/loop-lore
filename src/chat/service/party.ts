@@ -10,20 +10,12 @@
  * event when the chat is in VN mode.
  */
 import type { Kysely, } from "kysely";
-import { encryptMessageContent, getSmk, isEncryptionEnabled, } from "../../crypto";
-import {
-  ChatParticipantRole,
-  ContentEncoding,
-  MessageContentFormat,
-  MessageContentType,
-  MessageRole,
-  MessageStatus,
-  MessageVisibility,
-} from "../../db/enums";
+import { ChatParticipantRole, } from "../../db/enums";
 import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 import type { DB, } from "../../db/schema";
 import { safeJsonParse, } from "../../utils";
 import { resolveRendering, } from "../types/config";
+import { injectPartyNarration, } from "./party-narration";
 import type { ServiceError, } from "./types";
 
 /** Parameters for a party join. */
@@ -49,77 +41,6 @@ export type PartyJoinResult =
 export type PartyLeaveResult =
   | ServiceError
   | { ok: true };
-
-/**
- * Find the narrator actor, if one exists. Mirrors GM `injectNarration`.
- * @param database
- * @returns void
- */
-async function findNarrator(
-  database: Kysely<DB>,
-): Promise<{ id: string } | null> {
-  const narrator = await database
-    .selectFrom("actors",)
-    .select("id",)
-    .where("actor_type", "=", "narrator",)
-    .where("agent_type", "=", "narrator",)
-    .executeTakeFirst();
-  return narrator ?? null;
-}
-
-/**
- * Append a VN narration message for a party event, best-effort. Mirrors the
- * GM `injectNarration` write path (encryption + narrator actor lookup). Any
- * failure is non-fatal — the party mutation has already succeeded.
- * @param database
- * @param chatId
- * @param text
- * @returns void
- */
-async function injectPartyNarration(
-  database: Kysely<DB>,
-  chatId: string,
-  text: string,
-): Promise<void> {
-  try {
-    const narrator = await findNarrator(database,);
-    if (!narrator) { return; }
-
-    let storedContent = text;
-    let storedKeyId: string | null = null;
-    if (isEncryptionEnabled()) {
-      const smk = getSmk()!;
-      const enc = await encryptMessageContent({
-        database,
-        chatId,
-        actorId: narrator.id,
-        plaintext: text,
-        smk,
-      },);
-      storedContent = enc.storedContent;
-      storedKeyId = enc.keyId;
-    }
-
-    await database
-      .insertInto("messages",)
-      .values({
-        id: crypto.randomUUID(),
-        chat_id: chatId,
-        actor_id: narrator.id,
-        role: MessageRole.System,
-        content: storedContent,
-        key_id: storedKeyId,
-        content_type: MessageContentType.Narration,
-        content_format: MessageContentFormat.Markdown,
-        content_encoding: ContentEncoding.Identity,
-        status: MessageStatus.Confirmed,
-        visibility: MessageVisibility.Visible,
-      },)
-      .execute();
-  } catch {
-    /* non-fatal — party mutation already applied */
-  }
-}
 
 /**
  * Determine whether the chat is currently rendered as a visual novel by

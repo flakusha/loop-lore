@@ -12,16 +12,18 @@
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import {
-  actionButton,
   clearFocusLog,
   type FakeEl,
   installBattleDom,
   lastFocus,
-  mountBattle,
   pressKey,
+} from "../tests/battle-fake-dom";
+import {
+  actionButton,
+  mountBattle,
   tile,
   view,
-} from "../tests/battle-fake-dom";
+} from "../tests/battle-fake-mount";
 import { destroyBattlePanel, refreshBattle, renderBattle, } from "./panel";
 
 let restoreDom: () => void;

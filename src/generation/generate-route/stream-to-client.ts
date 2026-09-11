@@ -32,11 +32,12 @@ import {
 } from "../cancellation-manager";
 import { callWithFailover, } from "../providers/call-with-failover";
 import type { ChunkEvent, GenerateRequest as ProviderRequest, LLMProvider, } from "../providers/types";
-import { getOrCreateBuffer, scheduleBufferCleanup, StreamBuffer, } from "../stream-buffer";
+import { getOrCreateBuffer, scheduleBufferCleanup, } from "../stream-buffer";
 import type { GenerationMessage, } from "../types";
 import { streamCancelCleanup, } from "./cancel-stream";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { renderToolCallBlock, sseData, } from "./sse-utils";
+import { flushChunk, recordLastRendered, } from "./stream-flush";
 import { buildToolCallAssistantMessage, toGenerationToolCalls, } from "./stream-messages";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
 import { storeToolResultRows, } from "./tool-result-persist";
@@ -54,35 +55,6 @@ export interface StreamToClientOpts {
   providerName: string;
   providerReq: ProviderRequest;
   failoverList: { name: string; provider: LLMProvider }[];
-}
-
-/**
- * Flush a chunk to the SSE controller. Returns the sequence number assigned
- * by the StreamBuffer (used as `lastRenderedChunkIndex`).
- * @param controller
- * @param buffer
- * @param chunk
- */
-function flushChunk(
-  controller: ReadableStreamDefaultController,
-  buffer: StreamBuffer,
-  chunk: string,
-): number {
-  const seq = buffer.append("stream-update", chunk,);
-  controller.enqueue(new TextEncoder().encode(chunk,),);
-  return seq;
-}
-
-/**
- * Record that this SSE event reached the client. The active generation
- * carries `lastRenderedChunkIndex` so the cancel path can persist exactly
- * where the user-visible response was truncated.
- * @param attemptId
- * @param seq
- */
-function recordLastRendered(attemptId: string, seq: number,): void {
-  const active = activeGenerations.get(attemptId,);
-  if (active) { active.lastRenderedChunkIndex = seq; }
 }
 
 /**
