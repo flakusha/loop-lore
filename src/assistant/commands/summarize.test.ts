@@ -73,4 +73,28 @@ describe("summarize command", () => {
     const result = await runSummarize(["5",], { chatId: "c1", messages: msgs(2,), }, {},);
     expect(result.systemMessage,).toContain("(last 2 messages):",);
   });
+  it("clamps a zero count to the last message", async () => {
+    const result = await runSummarize(["0",], { chatId: "c1", messages: msgs(3,), }, {},);
+    expect(result.systemMessage,).toContain("(last 1 messages):",);
+  });
+
+  it("clamps a negative count to the last message", async () => {
+    const result = await runSummarize(["-5",], { chatId: "c1", messages: msgs(3,), }, {},);
+    expect(result.systemMessage,).toContain("(last 1 messages):",);
+    expect(result.systemMessage,).not.toContain("(last -5 messages):",);
+  });
+
+  it("truncates long messages in the LLM transcript", async () => {
+    let captured: GenerateRequest | undefined;
+    const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
+      captured = req;
+      return { content: "ok", };
+    };
+    const long = "y".repeat(1200,);
+    const messages = [{ id: "m1", role: "user", content: long, created_at: new Date().toISOString(), },];
+    await runSummarize([], { chatId: "c1", messages, }, { complete, },);
+    const transcript = captured?.messages[1]?.content ?? "";
+    expect(transcript,).toContain("y".repeat(500,),);
+    expect(transcript,).not.toContain("y".repeat(501,),);
+  });
 });
