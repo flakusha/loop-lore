@@ -4,23 +4,14 @@
 /**
  * Chat ownership transfer service.
  *
- * Transfers the ownership claim (`chats.created_by`) from one user to another
- * participant-or-not. Two modes:
- *   - Existing participant: flip `created_by` and grant `role_in_chat = "owner"`
- *     to the new owner; demote the previous owner to `member`.
- *   - Non-participant: auto-invite with `role_in_chat = "owner"` BEFORE the
- *     `created_by` flip.
+ * Flips `chats.created_by` to the new owner (auto-inviting non-participants
+ * with `role_in_chat = "owner"` first); demotes the previous owner to `member`.
+ * Authority: admin OR the current owner — a delegated `role_in_chat = 'owner'`
+ * grant alone cannot pass the chat around.
  *
- * Authority: admin OR the current owner (`checkChatSettingsAccess`). We
- * additionally require `requesterId === previousOwnerId` (except admin) so a
- * delegated `role_in_chat = 'owner'` grant cannot pass the chat around.
- *
- * Audit + notification: writes a `log_entries` row with `event_type =
- * "chat_ownership_transferred"` and emits two notifications via
- * `NotificationService.emit` (fire-and-forget) — previous owner + new owner.
- *
- * No schema migration: ownership is encoded as `created_by` (existing) +
- * `role_in_chat` (existing enum value `owner`).
+ * Writes one `log_entries` row (`chat_ownership_transferred`) + two
+ * `NotificationService.emit` calls (fire-and-forget). No schema migration:
+ * ownership is `created_by` + the existing `owner` enum value.
  */
 import type { Kysely, } from "kysely";
 import { ChatParticipantRole, NotificationType, } from "../../db/enums";
@@ -77,8 +68,7 @@ export async function transferOwnership(
     };
   }
 
-  // Admin bypass runs BEFORE `checkChatSettingsAccess`; that helper only consults
-  // creator + role_in_chat and would otherwise 403 an admin who isn't a participant.
+  // Admin bypass first: the helper below only consults creator + role_in_chat.
   const isAdmin = can(requesterRole, "admin.chat",);
   if (!isAdmin) {
     const settings = await checkChatSettingsAccess(db, chatId, requesterId, requesterRole,);
@@ -87,8 +77,7 @@ export async function transferOwnership(
     }
   }
 
-  // Load chat, then look up the new owner's participant row. Sequential so
-  // a missing chat surfaces before we probe participants.
+  // Sequential reads so a missing chat surfaces before we probe participants.
   const chat = await db
     .selectFrom("chats",)
     .select(["id", "created_by", "world_id",],)
@@ -121,11 +110,9 @@ export async function transferOwnership(
     };
   }
 
-  // Authority re-check: this guard rejects a delegated `role_in_chat = 'owner'`
-  // grant from passing the chat around — only the actual current owner OR an admin
-  // may transfer. (Admins already bypassed the initial access check above.)
-  // TOCTOU guard lives inside the tx below: the `created_by` flip is
-  // conditional on nobody else having moved ownership since the pre-tx read.
+  // Only the current owner or an admin may transfer — a delegated
+  // `role_in_chat = 'owner'` grant cannot pass the chat around.
+  // TOCTOU guard is the conditional flip inside the tx below.
   if (!isAdmin && requesterId !== previousOwnerId) {
     return {
       ok: false,
@@ -152,10 +139,8 @@ export async function transferOwnership(
   const CONCURRENT_MODIFICATION = "chat-ownership-concurrent-modification";
   try {
     const outcome = await db.transaction().execute(async (trx,) => {
-      // Linearization point: the flip applies only if ownership hasn't
-      // moved since the pre-tx read. Zero rows ⇒ a concurrent transfer
-      // won; throw before writing anything so the loser leaves no
-      // partial state and exactly one winner emerges.
+      // Linearization point: zero rows ⇒ a concurrent transfer won; throw
+      // before writing anything so the loser leaves no partial state.
       const flipped = await trx
         .updateTable("chats",)
         .set({ created_by: newOwnerId, updated_at: now, },)
