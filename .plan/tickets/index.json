@@ -9463,6 +9463,17 @@
     "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md",
     "status": "done"
   },
+  "TASK-APPLY-JSDOC-ACROSS-SRC-TO-SATISFY-JSDOC-REQUIRE-PARAM-RETURN": {
+    "hash": "pending",
+    "extid": "TASK-APPLY-JSDOC-ACROSS-SRC-TO-SATISFY-JSDOC-REQUIRE-PARAM-RETURN",
+    "type": "TASK",
+    "title": "Apply JSDoc across src/ to satisfy jsdoc/require-{param,returns,throws}",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
+  },
   "TASK-ARCHITECTURE": {
     "hash": "81bf8d3",
     "extid": "TASK-ARCHITECTURE",
