@@ -39,16 +39,16 @@ export {
   updateAssetVisibility,
 } from "./shares";
 export {
-  validateFileSize,
-  validateMimeType,
-} from "./validate";
-export {
   getAssetTransform,
   resolveAssetTransform,
   SEED_FOCAL_POINT,
   seedBaseTransform,
   upsertAssetTransform,
 } from "./transforms";
+export {
+  validateFileSize,
+  validateMimeType,
+} from "./validate";
 
 export type {
   AssetLinkInput,
