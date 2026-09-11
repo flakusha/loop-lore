@@ -49,7 +49,6 @@ import type {
  */
 export class CharacterGrowthService {
   /**
-   * 
    * @param db
    */
   constructor(private readonly db: Kysely<DB>,) {}
