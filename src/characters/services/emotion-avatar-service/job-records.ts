@@ -7,7 +7,7 @@ import { type Kysely, sql, type UpdateObject, } from "kysely";
 import type { EmotionType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { jsonParseOr, jsonStringifyOr, } from "../../../utils";
-import type { EmotionGenerationResult, } from "./types";
+import type { BatchGenerationJob, EmotionGenerationResult, GenerateEmotionAvatarsOpts, } from "./types";
 
 /** Lifecycle status persisted per generation job. */
 export type GenerationJobStatus = "pending" | "running" | "completed" | "failed" | "cancelled";
@@ -170,4 +170,44 @@ function toRecord(row: GenerationJobRow,): GenerationJobRecord {
     startedAt: row.started_at,
     completedAt: row.completed_at,
   };
+}
+/**
+ * Record batch start: mirrors the in-memory job as a running row so the
+ * gallery sees in-flight work.
+ * @param database
+ * @param job
+ * @param opts
+ */
+export async function recordBatchStart(
+  database: Kysely<DB>,
+  job: BatchGenerationJob,
+  opts: GenerateEmotionAvatarsOpts,
+): Promise<void> {
+  await createGenerationJobRecord(database, {
+    id: job.id,
+    kind: "emotion-avatar",
+    actorId: opts.actorId,
+    payload: {
+      emotions: job.results.map((result,) => result.emotion,),
+      baseAvatarId: opts.baseAvatarId,
+    },
+    startedAt: job.startedAt,
+  },);
+}
+
+/**
+ * Record batch end: persists terminal status plus per-emotion results.
+ * @param database
+ * @param job
+ */
+export async function recordBatchFinish(
+  database: Kysely<DB>,
+  job: BatchGenerationJob,
+): Promise<void> {
+  await updateGenerationJobRecord(database, job.id, {
+    status: job.status as GenerationJobStatus,
+    results: job.results,
+    errorMessage: job.error ?? null,
+    completedAt: job.completedAt ?? new Date().toISOString(),
+  },);
 }
