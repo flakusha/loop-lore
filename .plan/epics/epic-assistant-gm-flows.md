@@ -317,3 +317,4 @@ Autonomy loop + rate governance for GM/actor self-driving: epic-actor-autonomy-s
 - `TASK-assistant-gm-flows-reconciliation.md` — reconciliation tasks
 - `TASK-gm-guided-story-creation.md` — user as GM guiding LLM characters in chat/group-chat to create a story together
 - `TASK-precompiled-templates-injection.md` — pre-compiled schema+example prompt injection for creative generation processes
+- `FEAT-in-story-character-generation-via-assistant-chat-handoff.md` — story-introduced entity generation in place (characters lead; locations/items/quests/notes reuse the same detection -> assistant-chat handoff -> finalize -> review/approval mechanism; issue d08e2ff)
