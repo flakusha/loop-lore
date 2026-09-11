@@ -16,8 +16,11 @@ Backend `tsconfig.backend.json` is already strong:
 - `allowImportingTsExtensions: true` (Bun-native, no build step)
 - `paths`: `@/*` → `./src/*`
 
-CI enforces `type-coverage --strict --at-least 85` for both backend and
-frontend (`package.json` `typecheck:coverage*`). This is a good floor.
+CI enforces `type-coverage --strict --at-least 95` for both backend and
+frontend (`package.json` `typecheck:coverage*`). Backend buffer ~2pp,
+frontend buffer <1pp — tight by design. Floor was raised from historical
+85% baseline; further raises (e.g. 97% backend) would require either
+narrowing `as any` in DB wrapper + plugin loader or per-module overrides.
 
 ## Gaps
 
@@ -51,10 +54,20 @@ the most load-bearing data boundary bypasses type-checking. The `as any[]`
 should be the _only_ escape hatch and be visibly localized + documented (it is
 partially commented, but the union type is wider than necessary).
 
-### 5. `type-coverage` floor is 85%, not 100%
+### 5. `type-coverage` floor is 95%, not 100%
 
-85% permits a long tail of `any`/implicit-`any` in rarely-touched paths.
-Raise gradually (90 → 95 → 100) per PR to avoid a flag-day.
+95% permits a long tail of `any`/implicit-`any` in rarely-touched paths.
+Raise gradually (97 → 99 → 100) per PR to avoid a flag-day.
+
+**TS7 retest (isolated worktree): type-coverage-core@2.30.1 paired with
+typescript@7.0.2 and @typescript/native-preview@7.0.0-dev confirmed broken
+at module load.** `type-coverage-core/dist/checker.js:662` references
+`ts.SyntaxKind.Unknown` — TS7 removed the legacy alias (was renamed
+`UnknownKeyword`, still present in TS7). No upstream fix exists as of
+type-coverage-core@2.30.1 (latest published). Additionally,
+`typescript-eslint@^8.70` declares `typescript: >=4.8.4 <6.1.0`, blocking
+the toolchain end. Resuming TS7 requires both upstream issues to clear;
+keep the floor at 95% until they do.
 
 ## Recommendations
 
