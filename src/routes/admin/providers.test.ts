@@ -18,6 +18,7 @@ import { providersRoutes, } from "./providers";
  */
 function makeApp(database: Kysely<DB>,) {
   const app = new Elysia({ name: "test-providers", },);
+  app.derive((): { userId: string | null; userRole: string | null } => ({ userId: "test-user", userRole: "admin", }));
   return app.use(providersRoutes({ database, },),);
 }
 
