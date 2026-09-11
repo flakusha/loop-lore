@@ -107,6 +107,7 @@ describe("ownershipActions.submitOwnershipTransfer", () => {
       previousOwnerId: "old-owner",
       newOwnerId: "new-owner",
       autoInvited: true,
+      meta: { api_version: "1", },
     },);
     let reloaded = 0;
     const ctx = ownershipCtx({
@@ -133,7 +134,7 @@ describe("ownershipActions.submitOwnershipTransfer", () => {
   });
 
   test("surfaces server-side error message when response is non-ok", async () => {
-    mockFetch(403, { message: "Only the current owner may transfer", },);
+    mockFetch(403, { error: "Only the current owner may transfer", code: "FORBIDDEN", meta: { api_version: "1", }, },);
     const ctx = ownershipCtx({
       _ownershipNewOwnerId: "new-owner",
     },);
@@ -141,6 +142,17 @@ describe("ownershipActions.submitOwnershipTransfer", () => {
     expect(ctx._ownershipError,).toBe("Only the current owner may transfer",);
     expect(ctx._ownershipModalOpen,).toBe(false,); // stays closed on error
     expect(ctx._ownershipSubmitting,).toBe(false,);
+  });
+
+  test("error envelope: matches real { error, code, meta } shape from jsonError", async () => {
+    // Real production envelope from src/routes/http-utils/responses.ts:
+    //   jsonError(...) returns `{ error, code, meta }`. Pin the consumer reads
+    //   `body.error` (NOT body.message, NOT body.data) — the old code read
+    //   body.message which always came back undefined in production.
+    mockFetch(403, { error: "Forbidden", code: "FORBIDDEN", meta: { api_version: "1", }, },);
+    const ctx = ownershipCtx({ _ownershipNewOwnerId: "new-owner", },);
+    await ownershipActions.submitOwnershipTransfer!.call(ctx,);
+    expect(ctx._ownershipError,).toBe("Forbidden",);
   });
 
   test("falls back to HTTP status when error body is non-JSON", async () => {
