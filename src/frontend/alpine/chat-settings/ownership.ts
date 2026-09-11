@@ -87,8 +87,9 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
       if (!res.ok) {
         let message = `HTTP ${res.status}`;
         try {
-          const body = (await res.json()) as { message?: string };
-          if (body?.message) { message = body.message; }
+          // API error envelope: { error, code, meta } (jsonError/jsonValidationError).
+          const body = (await res.json()) as { error?: string };
+          if (body?.error) { message = body.error; }
         } catch { /* non-JSON error body — keep generic message */ }
         this._ownershipError = message;
         return;
