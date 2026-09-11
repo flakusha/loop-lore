@@ -8,6 +8,8 @@
 | Data Integrity | Phase 1 — config guards (reject `sqlite` when `INSTANCE_COUNT > 1`, warn on network FS WAL, fix stale MySQL claim in architecture doc) | Low    | ✅ Complete (`src/config/load.ts`)                                                                                                    |
 | NSFW           | Moderation Safety Infrastructure — gate, consent, audit, flagging                                                                      | Medium | ✅ Complete — runtime config + live enforcement + mood-shift + audit-log UI + consent display (2026-08-06)                            |
 | Shared Schemas | Reputation, Consent, NSFW Content Rating (`src/schemas/`)                                                                              | Medium | ✅ Complete                                                                                                                           |
+| Chat Crypto | `TASK-chat-feature-encryption-key-rotation.md` — reliable post-encrypt + deterministic key rotation on membership change (joined `epic-chat-product-features` 2026-09-11; app-critical — broken encryption blocks all private chats) | High | ⬜ Not Started — promoted to P0 visibility 2026-09-11; idempotent rotation + `src/middleware/idempotency.ts` overlap-debounce required before send |
+| Chat Ownership | `TASK-chat-feature-ownership-transfer.md` — owner can hand chat to another participant; mod/GM roles re-evaluated; audit handover (joined `epic-chat-product-features` 2026-09-11; user-flagged new requirement) | Medium | ⬜ Not Started — promoted to P0 visibility 2026-09-11; confirmation step + `confirm: true` on backend |
 
 ## P1 — High Priority (Post-P0)
 
