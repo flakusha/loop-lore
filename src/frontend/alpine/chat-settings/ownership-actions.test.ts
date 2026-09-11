@@ -125,6 +125,7 @@ describe("ownershipActions.submitOwnershipTransfer", () => {
     expect(call.opts.method,).toBe("POST",);
     expect(JSON.parse(call.opts.body as string,),).toEqual({
       newOwnerId: "new-owner",
+      confirm: true,
       reason: "stepping down",
     },);
     expect(ctx._ownershipModalOpen,).toBe(false,);
@@ -178,7 +179,7 @@ describe("ownershipActions.submitOwnershipTransfer", () => {
       _ownershipReason: "   ",
     },);
     await ownershipActions.submitOwnershipTransfer!.call(ctx,);
-    expect(JSON.parse(fetchCalls[0]!.opts.body as string,),).toEqual({ newOwnerId: "new-owner", },);
+    expect(JSON.parse(fetchCalls[0]!.opts.body as string,),).toEqual({ newOwnerId: "new-owner", confirm: true, },);
   });
 });
 
