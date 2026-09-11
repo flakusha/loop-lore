@@ -25,6 +25,7 @@ export interface WorldEditState {
   expandedLoc: string;
   editLocName: string;
   editLocDesc: string;
+  locationSearch: string;
   items: {
     id: string;
     name: string;
@@ -88,6 +89,7 @@ export interface WorldEditState {
   deleteLocation(locId: string,): Promise<void>;
   expandLoc(locId: string,): void;
   saveLocation(locId: string,): Promise<void>;
+  filterLocations(): void;
   loadItems(): Promise<void>;
   addItem(): Promise<void>;
   expandItem(itemId: string,): void;

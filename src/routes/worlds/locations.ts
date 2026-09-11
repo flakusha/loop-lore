@@ -26,6 +26,7 @@ import { validateConnections, } from "./location-connections";
  * @param pageSize
  * @param userId
  * @param userRole
+ * @param q
  */
 export async function handleListLocations(
   database: Kysely<DB>,
@@ -34,22 +35,32 @@ export async function handleListLocations(
   pageSize: number,
   userId: string | null,
   userRole: string | null,
+  q?: string,
 ) {
   const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
   if (worldErr) { return worldErr; }
 
   const offset = (page - 1) * pageSize;
-  const countResult = await database
+  let countQuery = database
     .selectFrom("locations",)
     .select(database.fn.countAll<number>().as("total",),)
-    .where("world_id", "=", worldId,)
-    .executeTakeFirst();
-  const total = countResult?.total ?? 0;
-
-  const locations = await database
+    .where("world_id", "=", worldId,);
+  let listQuery = database
     .selectFrom("locations",)
     .selectAll()
-    .where("world_id", "=", worldId,)
+    .where("world_id", "=", worldId,);
+
+  const trimmedQ = q?.trim() ?? "";
+  if (trimmedQ) {
+    const like = `%${trimmedQ}%`;
+    countQuery = countQuery.where("name", "like", like,);
+    listQuery = listQuery.where("name", "like", like,);
+  }
+
+  const countResult = await countQuery.executeTakeFirst();
+  const total = countResult?.total ?? 0;
+
+  const locations = await listQuery
     .orderBy("name", "asc",)
     .limit(pageSize,)
     .offset(offset,)

@@ -31,7 +31,8 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         const { userId, } = extractAuth(ctx,);
         const page = Number(ctx.query?.page,) || 1;
         const pageSize = Number(ctx.query?.pageSize,) || 20;
-        return handleListWorlds(database, page, pageSize, userId,);
+        const q = typeof ctx.query?.q === "string" ? ctx.query.q : undefined;
+        return handleListWorlds(database, page, pageSize, userId, q,);
       },
       {
         response: {
@@ -40,7 +41,8 @@ export function worldRoutes(opts: HandleOpts, prefix = "/api",) {
         },
         detail: {
           summary: "List worlds",
-          description: "List all worlds visible to the authenticated user.",
+          description:
+            "List all worlds visible to the authenticated user. Optional q filters by name substring (case-insensitive).",
           tags: ["Worlds",],
         },
       },

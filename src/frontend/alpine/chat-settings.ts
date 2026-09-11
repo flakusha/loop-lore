@@ -30,6 +30,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _gmProvider: "",
   _gmTemperature: 0.7,
   _gmMaxTokens: 2000,
+  _assistantTemperature: null as number | null,
+  _assistantMaxTokens: null as number | null,
   _actorModels: {} as Record<string, { model: string; provider: string }>,
   _chatParticipants: [] as { actor_id: string; name: string; display_name?: string }[],
   _personas: [] as any[],
@@ -93,6 +95,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._gmProvider = fields.gmProvider;
     this._gmTemperature = fields.gmTemperature;
     this._gmMaxTokens = fields.gmMaxTokens;
+    this._assistantTemperature = fields.assistantTemperature ?? null;
+    this._assistantMaxTokens = fields.assistantMaxTokens ?? null;
     this._responseLengthPreset = fields.responseLengthPreset;
     this._responseLengthCustom = fields.responseLengthCustom;
     this._outputStylePreset = fields.outputStylePreset;
@@ -161,6 +165,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         gmProvider: this._gmProvider,
         gmTemperature: this._gmTemperature,
         gmMaxTokens: this._gmMaxTokens,
+        assistantTemperature: this._assistantTemperature,
+        assistantMaxTokens: this._assistantMaxTokens,
         responseLengthPreset: this._responseLengthPreset,
         responseLengthCustom: this._responseLengthCustom,
         outputStylePreset: this._outputStylePreset,
