@@ -6356,6 +6356,19 @@
     "status": "done",
     "git_issue": "fef7e3b"
   },
+  "FEAT-IN-STORY-CHARACTER-GENERATION-VIA-ASSISTANT-CHAT-HANDOFF": {
+    "hash": "d08e2ff",
+    "git_issue": "d08e2ff",
+    "extid": "FEAT-IN-STORY-CHARACTER-GENERATION-VIA-ASSISTANT-CHAT-HANDOFF",
+    "type": "FEAT",
+    "title": "In-story character generation via assistant chat handoff",
+    "label": "feat",
+    "priority": "High",
+    "epic": "epic-assistant-gm-flows.md",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-in-story-character-generation-via-assistant-chat-handoff.md",
+    "status": "open"
+  },
   "FEAT-IRC-INTEGRATION-CHANNELS-AS-GROUP-CHAT-PM-AS-CHAT": {
     "hash": "eed7cfa",
     "git_issue": "eed7cfa",
