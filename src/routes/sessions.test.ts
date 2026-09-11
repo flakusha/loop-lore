@@ -5,6 +5,8 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import crypto from "node:crypto";
+import { verifyJwt, } from "../auth/jwt";
+import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
@@ -23,9 +25,12 @@ function createApp(
   userRole: string | null = "solo",
   sessionId: string | null = null,
 ): Elysia {
+  const config = {
+    auth: { jwtSecret: "test-jwt-secret", jwtExpiresIn: 86_400, },
+  } as unknown as Config;
   return new Elysia({ name: "test-sessions", },)
     .derive(() => ({ userId, userRole, sessionId, }))
-    .use(sessionsRoutes({ database: db, },),) as unknown as Elysia;
+    .use(sessionsRoutes({ database: db, config, },),) as unknown as Elysia;
 }
 
 /**
@@ -406,5 +411,98 @@ describe("sessionsRoutes", () => {
       new Request("http://localhost/api/sessions/nonexistent-id", { method: "DELETE", },),
     );
     expect(res.status,).toBe(404,);
+  });
+
+  test("POST /api/sessions/:id/switch returns 401 without userId", async () => {
+    const app = createApp(db, null,);
+    const res = await app.handle(
+      new Request("http://localhost/api/sessions/x/switch", { method: "POST", },),
+    );
+    expect(res.status,).toBe(401,);
+  });
+
+  test("POST /api/sessions/:id/switch rotates cookie and touches last_activity", async () => {
+    const currentId = uid();
+    const targetId = uid();
+    const staleActivity = new Date(Date.now() - 60_000,).toISOString();
+    await db
+      .insertInto("sessions",)
+      .values([
+        {
+          id: currentId,
+          user_id: userId,
+          token_hash: tokenHash("current-token",),
+          ip: "127.0.0.1",
+          user_agent: "TestAgent",
+          last_activity: staleActivity,
+          expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
+        },
+        {
+          id: targetId,
+          user_id: userId,
+          token_hash: tokenHash("target-token",),
+          ip: "127.0.0.1",
+          user_agent: "TestAgent",
+          last_activity: staleActivity,
+          expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
+        },
+      ],)
+      .execute();
+    const app = createApp(db, userId, "user", currentId,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/sessions/${targetId}/switch`, { method: "POST", },),
+    );
+    expect(res.status,).toBe(200,);
+    const setCookie = res.headers.get("Set-Cookie",) ?? "";
+    const token = setCookie.split(";",).at(0,)?.split("=",).at(1,) ?? "";
+    expect(token.length,).toBeGreaterThan(0,);
+    const verified = await verifyJwt({ secret: "test-jwt-secret", token, },);
+    expect(verified.valid,).toBe(true,);
+    if (verified.valid) { expect(verified.payload.sid,).toBe(targetId,); }
+    const row = await db.selectFrom("sessions",).select("last_activity",).where("id", "=", targetId,)
+      .executeTakeFirstOrThrow();
+    expect(Date.parse(row.last_activity as string,),).toBeGreaterThan(Date.parse(staleActivity,),);
+  });
+
+  test("POST /api/sessions/:id/switch returns 404 for another user's session", async () => {
+    const foreignId = uid();
+    await db
+      .insertInto("sessions",)
+      .values([{
+        id: foreignId,
+        user_id: otherUserId,
+        token_hash: tokenHash("foreign-token",),
+        ip: "127.0.0.1",
+        user_agent: "TestAgent",
+        expires_at: new Date(Date.now() + 86_400_000,).toISOString(),
+      },],)
+      .execute();
+    const app = createApp(db, userId, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/sessions/${foreignId}/switch`, { method: "POST", },),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
+  test("POST /api/sessions/:id/switch returns 410 for expired session and deletes it", async () => {
+    const staleId = uid();
+    await db
+      .insertInto("sessions",)
+      .values([{
+        id: staleId,
+        user_id: userId,
+        token_hash: tokenHash("stale-token",),
+        ip: "127.0.0.1",
+        user_agent: "TestAgent",
+        expires_at: new Date(Date.now() - 60_000,).toISOString(),
+      },],)
+      .execute();
+    const app = createApp(db, userId, "user",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/sessions/${staleId}/switch`, { method: "POST", },),
+    );
+    expect(res.status,).toBe(410,);
+    const row = await db.selectFrom("sessions",).select("id",).where("id", "=", staleId,).executeTakeFirst();
+    expect(row,).toBeUndefined();
   });
 });
