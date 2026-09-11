@@ -767,6 +767,12 @@
       "source": ".plan/tickets/TASK-item-asset-avatar-display-in-inventory-trading-and-provision.md"
     }
   ],
+  "src/assets/service/persist-generated.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-generation-asset-persistence-contract.md"
+    }
+  ],
   "src/assets/service/read.ts": [
     {
       "kind": "ticket",
