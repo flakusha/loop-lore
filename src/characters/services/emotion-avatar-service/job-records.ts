@@ -188,7 +188,7 @@ export async function recordBatchStart(
     kind: "emotion-avatar",
     actorId: opts.actorId,
     payload: {
-      emotions: job.results.map((result,) => result.emotion,),
+      emotions: job.results.map((result,) => result.emotion),
       baseAvatarId: opts.baseAvatarId,
     },
     startedAt: job.startedAt,
