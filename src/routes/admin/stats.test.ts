@@ -27,7 +27,7 @@ function makeApp(db: Kysely<DB>, opts: { userId?: string | null; userRole?: stri
   app.derive((): { userId: string; userRole: string | null } => ({
     userId: opts.userId ?? "",
     userRole: opts.userRole ?? null,
-  }),);
+  }));
   return app.use(statsRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 
@@ -39,7 +39,10 @@ function makeApp(db: Kysely<DB>, opts: { userId?: string | null; userRole?: stri
  * @param input.username - unique username
  * @param input.displayName - human-readable name
  */
-async function insertUser(db: Kysely<DB>, input: { id: string; username: string; displayName: string },): Promise<void> {
+async function insertUser(
+  db: Kysely<DB>,
+  input: { id: string; username: string; displayName: string },
+): Promise<void> {
   await db
     .insertInto("users",)
     .values({
