@@ -5,7 +5,16 @@ import { Elysia, t, } from "elysia";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, PaginationQuery, WorldIdParams, } from "../../validation/schemas";
 import { AdminPaginatedEnvelope, AdminWorldRow, } from "../../validation/schemas/responses";
-import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
+import {
+  ErrorCode,
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonNoContent,
+  jsonResponse,
+  parsePagination,
+  requireUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -19,7 +28,9 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(
         `${prefix}/admin/worlds`,
         async (ctx: any,) => {
-          const { userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -65,7 +76,9 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(
         `${prefix}/admin/worlds/:id`,
         async (ctx: any,) => {
-          const { params: p, userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -73,7 +86,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          const { id, } = p as { id: string };
+          const { id, } = ctx.params as { id: string };
           const world = await opts.database
             .selectFrom("worlds",)
             .selectAll()
@@ -103,7 +116,9 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .delete(
         `${prefix}/admin/worlds/:id`,
         async (ctx: any,) => {
-          const { params: p, userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.system",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -111,7 +126,7 @@ export function worldsRoutes(opts: AdminRouteOpts, prefix = "/api",) {
               code: ErrorCode.Forbidden,
             },);
           }
-          const { id, } = p as { id: string };
+          const { id, } = ctx.params as { id: string };
           await opts.database.deleteFrom("worlds",).where("id", "=", id,).execute();
           return jsonNoContent();
         },

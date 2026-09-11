@@ -37,7 +37,7 @@ function fakeProvider(): LLMProvider {
  */
 function makeApp(db: Kysely<DB>, userRole: string, config: Config,) {
   const app = new Elysia({ name: "test-model-roles", },);
-  app.derive(() => ({ userRole, }));
+  app.derive(() => ({ userId: `test-user-${userRole}`, userRole, }));
   return app.use(modelRolesRoutes({ database: db, config, },),);
 }
 

@@ -19,7 +19,10 @@ import { auditRoutes, } from "./audit";
  */
 function makeApp(db: Kysely<DB>, userRole: string,): Elysia {
   const app = new Elysia({ name: "test-audit", },);
-  app.derive((): { userRole: string } => ({ userRole, }));
+  app.derive((): { userId: string; userRole: string } => ({
+    userId: `test-user-${userRole}`,
+    userRole,
+  }));
   return app.use(auditRoutes({ database: db, config: {} as Config, }, "/api",),);
 }
 

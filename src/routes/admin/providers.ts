@@ -8,7 +8,7 @@ import type { DB, } from "../../db/schema";
 import { listProviders, } from "../../generation/providers/registry";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
 /**
  * @param opts
@@ -43,7 +43,9 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
       },)
       // ── Provider management ────────────────────────────────
       .get(`${prefix}/admin/providers`, (ctx: any,) => {
-        const { userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -75,7 +77,9 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
         },
       },)
       .get(`${prefix}/admin/providers/:name/models`, (ctx: any,) => {
-        const { params, userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -83,7 +87,7 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
             code: ErrorCode.Forbidden,
           },);
         }
-        const providerName = params.name as string;
+        const providerName = ctx.params.name as string;
 
         const health = getProviderHealth(providerName,);
         if (!health) {
@@ -107,7 +111,9 @@ export function providersRoutes(opts: { database?: Kysely<DB> } = {}, prefix = "
         },
       },)
       .post(`${prefix}/admin/providers/rescan`, async (ctx: any,) => {
-        const { userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",

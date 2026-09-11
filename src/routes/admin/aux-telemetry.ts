@@ -25,7 +25,7 @@ import { can, } from "../../users/permissions";
 import { jsonParseOr, } from "../../utils";
 import { DOMAIN_INFO, domainKey, } from "../../utils/hkdf";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 interface AuxTelemetryRow {
@@ -119,7 +119,9 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
   return new Elysia({ name: "admin-aux-telemetry", },)
     .get(`${prefix}/admin/telemetry/aux`, async (ctx: any,) => {
-      const { userRole, query, } = ctx;
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
+      const { userRole, } = extractAuth(ctx,);
       if (!can(userRole, "admin.system",)) {
         return jsonError({
           message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -128,14 +130,14 @@ export function auxTelemetryRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         },);
       }
 
-      const aggregateOnly = query?.aggregate_only === true || query?.aggregate_only === "true";
+      const aggregateOnly = ctx.query?.aggregate_only === true || ctx.query?.aggregate_only === "true";
       const limit = Math.min(
-        Math.max(Number(query?.limit,) || DEFAULT_LIMIT, 1,),
+        Math.max(Number(ctx.query?.limit,) || DEFAULT_LIMIT, 1,),
         MAX_LIMIT,
       );
-      const task = typeof query?.task === "string" ? query.task : undefined;
+      const task = typeof ctx.query?.task === "string" ? ctx.query.task : undefined;
 
-      const sinceParam = typeof query?.since === "string" ? query.since : undefined;
+      const sinceParam = typeof ctx.query?.since === "string" ? ctx.query.since : undefined;
       let sinceMsParsed: number | null = null;
       if (sinceParam) {
         if (/^\d+$/.test(sinceParam,)) {

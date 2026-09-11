@@ -4,7 +4,7 @@
 import { Elysia, t, } from "elysia";
 import { can, } from "../../users/permissions";
 import { ErrorResponse, } from "../../validation/schemas";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "../http-utils";
+import { ErrorCode, extractAuth, HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -16,7 +16,9 @@ export function keyRotationRoutes(opts: AdminRouteOpts, prefix = "/api",) {
     new Elysia({ name: "admin-key-rotation", },)
       // ── Manual key rotation trigger ─────────────────────────
       .post(`${prefix}/admin/rotate-expired-keys`, async (ctx: any,) => {
-        const { userRole, } = ctx;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const { userRole, } = extractAuth(ctx,);
         if (!can(userRole, "admin.system",)) {
           return jsonError({
             message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
