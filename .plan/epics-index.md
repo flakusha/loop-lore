@@ -3,7 +3,7 @@
 > Auto-generated from `.plan/epics/`. Do not edit manually.
 > Regenerate with `bun run scripts/gen-plan-docs.ts`.
 
-**Total:** 278 epics
+**Total:** 281 epics
 
 ## Summary
 
@@ -231,17 +231,20 @@
 | Unknown | Epic: Review — dev 2026-08-26 Late Merges (NSFW Audit Regression + Formatting) | Medium | Unknown | 0 | [epic-review-dev-2026-08-26-late-merges.md](/.plan/epics/epic-review-dev-2026-08-26-late-merges.md) |
 | 🟢 Code+tests+schema done (migration 036); UNWIRED | Epic: Skills | High | High | 0 | [epic-skills.md](/.plan/epics/epic-skills.md) |
 | Unknown | Epic: Strict Review — dev 2026-08-26 Merges (Security & Data-Integrity) | High | Unknown | 0 | [epic-review-dev-2026-08-26-security-data-integrity-merges.md](/.plan/epics/epic-review-dev-2026-08-26-security-data-integrity-merges.md) |
-| Draft\ | Epic: Timeline System | High\ | High\ | 6 | [epic-timeline-system.md](/.plan/epics/epic-timeline-system.md) |
+| Draft\ | Epic: Timeline System | High\ | High\ | 2 | [epic-timeline-system.md](/.plan/epics/epic-timeline-system.md) |
 | 🟡 In Progress — schema + loader + runtime shipped (engine schema/loader, runner state machine, per-chat session persistence, group-chat mention strip, GM routing/shadow-note/reuse-runner slices all landed). Remaining: model-family formatter matrix, real video-dispatch backend, frontend step UI + confirmation modal, plugin extension point. | Epic: Workflow Engine | High (MVP scoped, post-Gate C) | Large | 12 | [epic-workflow-engine.md](/.plan/epics/epic-workflow-engine.md) |
 | Not Started | Epic: World Diplomacy & Karma | Medium | High | 17 | [epic-world-diplomacy-karma.md](/.plan/epics/epic-world-diplomacy-karma.md) |
 | Not Started | Epic: World Encounters & Resources | Medium | High | 12 | [epic-world-encounters.md](/.plan/epics/epic-world-encounters.md) |
 | Not Started | Epic: World NPCs | High | High | 11 | [epic-world-npcs.md](/.plan/epics/epic-world-npcs.md) |
 | Not Started | Epic: World Travel & Time | High | High | 25 | [epic-world-travel-time.md](/.plan/epics/epic-world-travel-time.md) |
 | 🟢 Complete (core size-strict debt closed; `src/server/start.ts` remains documented follow-on) | File Splitting & God-Module Refactor | High | Very High | 5 | [epic-file-splitting.md](/.plan/epics/epic-file-splitting.md) |
+| Proposed | Frontend Emoji (`:...:`) and Message Reactions | Unknown | Unknown | 0 | [epic-frontend-emoji-reactions.md](/.plan/epics/epic-frontend-emoji-reactions.md) |
 | 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done | Frontend Gallery & Media Viewer | Medium | Medium | 1 | [epic-frontend-gallery.md](/.plan/epics/epic-frontend-gallery.md) |
 | ✅ Done — TASK-htmx-reuse-e2e-verify done; browser e2e green in parallel (113/0 across 18 files, 2026-08-07). Scope note: loading-state dedup via shared `src/components/loading-state.html` landed (7 views migrated); remaining dedup tasks (audit/shared-partials/ajax-helper/migrate-views) tracked separately. | Frontend HTML Deduplication & HTMX AJAX Reuse | Medium | Medium | 4 | [epic-frontend-html-dedup-htmx-reuse.md](/.plan/epics/epic-frontend-html-dedup-htmx-reuse.md) |
+| Proposed | Frontend Slash Commands (`/...`) for Chat, Group Chat, Assistant | Unknown | Unknown | 0 | [epic-frontend-chat-commands.md](/.plan/epics/epic-frontend-chat-commands.md) |
 | 🟡 In Progress (2026-08-01 — frontend + DB + CRUD routes done; prompt injection pending) | GM/Assistant Story Whitenotes & Shadow Notes | High | Medium | 0 | [epic-gm-shadow-notes.md](/.plan/epics/epic-gm-shadow-notes.md) |
 | 🟡 Partial — `src/group-chat` modules exist (mention-parser, turn-selector, index) but the feature was never captured as a first-class epic; linked defects resolved, feature tickets track remaining completion. | Group Chat | High | Medium | 0 | [epic-group-chat.md](/.plan/epics/epic-group-chat.md) |
+| Proposed | Hidden Carriage — Chat-Includeable Structured Memory Context | Unknown | Unknown | 0 | [epic-hidden-carriage-context.md](/.plan/epics/epic-hidden-carriage-context.md) |
 | Not Started | Immersion Consistency Gate (Actor-State Blockage & Refusal) | High | Large | 10 | [epic-immersion-consistency-gate.md](/.plan/epics/epic-immersion-consistency-gate.md) |
 | 🟡 Partially Implemented (wiring gaps remain) | Impersonation System | Medium | Med | 5 | [epic-impersonation.md](/.plan/epics/epic-impersonation.md) |
 | 🟡 In Progress (backend wiring merged 2026-08-14 — `rpg-wire-routes`; item frontend/UX tickets remain) | Item Systems Unification & Gap Closure | High | High | 6 | [epic-item-systems-unification.md](/.plan/epics/epic-item-systems-unification.md) |
@@ -2425,6 +2428,14 @@ Extends the time scale system (epic-time-scale.md) to manage branching world tim
 
 Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-file-size.ts`),
 
+### Frontend Emoji (`:...:`) and Message Reactions
+
+- **Status:** Proposed
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-frontend-emoji-reactions.md`
+
 ### Frontend Gallery & Media Viewer
 
 - **Status:** 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done
@@ -2442,6 +2453,14 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **Type:** Optimization Epic
 - **Tags:** frontend, htmx, partials, components, deduplication, ajax, reuse, views
 - **File:** `.plan/epics/epic-frontend-html-dedup-htmx-reuse.md`
+
+### Frontend Slash Commands (`/...`) for Chat, Group Chat, Assistant
+
+- **Status:** Proposed
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-frontend-chat-commands.md`
 
 ### GM/Assistant Story Whitenotes & Shadow Notes
 
@@ -2462,6 +2481,14 @@ Break down 200+ source files exceeding the 250L soft ceiling (`scripts/check-fil
 - **File:** `.plan/epics/epic-group-chat.md`
 
 Group chat lets multiple characters participate in one conversation. The runtime
+
+### Hidden Carriage — Chat-Includeable Structured Memory Context
+
+- **Status:** Proposed
+- **Priority:** Unknown
+- **Effort:** Unknown
+- **Type:** Feature
+- **File:** `.plan/epics/epic-hidden-carriage-context.md`
 
 ### Immersion Consistency Gate (Actor-State Blockage & Refusal)
 
