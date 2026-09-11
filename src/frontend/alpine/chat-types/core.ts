@@ -85,10 +85,6 @@ export interface ChatCoreState
   _renameChatName: string;
   _personas: any[];
   _selectedPersonaId: string | null;
-  // Ownership transfer modal state (TASK-chat-feature-ownership-transfer)
-  // TODO(chat-ownership): declare the ownership action methods here (openOwnershipTransferModal,
-  // closeOwnershipTransferModal, submitOwnershipTransfer, canTransferOwnership) — without them the
-  // ownershipActions literal in chat-settings/ownership.ts fails typecheck as excess properties.
   _ownershipModalOpen: boolean;
   _ownershipNewOwnerId: string;
   _ownershipReason: string;
@@ -208,7 +204,6 @@ export interface ChatCoreState
   dispatchCommandAction(action: string, payload: Record<string, unknown> | null, chatId: string,): Promise<void>;
   loadImpersonationState(): Promise<void>;
   loadChatParticipants(): Promise<void>;
-  // Ownership transfer (TASK-chat-feature-ownership-transfer)
   openOwnershipTransferModal(): void;
   closeOwnershipTransferModal(): void;
   submitOwnershipTransfer(): Promise<void>;

@@ -113,10 +113,7 @@ export async function transferOwnership(
     };
   }
 
-  // TODO(chat-ownership): validate the target up front — chats.created_by FKs to users.id
-  // (onDelete set null: that's how ownerless chats arise) and chat_participants.actor_id FKs
-  // to actors.id, so a bogus newOwnerId dies deep in the tx as a flattened "Transfer failed"
-  // instead of a 404. Check user + actor rows exist before opening the tx.
+  // TODO(chat-ownership): validate newOwnerId (FKs users/actors) up front — bogus ids die deep in the tx as a flattened 400.
   if (previousOwnerId === newOwnerId) {
     return {
       ok: false,
@@ -127,9 +124,7 @@ export async function transferOwnership(
   // Authority re-check: this guard rejects a delegated `role_in_chat = 'owner'`
   // grant from passing the chat around — only the actual current owner OR an admin
   // may transfer. (Admins already bypassed the initial access check above.)
-  // TODO(chat-ownership): TOCTOU — this check and the reads above run outside the tx
-  // below; concurrent transfers are last-writer-wins. Re-verify previousOwnerId
-  // inside the tx.
+  // TODO(chat-ownership): TOCTOU — re-verify previousOwnerId inside the tx (concurrent transfers are last-writer-wins).
   if (!isAdmin && requesterId !== previousOwnerId) {
     return {
       ok: false,
@@ -141,6 +136,18 @@ export async function transferOwnership(
   const now = new Date().toISOString();
   const reason = opts.reason?.trim().slice(0, 500,) ?? null;
 
+  const auditMeta = (() => {
+    const result = safeJsonStringify({
+      entity_type: "chat",
+      entity_id: chatId,
+      action: "transfer_ownership",
+      previous_owner_id: previousOwnerId,
+      new_owner_id: newOwnerId,
+      auto_invited: autoInvited,
+      reason,
+    },);
+    return result.ok ? result.value : "{}";
+  })();
   try {
     const outcome = await db.transaction().execute(async (trx,) => {
       if (autoInvited) {
@@ -187,18 +194,7 @@ export async function transferOwnership(
           message: "Chat ownership transferred",
           module: "chat-ownership",
           user_id: requesterId,
-          meta: (() => {
-            const result = safeJsonStringify({
-              entity_type: "chat",
-              entity_id: chatId,
-              action: "transfer_ownership",
-              previous_owner_id: previousOwnerId,
-              new_owner_id: newOwnerId,
-              auto_invited: autoInvited,
-              reason,
-            },);
-            return result.ok ? result.value : "{}";
-          })(),
+          meta: auditMeta,
           event_type: "chat_ownership_transferred",
           entity_type: "chat",
           entity_id: chatId,
@@ -230,13 +226,6 @@ export async function transferOwnership(
       link: `/chat/${chatId}`,
       data: { chatId, previousOwnerId: outcome.previousOwnerId, reason, },
     },);
-    ownershipLogger().info("ownership notifications emitted", {
-      chatId,
-      previousOwnerId: outcome.previousOwnerId,
-      newOwnerId: outcome.newOwnerId,
-      autoInvited: outcome.autoInvited,
-    },);
-
     ownershipLogger().info("ownership transferred", {
       chatId,
       previousOwnerId: outcome.previousOwnerId,
@@ -251,8 +240,6 @@ export async function transferOwnership(
       err instanceof Error ? err : new Error(String(err,),),
       { chatId, },
     );
-    // TODO(chat-ownership): don't flatten every tx failure to bad_request — an auto-invite
-    // unique-conflict should be 409 and a DB outage 500; this masks the real error.
     return {
       ok: false,
       error: { code: "bad_request", message: "Transfer failed; transaction rolled back", },
