@@ -45,6 +45,14 @@ export type { GroupTurnOrder, TurnOrderSlot, } from "./turn-order";
 // ── Participants ──────────────────────────────────────────────
 export { updateImpersonation, } from "./participants";
 
+// ── Ownership transfer (TASK-chat-feature-ownership-transfer) ─
+export {
+  transferOwnership,
+  type TransferOwnershipOptions,
+  type TransferOwnershipOutcome,
+  type TransferOwnershipResult,
+} from "./ownership";
+
 // ── Party join/leave (C7 — group-chat VN party) ──────────────
 export {
   joinParty,

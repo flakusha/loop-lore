@@ -8,6 +8,7 @@ import { generateEntityRoutes, } from "./generate-entity";
 import { listRoutes, } from "./list";
 import { manageRoutes, } from "./manage";
 import { participantRoutes, } from "./participants";
+import { ownershipRoutes, } from "./ownership";
 import { sideChannelRoutes, } from "./side-channels";
 import { partySplitRoutes, } from "./split";
 import { templatesRoutes, } from "./templates";
@@ -38,6 +39,7 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(batchRoutes(opts, prefix,),)
       .use(manageRoutes(opts, prefix,),)
       .use(participantRoutes(opts, prefix,),)
+      .use(ownershipRoutes(opts, prefix,),)
       .use(sideChannelRoutes(opts, prefix,),)
       .use(turnOrderRoutes(opts, prefix,),)
       .use(partySplitRoutes(opts, prefix,),)
