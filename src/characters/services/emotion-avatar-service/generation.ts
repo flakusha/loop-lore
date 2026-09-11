@@ -24,7 +24,7 @@ import {
   buildEmotionPrompt,
   extractAvatarMetadata,
 } from "../emotion-avatar-fallback";
-import { recordBatchFinish, recordBatchStart, } from "./job-records";
+import { recordBatchFailure, recordBatchFinish, recordBatchStart, } from "./job-records";
 import type { BatchGenerationJob, GenerateEmotionAvatarsOpts, } from "./types";
 
 /**
@@ -79,12 +79,16 @@ export async function runBatchGeneration(
   const avatarEmotions = config.templates.avatar.emotions;
 
   if (!sdConfig) {
-    throw new Error("No image generation provider configured",);
+    const error = new Error("No image generation provider configured",);
+    await recordBatchFailure(svc.db, job, error,);
+    throw error;
   }
 
   const validated = validateProviderUrl(sdConfig.baseUrl,);
   if (!validated.ok) {
-    throw new Error(`Invalid image provider URL: ${validated.error}`,);
+    const error = new Error(`Invalid image provider URL: ${validated.error}`,);
+    await recordBatchFailure(svc.db, job, error,);
+    throw error;
   }
 
   const uploadDir = opts.uploadDir ?? config.assets.uploadDir;
@@ -106,6 +110,7 @@ export async function runBatchGeneration(
   for (const result of job.results) {
     // Status can change to "cancelled" via cancelJob() at runtime
     if ((job.status as string) === "cancelled") {
+      job.completedAt = new Date().toISOString();
       await recordBatchFinish(svc.db, job,);
       return;
     }

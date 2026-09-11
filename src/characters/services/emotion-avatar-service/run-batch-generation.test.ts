@@ -155,6 +155,7 @@ describeOrSkip("runBatchGeneration", () => {
     expect(job.results.map((result,) => result.status),).toEqual(["completed", "pending",],);
     const record = await getGenerationJobRecord(db, job.id,);
     expect(record?.status,).toBe("cancelled",);
+    expect(job.completedAt,).toBeDefined();
   });
 
   // Last: re-registers the process-global config mock with no providers.
@@ -180,5 +181,39 @@ describeOrSkip("runBatchGeneration", () => {
     await expect(runBatchGeneration(svc, job, makeOpts(),),).rejects.toThrow(
       "No image generation provider",
     );
+    // No zombie "running" row: the failure is recorded as terminal.
+    expect(job.status,).toBe("failed",);
+    expect(job.error,).toContain("No image generation provider",);
+    const record = await getGenerationJobRecord(db, job.id,);
+    expect(record?.status,).toBe("failed",);
+    expect(record?.errorMessage,).toContain("No image generation provider",);
+    expect(record?.completedAt,).not.toBeNull();
+  });
+
+  // Last: invalid provider URL leaves a failed (not running) record too.
+  it("records failure when the provider URL is invalid", async () => {
+    mock.module("../../../config/load", () => ({
+      ...realConfigLoad,
+      loadConfig: () => ({
+        ...structuredClone(createConfigSchema().defaults,),
+        assets: { uploadDir: "/tmp", },
+        generation: {
+          ...structuredClone(createConfigSchema().defaults,).generation,
+          providers: { sd: [{ ...FAKE_SD, baseUrl: "notaurl", },], },
+        },
+      }),
+    }),);
+    const svc = makeSvc(db, mock(async () => ({ avatarId: "av-1", assetId: "as-1", })),);
+    const job = createJob({
+      id: "job-batch-badurl" as BatchJobId,
+      actorId,
+      baseAvatarId: "avatar-base",
+      emotions: [EmotionType.Happy,],
+    },);
+    await expect(runBatchGeneration(svc, job, makeOpts(),),).rejects.toThrow(
+      "Invalid image provider URL",
+    );
+    const record = await getGenerationJobRecord(db, job.id,);
+    expect(record?.status,).toBe("failed",);
   });
 },);
