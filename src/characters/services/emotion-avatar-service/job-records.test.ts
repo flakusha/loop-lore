@@ -12,9 +12,12 @@ import {
   createGenerationJobRecord,
   getGenerationJobRecord,
   listGenerationJobRecords,
+  recordBatchFinish,
+  recordBatchStart,
   updateGenerationJobRecord,
 } from "./job-records";
-
+import { createJob, } from "./job-store";
+import type { BatchJobId, } from "./types";
 describe("generation job records", () => {
   test("create then get round-trips status and payload", async () => {
     const { db, sqlite, } = await createTestDb();
@@ -89,6 +92,55 @@ describe("generation job records", () => {
       const listed = await listGenerationJobRecords(db, "actor-list-1",);
       expect(listed.map((record,) => record.id),).toEqual(["job-b", "job-a",],);
       expect(await getGenerationJobRecord(db, "job-nope",),).toBeUndefined();
+    } finally {
+      sqlite.close();
+    }
+  });
+  test("recordBatchStart mirrors the job as running; recordBatchFinish persists terminal state", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertActors(db, "Batch Actor", { id: "actor-batch-1", },);
+      const job = createJob({
+        id: "job-batch-1" as BatchJobId,
+        actorId: "actor-batch-1",
+        baseAvatarId: "av-base",
+        emotions: [EmotionType.Happy, EmotionType.Sad,],
+      },);
+      await recordBatchStart(db, job, { actorId: "actor-batch-1", baseAvatarId: "av-base", });
+      const running = await getGenerationJobRecord(db, "job-batch-1",);
+      expect(running?.status,).toBe("running",);
+      expect(running?.payload.emotions,).toEqual([EmotionType.Happy, EmotionType.Sad,],);
+
+      job.status = "completed";
+      job.results[0]!.status = "completed";
+      job.results[1]!.status = "completed";
+      job.completedAt = "2026-09-11T00:02:00.000Z";
+      await recordBatchFinish(db, job,);
+      const done = await getGenerationJobRecord(db, "job-batch-1",);
+      expect(done?.status,).toBe("completed",);
+      expect(done?.completedAt,).toBe("2026-09-11T00:02:00.000Z",);
+      expect(done?.results.every((result,) => result.status === "completed"),).toBe(true,);
+    } finally {
+      sqlite.close();
+    }
+  });
+
+  test("recordBatchFinish stamps completedAt when the job has none (cancel path)", async () => {
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertActors(db, "Batch Cancel Actor", { id: "actor-batch-2", },);
+      const job = createJob({
+        id: "job-batch-2" as BatchJobId,
+        actorId: "actor-batch-2",
+        baseAvatarId: "av-base",
+        emotions: [EmotionType.Happy,],
+      },);
+      await recordBatchStart(db, job, { actorId: "actor-batch-2", baseAvatarId: "av-base", });
+      job.status = "cancelled";
+      await recordBatchFinish(db, job,);
+      const record = await getGenerationJobRecord(db, "job-batch-2",);
+      expect(record?.status,).toBe("cancelled",);
+      expect(record?.completedAt,).toBeDefined();
     } finally {
       sqlite.close();
     }
