@@ -4901,10 +4901,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/chat/privacy.ts": [
@@ -5295,10 +5291,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/chat/service/crud/create.ts": [
@@ -5405,6 +5397,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/chat/service/participants.ts": [
@@ -5679,10 +5675,6 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-component-buttons.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/chat/setup-templates.test.ts": [
@@ -6175,6 +6167,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-chat-template-config-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     },
     {
       "kind": "ticket",
@@ -11765,6 +11761,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
+    }
+  ],
+  "src/frontend/alpine/chat-settings/ownership.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/frontend/alpine/chat-settings/vn.ts": [
@@ -17992,10 +17994,6 @@
     },
     {
       "kind": "ticket",
-      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
-    },
-    {
-      "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-accept-frontend-supplied-request-id-uuid-with-ser.md"
     },
     {
@@ -20957,6 +20955,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    }
+  ],
+  "src/routes/chats/ownership.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/routes/chats/participants.ts": [
