@@ -32,7 +32,15 @@ export function locationRoutes(opts: HandleOpts, prefix = "/api",) {
       },
       {
         response: {
-          200: t.Object({ data: t.Array(t.Any(),), total: t.Number(), page: t.Number(), pageSize: t.Number(), },),
+          200: t.Object({
+            data: t.Array(t.Any(),),
+            pagination: t.Object({
+              page: t.Number(),
+              pageSize: t.Number(),
+              total: t.Number(),
+              totalPages: t.Number(),
+            },),
+          },),
           401: ErrorResponse,
           404: ErrorResponse,
         },
