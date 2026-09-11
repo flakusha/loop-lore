@@ -502,7 +502,11 @@ async function ensureGpgWarm() {
   }
   console.error(`gpg-precheck: cold (${prolonged.reason}); warming via loopback pinentry...`,);
   const warmed = await warmCache(keyId,);
-  if (!warmed) {
+  // warmCache now returns a discriminated result (kind: "populated" |
+  // "noop" | "failed"); check only the failure case so a no-op warm
+  // (cache already populated) doesn't accidentally trigger the cold
+  // error path.
+  if (warmed.kind === "failed") {
     console.error("hint: gpg-cold-cache",);
     console.error(`Failed to warm GPG cache for ${keyId}.`,);
     console.error(`Run: bun run scripts/gpg-unlock.mjs`,);
