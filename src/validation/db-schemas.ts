@@ -1660,6 +1660,17 @@ export const VnChoicesSchema = t.Object({
   selected_at: t.Optional(t.String(),),
 },);
 
+// ── rotation_history ────────────────────────────────────────────
+export const RotationHistorySchema = t.Object({
+  chat_id: t.String(),
+  reason: t.String(),
+  new_key_id: t.String(),
+  actor_id: t.Optional(t.String(),),
+  old_key_id: t.Optional(t.String(),),
+  messages_re_encrypted: t.Optional(t.Number(),),
+  created_at: t.Optional(t.String(),),
+},);
+
 // ── personas ────────────────────────────────────────────
 export const PersonasSchema = t.Object({
   user_id: t.String(),
