@@ -28,6 +28,7 @@ import { adminRoutes, } from "../routes/admin";
 import { adminCharacterOverridesRoutes, } from "../routes/admin-character-overrides";
 import { adminNsfwRoutes, } from "../routes/admin-nsfw";
 import { adminTemplateRoutes, } from "../routes/admin-templates";
+import { sdTemplatesRoutes, } from "../routes/admin/sd-templates";
 import { analyticsRoutes, } from "../routes/analytics";
 import { apiKeysRoutes, } from "../routes/api-keys";
 import { assetSearchRoutes, } from "../routes/asset-search";
@@ -161,6 +162,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(chatBackgroundsRoutes(handleOpts,),);
   app.use(locationExplorerRoutes(handleOpts,),);
   app.use(adminRoutes(handleOpts,),);
+  app.use(sdTemplatesRoutes(handleOpts,),);
   app.use(pluginRoutes(handleOpts,),);
   app.use(storyTurnsRoutes(handleOpts,),);
   app.use(storyStatesRoutes(handleOpts,),);

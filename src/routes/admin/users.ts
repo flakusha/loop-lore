@@ -11,7 +11,16 @@ import {
   UserIdParams,
 } from "../../validation/schemas";
 import { AdminPaginatedEnvelope, AdminUserRow, } from "../../validation/schemas/responses";
-import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "../http-utils";
+import {
+  ErrorCode,
+  extractAuth,
+  HttpStatus,
+  jsonError,
+  jsonNoContent,
+  jsonResponse,
+  parsePagination,
+  requireUserId,
+} from "../http-utils";
 import type { AdminRouteOpts, } from "./types";
 
 /**
@@ -27,7 +36,9 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(
         `${prefix}/admin/users`,
         async (ctx: any,) => {
-          const { userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.users",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -91,7 +102,9 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .get(
         `${prefix}/admin/users/:id`,
         async (ctx: any,) => {
-          const { params: p, userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.users",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -100,7 +113,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           }
 
-          const { id, } = p as { id: string };
+          const { id, } = ctx.params as { id: string };
           const user = await db
             .selectFrom("users",)
             .select([
@@ -143,7 +156,9 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .patch(
         `${prefix}/admin/users/:id/role`,
         async (ctx: any,) => {
-          const { params: p, body, userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.users",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -152,8 +167,8 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           }
 
-          const { id, } = p as { id: string };
-          const { role, } = body as { role: "admin" | "user" | "viewer" };
+          const { id, } = ctx.params as { id: string };
+          const { role, } = ctx.body as { role: "admin" | "user" | "viewer" };
 
           await db.updateTable("users",).set({ role, },).where("id", "=", id,).execute();
           return jsonResponse({ ok: true, },);
@@ -167,7 +182,9 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
       .delete(
         `${prefix}/admin/users/:id`,
         async (ctx: any,) => {
-          const { params: p, userRole, } = ctx;
+          const userId = requireUserId(ctx,);
+          if (typeof userId !== "string") { return userId; }
+          const { userRole, } = extractAuth(ctx,);
           if (!can(userRole, "admin.users",)) {
             return jsonError({
               message: ctx.t?.("admin.adminAccessRequired",) ?? "Admin access required",
@@ -176,7 +193,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
             },);
           }
 
-          const { id, } = p as { id: string };
+          const { id, } = ctx.params as { id: string };
           await db.deleteFrom("users",).where("id", "=", id,).execute();
           return jsonNoContent();
         },
