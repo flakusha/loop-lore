@@ -39,6 +39,7 @@ import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { renderToolCallBlock, sseData, } from "./sse-utils";
 import { flushChunk, recordLastRendered, } from "./stream-flush";
 import { buildToolCallAssistantMessage, toGenerationToolCalls, } from "./stream-messages";
+import { flushChunk, recordLastRendered, } from "./stream-sink";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
 import { storeToolResultRows, } from "./tool-result-persist";
 import type { GenerateRequest, } from "./types";
