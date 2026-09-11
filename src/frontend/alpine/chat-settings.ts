@@ -3,10 +3,11 @@
 import type { ChatState, GmConfig, } from "./types";
 import type { OutputStylePreset, } from "../../chat/output-style";
 import { apiFetch, } from "./htmx";
-import { buildGmConfig, presentationGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
+import { buildGmConfig, readGmSettings, setStoryPaused, } from "./chat-settings/gm-config";
 import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
 import { personaActions, } from "./chat-settings/persona";
+import { presentationGmConfig, } from "./chat-settings/gm-config-presentation";
 import { syncVnRenderer, } from "./chat-settings/vn";
 import { t, } from "./i18n";
 

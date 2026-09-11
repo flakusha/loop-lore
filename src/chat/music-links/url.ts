@@ -67,3 +67,27 @@ export function toEmbedSrc(url: string, service: MusicService,): string {
       return clean;
   }
 }
+
+/** Service URL patterns + oEmbed endpoints (moved from ../music-links.ts). */
+export const SERVICES = {
+  spotify: {
+    pattern: /^(https?:\/\/)?(open\.)?spotify\.com\/.+/,
+    oembed: "https://open.spotify.com/oembed",
+  },
+  youtube_music: {
+    pattern: /^(https?:\/\/)?music\.youtube\.com\/.+/,
+    oembed: null,
+  },
+  soundcloud: {
+    pattern: /^(https?:\/\/)?(www\.)?soundcloud\.com\/.+/,
+    oembed: "https://soundcloud.com/oembed",
+  },
+  apple_music: {
+    pattern: /^(https?:\/\/)?(www\.)?music\.apple\.com\/.+/,
+    oembed: null,
+  },
+  bandcamp: {
+    pattern: /^(https?:\/\/)?[\w-]+\.bandcamp\.com\/.+/,
+    oembed: null,
+  },
+} as const satisfies Record<MusicService, { pattern: RegExp; oembed: string | null }>;

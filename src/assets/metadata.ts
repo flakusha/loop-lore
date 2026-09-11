@@ -7,6 +7,7 @@
  * Supports: PNG, JPEG, WebP, GIF. Alpha detection lives in ./alpha-detect.
  */
 import { detectGifAlpha, detectPngAlpha, detectWebpAlpha, } from "./alpha-detect";
+import { decodeTextChunk, ZTXTSIG, } from "./png-text-chunk";
 
 /** */
 export interface ImageMetadata {
@@ -20,7 +21,6 @@ export interface ImageMetadata {
 
 const PNG_HEADER = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10,],);
 const TEXTSIG = 0x74_45_58_74; // 'tEXt' in big-endian
-const ZTXTSIG = 0x7A_54_58_74; // 'zTXt' in big-endian
 
 /**
  * @param buf
@@ -110,31 +110,6 @@ function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; ca
   return { width, height, caption, };
 }
 
-/**
- * Decode a PNG tEXt/zTXt chunk into its key/value pair (null on empty value).
- * @param buf
- * @param chunkType
- * @param dataStart
- * @param dataEnd
- * @returns void
- */
-function decodeTextChunk(
-  buf: Uint8Array,
-  chunkType: number,
-  dataStart: number,
-  dataEnd: number,
-): { key: string; value: string } | null {
-  // Find null separator between key and value
-  let nullPos = dataStart;
-  while (nullPos < dataEnd && buf[nullPos] !== 0) { nullPos++; }
-  const key = new TextDecoder().decode(buf.slice(dataStart, nullPos,),);
-  const valStart = nullPos + 1;
-  if (valStart >= dataEnd) { return null; }
-  const value = chunkType === ZTXTSIG && buf[valStart] === 0
-    ? new TextDecoder().decode(buf.slice(valStart + 1, dataEnd,),)
-    : new TextDecoder().decode(buf.slice(valStart, dataEnd,),);
-  return { key, value, };
-}
 /**
  * @param buf
  */
