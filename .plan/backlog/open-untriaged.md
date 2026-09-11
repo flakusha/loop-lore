@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
 
-# Open — Untriaged Tickets & Issues (2026-09-10)
+# Open — Untriaged Tickets & Issues (2026-09-11 — chat-epic filings + Sep-10 re-triage)
 
 > **Purpose:** landing zone for git issues that exist but have no index entry / epic
 > linkage yet (advisory orphans reported by `bun run plan:sync`; recompute the
@@ -71,6 +71,19 @@ links `ad8bb7e`) and `bun run plan:sync` is green.
   Bucket A; verify the ticket still reproduces, else close. Suggested home: middleware
   hardening or close.
 - `dd6158e` TASK-unified — placeholder scope; scope it to a real deliverable or close.
+### Chat Variants Taxonomy + Chat Product Features wave (filed 2026-09-11 — **NEW**)
+
+Two new epics with 27 tickets filed together on 2026-09-11 awaiting triage. Tickets live on disk; epic spec + ticket files are linked but no git issues exist yet (and `plan:sync` is not required — these are intentional new filings, not orphans). Both cluster tables are already surfaced in `priority-p3-p5.md`:
+
+- **`epic-chat-variants-taxonomy.md`** — taxonomy-only epic, 12 variants, **no schema migration**. Maps `(chat_type, chat_mode, chat_purpose)` onto existing columns (`max_turns`, `auto_advance`, `gm_config`, `talkativity`, `prompt_override`). Authority for "chat admin" = global admin OR creator OR owning gm. Status: 🟡 Design — taxonomy agreed; column mapping established; per-variant implementation open.
+  - 12 variant tickets: `TASK-chat-variant-{assistant,assistant-group,user-1x1,user-group,user-group-admin,llm-only,llm-only-group,llm-only-group-gm,character,character-group,rpg,rpg-group}.md`
+  - **Suggested home:** `priority-p3-p5.md` Chat Variants Taxonomy cluster (already inserted 2026-09-11). Schedule cross-cutting (frontend variant picker, payload validator, legacy backfill) once any single variant ships.
+- **`epic-chat-product-features.md`** — cross-cutting product feature coverage, 15 tickets. Status: 🟡 Not Started.
+  - **P0-P2 promoted** (already inserted into `priority-p0-p2.md` 2026-09-11): `TASK-chat-feature-encryption-key-rotation.md` (app-critical — broken encryption blocks all private chats) and `TASK-chat-feature-ownership-transfer.md` (user-flagged new requirement).
+  - **P3-P5 remainder** (already in `priority-p3-p5.md` Chat Product Features cluster): component-buttons (Medium), notes-shadow-carriage (Low), context-memory-events (Medium), turn-talkativity-skip (Medium), moderation (High), location-transition-transfer (Medium), archive-deletion-search (Low), introduction-generation-propagation (High), entry-field-pre-send (Low), rpg-rule-system (Low), settings-templates-compat-matrix (Medium), rpg-location-uniqueness (Low, RPG-gated), rpg-chronological-navigation (Low, RPG-gated).
+  - **Suggested home:** `priority-p3-p5.md` Chat Product Features cluster + `priority-p0-p2.md` P0 table for encryption/ownership. Schedule order: encryption-key-rotation → ownership-transfer → moderation → introduction-generation → remaining in epic's published effort ranking.
+
+**Triage status (2026-09-11):** all 27 tickets filed with realistic `src/` paths, acceptance criteria, related tickets. **Triage pending** — link to git issues when created, then `plan:sync --fix` to backfill the index.
 
 ### New clusters (open issues)
 
