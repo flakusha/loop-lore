@@ -729,6 +729,16 @@ export const SCHEMA = new SchemaManifest()
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
   },)
+  .table("rotation_history", {
+    id: col("text", { primaryKey: true, },),
+    chat_id: col("text", { notNull: true, },),
+    actor_id: col("text",),
+    reason: col("text", { notNull: true, },),
+    old_key_id: col("text",),
+    new_key_id: col("text", { notNull: true, },),
+    messages_re_encrypted: col("integer", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+  },)
   .table("schema_version", {
     version: col("integer", { primaryKey: true, },),
     applied_at: col("text", { notNull: true, hasDefault: true, },),

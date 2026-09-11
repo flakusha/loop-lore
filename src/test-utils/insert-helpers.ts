@@ -2308,6 +2308,29 @@ export async function insertVnChoices(
   } as any,).execute();
 }
 
+/** Insert a rotation_history row. */
+export async function insertRotationHistory(
+  db: Db,
+  chat_id: string,
+  reason: string,
+  new_key_id: string,
+  opts?: {
+    id?: string;
+    actor_id?: string | null;
+    old_key_id?: string | null;
+    messages_re_encrypted?: number;
+    created_at?: string;
+  },
+): Promise<void> {
+  await db.insertInto("rotation_history",).values({
+    id: crypto.randomUUID(),
+    chat_id,
+    reason,
+    new_key_id,
+    ...opts,
+  } as any,).execute();
+}
+
 /** Insert a personas row. */
 export async function insertPersonas(
   db: Db,
