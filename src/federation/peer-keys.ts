@@ -15,7 +15,7 @@
 //
 // Single-writer invariant: only the receiver generates/rotates its inbound
 import type { Kysely, } from "kysely";
-import { decryptBytes, encryptBytes, } from "../crypto/actor-keys";
+import { decryptBytes, encryptBytes, } from "../crypto/actor-key-bytes";
 import type { DB, } from "../db/schema";
 import { type ContentCipher, pskCipher, } from "./cipher";
 import { canonicalOrigin, } from "./peer-fetch";
