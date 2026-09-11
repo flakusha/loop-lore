@@ -3,7 +3,7 @@
 
 import { existsSync, mkdirSync, } from "fs";
 import { resolve, } from "path";
-import { branchToPath, } from "../utils/config";
+import { branchToPath, linkWorktreeCredentials, } from "../utils/config";
 import { gitSync, isProtected, } from "../utils/git";
 import { linkNodeModules, } from "../utils/modules";
 import { log, } from "../utils/output";
@@ -82,6 +82,7 @@ export async function execute(
   }
 
   linkNodeModules(config.repoRoot, wtPath,);
+  linkWorktreeCredentials(config.repoRoot, wtPath,);
 
   log("success", `Created: ${wtPath}`,);
 }

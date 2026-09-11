@@ -115,8 +115,9 @@ function checkDevMergeable(repoRoot: string,): void {
  *
  * Lock primitive: atomic `O_CREAT|O_EXCL` via Node `openSync(path, 'wx')`.
  * The first caller wins; later callers fail fast. The lockfile content is
- * the PID so a stale lock from a crashed prior run can be detected via
- * `kill -0` and reaped automatically.
+ * the PID, so a stale lock from a crashed prior run is detected via
+ * `kill -0` and reaped automatically. An empty or corrupt lockfile
+ * (SIGKILL between create and PID write) reaps the same way.
  *
  * Returns a release function the caller MUST invoke in a finally block.
  *
@@ -152,7 +153,15 @@ export function acquireFinalizeLock(repoRoot: string,): () => void {
       return false;
     }
     const ownerPid = parseInt(raw, 10,);
-    if (!Number.isFinite(ownerPid,) || ownerPid === myPid) { return false; }
+    if (!Number.isFinite(ownerPid,)) {
+      // Empty or corrupt lockfile: a previous holder died between create
+      // and PID write (SIGKILL leaves a 0-byte file). Reap and retry.
+      try {
+        unlinkSync(lockPath,);
+      } catch { /* best-effort */ }
+      return tryCreate();
+    }
+    if (ownerPid === myPid) { return false; }
     try {
       process.kill(ownerPid, 0,);
       // Owner still alive — keep their lock.
