@@ -17,9 +17,7 @@ tracking: `epic-release-010.md`.
 - **Gate C** — VN, chat, assistant+tool calling, GM flows, GM-guided story, auth/access,
   gallery usable. **Complete — all core + GM-guided story shipped to `dev` (2026-08-14)**.
 - **Gate D** — P3–P5 0.1.0 value tiers operational; P6+ non-blocking.
-- **`bun run check` gate green (2026-08-14)** — lint-ts closed (0 errors, warnings
-  tracked); dprint + md-lint also green (pre-existing YAML-twin + ticket-format issues
-  fixed in `lint-ts-debt` worktree).
+- **`bun run check` gate green (2026-08-14)** — lint-ts closed; dprint + md-lint green. Gate has since regressed (size-strict + schema-manifest episodes) — see Build Integrity Cluster + size-strict ceiling below; must be green again before A9.
 - **e2e browser suite stable ✅ (2026-08-14)** — `test:e2e:browser` green across two
   consecutive runs (`e2e-stabilization` worktree: raised setup budgets, page-load
   timeouts, `ctx?.close()` guard).
@@ -28,8 +26,8 @@ tracking: `epic-release-010.md`.
 
 ### Open → close (blocking release)
 
-- [x] **Lint-ts debt** — ✅ closed 2026-08-14 (`lint-ts-debt` worktree) — 68→0 errors; warnings tracked; `bun run check` gate green. Last red gate gone.
-- [x] **Size-strict debt** — ✅ closed 2026-08-12 (no files over the size limit).
+- [x] **Lint-ts debt** — ✅ closed 2026-08-14 (`lint-ts-debt` worktree); `bun run check` gate green. Last red gate gone.
+- [ ] **Size-strict debt** — closed 2026-08-12, since regressed by growth; split-down in progress; must be back under ceiling before A9.
 - [x] **Unwired/leftover close-out (A8)** — ✅ CLOSED 2026-08-18 (`49ee5c1a`) — IS1–IS7 + LoRA all wired; `bun run check` 22/22 green; targeted tests pass. See `open-debt.md` #12 + #5. LoRA stale TODO dropped (`src/generation/lora/routes/index.ts:20`, 2026-08-20).
 
 ### Hardening (before tagging, non-blocking)
@@ -84,10 +82,10 @@ Shipped 2026-08-16 (backlog review session, on `dev`):
 - **Item 5** — memory selection / pin UI **verified already shipped** (backlog was stale): `src/frontend/alpine/memory-panel.ts` (load/split/create/delete/toggleMemoryPin/token-budget) + pin round-trip backend (`actor-memories-pin.test.ts`). No new code; unblocks item 13 topic-selection UX.
 - **Item 13** — proactive messaging **shipped end-to-end** (2026-08-16, on `dev`): dormap backend service + CRUD routes were already present — this session wired the trigger path. `POST /api/proactive-messaging/send` (re-checks `checkShouldMessage`, anchors in-thread to last message, reuses `triggerAutoGeneration`, `recordSent` + system notification; 409 when not due), `POST /api/proactive-messaging/backoff` (increment), reset-wiring in `messages/create.ts` (user response resets backoff), `saveProactiveConfig` in the character edit form, and a client scheduler `chat-proactive.ts` (60s poll of configs+check, one send/tick, 10s min + in-flight guard). Tests: `proactive-messaging.test.ts` (4 route) + `chat-proactive.test.ts` (5 scheduler). Ticket `TASK-proactive-messaging.md` ✅.
 
-Remaining (next session):
+Remaining (2026-09-11 refresh):
 
-- **Items 7, 8, 9, 12** — in-chat asset preview, creation wizards, GM-guided story, chat-type matrix UI remainder.
-- **Items 10, 11, 14, 15** — embeddings, asset-consistency conditioning, keyphrase recall, encounter/bestiary gen.
+- **Items 7, 8, 9 done** — in-chat asset preview ✅ (`FEAT-in-chat-asset-preview-linkage-side-panel`), creation wizards ✅ (C3), GM-guided story ✅ (P2-Da). Item 12 remainder = C7 Phases 3–4 (split/reunite + choice-card) + G2 branching UI; unified GM↔assistant view ✅ (E1).
+- **Items 10, 11, 14, 15** — embeddings, asset-consistency conditioning, keyphrase recall, encounter/bestiary gen — remain parked proposals, not core-finalization scope.
 
 Finalize-blocking cleanup (quick-wins, deferred — `--force` merge approved):
 
