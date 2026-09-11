@@ -37,6 +37,13 @@ export interface Whiteneote {
   createdAt: string;
 }
 
+/** In-story entity suggestion surfaced from narration scan. */
+export interface EntitySuggestion {
+  kind: string;
+  name: string;
+  seed: string;
+}
+
 (globalThis as unknown as Record<string, unknown>).gmPanel = function() {
   return {
     shadowNotes: [] as ShadowNote[],
@@ -49,7 +56,7 @@ export interface Whiteneote {
     entityKind: "character" as "character" | "location" | "world" | "item",
     entitySeed: "",
     entityMessage: "",
-    entitySuggestions: [] as { kind: string; name: string; seed: string }[],
+    entitySuggestions: [] as EntitySuggestion[],
 
     async init() {
       const chatId = (this as any).activeChat;
@@ -221,7 +228,7 @@ export interface Whiteneote {
       try {
         const res = await apiFetch(`/api/chats/${chatId}/entity-suggestions`, {},);
         if (res.ok) {
-          const data = await res.json() as { items?: typeof this.entitySuggestions };
+          const data = await res.json() as { items?: EntitySuggestion[] };
           this.entitySuggestions = data.items ?? [];
         }
       } catch (error) {
