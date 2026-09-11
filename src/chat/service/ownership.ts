@@ -124,7 +124,8 @@ export async function transferOwnership(
   // Authority re-check: this guard rejects a delegated `role_in_chat = 'owner'`
   // grant from passing the chat around — only the actual current owner OR an admin
   // may transfer. (Admins already bypassed the initial access check above.)
-  // TODO(chat-ownership): TOCTOU — re-verify previousOwnerId inside the tx (concurrent transfers are last-writer-wins).
+  // TOCTOU guard lives inside the tx below: the `created_by` flip is
+  // conditional on nobody else having moved ownership since the pre-tx read.
   if (!isAdmin && requesterId !== previousOwnerId) {
     return {
       ok: false,
@@ -148,8 +149,23 @@ export async function transferOwnership(
     },);
     return result.ok ? result.value : "{}";
   })();
+  const CONCURRENT_MODIFICATION = "chat-ownership-concurrent-modification";
   try {
     const outcome = await db.transaction().execute(async (trx,) => {
+      // Linearization point: the flip applies only if ownership hasn't
+      // moved since the pre-tx read. Zero rows ⇒ a concurrent transfer
+      // won; throw before writing anything so the loser leaves no
+      // partial state and exactly one winner emerges.
+      const flipped = await trx
+        .updateTable("chats",)
+        .set({ created_by: newOwnerId, updated_at: now, },)
+        .where("id", "=", chatId,)
+        .where("created_by", "=", previousOwnerId,)
+        .executeTakeFirst();
+      if (Number(flipped.numUpdatedRows ?? 0,) === 0) {
+        throw new Error(CONCURRENT_MODIFICATION,);
+      }
+
       if (autoInvited) {
         await trx
           .insertInto("chat_participants",)
@@ -176,12 +192,6 @@ export async function transferOwnership(
         .set({ role_in_chat: ChatParticipantRole.Member, },)
         .where("chat_id", "=", chatId,)
         .where("actor_id", "=", previousOwnerId,)
-        .execute();
-
-      await trx
-        .updateTable("chats",)
-        .set({ created_by: newOwnerId, updated_at: now, },)
-        .where("id", "=", chatId,)
         .execute();
 
       await trx
@@ -235,6 +245,12 @@ export async function transferOwnership(
 
     return { ok: true, result: outcome, };
   } catch (err) {
+    if (err instanceof Error && err.message === CONCURRENT_MODIFICATION) {
+      return {
+        ok: false,
+        error: { code: "bad_request", message: "Chat ownership changed concurrently; refresh and retry", },
+      };
+    }
     ownershipLogger().error(
       "ownership transfer failed",
       err instanceof Error ? err : new Error(String(err,),),

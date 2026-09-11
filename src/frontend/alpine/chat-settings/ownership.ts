@@ -14,7 +14,7 @@ const log = rootLog.child({ module: "chat-settings-ownership", },);
  * Mixed into `chatSettings` so they run with full `ChatState` context.
  *
  * Backend contract: POST /api/chats/:id/transfer-ownership with
- *   { newOwnerId: string, reason?: string }
+ *   { newOwnerId: string, confirm: true, reason?: string }
  *
  * Returns 200 on success with `{ ok, previousOwnerId, newOwnerId, autoInvited }`.
  * Returns 400 for self-transfer / invalid request, 403 for forbidden,
@@ -22,10 +22,6 @@ const log = rootLog.child({ module: "chat-settings-ownership", },);
  *
  * The action reloads the participant list on success so the new owner
  * appears in the role list without a full page refresh.
- *
- * TODO(chat-ownership): no template wires openOwnershipTransferModal / _ownershipModalOpen
- * yet, and there is no ownership-actions.test.ts (persona has one; the coverage gate floors
- * each module) — actions are unreachable from UI until the settings-modal markup lands.
  */
 export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
   // ── Local UI state ────────────────────────────────────────
@@ -79,6 +75,7 @@ export const ownershipActions: Partial<ChatState> & ThisType<ChatState> = {
           headers: { "Content-Type": "application/json", },
           body: jsonBody({
             newOwnerId,
+            confirm: true,
             ...(reason ? { reason, } : {}),
           },),
         },

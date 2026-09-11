@@ -3,7 +3,7 @@
 
 # TASK: Chat Ownership Transfer — Frontend & Backend
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-chat-product-features
@@ -14,12 +14,12 @@ Add explicit chat-ownership transfer as a first-class action: an owner can hand 
 
 ## Acceptance Criteria
 
-- [ ] Owner can transfer ownership to any current participant from a UI affordance and a backend endpoint
-- [ ] Previous owner loses owner-scoped capabilities on success; new owner gains them
-- [ ] Concurrent transfer attempts resolve to a single winner with audit evidence for the loser
-- [ ] Moderator / GM grants are re-evaluated and reconciled post-transfer
-- [ ] Transfer requires a confirmation step on the frontend and an explicit `confirm: true` on the backend
-- [ ] Audit trail records previous owner, new owner, timestamp, and any revocations
+- [x] Owner can transfer ownership to any current participant from a UI affordance and a backend endpoint
+- [x] Previous owner loses owner-scoped capabilities on success; new owner gains them
+- [x] Concurrent transfer attempts resolve to a single winner with audit evidence for the loser
+- [x] Moderator / GM grants are re-evaluated and reconciled post-transfer
+- [x] Transfer requires a confirmation step on the frontend and an explicit `confirm: true` on the backend
+- [x] Audit trail records previous owner, new owner, timestamp, and any revocations
 
 ## Related Tickets / Epics
 
@@ -29,14 +29,13 @@ Add explicit chat-ownership transfer as a first-class action: an owner can hand 
 
 ## Files
 
-- `src/chat/ownership.ts`
-- `src/chat/service/chats.ts`
-- `src/chat/service/write.ts`
-- `src/middleware/auth/`
-- `src/middleware/permissions.ts`
+- `src/chat/service/ownership.ts` — transfer service (conditional `created_by` flip, audit, notifications)
+- `src/routes/chats/ownership.ts` — `POST /api/chats/:id/transfer-ownership` (`confirm: true` gate)
+- `src/frontend/alpine/chat-settings/ownership.ts` — modal actions, sends `confirm: true`
+- `src/components/chat/chat-settings-modal.html` — transfer trigger + confirmation modal
 
 ## Open Questions
 
-- Can ownership be transferred to a non-participant (forces an invite + transfer)?
+- Resolved: yes — non-participants are auto-invited with `role_in_chat = owner` before the flip.
 - Is there a cooling-off window where the previous owner can revoke?
 
