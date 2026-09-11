@@ -71,8 +71,8 @@ export async function listAssetTags(
   return rows.map((row,) => ({
     id: row.id,
     tag: row.tag,
-    scope: row.scope,
-    source: row.source,
+    scope: row.scope as AssetTagScope,
+    source: row.source as AssetTagSource,
   }));
 }
 
@@ -102,7 +102,12 @@ async function insertTag(opts: UpsertTagOptions,): Promise<AssetTagRecord> {
   const existing = await existingQuery.executeTakeFirst();
 
   if (existing) {
-    return { id: existing.id, tag: existing.tag, scope: existing.scope, source: existing.source, };
+    return {
+      id: existing.id,
+      tag: existing.tag,
+      scope: existing.scope as AssetTagScope,
+      source: existing.source as AssetTagSource,
+    };
   }
 
   const id = uid();
