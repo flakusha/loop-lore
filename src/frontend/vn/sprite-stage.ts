@@ -14,14 +14,14 @@
  *
  * Deferred (need backend pipelines): LLM emotion classification
  * (TASK-aux-llm-emotion-classifier), action-verb extractors over
- * src/regex patterns, face-anchor calibration (5cf8b16), alpha matting
- * jobs (ea6d881).
+ * src/regex patterns, alpha matting jobs (ea6d881).
  */
 
 import {
   createPortraitElement,
   getPortraitUrl,
 } from "./portrait-manager";
+import { isAssetIdRef, } from "./sprite-anchor";
 
 /** Ordered stage slots, left to right. */
 export type StageSlot = "far-left" | "left" | "center" | "right" | "far-right";
@@ -186,6 +186,7 @@ export function buildStageElement(staged: StagedSprite, emotion?: string,): HTML
   },);
   el.classList.add("vn-stage-sprite", `vn-slot-${staged.slot}`,);
   el.dataset["characterId"] = staged.entry.characterId;
+  if (isAssetIdRef(staged.entry.avatarAssetId,)) { el.dataset["assetId"] = staged.entry.avatarAssetId; }
   applyStageHighlight(el, staged,);
   return el;
 }
