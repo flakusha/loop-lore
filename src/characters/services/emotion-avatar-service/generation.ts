@@ -7,7 +7,7 @@
 
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
-import { createAsset, linkAsset, } from "../../../assets/service";
+import { persistGeneratedImages, } from "../../../assets/service";
 import { loadConfig, } from "../../../config/load";
 import { pickSdProvider, } from "../../../config/schema";
 import type { ImageProviderConfig, } from "../../../config/schema";
@@ -197,28 +197,27 @@ export async function generateEmotionAvatar(
 
   const { images, mimeType, } = outcome;
 
-  // Store generated images as assets and create avatars
+  // Persist generated buffers via the shared generation→asset contract, then
+  // create avatars on top. Avatar rows + matting stay caller-owned follow-ups.
+  const persisted = await persistGeneratedImages({
+    database: svc.db,
+    uploadDir: opts.uploadDir,
+    images,
+    mimeType,
+    ownerId: opts.actorId,
+    altText: `Emotion avatar: ${opts.emotion}`,
+    link: {
+      entityType: "actor",
+      entityId: opts.actorId,
+      label: `emotion:${opts.emotion}`,
+    },
+    makeFilename: () => `emotion-${opts.emotion}-${randomUUID().slice(0, 8,)}.png`,
+  },);
+
   let avatarId = "";
   let assetId = "";
 
-  for (const buffer of images) {
-    const id = randomUUID();
-    const filename = `emotion-${opts.emotion}-${id.slice(0, 8,)}.png`;
-
-    const { asset, } = await createAsset({
-      database: svc.db,
-      input: {
-        ownerId: opts.actorId,
-        filename,
-        mimeType,
-        assetType: "image",
-        sizeBytes: buffer.length,
-        buffer,
-        altText: `Emotion avatar: ${opts.emotion}`,
-      },
-      uploadDir: opts.uploadDir,
-    },);
-
+  for (const { asset, } of persisted) {
     assetId = asset.id;
 
     // Create avatar with emotion tag
@@ -229,17 +228,6 @@ export async function generateEmotionAvatar(
       tags: { emotion: opts.emotion, },
       isPrimary: false,
       sortOrder: Object.values(EmotionType,).indexOf(opts.emotion,) + 1,
-    },);
-
-    // Link asset to character
-    await linkAsset({
-      database: svc.db,
-      assetId: asset.id,
-      link: {
-        entityType: "actor",
-        entityId: opts.actorId,
-        label: `emotion:${opts.emotion}`,
-      },
     },);
     // Auto-enqueue matting for generated sprites. Providers typically emit
     // RGBA PNGs with fully opaque pixels, so header-level detection marks the
