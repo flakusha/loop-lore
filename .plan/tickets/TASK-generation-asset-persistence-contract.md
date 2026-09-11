@@ -3,7 +3,7 @@
 
 # TASK: Generation-Asset Persistence Contract
 
-**Status:** ⬜ Not Started
+**Status:** 🔄 In Progress (shared `persistGeneratedImages` contract landed in `src/assets/service/persist-generated.ts` on dev; open remainder: generation-engine adoption + gallery reachability wiring)
 **Priority:** Medium
 **Effort:** Medium
 

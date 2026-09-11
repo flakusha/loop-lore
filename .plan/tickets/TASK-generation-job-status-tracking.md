@@ -3,7 +3,7 @@
 
 # TASK: Generation-Job-Status-Tracking
 
-**Status:** ⬜ Not Started
+**Status:** 🔄 In Progress (emotion-avatar batch half landed: `013_generation` table + `job-records` start/finish wrappers on dev; open remainder: general generation-engine hooks + gallery-service query side)
 **Priority:** Medium
 **Effort:** Medium
 
