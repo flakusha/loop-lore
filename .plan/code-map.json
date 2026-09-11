@@ -504,6 +504,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-asset-encryption.md"
     },
     {
@@ -706,6 +710,10 @@
     }
   ],
   "src/assets/service/delete.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-db-asset-delete-no-tx-n-1-memory-purge-column-allowlist-play.md"
@@ -19663,6 +19671,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-logout-deletes-session-without-signature-or-ownership-check.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-sessions-api-routes.md"
     }
   ],
   "src/routes/auth/shared.ts": [
