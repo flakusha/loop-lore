@@ -997,6 +997,21 @@ export interface MemoryEmbeddings {
   created_at: number;
 }
 
+// ── generation_jobs ────────────────────────────────────────────
+export interface GenerationJobs {
+  id: Generated<string>;
+  kind: string;
+  actor_id: string | null;
+  status: Generated<string>;
+  payload: Generated<string>;
+  results: Generated<string>;
+  error_message: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
 // ── nsfw_consent_state ────────────────────────────────────────────
 export interface NsfwConsentState {
   id: Generated<string>;

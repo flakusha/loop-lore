@@ -2205,6 +2205,20 @@ export const SyntheticDataSchema = t.Object({
   validated_by: t.Optional(t.String(),),
 },);
 
+// ── generation_jobs ────────────────────────────────────────────
+export const GenerationJobsSchema = t.Object({
+  kind: t.String(),
+  actor_id: t.Optional(t.String(),),
+  status: t.Optional(t.String(),),
+  payload: t.Optional(t.String(),),
+  results: t.Optional(t.String(),),
+  error_message: t.Optional(t.String(),),
+  started_at: t.Optional(t.String(),),
+  completed_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
 // ── content_flags ────────────────────────────────────────────
 export const ContentFlagsSchema = t.Object({
   reporter_id: t.String(),
