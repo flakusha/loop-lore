@@ -102,6 +102,11 @@ opt-in is required before these surface in the product).
 
 - [ ] TASK-chat-feature-share-links-export-formats
 
+### Organization & Sub-Conversations (Low)
+
+- [ ] TASK-chat-feature-chat-organization-folders-tags
+- [ ] TASK-chat-feature-topics-side-threads
+
 ## Files (Anchor References)
 
 ### Component Buttons & Asset Attach
@@ -230,3 +235,5 @@ opt-in is required before these surface in the product).
 - TASK-chat-feature-auto-continue-continuation.md
 - TASK-chat-feature-message-edit-resubmit-branch.md
 - TASK-chat-feature-share-links-export-formats.md
+- TASK-chat-feature-chat-organization-folders-tags.md
+- TASK-chat-feature-topics-side-threads.md
