@@ -19,6 +19,7 @@
 > (2026-08-16) — conversation branching, lorebook activation, conversation analytics,
 > model comparison, generation quality metrics, lore-consistency, model capability
 > registry, token budget advisor, memory access audit, prompt library expansions.
+> **Sep-11 filings:** two new chat epics filed with 27 supporting tickets — `epic-chat-variants-taxonomy.md` (12 variants, taxonomy-only, no schema change) and `epic-chat-product-features.md` (15 product/UX tickets; encryption-key-rotation and ownership-transfer promoted to P0–P2 visibility in `priority-p0-p2.md`). See `priority-p3-p5.md` cluster tables + `open-untriaged.md` triage notes.
 
 ## Status header
 
