@@ -152,8 +152,8 @@ describeReal("Assets E2E", () => {
       `/api/assets/${assetId}/signed-url/raw`,
     );
     expect(mintRes.ok,).toBe(true,);
-    expect(mintRes.data!.url,).toContain(`?expires=`);
-    expect(mintRes.data!.url,).toContain(`&sig=`);
+    expect(mintRes.data!.url,).toContain(`?expires=`,);
+    expect(mintRes.data!.url,).toContain(`&sig=`,);
     expect(mintRes.data!.expiresAt,).toBeGreaterThan(Date.now(),);
 
     // Session-less GET with the signed URL serves the file (no cookies).
