@@ -210,6 +210,26 @@ function applyFixes(
     fileByExtid.set(extid, tf,);
   }
 
+  // Backfill ticket `status` from the on-disk .md (Status: <state>) into
+  // index entries that have none. Existing index entries are NEVER
+  // overwritten here — once a status has been set (by this pass, by the
+  // statusMismatches fix below, or by hand), the index is treated as
+  // authoritative. This keeps the backfill idempotent and prevents
+  // oscillation with the statusMismatches fix when the .md status text
+  // uses a form `normalizeStatus` cannot reduce (e.g. "📝 Draft"
+  // normalizes to "draft" while git is "done"). The 186 stale-open
+  // bookkeeping gaps this unblocks are auto-corrected by the
+  // statusMismatches pass once the index has a normalized status to
+  // compare against.
+  for (const tf of ticketFiles) {
+    const extid = tf.filename.replace(/\.md$/, "",).toUpperCase();
+    const cur = fixed[extid];
+    if (!cur) { continue; }
+    if (cur.status !== undefined) { continue; }
+    fixed[extid] = { ...cur, status: normalizeStatus(tf.status,), };
+    report.fixesApplied.push(`${extid}: backfilled status (was undefined) → "${normalizeStatus(tf.status,)}"`,);
+  }
+
   // Fix status mismatches
   for (const mismatch of report.statusMismatches) {
     if (fixed[mismatch.extid]) {
@@ -363,6 +383,7 @@ function applyFixes(
       epic: tf.epic,
       tags: [],
       source: sourcePath,
+      status: normalizeStatus(tf.status,),
     };
     existingSources.add(sourcePath.toLowerCase(),);
     report.fixesApplied.push(`${extid}: added to index (from orphan file)`,);
