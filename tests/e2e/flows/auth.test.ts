@@ -113,7 +113,7 @@ describe("Auth E2E", () => {
       },);
       expect(r.status,).toBeGreaterThanOrEqual(400,);
       expect(r.status,).toBeLessThan(500,);
-    },);
+    });
 
     test("POST /api/auth/logout twice never returns 5xx", async () => {
       const ok = await scopedApi.loginAs(
@@ -132,7 +132,7 @@ describe("Auth E2E", () => {
       const second = await scopedApi.post("/api/auth/logout",);
       expect(second.status,).toBeLessThan(500,);
       expect([200, 204, 401, 403,],).toContain(second.status,);
-    },);
+    });
 
     test("GET /api/auth/me returns 401 with a forged-but-unparseable cookie", async () => {
       const tampered = createClient(scopedServer.url,);
@@ -140,7 +140,7 @@ describe("Auth E2E", () => {
       const res = await tampered.get("/api/auth/me",);
       expect(res.status,).toBe(401,);
       expect(res.code,).toBeTruthy();
-    },);
+    });
 
     test("GET /api/auth/me is consistent across two clients (session scoping)", async () => {
       const a = createClient(scopedServer.url,);
@@ -152,6 +152,6 @@ describe("Auth E2E", () => {
       const meB = await b.get("/api/auth/me",);
       expect(meA.status,).toBe(200,);
       expect(meB.status,).toBe(401,); // b never logged in
-    },);
+    });
   });
 });
