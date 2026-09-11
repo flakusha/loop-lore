@@ -284,6 +284,18 @@
     "source": ".plan/tickets/BUG-asset-webp-vp8x-dimension-truncation.md",
     "status": "[OK] Already resolved in dev — no code change needed"
   },
+  "BUG-ASSETS-DELETE-FK-CONSTRAINT-FAILS": {
+    "hash": "pending",
+    "extid": "BUG-ASSETS-DELETE-FK-CONSTRAINT-FAILS",
+    "type": "BUG",
+    "title": "Assets DELETE /api/assets/:id returns 500 (FOREIGN KEY constraint failed)",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md",
+    "status": "open"
+  },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "hash": "pending",
     "extid": "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE",
@@ -9452,7 +9464,6 @@
   },
   "TASK-APPLY-JSDOC-ACROSS-SRC-TO-SATISFY-JSDOC-REQUIRE-PARAM-RETURN": {
     "hash": "ecad323",
-    "git_issue": "ecad323",
     "extid": "TASK-APPLY-JSDOC-ACROSS-SRC-TO-SATISFY-JSDOC-REQUIRE-PARAM-RETURN",
     "type": "TASK",
     "title": "Apply JSDoc across src/ to satisfy jsdoc/require-{param,returns,throws}",
@@ -9461,18 +9472,8 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md",
-    "status": "done"
-  },
-  "TASK-APPLY-JSDOC-ACROSS-SRC-TO-SATISFY-JSDOC-REQUIRE-PARAM-RETURN": {
-    "hash": "pending",
-    "extid": "TASK-APPLY-JSDOC-ACROSS-SRC-TO-SATISFY-JSDOC-REQUIRE-PARAM-RETURN",
-    "type": "TASK",
-    "title": "Apply JSDoc across src/ to satisfy jsdoc/require-{param,returns,throws}",
-    "label": "task",
-    "priority": "medium",
-    "epic": "",
-    "tags": [],
-    "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
+    "status": "done",
+    "git_issue": "ecad323"
   },
   "TASK-ARCHITECTURE": {
     "hash": "81bf8d3",
