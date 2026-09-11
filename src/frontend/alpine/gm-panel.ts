@@ -46,6 +46,10 @@ export interface Whiteneote {
     newWhiteneoteContent: "",
     newWhiteneoteType: "narrative_direction" as Whiteneote["type"],
     newWhiteneotePriority: 5,
+    entityKind: "character" as "character" | "location" | "world" | "item",
+    entitySeed: "",
+    entityMessage: "",
+    entitySuggestions: [] as { kind: string; name: string; seed: string }[],
 
     async init() {
       const chatId = (this as any).activeChat;
@@ -174,6 +178,62 @@ export interface Whiteneote {
       } catch (error) {
         log.warn("Failed to delete whiteneote", { error, },);
       }
+    },
+
+    /** Start an in-place entity creation chat (story handoff). */
+    async generateEntity() {
+      const chatId = (this as any).activeChat;
+      if (!chatId || !this.entitySeed.trim()) { return; }
+      this.entityMessage = "";
+      try {
+        const res = await apiFetch(`/api/chats/${chatId}/generate-entity`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({
+            kind: this.entityKind,
+            seed: this.entitySeed.trim(),
+          },),
+        },);
+        if (res.ok) {
+          const data = await res.json() as { chatId?: string };
+          this.entitySeed = "";
+          if (typeof data.chatId === "string") {
+            this.entityMessage = "Creation chat started.";
+            const navigate = (this as any).selectChat;
+            if (typeof navigate === "function") {
+              await navigate.call(this, data.chatId,);
+            }
+          }
+        } else {
+          const data = await res.json().catch(() => ({}) as { error?: string });
+          this.entityMessage = data.error ?? "Failed to start creation chat.";
+        }
+      } catch (error) {
+        log.warn("Failed to start entity creation chat", { error, },);
+        this.entityMessage = "Failed to start creation chat.";
+      }
+    },
+
+    /** Scan recent narration for in-story entity introductions. */
+    async loadEntitySuggestions() {
+      const chatId = (this as any).activeChat;
+      if (!chatId) { return; }
+      try {
+        const res = await apiFetch(`/api/chats/${chatId}/entity-suggestions`, {},);
+        if (res.ok) {
+          const data = await res.json() as { items?: typeof this.entitySuggestions };
+          this.entitySuggestions = data.items ?? [];
+        }
+      } catch (error) {
+        log.warn("Failed to load entity suggestions", { error, },);
+      }
+    },
+
+    /** Prefill the seed from a suggestion and start the handoff. */
+    async useSuggestion(suggestion: { kind: string; seed: string },) {
+      this.entityKind = suggestion.kind as typeof this.entityKind;
+      this.entitySeed = suggestion.seed;
+      await this.generateEntity();
     },
   };
 };

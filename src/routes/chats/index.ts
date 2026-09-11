@@ -2,7 +2,9 @@ import { Elysia, } from "elysia";
 import { safeJsonParse, } from "../../utils";
 import { batchRoutes, } from "./batch";
 import { createRoutes, } from "./create";
+import { entitySuggestionRoutes, } from "./entity-suggestions";
 import { extrasRoutes, } from "./extras";
+import { generateEntityRoutes, } from "./generate-entity";
 import { listRoutes, } from "./list";
 import { manageRoutes, } from "./manage";
 import { participantRoutes, } from "./participants";
@@ -41,5 +43,7 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(partySplitRoutes(opts, prefix,),)
       .use(vnChoiceRoutes(opts, prefix,),)
       .use(extrasRoutes(opts, prefix,),)
+      .use(generateEntityRoutes(opts, prefix,),)
+      .use(entitySuggestionRoutes(opts, prefix,),)
   );
 }
