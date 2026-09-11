@@ -11,6 +11,7 @@
  */
 
 import type { MessageAttachment, } from "../alpine/chat-types/messages";
+import { type FakeEl, makeEl, } from "./vn-fake-element";
 
 /**
  * Fully-populated MessageAttachment for fixture use.
@@ -37,129 +38,7 @@ export function makeAttachment(
     ...overrides,
   };
 }
-
-export interface FakeEl {
-  tagName: string;
-  className: string;
-  style: {
-    setProperty: (name: string, value: string,) => void;
-    [prop: string]: string | ((name: string, value: string,) => void);
-  };
-  children: FakeEl[];
-  parent: FakeEl | null;
-  textContent: string;
-  disabled: boolean;
-  isConnected: boolean;
-  src: string;
-  alt: string;
-  listeners: Map<string, Array<(e?: unknown,) => void>>;
-  append: (...nodes: FakeEl[]) => void;
-  replaceChildren: () => void;
-  remove: () => void;
-  querySelector: (sel: string,) => FakeEl | null;
-  addEventListener: (type: string, fn: (e?: unknown,) => void,) => void;
-  removeEventListener: (type: string, fn: (e?: unknown,) => void,) => void;
-  dispatch: (type: string,) => void;
-  dataset: Record<string, string>;
-  classList: {
-    contains: (cls: string,) => boolean;
-    add: (...names: string[]) => void;
-    remove: (...names: string[]) => void;
-    toggle: (cls: string, force?: boolean,) => boolean;
-  };
-}
-
-export function makeEl(tag = "div",): FakeEl {
-  const children: FakeEl[] = [];
-  const listeners = new Map<string, Array<(e?: unknown,) => void>>();
-  const style: FakeEl["style"] = {
-    setProperty(name, value,) {
-      style[name] = value;
-    },
-  };
-  const find = (el: FakeEl, cls: string,): FakeEl | null => {
-    for (const child of el.children) {
-      if (child.className.split(" ",).includes(cls,)) { return child; }
-      const hit = find(child, cls,);
-      if (hit) { return hit; }
-    }
-    return null;
-  };
-  return {
-    tagName: tag.toUpperCase(),
-    className: "",
-    style,
-    children,
-    parent: null,
-    textContent: "",
-    disabled: false,
-    isConnected: true,
-    src: "",
-    alt: "",
-    listeners,
-    append(...nodes) {
-      for (const node of nodes) { node.parent = this; }
-      children.push(...nodes,);
-    },
-    replaceChildren() {
-      for (const child of children) { child.parent = null; }
-      children.length = 0;
-    },
-    remove() {
-      const p = this.parent;
-      if (p) {
-        const i = p.children.indexOf(this,);
-        if (i >= 0) { p.children.splice(i, 1,); }
-      }
-      this.parent = null;
-    },
-    get classList() {
-      const tokens = (): string[] => this.className.split(" ",).filter(Boolean,);
-      const write = (list: string[],): void => {
-        this.className = list.join(" ",);
-      };
-      return {
-        contains: (cls: string,) => tokens().includes(cls,),
-        add: (...names: string[]) => {
-          const list = tokens();
-          for (const name of names) {
-            if (!list.includes(name,)) { list.push(name,); }
-          }
-          write(list,);
-        },
-        remove: (...names: string[]) => {
-          write(tokens().filter((t,) => !names.includes(t,)),);
-        },
-        toggle: (cls: string, force?: boolean,) => {
-          const list = tokens();
-          const has = list.includes(cls,);
-          const next = force ?? !has;
-          if (next && !has) { list.push(cls,); }
-          if (!next && has) { list.splice(list.indexOf(cls,), 1,); }
-          write(list,);
-          return next;
-        },
-      };
-    },
-    dataset: {},
-    querySelector(sel,) {
-      return find(this, sel.replace(/^\./, "",),);
-    },
-    addEventListener(type, fn,) {
-      listeners.set(type, [...(listeners.get(type,) ?? []), fn,],);
-    },
-    removeEventListener(type, fn,) {
-      listeners.set(
-        type,
-        (listeners.get(type,) ?? []).filter((l,) => l !== fn),
-      );
-    },
-    dispatch(type,) {
-      const event = { type, target: null, };
-      for (const fn of [...(listeners.get(type,) ?? []),]) { fn(event,); }
-    },
-  };
-}
+export { type FakeEl, makeEl, } from "./vn-fake-element";
 
 type Globals = Record<string, unknown>;
 

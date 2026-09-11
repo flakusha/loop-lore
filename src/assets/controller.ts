@@ -19,6 +19,8 @@
  *   DELETE /api/assets/:id          — delete asset
  *   POST   /api/assets/:id/links    — link to entity
  *   DELETE /api/assets/:id/links/:linkId — unlink from entity
+ *   GET    /api/assets/:id/transform — resolved framing metadata (?context=)
+ *   PUT    /api/assets/:id/transform — upsert framing metadata (owner only)
  */
 
 import { Elysia, } from "elysia";
@@ -26,7 +28,7 @@ import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import { deriveChatKeyForChat, getSmk, } from "../crypto";
 import type { AssetLinkEntity, } from "../db/enums";
-import { AssetVisibility, } from "../db/enums";
+import { AssetVisibility, TransformContext, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import {
   badRequestResponse,
@@ -57,14 +59,17 @@ import {
   getAssetShares,
   linkAsset,
   listAssets,
+  resolveAssetTransform,
   shareAsset,
   unlinkAsset,
   unshareAsset,
   updateAssetVisibility,
+  upsertAssetTransform,
   validateFileSize,
   validateMimeType,
 } from "./service";
 import type { AssetRecord, } from "./service";
+import type { TransformValues, } from "./service/transforms";
 import { isSignedUrlAction, resolveSignedUrlSecret, signAssetUrl, } from "./signed-url";
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
 export interface UploadOpts {
@@ -189,6 +194,41 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           return notFoundResponse("Asset not found",);
         }
         return jsonNoContent();
+      },)
+      // -- Transform routes (face-anchor / framing metadata) ----
+      .get("/api/assets/:id/transform", async (ctx,) => {
+        const searchParams = new URL(ctx.request.url,).searchParams;
+        const context = searchParams.get("context",) ?? TransformContext.Default;
+        if (!(Object.values(TransformContext,) as string[]).includes(context,)) {
+          return badRequestResponse("Invalid context",);
+        }
+        const resolved = await resolveAsset(
+          database,
+          ctx.params.id,
+          (ctx as any).userId ?? null,
+          (ctx as any).userRole ?? null,
+        );
+        if (resolved instanceof Response) { return resolved; }
+        const transform = await resolveAssetTransform(database, ctx.params.id, context as TransformContext,);
+        if (!transform) { return notFoundResponse("No transform for this context",); }
+        return jsonResponse(transform,);
+      },)
+      .put("/api/assets/:id/transform", async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
+        const owned = await requireAssetOwner(database, ctx.params.id, userId,);
+        if (owned instanceof Response) { return owned; }
+        const { context: rawContext, ...values } = ctx.body as TransformValues & { context?: string };
+        const context = rawContext ?? TransformContext.Default;
+        if (!(Object.values(TransformContext,) as string[]).includes(context,)) {
+          return badRequestResponse("Invalid context",);
+        }
+        try {
+          const row = await upsertAssetTransform(database, ctx.params.id, context as TransformContext, values,);
+          return jsonResponse(row,);
+        } catch (err) {
+          return badRequestResponse(err instanceof Error ? err.message : "Invalid transform",);
+        }
       },)
       // ── File serving routes ──────────────────────────
       .get("/api/assets/:id/raw", async (ctx,) => {
