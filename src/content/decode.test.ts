@@ -1,20 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-/** Tests for content decoding (identity, empty, corrupt input). */
+/** Decode error paths (happy paths live in encode-decode.test.ts). */
 import { describe, expect, test, } from "bun:test";
 import { decodeContent, } from "./decode";
 import { encodeContent, } from "./encode";
 
-describe("decodeContent", () => {
-  test("identity returns the stored string as-is", () => {
-    expect(decodeContent("raw-stored", "identity",),).toBe("raw-stored",);
-  });
-
-  test("empty stored short-circuits regardless of encoding", () => {
-    expect(decodeContent("", "gzip",),).toBe("",);
-  });
-
+describe("decodeContent error paths", () => {
   test("rejects non-base64 input", () => {
     expect(() => decodeContent("!!! not base64 !!!", "gzip",),).toThrow();
   });
