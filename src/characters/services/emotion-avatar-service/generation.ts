@@ -24,6 +24,7 @@ import {
   buildEmotionPrompt,
   extractAvatarMetadata,
 } from "../emotion-avatar-fallback";
+import { createGenerationJobRecord, updateGenerationJobRecord, } from "./job-records";
 import type { BatchGenerationJob, GenerateEmotionAvatarsOpts, } from "./types";
 
 /**
@@ -70,6 +71,16 @@ export async function runBatchGeneration(
   opts: GenerateEmotionAvatarsOpts,
 ): Promise<void> {
   job.status = "running";
+  await createGenerationJobRecord(svc.db, {
+    id: job.id,
+    kind: "emotion-avatar",
+    actorId: opts.actorId,
+    payload: {
+      emotions: job.results.map((result,) => result.emotion),
+      baseAvatarId: opts.baseAvatarId,
+    },
+    startedAt: job.startedAt,
+  },);
 
   const config = loadConfig();
   const sdConfig = pickSdProvider(config.generation.providers.sd, "generate",);
@@ -104,6 +115,11 @@ export async function runBatchGeneration(
   for (const result of job.results) {
     // Status can change to "cancelled" via cancelJob() at runtime
     if ((job.status as string) === "cancelled") {
+      await updateGenerationJobRecord(svc.db, job.id, {
+        status: "cancelled",
+        results: job.results,
+        completedAt: new Date().toISOString(),
+      },);
       break;
     }
 
@@ -139,6 +155,11 @@ export async function runBatchGeneration(
 
   job.status = job.results.every((r,) => r.status === "completed") ? "completed" : "failed";
   job.completedAt = new Date().toISOString();
+  await updateGenerationJobRecord(svc.db, job.id, {
+    status: job.status,
+    results: job.results,
+    completedAt: job.completedAt,
+  },);
 }
 
 /**

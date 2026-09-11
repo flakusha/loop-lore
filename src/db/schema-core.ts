@@ -887,6 +887,21 @@ export interface WorldTimelines {
   created_at: Generated<string>;
 }
 
+// ── generation_jobs ────────────────────────────────────────────
+export interface GenerationJobs {
+  id: Generated<string>;
+  kind: string;
+  actor_id: string | null;
+  status: Generated<string>;
+  payload: Generated<string>;
+  results: Generated<string>;
+  error_message: string | null;
+  started_at: string | null;
+  completed_at: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
 // ── chat_keys ────────────────────────────────────────────
 export interface ChatKeys {
   id: Generated<string>;
