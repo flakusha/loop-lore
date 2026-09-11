@@ -755,6 +755,18 @@
       "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md"
     }
   ],
+  "src/assets/service/tag-propositions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    }
+  ],
+  "src/assets/service/tags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    }
+  ],
   "src/assistant": [
     {
       "kind": "ticket",
@@ -8615,6 +8627,12 @@
       "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md"
     }
   ],
+  "src/db/migrations/005_asset_tags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
+    }
+  ],
   "src/db/migrations/005_utility_tables.ts": [
     {
       "kind": "ticket",
@@ -9238,6 +9256,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-faction-standing-schema.md"
     }
   ],
@@ -9814,6 +9836,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-async-request-response-result-store-separate-table-offload.md"
     },
     {
@@ -10159,6 +10185,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-nsfw-appeals-as-any-and-dead-route.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
     },
     {
       "kind": "ticket",
@@ -11057,6 +11087,12 @@
       "source": ".plan/tickets/TASK-blog-frontend-authoring.md"
     }
   ],
+  "src/frontend/alpine/catalog-download.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
   "src/frontend/alpine/chat-actions.ts": [
     {
       "kind": "epic",
@@ -11897,6 +11933,36 @@
       "source": ".plan/tickets/WIRE-frontend-mobile-sticky-bottom-composer.md"
     }
   ],
+  "src/frontend/alpine/model-catalog.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
+  "src/frontend/alpine/model-downloader.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
+  "src/frontend/alpine/model-manager.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
+  "src/frontend/alpine/model-storage-idb.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
+  "src/frontend/alpine/model-storage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
   "src/frontend/alpine/mood.test.ts": [
     {
       "kind": "ticket",
@@ -12221,6 +12287,18 @@
       "source": ".plan/epics/epic-chat-transfer-location.md"
     }
   ],
+  "src/frontend/alpine/tunnel-connector.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
+  "src/frontend/alpine/tunnel-protocol.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
   "src/frontend/alpine/use-request-status.ts": [
     {
       "kind": "ticket",
@@ -12311,6 +12389,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-archival-workflow.md"
+    }
+  ],
+  "src/frontend/asset-preview-tags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
     }
   ],
   "src/frontend/asset-preview.test.ts": [
@@ -13851,6 +13935,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-vn-character-sprite-roster-per-chat.md"
+    }
+  ],
+  "src/frontend/vn/stage-directives.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
     }
   ],
   "src/frontend/vn/state-machine/index.ts": [
@@ -15767,6 +15857,12 @@
       "source": ".plan/epics/epic-comfyui-plugin.md"
     }
   ],
+  "src/gguf.rs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
+    }
+  ],
   "src/group-chat": [
     {
       "kind": "epic",
@@ -16409,6 +16505,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/items.md"
+    }
+  ],
+  "src/lib.rs": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-inference-browser-wllama-gguf.md"
     }
   ],
   "src/llm/queue.ts": [
@@ -18945,6 +19047,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-narration-actor-separation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-vn-emotion-mood-and-action-driven-sprite-staging.md"
     }
   ],
   "src/regex/html-sanitize.test.ts": [
@@ -25699,6 +25805,10 @@
       "source": ".plan/epics/epic-timeline-system.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-timeline-steering-close-roll-race-and-empty-timelineid-gap.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/lore.md"
     }
@@ -25841,6 +25951,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
     },
     {
       "kind": "ticket",
@@ -26488,6 +26602,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-apply-jsdoc-across-src-to-satisfy-jsdoc-require-param-return.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-scenario-source.md"
     },
     {
@@ -26671,6 +26789,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md"
+    }
+  ],
+  "src/validation/schemas/asset-tags.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
     }
   ],
   "src/validation/schemas/chat.ts": [
