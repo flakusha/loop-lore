@@ -134,7 +134,7 @@ describe("admin audit — general filtering + single entry", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { user_id: string | null }[] };
     expect(body.data.length,).toBeGreaterThanOrEqual(1,);
-    expect(body.data.every((e,) => e.user_id === "alice",),).toBe(true,);
+    expect(body.data.every((e,) => e.user_id === "alice"),).toBe(true,);
   });
 
   test("GET /api/admin/audit?entity_type=... applies entity_type filter", async () => {
@@ -152,7 +152,7 @@ describe("admin audit — general filtering + single entry", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as { data: { message: string }[] };
     expect(body.data.length,).toBeGreaterThanOrEqual(1,);
-    expect(body.data.every((e,) => e.message.includes("special_token",),),).toBe(true,);
+    expect(body.data.every((e,) => e.message.includes("special_token",)),).toBe(true,);
   });
 
   test("GET /api/admin/audit?q=<200 chars> applies query filter", async () => {
@@ -167,7 +167,7 @@ describe("admin audit — general filtering + single entry", () => {
 
   test("GET /api/admin/audit?page=2&pageSize=5 paginates", async () => {
     for (let i = 0; i < 12; i++) {
-      await insertLogRow(db, `u${String(i)}`, `r${String(i)}`,);
+      await insertLogRow(db, `u${String(i,)}`, `r${String(i,)}`,);
     }
     const app = makeApp(db, "admin",);
     const res = await app.handle(
@@ -220,4 +220,4 @@ describe("admin audit — general filtering + single entry", () => {
     // Moderator lacks admin.system → 403 even with non-NSFW event_type
     expect(res.status,).toBe(403,);
   });
-},);
+});

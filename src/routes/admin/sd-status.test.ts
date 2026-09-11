@@ -82,4 +82,4 @@ describe("admin sd-status routes", () => {
     const res = await app.handle(new Request("http://localhost/api/admin/sd-status",),);
     expect(res.status,).toBe(403,);
   });
-},);
+});

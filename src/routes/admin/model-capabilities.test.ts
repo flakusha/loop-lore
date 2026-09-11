@@ -110,7 +110,7 @@ describe("admin model-capabilities — list", () => {
     const res = await app.handle(new Request("http://localhost/api/admin/model-capabilities",),);
     expect(res.status,).toBe(200,);
     const body = await res.json() as { capabilities: unknown[] };
-    expect(body.capabilities,).toEqual([]);
+    expect(body.capabilities,).toEqual([],);
   });
 
   test("admin: returns seeded capabilities across providers", async () => {
@@ -121,7 +121,7 @@ describe("admin model-capabilities — list", () => {
     expect(res.status,).toBe(200,);
     const body = await res.json() as { capabilities: Array<{ providerId: string; modelId: string }> };
     expect(body.capabilities.length,).toBe(2,);
-    const ids = body.capabilities.map((c,) => `${c.providerId}:${c.modelId}`,);
+    const ids = body.capabilities.map((c,) => `${c.providerId}:${c.modelId}`);
     expect(ids,).toContain("openai:gpt-4o",);
     expect(ids,).toContain("anthropic:claude-3",);
   });
@@ -159,7 +159,7 @@ describe("admin model-capabilities — resolve one model", () => {
     const res = await app.handle(
       new Request("http://localhost/api/admin/model-capabilities/openai/does-not-exist",),
     );
-    expect([200, 404,]).toContain(res.status,);
+    expect([200, 404,],).toContain(res.status,);
   });
 
   test("non-admin: rejected from resolve endpoint with 403", async () => {
@@ -184,7 +184,9 @@ describe("admin model-capabilities — patch override", () => {
       },),
     );
     expect(res.status,).toBe(200,);
-    const body = await res.json() as { capabilities: { contextWindow: number; supportsTools: boolean; userOverride: boolean; notes: string | null } };
+    const body = await res.json() as {
+      capabilities: { contextWindow: number; supportsTools: boolean; userOverride: boolean; notes: string | null };
+    };
     expect(body.capabilities.contextWindow,).toBe(16384,);
     expect(body.capabilities.supportsTools,).toBe(true,);
     expect(body.capabilities.userOverride,).toBe(true,);
@@ -214,7 +216,7 @@ describe("admin model-capabilities — patch override", () => {
         body: JSON.stringify({ contextWindow: 1024, },),
       },),
     );
-    expect([200, 404,]).toContain(res.status,);
+    expect([200, 404,],).toContain(res.status,);
   });
 });
 
@@ -248,7 +250,7 @@ describe("admin model-capabilities — delete override", () => {
         method: "DELETE",
       },),
     );
-    expect([200, 404,]).toContain(res.status,);
+    expect([200, 404,],).toContain(res.status,);
   });
 
   test("non-admin: DELETE is rejected with 403", async () => {
