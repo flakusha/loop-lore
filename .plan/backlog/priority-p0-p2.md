@@ -29,36 +29,34 @@
 > worktree `rpg-wire-routes`** (see P2-later row + `epic-rpg-wiring-phase3.md`).
 > Detailed per-tier tickets live in `../tickets/`.
 
-### P2-Reconcile — Reconcile Bugs (Build-fix + Security + Broken Features)
+### P2-Reconcile — Reconcile Bugs (Build-fix + Security + Broken Features) — ✅ CLOSED
 
-> Added 2026-08-21 from reconcile review (Scout Batch C). 9 tickets, all high-priority defects
-> that block 0.1.0 quality.
-
-| Ticket | Area | Effort | Why P2 |
-|--------|------|--------|--------|
-| `BUG-impersonate-buildimpresult-referenceerror` | impersonation | Small | Impersonation broken (ReferenceError) |
-| `BUG-impersonate-commands-register-empty-callback` | impersonation | Small | Impersonate commands no-op |
-| `BUG-npc-navigation-routes-all-stubbed` | npcs | Large | NPC nav entirely stubbed |
-| `BUG-chat-swipe-index-race` | chat | Small | Data corruption risk |
-| `WIRE-impersonate-command-palette-no-actionpayload-dispatch` | impersonation | Medium | Impersonate FE dead |
-| `WIRE-characters-create-avatar-linking-missing` | characters | Medium | Character creation missing asset wiring |
-| `WIRE-nsfw-audit-page-missing-inline-authz` | nsfw | Small | **Security** — unguarded audit route |
-
-> **Closed (verify on `dev` 2026-08-22):** `BUG-gallery-duplicate-serveGalleryGrid`,
-> `BUG-users-persona-handlers-horizontal-priv-esc`, `BUG-rpg-route-authz-gaps-*`.
+> Added 2026-08-21 from reconcile review (Scout Batch C). All 9 tickets resolved —
+> statuses verified ✅ on `dev` 2026-09-11:
+>
+> - `BUG-impersonate-buildimpresult-referenceerror` — impersonation ReferenceError fixed
+> - `BUG-impersonate-commands-register-empty-callback` — impersonate commands live
+> - `BUG-npc-navigation-routes-all-stubbed` — NPC nav wired
+> - `BUG-chat-swipe-index-race` — swipe race fixed
+> - `WIRE-impersonate-command-palette-no-actionpayload-dispatch` — palette dispatch live
+> - `WIRE-characters-create-avatar-linking-missing` — avatar linking wired
+> - `WIRE-nsfw-audit-page-missing-inline-authz` — audit route guarded
+> - `BUG-gallery-duplicate-serveGalleryGrid`,
+>   `BUG-users-persona-handlers-horizontal-priv-esc`, `BUG-rpg-route-authz-gaps-*`
+>   (closed 2026-08-22).
 >
 
 | Tier     | Topic                                 | Tickets                                                                                                                                                                               | Status                                                                                                                                                        |
 | -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | P2-A     | Visual Novel Mode                     | `TASK-visual-novel-mode.md`, `TASK-vn-branching-choices.md`, `TASK-vn-dynamic-generation.md`, `TASK-vn-qa-mode.md`, `TASK-vn-scene-template-system.md`, `TASK-vn-template-actions.md` | ✅ Complete (backend + frontend, 2026-07-31); verify `bun test src/story/`                                                                                    |
-| P2-B     | Chat System                           | `TASK-chat-*.md` (autorenaming, backgrounds, external-music, room-search-join, room-filters, message-search, sectioning, transfer-location, travel-party, AUX-*)                      | 🟡 In progress — autorenaming/sections/invites/filters/message-search/transfer shipped; music-linking + party-join/leave + group-chat matrix UI open           |
-| P2-C     | Assistant & Tool Calling              | `TASK-assistant-commands-extension.md`, `TASK-assistant-command-execution-intent-detection.md`, `TASK-wire-gm-service-story-mode.md`, `TASK-assistant-gm-flows-reconciliation.md`     | 🟡 In progress — slash parser/commands, GM role runtime effect, LLM `classifyIntent`, **tool-call display ✅ (2026-08-12)**; command palette + creation wizards + tiered `/commands` open |
-| P2-D     | GM Flows                              | `TASK-gm-shadow-notes.md`, `TASK-gm-whitenotes.md`, `TASK-assistant-gm-flows.md`                                                                                                      | 🟡 **GM panels ✅ + quest log ✅ (2026-08-12)** + shadow/whitenotes shipped; unified GM↔assistant view open                                                                                  |
+| P2-B     | Chat System                           | `TASK-chat-*.md` (autorenaming, backgrounds, external-music, room-search-join, room-filters, message-search, sectioning, transfer-location, travel-party, AUX-*)                      | 🟡 In progress — autorenaming/sections/invites/filters/message-search/transfer shipped; music-linking open; party join/leave ✅ (Phases 1–2), split/reunite + choice-card open (Phases 3–4, `TASK-travel-party-migration.md`)           |
+| P2-C     | Assistant & Tool Calling              | `TASK-assistant-commands-extension.md`, `TASK-assistant-command-execution-intent-detection.md`, `TASK-wire-gm-service-story-mode.md`, `TASK-assistant-gm-flows-reconciliation.md`     | 🟡 In progress — slash parser/commands, GM role runtime effect, LLM `classifyIntent`, **tool-call display ✅ (2026-08-12)**; creation wizards + tiered `/commands` ✅ (C3, 2026-08-18); palette↔registry drift ✅ closed (`WIRE-assistant-command-palette-stale-static-list`) |
+| P2-D     | GM Flows                              | `TASK-gm-shadow-notes.md`, `TASK-gm-whitenotes.md`, `TASK-assistant-gm-flows.md`                                                                                                      | 🟡 **GM panels ✅ + quest log ✅ (2026-08-12)** + shadow/whitenotes shipped; unified GM↔assistant view ✅ (E1, 2026-08-20)                                                                                  |
 | P2-Da    | GM-Guided Story Creation (user as GM) | `TASK-gm-guided-story-creation.md`                                                                                                                                                    | ✅ **Done 2026-08-14** — participant type, `/guide` + `/scene` commands, guidance panel, `PUT /api/v1/chats/:id/gm-guidance`, `gmGuidance` threaded into `GameMasterService` (`4b0dd146`); merged to `dev`                                                                                              |
 | P2-E     | Authorization & Access                | `TASK-auth-register-route.md`, `TASK-encryption-access-management.md`, `TASK-dedupe-message-access-checks.md`, `TASK-fix-message-reactions-access.md`, `TASK-authoring-creation.md`   | 🟡 **Backend auth/access shipped incl. world/location access ✅ (2026-08-12)**; MFA re-planned 2026-09-02 (`epic-auth-channel-provisioning.md`; scheduling = human triage); authoring ownership indicators open                            |
 | P2-E†    | Unify 401 Guard Helpers (debt)        | `TASK-unify-401-guard-helpers.md`                                                                                                                                                     | ✅ Shipped 2026-08-06 (`c99704c1`) — remaining handler-funneled extraction tracked in `../open-inflight.md`                                                            |
 | P2-F     | Gallery                               | `TASK-gallery-minimal-image-asset-viewer.md`, `TASK-config-gallery-attachment-idempotent.md`                                                                                          | ✅ Backend + frontend; avatar-gallery visibility inheritance complete (G6)                                                                                             |
-| P2-G     | LoRA Discovery & Application          | `TASK-lora-discovery-application.md`                                                                                                                                                  | 🟡 Routes implemented but `.use()` commented out — wire or drop (see `../open-inflight.md`)                                                                            |
+| P2-G     | LoRA Discovery & Application          | `TASK-lora-discovery-application.md`                                                                                                                                                  | ✅ wired (A8, 2026-08-18; stale LoRA TODO dropped 2026-08-20)                                                                            |
 | P2-later | RPG Mechanics (wire phase-3)          | `TASK-rpg-mechanics-dice-stats.md`, `TASK-rpg-mechanics-combat.md`, `TASK-rpg-mechanics-xp-loot.md`, `TASK-wire-*-routes.md` × 8, `TASK-consolidate-quest-engines.md`                 | 🟡 **Item-systems backend merged 2026-08-14 (`rpg-wire-routes`)** + **7 more services wired 2026-08-14 (`51a7bc01`)**: achievements, skills, npc-navigation, replayability, world-location-traits, xp-loot, combat; quest engines consolidated. Remaining: crafting stations/execution, trade lifecycle, NPC trading → `epic-rpg-wiring-phase3.md` |
 | P2-later | Character System                      | `TASK-character-system-p2.md`                                                                                                                                                         | ⏸ Deferred                                                                                                                                                    |
 | P2-later | World & Locations                     | `epic-world-locations.md`                                                                                                                                                             | ⏸ Deferred                                                                                                                                                    |
