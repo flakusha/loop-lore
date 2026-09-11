@@ -79,7 +79,6 @@ export function startScheduler(deps: SchedulerDeps,): Scheduler {
   const live = new Map<string, LiveJob>();
 
   /**
-   * 
    * @param job
    * @param ctx
    */

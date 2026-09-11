@@ -63,7 +63,6 @@ export type {
 /** */
 export class BlogService {
   /**
-   * 
    * @param db
    */
   constructor(private readonly db: Kysely<any>,) {}
