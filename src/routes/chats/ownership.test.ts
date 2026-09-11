@@ -84,7 +84,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ newOwnerId: PARTICIPANT_ID, reason: "stepping down", },),
+        body: JSON.stringify({ newOwnerId: PARTICIPANT_ID, confirm: true, reason: "stepping down", },),
       },),
     );
 
@@ -124,7 +124,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ newOwnerId: OUTSIDER_ID, },),
+        body: JSON.stringify({ newOwnerId: OUTSIDER_ID, confirm: true, },),
       },),
     );
 
@@ -153,7 +153,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ newOwnerId: OWNER_ID, },),
+        body: JSON.stringify({ newOwnerId: OWNER_ID, confirm: true, },),
       },),
     );
 
@@ -175,7 +175,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ newOwnerId: PARTICIPANT_ID, reason: "compliance takeover", },),
+        body: JSON.stringify({ newOwnerId: PARTICIPANT_ID, confirm: true, reason: "compliance takeover", },),
       },),
     );
 
@@ -206,7 +206,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ newOwnerId: ADMIN_ID, },),
+        body: JSON.stringify({ newOwnerId: ADMIN_ID, confirm: true, },),
       },),
     );
 
@@ -227,7 +227,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ newOwnerId: OWNER_ID, },),
+        body: JSON.stringify({ newOwnerId: OWNER_ID, confirm: true, },),
       },),
     );
 
@@ -246,7 +246,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       new Request(`http://localhost/api/chats/${randomUUID()}/transfer-ownership`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ newOwnerId: PARTICIPANT_ID, },),
+        body: JSON.stringify({ newOwnerId: PARTICIPANT_ID, confirm: true, },),
       },),
     );
 
@@ -264,7 +264,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ newOwnerId: OWNER_ID, },),
+        body: JSON.stringify({ newOwnerId: OWNER_ID, confirm: true, },),
       },),
     );
 
@@ -282,13 +282,51 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
       new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
         method: "POST",
         headers: { "content-type": "application/json", },
-        body: JSON.stringify({ reason: "oops", },),
+        body: JSON.stringify({ confirm: true, reason: "oops", },),
       },),
     );
 
     // Elysia returns 422 for schema validation failures; the route never
     // enters the service so this is the canonical "bad body" code.
     expect(res.status,).toBe(422,);
+
+    await db.destroy();
+  });
+
+  test("422: missing confirm in body (Elysia schema rejection)", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const app = makeApp(db, OWNER_ID,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ newOwnerId: PARTICIPANT_ID, },),
+      },),
+    );
+
+    expect(res.status,).toBe(422,);
+
+    await db.destroy();
+  });
+
+  test("400: explicit confirm:false rejected at the route layer", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    const app = makeApp(db, OWNER_ID,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ newOwnerId: PARTICIPANT_ID, confirm: false, },),
+      },),
+    );
+
+    expect(res.status,).toBe(400,);
+    const chat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,).executeTakeFirst();
+    expect(chat?.created_by,).toBe(OWNER_ID,);
 
     await db.destroy();
   });

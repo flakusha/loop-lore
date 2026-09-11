@@ -269,4 +269,52 @@ describe("transferOwnership", () => {
     if (result.ok) { return; }
     expect(result.error.code,).toBe("not_found",);
   });
+
+  test("concurrent transfers: exactly one wins; loser fails without partial writes", async () => {
+    // OWNER fires two transfers at once (→ PARTICIPANT, → OUTSIDER).
+    // Awaits yield between the two flows, so their pre-tx reads and
+    // transactions interleave the way concurrent HTTP requests do.
+    // Exactly one conditional `created_by` flip can match: the winner
+    // commits, the loser fails (conflict guard, or the authority check
+    // if it read post-commit) — never silently last-writer-wins.
+    const [toParticipant, toOutsider,] = await Promise.all([
+      transferOwnership(db, {
+        chatId: CHAT_ID,
+        requesterId: OWNER_ID,
+        requesterRole: "user",
+        newOwnerId: PARTICIPANT_ID,
+      },),
+      transferOwnership(db, {
+        chatId: CHAT_ID,
+        requesterId: OWNER_ID,
+        requesterRole: "user",
+        newOwnerId: OUTSIDER_ID,
+      },),
+    ],);
+    const winners = [toParticipant, toOutsider,].filter((o,) => o.ok);
+    expect(winners.length,).toBe(1,);
+    const winner = winners[0]!;
+    if (!winner.ok) { return; }
+
+    const afterChat = await db.selectFrom("chats",).select("created_by",).where("id", "=", CHAT_ID,)
+      .executeTakeFirstOrThrow();
+    expect(afterChat.created_by,).toBe(winner.result.newOwnerId,);
+
+    const roles = await db
+      .selectFrom("chat_participants",)
+      .select(["actor_id", "role_in_chat",],)
+      .where("chat_id", "=", CHAT_ID,)
+      .execute();
+    const roleById = Object.fromEntries(roles.map((r,) => [r.actor_id, r.role_in_chat,]),);
+    expect(roleById[winner.result.newOwnerId],).toBe(ChatParticipantRole.Owner,);
+
+    // Single winner ⇒ single audit row; the loser wrote nothing.
+    const auditRows = await db
+      .selectFrom("log_entries",)
+      .select(["user_id", "meta",],)
+      .where("entity_id", "=", CHAT_ID,)
+      .where("event_type", "=", "chat_ownership_transferred",)
+      .execute();
+    expect(auditRows.length,).toBe(1,);
+  });
 });
