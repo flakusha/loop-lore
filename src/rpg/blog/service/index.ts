@@ -10,13 +10,7 @@ import {
   listCommentsThreaded as listCommentsThreadedDispatch,
   moderateComment as moderateCommentDispatch,
 } from "./comments";
-import {
-  follow as followDispatch,
-  getFollowers as getFollowersDispatch,
-  getFollowStatus as getFollowStatusDispatch,
-  isFollowing as isFollowingDispatch,
-  unfollow as unfollowDispatch,
-} from "./follows";
+import { BlogFollowsService, } from "./follows-service";
 import {
   createPost as createPostDispatch,
   deletePost as deletePostDispatch,
@@ -25,17 +19,14 @@ import {
   listPosts as listPostsDispatch,
   updatePost as updatePostDispatch,
 } from "./posts";
-import { addRAGSource as addRAGSourceDispatch, getRAGSources as getRAGSourcesDispatch, } from "./rag";
 import type {
   BlogCommentRow,
   BlogCommentStatus,
   BlogCommentWithChildren,
-  BlogFollowRow,
   BlogPostRow,
   BlogPostStatus,
   BlogPostVisibility,
   BlogPostWithTags,
-  BlogRAGSourceRow,
   CreateBlogPostInput,
   CreateCommentInput,
   UpdateBlogPostInput,
@@ -61,11 +52,13 @@ export type {
 
 // ── Service ──────────────────────────────────────
 /** */
-export class BlogService {
+export class BlogService extends BlogFollowsService {
   /**
    * @param db
    */
-  constructor(private readonly db: Kysely<any>,) {}
+  constructor(db: Kysely<any>,) {
+    super(db,);
+  }
 
   // ── Posts ────────────────────────────────────
   /**
@@ -192,83 +185,5 @@ export class BlogService {
     status: BlogCommentStatus,
   ): Promise<boolean> {
     return moderateCommentDispatch(this.db, id, status,);
-  }
-
-  // ── Follows ──────────────────────────────────
-  /**
-   * Follow an author.
-   * @param followerId
-   * @param authorId
-   */
-  async follow(
-    followerId: string,
-    authorId: string,
-  ): Promise<BlogFollowRow> {
-    return followDispatch(this.db, followerId, authorId,);
-  }
-
-  /**
-   * Unfollow an author.
-   * @param followerId
-   * @param authorId
-   */
-  async unfollow(
-    followerId: string,
-    authorId: string,
-  ): Promise<boolean> {
-    return unfollowDispatch(this.db, followerId, authorId,);
-  }
-
-  /**
-   * Get followers for an author.
-   * @param authorId
-   */
-  async getFollowers(authorId: string,): Promise<string[]> {
-    return getFollowersDispatch(this.db, authorId,);
-  }
-
-  /**
-   * Check if a user follows an author.
-   * @param followerId
-   * @param authorId
-   */
-  async isFollowing(
-    followerId: string,
-    authorId: string,
-  ): Promise<boolean> {
-    return isFollowingDispatch(this.db, followerId, authorId,);
-  }
-
-  /**
-   * Get follow status for a user.
-   * @param followerId
-   * @param authorId
-   */
-  async getFollowStatus(
-    followerId: string,
-    authorId: string,
-  ): Promise<{ following: boolean }> {
-    return getFollowStatusDispatch(this.db, followerId, authorId,);
-  }
-
-  // ── RAG Sources ──────────────────────────────
-  /**
-   * Add a RAG source to a post.
-   * @param postId
-   * @param source
-   */
-  async addRAGSource(
-    postId: string,
-    source: Omit<BlogRAGSourceRow, "id" | "created_at" | "post_id">,
-  ): Promise<BlogRAGSourceRow> {
-    return addRAGSourceDispatch(this.db, postId, source,);
-  }
-
-  /**
-   * Get RAG sources for a post.
-   * @param postId
-   */
-  async getRAGSources(postId: string,): Promise<BlogRAGSourceRow[]> {
-    return getRAGSourcesDispatch(this.db, postId,);
   }
 }

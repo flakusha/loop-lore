@@ -22,7 +22,7 @@
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { existsSync, readFileSync, } from "node:fs";
+import { existsSync, } from "node:fs";
 import { IMMUTABLE_CACHE_MAX_AGE, } from "../config/constants";
 import type { Config, } from "../config/schema";
 import { deriveChatKeyForChat, getSmk, } from "../crypto";
@@ -42,6 +42,7 @@ import {
 } from "../routes/http-utils";
 import { jsonStringifyOr, } from "../utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
+import { serveFile, } from "./serve-file";
 import {
   canAccessAsset,
   createAsset,
@@ -93,32 +94,6 @@ interface ServeCompressedOpts {
 
 interface ResolvedAsset {
   asset: AssetRecord;
-}
-
-/**
- * Serve a file from disk with proper headers.
- * @param filePath
- * @param contentType
- * @param opts
- * @param opts.cacheControl
- * @param opts.extraHeaders
- */
-function serveFile(
-  filePath: string,
-  contentType: string,
-  opts?: { cacheControl?: string; extraHeaders?: Record<string, string> },
-): Response {
-  if (!existsSync(filePath,)) {
-    return notFoundResponse("File not found on disk",);
-  }
-  const data = readFileSync(filePath,);
-  return new Response(data, {
-    headers: {
-      "Content-Type": contentType,
-      "Cache-Control": opts?.cacheControl ?? `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
-      ...opts?.extraHeaders,
-    },
-  },);
 }
 
 async function resolveAsset(
