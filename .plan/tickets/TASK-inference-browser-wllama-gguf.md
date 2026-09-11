@@ -29,6 +29,7 @@ git issue: 85fca038d
 - `cb45e88e0` feat(inference): llama.cpp tunnel connector with backoff
 - `54092ae6e` feat(inference): per-file model manifest with catalog download
 - `3b92eeb37` feat(native): gguf header probe with wasm-first TS fallback
+
 ## Acceptance Criteria
 
 - [x] Browser can download GGUF model files with SHA-256 verification
