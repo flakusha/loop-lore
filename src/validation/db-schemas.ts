@@ -956,6 +956,24 @@ export const AdminCharacterOverridesSchema = t.Object({
   expires_at: t.Optional(t.String(),),
 },);
 
+// ── asset_tags ────────────────────────────────────────────
+export const AssetTagsSchema = t.Object({
+  asset_id: t.String(),
+  tag: t.String(),
+  scope: t.Optional(t.String(),),
+  owner_id: t.Optional(t.String(),),
+  source: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+},);
+
+// ── asset_tag_dismissals ────────────────────────────────────────────
+export const AssetTagDismissalsSchema = t.Object({
+  asset_id: t.String(),
+  tag: t.String(),
+  user_id: t.String(),
+  created_at: t.Optional(t.String(),),
+},);
+
 // ── character_arc ────────────────────────────────────────────
 export const CharacterArcSchema = t.Object({
   actor_id: t.String(),
