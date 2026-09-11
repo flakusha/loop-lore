@@ -181,17 +181,14 @@ describeOrSkip("runBatchGeneration", () => {
     await expect(runBatchGeneration(svc, job, makeOpts(),),).rejects.toThrow(
       "No image generation provider",
     );
-    // No zombie "running" row: the failure is recorded as terminal.
-    expect(job.status,).toBe("failed",);
-    expect(job.error,).toContain("No image generation provider",);
+    // Validation runs before the start is recorded: no row exists to strand.
+    expect(job.status,).toBe("pending",);
     const record = await getGenerationJobRecord(db, job.id,);
-    expect(record?.status,).toBe("failed",);
-    expect(record?.errorMessage,).toContain("No image generation provider",);
-    expect(record?.completedAt,).not.toBeNull();
+    expect(record,).toBeUndefined();
   });
 
-  // Last: invalid provider URL leaves a failed (not running) record too.
-  it("records failure when the provider URL is invalid", async () => {
+  // Last: invalid provider URL rejects before any row is recorded too.
+  it("leaves no row when the provider URL is invalid", async () => {
     mock.module("../../../config/load", () => ({
       ...realConfigLoad,
       loadConfig: () => ({
@@ -213,7 +210,8 @@ describeOrSkip("runBatchGeneration", () => {
     await expect(runBatchGeneration(svc, job, makeOpts(),),).rejects.toThrow(
       "Invalid image provider URL",
     );
+    // Stillborn batch: rejected before any row was recorded.
     const record = await getGenerationJobRecord(db, job.id,);
-    expect(record?.status,).toBe("failed",);
+    expect(record,).toBeUndefined();
   });
 },);

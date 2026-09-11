@@ -24,7 +24,7 @@ import {
   buildEmotionPrompt,
   extractAvatarMetadata,
 } from "../emotion-avatar-fallback";
-import { recordBatchFailure, recordBatchFinish, recordBatchStart, } from "./job-records";
+import { recordBatchFinish, recordBatchStart, } from "./job-records";
 import type { BatchGenerationJob, GenerateEmotionAvatarsOpts, } from "./types";
 
 /**
@@ -70,26 +70,25 @@ export async function runBatchGeneration(
   job: BatchGenerationJob,
   opts: GenerateEmotionAvatarsOpts,
 ): Promise<void> {
-  job.status = "running";
-  await recordBatchStart(svc.db, job, opts,);
-
+  // Validate provider config BEFORE recording the start: a throw here leaves
+  // no row behind, so the gallery can never misread a stillborn batch as
+  // in-flight work.
   const config = loadConfig();
   const sdConfig = pickSdProvider(config.generation.providers.sd, "generate",);
   // Config-driven per-emotion intent/asset map consumed by prompt building.
   const avatarEmotions = config.templates.avatar.emotions;
 
   if (!sdConfig) {
-    const error = new Error("No image generation provider configured",);
-    await recordBatchFailure(svc.db, job, error,);
-    throw error;
+    throw new Error("No image generation provider configured",);
   }
 
   const validated = validateProviderUrl(sdConfig.baseUrl,);
   if (!validated.ok) {
-    const error = new Error(`Invalid image provider URL: ${validated.error}`,);
-    await recordBatchFailure(svc.db, job, error,);
-    throw error;
+    throw new Error(`Invalid image provider URL: ${validated.error}`,);
   }
+
+  job.status = "running";
+  await recordBatchStart(svc.db, job, opts,);
 
   const uploadDir = opts.uploadDir ?? config.assets.uploadDir;
   const fallbackMode = config.generation.emotionAvatar?.fallbackMode ?? "generation";
