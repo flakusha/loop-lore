@@ -20,7 +20,8 @@ import path from "node:path";
 import { createSqliteDialect, } from "../db";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
-import { encryptAtRest, getChatEncryptionLevel, isE2eOrEncrypted, } from "./at-rest";
+import { decryptAtRest, encryptAtRest, getChatEncryptionLevel, isE2eOrEncrypted, } from "./at-rest";
+import { isEncryptedPayload, } from "./pipeline";
 import { initSmk, } from "./smk";
 
 const VALID_HEX_KEY = "b".repeat(64,);
@@ -116,7 +117,7 @@ describe("encryptAtRest — tier-aware path", () => {
     expect(result.keyId,).toBeNull();
   });
 
-  test("standard tier: runs through server encrypt path (smoke)", async () => {
+  test("standard tier: seals outbound under the chat key, stores an envelope, round-trips", async () => {
     const chatId = "chat-standard-001";
     await db.insertInto("chats",).values({
       id: chatId,
@@ -126,16 +127,26 @@ describe("encryptAtRest — tier-aware path", () => {
       created_by: USER_ID,
       encryption_level: "standard",
     },).execute();
+    // Spaces/hyphens are outside the base64 alphabet, so a stored
+    // envelope can only contain this string via a plaintext leak.
+    const plaintext = "standard-tier outbound message";
     const result = await encryptAtRest({
       database: db,
       chatId,
-      plaintext: "message",
+      plaintext,
       encryptionLevel: "standard",
     },);
-    // Tier contract: path completes; `result` shape is well-defined.
-    expect(typeof result.storedContent,).toBe("string",);
-    expect(typeof result.wasEncrypted,).toBe("boolean",);
-    expect(result.keyId === null || typeof result.keyId === "string",).toBeTrue();
+    expect(result.wasEncrypted,).toBe(true,);
+    expect(typeof result.keyId,).toBe("string",);
+    expect(isEncryptedPayload(result.storedContent,),).toBe(true,);
+    expect(result.storedContent,).not.toContain(plaintext,);
+    const recovered = await decryptAtRest({
+      database: db,
+      chatId,
+      storedContent: result.storedContent,
+      encryptionLevel: "standard",
+    },);
+    expect(recovered,).toBe(plaintext,);
   });
 });
 
