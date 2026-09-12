@@ -18,6 +18,8 @@
 ## Tickets
 
 - `TASK-slash-commands-chat-group-assistant.md`
+- `TASK-chat-composer-markdown-pre-render-preview-before-send.md` - open (pre-send markdown preview)
+- `TASK-chat-composer-tab-complete-for-commands-mentions-emoji.md` - open (unified Tab-accept)
 
 ## Acceptance
 
