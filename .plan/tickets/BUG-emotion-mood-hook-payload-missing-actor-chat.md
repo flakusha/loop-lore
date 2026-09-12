@@ -3,7 +3,7 @@
 
 # BUG: EmotionHook + MoodHook payloads don't carry actorId/chatId; ambiguous in group chats
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Resolved (dev, 2026-08-30, fix(hooks) 563904ab4)
 **Priority:** P3
 **Effort:** Small
 **Epic:** epic-character-core-system
@@ -62,12 +62,23 @@ The risk surfaces when:
 
 ## Acceptance Criteria
 
-- [ ] `EmotionHook.data` and `MoodHook.data` include `actorId` + `chatId` copied from `context`.
-- [ ] Consumers (`content-hooks.ts`, `post-store.ts`, `story-mode.ts`) read actorId from payload, not opts.
-- [ ] Existing hook tests green; new assertions for the new fields.
+- [x] `EmotionHook.data` and `MoodHook.data` include `actorId` + `chatId` copied from `context`.
+- [x] Consumers (`content-hooks.ts`, `post-store.ts`, `story-mode.ts`) read actorId from payload, not opts.
+- [x] Existing hook tests green; new assertions for the new fields.
 - [ ] Optional follow-up: NSFW + Moderation hooks carry the same fields for consistency.
-- [ ] `bun run check` green.
+- [x] `bun run check` green.
 
 ## Notes
 
 **Reconciliation (2026-09-02)**: Prerequisite for epic Emotion Avatar Message Binding persist path (regeneration/render work blocked until hook payload carries actor+chat).
+
+## Resolution
+
+Implemented in commit `563904ab4` (`fix(hooks): wire context in MoodHook/EmotionHook — privacy gating, NSFW delta scaling, actorId/chatId payload`):
+
+- `EmotionHook.execute` (`src/generation/hooks/emotion-hook.ts:84-87`) now emits `{ dominantEmotion, indicators, actorId, chatId }`.
+- `MoodHook.execute` (`src/generation/hooks/mood-hook.ts:90-94`) now emits `{ dominantMood, delta, indicators, actorId, chatId }`.
+- Consumer-side helper `resolveActorIdFromEvents` was split into its own module (`src/generation/auto-gen/resolve-actor-from-events.ts`, `6b64dee48`) to satisfy the size gate.
+- `content-hooks.ts`, `post-store.ts`, `story-mode.ts` resolve actorId from payload first, falling back to caller-supplied `opts.actorId`.
+
+Ticket status updated 2026-09-13 during plan-ticket bookkeeping sweep; ticket was stale-on-paper.
