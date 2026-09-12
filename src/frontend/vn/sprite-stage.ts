@@ -186,7 +186,11 @@ export function buildStageElement(staged: StagedSprite, emotion?: string,): HTML
   },);
   el.classList.add("vn-stage-sprite", `vn-slot-${staged.slot}`,);
   el.dataset["characterId"] = staged.entry.characterId;
-  if (isAssetIdRef(staged.entry.avatarAssetId,)) { el.dataset["assetId"] = staged.entry.avatarAssetId; }
+  const variant = emotion && staged.entry.emotionVariants
+    ? Object.entries(staged.entry.emotionVariants,).find(([key,],) => key.toLowerCase() === emotion.toLowerCase(),)?.[1]
+    : undefined;
+  const ref = variant ?? staged.entry.avatarAssetId;
+  if (isAssetIdRef(ref,)) { el.dataset["assetId"] = ref; }
   applyStageHighlight(el, staged,);
   return el;
 }
