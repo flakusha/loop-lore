@@ -13,6 +13,8 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
+import type { Config, } from "../../config/schema";
+import { createConfigSchema, } from "../../config/schema-class";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -31,9 +33,10 @@ describe("chats archive-routes", () => {
   const CHAT_ID = crypto.randomUUID();
 
   function makeApp(userId: string | undefined,) {
+    const config = createConfigSchema().defaults as Config;
     return new Elysia({ name: "test-app", },)
       .derive(() => ({ userId, userRole: "user" as string | null, }))
-      .use(archiveRoutes({ database: db, }, "/api",),);
+      .use(archiveRoutes({ database: db, config, }, "/api",),);
   }
 
   beforeEach(async () => {
