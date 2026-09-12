@@ -149,3 +149,45 @@ interface RelationshipFlags {
 - NSFW flags are stored per-user, not per-message (avoids PII in message content).
 - Relationship graphs are stored separately from character data for isolation.
 - Opt-in/opt-out state is checked before every generation call.
+
+## 5. Safety & Consent Research Notes
+
+> Condensed from the retired `docs/.nsfw/research.md` (hidden dot-dir,
+> invisible to the docs site). Its storage sketches (separate `nsfw.db`,
+> third-party ID scan) contradict the implemented `src/nsfw/`
+> (preferences, per-chat/world overrides, appeals, audit) and the
+> `src/crypto/` chat-key hierarchy — they were dropped, not migrated.
+> Implemented gating lives in `src/nsfw/`; age self-declaration in
+> `docs/frontend/age-gate.md`. The notes below are future-facing, not
+> current behavior.
+
+### 5.1 Verification escalation
+
+- Low risk: self-declaration (current age gate).
+- Medium risk: periodic reaffirmation (e.g. 30-day).
+- High-risk / shared contexts: explicit per-chat consent log.
+
+### 5.2 Consent lifecycle
+
+`Undeclared → Pending → Verified → Active`; `Active → Modified → Active`,
+`Active → Revoked → Restricted`. Revocation restricts NSFW generation for
+that user/chat immediately.
+
+### 5.3 Safety filters & boundaries
+
+- Filter levels (`strict | moderate | permissive`) plus custom
+  keywords/regex.
+- Hard limits (never generate) vs soft limits (flag for review).
+- Emergency stop: halt generation, optionally auto-archive the session.
+
+### 5.4 Memory & session hygiene
+
+- Explicit-memory redaction (`full | partial`) and TTL auto-purge with
+  pre-purge confirmation.
+- Sensitive sessions: isolated storage, encryption at rest, optional TTL.
+
+### 5.5 Metadata-only moderation & exports
+
+- Moderators act on aggregates and reports, never message bodies (counts,
+  filter-trigger rates, anonymized patterns).
+- NSFW exports: opt-in, watermarked, auto-expiring.

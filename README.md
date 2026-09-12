@@ -36,56 +36,9 @@ layers, design principles, and key decisions. The authoritative source for
 project structure is `src/` and [`AGENTS.md`](AGENTS.md) — directory
 listings in this README would go stale within days.
 
----
-
-## Features
-
-Status legend: **MVP** = shipped, **WIP** = active, **Planned** = scoped
-but not started. Spec links go to [`docs/spec/`](docs/spec/) and
-[`docs/frontend/`](docs/frontend/); epic progress lives in
-[`.plan/epics-index.md`](.plan/epics-index.md) and active work in
-[`.plan/backlog/open.md`](.plan/backlog/open.md).
-
-| Feature                | Status  | Reference                                                                                                                                            |
-| ---------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Character management   | WIP     | [spec/character-spec](docs/spec/character-spec.md), [frontend/characters](docs/frontend/characters.md)                                               |
-| Chat engine            | WIP     | [spec/messages](docs/spec/messages.md), [frontend/chat](docs/frontend/chat/overview.md)                                                              |
-| TUI chat interface     | WIP     | [spec/terminal-ui](docs/spec/terminal-ui.md), [guide/getting-started](docs/guide/getting-started.md)                                                 |
-| Database layer         | WIP     | [spec/schema](docs/spec/schema.md), [spec/db-versioning](docs/spec/db-versioning.md)                                                                 |
-| Assets (media)         | WIP     | [spec/assets](docs/spec/assets.md), [frontend/gallery](docs/frontend/gallery.md)                                                                     |
-| Assistant chat         | MVP     | [spec/assistant-commands](docs/spec/assistant-commands.md), [frontend/chat/assistant](docs/frontend/chat/assistant.md)                               |
-| VN scene generation    | WIP     | [spec/visual-novel](docs/spec/visual-novel.md), [frontend/chat/visual-novel-mode](docs/frontend/chat/visual-novel-mode.md)                           |
-| Emotion avatars        | WIP     | [spec/emotion-avatars](docs/spec/emotion-avatars.md)                                                                                                 |
-| Regex extraction       | WIP     | [spec/regex-extraction](docs/spec/regex-extraction.md)                                                                                               |
-| RPG systems            | WIP     | [spec/rpg-mechanics](docs/spec/rpg-mechanics.md), [spec/achievements](docs/spec/achievements.md)                                                     |
-| Lorebooks / World Info | Planned | [spec/lore](docs/spec/lore.md), [frontend/worlds](docs/frontend/worlds.md)                                                                           |
-| Web UI                 | WIP     | [frontend/component-architecture](docs/frontend/component-architecture.md)                                                                           |
-| Plugin system          | WIP     | [spec/plugin-system](docs/spec/plugin-system.md)                                                                                                     |
-| Crypto / Encryption    | WIP     | [spec/crypto](docs/spec/crypto.md), [spec/encryption-workflow](docs/spec/encryption-workflow.md), [frontend/encryption](docs/frontend/encryption.md) |
-| Multi-session          | WIP     | [spec/users-sessions](docs/spec/users-sessions.md)                                                                                                   |
-| I18n                   | WIP     | [frontend/internationalization](docs/frontend/internationalization.md), [docs/i18n](docs/i18n/)                                                      |
-| Memory                 | WIP     | [spec/memory-system](docs/spec/memory-system.md), [frontend/chat/memories](docs/frontend/chat/memories.md)                                           |
-| Telemetry              | WIP     | [spec/observability-telemetry](docs/spec/observability-telemetry.md)                                                                                 |
-| Profanity filter       | WIP     | [spec/profanity-filter](docs/spec/profanity-filter.md)                                                                                               |
-| Age gate               | WIP     | [frontend/age-gate](docs/frontend/age-gate.md)                                                                                                       |
-| Notifications          | WIP     | [frontend/notifications](docs/frontend/notifications.md)                                                                                             |
-
----
-
-## Tech Stack
-
-| Layer         | Choice                                          |
-| ------------- | ----------------------------------------------- |
-| Runtime       | Bun (fast TS/JS, no build step)                 |
-| Language      | TypeScript 5.4+ (strict mode)                   |
-| Database      | `bun:sqlite` → Postgres via Kysely dialect swap |
-| Query Builder | Kysely (type-safe, no ORM overhead)             |
-| TUI           | blessed + blessed-contrib                       |
-| Web UI        | htmx + Alpine.js                                |
-
-Architecture decisions and tradeoffs live in
-[`docs/spec/architecture.md`](docs/spec/architecture.md). Coding conventions
-are in [`.agents/references/`](.agents/references/).
+Feature status lives in [`.plan/epics-index.md`](.plan/epics-index.md) and
+active work in [`.plan/backlog/open.md`](.plan/backlog/open.md) — statuses
+are not duplicated here.
 
 ---
 
@@ -116,6 +69,8 @@ Full guide: [`docs/guide/getting-started.md`](docs/guide/getting-started.md).
 
 ## Documentation
 
+- [`docs/README.md`](docs/README.md) — Documentation hub (philosophy, RPG
+  status, full index)
 - [`docs/spec/`](docs/spec/) — Core specs (architecture, characters, chat,
   RPG, encryption, telemetry, …)
 - [`docs/frontend/`](docs/frontend/) — UX specs (components, chat, gallery,
