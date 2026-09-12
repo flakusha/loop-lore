@@ -36,56 +36,9 @@ loop-lore 는 핵심 기능 — 캐릭터, 채팅, 로어북, 멀티 백엔드 L
 프로젝트 구조의 권위 있는 출처는 `src/` 와 [`AGENTS.md`](../../AGENTS.md) 입니다
 — 이 README 의 디렉터리 목록은 며칠 내에 오래됩니다.
 
----
-
-## 기능
-
-상태 범례: **MVP** = 출시됨, **WIP** = 진행 중, **Planned** = 계획되었으나
-미착수. 명세 링크는 [`docs/spec/`](../../docs/spec/) 과
-[`docs/frontend/`](../../docs/frontend/) 을 가리킵니다. 에픽 진행 상황은
-[`.plan/epics-index.md`](../../.plan/epics-index.md), 진행 중인 작업은
-[`.plan/backlog/open.md`](../../.plan/backlog/open.md) 에서 확인하세요.
-
-| 기능                  | 상태     | 참조                                                                                                            |
-| --------------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
-| 캐릭터 관리           | WIP      | [spec/character-spec](../../docs/spec/character-spec.md), [frontend/characters](../../docs/frontend/characters.md) |
-| 채팅 엔진             | WIP      | [spec/messages](../../docs/spec/messages.md), [frontend/chat](../../docs/frontend/chat/overview.md)              |
-| TUI 채팅 인터페이스   | WIP      | [spec/terminal-ui](../../docs/spec/terminal-ui.md), [guide/getting-started](../../docs/guide/getting-started.md) |
-| 데이터베이스 계층     | WIP      | [spec/schema](../../docs/spec/schema.md), [spec/db-versioning](../../docs/spec/db-versioning.md)                  |
-| 에셋 (미디어)         | WIP      | [spec/assets](../../docs/spec/assets.md), [frontend/gallery](../../docs/frontend/gallery.md)                     |
-| 어시스턴트 채팅       | MVP      | [spec/assistant-commands](../../docs/spec/assistant-commands.md), [frontend/chat/assistant](../../docs/frontend/chat/assistant.md) |
-| VN 장면 생성          | WIP      | [spec/visual-novel](../../docs/spec/visual-novel.md), [frontend/chat/visual-novel-mode](../../docs/frontend/chat/visual-novel-mode.md) |
-| 감정 아바타           | WIP      | _명세 미정 — `.plan/` 참조_                                                                                       |
-| 정규식 추출           | WIP      | _명세 미정 — `src/regex/` 참조_                                                                                   |
-| RPG 시스템            | WIP      | [spec/rpg-mechanics](../../docs/spec/rpg-mechanics.md), [spec/achievements](../../docs/spec/achievements.md)     |
-| 로어북 / 월드 정보    | Planned  | [spec/lore](../../docs/spec/lore.md), [frontend/worlds](../../docs/frontend/worlds.md)                          |
-| Web UI                | WIP      | [frontend/component-architecture](../../docs/frontend/component-architecture.md)                                |
-| 플러그인 시스템       | WIP      | [spec/plugin-system](../../docs/spec/plugin-system.md)                                                          |
-| 암호화                | WIP      | [spec/crypto](../../docs/spec/crypto.md), [spec/encryption-workflow](../../docs/spec/encryption-workflow.md), [frontend/encryption](../../docs/frontend/encryption.md) |
-| 멀티 세션             | WIP      | [spec/users-sessions](../../docs/spec/users-sessions.md)                                                        |
-| i18n                  | WIP      | [frontend/internationalization](../../docs/frontend/internationalization.md), [docs/i18n](../i18n/)            |
-| 메모리                | WIP      | [spec/memory-system](../../docs/spec/memory-system.md), [frontend/chat/memories](../../docs/frontend/chat/memories.md) |
-| 텔레메트리            | WIP      | [spec/observability-telemetry](../../docs/spec/observability-telemetry.md)                                      |
-| 비속어 필터           | WIP      | _명세 미정 — `src/profanity/` 참조_                                                                              |
-| 연령 게이트           | WIP      | [frontend/age-gate](../../docs/frontend/age-gate.md)                                                            |
-| 알림                  | WIP      | [frontend/notifications](../../docs/frontend/notifications.md)                                                  |
-
----
-
-## 기술 스택
-
-| 계층           | 선택                                                                              |
-| -------------- | --------------------------------------------------------------------------------- |
-| 런타임         | Bun (빠른 TS/JS, 빌드 단계 없음)                                                  |
-| 언어           | TypeScript 5.4+ (엄격 모드)                                                       |
-| 데이터베이스   | `bun:sqlite` → Kysely 방언 스왑으로 Postgres                                      |
-| 쿼리 빌더      | Kysely (타입 안전, ORM 오버헤드 없음)                                             |
-| TUI            | blessed + blessed-contrib                                                         |
-| Web UI         | htmx + Alpine.js                                                                  |
-
-아키텍처 결정과 트레이드오프는
-[`docs/spec/architecture.md`](../../docs/spec/architecture.md) 에 있습니다.
-코딩 규칙은 [`.agents/references/`](../../.agents/references/) 을 참조하세요.
+기능 상태는 [`.plan/epics-index.md`](../../.plan/epics-index.md), 진행 중인
+작업은 [`.plan/backlog/open.md`](../../.plan/backlog/open.md) 에 있습니다 —
+상태는 여기에 중복하지 않습니다.
 
 ---
 
@@ -116,6 +69,8 @@ bun test src/
 
 ## 문서
 
+- [`docs/README.md`](../../docs/README.md) — 문서 허브 (방침, RPG 상태,
+  전체 색인)
 - [`docs/spec/`](../../docs/spec/) — 핵심 명세 (아키텍처, 캐릭터, 채팅,
   RPG, 암호화, 텔레메트리, …)
 - [`docs/frontend/`](../../docs/frontend/) — UX 명세 (컴포넌트, 채팅,

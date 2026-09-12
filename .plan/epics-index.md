@@ -2130,7 +2130,7 @@ Multi-system epic combining:
 - **Tags:** nsfw, rpg, game-mechanics, adult, intimacy, relationships
 - **File:** `.plan/epics/epic-nsfw-game-mechanics.md`
 
-Game mechanics for adult/NSFW content — intimacy systems, seduction, relationship progression, adult encounters, desires, fetishes, pregnancy/reproduction, body systems, pheromones, aphrodisiacs, heat/rut cycles, and mature narrative mechanics. This epic covers the **gameplay layer** of NSFW content, not the safety/consent infrastructure (that lives in `epic-logic-reconciliation.md` NSFW Support section and `docs/.nsfw/research.md`).
+Game mechanics for adult/NSFW content — intimacy systems, seduction, relationship progression, adult encounters, desires, fetishes, pregnancy/reproduction, body systems, pheromones, aphrodisiacs, heat/rut cycles, and mature narrative mechanics. This epic covers the **gameplay layer** of NSFW content, not the safety/consent infrastructure (that lives in `epic-logic-reconciliation.md` NSFW Support section and `docs/spec/nsfw.md` §5).
 
 ### Epic: API Versioning (v1/v2+)
 
