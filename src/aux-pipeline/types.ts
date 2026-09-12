@@ -18,7 +18,8 @@ export type AuxTaskName =
   | "gm-tool"
   | "prompt-improve"
   | "prompt-analysis"
-  | "injection-check";
+  | "injection-check"
+  | "message-action";
 
 /** Per-call options for `callAux`. All optional — runner defaults apply. */
 export interface AuxCallOptions {
