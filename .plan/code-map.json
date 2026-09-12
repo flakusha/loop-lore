@@ -5303,6 +5303,12 @@
       "source": ".plan/epics/epic-file-splitting.md"
     }
   ],
+  "src/chat/service/crud/README.md": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.md"
+    }
+  ],
   "src/chat/service/crud/create.ts": [
     {
       "kind": "ticket",
@@ -5325,7 +5331,17 @@
       "source": ".plan/tickets/TASK-chat-locations-worlds-finalize-current-implementation.md"
     }
   ],
+  "src/chat/service/crud/delete.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.md"
+    }
+  ],
   "src/chat/service/crud/delete.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.md"
@@ -11086,6 +11102,10 @@
   "src/frontend": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waivers-for-3-modules-below-80-floor.md"
     },
     {
@@ -11733,6 +11753,12 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+  "src/frontend/alpine/chat-seen.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
+    }
+  ],
   "src/frontend/alpine/chat-seen.ts": [
     {
       "kind": "ticket",
@@ -11745,6 +11771,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery.md"
     }
   ],
   "src/frontend/alpine/chat-send.ts": [
@@ -16479,6 +16509,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-silence-pass-not-implemented.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-group-chat-mention-routing.md"
     }
   ],
   "src/group-chat/mention-parser.ts": [
@@ -16509,6 +16547,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-mention-parser-regex-fails-on-multi-word-names.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery.md"
     },
     {
       "kind": "ticket",
@@ -21879,6 +21921,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery.md"
     },
     {
       "kind": "ticket",
