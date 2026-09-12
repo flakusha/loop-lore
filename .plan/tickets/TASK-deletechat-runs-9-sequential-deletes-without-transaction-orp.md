@@ -1,6 +1,6 @@
 # TASK: deleteChat runs 9 sequential deletes without transaction (orphan risk)
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Implemented (chat-bugfix-batch-1)
 **Priority:** high
 **Effort:** Medium
 
@@ -10,6 +10,28 @@ src/chat/service/crud/delete.ts:13-42 deletes 9 child tables with separate await
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated
+
+## Resolution
+
+Implemented in branch `chat-bugfix-batch-1` (commit pending).
+
+`src/chat/service/crud/delete.ts` rewrites `deleteChat` to wrap the nine child-table
+deletes + the final `chats` row deletion in a single `db.transaction().execute((trx) => { ... })`.
+Each `database.deleteFrom(...)` became `trx.deleteFrom(...)`; the inner world-states delete's
+subqueries now run against `trx.selectFrom(...)` instead of the outer `database`. The
+function still returns `Promise<void>` and the outer API is unchanged.
+
+Tests added in `src/chat/service/crud/delete.test.ts`:
+- happy path: every child table row (chats, chat_participants, messages, story_turns,
+  asset_links, world_states) is wiped
+- unrelated chat rows survive the cascade
+- deleting a chat with no related rows resolves without error
+- mid-cascade failure rolls back every prior delete (atomicity): a stubbed `db` whose
+  `deleteFrom('messages')` throws proves the transaction wrapper keeps `chats`,
+  `chat_participants`, and the seeded `messages` row intact.
+
+Documentation update deferred — `src/chat/service/crud/README.md` does not exist; the
+JSDoc on `deleteChat` now describes the transaction semantics inline.
