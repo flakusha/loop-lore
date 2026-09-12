@@ -70,7 +70,7 @@ export function readDraftIndex(store: DraftStore,): string[] {
   if (!raw) { return []; }
   const parsed = jsonParseOr<unknown>(raw, [],);
   if (!Array.isArray(parsed,)) { return []; }
-  return parsed.filter((id,): id is string => typeof id === "string",);
+  return parsed.filter((id,): id is string => typeof id === "string");
 }
 
 /**
@@ -108,7 +108,7 @@ export function writeDraft(store: DraftStore, chatId: string, text: string,): vo
   } catch {
     return;
   }
-  const index = readDraftIndex(store,).filter((id,) => id !== chatId,);
+  const index = readDraftIndex(store,).filter((id,) => id !== chatId);
   index.unshift(chatId,);
   for (const evicted of index.slice(DRAFT_MAX_CHATS,)) {
     try {
@@ -137,7 +137,7 @@ export function clearDraft(store: DraftStore, chatId: string,): void {
     return;
   }
   try {
-    const index = readDraftIndex(store,).filter((id,) => id !== chatId,);
+    const index = readDraftIndex(store,).filter((id,) => id !== chatId);
     const encoded = safeJsonStringify(index,);
     if (encoded.ok) { store.setItem(DRAFT_INDEX_KEY, encoded.value,); }
   } catch {

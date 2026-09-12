@@ -1,13 +1,13 @@
 import { describe, expect, test, } from "bun:test";
 import {
-  DRAFT_MAX_CHARS,
-  DRAFT_MAX_CHATS,
   chatDraftMethods,
   clearDraft,
+  DRAFT_MAX_CHARS,
+  DRAFT_MAX_CHATS,
+  type DraftStore,
   readDraft,
   readDraftIndex,
   writeDraft,
-  type DraftStore,
 } from "./chat-drafts";
 
 function memStore(): DraftStore {
@@ -121,8 +121,8 @@ describe("draft storage helpers", () => {
 
   test("quota and removal failures never throw", () => {
     const store = throwingStore();
-    expect(() => writeDraft(store, "c1", "hi",),).not.toThrow();
-    expect(() => clearDraft(store, "c1",),).not.toThrow();
+    expect(() => writeDraft(store, "c1", "hi",)).not.toThrow();
+    expect(() => clearDraft(store, "c1",)).not.toThrow();
   });
 });
 
@@ -185,7 +185,7 @@ describe("chatDraftMethods", () => {
     const store = memStore();
     writeDraft(store, "chat-1", "kept",);
     const ctx = buildCtx({ $refs: {}, },);
-    expect(() => chatDraftMethods.restoreComposerDraft!.call(ctx as never, store,),).not.toThrow();
+    expect(() => chatDraftMethods.restoreComposerDraft!.call(ctx as never, store,)).not.toThrow();
     expect(readDraft(store, "chat-1",)?.text,).toBe("kept",);
   });
 

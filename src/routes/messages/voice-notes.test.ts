@@ -52,11 +52,11 @@ describe("enrichAttachments voice notes", () => {
     expect(first.mimeType,).toBe("audio/ogg",);
     expect(first.type,).toBe("audio",);
     expect(first.url,).toBe(`/api/assets/${voiceAsset}/raw`,);
-  },);
+  });
   test("returns null for empty payloads", async () => {
     expect(await enrichAttachments(db, null,),).toBeNull();
     expect(await enrichAttachments(db, "[]",),).toBeNull();
-  },);
+  });
   test("degrades gracefully for unknown assets", async () => {
     const enriched = (await enrichAttachments(
       db,
@@ -66,5 +66,5 @@ describe("enrichAttachments voice notes", () => {
     const first = enriched[0]!;
     expect(first.durationSecs,).toBe(0,);
     expect(first.mimeType,).toBe("",);
-  },);
-},);
+  });
+});

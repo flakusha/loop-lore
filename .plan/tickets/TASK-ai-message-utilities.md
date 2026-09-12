@@ -7,17 +7,20 @@
 **Type:** Feature | **Priority:** Medium | **Effort:** S
 
 ## Problem
+
 P2 actions in `message-actions.md` (Summarize/Narrate/Analyze) plus
 mobile Translate exist in menus, but translate never calls the LLM
 (BUG-assistant-improve-translate-rewrite-never-call-llm). Stub UX.
 
 ## Change
+
 - Wire selection actions to `aux-pipeline` (not main generation path):
   translate / summarize / explain, result as ephemeral overlay + copy. Tag injected message content with provenance (never system role).
 - Reuse existing assistant prompt seam; cap input 2KB, output 500 tokens.
 - Alpine: add to message context menu; same visibility matrix as P2.
 
 ## Acceptance
+
 - Each action returns LLM text (no static stub); failure surfaces error.
 - Main chat generation path untouched; existing BUG ticket closed by this.
 
