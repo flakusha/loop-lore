@@ -5150,6 +5150,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
     }
   ],
@@ -5391,6 +5395,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-file-splitting.md"
+    }
+  ],
+  "src/chat/service/ownership.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/chat/service/ownership.ts": [
@@ -11761,6 +11771,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
+    }
+  ],
+  "src/frontend/alpine/chat-settings/ownership-actions.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/frontend/alpine/chat-settings/ownership.ts": [
@@ -20955,6 +20971,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    }
+  ],
+  "src/routes/chats/ownership.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
     }
   ],
   "src/routes/chats/ownership.ts": [
