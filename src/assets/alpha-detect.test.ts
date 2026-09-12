@@ -24,17 +24,34 @@ function png(colorType: number, extra: number[] = [],): Uint8Array {
  */
 function chunk(type: string, length = 0,): number[] {
   return [
-    0, 0, 0, length,
+    0,
+    0,
+    0,
+    length,
     ...Array.from(type, (c,) => c.charCodeAt(0,),),
     ...new Array<number>(length,).fill(7,),
-    0, 0, 0, 0,
+    0,
+    0,
+    0,
+    0,
   ];
 }
 
 /** Minimal WebP: RIFF header plus a list of (tag, payload) chunks. */
 function webp(chunks: { tag: string; payload: number[] }[],): Uint8Array {
   const out: number[] = [
-    0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50,
+    0x52,
+    0x49,
+    0x46,
+    0x46,
+    0,
+    0,
+    0,
+    0,
+    0x57,
+    0x45,
+    0x42,
+    0x50,
   ];
   for (const { tag, payload, } of chunks) {
     out.push(...Array.from(tag, (c,) => c.charCodeAt(0,),),);
@@ -49,8 +66,19 @@ function webp(chunks: { tag: string; payload: number[] }[],): Uint8Array {
 /** Minimal GIF: header + screen descriptor, then extension bytes. */
 function gif(packed: number, rest: number[],): Uint8Array {
   return new Uint8Array([
-    0x47, 0x49, 0x46, 0x38, 0x39, 0x61, // GIF89a
-    1, 0, 1, 0, packed, 0, 0, // logical screen descriptor
+    0x47,
+    0x49,
+    0x46,
+    0x38,
+    0x39,
+    0x61, // GIF89a
+    1,
+    0,
+    1,
+    0,
+    packed,
+    0,
+    0, // logical screen descriptor
     ...rest,
   ],);
 }
@@ -70,11 +98,11 @@ describe("detectPngAlpha", () => {
   });
 
   test("false when IEND precedes any tRNS", () => {
-    expect(detectPngAlpha(png(2, [...chunk("IEND",), ...chunk("tRNS", 3,)],),),).toBe(false,);
+    expect(detectPngAlpha(png(2, [...chunk("IEND",), ...chunk("tRNS", 3,),],),),).toBe(false,);
   });
 
   test("walks past unrelated chunks to a later tRNS", () => {
-    expect(detectPngAlpha(png(2, [...chunk("zTXt", 5,), ...chunk("tRNS", 3,)],),),).toBe(true,);
+    expect(detectPngAlpha(png(2, [...chunk("zTXt", 5,), ...chunk("tRNS", 3,),],),),).toBe(true,);
   });
 
   test("false (no throw) on empty input", () => {
@@ -84,17 +112,17 @@ describe("detectPngAlpha", () => {
 
 describe("detectWebpAlpha", () => {
   test("VP8X flag bit decides", () => {
-    expect(detectWebpAlpha(webp([{ tag: "VP8X", payload: [0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0,], },]),),).toBe(
+    expect(detectWebpAlpha(webp([{ tag: "VP8X", payload: [0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0,], },],),),).toBe(
       true,
     );
-    expect(detectWebpAlpha(webp([{ tag: "VP8X", payload: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,], },]),),).toBe(
+    expect(detectWebpAlpha(webp([{ tag: "VP8X", payload: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,], },],),),).toBe(
       false,
     );
   });
 
   test("VP8L means alpha, lossy VP8 means none", () => {
-    expect(detectWebpAlpha(webp([{ tag: "VP8L", payload: [1, 2, 3, 4,], },]),),).toBe(true,);
-    expect(detectWebpAlpha(webp([{ tag: "VP8 ", payload: [1, 2, 3, 4,], },]),),).toBe(false,);
+    expect(detectWebpAlpha(webp([{ tag: "VP8L", payload: [1, 2, 3, 4,], },],),),).toBe(true,);
+    expect(detectWebpAlpha(webp([{ tag: "VP8 ", payload: [1, 2, 3, 4,], },],),),).toBe(false,);
   });
 
   test("skips unknown chunks to reach the verdict", () => {
@@ -106,7 +134,7 @@ describe("detectWebpAlpha", () => {
   });
 
   test("zero-size chunk stops the scan", () => {
-    expect(detectWebpAlpha(webp([{ tag: "ICCP", payload: [], },]),),).toBe(false,);
+    expect(detectWebpAlpha(webp([{ tag: "ICCP", payload: [], },],),),).toBe(false,);
   });
 
   test("false (no throw) on empty input", () => {
@@ -116,18 +144,18 @@ describe("detectWebpAlpha", () => {
 
 describe("detectGifAlpha", () => {
   test("graphic-control transparency flag decides", () => {
-    expect(detectGifAlpha(gif(0, [0x21, 0xf9, 0x04, 0x01,]),),).toBe(true,);
-    expect(detectGifAlpha(gif(0, [0x21, 0xf9, 0x04, 0x00,]),),).toBe(false,);
+    expect(detectGifAlpha(gif(0, [0x21, 0xf9, 0x04, 0x01,],),),).toBe(true,);
+    expect(detectGifAlpha(gif(0, [0x21, 0xf9, 0x04, 0x00,],),),).toBe(false,);
   });
 
   test("skips the global color table when flagged", () => {
     // Packed 0x80: GCT present, size 3 * 2^(0+1) = 6 bytes.
     const gct = [7, 7, 7, 7, 7, 7,];
-    expect(detectGifAlpha(gif(0x80, [...gct, 0x21, 0xf9, 0x04, 0x01,]),),).toBe(true,);
+    expect(detectGifAlpha(gif(0x80, [...gct, 0x21, 0xf9, 0x04, 0x01,],),),).toBe(true,);
   });
 
   test("false on immediate trailer", () => {
-    expect(detectGifAlpha(gif(0, [0x3b,]),),).toBe(false,);
+    expect(detectGifAlpha(gif(0, [0x3b,],),),).toBe(false,);
   });
 
   test("skips non-GCE extensions to reach the verdict", () => {
@@ -145,7 +173,7 @@ describe("detectGifAlpha", () => {
   });
 
   test("steps over unknown bytes", () => {
-    expect(detectGifAlpha(gif(0, [0x00, 0x21, 0xf9, 0x04, 0x01,]),),).toBe(true,);
+    expect(detectGifAlpha(gif(0, [0x00, 0x21, 0xf9, 0x04, 0x01,],),),).toBe(true,);
   });
 
   test("false (no throw) on empty input", () => {

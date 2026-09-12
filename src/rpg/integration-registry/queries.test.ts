@@ -10,16 +10,18 @@
 import { describe, expect, test, } from "bun:test";
 import { IntegrationRegistry, } from "./index";
 import {
+  type CrossSystemEvent,
   EdgeDirection,
   EventDirection,
-  type CrossSystemEvent,
   type IntegrationEdge,
   type InterfaceContract,
   type PlayerStateLayer,
 } from "./types";
 
 /** Minimal edge; callers override fields they care about. */
-function edge(overrides: Partial<IntegrationEdge> & { source: IntegrationEdge["source"]; target: IntegrationEdge["target"] },): IntegrationEdge {
+function edge(
+  overrides: Partial<IntegrationEdge> & { source: IntegrationEdge["source"]; target: IntegrationEdge["target"] },
+): IntegrationEdge {
   return {
     direction: EdgeDirection.DependsOn,
     interfaces: [],
@@ -37,7 +39,9 @@ function contract(overrides: Partial<InterfaceContract> & { id: string },): Inte
   };
 }
 
-function layer(overrides: Partial<PlayerStateLayer> & { id: string; owner: PlayerStateLayer["owner"] },): PlayerStateLayer {
+function layer(
+  overrides: Partial<PlayerStateLayer> & { id: string; owner: PlayerStateLayer["owner"] },
+): PlayerStateLayer {
   return {
     classification: "exclusive",
     producers: [],
@@ -77,14 +81,14 @@ describe("getContract / getSharedTypes / resolveEdgeInterfaces", () => {
     const registry = IntegrationRegistry();
     registry.addContract(contract({ id: "A", sharedBy: ["battle",], },),);
     registry.addContract(contract({ id: "B", sharedBy: ["magic",], },),);
-    expect(registry.getSharedTypes("battle",).map((c,) => c.id,),).toEqual(["A",]);
+    expect(registry.getSharedTypes("battle",).map((c,) => c.id),).toEqual(["A",],);
   });
 
   test("resolves edge interfaces, skipping unknown ids", () => {
     const registry = IntegrationRegistry();
     registry.addContract(contract({ id: "Known", },),);
     const e = edge({ source: "battle", target: "items", interfaces: ["Known", "Missing",], },);
-    expect(registry.resolveEdgeInterfaces(e,).map((c,) => c.id,),).toEqual(["Known",]);
+    expect(registry.resolveEdgeInterfaces(e,).map((c,) => c.id),).toEqual(["Known",],);
   });
 });
 
@@ -97,7 +101,7 @@ describe("getDependencies / getDependents", () => {
     registry.addEdge(direct,);
     registry.addEdge(bidi,);
     registry.addEdge(reverse,);
-    expect(registry.getDependencies("battle",),).toEqual([direct, bidi,]);
+    expect(registry.getDependencies("battle",),).toEqual([direct, bidi,],);
   });
 
   test("dependents mirror the direction filter", () => {
@@ -108,7 +112,7 @@ describe("getDependencies / getDependents", () => {
     registry.addEdge(dependent,);
     registry.addEdge(bidi,);
     registry.addEdge(outward,);
-    expect(registry.getDependents("battle",),).toEqual([dependent, bidi,]);
+    expect(registry.getDependents("battle",),).toEqual([dependent, bidi,],);
   });
 });
 
@@ -160,8 +164,8 @@ describe("getUnresolvedGaps", () => {
       target: "housing",
       gap: { gapId: "G-done", severity: "high", resolved: true, },
     },),);
-    const ids = registry.getUnresolvedGaps().map((e,) => e.gap?.gapId,);
-    expect(ids,).toEqual(["G-high", "G-med", "G-low",]);
+    const ids = registry.getUnresolvedGaps().map((e,) => e.gap?.gapId);
+    expect(ids,).toEqual(["G-high", "G-med", "G-low",],);
   });
 });
 
@@ -178,7 +182,7 @@ describe("getEvents", () => {
     const other = event({ id: "weather.changed", source: "weather", target: "exploration", },);
     registry.addEdge(edge({ source: "battle", target: "items", events: [emitted, subscribed,], },),);
     registry.addEdge(edge({ source: "weather", target: "exploration", events: [other,], },),);
-    expect(registry.getEvents("battle",).map((e,) => e.id,),).toEqual(["battle.hit", "items.consume",]);
+    expect(registry.getEvents("battle",).map((e,) => e.id),).toEqual(["battle.hit", "items.consume",],);
   });
 
   test("direction filter keeps matching direction plus Both", () => {
@@ -187,8 +191,8 @@ describe("getEvents", () => {
     const both = event({ id: "e2", direction: EventDirection.Both, },);
     const subscribed = event({ id: "e3", direction: EventDirection.Subscribes, },);
     registry.addEdge(edge({ source: "battle", target: "items", events: [emitted, both, subscribed,], },),);
-    const ids = registry.getEvents("battle", EventDirection.Emits,).map((e,) => e.id,);
-    expect(ids,).toEqual(["e1", "e2",]);
+    const ids = registry.getEvents("battle", EventDirection.Emits,).map((e,) => e.id);
+    expect(ids,).toEqual(["e1", "e2",],);
   });
 });
 
@@ -197,7 +201,7 @@ describe("getStateLayers / getGraph", () => {
     const registry = IntegrationRegistry();
     registry.registerStateLayer(layer({ id: "vitality", owner: "battle", },),);
     registry.registerStateLayer(layer({ id: "mood", owner: "social", },),);
-    expect(registry.getStateLayers("battle",).map((l,) => l.id,),).toEqual(["vitality",]);
+    expect(registry.getStateLayers("battle",).map((l,) => l.id),).toEqual(["vitality",],);
   });
 
   test("builds adjacency, mirroring bidirectional edges", () => {
@@ -209,8 +213,8 @@ describe("getStateLayers / getGraph", () => {
       direction: EdgeDirection.Bidirectional,
     },),);
     const graph = registry.getGraph();
-    expect(graph.get("battle",),).toEqual(["items", "crafting",]);
-    expect(graph.get("crafting",),).toEqual(["battle",]);
+    expect(graph.get("battle",),).toEqual(["items", "crafting",],);
+    expect(graph.get("crafting",),).toEqual(["battle",],);
     expect(graph.get("items",),).toEqual([],);
   });
 });
