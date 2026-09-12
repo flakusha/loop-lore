@@ -39,7 +39,7 @@ export async function regenerateMessageVariant(
   database: Kysely<DB>,
   params: RegenerateVariantParams,
 ): Promise<RegenerateVariantResult> {
-  const { chatId, messageId, userId, userRole, } = params;
+  const { chatId, messageId, userId, userRole, style, } = params;
 
   // The target message must exist and belong to the chat.
   const message = await database
@@ -69,9 +69,14 @@ export async function regenerateMessageVariant(
 
   // Fork position: the parent the target branches from.
   const parentId = message.parent_id ?? null;
-  const regenKey = `${REGEN_IDEMPOTENCY_PREFIX}${parentId}`;
+  // Style is part of the idempotency key so a pending variant carries the
+  // requested style hint forward to whichever downstream pass fills its
+  // content. Style null and each named style get distinct keys, so a
+  // follow-up request with a different style is NOT replayed — it gets a
+  // fresh sibling variant.
+  const regenKey = `${REGEN_IDEMPOTENCY_PREFIX}${parentId}:${style ?? "plain"}`;
 
-  // Idempotency: a pending regen variant for this parent is reused, not duplicated.
+  // Idempotency: a pending regen variant for this parent + style is reused.
   const pending = parentId
     ? await database
       .selectFrom("messages",)
@@ -89,10 +94,12 @@ export async function regenerateMessageVariant(
       replayed: true,
       variantMessageId: pending.id,
       swipeIndex: pending.swipe_index ?? 0,
+      style: style ?? null,
     };
   }
 
-  // Next swipe index among siblings sharing the same parent.
+  // Next swipe index among siblings sharing the same parent (style does NOT
+  // partition the sibling set — different styles are still swipe-alternatives).
   let swipeIndex = 0;
   if (parentId) {
     const maxRow = await database
@@ -126,5 +133,5 @@ export async function regenerateMessageVariant(
     },)
     .execute();
 
-  return { ok: true, replayed: false, variantMessageId, swipeIndex, };
+  return { ok: true, replayed: false, variantMessageId, swipeIndex, style: style ?? null, };
 }
