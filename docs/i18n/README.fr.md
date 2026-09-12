@@ -41,56 +41,10 @@ La source de référence pour la structure du projet est `src/` et
 [`AGENTS.md`](../../AGENTS.md) — les listes de répertoires de ce README
 deviendront obsolètes en quelques jours.
 
----
-
-## Fonctionnalités
-
-Légende des statuts : **MVP** = livré, **WIP** = en cours, **Planned** =
-prévu mais non démarré. Les liens de spécification pointent vers
-[`docs/spec/`](../../docs/spec/) et [`docs/frontend/`](../../docs/frontend/) ;
-la progression des epics est dans [`.plan/epics-index.md`](../../.plan/epics-index.md)
-et le travail actif dans [`.plan/backlog/open.md`](../../.plan/backlog/open.md).
-
-| Fonctionnalité                | Statut    | Référence                                                                                                                  |
-| ----------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Gestion des personnages       | WIP       | [spec/character-spec](../../docs/spec/character-spec.md), [frontend/characters](../../docs/frontend/characters.md)         |
-| Moteur de chat                | WIP       | [spec/messages](../../docs/spec/messages.md), [frontend/chat](../../docs/frontend/chat/overview.md)                        |
-| Interface TUI chat            | WIP       | [spec/terminal-ui](../../docs/spec/terminal-ui.md), [guide/getting-started](../../docs/guide/getting-started.md)           |
-| Couche base de données        | WIP       | [spec/schema](../../docs/spec/schema.md), [spec/db-versioning](../../docs/spec/db-versioning.md)                          |
-| Ressources (média)            | WIP       | [spec/assets](../../docs/spec/assets.md), [frontend/gallery](../../docs/frontend/gallery.md)                               |
-| Chat assistant                | MVP       | [spec/assistant-commands](../../docs/spec/assistant-commands.md), [frontend/chat/assistant](../../docs/frontend/chat/assistant.md) |
-| Génération de scènes VN       | WIP       | [spec/visual-novel](../../docs/spec/visual-novel.md), [frontend/chat/visual-novel-mode](../../docs/frontend/chat/visual-novel-mode.md) |
-| Avatars émotionnels           | WIP       | _spécification en cours — voir `.plan/`_                                                                                    |
-| Extraction regex              | WIP       | _spécification en cours — voir `src/regex/`_                                                                                |
-| Systèmes RPG                  | WIP       | [spec/rpg-mechanics](../../docs/spec/rpg-mechanics.md), [spec/achievements](../../docs/spec/achievements.md)             |
-| Lorebooks / info monde        | Planned   | [spec/lore](../../docs/spec/lore.md), [frontend/worlds](../../docs/frontend/worlds.md)                                      |
-| Web UI                        | WIP       | [frontend/component-architecture](../../docs/frontend/component-architecture.md)                                          |
-| Système de plugins            | WIP       | [spec/plugin-system](../../docs/spec/plugin-system.md)                                                                      |
-| Cryptographie / chiffrement   | WIP       | [spec/crypto](../../docs/spec/crypto.md), [spec/encryption-workflow](../../docs/spec/encryption-workflow.md), [frontend/encryption](../../docs/frontend/encryption.md) |
-| Multi-session                 | WIP       | [spec/users-sessions](../../docs/spec/users-sessions.md)                                                                    |
-| i18n                          | WIP       | [frontend/internationalization](../../docs/frontend/internationalization.md), [docs/i18n](../i18n/)                        |
-| Mémoire                       | WIP       | [spec/memory-system](../../docs/spec/memory-system.md), [frontend/chat/memories](../../docs/frontend/chat/memories.md)     |
-| Télémétrie                    | WIP       | [spec/observability-telemetry](../../docs/spec/observability-telemetry.md)                                                  |
-| Filtre de grossièretés        | WIP       | _spécification en cours — voir `src/profanity/`_                                                                            |
-| Contrôle d'âge                | WIP       | [frontend/age-gate](../../docs/frontend/age-gate.md)                                                                        |
-| Notifications                 | WIP       | [frontend/notifications](../../docs/frontend/notifications.md)                                                              |
-
----
-
-## Stack technique
-
-| Couche          | Choix                                                                                |
-| --------------- | ------------------------------------------------------------------------------------ |
-| Runtime         | Bun (TS/JS rapide, pas d'étape de build)                                             |
-| Langage         | TypeScript 5.4+ (mode strict)                                                        |
-| Base de données | `bun:sqlite` → Postgres via changement de dialecte Kysely                            |
-| Constructeur de requêtes | Kysely (typé sûr, sans surcharge ORM)                                       |
-| TUI             | blessed + blessed-contrib                                                            |
-| Web UI          | htmx + Alpine.js                                                                     |
-
-Les décisions d'architecture et compromis sont dans
-[`docs/spec/architecture.md`](../../docs/spec/architecture.md). Les conventions
-de code sont dans [`.agents/references/`](../../.agents/references/).
+L'état des fonctionnalités vit dans
+[`.plan/epics-index.md`](../../.plan/epics-index.md) et le travail actif dans
+[`.plan/backlog/open.md`](../../.plan/backlog/open.md) — les statuts ne sont
+pas dupliqués ici.
 
 ---
 
@@ -121,6 +75,8 @@ Guide complet : [`docs/guide/getting-started.md`](../../docs/guide/getting-start
 
 ## Documentation
 
+- [`docs/README.md`](../../docs/README.md) — Hub de documentation
+  (philosophie, état RPG, index complet)
 - [`docs/spec/`](../../docs/spec/) — Spécifications du cœur (architecture,
   personnages, chat, RPG, chiffrement, télémétrie, …)
 - [`docs/frontend/`](../../docs/frontend/) — Spécifications UX
