@@ -2,47 +2,23 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Chat ownership transfer service.
+ * Chat ownership transfer service (transactional core).
  *
  * Flips `chats.created_by` to the new owner (auto-inviting non-participants
  * with `role_in_chat = "owner"` first); demotes the previous owner to `member`.
- * Authority: admin OR the current owner — a delegated `role_in_chat = 'owner'`
- * grant alone cannot pass the chat around.
- *
- * Writes one `log_entries` row (`chat_ownership_transferred`) + two
- * `NotificationService.emit` calls (fire-and-forget). No schema migration:
- * ownership is `created_by` + the existing `owner` enum value.
+ * Authority: admin OR the current owner. Writes one `log_entries` row;
+ * notifications live in ./ownership-events. Types in ./ownership-types.
  */
 import type { Kysely, } from "kysely";
-import { ChatParticipantRole, NotificationType, } from "../../db/enums";
+import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { NotificationService, } from "../../notifications/service";
 import { can, } from "../../users/permissions";
-import { safeJsonStringify, } from "../../utils/safe-json";
 import { checkChatSettingsAccess, } from "./access";
-import type { ServiceError, } from "./types";
+import { buildOwnershipAuditMeta, emitOwnershipTransferNotifications, } from "./ownership-events";
+import type { TransferOwnershipOptions, TransferOwnershipOutcome, } from "./ownership-types";
 
-/** Input for an ownership-transfer request. */
-export interface TransferOwnershipOptions {
-  chatId: string;
-  requesterId: string;
-  requesterRole: string | null | undefined;
-  newOwnerId: string;
-  reason?: string;
-}
-
-/** Result payload on a successful transfer. */
-export interface TransferOwnershipResult {
-  newOwnerId: string;
-  previousOwnerId: string;
-  autoInvited: boolean;
-}
-
-/** Outcome envelope — success carries the result; failure carries a ServiceError. */
-export type TransferOwnershipOutcome =
-  | { ok: true; result: TransferOwnershipResult }
-  | { ok: false; error: ServiceError };
+export type { TransferOwnershipOptions, TransferOwnershipOutcome, TransferOwnershipResult, } from "./ownership-types";
 
 const ownershipLogger = (): ReturnType<typeof getLogger> => getLogger().child({ module: "chat-ownership", },);
 
@@ -139,18 +115,7 @@ export async function transferOwnership(
   const now = new Date().toISOString();
   const reason = opts.reason?.trim().slice(0, 500,) ?? null;
 
-  const auditMeta = (() => {
-    const result = safeJsonStringify({
-      entity_type: "chat",
-      entity_id: chatId,
-      action: "transfer_ownership",
-      previous_owner_id: previousOwnerId,
-      new_owner_id: newOwnerId,
-      auto_invited: autoInvited,
-      reason,
-    },);
-    return result.ok ? result.value : "{}";
-  })();
+  const auditMeta = buildOwnershipAuditMeta({ chatId, previousOwnerId, newOwnerId, autoInvited, reason, },);
   const CONCURRENT_MODIFICATION = "chat-ownership-concurrent-modification";
   try {
     const outcome = await db.transaction().execute(async (trx,) => {
@@ -215,32 +180,12 @@ export async function transferOwnership(
       return { newOwnerId, previousOwnerId, autoInvited, };
     },);
 
-    // `NotificationService.emit` is fire-and-forget: it swallows errors
-    // internally and logs via its own logger. Do not wrap it here.
-    const notifier = new NotificationService(db,);
-    notifier.emit({
-      userId: outcome.previousOwnerId,
-      type: NotificationType.System,
-      title: "Ownership transferred",
-      body: "You are no longer the owner of this chat",
-      link: `/chat/${chatId}`,
-      data: { chatId, newOwnerId: outcome.newOwnerId, autoInvited: outcome.autoInvited, reason, },
-    },);
-    notifier.emit({
-      userId: outcome.newOwnerId,
-      type: NotificationType.System,
-      title: "You are now the chat owner",
-      body: outcome.autoInvited
-        ? "You have been added as the owner of this chat"
-        : "You have been promoted to chat owner",
-      link: `/chat/${chatId}`,
-      data: { chatId, previousOwnerId: outcome.previousOwnerId, reason, },
-    },);
-    ownershipLogger().info("ownership transferred", {
+    emitOwnershipTransferNotifications(db, {
       chatId,
       previousOwnerId: outcome.previousOwnerId,
       newOwnerId: outcome.newOwnerId,
       autoInvited: outcome.autoInvited,
+      reason,
     },);
 
     return { ok: true, result: outcome, };
