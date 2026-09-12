@@ -3,7 +3,7 @@
 
 # TASK: Chat Archival / Deletion with Search Filtering & Priority
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Low
 **Effort:** Medium
 **Epic:** epic-chat-product-features
@@ -14,12 +14,12 @@ Provide first-class archive and hard-delete for chats, with a search filter that
 
 ## Acceptance Criteria
 
-- [ ] Owner / admin can archive a chat; archived chats are hidden from default listings
-- [ ] Search endpoint exposes an `include_archived` flag and a `search_priority` ordering parameter
-- [ ] Live chats always rank above archived chats at equal relevance
-- [ ] Hard-delete cascades to messages, assets, and shared memories (with the existing shareability guard)
-- [ ] RAG recall (`src/rag/search/quarantine.ts`) excludes archived chats by default
-- [ ] Archived chats remain openable from a dedicated archived view
+- [x] Owner / admin can archive a chat; archived chats are hidden from default listings
+- [x] Search endpoint exposes an `include_archived` flag and a `search_priority` ordering parameter
+- [x] Live chats always rank above archived chats at equal relevance
+- [x] Hard-delete cascades to messages, assets, and shared memories (with the existing shareability guard)
+- [x] RAG recall (`src/rag/search/quarantine.ts`) excludes archived chats by default
+- [x] Archived chats remain openable from a dedicated archived view
 
 ## Related Tickets / Epics
 

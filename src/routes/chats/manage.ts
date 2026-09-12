@@ -5,8 +5,8 @@ import { Elysia, } from "elysia";
 import {
   checkChatAccess,
   checkChatSettingsAccess,
-  deleteChat,
   getChat,
+  hardDeleteChat,
   migrateChat,
   updateChat,
 } from "../../chat/service";
@@ -23,6 +23,7 @@ import {
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
+import { archiveRoutes, } from "./archive-routes";
 import { gmGuidanceRoutes, } from "./gm-guidance";
 import { promptTemplateRoutes, } from "./prompt-template";
 import type { HandlerOpts, } from "./types";
@@ -188,15 +189,23 @@ export function manageRoutes(opts: HandlerOpts, prefix = "/api",) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
 
-          const access = await checkChatSettingsAccess(database, id, userId, userRole,);
-          if (!access.ok) { return forbidden(); }
-
-          await deleteChat(database, id,);
+          // hardDeleteChat enforces the settings-access guard and cascades to
+          // messages, asset_links, actor_memories (shared memories) and the
+          // parent row — same shape as the batch path with the per-chat
+          // ownership check from the route layer.
+          const result = await hardDeleteChat(database, id, userId, userRole,);
+          if ("code" in result) {
+            const status = result.code === "not_found"
+              ? HttpStatus.NotFound
+              : HttpStatus.Forbidden;
+            return jsonError(result.message, status, result.code as never,);
+          }
           return jsonNoContent();
         },
         { params: ChatIdParams, },
       )
       .use(gmGuidanceRoutes(opts, prefix,),)
       .use(promptTemplateRoutes(opts, prefix,),)
+      .use(archiveRoutes(opts, prefix,),)
   );
 }

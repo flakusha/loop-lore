@@ -4,6 +4,7 @@
 /**
  * Chat CRUD: create, read, update, delete.
  */
+export { archiveChat, isChatArchived, unarchiveChat, } from "./archive";
 export { createChat, } from "./create";
 export { deleteChat, } from "./delete";
 export { getChat, } from "./get";
