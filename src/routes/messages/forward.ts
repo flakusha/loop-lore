@@ -87,15 +87,15 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
           const assets = await database
             .selectFrom("assets",)
             .select(["id", "owner_id",],)
-            .where("id", "in", links.map((l,) => l.asset_id,),)
+            .where("id", "in", links.map((l,) => l.asset_id),)
             .execute();
           for (const a of assets) {
             if (a.owner_id === actorId) { ownedIds.add(a.id,); }
           }
         }
         const forwardable = links
-          .filter((l,) => ownedIds.has(l.asset_id,),)
-          .map((l, i,) => ({ assetId: l.asset_id, order: i, label: l.label ?? "message-attachment", }),);
+          .filter((l,) => ownedIds.has(l.asset_id,))
+          .map((l, i,) => ({ assetId: l.asset_id, order: i, label: l.label ?? "message-attachment", }));
         const droppedAttachments = links.length - forwardable.length;
 
         if (filteredContent.trim().length === 0 && forwardable.length === 0) {

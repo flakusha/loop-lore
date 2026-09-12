@@ -4887,6 +4887,12 @@
       "source": ".plan/tickets/TASK-chat-external-music-linking.md"
     }
   ],
+  "src/chat/music-links/url.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-rich-engagement.md"
+    }
+  ],
   "src/chat/npc-movement/index.ts": [
     {
       "kind": "epic",
@@ -5632,6 +5638,10 @@
   "src/chat/service/visibility.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-chat-composer-flows.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
     },
     {
@@ -5670,6 +5680,10 @@
     }
   ],
   "src/chat/service/write.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-composer-flows.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
@@ -9520,6 +9534,10 @@
   "src/db/migrations/parts/006_chat.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-chat-rich-engagement.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-chat-variants-taxonomy.md"
     },
     {
@@ -11617,6 +11635,12 @@
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     }
   ],
+  "src/frontend/alpine/chat-drafts.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-composer-draft-persistence.md"
+    }
+  ],
   "src/frontend/alpine/chat-filters.ts": [
     {
       "kind": "ticket",
@@ -11713,6 +11737,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-frontend-chat-seen-state-broken-null-actorid-dead-popover-po.md"
+    }
+  ],
+  "src/frontend/alpine/chat-send.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-composer-flows.md"
     }
   ],
   "src/frontend/alpine/chat-settings.ts": [
@@ -17761,6 +17791,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-msg-forward-across-chats.md"
     }
   ],
   "src/middleware/idempotency-utils.ts": [
@@ -18231,6 +18265,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-auth-channel-provisioning.md"
+    }
+  ],
+  "src/notifications/service/service.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-composer-flows.md"
     }
   ],
   "src/npcs/behavior.ts": [
@@ -20745,6 +20785,12 @@
       "source": ".plan/tickets/join-flow-mechanics.md"
     }
   ],
+  "src/routes/chat-messages.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-composer-flows.md"
+    }
+  ],
   "src/routes/chat-regenerate.ts": [
     {
       "kind": "ticket",
@@ -21939,6 +21985,12 @@
       "source": ".plan/tickets/BUG-nsfw-flag-side-effect-runs-before-access-check.md"
     }
   ],
+  "src/routes/messages/ai-action.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-ai-message-utilities.md"
+    }
+  ],
   "src/routes/messages/command.test.ts": [
     {
       "kind": "ticket",
@@ -22018,11 +22070,21 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-msg-forward-across-chats.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-proactive-messaging.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-turn-send-gate.md"
+    }
+  ],
+  "src/routes/messages/forward.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-msg-forward-across-chats.md"
     }
   ],
   "src/routes/messages/handle-scene-transitions.ts": [
@@ -22152,6 +22214,10 @@
     }
   ],
   "src/routes/messages/reply.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-chat-composer-flows.md"
+    },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-middleware-request-lifecycle.md"
