@@ -13,7 +13,7 @@
  * 'scheduled', 'manual'). `actor_id` is the actor whose action triggered
  * the rotation (leaver, joiner, null for non-actor triggers).
  *
- * `old_key_id` / `new_key_id` reference `chat_keys.id` for audit.
+ * `new_key_id` references `chat_keys.id` for audit. `old_key_id` is plain text with no FK: the rotation UPDATEs `chat_keys.id`, so the old id no longer exists at audit-insert time.
  */
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
@@ -26,7 +26,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("chat_id", "text", (col,) => col.notNull().references("chats.id",).onDelete("cascade",),)
     .addColumn("actor_id", "text", (col,) => col.references("actors.id",).onDelete("set null",),)
     .addColumn("reason", "text", (col,) => col.notNull(),)
-    .addColumn("old_key_id", "text", (col,) => col.references("chat_keys.id",).onDelete("set null",),)
+    .addColumn("old_key_id", "text",)
     .addColumn("new_key_id", "text", (col,) => col.notNull().references("chat_keys.id",).onDelete("restrict",),)
     .addColumn("messages_re_encrypted", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
@@ -36,7 +36,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .on("rotation_history",)
     .columns(["chat_id", "created_at",],)
     .execute();
-  await recordSchemaVersion(database, 23, "rotation history (audit log for chat-key rotations)",);
+  await recordSchemaVersion(database, 27, "rotation history (audit log for chat-key rotations)",);
 }
 
 /**
