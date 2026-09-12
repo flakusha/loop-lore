@@ -27,6 +27,7 @@ import { chatSettings, } from "../chat-settings";
 import { chatSideChannels, } from "../chat-side-channels";
 import { chatUtils, } from "../chat-utils";
 import { chatVariants, } from "../chat-variants";
+import { attachValidateDraft, createComposerPreSend, } from "../composer-pre-send";
 import { creationWizard, } from "../creation-wizard";
 import { t, } from "../i18n";
 import { memoryPanel, } from "../memory-panel";
@@ -215,6 +216,7 @@ export function chatState() {
     ...chatActivity,
     ...chatManagement,
     ...chatEditing,
+    ...attachValidateDraft(createComposerPreSend(),),
     ...chatActions,
     ...promptImproveActions,
     ...chatMusicEmbed,
