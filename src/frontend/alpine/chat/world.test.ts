@@ -78,13 +78,6 @@ afterEach(() => {
     delete historyGlobal.history;
   }
 },);
-afterEach(() => {
-  if (originalReplace) {
-    historyGlobal.history = { replaceState: originalReplace, };
-  } else {
-    delete historyGlobal.history;
-  }
-},);
 
 function worldCtx(overrides: Record<string, unknown> = {},): Record<string, unknown> {
   return {
