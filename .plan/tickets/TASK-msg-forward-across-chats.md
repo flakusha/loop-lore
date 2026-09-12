@@ -7,11 +7,13 @@
 **Type:** Feature | **Priority:** High | **Effort:** M
 
 ## Problem
+
 `docs/frontend/chat/message-actions.md` mobile + context menus list
 Forward, but no route/service exists (grep 2026-09-12: only http-forward
 and participant-forward false positives). Dead menu item.
 
 ## Change
+
 - `POST /api/chats/:id/messages/:mid/forward` with `{ targetChatId }`:
   `checkChatAccess` on both chats (pattern: `src/routes/messages/create.ts:60`);
   decrypt source via message-content pipeline, re-encrypt to target chat keys
@@ -24,11 +26,13 @@ and participant-forward false positives). Dead menu item.
 - Alpine: wire Forward menu → chat picker → optimistic placeholder.
 
 ## Acceptance
+
 - Forward user→own chat and group→direct round-trips with attribution.
 - Cross-user forward without target access → 403, no leak.
 - Existing reply/quote tests green; new route tests: ok/forbidden/leak.
 
 ## Non-goals
+
 - Share-links/export formats (TASK-chat-feature-share-links-export-formats).
 
 ## Implementation (2026-09-12, worktree chat-messenger-parity)

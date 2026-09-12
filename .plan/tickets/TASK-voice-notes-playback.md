@@ -7,11 +7,13 @@
 **Type:** Feature | **Priority:** Low | **Effort:** M
 
 ## Problem
+
 Zero voice-note implementation (grep `voice.*note|audio.*message` clean).
 Asset pipeline exists (`src/assets/`) but no audio-message type or
 inline player. AI-chat parity (mobile voice input) missing.
 
 ## Change
+
 - Reuse asset upload: allowlisted audio mimes per `validateMimeType` (e.g. audio/ogg verified) ≤5MB, store as asset_link
   with `kind=voice`; render inline `<audio>` player in bubble + TUI
   fallback link. No new storage backend.
@@ -20,9 +22,11 @@ inline player. AI-chat parity (mobile voice input) missing.
 - Duration + mime validated server-side; NSFW/audio moderation out of scope.
 
 ## Acceptance
+
 - Record → send → inline play round-trips; oversize/non-audio → 422.
 
 ## Non-goals
+
 - STT transcription / TTS (epic-audio-video-sound).
 
 ## Implementation (2026-09-12, worktree chat-messenger-parity)
