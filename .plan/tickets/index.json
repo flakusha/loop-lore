@@ -1827,7 +1827,7 @@
     "epic": "epic-character-core-system",
     "tags": [],
     "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-EMOTION-MOOD-HOOK-STALE-LLM-JAVADOC": {
     "hash": "pending",
@@ -2395,7 +2395,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-HALLUCINATION-GUARD-KNOWN-PARAMS-IGNORED": {
     "hash": "pending",
@@ -2408,7 +2408,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md",
     "git_issue": "103e372",
-    "status": "open"
+    "status": "done"
   },
   "BUG-HASHREPORTERID-USES-HARDCODED-DEFAULT-SECRET-IN-PRODUCTION-B": {
     "hash": "df90721",
