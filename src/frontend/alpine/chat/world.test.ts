@@ -60,18 +60,23 @@ afterEach(() => {
 
 // ── history stub (bare `history` in source resolves via globalThis.history) ──
 const replaceCalls: { state: unknown; title: string; url: string }[] = [];
-type HistoryLike = {
-  replaceState: (state: unknown, title: string, url: string,) => void;
-};
-const historyGlobal = globalThis as typeof globalThis & { history?: HistoryLike };
+// historyGlobal typed as Record<string, any> to bypass lib.dom History interface requirements
+const historyGlobal: Record<string, any> = globalThis as Record<string, any>;
 const originalReplace = historyGlobal.history?.replaceState;
 beforeEach(() => {
   replaceCalls.length = 0;
   historyGlobal.history = {
-    replaceState: ((state: unknown, title: string, url: string,) => {
+    replaceState: (state: unknown, title: string, url: string,) => {
       replaceCalls.push({ state, title, url, },);
-    }) as HistoryLike["replaceState"],
+    },
   };
+},);
+afterEach(() => {
+  if (originalReplace) {
+    historyGlobal.history = { replaceState: originalReplace, };
+  } else {
+    delete historyGlobal.history;
+  }
 },);
 afterEach(() => {
   if (originalReplace) {
