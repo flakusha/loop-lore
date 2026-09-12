@@ -7679,6 +7679,12 @@
       "source": ".plan/tickets/TASK-encryption-backward-compatibility.md"
     }
   ],
+  "src/crypto/at-rest.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md"
+    }
+  ],
   "src/crypto/at-rest.test.ts": [
     {
       "kind": "epic",
@@ -7853,6 +7859,18 @@
     {
       "kind": "spec",
       "source": "docs/spec/encryption-workflow.md"
+    }
+  ],
+  "src/crypto/chat-lifecycle-concurrent-rotation.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md"
+    }
+  ],
+  "src/crypto/chat-lifecycle.integration.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md"
     }
   ],
   "src/crypto/e2e/dh-ratchet.bugs.test.ts": [
@@ -8233,6 +8251,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-encrypted-payload-sniffing-misclassifies-user-json-as-pre-en.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md"
     }
   ],
   "src/crypto/pipeline.ts": [
@@ -17743,6 +17765,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-feature-encryption-key-rotation.md"
     }
   ],
   "src/middleware/idempotency.ts": [
