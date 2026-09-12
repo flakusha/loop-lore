@@ -30,3 +30,14 @@ and participant-forward false positives). Dead menu item.
 
 ## Non-goals
 - Share-links/export formats (TASK-chat-feature-share-links-export-formats).
+
+## Implementation (2026-09-12, worktree chat-messenger-parity)
+
+In `feb9bfca8` — `POST /api/chats/:id/messages/:mid/forward`
+(`src/routes/messages/forward.ts`, shared loader `source-message.ts`):
+decrypt-with-source-keys then re-encrypt for target, `> Forwarded from
+<name>` body prefix, caller-owned attachments only (foreign counted as
+dropped), idempotency-key replay, no commands/mentions/auto-reply by
+design. 8 route tests. Deviations: single message per call (ticket's cap
+of 5 moot); target-denied returns 404 not 403 (codebase convention hides
+chat existence — same as read paths). No Alpine Forward-menu wiring yet.

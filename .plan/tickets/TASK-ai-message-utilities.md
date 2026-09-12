@@ -20,3 +20,14 @@ mobile Translate exist in menus, but translate never calls the LLM
 ## Acceptance
 - Each action returns LLM text (no static stub); failure surfaces error.
 - Main chat generation path untouched; existing BUG ticket closed by this.
+
+## Implementation (2026-09-12, worktree chat-messenger-parity)
+
+In `1bb1a1343` — `POST /api/chats/:id/messages/:mid/ai-action`
+(`src/routes/messages/ai-action.ts`) via `callAux("message-action")`
+(auxiliary role, 300 max tokens, 4KB source cap); unconfigured model →
+503 `ai_unavailable`, result returned never stored. 7 tests (wiring +
+`buildAiActionPrompt`; live-LLM success untested — `mock.module` leaks
+process-global, see caption.test.ts note). Deviations: actions are
+summarize/action-items/explain (translate dropped — one-line follow-up:
+add Literal + prompt); no context-menu/overlay UI wired (backend only).
