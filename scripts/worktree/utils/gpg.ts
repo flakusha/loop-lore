@@ -31,20 +31,22 @@
  *     keyId is missing or not a valid hex fingerprint (8/16/40 chars).
  *
  *   hint: key-not-in-keyring
- *     `gpg --list-keys <id>` failed; key is not in the local keyring.
+ *     `gpg --list-keys <id>` (public) or `gpg --list-secret-keys <id>`
+ *     (secret) failed; the key material is not in the local keyring.
  *     Fix: `gpg --import <path-to-secret.asc>` or update
  *     `AGENT_GPG_KEY_ID` in `.credentials.env`.
  *
  *   hint: key-not-unlocked
- *     `gpg --list-secret-keys <id>` failed; the public key is in the
- *     keyring but gpg-agent has not cached the passphrase. Fix:
- *     `bun run scripts/gpg-unlock.mjs`.
+ *     A silent trial sign (`--pinentry-mode cancel`) against gpg-agent
+ *     failed: the agent has no usable cached passphrase (cache cold or
+ *     stale). Fix: `bun run scripts/gpg-unlock.mjs` in a terminal.
  *
  * Design: tree/worktree-investigate-gpg-unlock-ergonomics/.tmp/gpg-unlock-ergonomics-design.md
  * Ticket: BUG-fix-worktree-assert-gpg-unlocked-on-every-signing-path-surfa
  */
 
 import { spawnSync, } from "bun";
+import { probeCachedPassphrase, } from "../../gpg-unlock.mjs";
 import { credentials, } from "./credentials.mjs";
 
 type GpgHint = "invalid-key" | "key-not-in-keyring" | "key-not-unlocked";
@@ -74,16 +76,19 @@ function gpgAvailable(): boolean {
 }
 
 /**
- * Verify the secret key for `keyId` is reachable via gpg-agent.
+ * Verify the signing key for `keyId` is usable WITHOUT any passphrase
+ * prompt — the pre-condition for `git commit -S` to never hang a harness.
  *
- * Two checks run in order:
- *   (a) `gpg --list-keys <id>` — is the public key in the local keyring?
- *       If not, this is a config error (wrong id, missing import).
- *   (b) `gpg --list-secret-keys <id>` — can gpg-agent see the secret?
- *       If not, this is an operational error (passphrase not cached).
+ * Three checks run in order:
+ *   (a) `gpg --list-keys <id>` — public key in the keyring (config error).
+ *   (b) `gpg --list-secret-keys <id>` — secret key material present. NB:
+ *       this reads the keyring only; it succeeds on a cold cache and says
+ *       nothing about the passphrase cache.
+ *   (c) cancel-mode trial sign — the agent can sign using only a cached
+ *       passphrase. A cold cache fails here in milliseconds instead of
+ *       deadlocking `git commit -S` on a pinentry prompt nobody answers.
  *
- * Both checks exit 1 on failure with a distinct `hint:` prefix so the
- * failure mode is unambiguous to the operator.
+ * Each failure exits 1 with a distinct `hint:` prefix.
  */
 export function assertGpgUnlocked(keyId: string | undefined | null,): void {
   if (!keyId || !FINGERPRINT_RE.test(keyId,) || keyId.length < MIN_LEN || keyId.length > MAX_LEN) {
@@ -121,8 +126,24 @@ export function assertGpgUnlocked(keyId: string | undefined | null,): void {
   },);
   if (!secretCheck.success) {
     fail(
+      "key-not-in-keyring",
+      `Secret key for ${keyId} is not in the keyring.\n` +
+        `   Add it via: gpg --import <path-to-secret.asc>\n` +
+        `   or update AGENT_GPG_KEY_ID in .credentials.env`,
+    );
+  }
+
+  // Cache probe — the check that actually matters pre-commit.
+  // --list-secret-keys reads the keyring only and succeeds on a cold cache,
+  // which previously let `git commit -S` spawn pinentry-tty and lock up
+  // agent harnesses. The cancel-mode trial sign cannot prompt: warm cache
+  // → silent SIG_CREATED; cold cache → "Operation cancelled" in millis.
+  const probe = probeCachedPassphrase(keyId,);
+  if (!probe.warm) {
+    fail(
       "key-not-unlocked",
-      `GPG agent does not have ${keyId} unlocked. Run: bun run scripts/gpg-unlock.mjs`,
+      `GPG agent has no usable cached passphrase for ${keyId} (cache cold).\n` +
+        `   Warm it first: bun run scripts/gpg-unlock.mjs`,
     );
   }
 }
