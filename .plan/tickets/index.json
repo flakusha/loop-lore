@@ -8627,6 +8627,62 @@
     "source": ".plan/tickets/TASK-admin-revisions-diff-revert.md",
     "status": "open"
   },
+
+  "TASK-ADMIN-SYSTEM-CONFIG-GENERATION-TUNABLES-CONTEXT-WINDOW-GUARD": {
+    "hash": "ff48499",
+    "git_issue": "ff48499",
+    "extid": "TASK-ADMIN-SYSTEM-CONFIG-GENERATION-TUNABLES-CONTEXT-WINDOW-GUARD",
+    "type": "TASK",
+    "title": "Admin system-config: generation tunables (context window, guards, aux, model roles)",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-frontend-admin.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-system-config-generation-tunables-context-window-guard.md",
+    "status": "open"
+  },
+
+  "TASK-ADMIN-SYSTEM-CONFIG-NEW-MEMORY-SEARCH-STORY-DOMAINS": {
+    "hash": "23262d8",
+    "git_issue": "23262d8",
+    "extid": "TASK-ADMIN-SYSTEM-CONFIG-NEW-MEMORY-SEARCH-STORY-DOMAINS",
+    "type": "TASK",
+    "title": "Admin system-config: new memory/search/story domains",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-frontend-admin.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-system-config-new-memory-search-story-domains.md",
+    "status": "open"
+  },
+
+  "TASK-ADMIN-SYSTEM-CONFIG-RPG-CHAT-CAPTION-TURN-TUNABLES": {
+    "hash": "1b9e9ab",
+    "git_issue": "1b9e9ab",
+    "extid": "TASK-ADMIN-SYSTEM-CONFIG-RPG-CHAT-CAPTION-TURN-TUNABLES",
+    "type": "TASK",
+    "title": "Admin system-config: rpg/chat/caption/turn tunables",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-admin.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-system-config-rpg-chat-caption-turn-tunables.md",
+    "status": "open"
+  },
+
+  "TASK-ADMIN-SYSTEM-CONFIG-SURFACE-MISSING-SCHEMA-SECTIONS": {
+    "hash": "c3d1a83",
+    "git_issue": "c3d1a83",
+    "extid": "TASK-ADMIN-SYSTEM-CONFIG-SURFACE-MISSING-SCHEMA-SECTIONS",
+    "type": "TASK",
+    "title": "Admin system-config: surface missing schema sections",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-admin.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-system-config-surface-missing-schema-sections.md",
+    "status": "open"
+  },
   "TASK-ADOPT-BUN-ARRAYBUFFERSINK-FOR-BUFFER-BUILDING": {
     "hash": "0ccc836",
     "git_issue": "0ccc836",
@@ -13149,6 +13205,20 @@
     "tags": [],
     "source": ".plan/tickets/TASK-config-example-template-variables-doc.md",
     "status": "undefined"
+  },
+
+  "TASK-CONFIG-EXAMPLES-BACKFILL-13-MISSING-STALE-GENERATION-NSFW": {
+    "hash": "883628e",
+    "git_issue": "883628e",
+    "extid": "TASK-CONFIG-EXAMPLES-BACKFILL-13-MISSING-STALE-GENERATION-NSFW",
+    "type": "TASK",
+    "title": "Config examples backfill: 13 missing + stale generation/nsfw",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-config-extensions.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-config-examples-backfill-13-missing-stale-generation-nsfw.md",
+    "status": "open"
   },
   "TASK-CONFIG-EXTENSIONS": {
     "hash": "d1f633b",
