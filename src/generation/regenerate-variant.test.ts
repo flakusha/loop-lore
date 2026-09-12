@@ -212,3 +212,107 @@ describe("handleRegenerate (messageId → new sibling variant)", () => {
     expect(data.swipeIndex,).toBe(3,);
   });
 });
+
+describe("handleRegenerate style threading (BUG-smart-regen-style-not-threaded-through)", () => {
+  test("encodes style into the variant's idempotency_key and surfaces it on the response", async () => {
+    const { db, } = await seed();
+
+    const res = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, style: "funnier", },
+      db,
+      { userId: USER_ID, userRole: "user", },
+    );
+    expect(res.status,).toBe(200,);
+    const data = (await res.json()) as {
+      variantMessageId: string;
+      replayed: boolean;
+      style: string | null;
+    };
+    expect(data.replayed,).toBe(false,);
+    expect(data.style,).toBe("funnier",);
+
+    const created = await db
+      .selectFrom("messages",)
+      .select(["idempotency_key",],)
+      .where("id", "=", data.variantMessageId,)
+      .executeTakeFirst();
+    expect(created?.idempotency_key,).toBe(`regen:variant:${PARENT_ID}:funnier`,);
+  });
+
+  test("style null is encoded as ':plain' so it never collides with named styles", async () => {
+    const { db, } = await seed();
+
+    const res = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, },
+      db,
+      { userId: USER_ID, userRole: "user", },
+    );
+    const data = (await res.json()) as {
+      variantMessageId: string;
+      style: string | null;
+    };
+    expect(data.style,).toBeNull();
+
+    const created = await db
+      .selectFrom("messages",)
+      .select(["idempotency_key",],)
+      .where("id", "=", data.variantMessageId,)
+      .executeTakeFirst();
+    expect(created?.idempotency_key,).toBe(`regen:variant:${PARENT_ID}:plain`,);
+  });
+
+  test("different styles for the same parent are distinct pending variants (no cross-replay)", async () => {
+    const { db, } = await seed();
+
+    const funnier = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, style: "funnier", },
+      db,
+      { userId: USER_ID, userRole: "user", },
+    );
+    const funnierData = (await funnier.json()) as { variantMessageId: string; swipeIndex: number };
+
+    const darker = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, style: "darker", },
+      db,
+      { userId: USER_ID, userRole: "user", },
+    );
+    const darkerData = (await darker.json()) as {
+      variantMessageId: string;
+      replayed: boolean;
+      swipeIndex: number;
+    };
+
+    expect(darkerData.replayed,).toBe(false,);
+    expect(darkerData.variantMessageId,).not.toBe(funnierData.variantMessageId,);
+    expect(darkerData.swipeIndex,).toBe(funnierData.swipeIndex + 1,);
+
+    // Four siblings total: original + alt + funnier + darker.
+    const count = await db
+      .selectFrom("messages",)
+      .select(db.fn.countAll<number>().as("n",),)
+      .where("chat_id", "=", CHAT_ID,)
+      .where("parent_id", "=", PARENT_ID,)
+      .executeTakeFirst();
+    expect(count?.n,).toBe(4,);
+  });
+
+  test("same style + same parent replays the pending variant (idempotency preserved per style)", async () => {
+    const { db, } = await seed();
+
+    const first = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, style: "funnier", },
+      db,
+      { userId: USER_ID, userRole: "user", },
+    );
+    const firstData = (await first.json()) as { variantMessageId: string };
+
+    const second = await handleRegenerate(
+      { chatId: CHAT_ID, messageId: ORIGINAL_ID, style: "funnier", },
+      db,
+      { userId: USER_ID, userRole: "user", },
+    );
+    const secondData = (await second.json()) as { variantMessageId: string; replayed: boolean };
+    expect(secondData.replayed,).toBe(true,);
+    expect(secondData.variantMessageId,).toBe(firstData.variantMessageId,);
+  });
+});
