@@ -141,9 +141,18 @@ export interface RegenerateVariantParams {
   messageId: string;
   userId: string | null;
   userRole: string | null;
+  /** Style hint for the downstream prompt — encoded in idempotency_key. */
+  style?: string | null;
 }
 
 /** */
 export type RegenerateVariantResult =
   | ServiceError
-  | { ok: true; replayed: boolean; variantMessageId: string; swipeIndex: number };
+  | {
+    ok: true;
+    replayed: boolean;
+    variantMessageId: string;
+    swipeIndex: number;
+    /** Style propagated to the variant row's idempotency_key (null = plain regen). */
+    style: string | null;
+  };

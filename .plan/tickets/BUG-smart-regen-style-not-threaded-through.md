@@ -3,7 +3,7 @@
 
 # BUG: smart-regen validates style then drops it — the style parameter never reaches the LLM call
 
-**Status:** Not Started
+**Status:** [OK] Resolved
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -52,3 +52,24 @@ UX. Smart-regen is a primary UX surface for users who want a quick style overrid
 
 - `epic-output-control-transforms.md` (parent epic).
 - `smart-regen.ts` (existing infrastructure waiting for this fix).
+
+## Resolution
+
+Root cause: `RegenerateVariantParams` (`src/chat/service/types.ts`) did not carry the `style` field. The route validated `style`, computed `buildStylePrompt(style)`, then never forwarded it to `regenerateMessageVariant` — the variant placeholder was created with the wrong (or no) style hint, so whichever downstream pass fills its content had no signal that a style adjustment was requested.
+
+Fix (no schema migration): thread `style` through `RegenerateVariantParams` → `regenerateMessageVariant` → `RegenerateVariantResult`. The variant row's `idempotency_key` is suffixed with `:style` (or `:plain` when null), so:
+
+- Different styles for the same parent become distinct pending variants (no cross-replay).
+- The same style + same parent still replays while pending (idempotency preserved per style).
+- A future reader of `messages.idempotency_key` can derive the requested style by stripping the `regen:variant:<parentId>:` prefix.
+
+The route surfaces `result.style` (not the locally-computed `style ?? null`) so the response body reflects exactly what the variant row carries.
+
+## Acceptance Criteria
+
+- [x] `RegenerateVariantParams.style` added and threaded through to `regenerateMessageVariant`
+- [x] Variant row's `idempotency_key` carries style suffix (`regen:variant:<parentId>:<style>`)
+- [x] Different styles for the same parent are distinct pending variants
+- [x] Same style + same parent replays the pending variant
+- [x] `bun test src/generation/regenerate-variant.test.ts` → 9 pass, 0 fail
+- [x] `bun run typecheck` clean

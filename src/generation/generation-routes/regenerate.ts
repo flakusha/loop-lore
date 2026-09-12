@@ -84,6 +84,7 @@ export async function handleRegenerate(
       messageId: input.messageId,
       userId,
       userRole,
+      style,
     },);
 
     if (!("ok" in result)) {
@@ -99,7 +100,7 @@ export async function handleRegenerate(
       variantMessageId: result.variantMessageId,
       swipeIndex: result.swipeIndex,
       replayed: result.replayed,
-      style: style ?? null,
+      style: result.style,
     },);
   }
 
