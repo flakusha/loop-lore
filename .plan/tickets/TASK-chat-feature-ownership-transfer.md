@@ -3,7 +3,7 @@
 
 # TASK: Chat Ownership Transfer — Frontend & Backend
 
-**Status:** ✅ Done
+**Status:** 🚧 In Progress (3/6 ACs proven by scoped tests; concurrency/audit/moderator paths implemented but untested)
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-chat-product-features
@@ -16,10 +16,10 @@ Add explicit chat-ownership transfer as a first-class action: an owner can hand 
 
 - [x] Owner can transfer ownership to any current participant from a UI affordance and a backend endpoint
 - [x] Previous owner loses owner-scoped capabilities on success; new owner gains them
-- [x] Concurrent transfer attempts resolve to a single winner with audit evidence for the loser
-- [x] Moderator / GM grants are re-evaluated and reconciled post-transfer
+- [ ] Concurrent transfer attempts resolve to a single winner with audit evidence for the loser (implemented in service via conditional `created_by` flip + loser audit warn; no scoped test exercises it)
+- [ ] Moderator / GM grants are re-evaluated and reconciled post-transfer (no moderator/GM logic in service; no scoped test covers it)
 - [x] Transfer requires a confirmation step on the frontend and an explicit `confirm: true` on the backend
-- [x] Audit trail records previous owner, new owner, timestamp, and any revocations
+- [ ] Audit trail records previous owner, new owner, timestamp, and any revocations (service writes audit meta; no scoped test asserts the audit record — only the response envelope)
 
 ## Related Tickets / Epics
 
@@ -33,6 +33,12 @@ Add explicit chat-ownership transfer as a first-class action: an owner can hand 
 - `src/routes/chats/ownership.ts` — `POST /api/chats/:id/transfer-ownership` (`confirm: true` gate)
 - `src/frontend/alpine/chat-settings/ownership.ts` — modal actions, sends `confirm: true`
 - `src/components/chat/chat-settings-modal.html` — transfer trigger + confirmation modal
+
+## Verification (2026-09-12, post-rebase onto dev)
+
+- `bun test src/routes/chats/ownership.test.ts`: 12 pass / 0 fail (32 expects)
+- `bun test src/frontend/alpine/chat-settings/ownership-actions.test.ts`: 14 pass / 0 fail (31 expects)
+- Only the 3 still-checked ACs are proven by these 26 tests; the 3 unchecked ACs need scoped tests before they can be re-checked.
 
 ## Open Questions
 
