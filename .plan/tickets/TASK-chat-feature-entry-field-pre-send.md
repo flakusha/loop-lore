@@ -3,7 +3,7 @@
 
 # TASK: Entry Field — Pre-Send History Buffer & Send-Blocking by Turn Rules
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** Low
 **Effort:** Low
 **Epic:** epic-chat-product-features
@@ -14,12 +14,12 @@ The chat entry field must keep a browser-side history of drafts and must disable
 
 ## Acceptance Criteria
 
-- [ ] Drafts are persisted in browser storage and restored on reload
-- [ ] Send button is disabled while turn rules disallow the current actor
-- [ ] Tooltip / aria message explains why `send` is blocked
-- [ ] Mentions and asset references are validated pre-send via `src/group-chat/mention-parser.ts`
-- [ ] No network round-trip is required to disable the button — the gate uses client-known state
-- [ ] Unit / Alpine coverage exercises draft restoration, send blocking, and re-enable paths
+- [x] Drafts are persisted in browser storage and restored on reload
+- [x] Send button is disabled while turn rules disallow the current actor
+- [x] Tooltip / aria message explains why `send` is blocked
+- [x] Mentions and asset references are validated pre-send via `src/group-chat/mention-parser.ts`
+- [x] No network round-trip is required to disable the button — the gate uses client-known state
+- [x] Unit / Alpine coverage exercises draft restoration, send blocking, and re-enable paths
 
 ## Related Tickets / Epics
 

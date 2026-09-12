@@ -77,6 +77,10 @@ async function seedChat(
     mode?: string;
     worldId?: string | null;
     characterName?: string;
+    /** Override `is_pinned` (defaults to "unpinned"). Pass "archived" for archived chats. */
+    isPinned?: "unpinned" | "pinned" | "archived";
+    /** Update timestamp so recency-tie tests can pin a deterministic order. */
+    updatedAt?: string;
   } = {},
 ): Promise<string> {
   const chatId = uid();
@@ -86,6 +90,8 @@ async function seedChat(
     type: opts.type ?? "group",
     mode: opts.mode ?? "story",
     world_id: opts.worldId ?? null,
+    is_pinned: opts.isPinned ?? "unpinned",
+    updated_at: opts.updatedAt,
   } as never,);
   await insertChatParticipants(db, chatId, userId, {},);
   await insertActors(db, opts.characterName ?? "Bot Character", {
@@ -270,6 +276,148 @@ describe("searchRoutes — GET /api/chats/search", () => {
     expect(ids,).toContain(directChat,);
     expect(ids,).not.toContain(groupChat,);
 
+    await db.destroy();
+  });
+});
+
+describe("searchRoutes — include_archived + search_priority", () => {
+  /**
+   * @param db
+   * @param userId
+   * @param archivedName
+   * @param liveName
+   */
+  async function seedLiveAndArchived(
+    db: Kysely<DB>,
+    userId: string,
+    archivedName = "Old Archive",
+    liveName = "New Live",
+  ): Promise<{ archivedId: string; liveId: string }> {
+    const archivedId = await seedChat(db, userId, {
+      name: archivedName,
+      isPinned: "archived",
+      updatedAt: "2024-01-01T00:00:00.000Z",
+    },);
+    const liveId = await seedChat(db, userId, {
+      name: liveName,
+      isPinned: "unpinned",
+      updatedAt: "2026-01-01T00:00:00.000Z",
+    },);
+    return { archivedId, liveId, };
+  }
+
+  test("default request excludes archived chats", async () => {
+    createLogger({ level: "error", },);
+    const { db, } = await createTestDb();
+    const userId = await seedUser(db,);
+    const { archivedId, liveId, } = await seedLiveAndArchived(db, userId,);
+
+    const app = makeApp(db, userId,);
+    const res = await app.handle(
+      new Request("http://localhost/api/chats/search?type=group",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as SearchBody;
+    const ids = body.data.map((r,) => r.chatId);
+    expect(ids,).toContain(liveId,);
+    expect(ids,).not.toContain(archivedId,);
+
+    await db.destroy();
+  });
+
+  test("includeArchived=true returns both live and archived chats", async () => {
+    createLogger({ level: "error", },);
+    const { db, } = await createTestDb();
+    const userId = await seedUser(db,);
+    const { archivedId, liveId, } = await seedLiveAndArchived(db, userId,);
+
+    const app = makeApp(db, userId,);
+    const res = await app.handle(
+      new Request("http://localhost/api/chats/search?type=group&includeArchived=true",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as SearchBody;
+    const ids = body.data.map((r,) => r.chatId);
+    expect(ids,).toContain(archivedId,);
+    expect(ids,).toContain(liveId,);
+
+    await db.destroy();
+  });
+
+  test("live chats sort above archived chats at equal relevance (live_first default)", async () => {
+    createLogger({ level: "error", },);
+    const { db, } = await createTestDb();
+    const userId = await seedUser(db,);
+    const { archivedId, liveId, } = await seedLiveAndArchived(db, userId,);
+
+    const app = makeApp(db, userId,);
+    const res = await app.handle(
+      new Request("http://localhost/api/chats/search?type=group&includeArchived=true",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as SearchBody;
+    const order = body.data.map((r,) => r.chatId);
+    // Live-first means live < archived in the position array.
+    expect(order.indexOf(liveId,),).toBeLessThan(order.indexOf(archivedId,),);
+
+    await db.destroy();
+  });
+
+  test("search_priority=archive_first reverses the tier order", async () => {
+    createLogger({ level: "error", },);
+    const { db, } = await createTestDb();
+    const userId = await seedUser(db,);
+    const { archivedId, liveId, } = await seedLiveAndArchived(db, userId,);
+
+    const app = makeApp(db, userId,);
+    const res = await app.handle(
+      new Request(
+        "http://localhost/api/chats/search?type=group&includeArchived=true&searchPriority=archive_first",
+      ),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as SearchBody;
+    const order = body.data.map((r,) => r.chatId);
+    expect(order.indexOf(archivedId,),).toBeLessThan(order.indexOf(liveId,),);
+
+    await db.destroy();
+  });
+
+  test("search_priority without includeArchived degrades to live_first", async () => {
+    createLogger({ level: "error", },);
+    const { db, } = await createTestDb();
+    const userId = await seedUser(db,);
+    // Only archived chat exists → excluded by default, so result is empty.
+    await seedChat(db, userId, {
+      name: "Archived Only",
+      isPinned: "archived",
+      updatedAt: "2024-01-01T00:00:00.000Z",
+    },);
+
+    const app = makeApp(db, userId,);
+    const res = await app.handle(
+      new Request(
+        "http://localhost/api/chats/search?type=group&searchPriority=archive_first",
+      ),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as SearchBody;
+    expect(body.data,).toEqual([],);
+
+    await db.destroy();
+  });
+
+  test("rejects unknown search_priority with 4xx", async () => {
+    createLogger({ level: "error", },);
+    const { db, } = await createTestDb();
+    const userId = await seedUser(db,);
+    const app = makeApp(db, userId,);
+    const res = await app.handle(
+      new Request(
+        "http://localhost/api/chats/search?type=group&includeArchived=true&searchPriority=invalid",
+      ),
+    );
+    expect(res.status,).toBeGreaterThanOrEqual(400,);
     await db.destroy();
   });
 });

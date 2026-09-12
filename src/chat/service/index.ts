@@ -14,12 +14,15 @@ export { checkChatAccess, checkChatSettingsAccess, } from "./access";
 
 // ── Chat CRUD ─────────────────────────────────────────────────
 export {
+  archiveChat,
   batchArchiveChats,
   batchDeleteChats,
   batchExportChats,
   createChat,
   deleteChat,
   getChat,
+  isChatArchived,
+  unarchiveChat,
   updateChat,
 } from "./chats";
 export { updateGmGuidance, } from "./crud";
@@ -83,7 +86,7 @@ export {
 export { regenerateMessageVariant, } from "./write";
 
 // ── Message visibility ────────────────────────────────────────
-export { updateMessageVisibility, } from "./visibility";
+export { hardDeleteChat, updateMessageVisibility, } from "./visibility";
 
 // ── Message seen-state (VN mode / AI processing) ─────────────
 export {
