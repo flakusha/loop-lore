@@ -16,7 +16,7 @@ let anchorCleanup: (() => void) | null = null;
 
 /**
  * Click-to-place face-anchor editor over the preview image. Prefills from
- * the resolved sprite-context transform; each placement PUTs focal_x/y.
+ * the resolved sprite-context transform; each placement PUTs focalPointX/Y.
  *
  * @param body
  * @param assetId
@@ -45,7 +45,7 @@ export function mountPreviewAnchorEditor(body: HTMLElement, assetId: string,): v
         const res = await feFetch(`/api/assets/${id}/transform`, {
           method: "PUT",
           headers: { "Content-Type": "application/json", },
-          body: jsonBody({ context: "sprite", focal_x: point.x, focal_y: point.y, },),
+          body: jsonBody({ context: "sprite", focalPointX: point.x, focalPointY: point.y, },),
         },);
         return res.ok;
       } catch {
