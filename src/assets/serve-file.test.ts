@@ -20,8 +20,8 @@ describe("serveFile", () => {
   test("serves the file bytes with content type and immutable cache", async () => {
     const res = serveFile(EXISTING, "application/json",);
     expect(res.status,).toBe(200,);
-    expect(res.headers.get("Content-Type"),).toBe("application/json",);
-    expect(res.headers.get("Cache-Control"),).toMatch(/public, max-age=\d+, immutable/,);
+    expect(res.headers.get("Content-Type",),).toBe("application/json",);
+    expect(res.headers.get("Cache-Control",),).toMatch(/public, max-age=\d+, immutable/,);
     expect((await res.text()).length,).toBeGreaterThan(0,);
   });
 
@@ -30,7 +30,7 @@ describe("serveFile", () => {
       cacheControl: "no-store",
       extraHeaders: { "X-Custom": "yes", },
     },);
-    expect(res.headers.get("Cache-Control"),).toBe("no-store",);
-    expect(res.headers.get("X-Custom"),).toBe("yes",);
+    expect(res.headers.get("Cache-Control",),).toBe("no-store",);
+    expect(res.headers.get("X-Custom",),).toBe("yes",);
   });
 });

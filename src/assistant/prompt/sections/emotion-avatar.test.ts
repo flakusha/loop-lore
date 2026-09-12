@@ -12,8 +12,8 @@ function ctx(params: Record<string, string | undefined>,): AssembleContext {
 
 describe("emotionAvatarSection", () => {
   test("enabled only with emotion params", () => {
-    expect(emotionAvatarSection.enabled(ctx({ emotion: "joy", }),),).toBe(true,);
-    expect(emotionAvatarSection.enabled(ctx({ emotionAvatar: "joy.png", }),),).toBe(true,);
+    expect(emotionAvatarSection.enabled(ctx({ emotion: "joy", },),),).toBe(true,);
+    expect(emotionAvatarSection.enabled(ctx({ emotionAvatar: "joy.png", },),),).toBe(true,);
     expect(emotionAvatarSection.enabled(ctx({},),),).toBe(false,);
   });
 

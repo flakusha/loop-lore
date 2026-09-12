@@ -8,11 +8,11 @@ import { encodeContent, } from "./encode";
 
 describe("decodeContent error paths", () => {
   test("rejects non-base64 input", () => {
-    expect(() => decodeContent("!!! not base64 !!!", "gzip",),).toThrow();
+    expect(() => decodeContent("!!! not base64 !!!", "gzip",)).toThrow();
   });
 
   test("rejects a payload compressed with the wrong codec", () => {
     const gzip = encodeContent("hello world".repeat(10,), "gzip",);
-    expect(() => decodeContent(gzip.encoded, "brotli",),).toThrow();
+    expect(() => decodeContent(gzip.encoded, "brotli",)).toThrow();
   });
 });

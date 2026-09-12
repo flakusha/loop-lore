@@ -33,7 +33,7 @@ beforeEach(async () => {
   await insertWorlds(db, "user-player", "World", { id: "world-1", },);
   await insertPlaythroughs(db, "user-player", "world-1", { id: "run-done", status: "completed", },);
   await insertPlaythroughs(db, "user-player", "world-1", { id: "run-active", status: "active", },);
-});
+},);
 
 describe("startNewGamePlus", () => {
   test("starts a plus run linked to the completed run", async () => {
