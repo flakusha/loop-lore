@@ -77,7 +77,14 @@ describe("internalTraitsSection", () => {
     await insertUsers(db, "user-1", "User", { id: "user-1", },);
     await insertActors(db, "Alice", { id: "actor-1", user_id: "user-1", } as never,);
     await insertCharacterInternalTraits(db, "actor-1", {
-      aspirations: JSON.stringify([{ id: "a1", goal: "Find the lost sword", priority: "high", visibility: "open", progress: 0, plans: [], },],),
+      aspirations: JSON.stringify([{
+        id: "a1",
+        goal: "Find the lost sword",
+        priority: "high",
+        visibility: "open",
+        progress: 0,
+        plans: [],
+      },],),
       voice_patterns: JSON.stringify({ humor_style: "none", verbal_tics: [], },),
       visibility: JSON.stringify(["*",],),
     },);

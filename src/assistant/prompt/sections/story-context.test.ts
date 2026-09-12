@@ -59,7 +59,7 @@ function ctx(overrides: Record<string, unknown> = {},): AssembleContext {
 describe("storyContextSection", () => {
   test("enabled only for story chats", () => {
     expect(storyContextSection.enabled(ctx(),),).toBe(true,);
-    expect(storyContextSection.enabled(ctx({ isStory: false, }),),).toBe(false,);
+    expect(storyContextSection.enabled(ctx({ isStory: false, },),),).toBe(false,);
   });
 
   test("builds location plus state into one system message", async () => {
