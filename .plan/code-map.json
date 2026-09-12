@@ -15136,6 +15136,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-stale-audit-claim-aux-emotion-mood-task-tables.md"
     },
     {
@@ -15169,6 +15173,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-bug-auto-generation-applies-mood-delta-to-hook-payload-actor.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-emotion-mood-hook-payload-missing-actor-chat.md"
     }
   ],
   "src/generation/auto-gen/resolve-actor.test.ts": [
@@ -15183,10 +15191,24 @@
       "source": ".plan/tickets/BUG-bug-resolveactor-cascade-branch-does-not-verify-chat-partici.md"
     }
   ],
+  "src/generation/auto-gen/resolve-known-names.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
+    }
+  ],
   "src/generation/auto-gen/resolve-known-names.ts": [
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md"
     },
     {
       "kind": "ticket",
@@ -15231,6 +15253,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-hallucination-guard-isknownentity-stubs-unused-falls-through.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-hallucination-guard-known-params-ignored.md"
     },
     {
       "kind": "ticket",

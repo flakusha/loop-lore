@@ -3,7 +3,7 @@
 
 # BUG: hallucination-guard accepts knownActorIds/knownLocationIds params but isKnownEntity ignores them — uses global 500-row load instead
 
-**Status:** Not Started
+**Status:** [OK] Resolved (dev, prior to 2026-09-13)
 **Severity:** medium
 **Priority:** medium
 **Effort:** small
@@ -45,6 +45,18 @@ Correctness. The hallucination guard either misses world-specific NPCs (false ne
    ```
 
 4. Document the precedence: explicit param > world-scoped load > global load.
+
+## Resolution
+
+Implemented via the `knownEntityNames` pathway on `HallucinationCheckOpts` (`src/chat/hallucination-guard/types.ts:52`):
+
+- `src/generation/auto-gen/resolve-known-names.ts` — `resolveChatKnownEntityNames(database, chatId)` resolves the chat-scoped set of participant display names + current chat location name.
+- `src/generation/auto-gen/post-store.ts:118-125` and `src/generation/auto-gen/story-mode.ts:131-139` — call the helper and pass `knownEntityNames` into `detectHallucinations`.
+- `src/chat/hallucination-guard/known.ts` — `isKnownEntity` keeps the underscore-prefixed `_knownActorIds` / `_knownLocationIds` stubs for signature compatibility (these remain intentionally unused); the working pathway is the `knownEntityNames` Set passed through `allowedNames`.
+
+Trade-off: per-chat scoping is solved by deriving names from the chat's actual participants at call time, which is more correct than threading actor/location IDs through a global-actor-pool cache. The original `loadKnownEntities` is preserved for the no-known-names fallback.
+
+**Duplicates** closed together: `BUG-hallucination-guard-isknownentity-stubs-unused-falls-through-to-name-match.md`. Issue 103e372 closes here.
 
 ## Tests
 
