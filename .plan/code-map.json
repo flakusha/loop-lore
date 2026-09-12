@@ -5407,6 +5407,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md"
     }
   ],
   "src/chat/service/ownership.ts": [
@@ -5417,6 +5421,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-ownership-transfer.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md"
     }
   ],
   "src/chat/service/participants.ts": [
