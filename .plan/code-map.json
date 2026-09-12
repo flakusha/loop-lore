@@ -16299,6 +16299,12 @@
       "source": ".plan/tickets/TASK-resource-provision-quota-engine.md"
     }
   ],
+  "src/generation/regenerate-variant.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-smart-regen-style-not-threaded-through.md"
+    }
+  ],
   "src/generation/repetition-detector.ts": [
     {
       "kind": "epic",
