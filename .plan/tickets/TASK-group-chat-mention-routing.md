@@ -3,7 +3,7 @@
 
 # TASK: Group Chat Mention Routing
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Already Implemented (companion BUG ticket closed)
 **Priority:** High
 **Effort:** Small
 **Epic:** epic-group-chat
@@ -25,8 +25,18 @@ existed in code but had no owning epic or task until this ticket.
 
 ## Acceptance Criteria
 
-- [ ] Exact match preferred; on ambiguity, longest-prefix / explicit-disambiguation wins
-- [ ] Collision case produces a deterministic, documented resolution (or surfaces ambiguity to the user)
-- [ ] Tests cover prefix-collision and multi-match scenarios
-- [ ] BUG-group-chat-mention-prefix-collision closed
-- [ ] `bun run check` green
+- [x] Exact match preferred; on ambiguity, longest-prefix / explicit-disambiguation wins
+- [x] Collision case produces a deterministic, documented resolution (or surfaces ambiguity to the user)
+- [x] Tests cover prefix-collision and multi-match scenarios
+- [x] BUG-group-chat-mention-prefix-collision closed
+- [x] `bun run check` green
+
+## Resolution
+
+All five ACs already met on `dev`. Verified 2026-09-12 during `chat-bugfix-batch-1` preparation.
+
+- `src/group-chat/mention-parser.ts` `resolveMention` (lines 78-104) does exact-match-first (case-insensitive), then a prefix scan over participants stably ordered by `actorId`. If the prefix matches more than one participant, returns `null` so the caller surfaces an ambiguity message — no "wrong actor on prefix collision" behaviour.
+- `src/group-chat/mention-parser.test.ts` covers exact-over-prefix (`Lun` resolves to `Lun`, not `Luna`), prefix-collision returns `null` (`[Luna, Lunatic]` + `"Lun"` → null), case-insensitive exact (`alex` + `ALEX` → `alex`), and the `Dark Knight` multi-word resolution via single-token prefix match.
+- Companion `BUG-group-chat-mention-prefix-collision` already shows `Status: ✅ Resolved` and cites commit `f1f92684`. This TASK ticket was stale ("Not Started") despite the underlying work being shipped.
+
+No new code required. Bookkeeping ticket: `TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery`.

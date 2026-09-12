@@ -11004,6 +11004,18 @@
     "source": ".plan/tickets/TASK-blog-system.md",
     "status": "done"
   },
+  "TASK-BOOKKEEPING-CHAT-BUGFIX-BATCH-1-SCOPE-DISCOVERY": {
+    "hash": "pending",
+    "extid": "TASK-BOOKKEEPING-CHAT-BUGFIX-BATCH-1-SCOPE-DISCOVERY",
+    "type": "TASK",
+    "title": "chat-bugfix-batch-1 scope discovery (2 of 3 stale)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery.md",
+    "status": "open"
+  },
   "TASK-BOUND-LINKED-TRAVEL-PROMPTS": {
     "hash": "df44507",
     "extid": "TASK-BOUND-LINKED-TRAVEL-PROMPTS",
