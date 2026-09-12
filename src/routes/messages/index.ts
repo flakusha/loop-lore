@@ -4,6 +4,7 @@
 import { Elysia, } from "elysia";
 import { archivingRoutes, } from "./archiving";
 import { createRoutes, } from "./create";
+import { forwardRoutes, } from "./forward";
 import { readRoutes, } from "./read";
 import type { HandlerOpts, } from "./types";
 import { updateRoutes, } from "./update";
@@ -19,5 +20,6 @@ export function messagesRoutes(opts: HandlerOpts,) {
     .use(readRoutes(opts,),)
     .use(updateRoutes(opts,),)
     .use(createRoutes(opts,),)
+    .use(forwardRoutes(opts,),)
     .use(archivingRoutes(opts,),);
 }
