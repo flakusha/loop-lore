@@ -71,6 +71,7 @@ export interface AtRestResult {
 /**
  * @param opts
  * @returns Promise<unknown>
+ * @throws When SMK is missing or an in-flight rotation fails.
  */
 export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestResult> {
   const { database, chatId, plaintext, encryptionLevel, config, } = opts;

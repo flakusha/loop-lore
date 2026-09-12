@@ -50,12 +50,13 @@ export function resetRotationEventCount(): void {
   inflightRotations.clear();
 }
 
+/**
+ * @throws When the in-flight rotation rejects — callers must fail closed.
+ */
 export async function awaitChatKeyLock(chatId: string,): Promise<void> {
   const inflight = inflightRotations.get(chatId,);
   if (!inflight) { return; }
-  try {
-    await inflight;
-  } catch { /* let caller surface the error */ }
+  await inflight;
 }
 function log(): Logger {
   return getLogger().child({ module: "key-distribution", },);
@@ -100,6 +101,7 @@ export async function distributeKeysOnJoin(
  * @param chatId
  * @param departedParticipantId
  * @returns void
+ * @throws When no participants remain or any re-encrypt step fails.
  */
 export async function rotateKeyOnLeave(
   database: Kysely<DB>,
@@ -119,12 +121,14 @@ export async function rotateKeyOnLeave(
   return promise;
 }
 
+/**
+ * @throws When validation or any re-encrypt step fails; DB txn rolls back.
+ */
 async function doRotate(
   database: Kysely<DB>,
   chatId: string,
   departedParticipantId: string,
 ): Promise<ChatKey> {
-  rotationEventCount++;
   const smk = getSmk();
   if (!smk) { throw new Error("Encryption not configured — set SERVER_ENCRYPTION_KEY",); }
 
@@ -144,6 +148,7 @@ async function doRotate(
     throw new Error("Cannot rotate key: no remaining participants",);
   }
 
+  rotationEventCount++;
   const newId = crypto.randomUUID();
   const newRawKey = crypto.getRandomValues(new Uint8Array(32,),);
   const newEncryptedKey = await encryptBytes(smk, newRawKey,);

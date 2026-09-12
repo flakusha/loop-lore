@@ -49,6 +49,7 @@ export interface EncryptMessageResult {
  * `getChatEncryptionLevel`. This function delegates entirely to `encryptAtRest`,
  * which handles tier-aware encryption (none → plaintext, standard → AES-256-GCM,
  * private → throws with guidance to pre-encrypt client-side).
+ * @throws When SMK is missing, the tier requires pre-encryption, or an in-flight key rotation fails.
  * @param root0
  * @param root0.database
  * @param root0.chatId
