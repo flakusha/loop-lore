@@ -75,6 +75,12 @@ const ROLE_PRIORITY: Record<ChatParticipantRole, number> = {
   guest: -1,
   observer: 0,
   member: 1,
+  // `gm` is a moderation-tier role (added in migration 007), not a
+  // command-gating tier. Membership-tier priority (member = 1) prevents
+  // silent widening of owner-gated commands (attack/battle/create/debug/
+  // heal) until a per-command decision opts in. Promote to 2 when a
+  // command registers with `requiredRole: "gm"` to also permit owners.
+  gm: 1,
   owner: 2,
 };
 

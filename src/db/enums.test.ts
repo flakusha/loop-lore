@@ -36,7 +36,7 @@ const EXPECTED_ENUMS: Record<string, string[]> = {
   TurnStrategy: ["round_robin", "scene_based", "initiative", "quest_driven", "hybrid",],
   ActorType: ["user", "character", "narrator", "system",],
   AgentType: ["none", "ai", "narrator", "npc",],
-  ChatParticipantRole: ["member", "owner", "observer", "guest",],
+  ChatParticipantRole: ["member", "owner", "observer", "guest", "gm",],
   MessageRole: ["user", "assistant", "character", "system",],
   MessageContentType: ["text", "action", "narration", "system", "continuation", "music_link", "tool_result",],
   MessageContentFormat: ["markdown",],
