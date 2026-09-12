@@ -80,7 +80,7 @@ export async function transferOwnership(
   // Sequential reads so a missing chat surfaces before we probe participants.
   const chat = await db
     .selectFrom("chats",)
-    .select(["id", "created_by", "world_id",],)
+    .select(["id", "created_by",],)
     .where("id", "=", chatId,)
     .executeTakeFirst();
   const newOwnerParticipant = await db
@@ -102,7 +102,6 @@ export async function transferOwnership(
     };
   }
 
-  // TODO(chat-ownership): validate newOwnerId (FKs users/actors) up front — bogus ids die deep in the tx as a flattened 400.
   if (previousOwnerId === newOwnerId) {
     return {
       ok: false,
@@ -118,6 +117,22 @@ export async function transferOwnership(
       ok: false,
       error: { code: "forbidden", message: "Only the current owner or an admin may transfer ownership", },
     };
+  }
+  if (!newOwnerParticipant) {
+    // Up-front FK guard (post-authority, so outsiders cannot probe actor ids):
+    // a bogus newOwnerId would otherwise die on chat_participants.actor_id →
+    // actors.id deep in the tx and surface as a misleading "Transfer failed" 400.
+    const actorExists = await db
+      .selectFrom("actors",)
+      .select("id",)
+      .where("id", "=", newOwnerId,)
+      .executeTakeFirst();
+    if (!actorExists) {
+      return {
+        ok: false,
+        error: { code: "not_found", message: "New owner actor not found", },
+      };
+    }
   }
 
   const autoInvited = !newOwnerParticipant;
@@ -231,6 +246,15 @@ export async function transferOwnership(
     return { ok: true, result: outcome, };
   } catch (err) {
     if (err instanceof Error && err.message === CONCURRENT_MODIFICATION) {
+      // Audit evidence for the loser (AC: concurrent attempts resolve to a
+      // single winner with evidence): the winner's log_entries row shows who
+      // won; this warn line records who lost and when.
+      ownershipLogger().warn("ownership transfer lost concurrency race", {
+        chatId,
+        requesterId,
+        attemptedNewOwnerId: newOwnerId,
+        previousOwnerId,
+      },);
       return {
         ok: false,
         error: { code: "bad_request", message: "Chat ownership changed concurrently; refresh and retry", },
