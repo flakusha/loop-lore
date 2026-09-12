@@ -4138,6 +4138,18 @@
     "source": ".plan/tickets/BUG-telemetry-stores-raw-client-body-real-user-chat-session-ids.md",
     "status": "done"
   },
+  "BUG-TEST-ASSERTIONS-STALE-GM-SUPPORT-MESSAGE": {
+    "hash": "pending",
+    "extid": "BUG-TEST-ASSERTIONS-STALE-GM-SUPPORT-MESSAGE",
+    "type": "BUG",
+    "title": "test-assertions-stale-gm-support-message",
+    "label": "bug",
+    "priority": "high",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/BUG-test-assertions-stale-gm-support-message.md",
+    "status": "[OK] Resolved"
+  },
   "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22": {
     "hash": "1e5d5dc",
     "extid": "BUG-TEST-SUITE-FLAKY-44-ON-DEV-2026-08-22",
