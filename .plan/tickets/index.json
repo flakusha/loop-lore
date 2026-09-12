@@ -8627,7 +8627,6 @@
     "source": ".plan/tickets/TASK-admin-revisions-diff-revert.md",
     "status": "open"
   },
-
   "TASK-ADMIN-SYSTEM-CONFIG-GENERATION-TUNABLES-CONTEXT-WINDOW-GUARD": {
     "hash": "ff48499",
     "git_issue": "ff48499",
@@ -8641,7 +8640,6 @@
     "source": ".plan/tickets/TASK-admin-system-config-generation-tunables-context-window-guard.md",
     "status": "open"
   },
-
   "TASK-ADMIN-SYSTEM-CONFIG-NEW-MEMORY-SEARCH-STORY-DOMAINS": {
     "hash": "23262d8",
     "git_issue": "23262d8",
@@ -8655,7 +8653,6 @@
     "source": ".plan/tickets/TASK-admin-system-config-new-memory-search-story-domains.md",
     "status": "open"
   },
-
   "TASK-ADMIN-SYSTEM-CONFIG-RPG-CHAT-CAPTION-TURN-TUNABLES": {
     "hash": "1b9e9ab",
     "git_issue": "1b9e9ab",
@@ -8669,7 +8666,6 @@
     "source": ".plan/tickets/TASK-admin-system-config-rpg-chat-caption-turn-tunables.md",
     "status": "open"
   },
-
   "TASK-ADMIN-SYSTEM-CONFIG-SURFACE-MISSING-SCHEMA-SECTIONS": {
     "hash": "c3d1a83",
     "git_issue": "c3d1a83",
@@ -12200,6 +12196,58 @@
     "source": ".plan/tickets/TASK-chat-branch-merge.md",
     "status": "open"
   },
+  "TASK-CHAT-COMPOSER-GIF-PICKER": {
+    "hash": "c8ef579",
+    "git_issue": "c8ef579",
+    "extid": "TASK-CHAT-COMPOSER-GIF-PICKER",
+    "type": "TASK",
+    "title": "Chat composer: GIF picker",
+    "label": "task",
+    "priority": "low",
+    "epic": "epic-chat-rich-engagement.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-composer-gif-picker.md",
+    "status": "open"
+  },
+  "TASK-CHAT-COMPOSER-MARKDOWN-PRE-RENDER-PREVIEW-BEFORE-SEND": {
+    "hash": "d70da47",
+    "git_issue": "d70da47",
+    "extid": "TASK-CHAT-COMPOSER-MARKDOWN-PRE-RENDER-PREVIEW-BEFORE-SEND",
+    "type": "TASK",
+    "title": "Chat composer: markdown pre-render/preview before send",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-chat-commands.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-composer-markdown-pre-render-preview-before-send.md",
+    "status": "open"
+  },
+  "TASK-CHAT-COMPOSER-TAB-COMPLETE-FOR-COMMANDS-MENTIONS-EMOJI": {
+    "hash": "957590a",
+    "git_issue": "957590a",
+    "extid": "TASK-CHAT-COMPOSER-TAB-COMPLETE-FOR-COMMANDS-MENTIONS-EMOJI",
+    "type": "TASK",
+    "title": "Chat composer: tab-complete for commands, mentions, emoji",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-chat-commands.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-composer-tab-complete-for-commands-mentions-emoji.md",
+    "status": "open"
+  },
+  "TASK-CHAT-COMPOSER-USER-VISIBLE-STREAMING-VS-COMPLETE-TOGGLE": {
+    "hash": "3480864",
+    "git_issue": "3480864",
+    "extid": "TASK-CHAT-COMPOSER-USER-VISIBLE-STREAMING-VS-COMPLETE-TOGGLE",
+    "type": "TASK",
+    "title": "Chat composer: user-visible streaming vs complete toggle",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-chat-product-features.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-chat-composer-user-visible-streaming-vs-complete-toggle.md",
+    "status": "open"
+  },
   "TASK-CHAT-CONTEXT-FEATURE-PERMISSIONS": {
     "hash": "a3d9b3d",
     "extid": "TASK-CHAT-CONTEXT-FEATURE-PERMISSIONS",
@@ -13206,7 +13254,6 @@
     "source": ".plan/tickets/TASK-config-example-template-variables-doc.md",
     "status": "undefined"
   },
-
   "TASK-CONFIG-EXAMPLES-BACKFILL-13-MISSING-STALE-GENERATION-NSFW": {
     "hash": "883628e",
     "git_issue": "883628e",
@@ -16693,6 +16740,19 @@
     "source": ".plan/tickets/TASK-gm-whitenotes.md",
     "status": "done",
     "git_issue": "dbe91d6"
+  },
+  "TASK-GROUP-CHAT-MENTION-AUTOCOMPLETE-DROPDOWN-ACCEPTANCE": {
+    "hash": "36d317c",
+    "git_issue": "36d317c",
+    "extid": "TASK-GROUP-CHAT-MENTION-AUTOCOMPLETE-DROPDOWN-ACCEPTANCE",
+    "type": "TASK",
+    "title": "Group chat: @mention autocomplete dropdown acceptance",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-group-chat.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-group-chat-mention-autocomplete-dropdown-acceptance.md",
+    "status": "open"
   },
   "TASK-GROUP-CHAT-MENTION-ROUTING": {
     "hash": "0008385",
