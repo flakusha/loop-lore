@@ -83,6 +83,7 @@ Frontend implementation for Admin Panel & Dashboard. See `docs/frontend/admin.md
 - LLM: default provider/model, max context tokens, temperature, rate limit
 - Moderation toggles
 - Danger zone: purge audit logs, reset settings, factory reset (confirmation-gated)
+- File-config parity (open, 2026-09): expose hardcoded tunables + missing sections via `system_config` — generation context/guards/aux, memory/search/story, rpg/chat/caption, 13 unfiled schema sections
 
 ### Revision History (`/admin/revisions`) — ❌ not implemented
 
@@ -98,6 +99,10 @@ Frontend implementation for Admin Panel & Dashboard. See `docs/frontend/admin.md
 - `TASK-admin-danger-zone.md` — ✅ done (danger-zone.ts + admin.html §Danger Zone + admin-system.ts)
 - `TASK-admin-overview-dashboard.md` — ✅ done (stats.ts deltas + admin.ts 30s poll + overview tab)
 - `TASK-admin-revisions-diff-revert.md` — ⬜ **open** (only remaining admin gap; entity revision tracking + diff + revert)
+- `TASK-admin-system-config-generation-tunables-context-window-guard.md` — ⬜ open (context window/guards/aux/model roles)
+- `TASK-admin-system-config-new-memory-search-story-domains.md` — ⬜ open (new memory/search/story sections)
+- `TASK-admin-system-config-rpg-chat-caption-turn-tunables.md` — ⬜ open (rpg/chat/caption/turn)
+- `TASK-admin-system-config-surface-missing-schema-sections.md` — ⬜ open (13 unfiled sections)
 
 ## Related Epics
 
