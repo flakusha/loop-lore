@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 // size-allow: 300
 
+import type { DraftStore, } from "../chat-drafts";
 import type { AlpineMagicThis, GalleryAsset, PromptTemplateInfo, QuickReplyButton, } from "../types";
 import type * as filterState from "./filter-state";
 import type { GenerationDetail, GroupedMessage, Message, } from "./messages";
@@ -155,6 +156,7 @@ export interface ChatCoreState
   _lastAutoFireAt: number;
   /** Consecutive automated sends since the last human-initiated send; capped to break loops. */
   _consecutiveAutoFires: number;
+  _draftTimer: ReturnType<typeof setTimeout> | null;
   loadQuickReplies(): void;
   executeQuickReply(command: string,): Promise<void>;
   fireStartupQuickReplies(): Promise<void>;
@@ -183,6 +185,10 @@ export interface ChatCoreState
   loadOlderMessages(): Promise<void>;
   setupInfiniteScroll(): void;
   sendMessage(): Promise<void>;
+  saveComposerDraft(store?: DraftStore,): void;
+  flushComposerDraft(store?: DraftStore,): void;
+  restoreComposerDraft(store?: DraftStore,): void;
+  clearComposerDraft(store?: DraftStore,): void;
   autoResize(el: HTMLTextAreaElement,): void;
   scrollToBottom(): void;
   setupScrollDetection(): void;

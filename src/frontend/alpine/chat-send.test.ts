@@ -51,6 +51,10 @@ interface SendCtx {
   connectGenerationSSE: (chatId: string | null,) => void;
   dispatchCommandAction: (action: string, payload: unknown, chatId: string | null,) => Promise<void>;
   fireAutoQuickReplies: (trigger: "user" | "ai",) => Promise<void>;
+  clearedDrafts: number;
+  flushedDrafts: number;
+  clearComposerDraft: () => void;
+  flushComposerDraft: () => void;
   toasts: Toast[];
   dispatched: { event: string; detail: unknown }[];
   $dispatch: (event: string, detail?: unknown,) => void;
@@ -76,6 +80,14 @@ function buildCtx(overrides?: Partial<SendCtx>,): SendCtx {
     connectGenerationSSE: () => {},
     dispatchCommandAction: async () => {},
     fireAutoQuickReplies: async () => {},
+    clearedDrafts: 0,
+    flushedDrafts: 0,
+    clearComposerDraft: () => {
+      ctx.clearedDrafts += 1;
+    },
+    flushComposerDraft: () => {
+      ctx.flushedDrafts += 1;
+    },
     toasts: [],
     dispatched: [],
     $dispatch: (event, detail,) => {
@@ -270,5 +282,25 @@ describe("chatSendMethods.sendMessage — failure paths", () => {
     expect(ctx.messages,).toEqual([],);
     expect(ctx.isGenerating,).toBe(false,);
     expect(ctx.toasts[0]!.type,).toBe("error",);
+  });
+});
+
+describe("chatSendMethods.sendMessage — composer drafts", () => {
+  test("clears the composer draft after a successful send", async () => {
+    const ctx = buildCtx();
+    ctx.$refs.messageInput.value = "hello";
+    handler = async () => Response.json({ id: "m1", },);
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+    expect(ctx.clearedDrafts,).toBe(1,);
+    expect(ctx.flushedDrafts,).toBe(0,);
+  });
+
+  test("flushes the restored input when the send fails", async () => {
+    const ctx = buildCtx();
+    ctx.$refs.messageInput.value = "hello";
+    handler = async () => Response.json({ error: "boom", }, { status: 500, },);
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+    expect(ctx.clearedDrafts,).toBe(0,);
+    expect(ctx.flushedDrafts,).toBe(1,);
   });
 });

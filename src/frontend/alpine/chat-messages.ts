@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import type { ChatState, Message, } from "./types";
 import { MessageListResponse, } from "../../validation/schemas/responses";
+import { chatDraftMethods, } from "./chat-drafts";
 import { chatSeenMethods, } from "./chat-seen";
 import { chatSendMethods, } from "./chat-send";
 import { jsonBody, } from "./json";
@@ -15,6 +16,7 @@ const EMPTY_MESSAGE_PAGE = {
   pagination: { total: 0, page: 1, pageSize: 50, totalPages: 1, },
 };
 export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
+  ...chatDraftMethods,
   ...chatSendMethods,
   ...chatSeenMethods,
   async loadMessages() {

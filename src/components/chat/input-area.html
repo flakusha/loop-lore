@@ -138,7 +138,7 @@
         rows="1"
         @keydown.enter.shift=""
         @keydown.enter.prevent="sendMessage()"
-        @input="autoResize($el); handleMentionInput($event); handleCommandInput($event)"
+        @input="autoResize($el); handleMentionInput($event); handleCommandInput($event); saveComposerDraft()"
         @keydown.escape="hideMentionAutocomplete()"
         required
         :disabled="!activeChat || (isStoryMode && running)"
