@@ -197,7 +197,7 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
     await db.destroy();
   });
 
-  test("403: an admin cannot transfer to themselves (self-guard runs before bypass)", async () => {
+  test("400: an admin cannot transfer to themselves (self-guard runs before bypass)", async () => {
     const { db, } = await createTestDb();
     await seed(db,);
 
