@@ -3,17 +3,18 @@
 
 # Template System — Unified Architecture Spec
 
-**Status**: 🟡 In Progress — LLM-modality foundation shipped; DB-backed user templates + unified render future
+**Status**: 🟡 In Progress — LLM + image template foundations shipped (spec reconciled with code 2026-09-13); DB-backed user templates + unified registry future
 **Owner**: FEAT-065 (Prompt Library)
 **Scope**: LLM, Image, Video, Audio generation templates
 
 ---
 
-## Current State (2026-08-03)
+## Current State (verified against code 2026-09-13)
 
-- ✅ **LLM-modality foundation shipped** — config-file builtins registry: `LLM_PROMPT_DEFAULTS` (12 purposes) + `resolveSystemPrompt()` (`src/prompts/registry.ts`), user overrides via `configs/templates/llm.yaml` (extend/override/replace), 10 consumers wired (commit `9aefe593`). This corresponds to the registry's `builtins` + config-overlay `resolve`; the `prompt_templates` DB table (`userTemplates`) and unified `{{variable}}` `render` remain future work (`TASK-prompt-library.md`).
+- ✅ **LLM-modality foundation shipped** — config-file builtins registry: `LLM_PROMPT_DEFAULTS` (12 purposes) + `resolveSystemPrompt()` (`src/prompts/registry.ts`), user overrides via `configs/templates/llm.yaml` (extend/override/replace; examples: `llm.example.yaml` / `llm.example.toml`). LLM prompt sections are ordered builders in `src/assistant/prompt/registry.ts` (`PROMPT_SECTIONS`), consumed by `src/assistant/prompt-assembler.ts`. The `prompt_templates` DB table (`userTemplates`) and unified `{{variable}}` `render` for LLM remain future work (`TASK-prompt-library.md`).
+- ✅ **Image-modality foundation shipped** — `src/generation/prompt-templates/` module: `BUILTIN_PROFILES` / `DEFAULT_PROFILE_REGISTRY` (`profiles.ts`), shared `resolveTemplate()` `{{variable}}` substitution (`templates.ts`), user overlay via `configs/templates/sd.yaml` (`createConfigRegistry` in `config.ts`). Detail levels `instant` / `balanced` / `detailed` already unified.
 - 🟡 Registry hardening (typed purposes, single defaults source, llm.yaml validation): `TASK-prompt-template-registry.md`, design `.plan/epics/epic-config-templates.md`.
-- ⬜ DB `prompt_templates`/`template_variables` tables, `template-service.ts`, `/api/templates/:modality` routes, LLM `{{var}}` interpolation — future (Migration path below).
+- ⬜ DB `prompt_templates` / `template_variables` tables (absent from migrations today), `template-service.ts`, `/api/templates/:modality` routes, LLM `{{var}}` interpolation — future (Migration path below).
 
 ---
 
@@ -38,21 +39,21 @@ interface TemplateRegistry<TTemplate, TContext,> {
   /** User-created templates (from DB) */
   userTemplates: Map<string, TTemplate>;
   /** Model name → template ID matching (first match wins) */
-  modelMatching: { pattern: string; templateId: string }[];
+  modelMatching: { pattern: string; profileId: string }[];
 
-  resolve(modelName?: string, templateId?: string,): TTemplate;
+  resolve(modelName?: string, profileId?: string,): TTemplate;
   render(template: TTemplate, ctx: TContext,): string;
 }
 ```
 
 ### Modality Implementations
 
-| Modality | Registry File                              | Template Type         | Context Type           |
-| -------- | ------------------------------------------ | --------------------- | ---------------------- |
-| LLM      | `src/assistant/prompt/registry.ts`         | `LlmPromptTemplate`   | `AssembleContext`      |
-| Image    | `src/generation/prompt-templates.ts`       | `ImageModelProfile`   | `TemplateContext`      |
-| Video    | `src/generation/video-prompt-templates.ts` | `VideoPromptTemplate` | `VideoTemplateContext` |
-| Audio    | `src/generation/audio-prompt-templates.ts` | `AudioPromptTemplate` | `AudioTemplateContext` |
+| Modality | Registry File                                                                           | Template Type                                        | Context Type           |
+| -------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------- | ---------------------- |
+| LLM      | `src/prompts/registry.ts` (defaults) + `src/assistant/prompt/registry.ts` (sections)    | purpose defaults + `PROMPT_SECTIONS` builders        | `AssembleContext`      |
+| Image    | `src/generation/prompt-templates/` (`profiles.ts`, `config.ts`, `templates.ts`)         | `ImageModelProfile` (`types.ts`)                     | `Record<string, string>` (`resolveTemplate` ctx) |
+| Video    | `src/generation/video-prompt-templates.ts` (to create)                                  | `VideoPromptTemplate`                                | `VideoTemplateContext` |
+| Audio    | `src/generation/audio-prompt-templates.ts` (to create)                                  | `AudioPromptTemplate`                                | `AudioTemplateContext` |
 
 ---
 
@@ -87,7 +88,7 @@ CREATE TABLE template_variables (
 );
 ```
 
-> **Note**: Image/video/audio may use modality-specific extension tables (`image_prompt_templates`, `video_prompt_templates`, `audio_prompt_templates`) for format/mode-specific columns. LLM uses section-based storage (see FEAT-065-LLM).
+> **Note**: Image/video/audio may use modality-specific extension tables (`image_prompt_templates`, `video_prompt_templates`, `audio_prompt_templates`) for format/mode-specific columns. LLM uses section-based storage; that decision is tracked with the parent task `FEAT-065-prompt-library-expanded.md`.
 
 ---
 
@@ -100,6 +101,8 @@ function resolveTemplate(body: string, ctx: Record<string, string>,): string {
   return body.replaceAll(/\{\{(\w+)\}\}/g, (_, key,) => ctx[key] ?? "",);
 }
 ```
+
+Shipped for the image modality (`src/generation/prompt-templates/templates.ts`, re-exported via `index.ts`); LLM/video/audio adopt it with their wiring phases.
 
 ### Cross-Modality Variables
 
@@ -150,19 +153,19 @@ POST   /api/templates/:modality/:id/apply  # render with context
 
 ## Model→Template Auto-Matching
 
-Mirror `DEFAULT_PROFILE_REGISTRY.modelMatching` from `src/generation/prompt-templates.ts`:
+Mirror `DEFAULT_PROFILE_REGISTRY.modelMatching` from `src/generation/prompt-templates/profiles.ts` (12 built-in profiles, `defaultProfileId: "sdxl"`):
 
 ```typescript
 modelMatching: [
-  { pattern: "flux", templateId: "flux", },
-  { pattern: "sd3", templateId: "sd3", },
-  { pattern: "wan", templateId: "wan", },
-  { pattern: "eleven", templateId: "elevenlabs", },
+  { pattern: "flux", profileId: "flux", },
+  { pattern: "sd3", profileId: "sd3", },
+  { pattern: "noobai", profileId: "noob", },
+  { pattern: "illustrious", profileId: "illustrious", },
   // ...
 ];
 ```
 
-Resolution order: explicit `templateId` → `modelName` match → default per modality.
+Resolution order: explicit `profileId` → `modelName` pattern match (first match wins) → `defaultProfileId` per modality.
 
 ---
 
@@ -170,22 +173,25 @@ Resolution order: explicit `templateId` → `modelName` match → default per mo
 
 | Phase | Work                                                     | Files                                      |
 | ----- | -------------------------------------------------------- | ------------------------------------------ |
-| 1     | Unified `prompt_templates` + `template_variables` tables | `src/db/migrations/0XX_templates.ts`       |
+| 1     | Unified `prompt_templates` + `template_variables` tables | `src/db/migrations/parts/NNN_templates.ts` (append-only `parts/` layout, orchestrated by `001_init.ts`) |
 | 2     | `template-service.ts` (CRUD + render)                    | `src/generation/template-service.ts`       |
 | 3     | API routes                                               | `src/routes/templates.ts`                  |
-| 4     | Image wiring (FEAT-065-IMG)                              | `src/generation/image-gen-route.ts`        |
-| 5     | LLM wiring (FEAT-065-LLM)                                | `src/assistant/prompt-assembler.ts`        |
-| 6     | Video scaffold (FEAT-065-VID)                            | `src/generation/video-prompt-templates.ts` |
-| 7     | Audio scaffold (FEAT-065-AUD)                            | `src/generation/audio-prompt-templates.ts` |
+| 4     | Image wiring                                             | `src/generation/image-gen-route.ts`        |
+| 5     | LLM wiring                                               | `src/assistant/prompt-assembler.ts`        |
+| 6     | Video scaffold                                           | `src/generation/video-prompt-templates.ts` |
+| 7     | Audio scaffold                                           | `src/generation/audio-prompt-templates.ts` |
 
 ---
 
 ## References
 
-- `src/generation/prompt-templates.ts` — Image implementation (reference pattern)
+- `src/generation/prompt-templates/` — Image implementation (reference pattern)
 - `src/assistant/prompt-assembler.ts` — LLM section assembler
 - `docs/spec/integrations/image-generation.md` — Image model families
 - `docs/spec/integrations/llm-serving.md` — LLM presets
 - `docs/ideas/prompt-output-control.md` — #9 Template marketplace
 - `.plan/tickets/FEAT-065-prompt-library-expanded.md` — Parent task
-- `.plan/tickets/FEAT-065-sub-{llm,image,video,audio}.md` — Subtasks
+- `.plan/tickets/TASK-prompt-library.md` — LLM user-template follow-up
+- `.plan/tickets/TASK-prompt-template-registry.md` — Registry hardening
+- `.plan/tickets/TASK-template-unified-variable-engine.md` — Unified `{{var}}` engine
+- `.plan/tickets/TASK-templates-loader-merge-strategy-consistency.md` — Loader merge strategy
