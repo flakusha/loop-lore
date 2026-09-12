@@ -50,6 +50,9 @@ describe("anchorToObjectPosition", () => {
     expect(anchorToObjectPosition({ x: 0.4, y: 0.3, },),).toBe("40% 30%",);
     expect(anchorToObjectPosition({ x: 0.5, y: 0.35, },),).toBe("50% 35%",);
   });
+  test("clamps out-of-range anchors to valid CSS", () => {
+    expect(anchorToObjectPosition({ x: 2, y: -0.5, },),).toBe("100% 0%",);
+  });
 });
 
 describe("applySpriteAnchor", () => {
