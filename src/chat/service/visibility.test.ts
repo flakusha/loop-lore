@@ -148,7 +148,7 @@ describe("hardDeleteChat", () => {
     const result = await hardDeleteChat(localDb, otherChat, member, "user",);
     expect(result,).toEqual({
       code: "forbidden",
-      message: "Only the chat creator or an Owner role can change settings",
+      message: "Only the chat creator, an Owner, or a GM can change settings",
     },);
     // Chat row still present — the guard short-circuited before the cascade.
     const stillThere = await localDb
