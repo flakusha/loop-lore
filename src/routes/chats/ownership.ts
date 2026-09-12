@@ -23,7 +23,7 @@ import type { HandlerOpts, } from "./types";
  * Errors:
  *   400 — self-transfer / new owner already current owner / chat has no owner
  *   403 — requester is neither admin nor the current owner
- *   404 — chat not found
+ *   404 — chat not found / new-owner actor not found
  * @param opts
  * @param prefix
  */
@@ -65,7 +65,7 @@ export function ownershipRoutes(opts: HandlerOpts, prefix = "/api",) {
       if (!outcome.ok) {
         switch (outcome.error.code) {
           case "not_found":
-            return notFoundResponse("Chat not found",);
+            return notFoundResponse(outcome.error.message,);
           case "forbidden":
             return forbiddenResponse(outcome.error.message,);
           case "bad_request":
