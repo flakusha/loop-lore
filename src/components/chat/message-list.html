@@ -208,7 +208,7 @@
                 <template x-for="(asset, aIdx) in msg.attachments" :key="asset.assetId">
                   <div
                     class="media-item"
-                    :class="asset.type === 'image' ? 'media-image' : 'media-file'"
+                    :class="(asset.type === 'image' ? 'media-image' : 'media-file') + (asset.label === 'voice-note' ? ' media-voice' : '')"
                     :style="getMediaStyle(asset, msg.attachments.length)"
                   >
                     <template x-if="asset.type === 'image'">
