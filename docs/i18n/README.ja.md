@@ -37,57 +37,9 @@ LLM — を健全な基盤の上に再構築します:
 [`AGENTS.md`](../../AGENTS.md) です — この README のディレクトリ一覧は数日
 で古くなります。
 
----
-
-## 機能
-
-ステータス凡例: **MVP** = 出荷済み、**WIP** = 進行中、**Planned** = 計画済み
-だが未着手。仕様リンクは [`docs/spec/`](../../docs/spec/) と
-[`docs/frontend/`](../../docs/frontend/) を指します。エピック進捗は
-[`.plan/epics-index.md`](../../.plan/epics-index.md)、アクティブな作業は
-[`.plan/backlog/open.md`](../../.plan/backlog/open.md) を参照してください。
-
-| 機能                      | ステータス | リファレンス                                                                                                |
-| ------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
-| キャラクター管理          | WIP        | [spec/character-spec](../../docs/spec/character-spec.md)、[frontend/characters](../../docs/frontend/characters.md) |
-| チャットエンジン          | WIP        | [spec/messages](../../docs/spec/messages.md)、[frontend/chat](../../docs/frontend/chat/overview.md)          |
-| TUI チャット UI           | WIP        | [spec/terminal-ui](../../docs/spec/terminal-ui.md)、[guide/getting-started](../../docs/guide/getting-started.md) |
-| データベース層            | WIP        | [spec/schema](../../docs/spec/schema.md)、[spec/db-versioning](../../docs/spec/db-versioning.md)             |
-| アセット (メディア)       | WIP        | [spec/assets](../../docs/spec/assets.md)、[frontend/gallery](../../docs/frontend/gallery.md)                |
-| アシスタントチャット      | MVP        | [spec/assistant-commands](../../docs/spec/assistant-commands.md)、[frontend/chat/assistant](../../docs/frontend/chat/assistant.md) |
-| VN シーン生成             | WIP        | [spec/visual-novel](../../docs/spec/visual-novel.md)、[frontend/chat/visual-novel-mode](../../docs/frontend/chat/visual-novel-mode.md) |
-| 感情アバター              | WIP        | _仕様未定 — `.plan/` を参照_                                                                                  |
-| 正規表現抽出              | WIP        | _仕様未定 — `src/regex/` を参照_                                                                              |
-| RPG システム              | WIP        | [spec/rpg-mechanics](../../docs/spec/rpg-mechanics.md)、[spec/achievements](../../docs/spec/achievements.md) |
-| ワールドブック / ワールド情報 | Planned | [spec/lore](../../docs/spec/lore.md)、[frontend/worlds](../../docs/frontend/worlds.md)                     |
-| Web UI                    | WIP        | [frontend/component-architecture](../../docs/frontend/component-architecture.md)                            |
-| プラグインシステム        | WIP        | [spec/plugin-system](../../docs/spec/plugin-system.md)                                                      |
-| 暗号化                    | WIP        | [spec/crypto](../../docs/spec/crypto.md)、[spec/encryption-workflow](../../docs/spec/encryption-workflow.md)、[frontend/encryption](../../docs/frontend/encryption.md) |
-| マルチセッション          | WIP        | [spec/users-sessions](../../docs/spec/users-sessions.md)                                                    |
-| 国際化 (i18n)             | WIP        | [frontend/internationalization](../../docs/frontend/internationalization.md)、[docs/i18n](../i18n/)        |
-| メモリ                    | WIP        | [spec/memory-system](../../docs/spec/memory-system.md)、[frontend/chat/memories](../../docs/frontend/chat/memories.md) |
-| テレメトリ                | WIP        | [spec/observability-telemetry](../../docs/spec/observability-telemetry.md)                                  |
-| 暴言フィルター            | WIP        | _仕様未定 — `src/profanity/` を参照_                                                                          |
-| 年齢ゲート                | WIP        | [frontend/age-gate](../../docs/frontend/age-gate.md)                                                        |
-| 通知                      | WIP        | [frontend/notifications](../../docs/frontend/notifications.md)                                              |
-
----
-
-## 技術スタック
-
-| レイヤー    | 選択                                                                              |
-| ----------- | --------------------------------------------------------------------------------- |
-| ランタイム  | Bun (高速 TS/JS、ビルド不要)                                                      |
-| 言語        | TypeScript 5.4+ (厳格モード)                                                      |
-| データベース | `bun:sqlite` → Kysely 方言スワップで Postgres                                     |
-| クエリビルダー | Kysely (型安全、ORM オーバーヘッドなし)                                          |
-| TUI         | blessed + blessed-contrib                                                         |
-| Web UI      | htmx + Alpine.js                                                                  |
-
-アーキテクチャの決定とトレードオフは
-[`docs/spec/architecture.md`](../../docs/spec/architecture.md) にあります。
-コーディング規約は [`.agents/references/`](../../.agents/references/) を参照して
-ください。
+機能ステータスは [`.plan/epics-index.md`](../../.plan/epics-index.md)、
+進行中の作業は [`.plan/backlog/open.md`](../../.plan/backlog/open.md) に
+あります — ここでは重複させません。
 
 ---
 
@@ -118,6 +70,8 @@ bun test src/
 
 ## ドキュメント
 
+- [`docs/README.md`](../../docs/README.md) — ドキュメントハブ (方針、RPG
+  ステータス、全体索引)
 - [`docs/spec/`](../../docs/spec/) — 中核仕様 (アーキテクチャ、キャラクター、
   チャット、RPG、暗号化、テレメトリ、…)
 - [`docs/frontend/`](../../docs/frontend/) — UX 仕様 (コンポーネント、
