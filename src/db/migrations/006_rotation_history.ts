@@ -27,7 +27,11 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("actor_id", "text", (col,) => col.references("actors.id",).onDelete("set null",),)
     .addColumn("reason", "text", (col,) => col.notNull(),)
     .addColumn("old_key_id", "text",)
-    .addColumn("new_key_id", "text", (col,) => col.notNull().references("chat_keys.id",).onDelete("restrict",),)
+    .addColumn(
+      "new_key_id",
+      "text",
+      (col,) => col.notNull().references("chat_keys.id",).onDelete("restrict",).onUpdate("cascade",),
+    )
     .addColumn("messages_re_encrypted", "integer", (col,) => col.notNull().defaultTo(0,),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
