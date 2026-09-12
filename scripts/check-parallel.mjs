@@ -53,9 +53,15 @@ import path from "node:path";
 
 // GPG pre-flight: ensure the agent's signing key is unlocked before any
 // check subprocess spawns, so a downstream `git commit` against a cold
-// cache never hangs on a pinentry prompt. Imports the same prolong/warm
+// cache never hangs on a pinentry prompt. Imports the same probe/warm
 // helpers the human-facing `scripts/gpg-unlock.mjs` uses.
-import { prolongCachedPassphrase, warmCache, } from "./gpg-unlock.mjs";
+import {
+  effectiveCacheTtl,
+  passphraseSource,
+  probeCachedPassphrase,
+  warmCacheViaPassphrase,
+  warmCacheViaPinentry,
+} from "./gpg-unlock.mjs";
 
 // ── Parse args ──────────────────────────────────────────────────
 
@@ -440,12 +446,12 @@ let GPG_PRECHECK_STATE = null;
 
 /**
  * Pre-flight: ensure the agent's GPG key is unlocked before any check
- * subprocess starts. Under `--ci` (or any non-TTY invocation) we cannot
- * block on a pinentry prompt, so we prolong-only via `PRESET_PASSPHRASE`
- * and refuse to start on cold cache. Under `--plain` / `--fix` on a TTY,
- * a cold cache falls back to the loopback pinentry inherited from the
- * parent terminal — the operator answers once and the cache stays warm
- * for the rest of the run.
+ * subprocess starts. The probe is a silent trial sign (cancel-mode) — it
+ * can never prompt or hang. A warm cache proceeds silently; a cold one is
+ * warmed via the headless passphrase source (if configured) or the
+ * terminal pinentry (TTY, non-ci), and anything that still cannot warm
+ * refuses to start: a check subprocess signing against a cold cache would
+ * hang on a pinentry prompt no harness can answer.
  */
 async function ensureGpgWarm() {
   // Dev/sandbox escape hatch: `CHECK_SKIP_GPG_PRECHECK=1` runs the gate
@@ -475,45 +481,40 @@ async function ensureGpgWarm() {
     GPG_PRECHECK_STATE = { state: "cold", reason: "no-key-id", };
     process.exit(1,);
   }
-  // Step 1: try to prolong (silent, no prompt).
-  const prolonged = await prolongCachedPassphrase(keyId,);
-  if (prolonged.ok) {
-    console.log(`gpg-precheck: warm (TTL ${prolonged.maxTtl}s, key ${keyId.slice(0, 8,)}...)`,);
-    GPG_PRECHECK_STATE = { state: "warm", maxTtl: prolonged.maxTtl, };
+  // Step 1: honest probe — silent trial sign (cannot prompt, cannot hang).
+  if (probeCachedPassphrase(keyId,).warm) {
+    console.log(
+      `gpg-precheck: warm (silent sign verified, ttl ${effectiveCacheTtl()}s, key ${keyId.slice(0, 8,)}...)`,
+    );
+    GPG_PRECHECK_STATE = { state: "warm", ttl: effectiveCacheTtl(), };
     return;
   }
-  // Step 2: distinguish "agent config gap" from "genuine cold cache".
-  //   `preset-unsupported` means the agent can't accept PRESET_PASSPHRASE
-  //   (no `allow-preset-passphrase` in gpg-agent.conf). The cache MAY still
-  //   be warm from a prior session — prolong just can't refresh its TTL.
-  //   Don't kill the gate over a config gap the user owns.
-  if (prolonged.reason === "preset-unsupported") {
-    console.log(`gpg-precheck: prolong unavailable (${prolonged.reason}); trusting agent cache as-is.`,);
-    GPG_PRECHECK_STATE = { state: "warm", reason: prolonged.reason, };
-    return;
+
+  // Step 2: cold cache. Try the headless passphrase source first, then the
+  // terminal pinentry (TTY, non-ci only). Anything else refuses to start —
+  // a check subprocess that signs against a cold cache would hang.
+  const passphrase = passphraseSource();
+  if (passphrase) {
+    console.error("gpg-precheck: cold; warming via loopback passphrase source...",);
+    warmCacheViaPassphrase(keyId, passphrase,);
+    if (probeCachedPassphrase(keyId,).warm) {
+      GPG_PRECHECK_STATE = { state: "warm", via: "passphrase", };
+      return;
+    }
+  } else if (MODE !== "ci" && process.stdin.isTTY) {
+    console.error("gpg-precheck: cold; warming via pinentry (enter passphrase)...",);
+    warmCacheViaPinentry(keyId,);
+    if (probeCachedPassphrase(keyId,).warm) {
+      GPG_PRECHECK_STATE = { state: "warm", via: "pinentry", };
+      return;
+    }
   }
-  const isCi = MODE === "ci" || !process.stdout.isTTY;
-  if (isCi) {
-    console.error("hint: gpg-cold-cache",);
-    console.error(`GPG agent does not have ${keyId} unlocked.`,);
-    console.error(`Run: bun run scripts/gpg-unlock.mjs`,);
-    GPG_PRECHECK_STATE = { state: "cold", reason: prolonged.reason ?? "preset-rejected", };
-    process.exit(1,);
-  }
-  console.error(`gpg-precheck: cold (${prolonged.reason}); warming via loopback pinentry...`,);
-  const warmed = await warmCache(keyId,);
-  // warmCache now returns a discriminated result (kind: "populated" |
-  // "noop" | "failed"); check only the failure case so a no-op warm
-  // (cache already populated) doesn't accidentally trigger the cold
-  // error path.
-  if (warmed.kind === "failed") {
-    console.error("hint: gpg-cold-cache",);
-    console.error(`Failed to warm GPG cache for ${keyId}.`,);
-    console.error(`Run: bun run scripts/gpg-unlock.mjs`,);
-    GPG_PRECHECK_STATE = { state: "cold", reason: "warm-failed", };
-    process.exit(1,);
-  }
-  GPG_PRECHECK_STATE = { state: "warm", maxTtl: undefined, };
+
+  console.error("hint: gpg-cold-cache",);
+  console.error(`GPG agent does not have ${keyId} unlocked.`,);
+  console.error(`Run: bun run scripts/gpg-unlock.mjs`,);
+  GPG_PRECHECK_STATE = { state: "cold", reason: "cache-cold", };
+  process.exit(1,);
 }
 
 // ── Concurrency cap ────────────────────────────────────────────
@@ -1157,11 +1158,11 @@ async function main() {
     return;
   }
 
-  // GPG pre-flight: prolong cached passphrase if warm, warm the cache via
-  // loopback pinentry if cold (TTY mode), or refuse to start in --ci. This
-  // must run before any check subprocess so a downstream `git commit`
-  // against a cold cache never hangs on a pinentry prompt the harness
-  // can't answer.
+  // GPG pre-flight: verify the agent cache is warm via a silent trial
+  // sign, warm it via the passphrase source or terminal pinentry if cold,
+  // or refuse to start. This must run before any check subprocess so a
+  // downstream `git commit` against a cold cache never hangs on a
+  // pinentry prompt the harness can't answer.
   await ensureGpgWarm();
 
   const results = await runAllChecks();
