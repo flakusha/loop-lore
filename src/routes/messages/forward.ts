@@ -37,7 +37,7 @@ import type { HandlerOpts, } from "./types";
 
 const ForwardParams = t.Object({
   id: Id,
-  mid: Id,
+  messageId: Id,
 },);
 
 /**
@@ -50,11 +50,11 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "messages-forward", },)
     .post(
-      `${prefix}/chats/:id/messages/:mid/forward`,
+      `${prefix}/chats/:id/messages/:messageId/forward`,
       async (ctx: any,) => {
         const actorId = requireUserId(ctx,);
         if (typeof actorId !== "string") { return actorId; }
-        const { id: sourceChatId, mid: messageId, } = ctx.params as { id: string; mid: string };
+        const { id: sourceChatId, messageId, } = ctx.params as { id: string; messageId: string };
         const body = ctx.body as typeof MessageForwardBody.static;
         const targetChatId = body.targetChatId;
 

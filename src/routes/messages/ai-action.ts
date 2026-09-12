@@ -21,7 +21,7 @@ import type { HandlerOpts, } from "./types";
 
 const AiActionParams = t.Object({
   id: Id,
-  mid: Id,
+  messageId: Id,
 },);
 
 /** One supported AI action on a single message. */
@@ -56,11 +56,11 @@ export function aiActionRoutes(opts: HandlerOpts, prefix = "/api",) {
 
   return new Elysia({ name: "messages-ai-action", },)
     .post(
-      `${prefix}/chats/:id/messages/:mid/ai-action`,
+      `${prefix}/chats/:id/messages/:messageId/ai-action`,
       async (ctx: any,) => {
         const actorId = requireUserId(ctx,);
         if (typeof actorId !== "string") { return actorId; }
-        const { id: chatId, mid: messageId, } = ctx.params as { id: string; mid: string };
+        const { id: chatId, messageId, } = ctx.params as { id: string; messageId: string };
         const body = ctx.body as typeof MessageAiActionBody.static;
 
         const loaded = await loadSourcePlaintext(database, {
