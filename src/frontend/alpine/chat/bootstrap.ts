@@ -79,6 +79,7 @@ export function chatState() {
         type: string;
         width: number;
         height: number;
+        durationSecs?: number;
       }[];
     }[],
     loadingMessages: false,
