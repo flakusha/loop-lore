@@ -102,7 +102,7 @@ describe("chat archive service", () => {
     const result = await archiveChat(db, chatId, memberId, "user",);
     expect(result,).toEqual({
       code: "forbidden",
-      message: "Only the chat creator or an Owner role can change settings",
+      message: "Only the chat creator, an Owner, or a GM can change settings",
     },);
     expect(await isChatArchived(db, chatId,),).toBe(false,);
   });
