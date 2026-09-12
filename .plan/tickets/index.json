@@ -2255,6 +2255,19 @@
     "source": ".plan/tickets/BUG-gmnotessection-injects-shadow-notes-into-all-actors-prompts.md",
     "status": "done"
   },
+  "BUG-GPG-UNLOCK-WARM-NEVER-POPULATED-AGENT-CACHE-ASSERTGPGUNLOCKE": {
+    "hash": "d121328",
+    "git_issue": "d121328",
+    "extid": "BUG-GPG-UNLOCK-WARM-NEVER-POPULATED-AGENT-CACHE-ASSERTGPGUNLOCKE",
+    "type": "BUG",
+    "title": "gpg-unlock warm never populated agent cache; assertGpgUnlocked cache-blind",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-gpg-unlock-warm-never-populated-agent-cache-assertgpgunlocke.md",
+    "status": "open"
+  },
   "BUG-GROUP-CASCADE-CONSECUTIVE-TURN-GUARD": {
     "hash": "pending",
     "extid": "BUG-GROUP-CASCADE-CONSECUTIVE-TURN-GUARD",
