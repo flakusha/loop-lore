@@ -4915,6 +4915,12 @@
       "source": "docs/spec/chat-privacy.md"
     }
   ],
+  "src/chat/proactive": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/IDEA-chat-composer-predictive-inline-text-suggestions.md"
+    }
+  ],
   "src/chat/proactive/db-helpers.ts": [
     {
       "kind": "epic",
@@ -11122,6 +11128,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-composer-gif-picker.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-waivers-for-3-modules-below-80-floor.md"
     },
     {
@@ -11383,6 +11393,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-platform-integrations.md"
+    }
+  ],
+  "src/frontend/alpine": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-composer-markdown-pre-render-preview-before-send.md"
     }
   ],
   "src/frontend/alpine-init.ts": [
@@ -14726,6 +14742,10 @@
   "src/generation": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-composer-user-visible-streaming-vs-complete-toggle.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-story-points-prototype.md"
     }
   ],
@@ -15371,6 +15391,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-context-optimization.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-admin-system-config-generation-tunables-context-window-guard.md"
     },
     {
       "kind": "spec",
