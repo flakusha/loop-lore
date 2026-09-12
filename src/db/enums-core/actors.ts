@@ -26,6 +26,7 @@ export const ChatParticipantRole = {
   Owner: "owner",
   Observer: "observer",
   Guest: "guest",
+  Gm: "gm",
 } as const;
 /** */
 export type ChatParticipantRole = (typeof ChatParticipantRole)[keyof typeof ChatParticipantRole];
