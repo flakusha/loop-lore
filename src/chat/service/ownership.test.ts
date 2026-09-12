@@ -372,18 +372,18 @@ describe("transferOwnership", () => {
     // unreachable in production; the test is parked until a per-test schema
     // fixture lands. (ponytail: skip; safe — branch unreachable by design.)
     const { sql, } = await import("kysely");
-    await sql`UPDATE chats SET created_by = NULL WHERE id = ${CHAT_ID}`.execute(db);
+    await sql`UPDATE chats SET created_by = NULL WHERE id = ${CHAT_ID}`.execute(db,);
 
     const result = await transferOwnership(db, {
       chatId: CHAT_ID,
       requesterId: OUTSIDER_ID,
       requesterRole: "user",
       newOwnerId: PARTICIPANT_ID,
-    });
-    expect(result.ok).toBe(false);
+    },);
+    expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
-    expect(result.error.code).toBe("bad_request");
-    expect(result.error.message).toContain("no current owner");
+    expect(result.error.code,).toBe("bad_request",);
+    expect(result.error.message,).toContain("no current owner",);
   });
 
   test("post-transfer: reconcileModeratorGrants throw is logged but does not roll back", async () => {
@@ -393,9 +393,9 @@ describe("transferOwnership", () => {
       ...realAccess,
       reconcileModeratorGrants: () => {
         callCount += 1;
-        return Promise.reject(new Error("synthetic reconcile failure"));
+        return Promise.reject(new Error("synthetic reconcile failure",),);
       },
-    }));
+    }),);
     const ownership = await import("./ownership?thrown=" + Date.now());
     try {
       const result = await ownership.transferOwnership(db, {
@@ -403,18 +403,18 @@ describe("transferOwnership", () => {
         requesterId: OWNER_ID,
         requesterRole: "user",
         newOwnerId: PARTICIPANT_ID,
-      });
-      expect(result.ok).toBe(true);
-      expect(callCount).toBe(1);
+      },);
+      expect(result.ok,).toBe(true,);
+      expect(callCount,).toBe(1,);
       // Ownership flip must survive the reconcile failure.
       const after = await db
-        .selectFrom("chats")
-        .select("created_by")
-        .where("id", "=", CHAT_ID)
+        .selectFrom("chats",)
+        .select("created_by",)
+        .where("id", "=", CHAT_ID,)
         .executeTakeFirstOrThrow();
-      expect(after.created_by).toBe(PARTICIPANT_ID);
+      expect(after.created_by,).toBe(PARTICIPANT_ID,);
     } finally {
-      mock.module("./access", () => realAccess);
+      mock.module("./access", () => realAccess,);
     }
   });
 
@@ -422,30 +422,30 @@ describe("transferOwnership", () => {
     // OUTSIDER_ID has actors row but no chat_participants row for CHAT_ID
     // (resetChat wipes it). Drive the autoInvite INSERT path explicitly.
     const before = await db
-      .selectFrom("chat_participants")
-      .select("actor_id")
-      .where("chat_id", "=", CHAT_ID)
-      .where("actor_id", "=", OUTSIDER_ID)
+      .selectFrom("chat_participants",)
+      .select("actor_id",)
+      .where("chat_id", "=", CHAT_ID,)
+      .where("actor_id", "=", OUTSIDER_ID,)
       .executeTakeFirst();
-    expect(before).toBeUndefined();
+    expect(before,).toBeUndefined();
 
     const result = await transferOwnership(db, {
       chatId: CHAT_ID,
       requesterId: OWNER_ID,
       requesterRole: "user",
       newOwnerId: OUTSIDER_ID,
-    });
-    expect(result.ok).toBe(true);
+    },);
+    expect(result.ok,).toBe(true,);
     if (!result.ok) { return; }
-    expect(result.result.autoInvited).toBe(true);
+    expect(result.result.autoInvited,).toBe(true,);
 
     const row = await db
-      .selectFrom("chat_participants")
-      .select("role_in_chat")
-      .where("chat_id", "=", CHAT_ID)
-      .where("actor_id", "=", OUTSIDER_ID)
+      .selectFrom("chat_participants",)
+      .select("role_in_chat",)
+      .where("chat_id", "=", CHAT_ID,)
+      .where("actor_id", "=", OUTSIDER_ID,)
       .executeTakeFirstOrThrow();
-    expect(row.role_in_chat).toBe(ChatParticipantRole.Owner);
+    expect(row.role_in_chat,).toBe(ChatParticipantRole.Owner,);
   });
 
   test("actorExists probe: invalid newOwnerId returns not_found before the tx", async () => {
@@ -456,11 +456,11 @@ describe("transferOwnership", () => {
       requesterId: OWNER_ID,
       requesterRole: "user",
       newOwnerId: UNKNOWN_ID,
-    });
-    expect(result.ok).toBe(false);
+    },);
+    expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
-    expect(result.error.code).toBe("not_found");
-    expect(result.error.message).toContain("actor not found");
+    expect(result.error.code,).toBe("not_found",);
+    expect(result.error.message,).toContain("actor not found",);
   });
 
   test("already-current-owner branch: target equal to current owner is rejected", async () => {
@@ -472,10 +472,10 @@ describe("transferOwnership", () => {
       requesterId: PARTICIPANT_ID,
       requesterRole: "admin",
       newOwnerId: OWNER_ID,
-    });
-    expect(result.ok).toBe(false);
+    },);
+    expect(result.ok,).toBe(false,);
     if (result.ok) { return; }
-    expect(result.error.code).toBe("bad_request");
-    expect(result.error.message).toContain("already the current owner");
+    expect(result.error.code,).toBe("bad_request",);
+    expect(result.error.message,).toContain("already the current owner",);
   });
 });
