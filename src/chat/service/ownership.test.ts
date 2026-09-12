@@ -270,6 +270,20 @@ describe("transferOwnership", () => {
     expect(result.error.code,).toBe("not_found",);
   });
 
+  test("not_found: bogus new-owner id returns not_found before the tx", async () => {
+    // randomUUID() is never seeded as an actor: the up-front actors probe
+    // rejects it instead of dying on the participants FK deep in the tx.
+    const result = await transferOwnership(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      newOwnerId: randomUUID(),
+    },);
+    expect(result.ok,).toBe(false,);
+    if (result.ok) { return; }
+    expect(result.error.code,).toBe("not_found",);
+  });
+
   test("concurrent transfers: exactly one wins; loser fails without partial writes", async () => {
     // OWNER fires two transfers at once (→ PARTICIPANT, → OUTSIDER).
     // Awaits yield between the two flows, so their pre-tx reads and

@@ -10,7 +10,7 @@
  *   - 200 with auto-invite: target user is not a participant; inserted as owner
  *     and ownership transferred in one transaction.
  *   - 403: a non-owner non-admin cannot transfer.
- *   - 404: unknown chat id.
+ *   - 404: unknown chat id / bogus new-owner actor id (actor message passes through).
  *   - 400: self-transfer rejected at the route layer (body shape).
  */
 import { describe, expect, test, } from "bun:test";
@@ -251,6 +251,29 @@ describe("ownershipRoutes — POST /api/chats/:id/transfer-ownership", () => {
     );
 
     expect(res.status,).toBe(404,);
+
+    await db.destroy();
+  });
+
+  test("404: bogus new-owner id surfaces the actor message, not 'Chat not found'", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+
+    // randomUUID() is never seeded as an actor: the service rejects it with
+    // not_found("New owner actor not found") and the route must pass that
+    // message through (not the generic "Chat not found").
+    const app = makeApp(db, OWNER_ID,);
+    const res = await app.handle(
+      new Request(`http://localhost/api/chats/${CHAT_ID}/transfer-ownership`, {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ newOwnerId: randomUUID(), confirm: true, },),
+      },),
+    );
+
+    expect(res.status,).toBe(404,);
+    const json = (await res.json()) as { error: string };
+    expect(json.error,).toContain("actor",);
 
     await db.destroy();
   });
