@@ -362,4 +362,120 @@ describe("transferOwnership", () => {
       mock.module("./access", () => realAccess,);
     }
   });
+
+  // ── Coverage-gap tests (defense-in-depth branches the existing suite misses) ──
+
+  test.skip("bad_request: chat with null created_by (defense-in-depth)", async () => {
+    // Schema enforces NOT NULL on chats.created_by and SQLite's DROP COLUMN
+    // leaves the `idx_chats_created_by` index referencing the dropped column,
+    // so we cannot create a null-row in a shared test DB. The branch is
+    // unreachable in production; the test is parked until a per-test schema
+    // fixture lands. (ponytail: skip; safe — branch unreachable by design.)
+    const { sql, } = await import("kysely");
+    await sql`UPDATE chats SET created_by = NULL WHERE id = ${CHAT_ID}`.execute(db);
+
+    const result = await transferOwnership(db, {
+      chatId: CHAT_ID,
+      requesterId: OUTSIDER_ID,
+      requesterRole: "user",
+      newOwnerId: PARTICIPANT_ID,
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) { return; }
+    expect(result.error.code).toBe("bad_request");
+    expect(result.error.message).toContain("no current owner");
+  });
+
+  test("post-transfer: reconcileModeratorGrants throw is logged but does not roll back", async () => {
+    const realAccess = await import("./access");
+    let callCount = 0;
+    mock.module("./access", () => ({
+      ...realAccess,
+      reconcileModeratorGrants: () => {
+        callCount += 1;
+        return Promise.reject(new Error("synthetic reconcile failure"));
+      },
+    }));
+    const ownership = await import("./ownership?thrown=" + Date.now());
+    try {
+      const result = await ownership.transferOwnership(db, {
+        chatId: CHAT_ID,
+        requesterId: OWNER_ID,
+        requesterRole: "user",
+        newOwnerId: PARTICIPANT_ID,
+      });
+      expect(result.ok).toBe(true);
+      expect(callCount).toBe(1);
+      // Ownership flip must survive the reconcile failure.
+      const after = await db
+        .selectFrom("chats")
+        .select("created_by")
+        .where("id", "=", CHAT_ID)
+        .executeTakeFirstOrThrow();
+      expect(after.created_by).toBe(PARTICIPANT_ID);
+    } finally {
+      mock.module("./access", () => realAccess);
+    }
+  });
+
+  test("autoInvite branch: outsider with actor row but no chat_participants row is invited", async () => {
+    // OUTSIDER_ID has actors row but no chat_participants row for CHAT_ID
+    // (resetChat wipes it). Drive the autoInvite INSERT path explicitly.
+    const before = await db
+      .selectFrom("chat_participants")
+      .select("actor_id")
+      .where("chat_id", "=", CHAT_ID)
+      .where("actor_id", "=", OUTSIDER_ID)
+      .executeTakeFirst();
+    expect(before).toBeUndefined();
+
+    const result = await transferOwnership(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      newOwnerId: OUTSIDER_ID,
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) { return; }
+    expect(result.result.autoInvited).toBe(true);
+
+    const row = await db
+      .selectFrom("chat_participants")
+      .select("role_in_chat")
+      .where("chat_id", "=", CHAT_ID)
+      .where("actor_id", "=", OUTSIDER_ID)
+      .executeTakeFirstOrThrow();
+    expect(row.role_in_chat).toBe(ChatParticipantRole.Owner);
+  });
+
+  test("actorExists probe: invalid newOwnerId returns not_found before the tx", async () => {
+    // Use a UUID that has no actors row at all.
+    const UNKNOWN_ID = randomUUID();
+    const result = await transferOwnership(db, {
+      chatId: CHAT_ID,
+      requesterId: OWNER_ID,
+      requesterRole: "user",
+      newOwnerId: UNKNOWN_ID,
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) { return; }
+    expect(result.error.code).toBe("not_found");
+    expect(result.error.message).toContain("actor not found");
+  });
+
+  test("already-current-owner branch: target equal to current owner is rejected", async () => {
+    // The 'previousOwnerId === newOwnerId' branch fires when newOwnerId equals
+    // the chat's current created_by. CHAT_NO_OWNER_ID has OWNER_ID as creator;
+    // admin (PARTICIPANT_ID) tries to transfer to OWNER_ID (the current owner).
+    const result = await transferOwnership(db, {
+      chatId: CHAT_NO_OWNER_ID,
+      requesterId: PARTICIPANT_ID,
+      requesterRole: "admin",
+      newOwnerId: OWNER_ID,
+    });
+    expect(result.ok).toBe(false);
+    if (result.ok) { return; }
+    expect(result.error.code).toBe("bad_request");
+    expect(result.error.message).toContain("already the current owner");
+  });
 });
