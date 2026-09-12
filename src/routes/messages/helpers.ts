@@ -91,6 +91,7 @@ export async function enrichAttachments(
       "mime_type",
       "asset_type",
       "size_bytes",
+      "duration_secs",
       "width",
       "height",
       "alt_text",
@@ -114,6 +115,7 @@ export async function enrichAttachments(
       mimeType: asset?.mime_type ?? "",
       type: asset?.asset_type ?? "",
       sizeBytes: asset?.size_bytes ?? 0,
+      durationSecs: asset?.duration_secs ?? 0,
       width: asset?.width ?? 0,
       height: asset?.height ?? 0,
     };
