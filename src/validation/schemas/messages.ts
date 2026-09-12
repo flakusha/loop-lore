@@ -35,6 +35,11 @@ export const MessageCreateBody = t.Object({
   ),
 },);
 
+export const MessageForwardBody = t.Object({
+  targetChatId: t.String({ minLength: 1, },),
+  idempotencyKey: t.Optional(t.String(),),
+},);
+
 export const MessageVisibilityUpdateBody = t.Object({
   visibility: MessageVisibilitySchema,
   reason: t.Optional(t.String(),),
