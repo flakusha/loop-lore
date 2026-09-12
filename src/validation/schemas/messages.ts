@@ -40,6 +40,14 @@ export const MessageForwardBody = t.Object({
   idempotencyKey: t.Optional(t.String(),),
 },);
 
+export const MessageAiActionBody = t.Object({
+  action: t.Union([
+    t.Literal("summarize",),
+    t.Literal("action-items",),
+    t.Literal("explain",),
+  ],),
+},);
+
 export const MessageVisibilityUpdateBody = t.Object({
   visibility: MessageVisibilitySchema,
   reason: t.Optional(t.String(),),
