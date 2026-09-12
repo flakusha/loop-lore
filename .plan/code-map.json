@@ -5152,6 +5152,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-assertions-stale-gm-support-message.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md"
     },
     {
@@ -5307,6 +5311,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-deletechat-runs-9-sequential-deletes-without-transaction-orp.md"
+    }
+  ],
+  "src/chat/service/crud/archive.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-assertions-stale-gm-support-message.md"
     }
   ],
   "src/chat/service/crud/create.ts": [
@@ -5657,6 +5667,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-test-chat-module.md"
+    }
+  ],
+  "src/chat/service/visibility.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-test-assertions-stale-gm-support-message.md"
     }
   ],
   "src/chat/service/visibility.ts": [
