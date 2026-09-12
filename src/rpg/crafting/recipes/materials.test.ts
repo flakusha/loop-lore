@@ -132,6 +132,9 @@ describe("replaceMaterials", () => {
       expect(await materialRows(db, first,),).toEqual([
         { item_id: itemA, quantity: 2, slot_type: "required", },
       ],);
+      expect(await materialRows(db, second,),).toEqual([
+        { item_id: itemB, quantity: 3, slot_type: "required", },
+      ],);
     } finally {
       await db.destroy();
     }
