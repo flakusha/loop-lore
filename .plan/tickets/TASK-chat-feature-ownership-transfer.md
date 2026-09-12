@@ -3,7 +3,7 @@
 
 # TASK: Chat Ownership Transfer — Frontend & Backend
 
-**Status:** 🚧 In Progress (3/6 ACs proven by scoped tests; concurrency/audit/moderator paths implemented but untested)
+**Status:** 🚧 In Progress (5/6 ACs proven by tests; moderator/GM reconciliation has no implementation — the spec `gm` role has not landed)
 **Priority:** High
 **Effort:** Medium
 **Epic:** epic-chat-product-features
@@ -16,10 +16,10 @@ Add explicit chat-ownership transfer as a first-class action: an owner can hand 
 
 - [x] Owner can transfer ownership to any current participant from a UI affordance and a backend endpoint
 - [x] Previous owner loses owner-scoped capabilities on success; new owner gains them
-- [ ] Concurrent transfer attempts resolve to a single winner with audit evidence for the loser (implemented in service via conditional `created_by` flip + loser audit warn; no scoped test exercises it)
+- [x] Concurrent transfer attempts resolve to a single winner with audit evidence for the loser (proven by service `concurrent transfers` test: exactly one wins, loser leaves no partial writes, single audit row; loser evidence is an app-log warn without its own assertion)
 - [ ] Moderator / GM grants are re-evaluated and reconciled post-transfer (no moderator/GM logic in service; no scoped test covers it)
 - [x] Transfer requires a confirmation step on the frontend and an explicit `confirm: true` on the backend
-- [ ] Audit trail records previous owner, new owner, timestamp, and any revocations (service writes audit meta; no scoped test asserts the audit record — only the response envelope)
+- [x] Audit trail records previous owner, new owner, timestamp, and any revocations (proven by service audit-row test: `chat_ownership_transferred` row with previous/new owner + reason, timestamp-ordered)
 
 ## Related Tickets / Epics
 
@@ -38,7 +38,8 @@ Add explicit chat-ownership transfer as a first-class action: an owner can hand 
 
 - `bun test src/routes/chats/ownership.test.ts`: 12 pass / 0 fail (32 expects)
 - `bun test src/frontend/alpine/chat-settings/ownership-actions.test.ts`: 14 pass / 0 fail (31 expects)
-- Only the 3 still-checked ACs are proven by these 26 tests; the 3 unchecked ACs need scoped tests before they can be re-checked.
+- `bun test src/chat/service/ownership.test.ts`: 10 pass / 0 fail (38 expects) — covers audit row + concurrent single-winner
+- 36 tests total. Only the moderator/GM AC remains unchecked: no such logic exists (spec `gm` role unlanded per `src/chat/service/access.ts`).
 
 ## Open Questions
 
