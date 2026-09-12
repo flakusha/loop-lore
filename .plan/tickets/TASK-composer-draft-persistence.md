@@ -22,3 +22,11 @@ about validation, not persistence.
 ## Acceptance
 - Reload restores text + reply preview; send clears draft.
 - No server schema change required for v1.
+
+## Implementation (2026-09-12, worktree chat-messenger-parity)
+
+Local-only v1 in `4d3fbd12a` — `src/frontend/alpine/chat-drafts.ts`
+(`ChatDraftStore` localStorage class, debounced save, 10KB/draft, LRU 20),
+wired into `chat-send.ts` (save/flush/restore) and `world.ts` (flush+restore
+on chat switch). 47 tests across `chat-drafts`/`chat-send`/`world` suites.
+Server sync deferred per ticket (`// ponytail` marker in code).

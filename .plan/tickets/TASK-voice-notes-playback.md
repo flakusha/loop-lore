@@ -24,3 +24,14 @@ inline player. AI-chat parity (mobile voice input) missing.
 
 ## Non-goals
 - STT transcription / TTS (epic-audio-video-sound).
+
+## Implementation (2026-09-12, worktree chat-messenger-parity)
+
+Partial in `ff10542ec`: `enrichAttachments` now exposes `durationSecs`
+(from `assets.duration_secs`), `voice-note` label round-trips
+create→read→forward, and `message-list.html` marks voice bubbles with a
+`media-voice` class (`<audio controls>` playback already existed). 3
+tests. NOT done: MediaRecorder capture + upload — no binary upload
+endpoint exists anywhere in the app, so recording needs an app-wide
+upload route first (follow-up); no server-side duration/mime validation
+yet for the same reason.
