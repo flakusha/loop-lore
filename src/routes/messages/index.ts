@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, } from "elysia";
+import { aiActionRoutes, } from "./ai-action";
 import { archivingRoutes, } from "./archiving";
 import { createRoutes, } from "./create";
 import { forwardRoutes, } from "./forward";
@@ -21,5 +22,6 @@ export function messagesRoutes(opts: HandlerOpts,) {
     .use(updateRoutes(opts,),)
     .use(createRoutes(opts,),)
     .use(forwardRoutes(opts,),)
+    .use(aiActionRoutes(opts,),)
     .use(archivingRoutes(opts,),);
 }
