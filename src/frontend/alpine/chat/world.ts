@@ -69,6 +69,9 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
       },);
       return;
     }
+    // Snapshot the outgoing composer's text before the swap so each chat
+    // keeps its own draft.
+    this.flushComposerDraft();
     this._selectingChat = true;
     try {
       await this._selectChatInner(chatId,);
@@ -80,6 +83,7 @@ export const chatWorld: Partial<ChatState> & ThisType<ChatState> = {
   async _selectChatInner(chatId: string,) {
     this.loadingError = null;
     this.activeChat = chatId;
+    this.restoreComposerDraft();
     getLogger().setBindings({ chatId, },);
     Alpine.store("ui",).hasActiveChat = true;
     // Selecting a chat dismisses the transient side panels so the header
