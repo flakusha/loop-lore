@@ -19,7 +19,6 @@
  */
 import { Elysia, t, } from "elysia";
 import { getConfigValue, } from "../../admin/config";
-import { decryptMessageContent, getSmk, } from "../../crypto";
 import { checkChatAccess, updateMessageVisibility, } from "../../chat/service";
 import type { ContentEncoding, } from "../../db/enums";
 import { containsProfanity, filter as filterProfanity, } from "../../profanity/service";
@@ -32,6 +31,7 @@ import { attachAttachmentsOrForbidden, } from "./guards";
 import { serviceErrorToResponse, } from "./helpers";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
 import { prepareContentStorage, } from "./post";
+import { loadSourcePlaintext, } from "./source-message";
 import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
 import type { HandlerOpts, } from "./types";
 
@@ -59,44 +59,18 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
         const targetChatId = body.targetChatId;
 
         // Source access first so a non-participant cannot probe message ids.
-        const sourceAccess = await checkChatAccess(database, sourceChatId, actorId, ctx.userRole as string | null,);
-        if (!sourceAccess.ok) { return serviceErrorToResponse(sourceAccess.error,); }
-
-        const source = await database
-          .selectFrom("messages",)
-          .select(["id", "chat_id", "actor_id", "content", "content_encoding", "key_id",],)
-          .where("id", "=", messageId,)
-          .executeTakeFirst();
-        if (!source || source.chat_id !== sourceChatId) {
-          return jsonResponse(
-            { error: "not_found", message: "Message not found.", },
-            404 as HttpStatusCode,
-          );
-        }
+        const loaded = await loadSourcePlaintext(database, {
+          chatId: sourceChatId,
+          messageId,
+          actorId,
+          userRole: ctx.userRole as string | null,
+        },);
+        if (!loaded.ok) { return loaded.response; }
+        const { plaintext, senderName, } = loaded;
 
         const targetAccess = await checkChatAccess(database, targetChatId, actorId, ctx.userRole as string | null,);
         if (!targetAccess.ok) { return serviceErrorToResponse(targetAccess.error,); }
 
-        let plaintext: string;
-        try {
-          plaintext = await decryptMessageContent(database, {
-            content: source.content,
-            content_encoding: source.content_encoding,
-            key_id: source.key_id,
-            chat_id: source.chat_id,
-          }, getSmk()!,);
-        } catch {
-          return jsonResponse(
-            { error: "decrypt_failed", message: "Could not decrypt the source message.", },
-            422 as HttpStatusCode,
-          );
-        }
-
-        const sender = await database
-          .selectFrom("actors",)
-          .select("display_name",)
-          .where("id", "=", source.actor_id,)
-          .executeTakeFirst();
         const filteredContent = filterProfanity(plaintext,);
         const hasProfanity = containsProfanity(plaintext,);
         await flagNsfwUserMessage(database, actorId, targetChatId, plaintext,);
@@ -127,7 +101,7 @@ export function forwardRoutes(opts: HandlerOpts, prefix = "/api",) {
         if (filteredContent.trim().length === 0 && forwardable.length === 0) {
           return badRequestResponse("Nothing to forward: empty content and no owned attachments.",);
         }
-        const forwardedContent = `> Forwarded from ${sender?.display_name ?? "another chat"}\n\n${filteredContent}`;
+        const forwardedContent = `> Forwarded from ${senderName}\n\n${filteredContent}`;
 
         const { storedContent, contentEncoding, storedKeyId, storedPlaintext, } = await prepareContentStorage(
           database,
