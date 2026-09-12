@@ -31,7 +31,7 @@ const testConfig = {
  */
 function actionApp(db: Kysely<DB>, userId: string | null, userRole: string | null,): Elysia {
   return new Elysia({ name: "test-message-ai-action", },)
-    .derive(() => ({ userId, userRole, }),)
+    .derive(() => ({ userId, userRole, }))
     .use(aiActionRoutes({ database: db, config: testConfig, },),) as unknown as Elysia;
 }
 /**
@@ -81,49 +81,66 @@ describe("aiActionRoutes", () => {
     chatId = (await db.selectFrom("chats",).select("id",).where("name", "=", "Action Chat",).executeTakeFirst())!.id;
     await insertChatParticipants(db, chatId, ownerId, {},);
     sourceMsg = uid();
-    await insertMessages(db, chatId, ownerId, MessageRole.User, "we should fix the gate before Friday", { id: sourceMsg, },);
+    await insertMessages(db, chatId, ownerId, MessageRole.User, "we should fix the gate before Friday", {
+      id: sourceMsg,
+    },);
   },);
   afterAll(async () => {
     await sqlite.close();
   },);
   test("returns 401 without userId", async () => {
     const app = actionApp(db, null, null,);
-    const res = await appHandle(app, post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "summarize", },),);
+    const res = await appHandle(
+      app,
+      post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "summarize", },),
+    );
     expect(res.status,).toBe(401,);
-  },);
+  });
   test("returns 404 for an unknown message", async () => {
     const app = actionApp(db, ownerId, "user",);
-    const res = await appHandle(app, post(`/api/chats/${chatId}/messages/${uid()}/ai-action`, { action: "summarize", },),);
+    const res = await appHandle(
+      app,
+      post(`/api/chats/${chatId}/messages/${uid()}/ai-action`, { action: "summarize", },),
+    );
     expect(res.status,).toBe(404,);
-  },);
+  });
   test("denies a caller with no chat access", async () => {
     const app = actionApp(db, outsiderId, "user",);
-    const res = await appHandle(app, post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "summarize", },),);
+    const res = await appHandle(
+      app,
+      post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "summarize", },),
+    );
     expect([403, 404,],).toContain(res.status,);
-  },);
+  });
   test("rejects an unknown action", async () => {
     const app = actionApp(db, ownerId, "user",);
-    const res = await appHandle(app, post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "translate", },),);
+    const res = await appHandle(
+      app,
+      post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "translate", },),
+    );
     expect(res.status,).toBe(422,);
-  },);
+  });
   test("returns 503 when no auxiliary model is configured", async () => {
     const app = actionApp(db, ownerId, "user",);
-    const res = await appHandle(app, post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "action-items", },),);
+    const res = await appHandle(
+      app,
+      post(`/api/chats/${chatId}/messages/${sourceMsg}/ai-action`, { action: "action-items", },),
+    );
     expect(res.status,).toBe(503,);
     const body = (await res.json()) as { error: string };
     expect(body.error,).toBe("ai_unavailable",);
-  },);
-},);
+  });
+});
 describe("buildAiActionPrompt", () => {
   test("each action embeds its instruction and the source", async () => {
     expect(buildAiActionPrompt("summarize", "dragon hoard",),).toContain("dragon hoard",);
     expect(buildAiActionPrompt("summarize", "dragon hoard",),).toContain("key points",);
     expect(buildAiActionPrompt("action-items", "fix the gate",),).toContain("action items",);
     expect(buildAiActionPrompt("explain", "quantum gate",),).toContain("simple terms",);
-  },);
+  });
   test("caps long sources", async () => {
     const prompt = buildAiActionPrompt("summarize", "x".repeat(5000,),);
     expect(prompt.length,).toBeLessThan(5000,);
     expect(prompt,).toContain("x".repeat(100,),);
-  },);
-},);
+  });
+});
