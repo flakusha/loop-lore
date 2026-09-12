@@ -10,14 +10,16 @@ import { flushChunk, recordLastRendered, } from "./stream-flush";
 
 afterEach(() => {
   activeGenerations.delete("attempt-1",);
-});
+},);
 
 describe("flushChunk", () => {
   test("appends to the buffer and enqueues encoded bytes", () => {
     const buffer = new StreamBuffer();
     const chunks: Uint8Array[] = [];
     const controller = {
-      enqueue: (c: Uint8Array,) => { chunks.push(c,); },
+      enqueue: (c: Uint8Array,) => {
+        chunks.push(c,);
+      },
     } as unknown as ReadableStreamDefaultController;
     const seq = flushChunk(controller, buffer, "hello",);
     expect(seq,).toBe(0,);
@@ -36,6 +38,6 @@ describe("recordLastRendered", () => {
   });
 
   test("ignores unknown attempt ids", () => {
-    expect(() => recordLastRendered("nope", 3,),).not.toThrow();
+    expect(() => recordLastRendered("nope", 3,)).not.toThrow();
   });
 });

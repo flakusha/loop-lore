@@ -26,7 +26,7 @@ describe("buildEdges", () => {
     const faction = FACTION_EDGES[0]!;
     expect(faction.source,).toBe("faction",);
     expect(faction.target,).toBe("social",);
-    expect(faction.events.map((e,) => e.id,),).toEqual([
+    expect(faction.events.map((e,) => e.id),).toEqual([
       "faction.standing_changed",
       "social.reputation_updated",
       "poll.resolved",
