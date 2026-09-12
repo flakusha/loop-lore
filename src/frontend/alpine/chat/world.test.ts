@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { afterEach, describe, expect, mock, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import { chatWorld, } from "./world";
 
 // ── Mock apiFetch (chat/world imports ../htmx) ──
@@ -25,6 +25,62 @@ afterEach(() => {
   handler = null;
 },);
 
+// ── Alpine.store stub: provide stateful ui/chat stores via globalThis.Alpine ──
+type AlpineStore = {
+  hasActiveChat?: boolean;
+  showChatList?: boolean;
+  showGallery?: boolean;
+  showCharacterInfo?: boolean;
+  currentChat?: unknown;
+};
+const uiStore: AlpineStore = {
+  hasActiveChat: false,
+  showChatList: false,
+  showGallery: false,
+  showCharacterInfo: false,
+};
+const chatStore: AlpineStore = { currentChat: null, };
+const stores: Record<string, AlpineStore> = { ui: uiStore, chat: chatStore, };
+const alpineMock = {
+  store: (name: string,) => stores[name] ?? {},
+  initTree: () => {},
+};
+const originalAlpine = (globalThis as Record<string, unknown>).Alpine;
+beforeEach(() => {
+  uiStore.hasActiveChat = false;
+  uiStore.showChatList = false;
+  uiStore.showGallery = false;
+  uiStore.showCharacterInfo = false;
+  chatStore.currentChat = null;
+  (globalThis as Record<string, unknown>).Alpine = alpineMock;
+},);
+afterEach(() => {
+  (globalThis as Record<string, unknown>).Alpine = originalAlpine;
+},);
+
+// ── history stub (bare `history` in source resolves via globalThis.history) ──
+const replaceCalls: { state: unknown; title: string; url: string }[] = [];
+type HistoryLike = {
+  replaceState: (state: unknown, title: string, url: string,) => void;
+};
+const historyGlobal = globalThis as typeof globalThis & { history?: HistoryLike };
+const originalReplace = historyGlobal.history?.replaceState;
+beforeEach(() => {
+  replaceCalls.length = 0;
+  historyGlobal.history = {
+    replaceState: ((state: unknown, title: string, url: string,) => {
+      replaceCalls.push({ state, title, url, },);
+    }) as HistoryLike["replaceState"],
+  };
+},);
+afterEach(() => {
+  if (originalReplace) {
+    historyGlobal.history = { replaceState: originalReplace, };
+  } else {
+    delete historyGlobal.history;
+  }
+},);
+
 function worldCtx(overrides: Record<string, unknown> = {},): Record<string, unknown> {
   return {
     _worlds: [],
@@ -37,6 +93,44 @@ function worldCtx(overrides: Record<string, unknown> = {},): Record<string, unkn
     restoreComposerDraft: () => {},
     ...overrides,
   };
+}
+
+const noop = () => Promise.resolve();
+
+function makeSelectCtx(overrides: Record<string, unknown> = {},): Record<string, unknown> {
+  return worldCtx({
+    chats: [{ id: "c1", name: "Council", },],
+    loadingError: "stale-error",
+    currentPage: 5,
+    hasMoreMessages: false,
+    loadingOlder: true,
+    _sections: [{ id: "s1", },],
+    _activeSectionId: "s1",
+    _background: { url: "old.png", },
+    _locations: [{ id: "loc1", },],
+    _selectedLocationId: "loc1",
+    _chatWorldId: "old-world",
+    _chatCurrentLocationId: "old-loc",
+    _chatRecentLocationChanged: true,
+    _locationJoinableChats: [{ id: "ljc1", },],
+    isGroupChat: false,
+    loadMessages: noop,
+    loadSections: noop,
+    loadBackground: noop,
+    loadGalleryAssets: noop,
+    loadCharacterInfo: noop,
+    loadMood: noop,
+    markChatAsRead: noop,
+    loadChatKey: noop,
+    loadImpersonationState: noop,
+    loadQuickReplies: () => {},
+    fireStartupQuickReplies: noop,
+    startProactiveScheduler: () => {},
+    loadParticipants: noop,
+    loadTurnOrder: noop,
+    loadAvailableActors: noop,
+    ...overrides,
+  },);
 }
 
 describe("chatWorld.loadWorldChannels", () => {
@@ -220,5 +314,202 @@ describe("chatWorld.selectChat guards", () => {
     },);
     await chatWorld.selectChat!.call(ctx, "c1",);
     expect(events,).toEqual(["flush", "inner",],);
+  });
+});
+
+// ── Coverage for _selectChatInner ──────────────────────────────────
+
+describe("chatWorld._selectChatInner happy path", () => {
+  test("populates state, dismisses panels, restores draft, and reloads", async () => {
+    const events: string[] = [];
+    const titleEl = { textContent: "", };
+    const originalQS = document.querySelector;
+    document.querySelector = ((sel: string,) => {
+      if (sel === "#page-title") { return titleEl; }
+      return null;
+    }) as typeof document.querySelector;
+
+    const ctx = makeSelectCtx({
+      flushComposerDraft: () => {
+        events.push("flush",);
+      },
+      restoreComposerDraft: () => {
+        events.push("restore",);
+      },
+      loadMessages: () => {
+        events.push("messages",);
+        return Promise.resolve();
+      },
+      loadQuickReplies: () => {
+        events.push("quickReplies",);
+      },
+      startProactiveScheduler: () => {
+        events.push("scheduler",);
+      },
+    },);
+
+    try {
+      await chatWorld._selectChatInner!.call(ctx, "c1",);
+    } finally {
+      document.querySelector = originalQS;
+    }
+
+    // State mutations
+    expect(ctx.loadingError,).toBeNull();
+    expect(ctx.activeChat,).toBe("c1",);
+    expect(ctx.activeChatName,).toBe("Council",);
+    expect(ctx.currentPage,).toBe(1,);
+    expect(ctx.hasMoreMessages,).toBe(true,);
+    expect(ctx.loadingOlder,).toBe(false,);
+    // Location-scoped state was reset
+    expect(ctx._sections,).toEqual([],);
+    expect(ctx._activeSectionId,).toBeNull();
+    expect(ctx._background,).toBeNull();
+    expect(ctx._locations,).toEqual([],);
+    expect(ctx._selectedLocationId,).toBe("",);
+    expect(ctx._chatWorldId,).toBeNull();
+    expect(ctx._chatCurrentLocationId,).toBeNull();
+    expect(ctx._chatRecentLocationChanged,).toBe(false,);
+    expect(ctx._locationJoinableChats,).toEqual([],);
+    // UI store flipped
+    expect(uiStore.hasActiveChat,).toBe(true,);
+    expect(uiStore.showChatList,).toBe(false,);
+    expect(uiStore.showGallery,).toBe(false,);
+    expect(uiStore.showCharacterInfo,).toBe(false,);
+    // Chat store currentChat
+    expect(chatStore.currentChat,).toEqual({ id: "c1", name: "Council", },);
+    // Page title updated
+    expect(titleEl.textContent,).toBe("Council",);
+    // History replaced
+    expect(replaceCalls,).toHaveLength(1,);
+    expect(replaceCalls[0]!.url,).toBe("/views/chat?chatid=c1",);
+    // Reload order: selectReload first, then postLoad, then quickReplies + startup
+    const messagesIdx = events.indexOf("messages",);
+    const restoreIdx = events.indexOf("restore",);
+    const quickIdx = events.indexOf("quickReplies",);
+    const schedIdx = events.indexOf("scheduler",);
+    expect(restoreIdx,).toBeGreaterThanOrEqual(0,);
+    expect(messagesIdx,).toBeGreaterThan(restoreIdx,);
+    expect(quickIdx,).toBeGreaterThan(messagesIdx,);
+    expect(schedIdx,).toBeGreaterThan(quickIdx,);
+  });
+
+  test("uses the chat's name when found, otherwise falls back to the untitled key", async () => {
+    const ctx = makeSelectCtx({ chats: [], },);
+    await chatWorld._selectChatInner!.call(ctx, "missing",);
+    expect(ctx.activeChatName,).toBe("chats.untitledChat",);
+  });
+
+  test("swallows the chat-store error when Alpine.store('chat',) throws", async () => {
+    const failingAlpine = {
+      store: (name: string,) => {
+        if (name === "chat") { throw new Error("store not ready",); }
+        return stores[name] ?? {};
+      },
+      initTree: () => {},
+    };
+    const original = (globalThis as Record<string, unknown>).Alpine;
+    (globalThis as Record<string, unknown>).Alpine = failingAlpine;
+    try {
+      const ctx = makeSelectCtx({ chats: [{ id: "c1", name: "X", },], },);
+      await expect(chatWorld._selectChatInner!.call(ctx, "c1",),).resolves.toBeUndefined();
+      expect(ctx.activeChatName,).toBe("X",);
+    } finally {
+      (globalThis as Record<string, unknown>).Alpine = original;
+    }
+  });
+
+  test("skips the title update when #page-title is missing", async () => {
+    const originalQS = document.querySelector;
+    document.querySelector = ((_sel: string,) => null) as typeof document.querySelector;
+    try {
+      const ctx = makeSelectCtx({ chats: [{ id: "c1", name: "X", },], },);
+      await chatWorld._selectChatInner!.call(ctx, "c1",);
+      expect(ctx.activeChat,).toBe("c1",);
+    } finally {
+      document.querySelector = originalQS;
+    }
+  });
+
+  test("throws when any selectReload Promise.allSettled rejects", async () => {
+    const ctx = makeSelectCtx({
+      loadSections: () => Promise.reject(new Error("sections down",),),
+    },);
+    await expect(chatWorld._selectChatInner!.call(ctx, "c1",),).rejects.toThrow("select chat reload failed",);
+  });
+
+  test("throws when any postLoad Promise.allSettled rejects", async () => {
+    const ctx = makeSelectCtx({
+      markChatAsRead: () => Promise.reject(new Error("mark read failed",),),
+    },);
+    await expect(chatWorld._selectChatInner!.call(ctx, "c1",),).rejects.toThrow("select chat post-load failed",);
+  });
+
+  test("loads group-chat participants, turn order, and actors when isGroupChat", async () => {
+    const calls: string[] = [];
+    const ctx = makeSelectCtx({
+      isGroupChat: true,
+      loadParticipants: () => {
+        calls.push("participants",);
+        return Promise.resolve();
+      },
+      loadTurnOrder: () => {
+        calls.push("turnOrder",);
+        return Promise.resolve();
+      },
+      loadAvailableActors: () => {
+        calls.push("availableActors",);
+        return Promise.resolve();
+      },
+    },);
+    await chatWorld._selectChatInner!.call(ctx, "c1",);
+    expect(calls,).toContain("participants",);
+    expect(calls,).toContain("turnOrder",);
+    expect(calls,).toContain("availableActors",);
+  });
+
+  test("throws when any group-load Promise.allSettled rejects", async () => {
+    const ctx = makeSelectCtx({
+      isGroupChat: true,
+      loadTurnOrder: () => Promise.reject(new Error("turn order broken",),),
+    },);
+    await expect(chatWorld._selectChatInner!.call(ctx, "c1",),).rejects.toThrow("group chat load failed",);
+  });
+
+  test("skips group loads when not a group chat", async () => {
+    let groupCalls = 0;
+    const ctx = makeSelectCtx({
+      isGroupChat: false,
+      loadParticipants: () => {
+        groupCalls++;
+        return Promise.resolve();
+      },
+      loadTurnOrder: () => {
+        groupCalls++;
+        return Promise.resolve();
+      },
+      loadAvailableActors: () => {
+        groupCalls++;
+        return Promise.resolve();
+      },
+    },);
+    await chatWorld._selectChatInner!.call(ctx, "c1",);
+    expect(groupCalls,).toBe(0,);
+  });
+});
+
+describe("chatWorld.selectChat successful flow", () => {
+  test("enters _selectChatInner, clears the guard, and propagates errors", async () => {
+    let inner = 0;
+    const ctx = worldCtx({
+      _selectingChat: false,
+      _selectChatInner: async () => {
+        inner++;
+        throw new Error("inner boom",);
+      },
+    },);
+    await expect(chatWorld.selectChat!.call(ctx, "c1",),).rejects.toThrow("inner boom",);
+    expect(inner,).toBe(1,);
+    expect(ctx._selectingChat,).toBe(false,);
   });
 });
