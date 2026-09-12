@@ -9334,6 +9334,18 @@
     "git_issue": "7b51327",
     "status": "open"
   },
+  "TASK-AI-MESSAGE-UTILITIES": {
+    "hash": "pending",
+    "extid": "TASK-AI-MESSAGE-UTILITIES",
+    "type": "TASK",
+    "title": "AI message utilities (translate/summarize/explain)",
+    "label": "task",
+    "priority": "Medium | **Effort:** S",
+    "epic": "epic-chat-rich-engagement.md (proposed)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-ai-message-utilities.md",
+    "status": "undefined"
+  },
   "TASK-ALPHA-AWARE-GENERATION-REQUESTS-AND-FORMAT-PICK": {
     "hash": "e1a63dc",
     "git_issue": "e1a63dc",
@@ -13050,6 +13062,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-composer-analyze-affordance-for-prompt-analysis-mode.md",
     "status": "open"
+  },
+  "TASK-COMPOSER-DRAFT-PERSISTENCE": {
+    "hash": "pending",
+    "extid": "TASK-COMPOSER-DRAFT-PERSISTENCE",
+    "type": "TASK",
+    "title": "Composer draft persistence",
+    "label": "task",
+    "priority": "High | **Effort:** S",
+    "epic": "epic-chat-composer-flows.md (proposed)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-composer-draft-persistence.md",
+    "status": "undefined"
   },
   "TASK-CONFIG-BACKWARD-COMPAT": {
     "hash": "8e16152",
@@ -17656,6 +17680,18 @@
     "status": "done",
     "git_issue": "f92dee7"
   },
+  "TASK-LINK-PREVIEWS-UNFURL": {
+    "hash": "pending",
+    "extid": "TASK-LINK-PREVIEWS-UNFURL",
+    "type": "TASK",
+    "title": "Link previews (unfurl)",
+    "label": "task",
+    "priority": "Medium | **Effort:** S",
+    "epic": "epic-chat-rich-engagement.md (proposed)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-link-previews-unfurl.md",
+    "status": "undefined"
+  },
   "TASK-LIVING-WORLD-PERSISTENCE": {
     "hash": "pending",
     "extid": "TASK-LIVING-WORLD-PERSISTENCE",
@@ -18364,6 +18400,18 @@
     "git_issue": "6bd88be",
     "status": "open"
   },
+  "TASK-MESSAGE-POLLS-VOTES": {
+    "hash": "pending",
+    "extid": "TASK-MESSAGE-POLLS-VOTES",
+    "type": "TASK",
+    "title": "Message polls / votes",
+    "label": "task",
+    "priority": "Medium | **Effort:** M",
+    "epic": "epic-chat-rich-engagement.md (proposed)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-message-polls-votes.md",
+    "status": "undefined"
+  },
   "TASK-MESSAGE-QUICK-EMOJIS-FRONTEND": {
     "hash": "cb9cc57",
     "extid": "TASK-MESSAGE-QUICK-EMOJIS-FRONTEND",
@@ -18760,6 +18808,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md",
     "status": "open"
+  },
+  "TASK-MSG-FORWARD-ACROSS-CHATS": {
+    "hash": "pending",
+    "extid": "TASK-MSG-FORWARD-ACROSS-CHATS",
+    "type": "TASK",
+    "title": "Message forwarding across chats",
+    "label": "task",
+    "priority": "High | **Effort:** M",
+    "epic": "epic-chat-composer-flows.md (proposed)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-msg-forward-across-chats.md",
+    "status": "undefined"
   },
   "TASK-MULTI-INSTANCE-RECONCILIATION": {
     "hash": "b5e9d7c",
@@ -22869,6 +22929,18 @@
     "source": ".plan/tickets/TASK-scene-chat-transition-context.md",
     "status": "open"
   },
+  "TASK-SCHEDULED-MESSAGES-REMINDERS": {
+    "hash": "pending",
+    "extid": "TASK-SCHEDULED-MESSAGES-REMINDERS",
+    "type": "TASK",
+    "title": "Scheduled messages + reminders",
+    "label": "task",
+    "priority": "Medium | **Effort:** M",
+    "epic": "epic-chat-composer-flows.md (proposed)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-scheduled-messages-reminders.md",
+    "status": "undefined"
+  },
   "TASK-SCHEMA": {
     "hash": "a4f6353",
     "extid": "TASK-SCHEMA",
@@ -24961,6 +25033,18 @@
     "source": ".plan/tickets/TASK-vn-template-actions.md",
     "status": "done",
     "git_issue": "5cf3d0c"
+  },
+  "TASK-VOICE-NOTES-PLAYBACK": {
+    "hash": "pending",
+    "extid": "TASK-VOICE-NOTES-PLAYBACK",
+    "type": "TASK",
+    "title": "Voice notes playback",
+    "label": "task",
+    "priority": "Low | **Effort:** M",
+    "epic": "epic-chat-rich-engagement.md (proposed)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-voice-notes-playback.md",
+    "status": "undefined"
   },
   "TASK-WAIVER-COVERAGE-FLOOR-BELOW-80-FOR-PLUGINS-FRONTEND-NATIVE-I": {
     "hash": "be72331",
