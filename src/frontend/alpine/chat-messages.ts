@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { MessageListResponse, } from "../../validation/schemas/responses";
+import { chatDraftMethods, } from "./chat-drafts";
 import { chatSeenMethods, } from "./chat-seen";
 import { chatSendMethods, } from "./chat-send";
 import { t, } from "./i18n";
@@ -18,6 +19,7 @@ const EMPTY_MESSAGE_PAGE = {
 };
 
 export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
+  ...chatDraftMethods,
   ...chatSendMethods,
   ...chatSeenMethods,
   async loadMessages() {
