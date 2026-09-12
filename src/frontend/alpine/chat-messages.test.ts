@@ -235,7 +235,7 @@ describe("chatMessages coverage", () => {
       const olderMessages: Message[] = [mockMessage("old-1",), mockMessage("old-2",), mockMessage("old-3",),];
       const state = {
         activeChat: "chat-1",
-        messages: [...initialMessages],
+        messages: [...initialMessages,],
         currentPage: 1,
         totalPages: 3,
         hasMoreMessages: true,
@@ -246,7 +246,9 @@ describe("chatMessages coverage", () => {
       // Capture prev scrollHeight before fetch resolves.
       // scrollHeight grows when the messages array is prepended (proxy to messages.length).
       Object.defineProperty(state.$refs.messageList, "scrollHeight", {
-        get() { return state.messages.length * 100; },
+        get() {
+          return state.messages.length * 100;
+        },
         configurable: true,
       },);
 
@@ -257,16 +259,16 @@ describe("chatMessages coverage", () => {
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
 
       // Older messages are prepended (oldest first).
-      expect(state.messages.map((m,) => m.id,),).toEqual(["old-1", "old-2", "old-3", "new-1", "new-2",],);
+      expect(state.messages.map((m,) => m.id),).toEqual(["old-1", "old-2", "old-3", "new-1", "new-2",],);
       expect(state.currentPage,).toBe(2,);
       expect(state.totalPages,).toBe(3,);
       expect(state.hasMoreMessages,).toBe(true,);
       expect(state.loadingOlder,).toBe(false,);
       // Scroll restoration: scrollTop set to (newScrollHeight - prevScrollHeight).
-      expect(state.$refs.messageList.scrollTop,).toBeGreaterThan(0,);
+      expect(state.$refs.messageList!.scrollTop,).toBeGreaterThan(0,);
       // Pagination URL uses next page.
       expect(fetchCalls[0]?.url,).toBe("/api/chats/chat-1/messages?page=2&pageSize=50",);
-    },);
+    });
 
     test("no-ops when loadingOlder is already true", async () => {
       const state = {
@@ -281,7 +283,7 @@ describe("chatMessages coverage", () => {
       } as unknown as ChatState;
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
       expect(fetchCalls,).toHaveLength(0,);
-    },);
+    });
 
     test("no-ops when hasMoreMessages is false", async () => {
       const state = {
@@ -296,7 +298,7 @@ describe("chatMessages coverage", () => {
       } as unknown as ChatState;
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
       expect(fetchCalls,).toHaveLength(0,);
-    },);
+    });
 
     test("no-ops without an active chat", async () => {
       const state = {
@@ -311,7 +313,7 @@ describe("chatMessages coverage", () => {
       } as unknown as ChatState;
       await chatMessages.loadOlderMessages!.call(state as ChatState,);
       expect(fetchCalls,).toHaveLength(0,);
-    },);
+    });
 
     test("marks hasMoreMessages=false and clears loadingOlder when server returns empty page", async () => {
       const state = {
@@ -333,7 +335,7 @@ describe("chatMessages coverage", () => {
       expect(state.loadingOlder,).toBe(false,);
       // No prepending when data is empty.
       expect(state.messages,).toHaveLength(1,);
-    },);
+    });
 
     test("drops stale response if user switched chats mid-fetch", async () => {
       let release: ((r: Response,) => void) | null = null;
@@ -359,10 +361,10 @@ describe("chatMessages coverage", () => {
       },),);
       await pending;
       // Stale response must NOT mutate state.
-      expect(state.messages.map((m,) => m.id,),).toEqual(["keep",],);
+      expect(state.messages.map((m,) => m.id),).toEqual(["keep",],);
       expect(state.currentPage,).toBe(1,);
       expect(state.loadingOlder,).toBe(false,);
-    },);
+    });
 
     test("emits error toast when the fetch throws", async () => {
       fetchHandler = () => {
@@ -385,22 +387,27 @@ describe("chatMessages coverage", () => {
       expect(state.loadingOlder,).toBe(false,);
       expect(toasts,).toHaveLength(1,);
       expect(toasts[0]?.type,).toBe("error",);
-    },);
-  },);
+    });
+  });
 
   describe("setupInfiniteScroll", () => {
     test("disconnects a prior observer before wiring a new one", () => {
-      const disconnect = mock(() => {});
-      const observe = mock(() => {});
+      const disconnect = mock(() => {},);
+      const observe = mock((_el: Element,) => {},);
       class FakeObserver {
         disconnected = false;
         observed: Element[] = [];
-        disconnect(): void { this.disconnected = true; disconnect(); }
-        observe(el: Element,): void { this.observed.push(el,); observe(el,); }
+        disconnect(): void {
+          this.disconnected = true;
+          disconnect();
+        }
+        observe(el: Element,): void {
+          this.observed.push(el,);
+          observe(el,);
+        }
       }
       const sentinel = { id: "scroll-sentinel", };
-      globalThis.document.querySelector = ((sel: string,) =>
-        sel === "#scroll-sentinel" ? sentinel : null) as any;
+      globalThis.document.querySelector = ((sel: string,) => sel === "#scroll-sentinel" ? sentinel : null) as any;
       const OriginalIO = (globalThis as any).IntersectionObserver;
       (globalThis as any).IntersectionObserver = FakeObserver;
       try {
@@ -410,7 +417,7 @@ describe("chatMessages coverage", () => {
         expect(disconnect,).toHaveBeenCalledTimes(1,);
         expect(state.scrollObserver,).toBeInstanceOf(FakeObserver,);
         // Sentinel wired up via observe().
-        expect(observe.mock.calls[0]?.[0],).toBe(sentinel,);
+        expect((observe.mock.calls as unknown[][])[0]?.[0],).toBe(sentinel,);
         // Trigger the intersection callback: must call loadOlderMessages.
         const triggered: string[] = [];
         state.scrollObserver = undefined as any;
@@ -422,17 +429,20 @@ describe("chatMessages coverage", () => {
         };
         chatMessages.setupInfiniteScroll!.call(state2 as any,);
         // Reach into the captured constructor to fire the callback.
-        const ctor = (globalThis as any).IntersectionObserver;
-        const lastInstance: FakeObserver = (state2.scrollObserver as any);
         // Pull the entries handler from the constructor mock — easier: use lastInstance directly.
         // Re-run to capture handler:
         let capturedHandler: ((entries: Array<{ isIntersecting: boolean }>,) => void) | null = null;
-        const CapturingObserver = function (cb: any,) {
+        const CapturingObserver = function(cb: any,) {
           capturedHandler = cb;
           return new FakeObserver();
         };
         (globalThis as any).IntersectionObserver = CapturingObserver;
-        const state3 = { scrollObserver: null as any, loadOlderMessages: () => { triggered.push("called",); }, };
+        const state3 = {
+          scrollObserver: null as any,
+          loadOlderMessages: () => {
+            triggered.push("called",);
+          },
+        };
         chatMessages.setupInfiniteScroll!.call(state3 as any,);
         capturedHandler!([{ isIntersecting: true, },],);
         expect(triggered,).toContain("called",);
@@ -444,8 +454,8 @@ describe("chatMessages coverage", () => {
         (globalThis as any).IntersectionObserver = OriginalIO;
         globalThis.document.querySelector = null as any;
       }
-    },);
-  },);
+    });
+  });
 
   describe("scrollToBottom", () => {
     test("schedules scrollTop assignment via setTimeout", async () => {
@@ -454,22 +464,25 @@ describe("chatMessages coverage", () => {
       let scrollTopSet = 0;
       let scrollHeightRead = 0;
       const fakeEl = {
-        get scrollHeight(): number { return scrollHeightRead; },
-        set scrollTop(v: number,) { scrollTopSet = v; },
+        get scrollHeight(): number {
+          return scrollHeightRead;
+        },
+        set scrollTop(v: number,) {
+          scrollTopSet = v;
+        },
       };
-      globalThis.document.querySelector = ((sel: string,) =>
-        sel === "#message-list" ? fakeEl : null) as any;
+      globalThis.document.querySelector = ((sel: string,) => sel === "#message-list" ? fakeEl : null) as any;
       try {
         scrollHeightRead = 1234;
         chatMessages.scrollToBottom!();
         // Wait for the 50ms setTimeout to fire.
-        await new Promise((r,) => realSetTimeout(r, 80,),);
+        await new Promise((r,) => realSetTimeout(r, 80,));
         expect(scrollTopSet,).toBe(1234,);
       } finally {
         globalThis.document.querySelector = originalQS;
       }
-    },);
-  },);
+    });
+  });
 
   describe("setupScrollDetection", () => {
     test("attaches scroll handler and toggles _isScrolledUp at boundary", () => {
@@ -478,17 +491,19 @@ describe("chatMessages coverage", () => {
       const fakeEl: any = {
         _scrollHeight: 1000,
         _scrollTop: 0,
-        clientHeight: 900,
+        _clientHeight: 900,
         addEventListener(event: string, h: () => void,) {
           if (event === "scroll") { handlers.push(h,); }
         },
-        get scrollHeight(): number { return this._scrollHeight; },
-        get scrollTop(): number { return this._scrollTop; },
-        get clientHeight(): number { return this.clientHeight; },
+        get scrollHeight(): number {
+          return this._scrollHeight;
+        },
+        get scrollTop(): number {
+          return this._scrollTop;
+        },
       };
       Object.defineProperty(fakeEl, "clientHeight", { value: 900, configurable: true, },);
-      globalThis.document.querySelector = ((sel: string,) =>
-        sel === "#message-list" ? fakeEl : null) as any;
+      globalThis.document.querySelector = ((sel: string,) => sel === "#message-list" ? fakeEl : null) as any;
       try {
         const state: any = {};
         chatMessages.setupScrollDetection!.call(state,);
@@ -515,7 +530,7 @@ describe("chatMessages coverage", () => {
       } finally {
         globalThis.document.querySelector = realQS;
       }
-    },);
+    });
 
     test("flips _isScrolledUp when user is far from the bottom", () => {
       const realQS = globalThis.document.querySelector;
@@ -525,8 +540,7 @@ describe("chatMessages coverage", () => {
         clientHeight: 200,
         addEventListener: () => {},
       };
-      globalThis.document.querySelector = ((sel: string,) =>
-        sel === "#message-list" ? fakeEl : null) as any;
+      globalThis.document.querySelector = ((sel: string,) => sel === "#message-list" ? fakeEl : null) as any;
       try {
         const state: any = {};
         chatMessages.setupScrollDetection!.call(state,);
@@ -537,7 +551,7 @@ describe("chatMessages coverage", () => {
       } finally {
         globalThis.document.querySelector = realQS;
       }
-    },);
+    });
 
     test("no-ops when the message list element is missing", () => {
       globalThis.document.querySelector = (() => null) as any;
@@ -545,8 +559,8 @@ describe("chatMessages coverage", () => {
       chatMessages.setupScrollDetection!.call(state,);
       expect(state._scrollEl,).toBeUndefined();
       expect(state._scrollHandler,).toBeUndefined();
-    },);
-  },);
+    });
+  });
 
   describe("scrollToBottomSmooth", () => {
     test("calls scrollTo with smooth behavior and resets _isScrolledUp", () => {
@@ -554,25 +568,29 @@ describe("chatMessages coverage", () => {
       let scrollToArg: { top: number; behavior: string } | null = null;
       const fakeEl: any = {
         scrollHeight: 800,
-        scrollTo(opts: { top: number; behavior: string },) { scrollToArg = opts; },
+        scrollTo(opts: { top: number; behavior: string },) {
+          scrollToArg = opts;
+        },
       };
-      globalThis.document.querySelector = ((sel: string,) =>
-        sel === "#message-list" ? fakeEl : null) as any;
+      globalThis.document.querySelector = ((sel: string,) => sel === "#message-list" ? fakeEl : null) as any;
       try {
         const state: any = { _isScrolledUp: true, };
         chatMessages.scrollToBottomSmooth!.call(state,);
-        expect(scrollToArg,).toEqual({ top: 800, behavior: "smooth", },);
+        expect(scrollToArg as unknown as { top: number; behavior: string },).toEqual({
+          top: 800,
+          behavior: "smooth",
+        },);
         expect(state._isScrolledUp,).toBe(false,);
       } finally {
         globalThis.document.querySelector = realQS;
       }
-    },);
+    });
 
     test("no-ops when the message list element is missing", () => {
       globalThis.document.querySelector = (() => null) as any;
       const state: any = { _isScrolledUp: true, };
       chatMessages.scrollToBottomSmooth!.call(state,);
       expect(state._isScrolledUp,).toBe(true,);
-    },);
-  },);
+    });
+  });
 });
