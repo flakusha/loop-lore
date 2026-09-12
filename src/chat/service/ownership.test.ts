@@ -20,7 +20,7 @@
  * admin-path test for the can() bypass), and fix "target already current owner" to actually hit
  * that branch with an admin requester instead of re-testing the self-transfer guard.
  */
-import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { ChatParticipantRole, } from "../../db/enums";
@@ -330,5 +330,36 @@ describe("transferOwnership", () => {
       .where("event_type", "=", "chat_ownership_transferred",)
       .execute();
     expect(auditRows.length,).toBe(1,);
+  });
+
+  test("post-transfer: reconcileModeratorGrants invoked exactly once with correct ids", async () => {
+    // mock.module stubs the `./access` module so the import bound into
+    // ownership.ts resolves to a counting spy. Bun re-evaluates the
+    // module graph on dynamic import, so the spy actually intercepts.
+    const realAccess = await import("./access");
+    const calls: unknown[][] = [];
+    mock.module("./access", () => ({
+      ...realAccess,
+      reconcileModeratorGrants: (dbArg: unknown, chatId: string, previousOwnerId: string, newOwnerId: string,) => {
+        calls.push([dbArg, chatId, previousOwnerId, newOwnerId,],);
+        return Promise.resolve();
+      },
+    }),);
+    const ownership = await import("./ownership?spy=" + Date.now());
+    try {
+      const result = await ownership.transferOwnership(db, {
+        chatId: CHAT_ID,
+        requesterId: OWNER_ID,
+        requesterRole: "user",
+        newOwnerId: PARTICIPANT_ID,
+      },);
+      expect(result.ok,).toBe(true,);
+      expect(calls.length,).toBe(1,);
+      expect(calls[0]?.[1],).toBe(CHAT_ID,);
+      expect(calls[0]?.[2],).toBe(OWNER_ID,);
+      expect(calls[0]?.[3],).toBe(PARTICIPANT_ID,);
+    } finally {
+      mock.module("./access", () => realAccess,);
+    }
   });
 });

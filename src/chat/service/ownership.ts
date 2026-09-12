@@ -14,7 +14,7 @@ import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { can, } from "../../users/permissions";
-import { checkChatSettingsAccess, } from "./access";
+import { checkChatSettingsAccess, reconcileModeratorGrants, } from "./access";
 import { buildOwnershipAuditMeta, emitOwnershipTransferNotifications, } from "./ownership-events";
 import type { TransferOwnershipOptions, TransferOwnershipOutcome, } from "./ownership-types";
 
@@ -187,6 +187,20 @@ export async function transferOwnership(
       autoInvited: outcome.autoInvited,
       reason,
     },);
+
+    // Best-effort moderator grant reconciliation: a previous GM grant may
+    // outlive a chat's ownership transfer. Re-evaluation runs outside the
+    // ownership tx; failures are logged but never roll back the transfer
+    // itself (the new owner still takes the seat even if cleanup misses).
+    try {
+      await reconcileModeratorGrants(db, chatId, previousOwnerId, outcome.newOwnerId,);
+    } catch (reconcileErr) {
+      ownershipLogger().error(
+        "moderator grant reconciliation failed",
+        reconcileErr instanceof Error ? reconcileErr : new Error(String(reconcileErr,),),
+        { chatId, previousOwnerId, newOwnerId: outcome.newOwnerId, },
+      );
+    }
 
     return { ok: true, result: outcome, };
   } catch (err) {

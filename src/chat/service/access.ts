@@ -10,12 +10,14 @@
  *   - `checkChatSettingsAccess` — stricter authority required to mutate chat
  *     settings (mode, turnStrategy, worldId, gmConfig, name, pinned, paused,
  *     etc.) per `docs/spec/chat-privacy.md` §5.1.
- *     Only admin OR the chat creator OR `role_in_chat = "owner"` passes.
+ *     Passes for admin, chat creator, `role_in_chat = "owner"`, OR
+ *     `role_in_chat = "gm"` (added by migration 007).
  *
  * Both helpers return the same `{ ok: true } | { ok: false, error }` shape so
  * callers can drop in the appropriate variant without changing control flow.
  */
 import type { Kysely, } from "kysely";
+import { ChatParticipantRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { can, } from "../../users/permissions";
 import type { ServiceError, } from "./types";
@@ -150,9 +152,9 @@ export async function checkChatAccess(
 
 /**
  * Strict settings-access check. Per `docs/spec/chat-privacy.md` §5.1 only the
- * Master (chat creator) or a GM may change settings. The DB enum
- * (`ChatParticipantRole`) currently exposes `Owner` instead of `Master`; we
- * treat `Owner` as the Master equivalent until the spec's `gm` role lands.
+ * Master (chat creator) or a GM may change settings. The `gm` participant
+ * role was added in migration 007 and grants settings-mutation authority
+ * alongside the chat creator and `role_in_chat = "owner"`.
  *
  * Members/observers/guests are denied even when they pass `checkChatAccess`.
  * @param database
@@ -196,10 +198,21 @@ export async function checkChatSettingsAccess(
   if (ownerParticipant) {
     return { ok: true, };
   }
+  const gmParticipant = await database
+    .selectFrom("chat_participants",)
+    .select("actor_id",)
+    .where("chat_id", "=", chatId,)
+    .where("actor_id", "=", userId,)
+    .where("role_in_chat", "=", ChatParticipantRole.Gm,)
+    .executeTakeFirst();
+
+  if (gmParticipant) {
+    return { ok: true, };
+  }
 
   return {
     ok: false,
-    error: { code: "forbidden", message: "Only the chat creator or an Owner role can change settings", },
+    error: { code: "forbidden", message: "Only the chat creator, an Owner, or a GM can change settings", },
   };
 }
 
@@ -223,3 +236,8 @@ export async function isChatOnline(
     .executeTakeFirst();
   return row !== undefined;
 }
+// `reconcileModeratorGrants` (post-transfer moderator-grant reconciliation)
+// now lives in `./access-moderation.ts` to keep this file under the 250L
+// cap. Re-exported here for back-compat with consumers that still import
+// from `./access`.
+export { reconcileModeratorGrants, } from "./access-moderation";

@@ -23,6 +23,7 @@ import {
   checkChatAccess,
   checkChatSettingsAccess,
   getModerationBlock,
+  reconcileModeratorGrants,
 } from "./access";
 
 let dbHandle: TestDb;
@@ -49,7 +50,7 @@ beforeEach(async () => {
 
 async function seedChatWithParticipants(opts: {
   creatorId: string;
-  participants?: { userId: string; role: "owner" | "member" | "observer" | "guest" }[];
+  participants?: { userId: string; role: "owner" | "member" | "observer" | "guest" | "gm" }[];
 },): Promise<string> {
   await insertUsers(database, `u-${opts.creatorId}`, "User", { id: opts.creatorId, } as never,);
   await insertActors(database, opts.creatorId, {
@@ -244,5 +245,63 @@ describe("checkChatAccess moderation enforcement (chat/moderation.ts wiring)", (
     await insertModerationActions(database, "ban", "u-admin", "u-owner", "spam", "global",);
     const result = await checkChatAccess(database, chatId, "u-admin", "admin",);
     expect(result.ok,).toBe(true,);
+  });
+});
+describe("checkChatSettingsAccess GM role (migration 007)", () => {
+  it("grants participant with role_in_chat=gm", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-gm", role: "gm", },],
+    },);
+    const result = await checkChatSettingsAccess(database, chatId, "u-gm", null,);
+    expect(result.ok,).toBe(true,);
+  });
+});
+
+describe("reconcileModeratorGrants", () => {
+  it("demotes non-owner gm participants to member", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-gm-a", role: "gm", }, { userId: "u-gm-b", role: "gm", },],
+    },);
+
+    // Simulate the post-transfer state: a fresh owner is in the seat but is
+    // NOT one of the GM rows, so both GMs should be demoted.
+    await insertUsers(database, "u-new-owner", "User", { id: "u-new-owner", } as never,);
+    await insertActors(database, "u-new-owner", {
+      id: "u-new-owner",
+      user_id: "u-new-owner",
+      owner_id: "u-new-owner",
+    } as never,);
+    await insertChatParticipants(database, chatId, "u-new-owner", { role_in_chat: "owner", } as never,);
+
+    await reconcileModeratorGrants(database, chatId, "u-owner", "u-new-owner",);
+
+    const roles = await database
+      .selectFrom("chat_participants",)
+      .select(["actor_id", "role_in_chat",],)
+      .where("chat_id", "=", chatId,)
+      .where("actor_id", "in", ["u-gm-a", "u-gm-b",],)
+      .execute();
+    const byActor = Object.fromEntries(roles.map((r,) => [r.actor_id, r.role_in_chat,]),);
+    expect(byActor["u-gm-a"],).toBe("member",);
+    expect(byActor["u-gm-b"],).toBe("member",);
+  });
+
+  it("keeps newOwnerId as gm if they were gm before", async () => {
+    const chatId = await seedChatWithParticipants({
+      creatorId: "u-owner",
+      participants: [{ userId: "u-new-owner", role: "gm", },],
+    },);
+
+    await reconcileModeratorGrants(database, chatId, "u-owner", "u-new-owner",);
+
+    const row = await database
+      .selectFrom("chat_participants",)
+      .select("role_in_chat",)
+      .where("chat_id", "=", chatId,)
+      .where("actor_id", "=", "u-new-owner",)
+      .executeTakeFirstOrThrow();
+    expect(row.role_in_chat,).toBe("gm",);
   });
 });
