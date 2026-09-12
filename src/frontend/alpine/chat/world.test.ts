@@ -33,6 +33,8 @@ function worldCtx(overrides: Record<string, unknown> = {},): Record<string, unkn
     _worldExpanded: {},
     activeChat: null,
     loadWorldChats: chatWorld.loadWorldChats,
+    flushComposerDraft: () => {},
+    restoreComposerDraft: () => {},
     ...overrides,
   };
 }
@@ -202,5 +204,21 @@ describe("chatWorld.selectChat guards", () => {
     const ctx = worldCtx({ _selectingChat: false, _selectChatInner: async () => {}, },);
     await chatWorld.selectChat!.call(ctx, "c1",);
     expect(ctx._selectingChat,).toBe(false,);
+  });
+
+  test("flushes the outgoing draft before entering the new chat", async () => {
+    const events: string[] = [];
+    const ctx = worldCtx({
+      activeChat: "old",
+      _selectingChat: false,
+      _selectChatInner: async () => {
+        events.push("inner",);
+      },
+      flushComposerDraft: () => {
+        events.push("flush",);
+      },
+    },);
+    await chatWorld.selectChat!.call(ctx, "c1",);
+    expect(events,).toEqual(["flush", "inner",],);
   });
 });

@@ -125,6 +125,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
       );
       if (res.ok) {
         this.pendingAssets = [];
+        this.clearComposerDraft();
         const data = await res.json();
         if (data.action) {
           await this.dispatchCommandAction(data.action, data.actionPayload ?? null, this.activeChat,);
@@ -154,6 +155,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSend",), },);
         removeTempMessage(this, tempId,);
         restoreInput();
+        this.flushComposerDraft();
       }
     } catch {
       this.isGenerating = false;
@@ -161,6 +163,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkError",), },);
       removeTempMessage(this, tempId,);
       restoreInput();
+      this.flushComposerDraft();
     }
   },
 };
