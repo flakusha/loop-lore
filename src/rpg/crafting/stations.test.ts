@@ -103,9 +103,9 @@ describe("station defs", () => {
         stationType: CraftingStationType.Anvil,
       },);
       const all = await svc.listStationDefs(s.worldId,);
-      expect(all.map((d,) => d.name,),).toEqual(["A Forge", "B Anvil",]);
+      expect(all.map((d,) => d.name),).toEqual(["A Forge", "B Anvil",],);
       const anvils = await svc.listStationDefs(s.worldId, CraftingStationType.Anvil,);
-      expect(anvils.map((d,) => d.name,),).toEqual(["B Anvil",]);
+      expect(anvils.map((d,) => d.name),).toEqual(["B Anvil",],);
     } finally {
       await s.db.destroy();
     }
@@ -262,11 +262,11 @@ describe("station instances", () => {
         worldId: s.otherWorldId,
         currentDurability: 50,
       },);
-      expect((await svc.listInstances(s.worldId,)).map((i,) => i.id,),).toEqual(
-        expect.arrayContaining([first,]),
+      expect((await svc.listInstances(s.worldId,)).map((i,) => i.id),).toEqual(
+        expect.arrayContaining([first,],),
       );
       expect((await svc.listInstances(s.worldId,)).length,).toBe(2,);
-      expect((await svc.listInstances(s.worldId, locA,)).map((i,) => i.id,),).toEqual([first,]);
+      expect((await svc.listInstances(s.worldId, locA,)).map((i,) => i.id),).toEqual([first,],);
     } finally {
       await s.db.destroy();
     }
@@ -283,10 +283,12 @@ describe("station instances", () => {
         currentDurability: 50,
       },);
       expect(await svc.updateInstance(s.otherWorldId, id, { currentDurability: 1, },),).toBe(false,);
-      expect(await svc.updateInstance(s.worldId, id, {
-        currentDurability: 25,
-        isActive: false,
-      },),).toBe(true,);
+      expect(
+        await svc.updateInstance(s.worldId, id, {
+          currentDurability: 25,
+          isActive: false,
+        },),
+      ).toBe(true,);
       const inst = await svc.getInstance(s.worldId, id,);
       expect(inst?.currentDurability,).toBe(25,);
       expect(inst?.isActive,).toBe(false,);

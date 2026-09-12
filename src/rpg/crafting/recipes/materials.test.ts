@@ -10,7 +10,6 @@
  */
 import { describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { uid, } from "../../../utils";
 import type { DB, } from "../../../db/schema";
 import { createTestDb, } from "../../../test-utils/create-test-db";
 import {
@@ -18,6 +17,7 @@ import {
   insertUsers,
   insertWorlds,
 } from "../../../test-utils/insert-helpers";
+import { uid, } from "../../../utils";
 import { recipeMaterialInsertRows, rowToRecipeWithMaterials, } from "./helpers";
 import type { RecipeMaterialDbRow, RecipeRow, } from "./helpers";
 import { replaceMaterials, } from "./materials";

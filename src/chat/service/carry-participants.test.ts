@@ -5,8 +5,8 @@
 import { Database, } from "bun:sqlite";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import type { DB, } from "../../db/schema";
 import { ChatParticipantRole, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, resetTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, insertChatParticipants, insertChats, insertUsers, } from "../../test-utils/insert-helpers";
@@ -35,7 +35,7 @@ beforeEach(async () => {
   }
   await insertChats(db, "src", "user-1", { id: "chat-src", },);
   await insertChats(db, "dst", "user-1", { id: "chat-dst", },);
-});
+},);
 
 async function participantFields(chatId: string,) {
   const rows = await db
