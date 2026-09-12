@@ -13381,6 +13381,18 @@
     "source": ".plan/tickets/TASK-cover-frontend-vn-pages-new-chat-quests-worlds.md",
     "status": "open"
   },
+  "TASK-COVERAGE-WAIVER-CHAT-OWNERSHIP-ASYNC-BODY-LIMIT": {
+    "hash": "pending",
+    "extid": "TASK-COVERAGE-WAIVER-CHAT-OWNERSHIP-ASYNC-BODY-LIMIT",
+    "type": "TASK",
+    "title": "coverage waiver for chat/service/ownership.ts (bun async-body tracking limit)",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md",
+    "status": "open"
+  },
   "TASK-COVERAGE-WAIVERS-FOR-3-MODULES-BELOW-80-FLOOR": {
     "hash": "f67b1ca",
     "git_issue": "f67b1ca",
