@@ -3,6 +3,7 @@
 
 import type { ChatArchiveState, } from "./archive-state";
 import type { ChatBattleState, } from "./battle-state";
+import type { ChatComposerPreSendState, } from "./composer-pre-send-state";
 import type { ChatCoreState, } from "./core";
 import type { ChatLocationState, } from "./location-state";
 import type { ChatMemoryState, } from "./memory-state";
@@ -31,6 +32,7 @@ export interface ChatState
     ChatSideChannelsState,
     ChatPinsState,
     ChatArchiveState,
+    ChatComposerPreSendState,
     ChatMovementState,
     ChatNpcState,
     ChatWizardState,

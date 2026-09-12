@@ -10,8 +10,11 @@ export {
   batchExportChats,
 } from "./batch";
 export {
+  archiveChat,
   createChat,
   deleteChat,
   getChat,
+  isChatArchived,
+  unarchiveChat,
   updateChat,
 } from "./crud";
