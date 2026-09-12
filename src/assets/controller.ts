@@ -219,8 +219,12 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const owned = await requireAssetOwner(database, ctx.params.id, userId,);
         if (owned instanceof Response) { return owned; }
         const { context: rawContext, ...values } = ctx.body as TransformValues & { context?: string };
-        const unknownKeys = Object.keys(values,).filter((key,) => !["cropX", "cropY", "cropW", "cropH", "zoom", "rotation", "focalPointX", "focalPointY",].includes(key,),);
-        if (unknownKeys.length > 0) { return badRequestResponse(`Unknown transform keys: ${unknownKeys.join(", ",)}`,); }
+        const unknownKeys = Object.keys(values,).filter((key,) =>
+          !["cropX", "cropY", "cropW", "cropH", "zoom", "rotation", "focalPointX", "focalPointY",].includes(key,)
+        );
+        if (unknownKeys.length > 0) {
+          return badRequestResponse(`Unknown transform keys: ${unknownKeys.join(", ",)}`,);
+        }
         const context = rawContext ?? TransformContext.Default;
         if (!(Object.values(TransformContext,) as string[]).includes(context,)) {
           return badRequestResponse("Invalid context",);
