@@ -149,6 +149,19 @@ describe("PUT /api/assets/:id/transform", () => {
     expect(res.status,).toBe(400,);
     await db.destroy();
   });
+  test("400 on unknown snake_case keys (focal_x must not silently drop)", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    const res = await makeApp(db, OWNER_ID,).handle(
+      new Request(`http://localhost/api/assets/${ASSET_ID}/transform`, {
+        method: "PUT",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ focal_x: 0.4, focal_y: 0.3, },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+    await db.destroy();
+  });
 
   test("400 on invalid context", async () => {
     const { db, } = await createTestDb();
