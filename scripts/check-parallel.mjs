@@ -257,6 +257,7 @@ const checks = {
 
     // Wiring + dead-code check gate (routes mounted, services wired, plugins registered)
     "wiring - check": "bun run scripts/check-wiring.ts",
+    "fe-be - harmony (advisory)": "bun run scripts/check-fe-be-harmonization.ts || true",
 
     // Changelog gate (Keep-a-Changelog structure; latest tag must have a section)
     "changelog - gate": "bun run scripts/check-changelog.ts",
