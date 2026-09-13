@@ -560,3 +560,75 @@ describe("dispatchCommandAction link-asset", () => {
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to link castle.png", },],);
   });
 });
+
+describe("dispatchCommandAction impersonate", () => {
+  test("impersonate-toggle off PUTs null and clears flags", async () => {
+    mockFetch(200, {},);
+    const ctx = buildCtx() as any;
+    ctx.impersonationActive = true;
+    ctx.impersonatingActorId = "c1";
+    await chatActions.dispatchCommandAction!.call(ctx, "impersonate-toggle", { mode: "off", }, "chat-1",);
+    expect(fetchCalls.length,).toBe(1,);
+    expect(fetchCalls[0]?.url,).toBe("/api/v1/chats/chat-1/impersonate",);
+    expect(fetchCalls[0]?.opts.method,).toBe("PUT",);
+    expect(JSON.parse(fetchCalls[0]?.opts.body as string,),).toEqual({ impersonateActorId: null, },);
+    expect(ctx.impersonationActive,).toBe(false,);
+    expect(ctx.impersonatingActorId,).toBeNull();
+  });
+
+  test("impersonate-toggle default delegates to toggleImpersonate", async () => {
+    let toggled = false;
+    const ctx = buildCtx() as any;
+    ctx.toggleImpersonate = async () => {
+      toggled = true;
+    };
+    await chatActions.dispatchCommandAction!.call(ctx, "impersonate-toggle", null, "chat-1",);
+    expect(toggled,).toBe(true,);
+    expect(fetchCalls.length,).toBe(0,);
+  });
+
+  test("impersonate-select resolves a character and starts impersonation", async () => {
+    fetchHandler = (url,) => {
+      if (url.endsWith("/participants",)) {
+        return Response.json([{ display_name: "Aria", actor_type: "character", actor_id: "c1", },], { status: 200, },);
+      }
+      return Response.json({}, { status: 200, },);
+    };
+    const ctx = buildCtx() as any;
+    await chatActions.dispatchCommandAction!.call(
+      ctx,
+      "impersonate-select",
+      { characterName: "aria", },
+      "chat-1",
+    );
+    expect(fetchCalls.length,).toBe(2,);
+    expect(ctx.impersonationActive,).toBe(true,);
+    expect(ctx.impersonatingActorId,).toBe("c1",);
+  });
+
+  test("impersonate-select with unknown name toasts warning and skips PUT", async () => {
+    fetchHandler = (_url,) => Response.json([], { status: 200, },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "impersonate-select",
+      { characterName: "Nobody", },
+      "chat-1",
+    );
+    expect(fetchCalls.length,).toBe(1,);
+    expect(ctx.toasts.length,).toBe(1,);
+    expect(ctx.toasts[0]?.type,).toBe("warning",);
+  });
+
+  test("impersonate-select with empty name sends nothing", async () => {
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "impersonate-select", { characterName: "", }, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+  });
+
+  test("review-entity is display-only", async () => {
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "review-entity", { id: "e1", }, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+  });
+});
