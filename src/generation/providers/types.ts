@@ -83,6 +83,12 @@ export interface GenerateRequest {
     dynatempRange?: number;
     dynatempExponent?: number;
     reasoningBudget?: number;
+    /** Reuse cached prompt prefix (llama-server `cache_prompt`) */
+    cachePrompt?: boolean;
+    /** GBNF grammar for constrained generation (llama-server `grammar`) */
+    grammar?: string;
+    /** Structured-output schema (llama-server `response_format`) */
+    responseFormat?: Record<string, unknown>;
     [key: string]: unknown; // provider-specific overrides
   };
   /** Abort signal for cancellation */
