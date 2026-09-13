@@ -61,7 +61,7 @@ export function setLogLevel(level: LogLevel,): void {
  *  [[log]] array-of-tables blocks. raw() bypasses formatting in all. */
 export type OutputFormat = "simple" | "pretty" | "json" | "jsonl" | "toml";
 
-const FORMATS: readonly string[] = ["simple", "pretty", "json", "jsonl", "toml"];
+const FORMATS: readonly string[] = ["simple", "pretty", "json", "jsonl", "toml",];
 
 type EmitLevel = "debug" | "info" | "success" | "warn" | "error";
 
@@ -88,7 +88,7 @@ let activeFormat: OutputFormat = resolveFormat();
 function resolveFormat(): OutputFormat {
   const rawValue = (process.env.GIWT_OUTPUT ?? "").trim().toLowerCase();
   if (rawValue === "") { return "simple"; }
-  if (FORMATS.includes(rawValue)) { return rawValue as OutputFormat; }
+  if (FORMATS.includes(rawValue,)) { return rawValue as OutputFormat; }
   process.stderr.write(
     `output: ignoring invalid GIWT_OUTPUT value "${rawValue}" (expected simple|pretty|json|jsonl|toml)\n`,
   );
@@ -98,7 +98,7 @@ function resolveFormat(): OutputFormat {
 /** Override the output format at runtime (e.g. from config [output]). */
 export function setOutputFormat(format: string,): void {
   const normalized = format.trim().toLowerCase();
-  if (!FORMATS.includes(normalized)) {
+  if (!FORMATS.includes(normalized,)) {
     process.stderr.write(
       `output: ignoring invalid output format "${format}" (expected simple|pretty|json|jsonl|toml)\n`,
     );
@@ -121,9 +121,9 @@ function render(level: EmitLevel, message: string,): string {
     case "jsonl":
       return JSON.stringify({ ts: new Date().toISOString(), level, msg: message, },);
     case "toml":
-      return `[[log]]\nts = ${JSON.stringify(new Date().toISOString())}\nlevel = ${
-        JSON.stringify(level)
-      }\nmsg = ${JSON.stringify(message)}`;
+      return `[[log]]\nts = ${JSON.stringify(new Date().toISOString(),)}\nlevel = ${JSON.stringify(level,)}\nmsg = ${
+        JSON.stringify(message,)
+      }`;
     default:
       // simple: bare message; level tag only where it carries signal.
       return level === "warn" || level === "error" ? `${level}: ${message}` : message;

@@ -938,7 +938,10 @@ async function runFinalize(
   } else if (mergeStrategy === "direct") {
     // Direct merge warning
     console.log("",);
-    log("warn", `WARNING: direct merge strategy - conflicts will be resolved on ${targetBranch}, which can leave it in a broken state. Consider --merge-strategy rebase.`,);
+    log(
+      "warn",
+      `WARNING: direct merge strategy - conflicts will be resolved on ${targetBranch}, which can leave it in a broken state. Consider --merge-strategy rebase.`,
+    );
     console.log("",);
 
     if (!force) {
