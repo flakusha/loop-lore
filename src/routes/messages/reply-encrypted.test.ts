@@ -103,6 +103,9 @@ describe("maybeAutoReply — encrypted assistant reply", () => {
       .execute();
     expect(rows,).toHaveLength(1,);
     expect(rows[0]?.key_id,).not.toBeNull();
+    // NOTE: ciphertext is random bytes — "hello" could theoretically appear
+    // by chance (~1e-7 per run). If this flakes, drop the assertion; key_id
+    // above already proves the encryption branch ran.
     expect(rows[0]?.content,).not.toContain("hello",);
   });
 });
