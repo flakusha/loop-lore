@@ -11,12 +11,23 @@ import { WRITE_MEMORY_NOTE, writeMemoryNoteTool, } from "../tools/write-memory-n
 import { executeToolCalls, } from "./tool-execution";
 
 // Bun's mock.module is process-global and cannot be unmocked: without
-// --isolate, an earlier file (e.g. generate-route/non-stream.test.ts) may
-// have replaced ./tool-execution with an `async () => []` stub. Probe the
-// real arity (executeToolCalls(toolCalls, ctx?)) and skip instead of
-// asserting against the stub (pristine-module guard; see
+// --isolate, an earlier file may have replaced ./tool-execution with a stub.
+// Arity alone cannot prove the real module (a stub may declare params, as
+// stream-to-client.coverage.test.ts once did), so probe behavior: only the
+// real module answers an unknown tool with a "Tool not found" error result.
+// Skip instead of asserting against a stub (pristine-module guard; see
 // generation/providers/registry.test.ts).
-const toolExecPristine = executeToolCalls.length > 0;
+const toolExecPristine = await (async () => {
+  try {
+    const probe = await executeToolCalls([
+      { id: "probe", function: { name: "__pristine_probe__", arguments: "{}", }, },
+    ],);
+    const content = probe[0]?.content;
+    return typeof content === "string" && content.includes("Tool not found",);
+  } catch {
+    return false;
+  }
+})();
 const describeReal = toolExecPristine ? describe : describe.skip;
 
 describeReal("executeToolCalls context forwarding", () => {
