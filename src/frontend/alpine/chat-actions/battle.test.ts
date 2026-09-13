@@ -4,11 +4,13 @@ import { battleActionHandlers, } from "./battle";
 interface PanelCtx {
   rendered: unknown[];
   renderBattlePanel(view: unknown,): void;
+  connectGenerationSSE: (chatId: string,) => void;
 }
 
 function buildCtx(): PanelCtx {
   const ctx: PanelCtx = {
     rendered: [],
+    connectGenerationSSE: () => {},
     renderBattlePanel(view,) {
       ctx.rendered.push(view,);
     },

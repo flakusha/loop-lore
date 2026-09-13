@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { MemoryType, } from "../../../db/enums";
+
 // ── Memory Types ───────────────────────────────────────────────
 /** */
 export interface MemoryEntry {
   id: string;
   content: string;
-  type: "episodic" | "semantic" | "procedural";
+  type: MemoryType;
   category?: string;
   confidence: number;
   importance: number;
