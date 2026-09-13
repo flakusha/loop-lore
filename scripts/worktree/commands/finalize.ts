@@ -380,6 +380,19 @@ function findWorktree(branch: string, config: WorktreeConfig,): string | null {
   const dirName = branchToPath(branch,);
   const wtPath = resolve(config.treeDir, dirName,);
   if (existsSync(resolve(wtPath, ".git",),)) { return wtPath; }
+  // Fallback: worktrees checked out outside `treeDir` (e.g. native omp
+  // worktrees in loop-lore-worktrees/, dir name = branch + short-hash
+  // suffix). `tree/<branch>` is just the conventional layout — ask git
+  // which checkout actually has the branch checked out.
+  const listing = gitSyncQuiet(config.repoRoot, "worktree", "list", "--porcelain",);
+  let currentPath: string | null = null;
+  for (const line of listing.split("\n",)) {
+    if (line.startsWith("worktree ",)) {
+      currentPath = line.slice("worktree ".length,);
+    } else if (line === `branch refs/heads/${branch}` && currentPath) {
+      return currentPath;
+    }
+  }
   return null;
 }
 
