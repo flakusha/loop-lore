@@ -3,7 +3,7 @@
 
 # TASK: Gallery asset linkage to chat from assistant
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-rag-assets-unified-storage-and-assistant-flows

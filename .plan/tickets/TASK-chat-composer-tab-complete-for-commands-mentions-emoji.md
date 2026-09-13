@@ -3,7 +3,7 @@
 
 # TASK: Chat composer: tab-complete for commands, mentions, emoji
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-chat-commands.md

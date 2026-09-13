@@ -497,3 +497,66 @@ describe("selectCommand", () => {
     expect(state._showCommandPalette,).toBe(false,);
   });
 });
+
+describe("dispatchCommandAction link-asset", () => {
+  const priorConfirm = (globalThis as { confirm?: (message?: string,) => boolean }).confirm;
+  afterEach(() => {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = priorConfirm;
+  },);
+
+  function confirmWith(value: boolean,) {
+    (globalThis as { confirm?: (message?: string,) => boolean }).confirm = () => value;
+  }
+
+  test("confirmed link POSTs to /api/assets/:id/links and toasts success", async () => {
+    confirmWith(true,);
+    mockFetch(201, { id: "a1", },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "link-asset",
+      { assetId: "a1", filename: "castle.png", entityType: "chat", entityId: "chat-1", },
+      "chat-1",
+    );
+    expect(fetchCalls.length,).toBe(1,);
+    expect(fetchCalls[0]?.url,).toBe("/api/assets/a1/links",);
+    expect(fetchCalls[0]?.opts.method,).toBe("POST",);
+    const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
+    expect(body,).toEqual({ entityType: "chat", entityId: "chat-1", },);
+    expect(ctx.toasts,).toEqual([{ type: "success", message: "Asset linked: castle.png", },],);
+  });
+
+  test("dismissed confirm sends nothing", async () => {
+    confirmWith(false,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "link-asset",
+      { assetId: "a1", filename: "castle.png", entityType: "chat", entityId: "chat-1", },
+      "chat-1",
+    );
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("missing payload fields send nothing", async () => {
+    confirmWith(true,);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(ctx as any, "link-asset", { assetId: "a1", }, "chat-1",);
+    expect(fetchCalls.length,).toBe(0,);
+    expect(ctx.toasts,).toEqual([],);
+  });
+
+  test("failed POST toasts error", async () => {
+    confirmWith(true,);
+    mockFetch(403, { error: "forbidden", },);
+    const ctx = buildCtx();
+    await chatActions.dispatchCommandAction!.call(
+      ctx as any,
+      "link-asset",
+      { assetId: "a1", filename: "castle.png", entityType: "chat", entityId: "chat-1", },
+      "chat-1",
+    );
+    expect(ctx.toasts,).toEqual([{ type: "error", message: "Failed to link castle.png", },],);
+  });
+});

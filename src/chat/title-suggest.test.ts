@@ -1,7 +1,12 @@
 import { beforeAll, describe, expect, it, mock, } from "bun:test";
 import type { AuxCallResult, } from "../aux-pipeline/types";
 import { createLogger, } from "../logger";
-import { deriveChatTitleFallback, suggestChatTitle, } from "./title-suggest";
+import {
+  deriveChatTitleFallback,
+  isUntitledChatName,
+  suggestChatTitle,
+  titleUntitledChatFromFirstMessage,
+} from "./title-suggest";
 
 const callAuxMock = mock<() => Promise<AuxCallResult | null>>(() => Promise.resolve(null,));
 // Hoisted above imports: title-suggest binds the stubbed callAux.
@@ -113,5 +118,81 @@ describe("suggestChatTitle (mocked AUX)", () => {
       firstMessage: "Explore the dark forest",
     },);
     expect(result,).toBe("Explore the dark forest",);
+  });
+});
+
+describe("isUntitledChatName", () => {
+  it("treats null, empty, and the placeholder as untitled", () => {
+    expect(isUntitledChatName(null,),).toBe(true,);
+    expect(isUntitledChatName("",),).toBe(true,);
+    expect(isUntitledChatName("New Chat",),).toBe(true,);
+    expect(isUntitledChatName("My Campaign",),).toBe(false,);
+  });
+});
+
+describe("titleUntitledChatFromFirstMessage", () => {
+  function mockChatDb(captured: { name?: string }, fail = false,) {
+    return {
+      updateTable: () => ({
+        set: (values: { name: string },) => {
+          captured.name = values.name;
+          return {
+            where: () => ({
+              execute: async () => {
+                if (fail) { throw new Error("db down",); }
+              },
+            }),
+          };
+        },
+      }),
+    } as any;
+  }
+
+  it("titles an untitled group chat from the first message", async () => {
+    callAuxMock.mockResolvedValue(null,);
+    const captured: { name?: string } = {};
+    await titleUntitledChatFromFirstMessage({
+      config: noAuxConfig,
+      db: mockChatDb(captured,),
+      chatId: "chat-1",
+      chatRecord: { name: "New Chat", mode: "group", },
+      firstMessage: "Explore the dark forest",
+    },);
+    expect(captured.name,).toBe("Explore the dark forest",);
+  });
+
+  it("skips already-titled chats", async () => {
+    const captured: { name?: string } = {};
+    await titleUntitledChatFromFirstMessage({
+      config: noAuxConfig,
+      db: mockChatDb(captured,),
+      chatId: "chat-1",
+      chatRecord: { name: "My Campaign", mode: "group", },
+      firstMessage: "hello",
+    },);
+    expect(captured.name,).toBeUndefined();
+  });
+
+  it("skips direct chats (rule-based rename owns them)", async () => {
+    const captured: { name?: string } = {};
+    await titleUntitledChatFromFirstMessage({
+      config: noAuxConfig,
+      db: mockChatDb(captured,),
+      chatId: "chat-1",
+      chatRecord: { name: "New Chat", mode: "direct", },
+      firstMessage: "hello",
+    },);
+    expect(captured.name,).toBeUndefined();
+  });
+
+  it("never rejects when the update fails", async () => {
+    callAuxMock.mockResolvedValue(null,);
+    await titleUntitledChatFromFirstMessage({
+      config: noAuxConfig,
+      db: mockChatDb({}, true,),
+      chatId: "chat-1",
+      chatRecord: { name: null, mode: "group", },
+      firstMessage: "hello",
+    },);
   });
 });

@@ -1,7 +1,7 @@
 # BUG: Single-chat auto-reply ignores story pause
 
 **Epic:** epic-generation-flow-control.md
-**Status:** Not Started
+**Status:** ✅ Done
 **Priority:** Medium
 
 ## Problem

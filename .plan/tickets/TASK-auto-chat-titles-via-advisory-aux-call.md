@@ -3,7 +3,7 @@
 
 # TASK: Auto chat titles via advisory aux call
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
 
