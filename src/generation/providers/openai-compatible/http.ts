@@ -13,28 +13,15 @@ import type { GenerateRequest, } from "../types";
 import { ProviderAuthError, ProviderError, ProviderRateLimitError, } from "../types";
 import type { OpenAiCompatibleState, } from "./types";
 
-const STANDARD_KEYS = new Set([
-  "model",
-  "messages",
-  "stream",
-  "temperature",
-  "max_tokens",
-  "top_p",
-  "stop",
-  "presence_penalty",
-  "frequency_penalty",
-  "min_p",
-  "top_k",
-  "typical_p",
-  "repeat_penalty",
-  "dry_multiplier",
-  "dry_base",
-  "dry_allowed_length",
-  "xtc_probability",
-  "dynatemp_range",
-  "dynatemp_exponent",
-  "reasoning_budget",
-],);
+/**
+ * camelCase param name → snake_case body key (`dryBase` → `dry_base`).
+ * Lets the override loop in `buildBody` recognise already-mapped params
+ * without a separately maintained key list (which rots on every new param).
+ * @param key camelCase param name from `GenerateRequest.params`.
+ */
+function toSnakeCase(key: string,): string {
+  return key.replace(/([A-Z])/g, (ch,) => `_${ch.toLowerCase()}`,);
+}
 
 /**
  * Copy OpenAI-standard sampling params into the request body.
@@ -67,6 +54,9 @@ function applyLlamaParams(body: Record<string, unknown>, params: GenerateRequest
   if (params.dynatempRange !== undefined) { body.dynatemp_range = params.dynatempRange; }
   if (params.dynatempExponent !== undefined) { body.dynatemp_exponent = params.dynatempExponent; }
   if (params.reasoningBudget !== undefined) { body.reasoning_budget = params.reasoningBudget; }
+  if (params.cachePrompt !== undefined) { body.cache_prompt = params.cachePrompt; }
+  if (params.grammar !== undefined) { body.grammar = params.grammar; }
+  if (params.responseFormat !== undefined) { body.response_format = params.responseFormat; }
 }
 
 /**
@@ -92,11 +82,14 @@ export function buildBody(
   applyCommonParams(body, req.params,);
   applyLlamaParams(body, req.params,);
 
-  // Provider-specific overrides
+  // Provider-specific overrides — anything not already mapped above passes
+  // through verbatim. The snake_case check catches camelCase params whose
+  // mapped key is already in the body, so no key list to keep in sync.
   for (const [key, value,] of Object.entries(req.params,)) {
-    if (!Object.hasOwn(body, key,) && !STANDARD_KEYS.has(key,)) {
-      body[key] = value;
+    if (Object.hasOwn(body, key,) || Object.hasOwn(body, toSnakeCase(key,),)) {
+      continue;
     }
+    body[key] = value;
   }
 
   return body;

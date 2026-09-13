@@ -55,8 +55,19 @@ export interface GenerateRequest {
   typicalP?: number;
   repeatPenalty?: number;
   dryMultiplier?: number;
+  dryBase?: number;
+  dryAllowedLength?: number;
   xtcProbability?: number;
   dynatempRange?: number;
+  dynatempExponent?: number;
   reasoningBudget?: number;
+  presencePenalty?: number;
+  frequencyPenalty?: number;
+  /** Reuse cached prompt prefix (llama-server `cache_prompt`) */
+  cachePrompt?: boolean;
+  /** GBNF grammar for constrained generation (llama-server `grammar`) */
+  grammar?: string;
+  /** Structured-output schema (llama-server `response_format`) */
+  responseFormat?: Record<string, unknown>;
   stop?: string[];
 }
