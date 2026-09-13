@@ -182,7 +182,11 @@ function printTable(findings: Finding[],): void {
 
   for (const [api, hits,] of byApi) {
     const first = hits[0]!;
-    const statusTag = first.status === "native" ? "~native" : first.status === "shim" ? "shim [warn]" : "no-equiv [fail]";
+    const statusTag = first.status === "native"
+      ? "~native"
+      : first.status === "shim"
+      ? "shim [warn]"
+      : "no-equiv [fail]";
     process.stdout.write(`  ${api}  [${statusTag}]\n`,);
     process.stdout.write(`    deno: ${first.deno}\n`,);
     process.stdout.write(`    node: ${first.node}\n`,);
