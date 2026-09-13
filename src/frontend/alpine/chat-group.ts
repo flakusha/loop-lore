@@ -134,13 +134,25 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     this._mentionActiveIndex = (this._mentionActiveIndex + delta + count) % count;
   },
 
+  handleComposerEnter() {
+    if (this._showMentionAutocomplete && this._mentionResults.length > 0) {
+      this.acceptMentionAtIndex(this._mentionActiveIndex,);
+      return;
+    }
+    if (this._showCommandPalette && this._filteredCommands.length > 0) {
+      this.acceptPaletteAtIndex(this._paletteActiveIndex,);
+      return;
+    }
+    void this.sendMessage();
+  },
+
   handleComposerKeydown(event: KeyboardEvent,) {
     const target = event.target as { tagName?: string } | null;
     if (!target || target.tagName !== "TEXTAREA") { return; }
     if (event.isComposing) { return; }
     if (this._showMentionAutocomplete) {
       if (this._mentionResults.length > 0) {
-        if (event.key === "Tab" || event.key === "Enter") {
+        if (event.key === "Tab") {
           event.preventDefault();
           this.acceptMentionAtIndex(this._mentionActiveIndex,);
         } else if (event.key === "ArrowDown") {
@@ -165,10 +177,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
         return;
       }
       if (this._filteredCommands.length === 0) { return; }
-      if (event.key === "Enter") {
-        event.preventDefault();
-        this.acceptPaletteAtIndex(this._paletteActiveIndex,);
-      } else if (event.key === "Tab") {
+      if (event.key === "Tab") {
         event.preventDefault();
         if (event.shiftKey) { this.movePaletteSelection(-1,); }
         else { this.acceptPaletteAtIndex(this._paletteActiveIndex,); }
