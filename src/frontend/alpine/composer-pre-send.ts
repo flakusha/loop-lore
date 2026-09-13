@@ -6,18 +6,25 @@
  * surface, and pure helpers from `composer-pre-send/`. The submodules keep
  * each concern under the AGENTS.md <200L ceiling:
  *
- *   - `constants.ts`        - TTL + storage key
+ *   - `constants.ts`        - TTL + storage keys (drafts + stream pref)
  *   - `send-gate.ts`        - types + `computeSendBlocked` + reason text
  *   - `draft-codec.ts`      - `StoredDraft` + `decodeStoredDraft`
  *   - `validate.ts`         - `validatePreSend`
+ *   - `preview.ts`          - preview sanitize + stream-pref storage helpers
  *   - `composer-pre-send.ts` (this file) - factory + reactive state shape
  *
  * Ticket: TASK-chat-feature-entry-field-pre-send.
  */
 
 import { stripLeadingMention, } from "../../group-chat/mention-parser";
-import { DRAFT_STORAGE_KEY, DRAFT_TTL_MS, } from "./composer-pre-send/constants";
+import { DRAFT_STORAGE_KEY, DRAFT_TTL_MS, STREAM_PREF_KEY, } from "./composer-pre-send/constants";
 import { decodeStoredDraft, type StoredDraft, } from "./composer-pre-send/draft-codec";
+import {
+  isPreviewToggleEvent,
+  readStreamPreference,
+  renderPreviewHtml,
+  writeStreamPreference,
+} from "./composer-pre-send/preview";
 import {
   type ComposerPreSendDeps,
   type ComposerPreSendState,
@@ -30,7 +37,7 @@ import {
 import { validatePreSend, } from "./composer-pre-send/validate";
 import { safeJsonParse, safeJsonStringify, } from "./json";
 
-export { DRAFT_STORAGE_KEY, DRAFT_TTL_MS, };
+export { DRAFT_STORAGE_KEY, DRAFT_TTL_MS, STREAM_PREF_KEY, };
 export type {
   ComposerPreSendDeps,
   ComposerPreSendState,
@@ -59,6 +66,8 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
     _draftTtlMs: DRAFT_TTL_MS,
     _sendBlockedReason: null,
     _sendBlockedHint: "",
+    _showComposerPreview: false,
+    _streamResponses: readStreamPreference(storage, null,),
     restoreDraft(chatId: string,): string | null {
       if (!storage || !chatId) { return null; }
       const raw = storage.getItem(DRAFT_STORAGE_KEY,);
@@ -108,6 +117,34 @@ export function createComposerPreSend(deps: ComposerPreSendDeps = {},): Composer
     },
     validateDraft(text, participants, pendingAssetIds,) {
       return validatePreSend(text, participants, pendingAssetIds,);
+    },
+    toggleComposerPreview(): void {
+      const self = this as ComposerPreSendState;
+      self._showComposerPreview = !self._showComposerPreview;
+    },
+    composerPreviewHtml(): string {
+      const refs = (this as ComposerPreSendState & { $refs?: Record<string, unknown> }).$refs;
+      const input = refs?.["messageInput"] as { value?: unknown } | undefined;
+      const raw = typeof input?.value === "string" ? input.value : "";
+      return renderPreviewHtml(raw,);
+    },
+    handlePreviewKeydown(event: KeyboardEvent,): void {
+      if (!isPreviewToggleEvent(event,)) { return; }
+      event.preventDefault();
+      (this as ComposerPreSendState).toggleComposerPreview();
+    },
+    getStreamPreference(chatId: string,): boolean {
+      return readStreamPreference(storage, chatId,);
+    },
+    setStreamPreference(chatId: string, value: boolean,): void {
+      (this as ComposerPreSendState)._streamResponses = value;
+      writeStreamPreference(storage, chatId, value,);
+    },
+    toggleStreamResponses(): void {
+      const self = this as ComposerPreSendState & { activeChat?: string | null };
+      const next = !self._streamResponses;
+      self._streamResponses = next;
+      writeStreamPreference(storage, self.activeChat ?? null, next,);
     },
   };
 }

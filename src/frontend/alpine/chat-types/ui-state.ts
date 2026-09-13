@@ -29,7 +29,10 @@ export interface ChatCoreUiState {
   _activeCommand: string;
   _commandList: { name: string; descriptionKey: string; description: string }[];
   _filteredCommands: { name: string; descriptionKey: string; description: string }[];
+  _paletteActiveIndex: number;
   _loadCommandList(): Promise<void>;
+  acceptPaletteAtIndex(index: number,): void;
+  movePaletteSelection(delta: 1 | -1,): void;
   openContextMenu(event: MouseEvent, msgId: string,): void;
   closeContextMenu(): void;
   toggleReaction(msgId: string, emoji: string,): Promise<void>;

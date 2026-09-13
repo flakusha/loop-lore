@@ -356,3 +356,114 @@ describe("isSendBlocked side-effects", () => {
     expect(host._sendBlockedHint,).toBe("",);
   });
 });
+
+type PreviewGlobals = { __DOMPurify?: { sanitize(html: string,): string } };
+
+function setPreviewSanitizer(): void {
+  (globalThis as unknown as PreviewGlobals).__DOMPurify = {
+    sanitize(html: string,): string {
+      return html.replace(/<script[\s\S]*?<\/script>/gi, "",);
+    },
+  };
+}
+
+function clearPreviewSanitizer(): void {
+  delete (globalThis as unknown as PreviewGlobals).__DOMPurify;
+}
+
+/** Attach a fake `$refs.messageInput` to a factory-built composer. */
+function withMessageInput(
+  composer: ReturnType<typeof createComposerPreSend>,
+  value: string,
+): ReturnType<typeof createComposerPreSend> {
+  const host = composer as ReturnType<typeof createComposerPreSend> & {
+    $refs: Record<string, unknown>;
+  };
+  host.$refs = { messageInput: { value, }, };
+  return composer;
+}
+
+describe("composer preview", () => {
+  test("preview is off by default", () => {
+    expect(createComposerPreSend({ storage: makeStorage(), },)._showComposerPreview,).toBe(false,);
+  });
+  test("toggleComposerPreview flips the flag", () => {
+    const composer = createComposerPreSend({ storage: makeStorage(), },);
+    composer.toggleComposerPreview();
+    expect(composer._showComposerPreview,).toBe(true,);
+    composer.toggleComposerPreview();
+    expect(composer._showComposerPreview,).toBe(false,);
+  });
+  test("composerPreviewHtml sanitizes the message input value", () => {
+    setPreviewSanitizer();
+    try {
+      const composer = withMessageInput(
+        createComposerPreSend({ storage: makeStorage(), },),
+        "hello <script>alert(1)</script>",
+      );
+      const html = composer.composerPreviewHtml();
+      expect(html,).toContain("hello",);
+      expect(html,).not.toContain("<script",);
+    } finally {
+      clearPreviewSanitizer();
+    }
+  });
+  test("composerPreviewHtml falls back to raw text without a sanitizer", () => {
+    clearPreviewSanitizer();
+    const composer = withMessageInput(
+      createComposerPreSend({ storage: makeStorage(), },),
+      "plain <b>text</b>",
+    );
+    expect(composer.composerPreviewHtml(),).toBe("plain <b>text</b>",);
+  });
+  test("handlePreviewKeydown toggles only on Ctrl+Shift+P", () => {
+    const composer = createComposerPreSend({ storage: makeStorage(), },);
+    const chord = (key: string, ctrlKey: boolean, shiftKey: boolean,) => ({
+      ctrlKey,
+      shiftKey,
+      key,
+      preventDefault() {},
+    });
+    composer.handlePreviewKeydown(chord("P", true, true,) as unknown as KeyboardEvent,);
+    expect(composer._showComposerPreview,).toBe(true,);
+    composer.handlePreviewKeydown(chord("p", true, true,) as unknown as KeyboardEvent,);
+    expect(composer._showComposerPreview,).toBe(false,);
+    const misses = [["P", false, true,], ["P", true, false,], ["x", true, true,],] as const;
+    for (const [key, ctrl, shift,] of misses) {
+      composer.handlePreviewKeydown(chord(key, ctrl, shift,) as unknown as KeyboardEvent,);
+      expect(composer._showComposerPreview,).toBe(false,);
+    }
+  });
+});
+
+describe("stream preference", () => {
+  test("streams by default", () => {
+    expect(createComposerPreSend({ storage: makeStorage(), },)._streamResponses,).toBe(true,);
+  });
+  test("persists per chat under loop-lore:stream-pref:<chatId>", () => {
+    const storage = makeStorage();
+    const composer = createComposerPreSend({ storage, },);
+    expect(composer.getStreamPreference("chat-A",),).toBe(true,);
+    composer.setStreamPreference("chat-A", false,);
+    expect(composer.getStreamPreference("chat-A",),).toBe(false,);
+    expect(composer.getStreamPreference("chat-B",),).toBe(true,);
+    expect(storage.getItem("loop-lore:stream-pref:chat-A",),).toBe("false",);
+  });
+  test("toggleStreamResponses flips and persists globally without an active chat", () => {
+    const storage = makeStorage();
+    const composer = createComposerPreSend({ storage, },);
+    composer.toggleStreamResponses();
+    expect(composer._streamResponses,).toBe(false,);
+    expect(storage.getItem("loop-lore:stream-pref",),).toBe("false",);
+    expect(composer.getStreamPreference("chat-A",),).toBe(false,);
+  });
+  test("toggleStreamResponses persists per chat when one is active", () => {
+    const storage = makeStorage();
+    const composer = createComposerPreSend({ storage, },);
+    (composer as unknown as { activeChat: string }).activeChat = "chat-A";
+    composer.toggleStreamResponses();
+    expect(storage.getItem("loop-lore:stream-pref:chat-A",),).toBe("false",);
+    expect(composer.getStreamPreference("chat-A",),).toBe(false,);
+    expect(composer.getStreamPreference("chat-B",),).toBe(true,);
+  });
+});
