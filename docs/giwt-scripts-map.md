@@ -4,9 +4,9 @@ Pilot migration base (try 1). Source of truth for which `package.json` scripts s
 
 ## Install
 
-- Wiring: REVERTED try 3 (was: `"giwt": "git+ssh://git@github.com/flakusha/giwt.git#master"` + `plan:sync*` → `giwt sync`). Reason: `bun install` exits 1 without a GitHub SSH key, `.github/` has no SSH setup (CI would break), and HTTPS also needs auth (private repo). Re-land when one holds: repo public, CI SSH keys/token, or giwt published to a registry.
+- Dependency: `"giwt": "git+ssh://git@github.com/flakusha/giwt.git#master"` (bun git dep, unversioned `master` while giwt is in cleanup/dev). Owner installs manually with SSH keys (agent shells have no ssh by design); requires keys in every install env incl. CI, else `bun install` exits 1.
+- `plan:sync` / `plan:sync:fix` → `giwt sync [--fix]` (parity proven try 1 from source: both green).
 - Binary link (user-owned, outside repo — not committed): `ln -s /home/flak/git-ai/giwt/bin/giwt ~/.local/bin/giwt`.
-- Pilot proof (try 1, from source): `bun /home/flak/git-ai/giwt/src/cli.ts sync` ≡ `scripts/sync-ticket-index.ts` (both green on this tree). Re-apply `plan:sync*` → `giwt sync [--fix]` on re-land.
 
 ## KEEP in `scripts/` (real code maintenance)
 
@@ -53,3 +53,9 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 - Measured: `bun install` with the SSH git dep exits 1 keyless; `git ls-remote` over HTTPS also needs auth. Landing the dep would break fresh installs and CI. So `package.json` is restored to dev state (verified: `bun install` exits 0, `--stat` shows only the revert).
 - What lands: this mapping doc only — keep-vs-wrap table, pilot parity proof, rejected/blocked wraps with evidence, and re-land conditions (public repo, CI keys/token, or registry publish; then re-apply `plan:sync*` → `giwt sync` and pursue the worktree shim + upstream extensions).
 - Cap reached (3/3 tries). No push; further migration needs owner decisions above.
+
+## Try-4 re-land (owner-authorized, manual install)
+
+- Owner confirmed manual `bun install` of the giwt git dep works with their SSH keys (agent-shell ssh lock is expected). Re-applied try-1 wiring: git dep + `plan:sync*` → `giwt sync [--fix]`.
+- In-harness install verification still impossible (no ssh); owner smoke-tests with `bun run plan:sync` post-merge. CI caveat stands: needs keys/token or the dep breaks keyless installs.
+- Remaining: worktree shim + deletions + upstream extensions (backlog/docs/map/report parity) — needs giwt-side work first.
