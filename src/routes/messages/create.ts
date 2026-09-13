@@ -16,15 +16,14 @@ import type { HttpStatusCode, } from "../http-utils";
 import { dispatchCommand, } from "./command";
 import { createEntityConfirmRoutes, } from "./create-entity-confirm";
 import { attachAttachmentsOrForbidden, enforceInjectionGate, } from "./guards";
-import { handleSceneTransitions, } from "./handle-scene-transitions";
 import { serviceErrorToResponse, } from "./helpers";
 import { persistInitiative, } from "./initiative";
 import { flagNsfwUserMessage, } from "./nsfw-user-flag";
 import { ParentMessageNotFoundError, ParentMessageNotInChatError, } from "./parent-message-errors";
 import { persistMentions, prepareContentStorage, } from "./post";
+import { runPostInsertChatEffects, } from "./post-insert";
 import { maybeAutoReply, } from "./reply";
 import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
-import { autoRenameChat, } from "./transitions";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -193,14 +192,13 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         // ── Persist @mentions ─────────────────────────────────────
         await persistMentions(database, chatId, actorId, id, filteredContent,);
 
-        // ── Auto-rename chat + detect scene transitions ─────────────────
+        // ── Post-insert chat effects: rename, advisory AUX title, scene transitions ──
         const chatRecord = await database
           .selectFrom("chats",)
           .select(["name", "mode", "current_location_id", "world_id",],)
           .where("id", "=", chatId,)
           .executeTakeFirst();
-        await autoRenameChat(database, chatId, effectiveContent, chatRecord,);
-        await handleSceneTransitions(database, config, chatId, actorId, effectiveContent, chatRecord, id,);
+        await runPostInsertChatEffects(database, config, chatId, actorId, id, effectiveContent, chatRecord,);
 
         // ── Context window stats ─────────────────────────────────────
         const tokenRow = await database
