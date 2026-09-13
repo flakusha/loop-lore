@@ -781,6 +781,10 @@
   ],
   "src/assets/service/tag-propositions.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-asset-platform-capabilities.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md"
     }
@@ -798,6 +802,14 @@
     }
   ],
   "src/assistant": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-platform-research.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-odysseus-manage-tool-parity-evaluation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-show-assets-scenes-worlds-items-to-character-via-chat-contex.md"
@@ -1776,11 +1788,19 @@
   "src/assistant/prompt-budget.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-asset-platform-capabilities.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-context-injection-correctness.md"
     },
     {
       "kind": "epic",
       "source": ".plan/epics/epic-context-injection-templates.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-asset-context-inclusion-budget-policy.md"
     }
   ],
   "src/assistant/prompt/assembly.ts": [
@@ -2204,6 +2224,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-fts5-cross-session-recall-and-summarization-for-rag-unified-.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-provision-wiring.md"
     },
     {
@@ -2395,6 +2419,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-entity-access-tests.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-explicit-approval-flow-for-assistant-mutations.md"
     }
   ],
   "src/assistant/quota/engine.test.ts": [
@@ -7877,6 +7905,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-provider-wiring-settings-convention-for-byok-and-resource-pr.md"
     },
     {
       "kind": "ticket",
@@ -18927,6 +18959,16 @@
       "source": ".plan/tickets/TASK-format-version-migration.md"
     }
   ],
+  "src/plugins": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-platform-research.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-odysseus-manage-tool-parity-evaluation.md"
+    }
+  ],
   "src/plugins/api.ts": [
     {
       "kind": "epic",
@@ -23027,6 +23069,12 @@
       "source": "docs/spec/testing.md"
     }
   ],
+  "src/routes/rpg": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-platform-research.md"
+    }
+  ],
   "src/routes/rpg.ts": [
     {
       "kind": "epic",
@@ -23724,6 +23772,10 @@
     }
   ],
   "src/routes/worlds": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-platform-research.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-location-connections-validation-accepts-junk-and-persists-it.md"
@@ -26240,6 +26292,14 @@
     }
   ],
   "src/services": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-platform-research.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-odysseus-manage-tool-parity-evaluation.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-recon-test-coverage.md"
