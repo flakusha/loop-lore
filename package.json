@@ -122,15 +122,14 @@
     "clean-css": "^5.3.3",
     "dompurify": "^3.4.15",
     "elysia": "^1.4.30",
-    "giwt": "github:flakusha/giwt",
+    "giwt": "github:flakusha/giwt#fc2abc41a1d743e9c602fc71a0138d55f594f7f0",
     "htmx-ext-alpine-morph": "^2.0.2",
     "htmx-ext-sse": "^2.2.4",
     "js-yaml": "^5.4.1",
     "jszip": "^3.10.1",
     "kysely": "^0.29.5",
     "marked": "^18.0.12",
-    "obscenity": "^0.4.6",
-    "giwt": "git+ssh://git@github.com/flakusha/giwt.git#master"
+    "obscenity": "^0.4.6"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.12",
