@@ -45,7 +45,7 @@ Note: the table above describes the server's API. On our side, chat completions 
 | `min_p`, `typical_p`, `xtc_probability` | Advanced sampling | Typed end-to-end (`minP/typicalP/xtcProbability`, plus `topK/repeatPenalty`) |
 | `cache_prompt` | Reuse cached prompt processing | Typed end-to-end: route `cachePrompt` → body `cache_prompt` |
 
-How to send: camelCase fields on `POST /api/generation/generate` (`src/generation/generate-route/types.ts`) are mapped to snake_case body keys by the openai-compatible provider (`src/generation/providers/openai-compatible/http.ts`). Any other llama-server field passes through verbatim via the `GenerateRequest.params` index signature.
+How to send: camelCase fields on `POST /api/generation/generate` (`src/generation/generate-route/types.ts`) are mapped to snake_case body keys by the openai-compatible provider (`src/generation/providers/openai-compatible/http.ts`). Via HTTP only these typed fields are forwarded (the route layer drops unknown keys); other llama-server fields can be added the same way — the provider `params` index signature forwards unmapped keys verbatim for direct `GenerateRequest` callers.
 
 ### Task-Based Generation Presets
 
@@ -61,7 +61,7 @@ How to send: camelCase fields on `POST /api/generation/generate` (`src/generatio
 
 Named presets are planned, not implemented — no preset selector exists in code (`generationPreset` appears nowhere in `src/`). The table values above are reference targets. Actual sampling resolution (`src/generation/assistant-tuning.ts`, wired in `generate-route/handler.ts`): explicit request value → per-chat `gm_config.assistantTuning` (temperature/maxTokens only) → provider default.
 
-Prompt assembly is also planned, not implemented: no ordered `PromptSection[]` type exists in code. Actual assembly lives in `src/generation/generate-route/build-prompt.ts` (prompt built from request input + database state).
+Prompt assembly is ordered sections, but not the `PromptSection[]` record shape named here (identifier/role/content/isSystem/isMarker/enabled) — that shape exists nowhere in `src/`. Actual mechanism: `SectionBuilder[]` objects (`name`/`enabled()`/`build()`) with `PRIORITY` trim ranks in `src/assistant/prompt/`, plus a `PromptSectionReport[]` (name/chars/tokens/dropped) breakdown, wired into generation via `PromptAssembler` in `src/generation/generate-route/build-prompt.ts`.
 
 ### Context Compression (MVP — implemented)
 
