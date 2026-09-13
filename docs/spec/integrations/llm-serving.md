@@ -32,16 +32,18 @@ Standard OpenAI request/response shape. Streaming via SSE with `data: {...}` chu
 
 ### Extended llama.cpp Fields
 
-| Field                                   | Purpose                                       |
-| --------------------------------------- | --------------------------------------------- |
-| `reasoning_content`                     | Thinking tokens (from streaming deltas)       |
-| `reasoning_budget`                      | Max thinking tokens before visible output     |
-| `grammar`                               | GBNF grammar for constrained generation       |
-| `response_format`                       | `{ type: "json_schema", json_schema: {...} }` |
-| `dry_multiplier/base/allowed_length`    | DRY repetition penalty                        |
-| `dynatemp_range/exponent`               | Dynamic temperature                           |
-| `min_p`, `typical_p`, `xtc_probability` | Advanced sampling                             |
-| `cache_prompt`                          | Reuse cached prompt processing                |
+| Server field | Purpose | Our support |
+| --------------------------------------- | --------------------------------------------- | ----------------------------------------------------- |
+| `reasoning_content` (response) | Thinking tokens (from streaming deltas) | Parsed in `providers/openai-compatible/core.ts` → `thinking` |
+| `reasoning_budget` | Max thinking tokens before visible output | Typed end-to-end: route `reasoningBudget` → body `reasoning_budget` |
+| `grammar` | GBNF grammar for constrained generation | Typed end-to-end: route `grammar` → body `grammar` |
+| `response_format` | `{ type: "json_schema", json_schema: {...} }` | Typed end-to-end: route `responseFormat` → body `response_format` |
+| `dry_multiplier/base/allowed_length` | DRY repetition penalty | Typed end-to-end (`dryMultiplier/dryBase/dryAllowedLength`) |
+| `dynatemp_range/exponent` | Dynamic temperature | Typed end-to-end (`dynatempRange/dynatempExponent`) |
+| `min_p`, `typical_p`, `xtc_probability` | Advanced sampling | Typed end-to-end (`minP/typicalP/xtcProbability`, plus `topK/repeatPenalty`) |
+| `cache_prompt` | Reuse cached prompt processing | Typed end-to-end: route `cachePrompt` → body `cache_prompt` |
+
+How to send: camelCase fields on `POST /api/generation/generate` (`src/generation/generate-route/types.ts`) are mapped to snake_case body keys by the openai-compatible provider (`src/generation/providers/openai-compatible/http.ts`). Any other llama-server field passes through verbatim via the `GenerateRequest.params` index signature.
 
 ### Task-Based Generation Presets
 
@@ -55,9 +57,9 @@ Standard OpenAI request/response shape. Streaming via SSE with `data: {...}` chu
 | `roleplay`  | 1.0         | 0.95  | 40    | Character dialogue        |
 | `concise`   | 0.5         | 0.85  | 20    | Short answers             |
 
-Resolution: chat-level `chats.settings.generationPreset` → actor-level → global default (`balanced`).
+Named presets are planned, not implemented — no preset selector exists in code (`generationPreset` appears nowhere in `src/`). The table values above are reference targets. Actual sampling resolution (`src/generation/assistant-tuning.ts`, wired in `generate-route/handler.ts`): explicit request value → per-chat `gm_config.assistantTuning` (temperature/maxTokens only) → provider default.
 
-Prompt template structure (inspired by SillyTavern OpenAI presets): ordered `PromptSection[]` with `identifier`, `role`, `content`, `isSystem`, `isMarker`, `enabled`. Assembly order: system instruction → char description → scenario → chat history → post-history → user message.
+Prompt assembly is also planned, not implemented: no ordered `PromptSection[]` type exists in code. Actual assembly lives in `src/generation/generate-route/build-prompt.ts` (prompt built from request input + database state).
 
 ### Context Compression (MVP — implemented)
 
@@ -80,7 +82,7 @@ System messages always preserved. Floor: never below 1 user+assistant turn.
 | Code     | Action                              |
 | -------- | ----------------------------------- |
 | 400      | Fail, no retry                      |
-| 404      | Retry after model load              |
+| 404      | Fail, no retry (default branch — no model-load retry in code) |
 | 429      | Retry with exponential backoff      |
 | 5xx      | Retry up to `retries`               |
 | Timeout  | Abort, surface error                |
