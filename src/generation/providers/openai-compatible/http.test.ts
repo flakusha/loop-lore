@@ -148,6 +148,14 @@ describe("buildBody", () => {
     expect("vendor_flag" in body,).toBe(false,);
     expect("min_p" in body,).toBe(false,);
   });
+
+  test("ignores __proto__ params instead of corrupting the body prototype", () => {
+    const params = JSON.parse('{"__proto__": {"polluted": true}, "vendor_flag": "x"}',);
+    const body = buildBody(state, baseReq({ params, },), false,);
+    expect(body.vendor_flag,).toBe("x",);
+    expect("polluted" in body,).toBe(false,);
+    expect(Object.getPrototypeOf(body,),).toBe(Object.prototype,);
+  });
 });
 
 // ── mapFinishReason ───────────────────────────────────────
