@@ -3,6 +3,8 @@
 
 // ── Chat page (chat.html) — reactive state object builder ────
 import { chatActions, } from "../chat-actions";
+import { gifPicker, } from "../chat-actions/gif-picker";
+import { promptAnalyzeActions, } from "../chat-actions/prompt-analyze";
 import { promptImproveActions, } from "../chat-actions/prompt-improve";
 import { chatActivity, } from "../chat-activity";
 import { chatBackgrounds, } from "../chat-backgrounds";
@@ -219,6 +221,8 @@ export function chatState() {
     ...attachValidateDraft(createComposerPreSend(),),
     ...chatActions,
     ...promptImproveActions,
+    ...promptAnalyzeActions,
+    ...gifPicker,
     ...chatMusicEmbed,
     ...chatPins,
     ...messageArchive,

@@ -32,6 +32,7 @@ export const HttpStatus = {
   UnprocessableEntity: 422,
   InternalServerError: 500,
   NotImplemented: 501,
+  BadGateway: 502,
   ServiceUnavailable: 503,
 } as const;
 

@@ -3,6 +3,7 @@
 import { type Kysely, } from "kysely";
 import { generateResponse, isAssistantEnabled, } from "../../assistant/service";
 import type { AsyncStore, } from "../../async/store";
+import { autoTranslateText, buildTranslateDeps, } from "../../chat/auto-translate";
 import type { Config, } from "../../config/schema";
 
 import {
@@ -114,7 +115,16 @@ export async function maybeAutoReply(
   if (isAssistantEnabled(config,)) {
     const assistantResponse = generateResponse({ userInput: userMessage, },);
     if (assistantResponse) {
-      const assistantContent = filterProfanity(assistantResponse.content,);
+      let assistantContent = filterProfanity(assistantResponse.content,);
+      // Per-chat auto-translation (outbound): opt-in via story_state;
+      // degrades to the original when unset or translation fails.
+      const outbound = await autoTranslateText({
+        text: assistantContent,
+        storyState: pausedRow?.story_state ?? null,
+        chatId,
+        deps: await buildTranslateDeps(database, config, actorId,),
+      },);
+      assistantContent = outbound.text;
 
       let replyStoredContent = assistantContent;
       const replyEncoding = "identity";
