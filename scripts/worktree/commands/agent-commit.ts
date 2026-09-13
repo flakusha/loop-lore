@@ -77,7 +77,7 @@ export async function agentCommit(
 
   // Verify credentials
   if (!credentials.found) {
-    log("error", "AGENT_GPG_KEY_ID/NAME/EMAIL not set — check .credentials.env",);
+    log("error", "AGENT_GPG_KEY_ID/NAME/EMAIL not set - check .credentials.env",);
     process.exit(1,);
   }
 
@@ -143,12 +143,12 @@ export async function agentCommit(
   const output = verify.stdout.toString();
 
   if (output.includes("Good signature",)) {
-    console.log(`\n✓ Commit created:`,);
+    log("success", "Commit created:",);
     // Extract short hash from the first line
     const firstLine = output.split("\n",)[0];
     console.log(`  ${firstLine}`,);
   } else {
-    console.log(`\n⚠ Commit created but signature verification unclear`,);
+    log("warn", "Commit created but signature verification unclear",);
     console.log(output,);
   }
   // Outcome dispatch: the generic auto-append in index.ts recorded the

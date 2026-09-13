@@ -50,7 +50,7 @@ const coverageDir = process.argv.find((a,) => a.startsWith("--coverage-dir=",))?
   ".tmp/coverage";
 const lcovPath = `${coverageDir.replace(/\/+$/, "",)}/lcov.info`;
 if (!fs.existsSync(lcovPath,)) {
-  console.error(`lcov not found at ${lcovPath} — run 'bun test --coverage' first`,);
+  console.error(`lcov not found at ${lcovPath} - run 'bun test --coverage' first`,);
   process.exit(1,);
 }
 

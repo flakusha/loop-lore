@@ -158,12 +158,12 @@ if (import.meta.main) {
 
   if (check) {
     if (!existsSync(outPath,)) {
-      process.stderr.write("deno.json missing — run gen-deno-config\n",);
+      process.stderr.write("deno.json missing - run gen-deno-config\n",);
       process.exit(1,);
     }
     const existing = readFileSync(outPath, "utf8",);
     if (existing !== out) {
-      process.stderr.write("deno.json is stale — run gen-deno-config\n",);
+      process.stderr.write("deno.json is stale - run gen-deno-config\n",);
       process.exit(1,);
     }
     process.stdout.write("deno.json up to date\n",);

@@ -78,7 +78,7 @@ function parseMigration(filePath: string,): {
       const tblRef = before.substring(alterMatch,).match(/\.alterTable\(\s*"(\w+)"\s*,?\s*\)/,);
       if (tblRef) {
         droppedTables.add(tblRef[1],); // mark the _ck/_old table as dropped
-        console.log(`  [rename] ${tblRef[1]} → ${toTable}`,);
+        console.log(`  [rename] ${tblRef[1]} -> ${toTable}`,);
       }
     }
   }
@@ -191,7 +191,7 @@ function generateManifest(
   // Then apply alters (add columns to existing tables)
   for (const [name, cols,] of alterColumns) {
     if (!finalTables.has(name,)) {
-      console.warn(`[warn] alterTable references "${name}" but no createTable found — skipping`,);
+      console.warn(`[warn] alterTable references "${name}" but no createTable found - skipping`,);
       continue;
     }
     Object.assign(finalTables.get(name,)!, cols,);
@@ -487,7 +487,7 @@ function main() {
         allTables.set(name, def,);
         console.log(`  [create] ${name} (${Object.keys(def.columns,).length} cols) from ${def.createdBy}`,);
       } else {
-        console.warn(`  [warn] duplicate createTable "${name}" in ${def.createdBy} — using first occurrence`,);
+        console.warn(`  [warn] duplicate createTable "${name}" in ${def.createdBy} - using first occurrence`,);
       }
     }
 

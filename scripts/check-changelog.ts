@@ -107,7 +107,7 @@ function main(): void {
   try {
     content = readFileSync(CHANGELOG_PATH, "utf-8",);
   } catch {
-    console.error("changelog - gate: FAIL — CHANGELOG.md not found",);
+    console.error("changelog - gate: FAIL - CHANGELOG.md not found",);
     process.exit(1,);
   }
 
@@ -127,7 +127,7 @@ function main(): void {
     const hasSection = sections.some((s,) => s.version === latestTag);
     if (!hasSection) {
       errors.push(
-        `latest tag ${latestTag} has no CHANGELOG section — update CHANGELOG.md before tagging`,
+        `latest tag ${latestTag} has no CHANGELOG section - update CHANGELOG.md before tagging`,
       );
     }
   }
@@ -139,7 +139,7 @@ function main(): void {
   }
 
   const versionCount = sections.filter((s,) => s.version !== null).length;
-  console.log(`changelog - gate: OK — [Unreleased] present, ${versionCount} version section(s)`,);
+  console.log(`changelog - gate: OK - [Unreleased] present, ${versionCount} version section(s)`,);
 }
 
 main();

@@ -188,25 +188,25 @@ if (import.meta.main) {
 
   const passphrase = passphraseSource();
   if (passphrase) {
-    console.log("Cache is cold — warming via loopback passphrase source...",);
+    console.log("Cache is cold - warming via loopback passphrase source...",);
     const warmed = warmCacheViaPassphrase(keyId, passphrase,);
     if (warmed.ok && probeCachedPassphrase(keyId,).warm) {
       console.log("Passphrase cached (verified).",);
       process.exit(0,);
     }
-    console.error("Failed — the passphrase source did not warm the cache:",);
+    console.error("Failed - the passphrase source did not warm the cache:",);
     if (warmed.stderrOut.trim()) { console.error(`gpg stderr: ${warmed.stderrOut.trim()}`,); }
     process.exit(1,);
   }
 
   if (process.stdin.isTTY) {
-    console.log("Cache is cold — enter the key passphrase at the pinentry prompt...",);
+    console.log("Cache is cold - enter the key passphrase at the pinentry prompt...",);
     const warmed = warmCacheViaPinentry(keyId,);
     if (warmed.ok && probeCachedPassphrase(keyId,).warm) {
       console.log("Passphrase cached (verified).",);
       process.exit(0,);
     }
-    console.error("Failed — gpg-agent did not accept a passphrase for this key.",);
+    console.error("Failed - gpg-agent did not accept a passphrase for this key.",);
     if (warmed.stderrOut.trim()) { console.error(`gpg stderr: ${warmed.stderrOut.trim()}`,); }
     process.exit(1,);
   }
