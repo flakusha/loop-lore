@@ -75,11 +75,6 @@
     // gpg-unlock.mjs is invoked by agent-commit.ts and documented in
     // .agents/skills/worktree-merge/SKILL.md.
     "scripts/gpg-unlock.mjs",
-    // Ticket sync script: spawned at runtime by scripts/worktree/commands/sync.ts
-    // via Bun.spawnSync(bun run <repoRoot>/scripts/sync-ticket-index.ts) —
-    // path-resolved, not import-reachable. Kept deliberately (giwt wraps
-    // plan:sync; worktree CLI still delegates here). See docs/giwt-scripts-map.md.
-    "scripts/sync-ticket-index.ts",
 
     // Native benchmarks
     // Standalone bench entrypoints (run directly, never imported) --

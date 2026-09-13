@@ -2,37 +2,26 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Sync command — sync ticket index with files + git issues
+ * Sync command — thin shim over `giwt sync` (ticket index with files + git issues).
+ *
+ * The in-repo implementation (scripts/sync-ticket-index.ts) was removed once
+ * `plan:sync` moved to giwt. Runs in the caller's checkout so giwt resolves
+ * worktree-aware paths; the old shim forced the main repo root. Flags pass
+ * through verbatim — giwt owns validation.
  */
 
-import { existsSync, } from "fs";
-import { resolve, } from "path";
 import { type WorktreeConfig, } from "../utils/config";
 import { log, } from "../utils/output";
 
 export async function sync(
   args: string[],
-  config: WorktreeConfig,
+  _config: WorktreeConfig,
 ): Promise<void> {
-  const syncScript = resolve(config.repoRoot, "scripts", "sync-ticket-index.ts",);
-
-  if (!existsSync(syncScript,)) {
-    log("error", "sync-ticket-index.ts not found",);
-    process.exit(1,);
-  }
-
-  const hasFix = args.includes("--fix",);
-  const hasVerbose = args.includes("--verbose",);
-
-  const cmdArgs = [syncScript,];
-  if (hasFix) { cmdArgs.push("--fix",); }
-  if (hasVerbose) { cmdArgs.push("--verbose",); }
-
   log("info", "Syncing ticket index...",);
 
   const result = Bun.spawnSync(
-    ["bun", "run", ...cmdArgs,],
-    { stdout: "inherit", stderr: "inherit", cwd: config.repoRoot, },
+    ["giwt", "sync", ...args,],
+    { stdout: "inherit", stderr: "inherit", },
   );
 
   if (result.exitCode !== 0) {

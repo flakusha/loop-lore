@@ -229,7 +229,8 @@ git issue state <hash> --close --reason invalid \
 
 ### Race-Condition Workaround for the plan:sync:fix Phantom-Spawn Bug
 
-`scripts/sync-ticket-index.ts:252-271` auto-creates a git issue when it
+`giwt sync` (upstream `giwt/src/tickets/sync-index.ts`; formerly loop-lore's
+`scripts/sync-ticket-index.ts:252-271`, removed try-5) auto-creates a git issue when it
 encounters a phantom index entry (file missing). Closing the orphan causes
 `--fix` to spawn a NEW orphan with a different hash on the next run.
 
@@ -346,5 +347,5 @@ engram mem_session_summary --content "..."
   proper implementation of the per-ticket Status swap (would replace the
   manual `edit` step with a `bun run plan:resolve-tickets --apply` CLI).
 - `BUG-plan-sync-fix-mass-creates-orphan-git-issues-for-placeholder.md` —
-  the race-condition defect in `scripts/sync-ticket-index.ts:252-271` that
+  the race-condition defect in `giwt sync` (formerly `scripts/sync-ticket-index.ts:252-271`) that
   this skill works around.
