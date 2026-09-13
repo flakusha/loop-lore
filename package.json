@@ -87,8 +87,8 @@
     "license:check": "bun run scripts/check-licenses.ts",
     "license:check:strict": "LICENSE_CHECK=1 bun run scripts/check-licenses.ts --strict",
     "plan:docs": "bun run scripts/gen-plan-docs.ts",
-    "plan:sync": "bun run scripts/sync-ticket-index.ts",
-    "plan:sync:fix": "bun run scripts/sync-ticket-index.ts --fix",
+    "plan:sync": "giwt sync",
+    "plan:sync:fix": "giwt sync --fix",
     "plan:backlog:sync": "bun run scripts/sync-backlog-index.ts",
     "plan:backlog:sync:fix": "bun run scripts/sync-backlog-index.ts --fix",
     "plan:map": "bun run scripts/plan-code-map.ts",
@@ -128,7 +128,8 @@
     "jszip": "^3.10.1",
     "kysely": "^0.29.5",
     "marked": "^18.0.12",
-    "obscenity": "^0.4.6"
+    "obscenity": "^0.4.6",
+    "giwt": "git+ssh://git@github.com/flakusha/giwt.git#master"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.12",
