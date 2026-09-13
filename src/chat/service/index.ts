@@ -88,6 +88,12 @@ export { regenerateMessageVariant, } from "./write";
 // ── Message visibility ────────────────────────────────────────
 export { hardDeleteChat, updateMessageVisibility, } from "./visibility";
 
+export {
+  applyRewriteToMessage,
+  type RewriteApplyError,
+  type RewriteApplyOptions,
+} from "./rewrite-apply";
+
 // ── Message seen-state (VN mode / AI processing) ─────────────
 export {
   deleteMessageSeen,

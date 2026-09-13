@@ -3,7 +3,7 @@
 
 # TASK: User-saved Quick Replies for slash commands
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -13,6 +13,10 @@ One-tap buttons firing stored command strings (SillyTavern Quick Replies pattern
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Verified pre-existing implementation (no new code): `users`/`chats` `quick_replies` JSON column (migration 006), CRUD in `src/chat/service/crud/update.ts`, frontend `src/frontend/alpine/chat-quick-replies.ts` + 9 green tests. Ticket closed as already satisfied.
