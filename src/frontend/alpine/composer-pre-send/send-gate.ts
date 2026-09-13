@@ -121,6 +121,18 @@ export interface ComposerPreSendState {
     participants: { actorId: string; displayName: string }[],
     pendingAssetIds: string[],
   ): PreSendValidation;
+  /** Composer preview toggle (default off — no behavior change). */
+  _showComposerPreview: boolean;
+  /** Stream-responses preference (default on, persisted per chat). */
+  _streamResponses: boolean;
+  toggleComposerPreview(): void;
+  /** Sanitized preview HTML for the current `$refs.messageInput` value. */
+  composerPreviewHtml(): string;
+  /** Ctrl+Shift+P chord handler for the preview toggle. */
+  handlePreviewKeydown(event: KeyboardEvent,): void;
+  getStreamPreference(chatId: string,): boolean;
+  setStreamPreference(chatId: string, value: boolean,): void;
+  toggleStreamResponses(): void;
 }
 
 /** Inputs the factory needs from the surrounding Alpine context. */
