@@ -48,7 +48,6 @@ LLM — を健全な基盤の上に再構築します:
 ```bash
 # 前提条件: Bun (https://bun.sh)
 bun install
-cp .env.example .env
 bun run db:migrate
 
 # Web サーバーを起動
