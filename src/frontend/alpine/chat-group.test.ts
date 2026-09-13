@@ -333,7 +333,7 @@ describe("chatGroup.handleComposerEnter", () => {
     wire(ctx,);
     let sent = 0;
     Object.assign(ctx, {
-      sendMessage: () => {
+      sendMessage: async () => {
         sent += 1;
       },
     },);
@@ -350,5 +350,23 @@ describe("chatGroup.handleComposerEnter", () => {
     chatGroup.handleComposerKeydown!.call(ctx as never, event,);
     expect(prevented(),).toBe(false,);
     expect(ctx._showMentionAutocomplete,).toBe(true,);
+  });
+
+  test("a rejected send surfaces a failure toast instead of an unhandled rejection", async () => {
+    const ta = makeTextarea("hello",);
+    const ctx = buildCtx([], ta,);
+    wire(ctx,);
+    const toasts: unknown[] = [];
+    Object.assign(ctx, {
+      sendMessage: async (): Promise<void> => {
+        throw new Error("offline",);
+      },
+      $dispatch: (_event: string, detail: unknown,) => {
+        toasts.push(detail,);
+      },
+    },);
+    chatGroup.handleComposerEnter!.call(ctx as never,);
+    await new Promise((resolve,) => setTimeout(resolve, 0,));
+    expect(toasts,).toEqual([{ type: "error", message: "toasts.failedSend", },],);
   });
 });
