@@ -58,6 +58,7 @@ function wire(ctx: MentionCtx,): void {
     acceptMentionAtIndex: chatGroup.acceptMentionAtIndex,
     moveMentionSelection: chatGroup.moveMentionSelection,
     handleComposerKeydown: chatGroup.handleComposerKeydown,
+    handleComposerEnter: chatGroup.handleComposerEnter,
     selectCommand: commandPalette.selectCommand,
     acceptPaletteAtIndex: commandPalette.acceptPaletteAtIndex,
     movePaletteSelection: commandPalette.movePaletteSelection,
@@ -286,5 +287,68 @@ describe("toggleGroupPause", () => {
     await chatGroup.toggleGroupPause!.call(offline as never,);
     expect(offline.toasts.length,).toBe(1,);
     pauseHandler = null;
+  });
+});
+
+describe("chatGroup.handleComposerEnter", () => {
+  test("Enter accepts the open mention instead of sending", () => {
+    const ta = makeTextarea("hello @al",);
+    const ctx = buildCtx(participants, ta,);
+    wire(ctx,);
+    let sent = 0;
+    Object.assign(ctx, {
+      sendMessage: () => {
+        sent += 1;
+      },
+    },);
+    chatGroup.handleMentionInput!.call(ctx as never, { target: ta, } as unknown as Event,);
+    expect(ctx._showMentionAutocomplete,).toBe(true,);
+    chatGroup.handleComposerEnter!.call(ctx as never,);
+    expect(ta.value,).toBe("hello @alice ",);
+    expect(ctx._showMentionAutocomplete,).toBe(false,);
+    expect(sent,).toBe(0,);
+  });
+
+  test("Enter accepts the open palette entry instead of sending", () => {
+    const ta = makeTextarea("/ro",);
+    const ctx = buildCtx([], ta,);
+    wire(ctx,);
+    let sent = 0;
+    Object.assign(ctx, {
+      sendMessage: () => {
+        sent += 1;
+      },
+    },);
+    ctx._showCommandPalette = true;
+    ctx._filteredCommands = [{ name: "roll", descriptionKey: "k1", description: "d1", },];
+    chatGroup.handleComposerEnter!.call(ctx as never,);
+    expect(ta.value,).toBe("/roll ",);
+    expect(ctx._showCommandPalette,).toBe(false,);
+    expect(sent,).toBe(0,);
+  });
+
+  test("Enter with nothing open sends the message", () => {
+    const ta = makeTextarea("hello",);
+    const ctx = buildCtx([], ta,);
+    wire(ctx,);
+    let sent = 0;
+    Object.assign(ctx, {
+      sendMessage: () => {
+        sent += 1;
+      },
+    },);
+    chatGroup.handleComposerEnter!.call(ctx as never,);
+    expect(sent,).toBe(1,);
+  });
+
+  test("Enter is a no-op in the keydown router (owned by handleComposerEnter)", () => {
+    const ta = makeTextarea("hello @al",);
+    const ctx = buildCtx(participants, ta,);
+    wire(ctx,);
+    chatGroup.handleMentionInput!.call(ctx as never, { target: ta, } as unknown as Event,);
+    const { event, prevented, } = keyEvent("Enter", ta,);
+    chatGroup.handleComposerKeydown!.call(ctx as never, event,);
+    expect(prevented(),).toBe(false,);
+    expect(ctx._showMentionAutocomplete,).toBe(true,);
   });
 });
