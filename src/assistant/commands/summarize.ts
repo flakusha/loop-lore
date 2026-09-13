@@ -49,6 +49,32 @@ export interface SummarizeDeps {
   complete?: (req: GenerateRequest,) => Promise<{ content: string }>;
   model?: string;
 }
+/** Summary output shape for `--format` (default concise). */
+export type SummarizeFormat = "concise" | "tldr" | "bullets" | "detailed";
+
+const SUMMARIZE_FORMAT_PROMPTS: Record<SummarizeFormat, string> = {
+  concise: "Summarize the following conversation concisely. Preserve key facts, decisions, and open threads.",
+  tldr: "Summarize the following conversation in one or two sentences (TL;DR). Only the single most important point.",
+  bullets: "Summarize the following conversation as a short bullet list. One fact, decision, or open thread per bullet.",
+  detailed: "Summarize the following conversation in detail. Cover key facts, decisions, open threads, and message flow.",
+};
+
+/**
+ * Extract `--format <name>` (default concise), returning the remaining args.
+ * Unknown names fall back to concise; the extractive fallback ignores the flag.
+ * @param args
+ * @returns chosen format plus args with the flag removed
+ */
+function parseFormat(args: string[],): { format: SummarizeFormat; rest: string[] } {
+  const idx = args.indexOf("--format",);
+  if (idx === -1) { return { format: "concise", rest: args, }; }
+  const requested = args[idx + 1];
+  const rest = args.filter((_, i,) => i !== idx && i !== idx + 1,);
+  if (requested === "tldr" || requested === "bullets" || requested === "detailed") {
+    return { format: requested, rest, };
+  }
+  return { format: "concise", rest, };
+}
 
 /**
  * Core `/summarize` logic. Extractable so tests can inject a stub `complete`.
@@ -66,7 +92,8 @@ export async function runSummarize(
   if (!ctx.messages || ctx.messages.length === 0) {
     return { systemMessage: "No messages to summarize.", handled: true, };
   }
-  const count = Math.max(1, Math.min(parseIntOr(args[0] ?? "10", 10,), ctx.messages.length,),);
+  const { format, rest, } = parseFormat(args,);
+  const count = Math.max(1, Math.min(parseIntOr(rest[0] ?? "10", 10,), ctx.messages.length,),);
   const recent = ctx.messages.slice(-count,);
   if (deps.complete) {
     const transcript = recent
@@ -78,7 +105,7 @@ export async function runSummarize(
         messages: [
           {
             role: "system",
-            content: "Summarize the following conversation concisely. Preserve key facts, decisions, and open threads.",
+            content: SUMMARIZE_FORMAT_PROMPTS[format],
           },
           { role: "user", content: transcript, },
         ],
@@ -88,7 +115,7 @@ export async function runSummarize(
       if (content) {
         return {
           systemMessage: `**Conversation Summary** (last ${count} messages):\n\n${content}`,
-          actionPayload: { count, summary: content, },
+          actionPayload: { count, summary: content, format, },
           handled: true,
         };
       }
@@ -96,13 +123,14 @@ export async function runSummarize(
       // Fall through to extractive fallback
     }
   }
-  return buildSummary(args, ctx,);
+  return buildSummary(rest, ctx,);
 }
 
 function resolveAndSummarize(args: string[], ctx: CommandContext,): CommandResult | Promise<CommandResult> {
+  const { rest, } = parseFormat(args,);
   const { config, db, } = ctx;
   if (!db || !config) {
-    return buildSummary(args, ctx,);
+    return buildSummary(rest, ctx,);
   }
   return (async (): Promise<CommandResult> => {
     try {
@@ -112,7 +140,7 @@ function resolveAndSummarize(args: string[], ctx: CommandContext,): CommandResul
         model: resolved.resolvedModel,
       },);
     } catch {
-      return buildSummary(args, ctx,);
+      return buildSummary(rest, ctx,);
     }
   })();
 }
