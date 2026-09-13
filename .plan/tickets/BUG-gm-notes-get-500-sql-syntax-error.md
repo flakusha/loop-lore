@@ -41,9 +41,9 @@ Also confirmed via `/tmp` debug tests (gm-debug4, gm-debug5).
 
 ## Acceptance Criteria
 
-- [ ] `bun test src/routes/gm-notes.test.ts` → 7 pass / 0 fail
-- [ ] Both GET endpoints return `{ items, total, page, pageSize }` 200 with data
-- [ ] Root cause documented in this ticket or commit message
+- [x] `bun test src/routes/gm-notes.test.ts` → 7 pass / 0 fail (re-verified 2026-09-13: 7 pass / 0 fail)
+- [x] Both GET endpoints return `{ items, total, page, pageSize }` 200 with data
+- [x] Root cause documented in this ticket or commit message
 
 ## Notes
 
