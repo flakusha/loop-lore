@@ -13,14 +13,11 @@ import { browserRandomUUIDv7, } from "../../browser";
 import { t, } from "../i18n";
 import { log as rootLog, } from "../logger";
 
+import type { ActionHandler, } from "./dispatch";
+
 const log = rootLog.child({ module: "chat-actions", },);
 
-/** */
-export type ActionHandler = (
-  ctx: any,
-  payload: Record<string, unknown> | null,
-  chatId: string,
-) => Promise<void> | void;
+export type { ActionHandler, };
 
 export const wizardActionHandlers: Record<string, ActionHandler> = {
   "wizard-preview": (ctx, payload,) => {

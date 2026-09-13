@@ -8,17 +8,12 @@
  * Used by both Alpine app (chat pages) and vanilla UI (non-chat pages).
  */
 
+import type { Locale, LocaleInfo, TranslationMap, } from "../i18n/types";
 import { TranslationMapSchema, } from "../validation/schemas/responses";
 import { parseOr, } from "./alpine/validation";
 import { feFetch, } from "./fe-fetch";
 
-/** Supported locale IDs */
-export type Locale = "en" | "es" | "fr" | "de" | "ja" | "ko" | "zh" | "pt" | "ru" | "ar";
-
-/** Nested translation map */
-export interface TranslationMap {
-  [key: string]: string | TranslationMap;
-}
+export type { Locale, LocaleInfo, TranslationMap, };
 
 /** All supported locales with metadata */
 export const LOCALE_REGISTRY: Record<Locale, LocaleInfo> = {
@@ -39,14 +34,6 @@ export const DEFAULT_LOCALE: Locale = "en";
 
 /** All supported locale IDs */
 export const SUPPORTED_LOCALES = Object.keys(LOCALE_REGISTRY,) as Locale[];
-
-/** Locale metadata */
-export interface LocaleInfo {
-  id: Locale;
-  name: string;
-  nativeName: string;
-  direction: "ltr" | "rtl";
-}
 
 /**
  * Resolve a dot-notation key against a nested translation map.

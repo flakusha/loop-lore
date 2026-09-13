@@ -9,9 +9,10 @@ import { providerState, } from "./providers";
 import { roleState, } from "./roles";
 import { sdState, } from "./sd";
 
+import type { ApiFetchMock, } from "../../tests/test-types";
+
 // All five sub-states use the ambient `apiFetch` global (no htmx import), so
 // stub globalThis directly and restore afterwards — never mock.module i18n.
-type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 const g = globalThis as unknown as { apiFetch?: ApiFetchMock; showToast?: (...args: unknown[]) => void };
 const originalFetch = g.apiFetch;
 const originalToast = g.showToast;

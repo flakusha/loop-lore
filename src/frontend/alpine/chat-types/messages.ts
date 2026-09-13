@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { ToolCall, } from "../../../generation/providers/types";
+
 /** */
 export interface MessageAttachment {
   assetId: string;
@@ -17,11 +19,7 @@ export interface MessageAttachment {
 }
 
 /** A function call the assistant invoked during generation (mirrors GenerationToolCall). */
-export interface ToolCall {
-  id: string;
-  type: "function";
-  function: { name: string; arguments: string };
-}
+export type { ToolCall, };
 
 /** */
 export interface Message {

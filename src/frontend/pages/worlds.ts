@@ -7,6 +7,7 @@ import { log as rootLog, } from "../alpine/logger";
 import { eventTarget, } from "../dom";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
+import type { ChatTemplateMeta, } from "./new-chat/state";
 import { filterCards, } from "./shared";
 
 const pageLog = rootLog.child({ module: "worlds", },);
@@ -63,13 +64,6 @@ globalThis.createWorld = async function(event: Event,) {
 };
 
 // ── World detail: location CRUD ─────────────────────────────
-interface ChatTemplateMeta {
-  id: string;
-  slug: string;
-  name: string;
-  description: string | null;
-  features: string[];
-}
 
 globalThis.worldDetail = function(initial: {
   worldId: string;
