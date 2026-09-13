@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { RelationshipType, } from "../../../db/enums-character/relationships";
+
 // ── NPC Management UI Types ─────────────────────────────────
 
 /** Disposition level toward the player */
 export type NpcDisposition = "hostile" | "unfriendly" | "neutral" | "friendly" | "honored" | "revered" | "exalted";
 
 /** Relationship type between two entities */
-export type RelationshipType = "friend" | "rival" | "enemy" | "ally" | "mentor" | "subordinate" | "neutral";
+export type { RelationshipType, };
 
 /** NPC basic data */
 export interface NpcData {
