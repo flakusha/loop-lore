@@ -40,7 +40,7 @@ let stale = false;
 
 function checkFile(path: string, content: string, label: string,): void {
   if (!existsSync(path,)) {
-    console.log(`⚠ ${label} does not exist — regenerating`,);
+    console.log(`warn: ${label} does not exist - regenerating`,);
     writeFileSync(path, content,);
     stale = true;
     return;
@@ -48,10 +48,10 @@ function checkFile(path: string, content: string, label: string,): void {
 
   const existing = readFileSync(path, "utf8",);
   if (existing.trimEnd() !== content.trimEnd()) {
-    console.log(`✗ ${label} is STALE — needs regeneration`,);
+    console.log(`FAIL: ${label} is STALE - needs regeneration`,);
     stale = true;
   } else {
-    console.log(`✓ ${label} is up-to-date`,);
+    console.log(`OK: ${label} is up-to-date`,);
   }
 }
 

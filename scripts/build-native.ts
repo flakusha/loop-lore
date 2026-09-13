@@ -82,15 +82,15 @@ function rustSrcAvailable(): boolean {
  */
 function buildNativeCdylib(): void {
   if (!SUPPORTED_PLATFORMS.has(process.platform,)) {
-    console.log("[build:native:cdylib] platform unsupported — TS fallback",);
+    console.log("[build:native:cdylib] platform unsupported - TS fallback",);
     return;
   }
   if (!existsSync(join(CRATE_DIR, "Cargo.toml",),)) {
-    console.log("[build:native:cdylib] crate missing — TS fallback",);
+    console.log("[build:native:cdylib] crate missing - TS fallback",);
     return;
   }
   if (!cargoAvailable()) {
-    console.log("[build:native:cdylib] cargo not found — TS fallback",);
+    console.log("[build:native:cdylib] cargo not found - TS fallback",);
     return;
   }
 
@@ -100,7 +100,7 @@ function buildNativeCdylib(): void {
     stdio: "inherit",
   },);
   if (result.status !== 0) {
-    console.error(`[build:native:cdylib] cargo build failed (status ${result.status}) — TS fallback`,);
+    console.error(`[build:native:cdylib] cargo build failed (status ${result.status}) - TS fallback`,);
     return;
   }
   console.log("[build:native:cdylib] native module ready (gitignored target/)",);
@@ -116,7 +116,7 @@ function buildNativeCdylib(): void {
  */
 function buildWasm(): void {
   if (!cargoAvailable()) {
-    console.log("[build:native:wasm] cargo not found — skipping WASM",);
+    console.log("[build:native:wasm] cargo not found - skipping WASM",);
     return;
   }
 
@@ -126,12 +126,12 @@ function buildWasm(): void {
 
   if (rustupAvailable()) {
     useRustup = true;
-    console.log("[build:native:wasm] rustup detected — standard wasm target add",);
+    console.log("[build:native:wasm] rustup detected - standard wasm target add",);
   } else if (rustSrcAvailable()) {
     useBuildStd = true;
-    console.log("[build:native:wasm] no rustup, rust-src found — build-std path",);
+    console.log("[build:native:wasm] no rustup, rust-src found - build-std path",);
   } else {
-    console.log("[build:native:wasm] no rust toolchain — skipping WASM",);
+    console.log("[build:native:wasm] no rust toolchain - skipping WASM",);
     return;
   }
 

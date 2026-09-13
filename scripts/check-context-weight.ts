@@ -140,44 +140,44 @@ function printTable(entries: FileEntry[], total: FileEntry,): void {
   const pad = (s: string, n: number,) => s.padEnd(n,);
   const rpad = (s: string, n: number,) => s.padStart(n,);
 
-  console.log("┌" + "─".repeat(48,) + "┬" + "─".repeat(8,) + "┬" + "─".repeat(9,) + "┬" + "─".repeat(10,) + "┐",);
+  console.log("+" + "-".repeat(48,) + "+" + "-".repeat(8,) + "+" + "-".repeat(9,) + "+" + "-".repeat(10,) + "+",);
   console.log(
-    "│" + pad(" File", 48,) +
-      "│" + rpad("Lines", 8,) +
-      "│" + rpad("Size", 9,) +
-      "│" + rpad("Tokens", 10,) +
-      "│",
+    "|" + pad(" File", 48,) +
+      "|" + rpad("Lines", 8,) +
+      "|" + rpad("Size", 9,) +
+      "|" + rpad("Tokens", 10,) +
+      "|",
   );
-  console.log("├" + "─".repeat(48,) + "┼" + "─".repeat(8,) + "┼" + "─".repeat(9,) + "┼" + "─".repeat(10,) + "┤",);
+  console.log("+" + "-".repeat(48,) + "+" + "-".repeat(8,) + "+" + "-".repeat(9,) + "+" + "-".repeat(10,) + "+",);
 
   for (const e of entries) {
-    const path = e.relPath.length > 47 ? "…" + e.relPath.slice(-46,) : e.relPath;
+    const path = e.relPath.length > 47 ? "..." + e.relPath.slice(-44,) : e.relPath;
     console.log(
-      "│ " + pad(path, 47,) +
-        "│" + rpad(String(e.lines,), 8,) +
-        "│" + rpad(formatBytes(e.bytes,), 9,) +
-        "│" + rpad(formatTokens(e.tokens,), 10,) +
-        "│",
+      "| " + pad(path, 47,) +
+        "|" + rpad(String(e.lines,), 8,) +
+        "|" + rpad(formatBytes(e.bytes,), 9,) +
+        "|" + rpad(formatTokens(e.tokens,), 10,) +
+        "|",
     );
   }
 
-  console.log("├" + "─".repeat(48,) + "┼" + "─".repeat(8,) + "┼" + "─".repeat(9,) + "┼" + "─".repeat(10,) + "┤",);
+  console.log("+" + "-".repeat(48,) + "+" + "-".repeat(8,) + "+" + "-".repeat(9,) + "+" + "-".repeat(10,) + "+",);
   console.log(
-    "│ " + pad("TOTAL", 47,) +
-      "│" + rpad(String(total.lines,), 8,) +
-      "│" + rpad(formatBytes(total.bytes,), 9,) +
-      "│" + rpad(formatTokens(total.tokens,), 10,) +
-      "│",
+    "| " + pad("TOTAL", 47,) +
+      "|" + rpad(String(total.lines,), 8,) +
+      "|" + rpad(formatBytes(total.bytes,), 9,) +
+      "|" + rpad(formatTokens(total.tokens,), 10,) +
+      "|",
   );
-  console.log("└" + "─".repeat(48,) + "┴" + "─".repeat(8,) + "┴" + "─".repeat(9,) + "┴" + "─".repeat(10,) + "┘",);
+  console.log("+" + "-".repeat(48,) + "+" + "-".repeat(8,) + "+" + "-".repeat(9,) + "+" + "-".repeat(10,) + "+",);
 
   console.log(`\nThreshold: ${formatTokens(THRESHOLD,)} tokens`,);
   if (total.tokens > THRESHOLD) {
     console.log(
-      `⚠ Context weight ${formatTokens(total.tokens,)} exceeds ${formatTokens(THRESHOLD,)} — consider compressing`,
+      `warn: Context weight ${formatTokens(total.tokens,)} exceeds ${formatTokens(THRESHOLD,)} - consider compressing`,
     );
   } else {
-    console.log(`✓ Context weight ${formatTokens(total.tokens,)} within budget`,);
+    console.log(`OK: Context weight ${formatTokens(total.tokens,)} within budget`,);
   }
 }
 

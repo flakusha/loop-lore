@@ -46,7 +46,7 @@ export async function execute(
     try {
       const files = gitSync(repoRoot, "diff", "--name-only", `${rootBranch}..${branch}`,);
       for (const file of files.split("\n",).filter(f => f)) {
-        console.log(`    ${colorize("•", "cyan",)} ${file}`,);
+        console.log(`    ${colorize("-", "cyan",)} ${file}`,);
       }
     } catch {
       console.log("    (unable to list files)",);

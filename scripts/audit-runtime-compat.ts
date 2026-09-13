@@ -166,7 +166,7 @@ function scanFile(filePath: string,): Finding[] {
 
 function printTable(findings: Finding[],): void {
   if (findings.length === 0) {
-    process.stdout.write("✓ No Bun-specific APIs found.\n",);
+    process.stdout.write("OK: No Bun-specific APIs found.\n",);
     return;
   }
 
@@ -182,12 +182,12 @@ function printTable(findings: Finding[],): void {
 
   for (const [api, hits,] of byApi) {
     const first = hits[0]!;
-    const statusTag = first.status === "native" ? "≈native" : first.status === "shim" ? "⚠ shim" : "✗ no-equiv";
+    const statusTag = first.status === "native" ? "~native" : first.status === "shim" ? "shim [warn]" : "no-equiv [fail]";
     process.stdout.write(`  ${api}  [${statusTag}]\n`,);
     process.stdout.write(`    deno: ${first.deno}\n`,);
     process.stdout.write(`    node: ${first.node}\n`,);
     for (const h of hits) {
-      const shared = h.shared ? " ← SHARED" : "";
+      const shared = h.shared ? " [shared]" : "";
       process.stdout.write(`    ${h.file}:${h.line}${shared}\n`,);
     }
     process.stdout.write("\n",);
@@ -195,7 +195,7 @@ function printTable(findings: Finding[],): void {
 
   const sharedCount = findings.filter((f,) => f.shared).length;
   if (sharedCount > 0) {
-    process.stdout.write(`⚠ ${sharedCount} usage(s) in shared modules (need abstraction layer)\n`,);
+    process.stdout.write(`warn: ${sharedCount} usage(s) in shared modules (need abstraction layer)\n`,);
   }
 }
 

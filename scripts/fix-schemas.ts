@@ -27,8 +27,8 @@ mkdirSync(schemasDir, { recursive: true, },);
 
 const jsonSchemaPath = resolve(schemasDir, "loop-lore-config.schema.json",);
 writeFileSync(jsonSchemaPath, toJson(jsonSchema(),),);
-console.log(`✓ Written: ${jsonSchemaPath}`,);
+console.log(`Wrote: ${jsonSchemaPath}`,);
 
 const envMapPath = resolve(schemasDir, "env-map.snapshot.json",);
 writeFileSync(envMapPath, toJson(envMap(),),);
-console.log(`✓ Written: ${envMapPath}`,);
+console.log(`Wrote: ${envMapPath}`,);
