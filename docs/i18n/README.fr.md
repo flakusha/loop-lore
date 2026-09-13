@@ -53,7 +53,6 @@ pas dupliqués ici.
 ```bash
 # Prérequis : Bun (https://bun.sh)
 bun install
-cp .env.example .env
 bun run db:migrate
 
 # Démarrer le serveur web
