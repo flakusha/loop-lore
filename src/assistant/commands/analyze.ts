@@ -6,15 +6,15 @@
 // /analyze — analyze a draft message (intent/clarity profile) via the shared
 // prompt-analysis service. Advisory only: never touches the draft.
 
-import { type PromptAnalysis, analyzePrompt } from "../../prompt-improve/service";
-import { type CommandContext, type CommandResult, registerCommand } from "./registry";
+import { analyzePrompt, type PromptAnalysis, } from "../../prompt-improve/service";
+import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
 
 const USAGE = "Usage: /analyze <text> — analyze intent, clarity, and suggestions.\n" +
   "Advisory only; your text is never modified.";
 
 /** Deps shape for /analyze — injectable so tests can stub the AUX path. */
 export interface AnalyzeDeps {
-  analyze?: (text: string) => Promise<PromptAnalysis | null>;
+  analyze?: (text: string,) => Promise<PromptAnalysis | null>;
 }
 
 /**
@@ -30,17 +30,17 @@ export async function runAnalyze(
   ctx: CommandContext,
   deps: AnalyzeDeps = {},
 ): Promise<CommandResult> {
-  const text = args.join(" ").trim();
+  const text = args.join(" ",).trim();
   if (!text) {
-    return { systemMessage: USAGE, handled: true };
+    return { systemMessage: USAGE, handled: true, };
   }
 
-  const analyze = deps.analyze ?? (async (t: string) => {
+  const analyze = deps.analyze ?? (async (t: string,) => {
     if (!ctx.db || !ctx.config) { return null; }
-    return analyzePrompt({ text: t, config: ctx.config, db: ctx.db, userId: ctx.userId, chatId: ctx.chatId });
+    return analyzePrompt({ text: t, config: ctx.config, db: ctx.db, userId: ctx.userId, chatId: ctx.chatId, },);
   });
 
-  const profile = await analyze(text);
+  const profile = await analyze(text,);
   if (!profile) {
     return {
       systemMessage: "**Analysis unavailable** — LLM path unreachable. Your text is unchanged.",
@@ -49,16 +49,16 @@ export async function runAnalyze(
   }
 
   const lines = [
-    `**Analysis:** intent \`${profile.intent}\`, clarity ${Math.round(profile.clarity * 100)}%`,
+    `**Analysis:** intent \`${profile.intent}\`, clarity ${Math.round(profile.clarity * 100,)}%`,
     "",
-    ...profile.issues.map((issue) => `- ⚠ ${issue}`),
-    ...profile.suggestions.map((suggestion) => `- → ${suggestion}`),
+    ...profile.issues.map((issue,) => `- ⚠ ${issue}`),
+    ...profile.suggestions.map((suggestion,) => `- → ${suggestion}`),
   ];
   return {
-    systemMessage: lines.join("\n"),
-    actionPayload: { original: text, ...profile },
+    systemMessage: lines.join("\n",),
+    actionPayload: { original: text, ...profile, },
     handled: true,
   };
 }
 
-registerCommand("analyze", async (args, ctx): Promise<CommandResult> => runAnalyze(args, ctx));
+registerCommand("analyze", async (args, ctx,): Promise<CommandResult> => runAnalyze(args, ctx,),);

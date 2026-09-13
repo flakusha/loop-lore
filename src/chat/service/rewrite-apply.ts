@@ -8,8 +8,8 @@
 // targets assistant/character messages (the rewrite surface) instead of
 // user drafts. Ownership + same-chat scope gate every write.
 
-import type { Kysely } from "kysely";
-import type { Config } from "../../config/schema";
+import type { Kysely, } from "kysely";
+import type { Config, } from "../../config/schema";
 import {
   encryptMessageContent,
   extractKeyIdFromPayload,
@@ -17,9 +17,9 @@ import {
   isEncryptedPayload,
   isEncryptionEnabled,
 } from "../../crypto";
-import type { ContentEncoding } from "../../db/enums";
-import type { DB } from "../../db/schema";
-import { can } from "../../users/permissions";
+import type { ContentEncoding, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
+import { can, } from "../../users/permissions";
 
 /** Write-back failure modes: missing row, wrong author, or wrong chat. */
 export type RewriteApplyError = "not_found" | "forbidden" | "cross_chat";
@@ -47,24 +47,24 @@ export async function applyRewriteToMessage(
   db: Kysely<DB>,
   options: RewriteApplyOptions,
 ): Promise<{ ok: true; content: string } | { ok: false; error: RewriteApplyError }> {
-  const { messageId, chatId, userId, userRole, content, config } = options;
+  const { messageId, chatId, userId, userRole, content, config, } = options;
   const msg = await db
-    .selectFrom("messages")
-    .select(["id", "actor_id", "chat_id"])
-    .where("id", "=", messageId)
+    .selectFrom("messages",)
+    .select(["id", "actor_id", "chat_id",],)
+    .where("id", "=", messageId,)
     .executeTakeFirst();
-  if (!msg) { return { ok: false, error: "not_found" }; }
-  if (msg.chat_id !== chatId) { return { ok: false, error: "cross_chat" }; }
-  if (msg.actor_id !== userId && !can(userRole, "admin.chat")) {
-    return { ok: false, error: "forbidden" };
+  if (!msg) { return { ok: false, error: "not_found", }; }
+  if (msg.chat_id !== chatId) { return { ok: false, error: "cross_chat", }; }
+  if (msg.actor_id !== userId && !can(userRole, "admin.chat",)) {
+    return { ok: false, error: "forbidden", };
   }
 
   const trimmed = content.trim();
   let storedContent = trimmed;
   let storedKeyId: string | null = null;
   let storedPlaintext: string | null = trimmed;
-  if (isEncryptedPayload(trimmed)) {
-    storedKeyId = extractKeyIdFromPayload(trimmed);
+  if (isEncryptedPayload(trimmed,)) {
+    storedKeyId = extractKeyIdFromPayload(trimmed,);
     storedPlaintext = null;
   } else if (isEncryptionEnabled()) {
     const enc = await encryptMessageContent({
@@ -77,21 +77,21 @@ export async function applyRewriteToMessage(
         threshold: config.encryption.compressThreshold,
         algorithm: config.encryption.compressAlgorithm,
       },
-    });
+    },);
     storedContent = enc.storedContent;
     storedKeyId = enc.keyId;
   }
 
   await db
-    .updateTable("messages")
+    .updateTable("messages",)
     .set({
       content: storedContent,
       key_id: storedKeyId,
       content_plaintext: storedPlaintext,
       content_encoding: "identity" as ContentEncoding,
       edited_at: new Date().toISOString(),
-    })
-    .where("id", "=", messageId)
+    },)
+    .where("id", "=", messageId,)
     .execute();
-  return { ok: true, content: storedContent };
+  return { ok: true, content: storedContent, };
 }
