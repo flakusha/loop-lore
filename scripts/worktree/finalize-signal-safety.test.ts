@@ -290,7 +290,8 @@ describe("abort command (per-test fake git repo)", () => {
     const res = runAbort(repo.root, ["--dry-run",],);
     expect(res.status,).toBe(0,);
     expect(res.stdout,).toContain("Finalize abort",);
-    expect(res.stdout,).toContain("DRY RUN",);
+    // warn-level goes to stderr by design (see utils/output).
+    expect(res.stderr,).toContain("DRY RUN",);
     expect(res.stdout,).toContain("No lockfile present",);
     expect(res.stdout,).toContain("No leftover finalize stashes",);
   });
