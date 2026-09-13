@@ -208,7 +208,7 @@ async function checkFile(file: string,): Promise<void> {
     if (!resolved) { continue; }
     if (!existsSync(resolved,)) {
       broken++;
-      console.error(`[md-links] ${file} → broken target: ${target} (resolved ${resolved})`,);
+      console.error(`[md-links] ${file} -> broken target: ${target} (resolved ${resolved})`,);
     }
   }
 
@@ -233,7 +233,7 @@ async function checkFile(file: string,): Promise<void> {
       if (!resolves) {
         orphanRefs++;
         console.error(
-          `[md-links] ${file} → orphan TASK ref: ${ref} (no .plan/tickets/${ref}.md) — line: ${
+          `[md-links] ${file} -> orphan TASK ref: ${ref} (no .plan/tickets/${ref}.md) - line: ${
             line.trim().slice(0, 80,)
           }`,
         );
@@ -259,7 +259,7 @@ async function checkSrcComments(file: string,): Promise<void> {
       if (!resolved) { continue; }
       if (!existsSync(resolved,)) {
         broken++;
-        console.error(`[md-links] ${file} → broken comment citation: ${path} (resolved ${resolved})`,);
+        console.error(`[md-links] ${file} -> broken comment citation: ${path} (resolved ${resolved})`,);
       }
     }
   }
@@ -290,7 +290,7 @@ async function main(): Promise<void> {
     process.exit(1,);
   }
   console.log(
-    `[md-links] OK — ${files.size} markdown file(s), ${srcFiles.length} source file(s); all internal links and comment citations resolve.`,
+    `[md-links] OK - ${files.size} markdown file(s), ${srcFiles.length} source file(s); all internal links and comment citations resolve.`,
   );
 }
 

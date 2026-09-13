@@ -103,56 +103,56 @@ function reconcile(): SyncResult {
 // ── Reporting ──────────────────────────────────────────────────
 
 function report(result: SyncResult, verbose: boolean,): void {
-  console.log("\n📊 Reconcile .plan/backlog indexes...\n",);
+  console.log("\nReconcile .plan/backlog indexes...\n",);
   console.log(`   Backlog .md files:   ${readdirSync(BACKLOG_DIR,).filter((f,) => f.endsWith(".md",)).length}`,);
   console.log(`   Index files:         ${INDEX_FILES.join(", ",)}`,);
 
-  console.log("\n📋 Reconciliation Report\n" + "─".repeat(60,),);
+  console.log("\nReconciliation Report\n" + "-".repeat(60,),);
 
   if (result.orphans.length > 0) {
-    console.log(`\n🔴 Orphan files (not in any index file map): ${result.orphans.length}`,);
+    console.log(`\nOrphans (not in any index file map): ${result.orphans.length}`,);
     for (const f of result.orphans) { console.log(`   ${f}`,); }
   } else {
-    console.log("\n🟢 No orphan files",);
+    console.log("\nOK: No orphan files",);
   }
 
   if (result.phantoms.length > 0) {
-    console.log(`\n🔴 Phantom entries (index maps missing file): ${result.phantoms.length}`,);
+    console.log(`\nPhantoms (index maps missing file): ${result.phantoms.length}`,);
     for (const p of result.phantoms) {
-      console.log(`   ${p.index}:${p.row.line} → ${p.row.file} (missing)`,);
+      console.log(`   ${p.index}:${p.row.line} -> ${p.row.file} (missing)`,);
     }
   } else {
-    console.log("\n🟢 No phantom entries",);
+    console.log("\nOK: No phantom entries",);
   }
 
   if (result.outside.length > 0) {
-    console.log(`\n🟡 Non-backlog file-map targets: ${result.outside.length}`,);
+    console.log(`\nwarn: Non-backlog file-map targets: ${result.outside.length}`,);
     for (const o of result.outside) {
-      console.log(`   ${o.index}:${o.row.line} → ${o.row.target}`,);
+      console.log(`   ${o.index}:${o.row.line} -> ${o.row.target}`,);
     }
   } else {
-    console.log("\n🟢 No outside targets",);
+    console.log("\nOK: No outside targets",);
   }
 
   if (verbose) {
-    console.log("\n🗂️  File map state:",);
+    console.log("\nFile map state:",);
     for (const [file, rows,] of [...result.map.entries(),].sort()) {
       const homes = rows.map((r,) => r.index).join(", ",);
-      const dup = rows.length > 1 ? " ⚠️ multiple homes" : "";
-      console.log(`   ${file.padEnd(28,)} ← ${homes}${dup}`,);
+      const dup = rows.length > 1 ? " [warn] multiple homes" : "";
+      console.log(`   ${file.padEnd(28,)} <- ${homes}${dup}`,);
     }
     const listed = [...result.map.keys(),].filter((f,) => !result.orphans.includes(f,));
     const unlisted = result.orphans;
-    console.log(`\n   Listed: ${listed.length} · Unlisted (orphans): ${unlisted.length}`,);
+    console.log(`\n   Listed: ${listed.length} - Unlisted (orphans): ${unlisted.length}`,);
   }
 
   const issues = result.orphans.length + result.phantoms.length + result.outside.length;
-  console.log("\n" + "═".repeat(60,),);
+  console.log("\n" + "-".repeat(60,),);
   if (issues === 0) {
-    console.log("✅ Backlog indexes are in sync",);
+    console.log("OK: Backlog indexes are in sync",);
     process.exit(0,);
   } else {
-    console.log(`⚠️  ${issues} actionable issue(s) found`,);
+    console.log(`warn: ${issues} actionable issue(s) found`,);
     console.log("Run with --fix to apply automatic fixes",);
     process.exit(1,);
   }
@@ -202,7 +202,7 @@ function dropPhantomRow(index: string, row: FileMapRow,): boolean {
 }
 
 function applyFixes(result: SyncResult,): void {
-  console.log("\n🔧 Applying fixes...\n",);
+  console.log("\nApplying fixes...\n",);
   let changed = false;
 
   for (const f of result.orphans) {
@@ -224,13 +224,13 @@ function applyFixes(result: SyncResult,): void {
 
   // Outside targets: report only (can't auto-fix — likely an intentional cross-doc link)
   for (const o of result.outside) {
-    console.log(`   ${o.index}:${o.row.line}: outside target ${o.row.target} — manual review`,);
+    console.log(`   ${o.index}:${o.row.line}: outside target ${o.row.target} - manual review`,);
   }
 
   if (!changed) {
     console.log("   Nothing to fix",);
   } else {
-    console.log("\n✅ Wrote index file(s). Re-run without --fix to verify.",);
+    console.log("\nOK: Wrote index file(s). Re-run without --fix to verify.",);
   }
 }
 

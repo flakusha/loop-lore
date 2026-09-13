@@ -312,7 +312,7 @@ async function fixFiles(files: string[], rules: ReuseRule[],): Promise<number> {
   for (const file of files) {
     const rule = rules.find((r,) => r.matchers.some((m,) => m.test(file,)));
     if (!rule) {
-      console.warn(`[spdx:fix] no REUSE.toml rule matches — skipped: ${file}`,);
+      console.warn(`[spdx:fix] no REUSE.toml rule matches - skipped: ${file}`,);
       continue;
     }
 
@@ -328,7 +328,7 @@ async function fixFiles(files: string[], rules: ReuseRule[],): Promise<number> {
         console.log(`[spdx:fix] ${file}`,);
       }
     } catch {
-      console.warn(`[spdx:fix] failed to read/write — skipped: ${file}`,);
+      console.warn(`[spdx:fix] failed to read/write - skipped: ${file}`,);
     }
   }
 
@@ -346,13 +346,13 @@ async function main() {
   try {
     reuseContent = await Bun.file(reusePath,).text();
   } catch {
-    console.error("[spdx] Cannot read REUSE.toml — skipping check.",);
+    console.error("[spdx] Cannot read REUSE.toml - skipping check.",);
     process.exit(0,);
   }
 
   const rules = parseReuseToml(reuseContent,);
   if (rules.length === 0) {
-    console.warn("[spdx] No [[annotations]] in REUSE.toml — nothing to check.",);
+    console.warn("[spdx] No [[annotations]] in REUSE.toml - nothing to check.",);
     process.exit(0,);
   }
 
@@ -389,7 +389,7 @@ async function main() {
     if (!rule) {
       violations.push({
         file,
-        detail: `no REUSE.toml rule matches — add a [[annotations]] entry for this path`,
+        detail: `no REUSE.toml rule matches - add a [[annotations]] entry for this path`,
       },);
       continue;
     }
@@ -428,11 +428,11 @@ async function main() {
   const msg = [
     `[spdx] ${violations.length} file(s) with invalid SPDX headers:`,
     "",
-    ...violations.map((v,) => `  ${v.file}\n    → ${v.detail}`),
+    ...violations.map((v,) => `  ${v.file}\n    -> ${v.detail}`),
     "",
     "REUSE.toml rules:",
     ...rules.map(
-      (r,) => `  ${r.paths.join(", ",)} → ${r.license}`,
+      (r,) => `  ${r.paths.join(", ",)} -> ${r.license}`,
     ),
   ].join("\n",);
 
@@ -440,7 +440,7 @@ async function main() {
     console.error(msg,);
     process.exit(1,);
   } else {
-    console.warn(`${msg}\n\nNon-blocking — set SPDX_CHECK=1 to enforce.`,);
+    console.warn(`${msg}\n\nNon-blocking - set SPDX_CHECK=1 to enforce.`,);
     process.exit(0,);
   }
 }

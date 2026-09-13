@@ -109,7 +109,7 @@ async function runScancode(): Promise<ScancodeViolation[]> {
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error,);
     if (msg.includes("Command not found",) || msg.includes("ENOENT",)) {
-      console.warn("[license] scancode not found — skipping source scan",);
+      console.warn("[license] scancode not found - skipping source scan",);
       console.warn("  Install: pip install scancode-toolkit",);
     } else {
       console.warn(`[license] scancode failed: ${msg.split("\n",)[0]}`,);
@@ -156,7 +156,7 @@ async function runFossa(): Promise<FossaViolation[]> {
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error,);
     if (msg.includes("Command not found",) || msg.includes("ENOENT",)) {
-      console.warn("[license] fossa not found — skipping dependency scan",);
+      console.warn("[license] fossa not found - skipping dependency scan",);
       console.warn(
         "  Install: curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash",
       );
@@ -180,12 +180,12 @@ async function main() {
   const hasFossa = await toolExists("fossa",);
 
   if (!hasScancode && !hasFossa) {
-    console.warn("[license] Neither scancode nor fossa installed — skipping",);
+    console.warn("[license] Neither scancode nor fossa installed - skipping",);
     console.warn("  scancode: pip install scancode-toolkit",);
     console.warn(
       "  fossa:    curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash",
     );
-    console.warn("\nNon-blocking — tools not available.",);
+    console.warn("\nNon-blocking - tools not available.",);
     process.exit(0,);
   }
 
@@ -202,7 +202,7 @@ async function main() {
     console.error(`\n[license] scancode: ${scancodeViolations.length} GPL/AGPL violation(s) in src/:`,);
     for (const v of scancodeViolations) {
       const loc = v.startLine ? `:${v.startLine}` : "";
-      console.error(`  ${v.file}${loc} → ${v.license}`,);
+      console.error(`  ${v.file}${loc} -> ${v.license}`,);
     }
   } else if (hasScancode) {
     console.log("[license] scancode: no GPL/AGPL detected in src/",);
@@ -211,7 +211,7 @@ async function main() {
   if (fossaViolations.length > 0) {
     console.error(`\n[license] fossa: ${fossaViolations.length} GPL/AGPL dependency(ies):`,);
     for (const v of fossaViolations) {
-      console.error(`  ${v.dependency} → ${v.license}`,);
+      console.error(`  ${v.dependency} -> ${v.license}`,);
     }
   } else if (hasFossa) {
     console.log("[license] fossa: no GPL/AGPL dependencies detected",);
@@ -219,13 +219,13 @@ async function main() {
 
   // Exit logic
   if (totalViolations > 0 && BLOCKING) {
-    console.error(`\n[license] ${totalViolations} violation(s) — CI gate failed.`,);
+    console.error(`\n[license] ${totalViolations} violation(s) - CI gate failed.`,);
     console.error("  src/ is LGPL-3.0-or-later; GPL/AGPL code is forbidden.",);
     process.exit(1,);
   }
 
   if (totalViolations > 0) {
-    console.warn(`\n[license] ${totalViolations} violation(s) found. Non-blocking — set LICENSE_CHECK=1 to enforce.`,);
+    console.warn(`\n[license] ${totalViolations} violation(s) found. Non-blocking - set LICENSE_CHECK=1 to enforce.`,);
   } else {
     console.log("[license] All checks passed.",);
   }

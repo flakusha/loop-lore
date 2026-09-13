@@ -55,21 +55,21 @@ for await (const file of glob.scan()) {
   if (lines > fileLimit) {
     const msg = `[size] ${file}: ${lines}L exceeds ${fileLimit}L limit`;
     if (STRICT) {
-      console.error(msg + " — must split (see 04)",);
+      console.error(msg + " - must split (see 04)",);
       errors++;
     } else {
-      console.warn(msg + " — consider splitting (see 04)",);
+      console.warn(msg + " - consider splitting (see 04)",);
       warnings++;
     }
   }
 }
 
 if (STRICT && errors > 0) {
-  console.error(`[size] ${errors} file(s) over ${LIMIT}L — CI gate failed.`,);
+  console.error(`[size] ${errors} file(s) over ${LIMIT}L - CI gate failed.`,);
   process.exit(1,);
 }
 
 if (warnings > 0) {
-  console.warn(`[size] ${warnings} file(s) over ${LIMIT}L. Non-blocking — split when convenient.`,);
+  console.warn(`[size] ${warnings} file(s) over ${LIMIT}L. Non-blocking - split when convenient.`,);
 }
 process.exit(0,);

@@ -205,7 +205,7 @@ function main() {
   const sourceKeys = Object.keys(sourceFlat,);
 
   console.log("i18n Reconciliation Report",);
-  console.log("═══════════════════════════\n",);
+  console.log("---------------------------\n",);
   console.log(`en.json: ${sourceKeys.length} keys (source of truth)\n`,);
 
   // Get all locale files
@@ -242,22 +242,22 @@ function main() {
       // Print report
       if (missing.length === 0 && extra.length === 0 && typeMismatches.length === 0) {
         console.log(`${locale}.json:`,);
-        console.log(`  ✅ ${sourceKeys.length}/${sourceKeys.length} keys match\n`,);
+        console.log(`  OK: ${sourceKeys.length}/${sourceKeys.length} keys match\n`,);
       } else {
         console.log(`${locale}.json:`,);
 
         if (missing.length > 0) {
-          console.log(`  ⚠️  ${missing.length} missing key(s):`,);
+          console.log(`  warn: ${missing.length} missing key(s):`,);
           missing.forEach((k,) => console.log(`    - ${k}`,));
         }
 
         if (extra.length > 0) {
-          console.log(`  ℹ️  ${extra.length} extra key(s) (not in en.json):`,);
+          console.log(`  ${extra.length} extra key(s) (not in en.json):`,);
           extra.forEach((k,) => console.log(`    - ${k}`,));
         }
 
         if (typeMismatches.length > 0) {
-          console.log(`  ❌ ${typeMismatches.length} type mismatch(es):`,);
+          console.log(`  FAIL: ${typeMismatches.length} type mismatch(es):`,);
           typeMismatches.forEach((m,) => console.log(`    - ${m.key}: expected ${m.expected}, got ${m.actual}`,));
         }
 
@@ -267,11 +267,11 @@ function main() {
       // Fix if requested
       if (fixMode && (missing.length > 0 || extra.length > 0)) {
         fixLocale(sourceFile, localeFile, missing, extra,);
-        console.log(`  🔧 Fixed ${locale}.json\n`,);
+        console.log(`  Fixed ${locale}.json\n`,);
       }
     } catch (error) {
       console.log(`${locale}.json:`,);
-      console.log(`  ❌ Error reading file: ${error}\n`,);
+      console.log(`  FAIL: Error reading file: ${error}\n`,);
       hasDiscrepancies = true;
     }
   }
@@ -282,9 +282,9 @@ function main() {
   console.log(`  ${completed}/${reports.length} locales complete`,);
 
   if (hasDiscrepancies) {
-    console.log(`  ⚠️  Discrepancies found`,);
+    console.log(`  warn: Discrepancies found`,);
   } else {
-    console.log(`  ✅ All locales match en.json`,);
+    console.log(`  OK: All locales match en.json`,);
   }
 
   // CI mode
