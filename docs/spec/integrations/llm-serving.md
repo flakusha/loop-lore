@@ -17,7 +17,7 @@ llama.cpp's HTTP server (`llama-server`) with OpenAI-compatible API.
 
 Minimal: `llama-server -m model.gguf --port 3000 --ctx-size 8192`
 
-Production (from `ai-scripts/llama-server.sh`): add `-ctk/ctv iq4_nl`, `--swa-full`, `-fa on`, sampling params (temp, top-k, top-p, min-p, DRY, XTC, dynatemp, repeat-penalty, mirostat), `--spec-type` for speculative decoding, `--fit on`, `--cache-ram 49152`.
+Production example: add `-ctk/ctv iq4_nl`, `--swa-full`, `-fa on`, sampling params (temp, top-k, top-p, min-p, DRY, XTC, dynatemp, repeat-penalty, mirostat), `--spec-type` for speculative decoding, `--fit on`, `--cache-ram 49152`.
 
 ### OpenAI-Compatible Endpoints
 
@@ -29,6 +29,8 @@ Production (from `ai-scripts/llama-server.sh`): add `-ctk/ctv iq4_nl`, `--swa-fu
 | `GET /v1/models`            | List available models      |
 
 Standard OpenAI request/response shape. Streaming via SSE with `data: {...}` chunks ending with `data: [DONE]`.
+
+Note: the table above describes the server's API. On our side, chat completions go through the openai-compatible provider, while embeddings are served Ollama-native (`src/memory/embeddings.ts` via `embedDispatch`, model `nomic-embed-text`, override with `OLLAMA_BASE_URL`) — the openai-compatible provider reports `embeddings: false`.
 
 ### Extended llama.cpp Fields
 
@@ -102,12 +104,12 @@ Reverse proxy managing multiple llama-server backends. Single OpenAI-compatible 
 
 Features: multi-model hot-swap, API key auth, `GET /v1/models` returns all configured, loading state injection via `reasoning_content`, `/running` endpoint, request capture, Prometheus `/metrics`, TTL auto-unload.
 
-Config: `../ai-scripts/llama-swap.yaml`. Benefits over direct llama-server: no restart for model swap, auth, loading state UI, model list, debugging.
+Config: external llama-swap YAML (no `ai-scripts/` directory exists in this repo). Benefits over direct llama-server: no restart for model swap, auth, loading state UI, model list, debugging.
 
 ## vLLM Integration (Future)
 
 High-throughput GPU serving with PagedAttention, continuous batching, tensor parallelism.
-OpenAI-compatible. Same `LlmServingConfig` interface. Use when GPU throughput needed.
+OpenAI-compatible. Same `LLMProvider` + `ProviderInstanceConfig` seams (`src/generation/providers/types.ts`, `src/config/schema/providers.ts`). Use when GPU throughput needed.
 
 | vs llama-server | llama-server             | vLLM                         |
 | --------------- | ------------------------ | ---------------------------- |
@@ -124,7 +126,7 @@ Ollama, LM Studio, text-generation-webui, KoboldCpp, LocalAI, Anthropic API, Goo
 
 Env vars (`src/config/load/env.ts` — `LLAMACPP_*` does not exist in code): `LLM_PROVIDER_BASE_URL` (creates a `default` provider entry when set), `LLM_PROVIDER_NAME`/`LLM_PROVIDER_LABEL`/`LLM_PROVIDER_API_KEY`/`LLM_PROVIDER_MODEL`, `LLM_PROVIDER_TIMEOUT` (default 30000ms), `LLM_PROVIDER_RETRIES` (default 3), `LLM_PROVIDER_ALLOW_USER_KEY` (default true), `LLM_DEFAULT_PROVIDER`.
 
-Server lifecycle NOT managed by loop-lore — run separately via `ai-scripts/llama-server.sh`, systemd, or container.
+Server lifecycle NOT managed by loop-lore — run separately via a llama-server start script, systemd, or container.
 
 ## References
 
