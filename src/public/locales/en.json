@@ -1163,7 +1163,6 @@
     "promptImproved": "Prompt improved",
     "promptRestored": "Original draft restored",
     "promptImproveFailed": "Prompt improvement failed",
-    "promptAnalyzed": "Prompt analyzed",
     "promptInjectionBlocked": "Message blocked: prompt injection detected",
     "imageGenerationNotConfigured": "Image generation not configured yet — feature planned for 0.1.x",
     "failedGenerateImage": "Failed to generate image",
@@ -1299,6 +1298,20 @@
     "generationTimedOut": "Generation timed out.",
     "generationOutcome": "Generation {status}.",
     "resumingFromStep": "Resuming from step {step} of {total}..."
+  },
+  "analyze": {
+    "ready": "Prompt analyzed",
+    "failed": "Prompt analysis failed",
+    "unavailable": "Prompt analysis unavailable"
+  },
+  "gifPicker": {
+    "searchFailed": "GIF search failed. Try again.",
+    "notConfigured": "GIF search is not configured.",
+    "rateLimited": "GIF search is rate-limited. Try again shortly.",
+    "noActiveChat": "Select a chat first.",
+    "downloadFailed": "Could not download that GIF.",
+    "attachFailed": "Could not attach {filename}.",
+    "attached": "Attached {filename} — it will send with your next message."
   },
   "commands": {
     "help": "Show available commands",

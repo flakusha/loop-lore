@@ -194,6 +194,40 @@
           </div>
         </template>
       </div>
+      <!-- GIF picker (epic-chat-rich-engagement) -->
+      <button
+        type="button"
+        class="btn btn-ghost"
+        title="Insert GIF"
+        :disabled="!activeChat"
+        @click.prevent="toggleGifPicker()"
+        data-testid="gif-picker-button"
+      >🎞️</button>
+      <template x-if="_gifOpen">
+        <div class="gif-picker-panel" @click.outside="closeGifPicker()" data-testid="gif-picker-panel">
+          <input
+            type="text"
+            x-model="_gifQuery"
+            placeholder="Search GIFs"
+            @keydown.enter.prevent="searchGifs()"
+            @keydown.escape="closeGifPicker()"
+            @keydown.arrow-down.prevent="moveGifSelection(1)"
+            @keydown.arrow-up.prevent="moveGifSelection(-1)"
+            data-testid="gif-picker-search"
+          />
+          <div class="gif-picker-results" @keydown="handleGifKey($event)">
+            <template x-for="(gif, gifIdx) in _gifResults" :key="gif.id">
+              <img
+                :src="gif.previewUrl"
+                :alt="gif.title"
+                :class="_gifActiveIndex === gifIdx ? 'gif-active' : ''"
+                @click.prevent="insertGifAtIndex(gifIdx)"
+                data-testid="gif-picker-result"
+              />
+            </template>
+          </div>
+        </div>
+      </template>
       <button
         type="submit"
         class="btn btn-primary"
