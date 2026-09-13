@@ -131,13 +131,21 @@
           </button>
         </template>
       </div>
+      <!-- Composer markdown preview (Ctrl+Shift+P) -->
+      <div
+        class="composer-preview"
+        x-show="_showComposerPreview"
+        x-html="composerPreviewHtml()"
+        data-testid="composer-preview"
+      ></div>
       <textarea
         name="content"
         x-ref="messageInput"
         :placeholder="impersonationActive ? 'Respond as ' + (currentCharacter?.display_name || currentCharacter?.name || 'character') + '...' : 'Type a message...'"
         rows="1"
         @keydown.enter.shift=""
-        @keydown.enter.prevent="sendMessage()"
+        @keydown.enter.prevent="handleComposerEnter()"
+        @keydown="handleComposerKeydown($event)"
         @input="autoResize($el); handleMentionInput($event); handleCommandInput($event); saveComposerDraft()"
         @keydown.escape="hideMentionAutocomplete()"
         required
@@ -239,6 +247,23 @@
           data-testid="story-footer-quests"
         >📜 {{{t("story.questLog")}}}</button>
       </div>
+      <!-- Composer preview + stream-response toggles -->
+      <button
+        type="button"
+        class="btn btn-sm btn-ghost"
+        @click.prevent="toggleComposerPreview()"
+        :class="_showComposerPreview ? 'toggle-active' : ''"
+        title="Toggle markdown preview (Ctrl+Shift+P)"
+        data-testid="composer-preview-toggle"
+      >👁</button>
+      <button
+        type="button"
+        class="btn btn-sm btn-ghost"
+        @click.prevent="toggleStreamResponses()"
+        :class="_streamResponses ? 'toggle-active' : ''"
+        title="Toggle streaming responses"
+        data-testid="stream-toggle"
+      ><span x-text="_streamResponses ? '🌊' : '📨'"></span></button>
       <template x-if="pendingAssets.length > 0">
         <div class="pending-assets">
           <template x-for="(pa, paIdx) in pendingAssets" :key="pa.assetId">
