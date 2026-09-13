@@ -10523,7 +10523,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-auto-chat-titles-via-advisory-aux-call.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-AUTO-GENERATE-DOCS-REFERENCE-API-MD-FROM-OPENAPI-SPEC": {
     "hash": "93c3764",
@@ -12220,7 +12220,7 @@
     "epic": "epic-frontend-chat-commands.md",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-composer-markdown-pre-render-preview-before-send.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CHAT-COMPOSER-TAB-COMPLETE-FOR-COMMANDS-MENTIONS-EMOJI": {
     "hash": "957590a",
@@ -12233,7 +12233,7 @@
     "epic": "epic-frontend-chat-commands.md",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-composer-tab-complete-for-commands-mentions-emoji.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CHAT-COMPOSER-USER-VISIBLE-STREAMING-VS-COMPLETE-TOGGLE": {
     "hash": "3480864",
@@ -12246,7 +12246,7 @@
     "epic": "epic-chat-product-features.md",
     "tags": [],
     "source": ".plan/tickets/TASK-chat-composer-user-visible-streaming-vs-complete-toggle.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-CHAT-CONTEXT-FEATURE-PERMISSIONS": {
     "hash": "a3d9b3d",
@@ -16305,7 +16305,7 @@
     "epic": "epic-rag-assets-unified-storage-and-assistant-flows",
     "tags": [],
     "source": ".plan/tickets/TASK-gallery-asset-linkage-to-chat-from-assistant.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-GALLERY-ASSET-REUSE-PICKER-FOR-WORLD-LOCATION-ITEM-CREATION": {
     "hash": "7532037",
@@ -16752,7 +16752,7 @@
     "epic": "epic-group-chat.md",
     "tags": [],
     "source": ".plan/tickets/TASK-group-chat-mention-autocomplete-dropdown-acceptance.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-GROUP-CHAT-MENTION-ROUTING": {
     "hash": "0008385",
