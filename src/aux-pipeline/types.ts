@@ -19,7 +19,8 @@ export type AuxTaskName =
   | "prompt-improve"
   | "prompt-analysis"
   | "injection-check"
-  | "message-action";
+  | "message-action"
+  | "chat-title";
 
 /** Per-call options for `callAux`. All optional — runner defaults apply. */
 export interface AuxCallOptions {

@@ -6,6 +6,8 @@ import { t, } from "./i18n";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
 import type { ChatState, } from "./types";
 
+const mentionTokenRe = /@([\p{L}\p{N}_-]*)$/u;
+
 export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
   _groupPaused: false,
   _mentionQuery: "",
@@ -16,6 +18,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     actor_type?: string;
   }[],
   _showMentionAutocomplete: false,
+  _mentionActiveIndex: 0,
   _chatParticipants: [] as {
     actor_id: string;
     name: string;
@@ -76,10 +79,11 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     const value = textarea.value;
     const cursorPos = textarea.selectionStart;
     const beforeCursor = value.slice(0, cursorPos,);
-    const atMatch = /@(\w*)$/.exec(beforeCursor,);
+    const atMatch = mentionTokenRe.exec(beforeCursor,);
     if (atMatch) {
       this._mentionQuery = (atMatch[1] ?? "").toLowerCase();
       this._showMentionAutocomplete = true;
+      this._mentionActiveIndex = 0;
       this._mentionResults = [];
       for (const p of this._chatParticipants) {
         const name = (p.display_name || p.name || "").toLowerCase();
@@ -87,6 +91,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
       }
     } else {
       this._showMentionAutocomplete = false;
+      this._mentionActiveIndex = 0;
       this._mentionQuery = "";
       this._mentionResults = [];
     }
@@ -100,10 +105,11 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     const beforeCursor = value.slice(0, cursorPos,);
     const afterCursor = value.slice(cursorPos,);
     const displayName = participant.name || participant.actor_id;
-    const newBefore = beforeCursor.replace(/@\w*$/, () => `@${displayName} `,);
+    const newBefore = beforeCursor.replace(mentionTokenRe, () => `@${displayName} `,);
     textarea.value = newBefore + afterCursor;
     textarea.selectionStart = textarea.selectionEnd = newBefore.length;
     this._showMentionAutocomplete = false;
+    this._mentionActiveIndex = 0;
     this._mentionQuery = "";
     this._mentionResults = [];
     textarea.focus();
@@ -111,7 +117,68 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
 
   hideMentionAutocomplete() {
     this._showMentionAutocomplete = false;
+    this._mentionActiveIndex = 0;
     this._mentionQuery = "";
     this._mentionResults = [];
+  },
+
+  acceptMentionAtIndex(index: number,) {
+    const entry = this._mentionResults[index];
+    if (!entry) { return; }
+    this.selectMention(entry,);
+  },
+
+  moveMentionSelection(delta: 1 | -1,) {
+    const count = this._mentionResults.length;
+    if (count === 0) { return; }
+    this._mentionActiveIndex = (this._mentionActiveIndex + delta + count) % count;
+  },
+
+  handleComposerKeydown(event: KeyboardEvent,) {
+    const target = event.target as { tagName?: string } | null;
+    if (!target || target.tagName !== "TEXTAREA") { return; }
+    if (event.isComposing) { return; }
+    if (this._showMentionAutocomplete) {
+      if (this._mentionResults.length > 0) {
+        if (event.key === "Tab" || event.key === "Enter") {
+          event.preventDefault();
+          this.acceptMentionAtIndex(this._mentionActiveIndex,);
+        } else if (event.key === "ArrowDown") {
+          event.preventDefault();
+          this.moveMentionSelection(1,);
+        } else if (event.key === "ArrowUp") {
+          event.preventDefault();
+          this.moveMentionSelection(-1,);
+        } else if (event.key === "Escape") {
+          this.hideMentionAutocomplete();
+        }
+        return;
+      }
+      if (event.key === "Escape") {
+        this.hideMentionAutocomplete();
+        return;
+      }
+    }
+    if (this._showCommandPalette) {
+      if (event.key === "Escape") {
+        this._showCommandPalette = false;
+        return;
+      }
+      if (this._filteredCommands.length === 0) { return; }
+      if (event.key === "Enter") {
+        event.preventDefault();
+        this.acceptPaletteAtIndex(this._paletteActiveIndex,);
+      } else if (event.key === "Tab") {
+        event.preventDefault();
+        if (event.shiftKey) { this.movePaletteSelection(-1,); }
+        else { this.acceptPaletteAtIndex(this._paletteActiveIndex,); }
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        this.movePaletteSelection(1,);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        this.movePaletteSelection(-1,);
+      }
+    }
   },
 };
