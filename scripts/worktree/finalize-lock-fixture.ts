@@ -17,12 +17,14 @@
 import { existsSync, } from "node:fs";
 import { join, } from "node:path";
 
+import { LOCK_FILENAME, } from "./commands/abort";
 import { acquireFinalizeLock, } from "./commands/finalize";
 
 const tmp = process.argv[2];
 const mode = process.argv[3];
 
 const release = acquireFinalizeLock(tmp,);
+const lockPath = join(tmp, LOCK_FILENAME,);
 
 // Install the same cleanup `installSignalHandlers` would install in
 // production: `process.on('exit')` runs synchronously between any
