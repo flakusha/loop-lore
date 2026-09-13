@@ -30,6 +30,8 @@ import "./battle";
 import "./heal";
 import "./rewrite";
 import "./translate";
+import "./analyze";
+import "./regen";
 import "./workflow";
 
 export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "../command-parser";
