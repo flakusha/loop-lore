@@ -87,6 +87,34 @@ const actionHandlers: Record<string, ActionHandler> = {
     );
   },
 
+  "link-asset": async (ctx, payload,) => {
+    const assetId = (payload?.assetId as string) ?? "";
+    const entityType = (payload?.entityType as string) ?? "";
+    const entityId = (payload?.entityId as string) ?? "";
+    const filename = (payload?.filename as string) ?? assetId;
+    if (!assetId || !entityType || !entityId) {
+      log.warn("link-asset: missing required payload fields", { payload, },);
+      return;
+    }
+    const target = entityType === "message" ? `message ${entityId}` : "this chat";
+    if (!confirm(`Attach "${filename}" to ${target}?`,)) { return; }
+    try {
+      const res = await apiFetch(`/api/assets/${assetId}/links`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ entityType, entityId, },),
+      },);
+      ctx.$dispatch?.("show-toast", {
+        type: res.ok ? "success" : "error",
+        message: res.ok
+          ? t("toasts.assetLinked", { filename, },)
+          : t("toasts.assetLinkFailed", { filename, },),
+      },);
+    } catch {
+      ctx.$dispatch?.("show-toast", { type: "error", message: t("toasts.assetLinkFailed", { filename, },), },);
+    }
+  },
+
   "impersonate-toggle": async (ctx, payload, chatId,) => {
     const mode = (payload?.mode as string) ?? "toggle";
     if (mode === "off") {

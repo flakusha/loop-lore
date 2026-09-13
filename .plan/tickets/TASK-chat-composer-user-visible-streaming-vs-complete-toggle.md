@@ -3,7 +3,7 @@
 
 # TASK: Chat composer: user-visible streaming vs complete toggle
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-chat-product-features.md

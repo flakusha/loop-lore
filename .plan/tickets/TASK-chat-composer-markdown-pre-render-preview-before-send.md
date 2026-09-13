@@ -3,7 +3,7 @@
 
 # TASK: Chat composer: markdown pre-render/preview before send
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-chat-commands.md

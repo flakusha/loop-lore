@@ -16,6 +16,7 @@ import "./dice";
 import "./help";
 import "./improve";
 import "./image";
+import "./link";
 import "./quest";
 import "./stats";
 import "./video";
