@@ -1229,6 +1229,8 @@
     "failedAddLocation": "Failed to add location",
     "failedDeleteLocation": "Failed to delete location",
     "assetUploaded": "Asset uploaded",
+    "assetLinked": "Asset linked: {filename}",
+    "assetLinkFailed": "Failed to link {filename}",
     "assetAlreadyExists": "{filename} already exists",
     "characterCreated": "Character created",
     "characterImported": "Character imported",
@@ -1319,6 +1321,7 @@
     "create": "Create char/loc/world/item",
     "review": "Review entity data for completeness",
     "clear": "Clear chat",
-    "stats": "Show chat statistics"
+    "stats": "Show chat statistics",
+    "link": "Attach a gallery asset to this chat"
   }
 }

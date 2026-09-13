@@ -120,10 +120,10 @@ export async function selectNextGroupActor(options: TurnSelectorOptions,): Promi
 }
 
 /**
- * Check if group chat is paused from story_state JSON.
+ * Check if a chat is paused from story_state JSON.
  * @param storyState
  */
-function checkPaused(storyState: string | null,): boolean {
+export function checkPaused(storyState: string | null,): boolean {
   if (!storyState) { return false; }
   const result = safeJsonParse<{ isPaused?: boolean }>(storyState,);
   return result.ok && result.value.isPaused === true;

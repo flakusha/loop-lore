@@ -3,7 +3,7 @@
 
 # TASK: Group chat: @mention autocomplete dropdown acceptance
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-group-chat.md
