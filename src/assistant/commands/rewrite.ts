@@ -13,11 +13,14 @@
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
+import { applyRewriteToMessage, type RewriteApplyError, } from "../../chat/service";
 
 /** Deps shape for /rewrite — matches `runCreateGeneration`'s `complete` signature. */
 export interface RewriteDeps {
   complete?: (req: GenerateRequest,) => Promise<{ content: string }>;
   model?: string;
+  /** Write-back for `--apply` — ownership + same-chat checked by the service. */
+  apply?: (messageId: string, content: string,) => Promise<{ ok: true } | { ok: false; error: RewriteApplyError }>;
 }
 
 /**
@@ -48,7 +51,9 @@ export async function runRewrite(
   ctx: CommandContext,
   deps: RewriteDeps,
 ): Promise<CommandResult> {
-  const { style, rest, } = parseStyle(args,);
+  const applyRequested = args.includes("--apply",);
+  const { style, rest, } = parseStyle(args.filter((a,) => a !== "--apply",),);
+  let targetId: string | undefined;
 
   let targetText: string | undefined;
 
@@ -60,6 +65,7 @@ export async function runRewrite(
       const m = ctx.messages[i];
       if (m !== undefined && (m.role === "assistant" || m.role === "character")) {
         targetText = m.content;
+        targetId = m.id;
         break;
       }
     }
@@ -74,6 +80,7 @@ export async function runRewrite(
 
   const systemPrompt = `Rewrite the following text in ${style} style. Preserve meaning.`;
 
+  let rewritten: string | undefined;
   if (deps.complete) {
     try {
       const result = await deps.complete({
@@ -86,23 +93,79 @@ export async function runRewrite(
       },);
       const content = result.content.trim();
       if (content) {
-        return {
-          systemMessage: `**Rewritten (${style}):**\n\n${content}`,
-          actionPayload: { original: targetText, rewritten: content, style, },
-          handled: true,
-        };
+        rewritten = content;
       }
     } catch {
       // Fall through to local heuristic
     }
   }
 
-  const rewritten = rewriteText(targetText, style,);
+  const fallback = rewritten === undefined;
+  const final = fallback ? rewriteText(targetText, style,) : (rewritten as string);
+  if (applyRequested) {
+    if (!targetId) {
+      return {
+        systemMessage: "**Nothing to apply to.** `--apply` rewrites the last assistant message — omit the text argument.",
+        handled: true,
+      };
+    }
+    if (!deps.apply) {
+      return { systemMessage: "**Cannot apply.** Write-back needs a backend context.", handled: true, };
+    }
+    const applied = await deps.apply(targetId, final,);
+    if (applied.ok) {
+      return {
+        systemMessage: `**Rewritten (${style}) and applied.**\n\n${final}`,
+        actionPayload: {
+          original: targetText,
+          rewritten: final,
+          style,
+          applied: true,
+          messageId: targetId,
+          ...(fallback ? { fallback: true, } : {}),
+        },
+        handled: true,
+      };
+    }
+    const reason = applied.error === "not_found"
+      ? "The target message no longer exists."
+      : applied.error === "cross_chat"
+        ? "The target message belongs to another chat."
+        : "You are not the author of the target message.";
+    return { systemMessage: `**Cannot apply.** ${reason}`, handled: true, };
+  }
   return {
-    systemMessage: `**Rewritten (${style}):**\n\n${rewritten}\n\n[LLM unavailable — applied local heuristics only]`,
-    actionPayload: { original: targetText, rewritten, style, fallback: true, },
+    systemMessage: `**Rewritten (${style}):**\n\n${final}` +
+      (fallback ? "\n\n[LLM unavailable — applied local heuristics only]" : ""),
+    actionPayload: {
+      original: targetText,
+      rewritten: final,
+      style,
+      ...(fallback ? { fallback: true, } : {}),
+    },
     handled: true,
   };
+}
+
+/**
+ * Build the `--apply` write-back bound to this invocation's scope.
+ * Returns undefined for anonymous contexts (no author to check).
+ * @param ctx
+ * @param db
+ * @param config
+ * @returns apply closure or undefined
+ */
+function buildApply(ctx: CommandContext, db: NonNullable<CommandContext["db"]>, config: NonNullable<CommandContext["config"]>,): RewriteDeps["apply"] {
+  const userId = ctx.userId;
+  if (!userId) { return undefined; }
+  return (messageId: string, content: string,) => applyRewriteToMessage(db, {
+    messageId,
+    chatId: ctx.chatId,
+    userId,
+    userRole: null,
+    content,
+    config,
+  });
 }
 
 registerCommand("rewrite", async (args, ctx,): Promise<CommandResult> => {
@@ -115,9 +178,10 @@ registerCommand("rewrite", async (args, ctx,): Promise<CommandResult> => {
     return runRewrite(args, ctx, {
       complete: (req,) => resolved.provider.complete(req,),
       model: resolved.resolvedModel,
+      apply: buildApply(ctx, db, config,),
     },);
   } catch {
-    return runRewrite(args, ctx, {},);
+    return runRewrite(args, ctx, { apply: buildApply(ctx, db, config,), },);
   }
 },);
 

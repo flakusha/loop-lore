@@ -137,4 +137,65 @@ describe("rewrite command", () => {
       expect(result.systemMessage,).toContain("No text to rewrite",);
     });
   });
+
+  describe("runRewrite --apply", () => {
+    const history = {
+      chatId: "c1",
+      messages: [
+        { id: "1", role: "user", content: "hi", created_at: "t", },
+        { id: "2", role: "assistant", content: "previous reply", created_at: "t", },
+      ],
+    };
+    const complete = async (): Promise<{ content: string }> => ({ content: "rewritten reply", });
+
+    it("writes back through the apply dep", async () => {
+      let applied: { messageId: string; content: string } | undefined;
+      const result = await runRewrite(["--apply",], history, {
+        complete,
+        apply: async (messageId, content,) => {
+          applied = { messageId, content, };
+          return { ok: true, };
+        },
+      },);
+      expect(applied,).toEqual({ messageId: "2", content: "rewritten reply", });
+      expect(result.systemMessage,).toContain("and applied",);
+      expect(result.actionPayload,).toEqual(
+        expect.objectContaining({ applied: true, messageId: "2", }),
+      );
+    });
+
+    it("refuses explicit text with --apply (no target)", async () => {
+      const result = await runRewrite(["some text", "--apply",], { chatId: "c1", }, { complete, },);
+      expect(result.systemMessage,).toContain("Nothing to apply to",);
+    });
+
+    it("maps forbidden to the authorship message", async () => {
+      const result = await runRewrite(["--apply",], history, {
+        complete,
+        apply: async () => ({ ok: false, error: "forbidden", }),
+      },);
+      expect(result.systemMessage,).toContain("not the author",);
+    });
+
+    it("maps cross_chat to the scope message", async () => {
+      const result = await runRewrite(["--apply",], history, {
+        complete,
+        apply: async () => ({ ok: false, error: "cross_chat", }),
+      },);
+      expect(result.systemMessage,).toContain("another chat",);
+    });
+
+    it("maps not_found to the missing message", async () => {
+      const result = await runRewrite(["--apply",], history, {
+        complete,
+        apply: async () => ({ ok: false, error: "not_found", }),
+      },);
+      expect(result.systemMessage,).toContain("no longer exists",);
+    });
+
+    it("requires a backend-backed apply dep", async () => {
+      const result = await runRewrite(["--apply",], history, { complete, },);
+      expect(result.systemMessage,).toContain("needs a backend",);
+    });
+  });
 });

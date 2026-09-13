@@ -3,7 +3,7 @@
 
 # TASK: /rewrite --apply write-back to target message
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-output-control-transforms
@@ -14,6 +14,10 @@ Add --apply to /rewrite so the LLM rewrite replaces the target message content v
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Implemented in tree/prompt-power-batch: `applyRewriteToMessage` in `src/chat/service/rewrite-apply.ts` (same-chat scope, author-or-admin ownership, route-mirrored encryption handling) exported from the service barrel; `runRewrite` gained `--apply` with an injectable `apply` dep and not_found/forbidden/cross_chat messaging; production handler binds it via `buildApply`. 4 service + 6 command tests green.
