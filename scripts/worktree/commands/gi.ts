@@ -5,6 +5,7 @@ import { dirname, resolve, } from "path";
 import { fileURLToPath, } from "url";
 import type { WorktreeConfig, } from "../utils/config";
 import { gitSync, } from "../utils/git";
+import { raw, } from "../utils/output";
 
 const __filename = fileURLToPath(import.meta.url,);
 const __dirname = dirname(__filename,);
@@ -12,5 +13,5 @@ const __dirname = dirname(__filename,);
 export async function gi(args: string[], config: WorktreeConfig,): Promise<void> {
   const repoRoot = resolve(__dirname, "..", "..", "..",);
   const output = gitSync(repoRoot, "issue", ...args,);
-  console.log(output,);
+  raw(output,);
 }
