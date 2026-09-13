@@ -44,4 +44,5 @@ export interface ChatCoreFilterState {
   acceptMentionAtIndex(index: number,): void;
   moveMentionSelection(delta: 1 | -1,): void;
   handleComposerKeydown(event: KeyboardEvent,): void;
+  handleComposerEnter(): void;
 }

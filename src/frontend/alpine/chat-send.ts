@@ -134,7 +134,7 @@ export const chatSendMethods: Partial<ChatState> & ThisType<ChatState> = {
           // (e.g. slash-command response) bricks `selectChat`.
           this.isGenerating = false;
         } else {
-          this.connectGenerationSSE(this.activeChat,);
+          await this.sendWithPreferredMode(this.activeChat,);
         }
         await this.loadMessages();
         await this.loadChats();

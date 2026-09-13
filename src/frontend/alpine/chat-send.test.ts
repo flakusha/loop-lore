@@ -48,7 +48,7 @@ interface SendCtx {
   scrollToBottom: () => void;
   loadMessages: () => Promise<void>;
   loadChats: () => Promise<void>;
-  connectGenerationSSE: (chatId: string | null,) => void;
+  sendWithPreferredMode: (chatId: string | null,) => Promise<void>;
   dispatchCommandAction: (action: string, payload: unknown, chatId: string | null,) => Promise<void>;
   fireAutoQuickReplies: (trigger: "user" | "ai",) => Promise<void>;
   clearedDrafts: number;
@@ -77,7 +77,7 @@ function buildCtx(overrides?: Partial<SendCtx>,): SendCtx {
     scrollToBottom: () => {},
     loadMessages: async () => {},
     loadChats: async () => {},
-    connectGenerationSSE: () => {},
+    sendWithPreferredMode: async () => {},
     dispatchCommandAction: async () => {},
     fireAutoQuickReplies: async () => {},
     clearedDrafts: 0,
@@ -147,6 +147,18 @@ describe("chatSendMethods.sendMessage — success paths", () => {
     expect(ctx.isGenerating,).toBe(true,);
   });
 
+  test("routes generation through the per-chat stream preference", async () => {
+    const routed: (string | null)[] = [];
+    const ctx = buildCtx({
+      sendWithPreferredMode: async (chatId,) => {
+        routed.push(chatId,);
+      },
+    },);
+    ctx.$refs.messageInput.value = "hello";
+    handler = async () => Response.json({ id: "m1", },);
+    await chatSendMethods.sendMessage!.call(ctx as never,);
+    expect(routed,).toEqual(["chat-1",],);
+  });
   test("keeps the optimistic message labelled for media-only sends", async () => {
     const ctx = buildCtx({ pendingAssets: [{ assetId: "a1", filename: "pic.png", },], },);
     handler = async () => Response.json({ id: "m1", },);
@@ -206,7 +218,7 @@ describe("chatSendMethods.sendMessage — success paths", () => {
       dispatchCommandAction: async (action,) => {
         actions.push(action,);
       },
-      connectGenerationSSE: (chatId,) => {
+      sendWithPreferredMode: async (chatId,) => {
         sse.push(chatId,);
       },
     },);
