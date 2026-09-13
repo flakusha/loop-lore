@@ -16806,6 +16806,19 @@
     "source": ".plan/tickets/TASK-guided-regen-action-menu-on-assistant-messages.md",
     "status": "open"
   },
+  "TASK-GUIDED-REGEN-FRONTEND-MENU-WIRING-ON-ASSISTANT-MESSAGES": {
+    "hash": "92b200f",
+    "git_issue": "92b200f",
+    "extid": "TASK-GUIDED-REGEN-FRONTEND-MENU-WIRING-ON-ASSISTANT-MESSAGES",
+    "type": "TASK",
+    "title": "Guided-regen frontend menu wiring on assistant messages",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-guided-regen-frontend-menu-wiring-on-assistant-messages.md",
+    "status": "open"
+  },
   "TASK-HARDEN-CANACCESSNSFW-REQUIRE-BIRTH-DATE": {
     "hash": "f70d078",
     "git_issue": "f70d078",
@@ -24941,6 +24954,19 @@
     "epic": "epic-assistant-generation-extensions",
     "tags": [],
     "source": ".plan/tickets/TASK-user-prompt-gallery-frontend-page.md",
+    "status": "open"
+  },
+  "TASK-USER-PROMPT-TEMPLATE-LIBRARY-STORAGE-SAVE-AS-TEMPLATE-UNBLOC": {
+    "hash": "cd8a4be",
+    "git_issue": "cd8a4be",
+    "extid": "TASK-USER-PROMPT-TEMPLATE-LIBRARY-STORAGE-SAVE-AS-TEMPLATE-UNBLOC",
+    "type": "TASK",
+    "title": "User prompt-template library storage (save-as-template unblock)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-user-prompt-template-library-storage-save-as-template-unbloc.md",
     "status": "open"
   },
   "TASK-USER-SAVED-QUICK-REPLIES-FOR-SLASH-COMMANDS": {
