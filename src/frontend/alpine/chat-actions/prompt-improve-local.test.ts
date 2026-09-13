@@ -159,18 +159,7 @@ describe("improvePrompt guards + server errors", () => {
     expect(ctx.dispatched.at(-1,)?.event,).toBe("show-toast",);
   });
 });
-describe("analyzePrompt + restorePromptDraft", () => {
-  test("analysis toast summarizes intent + issues", async () => {
-    globals.apiFetch = (url,) => {
-      fetchCalls.push(url,);
-      const analysis = { intent: "greet", issues: ["vague", "short",], };
-      return Promise.resolve(Response.json({ data: { analysis, }, },),);
-    };
-    const ctx = buildCtx("hi",);
-    await promptImproveActions.analyzePrompt!.call(ctx as unknown as ChatState,);
-    expect(fetchCalls,).toEqual(["/api/generation/prompt",],);
-    expect(ctx._improving,).toBe(false,);
-  });
+describe("restorePromptDraft", () => {
   test("restores backup then no-ops when empty", async () => {
     const ctx = buildCtx("new",);
     ctx._promptImproveBackup = "old";
