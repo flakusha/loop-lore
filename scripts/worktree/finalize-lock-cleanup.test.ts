@@ -77,6 +77,20 @@ describe("finalize lock cleanup", () => {
       const reader = proc.stdout.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      // Read until the fixture signals readiness, then deliver SIGUSR1
+      // and drain the rest (the exit handler prints OK/LEAK last).
+      for (;;) {
+        const { done, value, } = await reader.read();
+        if (value) { buffer += decoder.decode(value, { stream: true, },); }
+        if (buffer.includes("started",) || done) { break; }
+      }
+      proc.kill("SIGUSR1",);
+      for (;;) {
+        const { done, value, } = await reader.read();
+        if (value) { buffer += decoder.decode(value, { stream: true, },); }
+        if (done) { break; }
+      }
+      reader.releaseLock();
       const code = await proc.exited;
       const leaked = buffer.includes("LEAK",);
       return { exitCode: code, leaked, };
