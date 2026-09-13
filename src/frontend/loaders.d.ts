@@ -47,34 +47,34 @@ declare global {
 
   /* ── UI helpers (src/frontend/ui.ts) ────────────────────────── */
 
-  var toggleSidebar: () => void;
-  var closeSidebar: () => void;
-  var showToast: (type: string, message: string,) => void;
-  var applyTheme: (themeId: string,) => void;
-  var setLocale: (localeId: string,) => void;
-  var t: (key: string, params?: Record<string, string>,) => string;
-  var openModal: (id: string,) => void;
-  var closeModal: (el: Element,) => void;
-  var closeModalOnBackdrop: (event: Event,) => void;
+  var toggleSidebar: typeof import("./ui").toggleSidebar;
+  var closeSidebar: typeof import("./ui").closeSidebar;
+  var showToast: typeof import("./ui").showToast;
+  var applyTheme: typeof import("./ui").applyTheme;
+  var setLocale: typeof import("./ui").setLocale;
+  var t: typeof import("./ui").t;
+  var openModal: typeof import("./ui").openModal;
+  var closeModal: typeof import("./ui").closeModal;
+  var closeModalOnBackdrop: typeof import("./ui").closeModalOnBackdrop;
 
   /* ── Page-loader functions (attached to globalThis for onclick / x-data) ── */
 
   var adminPage: any;
-  var filterCharacters: () => void;
-  var selectCharacterCard: (id: string,) => Promise<void>;
-  var unlinkCharacterAsset: (btn: HTMLElement,) => Promise<void>;
-  var startChatFromChar: (btn: HTMLElement,) => Promise<void>;
-  var editCharacter: (btn: HTMLElement,) => void;
-  var deleteCharacter: (btn: HTMLElement,) => Promise<void>;
-  var exportCharacter: (btn: HTMLElement,) => void;
+  var filterCharacters: typeof import("./pages/characters").filterCharacters;
+  var selectCharacterCard: typeof import("./pages/characters").selectCharacterCard;
+  var unlinkCharacterAsset: typeof import("./pages/characters").unlinkCharacterAsset;
+  var startChatFromChar: typeof import("./pages/characters").startChatFromChar;
+  var editCharacter: typeof import("./pages/characters").editCharacter;
+  var deleteCharacter: typeof import("./pages/characters").deleteCharacter;
+  var exportCharacter: typeof import("./pages/characters").exportCharacter;
   var saveCharacterEdit: (characterId: string,) => Promise<void>;
   var uploadAvatar: (input: HTMLInputElement,) => Promise<void>;
   var clearAvatar: () => void;
   var filterAssets: () => void;
-  var openAssetPreview: (id: string,) => Promise<void>;
-  var copyAssetUrl: () => Promise<void>;
-  var downloadAsset: () => void;
-  var deleteAssetPreview: () => Promise<void>;
+  var openAssetPreview: typeof import("./asset-preview").openAssetPreview;
+  var copyAssetUrl: typeof import("./asset-preview").copyAssetUrl;
+  var downloadAsset: typeof import("./asset-preview").downloadAsset;
+  var deleteAssetPreview: typeof import("./asset-preview").deleteAssetPreview;
   var loadNewChatPage: () => Promise<void>;
   var removeParticipant: (id: string,) => void;
   var selectActorFromList: (id: string,) => void;
