@@ -9,12 +9,12 @@ export let PASS = 0;
 export let FAIL = 0;
 
 export function pass(label: string,): void {
-  console.log(`  ${success("✓",)} ${label}`,);
+  console.log(`  ${success("PASS",)} ${label}`,);
   PASS++;
 }
 
 export function fail(label: string,): void {
-  console.log(`  ${error("✗",)} ${label}`,);
+  console.log(`  ${error("FAIL",)} ${label}`,);
   FAIL++;
 }
 
@@ -72,7 +72,7 @@ export function assertDirExists(path: string, label?: string,): void {
 
 export function printResults(): boolean {
   const total = PASS + FAIL;
-  console.log(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,);
+  console.log(`\n----------------------------------------`,);
   console.log(`${success(`${PASS}`,)} passed, ${error(`${FAIL}`,)} failed, ${total} total`,);
   if (FAIL > 0) {
     console.log(`${error("SOME TESTS FAILED",)}`,);

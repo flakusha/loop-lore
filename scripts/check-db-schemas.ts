@@ -145,17 +145,17 @@ for (const artifact of ARTIFACTS) {
 
   const generated = readFileSync(generatedPath, "utf8",).trimEnd();
   if (!existsSync(committedPath,)) {
-    console.error(`[MIGRATION LOGIC] ${artifact.label} missing from repo — run generators to create it`,);
+    console.error(`[MIGRATION LOGIC] ${artifact.label} missing from repo - run generators to create it`,);
     stale = true;
     continue;
   }
 
   const committed = readFileSync(committedPath, "utf8",).trimEnd();
   if (generated !== committed) {
-    console.error(`✗ ${artifact.label} is STALE — migrations changed but schemas not regenerated`,);
+    console.error(`FAIL: ${artifact.label} is STALE - migrations changed but schemas not regenerated`,);
     stale = true;
   } else {
-    console.log(`✓ ${artifact.label} up-to-date`,);
+    console.log(`OK: ${artifact.label} up-to-date`,);
   }
 }
 

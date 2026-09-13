@@ -186,7 +186,7 @@ for (const factory of routeFactories) {
   }
   if (!covered) {
     warnings.push(
-      `[wiring] route factory \`${factory}\` has NO direct test reference (advisory — may be covered via parent barrel)`,
+      `[wiring] route factory \`${factory}\` has NO direct test reference (advisory - may be covered via parent barrel)`,
     );
   }
 }
@@ -203,4 +203,4 @@ if (errors.length > 0) {
   process.exit(1,);
 }
 
-console.log("[wiring] OK — all route factories mounted, services wired, plugins registered, routes tested.",);
+console.log("[wiring] OK - all route factories mounted, services wired, plugins registered, routes tested.",);

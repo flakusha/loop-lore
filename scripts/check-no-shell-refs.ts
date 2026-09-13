@@ -112,11 +112,11 @@ if (existsSync(scriptsDir,)) {
 if (allViolations.length > 0) {
   console.log(`[no-shell-refs] ${allViolations.length} .sh reference(s) found:\n`,);
   for (const v of allViolations) {
-    console.log(`  ${v.file}:${v.line} — ${v.match}`,);
+    console.log(`  ${v.file}:${v.line} - ${v.match}`,);
   }
   console.log(`\n[no-shell-refs] Migrate .sh references to portable alternatives.`,);
   process.exit(1,);
 } else {
-  console.log(`[no-shell-refs] ✓ No .sh references found.`,);
+  console.log(`[no-shell-refs] OK: No .sh references found.`,);
   process.exit(0,);
 }

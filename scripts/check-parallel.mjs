@@ -537,7 +537,7 @@ function parseJobs() {
   const parsed = Number.parseInt(raw, 10,);
   if (!Number.isFinite(parsed,) || parsed < 1) {
     console.error(
-      `⚠ Invalid --jobs/CHECK_JOBS value ${JSON.stringify(raw,)}; falling back to ${DEFAULT_JOBS}.`,
+      `warn: Invalid --jobs/CHECK_JOBS value ${JSON.stringify(raw,)}; falling back to ${DEFAULT_JOBS}.`,
     );
     return DEFAULT_JOBS;
   }
@@ -662,10 +662,10 @@ function reportResults(results,) {
 
   for (const result of results) {
     if (result.passed) {
-      console.log(`✓ PASS: ${result.name}`,);
+      console.log(`PASS: ${result.name}`,);
       passed++;
     } else {
-      console.log(`✗ FAIL: ${result.name}`,);
+      console.log(`FAIL: ${result.name}`,);
       console.log(`  Output: ${result.output.split("\n",).slice(0, 10,).join("\n  ",)}`,);
       failed++;
     }
@@ -769,7 +769,7 @@ function writeReport(report,) {
   //    rest of the report. The `=` form is safe to feed to `cat` / `jq`.
   //    - Per-tool scratch paths are emitted only when the tool actually
   //    ran and produced output (CHECK_REPORT_COVERAGE_LCOV / _JSCPD).
-  console.log(`\n📄 Check report: ${REPORT_PATH}`,);
+  console.log(`\nCheck report: ${REPORT_PATH}`,);
   console.log(`CHECK_REPORT_PATH=${REPORT_PATH}`,);
   console.log(`CHECK_REPORT_LATEST=${REPORT_LATEST_PATH}`,);
   console.log(`CHECK_REPORT_RUN_ID=${RUN_ID}`,);
@@ -1007,10 +1007,10 @@ async function runNonBlockingChecks(notes,) {
     if (latestTag && packageVersion) {
       const tagVersion = latestTag.replace(/^v/, "",);
       if (tagVersion === packageVersion) {
-        console.log(`✓ Version in sync: ${packageVersion}`,);
+        console.log(`OK: Version in sync: ${packageVersion}`,);
         notes.push({ level: "ok", message: `Version in sync: ${packageVersion}`, },);
       } else {
-        console.log(`⚠ Version drift: package.json=${packageVersion}, latest tag=${tagVersion}`,);
+        console.log(`warn: Version drift: package.json=${packageVersion}, latest tag=${tagVersion}`,);
         console.log("  Run 'bun run version:sync' to reconcile",);
         notes.push({
           level: "warn",
@@ -1020,7 +1020,7 @@ async function runNonBlockingChecks(notes,) {
       }
     }
   } catch {
-    console.log("⚠ Version check skipped",);
+    console.log("warn: Version check skipped",);
     notes.push({ level: "skipped", message: "Version check skipped", },);
   }
 
@@ -1065,8 +1065,8 @@ async function runNonBlockingChecks(notes,) {
       trend = delta === 0
         ? " (unchanged vs last run)"
         : delta > 0
-        ? ` (+${delta} clones vs last run ⚠)`
-        : ` (${delta} clones vs last run ✓)`;
+        ? ` (+${delta} clones vs last run, warning)`
+        : ` (${delta} clones vs last run, ok)`;
     } catch {
       // no previous report in this checkout — baseline gets recorded below
     }
@@ -1077,18 +1077,18 @@ async function runNonBlockingChecks(notes,) {
       "utf8",
     );
     if (cloneCount > 0) {
-      console.log(`⚠ Code duplication detected (jscpd:full): ${cloneCount} clones${pctText}${trend}`,);
+      console.log(`warn: Code duplication detected (jscpd:full): ${cloneCount} clones${pctText}${trend}`,);
       console.log(`  Full report: ${JSCPD_REPORT_RELATIVE}`,);
       notes.push({
         level: "warn",
         message: `Code duplication (jscpd:full): ${cloneCount} clones${pctText}${trend}`,
       },);
     } else {
-      console.log("✓ No code duplication issues (jscpd:full)",);
+      console.log("OK: No code duplication issues (jscpd:full)",);
       notes.push({ level: "ok", message: "No code duplication issues (jscpd:full)", },);
     }
   } catch (error) {
-    console.log("⚠ Code duplication check skipped (jscpd run failed)",);
+    console.log("warn: Code duplication check skipped (jscpd run failed)",);
     notes.push({
       level: "skipped",
       message: `Code duplication check skipped: ${error.message}`,
@@ -1107,16 +1107,16 @@ async function runNonBlockingChecks(notes,) {
     ],);
     const linksText = stdout + stderr;
     if (linksText.includes("broken",)) {
-      console.log(`⚠ Markdown stale-link check found broken internal links:`,);
+      console.log(`warn: Markdown stale-link check found broken internal links:`,);
       for (const line of linksText.trim().split("\n",)) {
         if (line.includes("broken target",)) { console.log(`  ${line}`,); }
       }
     } else {
-      console.log("✓ Markdown links OK",);
+      console.log("OK: Markdown links OK",);
       notes.push({ level: "ok", message: "Markdown links OK", },);
     }
   } catch (error) {
-    console.log(`⚠ Markdown stale-link check skipped (${error.message})`,);
+    console.log(`warn: Markdown stale-link check skipped (${error.message})`,);
     notes.push({ level: "skipped", message: `Markdown stale-link check skipped (${error.message})`, },);
   }
 
@@ -1145,7 +1145,7 @@ async function runNonBlockingChecks(notes,) {
       notes.push({ level: "info", message: licenseNotes.join("\n",), },);
     }
   } catch (error) {
-    console.log(`⚠ License compliance check skipped (${error.message})`,);
+    console.log(`warn: License compliance check skipped (${error.message})`,);
     notes.push({ level: "skipped", message: `License compliance check skipped (${error.message})`, },);
   }
 }
@@ -1187,7 +1187,7 @@ async function main() {
 }
 
 main().catch((error,) => {
-  console.error("❌ Check runner failed:", error.message,);
+  console.error("error: Check runner failed:", error.message,);
   if (IS_REPORT_LS) { process.exit(1,); }
   writeReport(buildReport({
     exitCode: 1,

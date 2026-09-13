@@ -53,15 +53,15 @@ function list(benches: BenchFile[],): string {
 }
 
 async function runBench({ name, path, }: BenchFile,): Promise<boolean> {
-  console.log(`\n══════════════════════════════════════════════`,);
-  console.log(`▶ ${name}`,);
-  console.log(`══════════════════════════════════════════════`,);
+  console.log(`\n----------------------------------------------`,);
+  console.log(`${name}`,);
+  console.log(`----------------------------------------------`,);
   const started = performance.now();
   const process = Bun.spawn(["bun", "run", path,], { stdout: "inherit", stderr: "inherit", },);
   const exitCode = await process.exited;
   const elapsedMs = (performance.now() - started).toFixed(0,);
   const ok = exitCode === 0;
-  console.log(`[${name}] ${ok ? "✓" : "✗"} exit=${exitCode} ${elapsedMs} ms`,);
+  console.log(`[${name}] ${ok ? "PASS" : "FAIL"} exit=${exitCode} ${elapsedMs} ms`,);
   return ok;
 }
 

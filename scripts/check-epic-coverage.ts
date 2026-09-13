@@ -103,13 +103,13 @@ for (const [epic, cfg,] of Object.entries(MAP,)) {
   }
 }
 if (stale.length) {
-  console.log(`\n⚠ STALE (Not Started but code exists, no ticket) — ${stale.length}:`,);
+  console.log(`\nwarn: STALE (Not Started but code exists, no ticket) - ${stale.length}:`,);
   for (const s of stale) { console.log(`  - ${s}`,); }
 }
 if (gaps.length) {
-  console.log(`\n• GENUINE GAPS (no code, no ticket) — ${gaps.length}:`,);
+  console.log(`\n- GENUINE GAPS (no code, no ticket) - ${gaps.length}:`,);
   for (const g of gaps) { console.log(`  - ${g}`,); }
 }
-if (!stale.length && !gaps.length) { console.log("✓ No stale or un-signified frontend epics detected.",); }
-console.log("\nAdvisory only — not blocking.",);
+if (!stale.length && !gaps.length) { console.log("OK: No stale or un-signified frontend epics detected.",); }
+console.log("\nAdvisory only - not blocking.",);
 process.exit(0,);

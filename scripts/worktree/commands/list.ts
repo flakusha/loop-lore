@@ -60,7 +60,7 @@ export async function listWorktrees(
         syncLabel = "up to date";
       }
 
-      console.log(`    HEAD: ${headShort} — ${syncLabel}`,);
+      console.log(`    HEAD: ${headShort} - ${syncLabel}`,);
     } catch {
       console.log(`    HEAD: ${wt.HEAD.slice(0, 8,)}`,);
     }

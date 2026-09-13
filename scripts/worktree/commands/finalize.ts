@@ -8,7 +8,7 @@ import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { getRootBranch, gitSync, gitSyncQuiet, } from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { appendGripe, printRecentLedger, } from "../utils/ledger";
-import { colorize, log, section, } from "../utils/output";
+import { log, section, } from "../utils/output";
 import { DEV_IN_PROGRESS_HEADS, FINALIZE_STASH_PREFIX, } from "./abort";
 
 const LOCK_FILENAME = ".worktree-finalize.lock";
@@ -65,7 +65,7 @@ function checkDevMergeable(repoRoot: string,): void {
   // 1. Unmerged paths (merge/rebase/cherry-pick left a tree with conflicts)
   const unmerged = gitSyncQuiet(repoRoot, "ls-files", "--unmerged",);
   if (unmerged.length > 0) {
-    log("error", "dev checkout has unmerged paths — resolve or abort before finalizing",);
+    log("error", "dev checkout has unmerged paths - resolve or abort before finalizing",);
     console.log("  git -C " + repoRoot + " status  (then resolve or git merge/rebase/cherry-pick --abort)",);
     process.exit(1,);
   }
@@ -76,7 +76,7 @@ function checkDevMergeable(repoRoot: string,): void {
   for (const name of DEV_IN_PROGRESS_HEADS) {
     if (existsSync(resolve(gitDirAbs, name,),)) {
       const op = name.replace("_HEAD", "",).toLowerCase();
-      log("error", `dev checkout is mid-${op} (${name} exists) — abort or resolve before finalizing`,);
+      log("error", `dev checkout is mid-${op} (${name} exists) - abort or resolve before finalizing`,);
       if (op === "merge") { console.log("  git merge --abort  (or commit the merge)",); }
       else if (op === "rebase") { console.log("  git rebase --abort  (or git rebase --continue)",); }
       else { console.log("  git cherry-pick --abort  (or git cherry-pick --continue)",); }
@@ -100,7 +100,7 @@ function checkDevMergeable(repoRoot: string,): void {
   const stashList = gitSyncQuiet(repoRoot, "stash", "list",);
   const leftovers = stashList.split("\n",).filter((l,) => l.includes(FINALIZE_STASH_PREFIX,));
   if (leftovers.length > 0) {
-    log("warn", `dev has ${leftovers.length} leftover finalize stash(es) from prior crash — review 'git stash list'`,);
+    log("warn", `dev has ${leftovers.length} leftover finalize stash(es) from prior crash - review 'git stash list'`,);
   }
 }
 
@@ -192,7 +192,7 @@ export function acquireFinalizeLock(repoRoot: string,): () => void {
     // Brief backoff before retry. 50 × 20ms = 1s ceiling.
     Bun.sleepSync(20,);
   }
-  log("error", `could not acquire finalize lock at ${lockPath} — another finalize in progress?`,);
+  log("error", `could not acquire finalize lock at ${lockPath} - another finalize in progress?`,);
   console.log("  If no other finalize is running, remove the lockfile manually:",);
   console.log(`    rm ${lockPath}`,);
   process.exit(1,);
@@ -304,7 +304,7 @@ function releaseLockOnExit(): void {
  */
 function handleSignalAbort(sig: FinalizeSignal,): void {
   const state = ACTIVE_ABORT_STATE;
-  log("warn", `Finalize aborted by ${sig} — rolling back`,);
+  log("warn", `Finalize aborted by ${sig} - rolling back`,);
   if (state) {
     if (state.mergeInProgress) {
       log("info", `Aborting in-progress merge on ${state.branch}...`,);
@@ -315,7 +315,7 @@ function handleSignalAbort(sig: FinalizeSignal,): void {
       if (abort.exitCode === 0) {
         log("success", `merge --abort succeeded on ${state.branch}`,);
       } else {
-        log("warn", `merge --abort failed — manual cleanup may be required`,);
+        log("warn", `merge --abort failed - manual cleanup may be required`,);
         console.log(`  Stderr: ${abort.stderr.toString().trim()}`,);
       }
     }
@@ -494,7 +494,7 @@ function restoreDevFromStash(
   const lines = list.stdout.toString().split("\n",);
   const match = lines.find((line,) => line.includes(stashLabel,));
   if (!match) {
-    log("error", `stash '${stashLabel}' not found — restore manually with 'git stash list'`,);
+    log("error", `stash '${stashLabel}' not found - restore manually with 'git stash list'`,);
     process.exit(1,);
   }
   const stashRef = match.split(":",)[0].trim();
@@ -511,7 +511,7 @@ function restoreDevFromStash(
   // post-merge HEAD so the checkout is clean and the stash entry is
   // preserved. Without this, files end up in "modified" state and the
   // user's pre-merge work disappears into the stash entry.
-  log("warn", `stash pop conflicted — resetting dev to post-merge HEAD and preserving stash`,);
+  log("warn", `stash pop conflicted - resetting dev to post-merge HEAD and preserving stash`,);
   console.log("  Stash output:", pop.stderr.toString().trim(),);
   const reset = Bun.spawnSync(
     ["git", "-C", repoRoot, "reset", "--hard", mergeHead,],
@@ -612,7 +612,7 @@ export function resolveDiffBase(wtPath: string, target: string,): string {
   const mergeBase = gitSyncQuiet(wtPath, "merge-base", target, "HEAD",).trim();
   if (mergeBase.length === 0) {
     throw new Error(
-      `git merge-base ${target} HEAD failed — target is not a valid ref ` +
+      `git merge-base ${target} HEAD failed - target is not a valid ref ` +
         `or has no common ancestor with HEAD. Cannot determine diff-base ` +
         `for 'bun run check --diff-base'.`,
     );
@@ -674,7 +674,7 @@ function installFailureGripe(treeDir: string, getBranch: () => string,): void {
     if (process.exitCode !== 1) { return; }
     const branch = getBranch();
     const target = branch === "" ? "?" : branch;
-    appendGripe(treeDir, branch, `finalize ${target} failed (exit 1) — see console output`,);
+    appendGripe(treeDir, branch, `finalize ${target} failed (exit 1) - see console output`,);
   };
   process.on("exit", gripeOnFail,);
 }
@@ -702,7 +702,7 @@ export async function finalize(
   gripeBranch = branch;
 
   if (!["rebase", "squash", "direct",].includes(mergeStrategy,)) {
-    log("error", `unknown merge strategy '${mergeStrategy}' — use rebase, squash, or direct`,);
+    log("error", `unknown merge strategy '${mergeStrategy}' - use rebase, squash, or direct`,);
     process.exit(1,);
   }
 
@@ -720,7 +720,7 @@ export async function finalize(
   if (existsSync(resolve(dirPath, ".git",),)) {
     const headRef = gitSync(dirPath, "symbolic-ref", "--short", "HEAD",);
     if (headRef && headRef !== branch) {
-      log("info", `Resolved '${branch}' → branch '${headRef}'`,);
+      log("info", `Resolved '${branch}' -> branch '${headRef}'`,);
       branch = headRef;
       gripeBranch = branch;
     }
@@ -802,7 +802,7 @@ async function runFinalize(
     { stdout: "pipe", stderr: "pipe", },
   );
   if (dirty.exitCode !== 0 || staged.exitCode !== 0) {
-    log("error", "uncommitted changes detected — commit or stash before finalizing",);
+    log("error", "uncommitted changes detected - commit or stash before finalizing",);
     console.log(`  cd ${wtPath} && git add -A && git commit -m 'feat: ...'`,);
     console.log(`  cd ${wtPath} && git stash`,);
     process.exit(1,);
@@ -825,9 +825,9 @@ async function runFinalize(
       // See resolveDiffBase for why we don't pass targetBranch directly.
       const diffBase = resolveDiffBase(wtPath, targetBranch,);
       if (runCheck(wtPath, diffBase, checkArgs,)) {
-        log("success", `Checks passed (diff-base=${diffBase.slice(0, 8,)}…)`,);
+        log("success", `Checks passed (diff-base=${diffBase.slice(0, 8,)}...)`,);
       } else {
-        log("error", "Checks failed — fix before finalizing (or use --force)",);
+        log("error", "Checks failed - fix before finalizing (or use --force)",);
         process.exit(1,);
       }
     } else {
@@ -846,7 +846,7 @@ async function runFinalize(
     } else if (!hasBunLock) {
       log("warn", "Skipped: no bun.lock found",);
     } else {
-      log("error", "Tests failed — fix before finalizing (or use --force)",);
+      log("error", "Tests failed - fix before finalizing (or use --force)",);
       process.exit(1,);
     }
   }
@@ -856,7 +856,7 @@ async function runFinalize(
   const aheadStr = gitSync(wtPath, "rev-list", "--count", `${targetBranch}..HEAD`,);
   const ahead = parseInt(aheadStr || "0", 10,);
   if (ahead === 0) {
-    log("warn", `Branch '${branch}' has no commits beyond ${targetBranch} — nothing to merge`,);
+    log("warn", `Branch '${branch}' has no commits beyond ${targetBranch} - nothing to merge`,);
     process.exit(0,);
   }
   log("success", `Branch has ${ahead} commit(s) beyond ${targetBranch}`,);
@@ -870,7 +870,7 @@ async function runFinalize(
       { stdout: "pipe", stderr: "pipe", },
     );
     if (rebaseResult.exitCode !== 0) {
-      log("error", `Rebase conflicts — resolve in ${wtPath}`,);
+      log("error", `Rebase conflicts - resolve in ${wtPath}`,);
       console.log(`  Then: cd ${wtPath} && git rebase --continue`,);
       console.log(`  Then: finalize again`,);
       console.log(`  Or:   cd ${wtPath} && git rebase --abort`,);
@@ -938,14 +938,7 @@ async function runFinalize(
   } else if (mergeStrategy === "direct") {
     // Direct merge warning
     console.log("",);
-    console.log(colorize("╔════════════════════════════════════════════════════════════╗", "yellow",),);
-    console.log(colorize("║  ⚠ WARNING: Direct merge strategy                        ║", "yellow",),);
-    console.log(colorize("║                                                          ║", "yellow",),);
-    console.log(colorize(`║  Conflicts will be resolved on ${targetBranch.padEnd(35,)}║`, "yellow",),);
-    console.log(colorize(`║  This can leave ${targetBranch.padEnd(35,)} in a broken state.║`, "yellow",),);
-    console.log(colorize("║                                                          ║", "yellow",),);
-    console.log(colorize("║  Consider: --merge-strategy rebase                        ║", "yellow",),);
-    console.log(colorize("╚════════════════════════════════════════════════════════════╝", "yellow",),);
+    log("warn", `WARNING: direct merge strategy - conflicts will be resolved on ${targetBranch}, which can leave it in a broken state. Consider --merge-strategy rebase.`,);
     console.log("",);
 
     if (!force) {
@@ -966,7 +959,7 @@ async function runFinalize(
         { stdout: "pipe", stderr: "pipe", },
       );
       if (mergeResult.exitCode !== 0) {
-        log("error", `Merge conflicts — resolve on ${targetBranch}`,);
+        log("error", `Merge conflicts - resolve on ${targetBranch}`,);
         process.exit(1,);
       }
       setMergeInProgress(config.repoRoot, branch, preMergeHead, devStash, false,);
@@ -991,7 +984,7 @@ async function runFinalize(
     if (verifyResult.exitCode === 0) {
       log("success", `Merge commit GPG-signed (${mergeSha.slice(0, 8,)})`,);
     } else {
-      log("error", `Merge commit ${mergeSha.slice(0, 8,)} is unsigned — refusing to finalize`,);
+      log("error", `Merge commit ${mergeSha.slice(0, 8,)} is unsigned - refusing to finalize`,);
       process.exit(1,);
     }
   }
@@ -1005,7 +998,7 @@ async function runFinalize(
   if (removeResult.exitCode === 0) {
     log("success", "Worktree removed",);
   } else {
-    log("warn", `Failed to remove worktree — remove manually: git worktree remove ${wtPath}`,);
+    log("warn", `Failed to remove worktree - remove manually: git worktree remove ${wtPath}`,);
   }
 
   // Step 7: Delete branch
@@ -1026,5 +1019,5 @@ async function runFinalize(
   }
 
   console.log("",);
-  log("success", `Finalized '${branch}' — merged to ${targetBranch}`,);
+  log("success", `Finalized '${branch}' - merged to ${targetBranch}`,);
 }
