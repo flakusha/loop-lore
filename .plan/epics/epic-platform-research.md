@@ -25,6 +25,7 @@ Research and implementation of features from other platforms (SillyTavern, RisuA
 - SillyTavern feature parity
 - RisuAI innovations
 - Character.AI UX patterns
+- Odysseus agentic patterns (external-agent API, hwfit, manage-tools, MCP presets)
 - Community-requested features
 - Industry best practices
 
@@ -86,6 +87,10 @@ out; agentic-NPC recommended P6+ deferred into existing `actors`/`npcs`):
 | 16 | Asset-consistency generation (reference conditioning + in-chat edit) | Luma, Runway, Krea, RisuAI dynamic-assets | Keep a character's look across generated images; in-chat img-edit. **Med — pull now** (ideal 0.1.0/later wave) | Med |
 | 17 | Quick-Reply / event-driven automation (auto-execute on startup/user/ai) | SillyTavern Quick Replies, RisuAI dynamic-* | Event-triggered slash-command/regex automation — **cheap, pure frontend**, on-theme quick win | Med |
 | 18 | Dynamic memory/messages (assistant writes memory notes mid-response; multi-message) | RisuAI | Extends the shipped tool-call SSE (`messages.tool_calls`) toward durable in-chat memory writes — quick win | Med |
+| 19 | External-agent integration surface (scoped API + SKILL.md bundles, capability-aware security) | Odysseus (`/api/codex/*`, `integrations/codex+claude`) | Plugin system is loader-only; no external-agent API. Composes with `TASK-workspace-mcp-bridge` | High |
+| 20 | Hardware-aware model fit scoring (hwfit What-Fits + Cookbook download/serve) | Odysseus cookbook/hwfit | Direct input to `epic-byok-local-models` (Not Started); no hardware-fit logic in loop-lore | Med |
+| 21 | manage-tool parity (notes/checklists, calendar, bg jobs, webhooks, research triggers) | Odysseus `tool_index`/`admin_tools` | Verified zero coverage in `src/assistant` + `src/plugins` + `src/services`; maps to assistant entity-access follow-up | Med |
+| 22 | Model A/B comparison + user prefs surface | Odysseus compare/prefs routes | No comparison surface; prefs vs settings needs evaluation | Low–Med |
 
 **Cross-platform trends (strongest adoption signals):**
 - **A — Agentic NPC autonomy** (memory + goals + multi-agent dialogue): Inworld/Convai/generative-agents
@@ -97,6 +102,12 @@ out; agentic-NPC recommended P6+ deferred into existing `actors`/`npcs`):
 DB-persisted RPG state (items/combat/quests) are different philosophies, not rivals —
 loop-lore's structured backend is a differentiator. See landscape doc for the full
 respectful treatment.
+
+## Odysseus sweep (2026-09-13) — agentic assistant patterns
+
+Upstream `pewdiepie-archdaemon/odysseus` added: Codex/Claude external-agent integrations (scoped `/api/codex/*` routes, `integrations/codex|claude` plugin bundles with `SKILL.md`, capability-aware security); `manage_*` agent tools (tokens, documents, research, settings, notes/checklists, calendar, bg jobs); Cookbook model management (HF download/serve, `hwfit` hardware-fit scoring); 15 MCP presets (Gmail, IMAP/SMTP, CalDAV, GCal, Drive, GitHub, Slack, Notion, Linear, Brave, Playwright, FS, Memory, Postgres, Todoist); webhooks; model A/B compare; user prefs surface. Verified zero loop-lore coverage for MCP/webhook/calendar/notes/compare across `src/assistant`, `src/plugins`, `src/services`, `src/routes/worlds`, `src/routes/rpg` (routes root unscanned — tool guard).
+
+New candidates 19–22 in the table above; ticket map: external-agent integration → plugin epic (+ composes with `TASK-workspace-mcp-bridge`); hwfit → `epic-byok-local-models`; manage-tool parity → assistant epics.
 
 ## Open Questions
 
@@ -130,6 +141,7 @@ respectful treatment.
 - **Second sweep — Neta Studio** (World Expression Protocol, Neta-Lumina, agent studio): https://neta.art/changelogs/ + https://www.ai-market-watch.com/company/neta + https://marksun.net/blog/nieta-art-raises-over-10m-in-pre-a-funding-to-define-the-infrastructure-for-world-creation
 - **Second sweep — Story Studio AI** (text→illustrated-VN importer, frame→motion): https://story-studio.ai/; Dreammir: https://dreammir.ai/; miku.gg: https://miku.gg/
 - **Second-sweep synthesis:** `docs/ideas/emergent-platform-landscape-2026b.md` (Buckets D/E + E9–E16 gap synthesis)
+- **Odysseus refresh (2026-09-13):** https://github.com/pewdiepie-archdaemon/odysseus · Codex/Claude integrations: https://deepwiki.com/pewdiepie-archdaemon/odysseus (Agent System, MCP Servers, Companion Bridge sections)
 
 ## Research Reconciliation (2026-08-14)
 

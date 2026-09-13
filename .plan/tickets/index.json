@@ -9121,6 +9121,19 @@
     "source": ".plan/tickets/TASK-adopt-elysiajs-static-for-public-asset-serving.md",
     "status": "open"
   },
+  "TASK-ADOPT-HERMES-5-CATEGORY-TOOL-SURFACE-INTO-AGENTIC-WORKSPACE-": {
+    "hash": "f27fc74",
+    "git_issue": "f27fc74",
+    "extid": "TASK-ADOPT-HERMES-5-CATEGORY-TOOL-SURFACE-INTO-AGENTIC-WORKSPACE-",
+    "type": "TASK",
+    "title": "Adopt Hermes 5-category tool surface into agentic workspace epic",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-adopt-hermes-5-category-tool-surface-into-agentic-workspace-.md",
+    "status": "open"
+  },
   "TASK-ADOPT-INTERSECTION-OBSERVER-FOR-LAZY-LOADING": {
     "hash": "2ac3417",
     "git_issue": "2ac3417",
@@ -9642,6 +9655,19 @@
     "git_issue": "2346652",
     "status": "open"
   },
+  "TASK-ASSET-CONTEXT-INCLUSION-BUDGET-POLICY": {
+    "hash": "1660366",
+    "git_issue": "1660366",
+    "extid": "TASK-ASSET-CONTEXT-INCLUSION-BUDGET-POLICY",
+    "type": "TASK",
+    "title": "Asset context-inclusion budget policy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-context-inclusion-budget-policy.md",
+    "status": "open"
+  },
   "TASK-ASSET-DEDUP-TOCTOU-CREATES-DUPLICATE-ROWS-AND-ORPHAN-FILES": {
     "hash": "c8dbeab",
     "extid": "TASK-ASSET-DEDUP-TOCTOU-CREATES-DUPLICATE-ROWS-AND-ORPHAN-FILES",
@@ -9720,6 +9746,19 @@
     "source": ".plan/tickets/TASK-asset-platform-b5-deterministic-asset-ops.md",
     "status": "open"
   },
+  "TASK-ASSET-RAG-CAPTION-FRESHNESS-AND-STRIP-BEFORE-INDEX-PRIVACY": {
+    "hash": "67f7c8f",
+    "git_issue": "67f7c8f",
+    "extid": "TASK-ASSET-RAG-CAPTION-FRESHNESS-AND-STRIP-BEFORE-INDEX-PRIVACY",
+    "type": "TASK",
+    "title": "Asset RAG caption freshness and strip-before-index privacy",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-rag-caption-freshness-and-strip-before-index-privacy.md",
+    "status": "open"
+  },
   "TASK-ASSET-RPG-TOKENS": {
     "hash": "406496d",
     "extid": "TASK-ASSET-RPG-TOKENS",
@@ -9757,6 +9796,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-asset-storage-compression.md",
     "git_issue": "684b5a7",
+    "status": "open"
+  },
+  "TASK-ASSET-TAG-GOVERNANCE-AND-UNIFIED-PREVIEW": {
+    "hash": "d4bd580",
+    "git_issue": "d4bd580",
+    "extid": "TASK-ASSET-TAG-GOVERNANCE-AND-UNIFIED-PREVIEW",
+    "type": "TASK",
+    "title": "Asset tag governance and unified preview",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-asset-tag-governance-and-unified-preview.md",
     "status": "open"
   },
   "TASK-ASSET-TEMPLATES": {
@@ -15477,6 +15529,19 @@
     "source": ".plan/tickets/TASK-evaluate-elysiajs-opentelemetry-versus-custom-telemetry-modu.md",
     "status": "open"
   },
+  "TASK-EXPLICIT-APPROVAL-FLOW-FOR-ASSISTANT-MUTATIONS": {
+    "hash": "601e5df",
+    "git_issue": "601e5df",
+    "extid": "TASK-EXPLICIT-APPROVAL-FLOW-FOR-ASSISTANT-MUTATIONS",
+    "type": "TASK",
+    "title": "Explicit approval flow for assistant mutations",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-explicit-approval-flow-for-assistant-mutations.md",
+    "status": "open"
+  },
   "TASK-EXPLORATION-DISCOVERY": {
     "hash": "45c5d1e",
     "extid": "TASK-EXPLORATION-DISCOVERY",
@@ -16293,6 +16358,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-tree-shake.md",
     "status": "undefined"
+  },
+  "TASK-FTS5-CROSS-SESSION-RECALL-AND-SUMMARIZATION-FOR-RAG-UNIFIED-": {
+    "hash": "543eab8",
+    "git_issue": "543eab8",
+    "extid": "TASK-FTS5-CROSS-SESSION-RECALL-AND-SUMMARIZATION-FOR-RAG-UNIFIED-",
+    "type": "TASK",
+    "title": "FTS5 cross-session recall and summarization for RAG-unified memory",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fts5-cross-session-recall-and-summarization-for-rag-unified-.md",
+    "status": "open"
   },
   "TASK-GALLERY-ASSET-LINKAGE-TO-CHAT-FROM-ASSISTANT": {
     "hash": "6b68a12",
@@ -17402,6 +17480,19 @@
     "source": ".plan/tickets/TASK-import-export-io.md",
     "git_issue": "57df5ad",
     "status": "done"
+  },
+  "TASK-IN-CHAT-ASSET-EDIT-FLOW": {
+    "hash": "cba357a",
+    "git_issue": "cba357a",
+    "extid": "TASK-IN-CHAT-ASSET-EDIT-FLOW",
+    "type": "TASK",
+    "title": "In-chat asset edit flow",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-in-chat-asset-edit-flow.md",
+    "status": "open"
   },
   "TASK-INFERENCE-BROWSER-WLLAMA-GGUF": {
     "hash": "pending",
@@ -20124,6 +20215,45 @@
     "git_issue": "d555260",
     "status": "open"
   },
+  "TASK-ODYSSEUS-HWFIT-STYLE-HARDWARE-FIT-SCORING-FOR-LOCAL-MODELS": {
+    "hash": "1b76add",
+    "git_issue": "1b76add",
+    "extid": "TASK-ODYSSEUS-HWFIT-STYLE-HARDWARE-FIT-SCORING-FOR-LOCAL-MODELS",
+    "type": "TASK",
+    "title": "Odysseus hwfit-style hardware fit scoring for local models",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-odysseus-hwfit-style-hardware-fit-scoring-for-local-models.md",
+    "status": "open"
+  },
+  "TASK-ODYSSEUS-MANAGE-TOOL-PARITY-EVALUATION": {
+    "hash": "b8c764c",
+    "git_issue": "b8c764c",
+    "extid": "TASK-ODYSSEUS-MANAGE-TOOL-PARITY-EVALUATION",
+    "type": "TASK",
+    "title": "Odysseus manage-tool parity evaluation",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-odysseus-manage-tool-parity-evaluation.md",
+    "status": "open"
+  },
+  "TASK-ODYSSEUS-STYLE-EXTERNAL-AGENT-INTEGRATION-SURFACE": {
+    "hash": "a151a2c",
+    "git_issue": "a151a2c",
+    "extid": "TASK-ODYSSEUS-STYLE-EXTERNAL-AGENT-INTEGRATION-SURFACE",
+    "type": "TASK",
+    "title": "Odysseus-style external-agent integration surface",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-odysseus-style-external-agent-integration-surface.md",
+    "status": "open"
+  },
   "TASK-OLLAMA-NATIVE-PROVIDER": {
     "hash": "pending",
     "extid": "TASK-OLLAMA-NATIVE-PROVIDER",
@@ -21099,6 +21229,19 @@
     "epic": "Avatar Alpha Channel + VN Layering",
     "tags": [],
     "source": ".plan/tickets/TASK-provider-transparency-capability-flag.md",
+    "status": "open"
+  },
+  "TASK-PROVIDER-WIRING-SETTINGS-CONVENTION-FOR-BYOK-AND-RESOURCE-PR": {
+    "hash": "ad8029f",
+    "git_issue": "ad8029f",
+    "extid": "TASK-PROVIDER-WIRING-SETTINGS-CONVENTION-FOR-BYOK-AND-RESOURCE-PR",
+    "type": "TASK",
+    "title": "Provider wiring settings convention for BYOK and resource-provision",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-provider-wiring-settings-convention-for-byok-and-resource-pr.md",
     "status": "open"
   },
   "TASK-QUEST-LOG": {
@@ -23905,6 +24048,19 @@
     "source": ".plan/tickets/TASK-structured-llm-output-healing-utils.md",
     "status": "open"
   },
+  "TASK-SUBAGENT-DELEGATION-AND-PARALLEL-WORKSTREAMS-FOR-LOCAL-PROCE": {
+    "hash": "8a35bfd",
+    "git_issue": "8a35bfd",
+    "extid": "TASK-SUBAGENT-DELEGATION-AND-PARALLEL-WORKSTREAMS-FOR-LOCAL-PROCE",
+    "type": "TASK",
+    "title": "Subagent delegation and parallel workstreams for local-process-swarm",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-subagent-delegation-and-parallel-workstreams-for-local-proce.md",
+    "status": "open"
+  },
   "TASK-SUMMARIZE-FORMAT-TLDR-BULLETS-DETAILED-GRADATION": {
     "hash": "f856c0d",
     "git_issue": "f856c0d",
@@ -25753,6 +25909,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-workflow-strip-group-chat-mention-prefix-before-trigger-matc.md",
     "status": "done"
+  },
+  "TASK-WORKSPACE-MCP-BRIDGE-ON-OPENCLAW-SERVE-REGISTRY-PATTERN": {
+    "hash": "39aedf2",
+    "git_issue": "39aedf2",
+    "extid": "TASK-WORKSPACE-MCP-BRIDGE-ON-OPENCLAW-SERVE-REGISTRY-PATTERN",
+    "type": "TASK",
+    "title": "Workspace MCP bridge on OpenClaw serve/registry pattern",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-workspace-mcp-bridge-on-openclaw-serve-registry-pattern.md",
+    "status": "open"
   },
   "TASK-WORKTREE-AGENT-LEDGER": {
     "hash": "pending",
