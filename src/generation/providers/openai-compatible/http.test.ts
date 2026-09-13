@@ -137,6 +137,17 @@ describe("buildBody", () => {
     expect(body.model,).toBe("m1",);
     expect(body.temperature,).toBe(1,);
   });
+
+  test("drops undefined param values instead of leaking camelCase keys", () => {
+    const body = buildBody(
+      state,
+      baseReq({ params: { minP: undefined, vendor_flag: undefined, }, },),
+      false,
+    );
+    expect("minP" in body,).toBe(false,);
+    expect("vendor_flag" in body,).toBe(false,);
+    expect("min_p" in body,).toBe(false,);
+  });
 });
 
 // ── mapFinishReason ───────────────────────────────────────
