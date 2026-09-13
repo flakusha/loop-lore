@@ -19,7 +19,7 @@ that references docs instead of duplicating content.
 
 | Step | Action                                                       |
 | ---- | ------------------------------------------------------------ |
-| 1    | Run `plan:sync` (scripts/sync-ticket-index.ts) to find drift |
+| 1    | Run `plan:sync` (`giwt sync`) to find drift                  |
 | 2    | Link orphans to existing git issues via fuzzy title matching |
 | 3    | Create compact git issues for unmatched files                |
 | 4    | Update `index.json` with all links                           |
@@ -64,7 +64,7 @@ git issue create -m "See: .plan/tickets/TASK-AUTH-COOKIES.md" "TASK-AUTH-COOKIES
 
 ## Fuzzy Title Matching
 
-The sync script matches extid → git issue using word overlap:
+`giwt sync` matches extid → git issue using word overlap:
 
 ```javascript
 // Matching criteria (any one passes):
@@ -156,7 +156,7 @@ git issue create -m "See: .plan/tickets/TASK-NEW.md" "TASK-NEW: Title"
 
 **Problem:** hash mismatches after cross-type relinks
 **Cause:** TASK→EPIC cross-type links where extid differs from git issue prefix
-**Fix:** Script title matching accepts 2+ word overlap; run sync again after update
+**Fix:** Sync title matching accepts 2+ word overlap; run sync again after update
 
 **Problem:** "Phantom entries in index"
 **Cause:** Index has entries without corresponding .md files
@@ -164,7 +164,7 @@ git issue create -m "See: .plan/tickets/TASK-NEW.md" "TASK-NEW: Title"
 
 **Problem:** "Status mismatch"
 **Cause:** index.json status differs from git issue status
-**Fix:** Script auto-updates index status from git issue status
+**Fix:** Sync auto-updates index status from git issue status
 
 **Problem:** `--fix` refuses with "git issue CLI unavailable"
 **Cause:** The `git issue` command failed; the tool cannot distinguish a

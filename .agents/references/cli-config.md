@@ -28,7 +28,7 @@ Quick CLI reference for loop-lore. See `.agents/references/recommendations.md` f
 | `bun run size:check`           | File-size gate                                                                                                                                       |
 | `bun run context:weight`       | Agent context weight check                                                                                                                           |
 | `bun run plan:sync`            | Ticket index ↔ git issue sync check                                                                                                                  |
-| `bun run plan:sync:fix`        | Apply ticket index fixes (`scripts/sync-ticket-index.ts --fix`)                                                                                      |
+| `bun run plan:sync:fix`        | Apply ticket index fixes (`giwt sync --fix`)                                                                                                         |
 | `bun test`                     | Bun test runner (Jest-compatible)                                                                                                                    |
 | `bun test --coverage`          | Test coverage report                                                                                                                                 |
 
