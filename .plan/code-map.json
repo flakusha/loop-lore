@@ -21169,6 +21169,12 @@
       "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
     }
   ],
+  "src/routes/chats/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    }
+  ],
   "src/routes/chats/location.ts": [
     {
       "kind": "ticket",
@@ -22517,6 +22523,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-location-change-event-log.md"
+    }
+  ],
+  "src/routes/messages/translate-inbound.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
     }
   ],
   "src/routes/messages/types.ts": [
