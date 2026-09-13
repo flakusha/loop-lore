@@ -52,7 +52,7 @@ export const dispatch: Partial<ChatState> & ThisType<ChatState> = {
 
 // ── Action handlers (extracted for cognitive complexity) ──────
 
-type ActionHandler = (
+export type ActionHandler = (
   ctx: DispatchCtx & Partial<ChatState>,
   payload: Record<string, unknown> | null,
   chatId: string,

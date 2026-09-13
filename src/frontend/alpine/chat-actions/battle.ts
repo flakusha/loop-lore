@@ -10,12 +10,9 @@
 
 import type { BattleCombatantView, BattleView, } from "../../battle/panel";
 
-/** */
-export type ActionHandler = (
-  ctx: unknown,
-  payload: Record<string, unknown> | null,
-  chatId: string,
-) => Promise<void> | void;
+import type { ActionHandler, } from "./dispatch";
+
+export type { ActionHandler, };
 
 /**
  * Render the battle panel from a `battle-*` command action payload.
