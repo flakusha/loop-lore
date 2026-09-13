@@ -233,6 +233,7 @@ export interface ChatCoreState
     token_count_total?: number;
   },): string;
   connectGenerationSSE(chatId: string,): void;
+  sendWithPreferredMode(chatId: string, onDone?: () => void,): Promise<void>;
   renderStreamContainer(): void;
   _cleanupSSE(): void;
   cancelGeneration(): Promise<void>;

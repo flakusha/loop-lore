@@ -125,6 +125,23 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       log.debug("checkGenerationStatus failed", { chatId, error: String(error,), },);
     }
   },
+  async sendWithPreferredMode(chatId: string, onDone?: () => void,) {
+    const pref = this.getStreamPreference?.(chatId,) ?? this._streamResponses !== false;
+    if (pref) {
+      this.connectGenerationSSE(chatId,);
+      return;
+    }
+    const end = Date.now() + 30_000;
+    do {
+      await this.checkGenerationStatus(chatId,);
+      if (!this.isGenerating || Date.now() >= end) { break; }
+      await new Promise<void>((resolve,) => {
+        setTimeout(resolve, 1000,);
+      },);
+    } while (Date.now() < end);
+    await this.loadMessages();
+    onDone?.();
+  },
 
   async cancelGeneration() {
     log.info("cancelGeneration", { chatId: this.activeChat, },);
