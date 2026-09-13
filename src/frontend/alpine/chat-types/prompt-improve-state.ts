@@ -8,6 +8,5 @@ export interface ChatPromptImproveState {
   /** Draft saved before the last improve — one-click undo. */
   _promptImproveBackup: string | undefined;
   improvePrompt(level?: string,): Promise<void>;
-  analyzePrompt(): Promise<void>;
   restorePromptDraft(): void;
 }

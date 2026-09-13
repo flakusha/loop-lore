@@ -5,6 +5,7 @@ import type { ChatArchiveState, } from "./archive-state";
 import type { ChatBattleState, } from "./battle-state";
 import type { ChatComposerPreSendState, } from "./composer-pre-send-state";
 import type { ChatCoreState, } from "./core";
+import type { GifPickerState, } from "./gif-picker-state";
 import type { ChatLocationState, } from "./location-state";
 import type { ChatMemoryState, } from "./memory-state";
 import type { ChatMessageSearchState, } from "./message-search-state";
@@ -13,6 +14,7 @@ import type { ChatMovementState, } from "./movement-state";
 import type { ChatNpcState, } from "./npc-state";
 import type { ChatParticipantsState, } from "./participants-state";
 import type { ChatPinsState, } from "./pins-state";
+import type { ChatPromptAnalyzeState, } from "./prompt-analyze-state";
 import type { ChatPromptImproveState, } from "./prompt-improve-state";
 import type { ChatRpgState, } from "./rpg-state";
 import type { ChatSideChannelsState, } from "./side-channels-state";
@@ -36,5 +38,7 @@ export interface ChatState
     ChatMovementState,
     ChatNpcState,
     ChatWizardState,
-    ChatPromptImproveState
+    ChatPromptImproveState,
+    ChatPromptAnalyzeState,
+    GifPickerState
 {}

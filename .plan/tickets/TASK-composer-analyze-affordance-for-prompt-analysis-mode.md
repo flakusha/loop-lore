@@ -3,7 +3,7 @@
 
 # TASK: Composer Analyze affordance for prompt-analysis mode
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-prompt-improvement
@@ -14,6 +14,6 @@ Surface analyze mode next to the Improve button: POST mode analyze, render inten
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated

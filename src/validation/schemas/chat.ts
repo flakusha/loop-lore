@@ -197,6 +197,10 @@ export const ChatRenameBody = t.Object({
   name_source: t.Optional(t.String(),),
 },);
 
+export const ChatAutoTranslateBody = t.Object({
+  targetLang: t.Optional(t.String(),),
+},);
+
 /**
  * Body for `PUT /api/v1/chats/:id/gm-guidance` — runtime human-GM narrative
  * guidance. Unlike `gmConfig` on the main update route, this is NOT a key
