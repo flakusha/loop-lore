@@ -100,7 +100,7 @@ function findOwners(path: string,): void {
   // Prefix match (directory-level refs, e.g. `src/rpg/`).
   const prefixHits = Object.entries(map,).filter(([k,],) => k.startsWith(norm + "/",) && k !== norm);
   if (prefixHits.length > 0) {
-    console.log(`${norm} (directory — ${prefixHits.length} nested path(s) referenced)`,);
+    console.log(`${norm} (directory - ${prefixHits.length} nested path(s) referenced)`,);
     for (const [k, entries,] of prefixHits.slice(0, 20,)) {
       console.log(`  ${k}`,);
       for (const e of entries) {
@@ -109,7 +109,7 @@ function findOwners(path: string,): void {
     }
     return;
   }
-  console.log(`${norm} — not referenced by any plan/spec`,);
+  console.log(`${norm} - not referenced by any plan/spec`,);
 }
 
 function reportStale(map: CodeMap,): number {
@@ -128,7 +128,7 @@ function reportStale(map: CodeMap,): number {
 /** Regenerate in-memory and diff against the committed file (freshness gate). */
 function verifyFresh(map: CodeMap,): boolean {
   if (!existsSync(MAP_PATH,)) {
-    console.error(`[code-map] ${MAP_PATH} missing — run \`bun run plan:map\``,);
+    console.error(`[code-map] ${MAP_PATH} missing - run \`bun run plan:map\``,);
     return false;
   }
   const committed = readMap();
@@ -136,7 +136,7 @@ function verifyFresh(map: CodeMap,): boolean {
   const b = JSON.stringify(committed, null, 2,);
   if (a !== b) {
     console.error(
-      `[code-map] ${MAP_PATH} is stale — run \`bun run plan:map\` to regenerate`,
+      `[code-map] ${MAP_PATH} is stale - run \`bun run plan:map\` to regenerate`,
     );
     return false;
   }
@@ -154,7 +154,7 @@ function main(): void {
       process.exit(1,);
     }
     if (!existsSync(MAP_PATH,)) {
-      console.error(`[code-map] index missing — run \`bun run scripts/plan-code-map.ts\` first`,);
+      console.error(`[code-map] index missing - run \`bun run scripts/plan-code-map.ts\` first`,);
       process.exit(1,);
     }
     findOwners(path,);
@@ -174,13 +174,13 @@ function main(): void {
   if (isCheck) {
     // Freshness gate: committed index must match a fresh rebuild.
     if (!verifyFresh(map,)) { process.exit(1,); }
-    console.log("[code-map] OK — index is up to date",);
+    console.log("[code-map] OK - index is up to date",);
   } else if (args.includes("--stale",)) {
     const stale = reportStale(map,);
     if (stale > 0) {
-      console.error(`\n[code-map] ${stale} stale src reference(s) — advisory (future/renamed files)`,);
+      console.error(`\n[code-map] ${stale} stale src reference(s) - advisory (future/renamed files)`,);
     } else {
-      console.log("[code-map] OK — all src references resolve",);
+      console.log("[code-map] OK - all src references resolve",);
     }
   }
 }

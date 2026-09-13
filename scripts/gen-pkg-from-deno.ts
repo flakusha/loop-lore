@@ -140,7 +140,7 @@ if (import.meta.main) {
     const current = JSON.stringify(pkg.scripts ?? {}, null, 2,);
     const expected = JSON.stringify(merged, null, 2,);
     if (current !== expected) {
-      process.stderr.write("package.json scripts stale — run gen-pkg-from-deno\n",);
+      process.stderr.write("package.json scripts stale - run gen-pkg-from-deno\n",);
       process.exit(1,);
     }
     process.stdout.write("package.json scripts up to date\n",);

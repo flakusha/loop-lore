@@ -24,9 +24,9 @@ interface CheckReport {
 function formatStatus(status: string,): string {
   switch (status) {
     case "passed":
-      return colorize("✓ passed", "green",);
+      return colorize("passed", "green",);
     case "failed":
-      return colorize("✗ failed", "red",);
+      return colorize("failed", "red",);
     case "skipped":
       return colorize("~ skipped", "yellow",);
     default:
@@ -58,7 +58,7 @@ function parseReport(raw: string,): CheckReport {
 
 function printReportRow(name: string, report: CheckReport,): void {
   const overall = report.passed ? colorize("PASSED", "green",) : colorize("FAILED", "red",);
-  console.log(`  ${colorize(name, "cyan",)} ${overall} — ${report.branch} @ ${report.gitHead}`,);
+  console.log(`  ${colorize(name, "cyan",)} ${overall} - ${report.branch} @ ${report.gitHead}`,);
   console.log(`    run: ${report.runId} | mode: ${report.mode} | ${report.timestamp}`,);
   for (const [gate, result,] of Object.entries(report.gates,)) {
     console.log(`    ${gate}: ${formatStatus(result.status,)}`,);
@@ -68,7 +68,7 @@ function printReportRow(name: string, report: CheckReport,): void {
 
 function printMalformedRow(name: string, error: unknown,): void {
   const message = error instanceof Error ? error.message : String(error,);
-  console.log(`  ${colorize(name, "cyan",)} ${colorize("malformed report", "red",)} — ${message}`,);
+  console.log(`  ${colorize(name, "cyan",)} ${colorize("malformed report", "red",)} - ${message}`,);
 }
 
 /**
