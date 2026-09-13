@@ -63,11 +63,11 @@ Prompt assembly is also planned, not implemented: no ordered `PromptSection[]` t
 
 ### Context Compression (MVP — implemented)
 
-| File                                        | Key Exports                                     |
-| ------------------------------------------- | ----------------------------------------------- |
-| `src/generation/context-window-config.ts`   | `ContextWindowConfig`, `compressMessages` types |
-| `src/generation/context-compressor.ts`      | `compressMessages()` — pure function            |
-| `src/generation/context-compressor.test.ts` | 19 tests                                        |
+| File | Key Exports |
+| ------------------------------------------- | --------------------------------------------- |
+| `src/generation/context-window-config.ts` | `ContextWindowConfig`, `ContextMessage`, `SummarizeFn`/`TokenCountFn` types |
+| `src/generation/context-compressor/` | `compress.ts` — `compressMessages()`; `strategies.ts` — sliding/truncate/summarize |
+| `src/generation/context-compressor.test.ts` | 19 tests |
 
 Strategies:
 
@@ -86,7 +86,7 @@ System messages always preserved. Floor: never below 1 user+assistant turn.
 | 429      | Retry with exponential backoff      |
 | 5xx      | Retry up to `retries`               |
 | Timeout  | Abort, surface error                |
-| SSE drop | Try reconnect once, surface partial |
+| SSE drop | No reconnect — read error throws (partial lost); abort surfaces accumulated content as `cancelled` |
 
 ### Policy Detection
 
@@ -94,7 +94,7 @@ Post-generation: `src/generation/policy-detector.ts` — ruleset (banned topics,
 
 ### Health Check
 
-`GET /v1/models` with timeout. Returns `"ok" | "degraded" | "down"`. Runs on startup + periodically (default 60s).
+`GET /v1/models` (via `GET /models` on the provider base URL) with timeout. Returns `"ok" | "degraded" | "down"` (`providers/openai-compatible/operations.ts` — empty list maps to `degraded`). On-demand only: `POST /api/generation/test-connection` and the admin provider scan — no startup/periodic poller exists in code.
 
 ## Multi-Model: llama-swap
 
@@ -122,7 +122,7 @@ Ollama, LM Studio, text-generation-webui, KoboldCpp, LocalAI, Anthropic API, Goo
 
 ## Config
 
-Env vars: `LLAMACPP_BASE_URL` (default `http://localhost:3000`), `LLAMACPP_MODEL`, `LLAMACPP_TIMEOUT` (30s), `LLAMACPP_RETRIES` (2), `LLAMACPP_API_KEY`.
+Env vars (`src/config/load/env.ts` — `LLAMACPP_*` does not exist in code): `LLM_PROVIDER_BASE_URL` (creates a `default` provider entry when set), `LLM_PROVIDER_NAME`/`LLM_PROVIDER_LABEL`/`LLM_PROVIDER_API_KEY`/`LLM_PROVIDER_MODEL`, `LLM_PROVIDER_TIMEOUT` (default 30000ms), `LLM_PROVIDER_RETRIES` (default 3), `LLM_PROVIDER_ALLOW_USER_KEY` (default true), `LLM_DEFAULT_PROVIDER`.
 
 Server lifecycle NOT managed by loop-lore — run separately via `ai-scripts/llama-server.sh`, systemd, or container.
 
