@@ -47,7 +47,6 @@ loop-lore перестраивает ядро — персонажей, чаты
 ```bash
 # Предварительные требования: Bun (https://bun.sh)
 bun install
-cp .env.example .env
 bun run db:migrate
 
 # Запустить веб-сервер
