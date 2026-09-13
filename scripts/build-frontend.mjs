@@ -52,7 +52,7 @@ async function buildBundles() {
   await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/alpine/local-engine.worker.ts`;
   await $`bun build --target browser --minify --outdir ${DIST} ${frontend}/alpine/wllama-engine.worker.ts`;
 
-  console.log("✓ JS bundles built",);
+  console.log("JS bundles built",);
 }
 
 // ── Copy icons ──────────────────────────────────────────────────
@@ -60,7 +60,7 @@ async function buildBundles() {
 async function copyIcons() {
   console.log("=== Copying Tabler Icons ===",);
   await $`bun run src/build/copy-icons.ts`;
-  console.log("✓ Icons copied",);
+  console.log("Icons copied",);
 }
 
 // ── Compress and copy assets ────────────────────────────────────
@@ -68,7 +68,7 @@ async function copyIcons() {
 async function compressAssets() {
   console.log("=== Compressing and copying assets ===",);
   await $`bun run src/build/compress.ts ${DIST} ${SRC_PUBLIC} ${SRC_VIEWS}`;
-  console.log("✓ Assets compressed and copied",);
+  console.log("Assets compressed and copied",);
 }
 
 // ── Main ────────────────────────────────────────────────────────
@@ -81,6 +81,6 @@ async function main() {
 }
 
 main().catch((error,) => {
-  console.error("❌ Build failed:", error.message,);
+  console.error("Build failed:", error.message,);
   process.exit(1,);
 },);

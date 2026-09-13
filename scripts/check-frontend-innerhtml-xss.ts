@@ -164,7 +164,7 @@ function scan(): Finding[] {
 const findings = scan();
 console.log("=== Frontend innerHTML XSS check (advisory) ===",);
 if (findings.length === 0) {
-  console.log("✓ No unescaped interpolations in innerHTML assignments.",);
+  console.log("OK: No unescaped interpolations in innerHTML assignments.",);
   process.exit(0,);
 }
 const seen = new Set<string>();
@@ -176,6 +176,6 @@ for (const f of findings) {
   if (f.snippet) { console.log(`    ${f.snippet}`,); }
 }
 console.log(
-  `\n⚠ ${seen.size} unescaped interpolation(s). Wrap with escapeHtml() or use textContent/property assignment. (advisory)`,
+  `\nwarn: ${seen.size} unescaped interpolation(s). Wrap with escapeHtml() or use textContent/property assignment. (advisory)`,
 );
 process.exit(1,);

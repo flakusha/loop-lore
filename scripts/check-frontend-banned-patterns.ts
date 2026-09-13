@@ -84,15 +84,15 @@ for (const file of walk(TARGET,)) {
 console.log("=== Frontend heuristic banned-pattern report (advisory, ESLint-gap) ===",);
 const keys = Object.keys(buckets,);
 if (keys.length === 0) {
-  console.log("✓ No banned patterns found.",);
+  console.log("OK: No banned patterns found.",);
   process.exit(0,);
 }
 let total = 0;
 for (const k of keys) {
   const b = buckets[k];
   total += b.count;
-  console.log(`\n## ${k} — ${b.count}`,);
+  console.log(`\n## ${k} - ${b.count}`,);
   for (const ex of b.examples) { console.log(`  ${ex}`,); }
 }
-console.log(`\n⚠ ${total} finding(s) across ${keys.length} bucket(s). Advisory only — not blocking.`,);
+console.log(`\nwarn: ${total} finding(s) across ${keys.length} bucket(s). Advisory only - not blocking.`,);
 process.exit(1,);
