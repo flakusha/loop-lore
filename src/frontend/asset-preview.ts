@@ -26,14 +26,6 @@ interface PreviewAsset {
 
 declare global {
   var __previewAsset: PreviewAsset | null | undefined;
-
-  var openAssetPreview: ((id: string,) => Promise<void>) | undefined;
-
-  var copyAssetUrl: (() => Promise<void>) | undefined;
-
-  var downloadAsset: (() => Promise<void>) | undefined;
-
-  var deleteAssetPreview: (() => Promise<void>) | undefined;
 }
 
 /**
@@ -140,7 +132,7 @@ async function renderPreviewBody(
   }
 }
 
-globalThis.openAssetPreview = async function openAssetPreview(id: string,): Promise<void> {
+export async function openAssetPreview(id: string,): Promise<void> {
   try {
     const res = await feFetch(`/api/assets/${id}`,);
     if (!res.ok) { return; }
@@ -158,9 +150,9 @@ globalThis.openAssetPreview = async function openAssetPreview(id: string,): Prom
   } catch {
     /* ignore — preview is best-effort */
   }
-};
+}
 
-globalThis.copyAssetUrl = async function copyAssetUrl(): Promise<void> {
+export async function copyAssetUrl(): Promise<void> {
   const a = globalThis.__previewAsset;
   if (!a?.id) { return; }
   try {
@@ -172,9 +164,9 @@ globalThis.copyAssetUrl = async function copyAssetUrl(): Promise<void> {
     const { showToast, } = await import("./ui");
     showToast("error", "Failed to copy",);
   }
-};
+}
 
-globalThis.downloadAsset = async function downloadAsset(): Promise<void> {
+export async function downloadAsset(): Promise<void> {
   const a = globalThis.__previewAsset;
   if (!a?.id) { return; }
   try {
@@ -194,9 +186,9 @@ globalThis.downloadAsset = async function downloadAsset(): Promise<void> {
     const { showToast, } = await import("./ui");
     showToast("error", "Failed to download",);
   }
-};
+}
 
-globalThis.deleteAssetPreview = async function deleteAssetPreview(): Promise<void> {
+export async function deleteAssetPreview(): Promise<void> {
   const a = globalThis.__previewAsset;
   if (!a?.id || !confirm("Delete this asset?",)) { return; }
   const { showToast, } = await import("./ui");
@@ -214,4 +206,13 @@ globalThis.deleteAssetPreview = async function deleteAssetPreview(): Promise<voi
   } catch {
     showToast("error", "Failed to delete",);
   }
-};
+}
+
+// Single attachment point; loaders.d.ts derives these ambient signatures
+// via `typeof import("./asset-preview")`.
+Object.assign(globalThis, {
+  openAssetPreview,
+  copyAssetUrl,
+  downloadAsset,
+  deleteAssetPreview,
+},);

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
+// size-allow: 254
 // ── Characters page: search, detail modal, actions ────────────
 import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
@@ -17,7 +17,7 @@ import "../character-growth-editor";
 
 const log = rootLog.child({ module: "characters-page", },);
 
-globalThis.filterCharacters = function() {
+export function filterCharacters() {
   const query = document.querySelector<HTMLInputElement>("#character-search",)?.value ?? "";
   filterCards({
     containerId: "#character-grid",
@@ -28,7 +28,7 @@ globalThis.filterCharacters = function() {
     emptyIcon: "👤",
     emptyTitle: "No characters match your search",
   },);
-};
+}
 
 /** Lazy-init the character detail modal; returns null if unavailable. */
 async function ensureModal(): Promise<HTMLElement | null> {
@@ -128,7 +128,7 @@ async function loadCharacterGallery(modal: HTMLElement, id: string,): Promise<vo
   }
 }
 
-globalThis.unlinkCharacterAsset = async function(btn: HTMLElement,) {
+export async function unlinkCharacterAsset(btn: HTMLElement,) {
   const actorId = btn.dataset.actorId;
   const assetId = btn.dataset.assetId;
   const modal = btn.closest("#character-detail-modal",) as HTMLElement | null;
@@ -146,9 +146,9 @@ globalThis.unlinkCharacterAsset = async function(btn: HTMLElement,) {
   } catch {
     showToast("error", "Failed to unlink asset",);
   }
-};
+}
 
-globalThis.selectCharacterCard = async function(id: string,) {
+export async function selectCharacterCard(id: string,) {
   const modal = await ensureModal();
   if (!modal) { return; }
 
@@ -164,9 +164,9 @@ globalThis.selectCharacterCard = async function(id: string,) {
   } catch {
     /* ignore */
   }
-};
+}
 
-globalThis.startChatFromChar = async function(btn: HTMLElement,) {
+export async function startChatFromChar(btn: HTMLElement,) {
   const id = btn.dataset.id;
   if (!id) { return; }
   try {
@@ -182,14 +182,14 @@ globalThis.startChatFromChar = async function(btn: HTMLElement,) {
   } catch {
     /* ignore */
   }
-};
+}
 
-globalThis.editCharacter = function(btn: HTMLElement,) {
+export function editCharacter(btn: HTMLElement,) {
   const id = btn.dataset.id;
   if (id) { location.assign(`/character/${id}/edit`,); }
-};
+}
 
-globalThis.deleteCharacter = async function(btn: HTMLElement,) {
+export async function deleteCharacter(btn: HTMLElement,) {
   const id = btn.dataset.id;
   if (!id || !confirm("Delete this character?",)) { return; }
   try {
@@ -207,9 +207,9 @@ globalThis.deleteCharacter = async function(btn: HTMLElement,) {
   } catch {
     /* ignore */
   }
-};
+}
 
-globalThis.exportCharacter = function(btn: HTMLElement,) {
+export function exportCharacter(btn: HTMLElement,) {
   // The export modal partial does not carry data-character-id itself, but it
   // is rendered inside a context that does (e.g. #character-chat-list,
   // #character-edit-form, or the grid). Walk up to the nearest ancestor with
@@ -235,7 +235,18 @@ globalThis.exportCharacter = function(btn: HTMLElement,) {
   // Trigger download - backend uses /api/actors/:actorId/export
   globalThis.location.assign(`/api/actors/${characterId}/export?format=${format}`,);
   closeModal(btn,);
-};
+}
+
+// Attached for onclick/x-data; loaders.d.ts derives these ambient signatures via `typeof import("./pages/characters")`.
+Object.assign(globalThis, {
+  filterCharacters,
+  unlinkCharacterAsset,
+  selectCharacterCard,
+  startChatFromChar,
+  editCharacter,
+  deleteCharacter,
+  exportCharacter,
+},);
 
 initTraits(feFetch,);
 initProactive(feFetch,);
