@@ -41,7 +41,16 @@ import { ticket, } from "./commands/ticket";
 import { loadConfig, resolveBranch, } from "./utils/config";
 import { assertNotInWorktree, getBranches, getStatus, getWorktrees, gitSync, } from "./utils/git";
 import { appendLedger, extractSayArgs, LEDGER_SILENT_COMMANDS, } from "./utils/ledger";
-import { colorize, colors, log, section, } from "./utils/output";
+import {
+  colorize,
+  colors,
+  log,
+  type LogLevel,
+  type OutputFormat,
+  section,
+  setLogLevel,
+  setOutputFormat,
+} from "./utils/output";
 
 interface CommandHandler {
   description: string;
@@ -192,6 +201,9 @@ function showHelp(): void {
   }
   console.log("",);
   console.log("Run: worktree <command> [args]",);
+  console.log("Global flags (any command, after the command name):",);
+  console.log("  --log <level>      debug|info|success|warn|error|silent (or GIWT_LOG)",);
+  console.log("  --output <format>  simple|pretty|json|jsonl|toml (or GIWT_OUTPUT)",);
   console.log("",);
 }
 
@@ -209,6 +221,50 @@ const ROOT_ONLY_COMMANDS: Record<string, true> = {
   rebase: true,
   remove: true,
 };
+
+const LOG_LEVELS: readonly LogLevel[] = ["debug", "info", "success", "warn", "error", "silent",];
+const OUTPUT_FORMATS: readonly OutputFormat[] = ["simple", "pretty", "json", "jsonl", "toml",];
+
+/**
+ * Pull global `--log <level>` / `--output <format>` (or `--flag=value`)
+ * out of post-command args. Applied via setLogLevel/setOutputFormat before
+ * dispatch; stripped so subcommands never see them (same precedent as --say).
+ */
+function extractOutputFlags(args: string[],): { cleanArgs: string[] } {
+  const cleanArgs: string[] = [];
+  let i = 0;
+  while (i < args.length) {
+    const arg = args[i];
+    const eq = arg.indexOf("=",);
+    const flag = eq === -1 ? arg : arg.slice(0, eq,);
+    const inline = eq === -1 ? undefined : arg.slice(eq + 1,);
+    if (flag === "--log" || flag === "--output") {
+      const value = inline ?? args[i + 1];
+      if (value === undefined || value.startsWith("--",)) {
+        log("error", `${flag} requires a value`,);
+        process.exit(1,);
+      }
+      if (flag === "--log") {
+        if (!(LOG_LEVELS as readonly string[]).includes(value,)) {
+          log("error", `invalid --log value "${value}" (expected ${LOG_LEVELS.join("|",)})`,);
+          process.exit(1,);
+        }
+        setLogLevel(value as LogLevel,);
+      } else {
+        if (!(OUTPUT_FORMATS as readonly string[]).includes(value,)) {
+          log("error", `invalid --output value "${value}" (expected ${OUTPUT_FORMATS.join("|",)})`,);
+          process.exit(1,);
+        }
+        setOutputFormat(value as OutputFormat,);
+      }
+      i += inline === undefined ? 2 : 1;
+      continue;
+    }
+    cleanArgs.push(arg,);
+    i += 1;
+  }
+  return { cleanArgs, };
+}
 
 export async function main(): Promise<void> {
   const config = await loadConfig();
@@ -229,12 +285,13 @@ export async function main(): Promise<void> {
   // optional --say context). Say-flags are stripped before dispatch so
   // subcommands never see them.
   const { cleanArgs, said, } = extractSayArgs(cmdArgs,);
+  const { cleanArgs: finalArgs, } = extractOutputFlags(cleanArgs,);
   if (!LEDGER_SILENT_COMMANDS[cmdName]) {
-    appendLedger(config.treeDir, cmdName, cleanArgs, said,);
+    appendLedger(config.treeDir, cmdName, finalArgs, said,);
   }
 
   try {
-    await commands[cmdName].run(cleanArgs, config,);
+    await commands[cmdName].run(finalArgs, config,);
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error,);
     log("error", msg,);
