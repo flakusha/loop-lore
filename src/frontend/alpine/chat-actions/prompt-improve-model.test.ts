@@ -13,7 +13,7 @@ import { markModelReady, } from "../local-model-improve";
 import type { ChatState, } from "../types";
 import { promptImproveActions, } from "./prompt-improve";
 
-type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
+import type { ApiFetchMock, } from "../../tests/test-types";
 
 const globals = globalThis as unknown as {
   apiFetch?: ApiFetchMock;

@@ -1,11 +1,14 @@
 import { describe, expect, test, } from "bun:test";
 import { wizardActionHandlers, } from "./wizard";
 
+import type { ChatState, } from "../types";
+
 interface WizardCtx {
-  wizardDraft: unknown;
+  wizardDraft: ChatState["wizardDraft"];
   wizardPreviewOpen: boolean;
   toasts: { type: string; message: string }[];
   $dispatch?: (event: string, detail?: unknown,) => void;
+  connectGenerationSSE: (chatId: string,) => void;
 }
 
 function buildCtx(): WizardCtx {
@@ -13,6 +16,7 @@ function buildCtx(): WizardCtx {
     wizardDraft: null,
     wizardPreviewOpen: false,
     toasts: [],
+    connectGenerationSSE: () => {},
     $dispatch: (event, detail,) => {
       if (event === "show-toast") {
         const d = detail as { type: string; message: string };
@@ -59,7 +63,7 @@ describe("wizardActionHandlers.wizard-confirm", () => {
   test("closes the preview, clears the draft and toasts", () => {
     const ctx = buildCtx();
     ctx.wizardPreviewOpen = true;
-    ctx.wizardDraft = { wizardId: "w1", };
+    ctx.wizardDraft = { wizardId: "w1", entityType: "character", label: "c", fields: {}, };
     wizardActionHandlers["wizard-confirm"]!(ctx, { wizardId: "w1", }, "chat-1",);
     expect(ctx.wizardPreviewOpen,).toBe(false,);
     expect(ctx.wizardDraft,).toBeNull();
@@ -81,7 +85,7 @@ describe("wizardActionHandlers.wizard-cancel", () => {
   test("closes the preview and discards the draft without a toast", () => {
     const ctx = buildCtx();
     ctx.wizardPreviewOpen = true;
-    ctx.wizardDraft = { wizardId: "w9", };
+    ctx.wizardDraft = { wizardId: "w9", entityType: "character", label: "c", fields: {}, };
     wizardActionHandlers["wizard-cancel"]!(ctx, { wizardId: "w9", }, "chat-1",);
     expect(ctx.wizardPreviewOpen,).toBe(false,);
     expect(ctx.wizardDraft,).toBeNull();

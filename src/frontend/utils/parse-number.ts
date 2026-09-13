@@ -4,11 +4,13 @@
 /**
  * Browser-local strict numeric parsing. Mirrors src/utils/parse-number.ts
  * (frontend cannot import backend utils — see frontend/alpine/json.ts
- * precedent for safe-json). Keep the two in sync.
+ * precedent for safe-json). NumberResult is type-imported from the server
+ * twin so the result shape can never drift; only the functions are mirrored.
  */
 
-/** */
-export type NumberResult = { ok: true; value: number } | { ok: false; error: Error };
+import type { NumberResult, } from "../../utils/parse-number";
+
+export type { NumberResult, };
 
 /**
  * Parse a base-10 integer strictly: the whole string must be a valid integer.

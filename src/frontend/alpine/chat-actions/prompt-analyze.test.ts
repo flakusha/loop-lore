@@ -11,7 +11,7 @@ import { LOCAL_INFERENCE_OPTIN_KEY, } from "../local-inference";
 import type { ChatState, } from "../types";
 import { type ChatPromptAnalyzeState, promptAnalyzeActions, } from "./prompt-analyze";
 
-type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
+import type { ApiFetchMock, } from "../../tests/test-types";
 
 const globals = globalThis as unknown as {
   apiFetch?: ApiFetchMock;

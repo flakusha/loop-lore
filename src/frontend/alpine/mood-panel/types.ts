@@ -1,20 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { MoodState, } from "../../../characters/services/mood-service/types";
+
 // ── Mood Panel — shared types ──
 
-/** */
-export interface MoodState {
-  id: string;
-  actorId: string;
-  worldId: string | null;
-  happiness: number;
-  baseMood: string;
-  currentMood: string;
-  moodStability: number;
-  expressionModifiers: Record<string, number>;
-  lastMoodChange: string;
-}
+export type { MoodState, };
 
 /** */
 export interface EmotionEntry {

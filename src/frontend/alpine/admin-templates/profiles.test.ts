@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { profiles, } from "./profiles";
 import type { ProfileDetail, } from "./types";
 
-type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
+import type { ApiFetchMock, } from "../../tests/test-types";
 
 const globalState = globalThis as unknown as {
   apiFetch?: ApiFetchMock;

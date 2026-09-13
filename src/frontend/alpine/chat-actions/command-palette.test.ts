@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, mock, test, } from "bun:test";
 import { commandPalette, } from "./command-palette";
 
+import type { ApiFetchMock, } from "../../tests/test-types";
+
 // ── Mock ../htmx (must precede importing ./command-palette) ──
-type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 

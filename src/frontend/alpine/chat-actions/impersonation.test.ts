@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, mock, test, } from "bun:test";
 import { impersonation, } from "./impersonation";
 
+import type { ApiFetchMock, Toast, } from "../../tests/test-types";
+
 // ── Mock ../htmx (must precede importing ./impersonation) ──
-type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
 let handler: ApiFetchMock = async () => Response.json({},);
 
@@ -12,11 +13,6 @@ mock.module("../htmx", () => ({
     return handler(url, opts,);
   }) satisfies ApiFetchMock,
 }),);
-
-interface Toast {
-  type: string;
-  message: string;
-}
 
 interface ImpersonationCtx {
   activeChat: string | null;

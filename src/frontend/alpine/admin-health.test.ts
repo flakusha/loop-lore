@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { healthPanelMethods, } from "./admin-health";
 
-type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
+import type { ApiFetchMock, } from "../tests/test-types";
 
 const globalState = globalThis as unknown as {
   apiFetch?: ApiFetchMock;
