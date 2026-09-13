@@ -100,7 +100,7 @@ describe("summarize command", () => {
   it("maps --format to the system prompt variant", async () => {
     const seen: string[] = [];
     const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
-      seen.push(String(req.messages[0]?.content ?? ""),);
+      seen.push(String(req.messages[0]?.content ?? "",),);
       return { content: "ok", };
     };
     const ctx = { chatId: "c1", messages: msgs(2,), };
@@ -121,13 +121,13 @@ describe("summarize command", () => {
       { chatId: "c1", messages: msgs(2,), },
       { complete, },
     );
-    expect(result.actionPayload,).toMatchObject({ format: "bullets", });
+    expect(result.actionPayload,).toMatchObject({ format: "bullets", },);
   });
 
   it("falls back to concise on an unknown format", async () => {
     let captured = "";
     const complete = async (req: GenerateRequest,): Promise<{ content: string }> => {
-      captured = String(req.messages[0]?.content ?? "");
+      captured = String(req.messages[0]?.content ?? "",);
       return { content: "ok", };
     };
     await runSummarize(["--format", "haiku",], { chatId: "c1", messages: msgs(2,), }, { complete, },);
