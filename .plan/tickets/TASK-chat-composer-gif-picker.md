@@ -3,7 +3,7 @@
 
 # TASK: Chat composer: GIF picker
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-chat-rich-engagement.md
@@ -14,6 +14,21 @@ No GIF implementation in src/frontend; no ticket/epic coverage. Closest epic cov
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Implemented in tree/chat-batch-3 (GifPicker slice):
+- `src/frontend/alpine/chat-actions/gif-picker.ts` — composer GIF picker
+  actions (search via backend proxy, arrow/enter/esc keyboard nav,
+  insert as composer attachment through POST /api/assets + pendingAssets).
+- `src/frontend/alpine/chat-actions/gif-picker.test.ts` — 13 tests green.
+- `src/routes/gifs/search.ts` — GET /api/gifs/search Tenor proxy
+  (server-side key, 501 when unconfigured, 429 passthrough).
+- `src/routes/gifs/search.test.ts` — 11 tests green.
+- No new npm deps. Shared wiring left for the owner (see summary):
+  chat-actions/index.ts merge, ChatState/GifPickerState merge,
+  command-buttons.ts composer button, en.json gifPicker.* keys,
+  register-plugins.ts route line.

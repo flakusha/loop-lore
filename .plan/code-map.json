@@ -1483,6 +1483,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-assistant-improve-translate-rewrite-never-call-llm.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
     }
   ],
   "src/assistant/commands/video.ts": [
@@ -4581,6 +4585,18 @@
       "source": ".plan/tickets/TASK-wire-auto-rename.md"
     }
   ],
+  "src/chat/auto-translate.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    }
+  ],
+  "src/chat/auto-translate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    }
+  ],
   "src/chat/context-degradation.test.ts": [
     {
       "kind": "ticket",
@@ -5345,6 +5361,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-locations-worlds-finalize-current-implementation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
     }
   ],
   "src/chat/service/crud/delete.test.ts": [
@@ -11663,6 +11683,18 @@
       "source": ".plan/tickets/BUG-advertised-sfx-music-video-commands-are-stubs.md"
     }
   ],
+  "src/frontend/alpine/chat-actions/gif-picker.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-composer-gif-picker.md"
+    }
+  ],
+  "src/frontend/alpine/chat-actions/gif-picker.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-composer-gif-picker.md"
+    }
+  ],
   "src/frontend/alpine/chat-actions/index.ts": [
     {
       "kind": "epic",
@@ -17376,6 +17408,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-split-logger-god-module.md"
     },
     {
@@ -21095,6 +21131,12 @@
       "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
     }
   ],
+  "src/routes/chats/auto-translate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    }
+  ],
   "src/routes/chats/create.ts": [
     {
       "kind": "ticket",
@@ -21575,6 +21617,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    }
+  ],
+  "src/routes/gifs/search.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-composer-gif-picker.md"
+    }
+  ],
+  "src/routes/gifs/search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-composer-gif-picker.md"
     }
   ],
   "src/routes/gm-notes.test.ts": [
@@ -22210,6 +22264,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-proactive-messaging.md"
     },
     {
@@ -22417,6 +22475,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-request-id-elysia-derive.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
     }
   ],
   "src/routes/messages/swipe-race-insert.test.ts": [
