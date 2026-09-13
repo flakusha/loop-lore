@@ -19,6 +19,7 @@ import {
 import type { ContentEncoding, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
+import { checkPaused, } from "../../group-chat/turn-selector";
 import { filter as filterProfanity, } from "../../profanity/service";
 import { uid, } from "../../utils";
 import { ErrorCode, jsonCreated, jsonError, } from "../http-utils";
@@ -65,6 +66,20 @@ export async function maybeAutoReply(
   request: Request,
   asyncStore?: AsyncStore,
 ): Promise<{ replied: boolean; response?: Response }> {
+  // ── Story pause gate (BUG-single-chat-pause-not-gating-autoreply) ────
+  // A paused chat accepts user messages but generates no replies. Mirrors
+  // the group cascade pre/post-flight checks. Runs before request tracking
+  // so a paused chat registers no work to poll.
+  const pausedRow = await database
+    .selectFrom("chats",)
+    .select("story_state",)
+    .where("id", "=", chatId,)
+    .executeTakeFirst();
+  if (checkPaused(pausedRow?.story_state ?? null,)) {
+    log().debug("Chat paused, auto-reply skipped", { chatId, },);
+    return { replied: false, };
+  }
+
   // If the request carries a request id and an async store is wired, register
   // it now so the frontend can poll /api/requests/:id/status while generation
   // runs. The id is the same one auto-reply passes through to triggerAutoGeneration.

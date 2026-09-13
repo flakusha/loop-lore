@@ -604,3 +604,94 @@ describeReal("maybeAutoReply — userMessage edge cases", () => {
     }
   });
 },);
+
+describeReal("maybeAutoReply — story pause gate", () => {
+  let db: Kysely<DB>;
+  let actorId: string;
+  let pausedChatId: string;
+  let pausedParentId: string;
+  let openChatId: string;
+  let openParentId: string;
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    const userId = uid();
+    await insertUsers(db, `user-${userId}`, "Test User", { id: userId, } as never,);
+    actorId = userId;
+    await db
+      .insertInto("actors",)
+      .values({
+        id: actorId,
+        actor_type: "user",
+        display_name: "Test Actor",
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "none",
+        settings: "{}",
+        format_version: 0,
+        visibility: "private",
+        import_spec: "{}",
+      },)
+      .execute();
+
+    pausedChatId = uid();
+    await insertChats(db, "Paused Chat", actorId, { id: pausedChatId, } as never,);
+    await db
+      .updateTable("chats",)
+      .set({ story_state: JSON.stringify({ isPaused: true, },), },)
+      .where("id", "=", pausedChatId,)
+      .execute();
+    pausedParentId = uid();
+    await insertMessages(db, pausedChatId, actorId, MessageRole.User, "hello world", {
+      id: pausedParentId,
+      swipe_index: 0,
+    } as never,);
+
+    openChatId = uid();
+    await insertChats(db, "Open Chat", actorId, { id: openChatId, } as never,);
+    openParentId = uid();
+    await insertMessages(db, openChatId, actorId, MessageRole.User, "hello world", {
+      id: openParentId,
+      swipe_index: 0,
+    } as never,);
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("paused chat produces no reply and stores nothing", async () => {
+    const result = await maybeAutoReply(
+      db,
+      testConfig,
+      pausedChatId,
+      actorId,
+      pausedParentId,
+      "hello",
+      new Request("http://localhost/",),
+    );
+    expect(result.replied,).toBe(false,);
+    const rows = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", pausedChatId,)
+      .where("role", "=", MessageRole.Assistant,)
+      .execute();
+    expect(rows,).toHaveLength(0,);
+  });
+
+  test("unpaused chat replies normally", async () => {
+    const result = await maybeAutoReply(
+      db,
+      testConfig,
+      openChatId,
+      actorId,
+      openParentId,
+      "hello",
+      new Request("http://localhost/",),
+    );
+    expect(result.replied,).toBe(true,);
+  });
+},);
