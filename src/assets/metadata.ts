@@ -61,6 +61,7 @@ function readUint24LE(buf: Uint8Array, offset: number,): number {
 /**
  * @param buf
  * @param offset
+ * @returns decoded value
  */
 function readUint32LE(buf: Uint8Array, offset: number,): number {
   return ((buf[offset + 3]! << 24) | (buf[offset + 2]! << 16) | (buf[offset + 1]! << 8) | buf[offset]!) >>> 0;
@@ -69,6 +70,7 @@ function readUint32LE(buf: Uint8Array, offset: number,): number {
 /**
  * @param buf
  * @param prefix
+ * @returns whether buf starts with prefix
  */
 function startsWith(buf: Uint8Array, prefix: Uint8Array,): boolean {
   if (buf.length < prefix.length) { return false; }
@@ -78,6 +80,7 @@ function startsWith(buf: Uint8Array, prefix: Uint8Array,): boolean {
 
 /**
  * @param buf
+ * @returns dimensions with optional caption
  */
 function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; caption?: string } {
   const width = readUint32BE(buf, 16,);
@@ -112,6 +115,7 @@ function parsePngMetadata(buf: Uint8Array,): { width: number; height: number; ca
 
 /**
  * @param buf
+ * @returns dimensions with optional caption
  */
 function parseJpegMetadata(buf: Uint8Array,): { width: number; height: number; caption?: string } {
   let offset = 2;
@@ -161,6 +165,7 @@ function parseJpegMetadata(buf: Uint8Array,): { width: number; height: number; c
 
 /**
  * @param buf
+ * @returns dimensions
  */
 function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } {
   // RIFF header: 4 bytes "RIFF" + 4 bytes file size + 4 bytes "WEBP"
@@ -211,6 +216,7 @@ function parseWebpMetadata(buf: Uint8Array,): { width: number; height: number } 
 
 /**
  * @param buf
+ * @returns dimensions
  */
 function parseGifMetadata(buf: Uint8Array,): { width: number; height: number } {
   const width = readUint16LE(buf, 6,);
@@ -222,6 +228,7 @@ function parseGifMetadata(buf: Uint8Array,): { width: number; height: number } {
  * Extract metadata from an image buffer.
  * Returns dimensions, format, alpha presence, and optional caption.
  * @param buffer
+ * @returns extracted image metadata
  */
 export function extractImageMetadata(buffer: Uint8Array,): ImageMetadata {
   if (startsWith(buffer, PNG_HEADER,)) {

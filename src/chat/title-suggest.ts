@@ -67,3 +67,48 @@ export async function suggestChatTitle(args: {
     return fallback;
   }
 }
+
+/** Placeholder names marking a chat as untitled. Mirrors transitions.autoRenameChat. */
+export function isUntitledChatName(name: string | null,): boolean {
+  return name === null || name === "New Chat" || name === "";
+}
+
+/**
+ * Advisory first-message title for untitled non-direct chats. Direct chats
+ * keep the rule-based auto-rename (character + location); group/solo chats
+ * otherwise keep the placeholder forever. Never throws — skips titled or
+ * direct chats, logs update failures.
+ * @param args - Config, db, chat/user ids, the chat record, first message
+ */
+export async function titleUntitledChatFromFirstMessage(args: {
+  config: Config;
+  db: Kysely<DB>;
+  chatId: string;
+  userId?: string;
+  chatRecord: { name: string | null; mode: string | null } | undefined;
+  firstMessage: string;
+},): Promise<void> {
+  const record = args.chatRecord;
+  if (!record || !isUntitledChatName(record.name,)) { return; }
+  if (record.mode === "direct") { return; }
+  try {
+    const title = await suggestChatTitle({
+      config: args.config,
+      db: args.db,
+      userId: args.userId,
+      chatId: args.chatId,
+      firstMessage: args.firstMessage,
+    },);
+    await args.db
+      .updateTable("chats",)
+      .set({ name: title, updated_at: new Date().toISOString(), },)
+      .where("id", "=", args.chatId,)
+      .execute();
+  } catch (error) {
+    getLogger()
+      .child({ module: "chat-title", },)
+      .debug("chat title update failed, keeping placeholder", {
+        error: (error as Error).message,
+      },);
+  }
+}
