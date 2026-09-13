@@ -1031,6 +1031,12 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-adaptation.md"
     }
   ],
+  "src/assistant/commands/analyze.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-analyze-slash-command-over-prompt-analysis-service.md"
+    }
+  ],
   "src/assistant/commands/assets.test.ts": [
     {
       "kind": "ticket",
@@ -1393,6 +1399,12 @@
       "source": ".plan/tickets/TASK-assistant-entity-access-rag-access.md"
     }
   ],
+  "src/assistant/commands/regen.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-guided-regen-action-menu-on-assistant-messages.md"
+    }
+  ],
   "src/assistant/commands/registry.ts": [
     {
       "kind": "epic",
@@ -1471,6 +1483,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-assistant-generation-extensions.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-summarize-format-tldr-bullets-detailed-gradation.md"
     }
   ],
   "src/assistant/commands/translate.test.ts": [
@@ -5409,6 +5425,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-user-saved-quick-replies-for-slash-commands.md"
     }
   ],
   "src/chat/service/gm-guidance.ts": [
@@ -5541,6 +5561,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
+    }
+  ],
+  "src/chat/service/rewrite-apply.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-rewrite-apply-write-back-to-target-message.md"
     }
   ],
   "src/chat/service/seen.ts": [
@@ -11811,6 +11837,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-proactive-messaging.md"
+    }
+  ],
+  "src/frontend/alpine/chat-quick-replies.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-user-saved-quick-replies-for-slash-commands.md"
     }
   ],
   "src/frontend/alpine/chat-search.ts": [
