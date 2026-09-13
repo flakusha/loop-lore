@@ -157,10 +157,10 @@ describe("rewrite command", () => {
           return { ok: true, };
         },
       },);
-      expect(applied,).toEqual({ messageId: "2", content: "rewritten reply", });
+      expect(applied,).toEqual({ messageId: "2", content: "rewritten reply", },);
       expect(result.systemMessage,).toContain("and applied",);
       expect(result.actionPayload,).toEqual(
-        expect.objectContaining({ applied: true, messageId: "2", }),
+        expect.objectContaining({ applied: true, messageId: "2", },),
       );
     });
 
