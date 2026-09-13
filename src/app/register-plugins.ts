@@ -65,6 +65,7 @@ import { exportRoutes, } from "../routes/export";
 import { exportSseRoutes, } from "../routes/export-sse";
 import { federationRoutes, } from "../routes/federation";
 import { frontendLogsRoutes, } from "../routes/frontend-logs";
+import { gifSearchRoutes, } from "../routes/gifs/search";
 import { gmNotesRoutes, } from "../routes/gm-notes";
 import { healthRoutes, } from "../routes/health";
 import { i18nRoutes, } from "../routes/i18n";
@@ -211,6 +212,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(assetRoutes(handleOpts,),);
   app.use(assetSearchRoutes(handleOpts,),);
   app.use(assetTagRoutes({ database: handleOpts.database, },),);
+  app.use(gifSearchRoutes(handleOpts,),);
   app.use(imageEditRoutes({ database: handleOpts.database, },),);
   app.use(rpgRoutes(handleOpts,),);
   app.use(tradeRoutes(handleOpts,),);

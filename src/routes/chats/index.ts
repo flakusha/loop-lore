@@ -1,5 +1,6 @@
 import { Elysia, } from "elysia";
 import { safeJsonParse, } from "../../utils";
+import { autoTranslateRoutes, } from "./auto-translate";
 import { batchRoutes, } from "./batch";
 import { createRoutes, } from "./create";
 import { entitySuggestionRoutes, } from "./entity-suggestions";
@@ -37,6 +38,7 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(createRoutes(opts, prefix,),)
       .use(templatesRoutes(opts, prefix,),)
       .use(batchRoutes(opts, prefix,),)
+      .use(autoTranslateRoutes(opts, prefix,),)
       .use(manageRoutes(opts, prefix,),)
       .use(participantRoutes(opts, prefix,),)
       .use(ownershipRoutes(opts, prefix,),)

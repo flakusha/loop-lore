@@ -24,6 +24,7 @@ import { persistMentions, prepareContentStorage, } from "./post";
 import { runPostInsertChatEffects, } from "./post-insert";
 import { maybeAutoReply, } from "./reply";
 import { findByIdempotencyKey, insertUserMessageWithRetry, SwipeInsertExhaustedError, } from "./swipe-race-insert";
+import { translateInboundContent, } from "./translate-inbound";
 import type { HandlerOpts, } from "./types";
 
 /**
@@ -95,12 +96,15 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         const commandOutcome = await dispatchCommand(database, config, actorId, chatId, effectiveContent,);
         if (commandOutcome.handled) { return commandOutcome.response; }
 
+        // Per-chat auto-translation (inbound) — opt-in; degrades to original.
+        const storableContent = await translateInboundContent(database, config, chatId, actorId, filteredContent,);
+
         const { storedContent, contentEncoding, storedKeyId, storedPlaintext, } = await prepareContentStorage(
           database,
           config,
           chatId,
           actorId,
-          filteredContent,
+          storableContent,
         );
 
         const id = uid();

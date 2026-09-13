@@ -114,48 +114,6 @@ export const promptImproveActions: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  /**
-   * Analyze the current draft (intent/clarity profile) and surface it as a toast.
-   */
-  async analyzePrompt() {
-    const input = this.$refs.messageInput as HTMLTextAreaElement | undefined;
-    const text = input?.value.trim() ?? "";
-    if (!input || !text || this._improving) { return; }
-    if (!this.activeChat) {
-      this.$dispatch?.("show-toast", { type: "warning", message: t("toasts.noActiveChat",), },);
-      return;
-    }
-    this._improving = true;
-    try {
-      const res = await apiFetch(
-        "/api/generation/prompt",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", },
-          body: jsonBody({ mode: "analyze", text, chatId: this.activeChat, },),
-        } as Parameters<typeof apiFetch>[1],
-      );
-      if (!res.ok) {
-        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.promptImproveFailed",), },);
-        return;
-      }
-      const data = await res.json();
-      const analysis = data?.data?.analysis;
-      if (analysis) {
-        const issues: string[] = analysis.issues ?? [];
-        const joined = issues.join("; ",);
-        const summary = joined.length > 0
-          ? `${analysis.intent} · ${joined}`
-          : `${analysis.intent}`;
-        this.$dispatch?.("show-toast", { type: "success", message: `${t("toasts.promptAnalyzed",)}: ${summary}`, },);
-      }
-    } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.promptImproveFailed",), },);
-    } finally {
-      this._improving = false;
-    }
-  },
-
   /** Restore the draft saved by {@link improvePrompt}. */
   restorePromptDraft() {
     const input = this.$refs.messageInput as HTMLTextAreaElement | undefined;
