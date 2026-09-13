@@ -108,6 +108,30 @@ renditions row for baked crops, a pHash for sprite dedup, a backlink query for
   composition of B1 renditions + `epic-avatar-alpha-vn-layering.md` alpha +
   ops language (auto-cutout = a stored op).
 
+### B6 — Asset RAG operations: freshness, privacy, budget, preview, tagging
+
+- **Caption/OCR freshness**: VLM caption + OCR text versioned per asset
+  (`caption_version` pinned to source rendition hash); transform/derive/regen
+  bumps the version and marks the index row stale until re-caption; stale
+  descriptions surface with a `caption_stale` flag in preview, never as fact.
+- **Strip-before-index privacy**: EXIF/GPS + PNG text chunks stripped before
+  RAG text (B1 strip path reused); `has_location` assets index caption only,
+  never raw metadata. Ingest originals, never thumbs/LQIP renditions.
+- **Processing lifecycle**: ingestion states `pending/processing/indexed/failed`
+  with retry + admin visibility; video keyframe + audio diarization cost-capped
+  per asset (ties B3 storage budget).
+- **Context-inclusion budget**: asset text (caption, OCR, tags) enters the prompt
+  via `src/assistant/prompt-budget.ts` with explicit precedence
+  (lore, memory, then asset) + per-chat toggle; asset tokens counted.
+- **Unified preview contract**: gallery + chat + assistant `/asset-preview` share
+  one shape — original ref, decomposed/human repr (unified epic), backlinks,
+  caption + staleness flag, tags + pending propositions.
+- **Tag governance**: `proposeTags`/`dismissProposition` exist
+  (`src/assets/service/tag-propositions.ts`); missing: human review queue,
+  vocab merge/rename admin UX (`renameAssetTag` exists, needs surface),
+  tag-to-RAG weight, facet search UI. pHash similarity stays separate from
+  semantic tags — different signals, never conflated.
+
 ## Work Items
 
 - [ ] B1: `assets.blake3` + dedup-on-store; `asset_renditions` table + thumb/LQIP
@@ -121,6 +145,9 @@ renditions row for baked crops, a pHash for sprite dedup, a backlink query for
       store; usage/backlinks query + endpoint; RAG ingestion adapter
 - [ ] B5: ops-list storage + deterministic executor (sandboxed sharp-class ops
       only); assistant tool emitting ops; sticker kind atop alpha + recents
+- [ ] B6: `caption_version` + stale flag; strip-before-index rule; ingestion
+      states + retry; prompt-budget asset policy; unified preview shape;
+      proposition review queue + tag-to-RAG weight
 - [ ] Tests per batch: dedup identity + ref-count math, GC never touches
       referenced rows, strip-on-serve keeps own copy intact, ops executor
       determinism (same input+program → same bytes), backlinks completeness
@@ -143,6 +170,9 @@ renditions row for baked crops, a pHash for sprite dedup, a backlink query for
 - A generated image is searchable by description in RAG recall (B4 proof)
 - Assistant can produce a correct avatar crop **without** any image-model call
   (B5 proof: ops list → rendition)
+- Edited/derived asset never shows a stale caption (freshness proof)
+- EXIF/GPS text absent from the RAG index fixture (privacy proof)
+- Asset tokens counted inside the prompt budget with precedence respected (budget proof)
 
 ## Related
 
@@ -155,3 +185,6 @@ renditions row for baked crops, a pHash for sprite dedup, a backlink query for
 - `epic-frontend-gallery.md` — first consumer of renditions + shared-media
 - `epic-rag-ingestion.md` / `epic-rag-context-sources.md` — B4 adapter target
 - `epic-messages.md` — album kind + optimistic send surface
+- `epic-rag-assets-unified-storage-and-assistant-flows.md` — decomposition + gallery preview view consume B4/B6 surface
+- `src/assistant/prompt-budget.ts` — host for the B6 asset-inclusion policy
+- Platform-research candidate 16 (in-chat edit) — B5 ops + `src/image-edit/` follow-up
