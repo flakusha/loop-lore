@@ -38,3 +38,12 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 - Rewire `plan:sync`, `plan:sync:fix` to `giwt sync [--fix]`.
 - Keep `scripts/sync-ticket-index.ts` in tree (no deletion) until parity proven.
 - Validate: `bun install`, `bun run plan:sync`, `.githooks/pre-commit` on staged files.
+
+## Try-2 audit (no further rewires — evidence)
+
+- `check:report-ls` → `giwt report`: REJECTED. Different worktree roots and `giwt report` flags loop-lore's valid reports malformed (missing `gates` section — schema drift). Stays in-repo.
+- `scripts/sync-ticket-index.ts` deletion: BLOCKED. `scripts/worktree/commands/sync.ts` shells out to it; removal waits for the worktree-shim phase.
+- `scripts/gpg-unlock.mjs`: STAYS. Load-bearing for worktree commit paths and `check-parallel`; design doc pins it as the human-facing unlock command.
+- `plan:backlog:sync*`, `plan:docs`, `plan:map*`, `plan:find`: NO UPSTREAM. `giwt sync` covers tickets only; `giwt report`/`search` don't cover plan-docs/code-map. Needs giwt extensions (phase 3).
+- `version:*`, `commit:*` (`src/scripts/`): OUT OF SCOPE (denylist: `src/`).
+- `bun install` of the git dep needs the user's GitHub SSH key (harness shell has no ssh); user-side verification pending.
