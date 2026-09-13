@@ -85,7 +85,12 @@ export function buildBody(
   // Provider-specific overrides — anything not already mapped above passes
   // through verbatim. The snake_case check catches camelCase params whose
   // mapped key is already in the body, so no key list to keep in sync.
+  // `undefined` values are skipped: the route layer always sets every known
+  // key, and forwarding them would leak camelCase names as own properties.
   for (const [key, value,] of Object.entries(req.params,)) {
+    if (value === undefined) {
+      continue;
+    }
     if (Object.hasOwn(body, key,) || Object.hasOwn(body, toSnakeCase(key,),)) {
       continue;
     }
