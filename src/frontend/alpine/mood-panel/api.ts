@@ -4,7 +4,7 @@
 // ── Mood Panel — standalone async API functions ──
 import { apiFetch, } from "../htmx";
 import { jsonBody, } from "../json";
-import type { EmotionDefinition, EmotionEntry, MoodState, } from "./types";
+import type { EmotionDefinition, EmotionLogEntry, MoodState, } from "./types";
 
 /**
  * @param actorId
@@ -22,7 +22,7 @@ export async function fetchMood(actorId: string,): Promise<MoodState | null> {
 /**
  * @param actorId
  */
-export async function fetchEmotions(actorId: string,): Promise<EmotionEntry[]> {
+export async function fetchEmotions(actorId: string,): Promise<EmotionLogEntry[]> {
   try {
     const res = await apiFetch(`/api/actors/${actorId}/emotions`,);
     if (res.ok) { return await res.json(); }
