@@ -26,7 +26,7 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 
 | `package.json` script | today | pilot (try 1) | phase 2 |
 |---|---|---|---|
-| `plan:sync` / `plan:sync:fix` | `scripts/sync-ticket-index.ts [--fix]` | `giwt sync [--fix]` | delete `scripts/sync-ticket-index.ts` after parity proven |
+| `plan:sync` / `plan:sync:fix` | `giwt sync [--fix]` | `giwt sync [--fix]` | done (try-5: script + test + lib deleted, worktree `sync` shims to giwt) |
 | `plan:backlog:sync*` | `scripts/sync-backlog-index.ts` | stays (try 1) | `giwt sync --backlog` or `giwt ticket sync` extension |
 | `plan:docs`, `plan:map*`, `plan:find` | `gen-plan-docs.ts`, `plan-code-map.ts` | stays | `giwt report` / `giwt search` extension |
 | worktree ops (`scripts/worktree/`) | local CLI | stays (try 1) | thin shim to `giwt` (already feature-complete upstream) |
@@ -59,3 +59,9 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 - Owner confirmed manual `bun install` of the giwt git dep works with their SSH keys (agent-shell ssh lock is expected). Re-applied try-1 wiring: git dep + `plan:sync*` → `giwt sync [--fix]`.
 - In-harness install verification still impossible (no ssh); owner smoke-tests with `bun run plan:sync` post-merge. CI caveat stands: needs keys/token or the dep breaks keyless installs.
 - Remaining: worktree shim + deletions + upstream extensions (backlog/docs/map/report parity) — needs giwt-side work first.
+
+## Try-5 cleanup (worktree shim + deletion)
+
+- `scripts/worktree/commands/sync.ts` is now a thin shim over `giwt sync` (flags pass through verbatim; runs in the caller's checkout so giwt resolves worktree-aware paths instead of the old forced main-root cwd).
+- Deleted `scripts/sync-ticket-index.ts`, `scripts/sync-ticket-index.test.ts`, `scripts/lib/sync-ticket.ts` (lib had no other consumers) and dropped the knip exemption.
+- Unblocks the try-2 BLOCKED item above; remaining phase-2 work (backlog/docs/map/report parity, `gpg-unlock`) is unchanged.
