@@ -47,7 +47,6 @@ loop-lore 는 핵심 기능 — 캐릭터, 채팅, 로어북, 멀티 백엔드 L
 ```bash
 # 사전 요구 사항: Bun (https://bun.sh)
 bun install
-cp .env.example .env
 bun run db:migrate
 
 # 웹 서버 시작

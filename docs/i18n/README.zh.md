@@ -41,7 +41,6 @@ loop-lore 重建核心功能 — 角色、聊天、世界书、多后端 LLM —
 ```bash
 # 前置条件：Bun（https://bun.sh）
 bun install
-cp .env.example .env
 bun run db:migrate
 
 # 启动 Web 服务器
