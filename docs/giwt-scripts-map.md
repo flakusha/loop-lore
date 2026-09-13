@@ -4,9 +4,9 @@ Pilot migration base (try 1). Source of truth for which `package.json` scripts s
 
 ## Install
 
-- Dependency: `"giwt": "git+ssh://git@github.com/flakusha/giwt.git#master"` in `package.json` (bun git dep; needs GitHub SSH key for `bun install`).
+- Wiring: REVERTED try 3 (was: `"giwt": "git+ssh://git@github.com/flakusha/giwt.git#master"` + `plan:sync*` → `giwt sync`). Reason: `bun install` exits 1 without a GitHub SSH key, `.github/` has no SSH setup (CI would break), and HTTPS also needs auth (private repo). Re-land when one holds: repo public, CI SSH keys/token, or giwt published to a registry.
 - Binary link (user-owned, outside repo — not committed): `ln -s /home/flak/git-ai/giwt/bin/giwt ~/.local/bin/giwt`.
-- Wrapped scripts call `giwt <cmd>` (resolved via `node_modules/.bin` after `bun install`); source-checkout fallback: `bun /home/flak/git-ai/giwt/src/cli.ts <cmd>`. Parity proven try 1: `giwt sync` ≡ `scripts/sync-ticket-index.ts` (both green on this tree).
+- Pilot proof (try 1, from source): `bun /home/flak/git-ai/giwt/src/cli.ts sync` ≡ `scripts/sync-ticket-index.ts` (both green on this tree). Re-apply `plan:sync*` → `giwt sync [--fix]` on re-land.
 
 ## KEEP in `scripts/` (real code maintenance)
 
@@ -46,4 +46,10 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 - `scripts/gpg-unlock.mjs`: STAYS. Load-bearing for worktree commit paths and `check-parallel`; design doc pins it as the human-facing unlock command.
 - `plan:backlog:sync*`, `plan:docs`, `plan:map*`, `plan:find`: NO UPSTREAM. `giwt sync` covers tickets only; `giwt report`/`search` don't cover plan-docs/code-map. Needs giwt extensions (phase 3).
 - `version:*`, `commit:*` (`src/scripts/`): OUT OF SCOPE (denylist: `src/`).
-- `bun install` of the git dep needs the user's GitHub SSH key (harness shell has no ssh); user-side verification pending.
+- `bun install` of the git dep needs a GitHub SSH key in every install env (harness shell has none; CI has no SSH setup) — see Try-3.
+
+## Try-3 reversal (final try — no rewiring lands)
+
+- Measured: `bun install` with the SSH git dep exits 1 keyless; `git ls-remote` over HTTPS also needs auth. Landing the dep would break fresh installs and CI. So `package.json` is restored to dev state (verified: `bun install` exits 0, `--stat` shows only the revert).
+- What lands: this mapping doc only — keep-vs-wrap table, pilot parity proof, rejected/blocked wraps with evidence, and re-land conditions (public repo, CI keys/token, or registry publish; then re-apply `plan:sync*` → `giwt sync` and pursue the worktree shim + upstream extensions).
+- Cap reached (3/3 tries). No push; further migration needs owner decisions above.
