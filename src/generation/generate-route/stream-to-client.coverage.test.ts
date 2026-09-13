@@ -12,12 +12,13 @@
  * stream-to-client.test.ts).
  */
 
-import { describe, expect, mock, test, } from "bun:test";
+import { expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
 import { CancelReason, CancelSource, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
+import { describeOrSkipStrict, STRICTLY_ISOLATED, } from "../../test-utils/isolate-only";
 import { GenerationCancelledError, } from "../cancellation-actions/error";
 import type {
   ChunkEvent,
@@ -67,71 +68,83 @@ function resetState(): void {
   state.toolResults = [];
 }
 
-mock.module("../cancellation-manager", () => ({
-  activeGenerations: state.active,
-  processStreamingChunk: async (opts: { attemptId: string; chunk: string },) => {
-    state.chunkCalls.push(opts,);
-    if (state.chunkRejectOnce) {
-      state.chunkRejectOnce = false;
-      throw new Error("detect down",);
-    }
-    return "continue";
-  },
-  cancelGeneration: (...args: unknown[]) => {
-    state.cancelCalls.push(args,);
-    return true;
-  },
-  failGeneration: async (...args: unknown[]) => {
-    state.failCalls.push(args,);
-    if (state.failThrows) { throw new Error("fail-track down",); }
-  },
-}),);
+if (STRICTLY_ISOLATED) {
+  mock.module("../cancellation-manager", () => ({
+    activeGenerations: state.active,
+    processStreamingChunk: async (opts: { attemptId: string; chunk: string },) => {
+      state.chunkCalls.push(opts,);
+      if (state.chunkRejectOnce) {
+        state.chunkRejectOnce = false;
+        throw new Error("detect down",);
+      }
+      return "continue";
+    },
+    cancelGeneration: (...args: unknown[]) => {
+      state.cancelCalls.push(args,);
+      return true;
+    },
+    failGeneration: async (...args: unknown[]) => {
+      state.failCalls.push(args,);
+      if (state.failThrows) { throw new Error("fail-track down",); }
+    },
+  }),);
+}
 
-mock.module("./persist", () => ({
-  buildGenerationResult: (
-    response: { content: string; finishReason: string; usage: GenerateResponse["usage"] },
-    cancelled: boolean,
-  ) => ({
-    content: response.content,
-    thinking: null,
-    tokenUsage: response.usage,
-    finishReason: response.finishReason,
-    cancelled,
-  }),
-  storeGenerationResult: async (opts: unknown,) => {
-    state.storeCalls.push(opts,);
-    return "msg-cov-1";
-  },
-}),);
+if (STRICTLY_ISOLATED) {
+  mock.module("./persist", () => ({
+    buildGenerationResult: (
+      response: { content: string; finishReason: string; usage: GenerateResponse["usage"] },
+      cancelled: boolean,
+    ) => ({
+      content: response.content,
+      thinking: null,
+      tokenUsage: response.usage,
+      finishReason: response.finishReason,
+      cancelled,
+    }),
+    storeGenerationResult: async (opts: unknown,) => {
+      state.storeCalls.push(opts,);
+      return "msg-cov-1";
+    },
+  }),);
+}
 
-mock.module("./tool-execution", () => ({
-  executeToolCalls: async (toolCalls: unknown,) => {
-    state.toolCallsArgs.push(toolCalls,);
-    return state.toolResults;
-  },
-  MAX_TOOL_ROUNDS: 5,
-}),);
+if (STRICTLY_ISOLATED) {
+  mock.module("./tool-execution", () => ({
+    executeToolCalls: async (toolCalls: unknown,) => {
+      state.toolCallsArgs.push(toolCalls,);
+      return state.toolResults;
+    },
+    MAX_TOOL_ROUNDS: 5,
+  }),);
+}
 
-mock.module("./tool-result-persist", () => ({
-  storeToolResultRows: async (...args: unknown[]) => {
-    state.toolRowsCalls.push(args,);
-  },
-}),);
+if (STRICTLY_ISOLATED) {
+  mock.module("./tool-result-persist", () => ({
+    storeToolResultRows: async (...args: unknown[]) => {
+      state.toolRowsCalls.push(args,);
+    },
+  }),);
+}
 
-mock.module("../../telemetry/service", () => ({
-  isTelemetryEnabled: () => state.telemetryEnabled,
-  record: async (_db: unknown, event: { eventType: string },) => {
-    state.telemetryEvents.push(event,);
-    if (state.telemetryReject) { throw new Error("telemetry down",); }
-  },
-}),);
+if (STRICTLY_ISOLATED) {
+  mock.module("../../telemetry/service", () => ({
+    isTelemetryEnabled: () => state.telemetryEnabled,
+    record: async (_db: unknown, event: { eventType: string },) => {
+      state.telemetryEvents.push(event,);
+      if (state.telemetryReject) { throw new Error("telemetry down",); }
+    },
+  }),);
+}
 
-mock.module("../../memory", () => ({
-  extractAndStoreMemories: async (...args: unknown[]) => {
-    state.memoryCalls.push(args,);
-    if (state.memoryReject) { throw new Error("memory down",); }
-  },
-}),);
+if (STRICTLY_ISOLATED) {
+  mock.module("../../memory", () => ({
+    extractAndStoreMemories: async (...args: unknown[]) => {
+      state.memoryCalls.push(args,);
+      if (state.memoryReject) { throw new Error("memory down",); }
+    },
+  }),);
+}
 
 // mock.module must register before the SUT import; static import would bind
 // first, so the dynamic import below is load-bearing (not a style choice).
@@ -258,7 +271,7 @@ function seedActive(attemptId: string,): void {
   state.active.set(attemptId, { lastRenderedChunkIndex: -1, deliveryConfirmed: false, },);
 }
 
-describe("streamToClient coverage", () => {
+describeOrSkipStrict("streamToClient coverage", () => {
   test("streams content + thinking and closes with done, telemetry + memory fire", async () => {
     resetState();
     state.telemetryEnabled = true;
@@ -535,4 +548,4 @@ describe("streamToClient coverage", () => {
     expect(JSON.stringify(events,).includes("SECRET",),).toBe(false,);
     expect(state.failCalls.length,).toBe(1,);
   });
-});
+},);
