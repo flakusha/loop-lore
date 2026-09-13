@@ -143,7 +143,9 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
       this.acceptPaletteAtIndex(this._paletteActiveIndex,);
       return;
     }
-    void this.sendMessage();
+    void this.sendMessage().catch(() => {
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSend",), },);
+    },);
   },
 
   handleComposerKeydown(event: KeyboardEvent,) {
