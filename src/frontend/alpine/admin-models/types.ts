@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import type { ModelInfo, } from "../../../generation/providers/types";
+
 /** */
 export interface ProviderInfo {
   name: string;
@@ -39,18 +41,7 @@ export interface PluginInfo {
   routeCount: number;
 }
 
-/** */
-export interface ModelInfo {
-  id: string;
-  ownedBy?: string;
-  contextWindow?: number;
-  maxOutput?: number;
-  thinking?: boolean;
-  modalities?: string[];
-  toolCalling?: boolean;
-  paramSize?: string;
-  raw?: Record<string, unknown>;
-}
+export type { ModelInfo, };
 
 /** */
 export interface ModelCapabilityEntry {
