@@ -31,6 +31,7 @@ export interface ChatCoreFilterState {
     actor_type?: string;
   }[];
   _showMentionAutocomplete: boolean;
+  _mentionActiveIndex: number;
   _chatParticipants: {
     actor_id: string;
     name: string;
@@ -40,4 +41,7 @@ export interface ChatCoreFilterState {
   handleMentionInput(event: Event,): void;
   selectMention(participant: { actor_id: string; name: string },): void;
   hideMentionAutocomplete(): void;
+  acceptMentionAtIndex(index: number,): void;
+  moveMentionSelection(delta: 1 | -1,): void;
+  handleComposerKeydown(event: KeyboardEvent,): void;
 }

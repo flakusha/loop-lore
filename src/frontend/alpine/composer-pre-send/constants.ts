@@ -5,3 +5,5 @@
 export const DRAFT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 /** `localStorage` key namespace for composer drafts. */
 export const DRAFT_STORAGE_KEY = "ll-composer-draft-v1";
+/** `localStorage` base key for the per-chat stream-responses preference. */
+export const STREAM_PREF_KEY = "loop-lore:stream-pref";

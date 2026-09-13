@@ -22,6 +22,7 @@ const log = rootLog.child({ module: "command-palette", },);
 export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
   _showCommandPalette: false,
   _activeCommand: "",
+  _paletteActiveIndex: 0,
   _commandList: [] as { name: string; descriptionKey: string; description: string }[],
   _filteredCommands: [] as { name: string; descriptionKey: string; description: string }[],
 
@@ -55,6 +56,7 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
     if (value.startsWith("/",) && !value.includes(" ",)) {
       const query = value.slice(1,).toLowerCase();
       this._showCommandPalette = true;
+      this._paletteActiveIndex = 0;
       if (query) {
         const filtered: typeof this._commandList = [];
         for (const c of this._commandList) { if (c.name.includes(query,)) { filtered.push(c,); } }
@@ -74,5 +76,17 @@ export const commandPalette: Partial<ChatState> & ThisType<ChatState> = {
       input.focus();
     }
     this._showCommandPalette = false;
+  },
+
+  acceptPaletteAtIndex(index: number,) {
+    const entry = this._filteredCommands[index];
+    if (!entry) { return; }
+    this.selectCommand(entry.name,);
+  },
+
+  movePaletteSelection(delta: 1 | -1,) {
+    const count = this._filteredCommands.length;
+    if (count === 0) { return; }
+    this._paletteActiveIndex = (this._paletteActiveIndex + delta + count) % count;
   },
 };

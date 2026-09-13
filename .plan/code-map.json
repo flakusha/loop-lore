@@ -9445,10 +9445,6 @@
   ],
   "src/db/migrations/0XX_templates.ts": [
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-065-template-system.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/template-system.md"
     }
@@ -9685,6 +9681,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
+    }
+  ],
+  "src/db/migrations/parts/NNN_templates.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065-template-system.md"
     }
   ],
   "src/db/migrations/parts/NNN_tool_audit.ts": [
@@ -15789,6 +15791,10 @@
   ],
   "src/generation/hooks/nsfw-classifier.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-config-templates.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-aux-pipeline-prompt-reexport-asymmetry.md"
     }
@@ -16087,10 +16093,6 @@
       "source": ".plan/tickets/FEAT-065-sub-video.md"
     },
     {
-      "kind": "ticket",
-      "source": ".plan/tickets/FEAT-065-template-system.md"
-    },
-    {
       "kind": "spec",
       "source": "docs/spec/integrations/image-generation.md"
     },
@@ -16112,6 +16114,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065-template-system.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-rpg-rule-system.md"
     }
   ],
@@ -16119,6 +16125,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-product-features.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065-template-system.md"
     },
     {
       "kind": "ticket",
