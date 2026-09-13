@@ -10,10 +10,10 @@
  * @module assistant/commands/rewrite
  */
 
+import { applyRewriteToMessage, type RewriteApplyError, } from "../../chat/service";
 import { resolveProvider, } from "../../generation/providers/registry";
 import type { GenerateRequest, } from "../../generation/providers/types";
 import { type CommandContext, type CommandResult, registerCommand, } from "./registry";
-import { applyRewriteToMessage, type RewriteApplyError, } from "../../chat/service";
 
 /** Deps shape for /rewrite — matches `runCreateGeneration`'s `complete` signature. */
 export interface RewriteDeps {
@@ -52,7 +52,7 @@ export async function runRewrite(
   deps: RewriteDeps,
 ): Promise<CommandResult> {
   const applyRequested = args.includes("--apply",);
-  const { style, rest, } = parseStyle(args.filter((a,) => a !== "--apply",),);
+  const { style, rest, } = parseStyle(args.filter((a,) => a !== "--apply"),);
   let targetId: string | undefined;
 
   let targetText: string | undefined;
@@ -105,7 +105,8 @@ export async function runRewrite(
   if (applyRequested) {
     if (!targetId) {
       return {
-        systemMessage: "**Nothing to apply to.** `--apply` rewrites the last assistant message — omit the text argument.",
+        systemMessage:
+          "**Nothing to apply to.** `--apply` rewrites the last assistant message — omit the text argument.",
         handled: true,
       };
     }
@@ -130,8 +131,8 @@ export async function runRewrite(
     const reason = applied.error === "not_found"
       ? "The target message no longer exists."
       : applied.error === "cross_chat"
-        ? "The target message belongs to another chat."
-        : "You are not the author of the target message.";
+      ? "The target message belongs to another chat."
+      : "You are not the author of the target message.";
     return { systemMessage: `**Cannot apply.** ${reason}`, handled: true, };
   }
   return {
@@ -155,17 +156,22 @@ export async function runRewrite(
  * @param config
  * @returns apply closure or undefined
  */
-function buildApply(ctx: CommandContext, db: NonNullable<CommandContext["db"]>, config: NonNullable<CommandContext["config"]>,): RewriteDeps["apply"] {
+function buildApply(
+  ctx: CommandContext,
+  db: NonNullable<CommandContext["db"]>,
+  config: NonNullable<CommandContext["config"]>,
+): RewriteDeps["apply"] {
   const userId = ctx.userId;
   if (!userId) { return undefined; }
-  return (messageId: string, content: string,) => applyRewriteToMessage(db, {
-    messageId,
-    chatId: ctx.chatId,
-    userId,
-    userRole: null,
-    content,
-    config,
-  });
+  return (messageId: string, content: string,) =>
+    applyRewriteToMessage(db, {
+      messageId,
+      chatId: ctx.chatId,
+      userId,
+      userRole: null,
+      content,
+      config,
+    },);
 }
 
 registerCommand("rewrite", async (args, ctx,): Promise<CommandResult> => {

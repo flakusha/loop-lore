@@ -55,8 +55,10 @@ export type SummarizeFormat = "concise" | "tldr" | "bullets" | "detailed";
 const SUMMARIZE_FORMAT_PROMPTS: Record<SummarizeFormat, string> = {
   concise: "Summarize the following conversation concisely. Preserve key facts, decisions, and open threads.",
   tldr: "Summarize the following conversation in one or two sentences (TL;DR). Only the single most important point.",
-  bullets: "Summarize the following conversation as a short bullet list. One fact, decision, or open thread per bullet.",
-  detailed: "Summarize the following conversation in detail. Cover key facts, decisions, open threads, and message flow.",
+  bullets:
+    "Summarize the following conversation as a short bullet list. One fact, decision, or open thread per bullet.",
+  detailed:
+    "Summarize the following conversation in detail. Cover key facts, decisions, open threads, and message flow.",
 };
 
 /**
@@ -69,7 +71,7 @@ function parseFormat(args: string[],): { format: SummarizeFormat; rest: string[]
   const idx = args.indexOf("--format",);
   if (idx === -1) { return { format: "concise", rest: args, }; }
   const requested = args[idx + 1];
-  const rest = args.filter((_, i,) => i !== idx && i !== idx + 1,);
+  const rest = args.filter((_, i,) => i !== idx && i !== idx + 1);
   if (requested === "tldr" || requested === "bullets" || requested === "detailed") {
     return { format: requested, rest, };
   }
