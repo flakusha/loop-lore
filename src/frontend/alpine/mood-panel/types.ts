@@ -8,7 +8,7 @@ import type { MoodState, } from "../../../characters/services/mood-service/types
 export type { MoodState, };
 
 /** */
-export interface EmotionEntry {
+export interface EmotionLogEntry {
   id: string;
   actor_id: string;
   emotion_id: string;
@@ -33,7 +33,7 @@ export interface EmotionDefinition {
 /** */
 export interface MoodPanelState {
   mood: MoodState | null;
-  emotions: EmotionEntry[];
+  emotions: EmotionLogEntry[];
   emotionDefs: EmotionDefinition[];
   loading: boolean;
   _happinessDelta: number;

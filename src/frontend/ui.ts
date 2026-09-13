@@ -265,13 +265,16 @@ if (typeof document.addEventListener === "function") {
   );
 }
 
-// Reveal helpers globally for onclick="" usage
-globalThis.toggleSidebar = toggleSidebar;
-globalThis.closeSidebar = closeSidebar;
-globalThis.showToast = showToast;
-globalThis.applyTheme = applyTheme;
-globalThis.setLocale = setLocale;
-globalThis.t = t;
-globalThis.openModal = openModal;
-globalThis.closeModal = closeModal;
-globalThis.closeModalOnBackdrop = closeModalOnBackdrop;
+// Reveal helpers globally for onclick="" usage — single attachment point.
+// loaders.d.ts derives these ambient signatures via `typeof import("./ui")`.
+Object.assign(globalThis, {
+  toggleSidebar,
+  closeSidebar,
+  showToast,
+  applyTheme,
+  setLocale,
+  t,
+  openModal,
+  closeModal,
+  closeModalOnBackdrop,
+},);
