@@ -1,14 +1,23 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 import { type WorktreeConfig, } from "../utils/config";
-import { findWorktreeByBranch, getRootBranch, gitSync, } from "../utils/git";
+import { getRootBranch, gitSync, } from "../utils/git";
+import { findWorktreeForBranchSync, getWorktrees, } from "../utils/git";
 import { log, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
 
 function isProtected(branch: string,): boolean {
   return PROTECTED_BRANCHES.includes(branch,);
+}
+
+async function findWorktree(branch: string, config: WorktreeConfig,): Promise<string | null> {
+  const dirName = branchToPath(branch,);
+  const localPath = resolve(config.treeDir, dirName,);
+  if (existsSync(resolve(localPath, ".git",),)) { return localPath; }
+  // Fallback: omp sibling container (`<repoParent>/<repo>-worktrees/<branch>-<hash>`).
+  const worktrees = await getWorktrees(config.repoRoot,);
+  return findWorktreeForBranchSync(worktrees, branch,);
 }
 
 export async function rebase(
@@ -29,7 +38,7 @@ export async function rebase(
     process.exit(1,);
   }
 
-  const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
+  const wtPath = await findWorktree(branch, config,);
   if (!wtPath) {
     log("error", `no worktree found for branch '${branch}'`,);
     process.exit(1,);

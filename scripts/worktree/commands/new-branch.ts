@@ -42,17 +42,21 @@ export async function execute(
     log("error", `base '${base}' does not exist`,);
     process.exit(1,);
   }
-
   const dirName = branchToPath(branch,);
-  const wtPath = resolve(config.treeDir, dirName,);
+  // Placement precedence: explicit `TREE_DIR` (user/CI override) wins;
+  // fall back to omp's auto-set `OMP_WORKTREE_DIR`; finally to canonical
+  // in-repo `tree/` from `config.treeDir`.
+  const dirPath = process.env.TREE_DIR ??
+    process.env.OMP_WORKTREE_DIR ??
+    config.treeDir;
+  const wtPath = resolve(dirPath, dirName,);
 
   if (existsSync(wtPath,)) {
     log("warn", `worktree already exists: ${wtPath}`,);
     return;
   }
 
-  mkdirSync(config.treeDir, { recursive: true, },);
-
+  mkdirSync(dirPath, { recursive: true, },);
   log("info", `Creating new branch '${branch}' from '${base}'`,);
 
   // Branch off `base` (the caller-supplied ref, or the default `dev`). Using

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 import { type WorktreeConfig, } from "../utils/config";
-import { findWorktreeByBranch, gitSync, } from "../utils/git";
+import { gitSync, } from "../utils/git";
+import { findWorktreeForBranchSync, getWorktrees, } from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { log, } from "../utils/output";
 
@@ -21,6 +21,16 @@ function gpgMergeFlags(config: WorktreeConfig,): string[] {
   ];
 }
 
+async function findWorktree(branch: string, config: WorktreeConfig,): Promise<string | null> {
+  const dirName = branchToPath(branch,);
+  const localPath = resolve(config.treeDir, dirName,);
+  if (existsSync(resolve(localPath, ".git",),)) { return localPath; }
+  // Fallback: worktree lives outside `tree/` (omp sibling container). Git's
+  // worktree list is the source of truth for the branch→path mapping.
+  const worktrees = await getWorktrees(config.repoRoot,);
+  return findWorktreeForBranchSync(worktrees, branch,);
+}
+
 export async function merge(
   args: string[],
   config: WorktreeConfig,
@@ -33,7 +43,7 @@ export async function merge(
     process.exit(1,);
   }
 
-  const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
+  const wtPath = await findWorktree(branch, config,);
   if (!wtPath) {
     log("error", `no worktree found for branch '${branch}'`,);
     process.exit(1,);
