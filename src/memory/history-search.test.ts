@@ -163,6 +163,24 @@ describe("history-search", () => {
     expect(up.map((m,) => m.id),).toEqual(["msg-1", "msg-2", "msg-3",],);
   });
 
+  it("walkMessageChain down prefers the original branch over regenerations", async () => {
+    await insertMessages(
+      db,
+      "chat-hs",
+      "actor-hs",
+      "user",
+      "regenerated second message here",
+      {
+        id: "msg-2b",
+        parent_id: "msg-1",
+        created_at: "2026-01-01T00:00:02Z",
+        swipe_index: 1,
+      } as never,
+    );
+    const down = await walkMessageChain(db, "chat-hs", "msg-1", "down",);
+    expect(down.map((m,) => m.id),).toEqual(["msg-1", "msg-2", "msg-3",],);
+  });
+
   it("selectMemoriesWithExpansion preloads low-confidence chains", async () => {
     await storeMemories(db, "actor-hs", "chat-hs", [
       {
