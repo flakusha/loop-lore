@@ -206,7 +206,7 @@ describe("ChatCreateBody — field edge cases", () => {
   });
 
   test("encryptionLevel accepts the three documented tiers", () => {
-    for (const lvl of ["none", "standard", "private",]) {
+    for (const lvl of ["none", "standard", "at-rest",]) {
       expect(Value.Check(ChatCreateBody, body({ name: "ok", encryptionLevel: lvl, },),),).toBe(
         true,
       );

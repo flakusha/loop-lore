@@ -13,7 +13,8 @@ import { t, } from "elysia";
 
 // Tag ownership scope + provenance — generated single source (see ../db-schemas).
 import { AssetTagScopeSchema, AssetTagSourceSchema, } from "../db-schemas";
-export { AssetTagScopeSchema, AssetTagSourceSchema, };
+import { TagProvenanceSchema, } from "./primitives";
+export { AssetTagScopeSchema, AssetTagSourceSchema, TagProvenanceSchema, };
 
 
 /** One tag as returned to clients. */
@@ -47,11 +48,9 @@ export const RenameAssetTagBody = t.Object({
 export const DismissTagPropositionBody = t.Object({
   tag: t.String({ minLength: 1, maxLength: 64, pattern: "\\S", },),
 },);
-
-/** One proposed tag. */
 export const TagPropositionSchema = t.Object({
   tag: t.String(),
-  provenance: t.UnionEnum(["alt_text", "filename",],),
+  provenance: TagProvenanceSchema,
 },);
 
 /** `GET /api/assets/:id/tags` — list of visible tags. */
