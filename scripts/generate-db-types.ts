@@ -15,6 +15,7 @@
 import { readdirSync, readFileSync, writeFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
 import { COLUMN_TYPE_OVERRIDES, } from "../src/db/column-types";
+import { type ColumnDef, listMigrationFiles, parseMigration, } from "./lib/migration-parser";
 
 const MIGRATIONS_DIR = resolve(import.meta.dir, "../src/db/migrations",);
 // Output override for check-db-schemas.ts: generates into a temp dir instead of src/.
@@ -29,150 +30,12 @@ const VALIDATION_DIR = DB_OUTPUT_DIR
   ? resolve(DB_OUTPUT_DIR, "validation",)
   : resolve(import.meta.dir, "../src/validation",);
 
-// ── Types ──────────────────────────────────────────────────
-
-interface ColumnDef {
-  type: "text" | "integer" | "real" | "blob";
-  notNull: boolean;
-  hasDefault: boolean;
-  primaryKey: boolean;
-}
-
-// ── Migration Parser (reused from generate-schema-manifest) ──
-
-function parseMigration(filePath: string,): {
-  creates: Map<string, Record<string, ColumnDef>>;
-  alters: Map<string, Record<string, ColumnDef>>;
-  drops: Map<string, Set<string>>;
-  droppedTables: Set<string>;
-} {
-  const fullSource = readFileSync(filePath, "utf-8",);
-
-  // Extract only the up() function body
-  const upMatch = fullSource.match(
-    /export\s+async\s+function\s+up\s*\([^)]*\)\s*:\s*Promise<void>\s*\{([\s\S]*?)\n\}/,
-  );
-  const source = upMatch ? upMatch[1] : fullSource;
-
-  const creates = new Map<string, Record<string, ColumnDef>>();
-  const alters = new Map<string, Record<string, ColumnDef>>();
-  const drops = new Map<string, Set<string>>();
-  const droppedTables = new Set<string>();
-
-  // Create table blocks
-  const createTableRegex = /\.createTable\(\s*"(\w+)"\s*,?\s*\)[\s\S]*?\.execute\(\)/g;
-  let match;
-  while ((match = createTableRegex.exec(source,)) !== null) {
-    const tableName = match[1];
-    const block = match[0];
-    const columns = parseColumns(block,);
-    creates.set(tableName, columns,);
-  }
-
-  // Rename table — mark intermediate table as dropped
-  const renameTableRegex = /\.renameTo\(\s*"(\w+)"\s*,?\s*\)\.execute\(\)/g;
-  while ((match = renameTableRegex.exec(source,)) !== null) {
-    const before = source.substring(0, match.index,);
-    const alterMatch = before.lastIndexOf(".alterTable(",);
-    if (alterMatch !== -1) {
-      const tblRef = before.substring(alterMatch,).match(/\.alterTable\(\s*"(\w+)"\s*,?\s*\)/,);
-      if (tblRef) { droppedTables.add(tblRef[1],); }
-    }
-  }
-
-  // Alter table blocks
-  const alterBlockRegex = /\.alterTable\(\s*"(\w+)"\s*,?\s*\)[\s\S]*?\.execute\(\)/g;
-  while ((match = alterBlockRegex.exec(source,)) !== null) {
-    const tableName = match[1];
-    const block = match[0];
-
-    if (block.includes(".renameTo(",)) { continue; }
-
-    if (block.includes(".renameColumn(",)) {
-      const rcRegex = /\.renameColumn\(\s*"(\w+)"\s*,?\s*"(\w+)"\s*,?\s*\)/g;
-      let rcMatch;
-      while ((rcMatch = rcRegex.exec(block,)) !== null) {
-        const [, oldName, newName,] = rcMatch;
-        if (!drops.has(tableName,)) { drops.set(tableName, new Set(),); }
-        drops.get(tableName,)!.add(oldName,);
-        drops.get(tableName,)?.delete(newName,);
-
-        const addBlock = source.substring(Math.max(0, match.index - 500,), match.index,);
-        const typeMatch = addBlock.match(new RegExp(`\\.addColumn\\(\\s*"${oldName}"\\s*,\\s*"(\\w+)"`,),);
-        if (typeMatch) {
-          if (!alters.has(tableName,)) { alters.set(tableName, {},); }
-          alters.get(tableName,)![newName] = {
-            type: typeMatch[1] as ColumnDef["type"],
-            notNull: block.includes(".notNull()",),
-            hasDefault: block.includes(".defaultTo(",),
-            primaryKey: false,
-          };
-        }
-      }
-      continue;
-    }
-
-    if (block.includes(".dropColumn(",)) {
-      const dropColRegex = /\.dropColumn\(\s*"(\w+)"\s*,?\s*\)/g;
-      let dropMatch;
-      while ((dropMatch = dropColRegex.exec(block,)) !== null) {
-        if (!drops.has(tableName,)) { drops.set(tableName, new Set(),); }
-        drops.get(tableName,)!.add(dropMatch[1],);
-      }
-      continue;
-    }
-
-    if (block.includes(".addColumn(",)) {
-      const columns = parseColumns(block,);
-      if (!alters.has(tableName,)) { alters.set(tableName, {},); }
-      Object.assign(alters.get(tableName,)!, columns,);
-    }
-  }
-
-  return { creates, alters, drops, droppedTables, };
-}
-
-function parseColumns(block: string,): Record<string, ColumnDef> {
-  const columns: Record<string, ColumnDef> = {};
-  const parts = block.split(/\.addColumn\(/g,);
-
-  for (let i = 1; i < parts.length; i++) {
-    const part = parts[i];
-    const headerMatch = part.match(/^\s*"(\w+)"\s*,\s*"(text|integer|real|blob)"/,);
-    // Accept 2-arg form (name, type) AND 3-arg form (name, type, builder) — builder may follow
-    if (!headerMatch) { continue; }
-
-    const [, name, type,] = headerMatch;
-    const restOfPart = part.substring(part.indexOf(`"${type}"`,),);
-
-    columns[name] = {
-      type: type as ColumnDef["type"],
-      notNull: restOfPart.includes(".notNull()",),
-      hasDefault: restOfPart.includes(".defaultTo(",),
-      primaryKey: restOfPart.includes(".primaryKey()",),
-    };
-  }
-
-  return columns;
-}
+// ── Schema Building uses ./lib/migration-parser (parseMigration, listMigrationFiles) ──
 
 // ── Schema Building ──────────────────────────────────────
 
 function buildSchema(): Map<string, Record<string, ColumnDef>> {
-  const files = readdirSync(MIGRATIONS_DIR,)
-    .filter((f,) => f.endsWith(".ts",) && /^\d{3}_/.test(f,))
-    .sort();
-
-  const partsDir = join(MIGRATIONS_DIR, "parts",);
-  let partFiles: string[] = [];
-  try {
-    partFiles = readdirSync(partsDir,).filter((f,) => f.endsWith(".ts",)).sort();
-  } catch { /* no parts dir */ }
-
-  const allFiles = [
-    ...files.map((f,) => join(MIGRATIONS_DIR, f,)),
-    ...partFiles.map((f,) => join(partsDir, f,)),
-  ].sort((a, b,) => a.split("/",).pop()!.localeCompare(b.split("/",).pop()!,));
+  const allFiles = listMigrationFiles(MIGRATIONS_DIR,);
 
   const allTables = new Map<string, Record<string, ColumnDef>>();
   const allAlters = new Map<string, Record<string, ColumnDef>>();
@@ -182,9 +45,9 @@ function buildSchema(): Map<string, Record<string, ColumnDef>> {
   for (const filePath of allFiles) {
     const { creates, alters, drops, droppedTables: dt, } = parseMigration(filePath,);
 
-    for (const [name, cols,] of creates) {
+    for (const [name, def,] of creates) {
       if (dt.has(name,)) { continue; }
-      if (!allTables.has(name,)) { allTables.set(name, cols,); }
+      if (!allTables.has(name,)) { allTables.set(name, def.columns,); }
     }
 
     for (const [name, cols,] of alters) {
