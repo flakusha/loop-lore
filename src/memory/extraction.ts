@@ -207,9 +207,8 @@ export async function extractAndStoreMemories(
  * carry-forward, manual "try hard" reruns).
  *
  * Loads the chain rows oldest-first, builds a role-labeled transcript using
- * the same plaintext-mirror rule as the read path (`content_plaintext ??
- * content`; E2E rows without a mirror are dropped), then runs the standard
- * extraction over that transcript and binds the full chain on store.
+ * the read path's plaintext-mirror rule (`content_plaintext ?? content`;
+ * E2E rows without a mirror are dropped), then extracts and binds the chain.
  * @param db
  * @param opts
  * @param chain - message IDs (any order) plus the chats they span
@@ -220,11 +219,10 @@ export async function extractFromBurst(
   chain: { messageIds: string[]; chatIds?: string[] },
 ): Promise<number> {
   if (chain.messageIds.length === 0) { return 0; }
-  const wanted = chain.messageIds.slice(0, MAX_CHAIN_IDS,);
   const rows = await db
     .selectFrom("messages",)
     .select(["id", "role", "content", "content_plaintext", "key_id", "created_at",],)
-    .where("id", "in", wanted,)
+    .where("id", "in", chain.messageIds.slice(0, MAX_CHAIN_IDS,),)
     .orderBy("created_at", "asc",)
     .execute();
 
