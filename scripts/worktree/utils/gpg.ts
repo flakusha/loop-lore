@@ -5,7 +5,7 @@
  * GPG pre-flight helpers for worktree signing flows.
  *
  * Centralizes the cold-cache detection that was previously inlined in
- * commit.ts, agent-commit.ts, sign.ts, merge.ts, and finalize.ts. Each
+ * commit.ts, commit-branch.ts, sign.ts, merge.ts, and finalize.ts. Each
  * flow used a slightly different inline check; some emitted the
  * `Run: ./scripts/gpg-unlock.mjs` hint on failure, others did not, and
  * two of them (`merge.ts` and `finalize.ts`'s direct branch via
@@ -15,7 +15,7 @@
  * Usage:
  *   import { assertGpgUnlocked, assertAgentGpgUnlocked } from "../utils/gpg";
  *
- *   // For flows with an explicit key id (sign.ts, commit.ts, agent-commit.ts):
+ *   // For flows with an explicit key id (sign.ts, commit.ts, commit-branch.ts):
  *   assertGpgUnlocked(config.agentGpgKeyId);
  *
  *   // For flows that derive the key from .credentials.env (merge.ts,
