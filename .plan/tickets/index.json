@@ -20420,6 +20420,18 @@
     "git_issue": "301358f",
     "status": "open"
   },
+  "TASK-OPTIQUE-CLI-TOOLING-INTEGRATION": {
+    "hash": "pending",
+    "extid": "TASK-OPTIQUE-CLI-TOOLING-INTEGRATION",
+    "type": "TASK",
+    "title": "Adopt @optique/core + @optique/run for typed CLI parsing",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "epic-cli-tooling-optique",
+    "tags": [],
+    "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md",
+    "status": "in_progress"
+  },
   "TASK-OUTBOUND-FETCH-HTTP-2-3-PROTOCOL-HINTS": {
     "hash": "ae98edc",
     "git_issue": "ae98edc",
