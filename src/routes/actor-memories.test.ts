@@ -153,6 +153,58 @@ describe("actorMemoriesRoutes", () => {
     expect(res.status,).toBe(404,);
   });
 
+  it("expand treats hostile source ids as literal strings (parameterized IN)", async () => {
+    const { createTestDb, } = await import("../test-utils/create-test-db");
+    const { insertChats, insertMessages, } = await import("../test-utils/insert-helpers");
+    const { db: sdb, } = await createTestDb();
+    await insertUsers(sdb, "inj-user", "Inj User", { id: "user-inj", } as never,);
+    await insertChats(sdb, "Inj Chat", "user-inj", { id: "chat-inj", } as never,);
+    await insertActors(sdb, "Inj Actor", { id: "user-inj", actor_type: "user", user_id: "user-inj", } as never,);
+    await insertMessages(
+      sdb,
+      "chat-inj",
+      "user-inj",
+      "user",
+      "real message here",
+      { id: "msg-inj-1", } as never,
+    );
+    // Simulate any writer storing a hostile JSON array in the bound-chain
+    // column: SQL-syntax payloads must stay bound parameters, never text
+    // spliced into the query.
+    await sdb
+      .insertInto("actor_memories",)
+      .values({
+        id: "mem-inj",
+        actor_id: "user-inj",
+        content: "Injection probe summary of length",
+        memory_type: "episodic",
+        confidence: 0.9,
+        importance: 1,
+        keywords: "[]",
+        source_chat_id: "chat-inj",
+        scope: "character",
+        privacy: "shared",
+        source_message_ids: JSON.stringify([
+          "x'; DROP TABLE actor_memories; --",
+          "' OR '1'='1",
+          "msg-inj-1",
+        ],),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },)
+      .execute();
+    const res = await makeApp(sdb, "user-inj",).handle(
+      new Request("http://localhost/api/actors/user-inj/memories/mem-inj/expand",),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { messages: { id: string }[] };
+    // Only the real id resolves; payloads were compared literally.
+    expect(body.messages.map((m,) => m.id),).toEqual(["msg-inj-1",],);
+    // The dropped-table payload had no effect.
+    const survived = await sdb.selectFrom("actor_memories",).select("id",).execute();
+    expect(survived.length,).toBeGreaterThanOrEqual(1,);
+  });
+
   test("list returns owned actor's memories", async () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/memories",),
