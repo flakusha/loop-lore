@@ -35,7 +35,7 @@ function makeReportConfig(): WorktreeConfig {
   );
   writeFileSync(join(corruptReportDir, "check-report.json",), "{not valid json",);
   writeFileSync(join(noGatesReportDir, "check-report.json",), '{ "branch": "x" }',);
-  return { repoRoot: root, treeDir, };
+  return { repoRoot: root, treeDir, worktreeDirs: [treeDir,], };
 }
 
 async function captureOutput(config: WorktreeConfig,): Promise<string> {
@@ -130,7 +130,11 @@ describe("worktree report", () => {
       },),
     );
 
-    const output = await captureOutput({ repoRoot: root, treeDir: join(root, "tree",), },);
+    const output = await captureOutput({
+      repoRoot: root,
+      treeDir: join(root, "tree",),
+      worktreeDirs: [join(root, "external",), join(root, "tree",),],
+    },);
 
     expect(output,).toContain("omp-branch",);
     expect(output,).toContain("def5678",);

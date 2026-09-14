@@ -185,6 +185,46 @@ export async function getWorktrees(repoRoot: string,): Promise<GitWorktree[]> {
   return worktrees;
 }
 
+/**
+ * Resolve the on-disk path of the worktree that has `branch` checked out,
+ * by asking git (the source of truth — `tree/<branch>` is just the
+ * conventional layout). Works for worktrees in any container: in-repo
+ * `tree/<branch>` and the omp sibling `<repoParent>/<repo>-worktrees/<branch>-<hash>`.
+ * Returns null when the branch isn't checked out anywhere (e.g. a brand-new
+ * branch that hasn't been added to a worktree yet — callers that need
+ * to create a worktree fall through to `defaultWorktreePath`).
+ */
+export async function findWorktreeForBranch(
+  repoRoot: string,
+  branch: string,
+): Promise<string | null> {
+  const listing = gitSyncQuiet(repoRoot, "worktree", "list", "--porcelain",);
+  let currentPath: string | null = null;
+  for (const line of listing.split("\n",)) {
+    if (line.startsWith("worktree ",)) {
+      currentPath = line.slice("worktree ".length,);
+    } else if (line === `branch refs/heads/${branch}` && currentPath) {
+      return currentPath;
+    }
+  }
+  return null;
+}
+
+/**
+ * Synchronous variant of `findWorktreeForBranch` — parses
+ * `git worktree list --porcelain` from the already-loaded listing. Use this
+ * when the caller already has the listing (most read paths do — they call
+ * `getWorktrees()` first) and don't want to pay for a second git subprocess.
+ */
+export function findWorktreeForBranchSync(
+  worktrees: GitWorktree[],
+  branch: string,
+): string | null {
+  for (const wt of worktrees) {
+    if (wt.branch === `refs/heads/${branch}`) { return wt.path; }
+  }
+  return null;
+}
 export async function getStatus(
   repoRoot: string,
   branch: string,

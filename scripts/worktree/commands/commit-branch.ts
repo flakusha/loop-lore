@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 /**
  * Commit-branch command — GPG-signed commit from a worktree branch
  */
-
-import { type WorktreeConfig, } from "../utils/config";
+import { existsSync, } from "fs";
+import { resolve, } from "path";
+import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
-import { findWorktreeByBranch, gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
 import { appendCommitOutcome, } from "../utils/ledger";
-import { extractMessageInput, validateMessage, } from "../utils/message";
 import { log, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
@@ -45,16 +43,20 @@ export async function commitBranch(
     process.exit(1,);
   }
 
-  // Find the worktree for this branch — conventional tree/ layout first,
-  // then any checkout git knows about (e.g. native omp worktrees whose
-  // directory carries a session suffix).
-  const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
-
+  // Find worktree: in-repo `tree/<branch>` first, then git's authoritative
+  // listing (catches worktrees created outside `tree/`, e.g. omp's sibling
+  // container `<repoParent>/<repo>-worktrees/<branch>-<hash>`).
+  const dirName = branchToPath(branch,);
+  const localPath = resolve(config.treeDir, dirName,);
+  let wtPath: string | null = existsSync(resolve(localPath, ".git",),) ? localPath : null;
+  if (!wtPath) {
+    const worktrees = await getWorktrees(config.repoRoot,);
+    wtPath = findWorktreeForBranchSync(worktrees, branch,);
+  }
   if (!wtPath) {
     log("error", `worktree not found for branch '${branch}'`,);
     process.exit(1,);
   }
-
   // Check staged changes — git diff --quiet exits 1 when differences exist
   const diffResult = Bun.spawnSync(
     ["git", "-C", wtPath, "diff", "--cached", "--quiet",],

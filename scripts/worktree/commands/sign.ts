@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 import { existsSync, } from "fs";
 import { resolve, } from "path";
-import { findWorktreeByBranch, gitSync, } from "../utils/git";
+import { branchToPath, type WorktreeConfig, } from "../utils/config";
+import { gitSync, } from "../utils/git";
+import { findWorktreeForBranchSync, getWorktrees, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
 import { log, } from "../utils/output";
 
 export async function execute(
   args: string[],
-  config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
+  config: WorktreeConfig,
 ): Promise<void> {
   const branch = args[0];
   if (!branch) {
@@ -17,9 +18,7 @@ export async function execute(
     console.log("  Usage: worktree sign <branch>",);
     process.exit(1,);
   }
-
-  const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
-
+  const wtPath = await findWorktree(branch, config,);
   if (!wtPath) {
     log("error", `no worktree found for branch '${branch}'`,);
     process.exit(1,);
@@ -56,4 +55,13 @@ export async function execute(
     gitSync(wtPath, "config", "core.hooksPath", hooksDir,);
     log("success", "hooks configured",);
   }
+}
+
+async function findWorktree(branch: string, config: WorktreeConfig,): Promise<string | null> {
+  const dirName = branchToPath(branch,);
+  const localPath = resolve(config.treeDir, dirName,);
+  if (existsSync(resolve(localPath, ".git",),)) { return localPath; }
+  // Fallback: omp sibling container (`<repoParent>/<repo>-worktrees/<branch>-<hash>`).
+  const worktrees = await getWorktrees(config.repoRoot,);
+  return findWorktreeForBranchSync(worktrees, branch,);
 }
