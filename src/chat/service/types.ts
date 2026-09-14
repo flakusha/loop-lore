@@ -109,7 +109,6 @@ export type MigrateChatResult =
 /** Quick-reply trigger — single source `QuickReplyTriggerSchema` in `src/validation/schemas/primitives.ts`. */
 export type { ChatHistoryCarry, MemoryCarry, QuickReplyTrigger, } from "../../validation/schemas/primitives";
 
-
 /** A quick-reply button: label + slash command, optional trigger event. */
 export interface QuickReplyButton {
   label: string;
