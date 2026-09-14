@@ -45,15 +45,15 @@ tickets are filed.
 
 ## Overview
 
-| Step | Action                                                                           |
-| ---- | -------------------------------------------------------------------------------- |
-| 1    | Audit: read ticket file → grep current dev source → record evidence              |
-| 2    | Per-bucket worktree: `bun run scripts/worktree/ new fix-bucket-X-bookkeeping`    |
-| 3    | Per-ticket: swap `**Status:**` line + inject `## Resolution` section             |
+| Step | Action                                                                            |
+| ---- | --------------------------------------------------------------------------------- |
+| 1    | Audit: read ticket file → grep current dev source → record evidence               |
+| 2    | Per-bucket worktree: `bun run scripts/worktree/ new fix-bucket-X-bookkeeping`     |
+| 3    | Per-ticket: swap `**Status:**` line + inject `## Resolution` section              |
 | 4    | Single GPG-signed commit per bucket via `bun run scripts/worktree/ commit-branch` |
-| 5    | `bun run scripts/worktree/ finalize --force` (docs-only)                         |
-| 6    | `bun run plan:sync` → expect zero actionable issues                              |
-| 7    | Engram session summary; mark todos done                                          |
+| 5    | `bun run scripts/worktree/ finalize --force` (docs-only)                          |
+| 6    | `bun run plan:sync` → expect zero actionable issues                               |
+| 7    | Engram session summary; mark todos done                                           |
 
 ---
 
