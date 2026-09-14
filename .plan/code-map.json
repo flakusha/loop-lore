@@ -6965,6 +6965,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-real-llm-sd-e2e-fixture-llama-cpp-llama-swap-sd-server.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
     }
   ],
   "src/config/schema-class/frontend.ts": [
@@ -7203,6 +7207,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-sd-e2e-real-server-fixtures-via-sd-cpp-and-comfyui-with-gene.md"
+    }
+  ],
+  "src/config/schema/tui.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
     }
   ],
   "src/config/sections/auth.ts": [
@@ -7481,6 +7491,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-workflow-engine-schema-loader-template-types-workflow-discov.md"
+    }
+  ],
+  "src/config/sections/tui.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
     }
   ],
   "src/config/seeding.ts": [
@@ -12986,7 +13006,15 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-frontend-exposes-session-token-in-localstorage.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui.md"
     }
   ],
   "src/frontend/alpine/travel-panel.ts": [
@@ -13760,6 +13788,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-bun-csrf-for-csrf-protection.md"
     },
     {
@@ -13773,6 +13805,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-middleware-fe-be-db-record-content-hashing.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui.md"
     },
     {
       "kind": "ticket",
@@ -17471,6 +17507,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/quests-encounters.md"
+    }
+  ],
+  "src/logger": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
     }
   ],
   "src/logger/censors.test.ts": [
@@ -27429,6 +27471,22 @@
   ],
   "src/tui/app.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/terminal-ui.md"
     },
@@ -27438,6 +27496,18 @@
     }
   ],
   "src/tui/asset-view.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/terminal-ui.md"
@@ -27449,14 +27519,106 @@
       "source": ".plan/tickets/TASK-rigged-model-buffer-render.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/terminal-ui.md"
     }
   ],
+  "src/tui/chat/api.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui.md"
+    }
+  ],
+  "src/tui/chat/api.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    }
+  ],
+  "src/tui/chat/display.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui.md"
+    }
+  ],
+  "src/tui/chat/display.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    }
+  ],
+  "src/tui/chat/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    }
+  ],
+  "src/tui/chat/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    }
+  ],
   "src/tui/input.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/terminal-ui.md"
+    }
+  ],
+  "src/tui/nsfw-filter.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui.md"
+    }
+  ],
+  "src/tui/nsfw-filter.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-terminal-ui.md"
     }
   ],
   "src/turning": [
@@ -27751,6 +27913,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
+    }
+  ],
+  "src/utils/safe-fetch/headers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-tui.md"
     }
   ],
   "src/utils/safe-json.ts": [
