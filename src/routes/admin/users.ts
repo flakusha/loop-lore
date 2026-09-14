@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import type { UserRole, } from "../../db/enums";
 import { can, } from "../../users/permissions";
 import {
   AdminRoleUpdateBody,
@@ -168,7 +169,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           }
 
           const { id, } = ctx.params as { id: string };
-          const { role, } = ctx.body as { role: "admin" | "user" | "viewer" };
+          const { role, } = ctx.body as { role: UserRole };
 
           await db.updateTable("users",).set({ role, },).where("id", "=", id,).execute();
           return jsonResponse({ ok: true, },);
