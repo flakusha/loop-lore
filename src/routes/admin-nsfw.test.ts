@@ -7,7 +7,7 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
-import { initNsfwRuntimeConfig, } from "../nsfw/runtime-config";
+import { resetNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { adminNsfwRoutes, } from "./admin-nsfw";
@@ -78,14 +78,7 @@ describe("PUT /api/admin/nsfw", () => {
   // module default each test so allowNsfw=false never leaks into later test
   // files in the same worker (order-dependent false failures).
   beforeEach(() => {
-    initNsfwRuntimeConfig({
-      allowNsfw: true,
-      nsfwMinAge: 18,
-      defaultNsfwScope: "chat",
-      consentRequired: true,
-      auditLogging: true,
-      useLlmClassifier: false,
-    },);
+    resetNsfwRuntimeConfig();
   },);
 
   afterAll(async () => {
