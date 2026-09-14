@@ -625,9 +625,11 @@ function generateValidationSchemas(tables: Map<string, Record<string, ColumnDef>
   }
 
   // Every const-object enum becomes a schema (column-referenced or not).
-  const allEnumTypes = [...new Set(
-    [...allEnumsContent.matchAll(/export const (\w+) = \{/g,)].map((m,) => m[1] ?? "",),
-  ),].sort();
+  const allEnumTypes = [
+    ...new Set(
+      [...allEnumsContent.matchAll(/export const (\w+) = \{/g,),].map((m,) => m[1] ?? ""),
+    ),
+  ].sort();
   for (const enumName of allEnumTypes) {
     // Match the const object pattern: export const UserRole = { ... } as const;
     const constRegex = new RegExp(`export const ${enumName} = \\{([^}]+)\\} as const;`, "m",);
