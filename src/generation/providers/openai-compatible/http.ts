@@ -91,9 +91,10 @@ export function buildBody(
     if (value === undefined) {
       continue;
     }
-    // Never assign `__proto__`: `body[key] = value` would invoke the
-    // prototype setter and corrupt the body's prototype chain.
-    if (key === "__proto__") {
+    // Never assign `__proto__`/`constructor`/`prototype`: `body[key] = value`
+    // would invoke the prototype setter (`__proto__`) or shadow Object
+    // members as own properties, corrupting the body's shape.
+    if (key === "__proto__" || key === "constructor" || key === "prototype") {
       continue;
     }
     if (Object.hasOwn(body, key,) || Object.hasOwn(body, toSnakeCase(key,),)) {
