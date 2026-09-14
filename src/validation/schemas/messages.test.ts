@@ -138,7 +138,7 @@ describe("MessageCreateBody — additional field edge cases", () => {
   });
 
   test("contentType accepts every documented enum value", () => {
-    for (const ct of ["text", "action", "narration", "system", "continuation",]) {
+    for (const ct of ["text", "action", "narration", "system", "continuation", "music_link", "tool_result",]) {
       expect(
         Value.Check(MessageCreateBody, body({ content: "hi", contentType: ct, },),),
       ).toBe(true,);
@@ -147,7 +147,7 @@ describe("MessageCreateBody — additional field edge cases", () => {
 
   test("contentType rejects unknown strings", () => {
     expect(
-      Value.Check(MessageCreateBody, body({ content: "hi", contentType: "tool_result", },),),
+      Value.Check(MessageCreateBody, body({ content: "hi", contentType: "carrier_pigeon", },),),
     ).toBe(false,);
   });
 },);
