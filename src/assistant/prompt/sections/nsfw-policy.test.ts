@@ -6,9 +6,10 @@
  * - injected with the config-driven nsfwPolicy prompt when enabled
  * - falls back to the code default when no config override is present
  */
-import { describe, expect, test, } from "bun:test";
+import { beforeEach, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../../db/schema";
+import { resetNsfwRuntimeConfig, } from "../../../nsfw/runtime-config";
 import { NSFW_POLICY_LEVELS_PROMPT, } from "../../../prompts";
 import type { AssembleContext, } from "../types";
 import { nsfwPolicySection, } from "./nsfw-policy";
@@ -39,6 +40,9 @@ function makeCtx(config?: unknown,): AssembleContext {
 }
 
 describe("nsfwPolicySection", () => {
+  beforeEach(() => {
+    resetNsfwRuntimeConfig();
+  },);
   test("disabled when nsfw.allowNsfw is false", () => {
     const ctx = makeCtx({ nsfw: { allowNsfw: false, }, },);
     expect(nsfwPolicySection.enabled(ctx,),).toBe(false,);
