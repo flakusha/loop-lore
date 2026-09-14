@@ -603,14 +603,8 @@ function generateValidationSchemas(tables: Map<string, Record<string, ColumnDef>
 
   // No longer importing from schemas.ts — enum schemas generated inline
 
-  // Generate enum schemas inline (don't import from schemas.ts — they may not exist there)
-  // Collect all unique enum types from COLUMN_TYPE_OVERRIDES
-  const allEnumTypes = new Set<string>();
-  for (const overrides of Object.values(COLUMN_TYPE_OVERRIDES,)) {
-    for (const enumType of Object.values(overrides,)) {
-      allEnumTypes.add(enumType,);
-    }
-  }
+  // Enum schemas are generated inline below (hand-authored validation
+  // schemas re-export them instead of mirroring values).
 
   // We need the actual enum values to generate schemas. Read them from enums-*.ts
   // files (top-level) AND from within split enums-*/ subdirectory modules.
@@ -630,7 +624,11 @@ function generateValidationSchemas(tables: Map<string, Record<string, ColumnDef>
     allEnumsContent += readFileSync(join(enumDir, f,), "utf-8",) + "\n";
   }
 
-  for (const enumName of [...allEnumTypes,].sort()) {
+  // Every const-object enum becomes a schema (column-referenced or not).
+  const allEnumTypes = [...new Set(
+    [...allEnumsContent.matchAll(/export const (\w+) = \{/g,)].map((m,) => m[1] ?? "",),
+  ),].sort();
+  for (const enumName of allEnumTypes) {
     // Match the const object pattern: export const UserRole = { ... } as const;
     const constRegex = new RegExp(`export const ${enumName} = \\{([^}]+)\\} as const;`, "m",);
     const match = allEnumsContent.match(constRegex,);

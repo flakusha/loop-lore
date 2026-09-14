@@ -10,8 +10,18 @@
 import { t, } from "elysia";
 
 export const ActorTypeSchema = t.UnionEnum(["user", "character", "narrator", "system",],);
+export const ActorVisibilitySchema = t.UnionEnum(["private", "public",],);
 export const AdminOverrideActionSchema = t.UnionEnum(["ban", "approve", "restrict", "restore",],);
+export const AgeGateModeSchema = t.UnionEnum(["none", "self-declaration", "verification",],);
 export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
+export const ArousalLevelSchema = t.UnionEnum([
+  "calm",
+  "mildly_aroused",
+  "aroused",
+  "highly_aroused",
+  "desperate",
+  "climax",
+],);
 export const AssetAlphaStatusSchema = t.UnionEnum([
   "unknown",
   "raw",
@@ -32,8 +42,11 @@ export const AssetLinkEntitySchema = t.UnionEnum([
   "message",
   "asset",
 ],);
+export const AssetTagScopeSchema = t.UnionEnum(["user", "global",],);
+export const AssetTagSourceSchema = t.UnionEnum(["manual", "rag",],);
 export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
 export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
+export const AvailabilityStatusSchema = t.UnionEnum(["available", "restricted", "unavailable",],);
 export const AvatarSelectionRuleSchema = t.UnionEnum([
   "emotion_first",
   "mood_first",
@@ -43,6 +56,8 @@ export const AvatarSelectionRuleSchema = t.UnionEnum([
   "random",
   "fixed",
 ],);
+export const AvatarTagTypeSchema = t.UnionEnum(["emotion", "mood", "action", "location", "time", "outfit",],);
+export const BodyBuildSchema = t.UnionEnum(["slim", "athletic", "average", "curvy", "muscular", "heavy",],);
 export const CancelReasonSchema = t.UnionEnum([
   "user_cancel",
   "repetition_detected",
@@ -62,9 +77,21 @@ export const CancelSourceSchema = t.UnionEnum([
 ],);
 export const ChatModeSchema = t.UnionEnum(["direct", "group", "story",],);
 export const ChatParticipantRoleSchema = t.UnionEnum(["member", "owner", "observer", "guest", "gm",],);
+export const ChatPurposeSchema = t.UnionEnum(["main", "side", "notes",],);
+export const ChatRenderingOverrideSchema = t.UnionEnum(["text", "visual_novel",],);
 export const ChatTypeSchema = t.UnionEnum(["direct", "group",],);
+export const ChatVisibilitySchema = t.UnionEnum(["private", "public", "unlisted",],);
+export const ChunkActionSchema = t.UnionEnum([
+  "continue",
+  "cancel_repetition",
+  "cancel_policy",
+  "cancel_response_limit",
+  "complete",
+],);
+export const CompressionAlgorithmSchema = t.UnionEnum(["zstd", "br", "gzip", "none",],);
 export const ContentEncodingSchema = t.UnionEnum(["identity", "gzip", "zstd", "brotli",],);
 export const ContentIntensitySchema = t.UnionEnum(["vanilla", "mild", "moderate", "intense", "extreme",],);
+export const ContentRatingSchema = t.UnionEnum(["sfw", "nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw_extreme",],);
 export const CraftingAttemptStatusSchema = t.UnionEnum([
   "success",
   "failure",
@@ -91,6 +118,11 @@ export const CraftingStationTypeSchema = t.UnionEnum([
   "kitchen",
   "enchanting_table",
 ],);
+export const CrossOriginEmbedderPolicySchema = t.UnionEnum(["require-corp", "credentialless",],);
+export const CrossOriginOpenerPolicySchema = t.UnionEnum(["same-origin", "same-origin-allow-popups",],);
+export const CrossOriginResourcePolicySchema = t.UnionEnum(["same-origin", "cross-origin",],);
+export const DbTypeSchema = t.UnionEnum(["sqlite", "postgres",],);
+export const DefaultStateSchema = t.UnionEnum(["not_default", "default",],);
 export const DifficultyRerollSchema = t.UnionEnum(["none", "per_turn", "per_quest",],);
 export const DifficultyStateSchema = t.UnionEnum(["normal", "hard", "extreme", "custom",],);
 export const DiscoveryMethodSchema = t.UnionEnum([
@@ -102,6 +134,28 @@ export const DiscoveryMethodSchema = t.UnionEnum([
   "reverse_engineering",
   "starting_kit",
 ],);
+export const EmotionTypeSchema = t.UnionEnum([
+  "happy",
+  "sad",
+  "angry",
+  "fearful",
+  "surprised",
+  "disgusted",
+  "contemptuous",
+  "neutral",
+  "excited",
+  "anxious",
+  "calm",
+  "confused",
+  "proud",
+  "shameful",
+  "loving",
+  "jealous",
+  "grateful",
+  "bored",
+],);
+export const EncryptionCompressionSchema = t.UnionEnum(["gzip", "brotli", "zstd",],);
+export const EncryptionLevelSchema = t.UnionEnum(["none", "standard", "at-rest",],);
 export const EquipStateSchema = t.UnionEnum(["unequipped", "equipped",],);
 export const FantasyCategorySchema = t.UnionEnum([
   "power_exchange",
@@ -121,6 +175,15 @@ export const FantasyCategorySchema = t.UnionEnum([
   "degradation",
   "praise",
 ],);
+export const GameMasterTypeSchema = t.UnionEnum(["llm", "human", "hybrid",],);
+export const GatheringDisciplineSchema = t.UnionEnum([
+  "farming",
+  "fishing",
+  "mining",
+  "herbalism",
+  "skinning",
+  "logging",
+],);
 export const GatheringNodeTypeSchema = t.UnionEnum([
   "ore_vein",
   "herb_patch",
@@ -138,6 +201,9 @@ export const GenerationStatusSchema = t.UnionEnum([
   "failed",
   "cancelled",
 ],);
+export const HeatPhaseSchema = t.UnionEnum(["normal", "pre_heat", "heat", "post_heat",],);
+export const ImageApiFamilySchema = t.UnionEnum(["openai", "sdapi", "sdcpp", "comfyui",],);
+export const IntimacyActionTypeSchema = t.UnionEnum(["verbal", "physical", "gift", "service", "intimate",],);
 export const InviteStatusSchema = t.UnionEnum(["active", "revoked", "expired", "exhausted",],);
 export const ItemCategorySchema = t.UnionEnum([
   "weapon",
@@ -175,6 +241,7 @@ export const LicenseTypeSchema = t.UnionEnum([
   "proprietary",
   "custom",
 ],);
+export const LogLevelSchema = t.UnionEnum(["trace", "debug", "info", "warn", "error", "fatal",],);
 export const LoreEntryStatusSchema = t.UnionEnum(["enabled", "disabled", "archived",],);
 export const LorePositionSchema = t.UnionEnum(["before_char", "after_char", "in_char",],);
 export const MaterialSlotTypeSchema = t.UnionEnum(["required", "optional", "catalyst",],);
@@ -190,6 +257,7 @@ export const MessageContentTypeSchema = t.UnionEnum([
   "tool_result",
 ],);
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
+export const MessageSeenStateSchema = t.UnionEnum(["unseen", "processing", "seen",],);
 export const MessageStatusSchema = t.UnionEnum([
   "sending",
   "confirmed",
@@ -213,10 +281,40 @@ export const ModelRoleSchema = t.UnionEnum([
   "embeddings",
   "summarization",
 ],);
+export const ModerationActionSchema = t.UnionEnum(["none", "warned", "content_removed", "nsfw_revoked", "banned",],);
+export const ModerationFlagReasonSchema = t.UnionEnum([
+  "nsfw_violation",
+  "harassment",
+  "hate_speech",
+  "spam",
+  "underage",
+  "non_consensual",
+  "other",
+],);
+export const ModerationFlagStatusSchema = t.UnionEnum([
+  "pending",
+  "under_review",
+  "dismissed",
+  "confirmed",
+  "escalated",
+],);
+export const MoodExpressionSchema = t.UnionEnum(["tone", "verbosity", "cooperation", "warmth", "humor", "formality",],);
 export const NarrativeStyleSchema = t.UnionEnum(["fade_to_black", "implied", "explicit", "literary",],);
 export const NodeInstanceStateSchema = t.UnionEnum(["available", "depleted",],);
 export const NoteCategorySchema = t.UnionEnum(["general", "world", "character", "story", "combat", "session",],);
 export const NotificationStatusSchema = t.UnionEnum(["unread", "read", "archived",],);
+export const NotificationTypeSchema = t.UnionEnum([
+  "mention",
+  "quest_update",
+  "item_offer",
+  "world_event",
+  "chat_invite",
+  "character_update",
+  "gm_action",
+  "blog_post",
+  "blog_comment",
+  "system",
+],);
 export const NsfwAccessStatusSchema = t.UnionEnum(["clear", "blocked", "banned",],);
 export const NsfwEncounterStatusSchema = t.UnionEnum(["active", "completed",],);
 export const NsfwEncounterTypeSchema = t.UnionEnum([
@@ -254,6 +352,9 @@ export const PinnedStateSchema = t.UnionEnum(["unpinned", "pinned", "archived",]
 export const PlayerAchievementStatusSchema = t.UnionEnum(["locked", "unlocked", "claimed",],);
 export const PlaythroughStatusSchema = t.UnionEnum(["active", "completed",],);
 export const PluginStatusSchema = t.UnionEnum(["active", "disabled", "error",],);
+export const PolicyIndicatorTypeSchema = t.UnionEnum(["keyword", "pattern", "semantic", "context",],);
+export const PolicySeveritySchema = t.UnionEnum(["low", "medium", "high",],);
+export const PolicyTypeSchema = t.UnionEnum(["sfw", "nsfw", "custom",],);
 export const ProfessionBonusTypeSchema = t.UnionEnum([
   "speed",
   "quality",
@@ -263,6 +364,14 @@ export const ProfessionBonusTypeSchema = t.UnionEnum([
 ],);
 export const ProfessionTitleSchema = t.UnionEnum(["apprentice", "journeyman", "expert", "master", "grandmaster",],);
 export const PublicationStatusSchema = t.UnionEnum(["draft", "review", "published", "rejected", "archived",],);
+export const QualityDimensionSchema = t.UnionEnum([
+  "character_voice",
+  "plot_coherence",
+  "lore_consistency",
+  "narrative_quality",
+  "quest_relevance",
+  "creativity",
+],);
 export const QualityLevelSchema = t.UnionEnum(["poor", "common", "uncommon", "rare", "epic", "legendary",],);
 export const QuestCategorySchema = t.UnionEnum(["main", "side", "bounty", "daily",],);
 export const QuestProgressStatusSchema = t.UnionEnum(["active", "completed", "failed", "ignored",],);
@@ -276,6 +385,23 @@ export const QuestTypeSchema = t.UnionEnum([
   "social",
   "composite",
 ],);
+export const RelationshipEventTypeSchema = t.UnionEnum([
+  "met",
+  "helped",
+  "betrayed",
+  "fought",
+  "traded",
+  "trained",
+  "saved",
+  "abandoned",
+  "gifted",
+  "insulted",
+  "praised",
+  "teamed",
+  "separated",
+  "reconciled",
+  "promised",
+],);
 export const RelationshipTypeSchema = t.UnionEnum([
   "friend",
   "rival",
@@ -286,6 +412,8 @@ export const RelationshipTypeSchema = t.UnionEnum([
   "student",
   "neutral",
 ],);
+export const ResponseCompressionSchema = t.UnionEnum(["br", "gzip", "auto",],);
+export const SdModelTypeSchema = t.UnionEnum(["checkpoint", "diffusion",],);
 export const SeductionSkillCategorySchema = t.UnionEnum([
   "foreplay",
   "oral",
@@ -309,8 +437,10 @@ export const ShadowNoteTypeSchema = t.UnionEnum([
   "world_secret",
   "narrative_hook",
 ],);
+export const SizeCategorySchema = t.UnionEnum(["petite", "small", "average", "large", "massive",],);
 export const SkillLockStateSchema = t.UnionEnum(["locked", "unlocked",],);
 export const StackableStateSchema = t.UnionEnum(["unique", "stackable",],);
+export const StationLocationSchema = t.UnionEnum(["player_home", "world", "guild", "portable",],);
 export const StorageBackendSchema = t.UnionEnum(["local", "s3", "gcs",],);
 export const SyntheticDataStatusSchema = t.UnionEnum(["generated", "validated", "approved", "rejected", "archived",],);
 export const SyntheticDataTypeSchema = t.UnionEnum([
@@ -321,6 +451,8 @@ export const SyntheticDataTypeSchema = t.UnionEnum([
   "regeneration_case",
   "gm_escalation",
 ],);
+export const SyntheticTestModeSchema = t.UnionEnum(["replay", "mutation", "regression", "calibration", "stress",],);
+export const ThinkingVisibilitySchema = t.UnionEnum(["hidden", "collapsed", "visible",],);
 export const TraitCategorySchema = t.UnionEnum([
   "identity",
   "personality",
@@ -336,6 +468,24 @@ export const TransformContextSchema = t.UnionEnum([
   "card",
   "gallery",
   "sprite",
+],);
+export const TransportErrorCodeSchema = t.UnionEnum([
+  "PROTOCOL_UNSUPPORTED",
+  "NEGOTIATION_FAILED",
+  "COMPRESSION_FAILED",
+  "UPGRADE_FAILED",
+  "CONNECTION_CLOSED",
+  "BACKPRESSURE_TIMEOUT",
+  "MAX_FRAME_EXCEEDED",
+],);
+export const TransportProtocolSchema = t.UnionEnum([
+  "http/1.1",
+  "http/2",
+  "http/3",
+  "websocket",
+  "webtransport",
+  "tcp",
+  "tls",
 ],);
 export const TurnStatusSchema = t.UnionEnum([
   "pending",
@@ -381,9 +531,20 @@ export const WhiteneoteTypeSchema = t.UnionEnum([
   "character_context",
   "world_state",
 ],);
+export const WorldEventTypeSchema = t.UnionEnum([
+  "location_change",
+  "npc_state_change",
+  "item_transfer",
+  "time_advancement",
+  "location_modification",
+  "world_lore_update",
+  "quest_progress",
+  "combat_event",
+],);
 export const WorldKindSchema = t.UnionEnum(["rpg", "chat",],);
 export const WorldTraitCategorySchema = t.UnionEnum(["environmental", "cultural", "magical", "social", "equipment",],);
 export const WorldVisibilitySchema = t.UnionEnum(["public", "unlisted", "private",],);
+export const XFrameOptionSchema = t.UnionEnum(["DENY", "SAMEORIGIN",],);
 
 // ── data_migrations ────────────────────────────────────────────
 export const DataMigrationsSchema = t.Object({
