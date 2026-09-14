@@ -156,6 +156,15 @@ describe("buildBody", () => {
     expect("polluted" in body,).toBe(false,);
     expect(Object.getPrototypeOf(body,),).toBe(Object.prototype,);
   });
+
+  test("ignores constructor/prototype keys instead of shadowing Object members", () => {
+    const params = { constructor: { polluted: true, }, prototype: { polluted: true, }, vendor_flag: "x", };
+    const body = buildBody(state, baseReq({ params: params as never, },), false,);
+    expect(body.vendor_flag,).toBe("x",);
+    expect(Object.hasOwn(body, "constructor",),).toBe(false,);
+    expect(Object.hasOwn(body, "prototype",),).toBe(false,);
+    expect(typeof body.constructor,).toBe("function",);
+  });
 });
 
 // ── mapFinishReason ───────────────────────────────────────
