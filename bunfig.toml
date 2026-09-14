@@ -12,7 +12,5 @@ globalStore = false
 linker = "hoisted"
 
 [test]
-# Per-file module reset: resets the NSFW runtime singleton before each test
-# file to close cross-file pollution when the suite runs without `--isolate`.
-preload = ["./src/test-utils/nsfw-runtime-reset-preload.ts", "./tests/setup-globals.ts"]
+preload = ["./tests/setup-globals.ts"]
 pathIgnorePatterns = ["tree/**"]
