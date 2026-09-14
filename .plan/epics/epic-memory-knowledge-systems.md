@@ -37,6 +37,7 @@ Three-tier memory system — episodic, semantic, and procedural memory. Covers m
 | Keyphrase-triggered recall     | FEA-2026-060 | Low-Med | Recall memories by keyphrase match; reliable retrieval for important facts (Kindroid journals pattern) |
 | Importance-based scoring       | FEA-2026-061 | High   | Retrieval scoring: recency×importance×relevance (generative-agents/RisuAI HypaMemory) |
 | Emotional pattern tracking     | FEA-2026-062 | Med    | Track emotional patterns across conversations; feed into mood system (Kindroid pattern) |
+| History search / try-hard recall | FEA-2026-063 | Med    | Memories bind source message chains; low-confidence recall reconstructs the quoted context on demand (008_memory_source_chain) |
 
 ## Emotion-Impact Fields (FEA-2026-056)
 
