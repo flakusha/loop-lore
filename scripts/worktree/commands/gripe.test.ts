@@ -24,7 +24,7 @@ import { gripe, } from "./gripe";
 
 function makeConfig(): { config: WorktreeConfig; dir: string } {
   const dir = mkdtempSync(join(tmpdir(), "loop-lore-gripe-",),);
-  return { config: { repoRoot: dir, treeDir: dir, }, dir, };
+  return { config: { repoRoot: dir, treeDir: dir, worktreeDirs: [dir,], }, dir, };
 }
 
 function mockExit(): { calls: number[]; restore: () => void } {
