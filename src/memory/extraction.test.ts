@@ -23,8 +23,8 @@ import { registerProvider, unregisterProvider, } from "../generation/providers/r
 import type { GenerateRequest, GenerateResponse, LLMProvider, } from "../generation/providers/types";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
-import { insertActors, insertChats, insertUsers, } from "../test-utils/insert-helpers";
-import { extractAndStoreMemories, extractMemories, storeMemories, } from "./extraction";
+import { insertActors, insertChats, insertMessages, insertUsers, } from "../test-utils/insert-helpers";
+import { extractAndStoreMemories, extractFromBurst, extractMemories, storeMemories, } from "./extraction";
 
 /**
  * Cast a raw string to MemoryType. The storing tests deliberately pass
@@ -482,5 +482,98 @@ describe("extractAndStoreMemories", () => {
     },);
     const rows = await db.selectFrom("actor_memories",).select("id",).execute();
     expect(rows,).toHaveLength(0,);
+  });
+});
+
+describe("extractFromBurst", () => {
+  let db: Kysely<DB>;
+  let sqlite: { close(): void };
+
+  beforeEach(async () => {
+    createLogger({ level: "error", },);
+    const ctx = await createTestDb();
+    db = ctx.db;
+    sqlite = ctx.sqlite;
+    await db
+      .insertInto("model_role_overrides",)
+      .values({ role: "auxiliary", provider: "stub-extraction", model: "stub-model", },)
+      .execute();
+    await insertUsers(db, "burst-user", "Burst User", { id: "user-b", } as never,);
+    await insertChats(db, "Burst Chat", "user-b", { id: "chat-b", } as never,);
+    await insertActors(db, "Burst Actor", { id: "actor-b", } as never,);
+    await insertMessages(
+      db,
+      "chat-b",
+      "actor-b",
+      "user",
+      "first burst turn here",
+      { id: "bm-1", created_at: "2026-01-01T00:00:01Z", } as never,
+    );
+    await insertMessages(
+      db,
+      "chat-b",
+      "actor-b",
+      "assistant",
+      "second burst turn here",
+      { id: "bm-2", parent_id: "bm-1", created_at: "2026-01-01T00:00:02Z", } as never,
+    );
+    resetStub();
+  },);
+
+  afterEach(() => {
+    sqlite.close();
+  },);
+
+  it("stores burst-kind memories bound to the loaded chain oldest-first", async () => {
+    stubContent = JSON.stringify([
+      { content: "A burst summary of length", memoryType: "fact", confidence: 0.9, importance: 3, keywords: [], },
+    ],);
+    const stored = await extractFromBurst(
+      db,
+      { actorId: "actor-b", chatId: "chat-b", messageId: "bm-2", config: makeConfig(), },
+      { messageIds: ["bm-2", "bm-1",], chatIds: ["chat-b",], },
+    );
+    expect(stored,).toBe(1,);
+    const row = await db
+      .selectFrom("actor_memories",)
+      .select(["source_message_id", "source_message_ids", "source_chat_ids", "extraction_kind",],)
+      .where("actor_id", "=", "actor-b",)
+      .executeTakeFirstOrThrow();
+    expect(row.source_message_id,).toBe("bm-1",);
+    expect(row.source_message_ids,).toBe('["bm-1","bm-2"]',);
+    expect(row.source_chat_ids,).toBe('["chat-b"]',);
+    expect(row.extraction_kind,).toBe("burst",);
+  });
+
+  it("returns 0 for an empty chain without touching the provider", async () => {
+    // Valid stub content: if the empty-chain guard were removed and the
+    // provider ran, this would store a memory and fail the assertion.
+    stubContent = JSON.stringify([
+      { content: "Should never be stored here", memoryType: "fact", confidence: 0.9, importance: 3, keywords: [], },
+    ],);
+    const stored = await extractFromBurst(
+      db,
+      { actorId: "actor-b", chatId: "chat-b", messageId: "bm-1", config: makeConfig(), },
+      { messageIds: [], },
+    );
+    expect(stored,).toBe(0,);
+  });
+
+  it("returns 0 when every chain row is ciphertext without a plaintext mirror", async () => {
+    await db
+      .updateTable("messages",)
+      .set({ key_id: "key-b", content_plaintext: null, },)
+      .execute();
+    // Same discrimination as above: a skipped ciphertext filter would
+    // transcript the raw ciphertext and store a memory.
+    stubContent = JSON.stringify([
+      { content: "Should never be stored here", memoryType: "fact", confidence: 0.9, importance: 3, keywords: [], },
+    ],);
+    const stored = await extractFromBurst(
+      db,
+      { actorId: "actor-b", chatId: "chat-b", messageId: "bm-2", config: makeConfig(), },
+      { messageIds: ["bm-1", "bm-2",], },
+    );
+    expect(stored,).toBe(0,);
   });
 });
