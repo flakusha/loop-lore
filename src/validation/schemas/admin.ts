@@ -6,14 +6,13 @@
  */
 
 import { t, } from "elysia";
-import { OptionalId, } from "./primitives";
+import { OptionalId, UserRoleSchema, } from "./primitives";
 
 // ── Admin routes ───────────────────────────────────────────
 
 export const AdminRoleUpdateBody = t.Object({
-  role: t.UnionEnum(["admin", "user", "viewer",],),
+  role: UserRoleSchema,
 },);
-
 export const AdminSystemConfigBody = t.Object({
   key: t.String({ minLength: 1, },),
   value: t.String(),

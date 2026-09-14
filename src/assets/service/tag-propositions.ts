@@ -13,7 +13,7 @@ import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
 import { normalizeTag, } from "./tags";
 
-/** Provenance of a proposed tag token. */
+/** Provenance of a proposed tag token — mirrors `TagProvenanceSchema` in `src/validation/schemas/primitives.ts`. */
 export type TagProvenance = "alt_text" | "filename";
 
 /** A single proposed tag for an asset. */
