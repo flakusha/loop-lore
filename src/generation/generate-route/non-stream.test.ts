@@ -69,7 +69,7 @@ const fakeResponse = {
   content: '{"ok":true}',
   finishReason: "stop" as const,
   usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15, },
-  toolCalls: null,
+  toolCalls: null as null | { id: string; function: { name: string; arguments: string } }[],
 };
 
 if (STRICTLY_ISOLATED) {
@@ -130,7 +130,7 @@ describeSelf("runNonStreaming — generation.completed latencyMs", () => {
     // exceeds MAX_TOOL_ROUNDS and throws.
     fakeResponse.toolCalls = [
       { id: "tc-1", function: { name: "noop", arguments: "{}", }, },
-    ] as typeof fakeResponse.toolCalls;
+    ];
     const { createTestDb, } = await import("../../test-utils/create-test-db");
     const { db, sqlite, } = await createTestDb();
     // runNonStreaming converts internal errors to a 500 Response (never
