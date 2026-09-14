@@ -215,6 +215,50 @@ describe("characterGrowthRoutes coverage", () => {
     );
     expect([200, 404, 409,],).toContain(authed.status,);
   });
+
+  test("PATCH arc happy path writes stage and growth-log entry", async () => {
+    const res = await app.handle(
+      new Request(`http://localhost/api/character-growth/arc?actorId=${actorId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ currentStage: "crisis", stageDescription: "low", },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = (await res.json()) as { currentStage: string };
+    expect(body.currentStage,).toBe("crisis",);
+  });
+
+  test("POST confirm resolves the seeded pending entry", async () => {
+    const pending = await db.selectFrom("growth_log",).select("id",)
+      .where("actor_id", "=", actorId,).where("status", "=", "pending",)
+      .executeTakeFirstOrThrow();
+    const res = await app.handle(
+      new Request(`http://localhost/api/character-growth/growth-log/${pending.id}/confirm?actorId=${actorId}`, {
+        method: "POST",
+      },),
+    );
+    expect(res.status,).toBe(200,);
+  });
+
+  test("POST reject resolves a second pending entry", async () => {
+    const id = uid();
+    await db.insertInto("growth_log",).values({
+      id,
+      actor_id: actorId,
+      axis: "skill",
+      event_type: "skill_acquired",
+      status: "pending",
+      reason: "coverage-reject",
+      recorded_at: new Date().toISOString(),
+    },).execute();
+    const res = await app.handle(
+      new Request(`http://localhost/api/character-growth/growth-log/${id}/reject?actorId=${actorId}`, {
+        method: "POST",
+      },),
+    );
+    expect(res.status,).toBe(200,);
+  });
 });
 
 describe("character-growth helpers", () => {

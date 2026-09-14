@@ -1932,6 +1932,32 @@
     "git_issue": "dc5a8b8",
     "status": "done"
   },
+  "BUG-FE-BE-CHARACTER-GROWTH-ARC-CONFIRM-REJECT-DECLARE-UNSATISFIA": {
+    "hash": "9b7dd80",
+    "git_issue": "9b7dd80",
+    "extid": "BUG-FE-BE-CHARACTER-GROWTH-ARC-CONFIRM-REJECT-DECLARE-UNSATISFIA",
+    "type": "BUG",
+    "title": "FE-BE: character-growth arc/confirm/reject declare unsatisfiable actorId param, Elysia 422s every call",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md",
+    "status": "open"
+  },
+  "BUG-FE-BE-HARMONY-CHECKER-BLIND-TO-ELYSIA-APP-DIRECT-ROUTES-FACT": {
+    "hash": "164fd00",
+    "git_issue": "164fd00",
+    "extid": "BUG-FE-BE-HARMONY-CHECKER-BLIND-TO-ELYSIA-APP-DIRECT-ROUTES-FACT",
+    "type": "BUG",
+    "title": "FE-BE: harmony checker blind to elysia-app direct routes, factory routes, sibling-schema consts",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md",
+    "status": "open"
+  },
   "BUG-FEAT-RADICLE-INTEGRATION-ACCEPTANCE-CRITERIA-TOO-THIN": {
     "hash": "4a8525b",
     "git_issue": "4a8525b",
@@ -15773,6 +15799,19 @@
     "epic": "epic-runtime-integrity-fail-safes",
     "tags": [],
     "source": ".plan/tickets/TASK-fail-safe-execution-work-safety.md",
+    "status": "open"
+  },
+  "TASK-FE-BE-TRIAGE-VERIFY-OR-FIX-REMAINING-HARMONY-FINDINGS-PERSON": {
+    "hash": "57ecea9",
+    "git_issue": "57ecea9",
+    "extid": "TASK-FE-BE-TRIAGE-VERIFY-OR-FIX-REMAINING-HARMONY-FINDINGS-PERSON",
+    "type": "TASK",
+    "title": "FE-BE triage: verify-or-fix remaining harmony findings (personas PUT, story action, movement, plugins POST, review PUTs)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-fe-be-triage-verify-or-fix-remaining-harmony-findings-person.md",
     "status": "open"
   },
   "TASK-FEDERATION-CONTENT-CLEARANCE-GATE-PER-CHAT-CONSENT-BEFORE-ME": {
