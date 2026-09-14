@@ -159,7 +159,12 @@ function skipInterpolation(src: string, i: number,): number {
 }
 
 /** Consume one quoted char inside a string; reports new index + quote state. */
-function stepInString(src: string, i: number, q: string, esc: boolean,): { next: number; quote: string; escaped: boolean } {
+function stepInString(
+  src: string,
+  i: number,
+  q: string,
+  esc: boolean,
+): { next: number; quote: string; escaped: boolean } {
   const ch = src[i] ?? "";
   if (esc) { return { next: i + 1, quote: q, escaped: false, }; }
   if (ch === "\\") { return { next: i + 1, quote: q, escaped: true, }; }
@@ -180,9 +185,12 @@ function callExtent(src: string, from: number,): string {
   while (i < src.length) {
     if (q) {
       const st = stepInString(src, i, q, esc,);
-      i = st.next; q = st.quote; esc = st.escaped;
+      i = st.next;
+      q = st.quote;
+      esc = st.escaped;
       continue;
     }
+    const ch = src[i] ?? "";
     if (ch === '"' || ch === "'" || ch === "`") { q = ch; }
     else if (ch === "(") { depth++; }
     else if (ch === ")") {
@@ -200,6 +208,55 @@ function qsKeys(raw: string,): string[] {
   return q.split("&",).map((p,) => p.split("=",)[0]?.trim() ?? "").filter((k,) => k && !k.includes("${",));
 }
 
+/** String constants usable inside route templates (prefix, R from sibling schemas). */
+function routeConsts(src: string, dir: string, prefix: string,): Map<string, string> {
+  const consts = new Map<string, string>();
+  for (const cm of src.matchAll(/const (\w+) =\s*"([^"]+)"/g,)) {
+    consts.set(cm[1] ?? "", cm[2] ?? "",);
+  }
+  try {
+    const sib = readFileSync(path.join(dir, "schemas.ts",), "utf8",);
+    for (const cm of sib.matchAll(/export const (\w+) =\s*"([^"]+)"/g,)) {
+      if (!consts.has(cm[1] ?? "",)) { consts.set(cm[1] ?? "", cm[2] ?? "",); }
+    }
+  } catch { /* no sibling schemas */ }
+  consts.set("prefix", prefix,);
+  return consts;
+}
+
+/** Expand `${name}` template refs with the route const map (3 passes max). */
+function resolveRouteConsts(s: string, consts: Map<string, string>,): string {
+  let out = s;
+  for (let k = 0; k < 3; k++) {
+    const n = out.replace(/\$\{(\w+)\}/g, (mm, name,) => consts.get(name as string,) ?? mm,);
+    if (n === out) { break; }
+    out = n;
+  }
+  return out;
+}
+
+/** Literal route registrations in one file (skips .all catch-alls). */
+function literalBeRoutes(src: string, rel: string, resolve: (s: string,) => string, out: BeRoute[],): void {
+  const re = /\.(get|post|put|patch|delete|all)\s*\(\s*(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(src,)) !== null) {
+    const verb = ((m[1] ?? "get") as string).toUpperCase();
+    if (verb === "ALL") { continue; }
+    const raw = resolve((m[2] ?? "").slice(1, -1,),);
+    if (!raw.startsWith("/",) && !raw.includes("${",)) { continue; }
+    const win = callExtent(src, m.index,);
+    out.push({
+      method: verb,
+      path: norm(raw,),
+      raw: raw.slice(0, 90,),
+      file: rel,
+      line: lineOf(src, m.index,),
+      bodySchema: /body\s*:\s*(\w+)/.exec(win,)?.[1] ?? null,
+      querySchema: /query\s*:\s*(\w+)/.exec(win,)?.[1] ?? null,
+    },);
+  }
+}
+
 function scanBe(): BeRoute[] {
   const out: BeRoute[] = [];
   const seen = new Set<string>();
@@ -211,52 +268,9 @@ function scanBe(): BeRoute[] {
       seen.add(f,);
       const src = readFileSync(f, "utf8",);
       const rel = path.relative(ROOT, f,);
-      const pm = /prefix\s*=\s*"([^"]+)"/.exec(src,);
-      const prefix = pm?.[1] ?? "/api";
-      const consts = new Map<string, string>();
-      for (const cm of src.matchAll(/const (\w+) =\s*"([^"]+)"/g,)) {
-        consts.set(cm[1] ?? "", cm[2] ?? "",);
-      }
-      try {
-        const sib = readFileSync(path.join(path.dirname(f,), "schemas.ts",), "utf8",);
-        for (const cm of sib.matchAll(/export const (\w+) =\s*"([^"]+)"/g,)) {
-          if (!consts.has(cm[1] ?? "",)) { consts.set(cm[1] ?? "", cm[2] ?? "",); }
-        }
-      } catch { /* no sibling schemas */ }
-      const resolveConsts = (s: string,): string => {
-        let out = s;
-        for (let k = 0; k < 3; k++) {
-          const n = out.replace(
-            /\$\{(\w+)\}/g,
-            (mm, name,) => name === "prefix" ? prefix : (consts.get(name as string,) ?? mm),
-          );
-          if (n === out) { break; }
-          out = n;
-        }
-        return out;
-      };
-      const re = /\.(get|post|put|patch|delete|all)\s*\(\s*(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g;
-      let m: RegExpExecArray | null;
-      while ((m = re.exec(src,)) !== null) {
-        const verb = ((m[1] ?? "get") as string).toUpperCase();
-        if (verb === "ALL") { continue; }
-        const method = verb;
-        const lit = (m[2] ?? "") as string;
-        const raw = resolveConsts(lit.slice(1, -1,),);
-        if (!raw.startsWith("/",) && !raw.includes("${",)) { continue; }
-        const win = callExtent(src, m.index,);
-        const body = /body\s*:\s*(\w+)/.exec(win,)?.[1] ?? null;
-        const query = /query\s*:\s*(\w+)/.exec(win,)?.[1] ?? null;
-        out.push({
-          method,
-          path: norm(raw,),
-          raw: raw.slice(0, 90,),
-          file: rel,
-          line: lineOf(src, m.index,),
-          bodySchema: body,
-          querySchema: query,
-        },);
-      }
+      const prefix = /prefix\s*=\s*"([^"]+)"/.exec(src,)?.[1] ?? "/api";
+      const consts = routeConsts(src, path.dirname(f,), prefix,);
+      literalBeRoutes(src, rel, (s,) => resolveRouteConsts(s, consts,), out,);
       expandEntityFactories(src, rel, out,);
     }
   }
@@ -265,11 +279,12 @@ function scanBe(): BeRoute[] {
 
 /** Expand createEntityRoutes({parentPrefix, parentParam, entityPath}) into CRUD. */
 function expandEntityFactories(src: string, rel: string, out: BeRoute[],): void {
-  const cfg = /parentPrefix:\s*"([^"]+)"[\s\S]{0,200}?parentParam:\s*"([^"]+)"[\s\S]{0,200}?entityPath:\s*"([^"]+)"/.exec(src,);
+  const cfg = /parentPrefix:\s*"([^"]+)"[\s\S]{0,200}?parentParam:\s*"([^"]+)"[\s\S]{0,200}?entityPath:\s*"([^"]+)"/
+    .exec(src,);
   if (!cfg) { return; }
   const base = `/api/${cfg[1]}/:${cfg[2]}/${cfg[3]}`;
   const line = lineOf(src, cfg.index,);
-  const crud: Array<[string, string]> = [
+  const crud: Array<[string, string,]> = [
     ["GET", base,],
     ["POST", base,],
     ["GET", `${base}/:entityId`,],
