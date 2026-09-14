@@ -5,11 +5,9 @@
  * Commit-branch command — GPG-signed commit from a worktree branch
  */
 
-import { existsSync, } from "fs";
-import { resolve, } from "path";
-import { branchToPath, type WorktreeConfig, } from "../utils/config";
+import { type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
-import { gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
+import { findWorktreeByBranch, gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
 import { appendCommitOutcome, } from "../utils/ledger";
 import { extractMessageInput, validateMessage, } from "../utils/message";
@@ -47,10 +45,12 @@ export async function commitBranch(
     process.exit(1,);
   }
 
-  // Find worktree path from config
-  const wtPath = resolve(config.treeDir, branchToPath(branch,),);
+  // Find the worktree for this branch — conventional tree/ layout first,
+  // then any checkout git knows about (e.g. native omp worktrees whose
+  // directory carries a session suffix).
+  const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
 
-  if (!existsSync(resolve(wtPath, ".git",),)) {
+  if (!wtPath) {
     log("error", `worktree not found for branch '${branch}'`,);
     process.exit(1,);
   }
