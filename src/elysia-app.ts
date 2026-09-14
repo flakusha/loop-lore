@@ -20,7 +20,11 @@ import type { Config, } from "./config/schema";
 import { startAppScheduler, } from "./cron";
 import type { Db, } from "./db";
 import { authenticate, } from "./middleware/auth";
-import { CSRF_EXEMPT_ROUTES, CSRF_HEADER, } from "./middleware/csrf";
+import {
+  CSRF_EXEMPT_ROUTES,
+  CSRF_HEADER,
+  readCookieSecureOverrideFromEnv,
+} from "./middleware/csrf";
 import { applyCsrfPlugin, type CsrfMiddlewareOptions, } from "./middleware/csrf-plugin";
 import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { idempotent, } from "./middleware/idempotency";
@@ -107,9 +111,19 @@ export function createApp(deps: AppDeps,): Elysia {
   const fallbackSecret = config.auth.jwtSecret ?? "";
   const csrfEnabled = csrfSecret.length > 0 || fallbackSecret.length > 0;
   const effectiveCsrfSecret = csrfSecret.length > 0 ? csrfSecret : fallbackSecret;
+  // Honor the `LL_COOKIE_SECURE` env override before falling back to the
+  // NODE_ENV=production default. Mirrors `src/routes/auth/shared.ts::setTokenCookie`
+  // so the `csrf_token` and `ll_token` cookies stay in sync. The CSRF cookie
+  // previously emitted `Secure` whenever NODE_ENV=production and was impossible
+  // to turn off for plain-HTTP deployments behind a TLS-terminating proxy.
+  // BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.
+  const cookieSecureOverride = readCookieSecureOverrideFromEnv(
+    process.env["LL_COOKIE_SECURE"],
+  );
   const csrfOpts: CsrfMiddlewareOptions = {
     secret: effectiveCsrfSecret,
     enabled: csrfEnabled,
+    cookieSecureOverride,
   };
   // The CSRF wiring (onBeforeHandle + onAfterHandle) lives in
   // `src/middleware/csrf-plugin.ts::csrfPlugin`. Production and the
