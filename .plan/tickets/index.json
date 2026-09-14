@@ -4254,6 +4254,32 @@
     "source": ".plan/tickets/BUG-transport-strictuint8-applied-to-gzip-path-but-not-zstd-brot.md",
     "status": "done"
   },
+
+  "BUG-TUI-APP-GETLOGGER-THROWS-WHEN-RUNNING-STANDALONE": {
+    "hash": "pending",
+    "extid": "BUG-TUI-APP-GETLOGGER-THROWS-WHEN-RUNNING-STANDALONE",
+    "type": "BUG",
+    "title": "tui/app.ts calls getLogger() without prior createLogger() — runtime crash on first F5 failure",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md",
+    "status": "open"
+  },
+
+  "BUG-TUI-APP-NEVER-THREADS-SESSIONTOKEN-INTO-CHATWIDGET": {
+    "hash": "pending",
+    "extid": "BUG-TUI-APP-NEVER-THREADS-SESSIONTOKEN-INTO-CHATWIDGET",
+    "type": "BUG",
+    "title": "tui/app.ts never threads a session token into ChatWidget — auth header never sent",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md",
+    "status": "open"
+  },
   "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN": {
     "hash": "02abf8a",
     "extid": "BUG-TURN-STATE-BLIND-READ-MODIFY-WRITE-LOST-UPDATES-ON-CONCURREN",
@@ -24910,6 +24936,45 @@
     "git_issue": "62b2783",
     "status": "open"
   },
+
+  "TASK-TUI-ASSET-VIEW-REMOVE-SILENT-CATCH-AND-VOID-ASYNC-IIFE": {
+    "hash": "pending",
+    "extid": "TASK-TUI-ASSET-VIEW-REMOVE-SILENT-CATCH-AND-VOID-ASYNC-IIFE",
+    "type": "TASK",
+    "title": "tui/asset-view.ts: remove silent catch + void-without-catch pattern in setChatId",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md",
+    "status": "open"
+  },
+
+  "TASK-TUI-DEDUPE-API-BASE": {
+    "hash": "pending",
+    "extid": "TASK-TUI-DEDUPE-API-BASE",
+    "type": "TASK",
+    "title": "tui: dedupe API_BASE constant between app.ts and chat/api.ts",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tui-dedupe-api-base.md",
+    "status": "open"
+  },
+
+  "TASK-TUI-ENABLED-CONFIG-FLAG-NEVER-READ": {
+    "hash": "pending",
+    "extid": "TASK-TUI-ENABLED-CONFIG-FLAG-NEVER-READ",
+    "type": "TASK",
+    "title": "tui.enabled config flag mapped from env but never read at runtime",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md",
+    "status": "open"
+  },
   "TASK-TURN-SEND-GATE": {
     "hash": "pending",
     "extid": "TASK-TURN-SEND-GATE",
@@ -25097,6 +25162,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-unit-tests-untested-batch.md",
     "git_issue": "6e945b2",
+    "status": "open"
+  },
+
+  "TASK-UPDATE-TERMINAL-UI-SPEC-TO-ACTUAL-FILE-LAYOUT": {
+    "hash": "pending",
+    "extid": "TASK-UPDATE-TERMINAL-UI-SPEC-TO-ACTUAL-FILE-LAYOUT",
+    "type": "TASK",
+    "title": "update docs/spec/terminal-ui.md to match current src/tui/ file layout",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md",
     "status": "open"
   },
   "TASK-URL-IMPORT-CHUB": {
