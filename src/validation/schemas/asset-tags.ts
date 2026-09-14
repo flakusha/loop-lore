@@ -11,10 +11,11 @@
 
 import { t, } from "elysia";
 
-// Tag ownership scope + provenance — generated single source (see ../db-schemas).
+// Tag ownership scope — generated single source (see ../db-schemas).
+// TagProvenanceSchema lives in ./primitives (barrel-exported there).
 import { AssetTagScopeSchema, AssetTagSourceSchema, } from "../db-schemas";
 import { TagProvenanceSchema, } from "./primitives";
-export { AssetTagScopeSchema, AssetTagSourceSchema, TagProvenanceSchema, };
+export { AssetTagScopeSchema, AssetTagSourceSchema, };
 
 
 /** One tag as returned to clients. */
