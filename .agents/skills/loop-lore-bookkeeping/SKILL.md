@@ -50,7 +50,7 @@ tickets are filed.
 | 1    | Audit: read ticket file → grep current dev source → record evidence              |
 | 2    | Per-bucket worktree: `bun run scripts/worktree/ new fix-bucket-X-bookkeeping`    |
 | 3    | Per-ticket: swap `**Status:**` line + inject `## Resolution` section             |
-| 4    | Single GPG-signed commit per bucket via `bun run scripts/worktree/ agent-commit` |
+| 4    | Single GPG-signed commit per bucket via `bun run scripts/worktree/ commit-branch` |
 | 5    | `bun run scripts/worktree/ finalize --force` (docs-only)                         |
 | 6    | `bun run plan:sync` → expect zero actionable issues                              |
 | 7    | Engram session summary; mark todos done                                          |
@@ -80,7 +80,7 @@ a normal fix per `loop-lore-tasks` — not this skill.
 
 **Always** spin up a dedicated worktree from `dev` for each bucket. The
 mutating operations rule from `AGENTS.md` (`git commit`, `git merge`,
-`bun run scripts/worktree/ agent-commit`, `bun run scripts/worktree/
+`bun run scripts/worktree/ commit-branch`, `bun run scripts/worktree/
 finalize`) only run inside `tree/<worktree-name>/`. **Never** commit
 bookkeeping directly on `dev` even though `AGENTS.md` allowed one exception
 in the original session — that exception was for the user's explicit
@@ -133,7 +133,7 @@ Stage only the files the audit verified. Each bucket is one commit:
 
 ```bash
 git add .plan/tickets/BUG-1.md .plan/tickets/BUG-2.md ...
-bun run scripts/worktree/ agent-commit fix-bucket-X-bookkeeping \
+bun run scripts/worktree/ commit-branch fix-bucket-X-bookkeeping \
   "chore(plan): mark Bucket X BUGs resolved (<short summary>)"
 ```
 
@@ -316,7 +316,7 @@ bun run scripts/worktree/ new fix-bucket-X-bookkeeping
 
 # Stage + commit (from inside worktree):
 git add .plan/tickets/BUG-*.md
-bun run scripts/worktree/ agent-commit fix-bucket-X-bookkeeping \
+bun run scripts/worktree/ commit-branch fix-bucket-X-bookkeeping \
   "chore(plan): mark Bucket X BUGs resolved ()"
 
 # Finalize (docs-only: --force):

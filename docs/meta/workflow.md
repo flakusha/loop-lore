@@ -92,7 +92,7 @@ bun run scripts/worktree/ finalize feat-x         # check → test → GPG-signe
 ### GPG signing
 
 Commits made inside worktrees are GPG-signed with the agent key configured in
-`.credentials.env`. Use `bun run scripts/worktree/ agent-commit <branch> "msg"`
+`.credentials.env`. Use `bun run scripts/worktree/ commit-branch <branch> "msg"`
 rather than raw `git commit`. Merge/finalize operations sign the resulting
 merge commit automatically.
 
@@ -173,7 +173,7 @@ cd tree/ticket-BUG-2026-002
 # ... edit, test ...
 
 # 3. Commit (GPG-signed)
-bun run scripts/worktree/ agent-commit ticket-BUG-2026-002 "fix(e2e): isolate cachedSoloUser"
+bun run scripts/worktree/ commit-branch ticket-BUG-2026-002 "fix(e2e): isolate cachedSoloUser"
 
 # 4. Finalize (check + test + GPG-signed merge of feature branch into dev, worktree removed)
 bun run scripts/worktree/ finalize ticket-BUG-2026-002

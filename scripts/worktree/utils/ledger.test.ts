@@ -53,8 +53,8 @@ describe("extractSayArgs", () => {
   });
 
   it("leaves -m/-F and other flags alone", () => {
-    const r = extractSayArgs(["agent-commit", "b", "-m", "fix: x", "--force",],);
-    expect(r.cleanArgs,).toEqual(["agent-commit", "b", "-m", "fix: x", "--force",],);
+    const r = extractSayArgs(["commit-branch", "b", "-m", "fix: x", "--force",],);
+    expect(r.cleanArgs,).toEqual(["commit-branch", "b", "-m", "fix: x", "--force",],);
     expect(r.said,).toBeNull();
   });
 
@@ -206,16 +206,16 @@ describe("appendCommitOutcome", () => {
     try {
       appendCommitOutcome(
         dir,
-        "agent-commit",
+        "commit-branch",
         "my-branch",
         "abc1234567890",
         "fix(worktree): handle empty stdin\n\nBody here",
       );
       const records = readLedger(dir, 10,);
       expect(records.length,).toBe(1,);
-      expect(records[0].cmd,).toBe("agent-commit",);
+      expect(records[0].cmd,).toBe("commit-branch",);
       expect(records[0].branch,).toBe("my-branch",);
-      expect(records[0].msg,).toBe("agent-commit my-branch :: ✅ abc123456 fix(worktree): handle empty stdin",);
+      expect(records[0].msg,).toBe("commit-branch my-branch :: ✅ abc123456 fix(worktree): handle empty stdin",);
     } finally {
       rmSync(dir, { recursive: true, force: true, },);
     }

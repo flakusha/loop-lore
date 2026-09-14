@@ -327,8 +327,8 @@ bun run scripts/worktree/ new feature-name
 # Work in worktree
 cd tree/feature-name
 
-# Agent commit (GPG-signed)
-bun run scripts/worktree/ agent-commit feature-name "feat(scope): message"
+# Commit in worktree (GPG-signed)
+bun run scripts/worktree/ commit-branch feature-name "feat(scope): message"
 
 # Rebase onto updated dev
 bun run scripts/worktree/ rebase feature-name
@@ -352,7 +352,7 @@ to the user instead of bypassing the tooling with direct `git` calls.
 
 ### GPG signing — never bypass
 
-If `git commit`, `scripts/worktree/ agent-commit`, or any signed operation
+If `git commit`, `scripts/worktree/ commit-branch`, or any signed operation
 fails with a GPG / pinentry error, agents MUST stop and report the failure.
 NEVER set `commit.gpgsign=false`, pass `-S none`, or otherwise strip the
 signature requirement. The user owns GPG configuration; agents report, the
