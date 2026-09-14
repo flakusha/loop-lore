@@ -274,6 +274,8 @@ export function streamToClient({
             actorId: input.actorId,
             chatId: input.chatId,
             messageId,
+            sourceMessageIds: [messageId,],
+            extractionKind: "single_response",
             aiContent: result.content,
             config: cfg,
             userId,

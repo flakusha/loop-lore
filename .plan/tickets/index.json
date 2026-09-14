@@ -18583,6 +18583,20 @@
     "source": ".plan/tickets/TASK-memory-happiness-patterns.md",
     "status": "open"
   },
+
+  "TASK-MEMORY-HISTORY-SEARCH-BIND-MESSAGE-CHAIN-RECONSTRUCTABLE-CON": {
+    "hash": "895f8d6",
+    "git_issue": "895f8d6",
+    "extid": "TASK-MEMORY-HISTORY-SEARCH-BIND-MESSAGE-CHAIN-RECONSTRUCTABLE-CON",
+    "type": "TASK",
+    "title": "memory history search: bind message chain + reconstructable context",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-memory-knowledge-systems.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md",
+    "status": "open"
+  },
   "TASK-MEMORY-PROMOTION-PIPELINE": {
     "hash": "cbd08c7",
     "extid": "TASK-MEMORY-PROMOTION-PIPELINE",
