@@ -75,6 +75,16 @@ export function updateRuntimeNsfwConfig(partial: Partial<NsfwRuntimeConfig>,): v
 }
 
 /**
+ * Reset the runtime store to the code defaults. Dev/test only — re-seeds the
+ * module-level singleton after a mutation (e.g. `PUT /api/admin/nsfw` during a
+ * test run) so cross-file pollution doesn't leak into later test files when
+ * the suite runs without `--isolate`.
+ */
+export function resetNsfwRuntimeConfig(): void {
+  initNsfwRuntimeConfig({ ...DEFAULTS, },);
+}
+
+/**
  * Overlay any persisted admin overrides from `system_config` onto the runtime
  * store. Called once during server start, after the DB is available, so a
  * value saved via the admin panel survives a restart.
