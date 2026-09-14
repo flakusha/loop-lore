@@ -7,19 +7,6 @@ import type { ChatHost, ChatMessage, } from "./types";
 export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
 
 /**
- * Build the auth-header bag; attaches `Authorization: Bearer …` when a session token is present.
- * @param sessionToken - bearer token, or `undefined` for unauthenticated requests
- * @returns `Record<string, string>` always containing `Content-Type`.
- */
-function getAuthHeaders(sessionToken: string | undefined,): Record<string, string> {
-  const headers: Record<string, string> = { "Content-Type": "application/json", };
-  if (sessionToken) {
-    headers.Authorization = `Bearer ${sessionToken}`;
-  }
-  return headers;
-}
-
-/**
  * Send message via POST /api/chats/:id/messages.
  * Shows typing indicator, adds user message + assistant auto-reply.
  * @param host
@@ -42,7 +29,7 @@ export async function handleSend(host: ChatHost, text: string,): Promise<void> {
       assistantMessage?: { id: string; content: string };
     }>(`${API_BASE}/api/chats/${host.chatId}/messages`, {
       method: "POST",
-      headers: getAuthHeaders(host.sessionToken,),
+      auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
       body: bodyResult.ok ? bodyResult.value : "{}",
       handle401: false,
     },);
@@ -87,7 +74,7 @@ export async function loadMessages(host: ChatHost,): Promise<void> {
       ? `${API_BASE}/api/chats/${host.chatId}/messages?pageSize=200&cursor=${host.cursor}`
       : `${API_BASE}/api/chats/${host.chatId}/messages?pageSize=200`;
     const result = await safeFetch<{ data: ChatMessage[]; cursor: string | null }>(url, {
-      headers: getAuthHeaders(host.sessionToken,),
+      auth: host.sessionToken ? { sessionToken: host.sessionToken, } : undefined,
       handle401: false,
     },);
     if (!result.ok) {
