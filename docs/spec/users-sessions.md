@@ -24,7 +24,7 @@ Full table definition in `src/db/schema-core.ts` → `Users` interface.
 - `username` — string (unique)
 - `display_name` — string
 - `password_hash` — string (nullable for demo users, hashed with scrypt)
-- `role` — `UserRole` (admin | user | viewer | solo)
+- `role` — `UserRole` (see `src/db/enums-core/users.ts`; expanded beyond the four MVP roles)
 - `settings` — JSON (preferences, UI config)
 - `birth_date` — string (nullable, ISO date — age gate)
 - `age_gate_accepted_at` — string (nullable, ISO timestamp — age gate)
@@ -41,6 +41,7 @@ Password hashing: **scrypt** (native Bun `Bun.password.hash`). No bcrypt/argon2 
 | `user`   | Standard. Create/manage own chats, characters, assets. View own message stats.                                                              |
 | `viewer` | Read-only. View assigned chats, no editing.                                                                                                 |
 | `solo`   | Implicit role for local demo mode. Instance owner — admin-equivalent (user mgmt, system + age-gate config) within the single-user instance. |
+| others   | Additional roles per `UserRole` (`moderator`, `creator`, `player`, `guest`, `bot`, `tester`, `custom`) — permissions follow the nearest MVP role unless routes state otherwise. |
 
 ### Role-Based Feature Access
 

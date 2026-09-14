@@ -74,11 +74,11 @@ Each enum encodes a state machine rather than a binary on/off:
 
 | Column                              | Values                                                                                                                     | What it replaces                                      |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `users.role`                        | `admin`, `user`, `viewer`, `solo`                                                                                          | An `is_admin` boolean                                 |
+| `users.role`                        | `UserRole` (see `src/db/enums-core/users.ts`)                                                                              | An `is_admin` boolean                                 |
 | `users.status`                      | `active`, `disabled`, `deactivated`                                                                                        | An `is_active` boolean                                |
 | `messages.visibility`               | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted`                                              | A `hidden` boolean + separate `hidden_reason` column  |
 | `messages.status`                   | `sending`, `confirmed`, `failed`, `partial`, `rejected`, `cancelled`                                                       | Message lifecycle state                               |
-| `messages.content_type`             | `text`, `action`, `narration`, `system`, `continuation`                                                                    | A `content_type` field                                |
+| `messages.content_type`             | `MessageContentType` (see `src/db/enums-core/messages.ts`)                                                             | A `content_type` field                                |
 | `messages.content_format`           | `markdown` (default)                                                                                                       | A `format` field                                      |
 | `messages.content_encoding`         | `identity`, `gzip`, `zstd`, `brotli`                                                                                       | A `encoding` field                                    |
 | `actors.actor_type`                 | `user`, `character`, `narrator`, `system`                                                                                  | Polymorphic `(participant_type, participant_id)` pair |
