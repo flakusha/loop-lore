@@ -9,6 +9,7 @@
  */
 
 import { t, } from "elysia";
+import type { Static, } from "@sinclair/typebox";
 import { ChatRenderingOverrideSchema, } from "../db-schemas";
 
 // ── Primitives ─────────────────────────────────────────────
@@ -72,12 +73,14 @@ export {
 
 // ── Shared UI-only enums (no DB-generated counterpart) ──────────
 // Single source for chat-presentation literals that live in `chats` JSON
-// columns (`gm_config`, `quick_replies`) rather than DB enums.
-// Routers import these; services reuse the sibling `*Value` TS unions in
-// `src/chat/service/types.ts` (same literals, no runtime import).
+// columns (`gm_config`, `quick_replies`) rather than DB enums. Services
+// consume the `Static` types below via `import type` (no runtime dependency).
 export const QuickReplyTriggerSchema = t.UnionEnum(["startup", "user", "ai",],);
+export type QuickReplyTrigger = Static<typeof QuickReplyTriggerSchema>;
 export const MemoryCarrySchema = t.UnionEnum(["full", "selective", "fresh",],);
+export type MemoryCarry = Static<typeof MemoryCarrySchema>;
 export const ChatHistoryCarrySchema = t.UnionEnum(["none", "summary", "full",],);
+export type ChatHistoryCarry = Static<typeof ChatHistoryCarrySchema>;
 export const OutputStylePresetSchema = t.UnionEnum([
   "neutral", "high_fantasy", "sci_fi", "modern", "noir", "cyberpunk",
   "pulp", "literary", "horror", "western", "",
@@ -87,8 +90,9 @@ export const NullableChatRenderingOverrideSchema = t.Union([ChatRenderingOverrid
 
 // ── Hand-authored config enums (no DB counterpart) ──────────────
 // Gm* members describe chat-level GM configuration JSON, not DB enums.
-/** Tag-proposition provenance — mirrors `TagProvenance` in `src/assets/service/tag-propositions.ts`. */
+/** Tag-proposition provenance — single source for `TagProvenance` in `src/assets/service/tag-propositions.ts`. */
 export const TagProvenanceSchema = t.UnionEnum(["alt_text", "filename",],);
+export type TagProvenance = Static<typeof TagProvenanceSchema>;
 
 /** Chat-level GM configuration — stored as JSON in `chats.gm_config` */
 /** Per-participant turn priority for GM-guided story guidance. */

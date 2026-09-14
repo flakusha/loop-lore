@@ -101,14 +101,9 @@ export type MigrateChatResult =
   | ServiceError
   | { ok: true; newChatId: string; sourceChatId: string };
 
-/** Quick-reply trigger — mirrors `QuickReplyTriggerSchema` in `src/validation/schemas/primitives.ts`. */
-export type QuickReplyTrigger = "startup" | "user" | "ai";
-
-/** Memory-carry mode — mirrors `MemoryCarrySchema` in `src/validation/schemas/primitives.ts`. */
-export type MemoryCarry = "full" | "selective" | "fresh";
-
-/** History-carry mode — mirrors `ChatHistoryCarrySchema` in `src/validation/schemas/primitives.ts`. */
-export type ChatHistoryCarry = "none" | "summary" | "full";
+/** Quick-reply trigger — single source `QuickReplyTriggerSchema` in `src/validation/schemas/primitives.ts`. */
+import type { ChatHistoryCarry, MemoryCarry, QuickReplyTrigger, } from "../../validation/schemas/primitives";
+export type { ChatHistoryCarry, MemoryCarry, QuickReplyTrigger, } from "../../validation/schemas/primitives";
 
 /** A quick-reply button: label + slash command, optional trigger event. */
 export interface QuickReplyButton {

@@ -12,9 +12,9 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
 import { normalizeTag, } from "./tags";
-
-/** Provenance of a proposed tag token — mirrors `TagProvenanceSchema` in `src/validation/schemas/primitives.ts`. */
-export type TagProvenance = "alt_text" | "filename";
+/** Provenance of a proposed tag token — single source `TagProvenanceSchema` in `src/validation/schemas/primitives.ts`. */
+import type { TagProvenance, } from "../../validation/schemas/primitives";
+export type { TagProvenance, } from "../../validation/schemas/primitives";
 
 /** A single proposed tag for an asset. */
 export interface TagProposition {
