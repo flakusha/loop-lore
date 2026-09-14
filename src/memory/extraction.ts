@@ -215,7 +215,7 @@ export async function extractAndStoreMemories(
  */
 export async function extractFromBurst(
   db: Kysely<DB>,
-  opts: ExtractionOpts,
+  opts: Omit<ExtractionOpts, "aiContent" | "userContent">,
   chain: { messageIds: string[]; chatIds?: string[] },
 ): Promise<number> {
   if (chain.messageIds.length === 0) { return 0; }
