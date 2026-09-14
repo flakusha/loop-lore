@@ -7,16 +7,23 @@
 
 import { t, } from "elysia";
 import {
+  ChatHistoryCarrySchema,
   ChatModeSchema,
   ChatParticipantRoleSchema,
   ChatTypeSchema,
   ChatVisibilitySchema,
+  EncryptionLevelSchema,
   GmConfigSchema,
   GmGuidanceSchema,
   Id,
+  MemoryCarrySchema,
   Name,
+  NullableChatRenderingOverrideSchema,
   NullableId,
   OptionalId,
+  OutputStylePresetSchema,
+  QuickReplyTriggerSchema,
+  ThinkingVisibilitySchema,
   TurnStrategySchema,
 } from "./primitives";
 
@@ -30,26 +37,14 @@ export const ChatCreateBody = t.Object({
   worldId: OptionalId,
   currentLocationId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
-  renderingOverride: t.Optional(t.Union([
-    t.Literal("text",),
-    t.Literal("visual_novel",),
-    t.Null(),
-  ],),),
+  renderingOverride: t.Optional(NullableChatRenderingOverrideSchema,),
   visibility: t.Optional(ChatVisibilitySchema,),
   /** Encryption tier for message content at rest. Defaults to "none" on the server. */
-  encryptionLevel: t.Optional(t.Union([
-    t.Literal("none",),
-    t.Literal("standard",),
-    t.Literal("private",),
-  ],),),
+  encryptionLevel: t.Optional(EncryptionLevelSchema,),
   templateId: t.Optional(t.String({ minLength: 1, },),),
   // Memory carry: seed the new chat with the participant character's
   // memories (full = all, selective = only memoryCarryIds, fresh = none).
-  memoryCarry: t.Optional(t.Union([
-    t.Literal("full",),
-    t.Literal("selective",),
-    t.Literal("fresh",),
-  ],),),
+  memoryCarry: t.Optional(MemoryCarrySchema,),
   memoryCarryIds: t.Optional(t.Array(t.String(),),),
 },);
 
@@ -62,16 +57,8 @@ export const ChatUpdateBody = t.Object({
   isPaused: t.Optional(t.Boolean(),),
   freezePanel: t.Optional(t.Boolean(),),
   gmConfig: t.Optional(GmConfigSchema,),
-  renderingOverride: t.Optional(t.Union([
-    t.Literal("text",),
-    t.Literal("visual_novel",),
-    t.Null(),
-  ],),),
-  thinkingVisibility: t.Optional(t.Union([
-    t.Literal("hidden",),
-    t.Literal("collapsed",),
-    t.Literal("visible",),
-  ],),),
+  renderingOverride: t.Optional(NullableChatRenderingOverrideSchema,),
+  thinkingVisibility: t.Optional(ThinkingVisibilitySchema,),
   promptOverride: t.Optional(t.Union([
     t.String({ maxLength: 20_000, },),
     t.Null(),
@@ -80,27 +67,11 @@ export const ChatUpdateBody = t.Object({
     t.Array(t.Object({
       label: t.String(),
       command: t.String(),
-      trigger: t.Optional(t.Union([
-        t.Literal("startup",),
-        t.Literal("user",),
-        t.Literal("ai",),
-      ],),),
+      trigger: t.Optional(QuickReplyTriggerSchema,),
     },),),
     t.Null(),
   ],),),
-  outputStylePreset: t.Optional(t.Union([
-    t.Literal("neutral",),
-    t.Literal("high_fantasy",),
-    t.Literal("sci_fi",),
-    t.Literal("modern",),
-    t.Literal("noir",),
-    t.Literal("cyberpunk",),
-    t.Literal("pulp",),
-    t.Literal("literary",),
-    t.Literal("horror",),
-    t.Literal("western",),
-    t.Literal("",),
-  ],),),
+  outputStylePreset: t.Optional(OutputStylePresetSchema,),
   customInstructions: t.Optional(t.Union([
     t.String({ maxLength: 5000, },),
     t.Null(),
@@ -122,11 +93,7 @@ export const ChatSetupTemplateSchema = t.Object({
   turnStrategy: t.Optional(TurnStrategySchema,),
   worldId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
-  renderingOverride: t.Optional(t.Union([
-    t.Literal("text",),
-    t.Literal("visual_novel",),
-    t.Null(),
-  ],),),
+  renderingOverride: t.Optional(NullableChatRenderingOverrideSchema,),
   features: t.Optional(t.Array(t.String(),),),
   visibility: t.Optional(ChatVisibilitySchema,),
 },);
@@ -140,15 +107,10 @@ export const ChatSetupTemplateCreateBody = t.Object({
   turnStrategy: t.Optional(TurnStrategySchema,),
   worldId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
-  renderingOverride: t.Optional(t.Union([
-    t.Literal("text",),
-    t.Literal("visual_novel",),
-    t.Null(),
-  ],),),
+  renderingOverride: t.Optional(NullableChatRenderingOverrideSchema,),
   features: t.Optional(t.Array(t.String(),),),
   visibility: t.Optional(ChatVisibilitySchema,),
 },);
-
 /** Body for updating a chat setup template (admin). */
 export const ChatSetupTemplateUpdateBody = t.Object({
   name: t.Optional(t.String({ minLength: 1, },),),
@@ -157,11 +119,7 @@ export const ChatSetupTemplateUpdateBody = t.Object({
   turnStrategy: t.Optional(TurnStrategySchema,),
   worldId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
-  renderingOverride: t.Optional(t.Union([
-    t.Literal("text",),
-    t.Literal("visual_novel",),
-    t.Null(),
-  ],),),
+  renderingOverride: t.Optional(NullableChatRenderingOverrideSchema,),
   features: t.Optional(t.Array(t.String(),),),
   visibility: t.Optional(ChatVisibilitySchema,),
 },);
@@ -170,11 +128,10 @@ export const ChatSetupTemplateUpdateBody = t.Object({
 export const ChatMigrateCarrySchema = t.Object({
   participants: t.Optional(t.Boolean(),),
   memory: t.Optional(t.Boolean(),),
-  history: t.Optional(t.UnionEnum(["none", "summary", "full",],),),
   /** Carry party/game state: story_turns, quest_progress, group_initiatives. */
   state: t.Optional(t.Boolean(),),
   /** Carry chat pins + VN choice history. */
-  pins: t.Optional(t.Boolean(),),
+  history: t.Optional(ChatHistoryCarrySchema,),
   /** Carry world/npc/location state snapshots for the party's world. */
   worldState: t.Optional(t.Boolean(),),
   /** Carry location context: chat_sections + message section links. */

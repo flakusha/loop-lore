@@ -8,8 +8,8 @@
  * created via the `/create` command. Used by route handlers and confirmation
  * endpoints to validate incoming payloads.
  */
-
 import { t, } from "elysia";
+import { LorePositionSchema, } from "./primitives";
 
 // ── LoreSubject ─────────────────────────────────────────────────────────────
 
@@ -77,9 +77,7 @@ export const LoreEntrySchema = t.Object({
   requires_presence: t.Optional(t.Boolean(),),
   constant: t.Optional(t.Boolean(),),
   selective: t.Optional(t.Boolean(),),
-  position: t.Optional(
-    t.UnionEnum(["before_char", "after_char", "in_char",],),
-  ),
+  position: t.Optional(LorePositionSchema,),
   insertion_order: t.Optional(t.Integer({ minimum: 0, },),),
   priority: t.Optional(t.Integer({ minimum: -999, maximum: 999, },),),
   cooldown_seconds: t.Optional(t.Integer({ minimum: 0, },),),
