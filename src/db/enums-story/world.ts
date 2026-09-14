@@ -24,6 +24,18 @@ export const MemoryType = {
 /** */
 export type MemoryType = (typeof MemoryType)[keyof typeof MemoryType];
 
+// ── Memory extraction provenance ───────────────────────────
+/** How a memory was formed (008_memory_source_chain.extraction_kind). */
+export const ExtractionKind = {
+  SingleResponse: "single_response",
+  Burst: "burst",
+  Compaction: "compaction",
+  Manual: "manual",
+  CarryForward: "carry_forward",
+} as const;
+/** */
+export type ExtractionKind = (typeof ExtractionKind)[keyof typeof ExtractionKind];
+
 // ── Lorebook ──────────────────────────────────────────────
 export const LorePosition = {
   BeforeChar: "before_char",

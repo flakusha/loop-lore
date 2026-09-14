@@ -2,7 +2,7 @@
  * E2E tests for actor-memories routes (Elysia plugin)
  */
 import type { Database, } from "bun:sqlite";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
@@ -74,6 +74,47 @@ describe("actorMemoriesRoutes", () => {
       },),
     );
     expect(res.status,).toBe(400,);
+  });
+
+  it("expand endpoint reconstructs the bound chain", async () => {
+    const { createTestDb, } = await import("../test-utils/create-test-db");
+    const { insertChats, insertMessages, } = await import("../test-utils/insert-helpers");
+    const { storeMemories, } = await import("../memory/extraction");
+    const { db: edb, } = await createTestDb();
+    await insertUsers(edb, "exp-user", "Exp User", { id: "user-exp", } as never,);
+    await insertChats(edb, "Exp Chat", "user-exp", { id: "chat-exp", } as never,);
+    await insertActors(edb, "Exp Actor", { id: "user-exp", actor_type: "user", user_id: "user-exp", } as never,);
+    await insertMessages(
+      edb,
+      "chat-exp",
+      "user-exp",
+      "user",
+      "expandable message here",
+      { id: "msg-exp-1", } as never,
+    );
+    await storeMemories(edb, "user-exp", "chat-exp", [
+      {
+        content: "Expandable summary of length",
+        memoryType: "episodic",
+        confidence: 0.9,
+        importance: 1,
+        keywords: [],
+      },
+    ], { sourceMessageIds: ["msg-exp-1",], sourceChatIds: ["chat-exp",], },);
+    const row = await edb
+      .selectFrom("actor_memories",)
+      .select("id",)
+      .where("actor_id", "=", "user-exp",)
+      .executeTakeFirstOrThrow();
+    const app = makeApp(edb, "user-exp",);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/user-exp/memories/${row.id}/expand`,),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { summary: string; messages: { id: string }[]; truncated: boolean };
+    expect(body.summary,).toContain("Expandable",);
+    expect(body.messages.map((m,) => m.id),).toEqual(["msg-exp-1",],);
+    expect(body.truncated,).toBe(false,);
   });
 
   test("list returns owned actor's memories", async () => {

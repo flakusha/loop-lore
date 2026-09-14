@@ -8,6 +8,7 @@ import type { Generated, } from "kysely";
 import type {
   DifficultyReroll,
   DifficultyState,
+  ExtractionKind,
   ItemCategory,
   ItemRarity,
   ItemVisibility,
@@ -285,4 +286,9 @@ export interface ActorMemories {
   pinned: Generated<PinnedState>;
   privacy: Generated<string>;
   shareability: string | null;
+  source_message_ids: string | null;
+  source_chat_ids: string | null;
+  extraction_kind: ExtractionKind | null;
+  context_window_start: string | null;
+  context_window_end: string | null;
 }
