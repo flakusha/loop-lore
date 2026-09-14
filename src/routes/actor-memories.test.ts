@@ -117,6 +117,42 @@ describe("actorMemoriesRoutes", () => {
     expect(body.truncated,).toBe(false,);
   });
 
+  it("expand endpoint denies non-owners", async () => {
+    const { createTestDb, } = await import("../test-utils/create-test-db");
+    const { insertChats, insertMessages, } = await import("../test-utils/insert-helpers");
+    const { storeMemories, } = await import("../memory/extraction");
+    const { db: edb, } = await createTestDb();
+    await insertUsers(edb, "own-user", "Own User", { id: "user-own", } as never,);
+    await insertChats(edb, "Own Chat", "user-own", { id: "chat-own", } as never,);
+    await insertActors(edb, "Own Actor", { id: "user-own", actor_type: "user", user_id: "user-own", } as never,);
+    await insertMessages(
+      edb,
+      "chat-own",
+      "user-own",
+      "user",
+      "private message here",
+      { id: "msg-own-1", } as never,
+    );
+    await storeMemories(edb, "user-own", "chat-own", [
+      {
+        content: "Private summary of length",
+        memoryType: "episodic",
+        confidence: 0.9,
+        importance: 1,
+        keywords: [],
+      },
+    ], { sourceMessageIds: ["msg-own-1",], sourceChatIds: ["chat-own",], },);
+    const row = await edb
+      .selectFrom("actor_memories",)
+      .select("id",)
+      .where("actor_id", "=", "user-own",)
+      .executeTakeFirstOrThrow();
+    const res = await makeApp(edb, "intruder",).handle(
+      new Request(`http://localhost/api/actors/user-own/memories/${row.id}/expand`,),
+    );
+    expect(res.status,).toBe(404,);
+  });
+
   test("list returns owned actor's memories", async () => {
     const res = await makeApp(db, "user1",).handle(
       new Request("http://localhost/api/actors/user1/memories",),
