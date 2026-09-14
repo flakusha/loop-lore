@@ -181,6 +181,54 @@ describe("history-search", () => {
     expect(down.map((m,) => m.id),).toEqual(["msg-1", "msg-2", "msg-3",],);
   });
 
+  it("reconstructMessageChain clamps oversized bound chains", async () => {
+    // Chains are bounded per memory: ids beyond the cap never reach the IN
+    // query (bounded memory; keeps headroom under legacy SQLite 999-var and
+    // PG 65535-param limits). Real ids straddle the cap so the clamp is
+    // observable as an exact chain length.
+    for (let i = 0; i < 600; i++) {
+      await insertMessages(
+        db,
+        "chat-hs",
+        "actor-hs",
+        "user",
+        `bulk message ${i} of length`,
+        {
+          id: `bulk-${i}`,
+          created_at: `2026-02-01T00:${String(Math.floor(i / 60,),).padStart(2, "0",)}:${
+            String(i % 60,).padStart(2, "0",)
+          }Z`,
+        } as never,
+      );
+    }
+    const padded = [
+      ...Array.from({ length: 600, }, (_, i,) => `bulk-${i}`,),
+      ...Array.from({ length: 100, }, (_, i,) => `pad-${i}`,),
+    ];
+    await db
+      .insertInto("actor_memories",)
+      .values({
+        id: "mem-huge",
+        actor_id: "actor-hs",
+        content: "Huge chain probe summary of size",
+        memory_type: mt("fact",),
+        confidence: 0.9,
+        importance: 1,
+        keywords: "[]",
+        source_chat_id: "chat-hs",
+        scope: "character",
+        privacy: "shared",
+        source_message_ids: JSON.stringify(padded,),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },)
+      .execute();
+    const chain = await reconstructMessageChain(db, "mem-huge",);
+    expect(chain.length,).toBe(500,);
+    expect(chain[0]?.id,).toBe("bulk-0",);
+    expect(chain[499]?.id,).toBe("bulk-499",);
+  });
+
   it("selectMemoriesWithExpansion preloads low-confidence chains", async () => {
     await storeMemories(db, "actor-hs", "chat-hs", [
       {
