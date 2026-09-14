@@ -9,7 +9,6 @@ import { existsSync, } from "fs";
 import { readdir, readFile, } from "fs/promises";
 import { resolve, } from "path";
 import { type WorktreeConfig, } from "../utils/config";
-import { getWorktrees, } from "../utils/git";
 import { colorize, log, section, } from "../utils/output";
 
 interface CheckReport {
@@ -102,41 +101,55 @@ export async function report(
     console.log("",);
   }
 
-  // Check worktrees — the conventional tree/ layout plus any checkout git
-  // knows about (e.g. native omp worktrees outside the repo, whose check
-  // reports would otherwise be invisible to this aggregate).
-  const reported = new Set<string>();
-  if (existsSync(config.treeDir,)) {
-    const entries = await readdir(config.treeDir, { withFileTypes: true, },);
-    for (const entry of entries.filter((e,) => e.isDirectory())) {
-      const wtPath = resolve(config.treeDir, entry.name,);
-      reported.add(resolve(wtPath,),);
-      const reportPath = resolve(wtPath, ".tmp", "check-report.json",);
+  // Scan every known container — `tree/` (canonical) and `OMP_WORKTREE_DIR`
+  // (omp sibling). Dedup by absolute path so a worktree that happens to
+  // appear in two containers (shouldn't, but be defensive) prints once.
+  const containers = config.worktreeDirs.filter((d,) => existsSync(d,));
+  if (containers.length === 0) {
+    log("info", "No worktree containers found",);
+    return;
+  }
+
+  const seen = new Set<string>();
+  for (const dirPath of containers) {
+    const entries = await readdir(dirPath, { withFileTypes: true, },);
+    const worktrees = entries.filter(e => e.isDirectory());
+    for (const wt of worktrees) {
+      const fullPath = resolve(dirPath, wt.name,);
+      if (seen.has(fullPath,)) { continue; }
+      seen.add(fullPath,);
+
+      const reportPath = resolve(fullPath, ".tmp", "check-report.json",);
       if (!existsSync(reportPath,)) {
-        console.log(`  ${colorize(entry.name, "cyan",)} ${colorize("no report", "gray",)}`,);
+        console.log(`  ${colorize(wt.name, "cyan",)} ${colorize("no report", "gray",)}`,);
         continue;
       }
 
       try {
         const raw = await readFile(reportPath, "utf-8",);
-        printReportRow(entry.name, parseReport(raw,),);
+        printReportRow(wt.name, parseReport(raw,),);
       } catch (error) {
-        printMalformedRow(entry.name, error,);
+        printMalformedRow(wt.name, error,);
         continue;
       }
     }
-  } else {
-    log("info", "No tree/ directory found",);
   }
 
-  // External checkouts via porcelain listing. Guarded: synthetic test roots
-  // are not git repos, and the tree/ scan above already covered those cases.
+  // Final fallback: git's worktree list catches checkouts the user created
+  // outside any known container (e.g. experimental worktrees via
+  // `git worktree add <somewhere>`). Synthetic fixtures aren't git repos —
+  // getWorktrees() throws and we silently skip that path.
   try {
     const worktrees = await getWorktrees(config.repoRoot,);
     for (const wt of worktrees) {
-      if (resolve(wt.path,) === resolve(config.repoRoot,) || reported.has(resolve(wt.path,),)) { continue; }
-      const name = wt.branch.startsWith("refs/heads/",) ? wt.branch.slice("refs/heads/".length,) : wt.path;
-      const reportPath = resolve(wt.path, ".tmp", "check-report.json",);
+      const fullPath = resolve(wt.path,);
+      if (seen.has(fullPath,)) { continue; }
+      seen.add(fullPath,);
+
+      const name = wt.branch.startsWith("refs/heads/",)
+        ? wt.branch.slice("refs/heads/".length,)
+        : wt.path;
+      const reportPath = resolve(fullPath, ".tmp", "check-report.json",);
       if (!existsSync(reportPath,)) {
         console.log(`  ${colorize(name, "cyan",)} ${colorize("no report", "gray",)}`,);
         continue;
@@ -147,10 +160,9 @@ export async function report(
         printReportRow(name, parseReport(raw,),);
       } catch (error) {
         printMalformedRow(name, error,);
-        continue;
       }
     }
   } catch {
-    // Not a git repo (synthetic fixture roots) — tree/ scan above suffices.
+    // Not a git repo — container scan above suffices.
   }
 }
