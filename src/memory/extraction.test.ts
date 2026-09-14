@@ -576,4 +576,69 @@ describe("extractFromBurst", () => {
     );
     expect(stored,).toBe(0,);
   });
+
+  it("clamps oversized chains before the IN query", async () => {
+    // 600 existing ids straddle the 500 cap: bound ids (and therefore the
+    // stored provenance) must be exactly MAX_CHAIN_IDS, not the full chain.
+    stubContent = JSON.stringify([
+      {
+        content: "Burst clamp summary of length",
+        memoryType: "episodic",
+        confidence: 0.9,
+        importance: 3,
+        keywords: [],
+      },
+    ],);
+    for (let i = 0; i < 600; i++) {
+      await insertMessages(
+        db,
+        "chat-b",
+        "actor-b",
+        "user",
+        `bulk burst message ${i} of length`,
+        {
+          id: `bulk-b-${i}`,
+          created_at: `2026-03-01T00:${String(Math.floor(i / 60,),).padStart(2, "0",)}:${
+            String(i % 60,).padStart(2, "0",)
+          }Z`,
+        } as never,
+      );
+    }
+    const huge = Array.from({ length: 600, }, (_, i,) => `bulk-b-${i}`,);
+    const stored = await extractFromBurst(
+      db,
+      { actorId: "actor-b", chatId: "chat-b", messageId: "bulk-b-599", config: makeConfig(), },
+      { messageIds: huge, },
+    );
+    expect(stored,).toBe(1,);
+    const row = await db
+      .selectFrom("actor_memories",)
+      .select("source_message_ids",)
+      .where("actor_id", "=", "actor-b",)
+      .executeTakeFirstOrThrow();
+    const bound = JSON.parse(row.source_message_ids ?? "[]",) as string[];
+    expect(bound.length,).toBe(500,);
+  });
+
+  it("storeMemories clamps oversized provenance", async () => {
+    const padded = Array.from({ length: 600, }, (_, i,) => `prov-${i}`,);
+    const stored = await storeMemories(db, "actor-b", "chat-b", [
+      {
+        content: "Provenance clamp summary of length",
+        memoryType: "episodic",
+        confidence: 0.9,
+        importance: 3,
+        keywords: [],
+      },
+    ], { sourceMessageIds: padded, },);
+    expect(stored,).toBe(1,);
+    const row = await db
+      .selectFrom("actor_memories",)
+      .select("source_message_ids",)
+      .where("content", "=", "Provenance clamp summary of length",)
+      .executeTakeFirstOrThrow();
+    const bound = JSON.parse(row.source_message_ids ?? "[]",) as string[];
+    expect(bound.length,).toBe(500,);
+    expect(bound[0],).toBe("prov-0",);
+  });
 });
