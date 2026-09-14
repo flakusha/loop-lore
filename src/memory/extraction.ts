@@ -16,6 +16,7 @@ import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
 import { resolveSystemPrompt, } from "../prompts";
 import { jsonParseOr, jsonStringifyOr, } from "../utils";
+import { MAX_CHAIN_IDS, } from "./history-search";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
 
 /** Chain binding persisted alongside each stored memory. */
@@ -128,7 +129,7 @@ export async function storeMemories(
   memories: ExtractedMemory[],
   provenance: MemoryProvenance = {},
 ): Promise<number> {
-  const sourceMessageIds = provenance.sourceMessageIds ?? [];
+  const sourceMessageIds = (provenance.sourceMessageIds ?? []).slice(0, MAX_CHAIN_IDS,);
   const sourceChatIds = provenance.sourceChatIds ?? [chatId,];
   const extractionKind = provenance.extractionKind ?? "single_response";
   let stored = 0;
@@ -219,10 +220,11 @@ export async function extractFromBurst(
   chain: { messageIds: string[]; chatIds?: string[] },
 ): Promise<number> {
   if (chain.messageIds.length === 0) { return 0; }
+  const wanted = chain.messageIds.slice(0, MAX_CHAIN_IDS,);
   const rows = await db
     .selectFrom("messages",)
     .select(["id", "role", "content", "content_plaintext", "key_id", "created_at",],)
-    .where("id", "in", chain.messageIds,)
+    .where("id", "in", wanted,)
     .orderBy("created_at", "asc",)
     .execute();
 
