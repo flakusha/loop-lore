@@ -14,6 +14,7 @@ import { uid, } from "../../utils";
 import { normalizeTag, } from "./tags";
 /** Provenance of a proposed tag token — single source `TagProvenanceSchema` in `src/validation/schemas/primitives.ts`. */
 import type { TagProvenance, } from "../../validation/schemas/primitives";
+
 export type { TagProvenance, } from "../../validation/schemas/primitives";
 
 /** A single proposed tag for an asset. */
