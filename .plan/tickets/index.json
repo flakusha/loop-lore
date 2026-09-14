@@ -1943,7 +1943,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-FE-BE-HARMONY-CHECKER-BLIND-TO-ELYSIA-APP-DIRECT-ROUTES-FACT": {
     "hash": "164fd00",
@@ -1956,7 +1956,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-FEAT-RADICLE-INTEGRATION-ACCEPTANCE-CRITERIA-TOO-THIN": {
     "hash": "4a8525b",
@@ -2292,7 +2292,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-gpg-unlock-warm-never-populated-agent-cache-assertgpgunlocke.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-GROUP-CASCADE-CONSECUTIVE-TURN-GUARD": {
     "hash": "pending",
