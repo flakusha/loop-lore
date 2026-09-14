@@ -14,7 +14,7 @@
  */
 
 import { execSync, } from "child_process";
-
+import { flag, object, runScript, withDefault, } from "../cli/parser";
 const COMMIT_PATTERN = /^(\w+)(?:\(([^)]+)\))?(!)?:\s(.+)$/;
 const VALID_TYPES = [
   "feat",
@@ -158,8 +158,15 @@ function getCommitsSinceLastTag(): string[] {
  * @returns resolves when validation completes (exit is via `process.exit`).
  */
 async function main(): Promise<void> {
-  const args = Bun.argv.slice(2,);
-  const hookMode = !args.includes("--all",) && !process.stdin.isTTY;
+  const parser = object({
+    all: withDefault(flag("--all", "--staged",), false,),
+  },);
+  const args = runScript(parser, {
+    programName: "commit-check",
+    brief: "Validate commits against conventional-commit rules (used as githook).",
+    help: "option",
+  },);
+  const hookMode = !args.all && !process.stdin.isTTY;
 
   // Hook mode: read single commit from stdin
   if (hookMode) {
