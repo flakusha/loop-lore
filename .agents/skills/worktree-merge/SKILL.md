@@ -117,7 +117,7 @@ is available, `merge` and `finalize` pass `-c commit.gpgsign=true
 -c user.signingkey=<key>` to git automatically.
 
 If `/tmp/gpg-loopback` exists (non-TTY wrapper), it is used as
-`gpg.program` for merge commits. See `agent-commit` skill for details.
+`gpg.program` for merge commits. See `commit-branch` skill for details.
 
 ### Verification
 
@@ -158,7 +158,7 @@ bun run scripts/worktree/ new feature-xyz dev
 # 2. Work on feature (commits happen in tree/feature-xyz)
 cd tree/feature-xyz
 # ... implement feature ...
-# Commit with GPG signing (agent-commit skill)
+# Commit with GPG signing (commit-branch skill)
 
 # 3. Sync with dev before merge (back at repo root)
 bun run scripts/worktree/ rebase feature-xyz dev
