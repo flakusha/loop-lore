@@ -9,6 +9,7 @@ import {
   CSRF_HEADER,
   decideCsrf,
   mintCsrfToken,
+  readCookieSecureOverrideFromEnv,
   readCsrfCookie,
   resolveCookieSecure,
   verifyCsrfToken,
@@ -94,6 +95,35 @@ describe("buildCsrfCookie + resolveCookieSecure", () => {
     expect(resolveCookieSecure(false, true,),).toBe(false,);
     expect(resolveCookieSecure(undefined, true,),).toBe(true,);
     expect(resolveCookieSecure(undefined, false,),).toBe(false,);
+  });
+});
+
+describe("readCookieSecureOverrideFromEnv", () => {
+  // The mapping src/elysia-app.ts uses to wire LL_COOKIE_SECURE into
+  // csrfOpts.cookieSecureOverride. Without this, the CSRF cookie's Secure
+  // flag could not be turned off via env (and would diverge from the
+  // ll_token cookie's Secure flag, set in routes/auth/shared.ts).
+  test('LL_COOKIE_SECURE="true" → true', () => {
+    expect(readCookieSecureOverrideFromEnv("true",),).toBe(true,);
+  });
+
+  test('LL_COOKIE_SECURE="false" → false', () => {
+    expect(readCookieSecureOverrideFromEnv("false",),).toBe(false,);
+  });
+
+  test("unset → undefined (defer to NODE_ENV default)", () => {
+    expect(readCookieSecureOverrideFromEnv(undefined,),).toBeUndefined();
+  });
+
+  test('unrecognized ("1", "yes", "") → undefined', () => {
+    expect(readCookieSecureOverrideFromEnv("1",),).toBeUndefined();
+    expect(readCookieSecureOverrideFromEnv("yes",),).toBeUndefined();
+    expect(readCookieSecureOverrideFromEnv("",),).toBeUndefined();
+  });
+
+  test("case-sensitive: TRUE ≠ true (mirrors auth cookie helper)", () => {
+    expect(readCookieSecureOverrideFromEnv("TRUE",),).toBeUndefined();
+    expect(readCookieSecureOverrideFromEnv("True",),).toBeUndefined();
   });
 });
 
