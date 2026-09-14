@@ -6,9 +6,14 @@
  */
 
 import { t, } from "elysia";
+import type { Static, } from "@sinclair/typebox";
 import { Name, } from "./primitives";
 
 // ── Entity routes (actor-items, memories, lore, notes) ─────
+
+/** Entity audience scope — mirrors `MemoryScope` in `src/memory/types.ts`. */
+export const EntityScopeSchema = t.UnionEnum(["character", "assistant", "world",],);
+export type EntityScope = Static<typeof EntityScopeSchema>;
 
 export const EntityCreateBody = t.Object({
   entityId: t.Optional(t.String({ minLength: 1, },),),
@@ -18,7 +23,7 @@ export const EntityCreateBody = t.Object({
   content: t.Optional(t.String(),),
   data: t.Optional(t.Any(),),
   pinned: t.Optional(t.Boolean(),),
-  scope: t.Optional(t.Union([t.Literal("character"), t.Literal("assistant"), t.Literal("world"),],),),
+  scope: t.Optional(EntityScopeSchema,),
 },);
 
 export const EntityUpdateBody = t.Object({
@@ -27,5 +32,5 @@ export const EntityUpdateBody = t.Object({
   type: t.Optional(t.String(),),
   data: t.Optional(t.Any(),),
   pinned: t.Optional(t.Boolean(),),
-  scope: t.Optional(t.Union([t.Literal("character"), t.Literal("assistant"), t.Literal("world"),],),),
+  scope: t.Optional(EntityScopeSchema,),
 },);
