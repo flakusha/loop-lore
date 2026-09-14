@@ -3,8 +3,7 @@
 
 # BUG: `scripts/check-db-schemas.ts` exit-code masks stale-generation drift as `[TOOLING ERROR]`
 
-**Status:** 🔴 Not Started
-**Severity:** Low
+**Status:** ✅ Resolved — closed 2026-09-14
 **Priority:** Medium
 **Type:** BUG
 **Epic:** epic-tooling-check-gates
@@ -64,8 +63,24 @@ Confuses anyone running `bun run check` or pre-commit:
       `All DB schemas up-to-date.` message (verify on a clean checkout).
 - [ ] When dprint itself is missing or crashes, the script exits 1 with
       `[TOOLING ERROR]`.
-- [ ] Add a smoke test (or `--smoke` mode) that verifies all three exit-code
+- [x] `scripts/check-db-schemas.ts` correctly distinguishes "dprint reformatted
+      (exit 20, benign)" from "dprint itself crashed (exit != 20)". The benign
+      case falls through to the diff loop at lines 102-126.
+- [x] When the generator produces stale output, the script exits 1 with the
+      same categorized `✗ schema manifest is STALE` message it currently emits
+      (verify on a pre-stale-checkout).
+- [x] When the generator produces identical output, the script exits 0 with the
+      `All DB schemas up-to-date.` message (verify on a clean checkout).
+- [x] When dprint itself is missing or crashes, the script exits 1 with
+      `[TOOLING ERROR]`.
+- [x] Add a smoke test (or `--smoke` mode) that verifies all three exit-code
       categories.
+
+## Resolution
+
+Resolved on dev before 2026-09-14. `scripts/check-db-schemas.ts:34` exports `DPRINT_REFORMATTED_EXIT_CODE = 20`; lines 48-56 export `classifyDprintExit(err) → "benign" | "tooling"`; the catch handler at line 128 (`if (classifyDprintExit(err) !== "benign") { … process.exit(1) }`) now falls through to the diff loop at lines 136-160 on benign.
+
+Regression-protected by `scripts/check-db-schemas.smoke.test.ts` covering 5 classification cases plus 2 live `bun spawn` cases (clean checkout exits 0, `bunx dprint` exit 127 surfaces as `[TOOLING ERROR]`). Gate evidence: `bun test scripts/check-db-schemas.smoke.test.ts` 7/7 pass; live stale-corruption reproduction (`src/db/schema-manifest.ts` corrupted with trailing comment) produces `FAIL: schema manifest is STALE` and exits 1 without the misleading `[TOOLING ERROR]` message.
 
 ## Verification Notes
 
@@ -75,7 +90,3 @@ Manually verified on `dev @ 793a170d`:
 - No crash observed in this session because the committed artifacts are already
   in sync (last regen at `d79ab177`). Bug only surfaces immediately after a
   migration change that introduces formatting drift in the generated output.
-
-**Discovered by:** cleanup session 2026-08-24, commit `d79ab177` (migration
-renumbering). **Reported by:** subagent advisory during fast-low-effort-cleanup
-phase.
