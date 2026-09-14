@@ -15,7 +15,7 @@ import { log, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
 
-export function isProtected(branch: string,): boolean {
+function isProtected(branch: string,): boolean {
   return PROTECTED_BRANCHES.includes(branch,);
 }
 
