@@ -7175,6 +7175,12 @@
       "source": ".plan/tickets/TASK-observability-config-section.md"
     }
   ],
+  "src/config/schema/providers.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
+    }
+  ],
   "src/config/schema/seeding.ts": [
     {
       "kind": "ticket",
@@ -16485,6 +16491,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-067.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
   "src/generation/quality-metrics.ts": [
@@ -17637,6 +17647,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-search-service-unified.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
   "src/memory/extraction.ts": [
