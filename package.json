@@ -115,6 +115,8 @@
     "@alpinejs/morph": "^3.17.2",
     "@elysia/openapi": "^1.4.16",
     "@noble/hashes": "^2.4.0",
+    "@optique/core": "^1.2.6",
+    "@optique/run": "^1.2.6",
     "@sinclair/typebox": "^0.34.52",
     "alpinejs": "^3.17.2",
     "blessed": "^0.1.81",

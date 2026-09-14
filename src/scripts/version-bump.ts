@@ -6,20 +6,20 @@
 /**
  * Version management - Git tags are the single source of truth (bare `x.y.z`,
  * no `v` prefix). package.json is updated ONLY during release (--bump), never
- * during prediction.
- *
- * Usage:
- *   bun run version:predict              # Show predicted next version (reads tags only)
- *   bun run version:bump --bump=minor    # Bump + update package.json (NO tag)
- *   bun run version:bump --bump=minor --tag   # + create annotated tag + push
- *   bun run version:sync                 # Sync package.json to latest tag (CI/CD)
- *
- * Tag creation requires the explicit `--tag` flag — tagging is a post-testing
- * human decision; agents must never create tags.
+ * during prediction. Run with --help for full usage.
  */
 
 import { execSync, } from "child_process";
 import { resolve, } from "path";
+import {
+  choice,
+  flag,
+  object,
+  option,
+  optional,
+  runScript,
+  withDefault,
+} from "../cli/parser";
 import {
   readPackageJsonOrNull,
   setPackageJsonVersion as writePackageJsonVersion,
@@ -268,29 +268,48 @@ function syncPackageJson(): void {
   setPackageJsonVersion(tagVersion,);
 }
 
-/** */
+interface CliArgs {
+  readonly command: "sync" | "bump" | "predict";
+  readonly type?: "major" | "minor" | "patch";
+  readonly tag?: boolean;
+}
+
+function parseCliArgs(): CliArgs {
+  const parser = object({
+    sync: withDefault(flag("--sync",), false,),
+    type: optional(option("--bump", choice(["major", "minor", "patch",] as const,),),),
+    tag: withDefault(flag("--tag",), false,),
+  },);
+  const args = runScript(parser, {
+    programName: "version",
+    brief: "Predict, bump, or sync the package.json version (git tag is source of truth).",
+    description: "Default action is `predict` — prints the next version without modifying anything.",
+    examples:
+      "version                       # predict next version\n  version --bump=minor           # update package.json (no tag)\n  version --bump=minor --tag     # update + create annotated tag + push\n  version --sync                 # CI: sync package.json to latest tag",
+    showDefault: true,
+    help: "option",
+  },);
+  const command: CliArgs["command"] = args.sync
+    ? "sync"
+    : args.type !== undefined
+    ? "bump"
+    : "predict";
+  return { command, type: args.type, tag: args.tag, };
+}
+
 function main(): void {
-  const args = Bun.argv.slice(2,);
-  const command = args[0];
-
-  if (command === "--sync") {
-    syncPackageJson();
-    return;
+  const args = parseCliArgs();
+  switch (args.command) {
+    case "sync":
+      syncPackageJson();
+      return;
+    case "bump":
+      bumpVersion(args.type ?? "patch", args.tag ?? false,);
+      return;
+    case "predict":
+      console.log(predictVersion(),);
+      return;
   }
-
-  if (command === "--bump") {
-    const bumpType = args.find((a,) => a.startsWith("--bump=",))?.split("=",)[1] as "major" | "minor" | "patch";
-    if (!bumpType || !["major", "minor", "patch",].includes(bumpType,)) {
-      console.error("Usage: version:bump --bump=major|minor|patch [--tag]",);
-      process.exit(1,);
-    }
-    const shouldTag = args.includes("--tag",);
-    bumpVersion(bumpType, shouldTag,);
-    return;
-  }
-
-  // Default: predict
-  console.log(predictVersion(),);
 }
 
 main();

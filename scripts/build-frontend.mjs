@@ -67,8 +67,7 @@ async function copyIcons() {
 
 async function compressAssets() {
   console.log("=== Compressing and copying assets ===",);
-  await $`bun run src/build/compress.ts ${DIST} ${SRC_PUBLIC} ${SRC_VIEWS}`;
-  console.log("Assets compressed and copied",);
+  await $`bun run src/build/compress.ts --dist ${DIST} --public ${SRC_PUBLIC} --views ${SRC_VIEWS}`;
 }
 
 // ── Main ────────────────────────────────────────────────────────

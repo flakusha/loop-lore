@@ -3,12 +3,18 @@
 
 import { existsSync, readFileSync, writeFileSync, } from "node:fs";
 import { extname, join, } from "node:path";
+import {
+  object,
+  option,
+  runScript,
+  string,
+  withDefault,
+} from "../cli/parser";
 import { compressFile, copyDirectory, walkDirectory, } from "../content/compress";
 import { injectContentHashes, } from "../content/hash-injection";
 import { minifyCSS, minifyHTMLContent, } from "../content/minify";
 import { createLogger, } from "../logger";
 import type { Logger, } from "../logger/types";
-
 const STRIP_TEST_IDS = process.env.STRIP_TEST_IDS !== "false";
 
 /**
@@ -24,10 +30,22 @@ function stripTestIds(content: string,): string {
 /** */
 async function main() {
   const log = createLogger({ level: "info", },);
-  const directory = process.argv[2] ?? "./dist/public";
-  const sourcePublic = process.argv[3] ?? "./src/public";
-  const sourceViews = process.argv[4] ?? "./src/views";
-  const sourceComponents = process.argv[5] ?? "./src/components";
+  const parser = object({
+    directory: withDefault(option("--dist", string(),), "./dist/public",),
+    sourcePublic: withDefault(option("--public", string(),), "./src/public",),
+    sourceViews: withDefault(option("--views", string(),), "./src/views",),
+    sourceComponents: withDefault(
+      option("--components", string(),),
+      "./src/components",
+    ),
+  },);
+  const args = runScript(parser, {
+    programName: "compress",
+    brief: "Copy + minify + compress built artifacts in dist/.",
+    showDefault: true,
+    help: "option",
+  },);
+  const { directory, sourcePublic, sourceViews, sourceComponents, } = args;
 
   if (!existsSync(directory,)) {
     log.fatal(`Directory not found: ${directory}`,);
