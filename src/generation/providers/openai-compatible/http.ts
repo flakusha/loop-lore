@@ -6,7 +6,7 @@
 // Extracted from the `OpenAiCompatibleProvider` class body. Each dispatcher is
 // threaded with an explicit `state` handle (the class's private fields).
 
-// size-allow: 267
+// size-allow: 263
 
 import { safeJsonStringify, } from "../../../utils";
 import type { GenerateRequest, } from "../types";
@@ -88,13 +88,9 @@ export function buildBody(
   // `undefined` values are skipped: the route layer always sets every known
   // key, and forwarding them would leak camelCase names as own properties.
   for (const [key, value,] of Object.entries(req.params,)) {
-    if (value === undefined) {
-      continue;
-    }
-    // Never assign `__proto__`/`constructor`/`prototype`: `body[key] = value`
-    // would invoke the prototype setter (`__proto__`) or shadow Object
-    // members as own properties, corrupting the body's shape.
-    if (key === "__proto__" || key === "constructor" || key === "prototype") {
+    // Skip unset values (route layer sets every known key) and prototype-pollution
+    // keys (`__proto__` setter, `constructor`/`prototype` shadowing).
+    if (value === undefined || key === "__proto__" || key === "constructor" || key === "prototype") {
       continue;
     }
     if (Object.hasOwn(body, key,) || Object.hasOwn(body, toSnakeCase(key,),)) {
