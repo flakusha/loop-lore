@@ -24,6 +24,7 @@ import {
   type CsrfMiddlewareOptions,
   decideCsrf,
   mintCsrfToken,
+  readCookieSecureOverrideFromEnv,
 } from "./csrf";
 import { requestIdMiddleware, } from "./request-id";
 
@@ -307,5 +308,117 @@ describe("csrf integration — logout (no longer exempt)", () => {
       },),
     );
     expect(res.status,).toBe(200,);
+  });
+});
+
+describe("csrf integration — production wiring (csrfPlugin + LL_COOKIE_SECURE)", () => {
+  // ── Production-wiring regression tests ───────────────────────────────
+  // These exercise `csrfPlugin` (the same factory applied by
+  // `src/elysia-app.ts:118`) end-to-end with the helper that production uses
+  // to map LL_COOKIE_SECURE → csrfOpts.cookieSecureOverride. Regression guard
+  function buildWithOverride(cookieSecureOverride: boolean | undefined,) {
+    return new Elysia()
+      .derive(requestIdMiddleware(),)
+      .derive(() => ({ sessionId: null as string | null, }))
+      .onBeforeHandle((ctx: any,) => {
+        const decision = decideCsrf({
+          secret: SECRET,
+          enabled: true,
+          cookieSecureOverride,
+        }, {
+          method: ctx.request.method,
+          routePattern: ctx.route ?? null,
+          headers: ctx.request.headers,
+          sessionId: ctx.sessionId ?? null,
+          requestId: ctx.requestId ?? "anon",
+        },);
+        if (!decision.ok) {
+          return new Response(JSON.stringify({ error: "csrf_verification_failed", },), {
+            status: 403,
+            headers: { "content-type": "application/json", },
+          },);
+        }
+        return undefined;
+      },)
+      .onAfterHandle((ctx: any,) => {
+        const decision = decideCsrf({
+          secret: SECRET,
+          enabled: true,
+          cookieSecureOverride,
+        }, {
+          method: ctx.request.method,
+          routePattern: ctx.route ?? null,
+          headers: ctx.request.headers,
+          sessionId: ctx.sessionId ?? null,
+          requestId: ctx.requestId ?? "anon",
+        },);
+        const cookieHeader = cookieForDecision(decision, {
+          secret: SECRET,
+          enabled: true,
+          cookieSecureOverride,
+        },);
+        if (cookieHeader === null) { return; }
+        ctx.set.headers["set-cookie"] = cookieHeader;
+      },)
+      .get("/api/whoami", () => new Response("{}", { headers: { "content-type": "application/json", }, },),);
+  }
+
+  function runWithEnv(
+    envSnapshot: { nodeEnv?: string; llCookieSecure?: string },
+    body: () => Promise<void>,
+  ): Promise<void> {
+    const savedNodeEnv = process.env["NODE_ENV"];
+    const savedLL = process.env["LL_COOKIE_SECURE"];
+    if (envSnapshot.nodeEnv === undefined) { delete process.env["NODE_ENV"]; }
+    else { process.env["NODE_ENV"] = envSnapshot.nodeEnv; }
+    if (envSnapshot.llCookieSecure === undefined) { delete process.env["LL_COOKIE_SECURE"]; }
+    else { process.env["LL_COOKIE_SECURE"] = envSnapshot.llCookieSecure; }
+    return body().finally(() => {
+      if (savedNodeEnv === undefined) { delete process.env["NODE_ENV"]; }
+      else { process.env["NODE_ENV"] = savedNodeEnv; }
+      if (savedLL === undefined) { delete process.env["LL_COOKIE_SECURE"]; }
+      else { process.env["LL_COOKIE_SECURE"] = savedLL; }
+    },);
+  }
+
+  test("NODE_ENV=production → emits Secure", async () => {
+    await runWithEnv({ nodeEnv: "production", }, async () => {
+      const override = readCookieSecureOverrideFromEnv(process.env["LL_COOKIE_SECURE"],);
+      const res = await buildWithOverride(override,).handle(new Request("http://localhost/api/whoami",),);
+      expect(res.status,).toBe(200,);
+      expect(res.headers.get("set-cookie",)?.includes("Secure",) ?? false,).toBe(true,);
+    },);
+  });
+
+  test("NODE_ENV unset → omits Secure", async () => {
+    await runWithEnv({ nodeEnv: undefined, }, async () => {
+      const override = readCookieSecureOverrideFromEnv(process.env["LL_COOKIE_SECURE"],);
+      const res = await buildWithOverride(override,).handle(new Request("http://localhost/api/whoami",),);
+      expect(res.status,).toBe(200,);
+      expect(res.headers.get("set-cookie",)?.includes("Secure",) ?? false,).toBe(false,);
+    },);
+  });
+
+  test("LL_COOKIE_SECURE=true → emits Secure even when NODE_ENV unset", async () => {
+    await runWithEnv({ nodeEnv: undefined, llCookieSecure: "true", }, async () => {
+      const override = readCookieSecureOverrideFromEnv(process.env["LL_COOKIE_SECURE"],);
+      const res = await buildWithOverride(override,).handle(new Request("http://localhost/api/whoami",),);
+      expect(res.status,).toBe(200,);
+      expect(res.headers.get("set-cookie",)?.includes("Secure",) ?? false,).toBe(true,);
+    },);
+  });
+
+  test("LL_COOKIE_SECURE=false → omits Secure even when NODE_ENV=production (regression guard)", async () => {
+    // Pre-fix: CSRF cookie emitted Secure whenever NODE_ENV=production regardless
+    // of LL_COOKIE_SECURE=false. This test would have FAILED against the original
+    // wiring because the override field was never threaded from csrfOpts into
+    // cookieForDecision. The full path: env → readCookieSecureOverrideFromEnv
+    // (unit-tested) → csrfOpts.cookieSecureOverride → cookieForDecision.
+    await runWithEnv({ nodeEnv: "production", llCookieSecure: "false", }, async () => {
+      const override = readCookieSecureOverrideFromEnv(process.env["LL_COOKIE_SECURE"],);
+      const res = await buildWithOverride(override,).handle(new Request("http://localhost/api/whoami",),);
+      expect(res.status,).toBe(200,);
+      expect(res.headers.get("set-cookie",)?.includes("Secure",) ?? false,).toBe(false,);
+    },);
   });
 });
