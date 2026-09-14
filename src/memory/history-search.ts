@@ -41,6 +41,14 @@ export interface ExpandedMemoryContext {
   truncated: boolean;
 }
 
+/**
+ * Upper bound on source ids bound into one IN query, per memory (write and
+ * read side). Keeps bound params well under legacy SQLite (999) and PG
+ * (65535) variable limits regardless of dialect; hoist to chunked fetching
+ * if real chains ever need more than 500 messages.
+ */
+export const MAX_CHAIN_IDS = 500;
+
 /** */
 function getLog() {
   return getLogger().child({ module: "memory-history-search", },);
@@ -139,6 +147,7 @@ export async function reconstructMessageChain(
   let ids = jsonParseOr<string[]>(memory.source_message_ids ?? "", [],);
   if (ids.length === 0 && memory.source_message_id) { ids = [memory.source_message_id,]; }
   if (ids.length === 0) { return []; }
+  ids = ids.slice(0, MAX_CHAIN_IDS,);
 
   const rows = await db
     .selectFrom("messages",)
