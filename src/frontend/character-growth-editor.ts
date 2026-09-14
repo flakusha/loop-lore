@@ -91,7 +91,7 @@ export function characterGrowthEditor(opts: CharacterGrowthEditorOptions,): Char
     async saveArc() {
       try {
         const res = await feFetch(
-          `/api/character-growth/arc/${encodeURIComponent(this.actorId,)}`,
+          `/api/character-growth/arc?actorId=${encodeURIComponent(this.actorId,)}`,
           {
             method: "PATCH",
             headers: { "Content-Type": "application/json", },

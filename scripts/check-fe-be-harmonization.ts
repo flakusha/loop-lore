@@ -23,6 +23,10 @@ const ROOT = path.resolve(import.meta.dir, "..",);
 const FE_DIRS = ["src/frontend", "src/components", "src/views", "src/partials",];
 const BE_SCAN_DIRS = ["src/routes", "src",];
 const BE_FILE_RE = /(route|controller)\.ts$/i;
+function isBeFile(p: string,): boolean {
+  if (p.includes("/routes/",)) { return true; }
+  return BE_FILE_RE.test(path.basename(p,),);
+}
 const SCHEMA_DIR = path.join(ROOT, "src", "validation", "schemas",);
 const REPORT = path.join(ROOT, ".tmp", "fe-be-harmony.json",);
 
@@ -73,6 +77,7 @@ function norm(raw: string,): string {
   const api = p.indexOf("/api",);
   if (api > 0) { p = p.slice(api,); }
   p = p.replace(/\$\{[^}]*\}/g, "/:param",);
+  p = p.replace(/encodeURIComponent\([^)]*\)/g, ":param",);
   p = p.replace(/\/\/+/g, "/",);
   if (p.startsWith("/api",)) { p = p.slice(4,) || "/"; }
   p = p.replace(/^\/v\d+(?=\/|$)/, "",) || "/";
@@ -119,7 +124,7 @@ function scanFe(): FeCall[] {
         const raw = lit.slice(1, -1,);
         if (!raw.includes("/api",)) { continue; }
         if (/^https?:/.test(raw,)) { continue; }
-        const win = src.slice(m.index, m.index + 900,);
+        const win = callExtent(src, m.index,);
         const mm = /method\s*:\s*["'](GET|POST|PUT|PATCH|DELETE)["']/i.exec(win,);
         const bm = /JSON\.stringify\(\{([^}]*)\}/.exec(win,);
         const bodyKeys = bm ? [...bm[1].matchAll(/(\w+)\s*:/g,),].map((k,) => k[1] ?? "").filter(Boolean,) : [];
@@ -138,6 +143,44 @@ function scanFe(): FeCall[] {
   return out;
 }
 
+/** Slice of the call expression starting at `from` (matches parens, strings, templates). */
+function callExtent(src: string, from: number,): string {
+  const open = src.indexOf("(", from,);
+  if (open < 0) { return ""; }
+  let i = open;
+  let depth = 0;
+  let q = "";
+  let esc = false;
+  while (i < src.length) {
+    const ch = src[i] ?? "";
+    if (q) {
+      if (esc) { esc = false; }
+      else if (ch === "\\") { esc = true; }
+      else if (ch === q) { q = ""; }
+      else if (q === "`" && ch === "$" && src[i + 1] === "{") {
+        let b = 1;
+        i += 2;
+        while (i < src.length && b > 0) {
+          if (src[i] === "{") { b++; }
+          if (src[i] === "}") { b--; }
+          i++;
+        }
+        continue;
+      }
+      i++;
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === "`") { q = ch; }
+    else if (ch === "(") { depth++; }
+    else if (ch === ")") {
+      depth--;
+      if (depth === 0) { return src.slice(from, i + 1,); }
+    }
+    i++;
+  }
+  return src.slice(from, Math.min(from + 500, src.length,),);
+}
+
 function qsKeys(raw: string,): string[] {
   const q = raw.split("?",)[1];
   if (!q) { return []; }
@@ -149,7 +192,7 @@ function scanBe(): BeRoute[] {
   const seen = new Set<string>();
   for (const d of BE_SCAN_DIRS) {
     const all = walk(path.join(ROOT, d,), [".ts",],);
-    const files = d === "src" ? all.filter((p,) => BE_FILE_RE.test(path.basename(p,),)) : all;
+    const files = d === "src" ? all.filter(isBeFile,) : all;
     for (const f of files) {
       if (seen.has(f,)) { continue; }
       seen.add(f,);
@@ -157,14 +200,36 @@ function scanBe(): BeRoute[] {
       const rel = path.relative(ROOT, f,);
       const pm = /prefix\s*=\s*"([^"]+)"/.exec(src,);
       const prefix = pm?.[1] ?? "/api";
+      const consts = new Map<string, string>();
+      for (const cm of src.matchAll(/const (\w+) =\s*"([^"]+)"/g,)) {
+        consts.set(cm[1] ?? "", cm[2] ?? "",);
+      }
+      try {
+        const sib = readFileSync(path.join(path.dirname(f,), "schemas.ts",), "utf8",);
+        for (const cm of sib.matchAll(/export const (\w+) =\s*"([^"]+)"/g,)) {
+          if (!consts.has(cm[1] ?? "",)) { consts.set(cm[1] ?? "", cm[2] ?? "",); }
+        }
+      } catch { /* no sibling schemas */ }
+      const resolveConsts = (s: string,): string => {
+        let out = s;
+        for (let k = 0; k < 3; k++) {
+          const n = out.replace(
+            /\$\{(\w+)\}/g,
+            (mm, name,) => name === "prefix" ? prefix : (consts.get(name as string,) ?? mm),
+          );
+          if (n === out) { break; }
+          out = n;
+        }
+        return out;
+      };
       const re = /\.(get|post|put|patch|delete)\s*\(\s*(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g;
       let m: RegExpExecArray | null;
       while ((m = re.exec(src,)) !== null) {
         const method = ((m[1] ?? "get") as string).toUpperCase();
         const lit = (m[2] ?? "") as string;
-        let raw = lit.slice(1, -1,).replace(/\$\{prefix\}/g, prefix,);
-        if (!raw.startsWith("/",)) { continue; }
-        const win = src.slice(m.index, m.index + 1500,);
+        const raw = resolveConsts(lit.slice(1, -1,),);
+        if (!raw.startsWith("/",) && !raw.includes("${",)) { continue; }
+        const win = callExtent(src, m.index,);
         const body = /body\s*:\s*(\w+)/.exec(win,)?.[1] ?? null;
         const query = /query\s*:\s*(\w+)/.exec(win,)?.[1] ?? null;
         out.push({
