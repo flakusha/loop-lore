@@ -9,7 +9,7 @@
  */
 
 import type { Config, } from "../config/schema";
-import type { MemoryType, } from "../db/enums-story";
+import type { ExtractionKind, MemoryType, } from "../db/enums-story";
 
 /** Memory scope determines ownership and injection target. */
 export type MemoryScope = "character" | "assistant" | "world";
@@ -57,6 +57,16 @@ export interface MemoryEntry {
   keywords: string[];
   sourceChatId?: string;
   sourceMessageId?: string;
+  /** Full chain of source message IDs bound at extraction (plural; backfilled from legacy single). */
+  sourceMessageIds?: string[];
+  /** Chat IDs the source chain spans (carry-forward / side chats feeding main). */
+  sourceChatIds?: string[];
+  /** How the memory was formed (single_response | burst | compaction | manual | carry_forward). */
+  extractionKind?: ExtractionKind;
+  /** Game-time bounds of the source span (timescape-aware decay, future use). */
+  contextWindowStart?: string;
+  /** Game-time bounds of the source span (timescape-aware decay, future use). */
+  contextWindowEnd?: string;
   pinned: boolean;
   scope: MemoryScope;
   /** Privacy level — controls visibility in group chats and to other characters. */
@@ -86,6 +96,12 @@ export interface ExtractionOpts {
   aiContent: string;
   /** The user message that triggered the generation. */
   userContent?: string;
+  /** Full chain of source message IDs to bind (defaults to [messageId]). */
+  sourceMessageIds?: string[];
+  /** Chat IDs the source chain spans (defaults to [chatId]). */
+  sourceChatIds?: string[];
+  /** How the memory was formed (defaults to "single_response"). */
+  extractionKind?: ExtractionKind;
   /** App config — used to resolve the auxiliary model role for extraction. */
   config: Config;
   /** User ID for BYO apiKey resolution on the auxiliary call. */

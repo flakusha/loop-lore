@@ -380,6 +380,53 @@ describe("storeMemories", () => {
       .executeTakeFirst();
     expect(row?.memory_type,).toBe(mt("not-a-real-type",),);
   });
+
+  it("binds the source chain as JSON arrays plus legacy single id", async () => {
+    const stored = await storeMemories(db, "actor-ex", "chat-ex", [
+      {
+        content: "A chained memory of length",
+        memoryType: mt("fact",),
+        confidence: 0.9,
+        importance: 4,
+        keywords: [],
+      },
+    ], {
+      sourceMessageIds: ["m-1", "m-2",],
+      sourceChatIds: ["chat-ex", "chat-other",],
+      extractionKind: "burst",
+    },);
+    expect(stored,).toBe(1,);
+    const row = await db
+      .selectFrom("actor_memories",)
+      .select(["source_message_id", "source_message_ids", "source_chat_ids", "extraction_kind",],)
+      .where("actor_id", "=", "actor-ex",)
+      .executeTakeFirst();
+    expect(row?.source_message_id,).toBe("m-1",);
+    expect(row?.source_message_ids,).toBe('["m-1","m-2"]',);
+    expect(row?.source_chat_ids,).toBe('["chat-ex","chat-other"]',);
+    expect(row?.extraction_kind,).toBe("burst",);
+  });
+
+  it("defaults to empty chain and single_response kind", async () => {
+    await storeMemories(db, "actor-ex", "chat-ex", [
+      {
+        content: "A default-bound memory here",
+        memoryType: mt("fact",),
+        confidence: 0.9,
+        importance: 1,
+        keywords: [],
+      },
+    ],);
+    const row = await db
+      .selectFrom("actor_memories",)
+      .select(["source_message_id", "source_message_ids", "source_chat_ids", "extraction_kind",],)
+      .where("actor_id", "=", "actor-ex",)
+      .executeTakeFirst();
+    expect(row?.source_message_id,).toBeNull();
+    expect(row?.source_message_ids,).toBe("[]",);
+    expect(row?.source_chat_ids,).toBe('["chat-ex"]',);
+    expect(row?.extraction_kind,).toBe("single_response",);
+  });
 });
 
 describe("extractAndStoreMemories", () => {

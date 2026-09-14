@@ -117,6 +117,19 @@ export async function fetchActorMemories(
     })(),
     sourceChatId: r.source_chat_id ?? undefined,
     sourceMessageId: r.source_message_id ?? undefined,
+    sourceMessageIds: (() => {
+      const parsed = safeJsonParse<string[]>(r.source_message_ids ?? "",);
+      if (parsed.ok) { return parsed.value; }
+      return r.source_message_id ? [r.source_message_id,] : undefined;
+    })(),
+    sourceChatIds: (() => {
+      const parsed = safeJsonParse<string[]>(r.source_chat_ids ?? "",);
+      if (parsed.ok) { return parsed.value; }
+      return r.source_chat_id ? [r.source_chat_id,] : undefined;
+    })(),
+    extractionKind: (r.extraction_kind ?? undefined) as MemoryEntry["extractionKind"],
+    contextWindowStart: r.context_window_start ?? undefined,
+    contextWindowEnd: r.context_window_end ?? undefined,
     pinned: Boolean(r.pinned,),
     scope: (r.scope ?? "character") as MemoryEntry["scope"],
     privacy: (r.privacy ?? "shared") as MemoryEntry["privacy"],
