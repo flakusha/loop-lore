@@ -131,6 +131,8 @@ export const ChatMigrateCarrySchema = t.Object({
   /** Carry party/game state: story_turns, quest_progress, group_initiatives. */
   state: t.Optional(t.Boolean(),),
   /** Carry chat pins + VN choice history. */
+  pins: t.Optional(t.Boolean(),),
+  /** Carry message history: none | summary | full. */
   history: t.Optional(ChatHistoryCarrySchema,),
   /** Carry world/npc/location state snapshots for the party's world. */
   worldState: t.Optional(t.Boolean(),),
