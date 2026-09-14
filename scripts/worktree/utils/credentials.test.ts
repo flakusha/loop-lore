@@ -36,7 +36,7 @@ const LOADER_SRC = resolve(import.meta.dir, "credentials.mjs",);
 
 async function probe(loaderPath: string, cwd: string,): Promise<ProbeResult> {
   const PROBE = `
-    import { credentials } from ${JSON.stringify(loaderPath)};
+    import { credentials } from ${JSON.stringify(loaderPath,)};
     process.stdout.write(JSON.stringify({ keyId: credentials.keyId, name: credentials.name, email: credentials.email, found: credentials.found, source: credentials.source, path: credentials.path, }),);
   `;
   const proc = Bun.spawnSync(
@@ -71,10 +71,10 @@ function initGitRepo(dir: string, signingKey: string, name: string, email: strin
  */
 function installLoader(workdir: string,): { loaderPath: string; nestedCwd: string } {
   const nestedDir = join(workdir, "scripts", "worktree", "utils",);
-  mkdirSync(nestedDir, { recursive: true, });
+  mkdirSync(nestedDir, { recursive: true, },);
   const loaderPath = join(nestedDir, "credentials.mjs",);
   copyFileSync(LOADER_SRC, loaderPath,);
-  return { loaderPath, nestedCwd: nestedDir };
+  return { loaderPath, nestedCwd: nestedDir, };
 }
 
 describe("credentials.mjs fallback chain", () => {
@@ -84,7 +84,7 @@ describe("credentials.mjs fallback chain", () => {
 
   beforeEach(() => {
     workdir = mkdtempSync(join(tmpdir(), "ll-cred-",),);
-    ;({ loaderPath, nestedCwd, } = installLoader(workdir,),);
+    ({ loaderPath, nestedCwd, } = installLoader(workdir,));
   },);
 
   afterEach(() => {
@@ -108,7 +108,7 @@ describe("credentials.mjs fallback chain", () => {
     expect(result.credentials.name,).toBe("Test Agent",);
     expect(result.credentials.email,).toBe("agent@test.local",);
     expect(result.credentials.path,).toBe(join(workdir, ".credentials.env",),);
-  },);
+  });
 
   it("falls back to git config when .credentials.env is missing (source=git-config)", async () => {
     // No .credentials.env at all.
@@ -121,7 +121,7 @@ describe("credentials.mjs fallback chain", () => {
     expect(result.credentials.name,).toBe("Git Config",);
     expect(result.credentials.email,).toBe("git@test.local",);
     expect(result.credentials.path,).toBe(join(workdir, ".git", "config",),);
-  },);
+  });
 
   it("prefers .credentials.env when both are present", async () => {
     writeCredentialsEnv(
@@ -140,7 +140,7 @@ describe("credentials.mjs fallback chain", () => {
     expect(result.credentials.keyId,).toBe("ENVKEY",);
     expect(result.credentials.name,).toBe("Env Name",);
     expect(result.credentials.email,).toBe("env@test.local",);
-  },);
+  });
 
   it("treats incomplete .credentials.env (one missing var) as not found, falls back to git config", async () => {
     writeCredentialsEnv(
@@ -157,7 +157,7 @@ describe("credentials.mjs fallback chain", () => {
     const result = await probe(loaderPath, nestedCwd,);
     expect(result.credentials.source,).toBe("git-config",);
     expect(result.credentials.email,).toBe("git@test.local",);
-  },);
+  });
 
   it("fails closed (found=false) when neither source is available", async () => {
     // No .credentials.env, no git init → both lookups return empty.
@@ -167,5 +167,5 @@ describe("credentials.mjs fallback chain", () => {
     expect(result.credentials.name,).toBe("",);
     expect(result.credentials.email,).toBe("",);
     expect(result.credentials.source,).toBe("",);
-  },);
-},);
+  });
+});
