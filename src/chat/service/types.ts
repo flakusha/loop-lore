@@ -8,6 +8,8 @@
  * types they need. Everything exported is re-exported by the service barrel.
  */
 import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
+import type { EncryptionLevel, } from "../../db/enums-core/flags";
+import type { ThinkingVisibility, } from "../../db/enums-core/users";
 
 /** */
 export interface ServiceError {
@@ -46,9 +48,9 @@ export interface CreateChatParams {
   /** Discoverability state for the chat (private|public|unlisted). */
   visibility?: string;
   /** Encryption tier for message content at rest. Defaults to "none". */
-  encryptionLevel?: string;
-  /** Seed the new chat with participant memories: "full" | "selective" | "fresh". */
-  memoryCarry?: "full" | "selective" | "fresh";
+  encryptionLevel?: EncryptionLevel;
+  /** Seed the new chat with participant memories. */
+  memoryCarry?: MemoryCarry;
   /** When memoryCarry is "selective", IDs of specific memories to carry forward. */
   memoryCarryIds?: string[];
 }
@@ -82,7 +84,7 @@ export interface MigrateChatParams {
   carry?: {
     participants?: boolean;
     memory?: boolean;
-    history?: "none" | "summary" | "full";
+    history?: ChatHistoryCarry;
     /** Carry party/game state: story_turns, quest_progress, group_initiatives. */
     state?: boolean;
     /** Carry chat pins + VN choice history. */
@@ -99,11 +101,20 @@ export type MigrateChatResult =
   | ServiceError
   | { ok: true; newChatId: string; sourceChatId: string };
 
+/** Quick-reply trigger — mirrors `QuickReplyTriggerSchema` in `src/validation/schemas/primitives.ts`. */
+export type QuickReplyTrigger = "startup" | "user" | "ai";
+
+/** Memory-carry mode — mirrors `MemoryCarrySchema` in `src/validation/schemas/primitives.ts`. */
+export type MemoryCarry = "full" | "selective" | "fresh";
+
+/** History-carry mode — mirrors `ChatHistoryCarrySchema` in `src/validation/schemas/primitives.ts`. */
+export type ChatHistoryCarry = "none" | "summary" | "full";
+
 /** A quick-reply button: label + slash command, optional trigger event. */
 export interface QuickReplyButton {
   label: string;
   command: string;
-  trigger?: "startup" | "user" | "ai";
+  trigger?: QuickReplyTrigger;
 }
 
 /** */
@@ -118,7 +129,7 @@ export interface UpdateChatParams {
   userRole?: string | null;
   gmConfig?: Record<string, unknown> | null;
   renderingOverride?: ChatRenderingOverride | null;
-  thinkingVisibility?: string;
+  thinkingVisibility?: ThinkingVisibility;
   promptOverride?: string | null;
   quickReplies?: QuickReplyButton[] | null;
   /** Chat-level output-style preset ("" / null clears the override). */

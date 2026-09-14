@@ -9,6 +9,7 @@
  */
 
 import { t, } from "elysia";
+import { ChatRenderingOverrideSchema, } from "../db-schemas";
 
 // ── Primitives ─────────────────────────────────────────────
 
@@ -37,13 +38,16 @@ export {
   AssetVisibilitySchema,
   ChatModeSchema,
   ChatParticipantRoleSchema,
+  ChatRenderingOverrideSchema,
   ChatTypeSchema,
   ChatVisibilitySchema,
   ContentEncodingSchema,
   ContentRatingSchema,
+  EncryptionLevelSchema,
   GenerationStatusSchema,
   ItemCategorySchema,
   ItemRaritySchema,
+  LorePositionSchema,
   MemoryTypeSchema,
   MessageContentTypeSchema,
   MessageRoleSchema,
@@ -55,6 +59,7 @@ export {
   QuestStatusSchema,
   QuestTypeSchema,
   StorageBackendSchema,
+  ThinkingVisibilitySchema,
   TurnStatusSchema,
   TurnStrategySchema,
   TurnTypeSchema,
@@ -65,8 +70,25 @@ export {
   WorldVisibilitySchema,
 } from "../db-schemas";
 
+// ── Shared UI-only enums (no DB-generated counterpart) ──────────
+// Single source for chat-presentation literals that live in `chats` JSON
+// columns (`gm_config`, `quick_replies`) rather than DB enums.
+// Routers import these; services reuse the sibling `*Value` TS unions in
+// `src/chat/service/types.ts` (same literals, no runtime import).
+export const QuickReplyTriggerSchema = t.UnionEnum(["startup", "user", "ai",],);
+export const MemoryCarrySchema = t.UnionEnum(["full", "selective", "fresh",],);
+export const ChatHistoryCarrySchema = t.UnionEnum(["none", "summary", "full",],);
+export const OutputStylePresetSchema = t.UnionEnum([
+  "neutral", "high_fantasy", "sci_fi", "modern", "noir", "cyberpunk",
+  "pulp", "literary", "horror", "western", "",
+],);
+/** Nullable chat rendering override (DB `ChatRenderingOverride` + JSON null marker). */
+export const NullableChatRenderingOverrideSchema = t.Union([ChatRenderingOverrideSchema, t.Null(),],);
+
 // ── Hand-authored config enums (no DB counterpart) ──────────────
 // Gm* members describe chat-level GM configuration JSON, not DB enums.
+/** Tag-proposition provenance — mirrors `TagProvenance` in `src/assets/service/tag-propositions.ts`. */
+export const TagProvenanceSchema = t.UnionEnum(["alt_text", "filename",],);
 
 /** Chat-level GM configuration — stored as JSON in `chats.gm_config` */
 /** Per-participant turn priority for GM-guided story guidance. */
@@ -82,11 +104,7 @@ export const GmGuidanceSchema = t.Object({
 
 export const GmConfigSchema = t.Object({
   assistantRole: t.Optional(t.UnionEnum(["off", "helper", "gm", "moderator",],),),
-  renderingOverride: t.Optional(t.Union([
-    t.Literal("text",),
-    t.Literal("visual_novel",),
-    t.Null(),
-  ],),),
+  renderingOverride: t.Optional(NullableChatRenderingOverrideSchema,),
   storyMode: t.Optional(t.Boolean(),),
   gmGuidance: t.Optional(GmGuidanceSchema,),
   type: t.Optional(t.UnionEnum(["llm", "human", "hybrid",],),),
@@ -120,10 +138,7 @@ export const GmConfigSchema = t.Object({
   responseLengthCustom: t.Optional(t.Number({ minimum: 50, maximum: 2000, },),),
   outputStyle: t.Optional(t.Union([
     t.Object({
-      preset: t.Optional(t.UnionEnum([
-        "neutral", "high_fantasy", "sci_fi", "modern", "noir", "cyberpunk",
-        "pulp", "literary", "horror", "western", "",
-      ],),),
+      preset: t.Optional(OutputStylePresetSchema,),
       customInstruction: t.Optional(t.String(),),
       intensity: t.Optional(t.Number({ minimum: 0, maximum: 1, },),),
     },),
