@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Commit-message input extraction shared by `commit` and `agent-commit`.
+ * Commit-message input extraction shared by `commit` and `commit-branch`.
  *
  * Supports `-F <path>` / `--message-file <path>` (use `-` for stdin) and
  * piped stdin, so multi-line messages reach `git commit -m` without

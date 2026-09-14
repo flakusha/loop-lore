@@ -8,7 +8,7 @@
  */
 
 import { abort, } from "./commands/abort";
-import { agentCommit, } from "./commands/agent-commit";
+import { commitBranch, } from "./commands/commit-branch";
 import { agentMerge, } from "./commands/agent-merge";
 import { attach, } from "./commands/attach";
 import { attachDir, } from "./commands/attach-dir";
@@ -63,9 +63,9 @@ const commands: Record<string, CommandHandler> = {
       "Manually recover a finalize that left dev in a bad state (in-progress merge, leftover stash, stale lock)",
     run: abort,
   },
-  "agent-commit": {
+  "commit-branch": {
     description: "GPG-signed commit in worktree",
-    run: agentCommit,
+    run: commitBranch,
   },
   "agent-merge": {
     description: "Alias for finalize — merge worktree into current branch and clean up",
