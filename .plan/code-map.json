@@ -12630,6 +12630,10 @@
   "src/frontend/alpine/memory-panel.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/FEAT-068.md"
     },
     {
@@ -13501,6 +13505,12 @@
       "source": ".plan/tickets/TASK-fix-lint-baseline-debt.md"
     }
   ],
+  "src/frontend/character-growth-editor.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md"
+    }
+  ],
   "src/frontend/character-growth-editor.ts": [
     {
       "kind": "ticket",
@@ -14145,6 +14155,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    }
+  ],
+  "src/frontend/pages/new-chat/memory.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
     }
   ],
   "src/frontend/pages/quests.ts": [
@@ -20334,6 +20350,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-item-service.md"
     },
     {
@@ -20355,11 +20375,25 @@
       "source": ".plan/epics/epic-lore-knowledge.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/lore.md"
     }
   ],
+  "src/routes/actor-memories.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    }
+  ],
   "src/routes/actor-notes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/gm-shadow-notes.md"
@@ -20932,6 +20966,12 @@
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-growth-patch-confirm-reject-always-422-dead-endpoi.md"
     },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md"
+    }
+  ],
+  "src/routes/character-growth/routes.coverage.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md"
@@ -23846,6 +23886,10 @@
     }
   ],
   "src/routes/world-lore-entries.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
     {
       "kind": "spec",
       "source": "docs/spec/lore.md"

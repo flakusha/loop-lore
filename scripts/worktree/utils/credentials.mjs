@@ -17,8 +17,8 @@
  * Used by the TS dispatcher (import) and loadConfig (via findCredentials).
  */
 
-import { accessSync, constants, readFileSync, } from "node:fs";
 import { execSync, } from "node:child_process";
+import { accessSync, constants, readFileSync, } from "node:fs";
 import { dirname, resolve, } from "node:path";
 import { fileURLToPath, } from "node:url";
 
