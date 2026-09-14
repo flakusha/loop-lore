@@ -8,11 +8,19 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync, } from "node:fs";
 import path from "node:path";
+import {
+  choice,
+  flag,
+  object,
+  option,
+  runScript,
+  string,
+  withDefault,
+} from "../cli/parser";
 import { createLogger, } from "../logger";
 import { jsonStringifyOr, } from "../utils";
 
 const log = createLogger({ level: "info", },);
-
 // Domain definitions: maps domain name to the config path(s) it covers
 const DOMAINS: Record<string, string[]> = {
   server: ["server",],
@@ -38,38 +46,29 @@ interface MigrationOptions {
   format: "toml" | "yaml";
 }
 
-/** */
 function parseArgs(): MigrationOptions {
-  const args = process.argv.slice(2,);
-  const options: MigrationOptions = {
-    input: "",
-    outputDir: "configs",
-    dryRun: false,
-    format: "toml",
+  const parser = object({
+    input: option("--input", string(),),
+    output: withDefault(option("-o", "--output", string(),), "configs",),
+    "dry-run": withDefault(flag("--dry-run",), false,),
+    format: withDefault(
+      option("--format", choice(["toml", "yaml",] as const,),),
+      "toml",
+    ),
+  },);
+  const args = runScript(parser, {
+    programName: "migrate-config",
+    brief: "Split a monolithic config.toml into per-domain config files.",
+    showDefault: true,
+    help: "option",
+  },);
+
+  return {
+    input: args.input,
+    outputDir: args.output,
+    dryRun: args["dry-run"],
+    format: args.format,
   };
-
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    if (arg === "--input" && i + 1 < args.length) {
-      options.input = args[++i] ?? "";
-    } else if (arg === "--output" && i + 1 < args.length) {
-      options.outputDir = args[++i] ?? "configs";
-    } else if (arg === "--dry-run") {
-      options.dryRun = true;
-    } else if (arg === "--format" && i + 1 < args.length) {
-      const format = args[++i];
-      if (format === "toml" || format === "yaml") {
-        options.format = format;
-      }
-    }
-  }
-
-  if (!options.input) {
-    log.fatal("Missing required argument: --input <config-file>",);
-    process.exit(1,);
-  }
-
-  return options;
 }
 
 /**
