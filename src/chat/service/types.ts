@@ -10,6 +10,11 @@
 import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 import type { EncryptionLevel, } from "../../db/enums-core/flags";
 import type { ThinkingVisibility, } from "../../db/enums-core/users";
+import type {
+  ChatHistoryCarry,
+  MemoryCarry,
+  QuickReplyTrigger,
+} from "../../validation/schemas/primitives";
 
 /** */
 export interface ServiceError {
@@ -102,8 +107,8 @@ export type MigrateChatResult =
   | { ok: true; newChatId: string; sourceChatId: string };
 
 /** Quick-reply trigger — single source `QuickReplyTriggerSchema` in `src/validation/schemas/primitives.ts`. */
-import type { ChatHistoryCarry, MemoryCarry, QuickReplyTrigger, } from "../../validation/schemas/primitives";
 export type { ChatHistoryCarry, MemoryCarry, QuickReplyTrigger, } from "../../validation/schemas/primitives";
+
 
 /** A quick-reply button: label + slash command, optional trigger event. */
 export interface QuickReplyButton {
