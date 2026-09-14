@@ -6893,6 +6893,12 @@
       "source": ".plan/epics/epic-configs-path-resolution.md"
     }
   ],
+  "src/config/load/env.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
+    }
+  ],
   "src/config/load/fs.ts": [
     {
       "kind": "epic",
@@ -8883,6 +8889,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/schema.md"
     }
   ],
   "src/db/enums-core/moderation.ts": [
@@ -8919,6 +8929,18 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/auth-middleware.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/schema.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/users-sessions.md"
     }
   ],
   "src/db/enums-crafting.ts": [
@@ -10991,6 +11013,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-elysia-auth-ts-dead-shim-duplicate-logic.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
     },
     {
       "kind": "ticket",
@@ -13441,6 +13467,12 @@
       "source": ".plan/tickets/TASK-fix-lint-baseline-debt.md"
     }
   ],
+  "src/frontend/character-growth-editor.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md"
+    }
+  ],
   "src/frontend/chat-vendor.ts": [
     {
       "kind": "epic",
@@ -14879,6 +14911,12 @@
       "source": ".plan/epics/epic-authoring-creation.md"
     }
   ],
+  "src/generation/assistant-tuning.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
+    }
+  ],
   "src/generation/audio-gen-route.ts": [
     {
       "kind": "ticket",
@@ -15478,10 +15516,6 @@
   "src/generation/context-compressor.ts": [
     {
       "kind": "spec",
-      "source": "docs/spec/integrations/llm-serving.md"
-    },
-    {
-      "kind": "spec",
       "source": "docs/spec/memory-system.md"
     }
   ],
@@ -15603,6 +15637,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-participant-injection-absent-on-manual-generate-route.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
   "src/generation/generate-route/cancel-stream.test.ts": [
@@ -15715,6 +15753,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    }
+  ],
+  "src/generation/generate-route/types.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
   "src/generation/generate.ts": [
@@ -16359,6 +16403,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/integrations/llm-serving.md"
     }
   ],
   "src/generation/providers/openai-compatible/metadata.ts": [
@@ -20827,6 +20875,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-growth-patch-confirm-reject-always-422-dead-endpoi.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-fe-be-character-growth-arc-confirm-reject-declare-unsatisfia.md"
     }
   ],
   "src/routes/character-import.ts": [
