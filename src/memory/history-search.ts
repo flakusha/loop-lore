@@ -9,6 +9,7 @@
  * lookups walk back to those `messages` rows and rebuild the quoted context.
  */
 import type { Kysely, } from "kysely";
+import { sql, } from "kysely";
 import { estimateTokens, } from "../chat/token-utils";
 import type { DB, } from "../db";
 import { getLogger, } from "../logger";
@@ -103,6 +104,9 @@ export async function walkMessageChain(
         .where("chat_id", "=", chatId,)
         .where("parent_id", "=", cursor,)
         .orderBy("created_at", "asc",)
+        // Original/active branch (NULL swipe) precedes regenerations; the
+        // explicit expression keeps that order on PG (ASC alone puts NULLs last).
+        .orderBy(sql`swipe_index IS NULL`, "desc",)
         .orderBy("swipe_index", "asc",)
         .executeTakeFirst();
       cursor = child?.id ?? null;
