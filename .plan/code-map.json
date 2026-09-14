@@ -7051,6 +7051,13 @@
       "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
     }
   ],
+
+  "src/config/schema-class/idempotency.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-idempotency-table-backend-accepted-but-never-implemented.md"
+    }
+  ],
   "src/config/schema-class/index.ts": [
     {
       "kind": "ticket",
@@ -10587,6 +10594,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-multi-instance-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de.md"
     },
     {
       "kind": "ticket",
@@ -18286,6 +18297,10 @@
     }
   ],
   "src/middleware/idempotency-table.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-idempotency-table-backend-accepted-but-never-implemented.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-middleware-idempotency-table-backend-unimplemented.md"
@@ -26381,6 +26396,20 @@
     {
       "kind": "spec",
       "source": "docs/spec/transport-unified.md"
+    }
+  ],
+
+  "src/server/bar/baz.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md"
+    }
+  ],
+
+  "src/server/foo.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md"
     }
   ],
   "src/server/handler.ts": [

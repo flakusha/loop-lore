@@ -679,7 +679,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-bug-idempotency-table-backend-accepted-but-never-implemented.md",
-    "status": "open"
+    "status": "✅ Resolved (a738bc81, 2026-09-14)"
   },
   "BUG-BUG-LOGOUT-ROUTE-EXEMPT-FROM-CSRF-VERIFICATION-LOGOFF-CSRF": {
     "hash": "8490b2d",
@@ -1323,7 +1323,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de.md",
     "git_issue": "9437278",
-    "status": "open"
+    "status": "✅ Resolved (closed 2026-09-14; classifyDprintExit + smoke tests)"
   },
   "BUG-CHECK-DUPLICATE-LOADS-ALL-OWNER-ROWS": {
     "hash": "pending",
