@@ -53,7 +53,11 @@
     "@types/terser",
     // Native fallback: subpath import "@noble/hashes/blake3.js" (src/native/
     // fallback/blake3.ts) not traced by knip; also used by benchmarks.
-    "@noble/hashes"
+    "@noble/hashes",
+    // CLI parsing migration (@optique): accessed via src/cli/parser.ts, which
+    // is entry-unreachable (see ignore[] below). Same class as @noble/hashes.
+    "@optique/core",
+    "@optique/run"
   ],
   "ignoreBinaries": [
     "abort", // worktree CLI subcommand literal in finalize-signal-safety.test.ts spawnSync; knip mistakes it for a binary
@@ -143,10 +147,21 @@
     // but not by production code (tests/ only, not in knip entry graph)
     "tests/e2e/fixtures/chat-state-contract.ts",
 
-    // Browser E2E tests: run via bun test, not import-reachable from production.
-    // Each is an entry-point test file executed by the test runner.
-    "tests/e2e/flows/browser/access-correctness.browser.ts",
-    "tests/e2e/flows/browser/admin-dashboard-empty.browser.ts",
+    // CLI parsing migration (@optique): src/cli/parser.ts is the shared
+    // wrapper reached only via four standalone scripts below. The scripts
+    // are invoked via `bun run src/scripts/...` and `bun run
+    // src/config/migrate-config.ts`, not import-reachable from any entry.
+    "src/cli/parser.ts",
+    "src/scripts/version-bump.ts",
+    "src/scripts/commit-check.ts",
+    "src/config/migrate-config.ts",
+    "src/build/compress.ts",
+
+    // CLI parsing migration (@optique): package accessed via src/cli/parser.ts
+    // (added above as an ignored file). Without this the deps are flagged
+    // because the consumer file is excluded from the entry trace.
+    "@optique/core",
+    "@optique/run",
     "tests/e2e/flows/browser/admin-dashboard-populated.browser.ts",
     "tests/e2e/flows/browser/auth-flow.browser.ts",
     "tests/e2e/flows/browser/auth-session.browser.ts",
