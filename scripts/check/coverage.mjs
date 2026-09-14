@@ -151,6 +151,15 @@ const WAIVERS = {
     reason:
       "bun coverage cannot track lines inside async function bodies; tests exercise every branch but bun undercounts (refactor extracted helpers + flattened returns, hit 70.5% before split); TASK-coverage-waiver-chat-ownership-async-body-limit",
   },
+  // Gate pass: the tool-call round loop and the telemetry/memory
+  // void-reject callbacks are exercisable only through mock.module doubles,
+  // whose suites are deliberately skipped in the shared-process check gate
+  // (isolate-only.ts leak guard); the loop test runs under test:unit only.
+  "generation:src/generation/generate-route/non-stream.ts": {
+    floor: 78,
+    reason:
+      "tool-loop + void-reject callbacks need mock.module doubles, skipped in check gate; loop covered under test:unit (non-stream.test.ts); TASK-coverage-waiver-generate-route-non-stream-ts-below-80-floor",
+  },
 };
 
 /**
