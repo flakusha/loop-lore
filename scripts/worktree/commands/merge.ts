@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { existsSync, } from "fs";
-import { resolve, } from "path";
-import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { gitSync, } from "../utils/git";
+import { type WorktreeConfig, } from "../utils/config";
+import { findWorktreeByBranch, gitSync, } from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { log, } from "../utils/output";
 
@@ -23,13 +21,6 @@ function gpgMergeFlags(config: WorktreeConfig,): string[] {
   ];
 }
 
-function findWorktree(branch: string, config: WorktreeConfig,): string | null {
-  const dirName = branchToPath(branch,);
-  const wtPath = resolve(config.treeDir, dirName,);
-  if (existsSync(resolve(wtPath, ".git",),)) { return wtPath; }
-  return null;
-}
-
 export async function merge(
   args: string[],
   config: WorktreeConfig,
@@ -42,7 +33,7 @@ export async function merge(
     process.exit(1,);
   }
 
-  const wtPath = findWorktree(branch, config,);
+  const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
   if (!wtPath) {
     log("error", `no worktree found for branch '${branch}'`,);
     process.exit(1,);

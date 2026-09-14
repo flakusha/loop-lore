@@ -5,6 +5,7 @@
  * Git operation utilities for worktree management
  */
 
+import { existsSync, } from "node:fs";
 import { resolve, } from "node:path";
 import { log, } from "./output";
 
@@ -200,4 +201,28 @@ export async function getStatus(
     behind,
     clean: dirty === "",
   };
+}
+
+/**
+ * Resolve a branch to the worktree path it is checked out in.
+ *
+ * Fast path: the conventional `tree/<branch>` layout (respects TREE_DIR;
+ * the `/`→`-` normalization mirrors config.branchToPath, kept local to
+ * avoid a config→git import cycle).
+ *
+ * Fallback: worktrees checked out outside `treeDir` — e.g. native omp
+ * worktrees under loop-lore-worktrees/ where the directory name is
+ * `<branch>-<short-hash>` — matched by asking git which checkout actually
+ * has the branch. Returns null when the branch has no checkout.
+ */
+export async function findWorktreeByBranch(
+  repoRoot: string,
+  treeDir: string,
+  branch: string,
+): Promise<string | null> {
+  const wtPath = resolve(treeDir, branch.replace(/\//g, "-",),);
+  if (existsSync(resolve(wtPath, ".git",),)) { return wtPath; }
+  const worktrees = await getWorktrees(repoRoot,);
+  const found = worktrees.find((w,) => w.branch === `refs/heads/${branch}`);
+  return found?.path ?? null;
 }
