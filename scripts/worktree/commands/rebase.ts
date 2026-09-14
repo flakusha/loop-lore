@@ -1,23 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { existsSync, } from "fs";
-import { resolve, } from "path";
-import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { getRootBranch, gitSync, } from "../utils/git";
+import { type WorktreeConfig, } from "../utils/config";
+import { findWorktreeByBranch, getRootBranch, gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
 
 function isProtected(branch: string,): boolean {
   return PROTECTED_BRANCHES.includes(branch,);
-}
-
-function findWorktree(branch: string, config: WorktreeConfig,): string | null {
-  const dirName = branchToPath(branch,);
-  const wtPath = resolve(config.treeDir, dirName,);
-  if (existsSync(resolve(wtPath, ".git",),)) { return wtPath; }
-  return null;
 }
 
 export async function rebase(
@@ -38,7 +29,7 @@ export async function rebase(
     process.exit(1,);
   }
 
-  const wtPath = findWorktree(branch, config,);
+  const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
   if (!wtPath) {
     log("error", `no worktree found for branch '${branch}'`,);
     process.exit(1,);
