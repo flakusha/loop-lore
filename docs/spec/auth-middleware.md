@@ -10,7 +10,7 @@
 Two-mode authentication system:
 
 1. **Remote multi-user** — `config.auth.required = true`. JWT Bearer token →
-   `verifyJwt()` → sessions table lookup. Supports admin/user/viewer/solo roles.
+   `verifyJwt()` → sessions table lookup. Roles per `UserRole` (see `src/db/enums-core/users.ts`).
 2. **Solo/demo mode** — `config.auth.required = false`. No token check. Implicit
    solo user looked up once and cached.
 
