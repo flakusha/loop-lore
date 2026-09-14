@@ -11,11 +11,10 @@
 
 import { t, } from "elysia";
 
-/** Tag ownership scope: a viewer's personal set vs. the asset's shared set. */
-export const AssetTagScopeSchema = t.UnionEnum(["user", "global",],);
+// Tag ownership scope + provenance — generated single source (see ../db-schemas).
+import { AssetTagScopeSchema, AssetTagSourceSchema, } from "../db-schemas";
+export { AssetTagScopeSchema, AssetTagSourceSchema, };
 
-/** Provenance of a tag: manual entry or a metadata/RAG-derived proposal. */
-export const AssetTagSourceSchema = t.UnionEnum(["manual", "rag",],);
 
 /** One tag as returned to clients. */
 export const AssetTagRecordSchema = t.Object({
