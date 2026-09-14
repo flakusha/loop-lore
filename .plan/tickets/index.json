@@ -13638,6 +13638,20 @@
     "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md",
     "status": "open"
   },
+
+  "TASK-COVERAGE-WAIVER-GENERATE-ROUTE-NON-STREAM-TS-BELOW-80-FLOOR": {
+    "hash": "f787c2d",
+    "git_issue": "f787c2d",
+    "extid": "TASK-COVERAGE-WAIVER-GENERATE-ROUTE-NON-STREAM-TS-BELOW-80-FLOOR",
+    "type": "TASK",
+    "title": "Coverage waiver: generate-route/non-stream.ts below 80 floor",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-waiver-generate-route-non-stream-ts-below-80-floor.md",
+    "status": "open"
+  },
   "TASK-COVERAGE-WAIVERS-FOR-3-MODULES-BELOW-80-FLOOR": {
     "hash": "f67b1ca",
     "git_issue": "f67b1ca",
