@@ -8,7 +8,6 @@
  */
 
 import { abort, } from "./commands/abort";
-import { commitBranch, } from "./commands/commit-branch";
 import { agentMerge, } from "./commands/agent-merge";
 import { attach, } from "./commands/attach";
 import { attachDir, } from "./commands/attach-dir";
@@ -16,6 +15,7 @@ import { execute as branchesCmd, } from "./commands/branches";
 import { execute as cleanupCmd, } from "./commands/cleanup";
 import { comment, } from "./commands/comment";
 import { commit, } from "./commands/commit";
+import { commitBranch, } from "./commands/commit-branch";
 import { execute as createCmd, } from "./commands/create";
 import { execute as diffCmd, } from "./commands/diff";
 import { edit, } from "./commands/edit";
