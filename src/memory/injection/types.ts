@@ -74,6 +74,8 @@ export interface MemoryInjectionEvent {
   probability: number;
   injected: boolean;
   reason?: string;
+  /** Memory this expansion was reconstructed from (null for plain summary injection). */
+  expandedFromMemoryId: string | null;
 }
 
 /** Context for injection decisions. */

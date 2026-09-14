@@ -157,6 +157,14 @@ export const EmotionTypeSchema = t.UnionEnum([
 export const EncryptionCompressionSchema = t.UnionEnum(["gzip", "brotli", "zstd",],);
 export const EncryptionLevelSchema = t.UnionEnum(["none", "standard", "at-rest",],);
 export const EquipStateSchema = t.UnionEnum(["unequipped", "equipped",],);
+
+export const ExtractionKindSchema = t.UnionEnum([
+  "single_response",
+  "burst",
+  "compaction",
+  "manual",
+  "carry_forward",
+],);
 export const FantasyCategorySchema = t.UnionEnum([
   "power_exchange",
   "exhibitionism",
@@ -2314,6 +2322,11 @@ export const ActorMemoriesSchema = t.Object({
   pinned: t.Optional(PinnedStateSchema,),
   privacy: t.Optional(t.String(),),
   shareability: t.Optional(t.String(),),
+  source_message_ids: t.Optional(t.String(),),
+  source_chat_ids: t.Optional(t.String(),),
+  extraction_kind: t.Optional(ExtractionKindSchema,),
+  context_window_start: t.Optional(t.String(),),
+  context_window_end: t.Optional(t.String(),),
 },);
 
 // ── memory_embeddings ────────────────────────────────────────────

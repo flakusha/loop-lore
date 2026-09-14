@@ -11,11 +11,22 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { callAux, } from "../aux-pipeline";
 import type { DB, } from "../db";
+import type { ExtractionKind, } from "../db/enums-story";
 import type { GenerationMessage, } from "../generation/gen-types-options";
 import { getLogger, } from "../logger";
 import { resolveSystemPrompt, } from "../prompts";
 import { jsonParseOr, jsonStringifyOr, } from "../utils";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
+
+/** Chain binding persisted alongside each stored memory. */
+export interface MemoryProvenance {
+  /** Full chain of source message IDs (defaults to the single triggering message). */
+  sourceMessageIds?: string[];
+  /** Chat IDs the source chain spans (defaults to the triggering chat). */
+  sourceChatIds?: string[];
+  /** How the memory was formed (defaults to "single_response"). */
+  extractionKind?: ExtractionKind;
+}
 
 /** */
 function getLog() {
@@ -103,17 +114,23 @@ function parseExtractionResponse(content: string,): ExtractedMemory[] | null {
 /**
  * Store extracted memories in the database.
  * Deduplicates against existing memories for the same actor.
+ * Binds the source message chain for try-hard reconstruction.
  * @param db
  * @param actorId
  * @param chatId
  * @param memories
+ * @param provenance - chain binding; defaults to single-message single_response
  */
 export async function storeMemories(
   db: Kysely<DB>,
   actorId: string,
   chatId: string,
   memories: ExtractedMemory[],
+  provenance: MemoryProvenance = {},
 ): Promise<number> {
+  const sourceMessageIds = provenance.sourceMessageIds ?? [];
+  const sourceChatIds = provenance.sourceChatIds ?? [chatId,];
+  const extractionKind = provenance.extractionKind ?? "single_response";
   let stored = 0;
 
   for (const memory of memories) {
@@ -139,6 +156,10 @@ export async function storeMemories(
         importance: memory.importance,
         keywords: jsonStringifyOr(memory.keywords,),
         source_chat_id: chatId,
+        source_message_id: sourceMessageIds[0] ?? null,
+        source_message_ids: jsonStringifyOr(sourceMessageIds,),
+        source_chat_ids: jsonStringifyOr(sourceChatIds,),
+        extraction_kind: extractionKind,
         scope: "character",
         privacy: "shared",
         created_at: new Date().toISOString(),
@@ -169,9 +190,60 @@ export async function extractAndStoreMemories(
   try {
     const memories = await extractMemories(db, opts,);
     if (memories.length > 0) {
-      await storeMemories(db, opts.actorId, opts.chatId, memories,);
+      await storeMemories(db, opts.actorId, opts.chatId, memories, {
+        sourceMessageIds: opts.sourceMessageIds ?? [opts.messageId,],
+        sourceChatIds: opts.sourceChatIds ?? [opts.chatId,],
+        extractionKind: opts.extractionKind ?? "single_response",
+      },);
     }
   } catch (error) {
     getLog().warn("Background extraction failed", { error: (error as Error).message, actorId: opts.actorId, },);
   }
+}
+
+/**
+ * Extract memories from a known message chain (compaction pass,
+ * carry-forward, manual "try hard" reruns).
+ *
+ * Loads the chain rows oldest-first, builds a role-labeled transcript using
+ * the same plaintext-mirror rule as the read path (`content_plaintext ??
+ * content`; E2E rows without a mirror are dropped), then runs the standard
+ * extraction over that transcript and binds the full chain on store.
+ * @param db
+ * @param opts
+ * @param chain - message IDs (any order) plus the chats they span
+ */
+export async function extractFromBurst(
+  db: Kysely<DB>,
+  opts: ExtractionOpts,
+  chain: { messageIds: string[]; chatIds?: string[] },
+): Promise<number> {
+  if (chain.messageIds.length === 0) { return 0; }
+  const rows = await db
+    .selectFrom("messages",)
+    .select(["id", "role", "content", "content_plaintext", "key_id", "created_at",],)
+    .where("id", "in", chain.messageIds,)
+    .orderBy("created_at", "asc",)
+    .execute();
+
+  const lines: string[] = [];
+  for (const row of rows) {
+    if (row.key_id && !row.content_plaintext) { continue; }
+    const label = row.role === "assistant" ? "Assistant" : "User";
+    lines.push(`${label}: ${row.content_plaintext ?? row.content}`,);
+  }
+  if (lines.length === 0) { return 0; }
+
+  const memories = await extractMemories(db, {
+    ...opts,
+    messageId: rows[rows.length - 1]?.id ?? opts.messageId,
+    aiContent: lines.join("\n",),
+    userContent: undefined,
+  },);
+  if (memories.length === 0) { return 0; }
+  return storeMemories(db, opts.actorId, opts.chatId, memories, {
+    sourceMessageIds: Array.from(rows, (row,) => row.id,),
+    sourceChatIds: chain.chatIds ?? opts.sourceChatIds ?? [opts.chatId,],
+    extractionKind: opts.extractionKind ?? "burst",
+  },);
 }

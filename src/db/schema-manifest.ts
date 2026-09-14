@@ -965,6 +965,11 @@ export const SCHEMA = new SchemaManifest()
     pinned: col("text", { notNull: true, hasDefault: true, },),
     privacy: col("text", { notNull: true, hasDefault: true, },),
     shareability: col("text",),
+    source_message_ids: col("text",),
+    source_chat_ids: col("text",),
+    extraction_kind: col("text",),
+    context_window_start: col("text",),
+    context_window_end: col("text",),
   },)
   .table("actor_notes", {
     id: col("text", { primaryKey: true, },),

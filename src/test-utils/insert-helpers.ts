@@ -31,6 +31,7 @@ import type {
   DifficultyState,
   DiscoveryMethod,
   EquipState,
+  ExtractionKind,
   FantasyCategory,
   GatheringNodeType,
   GenerationStatus,
@@ -3187,6 +3188,11 @@ export async function insertActorMemories(
     pinned?: PinnedState;
     privacy?: string;
     shareability?: string | null;
+    source_message_ids?: string | null;
+    source_chat_ids?: string | null;
+    extraction_kind?: ExtractionKind | null;
+    context_window_start?: string | null;
+    context_window_end?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("actor_memories",).values({
