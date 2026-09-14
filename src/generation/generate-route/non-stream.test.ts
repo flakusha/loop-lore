@@ -123,6 +123,36 @@ const mockInput = {
 } as unknown as import("./types").GenerateRequest;
 
 describeSelf("runNonStreaming — generation.completed latencyMs", () => {
+  it("rejects after exceeding the tool-call round limit", async () => {
+    recordedEvents.length = 0;
+    const originalCalls = fakeResponse.toolCalls;
+    // Non-empty toolCalls every round keeps the loop spinning until it
+    // exceeds MAX_TOOL_ROUNDS and throws.
+    fakeResponse.toolCalls = [
+      { id: "tc-1", function: { name: "noop", arguments: "{}", }, },
+    ] as typeof fakeResponse.toolCalls;
+    const { createTestDb, } = await import("../../test-utils/create-test-db");
+    const { db, sqlite, } = await createTestDb();
+    // runNonStreaming converts internal errors to a 500 Response (never
+    // rethrows) — assert on the rendered status and message.
+    const res = await runNonStreaming({
+      input: mockInput,
+      database: db,
+      messages: [{ role: "user", content: "hello", },],
+      cfg: mockConfig,
+      userId: "user-1",
+      attemptId: "attempt-tools",
+      modelId: "test-model",
+      providerName: "test-provider",
+      providerReq: { model: "test-model", messages: [], params: {}, },
+      failoverList: [{ name: "test-provider", provider: {} as never, },],
+    },);
+    fakeResponse.toolCalls = originalCalls;
+    sqlite.close();
+    expect(res.status,).toBe(500,);
+    const body = await res.json() as { error: string };
+    expect(body.error,).toContain("Tool call loop exceeded max rounds",);
+  });
   it("records a non-zero latencyMs in the telemetry event", async () => {
     recordedEvents.length = 0;
     callDelayMs = 5; // 5ms simulated provider delay
