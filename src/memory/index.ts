@@ -8,7 +8,20 @@
  */
 export { estimateTokens, } from "../chat/token-utils";
 export { getMemoriesWithinBudget, selectWithinBudget, } from "./budget";
-export { extractAndStoreMemories, extractMemories, storeMemories, } from "./extraction";
+export { extractAndStoreMemories, extractFromBurst, extractMemories, storeMemories, } from "./extraction";
+export type { MemoryProvenance, } from "./extraction";
+export {
+  expandMemoryContext,
+  reconstructMessageChain,
+  selectMemoriesWithExpansion,
+  walkMessageChain,
+} from "./history-search";
+export type {
+  ExpandedMemoryContext,
+  ExpansionSelectOpts,
+  HistorySearchOpts,
+  ReconstructedMessage,
+} from "./history-search";
 export {
   DEFAULT_COMFORT,
   DEFAULT_INJECTION_CONFIG,
