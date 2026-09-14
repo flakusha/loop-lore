@@ -26,7 +26,7 @@ describe("parseColumns", () => {
   });
 
   test("skips entries without a storage type", () => {
-    const cols = parseColumns(`.alterTable("t",).addColumn("x", (c,) => c,),.execute()`);
+    const cols = parseColumns(`.alterTable("t",).addColumn("x", (c,) => c,),.execute()`,);
     expect(cols,).toEqual({},);
   });
 });
@@ -36,8 +36,8 @@ describe("listMigrationFiles", () => {
     const dir = resolve(import.meta.dir, "../../src/db/migrations",);
     const files = listMigrationFiles(dir,);
     expect(files.length,).toBeGreaterThan(7,);
-    expect(files.some((f,) => f.endsWith("001_init.ts") && !f.includes("parts",),),).toBe(true,);
-    expect(files.some((f,) => f.includes(`${"parts"}/`),),).toBe(true,);
+    expect(files.some((f,) => f.endsWith("001_init.ts",) && !f.includes("parts",)),).toBe(true,);
+    expect(files.some((f,) => f.includes(`${"parts"}/`,)),).toBe(true,);
   });
 });
 
