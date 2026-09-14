@@ -90,6 +90,25 @@ export function resolveCookieSecure(
 }
 
 /**
+ * Read the `LL_COOKIE_SECURE` env var into the `cookieSecureOverride` shape
+ * expected by `resolveCookieSecure`. Returns:
+ *   - `true` when `LL_COOKIE_SECURE=true`  (force Secure, override NODE_ENV)
+ *   - `false` when `LL_COOKIE_SECURE=false` (force non-Secure, override NODE_ENV)
+ *   - `undefined` when the var is unset / unrecognized (defer to NODE_ENV default)
+ *
+ * Mirrors `src/routes/auth/shared.ts::setTokenCookie` so both cookies stay in
+ * sync. Centralized so tests can assert the mapping without spinning up the
+ * full Elysia app.
+ */
+export function readCookieSecureOverrideFromEnv(
+  envValue: string | undefined,
+): boolean | undefined {
+  if (envValue === "true") { return true; }
+  if (envValue === "false") { return false; }
+  return undefined;
+}
+
+/**
  * Build the Set-Cookie header value for a freshly minted CSRF token.
  *
  * NOT HttpOnly — the frontend reads the cookie via `document.cookie` and
