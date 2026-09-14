@@ -4254,7 +4254,6 @@
     "source": ".plan/tickets/BUG-transport-strictuint8-applied-to-gzip-path-but-not-zstd-brot.md",
     "status": "done"
   },
-
   "BUG-TUI-APP-GETLOGGER-THROWS-WHEN-RUNNING-STANDALONE": {
     "hash": "pending",
     "extid": "BUG-TUI-APP-GETLOGGER-THROWS-WHEN-RUNNING-STANDALONE",
@@ -4267,7 +4266,6 @@
     "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md",
     "status": "open"
   },
-
   "BUG-TUI-APP-NEVER-THREADS-SESSIONTOKEN-INTO-CHATWIDGET": {
     "hash": "pending",
     "extid": "BUG-TUI-APP-NEVER-THREADS-SESSIONTOKEN-INTO-CHATWIDGET",
@@ -13638,7 +13636,6 @@
     "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md",
     "status": "open"
   },
-
   "TASK-COVERAGE-WAIVER-GENERATE-ROUTE-NON-STREAM-TS-BELOW-80-FLOOR": {
     "hash": "f787c2d",
     "git_issue": "f787c2d",
@@ -13650,6 +13647,19 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-coverage-waiver-generate-route-non-stream-ts-below-80-floor.md",
+    "status": "open"
+  },
+  "TASK-COVERAGE-WAIVER-STREAM-TO-CLIENT-TS-AT-75-3-UNDER-CHECK-GATE": {
+    "hash": "131f630",
+    "git_issue": "131f630",
+    "extid": "TASK-COVERAGE-WAIVER-STREAM-TO-CLIENT-TS-AT-75-3-UNDER-CHECK-GATE",
+    "type": "TASK",
+    "title": "Coverage waiver: stream-to-client.ts at 75.3 under check gate",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-waiver-stream-to-client-ts-at-75-3-under-check-gate.md",
     "status": "open"
   },
   "TASK-COVERAGE-WAIVERS-FOR-3-MODULES-BELOW-80-FLOOR": {
@@ -18597,7 +18607,6 @@
     "source": ".plan/tickets/TASK-memory-happiness-patterns.md",
     "status": "open"
   },
-
   "TASK-MEMORY-HISTORY-SEARCH-BIND-MESSAGE-CHAIN-RECONSTRUCTABLE-CON": {
     "hash": "895f8d6",
     "git_issue": "895f8d6",
@@ -24964,7 +24973,6 @@
     "git_issue": "62b2783",
     "status": "open"
   },
-
   "TASK-TUI-ASSET-VIEW-REMOVE-SILENT-CATCH-AND-VOID-ASYNC-IIFE": {
     "hash": "pending",
     "extid": "TASK-TUI-ASSET-VIEW-REMOVE-SILENT-CATCH-AND-VOID-ASYNC-IIFE",
@@ -24977,7 +24985,6 @@
     "source": ".plan/tickets/TASK-tui-asset-view-remove-silent-catch-and-void-async-iife.md",
     "status": "open"
   },
-
   "TASK-TUI-DEDUPE-API-BASE": {
     "hash": "pending",
     "extid": "TASK-TUI-DEDUPE-API-BASE",
@@ -24990,7 +24997,6 @@
     "source": ".plan/tickets/TASK-tui-dedupe-api-base.md",
     "status": "open"
   },
-
   "TASK-TUI-ENABLED-CONFIG-FLAG-NEVER-READ": {
     "hash": "pending",
     "extid": "TASK-TUI-ENABLED-CONFIG-FLAG-NEVER-READ",
@@ -25192,7 +25198,6 @@
     "git_issue": "6e945b2",
     "status": "open"
   },
-
   "TASK-UPDATE-TERMINAL-UI-SPEC-TO-ACTUAL-FILE-LAYOUT": {
     "hash": "pending",
     "extid": "TASK-UPDATE-TERMINAL-UI-SPEC-TO-ACTUAL-FILE-LAYOUT",
