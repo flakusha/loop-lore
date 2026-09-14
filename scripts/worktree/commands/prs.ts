@@ -4,6 +4,7 @@
 import { existsSync, mkdirSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, } from "../utils/config";
+import { findWorktreeForBranch, } from "../utils/git";
 import { linkNodeModules, } from "../utils/modules";
 import { log, } from "../utils/output";
 
@@ -54,21 +55,28 @@ export async function execute(
 
   console.log(`  Found ${prs.length} open PR(s)`,);
   console.log();
-
-  mkdirSync(config.treeDir, { recursive: true, },);
+  // Placement precedence: explicit `TREE_DIR` (user/CI override) wins;
+  // fall back to omp's auto-set `OMP_WORKTREE_DIR`; finally to canonical
+  // in-repo `tree/` from `config.treeDir`.
+  const dirPath = process.env.TREE_DIR ??
+    process.env.OMP_WORKTREE_DIR ??
+    config.treeDir;
+  mkdirSync(dirPath, { recursive: true, },);
   let created = 0;
   let skipped = 0;
 
   for (const pr of prs) {
     const dirName = branchToPath(pr.headRefName,);
-    const wtPath = resolve(config.treeDir, dirName,);
+    const wtPath = resolve(dirPath, dirName,);
 
-    if (existsSync(wtPath,)) {
-      log("warn", `Skipped: ${pr.headRefName} (already exists)`,);
+    // Skip when this branch is already checked out anywhere (in-repo `tree/`
+    // or omp's sibling container) — git is the source of truth.
+    const existing = await findWorktreeForBranch(config.repoRoot, pr.headRefName,);
+    if (existing ?? existsSync(wtPath,)) {
+      log("warn", `Skipped: ${pr.headRefName} (already exists at ${existing ?? wtPath})`,);
       skipped++;
       continue;
     }
-
     log("info", `Creating worktree for PR #${pr.number}: ${pr.title}`,);
 
     const addResult = Bun.spawnSync(
