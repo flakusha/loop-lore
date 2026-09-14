@@ -160,6 +160,11 @@ const WAIVERS = {
     reason:
       "tool-loop + void-reject callbacks need mock.module doubles, skipped in check gate; loop covered under test:unit (non-stream.test.ts); TASK-coverage-waiver-generate-route-non-stream-ts-below-80-floor",
   },
+  "generation:src/generation/generate-route/stream-to-client.ts": {
+    floor: 75,
+    reason:
+      "dedicated coverage suite is describeOrSkipStrict-gated (skips in check gate); module split moved uncovered paths in; TASK-coverage-waiver-stream-to-client-ts-at-75-3-under-check-gate",
+  },
 };
 
 /**
