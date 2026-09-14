@@ -9,6 +9,7 @@ import { existsSync, } from "fs";
 import { readdir, readFile, } from "fs/promises";
 import { resolve, } from "path";
 import { type WorktreeConfig, } from "../utils/config";
+import { getWorktrees, } from "../utils/git";
 import { colorize, log, section, } from "../utils/output";
 
 interface CheckReport {
@@ -101,28 +102,55 @@ export async function report(
     console.log("",);
   }
 
-  // Check worktrees
-  if (!existsSync(config.treeDir,)) {
+  // Check worktrees — the conventional tree/ layout plus any checkout git
+  // knows about (e.g. native omp worktrees outside the repo, whose check
+  // reports would otherwise be invisible to this aggregate).
+  const reported = new Set<string>();
+  if (existsSync(config.treeDir,)) {
+    const entries = await readdir(config.treeDir, { withFileTypes: true, },);
+    for (const entry of entries.filter((e,) => e.isDirectory())) {
+      const wtPath = resolve(config.treeDir, entry.name,);
+      reported.add(resolve(wtPath,),);
+      const reportPath = resolve(wtPath, ".tmp", "check-report.json",);
+      if (!existsSync(reportPath,)) {
+        console.log(`  ${colorize(entry.name, "cyan",)} ${colorize("no report", "gray",)}`,);
+        continue;
+      }
+
+      try {
+        const raw = await readFile(reportPath, "utf-8",);
+        printReportRow(entry.name, parseReport(raw,),);
+      } catch (error) {
+        printMalformedRow(entry.name, error,);
+        continue;
+      }
+    }
+  } else {
     log("info", "No tree/ directory found",);
-    return;
   }
 
-  const entries = await readdir(config.treeDir, { withFileTypes: true, },);
-  const worktrees = entries.filter(e => e.isDirectory());
+  // External checkouts via porcelain listing. Guarded: synthetic test roots
+  // are not git repos, and the tree/ scan above already covered those cases.
+  try {
+    const worktrees = await getWorktrees(config.repoRoot,);
+    for (const wt of worktrees) {
+      if (resolve(wt.path,) === resolve(config.repoRoot,) || reported.has(resolve(wt.path,),)) { continue; }
+      const name = wt.branch.startsWith("refs/heads/",) ? wt.branch.slice("refs/heads/".length,) : wt.path;
+      const reportPath = resolve(wt.path, ".tmp", "check-report.json",);
+      if (!existsSync(reportPath,)) {
+        console.log(`  ${colorize(name, "cyan",)} ${colorize("no report", "gray",)}`,);
+        continue;
+      }
 
-  for (const wt of worktrees) {
-    const reportPath = resolve(config.treeDir, wt.name, ".tmp", "check-report.json",);
-    if (!existsSync(reportPath,)) {
-      console.log(`  ${colorize(wt.name, "cyan",)} ${colorize("no report", "gray",)}`,);
-      continue;
+      try {
+        const raw = await readFile(reportPath, "utf-8",);
+        printReportRow(name, parseReport(raw,),);
+      } catch (error) {
+        printMalformedRow(name, error,);
+        continue;
+      }
     }
-
-    try {
-      const raw = await readFile(reportPath, "utf-8",);
-      printReportRow(wt.name, parseReport(raw,),);
-    } catch (error) {
-      printMalformedRow(wt.name, error,);
-      continue;
-    }
+  } catch {
+    // Not a git repo (synthetic fixture roots) — tree/ scan above suffices.
   }
 }

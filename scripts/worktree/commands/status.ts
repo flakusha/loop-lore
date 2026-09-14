@@ -5,9 +5,8 @@
  * Status command - show current branch status
  */
 
-import { resolve, } from "path";
-import { branchToPath, resolveBranch, } from "../utils/config";
-import { getStatus, gitSync, } from "../utils/git";
+import { resolveBranch, } from "../utils/config";
+import { findWorktreeByBranch, getStatus, gitSync, } from "../utils/git";
 import { colorize, log, } from "../utils/output";
 
 export async function execute(
@@ -42,10 +41,10 @@ export async function execute(
   console.log(`  Ahead: ${status.ahead}`,);
   console.log(`  Behind: ${status.behind}`,);
 
-  // Check if in worktree
-  const worktreePath = `${config.treeDir}/${branchToPath(branch,)}`;
-  const gitDirExists = await Bun.file(resolve(worktreePath, ".git",),).exists();
-  if (gitDirExists) {
+  // Show the worktree checkout when one exists (conventional tree/ layout
+  // or any checkout git knows about, e.g. native omp worktrees).
+  const worktreePath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
+  if (worktreePath) {
     console.log(`  Worktree: ${worktreePath}`,);
   }
 

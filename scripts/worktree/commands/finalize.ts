@@ -5,7 +5,7 @@ import { existsSync, } from "fs";
 import { closeSync, openSync, readFileSync, unlinkSync, writeSync, } from "node:fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { getRootBranch, gitSync, gitSyncQuiet, } from "../utils/git";
+import { findWorktreeByBranch, getRootBranch, gitSync, gitSyncQuiet, } from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { appendGripe, printRecentLedger, } from "../utils/ledger";
 import { log, section, } from "../utils/output";
@@ -376,26 +376,6 @@ function isProtected(branch: string,): boolean {
   return PROTECTED_BRANCHES.includes(branch,);
 }
 
-function findWorktree(branch: string, config: WorktreeConfig,): string | null {
-  const dirName = branchToPath(branch,);
-  const wtPath = resolve(config.treeDir, dirName,);
-  if (existsSync(resolve(wtPath, ".git",),)) { return wtPath; }
-  // Fallback: worktrees checked out outside `treeDir` (e.g. native omp
-  // worktrees in loop-lore-worktrees/, dir name = branch + short-hash
-  // suffix). `tree/<branch>` is just the conventional layout — ask git
-  // which checkout actually has the branch checked out.
-  const listing = gitSyncQuiet(config.repoRoot, "worktree", "list", "--porcelain",);
-  let currentPath: string | null = null;
-  for (const line of listing.split("\n",)) {
-    if (line.startsWith("worktree ",)) {
-      currentPath = line.slice("worktree ".length,);
-    } else if (line === `branch refs/heads/${branch}` && currentPath) {
-      return currentPath;
-    }
-  }
-  return null;
-}
-
 function gpgMergeFlags(config: WorktreeConfig,): string[] {
   if (!config.agentGpgKeyId) { return []; }
   const gpgCheck = Bun.spawnSync(
@@ -731,7 +711,7 @@ export async function finalize(
     process.exit(1,);
   }
 
-  const wtPath = findWorktree(branch, config,);
+  const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
   if (!wtPath) {
     log("error", `no worktree found for branch '${branch}'`,);
     process.exit(1,);

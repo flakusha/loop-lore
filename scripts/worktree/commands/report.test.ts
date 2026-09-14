@@ -97,4 +97,42 @@ describe("worktree report", () => {
     expect(output,).toContain("malformed report",);
     expect(output,).toContain("valid-branch",);
   });
+
+  test("includes check reports from worktrees checked out outside tree/", async () => {
+    // Real git fixture: unique temp root, omp-style external checkout whose
+    // dir name carries a session suffix. Teardown via the shared afterEach.
+    const root = mkdtempSync(join("/tmp", "worktree-report-ext-",),);
+    tempRoots.push(root,);
+    const runGit = (...args: string[]): void => {
+      const proc = Bun.spawnSync(["git", "-C", root, ...args,], { stdout: "ignore", stderr: "ignore", },);
+      if (proc.exitCode !== 0) { throw new Error(`git ${args.join(" ",)} failed`,); }
+    };
+    Bun.spawnSync(["git", "init", "-q", "-b", "dev", root,], { stdout: "ignore", stderr: "ignore", },);
+    runGit("config", "user.name", "test",);
+    runGit("config", "user.email", "test@test",);
+    runGit("commit", "--allow-empty", "-m", "init",);
+    runGit("branch", "omp-branch",);
+    const external = join(root, "external", "omp-branch-a863f47",);
+    mkdirSync(join(root, "external",), { recursive: true, },);
+    runGit("worktree", "add", external, "omp-branch",);
+    const externalReportDir = join(external, ".tmp",);
+    mkdirSync(externalReportDir, { recursive: true, },);
+    writeFileSync(
+      join(externalReportDir, "check-report.json",),
+      JSON.stringify({
+        branch: "omp-branch",
+        gitHead: "def5678",
+        runId: "run-ext",
+        mode: "plain",
+        gates: { typecheck: { status: "passed", }, },
+        passed: true,
+        timestamp: "2026-09-14T00:00:00.000Z",
+      },),
+    );
+
+    const output = await captureOutput({ repoRoot: root, treeDir: join(root, "tree",), },);
+
+    expect(output,).toContain("omp-branch",);
+    expect(output,).toContain("def5678",);
+  });
 });
