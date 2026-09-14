@@ -3494,6 +3494,10 @@
   "src/build/compress.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-frontend-bundle-optimization.md"
     },
     {
@@ -3503,6 +3507,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-insert-log-fatal-and-log-trace-calls-at-key-sites.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     },
     {
       "kind": "spec",
@@ -6109,6 +6117,42 @@
       "source": ".plan/tickets/TASK-cli-import-export.md"
     }
   ],
+  "src/cli/log.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    }
+  ],
+  "src/cli/parser.test.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
+    }
+  ],
+  "src/cli/parser.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
+    }
+  ],
+  "src/cli/valueparsers.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
+    }
+  ],
   "src/components/analytics/dashboard.html": [
     {
       "kind": "ticket",
@@ -6957,6 +7001,16 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
+    }
+  ],
+  "src/config/migrate-config.ts": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     }
   ],
   "src/config/schema-class.ts": [
@@ -25947,14 +26001,30 @@
   ],
   "src/scripts/commit-check.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/platform-support.md"
     }
   ],
   "src/scripts/version-bump.ts": [
     {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
+    {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-optique-cli-tooling-integration.md"
     },
     {
       "kind": "spec",
@@ -25965,6 +26035,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-script-migration.md"
+    }
+  ],
+  "src/scripts/worktree/index.mjs": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
     }
   ],
   "src/scripts/worktree/templates.ts": [
@@ -27612,6 +27688,10 @@
   "src/tui/app.ts": [
     {
       "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
+    {
+      "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
     },
     {
@@ -27944,6 +28024,10 @@
     }
   ],
   "src/utils": [
+    {
+      "kind": "epic",
+      "source": ".plan/epics/epic-cli-tooling-optique.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-mood-shift-delta-tuning-word-boundary.md"
