@@ -5333,6 +5333,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-rpg-chronological-navigation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/chat/service/carry-location.ts": [
@@ -5355,6 +5359,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-locations-worlds-finalize-current-implementation.md"
+    }
+  ],
+  "src/chat/service/carry-memory.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/chat/service/carry-world-state.ts": [
@@ -5405,6 +5415,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-locations-worlds-finalize-current-implementation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     },
     {
       "kind": "ticket",
@@ -8567,6 +8581,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/db/content-version.test.ts": [
@@ -9035,6 +9053,12 @@
       "source": ".plan/tickets/TASK-adopt-state-machine-framework-in-runtime-status-writes.md"
     }
   ],
+  "src/db/enums-story/world.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    }
+  ],
   "src/db/enums.ts": [
     {
       "kind": "epic",
@@ -9209,6 +9233,12 @@
       "source": ".plan/tickets/TASK-cleanup-banned-types-console-logging-magic-strings.md"
     }
   ],
+  "src/db/migration-roundtrip.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    }
+  ],
   "src/db/migrations": [
     {
       "kind": "ticket",
@@ -9301,6 +9331,12 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
+    }
+  ],
+  "src/db/migrations/008_memory_source_chain.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/db/migrations/008_moderation.ts": [
@@ -9603,6 +9639,10 @@
       "source": ".plan/tickets/BUG-chat-message-delete-soft-fails-compliance.md"
     },
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/migrations.md"
     }
@@ -9735,6 +9775,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-link-npc-inventory.md"
+    }
+  ],
+  "src/db/migrations/parts/012_memory.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/db/migrations/parts/016_fts.ts": [
@@ -15757,6 +15803,12 @@
       "source": ".plan/tickets/TASK-fix-cross-file-mock-module-leaks-under-non-isolated-and-cove.md"
     }
   ],
+  "src/generation/generate-route/non-stream.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    }
+  ],
   "src/generation/generate-route/stream-to-client.test.ts": [
     {
       "kind": "ticket",
@@ -15775,6 +15827,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/generation/generate-route/tool-execution.test.ts": [
@@ -17699,6 +17755,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-context-injection-dedup.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/memory/embeddings.ts": [
@@ -17709,6 +17769,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/integrations/llm-serving.md"
+    }
+  ],
+  "src/memory/extraction.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/memory/extraction.ts": [
@@ -17734,7 +17800,23 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-promotion-pipeline.md"
+    }
+  ],
+  "src/memory/history-search.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
+    }
+  ],
+  "src/memory/history-search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/memory/injection/decide.ts": [
@@ -17765,6 +17847,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-feature-context-memory-events.md"
+    }
+  ],
+  "src/memory/injection/types.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/memory/isolation.ts": [
@@ -17889,6 +17977,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-emotion-impact.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/messages/handle-scene-transitions.ts": [
@@ -20387,6 +20479,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
   "src/routes/actor-notes.ts": [
@@ -28033,6 +28129,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-actor-item-value-type.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     },
     {
       "kind": "ticket",
