@@ -157,7 +157,6 @@ export const EmotionTypeSchema = t.UnionEnum([
 export const EncryptionCompressionSchema = t.UnionEnum(["gzip", "brotli", "zstd",],);
 export const EncryptionLevelSchema = t.UnionEnum(["none", "standard", "at-rest",],);
 export const EquipStateSchema = t.UnionEnum(["unequipped", "equipped",],);
-
 export const ExtractionKindSchema = t.UnionEnum([
   "single_response",
   "burst",
