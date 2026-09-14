@@ -47,6 +47,8 @@ export interface ExpandedMemoryContext {
  * (65535) variable limits regardless of dialect; hoist to chunked fetching
  * if real chains ever need more than 500 messages.
  */
+// NOTE: 500 is a policy bound, not a measured optimum — revisit if real
+// compaction chains approach it.
 export const MAX_CHAIN_IDS = 500;
 
 /** */
