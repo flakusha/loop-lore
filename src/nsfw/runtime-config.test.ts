@@ -14,6 +14,7 @@ import {
   applyStoredNsfwConfig,
   getRuntimeNsfwConfig,
   initNsfwRuntimeConfig,
+  resetNsfwRuntimeConfig,
   updateRuntimeNsfwConfig,
 } from "./runtime-config";
 
@@ -23,14 +24,7 @@ describe("nsfw runtime config store", () => {
   // leaks into later test files (order-dependent false failures, e.g.
   // assistant/prompt/sections/nsfw-policy).
   afterEach(() => {
-    initNsfwRuntimeConfig({
-      allowNsfw: true,
-      nsfwMinAge: 18,
-      defaultNsfwScope: "chat",
-      consentRequired: true,
-      auditLogging: true,
-      useLlmClassifier: false,
-    },);
+    resetNsfwRuntimeConfig();
   },);
   test("init seeds defaults and preserves file-provided values", () => {
     initNsfwRuntimeConfig({
