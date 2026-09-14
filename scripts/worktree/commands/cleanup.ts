@@ -10,8 +10,11 @@ export async function execute(
   _args: string[],
   config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
 ): Promise<void> {
-  if (!existsSync(config.treeDir,)) {
-    log("info", "no tree/ directory — nothing to clean",);
+  // Iterate every known container: `tree/` (canonical) and `OMP_WORKTREE_DIR`
+  // (omp's sibling container). Each is independently skippable when absent.
+  const containers = config.worktreeDirs.filter((d,) => existsSync(d,));
+  if (containers.length === 0) {
+    log("info", "no worktree containers found — nothing to clean",);
     return;
   }
 
@@ -19,47 +22,49 @@ export async function execute(
   const worktrees = await getWorktrees(config.repoRoot,);
   let removed = 0;
 
-  const entries = readdirSync(config.treeDir, { withFileTypes: true, },);
-  for (const entry of entries) {
-    if (!entry.isDirectory()) { continue; }
-    const wtPath = resolve(config.treeDir, entry.name,);
+  for (const dirPath of containers) {
+    const entries = readdirSync(dirPath, { withFileTypes: true, },);
+    for (const entry of entries) {
+      if (!entry.isDirectory()) { continue; }
+      const wtPath = resolve(dirPath, entry.name,);
 
-    // Find matching worktree entry
-    const wt = worktrees.find(w => w.path === wtPath);
-    if (!wt || !wt.branch) {
-      console.log(`  ${colorize("Skipped (detached HEAD):", "yellow",)} ${wtPath}`,);
-      continue;
-    }
+      // Find matching worktree entry
+      const wt = worktrees.find(w => w.path === wtPath);
+      if (!wt || !wt.branch) {
+        console.log(`  ${colorize("Skipped (detached HEAD):", "yellow",)} ${wtPath}`,);
+        continue;
+      }
 
-    const branch = wt.branch.replace("refs/heads/", "",);
+      const branch = wt.branch.replace("refs/heads/", "",);
 
-    // Check if branch still exists
-    try {
-      gitSync(config.repoRoot, "rev-parse", "--verify", branch,);
-      console.log(`  ${colorize("Kept:", "green",)} ${wtPath} (branch '${branch}' exists)`,);
-    } catch {
-      console.log(`  ${colorize("Removing stale:", "red",)} ${wtPath} (branch '${branch}' deleted)`,);
-      const result = Bun.spawnSync(
-        ["git", "-C", config.repoRoot, "worktree", "remove", wtPath,],
-        { stdout: "pipe", stderr: "pipe", },
-      );
-      if (result.exitCode === 0) {
-        removed++;
+      // Check if branch still exists
+      try {
+        gitSync(config.repoRoot, "rev-parse", "--verify", branch,);
+        console.log(`  ${colorize("Kept:", "green",)} ${wtPath} (branch '${branch}' exists)`,);
+      } catch {
+        console.log(`  ${colorize("Removing stale:", "red",)} ${wtPath} (branch '${branch}' deleted)`,);
+        const result = Bun.spawnSync(
+          ["git", "-C", config.repoRoot, "worktree", "remove", wtPath,],
+          { stdout: "pipe", stderr: "pipe", },
+        );
+        if (result.exitCode === 0) {
+          removed++;
+        }
       }
     }
-  }
 
-  // Clean up empty directories
-  for (const entry of readdirSync(config.treeDir, { withFileTypes: true, },)) {
-    if (!entry.isDirectory()) { continue; }
-    const dirPath = resolve(config.treeDir, entry.name,);
-    try {
-      const remaining = readdirSync(dirPath,);
-      if (remaining.length === 0) {
-        rmSync(dirPath, { recursive: true, },);
+    // Clean up empty directories under this container
+    for (const entry of readdirSync(dirPath, { withFileTypes: true, },)) {
+      if (!entry.isDirectory()) { continue; }
+      const dirSubPath = resolve(dirPath, entry.name,);
+      try {
+        const remaining = readdirSync(dirSubPath,);
+        if (remaining.length === 0) {
+          rmSync(dirSubPath, { recursive: true, },);
+        }
+      } catch {
+        // skip
       }
-    } catch {
-      // skip
     }
   }
 

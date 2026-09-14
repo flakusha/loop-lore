@@ -12,12 +12,24 @@ import { log, } from "./output";
 
 export interface WorktreeConfig {
   repoRoot: string;
+  /**
+   * Primary worktree container — canonical in-repo `tree/`, or `TREE_DIR` env
+   * override. The shared agent ledger lives here so all worktrees see one
+   * `tree/.ledger.jsonl`. Kept for ledger/credential paths; *read* and *create*
+   * operations should consult `worktreeDirs` and `git worktree list` instead.
+   */
   treeDir: string;
+  /**
+   * All known worktree container dirs in priority order: `tree/` (canonical),
+   * then `OMP_WORKTREE_DIR` (omp's out-of-repo sibling), then any
+   * `EXTRA_TREE_DIRS`. New worktrees land in the first writable entry;
+   * readers fall back through the list when a branch isn't in the primary.
+   */
+  worktreeDirs: string[];
   agentGpgKeyId?: string;
   agentGpgName?: string;
   agentGpgEmail?: string;
 }
-
 async function findCredentials(startDir: string,): Promise<string | null> {
   let dir = startDir;
   while (dir !== "/") {
@@ -50,6 +62,19 @@ export async function loadConfig(): Promise<WorktreeConfig> {
   // an opt-in escape hatch for CI / non-standard layouts.
   const repoRoot = process.env.REPO_ROOT ?? findRepoRoot();
   const treeDir = process.env.TREE_DIR ?? resolve(repoRoot, "tree",);
+  // worktreeDirs expands `tree/` to also include omp's out-of-repo sibling
+  // (`OMP_WORKTREE_DIR`) and any `EXTRA_TREE_DIRS`. The canonical in-repo
+  // `tree/` stays first so existing layouts and the agent ledger (which
+  // lives at <treeDir>/.ledger.jsonl) keep working without surprises.
+  const worktreeDirs: string[] = [treeDir,];
+  const ompDir = process.env.OMP_WORKTREE_DIR;
+  if (ompDir && !worktreeDirs.includes(ompDir,)) { worktreeDirs.push(ompDir,); }
+  const extra = process.env.EXTRA_TREE_DIRS;
+  if (extra) {
+    for (const p of extra.split(":",).map((s,) => s.trim()).filter(Boolean,)) {
+      if (!worktreeDirs.includes(p,)) { worktreeDirs.push(p,); }
+    }
+  }
 
   // Load agent credentials from main repo
   const mainRepoRoot = await findCredentials(repoRoot,);
@@ -74,6 +99,7 @@ export async function loadConfig(): Promise<WorktreeConfig> {
   return {
     repoRoot,
     treeDir,
+    worktreeDirs,
     agentGpgKeyId,
     agentGpgName,
     agentGpgEmail,
@@ -110,13 +136,33 @@ export async function resolveBranch(
     gitSync(repoRoot, "rev-parse", "--verify", input,);
     return input;
   } catch {
-    // Try as directory name
+    // Try as directory name across every known container — `tree/` (the
+    // repo's own) plus omp's sibling (`OMP_WORKTREE_DIR`) and any extras
+    // (`EXTRA_TREE_DIRS`). Dir names under omp's container carry a
+    // short-hash suffix (`branch-<hash>`) so we match `<dirName>` first
+    // and then `<dirName>-*` to cover that shape.
     const dirName = branchToPath(input,);
-    const worktreePath = resolve(repoRoot, "tree", dirName,);
-    const gitExists = await Bun.file(resolve(worktreePath, ".git",),).exists();
-    if (gitExists) {
-      const headRef = gitSync(worktreePath, "symbolic-ref", "--short", "HEAD",);
-      if (headRef) { return headRef; }
+    const candidates = [
+      dirName,
+      ...(process.env.OMP_WORKTREE_DIR ? [`${dirName}-`,] : []),
+    ];
+    const roots = [
+      resolve(repoRoot, "tree",),
+      ...(process.env.OMP_WORKTREE_DIR ? [process.env.OMP_WORKTREE_DIR,] : []),
+    ];
+    for (const root of roots) {
+      for (const cand of candidates) {
+        const entries = await Array.fromAsync(
+          new Bun.Glob(`${cand}*`,).scan({ cwd: root, onlyFiles: false, },),
+        );
+        for (const entry of entries) {
+          const worktreePath = resolve(root, entry,);
+          const gitExists = await Bun.file(resolve(worktreePath, ".git",),).exists();
+          if (!gitExists) { continue; }
+          const headRef = gitSync(worktreePath, "symbolic-ref", "--short", "HEAD",);
+          if (headRef === input) { return headRef; }
+        }
+      }
     }
     return "";
   }

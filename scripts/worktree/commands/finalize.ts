@@ -5,11 +5,21 @@ import { existsSync, } from "fs";
 import { closeSync, openSync, readFileSync, unlinkSync, writeSync, } from "node:fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
-import { findWorktreeByBranch, getRootBranch, gitSync, gitSyncQuiet, } from "../utils/git";
+import {
+  findWorktreeByBranch,
+  findWorktreeForBranchSync,
+  getRootBranch,
+  getWorktrees,
+  gitSync,
+  gitSyncQuiet,
+} from "../utils/git";
 import { assertAgentGpgUnlocked, } from "../utils/gpg";
 import { appendGripe, printRecentLedger, } from "../utils/ledger";
 import { log, section, } from "../utils/output";
 import { DEV_IN_PROGRESS_HEADS, FINALIZE_STASH_PREFIX, } from "./abort";
+
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 const LOCK_FILENAME = ".worktree-finalize.lock";
 // Signals we treat as user-initiated cancellation. SIGINT (Ctrl-C), SIGTERM
@@ -686,23 +696,17 @@ export async function finalize(
     process.exit(1,);
   }
 
-  if (!branch) {
-    log("error", "branch name required",);
-    console.log(
-      "  Usage: worktree finalize <branch> [--merge-strategy rebase|squash|direct] [--force] [--gates <csv>] [--skip-gates <csv>]",
-    );
-    process.exit(1,);
-  }
-
-  // Resolve directory name to branch name
-  const dirName = branchToPath(branch,);
-  const dirPath = resolve(config.treeDir, dirName,);
-  if (existsSync(resolve(dirPath, ".git",),)) {
-    const headRef = gitSync(dirPath, "symbolic-ref", "--short", "HEAD",);
+  // Resolve directory name to branch name: scan every known container so
+  // an omp-sibling dir (`<branch>-<hash>`) is also caught. Git is the
+  // source of truth — `tree/<branch>` is just the conventional layout.
+  const listing = await getWorktrees(config.repoRoot,);
+  const worktreePath = findWorktreeForBranchSync(listing, branch,);
+  if (worktreePath) {
+    const headRef = gitSync(worktreePath, "symbolic-ref", "--short", "HEAD",);
     if (headRef && headRef !== branch) {
       log("info", `Resolved '${branch}' -> branch '${headRef}'`,);
       branch = headRef;
-      gripeBranch = branch;
+      gripeBranch = headRef;
     }
   }
 
@@ -712,6 +716,7 @@ export async function finalize(
   }
 
   const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
+
   if (!wtPath) {
     log("error", `no worktree found for branch '${branch}'`,);
     process.exit(1,);
