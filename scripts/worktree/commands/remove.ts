@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { existsSync, } from "fs";
-import { resolve, } from "path";
-import { branchToPath, } from "../utils/config";
-import { gitSync, } from "../utils/git";
+import { findWorktreeByBranch, gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
 
 export async function execute(
@@ -18,10 +15,9 @@ export async function execute(
     process.exit(1,);
   }
 
-  const dirName = branchToPath(branch,);
-  const wtPath = resolve(config.treeDir, dirName,);
+  const wtPath = await findWorktreeByBranch(config.repoRoot, config.treeDir, branch,);
 
-  if (!existsSync(resolve(wtPath, ".git",),)) {
+  if (!wtPath) {
     log("error", `no worktree found for branch '${branch}'`,);
     process.exit(1,);
   }
