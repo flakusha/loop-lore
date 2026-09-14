@@ -16,6 +16,7 @@ import { GameMasterType, } from "../db/enums";
 import { setTestDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { resetNsfwRuntimeConfig, } from "../nsfw/runtime-config";
 import { NSFW_POLICY_LEVELS_PROMPT, } from "../prompts";
 import { createTestDb, resetTestDb, } from "../test-utils/create-test-db";
 import { GameMasterService, type GenerateTextFn, } from "./game-master";
@@ -30,6 +31,9 @@ beforeAll(async () => {
   const env = await createTestDb();
   testDb = env.db;
   testSqlite = env.sqlite;
+},);
+beforeEach(() => {
+  resetNsfwRuntimeConfig();
 },);
 
 // ── Seed helpers ──────────────────────────────────────────────
