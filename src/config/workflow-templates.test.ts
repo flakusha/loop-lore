@@ -96,13 +96,14 @@ describe("validateWorkflowConfig", () => {
 
 describe("findWorkflowFiles + loadTemplateConfig", () => {
   test("discovers workflows dir and merges entries into config", () => {
-    const dir = path.join(
+    const scratchRoot = path.join(
       import.meta.dir,
       "..",
       "..",
-      ".test-workflows-",
-      `${Date.now()}`,
+      ".tmp",
+      `test-workflows-${crypto.randomUUID().slice(0, 8,)}-${Date.now()}`,
     );
+    const dir = scratchRoot;
     const workflowsDir = path.join(dir, "configs", "templates", "workflows",);
     mkdirSync(workflowsDir, { recursive: true, },);
     writeFileSync(
@@ -131,7 +132,7 @@ describe("findWorkflowFiles + loadTemplateConfig", () => {
       const config = loadTemplateConfig(dir,);
       expect(config.workflows.workflows["test-extra"]?.name,).toBe("Extra",);
     } finally {
-      rmSync(dir, { recursive: true, force: true, },);
+      rmSync(scratchRoot, { recursive: true, force: true, },);
     }
   });
 });
