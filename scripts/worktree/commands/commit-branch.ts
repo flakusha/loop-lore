@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Agent commit command — GPG-signed commit from worktree
+ * Commit-branch command — GPG-signed commit from a worktree branch
  */
 
 import { existsSync, } from "fs";
@@ -21,7 +21,7 @@ export function isProtected(branch: string,): boolean {
   return PROTECTED_BRANCHES.includes(branch,);
 }
 
-export async function agentCommit(
+export async function commitBranch(
   args: string[],
   config: WorktreeConfig,
 ): Promise<void> {
@@ -31,19 +31,19 @@ export async function agentCommit(
 
   if (!branch) {
     log("error", "branch required",);
-    console.log('  Usage: index.mjs agent-commit <branch> [-F <file>|--message-file <file>] "<message>"',);
+    console.log('  Usage: index.mjs commit-branch <branch> [-F <file>|--message-file <file>] "<message>"',);
     process.exit(1,);
   }
 
   const validation = validateMessage(message,);
   if (!validation.ok) {
     log("error", `commit message rejected: ${validation.reason}`,);
-    console.log('  Example: index.mjs agent-commit <branch> -F - <<< "fix(worktree): handle empty stdin"',);
+    console.log('  Example: index.mjs commit-branch <branch> -F - <<< "fix(worktree): handle empty stdin"',);
     process.exit(1,);
   }
 
   if (isProtected(branch,)) {
-    log("error", `cannot agent-commit on protected branch '${branch}'`,);
+    log("error", `cannot commit-branch on protected branch '${branch}'`,);
     process.exit(1,);
   }
 
@@ -154,5 +154,5 @@ export async function agentCommit(
   // Outcome dispatch: the generic auto-append in index.ts recorded the
   // invocation; this records what landed (short SHA + subject).
   const commitSha = gitSyncQuiet(wtPath, "rev-parse", "HEAD",);
-  appendCommitOutcome(config.treeDir, "agent-commit", branch, commitSha, message,);
+  appendCommitOutcome(config.treeDir, "commit-branch", branch, commitSha, message,);
 }

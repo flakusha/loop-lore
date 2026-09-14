@@ -218,12 +218,12 @@ export function appendGripe(treeDir: string, branch: string, message: string,): 
 /**
  * Record a commit outcome: a `<cmd>`-cmd ledger record carrying the new
  * commit's short SHA plus subject line. Called by `commit` and
- * `agent-commit` after a successful GPG-signed commit so the shared
+ * `commit-branch` after a successful GPG-signed commit so the shared
  * ledger shows what landed, not just that a commit ran (the generic
  * auto-append in `index.ts` records the invocation). Best-effort.
  *
  * @param treeDir - shared tree directory
- * @param cmd - "commit" or "agent-commit"
+ * @param cmd - "commit" or "commit-branch"
  * @param branch - committed branch ("" when unknown)
  * @param sha - full commit SHA (shortened to 9 chars)
  * @param subject - commit message (first line only)
