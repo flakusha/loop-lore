@@ -5,9 +5,8 @@
  * Coverage tests for character-growth routes (arc read + growth-log read)
  * plus the colocated request helpers (error mapping + param guards).
  *
- * PATCH /arc and the confirm/reject endpoints declare params schemas the
- * route paths cannot satisfy, so Elysia rejects them with 422 before the
- * handlers run; those cases pin the current behavior.
+ * Missing actorId is rejected by Elysia query validation (422, on: query),
+ * matching the GET endpoints; satisfied requests flow through to auth/service.
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -188,7 +187,7 @@ describe("characterGrowthRoutes coverage", () => {
     expect(badAxis.status,).toBe(422,);
   });
 
-  test("PATCH arc and confirm/reject are rejected by param validation", async () => {
+  test("PATCH arc and confirm/reject require actorId via query", async () => {
     const patch = await app.handle(
       new Request("http://localhost/api/character-growth/arc", {
         method: "PATCH",
@@ -209,6 +208,12 @@ describe("characterGrowthRoutes coverage", () => {
       },),
     );
     expect(reject.status,).toBe(422,);
+    const authed = await app.handle(
+      new Request(`http://localhost/api/character-growth/growth-log/${uid()}/confirm?actorId=${actorId}`, {
+        method: "POST",
+      },),
+    );
+    expect([200, 404, 409,],).toContain(authed.status,);
   });
 });
 

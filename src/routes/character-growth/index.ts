@@ -68,7 +68,7 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
     },)
     // ── Set arc stage (author/owner/GM via requireActorAccess) ────
     .patch(`${R}/arc`, async (ctx,) => {
-      const actorId = getString(ctx.params, "actorId",);
+      const actorId = getString(ctx.query, "actorId",);
       if (!actorId) { return jsonError("actorId is required", 400,); }
       const access = await requireActorAccess(
         { ...ctx, params: { actorId, }, } as Parameters<typeof requireActorAccess>[0],
@@ -90,7 +90,7 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
         return errResponse(error,);
       }
     }, {
-      params: t.Object({ actorId: t.String(), },),
+      query: t.Object({ actorId: t.String(), },),
       body: upsertArcBody,
       detail: {
         summary: "Set character arc stage",
@@ -136,7 +136,7 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
     },)
     // ── Confirm pending entry ───────────────────────────────
     .post(`${R}/growth-log/:entryId/confirm`, async (ctx,) => {
-      const actorId = getString(ctx.params, "actorId",);
+      const actorId = getString(ctx.query, "actorId",);
       const entryId = getString(ctx.params, "entryId",);
       if (!actorId || !entryId) { return jsonError("actorId and entryId are required", 400,); }
       const access = await requireActorAccess(
@@ -155,7 +155,8 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
         return errResponse(error,);
       }
     }, {
-      params: t.Object({ actorId: t.String(), entryId: t.String(), },),
+      params: t.Object({ entryId: t.String(), },),
+      query: t.Object({ actorId: t.String(), },),
       detail: {
         summary: "Confirm a pending growth_log entry",
         description: "Author/owner/GM applies a pending LLM-assist proposal.",
@@ -164,7 +165,7 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
     },)
     // ── Reject pending entry ────────────────────────────────
     .post(`${R}/growth-log/:entryId/reject`, async (ctx,) => {
-      const actorId = getString(ctx.params, "actorId",);
+      const actorId = getString(ctx.query, "actorId",);
       const entryId = getString(ctx.params, "entryId",);
       if (!actorId || !entryId) { return jsonError("actorId and entryId are required", 400,); }
       const access = await requireActorAccess(
@@ -183,7 +184,8 @@ export function characterGrowthRoutes(opts: HandlerOpts,) {
         return errResponse(error,);
       }
     }, {
-      params: t.Object({ actorId: t.String(), entryId: t.String(), },),
+      params: t.Object({ entryId: t.String(), },),
+      query: t.Object({ actorId: t.String(), },),
       detail: {
         summary: "Reject a pending growth_log entry",
         description: "Author/owner/GM rejects a pending LLM-assist proposal.",
