@@ -12,4 +12,17 @@ src/middleware/csrf.ts cookieForDecision uses resolveCookieSecure(opts.cookieSec
 
 - [x] Implementation complete
 - [x] Tests passing
-- [ ] Documentation updated
+## Resolution
+
+- **Branch:** `fix-csrf-ll-cookie-secure-wiring`
+- **Commits:**
+  - `c6a32eedb` (became `3cf92a48f` after rebase) `fix(csrf): wire LL_COOKIE_SECURE into csrf_token cookie Secure flag`
+  - `81bb05723` (became `a707bc330` after rebase) `chore(size): bump csrf.ts and elysia-app.ts size-allow for new helper`
+- **What landed:** added `readCookieSecureOverrideFromEnv` (`src/middleware/csrf.ts:103`) that maps `LL_COOKIE_SECURE` (`"true"` → `true`, `"false"` → `false`, anything else → `undefined`). Wired into `csrfOpts.cookieSecureOverride` in `src/elysia-app.ts:122`. Removed dead `src/middleware/csrf-wiring.ts`.
+- **Coverage:**
+  - Unit (5): `readCookieSecureOverrideFromEnv` — `"true"`, `"false"`, unset, `"1"/"yes"/""`, case-sensitive `TRUE`/`True`
+  - Unit (5): `cookieForDecision` — override=true, override=false, cookieSecureInProd default, NODE_ENV derivation, no-override behavior
+  - Integration (4): NODE_ENV=production, NODE_ENV unset, `LL_COOKIE_SECURE=true`, `LL_COOKIE_SECURE=false` (regression guard)
+  - 325/325 middleware tests pass; `bun run check` 24/24 gates pass
+- **Aligned with:** `src/routes/auth/shared.ts::setTokenCookie` (case-sensitive, same decision matrix, same override names)
+- **Out of scope:** documentation AC checkbox remains open — no `.md` files mention `LL_COOKIE_SECURE` yet, deferring to a docs sweep ticket.
