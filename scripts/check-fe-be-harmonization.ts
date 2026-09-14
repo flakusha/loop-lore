@@ -22,9 +22,12 @@ import path from "node:path";
 const ROOT = path.resolve(import.meta.dir, "..",);
 const FE_DIRS = ["src/frontend", "src/components", "src/views", "src/partials",];
 const BE_SCAN_DIRS = ["src/routes", "src",];
+const BE_EXTRA_FILES = ["src/elysia-app.ts",];
 const BE_FILE_RE = /(route|controller)\.ts$/i;
 function isBeFile(p: string,): boolean {
   if (p.includes("/routes/",)) { return true; }
+  const rel = path.relative(ROOT, p,);
+  if (BE_EXTRA_FILES.includes(rel,)) { return true; }
   return BE_FILE_RE.test(path.basename(p,),);
 }
 const SCHEMA_DIR = path.join(ROOT, "src", "validation", "schemas",);
@@ -144,6 +147,29 @@ function scanFe(): FeCall[] {
 }
 
 /** Slice of the call expression starting at `from` (matches parens, strings, templates). */
+function skipInterpolation(src: string, i: number,): number {
+  let b = 1;
+  let j = i + 2;
+  while (j < src.length && b > 0) {
+    if (src[j] === "{") { b++; }
+    if (src[j] === "}") { b--; }
+    j++;
+  }
+  return j;
+}
+
+/** Consume one quoted char inside a string; reports new index + quote state. */
+function stepInString(src: string, i: number, q: string, esc: boolean,): { next: number; quote: string; escaped: boolean } {
+  const ch = src[i] ?? "";
+  if (esc) { return { next: i + 1, quote: q, escaped: false, }; }
+  if (ch === "\\") { return { next: i + 1, quote: q, escaped: true, }; }
+  if (ch === q) { return { next: i + 1, quote: "", escaped: false, }; }
+  if (q === "`" && ch === "$" && src[i + 1] === "{") {
+    return { next: skipInterpolation(src, i,), quote: q, escaped: false, };
+  }
+  return { next: i + 1, quote: q, escaped: false, };
+}
+
 function callExtent(src: string, from: number,): string {
   const open = src.indexOf("(", from,);
   if (open < 0) { return ""; }
@@ -152,22 +178,9 @@ function callExtent(src: string, from: number,): string {
   let q = "";
   let esc = false;
   while (i < src.length) {
-    const ch = src[i] ?? "";
     if (q) {
-      if (esc) { esc = false; }
-      else if (ch === "\\") { esc = true; }
-      else if (ch === q) { q = ""; }
-      else if (q === "`" && ch === "$" && src[i + 1] === "{") {
-        let b = 1;
-        i += 2;
-        while (i < src.length && b > 0) {
-          if (src[i] === "{") { b++; }
-          if (src[i] === "}") { b--; }
-          i++;
-        }
-        continue;
-      }
-      i++;
+      const st = stepInString(src, i, q, esc,);
+      i = st.next; q = st.quote; esc = st.escaped;
       continue;
     }
     if (ch === '"' || ch === "'" || ch === "`") { q = ch; }
@@ -222,10 +235,12 @@ function scanBe(): BeRoute[] {
         }
         return out;
       };
-      const re = /\.(get|post|put|patch|delete)\s*\(\s*(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g;
+      const re = /\.(get|post|put|patch|delete|all)\s*\(\s*(`(?:[^`\\]|\\.)*`|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g;
       let m: RegExpExecArray | null;
       while ((m = re.exec(src,)) !== null) {
-        const method = ((m[1] ?? "get") as string).toUpperCase();
+        const verb = ((m[1] ?? "get") as string).toUpperCase();
+        if (verb === "ALL") { continue; }
+        const method = verb;
         const lit = (m[2] ?? "") as string;
         const raw = resolveConsts(lit.slice(1, -1,),);
         if (!raw.startsWith("/",) && !raw.includes("${",)) { continue; }
@@ -242,9 +257,28 @@ function scanBe(): BeRoute[] {
           querySchema: query,
         },);
       }
+      expandEntityFactories(src, rel, out,);
     }
   }
   return out;
+}
+
+/** Expand createEntityRoutes({parentPrefix, parentParam, entityPath}) into CRUD. */
+function expandEntityFactories(src: string, rel: string, out: BeRoute[],): void {
+  const cfg = /parentPrefix:\s*"([^"]+)"[\s\S]{0,200}?parentParam:\s*"([^"]+)"[\s\S]{0,200}?entityPath:\s*"([^"]+)"/.exec(src,);
+  if (!cfg) { return; }
+  const base = `/api/${cfg[1]}/:${cfg[2]}/${cfg[3]}`;
+  const line = lineOf(src, cfg.index,);
+  const crud: Array<[string, string]> = [
+    ["GET", base,],
+    ["POST", base,],
+    ["GET", `${base}/:entityId`,],
+    ["PUT", `${base}/:entityId`,],
+    ["DELETE", `${base}/:entityId`,],
+  ];
+  for (const [method, p,] of crud) {
+    out.push({ method, path: norm(p,), raw: p, file: rel, line, bodySchema: null, querySchema: null, },);
+  }
 }
 
 function scanSchemas(): Map<string, { required: string[]; optional: string[] }> {
