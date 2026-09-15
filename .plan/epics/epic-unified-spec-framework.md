@@ -43,26 +43,31 @@ loop-lore keeps one source of truth for that file.
 ## Acceptance Scenarios
 
 ### Scenario: New ticket passes validation
+
 - **GIVEN** an agent scaffolds a new `TASK-<slug>.md` via `bun run scripts/spec/new task <slug>`
 - **WHEN** the agent runs `bun run scripts/spec/validate`
 - **THEN** the file passes (has YAML frontmatter with all required keys, has `## Summary`, `## Acceptance Scenarios`, `## Related`, `## Files`, `## Verification` sections)
 
 ### Scenario: Legacy ticket survives validation
+
 - **GIVEN** a pre-existing ticket without frontmatter (existing ~2100 tickets)
 - **WHEN** `bun run scripts/spec/validate` runs (Phase B after migrate)
 - **THEN** the ticket is reported once with `_legacy: true` and `legacy_aliases` populated; does not block CI
 
 ### Scenario: index.json stays canonical
+
 - **GIVEN** `bun run scripts/spec/index-build` rewrites index entries from frontmatter
 - **WHEN** the build completes
 - **THEN** the `tickets/index.json` file still passes the existing `scripts/worktree/sync` parser; `git_issue` and `hash` fields untouched; only `updated` / `frontmatter` / `legacy_aliases` keys added
 
 ### Scenario: Convergence emits carryover
+
 - **GIVEN** a merged worktree branch with `.plan/changes/<slug>/` and `## Acceptance Scenarios` blocks
 - **WHEN** `bun run scripts/spec/converge <branch>` runs
 - **THEN** an actionable `carryover.md` is written listing each scenario whose observable outcome was not found in `git log <base>..<branch>` or in tests; failure mode is loud (exit 1 if any scenario unchecked)
 
 ### Scenario: Migration preserves prose
+
 - **GIVEN** `bun run scripts/spec/migrate` runs against a legacy ticket
 - **WHEN** the migration completes
 - **THEN** all prose below the frontmatter is byte-equal to the input; only the frontmatter block is added; status / priority / effort canonicalized via alias map; `_legacy: true` set
