@@ -1,15 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/config/schema-class/server.ts — server section defaults
-import { DATA_DIR, } from "../constants";
-import type { ServerConfig, } from "../schema";
-
-export const SERVER_DEFAULTS = {
-  port: 3000,
-  host: "localhost",
-  tls: {
-    key: `${DATA_DIR}/certs/key.pem`,
-    cert: `${DATA_DIR}/certs/cert.pem`,
-  },
-} satisfies ServerConfig;
+// src/config/schema-class/server.ts — re-export: single source in sections/server.ts
+// Sections copy is canonical: adds trustProxy matching ServerConfig.
+export { SERVER_DEFAULTS, } from "../sections/server";

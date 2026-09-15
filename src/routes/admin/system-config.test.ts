@@ -131,4 +131,61 @@ describe("admin system-config routes", () => {
     );
     expect(res.status,).toBe(403,);
   });
+
+  test("GET /api/admin/config-schema returns Meta-derived sections", async () => {
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(new Request("http://localhost/api/admin/config-schema",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { properties: Record<string, unknown> };
+    expect(body.properties.server,).toBeTruthy();
+    expect(body.properties.auth,).toBeTruthy();
+    // Meta-derived: secrets present, tui sessionToken present
+    const auth = body.properties.auth as { properties: Record<string, unknown> };
+    expect(auth.properties.jwtSecret,).toBeTruthy();
+    const tui = body.properties.tui as { properties: Record<string, unknown> };
+    expect(tui.properties.sessionToken,).toBeTruthy();
+  });
+
+  test("GET /api/admin/config-schema returns 403 for non-admin", async () => {
+    const app = makeApp(db, "user",);
+    const res = await app.handle(new Request("http://localhost/api/admin/config-schema",),);
+    expect(res.status,).toBe(403,);
+  });
+
+  test("GET /api/admin/system-config/export yaml redacts secrets + audit-logs", async () => {
+    await setConfig(db, "export.plain", "hello",);
+    await setConfig(db, "export.jwtSecret", "s3cr3t",);
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config/export?format=yaml",),
+    );
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("content-type",),).toContain("application/yaml",);
+    expect(res.headers.get("content-disposition",),).toContain(".yaml",);
+    const text = await res.text();
+    expect(text,).toContain("export.plain",);
+    expect(text,).toContain("***REDACTED***",);
+    expect(text,).not.toContain("s3cr3t",);
+  });
+
+  test("GET /api/admin/system-config/export toml round-trips via Bun.TOML", async () => {
+    await setConfig(db, "export.toml.key", "v",);
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config/export?format=toml",),
+    );
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("content-disposition",),).toContain(".toml",);
+    const text = await res.text();
+    const parsed = Bun.TOML.parse(text,) as { system_config: Record<string, string> };
+    expect(parsed.system_config["export.toml.key"],).toBe("v",);
+  });
+
+  test("GET /api/admin/system-config/export returns 403 for non-admin", async () => {
+    const app = makeApp(db, "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config/export?format=yaml",),
+    );
+    expect(res.status,).toBe(403,);
+  });
 });

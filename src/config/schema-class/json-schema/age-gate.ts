@@ -1,19 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/config/schema-class/json-schema/age-gate.ts — age-gate JSON Schema section
-export const ageGate = {
-  type: "object",
-  description: "Age verification configuration",
-  properties: {
-    enabled: { type: "boolean", default: false, description: "Enable age gating", },
-    minimumAge: { type: "integer", default: 18, description: "Minimum required age", },
-    mode: {
-      type: "string",
-      enum: ["none", "self-declaration", "verification",],
-      default: "self-declaration",
-      description: "Age gate mode",
-    },
-  },
-  required: ["enabled", "minimumAge", "mode",],
-};
+// src/config/schema-class/json-schema/age-gate.ts — re-export: single source ageGateMeta in sections/age-gate.ts
+import { ageGateMeta, } from "../../sections/age-gate";
+
+export const ageGate = ageGateMeta;
