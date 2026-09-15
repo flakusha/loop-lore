@@ -278,4 +278,4 @@ export function actorEmotionAvatarsFactory(actorId: string,): ActorEmotionAvatar
   return state;
 }
 
-(globalThis as Record<string, unknown>).actorEmotionAvatarsFactory = actorEmotionAvatarsFactory;
+(globalThis as Record<string, unknown>).actorEmotionAvatars = actorEmotionAvatars;

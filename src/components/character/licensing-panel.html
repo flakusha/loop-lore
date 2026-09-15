@@ -6,7 +6,7 @@
   `<section x-data="actorLicensingFactory(actorId)">`. Reads / writes
   `/api/actors/:actorId/licensing`.
 -->
-<section class="licensing-panel" x-data="actorLicensingFactory($store.ui.activeActorId ?? '')">
+<section class="licensing-panel" x-data="actorLicensingFactory(actorId,)">
   <header class="licensing-header">
     <h4 class="licensing-title">Licensing</h4>
     <p class="licensing-help">How others may use this character.</p>

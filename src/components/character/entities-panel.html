@@ -9,7 +9,7 @@
 <section
   class="entities-panel"
   :data-kind="$data._entKind"
-  x-data="actorEntitiesFactory($store.ui.activeActorId ?? '', 'notes')"
+  x-data="actorEntitiesFactory(actorId, 'notes')"
 >
   <header class="entities-header">
     <h4 class="entities-title" x-text="$data.config().plural"></h4>
