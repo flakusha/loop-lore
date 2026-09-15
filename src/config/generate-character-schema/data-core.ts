@@ -118,27 +118,28 @@ export const dataProperties = {
   species: {
     type: "string",
     maxLength: 64,
-    description: "Character species / race — mapped to character_permanent_traits identity/species",
+    description: "Character species / race — persisted as character_permanent_traits identity/species at seed time",
   },
   homeland: {
     type: "string",
     maxLength: 128,
-    description: "Character origin / homeland — mapped to character_permanent_traits background/homeland",
+    description:
+      "Character origin / homeland — persisted as character_permanent_traits background/homeland at seed time",
   },
   culture: {
     type: "string",
     maxLength: 128,
-    description: "Character culture — mapped to character_permanent_traits background/culture",
+    description: "Character culture — persisted as character_permanent_traits background/culture at seed time",
   },
   gender: {
     type: "string",
     maxLength: 64,
-    description: "Character gender — mapped to character_permanent_traits identity/gender",
+    description: "Character gender — persisted as character_permanent_traits identity/gender at seed time",
   },
   age: {
     type: ["string", "number",],
     maxLength: 32,
-    description: "Character age (string or number) — mapped to character_permanent_traits identity/age",
+    description: "Character age (string or number) — persisted as character_permanent_traits identity/age at seed time",
   },
   lorebook: {
     type: "object",
