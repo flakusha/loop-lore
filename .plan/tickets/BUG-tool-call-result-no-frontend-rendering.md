@@ -135,3 +135,26 @@ tests) continue to pass — the function is unchanged on `dev`.
   this ticket.
 - Index status flipped `open` → `closed` for the backend half by this batch;
   `plan:sync` shows no status mismatches.
+
+## Design Decision 2026-09-15 — tool_result rows keep `parent_id` NULL
+
+Re-parenting `tool_result` rows under the assistant message after
+`storeGenerationResult` was evaluated and **rejected**. Three consumers make
+threaded rows harmful, and none need them:
+
+1. `src/chat/service/read.ts:119-128` — swipe `variantIndexes`/`totalVariants`
+   are computed over ALL siblings sharing a `parent_id`, role-agnostic.
+   Threaded tool rows would be counted as swipe variants of the assistant
+   message and corrupt swipe navigation counts.
+2. `src/routes/messages/read.ts:191-207` — `PUT /api/messages/:id/variant`
+   selects a sibling by index from the same role-agnostic group; a threaded
+   tool row could be rotated into the displayed message slot.
+3. `src/frontend/alpine/chat-send.ts:45-46` — the next user message anchors
+   to the last real message id; threaded tool rows would become the parent of
+   subsequent user turns, pulling user replies into tool-row sibling groups.
+
+Threading "correctly" would require role guards at all three consumers plus
+re-parent machinery in the generation flow — with no user-visible gain, since
+`tool_result` rows already render inline in chronological order in the flat
+message list. Decision: keep `parent_id = NULL`; correlation stays on
+`metadata.tool_call_id` (see Resolution above).
