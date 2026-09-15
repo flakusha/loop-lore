@@ -159,9 +159,11 @@ export async function safeFetch<T = unknown,>(
       };
     }
 
-    // Check response size before reading body
+    // Check response size before reading body (bounded requests only). Stream
+    // mode hands the body back unconsumed, so the caller — not the wrapper —
+    // owns size limits; maxSize is a buffering guard and has no meaning there.
     const contentLength = response.headers.get("content-length",);
-    if (contentLength) {
+    if (!stream && contentLength) {
       const size = Number(contentLength,);
       if (!Number.isNaN(size,) && size > maxSize) {
         return {

@@ -9,10 +9,7 @@
 // whole call chain is exercised, unlike export-progress.test.ts which mocks
 // ./htmx above the breakage.
 import { afterEach, expect, test, } from "bun:test";
-import {
-  exportProgress,
-  type ExportProgressState,
-} from "./export-progress";
+import { exportProgressFactory, } from "./export-progress";
 
 const originalFetch = globalThis.fetch;
 const g = globalThis as unknown as {
@@ -22,10 +19,10 @@ const g = globalThis as unknown as {
 afterEach(() => {
   globalThis.fetch = originalFetch;
   g.localStorage = undefined;
-});
+},);
 
 /** A live SSE Response that never closes until the caller cancels it. */
-function openSse(frames: string[]): { response: Response; closed: boolean } {
+function openSse(frames: string[],): { response: Response; closed: boolean } {
   const state = { closed: false, cursor: 0, };
   const stream = new ReadableStream<Uint8Array>({
     pull(controller,) {
@@ -65,18 +62,7 @@ test("startExport streams the SSE body and disarms the fetch timeout", async () 
     return stream.response;
   }) as typeof fetch;
 
-  const ctx = Object.create(exportProgress,) as ExportProgressState;
-  ctx.jobId = "";
-  ctx.busy = false;
-  ctx.message = "";
-  ctx.error = "";
-  ctx.completedAt = "";
-  ctx.downloadUrl = "";
-  ctx.status = "queued";
-  ctx.progress = 0;
-  ctx.total = 0;
-  ctx.percentage = 0;
-  ctx.currentStep = "";
+  const ctx = exportProgressFactory();
 
   await ctx.startExport();
 

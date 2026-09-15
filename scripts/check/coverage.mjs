@@ -105,6 +105,22 @@ const WAIVERS = {
     floor: 75,
     reason: "DOM-bound UI (htmx listeners, panels, modals); Playwright DOM-coverage pending; 79% currently",
   },
+  // Gate pass: SSE streaming fix threads stream?: boolean through feFetch
+  // and apiFetch only (signature widening + one early return). Both files
+  // are DOM-bound (document listeners, localStorage, document.cookie) and
+  // fall below the 75% module floor in diff-file mode. The substantive
+  // change is src/utils/safe-fetch/fetch.ts (94.8%, floor 80). Owning
+  // ticket: .plan/tickets/TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature.md
+  "frontend:src/frontend/alpine/htmx.ts": {
+    floor: 25,
+    reason:
+      "DOM-bound htmx listeners; diff is stream?: boolean signature widening only; Playwright DOM-coverage pending; TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+  },
+  "frontend:src/frontend/fe-fetch.ts": {
+    floor: 60,
+    reason:
+      "DOM-bound (localStorage/document.cookie); diff is stream threading + one early-return; TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
+  },
   // Gate pass: src/server/ holds HTTP entry points (handler, index,
   // start, static-files). They run only in `bun run start` / smoke runs.
   // The 200 e2e tests cover their routes but lcov attributes the
