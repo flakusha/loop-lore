@@ -144,13 +144,27 @@ const PANELS_SECTION = (characterId: string,) => `
           <summary style="cursor:pointer;font-weight:600;font-size:var(--text-lg)">Sub-resources</summary>
           <p class="form-hint" style="color:var(--text-secondary);margin:var(--space-2) 0 var(--space-4)">Licensing, notes / items / lore entries, systems export, permanent traits, and emotion avatar batch jobs.</p>
           <div x-data="{ actorId: '${escapeAttr(characterId,)}' }">
-            <section x-data="actorLicensingFactory(actorId)" data-testid="character-licensing">${loadPanelBody("licensing-panel.html",)}</section>
-            <section x-data="actorEntitiesFactory(actorId, 'notes')" data-testid="character-notes" style="margin-top:var(--space-4)">${loadPanelBody("entities-panel.html",)}</section>
-            <section x-data="actorEntitiesFactory(actorId, 'items')" data-testid="character-items" style="margin-top:var(--space-4)">${loadPanelBody("entities-panel.html",)}</section>
-            <section x-data="actorEntitiesFactory(actorId, 'lore-entries')" data-testid="character-lore" style="margin-top:var(--space-4)">${loadPanelBody("entities-panel.html",)}</section>
-            <section x-data="actorSystemsFactory(actorId)" data-testid="character-systems" style="margin-top:var(--space-4)">${loadPanelBody("systems-panel.html",)}</section>
-            <section x-data="actorTraitsFactory(actorId)" data-testid="character-traits" style="margin-top:var(--space-4)">${loadPanelBody("traits-panel.html",)}</section>
-            <section x-data="actorEmotionAvatarsFactory(actorId)" data-testid="character-emotion-avatars" style="margin-top:var(--space-4)">${loadPanelBody("emotion-avatars-panel.html",)}</section>
+            <section x-data="actorLicensingFactory(actorId)" data-testid="character-licensing">${
+  loadPanelBody("licensing-panel.html",)
+}</section>
+            <section x-data="actorEntitiesFactory(actorId, 'notes')" data-testid="character-notes" style="margin-top:var(--space-4)">${
+  loadPanelBody("entities-panel.html",)
+}</section>
+            <section x-data="actorEntitiesFactory(actorId, 'items')" data-testid="character-items" style="margin-top:var(--space-4)">${
+  loadPanelBody("entities-panel.html",)
+}</section>
+            <section x-data="actorEntitiesFactory(actorId, 'lore-entries')" data-testid="character-lore" style="margin-top:var(--space-4)">${
+  loadPanelBody("entities-panel.html",)
+}</section>
+            <section x-data="actorSystemsFactory(actorId)" data-testid="character-systems" style="margin-top:var(--space-4)">${
+  loadPanelBody("systems-panel.html",)
+}</section>
+            <section x-data="actorTraitsFactory(actorId)" data-testid="character-traits" style="margin-top:var(--space-4)">${
+  loadPanelBody("traits-panel.html",)
+}</section>
+            <section x-data="actorEmotionAvatarsFactory(actorId)" data-testid="character-emotion-avatars" style="margin-top:var(--space-4)">${
+  loadPanelBody("emotion-avatars-panel.html",)
+}</section>
           </div>
         </details>`;
 /**
