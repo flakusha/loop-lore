@@ -364,7 +364,7 @@ describeOrSkipStrict("streamToClient coverage", () => {
     expect(state.toolRowsCalls.length,).toBe(0,);
   });
 
-   test("tool calls every round exceed max rounds and emit a generic error", async () => {
+  test("tool calls every round exceed max rounds and emit a generic error", async () => {
     resetState();
     const toolCall: ToolCall = {
       id: "tc-x",
