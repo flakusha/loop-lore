@@ -157,6 +157,8 @@ export interface ChatCoreState
   /** Consecutive automated sends since the last human-initiated send; capped to break loops. */
   _consecutiveAutoFires: number;
   _draftTimer: ReturnType<typeof setTimeout> | null;
+  /** Last non-empty draft before clear — session-level Ctrl+Z undo. */
+  _draftBackup: string | undefined;
   loadQuickReplies(): void;
   executeQuickReply(command: string,): Promise<void>;
   fireStartupQuickReplies(): Promise<void>;

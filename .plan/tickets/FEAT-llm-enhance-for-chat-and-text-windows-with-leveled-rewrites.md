@@ -3,7 +3,7 @@
 
 # FEAT: LLM-enhance for chat and text windows with leveled rewrites
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Epic:** epic-assistant-gm-flows, epic-conversation-branching
 **Priority:** medium
 **Effort:** Medium
@@ -14,6 +14,6 @@ Chat windows and text windows need an llm-enhance action with selectable levels:
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — 8 levels (spellcheck, wording, expand, strict, creative, style-chat, style-group) in `prompt-improve.ts`; backend `POST /api/generation/prompt` in `generation/prompt-route.ts`; local-first via browser inference; non-destructive via `_promptImproveBackup` + `restorePromptDraft()`
+- [x] Tests passing — 13 prompt-improve tests + 10 prompt-analyze tests green
+- [x] Documentation updated — this ticket reflects implementation status
