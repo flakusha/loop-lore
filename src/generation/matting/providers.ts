@@ -9,6 +9,7 @@
  * endpoint conforms by returning the matted image.
  */
 import { getLogger, } from "../../logger";
+import { safeFromUint8Array, } from "../../utils/safe-buffer";
 import type { MattingProvider, MattingProviderConfig, } from "./types";
 
 /**
@@ -40,7 +41,10 @@ export function createHttpMattingProvider(config: MattingProviderConfig,): Matti
         throw new Error(`Matting provider returned HTTP ${response.status}`,);
       }
 
-      const payload = Buffer.from(await response.arrayBuffer(),);
+      const raw = new Uint8Array(await response.arrayBuffer(),);
+      const sized = safeFromUint8Array(raw,);
+      if (!sized.ok) { throw sized.error; }
+      const payload = sized.buffer;
       if (!looksLikePng(payload,)) {
         throw new Error("Matting provider returned a non-PNG payload",);
       }
