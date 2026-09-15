@@ -7286,6 +7286,10 @@
   "src/config/schema/tui.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-enabled-config-flag-never-read.md"
     }
   ],
@@ -7441,7 +7445,6 @@
       "source": ".plan/tickets/TASK-observability-config-section.md"
     }
   ],
-
   "src/config/sections/integrations.ts": [
     {
       "kind": "ticket",
@@ -7578,6 +7581,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-terminal-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
     },
     {
       "kind": "ticket",
@@ -26824,7 +26831,6 @@
       "source": ".plan/tickets/TASK-social-hub-foundation.md"
     }
   ],
-
   "src/social-hub/adapters/irc.test.ts": [
     {
       "kind": "ticket",
@@ -27834,6 +27840,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-tui-dedupe-api-base.md"
     },
     {
@@ -27861,10 +27871,24 @@
       "source": ".plan/tickets/TASK-update-terminal-ui-spec-to-actual-file-layout.md"
     }
   ],
+  "src/tui/chat/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.md"
+    }
+  ],
   "src/tui/chat/index.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-tui-app-never-threads-sessiontoken-into-chatwidget.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.md"
     },
     {
       "kind": "ticket",
