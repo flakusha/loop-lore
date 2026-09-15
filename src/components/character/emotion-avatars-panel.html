@@ -1,0 +1,93 @@
+<!--
+  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+-->
+
+<!--
+  Emotion avatar batch generation panel for character info. Bound to
+  the `actorEmotionAvatarsFactory` Alpine plugin.
+-->
+<div
+  x-data="actorEmotionAvatarsFactory(actorId,)"
+  x-init="setActorId(actorId,)"
+  x-effect="stopPolling(); startPolling();"
+  class="emotion-avatars-panel"
+>
+  <h3>Generate emotion avatars</h3>
+
+  <label>
+    Base avatar id
+    <input type="text" x-model="baseAvatarId" placeholder="av-1" />
+  </label>
+
+  <fieldset>
+    <legend>Emotions</legend>
+    <label class="emotion-toggle">
+      <input type="checkbox" :checked="selectedEmotions.includes('happy')" @change="toggleEmotion('happy')" />
+      happy
+    </label>
+    <label class="emotion-toggle">
+      <input type="checkbox" :checked="selectedEmotions.includes('sad')" @change="toggleEmotion('sad')" />
+      sad
+    </label>
+    <label class="emotion-toggle">
+      <input type="checkbox" :checked="selectedEmotions.includes('angry')" @change="toggleEmotion('angry')" />
+      angry
+    </label>
+    <label class="emotion-toggle">
+      <input type="checkbox" :checked="selectedEmotions.includes('surprised')" @change="toggleEmotion('surprised')" />
+      surprised
+    </label>
+    <label class="emotion-toggle">
+      <input type="checkbox" :checked="selectedEmotions.includes('neutral')" @change="toggleEmotion('neutral')" />
+      neutral
+    </label>
+  </fieldset>
+
+  <label>
+    Prompt prefix (optional)
+    <input type="text" x-model="promptPrefix" />
+  </label>
+
+  <label>
+    Negative prompt (optional)
+    <input type="text" x-model="negativePrompt" />
+  </label>
+
+  <button type="button" :disabled="busy || !_eaActorId || !baseAvatarId" @click="startGeneration()">
+    Start batch generation
+  </button>
+
+  <p x-show="message" x-text="message" class="emotion-avatars-message"></p>
+  <p x-show="error" x-text="error" class="emotion-avatars-error"></p>
+
+  <h3>Jobs</h3>
+  <button type="button" :disabled="jobsLoading" @click="listJobs()">Refresh</button>
+  <p x-show="jobsLoading">Loading…</p>
+  <p x-show="jobsError" x-text="jobsError" class="emotion-avatars-error"></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Job</th>
+        <th>Status</th>
+        <th>Emotions</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="job in jobs" :key="job.id">
+        <tr>
+          <td x-text="job.id"></td>
+          <td x-text="job.status"></td>
+          <td x-text="(job.emotions || []).join(', ')"></td>
+          <td>
+            <button type="button" x-show="isJobActive(job)" @click="cancelJob(job.id)">
+              Cancel
+            </button>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+</div>
