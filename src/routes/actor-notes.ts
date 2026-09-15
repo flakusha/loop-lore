@@ -16,8 +16,9 @@ import { createEntityRoutes, } from "./entity-routes";
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @param prefix
  */
-export function actorNotesRoutes(opts: { database: Db; config: Config },): Elysia {
+export function actorNotesRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return createEntityRoutes(
     {
       parentPrefix: "actors",
@@ -56,5 +57,6 @@ export function actorNotesRoutes(opts: { database: Db; config: Config },): Elysi
       },
     },
     opts,
+    prefix,
   );
 }

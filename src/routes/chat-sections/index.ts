@@ -17,17 +17,18 @@ import { updateRoutes, } from "./update";
  * sub-plugins. Registration point/name (`chat-sections`) is preserved so the
  * `register-plugins.ts` wiring is unchanged.
  * @param opts
+ * @param prefix
  */
-export function chatSectionsRoutes(opts: HandlerOpts,) {
+export function chatSectionsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chat-sections", },)
-      .use(listRoutes(opts,),)
-      .use(createRoutes(opts,),)
-      .use(updateRoutes(opts,),)
-      .use(removeRoutes(opts,),)
-      .use(reorderRoutes(opts,),)
-      .use(assignRoutes(opts,),)
-      .use(bulkAssignRoutes(opts,),)
-      .use(narrativeRoutes(opts,),)
+      .use(listRoutes(opts, prefix,),)
+      .use(createRoutes(opts, prefix,),)
+      .use(updateRoutes(opts, prefix,),)
+      .use(removeRoutes(opts, prefix,),)
+      .use(reorderRoutes(opts, prefix,),)
+      .use(assignRoutes(opts, prefix,),)
+      .use(bulkAssignRoutes(opts, prefix,),)
+      .use(narrativeRoutes(opts, prefix,),)
   );
 }

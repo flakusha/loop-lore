@@ -18,16 +18,18 @@ import { checkChatAccess, } from "../../chat/service";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 import type { Ctx, } from "./auth";
 import { authorizeProactiveTarget, } from "./auth";
-import { chatActorQuery, chatQuery, configBody, logErr, R, } from "./schemas";
+import { chatActorQuery, chatQuery, configBody, logErr, } from "./schemas";
 import type { ProactiveRouteOpts, } from "./schemas";
 import { sendProactiveHandler, } from "./send-handler";
 
 /**
  * @param opts
+ * @param prefix
  */
-export function proactiveMessagingRoutes(opts: ProactiveRouteOpts,) {
+export function proactiveMessagingRoutes(opts: ProactiveRouteOpts, prefix = "/api",) {
   const svc = () => new ProactiveMessagingService(opts.database,);
   const { database, } = opts;
+  const R = `${prefix}/proactive-messaging`;
 
   return new Elysia({ name: "proactive-messaging", },)
     // ── Get config for chat+actor ────────────────────────

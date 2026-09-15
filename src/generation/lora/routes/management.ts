@@ -18,10 +18,10 @@ const ClearCacheBody = t.Object({
 },);
 
 /** GET /api/lora/list, /status and POST /api/lora/clear. */
-export function loraManagementRoutes() {
+export function loraManagementRoutes(prefix = "/api",) {
   return new Elysia({ name: "lora-management", },)
     // GET /api/lora/list
-    .get("/api/lora/list", (ctx,) => {
+    .get(`${prefix}/lora/list`, (ctx,) => {
       const { userId, } = extractAuth(ctx,);
       if (!userId) {
         return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);
@@ -68,7 +68,7 @@ export function loraManagementRoutes() {
       },
     },)
     // GET /api/lora/status
-    .get("/api/lora/status", (ctx,) => {
+    .get(`${prefix}/lora/status`, (ctx,) => {
       const { userId, } = extractAuth(ctx,);
       if (!userId) {
         return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);
@@ -92,7 +92,7 @@ export function loraManagementRoutes() {
       },
     },)
     // POST /api/lora/clear
-    .post("/api/lora/clear", (ctx,) => {
+    .post(`${prefix}/lora/clear`, (ctx,) => {
       const { userId, } = extractAuth(ctx,);
       if (!userId) {
         return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);

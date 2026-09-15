@@ -39,11 +39,14 @@ export function resolveDownloadPolicy(): LocalModelDownloadPolicy {
  * @param opts.resolvePolicy
  * @returns Elysia plugin serving the manifest and capability endpoints.
  */
-export function localInferenceRoutes(opts?: { resolvePolicy?: () => LocalModelDownloadPolicy },): Elysia {
+export function localInferenceRoutes(
+  opts?: { resolvePolicy?: () => LocalModelDownloadPolicy },
+  prefix = "/api",
+): Elysia {
   const policy = (opts?.resolvePolicy ?? resolveDownloadPolicy)();
   const app = new Elysia({ name: "local-inference", },);
 
-  app.get("/api/local-inference/manifest", () => {
+  app.get(`${prefix}/local-inference/manifest`, () => {
     return jsonResponse(buildLocalInferenceManifest(policy,),);
   }, {
     detail: {
@@ -54,7 +57,7 @@ export function localInferenceRoutes(opts?: { resolvePolicy?: () => LocalModelDo
     },
   },);
 
-  app.get("/api/local-inference/capability", () => {
+  app.get(`${prefix}/local-inference/capability`, () => {
     const manifest = buildLocalInferenceManifest(policy,);
     return jsonResponse({
       optInSupported: true,

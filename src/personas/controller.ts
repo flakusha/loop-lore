@@ -26,9 +26,9 @@ import {
  * @param root0.database - Kysely DB handle
  * @returns `Elysia` instance wired to the persona routes.
  */
-export function personaRoutes({ database, }: { database: Kysely<DB> },) {
+export function personaRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "personas", },)
-    .get("/api/personas", async (ctx,) => {
+    .get(`${prefix}/personas`, async (ctx,) => {
       const context = createRequestContext({
         userId: (ctx as any).userId as string | null,
         userRole: (ctx as any).userRole as string | null,
@@ -36,7 +36,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> },) {
       },);
       return handleListPersonas({ database, context, },);
     },)
-    .post("/api/personas", async (ctx,) => {
+    .post(`${prefix}/personas`, async (ctx,) => {
       const context = createRequestContext({
         userId: (ctx as any).userId as string | null,
         userRole: (ctx as any).userRole as string | null,
@@ -45,7 +45,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> },) {
       const body = ctx.body as Record<string, unknown>;
       return handleCreatePersona({ database, body, context, },);
     },)
-    .get("/api/personas/:id", async (ctx,) => {
+    .get(`${prefix}/personas/:id`, async (ctx,) => {
       const context = createRequestContext({
         userId: (ctx as any).userId as string | null,
         userRole: (ctx as any).userRole as string | null,
@@ -53,7 +53,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> },) {
       },);
       return handleGetPersona({ database, personaId: ctx.params.id, context, },);
     },)
-    .patch("/api/personas/:id", async (ctx,) => {
+    .patch(`${prefix}/personas/:id`, async (ctx,) => {
       const context = createRequestContext({
         userId: (ctx as any).userId as string | null,
         userRole: (ctx as any).userRole as string | null,
@@ -62,7 +62,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> },) {
       const body = ctx.body as Record<string, unknown>;
       return handleUpdatePersona({ database, personaId: ctx.params.id, body, context, },);
     },)
-    .delete("/api/personas/:id", async (ctx,) => {
+    .delete(`${prefix}/personas/:id`, async (ctx,) => {
       const context = createRequestContext({
         userId: (ctx as any).userId as string | null,
         userRole: (ctx as any).userRole as string | null,
@@ -70,7 +70,7 @@ export function personaRoutes({ database, }: { database: Kysely<DB> },) {
       },);
       return handleDeletePersona({ database, personaId: ctx.params.id, context, },);
     },)
-    .post("/api/personas/:id/convert-to-character", async (ctx,) => {
+    .post(`${prefix}/personas/:id/convert-to-character`, async (ctx,) => {
       const context = createRequestContext({
         userId: (ctx as any).userId as string | null,
         userRole: (ctx as any).userRole as string | null,
