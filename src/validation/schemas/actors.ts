@@ -46,7 +46,9 @@ export const ActorUpdateBody = t.Object({
   creatorNotes: t.Optional(t.String(),),
   creator: t.Optional(t.String(),),
   characterVersion: t.Optional(t.String(),),
-  settings: t.Optional(t.Any(),),
+  // Constrained JSON object — matches project convention (e.g. character-relations metadata).
+  // Rejects top-level arrays/primitives while preserving freeform values.
+  settings: t.Optional(t.Record(t.String(), t.Any(),),),
   /** Optimistic-concurrency version from the prior GET response. CHAR-1. */
   dataVersion: t.Optional(t.Integer({ minimum: 0, },),),
 },);
