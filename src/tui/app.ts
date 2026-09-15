@@ -10,6 +10,7 @@
  */
 
 import blessed from "blessed";
+import { loadConfig, } from "../config/load";
 import { getLogger, } from "../logger";
 import { AssetView, } from "./asset-view";
 import { ChatWidget, } from "./chat";
@@ -25,10 +26,21 @@ export class TUIApp {
 
   /** */
   constructor() {
+    // Load config once at startup to pick up [tui].sessionToken. A
+    // failed load (no config file, parse error, etc.) must not crash
+    // the TUI — log and fall back to anonymous mode (solo deployments
+    // ignore missing tokens).
+    let sessionToken: string | undefined;
+    try {
+      const config = loadConfig();
+      sessionToken = config.tui.sessionToken;
+    } catch (error) {
+      getLogger().warn(`tui: failed to load config; running anonymous: ${(error as Error).message}`,);
+    }
+
     this.screen = blessed.screen({
       smartCSR: true,
       title: "Loop Lore TUI",
-      dockBorders: true,
     },);
 
     // ── Status bar (bottom) ─────────────────────────────────
@@ -43,10 +55,8 @@ export class TUIApp {
       style: { bg: "blue", fg: "white", },
     },);
     this.updateStatus("initializing...",);
-
-    // ── Chat widget (main area, above status bar) ──────────
-    // Pass callback for chat change events
     this.chat = new ChatWidget(this.screen, {
+      sessionToken,
       onChatChange: (chatId,) => {
         this.assets.setChatId(chatId,);
         this.updateStatus(`chat: ${chatId.slice(0, 8,)}... | F2: assets`,);
