@@ -206,6 +206,82 @@ describe("exportProgress.reset", () => {
   });
 });
 
+const sseBody = (blocks: string[],) =>
+  new Response(
+    new ReadableStream({
+      start(controller,) {
+        for (const block of blocks) {
+          controller.enqueue(new TextEncoder().encode(block,),);
+        }
+        controller.close();
+      },
+    },),
+    { status: 200, headers: { "Content-Type": "text/event-stream", }, },
+  );
+
+describe("exportProgress.startExport (SSE stream)", () => {
+  test("consumes SSE blocks and reaches completed state", async () => {
+    handler = async () =>
+      sseBody([
+        `data: {"type":"progress","jobId":"j1","progress":5,"total":10,"percentage":50}\n\n`,
+        `data: {"type":"progress","status":"completed"}\n\n`,
+      ],);
+    const ctx = baseCtx();
+    await ctx.startExport();
+    expect(ctx.jobId,).toBe("j1",);
+    expect(ctx.status,).toBe("completed",);
+    expect(ctx.downloadUrl,).toBe("/api/export/download/j1",);
+  });
+
+  test("falls back to polling when stream ends without terminal event", async () => {
+    handler = async () =>
+      sseBody([
+        `data: {"type":"progress","jobId":"j2","progress":1}\n\n`,
+      ],);
+    const ctx = baseCtx();
+    await ctx.startExport();
+    expect(ctx.isTerminal(),).toBe(false,);
+    expect(ctx._pollTimer,).not.toBeNull();
+    ctx.stopTracking();
+  });
+});
+
+describe("exportProgress.startPolling tick", () => {
+  test("applies a completed snapshot and stops the timer", async () => {
+    handler = async () =>
+      Response.json({
+        id: "j1",
+        status: "completed",
+        progress: 1,
+        total: 1,
+        percentage: 100,
+        currentStep: "chats",
+        createdAt: "2026-01-01T00:00:00Z",
+      },);
+    const ctx = baseCtx();
+    ctx.jobId = "j1";
+    ctx.startPolling();
+    await Bun.sleep(20,);
+    expect(ctx.status,).toBe("completed",);
+    expect(ctx._pollTimer,).toBeNull();
+  });
+});
+
+describe("exportProgress._sse teardown", () => {
+  test("applyEvent completion closes the SSE handle", () => {
+    const ctx = baseCtx();
+    let closed = false;
+    ctx._sse = {
+      close: () => {
+        closed = true;
+      },
+    } as unknown as EventSource;
+    ctx.applyEvent({ type: "progress", jobId: "j1", status: "completed", },);
+    expect(closed,).toBe(true,);
+    expect(ctx._sse,).toBeNull();
+  });
+});
+
 describe("exportProgressFactory", () => {
   test("returns a fresh state", () => {
     const a = exportProgressFactory();
