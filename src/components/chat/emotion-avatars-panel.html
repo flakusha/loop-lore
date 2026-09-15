@@ -7,7 +7,7 @@
   where an actor id is available. Drives the actor-scoped emotion avatar
   batch endpoints via the `actorEmotionAvatars` state plugin.
 -->
-<section class="em-avatars-panel" x-data="actorEmotionAvatars" x-init="setActorId($store.ui.activeActorId ?? '')">
+<section class="em-avatars-panel" x-data="actorEmotionAvatars" x-init="setActorId(actorId,)">
   <header class="em-avatars-header">
     <h4 class="em-avatars-title">Emotion Avatars</h4>
     <p class="em-avatars-help">
