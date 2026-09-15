@@ -41,9 +41,11 @@ export class ChatWidget implements ChatHost {
    */
   constructor(screen: blessed.Widgets.Screen, options: ChatWidgetOptions = {},) {
     this.screen = screen;
-    this.sessionToken = options.sessionToken;
+    // Normalize empty string to undefined (mirrors the frontend `if (token)`
+    // pattern in src/frontend/fe-fetch.ts:41): an accidental `""` must not
+    // ship as `Bearer ` and trip 401s.
+    this.sessionToken = options.sessionToken === "" ? undefined : options.sessionToken;
     this.onChatChange = options.onChatChange;
-
     // Main container box
     this.box = blessed.box({
       parent: screen,
