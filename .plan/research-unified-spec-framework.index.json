@@ -84,7 +84,10 @@
   ],
   "current_state": {
     "epics": 281,
-    "tickets_total_estimate": 1998,
+    "tickets_total_estimate": "~2100 (actual directory count)",
+    "tickets_categorized_total": 2096,
+    "tickets_directory_total": 2101,
+    "tickets_uncategorized": ["e2e", "gap", "invite", "join", "template.md"],
     "ticket_prefix_tally": {
       "TASK": 1526,
       "BUG": 354,
@@ -271,7 +274,7 @@
   "non_goals_v1": ["Cross-repo stores", "Web UI / kanban", "AI skill-pack personas", "Telemetry", "Replace scripts/worktree/", "Rewrite tickets/index.json schema"],
   "references": [
     {"name": ".plan/epics-index.md", "kind": "loop-lore", "note": "281 epics; auto-generated"},
-    {"name": ".plan/tickets/index.json", "kind": "loop-lore", "note": "~2000 entries; canonical schema reuse target"},
+    {"name": ".plan/tickets/index.json", "kind": "loop-lore", "note": "~2100 entries; canonical schema reuse target"},
     {"name": "scripts/worktree/", "kind": "loop-lore", "note": "CLI precedent for scripts/spec/"},
     {"name": "scripts/worktree/sync.ts", "kind": "loop-lore", "note": "index.json canonical writer; scripts/spec/index-build.ts delegates here"},
     {"name": "scripts/gen-plan-docs.ts", "kind": "loop-lore", "note": "regenerates epics-index.md"},
