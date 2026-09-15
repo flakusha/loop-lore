@@ -21,7 +21,8 @@ export const EntityCreateBody = t.Object({
   name: t.Optional(Name,),
   title: t.Optional(t.String(),),
   content: t.Optional(t.String(),),
-  data: t.Optional(t.Any(),),
+  // Constrained JSON object — matches project convention.
+  data: t.Optional(t.Record(t.String(), t.Any(),),),
   pinned: t.Optional(t.Boolean(),),
   scope: t.Optional(EntityScopeSchema,),
 },);
@@ -30,7 +31,7 @@ export const EntityUpdateBody = t.Object({
   name: t.Optional(Name,),
   content: t.Optional(t.String(),),
   type: t.Optional(t.String(),),
-  data: t.Optional(t.Any(),),
+  data: t.Optional(t.Record(t.String(), t.Any(),),),
   pinned: t.Optional(t.Boolean(),),
   scope: t.Optional(EntityScopeSchema,),
 },);
