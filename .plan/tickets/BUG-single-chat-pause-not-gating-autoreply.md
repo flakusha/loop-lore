@@ -1,7 +1,7 @@
 # BUG: Single-chat auto-reply ignores story pause
 
 **Epic:** epic-generation-flow-control.md
-**Status:** ✅ Done
+**Status:** ✅ Resolved (67c170fc3) — closed 2026-09-15
 **Priority:** Medium
 
 ## Problem
@@ -13,6 +13,12 @@ calls `triggerAutoGeneration` without a pause check, so a paused single chat
 still auto-generates replies — contradicting the settings modal copy
 ("When paused, only user messages are allowed").
 
+## Resolution
+
+Resolved by commit `67c170fc3 feat(chat): composer batch — complete, preview, titles, link, pause`. `src/routes/messages/reply.ts:70-82` (`maybeAutoReply`) now reads `story_state` from the chat row and short-circuits via `checkPaused(...)` before the request tracker / `triggerAutoGeneration` calls, mirroring the group-cascade pre-flight check (`src/generation/auto-gen/group-cascade.ts:130-137`). The fix follows the same pattern the ticket prescribed.
+
+Regression-protected by `src/routes/messages/reply.test.ts:642-645` which sets `story_state = '{"isPaused":true}'` on a chat and asserts `maybeAutoReply` does not enqueue generation. Group cascade pause tests live in `src/generation/auto-gen-cascade.test.ts:444-449` ("chat paused: cascade stops when story_state.isPaused=true"). Wired in feature ticket `FEAT-unified-hold-semantics-per-chat-pause-gates-primary-generate.md` per the ticket's Fold-into note.
+
 ## Fix
 
 Check `story_state.isPaused` in `maybeAutoReply` (and any single-chat
@@ -21,4 +27,4 @@ pattern. Fold into `FEAT-unified-hold-semantics-per-chat-pause-gates-primary-gen
 
 ## Acceptance
 
-- Test: paused chat + user message → no auto-generation; unpause → resumes.
+- [x] Test: paused chat + user message → no auto-generation; unpause → resumes.
