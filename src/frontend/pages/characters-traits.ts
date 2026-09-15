@@ -14,7 +14,6 @@ import { jsonBody, } from "../alpine/json";
 import { browserRandomUUIDv7, } from "../browser";
 import type { feFetch, } from "../fe-fetch";
 import { parseFloatOr, } from "../utils/parse-number";
-import { escapeHtml, } from "./shared";
 
 // Shared feFetch — caller passes it in to avoid circular import
 let _feFetch: typeof feFetch;
@@ -56,44 +55,82 @@ let aspirationsData: Aspiration[] = [];
   renderAspirations();
 };
 
-(globalThis as Record<string, unknown>).removeAspiration = function(idx: number,) {
+function removeAspiration(idx: number,): void {
   aspirationsData.splice(idx, 1,);
   renderAspirations();
-};
-
+}
+(globalThis as Record<string, unknown>).removeAspiration = removeAspiration;
 /** */
 export function renderAspirations() {
   const container = document.querySelector("#aspirations-list",);
   if (!container) { return; }
+  // Clear via DOM API so any previously-attached listeners are released before
+  // we replace the children. innerHTML replacement alone would leak listeners
+  // on detached nodes.
+  while (container.firstChild) { container.removeChild(container.firstChild,); }
   if (aspirationsData.length === 0) {
-    container.innerHTML =
-      '<p style="color:var(--text-secondary);font-size:var(--text-sm)">No aspirations defined yet.</p>';
+    const empty = document.createElement("p",);
+    empty.style.cssText = "color:var(--text-secondary);font-size:var(--text-sm)";
+    empty.textContent = "No aspirations defined yet.";
+    container.appendChild(empty,);
     return;
   }
-  const htmlParts: string[] = [];
-  let idx = 0;
-  for (const a of aspirationsData) {
-    const i = idx++;
-    htmlParts.push(`
-    <div class="aspiration-row" style="display:flex;gap:var(--space-2);align-items:flex-start;margin-bottom:var(--space-2);padding:var(--space-2);background:var(--bg-secondary);border-radius:var(--radius-sm)">
-      <input class="form-input" type="text" value="${
-      escapeHtml(a.goal,)
-    }" placeholder="Goal" style="flex:1" onchange="aspirationsData[${i}].goal=this.value" />
-      <select class="form-input" style="width:100px" onchange="aspirationsData[${i}].priority=this.value">
-        <option value="high" ${a.priority === "high" ? "selected" : ""}>High</option>
-        <option value="medium" ${a.priority === "medium" ? "selected" : ""}>Medium</option>
-        <option value="low" ${a.priority === "low" ? "selected" : ""}>Low</option>
-      </select>
-      <select class="form-input" style="width:100px" onchange="aspirationsData[${i}].visibility=this.value">
-        <option value="hidden" ${a.visibility === "hidden" ? "selected" : ""}>Hidden</option>
-        <option value="hinted" ${a.visibility === "hinted" ? "selected" : ""}>Hinted</option>
-        <option value="open" ${a.visibility === "open" ? "selected" : ""}>Open</option>
-      </select>
-      <button type="button" class="btn btn-danger btn-sm" onclick="removeAspiration(${i})">✕</button>
-    </div>
-    `,);
-  }
-  container.innerHTML = htmlParts.join("",);
+  aspirationsData.forEach((a, i,) => {
+    const row = document.createElement("div",);
+    row.className = "aspiration-row";
+    row.style.cssText =
+      "display:flex;gap:var(--space-2);align-items:flex-start;margin-bottom:var(--space-2);padding:var(--space-2);background:var(--bg-secondary);border-radius:var(--radius-sm)";
+    row.dataset["aspirationIndex"] = String(i,);
+
+    const goal = document.createElement("input",);
+    goal.className = "form-input";
+    goal.type = "text";
+    goal.value = a.goal;
+    goal.placeholder = "Goal";
+    goal.style.flex = "1";
+    goal.addEventListener("change", () => {
+      aspirationsData[i]!.goal = goal.value;
+    },);
+
+    const priority = document.createElement("select",);
+    priority.className = "form-input";
+    priority.style.width = "100px";
+    for (const v of ["high", "medium", "low",] as const) {
+      const opt = document.createElement("option",);
+      opt.value = v;
+      opt.textContent = v[0]!.toUpperCase() + v.slice(1,);
+      if (a.priority === v) { opt.selected = true; }
+      priority.appendChild(opt,);
+    }
+    priority.addEventListener("change", () => {
+      aspirationsData[i]!.priority = priority.value;
+    },);
+
+    const visibility = document.createElement("select",);
+    visibility.className = "form-input";
+    visibility.style.width = "100px";
+    for (const v of ["hidden", "hinted", "open",] as const) {
+      const opt = document.createElement("option",);
+      opt.value = v;
+      opt.textContent = v[0]!.toUpperCase() + v.slice(1,);
+      if (a.visibility === v) { opt.selected = true; }
+      visibility.appendChild(opt,);
+    }
+    visibility.addEventListener("change", () => {
+      aspirationsData[i]!.visibility = visibility.value;
+    },);
+
+    const remove = document.createElement("button",);
+    remove.type = "button";
+    remove.className = "btn btn-danger btn-sm";
+    remove.textContent = "✕";
+    remove.addEventListener("click", () => {
+      removeAspiration(i,);
+    },);
+
+    row.append(goal, priority, visibility, remove,);
+    container.appendChild(row,);
+  },);
 }
 
 // ── Helpers ─────────────────────────────────────────────────
