@@ -165,6 +165,18 @@ const WAIVERS = {
     reason:
       "dedicated coverage suite is describeOrSkipStrict-gated (skips in check gate); module split moved uncovered paths in; TASK-coverage-waiver-stream-to-client-ts-at-75-3-under-check-gate",
   },
+  // Gate pass: ChatWidget body is dominated by blessed widget binding (box /
+  // list / textbox) and event-handler wiring that requires a live terminal.
+  // The mock.module-based suite covers the constructor's sessionToken
+  // threading + empty-string normalization, which is the diff-scoped new
+  // surface; the rest of the widget is exercised end-to-end through the
+  // blessed REPL harness and `test:e2e` (not the unit suite). Owning ticket:
+  // TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.
+  "tui:src/tui/chat/index.ts": {
+    floor: 51,
+    reason:
+      "blessed widget binding + event-handler wiring dominates uncovered lines; mock.module suite covers sessionToken threading + empty-string normalization (the new diff surface); e2e/REPL exercise the rest; TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate",
+  },
 };
 
 /**
