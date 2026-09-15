@@ -3,11 +3,12 @@
  */
 import { afterEach, beforeEach, describe, expect, it, } from "bun:test";
 import type { Kysely, } from "kysely";
+import type { PinnedState, } from "../db/enums-core/flags";
 import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { insertActors, } from "../test-utils/insert-helpers";
-import { applyDecay, touchMemory, } from "./purge";
+import { applyDecay, purgeStaleMemories, touchMemory, } from "./purge";
 
 /**
  * @param db
@@ -22,6 +23,8 @@ async function seedMemory(
     strength: number;
     decay_rate: number;
     last_accessed_at: string | null;
+    confidence: number;
+    pinned: PinnedState;
   }> = {},
 ): Promise<void> {
   const id = overrides.id ?? "mem-1";
@@ -38,7 +41,7 @@ async function seedMemory(
       actor_id: actorId,
       content,
       memory_type: "episodic" as const,
-      confidence: 1,
+      confidence: overrides.confidence ?? 1,
       importance: 1,
       keywords: "[]",
       strength,
@@ -46,7 +49,7 @@ async function seedMemory(
       last_accessed_at: lastAccessed,
       scope: "character",
       privacy: "shared",
-      pinned: "unpinned",
+      pinned: overrides.pinned ?? "unpinned",
       created_at: "2024-01-01T00:00:00Z",
       updated_at: "2024-01-01T00:00:00Z",
     },)
@@ -235,5 +238,74 @@ describe("touchMemory", () => {
 
     // 0.3 + 0.1 + 0.1 = 0.5
     expect(updated?.strength,).toBeCloseTo(0.5, 5,);
+  });
+});
+
+describe("purgeStaleMemories", () => {
+  let db: Kysely<DB>;
+  let sqlite: { close(): void };
+
+  beforeEach(async () => {
+    createLogger({ level: "error", },);
+    const ctx = await createTestDb();
+    db = ctx.db;
+    sqlite = ctx.sqlite;
+    await insertActors(db, "Test Actor", { id: "actor-1", } as never,);
+  },);
+
+  afterEach(() => {
+    sqlite.close();
+  },);
+
+  it("hard purge deletes stale unpinned rows but never pinned rows", async () => {
+    await seedMemory(db, {
+      id: "mem-unpinned",
+      strength: 0.05,
+      last_accessed_at: null,
+      confidence: 0.1,
+    },);
+    await seedMemory(db, {
+      id: "mem-pinned",
+      strength: 0.05,
+      last_accessed_at: null,
+      confidence: 0.1,
+      pinned: "pinned",
+    },);
+
+    const result = await purgeStaleMemories(db, { hardDelete: true, },);
+
+    expect(result.deleted,).toBe(1,);
+    const survived = await db
+      .selectFrom("actor_memories",)
+      .select("id",)
+      .where("id", "=", "mem-pinned",)
+      .executeTakeFirst();
+    expect(survived,).toBeDefined();
+  });
+
+  it("soft purge marks stale unpinned rows stale but leaves pinned rows untouched", async () => {
+    await seedMemory(db, {
+      id: "mem-unpinned",
+      strength: 0.05,
+      last_accessed_at: null,
+    },);
+    await seedMemory(db, {
+      id: "mem-pinned",
+      strength: 0.05,
+      last_accessed_at: null,
+      pinned: "pinned",
+    },);
+
+    const result = await purgeStaleMemories(db, { hardDelete: false, },);
+
+    expect(result.stale,).toBe(1,);
+    const rows = await db
+      .selectFrom("actor_memories",)
+      .select(["id", "confidence",],)
+      .execute();
+    const unpinnedRow = rows.find((r,) => r.id === "mem-unpinned");
+    const pinnedRow = rows.find((r,) => r.id === "mem-pinned");
+    expect(unpinnedRow?.confidence,).toBeCloseTo(0.01, 5,);
+    expect(pinnedRow?.confidence,).toBe(1,);
   });
 });

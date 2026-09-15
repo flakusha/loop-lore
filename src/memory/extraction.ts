@@ -27,6 +27,8 @@ export interface MemoryProvenance {
   sourceChatIds?: string[];
   /** How the memory was formed (defaults to "single_response"). */
   extractionKind?: ExtractionKind;
+  /** Review workflow state for the stored rows (defaults to "committed"). */
+  reviewStatus?: "pending" | "committed";
 }
 
 /** */
@@ -145,7 +147,6 @@ export async function storeMemories(
     if (existing) {
       continue;
     }
-
     await db
       .insertInto("actor_memories",)
       .values({
@@ -163,6 +164,7 @@ export async function storeMemories(
         extraction_kind: extractionKind,
         scope: "character",
         privacy: "shared",
+        review_status: provenance.reviewStatus ?? "committed",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },)
@@ -176,6 +178,33 @@ export async function storeMemories(
   }
 
   return stored;
+}
+
+/**
+ * Resolve whether extracted memories need user review: explicit reviewMode
+ * wins; otherwise the user's detailLevel setting ("Basic"/"Detailed" review,
+ * "Immersion" silently commits — docs/frontend/chat/memories.md).
+ * @param db
+ * @param opts
+ */
+async function resolveReviewStatus(
+  db: Kysely<DB>,
+  opts: ExtractionOpts,
+): Promise<"pending" | "committed"> {
+  if (opts.reviewMode === "review") { return "pending"; }
+  if (opts.reviewMode === "auto") { return "committed"; }
+  if (opts.userId) {
+    const user = await db
+      .selectFrom("users",)
+      .select("settings",)
+      .where("id", "=", opts.userId,)
+      .executeTakeFirst();
+    const settings = jsonParseOr<{ detailLevel?: string }>(user?.settings ?? "{}", {},);
+    if (settings.detailLevel === "Basic" || settings.detailLevel === "Detailed") {
+      return "pending";
+    }
+  }
+  return "committed";
 }
 
 /**
@@ -195,55 +224,10 @@ export async function extractAndStoreMemories(
         sourceMessageIds: opts.sourceMessageIds ?? [opts.messageId,],
         sourceChatIds: opts.sourceChatIds ?? [opts.chatId,],
         extractionKind: opts.extractionKind ?? "single_response",
+        reviewStatus: await resolveReviewStatus(db, opts,),
       },);
     }
   } catch (error) {
     getLog().warn("Background extraction failed", { error: (error as Error).message, actorId: opts.actorId, },);
   }
-}
-
-/**
- * Extract memories from a known message chain (compaction pass,
- * carry-forward, manual "try hard" reruns).
- *
- * Loads the chain rows oldest-first, builds a role-labeled transcript using
- * the read path's plaintext-mirror rule (`content_plaintext ?? content`;
- * E2E rows without a mirror are dropped), then extracts and binds the chain.
- * @param db
- * @param opts
- * @param chain - message IDs (any order) plus the chats they span
- */
-export async function extractFromBurst(
-  db: Kysely<DB>,
-  opts: Omit<ExtractionOpts, "aiContent" | "userContent">,
-  chain: { messageIds: string[]; chatIds?: string[] },
-): Promise<number> {
-  if (chain.messageIds.length === 0) { return 0; }
-  const rows = await db
-    .selectFrom("messages",)
-    .select(["id", "role", "content", "content_plaintext", "key_id", "created_at",],)
-    .where("id", "in", chain.messageIds.slice(0, MAX_CHAIN_IDS,),)
-    .orderBy("created_at", "asc",)
-    .execute();
-
-  const lines: string[] = [];
-  for (const row of rows) {
-    if (row.key_id && !row.content_plaintext) { continue; }
-    const label = row.role === "assistant" ? "Assistant" : "User";
-    lines.push(`${label}: ${row.content_plaintext ?? row.content}`,);
-  }
-  if (lines.length === 0) { return 0; }
-
-  const memories = await extractMemories(db, {
-    ...opts,
-    messageId: rows[rows.length - 1]?.id ?? opts.messageId,
-    aiContent: lines.join("\n",),
-    userContent: undefined,
-  },);
-  if (memories.length === 0) { return 0; }
-  return storeMemories(db, opts.actorId, opts.chatId, memories, {
-    sourceMessageIds: Array.from(rows, (row,) => row.id,),
-    sourceChatIds: chain.chatIds ?? opts.sourceChatIds ?? [opts.chatId,],
-    extractionKind: opts.extractionKind ?? "burst",
-  },);
 }

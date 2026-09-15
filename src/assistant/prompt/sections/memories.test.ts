@@ -26,6 +26,7 @@ import {
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
 import type { AssembleContext, } from "../types";
 import { memorySection, } from "./memories";
+import { chatHasMemoryCopies, fetchActorMemories, } from "./memories-helpers";
 
 describe("memorySection — per-viewer cross-actor isolation", () => {
   const elfPrivate = "elf private: the underground castle was abandoned.";
@@ -121,6 +122,45 @@ describe("memorySection — per-viewer cross-actor isolation", () => {
   });
 });
 
+describe("memorySection helpers — carry scoping", () => {
+  test("chatHasMemoryCopies and fetchActorMemories scope to the chat's carried copies", async () => {
+    try {
+      createLogger({ level: "error", },);
+    } catch {
+      // Already initialized — ignore.
+    }
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertUsers(db, "human", "Human",);
+      await insertActors(db, "Human",);
+      const actors = await db.selectFrom("actors",).select(["id", "display_name",],).execute();
+      const actorId = actors.find((a,) => a.display_name === "Human")!.id;
+      const users = await db.selectFrom("users",).select(["id", "username",],).execute();
+      const userId = users.find((u,) => u.username === "human")!.id;
+      await insertChats(db, "Carry chat", userId,);
+      const chat = await db.selectFrom("chats",).select(["id",],).limit(1,).executeTakeFirstOrThrow();
+
+      await insertActorMemories(db, actorId, "cross-chat original", {
+        source_chat_id: null,
+      },);
+      await insertActorMemories(db, actorId, "carried copy", {
+        source_chat_id: chat.id,
+      },);
+
+      expect(await chatHasMemoryCopies(db, actorId, chat.id,),).toBe(true,);
+      expect(await chatHasMemoryCopies(db, actorId, "no-such-chat",),).toBe(false,);
+
+      const scoped = await fetchActorMemories(db, actorId, 50, chat.id,);
+      expect(scoped.map((m,) => m.content),).toEqual(["carried copy",],);
+
+      const unscoped = await fetchActorMemories(db, actorId,);
+      expect(unscoped,).toHaveLength(2,);
+    } finally {
+      sqlite.close();
+    }
+  });
+});
+
 // ── BUG-ollama-outage-hard-fails-all-generations ───────────────────────
 // If semanticRecall throws (embed provider down), the memory section must
 // degrade gracefully: keep the keyword-ranked order and still build.
@@ -189,3 +229,39 @@ describeOrSkip("memorySection — semantic recall outage degrades gracefully", (
     }
   });
 },);
+describe("memorySection helpers — extraction review gating", () => {
+  test("fetchActorMemories excludes pending rows until committed", async () => {
+    try {
+      createLogger({ level: "error", },);
+    } catch {
+      // already initialized
+    }
+    const { db, sqlite, } = await createTestDb();
+    try {
+      await insertUsers(db, "human", "Human",);
+      const users = await db.selectFrom("users",).select(["id", "username",],).execute();
+      const userId = users.find((u,) => u.username === "human")!.id;
+      await insertActors(db, "Human",);
+      const actors = await db.selectFrom("actors",).select(["id", "display_name",],).execute();
+      const actorId = actors.find((a,) => a.display_name === "Human")!.id;
+      await insertChats(db, "Review chat", userId,);
+      const chat = await db.selectFrom("chats",).select("id",).limit(1,).executeTakeFirstOrThrow();
+      await insertChatParticipants(db, chat.id, actorId,);
+
+      await insertActorMemories(db, actorId, "committed fact", {
+        review_status: "committed",
+      },);
+      await insertActorMemories(db, actorId, "pending fact", {
+        review_status: "pending",
+      },);
+      await insertActorMemories(db, actorId, "rejected fact", {
+        review_status: "rejected",
+      },);
+
+      const visible = await fetchActorMemories(db, actorId,);
+      expect(visible.map((m,) => m.content),).toEqual(["committed fact",],);
+    } finally {
+      sqlite.close();
+    }
+  });
+});
