@@ -27,7 +27,7 @@ addEventListener("error", (e: ErrorEvent,) => {
  */
 export async function apiFetch(
   url: string,
-  options?: RequestInit & { idempotencyKey?: string | true },
+  options?: RequestInit & { idempotencyKey?: string | true; stream?: boolean },
 ): Promise<Response> {
   const method = options?.method ?? "GET";
   const start = performance.now();
