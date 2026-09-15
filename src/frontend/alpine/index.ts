@@ -43,7 +43,6 @@ import "./actor-licensing";
 import "./actor-systems";
 import "./actor-emotion-avatars";
 import "./actor-traits";
-import "./chat-transfer";
 import "./export-progress";
 
 export { useRequestStatus, } from "./use-request-status";

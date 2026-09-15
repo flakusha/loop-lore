@@ -338,6 +338,9 @@
             </button>
             <button type="button" class="btn btn-secondary">{{{t("settings.importChats")}}}</button>
           </div>
+          <div class="settings-subsection" style="margin-top: var(--space-5)" data-testid="settings-export-progress">
+            {{> export/export-progress-panel.html }}
+          </div>
           <div class="settings-section" style="margin-top: var(--space-5)">
             <div class="section-title">{{{t("settings.nsfwConsent")}}}</div>
             <p class="zone-description">{{{t("settings.nsfwConsentDescription")}}}</p>
