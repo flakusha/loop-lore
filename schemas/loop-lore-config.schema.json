@@ -23,11 +23,11 @@
         "trustProxy": {
           "type": "boolean",
           "default": false,
-          "description": "Honor X-Forwarded-For / X-Real-IP / CF-Connecting-IP. Default false. Env: SERVER_TRUST_PROXY=1."
+          "description": "Honor X-Forwarded-For / X-Real-IP / CF-Connecting-IP for getClientIp. Default false (headers are spoofable). Env: SERVER_TRUST_PROXY=1."
         },
         "publicOrigin": {
           "type": "string",
-          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Env: SERVER_PUBLIC_ORIGIN."
+          "description": "Public origin (scheme + host) when behind a TLS-terminating proxy. Used for self-referential URLs. Env: SERVER_PUBLIC_ORIGIN."
         },
         "tls": {
           "type": "object",
@@ -36,12 +36,12 @@
             "key": {
               "type": "string",
               "default": "${DATA_DIR}/certs/key.pem",
-              "description": "Path to TLS private key (PEM). DATA_DIR resolves to <repo>/loop-lore-data at runtime."
+              "description": "Path to TLS private key (PEM)"
             },
             "cert": {
               "type": "string",
               "default": "${DATA_DIR}/certs/cert.pem",
-              "description": "Path to TLS certificate (PEM). DATA_DIR resolves to <repo>/loop-lore-data at runtime."
+              "description": "Path to TLS certificate (PEM)"
             }
           },
           "required": [
@@ -71,7 +71,7 @@
         "sqliteFilename": {
           "type": "string",
           "default": "${DATA_DIR}/loop-lore.db",
-          "description": "SQLite database file path. DATA_DIR resolves to <repo>/loop-lore-data at runtime. Overridden by LOOP_LORE_DB_PATH env var."
+          "description": "SQLite database file path"
         },
         "url": {
           "type": "string",
@@ -95,7 +95,7 @@
         "uploadDir": {
           "type": "string",
           "default": "${DATA_DIR}/uploads",
-          "description": "Directory for uploaded assets. DATA_DIR resolves to <repo>/loop-lore-data at runtime."
+          "description": "Directory for uploaded assets"
         },
         "maxFileSize": {
           "type": "integer",
@@ -135,6 +135,11 @@
           "type": "boolean",
           "default": true,
           "description": "Enable rule-based assistant"
+        },
+        "travelPrompts": {
+          "type": "boolean",
+          "default": false,
+          "description": "Bound/linked travel mode: prompt the LLM to narrate travel and suggest moving the chat to another location/chat when the narrative leaves the current one"
         }
       },
       "required": [
@@ -155,7 +160,6 @@
             "error",
             "fatal"
           ],
-          "default": "debug",
           "description": "Log level"
         },
         "jsonlPath": {
@@ -164,22 +168,18 @@
         },
         "jsonlMaxBytes": {
           "type": "integer",
-          "default": 104857600,
           "description": "Max JSONL file bytes before rotation"
         },
         "jsonlMaxFiles": {
           "type": "integer",
-          "default": 5,
           "description": "Max rotated files to keep"
         },
         "dbEnabled": {
           "type": "boolean",
-          "default": false,
           "description": "Enable DB log transport"
         },
         "censorEnabled": {
           "type": "boolean",
-          "default": true,
           "description": "PII redaction"
         },
         "censorFields": {
@@ -191,27 +191,22 @@
         },
         "queueMaxSize": {
           "type": "integer",
-          "default": 10000,
           "description": "Max queue entries"
         },
         "maxMessageBytes": {
           "type": "integer",
-          "default": 10240,
           "description": "Max message string bytes"
         },
         "maxMetaBytes": {
           "type": "integer",
-          "default": 102400,
           "description": "Max meta blob bytes"
         },
         "maxMetaDepth": {
           "type": "integer",
-          "default": 5,
           "description": "Max meta recursion depth"
         },
         "maxStackBytes": {
           "type": "integer",
-          "default": 5120,
           "description": "Max error stack bytes"
         }
       },
@@ -226,6 +221,10 @@
           "type": "boolean",
           "default": true,
           "description": "Enable TUI mode"
+        },
+        "sessionToken": {
+          "type": "string",
+          "description": "Bearer token for authenticated chat routes; omit to run anonymous against solo deployments."
         }
       },
       "required": [
@@ -320,17 +319,32 @@
         "adminUsername": {
           "type": "string",
           "default": "",
-          "description": "Bootstrap admin username (multi-user mode). Env: AUTH_ADMIN_USERNAME."
+          "description": "Bootstrap admin username (multi-user mode). Set via config or AUTH_ADMIN_USERNAME env."
         },
         "adminPassword": {
           "type": "string",
           "default": "",
           "description": "Bootstrap admin password (multi-user mode). Env-only preferred: AUTH_ADMIN_PASSWORD. Never commit."
         },
+        "jwtSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC-SHA256 secret for JWT signing. Env-only: AUTH_JWT_SECRET. Required when auth.required=true."
+        },
+        "csrfSecret": {
+          "type": "string",
+          "default": "",
+          "description": "HMAC secret for Bun.CSRF token issuance + verification. Env-only: AUTH_CSRF_SECRET. Falls back to auth.jwtSecret when unset."
+        },
+        "jwtExpiresIn": {
+          "type": "integer",
+          "default": 86400,
+          "description": "JWT token expiry in seconds (default: 86400 = 24h)"
+        },
         "legacyOpaqueTokenFallback": {
           "type": "boolean",
           "default": false,
-          "description": "Permit sha256(token) lookup when JWT verify fails. Default false. Env: AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1."
+          "description": "Permit sha256(token) lookup when JWT verify fails. Default false. Set AUTH_LEGACY_OPAQUE_TOKEN_FALLBACK=1 only for one-shot legacy migrations."
         }
       },
       "required": [
@@ -501,20 +515,23 @@
             "user",
             "world"
           ],
-          "default": "chat"
+          "default": "chat",
+          "description": "Default NSFW scope for new chats"
         },
         "consentRequired": {
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Require consent before NSFW encounters"
         },
         "auditLogging": {
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Log NSFW gate decisions to audit trail"
         },
         "useLlmClassifier": {
           "type": "boolean",
           "default": true,
-          "description": "Augment NSFW keyword detection with an LLM content rating classifier (on by default — the safety filter for extreme content)"
+          "description": "Augment NSFW keyword detection with an LLM content rating classifier"
         }
       },
       "required": [
@@ -1038,7 +1055,7 @@
         },
         "permissionsPolicy": {
           "type": "string",
-          "default": "accelerometer=(), camera=(), geolocation=(), microphone=(), usb=()",
+          "default": "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()",
           "description": "Permissions-Policy feature delegation"
         },
         "csp": {
@@ -1065,7 +1082,6 @@
               },
               "default": [
                 "'self'",
-                "'unsafe-inline'",
                 "'unsafe-eval'",
                 "https://cdn.jsdelivr.net"
               ]
@@ -2161,7 +2177,7 @@
         "enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Master toggle"
+          "description": "Master switch for all scheduled jobs"
         },
         "jobs": {
           "type": "object",

@@ -577,6 +577,19 @@ Server configuration accessible only to admins.
 | Spam detection             | toggle | off     | Detect repeated messages |
 | Max flags before auto-hide | number | 3       | Auto-hide threshold      |
 
+### Export
+
+Saved keys download as YAML (`GET /api/admin/system-config/export?format=yaml`)
+or TOML (`?format=toml`). Secret-valued keys export as `***REDACTED***`.
+Each export writes a `system-config.export` audit entry. Browser download
+folder applies — no server-side path choice.
+
+### Typed Schema
+
+`GET /api/admin/config-schema` serves the full config JSON Schema derived
+from the single-source section `*Meta` registry (defaults, types, enums,
+descriptions). Powers future Meta→widget typed binding of the System tab.
+
 ### Danger Zone
 
 - **Purge all audit logs**: permanent, requires "PURGE" confirmation
