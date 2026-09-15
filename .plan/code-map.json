@@ -10151,7 +10151,6 @@
       "source": ".plan/tickets/TASK-character-multi-avatar.md"
     }
   ],
-
   "src/db/schema-backfill.test.ts": [
     {
       "kind": "ticket",
