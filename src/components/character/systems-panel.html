@@ -1,0 +1,60 @@
+<!--
+  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+-->
+
+<!--
+  Systems export / import panel for character info. Bound to the
+  `actorSystemsFactory` Alpine plugin.
+-->
+<div x-data="actorSystemsFactory(actorId,)" x-init="setActorId(actorId,)" class="systems-panel">
+  <h3>Export</h3>
+  <fieldset>
+    <legend>Sections</legend>
+    <template x-for="key in EXPORT_SECTIONS" :key="key">
+      <label class="systems-section">
+        <input type="checkbox" :checked="sections[key]" @change="sections[key] = $event.target.checked" />
+        <span x-text="describeSection(key)"></span>
+      </label>
+    </template>
+  </fieldset>
+
+  <label>
+    World (optional)
+    <input type="text" x-model="worldId" placeholder="world id" />
+  </label>
+
+  <button type="button" :disabled="busy || !_sysActorId" @click="triggerDownload()">
+    Download JSON
+  </button>
+
+  <h3>Import</h3>
+
+  <details>
+    <summary>From URL</summary>
+    <label>
+      URL
+      <input type="url" x-model="importUrl" placeholder="https://example.com/systems.json" />
+    </label>
+    <button type="button" :disabled="busy || !_sysActorId" @click="importFromUrl()">
+      Import from URL
+    </button>
+  </details>
+
+  <details>
+    <summary>From JSON payload</summary>
+    <textarea x-model="importPreview" rows="8" placeholder="Paste exported systems JSON"></textarea>
+    <button type="button" :disabled="busy || !_sysActorId" @click="importFromPayload()">
+      Import payload
+    </button>
+  </details>
+
+  <button type="button" @click="resetImport()">Reset import form</button>
+
+  <p x-show="message" x-text="message" class="systems-message"></p>
+  <p x-show="error" x-text="error" class="systems-error"></p>
+
+  <template x-if="importResult">
+    <pre x-text="JSON.stringify(importResult, null, 2)"></pre>
+  </template>
+</div>
