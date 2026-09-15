@@ -64,7 +64,7 @@ function makeWidget(): Record<string, unknown> {
 const screenBase = makeWidget();
 
 const blessedStub = {
-  screen: () => ({ ...screenBase, append: () => {}, focused: null, },),
+  screen: () => ({ ...screenBase, append: () => {}, focused: null, }),
   box: () => makeWidget(),
   list: () => makeWidget(),
   text: () => makeWidget(),
@@ -87,12 +87,16 @@ const blessedStub = {
 mock.module("blessed", () => blessedStub,);
 
 let ChatWidgetCtor: typeof ChatWidget;
-mock.module("blessed", () => ({ default: blessedStub, ...blessedStub, }),);
+const blessedDefaultExport: Record<string, unknown> = {
+  default: blessedStub,
+  ...blessedStub,
+};
+mock.module("blessed", () => blessedDefaultExport,);
 beforeAll(async () => {
   // Dynamic import required: bun's mock.module replaces the resolution table
   // only for modules imported after the stub registers; the static type-only
   // imports above are erased at runtime.
-  ChatWidgetCtor = (await import("./index",)).ChatWidget;
+  ChatWidgetCtor = (await import("./index")).ChatWidget;
 },);
 
 afterAll(() => {
