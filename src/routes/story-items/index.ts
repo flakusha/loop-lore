@@ -14,8 +14,8 @@ import { storyItemInstanceRoutes, } from "./instances";
  * @param root0
  * @param root0.database
  */
-export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
+export function storyItemsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "story-items", },)
-    .use(storyItemInstanceRoutes({ database, },),)
-    .use(storyItemDefinitionsRoutes({ database, },),);
+    .use(storyItemInstanceRoutes({ database, }, prefix,),)
+    .use(storyItemDefinitionsRoutes({ database, }, prefix,),);
 }

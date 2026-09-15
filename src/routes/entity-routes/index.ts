@@ -18,23 +18,28 @@ export type { EntityConfig, } from "./types";
  * sub-plugins under the configured `entityPath` name so consumers of
  * `createEntityRoutes` are unchanged.
  *
- *   GET    /api/:parentPrefix/:parentId/:entityPath       — list (paginated)
- *   POST   /api/:parentPrefix/:parentId/:entityPath       — create
- *   GET    /api/:parentPrefix/:parentId/:entityPath/:id   — get
- *   PUT    /api/:parentPrefix/:parentId/:entityPath/:id   — update
- *   DELETE /api/:parentPrefix/:parentId/:entityPath/:id   — delete
+ *   GET    {prefix}/:parentPrefix/:parentId/:entityPath       — list (paginated)
+ *   POST   {prefix}/:parentPrefix/:parentId/:entityPath       — create
+ *   GET    {prefix}/:parentPrefix/:parentId/:entityPath/:id   — get
+ *   PUT    {prefix}/:parentPrefix/:parentId/:entityPath/:id   — update
+ *   DELETE {prefix}/:parentPrefix/:parentId/:entityPath/:id   — delete
  * @param config
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @param prefix
  */
-export function createEntityRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
+export function createEntityRoutes(
+  config: EntityConfig,
+  opts: { database: Db; config: Config },
+  prefix = "/api",
+): Elysia {
   return (
     new Elysia({ name: config.entityPath, },)
-      .use(listRoutes(config, opts,),)
-      .use(createRoutes(config, opts,),)
-      .use(getRoutes(config, opts,),)
-      .use(updateRoutes(config, opts,),)
-      .use(removeRoutes(config, opts,),)
+      .use(listRoutes(config, opts, prefix,),)
+      .use(createRoutes(config, opts, prefix,),)
+      .use(getRoutes(config, opts, prefix,),)
+      .use(updateRoutes(config, opts, prefix,),)
+      .use(removeRoutes(config, opts, prefix,),)
   );
 }

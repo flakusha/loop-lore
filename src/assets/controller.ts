@@ -107,7 +107,7 @@ async function requireAssetOwner(
   return asset;
 }
 
-export function assetRoutes({ database, config, }: { database: Kysely<DB>; config: Config },) {
+export function assetRoutes({ database, config, }: { database: Kysely<DB>; config: Config }, prefix = "/api",) {
   return (
     new Elysia({ name: "assets", },)
       .guard({
@@ -118,7 +118,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         },
       },)
       // ── Collection routes ─────────────────────────────
-      .get("/api/assets", async (ctx,) => {
+      .get(`${prefix}/assets`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
         const page = Number(searchParams.get("page",) ?? "1",);
         const pageSize = Math.min(Number(searchParams.get("pageSize",) ?? "50",), 200,);
@@ -146,14 +146,14 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       // the upload handler can call request.formData(). Registering the multipart
       // route directly on the parent app avoids this issue.
       // ── Single asset routes ──────────────────────────
-      .get("/api/assets/:id", async (ctx,) => {
+      .get(`${prefix}/assets/:id`, async (ctx,) => {
         const userId = (ctx as any).userId as string | null ?? null;
         const userRole = (ctx as any).userRole as string | null ?? null;
         const resolved = await resolveAsset(database, ctx.params.id, userId, userRole,);
         if (resolved instanceof Response) { return resolved; }
         return jsonResponse(resolved.asset,);
       },)
-      .patch("/api/assets/:id", async (ctx,) => {
+      .patch(`${prefix}/assets/:id`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -178,7 +178,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         }
         return jsonResponse({ id: updated.id, visibility: updated.visibility, },);
       },)
-      .delete("/api/assets/:id", async (ctx,) => {
+      .delete(`${prefix}/assets/:id`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -196,7 +196,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         return jsonNoContent();
       },)
       // -- Transform routes (face-anchor / framing metadata) ----
-      .get("/api/assets/:id/transform", async (ctx,) => {
+      .get(`${prefix}/assets/:id/transform`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
         const context = searchParams.get("context",) ?? TransformContext.Default;
         if (!(Object.values(TransformContext,) as string[]).includes(context,)) {
@@ -213,7 +213,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         if (!transform) { return notFoundResponse("No transform for this context",); }
         return jsonResponse(transform,);
       },)
-      .put("/api/assets/:id/transform", async (ctx,) => {
+      .put(`${prefix}/assets/:id/transform`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
         const owned = await requireAssetOwner(database, ctx.params.id, userId,);
@@ -237,7 +237,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         }
       },)
       // ── File serving routes ──────────────────────────
-      .get("/api/assets/:id/raw", async (ctx,) => {
+      .get(`${prefix}/assets/:id/raw`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
         const chatId = searchParams.get("chatId",) ?? undefined;
         return handleServeRaw({
@@ -250,7 +250,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           ...signedUrlAuth(searchParams, "raw", config,),
         },);
       },)
-      .get("/api/assets/:id/download", async (ctx,) => {
+      .get(`${prefix}/assets/:id/download`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
         const chatId = searchParams.get("chatId",) ?? undefined;
         return handleDownload({
@@ -263,7 +263,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           ...signedUrlAuth(searchParams, "download", config,),
         },);
       },)
-      .get("/api/assets/:id/thumb", async (ctx,) => {
+      .get(`${prefix}/assets/:id/thumb`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
         return handleServeCompressed({
           database,
@@ -275,7 +275,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           ...signedUrlAuth(searchParams, "thumb", config,),
         },);
       },)
-      .get("/api/assets/:id/compressed", async (ctx,) => {
+      .get(`${prefix}/assets/:id/compressed`, async (ctx,) => {
         const searchParams = new URL(ctx.request.url,).searchParams;
         return handleServeCompressed({
           database,
@@ -291,7 +291,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       // Mint a time-limited HMAC URL for a serve action. Gates on the same
       // access check as serving; the token then authorizes session-less
       // fetching (e.g. <img src>) until expiry.
-      .post("/api/assets/:id/signed-url/:action", async (ctx,) => {
+      .post(`${prefix}/assets/:id/signed-url/:action`, async (ctx,) => {
         const userId = (ctx as any).userId as string | null ?? null;
         const userRole = (ctx as any).userRole as string | null ?? null;
         const resolved = await resolveAsset(database, ctx.params.id, userId, userRole,);
@@ -314,18 +314,18 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           action: actionParam,
           expiresInSeconds,
         },);
-        const url = `/api/assets/${ctx.params.id}/${actionParam}?expires=${signed.expiresAt}&sig=${signed.token}`;
+        const url = `${prefix}/assets/${ctx.params.id}/${actionParam}?expires=${signed.expiresAt}&sig=${signed.token}`;
         return jsonResponse({ url, token: signed.token, expiresAt: signed.expiresAt, action: actionParam, },);
       },)
       // ── Links sub-routes ─────────────────────────────
-      .get("/api/assets/:id/links", async (ctx,) => {
+      .get(`${prefix}/assets/:id/links`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
         const links = await getAssetLinks(database, ctx.params.id,);
         return jsonResponse(links,);
       },)
-      .post("/api/assets/:id/links", async (ctx,) => {
+      .post(`${prefix}/assets/:id/links`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -340,7 +340,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         },);
         return jsonCreated({ id: ctx.params.id, },);
       },)
-      .delete("/api/assets/:id/links/:linkId", async (ctx,) => {
+      .delete(`${prefix}/assets/:id/links/:linkId`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -357,7 +357,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         return jsonNoContent();
       },)
       // ── Share sub-routes ─────────────────────────────
-      .post("/api/assets/:id/share", async (ctx,) => {
+      .post(`${prefix}/assets/:id/share`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -377,7 +377,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         }
         return jsonCreated(share,);
       },)
-      .delete("/api/assets/:id/share", async (ctx,) => {
+      .delete(`${prefix}/assets/:id/share`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
@@ -392,7 +392,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         await unshareAsset({ database, assetId: ctx.params.id, sharedWithId: body.actor_id, },);
         return jsonNoContent();
       },)
-      .get("/api/assets/:id/shares", async (ctx,) => {
+      .get(`${prefix}/assets/:id/shares`, async (ctx,) => {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 

@@ -15,9 +15,9 @@ import { questWorldRoutes, } from "./world";
  * @param root0
  * @param root0.database
  */
-export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
+export function questsRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "quests", },)
-    .use(questWorldRoutes({ database, },),)
-    .use(questCrudRoutes({ database, },),)
-    .use(questProgressRoutes({ database, },),);
+    .use(questWorldRoutes({ database, }, prefix,),)
+    .use(questCrudRoutes({ database, }, prefix,),)
+    .use(questProgressRoutes({ database, }, prefix,),);
 }

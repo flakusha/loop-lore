@@ -21,9 +21,10 @@ export type { HandlerOpts, } from "./types";
 
 /**
  * @param opts
+ * @param prefix
  */
-export function chatBackgroundsRoutes(opts: HandlerOpts,) {
+export function chatBackgroundsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "chat-backgrounds", },)
-    .use(catalogRoutes(opts,),)
-    .use(assignmentRoutes(opts,),);
+    .use(catalogRoutes(opts, prefix,),)
+    .use(assignmentRoutes(opts, prefix,),);
 }

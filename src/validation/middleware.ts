@@ -8,7 +8,7 @@
  */
 
 import { getLogger, } from "../logger";
-import { ForbiddenError, NotFoundError, } from "../routes/http-utils";
+import { API_VERSION, ForbiddenError, NotFoundError, } from "../routes/http-utils";
 
 /**
  * Elysia `onError` handler that standardises validation and service-layer error responses.
@@ -68,30 +68,35 @@ export function onValidationError(
       error: "Validation failed",
       code: "VALIDATION_ERROR",
       details: details.length > 0 ? details : [{ field: "body", message: err.message ?? "Validation failed", },],
+      meta: { api_version: API_VERSION, },
     };
   }
 
   // ── Elysia "NOT_FOUND" for unmatched routes ─────────────
   if (code === "NOT_FOUND") {
     set.status = 404;
-    return { error: err.message ?? "Not found", code: "NOT_FOUND", };
+    return { error: err.message ?? "Not found", code: "NOT_FOUND", meta: { api_version: API_VERSION, }, };
   }
 
   // ── Elysia "PARSE" — body parse failure (e.g. multipart with no schema) ──
   if (code === "PARSE") {
     set.status = 400;
-    return { error: err?.message ?? "Failed to parse request body", code: "PARSE_ERROR", };
+    return {
+      error: err?.message ?? "Failed to parse request body",
+      code: "PARSE_ERROR",
+      meta: { api_version: API_VERSION, },
+    };
   }
 
   // ── Service-layer errors ────────────────────────────────
   if (err instanceof NotFoundError) {
     set.status = 404;
-    return { error: err.message, code: "NOT_FOUND", };
+    return { error: err.message, code: "NOT_FOUND", meta: { api_version: API_VERSION, }, };
   }
 
   if (err instanceof ForbiddenError) {
     set.status = 403;
-    return { error: err.message, code: "FORBIDDEN", };
+    return { error: err.message, code: "FORBIDDEN", meta: { api_version: API_VERSION, }, };
   }
 
   // ── Unknown errors → 500 ────────────────────────────────
@@ -118,7 +123,9 @@ export function onValidationError(
  * @returns 401 `Response` with `{ error, code: "UNAUTHORIZED" }` JSON body.
  */
 export function unauthorized(message = "Unauthorized",): Response {
-  return Response.json({ error: message, code: "UNAUTHORIZED", }, { status: 401, },);
+  return Response.json({ error: message, code: "UNAUTHORIZED", meta: { api_version: API_VERSION, }, }, {
+    status: 401,
+  },);
 }
 
 /**
@@ -127,7 +134,7 @@ export function unauthorized(message = "Unauthorized",): Response {
  * @returns 403 `Response` with `{ error, code: "FORBIDDEN" }` JSON body.
  */
 export function forbidden(message = "Forbidden",): Response {
-  return Response.json({ error: message, code: "FORBIDDEN", }, { status: 403, },);
+  return Response.json({ error: message, code: "FORBIDDEN", meta: { api_version: API_VERSION, }, }, { status: 403, },);
 }
 
 /**
@@ -136,7 +143,7 @@ export function forbidden(message = "Forbidden",): Response {
  * @returns 404 `Response` with `{ error, code: "NOT_FOUND" }` JSON body.
  */
 export function notFound(message = "Not found",): Response {
-  return Response.json({ error: message, code: "NOT_FOUND", }, { status: 404, },);
+  return Response.json({ error: message, code: "NOT_FOUND", meta: { api_version: API_VERSION, }, }, { status: 404, },);
 }
 
 /**

@@ -16,14 +16,15 @@ import { updateRoutes, } from "./update";
  * sub-plugins. Registration point/name (`characters`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
  * @param opts
+ * @param prefix
  */
-export function charactersRoutes(opts: HandlerOpts,) {
+export function charactersRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "characters", },)
-    .use(listRoutes(opts,),)
-    .use(createRoutes(opts,),)
-    .use(readRoutes(opts,),)
-    .use(cardRoutes(opts,),)
-    .use(updateRoutes(opts,),)
-    .use(removeRoutes(opts,),)
-    .use(exportRoutes(opts,),);
+    .use(listRoutes(opts, prefix,),)
+    .use(createRoutes(opts, prefix,),)
+    .use(readRoutes(opts, prefix,),)
+    .use(cardRoutes(opts, prefix,),)
+    .use(updateRoutes(opts, prefix,),)
+    .use(removeRoutes(opts, prefix,),)
+    .use(exportRoutes(opts, prefix,),);
 }

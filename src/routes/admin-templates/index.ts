@@ -23,13 +23,14 @@ import { updateRoutes, } from "./update";
  *   DELETE /api/admin/templates/:id         — delete custom profile
  * @param opts
  * @param opts.database
+ * @param prefix
  */
-export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
+export function adminTemplateRoutes(opts: { database: Kysely<DB> }, prefix = "/api",) {
   return (
     new Elysia({ name: "admin-templates", },)
-      .use(listRoutes(opts,),)
-      .use(updateRoutes(opts,),)
-      .use(createRoutes(opts,),)
-      .use(removeRoutes(opts,),)
+      .use(listRoutes(opts, prefix,),)
+      .use(updateRoutes(opts, prefix,),)
+      .use(createRoutes(opts, prefix,),)
+      .use(removeRoutes(opts, prefix,),)
   );
 }

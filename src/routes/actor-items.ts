@@ -18,8 +18,9 @@ import { createEntityRoutes, } from "./entity-routes";
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @param prefix
  */
-export function actorItemsRoutes(opts: { database: Db; config: Config },): Elysia {
+export function actorItemsRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   const crud = createEntityRoutes(
     {
       parentPrefix: "actors",
@@ -57,6 +58,7 @@ export function actorItemsRoutes(opts: { database: Db; config: Config },): Elysi
       createRequired: ["name",],
     },
     opts,
+    prefix,
   );
-  return crud.use(actorItemsGameplayRoutes(opts,),);
+  return crud.use(actorItemsGameplayRoutes(opts, prefix,),);
 }
