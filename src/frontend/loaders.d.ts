@@ -98,7 +98,6 @@ declare global {
   var actorEntitiesFactory: (actorId: string, kind: string,) => unknown;
   var actorSystemsFactory: (actorId: string,) => unknown;
   var actorTraitsFactory: (actorId: string,) => unknown;
-  var chatTransferFactory: (chatId: string,) => unknown;
   var exportProgressFactory: () => unknown;
   var actorEmotionAvatars: unknown;
   var currentLocale: string;
