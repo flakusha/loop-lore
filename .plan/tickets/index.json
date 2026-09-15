@@ -5171,7 +5171,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-036.md",
     "git_issue": "a7e62d9",
-    "status": "undefined"
+    "status": "done"
   },
   "FEAT-037": {
     "hash": "f6f4511",
@@ -5184,7 +5184,7 @@
     "tags": [],
     "source": ".plan/tickets/FEAT-037.md",
     "git_issue": "f6f4511",
-    "status": "undefined"
+    "status": "done"
   },
   "FEAT-038": {
     "hash": "e25c9ee",
