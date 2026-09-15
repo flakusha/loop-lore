@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-import { type WorktreeConfig, } from "../utils/config";
-import { getRootBranch, gitSync, } from "../utils/git";
-import { findWorktreeForBranchSync, getWorktrees, } from "../utils/git";
+
+import { existsSync, } from "node:fs";
+import { resolve, } from "node:path";
+import { branchToPath, type WorktreeConfig, } from "../utils/config";
+import { findWorktreeForBranchSync, getRootBranch, getWorktrees, gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
