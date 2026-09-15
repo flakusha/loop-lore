@@ -1,6 +1,6 @@
 # BUG: raw Buffer.from/alloc inconsistent with safe-buffer — 65 sites
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (audited + boundary sites routed, 2026-09-15)
 **Priority:** low
 **Effort:** Medium
 **Epic:** epic-code-quality
@@ -21,16 +21,35 @@
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 
-## Audit note (2026-09-15, uncommitted)
+## Resolution (2026-09-15)
+
+Two-pass audit, both merged to `dev`:
+
+- Pass 1 (commits `b5e9358b7` + tests): network/file/DB boundaries —
+  `matting/providers.ts:43` (remote HTTP bytes), `matting/service.ts:166`
+  (disk read), `memory/embeddings.ts` (vector store + DB, 3 sites),
+  `federation/cipher.ts` seal, `export-shared/assets.ts` + `helpers.ts`
+  (dropped pointless `Buffer.from` copy; `CryptoHasher.update` takes the
+  `Uint8Array`). New tests: `matting/providers.test.ts` (PNG/non-PNG/HTTP-500),
+  `export-shared/assets.test.ts` (real-file zip + checksum).
+- Pass 2 (commit `06c13fa3e`): `federation/cipher.ts` seal/open completed
+  plus all 8 `peer-keys.ts` key-wrap sites through `safeFromUint8Array` /
+  `safeFromBase64` / `safeToBase64`. Key-decode failure is fail-closed
+  (thrown guard error at wrap time). `steganography.ts` verified clean
+  (no Buffer refs).
+- Deliberately untouched: fixed-encoding trusted paths (`utf8`/`base64`/
+  `latin1` literals, magic bytes, constant-size `alloc`) per the ticket's own
+  trust rule; `peer-keys` empty-key rotation semantics preserved.
+- Verify: 69/69 `src/federation/` tests pass; full `check` + `test:unit`
+  green on both finalizes.
+
+## Prior audit note (superseded by Resolution above)
 
 Extended the first pass (network/file/DB boundaries, merged earlier):
 `federation/cipher.ts` seal/open plus all 8 `peer-keys.ts` key-wrap sites
-now route through `safe-buffer` (`safeFromUint8Array` /
-`safeFromBase64` / `safeToBase64`). Base64-key decode failure surfaces as a
-thrown guard error at wrap time (fail-closed) instead of `Buffer.from`
-throwing deep in the crypto call. `steganography.ts` has no Buffer refs
+now route through `safe-buffer`. `steganography.ts` has no Buffer refs
 (already clean). 69/69 `src/federation/` tests pass.
