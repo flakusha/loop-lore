@@ -27,7 +27,7 @@ export function prettyJson(value: unknown,): string {
 export function addChecksum(
   checksums: Record<string, string>,
   path: string,
-  content: string | Buffer,
+  content: string | Buffer | Uint8Array,
 ): void {
   checksums[path] = `sha256:${new Bun.CryptoHasher("sha256",).update(content,).digest("hex",)}`;
 }

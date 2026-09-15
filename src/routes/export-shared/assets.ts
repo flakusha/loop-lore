@@ -24,7 +24,7 @@ export async function exportAssetsToZip(ctx: ExportContext,): Promise<void> {
     const buffer = await file.arrayBuffer();
     const name = `${asset.id}-${asset.filename}`;
     assetsFolder?.file(name, buffer,);
-    addChecksum(ctx.checksums, `assets/${name}`, Buffer.from(buffer,),);
+    addChecksum(ctx.checksums, `assets/${name}`, new Uint8Array(buffer,),);
 
     ctx.onItem?.({
       id: asset.id,
