@@ -3,11 +3,18 @@
 
 # TASK: Chat Transfer Frontend
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (merged to dev 2026-09-15)
 **Priority:** P2
 **Effort:** Low
 **Epic:** epic-frontend-backend-integration
 **Tags:** transfer, frontend, chat
+
+## Resolution
+
+Merged to dev in `991f6f050` (`feat(frontend): mount actor panels, export progress; drop orphan`):
+
+- Ownership transfer is satisfied by the already-shipped `chat-settings-modal.html` + `chat-settings/ownership.ts` (both POST `/api/chats/:id/transfer-ownership`).
+- The orphan `chat-transfer.ts` module + `transfer-panel.html` + test were **deleted** (duplicate of the ownership modal) with a clean cutover — no shim.
 
 ## Summary
 

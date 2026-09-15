@@ -3,11 +3,18 @@
 
 # TASK: Actor Licensing Frontend
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (merged to dev 2026-09-15)
 **Priority:** P2
 **Effort:** Low
 **Epic:** epic-frontend-backend-integration
 **Tags:** licensing, frontend, actor, character
+
+## Resolution
+
+Merged to dev in `991f6f050` (`feat(frontend): mount actor panels, export progress; drop orphan`):
+
+- `src/frontend/alpine/actor-licensing.ts` — license type/terms/restrictions display with loading + error states.
+- `src/components/character/licensing-panel.html` — mounted inline in `src/routes/views/character-edit-form.ts`.
 
 ## Summary
 
