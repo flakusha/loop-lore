@@ -8,6 +8,7 @@ import type { Generated, } from "kysely";
 import type {
   ActorType,
   AgentType,
+  CharacterState,
   ChatMode,
   ChatParticipantRole,
   ChatType,
@@ -503,7 +504,7 @@ export interface CharacterStats {
   evasiveness: number | null;
   cooperativeness: number | null;
   aggression_threshold: number | null;
-  character_state: Generated<string>;
+  character_state: Generated<CharacterState>;
   conditions: Generated<string>;
   active_effects: Generated<string>;
   combat_alignment: Generated<string>;
