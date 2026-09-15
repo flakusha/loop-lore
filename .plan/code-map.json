@@ -15159,6 +15159,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-group-chat-talkativity-not-surfaced-in-prompt.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-chat-pause-not-gating-autoreply.md"
     }
   ],
   "src/generation/auto-gen-emotion-avatar.test.ts": [
@@ -22807,6 +22811,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-prompt-override-bypass-on-reply.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-single-chat-pause-not-gating-autoreply.md"
     }
   ],
   "src/routes/messages/reply.ts": [
