@@ -20,9 +20,9 @@ const DiscoverBody = t.Object({
  * POST /api/lora/discover — Trigger LoRA discovery for a backend.
  * @param config
  */
-export function discoverRoutes(config: Config,) {
+export function discoverRoutes(config: Config, prefix = "/api",) {
   return new Elysia({ name: "lora-discover", },)
-    .post("/api/lora/discover", async (ctx,) => {
+    .post(`${prefix}/lora/discover`, async (ctx,) => {
       const { userId, } = extractAuth(ctx,);
       if (!userId) {
         return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);

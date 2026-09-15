@@ -14,10 +14,11 @@ import type { HandlerOpts, } from "./types";
 
 /**
  * @param opts
+ * @param prefix
  */
-export function chatExportRoutes(opts: HandlerOpts,) {
+export function chatExportRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chat-export", },)
-      .use(exportChatRoute(opts,),)
+      .use(exportChatRoute(opts, prefix,),)
   );
 }

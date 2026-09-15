@@ -22,9 +22,10 @@ export type { HandlerOpts, } from "./types";
 
 /**
  * @param opts
+ * @param prefix
  */
-export function gmNotesRoutes(opts: HandlerOpts,) {
+export function gmNotesRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "gm-notes", },)
-    .use(shadowRoutes(opts,),)
-    .use(whitenoteRoutes(opts,),);
+    .use(shadowRoutes(opts, prefix,),)
+    .use(whitenoteRoutes(opts, prefix,),);
 }

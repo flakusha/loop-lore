@@ -20,8 +20,8 @@ export type { VnGenerateRouteOpts, } from "./types";
 /**
  * @param opts
  */
-export function vnGenerateRoutes(opts: VnGenerateRouteOpts,) {
-  return new Elysia({ prefix: "/api/chats", },)
+export function vnGenerateRoutes(opts: VnGenerateRouteOpts, prefix = "/api",) {
+  return new Elysia({ prefix: `${prefix}/chats`, },)
     .use(storyRoutes(opts,),)
     .use(choicesRoutes(opts,),);
 }

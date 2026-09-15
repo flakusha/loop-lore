@@ -15,9 +15,9 @@ const ValidateBody = t.Object({
 },);
 
 /** POST /api/lora/validate — Validate a LoRA configuration. */
-export function loraValidateRoutes() {
+export function loraValidateRoutes(prefix = "/api",) {
   return new Elysia({ name: "lora-validate", },)
-    .post("/api/lora/validate", (ctx,) => {
+    .post(`${prefix}/lora/validate`, (ctx,) => {
       const { userId, } = extractAuth(ctx,);
       if (!userId) {
         return jsonResponse({ error: "Unauthorized", code: "UNAUTHORIZED", }, 401,);

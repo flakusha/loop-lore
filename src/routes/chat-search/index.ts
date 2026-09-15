@@ -13,13 +13,14 @@ import type { HandlerOpts, } from "./types";
  * sub-plugins. Registration point/name (`chat-search`) is preserved so the
  * `register-plugins.ts` wiring is unchanged.
  * @param opts
+ * @param prefix
  */
-export function chatSearchRoutes(opts: HandlerOpts,) {
+export function chatSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "chat-search", },)
-      .use(searchRoutes(opts,),)
-      .use(joinableRoutes(opts,),)
-      .use(joinRoutes(opts,),)
-      .use(transferRoutes(opts,),)
+      .use(searchRoutes(opts, prefix,),)
+      .use(joinableRoutes(opts, prefix,),)
+      .use(joinRoutes(opts, prefix,),)
+      .use(transferRoutes(opts, prefix,),)
   );
 }

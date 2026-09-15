@@ -196,7 +196,7 @@ export async function handleHealth(): Promise<Response> {
  * @param _opts
  * @param _opts.database
  */
-export function imageEditRoutes(_opts: { database: Kysely<DB> },) {
+export function imageEditRoutes(_opts: { database: Kysely<DB> }, prefix = "/api",) {
   registerBuiltinTemplates();
 
   try {
@@ -209,9 +209,9 @@ export function imageEditRoutes(_opts: { database: Kysely<DB> },) {
   }
 
   return new Elysia({ name: "image-edit", },)
-    .get("/api/image-edit/templates", ({ request, },) => handleTemplates(request,),)
-    .get("/api/image-edit/nodes", () => handleNodes(),)
-    .get("/api/image-edit/capabilities", () => handleCapabilities(),)
-    .get("/api/image-edit/health", () => handleHealth(),)
-    .post("/api/image-edit/run", async ({ request, },) => handleRun(request,),);
+    .get(`${prefix}/image-edit/templates`, ({ request, },) => handleTemplates(request,),)
+    .get(`${prefix}/image-edit/nodes`, () => handleNodes(),)
+    .get(`${prefix}/image-edit/capabilities`, () => handleCapabilities(),)
+    .get(`${prefix}/image-edit/health`, () => handleHealth(),)
+    .post(`${prefix}/image-edit/run`, async ({ request, },) => handleRun(request,),);
 }

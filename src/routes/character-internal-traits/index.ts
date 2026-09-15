@@ -14,7 +14,7 @@ import { CharacterInternalTraitsService, } from "../../characters/services/inter
 import { type HandlerOpts, requireActorAccess, } from "../actor-auth";
 import { jsonError, jsonResponse, } from "../http-utils";
 
-const R = "/api/character-internal-traits";
+const R_SUFFIX = "/character-internal-traits";
 
 const aspirationSchema = t.Object({
   id: t.String(),
@@ -71,9 +71,11 @@ const actorQuery = t.Object({ actorId: t.String(), },);
 
 /**
  * @param opts
+ * @param prefix
  */
-export function characterInternalTraitsRoutes(opts: HandlerOpts,) {
+export function characterInternalTraitsRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = () => new CharacterInternalTraitsService(opts.database,);
+  const R = `${prefix}${R_SUFFIX}`;
 
   return new Elysia({ name: "character-internal-traits", },)
     // ── Get internal traits ──────────────────────────────

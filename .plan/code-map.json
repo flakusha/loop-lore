@@ -11288,6 +11288,14 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-035.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-037.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-admin-assistant-tooling-allowlist.md"
     },
     {
@@ -22057,6 +22065,13 @@
       "source": "docs/spec/lore.md"
     }
   ],
+
+  "src/routes/entity-routes/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-035.md"
+    }
+  ],
   "src/routes/epics/agentic-workspace.ts": [
     {
       "kind": "ticket",
@@ -23233,6 +23248,13 @@
       "source": ".plan/tickets/TASK-headers-additional-useful-response-headers.md"
     }
   ],
+
+  "src/routes/middleware/version-redirect.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-037.md"
+    }
+  ],
   "src/routes/middleware/version-redirect.ts": [
     {
       "kind": "epic",
@@ -23241,6 +23263,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-architecture.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-037.md"
     }
   ],
   "src/routes/middleware/version-resolver.test.ts": [
@@ -24113,6 +24139,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-035.md"
     }
   ],
   "src/routes/v1/openapi.ts": [
@@ -28615,6 +28645,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-validation-middleware-leaks-raw-err-message-in-500-envelope.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-036.md"
     },
     {
       "kind": "ticket",

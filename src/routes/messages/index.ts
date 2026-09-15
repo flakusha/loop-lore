@@ -15,13 +15,14 @@ import { updateRoutes, } from "./update";
  * sub-plugins. Registration point/name (`messages`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
  * @param opts
+ * @param prefix
  */
-export function messagesRoutes(opts: HandlerOpts,) {
+export function messagesRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "messages", },)
-    .use(readRoutes(opts,),)
-    .use(updateRoutes(opts,),)
-    .use(createRoutes(opts,),)
-    .use(forwardRoutes(opts,),)
-    .use(aiActionRoutes(opts,),)
-    .use(archivingRoutes(opts,),);
+    .use(readRoutes(opts, prefix,),)
+    .use(updateRoutes(opts, prefix,),)
+    .use(createRoutes(opts, prefix,),)
+    .use(forwardRoutes(opts, prefix,),)
+    .use(aiActionRoutes(opts, prefix,),)
+    .use(archivingRoutes(opts, prefix,),);
 }

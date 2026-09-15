@@ -15,15 +15,16 @@ import type { HandlerOpts, } from "./types";
  * sub-plugins. Registration point/name (`nsfw`) is preserved so the
  * `elysia-app.ts` wiring is unchanged.
  * @param opts
+ * @param prefix
  */
-export function nsfwRoutes(opts: HandlerOpts,) {
+export function nsfwRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "nsfw", },)
-      .use(intimacyRoutes(opts,),)
-      .use(seductionRoutes(opts,),)
-      .use(bodyRoutes(opts,),)
-      .use(encounterRoutes(opts,),)
-      .use(fantasyRoutes(opts,),)
-      .use(locationRoutes(opts,),)
+      .use(intimacyRoutes(opts, prefix,),)
+      .use(seductionRoutes(opts, prefix,),)
+      .use(bodyRoutes(opts, prefix,),)
+      .use(encounterRoutes(opts, prefix,),)
+      .use(fantasyRoutes(opts, prefix,),)
+      .use(locationRoutes(opts, prefix,),)
   );
 }
