@@ -42,6 +42,7 @@ Users want to:
 | **XMPP Integration**     | `epic-xmpp-integration.md`           | xmpp.js, SASL, OMEMO, MUC, presence, Jingle file transfer, roster, vCard                                     | Medium   | Medium |
 | **IM Integrations**      | `epic-im-integrations.md`            | WhatsApp Web (experimental), Telegram Bot API, Signal, unified IM UI/status dashboard                        | Medium   | Medium |
 | **Email Integration**    | `epic-email-integration.md`          | imapflow/nodemailer, PGP/GPG, email-to-chat bridge, notifications, templates, filtering/search/archiving     | Medium   | Medium |
+| **IRC Integration**      | `tickets/FEAT-2026-irc-group-chat-integration.md` (ticket, no separate epic file)                            | Native IRC: channels surface as group-chat, PM as chat, on the social-hub adapter surface                    | Medium   | High   |
 
 ## Slicing Rationale
 
@@ -87,7 +88,7 @@ Shared cross-protocol security posture (per-protocol details live in each sub-ep
 
 ## Open Questions
 
-- **Federation protocols absent:** ActivityPub/Lemmy do not appear anywhere in the current content. IRC appears only as a Matrix bridge target (via matrix-appservice-irc), not as a native integration. If federated/decentralized protocols beyond XMPP are intended, a new sub-epic (e.g. ActivityPub/Fediverse integration) is needed.
+- **IRC scope resolved:** native IRC integration (channels as group-chat, PM as chat) is consolidated under `tickets/FEAT-2026-irc-group-chat-integration.md` — implementation deferred pending persistence design (bouncer or relay). Federation protocols beyond XMPP (ActivityPub/Lemmy) still have no scoped ticket; a new sub-epic would be needed if intended.
 - Should experimental protocols (WhatsApp Web, Signal CLI) graduate to supported status, and under what criteria?
 
 ## Related Epics
