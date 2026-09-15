@@ -3,11 +3,18 @@
 
 # TASK: Actor Systems Export/Import Frontend
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (merged to dev 2026-09-15)
 **Priority:** P2
 **Effort:** Medium
 **Epic:** epic-frontend-backend-integration
 **Tags:** systems, export, import, frontend, actor
+
+## Resolution
+
+Merged to dev in `991f6f050` (`feat(frontend): mount actor panels, export progress; drop orphan`):
+
+- `src/frontend/alpine/actor-systems.ts` — export trigger + section toggles + import (payload + URL) forms.
+- `src/components/character/systems-panel.html` — mounted inline in `src/routes/views/character-edit-form.ts`.
 
 ## Summary
 
