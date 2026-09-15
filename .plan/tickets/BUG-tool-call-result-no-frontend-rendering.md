@@ -4,9 +4,9 @@
 # BUG: LLM tool calls persist in `messages.tool_calls` (migration 037) but no `MessageContentType.ToolResult` exists and no frontend bubble renders them — tool calls appear as raw JSON text in chat
 
 **Status:** [OK] Done
- **Severity:** medium
- **Priority:** medium
- **Effort:** medium
+**Severity:** medium
+**Priority:** medium
+**Effort:** medium
 **Epic:** epic-assistant-gm-flows, epic-chat-lifecycle-moderation
 **Files:** src/db/enums-core/messages.ts:18-26 (MessageContentType enum); src/db/migrations/037_message_tool_calls.ts; src/views/chat-render.ts (or equivalent); src/frontend/alpine/chat-bubble.ts
 

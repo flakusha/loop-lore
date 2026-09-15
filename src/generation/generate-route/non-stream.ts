@@ -39,7 +39,7 @@ import type { GenerateRequest as ProviderRequest, LLMProvider, } from "../provid
 import type { GenerationMessage, } from "../types";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
- import type { GenerateRequest, } from "./types";
+import type { GenerateRequest, } from "./types";
 
 /** */
 export interface RunNonStreamingOpts {
