@@ -13675,6 +13675,18 @@
     "source": ".plan/tickets/TASK-coverage-waiver-chat-ownership-async-body-limit.md",
     "status": "open"
   },
+  "TASK-COVERAGE-WAIVER-FRONTEND-FE-FETCH-HTMX-STREAM-SIGNATURE": {
+    "hash": "pending",
+    "extid": "TASK-COVERAGE-WAIVER-FRONTEND-FE-FETCH-HTMX-STREAM-SIGNATURE",
+    "type": "TASK",
+    "title": "Coverage waiver: frontend fe-fetch + htmx below 75% floor (stream signature-only diff)",
+    "label": "task",
+    "priority": "Low",
+    "epic": "epic-testing-qa",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature.md",
+    "status": "open"
+  },
   "TASK-COVERAGE-WAIVER-GENERATE-ROUTE-NON-STREAM-TS-BELOW-80-FLOOR": {
     "hash": "f787c2d",
     "git_issue": "f787c2d",
