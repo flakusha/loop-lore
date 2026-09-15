@@ -3801,7 +3801,7 @@
     "epic": "epic-i18n",
     "tags": [],
     "source": ".plan/tickets/BUG-server-view-date-display-ignores-user-timezone-locale.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-SERVICES-TRADECORE-VALIDATELINES-LACKS-WORLD-ID-FILTER-CROSS": {
     "hash": "a42f171",
