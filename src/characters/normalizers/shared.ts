@@ -43,6 +43,15 @@ export function buildCanonicalFields(
   },
 ): Omit<CanonicalCharacter, "lorebook" | "assets" | "extensions" | "nickname"> {
   const welcomeKey = opts?.welcomeKey ?? "first_mes";
+  // Identity fields — accept both canonical names and legacy aliases.
+  // `race` → `species` (SillyTavern V2), `origin` → `homeland` (per-character generator).
+  // Canonical names win; aliases fill in when canonical is missing.
+  const species = (raw.species as string | undefined) ?? (raw.race as string | undefined);
+  const homeland = (raw.homeland as string | undefined) ?? (raw.origin as string | undefined);
+  const culture = raw.culture as string | undefined;
+  const gender = raw.gender as string | undefined;
+  const ageRaw = raw.age;
+  const age = (typeof ageRaw === "number" || typeof ageRaw === "string") ? ageRaw : undefined;
   return {
     name: (raw.name as string) ?? "",
     description: (raw.description as string) ?? "",
@@ -57,6 +66,11 @@ export function buildCanonicalFields(
     creator: raw.creator as string | undefined,
     creator_notes: raw.creator_notes as string | undefined,
     character_version: raw.character_version as string | undefined,
+    species,
+    homeland,
+    culture,
+    gender,
+    age,
   };
 }
 
