@@ -6,4 +6,5 @@
 /** */
 export interface TuiConfig {
   enabled: boolean;
+  sessionToken?: string;
 }
