@@ -73,14 +73,32 @@ describe("exportProgress.applyEvent", () => {
     expect(ctx.status,).toBe("queued",);
   });
 
-  test("transitions to completed + sets downloadUrl + stops tracking", () => {
+  test("maps type:'completed' → status completed + sets downloadUrl + stops tracking", () => {
     const ctx = baseCtx();
-    ctx.applyEvent({ type: "progress", jobId: "j1", },);
-    ctx._pollTimer = setInterval(() => undefined, 1000,);
-    ctx.applyEvent({ type: "progress", status: "completed", },);
+    let closed = false;
+    ctx._sse = { close: () => { closed = true; }, } as unknown as EventSource;
+    ctx.applyEvent({ type: "job_created", jobId: "j1", status: "queued", },);
+    ctx.applyEvent({
+      type: "completed",
+      jobId: "j1",
+      downloadUrl: "/api/export/download/j1",
+      totalItems: 10,
+      completedAt: "2026-01-01T00:01:00Z",
+    },);
     expect(ctx.status,).toBe("completed",);
     expect(ctx.downloadUrl,).toBe("/api/export/download/j1",);
-    expect(ctx._pollTimer,).toBeNull();
+    expect(ctx.completedAt,).toBe("2026-01-01T00:01:00Z",);
+    expect(closed,).toBe(true,);
+    expect(ctx._sse,).toBeNull();
+  });
+
+  test("maps type:'failed' → status failed + captures error", () => {
+    const ctx = baseCtx();
+    ctx.applyEvent({ type: "job_created", jobId: "j1", status: "queued", },);
+    ctx.applyEvent({ type: "failed", jobId: "j1", error: "boom", },);
+    expect(ctx.status,).toBe("failed",);
+    expect(ctx.error,).toBe("boom",);
+    expect(ctx.downloadUrl,).toBe("",);
   });
 
   test("applies error message", () => {
@@ -223,8 +241,9 @@ describe("exportProgress.startExport (SSE stream)", () => {
   test("consumes SSE blocks and reaches completed state", async () => {
     handler = async () =>
       sseBody([
+        `data: {"type":"job_created","jobId":"j1","status":"queued"}\n\n`,
         `data: {"type":"progress","jobId":"j1","progress":5,"total":10,"percentage":50}\n\n`,
-        `data: {"type":"progress","status":"completed"}\n\n`,
+        `data: {"type":"completed","jobId":"j1","downloadUrl":"/api/export/download/j1","totalItems":10}\n\n`,
       ],);
     const ctx = baseCtx();
     await ctx.startExport();
@@ -276,7 +295,8 @@ describe("exportProgress._sse teardown", () => {
         closed = true;
       },
     } as unknown as EventSource;
-    ctx.applyEvent({ type: "progress", jobId: "j1", status: "completed", },);
+    ctx.applyEvent({ type: "job_created", jobId: "j1", status: "queued", },);
+    ctx.applyEvent({ type: "completed", jobId: "j1", },);
     expect(closed,).toBe(true,);
     expect(ctx._sse,).toBeNull();
   });
