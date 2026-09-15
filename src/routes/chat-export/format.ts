@@ -3,6 +3,7 @@
 
 import { MessageRole, } from "../../db/enums";
 import { safeJsonStringify, } from "../../utils";
+import { sqliteUtcToIso, } from "../../utils/date";
 import type { MessageData, } from "./types";
 
 /**
@@ -15,14 +16,6 @@ function escapeHtml(text: string,): string {
     .replaceAll(">", "&gt;",)
     .replaceAll('"', "&quot;",)
     .replaceAll("'", "&#039;",);
-}
-/**
- * @param value SQLite `datetime('now')` text or ISO string
- * @returns the instant as an ISO string, pinning zone-less values to UTC
- */
-function toIsoUtc(value: string,): string {
-  const zoned = /[zZ]|[+-]\d{2}:?\d{2}$/.test(value,) ? value : value.replace(" ", "T",) + "Z";
-  return new Date(zoned,).toISOString();
 }
 
 /**
@@ -108,7 +101,7 @@ export function formatHtml(chat: { name: string; type: string; mode: string }, m
     const author = msg.display_name || msg.role;
     const roleLabel = msg.role === MessageRole.User ? "You" : author;
     const roleClass = msg.role === MessageRole.User ? "user" : "assistant";
-    const time = toIsoUtc(msg.created_at,);
+    const time = sqliteUtcToIso(msg.created_at,);
 
     return `
     <div class="message ${roleClass}">
@@ -231,7 +224,7 @@ export function formatPlainText(
   for (const msg of messages) {
     const author = msg.display_name || msg.role;
     const roleLabel = msg.role === MessageRole.User ? "You" : author;
-    const time = toIsoUtc(msg.created_at,);
+    const time = sqliteUtcToIso(msg.created_at,);
 
     lines.push(`[${roleLabel}] (${time})`, "", msg.content, "", "---", "",);
   }
