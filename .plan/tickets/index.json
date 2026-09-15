@@ -4213,7 +4213,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md",
     "git_issue": "6a4f485",
-    "status": "open"
+    "status": "closed"
   },
   "BUG-TRANSITIONS-TEST-TS-OWNERSHIP-TESTS-FAIL-WITH-FK-CONSTRAINT-": {
     "hash": "d88ff7f",
