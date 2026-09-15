@@ -8,6 +8,7 @@
  */
 
 export * from "./actors.js";
+export * from "./character-state.js";
 export * from "./flags.js";
 export * from "./messages.js";
 export * from "./moderation.js";
