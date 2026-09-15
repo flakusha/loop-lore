@@ -40,7 +40,7 @@ import { renderToolCallBlock, sseData, } from "./sse-utils";
 import { flushChunk, recordLastRendered, } from "./stream-flush";
 import { buildToolCallAssistantMessage, toGenerationToolCalls, } from "./stream-messages";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
- import type { GenerateRequest, } from "./types";
+import type { GenerateRequest, } from "./types";
 
 /** */
 export interface StreamToClientOpts {
