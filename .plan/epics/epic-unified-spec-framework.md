@@ -48,7 +48,7 @@ loop-lore keeps one source of truth for that file.
 - **THEN** the file passes (has YAML frontmatter with all required keys, has `## Summary`, `## Acceptance Scenarios`, `## Related`, `## Files`, `## Verification` sections)
 
 ### Scenario: Legacy ticket survives validation
-- **GIVEN** a pre-existing ticket without frontmatter (existing 2000 tickets)
+- **GIVEN** a pre-existing ticket without frontmatter (existing ~2100 tickets)
 - **WHEN** `bun run scripts/spec/validate` runs (Phase B after migrate)
 - **THEN** the ticket is reported once with `_legacy: true` and `legacy_aliases` populated; does not block CI
 
