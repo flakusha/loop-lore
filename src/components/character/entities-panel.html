@@ -1,0 +1,146 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Generic actor-entities panel. Mount with:
+  `<section x-data="actorEntitiesFactory(actorId, 'notes')">` (or 'items' / 'lore-entries').
+  Renders a list + inline create/edit form driven by the per-kind config.
+-->
+<section
+  class="entities-panel"
+  :data-kind="$data._entKind"
+  x-data="actorEntitiesFactory($store.ui.activeActorId ?? '', 'notes')"
+>
+  <header class="entities-header">
+    <h4 class="entities-title" x-text="$data.config().plural"></h4>
+    <p class="entities-help">
+      Create, edit, and remove <span x-text="$data.config().plural.toLowerCase()"></span> for this character.
+    </p>
+  </header>
+
+  <!-- Search -->
+  <div class="form-group">
+    <label class="form-label" :for="`ent-search-${$data._entKind}`">Search</label>
+    <input
+      :id="`ent-search-${$data._entKind}`"
+      type="search"
+      class="form-input"
+      x-model="search"
+      placeholder="Filter…"
+      :data-testid="`${$data._entKind}-search`"
+    >
+  </div>
+
+  <!-- Loading + error -->
+  <div class="entities-loading" x-show="rowsLoading" :data-testid="`${$data._entKind}-loading`">
+    <span class="spinner"></span> Loading…
+  </div>
+  <p
+    class="entities-error"
+    x-show="rowsError"
+    x-text="rowsError"
+    :data-testid="`${$data._entKind}-error`"
+  >
+  </p>
+
+  <!-- Create / edit form -->
+  <form class="entities-form" @submit.prevent="$data.editingId ? save() : create()">
+    <template x-for="field in $data.config().fields" :key="field.key">
+      <div class="form-group">
+        <label class="form-label" :for="`ent-${$data._entKind}-${field.key}`" x-text="field.label"></label>
+        <template x-if="field.kind === 'textarea'">
+          <textarea
+            :id="`ent-${$data._entKind}-${field.key}`"
+            class="form-input form-textarea"
+            rows="3"
+            x-model="form[field.key]"
+            :data-testid="`${$data._entKind}-field-${field.key}`"
+          ></textarea>
+        </template>
+        <template x-if="field.kind === 'number'">
+          <input
+            :id="`ent-${$data._entKind}-${field.key}`"
+            type="number"
+            class="form-input"
+            x-model="form[field.key]"
+            :data-testid="`${$data._entKind}-field-${field.key}`"
+          >
+        </template>
+        <template x-if="field.kind === 'text'">
+          <input
+            :id="`ent-${$data._entKind}-${field.key}`"
+            type="text"
+            class="form-input"
+            x-model="form[field.key]"
+            :data-testid="`${$data._entKind}-field-${field.key}`"
+          >
+        </template>
+      </div>
+    </template>
+
+    <div class="entities-actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        :disabled="busy"
+        :data-testid="`${$data._entKind}-submit`"
+      >
+        <span x-show="!editingId">Create</span>
+        <span x-show="editingId">Save</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        @click="cancelEdit()"
+        x-show="editingId"
+        :data-testid="`${$data._entKind}-cancel`"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <!-- List -->
+  <ul class="entities-list" :data-testid="`${$data._entKind}-list`">
+    <template x-for="row in filteredRows()" :key="row.id">
+      <li class="entities-row">
+        <div class="entities-row-main">
+          <strong x-text="row[$data.config().titleField] || '(untitled)'"></strong>
+          <template x-for="field in $data.config().fields" :key="field.key">
+            <p
+              class="entities-row-detail"
+              x-show="field.key !== $data.config().titleField && row[field.key]"
+              x-text="row[field.key]"
+            >
+            </p>
+          </template>
+        </div>
+        <div class="entities-row-actions">
+          <button
+            type="button"
+            class="btn btn-secondary btn-xs"
+            @click="loadIntoForm(row)"
+            :data-testid="`${$data._entKind}-edit-${row.id}`"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger btn-xs"
+            @click="remove(row.id)"
+            :data-testid="`${$data._entKind}-delete-${row.id}`"
+          >
+            Delete
+          </button>
+        </div>
+      </li>
+    </template>
+    <li
+      class="entities-empty"
+      x-show="filteredRows().length === 0 && !rowsLoading"
+      :data-testid="`${$data._entKind}-empty`"
+    >
+      No entries.
+    </li>
+  </ul>
+</section>
