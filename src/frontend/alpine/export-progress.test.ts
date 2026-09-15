@@ -76,7 +76,11 @@ describe("exportProgress.applyEvent", () => {
   test("maps type:'completed' → status completed + sets downloadUrl + stops tracking", () => {
     const ctx = baseCtx();
     let closed = false;
-    ctx._sse = { close: () => { closed = true; }, } as unknown as EventSource;
+    ctx._sse = {
+      close: () => {
+        closed = true;
+      },
+    } as unknown as EventSource;
     ctx.applyEvent({ type: "job_created", jobId: "j1", status: "queued", },);
     ctx.applyEvent({
       type: "completed",
