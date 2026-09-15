@@ -38,5 +38,13 @@ import "./response-length";
 import "./command-buttons";
 import "./npc";
 import "./blog";
+import "./actor-entities";
+import "./actor-licensing";
+import "./actor-systems";
+import "./actor-emotion-avatars";
+import "./actor-traits";
+import "./chat-transfer";
+import "./export-progress";
+
 export { useRequestStatus, } from "./use-request-status";
 export type { RequestStatusKind, RequestStatusPayload, UseRequestStatusOptions, } from "./use-request-status";
