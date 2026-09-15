@@ -1,6 +1,6 @@
 # BUG: server-view date display ignores user timezone/locale
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (client-side rendering, 2026-09-15)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-i18n
@@ -27,6 +27,15 @@
 - [ ] Tests passing
 - [ ] Documentation updated
 
-## Notes
+## Resolution (2026-09-15, commit `72735c9a6`)
 
+Implemented the ticket's "alternatively" branch: server now emits
+machine-readable UTC ISO + `<time data-client-date>` and the browser renders
+the viewer's own zone/locale via a `hydrateClientDates` hydrator in
+`src/frontend/alpine-init.ts` (runs on load + `htmx:afterSwap`).
+`routes/views/characters.ts` (chat-list `.chat-time`) and
+`routes/chat-export/format.ts` (markdown/HTML/plaintext stamps; standalone
+HTML export keeps ISO `<time>` for portability) covered. New `toIsoUtc`
+helpers pin zone-less SQLite `datetime('now')` text to UTC. 16
+`format.test.ts` tests pass incl. 3 new ISO/time-element assertions.
 DEFERRED 2026-09-08: MINOR severity; fix requires either a user-timezone preference plumbed into server render paths (new feature) or client-side date rendering (template rework across 3 sites). Both are feature-sized; needs product decision before implementation.

@@ -24,3 +24,13 @@
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Audit note (2026-09-15, uncommitted)
+
+Extended the first pass (network/file/DB boundaries, merged earlier):
+`federation/cipher.ts` seal/open plus all 8 `peer-keys.ts` key-wrap sites
+now route through `safe-buffer` (`safeFromUint8Array` /
+`safeFromBase64` / `safeToBase64`). Base64-key decode failure surfaces as a
+thrown guard error at wrap time (fail-closed) instead of `Buffer.from`
+throwing deep in the crypto call. `steganography.ts` has no Buffer refs
+(already clean). 69/69 `src/federation/` tests pass.

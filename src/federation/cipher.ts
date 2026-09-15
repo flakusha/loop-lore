@@ -11,7 +11,7 @@
 // (Matrix/OMEMO/PGP) implement that interface without touching call sites.
 
 import { decryptValue, encryptValue, } from "../crypto/byok";
-import { safeToBase64, } from "../utils/safe-buffer";
+import { safeFromBase64, safeFromUint8Array, safeToBase64, } from "../utils/safe-buffer";
 
 /** Byte-oriented content cipher for one mesh trust domain. */
 export interface ContentCipher {
@@ -28,12 +28,17 @@ export interface ContentCipher {
 export function pskCipher(secret: string,): ContentCipher {
   return {
     async seal(plaintext: Uint8Array,): Promise<string> {
-      const r = safeToBase64(Buffer.from(plaintext,),);
-      if (!r.ok) { throw r.error; }
-      return encryptValue(r.buffer, secret,);
+      const bytes = safeFromUint8Array(plaintext,);
+      if (!bytes.ok) { throw bytes.error; }
+      const b64 = safeToBase64(bytes.buffer,);
+      if (!b64.ok) { throw b64.error; }
+      return encryptValue(b64.buffer, secret,);
     },
     async open(ciphertext: string,): Promise<Uint8Array> {
-      return Buffer.from(await decryptValue(ciphertext, secret,), "base64",);
+      const raw = await decryptValue(ciphertext, secret,);
+      const bytes = safeFromBase64(raw,);
+      if (!bytes.ok) { throw bytes.error; }
+      return new Uint8Array(bytes.buffer,);
     },
   };
 }
