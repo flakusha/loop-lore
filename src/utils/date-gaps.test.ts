@@ -143,12 +143,17 @@ describe("sqliteUtcToIso — zone-less SQLite text pinned to UTC", () => {
     expect(sqliteUtcToIso("2026-09-15 10:00:00",),).toBe("2026-09-15T10:00:00.000Z",);
   });
 
-  test("passes zoned ISO through", () => {
-    expect(sqliteUtcToIso("2026-09-15T10:00:00.000Z",),).toBe("2026-09-15T10:00:00.000Z",);
-  });
-
   test("empty and garbage render nothing instead of throwing", () => {
     expect(sqliteUtcToIso("",),).toBe("",);
     expect(sqliteUtcToIso("not-a-date",),).toBe("",);
+  });
+
+  test("short numerics are rejected (Date.parse leniency guard)", () => {
+    expect(sqliteUtcToIso("12",),).toBe("",);
+    expect(sqliteUtcToIso("2026",),).toBe("",);
+  });
+
+  test("zoned ISO passes through with offset applied", () => {
+    expect(sqliteUtcToIso("2026-09-15T10:00:00+02:00",),).toBe("2026-09-15T08:00:00.000Z",);
   });
 });

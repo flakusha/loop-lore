@@ -70,7 +70,10 @@ Alpine.magic("t", (el: HTMLElement,) => {
 // Server emits machine-readable ISO in <time datetime>; the browser renders
 // the viewer's own locale/zone. Runs on load + after every htmx swap.
 function hydrateClientDates(root: ParentNode = document,): void {
-  for (const el of root.querySelectorAll("time[data-client-date]",)) {
+  const els: Element[] = [];
+  if (root instanceof Element && root.matches("time[data-client-date]",)) { els.push(root,); }
+  for (const el of root.querySelectorAll("time[data-client-date]",)) { els.push(el,); }
+  for (const el of els) {
     const iso = el.getAttribute("datetime",);
     if (!iso) { continue; }
     const d = new Date(iso,);
@@ -84,8 +87,14 @@ function hydrateClientDates(root: ParentNode = document,): void {
 g.hydrateClientDates = hydrateClientDates;
 document.addEventListener("DOMContentLoaded", () => hydrateClientDates(),);
 document.addEventListener("htmx:afterSwap", (e: Event,) => {
-  const target = (e as CustomEvent<{ target?: Element }>).detail?.target;
-  hydrateClientDates(target?.parentNode ?? document,);
+  // htmx dispatches afterSwap on each settled element (bubbles to document);
+  // detail.target is the swap target. Hydrate both subtrees — each call is
+  // a scoped querySelectorAll, so over-coverage costs one extra scan.
+  const detail = (e as CustomEvent<{ target?: Element }>).detail;
+  if (e.target instanceof Element) { hydrateClientDates(e.target,); }
+  if (detail?.target instanceof Element && detail.target !== e.target) {
+    hydrateClientDates(detail.target,);
+  }
 },);
 
 // ── 6. htmx extensions (CJS side-effects) ───────────────────────
