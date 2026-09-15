@@ -3,15 +3,15 @@
 /**
  * Commit-branch command — GPG-signed commit from a worktree branch
  */
-import { appendCommitOutcome, } from "../utils/ledger";
-import { assertGpgUnlocked, } from "../utils/gpg";
+import { existsSync, } from "fs";
+import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
-import { existsSync, } from "fs";
-import { extractMessageInput, validateMessage, } from "../utils/message";
 import { findWorktreeForBranchSync, getWorktrees, gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
+import { assertGpgUnlocked, } from "../utils/gpg";
+import { appendCommitOutcome, } from "../utils/ledger";
+import { extractMessageInput, validateMessage, } from "../utils/message";
 import { log, } from "../utils/output";
-import { resolve, } from "path";
 
 const PROTECTED_BRANCHES = ["master", "main", "stg", "dev",];
 
