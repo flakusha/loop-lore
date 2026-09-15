@@ -5610,6 +5610,10 @@
   "src/chat/service/read.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-emotion-hook-to-avatarForMessage-integration.md"
     }
   ],
@@ -12135,6 +12139,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-chat-composer-flows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     }
   ],
   "src/frontend/alpine/chat-settings.ts": [
@@ -22869,6 +22877,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-key-history-loss-join-leave.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     }
   ],
   "src/routes/messages/reply.test.ts": [
