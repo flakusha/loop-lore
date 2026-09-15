@@ -18221,6 +18221,13 @@
       "source": "docs/frontend/headers-management.md"
     }
   ],
+
+  "src/middleware/csp-shipped-html.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-csp-unsafe-inline-defeats-per-request-nonce.md"
+    }
+  ],
   "src/middleware/csrf-plugin.ts": [
     {
       "kind": "ticket",
