@@ -39,8 +39,7 @@ import type { GenerateRequest as ProviderRequest, LLMProvider, } from "../provid
 import type { GenerationMessage, } from "../types";
 import { buildGenerationResult, storeGenerationResult, } from "./persist";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
-import { storeToolResultRows, } from "./tool-result-persist";
-import type { GenerateRequest, } from "./types";
+ import type { GenerateRequest, } from "./types";
 
 /** */
 export interface RunNonStreamingOpts {
@@ -150,8 +149,11 @@ export async function runNonStreaming({
       modelId,
       provider: providerName,
     },);
-
-    await storeToolResultRows(database, input, messageId, allToolResults,);
+    // Tool results are persisted inline by executeToolCalls when ctx.db is
+    // present (BUG-tool-call-result-no-frontend-rendering); no follow-up batch
+    // persist needed here. The inline rows trace correlation through
+    // `metadata.tool_call_id`; `parent_id` stays null because the assistant
+    // message id only exists after `storeGenerationResult` lands.
 
     // Stop-and-respond: non-stream responses are fully delivered before
     // storeGenerationResult returns (no SSE transport to race). Mark
