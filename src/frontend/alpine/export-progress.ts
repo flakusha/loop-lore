@@ -171,7 +171,7 @@ export const exportProgress: ExportProgressState = {
     this.error = "";
     this.message = "";
     try {
-      const res = await apiFetch("/api/export/progress", { method: "POST", },);
+      const res = await apiFetch("/api/export/progress", { method: "POST", stream: true, },);
       if (!res.ok || !res.body) {
         this.error = t("status.exportStartFailed",);
         return;

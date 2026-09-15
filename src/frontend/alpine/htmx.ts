@@ -27,7 +27,7 @@ addEventListener("error", (e: ErrorEvent,) => {
  */
 export async function apiFetch(
   url: string,
-  options?: RequestInit & { idempotencyKey?: string | true },
+  options?: RequestInit & { idempotencyKey?: string | true; stream?: boolean },
 ): Promise<Response> {
   const method = options?.method ?? "GET";
   const start = performance.now();
@@ -124,6 +124,10 @@ document.addEventListener("DOMContentLoaded", triggerPageLoaders,);
 
 // ── hx-on::after-request replacements (success events) ──────
 document.addEventListener("htmx:afterRequest", (e: Event,) => {
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;

@@ -117,16 +117,21 @@ export async function safeFetch<T = unknown,>(
     maxSize = DEFAULT_MAX_SIZE,
     signal: externalSignal,
     parseJson = true,
+    stream = false,
     auth,
     handle401 = true,
     onAuthError,
     ...fetchOptions
   } = options;
 
-  // Build AbortSignal with timeout
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout,);
-  const combinedSignal = combineSignals(externalSignal, controller.signal,);
+  // Streams (SSE, downloads) must not be aborted by the response timeout — the
+  // body stays open for the stream duration. Only arm the timeout for bounded
+  // requests; a caller-supplied external signal still cancels a stream.
+  const controller = stream ? undefined : new AbortController();
+  const timeoutId = stream ? undefined : setTimeout(() => controller!.abort(), timeout,);
+  const combinedSignal = stream
+    ? externalSignal
+    : combineSignals(externalSignal, controller!.signal,);
 
   try {
     const serializedBody = serializeBody(body,);
@@ -175,6 +180,12 @@ export async function safeFetch<T = unknown,>(
         status: response.status,
         headers: response.headers,
       };
+    }
+
+    // Streaming mode: hand back the live Response (body unconsumed) so the
+    // caller can read incrementally. No timeout was armed for this request.
+    if (stream) {
+      return { ok: true, data: response as unknown as T, status: response.status, headers: response.headers, };
     }
 
     // Read and optionally parse body
