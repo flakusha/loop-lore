@@ -10,7 +10,6 @@ import { credentials, } from "../utils/credentials.mjs";
 import { existsSync, } from "fs";
 import { extractMessageInput, validateMessage, } from "../utils/message";
 import { findWorktreeForBranchSync, getWorktrees, gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
-import { gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
 import { log, } from "../utils/output";
 import { resolve, } from "path";
 
