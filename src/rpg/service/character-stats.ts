@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { CharacterState, } from "../../db/enums-core";
 import { log, } from "./log.js";
 import type { RpgServiceDeps, } from "./types.js";
-
 /** */
 export interface CreateCharacterStatsParams {
   actorId: string;
@@ -109,7 +109,7 @@ export async function getCharacterStats(
     evasiveness: number | null;
     cooperativeness: number | null;
     aggressionThreshold: number | null;
-    characterState: string;
+    characterState: CharacterState;
     conditions: string;
     activeEffects: string;
   } | null
@@ -176,7 +176,7 @@ export interface UpdateCharacterStatsParams {
   evasiveness?: number;
   cooperativeness?: number;
   aggressionThreshold?: number;
-  characterState?: string;
+  characterState?: CharacterState;
   conditions?: string;
   activeEffects?: string;
 }
