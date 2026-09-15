@@ -15,9 +15,10 @@ import type { EntityConfig, } from "./types";
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @param prefix
  */
-export function removeRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
-  const { withIdPath, parentParam, } = entityPaths(config,);
+export function removeRoutes(config: EntityConfig, opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
+  const { withIdPath, parentParam, } = entityPaths(config, prefix,);
 
   return new Elysia({ name: `${config.entityPath}-remove`, },)
     .delete(withIdPath, async (ctx,) => {

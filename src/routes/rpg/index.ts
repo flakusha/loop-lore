@@ -58,25 +58,26 @@ import { xpLootTablesRoutes, } from "./xp-loot-tables";
  *     /api/rpg/world-location-traits/worlds|locations/... — trait CRUD
  *     /api/rpg/world-location-traits/actors/:actorId — aggregate
  * @param opts
+ * @param prefix
  */
-export function rpgRoutes(opts: HandlerOpts,) {
+export function rpgRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "rpg", },)
-      .use(diceRoutes(opts,),)
-      .use(statsRoutes(opts,),)
-      .use(statsActorRoutes(opts,),)
-      .use(achievementsRoutes(opts,),)
-      .use(achievementsPlayerRoutes(opts,),)
-      .use(replayabilityRoutes(opts,),)
-      .use(skillsRoutes(opts,),)
-      .use(skillsProgressionRoutes(opts,),)
-      .use(npcNavigationRoutes(opts,),)
-      .use(worldLocationTraitsRoutes(opts,),)
-      .use(combatRoutes(opts,),)
-      .use(combatStatusRoutes(opts,),)
-      .use(craftingStationRoutes(opts,),)
-      .use(craftingExecutionRoutes(opts,),)
-      .use(xpLootRoutes(opts,),)
-      .use(xpLootTablesRoutes(opts,),)
+      .use(diceRoutes(opts, prefix,),)
+      .use(statsRoutes(opts, prefix,),)
+      .use(statsActorRoutes(opts, prefix,),)
+      .use(achievementsRoutes(opts, prefix,),)
+      .use(achievementsPlayerRoutes(opts, prefix,),)
+      .use(replayabilityRoutes(opts, prefix,),)
+      .use(skillsRoutes(opts, prefix,),)
+      .use(skillsProgressionRoutes(opts, prefix,),)
+      .use(npcNavigationRoutes(opts, prefix,),)
+      .use(worldLocationTraitsRoutes(opts, prefix,),)
+      .use(combatRoutes(opts, prefix,),)
+      .use(combatStatusRoutes(opts, prefix,),)
+      .use(craftingStationRoutes(opts, prefix,),)
+      .use(craftingExecutionRoutes(opts, prefix,),)
+      .use(xpLootRoutes(opts, prefix,),)
+      .use(xpLootTablesRoutes(opts, prefix,),)
   );
 }

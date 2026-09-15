@@ -11,11 +11,12 @@ import type { HandlerOpts, } from "./types";
  * sub-plugins. Registration point/name (`character-emotions`) is preserved so
  * the `register-plugins.ts` wiring is unchanged.
  * @param opts
+ * @param prefix
  */
-export function characterEmotionsRoutes(opts: HandlerOpts,) {
+export function characterEmotionsRoutes(opts: HandlerOpts, prefix = "/api",) {
   return (
     new Elysia({ name: "character-emotions", },)
-      .use(actorRoutes(opts,),)
-      .use(definitionRoutes(opts,),)
+      .use(actorRoutes(opts, prefix,),)
+      .use(definitionRoutes(opts, prefix,),)
   );
 }
