@@ -189,7 +189,12 @@ export function toDate(input?: Date | number | string,): Date {
  */
 export function sqliteUtcToIso(value: string,): string {
   if (!value) { return ""; }
-  const zoned = /[zZ]|[+-]\d{2}:?\d{2}$/.test(value,) ? value : `${value.replace(" ", "T",)}Z`;
+  let zoned = value;
+  if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/.test(value,)) {
+    zoned = `${value.replace(" ", "T",)}Z`;
+  } else if (!/([zZ]|[+-]\d{2}:?\d{2})$/.test(value,)) {
+    return "";
+  }
   const ms = Date.parse(zoned,);
   if (Number.isNaN(ms,)) { return ""; }
   return new Date(ms,).toISOString();
