@@ -117,9 +117,11 @@ function renderChatListItems(rows: {
       }${r.last_message.length > 80 ? "…" : ""}</div>`
       : "";
 
-    return `<div class="chat-list-card" onclick="location.assign('/views/chat?chatid=${encodeURIComponent(r.id,)}')"
+    return `<div class="chat-list-card" x-on:click="window.location.assign('/views/chat?chatid=${
+      encodeURIComponent(r.id,)
+    }')"
         style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border:1px solid var(--border-default);border-radius:var(--radius-md);cursor:pointer;background:var(--bg-primary);transition:background 0.15s"
-        onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='var(--bg-primary)'"
+        x-on:mouseenter="$el.style.background='var(--bg-tertiary)'" x-on:mouseleave="$el.style.background='var(--bg-primary)'"
         data-testid="chat-card-${r.id}">
         <span style="font-size:18px;flex-shrink:0">${typeLabel}</span>
         <div style="flex:1;min-width:0">
