@@ -10,8 +10,8 @@
 import type { Database, } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
 import type { Kysely, } from "kysely";
-import { registry, } from "../../plugins/registry";
 import type { DB, } from "../../db/schema";
+import { registry, } from "../../plugins/registry";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertActors, } from "../../test-utils/insert-helpers";
 import { WRITE_MEMORY_NOTE, writeMemoryNoteTool, } from "../tools/write-memory-note";
@@ -209,7 +209,7 @@ describeReal("tool output sanitization (BUG-generation-error-handling-gaps)", ()
     expect(results[0]?.content,).not.toMatch(/onerror/i,);
     expect(results[0]?.content,).toContain('<a href="x"',);
   });
-});
+},);
 
 describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-result-no-frontend-rendering)", () => {
   let db: Kysely<DB>;
@@ -287,7 +287,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
         name: "stub_tool",
         description: "stub",
         parameters: {},
-        handler: async () => ({ content: "stub-out", },),
+        handler: async () => ({ content: "stub-out", }),
       },
     ],);
 
@@ -310,7 +310,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
     // In-memory return shape is preserved for the next prompt.
     expect(results[0]?.role,).toBe("tool",);
     expect(results[0]?.tool_call_id,).toBe("tc-1",);
-  },);
+  });
 
   test("persists a row with error content when the handler throws", async () => {
     registry.addTools("test-plugin", [
@@ -319,7 +319,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
         description: "explodes",
         parameters: {},
         handler: async () => {
-          throw new Error("boom");
+          throw new Error("boom",);
         },
       },
     ],);
@@ -343,7 +343,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
     // In-memory return still carries the error message.
     expect(results[0]?.role,).toBe("tool",);
     expect(results[0]?.tool_call_id,).toBe("tc-2",);
-  },);
+  });
 
   test("persists a row when the tool is not in the registry", async () => {
     const results = await executeToolCalls(
@@ -362,7 +362,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
 
     expect(results[0]?.role,).toBe("tool",);
     expect(results[0]?.tool_call_id,).toBe("tc-3",);
-  },);
+  });
 
   test("skips persist when ctx.db is absent; in-memory return unchanged", async () => {
     registry.addTools("test-plugin", [
@@ -370,7 +370,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
         name: "stub_tool",
         description: "stub",
         parameters: {},
-        handler: async () => ({ content: "stub-out", },),
+        handler: async () => ({ content: "stub-out", }),
       },
     ],);
 
@@ -384,7 +384,7 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
     expect(results[0]?.content,).toBe("stub-out",);
     // No DB to query, but absence of throw is the actual contract: existing
     // callers (e.g. test fixtures with mock ctx) must not regress.
-  },);
+  });
 
   test("inline persist failure does NOT abort the generation; in-memory return preserved", async () => {
     // Wrap db.insertInto so the second call's execute() rejects, simulating a
@@ -406,25 +406,29 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
         // Cast: test fixture replaces one method on a real Kysely<DB>; the
         // real Kysely type has many fluent methods we don't exercise here.
         const chain = {
-          values: () => ({ execute: async () => { throw new Error("simulated DB outage",); }, },),
+          values: () => ({
+            execute: async () => {
+              throw new Error("simulated DB outage",);
+            },
+          }),
         };
         return chain as unknown as ReturnType<Kysely<DB>["insertInto"]>;
       }
       return realInsertInto(table,);
-    },) as Kysely<DB>["insertInto"];
+    }) as Kysely<DB>["insertInto"];
 
     registry.addTools("test-plugin", [
       {
         name: "stub_tool",
         description: "stub",
         parameters: {},
-        handler: async () => ({ content: "ok-1", },),
+        handler: async () => ({ content: "ok-1", }),
       },
       {
         name: "stub_tool_2",
         description: "stub",
         parameters: {},
-        handler: async () => ({ content: "ok-2", },),
+        handler: async () => ({ content: "ok-2", }),
       },
     ],);
 
@@ -445,5 +449,5 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
     // The swallowed error was logged so operators can see the persist gap.
     expect(errorSpy,).toHaveBeenCalled();
     errorSpy.mockRestore();
-  },);
-});
+  });
+},);
