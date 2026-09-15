@@ -23,7 +23,9 @@ Regression-protected by `src/routes/messages/reply.test.ts:642-645` which sets `
 
 Check `story_state.isPaused` in `maybeAutoReply` (and any single-chat
 auto-gen scheduler) before dispatching; reuse the cascade's pre/post-flight
-pattern. Fold into `FEAT-unified-hold-semantics-per-chat-pause-gates-primary-generate.md`.
+pattern. Note: the original "Fold into FEAT-unified-hold-semantics-..." suggestion
+predates the implementation commit (`67c170fc3`) and the FEAT's actual scope — see the
+Resolution block above for why the two were eventually treated as orthogonal.
 
 ## Acceptance
 
