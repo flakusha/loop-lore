@@ -89,9 +89,8 @@ declare global {
   var personasPage: any;
   var settingsModal: any;
   var settingsPage: any;
-  var modelManager: () => ModelManagerState;
   var actorEmotionAvatarsFactory: (actorId: string,) => unknown;
-
+  var actorLicensingFactory: (actorId: string,) => unknown;
   /* ── Loose / vendor-injected globals ────────────────────────── */
 
   var currentLocale: string;

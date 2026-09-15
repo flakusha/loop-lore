@@ -1,0 +1,138 @@
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Character licensing panel. Mount with:
+  `<section x-data="actorLicensingFactory(actorId)">`. Reads / writes
+  `/api/actors/:actorId/licensing`.
+-->
+<section class="licensing-panel" x-data="actorLicensingFactory($store.ui.activeActorId ?? '')">
+  <header class="licensing-header">
+    <h4 class="licensing-title">Licensing</h4>
+    <p class="licensing-help">How others may use this character.</p>
+  </header>
+
+  <!-- Loading -->
+  <div class="licensing-loading" x-show="licenseLoading" data-testid="licensing-loading">
+    <span class="spinner"></span> Loading licensing…
+  </div>
+
+  <!-- Error -->
+  <p
+    class="licensing-error"
+    x-show="licenseError"
+    x-text="licenseError"
+    data-testid="licensing-error"
+  >
+  </p>
+
+  <!-- View mode: read-only summary when no edits are pending -->
+  <div class="licensing-summary" x-show="!licenseLoading && license && !licenseDirty" data-testid="licensing-summary">
+    <div>
+      <span class="form-label">License Type</span>
+      <span x-text="describeLicense(license.license_type)" data-testid="licensing-type"></span>
+    </div>
+    <div x-show="license.attribution">
+      <span class="form-label">Attribution</span>
+      <span x-text="license.attribution"></span>
+    </div>
+    <div class="licensing-flags">
+      <span class="licensing-flag" :data-allowed="license.allow_derivatives === 1">
+        Derivatives: <span x-text="license.allow_derivatives === 1 ? 'Allowed' : 'Not allowed'"></span>
+      </span>
+      <span class="licensing-flag" :data-allowed="license.allow_commercial === 1">
+        Commercial: <span x-text="license.allow_commercial === 1 ? 'Allowed' : 'Not allowed'"></span>
+      </span>
+      <span class="licensing-flag" :data-allowed="license.share_alike === 1">
+        Share-alike: <span x-text="license.share_alike === 1 ? 'Required' : 'Not required'"></span>
+      </span>
+    </div>
+    <button type="button" class="btn btn-secondary btn-sm" @click="licenseDirty = true">Edit</button>
+    <button type="button" class="btn btn-danger btn-sm" @click="remove()" data-testid="licensing-delete">Remove</button>
+  </div>
+
+  <!-- Edit / create form -->
+  <form
+    class="licensing-form"
+    x-show="!licenseLoading && (!license || licenseDirty)"
+    @input="markDirty()"
+    @change="markDirty()"
+    data-testid="licensing-form"
+  >
+    <div class="form-group">
+      <label class="form-label" for="lic-type">License Type</label>
+      <select id="lic-type" class="form-input" x-model="licenseForm.license_type">
+        <template x-for="opt in $store.constants?.licenseTypes ?? []" :key="opt.value">
+          <option :value="opt.value" x-text="opt.displayName"></option>
+        </template>
+      </select>
+    </div>
+
+    <div class="form-group" x-show="licenseForm.license_type === 'custom'">
+      <label class="form-label" for="lic-custom">Custom License Text</label>
+      <textarea
+        id="lic-custom"
+        class="form-input form-textarea"
+        rows="3"
+        x-model="licenseForm.custom_license_text"
+        data-testid="licensing-custom-text"
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="lic-attr">Attribution</label>
+      <input
+        id="lic-attr"
+        type="text"
+        class="form-input"
+        x-model="licenseForm.attribution"
+        placeholder="e.g. Original by Aria"
+        data-testid="licensing-attribution"
+      >
+    </div>
+
+    <div class="licensing-flag-toggles">
+      <label class="licensing-toggle">
+        <input type="checkbox" x-model="licenseForm.allow_derivatives">
+        <span>Allow derivatives</span>
+      </label>
+      <label class="licensing-toggle">
+        <input type="checkbox" x-model="licenseForm.allow_commercial">
+        <span>Allow commercial use</span>
+      </label>
+      <label class="licensing-toggle">
+        <input type="checkbox" x-model="licenseForm.share_alike">
+        <span>Require share-alike</span>
+      </label>
+    </div>
+
+    <div class="licensing-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        @click="save()"
+        :disabled="licenseSaving"
+        data-testid="licensing-save"
+      >
+        <span x-show="!licenseSaving">Save</span>
+        <span x-show="licenseSaving">Saving…</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        @click="licenseDirty = false; licenseForm = license ? { license_type: license.license_type, custom_license_text: license.custom_license_text ?? '', attribution: license.attribution ?? '', allow_derivatives: license.allow_derivatives === 1, allow_commercial: license.allow_commercial === 1, share_alike: license.share_alike === 1 } : licenseForm"
+        x-show="license"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <!-- Empty state when no license record exists and no form is open -->
+  <div class="licensing-empty" x-show="!licenseLoading && !license && !licenseDirty" data-testid="licensing-empty">
+    <p>No licensing set for this character yet.</p>
+    <button type="button" class="btn btn-primary btn-sm" @click="licenseDirty = true" data-testid="licensing-add">
+      Add licensing
+    </button>
+  </div>
+</section>
