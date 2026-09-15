@@ -7,7 +7,7 @@ import { existsSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
-import { gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
+import { findWorktreeForBranchSync, getWorktrees, gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
 import { assertGpgUnlocked, } from "../utils/gpg";
 import { appendCommitOutcome, } from "../utils/ledger";
 import { extractMessageInput, validateMessage, } from "../utils/message";
