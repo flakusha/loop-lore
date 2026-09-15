@@ -69,6 +69,9 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "CharacterSkills": {
     "lock_state": "SkillLockState",
   },
+  "CharacterStats": {
+    "character_state": "CharacterState",
+  },
   "Characters": {
     "agent_type": "AgentType",
   },

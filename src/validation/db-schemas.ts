@@ -75,6 +75,7 @@ export const CancelSourceSchema = t.UnionEnum([
   "chat_switch",
   "system",
 ],);
+export const CharacterStateSchema = t.UnionEnum(["active", "injured", "unconscious", "dead",],);
 export const ChatModeSchema = t.UnionEnum(["direct", "group", "story",],);
 export const ChatParticipantRoleSchema = t.UnionEnum(["member", "owner", "observer", "guest", "gm",],);
 export const ChatPurposeSchema = t.UnionEnum(["main", "side", "notes",],);
@@ -1448,7 +1449,7 @@ export const CharacterStatsSchema = t.Object({
   evasiveness: t.Optional(t.Number(),),
   cooperativeness: t.Optional(t.Number(),),
   aggression_threshold: t.Optional(t.Number(),),
-  character_state: t.Optional(t.String(),),
+  character_state: t.Optional(CharacterStateSchema,),
   conditions: t.Optional(t.String(),),
   active_effects: t.Optional(t.String(),),
   combat_alignment: t.Optional(t.String(),),
