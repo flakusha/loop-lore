@@ -1570,7 +1570,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-csp-unsafe-inline-defeats-per-request-nonce.md",
-    "status": "open"
+    "status": "closed"
   },
   "BUG-DATE-PARSE-RESULTS-UNCHECKED-FOR-NAN-10-SITES": {
     "hash": "65c87b5",
@@ -1609,7 +1609,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-db-reinit-archive-directory-has-no-rotation-pii-accumulates-.md",
-    "status": "open"
+    "status": "closed"
   },
   "BUG-DELETE-CHAT-GATED-ONLY-AT-PARTICIPANT-LEVEL": {
     "hash": "c80979f",
@@ -2604,7 +2604,7 @@
     "status": "done"
   },
   "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
-    "hash": "43d6c44",
+    "hash": "27cc7ab",
     "git_issue": "27cc7ab",
     "extid": "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD",
     "type": "BUG",
@@ -6005,6 +6005,19 @@
     "git_issue": "77d0b20",
     "status": "undefined"
   },
+  "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION": {
+    "hash": "0ec76d5",
+    "git_issue": "0ec76d5",
+    "extid": "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION",
+    "type": "FEAT",
+    "title": "# FEAT-2026-irc-group-chat-integration: IRC integration as group-chat (channel) + DM (PM) — RFC 1459/2812",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-communications-integrations.md",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md",
+    "status": "open"
+  },
   "FEAT-ACHIEVEMENTS": {
     "hash": "pending",
     "extid": "FEAT-ACHIEVEMENTS",
@@ -6442,20 +6455,6 @@
     "epic": "epic-assistant-gm-flows.md",
     "tags": [],
     "source": ".plan/tickets/FEAT-in-story-character-generation-via-assistant-chat-handoff.md",
-    "status": "open"
-  },
-
-  "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION": {
-    "hash": "0ec76d5",
-    "git_issue": "0ec76d5",
-    "extid": "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION",
-    "type": "FEAT",
-    "title": "# FEAT-2026-irc-group-chat-integration: IRC integration as group-chat (channel) + DM (PM) — RFC 1459/2812",
-    "label": "feat",
-    "priority": "medium",
-    "epic": "epic-communications-integrations.md",
-    "tags": [],
-    "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md",
     "status": "open"
   },
   "FEAT-IRC-INTEGRATION-CHANNELS-AS-GROUP-CHAT-PM-AS-CHAT": {

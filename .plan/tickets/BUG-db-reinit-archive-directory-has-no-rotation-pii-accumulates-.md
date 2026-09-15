@@ -1,6 +1,6 @@
 # BUG: db-reinit archive directory has no rotation; PII accumulates indefinitely
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Done
 **Priority:** medium
 **Effort:** Medium
 
@@ -22,8 +22,21 @@ Severity: medium. Operational risk + compliance.
 
 Tests: unit-test archiveFile to assert it deletes archives beyond MAX_ARCHIVES, sorts by timestamp, and refuses to delete when the dir is missing (no exception thrown for empty dir).
 
+## Resolution
+
+Closed on 2026-09-15 (commits land in an earlier batch on dev, predating the strict-review audit of this session). Implementation lives in src/db/reinit.ts with retention policy:
+- MAX_ARCHIVES (default 10, env-overridable)
+- MAX_ARCHIVE_AGE_DAYS (default 90, env-overridable)
+- On every archive, prunes oldest archives beyond MAX_ARCHIVES AND any archive older than MAX_ARCHIVE_AGE_DAYS.
+- Empty backup directory is treated as success (no exception).
+- Retention policy documented in docs/spec/db-reinit-retention.md and in the reinit script header.
+
+Verified:
+- 8 unit tests, 26 expect() calls, all pass on dev.
+- Edge cases covered: empty dir, beyond-cap prune, age-cap prune, no exception on missing dir, sort-by-timestamp correctness.
+
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
