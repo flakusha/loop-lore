@@ -178,6 +178,23 @@ export function toDate(input?: Date | number | string,): Date {
   return input instanceof Date ? input : new Date(input,);
 }
 
+/**
+ * SQLite `datetime('now')` text (or ISO string) → UTC ISO instant.
+ *
+ * Zone-less `"YYYY-MM-DD HH:MM:SS"` values are pinned to UTC; strings that
+ * already carry a zone pass through. Returns `""` for empty/invalid input
+ * (callers render nothing instead of 500ing the fragment).
+ * @param value SQLite datetime text or ISO string.
+ * @returns UTC ISO string, or `""` when unparseable.
+ */
+export function sqliteUtcToIso(value: string,): string {
+  if (!value) { return ""; }
+  const zoned = /[zZ]|[+-]\d{2}:?\d{2}$/.test(value,) ? value : `${value.replace(" ", "T",)}Z`;
+  const ms = Date.parse(zoned,);
+  if (Number.isNaN(ms,)) { return ""; }
+  return new Date(ms,).toISOString();
+}
+
 /** Output shapes supported by {@link serializeDate}. */
 export type DateFormat = "unix" | "iso" | "human" | "compact";
 
