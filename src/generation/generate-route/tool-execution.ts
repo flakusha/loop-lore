@@ -16,9 +16,8 @@
  * When `ctx.db` is supplied, each tool result is also persisted as a
  * chat-visible `messages` row with `content_type = tool_result`, linked
  * back to its tool call via `metadata.tool_call_id`. `parent_id` stays
- * null — the assistant message does not exist yet at this point; callers
- * that want the FK linkage should call `storeToolResultRows` themselves
- * after `storeGenerationResult` lands.
+ * null — the assistant message does not exist yet at this point, so rows
+ * correlate through `metadata.tool_call_id` rather than the parent_id FK.
  */
 
 import { randomUUID, } from "node:crypto";
@@ -95,9 +94,7 @@ interface ToolCallItem {
  * following the same server-side encryption path as generated messages and
  * linking the row back to its tool call via `metadata.tool_call_id`.
  * `parent_id` stays null because `executeToolCalls` does not have the
- * assistant message id; callers needing that linkage should use
- * `storeToolResultRows` from `./tool-result-persist` after
- * `storeGenerationResult` lands.
+ * assistant message id; rows correlate through `metadata.tool_call_id`.
  */
 async function persistToolResults(
   ctx: ToolExecutionContext,
@@ -194,9 +191,8 @@ export async function executeToolCalls(
   // BUG-tool-call-result-no-frontend-rendering: persist each tool result as a
   // chat-visible `messages` row so tool calls leave a record even when the
   // upstream LLM errored, the tool threw, or the registry missed the tool.
-  // Callers that want a FK back to the assistant message should call
-  // `storeToolResultRows` themselves — the inline path here writes
-  // `parent_id = null` and traces correlation through `metadata.tool_call_id`.
+  // The inline path writes `parent_id = null` and traces correlation
+  // through `metadata.tool_call_id` (the assistant row does not exist yet).
   // The `typeof ctx.db.insertInto` guard is for the existing test fixtures
   // that pass `db: {} as never`; in production ctx.db is always a real
   // Kysely<DB> instance, so a missing `insertInto` here would indicate a
