@@ -16,6 +16,7 @@ import {
   enrichAttachments,
   isServiceError,
   parseToolCalls,
+  parseToolResultMeta,
   resolveMessageContent,
   serviceErrorToResponse,
 } from "./helpers";
@@ -56,6 +57,8 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
             (async (): Promise<Record<string, unknown>> => {
               const row = m as Readonly<{
                 content: string;
+                content_type?: string;
+                metadata?: string | null;
                 content_encoding: string;
                 key_id: string | null;
                 chat_id: string;
@@ -64,11 +67,19 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
               }>;
               const attachments = await enrichAttachments(database, row.attachments ?? null,);
               const toolCalls = parseToolCalls(row.tool_calls ?? null,);
+              const toolMeta = row.content_type === "tool_result" ? parseToolResultMeta(row.metadata ?? null,) : null;
+              const toolFields = { tool_name: toolMeta?.toolName ?? null, tool_error: toolMeta?.toolError ?? false, };
               try {
                 const content = await resolveMessageContent(database, row,);
-                return { ...m, content, attachments, tool_calls: toolCalls, };
+                return { ...m, content, attachments, tool_calls: toolCalls, ...toolFields, };
               } catch {
-                return { ...m, content: "[Encrypted — unable to decrypt]", attachments, tool_calls: toolCalls, };
+                return {
+                  ...m,
+                  content: "[Encrypted — unable to decrypt]",
+                  attachments,
+                  tool_calls: toolCalls,
+                  ...toolFields,
+                };
               }
             })(),
           );
@@ -113,13 +124,24 @@ export function readRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         const attachments = await enrichAttachments(database, message.attachments as string | null,);
         const toolCalls = parseToolCalls(message.tool_calls as string | null,);
+        const singleRow = message as { content_type?: string; metadata?: string | null };
+        const toolMeta = singleRow.content_type === "tool_result"
+          ? parseToolResultMeta(singleRow.metadata ?? null,)
+          : null;
         let content: string;
         try {
           content = await resolveMessageContent(database, message as any,);
         } catch {
           content = "[Encrypted — unable to decrypt]";
         }
-        return jsonResponse({ ...message, content, attachments, tool_calls: toolCalls, },);
+        return jsonResponse({
+          ...message,
+          content,
+          attachments,
+          tool_calls: toolCalls,
+          tool_name: toolMeta?.toolName ?? null,
+          tool_error: toolMeta?.toolError ?? false,
+        },);
       },
       { params: MessageIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
     )

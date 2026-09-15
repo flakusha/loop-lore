@@ -28,6 +28,7 @@ Epic 26 reconciles instances through migration leadership and schema-drift detec
 - Prefer **cr-sqlite** to stay on the SQLite stack; fall back to **Yjs** for rich shared types if CRDT-SQLite coverage is insufficient for the required structures.
 - `SwarmReconciler` wraps CRDT-backed state beneath the existing store access layer; expose the same read/write surface Epic 26 uses.
 - Conflict policy: LWW-Register for scalar world fields, OR-Set for membership/lore entries, RGA/text-CRDT for message bodies.
+- Deletes propagate as tombstones with cross-topology precedence (leader-vs-swarm ordering defined); RGA/message-body growth is size-bounded (BUG-crdt-conflict-policy-missing-leader-vs-swarm-precedence-and-).
 - Transport: start with `y-webrtc` (or libp2p) for peer sync; document Matrix-as-transport as an alternative.
 - Sequence after Epic 26's leader path is stable (swarm is the riskier, later phase).
 

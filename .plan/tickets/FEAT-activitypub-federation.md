@@ -19,6 +19,8 @@ The current plan only covers Matrix as a fediverse-style transport (`epic-commun
 - A World or Channel can be published as a fediverse `Group` actor with a resolvable WebFinger (`@world@host`).
 - Inbound `Follow`/`Accept` and `Create`/`Announce` (`Note`/`Article`) are handled and verified via HTTP signatures + authorized fetch.
 - Outbound world events/messages are delivered to followers as signed activities.
+- New followers receive paginated outbox backfill (Mastodon/Lemmy-style `OrderedCollection` pages) covering a recent history window.
+- Outbound `Delete` activities propagate to followers/peers and inbound `Delete`s are honored; right-to-be-forgotten erases federated copies (BUG-federated-delete-and-gdpr-right-to-be-forgotten-unhandled).
 - Federated objects are persisted in the existing Kysely store with ownership/signature metadata.
 - All outbound federation routes through the existing NSFW + moderation gate; inbound supports blocklists/defederation.
 - Actor-model mapping (World/Channel/Character → actor type) is documented.

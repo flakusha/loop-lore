@@ -32,6 +32,8 @@ export interface Message {
   tool_calls?: ToolCall[] | null;
   content_type?: string;
   metadata?: string | null;
+  tool_name?: string | null;
+  tool_error?: boolean;
   actor_name?: string;
   actor_id?: string;
   variantIndex?: number;
