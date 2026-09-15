@@ -32,6 +32,10 @@ describe("formatMarkdown", () => {
     expect(out,).toContain("> Chat type: roleplay | Mode: chat",);
     expect(out,).toContain("---",);
   });
+  test("emits locale-independent ISO export date", () => {
+    const out = formatMarkdown(chat, [],);
+    expect(out,).toMatch(/Exported from loop-lore on \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/,);
+  });
 
   test("uses display name for assistant messages", () => {
     const out = formatMarkdown(chat, [msg({ content: "hello", display_name: "Bob", },),],);
@@ -119,6 +123,10 @@ describe("formatHtml", () => {
     expect(out,).toContain('class="message assistant"',);
     expect(out,).toContain(">Bob<",);
   });
+  test("emits machine-readable time elements for client-side rendering", () => {
+    const out = formatHtml(chat, [msg({ content: "hi", created_at: "2026-09-15 10:00:00", },),],);
+    expect(out,).toContain('<time datetime="2026-09-15T10:00:00.000Z" data-client-date="datetime">',);
+  });
 });
 
 describe("formatPlainText", () => {
@@ -134,5 +142,9 @@ describe("formatPlainText", () => {
     expect(out,).toContain("[You] (",);
     expect(out,).toContain("payload",);
     expect(out,).toContain("---",);
+  });
+  test("emits ISO per-message timestamps", () => {
+    const out = formatPlainText(chat, [msg({ content: "payload", created_at: "2026-09-15 10:00:00", },),],);
+    expect(out,).toContain("2026-09-15T10:00:00.000Z",);
   });
 });
