@@ -25,7 +25,7 @@
     "primary_inspiration": "OpenSpec",
     "secondary_inspiration": "Backlog.md",
     "rejected": ["BMAD Method", "Diataxis (tool)"],
-    "rationale": "Brownfield-first (2000 existing tickets), agent-surface parity with scripts/worktree/, lightweight ceremony, required frontmatter for new artifacts"
+    "rationale": "Brownfield-first (~2100 existing tickets), agent-surface parity with scripts/worktree/, lightweight ceremony, required frontmatter for new artifacts"
   },
   "tools_evaluated": [
     {
