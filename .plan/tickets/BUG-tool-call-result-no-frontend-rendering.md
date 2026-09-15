@@ -119,3 +119,19 @@ Closed by inline tool-result persistence in `executeToolCalls`
 All 12 tests in `tool-execution.test.ts` pass locally.
 All 11 tests in `persist.test.ts` (existing `storeToolResultRows` unit
 tests) continue to pass — the function is unchanged on `dev`.
+
+## Strict-Review Audit 2026-09-15
+
+- Verified on dev: `MessageContentType.ToolResult` present at
+  `src/db/enums-core/messages.ts:26`; `persistToolResults` at
+  `src/generation/generate-route/tool-execution.ts:102` called at `:213`;
+  `storeToolResultRows` refs gone from `non-stream.ts`/`stream-to-client.ts`.
+- `bun test src/generation/generate-route/tool-execution.test.ts` → 13 pass,
+  0 fail, 46 expects (covers the 4 claimed cases + inline-persist-failure guard).
+- Backend persistence half CLOSED. Frontend bubble half (original items 3–4:
+  `<tool-call-bubble>` component + `chat-render.ts` dispatch) NOT implemented —
+  live streaming renders tool calls via `chat-panels.ts`/`chat-generations.ts`
+  SSE path; no dedicated persisted-row bubble exists. Tracked as follow-up, not
+  this ticket.
+- Index status flipped `open` → `closed` for the backend half by this batch;
+  `plan:sync` shows no status mismatches.
