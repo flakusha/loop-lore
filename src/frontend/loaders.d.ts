@@ -89,9 +89,18 @@ declare global {
   var personasPage: any;
   var settingsModal: any;
   var settingsPage: any;
+  var modelManager: () => ModelManagerState;
+
+  /* ── Loose / vendor-injected globals ────────────────────────── */
+
   var actorEmotionAvatarsFactory: (actorId: string,) => unknown;
   var actorLicensingFactory: (actorId: string,) => unknown;
   var actorEntitiesFactory: (actorId: string, kind: string,) => unknown;
+  var actorSystemsFactory: (actorId: string,) => unknown;
+  var actorTraitsFactory: (actorId: string,) => unknown;
+  var chatTransferFactory: (chatId: string,) => unknown;
+  var exportProgressFactory: () => unknown;
+  var actorEmotionAvatars: unknown;
   var currentLocale: string;
   var __marked: any;
   var __DOMPurify: any;
