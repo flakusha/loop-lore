@@ -263,6 +263,7 @@ export const LogLevelSchema = t.UnionEnum(["trace", "debug", "info", "warn", "er
 export const LoreEntryStatusSchema = t.UnionEnum(["enabled", "disabled", "archived",],);
 export const LorePositionSchema = t.UnionEnum(["before_char", "after_char", "in_char",],);
 export const MaterialSlotTypeSchema = t.UnionEnum(["required", "optional", "catalyst",],);
+export const MemoryReviewStatusSchema = t.UnionEnum(["pending", "committed", "rejected",],);
 export const MemoryTypeSchema = t.UnionEnum(["episodic", "semantic", "procedural",],);
 export const MessageContentFormatSchema = t.UnionEnum(["markdown",],);
 export const MessageContentTypeSchema = t.UnionEnum([
@@ -2336,6 +2337,7 @@ export const ActorMemoriesSchema = t.Object({
   scope: t.Optional(t.String(),),
   pinned: t.Optional(PinnedStateSchema,),
   privacy: t.Optional(t.String(),),
+  review_status: t.Optional(MemoryReviewStatusSchema,),
   shareability: t.Optional(t.String(),),
   source_message_ids: t.Optional(t.String(),),
   source_chat_ids: t.Optional(t.String(),),

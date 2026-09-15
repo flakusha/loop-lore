@@ -8,8 +8,9 @@
  */
 export { estimateTokens, } from "../chat/token-utils";
 export { getMemoriesWithinBudget, selectWithinBudget, } from "./budget";
-export { extractAndStoreMemories, extractFromBurst, extractMemories, storeMemories, } from "./extraction";
+export { extractAndStoreMemories, extractMemories, storeMemories, } from "./extraction";
 export type { MemoryProvenance, } from "./extraction";
+export { extractFromBurst, } from "./extraction-burst";
 export {
   expandMemoryContext,
   reconstructMessageChain,

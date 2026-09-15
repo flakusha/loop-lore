@@ -6,7 +6,7 @@ import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
 import { notFound, } from "../../validation/middleware";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonNoContent, } from "../http-utils";
+import { jsonError, jsonNoContent, } from "../http-utils";
 import { checkOwnership, entityPaths, } from "./context";
 import type { EntityConfig, } from "./types";
 
@@ -31,6 +31,18 @@ export function removeRoutes(config: EntityConfig, opts: { database: Db; config:
       const ownershipOk = await checkOwnership(opts.database, config, parentId, userId, userRole,);
       if (!ownershipOk) {
         return notFound(`${config.entityName} not found`,);
+      }
+      if (config.writeGuard) {
+        const row = (await db
+          .selectFrom(config.tableName,)
+          .selectAll()
+          .where("id", "=", entityId,)
+          .where(config.parentFk, "=", parentId,)
+          .executeTakeFirst()) ?? null;
+        const guard = await config.writeGuard({ body: {}, existing: row, userId, userRole, },);
+        if (!guard.ok) {
+          return jsonError({ message: guard.message, status: guard.status, },);
+        }
       }
 
       const result = await db

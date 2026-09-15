@@ -9,10 +9,12 @@
  */
 
 import { jsonBody, } from "./json";
+import { memoryPanelActions, } from "./memory-panel-actions";
 import { memoriesForTab, type MemoryApiRow, toMemoryEntry, } from "./memory-panel/transform";
 import type { ChatState, MemoryEntry, } from "./types";
 
 export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
+  ...memoryPanelActions,
   memoryPanel: {
     activeTab: "character",
     characterMemories: [],
@@ -24,6 +26,10 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     tokensUsed: 0,
     showCreateForm: false,
     newMemoryContent: "",
+    busy: false,
+    error: null,
+    editingMemoryId: null,
+    editMemoryContent: "",
   },
 
   /**
@@ -179,6 +185,22 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       // Revert on failure
       mem.pinned = !mem.pinned;
     }
+  },
+
+  /** True when the user may write world memories (admin/solo roles). */
+  _isWorldAdmin(): boolean {
+    return this.userRole === "admin" || this.userRole === "solo";
+  },
+
+  /** True when write actions are allowed on the active tab (world tab is admin-managed). */
+  _canWriteActiveTab(): boolean {
+    return this.memoryPanel.activeTab !== "world" || this._isWorldAdmin();
+  },
+
+  startEditMemory(mem: MemoryEntry,) {
+    if (!this._canWriteActiveTab()) { return; }
+    this.memoryPanel.editingMemoryId = mem.id;
+    this.memoryPanel.editMemoryContent = mem.content;
   },
 
   _updateTokenCount() {

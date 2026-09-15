@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { jsonBody, } from "../../alpine/json";
 import { feFetch, } from "../../fe-fetch";
 import { estimateTokens, } from "./helpers";
 
@@ -56,7 +57,19 @@ export function renderMemoryList(ctx: NewChatCtx,): void {
   }
 
   while (ctx.memoryCheckboxList.firstChild) { ctx.memoryCheckboxList.removeChild(ctx.memoryCheckboxList.firstChild,); }
-  for (const m of ctx.characterMemories) {
+  const sorted = [...ctx.characterMemories,].sort(
+    (a, b,) => a.type.localeCompare(b.type,) || a.content.localeCompare(b.content,),
+  );
+  let lastType = "";
+  for (const m of sorted) {
+    if (m.type !== lastType) {
+      lastType = m.type;
+      const heading = document.createElement("div",);
+      heading.style.cssText =
+        "font-size: 10px; font-weight: 600; color: var(--text-secondary); margin: var(--space-2) 0 var(--space-1)";
+      heading.textContent = m.type;
+      ctx.memoryCheckboxList.appendChild(heading,);
+    }
     const label = document.createElement("label",);
     label.style.cssText =
       "display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-1) 0; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border-default, #f0f0f0)";
@@ -120,4 +133,24 @@ export function bindMemoryHandlers(ctx: NewChatCtx,): void {
       renderMemoryList(ctx,);
     },);
   }
+
+  // "Add memory" — create a new character memory inline, then refresh the list
+  const addInput = document.querySelector<HTMLInputElement>("#memory-add-input",);
+  const addBtn = document.querySelector<HTMLButtonElement>("#memory-add-btn",);
+  addBtn?.addEventListener("click", async () => {
+    const content = addInput?.value.trim() ?? "";
+    const actorId = ctx.selected[0]?.id;
+    if (!content || !actorId || !addInput) { return; }
+    try {
+      const res = await feFetch(`/api/actors/${actorId}/memories`, {
+        method: "POST",
+        body: jsonBody({ content, memoryType: "episodic", confidence: 1, importance: 5, keywords: [], },),
+      },);
+      if (!res.ok) { return; }
+      addInput.value = "";
+      await loadMemoriesForActor(ctx, actorId,);
+    } catch {
+      // leave the input as-is so the user can retry
+    }
+  },);
 }
