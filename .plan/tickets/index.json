@@ -2604,7 +2604,7 @@
     "status": "done"
   },
   "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD": {
-    "hash": "27cc7ab",
+    "hash": "43d6c44",
     "git_issue": "27cc7ab",
     "extid": "BUG-IRC-INTEGRATION-UNSCOPED-AS-GROUP-CHAT-ONLY-IN-SOCIAL-HUB-AD",
     "type": "BUG",
@@ -2614,7 +2614,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-ISGENERATING-STUCK-TRUE-BRICKS-CHAT-SWITCHING": {
     "hash": "f254f7a",
@@ -6442,6 +6442,20 @@
     "epic": "epic-assistant-gm-flows.md",
     "tags": [],
     "source": ".plan/tickets/FEAT-in-story-character-generation-via-assistant-chat-handoff.md",
+    "status": "open"
+  },
+
+  "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION": {
+    "hash": "0ec76d5",
+    "git_issue": "0ec76d5",
+    "extid": "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION",
+    "type": "FEAT",
+    "title": "# FEAT-2026-irc-group-chat-integration: IRC integration as group-chat (channel) + DM (PM) — RFC 1459/2812",
+    "label": "feat",
+    "priority": "medium",
+    "epic": "epic-communications-integrations.md",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md",
     "status": "open"
   },
   "FEAT-IRC-INTEGRATION-CHANNELS-AS-GROUP-CHAT-PM-AS-CHAT": {
