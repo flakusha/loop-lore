@@ -218,6 +218,30 @@ describe("safeFetch — streaming", () => {
       },
     );
   });
+
+  test("stream mode ignores content-length size guard (caller owns size limits)", async () => {
+    // A large download legitimately exceeds maxSize; the guard is a buffering
+    // limit, meaningless when the body is handed back unconsumed.
+    const stream = new ReadableStream<Uint8Array>({ pull: () => {}, },);
+    await withMockFetch(
+      mock(() =>
+        new Response(stream, {
+          status: 200,
+          headers: { "Content-Length": String(20 * 1024 * 1024,), },
+        },)
+      ),
+      async () => {
+        const result = await safeFetch<Response>("https://example.com/big", {
+          stream: true,
+          maxSize: 1024,
+        },);
+        expect(result.ok,).toBe(true,);
+        if (result.ok) {
+          expect((result.data as Response).body,).not.toBeNull();
+        }
+      },
+    );
+  });
 });
 
 describe("safeFetch — request body serialization", () => {
