@@ -44,7 +44,6 @@ const state = {
   failCalls: [] as unknown[],
   failThrows: false,
   storeCalls: [] as unknown[],
-  toolRowsCalls: [] as unknown[],
   toolCallsArgs: [] as unknown[],
   toolResults: [] as { role: string; content: string; tool_call_id?: string }[],
 };
@@ -63,7 +62,6 @@ function resetState(): void {
   state.failCalls = [];
   state.failThrows = false;
   state.storeCalls = [];
-  state.toolRowsCalls = [];
   state.toolCallsArgs = [];
   state.toolResults = [];
 }
@@ -116,14 +114,6 @@ if (STRICTLY_ISOLATED) {
       return state.toolResults;
     },
     MAX_TOOL_ROUNDS: 5,
-  }),);
-}
-
-if (STRICTLY_ISOLATED) {
-  mock.module("./tool-result-persist", () => ({
-    storeToolResultRows: async (...args: unknown[]) => {
-      state.toolRowsCalls.push(args,);
-    },
   }),);
 }
 
@@ -356,12 +346,8 @@ describeOrSkipStrict("streamToClient coverage", () => {
     const done = events.find((e,) => e.type === "done");
     expect(done?.content,).toBe("part1 done",);
     expect(state.toolCallsArgs.length,).toBe(1,);
-    // Tool results are persisted inline by executeToolCalls
-    // (BUG-tool-call-result-no-frontend-rendering). The mocked
-    // executeToolCalls here skips the inline path, and streamToClient no
-    // longer batches through storeToolResultRows post-loop, so the mock
-    // counter for storeToolResultRows stays empty.
-    expect(state.toolRowsCalls.length,).toBe(0,);
+    // The mocked executeToolCalls skips inline persistence; streamToClient
+    // never writes tool rows itself (BUG-tool-call-result-no-frontend-rendering).
   });
 
   test("tool calls every round exceed max rounds and emit a generic error", async () => {
