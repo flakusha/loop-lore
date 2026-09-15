@@ -38,7 +38,11 @@ export interface TagPropositionSource {
   propose(asset: PropositionAsset,): string[];
 }
 
-/** Tokenizes a string into candidate tags: non-alphanumeric splits, lowercase. */
+/**
+ * Tokenizes a string into candidate tags: non-alphanumeric splits, lowercase.
+ * @param value Raw string to tokenize.
+ * @returns Filtered tag tokens (2–48 chars, lowercased).
+ */
 function tokenize(value: string,): string[] {
   return value
     .toLowerCase()
@@ -62,7 +66,7 @@ export const staticTagPropositionSource: TagPropositionSource = {
  * @param database
  * @param assetId
  * @param userId
- * @param source
+ * @returns Proposed tags not already applied or dismissed.
  */
 export async function proposeTags(
   database: Kysely<DB>,
@@ -111,7 +115,7 @@ export async function proposeTags(
  * @param database
  * @param assetId
  * @param tag
- * @param userId
+ * @returns Resolves when the dismissal is recorded.
  */
 export async function dismissProposition(
   database: Kysely<DB>,
