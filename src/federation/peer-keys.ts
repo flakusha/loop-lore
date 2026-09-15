@@ -17,6 +17,7 @@
 import type { Kysely, } from "kysely";
 import { decryptBytes, encryptBytes, } from "../crypto/actor-key-bytes";
 import type { DB, } from "../db/schema";
+import { safeFromBase64, safeFromUint8Array, safeToBase64, } from "../utils/safe-buffer";
 import { type ContentCipher, pskCipher, } from "./cipher";
 import { canonicalOrigin, } from "./peer-fetch";
 
@@ -28,9 +29,11 @@ export const INBOUND_KEY_BYTES = 32;
  * as the `pskCipher` secret — HKDF derives the AES key from it.
  */
 export function generateInboundKey(): string {
-  return Buffer.from(crypto.getRandomValues(new Uint8Array(INBOUND_KEY_BYTES,),),).toString(
-    "base64",
-  );
+  const bytes = safeFromUint8Array(crypto.getRandomValues(new Uint8Array(INBOUND_KEY_BYTES,),),);
+  if (!bytes.ok) { throw bytes.error; }
+  const b64 = safeToBase64(bytes.buffer,);
+  if (!b64.ok) { throw b64.error; }
+  return b64.buffer;
 }
 
 /**
@@ -54,15 +57,18 @@ export async function getOrCreateInboundKey(
     .where("peer_origin", "=", origin,)
     .executeTakeFirst();
   if (row) {
-    return Buffer.from(await decryptBytes(smk, row.encrypted_key,),).toString("base64",);
+    const plain = safeFromUint8Array(await decryptBytes(smk, row.encrypted_key,),);
+    if (!plain.ok) { throw plain.error; }
+    const b64 = safeToBase64(plain.buffer,);
+    if (!b64.ok) { throw b64.error; }
+    return b64.buffer;
   }
   const key = generateInboundKey();
+  const wrap = safeFromBase64(key,);
+  if (!wrap.ok) { throw wrap.error; }
   await database
     .insertInto("mesh_inbound_keys",)
-    .values({
-      peer_origin: origin,
-      encrypted_key: await encryptBytes(smk, Buffer.from(key, "base64",),),
-    },)
+    .values({ peer_origin: origin, encrypted_key: await encryptBytes(smk, wrap.buffer,), },)
     .onConflict((oc,) => oc.column("peer_origin",).doNothing())
     .execute();
   // Re-read: a concurrent reserve may have won the insert; either way the
@@ -72,7 +78,11 @@ export async function getOrCreateInboundKey(
     .select(["encrypted_key",],)
     .where("peer_origin", "=", origin,)
     .executeTakeFirstOrThrow();
-  return Buffer.from(await decryptBytes(smk, raced.encrypted_key,),).toString("base64",);
+  const racedPlain = safeFromUint8Array(await decryptBytes(smk, raced.encrypted_key,),);
+  if (!racedPlain.ok) { throw racedPlain.error; }
+  const racedB64 = safeToBase64(racedPlain.buffer,);
+  if (!racedB64.ok) { throw racedB64.error; }
+  return racedB64.buffer;
 }
 
 /**
@@ -96,7 +106,9 @@ export async function rotateInboundKey(
     .where("peer_origin", "=", origin,)
     .executeTakeFirst();
   const key = generateInboundKey();
-  const encrypted = await encryptBytes(smk, Buffer.from(key, "base64",),);
+  const keyBytes = safeFromBase64(key,);
+  if (!keyBytes.ok) { throw keyBytes.error; }
+  const encrypted = await encryptBytes(smk, keyBytes.buffer,);
   if (row) {
     await database
       .updateTable("mesh_inbound_keys",)
@@ -117,7 +129,11 @@ export async function rotateInboundKey(
     .select(["encrypted_key",],)
     .where("peer_origin", "=", origin,)
     .executeTakeFirstOrThrow();
-  return Buffer.from(await decryptBytes(smk, stored.encrypted_key,),).toString("base64",);
+  const storedPlain = safeFromUint8Array(await decryptBytes(smk, stored.encrypted_key,),);
+  if (!storedPlain.ok) { throw storedPlain.error; }
+  const storedB64 = safeToBase64(storedPlain.buffer,);
+  if (!storedB64.ok) { throw storedB64.error; }
+  return storedB64.buffer;
 }
 /**
  * Revoke our inbound key for one sender: delete current + grace previous.
@@ -160,15 +176,16 @@ export async function inboundCiphers(
     .where("peer_origin", "=", origin,)
     .executeTakeFirst();
   if (!row) { return []; }
-  const ciphers: ContentCipher[] = [
-    pskCipher(Buffer.from(await decryptBytes(smk, row.encrypted_key,),).toString("base64",),),
-  ];
-  if (row.previous_encrypted_key !== null) {
-    ciphers.push(
-      pskCipher(
-        Buffer.from(await decryptBytes(smk, row.previous_encrypted_key,),).toString("base64",),
-      ),
-    );
+  const encrypted = row.previous_encrypted_key !== null
+    ? [row.encrypted_key, row.previous_encrypted_key,]
+    : [row.encrypted_key,];
+  const ciphers: ContentCipher[] = [];
+  for (const value of encrypted) {
+    const plain = safeFromUint8Array(await decryptBytes(smk, value,),);
+    if (!plain.ok) { throw plain.error; }
+    const b64 = safeToBase64(plain.buffer,);
+    if (!b64.ok) { throw b64.error; }
+    ciphers.push(pskCipher(b64.buffer,),);
   }
   return ciphers;
 }
