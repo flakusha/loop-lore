@@ -3,11 +3,18 @@
 
 # TASK: Actor Notes, Items, and Lore Entries Frontend
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (merged to dev 2026-09-15)
 **Priority:** P2
 **Effort:** Medium
 **Epic:** epic-frontend-backend-integration
 **Tags:** notes, items, lore, frontend, actor
+
+## Resolution
+
+Merged to dev in `991f6f050` (`feat(frontend): mount actor panels, export progress; drop orphan`):
+
+- `src/frontend/alpine/actor-entities.ts` — one `actorEntitiesFactory(actorId, kind)` for notes / items / lore-entries CRUD (supersedes the three flat `actor-notes.ts`/`actor-items.ts`/`actor-lore.ts` files named in this ticket).
+- `src/components/character/entities-panel.html` — kind-bound panel body, mounted inline ×3 in `src/routes/views/character-edit-form.ts`.
 
 ## Summary
 

@@ -3,11 +3,18 @@
 
 # TASK: Actor Traits Frontend
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (merged to dev 2026-09-15)
 **Priority:** P2
 **Effort:** Medium
 **Epic:** epic-frontend-backend-integration
 **Tags:** traits, frontend, actor, character
+
+## Resolution
+
+Merged to dev in `991f6f050` (`feat(frontend): mount actor panels, export progress; drop orphan`):
+
+- `src/frontend/alpine/actor-traits.ts` — permanent-traits list/create/update/delete with search + category filter.
+- `src/components/character/traits-panel.html` — mounted inline in `src/routes/views/character-edit-form.ts`.
 
 ## Summary
 
