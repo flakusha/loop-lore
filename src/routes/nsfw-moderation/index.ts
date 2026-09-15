@@ -22,13 +22,14 @@ export type { HandlerOpts, } from "./types";
 
 /**
  * @param opts
+ * @param prefix
  */
-export function nsfwModerationRoutes(opts: HandlerOpts,) {
+export function nsfwModerationRoutes(opts: HandlerOpts, prefix = "/api",) {
   return new Elysia({ name: "nsfw-moderation", },)
-    .use(preferencesRoutes(opts,),)
-    .use(actionsRoutes(opts,),)
-    .use(flagsRoutes(opts,),)
-    .use(auditRoutes(opts,),)
-    .use(overridesRoutes(opts,),)
-    .use(appealsRoutes(opts,),);
+    .use(preferencesRoutes(opts, prefix,),)
+    .use(actionsRoutes(opts, prefix,),)
+    .use(flagsRoutes(opts, prefix,),)
+    .use(auditRoutes(opts, prefix,),)
+    .use(overridesRoutes(opts, prefix,),)
+    .use(appealsRoutes(opts, prefix,),);
 }

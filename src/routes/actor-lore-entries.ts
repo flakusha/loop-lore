@@ -16,8 +16,9 @@ import { createEntityRoutes, } from "./entity-routes";
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @param prefix
  */
-export function actorLoreEntriesRoutes(opts: { database: Db; config: Config },): Elysia {
+export function actorLoreEntriesRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return createEntityRoutes(
     {
       parentPrefix: "actors",
@@ -63,5 +64,6 @@ export function actorLoreEntriesRoutes(opts: { database: Db; config: Config },):
       createRequired: ["content",],
     },
     opts,
+    prefix,
   );
 }

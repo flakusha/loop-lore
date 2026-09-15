@@ -11,9 +11,9 @@ import type { HandlerOpts, } from "./types";
  * @param root0
  * @param root0.database
  */
-export function exportSseRoutes({ database, }: HandlerOpts,): Elysia {
+export function exportSseRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysia {
   return new Elysia({ name: "export-sse", },)
-    .use(startRoutes({ database, },),)
-    .use(downloadRoutes({ database, },),)
-    .use(statusRoutes({ database, },),);
+    .use(startRoutes({ database, }, prefix,),)
+    .use(downloadRoutes({ database, }, prefix,),)
+    .use(statusRoutes({ database, }, prefix,),);
 }

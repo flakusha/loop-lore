@@ -234,12 +234,16 @@ export function handleAdminUpdateConfig(userRole: string | null | undefined, bod
  * Create the age-gate Elysia route group.
  * @param root0 - Options object.
  * @param root0.database - Database instance.
+ * @param prefix - URL prefix for the route group (default `/api`).
  * @returns Configured Elysia app.
  */
-export function ageGateRoutes({ database, }: { database: Kysely<DB> },) {
+export function ageGateRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",) {
   return new Elysia({ name: "age-gate", },)
-    .get("/api/age-gate/status", (ctx,) => handleGetStatus(database, (ctx as any).userId,),)
-    .post("/api/age-gate/accept", (ctx,) => handleAccept({ database, userId: (ctx as any).userId, body: ctx.body, },),)
-    .get("/api/admin/age-gate", (ctx,) => handleAdminGetConfig((ctx as any).userRole,),)
-    .put("/api/admin/age-gate", (ctx,) => handleAdminUpdateConfig((ctx as any).userRole, ctx.body,),);
+    .get(`${prefix}/age-gate/status`, (ctx,) => handleGetStatus(database, (ctx as any).userId,),)
+    .post(
+      `${prefix}/age-gate/accept`,
+      (ctx,) => handleAccept({ database, userId: (ctx as any).userId, body: ctx.body, },),
+    )
+    .get(`${prefix}/admin/age-gate`, (ctx,) => handleAdminGetConfig((ctx as any).userRole,),)
+    .put(`${prefix}/admin/age-gate`, (ctx,) => handleAdminUpdateConfig((ctx as any).userRole, ctx.body,),);
 }

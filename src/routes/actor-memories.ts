@@ -22,8 +22,9 @@ import { jsonResponse, } from "./http-utils";
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @param prefix
  */
-export function actorMemoriesRoutes(opts: { database: Db; config: Config },): Elysia {
+export function actorMemoriesRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   const entityConfig = {
     parentPrefix: "actors",
     parentParam: "actorId",
@@ -67,7 +68,7 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config },): El
       pinned: (value: unknown,) => value === "pinned",
     },
   } as const;
-  const { withIdPath, parentParam, } = entityPaths(entityConfig as never,);
+  const { withIdPath, parentParam, } = entityPaths(entityConfig as never, prefix,);
 
   const expandRoute = new Elysia({ name: "memories-expand", },)
     .get(`${withIdPath}/expand`, async (ctx,) => {
@@ -105,5 +106,5 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config },): El
       },
     },);
 
-  return expandRoute.use(createEntityRoutes(entityConfig as never, opts,),);
+  return expandRoute.use(createEntityRoutes(entityConfig as never, opts, prefix,),);
 }

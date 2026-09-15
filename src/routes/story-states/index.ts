@@ -15,9 +15,9 @@ import { storyWorldStateRoutes, } from "./world-states";
  * @param root0
  * @param root0.database
  */
-export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Elysia {
+export function storyStatesRoutes({ database, }: { database: Kysely<DB> }, prefix = "/api",): Elysia {
   return new Elysia({ name: "story-states", },)
-    .use(storyNpcStateRoutes({ database, },),)
-    .use(storyLocationStateRoutes({ database, },),)
-    .use(storyWorldStateRoutes({ database, },),);
+    .use(storyNpcStateRoutes({ database, }, prefix,),)
+    .use(storyLocationStateRoutes({ database, }, prefix,),)
+    .use(storyWorldStateRoutes({ database, }, prefix,),);
 }

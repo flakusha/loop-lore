@@ -27,14 +27,16 @@ import { type HandlerOpts, requireActorAccess, } from "../actor-auth";
 import { jsonError, jsonResponse, } from "../http-utils";
 import { errResponse, getBoolean, getNumber, getString, listLogQuery, upsertArcBody, } from "./helpers";
 
-const R = "/api/character-growth";
+const R_SUFFIX = "/character-growth";
 
 /**
  * Mount all character-growth routes on the supplied Elysia instance.
  * @param opts
+ * @param prefix
  */
-export function characterGrowthRoutes(opts: HandlerOpts,) {
+export function characterGrowthRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = () => characterGrowthService(opts.database,);
+  const R = `${prefix}${R_SUFFIX}`;
 
   return new Elysia({ name: "character-growth", },)
     // ── Get arc + growth state ──────────────────────────────

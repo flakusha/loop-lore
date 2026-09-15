@@ -19,11 +19,11 @@ export { resolveBackendUrls, } from "./urls";
  * @param root0
  * @param root0.config
  */
-export function loraRoutes({ config, }: { config: Config },) {
+export function loraRoutes({ config, }: { config: Config }, prefix = "/api",) {
   return (
     new Elysia({ name: "lora", },)
-      .use(discoverRoutes(config,),)
-      .use(loraManagementRoutes(),)
-      .use(loraValidateRoutes(),)
+      .use(discoverRoutes(config, prefix,),)
+      .use(loraManagementRoutes(prefix,),)
+      .use(loraValidateRoutes(prefix,),)
   );
 }

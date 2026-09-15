@@ -15,9 +15,10 @@ import type { EntityConfig, } from "./types";
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @param prefix
  */
-export function createRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
-  const { basePath, parentParam, } = entityPaths(config,);
+export function createRoutes(config: EntityConfig, opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
+  const { basePath, parentParam, } = entityPaths(config, prefix,);
 
   return new Elysia({ name: `${config.entityPath}-create`, },)
     .post(
