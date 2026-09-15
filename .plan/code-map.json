@@ -6039,6 +6039,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-gm-guided-story-creation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
     }
   ],
   "src/chat/types/index.ts": [
@@ -8171,6 +8175,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-dh-ratchet-regression-tests-lack-out-of-order-delivery-acros.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-e2ee-open-bugs.md"
     }
   ],
   "src/crypto/e2e/dh-ratchet.ts": [
@@ -28243,6 +28251,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-split-utils-god-module.md"
+    }
+  ],
+  "src/utils/base64.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-e2ee-open-bugs.md"
     }
   ],
   "src/utils/base64.ts": [
