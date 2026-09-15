@@ -30,7 +30,7 @@ function runCoverage(lcov: string,): { status: number | null; stdout: string; st
 }
 
 describe("coverage.mjs", () => {
-  test("skips top-level src files from the module table", () => {
+  test("groups top-level src files under the (root) module bucket", () => {
     const result = runCoverage(
       "TN:\n" +
         "SF:src/elysia-app.ts\n" +
@@ -47,6 +47,6 @@ describe("coverage.mjs", () => {
     expect(result.status,).toBe(0,);
     expect(result.stderr,).not.toContain("elysia-app.ts",);
     const report = JSON.parse(result.stdout,);
-    expect(report.modules.map((row: { mod: string },) => row.mod),).toEqual(["server",],);
+    expect(report.modules.map((row: { mod: string },) => row.mod).sort(),).toEqual(["(root)", "server",].sort(),);
   });
 });
