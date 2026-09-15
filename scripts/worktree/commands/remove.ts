@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+import { existsSync, } from "node:fs";
+import { resolve, } from "node:path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { gitSync, } from "../utils/git";
 import { findWorktreeForBranchSync, getWorktrees, } from "../utils/git";
