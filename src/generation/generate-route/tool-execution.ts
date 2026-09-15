@@ -11,8 +11,25 @@
  * Tool outputs are sanitized before being re-injected into the assistant
  * prompt so an attacker-controlled tool result cannot smuggle
  * `<script>`/on-event HTML into the next LLM turn.
+ *
+ * BUG-tool-call-result-no-frontend-rendering:
+ * When `ctx.db` is supplied, each tool result is also persisted as a
+ * chat-visible `messages` row with `content_type = tool_result`, linked
+ * back to its tool call via `metadata.tool_call_id`. `parent_id` stays
+ * null — the assistant message does not exist yet at this point; callers
+ * that want the FK linkage should call `storeToolResultRows` themselves
+ * after `storeGenerationResult` lands.
  */
 
+import { randomUUID, } from "node:crypto";
+import {
+  ContentEncoding,
+  MessageContentFormat,
+  MessageContentType,
+  MessageRole,
+  MessageStatus,
+  MessageVisibility,
+} from "../../db/enums";
 import { registry, } from "../../plugins/registry";
 import type { ToolDefinition, ToolExecutionContext, } from "../../plugins/types";
 import {
@@ -23,8 +40,9 @@ import {
   ON_EVENT_UNQUOTED,
   stripScriptTags,
 } from "../../regex/html-sanitize";
-import { jsonStringifyOr, safeJsonParse, } from "../../utils";
+import { jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "../../utils";
 import type { GenerationMessage, } from "../types";
+import { encryptStoredContent, } from "./tool-result-persist";
 
 /** Maximum rounds of tool calls in the generation loop. */
 export const MAX_TOOL_ROUNDS = 5;
@@ -70,6 +88,48 @@ export function gatePluginToolsByRole(agentRole: string | null,): ToolDefinition
 interface ToolCallItem {
   id: string;
   function: { name: string; arguments: string };
+}
+
+/**
+ * Persist each tool result as a `tool_result` row in the `messages` table,
+ * following the same server-side encryption path as generated messages and
+ * linking the row back to its tool call via `metadata.tool_call_id`.
+ * `parent_id` stays null because `executeToolCalls` does not have the
+ * assistant message id; callers needing that linkage should use
+ * `storeToolResultRows` from `./tool-result-persist` after
+ * `storeGenerationResult` lands.
+ */
+async function persistToolResults(
+  ctx: ToolExecutionContext,
+  results: GenerationMessage[],
+): Promise<void> {
+  for (const result of results) {
+    const { storedContent, storedKeyId, } = await encryptStoredContent({
+      database: ctx.db,
+      chatId: ctx.chatId,
+      actorId: ctx.actorId,
+      plaintext: result.content,
+    },);
+    const metadata = safeJsonStringify({ tool_call_id: result.tool_call_id ?? null, },);
+    await ctx.db
+      .insertInto("messages",)
+      .values({
+        id: randomUUID(),
+        chat_id: ctx.chatId,
+        actor_id: ctx.actorId,
+        parent_id: null,
+        role: MessageRole.Assistant,
+        content: storedContent,
+        key_id: storedKeyId,
+        content_type: MessageContentType.ToolResult,
+        content_format: MessageContentFormat.Markdown,
+        content_encoding: ContentEncoding.Identity,
+        status: MessageStatus.Confirmed,
+        visibility: MessageVisibility.Visible,
+        metadata: metadata.ok ? metadata.value : null,
+      },)
+      .execute();
+  }
 }
 
 /**
@@ -130,6 +190,15 @@ export async function executeToolCalls(
         tool_call_id: tc.id,
       },);
     }
+  }
+
+  // BUG-tool-call-result-no-frontend-rendering: persist each tool result as a
+  // chat-visible `messages` row so tool calls leave a record even when the
+  // upstream LLM errored, the tool threw, or the registry missed the tool.
+  // Callers that want a FK back to the assistant message should call
+  // `storeToolResultRows` themselves — the inline path here writes
+  if (ctx?.db && typeof ctx.db.insertInto === "function" && results.length > 0) {
+    await persistToolResults(ctx, results,);
   }
 
   return results;
