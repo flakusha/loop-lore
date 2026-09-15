@@ -9,7 +9,7 @@
  * distributing across six stats (8–15 each).
  */
 
-// eslint-disable-next-line import/first — value import used by ALL_CHARACTER_STATES; must precede section header.
+// eslint-disable-next-line import/first -- value import used by ALL_CHARACTER_STATES; must precede section header.
 import { CharacterState, } from "../../db/enums-core";
 
 // ── Types ────────────────────────────────────────────────
