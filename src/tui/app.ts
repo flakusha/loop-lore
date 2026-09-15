@@ -11,7 +11,7 @@
 
 import blessed from "blessed";
 import { loadConfig, } from "../config/load";
-import { getLogger, } from "../logger";
+import { createLogger, getLogger, } from "../logger";
 import { AssetView, } from "./asset-view";
 import { ChatWidget, } from "./chat";
 
@@ -133,6 +133,12 @@ export class TUIApp {
     process.exit(0,);
   }
 }
+
+// Initialize the global logger before module-scope TUIApp construction.
+// The constructor calls loadConfig(), which logs via getLogger(); without
+// this init, a config failure crashes the TUI inside its own catch block
+// (see BUG-tui-app-getlogger-throws-when-running-standalone).
+createLogger({ level: "warn", },);
 
 const app = new TUIApp();
 export default app;

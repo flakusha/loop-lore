@@ -6973,6 +6973,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-configs-path-resolution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
     }
   ],
   "src/config/load/parse.ts": [
@@ -7601,6 +7605,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-templates-loader-merge-strategy-consistency.md"
+    }
+  ],
+  "src/config/template-expansion/run.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tui-app-getlogger-throws-when-running-standalone.md"
     }
   ],
   "src/config/templates-loader.test.ts": [
