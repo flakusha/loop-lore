@@ -7441,6 +7441,13 @@
       "source": ".plan/tickets/TASK-observability-config-section.md"
     }
   ],
+
+  "src/config/sections/integrations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md"
+    }
+  ],
   "src/config/sections/items/defaults.ts": [
     {
       "kind": "ticket",
@@ -26817,10 +26824,21 @@
       "source": ".plan/tickets/TASK-social-hub-foundation.md"
     }
   ],
+
+  "src/social-hub/adapters/irc.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md"
+    }
+  ],
   "src/social-hub/adapters/irc.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-irc-integration-unscoped-as-group-chat-only-in-social-hub-ad.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-2026-irc-group-chat-integration.md"
     }
   ],
   "src/social-hub/adapters/slack.ts": [
