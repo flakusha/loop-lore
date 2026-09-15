@@ -8,7 +8,7 @@
  * a chat-visible `tool_result` row per executed tool call.
  */
 import type { Database, } from "bun:sqlite";
-import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import { registry, } from "../../plugins/registry";
 import type { DB, } from "../../db/schema";
@@ -384,5 +384,64 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
     expect(results[0]?.content,).toBe("stub-out",);
     // No DB to query, but absence of throw is the actual contract: existing
     // callers (e.g. test fixtures with mock ctx) must not regress.
+  },);
+
+  test("inline persist failure does NOT abort the generation; in-memory return preserved", async () => {
+    // Wrap db.insertInto so the second call's execute() rejects, simulating a
+    // partial DB outage mid-batch. The contract: executeToolCalls must catch
+    // the error, log it, and still return the full results array so the
+    // generation loop in non-stream.ts / stream-to-client.ts can continue.
+    // Capture console.error so the test output stays clean.
+    const errorSpy = spyOn(console, "error",).mockImplementation(() => {},);
+
+    const realInsertInto = db.insertInto.bind(db,);
+    let calls = 0;
+    // Local cast on a controlled boundary (test fixture replacing a single
+    // method on a real Kysely<DB>): the shape is structurally compatible.
+    const stub: Kysely<DB> = Object.create(db,);
+    stub.insertInto = ((table: Parameters<typeof db.insertInto>[0],) => {
+      calls += 1;
+      if (calls === 2) {
+        // Return a minimal fluent chain whose execute() rejects.
+        const chain: { values: () => { execute: () => Promise<void> } } = {
+          values: () => ({ execute: async () => { throw new Error("simulated DB outage",); }, },),
+        };
+        return chain as unknown as ReturnType<typeof realInsertInto>;
+      }
+      return realInsertInto(table,);
+    },) as Kysely<DB>["insertInto"];
+
+    registry.addTools("test-plugin", [
+      {
+        name: "stub_tool",
+        description: "stub",
+        parameters: {},
+        handler: async () => ({ content: "ok-1", },),
+      },
+      {
+        name: "stub_tool_2",
+        description: "stub",
+        parameters: {},
+        handler: async () => ({ content: "ok-2", },),
+      },
+    ],);
+
+    // Direct await — if executeToolCalls rejects, this assertion fails with
+    // the actual error instead of a swallowed throw inside `void`.
+    const results = await executeToolCalls(
+      [
+        { id: "tc-fail-1", function: { name: "stub_tool", arguments: "{}", }, },
+        { id: "tc-fail-2", function: { name: "stub_tool_2", arguments: "{}", }, },
+      ],
+      { db: stub, actorId, chatId, },
+    );
+
+    // In-memory return is intact: both results present, order preserved.
+    expect(results.length,).toBe(2,);
+    expect(results[0]?.tool_call_id,).toBe("tc-fail-1",);
+    expect(results[1]?.tool_call_id,).toBe("tc-fail-2",);
+    // The swallowed error was logged so operators can see the persist gap.
+    expect(errorSpy,).toHaveBeenCalled();
+    errorSpy.mockRestore();
   },);
 });
