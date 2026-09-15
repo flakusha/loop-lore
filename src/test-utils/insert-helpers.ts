@@ -19,6 +19,7 @@ import type {
   AvatarSelectionRule,
   CancelReason,
   CancelSource,
+  CharacterState,
   ChatMode,
   ChatParticipantRole,
   ChatType,
@@ -1647,7 +1648,7 @@ export async function insertCharacterStats(
     evasiveness?: number | null;
     cooperativeness?: number | null;
     aggression_threshold?: number | null;
-    character_state?: string;
+    character_state?: CharacterState;
     conditions?: string;
     active_effects?: string;
     combat_alignment?: string;
