@@ -22,7 +22,7 @@ Frontend \`markSeen\` POSTs \`actorId: this.currentActorId\` (always null) — r
 Resolved in commit `89cc294a0 fix(security): derive seen-state actor from session, close client-trust inversion` (verified on dev HEAD 2026-09-12).
 
 - Server: `src/routes/message-seen.ts` POST handler derives `actorId` via `resolvePrimaryActorId(database, userId,)` (line 118), no longer reads from `ctx.body`. The DELETE branch already used `requireActorFromSession` for comparison; the POST now mirrors that trust boundary.
-- Frontend: `src/frontend/alpine/chat-seen.ts` `markSeen` only sends `{ state }` in the body (lines 52-58). `this.currentActorId` is no longer referenced anywhere in the frontend (`grep this.currentActorId src/frontend → 0 matches`).
+- Frontend: `src/frontend/alpine/chat-seen.ts` `markSeen` only sends `{ state }` in the body (lines 40-44 — the `apiFetch` call inside the function; the comment at lines 35-39 explains the dropped `actorId` rationale). `this.currentActorId` is no longer referenced in any frontend source (`grep this.currentActorId src/frontend → 0 matches`; the bare identifier `currentActorId` still appears in test fixtures and `chat-types/participants-state.ts`/`composer-pre-send/send-gate.ts` interfaces, none of which use the `markSeen` trust boundary).
 - Tests: `src/frontend/alpine/chat-seen.test.ts` already exists; the body assertion `JSON.parse(String(post.opts.body))` confirms `actorId` is absent.
 
 Bookkeeping ticket: `TASK-bookkeeping-chat-bugfix-batch-1-scope-discovery`.
