@@ -134,7 +134,7 @@ export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: strin
           <div style="display:flex;flex-direction:column;gap:var(--space-2)">
             <label class="btn btn-secondary" style="cursor:pointer">
               <span id="upload-avatar-label">Upload Avatar</span>
-              <input type="file" accept="image/*" style="display:none" id="avatar-input" onchange="uploadAvatar(this)" />
+              <input type="file" accept="image/*" style="display:none" id="avatar-input" x-on:change="window.uploadAvatar($event.target)" data-testid="avatar-input" />
             </label>
             ${v.avatarRemoveBtn}
           </div>

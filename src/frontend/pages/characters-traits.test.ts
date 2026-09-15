@@ -12,14 +12,43 @@ import { initTraits, renderAspirations, updateSliderDisplays, } from "./characte
 
 type Listener = (e: unknown,) => void;
 
-interface FakeEl {
-  id: string;
-  value: string;
+type FakeNode = {
+  id?: string;
   type?: string;
+  value?: string;
   textContent: string;
-  innerHTML: string;
   style: Record<string, string>;
-  getHTML(): string;
+  listeners: Map<string, Listener[]>;
+  dataset: Record<string, string>;
+  className: string;
+  flex?: string;
+  width?: string;
+  marginTop?: string;
+  /** Children for DOM-clear/append. */
+  children: FakeNode[];
+  parent: FakeNode | null;
+  selected?: boolean;
+};
+
+const makeNode = (overrides: Partial<FakeNode> = {},): FakeNode => ({
+  textContent: "",
+  style: {},
+  listeners: new Map(),
+  dataset: {},
+  className: "",
+  children: [],
+  parent: null,
+  ...overrides,
+});
+
+interface FakeEl extends FakeNode {
+  addEventListener(type: string, fn: Listener,): void;
+  dispatch(type: string, payload?: unknown,): void;
+  firstChild: FakeNode | null;
+  removeChild(child: FakeNode,): FakeNode;
+  appendChild(child: FakeNode,): FakeNode;
+  append(...children: FakeNode[]): void;
+  innerHTML: string;
 }
 
 interface FakeDocument {
@@ -30,17 +59,51 @@ interface FakeDocument {
   addEventListener(type: string, fn: Listener,): void;
 }
 
+function attachDom(node: FakeNode,): FakeEl {
+  const el = node as FakeEl;
+  el.firstChild = el.children[0] ?? null;
+  el.addEventListener = (type, fn,) => {
+    const arr = el.listeners.get(type,) ?? [];
+    arr.push(fn,);
+    el.listeners.set(type, arr,);
+  };
+  el.dispatch = (type, payload,) => {
+    const arr = el.listeners.get(type,) ?? [];
+    for (const fn of arr) { fn(payload,); }
+  };
+  el.removeChild = (child,) => {
+    const i = el.children.indexOf(child,);
+    if (i >= 0) {
+      el.children.splice(i, 1,);
+      child.parent = null;
+    }
+    el.firstChild = el.children[0] ?? null;
+    return child;
+  };
+  el.appendChild = (child,) => {
+    el.children.push(child,);
+    child.parent = el;
+    el.firstChild = el.children[0] ?? null;
+    return child;
+  };
+  el.append = (...kids: FakeNode[]) => {
+    for (const k of kids) { el.appendChild(k,); }
+  };
+  el.innerHTML = "";
+  return el;
+}
+
 function makeDocument(): FakeDocument {
   const byId = new Map<string, FakeEl>();
   const listeners = new Map<string, Listener[]>();
   const d: FakeDocument = {
     listeners,
     register: (el,) => {
-      byId.set(el.id, el,);
+      if (el.id !== undefined) { byId.set(el.id, el,); }
       return el;
     },
     querySelector: (sel,) => sel.startsWith("#",) ? byId.get(sel.slice(1,),) ?? null : null,
-    createElement: (_tag,) => makeEl(),
+    createElement: (_tag,) => attachDom(makeNode(),),
     addEventListener: (type, fn,) => {
       const arr = listeners.get(type,) ?? [];
       arr.push(fn,);
@@ -51,20 +114,8 @@ function makeDocument(): FakeDocument {
 }
 
 function makeEl(id = "",): FakeEl {
-  return {
-    id,
-    value: "",
-    textContent: "",
-    innerHTML: "",
-    style: {},
-    getHTML(): string {
-      // Mirrors the browser: serializing element content escapes & < >.
-      return this.textContent.replaceAll("&", "&amp;",).replaceAll("<", "&lt;",).replaceAll(">", "&gt;",);
-    },
-  };
+  return attachDom(makeNode({ id, value: "", },),);
 }
-
-/** The page logic exposes its handlers as globals; named view over them. */
 const page = globalThis as unknown as {
   addAspiration: () => void;
   removeAspiration: (idx: number,) => void;
@@ -112,20 +163,78 @@ describe("initTraits", () => {
 });
 
 describe("aspirations", () => {
-  test("addAspiration appends a default row with index-bound handlers", () => {
+  test("addAspiration appends a default row with index-bound listeners", () => {
     const list = doc.register(makeEl("aspirations-list",),);
     page.addAspiration();
     page.addAspiration();
-    expect(list.innerHTML,).toContain('onchange="aspirationsData[0].goal=this.value"',);
-    expect(list.innerHTML,).toContain('onclick="removeAspiration(1)"',);
-    expect(list.innerHTML,).toContain(`<option value="medium" selected>`,);
-    expect(list.innerHTML,).toContain(`<option value="hidden" selected>`,);
+    // Two rows rendered; verify shape via DOM, not innerHTML strings (the old
+    // implementation relied on inline on*="" attributes — CSP-friendly form
+    // uses addEventListener so we assert the listener set instead).
+    expect(list.children.length,).toBe(2,);
+    const row0 = list.children[0] as FakeEl;
+    const row1 = list.children[1] as FakeEl;
+    expect(row0.dataset["aspirationIndex"],).toBe("0",);
+    expect(row1.dataset["aspirationIndex"],).toBe("1",);
+    // Each row has 4 children: goal input, priority select, visibility select, remove button.
+    expect(row0.children.length,).toBe(4,);
+    const goal0 = row0.children[0] as FakeEl;
+    const priority0 = row0.children[1] as FakeEl;
+    const visibility0 = row0.children[2] as FakeEl;
+    const remove0 = row0.children[3] as FakeEl;
+    expect(goal0.listeners.get("change",)?.length,).toBe(1,);
+    expect(priority0.listeners.get("change",)?.length,).toBe(1,);
+    expect(visibility0.listeners.get("change",)?.length,).toBe(1,);
+    expect(remove0.listeners.get("click",)?.length,).toBe(1,);
+    // Default values match the create-from-addAspiration defaults.
+    expect(goal0.value,).toBe("",);
+    expect(priority0.children.length,).toBe(3,);
+    const mediumOpt = priority0.children[1] as FakeEl;
+    expect(mediumOpt.value,).toBe("medium",);
+    expect(mediumOpt.selected,).toBe(true,);
+    const hiddenOpt = visibility0.children[0] as FakeEl;
+    expect(hiddenOpt.value,).toBe("hidden",);
+    expect(hiddenOpt.selected,).toBe(true,);
+  });
+
+  test("goal change listener mutates aspirationsData via closure", () => {
+    const list = doc.register(makeEl("aspirations-list",),);
+    page.addAspiration();
+    const goal = list.children[0]!.children[0] as FakeEl;
+    goal.value = "Save the world";
+    goal.dispatch("change",);
+    // Save path uses buildTraitsPayload which reads aspirationsData directly;
+    // we assert by saving and inspecting the payload via a stubbed fetch.
+    let captured: any = null;
+    initTraits(
+      ((_url: string, init: any,) => {
+        captured = JSON.parse(init.body,);
+        return Promise.resolve(new Response("{}",),);
+      }) as unknown as typeof fetch,
+    );
+    void page.saveInternalTraits("actor-1",);
+    // The save is async; flush microtasks.
+    return Promise.resolve().then(() => {
+      expect(captured?.aspirations?.[0]?.goal,).toBe("Save the world",);
+    },);
+  });
+
+  test("remove button splices the row at the bound index", () => {
+    const list = doc.register(makeEl("aspirations-list",),);
+    page.addAspiration();
+    page.addAspiration();
+    page.addAspiration();
+    expect(list.children.length,).toBe(3,);
+    const row2 = list.children[2] as FakeEl;
+    const removeBtn = row2.children[3] as FakeEl;
+    removeBtn.dispatch("click",);
+    expect(list.children.length,).toBe(2,);
   });
 
   test("renderAspirations: empty state with rows; no-op without a container", () => {
     const list = doc.register(makeEl("aspirations-list",),);
     renderAspirations();
-    expect(list.innerHTML,).toContain("No aspirations defined yet.",);
+    expect(list.children.length,).toBe(1,);
+    expect(list.children[0]!.textContent,).toBe("No aspirations defined yet.",);
     const emptyDoc = makeDocument();
     globalThis.document = emptyDoc as unknown as Document;
     expect(() => page.addAspiration()).not.toThrow();
@@ -174,10 +283,13 @@ describe("loadInternalTraits", () => {
     expect(doc.querySelector("#voice-tics",)?.value,).toBe("hmm, well",);
     expect(doc.querySelector("#approach-decision",)?.value,).toBe("deliberate",);
     // The hostile goal must be escaped, never interpolated raw.
-    expect(list.innerHTML,).toContain("&lt;script&gt;alert(1)&lt;/script&gt;",);
+    // The hostile goal is rendered via the input's `value` property, which is
+    // never parsed as HTML — so the script tag stays inert text. The row's
+    // innerHTML must never contain the raw tag.
+    const goalInput = (list.children[0] as FakeEl).children[0] as FakeEl;
+    expect(goalInput.value,).toBe(`<script>alert(1)</script>`,);
     expect(list.innerHTML,).not.toContain("<script>",);
   });
-
   test("leaves the form untouched on non-ok responses and network failures", async () => {
     initTraits(async () => new Response("denied", { status: 403, },));
     const lawful = doc.register(makeEl("moral-lawful",),);
