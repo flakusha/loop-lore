@@ -1,0 +1,120 @@
+<!-- SPDX-License-Identifier: LGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
+<!--
+  Character-detail emotion avatar batch panel.
+  Mounts as `<div x-data="actorEmotionAvatars" x-init="setActorId(<actorId>)">`
+  where an actor id is available. Drives the actor-scoped emotion avatar
+  batch endpoints via the `actorEmotionAvatars` state plugin.
+-->
+<section class="em-avatars-panel" x-data="actorEmotionAvatars" x-init="setActorId($store.ui.activeActorId ?? '')">
+  <header class="em-avatars-header">
+    <h4 class="em-avatars-title">Emotion Avatars</h4>
+    <p class="em-avatars-help">
+      Pick a base avatar and one or more emotions to generate a per-emotion variant set.
+    </p>
+  </header>
+
+  <!-- Base avatar id input -->
+  <div class="form-group">
+    <label class="form-label" for="em-avatar-base">Base Avatar ID</label>
+    <input
+      class="form-input"
+      id="em-avatar-base"
+      type="text"
+      x-model="_emAvatarBaseId"
+      placeholder="e.g. base-asset-001"
+      data-testid="em-avatar-base"
+    >
+  </div>
+
+  <!-- Emotion selector -->
+  <div class="form-group">
+    <div class="em-avatars-toolbar">
+      <span class="form-label">Emotions</span>
+      <span style="display: flex; gap: var(--space-2)">
+        <button type="button" class="btn btn-secondary btn-xs" @click="selectAll()">All</button>
+        <button type="button" class="btn btn-secondary btn-xs" @click="clearSelection()">Clear</button>
+      </span>
+    </div>
+    <div class="em-avatars-grid" data-testid="em-avatars-grid">
+      <template x-for="emotion in $store.constants?.emotions ?? []" :key="emotion">
+        <label class="em-avatars-chip" :class="{ active: _emAvatarSelected.includes(emotion) }">
+          <input
+            type="checkbox"
+            :value="emotion"
+            :checked="_emAvatarSelected.includes(emotion)"
+            @change="toggleEmotion(emotion)"
+          >
+          <span x-text="emotion"></span>
+        </label>
+      </template>
+    </div>
+  </div>
+
+  <!-- Trigger button + error -->
+  <div class="form-group">
+    <button
+      type="button"
+      class="btn btn-primary"
+      @click="startBatch()"
+      :disabled="_emAvatarBusy || _emAvatarSelected.length === 0 || !_emAvatarBaseId"
+      data-testid="em-avatar-start"
+    >
+      <span x-show="!_emAvatarBusy">Generate Batch</span>
+      <span x-show="_emAvatarBusy">Starting…</span>
+    </button>
+    <p
+      class="em-avatars-error"
+      x-show="_emAvatarError"
+      x-text="_emAvatarError"
+      data-testid="em-avatar-error"
+    >
+    </p>
+  </div>
+
+  <!-- Recent jobs -->
+  <div class="form-group">
+    <div class="em-avatars-toolbar">
+      <span class="form-label">Recent Jobs</span>
+      <button
+        type="button"
+        class="btn btn-secondary btn-xs"
+        @click="loadJobs()"
+        :disabled="_emAvatarJobsLoading"
+        data-testid="em-avatar-refresh"
+      >
+        Refresh
+      </button>
+    </div>
+
+    <div class="em-avatars-loading" x-show="_emAvatarJobsLoading">
+      <span class="spinner"></span> Loading jobs…
+    </div>
+
+    <ul class="em-avatars-jobs" data-testid="em-avatars-jobs" x-show="!_emAvatarJobsLoading">
+      <template x-for="job in _emAvatarJobs" :key="job.id">
+        <li class="em-avatars-job-row">
+          <div>
+            <code x-text="job.id"></code>
+            <span x-text="describeStatus(job)" :data-status="job.status"></span>
+          </div>
+          <div class="em-avatars-job-meta">
+            <span x-text="`${job.emotions.length} emotions`"></span>
+            <button
+              type="button"
+              class="btn btn-secondary btn-xs"
+              @click="cancelJob(job.id)"
+              x-show="job.status === 'running' || job.status === 'queued'"
+            >
+              Cancel
+            </button>
+          </div>
+        </li>
+      </template>
+      <li class="em-avatars-empty" x-show="_emAvatarJobs.length === 0 && !_emAvatarJobsLoading">
+        No jobs yet.
+      </li>
+    </ul>
+  </div>
+</section>
