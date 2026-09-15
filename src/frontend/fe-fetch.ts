@@ -36,7 +36,7 @@ export function getCsrfToken(): string {
  */
 export async function feFetch(
   url: string,
-  options: RequestInit & { idempotencyKey?: string | true } = {},
+  options: RequestInit & { idempotencyKey?: string | true; stream?: boolean } = {},
 ): Promise<Response> {
   const token = localStorage.getItem("session_token",);
   const csrf = getCsrfToken();
@@ -66,6 +66,7 @@ export async function feFetch(
     integrity: options.integrity,
     keepalive: options.keepalive,
     parseJson: false,
+    stream: options.stream,
     auth: { csrfToken: csrf || undefined, sessionToken: token ?? undefined, },
     handle401: true,
     onAuthError: () => {
@@ -86,6 +87,11 @@ export async function feFetch(
       throw new Error("Unauthorized",);
     }
     throw result.error;
+  }
+
+  // Streaming mode: return the live Response untouched (body already a stream).
+  if (options.stream) {
+    return result.data as unknown as Response;
   }
 
   // 204/205/304 are null-body statuses per the Fetch spec; constructing a

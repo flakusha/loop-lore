@@ -44,6 +44,14 @@ export interface SafeFetchOptions extends Omit<RequestInit, "body" | "signal"> {
   signal?: AbortSignal;
   /** If true, response body is parsed as JSON; if false, returned as text */
   parseJson?: boolean;
+  /**
+   * If true, the raw `Response` is returned as-is (`data` carries the live
+   * `Response`, body unconsumed) and no timeout is armed. For streaming
+   * responses (SSE, downloads) where buffering `response.text()` would defeat
+   * incremental reads and abort long-lived streams. 401/non-2xx handling is
+   * unchanged.
+   */
+  stream?: boolean;
   /** Authentication/CSRF configuration (replaces feFetch's browser-only logic) */
   auth?: FetchAuth;
   /**
