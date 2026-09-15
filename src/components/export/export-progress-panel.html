@@ -1,0 +1,31 @@
+<!--
+  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+-->
+
+<!--
+  Export progress panel. Bound to the `exportProgressFactory` Alpine
+  plugin. Streams progress via SSE with a polling fallback.
+-->
+<div x-data="exportProgressFactory()" class="export-progress-panel">
+  <h3>Export</h3>
+
+  <button type="button" :disabled="busy" @click="startExport()">Start export</button>
+  <button type="button" @click="reset()">Reset</button>
+
+  <p x-show="currentStep" class="export-progress-step">
+    Step: <span x-text="currentStep"></span>
+  </p>
+
+  <progress max="100" :value="percentage"></progress>
+  <span x-text="`${percentage}% (${progress}/${total})`"></span>
+
+  <p x-show="message" x-text="message" class="export-progress-message"></p>
+  <p x-show="error" x-text="error" class="export-progress-error"></p>
+
+  <template x-if="status === 'completed' && downloadUrl">
+    <p>
+      <a :href="downloadUrl" download>Download export (.zip)</a>
+    </p>
+  </template>
+</div>
