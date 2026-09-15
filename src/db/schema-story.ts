@@ -14,6 +14,7 @@ import type {
   ItemVisibility,
   LoreEntryStatus,
   LorePosition,
+  MemoryReviewStatus,
   MemoryType,
   PinnedState,
   PublicationStatus,
@@ -285,6 +286,7 @@ export interface ActorMemories {
   scope: Generated<string>;
   pinned: Generated<PinnedState>;
   privacy: Generated<string>;
+  review_status: Generated<MemoryReviewStatus>;
   shareability: string | null;
   source_message_ids: string | null;
   source_chat_ids: string | null;

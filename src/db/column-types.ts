@@ -27,6 +27,7 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
   "ActorMemories": {
     "memory_type": "MemoryType",
     "pinned": "PinnedState",
+    "review_status": "MemoryReviewStatus",
     "extraction_kind": "ExtractionKind",
   },
   "ActorNotes": {

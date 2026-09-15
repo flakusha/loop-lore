@@ -34,6 +34,12 @@ export function createRoutes(config: EntityConfig, opts: { database: Db; config:
         if (!ownershipOk) {
           return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound, },);
         }
+        if (config.writeGuard) {
+          const guard = await config.writeGuard({ body, existing: null, userId, userRole, },);
+          if (!guard.ok) {
+            return jsonError({ message: guard.message, status: guard.status, },);
+          }
+        }
 
         for (const required of config.createRequired) {
           if (body[required] == null || body[required] === "") {

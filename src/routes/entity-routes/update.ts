@@ -6,7 +6,7 @@ import type { Config, } from "../../config/schema";
 import type { Db, } from "../../db";
 import { notFound, } from "../../validation/middleware";
 import { EntityUpdateBody, ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { jsonResponse, } from "../http-utils";
+import { jsonError, jsonResponse, } from "../http-utils";
 import { checkOwnership, entityPaths, } from "./context";
 import { buildUpdateValues, } from "./helpers";
 import type { EntityConfig, } from "./types";
@@ -45,6 +45,18 @@ export function updateRoutes(config: EntityConfig, opts: { database: Db; config:
           .executeTakeFirst();
 
         if (!existing) { return notFound(`${config.entityName} not found`,); }
+        if (config.writeGuard) {
+          const row = (await db
+            .selectFrom(config.tableName,)
+            .selectAll()
+            .where("id", "=", entityId,)
+            .where(config.parentFk, "=", parentId,)
+            .executeTakeFirst()) ?? null;
+          const guard = await config.writeGuard({ body, existing: row, userId, userRole, },);
+          if (!guard.ok) {
+            return jsonError({ message: guard.message, status: guard.status, },);
+          }
+        }
 
         const updates = buildUpdateValues({ config, body, },);
         if (Object.keys(updates,).length <= 1) { return jsonResponse(existing,); }

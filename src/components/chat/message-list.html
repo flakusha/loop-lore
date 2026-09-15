@@ -300,6 +300,13 @@
                 📋
               </button>
               <button class="btn-icon-action" @click="startEdit(msg.id)" x-bind:title="t('common.edit')">✏️</button>
+              <button
+                class="btn-icon-action"
+                @click="rememberMessage(msg.id, msg.content)"
+                x-bind:title="t('chats.rememberThis')"
+              >
+                🧠
+              </button>
               <template x-if="msg.role === 'assistant'">
                 <button class="btn-icon-action" x-bind:title="t('chats.regenerate')" @click="regenerateVariant(msg.id)">
                   ♻

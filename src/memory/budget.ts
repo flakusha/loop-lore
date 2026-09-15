@@ -84,7 +84,7 @@ export async function getMemoriesWithinBudget(
   // Fetch all memories for the actor, ordered by importance
   const allMemories = await db
     .selectFrom("actor_memories",)
-    .select(["content", "memory_type", "importance", "confidence",],)
+    .select(["content", "memory_type", "importance", "confidence", "pinned",],)
     .where("actor_id", "=", actorId,)
     .orderBy("importance", "desc",)
     .execute();
@@ -92,12 +92,12 @@ export async function getMemoriesWithinBudget(
   // Apply confidence filter (pinned memories bypass this)
   const filtered: typeof allMemories = [];
   for (const m of allMemories) {
-    if (m.confidence >= minConfidence) { filtered.push(m,); }
+    if (m.pinned === "pinned" || m.confidence >= minConfidence) { filtered.push(m,); }
   }
 
-  // Apply budget
+  // Apply budget (pinned memories are never dropped — see selectWithinBudget)
   return selectWithinBudget(
-    Array.from(filtered, (m,) => ({ ...m, pinned: false, }),),
+    Array.from(filtered, (m,) => ({ ...m, pinned: m.pinned === "pinned", }),),
     { maxTokens, respectPins, },
   );
 }
