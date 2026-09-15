@@ -215,7 +215,7 @@ export async function executeToolCalls(
       console.error("[tool-execution] inline tool-result persist failed; continuing without DB rows", {
         chatId: ctx.chatId,
         toolCallCount: results.length,
-        error: persistError instanceof Error ? persistError.message : String(persistError),
+        error: persistError instanceof Error ? persistError.message : String(persistError,),
       },);
     }
   }

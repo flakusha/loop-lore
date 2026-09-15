@@ -9828,6 +9828,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-ask-type-fast-menu.md"
     }
   ],
@@ -15908,6 +15912,10 @@
   "src/generation/generate-route/non-stream.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-memory-history-search-bind-message-chain-reconstructable-con.md"
     }
   ],
@@ -15929,6 +15937,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-stream-cancel-leaves-attempt-stuck-processing-forever-no-cle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-tool-call-result-no-frontend-rendering.md"
     },
     {
       "kind": "ticket",

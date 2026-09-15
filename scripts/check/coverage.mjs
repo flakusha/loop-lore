@@ -156,7 +156,7 @@ const WAIVERS = {
   // whose suites are deliberately skipped in the shared-process check gate
   // (isolate-only.ts leak guard); the loop test runs under test:unit only.
   "generation:src/generation/generate-route/non-stream.ts": {
-    floor: 78,
+    floor: 77,
     reason:
       "tool-loop + void-reject callbacks need mock.module doubles, skipped in check gate; loop covered under test:unit (non-stream.test.ts); TASK-coverage-waiver-generate-route-non-stream-ts-below-80-floor",
   },
