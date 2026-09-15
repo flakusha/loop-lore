@@ -9983,6 +9983,10 @@
   ],
   "src/db/reinit-archive.ts": [
     {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-db-reinit-archive-directory-has-no-rotation-pii-accumulates-.md"
+    },
+    {
       "kind": "spec",
       "source": "docs/spec/db-reinit-retention.md"
     }
@@ -18221,7 +18225,6 @@
       "source": "docs/frontend/headers-management.md"
     }
   ],
-
   "src/middleware/csp-shipped-html.test.ts": [
     {
       "kind": "ticket",
