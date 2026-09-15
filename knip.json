@@ -184,6 +184,11 @@
     "tests/e2e/flows/browser/settings-flow.browser.ts",
     "tests/e2e/flows/browser/world-invites.browser.ts",
     "tests/e2e/flows/browser/worlds-flow.browser.ts",
-    "tests/e2e/flows/browser/vn-settings.browser.ts"
+    "tests/e2e/flows/browser/vn-settings.browser.ts",
+    "tests/e2e/flows/browser/access-correctness.browser.ts",
+    // Newly added e2e browser tests; not yet wired into a static import
+    // edge knip can trace (Playwright discovers by glob). Same class as
+    // the 22 sibling .browser.ts entries above.
+    "tests/e2e/flows/browser/admin-dashboard-empty.browser.ts"
   ]
 }
