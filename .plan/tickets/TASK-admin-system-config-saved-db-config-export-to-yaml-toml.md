@@ -3,7 +3,7 @@
 
 # TASK: Admin system-config: saved DB config export to yaml/toml
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (2026-09-16, tree/admin-config-impl)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-admin.md
@@ -16,4 +16,12 @@ Export persisted system_config rows (+ typed admin surfaces: nsfw nsfw_allow/nsf
 
 - [ ] Implementation complete
 - [ ] Tests passing
+
+## Resolution
+
+GET /api/admin/system-config/export?format=yaml|toml (admin.system, audit-logged
+best-effort to log_entries, secret keys → ***REDACTED***). js-yaml dump lineWidth:-1,
+Bun.TOML.stringify. Frontend: exportSystemConfig() anchor-download (browser download
+folder — no folder picker: web sandbox cannot choose server paths). TOML round-trip
+test via Bun.TOML.parse. 14 route tests green.
 - [ ] Documentation updated
