@@ -93,12 +93,14 @@ export async function fetchActorMemories(
   db: Kysely<DB>,
   actorId: string,
   limit = 50,
+  onlyChatId?: string,
 ): Promise<MemoryEntry[]> {
   const rows = await db
     .selectFrom("actor_memories",)
     .selectAll()
     .where("actor_id", "=", actorId,)
-    .orderBy("importance", "desc",)
+    .where("review_status", "=", "committed",)
+    .$if(!!onlyChatId, (qb,) => qb.where("source_chat_id", "=", onlyChatId as string,),)
     .limit(limit,)
     .execute();
 
@@ -130,7 +132,7 @@ export async function fetchActorMemories(
     extractionKind: (r.extraction_kind ?? undefined) as MemoryEntry["extractionKind"],
     contextWindowStart: r.context_window_start ?? undefined,
     contextWindowEnd: r.context_window_end ?? undefined,
-    pinned: Boolean(r.pinned,),
+    pinned: r.pinned === "pinned",
     scope: (r.scope ?? "character") as MemoryEntry["scope"],
     privacy: (r.privacy ?? "shared") as MemoryEntry["privacy"],
     shareability: r.shareability,
@@ -138,4 +140,27 @@ export async function fetchActorMemories(
     createdAt: r.created_at,
     updatedAt: r.updated_at,
   }),);
+}
+
+/**
+ * Whether the chat carries chat-scoped copies of the actor's memories
+ * (created by the memory-carry flow). When true, prompt assembly injects
+ * only the chat-scoped copies so the carry mode (full/selective) is honored.
+ * @param db
+ * @param actorId
+ * @param chatId
+ */
+export async function chatHasMemoryCopies(
+  db: Kysely<DB>,
+  actorId: string,
+  chatId: string,
+): Promise<boolean> {
+  const row = await db
+    .selectFrom("actor_memories",)
+    .select("id",)
+    .where("actor_id", "=", actorId,)
+    .where("source_chat_id", "=", chatId,)
+    .limit(1,)
+    .executeTakeFirst();
+  return !!row;
 }

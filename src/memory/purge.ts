@@ -108,6 +108,7 @@ export async function purgeStaleMemories(
       )
       .where("confidence", "<", minConfidence,)
       .where("strength", "<", minStrength,)
+      .where("pinned", "!=", "pinned",)
       .execute();
 
     let deleted = 0;
@@ -134,6 +135,7 @@ export async function purgeStaleMemories(
     )
     .where("confidence", ">", minConfidence,)
     .where("strength", "<", minStrength,)
+    .where("pinned", "!=", "pinned",)
     .execute();
 
   let stale = 0;

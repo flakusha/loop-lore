@@ -13,6 +13,14 @@ export const PinnedState = {
 /** */
 export type PinnedState = (typeof PinnedState)[keyof typeof PinnedState];
 
+export const MemoryReviewStatus = {
+  Pending: "pending",
+  Committed: "committed",
+  Rejected: "rejected",
+} as const;
+/** */
+export type MemoryReviewStatus = (typeof MemoryReviewStatus)[keyof typeof MemoryReviewStatus];
+
 export const DefaultState = {
   NotDefault: "not_default",
   Default: "default",

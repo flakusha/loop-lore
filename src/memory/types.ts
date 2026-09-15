@@ -102,6 +102,8 @@ export interface ExtractionOpts {
   sourceChatIds?: string[];
   /** How the memory was formed (defaults to "single_response"). */
   extractionKind?: ExtractionKind;
+  /** Force the review workflow: "review" stores pending, "auto" commits. Unset resolves from the user's detailLevel setting. */
+  reviewMode?: "review" | "auto";
   /** App config — used to resolve the auxiliary model role for extraction. */
   config: Config;
   /** User ID for BYO apiKey resolution on the auxiliary call. */

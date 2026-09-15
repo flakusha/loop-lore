@@ -181,6 +181,18 @@
                 </button>
               </div>
               <div id="memory-checkbox-list"></div>
+              <div style="display: flex; gap: var(--space-2); margin-top: var(--space-2)">
+                <input
+                  type="text"
+                  class="form-input"
+                  style="font-size: 12px; flex: 1"
+                  id="memory-add-input"
+                  x-bind:placeholder="t('chats.enterMemory')"
+                />
+                <button type="button" class="btn btn-secondary btn-xs" id="memory-add-btn">
+                  {{{t("chats.addMemory")}}}
+                </button>
+              </div>
             </div>
             <!-- Token estimate -->
             <div

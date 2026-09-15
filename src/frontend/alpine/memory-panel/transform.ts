@@ -30,7 +30,10 @@ export interface MemoryApiRow {
   keywords: string | string[];
   pinned?: boolean;
   scope?: string;
+  source_chat_id?: string;
+  review_status?: string;
   created_at: string;
+  source_message_ids?: string | string[];
 }
 
 /**
@@ -49,6 +52,7 @@ export function parseMemoryKeywords(keywords: string | string[],): string[] {
  * @param scopeFallback
  */
 export function toMemoryEntry(row: MemoryApiRow, scopeFallback: MemoryEntry["scope"],): MemoryEntry {
+  const sourceIds = parseMemoryKeywords(row.source_message_ids ?? [],);
   return {
     id: row.id,
     content: row.content,
@@ -57,10 +61,23 @@ export function toMemoryEntry(row: MemoryApiRow, scopeFallback: MemoryEntry["sco
     importance: row.importance,
     keywords: parseMemoryKeywords(row.keywords,),
     pinned: !!row.pinned,
+    reviewStatus: row.review_status,
     createdAt: row.created_at,
-    tokenCount: estimateTokens(row.content,),
     scope: (row.scope as MemoryEntry["scope"]) ?? scopeFallback,
+    sourceChatId: row.source_chat_id ?? undefined,
+    sourceMessageId: sourceIds[0] ?? undefined,
   };
+}
+
+/**
+ * Format a memory timestamp for the panel meta row (locale date).
+ * @param iso
+ */
+export function formatMemoryDate(iso: string,): string {
+  const date = new Date(iso,);
+  return Number.isNaN(date.getTime(),)
+    ? ""
+    : date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric", },);
 }
 
 /**

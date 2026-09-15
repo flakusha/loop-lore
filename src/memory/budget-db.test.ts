@@ -139,7 +139,7 @@ describe("getMemoriesWithinBudget", () => {
     expect(result,).toEqual([],);
   });
 
-  it("respectPins: false still returns rows (pinned state is not read from the DB here)", async () => {
+  it("respectPins: false ignores the pin but still reads the row", async () => {
     await seedMemory(db, {
       id: "m-pin",
       actorId: "actor-bud",
@@ -151,6 +151,77 @@ describe("getMemoriesWithinBudget", () => {
     const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, respectPins: false, },);
     expect(result,).toHaveLength(1,);
     expect(result[0]?.content,).toBe("pinned row in db",);
+  });
+
+  it("pinned memory bypasses the confidence floor", async () => {
+    await seedMemory(db, {
+      id: "m-pin-low",
+      actorId: "actor-bud",
+      content: "pinned but low confidence",
+      confidence: 0.1,
+      importance: 1,
+      pinned: "pinned",
+    },);
+    const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
+    expect(result.map((m,) => m.content),).toEqual(["pinned but low confidence",],);
+    expect(result[0]?.pinned,).toBe(true,);
+  });
+
+  it("pinned memory survives a budget too small for the unpinned remainder", async () => {
+    // Pinned rows consume budget first; when the remainder cannot fit the
+    // unpinned row, the unpinned row drops and the pin never does.
+    await seedMemory(db, {
+      id: "m-pin-tight",
+      actorId: "actor-bud",
+      content: "pinned row kept regardless of budget",
+      confidence: 0.5,
+      importance: 1,
+      pinned: "pinned",
+    },);
+    await seedMemory(db, {
+      id: "m-unpinned-tight",
+      actorId: "actor-bud",
+      content: "unpinned row kept by budget",
+      confidence: 0.9,
+      importance: 9,
+    },);
+    const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 10, },);
+    expect(result.map((m,) => m.content),).toEqual(["pinned row kept regardless of budget",],);
+    expect(result[0]?.pinned,).toBe(true,);
+  });
+
+  it("pinned and unpinned rows coexist when the budget fits both", async () => {
+    await seedMemory(db, {
+      id: "m-pin-fit",
+      actorId: "actor-bud",
+      content: "pinned row with room to spare",
+      confidence: 0.5,
+      importance: 1,
+      pinned: "pinned",
+    },);
+    await seedMemory(db, {
+      id: "m-unpinned-fit",
+      actorId: "actor-bud",
+      content: "unpinned row also fits",
+      confidence: 0.9,
+      importance: 9,
+    },);
+    const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
+    expect(result.map((m,) => m.content).sort((a, b,) => a.localeCompare(b,)),).toEqual(
+      ["pinned row with room to spare", "unpinned row also fits",],
+    );
+  });
+
+  it("unpinned low-confidence rows are still dropped", async () => {
+    await seedMemory(db, {
+      id: "m-unpin-low",
+      actorId: "actor-bud",
+      content: "unpinned below floor",
+      confidence: 0.1,
+      importance: 9,
+    },);
+    const result = await getMemoriesWithinBudget(db, "actor-bud", { maxTokens: 1024, },);
+    expect(result,).toEqual([],);
   });
 
   it("survives damaged rows with out-of-range confidence (NaN guard via min filter)", async () => {

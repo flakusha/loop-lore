@@ -33,6 +33,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("scope", "text", (col,) => col.notNull().defaultTo("character",),)
     .addColumn("pinned", "text", (col,) => col.notNull().defaultTo("unpinned",),)
     .addColumn("privacy", "text", (col,) => col.notNull().defaultTo("shared",),)
+    .addColumn("review_status", "text", (col,) => col.notNull().defaultTo("committed",),)
     .addColumn("shareability", "text",)
     .execute();
 
