@@ -24,9 +24,9 @@ Tests: unit-test archiveFile to assert it deletes archives beyond MAX_ARCHIVES, 
 
 ## Resolution
 
-Closed on 2026-09-15 (commits land in an earlier batch on dev, predating the strict-review audit of this session). Implementation lives in src/db/reinit.ts with retention policy:
-- MAX_ARCHIVES (default 10, env-overridable)
-- MAX_ARCHIVE_AGE_DAYS (default 90, env-overridable)
+Closed on 2026-09-15 (commits land in an earlier batch on dev, predating the strict-review audit of this session). Implementation lives in src/db/reinit-archive.ts (retention constants + archiveFile/pruneArchives; src/db/reinit.ts only imports archiveFile) with retention policy:
+- MAX_ARCHIVES (default 10, env-overridable via LOOP_LORE_REINIT_MAX_ARCHIVES)
+- MAX_ARCHIVE_AGE_DAYS (default 90, env-overridable via LOOP_LORE_REINIT_MAX_AGE_DAYS)
 - On every archive, prunes oldest archives beyond MAX_ARCHIVES AND any archive older than MAX_ARCHIVE_AGE_DAYS.
 - Empty backup directory is treated as success (no exception).
 - Retention policy documented in docs/spec/db-reinit-retention.md and in the reinit script header.
