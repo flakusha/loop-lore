@@ -20,6 +20,7 @@ import type { Kysely, } from "kysely";
 import type { DB, } from "../db";
 import { embedDispatch, } from "../generation/providers/ollama-native/operations";
 import type { OllamaNativeState, } from "../generation/providers/ollama-native/types";
+import { safeFromUint8Array, } from "../utils/safe-buffer";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -119,20 +120,23 @@ export async function storeEmbedding(
 ): Promise<void> {
   const dims = vector.length;
   const uint8 = new Uint8Array(vector.buffer, vector.byteOffset, vector.byteLength,);
+  const sized = safeFromUint8Array(uint8,);
+  if (!sized.ok) { throw sized.error; }
+  const vectorBuf = sized.buffer;
   await db
     .insertInto("memory_embeddings",)
     .values({
       memory_id: memoryId,
       model,
       dimensions: dims,
-      vector_blob: Buffer.from(uint8,),
+      vector_blob: vectorBuf,
       created_at: Math.floor(Date.now() / 1000,),
     },)
     .onConflict((oc,) =>
       oc.column("memory_id",).doUpdateSet({
         model,
         dimensions: dims,
-        vector_blob: Buffer.from(uint8,),
+        vector_blob: vectorBuf,
         created_at: Math.floor(Date.now() / 1000,),
       },)
     )
@@ -194,10 +198,11 @@ export async function getStoredVectors(
     .select(["memory_id", "vector_blob",],)
     .where("memory_id", "in", memoryIds,)
     .execute();
-
   const map = new Map<string, Float32Array>();
   for (const row of rows) {
-    const buf = Buffer.from(row.vector_blob,);
+    const sized = safeFromUint8Array(new Uint8Array(row.vector_blob,),);
+    if (!sized.ok) { throw sized.error; }
+    const buf = sized.buffer;
 
     const dims = Math.floor(buf.byteLength / 4,);
     map.set(row.memory_id, new Float32Array(buf.buffer, buf.byteOffset, dims,),);
