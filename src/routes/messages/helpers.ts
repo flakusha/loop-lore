@@ -142,6 +142,30 @@ export function parseToolCalls(toolCallsJson: string | null | undefined,): ToolC
   return calls;
 }
 
+/** Bubble fields flattened from a `tool_result` row's `metadata` JSON. */
+export interface ToolResultMeta {
+  toolName: string | null;
+  toolError: boolean;
+}
+
+/**
+ * Parse a `tool_result` row's `metadata` JSON into bubble fields (fail-closed
+ * defaults when missing/invalid — old rows predate the metadata contract).
+ * @param metadataJson
+ */
+export function parseToolResultMeta(metadataJson: string | null | undefined,): ToolResultMeta {
+  if (!metadataJson) { return { toolName: null, toolError: false, }; }
+  const parsed = safeJsonParse<{ tool_name?: unknown; tool_error?: unknown }>(metadataJson,);
+  if (!parsed.ok || typeof parsed.value !== "object" || parsed.value === null) {
+    return { toolName: null, toolError: false, };
+  }
+  const name = parsed.value.tool_name;
+  return {
+    toolName: typeof name === "string" && name.length > 0 ? name : null,
+    toolError: parsed.value.tool_error === true,
+  };
+}
+
 /**
  * Resolve the plaintext content of a stored message.
  *

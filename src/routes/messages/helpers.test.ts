@@ -1,5 +1,5 @@
 import { describe, expect, test, } from "bun:test";
-import { parseToolCalls, } from "./helpers";
+import { parseToolCalls, parseToolResultMeta, } from "./helpers";
 
 describe("parseToolCalls", () => {
   test("returns null for null/undefined/empty input", () => {
@@ -41,5 +41,38 @@ describe("parseToolCalls", () => {
     expect(calls,).toHaveLength(2,);
     expect(calls?.[0]?.function.name,).toBe("f1",);
     expect(calls?.[1]?.function.name,).toBe("f2",);
+  });
+});
+
+describe("parseToolResultMeta", () => {
+  test("returns fail-closed defaults for null/missing input", () => {
+    expect(parseToolResultMeta(null,),).toEqual({ toolName: null, toolError: false, },);
+    expect(parseToolResultMeta(undefined,),).toEqual({ toolName: null, toolError: false, },);
+    expect(parseToolResultMeta("",),).toEqual({ toolName: null, toolError: false, },);
+  });
+
+  test("returns fail-closed defaults for garbage/non-object metadata", () => {
+    expect(parseToolResultMeta("not json",),).toEqual({ toolName: null, toolError: false, },);
+    expect(parseToolResultMeta('"just a string"',),).toEqual({ toolName: null, toolError: false, },);
+    expect(parseToolResultMeta("[1,2]",),).toEqual({ toolName: null, toolError: false, },);
+  });
+
+  test("parses tool_name and tool_error", () => {
+    expect(parseToolResultMeta(JSON.stringify({ tool_name: "stub_tool", tool_error: true, },),),).toEqual({
+      toolName: "stub_tool",
+      toolError: true,
+    },);
+  });
+
+  test("empty-string name becomes null", () => {
+    expect(parseToolResultMeta(JSON.stringify({ tool_name: "", },),),).toEqual({
+      toolName: null,
+      toolError: false,
+    },);
+  });
+
+  test("truthy non-true tool_error stays false", () => {
+    expect(parseToolResultMeta(JSON.stringify({ tool_name: "t", tool_error: 1, },),).toolError,).toBe(false,);
+    expect(parseToolResultMeta(JSON.stringify({ tool_name: "t", tool_error: "true", },),).toolError,).toBe(false,);
   });
 });
