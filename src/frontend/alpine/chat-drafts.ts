@@ -213,6 +213,10 @@ export const chatDraftMethods: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat) { return; }
     const target = store ?? defaultDraftStore();
     if (!target) { return; }
+    // Stash the last non-empty text for session-level Ctrl+Z undo.
+    const input = this.$refs.messageInput as HTMLTextAreaElement | undefined;
+    const text = input?.value.trim() ?? "";
+    if (text) { this._draftBackup = text; }
     clearDraft(target, this.activeChat,);
   },
 };
