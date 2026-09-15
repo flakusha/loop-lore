@@ -182,7 +182,7 @@
             <!-- Tool result rows persisted by the generation pipeline -->
             <template x-if="msg.content_type === 'tool_result'">
               <details class="tool-result-block" data-testid="tool-result-block">
-                <summary>🛠 {{{t("chats.toolResult")}}}</summary>
+                <summary>🛠 {{{t("chats.toolResult")}}}<template x-if="msg.tool_name"><code class="tool-result-name" x-text="msg.tool_name"></code></template><template x-if="msg.tool_error === true"><span class="tool-result-error" data-testid="tool-result-error">⚠</span></template></summary>
                 <pre class="tool-result-content" x-text="msg.content"></pre>
               </details>
             </template>

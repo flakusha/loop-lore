@@ -305,7 +305,11 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
     expect(rows.length,).toBe(1,);
     expect(rows[0]!.parent_id,).toBeNull();
     expect(rows[0]!.chat_id,).toBe(chatId,);
-    expect(JSON.parse(rows[0]!.metadata ?? "{}",),).toEqual({ tool_call_id: "tc-1", },);
+    expect(JSON.parse(rows[0]!.metadata ?? "{}",),).toEqual({
+      tool_call_id: "tc-1",
+      tool_name: "stub_tool",
+      tool_error: false,
+    },);
 
     // In-memory return shape is preserved for the next prompt.
     expect(results[0]?.role,).toBe("tool",);
@@ -336,7 +340,11 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       .where("chat_id", "=", chatId,)
       .execute();
     expect(rows.length,).toBe(1,);
-    expect(JSON.parse(rows[0]!.metadata ?? "{}",),).toEqual({ tool_call_id: "tc-2", },);
+    expect(JSON.parse(rows[0]!.metadata ?? "{}",),).toEqual({
+      tool_call_id: "tc-2",
+      tool_name: "explode_tool",
+      tool_error: true,
+    },);
     const parsed = JSON.parse(rows[0]!.content,);
     expect(parsed.error,).toBe("boom",);
 
@@ -358,7 +366,11 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       .where("chat_id", "=", chatId,)
       .execute();
     expect(rows.length,).toBe(1,);
-    expect(JSON.parse(rows[0]!.metadata ?? "{}",),).toEqual({ tool_call_id: "tc-3", },);
+    expect(JSON.parse(rows[0]!.metadata ?? "{}",),).toEqual({
+      tool_call_id: "tc-3",
+      tool_name: "missing_tool",
+      tool_error: true,
+    },);
 
     expect(results[0]?.role,).toBe("tool",);
     expect(results[0]?.tool_call_id,).toBe("tc-3",);

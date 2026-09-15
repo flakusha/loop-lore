@@ -8,7 +8,7 @@ import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../../config/schema";
-import { MessageRole, } from "../../db/enums";
+import { MessageContentType, MessageRole, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
@@ -170,6 +170,27 @@ describe("readRoutes coverage", () => {
     const parsed = (await res.json()) as { id: string; content: string };
     expect(parsed.id,).toBe(firstMessageId,);
     expect(parsed.content,).toBe("hello",);
+  });
+
+  test("list flattens tool_result metadata into bubble fields", async () => {
+    const toolRowId = uid();
+    await insertMessages(db, chatId, owner, MessageRole.Assistant, '{"ok":true}', {
+      id: toolRowId,
+      content_type: MessageContentType.ToolResult,
+      metadata: JSON.stringify({ tool_call_id: "tc-9", tool_name: "stub_tool", tool_error: true, },),
+    } as never,);
+    const app = makeApp(db, owner, "user",);
+    const res = await app.handle(new Request(`http://localhost/api/chats/${chatId}/messages?page=1&pageSize=50`,),);
+    expect(res.status,).toBe(200,);
+    const parsed = (await res.json()) as {
+      data: { id: string; tool_name: string | null; tool_error: boolean }[];
+    };
+    const row = parsed.data.find((m,) => m.id === toolRowId);
+    expect(row?.tool_name,).toBe("stub_tool",);
+    expect(row?.tool_error,).toBe(true,);
+    const plain = parsed.data.find((m,) => m.id === firstMessageId);
+    expect(plain?.tool_name,).toBeNull();
+    expect(plain?.tool_error,).toBe(false,);
   });
 
   test("get 404 for missing id and stranger", async () => {
