@@ -3,7 +3,7 @@
 
 # FEAT: Browser-side chat input versioning with transparent rollback
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Epic:** epic-conversation-branching
 **Priority:** medium
 **Effort:** Medium
@@ -14,6 +14,6 @@ Persist versions of the chat input on the browser side so typed text survives: l
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete — ESC flushes debounced draft (`chat-group.ts:handleComposerKeydown`); blocked-Enter restores via `chat-send.ts:restoreInput()`; navigation flushes via `world.ts:selectChat`; Ctrl+Z restores from `_draftBackup`; restore button in `input-area.html`
+- [x] Tests passing — 16 draft tests + 18 chat-group tests + 29 send/improve tests + 39 dispatch tests all green; frontend typecheck clean
+- [x] Documentation updated — this ticket reflects implementation status
