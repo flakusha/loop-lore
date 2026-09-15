@@ -234,5 +234,8 @@ export async function executeToolCalls(
     }
   }
 
-  return results;
+  // Bubble-only fields (toolName/toolError) live in `messages.metadata`, not
+  // the provider wire format: the OpenAI-compatible path forwards `messages`
+  // verbatim, so strip them here to avoid leaking unknown keys upstream.
+  return results.map(({ toolName: _toolName, toolError: _toolError, ...rest },) => rest);
 }
