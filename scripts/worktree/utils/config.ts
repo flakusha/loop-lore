@@ -13,17 +13,23 @@ import { log, } from "./output";
 export interface WorktreeConfig {
   repoRoot: string;
   /**
-   * Primary worktree container — canonical in-repo `tree/`, or `TREE_DIR` env
-   * override. The shared agent ledger lives here so all worktrees see one
-   * `tree/.ledger.jsonl`. Kept for ledger/credential paths; *read* and *create*
-   * operations should consult `worktreeDirs` and `git worktree list` instead.
+   * Primary worktree container — canonical `<repo>/tree` when it exists on
+   * disk (legacy invariant — repos that have always used the in-repo layout
+   * must keep their ledger anchor at <canonical>/.ledger.jsonl). Falls back
+   * to OMP/extras only when canonical is missing. `TREE_DIR` env override
+   * always wins (CI escape hatch). The shared agent ledger and
+   * `.credentials.env` symlinks live here. Read/create operations should
+   * consult `worktreeDirs` and `git worktree list` for the full picture.
    */
   treeDir: string;
   /**
-   * All known worktree container dirs in priority order: `tree/` (canonical),
-   * then `OMP_WORKTREE_DIR` (omp's out-of-repo sibling), then any
-   * `EXTRA_TREE_DIRS`. New worktrees land in the first writable entry;
-   * readers fall back through the list when a branch isn't in the primary.
+   * All known worktree container dirs in priority order: `TREE_DIR` env
+   * override (explicit user/CI setting, always wins), then `OMP_WORKTREE_DIR`
+   * (omp's out-of-repo sibling), then any `EXTRA_TREE_DIRS`, with canonical
+   * `<repo>/tree` last as the default fallback. Readers iterate top-down
+   * looking for a branch; new worktrees land in `treeDir` (which has its
+   * own legacy-invariant logic — canonical when it exists, regardless of
+   * what's first here).
    */
   worktreeDirs: string[];
   agentGpgKeyId?: string;
@@ -56,25 +62,46 @@ function unquote(value: string,): string {
   return trimmed;
 }
 
+// ponytail: shared env-parsing helper. loadConfig and resolveBranch both
+// consume the same TREE_DIR / OMP_WORKTREE_DIR / EXTRA_TREE_DIRS + canonical
+// list; keeping the parsing in one place ensures `treeDir` and
+// `worktreeDirs` stay consistent (priority order here is what both sides
+// agree on). No file IO, no `.credentials.env` reads — safe for the
+// foreign/empty repos resolveBranch historically tolerated.
+function getContainerRoots(repoRoot: string,): { roots: string[]; canonical: string } {
+  const canonical = resolve(repoRoot, "tree",);
+  const roots: string[] = [];
+  const explicit = process.env.TREE_DIR;
+  if (explicit) { roots.push(explicit,); }
+  const ompDir = process.env.OMP_WORKTREE_DIR;
+  if (ompDir && !roots.includes(ompDir,)) { roots.push(ompDir,); }
+  const extra = process.env.EXTRA_TREE_DIRS;
+  if (extra) {
+    for (const p of extra.split(":",).map((s,) => s.trim()).filter(Boolean,)) {
+      if (!roots.includes(p,)) { roots.push(p,); }
+    }
+  }
+  if (!roots.includes(canonical,)) { roots.push(canonical,); }
+  return { roots, canonical, };
+}
+
 export async function loadConfig(): Promise<WorktreeConfig> {
   // Resolve the main repo root via git so the CLI works correctly when
   // invoked from inside a linked worktree (tree/<branch>). REPO_ROOT remains
   // an opt-in escape hatch for CI / non-standard layouts.
   const repoRoot = process.env.REPO_ROOT ?? findRepoRoot();
-  const treeDir = process.env.TREE_DIR ?? resolve(repoRoot, "tree",);
-  // worktreeDirs expands `tree/` to also include omp's out-of-repo sibling
-  // (`OMP_WORKTREE_DIR`) and any `EXTRA_TREE_DIRS`. The canonical in-repo
-  // `tree/` stays first so existing layouts and the agent ledger (which
-  // lives at <treeDir>/.ledger.jsonl) keep working without surprises.
-  const worktreeDirs: string[] = [treeDir,];
-  const ompDir = process.env.OMP_WORKTREE_DIR;
-  if (ompDir && !worktreeDirs.includes(ompDir,)) { worktreeDirs.push(ompDir,); }
-  const extra = process.env.EXTRA_TREE_DIRS;
-  if (extra) {
-    for (const p of extra.split(":",).map((s,) => s.trim()).filter(Boolean,)) {
-      if (!worktreeDirs.includes(p,)) { worktreeDirs.push(p,); }
-    }
-  }
+  // treeDir + worktreeDirs derive from the same helper to keep their priority
+  // orders in sync. Canonical `<repo>/tree` wins whenever it exists on disk
+  // (legacy invariant — repos that have always used the in-repo layout must
+  // keep their ledger anchor at <canonical>/.ledger.jsonl). TREE_DIR env
+  // override still wins (CI escape hatch); only fall back to OMP/extras
+  // when canonical is missing (OMP-only fresh repos). Avoids stealing
+  // treeDir from a repo that happens to also have OMP_WORKTREE_DIR exported
+  // by another tool.
+  const { roots, canonical, } = getContainerRoots(repoRoot,);
+  const explicit = process.env.TREE_DIR;
+  const treeDir = explicit ?? (existsSync(canonical,) ? canonical : roots.find((d,) => existsSync(d,))) ?? canonical;
+  const worktreeDirs = roots;
 
   // Load agent credentials from main repo
   const mainRepoRoot = await findCredentials(repoRoot,);
@@ -136,22 +163,16 @@ export async function resolveBranch(
     gitSync(repoRoot, "rev-parse", "--verify", input,);
     return input;
   } catch {
-    // Try as directory name across every known container — `tree/` (the
-    // repo's own) plus omp's sibling (`OMP_WORKTREE_DIR`) and any extras
-    // (`EXTRA_TREE_DIRS`). Dir names under omp's container carry a
-    // short-hash suffix (`branch-<hash>`) so we match `<dirName>` first
-    // and then `<dirName>-*` to cover that shape.
     const dirName = branchToPath(input,);
-    const candidates = [
-      dirName,
-      ...(process.env.OMP_WORKTREE_DIR ? [`${dirName}-`,] : []),
-    ];
-    const roots = [
-      resolve(repoRoot, "tree",),
-      ...(process.env.OMP_WORKTREE_DIR ? [process.env.OMP_WORKTREE_DIR,] : []),
-    ];
-    for (const root of roots) {
-      for (const cand of candidates) {
+    const { roots, } = getContainerRoots(repoRoot,);
+    // match both `<dirName>` and `<dirName>-*` so we cover either shape.
+    const cands = [dirName, ...roots.map(() => `${dirName}-`),]
+      .filter((c, i, a,) => a.indexOf(c,) === i);
+    // Skip roots whose dir doesn't exist — Bun.Glob throws on a missing cwd,
+    // and OMP-only repos may have no in-repo `tree/` at all.
+    const existingRoots = roots.filter((r,) => existsSync(r,));
+    for (const root of existingRoots) {
+      for (const cand of cands) {
         const entries = await Array.fromAsync(
           new Bun.Glob(`${cand}*`,).scan({ cwd: root, onlyFiles: false, },),
         );
