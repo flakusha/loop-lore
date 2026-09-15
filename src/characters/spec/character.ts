@@ -25,7 +25,7 @@ export interface CharacterFeatureFlags {
   lorebook?: boolean;
   assets?: boolean;
   nsfw?: boolean;
-  /** Opt-in: identity fields drive lore injection + memory config. Default false. */
+  /** Reserved: identity fields feed lore injection + memory config when enabled. Default false. */
   identity_lore?: boolean;
 }
 
@@ -119,7 +119,7 @@ export interface CanonicalCharacter {
   growth_mode?: GrowthMode;
   /** Opt-in LLM-assist pass (D6). Default false. */
   llm_assist_enabled?: boolean;
-  /* Identity — mapped 1:1 to character_permanent_traits identity/background categories. */
+  /* Identity — persisted as character_permanent_traits identity/background rows at seed time. */
   species?: string;
   homeland?: string;
   culture?: string;
