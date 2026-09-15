@@ -9,6 +9,9 @@
  * distributing across six stats (8–15 each).
  */
 
+// eslint-disable-next-line import/first — value import used by ALL_CHARACTER_STATES; must precede section header.
+import { CharacterState, } from "../../db/enums-core";
+
 // ── Types ────────────────────────────────────────────────
 
 /** The six core ability scores */
@@ -130,16 +133,14 @@ export const PROFICIENCY_BY_LEVEL: Record<number, number> = {
 };
 
 // ── Character State Machine ──────────────────────────────
-
-/** Character vitality states — ordered by severity */
-export type CharacterState = "active" | "injured" | "unconscious" | "dead";
+export { CharacterState, } from "../../db/enums-core";
 
 /** All character states in severity order (least → most severe) */
 export const ALL_CHARACTER_STATES: CharacterState[] = [
-  "active",
-  "injured",
-  "unconscious",
-  "dead",
+  CharacterState.Active,
+  CharacterState.Injured,
+  CharacterState.Unconscious,
+  CharacterState.Dead,
 ];
 
 /** Severity index for comparison */
