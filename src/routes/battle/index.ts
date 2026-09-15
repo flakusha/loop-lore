@@ -24,16 +24,17 @@ import { weatherRoutes, } from "./weather";
  *   Resolution:/api/battle/resolution/{damage,attack,defense,round}
  *   Morale:    /api/battle/morale/{compute,apply,break}
  * @param opts
+ * @param prefix
  */
-export function battleRoutes(opts: HandlerOpts,) {
+export function battleRoutes(opts: HandlerOpts, prefix = "/api",) {
   const { database: _database, } = opts;
 
   return new Elysia({ name: "battle", },)
-    .use(equipmentRoutes(opts,),)
-    .use(battleEquipmentDurabilityRoutes(opts,),)
-    .use(socialRoutes(opts,),)
-    .use(npcRoutes(opts,),)
-    .use(weatherRoutes(opts,),)
-    .use(resolutionRoutes(opts,),)
-    .use(moraleRoutes(opts,),);
+    .use(equipmentRoutes(opts, prefix,),)
+    .use(battleEquipmentDurabilityRoutes(opts, prefix,),)
+    .use(socialRoutes(opts, prefix,),)
+    .use(npcRoutes(opts, prefix,),)
+    .use(weatherRoutes(opts, prefix,),)
+    .use(resolutionRoutes(opts, prefix,),)
+    .use(moraleRoutes(opts, prefix,),);
 }

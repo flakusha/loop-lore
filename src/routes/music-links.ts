@@ -31,8 +31,9 @@ export interface MusicLinkHandlerOpts {
 
 /**
  * @param opts
+ * @param prefix
  */
-export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
+export function musicLinksRoutes(opts: MusicLinkHandlerOpts, prefix = "/api",) {
   const { database: db, nsfwFilterEnabled = false, } = opts;
 
   const service = createMusicLinkService(db as Kysely<DB>, {
@@ -42,7 +43,7 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
   return (
     new Elysia({ name: "music-links", },)
       .post(
-        "/api/chats/:id/music-links",
+        `${prefix}/chats/:id/music-links`,
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -93,7 +94,7 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
         },
       )
       .get(
-        "/api/chats/:id/music-links",
+        `${prefix}/chats/:id/music-links`,
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }
@@ -121,7 +122,7 @@ export function musicLinksRoutes(opts: MusicLinkHandlerOpts,) {
         },
       )
       .delete(
-        "/api/music-links/:id",
+        `${prefix}/music-links/:id`,
         async (ctx,) => {
           const userId = requireUserId(ctx,);
           if (typeof userId !== "string") { return userId; }

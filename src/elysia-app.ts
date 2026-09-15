@@ -245,7 +245,8 @@ export function createApp(deps: AppDeps,): Elysia {
       // Redirect unversioned /api/{resource} → /api/v1/{resource}.
       // Already-versioned /api/v1/* must NOT be redirected (would
       // double-prefix); they fall through to legacy dispatch below.
-      if (!url.pathname.startsWith("/api/v1/",)) {
+      // /api/views/* stays unversioned (embedded HTML, not JSON API).
+      if (!url.pathname.startsWith("/api/v1/",) && !url.pathname.startsWith("/api/views/",)) {
         return versionRedirect("v1",)({ request, },);
       }
       return handleApiRequest({ request, database, config, },);

@@ -9,11 +9,12 @@ import type { HandleOpts, } from "./types";
 import { worldRoutes, } from "./worlds-routes";
 /**
  * @param opts
+ * @param prefix
  */
-export function worldsRoutes(opts: HandleOpts,) {
+export function worldsRoutes(opts: HandleOpts, prefix = "/api",) {
   return new Elysia({ name: "worlds", },)
-    .use(worldRoutes(opts,),)
-    .use(locationRoutes(opts,),)
-    .use(chatsRoutes(opts,),)
-    .use(timelinesRoutes(opts,),);
+    .use(worldRoutes(opts, prefix,),)
+    .use(locationRoutes(opts, prefix,),)
+    .use(chatsRoutes(opts, prefix,),)
+    .use(timelinesRoutes(opts, prefix,),);
 }

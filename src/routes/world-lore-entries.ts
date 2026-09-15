@@ -60,8 +60,9 @@ async function worldOwnershipCheck({
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @param prefix
  */
-export function worldLoreEntriesRoutes(opts: { database: Db; config: Config },): Elysia {
+export function worldLoreEntriesRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   return createEntityRoutes(
     {
       parentPrefix: "worlds",
@@ -107,5 +108,6 @@ export function worldLoreEntriesRoutes(opts: { database: Db; config: Config },):
       checkOwnership: worldOwnershipCheck,
     },
     opts,
+    prefix,
   );
 }

@@ -12,7 +12,7 @@ import { checkChatAccess, } from "../../chat/service";
 import type { HandlerOpts, } from "../actor-auth";
 import { jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
-const R = "/api/npc-movement";
+const R_SUFFIX = "/npc-movement";
 
 const movementEventSchema = t.Object({
   actorId: t.String(),
@@ -36,12 +36,12 @@ const querySchema = t.Object({
 
 /**
  * @param opts
+ * @param prefix
  */
-export function npcMovementRoutes(opts: HandlerOpts,) {
+export function npcMovementRoutes(opts: HandlerOpts, prefix = "/api",) {
   const svc = () => new NpcMovementIndicatorService(opts.database,);
-
+  const R = `${prefix}${R_SUFFIX}`;
   return new Elysia({ name: "npc-movement", },)
-    // ── Store movement events ──────────────────────────────
     .post(`${R}/events`, async (ctx: any,) => {
       const userId = await requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }

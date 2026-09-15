@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-// size-allow: 293
+// size-allow: 345
 
 /**
  * Asset serve handlers — raw / download / thumb / compressed.
@@ -54,7 +54,11 @@ interface ResolvedAsset {
 
 /**
  * Load an asset after the actor-based access check (`canAccessAsset`).
- * Returns the asset on success, or a Response on failure.
+ * @param database - Kysely database instance.
+ * @param assetId - Asset identifier (uuid).
+ * @param actorId - Requesting actor identifier.
+ * @param actorRole - Requesting actor role.
+ * @returns The asset on success, or a Response on failure.
  */
 export async function resolveAsset(
   database: Kysely<DB>,
@@ -83,7 +87,10 @@ type SignedUrlAuth = Pick<
 
 /**
  * Extract signed-URL auth params from a serve request query string.
- * Returns {} when no `sig`+`expires` params are present (→ session auth);
+ * @param searchParams - Request URL query params.
+ * @param action - Signed-URL action being authorized.
+ * @param config - Server config (signed-URL secret).
+ * @returns {} when no `sig`+`expires` params are present (→ session auth);
  * otherwise resolved opts the serve handlers verify fail-closed.
  */
 export function signedUrlAuth(
@@ -106,6 +113,8 @@ export function signedUrlAuth(
  * Resolve the actor-facing asset record for a serve request.
  * A valid signed-URL token replaces session auth (the token already encodes
  * asset + action + expiry); otherwise the actor access check applies.
+ * @param opts - Serve request fields incl. optional signed-URL auth.
+ * @returns The resolved asset, or a `Response` on auth failure.
  */
 async function resolveForServe(
   opts: Pick<ServeRawOpts, "database" | "assetId" | "actorId" | "actorRole"> & SignedUrlAuth,
@@ -138,7 +147,21 @@ async function resolveForServe(
   return resolveAsset(opts.database, opts.assetId, opts.actorId, opts.actorRole,);
 }
 
-/** Serve the original file (raw bytes, decrypting chat-encrypted assets). */
+/**
+ * Serve the original file (raw bytes, decrypting chat-encrypted assets).
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.uploadDir
+ * @param root0.actorId
+ * @param root0.actorRole
+ * @param root0.chatId
+ * @param root0.signedUrlSecret
+ * @param root0.signedUrlToken
+ * @param root0.signedUrlExpires
+ * @param root0.signedUrlAction
+ * @returns Raw asset bytes response.
+ */
 export async function handleServeRaw({
   database,
   assetId,
@@ -197,7 +220,21 @@ export async function handleServeRaw({
   return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type,);
 }
 
-/** Serve a compressed variant (thumb/compressed), falling back to raw. */
+/**
+ * Serve a compressed variant (thumb/compressed), falling back to raw.
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.uploadDir
+ * @param root0.variant
+ * @param root0.actorId
+ * @param root0.actorRole
+ * @param root0.signedUrlSecret
+ * @param root0.signedUrlToken
+ * @param root0.signedUrlExpires
+ * @param root0.signedUrlAction
+ * @returns Compressed asset bytes response.
+ */
 export async function handleServeCompressed({
   database,
   assetId,
@@ -233,7 +270,21 @@ export async function handleServeCompressed({
   return serveFile(fullPath, "image/webp",);
 }
 
-/** Serve the original file as an attachment download. */
+/**
+ * Serve the original file as an attachment download.
+ * @param root0
+ * @param root0.database
+ * @param root0.assetId
+ * @param root0.uploadDir
+ * @param root0.actorId
+ * @param root0.actorRole
+ * @param root0.chatId
+ * @param root0.signedUrlSecret
+ * @param root0.signedUrlToken
+ * @param root0.signedUrlExpires
+ * @param root0.signedUrlAction
+ * @returns Asset download response.
+ */
 export async function handleDownload({
   database,
   assetId,

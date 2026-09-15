@@ -14,10 +14,11 @@ export interface EntityPaths {
 
 /**
  * @param config
+ * @param basePathPrefix
  */
-export function entityPaths(config: EntityConfig,): EntityPaths {
+export function entityPaths(config: EntityConfig, basePathPrefix = "/api",): EntityPaths {
   const parentParam = config.parentParam == null ? "id" : config.parentParam;
-  const basePath = `/api/${config.parentPrefix}/:${parentParam}/${config.entityPath}`;
+  const basePath = `${basePathPrefix}/${config.parentPrefix}/:${parentParam}/${config.entityPath}`;
   const withIdPath = `${basePath}/:entityId`;
   return { parentParam, basePath, withIdPath, };
 }
