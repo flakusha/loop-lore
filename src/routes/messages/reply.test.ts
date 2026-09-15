@@ -662,7 +662,7 @@ describeReal("maybeAutoReply — story pause gate", () => {
     await db.destroy();
   },);
 
-  test("paused chat produces no reply and stores nothing", async () => {
+  test("paused chat produces no assistant reply", async () => {
     const result = await maybeAutoReply(
       db,
       testConfig,
