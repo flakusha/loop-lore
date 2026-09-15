@@ -16,6 +16,14 @@ function escapeHtml(text: string,): string {
     .replaceAll('"', "&quot;",)
     .replaceAll("'", "&#039;",);
 }
+/**
+ * @param value SQLite `datetime('now')` text or ISO string
+ * @returns the instant as an ISO string, pinning zone-less values to UTC
+ */
+function toIsoUtc(value: string,): string {
+  const zoned = /[zZ]|[+-]\d{2}:?\d{2}$/.test(value,) ? value : value.replace(" ", "T",) + "Z";
+  return new Date(zoned,).toISOString();
+}
 
 /**
  * @param chat
@@ -28,7 +36,7 @@ export function formatMarkdown(chat: { name: string; type: string; mode: string 
   const lines: string[] = [
     `# ${chat.name}`,
     "",
-    `> Exported from loop-lore on ${new Date().toLocaleDateString()}`,
+    `> Exported from loop-lore on ${new Date().toISOString()}`,
     `> Chat type: ${chat.type} | Mode: ${chat.mode}`,
     "",
     "---",
@@ -100,13 +108,13 @@ export function formatHtml(chat: { name: string; type: string; mode: string }, m
     const author = msg.display_name || msg.role;
     const roleLabel = msg.role === MessageRole.User ? "You" : author;
     const roleClass = msg.role === MessageRole.User ? "user" : "assistant";
-    const time = new Date(msg.created_at,).toLocaleString();
+    const time = toIsoUtc(msg.created_at,);
 
     return `
     <div class="message ${roleClass}">
       <div class="header">
         <span class="sender">${escapeHtml(roleLabel,)}</span>
-        <span class="time">${escapeHtml(time,)}</span>
+        <span class="time"><time datetime="${time}" data-client-date="datetime">${time}</time></span>
       </div>
       <div class="content">${escapeHtml(msg.content,)}</div>
     </div>`;
@@ -188,7 +196,7 @@ export function formatHtml(chat: { name: string; type: string; mode: string }, m
   <h1>${escapeHtml(chat.name,)}</h1>
   <div class="info">
     <p><strong>Chat type:</strong> ${escapeHtml(chat.type,)} | <strong>Mode:</strong> ${escapeHtml(chat.mode,)}</p>
-    <p><strong>Exported:</strong> ${new Date().toLocaleDateString()}</p>
+    <p><strong>Exported:</strong> <time datetime="${new Date().toISOString()}">${new Date().toISOString()}</time></p>
   </div>
   <div class="messages">
     ${messageHtml}
@@ -214,7 +222,7 @@ export function formatPlainText(
   const lines: string[] = [
     chat.name,
     `Type: ${chat.type} | Mode: ${chat.mode}`,
-    `Exported: ${new Date().toLocaleDateString()}`,
+    `Exported: ${new Date().toISOString()}`,
     "",
     "---",
     "",
@@ -223,7 +231,7 @@ export function formatPlainText(
   for (const msg of messages) {
     const author = msg.display_name || msg.role;
     const roleLabel = msg.role === MessageRole.User ? "You" : author;
-    const time = new Date(msg.created_at,).toLocaleString();
+    const time = toIsoUtc(msg.created_at,);
 
     lines.push(`[${roleLabel}] (${time})`, "", msg.content, "", "---", "",);
   }
