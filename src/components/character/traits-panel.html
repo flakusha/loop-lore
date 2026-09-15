@@ -1,0 +1,83 @@
+<!--
+  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+-->
+
+<!--
+  Permanent traits editor for character info. Bound to the
+  `actorTraitsFactory` Alpine plugin.
+-->
+<div x-data="actorTraitsFactory(actorId,)" x-init="setActorId(actorId,)" class="traits-panel">
+  <h3>Traits</h3>
+
+  <label>
+    Search
+    <input type="search" x-model="search" placeholder="name / value" />
+  </label>
+
+  <label>
+    Category
+    <select x-model="categoryFilter">
+      <option value="">All</option>
+      <template x-for="cat in TRAIT_CATEGORIES" :key="cat">
+        <option :value="cat" x-text="describeCategory(cat)"></option>
+      </template>
+    </select>
+  </label>
+
+  <button type="button" :disabled="traitsLoading" @click="loadTraits()">Refresh</button>
+
+  <p x-show="traitsLoading">Loading…</p>
+  <p x-show="traitsError" x-text="traitsError" class="traits-error"></p>
+
+  <h4 x-text="draft.editingName ? 'Edit trait' : 'New trait'"></h4>
+  <form @submit.prevent="save()">
+    <label>
+      Category
+      <select x-model="draft.category">
+        <template x-for="cat in TRAIT_CATEGORIES" :key="cat">
+          <option :value="cat" x-text="describeCategory(cat)"></option>
+        </template>
+      </select>
+    </label>
+    <label>
+      Name
+      <input type="text" x-model="draft.name" placeholder="e.g. brave" />
+    </label>
+    <label>
+      Value
+      <input type="text" x-model="draft.value" placeholder="e.g. true" />
+    </label>
+    <button type="submit" :disabled="busy || !draft.name.trim()">
+      <span x-text="draft.editingName ? 'Update' : 'Create'"></span>
+    </button>
+    <button type="button" x-show="draft.editingName" @click="cancelEdit()">Cancel</button>
+  </form>
+
+  <p x-show="message" x-text="message" class="traits-message"></p>
+  <p x-show="error" x-text="error" class="traits-error"></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template x-for="trait in filteredTraits()" :key="trait.id">
+        <tr>
+          <td x-text="describeCategory(trait.trait_category)"></td>
+          <td x-text="trait.trait_name"></td>
+          <td x-text="String(trait.value ?? '')"></td>
+          <td>
+            <button type="button" @click="startEdit(trait)">Edit</button>
+            <button type="button" @click="remove(trait.trait_name)">Delete</button>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+</div>
