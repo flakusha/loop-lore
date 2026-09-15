@@ -40,6 +40,9 @@ export interface ExportSseEvent {
   percentage?: number;
   currentStep?: string;
   status?: JobStatus;
+  completedAt?: string;
+  downloadUrl?: string;
+  totalItems?: number;
   error?: string;
   message?: string;
 }
@@ -125,14 +128,23 @@ export const exportProgress: ExportProgressState = {
     if (typeof event.total === "number") { this.total = event.total; }
     if (typeof event.percentage === "number") { this.percentage = event.percentage; }
     if (typeof event.currentStep === "string") { this.currentStep = event.currentStep; }
-    if (event.status) { this.status = event.status; }
+    // Terminal frames carry the outcome in `type`, not `status`
+    // (src/routes/export-sse/start.ts enqueues `type:"completed"` /
+    // `type:"failed"` with no `status` field). `job_created` carries
+    // `status:"queued"`; `progress` carries neither.
+    if (event.type === "completed" || event.type === "failed") {
+      this.status = event.type;
+    } else if (event.status) {
+      this.status = event.status;
+    }
     if (event.error) { this.error = event.error; }
     if (event.message) { this.message = event.message; }
+    if (event.completedAt) { this.completedAt = event.completedAt; }
     if (this.status === "completed" && this.jobId) {
       this.downloadUrl = `/api/export/download/${this.jobId}`;
-      this.completedAt = new Date().toISOString();
-      this.stopTracking();
+      if (!this.completedAt) { this.completedAt = new Date().toISOString(); }
     }
+    if (this.isTerminal()) { this.stopTracking(); }
   },
 
   applySnapshot(snapshot: JobStatusSnapshot,) {
