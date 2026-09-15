@@ -8716,6 +8716,20 @@
     "source": ".plan/tickets/TASK-admin-revisions-diff-revert.md",
     "status": "open"
   },
+
+  "TASK-ADMIN-SYSTEM-CONFIG-CLASS-DRIVEN-TYPED-BINDING-FROM-SECTION-": {
+    "hash": "5d6b103",
+    "git_issue": "5d6b103",
+    "extid": "TASK-ADMIN-SYSTEM-CONFIG-CLASS-DRIVEN-TYPED-BINDING-FROM-SECTION-",
+    "type": "TASK",
+    "title": "Admin system-config: class-driven typed binding from section meta",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-admin.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-system-config-class-driven-typed-binding-from-section-.md",
+    "status": "open"
+  },
   "TASK-ADMIN-SYSTEM-CONFIG-GENERATION-TUNABLES-CONTEXT-WINDOW-GUARD": {
     "hash": "ff48499",
     "git_issue": "ff48499",
@@ -8753,6 +8767,20 @@
     "epic": "epic-frontend-admin.md",
     "tags": [],
     "source": ".plan/tickets/TASK-admin-system-config-rpg-chat-caption-turn-tunables.md",
+    "status": "open"
+  },
+
+  "TASK-ADMIN-SYSTEM-CONFIG-SAVED-DB-CONFIG-EXPORT-TO-YAML-TOML": {
+    "hash": "e92f904",
+    "git_issue": "e92f904",
+    "extid": "TASK-ADMIN-SYSTEM-CONFIG-SAVED-DB-CONFIG-EXPORT-TO-YAML-TOML",
+    "type": "TASK",
+    "title": "Admin system-config: saved DB config export to yaml/toml",
+    "label": "task",
+    "priority": "medium",
+    "epic": "epic-frontend-admin.md",
+    "tags": [],
+    "source": ".plan/tickets/TASK-admin-system-config-saved-db-config-export-to-yaml-toml.md",
     "status": "open"
   },
   "TASK-ADMIN-SYSTEM-CONFIG-SURFACE-MISSING-SCHEMA-SECTIONS": {
