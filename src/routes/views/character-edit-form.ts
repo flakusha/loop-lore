@@ -8,6 +8,8 @@
  * Called by serveCharacterEditForm after loading the actor from DB.
  */
 
+import { readFileSync, } from "node:fs";
+import { join, } from "node:path";
 import { escapeHtml, } from "./layout";
 
 /** Stricter escape for values interpolated inside single- or double-quoted attributes
@@ -15,6 +17,26 @@ import { escapeHtml, } from "./layout";
  * and JavaScript string literals (e.g. `onclick='...'`). Also encodes `'`. */
 function escapeAttr(str: string,): string {
   return escapeHtml(str,).replaceAll("'", "&#39;",);
+}
+const CHARACTER_COMPONENTS_DIR = join(import.meta.dir, "..", "..", "components", "character",);
+const panelBodyCache = new Map<string, string>();
+
+/** Load a character panel template inner body. The outer mount tag (which
+ *  carries its own `x-data`) is stripped — the caller provides the `x-data`
+ *  wrapper. Results cached per process. */
+function loadPanelBody(file: string,): string {
+  const cached = panelBodyCache.get(file,);
+  if (cached !== undefined) { return cached; }
+  const raw = readFileSync(join(CHARACTER_COMPONENTS_DIR, file,), "utf8",);
+  // Drop license + mount-doc comments, then the outer mount tag (which
+  // carries its own `x-data` — the caller provides the wrapper instead).
+  const body = raw
+    .replace(/<!--[\s\S]*?-->/g, "",)
+    .replace(/^[\s\S]*?<(?:section|div)[^>]*>/, "",)
+    .replace(/<\/(?:section|div)>\s*$/, "",)
+    .trim();
+  panelBodyCache.set(file, body,);
+  return body;
 }
 /** Input values for the edit form */
 export interface EditFormValues {
@@ -112,6 +134,25 @@ const PROACTIVE_SECTION = `
           <div id="proactive-status" style="font-size:var(--text-sm);color:var(--text-secondary);margin-top:var(--space-2)"></div>
         </details>`;
 
+/** Collapsible actor sub-resource panels (licensing, notes/items/lore, systems, traits, emotion avatars).
+ *  Each wrapper binds its own Alpine factory; the outer x-data provides actorId.
+ *  Panel bodies are inlined from `src/components/character/` (single source of
+ *  truth — the same files served at `/partials/character/*`). Rendered in the
+ *  character edit form just before the action footer. */
+const PANELS_SECTION = (characterId: string,) => `
+        <details class="form-section" data-testid="actor-panels-section" style="margin-top:var(--space-4);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:var(--space-4)">
+          <summary style="cursor:pointer;font-weight:600;font-size:var(--text-lg)">Sub-resources</summary>
+          <p class="form-hint" style="color:var(--text-secondary);margin:var(--space-2) 0 var(--space-4)">Licensing, notes / items / lore entries, systems export, permanent traits, and emotion avatar batch jobs.</p>
+          <div x-data="{ actorId: '${escapeAttr(characterId,)}' }">
+            <section x-data="actorLicensingFactory(actorId)" data-testid="character-licensing">${loadPanelBody("licensing-panel.html",)}</section>
+            <section x-data="actorEntitiesFactory(actorId, 'notes')" data-testid="character-notes" style="margin-top:var(--space-4)">${loadPanelBody("entities-panel.html",)}</section>
+            <section x-data="actorEntitiesFactory(actorId, 'items')" data-testid="character-items" style="margin-top:var(--space-4)">${loadPanelBody("entities-panel.html",)}</section>
+            <section x-data="actorEntitiesFactory(actorId, 'lore-entries')" data-testid="character-lore" style="margin-top:var(--space-4)">${loadPanelBody("entities-panel.html",)}</section>
+            <section x-data="actorSystemsFactory(actorId)" data-testid="character-systems" style="margin-top:var(--space-4)">${loadPanelBody("systems-panel.html",)}</section>
+            <section x-data="actorTraitsFactory(actorId)" data-testid="character-traits" style="margin-top:var(--space-4)">${loadPanelBody("traits-panel.html",)}</section>
+            <section x-data="actorEmotionAvatarsFactory(actorId)" data-testid="character-emotion-avatars" style="margin-top:var(--space-4)">${loadPanelBody("emotion-avatars-panel.html",)}</section>
+          </div>
+        </details>`;
 /**
  * Called by serveCharacterEditForm after DB lookup.
  *
@@ -174,6 +215,7 @@ export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: strin
         <input type="hidden" id="char-avatar-id" value="${escapeHtml(v.avatarId,)}" />
 ${INTERNAL_TRAITS_SECTION}
 ${PROACTIVE_SECTION}
+${PANELS_SECTION(v.characterId,)}
         <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
           <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
           <button type="button" class="btn btn-primary" x-on:click="window.saveCharacterEdit('${
