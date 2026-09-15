@@ -85,6 +85,19 @@ const WAIVERS = {
   // coverage tracking starts; lcov shows it as `tests/` module. Scoped
   // file-alone run shows 100%; only the full-run path under-counts.
   "tests": { floor: 50, reason: "bun preload before coverage tracking starts (tests/setup-globals.ts)", },
+  // Gate pass: TUI module body is dominated by blessed widget binding
+  // (box / list / textbox) and event-handler wiring that requires a live
+  // terminal to exercise. The mock.module-based test file
+  // (src/tui/chat/index.test.ts) covers the diff-scoped new surface
+  // (sessionToken threading + empty-string normalization). Per-file
+  // waiver in this same WAIVERS map keys `tui:src/tui/chat/index.ts`
+  // down to 51 for the diff gate; this module-wide floor covers the
+  // full-run path where blessed binding dominates the denominator.
+  "tui": {
+    floor: 74,
+    reason:
+      "blessed widget binding + event-handler wiring dominates uncovered lines; mock.module suite covers sessionToken threading; per-file waiver tui:src/tui/chat/index.ts at 51 for diff gate",
+  },
   // Gate pass: pure DOM-bound UI code (htmx event listeners, Alpine
   // directives, focus-trap, modals, panels). Playwright DOM-coverage is
   // the long-term fix; waivers are conservative until that harness lands.
