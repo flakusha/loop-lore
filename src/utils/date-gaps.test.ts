@@ -7,6 +7,7 @@ import {
   formatTime,
   parseExpiryMs,
   serializeDate,
+  sqliteUtcToIso,
   toDate,
   tzOffset,
 } from "./date";
@@ -134,5 +135,20 @@ describe("date gaps — parseExpiryMs", () => {
     expect(parseExpiryMs("not a date",),).toBeNull();
     expect(parseExpiryMs(undefined,),).toBeNull();
     expect(parseExpiryMs(123,),).toBeNull();
+  });
+});
+
+describe("sqliteUtcToIso — zone-less SQLite text pinned to UTC", () => {
+  test("pins zone-less datetime to UTC", () => {
+    expect(sqliteUtcToIso("2026-09-15 10:00:00",),).toBe("2026-09-15T10:00:00.000Z",);
+  });
+
+  test("passes zoned ISO through", () => {
+    expect(sqliteUtcToIso("2026-09-15T10:00:00.000Z",),).toBe("2026-09-15T10:00:00.000Z",);
+  });
+
+  test("empty and garbage render nothing instead of throwing", () => {
+    expect(sqliteUtcToIso("",),).toBe("",);
+    expect(sqliteUtcToIso("not-a-date",),).toBe("",);
   });
 });

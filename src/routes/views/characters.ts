@@ -5,6 +5,7 @@ import type { Kysely, } from "kysely";
 import { ActorType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getNonce, } from "../../middleware/csp-nonce";
+import { sqliteUtcToIso, } from "../../utils/date";
 import { buildEditFormHtml, } from "./character-edit-form";
 import { escapeHtml, htmlResponse, } from "./layout";
 
@@ -106,18 +107,10 @@ async function serveCharacterEditForm(
 }
 
 /**
- * @param value SQLite `datetime('now')` text or ISO string
- * @returns the instant as an ISO string, pinning zone-less values to UTC
- */
-function toIsoUtc(value: string,): string {
-  const zoned = /[zZ]|[+-]\d{2}:?\d{2}$/.test(value,) ? value : value.replace(" ", "T",) + "Z";
-  return new Date(zoned,).toISOString();
-}
-
-/**
  * @param slug
  * @param database
  */
+
 async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Promise<Response> {
   const chats = await database
     .selectFrom("chats",)
@@ -137,7 +130,9 @@ async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Pr
     const name = escapeHtml(c.name,);
     // SQLite stores `datetime('now')` as "YYYY-MM-DD HH:MM:SS" (no zone);
     // interpret as UTC so the browser renders the user's own zone.
-    const iso = toIsoUtc(c.updated_at ?? "",);
+    // sqliteUtcToIso returns "" for empty/invalid — renders no stamp
+    // instead of 500ing the fragment on one bad row.
+    const iso = sqliteUtcToIso(c.updated_at ?? "",);
     return `<div class="chat-item" x-on:click="window.location.assign('/views/chat?chatid=${c.id}')" data-testid="chat-item-${c.id}">
       <div class="chat-info"><h4 class="chat-name">${name}</h4><p class="chat-preview">No messages yet</p></div>
       <span class="chat-time"><time datetime="${iso}" data-client-date="date">${iso}</time></span>
