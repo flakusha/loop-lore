@@ -4304,6 +4304,19 @@
     "source": ".plan/tickets/BUG-type-scanallproviders-db-param-as-kysely-db-instead-of-unkno.md",
     "status": "done"
   },
+  "BUG-TYPECHECK-SCRIPTS-WORKTREE-REFERENCEERROR-CLASS-BUGS-SHIP-GR": {
+    "hash": "4c59162",
+    "git_issue": "4c59162",
+    "extid": "BUG-TYPECHECK-SCRIPTS-WORKTREE-REFERENCEERROR-CLASS-BUGS-SHIP-GR",
+    "type": "BUG",
+    "title": "typecheck scripts/worktree: ReferenceError-class bugs ship green",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-typecheck-scripts-worktree-referenceerror-class-bugs-ship-gr.md",
+    "status": "open"
+  },
   "BUG-UNDEFINED-CSS-CUSTOM-PROPERTIES-BREAK-RENDERING": {
     "hash": "6c5ec87",
     "extid": "BUG-UNDEFINED-CSS-CUSTOM-PROPERTIES-BREAK-RENDERING",
