@@ -8,6 +8,7 @@ import { resolve, } from "path";
 import { branchToPath, type WorktreeConfig, } from "../utils/config";
 import { credentials, } from "../utils/credentials.mjs";
 import { assertGpgUnlocked, } from "../utils/gpg";
+import { gitSyncQuiet, stagedDependencyPaths, } from "../utils/git";
 import { appendCommitOutcome, } from "../utils/ledger";
 import { extractMessageInput, validateMessage, } from "../utils/message";
 import { log, } from "../utils/output";

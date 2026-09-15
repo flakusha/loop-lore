@@ -55,12 +55,10 @@ export async function execute(
 
   console.log(`  Found ${prs.length} open PR(s)`,);
   console.log();
-  // Placement precedence: explicit `TREE_DIR` (user/CI override) wins;
-  // fall back to omp's auto-set `OMP_WORKTREE_DIR`; finally to canonical
-  // in-repo `tree/` from `config.treeDir`.
-  const dirPath = process.env.TREE_DIR ??
-    process.env.OMP_WORKTREE_DIR ??
-    config.treeDir;
+  // config.treeDir already honors TREE_DIR / OMP_WORKTREE_DIR / EXTRA_TREE_DIRS
+  // / canonical fallback. Reading env vars here would re-derive the chain and
+  // miss extras when neither TREE_DIR nor OMP are set.
+  const dirPath = config.treeDir;
   mkdirSync(dirPath, { recursive: true, },);
   let created = 0;
   let skipped = 0;
