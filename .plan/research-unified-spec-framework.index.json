@@ -1,0 +1,282 @@
+{
+  "research": {
+    "title": "Unified Markdown Spec Framework for .plan/",
+    "date": "2026-09-15",
+    "author": "minimax-code/MiniMax-M3",
+    "worktree": "tree/unified-spec-framework",
+    "branch": "unified-spec-framework",
+    "companion_md": ".plan/research-unified-spec-framework.md",
+    "companion_epic": ".plan/epics/epic-unified-spec-framework.md",
+    "scope": "Reusable .md spec schema + bookkeep-tooling for .plan/ epics, tasks, tickets, ideas, bugs",
+    "constraints_from_user": [
+      "REUSE existing .plan/tickets/index.json — tooling writes into it (not replaces it)",
+      "WORK IN A WORKTREE — no dev mutations; this work lives on branch 'unified-spec-framework'"
+    ],
+    "method": "Web survey (OpenSpec, Spec-Kit, Backlog.md, BMAD, Diataxis) + .plan/ inventory + scripts/worktree/ shape analysis",
+    "method_urls": [
+      "https://github.com/github/spec-kit",
+      "https://github.com/Fission-AI/OpenSpec",
+      "https://github.com/MrLesk/Backlog.md",
+      "https://diataxis.fr/",
+      "https://aicodingpatterns.com/en/patterns/openspec-vs-spec-kit-vs-bmad/"
+    ]
+  },
+  "decisions": {
+    "primary_inspiration": "OpenSpec",
+    "secondary_inspiration": "Backlog.md",
+    "rejected": ["BMAD Method", "Diataxis (tool)"],
+    "rationale": "Brownfield-first (2000 existing tickets), agent-surface parity with scripts/worktree/, lightweight ceremony, required frontmatter for new artifacts"
+  },
+  "tools_evaluated": [
+    {
+      "name": "GitHub Spec Kit",
+      "url": "https://github.com/github/spec-kit",
+      "runtime": "Python (uv)",
+      "artifacts": ["spec.md", "plan.md", "tasks.md", "checklists/*.md"],
+      "commands": ["constitution", "specify", "clarify", "plan", "tasks", "implement", "converge"],
+      "fit_score": 6,
+      "strengths": ["Converge loop discipline", "Template hierarchy (overrides/presets/extensions/core)", "Optional bug + idea extensions", "Phase discipline"],
+      "weaknesses": ["Python toolchain", "Rigid phase gates", "Heaviest ceremony", "One-shot optimizations"],
+      "reusable_pieces": ["convergence-loop", "bug-fix-extend-assess-fix-test", "extensions-and-presets", "constitution-artifact"]
+    },
+    {
+      "name": "Fission-AI OpenSpec",
+      "url": "https://github.com/Fission-AI/OpenSpec",
+      "runtime": "Node 20+",
+      "artifacts": ["openspec/changes/<name>/{proposal,design,tasks}.md", "openspec/changes/<name>/specs/*.md"],
+      "commands": ["explore", "propose", "apply", "archive"],
+      "fit_score": 9,
+      "strengths": ["Brownfield-first", "Lightest ceremony", "30+ agent integrations", "Schema config", "Requirement+scenario grammar"],
+      "weaknesses": ["Node-only (mitigable)", "Telemetry by default (disable-able)", "No converge loop"],
+      "reusable_pieces": ["per-change-folder-shape", "proposal-specs-design-tasks-split", "requirement-scenario-grammar", "archive-workflow", "schema-config"]
+    },
+    {
+      "name": "Backlog.md",
+      "url": "https://github.com/MrLesk/Backlog.md",
+      "runtime": "Node / Bun",
+      "artifacts": ["backlog/tasks/<id>-<slug>.md (YAML frontmatter required)"],
+      "commands": ["init", "task create/edit/list", "board", "browser", "search", "mcp"],
+      "fit_score": 7,
+      "strengths": ["Mandatory frontmatter discipline", "Acceptance criteria checklists", "Dependency edges", "Milestones", "Three-review-checkpoint model"],
+      "weaknesses": ["Single artifact type", "No proposal/design/plan split", "Bun baseline-runtime nuances"],
+      "reusable_pieces": ["frontmatter-schema", "acceptance-criteria-checklist", "dependency-edge", "milestones", "review-checkpoint"]
+    },
+    {
+      "name": "BMAD Method",
+      "url": "https://github.com/bmad-code-org/BMAD-METHOD",
+      "runtime": "Prompt-pack (no CLI)",
+      "artifacts": ["PRD", "architecture", "epics/stories", "sprint-plan"],
+      "fit_score": 3,
+      "strengths": ["Persona-driven quality"],
+      "weaknesses": ["Heavy ceremony", "Persona overhead", "Not a CLI"],
+      "reusable_pieces": []
+    },
+    {
+      "name": "Diataxis (lens)",
+      "url": "https://diataxis.fr/",
+      "runtime": "n/a (taxonomy)",
+      "artifacts": [],
+      "fit_score": 5,
+      "strengths": ["Clarifies epic vs ticket vs how-to roles"],
+      "weaknesses": ["Not a tool"],
+      "reusable_pieces": ["documentation-taxonomy-lens"]
+    }
+  ],
+  "current_state": {
+    "epics": 281,
+    "tickets_total_estimate": 1998,
+    "ticket_prefix_tally": {
+      "TASK": 1526,
+      "BUG": 354,
+      "FEAT": 138,
+      "EPIC": 43,
+      "TEST": 12,
+      "WIRE": 11,
+      "IDEA": 9,
+      "PERF": 2,
+      "IMPROVE": 1
+    },
+    "backlog_buckets": [
+      ".plan/backlog/open.md",
+      ".plan/backlog/open-untriaged.md",
+      ".plan/backlog/open-inflight.md",
+      ".plan/backlog/open-debt.md",
+      ".plan/backlog/priority.md",
+      ".plan/backlog/priority-p0-p2.md",
+      ".plan/backlog/priority-p3-p5.md",
+      ".plan/backlog/priority-release-010.md"
+    ],
+    "index_files": [".plan/tickets/index.json", ".plan/epics-index.md"],
+    "existing_tools": [
+      "scripts/worktree/ (commits, finalize, ticket, issues, search, gi, abort, rebase, sync)",
+      "scripts/gen-plan-docs.ts (regenerates epics-index.md)",
+      "scripts/check/ (gate suite)",
+      "package.json scripts (db:sync-*, schemas:check, spec-types-dts, plan:sync, plan:sync:fix, etc.)"
+    ],
+    "index_json_schema_keys_observed": ["hash", "extid", "type", "title", "label", "priority", "epic", "tags", "source", "git_issue", "status"],
+    "ticket_header_patterns_observed": [
+      "SPDX license comment (most files)",
+      "# TYPE-NAME: Title heading",
+      "**Status:** <free text> + emoji suffix (🟡, 🟨, 📝, ⬜)",
+      "**Priority:** <free text>",
+      "**Effort:** <free text>",
+      "**Epic:** <filename or empty>",
+      "## Summary",
+      "## Acceptance Criteria / ## Acceptance Scenarios (checklist)",
+      "## Related Tickets / Epics",
+      "## Files",
+      "## Verification",
+      "## Open Questions (optional)"
+    ],
+    "status_alias_observations": [
+      "done",
+      "open",
+      "in progress",
+      "postponed",
+      "stale-resolved",
+      "[OK] Already resolved in dev — no code change needed",
+      "✅ Resolved",
+      "fixed-in-worktree",
+      "🟨 In Progress",
+      "🟡 Design — taxonomy agreed",
+      "📝 Draft",
+      "⬜ Not Started"
+    ]
+  },
+  "schema_proposal": {
+    "version": "1.0.0-draft",
+    "frontmatter_required_keys": ["id", "type", "title", "status", "priority", "effort", "epic", "created", "updated"],
+    "frontmatter_optional_keys": ["owner", "labels", "dependencies", "acceptance_scenarios", "revision", "_legacy"],
+    "status_enum": ["draft", "proposed", "accepted", "in_progress", "blocked", "done", "archived", "dropped"],
+    "status_alias_map": {
+      "🟡 Design": "draft",
+      "📝 Draft": "draft",
+      "Draft": "draft",
+      "🟨 In Progress": "in_progress",
+      "In Progress": "in_progress",
+      "✅ Resolved": "done",
+      "[OK] Already resolved in dev — no code change needed": "done",
+      "stale-resolved": "done",
+      "fixed-in-worktree": "done",
+      "Done": "done",
+      "⬜ Not Started": "proposed",
+      "open": "proposed",
+      "Open": "proposed",
+      "postponed": "dropped",
+      "Postponed": "dropped",
+      "blocked": "blocked",
+      "Blocked": "blocked"
+    },
+    "priority_enum": ["critical", "high", "medium", "low"],
+    "priority_alias_map": {
+      "P0": "critical",
+      "P1": "high",
+      "P2": "high",
+      "P3": "medium",
+      "P4": "medium",
+      "P5": "low",
+      "P6": "low",
+      "Med": "medium",
+      "Med–High": "high"
+    },
+    "effort_enum": ["trivial", "small", "medium", "large", "xlarge"],
+    "type_enum": ["epic", "feat", "task", "bug", "idea", "test", "wire", "perf", "improve"],
+    "required_sections": {
+      "ticket": ["# Heading", "## Summary", "## Acceptance Scenarios", "## Related", "## Files", "## Verification"],
+      "epic": ["# Heading", "## Overview", "## Acceptance Scenarios", "## Tasks", "## Migration Strategy"]
+    },
+    "optional_sections": {
+      "ticket": ["## Open Questions"],
+      "epic": ["## Open Questions", "## Goals", "## Files"]
+    },
+    "change_bundle_optional": {
+      "path": ".plan/changes/<slug>/",
+      "artifacts": ["proposal.md", "design.md", "specs/<capability>.md", "tasks.md", "carryover.md"]
+    },
+    "index_json_evolution": {
+      "policy": "REUSE not replace",
+      "preserve_keys": ["hash", "extid", "type", "title", "label", "priority", "epic", "tags", "source", "git_issue", "status"],
+      "new_optional_keys": ["updated", "frontmatter", "legacy_aliases"],
+      "writer_strategy": "scripts/worktree/sync.ts remains canonical writer; scripts/spec/index-build.ts reads frontmatter + delegates writes; never overwrites git_issue/hash"
+    }
+  },
+  "tooling_proposed": {
+    "cli_entry": "bun run scripts/spec/index.ts",
+    "package_json_binding": "bun run scripts/spec/index.ts <subcommand>",
+    "subcommands": [
+      {"name": "new",      "args": ["<type>", "<slug>"], "creates": ".plan/tickets/<TYPE>-<slug>.md or .plan/epics/epic-<slug>.md; updates tickets/index.json; creates git-issue"},
+      {"name": "validate", "args": ["--target <id>"], "purpose": "lint frontmatter + required sections; exit 1 on invalid"},
+      {"name": "index-build", "args": [], "purpose": "rewrite .plan/tickets/index.json entries from frontmatter (delegates to scripts/worktree/sync when possible)"},
+      {"name": "migrate",  "args": ["--legacy-only"], "purpose": "backfill frontmatter on legacy tickets (sets _legacy: true; preserves prose untouched)"},
+      {"name": "converge", "args": ["<branch-name>"], "purpose": "diff merged branch vs spec acceptance scenarios; emit carryover.md"},
+      {"name": "archive",  "args": ["<change-name>"], "purpose": "move .plan/changes/<name>/ to .plan/changes/archive/<date>-<name>/"},
+      {"name": "status",   "args": [], "purpose": "human-readable summary by epic/status/priority"},
+      {"name": "search",   "args": ["<query>"], "purpose": "fuzzy search across .plan/"}
+    ],
+    "scripts": [
+      "scripts/spec/index.ts",
+      "scripts/spec/validate.ts",
+      "scripts/spec/index-build.ts",
+      "scripts/spec/new.ts",
+      "scripts/spec/migrate.ts",
+      "scripts/spec/converge.ts",
+      "scripts/spec/archive.ts",
+      "scripts/spec/status.ts",
+      "scripts/spec/search.ts",
+      "scripts/spec/templates/{epic,feat,task,bug,idea,test,perf,wire,improve}.md",
+      "scripts/spec/utils/{frontmatter,yaml,status,priority,aliases,walk,index-json}.ts"
+    ],
+    "constraints": [
+      "bun-native (no Node, no Python)",
+      "zero runtime dependencies",
+      "idempotent on every write",
+      "fail-loud with structured error",
+      "preserve existing prose untouched during migrate",
+      "_legacy: true on any artifact touched by migrate",
+      "REUSE scripts/worktree/sync.ts for index.json writes; never replace writer"
+    ]
+  },
+  "adoption_phases": [
+    {
+      "phase": "A",
+      "name": "Schema + validate + index-build",
+      "deliverables": ["scripts/spec/{index,validate,index-build,new,status,search}.ts", "scripts/spec/templates/", "docs/spec/spec-schema.md", "package.json binding", "scripts/check integration"],
+      "worktree": "tree/unified-spec-framework (this branch)"
+    },
+    {
+      "phase": "B",
+      "name": "Migration sweep",
+      "deliverables": ["spec migrate once on dedicated worktree", "all tickets frontmatter-stamped (_legacy: true)", "tickets/index.json canonicalized entries (schema preserved)"],
+      "worktree": true,
+      "runs_on": "dedicated worktree (not dev)"
+    },
+    {
+      "phase": "C",
+      "name": "Per-change bundle + converge",
+      "deliverables": ["scripts/spec/{converge,archive}.ts", "retro-bundle 2 in-flight epics", "scripts/worktree/finalize hook calls spec converge (opt-in)"],
+      "worktree": true
+    },
+    {
+      "phase": "D",
+      "name": "Extensions",
+      "deliverables": ["spec bug extension", "spec idea extension", "spec migrate --target=epic"],
+      "worktree": true
+    }
+  ],
+  "decisions_requested": [
+    "Hybrid shape (OpenSpec change bundle + Backlog.md frontmatter) — proceed?",
+    "Adoption phase order A->D — proceed, re-prioritize, or skip?",
+    "scripts/spec/index-build.ts delegates to scripts/worktree/sync.ts vs owns writes outright"
+  ],
+  "non_goals_v1": ["Cross-repo stores", "Web UI / kanban", "AI skill-pack personas", "Telemetry", "Replace scripts/worktree/", "Rewrite tickets/index.json schema"],
+  "references": [
+    {"name": ".plan/epics-index.md", "kind": "loop-lore", "note": "281 epics; auto-generated"},
+    {"name": ".plan/tickets/index.json", "kind": "loop-lore", "note": "~2000 entries; canonical schema reuse target"},
+    {"name": "scripts/worktree/", "kind": "loop-lore", "note": "CLI precedent for scripts/spec/"},
+    {"name": "scripts/worktree/sync.ts", "kind": "loop-lore", "note": "index.json canonical writer; scripts/spec/index-build.ts delegates here"},
+    {"name": "scripts/gen-plan-docs.ts", "kind": "loop-lore", "note": "regenerates epics-index.md"},
+    {"name": "AGENTS.md", "kind": "loop-lore", "note": "spec-authoring rule will land here"},
+    {"name": ".agents/references/banned-patterns.md", "kind": "loop-lore", "note": "lint consistency target"}
+  ],
+  "scope_decision_observed": "User confirmed: research web for unified spec patterns -> apply to .plan/ -> add scripts/ tooling -> reuse index.json -> new epic -> worktree; phase A deliverables in tree/unified-spec-framework"
+}
