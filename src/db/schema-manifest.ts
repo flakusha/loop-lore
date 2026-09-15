@@ -964,6 +964,7 @@ export const SCHEMA = new SchemaManifest()
     scope: col("text", { notNull: true, hasDefault: true, },),
     pinned: col("text", { notNull: true, hasDefault: true, },),
     privacy: col("text", { notNull: true, hasDefault: true, },),
+    review_status: col("text", { notNull: true, hasDefault: true, },),
     shareability: col("text",),
     source_message_ids: col("text",),
     source_chat_ids: col("text",),
