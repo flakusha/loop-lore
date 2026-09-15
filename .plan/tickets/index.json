@@ -13676,6 +13676,19 @@
     "source": ".plan/tickets/TASK-coverage-waiver-stream-to-client-ts-at-75-3-under-check-gate.md",
     "status": "open"
   },
+  "TASK-COVERAGE-WAIVER-TUI-CHAT-INDEX-TS-AT-51-UNDER-CHECK-GATE": {
+    "hash": "pending",
+    "git_issue": "pending",
+    "extid": "TASK-COVERAGE-WAIVER-TUI-CHAT-INDEX-TS-AT-51-UNDER-CHECK-GATE",
+    "type": "TASK",
+    "title": "Coverage waiver: tui/chat/index.ts at 51% under check gate",
+    "label": "task",
+    "priority": "Low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate.md",
+    "status": "open"
+  },
   "TASK-COVERAGE-WAIVERS-FOR-3-MODULES-BELOW-80-FLOOR": {
     "hash": "f67b1ca",
     "git_issue": "f67b1ca",
