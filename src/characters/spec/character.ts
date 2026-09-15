@@ -25,6 +25,8 @@ export interface CharacterFeatureFlags {
   lorebook?: boolean;
   assets?: boolean;
   nsfw?: boolean;
+  /** Opt-in: identity fields drive lore injection + memory config. Default false. */
+  identity_lore?: boolean;
 }
 
 // ── Inventory ────────────────────────────────────────
@@ -117,6 +119,12 @@ export interface CanonicalCharacter {
   growth_mode?: GrowthMode;
   /** Opt-in LLM-assist pass (D6). Default false. */
   llm_assist_enabled?: boolean;
+  /* Identity — mapped 1:1 to character_permanent_traits identity/background categories. */
+  species?: string;
+  homeland?: string;
+  culture?: string;
+  gender?: string;
+  age?: string | number;
   lorebook?: LorebookData;
   assets?: CharacterAsset[];
   extensions?: CharacterExtensions;

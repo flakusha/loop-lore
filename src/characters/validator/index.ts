@@ -75,6 +75,12 @@ export function validateCharacter(
     mode,
   );
   validateStringLength(character, "nickname", errors, warnings, mode,);
+  // ── Identity fields (FEAT-character-spec-inclusion-race-origin-culture) ──
+  validateStringLength(character, "species", errors, warnings, mode,);
+  validateStringLength(character, "homeland", errors, warnings, mode,);
+  validateStringLength(character, "culture", errors, warnings, mode,);
+  validateStringLength(character, "gender", errors, warnings, mode,);
+  validateStringLength(character, "age", errors, warnings, mode,);
 
   // ── Array constraints ───────────────────────
   validateArrayConstraints(character, "alternate_greetings", errors, warnings, mode,);
