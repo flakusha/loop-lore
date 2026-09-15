@@ -403,10 +403,12 @@ describeReal("executeToolCalls — persists tool-result rows (BUG-tool-call-resu
       calls += 1;
       if (calls === 2) {
         // Return a minimal fluent chain whose execute() rejects.
-        const chain: { values: () => { execute: () => Promise<void> } } = {
+        // Cast: test fixture replaces one method on a real Kysely<DB>; the
+        // real Kysely type has many fluent methods we don't exercise here.
+        const chain = {
           values: () => ({ execute: async () => { throw new Error("simulated DB outage",); }, },),
         };
-        return chain as unknown as ReturnType<typeof realInsertInto>;
+        return chain as unknown as ReturnType<Kysely<DB>["insertInto"]>;
       }
       return realInsertInto(table,);
     },) as Kysely<DB>["insertInto"];
