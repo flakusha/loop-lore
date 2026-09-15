@@ -8,6 +8,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import type { HeadersConfig, } from "../config/schema";
+import { CSP_DEFAULTS, } from "../config/sections/headers";
 import { generateNonce, } from "./csp-nonce";
 import { normalizeHeaderKey, ResponseHeaderPolicy, } from "./response-headers";
 
@@ -96,6 +97,34 @@ describe("ResponseHeaderPolicy.apply — classification", () => {
     const response = res(200, { "content-type": "text/html", }, "<html></html>",);
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.headers.get("Content-Security-Policy",),).not.toContain("'unsafe-hashes'",);
+  });
+
+  // BUG-csp-unsafe-inline-defeats-per-request-nonce:
+  // `'unsafe-inline'` in script-src makes the per-request nonce machinery
+  // meaningless (inline scripts pass either way). The default CSP must
+  // rely on the generated nonce to allow inline scripts.
+  test("CSP_DEFAULTS.scriptSrc does NOT contain 'unsafe-inline'", () => {
+    expect(CSP_DEFAULTS.scriptSrc,).not.toContain("'unsafe-inline'",);
+  });
+
+  test("emitted CSP using CSP_DEFAULTS does NOT include 'unsafe-inline' but DOES carry the nonce", () => {
+    const policy = new ResponseHeaderPolicy({
+      ...makeConfig(),
+      csp: { ...CSP_DEFAULTS, enabled: true, },
+    },);
+    const request = req("GET", "https://x/",);
+    const nonce = generateNonce(request,);
+    const out = policy.apply({
+      request,
+      response: res(200, { "content-type": "text/html", }, "<html></html>",),
+    },);
+    const csp = out.headers.get("Content-Security-Policy",) ?? "";
+    const scriptSrc = csp
+      .split(";",)
+      .map(s => s.trim())
+      .find(s => s.startsWith("script-src",)) ?? "";
+    expect(scriptSrc,).not.toMatch(/'unsafe-inline'/,);
+    expect(csp,).toContain(`'nonce-${nonce}'`,);
   });
 
   test("api route gets security headers but no CSP", async () => {

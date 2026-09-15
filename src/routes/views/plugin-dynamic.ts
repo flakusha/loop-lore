@@ -130,7 +130,7 @@ export function dynamicRoutes(database: Kysely<DB>,) {
       if (!isHtmx) {
         return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
       }
-      return await serveCharacterEditForm(ctx.params.id, database,);
+      return await serveCharacterEditForm(ctx.params.id, database, ctx.request,);
     }, {
       response: { 200: SuccessResponse, },
     },)
