@@ -86,6 +86,30 @@ export const adminSystem = {
       showToast("error", t("toasts.networkError",),);
     }
   },
+  async exportSystemConfig(format: "yaml" | "toml",) {
+    try {
+      const res = await apiFetch(`/api/admin/system-config/export?format=${format}`, {
+        headers: { Accept: format === "toml" ? "application/toml" : "application/yaml", },
+      },);
+      if (!res.ok) {
+        const err = await res.json();
+        showToast("error", err.message || t("toasts.failed",),);
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob,);
+      const a = document.createElement("a",);
+      a.href = url;
+      const today = new Date().toISOString().slice(0, 10,);
+      a.download = `system-config-${today}.${format}`;
+      document.body.appendChild(a,);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url,);
+    } catch {
+      showToast("error", t("toasts.networkError",),);
+    }
+  },
 
   async loadAnalytics() {
     this.loadingAnalytics = true;

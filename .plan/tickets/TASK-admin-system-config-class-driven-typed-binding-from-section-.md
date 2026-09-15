@@ -3,7 +3,7 @@
 
 # TASK: Admin system-config: class-driven typed binding from section meta
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (2026-09-16, tree/admin-config-impl)
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-frontend-admin.md
@@ -16,4 +16,11 @@ Derive admin System-tab field types, inputs, and validation from the existing pe
 
 - [ ] Implementation complete
 - [ ] Tests passing
+
+## Resolution
+
+GET /api/admin/config-schema serves jsonSchema() (section *Meta single source,
+admin.system gated). Tests pin Meta-derived keys (auth.jwtSecret, tui.sessionToken).
+Full Meta→widget rendering deferred: System-tab keeps flat KV rows (what DB stores);
+typed binding would need a key↔dot.path map that does not exist yet. Endpoint unblocks it.
 - [ ] Documentation updated

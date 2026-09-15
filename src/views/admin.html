@@ -1297,6 +1297,18 @@
                 </div>
               </template>
             </div>
+            <!-- Export Section -->
+            <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Export Configuration</h3>
+              <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-2)">
+                Download saved keys as YAML or TOML. Secret values are redacted. File saves to your browser download
+                folder.
+              </div>
+              <div style="display: flex; gap: var(--space-2)">
+                <button class="btn btn-secondary btn-xs" @click="exportSystemConfig('yaml')">Export YAML</button>
+                <button class="btn btn-secondary btn-xs" @click="exportSystemConfig('toml')">Export TOML</button>
+              </div>
+            </div>
             <!-- NSFW Configuration Section -->
             <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
               <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">NSFW Content Policy</h3>
