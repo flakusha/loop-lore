@@ -11145,6 +11145,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md"
     },
     {
@@ -18176,6 +18180,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
+    }
+  ],
+
+  "src/middleware/csrf-wiring.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-bug-csrf-cookie-secure-flag-hardcoded-true-breaks-over-plain.md"
     }
   ],
   "src/middleware/csrf.integration.test.ts": [
