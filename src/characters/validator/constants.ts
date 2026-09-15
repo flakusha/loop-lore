@@ -30,6 +30,12 @@ export const CONSTRAINTS: Record<string, FieldConstraints> = {
   nickname: { maxLength: 64, required: false, },
   nsfw_categories: { maxItems: 50, required: false, },
   nsfw_hard_limits: { maxItems: 50, required: false, },
+  // Identity fields — strict-mode length caps per FEAT-character-spec-inclusion.
+  species: { maxLength: 64, required: false, },
+  homeland: { maxLength: 128, required: false, },
+  culture: { maxLength: 128, required: false, },
+  gender: { maxLength: 64, required: false, },
+  age: { maxLength: 32, required: false, },
 };
 
 export const VALID_CONTENT_RATINGS: ContentRating[] = [

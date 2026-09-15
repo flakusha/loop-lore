@@ -114,6 +114,32 @@ export const dataProperties = {
     items: { type: "string", },
     description: "Never-allowed content",
   },
+  // Identity (FEAT-character-spec-inclusion-race-origin-culture)
+  species: {
+    type: "string",
+    maxLength: 64,
+    description: "Character species / race — mapped to character_permanent_traits identity/species",
+  },
+  homeland: {
+    type: "string",
+    maxLength: 128,
+    description: "Character origin / homeland — mapped to character_permanent_traits background/homeland",
+  },
+  culture: {
+    type: "string",
+    maxLength: 128,
+    description: "Character culture — mapped to character_permanent_traits background/culture",
+  },
+  gender: {
+    type: "string",
+    maxLength: 64,
+    description: "Character gender — mapped to character_permanent_traits identity/gender",
+  },
+  age: {
+    type: ["string", "number",],
+    maxLength: 32,
+    description: "Character age (string or number) — mapped to character_permanent_traits identity/age",
+  },
   lorebook: {
     type: "object",
     description: "Lorebook entries for context injection",

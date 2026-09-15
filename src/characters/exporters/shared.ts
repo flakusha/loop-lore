@@ -44,6 +44,13 @@ export function exportBaseFields(character: CanonicalCharacter,): Record<string,
   if (character.creator) { data.creator = character.creator; }
   if (character.character_version) { data.character_version = character.character_version; }
 
+  // Identity (FEAT-character-spec-inclusion-race-origin-culture)
+  if (character.species !== undefined) { data.species = character.species; }
+  if (character.homeland !== undefined) { data.homeland = character.homeland; }
+  if (character.culture !== undefined) { data.culture = character.culture; }
+  if (character.gender !== undefined) { data.gender = character.gender; }
+  if (character.age !== undefined) { data.age = character.age; }
+
   // Extensions
   if (character.extensions && Object.keys(character.extensions,).length > 0) {
     data.extensions = character.extensions;
