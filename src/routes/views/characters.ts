@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import { ActorType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { getNonce, } from "../../middleware/csp-nonce";
 import { buildEditFormHtml, } from "./character-edit-form";
 import { escapeHtml, htmlResponse, } from "./layout";
 
@@ -33,7 +34,7 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
       : "<span>👤</span>";
     const name = escapeHtml(c.display_name,);
     const desc = escapeHtml(c.description || "",);
-    return `<div class="character-card" onclick="selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
+    return `<div class="character-card" x-on:click="window.selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
       <div class="card-img">${avatar}</div>
       <div class="card-body">
         <div class="name">${name}</div>
@@ -49,7 +50,11 @@ async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
  * @param characterId
  * @param database
  */
-async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,): Promise<Response> {
+async function serveCharacterEditForm(
+  characterId: string,
+  database: Kysely<DB>,
+  request?: Request,
+): Promise<Response> {
   const actor = await database
     .selectFrom("actors",)
     .selectAll()
@@ -77,10 +82,12 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,
     : "<span>👤</span>";
   const avatarId = actor.avatar_asset_id || "";
   const avatarRemoveBtn = actor.avatar_asset_id
-    ? '<button type="button" class="btn btn-danger" onclick="clearAvatar()">Remove</button>'
+    ? '<button type="button" class="btn btn-danger" x-on:click="window.clearAvatar()">Remove</button>'
     : "";
   const contentRating = (actor.content_rating as string | null) ?? "sfw";
 
+  const rawNonce = request ? getNonce(request,) : null;
+  const cspNonce = rawNonce ?? undefined;
   return htmlResponse(buildEditFormHtml({
     name,
     desc,
@@ -95,7 +102,7 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,
     avatarRemoveBtn,
     characterId,
     contentRating,
-  },),);
+  }, { cspNonce, },),);
 }
 
 /**
@@ -119,7 +126,7 @@ async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Pr
 
   const items = Array.from(chats, (c,) => {
     const name = escapeHtml(c.name,);
-    return `<div class="chat-item" onclick="location.assign('/views/chat?chatid=${c.id}')" data-testid="chat-item-${c.id}">
+    return `<div class="chat-item" x-on:click="window.location.assign('/views/chat?chatid=${c.id}')" data-testid="chat-item-${c.id}">
       <div class="chat-info"><h4 class="chat-name">${name}</h4><p class="chat-preview">No messages yet</p></div>
       <span class="chat-time">${c.updated_at ? new Date(c.updated_at,).toLocaleDateString() : ""}</span>
     </div>`;

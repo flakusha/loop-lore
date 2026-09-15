@@ -42,7 +42,7 @@ const INTERNAL_TRAITS_SECTION = `
           <div class="form-group">
             <label class="form-label">Aspirations</label>
             <div id="aspirations-list" data-testid="aspirations-list"></div>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="addAspiration()" style="margin-top:var(--space-2)" data-testid="add-aspiration">+ Add Aspiration</button>
+            <button type="button" class="btn btn-secondary btn-sm" x-on:click="window.addAspiration()" style="margin-top:var(--space-2)" data-testid="add-aspiration">+ Add Aspiration</button>
           </div>
           <div class="form-group">
             <label class="form-label">Moral Disposition</label>
@@ -113,11 +113,18 @@ const PROACTIVE_SECTION = `
         </details>`;
 
 /**
- * Build the full character edit form HTML.
  * Called by serveCharacterEditForm after DB lookup.
+ *
+ * When `cspNonce` is supplied, the inline `<script>` block at the foot of
+ * the form carries the nonce so it executes under the strict CSP (no
+ * `'unsafe-inline'`). When omitted, the script emits without a nonce —
+ * acceptable in tests / non-CSP contexts.
  * @param v
+ * @param options
+ * @param options.cspNonce
  */
-export function buildEditFormHtml(v: EditFormValues,): string {
+export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: string } = {},): string {
+  const nonceAttr = options.cspNonce ? ` nonce="${options.cspNonce}"` : "";
   return `<div style="max-width:720px;margin:0 auto;width:100%">
       <form id="char-edit-form" data-testid="character-edit-form">
         <div class="form-group" style="display:flex;align-items:flex-start;gap:var(--space-4)">
@@ -169,11 +176,11 @@ ${INTERNAL_TRAITS_SECTION}
 ${PROACTIVE_SECTION}
         <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
           <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
-          <button type="button" class="btn btn-primary" onclick="saveCharacterEdit('${
+          <button type="button" class="btn btn-primary" x-on:click="window.saveCharacterEdit('${
     escapeAttr(v.characterId,)
   }')" data-testid="save-character-btn">Save Character</button>
       </form>
-      <script>
+      <script${nonceAttr}>
         (async () => {
           if (typeof globalThis.loadInternalTraits === 'function') { await globalThis.loadInternalTraits('${
     escapeAttr(v.characterId,)

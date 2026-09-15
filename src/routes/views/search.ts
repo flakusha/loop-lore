@@ -120,7 +120,7 @@ async function serveGallerySearch(
     const filename = escapeHtml(a.filename,);
     const size = formatSize(a.size_bytes,);
     const tags = escapeHtml((tagMap.get(a.id,) ?? []).join(",",),);
-    return `<div class="asset-card" data-tags="${tags}" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
+    return `<div class="asset-card" data-tags="${tags}" x-on:click="window.openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
       <div class="thumb">${thumbForAsset(a,)}</div>
       <div class="details">
         <span class="name">${filename}</span>
@@ -166,7 +166,7 @@ async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchPara
       : "<span>👤</span>";
     const name = escapeHtml(c.display_name,);
     const desc = escapeHtml(c.description || "",);
-    return `<div class="character-card" onclick="selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
+    return `<div class="character-card" x-on:click="window.selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
       <div class="card-img">${avatar}</div>
       <div class="card-body">
         <div class="name">${name}</div>
@@ -220,7 +220,7 @@ async function serveWorldsSearch(
   const items = Array.from(worlds, (w,) => {
     const name = escapeHtml(w.name,);
     const desc = escapeHtml(w.description || "",);
-    return `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
+    return `<div class="world-card" x-on:click="window.location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
       <div class="world-header"><h3 class="world-name">${name}</h3><span class="world-id">ID: ${w.id}</span></div>
       <div class="world-description">${desc}</div>
       <div class="world-meta"><span class="tag">0 chats</span></div>
