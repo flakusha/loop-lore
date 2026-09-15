@@ -79,4 +79,32 @@ describe("views/character-edit-form", () => {
     expect(html,).toContain("👤",);
     expect(html,).not.toContain("remove-avatar",);
   });
+
+  test("includes actor sub-resource panels section", () => {
+    const html = buildEditFormHtml(BASE,);
+    // Outer panel container
+    expect(html,).toContain("actor-panels-section",);
+    // Per-panel test hooks and Alpine factory bindings
+    expect(html,).toContain("actorLicensingFactory(actorId)",);
+    expect(html,).toContain("actorEntitiesFactory(actorId, 'notes')",);
+    expect(html,).toContain("actorEntitiesFactory(actorId, 'items')",);
+    expect(html,).toContain("actorEntitiesFactory(actorId, 'lore-entries')",);
+    expect(html,).toContain("actorSystemsFactory(actorId)",);
+    expect(html,).toContain("actorTraitsFactory(actorId)",);
+    expect(html,).toContain("actorEmotionAvatarsFactory(actorId)",);
+    // characterId is escaped into the x-data scope (XSS safety on the actor id)
+    expect(html,).toContain("x-data=\"{ actorId: 'actor-aria' }\"",);
+    // Real panel bodies are inlined (not empty mount points)
+    expect(html,).toContain("licensing-form",);
+    expect(html,).toContain("entities-list",);
+    expect(html,).toContain("systems-message",);
+    expect(html,).toContain("traits-message",);
+    expect(html,).toContain("emotion-avatars-message",);
+  });
+
+  test("escapes characterId in panel data scope", () => {
+    const html = buildEditFormHtml({ ...BASE, characterId: "evil'); alert(1); ('", },);
+    expect(html,).toContain("x-data=\"{ actorId: 'evil&#39;); alert(1); (&#39;' }\"",);
+    expect(html,).not.toContain("x-data=\"{ actorId: 'evil'); alert(1); (' }\"",);
+  });
 });
