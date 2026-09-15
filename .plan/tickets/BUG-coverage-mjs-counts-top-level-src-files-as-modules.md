@@ -10,9 +10,12 @@ scripts/check/coverage.mjs derives the module name as the first path segment aft
 
 ## Resolution
 
-Resolved on dev before 2026-09-14. `scripts/check/coverage.mjs:194` implements the suggested fix: `const mod = seg.includes(".",) ? "(root)" : seg;`. Top-level files like `src/elysia-app.ts` collapse into the `(root)` bucket instead of being reported as a module named `elysia-app.ts`.
+Resolved by commit `b63efbede` on 2026-09-10. `scripts/check/coverage.mjs:194` (`const mod = seg.includes(".",) ? "(root)" : seg;`) renames the bucket for top-level files to `(root)` instead of emitting `elysia-app.ts` as a module row. The `(root)` bucket is waived in `WAIVERS["(root)"]` at `coverage.mjs:107-110` (floor 75), so the runtime coverage gate stays green even when the composition root has low coverage.
 
-Gate evidence: synthetic grouping test (`SF:src/elysia-app.ts` + `SF:src/server/foo.ts` + `SF:src/server/bar/baz.ts`) confirms `src/elysia-app.ts → (root)` and `src/server/*` keeps the directory as `server`. Full `bun run check:parallel --gates "…coverage - per-module line %"` 5/5 pass on `ticket-work @ 810143d02`.
+Regression coverage in `scripts/check/coverage.test.ts:33-51`:
+- Synthetic lcov with `SF:src/elysia-app.ts` + `SF:src/server/handler.ts` exits 0.
+- Asserts both modules appear in the row list (`server` + `(root)`); the test name + assertion were updated to match the rename-to-bucket semantics (not skip) when the bookkeeping commit landed.
+- `bun run check:parallel --gates "typecheck - backend,lint - oxlint (correctness),format - dprint,db - schema gate,coverage - per-module line %,plan - ticket index (sync)"` 6/6 pass on `dev @ cc55b4aa0`.
 
 ## Acceptance Criteria
 
