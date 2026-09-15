@@ -6865,6 +6865,19 @@
     "source": ".plan/tickets/FEAT-time-scale.md",
     "status": "in_progress"
   },
+  "FEAT-TOOL-CALL-BUBBLE-PERSISTED-ROWS": {
+    "hash": "46d22ff",
+    "git_issue": "46d22ff",
+    "extid": "FEAT-TOOL-CALL-BUBBLE-PERSISTED-ROWS",
+    "type": "FEAT",
+    "title": "Persisted tool-call bubble for ToolCall/ToolResult rows",
+    "label": "feat",
+    "priority": "Medium",
+    "epic": "epic-assistant-gm-flows, epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/FEAT-tool-call-bubble-persisted-rows.md",
+    "status": "open"
+  },
   "FEAT-TRANSPORT-COMPRESSION-WIRE-RECEIVE-SIDE-DECOMPRESSION-WITH-L": {
     "hash": "9606042",
     "git_issue": "9606042",

@@ -12066,6 +12066,10 @@
   "src/frontend/alpine/chat-panels.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/FEAT-tool-call-bubble-persisted-rows.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/WIRE-frontend-keyboard-help-overlay.md"
     },
     {
