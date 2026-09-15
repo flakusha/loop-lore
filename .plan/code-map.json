@@ -10151,6 +10151,13 @@
       "source": ".plan/tickets/TASK-character-multi-avatar.md"
     }
   ],
+
+  "src/db/schema-backfill.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
+    }
+  ],
   "src/db/schema-backfill.ts": [
     {
       "kind": "ticket",
@@ -26593,6 +26600,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-auto-rotation-config-drift.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-new-migration-parts-never-apply-to-existing-databases.md"
     },
     {
       "kind": "ticket",
