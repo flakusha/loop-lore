@@ -57,7 +57,10 @@ export function applyChatViewDefaults(store: unknown,): void {
  * @param store
  */
 export function assertChatViewShape(store: unknown,): void {
-  if (process.env.NODE_ENV === "production") { return; }
+// Guarded for the browser bundle: `process` is undefined there. Bun and Node
+// expose it, so production still short-circuits as designed.
+const isProd = typeof process !== "undefined" && process.env?.NODE_ENV === "production";
+if (isProd) { return; }
   if (store == null || typeof store !== "object") {
     throw new TypeError(
       `[store-schema] chat store must be an object, got ${store === null ? "null" : typeof store}`,
