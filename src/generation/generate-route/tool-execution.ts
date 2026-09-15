@@ -89,6 +89,12 @@ interface ToolCallItem {
   function: { name: string; arguments: string };
 }
 
+/** Tool result plus the bubble metadata persisted to `messages.metadata`. */
+interface PersistedToolResult extends GenerationMessage {
+  toolName?: string;
+  toolError?: boolean;
+}
+
 /**
  * Persist each tool result as a `tool_result` row in the `messages` table,
  * following the same server-side encryption path as generated messages and
@@ -98,7 +104,7 @@ interface ToolCallItem {
  */
 async function persistToolResults(
   ctx: ToolExecutionContext,
-  results: GenerationMessage[],
+  results: PersistedToolResult[],
 ): Promise<void> {
   for (const result of results) {
     const { storedContent, storedKeyId, } = await encryptStoredContent({
@@ -107,7 +113,11 @@ async function persistToolResults(
       actorId: ctx.actorId,
       plaintext: result.content,
     },);
-    const metadata = safeJsonStringify({ tool_call_id: result.tool_call_id ?? null, },);
+    const metadata = safeJsonStringify({
+      tool_call_id: result.tool_call_id ?? null,
+      tool_name: result.toolName ?? null,
+      tool_error: result.toolError ?? false,
+    },);
     await ctx.db
       .insertInto("messages",)
       .values({
@@ -141,7 +151,7 @@ export async function executeToolCalls(
   ctx?: ToolExecutionContext,
 ): Promise<GenerationMessage[]> {
   const toolDefs = registry.getAllTools();
-  const results: GenerationMessage[] = [];
+  const results: PersistedToolResult[] = [];
 
   for (const tc of toolCalls) {
     const def = toolDefs.find((d,) => d.name === tc.function.name);
@@ -150,6 +160,8 @@ export async function executeToolCalls(
         role: "tool",
         content: sanitizeToolOutput(jsonStringifyOr({ error: `Tool not found: ${tc.function.name}`, },),),
         tool_call_id: tc.id,
+        toolName: tc.function.name,
+        toolError: true,
       },);
       continue;
     }
@@ -169,6 +181,8 @@ export async function executeToolCalls(
           received: tc.function.arguments.slice(0, 200,),
         },),),
         tool_call_id: tc.id,
+        toolName: tc.function.name,
+        toolError: true,
       },);
       continue;
     }
@@ -179,12 +193,16 @@ export async function executeToolCalls(
         role: "tool",
         content: sanitizeToolOutput(toolResult.content,),
         tool_call_id: tc.id,
+        toolName: tc.function.name,
+        toolError: false,
       },);
     } catch (error) {
       results.push({
         role: "tool",
         content: sanitizeToolOutput(jsonStringifyOr({ error: (error as Error).message, },),),
         tool_call_id: tc.id,
+        toolName: tc.function.name,
+        toolError: true,
       },);
     }
   }
