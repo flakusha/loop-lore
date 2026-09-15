@@ -156,6 +156,24 @@
       <div class="character-counter" x-show="activeChat && $refs.messageInput?.value?.length > 0">
         <span x-text="($refs.messageInput?.value?.length || 0)"></span>
       </div>
+      <!-- Draft restore: Ctrl+Z undo for cleared input (FEAT-browser-side-chat-input-versioning) -->
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm"
+        x-show="_draftBackup && $refs.messageInput?.value === ''"
+        @click.prevent="
+          const input = $refs.messageInput;
+          if (input && _draftBackup) {
+            input.value = _draftBackup;
+            _draftBackup = undefined;
+            autoResize(input);
+            saveComposerDraft();
+            $el.focus();
+          }
+        "
+        title="Restore last draft (Ctrl+Z)"
+        data-testid="draft-restore-button"
+      >↩</button>
       <!-- Prompt improve: unified "improve my prompt" (epic-prompt-improvement) -->
       <div class="prompt-improve" x-data="{ open: false }">
         <button

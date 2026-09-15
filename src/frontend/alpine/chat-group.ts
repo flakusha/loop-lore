@@ -191,5 +191,22 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
         this.movePaletteSelection(-1,);
       }
     }
+    // ESC when no autocomplete/palette open → flush the debounced draft so
+    // the last keystrokes survive a chat switch or reload.
+    if (event.key === "Escape") {
+      this.flushComposerDraft();
+      return;
+    }
+    // Ctrl+Z / Cmd+Z when the textarea is empty → restore the last cleared draft.
+    if ((event.ctrlKey || event.metaKey) && event.key === "z") {
+      const input = event.target as HTMLTextAreaElement | undefined;
+      if (input && input.value === "" && this._draftBackup) {
+        event.preventDefault();
+        input.value = this._draftBackup;
+        this._draftBackup = undefined;
+        this.autoResize(input);
+        this.saveComposerDraft();
+      }
+    }
   },
 };
