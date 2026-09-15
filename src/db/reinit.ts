@@ -3,33 +3,15 @@
 
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import { existsSync, mkdirSync, renameSync, unlinkSync, } from "node:fs";
+import { existsSync, } from "node:fs";
 import path from "node:path";
 import { DATA_DIR, } from "../config/constants";
 import { createLogger, getLogger, } from "../logger";
-import type { Logger, } from "../logger";
 import { createSqliteDialect, getDatabase, } from "./index";
 import { runMigrations, } from "./migrate";
+import { archiveFile, } from "./reinit-archive";
 import type { DB, } from "./schema";
 import { seedDefaultActors, } from "./seed";
-
-/**
- * Move a DB file into the timestamped backup dir; fall back to unlink on cross-device rename.
- * @param p
- * @param log
- */
-function archiveFile(p: string, log: Logger,): void {
-  const backupDir = process.env.LOOP_LORE_BACKUP_DIR ??
-    path.resolve(DATA_DIR, "..", "loop-lore-data-backup",);
-  mkdirSync(backupDir, { recursive: true, },);
-  const stamp = new Date().toISOString().replace(/[:.]/g, "-",);
-  try {
-    renameSync(p, path.join(backupDir, `${stamp}-${path.basename(p,)}`,),);
-  } catch (err) {
-    log.warn(`Could not archive ${p} (${String(err,)}); removing instead`,);
-    unlinkSync(p,);
-  }
-}
 
 /** */
 async function reinit(): Promise<void> {
