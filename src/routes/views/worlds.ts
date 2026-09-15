@@ -46,7 +46,7 @@ async function serveWorldsListDb(
   const items = Array.from(worlds, (w,) => {
     const name = escapeHtml(w.name,);
     const desc = escapeHtml(w.description || "",);
-    return `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
+    return `<div class="world-card" x-on:click="window.location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
       <div class="world-header"><h3 class="world-name">${name}</h3><span class="world-id">ID: ${w.id}</span></div>
       <div class="world-description">${desc}</div>
       <div class="world-meta"><span class="tag">0 chats</span></div>

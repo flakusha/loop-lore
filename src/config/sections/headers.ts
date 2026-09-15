@@ -8,7 +8,12 @@ import type { CspConfig, HeadersConfig, } from "../schema";
 export const CSP_DEFAULTS: CspConfig = {
   enabled: true,
   defaultSrc: ["'self'",],
-  scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net",],
+  // BUG-csp-unsafe-inline-defeats-per-request-nonce:
+  // Inline scripts must carry a per-request nonce (see src/middleware/csp-nonce.ts).
+  // `'unsafe-eval'` stays because Alpine.js uses Function()/eval internally for
+  // expression evaluation; once Alpine is replaced with the v3 build that compiles
+  // expressions statically, this can drop too.
+  scriptSrc: ["'self'", "'unsafe-eval'", "https://cdn.jsdelivr.net",],
   styleSrc: ["'self'", "'unsafe-inline'",],
   imgSrc: ["'self'", "data:", "blob:",],
   fontSrc: ["'self'",],
