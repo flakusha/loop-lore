@@ -3,11 +3,18 @@
 
 # TASK: Export Frontend Progress UI
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (merged to dev 2026-09-15)
 **Priority:** P1
 **Effort:** Low
 **Epic:** epic-frontend-backend-integration
 **Tags:** export, frontend, progress, download
+
+## Resolution
+
+Merged to dev in `991f6f050` (`feat(frontend): mount actor panels, export progress; drop orphan`):
+
+- `src/frontend/alpine/export-progress.ts` (+ `.test.ts`) — SSE + polling fallback + download link, driven by `exportProgressFactory`.
+- `src/components/export/export-progress-panel.html` — mounted in `src/views/settings.html` under `data-testid="settings-export-progress"`.
 
 ## Summary
 

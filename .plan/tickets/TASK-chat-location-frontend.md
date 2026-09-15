@@ -3,11 +3,18 @@
 
 # TASK: Chat Location Frontend
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done (merged to dev 2026-09-15)
 **Priority:** P2
 **Effort:** Low
 **Epic:** epic-frontend-backend-integration
 **Tags:** location, frontend, chat
+
+## Resolution
+
+Merged to dev in `991f6f050` (`feat(frontend): mount actor panels, export progress; drop orphan`):
+
+- `src/frontend/alpine/chat-location.ts` (+ `.test.ts`) — get/set location.
+- `src/components/chat/location-panel.html` — mounted via `{{> chat/location-panel.html }}` in `src/views/chat.html`.
 
 ## Summary
 
