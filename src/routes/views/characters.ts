@@ -106,6 +106,15 @@ async function serveCharacterEditForm(
 }
 
 /**
+ * @param value SQLite `datetime('now')` text or ISO string
+ * @returns the instant as an ISO string, pinning zone-less values to UTC
+ */
+function toIsoUtc(value: string,): string {
+  const zoned = /[zZ]|[+-]\d{2}:?\d{2}$/.test(value,) ? value : value.replace(" ", "T",) + "Z";
+  return new Date(zoned,).toISOString();
+}
+
+/**
  * @param slug
  * @param database
  */
@@ -126,9 +135,12 @@ async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Pr
 
   const items = Array.from(chats, (c,) => {
     const name = escapeHtml(c.name,);
+    // SQLite stores `datetime('now')` as "YYYY-MM-DD HH:MM:SS" (no zone);
+    // interpret as UTC so the browser renders the user's own zone.
+    const iso = toIsoUtc(c.updated_at ?? "",);
     return `<div class="chat-item" x-on:click="window.location.assign('/views/chat?chatid=${c.id}')" data-testid="chat-item-${c.id}">
       <div class="chat-info"><h4 class="chat-name">${name}</h4><p class="chat-preview">No messages yet</p></div>
-      <span class="chat-time">${c.updated_at ? new Date(c.updated_at,).toLocaleDateString() : ""}</span>
+      <span class="chat-time"><time datetime="${iso}" data-client-date="date">${iso}</time></span>
     </div>`;
   },).join("",);
 
