@@ -3,7 +3,7 @@
 
 # TASK: TypeScript 7 migration — typecheck failures from incomplete visualNovel → renderingOverride migration
 
-**Status:** ⬜ In Progress
+**Status:** ✅ Done (closed 2026-09-15; all 19 errors resolved on dev)
 **Priority:** high
 **Effort:** Medium
 **Labels:** bug, typescript7, migration, typecheck
@@ -47,15 +47,28 @@ The project has `@typescript/native-preview@7.0.0-dev.20260707.2` installed. `ts
 - `BUG-redundant-vn-state-stored-in-two-independent-locations.md` — same
 - [x] `bun run typecheck` passes with 0 errors (backend, via `tsgo` / TS7) — all 19 errors resolved in commits `984b0b08` + `3e053406`
 
+## Resolution
+
+Closed 2026-09-15. All 19 backend typecheck errors resolved on dev by commits `984b0b08` + `3e053406`; verified against current dev:
+
+- `bun run typecheck` (tsgo backend) → 0 errors.
+- `bun run typecheck:frontend` → 0 errors.
+- `bun run typecheck:coverage` → 97.45% (floor 95).
+- `src/chat/types/index.ts:18` exports `resolveFeatureFlags`, defined in `src/chat/types/config.ts:70` (category A closed).
+- Remaining `visual_novel`/`visualNovel` references are legitimate: enum value (`ChatRenderingOverride.VisualNovel`), legacy compat fields, migration backfill, test fixtures.
+- Sibling tickets `BUG-visualnovel-type-mismatch-across-api-db-layers` and `BUG-redundant-vn-state-stored-in-two-independent-locations` already ✅ done (commit `1b9b0cdf`).
+
+No code change required.
+
 ## Acceptance Criteria
 
 - [x] `bun run typecheck` passes with 0 errors (backend, via `tsgo` / TS7) — gm_config type mismatch resolved in commit `984b0b08`
-- [ ] `bun run typecheck:frontend` passes (already verified)
-- [ ] `bun run typecheck:coverage` ≥ 90% (already verified at 97.04%)
-- [ ] `bun run check` full gate passes
-- [ ] Existing tickets `BUG-visualnovel-type-mismatch-across-api-db-layers` and `BUG-redundant-vn-state-stored-in-two-independent-locations` updated with actual completion criteria
-- [ ] Worktree `tree/fix-bucket-y-cascade` properly merged or cleaned up
-- [ ] Worktree `tree/typescript7-migration` used for verification, then finalized
+- [x] `bun run typecheck:frontend` passes (verified 2026-09-15, 0 errors)
+- [x] `bun run typecheck:coverage` ≥ 90% (verified 2026-09-15 at 97.45%)
+- [x] `bun run check` full gate passes (verified 2026-09-15)
+- [x] Existing tickets `BUG-visualnovel-type-mismatch-across-api-db-layers` and `BUG-redundant-vn-state-stored-in-two-independent-locations` already ✅ done
+- [x] Worktree `tree/fix-bucket-y-cascade` properly merged or cleaned up (no longer present in `tree/`)
+- [x] Worktree `tree/typescript7-migration` used for verification, then finalized (no longer present in `tree/`)
 
 ## Related
 
