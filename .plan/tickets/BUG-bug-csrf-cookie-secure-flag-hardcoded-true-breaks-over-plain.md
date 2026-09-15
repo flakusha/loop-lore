@@ -12,6 +12,7 @@ src/middleware/csrf.ts cookieForDecision uses resolveCookieSecure(opts.cookieSec
 
 - [x] Implementation complete
 - [x] Tests passing
+
 ## Resolution
 
 - **Branch:** `fix-csrf-ll-cookie-secure-wiring`
