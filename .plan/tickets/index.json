@@ -166,7 +166,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-align-seeddefaults-null-handling-with-resolvemodelrole-defen.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-ALPINE-INIT-CRASH-CHAT-VIEW-STORE-UNDEFINED": {
     "hash": "0c39d4f",
@@ -939,7 +939,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-character-growth-patch-confirm-reject-always-422-dead-endpoi.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-ACTOR-OWNERSHIP-NEVER-CHECKED": {
     "hash": "d6c64be",
@@ -952,7 +952,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-character-internal-traits-idor-actor-ownership-never-checked.md",
     "git_issue": "d6c64be",
-    "status": "duplicate"
+    "status": "done"
   },
   "BUG-CHARACTER-INTERNAL-TRAITS-IDOR-CROSS-USER-READ-WRITE-DELETE": {
     "hash": "32ab55e",
@@ -2111,7 +2111,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-FRONTEND-MINOR-BUGS-BATCH": {
     "hash": "aae9870",
@@ -4098,7 +4098,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d.md",
     "git_issue": "8be98b3",
-    "status": "open"
+    "status": "done"
   },
   "BUG-TABLE-BACKEND-REQUEST-ID-COLLISION-OVERWRITES-FOREIGN-ROW": {
     "hash": "",
