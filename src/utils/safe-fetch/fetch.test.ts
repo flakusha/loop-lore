@@ -174,6 +174,52 @@ describe("safeFetch — timeout and abort", () => {
   });
 });
 
+describe("safeFetch — streaming", () => {
+  test("returns the live Response with unconsumed body when stream is true", async () => {
+    let enqueued = false;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller,) {
+        if (!enqueued) {
+          enqueued = true;
+          controller.enqueue(new TextEncoder().encode("chunk",),);
+        } else {
+          controller.close();
+        }
+      },
+    },);
+    await withMockFetch(
+      mock(() => new Response(stream, { status: 200, headers: { "Content-Type": "text/event-stream", }, },)),
+      async () => {
+        const result = await safeFetch<Response>("https://example.com/stream", { stream: true, },);
+        expect(result.ok,).toBe(true,);
+        if (result.ok) {
+          expect(result.data,).toBeInstanceOf(Response,);
+          // Body must still be consumable: proves response.text() was never called.
+          const reader = (result.data as Response).body!.getReader();
+          const { value, } = await reader.read();
+          expect(new TextDecoder().decode(value,),).toBe("chunk",);
+        }
+      },
+    );
+  });
+
+  test("resolves immediately for a never-ending stream (no timeout armed)", async () => {
+    const neverEnding = new ReadableStream<Uint8Array>({ pull: () => {}, },);
+    await withMockFetch(
+      mock(() => new Response(neverEnding, { status: 200, },)),
+      async () => {
+        const result = await safeFetch<Response>("https://example.com/stream", {
+          stream: true,
+          timeout: 1,
+        },);
+        // If a timeout were armed, safeFetch would never resolve against a body
+        // that stays open. It returns the unread Response immediately.
+        expect(result.ok,).toBe(true,);
+      },
+    );
+  });
+});
+
 describe("safeFetch — request body serialization", () => {
   test("passes string bodies through without double serialization", async () => {
     let captured: RequestInit | undefined;
