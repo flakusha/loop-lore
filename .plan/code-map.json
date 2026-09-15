@@ -7051,7 +7051,6 @@
       "source": ".plan/tickets/TASK-nsfw-gate-gaps-performedby-spoof-audit-target-misconfig-disa.md"
     }
   ],
-
   "src/config/schema-class/idempotency.test.ts": [
     {
       "kind": "ticket",
@@ -10153,6 +10152,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-emotion-avatar-fallback-metadata-incomplete.md"
     },
     {
@@ -10594,10 +10597,6 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-multi-instance-reconciliation.md"
-    },
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-check-db-schemas-ts-dprint-subprocess-exit-20-masks-stale-de.md"
     },
     {
       "kind": "ticket",
@@ -18182,7 +18181,6 @@
       "source": ".plan/tickets/BUG-fix-csrf-extract-csrfplugin-factory-so-tests-exercise-the-pr.md"
     }
   ],
-
   "src/middleware/csrf-wiring.ts": [
     {
       "kind": "ticket",
@@ -26409,20 +26407,6 @@
       "source": "docs/spec/transport-unified.md"
     }
   ],
-
-  "src/server/bar/baz.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md"
-    }
-  ],
-
-  "src/server/foo.ts": [
-    {
-      "kind": "ticket",
-      "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md"
-    }
-  ],
   "src/server/handler.ts": [
     {
       "kind": "epic",
@@ -26431,6 +26415,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-access-log-never-records-userid-handle-x-user-id-header-neve.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-coverage-mjs-counts-top-level-src-files-as-modules.md"
     },
     {
       "kind": "ticket",
