@@ -1,29 +1,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// src/config/schema-class/json-schema/db.ts — database JSON Schema section
-// Default paths are emitted as `${DATA_DIR}/...` placeholders, not the
-// resolved absolute path, so the published JSON Schema is portable across
-// dev checkouts / worktrees / CI machines. Consumers resolve `DATA_DIR` at
-// runtime via `path.resolve(<repo>/loop-lore-data)` (see src/config/constants.ts).
+// src/config/schema-class/json-schema/db.ts — re-export: single source databaseMeta in sections/database.ts
+// DATA_DIR placeholder handling moved to the json-schema assembly boundary (index.ts).
+import { databaseMeta, } from "../../sections/database";
 
-export const db = {
-  type: "object",
-  description: "Database configuration",
-  properties: {
-    type: {
-      type: "string",
-      enum: ["sqlite", "postgres",],
-      default: "sqlite",
-      description: "Database type",
-    },
-    sqliteFilename: {
-      type: "string",
-      default: "${DATA_DIR}/loop-lore.db",
-      description:
-        "SQLite database file path. DATA_DIR resolves to <repo>/loop-lore-data at runtime. Overridden by LOOP_LORE_DB_PATH env var.",
-    },
-    url: { type: "string", description: "PostgreSQL connection URL", },
-  },
-  required: ["type", "sqliteFilename",],
-};
+export const db = databaseMeta;
