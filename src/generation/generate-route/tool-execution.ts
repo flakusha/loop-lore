@@ -191,14 +191,33 @@ export async function executeToolCalls(
       },);
     }
   }
-
   // BUG-tool-call-result-no-frontend-rendering: persist each tool result as a
   // chat-visible `messages` row so tool calls leave a record even when the
   // upstream LLM errored, the tool threw, or the registry missed the tool.
   // Callers that want a FK back to the assistant message should call
   // `storeToolResultRows` themselves — the inline path here writes
+  // `parent_id = null` and traces correlation through `metadata.tool_call_id`.
+  // The `typeof ctx.db.insertInto` guard is for the existing test fixtures
+  // that pass `db: {} as never`; in production ctx.db is always a real
+  // Kysely<DB> instance, so a missing `insertInto` here would indicate a
+  // wiring bug, not an intended no-op.
+  // Inline persist is best-effort: a throw (DB outage, constraint violation,
+  // encryption error) must NOT abort the generation loop. Log and continue
+  // so the in-memory results still feed the next LLM round, and the
+  // assistant message can still be persisted by `storeGenerationResult`
+  // downstream. Partial-persist orphan rows are an accepted trade-off — the
+  // alternative (failing the whole generation on a persist error) regresses
+  // the prior failure mode where tool-result rows were best-effort anyway.
   if (ctx?.db && typeof ctx.db.insertInto === "function" && results.length > 0) {
-    await persistToolResults(ctx, results,);
+    try {
+      await persistToolResults(ctx, results,);
+    } catch (persistError) {
+      console.error("[tool-execution] inline tool-result persist failed; continuing without DB rows", {
+        chatId: ctx.chatId,
+        toolCallCount: results.length,
+        error: persistError instanceof Error ? persistError.message : String(persistError),
+      },);
+    }
   }
 
   return results;
