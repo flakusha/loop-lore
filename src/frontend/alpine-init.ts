@@ -66,6 +66,28 @@ Alpine.magic("t", (el: HTMLElement,) => {
   return resolve;
 },);
 
+// ── 5b. Client-side dates (<time data-client-date>) ───────────────
+// Server emits machine-readable ISO in <time datetime>; the browser renders
+// the viewer's own locale/zone. Runs on load + after every htmx swap.
+function hydrateClientDates(root: ParentNode = document,): void {
+  for (const el of root.querySelectorAll("time[data-client-date]",)) {
+    const iso = el.getAttribute("datetime",);
+    if (!iso) { continue; }
+    const d = new Date(iso,);
+    if (Number.isNaN(d.getTime(),)) { continue; }
+    el.textContent = el.getAttribute("data-client-date",) === "datetime"
+      ? d.toLocaleString()
+      : d.toLocaleDateString();
+  }
+}
+
+g.hydrateClientDates = hydrateClientDates;
+document.addEventListener("DOMContentLoaded", () => hydrateClientDates(),);
+document.addEventListener("htmx:afterSwap", (e: Event,) => {
+  const target = (e as CustomEvent<{ target?: Element }>).detail?.target;
+  hydrateClientDates(target?.parentNode ?? document,);
+},);
+
 // ── 6. htmx extensions (CJS side-effects) ───────────────────────
 
 require("htmx.org/dist/ext/alpine-morph.js",);
