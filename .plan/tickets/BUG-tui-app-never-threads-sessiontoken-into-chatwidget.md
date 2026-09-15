@@ -32,6 +32,7 @@ There is no existing env-var convention for the TUI session token — frontend r
 - Empirical verification (2026-09-15, throwaway script against `loadConfig`): `[tui] sessionToken = "abc123"` → `config.tui.sessionToken === "abc123"`; `sessionToken = ""` → loader delivers raw `""` (inert downstream per above); section omitted → `undefined`.
 - `src/tui/chat/index.ts:42-48` — `ChatWidget` constructor normalizes empty-string `options.sessionToken` to `undefined` so a stray `""` from TOML never ships as a `Bearer ` header.
 - `src/tui/app.ts:13,28-65` — `TUIApp` constructor calls `loadConfig()` inside try/catch (`getLogger().warn` on failure, falling back to anonymous) and forwards `config.tui.sessionToken` into `new ChatWidget(this.screen, { sessionToken, ... })`.
+- `src/tui/app.ts:137-141` (follow-up, `tui-logger-init`): `createLogger({ level: "warn" })` at module top — required for the `getLogger().warn` fallback above to actually work, since `loadConfig()` itself calls `getLogger()` unconditionally (`runTemplateExpansion`); without init the constructor's catch block rethrew and `bun run tui` crashed at startup. See BUG-tui-app-getlogger-throws-when-running-standalone.
 - `src/tui/chat/index.test.ts` — new test file covering the three contract points: explicit token forwarded, omitted token stays undefined, empty-string token normalized to undefined. `blessed` is mocked at module level so the suite runs under `bun test src/tui/chat/index.test.ts` without a TTY.
 
 Acceptance criteria:

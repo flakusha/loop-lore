@@ -3,7 +3,7 @@
 
 # BUG: tui/app.ts calls getLogger() without prior createLogger() — runtime crash on first F5 failure
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** small
 
@@ -30,3 +30,9 @@ Verified with `bun -e "import { getLogger } from './src/logger'; getLogger()"` �
 
 - `src/tui/app.ts` and `src/tui/asset-view.ts` instantiate blessed widgets at module load; they are not unit-testable without a TTY. This ticket is therefore untestable in isolation — verification is via manual smoke run + the F5 failure reproduction.
 - Deferred from `tui-updates` worktree (2026-09-14 review pass): not landed alongside the `chat/api.ts` `auth:` migration because that change kept coverage gates green; this one would require an entry-point coverage waiver or refactor of `app.ts` to make it testable.
+
+## Resolution
+
+- `src/tui/app.ts:14,137-141` — `createLogger({ level: "warn" })` added at module top, above `const app = new TUIApp()` (the ticket's own prescribed fix).
+- Empirical proof (2026-09-15): `.tmp` script reproducing the startup shape — without `createLogger`, the constructor's `loadConfig()` throws from `runTemplateExpansion` (`getLogger()` is called unconditionally at `src/config/template-expansion/run.ts:37` via `src/config/load/load.ts:125`) and the catch block's `getLogger().warn` rethrows → process exit 1; with `createLogger` first, config loads and the run exits clean.
+- Landing via `tui-logger-init` (same session as the sessiontoken batch) — the sessiontoken diff's `loadConfig()` call in the constructor had converted this latent F5-path crash into an unconditional startup crash; this fix resolves both.
