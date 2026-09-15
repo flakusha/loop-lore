@@ -3561,7 +3561,7 @@
     "epic": "epic-code-quality",
     "tags": [],
     "source": ".plan/tickets/BUG-raw-buffer-from-alloc-inconsistent-with-safe-buffer-65-sites.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-RAW-JSON-PARSE-OUTSIDE-SAFE-JSON-3-SITES": {
     "hash": "2984874",
