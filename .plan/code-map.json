@@ -6241,6 +6241,12 @@
       "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
     }
   ],
+  "src/components/character/entities-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-notes-items-lore-frontend.md"
+    }
+  ],
   "src/components/character/equipment-summary.html": [
     {
       "kind": "ticket",
@@ -6481,6 +6487,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-bound-linked-travel-prompts.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-location-frontend.md"
     }
   ],
   "src/components/chat/mention-dropdown.html": [
@@ -6551,6 +6561,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-character-creation-wizard-bug-wizardid-unused.md"
+    }
+  ],
+  "src/components/export/export-progress-panel.html": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-export-frontend-progress.md"
     }
   ],
   "src/components/export/progress-bar.html": [
@@ -11727,6 +11743,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
+    }
+  ],
+  "src/frontend/alpine/actor-entities.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-notes-items-lore-frontend.md"
     }
   ],
   "src/frontend/alpine/actor-items.ts": [
@@ -23996,6 +24018,26 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-emotion-avatars-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-licensing-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-notes-items-lore-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-systems-export-frontend.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-actor-traits-frontend.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-char-editor-structured-fields-ui.md"
     },
     {
@@ -28800,6 +28842,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-chat-location-frontend.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-message-search.md"
     },
     {
@@ -29041,6 +29087,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-encryption-key-management-ui.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-export-frontend-progress.md"
     },
     {
       "kind": "ticket",

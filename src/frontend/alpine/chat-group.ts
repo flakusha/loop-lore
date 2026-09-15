@@ -204,7 +204,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
         event.preventDefault();
         input.value = this._draftBackup;
         this._draftBackup = undefined;
-        this.autoResize(input);
+        this.autoResize(input,);
         this.saveComposerDraft();
       }
     }
