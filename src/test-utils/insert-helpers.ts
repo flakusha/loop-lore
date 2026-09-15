@@ -46,6 +46,7 @@ import type {
   LoreEntryStatus,
   LorePosition,
   MaterialSlotType,
+  MemoryReviewStatus,
   MemoryType,
   MessageContentFormat,
   MessageContentType,
@@ -3193,6 +3194,7 @@ export async function insertActorMemories(
     scope?: string;
     pinned?: PinnedState;
     privacy?: string;
+    review_status?: MemoryReviewStatus;
     shareability?: string | null;
     source_message_ids?: string | null;
     source_chat_ids?: string | null;

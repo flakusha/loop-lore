@@ -14,9 +14,13 @@ export interface MemoryEntry {
   importance: number;
   keywords: string[];
   sourceMessageId?: string;
-  createdAt: string;
+  /** Chat this row is scoped to (set on carry copies). */
+  sourceChatId?: string;
+  /** Extraction review workflow state (pending rows await user review). */
+  reviewStatus?: string;
   expiresAt?: string;
   pinned?: boolean;
+  createdAt?: string;
   tokenCount?: number;
   /** Memory scope — which panel tab owns it (character/assistant/world). */
   scope?: "character" | "assistant" | "world";
@@ -34,4 +38,12 @@ export interface MemoryPanelState {
   tokensUsed: number;
   showCreateForm: boolean;
   newMemoryContent: string;
+  /** Memory currently being edited inline (null = none). */
+  editingMemoryId: string | null;
+  /** Draft content for the memory being edited. */
+  editMemoryContent: string;
+  /** True while a mutation request is in flight. */
+  busy: boolean;
+  /** Last panel-level error message (null = none). */
+  error: string | null;
 }
