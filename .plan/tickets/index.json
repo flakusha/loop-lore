@@ -1233,7 +1233,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-CHAT-SETTINGS-MODAL-INVALID-MODE": {
     "hash": "e5bf24b",
@@ -3865,7 +3865,7 @@
     "epic": "epic-generation-flow-control.md",
     "tags": [],
     "source": ".plan/tickets/BUG-single-chat-pause-not-gating-autoreply.md",
-    "status": "open"
+    "status": "done"
   },
   "BUG-SIZE-STRICT-PRE-EXISTING-DEV-DRIFT": {
     "hash": "94675a8",
