@@ -41,6 +41,7 @@ import {
   mkdirSync,
   readdirSync,
   readFileSync,
+  readlinkSync,
   renameSync,
   rmSync,
   statSync,
@@ -796,12 +797,29 @@ function pruneOldReports() {
   } catch {
     return; // dir missing → nothing to prune
   }
+  // `.latest.json` is a symlink to one of the per-run files. Resolve it
+  // so retention never deletes the file it currently points at (would
+  // leave a dangling symlink for downstream consumers reading the stable
+  // filename). `try` because the symlink may not exist yet (very first
+  // run) or may already be broken (a previous bug left it dangling —
+  // writeReport step 3 atomically replaces the symlink on the next run,
+  // healing it without this function needing to).
+  let latestTarget = null;
+  if (existsSync(REPORT_LATEST_PATH,)) {
+    try {
+      latestTarget = readlinkSync(REPORT_LATEST_PATH,);
+    } catch {
+      // dangling symlink or unreadable — writeReport step 3 heals
+      // on the next invocation; nothing to protect here.
+    }
+  }
   const perRun = entries
     .filter((name,) =>
       name.startsWith("check-report-",) &&
       name.endsWith(".json",) &&
       name !== "check-report.json" &&
-      name !== "check-report.latest.json"
+      name !== "check-report.latest.json" &&
+      name !== latestTarget
     )
     .sort((a, b,) => b.localeCompare(a,)); // newest first
   if (perRun.length <= REPORT_RETENTION_COUNT) { return; }
