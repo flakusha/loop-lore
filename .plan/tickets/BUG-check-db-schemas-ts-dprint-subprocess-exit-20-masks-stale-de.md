@@ -80,7 +80,7 @@ Confuses anyone running `bun run check` or pre-commit:
 
 Resolved on dev before 2026-09-14. `scripts/check-db-schemas.ts:34` exports `DPRINT_REFORMATTED_EXIT_CODE = 20`; lines 48-56 export `classifyDprintExit(err) → "benign" | "tooling"`; the catch handler at line 128 (`if (classifyDprintExit(err) !== "benign") { … process.exit(1) }`) now falls through to the diff loop at lines 136-160 on benign.
 
-Regression-protected by `scripts/check-db-schemas.smoke.test.ts` covering 5 classification cases plus 2 live `bun spawn` cases (clean checkout exits 0, `bunx dprint` exit 127 surfaces as `[TOOLING ERROR]`). Gate evidence: `bun test scripts/check-db-schemas.smoke.test.ts` 7/7 pass; live stale-corruption reproduction (`src/db/schema-manifest.ts` corrupted with trailing comment) produces `FAIL: schema manifest is STALE` and exits 1 without the misleading `[TOOLING ERROR]` message.
+Regression-protected by `scripts/check-db-schemas.smoke.test.ts` covering 5 classification cases plus 2 live `bun spawn` cases (clean checkout exits 0, `bunx dprint` exit 127 surfaces as `[TOOLING ERROR]`). Gate evidence: `bun test scripts/check-db-schemas.smoke.test.ts` 7/7 pass; live stale-corruption reproduction (`src/db/schema-character.ts` with a leading comment) emits `FAIL: schema character is STALE - migrations changed but schemas not regenerated` and exits 1 without the misleading `[TOOLING ERROR]` message — the catch handler falls through to the diff loop at lines 136-160.
 
 ## Verification Notes
 
