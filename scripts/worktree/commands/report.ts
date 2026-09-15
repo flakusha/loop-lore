@@ -9,6 +9,7 @@ import { existsSync, } from "fs";
 import { readdir, readFile, } from "fs/promises";
 import { resolve, } from "path";
 import { type WorktreeConfig, } from "../utils/config";
+import { getWorktrees, } from "../utils/git";
 import { colorize, log, section, } from "../utils/output";
 
 interface CheckReport {
