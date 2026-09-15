@@ -91,8 +91,7 @@ declare global {
   var settingsPage: any;
   var actorEmotionAvatarsFactory: (actorId: string,) => unknown;
   var actorLicensingFactory: (actorId: string,) => unknown;
-  /* ── Loose / vendor-injected globals ────────────────────────── */
-
+  var actorEntitiesFactory: (actorId: string, kind: string,) => unknown;
   var currentLocale: string;
   var __marked: any;
   var __DOMPurify: any;
