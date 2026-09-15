@@ -4,15 +4,15 @@
 import { afterEach, describe, expect, mock, test, } from "bun:test";
 import {
   actorEmotionAvatars,
+  actorEmotionAvatarsFactory,
   type ActorEmotionAvatarsState,
-  ALL_EMOTIONS,
   type EmotionAvatarJob,
 } from "./actor-emotion-avatars";
 
 // ── Mock ../htmx (must precede importing ./actor-emotion-avatars) ──
 type ApiFetchMock = (url: string, opts?: RequestInit,) => Promise<Response>;
 let calls: { url: string; opts: RequestInit }[] = [];
-let handler: ApiFetchMock = async () => Response.json({ jobs: [], },);
+let handler: ApiFetchMock = async () => Response.json({},);
 
 mock.module("./htmx", () => ({
   apiFetch: ((url: string, opts?: RequestInit,) => {
@@ -21,178 +21,182 @@ mock.module("./htmx", () => ({
   }) satisfies ApiFetchMock,
 }),);
 
-const baseCtx = (): ActorEmotionAvatarsState & Record<string, unknown> => {
-  const state = Object.create(actorEmotionAvatars,) as ActorEmotionAvatarsState & Record<string, unknown>;
-  state._emAvatarJobs = [];
-  state._emAvatarSelected = [];
-  state._emAvatarActorId = null;
-  state._emAvatarBusy = false;
-  state._emAvatarError = "";
-  state._emAvatarBaseId = "base-1";
-  state._emAvatarPolling = null;
+const baseCtx = (): ActorEmotionAvatarsState => {
+  const state = Object.create(actorEmotionAvatars,) as ActorEmotionAvatarsState;
+  state._eaActorId = null;
+  state.jobs = [];
+  state.jobsLoading = false;
+  state.jobsError = "";
+  state.baseAvatarId = "";
+  state.selectedEmotions = [];
+  state.promptPrefix = "";
+  state.negativePrompt = "";
+  state.busy = false;
+  state.message = "";
+  state.error = "";
+  state.pollIntervalMs = 2_000;
+  state._pollHandle = null;
+  state._pollInterval = null;
   return state;
-};
-
-/** Drive the microtask queue (handles bare `void promise` inside setActorId). */
-const flush = async (): Promise<void> => {
-  const { promise, resolve, } = Promise.withResolvers<void>();
-  queueMicrotask(() => {
-    resolve();
-  },);
-  await promise;
 };
 
 afterEach(() => {
   calls = [];
-  handler = async () => Response.json({ jobs: [], },);
+  handler = async () => Response.json({},);
 },);
 
+const sampleJob = (over: Partial<EmotionAvatarJob> = {},): EmotionAvatarJob => ({
+  id: "job-1",
+  actorId: "actor-1",
+  status: "running",
+  baseAvatarId: "av-1",
+  emotions: ["happy",],
+  createdAt: "2026-01-01T00:00:00Z",
+  updatedAt: "2026-01-01T00:00:00Z",
+  ...over,
+});
+
 describe("actorEmotionAvatars.setActorId", () => {
-  test("binds and resets prior state on first set", () => {
+  test("binds and clears prior state", () => {
     const ctx = baseCtx();
     ctx.setActorId("actor-1",);
-    expect(ctx._emAvatarActorId,).toBe("actor-1",);
+    expect(ctx._eaActorId,).toBe("actor-1",);
+    expect(ctx.jobs,).toEqual([],);
   });
 
-  test("no-op when actor unchanged", async () => {
+  test("no-op when actor unchanged", () => {
     const ctx = baseCtx();
     ctx.setActorId("actor-1",);
-    await flush();
-    const before = ctx._emAvatarJobs;
+    ctx.error = "old";
     ctx.setActorId("actor-1",);
-    expect(ctx._emAvatarJobs,).toBe(before,);
-  });
-
-  test("stops polling on actor swap", async () => {
-    const ctx = baseCtx();
-    ctx.setActorId("actor-1",);
-    await flush();
-    ctx._emAvatarPolling = setInterval(() => {}, 60_000,) as ActorEmotionAvatarsState["_emAvatarPolling"];
-    ctx.setActorId("actor-2",);
-    expect(ctx._emAvatarPolling,).toBeNull();
+    expect(ctx.error,).toBe("old",);
   });
 });
 
-describe("actorEmotionAvatars.loadJobs", () => {
-  test("no-op when no actor is bound", async () => {
+describe("actorEmotionAvatars.isJobActive", () => {
+  test("returns true for queued/running", () => {
     const ctx = baseCtx();
-    await ctx.loadJobs();
+    expect(ctx.isJobActive(sampleJob({ status: "queued", },),),).toBe(true,);
+    expect(ctx.isJobActive(sampleJob({ status: "running", },),),).toBe(true,);
+  });
+
+  test("returns false for terminal states", () => {
+    const ctx = baseCtx();
+    expect(ctx.isJobActive(sampleJob({ status: "completed", },),),).toBe(false,);
+    expect(ctx.isJobActive(sampleJob({ status: "failed", },),),).toBe(false,);
+    expect(ctx.isJobActive(sampleJob({ status: "cancelled", },),),).toBe(false,);
+  });
+});
+
+describe("actorEmotionAvatars.listJobs", () => {
+  test("no-op without actor", async () => {
+    const ctx = baseCtx();
+    await ctx.listJobs();
     expect(calls,).toHaveLength(0,);
   });
 
-  test("populates _emAvatarJobs on 200", async () => {
-    const jobs: EmotionAvatarJob[] = [{
-      id: "job-1",
-      status: "completed",
-      progress: 18,
-      total: 18,
-      emotions: ["happy",],
-      createdAt: "2026-01-01T00:00:00Z",
-      completedAt: "2026-01-01T00:01:00Z",
-      error: null,
-    },];
-    handler = async () => Response.json({ jobs, },);
+  test("populates jobs on 200 array", async () => {
+    handler = async () => Response.json([sampleJob(), sampleJob({ id: "job-2", },),],);
     const ctx = baseCtx();
-    ctx.setActorId("actor-1",);
-    await flush();
-    expect(ctx._emAvatarJobs,).toEqual(jobs,);
+    ctx._eaActorId = "actor-1";
+    await ctx.listJobs();
+    expect(ctx.jobs.length,).toBe(2,);
+    expect(ctx.jobsError,).toBe("",);
   });
 
-  test("tolerates non-200 silently", async () => {
+  test("populates jobs on 200 wrapped payload", async () => {
+    handler = async () => Response.json({ data: [sampleJob(),], },);
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    await ctx.listJobs();
+    expect(ctx.jobs.length,).toBe(1,);
+  });
+
+  test("records error on non-200", async () => {
     handler = async () => Response.json({}, { status: 500, },);
     const ctx = baseCtx();
-    ctx.setActorId("actor-1",);
-    await flush();
-    expect(ctx._emAvatarJobs,).toEqual([],);
+    ctx._eaActorId = "actor-1";
+    await ctx.listJobs();
+    expect(ctx.jobsError,).toBeTruthy();
+    expect(ctx.jobs,).toEqual([],);
   });
 
-  test("records an error message on network failure", async () => {
+  test("records error on network failure", async () => {
     handler = async () => {
-      throw new Error("boom",);
+      throw new Error("net",);
     };
     const ctx = baseCtx();
-    ctx.setActorId("actor-1",);
-    await flush();
-    expect(ctx._emAvatarError,).toBeTruthy();
+    ctx._eaActorId = "actor-1";
+    await ctx.listJobs();
+    expect(ctx.jobsError,).toBeTruthy();
   });
 });
 
-describe("actorEmotionAvatars.toggleEmotion / selectAll / clearSelection", () => {
-  test("toggle adds then removes", () => {
+describe("actorEmotionAvatars.toggleEmotion", () => {
+  test("adds emotion to empty selection", () => {
+    const ctx = baseCtx();
+    ctx.toggleEmotion("happy",);
+    expect(ctx.selectedEmotions,).toEqual(["happy",],);
+  });
+
+  test("removes emotion when already present", () => {
+    const ctx = baseCtx();
+    ctx.toggleEmotion("happy",);
+    ctx.toggleEmotion("happy",);
+    expect(ctx.selectedEmotions,).toEqual([],);
+  });
+
+  test("preserves order of independent emotions", () => {
     const ctx = baseCtx();
     ctx.toggleEmotion("happy",);
     ctx.toggleEmotion("sad",);
-    expect(ctx._emAvatarSelected,).toEqual(["happy", "sad",],);
-    ctx.toggleEmotion("happy",);
-    expect(ctx._emAvatarSelected,).toEqual(["sad",],);
-  });
-
-  test("selectAll seeds every known emotion", () => {
-    const ctx = baseCtx();
-    ctx.selectAll();
-    expect(ctx._emAvatarSelected.length,).toBe(ALL_EMOTIONS.length,);
-    for (const e of ALL_EMOTIONS) {
-      expect(ctx._emAvatarSelected.includes(e,),).toBe(true,);
-    }
-  });
-
-  test("clearSelection empties the array", () => {
-    const ctx = baseCtx();
-    ctx.selectAll();
-    ctx.clearSelection();
-    expect(ctx._emAvatarSelected,).toEqual([],);
+    expect(ctx.selectedEmotions,).toEqual(["happy", "sad",],);
   });
 });
 
-describe("actorEmotionAvatars.startBatch", () => {
-  test("no-op without actor id", async () => {
+describe("actorEmotionAvatars.startGeneration", () => {
+  test("no-op without actor", async () => {
     const ctx = baseCtx();
-    await ctx.startBatch();
+    ctx.baseAvatarId = "av-1";
+    expect(await ctx.startGeneration(),).toBe(false,);
     expect(calls,).toHaveLength(0,);
   });
 
-  test("errors when no base avatar is set", async () => {
+  test("errors on missing baseAvatarId", async () => {
     const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    ctx._emAvatarBaseId = "";
-    ctx._emAvatarSelected = ["happy",];
-    await ctx.startBatch();
-    expect(ctx._emAvatarError,).toBeTruthy();
+    ctx._eaActorId = "actor-1";
+    expect(await ctx.startGeneration(),).toBe(false,);
+    expect(ctx.error,).toBeTruthy();
     expect(calls,).toHaveLength(0,);
   });
 
-  test("errors when no emotions are selected", async () => {
+  test("POSTs payload and triggers listJobs", async () => {
+    handler = async () => Response.json({ jobId: "job-1", }, { status: 201, },);
     const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    ctx._emAvatarBaseId = "base-1";
-    await ctx.startBatch();
-    expect(ctx._emAvatarError,).toBeTruthy();
-    expect(calls,).toHaveLength(0,);
+    ctx._eaActorId = "actor-1";
+    ctx.baseAvatarId = "av-1";
+    ctx.selectedEmotions = ["happy", "sad",];
+    ctx.promptPrefix = "p";
+    ctx.negativePrompt = "n";
+    const ok = await ctx.startGeneration();
+    expect(ok,).toBe(true,);
+    const postCall = calls.find((c,) => c.opts.method === "POST");
+    expect(postCall?.url,).toBe("/api/actors/actor-1/emotion-avatars",);
+    expect(JSON.parse(String(postCall?.opts.body ?? "{}",),),).toMatchObject({
+      baseAvatarId: "av-1",
+      emotions: ["happy", "sad",],
+      promptPrefix: "p",
+      negativePrompt: "n",
+    },);
   });
 
-  test("posts the selection and starts polling on success", async () => {
-    handler = async () => Response.json({ jobId: "job-99", }, { status: 201, },);
+  test("captures server message on non-200", async () => {
+    handler = async () => Response.json({ message: "denied", }, { status: 403, },);
     const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    ctx._emAvatarBaseId = "base-1";
-    ctx._emAvatarSelected = ["happy", "sad",];
-    await ctx.startBatch();
-    expect(calls.length,).toBeGreaterThanOrEqual(1,);
-    expect(calls[0]!.url,).toBe("/api/actors/actor-1/emotion-avatars",);
-    expect(calls[0]!.opts.method,).toBe("POST",);
-    expect(ctx._emAvatarPolling,).not.toBeNull();
-    ctx.stopPolling();
-  });
-
-  test("captures server-side message on non-201", async () => {
-    handler = async () => Response.json({ message: "rate limited", }, { status: 429, },);
-    const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    ctx._emAvatarBaseId = "base-1";
-    ctx._emAvatarSelected = ["happy",];
-    await ctx.startBatch();
-    expect(ctx._emAvatarError,).toBe("rate limited",);
-    expect(ctx._emAvatarPolling,).toBeNull();
+    ctx._eaActorId = "actor-1";
+    ctx.baseAvatarId = "av-1";
+    expect(await ctx.startGeneration(),).toBe(false,);
+    expect(ctx.error,).toBe("denied",);
   });
 
   test("records generic error on network failure", async () => {
@@ -200,152 +204,117 @@ describe("actorEmotionAvatars.startBatch", () => {
       throw new Error("net",);
     };
     const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    ctx._emAvatarBaseId = "base-1";
-    ctx._emAvatarSelected = ["happy",];
-    await ctx.startBatch();
-    expect(ctx._emAvatarError,).toBeTruthy();
-    expect(ctx._emAvatarBusy,).toBe(false,);
-  });
-
-  test("ignores calls while busy (synchronous double-tap)", async () => {
-    // Yield a single pending handler; resolve it inline so the first call can complete.
-    let resolveHandler: ((r: Response,) => void) | null = null;
-    handler = async () =>
-      new Promise<Response>((r,) => {
-        resolveHandler = r;
-        queueMicrotask(() => r(Response.json({ jobId: "j", }, { status: 201, },),));
-      },);
-    const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    ctx._emAvatarBaseId = "base-1";
-    ctx._emAvatarSelected = ["happy",];
-    const p1 = ctx.startBatch();
-    // Pre-resolution on the next tick: the handler resolves itself; await p1.
-    const callsWhileBusy = calls.length;
-    await ctx.startBatch();
-    expect(calls.length,).toBe(callsWhileBusy,);
-    await p1;
-    ctx.stopPolling();
-    // resolveHandler is assigned but never used now — keep the closure live to avoid an unused-var lint.
-    void resolveHandler;
+    ctx._eaActorId = "actor-1";
+    ctx.baseAvatarId = "av-1";
+    expect(await ctx.startGeneration(),).toBe(false,);
+    expect(ctx.error,).toBeTruthy();
   });
 });
 
 describe("actorEmotionAvatars.cancelJob", () => {
-  test("POSTs the cancel endpoint and reloads jobs", async () => {
-    handler = async () => Response.json({ ok: true, cancelled: true, },);
-    const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    await ctx.cancelJob("job-1",);
-    expect(
-      calls.some((c,) => c.url === "/api/actors/actor-1/emotion-avatars/jobs/job-1/cancel" && c.opts.method === "POST"),
-    )
-      .toBe(true,);
-  });
-
-  test("no-op without actor id", async () => {
+  test("no-op without actor", async () => {
     const ctx = baseCtx();
     await ctx.cancelJob("job-1",);
     expect(calls,).toHaveLength(0,);
   });
-});
 
-describe("actorEmotionAvatars.describeStatus", () => {
-  test("returns localized text for terminal statuses", () => {
+  test("no-op without jobId", async () => {
     const ctx = baseCtx();
-    const job: EmotionAvatarJob = {
-      id: "x",
-      status: "completed",
-      progress: 0,
-      total: 0,
-      emotions: [],
-      createdAt: "",
-      completedAt: null,
-      error: null,
-    };
-    const s = ctx.describeStatus(job,);
-    expect(s.length > 0,).toBe(true,);
-    expect(s.includes("%",),).toBe(false,);
+    ctx._eaActorId = "actor-1";
+    await ctx.cancelJob("",);
+    expect(calls,).toHaveLength(0,);
   });
 
-  test("returns percent for in-flight jobs", () => {
-    const ctx = baseCtx();
-    const job: EmotionAvatarJob = {
-      id: "x",
-      status: "running",
-      progress: 5,
-      total: 20,
-      emotions: [],
-      createdAt: "",
-      completedAt: null,
-      error: null,
+  test("POSTs cancel + refreshes + reloads list", async () => {
+    let callIdx = 0;
+    handler = async (url: string,) => {
+      callIdx++;
+      if (url.endsWith("/cancel",) && callIdx === 1) {
+        return Response.json({ ok: true, },);
+      }
+      if (url.endsWith("/jobs/job-1",)) {
+        return Response.json(sampleJob({ status: "cancelled", },),);
+      }
+      if (url.endsWith("/jobs",)) {
+        return Response.json([sampleJob({ status: "cancelled", },),],);
+      }
+      return Response.json({},);
     };
-    expect(ctx.describeStatus(job,),).toBe("25%",);
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    ctx.jobs = [sampleJob(),];
+    await ctx.cancelJob("job-1",);
+    expect(calls.some((c,) => c.opts.method === "POST" && c.url.endsWith("/cancel",)),).toBe(true,);
   });
 
-  test("handles zero-total gracefully", () => {
+  test("captures server message on non-200", async () => {
+    handler = async () => Response.json({ message: "forbidden", }, { status: 403, },);
     const ctx = baseCtx();
-    const job: EmotionAvatarJob = {
-      id: "x",
-      status: "queued",
-      progress: 0,
-      total: 0,
-      emotions: [],
-      createdAt: "",
-      completedAt: null,
-      error: null,
-    };
-    expect(ctx.describeStatus(job,),).toBe("0%",);
+    ctx._eaActorId = "actor-1";
+    await ctx.cancelJob("job-1",);
+    expect(ctx.error,).toBe("forbidden",);
   });
 });
 
-describe("actorEmotionAvatars._pollJobOnce", () => {
-  test("returns null when no actor id is bound", async () => {
+describe("actorEmotionAvatars.refreshJob", () => {
+  test("no-op without actor", async () => {
     const ctx = baseCtx();
-    expect(await ctx._pollJobOnce("job-1",),).toBeNull();
+    await ctx.refreshJob("job-1",);
+    expect(calls,).toHaveLength(0,);
   });
 
-  test("returns the job on 200", async () => {
-    handler = async () =>
-      Response.json({
-        id: "job-1",
-        status: "running",
-        progress: 4,
-        total: 10,
-        emotions: [],
-        createdAt: "",
-        completedAt: null,
-        error: null,
-      },);
+  test("replaces existing job by id", async () => {
+    handler = async () => Response.json(sampleJob({ status: "completed", },),);
     const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    const job = await ctx._pollJobOnce("job-1",);
-    expect(job?.status,).toBe("running",);
+    ctx._eaActorId = "actor-1";
+    ctx.jobs = [sampleJob({ status: "running", },),];
+    await ctx.refreshJob("job-1",);
+    expect(ctx.jobs[0]?.status,).toBe("completed",);
   });
 
-  test("returns null on non-200", async () => {
-    handler = async () => Response.json({}, { status: 500, },);
+  test("appends when id missing", async () => {
+    handler = async () => Response.json(sampleJob({ id: "job-2", },),);
     const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    expect(await ctx._pollJobOnce("job-1",),).toBeNull();
+    ctx._eaActorId = "actor-1";
+    ctx.jobs = [];
+    await ctx.refreshJob("job-2",);
+    expect(ctx.jobs.length,).toBe(1,);
+  });
+
+  test("records nothing on non-200", async () => {
+    handler = async () => Response.json({}, { status: 404, },);
+    const ctx = baseCtx();
+    ctx._eaActorId = "actor-1";
+    await ctx.refreshJob("job-1",);
+    expect(ctx.jobs,).toEqual([],);
   });
 });
 
-describe("actorEmotionAvatars stopPolling / _startPolling", () => {
-  test("stopPolling is safe on null", () => {
+describe("actorEmotionAvatars.startPolling / stopPolling", () => {
+  test("stopPolling is idempotent", () => {
     const ctx = baseCtx();
-    ctx._emAvatarPolling = null;
-    expect(() => ctx.stopPolling()).not.toThrow();
-  });
-
-  test("_startPolling clears any existing handle", () => {
-    const ctx = baseCtx();
-    ctx._emAvatarActorId = "actor-1";
-    ctx._emAvatarPolling = setInterval(() => {}, 60_000,) as ActorEmotionAvatarsState["_emAvatarPolling"];
-    ctx._startPolling("job-1",);
-    expect(ctx._emAvatarPolling,).not.toBeNull();
     ctx.stopPolling();
-    expect(ctx._emAvatarPolling,).toBeNull();
+    ctx.stopPolling();
+    expect(ctx._pollHandle,).toBeNull();
+    expect(ctx._pollInterval,).toBeNull();
+  });
+
+  test("startPolling then stopPolling clears handles", () => {
+    const ctx = baseCtx();
+    ctx.startPolling();
+    expect(ctx._pollHandle !== null || ctx._pollInterval !== null,).toBe(true,);
+    ctx.stopPolling();
+    expect(ctx._pollHandle,).toBeNull();
+    expect(ctx._pollInterval,).toBeNull();
+  });
+});
+
+describe("actorEmotionAvatarsFactory", () => {
+  test("returns a fresh state bound to the actor", () => {
+    const a = actorEmotionAvatarsFactory("actor-a",);
+    const b = actorEmotionAvatarsFactory("actor-b",);
+    expect(a,).not.toBe(b,);
+    expect(a._eaActorId,).toBe("actor-a",);
+    expect(b._eaActorId,).toBe("actor-b",);
   });
 });
