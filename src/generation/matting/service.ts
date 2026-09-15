@@ -20,6 +20,7 @@ import { AssetAlphaStatus, AssetLinkEntity, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
+import { safeFromUint8Array, } from "../../utils/safe-buffer";
 import { getJob, listJobs, storeJob, } from "./job-store";
 import type {
   MattingJob,
@@ -163,7 +164,10 @@ export class MattingService {
       throw new Error("Matting of encrypted assets is not supported",);
     }
     const path = getAssetFilePath(this.#uploadDir, asset.storage_path,);
-    return Buffer.from(await Bun.file(path,).arrayBuffer(),);
+    const raw = new Uint8Array(await Bun.file(path,).arrayBuffer(),);
+    const sized = safeFromUint8Array(raw,);
+    if (!sized.ok) { throw sized.error; }
+    return sized.buffer;
   }
 
   /**
