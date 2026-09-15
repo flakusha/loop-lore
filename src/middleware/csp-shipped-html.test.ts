@@ -93,7 +93,11 @@ describe("CSP — no inline event handlers in shipped view HTML", () => {
 describe("CSP — no inline event handlers in frontend pages innerHTML sinks", () => {
   const offenders: { file: string; line: number; snippet: string }[] = [];
   const files = (() => {
-    try { return walk(FRONTEND_PAGES_ROOT,); } catch { return []; }
+    try {
+      return walk(FRONTEND_PAGES_ROOT,);
+    } catch {
+      return [];
+    }
   })();
 
   for (const file of files) {
