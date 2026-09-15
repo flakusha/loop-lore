@@ -15159,7 +15159,7 @@
     "epic": "epic-crypto",
     "tags": [],
     "source": ".plan/tickets/TASK-e2ee-open-bugs.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-E2EE-RECEIVER-WIRING": {
     "hash": "pending",
@@ -25182,7 +25182,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md",
-    "status": "in_progress"
+    "status": "done"
   },
   "TASK-TYPESCRIPT-MJS-RECONCILIATION": {
     "hash": "728c3ff",
