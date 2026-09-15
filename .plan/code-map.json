@@ -9957,6 +9957,18 @@
       "source": ".plan/tickets/TASK-guard-sql-ref-identifier-construction-in-optimistic-locking.md"
     }
   ],
+  "src/db/reinit-archive.test.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/db-reinit-retention.md"
+    }
+  ],
+  "src/db/reinit-archive.ts": [
+    {
+      "kind": "spec",
+      "source": "docs/spec/db-reinit-retention.md"
+    }
+  ],
   "src/db/reinit.ts": [
     {
       "kind": "epic",
@@ -9981,6 +9993,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-db-reinit-archives-previous-database-instead-of-deleting.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/db-reinit-retention.md"
     }
   ],
   "src/db/repositories/documents.ts": [
