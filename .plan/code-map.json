@@ -11725,6 +11725,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-gallery-openAssetPreview-context-safety.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-server-view-date-display-ignores-user-timezone-locale.md"
     }
   ],
   "src/frontend/alpine/a11y.ts": [
