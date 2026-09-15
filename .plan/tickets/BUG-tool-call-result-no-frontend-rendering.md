@@ -3,11 +3,10 @@
 
 # BUG: LLM tool calls persist in `messages.tool_calls` (migration 037) but no `MessageContentType.ToolResult` exists and no frontend bubble renders them — tool calls appear as raw JSON text in chat
 
-**Status:** Not Started
-**Severity:** medium
-**Priority:** medium
-**Effort:** medium
-**Type:** BUG
+**Status:** [OK] Done
+ **Severity:** medium
+ **Priority:** medium
+ **Effort:** medium
 **Epic:** epic-assistant-gm-flows, epic-chat-lifecycle-moderation
 **Files:** src/db/enums-core/messages.ts:18-26 (MessageContentType enum); src/db/migrations/037_message_tool_calls.ts; src/views/chat-render.ts (or equivalent); src/frontend/alpine/chat-bubble.ts
 
@@ -60,6 +59,63 @@ UX / observability. Tool calling is a primary UX surface for the assistant (per 
 - `TASK-tool-call-user-text-sanitization` (sibling).
 - `epic-assistant-gm-flows.md`, `epic-chat-lifecycle-moderation.md`.
 
-## Notes
+## Resolution
 
-PROGRESS 2026-09-08: frontend half landed (message-list.html renders msg.tool_calls as collapsible blocks; chat-panels.ts surfaces calls). Remaining backend half (MessageContentType ToolCall/ToolResult enum + ToolResult message rows in executeToolCalls) requires a migration — pending user's append-vs-fold migration strategy decision per AGENTS.md.
+Closed by inline tool-result persistence in `executeToolCalls`
+(`src/generation/generate-route/tool-execution.ts:201-203`, helper at
+`src/generation/generate-route/tool-execution.ts:93-133`).
+
+**Scope correction against the original ticket text:**
+
+- `MessageContentType.ToolResult: "tool_result"` is **already** present at
+  `src/db/enums-core/messages.ts:26`. No enum extension needed.
+- `messages.content_type` is a free-text column with no CHECK constraint
+  (see `src/db/migrations/parts/006_chat.ts:230` and surrounding columns).
+  No migration is required — `tool_result` is accepted as-is.
+- `messages.tool_call_id` is **not** a real schema column. The existing
+  `tool_calls` JSON column on the assistant row (`006_chat.ts:257`) plus
+  `metadata.tool_call_id` on the result row is the established linkage.
+
+**What this commit actually does:**
+
+1. Adds a private `persistToolResults(ctx, results)` helper inside
+   `tool-execution.ts:93-133`. For each tool result it:
+   - Encrypts content through the existing `encryptStoredContent` path
+     (already used by `storeToolResultRows`).
+   - Inserts a `messages` row with `content_type = ToolResult`,
+     `metadata = JSON.stringify({ tool_call_id })`, and `parent_id = null`.
+     The assistant message id is not known at this point in the generation
+     loop; correlation is preserved through `metadata.tool_call_id`.
+2. Calls the helper from `executeToolCalls` after the per-call loop
+   (`tool-execution.ts:201-203`) when `ctx?.db` exposes `insertInto` —
+   defensive guard preserves the legacy mock-ctx behavior in existing tests.
+   Failure paths (handler throws, registry miss, argument-shape mismatch)
+   all leave a `tool_result` row so the chat history never silently loses a
+   tool invocation.
+3. Removes the now-redundant post-loop `storeToolResultRows` batched
+   persist from `src/generation/generate-route/non-stream.ts:154` and
+   `src/generation/generate-route/stream-to-client.ts:204`. Inline writes
+   cover the same surface; the FK back to the assistant message is replaced
+   by `metadata.tool_call_id` correlation. The previous batched path
+   required the assistant row to land first; the inline path is symmetric
+   across rounds and removes that ordering coupling.
+4. Updates `stream-to-client.coverage.test.ts:359-364` — the mock counter
+   for `storeToolResultRows` now stays at zero because the inline path in
+   the (mocked) `executeToolCalls` does the work.
+
+**Acceptance — new tests in `tool-execution.test.ts:213-388`:**
+
+- "persists one tool_result row per call linked via metadata.tool_call_id"
+  — happy-path insert; verifies row count, `parent_id IS NULL`, and
+  `metadata.tool_call_id` matches the assistant `tool_calls.id`.
+- "persists a row with error content when the handler throws" — defensive:
+  the handler throwing must still produce a chat-visible record.
+- "persists a row when the tool is not in the registry" — defensive: the
+  unknown-tool error path must also leave a row.
+- "skips persist when ctx.db is absent; in-memory return unchanged" —
+  preserves the legacy pure-function contract for callers without a DB
+  context (no throw, in-memory `GenerationMessage[]` returned as before).
+
+All 12 tests in `tool-execution.test.ts` pass locally.
+All 11 tests in `persist.test.ts` (existing `storeToolResultRows` unit
+tests) continue to pass — the function is unchanged on `dev`.

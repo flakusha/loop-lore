@@ -40,8 +40,7 @@ import { renderToolCallBlock, sseData, } from "./sse-utils";
 import { flushChunk, recordLastRendered, } from "./stream-flush";
 import { buildToolCallAssistantMessage, toGenerationToolCalls, } from "./stream-messages";
 import { executeToolCalls, MAX_TOOL_ROUNDS, } from "./tool-execution";
-import { storeToolResultRows, } from "./tool-result-persist";
-import type { GenerateRequest, } from "./types";
+ import type { GenerateRequest, } from "./types";
 
 /** */
 export interface StreamToClientOpts {
@@ -200,8 +199,11 @@ export function streamToClient({
           provider: providerName,
           continuationNumber: input.continuationNumber,
         },);
-
-        await storeToolResultRows(database, input, messageId, allToolResults,);
+        // Tool results are persisted inline by executeToolCalls when ctx.db is
+        // present (BUG-tool-call-result-no-frontend-rendering); no follow-up
+        // batch persist needed here. Inline rows trace correlation through
+        // `metadata.tool_call_id`; `parent_id` stays null because the assistant
+        // message id only exists after `storeGenerationResult` lands.
 
         const activeForDone = activeGenerations.get(attemptId,);
         const isCancelled = finalResponse.finishReason === "cancelled";

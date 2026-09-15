@@ -356,10 +356,15 @@ describeOrSkipStrict("streamToClient coverage", () => {
     const done = events.find((e,) => e.type === "done");
     expect(done?.content,).toBe("part1 done",);
     expect(state.toolCallsArgs.length,).toBe(1,);
-    expect(state.toolRowsCalls.length,).toBe(1,);
+    // Tool results are persisted inline by executeToolCalls
+    // (BUG-tool-call-result-no-frontend-rendering). The mocked
+    // executeToolCalls here skips the inline path, and streamToClient no
+    // longer batches through storeToolResultRows post-loop, so the mock
+    // counter for storeToolResultRows stays empty.
+    expect(state.toolRowsCalls.length,).toBe(0,);
   });
 
-  test("tool calls every round exceed max rounds and emit a generic error", async () => {
+   test("tool calls every round exceed max rounds and emit a generic error", async () => {
     resetState();
     const toolCall: ToolCall = {
       id: "tc-x",
