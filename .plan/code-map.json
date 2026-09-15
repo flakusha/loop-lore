@@ -14020,6 +14020,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-e2e-auth-flows.md"
     },
     {
@@ -14065,6 +14069,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
+    }
+  ],
+
+  "src/frontend/htmx.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature.md"
     }
   ],
   "src/frontend/i18n.ts": [
@@ -28349,6 +28360,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
+    }
+  ],
+
+  "src/utils/safe-fetch/fetch.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature.md"
     }
   ],
   "src/utils/safe-fetch/headers.ts": [
