@@ -14,9 +14,13 @@ import type {
 
 /**
  * Content-Security-Policy directive set.
- * Applied only to HTML views. `script-src` includes `'unsafe-eval'` because
- * Alpine.js uses `new Function()` internally for expression evaluation, and
- * `'unsafe-inline'` because Alpine's @x directive parsing uses innerHTML.
+ * Applied only to HTML views.
+ *
+ * `script-src` includes `'unsafe-eval'` because Alpine.js uses `new Function()`
+ * internally for expression evaluation. Inline scripts are gated by a
+ * per-request nonce emitted from `src/middleware/csp-nonce.ts`; we explicitly
+ * do NOT add `'unsafe-inline'` because that would render the nonce machinery
+ * meaningless (every inline script would pass the policy regardless of nonce).
  */
 export interface CspConfig {
   /** Master toggle for CSP emission. */

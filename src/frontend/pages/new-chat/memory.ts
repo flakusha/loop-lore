@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { feFetch, } from "../../fe-fetch";
-import { escapeHtml, } from "../shared";
 import { estimateTokens, } from "./helpers";
+
 import type { NewChatCtx, } from "./state";
 
 /**
@@ -55,23 +55,31 @@ export function renderMemoryList(ctx: NewChatCtx,): void {
     ctx.memoryTokenEstimate.style.display = ctx.characterMemories.length > 0 ? "block" : "none";
   }
 
-  const checkboxLabels: string[] = [];
+  while (ctx.memoryCheckboxList.firstChild) { ctx.memoryCheckboxList.removeChild(ctx.memoryCheckboxList.firstChild,); }
   for (const m of ctx.characterMemories) {
-    const checked = ctx.selectedMemoryIds.has(m.id,) ? "checked" : "";
-    const preview = m.content.length > 80 ? `${m.content.slice(0, 80,)}...` : m.content;
-    checkboxLabels.push(
-      `<label style="display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-1) 0; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border-default, #f0f0f0)">
-          <input type="checkbox" value="${m.id}" ${checked} onchange="window._toggleMemorySelect('${m.id}', this.checked)" style="margin-top: 2px" />
-          <div>
-            <div style="color: var(--text-primary)">${escapeHtml(preview,)}</div>
-            <div style="font-size: 10px; color: var(--text-secondary)">${m.type} · ${m.tokens} tokens${
-        m.pinned ? " · 📌" : ""
-      }</div>
-          </div>
-        </label>`,
-    );
+    const label = document.createElement("label",);
+    label.style.cssText =
+      "display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-1) 0; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border-default, #f0f0f0)";
+    const cb = document.createElement("input",);
+    cb.type = "checkbox";
+    cb.value = m.id;
+    cb.checked = ctx.selectedMemoryIds.has(m.id,);
+    cb.style.marginTop = "2px";
+    cb.addEventListener("change", () => {
+      const fn = (globalThis as Record<string, unknown>)["_toggleMemorySelect"];
+      if (typeof fn === "function") { (fn as (id: string, checked: boolean,) => void)(m.id, cb.checked,); }
+    },);
+    const wrap = document.createElement("div",);
+    const preview = document.createElement("div",);
+    preview.style.color = "var(--text-primary)";
+    preview.textContent = m.content.length > 80 ? `${m.content.slice(0, 80,)}...` : m.content;
+    const meta = document.createElement("div",);
+    meta.style.cssText = "font-size: 10px; color: var(--text-secondary)";
+    meta.textContent = `${m.type} · ${m.tokens} tokens${m.pinned ? " · 📌" : ""}`;
+    wrap.append(preview, meta,);
+    label.append(cb, wrap,);
+    ctx.memoryCheckboxList.appendChild(label,);
   }
-  ctx.memoryCheckboxList.innerHTML = checkboxLabels.join("",);
 }
 
 /**
