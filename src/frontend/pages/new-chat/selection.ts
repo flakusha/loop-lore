@@ -1,24 +1,35 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-import { escapeHtml, filterActors, } from "../shared";
+import { filterActors, } from "../shared";
 import { loadMemoriesForActor, } from "./memory";
 import { isGroup, type NewChatCtx, } from "./state";
-
 /**
  * @param ctx
  */
 export function renderSelected(ctx: NewChatCtx,): void {
   if (!ctx.selectedEl) { return; }
-  const selectedItems = Array.from(
-    ctx.selected,
-    (a: any,) =>
-      `<span style="display:inline-flex;align-items:center;gap:var(--space-1);padding:2px var(--space-2);background:var(--bg-tertiary);border-radius:var(--radius-sm);font-size:13px">
-        ${escapeHtml(a.display_name || a.name || "Unknown",)}
-        <button type="button" class="btn-icon" style="font-size:14px;width:18px;height:18px" data-id="${a.id}" onclick="removeParticipant('${a.id}')">&times;</button>
-      </span>`,
-  );
-  ctx.selectedEl.innerHTML = selectedItems.join("",);
+  // DOM-clear before re-rendering so previously-attached listeners are released
+  // from detached nodes (innerHTML replacement would leak them).
+  while (ctx.selectedEl.firstChild) { ctx.selectedEl.removeChild(ctx.selectedEl.firstChild,); }
+  for (const a of ctx.selected) {
+    const chip = document.createElement("span",);
+    chip.style.cssText =
+      "display:inline-flex;align-items:center;gap:var(--space-1);padding:2px var(--space-2);background:var(--bg-tertiary);border-radius:var(--radius-sm);font-size:13px";
+    chip.textContent = a.display_name || a.name || "Unknown";
+    const btn = document.createElement("button",);
+    btn.type = "button";
+    btn.className = "btn-icon";
+    btn.style.cssText = "font-size:14px;width:18px;height:18px";
+    btn.dataset["id"] = a.id;
+    btn.innerHTML = "&times;";
+    btn.addEventListener("click", () => {
+      const fn = (globalThis as Record<string, unknown>)["removeParticipant"];
+      if (typeof fn === "function") { (fn as (id: string,) => void)(a.id,); }
+    },);
+    chip.appendChild(btn,);
+    ctx.selectedEl.appendChild(chip,);
+  }
 }
 
 /**
@@ -27,30 +38,51 @@ export function renderSelected(ctx: NewChatCtx,): void {
  */
 export function renderResults(ctx: NewChatCtx, filtered: any[],): void {
   if (!ctx.resultsEl) { return; }
+  while (ctx.resultsEl.firstChild) { ctx.resultsEl.removeChild(ctx.resultsEl.firstChild,); }
   if (filtered.length === 0) {
-    ctx.resultsEl.innerHTML =
-      '<div style="padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center">No characters found</div>';
-  } else {
-    const resultItems: string[] = [];
-    for (const a of filtered) {
-      const disabled = isGroup(ctx,) && ctx.selected.find((s: any,) => s.id === a.id);
-      const onclickAttr = disabled ? "" : `onclick="selectActorFromList('${a.id}')"`;
-      resultItems.push(
-        `<div style="padding:var(--space-2) var(--space-3);cursor:pointer;display:flex;align-items:center;gap:var(--space-2);${
-          disabled ? "opacity:0.4;cursor:default" : ""
-        }" ${onclickAttr} onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background=''">
-          <span style="font-size:16px">${a.avatar_asset_id ? "" : "👤"}</span>
-          <div>
-            <div style="font-size:14px;font-weight:500">${escapeHtml(a.display_name || a.name || "Unknown",)}</div>
-            <div style="font-size:12px;color:var(--text-secondary)">${
-          escapeHtml((a.description || "").slice(0, 60,),)
-        }</div>
-          </div>
-          ${disabled ? '<span style="margin-left:auto;font-size:12px;color:var(--text-secondary)">added</span>' : ""}
-        </div>`,
-      );
+    const empty = document.createElement("div",);
+    empty.style.cssText = "padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center";
+    empty.textContent = "No characters found";
+    ctx.resultsEl.appendChild(empty,);
+    return;
+  }
+  for (const a of filtered) {
+    const disabled = isGroup(ctx,) && ctx.selected.find((s: any,) => s.id === a.id);
+    const row = document.createElement("div",);
+    const cursorAndOpacity = disabled ? "opacity:0.4;cursor:default" : "cursor:pointer";
+    row.style.cssText =
+      `padding:var(--space-2) var(--space-3);${cursorAndOpacity};display:flex;align-items:center;gap:var(--space-2)`;
+    row.addEventListener("mouseenter", () => {
+      row.style.background = "var(--bg-tertiary)";
+    },);
+    row.addEventListener("mouseleave", () => {
+      row.style.background = "";
+    },);
+    if (!disabled) {
+      row.addEventListener("click", () => {
+        const fn = (globalThis as Record<string, unknown>)["selectActorFromList"];
+        if (typeof fn === "function") { (fn as (id: string,) => void)(a.id,); }
+      },);
     }
-    ctx.resultsEl.innerHTML = resultItems.join("",);
+    const avatar = document.createElement("span",);
+    avatar.style.fontSize = "16px";
+    avatar.textContent = a.avatar_asset_id ? "" : "👤";
+    const info = document.createElement("div",);
+    const name = document.createElement("div",);
+    name.style.cssText = "font-size:14px;font-weight:500";
+    name.textContent = a.display_name || a.name || "Unknown";
+    const desc = document.createElement("div",);
+    desc.style.cssText = "font-size:12px;color:var(--text-secondary)";
+    desc.textContent = (a.description || "").slice(0, 60,);
+    info.append(name, desc,);
+    row.append(avatar, info,);
+    if (disabled) {
+      const tag = document.createElement("span",);
+      tag.style.cssText = "margin-left:auto;font-size:12px;color:var(--text-secondary)";
+      tag.textContent = "added";
+      row.appendChild(tag,);
+    }
+    ctx.resultsEl.appendChild(row,);
   }
 }
 
