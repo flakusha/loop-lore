@@ -7,12 +7,13 @@
 import { statSync, } from "node:fs";
 import { resolve, } from "path";
 import { branchToPath, resolveBranch, } from "../utils/config";
+import type { WorktreeConfig, } from "../utils/config";
 import { findWorktreeForBranch, getStatus, gitSync, } from "../utils/git";
 import { log, } from "../utils/output";
 
 export async function execute(
   args: string[],
-  config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
+  config: WorktreeConfig,
 ): Promise<void> {
   const { repoRoot, } = config;
 

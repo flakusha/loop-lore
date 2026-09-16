@@ -1,1 +1,11 @@
-{"extends": "./tsconfig.backend.json", "compilerOptions": {"noUnusedLocals": false, "noUnusedParameters": false, "strict": false, "noUncheckedIndexedAccess": false, "typeRoots": ["./node_modules/@types", "./node_modules/bun-types"]}, "include": ["scripts/worktree/**/*.ts"]}
+{
+  "extends": "./tsconfig.backend.json",
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strict": false,
+    "noUncheckedIndexedAccess": false,
+    "typeRoots": ["./node_modules/@types", "./node_modules/bun-types"]
+  },
+  "include": ["scripts/worktree/**/*.ts"]
+}
