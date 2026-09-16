@@ -8,14 +8,13 @@
 // budget, and returns the assembled prompt. See
 // docs/frontend/chat/prompt-creation.md for section ordering rationale.
 
-// size-allow: 268
-
+// size-allow: 330
 import type { Kysely, } from "kysely";
 import { getContextWindowForModel, } from "../admin/model-capabilities";
 import { MoodService, } from "../characters/services/mood-service";
 import { resolveOutputStyle, } from "../chat/output-style";
 import type { OutputStylePreset, } from "../chat/output-style";
-import { buildLengthConfig, isValidPreset, type LengthPreset, } from "../chat/response-length";
+import { buildLengthConfig, isValidPreset, type LengthPreset, type ResponseLengthConfig, } from "../chat/response-length";
 import type { GmConfig, } from "../chat/types/config";
 import { ChatMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
@@ -34,7 +33,7 @@ import type {
   PromptSectionReport,
 } from "./prompt/types";
 
-export { compactPromptHistory, } from "./prompt-budget";
+import { assembleWithTemplate, } from "./prompt/template-render";
 export type { AssembledPrompt, PromptParams, PromptSectionReport, } from "./prompt/types";
 
 /** */
@@ -49,6 +48,73 @@ export class PromptAssembler {
    * @returns the assembled `AssembledPrompt` ready for the LLM call.
    */
   async assemble(params: PromptParams,): Promise<AssembledPrompt> {
+    const { actor, chat, } = await this.loadProjections(params,);
+    const { ctx, resolvedResponseLength, } = await this.buildAssembleContext(params, actor, chat,);
+
+    // FEAT-065-LLM: a prompt-template override (chat column > actor
+    // settings) replaces the hardcoded section ordering when it resolves to
+    // an LLM template (preset or owner-owned row); otherwise fall through
+    // to the hardcoded sections.
+    const templateOverrideId = chat.prompt_template_id ?? actorSettingsTemplateId(actor.settings,);
+    if (templateOverrideId) {
+      const fromTemplate = await assembleWithTemplate(this.db, ctx, templateOverrideId, params.userId ?? "",);
+      if (fromTemplate) { return fromTemplate; }
+    }
+
+
+    const sections: PromptSectionReport[] = [];
+    const messages: GenerationMessage[] = [];
+    let systemPrompt: string | undefined;
+
+    for (const section of PROMPT_SECTIONS) {
+      if (!section.enabled(ctx,)) { continue; }
+      const built = await section.build(ctx,);
+      for (const msg of built) {
+        const tokens = defaultTokenCount(msg.content,);
+        sections.push({ name: section.name, chars: msg.content.length, tokens, dropped: false, },);
+        messages.push(msg,);
+        if (systemPrompt === undefined && section.name === "system") { systemPrompt = msg.content; }
+      }
+    }
+
+    let totalTokens = 0;
+    for (const s of sections) { if (!s.dropped) { totalTokens += s.tokens; } }
+
+    if (totalTokens > ctx.tokenBudget) {
+      totalTokens = dropOverBudgetSections(sections, ctx.tokenBudget, totalTokens,);
+    }
+
+    const finalMessages = reorderPromptMessages(messages, sections,);
+
+    return {
+      messages: finalMessages,
+      systemPrompt,
+      tokenCount: totalTokens,
+      tokenBudget: ctx.tokenBudget,
+      sections,
+      responseLength: resolvedResponseLength,
+    };
+  }
+
+  /**
+   * @param params
+   * @param templateId - Template or preset id to assemble from
+   * @param userId - Requesting user (row ownership enforced)
+   * @returns The assembled prompt, or null when the id does not resolve to
+   *   an LLM template owned by `userId`.
+   */
+  async assembleWithTemplateOverride(
+    params: PromptParams,
+    templateId: string,
+    userId: string,
+  ): Promise<AssembledPrompt | null> {
+    const { actor, chat, } = await this.loadProjections(params,);
+    const { ctx, } = await this.buildAssembleContext(params, actor, chat,);
+    return assembleWithTemplate(this.db, ctx, templateId, userId,);
+  }
+
+  /** */
+  private async loadProjections(params: PromptParams,): Promise<{ actor: AssembleActor; chat: AssembleChat }> {
     const projectionResults = await Promise.allSettled([
       this.db
         .selectFrom("actors",)
@@ -65,6 +131,7 @@ export class PromptAssembler {
           "post_history_instructions",
           "mes_example",
           "agent_role",
+          "settings",
         ],)
         .where("id", "=", params.actorId,)
         .executeTakeFirstOrThrow(),
@@ -81,6 +148,7 @@ export class PromptAssembler {
           "response_length_preset",
           "response_length_custom",
           "custom_instructions",
+          "prompt_template_id",
         ],)
         .where("id", "=", params.chatId,)
         .executeTakeFirstOrThrow(),
@@ -89,9 +157,19 @@ export class PromptAssembler {
     const chatResult = projectionResults[1];
     if (actorResult.status === "rejected") { throw actorResult.reason; }
     if (chatResult.status === "rejected") { throw chatResult.reason; }
-    const actor: AssembleActor = { ...actorResult.value, type: actorResult.value.actor_type, };
-    const chat = chatResult.value;
+    return {
+      actor: { ...actorResult.value, type: actorResult.value.actor_type, },
+      chat: chatResult.value,
+    };
+  }
 
+  /** */
+  private async buildAssembleContext(
+    params: PromptParams,
+    actor: AssembleActor,
+    chat: AssembleChat,
+  ): Promise<{ ctx: AssembleContext; resolvedResponseLength: ResponseLengthConfig }> {
+    // ── Resolve output style + response length (chat → user → server) ──
     // ── Resolve output style + response length (chat → user → server) ──
     const gmConfig = parseJsonOr<GmConfig | null>(chat.gm_config, null,);
     let userOutputStylePreset: OutputStylePreset | null = null;
@@ -205,41 +283,8 @@ export class PromptAssembler {
       userCustomInstructions,
       isStory,
     };
-
-    const sections: PromptSectionReport[] = [];
-    const messages: GenerationMessage[] = [];
-    let systemPrompt: string | undefined;
-
-    for (const section of PROMPT_SECTIONS) {
-      if (!section.enabled(ctx,)) { continue; }
-      const built = await section.build(ctx,);
-      for (const msg of built) {
-        const tokens = defaultTokenCount(msg.content,);
-        sections.push({ name: section.name, chars: msg.content.length, tokens, dropped: false, },);
-        messages.push(msg,);
-        if (systemPrompt === undefined && section.name === "system") { systemPrompt = msg.content; }
-      }
-    }
-
-    let totalTokens = 0;
-    for (const s of sections) { if (!s.dropped) { totalTokens += s.tokens; } }
-
-    if (totalTokens > tokenBudget) {
-      totalTokens = dropOverBudgetSections(sections, tokenBudget, totalTokens,);
-    }
-
-    const finalMessages = reorderPromptMessages(messages, sections,);
-
-    return {
-      messages: finalMessages,
-      systemPrompt,
-      tokenCount: totalTokens,
-      tokenBudget,
-      sections,
-      responseLength: resolvedResponseLength,
-    };
+    return { ctx, resolvedResponseLength, };
   }
-
   /**
    * Resolve the character's current emotional state for prompt injection.
    * @param params - Prompt params (emotion field read for the actor/world)
@@ -261,3 +306,18 @@ export class PromptAssembler {
 }
 
 export { parseJsonOr, } from "./prompt-utils";
+
+/**
+ * Read the actor-level LLM template override from the actor's settings JSON.
+ * @param settingsJson - Raw `actors.settings` text
+ * @returns The referenced template id, or null when unset/malformed.
+ */
+function actorSettingsTemplateId(settingsJson: string | null | undefined,): string | null {
+  if (!settingsJson) { return null; }
+  try {
+    const parsed = JSON.parse(settingsJson) as { prompt_template_id?: unknown };
+    return typeof parsed.prompt_template_id === "string" ? parsed.prompt_template_id : null;
+  } catch {
+    return null;
+  }
+}

@@ -34,6 +34,9 @@
           <button class="world-edit-tab" :class="{ active: tab === 'generation' }" @click="tab = 'generation'">
             {{{ t("settings.generation") }}}
           </button>
+          <button class="world-edit-tab" :class="{ active: tab === 'templates' }" @click="tab = 'templates'">
+            <span x-text="t('settings.templates') || 'Templates'"></span>
+          </button>
         </div>
 
         <!-- Theme tab -->
@@ -124,6 +127,106 @@
               data-testid="settings-custom-instructions"
             ></textarea>
           </div>
+        </div>
+
+        <!-- Templates tab (FEAT-065 prompt template library) -->
+        <div x-show="tab === 'templates'" x-data="templateLibrary()" x-init="load()">
+          <template x-if="error">
+            <p style="color: var(--text-danger, #b91c1c); font-size: var(--fs-sm)" x-text="error"></p>
+          </template>
+
+          <template x-if="!draft">
+            <div>
+              <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2); align-items: center">
+                <select class="form-select" style="flex: 1" x-model="modality" @change="load()"
+                  data-testid="templates-modality-filter">
+                  <option value="" x-text="t('templates.allModalities') || 'All modalities'"></option>
+                  <option value="llm">LLM</option>
+                  <option value="image">Image</option>
+                  <option value="video">Video</option>
+                  <option value="audio">Audio</option>
+                </select>
+                <button class="btn btn-secondary btn-sm" @click="startCreate()" data-testid="templates-create">
+                  <span x-text="t('templates.new') || 'New'"></span>
+                </button>
+                <button class="btn btn-ghost btn-sm" @click="exportPack()" data-testid="templates-export">
+                  <span x-text="t('templates.export') || 'Export'"></span>
+                </button>
+                <label class="btn btn-ghost btn-sm" style="cursor: pointer">
+                  <span x-text="t('templates.import') || 'Import'"></span>
+                  <input type="file" accept="application/json" style="display: none"
+                    @change="importPack($event.target.files[0]); $event.target.value = ''"
+                    data-testid="templates-import" />
+                </label>
+              </div>
+
+              <template x-if="!loading && templates.length === 0">
+                <p style="color: var(--text-secondary); font-size: var(--fs-sm)"
+                  x-text="t('templates.empty') || 'No templates yet.'"></p>
+              </template>
+              <template x-for="tpl in templates" :key="tpl.id">
+                <div style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) 0">
+                  <span class="badge" style="font-size: var(--fs-xs); text-transform: uppercase"
+                    x-text="tpl.modality"></span>
+                  <span style="flex: 1; font-size: var(--fs-sm)">
+                    <span x-text="tpl.name"></span>
+                    <span x-show="tpl.isPreset" style="color: var(--text-secondary); font-size: var(--fs-xs)"
+                      x-text="t('templates.preset') || '(preset)'"></span>
+                  </span>
+                  <button class="btn btn-ghost btn-sm" @click="startEdit(tpl.id)" data-testid="templates-edit">
+                    <span
+                      x-text="tpl.isPreset ? (t('templates.copy') || 'Copy') : (t('templates.edit') || 'Edit')"></span>
+                  </button>
+                  <button class="btn btn-ghost btn-sm" x-show="tpl.isOwner" @click="remove(tpl.id)"
+                    data-testid="templates-delete">
+                    <span x-text="t('templates.delete') || 'Delete'"></span>
+                  </button>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <template x-if="draft">
+            <div>
+              <div class="form-group">
+                <label class="form-label" for="template-name"><span
+                    x-text="t('templates.name') || 'Name'"></span></label>
+                <input id="template-name" class="form-input" type="text" x-model="draft.name"
+                  data-testid="template-name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="template-modality"><span
+                    x-text="t('templates.modality') || 'Modality'"></span></label>
+                <select id="template-modality" class="form-select" x-model="draft.modality"
+                  data-testid="template-modality">
+                  <option value="llm">LLM</option>
+                  <option value="image">Image</option>
+                  <option value="video">Video</option>
+                  <option value="audio">Audio</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="template-description"><span
+                    x-text="t('templates.description') || 'Description'"></span></label>
+                <input id="template-description" class="form-input" type="text" x-model="draft.description" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="template-payload"><span
+                    x-text="t('templates.payload') || 'Payload (JSON)'"></span></label>
+                <textarea id="template-payload" class="form-input" rows="8" x-model="draft.payload"
+                  style="font-family: var(--font-mono, monospace)" data-testid="template-payload"></textarea>
+              </div>
+              <div style="display: flex; gap: var(--space-2); justify-content: flex-end">
+                <button class="btn btn-ghost btn-sm" @click="draft = null; editingId = ''">
+                  <span x-text="t('common.cancel') || 'Cancel'"></span>
+                </button>
+                <button class="btn btn-primary btn-sm" @click="save()" :disabled="saving"
+                  data-testid="template-save">
+                  <span x-text="t('common.save') || 'Save'"></span>
+                </button>
+              </div>
+            </div>
+          </template>
         </div>
 
         <div style="display: flex; justify-content: flex-end; margin-top: var(--space-4)">
