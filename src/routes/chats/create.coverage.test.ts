@@ -23,6 +23,7 @@ const testConfig = {
   assistant: { enabled: false, },
   encryption: { compressThreshold: 1024, compressAlgorithm: "gzip", },
   generation: { providers: { openaiCompatible: [], }, defaultProvider: null, },
+  nsfw: { allowNsfw: true, nsfwMinAge: 18, },
 } as unknown as Config;
 
 const USER_ID = "variant-creator";
@@ -163,6 +164,31 @@ describe("chats/create — variant taxonomy wiring", () => {
     expect(chat?.type,).toBe("group",);
     expect(chat?.mode,).toBe("story",);
     expect(chat?.gm_config,).toBeNull();
+    await db.destroy();
+  });
+
+  test("welcome messages are seeded for participants that declare one", async () => {
+    const { db, } = await createTestDb();
+    await seed(db,);
+    await insertActors(db, "Greeter", {
+      id: "greeter-actor",
+      owner_id: USER_ID,
+      welcome_message: "Hello!",
+    } as never,);
+
+    const res = await postChat(makeApp(db, USER_ID,), {
+      name: "Welcomed",
+      participantIds: ["greeter-actor",],
+    },);
+    const created = await res.json() as { id?: string };
+    const messages = await db
+      .selectFrom("messages",)
+      .select(["actor_id", "content",],)
+      .where("chat_id", "=", created.id!,)
+      .execute();
+
+    expect(res.status,).toBe(201,);
+    expect(messages,).toEqual([{ actor_id: "greeter-actor", content: "Hello!", },],);
     await db.destroy();
   });
 });
