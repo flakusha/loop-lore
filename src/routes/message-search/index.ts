@@ -16,12 +16,19 @@ import { Elysia, } from "elysia";
 import type { QueryResult, } from "kysely";
 import { sql, } from "kysely";
 import { checkChatAccess, } from "../../chat/service";
+import { AssetType, } from "../../db/enums-content";
 import {
   ErrorResponse,
   MessageSearchQuery,
   MessageSearchResponse,
 } from "../../validation/schemas";
-import { extractAuth, jsonResponse, notFoundResponse as notFound, requireUserId, } from "../http-utils";
+import {
+  badRequestResponse,
+  extractAuth,
+  jsonResponse,
+  notFoundResponse as notFound,
+  requireUserId,
+} from "../http-utils";
 import { resolveMessageContent, } from "../messages/helpers";
 import {
   buildFtsQuery,
@@ -57,6 +64,15 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
           const limit = query.limit ?? 50;
           const offset = query.offset ?? 0;
           const q = (query.q ?? "").trim();
+
+          // Runtime enum check — Elysia 1.4 cannot validate plain-string query
+          // enums, and t.UnionEnum defaults an ABSENT param to its first
+          // member (which would filter every search to `image`).
+          if (query.attachmentType && !Object.values(AssetType,).includes(query.attachmentType as AssetType,)) {
+            return badRequestResponse(
+              `attachmentType must be one of: ${Object.values(AssetType,).join(", ")}`,
+            );
+          }
 
           // Single-chat scope: verify access first.
           if (query.chatId) {
@@ -200,6 +216,8 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
             q,
             role: query.role ?? null,
             hasAttachment: query.hasAttachment ?? null,
+            attachmentType: query.attachmentType ?? null,
+            linkPattern: query.linkPattern ?? null,
             resultCount: results.length,
             total,
           },);
@@ -215,13 +233,15 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
           query: MessageSearchQuery,
           response: {
             200: MessageSearchResponse,
+            400: ErrorResponse,
             401: ErrorResponse,
             404: ErrorResponse,
           },
           detail: {
             summary: "Search messages",
             description: "Full-text search over message content, scoped to one chat or all accessible chats. " +
-              "Filters compose with AND: chatId, q (FTS5 MATCH), role, hasAttachment, dateFrom/dateTo, limit/offset.",
+              "Filters compose with AND: chatId, q (FTS5 MATCH), role, hasAttachment, attachmentType, " +
+              "linkPattern, dateFrom/dateTo, limit/offset.",
             tags: ["Messages", "Search",],
           },
         },
