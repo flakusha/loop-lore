@@ -52,7 +52,11 @@ export type GmConfig =
   | { validation: { harness: string; expected_outputs?: string[]; scoring?: string } }
   | { gm_profile: { kind: "llm" | "user" | "hybrid"; persona_ref?: string; autonomy_level?: number } }
   | { cast: string[]; director?: string }
-  | { gm_profile: { kind: "llm" | "user" | "hybrid"; persona_ref?: string; autonomy_level?: number }; rpg_party: string[]; party_size: number }
+  | {
+    gm_profile: { kind: "llm" | "user" | "hybrid"; persona_ref?: string; autonomy_level?: number };
+    rpg_party: string[];
+    party_size: number;
+  }
   | null;
 
 export interface VariantDefaults {

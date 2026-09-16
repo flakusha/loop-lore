@@ -15,24 +15,27 @@ import { describe, expect, it, } from "bun:test";
 import { ChatMode, ChatPurpose, ChatType, } from "../db/enums-core/users";
 import {
   CHAT_VARIANTS,
-  VARIANT_DEFAULTS,
+  type ChatVariant,
   getVariantDefaults,
   validateVariantTriple,
-  type ChatVariant,
+  VARIANT_DEFAULTS,
 } from "./types/variants";
 
 describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
   it("covers all 12 variants", () => {
-    expect(Object.keys(VARIANT_DEFAULTS).length,).toBe(12,);
+    expect(Object.keys(VARIANT_DEFAULTS,).length,).toBe(12,);
     for (const v of CHAT_VARIANTS) {
       expect(VARIANT_DEFAULTS[v],).toBeDefined();
     }
   });
 
   it("each variant resolves to valid ChatType / ChatMode / ChatPurpose", () => {
-    const validTypes = Object.fromEntries(Object.values(ChatType,).map((s,) => [s, true],),) as Record<string, true>;
-    const validModes = Object.fromEntries(Object.values(ChatMode,).map((s,) => [s, true],),) as Record<string, true>;
-    const validPurposes = Object.fromEntries(Object.values(ChatPurpose,).map((s,) => [s, true],),) as Record<string, true>;
+    const validTypes = Object.fromEntries(Object.values(ChatType,).map((s,) => [s, true,]),) as Record<string, true>;
+    const validModes = Object.fromEntries(Object.values(ChatMode,).map((s,) => [s, true,]),) as Record<string, true>;
+    const validPurposes = Object.fromEntries(Object.values(ChatPurpose,).map((s,) => [s, true,]),) as Record<
+      string,
+      true
+    >;
     for (const v of CHAT_VARIANTS) {
       const d = VARIANT_DEFAULTS[v];
       expect(validTypes[d.chat_type],).toBe(true,);
@@ -46,7 +49,7 @@ describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
       const d = VARIANT_DEFAULTS[v];
       const validMt = d.max_turns === null || Number.isFinite(d.max_turns,);
       expect(validMt,).toBe(true,);
-      expect([0, 1],).toContain(d.auto_advance,);
+      expect([0, 1,],).toContain(d.auto_advance,);
     }
   });
 
@@ -70,8 +73,8 @@ describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
         // Variant 4 (user_group) and variant 5 (user_group_admin) share
         // (group, story, social) by design — they differ on auxiliary
         // gm_config (moderation block). Allow that specific collision.
-        const allowedPairs: Array<[ChatVariant, ChatVariant]> = [
-          ["user_group", "user_group_admin"],
+        const allowedPairs: Array<[ChatVariant, ChatVariant,]> = [
+          ["user_group", "user_group_admin",],
         ];
         const ok = allowedPairs.some((pair,) =>
           (pair[0] === prev && pair[1] === v) || (pair[1] === prev && pair[0] === v)
@@ -83,7 +86,7 @@ describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
   });
 
   it("LLM-validation variants (6, 7) auto_advance=1 and have prompt_override_default", () => {
-    for (const v of ["llm_only", "llm_only_group"] as const) {
+    for (const v of ["llm_only", "llm_only_group",] as const) {
       const d = VARIANT_DEFAULTS[v];
       expect(d.auto_advance,).toBe(1,);
       expect(d.prompt_override_default,).not.toBeNull();
@@ -98,7 +101,7 @@ describe("VARIANT_DEFAULTS — 12-variant canonical taxonomy", () => {
   });
 
   it("LLM-only variants (6, 7) use chat_mode=battle", () => {
-    for (const v of ["llm_only", "llm_only_group"] as const) {
+    for (const v of ["llm_only", "llm_only_group",] as const) {
       expect(VARIANT_DEFAULTS[v].chat_mode,).toBe(ChatMode.Battle,);
     }
   });
