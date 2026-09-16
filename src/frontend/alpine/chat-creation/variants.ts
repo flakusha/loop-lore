@@ -16,8 +16,8 @@
 
 import {
   CHAT_VARIANTS,
-  VARIANT_DEFAULTS,
   type ChatVariant,
+  VARIANT_DEFAULTS,
   type VariantDefaults,
 } from "../../../chat/types/variants";
 import type { ChatMode, ChatPurpose, ChatType, } from "../../../db/enums-core/users";
@@ -31,7 +31,7 @@ export interface VariantPicker {
 
   openPicker(): void;
   closePicker(): void;
-  selectVariant(variant: ChatVariant): void;
+  selectVariant(variant: ChatVariant,): void;
   /**
    * Resolve the canonical triple + auxiliary defaults for the picked
    * variant. Returns `null` until the user picks one. The returned object
@@ -72,9 +72,15 @@ export const variantPicker: VariantPicker = {
   selectedVariant: null,
   variants: CHAT_VARIANTS,
 
-  openPicker() { this.pickerOpen = true; },
-  closePicker() { this.pickerOpen = false; },
-  selectVariant(variant) { this.selectedVariant = variant; },
+  openPicker() {
+    this.pickerOpen = true;
+  },
+  closePicker() {
+    this.pickerOpen = false;
+  },
+  selectVariant(variant,) {
+    this.selectedVariant = variant;
+  },
   triple() {
     if (!this.selectedVariant) { return null; }
     const d = VARIANT_DEFAULTS[this.selectedVariant];
@@ -90,5 +96,7 @@ export const variantPicker: VariantPicker = {
       prompt_override_default: d.prompt_override_default,
     };
   },
-  labelFor(variant) { return LABELS[variant]; },
+  labelFor(variant,) {
+    return LABELS[variant];
+  },
 };
