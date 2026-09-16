@@ -1919,7 +1919,6 @@
     "source": ".plan/tickets/BUG-export-sse-start-throws-controller-is-already-closed-on-clie.md",
     "status": "done"
   },
-
   "BUG-EXPORT-STATUS-DOWNLOAD-ENDPOINTS-LEAK-OTHER-USERS-JOBS-VIA-U": {
     "hash": "2536140",
     "git_issue": "2536140",
@@ -7058,7 +7057,7 @@
     "status": "undefined"
   },
   "TASK-003": {
-    "hash": "88dafaf",
+    "hash": "b45761d",
     "extid": "TASK-003",
     "type": "TASK",
     "title": "# TASK-003: Chat room filters",
@@ -7067,7 +7066,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-003.md",
-    "git_issue": "88dafaf",
+    "git_issue": "b45761d",
     "status": "done"
   },
   "TASK-003-EVALUATE-HOSTINGS": {
@@ -10601,6 +10600,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-audit-follow-up-worktree-finalize-reapstale-void-dead-code.md",
     "status": "done"
+  },
+  "TASK-AUDIT-T-UNIONENUM-SCHEMA-FIELDS-ABSENT-VALUE-SILENTLY-DEFAUL": {
+    "hash": "fdef7c8",
+    "git_issue": "fdef7c8",
+    "extid": "TASK-AUDIT-T-UNIONENUM-SCHEMA-FIELDS-ABSENT-VALUE-SILENTLY-DEFAUL",
+    "type": "TASK",
+    "title": "Audit t.UnionEnum schema fields: absent value silently defaults to first member (Elysia 1.4)",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-audit-t-unionenum-schema-fields-absent-value-silently-defaul.md",
+    "status": "open"
   },
   "TASK-AUTH-FACTORS-SCHEMA-AND-SERVICE-CORE-F1": {
     "hash": "89e0e7b",

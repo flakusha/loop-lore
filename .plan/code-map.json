@@ -4623,7 +4623,6 @@
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     }
   ],
-
   "src/chat/auto-rename.test.ts": [
     {
       "kind": "ticket",
@@ -14938,7 +14937,6 @@
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
-
   "src/frontend/vn/settings.test.ts": [
     {
       "kind": "ticket",
@@ -21545,14 +21543,12 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
-
   "src/routes/chat-search/index.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-002.md"
     }
   ],
-
   "src/routes/chat-search/join.ts": [
     {
       "kind": "ticket",
@@ -21569,14 +21565,12 @@
       "source": ".plan/tickets/TASK-002.md"
     }
   ],
-
   "src/routes/chat-search/search.test.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-003.md"
     }
   ],
-
   "src/routes/chat-search/search.ts": [
     {
       "kind": "ticket",
@@ -23166,7 +23160,6 @@
       "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
     }
   ],
-
   "src/routes/messages/transitions.test.ts": [
     {
       "kind": "ticket",
@@ -23594,7 +23587,6 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
-
   "src/routes/quests.test.ts": [
     {
       "kind": "ticket",
@@ -23617,7 +23609,6 @@
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
     }
   ],
-
   "src/routes/quests/routes.test.ts": [
     {
       "kind": "ticket",
@@ -23742,7 +23733,6 @@
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
     }
   ],
-
   "src/routes/rpg/crafting-stations.test.ts": [
     {
       "kind": "ticket",
@@ -27433,7 +27423,6 @@
       "source": ".plan/tickets/TASK-link-npc-inventory.md"
     }
   ],
-
   "src/story/items/instances.test.ts": [
     {
       "kind": "ticket",
@@ -28831,6 +28820,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-audit-t-unionenum-schema-fields-absent-value-silently-defaul.md"
     },
     {
       "kind": "ticket",

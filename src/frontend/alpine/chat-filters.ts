@@ -133,7 +133,7 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
     if (this._chatStatus !== "all") { chips.push({ key: "status", label: this._chatStatus, },); }
     if (this._chatSort !== "recent") { chips.push({ key: "sort", label: this._chatSort, },); }
     if (this._chatWorld) {
-      const world = (this._worlds ?? [],).find((w,) => w.id === this._chatWorld,);
+      const world = (this._worlds ?? []).find((w,) => w.id === this._chatWorld);
       chips.push({ key: "world", label: world?.name ?? this._chatWorld, },);
     }
     if (this._chatMinMessages) { chips.push({ key: "minMessages", label: `≥ ${this._chatMinMessages} msgs`, },); }
@@ -145,13 +145,34 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
   /** Remove one filter chip (reset to default) and refresh the list. */
   async clearChatFilter(key: ChatFilterChipKey,): Promise<void> {
     switch (key) {
-      case "type": { this._chatType = "all"; break; }
-      case "status": { this._chatStatus = "all"; break; }
-      case "sort": { this._chatSort = "recent"; break; }
-      case "world": { this._chatWorld = ""; break; }
-      case "minMessages": { this._chatMinMessages = ""; break; }
-      case "maxMessages": { this._chatMaxMessages = ""; break; }
-      case "updatedSince": { this._chatUpdatedSince = ""; break; }
+      case "type": {
+        this._chatType = "all";
+        break;
+      }
+      case "status": {
+        this._chatStatus = "all";
+        break;
+      }
+      case "sort": {
+        this._chatSort = "recent";
+        break;
+      }
+      case "world": {
+        this._chatWorld = "";
+        break;
+      }
+      case "minMessages": {
+        this._chatMinMessages = "";
+        break;
+      }
+      case "maxMessages": {
+        this._chatMaxMessages = "";
+        break;
+      }
+      case "updatedSince": {
+        this._chatUpdatedSince = "";
+        break;
+      }
     }
     await this.applyChatFilters();
   },

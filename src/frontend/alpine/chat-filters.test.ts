@@ -2,7 +2,7 @@ import { describe, expect, mock, test, } from "bun:test";
 import { chatFilters, } from "./chat-filters";
 
 /** Minimal localStorage stub (bun test env has none); passes the fake to `run` and restores the global after. */
-function withFakeStorage(run: (store: Storage) => void,): void {
+function withFakeStorage(run: (store: Storage,) => void,): void {
   const g = globalThis as Record<string, unknown>;
   const original = g.localStorage;
   const backing = new Map<string, string>();
@@ -81,7 +81,15 @@ describe("chatFilters", () => {
 
     test("persists active filters and omits defaults", () => {
       withFakeStorage((store,) => {
-        const ctx = { _chatType: "group", _chatStatus: "all", _chatSort: "recent", _chatWorld: "", _chatMinMessages: "5", _chatMaxMessages: "", _chatUpdatedSince: "", };
+        const ctx = {
+          _chatType: "group",
+          _chatStatus: "all",
+          _chatSort: "recent",
+          _chatWorld: "",
+          _chatMinMessages: "5",
+          _chatMaxMessages: "",
+          _chatUpdatedSince: "",
+        };
         chatFilters.persistChatFilters!.call(ctx,);
         const raw = store.getItem(KEY,);
         expect(raw,).not.toBeNull();
@@ -91,8 +99,26 @@ describe("chatFilters", () => {
 
     test("restore hydrates fields and ignores invalid values", () => {
       withFakeStorage((store,) => {
-        store.setItem(KEY, JSON.stringify({ type: "direct", status: "archived", sort: "nope", world: "w1", minMessages: "3", updatedSince: "2026-08-01", },),);
-        const ctx = { _chatType: "all", _chatStatus: "all", _chatSort: "recent", _chatWorld: "", _chatMinMessages: "", _chatMaxMessages: "", _chatUpdatedSince: "", };
+        store.setItem(
+          KEY,
+          JSON.stringify({
+            type: "direct",
+            status: "archived",
+            sort: "nope",
+            world: "w1",
+            minMessages: "3",
+            updatedSince: "2026-08-01",
+          },),
+        );
+        const ctx = {
+          _chatType: "all",
+          _chatStatus: "all",
+          _chatSort: "recent",
+          _chatWorld: "",
+          _chatMinMessages: "",
+          _chatMaxMessages: "",
+          _chatUpdatedSince: "",
+        };
         chatFilters.restoreChatFilters!.call(ctx,);
         expect(ctx._chatType,).toBe("direct",);
         expect(ctx._chatStatus,).toBe("archived",);
@@ -106,8 +132,16 @@ describe("chatFilters", () => {
     test("restore survives corrupt storage", () => {
       withFakeStorage((store,) => {
         store.setItem(KEY, "{not json",);
-        const ctx = { _chatType: "all", _chatStatus: "all", _chatSort: "recent", _chatWorld: "", _chatMinMessages: "", _chatMaxMessages: "", _chatUpdatedSince: "", };
-        expect(() => chatFilters.restoreChatFilters!.call(ctx,),).not.toThrow();
+        const ctx = {
+          _chatType: "all",
+          _chatStatus: "all",
+          _chatSort: "recent",
+          _chatWorld: "",
+          _chatMinMessages: "",
+          _chatMaxMessages: "",
+          _chatUpdatedSince: "",
+        };
+        expect(() => chatFilters.restoreChatFilters!.call(ctx,)).not.toThrow();
         expect(ctx._chatType,).toBe("all",);
       },);
     });
@@ -135,8 +169,13 @@ describe("chatFilters", () => {
     test("clearChatFilter resets one filter and reloads", () => {
       withFakeStorage(() => {
         const ctx = {
-          _chatType: "group", _chatStatus: "all", _chatSort: "recent", _chatWorld: "",
-          _chatMinMessages: "", _chatMaxMessages: "", _chatUpdatedSince: "",
+          _chatType: "group",
+          _chatStatus: "all",
+          _chatSort: "recent",
+          _chatWorld: "",
+          _chatMinMessages: "",
+          _chatMaxMessages: "",
+          _chatUpdatedSince: "",
           _searchResults: [] as unknown[],
           persistChatFilters: chatFilters.persistChatFilters,
           applyChatFilters: chatFilters.applyChatFilters,
@@ -151,8 +190,13 @@ describe("chatFilters", () => {
     test("clearAllChatFilters resets every filter and reloads", () => {
       withFakeStorage(() => {
         const ctx = {
-          _chatType: "group", _chatStatus: "archived", _chatSort: "name", _chatWorld: "w1",
-          _chatMinMessages: "2", _chatMaxMessages: "9", _chatUpdatedSince: "2026-08-01",
+          _chatType: "group",
+          _chatStatus: "archived",
+          _chatSort: "name",
+          _chatWorld: "w1",
+          _chatMinMessages: "2",
+          _chatMaxMessages: "9",
+          _chatUpdatedSince: "2026-08-01",
           _searchResults: [] as unknown[],
           persistChatFilters: chatFilters.persistChatFilters,
           applyChatFilters: chatFilters.applyChatFilters,

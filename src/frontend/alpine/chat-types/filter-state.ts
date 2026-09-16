@@ -16,8 +16,13 @@ export interface ChatCoreFilterState {
   _filterParams(): string;
   restoreChatFilters(): void;
   persistChatFilters(): void;
-  activeChatFilterChips(): { key: "type" | "status" | "sort" | "world" | "minMessages" | "maxMessages" | "updatedSince"; label: string }[];
-  clearChatFilter(key: "type" | "status" | "sort" | "world" | "minMessages" | "maxMessages" | "updatedSince",): Promise<void>;
+  activeChatFilterChips(): {
+    key: "type" | "status" | "sort" | "world" | "minMessages" | "maxMessages" | "updatedSince";
+    label: string;
+  }[];
+  clearChatFilter(
+    key: "type" | "status" | "sort" | "world" | "minMessages" | "maxMessages" | "updatedSince",
+  ): Promise<void>;
   clearAllChatFilters(): Promise<void>;
   applyChatFilters(): Promise<void>;
   _searchResults: {
