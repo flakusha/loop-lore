@@ -1589,6 +1589,8 @@ export const ChatParticipantsSchema = t.Object({
   persona_id: t.Optional(t.String(),),
   talkativity: t.Optional(t.Number(),),
   initiative: t.Optional(t.Number(),),
+  muted_until: t.Optional(t.String(),),
+  banned_until: t.Optional(t.String(),),
 },);
 
 // ── chat_pins ────────────────────────────────────────────
