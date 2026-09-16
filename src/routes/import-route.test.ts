@@ -112,6 +112,33 @@ describe("importRoutes — POST /api/actors/import", () => {
     expect(actor?.user_id,).toBeDefined();
   });
 
+  test("persists alternate_greetings + imported counts in the response", async () => {
+    const app = createApp(db,);
+    const res = await app.handle(
+      multipartRequest(new File([ccv2Card,], "card.json", { type: "application/json", },),),
+    );
+
+    expect(res.status,).toBe(201,);
+    const body = (await res.json()) as {
+      assets_imported: number;
+      lore_entries_imported: number;
+      warnings: string[];
+    };
+    expect(body.assets_imported,).toBe(0,);
+    expect(body.lore_entries_imported,).toBe(0,);
+    expect(Array.isArray(body.warnings,),).toBe(true,);
+
+    const actor = await db
+      .selectFrom("actors",)
+      .select(["alternate_greetings", "appearance", "default_outfit", "outfits",],)
+      .where("display_name", "=", "Import Test Char",)
+      .executeTakeFirst();
+    expect(actor?.appearance,).toBe("Tall ranger with weathered leathers",);
+    expect(actor?.default_outfit,).toBe("ranger-gear",);
+    expect(actor?.outfits,).toContain("ranger-gear",);
+    expect(actor?.alternate_greetings,).toContain("Alternative greeting",);
+  });
+
   test("returns 400 when the file field is missing", async () => {
     const app = createApp(db,);
     const res = await app.handle(multipartRequest(),);
