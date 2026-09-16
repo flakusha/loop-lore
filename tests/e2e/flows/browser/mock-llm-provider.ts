@@ -24,15 +24,15 @@
  * setters on the returned instance.
  */
 
-import { MockLLMProvider, } from "../../../src/test-utils/mock-provider";
-import type { Config, } from "../../../src/config/schema";
+import { MockLLMProvider, } from "@/test-utils/mock-provider";
+import type { Config, } from "@/config/schema";
 import {
   getProvider,
   initializeProviders,
   registerProvider,
-} from "../../../src/generation";
+} from "@/generation";
 
-export { MockLLMProvider, } from "../../../src/test-utils/mock-provider";
+export { MockLLMProvider, } from "@/test-utils/mock-provider";
 
 /** Mock provider name registered with the generation registry. */
 export const MOCK_PROVIDER_NAME = "mock-provider";
