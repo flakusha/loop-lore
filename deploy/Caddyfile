@@ -4,7 +4,7 @@
 # Production Caddyfile — automatic HTTPS via ACME (Let's Encrypt).
 #
 # Usage:
-#   DOMAIN=lore.example.com bun run scripts/worktree/ ... (see deploy/docker-compose.yml)
+#   DOMAIN=lore.example.com giwt ... (see deploy/docker-compose.yml)
 #   # or: caddy run --config deploy/Caddyfile --adapter caddyfile
 #
 # Caddy obtains and renews the certificate automatically (HTTP-01 on :80,

@@ -70,20 +70,23 @@ Use conventional commit format in PR titles:
 
 ## Issue Tracking
 
-loop-lore uses **git-native-issue** for in-repository issue tracking.
+loop-lore uses **git-native-issue** for in-repository issue tracking, with
+`giwt` as the canonical CLI for tickets, worktrees, and git issues.
 
 ```bash
 # Create ticket + worktree
-./scripts/worktree.sh ticket BUG 001 "Fix login crash"
+giwt ticket BUG 001 "Fix login crash"
 cd tree/ticket-BUG-2025-001
 
 # List open issues
-./scripts/worktree.sh issues
+giwt issues
 ```
 
 Extended identifiers: `BUG-2025-001`, `FEA-2025-042`, `EPIC-16`, etc.
 
-See [AGENTS.md](AGENTS.md) for full issue tracking documentation.
+See [AGENTS.md](AGENTS.md) for full issue tracking documentation and the
+giwt ↔ legacy `scripts/worktree/` migration map at
+[docs/giwt-scripts-map.md](docs/giwt-scripts-map.md).
 
 ## Documentation
 
