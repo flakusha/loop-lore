@@ -55,7 +55,7 @@ function defaultOutfitFor(data: GeneratedEntity,): string | null {
  * @param data - Validated entity (gates require appearance, optional defaultOutfit)
  */
 function outfitsJsonFor(data: GeneratedEntity,): string | null {
-  const id = data.defaultOutfit;
+  const id = data.defaultOutfit ?? data.appearance;
   if (!id) { return null; }
   return jsonStringifyOr([{ id, name: id, descriptor: data.appearance ?? id, },],);
 }
