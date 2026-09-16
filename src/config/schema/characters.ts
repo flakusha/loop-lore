@@ -16,6 +16,8 @@ export interface CharactersConfig {
     name: string;
     description: string;
     personality?: string;
+    /** General look / body / face — immutable visual base. Required. */
+    appearance?: string;
     scenario?: string;
     welcome_message?: string;
     system_prompt?: string;

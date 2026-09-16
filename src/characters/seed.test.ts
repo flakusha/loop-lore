@@ -76,6 +76,23 @@ describe("seedCharacterTemplates", () => {
     expect(actor,).toBeDefined();
   });
 
+  test("seeds wardrobe fallback from appearance when outfits omitted", async () => {
+    const config: CharactersConfig = {
+      enabled: true,
+      templates: [
+        { name: "Wardrobe Fallback", description: "Seeded without outfits", appearance: "Tall figure", },
+      ],
+    };
+    const result = await seedCharacterTemplates(db, config,);
+    expect(result.created,).toBe(1,);
+    const actor = await db
+      .selectFrom("actors",)
+      .select(["default_outfit", "outfits",],)
+      .where("display_name", "=", "Wardrobe Fallback",)
+      .executeTakeFirstOrThrow();
+    expect(actor.outfits,).toContain("Tall figure",);
+  });
+
   test("uses hard ID when provided", async () => {
     const config: CharactersConfig = {
       enabled: true,

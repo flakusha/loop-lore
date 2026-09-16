@@ -33,7 +33,17 @@ describe("Import E2E", () => {
   },);
 
   test("POST /api/actors/import imports JSON actor", async () => {
-    const file = makeJsonBlob({ name: "Imported JSON", description: "via multipart", }, "imported.json",);
+    const file = makeJsonBlob(
+      {
+        name: "Imported JSON",
+        description: "via multipart",
+        personality: "Bold and curious",
+        appearance: "Tall figure with sharp features",
+        default_outfit: "travel-gear",
+        outfits: [{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],
+      },
+      "imported.json",
+    );
     const form = new FormData();
     form.append("file", file,);
 
@@ -48,7 +58,17 @@ describe("Import E2E", () => {
   });
 
   test("POST /api/actors/import imports YAML actor", async () => {
-    const file = makeYamlBlob({ name: "Imported YAML", description: "via multipart", }, "imported.yaml",);
+    const file = makeYamlBlob(
+      {
+        name: "Imported YAML",
+        description: "via multipart",
+        personality: "Bold and curious",
+        appearance: "Tall figure with sharp features",
+        default_outfit: "travel-gear",
+        outfits: [{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],
+      },
+      "imported.yaml",
+    );
     const form = new FormData();
     form.append("file", file,);
 
@@ -61,7 +81,17 @@ describe("Import E2E", () => {
   });
 
   test("POST /api/actors/import imports YML extension", async () => {
-    const file = makeYamlBlob({ name: "Imported YML", description: "yml extension", }, "imported.yml",);
+    const file = makeYamlBlob(
+      {
+        name: "Imported YML",
+        description: "yml extension",
+        personality: "Bold and curious",
+        appearance: "Tall figure with sharp features",
+        default_outfit: "travel-gear",
+        outfits: [{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],
+      },
+      "imported.yml",
+    );
     const form = new FormData();
     form.append("file", file,);
 
@@ -73,7 +103,10 @@ describe("Import E2E", () => {
   });
 
   test("POST /api/actors/import imports TOML actor", async () => {
-    const toml = '[character]\nname = "Imported TOML"\ndescription = "via multipart"\n';
+    const toml =
+      '[character]\nname = "Imported TOML"\ndescription = "via multipart"\npersonality = "Bold and curious"\n' +
+      'appearance = "Tall figure with sharp features"\ndefault_outfit = "travel-gear"\n' +
+      '[[character.outfits]]\nid = "travel-gear"\nname = "Travel Gear"\ndescriptor = "Sturdy clothes"\n';
     const file = new File([toml,], "test.toml", { type: "application/toml", },);
     const form = new FormData();
     form.append("file", file,);
@@ -117,7 +150,15 @@ describe("Import E2E", () => {
   });
 
   test("POST /api/actors/import rejects actor without name", async () => {
-    const file = makeJsonBlob({ description: "nameless", }, "noname.json",);
+    const file = makeJsonBlob(
+      {
+        description: "nameless",
+        appearance: "Tall figure with sharp features",
+        default_outfit: "travel-gear",
+        outfits: [{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],
+      },
+      "noname.json",
+    );
     const form = new FormData();
     form.append("file", file,);
 

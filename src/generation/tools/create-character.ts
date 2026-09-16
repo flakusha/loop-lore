@@ -26,26 +26,34 @@ const PARAMETERS: Record<string, unknown> = {
   properties: {
     name: {
       type: "string",
-      description: "Display name of the character.",
+      description: "Display name for the character (required).",
     },
     description: {
       type: "string",
-      description: "1-2 paragraph backstory/description.",
+      description: "Short description / hook for the character (required).",
     },
     personality: {
       type: "string",
-      description: "Personality summary for the character.",
+      description: "Personality summary, immutable core (required).",
+    },
+    appearance: {
+      type: "string",
+      description: "Physical appearance — body/face/general look, immutable base (required).",
+    },
+    defaultOutfit: {
+      type: "string",
+      description: "Starting outfit id or description (required; seeds the wardrobe).",
     },
     scenario: {
       type: "string",
-      description: "One-sentence starting scenario.",
+      description: "Opening scenario or situation.",
     },
     systemPrompt: {
       type: "string",
-      description: "Optional system prompt guiding the character's behavior.",
+      description: "Optional system prompt override.",
     },
   },
-  required: ["name",],
+  required: ["name", "description", "personality", "appearance", "defaultOutfit",],
   additionalProperties: false,
 };
 
@@ -56,7 +64,7 @@ const PARAMETERS: Record<string, unknown> = {
 export const characterCreationTool: ToolDefinition = {
   name: CREATE_CHARACTER,
   description:
-    "Create a new roleplay character. Provide a name (required) and optionally a description, personality, scenario, and system prompt. The character becomes an AI actor owned by the current user.",
+    "Create a new roleplay character. Requires name, description, personality, appearance, and defaultOutfit; scenario and system prompt are optional. The character becomes an AI actor owned by the current user.",
   parameters: PARAMETERS,
   handler: async (params, ctx,): Promise<ToolResult> => {
     if (!ctx) {
@@ -69,12 +77,29 @@ export const characterCreationTool: ToolDefinition = {
     }
 
     const description = stringParam(params, "description",);
+    if (!description) {
+      return { content: '{"error":"description is required and must be non-empty"}', isError: true, };
+    }
     const personality = stringParam(params, "personality",);
+    if (!personality) {
+      return { content: '{"error":"personality is required and must be non-empty"}', isError: true, };
+    }
+    const appearance = stringParam(params, "appearance",);
+    if (!appearance) {
+      return { content: '{"error":"appearance is required and must be non-empty"}', isError: true, };
+    }
+    const defaultOutfit = stringParam(params, "defaultOutfit",);
+    if (!defaultOutfit) {
+      return { content: '{"error":"defaultOutfit is required and must be non-empty"}', isError: true, };
+    }
     const scenario = stringParam(params, "scenario",);
     const systemPrompt = stringParam(params, "systemPrompt",);
 
     const ownerId = await resolveOwnerUserId(ctx.db, ctx.actorId,);
 
+    // Wizard takes a single outfit id; seed the wardrobe catalog with it so the
+    // row satisfies the spec mandatory set (≥1 outfit + matching default).
+    const outfits = jsonStringifyOr([{ id: defaultOutfit, name: defaultOutfit, descriptor: defaultOutfit, },],);
     const id = uid();
     await ctx.db
       .insertInto("actors",)
@@ -85,10 +110,13 @@ export const characterCreationTool: ToolDefinition = {
         user_id: ownerId,
         owner_id: ownerId,
         agent_type: AgentType.Ai,
-        description: description ?? null,
+        description,
         system_prompt: systemPrompt ?? null,
         settings: "{}",
-        personality: personality ?? null,
+        personality,
+        appearance,
+        default_outfit: defaultOutfit,
+        outfits,
         scenario: scenario ?? null,
         import_spec: "assistant-wizard",
       },)

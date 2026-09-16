@@ -27631,6 +27631,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-character-world-setup.md"
+    },
+    {
+      "kind": "spec",
+      "source": "docs/spec/character-spec.md"
     }
   ],
   "src/telemetry": [

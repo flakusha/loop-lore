@@ -20,6 +20,8 @@ interface CharacterFileData {
   name?: string;
   description?: string;
   personality?: string;
+  /** General look / body / face — immutable visual base. Required. */
+  appearance?: string;
   scenario?: string;
   welcome_message?: string;
   system_prompt?: string;
@@ -133,6 +135,7 @@ function normalizeTemplates(data: CharacterFileData,): CharacterTemplateConfig["
       name: t.name ?? "",
       description: t.description ?? "",
       personality: t.personality,
+      appearance: t.appearance,
       scenario: t.scenario,
       welcome_message: t.welcome_message,
       system_prompt: t.system_prompt,
@@ -157,6 +160,7 @@ function normalizeTemplates(data: CharacterFileData,): CharacterTemplateConfig["
       name: data.name,
       description: data.description,
       personality: data.personality,
+      appearance: data.appearance,
       scenario: data.scenario,
       welcome_message: data.welcome_message,
       system_prompt: data.system_prompt,

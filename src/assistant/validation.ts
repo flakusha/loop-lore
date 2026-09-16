@@ -51,6 +51,9 @@ export function validateGeneratedEntity(
     if (typeof data.personality !== "string" || data.personality.trim() === "") {
       errors.push("Recommended field missing: personality",);
     }
+    if (typeof data.appearance !== "string" || data.appearance.trim() === "") {
+      errors.push("Recommended field missing: appearance",);
+    }
   }
 
   if (entityKind === "world") {

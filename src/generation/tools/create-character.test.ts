@@ -34,7 +34,14 @@ describe("create_character tool", () => {
 
   test("creates a character owned by the generating actor", async () => {
     const result = await characterCreationTool.handler(
-      { name: "Lyra", description: "A wandering bard.", personality: "Witty", scenario: "Arrives at the inn.", },
+      {
+        name: "Lyra",
+        description: "A wandering bard.",
+        personality: "Witty",
+        appearance: "Tall with wind-tangled hair.",
+        defaultOutfit: "travel-gear",
+        scenario: "Arrives at the inn.",
+      },
       { db, actorId, chatId: "chat-1", },
     );
     expect(result.isError,).not.toBe(true,);
@@ -51,6 +58,8 @@ describe("create_character tool", () => {
     expect(row.user_id,).toBe(userId,);
     expect(row.import_spec,).toBe("assistant-wizard",);
     expect(row.personality,).toBe("Witty",);
+    expect(row.appearance,).toBe("Tall with wind-tangled hair.",);
+    expect(row.default_outfit,).toBe("travel-gear",);
     expect(row.scenario,).toBe("Arrives at the inn.",);
   });
 

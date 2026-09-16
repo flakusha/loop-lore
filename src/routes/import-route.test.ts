@@ -39,6 +39,11 @@ const ccv2Card = JSON.stringify({
     name: "Import Test Char",
     description: "A character imported via multipart",
     personality: "brave",
+    appearance: "Tall ranger with weathered leathers",
+    default_outfit: "ranger-gear",
+    outfits: [
+      { id: "ranger-gear", name: "Ranger Gear", descriptor: "Weathered leathers and cloak", },
+    ],
     scenario: "In a cave",
     first_mes: "Welcome!",
     mes_example: "Example dialogue",

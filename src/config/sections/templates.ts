@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 260
 // Defines types and defaults for the config-driven template system.
-
 import type {
   DetailLevel,
   SdGenMode,
@@ -177,6 +177,8 @@ export interface CharacterTemplateConfig {
     name: string;
     description: string;
     personality?: string;
+    /** General look / body / face — immutable visual base. Required. */
+    appearance?: string;
     scenario?: string;
     welcome_message?: string;
     system_prompt?: string;

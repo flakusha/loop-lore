@@ -96,6 +96,8 @@ export interface AssembleActor {
   system_prompt: string | null;
   description: string | null;
   personality: string | null;
+  appearance?: string | null;
+  default_outfit?: string | null;
   scenario: string | null;
   post_history_instructions: string | null;
   mes_example: string | null;

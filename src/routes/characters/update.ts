@@ -4,7 +4,7 @@
 import { Elysia, } from "elysia";
 import { updateWithVersionCheck, } from "../../db/optimistic-locking";
 import { can, } from "../../users/permissions";
-import { safeJsonStringify, } from "../../utils";
+import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import {
   ActorIdParams,
   ActorUpdateBody,
@@ -64,6 +64,16 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         }
 
         const updates = buildActorUpdates(ctx.body,);
+        // Spec-required fields (description/personality/appearance + wardrobe) are
+        // enforced at the import/validator layer, not on partial PUTs: actors rows
+        // double as skeletal drafts and legacy rows predate the wardrobe columns.
+        // halves of the wardrobe pair.
+        if (actor.actor_type === "character") {
+          const cleared = rejectClearedCharacterFields(ctx.body,);
+          if (cleared) {
+            return jsonError({ message: cleared, status: HttpStatus.BadRequest, },);
+          }
+        }
         if (settings !== undefined) {
           const settingsResult = safeJsonStringify(settings,);
           if (!settingsResult.ok) {
@@ -125,6 +135,9 @@ function buildActorUpdates(
     avatarAssetId,
     contentRating,
     personality,
+    appearance,
+    defaultOutfit,
+    outfits,
     welcomeMessage,
     mesExample,
     scenario,
@@ -142,6 +155,9 @@ function buildActorUpdates(
   if (avatarAssetId !== undefined) { updates.avatar_asset_id = avatarAssetId; }
   if (contentRating !== undefined) { updates.content_rating = contentRating; }
   if (personality) { updates.personality = personality; }
+  if (appearance) { updates.appearance = appearance; }
+  if (defaultOutfit !== undefined) { updates.default_outfit = defaultOutfit; }
+  if (outfits !== undefined) { updates.outfits = outfits; }
   if (welcomeMessage) { updates.welcome_message = welcomeMessage; }
   if (mesExample) { updates.mes_example = mesExample; }
   if (scenario) { updates.scenario = scenario; }
@@ -152,4 +168,49 @@ function buildActorUpdates(
   if (growthMode !== undefined) { updates.growth_mode = growthMode; }
   if (llmAssistEnabled !== undefined) { updates.llm_assist_enabled = llmAssistEnabled ? 1 : 0; }
   return updates;
+}
+
+/**
+ * Reject partial updates that carry an internally inconsistent wardrobe pair.
+ * Only the request body is validated (not the merged stored row): legacy and
+ * skeletal actors predate the wardrobe columns, and a displayName-only PUT
+ * must not fail on untouched outfit fields. When the caller touches either
+ * half, both must be present, valid JSON, and reference-consistent.
+ * @param body - Raw request body (presence check)
+ * @returns Error message, or null when the request-side wardrobe stays valid
+ */
+function rejectClearedCharacterFields(body: Record<string, unknown>,): string | null {
+  const hasOutfits = "outfits" in body;
+  const hasDefault = "defaultOutfit" in body;
+  if (!hasOutfits && !hasDefault) { return null; }
+  const outfitsValue = typeof body.outfits === "string" ? body.outfits : null;
+  const defValue = typeof body.defaultOutfit === "string" ? body.defaultOutfit : null;
+  if (typeof outfitsValue !== "string" || outfitsValue.trim() === "") {
+    return "At least one outfit is required";
+  }
+  if (typeof defValue !== "string" || defValue.trim() === "") {
+    return "default_outfit is required";
+  }
+  const parsedResult = safeJsonParse<unknown>(outfitsValue,);
+  if (!parsedResult.ok) { return "outfits must be valid JSON"; }
+  const parsed = parsedResult.value;
+  if (!Array.isArray(parsed,) || parsed.length === 0) {
+    return "At least one outfit is required";
+  }
+  const ids = new Set<string>();
+  for (const o of parsed) {
+    const idValue = (o as { id?: unknown } | null)?.id;
+    if (typeof idValue !== "string" || idValue === "") {
+      return "Each outfit must have a non-empty id";
+    }
+    if (ids.has(idValue,)) {
+      return `Duplicate outfit id "${idValue}"`;
+    }
+    ids.add(idValue,);
+  }
+  const defId = defValue as string;
+  if (!ids.has(defId,)) {
+    return `default_outfit "${defId}" must match an outfits[].id`;
+  }
+  return null;
 }

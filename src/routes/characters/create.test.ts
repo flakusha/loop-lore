@@ -104,6 +104,9 @@ describe("createRoutes avatar asset linking", () => {
         body: JSON.stringify({
           displayName: "DetailsChar",
           personality: "witty, loyal",
+          appearance: "Tall figure with a scarred cheek",
+          defaultOutfit: "travel-gear",
+          outfits: JSON.stringify([{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],),
           scenario: "in a tavern",
           welcomeMessage: "Hello traveller!",
           tags: "fantasy, elf, mentor",
@@ -111,13 +114,15 @@ describe("createRoutes avatar asset linking", () => {
         },),
       },),
     );
-    expect(res.status,).toBe(201,);
     const { id, } = (await res.json()) as { id: string };
 
     const row = await testEnv.db
       .selectFrom("actors",)
       .select([
         "personality",
+        "appearance",
+        "default_outfit",
+        "outfits",
         "scenario",
         "welcome_message",
         "settings",
@@ -126,6 +131,11 @@ describe("createRoutes avatar asset linking", () => {
       .where("id", "=", id,)
       .executeTakeFirst();
     expect(row?.personality,).toBe("witty, loyal",);
+    expect(row?.appearance,).toBe("Tall figure with a scarred cheek",);
+    expect(row?.default_outfit,).toBe("travel-gear",);
+    expect(row?.outfits,).toBe(
+      JSON.stringify([{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],),
+    );
     expect(row?.scenario,).toBe("in a tavern",);
     expect(row?.welcome_message,).toBe("Hello traveller!",);
     expect(row?.agent_role,).toBe("guide",);

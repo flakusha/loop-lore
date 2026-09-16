@@ -32,6 +32,9 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           contentRating,
           description,
           personality,
+          appearance,
+          defaultOutfit,
+          outfits,
           scenario,
           welcomeMessage,
           systemPrompt,
@@ -40,7 +43,11 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         const userId = requireUserId(ctx,);
         if (typeof userId !== "string") { return userId; }
 
-        const id = uid();
+        // Spec mandatory set (description/personality/appearance + wardrobe) is
+        // enforced at the import/validator layer (parser strict gate,
+        // validator outfits/personality, assistant gates), not here: this is a
+        // low-level actor endpoint also used for skeletal drafts, narrator/user/
+        // system actors, and participant stubs.
         const parsedTags: string[] = [];
         if (tags) {
           for (const t of tags.split(",",)) {
@@ -49,6 +56,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           }
         }
         const settings = parsedTags.length > 0 ? jsonStringifyOr({ tags: parsedTags, },) : "{}";
+        const id = uid();
         await database
           .insertInto("actors",)
           .values({
@@ -62,6 +70,9 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             content_rating: contentRating ?? "sfw",
             description: description ?? null,
             personality: personality ?? null,
+            appearance: appearance ?? null,
+            default_outfit: defaultOutfit ?? null,
+            outfits: outfits ?? null,
             scenario: scenario ?? null,
             welcome_message: welcomeMessage ?? null,
             system_prompt: systemPrompt ?? null,

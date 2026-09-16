@@ -13,7 +13,7 @@ export const groupParticipantsSection: SectionBuilder = {
   build: async (ctx,) => {
     const others = await ctx.db
       .selectFrom("actors",)
-      .select(["id", "display_name", "description", "personality",],)
+      .select(["id", "display_name", "description", "personality", "appearance",],)
       .where("id", "in", ctx.params.groupParticipantIds ?? [],)
       .execute();
 
@@ -25,6 +25,7 @@ export const groupParticipantsSection: SectionBuilder = {
       if (other.display_name) { card.push(other.display_name,); }
       if (other.description) { card.push(`— ${other.description}`,); }
       if (other.personality) { card.push(`(${other.personality})`,); }
+      if (other.appearance) { card.push(`[${other.appearance}]`,); }
       if (card.length > 0) { parts.push(`\n- ${card.join(" ",)}`,); }
     }
 
