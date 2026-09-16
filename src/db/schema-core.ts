@@ -120,6 +120,20 @@ export interface ChatMentions {
   created_at: Generated<string>;
 }
 
+export interface ChatParticipants {
+  chat_id: string;
+  actor_id: string;
+  role_in_chat: Generated<ChatParticipantRole>;
+  joined_at: Generated<string>;
+  last_read_message_id: string | null;
+  impersonate_actor_id: string | null;
+  persona_id: string | null;
+  talkativity: Generated<number>;
+  initiative: Generated<number>;
+  muted_until: string | null;
+  banned_until: string | null;
+}
+
 export interface Chats {
   id: Generated<string>;
 
@@ -211,19 +225,6 @@ export interface WorldInvites {
   llm_assist_enabled: Generated<number>;
 }
 
-
-// ── chat_participants ────────────────────────────────────────────
-export interface ChatParticipants {
-  chat_id: string;
-  actor_id: string;
-  role_in_chat: Generated<ChatParticipantRole>;
-  joined_at: Generated<string>;
-  last_read_message_id: string | null;
-  impersonate_actor_id: string | null;
-  persona_id: string | null;
-  talkativity: Generated<number>;
-  initiative: Generated<number>;
-}
 
 export interface ChatSetupTemplates {
   id: Generated<string>;
