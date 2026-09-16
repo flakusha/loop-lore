@@ -207,7 +207,23 @@
     "nsfwBlocked": "已阻止",
     "nsfwBanned": "已封禁",
     "nsfwShadow": "影子限制",
-    "nsfwConsentUnavailable": "无法加载 NSFW 同意状态。"
+    "nsfwConsentUnavailable": "无法加载 NSFW 同意状态。",
+    "models": "Models",
+    "browserModels": "Browser Models",
+    "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
+    "hostCatalog": "Host catalog",
+    "noCatalogModels": "No catalog models advertised.",
+    "catalogUnavailable": "Model catalog unavailable — direct URL download still works.",
+    "downloadModel": "Download model file",
+    "modelFileUrl": "Model file URL",
+    "modelFileUrlPlaceholder": "https://example.com/model.gguf",
+    "modelSha256": "SHA-256 checksum (optional, verified when present)",
+    "modelName": "Model name (optional, derived from URL)",
+    "storedModels": "Stored models",
+    "noStoredModels": "No models stored in this browser yet.",
+    "storageUsage": "Storage used",
+    "stored": "stored",
+    "localInference": "Browser-side inference (opt-in)"
   },
   "admin": {
     "title": "Administration",
@@ -695,7 +711,8 @@
       "apiEndpoint": "自定义API端点URL。留空使用默认值。",
       "model": "选择用于生成回复的AI模型。",
       "maxTokens": "最大上下文窗口大小。较大的值使用更多内存。",
-      "temperature": "较高的值使回复更有创意；较低的值更集中。"
+      "temperature": "较高的值使回复更有创意；较低的值更集中。",
+      "localInference": "Run eligible helper tasks in your browser so drafts never reach the server."
     },
     "character": {
       "personality": "塑造角色回复的核心行为特征。",
@@ -919,7 +936,18 @@
     "flagSubmitted": "Content flagged for review",
     "flagFailed": "Failed to flag content.",
     "flagReasonRequired": "Select a reason or describe the issue.",
-    "toolResult": "工具结果"
+    "toolResult": "工具结果",
+    "forward": "Forward",
+    "aiSummarize": "Summarize",
+    "forwardTargetPrompt": "Forward to chat ID:",
+    "unarchiveChat": "Unarchive",
+    "budgetUsage": "Context budget used:",
+    "noSections": "No section breakdown available yet.",
+    "trimSuggestions": "Trim suggestions",
+    "budgetHealthy": "Context budget healthy — no trimming needed.",
+    "invitesTitle": "Chat Invites",
+    "loadingInvites": "Loading invites…",
+    "noChatInvites": "No invites yet — create one to share this chat."
   },
   "personas": {
     "title": "Personas",
@@ -942,7 +970,12 @@
     "setDefault": "Set as default persona",
     "saving": "Saving...",
     "update": "Update",
-    "create": "Create"
+    "create": "Create",
+    "modelOverride": "Model Override",
+    "modelPlaceholder": "Leave blank to inherit from chat defaults",
+    "maxTokensOverride": "Max Tokens Override",
+    "maxTokensPlaceholder": "Leave blank to inherit",
+    "temperatureOverride": "Temperature Override"
   },
   "messages": {
     "invalidVariantIndex": "Invalid variant index",
@@ -1068,11 +1101,8 @@
     "chatTransferred": "聊天已转移",
     "chatAlreadyInLocation": "聊天已在此位置",
     "locationUpdated": "位置已更新",
-    "failedChangeLocation": "更改位置失败",
-    "failedTransferChat": "转移聊天失败",
     "failedDeleteChat": "删除聊天失败",
     "failedRenameChat": "重命名聊天失败",
-    "failedUpdatePinState": "更新固定状态失败",
     "failedArchive": "归档失败",
     "failedDelete": "删除失败",
     "failedExport": "导出失败",
@@ -1114,8 +1144,6 @@
     "imageGenerationStarted": "图片生成已开始",
     "imageGenerationNotConfigured": "图片生成尚未配置——功能计划于 0.1.x 推出",
     "failedGenerateImage": "生成图片失败",
-    "messageNoContentForImage": "消息没有可用于生成图片的内容",
-    "captioningStarted": "添加说明已开始",
     "captioningNotConfigured": "添加说明功能尚未配置——计划于 0.1.x 推出",
     "failedCaption": "添加说明失败",
     "noAssetsToCaption": "没有可添加说明的资源",
@@ -1125,10 +1153,8 @@
     "networkErrorCancellingGeneration": "取消生成时出现网络错误",
     "networkErrorCaptioning": "添加说明时出现网络错误",
     "networkErrorContinuingMessage": "继续消息时出现网络错误",
-    "networkErrorCreatingQuest": "创建任务时出现网络错误",
     "networkErrorDeletingChat": "删除聊天时出现网络错误",
     "networkErrorDeletingChats": "删除聊天时出现网络错误",
-    "networkErrorDuringRetry": "重试期间出现网络错误",
     "networkErrorExportingChats": "导出聊天时出现网络错误",
     "networkErrorGeneratingImage": "生成图片时出现网络错误",
     "networkErrorRemovingMessage": "移除消息时出现网络错误",
@@ -1208,10 +1234,35 @@
     "roleClearedFor": "{role}角色已清除",
     "failedSave": "保存失败",
     "failedCreate": "创建失败",
-    "gmGuidanceApplied": "GM guidance applied",
     "gmGuidanceFailed": "Failed to apply GM guidance",
     "quickRepliesSaved": "Quick-reply buttons saved",
-    "quickRepliesSaveFailed": "Failed to save quick-reply buttons"
+    "quickRepliesSaveFailed": "Failed to save quick-reply buttons",
+    "chatUnarchived": "Chat unarchived",
+    "failedSaveSettings": "Failed to save settings",
+    "failedSaveAutoTranslate": "Failed to save auto-translate target",
+    "promptImproved": "Prompt improved",
+    "promptRestored": "Original draft restored",
+    "promptImproveFailed": "Prompt improvement failed",
+    "promptInjectionBlocked": "Message blocked: prompt injection detected",
+    "messageForwarded": "Message forwarded",
+    "messageForwardedDropped": "Message forwarded (foreign attachments dropped)",
+    "messageForwardEmpty": "Nothing to forward: empty content and no owned attachments",
+    "failedForwardMessage": "Failed to forward message",
+    "networkErrorForwarding": "Network error forwarding message",
+    "aiActionEmpty": "AI returned an empty result",
+    "aiActionUnavailable": "AI actions unavailable (no auxiliary model configured)",
+    "failedAiAction": "Failed to run AI action",
+    "networkErrorAiAction": "Network error running AI action",
+    "networkErrorUnarchivingChat": "Network error unarchiving chat",
+    "enterChatInviteCode": "Enter a chat invite code",
+    "alreadyChatMember": "Already a member of this chat",
+    "assetLinked": "Asset linked: {filename}",
+    "assetLinkFailed": "Failed to link {filename}",
+    "wizardConfirmed": "Entity created from wizard",
+    "wizardConfirmFailed": "Failed to save entity from wizard",
+    "entityCreated": "Entity \"{name}\" created successfully",
+    "failedCreateEntity": "Failed to create entity",
+    "networkErrorCreatingEntity": "Network error — could not create entity"
   },
   "status": {
     "characterResponding": "角色正在回复……",
@@ -1249,7 +1300,8 @@
     "create": "创建角色/地点/世界/物品",
     "review": "检查实体数据的完整性",
     "clear": "清空聊天",
-    "stats": "显示聊天统计"
+    "stats": "显示聊天统计",
+    "link": "Attach a gallery asset to this chat"
   },
   "participants": {
     "title": "Participants",
@@ -1264,7 +1316,11 @@
     "removed": "Participant removed",
     "failedAdd": "Failed to add participant",
     "failedRemove": "Failed to remove participant",
-    "failedUpdate": "Failed to update participant"
+    "failedUpdate": "Failed to update participant",
+    "turnOrder": "Turn Order",
+    "current": "current",
+    "next": "next",
+    "noTurnOrder": "No turn order yet"
   },
   "wizard": {
     "stepEditFields": "Edit Fields",
@@ -1274,6 +1330,35 @@
     "visibility": "Visibility",
     "private": "Private",
     "public": "Public",
-    "back": "Back"
+    "back": "Back",
+    "previewTitle": "Create {type} — Preview",
+    "confirm": "Create",
+    "cancel": "Cancel",
+    "editHint": "Edit fields below, then confirm to save."
+  },
+
+  "sideChannels": {
+    "title": "Side Channels",
+    "none": "No side channels yet",
+    "new": "New",
+    "newPlaceholder": "Channel name…",
+    "created": "Side channel created",
+    "failedCreate": "Failed to create side channel"
+  },
+
+  "analyze": {
+    "ready": "Prompt analyzed",
+    "failed": "Prompt analysis failed",
+    "unavailable": "Prompt analysis unavailable"
+  },
+
+  "gifPicker": {
+    "searchFailed": "GIF search failed. Try again.",
+    "notConfigured": "GIF search is not configured.",
+    "rateLimited": "GIF search is rate-limited. Try again shortly.",
+    "noActiveChat": "Select a chat first.",
+    "downloadFailed": "Could not download that GIF.",
+    "attachFailed": "Could not attach {filename}.",
+    "attached": "Attached {filename} — it will send with your next message."
   }
 }

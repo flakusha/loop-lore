@@ -7,6 +7,6 @@ export interface ChatArchiveState {
   _archiveConfirmId: string | null;
   archiveMessage(messageId: string,): Promise<void>;
   restoreMessage(messageId: string,): Promise<void>;
+  purgeArchivedMessages(): Promise<void>;
   confirmArchive(): Promise<void>;
-  cancelArchive(): void;
 }
