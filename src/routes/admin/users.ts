@@ -5,6 +5,7 @@ import { Elysia, t, } from "elysia";
 import { can, } from "../../users/permissions";
 import {
   AdminRoleUpdateBody,
+  ADMIN_ROLES,
   ErrorResponse,
   PaginationQuery,
   SuccessResponse,
@@ -12,6 +13,7 @@ import {
 } from "../../validation/schemas";
 import { AdminPaginatedEnvelope, AdminUserRow, } from "../../validation/schemas/responses";
 import {
+  badRequestResponse,
   ErrorCode,
   extractAuth,
   HttpStatus,
@@ -168,7 +170,13 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
           }
 
           const { id, } = ctx.params as { id: string };
-          const { role, } = ctx.body as { role: "admin" | "user" | "viewer" };
+          const { role, } = ctx.body as { role: string };
+
+          // Schema is a plain string (see AdminRoleUpdateBody); enforce the
+          // role set here so an out-of-enum value is a 400, never a write.
+          if (!(ADMIN_ROLES as readonly string[]).includes(role,)) {
+            return badRequestResponse(`role must be one of: ${ADMIN_ROLES.join(", ")}`,);
+          }
 
           await db.updateTable("users",).set({ role, },).where("id", "=", id,).execute();
           return jsonResponse({ ok: true, },);
@@ -176,7 +184,7 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
         {
           body: AdminRoleUpdateBody,
           params: UserIdParams,
-          response: { 200: SuccessResponse, 403: ErrorResponse, 404: ErrorResponse, },
+          response: { 200: SuccessResponse, 400: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
         },
       )
       .delete(

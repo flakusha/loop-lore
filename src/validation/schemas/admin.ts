@@ -10,8 +10,13 @@ import { OptionalId, } from "./primitives";
 
 // ── Admin routes ───────────────────────────────────────────
 
+export const ADMIN_ROLES = ["admin", "user", "viewer",] as const;
+
 export const AdminRoleUpdateBody = t.Object({
-  role: t.UnionEnum(["admin", "user", "viewer",],),
+  // Plain string + runtime check in the route: Elysia 1.4 compiles t.UnionEnum
+  // with "default": <first member>, so an ABSENT role would be silently
+  // replaced by "admin" instead of failing validation.
+  role: t.String(),
 },);
 export const AdminSystemConfigBody = t.Object({
   key: t.String({ minLength: 1, },),
