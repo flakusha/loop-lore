@@ -3,7 +3,8 @@
 
 # TASK-003: Chat room filters
 
- @ours
+**Status:** [OK] Done
+
 ## Resolution
 
 Implemented. Evidence: `src/routes/chat-search/search.ts` filters (`type`, `world`,
