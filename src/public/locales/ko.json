@@ -207,7 +207,23 @@
     "nsfwBlocked": "차단됨",
     "nsfwBanned": "밴됨",
     "nsfwShadow": "섀도우 제한",
-    "nsfwConsentUnavailable": "NSFW 동의 상태를 불러올 수 없습니다."
+    "nsfwConsentUnavailable": "NSFW 동의 상태를 불러올 수 없습니다.",
+    "models": "Models",
+    "browserModels": "Browser Models",
+    "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
+    "hostCatalog": "Host catalog",
+    "noCatalogModels": "No catalog models advertised.",
+    "catalogUnavailable": "Model catalog unavailable — direct URL download still works.",
+    "downloadModel": "Download model file",
+    "modelFileUrl": "Model file URL",
+    "modelFileUrlPlaceholder": "https://example.com/model.gguf",
+    "modelSha256": "SHA-256 checksum (optional, verified when present)",
+    "modelName": "Model name (optional, derived from URL)",
+    "storedModels": "Stored models",
+    "noStoredModels": "No models stored in this browser yet.",
+    "storageUsage": "Storage used",
+    "stored": "stored",
+    "localInference": "Browser-side inference (opt-in)"
   },
   "admin": {
     "title": "Administration",
@@ -695,7 +711,8 @@
       "apiEndpoint": "사용자 정의 API 엔드포인트 URL. 기본값은 비워두세요.",
       "model": "응답 생성에 사용할 AI 모델을 선택하세요.",
       "maxTokens": "최대 컨텍스트 창 크기. 더 큰 값은 더 많은 메모리를 사용합니다.",
-      "temperature": "높은 값은 응답을 더 창의적으로; 낮은 값은 더 집중적으로 만듭니다."
+      "temperature": "높은 값은 응답을 더 창의적으로; 낮은 값은 더 집중적으로 만듭니다.",
+      "localInference": "Run eligible helper tasks in your browser so drafts never reach the server."
     },
     "character": {
       "personality": "캐릭터의 응답을 형성하는 핵심 행동 특성.",
@@ -919,7 +936,18 @@
     "flagSubmitted": "Content flagged for review",
     "flagFailed": "Failed to flag content.",
     "flagReasonRequired": "Select a reason or describe the issue.",
-    "toolResult": "도구 결과"
+    "toolResult": "도구 결과",
+    "forward": "Forward",
+    "aiSummarize": "Summarize",
+    "forwardTargetPrompt": "Forward to chat ID:",
+    "unarchiveChat": "Unarchive",
+    "budgetUsage": "Context budget used:",
+    "noSections": "No section breakdown available yet.",
+    "trimSuggestions": "Trim suggestions",
+    "budgetHealthy": "Context budget healthy — no trimming needed.",
+    "invitesTitle": "Chat Invites",
+    "loadingInvites": "Loading invites…",
+    "noChatInvites": "No invites yet — create one to share this chat."
   },
   "personas": {
     "title": "Personas",
@@ -942,7 +970,12 @@
     "setDefault": "Set as default persona",
     "saving": "Saving...",
     "update": "Update",
-    "create": "Create"
+    "create": "Create",
+    "modelOverride": "Model Override",
+    "modelPlaceholder": "Leave blank to inherit from chat defaults",
+    "maxTokensOverride": "Max Tokens Override",
+    "maxTokensPlaceholder": "Leave blank to inherit",
+    "temperatureOverride": "Temperature Override"
   },
   "messages": {
     "invalidVariantIndex": "Invalid variant index",
@@ -1068,11 +1101,8 @@
     "chatTransferred": "채팅이 이전되었습니다",
     "chatAlreadyInLocation": "채팅이 이미 이 위치에 있습니다",
     "locationUpdated": "위치가 업데이트되었습니다",
-    "failedChangeLocation": "위치 변경에 실패했습니다",
-    "failedTransferChat": "채팅 이전에 실패했습니다",
     "failedDeleteChat": "채팅 삭제에 실패했습니다",
     "failedRenameChat": "채팅 이름 변경에 실패했습니다",
-    "failedUpdatePinState": "고정 상태 업데이트에 실패했습니다",
     "failedArchive": "보관에 실패했습니다",
     "failedDelete": "삭제에 실패했습니다",
     "failedExport": "내보내기에 실패했습니다",
@@ -1114,8 +1144,6 @@
     "imageGenerationStarted": "이미지 생성이 시작되었습니다",
     "imageGenerationNotConfigured": "이미지 생성이 아직 구성되지 않음 — 0.1.x에서 제공 예정",
     "failedGenerateImage": "이미지 생성에 실패했습니다",
-    "messageNoContentForImage": "이미지 생성을 위한 메시지 내용이 없습니다",
-    "captioningStarted": "자막 생성이 시작되었습니다",
     "captioningNotConfigured": "자막 생성이 아직 구성되지 않음 — 0.1.x에서 제공 예정",
     "failedCaption": "자막 생성에 실패했습니다",
     "noAssetsToCaption": "자막을 생성할 리소스가 없습니다",
@@ -1125,10 +1153,8 @@
     "networkErrorCancellingGeneration": "생성 취소 중 네트워크 오류",
     "networkErrorCaptioning": "자막 생성 중 네트워크 오류",
     "networkErrorContinuingMessage": "메시지 이어쓰기 중 네트워크 오류",
-    "networkErrorCreatingQuest": "퀘스트 생성 중 네트워크 오류",
     "networkErrorDeletingChat": "채팅 삭제 중 네트워크 오류",
     "networkErrorDeletingChats": "채팅 삭제 중 네트워크 오류",
-    "networkErrorDuringRetry": "재시도 중 네트워크 오류",
     "networkErrorExportingChats": "채팅 내보내기 중 네트워크 오류",
     "networkErrorGeneratingImage": "이미지 생성 중 네트워크 오류",
     "networkErrorRemovingMessage": "메시지 제거 중 네트워크 오류",
@@ -1208,10 +1234,35 @@
     "roleClearedFor": "{role} 역할이 해제되었습니다",
     "failedSave": "저장에 실패했습니다",
     "failedCreate": "생성에 실패했습니다",
-    "gmGuidanceApplied": "GM guidance applied",
     "gmGuidanceFailed": "Failed to apply GM guidance",
     "quickRepliesSaved": "Quick-reply buttons saved",
-    "quickRepliesSaveFailed": "Failed to save quick-reply buttons"
+    "quickRepliesSaveFailed": "Failed to save quick-reply buttons",
+    "chatUnarchived": "Chat unarchived",
+    "failedSaveSettings": "Failed to save settings",
+    "failedSaveAutoTranslate": "Failed to save auto-translate target",
+    "promptImproved": "Prompt improved",
+    "promptRestored": "Original draft restored",
+    "promptImproveFailed": "Prompt improvement failed",
+    "promptInjectionBlocked": "Message blocked: prompt injection detected",
+    "messageForwarded": "Message forwarded",
+    "messageForwardedDropped": "Message forwarded (foreign attachments dropped)",
+    "messageForwardEmpty": "Nothing to forward: empty content and no owned attachments",
+    "failedForwardMessage": "Failed to forward message",
+    "networkErrorForwarding": "Network error forwarding message",
+    "aiActionEmpty": "AI returned an empty result",
+    "aiActionUnavailable": "AI actions unavailable (no auxiliary model configured)",
+    "failedAiAction": "Failed to run AI action",
+    "networkErrorAiAction": "Network error running AI action",
+    "networkErrorUnarchivingChat": "Network error unarchiving chat",
+    "enterChatInviteCode": "Enter a chat invite code",
+    "alreadyChatMember": "Already a member of this chat",
+    "assetLinked": "Asset linked: {filename}",
+    "assetLinkFailed": "Failed to link {filename}",
+    "wizardConfirmed": "Entity created from wizard",
+    "wizardConfirmFailed": "Failed to save entity from wizard",
+    "entityCreated": "Entity \"{name}\" created successfully",
+    "failedCreateEntity": "Failed to create entity",
+    "networkErrorCreatingEntity": "Network error — could not create entity"
   },
   "status": {
     "characterResponding": "캐릭터가 응답 중...",
@@ -1249,7 +1300,8 @@
     "create": "캐릭터/장소/월드/아이템 생성",
     "review": "엔티티 데이터 완전성 검토",
     "clear": "채팅 지우기",
-    "stats": "채팅 통계 표시"
+    "stats": "채팅 통계 표시",
+    "link": "Attach a gallery asset to this chat"
   },
   "participants": {
     "title": "Participants",
@@ -1264,7 +1316,11 @@
     "removed": "Participant removed",
     "failedAdd": "Failed to add participant",
     "failedRemove": "Failed to remove participant",
-    "failedUpdate": "Failed to update participant"
+    "failedUpdate": "Failed to update participant",
+    "turnOrder": "Turn Order",
+    "current": "current",
+    "next": "next",
+    "noTurnOrder": "No turn order yet"
   },
   "wizard": {
     "stepEditFields": "Edit Fields",
@@ -1274,6 +1330,35 @@
     "visibility": "Visibility",
     "private": "Private",
     "public": "Public",
-    "back": "Back"
+    "back": "Back",
+    "previewTitle": "Create {type} — Preview",
+    "confirm": "Create",
+    "cancel": "Cancel",
+    "editHint": "Edit fields below, then confirm to save."
+  },
+
+  "sideChannels": {
+    "title": "Side Channels",
+    "none": "No side channels yet",
+    "new": "New",
+    "newPlaceholder": "Channel name…",
+    "created": "Side channel created",
+    "failedCreate": "Failed to create side channel"
+  },
+
+  "analyze": {
+    "ready": "Prompt analyzed",
+    "failed": "Prompt analysis failed",
+    "unavailable": "Prompt analysis unavailable"
+  },
+
+  "gifPicker": {
+    "searchFailed": "GIF search failed. Try again.",
+    "notConfigured": "GIF search is not configured.",
+    "rateLimited": "GIF search is rate-limited. Try again shortly.",
+    "noActiveChat": "Select a chat first.",
+    "downloadFailed": "Could not download that GIF.",
+    "attachFailed": "Could not attach {filename}.",
+    "attached": "Attached {filename} — it will send with your next message."
   }
 }

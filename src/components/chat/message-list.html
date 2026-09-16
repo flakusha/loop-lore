@@ -312,6 +312,17 @@
                   ♻
                 </button>
               </template>
+              <template x-if="msg.role === 'assistant'">
+                <button
+                  class="btn-icon-action"
+                  @click="openVariants(msg.id)"
+                  title="Browse variants"
+                  aria-label="Browse variants"
+                  data-testid="browse-variants"
+                >
+                  ⋯
+                </button>
+              </template>
               <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
                 <span class="variant-switcher">
                   <button
@@ -361,6 +372,22 @@
                   💬
                 </button>
               </template>
+              <button
+                class="btn-icon-action"
+                @click="forwardMessage(msg.id)"
+                x-bind:title="t('chats.forward')"
+                aria-label="Forward message"
+              >
+                ➦
+              </button>
+              <button
+                class="btn-icon-action"
+                @click="runMessageAiAction(msg.id, 'summarize')"
+                x-bind:title="t('chats.aiSummarize')"
+                aria-label="Summarize message"
+              >
+                📝
+              </button>
               <button
                 class="btn-icon-action"
                 @click="pinMessage(msg.id)"
@@ -474,6 +501,11 @@
                       ▶ {{{t("chats.nextVariant")}}}
                     </button>
                   </template>
+                  <template x-if="msg.role === 'assistant'">
+                    <button @click="openVariants(msg.id); _hamburgerOpen[msg.id] = false">
+                      ⋯ Browse variants
+                    </button>
+                  </template>
                   <template x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')">
                     <button @click="continueMessage(msg.id); _hamburgerOpen[msg.id] = false">
                       ↳ {{{t("chats.continueAction")}}}
@@ -495,6 +527,12 @@
                       💬 {{{t("chats.captionImages")}}}
                     </button>
                   </template>
+                  <button @click="forwardMessage(msg.id); _hamburgerOpen[msg.id] = false">
+                    ➦ {{{t("chats.forward")}}}
+                  </button>
+                  <button @click="runMessageAiAction(msg.id, 'summarize'); _hamburgerOpen[msg.id] = false">
+                    📝 {{{t("chats.aiSummarize")}}}
+                  </button>
                   <button @click="pinMessage(msg.id); _hamburgerOpen[msg.id] = false">
                     📌 Pin
                   </button>
@@ -553,6 +591,12 @@
         ↳ {{{t("chats.continueAction")}}}
       </button>
     </template>
+    <button @click="forwardMessage(_contextMenu.messageId); closeContextMenu()">
+      ➦ {{{t("chats.forward")}}}
+    </button>
+    <button @click="runMessageAiAction(_contextMenu.messageId, 'summarize'); closeContextMenu()">
+      📝 {{{t("chats.aiSummarize")}}}
+    </button>
     <button @click="generateImageFromMessage(_contextMenu.messageId); closeContextMenu()">
       🖼 {{{t("chats.generateImage")}}}
     </button>
@@ -674,6 +718,39 @@
           <span class="seen-viewer-time" x-show="v.seenAt" x-text="formatTimeShort(v.seenAt)"></span>
         </div>
       </template>
+    </div>
+  </div>
+  <!-- Variants browser: swipe siblings via GET /api/messages/:id/variants -->
+  <div
+    class="modal-overlay"
+    x-show="_variantsOpen"
+    @click.self="closeVariants()"
+    @keydown.escape.window="closeVariants()"
+    x-cloak
+    data-testid="variants-modal"
+  >
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Browse variants">
+      <div class="modal-header">
+        <h3>Variants</h3>
+        <button class="btn-icon btn-xs" @click="closeVariants()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div x-show="_variantsLoading">Loading…</div>
+        <div x-show="!_variantsLoading && _variants.length === 0">No variants.</div>
+        <template x-for="(v, idx) in _variants" :key="v.id">
+          <div
+            class="variant-row"
+            style="display: flex; gap: var(--space-2); align-items: flex-start; padding: var(--space-2) 0; border-bottom: 1px solid var(--border-default)"
+          >
+            <span style="font-weight: 600" x-text="idx + 1"></span>
+            <p style="flex: 1; margin: 0; font-size: 13px" x-text="v.content.slice(0, 200)"></p>
+            <button class="btn btn-ghost btn-xs" @click="selectVariantByIndex(_variantsFor, idx)">Use</button>
+          </div>
+        </template>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost btn-sm" @click="closeVariants()">Cancel</button>
+      </div>
     </div>
   </div>
 </div>

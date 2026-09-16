@@ -53,6 +53,26 @@ export const messageArchive: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
+  async purgeArchivedMessages() {
+    if (!this.activeChat) { return; }
+    if (!confirm("Permanently delete archived messages older than 30 days?",)) { return; }
+    try {
+      const res = await apiFetch(`/api/v1/chats/${this.activeChat}/messages/purge`, { method: "POST", },);
+      if (res.ok) {
+        const body = await res.json() as { purged?: number };
+        this.$dispatch?.(
+          "show-toast",
+          { type: "success", message: `Purged ${body.purged ?? 0} archived message(s)`, },
+        );
+      } else {
+        this.$dispatch?.("show-toast", { type: "error", message: "Failed to purge archived messages", },);
+      }
+    } catch (error) {
+      log.warn("purgeArchivedMessages failed", { error: String(error,), },);
+      this.$dispatch?.("show-toast", { type: "error", message: "Failed to purge archived messages", },);
+    }
+  },
+
   async confirmArchive() {
     if (this._archiveConfirmId) {
       await this.archiveMessage(this._archiveConfirmId,);

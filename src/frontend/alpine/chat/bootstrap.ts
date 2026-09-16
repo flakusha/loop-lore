@@ -13,6 +13,7 @@ import { chatEditing, } from "../chat-editing";
 import { chatFilters, } from "../chat-filters";
 import { chatGenerations, } from "../chat-generations";
 import { chatGroup, } from "../chat-group";
+import { chatInvites, } from "../chat-invites";
 import { chatKeys, } from "../chat-keys";
 import { chatLocation, } from "../chat-location";
 import { chatManagement, } from "../chat-management";
@@ -226,6 +227,7 @@ export function chatState() {
     ...chatMusicEmbed,
     ...chatPins,
     ...messageArchive,
+    ...chatInvites,
     ...worldChannels,
   };
 
