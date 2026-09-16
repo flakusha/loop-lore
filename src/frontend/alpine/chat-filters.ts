@@ -16,6 +16,7 @@
 // loadChats(), applyChatFilters() persists on every change. Active filters
 // surface as removable chips (activeChatFilterChips + clearChatFilter /
 // clearAllChatFilters).
+import { safeJsonParse, safeJsonStringify, } from "../../utils/safe-json";
 import type { ChatState, } from "./types";
 
 const STORAGE_KEY = "chat-sidebar-filters";
@@ -49,9 +50,11 @@ function readStoredFilters(): StoredFilters {
   try {
     const raw = localStorage.getItem(STORAGE_KEY,);
     if (!raw) { return {}; }
-    const parsed: unknown = JSON.parse(raw,);
-    if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed,)) { return {}; }
-    return parsed as StoredFilters;
+    const parsed = safeJsonParse<StoredFilters>(raw,);
+    if (
+      !parsed.ok || parsed.value === null || typeof parsed.value !== "object" || Array.isArray(parsed.value,)
+    ) { return {}; }
+    return parsed.value;
   } catch {
     return {};
   }
@@ -105,7 +108,8 @@ export const chatFilters: Partial<ChatState> & ThisType<ChatState> = {
     if (this._chatMaxMessages) { payload.maxMessages = this._chatMaxMessages; }
     if (this._chatUpdatedSince) { payload.updatedSince = this._chatUpdatedSince; }
     try {
-      store.setItem(STORAGE_KEY, JSON.stringify(payload,),);
+      const encoded = safeJsonStringify(payload,);
+      if (encoded.ok) { store.setItem(STORAGE_KEY, encoded.value,); }
     } catch {
       // Quota/privacy-mode failures must never break filtering.
     }

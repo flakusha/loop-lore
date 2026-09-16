@@ -122,7 +122,9 @@ describe("admin users routes", () => {
         body: JSON.stringify({ role: "not-a-real-role", },),
       },),
     );
-    expect(res.status,).toBe(422,);
+    // Runtime enum check (schema is a plain string — see AdminRoleUpdateBody):
+    // out-of-enum values are a 400, never a silent write.
+    expect(res.status,).toBe(400,);
   });
 
   test("DELETE /api/admin/users/:id returns 204 for admin", async () => {
