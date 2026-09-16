@@ -207,7 +207,23 @@
     "nsfwBlocked": "Заблокировано",
     "nsfwBanned": "Забанено",
     "nsfwShadow": "Скрытое ограничение",
-    "nsfwConsentUnavailable": "Не удалось загрузить состояние согласия NSFW."
+    "nsfwConsentUnavailable": "Не удалось загрузить состояние согласия NSFW.",
+    "models": "Models",
+    "browserModels": "Browser Models",
+    "browserModelsDescription": "Download model files for local inference and manage browser storage. Files are verified by SHA-256 before use.",
+    "hostCatalog": "Host catalog",
+    "noCatalogModels": "No catalog models advertised.",
+    "catalogUnavailable": "Model catalog unavailable — direct URL download still works.",
+    "downloadModel": "Download model file",
+    "modelFileUrl": "Model file URL",
+    "modelFileUrlPlaceholder": "https://example.com/model.gguf",
+    "modelSha256": "SHA-256 checksum (optional, verified when present)",
+    "modelName": "Model name (optional, derived from URL)",
+    "storedModels": "Stored models",
+    "noStoredModels": "No models stored in this browser yet.",
+    "storageUsage": "Storage used",
+    "stored": "stored",
+    "localInference": "Browser-side inference (opt-in)"
   },
   "admin": {
     "title": "Administration",
@@ -695,7 +711,8 @@
       "apiEndpoint": "Пользовательский URL API. Оставьте пустым для значения по умолчанию.",
       "model": "Какую модель ИИ использовать для генерации ответов.",
       "maxTokens": "Максимальный размер окна контекста. Большие значения используют больше памяти.",
-      "temperature": "Более высокие значения делают ответы более творческими; более низкие — более сфокусированными."
+      "temperature": "Более высокие значения делают ответы более творческими; более низкие — более сфокусированными.",
+      "localInference": "Run eligible helper tasks in your browser so drafts never reach the server."
     },
     "character": {
       "personality": "Ключевые черты поведения, формирующие ответы персонажа.",
@@ -919,7 +936,18 @@
     "flagSubmitted": "Content flagged for review",
     "flagFailed": "Failed to flag content.",
     "flagReasonRequired": "Select a reason or describe the issue.",
-    "toolResult": "Результат инструмента"
+    "toolResult": "Результат инструмента",
+    "forward": "Forward",
+    "aiSummarize": "Summarize",
+    "forwardTargetPrompt": "Forward to chat ID:",
+    "unarchiveChat": "Unarchive",
+    "budgetUsage": "Context budget used:",
+    "noSections": "No section breakdown available yet.",
+    "trimSuggestions": "Trim suggestions",
+    "budgetHealthy": "Context budget healthy — no trimming needed.",
+    "invitesTitle": "Chat Invites",
+    "loadingInvites": "Loading invites…",
+    "noChatInvites": "No invites yet — create one to share this chat."
   },
   "personas": {
     "title": "Personas",
@@ -942,7 +970,12 @@
     "setDefault": "Set as default persona",
     "saving": "Saving...",
     "update": "Update",
-    "create": "Create"
+    "create": "Create",
+    "modelOverride": "Model Override",
+    "modelPlaceholder": "Leave blank to inherit from chat defaults",
+    "maxTokensOverride": "Max Tokens Override",
+    "maxTokensPlaceholder": "Leave blank to inherit",
+    "temperatureOverride": "Temperature Override"
   },
   "messages": {
     "invalidVariantIndex": "Invalid variant index",
@@ -1068,11 +1101,8 @@
     "chatTransferred": "Чат передан",
     "chatAlreadyInLocation": "Чат уже находится в этой локации",
     "locationUpdated": "Локация обновлена",
-    "failedChangeLocation": "Не удалось сменить локацию",
-    "failedTransferChat": "Не удалось передать чат",
     "failedDeleteChat": "Не удалось удалить чат",
     "failedRenameChat": "Не удалось переименовать чат",
-    "failedUpdatePinState": "Не удалось обновить состояние закрепления",
     "failedArchive": "Не удалось архивировать",
     "failedDelete": "Не удалось удалить",
     "failedExport": "Не удалось экспортировать",
@@ -1114,8 +1144,6 @@
     "imageGenerationStarted": "Генерация изображения запущена",
     "imageGenerationNotConfigured": "Генерация изображений ещё не настроена — функция запланирована на 0.1.x",
     "failedGenerateImage": "Не удалось сгенерировать изображение",
-    "messageNoContentForImage": "В сообщении нет содержимого для генерации изображения",
-    "captioningStarted": "Создание подписей запущено",
     "captioningNotConfigured": "Подписи ещё не настроены — функция запланирована на 0.1.x",
     "failedCaption": "Не удалось создать подпись",
     "noAssetsToCaption": "Нет ресурсов для подписи",
@@ -1125,10 +1153,8 @@
     "networkErrorCancellingGeneration": "Ошибка сети при отмене генерации",
     "networkErrorCaptioning": "Ошибка сети при создании подписи",
     "networkErrorContinuingMessage": "Ошибка сети при продолжении сообщения",
-    "networkErrorCreatingQuest": "Ошибка сети при создании квеста",
     "networkErrorDeletingChat": "Ошибка сети при удалении чата",
     "networkErrorDeletingChats": "Ошибка сети при удалении чатов",
-    "networkErrorDuringRetry": "Ошибка сети при повторной попытке",
     "networkErrorExportingChats": "Ошибка сети при экспорте чатов",
     "networkErrorGeneratingImage": "Ошибка сети при генерации изображения",
     "networkErrorRemovingMessage": "Ошибка сети при удалении сообщения",
@@ -1208,10 +1234,35 @@
     "roleClearedFor": "Роль {role} снята",
     "failedSave": "Не удалось сохранить",
     "failedCreate": "Не удалось создать",
-    "gmGuidanceApplied": "GM guidance applied",
     "gmGuidanceFailed": "Failed to apply GM guidance",
     "quickRepliesSaved": "Quick-reply buttons saved",
-    "quickRepliesSaveFailed": "Failed to save quick-reply buttons"
+    "quickRepliesSaveFailed": "Failed to save quick-reply buttons",
+    "chatUnarchived": "Chat unarchived",
+    "failedSaveSettings": "Failed to save settings",
+    "failedSaveAutoTranslate": "Failed to save auto-translate target",
+    "promptImproved": "Prompt improved",
+    "promptRestored": "Original draft restored",
+    "promptImproveFailed": "Prompt improvement failed",
+    "promptInjectionBlocked": "Message blocked: prompt injection detected",
+    "messageForwarded": "Message forwarded",
+    "messageForwardedDropped": "Message forwarded (foreign attachments dropped)",
+    "messageForwardEmpty": "Nothing to forward: empty content and no owned attachments",
+    "failedForwardMessage": "Failed to forward message",
+    "networkErrorForwarding": "Network error forwarding message",
+    "aiActionEmpty": "AI returned an empty result",
+    "aiActionUnavailable": "AI actions unavailable (no auxiliary model configured)",
+    "failedAiAction": "Failed to run AI action",
+    "networkErrorAiAction": "Network error running AI action",
+    "networkErrorUnarchivingChat": "Network error unarchiving chat",
+    "enterChatInviteCode": "Enter a chat invite code",
+    "alreadyChatMember": "Already a member of this chat",
+    "assetLinked": "Asset linked: {filename}",
+    "assetLinkFailed": "Failed to link {filename}",
+    "wizardConfirmed": "Entity created from wizard",
+    "wizardConfirmFailed": "Failed to save entity from wizard",
+    "entityCreated": "Entity \"{name}\" created successfully",
+    "failedCreateEntity": "Failed to create entity",
+    "networkErrorCreatingEntity": "Network error — could not create entity"
   },
   "status": {
     "characterResponding": "Персонаж отвечает...",
@@ -1249,7 +1300,8 @@
     "create": "Создать персонажа/локацию/мир/предмет",
     "review": "Проверить полноту данных сущности",
     "clear": "Очистить чат",
-    "stats": "Показать статистику чата"
+    "stats": "Показать статистику чата",
+    "link": "Attach a gallery asset to this chat"
   },
   "participants": {
     "title": "Participants",
@@ -1264,7 +1316,11 @@
     "removed": "Participant removed",
     "failedAdd": "Failed to add participant",
     "failedRemove": "Failed to remove participant",
-    "failedUpdate": "Failed to update participant"
+    "failedUpdate": "Failed to update participant",
+    "turnOrder": "Turn Order",
+    "current": "current",
+    "next": "next",
+    "noTurnOrder": "No turn order yet"
   },
   "wizard": {
     "stepEditFields": "Edit Fields",
@@ -1274,6 +1330,35 @@
     "visibility": "Visibility",
     "private": "Private",
     "public": "Public",
-    "back": "Back"
+    "back": "Back",
+    "previewTitle": "Create {type} — Preview",
+    "confirm": "Create",
+    "cancel": "Cancel",
+    "editHint": "Edit fields below, then confirm to save."
+  },
+
+  "sideChannels": {
+    "title": "Side Channels",
+    "none": "No side channels yet",
+    "new": "New",
+    "newPlaceholder": "Channel name…",
+    "created": "Side channel created",
+    "failedCreate": "Failed to create side channel"
+  },
+
+  "analyze": {
+    "ready": "Prompt analyzed",
+    "failed": "Prompt analysis failed",
+    "unavailable": "Prompt analysis unavailable"
+  },
+
+  "gifPicker": {
+    "searchFailed": "GIF search failed. Try again.",
+    "notConfigured": "GIF search is not configured.",
+    "rateLimited": "GIF search is rate-limited. Try again shortly.",
+    "noActiveChat": "Select a chat first.",
+    "downloadFailed": "Could not download that GIF.",
+    "attachFailed": "Could not attach {filename}.",
+    "attached": "Attached {filename} — it will send with your next message."
   }
 }
