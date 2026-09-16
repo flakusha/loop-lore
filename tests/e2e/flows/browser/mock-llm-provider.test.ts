@@ -10,18 +10,18 @@
  * full e2e fixture (just shape + canned responses).
  */
 
+import { getProvider, listProviders, } from "@/generation";
 import { describe, expect, test, } from "bun:test";
 import {
+  installMockLlmProvider,
   MOCK_MODEL_ID,
   MOCK_PROVIDER_NAME,
   MockLLMProvider,
-  installMockLlmProvider,
   useMockLlmProvider,
 } from "./mock-llm-provider";
-import { getProvider, listProviders, } from "@/generation";
 
 function listNames(): string[] {
-  return listProviders().map((p,) => p.name,);
+  return listProviders().map((p,) => p.name);
 }
 
 describe("MockLLMProvider helper — basic shape", () => {
@@ -80,15 +80,15 @@ describe("MockLLMProvider helper — basic shape", () => {
     await mock.stream({ model: "mock-model", messages: [], }, (chunk,) => {
       if (chunk.type === "content" && chunk.content) { chunks.push(chunk.content,); }
     },);
-    expect(chunks.join(""),).toContain("Mock",);
-    expect(chunks.join(""),).toContain("streamed",);
+    expect(chunks.join("",),).toContain("Mock",);
+    expect(chunks.join("",),).toContain("streamed",);
   });
 
   test("mock failOnCall throws synchronously on complete()", () => {
     // complete() throws before returning a Promise, so the call itself throws.
     const mock = new MockLLMProvider();
     mock.failOnCall = true;
-    expect(() => mock.complete({ model: "mock-model", messages: [], },),)
+    expect(() => mock.complete({ model: "mock-model", messages: [], },))
       .toThrow("Mock provider failure",);
   });
 });

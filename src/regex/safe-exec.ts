@@ -23,7 +23,7 @@ export class RegexInputTooLargeError extends Error {
   readonly actualLength: number;
   readonly limit: number;
 
-  constructor(actualLength: number, limit: number = MAX_INPUT_CHARS) {
+  constructor(actualLength: number, limit: number = MAX_INPUT_CHARS,) {
     super(`Regex pipeline input exceeds ${limit} characters (got ${actualLength})`,);
     this.name = "RegexInputTooLargeError";
     this.actualLength = actualLength;
