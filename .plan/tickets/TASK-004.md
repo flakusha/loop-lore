@@ -3,7 +3,7 @@
 
 # TASK-004: Chat message search
 
-**Status**: closed
+**Status:** [OK] Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
