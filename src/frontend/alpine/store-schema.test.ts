@@ -81,14 +81,14 @@ describe("store-schema — chat-view defaults + shape assertions", () => {
       const broken: Record<string, unknown> = {};
       // Would throw in dev — must silently no-op in production.
       expect(() => assertChatViewShape(broken,)).not.toThrow();
-    },);
+    });
 
     test("does not throw when process is undefined (browser bundle)", () => {
       // ponytail: simulate the browser bundle by stripping `process`.
       // Without this guard the dev-mode check throws ReferenceError at module
       // init via src/frontend/stores/index.ts:38 — kills the e2e context.
-      type GlobalWithProcess = typeof globalThis & { process?: typeof process };
-      const global = globalThis as GlobalWithProcess;
+      // Cast to an optional-process shape so `delete` is legal under strict TS.
+      const global = globalThis as { process?: typeof process };
       const originalProcess = global.process;
       delete global.process;
       try {
@@ -97,6 +97,6 @@ describe("store-schema — chat-view defaults + shape assertions", () => {
       } finally {
         global.process = originalProcess;
       }
-    },);
+    });
   });
 });
