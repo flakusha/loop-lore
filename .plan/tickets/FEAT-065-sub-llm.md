@@ -5,7 +5,7 @@
 
 **Epic:** epic-items
 
-**Status**: open
+**Status**: closed (implemented — see Resolution)
 **Priority**: high
 **Labels**: generation, llm, prompts, templates
 **Assignee**:
@@ -106,12 +106,36 @@ interface LlmTemplateSection {
 ## Acceptance Criteria
 
 - [ ] User can create LLM prompt template with ordered sections + variables
+
 - [ ] Template renders with `{{variables}}` substituted from actor/chat context
 - [ ] Actor override (`actors.settings.prompt_template_id`) takes precedence over hardcoded sections
 - [ ] Chat override (`chats.settings.prompt_template_id`) takes precedence over actor
 - [ ] 5 built-in presets available
 - [ ] Token budget trimming respects section `priority`
 - [ ] Unit tests: template CRUD, render, variable substitution, override resolution
+
+## Resolution
+
+Implemented on `tree/feat-065-prompt-library`:
+
+- `prompt_templates` table (modality-discriminated JSON `payload`) +
+  `chats.prompt_template_id` override column (migration parts/013).
+- `src/generation/template-service.ts` — CRUD + `resolveTemplateDef`
+  (preset → owned row) + `resolveLlmTemplateOverrideId` (chat column →
+  actor `settings.prompt_template_id`).
+- 5 LLM presets in `src/assistant/prompt/presets.ts` (`preset-roleplay`,
+  `preset-assistant`, `preset-story-gm`, `preset-code`, `preset-creative`).
+- `src/assistant/prompt/template-render.ts` — `assembleWithTemplate` /
+  `assembleFromTemplate`: ordered sections (linked builtin builders or
+  static content with `{{variable}}` substitution), priority-based budget
+  trimming. Wired into `PromptAssembler.assemble()`.
+- REST: `/api/templates` CRUD + presets + `/apply` (renders against live
+  actor/chat context) + `/import` + `/export`; validation in
+  `src/validation/schemas/templates.ts`.
+- UI: Templates tab in the user settings modal (browse, create, edit,
+  copy-preset, delete, JSON pack import/export).
+- Tests: `template-service.test.ts`, `template-render.test.ts`,
+  `routes/templates/templates.test.ts`.
 
 ---
 

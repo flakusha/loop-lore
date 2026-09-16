@@ -3,7 +3,7 @@
 
 # FEAT-065: Prompt Library — Expanded Scope (Generation Templates)
 
-**Status**: open
+**Status**: closed (implemented — see Resolution)
 **Priority**: high
 **Labels**: generation, prompts, templates
 **Assignee**:
@@ -124,8 +124,34 @@ Unified **prompt template system** for all generation modalities — LLM text, i
 
 | ID           | Title                             | Modality       | Status     |
 | ------------ | --------------------------------- | -------------- | ---------- |
-| FEAT-065-LLM | LLM prompt template system        | LLM            | 📋 Planned |
-| FEAT-065-IMG | Image prompt template persistence | Image          | 📋 Planned |
+| FEAT-065-LLM | LLM prompt template system        | LLM            | ✅ Done    |
+| FEAT-065-IMG | Image prompt template persistence | Image          | ✅ Done    |
 | FEAT-065-VID | Video generation templates        | Video          | 📋 Planned |
 | FEAT-065-AUD | Audio/sound generation templates  | Audio          | 📋 Planned |
-| FEAT-065-REG | Unified template registry         | Cross-modality | 📋 Planned |
+| FEAT-065-REG | Unified template registry         | Cross-modality | ✅ Done    |
+
+## Resolution
+
+Implemented on `tree/feat-065-prompt-library` as a **unified template
+library** (LLM + image + video/audio payloads):
+
+- One `prompt_templates` table with `modality` discriminator
+  (`llm | image | video | audio`) and modality-shaped JSON `payload`
+  (`sections` for LLM, `templateBody` for image, `body` for video/audio).
+- Per-modality render adapters: LLM → section assembler
+  (`assistant/prompt/template-render.ts`), image →
+  `applyImageTemplate` (+ `ResolveProfileOptions.templateOverride`),
+  video/audio → `applySimpleTemplate` with default params.
+- REST surface: `/api/templates` (CRUD), `/apply`, `/import`, `/export`
+  (shareable JSON packs), registered in `app/register-plugins.ts`.
+- UI: Templates tab in the user settings modal — browse with modality
+  filter, create/edit (JSON payload), copy LLM presets, delete, pack
+  import/export.
+- Overrides: chat `prompt_template_id` column → actor
+  `settings.prompt_template_id` → hardcoded sections; image gen accepts
+  `templateId` + `context`.
+- Out of scope (tracked by FEAT-065-VID / FEAT-065-AUD): wiring
+  video/audio generation routes to `templateId`; the payload schema and
+  CRUD/render plumbing already exist.
+- `FEAT-065-LLM` and `FEAT-065-IMG` are closed by this work; `FEAT-065.md`
+  is the compact duplicate of this ticket.

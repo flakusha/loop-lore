@@ -9,13 +9,18 @@ import { loadConfig, } from "../config/load";
 import { pickSdProvider, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
+import {
+  applyImageTemplate,
+  getOwnedTemplate,
+} from "./template-service";
+import { parseTemplatePayload, type ImageTemplatePayload, } from "./template-types";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { uid, } from "../utils";
 import { generateImages, } from "./image-engine";
 import type { LoRAConfig, } from "./lora/types";
 
 interface ImageGenBody {
-  prompt: string;
+  prompt?: string;
   chatId?: string;
   messageId?: string;
   size?: string;
@@ -33,6 +38,10 @@ interface ImageGenBody {
   workflow?: string;
   /** Optional LoRA model to inject into the generation pipeline. */
   lora?: LoRAConfig;
+  /** User image-prompt template id — renders `context` into the prompt. */
+  templateId?: string;
+  /** {{variable}} values substituted into the template body. */
+  context?: Record<string, string>;
 }
 
 /**
@@ -63,7 +72,30 @@ export async function handleImageGeneration(
     if (!access.ok) { return forbiddenResponse(); }
   }
 
-  if (!req.prompt) {
+  const db = database ?? getDatabase();
+
+  // FEAT-065-IMG: a user template renders the final prompt from {{variables}}
+  // when provided; the raw `prompt` field is then optional.
+  let prompt = req.prompt;
+  let negativePrompt = req.negative_prompt;
+  if (req.templateId) {
+    const row = await getOwnedTemplate(db, req.templateId, userId,);
+    if (!row) {
+      return Response.json({ error: "Template not found", status: 404, }, { status: 404, },);
+    }
+    const payload = parseTemplatePayload(row.payload, row.modality,);
+    if (row.modality !== "image" || !payload) {
+      return Response.json(
+        { error: "Template is not an image template", status: 400, },
+        { status: 400, },
+      );
+    }
+    const rendered = applyImageTemplate(payload as ImageTemplatePayload, req.context ?? {},);
+    prompt = rendered.prompt;
+    negativePrompt = negativePrompt ?? rendered.negativePrompt;
+  }
+
+  if (!prompt) {
     return Response.json({ error: "Missing required field: prompt", status: 400, }, { status: 400, },);
   }
 
@@ -96,14 +128,14 @@ export async function handleImageGeneration(
   const outputFormat = req.output_format ?? "png";
 
   const outcome = await generateImages(sdConfig, {
-    prompt: req.prompt,
+    prompt,
     n,
     size: req.size,
     outputFormat,
     steps: req.steps,
     cfgScale: req.cfgScale,
     samplerName: req.sampler_name,
-    negativePrompt: req.negative_prompt,
+    negativePrompt,
     seed: req.seed,
     enableHr: req.enable_hr,
     hrScale: req.hr_scale,
@@ -121,7 +153,6 @@ export async function handleImageGeneration(
 
   const { images, mimeType, } = outcome;
 
-  const db = getDatabase();
   const assets: { id: string; url: string; filename: string; mimeType: string }[] = [];
 
   for (const buffer of images) {

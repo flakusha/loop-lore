@@ -102,6 +102,8 @@ export interface AssembleActor {
   post_history_instructions: string | null;
   mes_example: string | null;
   agent_role: string | null;
+  /** Raw settings JSON; may carry `prompt_template_id` (FEAT-065-LLM). */
+  settings?: string | null;
 }
 
 /** Minimal chat projection the section builders need. */
@@ -129,6 +131,8 @@ export interface AssembleChat {
   world_system_prompt_override?: string | null;
   /** Per-story custom instructions (story tier of the two-tier steering). */
   custom_instructions?: string | null;
+  /** Chat-level LLM prompt template override (FEAT-065-LLM). */
+  prompt_template_id?: string | null;
 }
 
 /** Shared inputs handed to every section builder. */

@@ -31,6 +31,8 @@ import type {
   PlaythroughStatus,
   PluginStatus,
   SkillLockState,
+  TemplateDetailLevel,
+  TemplateModality,
   TransformContext,
   TurnStrategy,
   UserRole,
@@ -680,6 +682,7 @@ export interface Chats {
   data_version: Generated<number>;
   record_hash: Generated<string>;
   custom_instructions: string | null;
+  prompt_template_id: string | null;
 }
 
 // ── chat_random_events ────────────────────────────────────────────
@@ -1026,6 +1029,20 @@ export interface GenerationJobs {
   error_message: string | null;
   started_at: string | null;
   completed_at: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── prompt_templates ────────────────────────────────────────────
+export interface PromptTemplates {
+  id: Generated<string>;
+  owner_id: string;
+  modality: Generated<TemplateModality>;
+  name: string;
+  description: string | null;
+  model_family: string | null;
+  detail_level: Generated<TemplateDetailLevel>;
+  payload: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
