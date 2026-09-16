@@ -8716,7 +8716,6 @@
     "source": ".plan/tickets/TASK-admin-revisions-diff-revert.md",
     "status": "open"
   },
-
   "TASK-ADMIN-SYSTEM-CONFIG-CLASS-DRIVEN-TYPED-BINDING-FROM-SECTION-": {
     "hash": "5d6b103",
     "git_issue": "5d6b103",
@@ -8728,7 +8727,7 @@
     "epic": "epic-frontend-admin.md",
     "tags": [],
     "source": ".plan/tickets/TASK-admin-system-config-class-driven-typed-binding-from-section-.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ADMIN-SYSTEM-CONFIG-GENERATION-TUNABLES-CONTEXT-WINDOW-GUARD": {
     "hash": "ff48499",
@@ -8769,7 +8768,6 @@
     "source": ".plan/tickets/TASK-admin-system-config-rpg-chat-caption-turn-tunables.md",
     "status": "open"
   },
-
   "TASK-ADMIN-SYSTEM-CONFIG-SAVED-DB-CONFIG-EXPORT-TO-YAML-TOML": {
     "hash": "e92f904",
     "git_issue": "e92f904",
@@ -8781,7 +8779,7 @@
     "epic": "epic-frontend-admin.md",
     "tags": [],
     "source": ".plan/tickets/TASK-admin-system-config-saved-db-config-export-to-yaml-toml.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-ADMIN-SYSTEM-CONFIG-SURFACE-MISSING-SCHEMA-SECTIONS": {
     "hash": "c3d1a83",
@@ -23782,7 +23780,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-single-source-of-truth-for-config-schema-mirrors.md",
-    "status": "open"
+    "status": "done"
   },
   "TASK-SIZE-STRICT-DEBT": {
     "hash": "eb3ed64f",
