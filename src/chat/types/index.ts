@@ -35,9 +35,15 @@ export type {
 } from "./transitions";
 
 export type {
+  ApplyOptions,
+  ApplyResult,
   ModerationAction,
+  ModerationActionKind,
   ModerationActionType,
+  ModerationAuditEntry,
+  ModerationEventType,
   ModerationScope,
+  ModerationSeverity,
 } from "./moderation";
 
 export type {
