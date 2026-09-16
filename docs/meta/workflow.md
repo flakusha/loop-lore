@@ -30,18 +30,18 @@ Identifier format: `<TYPE>-YYYY-<NNN>` (e.g. `BUG-2026-002`, `FEAT-2026-001`).
 
 ```bash
 # List open issues (with branch mapping)
-bun run scripts/worktree/ issues
+giwt issues
 
 # Create an issue + branch + worktree in one step
-bun run scripts/worktree/ ticket FEAT 015 "Add dark mode toggle"
+giwt ticket FEAT 015 "Add dark mode toggle"
 
 # Create an issue only
 git issue create "Title" -m "Body" -l feature -p medium
 
 # Show / comment / close
-git issue show BUG-2026-002
-git issue comment BUG-2026-002 -m "Reproduced on Firefox"
-git issue state BUG-2026-002 closed
+giwt show BUG-2026-002
+giwt comment BUG-2026-002 -m "Reproduced on Firefox"
+giwt state BUG-2026-002 closed
 ```
 
 The full issue list is published in the docs site at
@@ -66,35 +66,39 @@ Solution: SOL-2026-001
 
 ## Worktrees (parallel development)
 
-`bun run scripts/worktree/` manages git worktrees so multiple branches can be worked
-on simultaneously without stashing.
+`giwt` manages git worktrees so multiple branches can be worked on
+simultaneously without stashing. It is the canonical CLI for worktree ops,
+ticket creation, and git-issue flows. The legacy `scripts/worktree/` CLI is
+still in tree for backwards compatibility but its commands are now thin
+shims over `giwt` (see `docs/giwt-scripts-map.md` try-5/6).
 
 ```bash
 # Create a worktree for an existing branch
-bun run scripts/worktree/ create feat-14-io
+giwt create feat-14-io
 
-# Create a new branch + worktree (base defaults to master)
-bun run scripts/worktree/ new feat-my-feature
+# Create a new branch + worktree (base defaults to dev)
+giwt new feat-my-feature
 
 # Create a ticket branch + worktree (issue already created)
-bun run scripts/worktree/ new ticket/BUG-2026-002 master
+giwt new ticket/BUG-2026-002 master
 
 # List / clean up
-bun run scripts/worktree/ list
-bun run scripts/worktree/ cleanup          # removes worktrees for deleted branches
-bun run scripts/worktree/ remove feat-x   # blocks if dirty
+giwt list
+giwt cleanup          # removes worktrees for deleted branches
+giwt remove feat-x    # blocks if dirty
 
 # Integrate back
-bun run scripts/worktree/ merge master feat-x     # merge into a branch
-bun run scripts/worktree/ finalize feat-x         # check → test → GPG-signed merge → remove
+giwt merge feat-x master      # merge source INTO target (target, source order)
+giwt finalize feat-x          # check → test → GPG-signed merge → remove
 ```
 
 ### GPG signing
 
 Commits made inside worktrees are GPG-signed with the agent key configured in
-`.credentials.env`. Use `bun run scripts/worktree/ commit-branch <branch> "msg"`
-rather than raw `git commit`. Merge/finalize operations sign the resulting
-merge commit automatically.
+`.credentials.env`. Use `giwt commit-wt <branch> "msg"` rather than raw
+`git commit`. Merge/finalize operations sign the resulting merge commit
+automatically. Warm the cache with `giwt gpg-unlock` before a signing run if
+`gpg-agent` is cold.
 
 ### Branch conventions
 
@@ -120,7 +124,7 @@ tiers never pull from higher tiers.
 
 **Flow rules:**
 
-- `dev` ← all new work (feature/fix/refactor/TASK) lands here via `bun run scripts/worktree/ finalize`.
+- `dev` ← all new work (feature/fix/refactor/TASK) lands here via `giwt finalize`.
 - `stg` ← fast-forward or merge from `dev` once `stg` is clean. Add patch-level hotfixes on top.
 - `master` ← only release tags from `stg`. Promotion requires a signed, annotated tag (see [Release Process](/meta/release-process)).
 
@@ -165,7 +169,7 @@ git tag -s 0.2.0 -m "loop-lore 0.2.0"   # tag, then push (see release-process)
 
 ```bash
 # 1. Create issue + worktree
-bun run scripts/worktree/ ticket BUG 002 "Browser E2E parallel instability"
+giwt ticket BUG 002 "Browser E2E parallel instability"
 #    → issue BUG-2026-002, branch ticket/BUG-2026-002, worktree tree/ticket-BUG-2026-002
 
 # 2. Work in the worktree
@@ -173,10 +177,10 @@ cd tree/ticket-BUG-2026-002
 # ... edit, test ...
 
 # 3. Commit (GPG-signed)
-bun run scripts/worktree/ commit-branch ticket-BUG-2026-002 "fix(e2e): isolate cachedSoloUser"
+giwt commit-wt ticket-BUG-2026-002 "fix(e2e): isolate cachedSoloUser"
 
 # 4. Finalize (check + test + GPG-signed merge of feature branch into dev, worktree removed)
-bun run scripts/worktree/ finalize ticket-BUG-2026-002
+giwt finalize ticket-BUG-2026-002
 
 # 5. Promote dev → stg (when stg is clean; see "Branch tiers" above)
 git switch stg
