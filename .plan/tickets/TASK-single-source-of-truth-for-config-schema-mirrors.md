@@ -19,11 +19,11 @@ D3, decision 2026-09-03: mirrored structures MUST be derived from one source of 
 
 ## Resolution
 
-18 schema-class defaults files → re-exports of sections/* (sections canonical).
-15 json-schema mirrors → re-exports of section *Meta (incl. headersMeta rewrite:
+18 schema-class defaults files → re-exports of `sections/*` (sections canonical).
+15 json-schema mirrors → re-exports of section `*Meta` (incl. headersMeta rewrite:
 defaults-sourced + hsts added; loggingMeta kept default-free honest).
 DATA_DIR placeholder moved to json-schema/index.ts assembly boundary.
 Behavior deltas now live: AUTH_JWTSECRET/CSRFSECRET/JWTEXPIRESIN/LEGACYOPAQUE
-+ SERVER_TRUSTPROXY env keys; nsfw.useLlmClassifier false→true; encryption.anonymous;
+- `SERVER_TRUSTPROXY` env keys; nsfw.useLlmClassifier false→true; encryption.anonymous;
 generation chatDefaults replaces stale regexTransforms literal; sessionToken + jwt/auth
 keys + travelPrompts surfaced in published schema. schemas/* regenerated, 29 schema tests green.
