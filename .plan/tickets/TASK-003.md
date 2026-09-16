@@ -3,7 +3,7 @@
 
 # TASK-003: Chat room filters
 
-**Status**: open
+**Status**: closed
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -11,3 +11,9 @@
 **Related**:
 
 Git issue: `b45761d`
+
+## Resolution
+
+Implemented. Evidence: `src/routes/chat-search/search.ts` filters (`type`, `world`,
+`includeArchived`, `searchPriority`) with pagination, covered by
+`src/routes/chat-search/search.test.ts`.
