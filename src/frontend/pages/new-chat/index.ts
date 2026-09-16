@@ -43,7 +43,11 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   }
 
   ctx.templateSelect = $<HTMLSelectElement>("#chat-template",);
+  // Guard the empty option so htmx re-entry doesn't stack template duplicates.
+  const templateEmpty = ctx.templateSelect?.querySelector("option",) ?? null;
   if (ctx.templateSelect && ctx.templates.length > 0) {
+    ctx.templateSelect.replaceChildren();
+    if (templateEmpty) { ctx.templateSelect.append(templateEmpty,); }
     for (const t of ctx.templates) {
       const opt = document.createElement("option",);
       opt.value = t.id;
@@ -104,7 +108,12 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
 
   // ── World picker: populate + pre-fill, independent of template selection ──
   ctx.worldSelect ??= $<HTMLSelectElement>("#chat-world",);
-  if (ctx.worldSelect && worlds.length > 0) {
+  if (ctx.worldSelect) {
+    // Rebuild from scratch: keep the static "use default" option so htmx
+    // re-entry doesn't stack duplicates.
+    const def = ctx.worldSelect.querySelector("option",);
+    ctx.worldSelect.replaceChildren();
+    if (def) { ctx.worldSelect.append(def,); }
     for (const w of worlds) {
       const opt = document.createElement("option",);
       opt.value = w.id;

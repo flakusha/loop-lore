@@ -3,7 +3,7 @@
 
 # TASK-005: Chat auto-renaming
 
-**Status**: closed
+**Status:** [OK] Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
