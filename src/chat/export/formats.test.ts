@@ -47,7 +47,7 @@ describe("exportChat — json", () => {
     };
     expect(parsed.chat,).toEqual(payloadFixture.chat,);
     expect(parsed.messages,).toEqual(payloadFixture.messages,);
-    expect(parsed.exported_at,).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(parsed.exported_at,).toMatch(/^\d{4}-\d{2}-\d{2}T/,);
     expect(out,).toContain('\n  "chat":',);
   });
 });
@@ -67,12 +67,12 @@ describe("exportChat — toml", () => {
   test("emits a [chat] block plus [[message]] entries", () => {
     const out = exportChat(payloadFixture, "toml",);
     expect(out,).toContain("[chat]",);
-    expect(out,).toContain("name = \"Sample Chat\"",);
+    expect(out,).toContain('name = "Sample Chat"',);
     expect(out,).toMatch(/\[\[message\]\][\s\S]*role = "user"/,);
     expect(out,).toMatch(/\[\[message\]\][\s\S]*role = "assistant"/,);
     expect(out,).toContain("Hello there!",);
     expect(out,).toContain("General Kenobi!",);
-    expect(out,).toContain("model = \"gpt-test\"",);
+    expect(out,).toContain('model = "gpt-test"',);
   });
 });
 
@@ -112,6 +112,6 @@ describe("exportChat — md", () => {
 
 describe("exportChat — validation", () => {
   test("rejects unsupported format", () => {
-    expect(() => exportChat(payloadFixture, "xml" as never,),).toThrow(/Unsupported export format/);
+    expect(() => exportChat(payloadFixture, "xml" as never,)).toThrow(/Unsupported export format/,);
   });
 });

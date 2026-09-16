@@ -15,12 +15,12 @@
  */
 
 import { Elysia, t, } from "elysia";
-import { checkChatAccess, } from "../../chat/service";
 import {
+  type AnnotationKind,
   createAnnotation,
   listMemoryAnnotations,
-  type AnnotationKind,
 } from "../../chat/proactive/annotations";
+import { checkChatAccess, } from "../../chat/service";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
 import {
   badRequestResponse as badRequest,
@@ -65,7 +65,7 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
 
         if (!isAnnotationKind(body.kind,)) {
           return badRequest(
-            `Annotation kind must be one of: ${ANNOTATION_KINDS.join(", ")}`,
+            `Annotation kind must be one of: ${ANNOTATION_KINDS.join(", ",)}`,
           );
         }
         if (typeof body.body !== "string" || body.body.length === 0) {
@@ -132,7 +132,7 @@ export function annotationRoutes(opts: HandlerOpts, prefix = "/api",) {
           body: row.content,
           createdAt: row.created_at,
           ttlUntil: null,
-        }),);
+        }));
         const memory = listMemoryAnnotations(chatId,);
         return jsonResponse({ data: [...shadowAnnotations, ...memory,], },);
       },

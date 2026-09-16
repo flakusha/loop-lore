@@ -12,11 +12,11 @@ import {
   insertUsers,
 } from "../../test-utils/insert-helpers";
 import {
+  type Annotation,
   clearMemoryAnnotations,
   createAnnotation,
   isAnnotationExpired,
   listMemoryAnnotations,
-  type Annotation,
 } from "./annotations";
 
 let db: Kysely<DB>;
@@ -38,7 +38,7 @@ afterAll(async () => {
 },);
 
 describe("createAnnotation — kind discriminator", () => {
-  test.each(["note", "shadow", "quest"] as const,)(
+  test.each(["note", "shadow", "quest",] as const,)(
     "kind=%s persists the correct discriminator",
     async (kind,) => {
       clearMemoryAnnotations();
@@ -65,7 +65,7 @@ describe("createAnnotation — kind discriminator", () => {
         kind: "marginalia",
         body: "x",
       },),
-    ).rejects.toThrow(/Invalid annotation kind/);
+    ).rejects.toThrow(/Invalid annotation kind/,);
   });
 });
 
@@ -106,7 +106,7 @@ describe("createAnnotation — shadow persistence", () => {
       body: "retrieve the sword",
     },);
     const memory = listMemoryAnnotations("chat-mem",);
-    expect(memory.map((a: Annotation,) => a.id,).sort(),).toEqual([note.id, quest.id,].sort(),);
+    expect(memory.map((a: Annotation,) => a.id).sort(),).toEqual([note.id, quest.id,].sort(),);
 
     const noteRow = await db
       .selectFrom("shadow_notes",)
