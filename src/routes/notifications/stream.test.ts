@@ -13,7 +13,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { NotificationStreamer, loadNotificationSnapshot, } from "./stream";
+import { loadNotificationSnapshot, NotificationStreamer, } from "./stream";
 /**
  * Decode an SSE-encoded chunk into a list of {event,data} frames.
  * @param chunk

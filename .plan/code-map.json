@@ -4228,6 +4228,10 @@
   "src/characters/services/federation-consent.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md"
     }
   ],
@@ -7861,6 +7865,10 @@
   "src/crypto/activitypub-keys.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-character-federation-lacks-owner-consent-or-nsfw-gate.md"
     },
     {
@@ -11468,6 +11476,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-chat-seen-currentactorid-never-assigned-markseen-sends-null.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-frontend-dead-csrf-bearer-header-machinery.md"
     },
     {
       "kind": "ticket",
@@ -22187,6 +22199,13 @@
       "source": ".plan/tickets/TASK-mesh-encrypted-content-sharing-reservation-duplication.md"
     }
   ],
+
+  "src/routes/federation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-backfill-of-historical-posts-on-new-follower-unspecified.md"
+    }
+  ],
   "src/routes/gallery-search.test.ts": [
     {
       "kind": "ticket",
@@ -23334,6 +23353,13 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-world-chat-channels-invites.md"
+    }
+  ],
+
+  "src/routes/notifications/stream.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-notification-stream-error-unreachable.md"
     }
   ],
   "src/routes/notifications/stream.ts": [
@@ -28744,6 +28770,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-nsfw-rating-enforcement.md"
+    }
+  ],
+
+  "src/validation/schemas/any-tightening.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-t-any-schemas-persist-arbitrary-json-actor-settings-entity-d.md"
     }
   ],
   "src/validation/schemas/api-keys.ts": [

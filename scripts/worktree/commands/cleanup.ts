@@ -3,12 +3,13 @@
 
 import { existsSync, readdirSync, rmSync, } from "fs";
 import { resolve, } from "path";
+import type { WorktreeConfig, } from "../utils/config";
 import { getWorktrees, gitSync, } from "../utils/git";
 import { colorize, log, } from "../utils/output";
 
 export async function execute(
   _args: string[],
-  config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
+  config: WorktreeConfig,
 ): Promise<void> {
   // Iterate every known container: `tree/` (canonical) and `OMP_WORKTREE_DIR`
   // (omp's sibling container). Each is independently skippable when absent.
