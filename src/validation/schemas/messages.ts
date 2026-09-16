@@ -80,6 +80,16 @@ export const MessageSearchQuery = t.Object({
   role: t.Optional(t.String({ enum: ["user", "assistant", "character", "system",], },),),
   /** "true" to return only messages that carry at least one attachment. */
   hasAttachment: t.Optional(t.String({ enum: ["true", "false",], },),),
+  /**
+   * Only messages carrying an attachment asset of this type
+   * (asset_links → assets.asset_type). Accepted values are the AssetType enum
+   * members; deliberately a plain string — Elysia 1.4 defaults an absent
+   * t.UnionEnum/t.Enum query param to its FIRST member, which would silently
+   * filter every unqualified search to `image`. Validated at runtime instead.
+   */
+  attachmentType: t.Optional(t.String(),),
+  /** Substring matched (LIKE, %/_ escaped) against message plaintext — e.g. "youtube". */
+  linkPattern: t.Optional(t.String({ minLength: 1, maxLength: 100, },),),
   /** Inclusive lower bound (ISO date) on message created_at. */
   dateFrom: t.Optional(t.String(),),
   /** Inclusive upper bound (ISO date) on message created_at. */
