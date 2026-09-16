@@ -12,6 +12,8 @@
  */
 
 import { describe, expect, test, } from "bun:test";
+import { INTENT_PATTERNS, REGEX_SPECIAL_CHARS, SLASH_COMMAND, } from "./intent";
+import { ENTITY_PATTERN, } from "./memory-classification";
 import {
   assertInputSize,
   MAX_INPUT_CHARS,
@@ -19,17 +21,15 @@ import {
   safeRegexExec,
   safeRegexMatch,
 } from "./safe-exec";
-import { ENTITY_PATTERN, } from "./memory-classification";
-import { INTENT_PATTERNS, REGEX_SPECIAL_CHARS, SLASH_COMMAND, } from "./intent";
 import { LOCATION_MOVEMENT, } from "./story-events";
 
 // ── Input size cap ─────────────────────────────────────────
 
 describe("assertInputSize", () => {
   test("accepts inputs at or below the cap", () => {
-    expect(() => assertInputSize("",),).not.toThrow();
-    expect(() => assertInputSize("a".repeat(MAX_INPUT_CHARS,),),).not.toThrow();
-    expect(() => assertInputSize("hello world",),).not.toThrow();
+    expect(() => assertInputSize("",)).not.toThrow();
+    expect(() => assertInputSize("a".repeat(MAX_INPUT_CHARS,),)).not.toThrow();
+    expect(() => assertInputSize("hello world",)).not.toThrow();
   });
 
   test("throws RegexInputTooLargeError (typed) for oversized input", () => {
@@ -50,15 +50,15 @@ describe("assertInputSize", () => {
   });
 
   test("respects a custom limit", () => {
-    expect(() => assertInputSize("a".repeat(100,), 50,),).toThrow(RegexInputTooLargeError,);
-    expect(() => assertInputSize("a".repeat(49,), 50,),).not.toThrow();
+    expect(() => assertInputSize("a".repeat(100,), 50,)).toThrow(RegexInputTooLargeError,);
+    expect(() => assertInputSize("a".repeat(49,), 50,)).not.toThrow();
   });
 
   test("rejects non-string input with TypeError", () => {
     // @ts-expect-error — intentional misuse
-    expect(() => assertInputSize(42,),).toThrow(TypeError,);
+    expect(() => assertInputSize(42,)).toThrow(TypeError,);
     // @ts-expect-error — intentional misuse
-    expect(() => assertInputSize(null,),).toThrow(TypeError,);
+    expect(() => assertInputSize(null,)).toThrow(TypeError,);
   });
 });
 

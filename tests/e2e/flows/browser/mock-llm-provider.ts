@@ -24,13 +24,13 @@
  * setters on the returned instance.
  */
 
-import { MockLLMProvider, } from "@/test-utils/mock-provider";
 import type { Config, } from "@/config/schema";
 import {
   getProvider,
   initializeProviders,
   registerProvider,
 } from "@/generation";
+import { MockLLMProvider, } from "@/test-utils/mock-provider";
 
 export { MockLLMProvider, } from "@/test-utils/mock-provider";
 
