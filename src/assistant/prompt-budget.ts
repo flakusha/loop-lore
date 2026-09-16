@@ -59,19 +59,16 @@ export function dropOverBudgetSections(
   sections: PromptSectionReport[],
   tokenBudget: number,
   totalTokens: number,
+  priorityOf: (name: string,) => number = (name,) => PRIORITY[name as keyof typeof PRIORITY] ?? 99,
 ): number {
   const ordered: (PromptSectionReport & { index: number })[] = [];
   for (const [si, s,] of sections.entries()) {
     if (s.dropped) { continue; }
-    if (PRIORITY[s.name as keyof typeof PRIORITY] > 0) {
+    if (priorityOf(s.name,) > 0) {
       ordered.push({ ...s, index: si, },);
     }
   }
-  ordered.sort(
-    (a, b,) =>
-      (PRIORITY[b.name as keyof typeof PRIORITY] ?? 99) -
-      (PRIORITY[a.name as keyof typeof PRIORITY] ?? 99),
-  );
+  ordered.sort((a, b,) => priorityOf(b.name,) - priorityOf(a.name,));
 
   let remaining = totalTokens;
   for (const section of ordered) {

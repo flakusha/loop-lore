@@ -1,6 +1,6 @@
 ---
 title: "FEAT-065: Prompt library — expanded scope"
-status: open
+status: closed
 priority: medium
 labels: [feature, prompt-system, generation]
 epic: epic-config-templates
@@ -52,3 +52,12 @@ The prompt registry already handles LLM system prompts with purpose-keyed defaul
 
 - Blocked by: nothing (extends existing registry)
 - Blocks: nothing
+
+## Resolution
+
+Compact duplicate of `FEAT-065-prompt-library-expanded.md` — implemented on
+`tree/feat-065-prompt-library` as a unified prompt-template library (LLM +
+image + video/audio payloads, one `prompt_templates` table, `/api/templates`
+CRUD + apply + import/export, Templates tab in the user settings modal).
+See the expanded ticket's Resolution for details. LLM/image sub-tickets are
+closed; FEAT-065-VID / FEAT-065-AUD remain planned.
