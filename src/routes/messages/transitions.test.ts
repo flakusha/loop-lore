@@ -115,6 +115,47 @@ describe("autoRenameChat", () => {
     await autoRenameChat(db, "chat-undef", "hello", undefined,);
     expect(await chatName("chat-undef",),).toBe("Untouched",);
   });
+
+  test("does not rename when the owner disabled auto_rename_enabled", async () => {
+    await db
+      .updateTable("users",)
+      .set({ settings: JSON.stringify({ auto_rename_enabled: false, },), },)
+      .where("id", "=", "user-renamer",)
+      .execute();
+    await insertActors(db, "Mira", { id: "actor-mira-off", agent_type: "ai", } as never,);
+    await insertChats(db, "New Chat", "user-renamer", { id: "chat-toggle", mode: "direct", } as never,);
+    await insertChatParticipants(db, "chat-toggle", "actor-mira-off", {} as never,);
+    const record: ChatRecord = {
+      name: "New Chat",
+      mode: "direct",
+      current_location_id: null,
+      world_id: null,
+      created_by: "user-renamer",
+    };
+    await autoRenameChat(db, "chat-toggle", "hello there", record,);
+    expect(await chatName("chat-toggle",),).toBe("New Chat",);
+  });
+
+  test("stamps name_source 'auto' on rule-based rename", async () => {
+    await insertActors(db, "Mira", { id: "actor-mira-src", agent_type: "ai", } as never,);
+    await insertChats(db, "New Chat", "user-renamer", { id: "chat-src", mode: "direct", } as never,);
+    await insertChatParticipants(db, "chat-src", "actor-mira-src", {} as never,);
+    const record: ChatRecord = {
+      name: "New Chat",
+      mode: "direct",
+      current_location_id: null,
+      world_id: null,
+      created_by: "user-renamer",
+    };
+    await autoRenameChat(db, "chat-src", "hello there", record,);
+    const row = await db
+      .selectFrom("chats",)
+      .select(["name", "name_source",],)
+      .where("id", "=", "chat-src",)
+      .executeTakeFirst();
+    expect(row?.name_source,).toBe("auto",);
+    expect(row?.name,).not.toBe("New Chat",);
+  });
 });
 
 describe("autoRenameChat — input edge cases", () => {

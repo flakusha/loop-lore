@@ -4,6 +4,7 @@
 import type { Kysely, } from "kysely";
 import { generateRuleName, } from "../../chat";
 import type { DB, } from "../../db/schema";
+import { jsonParseOr, } from "../../utils";
 import { log, } from "./helpers";
 
 /** Chat rows fetched once by the create handler and shared by post-insert side effects. */
@@ -12,6 +13,8 @@ export interface ChatRecord {
   mode: string | null;
   current_location_id: string | null;
   world_id: string | null;
+  /** Chat owner — enables the per-user auto-rename toggle guard when present. */
+  created_by?: string | null;
 }
 
 /**
@@ -33,6 +36,22 @@ export async function autoRenameChat(
     (chatRecord.name !== "New Chat" && chatRecord.name !== "")
   ) {
     return;
+  }
+
+  // Per-user toggle (TASK-chat-autorenaming): rule-based rename is the v1
+  // default, so only an explicit `auto_rename_enabled: false` disables it.
+  // PATCH /api/settings persists the key via the free-form settings merge.
+  if (chatRecord?.created_by) {
+    const owner = await database
+      .selectFrom("users",)
+      .select("settings",)
+      .where("id", "=", chatRecord.created_by,)
+      .executeTakeFirst();
+    const ownerSettings = owner?.settings ? jsonParseOr<Record<string, unknown>>(owner.settings, {},) : {};
+    if (ownerSettings["auto_rename_enabled"] === false) {
+      log().debug("Auto-rename disabled by owner setting", { chatId, },);
+      return;
+    }
   }
 
   const charActor = await database
@@ -61,7 +80,7 @@ export async function autoRenameChat(
 
   await database
     .updateTable("chats",)
-    .set({ name: renameResult.name, updated_at: new Date().toISOString(), },)
+    .set({ name: renameResult.name, name_source: "auto", updated_at: new Date().toISOString(), },)
     .where("id", "=", chatId,)
     .execute();
 
