@@ -127,6 +127,20 @@
         </small>
       </div>
       <div class="form-group">
+        <label class="form-label" for="settings-auto-translate">Auto-translate target</label>
+        <input
+          class="form-input"
+          type="text"
+          id="settings-auto-translate"
+          x-model="_chatAutoTranslateLang"
+          placeholder="e.g. es (blank = off)"
+          data-testid="settings-auto-translate"
+        />
+        <small style="color: var(--text-secondary); display: block; margin-top: var(--space-1)">
+          Opt this chat into automatic translation. Clear to turn it off.
+        </small>
+      </div>
+      <div class="form-group">
         <label class="form-label" for="settings-custom-instructions">Custom Instructions (this story)</label>
         <textarea
           class="form-input form-textarea"

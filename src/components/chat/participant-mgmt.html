@@ -114,4 +114,47 @@
       </div>
     </div>
   </div>
+
+  <!-- Chat invites (owner create/copy/revoke) -->
+  <div class="participant-invites" x-init="loadChatInvites()" data-testid="chat-invites">
+    <h4>{{{ t("chats.invitesTitle") }}}</h4>
+    <div x-show="_chatInvitesLoading">{{{ t("chats.loadingInvites") }}}</div>
+    <div x-show="!_chatInvitesLoading && _chatInvites.length === 0">{{{ t("chats.noChatInvites") }}}</div>
+    <template x-for="invite in _chatInvites" :key="invite.id">
+      <div class="participant-add-row" data-testid="chat-invite-row">
+        <span class="participant-name" x-text="invite.code"></span>
+        <span
+          class="participant-role"
+          x-text="invite.revoked ? t('worlds.inviteRevoked') : t('worlds.inviteActive')"
+        ></span>
+        <button class="btn btn-sm btn-ghost" @click="copyChatInviteCode(invite.code)" data-testid="chat-invite-copy">
+          {{{ t("worlds.inviteCopy") }}}
+        </button>
+        <button class="btn btn-sm btn-ghost" @click="revokeChatInvite(invite.id)" data-testid="chat-invite-revoke">
+          {{{ t("worlds.inviteRevoke") }}}
+        </button>
+      </div>
+    </template>
+    <div x-show="!_showChatInviteForm">
+      <button
+        class="btn btn-sm btn-primary"
+        @click="_showChatInviteForm = true; loadChatInvites()"
+        data-testid="chat-invite-new"
+      >
+        {{{ t("worlds.createInvite") }}}
+      </button>
+    </div>
+    <div x-show="_showChatInviteForm" style="display: flex; gap: var(--space-2); align-items: center">
+      <input
+        type="text"
+        class="form-input"
+        x-model="_newChatInviteMaxUses"
+        :placeholder="t('worlds.inviteMaxUsesPlaceholder')"
+        data-testid="chat-invite-max-uses"
+      />
+      <button class="btn btn-sm btn-primary" @click="createChatInvite()" data-testid="chat-invite-create">
+        {{{ t("worlds.createInvite") }}}
+      </button>
+    </div>
+  </div>
 </div>

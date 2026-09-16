@@ -59,7 +59,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _outputStyleIntensity: 0.5,
   // Two-tier custom instructions — story tier (TASK-two-tier-custom-instructions)
   _customInstructions: "",
-
+  _chatAutoTranslateLang: "",
   toggleDebugView() {
     this._debugView = !this._debugView;
   },
@@ -105,7 +105,9 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._outputStylePreset = fields.outputStylePreset;
     this._outputStyleIntensity = fields.outputStyleIntensity;
     this._customInstructions = chat?.custom_instructions ?? "";
-    // Seed per-actor model overrides from saved config (or empty defaults)
+    const storyState = chat?.story_state ? jsonParseOr<Record<string, unknown>>(chat.story_state, {},) : {};
+    const autoLang = storyState.autoTranslateLang;
+    this._chatAutoTranslateLang = typeof autoLang === "string" ? autoLang : "";
     // so the modal bindings have a stable object per participant.
     const actorModels: Record<string, { model: string; provider: string }> = {};
     for (const p of this._chatParticipants) {
@@ -198,35 +200,44 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         headers: { "Content-Type": "application/json", },
         body: jsonBody(body,),
       },);
-      if (res.ok) {
-        const chats = this.chats;
-        const chat = chats.find((c,) => c.id === this.activeChat);
-        if (chat) {
-          chat.name = this._chatSettingsName.trim();
-          chat.turn_strategy = this._chatSettingsTurnStrategy;
-          chat.custom_instructions = this._customInstructions.trim() || null;
-          setStoryPaused(chat, this._groupPaused,);
-          if (globalThis.Alpine) {
-            try {
-              Alpine.store("chat",).currentChat = chat;
-            } catch {
-              /* store not ready */
-            }
-          }
-        }
-        this.activeChatName = this._chatSettingsName.trim();
-        const titleEl = document.querySelector("#page-title",);
-        if (titleEl) { titleEl.textContent = this.activeChatName; }
-        Alpine.store("ui",).showChatSettings = false;
-        this.setPersona();
-        this.toggleImpersonation();
-        // Re-init VN mode if toggle changed
-        this.updateVnMode();
-        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatSettingsSaved",), },);
-      } else {
+      if (!res.ok) {
         const err = await res.json();
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedSaveSettings",), },);
+        return;
       }
+      const targetLang = this._chatAutoTranslateLang.trim();
+      const translateRes = targetLang
+        ? await apiFetch(`/api/v1/chats/${this.activeChat}/auto-translate`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ targetLang, },),
+        },)
+        : await apiFetch(`/api/v1/chats/${this.activeChat}/auto-translate`, { method: "DELETE", },);
+      if (!translateRes.ok) {
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSaveAutoTranslate",), },);
+        return;
+      }
+      const chats = this.chats;
+      const chat = chats.find((c,) => c.id === this.activeChat);
+      if (chat) {
+        chat.name = this._chatSettingsName.trim();
+        chat.turn_strategy = this._chatSettingsTurnStrategy;
+        chat.custom_instructions = this._customInstructions.trim() || null;
+        setStoryPaused(chat, this._groupPaused,);
+        try {
+          Alpine.store("chat",).currentChat = chat;
+        } catch {
+          /* store not ready */
+        }
+      }
+      this.activeChatName = this._chatSettingsName.trim();
+      const titleEl = document.querySelector("#page-title",);
+      if (titleEl) { titleEl.textContent = this.activeChatName; }
+      Alpine.store("ui",).showChatSettings = false;
+      this.setPersona();
+      this.toggleImpersonation();
+      this.updateVnMode();
+      this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatSettingsSaved",), },);
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorSavingSettings",), },);
     }

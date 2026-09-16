@@ -10,6 +10,72 @@ import type { ChatState, } from "./types";
 const log = rootLog.child({ module: "chat-variants", },);
 
 export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
+  _variantsOpen: false,
+  _variantsLoading: false,
+  _variantsFor: null as string | null,
+  _variants: [] as { id: string; content: string }[],
+
+  async openVariants(messageId: string,) {
+    log.info("openVariants", { messageId, },);
+    this._variantsFor = messageId;
+    this._variantsOpen = true;
+    this._variantsLoading = true;
+    this._variants = [];
+    try {
+      const res = await apiFetch(`/api/messages/${messageId}/variants`,);
+      if (res.ok) {
+        const data = await res.json() as { id: string; content: string }[];
+        this._variants = Array.isArray(data) ? data : [];
+      } else {
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSwitchVariant",), },);
+        this._variantsOpen = false;
+        this._variantsFor = null;
+      }
+    } catch {
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSwitchVariant",), },);
+      this._variantsOpen = false;
+      this._variantsFor = null;
+    } finally {
+      this._variantsLoading = false;
+    }
+  },
+
+  closeVariants() {
+    this._variantsOpen = false;
+    this._variantsLoading = false;
+    this._variantsFor = null;
+    this._variants = [];
+  },
+
+  // BE PUT /messages/:id/variant is stateless (returns the sibling at
+  // index, persists nothing), so apply the selection locally as a preview
+  // swap on the originating bubble instead of reloading the list.
+  async selectVariantByIndex(messageId: string, index: number,) {
+    log.info("selectVariantByIndex", { messageId, index, },);
+    try {
+      const res = await apiFetch(`/api/messages/${messageId}/variant`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ variantIndex: index, },),
+      },);
+      if (!res.ok) {
+        this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSwitchVariant",), },);
+        return;
+      }
+      const selected = await res.json() as { id?: string; content?: string };
+      const msg = this.messages.find((m,) => m.id === messageId);
+      if (msg && typeof selected.content === "string") {
+        msg.content = selected.content;
+        msg.variantIndex = index;
+      } else {
+        await this.loadMessages();
+      }
+      this.closeVariants();
+    } catch {
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSwitchVariant",), },);
+    }
+  },
+
   async regenerateResponse() {
     log.info("regenerateResponse", { chatId: this.activeChat, },);
     if (!this.activeChat) {
@@ -57,16 +123,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
     const msg = this.messages.find((m,) => m.id === messageId);
     if (!msg?.totalVariants || msg.totalVariants <= 1) { return; }
     const newIdx = ((msg.variantIndex ?? 0) + direction + msg.totalVariants) % msg.totalVariants;
-    try {
-      const res = await apiFetch(`/api/messages/${messageId}/variant`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", },
-        body: jsonBody({ variantIndex: newIdx, },),
-      },);
-      if (res.ok) { await this.loadMessages(); }
-    } catch {
-      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSwitchVariant",), },);
-    }
+    await this.selectVariantByIndex(messageId, newIdx,);
   },
 
   async continueMessage(messageId: string,) {

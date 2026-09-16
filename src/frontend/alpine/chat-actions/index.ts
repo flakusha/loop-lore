@@ -7,12 +7,14 @@ import { commandPalette, } from "./command-palette";
 import { dispatch, } from "./dispatch";
 import { impersonation, } from "./impersonation";
 import { media, } from "./media";
+import { messageTools, } from "./message-tools";
 
 export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
   ...commandPalette,
   ...dispatch,
   ...impersonation,
   ...media,
+  ...messageTools,
   formattedGenerationTime,
   formattedTokensPerSecond,
   statsLine,
