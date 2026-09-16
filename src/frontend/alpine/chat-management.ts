@@ -208,4 +208,20 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorExportingChats",), },);
     }
   },
+
+  async unarchiveChat(chatId: string,) {
+    log.info("unarchiveChat", { chatId, },);
+    try {
+      const res = await apiFetch(`/api/v1/chats/${chatId}/unarchive`, { method: "POST", },);
+      if (res.ok) {
+        await this.loadChats();
+        this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatUnarchived",), },);
+      } else {
+        const err = await res.json().catch(() => ({} as { error?: string }),) as { error?: string };
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedUnarchiveChat",), },);
+      }
+    } catch {
+      this.$dispatch?.("show-toast", { type: "error", message: t("toasts.networkErrorUnarchivingChat",), },);
+    }
+  },
 };

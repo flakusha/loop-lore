@@ -27,7 +27,7 @@ export interface ChatCoreState
   chats: {
     id: string;
     name?: string;
-    isPinned?: number;
+    isPinned?: boolean | number;
     type?: string;
     mode?: string;
     turn_strategy?: string;
@@ -140,7 +140,8 @@ export interface ChatCoreState
   _outputStyleIntensity: number;
   /** Story tier of the two-tier custom instructions ("" = unset). */
   _customInstructions: string;
-  _promptTemplate: PromptTemplateInfo | null;
+  /** Auto-translate target lang code ("" = off). */
+  _chatAutoTranslateLang: string;
   _promptLoading: boolean;
   _promptExpanded: boolean;
   _promptOverrideDraft: string;
@@ -221,6 +222,8 @@ export interface ChatCoreState
   toggleImpersonation(): Promise<void>;
   generateImageFromMessage(msgId: string,): Promise<void>;
   captionMessage(msgId: string,): Promise<void>;
+  forwardMessage(msgId: string,): Promise<void>;
+  runMessageAiAction(msgId: string, action: "summarize" | "action-items" | "explain",): Promise<void>;
   statsLine(msg: {
     model_id?: string;
     provider?: string;
@@ -244,6 +247,13 @@ export interface ChatCoreState
   regenerateResponse(): Promise<void>;
   regenerateVariant(messageId: string,): Promise<void>;
   switchVariant(messageId: string, direction: number,): Promise<void>;
+  _variantsOpen: boolean;
+  _variantsLoading: boolean;
+  _variantsFor: string | null;
+  _variants: { id: string; content: string }[];
+  openVariants(messageId: string,): Promise<void>;
+  closeVariants(): void;
+  selectVariantByIndex(messageId: string, index: number,): Promise<void>;
   continueMessage(messageId: string,): Promise<void>;
   retryFromPoint(attemptId: string, step: number,): Promise<void>;
   getChatId(): string | null;
@@ -277,10 +287,10 @@ export interface ChatCoreState
   confirmRenameChat(): Promise<void>;
   deleteChat(chatId: string, event: Event,): Promise<void>;
   toggleChatPin(chatId: string,): Promise<void>;
+  unarchiveChat(chatId: string,): Promise<void>;
   toggleChatSelection(chatId: string,): void;
   batchArchive(): Promise<void>;
   batchDelete(): Promise<void>;
-  batchExport(): Promise<void>;
   loadChatKey(chatId: string,): Promise<void>;
   checkGenerationStatus(chatId: string,): Promise<void>;
   registerPanelHandlers(): void;
