@@ -256,6 +256,21 @@
         Join
       </button>
     </div>
+    <!-- Join a chat via invite code -->
+    <div class="nav-item-row" style="padding: var(--space-1) var(--space-3); gap: var(--space-2)">
+      <input
+        type="text"
+        class="form-input"
+        x-model="_chatJoinCode"
+        placeholder="Chat invite code"
+        style="font-size: 12px; padding: var(--space-1) var(--space-2); flex: 1; min-width: 0"
+        @keydown.enter="joinChatByCode()"
+        data-testid="chat-join-code"
+      />
+      <button class="btn btn-ghost" @click="joinChatByCode()" style="font-size: 12px; white-space: nowrap">
+        Join
+      </button>
+    </div>
     <!-- Client-side filtered list -->
     <template x-if="_searchResults.length === 0">
       <div>
@@ -285,6 +300,14 @@
                 :style="chat.isPinned === 'pinned' ? 'color:var(--accent-yellow)' : ''"
                 x-text="chat.isPinned === 'pinned' ? '★' : '☆'"
               >
+              </button>
+              <button
+                class="btn-icon btn-xs"
+                x-show="_chatStatus === 'archived'"
+                x-bind:title="t('chats.unarchiveChat')"
+                @click.prevent="unarchiveChat(chat.id)"
+              >
+                ↩
               </button>
               <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(chat.id)">✏️</button>
               <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $event)">
