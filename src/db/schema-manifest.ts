@@ -1521,6 +1521,8 @@ export const SCHEMA = new SchemaManifest()
     persona_id: col("text",),
     talkativity: col("integer", { notNull: true, hasDefault: true, },),
     initiative: col("integer", { notNull: true, hasDefault: true, },),
+    muted_until: col("text",),
+    banned_until: col("text",),
   },)
   .table("chat_pins", {
     id: col("text", { primaryKey: true, },),

@@ -14,7 +14,16 @@
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, it, } from "bun:test";
 import { type Kysely, } from "kysely";
-import { checkChatSettingsAccess, } from "./service";
+import { type DB, } from "../db/schema";
+import { createLogger, } from "../logger";
+import { createTestDb, type TestDb, } from "../test-utils/create-test-db";
+import {
+  insertActors,
+  insertChatParticipants,
+  insertChats,
+  insertModerationActions,
+  insertUsers,
+} from "../test-utils/insert-helpers";
 import {
   applyBan,
   applyFlag,
@@ -28,16 +37,7 @@ import {
   isMuted,
   isParticipantBanned,
 } from "./moderation";
-import { type DB, } from "../db/schema";
-import { createLogger, } from "../logger";
-import { createTestDb, type TestDb, } from "../test-utils/create-test-db";
-import {
-  insertActors,
-  insertChatParticipants,
-  insertChats,
-  insertModerationActions,
-  insertUsers,
-} from "../test-utils/insert-helpers";
+import { checkChatSettingsAccess, } from "./service";
 import type { ModerationAction, } from "./types";
 
 // ─── Pure-helper suite (existing, unchanged) ────────────────────────────
@@ -277,7 +277,7 @@ async function seedChat(opts: {
     } as never,);
   }
 
-  const chatId = `chat-${opts.creatorId}-${Math.random().toString(36).slice(2, 8)}`;
+  const chatId = `chat-${opts.creatorId}-${Math.random().toString(36,).slice(2, 8,)}`;
   await insertChats(database, "Test Chat", opts.creatorId, {
     id: chatId,
     type: "group",
@@ -338,7 +338,7 @@ describe("applyBan — ban removes participant + prevents rejoin", () => {
       Date.now() + (365 * 24 * 60 * 60 * 1000),
     );
     expect(expired,).toBe(false,);
-  },);
+  });
 
   it("rejects self-ban", async () => {
     const result = await applyBan(database, {
@@ -349,7 +349,7 @@ describe("applyBan — ban removes participant + prevents rejoin", () => {
     },);
     expect(result.ok,).toBe(false,);
     expect(result.reason,).toContain("yourself",);
-  },);
+  });
 });
 
 describe("applyKick — removes actor immediately, leaves history intact", () => {
@@ -384,25 +384,25 @@ describe("applyKick — removes actor immediately, leaves history intact", () =>
       .executeTakeFirst();
     expect(audit?.action,).toBe("kick",);
     expect(audit?.event_type,).toBe("moderation.chat.kick",);
-  },);
+  });
 });
 
 describe("applyMute / isMuted — mute predicate unit", () => {
   it("returns true while muted_until is in the future", () => {
     const future = new Date(Date.now() + 60_000,).toISOString();
-    expect(isMuted({ muted_until: future }, Date.now(),),).toBe(true,);
-  },);
+    expect(isMuted({ muted_until: future, }, Date.now(),),).toBe(true,);
+  });
 
   it("returns false when muted_until is null", () => {
-    expect(isMuted({ muted_until: null }, Date.now(),),).toBe(false,);
+    expect(isMuted({ muted_until: null, }, Date.now(),),).toBe(false,);
     expect(isMuted(null, Date.now(),),).toBe(false,);
     expect(isMuted(undefined, Date.now(),),).toBe(false,);
-  },);
+  });
 
   it("returns false when muted_until is in the past", () => {
     const past = new Date(Date.now() - 60_000,).toISOString();
-    expect(isMuted({ muted_until: past }, Date.now(),),).toBe(false,);
-  },);
+    expect(isMuted({ muted_until: past, }, Date.now(),),).toBe(false,);
+  });
 
   it("applyMute stamps muted_until + writes a mute audit row", async () => {
     const chatId = await seedChat({
@@ -436,7 +436,7 @@ describe("applyMute / isMuted — mute predicate unit", () => {
       .executeTakeFirst();
     expect(audit?.action,).toBe("mute",);
     expect(audit?.event_type,).toBe("moderation.chat.mute",);
-  },);
+  });
 });
 
 describe("applyFlag — writes audit row + invokes moderation hook", () => {
@@ -465,7 +465,7 @@ describe("applyFlag — writes audit row + invokes moderation hook", () => {
       .executeTakeFirst();
     expect(audit?.action,).toBe("flag-nsfw",);
     expect(audit?.event_type,).toBe("moderation.chat.flag.nsfw",);
-  },);
+  });
 
   it("flag-tox uses the warn event_type without scanning content", async () => {
     const chatId = await seedChat({ creatorId: "u-owner", },);
@@ -489,7 +489,7 @@ describe("applyFlag — writes audit row + invokes moderation hook", () => {
       .where("id", "=", result.auditEntryId!,)
       .executeTakeFirst();
     expect(audit?.event_type,).toBe("moderation.chat.flag.tox",);
-  },);
+  });
 });
 
 describe("admin/owner gate via checkChatSettingsAccess", () => {
@@ -502,7 +502,7 @@ describe("admin/owner gate via checkChatSettingsAccess", () => {
     const access = await checkChatSettingsAccess(database, chatId, "u-member", null,);
     expect(access.ok,).toBe(false,);
     if (!access.ok) { expect(access.error.code,).toBe("forbidden",); }
-  },);
+  });
 
   it("grants chat creator", async () => {
     const chatId = await seedChat({
@@ -512,7 +512,7 @@ describe("admin/owner gate via checkChatSettingsAccess", () => {
 
     const access = await checkChatSettingsAccess(database, chatId, "u-owner", null,);
     expect(access.ok,).toBe(true,);
-  },);
+  });
 
   it("grants admin role (moderation.action) bypassing membership", async () => {
     const chatId = await seedChat({
@@ -522,7 +522,7 @@ describe("admin/owner gate via checkChatSettingsAccess", () => {
 
     const access = await checkChatSettingsAccess(database, chatId, "u-admin", "admin",);
     expect(access.ok,).toBe(true,);
-  },);
+  });
 
   it("rejects a stranger with no role and no membership", async () => {
     const chatId = await seedChat({
@@ -532,7 +532,7 @@ describe("admin/owner gate via checkChatSettingsAccess", () => {
 
     const access = await checkChatSettingsAccess(database, chatId, "u-stranger", null,);
     expect(access.ok,).toBe(false,);
-  },);
+  });
 });
 
 // Ensure the legacy `insertModerationActions` helper is still importable —
@@ -545,5 +545,5 @@ describe("import sanity", () => {
     expect(typeof insertChats,).toBe("function",);
     expect(typeof insertChatParticipants,).toBe("function",);
     expect(typeof insertUsers,).toBe("function",);
-  },);
+  });
 });
