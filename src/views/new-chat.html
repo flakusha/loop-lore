@@ -108,6 +108,12 @@
               {{{t("chats.visualNovelOverlay")}}}
             </label>
           </div>
+          <div class="form-group" id="world-group">
+            <label class="form-label" for="chat-world">{{{t("story.world")}}}</label>
+            <select class="form-select" name="world" id="chat-world" data-testid="chat-world">
+              <option value="">{{{t("chats.useDefault")}}}</option>
+            </select>
+          </div>
           <div class="form-group" id="participant-group">
             <label class="form-label" for="participant-search">{{{t("chats.characterParticipant")}}}</label>
             <div style="position: relative">

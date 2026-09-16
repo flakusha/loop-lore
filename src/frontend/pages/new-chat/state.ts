@@ -45,6 +45,7 @@ export interface NewChatCtx {
   templateFeaturesList: HTMLElement | null;
   fineTuneGroup: HTMLElement | null;
   turnStrategySelect: HTMLSelectElement | null;
+  worldSelect: HTMLSelectElement | null;
   visibilitySelect: HTMLSelectElement | null;
   visualNovelCheckbox: HTMLInputElement | null;
   searchInput: HTMLInputElement | null;
@@ -76,6 +77,7 @@ export function createCtx(): NewChatCtx {
     templateFeaturesList: null,
     fineTuneGroup: null,
     turnStrategySelect: null,
+    worldSelect: null,
     visibilitySelect: null,
     visualNovelCheckbox: null,
     searchInput: null,

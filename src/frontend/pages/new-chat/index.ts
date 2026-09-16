@@ -22,9 +22,21 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
 
   // ── Chat setup templates: load + pre-fill key mechanics ─────
   try {
-    const res = await feFetch("/api/v1/chat-setup-templates",);
+    const res = await feFetch("/api/chat-setup-templates",);
     if (res.ok) {
       ctx.templates = (await res.json()) as typeof ctx.templates;
+    }
+  } catch {
+    /* ignore */
+  }
+
+  // ── Worlds: load for the world picker (fine-tune override) ─────
+  let worlds: { id: string; name: string }[] = [];
+  try {
+    const res = await feFetch("/api/worlds?pageSize=100",);
+    if (res.ok) {
+      const body = await res.json() as { data?: { id: string; name: string }[] };
+      if (Array.isArray(body.data,)) { worlds = body.data; }
     }
   } catch {
     /* ignore */
@@ -44,6 +56,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
     ctx.templateFeaturesList = $<HTMLElement>("#template-features-list",);
     ctx.fineTuneGroup = $<HTMLElement>("#fine-tune-group",);
     ctx.turnStrategySelect = $<HTMLSelectElement>("#chat-turn-strategy",);
+    ctx.worldSelect = $<HTMLSelectElement>("#chat-world",);
     ctx.visibilitySelect = $<HTMLSelectElement>("#chat-visibility",);
     ctx.visualNovelCheckbox = $<HTMLInputElement>("#chat-visual-novel",);
 
@@ -55,6 +68,9 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
       if (modeSelect && t?.mode) { modeSelect.value = t.mode; }
       if (ctx.turnStrategySelect) {
         ctx.turnStrategySelect.value = t?.turnStrategy ?? "";
+      }
+      if (ctx.worldSelect) {
+        ctx.worldSelect.value = t?.worldId ?? "";
       }
       if (ctx.visibilitySelect) {
         ctx.visibilitySelect.value = t?.visibility ?? "";
@@ -81,10 +97,20 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
         ctx.fineTuneGroup.style.display = t ? "block" : "none";
       }
     };
-
     ctx.templateSelect.addEventListener("change", function() {
       renderTemplate(this.value,);
     },);
+  }
+
+  // ── World picker: populate + pre-fill, independent of template selection ──
+  ctx.worldSelect ??= $<HTMLSelectElement>("#chat-world",);
+  if (ctx.worldSelect && worlds.length > 0) {
+    for (const w of worlds) {
+      const opt = document.createElement("option",);
+      opt.value = w.id;
+      opt.textContent = w.name;
+      ctx.worldSelect.append(opt,);
+    }
   }
 
   try {
