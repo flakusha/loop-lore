@@ -110,7 +110,7 @@ export function buildImagePromptMessages(
 ): ImagePromptMessage[] {
   const { profile, template, } = resolveProfile(mode, detail, opts,);
   const systemPrompt = buildImageSystemPrompt(profile, detail,);
-  const userMessage = resolveTemplate(template, ctx,);
+  const userMessage = resolveTemplate(opts.templateOverride ?? template, ctx,);
 
   return [
     { role: "system", content: systemPrompt, },

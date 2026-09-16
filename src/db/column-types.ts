@@ -121,6 +121,10 @@ export const COLUMN_TYPE_OVERRIDES: Record<string, Record<string, string>> = {
     "max_quality": "QualityLevel",
     "min_quality": "QualityLevel",
   },
+  "PromptTemplates": {
+    "modality": "TemplateModality",
+    "detail_level": "TemplateDetailLevel",
+  },
   "GenerationAttempts": {
     "cancel_reason": "CancelReason",
     "cancel_source": "CancelSource",

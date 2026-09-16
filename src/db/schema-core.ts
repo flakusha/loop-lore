@@ -30,6 +30,8 @@ import type {
   PlaythroughStatus,
   PluginStatus,
   SkillLockState,
+  TemplateDetailLevel,
+  TemplateModality,
   TransformContext,
   TurnStrategy,
   UserRole,
@@ -174,6 +176,7 @@ export interface Chats {
   data_version: Generated<number>;
   record_hash: Generated<string>;
   custom_instructions: string | null;
+  prompt_template_id: string | null;
 }
 // ── actors ────────────────────────────────────────────
 export interface Actors {
@@ -676,19 +679,6 @@ export interface WorldMembers {
   actor_id: string;
 }
 
-// ── world_invites ────────────────────────────────────────────
-export interface WorldInvites {
-  id: Generated<string>;
-  world_id: string;
-  code: string;
-  created_by: string | null;
-  created_at: Generated<string>;
-  expires_at: string | null;
-  max_uses: number | null;
-  uses: Generated<number>;
-  status: Generated<InviteStatus>;
-}
-
 // ── chat_random_events ────────────────────────────────────────────
 export interface ChatRandomEvents {
   id: Generated<string>;
@@ -930,6 +920,20 @@ export interface GenerationJobs {
   error_message: string | null;
   started_at: string | null;
   completed_at: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── prompt_templates ────────────────────────────────────────────
+export interface PromptTemplates {
+  id: Generated<string>;
+  owner_id: string;
+  modality: Generated<TemplateModality>;
+  name: string;
+  description: string | null;
+  model_family: string | null;
+  detail_level: Generated<TemplateDetailLevel>;
+  payload: Generated<string>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }

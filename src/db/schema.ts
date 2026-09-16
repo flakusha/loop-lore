@@ -147,6 +147,7 @@ export interface DB {
   generation_attempts: import("./schema-generation").GenerationAttempts;
   synthetic_data: import("./schema-synthetic").SyntheticData;
   generation_jobs: import("./schema-core").GenerationJobs;
+  prompt_templates: import("./schema-core").PromptTemplates;
   content_flags: import("./schema-moderation").ContentFlags;
   location_nsfw_config: import("./schema-character").LocationNsfwConfig;
   moderation_actions: import("./schema-moderation").ModerationActions;

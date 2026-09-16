@@ -5,7 +5,7 @@
 
 **Epic:** epic-items
 
-**Status**: open
+**Status**: closed (implemented — see Resolution)
 **Priority**: medium
 **Labels**: generation, image, prompts, templates
 **Assignee**:
@@ -87,6 +87,24 @@ interface ImagePromptTemplateRow {
 - [ ] `{{variables}}` render correctly from chat context
 - [ ] CRUD API + unit tests
 - [ ] Migration adds `image_prompt_templates` table
+
+## Resolution
+
+Implemented on `tree/feat-065-prompt-library`:
+
+- `image_prompt_templates` was folded into the unified `prompt_templates`
+  table (modality `image`, JSON payload `{ templateBody, negativePrompt?,
+  promptFormat?, genMode? }`) — one CRUD surface for all modalities per the
+  FEAT-065 expanded design.
+- `/api/templates` CRUD + `/apply` render `{{variables}}` from a context map.
+- `image-gen-route` accepts `templateId` + `context`: the template renders
+  the final prompt (raw `prompt` becomes optional); `negative_prompt` from
+  the body wins over the template default.
+- `buildImagePromptMessages()` accepts `templateOverride` for full-template
+  substitution over the built-in profile templates.
+- UI + import/export shared with the LLM tab (settings modal, Templates tab).
+- Tests: `src/routes/templates/templates.test.ts` (apply render, ownership),
+  `template-service.test.ts` (serializer, apply helpers).
 
 ---
 

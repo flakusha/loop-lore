@@ -73,3 +73,21 @@ export const ChunkAction = {
 } as const;
 /** */
 export type ChunkAction = (typeof ChunkAction)[keyof typeof ChunkAction];
+
+// ── Prompt Template Library (FEAT-065) ────────────────────
+export const TemplateModality = {
+  Llm: "llm",
+  Image: "image",
+  Video: "video",
+  Audio: "audio",
+} as const;
+/** */
+export type TemplateModality = (typeof TemplateModality)[keyof typeof TemplateModality];
+
+export const TemplateDetailLevel = {
+  Instant: "instant",
+  Balanced: "balanced",
+  Detailed: "detailed",
+} as const;
+/** */
+export type TemplateDetailLevel = (typeof TemplateDetailLevel)[keyof typeof TemplateDetailLevel];
