@@ -109,6 +109,7 @@ implementation detail that callers stop invoking directly.
     gains the `gates` section.
   - `scripts/gpg-unlock.mjs` → `giwt gpg-unlock` rewrite is unblocked by
     try-5 (no worktree-shim dependency); lands when owner authorizes.
+
 ## Try-6 cosmetic (giwt ASCII output)
 
 - Bumped giwt pin from `34c8f02` → `fe463f4` (intermediate commit on master). Purely cosmetic — replaces unicode glyphs (☦, box-drawing) with bare ASCII + level tag. Default is `simple` (env `GIWT_OUTPUT=simple`); `pretty` keeps the old glyphs; `json`/`jsonl`/`toml` available for tooling.
