@@ -4,7 +4,7 @@ Pilot migration base (try 1). Source of truth for which `package.json` scripts s
 
 ## Install
 
-- Dependency: `"giwt": "git+ssh://git@github.com/flakusha/giwt.git#master"` (bun git dep, unversioned `master` while giwt is in cleanup/dev). Owner installs manually with SSH keys (agent shells have no ssh by design); requires keys in every install env incl. CI, else `bun install` exits 1.
+- Dependency: `"giwt": "github:flakusha/giwt#c53ffb5c9e09a6242b4a0cc60e27c05155b9811f"` (commit-pinned to giwt master HEAD; bumps per try-4/6/7 as the owner merges upstream). Owner installs manually with SSH keys (agent shells have no ssh by design); requires keys in every install env incl. CI, else `bun install` exits 1.
 - `plan:sync` / `plan:sync:fix` → `giwt sync [--fix]` (parity proven try 1 from source: both green).
 - Binary link (user-owned, outside repo — not committed): `ln -s /home/flak/git-ai/giwt/bin/giwt ~/.local/bin/giwt`.
 
@@ -27,8 +27,9 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 | `package.json` script | today | pilot (try 1) | phase 2 |
 |---|---|---|---|
 | `plan:sync` / `plan:sync:fix` | `giwt sync [--fix]` | `giwt sync [--fix]` | done (try-5: script + test + lib deleted, worktree `sync` shims to giwt) |
-| `plan:backlog:sync*` | `scripts/sync-backlog-index.ts` | stays (try 1) | `giwt sync --backlog` or `giwt ticket sync` extension |
-| `plan:docs`, `plan:map*`, `plan:find` | `gen-plan-docs.ts`, `plan-code-map.ts` | stays | `giwt report` / `giwt search` extension |
+| `plan:backlog:sync*` | `giwt plan backlog-sync [--fix]` | stays (try 1) | done (try-7: script deleted) |
+| `plan:docs` | `giwt plan gen-docs [--check]` | stays (try 1) | done (try-7: script deleted) |
+| `plan:map*`, `plan:find` | `giwt plan code-map [--check \| --find <path>]` | stays (try 1) | done (try-7: script deleted; `extractSrcRefs` + `stripMarkdownCode` + `SRC_REF_RE` dropped from `scripts/lib/src-refs.ts`) |
 | worktree ops (`scripts/worktree/`) | local CLI | stays (try 1) | thin shim to `giwt` (already feature-complete upstream) |
 | `gpg-unlock` | `scripts/gpg-unlock.mjs` | stays | `giwt gpg-unlock` (exists upstream) |
 
@@ -44,7 +45,7 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 - `check:report-ls` → `giwt report`: REJECTED. Different worktree roots and `giwt report` flags loop-lore's valid reports malformed (missing `gates` section — schema drift). Stays in-repo.
 - `scripts/sync-ticket-index.ts` deletion: BLOCKED. `scripts/worktree/commands/sync.ts` shells out to it; removal waits for the worktree-shim phase.
 - `scripts/gpg-unlock.mjs`: STAYS. Load-bearing for worktree commit paths and `check-parallel`; design doc pins it as the human-facing unlock command.
-- `plan:backlog:sync*`, `plan:docs`, `plan:map*`, `plan:find`: NO UPSTREAM. `giwt sync` covers tickets only; `giwt report`/`search` don't cover plan-docs/code-map. Needs giwt extensions (phase 3).
+- `plan:backlog:sync*`, `plan:docs`, `plan:map*`, `plan:find`: NO UPSTREAM → done in try-7 (`giwt plan` added in upstream commit `c53ffb5`; subsumes backlog-sync, code-map, gen-docs + adds check-links, validate, status).
 - `version:*`, `commit:*` (`src/scripts/`): OUT OF SCOPE (denylist: `src/`).
 - `bun install` of the git dep needs a GitHub SSH key in every install env (harness shell has none; CI has no SSH setup) — see Try-3.
 
@@ -65,3 +66,34 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 - `scripts/worktree/commands/sync.ts` is now a thin shim over `giwt sync` (flags pass through verbatim; runs in the caller's checkout so giwt resolves worktree-aware paths instead of the old forced main-root cwd).
 - Deleted `scripts/sync-ticket-index.ts`, `scripts/sync-ticket-index.test.ts`, `scripts/lib/sync-ticket.ts` (lib had no other consumers) and dropped the knip exemption.
 - Unblocks the try-2 BLOCKED item above; remaining phase-2 work (backlog/docs/map/report parity, `gpg-unlock`) is unchanged.
+
+## Try-6 cosmetic (giwt ASCII output)
+
+- Bumped giwt pin from `34c8f02` → `fe463f4` (intermediate commit on master). Purely cosmetic — replaces unicode glyphs (☦, box-drawing) with bare ASCII + level tag. Default is `simple` (env `GIWT_OUTPUT=simple`); `pretty` keeps the old glyphs; `json`/`jsonl`/`toml` available for tooling.
+- No script deletions; no table rewires. Just a dep bump.
+
+## Try-7 plan tooling (`giwt plan`)
+
+- Bumped giwt pin from `fe463f4` → `c53ffb5` (master HEAD). Adds `giwt plan <subcommand>`:
+  - `backlog-sync [--fix]` — replaces `scripts/sync-backlog-index.ts`
+  - `code-map [--check | --find <path> | --stale]` — replaces `scripts/plan-code-map.ts`
+  - `gen-docs [--check]` — replaces `scripts/gen-plan-docs.ts`
+  - `check-links` — new (markdown link + TASK ref validator)
+  - `validate [--gates …]` — orchestrator: format, linkage, backlog, tickets, code-map, links, spdx, naming, epics-doc
+  - `status` — health summary
+  - `finalize --plan-gates <csv>` — runs `plan validate` before merge; `--force` skips
+- Rewired `package.json`:
+  - `plan:docs` → `giwt plan gen-docs` (added `plan:docs:check` for `--check`)
+  - `plan:backlog:sync`, `plan:backlog:sync:fix` → `giwt plan backlog-sync [--fix]`
+  - `plan:map`, `plan:map:check`, `plan:find` → `giwt plan code-map [--check | --find …]`
+  - `scripts/check-parallel.mjs` gates (`backlog - index`, `code-map - freshness`) now transitively invoke giwt via these scripts — no direct edit needed.
+- Deleted:
+  - `scripts/sync-backlog-index.ts`
+  - `scripts/gen-plan-docs.ts`
+  - `scripts/plan-code-map.ts`
+  - `scripts/lib/src-refs.ts` — kept the file (still used by `scripts/check-md-links.ts`); dropped the unused `extractSrcRefs` + `stripMarkdownCode` + `SRC_REF_RE` + `SrcRef` interface (now only `extractComments` + `extractDocRefs` remain).
+  - `scripts/lib/src-refs.test.ts` — kept the file; dropped the `describe("extractSrcRefs")` block.
+- Knip verified clean (3 unused files → 0; remaining config hints are pre-existing).
+- Unit tests still pass: `bun test scripts/lib/src-refs.test.ts` (4 pass), `bun test scripts/scripts.test.ts` (40 pass), `bun test scripts/check-md-links.test.ts scripts/lib/` (8 pass).
+- Run-record parity: `giwt plan backlog-sync` matches the deleted script's report format; `giwt plan code-map` writes `.plan/code-map.json` in the same shape so existing tooling (knip, search) sees no change.
+- Unblocks the try-2 BLOCKED item for `plan:backlog:sync*` + `plan:docs` + `plan:map*` + `plan:find`. The remaining `gpg-unlock` migration is unchanged.
