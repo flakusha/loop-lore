@@ -33,8 +33,15 @@ export const IMPORTANCE_DECISION = /\b(decided|chose|promised|swore|vowed|commit
 /** Emotional content that increases importance */
 export const IMPORTANCE_EMOTION = /\b(angry|happy|sad|afraid|excited|love|hate)\b/i;
 
-/** Entity pattern for proper noun detection */
-export const ENTITY_PATTERN = /\b[A-Z][a-z]+(?:\s[A-Z][a-z]+)*\b/g;
+/**
+ * Entity pattern for proper noun detection.
+ *
+ * The trailing multi-token group is bounded to `{0,5}`: an unbounded `{0,}`
+ * on the alternating `[A-Z][a-z]+\s` group is near-linear but worst-case
+ * quadratic on alternating-case spam over uncapped bodies. Five tokens is the
+ * practical maximum for a single proper noun phrase.
+ */
+export const ENTITY_PATTERN = /\b[A-Z][a-z]+(?:\s[A-Z][a-z]+){0,5}\b/g;
 
 // ── Keyword Extraction ────────────────────────────────────
 
