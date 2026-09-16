@@ -227,4 +227,29 @@ describe("character appearance + outfits — required fields", () => {
     expect(exported.default_outfit,).toBe("travel-gear",);
     expect(exported.outfits,).toEqual(baseCharacter.outfits,);
   });
+  it("strict mode: oversized catalog + invalid fields → MAX_ITEMS + INVALID_VALUE", () => {
+    const outfits = Array.from({ length: 21, }, (_, i,) => ({
+      id: i === 0 ? "" : `gear-${i}`,
+      name: i === 1 ? "" : `Gear ${i}`,
+      descriptor: i === 2 ? "" : "Sturdy clothes",
+    }),);
+    const char: CanonicalCharacter = { ...baseCharacter, outfits, default_outfit: "gear-3", };
+    const result = validateCharacter(char, "strict",);
+    expect(result.errors.find((e,) => e.field === "outfits" && e.code === "MAX_ITEMS_EXCEEDED"),).toBeDefined();
+    expect(result.errors.find((e,) => e.field === "outfits[0].id" && e.code === "INVALID_VALUE"),).toBeDefined();
+    expect(result.errors.find((e,) => e.field === "outfits[1].name" && e.code === "INVALID_VALUE"),).toBeDefined();
+    expect(result.errors.find((e,) => e.field === "outfits[2].descriptor" && e.code === "INVALID_VALUE"),)
+      .toBeDefined();
+  });
+
+  it("strict mode: non-object outfit + missing default → INVALID_TYPE + REQUIRED", () => {
+    const char: CanonicalCharacter = {
+      ...baseCharacter,
+      outfits: [null as unknown as { id: string; name: string; descriptor: string },],
+      default_outfit: "",
+    };
+    const result = validateCharacter(char, "strict",);
+    expect(result.errors.find((e,) => e.field === "outfits[0]" && e.code === "INVALID_TYPE"),).toBeDefined();
+    expect(result.errors.find((e,) => e.field === "default_outfit" && e.code === "REQUIRED"),).toBeDefined();
+  });
 });
