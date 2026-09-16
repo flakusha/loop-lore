@@ -45,15 +45,15 @@ From `.tmp/ticket-categorization.json` `VALID_FIXABLE` keys:
 
 ## Process per bug
 
-1. `bun run scripts/worktree/ new fix-<bug-slug>` (if not already in a shared batch)
+1. `giwt new fix-<bug-slug>` (if not already in a shared batch)
 2. Read full ticket from `.plan/tickets/BUG-<slug>.md`
 3. Locate code via `grep` / `lsp`
 4. Reproduce with minimal test or `bun test` snippet
 5. Implement fix
 6. Add regression test
 7. Update ticket Status `[OK] Done` + Acceptance Criteria
-8. Commit GPG-signed: `fix(<area>): <one-line summary>`
-9. `bun run scripts/worktree/ finalize fix-<slug> --force`
+8. Commit GPG-signed: `fix(<area>): <one-line summary>` via `giwt commit-wt fix-<slug> "..."`
+9. `giwt finalize fix-<slug> --force`
 10. Update `.tmp/bugfix-batch-2026-09-01-report.md` or write successor report
 
 ## Constraints

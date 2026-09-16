@@ -60,6 +60,6 @@ Spawn rebase subagent for `fix-csrf-hardening-batch` per user choice in prior tu
 1. Rebase onto `ebcebb12` (1 unpushed commit)
 2. Discard or stash 7 dirty HSTS files (likely conflict with H6 already on dev)
 3. Verify only the user-status-gate change (`909d0d1c`) survives the rebase
-4. `bun run scripts/worktree/ finalize` (without --force? Cannot, OOM)
+4. `giwt finalize` (without --force? Cannot, OOM)
 
 Per system constraint: `bun run check` is OOM-prohibited, so the subagent cannot run the full check gate. Acceptable constraint: the commit is already tested via the 14 auth middleware tests passing per the original commit message. Rebase-only flow with manual conflict resolution + subagent's own test verification on touched files only (`bun test src/middleware/auth/`).
