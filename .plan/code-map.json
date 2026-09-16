@@ -14071,7 +14071,6 @@
       "source": ".plan/tickets/BUG-private-tier-no-true-e2e.md"
     }
   ],
-
   "src/frontend/htmx.ts": [
     {
       "kind": "ticket",
@@ -22042,10 +22041,26 @@
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
     }
   ],
+  "src/routes/export-sse/download.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-status-download-endpoints-leak-other-users-jobs-via-u.md"
+    }
+  ],
+  "src/routes/export-sse/jobs.coverage.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-status-download-endpoints-leak-other-users-jobs-via-u.md"
+    }
+  ],
   "src/routes/export-sse/start.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-export-sse-start-throws-controller-is-already-closed-on-clie.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-status-download-endpoints-leak-other-users-jobs-via-u.md"
     },
     {
       "kind": "ticket",
@@ -22054,6 +22069,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-.md"
+    }
+  ],
+  "src/routes/export-sse/status.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-export-status-download-endpoints-leak-other-users-jobs-via-u.md"
     }
   ],
   "src/routes/export.test.ts": [
@@ -28362,7 +28383,6 @@
       "source": ".plan/tickets/TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress.md"
     }
   ],
-
   "src/utils/safe-fetch/fetch.ts": [
     {
       "kind": "ticket",
