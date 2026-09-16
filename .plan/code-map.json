@@ -4619,7 +4619,18 @@
       "source": ".plan/tickets/TASK-reconciliation-plan.md"
     }
   ],
+
+  "src/chat/auto-rename.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-005.md"
+    }
+  ],
   "src/chat/auto-rename.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-005.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-autorenaming.md"
@@ -5585,6 +5596,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-mode-locked-once-chat-has-confirmed-messages.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-024.md"
     },
     {
       "kind": "ticket",
@@ -14911,6 +14926,13 @@
       "source": "docs/frontend/chat/visual-novel-mode.md"
     }
   ],
+
+  "src/frontend/vn/settings.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-024.md"
+    }
+  ],
   "src/frontend/vn/settings.ts": [
     {
       "kind": "ticket",
@@ -21511,10 +21533,46 @@
       "source": "docs/frontend/chat/search-and-filter.md"
     }
   ],
+
+  "src/routes/chat-search/index.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-002.md"
+    }
+  ],
+
+  "src/routes/chat-search/join.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-002.md"
+    }
+  ],
   "src/routes/chat-search/joinable.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-002.md"
+    }
+  ],
+
+  "src/routes/chat-search/search.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-003.md"
+    }
+  ],
+
+  "src/routes/chat-search/search.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-002.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-003.md"
     }
   ],
   "src/routes/chat-search/transfer.ts": [
@@ -21669,6 +21727,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-024.md"
     },
     {
       "kind": "ticket",
@@ -21832,6 +21894,10 @@
     }
   ],
   "src/routes/crafting.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-027.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-crafting-routes.md"
@@ -22541,6 +22607,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-004.md"
     }
   ],
   "src/routes/message-search.ts": [
@@ -22565,6 +22635,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-message-search-returns-ciphertext-and-indexes-ciphertext-for.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-004.md"
     },
     {
       "kind": "ticket",
@@ -23073,7 +23147,18 @@
       "source": ".plan/tickets/TASK-middleware-idempotency-wire-into-elysia.md"
     }
   ],
+
+  "src/routes/messages/transitions.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-005.md"
+    }
+  ],
   "src/routes/messages/transitions.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-005.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-location-change-event-log.md"
@@ -23483,6 +23568,13 @@
       "source": ".plan/tickets/TASK-rpg-chat-questions.md"
     }
   ],
+
+  "src/routes/quests.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-026.md"
+    }
+  ],
   "src/routes/quests.ts": [
     {
       "kind": "ticket",
@@ -23497,6 +23589,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-size-strict-pre-existing-dev-drift.md"
+    }
+  ],
+
+  "src/routes/quests/routes.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-026.md"
     }
   ],
   "src/routes/queue.ts": [
@@ -23615,6 +23714,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-battle-equipment-loot-no-auth-guard.md"
+    }
+  ],
+
+  "src/routes/rpg/crafting-stations.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-027.md"
     }
   ],
   "src/routes/rpg/index.ts": [
@@ -27299,6 +27405,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-link-npc-inventory.md"
+    }
+  ],
+
+  "src/story/items/instances.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-028.md"
     }
   ],
   "src/story/items/instances.ts": [
