@@ -3,7 +3,7 @@
 
 # TASK-026: Quest System Implementation
 
-**Status**: open
+**Status**: closed
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -11,3 +11,8 @@
 **Related**:
 
 Git issue: `4da10d6`
+
+## Resolution
+
+Implemented. Evidence: `src/routes/quests/` CRUD + progress endpoints, covered by
+`src/routes/quests.test.ts` and `src/routes/routes.test.ts`.

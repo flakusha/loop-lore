@@ -3,7 +3,7 @@
 
 # TASK-024: Visual novel mode
 
-**Status**: open
+**Status**: closed
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -11,3 +11,9 @@
 **Related**:
 
 Git issue: `70f8e8d`
+
+## Resolution
+
+Implemented. Evidence: `renderingOverride` visual-novel pipeline
+(`src/chat/service/party.ts`, `src/routes/chats/create.ts`, `src/frontend/vn/`),
+covered by `src/frontend/vn/settings.test.ts`.
