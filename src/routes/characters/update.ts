@@ -67,11 +67,13 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         // Spec-required fields (description/personality/appearance + wardrobe) are
         // enforced at the import/validator layer, not on partial PUTs: actors rows
         // double as skeletal drafts and legacy rows predate the wardrobe columns.
-        // Only validate internal consistency when the request touches the wardrobe.
+        // Only validate internal consistency when the request touches the wardrobe,
+        // merging single-half updates with the stored row so a defaultOutfit-only
+        // save validates against existing outfits (and vice versa).
         // Type-agnostic: POST /api/actors defaults actor_type to "user", so a
         // character check here would never fire; the pair check is valid for any
         // actor carrying wardrobe fields.
-        const cleared = rejectClearedCharacterFields(ctx.body,);
+        const cleared = rejectClearedCharacterFields(ctx.body, actor,);
         if (cleared) {
           return jsonError({ message: cleared, status: HttpStatus.BadRequest, },);
         }
@@ -173,19 +175,25 @@ function buildActorUpdates(
 
 /**
  * Reject partial updates that carry an internally inconsistent wardrobe pair.
- * Only the request body is validated (not the merged stored row): legacy and
- * skeletal actors predate the wardrobe columns, and a displayName-only PUT
- * must not fail on untouched outfit fields. When the caller touches either
- * half, both must be present, valid JSON, and reference-consistent.
+ * Single-half updates merge with the stored row: a defaultOutfit-only PUT
+ * validates against existing outfits (and vice versa). Fully untouched
+ * wardrobe (neither half in body nor stored) stays valid so displayName-only
+ * PUTs on legacy/skeletal rows never fail.
  * @param body - Raw request body (presence check)
- * @returns Error message, or null when the request-side wardrobe stays valid
+ * @param actor - Stored actor row (merge source for the untouched half)
+ * @returns Error message, or null when the merged wardrobe stays valid
  */
-function rejectClearedCharacterFields(body: Record<string, unknown>,): string | null {
+function rejectClearedCharacterFields(
+  body: Record<string, unknown>,
+  actor: { outfits?: string | null; default_outfit?: string | null },
+): string | null {
   const hasOutfits = "outfits" in body;
   const hasDefault = "defaultOutfit" in body;
   if (!hasOutfits && !hasDefault) { return null; }
-  const outfitsValue = typeof body.outfits === "string" ? body.outfits : null;
-  const defValue = typeof body.defaultOutfit === "string" ? body.defaultOutfit : null;
+  const outfitsValue = hasOutfits && typeof body.outfits === "string" ? body.outfits : actor.outfits ?? null;
+  const defValue = hasDefault && typeof body.defaultOutfit === "string"
+    ? body.defaultOutfit
+    : actor.default_outfit ?? null;
   if (typeof outfitsValue !== "string" || outfitsValue.trim() === "") {
     return "At least one outfit is required";
   }
