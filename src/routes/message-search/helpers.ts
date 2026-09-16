@@ -68,6 +68,15 @@ export function parseAttachments(raw: string | null,): unknown[] {
 }
 
 /**
+ * Escape SQL LIKE metacharacters so a user-supplied `linkPattern` matches
+ * literally (paired with `ESCAPE '\'` in the clause).
+ * @param pattern
+ */
+export function escapeLike(pattern: string,): string {
+  return pattern.replaceAll("\\", "\\\\",).replaceAll("%", "\\%",).replaceAll("_", "\\_",);
+}
+
+/**
  * Build the shared extra WHERE fragment: " AND <cond1> AND <cond2>…" or nothing.
  *
  * Access policy mirrors `checkChatAccess`: chat creator, admin, solo, and any
@@ -99,6 +108,22 @@ export function extraWhere(
   if (query.role) { clauses.push(sql`m.role = ${query.role}`,); }
   if (query.hasAttachment === "true") {
     clauses.push(sql`m.attachments IS NOT NULL AND m.attachments != '[]'`,);
+  }
+  if (query.attachmentType) {
+    // The stored attachments JSON carries only {assetId,order,caption,label};
+    // asset *type* lives on the linked asset row.
+    clauses.push(sql`EXISTS (
+        SELECT 1 FROM asset_links al
+        JOIN assets a ON a.id = al.asset_id
+        WHERE al.entity_type = 'message' AND al.entity_id = m.id
+          AND a.asset_type = ${query.attachmentType}
+      )`,);
+  }
+  if (query.linkPattern) {
+    // Plaintext mirror first: ciphertext rows have no meaningful content match
+    // (same visibility rule as the FTS index itself).
+    const pattern = `%${escapeLike(query.linkPattern,)}%`;
+    clauses.push(sql`COALESCE(m.content_plaintext, m.content) LIKE ${pattern} ESCAPE '\\'`,);
   }
   if (query.dateFrom) { clauses.push(sql`m.created_at >= ${query.dateFrom}`,); }
   if (query.dateTo) { clauses.push(sql`m.created_at <= ${query.dateTo}`,); }

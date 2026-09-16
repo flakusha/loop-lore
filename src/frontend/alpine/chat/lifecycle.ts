@@ -81,6 +81,7 @@ export const chatLifecycle: Partial<ChatState> & ThisType<ChatState> = {
       }
     };
     addEventListener("storage", this._storageHandler,);
+    this.restoreChatFilters();
     await this.loadChats();
     this.loadWorldChannels();
     this.loadJoinableChats();

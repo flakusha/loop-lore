@@ -152,14 +152,18 @@ describe("BatchIdsBody", () => {
 describe("AdminRoleUpdateBody", () => {
   const C = compile(AdminRoleUpdateBody,);
 
-  test("accepts valid role", () => {
+  test("accepts any string (enum enforced at runtime — see ADMIN_ROLES)", () => {
     expect(C.Check({ role: "admin", },),).toBe(true,);
     expect(C.Check({ role: "user", },),).toBe(true,);
     expect(C.Check({ role: "viewer", },),).toBe(true,);
   });
 
-  test("rejects invalid role", () => {
-    expect(C.Check({ role: "superadmin", },),).toBe(false,);
+  test("rejects missing role (never defaults to a role)", () => {
+    expect(C.Check({},),).toBe(false,);
+  });
+
+  test("rejects non-string role", () => {
+    expect(C.Check({ role: 42, },),).toBe(false,);
   });
 });
 

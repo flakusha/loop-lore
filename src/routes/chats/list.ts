@@ -27,8 +27,11 @@ const ChatListQuery = t.Object({
   pageSize: t.Optional(t.Numeric({ minimum: 1, maximum: 200, default: 50, },),),
   type: t.Optional(t.Enum({ direct: "direct", group: "group", },),),
   archived: t.Optional(t.Union([archivedTrue, archivedFalse, archivedOne, archivedZero,],),),
-  sort: t.Optional(t.UnionEnum(["recent", "name", "unread", "pinned-first",],),),
-  world: t.Optional(t.String(),),
+  // t.Enum, not t.UnionEnum: an absent t.UnionEnum query param is forced to
+  // its first member by Elysia 1.4 ("default": <first member>).
+  sort: t.Optional(t.Enum({ recent: "recent", name: "name", unread: "unread", "pinned-first": "pinned-first", },),),
+  // World ids are uuids (uid() = randomUUID); matches ChatSearchQuery.world.
+  world: t.Optional(t.String({ format: "uuid", },),),
   minMessages: t.Optional(t.Numeric({ minimum: 0, },),),
   maxMessages: t.Optional(t.Numeric({ minimum: 0, },),),
   updatedSince: t.Optional(t.String(),),

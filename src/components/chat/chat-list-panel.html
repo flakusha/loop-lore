@@ -129,6 +129,33 @@
       aria-label="Updated since"
     />
   </div>
+  <!-- Active filters as removable chips (TASK-chat-room-filters) -->
+  <div
+    class="chat-list-active-filters"
+    x-show="activeChatFilterChips().length > 0"
+    style="display: flex; gap: var(--space-1); padding: var(--space-1) var(--space-3); border-bottom: 1px solid var(--border-default); align-items: center; flex-wrap: wrap"
+    x-cloak
+  >
+    <template x-for="chip in activeChatFilterChips()" :key="chip.key">
+      <button
+        class="btn-xs chat-filter-chip"
+        @click="clearChatFilter(chip.key)"
+        :aria-label="'Remove filter ' + chip.label"
+        :data-testid="'chat-filter-chip-' + chip.key"
+        style="display: inline-flex; align-items: center; gap: 4px"
+      >
+        <span x-text="chip.label"></span><span aria-hidden="true">✕</span>
+      </button>
+    </template>
+    <button
+      class="btn-xs"
+      @click="clearAllChatFilters()"
+      data-testid="chat-filters-clear-all"
+      style="color: var(--text-secondary)"
+    >
+      Clear all
+    </button>
+  </div>
   <div id="chat-list">
     <template x-if="chats.length === 0 && _searchResults.length === 0">
       <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
