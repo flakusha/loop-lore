@@ -1604,6 +1604,7 @@ export const SCHEMA = new SchemaManifest()
     data_version: col("integer", { notNull: true, hasDefault: true, },),
     record_hash: col("text", { notNull: true, hasDefault: true, },),
     custom_instructions: col("text",),
+    prompt_template_id: col("text",),
   },)
   .table("messages", {
     id: col("text", { primaryKey: true, },),
@@ -1984,6 +1985,18 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true, hasDefault: true, },),
     temperature: col("real",),
     max_tokens: col("integer",),
+  },)
+  .table("prompt_templates", {
+    id: col("text", { primaryKey: true, },),
+    owner_id: col("text", { notNull: true, },),
+    modality: col("text", { notNull: true, hasDefault: true, },),
+    name: col("text", { notNull: true, },),
+    description: col("text",),
+    model_family: col("text",),
+    detail_level: col("text", { notNull: true, hasDefault: true, },),
+    payload: col("text", { notNull: true, hasDefault: true, },),
+    created_at: col("text", { notNull: true, hasDefault: true, },),
+    updated_at: col("text", { notNull: true, hasDefault: true, },),
   },)
   // ── Core: Users & Sessions ──────────────────────────────────────────────
   .table("personas", {

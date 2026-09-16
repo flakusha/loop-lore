@@ -160,11 +160,54 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .on("generation_jobs",)
     .column("status",)
     .execute();
+  // ── FEAT-065: unified prompt template library ───────────────
+  // One table for all generation modalities (llm/image/video/audio);
+  // modality-specific shape lives in the JSON `payload` column.
+  await database.schema
+    .createTable("prompt_templates",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("owner_id", "text", (col,) => col.notNull().references("users.id",).onDelete("cascade",),)
+    .addColumn("modality", "text", (col,) => col.notNull().defaultTo("llm",),)
+    .addColumn("name", "text", (col,) => col.notNull(),)
+    .addColumn("description", "text",)
+    .addColumn("model_family", "text",)
+    .addColumn("detail_level", "text", (col,) => col.notNull().defaultTo("balanced",),)
+    .addColumn("payload", "text", (col,) => col.notNull().defaultTo("{}",),)
+    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
+    .addCheckConstraint(
+      "ck_prompt_templates_modality",
+      sql`modality IN ('llm', 'image', 'video', 'audio')`,
+    )
+    .execute();
+
+  // Chat-level LLM prompt template override (beats actors.settings.prompt_template_id).
+  await database.schema
+    .alterTable("chats",)
+    .addColumn("prompt_template_id", "text", (col,) => col.references("prompt_templates.id",).onDelete("set null",),)
+    .execute();
+
+  await database.schema
+    .createIndex("idx_prompt_templates_owner",)
+    .on("prompt_templates",)
+    .column("owner_id",)
+    .execute();
+
+  await database.schema
+    .createIndex("idx_prompt_templates_modality",)
+    .on("prompt_templates",)
+    .column("modality",)
+    .execute();
 }
 /**
  * @param database
  */
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema
+    .alterTable("chats",)
+    .dropColumn("prompt_template_id",)
+    .execute();
+  await database.schema.dropTable("prompt_templates",).execute();
   await database.schema.dropTable("synthetic_data",).execute();
   await database.schema.dropTable("generation_jobs",).execute();
   await database.schema.dropTable("generation_attempts",).execute();
