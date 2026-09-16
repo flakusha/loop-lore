@@ -38,6 +38,7 @@ export const ChatMode = {
   Direct: "direct",
   Group: "group",
   Story: "story",
+  Battle: "battle",
 } as const;
 /** */
 export type ChatMode = (typeof ChatMode)[keyof typeof ChatMode];
@@ -46,6 +47,13 @@ export const ChatPurpose = {
   Main: "main",
   Side: "side",
   Notes: "notes",
+  // chat-variants-taxonomy: 6 purpose strings for the 12-variant taxonomy.
+  Assistant: "assistant",
+  Roleplay: "roleplay",
+  Rpg: "rpg",
+  Social: "social",
+  Guided: "guided",
+  Validation: "validation",
 } as const;
 /** */
 export type ChatPurpose = (typeof ChatPurpose)[keyof typeof ChatPurpose];
