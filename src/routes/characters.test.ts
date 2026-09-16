@@ -235,6 +235,106 @@ describe("charactersRoutes", () => {
     const actor = await db.selectFrom("actors",).selectAll().where("id", "=", id,).executeTakeFirst();
     expect(actor?.display_name,).toBe("New Name",);
   });
+  test("PUT /api/actors/:id accepts a consistent wardrobe pair", async () => {
+    const app = createApp(db, userId,);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Wardrobe Actor", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const outfits = JSON.stringify([{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ outfits, defaultOutfit: "travel-gear", dataVersion: created?.format_version, },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const stored = await db.selectFrom("actors",).select(["outfits", "default_outfit",],).where("id", "=", id,)
+      .executeTakeFirst();
+    expect(stored?.default_outfit,).toBe("travel-gear",);
+    expect(stored?.outfits,).toBe(outfits,);
+  });
+
+  test("PUT /api/actors/:id rejects a dangling default_outfit", async () => {
+    const app = createApp(db, userId,);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Dangling Actor", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          outfits: JSON.stringify([{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],),
+          defaultOutfit: "nope",
+          dataVersion: created?.format_version,
+        },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("PUT /api/actors/:id rejects invalid outfits JSON", async () => {
+    const app = createApp(db, userId,);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Broken JSON Actor", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          outfits: "not-json",
+          defaultOutfit: "travel-gear",
+          dataVersion: created?.format_version,
+        },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("PUT /api/actors/:id rejects duplicate outfit ids", async () => {
+    const app = createApp(db, userId,);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Duplicate Actor", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const outfits = JSON.stringify([
+      { id: "gear", name: "Gear", descriptor: "Sturdy clothes", },
+      { id: "gear", name: "Gear 2", descriptor: "Other clothes", },
+    ],);
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ outfits, defaultOutfit: "gear", dataVersion: created?.format_version, },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
 
   test("PUT /api/actors/:id updates content_rating", async () => {
     const app = createApp(db, userId,);
