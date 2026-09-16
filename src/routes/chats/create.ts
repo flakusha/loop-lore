@@ -185,7 +185,6 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
           // (type, mode, purpose) triple to the canonical taxonomy table.
           let resolvedType: string | undefined;
           let resolvedMode: string | undefined;
-          let resolvedPurpose: string | undefined;
           let resolvedGmConfig: Record<string, unknown> | undefined;
           const rawVariant = rawBody.variant as string | undefined;
           if (rawVariant !== undefined) {
@@ -216,7 +215,6 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             // for mode/purpose where the caller did not pin them.
             resolvedType = suppliedType ?? def.chat_type;
             resolvedMode = suppliedMode ?? def.chat_mode;
-            resolvedPurpose = suppliedPurpose ?? def.chat_purpose;
             // Variant-derived gm_config seeds the row's gm_config when the
             // caller did not provide one explicitly.
             if (!hasExplicit("gmConfig",) && def.gm_config !== null) {
