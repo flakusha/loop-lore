@@ -1,6 +1,6 @@
 # BUG: frontend dead CSRF bearer header machinery
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Done - full closure (dead Bearer removed, cookie-only browser story, 2026-09-16)
 **Priority:** medium
 **Effort:** Medium
 
@@ -16,6 +16,26 @@ Acceptance: auth header story is coherent and documented; CSRF is either server-
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Original premise was half-stale: server double-submit CSRF already existed
+and wired (`csrf-plugin.ts` + `applyCsrfPlugin`, `elysia-app.ts:134`;
+`csrf.ts` mint/verify; `csrf{,.plugin.coverage,.integration}.test.ts` green).
+What remained was the dead browser Bearer fallback: three
+`localStorage.session_token` reads with no writer anywhere in `src/`.
+Removed all three (browser is now cookie-only: HttpOnly `ll_token` +
+validated `X-CSRF-Token` double-submit); `FetchAuth.sessionToken` kept and
+re-scoped to TUI/server callers (`tui/chat/api.ts` Bearer stays live —
+server accepts Bearer-then-cookie per `authenticate.ts:41-52`). Bonus fix:
+`ServerTransport.flush()` now sends the CSRF header instead of the dead
+Bearer (its POST to `/api/frontend/logs` would otherwise 403 under the
+gate). Trust boundary documented in `fe-fetch.ts`, `htmx.ts`,
+`server.ts`, `safe-fetch/types.ts` + `headers.ts`.
+Verify: safe-fetch 38 pass, tui/chat 25 pass, CSRF 83 pass,
+frontend-logs 6 pass, `check --gates "typecheck - frontend,
+typecheck - scripts"` green, `session_token` in `src/frontend` -> comments
+only, zero live reads.
