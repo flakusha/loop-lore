@@ -33,12 +33,12 @@ bun run check && bun test src/
 #   light gates — two concurrent bun-test processes OOM on this host.
 # - `bun run check --diff-base <ref>` scopes unit + coverage gates to the
 #   branch diff (test files adjacent to changed src files; coverage floored
-#   only for modules the diff touches). `worktree finalize` Step 2 passes
+#   only for modules the diff touches). `giwt finalize` Step 2 passes
 #   this automatically; static gates always run project-wide.
 # - `bun run check --gates <csv>` / `--skip-gates <csv>` runs a subset of
 #   the 21 gates. Names are matched verbatim against the runner's check
 #   registry; unknown names exit 2 and list available gates. `--gates`
-#   and `--skip-gates` are mutually exclusive. `worktree finalize`
+#   and `--skip-gates` are mutually exclusive. `giwt finalize`
 #   accepts `--gates` / `--skip-gates` and forwards them to Step 2.
 ```
 
@@ -148,8 +148,8 @@ rg "interface.*Config" src/ --type ts
 fd "test" src/ --type f -e ts
 
 # Check git issues for active work
-bun run scripts/worktree/ issues
-bun run scripts/worktree/ search "your topic"
+giwt issues
+giwt search "your topic"
 ```
 
 ## Directory Structure (Key Paths)
@@ -242,7 +242,7 @@ E2E_SAFEGUARD=1 bun test tests/e2e/  # e2e (if affecting)
 Each `bun run check` writes `.tmp/check-report.json` atomically with provenance
 (branch, gitHead, runId, mode). The pre-commit hook warns when the report is
 stale w.r.t. the tree's current HEAD; treat a stale or failed report as
-"unverified". `bun run check:report-ls` (or `bun run scripts/worktree/ report`)
+"unverified". `bun run check:report-ls` (or `giwt report`)
 aggregates report status across all worktrees.
 
 ### Check report stdout contract (programmatic consumption)
@@ -320,24 +320,40 @@ Migration helper utilities:
 
 ## Worktree Workflow
 
+`giwt` is the canonical worktree, ticket, and git-issue CLI. It is installed
+via the project's `giwt` git dependency (see `docs/giwt-scripts-map.md`) and
+linked at `~/.local/bin/giwt`. **Use `giwt <command>` for every worktree
+operation** — do not run raw `git worktree`/`git commit`/`git merge`/`git push`
+on the dev checkout.
+
 ```bash
-# Create worktree
-bun run scripts/worktree/ new feature-name
+# Create worktree (branch defaults to dev base)
+giwt new feature-name
 
 # Work in worktree
 cd tree/feature-name
 
-# Commit in worktree (GPG-signed)
-bun run scripts/worktree/ commit-branch feature-name "feat(scope): message"
+# Commit in worktree (GPG-signed; --message-file for multi-line)
+giwt commit-wt feature-name "feat(scope): message"
 
 # Rebase onto updated dev
-bun run scripts/worktree/ rebase feature-name
+giwt rebase feature-name
 
 # Finalize (checks + signed merge + cleanup; --force skips gates)
-bun run scripts/worktree/ finalize feature-name [--gates <csv>] [--skip-gates <csv>]
+giwt finalize feature-name [--gates <csv>] [--skip-gates <csv>]
+
+# Manual recovery if finalize left dev in a bad state
+giwt abort              # recover (idempotent)
+giwt abort --dry-run   # preview what would happen
 ```
 
-> **Note:** The worktree CLI is native Bun (`scripts/worktree/index.mjs`). Run via `bun run scripts/worktree/ <command>` — no shell wrapper.
+> **Note:** The legacy in-repo CLI at `scripts/worktree/index.mjs` still
+> exists for backwards compatibility, but its commands are now thin shims
+> over `giwt` (or about to be — see `docs/giwt-scripts-map.md` try-5/6).
+> New work should call `giwt` directly. Flag-style differences worth noting:
+> `giwt ticket` uses `--label` / `--priority` (long-form), not `-l` / `-p`;
+> `giwt commit-wt` is the renamed `commit-branch`; `giwt merge` takes
+> `<target-branch> <source>` instead of the legacy `<base> <feature>`.
 
 ### Mutating operations are worktree-only
 
@@ -346,42 +362,38 @@ Agents MUST NOT run `git commit`, `git stash`, `git reset`, `git rebase`,
 `/home/flak/git-ai/loop-lore` (the dev checkout) outside of an isolated
 worktree under `tree/`. The dev checkout is for read-only inspection.
 All mutating operations — commits, stashes, rebases, merges, push/cleanup
-of finalized branches — flow through `scripts/worktree/`. If
-`scripts/worktree/ <command>` fails, agents MUST stop and report the failure
-to the user instead of bypassing the tooling with direct `git` calls.
+of finalized branches — flow through `giwt`. If a `giwt <command>` fails,
+agents MUST stop and report the failure to the user instead of bypassing
+the tooling with direct `git` calls.
 
 ### GPG signing — never bypass
 
-If `git commit`, `scripts/worktree/ commit-branch`, or any signed operation
-fails with a GPG / pinentry error, agents MUST stop and report the failure.
-NEVER set `commit.gpgsign=false`, pass `-S none`, or otherwise strip the
-signature requirement. The user owns GPG configuration; agents report, the
-user fixes the signer. An unsigned commit on `dev` is a blocker — reset it
-and ask the user to re-sign or re-run the flow.
+If `giwt commit-wt`, `giwt finalize`, or any signed operation fails with a
+GPG / pinentry error, agents MUST stop and report the failure. NEVER set
+`commit.gpgsign=false`, pass `-S none`, or otherwise strip the signature
+requirement. The user owns GPG configuration; agents report, the user fixes
+the signer. An unsigned commit on `dev` is a blocker — reset it and ask the
+user to re-sign or re-run the flow. Warm the cache with `giwt gpg-unlock`
+before any signing run if `gpg-agent` is cold.
 
 ### Stop on tooling failure
 
-When a `scripts/worktree/` command (or any other tool) fails, agents MUST
-stop and surface the error. Do NOT retry the failing step with a workaround
+When a `giwt` command (or any other tool) fails, agents MUST stop and
+surface the error. Do NOT retry the failing step with a workaround
 (different binary, force flag, raw git, manual signing, etc.) without
 explicit user direction. If a workaround is genuinely necessary, ASK first.
 
 ### Finalize signal safety + manual recovery
 
-`finalize` installs SIGINT/SIGTERM/SIGHUP handlers around the in-place merge
-on `dev`. On signal, it runs a transactional rollback in order: `git merge
---abort`, then pop the auto-stashed dev state, then release the lock, then
-`exit 130`.
+`giwt finalize` installs SIGINT/SIGTERM/SIGHUP handlers around the in-place
+merge on `dev`. On signal, it runs a transactional rollback in order:
+`git merge --abort`, then pop the auto-stashed dev state, then release the
+lock, then `exit 130`.
 
-`kill -9` (SIGKILL) bypasses the handler and may leave dev mid-merge. Recover
-manually:
+`kill -9` (SIGKILL) bypasses the handler and may leave dev mid-merge.
+Recover manually with `giwt abort` (see above).
 
-```bash
-bun run scripts/worktree/ abort              # recover (idempotent)
-bun run scripts/worktree/ abort --dry-run   # preview what would happen
-```
-
-`abort` aborts any in-progress merge/rebase/cherry-pick, pops leftover
+`giwt abort` aborts any in-progress merge/rebase/cherry-pick, pops leftover
 `worktree-finalize-*` stashes (preserving them if pop conflicts), and removes
 a stale lockfile. It NEVER deletes user-authored stashes, force-deletes
 branches, or resets to a remote ref.
@@ -391,27 +403,26 @@ branches, or resets to a remote ref.
 
 ```bash
 # Create ticket (filename = TYPE-slug from title, e.g. TASK-fix-login; also creates git issue)
-bun run scripts/worktree/ ticket TASK "Title" "Description" -l label -p high
+giwt ticket TASK "Title" "Description" --label label --priority high
 
 # List/Search
-bun run scripts/worktree/ issues
-bun run scripts/worktree/ search "pattern"
+giwt issues
+giwt search "pattern"
 
 # Show/Comment/Attach
-bun run scripts/worktree/ show TASK-001
-bun run scripts/worktree/ comment TASK-001 -m "text"
-bun run scripts/worktree/ attach TASK-001 ./file.md
+giwt show TASK-001
+giwt comment TASK-001 -m "text"
+giwt attach TASK-001 ./file.md
 
 # State transitions
-bun run scripts/worktree/ state TASK-001 closed
+giwt state TASK-001 closed
 
 # Sync .plan/tickets/index.json with git issues
-bun run plan:sync:fix                 # apply fixes (non-interactive)
-bun run plan:sync                     # check
-bun run plan:sync:fix                 # apply fixes
+bun run plan:sync:fix                 # apply fixes (non-interactive) — runs giwt sync --fix
+bun run plan:sync                     # check — runs giwt sync
 
 # Direct git-issue
-bun run scripts/worktree/ gi <command>
+giwt gi <command>
 ````
 
 ## Planning System

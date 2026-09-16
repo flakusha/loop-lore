@@ -44,7 +44,7 @@ TASK-generation-error-handling-gaps committed (`41a321c3`):
 
 - **NEVER run `bun run check`** — system OOM (per memory)
 - **NEVER bypass GPG signing** — agents stop on pinentry timeout
-- Finalize via `bun run scripts/worktree/ finalize feat-stop-and-respond-interrupt --force` (skipping `bun run check` is required)
+- Finalize via `giwt finalize feat-stop-and-respond-interrupt --force` (skipping `bun run check` is required)
 - Source-of-truth ordering: AGENTS.md > src/ > docs/spec/
 
 ## Deliverable

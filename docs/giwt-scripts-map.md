@@ -67,6 +67,48 @@ Build/type/lint/test/format + code-generated artifacts + correctness gates:
 - Deleted `scripts/sync-ticket-index.ts`, `scripts/sync-ticket-index.test.ts`, `scripts/lib/sync-ticket.ts` (lib had no other consumers) and dropped the knip exemption.
 - Unblocks the try-2 BLOCKED item above; remaining phase-2 work (backlog/docs/map/report parity, `gpg-unlock`) is unchanged.
 
+
+## Try-6 docs canonicalization (`giwt` is now the user-facing CLI)
+
+**Goal:** user-facing documentation points at `giwt <command>`; the
+in-repo `scripts/worktree/` CLI becomes a load-bearing internal
+implementation detail that callers stop invoking directly.
+
+- Repository documents updated to reference `giwt` instead of
+  `bun run scripts/worktree/ <x>`:
+  - `AGENTS.md` (Quick Start, Discovery Commands, Worktree Workflow,
+    Mutating-ops policy, GPG signing, Issue Tracking, Finalize recovery).
+  - `docs/meta/workflow.md` (Issues commands, Worktrees commands,
+    GPG signing section, End-to-end example).
+  - `docs/meta/release-process.md` (Signing → agent commit line).
+  - `docs/meta/code-practices-improvements/feat-bug-triage-batch-2-handoff.md`
+    (Process per bug).
+  - `docs/meta/code-practices-improvements/feat-stop-and-respond-interrupt-handoff.md`
+    (Constraints).
+  - `docs/meta/code-practices-improvements/next-batch-2026-09-02-plan.md`
+    (Tools / handoff).
+  - `docs/meta/code-practices-improvements/tree-finalization-candidates.md`
+    (Outstanding finalize step).
+  - `CONTRIBUTING.md` (Ticket + worktree section).
+- Command-name changes documented in AGENTS.md / workflow.md:
+  - `commit-branch` → `commit-wt` (giwt command name).
+  - `ticket -l / -p` flags → `--label / --priority` (giwt long-form).
+  - `merge <base> <feature>` → `merge <target-branch> <source>` (giwt arg order).
+- The legacy `scripts/worktree/` CLI remains in-tree for backwards
+  compatibility (subshims and tests still reference it), but new work
+  should call `giwt` directly.
+- Open (next steps, post-try-6):
+  - Decide whether to delete `scripts/worktree/commands/*.ts` outright
+    (and let `giwt` be the only entry point), or keep as a thin wrapper
+    layer (`scripts/worktree/index.mjs` → `giwt <subcommand>`). The
+    `scripts/worktree/utils/*` helpers (credentials, GPG, git helpers)
+    are still load-bearing for `check-parallel.mjs` and must survive
+    either path.
+  - `check:report-ls` → `giwt report` rewrite is still REJECTED on the
+    schema-drift grounds from try-2; revisit if upstream `giwt report`
+    gains the `gates` section.
+  - `scripts/gpg-unlock.mjs` → `giwt gpg-unlock` rewrite is unblocked by
+    try-5 (no worktree-shim dependency); lands when owner authorizes.
 ## Try-6 cosmetic (giwt ASCII output)
 
 - Bumped giwt pin from `34c8f02` → `fe463f4` (intermediate commit on master). Purely cosmetic — replaces unicode glyphs (☦, box-drawing) with bare ASCII + level tag. Default is `simple` (env `GIWT_OUTPUT=simple`); `pretty` keeps the old glyphs; `json`/`jsonl`/`toml` available for tooling.
