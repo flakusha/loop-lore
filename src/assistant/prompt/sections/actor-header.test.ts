@@ -32,12 +32,14 @@ describe("actorHeaderSection", () => {
     expect(await actorHeaderSection.build(ctx({},),),).toEqual([],);
   });
 
-  test("full card joins all four parts into one system message", async () => {
+  test("full card joins all parts into one system message", async () => {
     const out = await actorHeaderSection.build(
       ctx({
         display_name: "Lyra",
         description: "A sky pirate.",
         personality: "Brash.",
+        appearance: "Tall with wind-tangled hair.",
+        default_outfit: "sky-leathers",
         scenario: "Aboard the Zephyr.",
       },),
     );
@@ -47,6 +49,8 @@ describe("actorHeaderSection", () => {
     expect(content,).toContain("You are Lyra.",);
     expect(content,).toContain("Description: A sky pirate.",);
     expect(content,).toContain("Personality: Brash.",);
+    expect(content,).toContain("Appearance: Tall with wind-tangled hair.",);
+    expect(content,).toContain("Outfit: sky-leathers",);
     expect(content,).toContain("Scenario: Aboard the Zephyr.",);
   });
 

@@ -19,6 +19,11 @@ const baseCharacter: CanonicalCharacter = {
   name: "Test",
   description: "Test desc",
   personality: "Test personality",
+  appearance: "Test appearance",
+  default_outfit: "travel-gear",
+  outfits: [
+    { id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy traveling clothes", },
+  ],
 };
 
 describe("FEAT-character-spec-inclusion — identity fields", () => {
@@ -162,5 +167,64 @@ describe("FEAT-character-spec-inclusion — exporter round-trip", () => {
     expect("culture" in exported,).toBe(false,);
     expect("gender" in exported,).toBe(false,);
     expect("age" in exported,).toBe(false,);
+  });
+});
+describe("character appearance + outfits — required fields", () => {
+  it("strict mode: missing appearance → REQUIRED error", () => {
+    const char: CanonicalCharacter = { ...baseCharacter, appearance: "", };
+    const result = validateCharacter(char, "strict",);
+    expect(result.errors.find((e,) => e.field === "appearance" && e.code === "REQUIRED"),).toBeDefined();
+  });
+
+  it("strict mode: missing outfits → REQUIRED error", () => {
+    const char: CanonicalCharacter = { ...baseCharacter, outfits: [], default_outfit: "", };
+    const result = validateCharacter(char, "strict",);
+    expect(result.errors.find((e,) => e.field === "outfits" && e.code === "REQUIRED"),).toBeDefined();
+  });
+
+  it("strict mode: dangling default_outfit → INVALID_REFERENCE", () => {
+    const char: CanonicalCharacter = { ...baseCharacter, default_outfit: "nope", };
+    const result = validateCharacter(char, "strict",);
+    expect(result.errors.find((e,) => e.field === "default_outfit" && e.code === "INVALID_REFERENCE"),).toBeDefined();
+  });
+
+  it("strict mode: duplicate outfit ids → DUPLICATE_ID", () => {
+    const char: CanonicalCharacter = {
+      ...baseCharacter,
+      outfits: [
+        { id: "gear", name: "Gear", descriptor: "Sturdy clothes", },
+        { id: "gear", name: "Gear 2", descriptor: "Other clothes", },
+      ],
+      default_outfit: "gear",
+    };
+    const result = validateCharacter(char, "strict",);
+    expect(result.errors.find((e,) => e.field === "outfits" && e.code === "DUPLICATE_ID"),).toBeDefined();
+  });
+
+  it("relaxed mode: missing outfits → warning, not error", () => {
+    const char: CanonicalCharacter = { ...baseCharacter, outfits: [], default_outfit: "", };
+    const result = validateCharacter(char, "relaxed",);
+    expect(result.errors.find((e,) => e.field === "outfits"),).toBeUndefined();
+    expect(result.warnings.find((w,) => w.field === "outfits"),).toBeDefined();
+  });
+
+  it("normalizer maps appearance + outfits with default fallback", () => {
+    const result = buildCanonicalFields({
+      name: "A",
+      description: "d",
+      personality: "p",
+      appearance: "Tall figure",
+      outfits: [{ id: "gear", name: "Gear", descriptor: "Sturdy clothes", },],
+    },);
+    expect(result.appearance,).toBe("Tall figure",);
+    expect(result.outfits,).toHaveLength(1,);
+    expect(result.default_outfit,).toBe("gear",);
+  });
+
+  it("exporter round-trips appearance + outfits", () => {
+    const exported = exportBaseFields(baseCharacter,);
+    expect(exported.appearance,).toBe("Test appearance",);
+    expect(exported.default_outfit,).toBe("travel-gear",);
+    expect(exported.outfits,).toEqual(baseCharacter.outfits,);
   });
 });

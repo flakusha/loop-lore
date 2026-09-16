@@ -67,12 +67,26 @@ export interface LocaleConfig {
   fallback_locale: string;
 }
 
+// ── Character Outfit ───────────────────────────────────
+/** Wardrobe outfit descriptor — canonical shape shared with config templates. */
+export interface CharacterOutfit {
+  /** Stable outfit id referenced by loadouts and selection ladder. */
+  id: string;
+  /** Human-readable label shown in UI. */
+  name: string;
+  /** Prompt-fragment fed to the avatar generator. */
+  descriptor: string;
+  /** Free-form tags (formal|armor|sleepwear|swim|...) used by binding rules. */
+  tags?: string[];
+}
+
 // ── Localized Fields ─────────────────────────────────
 /** */
 export interface LocalizedFields {
   name?: Record<string, string>;
   description?: Record<string, string>;
   personality?: Record<string, string>;
+  appearance?: Record<string, string>;
   scenario?: Record<string, string>;
   welcome_message?: Record<string, string>;
   mes_example?: Record<string, string>;
@@ -101,6 +115,12 @@ export interface CanonicalCharacter {
   name: string;
   description: string;
   personality: string;
+  /** General look / body / face — immutable visual base. Required. */
+  appearance: string;
+  /** Default outfit id used when no context binding fires. Required with outfits. */
+  default_outfit: string;
+  /** Wardrobe catalog: at least one outfit required. */
+  outfits: CharacterOutfit[];
   scenario?: string;
   welcome_message?: string;
   mes_example?: string;

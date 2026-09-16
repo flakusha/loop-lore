@@ -13,7 +13,7 @@ import { validateGeneratedEntity, } from "./validation";
 describe("validateGeneratedEntity", () => {
   test("valid character passes with no errors", () => {
     const r = validateGeneratedEntity(
-      { name: "Kaelen", description: "A bold knight.", personality: "Brave.", },
+      { name: "Kaelen", description: "A bold knight.", personality: "Brave.", appearance: "Tall with a scar.", },
       "character",
     );
     expect(r,).toEqual({ valid: true, errors: [], },);
@@ -41,9 +41,15 @@ describe("validateGeneratedEntity", () => {
   });
 
   test("character without personality fails", () => {
-    const r = validateGeneratedEntity({ name: "N", description: "D.", }, "character",);
+    const r = validateGeneratedEntity({ name: "N", description: "D.", appearance: "Tall.", }, "character",);
     expect(r.valid,).toBe(false,);
     expect(r.errors.join(" ",),).toMatch(/personality/,);
+  });
+
+  test("character without appearance fails", () => {
+    const r = validateGeneratedEntity({ name: "N", description: "D.", personality: "Brave.", }, "character",);
+    expect(r.valid,).toBe(false,);
+    expect(r.errors.join(" ",),).toMatch(/appearance/,);
   });
 
   test("world without lore fails, item without lore passes", () => {

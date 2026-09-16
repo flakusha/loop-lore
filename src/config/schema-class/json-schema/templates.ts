@@ -155,6 +155,7 @@ export const templates = {
               name: { type: "string", description: "Character display name", },
               description: { type: "string", description: "Character description", },
               personality: { type: "string", },
+              appearance: { type: "string", description: "General look / body / face — immutable visual base", },
               scenario: { type: "string", },
               welcome_message: { type: "string", },
               system_prompt: { type: "string", },

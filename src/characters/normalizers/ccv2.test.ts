@@ -11,6 +11,11 @@ describe("normalizeCcV2", () => {
       name: "Test Character",
       description: "A test character",
       personality: "Friendly",
+      appearance: "Tall figure with sharp features",
+      default_outfit: "travel-gear",
+      outfits: [
+        { id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },
+      ],
       scenario: "In a test world",
       first_mes: "Hello!",
       mes_example: "Example message",
@@ -28,6 +33,9 @@ describe("normalizeCcV2", () => {
     expect(result.name,).toBe("Test Character",);
     expect(result.description,).toBe("A test character",);
     expect(result.personality,).toBe("Friendly",);
+    expect(result.appearance,).toBe("Tall figure with sharp features",);
+    expect(result.default_outfit,).toBe("travel-gear",);
+    expect(result.outfits,).toHaveLength(1,);
     expect(result.scenario,).toBe("In a test world",);
     expect(result.welcome_message,).toBe("Hello!",);
     expect(result.mes_example,).toBe("Example message",);

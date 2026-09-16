@@ -9,6 +9,8 @@ const BASE: EditFormValues = {
   desc: "A singer",
   systemPrompt: "You are Aria.",
   personality: "warm",
+  appearance: "Tall with silver hair",
+  defaultOutfit: "Travel cloak",
   welcome: "Hello!",
   scenario: "At the tavern",
   mesExample: "<user>hi</user>",

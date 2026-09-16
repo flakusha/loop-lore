@@ -38,6 +38,8 @@ export interface GeneratedEntity {
   name: string;
   description?: string;
   personality?: string;
+  appearance?: string;
+  defaultOutfit?: string;
   scenario?: string;
   /** Structured lore entries when the model emits `lore[]`, or prose string for backward compat. */
   lore?: string | GeneratedEntityLoreEntry[];
@@ -48,9 +50,9 @@ export const MAX_KEYS = 5;
 /** Maximum length of a single keyword key. */
 export const MAX_KEY_LENGTH = 100;
 
-/** Per-kind required field sets. `name` is always required. */
+/** Per-kind required field sets. `name` is always required. Character also requires personality + appearance (spec mandatory set). */
 export const REQUIRED_FIELDS: Record<EntityKind, string[]> = {
-  character: ["name", "description",],
+  character: ["name", "description", "personality", "appearance",],
   location: ["name", "description",],
   world: ["name", "description",],
   item: ["name", "description",],

@@ -192,6 +192,10 @@ export async function seedCharacter(db: Kysely<DB>,): Promise<void> {
       system_prompt: "You are a test character.",
       settings: "{}",
       import_spec: "raw",
+      personality: "Helpful test personality",
+      appearance: "Nondescript E2E test appearance",
+      default_outfit: "everyday",
+      outfits: JSON.stringify([{ id: "everyday", name: "Everyday", descriptor: "Simple everyday clothes", },],),
     },)
     .execute();
 }
@@ -381,6 +385,10 @@ export async function seedSolo(db: Kysely<DB>,): Promise<void> {
       system_prompt: "You are a test character.",
       settings: "{}",
       import_spec: "raw",
+      personality: "Helpful test personality",
+      appearance: "Nondescript E2E test appearance",
+      default_outfit: "everyday",
+      outfits: JSON.stringify([{ id: "everyday", name: "Everyday", descriptor: "Simple everyday clothes", },],),
     },)
     .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();

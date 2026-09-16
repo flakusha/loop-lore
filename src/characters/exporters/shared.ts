@@ -24,6 +24,9 @@ export function exportBaseFields(character: CanonicalCharacter,): Record<string,
   if (character.name) { data.name = character.name; }
   if (character.description) { data.description = character.description; }
   if (character.personality) { data.personality = character.personality; }
+  if (character.appearance) { data.appearance = character.appearance; }
+  if (character.default_outfit) { data.default_outfit = character.default_outfit; }
+  if (character.outfits?.length) { data.outfits = character.outfits; }
   if (character.scenario) { data.scenario = character.scenario; }
   if (character.welcome_message) { data.first_mes = character.welcome_message; }
   if (character.mes_example) { data.mes_example = character.mes_example; }

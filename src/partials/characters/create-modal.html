@@ -44,6 +44,7 @@
             name="description"
             id="char-desc"
             rows="3"
+            required
             placeholder="Brief description..."
           ></textarea>
         </div>
@@ -54,8 +55,31 @@
             name="personality"
             id="char-personality"
             rows="2"
+            required
             placeholder="Traits, mannerisms, speech patterns..."
           ></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="char-appearance">{{{ t("characters.appearance") }}}</label>
+          <textarea
+            class="form-input form-textarea"
+            name="appearance"
+            id="char-appearance"
+            rows="2"
+            required
+            placeholder="Body, face, general look..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="char-outfit">{{{ t("characters.defaultOutfit") }}}</label>
+          <input
+            class="form-input"
+            type="text"
+            name="defaultOutfit"
+            id="char-outfit"
+            required
+            placeholder="e.g., travel-gear"
+          />
         </div>
         <div class="form-group">
           <label class="form-label" for="char-scenario">{{{ t("characters.scenario") }}}</label>

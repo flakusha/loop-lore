@@ -59,6 +59,8 @@ export class PromptAssembler {
           "system_prompt",
           "description",
           "personality",
+          "appearance",
+          "default_outfit",
           "scenario",
           "post_history_instructions",
           "mes_example",

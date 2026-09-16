@@ -18,7 +18,7 @@ import type { Kysely, } from "kysely";
 import { createChat, getChatSetupTemplate, } from "../../chat/service";
 import { DifficultyReroll, DifficultyState, } from "../../db/enums-story";
 import type { DB, } from "../../db/schema";
-import { safeJsonParse, uid, } from "../../utils";
+import { jsonStringifyOr, safeJsonParse, uid, } from "../../utils";
 import type { EntityKind, } from "../prompt/templates/entity-generation";
 import type { GeneratedEntity, } from "../quality/entity-creation";
 import { insertEntityLore, } from "./create-entity-lore";
@@ -40,6 +40,24 @@ export interface InsertedEntity {
   name: string;
   /** For locations, the auto-created public chat id (if template present). */
   linkedChatId?: string;
+}
+
+/**
+ * Default outfit for a confirmed character draft.
+ * @param data - Validated entity (gates require appearance, optional defaultOutfit)
+ */
+function defaultOutfitFor(data: GeneratedEntity,): string | null {
+  return data.defaultOutfit ?? data.appearance ?? null;
+}
+
+/**
+ * Wardrobe catalog JSON for a confirmed character draft.
+ * @param data - Validated entity (gates require appearance, optional defaultOutfit)
+ */
+function outfitsJsonFor(data: GeneratedEntity,): string | null {
+  const id = data.defaultOutfit;
+  if (!id) { return null; }
+  return jsonStringifyOr([{ id, name: id, descriptor: data.appearance ?? id, },],);
 }
 
 /**
@@ -79,7 +97,9 @@ export async function insertGeneratedEntity(
             system_prompt: null,
             settings: "{}",
             personality: data.personality ?? null,
-            scenario: data.scenario ?? null,
+            appearance: data.appearance ?? null,
+            default_outfit: defaultOutfitFor(data,),
+            outfits: outfitsJsonFor(data,),
             import_spec: "llm-generated",
           },)
           .execute();
