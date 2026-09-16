@@ -13,7 +13,7 @@ import {
 
 beforeEach(() => {
   resetOrganizationStores();
-});
+},);
 
 describe("createFolder", () => {
   test("creates a folder scoped to the user", () => {
@@ -21,7 +21,7 @@ describe("createFolder", () => {
     expect(folder.id,).toMatch(/^[0-9a-f-]{36}$/i,);
     expect(folder.userId,).toBe("u-1",);
     expect(folder.name,).toBe("Stories",);
-    expect(listFolders("u-1",).map((f,) => f.id,),).toEqual([folder.id,]);
+    expect(listFolders("u-1",).map((f,) => f.id),).toEqual([folder.id,],);
   });
 
   test("folder name is case-insensitive unique per user", () => {
@@ -35,34 +35,34 @@ describe("createFolder", () => {
     const a = createFolder("u-1", "Stories",);
     const b = createFolder("u-2", "Stories",);
     expect(a.id,).not.toBe(b.id,);
-    expect(listFolders("u-1",).map((f,) => f.id,),).toEqual([a.id,]);
-    expect(listFolders("u-2",).map((f,) => f.id,),).toEqual([b.id,]);
+    expect(listFolders("u-1",).map((f,) => f.id),).toEqual([a.id,],);
+    expect(listFolders("u-2",).map((f,) => f.id),).toEqual([b.id,],);
   });
 
   test("rejects blank names", () => {
-    expect(() => createFolder("u-1", "   ",),).toThrow(/cannot be empty/);
+    expect(() => createFolder("u-1", "   ",)).toThrow(/cannot be empty/,);
   });
 });
 
 describe("tagChat / untagChat", () => {
   test("add then list returns the tag", () => {
     tagChat("chat-1", "favorite",);
-    expect(listChatTags("chat-1",),).toEqual(["favorite",]);
+    expect(listChatTags("chat-1",),).toEqual(["favorite",],);
   });
 
   test("tagChat is idempotent", () => {
     tagChat("chat-1", "favorite",);
     tagChat("chat-1", "favorite",);
-    expect(listChatTags("chat-1",),).toEqual(["favorite",]);
+    expect(listChatTags("chat-1",),).toEqual(["favorite",],);
   });
 
   test("untagChat removes the tag and is idempotent", () => {
     tagChat("chat-1", "favorite",);
     tagChat("chat-1", "archive",);
     untagChat("chat-1", "favorite",);
-    expect(listChatTags("chat-1",),).toEqual(["archive",]);
+    expect(listChatTags("chat-1",),).toEqual(["archive",],);
     untagChat("chat-1", "favorite",);
-    expect(listChatTags("chat-1",),).toEqual(["archive",]);
+    expect(listChatTags("chat-1",),).toEqual(["archive",],);
   });
 
   test("blank tags are silently ignored", () => {
@@ -73,7 +73,7 @@ describe("tagChat / untagChat", () => {
   test("tags are isolated per chat", () => {
     tagChat("chat-1", "x",);
     tagChat("chat-2", "y",);
-    expect(listChatTags("chat-1",),).toEqual(["x",]);
-    expect(listChatTags("chat-2",),).toEqual(["y",]);
+    expect(listChatTags("chat-1",),).toEqual(["x",],);
+    expect(listChatTags("chat-2",),).toEqual(["y",],);
   });
 });
