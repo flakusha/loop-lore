@@ -25,6 +25,11 @@ export interface ResolveProfileOptions {
    * Matched overrides replace the built-in template for that mode+detail combo.
    */
   characterOverrides?: Record<string, string>;
+  /**
+   * Full template override (e.g. a user template body from the prompt
+   * template library). Replaces the resolved built-in template entirely.
+   */
+  templateOverride?: string;
 }
 
 /** */

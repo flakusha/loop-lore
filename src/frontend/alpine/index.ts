@@ -44,6 +44,7 @@ import "./actor-systems";
 import "./actor-emotion-avatars";
 import "./actor-traits";
 import "./export-progress";
+import "./template-library";
 
 export { useRequestStatus, } from "./use-request-status";
 export type { RequestStatusKind, RequestStatusPayload, UseRequestStatusOptions, } from "./use-request-status";

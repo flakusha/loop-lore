@@ -471,6 +471,8 @@ export const SyntheticDataTypeSchema = t.UnionEnum([
   "gm_escalation",
 ],);
 export const SyntheticTestModeSchema = t.UnionEnum(["replay", "mutation", "regression", "calibration", "stress",],);
+export const TemplateDetailLevelSchema = t.UnionEnum(["instant", "balanced", "detailed",],);
+export const TemplateModalitySchema = t.UnionEnum(["llm", "image", "video", "audio",],);
 export const ThinkingVisibilitySchema = t.UnionEnum(["hidden", "collapsed", "visible",],);
 export const TraitCategorySchema = t.UnionEnum([
   "identity",
@@ -1675,6 +1677,7 @@ export const ChatsSchema = t.Object({
   data_version: t.Optional(t.Number(),),
   record_hash: t.Optional(t.String(),),
   custom_instructions: t.Optional(t.String(),),
+  prompt_template_id: t.Optional(t.String(),),
 },);
 
 // ── chat_random_events ────────────────────────────────────────────
@@ -2417,6 +2420,19 @@ export const GenerationJobsSchema = t.Object({
   error_message: t.Optional(t.String(),),
   started_at: t.Optional(t.String(),),
   completed_at: t.Optional(t.String(),),
+  created_at: t.Optional(t.String(),),
+  updated_at: t.Optional(t.String(),),
+},);
+
+// ── prompt_templates ────────────────────────────────────────────
+export const PromptTemplatesSchema = t.Object({
+  owner_id: t.String(),
+  name: t.String(),
+  modality: t.Optional(TemplateModalitySchema,),
+  description: t.Optional(t.String(),),
+  model_family: t.Optional(t.String(),),
+  detail_level: t.Optional(TemplateDetailLevelSchema,),
+  payload: t.Optional(t.String(),),
   created_at: t.Optional(t.String(),),
   updated_at: t.Optional(t.String(),),
 },);
