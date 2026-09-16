@@ -3,7 +3,7 @@
 
 # BUG: typecheck scripts/worktree: ReferenceError-class bugs ship green
 
-**Status:** ⬜ Not Started
+**Status:** [OK] Done - fixed in batch (tsconfig.scripts.json + typecheck-scripts gate, 2026-09-16)
 **Priority:** high
 **Effort:** Medium
 
@@ -13,6 +13,19 @@ scripts/ is in no tsconfig (tsconfig.backend.json include=src/**), so the worktr
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Documentation updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
+
+## Resolution
+
+Added `tsconfig.scripts.json` (extends backend, strict debt relaxed, name
+resolution kept) + `typecheck - scripts` gate in `scripts/check-parallel.mjs`
+(`bun run check --gates "typecheck - scripts"` green). Fixed two live
+ReferenceError-class bugs the first gate run caught: missing `ticket` import
+and missing `utils/git` import in `scripts/worktree/index.ts` (both TS2304);
+fixed six `import(\"../index\").loadConfig` member errors (TS2694) via a
+`loadConfig` + `WorktreeConfig` re-export from `index.ts`, and migrated
+`CommandHandler.run` to the named `WorktreeConfig` type per ts-no-return-type.
+`bun run scripts/worktree/ list` smoke passes. `bunx tsgo --noEmit -p
+tsconfig.scripts.json` -> 0 errors.

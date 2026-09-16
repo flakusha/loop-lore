@@ -241,7 +241,12 @@ const checks = {
     "typecheck - frontend": "bun run typecheck:frontend",
     "typecheck - coverage": "bun run typecheck:coverage",
     "typecheck - coverage - frontend": "bun run typecheck:coverage:frontend", // 95% floor each (re-enabled after TS5.9 unblock; type-coverage-core uses ts.SyntaxKind.Unknown, TS7-incompatible)
-
+    // BUG-typecheck-scripts-worktree-referenceerror-class-bugs-ship-gr:
+    // scripts/worktree CLI ships outside tsconfig.backend.json (src/** only).
+    // Scoped tsconfig.scripts.json relaxes strict debt but keeps name
+    // resolution so unimported identifiers (TS2304/TS2552 ReferenceError
+    // class) fail the gate instead of crashing at runtime.
+    "typecheck - scripts": "bunx tsgo --noEmit -p tsconfig.scripts.json",
     // ESLint (single canonical entry — duplicate "lint - ts (eslint)" removed;
     // running ESLint twice doubled its 1.5GB RSS peak with no new signal.)
     "lint - eslint": "bun run lint:eslint",

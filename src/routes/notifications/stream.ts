@@ -16,18 +16,46 @@ import { safeJsonStringify, } from "../../utils";
 export const POLL_INTERVAL_MS = 5000;
 export const KEEPALIVE_MS = 15_000;
 
-/** */
-export class NotificationStreamer {
-  /**
-   * @param database
-   * @param userId
-   * @param intervalMs
-   */
-  constructor(
-    private readonly database: Kysely<DB>,
-    private readonly userId: string,
-    private readonly intervalMs: number = POLL_INTERVAL_MS,
-  ) {}
+/** Snapshot of the unread state surfaced over SSE. */
+export interface NotificationSnapshot {
+  readonly count: number;
+  readonly recent: readonly { readonly id: string }[];
+}
+
+/**
+ * Load the unread snapshot with allSettled semantics: each query resolves
+ * independently so one failing query degrades to its empty default instead
+ * of throwing. Never rejects for query failures.
+ * @param database
+ * @param userId
+ */
+export async function loadNotificationSnapshot(
+  database: Kysely<DB>,
+  userId: string,
+): Promise<NotificationSnapshot> {
+  const service = new NotificationService(database,);
+  const [countRes, recentRes,] = await Promise.allSettled([
+    service.getUnreadCount(userId,),
+    service.list(userId, false,),
+  ],);
+  return {
+    count: countRes.status === "fulfilled" ? countRes.value : 0,
+    recent: recentRes.status === "fulfilled" ? recentRes.value : [],
+  };
+}
+
+ /** */
+ export class NotificationStreamer {
+   /**
+    * @param database
+    * @param userId
+    * @param intervalMs
+    */
+   constructor(
+     private readonly database: Kysely<DB>,
+     private readonly userId: string,
+     private readonly intervalMs: number = POLL_INTERVAL_MS,
+   ) {}
 
   /** */
   open(): Response {
@@ -46,14 +74,10 @@ export class NotificationStreamer {
     };
 
     const tick = async (controller: ReadableStreamDefaultController,): Promise<void> => {
+      // loadNotificationSnapshot never rejects for query failures (allSettled
+      // → empty defaults), so only transport-level throws land in catch.
       try {
-        const service = new NotificationService(this.database,);
-        const [countRes, recentRes,] = await Promise.allSettled([
-          service.getUnreadCount(this.userId,),
-          service.list(this.userId, false,),
-        ],);
-        const count = countRes.status === "fulfilled" ? countRes.value : 0;
-        const recent = recentRes.status === "fulfilled" ? recentRes.value : [];
+        const { count, recent, } = await loadNotificationSnapshot(this.database, this.userId,);
         const snap = `${count}:${recent[0]?.id ?? ""}`;
         if (snap !== lastSnapshot) {
           lastSnapshot = snap;
@@ -67,13 +91,7 @@ export class NotificationStreamer {
     const stream = new ReadableStream({
       start: async (controller,) => {
         try {
-          const service = new NotificationService(this.database,);
-          const [countRes, recentRes,] = await Promise.allSettled([
-            service.getUnreadCount(this.userId,),
-            service.list(this.userId, false,),
-          ],);
-          const count = countRes.status === "fulfilled" ? countRes.value : 0;
-          const recent = recentRes.status === "fulfilled" ? recentRes.value : [];
+          const { count, recent, } = await loadNotificationSnapshot(this.database, this.userId,);
           lastSnapshot = `${count}:${recent[0]?.id ?? ""}`;
           send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10,), },);
         } catch (error) {

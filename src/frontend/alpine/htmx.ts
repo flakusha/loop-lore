@@ -44,10 +44,8 @@ globalThis.apiFetch = apiFetch;
 
 document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Record<string, string> }>,) => {
   apiLog.debug("htmx:configRequest", { path: (e as any)?.detail?.path, },);
-  const token = localStorage.getItem("session_token",);
-  if (token) {
-    e.detail.headers.Authorization = `Bearer ${token}`;
-  }
+  // Browser auth rides the HttpOnly `ll_token` cookie (same-origin, automatic)
+  // — no Bearer fallback: `localStorage.session_token` has no writer.
   // CSRF double-submit: echo the (non-HttpOnly) csrf_token cookie value in
   // the header. htmx sends same-origin cookies automatically, so the cookie
   // half is already present; without this header the both-halves gate
