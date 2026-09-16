@@ -28,7 +28,9 @@ export type SearchPriority = (typeof SEARCH_PRIORITY_VALUES)[number];
 
 export const ChatSearchQuery = t.Object({
   q: t.Optional(t.String({ minLength: 1, maxLength: 200, },),),
-  type: t.Optional(t.UnionEnum(["direct", "group",],),),
+  // t.Enum, not t.UnionEnum: Elysia 1.4 compiles t.UnionEnum with
+  // "default": <first member>, forcing an ABSENT query param to "direct".
+  type: t.Optional(t.Enum({ direct: "direct", group: "group", },),),
   world: t.Optional(t.String({ format: "uuid", },),),
   limit: t.Optional(t.Numeric({ minimum: 1, maximum: 50, default: 20, },),),
   offset: t.Optional(t.Numeric({ minimum: 0, default: 0, },),),
@@ -41,7 +43,7 @@ export const ChatSearchQuery = t.Object({
    * Ordering preference for the live/archived split. See
    * `SEARCH_PRIORITY_VALUES`.
    */
-  searchPriority: t.Optional(t.UnionEnum(SEARCH_PRIORITY_VALUES,),),
+  searchPriority: t.Optional(t.Enum({ live_first: "live_first", archive_first: "archive_first", },),),
 },);
 
 export const JoinableQuery = t.Object({
