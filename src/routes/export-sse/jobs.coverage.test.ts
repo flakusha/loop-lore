@@ -286,4 +286,56 @@ describe("export-sse routes", () => {
     expect(bytes.length,).toBe(9,);
     jobs.delete(job.id,);
   });
+
+  test("status 404s when the caller is not the job owner", async () => {
+    const job = stageJob(db, { userId: "cov-user", },);
+    const other = new Elysia({ name: "test-export-idor-other", },)
+      .derive({ as: "scoped", }, () => ({ userId: "other-user", userRole: "user", }),)
+      .use(statusRoutes({ database: db, },),) as unknown as Elysia;
+    const res = await other.handle(
+      new Request(`http://localhost/api/export/status/${job.id}`,),
+    );
+    expect(res.status,).toBe(404,);
+    jobs.delete(job.id,);
+  });
+
+  test("download 404s when the caller is not the job owner", async () => {
+    const job = stageJob(db, {
+      status: "completed",
+      progress: 1,
+      total: 1,
+      zipBuffer: Buffer.from("PKfakezip",),
+    },);
+    const other = new Elysia({ name: "test-export-idor-other-dl", },)
+      .derive({ as: "scoped", }, () => ({ userId: "other-user", userRole: "user", }),)
+      .use(downloadRoutes({ database: db, },),) as unknown as Elysia;
+    const res = await other.handle(
+      new Request(`http://localhost/api/export/download/${job.id}`,),
+    );
+    expect(res.status,).toBe(404,);
+    jobs.delete(job.id,);
+  });
+
+  test("admin may read another user's job status", async () => {
+    const job = stageJob(db, { userId: "cov-user", },);
+    const admin = new Elysia({ name: "test-export-idor-admin", },)
+      .derive({ as: "scoped", }, () => ({ userId: "admin-1", userRole: "admin", }),)
+      .use(statusRoutes({ database: db, },),) as unknown as Elysia;
+    const res = await admin.handle(
+      new Request(`http://localhost/api/export/status/${job.id}`,),
+    );
+    expect(res.status,).toBe(200,);
+    jobs.delete(job.id,);
+  });
+
+  test("unauthenticated status lookup 404s even for a known job", async () => {
+    const job = stageJob(db, { userId: "cov-user", },);
+    const anon = new Elysia({ name: "test-export-idor-anon", },)
+      .use(statusRoutes({ database: db, },),) as unknown as Elysia;
+    const res = await anon.handle(
+      new Request(`http://localhost/api/export/status/${job.id}`,),
+    );
+    expect(res.status,).toBe(404,);
+    jobs.delete(job.id,);
+  });
 });

@@ -3,7 +3,7 @@
 
 import { Elysia, } from "elysia";
 import { ErrorResponse, SuccessResponse, } from "../../validation/schemas";
-import { HttpStatus, jsonError, } from "../http-utils";
+import { extractAuth, HttpStatus, jsonError, } from "../http-utils";
 import { jobs, } from "./jobs";
 import type { HandlerOpts, } from "./types";
 
@@ -19,6 +19,16 @@ export function downloadRoutes(_opts: HandlerOpts, prefix = "/api",): Elysia {
       const job = jobs.get(jobId,);
 
       if (!job) {
+        return jsonError({
+          message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
+          status: HttpStatus.NotFound,
+        },);
+      }
+
+      // Ownership: only the owning user (or an admin) may download a job's
+      // ZIP. 404 — not 403 — to avoid leaking job existence (IDOR).
+      const { userId, userRole, } = extractAuth(ctx,);
+      if (job.userId !== userId && userRole !== "admin") {
         return jsonError({
           message: ctx.t?.("characters.emotionJobNotFound",) ?? "Job not found",
           status: HttpStatus.NotFound,
