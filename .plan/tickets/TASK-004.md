@@ -3,7 +3,7 @@
 
 # TASK-004: Chat message search
 
-**Status**: open
+**Status**: closed
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -11,3 +11,8 @@
 **Related**:
 
 Git issue: `bd70e0f`
+
+## Resolution
+
+Implemented. Evidence: `src/routes/message-search/index.ts` (`GET /api/messages/search`),
+covered by `src/routes/message-search.test.ts`.
