@@ -1919,6 +1919,20 @@
     "source": ".plan/tickets/BUG-export-sse-start-throws-controller-is-already-closed-on-clie.md",
     "status": "done"
   },
+
+  "BUG-EXPORT-STATUS-DOWNLOAD-ENDPOINTS-LEAK-OTHER-USERS-JOBS-VIA-U": {
+    "hash": "2536140",
+    "git_issue": "2536140",
+    "extid": "BUG-EXPORT-STATUS-DOWNLOAD-ENDPOINTS-LEAK-OTHER-USERS-JOBS-VIA-U",
+    "type": "BUG",
+    "title": "Export status/download endpoints leak other users jobs via unguessable jobId",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-export-status-download-endpoints-leak-other-users-jobs-via-u.md",
+    "status": "done"
+  },
   "BUG-FACTORY-RESET-DELETES-TABLES-WITHOUT-TRANSACTION-SILENT-PER-": {
     "hash": "dc5a8b8",
     "extid": "BUG-FACTORY-RESET-DELETES-TABLES-WITHOUT-TRANSACTION-SILENT-PER-",
