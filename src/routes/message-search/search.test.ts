@@ -223,4 +223,35 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     expect(res.status,).toBe(404,);
     await db.destroy();
   });
+
+  test("hostile q/linkPattern input stays a literal search, never SQL", async () => {
+    createLogger({ level: "error", },);
+    const { db, } = await createTestDb();
+    const userId = await seedUser(db,);
+    const chatId = await seedChat(db, userId,);
+    await seedMessage(db, chatId, userId, "harmless message text",);
+
+    const app = makeApp(db, userId,);
+    // FTS5 operator syntax, SQL comment/quote payloads — all must be treated
+    // as search terms (bound MATCH parameter, quote-escaped tokens), return
+    // 200, and leak nothing.
+    for (const q of ['" OR 1=1 --', "ne AND (SELECT 1", "drag* -> other", 'x"y',]) {
+      const res = await app.handle(
+        new Request(`http://localhost/api/messages/search?q=${encodeURIComponent(q,)}`,),
+      );
+      expect(res.status,).toBe(200,);
+      const body = (await res.json()) as SearchBody;
+      expect(body.results.map((r,) => r.content),).not.toContain("harmless message text",);
+    }
+    // LIKE metacharacters in linkPattern must stay literal.
+    const likeRes = await app.handle(
+      new Request("http://localhost/api/messages/search?linkPattern=%25%25%27%3B%20DROP%20TABLE%20messages%3B--",),
+    );
+    expect(likeRes.status,).toBe(200,);
+    expect(((await likeRes.json()) as SearchBody).results,).toEqual([],);
+    // Table still intact after the hostile requests.
+    const remaining = await db.selectFrom("messages",).selectAll().execute();
+    expect(remaining.length,).toBe(1,);
+    await db.destroy();
+  });
 });
