@@ -19,6 +19,9 @@ export function exportToToml(character: CanonicalCharacter,): string {
   if (character.name) { characterSection.name = character.name; }
   if (character.description) { characterSection.description = character.description; }
   if (character.personality) { characterSection.personality = character.personality; }
+  if (character.appearance) { characterSection.appearance = character.appearance; }
+  if (character.default_outfit) { characterSection.default_outfit = character.default_outfit; }
+  if (character.outfits?.length) { characterSection.outfits = character.outfits; }
   if (character.scenario) { characterSection.scenario = character.scenario; }
   if (character.welcome_message) { characterSection.welcome_message = character.welcome_message; }
   if (character.mes_example) { characterSection.mes_example = character.mes_example; }

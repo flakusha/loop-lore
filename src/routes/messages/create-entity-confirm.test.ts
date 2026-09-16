@@ -208,6 +208,8 @@ describe("POST /api/chats/:id/create-entity", () => {
             name: "Aragorn",
             description: "Ranger of the North",
             personality: "Noble and steadfast",
+            appearance: "Tall weathered ranger",
+            defaultOutfit: "travel-gear",
             scenario: "Middle-earth",
           },
         },),
@@ -396,6 +398,9 @@ describe("POST /api/chats/:id/create-entity", () => {
           data: {
             name: "LoreKEEPER",
             description: "A keeper of ancient knowledge",
+            personality: "Wise and secretive",
+            appearance: "Hooded figure",
+            defaultOutfit: "keeper-robes",
             lore: [
               {
                 name: "Ancient Secret",
@@ -407,7 +412,6 @@ describe("POST /api/chats/:id/create-entity", () => {
                 position: "before_char",
                 insertion_order: 0,
                 priority: 1,
-                cooldown_seconds: 0,
               },
               {
                 name: "Silent Oath",
@@ -589,7 +593,13 @@ describe("POST /api/chats/:id/create-entity", () => {
         headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
           kind: "character",
-          data: { name: "Simple", description: "No lore here", },
+          data: {
+            name: "Simple",
+            description: "No lore here",
+            personality: "Plain",
+            appearance: "Unremarkable",
+            defaultOutfit: "simple-clothes",
+          },
         },),
       },),
     );
@@ -765,6 +775,9 @@ describe("POST /api/chats/:id/create-entity", () => {
           data: {
             name: "Ranger",
             description: "A silent hunter",
+            personality: "Quiet and watchful",
+            appearance: "Cloaked figure",
+            defaultOutfit: "ranger-gear",
             lore: [
               {
                 name: "Hunting Ground",

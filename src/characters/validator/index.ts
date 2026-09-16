@@ -24,6 +24,7 @@ import {
   validateRequiredString,
   validateStringLength,
 } from "./fields";
+import { validateOutfitFields, } from "./outfits";
 
 export {
   filterAllowedRatings,
@@ -49,11 +50,12 @@ export function validateCharacter(
   validateRequiredString(character, "name", errors,);
   validateRequiredString(character, "description", errors,);
   validateRequiredString(character, "personality", errors,);
-
+  validateRequiredString(character, "appearance", errors,);
   // ── Length constraints ──────────────────────
   validateStringLength(character, "name", errors, warnings, mode,);
   validateStringLength(character, "description", errors, warnings, mode,);
   validateStringLength(character, "personality", errors, warnings, mode,);
+  validateStringLength(character, "appearance", errors, warnings, mode,);
   validateStringLength(character, "scenario", errors, warnings, mode,);
   validateStringLength(character, "welcome_message", errors, warnings, mode,);
   validateStringLength(character, "mes_example", errors, warnings, mode,);
@@ -94,10 +96,12 @@ export function validateCharacter(
   // ── Relaxed mode: skip optional field type validation ──
   if (mode === "strict") {
     validateOptionalFields(character, errors, warnings,);
+    validateOutfitFields(character, errors, warnings,);
+  } else {
+    validateOutfitFields(character, errors, warnings, "relaxed",);
   }
   // ── Extensions validation ───────────────────
   validateExtensions(character, errors, warnings, mode,);
-
   // ── Growth fields (`.plan/epics/epic-character-growth.md`) ──
   validateGrowthFields(character, errors,);
 

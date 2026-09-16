@@ -1781,6 +1781,10 @@
                   "personality": {
                     "type": "string"
                   },
+                  "appearance": {
+                    "type": "string",
+                    "description": "General look / body / face — immutable visual base"
+                  },
                   "scenario": {
                     "type": "string"
                   },

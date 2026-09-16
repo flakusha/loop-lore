@@ -43,7 +43,12 @@ describe("/create command — preview flow", () => {
 
   it("returns create-entity-preview with validated draft and threads the model, performs no insert", async () => {
     const { db, } = await createTestDb();
-    stubBody = JSON.stringify({ name: "Aragorn", description: "Ranger of the North", },);
+    stubBody = JSON.stringify({
+      name: "Aragorn",
+      description: "Ranger of the North",
+      personality: "Stern.",
+      appearance: "Tall ranger.",
+    },);
 
     const result: CommandResult = await runCreateGeneration(
       ["char", "a doomed king",],
@@ -75,6 +80,8 @@ describe("/create command — preview flow", () => {
     stubBody = JSON.stringify({
       name: "The Ancient One",
       description: "An old mage",
+      personality: "Wise.",
+      appearance: "Ancient robes.",
       lore: [
         {
           name: "First Knowledge",

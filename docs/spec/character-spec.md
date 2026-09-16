@@ -22,11 +22,31 @@ serves character data across the system.
 
 ### 1.1 Mandatory Fields (Required for All Characters)
 
-| Field         | Type     | Description                            | Constraints                                      |
-| ------------- | -------- | -------------------------------------- | ------------------------------------------------ |
-| `name`        | `string` | Character display name                 | `1 ≤ length ≤ 64`, trimmed, non-empty after trim |
-| `description` | `string` | Full character description / backstory | `1 ≤ length ≤ 5000`, trimmed                     |
-| `personality` | `string` | Personality summary (immutable core)   | `1 ≤ length ≤ 2000`, trimmed                     |
+| Field            | Type                | Description                                        | Constraints                                      |
+| ---------------- | ------------------- | -------------------------------------------------- | ------------------------------------------------ |
+| `name`           | `string`            | Character display name                             | `1 ≤ length ≤ 64`, trimmed, non-empty after trim |
+| `description`    | `string`            | Full character description / backstory             | `1 ≤ length ≤ 5000`, trimmed                     |
+| `personality`    | `string`            | Personality summary (immutable core)               | `1 ≤ length ≤ 2000`, trimmed                     |
+| `appearance`     | `string`            | General look / body / face (immutable visual base) | `1 ≤ length ≤ 2000`, trimmed                     |
+| `default_outfit` | `string`            | Default outfit id (must match `outfits[].id`)      | `1 ≤ length ≤ 64`, `INVALID_REFERENCE` otherwise |
+| `outfits`        | `CharacterOutfit[]` | Wardrobe catalog (at least one entry)              | `1 ≤ length ≤ 20`, ids unique                    |
+
+Each outfit entry:
+
+| Field        | Type       | Description                              | Constraints              |
+| ------------ | ---------- | ---------------------------------------- | ------------------------ |
+| `id`         | `string`   | Stable outfit id (loadouts + ladder ref) | `1 ≤ length ≤ 64`        |
+| `name`       | `string`   | Human-readable label shown in UI         | `1 ≤ length ≤ 64`        |
+| `descriptor` | `string`   | Prompt-fragment for the avatar generator | `1 ≤ length ≤ 2000`      |
+| `tags`       | `string[]` | Free-form binding tags (optional)        | e.g. `formal\|armor\|...` |
+
+New outfits can be created later via wardrobe CRUD, chat/scene outfit
+overrides, or world binding rules (`epic-wardrobe-avatar-variants.md`);
+the spec only gates the ≥1 default at creation/validation time.
+
+`appearance` is the immutable visual base (body/face/general look) and stays
+distinct from `description` (backstory/role), identity facts
+(`species`/`gender`/`age`), and the `natural_appearance` runtime trait lock.
 
 ### 1.2 Optional Fields
 
@@ -44,7 +64,19 @@ serves character data across the system.
 | `creator_notes`             | `string`         | `""`    | Creator notes                   | `≤ 2000`                          |
 | `character_version`         | `string`         | `"1.0"` | Creator's version string        | Semver-ish, `≤ 16`                |
 
-### 1.3 Multi-Level Object Descriptions
+### 1.2b Inventory Lifecycle (Not a Character-Spec Field)
+
+`inventory` is intentionally **not** a required character field. It lives in
+three layers:
+
+1. **Template hint** — `extensions.inventory?: InventoryItem[]` (optional,
+   validated when present, no runtime consumers).
+2. **Per-world seed** — `character_world_setup.starting_inventory`, granted
+   idempotently as `world_items` on first join
+   (`src/story/world-state/init.ts`).
+3. **Runtime truth** — `world_items.owner_actor_id`, `actor_items`,
+   `npc_states.inventory` snapshot. Only exists once the character is in a
+   world/chat.
 
 Characters support nested, structured descriptions through the `description`
 field and the `extensions` map. The `description` is a flat string for
@@ -182,6 +214,9 @@ All characters are stored internally as **JSON** in the database. The
     "name": "",
     "description": "",
     "personality": "",
+    "appearance": "",
+    "default_outfit": "",
+    "outfits": [],
     "scenario": "",
     "welcome_message": "",
     "mes_example": "",

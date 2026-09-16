@@ -38,7 +38,10 @@ describe("normalizeEntity", () => {
 
 describe("validateEntitySchema", () => {
   it("accepts a complete entity", () => {
-    expect(validateEntitySchema("character", { name: "A", description: "B", },).ok,).toBe(true,);
+    expect(
+      validateEntitySchema("character", { name: "A", description: "B", personality: "Brave.", appearance: "Tall.", },)
+        .ok,
+    ).toBe(true,);
   });
 
   it("rejects missing required fields", () => {

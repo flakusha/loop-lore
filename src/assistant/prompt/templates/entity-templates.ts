@@ -30,12 +30,13 @@ const LORE_ENTRY_SCHEMA =
 export const ENTITY_TEMPLATES: Record<EntityKind, EntityTemplate> = {
   character: {
     schema:
-      `name (string, required), description (string, required, 1-2 paragraphs), personality (string), scenario (string, 1 sentence), lore (array of lore entries, optional) — each entry: ${LORE_ENTRY_SCHEMA}`,
+      `name (string, required), description (string, required, 1-2 paragraphs), personality (string, required), appearance (string, required), scenario (string, 1 sentence), lore (array of lore entries, optional) — each entry: ${LORE_ENTRY_SCHEMA}`,
     example: {
       name: "Eldric the Wanderer",
       description:
         "A grizzled half-elf ranger with silver-streaked hair and a limp from an old battle. Speaks in short, deliberate sentences.",
       personality: "Cautious, dry-humored, fiercely loyal to companions.",
+      appearance: "Silver-streaked hair, weathered leathers, a limp from an old battle.",
       scenario: "Approaches the party at a crossroads inn, looking for leads on a missing caravans.",
       lore: [
         {

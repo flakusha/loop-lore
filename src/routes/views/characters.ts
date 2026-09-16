@@ -74,6 +74,8 @@ async function serveCharacterEditForm(
   const desc = actor.description ?? "";
   const systemPrompt = actor.system_prompt ?? "";
   const personality = actor.personality ?? "";
+  const appearance = (actor as { appearance?: string | null }).appearance ?? "";
+  const defaultOutfit = (actor as { default_outfit?: string | null }).default_outfit ?? "";
   const welcome = actor.welcome_message ?? "";
   const scenario = actor.scenario ?? "";
   const mesExample = actor.mes_example ?? "";
@@ -94,6 +96,8 @@ async function serveCharacterEditForm(
     desc,
     systemPrompt,
     personality,
+    appearance,
+    defaultOutfit,
     welcome,
     scenario,
     mesExample,

@@ -37,6 +37,8 @@ export function normalizeEntity(
     name: str(raw.name,) ?? "",
     description: str(raw.description,),
     personality: str(raw.personality,),
+    appearance: str(raw.appearance,),
+    defaultOutfit: str(raw.defaultOutfit,) ?? str(raw.default_outfit,),
     scenario: str(raw.scenario,),
     lore: Array.isArray(raw.lore,)
       ? normalizeLoreEntries(raw.lore,)

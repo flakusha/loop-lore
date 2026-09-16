@@ -3,7 +3,7 @@
 
 /**
  * Actor header section — the generating character's card
- * (name / description / personality / scenario).
+ * (name / description / personality / appearance / outfit / scenario).
  */
 import type { SectionBuilder, } from "../types";
 
@@ -16,6 +16,8 @@ export const actorHeaderSection: SectionBuilder = {
     if (actor.display_name) { headerParts.push(`You are ${actor.display_name}.`,); }
     if (actor.description) { headerParts.push(`\nDescription: ${actor.description}`,); }
     if (actor.personality) { headerParts.push(`\nPersonality: ${actor.personality}`,); }
+    if (actor.appearance) { headerParts.push(`\nAppearance: ${actor.appearance}`,); }
+    if (actor.default_outfit) { headerParts.push(`\nOutfit: ${actor.default_outfit}`,); }
     if (actor.scenario) { headerParts.push(`\nScenario: ${actor.scenario}`,); }
 
     return headerParts.length > 0 ? [{ role: "system", content: headerParts.join("",), },] : [];

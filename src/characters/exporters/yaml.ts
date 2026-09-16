@@ -33,6 +33,9 @@ export function exportToYaml(character: CanonicalCharacter,): string {
   if (character.name) { yamlData.name = character.name; }
   if (character.description) { yamlData.description = character.description; }
   if (character.personality) { yamlData.personality = character.personality; }
+  if (character.appearance) { yamlData.appearance = character.appearance; }
+  if (character.default_outfit) { yamlData.default_outfit = character.default_outfit; }
+  if (character.outfits?.length) { yamlData.outfits = character.outfits; }
   if (character.scenario) { yamlData.scenario = character.scenario; }
   if (character.system_prompt) { yamlData.system_prompt = character.system_prompt; }
   if (character.welcome_message) { yamlData.welcome_message = character.welcome_message; }
