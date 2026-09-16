@@ -159,3 +159,13 @@ export {
   SINGLE_BRACE,
   WORKFLOW_TAG,
 } from "./placeholders";
+
+// ── Hardening helpers ───────────────────────────────────────
+
+export {
+  assertInputSize,
+  MAX_INPUT_CHARS,
+  RegexInputTooLargeError,
+  safeRegexExec,
+  safeRegexMatch,
+} from "./safe-exec";

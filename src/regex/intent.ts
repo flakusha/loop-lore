@@ -105,5 +105,11 @@ export const SLASH_COMMAND = /^\/(\w+)/;
 
 // ── Keyword Escaping ──────────────────────────────────────
 
-/** Characters that need escaping in keyword-to-regex conversion */
-export const REGEX_SPECIAL_CHARS = /[.*+?^${}()|[\]\\]/g;
+/**
+ * Characters that need escaping in keyword-to-regex conversion.
+ *
+ * No `g` flag: `.test()`/`.exec()` consumers inherit stale `lastIndex` from
+ * module-level globals. Without the flag the cursor never advances, so callers
+ * can share this pattern without manual resets.
+ */
+export const REGEX_SPECIAL_CHARS = /[.*+?^${}()|[\]\\]/;
