@@ -3,7 +3,7 @@
 
 # TASK-002: Chat room search and join
 
-**Status**: closed
+**Status:** [OK] Done
 **Priority**: medium
 **Labels**:
 **Assignee**:

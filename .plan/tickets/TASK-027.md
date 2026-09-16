@@ -3,7 +3,7 @@
 
 # TASK-027: Crafting System Implementation
 
-**Status**: closed
+**Status:** [OK] Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
