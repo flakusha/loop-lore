@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+// size-allow: 600
 
 /**
  * Chat moderation — pure permission/state helpers + DB-backed primitives.
@@ -26,9 +27,10 @@
  */
 import { type Kysely, } from "kysely";
 import { type DB, } from "../db/schema";
-import { getLogger, } from "../logger";
 import { ModerationHook, } from "../generation/hooks/moderation-hook";
+import { getLogger, } from "../logger";
 import { can, } from "../users/permissions";
+import { jsonStringifyOr, } from "../utils/safe-json";
 import type {
   ApplyOptions,
   ApplyResult,
@@ -218,7 +220,7 @@ async function writeAuditPair(
     durationMs?: number;
     extraMeta?: Record<string, unknown>;
   },
-): Promise<{ actionId: string; auditEntryId: string; }> {
+): Promise<{ actionId: string; auditEntryId: string }> {
   const id = crypto.randomUUID();
   const now = Date.now();
   const iso = new Date(now,).toISOString();
@@ -252,7 +254,7 @@ async function writeAuditPair(
       reason,
       scope: args.scope,
       scope_id: args.chatId,
-      metadata: JSON.stringify(meta,),
+      metadata: jsonStringifyOr(meta,),
       expires_at: expiresAt,
       created_at: iso,
     },)
@@ -272,7 +274,7 @@ async function writeAuditPair(
       entity_id: args.targetActorId,
       action: args.kind,
       event_type: eventType,
-      meta: JSON.stringify(meta,),
+      meta: jsonStringifyOr(meta,),
     },)
     .execute();
 
