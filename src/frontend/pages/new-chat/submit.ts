@@ -76,10 +76,12 @@ function collectNewChatPayload(ctx: NewChatCtx, name: string,): Record<string, u
 
   // Fine-tune overrides: only sent when the user picked a non-default value.
   const turnStrategy = $<HTMLSelectElement>("#chat-turn-strategy",)?.value || undefined;
+  const worldId = $<HTMLSelectElement>("#chat-world",)?.value || undefined;
   const visibility = $<HTMLSelectElement>("#chat-visibility",)?.value || undefined;
   const visualNovel = $<HTMLInputElement>("#chat-visual-novel",)?.checked;
   const fineTunePayload: Record<string, unknown> = {};
   if (turnStrategy) { fineTunePayload.turnStrategy = turnStrategy; }
+  if (worldId) { fineTunePayload.worldId = worldId; }
   if (visibility) { fineTunePayload.visibility = visibility; }
   // VN checkbox is only visible with a template selected, and the template
   // pre-fills it — send the real state so it can be toggled off too. The

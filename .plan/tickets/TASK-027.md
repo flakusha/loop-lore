@@ -3,7 +3,7 @@
 
 # TASK-027: Crafting System Implementation
 
-**Status**: open
+**Status**: closed
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -11,3 +11,8 @@
 **Related**:
 
 Git issue: `dd2d5e7`
+
+## Resolution
+
+Implemented. Evidence: `src/routes/crafting/` recipe/station/order/attempt endpoints,
+covered by `src/routes/crafting.test.ts` and `src/routes/rpg/crafting-stations.test.ts`.

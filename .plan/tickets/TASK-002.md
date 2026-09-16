@@ -3,7 +3,7 @@
 
 # TASK-002: Chat room search and join
 
-**Status**: open
+**Status**: closed
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -11,3 +11,10 @@
 **Related**:
 
 Git issue: `20c7472`
+
+## Resolution
+
+Implemented. Evidence: `src/routes/chat-search/search.ts` (`GET /api/chats/search`),
+`src/routes/chat-search/joinable.ts` (`GET /api/chats/joinable`),
+`src/routes/chat-search/join.ts` (`POST /api/chats/:id/join`), covered by
+`src/routes/chat-search/index.test.ts`.

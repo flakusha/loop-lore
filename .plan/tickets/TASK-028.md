@@ -3,7 +3,7 @@
 
 # TASK-028: Item Specification & Parameters System
 
-**Status**: open
+**Status**: closed
 **Priority**: medium
 **Labels**:
 **Assignee**:
@@ -11,3 +11,9 @@
 **Related**:
 
 Git issue: `cbf7fb9`
+
+## Resolution
+
+Implemented. Evidence: `ItemsService` definition/instance CRUD in `src/story/items/`
+(`index.ts`, `definitions.ts`, `instances.ts`, `types.ts`), covered by
+`src/story/items/instances.test.ts`.
