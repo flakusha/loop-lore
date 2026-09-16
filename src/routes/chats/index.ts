@@ -1,5 +1,6 @@
+import type { HandlerOpts, } from "./types";
 import { Elysia, } from "elysia";
-import { safeJsonParse, } from "../../utils";
+import { annotationRoutes, } from "./annotations";
 import { autoTranslateRoutes, } from "./auto-translate";
 import { batchRoutes, } from "./batch";
 import { createRoutes, } from "./create";
@@ -11,11 +12,11 @@ import { manageRoutes, } from "./manage";
 import { moderationRoutes, } from "./moderation";
 import { ownershipRoutes, } from "./ownership";
 import { participantRoutes, } from "./participants";
-import { sideChannelRoutes, } from "./side-channels";
 import { partySplitRoutes, } from "./split";
+import { safeJsonParse, } from "../../utils";
+import { sideChannelRoutes, } from "./side-channels";
 import { templatesRoutes, } from "./templates";
 import { turnOrderRoutes, } from "./turn-order";
-import type { HandlerOpts, } from "./types";
 import { vnChoiceRoutes, } from "./vn-choices";
 
 /**
@@ -40,6 +41,7 @@ export function chatsRoutes(opts: HandlerOpts, prefix = "/api",) {
       .use(templatesRoutes(opts, prefix,),)
       .use(batchRoutes(opts, prefix,),)
       .use(autoTranslateRoutes(opts, prefix,),)
+      .use(annotationRoutes(opts, prefix,),)
       .use(manageRoutes(opts, prefix,),)
       .use(moderationRoutes(opts, prefix,),)
       .use(participantRoutes(opts, prefix,),)
