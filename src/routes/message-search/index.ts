@@ -65,13 +65,10 @@ export function messageSearchRoutes(opts: HandlerOpts, prefix = "/api",) {
           const offset = query.offset ?? 0;
           const q = (query.q ?? "").trim();
 
-          // Runtime enum check — Elysia 1.4 cannot validate plain-string query
-          // enums, and t.UnionEnum defaults an ABSENT param to its first
-          // member (which would filter every search to `image`).
+          // Runtime enum check: Elysia 1.4 can't validate plain-string query
+          // enums, and t.UnionEnum defaults an ABSENT param to its first member.
           if (query.attachmentType && !Object.values(AssetType,).includes(query.attachmentType as AssetType,)) {
-            return badRequestResponse(
-              `attachmentType must be one of: ${Object.values(AssetType,).join(", ")}`,
-            );
+            return badRequestResponse(`attachmentType must be one of: ${Object.values(AssetType,).join(", ",)}`,);
           }
 
           // Single-chat scope: verify access first.
