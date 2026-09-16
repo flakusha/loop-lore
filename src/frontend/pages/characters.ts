@@ -150,11 +150,15 @@ export async function unlinkCharacterAsset(btn: HTMLElement,) {
 
 export async function selectCharacterCard(id: string,) {
   const modal = await ensureModal();
-  if (!modal) { return; }
+  if (!modal) {
+    showToast("error", "Character detail unavailable",);
+    return;
+  }
 
   const resp = await feFetch(`/api/actors/${id}`,);
   if (!resp.ok) {
     log.error("Failed to fetch actor", undefined, { status: resp.status, id, },);
+    showToast("error", "Failed to load character",);
     return;
   }
   const char = await resp.json();
@@ -162,13 +166,16 @@ export async function selectCharacterCard(id: string,) {
   try {
     await populateModal(modal, char, id,);
   } catch {
-    /* ignore */
+    showToast("error", "Failed to load character",);
   }
 }
 
 export async function startChatFromChar(btn: HTMLElement,) {
   const id = btn.dataset.id;
-  if (!id) { return; }
+  if (!id) {
+    showToast("error", "Character not loaded yet",);
+    return;
+  }
   try {
     const res = await feFetch("/api/chats", {
       method: "POST",
@@ -178,9 +185,11 @@ export async function startChatFromChar(btn: HTMLElement,) {
     if (res.ok) {
       const data = await res.json();
       location.assign(`/views/chat?chatid=${encodeURIComponent(data.id,)}`,);
+    } else {
+      showToast("error", "Failed to start chat",);
     }
   } catch {
-    /* ignore */
+    showToast("error", "Failed to start chat",);
   }
 }
 
