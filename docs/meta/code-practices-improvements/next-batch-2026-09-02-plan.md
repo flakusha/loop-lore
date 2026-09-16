@@ -121,7 +121,7 @@ Listed for completeness; do **not** re-open:
 
 - Handoff doc pattern: `.tmp/feat-<slug>-handoff.md`
 - Triage doc pattern: `.tmp/bugfix-batch-<date>-report.md`
-- Each BUG in its own worktree: `bun run scripts/worktree/ new fix-<slug>`
+- Each BUG in its own worktree: `giwt new fix-<slug>`
 - NEVER run `bun run check` (system OOM)
 - NEVER bypass GPG signing
-- Finalize: `bun run scripts/worktree/ finalize fix-<slug> --force`
+- Finalize: `giwt finalize fix-<slug> --force`
