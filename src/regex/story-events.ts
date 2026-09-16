@@ -12,13 +12,24 @@
 
 // ── Location Change Patterns ─────────────────────────────────
 
-/** Matches phrases like "enters the tavern", "moves to the forest", "heads toward castle" */
+/**
+ * Matches phrases like "enters the tavern", "moves to the forest", "heads toward castle".
+ *
+ * The named-location capture is bounded to `{1,30}` chars and requires a
+ * sentence-ending terminator (`.`, `,`, `;`, `!`, `?`, or end-of-string).
+ * Without the terminator anchor a punctuation-free narrative forces the lazy
+ * group to retry every position along the run (O(n²) on long matches).
+ */
 export const LOCATION_MOVEMENT =
-  /(?:enters?|moves?\s+to|arrives?\s+at|steps?\s+into|walks?\s+into|goes?\s+to|heads?\s+(?:to|toward)|leaves?\s+the)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/i;
+  /(?:enters?|moves?\s+to|arrives?\s+at|steps?\s+into|walks?\s+into|goes?\s+to|heads?\s+(?:to|toward)|leaves?\s+the)\s+[""']?([A-Za-z][A-Za-z\s]{0,29})[""']?(?:[,.;!?]|$)/i;
 
-/** Matches phrases like "makes their way to the castle", "travels to the village", "ventures into the cave" */
+/**
+ * Matches phrases like "makes their way to the castle", "travels to the village", "ventures into the cave".
+ *
+ * Same anchor/bound rationale as {@link LOCATION_MOVEMENT}.
+ */
 export const LOCATION_TRAVEL =
-  /(?:makes?\s+(?:their\s+)?way\s+to(?:wards?)?|travels?\s+to|ventures?\s+into)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/i;
+  /(?:makes?\s+(?:their\s+)?way\s+to(?:wards?)?|travels?\s+to|ventures?\s+into)\s+[""']?([A-Za-z][A-Za-z\s]{0,29})[""']?(?:[,.;!?]|$)/i;
 
 // ── Time Advancement Patterns ─────────────────────────────────
 
