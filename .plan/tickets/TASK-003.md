@@ -3,7 +3,7 @@
 
 # TASK-003: Chat room filters
 
-**Status**: closed
+**Status:** [OK] Done
 **Priority**: medium
 **Labels**:
 **Assignee**:

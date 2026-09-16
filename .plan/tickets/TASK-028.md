@@ -3,7 +3,7 @@
 
 # TASK-028: Item Specification & Parameters System
 
-**Status**: closed
+**Status:** [OK] Done
 **Priority**: medium
 **Labels**:
 **Assignee**:

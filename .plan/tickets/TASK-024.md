@@ -3,7 +3,7 @@
 
 # TASK-024: Visual novel mode
 
-**Status**: closed
+**Status:** [OK] Done
 **Priority**: medium
 **Labels**:
 **Assignee**:
