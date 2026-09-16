@@ -13,8 +13,12 @@ export type FetchResult<T,> =
 /**
  * Authentication/CSRF configuration for safeFetch.
  *
- * On the browser, pass tokens from `localStorage`/`document.cookie`.
- * On the server, pass API keys or bearer tokens from config/env.
+ * Browser (cookie-only): pass `csrfToken` from `document.cookie`; auth rides
+ * the HttpOnly `ll_token` cookie automatically. Never pass a token from
+ * `localStorage` — no writer exists and anything stored there is XSS-stealable.
+ * Non-browser (TUI/server): pass `sessionToken`/`apiKey`/`authorization`,
+ * which inject an `Authorization: Bearer` header the server also accepts
+ * (`src/middleware/auth/authenticate.ts` tries Bearer before the cookie).
  *
  * This replaces the browser-specific logic in `feFetch` with a
  * universal interface that works in both environments.
@@ -22,7 +26,7 @@ export type FetchResult<T,> =
 export interface FetchAuth {
   /** CSRF token (browser) — injected as X-CSRF-Token header */
   csrfToken?: string;
-  /** Session bearer token (browser) — injected as Authorization: Bearer header */
+  /** Bearer token (TUI/server only, never browser localStorage) — injected as Authorization: Bearer header */
   sessionToken?: string;
   /** API key (server) — injected as Authorization: Bearer header */
   apiKey?: string;

@@ -5,8 +5,11 @@
  * Unified Frontend fetch utility.
  *
  * Wraps the native `fetch` and injects the cross-site-request-forgery token
- * (from a <meta name="csrf-token"> tag or the `csrf_token` cookie) and the
- * session bearer token (from `localStorage.session_token`) on every request.
+ * (from a <meta name="csrf-token"> tag or the `csrf_token` cookie).
+ * Browser auth rides the HttpOnly `ll_token` cookie (same-origin, automatic);
+ * the server validates the CSRF double-submit (`src/middleware/csrf-plugin.ts`).
+ * No Bearer fallback: `localStorage.session_token` has no writer, and the
+ * `FetchAuth.sessionToken` field is non-browser only (TUI/server callers).
  * On a 401 it redirects to the login page — mirroring the behaviour the HTMX
  * layer applies to its own requests via `htmx:configRequest`.
  *
@@ -38,7 +41,6 @@ export async function feFetch(
   url: string,
   options: RequestInit & { idempotencyKey?: string | true; stream?: boolean } = {},
 ): Promise<Response> {
-  const token = localStorage.getItem("session_token",);
   const csrf = getCsrfToken();
 
   // When the caller asks for an idempotency key (or supplies its own), mint
@@ -67,7 +69,7 @@ export async function feFetch(
     keepalive: options.keepalive,
     parseJson: false,
     stream: options.stream,
-    auth: { csrfToken: csrf || undefined, sessionToken: token ?? undefined, },
+    auth: { csrfToken: csrf || undefined, },
     handle401: true,
     onAuthError: () => {
       // Avoid redirect loops: if we're already on the login or register page,
@@ -96,7 +98,6 @@ export async function feFetch(
 
   // 204/205/304 are null-body statuses per the Fetch spec; constructing a
   // Response with any body source (including "") throws TypeError. Preserve
-  // the status with a null body so callers don't break on 2xx deletes/etc.
   const body: BodyInit | null = [204, 205, 304,].includes(result.status,)
     ? null
     : result.data;

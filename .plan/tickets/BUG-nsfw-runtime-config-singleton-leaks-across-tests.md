@@ -1,6 +1,6 @@
 # BUG: nsfwRuntimeConfig singleton leaks across test files
 
-**Status:** 🟡 Identified, fix pending (pre-existing, exposed by feat-stabilize-high-value)
+**Status:** ✅ Done — fixed on dev by 7190e37df + 3b95687df (2026-09-14), verified live + 36 consumer tests green
 **Priority:** medium
 **Effort:** Tiny
 
@@ -45,7 +45,13 @@ afterEach(() => {
 ```
 
 Option B — global: add `--isolate` to default test script in `package.json` so all `bun test` runs are isolated. Side-effect: slower.
+## Resolution
 
+Fixed on dev. `7190e37df` added `resetNsfwRuntimeConfig()` + preload hook; follow-up `3b95687df` replaced the preload (which ran once per process) with per-file `beforeEach(resetNsfwRuntimeConfig())` in all three NSFW consumers (`admin-nsfw.test.ts:81`, `nsfw-policy.test.ts:44`, `game-master.test.ts:36`) after the preload proved insufficient for shared-process runs. Verified 2026-09-16 in this session: 10 (admin-nsfw) + 4 (nsfw-policy) + 22 (game-master) = 36 pass, 0 fail. No code change in this ticket.
+
+- [x] Implementation complete
+- [x] Tests passing
+- [x] Documentation updated
 ## Files involved
 
 - `src/nsfw/runtime-config.ts` — singleton source (no `reset()` exposed)
