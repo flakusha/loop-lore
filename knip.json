@@ -99,7 +99,6 @@
     // Intra-file usage knip can't trace:
     // - isProtected: called at line 34 within agent-commit.ts; knip only tracks
     //   inter-file imports, not intra-file calls.
-    // - stripMarkdownCode: called at line 117 within src-refs.ts (same file).
     // - acquireFinalizeLock: called within finalize.ts (same file); the only
     //   other consumer is the spawn-run child-process fixture
     //   (finalize-lock-fixture.ts, ignored below), whose import edge knip
