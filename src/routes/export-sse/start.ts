@@ -20,7 +20,11 @@ export function startRoutes({ database, }: HandlerOpts, prefix = "/api",): Elysi
     // POST /api/export/progress — Start export and return SSE stream
     .post(`${prefix}/export/progress`, async (ctx: any,) => {
       const { auth: authConfig, } = loadConfig();
-      const userId = await resolveUserIdFromRequest(ctx.request, database, "solo", authConfig,);
+      // Prefer the identity already resolved by the global auth derive
+      // (elysia-app.ts) so the job is owned by the same user the status/
+      // download ownership guards compare against. Fall back only when the
+      // route is mounted without that derive (direct test mounts).
+      const userId = ctx.userId ?? await resolveUserIdFromRequest(ctx.request, database, "solo", authConfig,);
       if (!userId) {
         return jsonError({
           message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
