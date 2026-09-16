@@ -67,12 +67,13 @@ export function updateRoutes(opts: HandlerOpts, prefix = "/api",) {
         // Spec-required fields (description/personality/appearance + wardrobe) are
         // enforced at the import/validator layer, not on partial PUTs: actors rows
         // double as skeletal drafts and legacy rows predate the wardrobe columns.
-        // halves of the wardrobe pair.
-        if (actor.actor_type === "character") {
-          const cleared = rejectClearedCharacterFields(ctx.body,);
-          if (cleared) {
-            return jsonError({ message: cleared, status: HttpStatus.BadRequest, },);
-          }
+        // Only validate internal consistency when the request touches the wardrobe.
+        // Type-agnostic: POST /api/actors defaults actor_type to "user", so a
+        // character check here would never fire; the pair check is valid for any
+        // actor carrying wardrobe fields.
+        const cleared = rejectClearedCharacterFields(ctx.body,);
+        if (cleared) {
+          return jsonError({ message: cleared, status: HttpStatus.BadRequest, },);
         }
         if (settings !== undefined) {
           const settingsResult = safeJsonStringify(settings,);
