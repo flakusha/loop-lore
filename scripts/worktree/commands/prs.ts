@@ -4,6 +4,7 @@
 import { existsSync, mkdirSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, } from "../utils/config";
+import type { WorktreeConfig, } from "../utils/config";
 import { findWorktreeForBranch, } from "../utils/git";
 import { linkNodeModules, } from "../utils/modules";
 import { log, } from "../utils/output";
@@ -16,7 +17,7 @@ interface GhPr {
 
 export async function execute(
   _args: string[],
-  config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
+  config: WorktreeConfig,
 ): Promise<void> {
   // Check gh is installed
   const which = Bun.spawnSync(["which", "gh",], { stdout: "pipe", stderr: "pipe", },);
