@@ -98,7 +98,7 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     const res = await app.handle(new Request("http://localhost/api/messages/search?q=dragon",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
-    expect(body.results.map((r,) => r.messageId,),).toEqual([hit,],);
+    expect(body.results.map((r,) => r.messageId),).toEqual([hit,],);
     expect(body.total,).toBe(1,);
     expect(body.query,).toBe("dragon",);
     await db.destroy();
@@ -120,7 +120,7 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     const res = await app.handle(new Request("http://localhost/api/messages/search?role=character",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
-    expect(body.results.map((r,) => r.messageId,),).toEqual([asCharacter,],);
+    expect(body.results.map((r,) => r.messageId),).toEqual([asCharacter,],);
     await db.destroy();
   });
 
@@ -132,7 +132,7 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     const assetId = uid();
     await insertAssets(db, userId, "pic.png", "image/png", "image", 10, "p", { id: assetId, },);
     const withAttachment = await seedMessage(db, chatId, userId, "look at this", {
-      attachments: JSON.stringify([{ assetId, order: 0, caption: "", label: "message-attachment", }],),
+      attachments: JSON.stringify([{ assetId, order: 0, caption: "", label: "message-attachment", },],),
     },);
     await seedMessage(db, chatId, userId, "just text",);
     await insertAssetLinks(db, assetId, "message", withAttachment,);
@@ -141,7 +141,7 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     const res = await app.handle(new Request("http://localhost/api/messages/search?hasAttachment=true",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
-    expect(body.results.map((r,) => r.messageId,),).toEqual([withAttachment,],);
+    expect(body.results.map((r,) => r.messageId),).toEqual([withAttachment,],);
     await db.destroy();
   });
 
@@ -155,10 +155,10 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     await insertAssets(db, userId, "pic.png", "image/png", "image", 10, "p", { id: imageAsset, },);
     await insertAssets(db, userId, "song.mp3", "audio/mpeg", "audio", 10, "p", { id: audioAsset, },);
     const imageMsg = await seedMessage(db, chatId, userId, "an image", {
-      attachments: JSON.stringify([{ assetId: imageAsset, order: 0, caption: "", label: "message-attachment", }],),
+      attachments: JSON.stringify([{ assetId: imageAsset, order: 0, caption: "", label: "message-attachment", },],),
     },);
     const audioMsg = await seedMessage(db, chatId, userId, "a song", {
-      attachments: JSON.stringify([{ assetId: audioAsset, order: 0, caption: "", label: "message-attachment", }],),
+      attachments: JSON.stringify([{ assetId: audioAsset, order: 0, caption: "", label: "message-attachment", },],),
     },);
     await insertAssetLinks(db, imageAsset, "message", imageMsg,);
     await insertAssetLinks(db, audioAsset, "message", audioMsg,);
@@ -167,11 +167,11 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     const res = await app.handle(new Request("http://localhost/api/messages/search?attachmentType=image",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
-    expect(body.results.map((r,) => r.messageId,),).toEqual([imageMsg,],);
+    expect(body.results.map((r,) => r.messageId),).toEqual([imageMsg,],);
 
     const res2 = await app.handle(new Request("http://localhost/api/messages/search?attachmentType=audio",),);
     const body2 = (await res2.json()) as SearchBody;
-    expect(body2.results.map((r,) => r.messageId,),).toEqual([audioMsg,],);
+    expect(body2.results.map((r,) => r.messageId),).toEqual([audioMsg,],);
     await db.destroy();
   });
 
@@ -187,12 +187,12 @@ describe("messageSearchRoutes — GET /api/messages/search", () => {
     const res = await app.handle(new Request("http://localhost/api/messages/search?linkPattern=youtube.com",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as SearchBody;
-    expect(body.results.map((r,) => r.messageId,),).toEqual([linkMsg,],);
+    expect(body.results.map((r,) => r.messageId),).toEqual([linkMsg,],);
 
     // % and _ in the pattern must not act as wildcards.
     const res2 = await app.handle(new Request("http://localhost/api/messages/search?linkPattern=watch%3Fv%3Dx_1",),);
     const body2 = (await res2.json()) as SearchBody;
-    expect(body2.results.map((r,) => r.messageId,),).toEqual([linkMsg,],);
+    expect(body2.results.map((r,) => r.messageId),).toEqual([linkMsg,],);
     const res3 = await app.handle(new Request("http://localhost/api/messages/search?linkPattern=watch%3Fv%3Dx%251",),);
     const body3 = (await res3.json()) as SearchBody;
     expect(body3.results,).toEqual([],);
