@@ -35,8 +35,7 @@ export interface TalkativityOpts {
   override?: number | null;
 }
 
-const clampWindow = (value: number,): number =>
-  Math.max(MIN_TALKATIVITY, Math.min(MAX_TALKATIVITY, value,),);
+const clampWindow = (value: number,): number => Math.max(MIN_TALKATIVITY, Math.min(MAX_TALKATIVITY, value,),);
 
 /**
  * Compute the effective talkativity for an actor inside a chat.

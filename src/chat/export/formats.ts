@@ -21,8 +21,8 @@
 
 import { dump as yamlDump, } from "js-yaml";
 import { MessageRole, } from "../../db/enums";
-import { safeJsonStringify, } from "../../utils";
 import type { MessageData, } from "../../routes/chat-export/types";
+import { safeJsonStringify, } from "../../utils";
 
 /** Supported export formats. */
 export type ExportFormat = "json" | "yaml" | "toml" | "md";
@@ -115,7 +115,7 @@ function renderToml(payload: ExportPayload,): string {
     `createdAt = "${tomlEscape(chat.createdAt,)}"`,
     "",
   ];
-  for (const [i, msg] of messages.entries()) {
+  for (const [i, msg,] of messages.entries()) {
     lines.push(`[[message]]`,);
     lines.push(`index = ${i}`,);
     lines.push(`id = "${tomlEscape(msg.id,)}"`,);
