@@ -24,6 +24,8 @@ globalThis.saveCharacterEdit = async function(characterId: string,) {
     description: editField("edit-desc",),
     systemPrompt: editField("edit-system",),
     personality: editField("edit-personality",),
+    appearance: editField("edit-appearance",),
+    defaultOutfit: editField("edit-outfit",) || undefined,
     welcomeMessage: editField("edit-greeting",),
     scenario: editField("edit-scenario",),
     mesExample: editField("edit-example",),
@@ -81,8 +83,8 @@ globalThis.uploadAvatar = async function(input: HTMLInputElement,) {
       return;
     }
     const asset = await res.json();
-    const avatarInput = document.querySelector<HTMLInputElement>("#char-avatar-id",);
-    if (avatarInput) { avatarInput.value = asset.id; }
+    const hidden = document.querySelector<HTMLInputElement>("#char-avatar-id",);
+    if (hidden) { hidden.value = asset.id; }
     const preview = document.querySelector("#avatar-preview",);
     if (preview) {
       preview.innerHTML = `<img src="/api/assets/${
