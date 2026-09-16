@@ -72,7 +72,15 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
 
   // Import CHARX assets (avatars, audio, etc.)
   if (uploadDir && charxAssets && charxAssets.length > 0) {
-    const avatarCount = await importCharxAssets(database, id, character.name, charxAssets, uploadDir, warnings,);
+    const avatarCount = await importCharxAssets(
+      database,
+      userId,
+      id,
+      character.name,
+      charxAssets,
+      uploadDir,
+      warnings,
+    );
     if (avatarCount > 0) {
       warnings.push(`Imported ${avatarCount} avatar(s) from CHARX`,);
     }
@@ -101,6 +109,7 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
  *
  * Asset failures are logged as warnings and never fail the import.
  * @param database
+ * @param ownerId
  * @param actorId
  * @param characterName
  * @param charxAssets
@@ -110,6 +119,7 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
  */
 async function importCharxAssets(
   database: Kysely<DB>,
+  ownerId: string,
   actorId: string,
   characterName: string,
   charxAssets: { name: string; type: string; data: Buffer }[],
@@ -125,7 +135,7 @@ async function importCharxAssets(
       const { asset: assetRecord, } = await createAsset({
         database,
         input: {
-          ownerId: actorId,
+          ownerId,
           filename: asset.name,
           mimeType: mime,
           assetType,
