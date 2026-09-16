@@ -1910,6 +1910,8 @@ export async function insertChatParticipants(
     persona_id?: string | null;
     talkativity?: number;
     initiative?: number;
+    muted_until?: string | null;
+    banned_until?: string | null;
   },
 ): Promise<void> {
   await db.insertInto("chat_participants",).values({

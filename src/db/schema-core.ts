@@ -601,6 +601,8 @@ export interface ChatParticipants {
   persona_id: string | null;
   talkativity: Generated<number>;
   initiative: Generated<number>;
+  muted_until: string | null;
+  banned_until: string | null;
 }
 
 // ── chat_pins ────────────────────────────────────────────
