@@ -14,8 +14,15 @@ import {
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
 import { canAccessNsfw, getActorContentRating, isNsfwRating, } from "../../middleware/nsfw-gate";
 import { jsonParseOr, uid, } from "../../utils";
+import {
+  CHAT_VARIANTS,
+  VARIANT_DEFAULTS,
+  validateVariantTriple,
+  type ChatVariant,
+} from "../../chat/types/variants";
 import { ChatCreateBody, } from "../../validation/schemas";
 import {
+  badRequestResponse as badRequest,
   forbiddenResponse as forbidden,
   jsonCreated,
   notFoundResponse as notFound,
@@ -174,18 +181,61 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
             return notFound("Chat setup template not found",);
           }
 
+          // ── Variant validation: optional `variant` field that pins the
+          // (type, mode, purpose) triple to the canonical taxonomy table.
+          let resolvedType: string | undefined;
+          let resolvedMode: string | undefined;
+          let resolvedPurpose: string | undefined;
+          let resolvedGmConfig: Record<string, unknown> | undefined;
+          const rawVariant = rawBody.variant as string | undefined;
+          if (rawVariant !== undefined) {
+            if (!(CHAT_VARIANTS as readonly string[]).includes(rawVariant,)) {
+              return badRequest(`Unknown chat variant: ${rawVariant}`);
+            }
+            const variant = rawVariant as ChatVariant;
+            const def = VARIANT_DEFAULTS[variant];
+            // If the caller also supplies any of type/mode/purpose, they must
+            // match the variant table; otherwise the variant default applies.
+            const suppliedType = hasExplicit("type",) ? body.type : undefined;
+            const suppliedMode = hasExplicit("mode",) ? body.mode : template?.mode ?? undefined;
+            const suppliedPurpose = hasExplicit("purpose",)
+              ? (rawBody.purpose as string)
+              : undefined;
+            if (
+              suppliedType !== undefined || suppliedMode !== undefined || suppliedPurpose !== undefined
+            ) {
+              const err = validateVariantTriple(
+                variant,
+                suppliedType ?? def.chat_type,
+                suppliedMode ?? def.chat_mode,
+                suppliedPurpose ?? def.chat_purpose,
+              );
+              if (err) { return badRequest(err); }
+            }
+            // Lock the triple to the variant defaults. Variant wins over caller
+            // for mode/purpose where the caller did not pin them.
+            resolvedType = suppliedType ?? def.chat_type;
+            resolvedMode = suppliedMode ?? def.chat_mode;
+            resolvedPurpose = suppliedPurpose ?? def.chat_purpose;
+            // Variant-derived gm_config seeds the row's gm_config when the
+            // caller did not provide one explicitly.
+            if (!hasExplicit("gmConfig",) && def.gm_config !== null) {
+              resolvedGmConfig = def.gm_config as Record<string, unknown>;
+            }
+          }
+
           const newChatId = await createChat(database, {
             name: body.name,
-            type: body.type,
-            mode: hasExplicit("mode",) ? body.mode : template?.mode ?? undefined,
+            type: resolvedType ?? body.type,
+            mode: resolvedMode ?? (hasExplicit("mode",) ? body.mode : template?.mode ?? undefined),
             createdBy: userId,
             worldId: hasExplicit("worldId",) ? body.worldId : template?.world_id ?? undefined,
             currentLocationId: body.currentLocationId,
             turnStrategy: hasExplicit("turnStrategy",) ? body.turnStrategy : template?.turn_strategy ?? undefined,
             participantIds: body.participantIds,
-            gmConfig: hasExplicit("gmConfig",)
+            gmConfig: resolvedGmConfig ?? (hasExplicit("gmConfig",)
               ? body.gmConfig
-              : (template?.gm_config ? jsonParseOr(template.gm_config, {},) : undefined),
+              : (template?.gm_config ? jsonParseOr(template.gm_config, {},) : undefined)),
             renderingOverride: hasExplicit("renderingOverride",)
               ? body.renderingOverride
               : (template

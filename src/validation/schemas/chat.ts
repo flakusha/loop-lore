@@ -32,6 +32,12 @@ export const ChatCreateBody = t.Object({
   name: Name,
   type: t.Optional(ChatTypeSchema,),
   mode: t.Optional(ChatModeSchema,),
+  // chat-variants-taxonomy: when a `variant` is supplied, the route validator
+  // pins type/mode/purpose to the canonical triple from VARIANT_DEFAULTS.
+  // Free-form `purpose` is supported for legacy/advanced callers; combined
+  // with a `variant` it must agree with the table.
+  purpose: t.Optional(t.String({ minLength: 1, },),),
+  variant: t.Optional(t.String({ minLength: 1, },),),
   turnStrategy: t.Optional(TurnStrategySchema,),
   participantIds: t.Optional(t.Array(t.String(),),),
   worldId: OptionalId,
