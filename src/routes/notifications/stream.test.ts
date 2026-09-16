@@ -1,8 +1,10 @@
 /**
  * Tests for routes/notifications/stream.ts — NotificationStreamer.
  *
- * Covers the SSE contract: response headers and the initial notifications
- * snapshot event. Uses Promise.withResolvers per project rules.
+ * Covers the SSE contract (response headers, initial notifications snapshot)
+ * plus loadNotificationSnapshot's allSettled degradation: one failing query
+ * resolves to its empty default instead of throwing.
+ * Uses Promise.withResolvers per project rules.
  */
 import { beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
@@ -11,7 +13,7 @@ import { createLogger, } from "../../logger";
 import { createTestDb, } from "../../test-utils/create-test-db";
 import { insertUsers, } from "../../test-utils/insert-helpers";
 import { uid, } from "../../utils";
-import { NotificationStreamer, } from "./stream";
+import { NotificationStreamer, loadNotificationSnapshot, } from "./stream";
 /**
  * Decode an SSE-encoded chunk into a list of {event,data} frames.
  * @param chunk
@@ -94,5 +96,17 @@ describe("NotificationStreamer", () => {
     const payload = JSON.parse(frames[0]?.data ?? "{}",);
     expect(payload.unreadCount,).toBe(0,);
     expect(payload.items,).toEqual([],);
+  });
+  test("loadNotificationSnapshot returns live count + items", async () => {
+    const snap = await loadNotificationSnapshot(db, user,);
+    expect(snap.count,).toBe(0,);
+    expect(snap.recent,).toEqual([],);
+  });
+
+  test("loadNotificationSnapshot degrades to defaults when queries fail", async () => {
+    const broken = {} as Kysely<DB>;
+    const snap = await loadNotificationSnapshot(broken, user,);
+    expect(snap.count,).toBe(0,);
+    expect(snap.recent,).toEqual([],);
   });
 });

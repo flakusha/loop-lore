@@ -4,11 +4,14 @@
 /**
  * ServerTransport — POSTs log entries to /api/frontend/logs.
  *
- * Batches entries on a 5s interval. Auth via session token in localStorage.
+ * Batches entries on a 5s interval. Browser auth rides the HttpOnly
+ * `ll_token` cookie (same-origin, automatic); the route is public and the
+ * request carries only the CSRF double-submit header when present.
  */
 
 import type { LogEntry, Transport, } from "../../../logger/types";
 import { safeFetch, } from "../../../utils";
+import { getCsrfToken, } from "../../fe-fetch";
 
 /** */
 export class ServerTransport implements Transport {
@@ -37,12 +40,11 @@ export class ServerTransport implements Transport {
     this.buffer.length = 0;
 
     try {
-      const token = typeof localStorage === "undefined" ? null : localStorage.getItem("session_token",);
-
+      const csrf = getCsrfToken();
       await safeFetch("/api/frontend/logs", {
         method: "POST",
         body: { entries: batch, },
-        auth: { sessionToken: token ?? undefined, },
+        auth: { csrfToken: csrf || undefined, },
         handle401: false,
         timeout: 10_000,
       },);

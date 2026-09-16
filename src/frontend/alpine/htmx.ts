@@ -44,10 +44,8 @@ globalThis.apiFetch = apiFetch;
 
 document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Record<string, string> }>,) => {
   apiLog.debug("htmx:configRequest", { path: (e as any)?.detail?.path, },);
-  const token = localStorage.getItem("session_token",);
-  if (token) {
-    e.detail.headers.Authorization = "Bearer " + token;
-  }
+  // Browser auth rides the HttpOnly `ll_token` cookie (same-origin, automatic)
+  // — no Bearer fallback: `localStorage.session_token` has no writer.
   // CSRF double-submit: echo the (non-HttpOnly) csrf_token cookie value in
   // the header. htmx sends same-origin cookies automatically, so the cookie
   // half is already present; without this header the both-halves gate
@@ -71,24 +69,8 @@ function triggerPageLoaders(): void {
     }
   }
 }
-
 document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>,) => {
-  const elt = e.detail.elt;
-  apiLog.debug("htmx:load", { tag: elt?.tagName, id: (elt as any)?.id, },);
-  if (elt && (globalThis as any).htmx && globalThis.Alpine) {
-    htmx.process(elt as HTMLElement,);
-    try {
-      Alpine.initTree(elt as HTMLElement,);
-    } catch {
-      /* Alpine may fail on partial swaps */
-    }
-  }
-  triggerPageLoaders();
-  normalizeHeaderSlot();
-},);
-
-// Update document title from header title after navigation
-document.addEventListener("htmx:afterSwap", (e: Event,) => {
+document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>,) => {
   const target = (e as CustomEvent<{ target: Element }>)?.detail?.target;
   if (target) {
     const header = document.querySelector<HTMLElement>("#header-slot .title",);
@@ -124,6 +106,14 @@ document.addEventListener("DOMContentLoaded", triggerPageLoaders,);
 
 // ── hx-on::after-request replacements (success events) ──────
 document.addEventListener("htmx:afterRequest", (e: Event,) => {
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
@@ -185,3 +175,5 @@ document.addEventListener("keydown", (e: KeyboardEvent,) => {
     closeSidebar();
   }
 },);
+
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;

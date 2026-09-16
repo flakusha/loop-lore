@@ -39,6 +39,7 @@ import { execute as statusCmd, } from "./commands/status";
 import { sync, } from "./commands/sync";
 import { ticket, } from "./commands/ticket";
 import { loadConfig, resolveBranch, } from "./utils/config";
+import type { WorktreeConfig, } from "./utils/config";
 import { assertNotInWorktree, getBranches, getStatus, getWorktrees, gitSync, } from "./utils/git";
 import { appendLedger, extractSayArgs, LEDGER_SILENT_COMMANDS, } from "./utils/ledger";
 import {
@@ -51,10 +52,15 @@ import {
   setLogLevel,
   setOutputFormat,
 } from "./utils/output";
+// Re-exported so command modules can type their config param against the
+// canonical loader without importing utils/config directly (avoids a second
+// import path to the same symbol).
+export { loadConfig } from "./utils/config";
+export type { WorktreeConfig } from "./utils/config";
 
 interface CommandHandler {
   description: string;
-  run: (args: string[], config: Awaited<ReturnType<typeof loadConfig>>,) => Promise<void>;
+  run: (args: string[], config: WorktreeConfig,) => Promise<void>;
 }
 
 const commands: Record<string, CommandHandler> = {
