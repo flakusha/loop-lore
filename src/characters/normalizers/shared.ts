@@ -9,6 +9,7 @@
 
 import type {
   CanonicalCharacter,
+  CharacterOutfit,
   LorebookData,
   LorebookEntry,
 } from "../spec";
@@ -52,10 +53,23 @@ export function buildCanonicalFields(
   const gender = raw.gender as string | undefined;
   const ageRaw = raw.age;
   const age = (typeof ageRaw === "number" || typeof ageRaw === "string") ? ageRaw : undefined;
+  // Wardrobe — canonical names; legacy aliases (`outfit` singular, `wardrobe`) fill in when missing.
+  const outfitsRaw = (raw.outfits as CanonicalCharacter["outfits"] | undefined) ??
+    (raw.wardrobe as CanonicalCharacter["outfits"] | undefined);
+  const outfits = Array.isArray(outfitsRaw,)
+    ? outfitsRaw.filter((o,): o is CharacterOutfit => !!o && typeof o === "object")
+    : [];
+  const defaultOutfit = (raw.default_outfit as string | undefined) ??
+    (raw.outfit as string | undefined) ??
+    outfits[0]?.id ??
+    "";
   return {
     name: (raw.name as string) ?? "",
     description: (raw.description as string) ?? "",
     personality: (raw.personality as string) ?? "",
+    appearance: (raw.appearance as string) ?? "",
+    default_outfit: defaultOutfit,
+    outfits,
     scenario: raw.scenario as string | undefined,
     welcome_message: raw[welcomeKey] as string | undefined,
     mes_example: raw.mes_example as string | undefined,

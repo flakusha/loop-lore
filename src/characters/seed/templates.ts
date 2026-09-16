@@ -97,7 +97,17 @@ async function seedTemplate(
         : { is_template: template.is_template, is_default: template.is_default, },
     );
     const settings = settingsResult.ok ? settingsResult.value : "{}";
-
+    // Spec mandatory set: seed rows must carry a wardrobe catalog + matching
+    // default. Templates without one inherit a single outfit seeded from the
+    // appearance text so reads (card/export/prompt) stay consistent.
+    const templateOutfits = template.outfits && template.outfits.length > 0
+      ? template.outfits
+      : template.appearance
+      ? [{ id: "default", name: "Default", descriptor: template.appearance, },]
+      : [];
+    const templateDefault = template.default_outfit ?? templateOutfits[0]?.id ?? null;
+    const outfitsResult = templateOutfits.length > 0 ? safeJsonStringify(templateOutfits,) : null;
+    const outfits = outfitsResult ? (outfitsResult.ok ? outfitsResult.value : null) : null;
     await database
       .insertInto("actors",)
       .values({
@@ -109,9 +119,11 @@ async function seedTemplate(
         agent_type: "ai",
         description: template.description,
         personality: template.personality ?? null,
+        appearance: template.appearance ?? null,
+        default_outfit: templateDefault,
+        outfits,
         scenario: template.scenario ?? null,
         welcome_message: template.welcome_message ?? null,
-        system_prompt: template.system_prompt ?? null,
         mes_example: template.mes_example ?? null,
         creator: template.creator ?? null,
         visibility: template.visibility ?? "public",

@@ -45,6 +45,8 @@ export interface EditFormValues {
   desc: string;
   systemPrompt: string;
   personality: string;
+  appearance: string;
+  defaultOutfit: string;
   welcome: string;
   scenario: string;
   mesExample: string;
@@ -89,7 +91,6 @@ const INTERNAL_TRAITS_SECTION = `
               <div><label class="form-label" for="cope-conflict" style="font-size:var(--text-sm)">Conflict Style</label><input class="form-input" type="text" id="cope-conflict" placeholder="e.g. avoid, confront" /></div>
             </div>
           </div>
-          <div class="form-group">
             <label class="form-label">Approach Tendencies</label>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-3)">
               <div><label class="form-label" for="approach-decision" style="font-size:var(--text-sm)">Decision Style</label><input class="form-input" type="text" id="approach-decision" placeholder="e.g. analytical, impulsive" /></div>
@@ -207,6 +208,12 @@ export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: strin
         <div class="form-group"><label class="form-label" for="edit-personality">Personality</label><textarea class="form-input form-textarea" id="edit-personality" rows="4">${
     escapeHtml(v.personality,)
   }</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-appearance">Appearance</label><textarea class="form-input form-textarea" id="edit-appearance" rows="3">${
+    escapeHtml(v.appearance,)
+  }</textarea></div>
+        <div class="form-group"><label class="form-label" for="edit-outfit">Default Outfit</label><input class="form-input" type="text" id="edit-outfit" value="${
+    escapeHtml(v.defaultOutfit,)
+  }" /></div>
         <div class="form-group"><label class="form-label" for="edit-greeting">Welcome Message</label><textarea class="form-input form-textarea" id="edit-greeting" rows="4">${
     escapeHtml(v.welcome,)
   }</textarea></div>
@@ -227,7 +234,6 @@ export function buildEditFormHtml(v: EditFormValues, options: { cspNonce?: strin
           <option value="nsfw_extreme"${v.contentRating === "nsfw_extreme" ? " selected" : ""}>Extreme</option>
         </select>
         <p class="form-hint" style="color:var(--text-secondary)">Maximum explicit content this character may produce. Gated by your account&rsquo;s NSFW preference.</p></div>
-        <input type="hidden" id="char-avatar-id" value="${escapeHtml(v.avatarId,)}" />
 ${INTERNAL_TRAITS_SECTION}
 ${PROACTIVE_SECTION}
 ${PANELS_SECTION(v.characterId,)}

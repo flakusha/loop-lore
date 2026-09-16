@@ -26,11 +26,16 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
 
   const id = uid();
 
-  // Convert alternate_greetings to JSON string
+  // Convert alternate_greetings / outfits to JSON strings
   let alternateGreetings: string | null = null;
   if (character.alternate_greetings && character.alternate_greetings.length > 0) {
     const result = safeJsonStringify(character.alternate_greetings,);
     if (result.ok) { alternateGreetings = result.value; }
+  }
+  let outfits: string | null = null;
+  if (character.outfits?.length) {
+    const result = safeJsonStringify(character.outfits,);
+    if (result.ok) { outfits = result.value; }
   }
 
   // Insert character as actor
@@ -47,6 +52,9 @@ export async function importActor(opts: ImportActorOpts,): Promise<Response> {
       system_prompt: character.system_prompt ?? null,
       welcome_message: character.welcome_message ?? null,
       personality: character.personality ?? null,
+      appearance: character.appearance ?? null,
+      default_outfit: character.default_outfit ?? null,
+      outfits,
       scenario: character.scenario ?? null,
       mes_example: character.mes_example ?? null,
       post_history_instructions: character.post_history_instructions ?? null,
