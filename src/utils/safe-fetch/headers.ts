@@ -9,8 +9,8 @@ import type { FetchAuth, } from "./types";
 /**
  * Build headers from auth configuration, compatible with feFetch behavior.
  *
- * - CSRF token → X-CSRF-Token header (mirrors feFetch)
- * - sessionToken/apiKey/authorization → Authorization header (mirrors feFetch)
+ * - CSRF token → X-CSRF-Token header (browser double-submit)
+ * - sessionToken/apiKey/authorization → Authorization header (TUI/server only)
  * - extraHeaders merged last (highest priority)
  * @param auth - auth config (csrfToken, sessionToken/apiKey/authorization, extraHeaders)
  * @returns headers object (possibly empty `{}` when auth is undefined).
