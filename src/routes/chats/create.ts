@@ -14,12 +14,6 @@ import {
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../../generation/auto-gen";
 import { canAccessNsfw, getActorContentRating, isNsfwRating, } from "../../middleware/nsfw-gate";
 import { jsonParseOr, uid, } from "../../utils";
-import {
-  CHAT_VARIANTS,
-  VARIANT_DEFAULTS,
-  validateVariantTriple,
-  type ChatVariant,
-} from "../../chat/types/variants";
 import { ChatCreateBody, } from "../../validation/schemas";
 import {
   badRequestResponse as badRequest,
@@ -28,6 +22,7 @@ import {
   notFoundResponse as notFound,
   requireUserId,
 } from "../http-utils";
+import { resolveVariantOverrides, } from "./create-variant";
 import type { HandlerOpts, } from "./types";
 
 // ── Helpers (extracted for cognitive complexity) ────────────
@@ -183,44 +178,16 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
 
           // ── Variant validation: optional `variant` field that pins the
           // (type, mode, purpose) triple to the canonical taxonomy table.
-          let resolvedType: string | undefined;
-          let resolvedMode: string | undefined;
-          let resolvedGmConfig: Record<string, unknown> | undefined;
-          const rawVariant = rawBody.variant as string | undefined;
-          if (rawVariant !== undefined) {
-            if (!(CHAT_VARIANTS as readonly string[]).includes(rawVariant,)) {
-              return badRequest(`Unknown chat variant: ${rawVariant}`);
-            }
-            const variant = rawVariant as ChatVariant;
-            const def = VARIANT_DEFAULTS[variant];
-            // If the caller also supplies any of type/mode/purpose, they must
-            // match the variant table; otherwise the variant default applies.
-            const suppliedType = hasExplicit("type",) ? body.type : undefined;
-            const suppliedMode = hasExplicit("mode",) ? body.mode : template?.mode ?? undefined;
-            const suppliedPurpose = hasExplicit("purpose",)
-              ? (rawBody.purpose as string)
-              : undefined;
-            if (
-              suppliedType !== undefined || suppliedMode !== undefined || suppliedPurpose !== undefined
-            ) {
-              const err = validateVariantTriple(
-                variant,
-                suppliedType ?? def.chat_type,
-                suppliedMode ?? def.chat_mode,
-                suppliedPurpose ?? def.chat_purpose,
-              );
-              if (err) { return badRequest(err); }
-            }
-            // Lock the triple to the variant defaults. Variant wins over caller
-            // for mode/purpose where the caller did not pin them.
-            resolvedType = suppliedType ?? def.chat_type;
-            resolvedMode = suppliedMode ?? def.chat_mode;
-            // Variant-derived gm_config seeds the row's gm_config when the
-            // caller did not provide one explicitly.
-            if (!hasExplicit("gmConfig",) && def.gm_config !== null) {
-              resolvedGmConfig = def.gm_config as Record<string, unknown>;
-            }
-          }
+          const variantOverride = resolveVariantOverrides(
+            rawBody,
+            body,
+            hasExplicit,
+            template?.mode ?? undefined,
+          );
+          if (variantOverride.error) { return badRequest(variantOverride.error,); }
+          const resolvedType = variantOverride.resolvedType;
+          const resolvedMode = variantOverride.resolvedMode;
+          const resolvedGmConfig = variantOverride.resolvedGmConfig;
 
           const newChatId = await createChat(database, {
             name: body.name,
