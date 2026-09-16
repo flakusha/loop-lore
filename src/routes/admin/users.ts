@@ -2,10 +2,11 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { Elysia, t, } from "elysia";
+import type { UserRole, } from "../../db/enums-core/users";
 import { can, } from "../../users/permissions";
 import {
-  AdminRoleUpdateBody,
   ADMIN_ROLES,
+  AdminRoleUpdateBody,
   ErrorResponse,
   PaginationQuery,
   SuccessResponse,
@@ -174,8 +175,9 @@ export function usersRoutes(opts: AdminRouteOpts, prefix = "/api",) {
 
           // Schema is a plain string (see AdminRoleUpdateBody); enforce the
           // role set here so an out-of-enum value is a 400, never a write.
-          if (!(ADMIN_ROLES as readonly string[]).includes(role,)) {
-            return badRequestResponse(`role must be one of: ${ADMIN_ROLES.join(", ")}`,);
+          const isRole = (r: string,): r is UserRole => (ADMIN_ROLES as readonly string[]).includes(r,);
+          if (!isRole(role,)) {
+            return badRequestResponse(`role must be one of: ${ADMIN_ROLES.join(", ",)}`,);
           }
 
           await db.updateTable("users",).set({ role, },).where("id", "=", id,).execute();
