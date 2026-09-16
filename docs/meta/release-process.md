@@ -73,6 +73,14 @@ eval "$(bun run scripts/worktree/utils/credentials.mjs)"
 git -c user.signingkey="$AGENT_GPG_KEY_ID" tag -s 0.2.0 -m "loop-lore 0.2.0"
 ```
 
+> **Note:** `scripts/worktree/utils/credentials.mjs` is still the
+> canonical way to load agent signing credentials into the shell
+> environment. `giwt` does not expose a credentials loader — its
+> signing flows read `.credentials.env` directly from inside the
+> worktree where they're invoked. For ad-hoc shell commands (e.g.
+> signing a release tag from the dev checkout), source the helper
+> explicitly as shown above.
+
 Annotated + signed only. Never lightweight tags. `version:bump` never tags
 unless the explicit `--tag` flag is passed — and agents must never run it with
 `--tag`.
@@ -98,7 +106,7 @@ single source; missing section fails the release.
 
 ## Signing
 
-- Commits: agent commits via `bun run scripts/worktree/ commit-branch` (Author=user, Committer=agent, agent key).
+- Commits: agent commits via `giwt commit-wt <branch> "msg"` (Author=user, Committer=agent, agent key).
 - Tags: signed with the same agent key — signature proves the tag came from this repo's release lane.
 - Verify: `git tag -v 0.1.0`.
 
