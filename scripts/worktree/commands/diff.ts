@@ -6,12 +6,13 @@
  */
 
 import { resolveBranch, } from "../utils/config";
+import type { WorktreeConfig, } from "../utils/config";
 import { getRootBranch, getStatus, gitSync, } from "../utils/git";
 import { colorize, log, } from "../utils/output";
 
 export async function execute(
   args: string[],
-  config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
+  config: WorktreeConfig,
 ): Promise<void> {
   const { repoRoot, } = config;
   const rootBranch = getRootBranch(repoRoot,);

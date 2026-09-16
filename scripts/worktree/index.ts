@@ -52,11 +52,6 @@ import {
   setLogLevel,
   setOutputFormat,
 } from "./utils/output";
-// Re-exported so command modules can type their config param against the
-// canonical loader without importing utils/config directly (avoids a second
-// import path to the same symbol).
-export { loadConfig } from "./utils/config";
-export type { WorktreeConfig } from "./utils/config";
 
 interface CommandHandler {
   description: string;

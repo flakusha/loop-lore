@@ -4,13 +4,14 @@
 import { existsSync, mkdirSync, } from "fs";
 import { resolve, } from "path";
 import { branchToPath, linkWorktreeCredentials, } from "../utils/config";
+import type { WorktreeConfig, } from "../utils/config";
 import { gitSync, isProtected, } from "../utils/git";
 import { linkNodeModules, } from "../utils/modules";
 import { log, } from "../utils/output";
 
 export async function execute(
   args: string[],
-  config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
+  config: WorktreeConfig,
 ): Promise<void> {
   const branch = args[0];
   if (!branch) {

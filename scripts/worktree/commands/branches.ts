@@ -5,12 +5,13 @@
  * Branches command - list branches with status
  */
 
+import type { WorktreeConfig, } from "../utils/config";
 import { getBranches, getStatus, getWorktrees, isProtected, } from "../utils/git";
 import { colorize, log, section, } from "../utils/output";
 
 export async function execute(
   _args: string[],
-  config: Awaited<ReturnType<typeof import("../index").loadConfig>>,
+  config: WorktreeConfig,
 ): Promise<void> {
   const { repoRoot, } = config;
 
