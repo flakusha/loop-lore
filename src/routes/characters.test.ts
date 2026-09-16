@@ -261,6 +261,57 @@ describe("charactersRoutes", () => {
     expect(stored?.outfits,).toBe(outfits,);
   });
 
+  test("PUT /api/actors/:id accepts a defaultOutfit-only update against stored outfits", async () => {
+    const app = createApp(db, userId,);
+    const outfits = JSON.stringify([
+      { id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },
+      { id: "court-robes", name: "Court Robes", descriptor: "Formal robes", },
+    ],);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Half Pair Actor", outfits, defaultOutfit: "travel-gear", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ defaultOutfit: "court-robes", dataVersion: created?.format_version, },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const stored = await db.selectFrom("actors",).select(["outfits", "default_outfit",],).where("id", "=", id,)
+      .executeTakeFirst();
+    expect(stored?.default_outfit,).toBe("court-robes",);
+    expect(stored?.outfits,).toBe(outfits,);
+  });
+
+  test("PUT /api/actors/:id rejects a defaultOutfit-only update dangling against stored outfits", async () => {
+    const app = createApp(db, userId,);
+    const outfits = JSON.stringify([{ id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy clothes", },],);
+    const actorCreate = await app.handle(
+      new Request("http://localhost/api/actors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ displayName: "Half Dangling Actor", outfits, defaultOutfit: "travel-gear", },),
+      },),
+    );
+    const { id, } = (await actorCreate.json()) as { id: string };
+    const created = await db.selectFrom("actors",).select("format_version",).where("id", "=", id,).executeTakeFirst();
+    const res = await app.handle(
+      new Request(`http://localhost/api/actors/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ defaultOutfit: "nope", dataVersion: created?.format_version, },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
   test("PUT /api/actors/:id rejects a dangling default_outfit", async () => {
     const app = createApp(db, userId,);
     const actorCreate = await app.handle(
