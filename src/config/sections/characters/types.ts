@@ -13,6 +13,8 @@ export interface CharacterTemplate {
   description: string;
   /** Personality traits */
   personality?: string;
+  /** General look / body / face — immutable visual base. Required. */
+  appearance?: string;
   /** RP scenario/setting */
   scenario?: string;
   /** Welcome message */

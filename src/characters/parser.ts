@@ -212,6 +212,33 @@ export function validateCharacter(character: CanonicalCharacter,): string[] {
     errors.push("Description is required",);
   }
 
+  if (!character.personality || character.personality.trim() === "") {
+    errors.push("Personality is required",);
+  }
+
+  if (!character.appearance || character.appearance.trim() === "") {
+    errors.push("Appearance is required",);
+  }
+
+  if (!Array.isArray(character.outfits,) || character.outfits.length === 0) {
+    errors.push("At least one outfit is required",);
+  } else if (!character.default_outfit || character.default_outfit.trim() === "") {
+    errors.push("Default outfit is required",);
+  } else if (!character.outfits.some((o,) => o?.id === character.default_outfit)) {
+    errors.push("Default outfit must match an outfits[].id",);
+  } else {
+    const ids = new Set<string>();
+    for (const o of character.outfits) {
+      if (o && typeof o.id === "string" && o.id !== "") {
+        if (ids.has(o.id,)) {
+          errors.push(`Duplicate outfit id "${o.id}"`,);
+          break;
+        }
+        ids.add(o.id,);
+      }
+    }
+  }
+
   return errors;
 }
 

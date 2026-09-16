@@ -1025,6 +1025,9 @@ export async function insertActors(
     visibility?: string;
     welcome_message?: string | null;
     personality?: string | null;
+    appearance?: string | null;
+    default_outfit?: string | null;
+    outfits?: string | null;
     scenario?: string | null;
     mes_example?: string | null;
     alternate_greetings?: string | null;

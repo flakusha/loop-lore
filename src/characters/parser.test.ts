@@ -101,11 +101,34 @@ describe("validateCharacter", () => {
       name: "",
       description: "",
       personality: "",
+      appearance: "",
+      default_outfit: "",
+      outfits: [],
     };
 
     const errors = validateCharacter(character,);
     expect(errors,).toContain("Name is required",);
     expect(errors,).toContain("Description is required",);
+    expect(errors,).toContain("Personality is required",);
+    expect(errors,).toContain("Appearance is required",);
+    expect(errors,).toContain("At least one outfit is required",);
+  });
+
+  test("returns errors for duplicate outfit ids", () => {
+    const character: CanonicalCharacter = {
+      name: "Dup",
+      description: "d",
+      personality: "p",
+      appearance: "Tall",
+      default_outfit: "gear",
+      outfits: [
+        { id: "gear", name: "Gear", descriptor: "x", },
+        { id: "gear", name: "Gear 2", descriptor: "y", },
+      ],
+    };
+
+    const errors = validateCharacter(character,);
+    expect(errors,).toContain('Duplicate outfit id "gear"',);
   });
 
   test("returns no errors for valid character", () => {
@@ -113,6 +136,11 @@ describe("validateCharacter", () => {
       name: "Valid Character",
       description: "A valid character",
       personality: "A valid personality",
+      appearance: "A valid appearance",
+      default_outfit: "travel-gear",
+      outfits: [
+        { id: "travel-gear", name: "Travel Gear", descriptor: "Sturdy traveling clothes", },
+      ],
     };
 
     const errors = validateCharacter(character,);
