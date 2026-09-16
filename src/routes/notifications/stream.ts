@@ -44,18 +44,18 @@ export async function loadNotificationSnapshot(
   };
 }
 
- /** */
- export class NotificationStreamer {
-   /**
-    * @param database
-    * @param userId
-    * @param intervalMs
-    */
-   constructor(
-     private readonly database: Kysely<DB>,
-     private readonly userId: string,
-     private readonly intervalMs: number = POLL_INTERVAL_MS,
-   ) {}
+/** */
+export class NotificationStreamer {
+  /**
+   * @param database
+   * @param userId
+   * @param intervalMs
+   */
+  constructor(
+    private readonly database: Kysely<DB>,
+    private readonly userId: string,
+    private readonly intervalMs: number = POLL_INTERVAL_MS,
+  ) {}
 
   /** */
   open(): Response {

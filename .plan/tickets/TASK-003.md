@@ -3,15 +3,7 @@
 
 # TASK-003: Chat room filters
 
-**Status:** [OK] Done
-**Priority**: medium
-**Labels**:
-**Assignee**:
-**Epic**:
-**Related**:
-
-Git issue: `b45761d`
-
+ @ours
 ## Resolution
 
 Implemented. Evidence: `src/routes/chat-search/search.ts` filters (`type`, `world`,
