@@ -76,9 +76,9 @@ export const CancelSourceSchema = t.UnionEnum([
   "system",
 ],);
 export const CharacterStateSchema = t.UnionEnum(["active", "injured", "unconscious", "dead",],);
-export const ChatModeSchema = t.UnionEnum(["direct", "group", "story",],);
+export const ChatModeSchema = t.UnionEnum(["direct", "group", "story", "battle",],);
 export const ChatParticipantRoleSchema = t.UnionEnum(["member", "owner", "observer", "guest", "gm",],);
-export const ChatPurposeSchema = t.UnionEnum(["main", "side", "notes",],);
+export const ChatPurposeSchema = t.UnionEnum(["main", "side", "notes", "assistant", "roleplay", "rpg", "social", "guided", "validation",],);
 export const ChatRenderingOverrideSchema = t.UnionEnum(["text", "visual_novel",],);
 export const ChatTypeSchema = t.UnionEnum(["direct", "group",],);
 export const ChatVisibilitySchema = t.UnionEnum(["private", "public", "unlisted",],);
