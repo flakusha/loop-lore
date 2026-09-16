@@ -52,7 +52,7 @@ const memoryStore = new Map<string, Annotation>();
 export function listMemoryAnnotations(chatId: string,): Annotation[] {
   const out: Annotation[] = [];
   for (const a of memoryStore.values()) {
-    if (a.chatId === chatId) { out.push(a); }
+    if (a.chatId === chatId) { out.push(a,); }
   }
   return out;
 }

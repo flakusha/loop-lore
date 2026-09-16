@@ -130,8 +130,10 @@ export function listChatTags(chatId: string,): string[] {
 }
 
 /** @internal exported for tests that want to seed state directly. */
-export const __test = { tagStore: (chatId: string,): ChatTagEntry[] | null => {
-  const tags = tagStore.get(chatId,);
-  if (!tags) { return null; }
-  return Array.from(tags, (t,) => ({ chatId, tag: t, }),);
-}, };
+export const __test = {
+  tagStore: (chatId: string,): ChatTagEntry[] | null => {
+    const tags = tagStore.get(chatId,);
+    if (!tags) { return null; }
+    return Array.from(tags, (t,) => ({ chatId, tag: t, }),);
+  },
+};
