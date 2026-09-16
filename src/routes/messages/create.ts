@@ -199,7 +199,7 @@ export function createRoutes(opts: HandlerOpts, prefix = "/api",) {
         // ── Post-insert chat effects: rename, advisory AUX title, scene transitions ──
         const chatRecord = await database
           .selectFrom("chats",)
-          .select(["name", "mode", "current_location_id", "world_id",],)
+          .select(["name", "mode", "current_location_id", "world_id", "created_by",],)
           .where("id", "=", chatId,)
           .executeTakeFirst();
         await runPostInsertChatEffects(database, config, chatId, actorId, id, effectiveContent, chatRecord,);

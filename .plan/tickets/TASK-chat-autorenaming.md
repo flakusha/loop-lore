@@ -126,13 +126,13 @@ Title:
 
 ## Acceptance Criteria
 
-- [ ] Chat list shows descriptive names instead of "Chat with X"
-- [ ] Rule-based rename works without LLM call
-- [ ] LLM-based rename generates concise, accurate titles
-- [ ] Manual rename overrides auto-name
-- [ ] Auto-rename triggers after first exchange (if enabled)
-- [ ] Rename setting is per-user (persisted in settings)
-- [ ] No rename if user has disabled it
+- [x] Chat list shows descriptive names instead of "Chat with X"
+- [x] Rule-based rename works without LLM call
+- [x] LLM-based rename generates concise, accurate titles (on-demand title-suggest with AUX fallback)
+- [x] Manual rename overrides auto-name (guard only fires on "New Chat"/"" placeholders)
+- [x] Auto-rename triggers after first exchange (if enabled)
+- [x] Rename setting is per-user (persisted in settings — `auto_rename_enabled` key in the free-form `users.settings` blob via PATCH /api/settings)
+- [x] No rename if user has disabled it (owner-settings guard in `autoRenameChat`; transitions.test.ts covers both the guard and the `name_source: "auto"` stamp)
 
 ## Risk
 
