@@ -3,14 +3,13 @@
 
 /**
  * Tests for scripts/lib/src-refs.ts — pure plan↔code cross-reference
- * extraction (TS comments → doc refs, markdown → src refs).
+ * extraction (TS comments → doc refs).
  */
 
 import { describe, expect, test, } from "bun:test";
 import {
   extractComments,
   extractDocRefs,
-  extractSrcRefs,
 } from "./src-refs";
 
 describe("extractComments", () => {
@@ -42,27 +41,5 @@ describe("extractDocRefs", () => {
   test("dedupes repeated paths", () => {
     const refs = extractDocRefs("docs/spec/a.md twice docs/spec/a.md",);
     expect(refs,).toHaveLength(1,);
-  });
-});
-
-describe("extractSrcRefs", () => {
-  test("captures backticked + prose src paths", () => {
-    const refs = extractSrcRefs(
-      "see `src/prompts/registry.ts` and src/rpg/quests/service.ts:12",
-    );
-    const paths = refs.map((r,) => r.path);
-    expect(paths,).toContain("src/prompts/registry.ts",);
-    expect(paths,).toContain("src/rpg/quests/service.ts",);
-  });
-
-  test("strips fenced code blocks", () => {
-    const md = "```ts\nconst x = src/not-real.ts;\n```\nreal src/real.ts";
-    const refs = extractSrcRefs(md,);
-    expect(refs.map((r,) => r.path),).toEqual(["src/real.ts",],);
-  });
-
-  test("skips globs, bare dirs, and trailing punctuation", () => {
-    const refs = extractSrcRefs("src/**/*.ts, src/routes/, src/foo.ts).",);
-    expect(refs.map((r,) => r.path),).toEqual(["src/foo.ts",],);
   });
 });
