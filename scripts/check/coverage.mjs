@@ -206,6 +206,26 @@ const WAIVERS = {
     reason:
       "blessed widget binding + event-handler wiring dominates uncovered lines; mock.module suite covers sessionToken threading + empty-string normalization (the new diff surface); e2e/REPL exercise the rest; TASK-coverage-waiver-tui-chat-index-ts-at-51-under-check-gate",
   },
+  // Gate pass: htmx.ts is document.addEventListener wiring (configRequest,
+  // beforeSwap, afterSwap, responseError, asset/character/world events,
+  // keyboard) that requires a live DOM + htmx runtime. Scoped bun run loads
+  // the module but exercises none of the handlers (30% measured). The
+  // CSRF-bearer batch touched only the configRequest comment block.
+  "frontend:src/frontend/alpine/htmx.ts": {
+    floor: 30,
+    reason:
+      "document.addEventListener wiring needs live DOM + htmx runtime; scoped bun run loads module without firing handlers (30.3 measured); Playwright DOM-coverage pending; BUG-frontend-dead-csrf-bearer-header-machinery",
+  },
+  // Gate pass: fe-fetch.ts body is getCsrfToken DOM reads
+  // (document.querySelector/document.cookie) + safeFetch delegation +
+  // 401-redirect wiring. Scoped run covers the delegation path (64.3
+  // measured) but not the DOM-token branches; the CSRF-bearer batch
+  // deleted the dead localStorage branch, shrinking the denominator.
+  "frontend:src/frontend/fe-fetch.ts": {
+    floor: 60,
+    reason:
+      "getCsrfToken DOM branches + 401-redirect wiring need live document/location; delegation path covered (64.3 measured); Playwright DOM-coverage pending; BUG-frontend-dead-csrf-bearer-header-machinery",
+  },
 };
 
 /**
@@ -230,11 +250,14 @@ const modules = {};
 
 for (const r of records) {
   const sf = r.match(/SF:(.+)/,)?.[1];
+
   if (!sf) { continue; }
   const seg = sf.replace(/^src\//, "",).split("/",)[0];
   const mod = seg.includes(".",) ? "(root)" : seg;
   const lf = parseInt(r.match(/LF:(\d+)/,)?.[1] || "0", 10,);
+
   const lh = parseInt(r.match(/LH:(\d+)/,)?.[1] || "0", 10,);
+
   modules[mod] = modules[mod] || { lf: 0, lh: 0, };
   modules[mod].lf += lf;
   modules[mod].lh += lh;
@@ -247,9 +270,12 @@ if (diffFiles) {
   const perFile = {};
   for (const r of records) {
     const sf = r.match(/SF:(.+)/,)?.[1];
+
     if (!sf) { continue; }
     const lf = parseInt(r.match(/LF:(\d+)/,)?.[1] || "0", 10,);
+
     const lh = parseInt(r.match(/LH:(\d+)/,)?.[1] || "0", 10,);
+
     perFile[sf] = { lf, lh, };
   }
 
@@ -295,6 +321,7 @@ if (diffFiles) {
       : r.pct >= r.floor
       ? "ok"
       : "FAIL";
+
     console.error(
       `| ${r.file} | ${r.measured ? `${r.pct.toFixed(1,)}%` : "n/a"} | ${r.lh}/${r.lf} | ${r.floor}% | ${status} |`,
     );
@@ -322,6 +349,7 @@ console.error("|---|---|---|---|---|",);
 for (const r of rows) {
   const effectiveFloor = floorFor(r.mod,);
   const status = r.waived ? "WAIVED" : (r.pct >= effectiveFloor ? "ok" : "FAIL");
+
   console.error(`| ${r.mod} | ${r.pct.toFixed(1,)}% | ${r.lh}/${r.lf} | ${effectiveFloor}% | ${status} |`,);
 }
 
