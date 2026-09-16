@@ -121,6 +121,11 @@ const WAIVERS = {
     reason:
       "DOM-bound (localStorage/document.cookie); diff is stream threading + one early-return; TASK-coverage-waiver-frontend-fe-fetch-htmx-stream-signature",
   },
+  "frontend:src/frontend/pages/characters.ts": {
+    floor: 10,
+    reason:
+      "Page module loads DOM globals at import (document/localStorage); scoped suite covers exportCharacter path only (13.8 measured); toasts are DOM-visible behavior verified via characters.test.ts",
+  },
   // Gate pass: src/server/ holds HTTP entry points (handler, index,
   // start, static-files). They run only in `bun run start` / smoke runs.
   // The 200 e2e tests cover their routes but lcov attributes the
