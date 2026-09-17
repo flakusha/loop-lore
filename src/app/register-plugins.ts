@@ -94,6 +94,7 @@ import { sessionsRoutes, } from "../routes/sessions";
 import { switchSessionRoutes, } from "../routes/sessions-switch";
 import { settingsRoutes, } from "../routes/settings";
 import { storyItemsRoutes, } from "../routes/story-items";
+import { storyOrchestrationRoutes, } from "../routes/story-orchestration";
 import { storyStatesRoutes, } from "../routes/story-states";
 import { storyTurnsRoutes, } from "../routes/story-turns";
 import { telemetryRoutes, } from "../routes/telemetry";
@@ -170,6 +171,7 @@ export function registerPlugins(app: Elysia<any>, opts: RegisterPluginsOpts,): v
   app.use(storyTurnsRoutes(handleOpts,),);
   app.use(storyStatesRoutes(handleOpts,),);
   app.use(storyItemsRoutes(handleOpts,),);
+  app.use(storyOrchestrationRoutes(handleOpts,),);
   app.use(questsRoutes(handleOpts,),);
   app.use(charactersRoutes(handleOpts,),);
   app.use(characterTraitsRoutes(handleOpts,),);

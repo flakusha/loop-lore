@@ -16,6 +16,7 @@ import type { EntityConfig, } from "./types";
  * @param opts.database
  * @param opts.config
  * @param prefix
+ * @returns Elysia plugin serving the entity create endpoint.
  */
 export function createRoutes(config: EntityConfig, opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   const { basePath, parentParam, } = entityPaths(config, prefix,);

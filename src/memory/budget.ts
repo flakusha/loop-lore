@@ -20,6 +20,7 @@ const DEFAULT_MAX_TOKENS = 1024;
  * Returns memories sorted by importance, filtered to fit the budget.
  * @param memories
  * @param config
+ * @returns the subset that fits the token budget
  */
 export function selectWithinBudget<
   T extends { content: string; confidence: number; importance: number; pinned?: boolean },
@@ -73,6 +74,7 @@ export function selectWithinBudget<
  * @param db
  * @param actorId
  * @param config
+ * @returns the actor's memories that fit the budget
  */
 export async function getMemoriesWithinBudget(
   db: Kysely<DB>,
