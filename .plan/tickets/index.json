@@ -4382,6 +4382,19 @@
     "closed_at": "2026-08-22",
     "source": ".plan/tickets/BUG-users-persona-handlers-horizontal-priv-esc.md"
   },
+  "BUG-V1-ROUTE-CHAIN-EXCEEDS-TS-INSTANTIATION-DEPTH": {
+    "hash": "a67a52d",
+    "git_issue": "a67a52d",
+    "extid": "BUG-V1-ROUTE-CHAIN-EXCEEDS-TS-INSTANTIATION-DEPTH",
+    "type": "BUG",
+    "title": "v1 route chain exceeds TS instantiation depth",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-v1-route-chain-exceeds-ts-instantiation-depth.md",
+    "status": "open"
+  },
   "BUG-VALIDATION-AVATARSELECTIONRULESCHEMA-MISSING-ACTION-FIRST-AN": {
     "hash": "3fbd1f5",
     "git_issue": "3fbd1f5",

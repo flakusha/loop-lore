@@ -24244,6 +24244,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-v1-route-chain-exceeds-ts-instantiation-depth.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/BUG-vn-choice-fe-be-contract-mismatch-renders-blank-labels.md"
     },
     {
