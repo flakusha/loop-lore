@@ -261,6 +261,12 @@ const checks = {
     // Dead-code analysis (knip)
     "dead - code (knip)": "bun run dead:code",
 
+    // Circular-import gate (madge). skipTypeImports=true in package.json
+    // filters erased-at-compile-time `import type` edges, so only runtime
+    // cycles are reported. Currently advisory: existing 9 runtime cycles
+    // in src/ are tracked for a follow-up sweep (see TASK-madge-runtime-cycles).
+    "circular - imports (advisory)": "bun run circular:check || true",
+
     // Wiring + dead-code check gate (routes mounted, services wired, plugins registered)
     "wiring - check": "bun run scripts/check-wiring.ts",
     "fe-be - harmony (advisory)": "bun run scripts/check-fe-be-harmonization.ts || true",
