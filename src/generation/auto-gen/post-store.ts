@@ -210,7 +210,8 @@ export async function applyPostStoreEffects(opts: PostStoreOpts,): Promise<void>
   if (isGroupChat && finishReason !== "cancelled") {
     void (async () => {
       try {
-        await d.triggerGroupCascade!({
+        const { triggerGroupCascade, } = await import("./group-cascade");
+        await triggerGroupCascade({
           database,
           config,
           chatId,

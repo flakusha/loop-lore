@@ -19,7 +19,7 @@ import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-c
 import { loadAllPlugins, unloadAllPlugins, } from "../plugins";
 import { applyEnvironmentOverrides, seedConfiguredContent, seedConfiguredUsers, } from "../seeding";
 import { ServerExternalManager, } from "../services/server-external-manager";
-import { createRequestHandler, } from "./handler";
+import { createRequestHandler, handleApiRequest, } from "./handler";
 import { initAssetCompression, } from "./init-asset-compression";
 import { initBackgroundServices, } from "./init-background-services";
 import { createNonApiHandler, } from "./static-files";
@@ -97,6 +97,7 @@ export async function start() {
     database,
     config,
     handleNonApiRequest,
+    handleApiRequest,
   },);
 
   // ── Centralized response-header + dynamic-response policies ──

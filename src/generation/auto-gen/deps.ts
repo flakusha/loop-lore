@@ -29,10 +29,6 @@ import {
   listProviders,
   resolveProvider,
 } from "../providers/registry";
-import type { AutoGenOpts, } from "./auto-generation";
-import { triggerAutoGeneration, } from "./auto-generation";
-import type { GroupCascadeOpts, } from "./group-cascade";
-import { triggerGroupCascade, } from "./group-cascade";
 
 /** Injectable dependencies for generation functions. */
 export interface GenDeps {
@@ -56,12 +52,12 @@ export interface GenDeps {
   decryptAtRest: typeof decryptAtRest;
   markedParse: (src: string, opts?: Record<string, unknown>,) => string;
   createPromptAssembler: (db: Kysely<DB>,) => PromptAssembler;
-  /** Self-references for recursive calls (set automatically). */
-  triggerAutoGeneration?: (opts: AutoGenOpts,) => Promise<void>;
-  triggerGroupCascade?: (opts: GroupCascadeOpts,) => Promise<void>;
 }
 
-/** Return the real production implementations. */
+/**
+ * Return the real production implementations.
+ * @returns Default GenDeps for production use.
+ */
 export function createDefaultDeps(): GenDeps {
   return {
     cancelGenerationByChat,
@@ -84,7 +80,5 @@ export function createDefaultDeps(): GenDeps {
     decryptAtRest,
     markedParse: (src, opts?,) => marked.parse(src, opts ?? {},) as string,
     createPromptAssembler: (db,) => new PromptAssembler(db,),
-    triggerAutoGeneration,
-    triggerGroupCascade,
   };
 }
