@@ -15,6 +15,7 @@ import type { MemoryEntry, MemoryPanelState, } from "../types";
 /**
  * Estimate tokens from content length (~4 chars per token).
  * @param content
+ * @returns estimated token count
  */
 export function estimateTokens(content: string,): number {
   return Math.ceil(content.length / 4,);
@@ -39,6 +40,7 @@ export interface MemoryApiRow {
 /**
  * Parse keywords that may arrive as a JSON string or as an array.
  * @param keywords
+ * @returns parsed keyword list
  */
 export function parseMemoryKeywords(keywords: string | string[],): string[] {
   return typeof keywords === "string"
@@ -50,6 +52,7 @@ export function parseMemoryKeywords(keywords: string | string[],): string[] {
  * Map a raw API row to a MemoryEntry, defaulting the scope when absent.
  * @param row
  * @param scopeFallback
+ * @returns the mapped panel entry
  */
 export function toMemoryEntry(row: MemoryApiRow, scopeFallback: MemoryEntry["scope"],): MemoryEntry {
   const sourceIds = parseMemoryKeywords(row.source_message_ids ?? [],);
@@ -72,6 +75,7 @@ export function toMemoryEntry(row: MemoryApiRow, scopeFallback: MemoryEntry["sco
 /**
  * Format a memory timestamp for the panel meta row (locale date).
  * @param iso
+ * @returns locale date string, empty for an invalid timestamp
  */
 export function formatMemoryDate(iso: string,): string {
   const date = new Date(iso,);
@@ -84,6 +88,7 @@ export function formatMemoryDate(iso: string,): string {
  * Memories owned by the given panel tab.
  * @param panel
  * @param tab
+ * @returns the memories backing that tab
  */
 export function memoriesForTab(panel: MemoryPanelState, tab: MemoryPanelState["activeTab"],): MemoryEntry[] {
   switch (tab) {
