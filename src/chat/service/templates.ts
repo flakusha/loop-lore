@@ -14,23 +14,11 @@ import type { Kysely, } from "kysely";
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
 import type { DB, } from "../../db/schema";
-import { jsonStringifyOr, safeJsonParse, } from "../../utils";
+import { jsonStringifyOr, } from "../../utils";
 import { findMainRepoRoot, } from "../../utils/git-worktree";
 import { CHAT_SETUP_TEMPLATE_DEFAULTS, type ChatSetupTemplateDefault, } from "./template-defaults";
+import { parseFeatures, } from "./template-queries";
 import type { ChatSetupTemplate, } from "./types";
-
-/** Default chat setup template shape (code-defined). */
-/**
- * Parse the features JSON column into a string array.
- * @param raw
- * @returns string
- */
-function parseFeatures(raw: string | null,): string[] | null {
-  if (!raw) { return null; }
-  const parsed = safeJsonParse(raw,);
-  if (!parsed.ok || !Array.isArray(parsed.value,)) { return null; }
-  return Array.from(parsed.value, String,);
-}
 
 /**
  * Load config-file chat setup templates from `configs/templates/chat-setup.yaml`
@@ -50,8 +38,8 @@ function parseFeatures(raw: string | null,): string[] | null {
  *     gmConfig: null
  *     features: [rpg mode, no assistant]
  * ```
- * @param cwd
- * @returns void
+ * @param cwd Base directory for resolving the templates config.
+ * @returns Chat setup template defaults loaded from config files.
  */
 export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDefault[] {
   const base = cwd ?? process.cwd();
@@ -81,8 +69,8 @@ export function loadConfigChatSetupTemplates(cwd?: string,): ChatSetupTemplateDe
 
 /**
  * Collect chat-setup template files under the repo config dirs.
- * @param base
- * @returns void
+ * @param base Base directory to start scanning from.
+ * @returns Candidate file paths with their format.
  */
 function findTemplateCandidates(
   base: string,
@@ -133,7 +121,8 @@ function toTemplateDefault(item: unknown,): ChatSetupTemplateDefault | null {
 }
 
 /**
- * @param p
+ * @param p Path to check.
+ * @returns True if the path is a directory.
  */
 function statIsDir(p: string,): boolean {
   try {
@@ -145,7 +134,8 @@ function statIsDir(p: string,): boolean {
 
 /**
  * List all chat setup templates, with parsed features.
- * @param database
+ * @param database Active Kysely database.
+ * @returns All chat setup templates ordered by name.
  */
 export async function listChatSetupTemplates(
   database: Kysely<DB>,
@@ -159,28 +149,6 @@ export async function listChatSetupTemplates(
     ...(row as unknown as ChatSetupTemplate),
     features: parseFeatures((row as { features?: string | null }).features ?? null,),
   }),);
-}
-
-/**
- * Resolve a chat setup template by id or slug.
- * @param database
- * @param templateId
- * @returns void
- */
-export async function getChatSetupTemplate(
-  database: Kysely<DB>,
-  templateId: string,
-): Promise<ChatSetupTemplate | null> {
-  const row = await database
-    .selectFrom("chat_setup_templates",)
-    .selectAll()
-    .where((eb,) => eb.or([eb("id", "=", templateId,), eb("slug", "=", templateId,),],))
-    .executeTakeFirst();
-  if (!row) { return null; }
-  return {
-    ...(row as unknown as ChatSetupTemplate),
-    features: parseFeatures((row as { features?: string | null }).features ?? null,),
-  };
 }
 
 /**
@@ -230,6 +198,15 @@ export async function seedChatSetupTemplates(
  * Create a chat setup template (admin).
  */
 
-// ── Re-exports (defaults + admin CRUD live in sibling modules) ─────
-export * from "./template-crud";
+// ── Re-exports (admin CRUD lives in sibling modules) ─────
+// Explicit named re-exports (instead of the prior wildcard re-export)
+// keep this module a leaf for the runtime graph; the wildcard re-export
+// pulled in ./template-crud, which itself imports getChatSetupTemplate
+// from ./templates — closing the cycle.
+export {
+  createChatSetupTemplate,
+  deleteChatSetupTemplate,
+  updateChatSetupTemplate,
+} from "./template-crud";
 export * from "./template-defaults";
+export { getChatSetupTemplate, } from "./template-queries";

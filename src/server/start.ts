@@ -6,7 +6,7 @@ import { applyStoredNsfwConfig, initNsfwRuntimeConfig, } from "../nsfw/runtime-c
 import { createApp, } from "../elysia-app";
 import { createLogger, getLogger, setGlobalLogger, } from "../logger";
 import { createNonApiHandler, } from "./static-files";
-import { createRequestHandler, } from "./handler";
+import { createRequestHandler, handleApiRequest, } from "./handler";
 import { ensureTlsCerts, } from "../config/cert";
 import { getDatabase, } from "../db/index";
 import { getScheduler, } from "../cron";
@@ -95,6 +95,7 @@ export async function start() {
     database,
     config,
     handleNonApiRequest,
+    handleApiRequest,
   },);
 
   // ── Centralized response-header + dynamic-response policies ──
