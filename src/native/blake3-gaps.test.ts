@@ -7,8 +7,8 @@
  * `blake3.test.ts` covers the fallback path (no cdylib in unit-test envs);
  * the `getNativeModule() !== null` branches need an injected fake handle.
  * Isolated-gate only: `mock.module` must not serve the fake handle to
- * unrelated suites in shared-process runs (`test:unit:parallel`, bare
- * `bun test`). Gated on `npm_lifecycle_event` (the `--isolate` flag itself
+ * unrelated suites in shared-process runs (bare `bun test`). Gated on
+ * `npm_lifecycle_event` (the `--isolate` flag itself
  * is invisible inside test processes): the allow-list names exactly the
  * scripts whose `bun test` runs pass `--isolate` — direct (`test`,
  * `test:unit`, `test:coverage`) and pipeline-spawned (`check:parallel`,

@@ -72,7 +72,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Run unit tests
-        run: bun test src/ --isolate --coverage
+        run: bun test --parallel=4 src/ --isolate --coverage
 
       - name: Upload coverage
         if: always()
