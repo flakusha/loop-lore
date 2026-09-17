@@ -10,7 +10,7 @@ import { describe, expect, mock, test, } from "bun:test";
  * (`check:parallel`, whose coverage command runs `bun test --isolate`
  * in-process). The `--isolate` flag itself is invisible inside test
  * processes, so argv cannot be used. Shared-process runs
- * (`test:unit:parallel`, bare `bun test`) skip, keeping the real loader.
+ * (bare `bun test`) skip, keeping the real loader.
  */
 const ISOLATED_RUN = ["test", "test:unit", "test:coverage", "check:parallel",].includes(
   process.env.npm_lifecycle_event ?? "",

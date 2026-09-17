@@ -115,7 +115,7 @@ Individual checks:
 ```bash
 bun run check:ci        # Quality checks (strict)
 bun run check:fix       # Auto-fix formatting/lint
-bun run test:unit:parallel
+bun run test:unit
 bun run test:e2e:browser
 bun run build
 ```
