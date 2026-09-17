@@ -47,14 +47,15 @@ export interface GroupCascadeOpts {
 
 /**
  * Pick the next actor in the cascade: @mentions win, else auto-advance.
- * @param aiParticipants
- * @param aiContent
- * @param previousActorId
- * @param autoAdvance
- * @param database
- * @param chatId
- * @param depth
- * @param log
+ * @param aiParticipants Eligible AI participants.
+ * @param aiContent Most recent AI message content.
+ * @param previousActorId Actor that just generated the message.
+ * @param autoAdvance Whether auto-advance mode is on.
+ * @param database Active Kysely database.
+ * @param chatId Chat id.
+ * @param depth Current cascade depth.
+ * @param log Logger instance.
+ * @returns Chosen actor id, or null when no eligible actor is found.
  */
 async function resolveNextCascadeActor(
   aiParticipants: { actor_id: string; actor_type: string; display_name: string }[],
@@ -98,6 +99,11 @@ async function resolveNextCascadeActor(
 }
 /**
  * @param opts
+ */
+/**
+ * Run one group-chat cascade step.
+ * @param opts Group cascade options.
+ * @returns Resolves when cascade completes.
  */
 export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void> {
   const { database, config, chatId, userId, aiContent, previousActorId, depth, } = opts;
@@ -194,7 +200,8 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
   },);
 
   try {
-    await d.triggerAutoGeneration!({
+    const { triggerAutoGeneration, } = await import("./auto-generation");
+    await triggerAutoGeneration({
       database,
       config,
       chatId,

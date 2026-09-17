@@ -30,6 +30,7 @@ import { type Kysely, sql, } from "kysely";
 import { getLogger, } from "../logger";
 import type { DB, } from "./schema";
 import { repairMeshSharing, } from "./schema-backfill-mesh";
+import { tableSql, } from "./schema-backfill-queries";
 import { repairEventSteerings, } from "./schema-backfill-steering";
 import { recordSchemaVersion, } from "./schema-version";
 
@@ -115,16 +116,6 @@ async function repairTemplateVisualNovel(database: Kysely<DB>,): Promise<boolean
 
   log.info("Schema backfill applied: chat_setup_templates.visual_novel converged and dropped",);
   return true;
-}
-
-/**
- * @param database
- * @param name
- */
-export async function tableSql(database: Kysely<DB>, name: string,): Promise<string | null> {
-  const found = await sql<{ sql: string | null }>`SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ${name}`
-    .execute(database,);
-  return found.rows[0]?.sql ?? null;
 }
 
 /**

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// size-allow: 260
+// size-allow: 270
 
 /**
  * Elysia App Builder
@@ -38,7 +38,6 @@ import { redirectTo, } from "./routes/http-utils";
 import { versionRedirect, } from "./routes/middleware/version-redirect";
 import { versionResolver, } from "./routes/middleware/version-resolver";
 import { v1Routes, } from "./routes/v1";
-import { handleApiRequest, } from "./server";
 
 import { onValidationError, } from "./validation";
 
@@ -47,13 +46,18 @@ export interface AppDeps {
   database: Db;
   config: Config;
   handleNonApiRequest: (request: Request,) => Promise<Response>;
+  /** API catch-all dispatcher — server-internal, kept off the type to avoid
+   *  elysia-app ↔ server cycle. Injected by `server/start.ts`. */
+  handleApiRequest: (opts: { request: Request; database: Db; config: Config },) => Promise<Response>;
 }
 
 /**
- * @param deps
+ * Build the Elysia app: routes + middleware + catch-all dispatcher.
+ * @param deps Database, config, and request handlers (injected to avoid elysia-app ↔ server cycle).
+ * @returns Configured Elysia instance.
  */
 export function createApp(deps: AppDeps,): Elysia {
-  const { database, config, handleNonApiRequest, } = deps;
+  const { database, config, handleNonApiRequest, handleApiRequest, } = deps;
 
   // Wire the async request-result store once at boot.
   // The status endpoint, idempotency replay, and `triggerAutoGeneration`
