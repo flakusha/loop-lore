@@ -63,7 +63,7 @@ describe("promptTemplateRoutes", () => {
       },),
     );
     expect(create.status,).toBe(401,);
-  },);
+  });
 
   test("create → list → get → patch → delete round-trip", async () => {
     const app = makeApp(db, userId,);
@@ -81,7 +81,7 @@ describe("promptTemplateRoutes", () => {
     const list = await app.handle(new Request("http://localhost/api/templates?modality=image",),);
     expect(list.status,).toBe(200,);
     const listBody = (await list.json()) as { templates: { id: string }[] };
-    expect(listBody.templates.some((t,) => t.id === row.id,),).toBe(true,);
+    expect(listBody.templates.some((t,) => t.id === row.id),).toBe(true,);
 
     const got = await app.handle(new Request(`http://localhost/api/templates/${row.id}`,),);
     expect(got.status,).toBe(200,);
@@ -104,7 +104,7 @@ describe("promptTemplateRoutes", () => {
     expect(deleted.status,).toBe(204,);
     const gone = await app.handle(new Request(`http://localhost/api/templates/${row.id}`,),);
     expect(gone.status,).toBe(404,);
-  },);
+  });
 
   test("rejects unknown modality on create", async () => {
     const app = makeApp(db, userId,);
@@ -116,16 +116,16 @@ describe("promptTemplateRoutes", () => {
       },),
     );
     expect(res.status,).toBe(422,);
-  },);
+  });
 
   test("list includes LLM presets", async () => {
     const app = makeApp(db, userId,);
     const res = await app.handle(new Request("http://localhost/api/templates?modality=llm",),);
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { templates: { id: string; isPreset: boolean }[] };
-    const preset = body.templates.find((t,) => t.id === "preset-roleplay",);
+    const preset = body.templates.find((t,) => t.id === "preset-roleplay");
     expect(preset?.isPreset,).toBe(true,);
-  },);
+  });
 
   test("preset detail is readable and read-only", async () => {
     const app = makeApp(db, userId,);
@@ -145,7 +145,7 @@ describe("promptTemplateRoutes", () => {
       },),
     );
     expect(patch.status,).toBe(404,);
-  },);
+  });
 
   test("apply renders image template variables", async () => {
     const app = makeApp(db, userId,);
@@ -156,19 +156,19 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify(IMAGE_BODY,),
       },),
     );
-    const { id } = ((await created.json()) as { template: { id: string } }).template;
+    const { id, } = ((await created.json()) as { template: { id: string } }).template;
     const applied = await app.handle(
       new Request(`http://localhost/api/templates/${id}/apply`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ context: { subject: "a lone lighthouse" }, },),
+        body: JSON.stringify({ context: { subject: "a lone lighthouse", }, },),
       },),
     );
     expect(applied.status,).toBe(200,);
     const body = (await applied.json()) as { prompt: string; negativePrompt: string };
     expect(body.prompt,).toBe("a lone lighthouse, cinematic lighting, 85mm",);
     expect(body.negativePrompt,).toBe("blurry",);
-  },);
+  });
 
   test("apply returns 404 for a missing template", async () => {
     const app = makeApp(db, userId,);
@@ -180,7 +180,7 @@ describe("promptTemplateRoutes", () => {
       },),
     );
     expect(res.status,).toBe(404,);
-  },);
+  });
 
   test("ownership: another user cannot see, patch, or delete", async () => {
     const appA = makeApp(db, userId,);
@@ -191,7 +191,7 @@ describe("promptTemplateRoutes", () => {
         body: JSON.stringify(IMAGE_BODY,),
       },),
     );
-    const { id } = ((await created.json()) as { template: { id: string } }).template;
+    const { id, } = ((await created.json()) as { template: { id: string } }).template;
 
     const appB = makeApp(db, otherId,);
     const got = await appB.handle(new Request(`http://localhost/api/templates/${id}`,),);
@@ -208,7 +208,7 @@ describe("promptTemplateRoutes", () => {
       new Request(`http://localhost/api/templates/${id}`, { method: "DELETE", },),
     );
     expect(deleted.status,).toBe(404,);
-  },);
+  });
 
   test("import/export round-trip preserves payloads and skips invalid", async () => {
     const appA = makeApp(db, userId,);
@@ -241,7 +241,7 @@ describe("promptTemplateRoutes", () => {
     };
     expect(exported.version,).toBe(1,);
     expect(exported.exportedBy,).toBe(userId,);
-    const packed = exported.templates.find((t,) => t.name === "Pack A",);
+    const packed = exported.templates.find((t,) => t.name === "Pack A");
     expect(packed?.payload.templateBody,).toBe(IMAGE_BODY.payload.templateBody,);
-  },);
+  });
 });

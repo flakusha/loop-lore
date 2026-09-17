@@ -7,11 +7,11 @@
  * and priority-based token-budget trimming.
  */
 import { describe, expect, test, } from "bun:test";
-import type { DB, } from "../../db/schema";
 import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
+import type { LlmTemplatePayload, } from "../../generation/template-types";
 import { assembleFromTemplate, } from "./template-render";
 import type { AssembleContext, } from "./types";
-import type { LlmTemplatePayload, } from "../../generation/template-types";
 
 /**
  * Static-only assembly context: no DB reads (userId empty) and no built-in
@@ -54,13 +54,13 @@ describe("assembleFromTemplate", () => {
       ],
     };
     const res = await assembleFromTemplate(makeCtx(10_000,), payload,);
-    expect(res.messages.map((m,) => `${m.role}:${m.content}`,),).toEqual(
+    expect(res.messages.map((m,) => `${m.role}:${m.content}`),).toEqual(
       ["system:You are Seraphine.", "user:Hello",],
     );
     expect(res.systemPrompt,).toBe("You are Seraphine.",);
     expect(res.tokenCount,).toBeGreaterThan(0,);
-    expect(res.sections.every((s,) => !s.dropped,),).toBe(true,);
-  },);
+    expect(res.sections.every((s,) => !s.dropped),).toBe(true,);
+  });
 
   test("drops low-priority sections over budget", async () => {
     const long = "x".repeat(600,);
@@ -71,10 +71,10 @@ describe("assembleFromTemplate", () => {
       ],
     };
     const res = await assembleFromTemplate(makeCtx(50,), payload,);
-    expect(res.sections.some((s,) => s.dropped,),).toBe(true,);
-    expect(res.sections.find((s,) => s.name === "custom:0",)?.dropped,).toBe(false,);
+    expect(res.sections.some((s,) => s.dropped),).toBe(true,);
+    expect(res.sections.find((s,) => s.name === "custom:0")?.dropped,).toBe(false,);
     expect(res.tokenCount,).toBeLessThanOrEqual(50,);
-  },);
+  });
 
   test("reports linked-but-unknown builtin identifiers as static content", async () => {
     const payload: LlmTemplatePayload = {
@@ -84,5 +84,5 @@ describe("assembleFromTemplate", () => {
     };
     const res = await assembleFromTemplate(makeCtx(10_000,), payload,);
     expect(res.messages[0]?.content,).toBe("fallback",);
-  },);
+  });
 });

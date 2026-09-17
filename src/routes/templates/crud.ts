@@ -36,7 +36,6 @@ import {
 } from "../../validation/schemas";
 import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "../http-utils";
 
-
 const MODALITIES: readonly TemplateModality[] = ["llm", "image", "video", "audio",];
 
 const IdParams = Type.Object({ id: Type.String(), },);
