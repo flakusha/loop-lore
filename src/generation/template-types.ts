@@ -9,6 +9,7 @@
  * are the contract for each variant.
  */
 import type { TemplateDetailLevel, TemplateModality, } from "../db/enums";
+import { safeJsonParse, } from "../utils";
 
 /** One ordered section of an LLM prompt template. */
 export interface LlmTemplateSection {
@@ -83,12 +84,9 @@ export function parseTemplatePayload(
   raw: string,
   modality: TemplateModality,
 ): TemplatePayload | null {
-  let value: unknown;
-  try {
-    value = JSON.parse(raw,);
-  } catch {
-    return null;
-  }
+  const parsed = safeJsonParse<unknown>(raw,);
+  if (!parsed.ok) { return null; }
+  const value = parsed.value;
   if (typeof value !== "object" || value === null) { return null; }
   const record = value as Record<string, unknown>;
 

@@ -13,6 +13,7 @@ import type { Kysely, } from "kysely";
 import type { TemplateModality, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { createTemplate, type CreateTemplateInput, } from "../../generation/template-service";
+import { jsonParseOr, } from "../../utils";
 import {
   ErrorResponse,
   TemplateImportBody,
@@ -30,18 +31,6 @@ interface TemplatePack {
   version: 1;
   exportedBy: string;
   templates: CreateTemplateInput[];
-}
-
-/**
- * Parse a stored payload JSON string, falling back to an empty object.
- * @param raw - JSON text from the payload column
- */
-function safeParse(raw: string,): unknown {
-  try {
-    return JSON.parse(raw,);
-  } catch {
-    return {};
-  }
 }
 
 /**
@@ -73,7 +62,7 @@ export function templateTransferRoutes(
           description: row.description,
           model_family: row.model_family,
           detail_level: row.detail_level,
-          payload: safeParse(row.payload,),
+          payload: jsonParseOr<unknown>(row.payload, {},),
         }));
       const pack: TemplatePack = { version: 1, exportedBy: userId, templates, };
       return jsonResponse(pack,);

@@ -2,27 +2,24 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 /**
- * Unified prompt template service (FEAT-065).
+ * Prompt template CRUD (FEAT-065).
  *
- * CRUD over the `prompt_templates` table (all modalities), override
- * resolution for LLM assembly (chat column > actor settings), and
- * apply/render for image + simple (video/audio) payloads.
- *
- * LLM section rendering lives in `assistant/prompt/template-render.ts` —
- * it needs the prompt section builders, which live on the assistant side.
+ * Row lifecycle over the `prompt_templates` table (all modalities), plus
+ * payload validation and the list/summary shape. Override resolution lives
+ * in `./resolve`; payload rendering lives in `./apply`. LLM section rendering
+ * lives in `assistant/prompt/template-render.ts` — it needs the prompt
+ * section builders, which live on the assistant side.
  */
 import type { Kysely, } from "kysely";
-import { findLlmTemplatePreset, LLM_TEMPLATE_PRESETS, type LlmTemplatePreset, } from "../assistant/prompt/presets";
-import type { TemplateDetailLevel, TemplateModality, } from "../db/enums";
-import type { DB, } from "../db/schema";
-import { uid, } from "../utils";
+import { LLM_TEMPLATE_PRESETS, } from "../../assistant/prompt/presets";
+import type { TemplateDetailLevel, TemplateModality, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
+import { jsonStringifyOr, uid, } from "../../utils";
 import {
-  type ImageTemplatePayload,
   parseTemplatePayload,
   type PromptTemplateRow,
-  type SimpleTemplatePayload,
   type TemplateSummary,
-} from "./template-types";
+} from "../template-types";
 const MODALITIES: readonly TemplateModality[] = ["llm", "image", "video", "audio",];
 const DETAIL_LEVELS: readonly TemplateDetailLevel[] = ["instant", "balanced", "detailed",];
 
@@ -57,11 +54,11 @@ export function serializeTemplateInput(
   if (typeof input.payload !== "object" || input.payload === null) {
     return { ok: false, error: "payload object is required", };
   }
-  const probe = parseTemplatePayload(JSON.stringify(input.payload,), input.modality,);
+  const probe = parseTemplatePayload(jsonStringifyOr(input.payload,), input.modality,);
   if (!probe) {
     return { ok: false, error: `payload does not match the ${input.modality} template shape`, };
   }
-  return { ok: true, payload: JSON.stringify(input.payload,), };
+  return { ok: true, payload: jsonStringifyOr(input.payload,), };
 }
 
 /**
@@ -111,23 +108,6 @@ export async function getOwnedTemplate(
   const row = await db.selectFrom("prompt_templates",).selectAll()
     .where("id", "=", id,).where("owner_id", "=", userId,).executeTakeFirst();
   return row ?? null;
-}
-
-/**
- * Resolve a template reference to its definition: user row or LLM preset.
- * @param db - Kysely database handle
- * @param id - Template or preset id
- * @param userId - Requesting user (row ownership enforced)
- */
-export async function resolveTemplateDef(
-  db: Kysely<DB>,
-  id: string,
-  userId: string,
-): Promise<{ row: PromptTemplateRow; preset: null } | { row: null; preset: LlmTemplatePreset } | null> {
-  const preset = findLlmTemplatePreset(id,);
-  if (preset) { return { row: null, preset, }; }
-  const row = await getOwnedTemplate(db, id, userId,);
-  return row ? { row, preset: null, } : null;
 }
 
 /**
@@ -217,71 +197,6 @@ export async function deleteTemplate(db: Kysely<DB>, id: string, userId: string,
     .where("id", "=", id,).where("owner_id", "=", userId,)
     .executeTakeFirst();
   return (result.numDeletedRows ?? 0n) > 0n;
-}
-
-/**
- * Resolve the LLM template override id for a chat: chat column wins over
- * the actor's `settings.prompt_template_id`.
- * @param db - Kysely database handle
- * @param chatId - Chat to resolve
- * @param actorId - Actor generating (settings fallback)
- */
-export async function resolveLlmTemplateOverrideId(
-  db: Kysely<DB>,
-  chatId: string,
-  actorId: string,
-): Promise<string | null> {
-  const chat = await db.selectFrom("chats",).select("prompt_template_id",)
-    .where("id", "=", chatId,).executeTakeFirst();
-  if (chat?.prompt_template_id) { return chat.prompt_template_id; }
-
-  const actor = await db.selectFrom("actors",).select("settings",)
-    .where("id", "=", actorId,).executeTakeFirst();
-  if (!actor?.settings) { return null; }
-  try {
-    const settings = JSON.parse(actor.settings,) as { prompt_template_id?: unknown };
-    return typeof settings.prompt_template_id === "string" ? settings.prompt_template_id : null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Render an image template payload against a variable context.
- * Unknown variables are substituted with empty strings — see
- * `resolveTemplate` in `./prompt-templates/templates.ts`.
- * @param payload - Parsed image payload
- * @param ctx - Variable map (TemplateContext-compatible)
- */
-export function applyImageTemplate(
-  payload: ImageTemplatePayload,
-  ctx: Record<string, string | undefined>,
-): { prompt: string; negativePrompt: string | undefined } {
-  let prompt = payload.templateBody;
-  for (const [key, value,] of Object.entries(ctx,)) {
-    prompt = prompt.replaceAll(`{{${key}}}`, value ?? "",);
-  }
-  // Unknown variables render empty — same contract as resolveTemplate().
-  prompt = prompt.replace(/\{\{[^}]+\}\}/g, "",);
-  return { prompt, negativePrompt: payload.negativePrompt, };
-}
-
-/**
- * Render a simple (video/audio) template payload with variable substitution
- * and default params.
- * @param payload - Parsed simple payload
- * @param vars - Variable overrides on top of `params`
- */
-export function applySimpleTemplate(
-  payload: SimpleTemplatePayload,
-  vars: Record<string, string> = {},
-): string {
-  const merged = { ...payload.params, ...vars, };
-  let body = payload.body;
-  for (const [key, value,] of Object.entries(merged,)) {
-    body = body.replaceAll(`{{${key}}}`, value,);
-  }
-  return body;
 }
 
 /** */

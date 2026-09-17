@@ -14,7 +14,12 @@ import { getContextWindowForModel, } from "../admin/model-capabilities";
 import { MoodService, } from "../characters/services/mood-service";
 import { resolveOutputStyle, } from "../chat/output-style";
 import type { OutputStylePreset, } from "../chat/output-style";
-import { buildLengthConfig, isValidPreset, type LengthPreset, type ResponseLengthConfig, } from "../chat/response-length";
+import {
+  buildLengthConfig,
+  isValidPreset,
+  type LengthPreset,
+  type ResponseLengthConfig,
+} from "../chat/response-length";
 import type { GmConfig, } from "../chat/types/config";
 import { ChatMode, } from "../db/enums";
 import type { DB, } from "../db/schema";
@@ -314,10 +319,8 @@ export { parseJsonOr, } from "./prompt-utils";
  */
 function actorSettingsTemplateId(settingsJson: string | null | undefined,): string | null {
   if (!settingsJson) { return null; }
-  try {
-    const parsed = JSON.parse(settingsJson) as { prompt_template_id?: unknown };
-    return typeof parsed.prompt_template_id === "string" ? parsed.prompt_template_id : null;
-  } catch {
-    return null;
-  }
+  const parsed = parseJsonOr<unknown>(settingsJson, null,);
+  if (parsed === null || typeof parsed !== "object") { return null; }
+  const templateId = (parsed as { prompt_template_id?: unknown }).prompt_template_id;
+  return typeof templateId === "string" ? templateId : null;
 }
