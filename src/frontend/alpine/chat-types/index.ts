@@ -35,6 +35,7 @@ export type {
 export type { ChatNpcState, } from "./npc-state";
 export type { ChatParticipantsState, } from "./participants-state";
 export type { ChatPinRow, ChatPinsState, } from "./pins-state";
+export type { ChatPromptTemplateState, } from "./prompt-template-state";
 export type { EquipmentSlot, RpgStatBlock, RpgStats, StatusEffect, } from "./rpg";
 export type { ChatRpgState, } from "./rpg-state";
 export type { ChatSideChannelsState, SideChannel, } from "./side-channels-state";
