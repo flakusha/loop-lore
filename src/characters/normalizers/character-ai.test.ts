@@ -20,7 +20,11 @@ describe("normalizeCharacterAI", () => {
 
     expect(result.name,).toBe("Test Character",);
     expect(result.description,).toBe("A test character\n\nYou are a friendly character",);
-    expect(result.personality,).toBe("",);
+    expect(result.personality,).toBe("You are a friendly character",);
+    expect(result.appearance,).toBe("A test character",);
+    expect(result.default_outfit,).toBe("default",);
+    expect(result.outfits,).toHaveLength(1,);
+    expect(result.outfits[0]?.id,).toBe("default",);
     expect(result.welcome_message,).toBe("Hello!",);
     expect(result.mes_example,).toBe("User: Hi\nCharacter: Hello!",);
     expect(result.tags,).toEqual(["test", "friendly",],);
@@ -36,7 +40,10 @@ describe("normalizeCharacterAI", () => {
 
     expect(result.name,).toBe("Minimal Character",);
     expect(result.description,).toBe("Minimal description",);
-    expect(result.personality,).toBe("",);
+    expect(result.personality,).toBe("Minimal description",);
+    expect(result.appearance,).toBe("Minimal description",);
+    expect(result.default_outfit,).toBe("default",);
+    expect(result.outfits,).toHaveLength(1,);
     expect(result.welcome_message,).toBeUndefined();
     expect(result.mes_example,).toBeUndefined();
     expect(result.tags,).toBeUndefined();
@@ -52,6 +59,8 @@ describe("normalizeCharacterAI", () => {
     const result = normalizeCharacterAI(input,);
 
     expect(result.description,).toBe("{{char}} is a character who likes {{user}}",);
+    expect(result.personality,).toBe("{{char}} is a character who likes {{user}}",);
+    expect(result.appearance,).toBe("{{char}} is a character who likes {{user}}",);
   });
 
   it("handles definition without description", () => {
@@ -63,6 +72,15 @@ describe("normalizeCharacterAI", () => {
     const result = normalizeCharacterAI(input,);
 
     expect(result.description,).toBe("You are a character",);
+    expect(result.personality,).toBe("You are a character",);
+    expect(result.appearance,).toBe("You are a character",);
+  });
+
+  it("synthesizes a default outfit so CAI cards pass the import gate", () => {
+    const result = normalizeCharacterAI({ name: "CAI", description: "A traveler", definition: "Bold scout", },);
+    expect(result.default_outfit,).toBe("default",);
+    expect(result.outfits,).toHaveLength(1,);
+    expect(result.outfits[0]?.descriptor,).toBe("A traveler",);
   });
 
   it("handles empty input", () => {
