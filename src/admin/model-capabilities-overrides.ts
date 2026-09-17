@@ -7,8 +7,6 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
-import { resolveModelCapabilities, } from "./model-capabilities";
-
 /**
  * Set user override for a model's capabilities.
  * Only updates fields provided in the override — preserves others.
@@ -103,6 +101,11 @@ export async function getContextWindowForModel(
   providerId: string,
   modelId: string,
 ): Promise<number | null> {
-  const caps = await resolveModelCapabilities(db, providerId, modelId,);
-  return caps?.contextWindow ?? null;
+  const row = await db
+    .selectFrom("model_capabilities",)
+    .where("provider_id", "=", providerId,)
+    .where("model_id", "=", modelId,)
+    .select("context_window",)
+    .executeTakeFirst();
+  return row?.context_window ?? null;
 }

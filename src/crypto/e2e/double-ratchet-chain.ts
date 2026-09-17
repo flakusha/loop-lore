@@ -3,7 +3,7 @@
 
 // size-allow: 42
 
-import { CHAIN_KEY_INFO, KEY_LENGTH, } from "./double-ratchet";
+import { CHAIN_KEY_INFO, KEY_LENGTH, } from "./double-ratchet-constants";
 
 /**
  * Derive the 32-byte chain key from the ECDH shared secret + chain index.
