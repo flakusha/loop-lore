@@ -20,6 +20,9 @@ import type { ExtractionOpts, } from "./types";
  * @param db
  * @param opts
  * @param chain - message IDs (any order) plus the chats they span
+ * @param chain.messageIds
+ * @param chain.chatIds
+ * @returns how many memories were stored (0 when the chain yields none)
  */
 export async function extractFromBurst(
   db: Kysely<DB>,
