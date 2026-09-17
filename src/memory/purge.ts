@@ -12,7 +12,9 @@ import type { DB, } from "../db";
 import { getLogger, } from "../logger";
 import type { PurgeConfig, } from "./types";
 
-/** */
+/**
+ * @returns logger scoped to the memory-purge module
+ */
 function getLog() {
   return getLogger().child({ module: "memory-purge", },);
 }
@@ -82,6 +84,7 @@ export async function applyDecay(
  * Stale = not accessed in the last N chats.
  * @param db
  * @param config
+ * @returns how many memories were marked stale and how many were deleted
  */
 export async function purgeStaleMemories(
   db: Kysely<DB>,

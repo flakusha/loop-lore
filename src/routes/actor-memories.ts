@@ -23,6 +23,7 @@ import { jsonResponse, } from "./http-utils";
  * @param opts
  * @param opts.database
  * @param opts.config
+ * @returns Elysia plugin for the actor memories CRUD surface.
  */
 export function actorMemoriesRoutes(opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   const entityConfig = {

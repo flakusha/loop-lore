@@ -16,6 +16,7 @@ import type { EntityConfig, } from "./types";
  * @param opts.database
  * @param opts.config
  * @param prefix
+ * @returns Elysia plugin serving the entity delete endpoint.
  */
 export function removeRoutes(config: EntityConfig, opts: { database: Db; config: Config }, prefix = "/api",): Elysia {
   const { withIdPath, parentParam, } = entityPaths(config, prefix,);
