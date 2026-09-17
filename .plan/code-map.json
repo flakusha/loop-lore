@@ -1815,6 +1815,13 @@
       "source": ".plan/tickets/FEAT-055.md"
     }
   ],
+
+  "src/assistant/prompt/presets.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065-sub-llm.md"
+    }
+  ],
   "src/assistant/prompt/registry.ts": [
     {
       "kind": "epic",
@@ -2329,6 +2336,13 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-impersonation.md"
+    }
+  ],
+
+  "src/assistant/prompt/template-render.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065-sub-llm.md"
     }
   ],
   "src/assistant/prompt/templates": [
@@ -24185,6 +24199,13 @@
       "source": "docs/spec/template-system.md"
     }
   ],
+
+  "src/routes/templates/templates.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065-sub-image.md"
+    }
+  ],
   "src/routes/three-d.ts": [
     {
       "kind": "epic",
@@ -28999,6 +29020,13 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-telemetry-errors-leaks-raw-event-data.md"
+    }
+  ],
+
+  "src/validation/schemas/templates.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/FEAT-065-sub-llm.md"
     }
   ],
   "src/validation/schemas/worlds.ts": [
