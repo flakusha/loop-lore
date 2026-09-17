@@ -106,13 +106,13 @@ describe("gifPicker.searchGifs", () => {
     await gifPicker.searchGifs!.call(ctx as never,);
     expect(ctx.toasts,).toEqual([{ type: "info", message: "GIF search is not configured.", },],);
     expect(ctx._gifResults,).toEqual([],);
-  },);
+  });
   test("429 surfaces the rate-limit error toast", async () => {
     const ctx = buildCtx({ _gifQuery: "cats", },);
     handler = async () => new Response("", { status: 429, },);
     await gifPicker.searchGifs!.call(ctx as never,);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "GIF search is rate-limited. Try again shortly.", },],);
-  },);
+  });
   test("network failure surfaces the search-failed toast", async () => {
     const ctx = buildCtx({ _gifQuery: "cats", },);
     handler = async () => {
@@ -121,9 +121,8 @@ describe("gifPicker.searchGifs", () => {
     await gifPicker.searchGifs!.call(ctx as never,);
     expect(ctx.toasts,).toEqual([{ type: "error", message: "GIF search failed. Try again.", },],);
     expect(ctx._gifLoading,).toBe(false,);
-  },);
+  });
 });
-
 
 describe("gifPicker keyboard navigation", () => {
   test("arrows wrap around the result list", () => {
@@ -165,7 +164,7 @@ describe("gifPicker.insertGif", () => {
     await gifPicker.insertGif!.call(ctx as never, gif("a",),);
     expect(ctx.toasts,).toEqual([{ type: "warning", message: "Select a chat first.", },],);
     expect(calls,).toEqual([],);
-  },);
+  });
   test("failed download surfaces the download toast", async () => {
     const ctx = buildCtx({ _gifOpen: true, },);
     fetchHandler = async () => new Response("", { status: 404, },);
@@ -173,7 +172,7 @@ describe("gifPicker.insertGif", () => {
     expect(ctx.toasts,).toEqual([{ type: "error", message: "Could not download that GIF.", },],);
     expect(calls,).toEqual([],);
     expect(ctx._gifOpen,).toBe(true,);
-  },);
+  });
 
   test("failed upload surfaces the server error", async () => {
     const ctx = buildCtx({ _gifOpen: true, },);

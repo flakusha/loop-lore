@@ -3,7 +3,7 @@
 // size-allow: 320
 
 import type { DraftStore, } from "../chat-drafts";
-import type { AlpineMagicThis, GalleryAsset, PromptTemplateInfo, QuickReplyButton, } from "../types";
+import type { AlpineMagicThis, GalleryAsset, QuickReplyButton, } from "../types";
 import type * as filterState from "./filter-state";
 import type { GenerationDetail, GroupedMessage, Message, } from "./messages";
 import type * as uiState from "./ui-state";
@@ -142,12 +142,6 @@ export interface ChatCoreState
   _customInstructions: string;
   /** Auto-translate target lang code ("" = off). */
   _chatAutoTranslateLang: string;
-  _promptLoading: boolean;
-  _promptExpanded: boolean;
-  _promptOverrideDraft: string;
-  _promptOverrideSaving: boolean;
-  loadPromptTemplate(): Promise<void>;
-  savePromptOverride(): Promise<void>;
   _quickReplies: QuickReplyButton[];
   _quickRepliesDirty: boolean;
   _startupFiredChat: string | null;
@@ -291,6 +285,7 @@ export interface ChatCoreState
   toggleChatSelection(chatId: string,): void;
   batchArchive(): Promise<void>;
   batchDelete(): Promise<void>;
+  batchExport(): Promise<void>;
   loadChatKey(chatId: string,): Promise<void>;
   checkGenerationStatus(chatId: string,): Promise<void>;
   registerPanelHandlers(): void;
