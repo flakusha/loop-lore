@@ -27,7 +27,7 @@
  * @module regex/html-sanitize-streaming
  */
 
-import { sanitizeHtml, } from "./html-sanitize";
+import { sanitizeHtml, } from "./html-sanitize-core";
 
 /**
  * Names of paired dangerous HTML tags whose contents could execute or
@@ -64,8 +64,9 @@ const DANGEROUS_PAIRED_TAG_SET: ReadonlySet<string> = new Set(DANGEROUS_PAIRED_T
  * attribute values when looking for the `>` terminator. A dangerous
  * opener without a `>` (chunk split mid-tag) is treated as still
  * open — that's exactly the XSS boundary case.
- * @param html
- * @param fromIndex
+ * @param html Full accumulated HTML to scan.
+ * @param fromIndex Index to start scanning from.
+ * @returns Index of the leftmost unclosed dangerous opener, or html.length if none.
  */
 function findEarliestUnclosedDangerousOpen(html: string, fromIndex: number,): number {
   const lower = html.toLowerCase();

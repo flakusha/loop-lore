@@ -61,9 +61,7 @@
 import { deriveChainKey, } from "./double-ratchet-chain";
 import { nextRatchetStep, } from "./ratchet";
 
-export const CHAIN_KEY_INFO = "loop-lore-e2e-ephemeral-chain-v1" as const;
-export const KEY_LENGTH = 32;
-export const NONCE_LENGTH = 12;
+import { CHAIN_KEY_INFO, KEY_LENGTH, NONCE_LENGTH, } from "./double-ratchet-constants";
 
 /** */
 export interface EphemeralRatchetWirePayload {

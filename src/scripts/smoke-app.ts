@@ -26,6 +26,7 @@ const app = createApp({
   config,
 
   handleNonApiRequest: async () => new Response("Not found", { status: 404, },),
+  handleApiRequest: async () => new Response("Not found", { status: 404, },),
 },);
 console.log("createApp succeeded",);
 
