@@ -13,6 +13,7 @@ import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
 import { createEntityRoutes, type EntityConfig, } from "./entity-routes";
+import { checkOwnership, entityPaths, } from "./entity-routes/context";
 
 const mockConfig = {} as any;
 
@@ -293,5 +294,126 @@ describe("createEntityRoutes", () => {
     const app = createApp(db, "some-other-user", "admin",);
     const res = await app.handle(new Request(`http://localhost/api/actors/${actorId}/notes`,),);
     expect(res.status,).toBe(200,);
+  });
+});
+
+describe("entityPaths", () => {
+  test("uses the configured parentParam", () => {
+    const paths = entityPaths(NOTES_CONFIG,);
+    expect(paths.parentParam,).toBe("actorId",);
+    expect(paths.basePath,).toBe("/api/actors/:actorId/notes",);
+    expect(paths.withIdPath,).toBe("/api/actors/:actorId/notes/:entityId",);
+  });
+
+  test("defaults parentParam to id when omitted", () => {
+    const paths = entityPaths({ ...NOTES_CONFIG, parentParam: undefined, },);
+    expect(paths.parentParam,).toBe("id",);
+    expect(paths.withIdPath.endsWith("/:entityId",),).toBe(true,);
+    expect(paths.basePath,).toBe("/api/actors/:id/notes",);
+  });
+
+  test("threads basePathPrefix into basePath", () => {
+    const paths = entityPaths(NOTES_CONFIG, "/api/v1",);
+    expect(paths.basePath,).toBe("/api/v1/actors/:actorId/notes",);
+    expect(paths.withIdPath,).toBe("/api/v1/actors/:actorId/notes/:entityId",);
+  });
+});
+
+describe("checkOwnership", () => {
+  let db: Kysely<DB>;
+  let actorId: string;
+  const ownerId = uid();
+  const strangerId = uid();
+
+  beforeAll(async () => {
+    createLogger({ level: "error", },);
+    ({ db, } = await createTestDb());
+
+    for (const id of [ownerId, strangerId,]) {
+      await db
+        .insertInto("users",)
+        .values({
+          id,
+          username: `user-${id}`,
+          display_name: "Ownership User",
+          role: "solo",
+          status: "active",
+          settings: "{}",
+        },)
+        .execute();
+    }
+
+    actorId = uid();
+    await db
+      .insertInto("actors",)
+      .values({
+        id: actorId,
+        actor_type: "character",
+        display_name: "Owned Actor",
+        user_id: ownerId,
+        owner_id: ownerId,
+        agent_type: "ai",
+        settings: "{}",
+        import_spec: "{}",
+      },)
+      .execute();
+  },);
+
+  afterAll(async () => {
+    await db.destroy();
+  },);
+
+  test("delegates to config.checkOwnership and returns its boolean", async () => {
+    const captured: {
+      parentId: string;
+      _entityId: string | null;
+      userId: string | null;
+      userRole: string | null;
+    }[] = [];
+    const config: EntityConfig = {
+      ...NOTES_CONFIG,
+      checkOwnership: async (opts,) => {
+        captured.push({
+          parentId: opts.parentId,
+          _entityId: opts._entityId,
+          userId: opts.userId,
+          userRole: opts.userRole,
+        },);
+        return true;
+      },
+    };
+
+    const result = await checkOwnership(db, config, "parent-1", "user-1", "user",);
+
+    expect(result,).toBe(true,);
+    expect(captured,).toHaveLength(1,);
+    expect(captured[0]!._entityId,).toBeNull();
+    expect(captured[0]!.parentId,).toBe("parent-1",);
+    expect(captured[0]!.userId,).toBe("user-1",);
+    expect(captured[0]!.userRole,).toBe("user",);
+  });
+
+  test("returns false verbatim when the callback denies", async () => {
+    const config: EntityConfig = {
+      ...NOTES_CONFIG,
+      checkOwnership: async () => false,
+    };
+    expect(await checkOwnership(db, config, "parent-1", "user-1", "user",),).toBe(false,);
+  });
+
+  test("owner passes the ownership check", async () => {
+    expect(await checkOwnership(db, NOTES_CONFIG, actorId, ownerId, "user",),).toBe(true,);
+  });
+
+  test("non-owner non-admin fails the ownership check", async () => {
+    expect(await checkOwnership(db, NOTES_CONFIG, actorId, strangerId, "user",),).toBe(false,);
+  });
+
+  test("admin bypasses ownership for a foreign row", async () => {
+    expect(await checkOwnership(db, NOTES_CONFIG, actorId, strangerId, "admin",),).toBe(true,);
+  });
+
+  test("missing parent row fails the ownership check", async () => {
+    expect(await checkOwnership(db, NOTES_CONFIG, "missing-parent", ownerId, "user",),).toBe(false,);
   });
 });
