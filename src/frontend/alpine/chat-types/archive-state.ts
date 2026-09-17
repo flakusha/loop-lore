@@ -9,4 +9,5 @@ export interface ChatArchiveState {
   restoreMessage(messageId: string,): Promise<void>;
   purgeArchivedMessages(): Promise<void>;
   confirmArchive(): Promise<void>;
+  cancelArchive(): void;
 }
