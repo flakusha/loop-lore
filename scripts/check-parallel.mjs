@@ -366,6 +366,17 @@ const checks = {
     if (process.argv.includes("--fix",)) { return "fix"; }
     return "plain";
   })(),
+  // Parallelism for the heavy `bun test` gates: `--parallel=N` hands test
+  // FILES to N worker processes (per-file fresh globals; `--isolate` stays
+  // for the non-parallel path and is compatible). Without it, isolate runs
+  // are strictly sequential on one core — a 7-module scoped diff burned
+  // 20-60+ min and made `giwt finalize` unfinishable under any caller
+  // timeout (observed SIGTERM kills at 5/10/60 min, exit 143). Cap is
+  // deliberately modest: whole heavy gates peak multi-GB RSS and two
+  // co-scheduled gates OOM'd this host before; per-file workers are far
+  // smaller, but 4-way bounds peak memory on multi-worktree hosts.
+  // Override with CHECK_TEST_JOBS=N.
+  TEST_JOBS = process.env.CHECK_TEST_JOBS ?? "4",
   IS_REPORT_LS = process.argv.includes("--report-ls",);
 
 /**
@@ -392,7 +403,7 @@ function coverageCommand() {
   if (!DIFF_BASE) {
     // Plain mode: same flags and test set as `bun run test:coverage`
     // (e2e safeguard included), but into the per-RUN dir.
-    return `E2E_SAFEGUARD=1 bun test tests/e2e/ src/ --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}`;
+    return `E2E_SAFEGUARD=1 bun test --parallel=${TEST_JOBS} tests/e2e/ src/ --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}`;
   }
   if (SCOPED_COVERAGE_PATHS.length === 0) { return NOOP_OK; }
   if (SCOPED_DIFF_SRC_FILES.length === 0) { return NOOP_OK; }
@@ -402,7 +413,7 @@ function coverageCommand() {
   const filesFlag = SCOPED_DIFF_SRC_FILES.length > 0
     ? ` --files=${SCOPED_DIFF_SRC_FILES.join(",",)}`
     : "";
-  return `bun test --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
+  return `bun test --parallel=${TEST_JOBS} --isolate --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=${COVERAGE_DIR_RELATIVE} ${
     SCOPED_COVERAGE_PATHS.join(" ",)
   } && bun run scripts/check/coverage.mjs --floor=80 --coverage-dir=${COVERAGE_DIR_RELATIVE}${filesFlag}`;
 }
