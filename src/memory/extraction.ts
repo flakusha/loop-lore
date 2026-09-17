@@ -31,7 +31,9 @@ export interface MemoryProvenance {
   reviewStatus?: "pending" | "committed";
 }
 
-/** */
+/**
+ * @returns logger scoped to the memory-extraction module
+ */
 function getLog() {
   return getLogger().child({ module: "memory-extraction", },);
 }
@@ -42,6 +44,7 @@ function getLog() {
  * Returns extracted memories without storing them (caller decides when to store).
  * @param db
  * @param opts
+ * @returns extracted memories; empty when the LLM call fails
  */
 export async function extractMemories(
   db: Kysely<DB>,
@@ -90,6 +93,7 @@ export async function extractMemories(
 /**
  * Parse the LLM extraction response into structured memories.
  * @param content
+ * @returns parsed memories, or null when the payload held no array
  */
 function parseExtractionResponse(content: string,): ExtractedMemory[] | null {
   const trimmed = content.trim();
@@ -121,6 +125,7 @@ function parseExtractionResponse(content: string,): ExtractedMemory[] | null {
  * @param db
  * @param actorId
  * @param chatId
+ * @returns how many memories were inserted (deduplicated rows excluded)
  * @param memories
  * @param provenance - chain binding; defaults to single-message single_response
  */
@@ -186,6 +191,7 @@ export async function storeMemories(
  * "Immersion" silently commits — docs/frontend/chat/memories.md).
  * @param db
  * @param opts
+ * @returns "pending" when the user must review, otherwise "committed"
  */
 async function resolveReviewStatus(
   db: Kysely<DB>,

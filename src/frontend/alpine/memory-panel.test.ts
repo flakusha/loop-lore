@@ -345,3 +345,222 @@ describe("memoryPanel review actions", () => {
     expect(fetchCalls,).toEqual([],);
   });
 });
+
+describe("memoryPanel.getFilteredMemories", () => {
+  /** @param searchQuery */
+  function searchCtx(searchQuery: string,) {
+    return ctx({
+      memoryPanel: {
+        ...(memoryPanel.memoryPanel as object),
+        activeTab: "character",
+        searchQuery,
+        characterMemories: [
+          {
+            id: "m1",
+            content: "Fire Magic",
+            type: "episodic",
+            confidence: 1,
+            importance: 1,
+            keywords: ["spell",],
+            createdAt: "t",
+          },
+          {
+            id: "m2",
+            content: "Ice Wall",
+            type: "episodic",
+            confidence: 1,
+            importance: 1,
+            keywords: [],
+            createdAt: "t",
+          },
+        ],
+      },
+    },);
+  }
+
+  test("returns every tab memory for an empty query", () => {
+    const c = searchCtx("",);
+    expect(c.getFilteredMemories!().map((m,) => m.id),).toEqual(["m1", "m2",],);
+  });
+
+  test("matches content case-insensitively", () => {
+    const c = searchCtx("FIRE",);
+    expect(c.getFilteredMemories!().map((m,) => m.id),).toEqual(["m1",],);
+  });
+
+  test("matches keywords as well as content", () => {
+    const c = searchCtx("spell",);
+    expect(c.getFilteredMemories!().map((m,) => m.id),).toEqual(["m1",],);
+  });
+
+  test("returns nothing when no memory matches", () => {
+    const c = searchCtx("goblin",);
+    expect(c.getFilteredMemories!(),).toEqual([],);
+  });
+});
+
+describe("memoryPanel.deleteMemory", () => {
+  /** @param opts */
+  function deleteCtx(opts: { participants?: unknown[] } = {},) {
+    return ctx({
+      ...(opts.participants ? { _chatParticipants: opts.participants, } : {}),
+      memoryPanel: {
+        ...(memoryPanel.memoryPanel as object),
+        activeTab: "character",
+        characterMemories: [
+          {
+            id: "m1",
+            content: "c",
+            type: "episodic",
+            confidence: 1,
+            importance: 1,
+            keywords: [],
+            createdAt: "t",
+            tokenCount: 3,
+          },
+        ],
+      },
+    },);
+  }
+
+  test("DELETEs the row and drops it from the active tab", async () => {
+    mockFetch(200, {},);
+    const c = deleteCtx();
+    await c.deleteMemory!("m1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/actors/char-1/memories/m1",);
+    expect(fetchCalls[0]!.opts?.method,).toBe("DELETE",);
+    expect(c.memoryPanel!.characterMemories,).toEqual([],);
+    expect(c.memoryPanel!.tokensUsed,).toBe(0,);
+  });
+
+  test("removes the row locally when the API call throws", async () => {
+    fetchHandler = () => {
+      throw new Error("network down",);
+    };
+    const c = deleteCtx();
+    await c.deleteMemory!("m1",);
+    expect(c.memoryPanel!.characterMemories,).toEqual([],);
+  });
+
+  test("leaves the list untouched for an unknown id", async () => {
+    mockFetch(200, {},);
+    const c = deleteCtx();
+    await c.deleteMemory!("nope",);
+    expect(c.memoryPanel!.characterMemories,).toHaveLength(1,);
+    expect(c.memoryPanel!.tokensUsed,).toBe(0,);
+  });
+
+  test("skips the request without a character participant", async () => {
+    const c = deleteCtx({ participants: [], },);
+    await c.deleteMemory!("m1",);
+    expect(fetchCalls,).toEqual([],);
+  });
+});
+
+describe("memoryPanel.toggleMemoryPin", () => {
+  /** @param participants */
+  function pinCtx(participants?: unknown[],) {
+    return ctx({
+      ...(participants ? { _chatParticipants: participants, } : {}),
+      memoryPanel: {
+        ...(memoryPanel.memoryPanel as object),
+        activeTab: "character",
+        characterMemories: [
+          {
+            id: "m1",
+            content: "c",
+            type: "episodic",
+            confidence: 1,
+            importance: 1,
+            keywords: [],
+            createdAt: "t",
+            pinned: false,
+          },
+        ],
+      },
+    },);
+  }
+
+  test("PUTs the flipped pin state", async () => {
+    mockFetch(200, {},);
+    const c = pinCtx();
+    await c.toggleMemoryPin!("m1",);
+    expect(fetchCalls[0]!.url,).toBe("/api/actors/char-1/memories/m1",);
+    expect(fetchCalls[0]!.opts?.method,).toBe("PUT",);
+    expect(JSON.parse(fetchCalls[0]!.opts?.body as string,),).toEqual({ pinned: true, },);
+    expect(c.memoryPanel!.characterMemories[0]!.pinned,).toBe(true,);
+  });
+
+  test("reverts the optimistic pin when the request throws", async () => {
+    fetchHandler = () => {
+      throw new Error("network down",);
+    };
+    const c = pinCtx();
+    await c.toggleMemoryPin!("m1",);
+    expect(c.memoryPanel!.characterMemories[0]!.pinned,).toBe(false,);
+  });
+
+  test("ignores an unknown memory id", async () => {
+    mockFetch(200, {},);
+    const c = pinCtx();
+    await c.toggleMemoryPin!("nope",);
+    expect(fetchCalls,).toEqual([],);
+  });
+
+  test("skips the request without a character participant", async () => {
+    const c = pinCtx([],);
+    await c.toggleMemoryPin!("m1",);
+    expect(fetchCalls,).toEqual([],);
+  });
+});
+
+describe("memoryPanel.startEditMemory allowed path", () => {
+  test("admin seeds the edit id and content on the world tab", () => {
+    const c = ctx({
+      userRole: "admin",
+      memoryPanel: {
+        ...(memoryPanel.memoryPanel as object),
+        activeTab: "world",
+        worldMemories: [
+          { id: "w1", content: "lore", type: "fact", confidence: 1, importance: 1, keywords: [], createdAt: "t", },
+        ],
+      },
+    },);
+    c.startEditMemory!(c.memoryPanel!.worldMemories[0]!,);
+    expect(c.memoryPanel!.editingMemoryId,).toBe("w1",);
+    expect(c.memoryPanel!.editMemoryContent,).toBe("lore",);
+  });
+});
+
+describe("memoryPanel.createMemory failure paths", () => {
+  /** @returns a context with a pending draft. */
+  function draftCtx() {
+    return ctx({
+      memoryPanel: {
+        ...(memoryPanel.memoryPanel as object),
+        activeTab: "character",
+        newMemoryContent: "keep me",
+        showCreateForm: true,
+      },
+    },);
+  }
+
+  test("leaves the draft intact when the API rejects", async () => {
+    mockFetch(500, {},);
+    const c = draftCtx();
+    await c.createMemory!();
+    expect(c.memoryPanel!.newMemoryContent,).toBe("keep me",);
+    expect(c.memoryPanel!.showCreateForm,).toBe(true,);
+    expect(c.memoryPanel!.characterMemories,).toEqual([],);
+  });
+
+  test("leaves the draft intact when the request throws", async () => {
+    fetchHandler = () => {
+      throw new Error("network down",);
+    };
+    const c = draftCtx();
+    await c.createMemory!();
+    expect(c.memoryPanel!.newMemoryContent,).toBe("keep me",);
+    expect(c.memoryPanel!.characterMemories,).toEqual([],);
+  });
+});

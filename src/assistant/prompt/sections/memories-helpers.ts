@@ -87,7 +87,8 @@ export async function buildProvisionContext(
  * @param db
  * @param actorId
  * @param limit
- * @returns void
+ * @param onlyChatId - when set, only memories carried into this chat
+ * @returns the actor's committed memories, optionally limited to one chat
  */
 export async function fetchActorMemories(
   db: Kysely<DB>,
@@ -149,6 +150,7 @@ export async function fetchActorMemories(
  * @param db
  * @param actorId
  * @param chatId
+ * @returns whether the chat holds chat-scoped copies for the actor
  */
 export async function chatHasMemoryCopies(
   db: Kysely<DB>,
