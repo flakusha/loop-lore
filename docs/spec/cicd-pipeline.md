@@ -18,7 +18,7 @@ loop-lore uses GitHub Actions for continuous integration and deployment. The pip
 **Jobs (parallel):**
 
 - `quality` - TypeScript typecheck, ESLint, Stylelint, Markuplint, dprint, markdownlint
-- `test-unit` - Unit tests (`bun test src/ --concurrency=$(nproc)`)
+- `test-unit` - Unit tests (`bun test --parallel=4 src/ --isolate`); worker count adjustable via `CHECK_TEST_JOBS=N` (see scripts/check-parallel.mjs)
 - `test-e2e` - Playwright browser tests (`E2E_SAFEGUARD=1 bun run test:e2e:browser`)
 - `build` - Frontend + server build (depends on quality + unit tests)
 - `version-predict` - Shows next version on push to protected branches
