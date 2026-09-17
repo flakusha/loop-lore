@@ -8,6 +8,9 @@
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import { createTestDb, } from "../test-utils/create-test-db";
+import { insertUsers, } from "../test-utils/insert-helpers";
+import { uid, } from "../utils";
 import {
   applyImageTemplate,
   applySimpleTemplate,
@@ -20,9 +23,6 @@ import {
   serializeTemplateInput,
   updateTemplate,
 } from "./template-service";
-import { createTestDb, } from "../test-utils/create-test-db";
-import { insertUsers, } from "../test-utils/insert-helpers";
-import { uid, } from "../utils";
 
 describe("serializeTemplateInput", () => {
   test("accepts a valid image template", () => {
@@ -32,18 +32,20 @@ describe("serializeTemplateInput", () => {
       payload: { templateBody: "{{subject}}", },
     },);
     expect(res.ok,).toBe(true,);
-  },);
+  });
 
   test("rejects unknown modality, bad detail level, empty name, bad payload", () => {
     expect(serializeTemplateInput({ name: "T", modality: "smell" as never, payload: {}, },).ok,).toBe(false,);
-    expect(serializeTemplateInput(
-      { name: "T", modality: "image", detail_level: "ultra" as never, payload: { templateBody: "x", }, },
-    ).ok,).toBe(false,);
+    expect(
+      serializeTemplateInput(
+        { name: "T", modality: "image", detail_level: "ultra" as never, payload: { templateBody: "x", }, },
+      ).ok,
+    ).toBe(false,);
     expect(serializeTemplateInput({ name: "  ", modality: "image", payload: { templateBody: "x", }, },).ok,).toBe(
       false,
     );
     expect(serializeTemplateInput({ name: "T", modality: "image", payload: {}, },).ok,).toBe(false,);
-  },);
+  });
 });
 
 describe("template service CRUD", () => {
@@ -72,7 +74,7 @@ describe("template service CRUD", () => {
     expect(getOwnedTemplate(db, row.id, otherId,),).resolves.toBeNull();
 
     const listed = await listTemplates(db, userId, "image",);
-    expect(listed.some((t,) => t.id === row.id && t.isOwner,),).toBe(true,);
+    expect(listed.some((t,) => t.id === row.id && t.isOwner),).toBe(true,);
 
     const updated = await updateTemplate(db, row.id, userId, { name: "Renamed", },);
     expect(updated?.name,).toBe("Renamed",);
@@ -80,9 +82,9 @@ describe("template service CRUD", () => {
 
     expect(await updateTemplate(db, row.id, otherId, { name: "X", },),).toBeNull();
 
-    expect(await deleteTemplate(db, row.id, userId,),).toBe(true);
+    expect(await deleteTemplate(db, row.id, userId,),).toBe(true,);
     expect(await getOwnedTemplate(db, row.id, userId,),).toBeNull();
-  },);
+  });
 
   test("update rejects a payload that breaks the modality shape", async () => {
     const row = await createTemplate(db, userId, {
@@ -90,8 +92,8 @@ describe("template service CRUD", () => {
       modality: "image",
       payload: { templateBody: "x", },
     },);
-    await expect(updateTemplate(db, row.id, userId, { payload: {}, },),).rejects.toBeInstanceOf(Error);
-  },);
+    await expect(updateTemplate(db, row.id, userId, { payload: {}, },),).rejects.toBeInstanceOf(Error,);
+  });
 
   test("resolveTemplateDef serves presets then owned rows", async () => {
     const preset = await resolveTemplateDef(db, "preset-roleplay", userId,);
@@ -105,17 +107,17 @@ describe("template service CRUD", () => {
     const def = await resolveTemplateDef(db, row.id, userId,);
     expect(def?.row?.id,).toBe(row.id,);
     expect(await resolveTemplateDef(db, "tmpl-nope", userId,),).toBeNull();
-  },);
+  });
 
   test("list marks presets read-only and never lists them for image", async () => {
     const all = await listTemplates(db, userId,);
-    const presets = all.filter((t,) => t.isPreset,);
+    const presets = all.filter((t,) => t.isPreset);
     expect(presets.length,).toBeGreaterThan(0,);
-    expect(presets.every((t,) => t.modality === "llm" && !t.isOwner,),).toBe(true,);
+    expect(presets.every((t,) => t.modality === "llm" && !t.isOwner),).toBe(true,);
 
     const images = await listTemplates(db, userId, "image",);
-    expect(images.every((t,) => !t.isPreset,),).toBe(true,);
-  },);
+    expect(images.every((t,) => !t.isPreset),).toBe(true,);
+  });
 });
 
 describe("payload rendering", () => {
@@ -126,7 +128,7 @@ describe("payload rendering", () => {
     );
     expect(res.prompt,).toBe("alpha / ",);
     expect(res.negativePrompt,).toBe("blurry",);
-  },);
+  });
 
   test("applySimpleTemplate merges params then vars", () => {
     const body = applySimpleTemplate(
@@ -134,7 +136,7 @@ describe("payload rendering", () => {
       { temp: "30", },
     );
     expect(body,).toBe("calm 30",);
-  },);
+  });
 });
 
 describe("resolveLlmTemplateOverrideId", () => {
@@ -153,5 +155,5 @@ describe("resolveLlmTemplateOverrideId", () => {
   test("falls back chat → actor settings → null", async () => {
     // No chat/actor rows: null.
     expect(await resolveLlmTemplateOverrideId(db, "chat-x", "actor-x",),).toBeNull();
-  },);
+  });
 });
