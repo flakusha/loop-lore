@@ -60,16 +60,14 @@
     "check:fix": "bun run check:parallel --fix",
     "check:report-ls": "bun run check:parallel --report-ls",
     "check:full": "bun run build:frontend && bun run check",
-    "test": "bun test --isolate",
+    "test": "bun test --parallel=4 --isolate",
     "test:watch": "bun test --watch",
-    "test:coverage": "E2E_SAFEGUARD=1 bun test tests/e2e/ src/ --coverage --isolate --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage",
-    "test:unit": "bun test src/ --isolate",
-    "test:unit:parallel": "bun test src/ --concurrency=$(nproc)",
+    "test:coverage": "E2E_SAFEGUARD=1 bun test --parallel=4 tests/e2e/ src/ --coverage --isolate --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=.tmp/coverage",
+    "test:unit": "bun test --parallel=4 src/ --isolate",
     "test:e2e": "HTTP_PROXY= NO_PROXY=* bun test tests/e2e/",
     "test:e2e:browser": "for f in tests/e2e/flows/browser/*.browser.ts; do bun test --max-concurrency=1 \"./$f\" || exit 1; sleep 0.3; done",
     "test:e2e:smoke": "bun test ./tests/e2e/flows/browser/smoke.browser.ts",
     "test:all": "bun run build:frontend && bun test && bun run test:e2e:browser",
-    "test:parallel": "bun run test:unit:parallel & bun run test:e2e & wait",
     "jscpd": "jscpd src/ --min-lines 8 --min-tokens 100 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts'",
     "jscpd:full": "jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/*.test.ts,**/migrations/*,**/public/**,**/schema-manifest.ts,**/db-schemas.ts,**/insert-helpers.ts' --reporters console,json --output .tmp/jscpd",
     "size:check": "bun run scripts/check-file-size.ts",
@@ -113,7 +111,7 @@
     "bench": "bun run scripts/run-benchmarks.ts",
     "bench:native": "bun run scripts/run-benchmarks.ts blake3",
     "bench:ci": "bun run scripts/run-benchmarks.ts",
-    "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e && bun run build"
+    "ci": "bun run check:ci && bun run test:unit && E2E_SAFEGUARD=1 bun run test:e2e && bun run build"
   },
   "dependencies": {
     "@alpinejs/morph": "^3.17.2",
