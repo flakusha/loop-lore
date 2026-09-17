@@ -21259,6 +21259,12 @@
       "source": ".plan/tickets/TASK-gallery-editor-structured-ui.md"
     }
   ],
+  "src/routes/character-avatars/config.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-char-avatar-config.md"
+    }
+  ],
   "src/routes/character-avatars/select.ts": [
     {
       "kind": "ticket",
@@ -21269,6 +21275,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-avatar-regeneration-control.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-char-emotion-types-and-prompt-modifier.md"
     },
     {
       "kind": "ticket",
@@ -21349,6 +21359,24 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-char-editor-db-storage-sync.md"
+    }
+  ],
+  "src/routes/character-traits/location.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-actor-traits-location-and-world.md"
+    }
+  ],
+  "src/routes/character-traits/world.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-actor-traits-location-and-world.md"
+    }
+  ],
+  "src/routes/character-world-setup.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-char-world-setup-resolve.md"
     }
   ],
   "src/routes/characters-internal.test.ts": [
@@ -21721,6 +21749,18 @@
       "source": "docs/spec/chat-privacy.md"
     }
   ],
+  "src/routes/chats/annotations.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-chat-annotations.md"
+    }
+  ],
+  "src/routes/chats/archive-routes.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-chat-archive-unarchive.md"
+    }
+  ],
   "src/routes/chats/ask.ts": [
     {
       "kind": "ticket",
@@ -21728,6 +21768,10 @@
     }
   ],
   "src/routes/chats/auto-translate.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-chat-auto-translate.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
@@ -21796,7 +21840,17 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-chat-rename-and-migrate.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-typescript-7-migration-typecheck-failures.md"
+    }
+  ],
+  "src/routes/chats/moderation.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-chat-moderate-action.md"
     }
   ],
   "src/routes/chats/ownership.test.ts": [
@@ -21841,6 +21895,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/FEAT-world-template-chat-lifecycle.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-chat-setup-templates-edit-delete.md"
     }
   ],
   "src/routes/chats/types.ts": [
@@ -21940,6 +21998,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-crafting-attempts-ui.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-crafting-routes.md"
     }
   ],
@@ -21968,6 +22030,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-crafting-orders-ui.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-implement-trade.md"
     },
     {
@@ -21982,6 +22048,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-crafting-recipes-ui.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-wire-crafting-routes.md"
     }
   ],
@@ -21989,6 +22059,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-crafting-stations-ui.md"
     },
     {
       "kind": "ticket",
@@ -22003,6 +22077,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-crafting-stations-execution.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-crafting-stations-ui.md"
     },
     {
       "kind": "ticket",
@@ -22065,7 +22143,6 @@
       "source": "docs/spec/lore.md"
     }
   ],
-
   "src/routes/entity-routes/index.ts": [
     {
       "kind": "ticket",
@@ -23248,7 +23325,6 @@
       "source": ".plan/tickets/TASK-headers-additional-useful-response-headers.md"
     }
   ],
-
   "src/routes/middleware/version-redirect.test.ts": [
     {
       "kind": "ticket",
@@ -23359,6 +23435,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-music-links-routes-lack-chat-access-checks-cross-chat-read-w.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-chat-music-links.md"
     }
   ],
   "src/routes/notes.ts": [
@@ -24021,6 +24101,28 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-story-items-cross-world-idor-read-transfer-destroy.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-story-item-instance-transfer.md"
+    }
+  ],
+  "src/routes/story-states/npc.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-story-npc-state.md"
+    }
+  ],
+  "src/routes/story-states/world-states.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-story-world-states-crud.md"
+    }
+  ],
+  "src/routes/story-turns.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-story-turn-by-id.md"
     }
   ],
   "src/routes/swagger.ts": [
@@ -24108,6 +24210,10 @@
     }
   ],
   "src/routes/trade/index.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-trade-balance-and-execute.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-trade-history-npc-counterparty.md"
@@ -24391,6 +24497,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/BUG-fe-be-harmony-checker-blind-to-elysia-app-direct-routes-fact.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-world-lore-entries-ui.md"
     },
     {
       "kind": "spec",
