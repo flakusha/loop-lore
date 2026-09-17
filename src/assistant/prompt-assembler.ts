@@ -66,7 +66,6 @@ export class PromptAssembler {
       if (fromTemplate) { return fromTemplate; }
     }
 
-
     const sections: PromptSectionReport[] = [];
     const messages: GenerationMessage[] = [];
     let systemPrompt: string | undefined;
