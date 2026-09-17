@@ -77,6 +77,9 @@
     "changelog:check": "bun run scripts/check-changelog.ts",
     "dead:code": "knip",
     "dead:code:ci": "knip --no-progress",
+    "circular:check": "madge --circular --ts-config tsconfig.json --extensions ts,tsx --no-color src/ tests/ scripts/",
+    "circular:summary": "madge --ts-config tsconfig.json --extensions ts,tsx --summary --warning src/ tests/ scripts/",
+    "circular:graph": "madge --ts-config tsconfig.json --extensions ts,tsx --json src/ tests/ scripts/ > .tmp/madge-graph.json",
     "context:weight": "bun run scripts/check-context-weight.ts",
     "context:weight:json": "bun run scripts/check-context-weight.ts --json",
     "context:weight:strict": "bun run scripts/check-context-weight.ts --strict",
@@ -160,6 +163,7 @@
     "htmx.org": "2.0.10",
     "jscpd": "^5.2.0",
     "knip": "^6.35.1",
+    "madge": "^8.0.0",
     "markdownlint-cli2": "^0.23.2",
     "markuplint": "^5.0.0",
     "oxlint": "^1.83.0",
@@ -169,5 +173,11 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.70.0",
     "vitepress": "^1.6.4"
+  },
+  "madge": {
+    "detectiveOptions": {
+      "ts": { "skipAsyncImports": true, "skipTypeImports": true },
+      "tsx": { "skipAsyncImports": true, "skipTypeImports": true }
+    }
   }
 }
