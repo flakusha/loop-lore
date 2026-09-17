@@ -123,14 +123,19 @@ import { versionedOpenApiPlugin, } from "./openapi";
  * their routes under `/api/v1/...` instead of the default `/api/...`.
  * @param opts
  */
-export function v1Routes(opts: RegisterPluginsOpts,) {
+interface SectionOpts {
+  database: RegisterPluginsOpts["database"];
+  config: RegisterPluginsOpts["config"];
+}
+
+export function baseSurface(opts: RegisterPluginsOpts,) {
   const { database, config, } = opts;
   const handleOpts = { database, config, };
   const prefix = "/api/v1";
 
-  // NOTE: this chain is split into section consts on purpose -- one expression of
-  // this size exceeds TypeScript's instantiation depth (TS2589 in the typecheck gate).
-  const base = new Elysia({ name: "v1", },)
+  // NOTE: each surface is its own Elysia barrel on purpose -- one chain of this
+  // size exceeds TypeScript's instantiation depth (TS2589 in the typecheck gate).
+  return new Elysia({ name: "v1", },)
     // MUST be registered BEFORE the route plugins: Elysia's onAfterHandle
     // only wraps routes declared after the hook (proven by probe test).
     .onAfterHandle(
@@ -160,8 +165,13 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
     .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
     .use(messageEncryptionRoutes(handleOpts, prefix,),)
     .use(keyManagementRoutes({ database, }, prefix,),);
+}
 
-  const chatSurface = base
+export function chatsSurface(opts: SectionOpts,) {
+  const { database, config, } = opts;
+  const handleOpts = { database, config, };
+  const prefix = "/api/v1";
+  return new Elysia({ name: "v1-chats", },)
     // ── Chats & messages ─────────────────────────────────────
     .use(chatsRoutes(handleOpts, prefix,),)
     .use(messagesRoutes(handleOpts, prefix,),)
@@ -178,8 +188,13 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
     .use(invitesRoutes(handleOpts, prefix,),)
     .use(worldInvitesRoutes(handleOpts, prefix,),)
     .use(vnGenerateRoutes({ database, config, }, prefix,),);
+}
 
-  const actorSurface = chatSurface
+export function actorsSurface(opts: SectionOpts,) {
+  const { database, config, } = opts;
+  const handleOpts = { database, config, };
+  const prefix = "/api/v1";
+  return new Elysia({ name: "v1-actors", },)
     // ── Actors / characters ──────────────────────────────────
     .use(charactersRoutes(handleOpts, prefix,),)
     .use(actorE2EPubkeyRoutes(handleOpts, prefix,),)
@@ -215,8 +230,13 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
     .use(battleRoutes(handleOpts, prefix,),)
     .use(tradeRoutes(handleOpts, prefix,),)
     .use(gmNotesRoutes(handleOpts, prefix,),);
+}
 
-  const contentSurface = actorSurface
+export function contentSurface(opts: SectionOpts,) {
+  const { database, config, } = opts;
+  const handleOpts = { database, config, };
+  const prefix = "/api/v1";
+  return new Elysia({ name: "v1-content", },)
     // ── Generation & assets ──────────────────────────────────
     .use(generationRoutes({ database, config, }, prefix,),)
     .use(loraRoutes({ config, }, prefix,),)
@@ -236,8 +256,13 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
     .use(blogRoutes({ database, }, prefix,),)
     .use(analyticsRoutes({ database, }, prefix,),)
     .use(modelComparisonsRoutes({ database, }, prefix,),);
+}
 
-  return contentSurface
+export function adminSurface(opts: SectionOpts,) {
+  const { database, config, } = opts;
+  const handleOpts = { database, config, };
+  const prefix = "/api/v1";
+  return new Elysia({ name: "v1-admin", },)
     // ── Admin & plugins ──────────────────────────────────────
     .use(adminRoutes(handleOpts, prefix,),)
     .use(sdTemplatesRoutes(handleOpts, prefix,),)
@@ -252,4 +277,37 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
     .use(exportSseRoutes({ database, }, prefix,),)
     .use(worldImportRoutes(handleOpts, prefix,),)
     .use(versionedOpenApiPlugin({ version: "1", },),);
+}
+
+/**
+ * Create v1 versioned routes.
+ *
+ * Five small barrels keep each Elysia chain shallow enough for the
+ * typechecker (TS2589). Route order is unchanged from the single chain.
+ * @param opts
+ */
+export function v1Routes(opts: RegisterPluginsOpts,) {
+  return new Elysia({ name: "v1", },)
+    .onAfterHandle(
+      deprecationAfterHandle({
+        enabled: () => process.env.API_V1_DEPRECATED === "1",
+        deprecatedVersion: "1",
+        successorVersion: "2",
+        sunset: "Sat, 01 Jan 2028 00:00:00 GMT",
+      },),
+    )
+    .use(versionResolver(),)
+    .use(baseSurface(opts,),)
+    .use(chatsSurface(pickSectionOpts(opts,),),)
+    .use(actorsSurface(pickSectionOpts(opts,),),)
+    .use(contentSurface(pickSectionOpts(opts,),),)
+    .use(adminSurface(pickSectionOpts(opts,),),);
+}
+
+/**
+ * Narrow the register opts to the database/config pair the sections need.
+ * @param opts
+ */
+function pickSectionOpts(opts: RegisterPluginsOpts,): SectionOpts {
+  return { database: opts.database, config: opts.config, };
 }
