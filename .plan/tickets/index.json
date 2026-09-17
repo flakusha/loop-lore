@@ -16348,6 +16348,19 @@
     "git_issue": "e705303",
     "status": "open"
   },
+  "TASK-FRONTEND-ACTOR-TRAITS-LOCATION-AND-WORLD": {
+    "hash": "547a31a",
+    "extid": "TASK-FRONTEND-ACTOR-TRAITS-LOCATION-AND-WORLD",
+    "type": "TASK",
+    "title": "Frontend — Actor Location & World Traits CRUD",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-actor-traits-location-and-world.md",
+    "status": "open",
+    "git_issue": "547a31a"
+  },
   "TASK-FRONTEND-BUNDLE-ANALYSIS": {
     "hash": "372be44",
     "extid": "TASK-FRONTEND-BUNDLE-ANALYSIS",
@@ -16361,6 +16374,45 @@
     "git_issue": "372be44",
     "status": "open"
   },
+  "TASK-FRONTEND-CHAR-AVATAR-CONFIG": {
+    "hash": "b805c74",
+    "git_issue": "b805c74",
+    "extid": "TASK-FRONTEND-CHAR-AVATAR-CONFIG",
+    "type": "TASK",
+    "title": "Frontend — Character Avatar Config (world-scoped per-actor)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-char-avatar-config.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CHAR-EMOTION-TYPES-AND-PROMPT-MODIFIER": {
+    "hash": "5dba09b",
+    "extid": "TASK-FRONTEND-CHAR-EMOTION-TYPES-AND-PROMPT-MODIFIER",
+    "type": "TASK",
+    "title": "Frontend — Character Emotion Types & Prompt Modifier Lookup",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-character-core-system",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-char-emotion-types-and-prompt-modifier.md",
+    "status": "open",
+    "git_issue": "5dba09b"
+  },
+  "TASK-FRONTEND-CHAR-WORLD-SETUP-RESOLVE": {
+    "hash": "04c9fd8",
+    "git_issue": "04c9fd8",
+    "extid": "TASK-FRONTEND-CHAR-WORLD-SETUP-RESOLVE",
+    "type": "TASK",
+    "title": "Frontend — Character World Setup Resolution",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-character-world-setup",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-char-world-setup-resolve.md",
+    "status": "open"
+  },
   "TASK-FRONTEND-CHARACTERS-PAGE-SPEC": {
     "hash": "ec5148d",
     "extid": "TASK-FRONTEND-CHARACTERS-PAGE-SPEC",
@@ -16372,6 +16424,45 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-characters-page-spec.md",
     "git_issue": "ec5148d",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CHAT-ANNOTATIONS": {
+    "hash": "427c4e3",
+    "git_issue": "427c4e3",
+    "extid": "TASK-FRONTEND-CHAT-ANNOTATIONS",
+    "type": "TASK",
+    "title": "Frontend — Chat Annotations (notes/shadow/quest)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-annotations.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CHAT-ARCHIVE-UNARCHIVE": {
+    "hash": "d98eb8e",
+    "git_issue": "d98eb8e",
+    "extid": "TASK-FRONTEND-CHAT-ARCHIVE-UNARCHIVE",
+    "type": "TASK",
+    "title": "Frontend — Chat Unarchive",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-archive-unarchive.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CHAT-AUTO-TRANSLATE": {
+    "hash": "1c13dd0",
+    "git_issue": "1c13dd0",
+    "extid": "TASK-FRONTEND-CHAT-AUTO-TRANSLATE",
+    "type": "TASK",
+    "title": "Frontend — Chat Auto-Translate Toggle",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-auto-translate.md",
     "status": "open"
   },
   "TASK-FRONTEND-CHAT-COMMANDS-EXTRAS-SPEC": {
@@ -16426,6 +16517,54 @@
     "git_issue": "710b94e",
     "status": "open"
   },
+  "TASK-FRONTEND-CHAT-MODERATE-ACTION": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-MODERATE-ACTION",
+    "type": "TASK",
+    "title": "Frontend — Chat Moderate Action",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-chat-lifecycle-moderation",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-moderate-action.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CHAT-MUSIC-LINKS": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-MUSIC-LINKS",
+    "type": "TASK",
+    "title": "Frontend — Chat Music Links",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-ambient-music-sfx",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-music-links.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CHAT-RENAME-AND-MIGRATE": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-RENAME-AND-MIGRATE",
+    "type": "TASK",
+    "title": "Frontend — Chat Rename & Migrate Actions",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-rename-and-migrate.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CHAT-SETUP-TEMPLATES-EDIT-DELETE": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CHAT-SETUP-TEMPLATES-EDIT-DELETE",
+    "type": "TASK",
+    "title": "Frontend — Chat Setup Templates (edit/delete)",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-chat-product-features",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-chat-setup-templates-edit-delete.md",
+    "status": "open"
+  },
   "TASK-FRONTEND-COMPRESSION": {
     "hash": "pending",
     "extid": "TASK-FRONTEND-COMPRESSION",
@@ -16437,6 +16576,54 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-compression.md",
     "status": "undefined"
+  },
+  "TASK-FRONTEND-CRAFTING-ATTEMPTS-UI": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CRAFTING-ATTEMPTS-UI",
+    "type": "TASK",
+    "title": "Frontend — Crafting Attempts UI (execute + history)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-crafting-professions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-crafting-attempts-ui.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CRAFTING-ORDERS-UI": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CRAFTING-ORDERS-UI",
+    "type": "TASK",
+    "title": "Frontend — Crafting Orders UI",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-crafting-professions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-crafting-orders-ui.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CRAFTING-RECIPES-UI": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CRAFTING-RECIPES-UI",
+    "type": "TASK",
+    "title": "Frontend — Crafting Recipes UI",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-crafting-professions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-crafting-recipes-ui.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-CRAFTING-STATIONS-UI": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-CRAFTING-STATIONS-UI",
+    "type": "TASK",
+    "title": "Frontend — Crafting Stations UI (defs + instances)",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-crafting-professions",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-crafting-stations-ui.md",
+    "status": "open"
   },
   "TASK-FRONTEND-DEDUP-CHUNKS": {
     "hash": "pending",
@@ -16527,6 +16714,18 @@
     "source": ".plan/tickets/TASK-frontend-size-gate.md",
     "status": "undefined"
   },
+  "TASK-FRONTEND-STORY-ITEM-INSTANCE-TRANSFER": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-STORY-ITEM-INSTANCE-TRANSFER",
+    "type": "TASK",
+    "title": "Frontend — Story Item Instance Transfer",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-item-systems-unification",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-story-item-instance-transfer.md",
+    "status": "open"
+  },
   "TASK-FRONTEND-STORY-MODE-UI": {
     "hash": "96f793c",
     "extid": "TASK-FRONTEND-STORY-MODE-UI",
@@ -16540,6 +16739,42 @@
     "git_issue": "96f793c",
     "status": "in_progress"
   },
+  "TASK-FRONTEND-STORY-NPC-STATE": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-STORY-NPC-STATE",
+    "type": "TASK",
+    "title": "Frontend — Story NPC State GET/PUT",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-story-mode-ui",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-story-npc-state.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-STORY-TURN-BY-ID": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-STORY-TURN-BY-ID",
+    "type": "TASK",
+    "title": "Frontend — Story Turn By-ID Lookup",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-story-mode-ui",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-story-turn-by-id.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-STORY-WORLD-STATES-CRUD": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-STORY-WORLD-STATES-CRUD",
+    "type": "TASK",
+    "title": "Frontend — Story World States CRUD",
+    "label": "task",
+    "priority": "P2 — Medium",
+    "epic": "epic-story-mode-ui",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-story-world-states-crud.md",
+    "status": "open"
+  },
   "TASK-FRONTEND-TOUCH-GESTURES": {
     "hash": "915842dc",
     "extid": "TASK-FRONTEND-TOUCH-GESTURES",
@@ -16550,6 +16785,18 @@
     "epic": "epic-accessibility-input (Phase 2 Mobile Support, 🟡)",
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-touch-gestures.md",
+    "status": "open"
+  },
+  "TASK-FRONTEND-TRADE-BALANCE-AND-EXECUTE": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-TRADE-BALANCE-AND-EXECUTE",
+    "type": "TASK",
+    "title": "Frontend — Trade Balance + Execute",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-economy-trading",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-trade-balance-and-execute.md",
     "status": "open"
   },
   "TASK-FRONTEND-TREE-SHAKE": {
@@ -16563,6 +16810,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-frontend-tree-shake.md",
     "status": "undefined"
+  },
+  "TASK-FRONTEND-WORLD-LORE-ENTRIES-UI": {
+    "hash": "pending",
+    "extid": "TASK-FRONTEND-WORLD-LORE-ENTRIES-UI",
+    "type": "TASK",
+    "title": "Frontend — World Lore Entries CRUD",
+    "label": "task",
+    "priority": "P1 — High",
+    "epic": "epic-world-locations",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-world-lore-entries-ui.md",
+    "status": "open"
   },
   "TASK-FTS5-CROSS-SESSION-RECALL-AND-SUMMARIZATION-FOR-RAG-UNIFIED-": {
     "hash": "543eab8",
