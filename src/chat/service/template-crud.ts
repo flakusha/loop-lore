@@ -12,7 +12,7 @@ import type { Kysely, } from "kysely";
 import type { ChatRenderingOverride, } from "../../db/enums-core/chat";
 import type { DB, } from "../../db/schema";
 import { jsonStringifyOr, safeJsonParse, } from "../../utils";
-import { getChatSetupTemplate, } from "./templates";
+import { getChatSetupTemplate, } from "./template-queries";
 import type { TemplateMutationResult, } from "./types";
 
 /**

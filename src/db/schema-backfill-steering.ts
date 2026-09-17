@@ -13,7 +13,7 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import { getLogger, } from "../logger";
 import type { DB, } from "./schema";
-import { tableSql, } from "./schema-backfill";
+import { tableSql, } from "./schema-backfill-queries";
 import { recordSchemaVersion, } from "./schema-version";
 
 /**

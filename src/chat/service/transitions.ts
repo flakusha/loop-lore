@@ -16,7 +16,7 @@ import { carryPins, } from "./carry-pins";
 import { carryState, } from "./carry-state";
 import { carryWorldState, } from "./carry-world-state";
 import { recordLocationChange, } from "./location-events";
-import { getChatSetupTemplate, } from "./templates";
+import { getChatSetupTemplate, } from "./template-queries";
 import type { MigrateChatParams, MigrateChatResult, } from "./types";
 
 /**
