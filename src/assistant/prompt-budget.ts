@@ -59,7 +59,11 @@ export function dropOverBudgetSections(
   sections: PromptSectionReport[],
   tokenBudget: number,
   totalTokens: number,
-  priorityOf: (name: string,) => number = (name,) => PRIORITY[name as keyof typeof PRIORITY] ?? 99,
+  // `?? 0`, not a high default: unknown section names fail the `> 0` gate
+  // and stay immune from dropping (contract: prompt-budget.test.ts). The
+  // template-library refactor briefly defaulted to 99, which made any
+  // unknown/renamed section name drop FIRST.
+  priorityOf: (name: string,) => number = (name,) => PRIORITY[name as keyof typeof PRIORITY] ?? 0,
 ): number {
   const ordered: (PromptSectionReport & { index: number })[] = [];
   for (const [si, s,] of sections.entries()) {
