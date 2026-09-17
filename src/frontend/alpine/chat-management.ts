@@ -217,7 +217,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         await this.loadChats();
         this.$dispatch?.("show-toast", { type: "success", message: t("toasts.chatUnarchived",), },);
       } else {
-        const err = await res.json().catch(() => ({} as { error?: string }),) as { error?: string };
+        const err = await res.json().catch(() => ({} as { error?: string })) as { error?: string };
         this.$dispatch?.("show-toast", { type: "error", message: err.error || t("toasts.failedUnarchiveChat",), },);
       }
     } catch {

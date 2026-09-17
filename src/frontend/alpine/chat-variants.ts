@@ -25,7 +25,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       const res = await apiFetch(`/api/messages/${messageId}/variants`,);
       if (res.ok) {
         const data = await res.json() as { id: string; content: string }[];
-        this._variants = Array.isArray(data) ? data : [];
+        this._variants = Array.isArray(data,) ? data : [];
       } else {
         this.$dispatch?.("show-toast", { type: "error", message: t("toasts.failedSwitchVariant",), },);
         this._variantsOpen = false;
