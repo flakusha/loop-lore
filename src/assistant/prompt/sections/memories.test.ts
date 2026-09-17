@@ -21,6 +21,7 @@ import {
   insertActors,
   insertChatParticipants,
   insertChats,
+  insertMessages,
   insertUsers,
 } from "../../../test-utils/insert-helpers";
 import { describeOrSkip, ISOLATED, } from "../../../test-utils/isolate-only";
@@ -196,10 +197,23 @@ describeOrSkip("memorySection — semantic recall outage degrades gracefully", (
       await insertChatParticipants(db, chat.id, actorId,);
 
       // A public character-scope memory so the section has material to rank.
+
       await insertActorMemories(db, actorId, "The island's southern shore is calm.", {
         scope: "character",
         privacy: "public",
       },);
+
+      // Pinned anchor: `shouldInjectMemory` bypasses the probabilistic injection roll,
+      // so the section's non-empty output does not depend on Math.random.
+      await insertActorMemories(db, actorId, "The lighthouse keeper knows every reef.", {
+        scope: "character",
+        privacy: "public",
+        pinned: "pinned",
+      },);
+
+      // A message puts the throwing `semanticRecall` mock on the hot path: semantic
+      // re-ranking only runs when the chat has recent messages.
+      await insertMessages(db, chat.id, actorId, "user", "Which way to the calm shore?",);
 
       const ctx: AssembleContext = {
         db,
