@@ -1,7 +1,8 @@
 import { TypeCompiler, } from "@sinclair/typebox/compiler";
 import { describe, expect, test, } from "bun:test";
 import { Elysia, t, } from "elysia";
-import { onValidationError, } from "./middleware";
+import { ForbiddenError, NotFoundError, } from "../routes/http-utils";
+import { forbidden, notFound, onValidationError, unauthorized, } from "./middleware";
 import {
   ActorCreateBody,
   AdminRoleUpdateBody,
@@ -343,6 +344,119 @@ describe("onValidationError", () => {
     expect(body.error,).toBe("Internal server error",);
     expect(body.error,).not.toContain(SECRET_PATH,);
     expect(body.error,).not.toContain("SQLITE_CANTOPEN",);
+  });
+});
+
+// ── onValidationError direct-call branches ──────────────────
+
+describe("onValidationError direct branches", () => {
+  test("maps the NOT_FOUND code to a 404 envelope", () => {
+    const set: { status?: number } = { status: undefined, };
+    const body = onValidationError("NOT_FOUND", new Error("nope",), set,);
+    expect(set.status,).toBe(404,);
+    expect(body.code,).toBe("NOT_FOUND",);
+    expect(body.error,).toBe("nope",);
+    expect((body.meta as { api_version: string }).api_version,).toBe("1",);
+  });
+
+  test("maps the NOT_FOUND code to a generic message when err.message is absent", () => {
+    const set: { status?: number } = { status: undefined, };
+    const body = onValidationError("NOT_FOUND", {} as Error, set,);
+    expect(set.status,).toBe(404,);
+    expect(body.error,).toBe("Not found",);
+  });
+
+  test("maps the PARSE code to a 400 PARSE_ERROR envelope", () => {
+    const set: { status?: number } = { status: undefined, };
+    const body = onValidationError("PARSE", new Error("bad body",), set,);
+    expect(set.status,).toBe(400,);
+    expect(body.code,).toBe("PARSE_ERROR",);
+    expect(body.error,).toBe("bad body",);
+    expect((body.meta as { api_version: string }).api_version,).toBe("1",);
+  });
+
+  test("falls back on a generic PARSE message when err.message is missing", () => {
+    const set: { status?: number } = { status: undefined, };
+    const body = onValidationError("PARSE", {} as Error, set,);
+    expect(set.status,).toBe(400,);
+    expect(body.code,).toBe("PARSE_ERROR",);
+    expect(body.error,).toBe("Failed to parse request body",);
+  });
+
+  test("maps a service-layer NotFoundError to 404 NOT_FOUND", () => {
+    const set: { status?: number } = { status: undefined, };
+    // Assert forwarding, not the class's own message format: pinning the
+    // literal would break on an unrelated status.ts wording change.
+    const err = new NotFoundError("World", "missing",);
+    const body = onValidationError("UNKNOWN", err, set,);
+    expect(set.status,).toBe(404,);
+    expect(body.code,).toBe("NOT_FOUND",);
+    expect(body.error,).toBe(err.message,);
+    expect(body.error,).toContain("missing",);
+    expect((body.meta as { api_version: string }).api_version,).toBe("1",);
+  });
+
+  test("maps a service-layer ForbiddenError to 403 FORBIDDEN", () => {
+    const set: { status?: number } = { status: undefined, };
+    const body = onValidationError("UNKNOWN", new ForbiddenError("nope",), set,);
+    expect(set.status,).toBe(403,);
+    expect(body.code,).toBe("FORBIDDEN",);
+    expect(body.error,).toBe("nope",);
+  });
+});
+
+// ── Guard response helpers ─────────────────────────────────
+
+describe("guard response helpers", () => {
+  test("unauthorized() returns a 401 UNAUTHORIZED envelope", async () => {
+    const res = unauthorized();
+    expect(res.status,).toBe(401,);
+    const body = (await res.json()) as { error: string; code: string; meta: { api_version: string } };
+    expect(body.error,).toBe("Unauthorized",);
+    expect(body.code,).toBe("UNAUTHORIZED",);
+    expect(body.meta.api_version,).toBe("1",);
+  });
+
+  test("unauthorized() echoes a custom message", async () => {
+    const res = unauthorized("token expired",);
+    expect(res.status,).toBe(401,);
+    const body = (await res.json()) as { error: string; code: string };
+    expect(body.error,).toBe("token expired",);
+    expect(body.code,).toBe("UNAUTHORIZED",);
+  });
+
+  test("forbidden() returns a 403 FORBIDDEN envelope", async () => {
+    const res = forbidden();
+    expect(res.status,).toBe(403,);
+    const body = (await res.json()) as { error: string; code: string; meta: { api_version: string } };
+    expect(body.error,).toBe("Forbidden",);
+    expect(body.code,).toBe("FORBIDDEN",);
+    expect(body.meta.api_version,).toBe("1",);
+  });
+
+  test("forbidden() echoes a custom message", async () => {
+    const res = forbidden("not your chat",);
+    expect(res.status,).toBe(403,);
+    const body = (await res.json()) as { error: string; code: string };
+    expect(body.error,).toBe("not your chat",);
+    expect(body.code,).toBe("FORBIDDEN",);
+  });
+
+  test("notFound() returns a 404 NOT_FOUND envelope", async () => {
+    const res = notFound();
+    expect(res.status,).toBe(404,);
+    const body = (await res.json()) as { error: string; code: string; meta: { api_version: string } };
+    expect(body.error,).toBe("Not found",);
+    expect(body.code,).toBe("NOT_FOUND",);
+    expect(body.meta.api_version,).toBe("1",);
+  });
+
+  test("notFound() echoes a custom message", async () => {
+    const res = notFound("gone",);
+    expect(res.status,).toBe(404,);
+    const body = (await res.json()) as { error: string; code: string };
+    expect(body.error,).toBe("gone",);
+    expect(body.code,).toBe("NOT_FOUND",);
   });
 });
 
