@@ -10,9 +10,9 @@
  * image templates render their {{variable}} skeleton; video/audio render
  * their body with variable substitution. Import/export live in transfer.ts.
  */
+import { Type, } from "@sinclair/typebox";
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import { Type, } from "@sinclair/typebox";
 import { PromptAssembler, } from "../../assistant/prompt-assembler";
 import type { DB, } from "../../db/schema";
 import {
@@ -21,8 +21,8 @@ import {
   resolveTemplateDef,
 } from "../../generation/template-service";
 import {
-  parseTemplatePayload,
   type ImageTemplatePayload,
+  parseTemplatePayload,
   type SimpleTemplatePayload,
 } from "../../generation/template-types";
 import { notFound, } from "../../validation/middleware";
@@ -48,7 +48,7 @@ export function templateApplyRoutes(
     .post(`${prefix}/templates/:id/apply`, async (ctx,) => {
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
-      const { id } = ctx.params;
+      const { id, } = ctx.params;
       // Elysia cannot statically infer bodies through Type.Unknown payload
       // schemas — assert the validated shape once at the boundary.
       const body = ctx.body as TemplateApplyBodyT;

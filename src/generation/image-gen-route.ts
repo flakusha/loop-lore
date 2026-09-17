@@ -9,15 +9,15 @@ import { loadConfig, } from "../config/load";
 import { pickSdProvider, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
-import {
-  applyImageTemplate,
-  getOwnedTemplate,
-} from "./template-service";
-import { parseTemplatePayload, type ImageTemplatePayload, } from "./template-types";
 import { forbiddenResponse, } from "../routes/http-utils";
 import { uid, } from "../utils";
 import { generateImages, } from "./image-engine";
 import type { LoRAConfig, } from "./lora/types";
+import {
+  applyImageTemplate,
+  getOwnedTemplate,
+} from "./template-service";
+import { type ImageTemplatePayload, parseTemplatePayload, } from "./template-types";
 
 interface ImageGenBody {
   prompt?: string;

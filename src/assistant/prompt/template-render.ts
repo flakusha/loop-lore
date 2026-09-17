@@ -15,13 +15,16 @@
  * per-section priorities; ordering follows the template's section order
  * (system-role messages are still front-loaded by reorderPromptMessages).
  */
-import { defaultTokenCount, } from "../../generation/context-window-config";
-import type { GenerationMessage, } from "../../generation/gen-types-options";
-import type { LlmTemplatePayload, } from "../../generation/template-types";
-import { parseTemplatePayload, type LlmTemplateSection, } from "../../generation/template-types";
-import { resolveTemplateDef, } from "../../generation/template-service";
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { defaultTokenCount, } from "../../generation/context-window-config";
+import type { GenerationMessage, } from "../../generation/gen-types-options";
+import { resolveTemplateDef, } from "../../generation/template-service";
+import {
+  type LlmTemplatePayload,
+  type LlmTemplateSection,
+  parseTemplatePayload,
+} from "../../generation/template-types";
 import { dropOverBudgetSections, reorderPromptMessages, } from "../prompt-budget";
 import { PROMPT_SECTIONS, } from "./registry";
 import type { AssembleContext, AssembledPrompt, PromptSectionReport, } from "./types";
