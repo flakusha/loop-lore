@@ -64,13 +64,20 @@ export const memoryPanelActions: Partial<ChatState> & ThisType<ChatState> = {
     el.classList.add("search-match-active",);
   },
 
-  /** True when the active chat carries chat-scoped memory copies. */
+  /**
+   * True when the active chat carries chat-scoped memory copies.
+   * @returns whether any loaded memory is a copy for the active chat
+   */
   _chatHasCopies(): boolean {
     if (!this.activeChat) { return false; }
     return this.memoryPanel.characterMemories.some((m,) => m.sourceChatId === this.activeChat);
   },
 
-  /** Whether a memory is injected into the active chat's context. */
+  /**
+   * Whether a memory is injected into the active chat's context.
+   * @param mem
+   * @returns whether the memory is part of the active chat's context
+   */
   _isInChat(mem: MemoryEntry,): boolean {
     if (!this.activeChat) { return true; }
     return this._chatHasCopies() ? mem.sourceChatId === this.activeChat : true;
