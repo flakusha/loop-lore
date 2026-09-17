@@ -128,120 +128,128 @@ export function v1Routes(opts: RegisterPluginsOpts,) {
   const handleOpts = { database, config, };
   const prefix = "/api/v1";
 
-  return (
-    new Elysia({ name: "v1", },)
-      // MUST be registered BEFORE the route plugins: Elysia's onAfterHandle
-      // only wraps routes declared after the hook (proven by probe test).
-      .onAfterHandle(
-        deprecationAfterHandle({
-          enabled: () => process.env.API_V1_DEPRECATED === "1",
-          deprecatedVersion: "1",
-          successorVersion: "2",
-          sunset: "Sat, 01 Jan 2028 00:00:00 GMT",
-        },),
-      )
-      .use(versionResolver(),)
-      // ── Public surfaces ──────────────────────────────────────
-      .use(healthRoutes(handleOpts, prefix,),)
-      .use(authPublicRoutes(handleOpts, prefix,),)
-      .use(i18nRoutes(handleOpts, prefix,),)
-      .use(telemetryRoutes(handleOpts, prefix,),)
-      .use(frontendLogsRoutes(prefix,),)
-      .use(localInferenceRoutes(undefined, prefix,),)
-      .use(ageGateRoutes({ database, }, prefix,),)
-      // ── Auth-protected core ──────────────────────────────────
-      .use(authProtectedRoutes({ database, }, prefix,),)
-      .use(usersRoutes(handleOpts, prefix,),)
-      .use(sessionsRoutes(handleOpts, prefix,),)
-      .use(switchSessionRoutes(handleOpts, prefix,),)
-      .use(apiKeysRoutes(handleOpts, prefix,),)
-      .use(settingsRoutes(handleOpts, prefix,),)
-      .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
-      .use(messageEncryptionRoutes(handleOpts, prefix,),)
-      .use(keyManagementRoutes({ database, }, prefix,),)
-      // ── Chats & messages ─────────────────────────────────────
-      .use(chatsRoutes(handleOpts, prefix,),)
-      .use(messagesRoutes(handleOpts, prefix,),)
-      .use(messageReactionsRoutes(handleOpts, prefix,),)
-      .use(messageSearchRoutes(handleOpts, prefix,),)
-      .use(messageSeenRoutes({ database, }, prefix,),)
-      .use(musicLinksRoutes(handleOpts, prefix,),)
-      .use(chatSearchRoutes(handleOpts, prefix,),)
-      .use(chatSectionsRoutes(handleOpts, prefix,),)
-      .use(chatBackgroundsRoutes(handleOpts, prefix,),)
-      .use(chatPinRoutes(handleOpts, prefix,),)
-      .use(chatExportRoutes(handleOpts, prefix,),)
-      .use(chatContextRoutes(handleOpts, prefix,),)
-      .use(invitesRoutes(handleOpts, prefix,),)
-      .use(worldInvitesRoutes(handleOpts, prefix,),)
-      .use(vnGenerateRoutes({ database, config, }, prefix,),)
-      // ── Actors / characters ──────────────────────────────────
-      .use(charactersRoutes(handleOpts, prefix,),)
-      .use(actorE2EPubkeyRoutes(handleOpts, prefix,),)
-      .use(actorItemsRoutes(handleOpts, prefix,),)
-      .use(actorMemoriesRoutes(handleOpts, prefix,),)
-      .use(actorLoreEntriesRoutes(handleOpts, prefix,),)
-      .use(actorNotesRoutes(handleOpts, prefix,),)
-      .use(characterTraitsRoutes(handleOpts, prefix,),)
-      .use(characterWorldSetupRoutes(handleOpts, prefix,),)
-      .use(characterInternalTraitsRoutes(handleOpts, prefix,),)
-      .use(characterGrowthRoutes(handleOpts, prefix,),)
-      .use(characterMoodRoutes(handleOpts, prefix,),)
-      .use(characterRelationshipsRoutes(handleOpts, prefix,),)
-      .use(characterAvatarsRoutes(handleOpts, prefix,),)
-      .use(characterEmotionsRoutes(handleOpts, prefix,),)
-      .use(characterEmotionAvatarsRoutes(handleOpts, prefix,),)
-      .use(characterAvailabilityRoutes(handleOpts, prefix,),)
-      .use(characterLicensingRoutes(handleOpts, prefix,),)
-      .use(characterIoRoutes(handleOpts, prefix,),)
-      // ── Worlds & RPG ─────────────────────────────────────────
-      .use(worldsRoutes(handleOpts, prefix,),)
-      .use(worldLoreEntriesRoutes(handleOpts, prefix,),)
-      .use(questsRoutes({ database, }, prefix,),)
-      .use(storyTurnsRoutes(handleOpts, prefix,),)
-      .use(storyStatesRoutes({ database, }, prefix,),)
-      .use(storyItemsRoutes({ database, }, prefix,),)
-      .use(craftingRecipeRoutes(handleOpts, prefix,),)
-      .use(craftingStationRoutes(handleOpts, prefix,),)
-      .use(craftingAttemptRoutes(handleOpts, prefix,),)
-      .use(craftingOrderRoutes(handleOpts, prefix,),)
-      .use(npcMovementRoutes(handleOpts, prefix,),)
-      .use(rpgRoutes(handleOpts, prefix,),)
-      .use(battleRoutes(handleOpts, prefix,),)
-      .use(tradeRoutes(handleOpts, prefix,),)
-      .use(gmNotesRoutes(handleOpts, prefix,),)
-      // ── Generation & assets ──────────────────────────────────
-      .use(generationRoutes({ database, config, }, prefix,),)
-      .use(loraRoutes({ config, }, prefix,),)
-      .use(assetRoutes({ database, config, }, prefix,),)
-      .use(assetSearchRoutes(handleOpts, prefix,),)
-      .use(assetTagRoutes({ database, }, prefix,),)
-      .use(gifSearchRoutes(handleOpts, prefix,),)
-      .use(imageEditRoutes({ database, }, prefix,),)
-      // ── Social / content ─────────────────────────────────────
-      .use(personaRoutes({ database, }, prefix,),)
-      .use(nsfwRoutes(handleOpts, prefix,),)
-      .use(nsfwModerationRoutes(handleOpts, prefix,),)
-      .use(activityRoutes(handleOpts, prefix,),)
-      .use(activityStreamRoutes(handleOpts, prefix,),)
-      .use(notificationsRoutes(handleOpts, prefix,),)
-      .use(proactiveMessagingRoutes(handleOpts, prefix,),)
-      .use(blogRoutes({ database, }, prefix,),)
-      .use(analyticsRoutes({ database, }, prefix,),)
-      .use(modelComparisonsRoutes({ database, }, prefix,),)
-      // ── Admin & plugins ──────────────────────────────────────
-      .use(adminRoutes(handleOpts, prefix,),)
-      .use(sdTemplatesRoutes(handleOpts, prefix,),)
-      .use(pluginRoutes(handleOpts, prefix,),)
-      .use(adminCharacterOverridesRoutes(handleOpts, prefix,),)
-      .use(adminTemplateRoutes({ database, }, prefix,),)
-      .use(adminNsfwRoutes({ database, }, prefix,),)
-      .use(commandsRoutes({ prefix, },),)
-      // ── Import / export ──────────────────────────────────────
-      .use(importRoutes(handleOpts, prefix,),)
-      .use(exportRoutes({ database, }, prefix,),)
-      .use(exportSseRoutes({ database, }, prefix,),)
-      .use(worldImportRoutes(handleOpts, prefix,),)
-      .use(versionedOpenApiPlugin({ version: "1", },),)
-  );
+  // NOTE: this chain is split into section consts on purpose -- one expression of
+  // this size exceeds TypeScript's instantiation depth (TS2589 in the typecheck gate).
+  const base = new Elysia({ name: "v1", },)
+    // MUST be registered BEFORE the route plugins: Elysia's onAfterHandle
+    // only wraps routes declared after the hook (proven by probe test).
+    .onAfterHandle(
+      deprecationAfterHandle({
+        enabled: () => process.env.API_V1_DEPRECATED === "1",
+        deprecatedVersion: "1",
+        successorVersion: "2",
+        sunset: "Sat, 01 Jan 2028 00:00:00 GMT",
+      },),
+    )
+    .use(versionResolver(),)
+    // ── Public surfaces ──────────────────────────────────────
+    .use(healthRoutes(handleOpts, prefix,),)
+    .use(authPublicRoutes(handleOpts, prefix,),)
+    .use(i18nRoutes(handleOpts, prefix,),)
+    .use(telemetryRoutes(handleOpts, prefix,),)
+    .use(frontendLogsRoutes(prefix,),)
+    .use(localInferenceRoutes(undefined, prefix,),)
+    .use(ageGateRoutes({ database, }, prefix,),)
+    // ── Auth-protected core ──────────────────────────────────
+    .use(authProtectedRoutes({ database, }, prefix,),)
+    .use(usersRoutes(handleOpts, prefix,),)
+    .use(sessionsRoutes(handleOpts, prefix,),)
+    .use(switchSessionRoutes(handleOpts, prefix,),)
+    .use(apiKeysRoutes(handleOpts, prefix,),)
+    .use(settingsRoutes(handleOpts, prefix,),)
+    .use(requestStatusRoutes({ asyncStore: opts.asyncStore, }, prefix,),)
+    .use(messageEncryptionRoutes(handleOpts, prefix,),)
+    .use(keyManagementRoutes({ database, }, prefix,),);
+
+  const chatSurface = base
+    // ── Chats & messages ─────────────────────────────────────
+    .use(chatsRoutes(handleOpts, prefix,),)
+    .use(messagesRoutes(handleOpts, prefix,),)
+    .use(messageReactionsRoutes(handleOpts, prefix,),)
+    .use(messageSearchRoutes(handleOpts, prefix,),)
+    .use(messageSeenRoutes({ database, }, prefix,),)
+    .use(musicLinksRoutes(handleOpts, prefix,),)
+    .use(chatSearchRoutes(handleOpts, prefix,),)
+    .use(chatSectionsRoutes(handleOpts, prefix,),)
+    .use(chatBackgroundsRoutes(handleOpts, prefix,),)
+    .use(chatPinRoutes(handleOpts, prefix,),)
+    .use(chatExportRoutes(handleOpts, prefix,),)
+    .use(chatContextRoutes(handleOpts, prefix,),)
+    .use(invitesRoutes(handleOpts, prefix,),)
+    .use(worldInvitesRoutes(handleOpts, prefix,),)
+    .use(vnGenerateRoutes({ database, config, }, prefix,),);
+
+  const actorSurface = chatSurface
+    // ── Actors / characters ──────────────────────────────────
+    .use(charactersRoutes(handleOpts, prefix,),)
+    .use(actorE2EPubkeyRoutes(handleOpts, prefix,),)
+    .use(actorItemsRoutes(handleOpts, prefix,),)
+    .use(actorMemoriesRoutes(handleOpts, prefix,),)
+    .use(actorLoreEntriesRoutes(handleOpts, prefix,),)
+    .use(actorNotesRoutes(handleOpts, prefix,),)
+    .use(characterTraitsRoutes(handleOpts, prefix,),)
+    .use(characterWorldSetupRoutes(handleOpts, prefix,),)
+    .use(characterInternalTraitsRoutes(handleOpts, prefix,),)
+    .use(characterGrowthRoutes(handleOpts, prefix,),)
+    .use(characterMoodRoutes(handleOpts, prefix,),)
+    .use(characterRelationshipsRoutes(handleOpts, prefix,),)
+    .use(characterAvatarsRoutes(handleOpts, prefix,),)
+    .use(characterEmotionsRoutes(handleOpts, prefix,),)
+    .use(characterEmotionAvatarsRoutes(handleOpts, prefix,),)
+    .use(characterAvailabilityRoutes(handleOpts, prefix,),)
+    .use(characterLicensingRoutes(handleOpts, prefix,),)
+    .use(characterIoRoutes(handleOpts, prefix,),)
+    // ── Worlds & RPG ─────────────────────────────────────────
+    .use(worldsRoutes(handleOpts, prefix,),)
+    .use(worldLoreEntriesRoutes(handleOpts, prefix,),)
+    .use(questsRoutes({ database, }, prefix,),)
+    .use(storyTurnsRoutes(handleOpts, prefix,),)
+    .use(storyStatesRoutes({ database, }, prefix,),)
+    .use(storyItemsRoutes({ database, }, prefix,),)
+    .use(craftingRecipeRoutes(handleOpts, prefix,),)
+    .use(craftingStationRoutes(handleOpts, prefix,),)
+    .use(craftingAttemptRoutes(handleOpts, prefix,),)
+    .use(craftingOrderRoutes(handleOpts, prefix,),)
+    .use(npcMovementRoutes(handleOpts, prefix,),)
+    .use(rpgRoutes(handleOpts, prefix,),)
+    .use(battleRoutes(handleOpts, prefix,),)
+    .use(tradeRoutes(handleOpts, prefix,),)
+    .use(gmNotesRoutes(handleOpts, prefix,),);
+
+  const contentSurface = actorSurface
+    // ── Generation & assets ──────────────────────────────────
+    .use(generationRoutes({ database, config, }, prefix,),)
+    .use(loraRoutes({ config, }, prefix,),)
+    .use(assetRoutes({ database, config, }, prefix,),)
+    .use(assetSearchRoutes(handleOpts, prefix,),)
+    .use(assetTagRoutes({ database, }, prefix,),)
+    .use(gifSearchRoutes(handleOpts, prefix,),)
+    .use(imageEditRoutes({ database, }, prefix,),)
+    // ── Social / content ─────────────────────────────────────
+    .use(personaRoutes({ database, }, prefix,),)
+    .use(nsfwRoutes(handleOpts, prefix,),)
+    .use(nsfwModerationRoutes(handleOpts, prefix,),)
+    .use(activityRoutes(handleOpts, prefix,),)
+    .use(activityStreamRoutes(handleOpts, prefix,),)
+    .use(notificationsRoutes(handleOpts, prefix,),)
+    .use(proactiveMessagingRoutes(handleOpts, prefix,),)
+    .use(blogRoutes({ database, }, prefix,),)
+    .use(analyticsRoutes({ database, }, prefix,),)
+    .use(modelComparisonsRoutes({ database, }, prefix,),);
+
+  return contentSurface
+    // ── Admin & plugins ──────────────────────────────────────
+    .use(adminRoutes(handleOpts, prefix,),)
+    .use(sdTemplatesRoutes(handleOpts, prefix,),)
+    .use(pluginRoutes(handleOpts, prefix,),)
+    .use(adminCharacterOverridesRoutes(handleOpts, prefix,),)
+    .use(adminTemplateRoutes({ database, }, prefix,),)
+    .use(adminNsfwRoutes({ database, }, prefix,),)
+    .use(commandsRoutes({ prefix, },),)
+    // ── Import / export ──────────────────────────────────────
+    .use(importRoutes(handleOpts, prefix,),)
+    .use(exportRoutes({ database, }, prefix,),)
+    .use(exportSseRoutes({ database, }, prefix,),)
+    .use(worldImportRoutes(handleOpts, prefix,),)
+    .use(versionedOpenApiPlugin({ version: "1", },),);
 }
