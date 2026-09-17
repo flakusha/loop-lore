@@ -188,6 +188,10 @@
     // Newly added e2e browser tests; not yet wired into a static import
     // edge knip can trace (Playwright discovers by glob). Same class as
     // the 22 sibling .browser.ts entries above.
-    "tests/e2e/flows/browser/admin-dashboard-empty.browser.ts"
+    "tests/e2e/flows/browser/admin-dashboard-empty.browser.ts",
+    // Interaction-coverage suite. Executed by the shell glob in
+    // package.json `test:e2e:browser` and .github/workflows/ci.yml
+    // (test-browser job) — knip cannot trace a shell glob as an import edge.
+    "tests/e2e/flows/browser/harness-improvements.browser.ts"
   ]
 }

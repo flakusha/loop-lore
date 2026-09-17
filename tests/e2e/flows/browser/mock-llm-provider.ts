@@ -40,17 +40,6 @@ export const MOCK_PROVIDER_NAME = "mock-provider";
 /** Model ID the mock advertises and `defaultModels` is forced to. */
 export const MOCK_MODEL_ID = "mock-model";
 
-/** Holds the most recently installed mock for direct manipulation in tests. */
-let activeMock: MockLLMProvider | null = null;
-
-/**
- * Returns the active mock provider instance, or null if none was installed.
- * Tests use this to flip `failOnCall`/`streamError` between assertions.
- */
-export function getActiveMockProvider(): MockLLMProvider | null {
-  return activeMock;
-}
-
 /**
  * Mutate a config in-place so the next `initializeProviders` call wires the
  * mock as the default. Does NOT call `initializeProviders` itself — callers
@@ -62,8 +51,7 @@ export function installMockLlmProvider(config: Config,): MockLLMProvider {
   config.generation.defaultProvider = MOCK_PROVIDER_NAME;
   config.generation.defaultModels[MOCK_PROVIDER_NAME] = MOCK_MODEL_ID;
   config.generation.providers.openaiCompatible = [];
-  activeMock = getProvider(MOCK_PROVIDER_NAME,) as MockLLMProvider ?? mock;
-  return activeMock;
+  return (getProvider(MOCK_PROVIDER_NAME,) as MockLLMProvider) ?? mock;
 }
 
 /**
