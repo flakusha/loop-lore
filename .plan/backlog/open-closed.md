@@ -147,3 +147,19 @@ Full detail: `bucket-A-security-perf-close-out-2026-09-03.md`.
 
 Filed as `TASK-audit-follow-up-*` git issues — tracked in `open-debt.md` § Audit Follow-up
 Cluster. No BLOCKING issues found; all are NIT-1/LOW/MED follow-ups.
+
+## Retired 2026-09-18 (cluster cleanup)
+
+- **Build integrity cluster** — 3 BUG tickets (Bucket X) flipped ✅ Resolved on `dev`
+  via commits `4a1f56b8` and `1cddba36`. See `open-build-integrity.md` (pointer stub)
+  + `bucket-x-build-integrity-close-out-2026-09-03.md` + `open-closed.md` § "Bucket X
+  close-out" for resolution evidence.
+- **Audit follow-up cluster** — 8 follow-up tickets ✅ Resolved 2026-09-10 in worktree
+  `audit-followups-2026-09-10`. See `open-debt.md` (pointer stub) and
+  `audit-followups-2026-09-10` worktree log for commit refs.
+- **Refactor cluster (Post-bug-bucket refactoring session-2026-09-03)** — 4 refactor
+  tickets ✅ Resolved on `dev`: `resolveActorAccess`, `worldScoped`,
+  `upsertByUnique`/`upsertByUniqueWith`/`insertUnique`, and
+  `assertChatViewShape` (+ audit pass). 5th refactor
+  `TASK-refactor-llm-provider-adapters-onto-shared-base-factory` is ⬜ Not Started
+  (carried forward, not part of this retirement).

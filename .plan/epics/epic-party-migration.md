@@ -59,20 +59,21 @@ that world simulation, autonomy scheduler, and chat transfer all depend on.
 
 ## Tasks
 
-- [ ] Party schema (party table + party_member table + party_state)
-- [ ] Party CRUD endpoints (create/disband/member manage)
-- [ ] Party types: caravan, patrol, raid, trade, escort, mixed
-- [ ] Party travel engine (adjacency + fast-travel)
-- [ ] Free-travel (jump) edge in location graph
-- [ ] Party schedule and route (patrol/trade routes)
-- [ ] Party → world-tick integration
-- [ ] Party → chat transfer integration
-- [ ] Party → chat branch merge integration
-- [ ] Party economy (shared loot, currency split, vendor splits)
-- [ ] Party-bound NPCs (boss + guards retinue)
-- [ ] NPC group behavior (defend-member, scatter, regroup)
-- [ ] Party UI (roster, route, schedule, stats)
-- [ ] Migration for party + party_member
+- [ ] Party schema (party table + party_member table + party_state) — `TASK-party-schema-crud-routes-and-migration`
+- [ ] Party CRUD endpoints (create/disband/member manage) — `TASK-party-schema-crud-routes-and-migration`
+- [ ] Party types: caravan, patrol, raid, trade, escort, mixed — `TASK-party-schema-crud-routes-and-migration`
+- [ ] Party travel engine (adjacency + fast-travel) — `TASK-party-travel-engine-adjacency-and-fast-travel`
+- [ ] Free-travel (jump) edge in location graph — `TASK-party-free-jump-location-graph-edge`
+- [ ] Party schedule and route (patrol/trade routes) — `TASK-party-schedule-and-patrol-routes`
+- [ ] Party → world-tick integration — `TASK-party-world-tick-and-chat-transfer-integration`
+- [ ] Party → chat transfer integration — `TASK-party-world-tick-and-chat-transfer-integration`
+- [ ] Party → chat branch merge integration — `TASK-party-chat-branch-merge-on-converge`
+- [ ] Party economy (shared loot, currency split, vendor splits) — `TASK-party-economy-shared-loot-and-currency-split`
+- [ ] Party-bound NPCs (boss + guards retinue) — `TASK-party-bound-npc-retinue-and-group-behavior`
+- [ ] NPC group behavior (defend-member, scatter, regroup) — `TASK-party-bound-npc-retinue-and-group-behavior`
+- [ ] Party UI (roster, route, schedule, stats) — `TASK-party-ui-roster-route-schedule-stats`
+- [ ] Migration for party + party_member — `TASK-party-schema-crud-routes-and-migration`
+- [ ] Party join/leave with VN narration (Phase 1 done 2026-08-19: `joinParty`/`leaveParty`, participant endpoints, `guest` role; open: VN scene-renderer wiring, state snapshot on leave) — `TASK-party-join-leave`
 
 ## Design
 
@@ -155,7 +156,7 @@ interface BoundNpcRetinue {
 
 - TASK-party-schema-crud-routes-and-migration
 - TASK-party-travel-engine-adjacency-and-fast-travel
-- TASK-party-free-jump-location-graph
+- TASK-party-free-jump-location-graph-edge
 - TASK-party-schedule-and-patrol-routes
 - TASK-party-world-tick-and-chat-transfer-integration
 - TASK-party-chat-branch-merge-on-converge

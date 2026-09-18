@@ -37,7 +37,7 @@
 
 | # | Item | Where | Status |
 | - | ---- | ----- | ------ |
-| 1 | `migrations/parts/` dead code — loader (`src/db/migrate.ts:13-28`) does non-recursive `readdirSync` filtered on top-level `.ts`, so `parts/*.ts` never load; zero imports; bare `up()` exports incompatible with loader contract (`module.default ?? module`) | `src/db/migrations/parts/` | 🟡 DELETE — unreferenced split of `001_init`; recoverable from git. ⚠️ 13 legacy tickets/epics still cite `migrations/parts/*.ts` as edit targets — stale pointers, real schema lives in shipped top-level migrations |
+| 1 | `migrations/parts/` is the real schema source — `001_init.ts:11-40` directly ESM-imports every `parts/NNN_*.ts` (19 imports: 001_core through 022_mesh_sharing; gaps 017 and 021 are not files) as the migration orchestrator; the `migrate.ts` readdirSync loader intentionally ignores the `parts/` subtree (verified: `scripts/check-migration-ordering.ts:18-20` documents this design). `.plan/code-map.json` contains 13 keys under `migrations/parts/`: 8 point to real parts files (001_core, 002_assets, 003_worlds, 004_actors, 005_characters, 006_chat, 012_memory, 016_fts — accurate schema pointers); 5 reference files that do not exist in parts/ (004_chats_actors, 005_actor_data, 006_messages_keys, 007_story_generation, 016_telemetry_events — treat as historical/analytical cross-refs whose current file ownership is unverified; the code-map's `parts/` section warrants its own audit but is out of scope here). Renaming parts/ prefixes would orphan applied `kysely_migration` rows — forbidden by append-only policy. | `src/db/migrations/parts/` | ✅ CLOSED — parts/ is the intended schema source, loaded transitively via 001_init.ts; 8 code-map keys are live schema pointers, 5 are analytical |
 | 2 | Duplicate migration prefixes (041×2, 042×2, 044×2, 046×3, 047×3, 054×2) — order within a number is an alphabetical tiebreak; verified benign today (disjoint tables/columns) but unenforced. Gap 007–008 cosmetic | `src/db/migrations/` | 🟡 ADD GATE — check failing on duplicate numeric prefix / reused prefix for new migrations; next migration takes `057`, numbers never reused |
 | 3 | Decision record: combining applied migrations is permanently unsafe — filename is identity in `kysely_migration`; `assertMigrationsNotStale` (`src/db/migrate.ts:40`, wired in `runMigrations` `:84`) fails fast on missing applied names. Verified 2026-08-25: live DB (`loop-lore-data/loop-lore.db`) has 62/62 names matching source exactly — no combine window remains for any existing file | `src/db/migrations/README.md` policy | ✅ CLOSED — combine nothing; append-only holds |
 
@@ -52,41 +52,14 @@
 
 Surfaced by the 5 surgical bug fixes shipped on 2026-09-03 (`c093f56d`, `7cbcea68`, `a4ce15bf`, `be9fcfc5`, `08c2a95f`, `7e0687f4`). 4 of 5 fixes were trust-boundary failures; the inline patches need a structural home. Filed as TASK tickets; this section is the visibility index.
 
-| # | Refactor                                                              | Where                                          | Triggered by                                                              | Prereq |
-| - | --------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- | ------ |
-| 1 | Extract `scopeByUserId` middleware                                   | `src/middleware/actor-scope.ts` (new)          | `be9fcfc5` (message-seen DELETE IDOR) + `c093f56d` (async userId guards)   | —      |
-| 2 | Lift crafting-station `world_id` scope to shared entity-helper        | `src/db/entity-scope.ts` or `src/rpg/world-scoped.ts` (new) | `7e0687f4` (crafting station world scope)                                 | —      |
-| 3 | Typed Kysely helpers for ON CONFLICT upsert-by-unique-key             | `src/db/upsert.ts` (new)                       | `08c2a95f` (chat swipe_index race) + `058_swipe_index_unique.ts`          | —      |
-| 4 | Schema-validate Alpine store fields at init (replace runtime defaults) | `src/frontend/stores/chat-schema.ts` (new)     | `7cbcea68` + `a4ce15bf` (alpine chat-view init crash)                     | —      |
-| 5 | Trust-boundary audit pass (cross-cutting migration sweep)             | `src/routes/**` + helpers from #1/#2           | meta-finding — 4 of 5 fixes were trust-boundary class                     | #1, #2 |
-
-**Execution order**: #1, #2, #3, #4 small enough to parallelize. #5 is the meta-sweep that adopts them — must run after #1 and #2 land.
-
-**Why now**: each helper is small (1-3 days), eliminates whole IDOR classes, and de-risks the next 70+ open HIGH BUG tickets where ownership/scope checks are missing. Bucket-D bug fixes will hit the same patterns repeatedly unless these helpers land first.
-
-**Tickets**: `TASK-refactor-extract-scopebyuserid-middleware`, `TASK-refactor-lift-crafting-station-world-id-scope-to-shared-help`, `TASK-refactor-typed-kysely-upsert-by-unique-key-helpers`, `TASK-refactor-schema-validate-alpine-store-fields-at-init`, `TASK-refactor-trust-boundary-audit-pass`.
-
-**Acceptance check**: after #1 + #2 + #5 land, grep `query\.actorId\|body\.actorId` in `src/routes/` returns zero production hits, and every world-scoped entity query has a `WHERE world_id = ?` (or helper call).
-
+- #1 `scopeByUserId` middleware — ✅ Resolved — see `open-closed.md` (Retired 2026-09-18) for resolution evidence.
+- #2 crafting-station `world_id` shared helper — ✅ Resolved — see `open-closed.md` (Retired 2026-09-18) for resolution evidence.
+- #3 typed Kysely upsert-by-unique-key helpers — ✅ Resolved — see `open-closed.md` (Retired 2026-09-18) for resolution evidence.
+- #4 schema-validate Alpine store fields at init — ✅ Resolved — see `open-closed.md` (Retired 2026-09-18) for resolution evidence.
+- #5 trust-boundary audit pass — ✅ Resolved pointer — see `open-closed.md` (Retired 2026-09-18).
 ## Audit Follow-up Cluster (from Bucket A/B/C close-outs — 2026-09-03) — ✅ RESOLVED 2026-09-10
 
-> All 8 follow-up tickets closed 2026-09-10 (`audit-followups-2026-09-10` worktree). Filed from the 2026-09-03 audit re-reviews (`docs/meta/code-practices-improvements/audit-batch-A-message-seen-gen-2026-09-03.md` and sibling Bucket B/C audits). 6 verified stale against current source (the audit findings reference code states that do not exist or are already covered by tests): #1 `864a2bc` `name` field present at `check-parallel.mjs:477`; #2 `0391ad6` `DEFAULT_MAX_RATIO=1000` unchanged since `feat(utils): add safeFetch and safeBuffer utilities`, regression tests at `src/utils/safe-buffer/compression.test.ts:79,91`; #4 `4636043` `src/scripts/worktree/templates.ts` does not exist; #6 `6caa51a` covered by `src/chat/service/split.test.ts:240` "returns forbidden when actor is not the secondary chat owner" (file is `split.ts`, not `ownership.ts`); #7 `06d25f6` `finalize.ts:182` already does `if (reapStale())` synchronously — no `void reapStale()` antipattern present; #8 `3afdeb2` `test/messaging/swipe-race.test.ts` does not exist. 2 fixed by code commit `00d5e0f2` (DI authConfig 4-arg wired in `src/routes/export.ts:41` + `src/routes/export-sse/start.ts:23`, regression test in `src/middleware/auth.test.ts`; triggerAutoGeneration catch-path contract pinned by 5 tests in `src/generation/auto-gen/auto-generation.test.ts`). 41/41 audit-related tests pass; `bun run plan:sync` and 20/20 static gates green on the bookkeeping commit. Git issues closed; `plan:sync --fix` reconciled the index.
-
-| Git issue | Task | Severity | Problem | Where |
-| --------- | ---- | -------- | ------- | ----- |
-| `864a2bc` | `TASK-audit-follow-up-check-report-name-field-dropped` | NIT-1 | Check report `name` field dropped after ratchet-perf changes | check report aggregation |
-| `0391ad6` | `TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress` | NIT-1 | `safeDecompress` `maxRatio` silently raised 10× without regression test | `src/content/compress.ts` |
-| `0735878` | `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` | LOW | DI fast path (4-arg call) untested; callers silently fall back to per-request `loadConfig()` | `src/middleware/auth/*` |
-| `4636043` | `TASK-audit-follow-up-templates-ts-at-190l-convention-ceiling` | NIT-1 | `templates.ts` at 190L convention ceiling | `src/assistant/prompt/templates.ts` |
-| `1448001` | `TASK-audit-follow-up-triggerautogeneration-catch-path-untested` | NIT-2 | `.catch()` path of `triggerAutoGeneration` not isolated | `src/generation/auto-gen/auto-generation.ts` |
-| `6caa51a` | `TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha` | NIT-2 | Secondary chat-ownership check in `reuniteChats` untested | `src/chat/service/` |
-| `06d25f6` | `TASK-audit-follow-up-worktree-finalize-reapstale-void-dead-code` | LOW | Proposed removal of `reapStale(): boolean` as dead-code pattern | worktree tooling |
-| `3afdeb2` | `TASK-audit-follow-up-chat-swipe-index-race-test-uses-promise-all-` | NIT-1 | chat-swipe-index-race test uses `Promise.all` which runs on JS thread serially — no real concurrency tested | test infra |
-
-**Priority order** (from bucket-A close-out doc): #1 (report name), #2 (maxRatio), #3 (DI path), #4 (templates.ts ceiling), #5 (.catch path), #6 (reuniteChats ownership), #7 (reapStale dead code), #8 (Promise.all concurrency).
-
-**Tracking**: each ticket has a git issue + `.plan/tickets/TASK-audit-follow-up-*.md` file. These cluster with the post-bug-bucket refactoring section above — #3 (DI path) and #5 (.catch path) overlap with the refactoring items #1 and #3 respectively.
-
+Closed 2026-09-10 — see `open-closed.md` Audit Follow-up Cluster (2026-09-10).
 ---
 
 ## 2026-09-10 landed (debt paydown)
@@ -103,4 +76,4 @@ Surfaced by the 5 surgical bug fixes shipped on 2026-09-03 (`c093f56d`, `7cbcea6
   tool-executor suites at full coverage; remaining gap is bundled shipped-plugin sources
   exercised via the loader e2e boot path.
 - **Still open**: transport module, music/SFX/Video stubs; migration-hygiene gate
-  (duplicate prefixes, parts/ pointers); audit follow-up cluster ordering unchanged.
+  (duplicate prefixes, parts/ pointers).
