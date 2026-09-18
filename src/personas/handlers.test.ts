@@ -294,6 +294,38 @@ describe("handleUpdatePersona", () => {
     },);
     expect(res.status,).toBe(404,);
   });
+
+  test("returns 404 when updating another user's persona (cross-user guard)", async () => {
+    // Regression for BUG-persona-update-on-cross-user-id: a peer PATCHing
+    // someone else's persona previously got 200 { ok: true } because
+    // service.update() silently no-op'd on WHERE user_id mismatch. The
+    // contract must match getById / delete / convertToCharacter → 404.
+    const ownerId = await service.create({ userId: OWNER_ID, name: "Mine", },);
+    const beforeStored = await service.getById(ownerId, OWNER_ID,);
+    expect(beforeStored?.name,).toBe("Mine",);
+
+    const res = await handleUpdatePersona({
+      database: db,
+      personaId: ownerId,
+      body: { name: "Hijacked", },
+      context: ctxFor(PEER_ID,),
+    },);
+    expect(res.status,).toBe(404,);
+
+    // Peer must not have mutated the persona.
+    const afterStored = await service.getById(ownerId, OWNER_ID,);
+    expect(afterStored?.name,).toBe("Mine",);
+  });
+
+  test("returns 404 for an unknown persona id", async () => {
+    const res = await handleUpdatePersona({
+      database: db,
+      personaId: "ghost-id-update",
+      body: { name: "anything", },
+      context: ctxFor(OWNER_ID,),
+    },);
+    expect(res.status,).toBe(404,);
+  });
 });
 
 describe("handleDeletePersona", () => {

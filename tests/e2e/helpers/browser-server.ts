@@ -25,6 +25,7 @@ import { initializeProviders, } from "@/generation";
 import { createLogger, setGlobalLogger, } from "@/logger";
 import { resetSoloUserCache, } from "@/middleware/index";
 import { loadAllPlugins, unloadAllPlugins, } from "@/plugins";
+import { handleApiRequest, } from "@/server";
 import { type Browser, chromium, type Page, } from "@playwright/test";
 import type { Kysely, } from "kysely";
 import { spawnSync, } from "node:child_process";
@@ -105,6 +106,7 @@ export async function createBrowserTest(
   const app = createApp({
     database: db,
     config,
+    handleApiRequest,
     handleNonApiRequest: async (request: Request,): Promise<Response> => {
       const url = new URL(request.url,);
       const publicPath = join(publicDir, url.pathname === "/" ? "index.html" : url.pathname,);
