@@ -140,7 +140,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-admin-templates-update-remove-lack-admin-settings-gate.md",
-    "status": "✅ Resolved"
+    "status": "done"
   },
   "BUG-ADVERTISED-SFX-MUSIC-VIDEO-COMMANDS-ARE-STUBS": {
     "hash": "9e39b51",
@@ -231,7 +231,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-asset-link-share-handlers-and-gallery-grid-param-lack-valida.md",
     "git_issue": "64464bf",
-    "status": "fixed-in-worktree"
+    "status": "done"
   },
   "BUG-ASSET-LINK-SHARE-JSON-ROUTES-500-BODY-ALREADY-USED-ELYSIA-SU": {
     "hash": "c78e5466",
@@ -257,7 +257,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-asset-serve-public-immutable-cache-inline-svg-exposure.md",
     "git_issue": "4961df8",
-    "status": "fixed-in-worktree"
+    "status": "done"
   },
   "BUG-ASSET-WEBP-METADATA-VP8L-VP8X-OFF-BYTES": {
     "hash": "c658dd8",
@@ -679,7 +679,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/BUG-bug-idempotency-table-backend-accepted-but-never-implemented.md",
-    "status": "✅ Resolved (a738bc81, 2026-09-14)"
+    "status": "done"
   },
   "BUG-BUG-LOGOUT-ROUTE-EXEMPT-FROM-CSRF-VERIFICATION-LOGOFF-CSRF": {
     "hash": "8490b2d",
@@ -862,7 +862,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-caption-route-has-no-ownership-check-and-overwrites-foreign-.md",
     "git_issue": "07a1ef2",
-    "status": "fixed-in-worktree"
+    "status": "done"
   },
   "BUG-CARRYHISTORY-COPIES-KEY-ID-INTO-MIGRATED-CHAT-HISTORY-BREAKS": {
     "hash": "aaba0e3",
@@ -1738,7 +1738,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-duplicate-openassetpreview-definitions-with-divergent-behavi.md",
     "git_issue": "fbd71df",
-    "status": "fixed-in-worktree"
+    "status": "done"
   },
   "BUG-DYNAMIC-RESPONSE-ACCEPT-ENCODING-NEGOTIATION-USES-SUBSTRING-": {
     "hash": "ed020f4",
@@ -2176,7 +2176,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-gallery-grid-exposes-other-users-private-assets.md",
     "git_issue": "53398da",
-    "status": "fixed-in-worktree"
+    "status": "done"
   },
   "BUG-GALLERY-OPENASSETPREVIEW-CONTEXT-SAFETY": {
     "hash": "pending",
@@ -2201,7 +2201,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-generated-images-owned-by-system-are-invisible-to-the-reques.md",
     "git_issue": "5d355aa",
-    "status": "fixed-in-worktree"
+    "status": "done"
   },
   "BUG-GENERATION-CONTROL-PLANE-ROUTES-LACK-AUTHORIZATION": {
     "hash": "8746eca",
@@ -2744,7 +2744,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-listassets-treats-shared-visibility-as-world-readable.md",
     "git_issue": "72706d2",
-    "status": "fixed-in-worktree"
+    "status": "done"
   },
   "BUG-LOCATION-CONNECTIONS-VALIDATION-ACCEPTS-JUNK-AND-PERSISTS-IT": {
     "hash": "c94e69c",
@@ -2861,7 +2861,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-message-attachments-link-arbitrary-asset-ids-without-ownersh.md",
     "git_issue": "1fbe78c",
-    "status": "fixed-in-worktree"
+    "status": "done"
   },
   "BUG-MESSAGE-SEARCH-PROMISE-ALLSETTLED-REJECTION-INSERTS-PHANTOM-": {
     "hash": "ac86c2d",
@@ -3428,6 +3428,19 @@
     "source": ".plan/tickets/BUG-parseacceptlanguage-ignores-quality-values-returns-header-or.md",
     "status": "done"
   },
+  "BUG-PERSONA-UPDATE-ON-CROSS-USER-ID-RETURNS-200-OK-INSTEAD-OF-40": {
+    "hash": "0454612",
+    "git_issue": "0454612",
+    "extid": "BUG-PERSONA-UPDATE-ON-CROSS-USER-ID-RETURNS-200-OK-INSTEAD-OF-40",
+    "type": "BUG",
+    "title": "Persona update on cross-user id returns 200 ok instead of 404",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-persona-update-on-cross-user-id-returns-200-ok-instead-of-40.md",
+    "status": "open"
+  },
   "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD": {
     "hash": "c04aa89",
     "extid": "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD",
@@ -3478,7 +3491,7 @@
     "tags": [],
     "source": ".plan/tickets/BUG-post-history-instruction-relocated-to-front-not-after-histor.md",
     "git_issue": "0d223a7",
-    "status": "✅ Fixed (fix-post-history-instruction-position @ ed1844be+3)"
+    "status": "done"
   },
   "BUG-POST-STORE-TEST-TS-32-IMPORTS-MISSING-COMPLETEGENERATIONOPTS": {
     "hash": "d660ce1",
@@ -14255,7 +14268,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-crypto-hardening-minors-algo-field-decorative-pbkdf2-hot-pat.md",
     "git_issue": "c376c81",
-    "status": "✅ Resolved (2026-09-04)"
+    "status": "done"
   },
   "TASK-CRYPTO-LIBRARY-RESEARCH": {
     "hash": "pending",
@@ -17938,7 +17951,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-implement-per-connection-ip-sourcing-for-auth-rate-limiters.md",
-    "status": "✅ Resolved (2026-08-25, worktree `fix-ratelimiter-global-bucket`)"
+    "status": "done"
   },
   "TASK-IMPLEMENT-REUSABLE-BULK-TICKET-RESOLUTION-HELPER": {
     "hash": "df8fd5f",
@@ -18714,7 +18727,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-log-files-created-world-readable-0644.md",
     "git_issue": "8e464f9",
-    "status": "✅ Resolved"
+    "status": "done"
   },
   "TASK-LOG-JSONL-FORMAT": {
     "hash": "pending",
@@ -18790,7 +18803,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/TASK-logging-hardening-minors-injection-rotation-races-sink-path-.md",
-    "status": "✅ Resolved (2026-09-04)"
+    "status": "done"
   },
   "TASK-LOGGING-SEPARATE-DATABASE-RESEARCH": {
     "hash": "pending",
@@ -21075,6 +21088,32 @@
     "source": ".plan/tickets/TASK-persistent-trade-offer-accept-cancel-lifecycle-with-counter-.md",
     "status": "done"
   },
+  "TASK-PERSONA-SETDEFAULT-GETDEFAULT-UNWIRED-DELETE-OR-WIRE": {
+    "hash": "258b465",
+    "git_issue": "258b465",
+    "extid": "TASK-PERSONA-SETDEFAULT-GETDEFAULT-UNWIRED-DELETE-OR-WIRE",
+    "type": "TASK",
+    "title": "Persona setDefault/getDefault unwired: delete or wire",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-persona-setdefault-getdefault-unwired-delete-or-wire.md",
+    "status": "open"
+  },
+  "TASK-PERSONAS-IMPERSONATION-PLAN-DOCS-BOOKKEEPING-SWEEP": {
+    "hash": "ddff4ab",
+    "git_issue": "ddff4ab",
+    "extid": "TASK-PERSONAS-IMPERSONATION-PLAN-DOCS-BOOKKEEPING-SWEEP",
+    "type": "TASK",
+    "title": "Personas/impersonation plan + docs bookkeeping sweep",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-personas-impersonation-plan-docs-bookkeeping-sweep.md",
+    "status": "open"
+  },
   "TASK-PIPE-OPERATOR-CHAINING-SLASH-COMMANDS": {
     "hash": "6fa44f0",
     "git_issue": "6fa44f0",
@@ -21253,6 +21292,18 @@
     "source": ".plan/tickets/TASK-PLAN-UNWIRED-CODEOUT.md",
     "git_issue": "fea7fe2",
     "status": "done"
+  },
+  "TASK-PLAN-VALIDATE-DEBT-CLEANUP": {
+    "hash": "pending",
+    "extid": "TASK-PLAN-VALIDATE-DEBT-CLEANUP",
+    "type": "TASK",
+    "title": "Plan Validate Debt Cleanup",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-plan-validate-debt-cleanup.md",
+    "status": "undefined"
   },
   "TASK-PLATFORM-CATALOG-CONFIG-SCHEMA": {
     "hash": "948e44f",
@@ -22475,7 +22526,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-redos-config-transforms-build-regexp-from-untrusted-pattern.md",
     "git_issue": "1330c1f",
-    "status": "✅ Resolved (already fixed on dev)"
+    "status": "done"
   },
   "TASK-REDOS-LORE-ACTIVATION-BUILDS-REGEXP-FROM-AUTHOR-CONTROLLED-K": {
     "hash": "5c73739",
@@ -22488,7 +22539,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-redos-lore-activation-builds-regexp-from-author-controlled-k.md",
     "git_issue": "5c73739",
-    "status": "✅ Resolved (already fixed on dev)"
+    "status": "done"
   },
   "TASK-REDUCE-REQUIREUSERID-AUTH-NARROW-DUPLICATION-JSCPD-FULL": {
     "hash": "784771d",
@@ -23452,7 +23503,7 @@
     "epic": "epic-mechanics-governance.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-gate-chat-commands-behind-world-opt-in.md",
-    "status": "✅ Implemented"
+    "status": "done"
   },
   "TASK-RPG-HISTORY-COMMITTING-CHATS-PER-WORLD": {
     "hash": "baf7d71",
@@ -23582,7 +23633,7 @@
     "epic": "epic-mechanics-governance.md",
     "tags": [],
     "source": ".plan/tickets/TASK-rpg-per-mechanic-opt-in-config-worldmechanicsconfig-schema-s.md",
-    "status": "✅ Implemented"
+    "status": "done"
   },
   "TASK-RPG-PLAYER-AGENCY-STORY-POINTS": {
     "hash": "b4ec3f5",
@@ -24753,7 +24804,7 @@
     "tags": [],
     "source": ".plan/tickets/TASK-telemetry-endpoint-trusts-userid-from-request-body.md",
     "git_issue": "fcdcefc",
-    "status": "✅ Resolved 2026-08-25 — route already uses server-derived ctx.userId (verified on dev); no body trust remains"
+    "status": "done"
   },
   "TASK-TELEMETRY-SCHEMA-COMMENT-CLAIMS-ADDITIONALPROPERTIES-FALSE-R": {
     "hash": "12a153e",
