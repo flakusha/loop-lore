@@ -3,6 +3,11 @@
 
 # TASK: Finalize must gate the post-rebase tree (check runs before merge)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress
 **Priority:** high
 **Effort:** Medium

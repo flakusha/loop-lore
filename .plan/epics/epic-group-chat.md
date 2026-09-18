@@ -3,6 +3,9 @@
 
 # EPIC: Group Chat
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Partial — `src/group-chat` modules exist (mention-parser, turn-selector, index) but the feature was never captured as a first-class epic; linked defects resolved, feature tickets track remaining completion.
 **Priority:** High
 **Effort:** Medium

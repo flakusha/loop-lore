@@ -3,6 +3,9 @@
 
 # EPIC: Continuous Improvement — Lint, TypeCheck, Build, Coverage
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress
 **Priority:** High
 **Effort:** Medium

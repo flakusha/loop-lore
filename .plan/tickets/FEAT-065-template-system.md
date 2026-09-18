@@ -3,6 +3,14 @@
 
 # Template System — Unified Architecture Spec
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: 🟡 In Progress — LLM + image template foundations shipped (spec reconciled with code 2026-09-13); DB-backed user templates + unified registry future
 **Owner**: FEAT-065 (Prompt Library)
 **Scope**: LLM, Image, Video, Audio generation templates

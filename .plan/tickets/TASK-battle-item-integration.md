@@ -3,6 +3,11 @@
 
 # TASK: Battle-Item Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Battle & Action Systems, Item System Extensions
 **Priority:** High
 **Effort:** High

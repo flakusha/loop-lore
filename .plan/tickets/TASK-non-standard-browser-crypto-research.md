@@ -3,6 +3,11 @@
 
 # TASK: Non-Standard Browser Crypto Research (Umbrella)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress — split into 2 child tickets
 **Priority:** Medium
 **Effort:** Med

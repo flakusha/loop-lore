@@ -3,6 +3,14 @@
 
 # Epic: Deployment Infrastructure (Docker & Bare Metal)
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Overview
 
 Containerize the loop-lore application and establish deployment strategies for both containerized environments (Docker) and bare-metal servers. Evaluate cost-effective hosting options that support storage and GPU compute for LLM inference workloads.

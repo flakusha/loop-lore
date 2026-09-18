@@ -3,6 +3,9 @@
 
 # Epic: Game Frontend Scenes (2D/3D)
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Medium

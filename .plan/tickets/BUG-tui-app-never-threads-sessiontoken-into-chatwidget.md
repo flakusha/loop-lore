@@ -3,6 +3,11 @@
 
 # BUG: tui/app.ts never threads a session token into ChatWidget — auth header never sent
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Done
 **Priority:** medium
 **Effort:** small

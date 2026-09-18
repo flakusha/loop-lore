@@ -3,6 +3,11 @@
 
 # TASK: Mesh Encrypted Content Sharing, Reservation & Duplication
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
  **Status:** 🟡 In Progress — transfer foundation landed (see Progress 2026-09-09)
 **Priority:** high
 **Effort:** Large

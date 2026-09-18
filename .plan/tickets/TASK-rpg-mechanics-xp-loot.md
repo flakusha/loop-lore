@@ -3,6 +3,11 @@
 
 # TASK: RPG Mechanics — XP Progression & Loot
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete
 **Priority:** Medium
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # BUG: NSFW `exportUserData` returns full GDPR bundle (prefs + audit + flags) with no access log, no rate limit, no elevated capability
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Severity:** Medium
 **Priority:** medium

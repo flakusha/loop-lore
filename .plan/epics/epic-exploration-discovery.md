@@ -3,6 +3,9 @@
 
 # EPIC: Exploration & Discovery Systems
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High

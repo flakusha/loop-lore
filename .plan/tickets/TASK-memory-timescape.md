@@ -3,6 +3,11 @@
 
 # TASK: Timescape-Aware Memory
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** `epic-memory-knowledge-systems.md` (FEA-2026-058)
 **Priority:** Medium
 **Effort:** Medium

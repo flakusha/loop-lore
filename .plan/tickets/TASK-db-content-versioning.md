@@ -3,6 +3,12 @@
 
 # TASK: db content versioning
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 📝 Draft
 **Priority:** High
 **Epic:** epic-db-content-versioning

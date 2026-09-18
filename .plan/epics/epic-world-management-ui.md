@@ -3,6 +3,9 @@
 
 # EPIC: World & Location Management UI
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P0 — Critical
 **Effort:** High

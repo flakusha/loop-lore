@@ -3,6 +3,11 @@
 
 # BUG: Auto-gen assemble() omits providerId/tokenBudget and never compacts
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** done
 **Priority:** high
 **Effort:** Medium

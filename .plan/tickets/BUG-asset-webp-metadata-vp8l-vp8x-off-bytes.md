@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: WebP metadata parser reads VP8L/VP8X dimension fields at wrong offsets
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Resolved (commit 832937e7 — VP8/VP8L/VP8X offsets match spec; NOTE: VP8X dimension mask is 14-bit, truncates >=16384px canvases — see BUG-asset-webp-vp8x-dimension-truncation)
 **Priority:** medium

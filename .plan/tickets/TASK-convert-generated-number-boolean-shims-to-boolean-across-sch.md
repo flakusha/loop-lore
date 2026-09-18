@@ -3,6 +3,11 @@
 
 # TASK: Convert Generated<number> boolean shims to boolean state machines across schema
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🔄 Split into two tickets below
 **Priority:** high
 **Effort:** Large

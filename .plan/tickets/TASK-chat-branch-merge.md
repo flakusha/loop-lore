@@ -3,6 +3,11 @@
 
 # TASK: Chat Split/Reunite Engine (Party Branch & Merge)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🔴 Not Started
 **Priority:** P2-B
 **Effort:** High

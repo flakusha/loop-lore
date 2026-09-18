@@ -3,6 +3,11 @@
 
 # TASK: Export Frontend Progress UI
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (merged to dev 2026-09-15)
 **Priority:** P1
 **Effort:** Low

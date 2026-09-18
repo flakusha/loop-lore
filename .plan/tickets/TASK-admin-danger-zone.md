@@ -3,6 +3,11 @@
 
 # TASK: Admin Danger Zone — Factory Reset & Purge
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — BE `src/routes/admin/danger-zone.ts` (audit purge / settings reset / factory reset, audit-logged, typed confirmations), FE `admin-system.ts` + `admin.html` Danger Zone section
 **Priority:** low
 **Effort:** Low

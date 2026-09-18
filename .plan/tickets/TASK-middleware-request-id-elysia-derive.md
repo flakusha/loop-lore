@@ -3,6 +3,11 @@
 
 # TASK: Wire `requestIdMiddleware` into Elysia `.derive()` chain
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Open
 **Priority:** high
 **Effort:** Small

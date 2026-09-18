@@ -3,6 +3,11 @@
 
 # BUG: create-entity confirm bypasses world ownership
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (already on dev, 2026-09-05)
 **Priority:** high
 **Effort:** Small

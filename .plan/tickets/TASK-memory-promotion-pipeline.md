@@ -3,6 +3,12 @@
 
 # TASK: Implement memory promotion pipeline
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Issue:** 22f6cd99-562f-4df1-a09a-f7f343a41b69
 **Status:** open
 **Priority:** medium

@@ -3,6 +3,11 @@
 
 # TASK: LoRA Discovery & Application
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Phase 1 Complete, Phase 2 Partial
 **Priority:** High
 **Effort:** Medium

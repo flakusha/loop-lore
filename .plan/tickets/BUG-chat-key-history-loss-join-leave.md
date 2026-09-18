@@ -3,6 +3,12 @@
 
 # BUG: Group-chat history becomes undecryptable after any participant join/leave
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟢 Closed — fixed by crypto-chat-history-survives-membership branch (commits 8400433a + 8e75ae1f)
 **Severity:** Critical
 **Priority:** High

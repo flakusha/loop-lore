@@ -3,6 +3,13 @@
 
 # Mini-Games: Expanded Design — UI/UX, Flow, & Deep Mechanics
 
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** Draft
 **Parent:** Epic: Mini-Games & Interactive Mechanics
 **Extends:** `epic-mini-games-design.md`

@@ -3,6 +3,11 @@
 
 # TASK: Stable Stored Chat Key (Future)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High (escalated — see BUG-chat-key-history-loss-join-leave)
 **Effort:** Medium

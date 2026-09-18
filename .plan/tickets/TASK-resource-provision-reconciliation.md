@@ -3,6 +3,11 @@
 
 # TASK: Hashing-Based Reconciliation & Drift Detection
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Open
 **Priority:** high
 **Effort:** large

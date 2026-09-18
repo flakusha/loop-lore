@@ -3,6 +3,11 @@
 
 # BUG: NSFW `getPreferences` lazily INSERTs default row on miss — admin read materializes phantom row
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (already implemented in code)
 **Severity:** Medium
 **Priority:** medium

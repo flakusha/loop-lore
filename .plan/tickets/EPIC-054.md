@@ -3,6 +3,14 @@
 
 # EPIC-054: 054: Embeddable Engine & Game Frontend
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: open
 **Priority**: medium
 **Labels**: epic

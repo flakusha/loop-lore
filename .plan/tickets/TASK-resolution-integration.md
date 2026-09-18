@@ -3,6 +3,11 @@
 
 # TASK: Resolution System Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** RPG Mechanics, Battle & Action Systems, Social Interaction, Magic & Spell Systems
 **Priority:** Medium
 **Effort:** Medium

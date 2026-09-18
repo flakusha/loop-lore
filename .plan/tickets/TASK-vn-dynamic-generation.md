@@ -3,6 +3,12 @@
 
 # TASK: Visual Novel Mode — Dynamic Image & Story Generation
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** 🟡 Partial Complete — Story generation ✅, Image generation deferred, Q&A routes not in this ticket
 **Epic:** epic-visual-novel-mode

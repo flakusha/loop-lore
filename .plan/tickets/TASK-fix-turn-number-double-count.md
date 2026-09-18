@@ -3,6 +3,11 @@
 
 # TASK: Fix turn number double-count in TurnManager/executeTurn
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Small

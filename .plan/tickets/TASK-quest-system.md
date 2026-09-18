@@ -3,6 +3,11 @@
 
 # TASK: Quest System Implementation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** RPG Mechanics & Extensible Game Systems
 **Priority:** High
 **Effort:** Large

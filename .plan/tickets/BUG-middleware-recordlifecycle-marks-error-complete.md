@@ -3,6 +3,11 @@
 
 # BUG: `recordLifecycle` marks 4xx/5xx responses `complete`
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** fixed-in-worktree
 **Priority:** medium
 **Effort:** Small

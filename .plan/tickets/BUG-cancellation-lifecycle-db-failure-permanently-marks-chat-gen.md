@@ -1,4 +1,13 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Cancellation lifecycle: DB failure permanently marks chat generating; state machine advisory only
+
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Resolved (failGeneration + completeGeneration DB writes wrapped in try/catch; in-memory cleanup runs regardless)
 **Priority:** medium

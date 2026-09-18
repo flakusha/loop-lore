@@ -3,6 +3,11 @@
 
 # TASK: AUX LLM Transition Detection Fallback
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done 2026-08-01 (classifier + wiring); regression acceptance tracked here
 **Priority:** P2-B
 **Effort:** Medium

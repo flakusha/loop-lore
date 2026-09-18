@@ -3,6 +3,11 @@
 
 # Communications Integrations — Quick Reference
 
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Epic Overview
 
 **File:** `.plan/epics/epic-communications-integrations.md` (hub)

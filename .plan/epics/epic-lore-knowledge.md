@@ -3,6 +3,9 @@
 
 # Epic: Lore Knowledge System
 
+**Overview:** (see sections below)
+
+
 **Status:** Draft\
 **Priority:** High\
 **Effort:** Medium\

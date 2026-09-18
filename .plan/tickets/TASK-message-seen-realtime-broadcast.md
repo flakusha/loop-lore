@@ -3,6 +3,11 @@
 
 # TASK: Seen-State Realtime Broadcast (WebSocket)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

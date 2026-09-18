@@ -3,6 +3,11 @@
 
 # TASK: Item generation review parity: extract category/rarity/stats, preview them, accept confirm overrides
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

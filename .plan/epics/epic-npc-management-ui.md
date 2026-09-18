@@ -3,6 +3,9 @@
 
 # EPIC: NPC & Social UI
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟢 Implemented (mock data, UI shell)
 **Priority:** P2 — Medium
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK: Gallery Fuzzy Search + Pagination + Backend Sort/Relevance
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium
@@ -60,7 +65,7 @@ Returns:
 
 - `src/frontend/pages/gallery.ts` — replace `globalThis.filterAssets` with debounced (250ms) HTMX `GET /api/assets/search` + Alpine `x-data` store of `results[]`, `total`, `hasMore`, `facets`. Pagination via "load more" HTMX button (`hx-get` + `hx-trigger="revealed"` infinite scroll).
 - Sort dropdown writes to URL params; backend returns ranked results.
-- "Select all visible" + per-item checkboxes remain (consume `TASK-gallery-batch-operations.md`).
+- "Select all visible" + per-item checkboxes remain.
 - Result card renders `matchContext` snippet when `q` is set (server-side FTS5 `<mark>` wrapping).
 
 ### Time caps

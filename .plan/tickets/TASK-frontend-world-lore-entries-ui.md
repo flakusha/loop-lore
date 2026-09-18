@@ -3,6 +3,11 @@
 
 # TASK: Frontend — World Lore Entries CRUD
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P1 — High
 **Effort:** Medium

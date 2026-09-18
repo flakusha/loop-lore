@@ -3,6 +3,11 @@
 
 # TASK-3d-gltf-assets: 3D GLTF/GLB asset support (Phase 3)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Medium

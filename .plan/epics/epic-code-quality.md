@@ -3,6 +3,9 @@
 
 # EPIC: Code Quality & Best Practices (Permanently Ongoing)
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Permanently Ongoing
 **Priority:** High
 **Effort:** Continuous

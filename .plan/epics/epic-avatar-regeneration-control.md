@@ -3,6 +3,9 @@
 
 # EPIC: Emotion Avatar Regeneration Control
 
+**Overview:** (see sections below)
+
+
 **Status:** 🔴 Not Started
 **Priority:** Medium
 **Effort:** Small

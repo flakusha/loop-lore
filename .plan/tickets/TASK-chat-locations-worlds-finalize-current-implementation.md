@@ -3,6 +3,11 @@
 
 # TASK: Chat/Locations/Worlds: Finalize Current Implementation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium

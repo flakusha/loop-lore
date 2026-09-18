@@ -3,6 +3,12 @@
 
 # TASK: Terminal UI (TUI) — modernize chat/api.ts + add unit tests
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress
 **Priority:** Medium
 **Epic:** epic-terminal-ui

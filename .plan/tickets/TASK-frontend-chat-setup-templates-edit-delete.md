@@ -3,11 +3,15 @@
 
 # TASK: Frontend — Chat Setup Templates (edit/delete)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P2 — Medium
 **Effort:** Small
 **Epic:** epic-chat-product-features
-**Related:** TASK-chat-composer-flows
 **Source:** FE-BE harmonization check, 2026-09-17 — 2 routes in this slice.
 
 ## Summary

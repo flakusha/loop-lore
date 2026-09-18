@@ -3,6 +3,11 @@
 
 # BUG: world-state init seeds all DB actors into every world
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved
 **Priority:** high
 **Effort:** Medium

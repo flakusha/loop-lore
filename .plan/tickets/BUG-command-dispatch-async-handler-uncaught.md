@@ -3,6 +3,11 @@
 
 # BUG: dispatchCommand awaits async handler without safety net — a thrown promise becomes a 500 instead of a friendly systemMessage
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Severity:** medium
 **Priority:** medium

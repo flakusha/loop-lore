@@ -3,6 +3,12 @@
 
 # BUG: config schema defaults leak absolute paths
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** Medium
 **Epic:** epic-api-validation-guardrails.md

@@ -3,6 +3,12 @@
 
 # TASK: Random Encounters & Random Events Generation
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** 🟡 Partial — basic generator wired into generation pipeline; encounter tables + event chains pending
 **Epic:** epic-world-event-system

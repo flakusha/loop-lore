@@ -3,6 +3,11 @@
 
 # TASK-e2ee-open-bugs: Fix open bugs against shipped E2E crypto code
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (closed 2026-09-15; all three sub-bugs already resolved on dev)
 **Priority:** High
 **Effort:** Small

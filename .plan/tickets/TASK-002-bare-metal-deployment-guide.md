@@ -3,6 +3,14 @@
 
 # TASK-002: Bare metal deployment guide
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: pending
 **Priority**: high
 **Labels**: ops, bare-metal, deployment

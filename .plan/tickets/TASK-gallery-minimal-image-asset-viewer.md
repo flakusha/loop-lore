@@ -3,6 +3,11 @@
 
 # TASK: Gallery: Minimal Image Asset Viewer
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — images, audio, and video all supported in gallery grid + preview modal
 **Priority:** high
 **Effort:** Medium

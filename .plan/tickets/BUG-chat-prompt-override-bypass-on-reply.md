@@ -3,6 +3,11 @@
 
 # BUG: Chat-level promptOverride is persisted but never consumed by assistant reply or auto-generation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** done
 **Severity:** medium
 **Priority:** medium

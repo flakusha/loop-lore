@@ -3,6 +3,12 @@
 
 # Task: Creative Toolbar in Chat Input
 
+**Priority:** medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-creative-studio.md (MVP Tier 1)
 **Status:** ⬜ Not Started
 **Effort:** Low

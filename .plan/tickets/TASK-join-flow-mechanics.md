@@ -3,6 +3,14 @@
 
 # Ticket: Join Flow Mechanics
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 ## Description
 
 Implement and test the join flow for users accepting invitations to chats.

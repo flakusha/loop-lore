@@ -3,6 +3,11 @@
 
 # TASK: Location Details Panel
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P0 — Critical
 **Effort:** Small

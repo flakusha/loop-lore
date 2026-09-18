@@ -3,6 +3,11 @@
 
 # TASK: RPG Mechanics — Combat Engine
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete
 **Priority:** High
 **Effort:** High

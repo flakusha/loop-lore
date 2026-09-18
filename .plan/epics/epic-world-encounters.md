@@ -3,6 +3,9 @@
 
 # Epic: World Encounters & Resources
 
+**Overview:** (see sections below)
+
+
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** High

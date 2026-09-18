@@ -3,6 +3,11 @@
 
 # TASK: Alpha-aware render binding and mood panel
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK: Character Multi-Avatar System
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Character Core System
 **Priority:** Medium
 **Effort:** High

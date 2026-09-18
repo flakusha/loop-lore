@@ -3,6 +3,14 @@
 
 # Ticket: E2E Invite/Flow Validation
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 ## Description
 
 Create comprehensive E2E tests for invitation and join flows to cover missing test coverage identified in audit.

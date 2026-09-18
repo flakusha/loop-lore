@@ -3,6 +3,14 @@
 
 # TASK: Nsfw Rating Enforcement
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: done
 **Priority**: medium
 **Labels**: nsfw, rating, ui, enforcement

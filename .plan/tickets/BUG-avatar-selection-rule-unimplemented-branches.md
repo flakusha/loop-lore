@@ -3,6 +3,12 @@
 
 # BUG: selectionRule branches action_first / context_first / weighted are no-ops
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** P3
 **Epic:** epic-character-core-system

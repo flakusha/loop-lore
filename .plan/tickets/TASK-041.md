@@ -3,6 +3,14 @@
 
 # TASK-041: NSFW Mood & Emotional State
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: open
 **Priority**: medium
 **Labels**:

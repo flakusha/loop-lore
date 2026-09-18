@@ -132,7 +132,7 @@
     "clean-css": "^5.3.3",
     "dompurify": "^3.4.15",
     "elysia": "^1.4.30",
-    "giwt": "github:flakusha/giwt#c53ffb5c9e09a6242b4a0cc60e27c05155b9811f",
+    "giwt": "github:flakusha/giwt#ff0a95f6e2ae474587520251558979fc9c461e04",
     "htmx-ext-alpine-morph": "^2.0.2",
     "htmx-ext-sse": "^2.2.4",
     "js-yaml": "^5.4.2",

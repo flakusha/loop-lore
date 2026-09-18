@@ -3,6 +3,11 @@
 
 # TASK: Encryption — Key Management UI
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟨 Partial (routes done, UI pending)
 **Priority:** High
 **Effort:** Med

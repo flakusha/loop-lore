@@ -3,6 +3,13 @@
 
 # Epic: Review — dev 2026-08-26 Late Merges (NSFW Audit Regression + Formatting)
 
+**Status:** Not Started
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Status: Proposed
 
 **Priority:** Medium

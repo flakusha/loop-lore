@@ -3,6 +3,12 @@
 
 # TASK: Crafting Stations & Execution (stations CRUD + `POST /craft` + orders)
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-08-18)
 **Priority:** high
 **Labels:** rpg, crafting, routes

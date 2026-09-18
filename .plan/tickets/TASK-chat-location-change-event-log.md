@@ -3,6 +3,11 @@
 
 # TASK: Chat location-change event log + section-linkage fixes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Draft
 **Priority:** P2-B
 **Effort:** Medium

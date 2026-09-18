@@ -3,6 +3,14 @@
 
 # Invitation System Implementation
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Objective
 
 Implement and test invitation mechanics for user onboarding and group chat joining.

@@ -3,6 +3,11 @@
 
 # TASK-e2ee-crypto-ui: Client-Side E2E — Phase G UI affordances
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started — **blocked on `TASK-encryption-architecture-clarification.md`**
 **Priority:** Low
 **Effort:** Medium

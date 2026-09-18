@@ -3,6 +3,11 @@
 
 # TASK: Epic 11 Reconciliation — Admin & Settings Already Implemented
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (reconciliation)
 **Priority:** —
 **Effort:** —

@@ -3,6 +3,11 @@
 
 # TASK: Wardrobe story/GM integration (outfit change events)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

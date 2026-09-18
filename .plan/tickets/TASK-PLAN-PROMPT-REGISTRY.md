@@ -3,6 +3,14 @@
 
 # TASK-PLAN-PROMPT-REGISTRY: Implement prompt-template registry
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: done
 **Priority**: medium
 **Labels**:

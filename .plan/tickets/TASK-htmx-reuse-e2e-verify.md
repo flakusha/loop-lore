@@ -3,6 +3,11 @@
 
 # TASK: HTMX Reuse E2E Verification
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Low

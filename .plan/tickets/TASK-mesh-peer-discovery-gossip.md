@@ -3,11 +3,16 @@
 
 # TASK: Mesh peer discovery and gossip transport
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress — gossip loop wired (federation-mesh-core)
 **Priority:** medium
 **Effort:** Large
 **Epic:** epic-federation-swarm-sync.md
-**Related:** TASK-instance-state-advertisement-endpoint, TASK-federation-peer-connectivity-config, FEAT-swarm-mode-reconciliation
+**Related:** TASK-instance-state-advertisement-endpoint, FEAT-swarm-mode-reconciliation
 
 ## Summary
 

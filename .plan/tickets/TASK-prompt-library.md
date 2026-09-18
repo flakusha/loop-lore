@@ -3,6 +3,11 @@
 
 # TASK: Prompt Library — Reusable Prompt Templates
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Low–Med

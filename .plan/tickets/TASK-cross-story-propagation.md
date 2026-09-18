@@ -3,6 +3,12 @@
 
 # TASK: Cross-story event propagation logic
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Draft
 **Priority:** P1 — High
 **Epic:** `epic-timeline-system.md`

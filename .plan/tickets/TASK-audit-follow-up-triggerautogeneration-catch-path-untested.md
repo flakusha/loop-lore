@@ -3,6 +3,11 @@
 
 # TASK: Audit follow-up: triggerAutoGeneration .catch path untested
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (commit `00d5e0f2`)
 **Priority:** low
 **Effort:** Medium

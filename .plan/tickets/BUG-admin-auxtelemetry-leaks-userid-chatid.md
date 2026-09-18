@@ -3,6 +3,11 @@
 
 # BUG: `/api/admin/telemetry/aux` returns `userId` + `chatId` + raw `error` string per AUX call — no scoping, no hashing
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (already implemented in code)
 **Severity:** Medium
 **Priority:** medium

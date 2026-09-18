@@ -3,6 +3,14 @@
 
 # Epic: Context Injection Correctness
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Goal
 
 Audit and harden how the assistant, chat, and group-chat layers assemble the
