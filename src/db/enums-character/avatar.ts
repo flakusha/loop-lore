@@ -62,6 +62,32 @@ export const EmotionType = {
 /** */
 export type EmotionType = (typeof EmotionType)[keyof typeof EmotionType];
 
+/**
+ * Stable ordinal per emotion (mirrors EmotionType's original insertion order).
+ * Use for sortOrder instead of `Object.values(EmotionType).indexOf(...)`:
+ * a literal reorder/refactor must never silently reshuffle stored sort orders.
+ */
+export const EMOTION_ORDINAL: Readonly<Record<EmotionType, number>> = {
+  happy: 1,
+  sad: 2,
+  angry: 3,
+  fearful: 4,
+  surprised: 5,
+  disgusted: 6,
+  contemptuous: 7,
+  neutral: 8,
+  excited: 9,
+  anxious: 10,
+  calm: 11,
+  confused: 12,
+  proud: 13,
+  shameful: 14,
+  loving: 15,
+  jealous: 16,
+  grateful: 17,
+  bored: 18,
+};
+
 // ── Availability Status ───────────────────────────────────
 export const AvailabilityStatus = {
   Available: "available",

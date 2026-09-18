@@ -35,8 +35,10 @@ export function calculateSurrenderChance(
   // Cap at 90%
   chance = Math.min(90, Math.max(0, chance,),);
 
+  // canSurrender must mean surrender is actually viable, not merely that
+  // morale passed the gate (a 0% chance is not a real option).
   return {
     surrenderChance: Math.round(chance,),
-    canSurrender: true,
+    canSurrender: chance > 0,
   };
 }

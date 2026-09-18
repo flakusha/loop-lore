@@ -48,6 +48,7 @@ export async function resolveCharacterTraits(
 
   // Layer 2: World traits
   const world: Record<string, string> = {};
+  const worldViolations: PersonalityLockResult[] = [];
   if (worldId) {
     const worldRows = await database
       .selectFrom("character_world_traits",)
@@ -60,7 +61,8 @@ export async function resolveCharacterTraits(
       // Check personality integrity
       const lock = checkPersonalityIntegrity(row.trait_name, row.trait_category as TraitCategory,);
       if (!lock.allowed) {
-        // Skip — personality integrity violation
+        // Skip, but keep the violation visible in the audit trail.
+        worldViolations.push(lock,);
         continue;
       }
       world[row.trait_name] = row.trait_value;
@@ -94,5 +96,5 @@ export async function resolveCharacterTraits(
     }
   }
 
-  return { resolved, violations, layers: { permanent, world, location, }, };
+  return { resolved, violations: [...violations, ...worldViolations,], layers: { permanent, world, location, }, };
 }

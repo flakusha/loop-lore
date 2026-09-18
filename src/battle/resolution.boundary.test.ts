@@ -30,6 +30,18 @@ describe("battle resolution boundary", () => {
     expect(r.type,).toBe("physical",);
   });
 
+  test("critical damage doubles dice but not the flat bonus", () => {
+    const originalRandom = Math.random;
+    Math.random = () => 0.5; // d6 -> floor(0.5*6)+1 = 4
+    try {
+      const r = calculateDamage("1d6+3", [], true,);
+      // 4*2 + 3 = 11; the old bug produced (4+3)*2 = 14.
+      expect(r.baseDamage,).toBe(11,);
+    } finally {
+      Math.random = originalRandom;
+    }
+  });
+
   test("rollDice d20 returns 1..20", () => {
     for (let i = 0; i < 30; i++) {
       const v = rollDice("d20",);

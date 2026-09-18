@@ -3,7 +3,7 @@
 
 # BUG: battle attacks: calculateDamage doubles flat dice-notation bonus on critical hits
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** high
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Reorder: `let baseDamageValue = diceSum; if (isCritical) baseDamageValue *= 2; b
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

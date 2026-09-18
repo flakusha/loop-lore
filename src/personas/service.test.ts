@@ -108,6 +108,10 @@ describe("PersonasService", () => {
   });
 
   describe("setDefault()", () => {
+    test("throws Persona not found for a missing or foreign persona", async () => {
+      await expect(service.setDefault("no-such-id", userId,),).rejects.toThrow("Persona not found",);
+    });
+
     test("sets a persona as default", async () => {
       const id = await service.create({ userId, name: "Default One", },);
       await service.setDefault(id, userId,);

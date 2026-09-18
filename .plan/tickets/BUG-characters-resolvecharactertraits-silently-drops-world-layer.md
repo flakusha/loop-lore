@@ -3,7 +3,7 @@
 
 # BUG: characters: resolveCharacterTraits silently drops world-layer integrity violations
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Resolved (batch 2)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (see ## Summary)
@@ -37,6 +37,6 @@ Collect world-layer violations in the same loop: `if (!lock.allowed) { worldViol
 
 ## Acceptance Criteria
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] Documentation updated

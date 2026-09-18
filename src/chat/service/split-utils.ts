@@ -153,7 +153,12 @@ export async function copyMessagesToPrimary(
         parent_id: null,
         role: msg.role,
         content: msg.content,
-        key_id: msg.key_id,
+        // BUG-reunite-copies-key-id: the key_id points at a chat_keys row
+        // owned by the SECONDARY chat; carrying it verbatim dangles once the
+        // secondary is archived/deleted. Match carryHistory: null the key and
+        // carry the plaintext mirror so the primary's read path resolves it.
+        key_id: null,
+        content_plaintext: msg.content_plaintext,
         content_type: msg.content_type,
         content_format: msg.content_format,
         content_encoding: msg.content_encoding,
