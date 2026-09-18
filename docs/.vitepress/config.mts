@@ -29,6 +29,7 @@ export default withMermaid(defineConfig({
       { text: 'Frontend', link: '/frontend/overview', activeMatch: '/frontend/' },
       { text: 'Reference', link: '/reference/api', activeMatch: '/reference/' },
       { text: 'Ideas', link: '/ideas/', activeMatch: '/ideas/' },
+      { text: 'Plan', link: '/plan-gen/', activeMatch: '/plan-gen/' },
       { text: 'GitHub', link: 'https://github.com/flakusha/loop-lore' },
     ],
 
@@ -201,6 +202,19 @@ export default withMermaid(defineConfig({
             { text: 'Alpine + HTMX Integration', link: '/meta/reviews/alpine-htmx-integration' },
             { text: 'FE/BE Compatibility', link: '/meta/reviews/fe-be-compatibility' },
             { text: 'Review Rounds', link: '/meta/reviews/review-rounds' },
+          ],
+        },
+      ],
+
+      '/plan-gen/': [
+        {
+          text: 'Plan',
+          collapsed: false,
+          items: [
+            { text: 'Plan Index', link: '/plan-gen/' },
+            { text: 'Epics', link: '/plan-gen/epics/' },
+            { text: 'Tickets', link: '/plan-gen/tickets/' },
+            { text: 'Backlog', link: '/plan-gen/backlog/' },
           ],
         },
       ],

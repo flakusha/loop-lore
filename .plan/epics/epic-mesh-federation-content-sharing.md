@@ -128,32 +128,21 @@ Quota enforcement for server-to-server content federation:
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Mesh Coordinator Server                       │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
-│  │  Knowledge DB │  │  Key Store   │  │  Resync Cron Engine    │ │
-│  │  (servers,     │  │  (trusted    │  │  (per-peer schedules)  │ │
-│  │   addresses,   │  │   keys,      │  │                        │ │
-│  │   status)      │  │   capabilities)│                        │ │
-│  └──────────────┘  └──────────────┘  └────────────────────────┘ │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
-│  │  Negotiation  │  │  Quota       │  │  Reservation Manager   │ │
-│  │  Protocol     │  │  Engine      │  │  (pre-alloc storage)   │ │
-│  └──────────────┘  └──────────────┘  └────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-         │                    │                    │
-         ▼                    ▼                    ▼
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│  Server A    │◄──►│  Server B    │◄──►│  Server C    │
-│  (loop-lore) │    │  (loop-lore) │    │  (loop-lore) │
-│              │    │              │    │              │
-│  Encrypted   │    │  Encrypted   │    │  Encrypted   │
-│  Content     │    │  Content     │    │  Content     │
-│  + Reservation│   │  + Reservation│   │  + Reservation│
-│  + Duplication│   │  + Duplication│   │  + Duplication│
-│  + Quota     │    │  + Quota     │    │  + Quota     │
-└──────────────┘    └──────────────┘    └──────────────┘
+```mermaid
+flowchart TD
+    subgraph Coordinator["Mesh Coordinator Server"]
+        KDB["Knowledge DB<br/>(servers, addresses, status)"]
+        KEYS["Key Store<br/>(trusted keys, capabilities)"]
+        CRON["Resync Cron Engine<br/>(per-peer schedules)"]
+        NEG["Negotiation Protocol"]
+        QUOTA["Quota Engine"]
+        RES["Reservation Manager<br/>(pre-alloc storage)"]
+    end
+    Coordinator --> SA["Server A (loop-lore)<br/>Encrypted Content<br/>+ Reservation + Duplication + Quota"]
+    Coordinator --> SB["Server B (loop-lore)<br/>Encrypted Content<br/>+ Reservation + Duplication + Quota"]
+    Coordinator --> SC["Server C (loop-lore)<br/>Encrypted Content<br/>+ Reservation + Duplication + Quota"]
+    SA <--> SB
+    SB <--> SC
 ```
 
 ## Phases
