@@ -9,8 +9,8 @@
 import type { Kysely, } from "kysely";
 import { DefaultState, } from "../db/enums";
 import type { DB, } from "../db/schema";
-import { getLogger, } from "../logger";
 import { uid, } from "../utils";
+import { convertPersonaToCharacter, } from "./convert";
 
 /** */
 export interface CreatePersonaParams {
@@ -207,41 +207,8 @@ export class PersonasService {
    * @returns `{ actorId }` for the newly-created character.
    */
   async convertToCharacter(id: string, userId: string,): Promise<{ actorId: string }> {
-    const persona = await this.db
-      .selectFrom("personas",)
-      .selectAll()
-      .where("id", "=", id,)
-      .where("user_id", "=", userId,)
-      .executeTakeFirst();
-
-    if (!persona) {
-      getLogger()
-        .child({ module: "personas", },)
-        .warn("Persona not found for conversion", { personaId: id, userId, },);
-      throw new Error("Persona not found",);
-    }
-
-    const actorId = uid();
-    await this.db
-      .insertInto("actors",)
-      .values({
-        id: actorId,
-        actor_type: "character",
-        display_name: persona.name,
-        user_id: null,
-        owner_id: userId,
-        avatar_asset_id: persona.avatar_asset_id,
-        description: persona.description,
-        system_prompt: null,
-        agent_type: "ai",
-        settings: "{}",
-        format_version: 0,
-        import_spec: "raw",
-        data_source_format: "json",
-        data_raw: null,
-      },)
-      .execute();
-
-    return { actorId, };
+    // Delegated: carries title/temperature/max_tokens/model into the actor
+    // settings JSON (BUG-personas-converttocharacter-drops-…).
+    return convertPersonaToCharacter(this.db, id, userId,);
   }
 }

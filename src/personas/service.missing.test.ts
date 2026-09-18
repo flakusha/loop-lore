@@ -92,7 +92,19 @@ describe("PersonasService — convertToCharacter()", () => {
     expect(actor!.owner_id,).toBe(userId,);
     expect(actor!.system_prompt,).toBeNull();
     expect(actor!.agent_type,).toBe("ai",);
-    expect(actor!.settings,).toBe("{}",);
+    // Conversion carries the persona block (title/tuning) in settings JSON.
+    const settings = JSON.parse(actor!.settings,) as {
+      persona?: {
+        title?: string | null;
+        temperature?: number | null;
+        max_tokens?: number | null;
+        model?: string | null;
+      };
+    };
+    expect(settings.persona?.title,).toBe("Knight Champion",);
+    expect(settings.persona?.temperature,).toBeNull();
+    expect(settings.persona?.max_tokens,).toBeNull();
+    expect(settings.persona?.model,).toBeNull();
     expect(actor!.format_version,).toBe(0,);
     expect(actor!.import_spec,).toBe("raw",);
     expect(actor!.data_source_format,).toBe("json",);
