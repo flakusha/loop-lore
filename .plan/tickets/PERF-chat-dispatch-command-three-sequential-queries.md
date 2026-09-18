@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** Open
+**Status:** ✅ Done
 **Priority:** low
 **Priority Tier:** P6+
 **Effort:** Trivial
@@ -42,5 +42,13 @@ Wrap in `Promise.all([...])`.
 
 ## Acceptance Criteria
 
-- [ ] Three queries issued in parallel
-- [ ] No regression in message dispatch
+- [x] Three queries issued in parallel
+- [x] No regression in message dispatch
+
+## Resolution (2026-09-18)
+
+**Status at scan**: Ticket stale w.r.t. HEAD. `src/routes/messages/command.ts:79-99` already wraps the three queries in `Promise.allSettled`, with an explanatory comment block (lines 74-78) naming the prior 3-sequential-await pattern. The comment also explains why `allSettled` was used instead of `Promise.all` (project `no-restricted-syntax` rule).
+
+Note that `Promise.allSettled` was chosen over the ticket's suggested `Promise.all`. Per-ticket acceptance "three queries issued in parallel" still holds — the wrapper shape differs by ESLint policy.
+
+**Verification**: `bun test src/assistant/commands/workflow-dispatch.test.ts src/assistant/commands/battle.integration.test.ts` → 18 pass / 0 fail. Dispatch path regression-free.
