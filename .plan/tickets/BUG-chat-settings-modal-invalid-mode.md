@@ -3,7 +3,7 @@
 
 # BUG: Chat Settings Modal Sends Invalid Mode Values
 
-**Status:** Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
