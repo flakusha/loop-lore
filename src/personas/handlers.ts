@@ -196,7 +196,7 @@ export async function handleDeletePersona({ database, personaId, context, }: Del
  * @param root0.database - Kysely DB handle
  * @param root0.personaId - target persona id
  * @param root0.context - request context
- * @returns 200 with the new character id, or 401/404 on auth / not-found.
+ * @returns 201 with the new character id, or 401/404 on auth / not-found.
  */
 export async function handleConvertToCharacter({ database, personaId, context, }: GetPersonaOpts,): Promise<Response> {
   const userId = context.userId;

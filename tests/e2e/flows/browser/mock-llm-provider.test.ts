@@ -68,7 +68,7 @@ describe("MockLLMProvider helper — basic shape", () => {
 
   test("mock instance returns canned complete() response", async () => {
     const mock = new MockLLMProvider();
-    const res = await mock.complete({ model: "mock-model", messages: [], },);
+    const res = await mock.complete({ model: "mock-model", messages: [], params: {}, },);
     expect(res.content,).toBeTruthy();
     expect(res.finishReason,).toBe("stop",);
     expect(res.usage.totalTokens,).toBe(30,);
@@ -77,7 +77,7 @@ describe("MockLLMProvider helper — basic shape", () => {
   test("mock stream() emits content chunks then a done event", async () => {
     const mock = new MockLLMProvider();
     const chunks: string[] = [];
-    await mock.stream({ model: "mock-model", messages: [], }, (chunk,) => {
+    await mock.stream({ model: "mock-model", messages: [], params: {}, }, (chunk,) => {
       if (chunk.type === "content" && chunk.content) { chunks.push(chunk.content,); }
     },);
     expect(chunks.join("",),).toContain("Mock",);
@@ -88,7 +88,7 @@ describe("MockLLMProvider helper — basic shape", () => {
     // complete() throws before returning a Promise, so the call itself throws.
     const mock = new MockLLMProvider();
     mock.failOnCall = true;
-    expect(() => mock.complete({ model: "mock-model", messages: [], },))
+    expect(() => mock.complete({ model: "mock-model", messages: [], params: {}, },))
       .toThrow("Mock provider failure",);
   });
 });
