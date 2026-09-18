@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
+import { toDate, } from "../../../utils/date";
 import type { ChatState, GroupedMessage, } from "../types";
 
 export const chatUtilsGroupedData: Partial<ChatState> & ThisType<ChatState> = {
@@ -24,7 +25,7 @@ export function computeGroupedMessages(this: ChatState,): GroupedMessage[] {
       // Section change always starts a new group so section dividers
       // align with the message stream.
       const sameSection = msg.section_id === prev.section_id;
-      const timeDiff = new Date(msg.created_at,).getTime() - new Date(prev.created_at,).getTime();
+      const timeDiff = toDate(msg.created_at,).getTime() - toDate(prev.created_at,).getTime();
       if (sameRole && sameSection && timeDiff < 300_000) {
         msg.group = true;
         const last = groups[groups.length - 1];

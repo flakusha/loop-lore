@@ -12,6 +12,7 @@ import type { Kysely, } from "kysely";
 import type { AssistantWorkflowConfig, } from "../config/sections/templates";
 import type { DB, } from "../db/schema";
 import { jsonParseOr, jsonStringifyOr, } from "../utils";
+import { parseExpiryMs, } from "../utils/date";
 import { restoreSession, type WorkflowSession, } from "./workflow-session";
 
 /** Runs untouched longer than this are dropped on next load. */
@@ -25,11 +26,11 @@ export const WORKFLOW_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
  */
 export function parseDbTimestamp(value: string,): number {
   if (value.includes("T",)) {
-    const parsed = Date.parse(value,);
-    return Number.isNaN(parsed,) ? 0 : parsed;
+    const parsed = parseExpiryMs(value,);
+    return parsed ?? 0;
   }
-  const parsed = Date.parse(`${value.replace(" ", "T",)}Z`,);
-  return Number.isNaN(parsed,) ? 0 : parsed;
+  const parsed = parseExpiryMs(`${value.replace(" ", "T",)}Z`,);
+  return parsed ?? 0;
 }
 
 /**

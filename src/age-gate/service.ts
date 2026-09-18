@@ -14,6 +14,7 @@
 import type { Kysely, } from "kysely";
 import type { AgeGateConfig, } from "../config/schema";
 import type { DB, } from "../db/schema";
+import { parseExpiryMs, toDate, } from "../utils/date";
 
 /** Result of an age gate status check. */
 export interface AgeGateStatus {
@@ -105,12 +106,12 @@ export function getStatus(
  * @throws {AgeGateError} if birthDate is not a valid ISO date
  */
 export function validateAge(birthDate: string, minimumAge: number,): void {
-  const parsed = Date.parse(birthDate,);
-  if (Number.isNaN(parsed,)) {
+  const parsed = parseExpiryMs(birthDate,);
+  if (parsed === null) {
     throw new AgeGateError("Invalid birth date. Expected YYYY-MM-DD format.",);
   }
 
-  const birth = new Date(parsed,);
+  const birth = toDate(parsed,);
   const today = new Date();
 
   // Calculate age in years relative to today

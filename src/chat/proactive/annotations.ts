@@ -18,6 +18,7 @@ import type { Kysely, } from "kysely";
 import { ShadowNoteStatus, ShadowNoteType, } from "../../db/enums-gm";
 import type { DB, } from "../../db/schema";
 import { uid, } from "../../utils";
+import { parseExpiryMs, } from "../../utils/date";
 
 /** Annotation kinds carried by GM-style chat annotations. */
 export type AnnotationKind = "note" | "shadow" | "quest";
@@ -92,7 +93,7 @@ export async function createAnnotation(
   }
   const createdAt = new Date().toISOString();
   const ttlUntil = typeof input.ttlMs === "number" && input.ttlMs > 0
-    ? new Date(Date.parse(createdAt,) + input.ttlMs,).toISOString()
+    ? new Date((parseExpiryMs(createdAt,) ?? 0) + input.ttlMs,).toISOString()
     : null;
 
   const annotation: Annotation = {

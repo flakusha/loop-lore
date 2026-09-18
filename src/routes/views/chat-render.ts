@@ -3,6 +3,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { toDate, } from "../../utils/date";
 import { escapeHtml, } from "./layout";
 
 /**
@@ -103,7 +104,7 @@ function renderChatListItems(rows: {
         escapeHtml(r.location_name,)
       }</span>`
       : "";
-    const ts = new Date(r.updated_at,).getTime();
+    const ts = toDate(r.updated_at,).getTime();
     const age = now - ts;
     let ageStr: string;
     if (age < 60_000) { ageStr = "just now"; }

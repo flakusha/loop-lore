@@ -10,6 +10,7 @@ import type { Kysely, } from "kysely";
 import { WorldEventType, } from "../../../db/enums";
 import type { DB, } from "../../../db/schema";
 import { assertNever, safeJsonStringify, } from "../../../utils";
+import { formatHuman, } from "../../../utils/date";
 import type { ItemsService, } from "../../items";
 import type { WorldEvent, } from "../../types";
 import { promoteEventToLore, } from "../promote-lore";
@@ -185,8 +186,8 @@ export async function applyWorldLoreUpdate(db: Kysely<DB>, worldId: string, even
   if (world) {
     const existingLore = world.lore ?? "";
     const newLore = existingLore
-      ? `${existingLore}\n\n### ${new Date().toLocaleDateString()}\n${entry}`
-      : `### ${new Date().toLocaleDateString()}\n${entry}`;
+      ? `${existingLore}\n\n### ${formatHuman(new Date(), { humanStyle: "date", },)}\n${entry}`
+      : `### ${formatHuman(new Date(), { humanStyle: "date", },)}\n${entry}`;
 
     await db.updateTable("worlds",).set({ lore: newLore, },).where("id", "=", worldId,).execute();
 

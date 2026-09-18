@@ -12,6 +12,7 @@ import { signJwt, } from "../auth/jwt";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { getLogger, } from "../logger";
+import { parseExpiryMs, } from "../utils/date";
 import { notFound, } from "../validation/middleware";
 import { ErrorResponse, } from "../validation/schemas";
 import { setTokenCookie, } from "./auth/shared";
@@ -42,7 +43,8 @@ export function switchSessionRoutes(opts: SwitchOpts, prefix = "/api",): Elysia 
         .where("user_id", "=", userId,)
         .executeTakeFirst();
       if (!row) { return notFound("Session not found",); }
-      if (!Number.isFinite(Date.parse(row.expires_at,),) || Date.parse(row.expires_at,) <= Date.now()) {
+      const expiresAtMs = parseExpiryMs(row.expires_at,);
+      if (expiresAtMs === null || expiresAtMs <= Date.now()) {
         await database.deleteFrom("sessions",).where("id", "=", targetId,).execute();
         return jsonError({ message: "Session expired", status: HttpStatus.Gone, },);
       }

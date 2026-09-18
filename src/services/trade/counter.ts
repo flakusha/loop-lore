@@ -9,6 +9,7 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, jsonStringifyOr, } from "../../utils";
+import { toDate, } from "../../utils/date";
 import type { TradeLine, } from "./types";
 
 /**
@@ -17,7 +18,7 @@ import type { TradeLine, } from "./types";
  */
 export function isExpired(deadline: string | null,): boolean {
   if (!deadline) { return false; }
-  return new Date(deadline,).getTime() < Date.now();
+  return toDate(deadline,).getTime() < Date.now();
 }
 
 /**
