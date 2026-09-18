@@ -3,7 +3,7 @@
 
 # TASK-001: Dockerize the application
 
-**Status:** Not Started
+**Status:** 🟡 In Progress — Dockerfile + compose wiring landed; docker-build ACs pending verification (no docker on dev host)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -11,7 +11,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status**: pending
+**Status**: in-progress
 **Priority**: high
 **Labels**: devops, docker, containerization
 **Epic**: epic-deployment-infrastructure
@@ -23,15 +23,15 @@ Containerize the loop-lore application for consistent deployment across environm
 
 ## Tasks
 
-- [ ] Create multi-stage Dockerfile for Bun application
-- [ ] Separate stages: builder (for frontend build) and runtime
-- [ ] Optimize image size (use distroless or slim base if possible)
-- [ ] Ensure all services (server, asset processing) are included
-- [ ] Test Docker build and run locally
-- [ ] Verify health check endpoint works in container
-- [ ] Document environment variables required
-- [ ] Add .dockerignore to exclude unnecessary files
-- [ ] Ensure compatibility with existing deployment scripts
+- [x] Create multi-stage Dockerfile for Bun application
+- [x] Separate stages: builder (for frontend build) and runtime
+- [x] Optimize image size (use distroless or slim base if possible) — oven/bun:1-debian-slim runtime, prod-only install
+- [x] Ensure all services (server, asset processing) are included
+- [ ] Test Docker build and run locally — BLOCKED: no docker on dev host; build-stage commands proven natively (bun run build:frontend)
+- [ ] Verify health check endpoint works in container — healthcheck expression validated (`bun -e` fetch /api/health, exit semantics proven); in-container run pending docker
+- [x] Document environment variables required
+- [x] Add .dockerignore to exclude unnecessary files
+- [x] Ensure compatibility with existing deployment scripts — deploy/docker-compose.yml wired (build: .., healthchecks, ordered depends_on, app_data volume)
 
 ## Acceptance Criteria
 
