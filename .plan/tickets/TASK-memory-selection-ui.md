@@ -13,8 +13,7 @@
 **Effort:** Medium
 **Epic:** epic-memory-systems
 
-## Summary
-
+**Summary:**
 Memory selection UI: mid-chat panel, pinning, context window integration. From `epic-memory-systems.md`.
 
 ## Scope
@@ -40,8 +39,7 @@ Memory selection UI: mid-chat panel, pinning, context window integration. From `
 
 - `epic-memory-systems.md`
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [x] Memory selection panel in chat
 - [x] Memory pinning interface
 - [x] Context window integration

@@ -13,12 +13,10 @@
 **Effort:** medium
 **Epic:** Character & NPC Lore Access
 
-## Summary
-
+**Summary:**
 Filter memory retrieval so recalled memories referencing lore entries respect the actor access profile (consistency with personal narrative). Part of epic Character & NPC Lore Access.
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated

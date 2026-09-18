@@ -18,8 +18,7 @@
 **Epic**: epic-agency-story-points
 **Related**:
 
-## Summary
-
+**Summary:**
 Dynamic plan adjustment based on events
 
 ## Acceptance

@@ -36,8 +36,7 @@ Wire trustModifier from character relationships into the memory provision pipeli
 - [ ] Normalize trust (-100..100) → trustModifier (-1..1) using `trust / 100`
 - [ ] Write unit test for trust-augmented memory provision
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Private memories respect participant trust level
 - [ ] Secret memory sharing probability adjusted by relationship trust
 - [ ] Test: high-trust participant sees secret memory more often

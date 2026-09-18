@@ -29,8 +29,7 @@ Migration 011 added `decay_rate`, `strength`, and `last_accessed_at` columns to 
 - Minimum strength threshold before purge
 - Use existing `src/memory/purge.ts` patterns
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [x] `applyDecay()` reduces strength based on decay_rate and time
 - [x] `touchMemory()` updates last_accessed_at and boosts strength
 - [ ] Memories below minimum strength are purged

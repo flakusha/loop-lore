@@ -18,8 +18,7 @@
 **Epic**: epic-social-interaction
 **Related**:
 
-## Summary
-
+**Summary:**
 Prompt assembly for NPC conversations
 
 ## Acceptance
