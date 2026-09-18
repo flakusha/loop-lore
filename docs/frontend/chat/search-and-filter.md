@@ -263,27 +263,40 @@ message insert/edit. Rebuild on migration.
 
 ## Integration Points
 
-- **Chat list panel** (`src/views/chat-list-panel.html`): integrates sidebar
-  search + filter chips
+<!-- GAP: src/frontend/alpine/chat-search.ts, src/routes/chat-search.ts,
+     src/db/fts.ts, src/routes/views.ts are aspirational. Current implementation
+     lives at src/frontend/alpine/chat/search.ts and src/routes/activity.ts. -->
+
+- **Chat list panel** (`src/views/chat-list-panel.html`, `src/components/chat/chat-list-panel.html`): integrates sidebar search + filter chips
 - **Chat header**: integrates in-chat search bar
-- **Message list**: handles highlight rendering, scroll-to-match
-- **HTMX**: search results loaded via hx-get, hx-trigger="input changed delay:300ms"
-- **Alpine.js**: filter state management, localStorage persistence
+- **Message list** (`src/components/chat/message-list.html`): handles highlight rendering, scroll-to-match
+- **Message search bar** (`src/components/chat/message-search-bar.html`): inline search UI
+- **HTMX** (`src/frontend/alpine/htmx.ts`): search results loaded via hx-get, hx-trigger="input changed delay:300ms"
+- **Alpine.js** (`src/frontend/alpine/chat-utils/`): filter state management, localStorage persistence
 
 ## Files
 
-### Create
+### Status
 
+<!-- GAP: the four files listed below as "Create" do NOT exist; the actual
+     implementation is split across src/frontend/alpine/chat/search.ts,
+     src/routes/activity.ts, src/db/migrations/ (FTS5 migration if any).
+     This section preserves the design intent for future wiring. -->
+
+### Planned (aspirational)
+
+- `src/frontend/alpine/chat-search.ts` — search state, debounce, navigation
 - `src/routes/chat-search.ts` — search endpoints (chat search, message search)
 - `src/db/fts.ts` — FTS5 setup, index management
-
-### Modify
-
-- `src/views/chat-list-panel.html` — add search input + filter chips
-- `src/views/chat.html` — add in-chat search bar
-- `src/frontend/alpine/chat-search.ts` — search state, debounce, navigation
 - `src/routes/views.ts` — register search HTMX routes
-- `src/db/migrations/` — FTS5 virtual table migration
+
+### Already exists
+
+- `src/views/chat-list-panel.html` — chat list with search input
+- `src/views/chat.html` — chat shell
+- `src/components/chat/chat-list-panel.html` — chat list component
+- `src/components/chat/message-search-bar.html` — in-chat search UI
+- `src/db/migrations/` — DB migrations directory
 
 ## Related
 
