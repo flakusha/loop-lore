@@ -101,6 +101,9 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await sql`DROP TRIGGER IF EXISTS messages_fts_ad`.execute(database,);
   await sql`DROP TRIGGER IF EXISTS messages_fts_ai`.execute(database,);
   await sql`DROP TRIGGER IF EXISTS messages_fts_au`.execute(database,);
+  await sql`DROP TRIGGER IF EXISTS actor_memories_fts_ad`.execute(database,);
+  await sql`DROP TRIGGER IF EXISTS actor_memories_fts_ai`.execute(database,);
+  await sql`DROP TRIGGER IF EXISTS actor_memories_fts_au`.execute(database,);
   await sql`DROP TABLE IF EXISTS memories_fts`.execute(database,);
   await sql`DROP TABLE IF EXISTS messages_fts`.execute(database,);
 }
