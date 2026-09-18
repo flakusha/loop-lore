@@ -87,7 +87,7 @@
     "tickets_total_estimate": "~2100 (actual directory count)",
     "tickets_categorized_total": 2096,
     "tickets_directory_total": 2101,
-    "tickets_uncategorized": ["e2e", "gap", "invite", "join", "template.md"],
+    "tickets_uncategorized": ["e2e", "gap", "invite", "join", "TASK-template.md"],
     "ticket_prefix_tally": {
       "TASK": 1526,
       "BUG": 354,

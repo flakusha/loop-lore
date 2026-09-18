@@ -58,12 +58,12 @@ Authorization and access control for the application. Covers user registration, 
 
 ## Tickets
 
-- [`TASK-auth-register-route.md`](TASK-auth-register-route.md) — register route + frontend form
-- [`TASK-two-factor-multi-factor-auth.md`](TASK-two-factor-multi-factor-auth.md) — MFA with TOTP/SMS/email/hardware key
-- [`TASK-encryption-access-management.md`](TASK-encryption-access-management.md) — encryption + access management display
-- [`TASK-dedupe-message-access-checks.md`](TASK-dedupe-message-access-checks.md) — message access check UI
-- [`TASK-fix-message-reactions-access.md`](TASK-fix-message-reactions-access.md) — reaction access gating in UI
-- [`TASK-authoring-creation.md`](TASK-authoring-creation.md) — authoring ownership indicators
+- [`TASK-auth-register-route.md`](../tickets/TASK-auth-register-route.md) — register route + frontend form
+- [`TASK-two-factor-multi-factor-auth.md`](../tickets/TASK-two-factor-multi-factor-auth.md) — MFA with TOTP/SMS/email/hardware key
+- [`TASK-encryption-access-management.md`](../tickets/TASK-encryption-access-management.md) — encryption + access management display
+- [`TASK-dedupe-message-access-checks.md`](../tickets/TASK-dedupe-message-access-checks.md) — message access check UI
+- [`TASK-fix-message-reactions-access.md`](../tickets/TASK-fix-message-reactions-access.md) — reaction access gating in UI
+- [`TASK-authoring-creation.md`](../tickets/TASK-authoring-creation.md) — authoring ownership indicators
 
 ## Acceptance Criteria
 

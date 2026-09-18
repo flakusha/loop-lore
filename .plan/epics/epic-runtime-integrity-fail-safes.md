@@ -137,6 +137,7 @@ Integrate all mechanisms into a unified local-instance integrity posture:
 - **Documentation**: authoritative integrity playbook for the local instance.
 
 ## Architecture
+
 ```mermaid
 flowchart TB
   subgraph Local["Local Instance"]

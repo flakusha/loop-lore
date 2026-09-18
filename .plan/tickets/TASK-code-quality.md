@@ -32,7 +32,7 @@ Ongoing code quality improvements — lint rules, type coverage, formatting, and
 - `TASK-split-messages-route.md` — Split `src/routes/messages.ts` (1013L) into domain modules
 - `TASK-split-generate-route.md` — Split `src/generation/generate-route.ts` (736L) into pipeline steps
 - `TASK-split-config-schema.md` — Split `src/config/schema.ts` (812L) by domain
-- `TASK-split-server.ts.md` — Split `src/server.ts` (640L) into focused modules
+- `TASK-split-server-ts.md` — Split `src/server.ts` (640L) into focused modules
 - `TASK-split-utils-god-module.md` — Break `src/utils.ts` god module (~52 importers)
 - `TASK-split-logger-god-module.md` — Break `src/logger/index.ts` god module (~59 importers)
 

@@ -55,6 +55,7 @@ checkboxes.
 #### 1. Permanent Panel
 
 Always-visible side panel with 3D avatar:
+
 ```mermaid
 flowchart TB
     subgraph PP["1. Permanent Panel — always visible"]
