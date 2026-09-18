@@ -46,6 +46,12 @@ export interface SettingsState {
   loaded: boolean;
   nsfwConsent: NsfwConsent | null;
 
+  // Restart-required banner (TASK-restart-required-indicator-on-system-config-changes)
+  pendingRestartKeys: string[];
+  pendingRestartBannerDismissed: boolean;
+  loadPendingRestart(): Promise<void>;
+  hasPendingRestart(): boolean;
+  dismissRestartBanner(): void;
   init(): Promise<void>;
   loadLocales(): Promise<void>;
   loadSettings(): Promise<void>;

@@ -23,6 +23,15 @@ export const AdminSystemConfigBody = t.Object({
   value: t.String(),
   description: t.Optional(t.String(),),
 },);
+/**
+ * Body for POST /api/admin/system-config/import — accept a YAML/TOML payload
+ * produced by the matching export endpoint. `format` selects the parser;
+ * `content` is the raw file text (≤1MB enforced in the route).
+ */
+export const AdminSystemConfigImportBody = t.Object({
+  format: t.Union([t.Literal("yaml"), t.Literal("toml")],),
+  content: t.String({ maxLength: 1024 * 1024, },),
+});
 
 export const AdminModelRoleOverrideBody = t.Object({
   provider: t.String({ minLength: 1, },),
