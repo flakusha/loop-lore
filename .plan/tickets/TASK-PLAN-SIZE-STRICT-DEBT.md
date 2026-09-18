@@ -3,7 +3,7 @@
 
 # TASK-PLAN-SIZE-STRICT-DEBT: Close size-strict debt (10 files) -> check 17/17
 
-**Status:** Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
