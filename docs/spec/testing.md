@@ -36,7 +36,7 @@ bun run test:e2e:browser
 1. **Step 2** — `bun run check --diff-base <merge-base>` (full gate
    suite scoped to the branch's diff). Heavy gates are serialized after
    the lights; the per-module coverage floor (80%) is enforced here.
-3. **Step 3** — `bun run test:unit` (behavioral, no coverage
+2. **Step 3** — `bun run test:unit` (behavioral, no coverage
    instrumentation). Runs all unit tests with `--parallel=${TEST_JOBS:-4}
    --isolate` (see `package.json:66`).
 
@@ -46,6 +46,7 @@ where flake budgets are acceptable. Finalize is for fast, sound gating
 on the critical path; CI catches integration regressions.
 
 Bypass gates selectively:
+
 ```bash
 giwt finalize <branch> --skip-gates 'coverage - per-module line %,lint - oxlint (corrected)'  # example
 CHECK_INCLUDE_HEAVY_DB_TESTS=1 giwt finalize <branch>            # full migration test coverage
