@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { healthPanelMethods, } from "./admin-health";
+import { adminImportWizard, } from "./admin-import-wizard";
 import { t, } from "./i18n";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
@@ -14,6 +15,8 @@ interface ConfigEntry {
   description: string | null;
   created_at: string;
   updated_at: string;
+  requires_restart?: boolean;
+  per_chat_overridable?: boolean;
 }
 
 /** Methods provided by the merged admin page state (admin.ts). */
@@ -28,6 +31,29 @@ export const adminSystem = {
   loadingSystemConfig: false,
   confirmDeleteConfig: "",
 
+  // ── Restart-required keys (TASK-restart-required-indicator) ──
+  // Static set populated from GET /api/admin/config-schema. Per-row `requires_restart`
+  // is the authoritative signal on each row; this set is used for the global banner.
+  requiresRestartKeys: {} as Record<string, true>,
+  dismissedRestartKeys: {} as Record<string, true>,
+  restartBannerDismissed: false,
+  requiresRestart(key: string,): boolean {
+    return this.systemConfig.find((c,) => c.key === key)?.requires_restart === true;
+  },
+  hasPendingRestart(): boolean {
+    return Object.keys(this.sysConfigDirty,).some((k,) => this.requiresRestart(k,));
+  },
+  dismissRestartBanner() {
+    this.restartBannerDismissed = true;
+    for (const k of Object.keys(this.sysConfigDirty,)) { this.dismissedRestartKeys[k] = true; }
+  },
+  clearRestartDismissals() {
+    this.restartBannerDismissed = false;
+    this.dismissedRestartKeys = {};
+  },
+
+  // ── Setup wizard slice (TASK-frontend-setup-wizard; see admin-import-wizard.ts) ──
+  ...adminImportWizard.call({} as never,) as Record<string, unknown> as object,
   // ── Analytics ───────────────────────────────────────────
   analyticsSummary: { total: 0, distinct_sessions: 0, distinct_users: 0, },
   dailyStats: [] as { count: number; active_users: number; date: string }[],
