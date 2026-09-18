@@ -274,6 +274,18 @@
           data-testid="settings-gm-maxtokens"
         />
       </div>
+      <!-- Per-Chat Override Surface (TASK-moderator-frontend-for-per-chat-tunable-overrides) -->
+      <div
+        class="form-group"
+        style="margin-top: var(--space-3); border-top: 1px solid var(--border); padding-top: var(--space-3)"
+        data-testid="per-chat-override-surface"
+      >
+        <span class="form-label">Per-Chat Override Surface</span>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-2)">
+          Tunables below override the global system-config value for this chat only. Server defaults apply when the
+          field is blank or cleared. To change global defaults, an admin must edit System Configuration.
+        </p>
+      </div>
 
       <div class="form-group" x-show="!_chatOnline">
         <label class="form-label" for="settings-assistant-temperature">

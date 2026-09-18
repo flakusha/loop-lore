@@ -9,11 +9,12 @@
  * Admin panel reads/writes runtime configuration here.
  */
 
+import { load as yamlLoad, } from "js-yaml";
 import type { Kysely, } from "kysely";
 import type { Config, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
-
+import { SECRET_KEY_PATTERN, } from "./config-keys";
 /**
  * Logger instance for this module.
  * @returns Child logger scoped to "system-config".
@@ -30,7 +31,12 @@ export interface ConfigEntry {
   created_at: string;
   updated_at: string;
 }
-
+export {
+  decorateConfigEntry,
+  PER_CHAT_OVERRIDABLE_KEYS,
+  REQUIRES_RESTART_KEYS,
+  SECRET_KEY_PATTERN,
+} from "./config-keys";
 /**
  * Return all system config entries ordered by key.
  * @param db - Database instance.
@@ -171,4 +177,63 @@ export async function seedDefaults(db: Kysely<DB>, config: Config,): Promise<voi
   }
 
   log().info("System config defaults seeded", { count: defaults.length, },);
+}
+
+/** Per-key result for an import operation. */
+export interface ImportEntryResult {
+  key: string;
+  action: "added" | "changed" | "skipped" | "conflict";
+  error?: string;
+}
+
+/**
+ * Import system_config rows from a YAML or TOML payload produced by the
+ * matching export endpoint.
+ *
+ * - Parses the entire payload, then persists each key via {@link setConfig}.
+ * - Secret-pattern keys are read (so the operation can succeed atomically) but
+ *   never echoed back in the diff — the import response masks them with
+ *   `***REDACTED***` even on success.
+ * - Returns one {@link ImportEntryResult} per parsed key, in input order.
+ *
+ * @param db - Database instance.
+ * @param text - Raw YAML/TOML payload.
+ * @param format - Payload format.
+ * @returns One {@link ImportEntryResult} per parsed key, in input order.
+ * @throws if the payload does not parse as the requested format, or if the
+ *   parsed root is not a `{ system_config: { … } }` object.
+ */
+export async function importConfigFromText(
+  db: Kysely<DB>,
+  text: string,
+  format: "yaml" | "toml",
+): Promise<ImportEntryResult[]> {
+  const parsed: unknown = format === "yaml" ? yamlLoad(text,) : Bun.TOML.parse(text,);
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed,)) {
+    throw new Error(`Import payload must be a mapping, got ${typeof parsed}`,);
+  }
+  const root = parsed as { system_config?: unknown };
+  const entries = root.system_config;
+  if (typeof entries !== "object" || entries === null || Array.isArray(entries,)) {
+    throw new Error("Import payload must contain a `system_config` mapping",);
+  }
+  const results: ImportEntryResult[] = [];
+  for (const [key, raw,] of Object.entries(entries as Record<string, unknown>,)) {
+    if (typeof raw !== "string") {
+      results.push({ key, action: "skipped", error: `value is ${typeof raw}, expected string`, },);
+      continue;
+    }
+    if (SECRET_KEY_PATTERN.test(key,)) {
+      results.push({ key, action: "skipped", },);
+      continue;
+    }
+    const existing = await getConfig(db, key,);
+    try {
+      await setConfig(db, key, raw, existing?.description ?? undefined,);
+      results.push({ key, action: existing ? "changed" : "added", },);
+    } catch (error) {
+      results.push({ key, action: "conflict", error: (error as Error).message, },);
+    }
+  }
+  return results;
 }
