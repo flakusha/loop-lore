@@ -6045,8 +6045,8 @@
     "status": "undefined"
   },
   "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION": {
-    "hash": "0ec76d5",
-    "git_issue": "0ec76d5",
+    "hash": "eed7cfa",
+    "git_issue": "eed7cfa",
     "extid": "FEAT-2026-IRC-GROUP-CHAT-INTEGRATION",
     "type": "FEAT",
     "title": "# FEAT-2026-irc-group-chat-integration: IRC integration as group-chat (channel) + DM (PM) — RFC 1459/2812",
@@ -17027,6 +17027,18 @@
     "source": ".plan/tickets/TASK-gallery-user-tagging-propositions.md",
     "status": "✅ Resolved (commit c0c24103 — feat(gallery): tag facet + preview tag rename)"
   },
+  "TASK-GAP-CLOSURE-REPORT": {
+    "hash": "pending",
+    "extid": "TASK-GAP-CLOSURE-REPORT",
+    "type": "TASK",
+    "title": "# Gap-closure report — P1–P6 18-item workstream",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-gap-closure-report.md",
+    "status": "undefined"
+  },
   "TASK-GEMINI-PROVIDER": {
     "hash": "pending",
     "extid": "TASK-GEMINI-PROVIDER",
@@ -18215,6 +18227,18 @@
     "git_issue": "d3b7eba",
     "status": "open"
   },
+  "TASK-INVITE-CODE-GENERATION": {
+    "hash": "pending",
+    "extid": "TASK-INVITE-CODE-GENERATION",
+    "type": "TASK",
+    "title": "# Ticket: Invite Code Generation System",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-invite-code-generation.md",
+    "status": "undefined"
+  },
   "TASK-IO-FORMATS": {
     "hash": "58fa43b",
     "extid": "TASK-IO-FORMATS",
@@ -18351,6 +18375,18 @@
     "tags": [],
     "source": ".plan/tickets/TASK-item-system-extensions.md",
     "git_issue": "801bcd0",
+    "status": "undefined"
+  },
+  "TASK-JOIN-FLOW-MECHANICS": {
+    "hash": "pending",
+    "extid": "TASK-JOIN-FLOW-MECHANICS",
+    "type": "TASK",
+    "title": "# Ticket: Join Flow Mechanics",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-join-flow-mechanics.md",
     "status": "undefined"
   },
   "TASK-JSDOC-COVERAGE-CLEANUP-PUBLIC-EXPORTS": {
@@ -24351,7 +24387,7 @@
     "hash": "9337aae",
     "extid": "TASK-SPLIT-SERVER",
     "type": "TASK",
-    "title": "# TASK-SPLIT-SERVER: TASK-SPLIT-SERVER.TS: Split `src/server.ts` (640L)",
+    "title": "# TASK-SPLIT-SERVER: TASK-SPLIT-SERVER-TS: Split `src/server.ts` (640L)",
     "label": "task",
     "priority": "medium",
     "epic": "",
@@ -24360,16 +24396,16 @@
     "git_issue": "9337aae",
     "status": "undefined"
   },
-  "TASK-SPLIT-SERVER.TS": {
+  "TASK-SPLIT-SERVER-TS": {
     "hash": "pending",
-    "extid": "TASK-SPLIT-SERVER.TS",
+    "extid": "TASK-SPLIT-SERVER-TS",
     "type": "TASK",
     "title": "Split `src/server.ts` (640L)",
     "label": "task",
     "priority": "Medium",
     "epic": "epic-code-quality",
     "tags": [],
-    "source": ".plan/tickets/TASK-split-server.ts.md",
+    "source": ".plan/tickets/TASK-split-server-ts.md",
     "status": "open"
   },
   "TASK-SPLIT-UTILS-GOD-MODULE": {
@@ -24717,6 +24753,18 @@
     "epic": "epic-nsfw-moderation-priority",
     "tags": [],
     "source": ".plan/tickets/TASK-telemetry-schema-comment-claims-additionalproperties-false-r.md",
+    "status": "open"
+  },
+  "TASK-TEMPLATE": {
+    "hash": "pending",
+    "extid": "TASK-TEMPLATE",
+    "type": "TASK",
+    "title": "# Issue Template",
+    "label": "task",
+    "priority": "Medium",
+    "epic": "(optional, e.g. epic-plugin-system)",
+    "tags": [],
+    "source": ".plan/tickets/TASK-template.md",
     "status": "open"
   },
   "TASK-TEMPLATE-BASED-ENTITY-CREATION-DETERMINISTIC-PLUS-LLM-PATHS": {
@@ -26835,6 +26883,18 @@
     "tags": [],
     "source": ".plan/tickets/TEST-gallery-upload-dropzone-untested.md",
     "status": "open"
+  },
+  "TEST-INVITE-JOIN-E2E": {
+    "hash": "pending",
+    "extid": "TEST-INVITE-JOIN-E2E",
+    "type": "TEST",
+    "title": "# Ticket: E2E Invite/Flow Validation",
+    "label": "test",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TEST-invite-join-e2e.md",
+    "status": "undefined"
   },
   "TEST-NPC-NAVIGATION-PROCESSMOVEMENTTICK-UNTESTED": {
     "hash": "pending",

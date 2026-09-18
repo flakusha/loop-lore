@@ -6,7 +6,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small
-**Epic:** epic-frontend-modernization.md
+**Epic:** epic-frontend-overview.md
 
 ## Summary
 
