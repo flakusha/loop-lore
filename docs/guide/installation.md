@@ -43,6 +43,7 @@ bun run dev
 | `bun run docs:dev`     | Start documentation dev server     |
 | `bun run docs:build`   | Build documentation for production |
 | `bun run docs:preview` | Preview built documentation        |
+| `bun run mermaid:lint` | Validate mermaid diagram blocks in docs |
 
 ## Environment
 
