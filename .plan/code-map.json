@@ -5232,6 +5232,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-personas-impersonation-plan-docs-bookkeeping-sweep.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-recon-test-coverage.md"
     },
     {
@@ -5599,6 +5603,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/IMPROVE-impersonate-explicit-else-branch.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-personas-impersonation-plan-docs-bookkeeping-sweep.md"
     }
   ],
   "src/chat/service/party-narration.ts": [
@@ -11833,6 +11841,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-chat-composer-markdown-pre-render-preview-before-send.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-personas-impersonation-plan-docs-bookkeeping-sweep.md"
     }
   ],
   "src/frontend/alpine-init.ts": [
@@ -19489,6 +19501,12 @@
       "source": ".plan/tickets/BUG-actortype-persona-422-on-valid-ui-input.md"
     }
   ],
+  "src/personas/handlers.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-persona-update-on-cross-user-id-returns-200-ok-instead-of-40.md"
+    }
+  ],
   "src/personas/service.test.ts": [
     {
       "kind": "ticket",
@@ -19503,6 +19521,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-format-version-migration.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-persona-setdefault-getdefault-unwired-delete-or-wire.md"
     }
   ],
   "src/plugins": [
@@ -21867,6 +21889,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-per-chat-auto-translation-layer.md"
+    }
+  ],
+  "src/routes/chats/chat.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
     }
   ],
   "src/routes/chats/create.ts": [
@@ -29059,6 +29087,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-validate-and-fix-fe-be-db-gaps-for-chat-vn-settings.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/WIRE-extras-impersonateactorid-schema-validation.md"
     }
   ],
   "src/validation/schemas/entities.ts": [
