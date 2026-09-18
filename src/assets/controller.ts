@@ -54,6 +54,7 @@ import {
 import {
   createAsset,
   deleteAsset,
+  deleteAssetLink,
   detectAssetType,
   getAssetLinks,
   getAssetShares,
@@ -61,7 +62,6 @@ import {
   listAssets,
   resolveAssetTransform,
   shareAsset,
-  unlinkAsset,
   unshareAsset,
   updateAssetVisibility,
   upsertAssetTransform,
@@ -347,13 +347,16 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const owned = await requireAssetOwner(database, ctx.params.id, userId,);
         if (owned instanceof Response) { return owned; }
 
-        const body = ctx.body as { entityType?: string; entityId?: string };
-        await unlinkAsset({
+        // :linkId is the linked entity's id; both the asset id and the link
+        // id must match. Unknown ids are a 404, never a silent success.
+        const deleted = await deleteAssetLink({
           database,
           assetId: ctx.params.id,
-          entityType: (body.entityType ?? "") as AssetLinkEntity,
-          entityId: body.entityId ?? "",
+          linkId: ctx.params.linkId,
         },);
+        if (!deleted) {
+          return notFoundResponse("Link not found",);
+        }
         return jsonNoContent();
       },)
       // ── Share sub-routes ─────────────────────────────

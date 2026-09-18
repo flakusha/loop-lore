@@ -370,14 +370,81 @@ describe("asset links", () => {
       const links = (await listed.json()) as { entity_id: string }[];
       expect(links.map((l,) => l.entity_id),).toContain("char-1",);
       const unlinked = await app.handle(
-        jsonRequest(`http://localhost/api/assets/${fx.assetId}/links/x`, "DELETE", {
-          entityType: "character",
-          entityId: "char-1",
-        },),
+        new Request(`http://localhost/api/assets/${fx.assetId}/links/char-1`, { method: "DELETE", },),
       );
       expect(unlinked.status,).toBe(204,);
       const relisted = await app.handle(new Request(`http://localhost/api/assets/${fx.assetId}/links`,),);
       expect(((await relisted.json()) as unknown[]).length,).toBe(0,);
+    } finally {
+      await cleanup(fx,);
+    }
+  });
+
+  test("DELETE removes only the link addressed by the path id", async () => {
+    const fx = await seed();
+    try {
+      const app = makeApp(fx.db, fx.ownerId, fx.uploadDir,);
+      for (const entityId of ["char-1", "world-2",]) {
+        const linked = await app.handle(
+          jsonRequest(`http://localhost/api/assets/${fx.assetId}/links`, "POST", {
+            entityType: "character",
+            entityId,
+          },),
+        );
+        expect(linked.status,).toBe(201,);
+      }
+
+      const deleted = await app.handle(
+        new Request(`http://localhost/api/assets/${fx.assetId}/links/char-1`, { method: "DELETE", },),
+      );
+      expect(deleted.status,).toBe(204,);
+
+      const listed = await app.handle(new Request(`http://localhost/api/assets/${fx.assetId}/links`,),);
+      const links = (await listed.json()) as { entity_id: string }[];
+      expect(links.map((l,) => l.entity_id),).toEqual(["world-2",],);
+
+      // The deleted link 404s on repeat — never a silent success.
+      const repeat = await app.handle(
+        new Request(`http://localhost/api/assets/${fx.assetId}/links/char-1`, { method: "DELETE", },),
+      );
+      expect(repeat.status,).toBe(404,);
+    } finally {
+      await cleanup(fx,);
+    }
+  });
+
+  test("DELETE 404s for an unknown link id", async () => {
+    const fx = await seed();
+    try {
+      const app = makeApp(fx.db, fx.ownerId, fx.uploadDir,);
+      const res = await app.handle(
+        new Request(`http://localhost/api/assets/${fx.assetId}/links/ghost`, { method: "DELETE", },),
+      );
+      expect(res.status,).toBe(404,);
+    } finally {
+      await cleanup(fx,);
+    }
+  });
+
+  test("DELETE 404s when a non-owner unlinks", async () => {
+    const fx = await seed();
+    try {
+      const ownerApp = makeApp(fx.db, fx.ownerId, fx.uploadDir,);
+      await ownerApp.handle(
+        jsonRequest(`http://localhost/api/assets/${fx.assetId}/links`, "POST", {
+          entityType: "character",
+          entityId: "char-1",
+        },),
+      );
+
+      const res = await makeApp(fx.db, fx.outsiderId, fx.uploadDir,).handle(
+        new Request(`http://localhost/api/assets/${fx.assetId}/links/char-1`, { method: "DELETE", },),
+      );
+      expect(res.status,).toBe(404,);
+
+      // Ownership is enforced server-side: the link survives the rejected call.
+      const listed = await ownerApp.handle(new Request(`http://localhost/api/assets/${fx.assetId}/links`,),);
+      expect(((await listed.json()) as unknown[]).length,).toBe(1,);
     } finally {
       await cleanup(fx,);
     }
