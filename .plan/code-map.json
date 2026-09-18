@@ -1775,7 +1775,6 @@
       "source": ".plan/epics/epic-memory-propagation.md"
     }
   ],
-
   "src/assistant/personality/presets.ts": [
     {
       "kind": "ticket",
@@ -2707,6 +2706,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-species.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-world.md"
     },
     {
@@ -2960,7 +2963,6 @@
       "source": ".plan/tickets/BUG-getclientip-trusts-spoofable-proxy-headers-unconditionally.md"
     }
   ],
-
   "src/auto-gen.ts": [
     {
       "kind": "ticket",
@@ -2999,7 +3001,6 @@
       "source": ".plan/tickets/BUG-callaux-graceful-failure-throws-on-empty-config.md"
     }
   ],
-
   "src/aux-pipeline/config.ts": [
     {
       "kind": "ticket",
@@ -3548,14 +3549,12 @@
       "source": ".plan/tickets/TASK-adopt-bun-randomuuidv7-for-time-sortable-ids.md"
     }
   ],
-
   "src/bestiary/ecology.ts": [
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-bestiary-ecology-pressure-model.md"
     }
   ],
-
   "src/bestiary/repopulation.ts": [
     {
       "kind": "ticket",
@@ -4168,7 +4167,6 @@
       "source": ".plan/tickets/TASK-character-personality-integrity.md"
     }
   ],
-
   "src/characters/relationships-service.ts": [
     {
       "kind": "ticket",
@@ -4249,6 +4247,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-character-template-seeding.md"
+    }
+  ],
+  "src/characters/seed/avatar.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-npc-character-edit-stack-parity.md"
     }
   ],
   "src/characters/seed/templates.ts": [
@@ -4337,6 +4341,12 @@
     {
       "kind": "spec",
       "source": "docs/spec/emotion-avatars.md"
+    }
+  ],
+  "src/characters/services/emotion-avatar-service": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-npc-character-edit-stack-parity.md"
     }
   ],
   "src/characters/services/emotion-avatar-service.test.ts": [
@@ -11961,7 +11971,6 @@
       "source": "docs/spec/quests-encounters.md"
     }
   ],
-
   "src/factions/politics.ts": [
     {
       "kind": "ticket",
@@ -12418,7 +12427,6 @@
       "source": ".plan/tickets/TASK-actor-traits-frontend.md"
     }
   ],
-
   "src/frontend/alpine/admin-": [
     {
       "kind": "ticket",
@@ -20081,7 +20089,6 @@
       "source": ".plan/tickets/TASK-world-item-frontend.md"
     }
   ],
-
   "src/parties/travel.ts": [
     {
       "kind": "ticket",
@@ -21419,11 +21426,19 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-species.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflow-world.md"
     },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-assistant-creative-studio-workflows.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-item-generation.md"
     },
     {
       "kind": "ticket",
@@ -22098,7 +22113,6 @@
       "source": ".plan/tickets/TASK-persist-loot-drops.md"
     }
   ],
-
   "src/routes/bestiary.ts": [
     {
       "kind": "ticket",
@@ -24537,7 +24551,6 @@
       "source": ".plan/tickets/TASK-api-first-foundation.md"
     }
   ],
-
   "src/routes/parties.ts": [
     {
       "kind": "ticket",
@@ -26476,7 +26489,6 @@
       "source": ".plan/tickets/TASK-nsfw-location-environment.md"
     }
   ],
-
   "src/rpg/loot": [
     {
       "kind": "ticket",
@@ -26741,7 +26753,6 @@
       "source": ".plan/tickets/TEST-npc-navigation-processMovementTick-untested.md"
     }
   ],
-
   "src/rpg/npc-navigation/tick-driver.ts": [
     {
       "kind": "ticket",
@@ -28496,7 +28507,6 @@
       "source": ".plan/epics/epic-configs-path-resolution.md"
     }
   ],
-
   "src/services/trade-core": [
     {
       "kind": "ticket",
