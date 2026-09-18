@@ -284,6 +284,19 @@
     "source": ".plan/tickets/BUG-asset-webp-vp8x-dimension-truncation.md",
     "status": "[OK] Already resolved in dev — no code change needed"
   },
+  "BUG-ASSETS-DELETE-ASSETS-ID-LINKS-LINKID-IGNORES-LINKID-PATH-PAR": {
+    "hash": "3368bad",
+    "git_issue": "3368bad",
+    "extid": "BUG-ASSETS-DELETE-ASSETS-ID-LINKS-LINKID-IGNORES-LINKID-PATH-PAR",
+    "type": "BUG",
+    "title": "assets DELETE /assets/:id/links/:linkId ignores linkId path parameter",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assets-delete-assets-id-links-linkid-ignores-linkid-path-par.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-ASSETS-DELETE-FK-CONSTRAINT-FAILS": {
     "hash": "pending",
     "extid": "BUG-ASSETS-DELETE-FK-CONSTRAINT-FAILS",
@@ -295,6 +308,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-assets-delete-fk-constraint-fails.md",
     "status": "open"
+  },
+  "BUG-ASSETS-SERVE-SERVEFILE-OMITS-X-CONTENT-TYPE-OPTIONS-NOSNIFF-": {
+    "hash": "0403ca3",
+    "git_issue": "0403ca3",
+    "extid": "BUG-ASSETS-SERVE-SERVEFILE-OMITS-X-CONTENT-TYPE-OPTIONS-NOSNIFF-",
+    "type": "BUG",
+    "title": "assets serve: serveFile omits X-Content-Type-Options: nosniff, enabling MIME-sniff attacks",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-assets-serve-servefile-omits-x-content-type-options-nosniff-.md",
+    "status": "⬜ Not Started"
   },
   "BUG-ASSISTANT-CREATIVE-STUDIO-TASK-STALE": {
     "hash": "pending",
@@ -487,6 +513,45 @@
     "git_issue": "bc5de16",
     "status": "done"
   },
+  "BUG-BATTLE-ATTACKS-CALCULATEDAMAGE-DOUBLES-FLAT-DICE-NOTATION-BO": {
+    "hash": "b7918e1",
+    "git_issue": "b7918e1",
+    "extid": "BUG-BATTLE-ATTACKS-CALCULATEDAMAGE-DOUBLES-FLAT-DICE-NOTATION-BO",
+    "type": "BUG",
+    "title": "battle attacks: calculateDamage doubles flat dice-notation bonus on critical hits",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-battle-attacks-calculatedamage-doubles-flat-dice-notation-bo.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-BATTLE-DICE-ADVANTAGE-DISADVANTAGE-ROLLS-IGNORE-MODIFIERS-BI": {
+    "hash": "f914631",
+    "git_issue": "f914631",
+    "extid": "BUG-BATTLE-DICE-ADVANTAGE-DISADVANTAGE-ROLLS-IGNORE-MODIFIERS-BI",
+    "type": "BUG",
+    "title": "battle dice: advantage/disadvantage rolls ignore modifiers, biasing vs initial roll",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-battle-dice-advantage-disadvantage-rolls-ignore-modifiers-bi.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-BATTLE-DICE-CRITICAL-SUCCESS-FAILURE-CHECKS-DISCARDED-DIE-UN": {
+    "hash": "d97fff9",
+    "git_issue": "d97fff9",
+    "extid": "BUG-BATTLE-DICE-CRITICAL-SUCCESS-FAILURE-CHECKS-DISCARDED-DIE-UN",
+    "type": "BUG",
+    "title": "battle dice: critical success/failure checks discarded die under advantage/disadvantage",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-battle-dice-critical-success-failure-checks-discarded-die-un.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-BATTLE-EQUIPMENT-LOOT-NO-AUTH-GUARD": {
     "hash": "pending",
     "extid": "BUG-BATTLE-EQUIPMENT-LOOT-NO-AUTH-GUARD",
@@ -511,6 +576,19 @@
     "source": ".plan/tickets/BUG-battle-resolution-missing-empty-input-adapter.md",
     "git_issue": "pending",
     "status": "done"
+  },
+  "BUG-BATTLE-SURRENDER-CANSURRENDER-IS-ALWAYS-TRUE-WHEN-MORALE-30-": {
+    "hash": "268cbca",
+    "git_issue": "268cbca",
+    "extid": "BUG-BATTLE-SURRENDER-CANSURRENDER-IS-ALWAYS-TRUE-WHEN-MORALE-30-",
+    "type": "BUG",
+    "title": "battle surrender: canSurrender is always true when morale ≤ 30, redundant with surrenderChance",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-battle-surrender-cansurrender-is-always-true-when-morale-30-.md",
+    "status": "⬜ Not Started"
   },
   "BUG-BLOG-COMMENTS-LACK-THREADING-PARENT-COMMENT-ID-BLOCKING-LEMM": {
     "hash": "69d45a5",
@@ -979,6 +1057,32 @@
     "source": ".plan/tickets/BUG-characters-creation-wizard-wizardid-unused.md",
     "status": "done"
   },
+  "BUG-CHARACTERS-EMOTION-AVATAR-SORTORDER-DERIVED-FROM-OBJECT-VALU": {
+    "hash": "8e8545e",
+    "git_issue": "8e8545e",
+    "extid": "BUG-CHARACTERS-EMOTION-AVATAR-SORTORDER-DERIVED-FROM-OBJECT-VALU",
+    "type": "BUG",
+    "title": "characters emotion-avatar: sortOrder derived from Object.values() insertion order",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-characters-emotion-avatar-sortorder-derived-from-object-valu.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-CHARACTERS-RESOLVECHARACTERTRAITS-SILENTLY-DROPS-WORLD-LAYER": {
+    "hash": "ebe17ed",
+    "git_issue": "ebe17ed",
+    "extid": "BUG-CHARACTERS-RESOLVECHARACTERTRAITS-SILENTLY-DROPS-WORLD-LAYER",
+    "type": "BUG",
+    "title": "characters: resolveCharacterTraits silently drops world-layer integrity violations",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-characters-resolvecharactertraits-silently-drops-world-layer.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-CHAT-ASSISTANT-RETRY-SILENT-500": {
     "hash": "pending",
     "extid": "BUG-CHAT-ASSISTANT-RETRY-SILENT-500",
@@ -1003,6 +1107,19 @@
     "tags": [],
     "source": ".plan/tickets/BUG-chat-batch-export-n-plus-one.md",
     "status": "done"
+  },
+  "BUG-CHAT-CARRYHISTORY-SKIPPED-CIPHERTEXT-MESSAGES-ORPHAN-ALL-DES": {
+    "hash": "308ee2a",
+    "git_issue": "308ee2a",
+    "extid": "BUG-CHAT-CARRYHISTORY-SKIPPED-CIPHERTEXT-MESSAGES-ORPHAN-ALL-DES",
+    "type": "BUG",
+    "title": "chat carryHistory: skipped ciphertext messages orphan all descendants",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-carryhistory-skipped-ciphertext-messages-orphan-all-des.md",
+    "status": "⬜ Not Started"
   },
   "BUG-CHAT-FTS-ENCRYPT-MISMATCH": {
     "hash": "pending",
@@ -1209,6 +1326,32 @@
     "source": ".plan/tickets/BUG-chat-random-events-no-character-binding.md",
     "git_issue": "31e8676",
     "status": "done"
+  },
+  "BUG-CHAT-REUNITE-COPYMESSAGESTOPRIMARY-CARRIES-SOURCE-CHAT-KEY-I": {
+    "hash": "d2429bc",
+    "git_issue": "d2429bc",
+    "extid": "BUG-CHAT-REUNITE-COPYMESSAGESTOPRIMARY-CARRIES-SOURCE-CHAT-KEY-I",
+    "type": "BUG",
+    "title": "chat reunite: copyMessagesToPrimary carries source chat key_id verbatim",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-reunite-copymessagestoprimary-carries-source-chat-key-i.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-CHAT-REUNITE-SECONDARY-CHAT-NARRATES-ARCHIVED-BUT-IS-NEVER-A": {
+    "hash": "2f54162",
+    "git_issue": "2f54162",
+    "extid": "BUG-CHAT-REUNITE-SECONDARY-CHAT-NARRATES-ARCHIVED-BUT-IS-NEVER-A",
+    "type": "BUG",
+    "title": "chat reunite: secondary chat narrates 'archived' but is never archived",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-chat-reunite-secondary-chat-narrates-archived-but-is-never-a.md",
+    "status": "⬜ Not Started"
   },
   "BUG-CHAT-REUNITE-SECONDARY-OWNERSHIP-CHECK-MISSING": {
     "hash": "a27d730",
@@ -3441,6 +3584,58 @@
     "source": ".plan/tickets/BUG-persona-update-on-cross-user-id-returns-200-ok-instead-of-40.md",
     "status": "open"
   },
+  "BUG-PERSONAS-CONVERTTOCHARACTER-DROPS-TITLE-TEMPERATURE-MAX-TOKE": {
+    "hash": "dd64edd",
+    "git_issue": "dd64edd",
+    "extid": "BUG-PERSONAS-CONVERTTOCHARACTER-DROPS-TITLE-TEMPERATURE-MAX-TOKE",
+    "type": "BUG",
+    "title": "personas convertToCharacter: drops title, temperature, max_tokens, model from persona",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-personas-converttocharacter-drops-title-temperature-max-toke.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-PERSONAS-HANDLECONVERTTOCHARACTER-CATCH-LEAKS-ERROR-MESSAGE-": {
+    "hash": "8490dbf",
+    "git_issue": "8490dbf",
+    "extid": "BUG-PERSONAS-HANDLECONVERTTOCHARACTER-CATCH-LEAKS-ERROR-MESSAGE-",
+    "type": "BUG",
+    "title": "personas handleConvertToCharacter: catch leaks error.message and always returns 404",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-personas-handleconverttocharacter-catch-leaks-error-message-.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-PERSONAS-HANDLEUPDATEPERSONA-CATCH-MAPS-ANY-THROWN-ERROR-TO-": {
+    "hash": "0a2f374",
+    "git_issue": "0a2f374",
+    "extid": "BUG-PERSONAS-HANDLEUPDATEPERSONA-CATCH-MAPS-ANY-THROWN-ERROR-TO-",
+    "type": "BUG",
+    "title": "personas handleUpdatePersona: catch maps ANY thrown error to 404 'Persona not found'",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-personas-handleupdatepersona-catch-maps-any-thrown-error-to-.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-PERSONAS-SETDEFAULT-SILENTLY-SUCCEEDS-FOR-INVALID-PERSONAID-": {
+    "hash": "2be6495",
+    "git_issue": "2be6495",
+    "extid": "BUG-PERSONAS-SETDEFAULT-SILENTLY-SUCCEEDS-FOR-INVALID-PERSONAID-",
+    "type": "BUG",
+    "title": "personas setDefault: silently succeeds for invalid personaId with no existence check",
+    "label": "bug",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-personas-setdefault-silently-succeeds-for-invalid-personaid-.md",
+    "status": "⬜ Not Started"
+  },
   "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD": {
     "hash": "c04aa89",
     "extid": "BUG-PII-REDACTION-HARDCODED-DEV-FALLBACK-SECRET-NO-PROD-GUARD",
@@ -3749,6 +3944,32 @@
     "tags": [],
     "source": ".plan/tickets/BUG-routes-message-seen-post-delete-trusts-client-actorid-idor-a.md",
     "status": "done"
+  },
+  "BUG-RPG-LOOT-LUCKMODIFIER-INVERTS-DROP-QUALITY-POSITIVE-LUCK-PRO": {
+    "hash": "f674eba",
+    "git_issue": "f674eba",
+    "extid": "BUG-RPG-LOOT-LUCKMODIFIER-INVERTS-DROP-QUALITY-POSITIVE-LUCK-PRO",
+    "type": "BUG",
+    "title": "rpg loot: luckModifier inverts drop quality — positive luck produces worse drops",
+    "label": "bug",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rpg-loot-luckmodifier-inverts-drop-quality-positive-luck-pro.md",
+    "status": "⬜ Not Started"
+  },
+  "BUG-RPG-LOOT-ROLLLOOTTABLE-SETS-USED-FLAG-BUT-NEVER-ENFORCES-ONE": {
+    "hash": "9d34ffe",
+    "git_issue": "9d34ffe",
+    "extid": "BUG-RPG-LOOT-ROLLLOOTTABLE-SETS-USED-FLAG-BUT-NEVER-ENFORCES-ONE",
+    "type": "BUG",
+    "title": "rpg loot: rollLootTable sets 'used' flag but never enforces one-shot use",
+    "label": "bug",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/BUG-rpg-loot-rollloottable-sets-used-flag-but-never-enforces-one.md",
+    "status": "⬜ Not Started"
   },
   "BUG-RPG-ROUTE-AUTHZ-GAPS-XP-AWARD-LEDGER-WORLD-TRAIT-IDOR-WORLD-": {
     "hash": "82e8395",
