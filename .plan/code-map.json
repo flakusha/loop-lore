@@ -9398,6 +9398,10 @@
   "src/db/migration-roundtrip.test.ts": [
     {
       "kind": "ticket",
+      "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
     },
     {
@@ -9416,6 +9420,14 @@
     }
   ],
   "src/db/migrations.test.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.md"
+    },
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-coverage-gate-true-multi-worker-fanout-investigation.md"
@@ -9873,6 +9885,10 @@
     {
       "kind": "epic",
       "source": ".plan/epics/epic-character-growth.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/BUG-migration-activitypub-actor-keys-fk-missing-ondelete-cascade.md"
     }
   ],
   "src/db/migrations/parts/004_chats_actors.ts": [
