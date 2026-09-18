@@ -3,19 +3,47 @@
 
 # TASK-025: Text effects and overlays
 
-**Status:** Not Started
+**Status:** open
 **Priority:** medium
 **Effort:** Medium
-**Summary:** (none captured)
-**Context:** (none captured)
-**Acceptance Criteria:** (none captured)
-
+**Summary:** Reusable text-effects primitives (shake, glow, typewriter, fade) plus overlay stack.
+**Context:** Pure presentation layer; composes on existing surfaces without altering backend schema.
+**Acceptance Criteria:** See ## Acceptance Criteria below.
 
 **Status**: open
 **Priority**: medium
-**Labels**:
+**Effort:** Medium
+**Labels**: text-effects, overlay, ui, immersion
 **Assignee**:
-**Epic**:
+**Epic**: epic-frontend-components
 **Related**:
+
+## Summary
+
+Add inline text effects (shake, glow, typewriter, fade) and overlay layers (banner, toast, ambient ticker) usable across chat, narration, and scene HUDs.
+
+## Context
+
+Pure presentation layer. Effects compose on existing message and HUD surfaces without altering backend message schema. IN: CSS-driven effects library, overlay stack manager, reduced-motion fallback. OUT: LLM-side effect tagging, server-rendered animation frames.
+
+## Acceptance Criteria
+
+- Effects library exposes shake, glow, typewriter, and fade via a single `<TextFx>` component
+- Overlay stack supports concurrent banner, toast, and ticker without z-index collisions
+- `prefers-reduced-motion` disables non-essential motion; essential UI feedback remains
+- Effects are testable via Playwright assertions on computed styles and aria-live regions
+- No regression in chat scroll position when overlays appear
+
+## Related Files
+
+- src/components/TextFx.vue (to be created)
+- src/components/OverlayStack.vue (to be created)
+- src/views/chat/ChatView.vue
+- src/frontend/effects/
+
+## Notes
+
+- Coordinate with accessibility epic for reduced-motion semantics
+- Avoid JS animation libraries where CSS keyframes suffice
 
 Git issue: `b983dc4`
