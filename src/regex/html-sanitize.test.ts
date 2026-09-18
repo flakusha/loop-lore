@@ -46,10 +46,14 @@ describe("stripScriptTags", () => {
 
   test("handles many unterminated <script prefixes in linear time", () => {
     // The former SCRIPT_TAG regex nested-quantifier backtracked quadratically
-    // here (~428ms on a 56KB input and minutes on 280KB); the linear scanner
-    // must complete and return the input unchanged.
-    const s = "<script".repeat(40_000,);
+    // here (~428ms on a 56KB input and minutes on 280KB). 1.4MB of the same
+    // prefix must finish well inside a generous 2s wall-clock bound (the
+    // quadratic regex would take hours at this size) and return the input
+    // unchanged.
+    const s = "<script".repeat(200_000,);
+    const started = performance.now();
     expect(stripScriptTags(s,),).toBe(s,);
+    expect(performance.now() - started,).toBeLessThan(2000,);
   });
 });
 
