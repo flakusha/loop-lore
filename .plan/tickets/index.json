@@ -7268,7 +7268,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/IMPROVE-impersonate-explicit-else-branch.md",
-    "status": "open"
+    "status": "done"
   },
   "PERF-CHAT-DISPATCH-COMMAND-THREE-SEQUENTIAL-QUERIES": {
     "hash": "pending",
@@ -7280,7 +7280,7 @@
     "epic": "",
     "tags": [],
     "source": ".plan/tickets/PERF-chat-dispatch-command-three-sequential-queries.md",
-    "status": "open"
+    "status": "done"
   },
   "PERF-GALLERY-UPLOADCHATASSETS-SEQUENTIAL": {
     "hash": "pending",

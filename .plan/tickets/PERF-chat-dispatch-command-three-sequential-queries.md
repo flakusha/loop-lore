@@ -8,7 +8,7 @@
 **Acceptance Criteria:** (none captured)
 
 
-**Status:** ✅ Done
+**Status:** ✅ Resolved (already on dev, 2026-09-18)
 **Priority:** low
 **Priority Tier:** P6+
 **Effort:** Trivial
