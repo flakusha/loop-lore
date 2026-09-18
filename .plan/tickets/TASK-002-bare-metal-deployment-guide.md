@@ -14,7 +14,6 @@
 **Assignee:** Ops Team
 
 ## Summary
-## Summary
 
 Document on-premises / dedicated-server deployment procedures for loop-lore, producing a runbook at `docs/ops/bare-metal-deploy.md` that covers hardware inventory, step-by-step installation, systemd unit files, NVMe/RAID/storage setup, GPU/CUDA configuration, networking, monitoring, and backup strategy.
 
