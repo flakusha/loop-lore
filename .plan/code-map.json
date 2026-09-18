@@ -52,6 +52,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-restart-required-indicator-on-system-config-changes.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TEST-admin-seeddefaults-silent-duplicate-skip-untested.md"
     }
   ],
@@ -501,6 +505,12 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-skills-routes.md"
+    }
+  ],
+  "src/app/start.ts": [
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md"
     }
   ],
   "src/assets/controller.ts": [
@@ -7027,6 +7037,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-fix-eslint-errors.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md"
     }
   ],
   "src/config/load.test.ts": [
@@ -12109,6 +12123,14 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-epic11-admin-settings-reconciliation.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-setup-wizard-import-system-config-from-yaml-toml.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-restart-required-indicator-on-system-config-changes.md"
     }
   ],
   "src/frontend/alpine/admin-users.ts": [
@@ -27449,6 +27471,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-tls-cipher-suite-hardening-and-secure-defaults.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md"
     }
   ],
   "src/server/static-files.ts": [
@@ -29488,6 +29514,10 @@
     },
     {
       "kind": "ticket",
+      "source": ".plan/tickets/TASK-frontend-setup-wizard-import-system-config-from-yaml-toml.md"
+    },
+    {
+      "kind": "ticket",
       "source": ".plan/tickets/TASK-i18n-template-strings.md"
     }
   ],
@@ -29903,6 +29933,10 @@
     {
       "kind": "ticket",
       "source": ".plan/tickets/TASK-info-bubbles.md"
+    },
+    {
+      "kind": "ticket",
+      "source": ".plan/tickets/TASK-restart-required-indicator-on-system-config-changes.md"
     },
     {
       "kind": "ticket",
