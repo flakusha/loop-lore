@@ -3,7 +3,7 @@
 
 # FEAT-065-IMG: Image Prompt Template Persistence
 
-**Status:** Not Started
+**Status:** closed
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

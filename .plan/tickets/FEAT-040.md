@@ -3,7 +3,7 @@
 
 # FEAT-040: Schema version table
 
-**Status:** Not Started
+**Status:** resolved
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
