@@ -286,7 +286,7 @@ interface VnModeSettings {
 - `src/frontend/vn/portrait-manager.ts` — character portrait positioning
 - `src/frontend/vn/typewriter.ts` — typewriter text effect
 - `src/frontend/vn/settings.ts` — VN mode preferences
-- `src/public/css/vn.css` — VN mode styles (served; consolidated from `src/frontend/vn/styles.css`)
+- `src/public/css/vn.css` — VN mode styles (served directly; there is NO `src/frontend/vn/styles.css` — the CSS lives in `src/public/css/`)
 
 ### Modify
 
