@@ -160,7 +160,6 @@ describe("PersonasService — update() individual field branches", () => {
     expect(persona!.title,).toBe("Supreme Overlord",);
   });
 
-
   test("isDefault=false sets is_default to DefaultState.NotDefault", async () => {
     const id = await service.create({
       userId,
@@ -194,26 +193,26 @@ describe("PersonasService — update() individual field branches", () => {
   });
 });
 
-  test('update() with isDefault=true on a missing id throws and leaves other personas untouched', async () => {
-    const otherId = await service.create({ userId, name: 'Unrelated', title: 'Unrelated Title', },);
-    const otherBefore = await service.getById(otherId, userId,);
+test("update() with isDefault=true on a missing id throws and leaves other personas untouched", async () => {
+  const otherId = await service.create({ userId, name: "Unrelated", title: "Unrelated Title", },);
+  const otherBefore = await service.getById(otherId, userId,);
 
-    await expect(
-      service.update('no-such-persona-id', { isDefault: true, title: 'X', }, userId,),
-    ).rejects.toThrow('Persona not found',);
+  await expect(
+    service.update("no-such-persona-id", { isDefault: true, title: "X", }, userId,),
+  ).rejects.toThrow("Persona not found",);
 
-    const otherAfter = await service.getById(otherId, userId,);
-    expect(otherAfter!.title,).toBe(otherBefore!.title,);
-    expect(otherAfter!.title,).not.toBe('X',);
+  const otherAfter = await service.getById(otherId, userId,);
+  expect(otherAfter!.title,).toBe(otherBefore!.title,);
+  expect(otherAfter!.title,).not.toBe("X",);
 
-    const leakedTitle = await db
-      .selectFrom('personas',)
-      .selectAll()
-      .where('user_id', '=', userId,)
-      .where('title', '=', 'X',)
-      .executeTakeFirst();
-    expect(leakedTitle,).toBeUndefined();
-  });
+  const leakedTitle = await db
+    .selectFrom("personas",)
+    .selectAll()
+    .where("user_id", "=", userId,)
+    .where("title", "=", "X",)
+    .executeTakeFirst();
+  expect(leakedTitle,).toBeUndefined();
+});
 
 describe("PersonasService — delete() cascade", () => {
   test("clears persona_id from chat_participants when deleting persona", async () => {
