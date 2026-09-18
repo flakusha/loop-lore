@@ -37,7 +37,7 @@ Response:
 ### Validation
 
 Request body validation uses Elysia TypeBox (`t`) schemas defined per route
-group in `src/validation/schemas.ts`. Route handlers validate the parsed body
+group in `src/validation/schemas/` (per-domain TypeBox files). Route handlers
 against the schema after `parseBody()` — invalid requests return 422 with
 field-level details. See `docs/spec/implementation.md#runtime-validation-layer`
 for full design. (A `src/schemas/` Zod layer does not exist; the Zod/OpenAPI

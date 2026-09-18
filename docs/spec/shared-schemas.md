@@ -216,9 +216,10 @@ const NSFW_RATING_HIERARCHY = [
 - `src/schemas/reputation.ts` — Unified reputation schema
 - `src/schemas/consent.ts` — Unified consent schema
 - `src/schemas/nsfw-rating.ts` — NSFW content rating schema
-- `src/schemas/index.ts` — Schema exports
-- `src/db/schema-shared.ts` — Shared database tables
-- `src/routes/schemas.ts` — Schema API endpoints
+<!-- GAP: src/schemas/ directory is the planned home for shared schemas.
+     At time of writing only src/schemas/reputation.ts and src/schemas/nsfw-rating.ts exist;
+     src/schemas/consent.ts is aspirational. Files below this gap marker are speculative. -->
+- `src/schemas/index.ts` — planned barrel re-export (not yet implemented)
 - `docs/spec/shared-schemas.md` — Schema documentation
 
 ## Open Questions
@@ -262,3 +263,32 @@ const NSFW_RATING_HIERARCHY = [
   - Social + NSFW reputation working
   - Chat Lifecycle + NSFW consent working
   - Character Core + NSFW rating working
+
+
+---
+
+## Faction Reputation
+
+> Folded in from `docs/spec/faction-reputation.md` during Phase 2 spec reconciliation.
+
+### Overview
+
+Worlds can define **factions** that control territory, issue quests, and track player standing.
+
+> Source `docs/spec/faction-reputation.md` Overview sentence was truncated mid-word at fold time.
+
+### Scope
+
+_TBD — expand with detailed requirements from the epic._
+
+### Technical Design
+
+_TBD — add implementation details, schemas, and API contracts._
+
+### Integration Points
+
+_TBD — document cross-system dependencies._
+
+### Related Epics
+
+- `.plan/epics/epic-faction-reputation.md`
