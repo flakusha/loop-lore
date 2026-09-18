@@ -3,7 +3,7 @@
 
 # TASK: Coverage gate: true multi-worker fanout investigation
 
-**Status:** 🟡 In Progress — partial (mitigation shipped: skip-by-default)
+**Status:** 🟡 In Progress — mitigation shipped (skip-by-default) and root-cause migration bug fixed (`016_fts.ts` down() trigger drops, 2026-09-18); remaining fanout investigation items are optional next steps
 **Priority:** medium
 **Effort:** Medium
 
@@ -13,7 +13,7 @@
 
 ## Mitigation shipped (skip-by-default, 2026-09-18)
 
-`scripts/check-parallel.mjs` now skips `src/db/migrations.test.ts` and `src/db/migration-roundtrip.test.ts` in the coverage gate's path list (verified: bun's `--path-ignore-patterns` glob did not reliably exclude on 1.4.2; runner builds a filtered path list instead). Both tests are slow AND broken: they hold the SQLite write-lock for the entire migration chain and `001_init.down()` fails because `migrations/parts/013_generation.ts:209` `DROP TABLE` fires `actor_memories_fts_ad` against the already-dropped `memories_fts` (FTS5 trigger dependency).
+`scripts/check-parallel.mjs` now skips `src/db/migrations.test.ts` and `src/db/migration-roundtrip.test.ts` in the coverage gate's path list (verified: bun's `--path-ignore-patterns` glob did not reliably exclude on 1.4.2; runner builds a filtered path list instead). Corrected after a zero-trust review (2026-09-18, `.tmp/review/db-roundtrip-review.md`): the "write-lock for the entire chain" attribution was stale — both files already use per-test `:memory:` SQLite (no file DB, no WAL) and run in ~0.5s each. The breakage was real: `001_init.down()` failed because `parts/016_fts.ts` `down()` dropped `memories_fts` without dropping the `actor_memories_fts_ad/ai/au` triggers that reference it; the orphaned triggers fired on later `actor_memories` teardown (`SQLiteError: no such table: main.memories_fts`). Earlier attribution to `013_generation.ts:209` was wrong. Fixed by folding the three `DROP TRIGGER` statements into `016_fts.ts down()`.
 
 - Default: skip the two files (sub-5min `giwt finalize`).
 - Opt back in: `CHECK_INCLUDE_HEAVY_DB_TESTS=1 bun run check`.
@@ -47,6 +47,7 @@ So the real next step is **faster migrations, not in-memory** — see candidates
 ## Acceptance Criteria
 
 - [x] Skip-by-default shipped (coverage gate finishes sub-5min on `dev`)
-- [ ] Fix FTS5 trigger dependency in `migrations/parts/013_generation.ts` so `001_init.down()` is clean (unblocks `CHECK_INCLUDE_HEAVY_DB_TESTS=1`)
-- [ ] `CHECK_INCLUDE_HEAVY_DB_TESTS=1 bun run check` passes the migration tests sub-5min
-- [ ] Documentation updated
+- [x] Fix FTS5 trigger dependency so `001_init.down()` is clean (unblocks `CHECK_INCLUDE_HEAVY_DB_TESTS=1`) — root cause was `parts/016_fts.ts` `down()` (not `013_generation.ts`); fixed by folding the three `DROP TRIGGER` statements in
+- [x] Implementation complete: in-memory SQLite for `migrations.test.ts` + `migration-roundtrip.test.ts` (verified on `dev` 2026-09-18 — both files already per-test `:memory:`; the "in-memory rewrite" criterion was already satisfied, not pending)
+- [x] Tests passing (with `CHECK_INCLUDE_HEAVY_DB_TESTS=1 bun run check`) — 49/49 green across both files in ~1.2s after the `016_fts.ts` down() trigger fix
+- [x] Documentation updated (this ticket's root-cause correction; `docs/spec/testing.md` opt-in docs; review at `.tmp/review/db-roundtrip-review.md`)
