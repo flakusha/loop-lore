@@ -3,7 +3,7 @@
 
 # BUG-2025-002: Client-side `ReferenceError: view is not defined` during characters flow
 
-**Status:** Not Started
+**Status:** closed
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

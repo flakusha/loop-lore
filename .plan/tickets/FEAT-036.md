@@ -3,7 +3,7 @@
 
 # FEAT-036: Response envelope version
 
-**Status:** Not Started
+**Status:** closed
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

@@ -3,7 +3,7 @@
 
 # FEAT-039: OpenAPI Swagger generation
 
-**Status:** Not Started
+**Status:** resolved
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)

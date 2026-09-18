@@ -3,7 +3,7 @@
 
 # FEAT-038: Deprecation headers
 
-**Status:** Not Started
+**Status:** resolved
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
