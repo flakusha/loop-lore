@@ -49,8 +49,10 @@ describe("chunk-boundary XSS attacks", () => {
   });
 
   it("holds back <script> when opener prefix spans chunks and body in next chunk", () => {
-    // Step 1: `<scr` (incomplete, no `>` yet) — name is `scr`, not in
-    // the dangerous set, so the harmless prefix passes through.
+    // Step 1: `<scr` (incomplete, no `>` yet) — the name is a prefix of
+    // `script`, so it could complete into a dangerous opener in the
+    // next chunk; the partial tag is held from its `<` so the rescan
+    // restarts there once the boundary text arrives.
     // Step 2: cumulative input now contains `<script>alert(1)` (opener
     // with no closer) — sanitizeHtml keeps the unclosed span, and the
     // streaming sanitizer pins the dangerous opener as held.
@@ -58,7 +60,7 @@ describe("chunk-boundary XSS attacks", () => {
     // the streaming sanitizer emits the safe trailing content.
     const sanitize = createStreamingSanitizer();
     const step1 = sanitize("<p>safe</p><scr",);
-    expect(step1,).toBe("<p>safe</p><scr",);
+    expect(step1,).toBe("<p>safe</p>",);
     const step2 = sanitize("<p>safe</p><scr<script>alert(1)",);
     expect(step2,).not.toContain("alert(1)",);
     expect(step2,).not.toContain("<script",);
@@ -88,6 +90,53 @@ describe("chunk-boundary XSS attacks", () => {
     }
     expect(e4,).toContain("done",);
     expect(e4,).toContain("<p>safe</p>",);
+  });
+
+  it("defends the '<scr' + 'ipt>' opener split across exactly two chunks", () => {
+    // The acceptance vector from
+    // BUG-redos-in-html-sanitize-script-tag-pattern-chunk-boundary-san:
+    // the tag NAME itself is split mid-way. The partial `<scr` must be
+    // held (it is a prefix of a dangerous name), and the completed-
+    // but-unclosed opener must never be emitted — even on the interim
+    // chunk before the closer arrives.
+    const sanitize = createStreamingSanitizer();
+    const c1 = "<p>safe</p><scr";
+    const e1 = sanitize(c1,);
+    expect(e1,).toBe("<p>safe</p>",);
+    const c2 = c1 + "ipt>alert(1)";
+    const e2 = sanitize(c2,);
+    expect(e2,).not.toContain("<script",);
+    expect(e2,).not.toContain("alert(1)",);
+    expect(e2,).toBe("<p>safe</p>",);
+    const c3 = c2 + "</script>done";
+    const e3 = sanitize(c3,);
+    expect(e3,).toBe("<p>safe</p>done",);
+  });
+
+  it("holds a bare trailing '<' that could complete into '<script>' next chunk", () => {
+    // A lone `<` at end-of-chunk can become `<script` once the next
+    // chunk lands. Holding it guarantees the rescan restarts at that
+    // exact `<` instead of never re-reading the emitted prefix.
+    const sanitize = createStreamingSanitizer();
+    expect(sanitize("2 <",),).toBe("2 ",);
+    expect(sanitize("2 <script>alert(1)",),).toBe("2 ",);
+    expect(sanitize("2 <script>alert(1)</script>x",),).toBe("2 x",);
+  });
+
+  it("holds '<styl' partial name until it completes into <style>", () => {
+    const sanitize = createStreamingSanitizer();
+    expect(sanitize("a<styl",),).toBe("a",);
+    expect(sanitize("a<style>p{}</style>b",),).toBe("ab",);
+  });
+
+  it("holds a <script hidden inside a preceding non-dangerous tag region", () => {
+    // A `<` inside the attribute region of a non-dangerous tag is
+    // re-examined (mirroring stripScriptTags' substring semantics), so
+    // `<b<script>alert(1)` cannot smuggle the opener past the tracker.
+    const sanitize = createStreamingSanitizer();
+    const e = sanitize("<b<script>alert(1)",);
+    expect(e,).not.toContain("<script",);
+    expect(e,).not.toContain("alert(1)",);
   });
 
   it("holds back unclosed <iframe> opener across chunk boundary until sanitized", () => {
@@ -190,12 +239,15 @@ describe("false-positive guards", () => {
     expect(sanitize(text,),).toBe(text,);
   });
 
-  it("preserves <<script (extra < before a real <script)", () => {
+  it("holds <<script input; the residual lone '<' stays held until the final flush", () => {
     // The first `<` is not a tag opener; the second is. Both arrive in
-    // a single chunk. The sanitizer holds back from the first open
-    // `<script>` onward; the leading single `<` survives.
+    // a single chunk. sanitizeHtml strips the script span, leaving a
+    // bare trailing `<` — the tracker holds it because it could
+    // complete into a dangerous opener in a later chunk. The final
+    // render (renderStreamMessage) flushes it; see stream-render's
+    // final-render test.
     const sanitize = createStreamingSanitizer();
-    expect(sanitize("<<script>alert(1)</script>",),).toBe("<",);
+    expect(sanitize("<<script>alert(1)</script>",),).toBe("",);
   });
 
   it("does not strip an orphan </script> with no preceding opener", () => {
@@ -204,6 +256,21 @@ describe("false-positive guards", () => {
     // sanitizer must not turn them into held-back content.
     const sanitize = createStreamingSanitizer();
     expect(sanitize("</script>after",),).toBe("</script>after",);
+  });
+
+  it("does not treat an incomplete </script closer as closing the open tag", () => {
+    // Chunk N ends INSIDE the closing tag (`...</script`, no `>` yet).
+    // The closer has not terminated, so the open <script> must stay
+    // held — treating it as closed leaked the raw span on the interim
+    // chunk.
+    const sanitize = createStreamingSanitizer();
+    const c1 = "<p>x</p><script>alert(1)</script";
+    const e1 = sanitize(c1,);
+    expect(e1,).not.toContain("<script",);
+    expect(e1,).not.toContain("alert(1)",);
+    expect(e1,).toBe("<p>x</p>",);
+    // The `>` completes the closer; sanitizeHtml strips the whole span.
+    expect(sanitize(c1 + ">ok",),).toBe("<p>x</p>ok",);
   });
 
   it("catches <SCRIPT> (uppercase) as a dangerous opener", () => {
@@ -283,16 +350,17 @@ describe("performance and overflow", () => {
     // Many `<` with no tag names — the scanner must not explode
     // quadratically on input that has lots of `<` but no matching `>`.
     // Each `<` triggers an empty-name opener (not dangerous), and
-    // `sanitizeHtml` keeps the string as-is; streaming emits the
-    // whole input unchanged.
+    // `sanitizeHtml` keeps the string as-is. Everything except the
+    // trailing bare `<` is emitted: the last `<` is held because it
+    // could complete into `<script>` in the next chunk.
     const sanitize = createStreamingSanitizer();
     const input = "<<<".repeat(30_000,);
     const t0 = performance.now();
     const out = sanitize(input,);
     const elapsed = performance.now() - t0;
     expect(elapsed,).toBeLessThan(500,);
-    // No dangerous opener survives, so the entire input is emitted.
-    expect(out.length,).toBe(input.length,);
+    expect(out.length,).toBe(input.length - 1,);
+    expect(out,).toBe(input.slice(0, -1,),);
   });
 
   it("empty chunk is a no-op (returns empty string, no throw)", () => {
