@@ -293,6 +293,7 @@ Registration: `src/plugins/registry.ts` (existing plugin infrastructure).
      scene-renderer/, etc.). See `docs/frontend/chat/visual-novel-mode.md`.
      This doc is preserved for historical context; path refs below are stale. -->
 <!-- (end GAP marker) -->
+
 ### Create (aspirational — re-architected into `src/frontend/vn/`)
 
 - `src/frontend/effects/text-effects.ts` — effect renderer (NEVER CREATED)
