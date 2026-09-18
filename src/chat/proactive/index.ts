@@ -12,6 +12,7 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { toDate, } from "../../utils/date";
 import {
   countMessagesSince,
   insertConfig,
@@ -116,7 +117,7 @@ export class ProactiveMessagingService {
     const requiredMs = backoffMs(baseMs, config.backoffCount,);
 
     if (config.lastProactiveAt) {
-      const elapsed = now.getTime() - new Date(config.lastProactiveAt,).getTime();
+      const elapsed = now.getTime() - toDate(config.lastProactiveAt,).getTime();
       if (elapsed < requiredMs) {
         return {
           shouldMessage: false,

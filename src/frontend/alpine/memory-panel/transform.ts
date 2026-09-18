@@ -9,6 +9,7 @@
  * `memory-panel.ts` so the component stays under the 250L file-size guard.
  */
 
+import { toDate, } from "../../../utils/date";
 import { jsonParseOr, } from "../json";
 import type { MemoryEntry, MemoryPanelState, } from "../types";
 
@@ -78,7 +79,7 @@ export function toMemoryEntry(row: MemoryApiRow, scopeFallback: MemoryEntry["sco
  * @returns locale date string, empty for an invalid timestamp
  */
 export function formatMemoryDate(iso: string,): string {
-  const date = new Date(iso,);
+  const date = toDate(iso,);
   return Number.isNaN(date.getTime(),)
     ? ""
     : date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric", },);
