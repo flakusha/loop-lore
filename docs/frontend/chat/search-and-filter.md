@@ -16,17 +16,6 @@ full-text message search, and specialized content filters.
 When the hamburger sidebar is open, a search input sits at the top of the
 "Chats" section:
 
-```
-┌─────────────────────────────┐
-│ ☰ loop-lore          [close]│
-├─────────────────────────────┤
-│ 🔍 Search chats...          │  ← text input with debounce
-├─────────────────────────────┤
-│ [chat row]                  │
-│ [chat row]                  │
-│ ...                         │
-└─────────────────────────────┘
-```
 
 **Behavior:**
 
@@ -105,17 +94,6 @@ interface JoinableChat {
 
 Below the search input, a row of filter chips narrows the chat list:
 
-```
-┌─────────────────────────────┐
-│ 🔍 Search chats...          │
-├─────────────────────────────┤
-│ [All] [Direct] [Group]      │  ← type filter
-│ [World ▼] [Tags ▼] [More ▼] │  ← dropdown filters
-├─────────────────────────────┤
-│ [chat row]                  │
-│ ...                         │
-└─────────────────────────────┘
-```
 
 **Filter dimensions:**
 

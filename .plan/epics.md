@@ -544,23 +544,19 @@ Tasks that extend existing epics with creative new mechanics and social systems.
 
 ## Epic Dependency Graph
 
-```
-Epic 33 (Multi-Instance) ──→ Epic 32 (Deployment Topologies)
-                          ──→ Epic 34 (Data Integrity)
-
-Epic 34 (Data Integrity) ──→ Epic 32 (Deployment Topologies)
-
-Epic 22 (RPG Core) ──→ 15 sub-systems (Battle, Magic, Crafting, etc.)
-
-Epic 37 (Plugin System) ──→ Epic 29 (Provider & Plugin Ecosystem)
-                          ──→ Generation Hooks Infrastructure
-
-Epic 35 (ECE) ──→ Epic 26 (Avatar & Expression, via emotions)
-               ──→ Epic 22 (RPG, via status effects)
-               ──→ Epic 37 (Plugin, via extension store)
-
-Epic 47 (Character Core) ──→ Epic 22 (RPG, via traits/combat stats)
-                         ──→ Epic 48 (Immersion, via portraits/mood)
+```mermaid
+flowchart LR
+  Epic33["Epic 33 (Multi-Instance)"] --> Epic32["Epic 32 (Deployment Topologies)"]
+  Epic33 --> Epic34["Epic 34 (Data Integrity)"]
+  Epic34 --> Epic32
+  Epic22["Epic 22 (RPG Core)"] --> Epic15["15 sub-systems (Battle, Magic, Crafting, etc.)"]
+  Epic37["Epic 37 (Plugin System)"] --> Epic29["Epic 29 (Provider & Plugin Ecosystem)"]
+  Epic37 --> GenHooks["Generation Hooks Infrastructure"]
+  Epic35["Epic 35 (ECE)"] --> Epic26["Epic 26 (Avatar & Expression, via emotions)"]
+  Epic35 --> Epic22
+  Epic35 --> Epic37
+  Epic47["Epic 47 (Character Core)"] --> Epic22RPG["Epic 22 (RPG, via traits/combat stats)"]
+  Epic47 --> Epic48["Epic 48 (Immersion, via portraits/mood)"]
 ```
 
 ---

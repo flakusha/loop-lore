@@ -43,13 +43,14 @@ Replace static 2D character images with 3D rendered avatars using Three.js or si
 
 ### Rendering Pipeline
 
-```
-Character Avatar (VRM/GLTF)
-  ├── Three.js scene setup (lighting, camera)
-  ├── VRM loader + animator
-  ├── Blend shape controller (expression mapping)
-  ├── Post-processing (bloom, outline)
-  └── Canvas → texture for UI
+```mermaid
+flowchart TD
+    CA["Character Avatar (VRM/GLTF)"]
+    CA --> TJS["Three.js scene setup (lighting, camera)"]
+    CA --> VRML["VRM loader + animator"]
+    CA --> BSC["Blend shape controller (expression mapping)"]
+    CA --> PP["Post-processing (bloom, outline)"]
+    CA --> CTU["Canvas -> texture for UI"]
 ```
 
 ### Expression System

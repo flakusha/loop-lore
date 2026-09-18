@@ -56,93 +56,15 @@ Complete battle interface for turn-based combat, including state display, action
 
 ### Battle Screen Layout
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Battle: Goblin Ambush                          Round: 3     │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─ Enemies ──────────────────────────────────────────────┐ │
-│  │ [Goblin 1]  HP: ████████░░ 80%  [Poisoned]           │ │
-│  │ [Goblin 2]  HP: ██████░░░░ 60%  [Stunned]            │ │
-│  │ [Goblin 3]  HP: ████░░░░░░ 40%                        │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                                                             │
-│  ┌─ Allies ───────────────────────────────────────────────┐ │
-│  │ [You]      HP: ██████████ 100%  [Haste]              │ │
-│  │ [Companion] HP: ████████░░ 80%                        │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                                                             │
-│  ┌─ Environment ──────────────────────────────────────────┐ │
-│  │ 🌧️ Rainy | 🌙 Night | 🌲 Forest                      │ │
-│  │ Effects: -20% Fire damage, +10% Stealth               │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                                                             │
-├─────────────────────────────────────────────────────────────┤
-│ Turn Order: You → Goblin 1 → Companion → Goblin 2 → ...   │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│ ┌─ Actions ───────────────────────────────────────────────┐ │
-│ │ ⚔️ Attack  🛡️ Defend  🧪 Item  ✨ Spell  💨 Flee      │ │
-│ └────────────────────────────────────────────────────────┘ │
-│                                                             │
-│ ┌─ Battle Log ────────────────────────────────────────────┐ │
-│ │ > You attack Goblin 1 for 15 damage!                    │ │
-│ │ > Goblin 1 takes poison damage (5)                      │ │
-│ │ > Companion casts Heal on You (+10 HP)                  │ │
-│ └────────────────────────────────────────────────────────┘ │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Action Selection Modal
 
-```
-┌─ Select Action ──────────────────────────────────────────────┐
-│                                                               │
-│ ⚔️ Attack                                                     │
-│    Cost: 1 Action Point                                       │
-│    Target: Single enemy                                       │
-│    Damage: 1d8 + STR modifier                                 │
-│                                                               │
-│ 🛡️ Defend                                                     │
-│    Cost: 1 Action Point                                       │
-│    Effect: +50% Defense this turn                             │
-│                                                               │
-│ 🧪 Use Item                                                    │
-│    Cost: 1 Action Point                                       │
-│    Items: [Health Potion x3] [Mana Potion x1]                │
-│                                                               │
-│ ✨ Cast Spell                                                   │
-│    Cost: 5 Mana                                               │
-│    Spells: [Fireball] [Ice Shield] [Lightning Bolt]           │
-│                                                               │
-│ 💨 Flee                                                         │
-│    Cost: 1 Action Point                                       │
-│    Chance: 70% (DEX + Speed modifiers)                        │
-│                                                               │
-│                        [Cancel]  [Confirm]                     │
-└───────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ### Dice Roll Animation
 
-```
-┌─ Skill Check: Stealth ────────────────────────────────────────┐
-│                                                               │
-│        ┌─────────┐                                            │
-│        │   ⚀     │  Roll: 14                                 │
-│        │         │  + DEX: +3                                 │
-│        │         │  + Stealth: +5                             │
-│        │         │  + Haste: +2                               │
-│        └─────────┘  = Total: 24                               │
-│                                                               │
-│        DC: 18  ✅ SUCCESS (Margin: +6)                        │
-│                                                               │
-│        "You slip through the shadows, unnoticed by the       │
-│         goblins. You have advantage on your first attack."    │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
+<!-- ASCII UI mockup removed in favor of prose description: see preceding/following sections. -->
 
 ## Integration Points
 
