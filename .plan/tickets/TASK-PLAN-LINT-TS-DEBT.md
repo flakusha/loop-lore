@@ -3,7 +3,7 @@
 
 # TASK-PLAN-LINT-TS-DEBT: Close lint-ts debt → `check` lint gate green
 
-**Status:** Not Started
+**Status:** done
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
