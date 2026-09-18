@@ -152,7 +152,7 @@ Cluster. No BLOCKING issues found; all are NIT-1/LOW/MED follow-ups.
 
 - **Build integrity cluster** — 3 BUG tickets (Bucket X) flipped ✅ Resolved on `dev`
   via commits `4a1f56b8` and `1cddba36`. See `open-build-integrity.md` (pointer stub)
-  and `bucket-x-build-integrity-close-out-2026-09-03.md` + `open-closed.md` § "Bucket X
+  , `bucket-x-build-integrity-close-out-2026-09-03.md` + `open-closed.md` § "Bucket X
   close-out" for resolution evidence.
 - **Audit follow-up cluster** — 8 follow-up tickets ✅ Resolved 2026-09-10 in worktree
   `audit-followups-2026-09-10`. See `open-debt.md` (pointer stub) and
