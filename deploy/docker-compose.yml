@@ -50,7 +50,12 @@ services:
     volumes:
       - app_data:/app/loop-lore-data
     healthcheck:
-      test: ["CMD", "bun", "-e", "const r = await fetch('http://127.0.0.1:3000/api/health'); process.exit(r.ok ? 0 : 1);"]
+      test: [
+        "CMD",
+        "bun",
+        "-e",
+        "const r = await fetch('http://127.0.0.1:3000/api/health'); process.exit(r.ok ? 0 : 1);",
+      ]
       interval: 30s
       timeout: 5s
       retries: 3
