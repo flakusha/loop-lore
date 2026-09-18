@@ -3,7 +3,7 @@
 
 # TASK: Plan Validate Debt Cleanup
 
-**Status:** Not Started
+**Status:** ✅ Resolved (already on dev, 2026-09-18)
 **Priority:** medium
 **Effort:** Medium
 **Summary:** (none captured)
@@ -52,6 +52,34 @@ This is **pre-existing dev debt** accumulated across many PRs. Out of scope for 
 - No new pre-existing failures introduced (each fixed file passes its gate's per-file check).
 - `giwt sync` runs clean as part of the fix (resolves the `tickets` gate).
 - Cleanup worktree finalizes without `--skip-gates`.
+
+## Resolution
+
+Already fixed on `dev` by intervening bookkeeping commits landed between the
+ticket's reference point (`80b11e372`) and current `dev` (`ee4dc22e9`).
+Verified 2026-09-18 against `dev` HEAD `ee4dc22e9` via `giwt plan validate`:
+
+- `giwt plan validate` → exit 0, all 9 sub-gates green:
+  `format`, `linkage`, `backlog`, `tickets`, `code-map`, `links`, `spdx`,
+  `naming`, `epics-doc`.
+- `giwt plan status` → 2139 tickets / 288 epics / 16 backlog / code-map +
+  epics-index in sync.
+- The ticket's premise (~9600 / 12042 issues @ `80b11e372`) is stale;
+  intervening commits absorbed the debt:
+  - `c6d346abe` `chore(license): apply SPDX headers repo-wide`
+  - `4f7bbc191` `chore(license): apply SPDX headers repo-wide`
+  - `5893af3c1` `fix(plan): finish format migration, bump giwt pin, gate race`
+  - `e3acf971b` `TASK-plan-format-migration: Plan-format migration`
+  - `cbbab9772` `fix(plan): repair mechanical gate failures blocking finalize`
+  - `2726f26e6` `docs(plan): fix broken md-links to deleted spec stubs`
+  - `bbabe3f5d` `fix(plan): regen index and code-map post-rebase`
+  - `5329e48a4` `chore(plan): regenerate code-map`
+  - `c34a1e73e` `chore(plan): backfill index.json 347 undefined statuses to open`
+  - `eda6beed2` `chore(plan): regenerate epics-index.md after status backfill`
+
+No code change required. Ticket closed for bookkeeping. No separate work
+was performed in `tree/fix-plan-validate-debt-cleanup/` — the worktree is
+empty and finalizes as a single status-flip commit (docs-only).
 
 ## Approach (suggested)
 
