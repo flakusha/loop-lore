@@ -98,6 +98,11 @@ export class PersonasService {
    * @param id
    * @param params
    * @param userId
+   * @throws {Error} `"Persona not found"` when no row matches `id` + `userId`
+   *   (i.e. either the persona does not exist or it belongs to a different
+   *   user). Callers must surface this as 404 to match getById / delete /
+   *   convertToCharacter — a silent no-op would let wrong-id probes return
+   *   200 and hide ownership mistakes.
    */
   async update(id: string, params: UpdatePersonaParams, userId: string,): Promise<void> {
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), };
@@ -112,12 +117,18 @@ export class PersonasService {
     if (params.maxTokens !== undefined) { updates.max_tokens = params.maxTokens; }
     if (params.model !== undefined) { updates.model = params.model; }
 
-    await this.db
+    const result = await this.db
       .updateTable("personas",)
       .set(updates,)
       .where("id", "=", id,)
       .where("user_id", "=", userId,)
-      .execute();
+      .executeTakeFirst();
+
+    // 0 rows affected ⇒ either no such persona or owned by another user.
+    // Throw so the handler maps to 404 (matches getById/delete/convertToCharacter).
+    if (Number(result?.numUpdatedRows ?? 0,) === 0) {
+      throw new Error("Persona not found",);
+    }
   }
 
   /**

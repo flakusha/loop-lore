@@ -35,7 +35,7 @@ async function postJson(
 ): Promise<Response> {
   return fetch(`${server.url}/api/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": JSON, Accept: JSON, },
+    headers: { "Content-Type": JSON_CT, Accept: JSON_CT, },
     body: globalThis.JSON.stringify(body,),
   },);
 }
@@ -90,7 +90,7 @@ describe("Auth edge-cases E2E", () => {
   test("POST malformed JSON returns 400 JSON", async () => {
     const res = await fetch(`${server.url}/api/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": JSON, Accept: JSON, },
+      headers: { "Content-Type": JSON_CT, Accept: JSON_CT, },
       body: "{not-json",
     },);
     expect(res.status,).toBe(400,);
@@ -100,7 +100,7 @@ describe("Auth edge-cases E2E", () => {
   test("POST wrong Content-Type (text/plain) returns 400 JSON", async () => {
     const res = await fetch(`${server.url}/api/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "text/plain", Accept: JSON, },
+      headers: { "Content-Type": "text/plain", Accept: JSON_CT, },
       body: "username=foo&password=bar",
     },);
     expect(res.status,).toBe(400,);
