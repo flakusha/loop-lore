@@ -42,9 +42,9 @@ Frontend implementation of the Gallery & Media Viewer for the loop-lore web UI. 
 
 ## Tickets
 
-- [`TASK-gallery-minimal-image-asset-viewer.md`](TASK-gallery-minimal-image-asset-viewer.md) — ✅ Done — gallery grid, preview modal, upload dialog, all three media types
-- [`TASK-config-gallery-attachment-idempotent.md`](TASK-config-gallery-attachment-idempotent.md) — ✅ Done — hash-based duplicate detection + frontend toast
-- [`TASK-character-avatar-gallery-binding.md`](TASK-character-avatar-gallery-binding.md) — 🟡 Backend + entity filter + tab done; visibility inheritance (G6) done
+- [`TASK-gallery-minimal-image-asset-viewer.md`](../tickets/TASK-gallery-minimal-image-asset-viewer.md) — ✅ Done — gallery grid, preview modal, upload dialog, all three media types
+- [`TASK-config-gallery-attachment-idempotent.md`](../tickets/TASK-config-gallery-attachment-idempotent.md) — ✅ Done — hash-based duplicate detection + frontend toast
+- [`TASK-character-avatar-gallery-binding.md`](../tickets/TASK-character-avatar-gallery-binding.md) — 🟡 Backend + entity filter + tab done; visibility inheritance (G6) done
 
 ## File Structure (verified 2026-08-01)
 

@@ -35,8 +35,6 @@ Left sidebar with section links. Main area shows the selected section.
 
 Summary cards with key metrics:
 
-
-
 - Metrics refresh every 30 seconds (auto-poll)
 - Click a metric card to jump to the relevant section
 - Recent activity: last 20 actions, filterable by user and type

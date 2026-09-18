@@ -112,7 +112,7 @@ users can also type markdown in the input. Rendering uses
 
 - `**bold**`, `*italic*`, `~~strikethrough~~`
 - `` `inline code` ``, fenced code blocks with language hint
-- `[links](url)` — open in new tab
+- `` `[links](url)` `` — open in new tab
 - `> blockquote`
 - `- unordered list`, `1. ordered list`
 - Tables (`| col | col |`)

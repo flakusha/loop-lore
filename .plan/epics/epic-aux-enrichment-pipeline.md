@@ -89,6 +89,7 @@ Audit of `src/` produced these actionable gaps. Severity: 🔴 high / 🟡 mediu
 | **Parallel** | Runs alongside main gen    | Doesn't block message flow                             |
 
 ## Architecture
+
 ```mermaid
 flowchart TD
   User["User message"] --> Pipeline["AUX LLM Pipeline (parallel, sub 5s)"]
