@@ -234,7 +234,7 @@
 | ⬜ Not Started | NSFW Integration Gaps — Housing, Weather, Social, Disease | High | Medium | 5 | [epic-nsfw-integration-gaps.md](/.plan/epics/epic-nsfw-integration-gaps.md) |
 | ⬜ Not Started | NSFW Interaction UI | P0 — Critical | Medium | 14 | [epic-nsfw-ui.md](/.plan/epics/epic-nsfw-ui.md) |
 | ✅ Complete (merged epic-openapi-reference branch) | OpenAPI-Driven API Reference | P1-High | Medium | 23 | [epic-openapi-reference.md](/.plan/epics/epic-openapi-reference.md) |
-| ⬜ Not Started | Party Migration & Travel | Low | Medium | 14 | [epic-party-migration.md](/.plan/epics/epic-party-migration.md) |
+| ⬜ Not Started | Party Migration & Travel | Low | Medium | 15 | [epic-party-migration.md](/.plan/epics/epic-party-migration.md) |
 | 🟡 In Progress (schema + service + seed hook shipped; resolution integration pending) | Per-World Character Setup & Overlay | High | Medium | 0 | [epic-character-world-setup.md](/.plan/epics/epic-character-world-setup.md) |
 | ⬜ Not Started | Performance Dashboard & SLO Tracking | High | High | 19 | [epic-performance-dashboard-slo.md](/.plan/epics/epic-performance-dashboard-slo.md) |
 | Not Started | Perspective & Voice Control (1st / 3rd / Narrator) | High | Medium | 7 | [epic-perspective-narration-voice.md](/.plan/epics/epic-perspective-narration-voice.md) |
@@ -3068,4 +3068,3 @@ Extends the World & Locations foundation (see `epic-world-locations.md`, which
 ## Backlog
 
 Full backlog with prioritized tasks: [.plan/backlog/](/.plan/backlog/)
-

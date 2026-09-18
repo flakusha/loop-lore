@@ -67,8 +67,8 @@ Key decisions:
 
 ## Work Items
 
-- [ ] **Autonomy rate governor** — per-actor action quotas, per-world/chat budgets (actions/hour + token/cost caps), cooldowns with mandatory jitter, cost accounting per actor; kill switch = autonomy-native per-world scope + consumption of generation-flow-control global/per-chat holds (no parallel pause machinery). Unlimited mode only behind explicit dev/stress flag. → TASK-autonomy-rate-governor
 - [ ] **Story auto-drive scheduler** — world-tick loop, due-actor selection, action dispatch through existing generation pipeline (navigation ticks, BDI decisions, GM beats), pause/resume/step, persistence of simulation state across restarts. → TASK-story-auto-drive-scheduler
+- [ ] **NPC navigation tick driver** — autonomous caller for `NpcNavigationService` ticks via the scheduler, with jitter and governor budget gate. → `TASK-world-simulation-npc-navigation-tick-driver.md`
 - [ ] **Autonomy config surface** — layering: world default → chat override → per-actor override; pacing presets (serene / organic / brisk); unlimited stress preset gated to dev builds; UI affordances in chat + world settings. → TASK-autonomy-config-surface
 
 ## Non-Goals

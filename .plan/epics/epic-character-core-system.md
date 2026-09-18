@@ -133,13 +133,14 @@ combat, and save outcomes; the modal surfaces the budget and trait picker to
 authors. Implementation slices below; new tickets are sequenced DB → catalog →
 engine → API → FE → tests so each phase has a verifiable boundary.
 
-- `TASK-world-requires-stats-flag-and-point-budget-config` — `worlds.requires_stats`, `stat_point_budget`, `stat_min`, `stat_max` columns
-- `TASK-character-trait-catalog-for-gameplay-mechanics` — typed catalog (`fast_reflexes`, `innate_magic`, `swift_hands`, …) with discriminated effects
-- `TASK-character-stat-modifiers-and-trait-application-engine` — `applyTraits`, `minimumRollValue`, `rollWithTraits` wired into combat/dice/saves
-- `TASK-character-stat-allocation-backend-api-and-db-integration` — migration 023 + `character_stat_allocation` / `character_trait_assignments` + PUT route
-- `TASK-character-stat-allocation-frontend-modal-and-edit-integration` — htmx/Alpine modal + catalog endpoint, gated by `requires_stats`
-- `TASK-character-stat-allocation-integration-tests-e2e` — DB + engine + route coverage, 80% floor
-
+| Task | Ticket | Status |
+| ---- | ------ | ------ |
+| `worlds.requires_stats`, `stat_point_budget`, `stat_min`, `stat_max` columns | `TASK-world-requires-stats-flag-and-point-budget-config.md` | ⬜ Not Started |
+| Typed trait catalog (`fast_reflexes`, `innate_magic`, `swift_hands`, …) | `TASK-character-trait-catalog-for-gameplay-mechanics.md` | ⬜ Not Started |
+| `applyTraits`, `minimumRollValue`, `rollWithTraits` wired into combat/dice/saves | `TASK-character-stat-modifiers-and-trait-application-engine.md` | ⬜ Not Started |
+| Migration 023 + `character_stat_allocation` / `character_trait_assignments` + PUT route | `TASK-character-stat-allocation-backend-api-and-db-integration.md` | ⬜ Not Started |
+| htmx/Alpine modal + catalog endpoint, gated by `requires_stats` | `TASK-character-stat-allocation-frontend-modal-and-edit-integration.md` | ⬜ Not Started |
+| DB + engine + route coverage, 80% floor | `TASK-character-stat-allocation-integration-tests-e2e.md` | ⬜ Not Started |
 ---
 
 ## Memory Architecture (Extension — Research-Driven)
