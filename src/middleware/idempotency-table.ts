@@ -39,6 +39,7 @@
 
 import type { AsyncStore, RequestResultRow, } from "../async/store";
 import { getLogger, } from "../logger";
+import { parseExpiryMs, } from "../utils/date";
 import type { IdempotencyBackendApi, InMemoryEntry, } from "./idempotency-memory";
 
 /**
@@ -72,10 +73,8 @@ function rowToEntry(row: RequestResultRow,): InMemoryEntry {
   // to ms since epoch. Parsing failures fall back to `Date.now()` — TTL
   // semantics still hold because the freshly hydrated entry is live for
   // the full TTL window from `completedAt`.
-  const startedAtMs = Number.isFinite(Date.parse(row.startedAt,),) ? Date.parse(row.startedAt,) : Date.now();
-  const completedAtMs = row.completedAt && Number.isFinite(Date.parse(row.completedAt,),)
-    ? Date.parse(row.completedAt,)
-    : Date.now();
+  const startedAtMs = parseExpiryMs(row.startedAt,) ?? Date.now();
+  const completedAtMs = parseExpiryMs(row.completedAt,) ?? Date.now();
   return {
     status: row.responseStatus ?? 0,
     headers,

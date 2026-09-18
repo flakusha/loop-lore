@@ -18,6 +18,7 @@
  * (race/profession/location) are filtered by the speaking actor's identity.
  * Included entries are ordered by `priority` (high first) then insertion order.
  */
+import { toDate, } from "../../../utils/date";
 import { isLoreVisibleTo, parseLoreScope, } from "../../lore/audience";
 import type { ActorIdentity, } from "../../lore/audience";
 import { wrapSection, } from "../../xml-utils";
@@ -57,7 +58,7 @@ function isCooldownExpired(
 ): boolean {
   if (cooldownSeconds <= 0) { return true; }
   if (!lastActivated) { return true; }
-  const lastActivatedMs = new Date(lastActivated,).getTime();
+  const lastActivatedMs = toDate(lastActivated,).getTime();
   const cooldownMs = cooldownSeconds * 1000;
   return Date.now() - lastActivatedMs >= cooldownMs;
 }
