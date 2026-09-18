@@ -6,7 +6,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Large (ongoing)
-**Epic:** epic-code-quality-and-standards.md
+**Epic:** epic-code-quality.md
 
 ## Summary
 

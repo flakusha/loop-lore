@@ -49,6 +49,7 @@ Ground truth (verified 2026-08-12):
   paying rewards. No existing infrastructure for this.
 
 ## Design
+
 ```mermaid
 flowchart LR
   Node["Contributor Node agent (GPU/CPU)"] -- "register/heartbeat" --> Hub["Platform Hub<br/>node registry, dispatcher + queue,<br/>provider integration, trust/validation,<br/>rewards ledger"]
