@@ -8,6 +8,7 @@ import { ErrorCode, HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonRespo
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
 import type { RequestContext, } from "../middleware/types";
 import { PersonasService, } from "./service";
 
@@ -162,8 +163,20 @@ export async function handleUpdatePersona({
       },
       userId,
     );
-  } catch {
-    return jsonError({ message: "Persona not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
+  } catch (error) {
+    if (error instanceof Error && error.message === "Persona not found") {
+      return jsonError({ message: "Persona not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
+    }
+    getLogger().error({
+      msg: "Persona update failed",
+      personaId,
+      detail: error instanceof Error ? error.message : String(error,),
+    },);
+    return jsonError({
+      message: "Failed to update persona",
+      status: HttpStatus.InternalServerError,
+      code: ErrorCode.ServerError,
+    },);
   }
 
   return jsonResponse({ ok: true, },);
@@ -213,9 +226,18 @@ export async function handleConvertToCharacter({ database, personaId, context, }
     const result = await service.convertToCharacter(personaId, userId,);
     return jsonCreated(result,);
   } catch (error) {
+    if (error instanceof Error && error.message === "Persona not found") {
+      return jsonError({ message: "Persona not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
+    }
+    getLogger().error({
+      msg: "Persona conversion failed",
+      personaId,
+      detail: error instanceof Error ? error.message : String(error,),
+    },);
     return jsonError({
-      message: error instanceof Error ? error.message : "Conversion failed",
-      status: HttpStatus.NotFound,
+      message: "Conversion failed",
+      status: HttpStatus.InternalServerError,
+      code: ErrorCode.ServerError,
     },);
   }
 }
