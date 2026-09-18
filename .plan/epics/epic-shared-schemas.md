@@ -391,8 +391,8 @@ const NSFW_RATING_HIERARCHY = [
 - [Character Core System](docs/spec/character-spec.md)
 - [Chat Lifecycle & Moderation](docs/spec/chat-privacy.md)
 - [Social Interaction Design](docs/spec/social-interaction.md)
-- [Faction Reputation](docs/spec/faction-reputation.md)
+- [Faction Reputation](docs/spec/rpg-mechanics.md) <!-- folded into rpg-mechanics during Phase 2 -->
 - [NSFW System Design](docs/spec/nsfw.md)
-- [Economy System](docs/spec/economy-trading.md)
+- [Economy System](docs/spec/crafting-professions.md) <!-- folded into crafting-professions during Phase 2 -->
 - [Battle System](docs/spec/battle.md)
 - [Plugin System](docs/spec/plugin-system.md)
