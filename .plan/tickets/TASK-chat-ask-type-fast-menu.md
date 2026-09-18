@@ -243,41 +243,23 @@ Each dispatch is **transactional**: a dispatch either commits its kind-specific 
 
 ### Lifecycle diagram (ASCII)
 
-```
-┌──────────────────┐
-│ System computes  │◀─── chat state change (location change, trade offer,
-│   available      │     inventory update, battle spawn, GM action)
-│   actions        │
-└─────────┬────────┘
-          │ POST /api/chats/:id/ask
-          ▼
-┌──────────────────┐
-│ Ask message      │ content_type=ask, closure=one_shot|persistent|ephemeral
-│ stored in stream │ opt-in policy applied (filter actions)
-└─────────┬────────┘
-          │ (HTMX partial above chat input)
-          ▼
-┌──────────────────┐
-│ AskMenu render   │ mobile: vertical | desktop: horizontal strip
-└─────────┬────────┘
-          │ user clicks action
-          ▼
-┌──────────────────┐        fail           ┌─────────────────┐
-│ POST /dispatch   │──────gated/conflict──▶│ ask_closes=false │
-│                  │                        │ stays open       │
-└─────────┬────────┘                        └─────────────────┘
-          │ ok
-          ▼
-┌──────────────────┐
-│ kind-specific    │ e.g. POST /api/worlds/:id/trade/offers
-│ handler          │
-└─────────┬────────┘
-          │
-          ▼
-┌──────────────────┐
-│ message resolved │ ask_resolved_at set, next ask (if any) becomes active
-└──────────────────┘
-```
+```mermaid
+stateDiagram-v2
+    [*] --> SystemComputes
+    SystemComputes: System computes available actions
+    SystemComputes --> AskStored: POST /api/chats/:id/ask
+    AskStored: Ask message stored in stream<br/>content_type=ask, closure=one_shot or persistent or ephemeral<br/>opt-in policy applied (filter actions)
+    AskStored --> AskMenuRender: HTMX partial above chat input
+    AskMenuRender: AskMenu render<br/>mobile: vertical | desktop: horizontal strip
+    AskMenuRender --> Dispatch: user clicks action
+    Dispatch: POST /dispatch
+    Dispatch --> AskStaysOpen: fail (gated or conflict)<br/>ask_closes=false, stays open
+    Dispatch --> KindHandler: ok
+    KindHandler: kind-specific handler<br/>e.g. POST /api/worlds/:id/trade/offers
+    KindHandler --> MessageResolved
+    MessageResolved: message resolved<br/>ask_resolved_at set, next ask (if any) becomes active
+    MessageResolved --> [*]
+    AskStaysOpen --> Dispatch
 
 ### Edge cases + risks (must be addressed by tests)
 

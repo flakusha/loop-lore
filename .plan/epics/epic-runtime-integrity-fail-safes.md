@@ -137,44 +137,28 @@ Integrate all mechanisms into a unified local-instance integrity posture:
 - **Documentation**: authoritative integrity playbook for the local instance.
 
 ## Architecture
+```mermaid
+flowchart TB
+  subgraph Local["Local Instance"]
+    subgraph AppRuntime["Application Runtime"]
+      IWD["Integrity Watchdog"] --> CR["Crash Recovery (on startup)"]
+      CR --> SDS["Shutdown Data Safety (on shutdown)"]
+      AOF["Atomic Operation Framework"] --> SSM["Signal-Safe Mutation"]
+      AOF --> SP["Subprocess Preservation"]
+    end
+    subgraph DataLayer["Data Layer"]
+      WAL["SQLite WAL + FK pragmas"] --> FV["format_version enforcement"]
+      FV --> CH["Content Hashing"]
+    end
+    subgraph HealthReport["Health & Reporting"]
+      IH["Integrity Health"] --> SM["Safe Mode (read-only)"]
+      SM --> IR["Integrity Reports"]
+    end
+  end
+  AppRuntime --> DataLayer
+  AppRuntime --> HealthReport
+```
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                      Local Instance                               │
-│                                                                  │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │                    Application Runtime                       │ │
-│  │                                                            │ │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐ │ │
-│  │  │  Integrity    │  │  Crash       │  │  Shutdown        │ │ │
-│  │  │  Watchdog     │  │  Recovery    │  │  Data Safety     │ │ │
-│  │  │              │  │  (on startup)│  │  (on shutdown)   │ │ │
-│  │  └──────────────┘  └──────────────┘  └──────────────────┘ │ │
-│  │                                                            │ │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐ │ │
-│  │  │  Atomic       │  │  Signal-     │  │  Subprocess      │ │ │
-│  │  │  Operation    │  │  Safe        │  │  Preservation    │ │ │
-│  │  │  Framework    │  │  Mutation    │  │                  │ │ │
-│  │  └──────────────┘  └──────────────┘  └──────────────────┘ │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│                                                                  │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │                    Data Layer                               │ │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐ │ │
-│  │  │  SQLite WAL   │  │  format_version│ │  Content         │ │ │
-│  │  │  + FK pragmas │  │  enforcement │  │  Hashing         │ │ │
-│  │  └──────────────┘  └──────────────┘  └──────────────────┘ │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│                                                                  │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │                    Health & Reporting                       │ │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐ │ │
-│  │  │  Integrity    │  │  Safe Mode   │  │  Integrity       │ │ │
-│  │  │  Health       │  │  (read-only) │  │  Reports         │ │ │
-│  │  └──────────────┘  └──────────────┘  └──────────────────┘ │ │
-│  └────────────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────────┘
-```
 
 ## Phases
 

@@ -55,50 +55,26 @@ checkboxes.
 #### 1. Permanent Panel
 
 Always-visible side panel with 3D avatar:
-
-```
-┌──────────────────┬──────────────────────────┐
-│                  │ [chat messages]          │
-│   3D Avatar      │                          │
-│   (always        │ [chat messages]          │
-│    rendered)     │                          │
-│                  │ [input area]             │
-└──────────────────┴──────────────────────────┘
-```
-
-- Width: configurable (200-400px, default 280px)
-- Renders continuously (requestAnimationFrame loop)
-- Avatar reacts to chat events (typing, message received)
-- Collapse button to hide panel
-
-#### 2. Collapsible Panel
-
-Expandable panel that shows 3D avatar on demand:
-
-```
-[chat header]  [▶ 3D]     ← toggle button in header
-                                    
-[chat messages]              ← normal chat layout
-
-[input area]
-```
-
-Click "▶ 3D" → panel slides out from right (like character info panel).
-Avatar renders only when panel is open.
-
-- Panel: 300px wide, slides from right
-- Renders on open, pauses on close (dispose WebGL context)
-- Same interaction as permanent panel
-
-#### 3. Inline Preview
-
-Small 3D preview within message bubbles:
-
-```
-┌──────────────────────────────┐
-│ [tiny 3D] Character Name     │
-│ "The forest is dark..."      │
-└──────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph PP["1. Permanent Panel — always visible"]
+        PPA["3D Avatar<br/>(always rendered)"]
+        PPC["chat messages<br/>chat messages"]
+        PPI["input area"]
+    end
+    subgraph CP["2. Collapsible Panel — toggle via '3D' button"]
+        CPH["chat header"]
+        CPT["3D toggle button in header"]
+        CPM["chat messages<br/>(normal layout)"]
+        CPI["input area"]
+        CPH --> CPT
+    end
+    subgraph IP["3. Inline Preview — within message bubbles"]
+        IPT["tiny 3D"]
+        IPCN["Character Name"]
+        IPQ["The forest is dark..."]
+        IPT --> IPCN
+    end
 ```
 
 - Size: 48x48px (same as avatar circle)
