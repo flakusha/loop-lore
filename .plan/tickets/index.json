@@ -14560,6 +14560,19 @@
     "source": ".plan/tickets/TASK-db-migration-epoch-squash.md",
     "status": "open"
   },
+  "TASK-DB-RECOVERY-VIA-CANONICAL-JSONL-LOG-REPLAY-RESEARCH": {
+    "hash": "ac19cd7",
+    "git_issue": "ac19cd7",
+    "extid": "TASK-DB-RECOVERY-VIA-CANONICAL-JSONL-LOG-REPLAY-RESEARCH",
+    "type": "TASK",
+    "title": "DB recovery via canonical JSONL log replay — research",
+    "label": "task",
+    "priority": "low",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-db-recovery-via-canonical-jsonl-log-replay-research.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-DB-REINIT-ARCHIVES-PREVIOUS-DATABASE-INSTEAD-OF-DELETING": {
     "hash": "62d1647",
     "git_issue": "62d1647",
@@ -16765,6 +16778,19 @@
     "git_issue": "3691b57",
     "status": "open"
   },
+  "TASK-FRONTEND-SETUP-WIZARD-IMPORT-SYSTEM-CONFIG-FROM-YAML-TOML": {
+    "hash": "4293058",
+    "git_issue": "4293058",
+    "extid": "TASK-FRONTEND-SETUP-WIZARD-IMPORT-SYSTEM-CONFIG-FROM-YAML-TOML",
+    "type": "TASK",
+    "title": "Frontend setup wizard: import system_config from YAML/TOML",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-frontend-setup-wizard-import-system-config-from-yaml-toml.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-FRONTEND-SIZE-GATE": {
     "hash": "pending",
     "extid": "TASK-FRONTEND-SIZE-GATE",
@@ -18025,6 +18051,19 @@
     "source": ".plan/tickets/TASK-import-export-io.md",
     "git_issue": "57df5ad",
     "status": "done"
+  },
+  "TASK-IMPORT-YAML-TOML-CONFIG-INTO-SYSTEM-CONFIG-DB": {
+    "hash": "a8cda49",
+    "git_issue": "a8cda49",
+    "extid": "TASK-IMPORT-YAML-TOML-CONFIG-INTO-SYSTEM-CONFIG-DB",
+    "type": "TASK",
+    "title": "Import YAML/TOML config into system_config DB",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-import-yaml-toml-config-into-system-config-db.md",
+    "status": "⬜ Not Started"
   },
   "TASK-IN-CHAT-ASSET-EDIT-FLOW": {
     "hash": "cba357a",
@@ -19599,6 +19638,19 @@
     "source": ".plan/tickets/TASK-moderation-privacy-first-foundation.md",
     "git_issue": "d0b9bb7",
     "status": "🟡 Partial — moderation data model + NSFW gate exist; ModerationHook keyword-only, dead `Moderation` model role, destructive suppression (2026-08-01)"
+  },
+  "TASK-MODERATOR-FRONTEND-FOR-PER-CHAT-TUNABLE-OVERRIDES": {
+    "hash": "9ab5c2d",
+    "git_issue": "9ab5c2d",
+    "extid": "TASK-MODERATOR-FRONTEND-FOR-PER-CHAT-TUNABLE-OVERRIDES",
+    "type": "TASK",
+    "title": "Moderator frontend for per-chat tunable overrides",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-moderator-frontend-for-per-chat-tunable-overrides.md",
+    "status": "⬜ Not Started"
   },
   "TASK-MODERATOR-PERMISSION-GATING-FOR-READ-ONLY-REVIEW-SURFACE": {
     "hash": "5f22b58",
@@ -23300,6 +23352,19 @@
     "git_issue": "121a09b",
     "status": "open"
   },
+  "TASK-RESTART-REQUIRED-INDICATOR-ON-SYSTEM-CONFIG-CHANGES": {
+    "hash": "5e62e8c",
+    "git_issue": "5e62e8c",
+    "extid": "TASK-RESTART-REQUIRED-INDICATOR-ON-SYSTEM-CONFIG-CHANGES",
+    "type": "TASK",
+    "title": "Restart-required indicator on system_config changes",
+    "label": "task",
+    "priority": "high",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-restart-required-indicator-on-system-config-changes.md",
+    "status": "⬜ Not Started"
+  },
   "TASK-REWRITE-APPLY-WRITE-BACK-TO-TARGET-MESSAGE": {
     "hash": "0286f47",
     "git_issue": "0286f47",
@@ -26356,6 +26421,19 @@
     "tags": [],
     "source": ".plan/tickets/TASK-wire-elysia-openapi-mount-to-emit-generated-served-spec.md",
     "status": "open"
+  },
+  "TASK-WIRE-FSWATCHER-ONRELOAD-CALLBACK-IN-SERVER-STARTUP": {
+    "hash": "bc05e36",
+    "git_issue": "bc05e36",
+    "extid": "TASK-WIRE-FSWATCHER-ONRELOAD-CALLBACK-IN-SERVER-STARTUP",
+    "type": "TASK",
+    "title": "Wire FSWatcher onReload callback in server startup",
+    "label": "task",
+    "priority": "medium",
+    "epic": "",
+    "tags": [],
+    "source": ".plan/tickets/TASK-wire-fswatcher-onreload-callback-in-server-startup.md",
+    "status": "⬜ Not Started"
   },
   "TASK-WIRE-GM-SERVICE-STORY-MODE": {
     "hash": "pending",
