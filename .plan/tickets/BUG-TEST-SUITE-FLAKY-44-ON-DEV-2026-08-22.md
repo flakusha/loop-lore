@@ -61,3 +61,14 @@ $ bun test src/telemetry/telemetry.test.ts src/routes/admin/model-roles.test.ts
 $ bun run test:unit
 # 11495 pass, 1 skip, 0 fail, 45194 expect() calls
 ```
+
+## Re-verification (2026-09-18, dev HEAD a3e6478c2 — post route-collision fix)
+
+The original 31-fail / 10-error sweep was filed at dev HEAD c18d6bfb. The
+follow-up commits between Aug-22 and Sep-18 healed clusters A-E individually,
+and commit a3e6478c2 cleared the underlying server-bootstrap route collision
+that surfaced during the BUG-2025-001 / BUG-2025-002 re-verification. After
+that fix the server boots cleanly and unit suites for the affected scope
+(story-orchestration, story-turns) pass 15/15. The characters-flow browser
+E2E remains red on an unrelated `ReferenceError: process is not defined`
+frontend-bundle issue tracked elsewhere; that is out of this ticket's scope.

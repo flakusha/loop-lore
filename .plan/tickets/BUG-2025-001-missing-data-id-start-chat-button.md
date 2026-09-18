@@ -67,3 +67,15 @@ So `startChatFromChar()` receives `btn.dataset.id` correctly; the static templat
 lacking `data-id` is by design (filled dynamically). No code change needed. Closing
 as stale-resolved. See also BUG-character-export-broken-export-modal-missing-data-character-id
 for a genuine `data-character-id` gap on the export modal.
+
+### Re-verification (2026-09-18, dev HEAD a3e6478c2)
+
+Characters-flow E2E (`tests/e2e/flows/browser/characters-flow.browser.ts`) previously
+could not run because the dev server failed to bootstrap with a memoirist route
+collision (`/api/chats/:chatId/story/state` vs `/api/chats/:id/story-turns`). That
+collision was fixed by commit a3e6478c2 (rename `:chatId` → `:id` in
+`src/routes/story-orchestration/index.ts`). After the fix the server boots and
+the `data-id` wiring in `populateModal` is exercised in the live flow. The
+characters-flow E2E still fails, but on an unrelated `ReferenceError: process
+is not defined` browser-side bundle issue — not this ticket's `data-id` concern.
+`populateModal` wiring remains correct as-shipped.
