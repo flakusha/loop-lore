@@ -1262,12 +1262,35 @@
           <div class="title">Loading configuration...</div>
         </div>
         <template x-if="!loadingSystemConfig">
+          <!-- Restart-required banner (TASK-restart-required-indicator) -->
+          <div
+            x-show="hasPendingRestart() && !restartBannerDismissed"
+            style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; margin-bottom: 12px; font-size: 13px; color: #6b5400"
+            role="alert"
+          >
+            <span style="font-size: 18px">⚠️</span>
+            <span style="flex: 1">
+              One or more saved values require a server restart to take effect. The new values are stored, but handlers
+              continue using the previous values until the process restarts.
+            </span>
+            <button class="btn btn-secondary btn-xs" @click="dismissRestartBanner()">Dismiss</button>
+          </div>
           <div style="padding: var(--space-6)">
             <div style="display: grid; gap: var(--space-4)">
               <template x-for="c in systemConfig" :key="c.key">
                 <div style="display: grid; grid-template-columns: 200px 1fr auto auto; gap: var(--space-3); align-items: center; padding: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef)">
                   <div>
                     <span x-text="displayKey(c.key)" style="font-weight: 500; font-size: 13px"></span>
+                    <span
+                      x-show="c.requires_restart"
+                      title="Requires server restart to take effect"
+                      style="display: inline-block; margin-left: 6px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: #6b5400; background: #fff3cd; border: 1px solid #ffc107; border-radius: 999px; vertical-align: middle"
+                    >restart</span>
+                    <span
+                      x-show="c.per_chat_overridable"
+                      title="This key can be overridden per chat from the chat settings modal"
+                      style="display: inline-block; margin-left: 4px; padding: 1px 6px; font-size: 10px; font-weight: 600; color: #0a4d8c; background: #d8ecff; border: 1px solid #6aa9e6; border-radius: 999px; vertical-align: middle"
+                    >per-chat</span>
                     <div
                       x-text="c.description"
                       style="font-size: 11px; color: var(--text-secondary)"
@@ -1308,6 +1331,15 @@
                 <button class="btn btn-secondary btn-xs" @click="exportSystemConfig('yaml')">Export YAML</button>
                 <button class="btn btn-secondary btn-xs" @click="exportSystemConfig('toml')">Export TOML</button>
               </div>
+            </div>
+            <!-- Import Section (TASK-frontend-setup-wizard) -->
+            <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Import Configuration</h3>
+              <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-2)">
+                Restore or seed <code>system_config</code> from a YAML/TOML file produced by Export. Secrets are
+                skipped; rows are previewed before they are written.
+              </div>
+              <button class="btn btn-secondary btn-xs" @click="openImportWizard()">Import Config…</button>
             </div>
             <!-- NSFW Configuration Section -->
             <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
@@ -1420,6 +1452,90 @@
             </div>
           </div>
         </template>
+        <!-- Import Wizard Modal (TASK-frontend-setup-wizard) -->
+        <div
+          x-show="importWizard.open"
+          x-cloak
+          style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); display: flex; align-items: center; justify-content: center; z-index: 1000"
+          @click.self="cancelImport()"
+        >
+          <div style="background: var(--bg-primary, #fff); color: inherit; border-radius: 8px; padding: 20px; width: min(720px, 90vw); max-height: 85vh; overflow: auto; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25)">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px">
+              <h3 style="font-size: 16px; font-weight: 600; margin: 0">
+                <span x-show="importWizard.step === 1">Import Configuration — Choose File</span>
+                <span x-show="importWizard.step === 2">Import Configuration — Preview</span>
+              </h3>
+              <button class="btn btn-secondary btn-xs" @click="cancelImport()">Cancel</button>
+            </div>
+
+            <!-- Step 1: file picker -->
+            <div x-show="importWizard.step === 1">
+              <p style="font-size: 13px; color: var(--text-secondary, #6c757d); margin-bottom: 12px">
+                Select a YAML or TOML file produced by Export Configuration. The next step previews the keys that will
+                be written and flags anything that looks like a secret.
+              </p>
+              <input type="file" accept=".yaml, .yml, .toml" @change="handleFileSelect($event)" class="form-input" />
+              <div
+                x-show="importWizard.error"
+                style="color: #c00; font-size: 12px; margin-top: 8px"
+                x-text="importWizard.error"
+              >
+              </div>
+            </div>
+
+            <!-- Step 2: preview -->
+            <div x-show="importWizard.step === 2">
+              <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: 8px">
+                File: <code x-text="importWizard.fileName"></code> · Format: <code
+                  x-text="importWizard.format.toUpperCase()"
+                ></code> ·
+                <span x-text="importWizard.preview.length + ' keys'"></span>
+              </div>
+              <table style="width: 100%; border-collapse: collapse; font-size: 12px">
+                <thead>
+                  <tr style="background: var(--bg-secondary, #f8f9fa)">
+                    <th style="text-align: left; padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                      Key
+                    </th>
+                    <th style="text-align: left; padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                      Action
+                    </th>
+                    <th style="text-align: left; padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                      Notes
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="row in importWizard.preview" :key="row.key">
+                    <tr>
+                      <td style="padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                        <code x-text="row.key"></code>
+                      </td>
+                      <td style="padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                        <span x-show="row.willOverwrite" style="color: #6b5400">overwrite</span>
+                        <span x-show="!row.willOverwrite" style="color: #0a7">create</span>
+                      </td>
+                      <td style="padding: 6px; border-bottom: 1px solid var(--border-default, #e9ecef)">
+                        <span x-show="row.isSecret" style="color: #c00; font-size: 11px"
+                        >⚠ secret-pattern — will be skipped on import</span>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+              <div
+                x-show="importWizard.error"
+                style="color: #c00; font-size: 12px; margin-top: 8px"
+                x-text="importWizard.error"
+              >
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end">
+                <button class="btn btn-secondary btn-xs" @click="importWizard.step = 1">Back</button>
+                <button class="btn btn-primary btn-xs" @click="confirmImport()">Apply Import</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div x-show="activeTab === 'analytics'">
         <div x-show="loadingAnalytics" class="empty-state" style="padding: var(--space-12)">
