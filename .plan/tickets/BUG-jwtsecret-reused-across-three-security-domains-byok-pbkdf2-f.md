@@ -1,6 +1,46 @@
 # BUG: jwtSecret reused across three security domains; BYOK PBKDF2 fixed global salt
 
-**Status:** 🔄 In Progress (PII leg done; JWT / signed-URL / BYOK legs open)
+**Status:** 🔄 In Progress — PII leg done, JWT-MAC / signed-URL / BYOK legs deferred (handoff 2026-09-18)
+
+## Handoff (this ticket is multi-leg; only the PII leg landed in this worktree)
+
+**PII leg — DONE** (already landed prior to this batch):
+`actorHash` / `chatHash` hash under separate HKDF domains
+(`NSFW_PII_ACTOR` / `NSFW_PII_CHAT`) via the shared `hashWithDomain`
+helper; module renamed `pii-redact.ts` → `telemetry-id-hashes.ts`.
+
+**Open legs — deferred to dedicated worktree** (out of scope for the
+`find-work-batch-tickets` batch per user direction 2026-09-18):
+
+1. **JWT MAC HKDF domain separation** (`src/auth/jwt.ts`)
+   - Currently `importSecretKey(secret)` derives the signing key from
+     `auth.jwtSecret` raw. Should use `domainKey(secret, DOMAIN_INFO.JWT_SIGN)`
+     so a leaked signed-URL HMAC key cannot forge JWTs.
+   - **Risk**: any in-flight JWT issued pre-fix will fail verification
+     post-fix. Either accept a forced re-auth (rotate `jwtSecret`) or
+     support a one-issuance overlap (verify against both old and new
+     keys, sign only with new). The two-key overlap adds complexity; the
+     rotate approach is simpler and standard.
+   - Suggested commit: change `importSecretKey` + `verifyJwt` to derive
+     via HKDF, then rotate `AUTH_JWT_SECRET` env in deployment.
+   - Tests already cover `signed-url.ts` HKDF domain; mirror for jwt.ts.
+
+2. **signed-URL fallback warn** — already done. `resolveSignedUrlSecret`
+   emits a one-shot warn when `assets.signedUrlSecret` is unset and
+   falls back to `auth.jwtSecret` (src/assets/controller/signed-url.ts:228-238).
+   No further action.
+
+3. **BYOK per-record salt** — already done. `encryptValue` writes
+   `salt:iv:ciphertext` (3-chunk wire format); `decryptValue` accepts
+   both new and legacy 2-chunk format. Per-record salt is generated
+   randomly per call (src/crypto/byok.ts:25-28, 80-88).
+   No further action.
+
+**Why deferred**: per user direction 2026-09-18, this batch stopped
+at end-to-end-verified scope (migration ordering + activitypub FK).
+The JWT-MAC leg is a security-relevant change to the auth surface
+and warrants its own dedicated worktree with explicit verification of
+token rotation policy before landing.
 **Priority:** high
 **Effort:** Medium
 

@@ -277,6 +277,10 @@ const checks = {
     // DB schema staleness (regenerates into temp dir, diffs vs committed)
     "db - schema gate": "bun run scripts/check-db-schemas.ts",
 
+    // Migration ordering: numeric-prefix uniqueness + localeCompare-free sort.
+    // BUG-migration-ordering-ambiguous-via-localecompare-duplicate-num.
+    "migrations - ordering": "bun run scripts/check-migration-ordering.ts",
+
     // Backlog index reconciliation (file-map rows ↔ tier files; orphans/phantoms)
     "backlog - index": "bun run plan:backlog:sync",
 
