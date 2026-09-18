@@ -3,6 +3,11 @@
 
 # BUG: chat batch export N+1 (batch.ts:72-98)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Priority:** medium
 **Priority Tier:** P3

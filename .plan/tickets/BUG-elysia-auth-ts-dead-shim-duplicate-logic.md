@@ -3,6 +3,11 @@
 
 # BUG: `src/middleware/elysia-auth.ts` is a dead shim with divergent failure-path logic
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** done
 **Priority:** medium
 **Effort:** Small

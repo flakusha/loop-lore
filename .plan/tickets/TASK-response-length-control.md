@@ -3,6 +3,11 @@
 
 # TASK: Response Length Control (FEAT-071)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial — backend complete (resolveResponseLength, presets, clampTokenCount), UI wiring pending
 **Priority:** Low
 **Effort:** Low

@@ -3,6 +3,11 @@
 
 # TASK: Emotional Pattern Tracking in Memory
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-memory-knowledge-systems
 **Priority:** Medium (matrix G31 — agentic addendum; not P6-blocked)
 **Effort:** Medium

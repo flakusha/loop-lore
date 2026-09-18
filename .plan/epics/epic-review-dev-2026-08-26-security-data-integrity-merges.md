@@ -3,6 +3,13 @@
 
 # Epic: Strict Review — dev 2026-08-26 Merges (Security & Data-Integrity)
 
+**Status:** Not Started
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Status: Proposed
 
 **Priority:** High

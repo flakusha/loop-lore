@@ -3,6 +3,11 @@
 
 # TASK: Character: Mood Swings & Happiness Meter
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

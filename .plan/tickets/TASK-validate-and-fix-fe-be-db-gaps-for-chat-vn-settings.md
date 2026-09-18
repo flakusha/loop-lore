@@ -3,6 +3,11 @@
 
 # TASK: Validate and fix FE/BE/DB gaps for chat/VN settings
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (already on dev, 2026-09-06)
 **Priority:** high
 **Effort:** Medium

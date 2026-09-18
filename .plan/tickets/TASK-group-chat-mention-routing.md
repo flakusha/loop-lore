@@ -3,6 +3,11 @@
 
 # TASK: Group Chat Mention Routing
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Already Implemented (companion BUG ticket closed)
 **Priority:** High
 **Effort:** Small

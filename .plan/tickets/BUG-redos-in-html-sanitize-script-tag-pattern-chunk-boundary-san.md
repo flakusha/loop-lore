@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: ReDoS in html-sanitize script-tag pattern + chunk-boundary sanitization gap
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** 🔧 Partial (ReDoS done 1a15200b; chunk-boundary + tag/attr coverage deferred — handoff 2026-09-18)
 

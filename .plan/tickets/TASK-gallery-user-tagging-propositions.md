@@ -1,4 +1,13 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: User-side gallery tagging + tag propositions
+
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Epic:** epic-frontend-gallery.md
 **Status:** ✅ Resolved (commit c0c24103 — feat(gallery): tag facet + preview tag rename)

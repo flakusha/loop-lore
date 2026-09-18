@@ -3,6 +3,12 @@
 
 # TASK: Add `rarity_multiplier` to `world_timeline_events`
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Draft
 **Priority:** Medium
 **Epic:** `epic-rarity-extensions.md`

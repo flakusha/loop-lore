@@ -3,6 +3,9 @@
 
 # EPIC: Frontend Gallery & Media Viewer
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Mostly Complete — gallery grid, preview, upload, entity filtering, idempotent upload, story-view attachments all working; visibility inheritance (G6) done
 **Priority:** Medium
 **Effort:** Medium

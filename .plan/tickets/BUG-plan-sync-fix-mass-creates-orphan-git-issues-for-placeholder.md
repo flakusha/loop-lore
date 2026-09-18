@@ -3,6 +3,11 @@
 
 # BUG: plan:sync --fix mass-creates orphan git issues for placeholder hashes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (commit `4a1f56b8`)
 **Priority:** high
 **Effort:** Medium

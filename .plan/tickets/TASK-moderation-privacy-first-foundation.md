@@ -3,6 +3,11 @@
 
 # TASK: Moderation: Privacy-First Foundation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial — moderation data model + NSFW gate exist; ModerationHook keyword-only, dead `Moderation` model role, destructive suppression (2026-08-01)
 **Priority:** high
 **Effort:** Small

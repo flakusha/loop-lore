@@ -3,6 +3,11 @@
 
 # TASK: Message Archive/Restore Frontend
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — archive/restore Alpine component + confirm modal wired (0395b7af)
 **Priority:** P2
 **Effort:** Low

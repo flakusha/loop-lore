@@ -3,6 +3,11 @@
 
 # BUG: `/api/telemetry/analytics/errors` exposes raw `event_data` JSON + `user_id`/`chat_id` to admin
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Severity:** High
 **Priority:** high

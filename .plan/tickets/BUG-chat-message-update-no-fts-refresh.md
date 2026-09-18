@@ -3,6 +3,11 @@
 
 # BUG: PATCH /messages/:id edit does not re-tokenize FTS — edited messages are searchable only against the original plaintext
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Severity:** medium
 **Priority:** medium

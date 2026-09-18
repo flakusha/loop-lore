@@ -3,6 +3,11 @@
 
 # BUG: mention-parser regex fails on multi-word names
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved
 **Priority:** medium
 **Effort:** Medium

@@ -3,6 +3,9 @@
 
 # EPIC: XMPP Integration
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

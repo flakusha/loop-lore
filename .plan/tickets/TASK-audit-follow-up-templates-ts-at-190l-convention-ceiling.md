@@ -3,6 +3,11 @@
 
 # TASK: Audit follow-up: templates.ts at 190L convention ceiling
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — verified stale (no code change required)
 **Priority:** low
 **Effort:** Medium

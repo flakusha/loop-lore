@@ -3,6 +3,9 @@
 
 # EPIC: ComfyUI Plugin & Workflow Templates
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Partial — ComfyUI integration shipped across **two** surfaces (generation image-engine + image-edit template system). Builtin TS templates, node discovery (`/object_info`), config-driven workflows, and `/api/image-edit/*` routes exist. **Blocking gaps:** image-edit routes are NOT mounted; `ComfyUIEditProvider.execute` emits dangling asset links (never downloads/stores the image); `submitWorkflow` omits `client_id` (no WebSocket progress, ambiguous multi-client scoping). GGUF model loading + FLUX.1 Kontext / Qwen Edit templates pending.
 **Priority:** High
 **Effort:** High

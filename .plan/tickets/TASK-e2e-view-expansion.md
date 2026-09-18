@@ -3,6 +3,11 @@
 
 # TASK-e2e-view-expansion: Browser e2e view, creation-menu and settings coverage
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Medium

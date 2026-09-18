@@ -3,6 +3,10 @@
 
 # EPIC: Chat/Group Chat Transfer & Location Change Mechanics
 
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Partial — foundation + sectioning backend shipped; party join/leave + split/merge + VN integration + frontend flows open
 **Priority:** P2-B
 **Effort:** High

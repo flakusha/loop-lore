@@ -3,6 +3,11 @@
 
 # TASK: Cleanup banned types console logging magic strings
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** low
 **Effort:** Small

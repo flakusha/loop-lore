@@ -3,6 +3,11 @@
 
 # TASK: Chat composer: user-visible streaming vs complete toggle
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK: /help full command list with descriptions
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium

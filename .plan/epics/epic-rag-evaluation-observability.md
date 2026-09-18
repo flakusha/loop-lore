@@ -3,6 +3,9 @@
 
 # EPIC: RAG Evaluation & Observability
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High (blocks shipping `epic-rag-assets-unified-storage-and-assistant-flows.md` B-R4 + B-R5 with confidence)
 **Effort:** Medium
@@ -303,14 +306,6 @@ docs/spec/
 3. **Telemetry sampling rate:** 10% default in prod, or 100% for the first 30 days post-launch then downsample?
 4. **Eval report retention:** keep last 90 days of `.tmp/rag-eval-report.json` files, or only the most recent + the baseline?
 5. **Citation click-through as quality signal:** count only positive clicks, or weight by time-on-page (engagement)?
-
-## Tickets (deferred)
-
-- `TASK-rag-eval-harness.md` — B-E1
-- `TASK-rag-retrieval-telemetry.md` — B-E2
-- `TASK-rag-prompt-cache.md` — B-E3
-- `TASK-rag-citation-clicks.md` — B-E4
-- `TASK-rag-admin-dashboard.md` — B-E5
 
 ## Related
 

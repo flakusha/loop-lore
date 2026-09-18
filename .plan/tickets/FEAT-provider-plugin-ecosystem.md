@@ -3,6 +3,11 @@
 
 # FEAT: Provider & Plugin Ecosystem
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial (openai-compatible complete; native providers deferred)
 **Priority:** medium
 **Effort:** Large

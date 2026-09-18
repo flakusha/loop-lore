@@ -3,6 +3,12 @@
 
 # EPIC: Encryption UI
 
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** 🟨 Partial — browser crypto + send path built; receive-decrypt + key-management UI pending
 **Priority:** Medium
 

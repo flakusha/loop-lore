@@ -3,6 +3,14 @@
 
 # TASK: Message Quick Emojis Frontend
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: ✅ Done — reaction chips + quick-picker popover wired in `message-list.html` (commit 4ec0054, worktree `message-actions-ui`); reuses pre-existing reaction CSS classes; `addReaction` i18n key added to all 10 locales; 10 reaction tests in `chat-messages.test.ts`
 **Priority**: medium
 **Labels**:

@@ -3,6 +3,11 @@
 
 # TASK: Add AchievementCategory and AchievementTier enums for achievements
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Small

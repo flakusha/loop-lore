@@ -3,6 +3,9 @@
 
 # EPIC: OpenAPI-Driven API Reference
 
+**Overview:** (see sections below)
+
+
 **Status:** ✅ Complete (merged epic-openapi-reference branch)
 **Priority:** P1-High
 **Effort:** Medium

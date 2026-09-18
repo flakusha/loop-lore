@@ -3,6 +3,9 @@
 
 # EPIC: Blog System
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Partial (core CRUD + comments + follows + moderation built)
 **Priority:** Medium
 **Effort:** High

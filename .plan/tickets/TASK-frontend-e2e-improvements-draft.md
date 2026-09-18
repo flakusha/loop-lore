@@ -3,6 +3,11 @@
 
 # TASK: Frontend E2E Improvements (Draft)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Draft — investigate later
 **Priority:** Low
 **Effort:** High (estimated)

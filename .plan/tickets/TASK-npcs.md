@@ -3,6 +3,12 @@
 
 # TASK: npcs
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 📝 Draft
 **Priority:** High
 **Epic:** epic-npcs

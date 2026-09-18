@@ -3,6 +3,9 @@
 
 # EPIC: Two-Pass Message Delivery (Draft → Finalization)
 
+**Overview:** (see sections below)
+
+
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Large
@@ -60,13 +63,13 @@ is set before actions, and per-actor isolation prevents draft-echo contamination
 
 ## Work Items
 
-- [ ] **Draft stage schema** — typed draft artifact + persistence + retention policy. → TASK-two-pass-draft-schema
-- [ ] **Pass 1 implementation** — aux-pipeline draft generation (narration mood + per-actor intents). → TASK-two-pass-draft-stage
-- [ ] **Pass 2 finalization** — narration rewrite with hint dosage; per-actor isolated refinement in cascade. → TASK-two-pass-finalize-stage
-- [ ] **Isolation enforcement** — context assembly guarantee (no peer drafts leak). → TASK-two-pass-isolation
-- [ ] **Budget policy** — per-chat two-pass opt-in, flow-control accounting, single-pass fallback. → TASK-two-pass-budget
-- [ ] **Draft-utilization scorer** — verify refinement consumed the draft. → TASK-two-pass-scorer
-- [ ] **UI status semantics** — composing indicator, pass-2-only streaming. → TASK-two-pass-ui
+- [ ] **Draft stage schema** — typed draft artifact + persistence + retention policy.
+- [ ] **Pass 1 implementation** — aux-pipeline draft generation (narration mood + per-actor intents).
+- [ ] **Pass 2 finalization** — narration rewrite with hint dosage; per-actor isolated refinement in cascade.
+- [ ] **Isolation enforcement** — context assembly guarantee (no peer drafts leak).
+- [ ] **Budget policy** — per-chat two-pass opt-in, flow-control accounting, single-pass fallback.
+- [ ] **Draft-utilization scorer** — verify refinement consumed the draft.
+- [ ] **UI status semantics** — composing indicator, pass-2-only streaming.
 
 ## Non-Goals
 

@@ -3,6 +3,11 @@
 
 # TASK: GM: reuse WorkflowRunner for guided entity creation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (shipped: configs/templates/workflows/entities.yaml with entity-character/world/location/item/npc guided workflows; findWorkflowById lookup in src/assistant/workflow-routing.ts; assembled prompt feeds /create description keeping generate → quality gates → create-entity-preview confirmation. Verified: 6 workflows load via loadTemplateConfig; no persist-without-approval path added.)
 **Priority:** Medium
 **Effort:** Medium

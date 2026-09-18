@@ -3,6 +3,11 @@
 
 # TASK: Chat Organization — Folders, Tags & Saved Filters
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Medium

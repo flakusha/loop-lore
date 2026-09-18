@@ -3,6 +3,11 @@
 
 # TASK: Encryption — Key Rotation (Auto + Manual)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟨 Partial — manual done; auto built but broken (see BUG-key-rotation-noop-orphans-history)
 **Priority:** Medium
 **Effort:** Med

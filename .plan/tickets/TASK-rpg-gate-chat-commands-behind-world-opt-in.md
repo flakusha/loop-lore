@@ -3,6 +3,11 @@
 
 # TASK: RPG: gate chat commands behind world opt-in
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Implemented
 **Priority:** Medium
 **Effort:** Medium

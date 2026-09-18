@@ -3,6 +3,10 @@
 
 # EPIC: Headless Mode & Alternative Frontends
 
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High (split into 5 sub-epics)

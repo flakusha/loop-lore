@@ -3,11 +3,16 @@
 
 # TASK: Frontend — Story Item Instance Transfer
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P1 — High
 **Effort:** Small
 **Epic:** epic-item-systems-unification
-**Related:** TASK-inventory-ui, TASK-trade-history-npc-counterparty
+**Related:** TASK-trade-history-npc-counterparty
 **Source:** FE-BE harmonization check, 2026-09-17 — 1 route in this slice.
 
 ## Summary

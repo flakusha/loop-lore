@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Decision Matrix — Federation, Swarm & Decentralized Comms
 
 Companion to `epic-federation-swarm-sync.md` (sections *Gaps & Open Questions*, *Extensions*, *Decision Register*) and `matrix-federation-swarm.md`. Tracks open architecture forks and policy choices discovered during strict review (2026-08-25). Each row names the decision, the candidate options, a recommendation, current status, what it blocks, and the linked ticket.

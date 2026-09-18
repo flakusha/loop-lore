@@ -3,6 +3,11 @@
 
 # TASK: Harmonize Quest Type Taxonomy
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Todo
 **Priority:** High
 **Effort:** Medium

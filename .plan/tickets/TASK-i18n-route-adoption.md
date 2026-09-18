@@ -3,6 +3,11 @@
 
 # TASK: i18n Route Adoption (Phase 2)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Large

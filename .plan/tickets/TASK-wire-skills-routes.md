@@ -3,6 +3,11 @@
 
 # TASK: Wire Skills Routes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-14, `51a7bc01`) — wired to HTTP (`src/routes/rpg/skills.ts` + schemas + tests)
 **Priority:** High
 **Effort:** Medium

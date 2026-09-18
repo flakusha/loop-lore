@@ -3,6 +3,9 @@
 
 # EPIC: Documentation Reconciliation & UX
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress
 **Priority:** Medium
 **Epic ID:** EPIC-2026-39

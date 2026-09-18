@@ -3,6 +3,11 @@
 
 # TASK: Audit follow-up: maxRatio silently raised 10x without regression test
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — verified stale (no code change required)
 **Priority:** low
 **Effort:** Medium

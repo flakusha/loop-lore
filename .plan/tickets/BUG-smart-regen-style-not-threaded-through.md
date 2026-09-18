@@ -3,6 +3,11 @@
 
 # BUG: smart-regen validates style then drops it — the style parameter never reaches the LLM call
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Resolved
 **Severity:** medium
 **Priority:** medium

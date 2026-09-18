@@ -3,6 +3,11 @@
 
 # TASK: Smart Context Pruning (FEAT-072)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** Medium
 **Effort:** Med

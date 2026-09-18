@@ -3,6 +3,11 @@
 
 # TASK: Reconcile leftover finalize stash @{0} (random-events post-store.ts edit)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-09-05, fix-character-growth-gate-failures worktree)
 **Priority:** medium
 **Effort:** Medium

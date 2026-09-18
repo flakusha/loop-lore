@@ -3,6 +3,11 @@
 
 # TASK: Opt-in `ask`-Type Chat Event for Direct User Interactions + Story Development
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Medium
@@ -290,11 +295,11 @@ stateDiagram-v2
 
 ## Sub-tickets (recommended breakdown)
 
-1. **`TASK-chat-ask-types-and-schema.md`** — types, migration parts, AskContext assembly
-2. **`TASK-chat-ask-sources-and-opt-in.md`** — system/gm/user computors + opt-in persistence
-3. **`TASK-chat-ask-dispatch.md`** — kind→handler table + capability gate + audit
-4. **`TASK-chat-ask-menu-frontend.md`** — render, hotkeys, accessibility, mobile/desktop layout
-5. **`TASK-chat-ask-extension-api.md`** — plugin API for new AskActionKind values
+1. types, migration parts, AskContext assembly
+2. system/gm/user computors + opt-in persistence
+3. kind→handler table + capability gate + audit
+4. render, hotkeys, accessibility, mobile/desktop layout
+5. plugin API for new AskActionKind values
 
 ## Open questions (require user input before implementation)
 
@@ -305,7 +310,7 @@ stateDiagram-v2
 5. **Hotkey policy** — single-key vs modifier-prefixed (`Alt+I`). Recommendation: **single-key, only when composer empty and no other input focused**. User decision required.
 6. **Audit log retention** — `chat_ask_dispatches` rows accumulate forever? Recommend **90-day TTL with archive** (aligns with `epic-analytics-observability.md` retention patterns). User decision required.
 7. **VN interop** — should `vn_choices` migrate to use the new `ask` system, or stay separate? Recommendation: **stay separate** — `vn_choices` is LLM-generated scene-locked; `ask` is surface-driven chat-level; different lifecycles. Documentation cross-link only.
-8. **B15 follow-up: battle initiation** — out of scope of this ticket; spawn separate `TASK-battle-initiation-from-chat.md` (under `epic-battle-action-systems.md`).
+8. **B15 follow-up: battle initiation** — out of scope of this ticket; spawn separate (under `epic-battle-action-systems.md`).
 
 ## Acceptance Criteria
 

@@ -3,6 +3,14 @@
 
 # TASK-PLAN-SIZE-STRICT-DEBT: Close size-strict debt (10 files) -> check 17/17
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: done
 **Priority**: medium
 **Labels**:

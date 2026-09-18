@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # Protocol → Chat / Group-Chat / Blog Integration Matrix
 
 Companion to `epic-federation-swarm-sync.md` and `matrix-federation-swarm.md`. Maps external protocols' chat/group primitives onto loop-lore's **verified** seams (chat = 1:1, group-chat = multi-participant, blog = posts + comments + follows). Research date 2026-08-25.

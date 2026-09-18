@@ -3,6 +3,11 @@
 
 # BUG: tui/app.ts calls getLogger() without prior createLogger() — runtime crash on first F5 failure
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** medium
 **Effort:** small

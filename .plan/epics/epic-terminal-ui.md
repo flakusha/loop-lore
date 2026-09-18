@@ -3,6 +3,12 @@
 
 # EPIC: Terminal UI (TUI)
 
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Partially Built — blessed + blessed-contrib scaffolding shipped; integration hardening in progress
 **Priority:** Low
 

@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: crypto: ActivityPub key rotation is non-atomic; insert failure drops all signing keys
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done (verified landed on dev — expire + insert wrapped in a single `database.transaction()`)
 **Priority:** high

@@ -3,6 +3,11 @@
 
 # BUG: idempotency in-flight slot orphaned by throwing handler → permanent 409
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** fixed-in-worktree
 **Priority:** high
 **Effort:** Small

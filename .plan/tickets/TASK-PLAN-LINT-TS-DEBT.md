@@ -3,6 +3,14 @@
 
 # TASK-PLAN-LINT-TS-DEBT: Close lint-ts debt → `check` lint gate green
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: done
 **Priority**: high (release-blocking — last red gate)
 **Labels**: lint, quality, release-closeout

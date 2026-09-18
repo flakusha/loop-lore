@@ -3,6 +3,11 @@
 
 # BUG: register-plugins:150 references undefined chatSectionsRoutes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (commit `4a1f56b8`, follow-up `1cddba36`)
 **Priority:** high
 **Effort:** Small

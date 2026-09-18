@@ -3,6 +3,11 @@
 
 # TASK-recon-security-fixes: Backend reconciliation — Phase 2 security fixes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Medium

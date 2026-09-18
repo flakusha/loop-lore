@@ -3,6 +3,11 @@
 
 # TASK: VN Scene Template System
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** ✅ Engine Complete (2026-08-23) — Template core done; GM builder UI not implemented
 **Epic:** Epic Visual Novel Mode (51)

@@ -3,6 +3,11 @@
 
 # TASK: Reconcile specs + API reference with implementation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium

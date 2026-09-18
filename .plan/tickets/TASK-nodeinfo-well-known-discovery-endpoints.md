@@ -3,6 +3,11 @@
 
 # TASK: NodeInfo and well-known discovery endpoints for federation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Implemented
 **Priority:** medium
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK: Context-Based Feature Permissions (UI Gating)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-chat-lifecycle-moderation
 **Priority:** Medium
 **Effort:** Medium

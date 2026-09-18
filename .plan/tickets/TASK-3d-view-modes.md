@@ -3,6 +3,11 @@
 
 # TASK: 3D View Modes (Umbrella)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started — split into 5 child tickets
 **Priority:** Low
 **Effort:** High

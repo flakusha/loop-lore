@@ -3,6 +3,14 @@
 
 # TASK-010: E2E tests for i18n system
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: open
 **Priority**: medium
 **Labels**:

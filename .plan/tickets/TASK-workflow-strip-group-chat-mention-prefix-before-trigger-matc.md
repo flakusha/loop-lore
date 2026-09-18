@@ -3,6 +3,11 @@
 
 # TASK: Workflow: strip group-chat mention prefix before trigger match
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (shipped: `stripLeadingMention` in src/group-chat/mention-parser.ts; dispatch runs slash parse, trigger match, and step fill on the stripped remainder; lone mentions fall through; addressed slash commands dispatch. Verified: dispatch integration tests.)
 **Priority:** Medium
 **Effort:** Medium

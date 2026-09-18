@@ -3,6 +3,11 @@
 
 # TASK: tui.enabled config flag mapped from env but never read at runtime
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** small

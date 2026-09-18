@@ -3,6 +3,11 @@
 
 # EPIC: Chat Composer Flows (draft for new worktree)
 
+**Effort:** Medium
+**Type:** epic
+**Overview:** (see sections below)
+
+
 **Status:** Proposed
 **Priority:** High — messenger parity gap
 **Tags:** chat, messenger, forward, drafts, scheduled, reminders

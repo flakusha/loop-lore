@@ -3,6 +3,11 @@
 
 # TASK: Chat Settings Templates + Compatibility Matrix Validation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High

@@ -3,6 +3,11 @@
 
 # FEAT: LLM-enhance for chat and text windows with leveled rewrites
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Epic:** epic-assistant-gm-flows, epic-conversation-branching
 **Priority:** medium

@@ -3,6 +3,11 @@
 
 # TASK: GM-Guided Story Creation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-14) — UI + persistence (`feature/gm-guided-story-ui`) + orchestrator consumption (`4b0dd146` threads `gmGuidance` into `GameMasterService`; tested in `game-master.test.ts`)
 **Priority:** High
 **Effort:** High

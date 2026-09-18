@@ -3,6 +3,14 @@
 
 # TASK-epic17-encryption-e2e-expansion
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 ## Epic: Encryption E2E Expansion (Epic 17)
 
 ## Status: 🟨 Partially Implemented

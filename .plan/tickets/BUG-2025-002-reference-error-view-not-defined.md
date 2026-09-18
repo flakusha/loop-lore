@@ -3,6 +3,14 @@
 
 # BUG-2025-002: Client-side `ReferenceError: view is not defined` during characters flow
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: ✅ Closed — stale-resolved (verified 2026-09-18)
 **Priority**: medium
 **Labels**: e2e, characters, error

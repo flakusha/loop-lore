@@ -3,6 +3,9 @@
 
 # EPIC: Actor Turn Skip ('Continue' Without Breaking the Story)
 
+**Overview:** (see sections below)
+
+
 **Status:** Not Started
 **Priority:** Medium
 **Effort:** Small–Medium
@@ -59,12 +62,12 @@ name (`pass` / `skip turn`) in UI, API, and code to avoid semantic collision.
 ## Work Items
 
 - [ ] **turn_skip event + persistence** — schema, API route, context-assembly rendering. → TASK-turn-skip-event
-- [ ] **GM absence contract** — prompt + acceptance rules for hold/advance handling. → TASK-turn-skip-gm-handling
+- [ ] **GM absence contract** — prompt + acceptance rules for hold/advance handling.
 - [ ] **Cascade integration** — build on `filterPassedActors` (promote the `[PASS]`
   convention to the `turn_skip` event) rather than greenfield; slot release in group
   chat; budgeted beat in solo. → TASK-turn-skip-cascade
 - [ ] **Gate interlock** — refusal-notice offers skip; refused-beat cannot also be skipped. → TASK-turn-skip-gate-interlock
-- [ ] **UI** — 'Skip turn' composer control with hold/advance choice. → TASK-turn-skip-ui
+- [ ] **UI** — 'Skip turn' composer control with hold/advance choice.
 
 ## Non-Goals
 

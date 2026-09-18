@@ -3,6 +3,11 @@
 
 # BUG: post-store.test.ts:32 imports missing CompleteGenerationOpts
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (commit `4a1f56b8`)
 **Priority:** high
 **Effort:** Small

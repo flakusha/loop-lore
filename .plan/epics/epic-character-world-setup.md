@@ -3,6 +3,9 @@
 
 # EPIC: Per-World Character Setup & Overlay
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress (schema + service + seed hook shipped; resolution integration pending)
 **Priority:** High
 **Effort:** Medium

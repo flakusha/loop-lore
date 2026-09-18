@@ -3,6 +3,12 @@
 
 # TASK: GM/Assistant Shadow Notes System
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** High
 **Status:** ✅ Done — Backend Complete + Tested — Injection Live. Closed 2026-08-03.
 **Epic:** epic-gm-shadow-notes

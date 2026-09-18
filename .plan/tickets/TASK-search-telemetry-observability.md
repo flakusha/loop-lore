@@ -3,6 +3,11 @@
 
 # TASK: Search Telemetry & Quota Observability
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Low

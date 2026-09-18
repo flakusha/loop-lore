@@ -3,6 +3,11 @@
 
 # TASK: Deduplicate SSE activity stream (two connections to /api/activity/stream)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Open
 **Priority:** Medium
 **Effort:** Small

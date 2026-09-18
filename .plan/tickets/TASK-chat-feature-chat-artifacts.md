@@ -3,6 +3,11 @@
 
 # TASK: Chat Artifacts — Rich Generated Content Rendered In-Chat
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** High

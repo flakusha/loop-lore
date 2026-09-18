@@ -3,6 +3,9 @@
 
 # EPIC: Provider & Plugin Ecosystem
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Partial (openai-compatible complete; native providers deferred)
 **Priority:** Medium
 **Effort:** Large

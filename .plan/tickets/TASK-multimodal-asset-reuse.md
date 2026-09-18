@@ -3,6 +3,12 @@
 
 # TASK: Gallery Asset Reuse for Multimodal Generation
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** High
 **Status:** ⬜ Not Started
 **Epic:** epic-audio-video-sound (Phase 5)

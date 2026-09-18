@@ -3,6 +3,12 @@
 
 # TASK: Visual Novel Mode — Branching Choices & Relationship Impact
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Priority:** Medium
 **Status:** ✅ Complete (2026-08-23) — Backend, routes, frontend cards, accumulated impacts, split/reunite detection all live
 **Epic:** epic-immersion-presentation

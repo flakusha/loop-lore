@@ -3,6 +3,12 @@
 
 # EPIC: Immersion & Presentation
 
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Plan.md:** §48

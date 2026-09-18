@@ -3,6 +3,11 @@
 
 # BUG: idempotency `table` backend is unimplemented (silently == memory)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium

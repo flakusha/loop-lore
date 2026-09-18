@@ -3,6 +3,11 @@
 
 # TASK: EPIC: Worlds Extension (Shareability, Epochs, Maps, Mode Switches)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High

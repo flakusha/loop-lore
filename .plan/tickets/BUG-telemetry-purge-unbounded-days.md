@@ -3,6 +3,11 @@
 
 # BUG: `DELETE /api/telemetry/analytics/purge` accepts unbounded `?days=` — admin can wipe instantly with `days=0`
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (already implemented in code)
 **Severity:** Medium
 **Priority:** medium

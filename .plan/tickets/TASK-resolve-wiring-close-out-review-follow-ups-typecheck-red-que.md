@@ -3,6 +3,11 @@
 
 # TASK: Resolve wiring-close-out review follow-ups: typecheck red + quest test gap + gate caveats
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

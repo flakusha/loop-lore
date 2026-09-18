@@ -3,6 +3,11 @@
 
 # BUG: Post-history instruction relocated to front, not after history
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Fixed (fix-post-history-instruction-position @ ed1844be+3)
 **Priority:** medium
 **Effort:** Medium

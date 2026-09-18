@@ -3,6 +3,12 @@
 
 # TASK: Implement `emotion_avatar` enrichment task in AUX pipeline
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P3
 **Epic:** epic-aux-enrichment-pipeline

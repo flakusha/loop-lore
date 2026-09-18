@@ -3,6 +3,11 @@
 
 # TASK: NPC-to-NPC Autonomous Social Simulation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-social-interaction, NPC/Actor System
 **Priority:** Medium (P6+ deferred)
 **Effort:** High

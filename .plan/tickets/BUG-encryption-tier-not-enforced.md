@@ -3,6 +3,12 @@
 
 # BUG: Encryption tier (`encryption_level`) is never enforced; default `"public"` is out-of-enum
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟢 Closed — fixed by crypto-tier-foundation branch (commits f06900a0 + 9c800c52)
 **Severity:** Critical
 **Priority:** High

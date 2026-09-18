@@ -3,6 +3,9 @@
 
 # EPIC-036: Crafting, Memory & Chat Systems
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress (crafting DB layer + memory injection + chat infrastructure merged; Professions/Stations/Quality services + UI pending)
 **Priority:** High
 **Effort:** Very High

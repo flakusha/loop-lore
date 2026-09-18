@@ -3,6 +3,14 @@
 
 # IDEA: Migrated Chat History — Message Tree + Swipe Remap
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: open
 **Priority**: low
 **Labels**: chat, migration, messages, swipe, tree, carry

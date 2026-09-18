@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: e2e test client never sends X-CSRF-Token - 114/173 e2e red on dev
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Fixed (fix-review-quickwins; client wiring for ccac5b9d)
 **Priority:** high

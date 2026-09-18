@@ -3,6 +3,13 @@
 
 # Epic: Review — `bun run check` RAM Footprint (2026-09-03)
 
+**Status:** Not Started
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 ## Status: Resolved (informational, no action required)
 
 **Priority:** Low

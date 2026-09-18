@@ -3,6 +3,11 @@
 
 # TASK: EPIC: Embeddable Engine & 2D/3D Game Frontend (Far Fetched)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Very High

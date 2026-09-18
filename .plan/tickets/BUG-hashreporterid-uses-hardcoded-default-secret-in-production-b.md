@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: hashReporterId uses hardcoded default secret in production — breaks PII pseudonymous projection
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done (worktree fix-nsfw-hashreporterid-default-secret, pending commit)
 **Priority:** high

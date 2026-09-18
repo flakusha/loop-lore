@@ -3,6 +3,12 @@
 
 # BUG: `src/chat/transitions.test.ts` ownership tests fail with FK constraint (missing fixture rows)
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Severity:** Medium
 **Priority:** Medium

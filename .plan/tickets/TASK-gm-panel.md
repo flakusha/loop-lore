@@ -3,6 +3,11 @@
 
 # TASK: GM Panel
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress — notes panel done, world/NPC/event/scene controls pending (2026-08-01)
 **Priority:** P1 — High
 **Effort:** Medium

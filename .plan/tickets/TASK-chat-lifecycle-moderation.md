@@ -3,6 +3,11 @@
 
 # TASK: Chat Lifecycle & Moderation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** Medium
 **Effort:** High

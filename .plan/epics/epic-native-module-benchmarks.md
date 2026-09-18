@@ -3,6 +3,9 @@
 
 # EPIC: Native/WASM Module Performance Benchmarks
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 In Progress — blake3 + zstd benchmarks shipped (2026-08-15, branch `native-blake3`)
 **Priority:** High
 **Effort:** High

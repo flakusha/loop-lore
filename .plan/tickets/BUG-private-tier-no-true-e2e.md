@@ -3,6 +3,12 @@
 
 # BUG: "Private"/E2E tier is server-mediated symmetric encryption — no true E2E
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟢 Closed — chose rename path (see below)
 **Severity:** High
 **Priority:** High

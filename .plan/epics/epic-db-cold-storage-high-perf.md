@@ -3,6 +3,9 @@
 
 # Epic: DB as Cold Storage for Extreme-Performance API-Heavy Workloads
 
+**Overview:** (see sections below)
+
+
 **Status:** 📝 Draft
 **Priority:** Low (speculative — "far-fetched" scenario, only justified by measured need)
 **Effort:** Large

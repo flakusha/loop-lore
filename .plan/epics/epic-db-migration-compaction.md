@@ -3,6 +3,9 @@
 
 # EPIC: DB Migration Compaction — final-form single migration (Path B)
 
+**Overview:** (see sections below)
+
+
 **Status:** 📝 Planned (document only — no migration edits until reviewed)
 **Priority:** Medium (maintainability; no runtime behavior change on a fresh DB)
 **Effort:** High

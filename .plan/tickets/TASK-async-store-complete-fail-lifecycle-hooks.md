@@ -3,6 +3,11 @@
 
 # TASK: Wire `asyncStore.complete()` / `fail()` / `progress()` into the request lifecycle
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (fixed in worktree merge-review-followups, 2026-08-27)
 **Priority:** high
 **Effort:** Medium

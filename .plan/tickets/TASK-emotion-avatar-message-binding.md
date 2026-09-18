@@ -3,6 +3,11 @@
 
 # TASK: Emotion-Avatar Message Binding (persist + render)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — migration + schema done, per-message avatar binding shipped (cbf8ec95). Closed 2026-08-03.
 **Priority:** High
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK: Battle-Social Checks Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Battle & Action Systems, Social Interaction
 **Priority:** Medium
 **Effort:** High

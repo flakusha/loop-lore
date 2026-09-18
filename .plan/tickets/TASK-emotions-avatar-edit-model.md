@@ -3,6 +3,11 @@
 
 # TASK: Emotions Avatar Feature — Edit Model Support
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Phase 1 Complete (generation fallback)
 **Priority:** Medium
 **Effort:** High
@@ -239,4 +244,4 @@ Medium — generation fallback reduces edit model dependency. Main risk is fallb
 
 ## Notes
 
-**Reconciliation (2026-09-02)**: Absorbed TASK-emotion-avatar-edit-model.md (42L near-duplicate; folded per matrix reconciliation). Phase-2 edit-model stability remains tracked here.
+**Reconciliation (2026-09-02)**: Absorbed (42L near-duplicate; folded per matrix reconciliation). Phase-2 edit-model stability remains tracked here.

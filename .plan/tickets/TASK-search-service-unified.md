@@ -3,6 +3,11 @@
 
 # TASK: Unified Search Service (DB-direct / rg / BM25 / vector / decrypted)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🔄 In Progress — providers, conveniences, gallery endpoint, memories-FTS migration landed; assistant/RAG consumers pending
 **Priority:** High
 **Effort:** Medium
@@ -151,7 +156,7 @@ Resolved precedence: **user > admin > global**. The `defaultMs` caps typical que
 ## Dependencies
 
 - Builds on: `src/db/migrations/parts/016_fts.ts` (FTS5 schema), `src/memory/embeddings.ts` (vector cosine)
-- Enables: `TASK-gallery-fuzzy-search-pagination.md`, `TASK-assistant-rag-access-extensions.md`, `epic-rag-retrieval.md`
+- Enables: `TASK-gallery-fuzzy-search-pagination.md`, `epic-rag-retrieval.md`
 - Schema strategy: **folded into `016_fts.ts`** per user decision (DB regenerated anyway) — `users.encryption_secret` + `message_search_tokens` + lookup index live alongside the FTS tables, one atomic part. No `NNN_search_tokens` part.
 
 ## Progress (search-unified worktree)
@@ -199,5 +204,4 @@ Elysia coerces absent Optional enum query params to union member 0
 `searchParams` while the schema still 422s bogus values.
 
 Still open: gallery frontend swap (`TASK-gallery-fuzzy-search-pagination`),
-assistant/RAG consumers (`TASK-assistant-rag-access-extensions`,
-`epic-rag-retrieval`).
+assistant/RAG consumers (`epic-rag-retrieval`).

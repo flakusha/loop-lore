@@ -3,6 +3,9 @@
 
 # EPIC: Character Internal Traits, Aspirations & Moral Disposition
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Draft — extended with behavioral dimensions (D7–D9: coping, approach, autonomy)
 **Priority:** High
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK: Alpha-aware generation requests and format pick
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

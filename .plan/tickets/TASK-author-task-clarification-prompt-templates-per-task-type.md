@@ -3,6 +3,11 @@
 
 # TASK: Author task-clarification prompt templates per task type
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-24, feat-injection-templates)
 **Priority:** medium
 **Effort:** Medium

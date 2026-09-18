@@ -3,6 +3,11 @@
 
 # TASK: Auto-generate docs/reference/api.md from OpenAPI spec
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Epic:** epic-openapi-reference
 **Priority:** Medium

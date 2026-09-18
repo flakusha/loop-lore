@@ -3,6 +3,11 @@
 
 # TASK: System Format Contract — Validity of Format Requests in Prompts
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High

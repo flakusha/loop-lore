@@ -3,6 +3,11 @@
 
 # TASK: Unify Item Type Taxonomies
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-08-12)
 **Priority:** P0 — Critical
 **Effort:** Medium

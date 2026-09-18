@@ -3,6 +3,11 @@
 
 # TASK: Impersonation System
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partially Implemented
 **Priority:** Medium
 **Effort:** Low (remaining)

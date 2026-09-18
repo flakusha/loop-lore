@@ -3,6 +3,11 @@
 
 # TASK: Add NsfwEncounterStatus state machine for nsfw_encounters.status
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Small

@@ -3,6 +3,11 @@
 
 # TASK: Add blog state machines: BlogPostStatus, BlogPostVisibility, BlogCommentStatus
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

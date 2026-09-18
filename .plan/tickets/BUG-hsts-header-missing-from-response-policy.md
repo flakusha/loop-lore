@@ -3,6 +3,11 @@
 
 # BUG: HSTS header missing from response policy
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Resolved (worktree fix-hsts-response-policy)
 
 **Priority:** low
