@@ -13,8 +13,7 @@
 **Effort:** Large
 **Epic:** epic-memory-knowledge-systems.md
 
-## Summary
-
+**Summary:**
 Memory entries are low-context compacted summaries of chat events. At extraction time we need to bind the full chain of source message IDs (plural — current schema only stores a single `source_message_id`) so that "try hard to remember" lookups can reconstruct the original conversation by walking the message chain.
 
 ## Problem
@@ -103,8 +102,7 @@ bun test src/memory/ src/db/migrations.test.ts src/db/migration-roundtrip.test.t
 - `epic-memory-knowledge-systems.md`
 - `epic-archival-workflow.md` (chain walk overlaps with archive retrieval)
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [x] Migration `008_memory_source_chain.ts` lands and roundtrips (up→down→up).
 - [x] `ExtractionKind` enum defined in `src/db/enums-story/world.ts`; column-type override registered in `src/db/column-types.ts`; validation enum auto-regenerated into `src/validation/db-schemas.ts`.
 - [x] `actor_memories.source_message_ids` and `source_chat_ids` populated by extraction; existing single-ID rows backfilled.

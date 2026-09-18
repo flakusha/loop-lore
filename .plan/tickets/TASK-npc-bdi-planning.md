@@ -16,8 +16,7 @@
 **Platform Candidate:** E1 (Agentic NPC autonomy — Inworld AI, generative-agents)
 **Research Source:** Stanford generative-agents (2023), BDI architecture patterns
 
-## Summary
-
+**Summary:**
 Implement BDI (Belief-Desire-Intention) goal-pursuit loop for NPCs: daily planning, task decomposition, reaction system, plan revision, and chat buffer management to prevent infinite conversation loops.
 
 ## Background
@@ -93,8 +92,7 @@ interface ChatBuffer {
 - **epic-social-interaction.md** — Social events trigger reactions
 - **Memory system** — Episodic memory stores plan outcomes
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] NPCs generate daily plans from aspirations
 - [ ] Plans decompose into hourly activities with subtasks
 - [ ] Perceived events trigger reaction decisions

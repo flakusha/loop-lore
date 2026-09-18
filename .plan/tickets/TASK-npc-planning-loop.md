@@ -18,8 +18,7 @@
 **Epic**: epic-agency-story-points
 **Related**:
 
-## Summary
-
+**Summary:**
 Implement daily planning + task decomposition
 
 ## Acceptance

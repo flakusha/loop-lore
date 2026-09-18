@@ -13,8 +13,7 @@
 **Effort:** Medium
 **Status:** Not Started
 
-## Summary
-
+**Summary:**
 Integrate memory emotion-impact with character systems: mood, coping, relationships, and prompt assembly.
 
 ## Requirements
@@ -49,8 +48,7 @@ Integrate memory emotion-impact with character systems: mood, coping, relationsh
 - `epic-character-internal-traits.md` (coping profile, mood integration)
 - `epic-character-core-system.md` (mood service, relationship service)
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Memory → Mood integration working
 - [ ] Memory → Coping integration working
 - [ ] Memory → Relationship integration working

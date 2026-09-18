@@ -13,8 +13,7 @@
 **Effort:** Medium
 **Status:** Not Started
 
-## Summary
-
+**Summary:**
 Convert memory timestamps to game-time, add timeline-specific memory recall, and implement time-based decay per game-day.
 
 ## Requirements
@@ -51,8 +50,7 @@ Convert memory timestamps to game-time, add timeline-specific memory recall, and
 - `epic-time-scale.md` (game-time progression, time compression)
 - `epic-memory-propagation.md` (cross-timeline memory scopes)
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Memory timestamps are game-time
 - [ ] `timeline_id` field on memories
 - [ ] Migration applied

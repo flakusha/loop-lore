@@ -29,8 +29,7 @@ Wire message promotion to memory extraction and storage.
 - Store extracted memories in `actor_memories` with correct scope
 - Wire `transitions.ts` → `memory/extraction.ts` → DB
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [ ] Promoted messages trigger memory extraction
 - [ ] Extracted memories get correct scope (character/world/assistant)
 - [ ] `promotedToMemory` array is populated in ContextWindow

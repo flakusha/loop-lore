@@ -14,14 +14,12 @@
 **Epic:** epic-chat-transfer-location
 **Related:** TASK-travel-party-migration.md (umbrella), TASK-party-join-leave.md, TASK-chat-branch-merge.md
 
-## Summary
-
+**Summary:**
 Phase 2 of travel-party migration: AUX LLM fallback for transition intent
 detection. Regex-based detection misses nuanced transitions; an AUX LLM provides
 fallback classification under fast-resolution constraints.
 
-## Context
-
+**Context:**
 The transition classifier landed as `src/chat/transition-classifier.ts`
 (done 2026-08-01; see `TASK-transition-aux-llm-fallback.md`). It runs
 regex-first, then AUX-LLM-fallback, wired into the message processing pipeline
@@ -45,8 +43,7 @@ with timeout and error handling. Constraints for the AUX call:
 - [x] Wire into message processing pipeline
 - [x] Add timeout and error handling
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [x] AUX LLM fallback detects transitions regex misses (Phase 2, done 2026-08-01)
 - [x] AUX LLM fails fast (2s timeout) with graceful degradation
 - [x] All existing chat tests still pass

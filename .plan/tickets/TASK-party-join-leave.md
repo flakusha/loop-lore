@@ -14,15 +14,13 @@
 **Epic:** epic-chat-transfer-location
 **Related:** TASK-travel-party-migration.md (umbrella), TASK-party-aux-transition.md, TASK-chat-branch-merge.md
 
-## Summary
-
+**Summary:**
 Phase 1 of travel-party migration: implement party join/leave mechanics with
 VN-driven entrance/exit narration. A "party" is the set of characters sharing a
 chat in group/story mode (implicit via `chat_participants` — no `parties`
 table is needed).
 
-## Context
-
+**Context:**
 Already shipped (2026-08-19): `joinParty` / `leaveParty` in
 `src/chat/service/party.ts`, participant endpoints in
 `src/routes/chats/participants.ts`, the `guest` role on `ChatParticipantRole`,
@@ -30,7 +28,7 @@ and VN join/leave narration. Open work: VN scene-renderer wiring for
 entrance/exit animations and a character state snapshot on leave for rejoin
 continuity (both tracked as tasks inside this ticket).
 
-### Party Join Flow
+## Party Join Flow
 
 1. **API**: `POST /api/chats/:id/participants` with `actorId`
 2. **VN Transition**: Entrance narration (system-generated, or character's `welcome_message`)
@@ -58,8 +56,7 @@ continuity (both tracked as tasks inside this ticket).
 - [ ] Wire VN scene renderer for entrance/exit animations (frontend, separate ticket)
 - [ ] Add character state snapshot on leave (rejoin continuity, separate ticket)
 
-## Acceptance Criteria
-
+**Acceptance Criteria:**
 - [x] Party join generates VN entrance narration (VN-mode chats)
 - [x] Party leave generates VN departure narration (VN-mode chats)
 - [x] Idempotent join; not_found for missing chat / non-member leave
