@@ -5,6 +5,7 @@
  * NSFW gate constants + pure rating helpers.
  */
 import type { ContentRating, } from "../../db/enums";
+import { toDate, } from "../../utils/date";
 
 /** NSFW content rating levels that require age verification. */
 const NSFW_RATINGS: readonly ContentRating[] = [
@@ -31,7 +32,7 @@ export function isNsfwRating(rating: ContentRating,): boolean {
  * @returns age in years, or null when birthDate is not a valid date
  */
 export function calculateAge(birthDate: string,): number | null {
-  const birth = new Date(birthDate,);
+  const birth = toDate(birthDate,);
   if (Number.isNaN(birth.getTime(),)) { return null; }
   const now = new Date();
   let age = now.getFullYear() - birth.getFullYear();

@@ -10,6 +10,8 @@
  * challenge page. Match is fail-fast: any hit means quarantine, no retry.
  */
 
+import { parseExpiryMs, } from "../../utils/date";
+
 const BODY_MARKERS = [
   "captcha",
   "verify you are human",
@@ -62,7 +64,7 @@ export function parseRetryAfter(value: string | null, nowMs: number = Date.now()
   if (value == null || value.trim() === "") { return null; }
   const secs = Number(value,);
   if (Number.isFinite(secs,) && secs >= 0) { return Math.min(secs, 3600,) * 1000; }
-  const at = Date.parse(value,);
-  if (Number.isFinite(at,)) { return Math.max(0, Math.min(at - nowMs, 3600_000,),); }
+  const at = parseExpiryMs(value,);
+  if (at !== null) { return Math.max(0, Math.min(at - nowMs, 3600_000,),); }
   return null;
 }

@@ -55,6 +55,14 @@ const customRestrictedSyntax = [
     selector: "CallExpression[callee.name='parseFloat']",
     message: "Use safeParseFloat()/parseFloatOr() from utils/parse-number instead of bare parseFloat",
   },
+  {
+    selector: "CallExpression[callee.object.name='Date'][callee.property.name='parse']",
+    message: "Use parseExpiryMs() or toDate() from utils/date instead of bare Date.parse",
+  },
+  {
+    selector: "NewExpression[callee.name='Date'][arguments.length>0]",
+    message: "Use toDate() from utils/date instead of bare new Date(var). new Date() (now) and new Date(epochMs) arithmetic are allowed.",
+  },
 ];
 
 // Shared plugins
@@ -282,7 +290,7 @@ export default [
     },
   },
   // Util implementations: base64 wraps btoa/atob; safe-fetch wraps bare fetch;
-  // url-validation parses ports.
+  // url-validation parses ports; date.ts wraps Date.parse / new Date.
   {
     files: [
       "src/utils/safe-json.ts",
@@ -290,6 +298,7 @@ export default [
       "src/utils/base64.ts",
       "src/utils/safe-fetch/fetch.ts",
       "src/utils/url-validation.ts",
+      "src/utils/date.ts",
     ],
     rules: {
       "no-restricted-syntax": "off",
@@ -325,6 +334,30 @@ export default [
     rules: {
       "no-restricted-syntax": "off",
       "no-restricted-globals": "off",
+    },
+  },
+  // Legitimate new Date(epochMs) — safe epoch math, not untrusted string input.
+  // These compute timestamps from Date.now() ± offsets, not from DB/user strings.
+  {
+    files: [
+      "src/chat/moderation.ts",
+      "src/chat/proactive/timing.ts",
+      "src/chat/proactive/index.ts",
+      "src/chat/proactive/annotations.ts",
+      "src/async/offload.ts",
+      "src/telemetry/cleanup.ts",
+      "src/memory/purge.ts",
+      "src/middleware/auth/authenticate.ts",
+      "src/routes/admin/aux-telemetry.ts",
+      "src/routes/telemetry-purge.ts",
+      "src/routes/auth/session.ts",
+      "src/routes/messages/archiving.ts",
+      "src/federation/sharing.ts",
+      "src/crypto/key-rotation/find-expired.ts",
+      "src/services/trade/counter.ts",
+    ],
+    rules: {
+      "no-restricted-syntax": "off",
     },
   },
   // TUI app: process.exit allowed
