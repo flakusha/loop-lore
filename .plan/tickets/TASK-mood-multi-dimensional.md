@@ -3,6 +3,11 @@
 
 # TASK-mood-multi-dimensional: Mood extension — multi-dimensional emotional states (PAD)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Small

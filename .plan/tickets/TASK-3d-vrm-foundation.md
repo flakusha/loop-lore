@@ -3,6 +3,11 @@
 
 # TASK-3d-vrm-foundation: 3D foundation — VRM avatars + rendering pipeline (Phases 1–2)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Large

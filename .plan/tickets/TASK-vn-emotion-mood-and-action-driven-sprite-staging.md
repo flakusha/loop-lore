@@ -3,6 +3,11 @@
 
 # TASK: VN: emotion mood and action driven sprite staging
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-09-10) — frontend half: directive schema + derivation/application wired to renderer state; backend LLM/action extractors deferred
 **Priority:** high
 **Epic:** Emotion Avatar Message Binding; Visual Novel Mode

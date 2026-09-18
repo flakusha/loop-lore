@@ -3,6 +3,11 @@
 
 # BUG: Group chat @mention parser silently picks wrong actor on prefix collision
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Priority:** high
 **Effort:** small

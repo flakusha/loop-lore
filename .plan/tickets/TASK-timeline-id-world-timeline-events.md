@@ -3,6 +3,12 @@
 
 # TASK: Add `timeline_id` to `world_timeline_events`
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Implemented (2026-09-10 — landed via final-form squash `e3b8edbf3`, verified on dev)
 **Priority:** High
 **Epic:** `epic-timeline-system.md`

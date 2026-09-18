@@ -3,6 +3,11 @@
 
 # TASK-avatars-dynamic-2d: Dota-style dynamic 2D avatars (Phase 4)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Medium

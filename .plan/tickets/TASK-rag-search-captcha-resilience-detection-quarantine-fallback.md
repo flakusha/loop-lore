@@ -3,6 +3,11 @@
 
 # TASK: RAG search captcha resilience — detection, quarantine, fallback
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟨 In Progress
 **Priority:** High
 **Effort:** Medium

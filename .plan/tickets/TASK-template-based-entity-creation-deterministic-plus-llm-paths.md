@@ -3,6 +3,11 @@
 
 # TASK: Template-based entity creation: deterministic plus LLM paths
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

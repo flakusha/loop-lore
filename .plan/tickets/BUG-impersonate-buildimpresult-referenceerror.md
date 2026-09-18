@@ -3,6 +3,11 @@
 
 # BUG: impersonate buildImpersonateResult ReferenceError on undefined `target`
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** not-a-bug
 **Priority:** high
 **Priority Tier:** P2

@@ -3,6 +3,11 @@
 
 # TASK: VN: multi-character sprite ordering and positioning
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-09-10) — deterministic slots per cast size with z-order, stage renders for 2+ cast, solo scenes keep the legacy portrait
 **Priority:** medium
 **Epic:** Avatar Alpha Channel + VN Layering; Visual Novel Mode

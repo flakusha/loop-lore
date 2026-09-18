@@ -3,6 +3,11 @@
 
 # TASK: Single source of truth for config schema mirrors
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-09-16, tree/admin-config-impl)
 **Priority:** medium
 **Effort:** Medium

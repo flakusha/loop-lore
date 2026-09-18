@@ -3,6 +3,11 @@
 
 # TASK: Extend talkativity to also influence response verbosity (design proposal — separate from selection-rate)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 📝 Draft
 **Priority:** medium
 **Effort:** small

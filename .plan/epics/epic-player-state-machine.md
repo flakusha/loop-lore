@@ -3,6 +3,9 @@
 
 # Player State Machine — Cross-System Design
 
+**Overview:** (see sections below)
+
+
 **Status:** 📝 Draft
 **Created:** 2026-07-27
 **Priority:** Medium

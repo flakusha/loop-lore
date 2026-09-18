@@ -3,6 +3,9 @@
 
 # EPIC: Chat Variants Taxonomy
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Design — taxonomy agreed; column mapping established; per-variant implementation open (see task list)
 **Priority:** High
 **Effort:** Medium

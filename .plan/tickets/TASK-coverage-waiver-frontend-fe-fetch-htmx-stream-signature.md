@@ -3,6 +3,11 @@
 
 # TASK: Coverage waiver: frontend fe-fetch + htmx below 75% floor (stream signature-only diff)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Small

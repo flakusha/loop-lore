@@ -3,6 +3,9 @@
 
 # EPIC: Local Process Swarm (Bun-Managed Multi-Process Decomposition)
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Very High

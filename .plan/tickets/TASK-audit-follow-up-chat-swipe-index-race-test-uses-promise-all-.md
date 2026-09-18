@@ -3,6 +3,11 @@
 
 # TASK: Audit follow-up: chat-swipe-index-race test uses Promise.all (JS-thread serial, no real race)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — verified stale (no code change required)
 **Priority:** medium
 **Effort:** Medium

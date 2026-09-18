@@ -3,6 +3,9 @@
 
 # EPIC: Worlds Extension (Shareability, Epochs, Maps, Mode Switches)
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High

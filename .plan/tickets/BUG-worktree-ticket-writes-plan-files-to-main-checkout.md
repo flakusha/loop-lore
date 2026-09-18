@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Worktree ticket writes plan files to main checkout
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Closed — duplicate of `BUG-scripts-worktree-ticket-writes-to-cwd-instead-of-worktree-pa` (issue 81dc8f9); root-cause analysis posted there (2026-08-31)
 **Priority:** medium

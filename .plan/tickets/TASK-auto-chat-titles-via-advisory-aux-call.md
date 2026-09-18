@@ -3,6 +3,11 @@
 
 # TASK: Auto chat titles via advisory aux call
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** low
 **Effort:** Medium

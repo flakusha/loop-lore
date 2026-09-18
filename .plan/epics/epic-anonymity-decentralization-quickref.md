@@ -3,6 +3,9 @@
 
 # Anonymity & Decentralization — Quick Reference
 
+**Overview:** (see sections below)
+
+
 ## Epic Overview
 
 **File:** `.plan/epics/epic-anonymity-decentralization.md`

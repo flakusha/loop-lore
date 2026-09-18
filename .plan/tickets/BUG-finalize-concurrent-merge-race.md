@@ -3,6 +3,12 @@
 
 # BUG: finalize concurrent-merge race corrupts dev checkout
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** High
 **Epic:** epic-tooling-improvement.md

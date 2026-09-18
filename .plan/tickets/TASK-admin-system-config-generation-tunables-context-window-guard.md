@@ -3,6 +3,11 @@
 
 # TASK: Admin system-config: generation tunables (context window, guards, aux, model roles)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

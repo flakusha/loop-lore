@@ -3,6 +3,11 @@
 
 # TASK: Character Mood & Expression System
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress (services + routes done) — umbrella; work split into 3 child tickets
 **Priority:** Medium
 **Effort:** Medium

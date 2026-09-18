@@ -62,9 +62,9 @@ metadata, alpha/VN layering, wardrobe variants, asset platform capabilities.
 
 | Existing ticket | Disposition |
 | --------------- | ----------- |
-| `TASK-emotion-avatar-edit-model` (42L) / `TASK-emotions-avatar-edit-model` (238L) | near-duplicate pair — fold the short one into the 238L parent at bookkeeping; Phase-2 (edit-model stability) stays its own ticket |
+| `TASK-emotions-avatar-edit-model` (238L) | near-duplicate pair — fold the short one into the 238L parent at bookkeeping; Phase-2 (edit-model stability) stays its own ticket |
 | `TASK-aux-emotion-avatar`, `TASK-aux-llm-emotion-classifier`, `TASK-aux-enrichment-emotion-avatar-task`, `TASK-emotion-intent-detection` | detection axis — feed binding epic's sources; no new owner, keep as-is |
-| `TASK-actor-emotion-avatars-frontend` / `TASK-actor-emotion-avatars-frontend-panel` | pair — merge into one frontend ticket scoped to binding-epic render tasks; grid grouping-by-outfit deferred to wardrobe |
+| `TASK-actor-emotion-avatars-frontend` | pair — merge into one frontend ticket scoped to binding-epic render tasks; grid grouping-by-outfit deferred to wardrobe |
 | `BUG-avatar-select-empty-throws-no-frontend-fallback`, `BUG-avatar-select-fallback-chain-unwired`, `BUG-avatar-selection-rule-unimplemented-branches`, `TEST-avatar-selection-fallback-empty-coverage` | selection-axis bugs — become wardrobe-epic fallback-ladder prerequisites (fix first, ladder tests pin them) |
 | `BUG-emotion-mood-hook-payload-missing-actor-chat`, `BUG-emotion-mood-hook-stale-llm-javadoc`, `BUG-emotion-avatar-fallback-metadata-incomplete` | binding-epic prerequisites (hook payload is the persist path) |
 | `TEST-emotion-hook-to-avatarForMessage-integration` | binds to binding epic acceptance list |
@@ -79,7 +79,7 @@ metadata, alpha/VN layering, wardrobe variants, asset platform capabilities.
       transforms 8, alpha 7, wardrobe 8, platform B1–B5 (5 batch-level,
       decompose per batch at execution), decisions 4 (AV3/AV4/AV8/AV10)
 - [x] Execute the ticket reconciliations above — ✅ 2026-09-02: folded
-      `TASK-emotion-avatar-edit-model` (42L) into `TASK-emotions-avatar-edit-model`;
+      into `TASK-emotions-avatar-edit-model`;
       merged `…-frontend-panel` into `TASK-actor-emotion-avatars-frontend`;
       selection bugs → wardrobe ladder prerequisites; hook bugs → binding
       prerequisites; `TASK-character-multi-avatar` ↔ selection-v2 cross-linked

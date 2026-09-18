@@ -3,6 +3,11 @@
 
 # FEAT: Race & Origin (Homeland/Culture) as First-Class Lore Identity Dimensions
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium

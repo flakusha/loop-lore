@@ -3,6 +3,11 @@
 
 # TASK: Workspace MCP bridge on OpenClaw serve/registry pattern
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

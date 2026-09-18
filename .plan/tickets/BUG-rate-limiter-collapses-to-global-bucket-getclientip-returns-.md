@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: Rate limiter collapses to global bucket (getClientIp returns 'unknown')
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done
 **Priority:** critical

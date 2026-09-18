@@ -3,6 +3,11 @@
 
 # IDEA: Chat composer: predictive inline text suggestions
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # BUG: Group chat cascade has no silence / pass-through mechanic — every cascade turn forces an LLM generation regardless of relevance
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-07; followup in chat-turning-bugfix-batch-9)
 **Severity:** medium
 **Priority:** medium

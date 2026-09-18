@@ -3,6 +3,14 @@
 
 # TASK-char-editor-validation-spec-compliance
 
+**Status:** Not Started
+**Priority:** medium
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status**: open
 **Priority**: high
 **Labels**: frontend, validation, character-editor, schema

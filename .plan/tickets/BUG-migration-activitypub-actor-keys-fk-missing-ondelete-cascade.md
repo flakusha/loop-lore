@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: migration: activitypub_actor_keys FK missing onDelete cascade
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Closed — fixed in worktree find-work-batch-tickets (verified 2026-09-18)
 

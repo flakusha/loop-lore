@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Adopt Bun.randomUUIDv7() for time-sortable IDs
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** 🟡 Deferred (test-contract dependency)
 **Priority:** medium

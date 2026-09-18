@@ -3,6 +3,11 @@
 
 # BUG: RPG route authz gaps: XP award/ledger + world-trait IDOR + world tick
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Closed (2026-08-20, worktree `rpg-authz-fix`)
 **Priority:** high
 **Effort:** Medium

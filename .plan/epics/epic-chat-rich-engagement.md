@@ -3,6 +3,11 @@
 
 # EPIC: Chat Rich Engagement (draft for new worktree)
 
+**Effort:** Medium
+**Type:** epic
+**Overview:** (see sections below)
+
+
 **Status:** Proposed
 **Priority:** Medium — messenger/AI parity gap
 **Tags:** chat, polls, link-preview, voice-notes, ai-utilities

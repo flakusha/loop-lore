@@ -3,6 +3,11 @@
 
 # TASK: tui/asset-view.ts: remove silent catch + void-without-catch pattern in setChatId
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** low
 **Effort:** trivial

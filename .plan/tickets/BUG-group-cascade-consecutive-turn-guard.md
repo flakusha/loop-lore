@@ -3,6 +3,11 @@
 
 # BUG: TurnManager strategies have no consecutive-turn guard — an actor can speak twice in a row when strategy weight ties
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified via commit 359a3d3; bookkeeping)
 **Severity:** medium
 **Priority:** medium

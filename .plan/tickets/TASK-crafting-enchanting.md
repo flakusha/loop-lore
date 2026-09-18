@@ -3,6 +3,11 @@
 
 # TASK: Crafting-Enchanting Integration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Crafting & Professions, Magic & Spell Systems
 **Priority:** Medium
 **Effort:** Medium

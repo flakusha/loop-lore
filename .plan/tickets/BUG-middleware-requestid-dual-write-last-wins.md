@@ -3,6 +3,11 @@
 
 # BUG: same `requestId` row dual-written by HTTP afterHandle + async LLM gen
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** fixed-in-worktree
 **Priority:** medium
 **Effort:** Small

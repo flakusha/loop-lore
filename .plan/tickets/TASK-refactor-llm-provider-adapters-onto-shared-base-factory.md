@@ -3,6 +3,11 @@
 
 # TASK: Refactor LLM provider adapters onto shared base factory
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

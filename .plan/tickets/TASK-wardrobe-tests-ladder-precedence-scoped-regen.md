@@ -3,6 +3,11 @@
 
 # TASK: Wardrobe tests ladder precedence scoped regen
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

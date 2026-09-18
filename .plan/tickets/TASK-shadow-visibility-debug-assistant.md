@@ -1,4 +1,13 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Relaxed shadow visibility for debug and assistant flows
+
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Epic:** epic-hidden-carriage-context.md
 **See also:** epic-gm-shadow-notes.md, epic-assistant-gm-flows.md

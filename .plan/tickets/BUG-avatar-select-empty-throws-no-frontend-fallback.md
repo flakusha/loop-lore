@@ -3,6 +3,12 @@
 
 # BUG: selectAvatar throws on actors with no avatars; no safe-fallback API
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** P2
 **Epic:** epic-character-core-system

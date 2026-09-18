@@ -3,6 +3,11 @@
 
 # BUG: chat swipe_index race on concurrent assistant replies (reply.ts:83-84)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Priority:** high
 **Priority Tier:** P2

@@ -3,6 +3,9 @@
 
 # Epic: Memory & Knowledge Systems
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟡 Partial (three-tier scopes, budget, extraction, injection, provision, shareability, decay, promotion, purge built)
 **Priority:** High
 **Effort:** High

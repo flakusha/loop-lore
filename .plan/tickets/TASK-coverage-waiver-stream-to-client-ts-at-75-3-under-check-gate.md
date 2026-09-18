@@ -3,6 +3,11 @@
 
 # TASK: Coverage waiver: stream-to-client.ts at 75.3 under check gate
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

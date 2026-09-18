@@ -1,4 +1,13 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: No in-flight generation check — concurrent generate requests last-wins abort
+
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Resolved (hasInFlightGeneration check wired in handleGenerate; 409 Conflict on duplicate)
 **Priority:** high

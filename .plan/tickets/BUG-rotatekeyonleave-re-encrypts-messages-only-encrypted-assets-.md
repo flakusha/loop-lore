@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: rotateKeyOnLeave re-encrypts messages only - encrypted assets become undecryptable
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done (verified landed on dev — `rotateKeyOnLeave` calls `reEncryptChatAssets` with explicit old+new keys before the swap; asset failures abort rotation)
 **Priority:** high

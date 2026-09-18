@@ -3,6 +3,9 @@
 
 # EPIC: Immersion Consistency Gate (Actor-State Blockage & Refusal)
 
+**Overview:** (see sections below)
+
+
 **Status:** Not Started
 **Priority:** High
 **Effort:** Large
@@ -68,12 +71,12 @@ fiction, preserving story flow; reasons surfaced OOC only on hard-block.
 
 ## Work Items
 
-- [ ] **Claim extraction** — detect action/skill/item/movement claims from user messages (regex + aux). → TASK-immersion-gate-claims
-- [ ] **Deterministic rule engine** — checks against actor state, skills, inventory, pending failed-check consequences. → TASK-immersion-gate-rules
-- [ ] **Failed-check enforcement** — consume battle/dice outcomes to constrain follow-up actions. → TASK-immersion-gate-check-failure
-- [ ] **LLM classifier (opt-in)** — prose-level immersion audit via aux-pipeline, budget-governed. → TASK-immersion-gate-llm
-- [ ] **Refusal narration path** — soft-refusal → attempted-action framing into GM/narration generation. → TASK-immersion-gate-refusal
-- [ ] **Config surface + audit** — per-chat severity, per-rule toggles, decision log for review/rollback. → TASK-immersion-gate-config
+- [ ] **Claim extraction** — detect action/skill/item/movement claims from user messages (regex + aux).
+- [ ] **Deterministic rule engine** — checks against actor state, skills, inventory, pending failed-check consequences.
+- [ ] **Failed-check enforcement** — consume battle/dice outcomes to constrain follow-up actions.
+- [ ] **LLM classifier (opt-in)** — prose-level immersion audit via aux-pipeline, budget-governed.
+- [ ] **Refusal narration path** — soft-refusal → attempted-action framing into GM/narration generation.
+- [ ] **Config surface + audit** — per-chat severity, per-rule toggles, decision log for review/rollback.
 
 ## Non-Goals
 

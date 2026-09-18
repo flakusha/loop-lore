@@ -3,6 +3,9 @@
 
 # EPIC: Shared Schemas — Reputation, Consent, NSFW Content Rating
 
+**Overview:** (see sections below)
+
+
 **Status:** 🟢 Complete (implementation + integration + tests verified 2026-08-15; migration tests N/A — in-memory schemas, no DB tables)
 **Priority:** High
 **Effort:** Medium

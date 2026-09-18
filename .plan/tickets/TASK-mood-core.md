@@ -3,6 +3,11 @@
 
 # TASK-mood-core: Character happiness meter & mood core system
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress (services + routes done, needs validation)
 **Priority:** Medium
 **Effort:** Medium

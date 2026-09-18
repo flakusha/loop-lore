@@ -3,6 +3,11 @@
 
 # BUG: hallucination-guard-isKnownEntity-stubs-unused-falls-through-to-name-match
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Resolved (dev, prior to 2026-09-13)
 **Priority:** high
 **Effort:** Medium

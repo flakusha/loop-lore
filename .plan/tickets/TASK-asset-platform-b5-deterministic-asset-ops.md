@@ -3,6 +3,11 @@
 
 # TASK: Asset platform B5 deterministic asset ops
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

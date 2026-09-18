@@ -3,6 +3,11 @@
 
 # TASK: AUX LLM — Memory Extraction
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial — extraction implemented but wired to MAIN provider with `model: "default"` bug; not on auxiliary role (2026-08-01)
 **Priority:** P2-B
 **Effort:** Small

@@ -3,6 +3,12 @@
 
 # EPIC: Headers & Navigation Management
 
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 

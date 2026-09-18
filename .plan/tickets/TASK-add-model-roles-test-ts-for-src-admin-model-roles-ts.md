@@ -3,6 +3,11 @@
 
 # TASK: Add model-roles.test.ts for src/admin/model-roles.ts
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

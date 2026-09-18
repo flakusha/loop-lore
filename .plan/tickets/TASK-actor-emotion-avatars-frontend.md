@@ -3,6 +3,11 @@
 
 # TASK: Actor Emotion Avatars Frontend
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (merged to dev 2026-09-15)
 **Priority:** P2
 **Effort:** Medium
@@ -52,4 +57,4 @@ Create frontend UI for emotion avatar batch generation. Backend routes exist at 
 
 ## Notes
 
-**Reconciliation (2026-09-02)**: Absorbed TASK-actor-emotion-avatars-frontend-panel.md (merged frontend ticket scoped to binding-epic render tasks per matrix reconciliation; grid group-by-outfit deferred to wardrobe epic).
+**Reconciliation (2026-09-02)**: Absorbed the panel sibling (merged frontend ticket scoped to binding-epic render tasks per matrix reconciliation; grid group-by-outfit deferred to wardrobe epic).

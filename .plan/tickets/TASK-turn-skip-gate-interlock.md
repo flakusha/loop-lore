@@ -3,6 +3,11 @@
 
 # TASK: Turn skip gate interlock
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small

@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: BUG: message-seen DELETE handler trusts client actorId (IDOR)
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ done
 **Resolution:** Fixed in `5b080b4d0c013f04faa88076ac3abd47cab481ca`

@@ -3,6 +3,10 @@
 
 # Epic: Mini-Games & Interactive Mechanics
 
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High

@@ -3,6 +3,11 @@
 
 # TASK: Add EventSource enum for chat_location_events.source
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Small

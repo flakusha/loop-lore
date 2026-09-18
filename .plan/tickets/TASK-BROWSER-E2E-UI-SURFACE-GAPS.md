@@ -3,6 +3,11 @@
 
 # TASK-BROWSER-E2E-UI-SURFACE-GAPS: Browser e2e — remaining untested UI surfaces
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⚪ Not Started
 **Priority:** High
 **Effort:** Large

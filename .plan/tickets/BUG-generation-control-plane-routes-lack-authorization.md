@@ -3,6 +3,11 @@
 
 # BUG: generation control-plane routes lack authorization
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (already on dev, 2026-09-05)
 **Priority:** critical
 **Effort:** Large

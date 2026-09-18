@@ -3,6 +3,12 @@
 
 # TASK: VN: character sprite roster per chat
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete (2026-09-10) — per-chat roster lives in scene-renderer state, synced on init/addScene, cleared on destroy
 **Priority:** medium
 **Epic:** Avatar Alpha Channel + VN Layering; Visual Novel Mode

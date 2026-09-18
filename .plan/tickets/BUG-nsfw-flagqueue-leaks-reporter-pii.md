@@ -3,6 +3,11 @@
 
 # BUG: NSFW flag queue endpoint returns full `reporter_id` + free-text `description` to admin — no projection or redaction
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Done
 **Severity:** High
 **Priority:** high

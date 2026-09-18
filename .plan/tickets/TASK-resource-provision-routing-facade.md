@@ -3,6 +3,11 @@
 
 # TASK: Resource Provider Routing Facade
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Open
 **Priority:** high
 **Effort:** large

@@ -3,6 +3,11 @@
 
 # TASK: RPG: ruleset enforcement in prompts and post-generation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

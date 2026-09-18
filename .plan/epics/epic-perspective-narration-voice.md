@@ -3,6 +3,9 @@
 
 # EPIC: Perspective & Voice Control (1st / 3rd / Narrator)
 
+**Overview:** (see sections below)
+
+
 **Status:** Not Started
 **Priority:** High
 **Effort:** Medium
@@ -50,10 +53,10 @@ actors mirror the user's voice), generation quality gating, and the frontend com
 
 ## Work Items
 
-- [ ] **Perspective schema + API** — chat/persona fields, validation, migration. → TASK-perspective-voice-schema
-- [ ] **Prompt-assembly integration** — voice contract into generation context. → TASK-perspective-prompt-assembly
-- [ ] **Scorer rework** — character-voice scorer obeys configured perspective, drops hardcoded first-person bonus. → TASK-perspective-voice-scoring
-- [ ] **Composer UI** — perspective toggle + narrator-mode input affordance. → TASK-perspective-voice-ui
+- [ ] **Perspective schema + API** — chat/persona fields, validation, migration.
+- [ ] **Prompt-assembly integration** — voice contract into generation context.
+- [ ] **Scorer rework** — character-voice scorer obeys configured perspective, drops hardcoded first-person bonus.
+- [ ] **Composer UI** — perspective toggle + narrator-mode input affordance.
 
 ## Non-Goals
 

@@ -3,6 +3,11 @@
 
 # TASK: Party Join/Leave with VN Narration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial — Phase 1 landed 2026-08-19; VN renderer wiring + state snapshot open
 **Priority:** P2-B
 **Effort:** High

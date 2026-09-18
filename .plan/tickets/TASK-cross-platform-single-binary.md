@@ -3,6 +3,11 @@
 
 # TASK: Single-Binary Build (bun build --compile)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Open
 **Priority:** Medium
 **Effort:** Medium

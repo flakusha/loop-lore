@@ -3,6 +3,12 @@
 
 # TASK: Character emotion definitions CRUD + admin UI
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P3
 **Epic:** epic-character-core-system / epic-emotion-avatar-message-binding

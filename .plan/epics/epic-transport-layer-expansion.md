@@ -3,6 +3,12 @@
 
 # EPIC: Transport Layer Expansion
 
+**Effort:** Medium
+**Type:** epic
+**Tags:** (none)
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Epic ID:** EPIC-2026-35

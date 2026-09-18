@@ -3,11 +3,17 @@
 
 # BUG: Emotion-avatar fallback prompt only sees `alt_text`; never uses character description
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding / epic-character-core-system
 **Labels:** emotion-avatar, fallback, character-description
-**Related:** TASK-emotions-avatar-edit-model.md, TASK-emotion-avatar-edit-model.md, src/characters/services/emotion-avatar-fallback.ts, src/characters/services/emotion-avatar-service/generation.ts:158-162
+**Related:** TASK-emotions-avatar-edit-model.md, src/characters/services/emotion-avatar-fallback.ts, src/characters/services/emotion-avatar-service/generation.ts:158-162
 
 ## Summary
 

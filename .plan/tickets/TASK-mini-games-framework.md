@@ -3,6 +3,12 @@
 
 # TASK: Mini-Games Framework + Tier 1
 
+**Status:** Not Started
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Mini-Games & Interactive Mechanics
 **Phase:** 1 (Framework + Tier 1 Games)
 **Priority:** High

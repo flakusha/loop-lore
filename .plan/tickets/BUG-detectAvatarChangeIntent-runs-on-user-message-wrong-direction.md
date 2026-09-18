@@ -3,6 +3,12 @@
 
 # BUG: detectAvatarChangeIntent runs on user messages, not assistant responses
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** done
 **Priority:** P2
 **Epic:** epic-emotion-avatar-message-binding

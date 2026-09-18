@@ -3,6 +3,11 @@
 
 # TASK: Location Explorer
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-22, feature/location-explorer-ui)
 **Priority:** P0 — Critical
 **Effort:** Medium

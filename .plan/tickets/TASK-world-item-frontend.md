@@ -3,6 +3,11 @@
 
 # TASK: World Item Frontend (Item Creation & Item Settings)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P1 — High
 **Effort:** Medium

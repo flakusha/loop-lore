@@ -3,6 +3,11 @@
 
 # BUG: FE-BE: harmony checker blind to elysia-app direct routes, factory routes, sibling-schema consts
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (already on dev, 2026-09-14)
 **Priority:** high
 **Effort:** Medium

@@ -3,6 +3,11 @@
 
 # TASK: NPC Behavior State Machine Foundation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium

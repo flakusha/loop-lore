@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # FEAT: In-chat asset preview + linkage side panel
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done — in-chat asset preview + linkage side panel shipped in dev: `src/components/chat/gallery-sidebar.html` + `media-preview-modal.html` (toggle `showGallery`), `src/frontend/alpine/chat-utils/gallery.ts` (`openAssetPreview`/`loadGalleryAssets`/`getMediaStyle`), message attachments via `pendingAssets`→`sendMessage` (chat-send.ts + chat-editing.ts), upload→chat entity linkage (`entity_type=chat`). Git issue `fef7e3b` closed 2026-08-19.
 **Priority:** medium

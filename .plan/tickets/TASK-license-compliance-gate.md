@@ -3,6 +3,11 @@
 
 # TASK: License compliance gate — scancode + fossa in bun check
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done
 **Priority:** high
 **Effort:** Small

@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # FEAT: Worktree commit commands lack message file input
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done (2026-09-02 — `-F`/`--message-file` shipped in `scripts/worktree/utils/message.ts`, wired into `commit`/`agent-commit`)
 **Priority:** low

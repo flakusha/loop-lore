@@ -3,6 +3,11 @@
 
 # BUG: Group participant injection absent on manual generate route
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (worktree fix-group-participant-injection; production code landed, tests WIP)
 **Priority:** medium
 **Effort:** Medium

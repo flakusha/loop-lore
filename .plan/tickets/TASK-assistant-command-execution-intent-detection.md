@@ -3,6 +3,11 @@
 
 # TASK: Assistant: Command Execution & Intent Detection
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Partial — slash command parser + AUX `classifyIntent` exist; no timeout/apiKey on AUX path, `detectIntent` dead (2026-08-01)
 **Priority:** high
 **Effort:** Medium

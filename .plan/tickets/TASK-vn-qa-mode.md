@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: VN Q&A Mode
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** 🟡 Partial Complete — QA Validator ✅, Q&A Interaction Loop ⬜ Not Started
 **Priority:** P2 — Medium

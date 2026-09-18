@@ -3,6 +3,11 @@
 
 # TASK: RPG Core: Dice & Stats (d20 only)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete
 **Priority:** high
 **Effort:** Medium

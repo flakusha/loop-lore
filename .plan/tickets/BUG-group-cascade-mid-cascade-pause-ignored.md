@@ -3,6 +3,11 @@
 
 # BUG: Mid-cascade pause toggle does not abort the in-flight LLM call or stop the chain promptly
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified via commit 359a3d3; bookkeeping)
 **Severity:** high
 **Priority:** high

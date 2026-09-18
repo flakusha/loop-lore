@@ -3,6 +3,9 @@
 
 # EPIC: Mechanics Governance — Per-World Config, Control Levels & Plugin API
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium

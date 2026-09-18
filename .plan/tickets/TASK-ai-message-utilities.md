@@ -3,6 +3,12 @@
 
 # TASK: AI message utilities (translate/summarize/explain)
 
+**Status:** Not Started
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-chat-rich-engagement.md (proposed)
 **Type:** Feature | **Priority:** Medium | **Effort:** S
 

@@ -3,6 +3,11 @@
 
 # BUG: FTS5 triggers index encrypted ciphertext — chat search is non-functional for at-rest encrypted chats
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-07; bookkeeping)
 **Severity:** high
 **Priority:** high

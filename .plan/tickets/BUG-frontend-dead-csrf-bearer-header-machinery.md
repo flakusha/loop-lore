@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: frontend dead CSRF bearer header machinery
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** [OK] Done - full closure (dead Bearer removed, cookie-only browser story, 2026-09-16)
 **Priority:** medium

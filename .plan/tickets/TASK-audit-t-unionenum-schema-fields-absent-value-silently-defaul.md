@@ -3,6 +3,11 @@
 
 # TASK: Audit t.UnionEnum schema fields: absent value silently defaults to first member (Elysia 1.4)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Medium

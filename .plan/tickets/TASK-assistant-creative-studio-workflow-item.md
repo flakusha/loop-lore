@@ -3,6 +3,11 @@
 
 # TASK: Assistant Creative Studio — Item Generation Workflow
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 📝 Draft
 **Priority:** High (post-Gate C, with parent epic)
 **Effort:** Medium

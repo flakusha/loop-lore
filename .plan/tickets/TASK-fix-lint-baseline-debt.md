@@ -3,6 +3,11 @@
 
 # TASK: Fix lint baseline debt (11 no-restricted-syntax errors)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-09-05, fix-lint-baseline-debt worktree)
 **Priority:** low
 **Effort:** Small

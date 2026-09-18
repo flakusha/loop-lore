@@ -3,6 +3,11 @@
 
 # BUG: Author-note section duplicates post-history instructions (same field)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (verified 2026-09-07; documented dual-injection contract)
 **Priority:** high
 **Effort:** Medium

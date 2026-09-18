@@ -1,4 +1,13 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Local image generation queue with pause and rate limit
+
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Epic:** epic-llm-queue.md (see also epic-generation-flow-control.md)
 **Status:** Not Started

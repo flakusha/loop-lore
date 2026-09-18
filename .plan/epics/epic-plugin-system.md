@@ -3,6 +3,9 @@
 
 # EPIC: Plugin System & Extensibility
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Very High

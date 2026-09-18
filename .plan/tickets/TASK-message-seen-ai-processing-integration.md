@@ -3,6 +3,11 @@
 
 # TASK: AI Actor Processing State Integration (Turn Scheduler)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Large

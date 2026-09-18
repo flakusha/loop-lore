@@ -3,6 +3,9 @@
 
 # Social Hub — Quick Reference
 
+**Overview:** (see sections below)
+
+
 ## Epic Overview
 
 **File:** `.plan/epics/epic-social-hub.md`

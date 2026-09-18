@@ -3,6 +3,11 @@
 
 # TASK: Add HeatPhase state machine for character_heat_cycle.current_phase
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** Small

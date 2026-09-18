@@ -3,6 +3,11 @@
 
 # TASK: AUX LLM Fallback for Transition Intent Detection
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done — implemented in `src/chat/transition-classifier.ts` (2026-08-01)
 **Priority:** P2-B
 **Effort:** Small

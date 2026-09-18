@@ -3,6 +3,11 @@
 
 # TASK-3d-view-modes-ui: VRM view-mode switching + device-tier gating (Phase 5)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Medium

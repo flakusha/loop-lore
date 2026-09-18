@@ -3,6 +3,11 @@
 
 # BUG: LLM tool calls persist in `messages.tool_calls` (migration 037) but no `MessageContentType.ToolResult` exists and no frontend bubble renders them — tool calls appear as raw JSON text in chat
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** [OK] Done
 **Severity:** medium
 **Priority:** medium

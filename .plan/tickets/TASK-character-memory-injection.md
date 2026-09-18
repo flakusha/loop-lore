@@ -3,6 +3,11 @@
 
 # TASK: Character Memory Injection Probability & Privacy
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** epic-memory-knowledge-systems
 **Priority:** Medium
 **Effort:** High

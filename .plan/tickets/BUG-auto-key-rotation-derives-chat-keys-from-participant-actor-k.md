@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: auto key rotation derives chat keys from participant actor keys - legacy scheme incompatible with stable chat_keys
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done (verified landed on dev — `rotateActorKey` performs atomic actor-key expiry with no message re-encrypt step, `messagesReEncrypted: 0`; covered by `rotate.test.ts`)
 **Priority:** medium

@@ -3,6 +3,11 @@
 
 # TASK: By-Role, By-Capability Assistant Capability Disclosure
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Low

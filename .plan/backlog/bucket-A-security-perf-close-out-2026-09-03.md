@@ -61,14 +61,14 @@
 
 The strict re-review (`docs/meta/code-practices-improvements/audit-batch-A-message-seen-gen-2026-09-03.md`) surfaced follow-up tickets now filed as TASK-audit-follow-up-* in `.plan/tickets/`. These are NOT bucket-A failures — they are residual defects that the bucket landed while not yet addressing. The audit found no BLOCKING issues. Listed in priority order:
 
-1. `TASK-audit-follow-up-check-report-name-field-dropped` (issue `864a2bc`) — check report `name` field dropped; need to verify report contents after the ratchet-perf changes.
-2. `TASK-audit-follow-up-maxratio-silently-raised-10x-without-regress` (issue `0391ad6`) — `safeDecompress` `maxRatio` silently raised 10× without a regression test. NIT-1 from Batch C audit, same theme.
-3. `TASK-audit-follow-up-resolveuseridfromrequest-authconfig-di-path-` (issue `0735878`) — DI fast path (4-arg call) untested; callers silently fall back to per-request `loadConfig()`.
-4. `TASK-audit-follow-up-templates-ts-at-190l-convention-ceiling` (issue `4636043`) — `templates.ts` at 190L convention ceiling.
-5. `TASK-audit-follow-up-triggerautogeneration-catch-path-untested` (issue `1448001`) — `.catch()` path of `triggerAutoGeneration` not isolated. NIT-2 from Batch C audit, same theme.
-6. `TASK-audit-follow-up-secondary-chat-ownership-check-in-reunitecha` (issue `6caa51a`) — secondary chat-ownership check in `reuniteChats` untested.
-7. `TASK-audit-follow-up-worktree-finalize-reapstale-void-dead-code` (issue `06d25f6`) — proposed removal of `reapStale(): boolean` as dead-code pattern (in favor of inline lock acquisition). Low priority.
-8. `TASK-audit-follow-up-chat-swipe-index-race-test-uses-promise-all-` (issue `3afdeb2`) — chat-swipe-index-race test uses `Promise.all` which runs on JS thread serially — no real concurrency tested.
+1. `audit follow-up: check-report-name-field-dropped` (issue `864a2bc`) — check report `name` field dropped; need to verify report contents after the ratchet-perf changes.
+2. `audit follow-up: maxratio-silently-raised-10x-without-regress` (issue `0391ad6`) — `safeDecompress` `maxRatio` silently raised 10× without a regression test. NIT-1 from Batch C audit, same theme.
+3. `audit follow-up: resolveuseridfromrequest-authconfig-di-path-` (issue `0735878`) — DI fast path (4-arg call) untested; callers silently fall back to per-request `loadConfig()`.
+4. `audit follow-up: templates-ts-at-190l-convention-ceiling` (issue `4636043`) — `templates.ts` at 190L convention ceiling.
+5. `audit follow-up: triggerautogeneration-catch-path-untested` (issue `1448001`) — `.catch()` path of `triggerAutoGeneration` not isolated. NIT-2 from Batch C audit, same theme.
+6. `audit follow-up: secondary-chat-ownership-check-in-reunitecha` (issue `6caa51a`) — secondary chat-ownership check in `reuniteChats` untested.
+7. `audit follow-up: worktree-finalize-reapstale-void-dead-code` (issue `06d25f6`) — proposed removal of `reapStale(): boolean` as dead-code pattern (in favor of inline lock acquisition). Low priority.
+8. `audit follow-up: chat-swipe-index-race-test-uses-promise-all-` (issue `3afdeb2`) — chat-swipe-index-race test uses `Promise.all` which runs on JS thread serially — no real concurrency tested.
 
 ## Status
 

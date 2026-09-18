@@ -3,6 +3,9 @@
 
 # EPIC: Plugin Management UI
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** P2 — Medium
 **Effort:** Medium

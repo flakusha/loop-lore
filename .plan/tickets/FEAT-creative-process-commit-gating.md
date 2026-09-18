@@ -3,6 +3,11 @@
 
 # FEAT: Creative process commit gating
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** high
 **Effort:** High

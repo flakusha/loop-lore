@@ -3,6 +3,11 @@
 
 # TASK: Character Avatar Gallery Binding
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Complete
 **Priority:** High
 **Effort:** Medium

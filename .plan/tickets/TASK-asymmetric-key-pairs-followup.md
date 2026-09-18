@@ -3,6 +3,11 @@
 
 # TASK: Implement True Client-Side E2E for at-rest+ Tier (4-phase delivery)
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 Foundation + Phases A–D shipped (commit `10b203b4` on dev); remainder split into 4 child tickets
 **Priority:** Medium
 **Effort:** Large

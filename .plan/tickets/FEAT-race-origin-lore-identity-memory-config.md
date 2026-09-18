@@ -3,6 +3,11 @@
 
 # FEAT: Race & Origin (Homeland/Culture) Identity-Aware Lore/Memory Configuration
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** Open
 **Priority:** Medium
 **Effort:** Medium

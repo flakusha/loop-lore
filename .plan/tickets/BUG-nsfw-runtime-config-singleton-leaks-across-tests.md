@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: nsfwRuntimeConfig singleton leaks across test files
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** ✅ Done — fixed on dev by 7190e37df + 3b95687df (2026-09-14), verified live + 36 consumer tests green
 **Priority:** medium

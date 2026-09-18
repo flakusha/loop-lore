@@ -3,6 +3,11 @@
 
 # BUG: gm_config corrupted by string-spread in buildChatUpdates merge
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Resolved (4835dcaf, 2026-09-04)
 **Priority:** high
 **Effort:** Medium

@@ -1,4 +1,12 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # BUG: NsfwModerationService missing getOrCreateOwn wiring — block/ban/shadow all return 400
+
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Status:** [OK] Resolved (class now binds getOrCreateOwn via arrow-field dispatcher; regression test in preferences.test.ts verifies the binding; bun test src/nsfw/ — 60 pass / 0 fail)
 **Priority:** high

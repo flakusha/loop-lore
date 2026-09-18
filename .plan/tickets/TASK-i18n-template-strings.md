@@ -3,6 +3,12 @@
 
 # TASK: i18n Template String Replacement
 
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress
 **Priority:** High
 **Epic:** epic-i18n (Phase 3)

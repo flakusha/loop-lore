@@ -1,4 +1,13 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Loop Lore Contributors -->
+
 # TASK: Single-assembly dedup across carriage, notes, quests, memory injection
+
+**Effort:** Medium
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
 
 **Epic:** epic-hidden-carriage-context.md
 **See also:** epic-context-injection-templates.md, epic-quests-encounters.md, epic-gm-shadow-notes.md

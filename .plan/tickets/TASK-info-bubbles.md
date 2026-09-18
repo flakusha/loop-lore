@@ -3,6 +3,11 @@
 
 # TASK: Info Bubbles Implementation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Epic:** Immersion & Presentation (EPIC-048)
 **Priority:** Medium
 **Effort:** Low

@@ -3,6 +3,9 @@
 
 # EPIC: Embeddable Engine & 2D/3D Game Frontend (Far Fetched)
 
+**Overview:** (see sections below)
+
+
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Very High (split into 5 sub-epics)

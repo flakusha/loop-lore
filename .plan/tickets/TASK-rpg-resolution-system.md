@@ -3,6 +3,11 @@
 
 # TASK: RPG: Resolution System
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** 🟡 In Progress (split into implementing tickets — see below)
 **Priority:** high
 **Effort:** Medium

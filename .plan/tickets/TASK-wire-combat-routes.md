@@ -3,6 +3,11 @@
 
 # TASK: Wire Combat Routes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-14, `51a7bc01`) — combat wired to HTTP (`src/routes/rpg/combat.ts` + tests); battle UI glue in `src/battle/` already shipped
 **Priority:** Medium
 **Effort:** Medium

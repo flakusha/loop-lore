@@ -3,6 +3,11 @@
 
 # TASK: Wire Quests Routes
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ✅ Done (2026-08-14, `51a7bc01`) — dual quest system consolidated (`src/rpg/quests/service/` removed) and wired to HTTP
 **Priority:** High
 **Effort:** Medium

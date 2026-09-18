@@ -3,6 +3,11 @@
 
 # TASK: Adopt View Transitions API for page navigation
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Small
@@ -41,8 +46,4 @@ The View Transitions API provides native animated page transitions for SPAs and 
 - Firefox 126+ (2024+)
 - Safari 18+ (2024+)
 - ~90% global coverage as of 2025
-
-## Related
-
-- `TASK-adopt-dialog-api-for-modals` — dialogs can use view transitions for open/close
 

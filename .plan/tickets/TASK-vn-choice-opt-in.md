@@ -3,6 +3,11 @@
 
 # TASK: VN choice opt-in with pending-choice send block
 
+**Summary:** (none captured)
+**Context:** (none captured)
+**Acceptance Criteria:** (none captured)
+
+
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
