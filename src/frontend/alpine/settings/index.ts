@@ -4,6 +4,7 @@
 import { api, } from "./api";
 import { chat, } from "./chat";
 import { general, } from "./general";
+import { restartBanner, } from "./restart-banner";
 import type { LocaleInfoArray, SettingsState, } from "./types";
 
 (globalThis as any).settingsPage = function(): Partial<SettingsState> & ThisType<SettingsState> {
@@ -36,8 +37,11 @@ import type { LocaleInfoArray, SettingsState, } from "./types";
       shadowNsfw: boolean;
       blockReason: string | null;
     },
+    pendingRestartKeys: [],
+    pendingRestartBannerDismissed: false,
     ...general(),
     ...chat(),
     ...api(),
+    ...restartBanner(),
   };
 };

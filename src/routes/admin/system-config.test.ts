@@ -10,6 +10,8 @@
  *   - GET 200 (empty + seeded)
  *   - PATCH 200 (valid body) / 400 (invalid body)
  *   - DELETE 204
+ *   - POST /import (yaml/toml) with per-key diff and secret skip
+ *   - GET /config-schema includes requires_restart_keys
  */
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { Elysia, } from "elysia";
@@ -185,6 +187,113 @@ describe("admin system-config routes", () => {
     const app = makeApp(db, "user",);
     const res = await app.handle(
       new Request("http://localhost/api/admin/system-config/export?format=yaml",),
+    );
+    expect(res.status,).toBe(403,);
+  });
+
+  test("GET /api/admin/config-schema includes requires_restart_keys", async () => {
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(new Request("http://localhost/api/admin/config-schema",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { requires_restart_keys?: string[] };
+    expect(Array.isArray(body.requires_restart_keys,),).toBe(true,);
+    expect(body.requires_restart_keys,).toContain("default_provider",);
+  });
+
+  test("GET /api/admin/system-config decorates rows with requires_restart", async () => {
+    // default_provider is in REQUIRES_RESTART_KEYS — set explicitly so the row exists.
+    await setConfig(db, "default_provider", "openai",);
+    await setConfig(db, "decorated_k_friendly", "hi",);
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(new Request("http://localhost/api/admin/system-config",),);
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as Array<{ key: string; requires_restart: boolean }>;
+    const provider = body.find((c,) => c.key === "default_provider");
+    expect(provider,).toBeTruthy();
+    expect(provider?.requires_restart,).toBe(true,);
+    const friendly = body.find((c,) => c.key === "decorated_k_friendly");
+    expect(friendly?.requires_restart,).toBe(false,);
+  });
+
+  test("POST /api/admin/system-config/import yaml adds new keys and reports diff", async () => {
+    const yamlBody = `system_config:
+  import.k1: v1
+  import.k2: v2
+`;
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config/import", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ format: "yaml", content: yamlBody, },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as {
+      imported: number;
+      changed: number;
+      skipped: number;
+      results: { key: string; action: string }[];
+    };
+    expect(body.imported,).toBe(2,);
+    expect(body.results.map((r,) => r.key).sort(),).toEqual(["import.k1", "import.k2",],);
+    expect(body.results.every((r,) => r.action === "added"),).toBe(true,);
+  });
+  test("POST /api/admin/system-config/import toml round-trips and reports changed", async () => {
+    await setConfig(db, "import.toml.pre", "old",);
+    // Bun.TOML export uses quoted dotted keys to keep them flat on parse.
+    const tomlBody = `[system_config]\n"import.toml.pre" = "new"\n`;
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config/import", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ format: "toml", content: tomlBody, },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { changed: number; results: { key: string; action: string }[] };
+    expect(body.changed,).toBe(1,);
+    expect(body.results[0]?.action,).toBe("changed",);
+  });
+
+  test("POST /api/admin/system-config/import skips secret-pattern keys", async () => {
+    const yamlBody = `system_config:\n  import.jwtSecret: leaked\n  import.publicKey: ok\n`;
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config/import", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ format: "yaml", content: yamlBody, },),
+      },),
+    );
+    expect(res.status,).toBe(200,);
+    const body = await res.json() as { skipped: number; results: { key: string; action: string }[] };
+    expect(body.skipped,).toBeGreaterThanOrEqual(1,);
+    const secret = body.results.find((r,) => r.key === "import.jwtSecret");
+    expect(secret?.action,).toBe("skipped",);
+  });
+
+  test("POST /api/admin/system-config/import returns 400 on invalid yaml", async () => {
+    const app = makeApp(db, "admin",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config/import", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ format: "yaml", content: "{ this: is: invalid", },),
+      },),
+    );
+    expect(res.status,).toBe(400,);
+  });
+
+  test("POST /api/admin/system-config/import returns 403 for non-admin", async () => {
+    const app = makeApp(db, "user",);
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config/import", {
+        method: "POST",
+        headers: { "content-type": "application/json", },
+        body: JSON.stringify({ format: "yaml", content: "system_config: {}", },),
+      },),
     );
     expect(res.status,).toBe(403,);
   });
