@@ -56,20 +56,20 @@ the full bestiary + ecology + repopulation system.
 
 ## Tasks
 
-- [ ] Bestiary catalog schema
-- [ ] Bestiary CRUD endpoints (admin/GM only)
-- [ ] Bestiary UI (compendium + per-location population)
-- [ ] Population tables per location per species
-- [ ] Time-based repopulation engine
-- [ ] Admin/GM force spawn and force cull endpoints
-- [ ] Ecology pressure model
-- [ ] Per-species quest bindings
-- [ ] Bestiary → encounter table integration
-- [ ] Bestiary → loot table integration
-- [ ] Bestiary → XP award integration
-- [ ] Bestiary state snapshots
-- [ ] Migration for bestiary + population tables
+- [ ] Bestiary catalog schema — `TASK-bestiary-catalog-schema-and-migration`
 - [ ] Species generation workflow (LLM, gated, review/approved) — `TASK-assistant-creative-studio-workflow-species.md`
+- [ ] Bestiary CRUD endpoints (admin/GM only) — `TASK-bestiary-crud-routes-admin-gm`
+- [ ] Bestiary UI (compendium + per-location population) — `TASK-bestiary-ui-compendium-and-per-location-population`
+- [ ] Population tables per location per species — `TASK-bestiary-catalog-schema-and-migration`
+- [ ] Time-based repopulation engine — `TASK-bestiary-time-based-repopulation-engine`
+- [ ] Admin/GM force spawn and force cull endpoints — `TASK-bestiary-admin-gm-force-spawn-and-cull`
+- [ ] Ecology pressure model — `TASK-bestiary-ecology-pressure-model`
+- [ ] Per-species quest bindings — `TASK-bestiary-quest-bindings-integration`
+- [ ] Bestiary → encounter table integration (in `epic-world-encounters.md`)
+- [ ] Bestiary → loot table integration — `TASK-bestiary-loot-and-xp-integration`
+- [ ] Bestiary → XP award integration — `TASK-bestiary-loot-and-xp-integration`
+- [ ] Bestiary state snapshots (covered by schema + repopulation engine)
+- [ ] Migration for bestiary + population tables — `TASK-bestiary-catalog-schema-and-migration`
 
 ## Design
 

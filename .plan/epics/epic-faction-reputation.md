@@ -38,11 +38,14 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 
 ## Tasks
 
-- TASK-faction-standing-schema
-- Faction CRUD + world linkage
-- Standing computation on choice events
-- Quest / NPC gating by standing
-- World-state persistence + archival
+| Task | Ticket | Status |
+| ---- | ------ | ------ |
+| Faction standing schema + migration | `TASK-faction-standing-schema.md` | ⬜ Not Started |
+| Faction CRUD + world linkage | `TASK-faction-relations-list-and-standing.md` | ⬜ Not Started |
+| Standing computation on choice events | `TASK-faction-standing-and-reputation-drift-integration.md` | ⬜ Not Started |
+| Quest / NPC gating by standing | (covered in quest/encounter epic) | ⬜ Not Started |
+| World-state persistence + archival | `TASK-faction-politics-coups-and-expansion-engine.md` | ⬜ Not Started |
+| Faction leader + cadre generation | `TASK-faction-leaders-and-cadre-generation.md` | ⬜ Not Started |
 
 ## Integration Points
 

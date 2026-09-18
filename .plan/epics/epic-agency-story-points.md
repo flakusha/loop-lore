@@ -161,13 +161,20 @@ When generating NPC plans and reactions, the prompt includes:
 
 | Task | Description | Priority | Status |
 |------|-------------|----------|--------|
-| TASK-npc-planning-loop | Implement daily planning + task decomposition | High | Not Started |
-| TASK-npc-reaction-system | Event perception + reaction decision system | High | Not Started |
-| TASK-npc-plan-revision | Dynamic plan adjustment based on events | Medium | Not Started |
-| TASK-npc-chat-buffer | Chat cooldown and buffer management | Medium | Not Started |
-| TASK-npc-planning-prompt | Prompt assembly for planning and reactions | High | Not Started |
-| TASK-npc-planning-tests | Planning, reaction, revision, buffer tests | High | Not Started |
-
+| `TASK-npc-bdi-planning` | BDI goal-pursuit loop: daily planning, task decomposition, reaction, plan revision, chat buffer | High | Not Started |
+| `TASK-npc-social-conversation` | NPC initiates social conversations based on proximity, mood, relationship | Medium | Not Started |
+| `TASK-npc-social-decision` | NPC decides how to react: chat / wait / flee / attack / ignore | Medium | Not Started |
+| `TASK-npc-social-memory` | NPC stores conversation outcomes in episodic memory | Medium | Not Started |
+| `TASK-npc-social-dynamics` | NPC-to-NPC social dynamics: information propagation, relationship drift | Medium | Not Started |
+| `TASK-npc-to-npc-social` | Full autonomous NPC-to-NPC social simulation with emergent gossip | Medium | Not Started |
+| `TASK-npc-social-prompt` | Prompt assembly for NPC social reasoning | Medium | Not Started |
+| `TASK-npc-social-tests` | Planning, reaction, revision, buffer, social tests | High | Not Started |
+| `TASK-npc-planning-loop` | Implement daily planning + task decomposition | High | Not Started |
+| `TASK-npc-reaction-system` | Event perception + reaction decision system | High | Not Started |
+| `TASK-npc-plan-revision` | Dynamic plan adjustment based on events | Medium | Not Started |
+| `TASK-npc-chat-buffer` | Chat cooldown and buffer management | Medium | Not Started |
+| `TASK-npc-planning-prompt` | Prompt assembly for planning and reactions | High | Not Started |
+| `TASK-npc-planning-tests` | Planning, reaction, revision, buffer tests | High | Not Started |
 ### Open Questions
 
 1. Should NPC plans be visible to players, or only their actions?
