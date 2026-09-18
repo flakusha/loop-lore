@@ -3,7 +3,7 @@
 
 # TASK: db-migration-compaction (Path B — final-form, parts/-decomposed)
 
-**Status:** ⬜ Not Started
+**Status:** ⬜ Not Started (fact reconciliation 2026-09-18: "79 top-level migrations" predates the current tree — `dev` already has 9 top-level migrations with `001_init` composing 20 `parts/` files; `migration-076` no longer exists in the chain. Confirm remaining scope against the current shape before starting. Migration-coupled tests `migration-roundtrip` + `migrations` are green as of the `016_fts.ts` down() trigger fix.)
 **Priority:** high
 **Effort:** High
 
