@@ -36,3 +36,4 @@ your first message. For full setup details (env vars, Docker, Windows) see
 | `bun run db:migrate` | Run database migrations            |
 | `bun run docs:dev`   | Start documentation dev server     |
 | `bun run docs:build` | Build documentation for production |
+| `bun run mermaid:lint` | Validate mermaid diagram blocks in docs |
