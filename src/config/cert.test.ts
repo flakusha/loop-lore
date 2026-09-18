@@ -91,6 +91,7 @@ describe("ensureTlsCerts — generation path", () => {
       expect(cmd[0],).toBe("openssl",);
       expect(cmd,).toContain("-x509",);
       expect(cmd,).toContain("req",);
+      expect(cmd,).toContain("subjectAltName=DNS:localhost,IP:127.0.0.1",);
       // Simulate successful cert write
       writeFileSync(keyPath, "generated-key",);
       writeFileSync(certPath, "generated-cert",);
