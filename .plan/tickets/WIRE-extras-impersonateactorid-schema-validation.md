@@ -3,7 +3,7 @@
 
 # WIRE: verify ChatImpersonateBody schema includes impersonateActorId
 
-**Status:** Open
+**Status:** Closed (2026-09-18, reconciliation verified)
 **Priority:** low
 **Priority Tier:** P5
 **Effort:** Small
@@ -37,5 +37,9 @@ If `Optional`, add `.default("")`.
 
 ## Acceptance Criteria
 
-- [ ] `ChatImpersonateBody` enforces `impersonateActorId` field
-- [ ] Malformed request → 400
+- [x] `ChatImpersonateBody` enforces `impersonateActorId` field
+- [x] Malformed request → 400
+
+## Resolution (2026-09-18)
+
+Verified enforced: `ChatImpersonateBody` is a non-Optional `t.Object({ impersonateActorId: t.String() })` at `src/validation/schemas/chat.ts:198-200`, mounted on `PUT /api/chats/:id/impersonate` (`src/routes/chats/extras.ts:141-168`); missing-field → 400 covered by `src/routes/chats/chat.test.ts:317-341`. The `?? null` in extras.ts is dead against the schema. No code change required.
