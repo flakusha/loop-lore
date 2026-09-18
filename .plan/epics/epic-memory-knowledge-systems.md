@@ -45,6 +45,7 @@ Three-tier memory system — episodic, semantic, and procedural memory. Covers m
 | Memory promotion pipeline | — | `TASK-memory-promotion-pipeline.md` | ⬜ Not Started | Extract → promote → inject pipeline |
 | Memory trust modifier | — | `TASK-memory-trust-modifier-wiring.md` | ⬜ Not Started | Trust modifier wired into memory retrieval |
 | Memory provision wiring | — | `TASK-memory-provision-wiring.md` | ⬜ Not Started | Provision service wired into extraction |
+
 ## Emotion-Impact Fields (FEA-2026-056)
 
 Structured emotion-impact on episodic memories that drives character behavior:
