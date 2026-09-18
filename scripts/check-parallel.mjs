@@ -4,7 +4,7 @@
 
 /**
  * Parallel check runner for loop-lore
- * Runs independent checks in parallel and aggregates results
+    "plan - validate": "bun run plan:validate",
  *
  * Usage:
  *   bun run scripts/check-parallel.mjs [--fix] [--ci] [--report-ls] [--jobs N]
@@ -285,6 +285,10 @@ const checks = {
 
     // Ticket index reconciliation (index.json ↔ .md ↔ git issues)
     "plan - ticket index (sync)": "bun run plan:sync",
+
+    // Comprehensive .plan/ validation (10 gates: format, linkage, backlog,
+    // tickets, code-map, links, spdx, naming, epics-doc, all)
+    "plan - validate": "bun run plan:validate",
 
     // Size check
     "size - check": "bun run scripts/check-file-size.ts",
